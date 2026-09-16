@@ -1,7 +1,7 @@
 # LINE album acceptance and reusable transaction process — revised candidate plan
 
 TASK_ID: T20260916-0102-01-line-backup-acceptance
-PLAN_REVISION: 17
+PLAN_REVISION: 18
 PLAN_STATUS: CANDIDATE
 TASK_CLASS: CRITICAL (persistent-state and safety-semantics changes: dispatch continuity, duplicate/refusal gating, provenance binding, success semantics)
 REVIEW_REQUIRED: YES
@@ -9,14 +9,65 @@ INDEPENDENT_ACCEPTANCE_REQUIRED: YES
 E2E_REQUIRED: NO
 E2E_RATIONALE: The only user journey for this album is a read-only verify-only pass over an existing destination; no production download is authorized in this wave. Real CLI, real formal read-only data, real evidence and (if granted) one real GUI observation are used; no fixture result may be reported as production E2E.
 ACCEPTED_BY_USER: YES
-PRIOR_REVIEW_ATTEMPT: 20, 21
-PRIOR_REVIEW_GATE: PLAN_REVISION_REQUIRED (Rev16 at SHA256 61e1676439b9bb2a5314bd68f0a7d14a0eeb4d9b11af62230e5591c50139384e; review/attempt-20 returned PLAN_REVISION_REQUIRED with RV-1…RV-11 and review/attempt-21 returned PLAN_REVISION_REQUIRED with RV-1 BLOCKER plus RV-2…RV-6; no approval exists for Rev17)
+PRIOR_REVIEW_ATTEMPT: 22, 23
+PRIOR_REVIEW_GATE: SPLIT (Rev17 at SHA256 5dd7ab19ce16175fb8e091762d73a50cebb6415ab895342c00a9a015ea1b866f; review/attempt-22 returned PLAN_APPROVED with three non-gating MINOR notes and review/attempt-23 returned PLAN_REVISION_REQUIRED with RV-23-1 MAJOR plus RV-23-2…RV-23-5; Rev18 answers attempt-23 and no approval exists for Rev18)
 PRIMARY_OUTCOME_STATUS: UNKNOWN
 IMPLEMENTATION_STATUS: NOT_STARTED
 CORE_ACCEPTANCE_STATUS: NOT_RUN
 REQUIRED_VERIFICATION_STATUS: NOT_RUN
 INDEPENDENT_ACCEPTANCE_STATUS: PENDING
 TASK_CLOSURE_STATUS: IN_PROGRESS
+
+## Revision 18 changes
+
+Wave: **automation verification** (same task, same wave). Rev18 answers the Stage 02 review of Rev17 —
+`review/attempt-23` (gate `PLAN_REVISION_REQUIRED`; RV-23-1 MAJOR plus RV-23-2…RV-23-5) — while adopting the two
+non-gating bookkeeping notes from `review/attempt-22` (`PLAN_APPROVED`) that name the same literals. §18.1–§18.5 are
+normative and each one corrects its paragraphs **in place**; together with §17.1–§17.10 there is no surviving
+contradicting literal. Both Rev17 reviews stay invalid for this revision, and no Stage 03 handoff may be compiled from
+Rev17.
+
+### 18.1 Legacy Registry axis made single-valued (corrects §17.3 and §16.5; attempt-23 RV-23-1)
+
+The blanket claim "a tolerated-legacy run yields … Registry FAIL … Registry and Source never PASS" is deleted. Registry
+is never forced by legacy tolerance and follows the §16.8 axis rule alone: a unique readable match with
+`verified_run_id` null (the imported-evidence form, e.g. the matrix `legacy-record` row) is Registry PASS, while the
+`CASE_ROOT_25` real-state copy — whose persisted 楨 U+6968 keys never match the requested 禎 U+798E album — and any
+unreadable or non-matching run are Registry FAIL. Filesystem PASS is preserved (an independent axis), Source stays
+UNRESOLVED, State `LEGACY_PROVENANCE_LIMITED`, overall `UNKNOWN`, exit 4, `failure_class=INPUT_PROVENANCE_LIMITED`. The
+v1 sentence "A legacy or unreadable run never becomes Filesystem/Registry/Source PASS" is corrected accordingly: Source
+never PASSes, Filesystem may, and Registry only by that axis rule.
+
+### 18.2 Production finalize grammar annotated (corrects the production transaction-forms bullet; attempt-23 RV-23-2 / attempt-22 RV-2)
+
+The production grammar statement now marks `--verification-json` outcome-conditional (required for `--outcome VERIFIED`,
+optional for `SAFE_ABORT`), so §17.9's "in both grammar statements" claim is true of both statements.
+
+### 18.3 Reconcile-oracle claim narrowed to the actual oracles (corrects §17.9 and §16.6; attempt-23 RV-23-3)
+
+Case 02's oracle asserts the exact persisted string `reconcile:reconcile.json:<sha256 of its bytes>`; case 03's oracle
+asserts only that its idempotent resume writes no new reconcile artifact and leaves the persisted reference unchanged;
+the §16.6 grammar remains normative for every reconciliation reference any case writes. No case gains a new assertion
+beyond what its oracle text already states.
+
+### 18.4 Stale literals and supersession sentences restated as direct corrections (corrects the closure paragraphs and §16.1/§16.7/§17.8 wording; attempt-23 RV-23-4 / attempt-22 RV-1)
+
+The closure paragraphs now bind Stage 03 to "the current PLAN_REVISION at handoff time (18 at this writing)" and name
+"this Revision 18". The §16.1 and §16.7 sentences that read "… is superseded accordingly/by …" and the §17.8 range
+sentence are restated as direct corrections ("… was corrected in place to …"), so no leftover supersession sentence
+survives the "no new supersession layer" claim.
+
+### 18.5 Nineteenth status row added to the fixture table (corrects the status fixtures table; attempt-23 RV-23-5 / attempt-22 RV-3)
+
+The executable status fixture table gains the `baseline-worsened` row directly after the unchanged-baseline row, with
+the §17.6 tuple (PRIMARY `ACHIEVED`, IMPLEMENTATION `COMPLETE`, CORE `PASS`, REQUIRED_VERIFICATION `FAIL`, INDEPENDENT
+`PENDING`, CLOSURE `FIX_REQUIRED`, blocker `BASELINE_REGRESSION_DELTA/FAIL/TASK_REGRESSION`).
+
+### 18.6 Unchanged by this revision
+
+Everything else, including the goal contract and `PRIMARY_OUTCOME`, closure and `DONE`, the R1–R7 fix contract, cases
+01–25 with their literals and oracles, the one human gate, the read-only fences, the three separately reported results,
+and all other §17.1–§17.10 decisions.
 
 ## Revision 17 changes
 
@@ -95,10 +146,14 @@ the acceptance driver hashes its own captures separately.
   strictly valid is refused `INVALID_STATE_LEGACY` exit 4 with no write. The real formal state therefore stays readable
   and cannot be mutated by this wave, and 25b is its executable oracle.
 - Read-only mapping is unified with the existing product output and the verifier-contract section: a tolerated-legacy or
-  unreadable run yields Filesystem PASS preserved (an independent axis), Registry FAIL, Source UNRESOLVED, State
-  `LEGACY_PROVENANCE_LIMITED`, overall `UNKNOWN`, exit 4, `failure_class=INPUT_PROVENANCE_LIMITED`. The v1 sentence
-  "A legacy or unreadable run never becomes Filesystem/Registry/Source PASS" is corrected: Registry and Source never
-  PASS, Filesystem may.
+  unreadable run yields Filesystem PASS preserved (an independent axis), Source UNRESOLVED, State
+  `LEGACY_PROVENANCE_LIMITED`, overall `UNKNOWN`, exit 4, `failure_class=INPUT_PROVENANCE_LIMITED`. Registry is never
+  forced by legacy tolerance and follows the §16.8 axis rule alone: a unique readable match with `verified_run_id` null
+  (the imported-evidence form, e.g. the matrix `legacy-record` row) is Registry PASS, while the `CASE_ROOT_25`
+  real-state copy (persisted 楨 U+6968 keys never match the requested 禎 U+798E album) and any unreadable or
+  non-matching run are Registry FAIL (Rev18 §18.1). The v1 sentence "A legacy or unreadable run never becomes
+  Filesystem/Registry/Source PASS" is corrected: Source never PASSes, Filesystem may, and Registry only by that axis
+  rule.
 - `legacy_normalizations[]` is pinned as an array of `{run_id, kind, detail}` with `kind ∈ {calibration.extra_keys,
   calibration.missing, contract_revision.missing, UNREADABLE_LEGACY}`; every tolerated or unreadable run appears exactly
   once, and an `UNREADABLE_LEGACY` run is additionally named in the scoped blocker. 25a asserts that exact list.
@@ -146,8 +201,9 @@ never dispatches); 25a — zero, 25b — zero.
 ### 17.8 Evidence roots, ranges and headings corrected (attempt-20 RV-10, attempt-21 RV-3, MINOR-1, MINOR-3)
 
 The product verify command targets `evidence/20260916-product-verify/attempt-04`, and the baseline copy targets
-`evidence/20260916-baseline/attempt-02`; every `attempt-01` root stays read-only provenance. Every `-01`…`-19` range
-reads `-01`…`-25`. The planned-file heading reads "Planned implementation files (existing modules are modified in place;
+`evidence/20260916-baseline/attempt-02`; every `attempt-01` root stays read-only provenance. The former `-01`…`-19`
+ranges were corrected in place to `-01`…`-25` (Rev18 §18.4). The planned-file heading reads "Planned implementation
+files (existing modules are modified in place;
 `run_all.py` is new)" and §16.9 remains authoritative for the file set. The two-order Phase-2 wave is pinned inside
 §16.10's `attempt-02/` as `attempt-02/order-ownership-first/` and `attempt-02/order-driver-first/`, each with its own
 per-driver subdirectories and its own `readback-verification.json`, so neither order can overwrite the other.
@@ -159,8 +215,10 @@ per-driver subdirectories and its own `readback-verification.json`, so neither o
 - `finalize`'s `--verification-json` is outcome-conditional in both grammar statements: required for `--outcome VERIFIED`,
   optional for `SAFE_ABORT` (when supplied it must still be a readable JSON object, and it is never consulted for
   SAFE_ABORT success).
-- The case-02/03/19 oracles assert the persisted reference form `reconcile:<relpath>:<sha256>` for the artifact each of
-  them produces, matching §16.6.
+- The case-02 oracle asserts the exact persisted reference string `reconcile:reconcile.json:<sha256 of its bytes>` and
+  the case-03 oracle asserts only that its idempotent resume writes no new reconcile artifact and leaves the persisted
+  reference unchanged; the §16.6 grammar stays normative for every reconciliation reference any case writes
+  (Rev18 §18.3).
 - The reconcile artifact is pinned: the process writes the persisted record to `<operation --evidence-dir>/reconcile.json`
   for its first reconciliation write in that directory, and `reconcile-2.json`, `reconcile-3.json`, … afterwards; the
   persisted reference is `reconcile:<that file name>:<sha256 of its bytes>`.
@@ -216,8 +274,9 @@ end-to-end: `prepare` (adapter pair) → `verify-only --test-mode` on the same c
 `evidence/verify-1/result.json` and `evidence/verify-1/manifest.json` per §16.3) → `commit --verification-json
 CASE_ROOT_01/evidence/verify-1/result.json` → `finalize --outcome VERIFIED` → `verify-only` run 2 on the same argv
 (closed loop, `source_status=CONFIRMED`) → duplicate-check `SKIP_DUPLICATE` → same-fingerprint different-destination
-prepare refused → terminal `resume` `SKIP_TERMINAL`. All literal Case-01 argv in this plan are superseded by this
-shape, and every earlier line that named `CASE_ROOT_NN/state.json` or "through -19" is superseded accordingly.
+prepare refused → terminal `resume` `SKIP_TERMINAL`. All literal Case-01 argv in this plan use this shape, and every
+line that named `CASE_ROOT_NN/state.json` or "through -19" was corrected in place to the canonical children and
+"through -25" (Rev17 §17.1/§17.8; Rev18 §18.4).
 
 ### 16.2 Case 20 — the real parent-SIGKILL in the dispatch window (fixes A-RV-2, B-RV-5)
 
@@ -351,10 +410,13 @@ which never rewrites anything:
 - Any other strict-schema deviation makes that run `UNREADABLE_LEGACY` (the fourth pinned `legacy_normalizations[]`
   kind): reported, never repaired, with the album's State axis `LEGACY_PROVENANCE_LIMITED` and the run named in the
   scoped blocker. Never a crash, never a rewrite.
-- A legacy or unreadable run yields Filesystem PASS preserved (an independent axis), Registry FAIL, Source UNRESOLVED,
-  State `LEGACY_PROVENANCE_LIMITED`, overall `UNKNOWN`, exit 4 and `failure_class=INPUT_PROVENANCE_LIMITED`. Registry
-  and Source never PASS; Filesystem may. Rev17 §17.3 corrects the former "never becomes Filesystem/Registry/Source PASS"
-  / `NOT_ACHIEVED` wording, exactly as the real-state pass already specifies.
+- A tolerated-legacy or unreadable run yields Filesystem PASS preserved (an independent axis), Source UNRESOLVED, State
+  `LEGACY_PROVENANCE_LIMITED`, overall `UNKNOWN`, exit 4 and `failure_class=INPUT_PROVENANCE_LIMITED`. Registry follows
+  only the §16.8 axis rule (Rev18 §18.1): the imported-evidence form (unique readable match, `verified_run_id` null) is
+  Registry PASS, while the `CASE_ROOT_25` real-state copy (楨 U+6968 keys ≠ the requested 禎 U+798E album) and any
+  unreadable or non-matching run are Registry FAIL. Source never PASSes; Filesystem may. Rev17 §17.3 as corrected by
+  Rev18 §18.1 replaces the former "never becomes Filesystem/Registry/Source PASS" / `NOT_ACHIEVED` wording, exactly as
+  the real-state pass already specifies.
 
 Mutation operations (`prepare`, `commit`, `finalize`, `resume`) load state strictly: any state containing at least one
 run that is not strictly valid is refused `INVALID_STATE_LEGACY` exit 4 with no write — the former `prepare`-may-append
@@ -363,18 +425,19 @@ wave.
 
 `CASE_ROOT_25` (`legacy-real-state-shape`) holds a read-only copy of the real formal state's shapes — one run with the
 extra calibration keys, one run without calibration, four runs without `contract_revision`, the real 楨 group key — plus
-a 57-file destination: 25a `verify-only --test-mode` → Filesystem PASS / Registry FAIL / Source UNRESOLVED / State
-`LEGACY_PROVENANCE_LIMITED`, overall `UNKNOWN`, `failure_class=INPUT_PROVENANCE_LIMITED`, exit 4, state bytes
-unchanged, and `legacy_normalizations[]` exactly the §17.3 array `{run_id, kind, detail}` naming every normalized or
-unreadable run; 25b `transaction prepare` against the same state → `INVALID_STATE_LEGACY` exit 4, no write, no
-counter line.
+a 57-file destination: 25a `verify-only --test-mode` → Filesystem PASS / Registry FAIL (no association match for the
+requested 禎 album, per the §16.8 axis rule; Rev18 §18.1) / Source UNRESOLVED / State `LEGACY_PROVENANCE_LIMITED`,
+overall `UNKNOWN`, `failure_class=INPUT_PROVENANCE_LIMITED`, exit 4, state bytes unchanged, and
+`legacy_normalizations[]` exactly the §17.3 array `{run_id, kind, detail}` naming every normalized or unreadable run;
+25b `transaction prepare` against the same state → `INVALID_STATE_LEGACY` exit 4, no write, no counter line.
 
 ### 16.6 Dispatch-continuity details: one reconcile grammar, refusal precedence, path conversion
 
 - **One grammar, one base** (A-RV-7 / B-RV-1): the persisted `reconciliations[].evidence` reference is exactly
   `reconcile:<relpath>:<sha256>` and always resolves inside the operation's own `--evidence-dir`; it is not a source
   binding and never participates in `source_status`. The `<kind>`-bearing form and the "§15.2 base rules" phrase are
-  deleted. The case-02/03/19 oracles assert the exact persisted string form of the reference they produce.
+  deleted. The case-02 oracle asserts the exact persisted string form of the reference it produces; case-03 asserts
+  that its idempotent resume writes no new artifact and leaves the persisted reference unchanged (Rev18 §18.3).
 - **Deterministic prepare refusal precedence** (A-RV-8): authority validation → `MISSING_SOURCE_EVIDENCE` →
   `MISSING_DISPATCHER` → `INVALID_SOURCE_EVIDENCE` → precondition refusals (`CONFLICT_ACTIVE_RUN`,
   `CONFLICT_DUPLICATE`, `CONFLICT_DUPLICATE_FINGERPRINT`, `AMBIGUOUS_FINGERPRINT`, `NEEDS_RECONCILIATION`) →
@@ -416,7 +479,7 @@ counter line.
   (`baseline_delta=WORSENED`) whose oracle asserts the must-not-break routing — REQUIRED_VERIFICATION `FAIL`, CLOSURE
   `FIX_REQUIRED`, blocker `BASELINE_REGRESSION_DELTA/FAIL/TASK_REGRESSION`, scoped blocker, no DONE (Rev17 §17.6; never
   `INCOMPLETE`/`PENDING_REQUIRED_VERIFICATION`).
-- **Case numbering**: the literal root set is `-01`…`-25`; every "through -19" phrase is superseded by "through -25".
+- **Case numbering**: the literal root set is `-01`…`-25`; every former "through -19" phrase now reads "through -25" (corrected in place; Rev18 §18.4).
 
 ### 16.8 Wording corrections (B-RV-3, B-RV-4, B-RV-7)
 
@@ -1013,7 +1076,7 @@ Packaging/build contract:
 Operator CLI grammar and product call graph:
 
 - verify-only --project-root PATH --config PATH --state PATH --destination PATH --group-key KEY --start-date ISO --end-date ISO --expected-images INT --evidence-dir PATH [--test-mode --pause-at SAMPLE_2_READY --barrier-file PATH]
-- Production transaction forms (no `--test-mode`): `transaction prepare --project-root PATH --config PATH --run-log PATH --state PATH --run-id ID --owner-id ID --source-evidence PATH --group-key KEY --start-date ISO --end-date ISO --expected-images INT --destination PATH --dispatcher PATH --dispatch-counter PATH --evidence-dir PATH`; `transaction resume --project-root PATH --config PATH --run-log PATH --state PATH --run-id ID --expected-revision INT --expected-owner-id ID --evidence-dir PATH [--no-dispatch]` (adapter options are still parsed but are rejected with `INVALID_INPUT` exit 2 after authority validation, per §15.1); `transaction commit --project-root PATH --config PATH --run-log PATH --state PATH --run-id ID --expected-revision INT --expected-owner-id ID --verification-json PATH --evidence-dir PATH`; `transaction finalize --project-root PATH --config PATH --run-log PATH --state PATH --run-id ID --expected-revision INT --expected-owner-id ID --outcome VERIFIED|SAFE_ABORT --verification-json PATH --evidence-dir PATH`; `transaction duplicate-check --project-root PATH --config PATH --run-log PATH --state PATH --group-key KEY --start-date ISO --end-date ISO --expected-images INT --destination PATH --evidence-dir PATH`.
+- Production transaction forms (no `--test-mode`): `transaction prepare --project-root PATH --config PATH --run-log PATH --state PATH --run-id ID --owner-id ID --source-evidence PATH --group-key KEY --start-date ISO --end-date ISO --expected-images INT --destination PATH --dispatcher PATH --dispatch-counter PATH --evidence-dir PATH`; `transaction resume --project-root PATH --config PATH --run-log PATH --state PATH --run-id ID --expected-revision INT --expected-owner-id ID --evidence-dir PATH [--no-dispatch]` (adapter options are still parsed but are rejected with `INVALID_INPUT` exit 2 after authority validation, per §15.1); `transaction commit --project-root PATH --config PATH --run-log PATH --state PATH --run-id ID --expected-revision INT --expected-owner-id ID --verification-json PATH --evidence-dir PATH`; `transaction finalize --project-root PATH --config PATH --run-log PATH --state PATH --run-id ID --expected-revision INT --expected-owner-id ID --outcome VERIFIED|SAFE_ABORT --verification-json PATH --evidence-dir PATH` (with `--verification-json` required for `--outcome VERIFIED` and optional for `SAFE_ABORT`; Rev17 §17.9/§16.7; Rev18 §18.2); `transaction duplicate-check --project-root PATH --config PATH --run-log PATH --state PATH --group-key KEY --start-date ISO --end-date ISO --expected-images INT --destination PATH --evidence-dir PATH`.
 - Test-only forms (Rev16 §16.1 supersedes this layout): the same operation-specific arguments use `--project-root /private/tmp/line-backup-acceptance-case-01` through `-25` with the canonical children `--config CASE_ROOT/config/line_backup_config.json --run-log CASE_ROOT/state/run_log.md --state CASE_ROOT/state/backup_state.json` and explicit `--test-mode`; only the declared pause, dispatcher, storage-fault and `--storage-fault-slot` flags are accepted in this form (Rev16 §16.7), and `--source-evidence` must be a test-mode record. Production commands accept the production adapter interface (`--dispatcher`, `--dispatch-counter` on `prepare` only) and never the test-only fault flags (`--dispatcher-outcome` non-default, `--crash-after-dispatch`, `--pause-at`, `--barrier-file`, `--storage-fault`).
 - status evaluate --input PATH --output PATH
 
@@ -1329,6 +1392,7 @@ Executable status fixtures invoke status evaluate with a literal input JSON and 
 | Complete implementation, CORE blocked | UNKNOWN | COMPLETE | BLOCKED | NOT_RUN | PENDING | CORE_ACCEPTANCE_BLOCKED | CORE_ACCEPTANCE/BLOCKED/AUTHORITY_REQUIRED |
 | Complete implementation, CORE fail | NOT_ACHIEVED | IN_PROGRESS | FAIL | NOT_RUN | PENDING | FIX_REQUIRED | CORE_ACCEPTANCE/FAIL/TASK_REGRESSION |
 | CORE pass with unchanged baseline delta and required checks pass | ACHIEVED | COMPLETE | PASS | PASS | PENDING | READY_FOR_INDEPENDENT_ACCEPTANCE | no blocker; baseline_delta=UNCHANGED |
+| Baseline worsened (`baseline_delta=WORSENED`) with all other required checks passing | ACHIEVED | COMPLETE | PASS | FAIL | PENDING | FIX_REQUIRED | BASELINE_REGRESSION_DELTA/FAIL/TASK_REGRESSION; per workflow-routing §7.7 rule 8 a worsened baseline is a must-not-break violation, never INCOMPLETE/PENDING_REQUIRED_VERIFICATION (Rev17 §17.6) |
 | Canonical incident with pre-existing hard-clean debt | ACHIEVED | COMPLETE | PASS | INCOMPLETE | PENDING | PENDING_REQUIRED_VERIFICATION | DOCUMENTATION_RETENTION_HEALTH/FAIL/PRE_EXISTING_REPOSITORY_FAILURE; aggregate INCOMPLETE is retained because a conclusive pre-existing debt is disclosed but not clean |
 | CORE pass, baseline unavailable | ACHIEVED | COMPLETE | PASS | INCOMPLETE | PENDING | PENDING_REQUIRED_VERIFICATION | REQUIRED_VERIFICATION/BLOCKED/INPUT_UNAVAILABLE |
 | All required items formally waived | ACHIEVED | COMPLETE | PASS | WAIVED | PENDING | READY_FOR_INDEPENDENT_ACCEPTANCE | waiver APPROVED by named authority |
@@ -1374,9 +1438,9 @@ A valid waiver preserves CHECK_RESULT and includes WAIVED_BY, WAIVER_SCOPE, RATI
 
 ## Closure and sequencing
 
-The root /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/handoff.md is historical/non-authoritative for this task because it predates this TASK_ID and revision. Stage 03 must create a fresh handoff bound to TASK_ID, PLAN_REVISION=16, the approved plan SHA, GOAL_ANCHOR, critical path, invariants, deferred/non-gating items and stop conditions.
+The root /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/handoff.md is historical/non-authoritative for this task because it predates this TASK_ID and revision. Stage 03 must create a fresh handoff bound to TASK_ID, the current PLAN_REVISION at handoff time (18 at this writing), the approved plan SHA, GOAL_ANCHOR, critical path, invariants, deferred/non-gating items and stop conditions.
 
-Stage 02 must independently review this Revision 16 and its exact hash. Stage 03 may compile handoff only for the approved revision/hash. Stage 04 repairs only the approved evidence harness and reruns the verifier/transaction/status wave; it must preserve prior attempts, write execution.md with the canonical six statuses, check matrix/results, scoped blockers, Stage 04 snapshot fields and artifact hashes. Stage 05 independently accepts the real CLI/evidence, snapshots immutable Stage 04 facts and does not modify product code.
+Stage 02 must independently review this Revision 18 and its exact hash. Stage 03 may compile handoff only for the approved revision/hash. Stage 04 repairs only the approved evidence harness and reruns the verifier/transaction/status wave; it must preserve prior attempts, write execution.md with the canonical six statuses, check matrix/results, scoped blockers, Stage 04 snapshot fields and artifact hashes. Stage 05 independently accepts the real CLI/evidence, snapshots immutable Stage 04 facts and does not modify product code.
 
 The current plan is not implementation approval. Offline read-only reconciliation, isolated fixture construction, baseline reproduction, and review preparation are authorized now. Product code edits, external formal-state writes, GUI input, deployment, and production download require the applicable later gate. Any semantic contract, product-boundary, E2E, or GUI-budget change increments PLAN_REVISION on the same TASK_ID, invalidates prior approvals and any handoff, and repeats independent review; it never continues under the same revision (Rev16 §16.8).
 
