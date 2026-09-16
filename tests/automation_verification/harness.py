@@ -155,8 +155,8 @@ def tree_manifest(root: Path, *, exclude=("manifest.json",)) -> dict:
             "files": len(artifacts), "total_bytes": sum(a["bytes"] for a in artifacts), "artifacts": artifacts}
 
 
-def write_tree_manifest(root: Path, *, name="manifest.json") -> dict:
-    manifest = tree_manifest(root, exclude=(name,))
+def write_tree_manifest(root: Path, *, name="manifest.json", exclude_extra=()) -> dict:
+    manifest = tree_manifest(root, exclude=(name, *exclude_extra))
     meta = write_json(root / name, manifest)
     manifest["manifest_sha256"] = meta["sha256"]
     manifest["manifest_bytes"] = meta["bytes"]
