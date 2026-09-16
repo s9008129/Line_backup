@@ -1,0 +1,15 @@
+{
+  "scope": "2026-09-16 static source review and handoff rewrite; no product repair or GUI action",
+  "artifacts": [
+    {
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/handoff.md",
+      "bytes": 25871,
+      "sha256": "5f35f6d306e2ecaab45435d8fedf3780a046d4c981ad02bea83d6e68ee9f97e0"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-handoff-root-cause/attempt-01/handoff-before.md",
+      "bytes": 18739,
+      "sha256": "dd3f85a50558b160dfb95f4059b0a824c25d4344cec12b07fd23f19f73b2b974"
+    }
+  ]
+}

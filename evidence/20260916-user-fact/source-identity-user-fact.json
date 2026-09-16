@@ -1,0 +1,109 @@
+{
+  "evidence_id": "20260916-user-fact-01",
+  "artifact_type": "source_identity_user_fact",
+  "status": "PARTIAL",
+  "target_blocker": "B1-SOURCE-IDENTITY (禎/楨)",
+  "recorded_at_local": "2026-09-16T19:35+0800",
+  "recorded_by": "Codex CLI session 01a0a8d7-f3e1-7242-b749-169a76167461",
+  "supplied_by": "使用者本人（檔案擁有者）",
+  "supplied_via": "Codex CLI 對話（同一 session；逐字轉錄）",
+  "session_transcript": "/Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T14-12-00-01a0a8d7-f3e1-7242-b749-169a76167461.jsonl",
+  "question": {
+    "asked_at_local": "2026-09-16T18:57:19.960+0800",
+    "asked_by_ordinal": 1015,
+    "message_context_prefix": "這依規則不能單獨用來合併字串，但只要你回答一句就能結案：",
+    "exact_text": "「你在 LINE 看到的那個群組，是『禎』還是『楨』？`Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57` 那 57 張，是不是就是這個群組 2024/05/13～05/17 的備份？（可以答不知道）」",
+    "part_1_exact": "你在 LINE 看到的那個群組，是『禎』還是『楨』？",
+    "part_2_exact": "`Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57` 那 57 張，是不是就是這個群組 2024/05/13～05/17 的備份？（可以答不知道）"
+  },
+  "answer": {
+    "answered_at_local": "2026-09-16T19:29:21.342+0800",
+    "answered_by_ordinal": 1022,
+    "exact_text": "正確是「禎」",
+    "addresses": "part_1",
+    "part_2": "UNANSWERED"
+  },
+  "facts": {
+    "raw_requested_group": "旻謙允禎成長日記",
+    "raw_requested_group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+    "raw_requested_group_char": "禎 (U+798E)",
+    "raw_persisted_group": "旻謙允楨成長日記",
+    "raw_persisted_group_key": "line:jp.naver.line.mac:旻謙允楨成長日記",
+    "raw_persisted_group_char": "楨 (U+6968)",
+    "app_bundle": "jp.naver.line.mac",
+    "album": "2024/05/13～05/17",
+    "expected_count": 57,
+    "existing_destination": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57"
+  },
+  "merge_prohibited": true,
+  "prohibitions": [
+    "禁止合併或正規化「禎」與「楨」字串；不得改寫正式 config/state 的 canonical key。",
+    "不得以相同日期／數量／hash 推斷同一來源。",
+    "本事實為 evidence-only；任何 key 變更或成功語意變更須走新任務的 CRITICAL plan revision。"
+  ],
+  "supporting_evidence": [
+    {
+      "path": "evidence/20260916-cua-cli-proof/line-window-raised-20260916T1839+0800.jpg",
+      "bytes": 113927,
+      "sha256": "9e6aeaf01161faad3effc7eb400bf9589f7e3fc2437c5d06f5b751a3b2e565b0",
+      "note": "LINE 視窗 Raise 後截圖；標題顯示「旻謙允禎成長日記 (3)」（supporting only，非身分證明）"
+    },
+    {
+      "path": "evidence/20260916-cua-cli-proof/crop-header-3x.jpg",
+      "bytes": 15117,
+      "sha256": "04b35c35ddf0286f0f41fd9ff07c5450c30f10798a5376e8fb60bbd06abaa41f"
+    },
+    {
+      "path": "evidence/20260916-cua-cli-proof/crop-sidebar-3x.jpg",
+      "bytes": 15534,
+      "sha256": "80f44aa733e3fdbf67d3060763e699e113ca64b1e0cfdea8d9ecf7c0d577b919"
+    },
+    {
+      "path": "evidence/20260916-cua-cli-proof/README.md",
+      "note": "CUA 行動清單與完整 hash 表"
+    }
+  ],
+  "authority_read_only_recheck": {
+    "checked_at_local": "2026-09-16T19:32:16+0800",
+    "mode": "read-only（shasum／stat／find／cat／jq；未寫入任何正式檔案）",
+    "config": {
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/config/line_backup_config.json",
+      "bytes": 372,
+      "sha256": "390cbdcf36a88c9f134c0ecb29d39018ebadf42babfb7a264a741337499d3b3b",
+      "group_key": "line:jp.naver.line.mac:旻謙允楨成長日記",
+      "group_name": "旻謙允楨成長日記",
+      "app_identifier": "jp.naver.line.mac"
+    },
+    "state": {
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json",
+      "bytes": 48146,
+      "sha256": "e9313a563bf298d4b1e9ae243c5d3d404ad1333f69cb71b156e68589a8ec2f59"
+    },
+    "run_log": {
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/run_log.md",
+      "bytes": 15950,
+      "sha256": "a62dd07d1df1a34fb91a11d6eec6ac8aae7146abf9eb7011b78b1d27914158bf"
+    },
+    "existing_destination_snapshot": {
+      "file_count": 57,
+      "total_bytes": 17924900
+    }
+  },
+  "unchanged_legacy_ids_and_fields": {
+    "state_revision": 39,
+    "current_run_id": null,
+    "unresolved_runs_key": "ABSENT（state keys 未含此欄位）",
+    "verified_albums_length": 4,
+    "verified_album_index": 3,
+    "verified_album_group_key": "line:jp.naver.line.mac:旻謙允楨成長日記",
+    "verified_album_fingerprint": "2024-05-13～2024-05-17 / expected_images 57",
+    "verified_run_id": "RUN-20260907-154331-01",
+    "source_kind": "filesystem_verification",
+    "destinations": [
+      "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57"
+    ],
+    "note": "以上欄位於 2026-09-16 19:32 唯讀讀回；state SHA-256 與 handoff §4 快照一致（未變動）。"
+  },
+  "source_correspondence_result_at_recording": "UNRESOLVED",
+  "source_correspondence_note": "本檔僅保存使用者事實；是否足以讓 SOURCE_CORRESPONDENCE=CONFIRMED（同一來源）由接手任務的 plan／review 判定。第 2 問未答前不得推定。"
+}

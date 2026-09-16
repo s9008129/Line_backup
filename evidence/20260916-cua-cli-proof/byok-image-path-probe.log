@@ -1,0 +1,182 @@
+==================================================================
+=== BYOK image-path probe log — start 2026-09-16T10:34:51Z ===
+--- STEP 0 intent: read-only grep of session file for input_image / data:image/ / has_image
+--- path: /Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T14-12-00-01a0a8d7-f3e1-7242-b749-169a76167461.jsonl
+exists: yes
+-rw-r--r--  1 hsiaojohnny  staff  8633088 Sep 16 18:34 /Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T14-12-00-01a0a8d7-f3e1-7242-b749-169a76167461.jsonl
+ 8633088 /Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T14-12-00-01a0a8d7-f3e1-7242-b749-169a76167461.jsonl
+--- STEP 0 pattern counts (occurrences / matching lines) ---
+pattern=["type":"input_image"] occurrences=0 lines=0
+pattern=["type": "input_image"] occurrences=0 lines=0
+pattern=[input_image] occurrences=63 lines=13
+pattern=[data:image/] occurrences=10 lines=7
+pattern=["has_image"] occurrences=0 lines=0
+--- STEP 0 line numbers of input_image matches (first 10) ---
+599 599 600 600 600 600 605 605 615 615 
+--- STEP 0 line numbers of data:image/ matches (first 10) ---
+722 723 725 726 727 727 728 728 730 730 
+--- STEP 0 all line numbers of input_image matches ---
+599 600 605 615 620 623 722 723 725 726 727 728 730 767 768 
+--- STEP 0 all line numbers of data:image/ matches ---
+722 723 725 726 727 728 730 
+--- STEP 0 extra: pattern counts (image_url, content_item, response.completed) ---
+pattern=["image_url"] occurrences=0 lines=0
+pattern=[FunctionCallOutputContentItem] occurrences=18 lines=7
+pattern=[response.completed] occurrences=0 lines=0
+pattern=[turn.completed] occurrences=0 lines=0
+pattern=["type":"error"] occurrences=0 lines=0
+pattern=[stream_error] occurrences=0 lines=0
+--- STEP 0 line numbers of image_url matches (first 10) ---
+
+--- STEP 0 event type histogram (top 40) ---
+ 378 "type":"response_item"
+ 299 "type":"event_msg"
+ 278 "type":"function_call_output"
+ 277 "type":"function_call"
+ 199 "type":"item_completed"
+ 141 "type":"summary_text"
+ 141 "type":"reasoning"
+ 104 "type":"input_text"
+  81 "type":"message"
+  73 "type":"token_count"
+  67 "type":"token_usage_record"
+  64 "type":"Reasoning"
+  60 "type":"CollabAgentToolCall"
+  58 "type":"CommandExecution"
+  48 "type":"unknown"
+  19 "type":"disabled"
+  14 "type":"world_state"
+  13 "type":"text"
+  13 "type":"output_text"
+  11 "type":"thread_settings_applied"
+   8 "type":"turn_context"
+   8 "type":"task_started"
+   8 "type":"read"
+   7 "type":"UserMessage"
+   5 "type":"turn_aborted"
+   5 "type":"McpToolCall"
+   3 "type":"compacted"
+   3 "type":"ContextCompaction"
+   2 "type":"task_complete"
+   2 "type":"list_files"
+   2 "type":"Text"
+   2 "type":"AgentMessage"
+   1 "type":"thread_goal_updated"
+   1 "type":"session_meta"
+   1 "type":"model"
+--- STEP 0 extra: McpToolCall line numbers ---
+82 89 282 292 475 
+--- STEP 0 extra: bare has_image occurrences ---
+5
+--- STEP 0 extra: excerpts around McpToolCall (first 4 matches, redacted) ---
+t_msg","payload":{"type":"item_completed","thread_id":"01a0a8d7-f3e1-7242-b749-169a76167461","turn_id":"01a0a8d8-0f3f-7cc2-9b86-9bed81532350","item":{"type":"McpToolCall","id":"call_sqgt2io9","server":"cua_repl","tool":"js","arguments":{"code":"await cua.getState();","title":"盤點 Computer Use 可用介面"},"pluginId":"unified-computer-use@openai-bundled","readOnlyHint":true,"status":"completed","result":{"content":[{"type":"text","text":"## Computer Use\n\nControl native ap
+t_msg","payload":{"type":"item_completed","thread_id":"01a0a8d7-f3e1-7242-b749-169a76167461","turn_id":"01a0a8d8-0f3f-7cc2-9b86-9bed81532350","item":{"type":"McpToolCall","id":"call_zm03vl3q","server":"cua_repl","tool":"js","arguments":{"code":"await cua.getApp(\"jp.naver.line.mac\");","title":"讀取 LINE 目前的可存取性狀態（唯讀觀察）"},"pluginId":"unified-computer-use@openai-bundled","readOnlyHint":true,"status":"completed","result":{"content":[{"type":"text","text":"Window: \"LINE
+t_msg","payload":{"type":"item_completed","thread_id":"01a0a8d7-f3e1-7242-b749-169a76167461","turn_id":"01a0a994-eff4-7543-aa86-183fc09416d0","item":{"type":"McpToolCall","id":"call_nj2upjew","server":"cua_repl","tool":"js","arguments":{"code":"const state = await cua.getState();","title":"盤點電腦控制可用資源（唯讀）"},"pluginId":"unified-computer-use@openai-bundled","readOnlyHint":true,"status":"completed","result":{"content":[{"type":"text","text":"{\"apps\":[{\"displayName\":
+t_msg","payload":{"type":"item_completed","thread_id":"01a0a8d7-f3e1-7242-b749-169a76167461","turn_id":"01a0a994-eff4-7543-aa86-183fc09416d0","item":{"type":"McpToolCall","id":"call_z0rmhulj","server":"cua_repl","tool":"js","arguments":{"code":"await cua.rewriteDocumentation();","title":"載入電腦控制完整說明文件"},"pluginId":"unified-computer-use@openai-bundled","readOnlyHint":true,"status":"completed","result":{"content":[{"type":"text","text":"## Computer Use\n\nControl nativ
+--- STEP 0 extra: line numbers of bare has_image ---
+722 723 725 728 730 
+--- STEP 0 extra: excerpts around bare has_image (redacted) ---
+ould not infer image MIME type from bytes; expected PNG, JPEG, or WebP data\"\n  image_url: `data:${mimeType};base64,${Buffer.from(bytes).toString(\"base64\")}`\n  ```\n- Codex 端：`McpToolResultcontenthas_imagefull_outputtruncated` → 轉成 `FunctionCallOutputContentItem::InputImage{ image_url, detail }` → 以 Responses API `input_image` + base64 data URL 送出（`data:image/png;base64,` 存在於 binary）。型別＝**MCP image con
+infer image MIME type from bytes; expected PNG, JPEG, or WebP data\\\"\\n  image_url: `data:${mimeType};base64,${Buffer.from(bytes).toString(\\\"base64\\\")}`\\n  ```\\n- Codex 端：`McpToolResultcontenthas_imagefull_outputtruncated` → 轉成 `FunctionCallOutputContentItem::InputImage{ image_url, detail }` → 以 Responses API `input_image` + base64 data URL 送出（`data:image/png;base64,` 存在於 binary）。型別＝**MCP image con
+infer image MIME type from bytes; expected PNG, JPEG, or WebP data\\\"\\n  image_url: `data:${mimeType};base64,${Buffer.from(bytes).toString(\\\"base64\\\")}`\\n  ```\\n- Codex 端：`McpToolResultcontenthas_imagefull_outputtruncated` → 轉成 `FunctionCallOutputContentItem::InputImage{ image_url, detail }` → 以 Responses API `input_image` + base64 data URL 送出（`data:image/png;base64,` 存在於 binary）。型別＝**MCP image con
+讀 grep：在 `/Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T14-12-00-01a0a8d7-f3e1-7242-b749-169a76167461.jsonl` 內搜尋 `\\\"type\\\":\\\"input_image\\\"`、`input_image`、`data:image/`、`\\\"has_image\\\"`，統計筆數並節錄前後 200 字元（不要貼出整張圖片 base64 全文；節錄時把 base64 內容用 `...REDACTED_B64...` 取代）。目的：看本 session 過去是否真的送出過圖片、以及是否有成功回應。\\n\\n1) `mkdir -p /tmp/byok-image-probe`，用 base64 建立一張 1x1 PNG（例：`printf '%s' 'i
+）：\n\n0) 唯讀 grep：在 `/Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T14-12-00-01a0a8d7-f3e1-7242-b749-169a76167461.jsonl` 內搜尋 `\"type\":\"input_image\"`、`input_image`、`data:image/`、`\"has_image\"`，統計筆數並節錄前後 200 字元（不要貼出整張圖片 base64 全文；節錄時把 base64 內容用 `...REDACTED_B64...` 取代）。目的：看本 session 過去是否真的送出過圖片、以及是否有成功回應。\n\n1) `mkdir -p /tmp/byok-image-probe`，用 base64 建立一張 1x1 PNG（例：`printf '%s' 'iVBOR
+=== STEP 0 conclusion (probe's own read): no real image content items found; matches are discussion text only ===
+--- STEP 1 intent: create tiny 1x1 PNG in /tmp/byok-image-probe/ from base64, verify with file + wc -c
+--- STEP 1 result:
+/tmp/byok-image-probe/tiny.png: PNG image data, 1 x 1, 8-bit/color RGBA, non-interlaced
+      70 /tmp/byok-image-probe/tiny.png
+--- STEP 2 intent: about to call view_image tool with path=/tmp/byok-image-probe/tiny.png (2026-09-16T10:35:27Z)
+--- STEP 2 result: view_image returned the rendered image with NO error. Observed tool output shows a 1x1 image rendered (a small black/transparent pixel square). No error text was returned by the tool. Model continued operating after this tool result, so the subsequent upstream request containing this image did not fail (2026-09-16T10:35:47Z).
+--- STEP 3 intent: about to call mcp__node_repl.js with code emitting data:image/png;base64 1x1 PNG via nodeRepl.emitImage, then nodeRepl.write("EMIT_IMAGE_OK") (2026-09-16T10:35:47Z)
+--- STEP 3 result (observed): mcp__node_repl.js tool call SUCCEEDED. Tool returned the emitted image inline in the tool result AND printed 'EMIT_IMAGE_OK'. No error message. Wall time 0.0500 seconds. The MCP tool result therefore contained a real image content item and it was delivered to the model context without rejection (2026-09-16T10:36:01Z).
+--- STEP 4 intent: harmless liveness check echo ALIVE_AFTER_IMAGE && date (2026-09-16T10:36:01Z)
+Wed Sep 16 18:36:05 CST 2026
+--- EXTRA: probe session rollout (myself): /Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T18-34-22-01a0a9c8-2b44-7b71-b9e2-a60c69345853.jsonl
+  341972 /Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T18-34-22-01a0a9c8-2b44-7b71-b9e2-a60c69345853.jsonl
+pattern=[data:image/] occurrences=198
+pattern=["input_image"] occurrences=2
+pattern=[input_image] occurrences=298
+pattern=[image_url] occurrences=97
+pattern=["type":"error"] occurrences=0
+pattern=[stream error] occurrences=4
+pattern=[failed] occurrences=7
+--- EXTRA: line numbers for data:image/ and input_image ---
+7 8 9 10 11 12 14 18 20 21 25 26 28 30 31 32 34 39 40 42 44 45 51 52 61 63 82 86 87 89 91 92 93 95 96 101 103 110 111 117 118 119 
+7 8 9 10 11 12 14 18 20 21 23 24 25 26 28 30 31 32 34 35 37 38 40 42 44 45 51 52 61 63 65 66 82 96 98 99 110 111 117 118 119 
+--- EXTRA: identity check of probe rollout ---
+pattern=[EMIT_IMAGE_OK] occurrences=51
+pattern=[ALIVE_AFTER_IMAGE] occurrences=40
+pattern=[byok-image-probe] occurrences=211
+pattern=[BYOK image-path probe] occurrences=14
+--- EXTRA: view_image / node_repl / emitImage line numbers ---
+7 8 9 10 72 73 74 75 77 79 84 85 86 87 89 110 111 124 125 126 
+7 8 9 10 40 42 84 85 86 87 89 93 95 98 99 100 101 103 124 125 126 
+--- EXTRA: exact "input_image" quoted occurrences with line numbers ---
+82 96 
+--- EXTRA: "type":"input_image" occurrences ---
+2
+--- EXTRA: total lines in probe rollout ---
+     133 /Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T18-34-22-01a0a9c8-2b44-7b71-b9e2-a60c69345853.jsonl
+--- EXTRA: line 82 excerpt ---
+{"timestamp":"2026-09-16T10:35:30.407Z","ordinal":81,"type":"response_item","payload":{"type":"function_call_output","id":"fco_01a0a9c9-32e7-7a61-8aa3-91dcc9ff6d49","call_id":"call_7vt5m583","output":[{"type":"input_image","image_url":"data:image/png;base64,...REDACTED_B64...","detail":"high"}],"internal_chat_message_metadata_passthrough":{"turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","create_time":1789554930.407356}}}
+--- EXTRA: line 96 excerpt ---
+{"timestamp":"2026-09-16T10:35:52.492Z","ordinal":95,"type":"response_item","payload":{"type":"function_call_output","id":"fco_01a0a9c9-892c-7f92-ab5d-26bd51120f6c","call_id":"call_0ey1rzo2","output":[{"type":"input_text","text":"Wall time: 0.0500 seconds\nOutput:"},{"type":"input_text","text":"EMIT_IMAGE_OK"},{"type":"input_image","image_url":"data:image/png;base64,...REDACTED_B64...","detail":"high"}],"internal_chat_message_metadata_passthrough":{"turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","create_time":178955
+--- EXTRA: image_url line numbers ---
+34 35 40 42 44 45 46 48 49 51 52 61 63 65 66 82 96 110 111 117 118 119 120 122 124 125 131 132 138 139 140 
+--- EXTRA: function_call names for the two image-bearing outputs ---
+":"{\"path\":\"/tmp/byok-image-probe/tiny.png\"}","call_id":"call_7vt5m583","internal_chat_message_metadata_passthrough":{"turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347"}}}
+b79-7850-a194-beae1d2c3347","item":{"type":"ImageView","id":"call_7vt5m583","path":"file:///tmp/byok-image-probe/tiny.png"},"started_at_ms":1789554930295,"completed_at_ms":1789554930295}}
+
+ia nodeRepl.emitImage (BYOK image path probe)\"}","call_id":"call_0ey1rzo2","internal_chat_message_metadata_passthrough":{"turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347"}}}
+9-7850-a194-beae1d2c3347","item":{"type":"McpToolCall","id":"call_0ey1rzo2","server":"node_repl","tool":"js","arguments":{"code":"const b64 = \"...REDACTED_B64...\";\nawait nodeRepl.emitImage(`data
+
+--- EXTRA: token_count / turn events line numbers (to show requests continued after line 96) ---
+15 22 29 36 43 50 57 64 71 78 83 90 97 104 109 116 123 130 137 144 
+
+
+--- EXTRA: current line count ---
+     147 /Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T18-34-22-01a0a9c8-2b44-7b71-b9e2-a60c69345853.jsonl
+--- EXTRA: has_image occurrences in probe rollout ---
+164
+9-16T14-12-00-01a0a8d7-f3e1-7242-b749-169a76167461.jsonl` 內搜尋 `\"type\":\"input_image\"`、`input_image`、`data:image/`、`\"has_image\"`，統計筆數並節錄前後 200 字元（不要貼出整張圖片 base64 全文；節錄時把 base64 內容用 `...REDACTED_B64...` 取代）。目的：看本 session 過去是否真的送出過圖片、以及是否有成功回應。\n\
+9-16T14-12-00-01a0a8d7-f3e1-7242-b749-169a76167461.jsonl` 內搜尋 `\"type\":\"input_image\"`、`input_image`、`data:image/`、`\"has_image\"`，統計筆數並節錄前後 200 字元（不要貼出整張圖片 base64 全文；節錄時把 base64 內容用 `...REDACTED_B64...` 取代）。目的：看本 session 過去是否真的送出過圖片、以及是否有成功回應。\n\
+s:\n0) Read-only grep in a specific session jsonl file for `\"type\":\"input_image\"`, `input_image`, `data:image/`, `\"has_image\"` — count and excerpt ±200 chars, redacting base64.\n\n1) Create /tmp/byok-image-probe dir, tiny PNG, verify with file
+--- EXTRA: contexts of 'failed' matches (redacted, first 4) ---
+nAlso look for error events: `rg -a -o '\"type\":\"(error|stream_error|response.failed)\"' ...`. Let me capture histogram first.\n\nThen to answer \"是否有成功回應\" after i
+nAlso look for error events: `rg -a -o '\"type\":\"(error|stream_error|response.failed)\"' ...`. Let me capture histogram first.\n\nThen to answer \"是否有成功回應\" after i
+nAlso look for error events: `rg -a -o '\"type\":\"(error|stream_error|response.failed)\"' ...`. Let me capture histogram first.\n\nThen to answer \"是否有成功回應\" after i
+ult. If the provider had rejected `input_image` content, the request would have failed with a stream error and I wouldn't be able to continue.\n\nWait — but I need to
+--- EXTRA: turn_id of image outputs vs subsequent token_count items around them ---
+{"timestamp":"2026-09-16T10:35:30.406Z","ordinal":80,"type":"token_usage_record","payload":{"thread_id":"01a0a9c8-2b44-7b71-b9e2-a60c69345853","turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","session_id":"01a0a8d7-f3e1-7242-b749-169a76167461","root_turn_id":"
+{"timestamp":"2026-09-16T10:35:30.407Z","ordinal":81,"type":"response_item","payload":{"type":"function_call_output","id":"fco_01a0a9c9-32e7-7a61-8aa3-91dcc9ff6d49","call_id":"call_7vt5m583","output":[{"type":"input_image","image_url":"data:image/png;base64,..
+{"timestamp":"2026-09-16T10:35:30.407Z","ordinal":82,"type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":1007855,"cached_input_tokens":990208,"cache_write_input_tokens":0,"output_tokens":10110,"reasoning_output_tokens
+{"timestamp":"2026-09-16T10:35:47.095Z","ordinal":83,"type":"event_msg","payload":{"type":"item_completed","thread_id":"01a0a9c8-2b44-7b71-b9e2-a60c69345853","turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","item":{"type":"Reasoning","id":"rs_219859","summary_
+  ...
+{"timestamp":"2026-09-16T10:35:52.490Z","ordinal":94,"type":"event_msg","payload":{"type":"item_completed","thread_id":"01a0a9c8-2b44-7b71-b9e2-a60c69345853","turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","item":{"type":"McpToolCall","id":"call_0ey1rzo2","se
+{"timestamp":"2026-09-16T10:35:52.492Z","ordinal":95,"type":"response_item","payload":{"type":"function_call_output","id":"fco_01a0a9c9-892c-7f92-ab5d-26bd51120f6c","call_id":"call_0ey1rzo2","output":[{"type":"input_text","text":"Wall time: 0.0500 seconds\nOut
+{"timestamp":"2026-09-16T10:35:52.492Z","ordinal":96,"type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":1203429,"cached_input_tokens":1087428,"cache_write_input_tokens":0,"output_tokens":10941,"reasoning_output_token
+{"timestamp":"2026-09-16T10:36:01.832Z","ordinal":97,"type":"event_msg","payload":{"type":"item_completed","thread_id":"01a0a9c8-2b44-7b71-b9e2-a60c69345853","turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","item":{"type":"Reasoning","id":"rs_711620","summary_
+--- EXTRA: key evidence lines saved to /tmp/byok-image-probe/rollout-image-evidence-redacted.txt
+[line 81 (ordinal 80)] token_usage_record
+{"timestamp":"2026-09-16T10:35:30.406Z","ordinal":80,"type":"token_usage_record","payload":{"thread_id":"01a0a9c8-2b44-7b71-b9e2-a60c69345853","turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","session
+[line 82 (ordinal 81)] function_call_output call_7vt5m583 (view_image) => input_image content item:
+{"timestamp":"2026-09-16T10:35:30.407Z","ordinal":81,"type":"response_item","payload":{"type":"function_call_output","id":"fco_01a0a9c9-32e7-7a61-8aa3-91dcc9ff6d49","call_id":"call_7vt5m583","output":[{"type":"input_image","image_url":"data:image/png;base64,...REDACTED_B64...","detail":"high"}],"internal_chat_message_m
+[line 83 (ordinal 82)] token_count right after
+{"timestamp":"2026-09-16T10:35:30.407Z","ordinal":82,"type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":1007855,"cached_input_tokens":990208,"cache_write_in
+[line 84 (ordinal 83)] Reasoning item AFTER the image-bearing output (model responded => request accepted):
+{"timestamp":"2026-09-16T10:35:47.095Z","ordinal":83,"type":"event_msg","payload":{"type":"item_completed","thread_id":"01a0a9c8-2b44-7b71-b9e2-a60c69345853","turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","item":{"type":"Reasoning","id":"rs_219859","summary_
+[line 96 (ordinal 95)] function_call_output call_0ey1rzo2 (mcp__node_repl.js) => input_text EMIT_IMAGE_OK + input_image content item:
+{"timestamp":"2026-09-16T10:35:52.492Z","ordinal":95,"type":"response_item","payload":{"type":"function_call_output","id":"fco_01a0a9c9-892c-7f92-ab5d-26bd51120f6c","call_id":"call_0ey1rzo2","output":[{"type":"input_text","text":"Wall time: 0.0500 seconds\nOutput:"},{"type":"input_text","text":"EMIT_IMAGE_OK"},{"type":"input_image","image_url":"data:image/pn
+[line 97 (ordinal 96)] token_count right after
+{"timestamp":"2026-09-16T10:35:52.492Z","ordinal":96,"type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":1203429,"cached_input_tokens":1087428,"cache_write_i
+[line 98 (ordinal 97)] Reasoning item AFTER the MCP image-bearing output (model responded => request accepted):
+{"timestamp":"2026-09-16T10:36:01.832Z","ordinal":97,"type":"event_msg","payload":{"type":"item_completed","thread_id":"01a0a9c8-2b44-7b71-b9e2-a60c69345853","turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","item":{"type":"Reasoning","id":"rs_711620","summary_
+=== FINAL CONCLUSION ===
+IMAGE_PATH_WORKS — both tool-result images were materialized as Responses-API 'input_image' content items (base64 data URL, detail=high) in function_call_output records, and every subsequent upstream request completed (model reasoning/output items continued, token accounting continued, 0 error events, 0 turn_aborted, session alive at 2026-09-16T10:38:52Z). No upstream rejection observed.
+Residual uncertainty: provider-side raw wire request logs were not inspected; 'accepted' is established as 'not rejected + conversation continued'. Whether the provider visually processed the pixels (vision understanding) is UNKNOWN / out of scope of this probe.
+--- FINAL RECHECK on original session file (to resolve count drift while file was live) at 2026-09-16T10:39:27Z ---
+ 8661028 /Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T14-12-00-01a0a8d7-f3e1-7242-b749-169a76167461.jsonl
+pattern=[input_image] occurrences=66 lines(rg -c)=15 unique_lines=15
+pattern=[data:image/] occurrences=10 lines(rg -c)=7 unique_lines=7
+pattern=["type":"input_image"] occurrences=0 lines(rg -c)=0 unique_lines=0

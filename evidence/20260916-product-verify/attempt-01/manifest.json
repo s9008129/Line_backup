@@ -1,0 +1,40 @@
+{
+  "artifacts": [
+    {
+      "bytes": 2,
+      "path": "exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 17287,
+      "path": "inventory-1.json",
+      "sha256": "76d8403848d43430abcb0e1bc57b3bea16598536863bdede9a921ee564093e2b"
+    },
+    {
+      "bytes": 17287,
+      "path": "inventory-2.json",
+      "sha256": "eef7013555ff0394436cab0fb8af12a7395fb34e6f682242b1c6b0a103fbaecd"
+    },
+    {
+      "bytes": 17287,
+      "path": "inventory-3.json",
+      "sha256": "e56bea23aba5fcb22cd17a9ba5709124e4fe877e7843d33ac5d5d617098b327b"
+    },
+    {
+      "bytes": 18993,
+      "path": "result.json",
+      "sha256": "e331cc99ec7206723acd0b3ca0c386db716b818de88a2942f3a9fe0c8e77dffc"
+    },
+    {
+      "bytes": 0,
+      "path": "stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14865,
+      "path": "stdout.log",
+      "sha256": "e169fcd4f2bd31e799b7fafc6992906099014f7b4658353d3c0c629e5db6fe5e"
+    }
+  ],
+  "schema_version": 1
+}

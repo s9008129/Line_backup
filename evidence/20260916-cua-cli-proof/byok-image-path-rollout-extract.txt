@@ -1,0 +1,18 @@
+--- EXTRA: key evidence lines saved to /tmp/byok-image-probe/rollout-image-evidence-redacted.txt
+[line 81 (ordinal 80)] token_usage_record
+{"timestamp":"2026-09-16T10:35:30.406Z","ordinal":80,"type":"token_usage_record","payload":{"thread_id":"01a0a9c8-2b44-7b71-b9e2-a60c69345853","turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","session
+[line 82 (ordinal 81)] function_call_output call_7vt5m583 (view_image) => input_image content item:
+{"timestamp":"2026-09-16T10:35:30.407Z","ordinal":81,"type":"response_item","payload":{"type":"function_call_output","id":"fco_01a0a9c9-32e7-7a61-8aa3-91dcc9ff6d49","call_id":"call_7vt5m583","output":[{"type":"input_image","image_url":"data:image/png;base64,...REDACTED_B64...","detail":"high"}],"internal_chat_message_m
+[line 83 (ordinal 82)] token_count right after
+{"timestamp":"2026-09-16T10:35:30.407Z","ordinal":82,"type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":1007855,"cached_input_tokens":990208,"cache_write_in
+[line 84 (ordinal 83)] Reasoning item AFTER the image-bearing output (model responded => request accepted):
+{"timestamp":"2026-09-16T10:35:47.095Z","ordinal":83,"type":"event_msg","payload":{"type":"item_completed","thread_id":"01a0a9c8-2b44-7b71-b9e2-a60c69345853","turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","item":{"type":"Reasoning","id":"rs_219859","summary_
+[line 96 (ordinal 95)] function_call_output call_0ey1rzo2 (mcp__node_repl.js) => input_text EMIT_IMAGE_OK + input_image content item:
+{"timestamp":"2026-09-16T10:35:52.492Z","ordinal":95,"type":"response_item","payload":{"type":"function_call_output","id":"fco_01a0a9c9-892c-7f92-ab5d-26bd51120f6c","call_id":"call_0ey1rzo2","output":[{"type":"input_text","text":"Wall time: 0.0500 seconds\nOutput:"},{"type":"input_text","text":"EMIT_IMAGE_OK"},{"type":"input_image","image_url":"data:image/pn
+[line 97 (ordinal 96)] token_count right after
+{"timestamp":"2026-09-16T10:35:52.492Z","ordinal":96,"type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":1203429,"cached_input_tokens":1087428,"cache_write_i
+[line 98 (ordinal 97)] Reasoning item AFTER the MCP image-bearing output (model responded => request accepted):
+{"timestamp":"2026-09-16T10:36:01.832Z","ordinal":97,"type":"event_msg","payload":{"type":"item_completed","thread_id":"01a0a9c8-2b44-7b71-b9e2-a60c69345853","turn_id":"01a0a9c8-2b79-7850-a194-beae1d2c3347","item":{"type":"Reasoning","id":"rs_711620","summary_
+=== FINAL CONCLUSION ===
+IMAGE_PATH_WORKS — both tool-result images were materialized as Responses-API 'input_image' content items (base64 data URL, detail=high) in function_call_output records, and every subsequent upstream request completed (model reasoning/output items continued, token accounting continued, 0 error events, 0 turn_aborted, session alive at 2026-09-16T10:38:52Z). No upstream rejection observed.
+Residual uncertainty: provider-side raw wire request logs were not inspected; 'accepted' is established as 'not rejected + conversation continued'. Whether the provider visually processed the pixels (vision understanding) is UNKNOWN / out of scope of this probe.

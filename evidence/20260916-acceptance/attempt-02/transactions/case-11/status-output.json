@@ -1,0 +1,14 @@
+{
+  "baseline_delta": null,
+  "blocker": "SOURCE_CORRESPONDENCE/BLOCKED/INPUT_UNAVAILABLE",
+  "checks": [],
+  "core_acceptance_status": "BLOCKED",
+  "failure_class": null,
+  "implementation_status": "COMPLETE",
+  "independent_acceptance_status": "PENDING",
+  "primary_outcome_status": "UNKNOWN",
+  "required_verification_status": "PASS",
+  "schema_version": 2,
+  "task_closure_status": "CORE_ACCEPTANCE_BLOCKED",
+  "waiver": null
+}

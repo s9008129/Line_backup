@@ -1,0 +1,5 @@
+old_script=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260915-verify-only-57/verify-only.sh
+fixture_expected_image_files=56
+verifier_EXPECTED=57
+formal_state_write=NONE
+fixture_destination=/private/tmp/line-old-verifier-repro.PSjZOV/destination

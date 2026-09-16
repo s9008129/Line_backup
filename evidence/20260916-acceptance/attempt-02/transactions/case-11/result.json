@@ -1,0 +1,10 @@
+{
+  "case_id": "11",
+  "manifest": {
+    "bytes": 7840,
+    "exists": true,
+    "sha256": "634d428a3b34c498873be1430b1854bd1510a540246b0a8c7726ca8cf28aef6f"
+  },
+  "match": true,
+  "root": "/private/tmp/line-backup-acceptance-case-11"
+}

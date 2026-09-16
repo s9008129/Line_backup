@@ -1,0 +1,8 @@
+{
+  "dispatch_performed": true,
+  "exit_code": 1,
+  "message": "dispatcher returned unknown outcome",
+  "result": "DISPATCH_UNKNOWN",
+  "revision": 2,
+  "schema_version": 1
+}

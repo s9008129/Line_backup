@@ -1,0 +1,8 @@
+{
+  "dispatch_performed": false,
+  "exit_code": 0,
+  "message": "loaded intent is reconciled without dispatch",
+  "result": "RECOVERY_NO_DISPATCH",
+  "revision": 2,
+  "schema_version": 1
+}

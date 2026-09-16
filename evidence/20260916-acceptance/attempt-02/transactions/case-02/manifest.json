@@ -1,0 +1,310 @@
+{
+  "artifacts": [
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": ".line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 24,
+      "exists": true,
+      "path": "counter.jsonl",
+      "sha256": "d5920612d8273e24218c7fb8fb199999a9102c8afae0f91b4d2feca66f163453"
+    },
+    {
+      "bytes": 364,
+      "exists": true,
+      "path": "dispatcher.py",
+      "sha256": "3e1b594115cee25d360e7b41492bb77947b9816bfbdc2821338bda0f0f6d3342"
+    },
+    {
+      "bytes": 175,
+      "exists": true,
+      "path": "evidence/first/result.json",
+      "sha256": "29129c72e7daaa209a68136931546ddb6829286766b96609b4f6bc012841511e"
+    },
+    {
+      "bytes": 189,
+      "exists": true,
+      "path": "evidence/second/result.json",
+      "sha256": "217e1b855dea312ac5fdf42cf12120e1c63a26cb357588f213d3fe5a0678329c"
+    },
+    {
+      "bytes": 1646,
+      "exists": true,
+      "path": "input-state.json",
+      "sha256": "23488bf4defdf61f29edb43da73738c8c7c837933977836165cd38d17f8fa963"
+    },
+    {
+      "bytes": 677,
+      "exists": true,
+      "path": "process-records/first/argv.json",
+      "sha256": "340650db33a698dc1f1c45d578192d96ffc23be4bb81fcbc13b828d520ad7171"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/first/exit-code",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/first/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 161,
+      "exists": true,
+      "path": "process-records/first/stdout.log",
+      "sha256": "2ac800c9548ffed095c86ea90860b7376f56a040daa317d22580c14f331839b8"
+    },
+    {
+      "bytes": 629,
+      "exists": true,
+      "path": "process-records/second/argv.json",
+      "sha256": "357ec08442dcb251ebf8a847e4fe32d5b79169a3aa7b131b6baf39f5115d103f"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/second/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/second/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 175,
+      "exists": true,
+      "path": "process-records/second/stdout.log",
+      "sha256": "6e6ac35730bc41609f60422bfdcc8a1cfff16c2a611cf50cb9c49ab955314dba"
+    },
+    {
+      "bytes": 1773,
+      "exists": true,
+      "path": "state.json",
+      "sha256": "fd24d47941d4f12862fc0ae61c0137af180e44c4987b7c30698f01f2958db27c"
+    },
+    {
+      "bytes": 108,
+      "exists": true,
+      "path": "verification.json",
+      "sha256": "1af764caf785db7dee31db45b5419d607d08abd9ca60631f60b5fc8fefef02fd"
+    }
+  ],
+  "case_id": "02",
+  "final": {
+    "active_writer_id": "WRITER-CASE-02",
+    "bytes": {
+      "bytes": 1773,
+      "exists": true,
+      "sha256": "fd24d47941d4f12862fc0ae61c0137af180e44c4987b7c30698f01f2958db27c"
+    },
+    "context_lock": null,
+    "counter_lines": 1,
+    "current_run_id": "RUN-CASE-02",
+    "intent_axes": {
+      "dispatch_outcome": "UNKNOWN",
+      "dispatch_state": "UNKNOWN",
+      "intent_state": "TRIGGER_UNKNOWN",
+      "save_all_retry_allowed": false,
+      "trigger_outcome": "UNKNOWN"
+    },
+    "revision": 2,
+    "run": {
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-02/destination",
+      "dispatch_evidence": {
+        "coordinate_invocation_attempted": null,
+        "outcome": "UNKNOWN",
+        "save_all_click_count": null
+      },
+      "dispatch_state": "UNKNOWN",
+      "events": [],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "intent": {
+        "action_id": "ACTION-RUN-CASE-02",
+        "calibration": {
+          "confidence": "HIGH",
+          "evidence": "fixture"
+        },
+        "destination": "/private/tmp/line-backup-acceptance-case-02/destination",
+        "dispatch_outcome": "UNKNOWN",
+        "dispatch_state": "UNKNOWN",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "intent_state": "TRIGGER_UNKNOWN",
+        "owner_execution_id": "WRITER-CASE-02",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "UNKNOWN"
+      },
+      "intent_state": "TRIGGER_UNKNOWN",
+      "observed_title": "旻謙允禎成長日記",
+      "owner_id": "WRITER-CASE-02",
+      "phase": "SAVE_ALL_INTENT_COMMITTED",
+      "reconciliations": [],
+      "run_id": "RUN-CASE-02",
+      "runtime_errors": [],
+      "source_provenance": "fixture source",
+      "workflow_outcome": null
+    },
+    "verified_albums": []
+  },
+  "independent_oracle_match": true,
+  "initial": {
+    "active_writer_id": "WRITER-CASE-02",
+    "bytes": {
+      "bytes": 1646,
+      "exists": true,
+      "sha256": "23488bf4defdf61f29edb43da73738c8c7c837933977836165cd38d17f8fa963"
+    },
+    "context_lock": null,
+    "counter_lines": 0,
+    "current_run_id": "RUN-CASE-02",
+    "intent_axes": {
+      "dispatch_outcome": "NOT_ATTEMPTED",
+      "dispatch_state": "NOT_ATTEMPTED",
+      "intent_state": "INTENT_COMMITTED",
+      "save_all_retry_allowed": false,
+      "trigger_outcome": "NOT_APPLICABLE"
+    },
+    "revision": 1,
+    "run": {
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-02/destination",
+      "dispatch_state": "NOT_ATTEMPTED",
+      "events": [],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "intent": {
+        "action_id": "ACTION-RUN-CASE-02",
+        "calibration": {
+          "confidence": "HIGH",
+          "evidence": "fixture"
+        },
+        "destination": "/private/tmp/line-backup-acceptance-case-02/destination",
+        "dispatch_outcome": "NOT_ATTEMPTED",
+        "dispatch_state": "NOT_ATTEMPTED",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "intent_state": "INTENT_COMMITTED",
+        "owner_execution_id": "WRITER-CASE-02",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "NOT_APPLICABLE"
+      },
+      "intent_state": "INTENT_COMMITTED",
+      "observed_title": "旻謙允禎成長日記",
+      "owner_id": "WRITER-CASE-02",
+      "phase": "SAVE_ALL_INTENT_COMMITTED",
+      "reconciliations": [],
+      "run_id": "RUN-CASE-02",
+      "runtime_errors": [],
+      "source_provenance": "fixture source",
+      "workflow_outcome": null
+    },
+    "verified_albums": []
+  },
+  "processes": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "resume",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-02",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-02/state.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-02/evidence/first",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-02",
+        "--expected-revision",
+        "1",
+        "--expected-owner-id",
+        "WRITER-CASE-02",
+        "--dispatcher",
+        "/private/tmp/line-backup-acceptance-case-02/dispatcher.py",
+        "--dispatch-counter",
+        "/private/tmp/line-backup-acceptance-case-02/counter.jsonl",
+        "--dispatcher-outcome",
+        "RETURNED",
+        "--crash-after-dispatch"
+      ],
+      "exit_code": 1,
+      "result": {
+        "dispatch_performed": true,
+        "exit_code": 1,
+        "message": "dispatcher failed",
+        "result": "DISPATCHER_CRASH_AFTER_SIDE_EFFECT",
+        "revision": 2,
+        "schema_version": 1
+      },
+      "stderr": "/private/tmp/line-backup-acceptance-case-02/process-records/first/stderr.log",
+      "stdout": "/private/tmp/line-backup-acceptance-case-02/process-records/first/stdout.log"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "resume",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-02",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-02/state.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-02/evidence/second",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-02",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-02",
+        "--dispatcher",
+        "/private/tmp/line-backup-acceptance-case-02/dispatcher.py",
+        "--dispatch-counter",
+        "/private/tmp/line-backup-acceptance-case-02/counter.jsonl",
+        "--no-dispatch"
+      ],
+      "exit_code": 0,
+      "result": {
+        "dispatch_performed": false,
+        "exit_code": 0,
+        "message": "loaded intent is reconciled without dispatch",
+        "result": "RECOVERY_NO_DISPATCH",
+        "revision": 2,
+        "schema_version": 1
+      },
+      "stderr": "/private/tmp/line-backup-acceptance-case-02/process-records/second/stderr.log",
+      "stdout": "/private/tmp/line-backup-acceptance-case-02/process-records/second/stdout.log"
+    }
+  ],
+  "schema_version": 1
+}

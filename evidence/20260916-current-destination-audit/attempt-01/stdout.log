@@ -1,0 +1,60 @@
+{
+  "destination": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+  "expected_images": 57,
+  "filesystem_criteria": {
+    "expected_count": true,
+    "no_other_entries": true,
+    "no_read_errors": true,
+    "no_subdirectories": true,
+    "no_symlinks": true,
+    "partial_temp_zero": true,
+    "unrecognized_zero": true,
+    "zero_byte_zero": true
+  },
+  "filesystem_pass": false,
+  "samples": [
+    {
+      "errors": [],
+      "expected_images": 57,
+      "other_entries": 0,
+      "partial_temp_files": 0,
+      "recognized_images": 57,
+      "regular_files": 57,
+      "sample": 1,
+      "subdirectories": 0,
+      "symlinks": 0,
+      "total_bytes": 17924900,
+      "unrecognized_regular_files": 0,
+      "zero_byte_files": 0
+    },
+    {
+      "errors": [],
+      "expected_images": 57,
+      "other_entries": 0,
+      "partial_temp_files": 0,
+      "recognized_images": 57,
+      "regular_files": 57,
+      "sample": 2,
+      "subdirectories": 0,
+      "symlinks": 0,
+      "total_bytes": 17924900,
+      "unrecognized_regular_files": 0,
+      "zero_byte_files": 0
+    },
+    {
+      "errors": [],
+      "expected_images": 57,
+      "other_entries": 0,
+      "partial_temp_files": 0,
+      "recognized_images": 57,
+      "regular_files": 57,
+      "sample": 3,
+      "subdirectories": 0,
+      "symlinks": 0,
+      "total_bytes": 17924900,
+      "unrecognized_regular_files": 0,
+      "zero_byte_files": 0
+    }
+  ],
+  "stable_inventory": false
+}

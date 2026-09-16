@@ -1,0 +1,3 @@
+python3 evidence/20260916-current-destination-audit/attempt-02/canonical-audit.py /Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57 /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-current-destination-audit/attempt-02 57 1
+FORMAL_STATE_WRITE=NONE
+GUI_INPUT=NONE

@@ -1,0 +1,32 @@
+{
+  "independent_oracle": "old verifier accepted exact wrong counts 56 and 58",
+  "legacy_script": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260915-verify-only-57/verify-only.sh",
+  "reproduction_match": true,
+  "rows": [
+    {
+      "actual_image_files": 56,
+      "argv": [
+        "/private/tmp/line-backup-legacy-false-positive/56/legacy-verify.sh"
+      ],
+      "count": 56,
+      "exit_code": "/private/tmp/line-backup-legacy-false-positive/56/output/exit-code",
+      "legacy_claimed_pass": true,
+      "legacy_exit": 0,
+      "stderr": "/private/tmp/line-backup-legacy-false-positive/56/output/stderr.log",
+      "stdout": "/private/tmp/line-backup-legacy-false-positive/56/output/stdout.log"
+    },
+    {
+      "actual_image_files": 58,
+      "argv": [
+        "/private/tmp/line-backup-legacy-false-positive/58/legacy-verify.sh"
+      ],
+      "count": 58,
+      "exit_code": "/private/tmp/line-backup-legacy-false-positive/58/output/exit-code",
+      "legacy_claimed_pass": true,
+      "legacy_exit": 0,
+      "stderr": "/private/tmp/line-backup-legacy-false-positive/58/output/stderr.log",
+      "stdout": "/private/tmp/line-backup-legacy-false-positive/58/output/stdout.log"
+    }
+  ],
+  "schema_version": 1
+}

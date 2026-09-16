@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "target": {
+    "runtime_app_bundle": "jp.naver.line.mac",
+    "raw_group": "旻謙允禎成長日記",
+    "album": "2024/05/13～05/17",
+    "expected_count": 57,
+    "project_root": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state"
+  },
+  "documented_capability": {
+    "runtime_surface": "Codex desktop unified-computer-use exposes a visual CUA surface and AX observation APIs",
+    "documented_ref": "/Users/hsiaojohnny/.codex/skills/line-album-backup/references/ui-procedure.md",
+    "required_route_contract": "fresh exact target binding, reliable visual/menu identity, then one uninterrupted ellipsis-to-Save-All transaction",
+    "current_task_cua_initialized": false
+  },
+  "historical_ledger": {
+    "actions_path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/files-pasted-by-the-user-line/outputs/20260913T141849Z-menu-discovery-0d9a87b5-cef1-4815-b886-ccdb34fa803b/actions.jsonl",
+    "actions_bytes": 4219,
+    "actions_sha256": "9d6a159024f822003052fd7d538598d3a161f226c49ce14ea5c11d5c95c95aee",
+    "environment_path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/files-pasted-by-the-user-line/outputs/20260913T141849Z-menu-discovery-0d9a87b5-cef1-4815-b886-ccdb34fa803b/environment.json",
+    "environment_bytes": 4555,
+    "environment_sha256": "a43d23d6166a3d2156c5e3a1ccd08cc394b8b283f9c3a2d007929db986922c95",
+    "ellipsis_clicks_used": 2,
+    "ellipsis_click_budget": 2,
+    "menu_item_clicks": 0,
+    "save_all_clicks": 0,
+    "backup_state_writes": 0
+  },
+  "actual_evidence": {
+    "fresh_health_target_save_all_text_found": false,
+    "trial_01_post_surface": "AXWindow/AXDialog with AXChildren=[]; no menu item surface",
+    "trial_02_post_surface": "AXWindow/AXDialog with AXChildren=[]; no menu item surface",
+    "historical_route_identity": "The documented route was tested on a different visible title; it is not proof for this raw target",
+    "bridge_test_status": "bridge/controller tests are not target Save-All evidence",
+    "production_download": "not authorized",
+    "existing_57_redownload": "forbidden"
+  },
+  "route_result": {
+    "route_status": "UNKNOWN",
+    "decision": "SAFE_ABORT_NO_GUI_INPUT",
+    "reason": "No affirmative current target Save-All/menu identity or reliable geometry; historical observation budget is exhausted and current task has no fresh GUI authorization.",
+    "save_all_click_count": 0,
+    "menu_item_click_count": 0,
+    "chooser_state": "NOT_ENTERED",
+    "backup_state_write_count": 0,
+    "production_dispatch": "FORBIDDEN"
+  },
+  "blocking_chain": {
+    "fact": "The existing destination is complete, but its formal provenance is legacy and the requested key 禎 differs from persisted config/state key 楨.",
+    "assumption_rejected": "A matching count, destination, fingerprint, historical coordinates, bridge PASS, or similar title proves source or Save-All identity.",
+    "next_discriminating_experiment": "After one explicit Human Gate, with the exact target album card already visible, perform exactly one current-target ellipsis input, capture immediate post evidence, and stop before any menu-item/Save-All/chooser input or state write.",
+    "minimum_human_gate": "Authorize only the controlled observation for LINE jp.naver.line.mac / 旻謙允禎成長日記 / 2024/05/13～05/17 / 57; this is not download authorization and does not authorize Save All."
+  }
+}
