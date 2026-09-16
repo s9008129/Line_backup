@@ -1,0 +1,72 @@
+{
+  "blocking_chain": {
+    "fact": "The existing destination is complete (Filesystem=PASS), but formal provenance is legacy and the requested key 禎 (U+798E) differs from the persisted config/state key 楨 (U+6968).",
+    "impact": "SOURCE_CORRESPONDENCE stays UNRESOLVED and CUA_ROUTE_DECISION stays BLOCKED/UNKNOWN; no dispatch and no Save-All retry is authorized.",
+    "next_discriminating_experiment": "After one explicit Human Gate, with the exact target album card already visible, perform exactly one current-target ellipsis input, capture immediate post evidence, and stop before any menu-item/Save-All/chooser input or state write."
+  },
+  "current_session_actions": {
+    "ax_calls": 0,
+    "gui_inputs": 0,
+    "note": "the Stage-04 wave is fully non-GUI; the single observation gate remains with the user",
+    "save_all_attempts": 0,
+    "state_writes": 0
+  },
+  "documented_capability": {
+    "current_task_cua_initialized": false,
+    "documented_ref": "/Users/hsiaojohnny/.codex/skills/line-album-backup/references/ui-procedure.md",
+    "note": "documented capability is unchanged; no current-session CUA authorization exists and none was requested",
+    "required_route_contract": "fresh exact target binding, reliable visual/menu identity, then one uninterrupted ellipsis-to-Save-All transaction",
+    "runtime_surface": "Codex desktop unified-computer-use exposes a visual CUA surface and AX observation APIs"
+  },
+  "evidence_id": "20260916-route-attempt-02",
+  "generated_at": "2026-09-16T22:10:45Z",
+  "historical_ledger_recheck": {
+    "actions_bytes": 4219,
+    "actions_path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/files-pasted-by-the-user-line/outputs/20260913T141849Z-menu-discovery-0d9a87b5-cef1-4815-b886-ccdb34fa803b/actions.jsonl",
+    "actions_sha256": "9d6a159024f822003052fd7d538598d3a161f226c49ce14ea5c11d5c95c95aee",
+    "backup_state_writes": 0,
+    "ellipsis_click_budget": 2,
+    "ellipsis_clicks_used": 2,
+    "environment_bytes": 4555,
+    "environment_path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/files-pasted-by-the-user-line/outputs/20260913T141849Z-menu-discovery-0d9a87b5-cef1-4815-b886-ccdb34fa803b/environment.json",
+    "environment_sha256": "a43d23d6166a3d2156c5e3a1ccd08cc394b8b283f9c3a2d007929db986922c95",
+    "matches_attempt_01_record": true,
+    "menu_item_clicks": 0,
+    "save_all_clicks": 0
+  },
+  "human_gate": {
+    "does_not_permit": [
+      "menu-item selection",
+      "Save All",
+      "chooser interaction",
+      "keyboard shortcuts",
+      "any state write",
+      "any download",
+      "any production transaction"
+    ],
+    "exact_scope": "LINE jp.naver.line.mac / group 旻謙允禎成長日記 (禎 U+798E, never merged with 楨 U+6968) / album 2024/05/13～05/17 / 57 images already visible",
+    "note": "the gate stays with the user after all non-GUI work; a negative or absent authorization only localizes an observation gap and is never proof that a bridge is necessary",
+    "permits": "exactly one current-target ellipsis observation input, then capture immediate post-observation evidence and stop",
+    "status": "PENDING_USER"
+  },
+  "produced_by": "Stage 04 fresh implementer (Rev18 wave); no GUI/AX/Computer-Use input in this session",
+  "route_result": {
+    "backup_state_write_count": 0,
+    "chooser_state": "NOT_ENTERED",
+    "decision": "SAFE_ABORT_NO_GUI_INPUT",
+    "menu_item_click_count": 0,
+    "production_dispatch": "FORBIDDEN",
+    "reason": "No affirmative current-target Save-All/menu identity or reliable geometry; the historical ellipsis budget is exhausted (2/2) and this Stage-04 session performs no GUI/AX input by explicit task boundary.",
+    "route_status": "UNKNOWN",
+    "save_all_click_count": 0
+  },
+  "schema_version": 2,
+  "target": {
+    "album": "2024/05/13～05/17",
+    "expected_count": 57,
+    "project_root": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state",
+    "raw_group": "旻謙允禎成長日記",
+    "runtime_app_bundle": "jp.naver.line.mac"
+  },
+  "task_id": "T20260916-0102-01-line-backup-acceptance"
+}

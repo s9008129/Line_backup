@@ -1,0 +1,45 @@
+{
+  "artifacts": [
+    {
+      "bytes": 18962,
+      "path": "inventory-1.json",
+      "sha256": "10b07e1b30271563a22ab462dade8a885858ba20e397d18bb003a4faaab98467"
+    },
+    {
+      "bytes": 18962,
+      "path": "inventory-2.json",
+      "sha256": "e2cf7959316458762aed8d15f103c6dbcc5286ec9c4b6f1d3118b2cab4aa5bb9"
+    },
+    {
+      "bytes": 18962,
+      "path": "inventory-3.json",
+      "sha256": "f1ebba6fc971914e0d69c890d8ff070762e61797e9e5deed015458f7e8d3725e"
+    },
+    {
+      "bytes": 21569,
+      "path": "result.json",
+      "sha256": "55189ce7a2e75779b8f76b874527d037f68645d336db6f2c9d3399308f36009e"
+    }
+  ],
+  "result_bytes": 21569,
+  "result_sha256": "55189ce7a2e75779b8f76b874527d037f68645d336db6f2c9d3399308f36009e",
+  "result_summary": {
+    "artifact_readback": "PASS",
+    "destination": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+    "exit_code": 4,
+    "expected_images": 57,
+    "filesystem_status": "PASS",
+    "fingerprint": {
+      "end_date": "2024-05-17",
+      "expected_images": 57,
+      "start_date": "2024-05-13"
+    },
+    "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+    "mode": "verify_only",
+    "overall_status": "UNKNOWN",
+    "recognized_images": 57,
+    "run_id": null,
+    "schema_version": 1
+  },
+  "schema_version": 1
+}

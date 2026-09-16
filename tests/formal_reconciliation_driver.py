@@ -8,10 +8,13 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 
 WORKSPACE = Path("/Users/hsiaojohnny/Documents/ChatGPT/Line_backup")
+sys.path.insert(0, str(WORKSPACE / "tests" / "automation_verification"))
+import harness as H  # noqa: E402
 PROJECT = Path("/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state")
 CONFIG = PROJECT / "config/line_backup_config.json"
 STATE = PROJECT / "state/backup_state.json"
@@ -81,9 +84,19 @@ def main() -> int:
                "baseline_pre": digest(baseline_pre), "baseline_post_artifact": digest(baseline_post),
                "match": observed == expected and baseline_same and baseline_record["exit_code"] == 0}
     write_json(Path(ns.summary), summary)
+    manifest = H.write_tree_manifest(evidence, exclude_extra=("readback-verification.json",))
+    evidence_check = ["/usr/bin/python3", str(WORKSPACE / "tests/automation_verification" / "verify_evidence.py"),
+                      "--root", str(evidence), "--output", str(evidence / "readback-verification.json")]
+    readback = subprocess.run(evidence_check, cwd=str(WORKSPACE), env=os.environ.copy(), capture_output=True,
+                              text=True, check=False)
+    report = json.loads((evidence / "readback-verification.json").read_text(encoding="utf-8")) \
+        if (evidence / "readback-verification.json").is_file() else {}
     print(json.dumps({"match": summary["match"], "baseline_delta": summary["baseline_delta"],
-                      "verify_exit": verify_record["exit_code"], "verify_overall": observed.get("overall_status")}, sort_keys=True))
-    return 0 if summary["match"] else 1
+                      "verify_exit": verify_record["exit_code"], "verify_overall": observed.get("overall_status"),
+                      "readback": report.get("verdict"),
+                      "manifest_sha256": manifest["manifest_sha256"],
+                      "readback_exit_code": readback.returncode}, sort_keys=True))
+    return 0 if summary["match"] and report.get("verdict") == "PASS" else 1
 
 
 if __name__ == "__main__":

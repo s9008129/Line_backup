@@ -1,0 +1,14 @@
+{
+  "artifacts": [
+    {
+      "bytes": 4091,
+      "path": "route-decision.json",
+      "sha256": "1bb31fe3677eb3a08052eac30fc9362243f637f0f0785ee1885265515a39326b"
+    }
+  ],
+  "files": 1,
+  "generated_at": "2026-09-16T22:10:45Z",
+  "root": "evidence/20260916-route/attempt-02",
+  "schema_version": 1,
+  "total_bytes": 4091
+}
