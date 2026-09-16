@@ -1,7 +1,7 @@
 # LINE album acceptance and reusable transaction process — revised candidate plan
 
 TASK_ID: T20260916-0102-01-line-backup-acceptance
-PLAN_REVISION: 16
+PLAN_REVISION: 17
 PLAN_STATUS: CANDIDATE
 TASK_CLASS: CRITICAL (persistent-state and safety-semantics changes: dispatch continuity, duplicate/refusal gating, provenance binding, success semantics)
 REVIEW_REQUIRED: YES
@@ -9,14 +9,170 @@ INDEPENDENT_ACCEPTANCE_REQUIRED: YES
 E2E_REQUIRED: NO
 E2E_RATIONALE: The only user journey for this album is a read-only verify-only pass over an existing destination; no production download is authorized in this wave. Real CLI, real formal read-only data, real evidence and (if granted) one real GUI observation are used; no fixture result may be reported as production E2E.
 ACCEPTED_BY_USER: YES
-PRIOR_REVIEW_ATTEMPT: 18, 19
-PRIOR_REVIEW_GATE: PLAN_REVISION_REQUIRED (Rev15 at SHA256 e22373ee04894d2625c9f8c240276b099a66ca52f7b4d6127b4028f4eb0741e4; review/attempt-18 and review/attempt-19 both returned PLAN_REVISION_REQUIRED; no approval exists for Rev16)
+PRIOR_REVIEW_ATTEMPT: 20, 21
+PRIOR_REVIEW_GATE: PLAN_REVISION_REQUIRED (Rev16 at SHA256 61e1676439b9bb2a5314bd68f0a7d14a0eeb4d9b11af62230e5591c50139384e; review/attempt-20 returned PLAN_REVISION_REQUIRED with RV-1…RV-11 and review/attempt-21 returned PLAN_REVISION_REQUIRED with RV-1 BLOCKER plus RV-2…RV-6; no approval exists for Rev17)
 PRIMARY_OUTCOME_STATUS: UNKNOWN
 IMPLEMENTATION_STATUS: NOT_STARTED
 CORE_ACCEPTANCE_STATUS: NOT_RUN
 REQUIRED_VERIFICATION_STATUS: NOT_RUN
 INDEPENDENT_ACCEPTANCE_STATUS: PENDING
 TASK_CLOSURE_STATUS: IN_PROGRESS
+
+## Revision 17 changes
+
+Wave: **automation verification** (same task, same wave). Rev17 answers the two independent Stage 02 reviews of Rev16 —
+`review/attempt-20` (GATE `PLAN_REVISION_REQUIRED`; RV-1…RV-11) and `review/attempt-21` (GATE `PLAN_REVISION_REQUIRED`;
+RV-1 BLOCKER plus RV-2…RV-6) — together with the planner's own Rev16 self-audit
+(`planner-notes-rev16-self-audit.md`, items G1/G2, which name the same defects as attempt-20 RV-11/RV-7). Both reviews
+confirmed the goal alignment, the read-only fences, the 禎 U+798E / 楨 U+6968 separation, the oracle-before-output
+discipline and §16.9's module grounding, and neither relaxed an authority rule. §17.1–§17.10 are normative, and each one
+names the paragraphs it corrects **in place** — no new supersession layer and no surviving contradicting literal. Every
+earlier approval (Rev13 + attempt-16, Rev14 + attempt-17, Rev15 + attempt-18/19, Rev16 + attempt-20/21) stays invalid for
+this revision.
+
+### 17.1 One executable test-mode grammar (corrects attempt-20 RV-1, attempt-21 RV-2)
+
+Every test-mode `transaction` invocation now reads exactly `--project-root CASE_ROOT_NN --config
+CASE_ROOT_NN/config/line_backup_config.json --run-log CASE_ROOT_NN/state/run_log.md --state
+CASE_ROOT_NN/state/backup_state.json --test-mode` plus its operation arguments, with `NN` = 01…25.
+
+The "test mode uses the same arguments minus `--config`/`--run-log`" sentence in §15.1 is deleted, and the corrected
+literal argv replace the old ones in place: the transaction subprocess entry point, the Case-01 prepare / verify-only /
+commit / finalize arguments, the closing triple, the Case-04 reference and the Case-07 pair. The four construction rules
+of the transaction-acceptance section state the same three canonical children. The two Case-01 verify-only runs
+additionally carry `--test-mode` and `--run-id RUN-CASE-01` (§17.2); run 2 repeats run 1's argv byte-identically except
+for `--evidence-dir`. `--state CASE_ROOT_NN/state.json` is not legal in any literal, example, construction rule or
+oracle.
+
+The five root-bearing literal test-only authority negatives gain present-but-mismatched canonical children
+(`--config`/`--run-log`/`--state` resolving to another allowlisted case root), so that the canonical-path mismatch is
+what they exercise rather than a missing-argument path; their expected class stays `INVALID_AUTHORITY` exit 2 before any
+state read or write. The missing-`--project-root` parser negative and the five production negatives are unchanged.
+
+### 17.2 Verification-evidence chain v2 — acyclic (replaces §16.3's v1 field list; attempt-20 RV-3, attempt-21 RV-1 BLOCKER)
+
+Write order, one direction only:
+
+1. every other artifact of the run (`inventory-1.json`…`inventory-3.json`, plus `error.json` when one is written);
+2. `result.json`, carrying `verification_evidence{manifest_path, manifest_bytes}` — never a hash of itself — plus
+   `schema_version`, `mode`, `run_id` (null when `--run-id` was absent), `group_key`, `fingerprint`, `destination`,
+   `filesystem_status`, `recognized_images`, `expected_images`, `overall_status`, `exit_code`, `artifact_readback`;
+3. `manifest.json` written last, carrying `artifacts[]` — every artifact of that run **including `result.json`** and
+   excluding only `manifest.json` itself, each entry `{path, bytes, sha256}` with `path` relative to the evidence dir —
+   plus `result_summary` (the same eleven verdict fields as step 2) and `result_bytes`/`result_sha256` for the result it
+   just recorded.
+
+Hashing convention: SHA-256 over raw file bytes, lowercase hex. No serialization, canonicalization or field-exclusion
+rule is needed, and `manifest_sha256` is never recorded inside `result.json`, because the write order forbids it.
+
+`commit` and `finalize` recompute in this order before applying any other gate: read the exact bytes at the
+`--verification-json` path → locate `manifest.json` beside it → validate the manifest shape → require its
+`result_summary`, `result_bytes` and `result_sha256` to equal the result's fields and bytes exactly → require the
+manifest's `result.json` entry to re-hash to those bytes → re-hash every other listed artifact at its recorded path →
+then apply the F3 gates. Any missing, malformed or mismatching element is `INVALID_VERIFICATION_EVIDENCE`; evidence whose
+`run_id`, `group_key`, `fingerprint` or `destination` belongs to another run is `VERIFICATION_RUN_MISMATCH`; both exit 4,
+no revision change, no registry entry, no lock leak.
+
+Honest scope of the guarantee (this replaces the v1 claim "A payload that merely looks like a result … cannot finalize
+anything"): the chain proves internal consistency, completeness and post-hoc integrity of that verify run's evidence
+directory. It is not an authorship proof and does not survive a writer who may rewrite that directory. What it does
+forbid is every payload without a chain, and every chain that disagrees with its result in any field or byte. Rows 22a–d
+stand, and **22e** (a self-consistent hand-authored chain whose manifest `result_summary` disagrees with its result) and
+**22f** (a genuine chain with one `result.json` byte flipped after the manifest was written) make the enforceable part
+executable.
+
+`verify-only` gains optional `--run-id`: when supplied it is copied into `result.run_id`; when absent, `run_id` is null
+and neither `commit` nor `finalize` may consume that result. Driver-captured `stdout.log`, `stderr.log` and `exit-code`
+are never part of the chain: the manifest covers only the artifacts the product writes into that evidence directory, and
+the acceptance driver hashes its own captures separately.
+
+### 17.3 Legacy contract single-valued (§16.5 corrected in place; attempt-20 RV-2, attempt-21 RV-5/RV-6)
+
+- Validation scope is exactly §16.5's (i) the payload about to be replaced and (ii) every new RC2 record. The authority
+  section's universal "at every load … refused with no write" sentence is amended in place to that scope; reading an
+  existing authority state is never gated by it.
+- The `prepare`-may-append exception is **deleted**: any mutation whose target state contains at least one run that is not
+  strictly valid is refused `INVALID_STATE_LEGACY` exit 4 with no write. The real formal state therefore stays readable
+  and cannot be mutated by this wave, and 25b is its executable oracle.
+- Read-only mapping is unified with the existing product output and the verifier-contract section: a tolerated-legacy or
+  unreadable run yields Filesystem PASS preserved (an independent axis), Registry FAIL, Source UNRESOLVED, State
+  `LEGACY_PROVENANCE_LIMITED`, overall `UNKNOWN`, exit 4, `failure_class=INPUT_PROVENANCE_LIMITED`. The v1 sentence
+  "A legacy or unreadable run never becomes Filesystem/Registry/Source PASS" is corrected: Registry and Source never
+  PASS, Filesystem may.
+- `legacy_normalizations[]` is pinned as an array of `{run_id, kind, detail}` with `kind ∈ {calibration.extra_keys,
+  calibration.missing, contract_revision.missing, UNREADABLE_LEGACY}`; every tolerated or unreadable run appears exactly
+  once, and an `UNREADABLE_LEGACY` run is additionally named in the scoped blocker. 25a asserts that exact list.
+
+### 17.4 user_fact v1 equality anchors (§15.2 corrected in place; attempt-20 RV-4, attempt-21 MINOR-2)
+
+For `user_fact:` the artifact must be the §16.4 v1 record, and the equality anchors are `app_identifier`,
+`raw_requested_group` (byte-for-byte; 禎 U+798E is never equal to 楨 U+6968) and `fingerprint` on all three fields. No
+`group_key` key is required or consulted on the record; the request's key is compared only against
+`"line:" + app_identifier + ":" + raw_requested_group` reconstructed from the record. §15.2's Rev13-format clause is
+replaced accordingly, and the preserved `evidence/20260916-user-fact/source-identity-user-fact.json` remains evidence
+only: it can never yield `CONFIRMED`.
+
+### 17.5 Case 20 orphan semantics (§16.2 corrected in place; attempt-20 RV-5)
+
+The dispatcher is a child process (`subprocess.run` in `transaction.py`), so killing prepare does not kill it. The
+fixture adapter is pinned to self-exit on reparenting: after writing its counter line and `dispatch-started.barrier` it
+polls `os.getppid()` every 0.25 s and exits by itself within ≤10 s of the parent's death (macOS reparents the orphan, so
+`getppid()` changes). The driver waits (bounded ≤10 s) for that exit, records the observed reparenting, and then asserts:
+exactly one counter line and no further bytes; state bytes byte-identical to the independently hashed revision-1 bytes;
+no revision-2 record; `save_all_retry_allowed=false`; and, **within `CASE_ROOT_20/state/`**, the only remainder is the
+empty `.line-backup-state.lock` control file. The protocol-mandated `dispatch-started.barrier`,
+`dispatch-counter.jsonl` and the driver's own process records sit outside that claim and are retained as evidence. If the
+adapter is still alive after 15 s the driver kills it and records `orphan-forced-kill`; that is a fixture failure
+(TASK_REGRESSION), never an accepted path.
+
+### 17.6 The nineteenth status row (§16.7 and the status-manifest enumeration corrected in place; attempt-20 RV-7, attempt-21 RV-4, planner G2)
+
+Row `baseline-worsened`, with the literal paths `/private/tmp/line-backup-acceptance-status/baseline-worsened.input.json`
+and `/private/tmp/line-backup-acceptance-status/baseline-worsened.output.json`: a valid `baseline_artifact` (SHA-256 and
+byte length), `baseline_delta=WORSENED`, and the newly appeared or worsened signature disclosed. Expected tuple: PRIMARY
+`ACHIEVED`, IMPLEMENTATION `COMPLETE`, CORE `PASS`, REQUIRED_VERIFICATION `FAIL`, INDEPENDENT `PENDING`, CLOSURE
+`FIX_REQUIRED`, blocker `BASELINE_REGRESSION_DELTA/FAIL/TASK_REGRESSION` — per workflow-routing §7.7 rule 8 a worsened
+baseline is a must-not-break violation, never `INCOMPLETE`/`PENDING_REQUIRED_VERIFICATION`. The manifest enumeration
+reads nineteen rows and lists `baseline-worsened` directly after `baseline-unchanged`.
+
+### 17.7 Failure routing and counter oracles for rows 20–25 (attempt-20 RV-11, planner G1)
+
+Routing: failures of **20** and **23** stop recovery/duplicate-safety acceptance and prohibit production use (the same
+class as 02/03/05/07); failures of **21, 22, 24, 25** are product/test regressions. Counter oracles: 20 — exactly one
+line before the kill and still exactly one after recovery; 21 — zero; 22 — untouched by all six finalize refusals (the
+setup's single dispatch line is still the only line); 23a — zero, 23b — zero, 23c — exactly one; 24 — zero (verify-only
+never dispatches); 25a — zero, 25b — zero.
+
+### 17.8 Evidence roots, ranges and headings corrected (attempt-20 RV-10, attempt-21 RV-3, MINOR-1, MINOR-3)
+
+The product verify command targets `evidence/20260916-product-verify/attempt-04`, and the baseline copy targets
+`evidence/20260916-baseline/attempt-02`; every `attempt-01` root stays read-only provenance. Every `-01`…`-19` range
+reads `-01`…`-25`. The planned-file heading reads "Planned implementation files (existing modules are modified in place;
+`run_all.py` is new)" and §16.9 remains authoritative for the file set. The two-order Phase-2 wave is pinned inside
+§16.10's `attempt-02/` as `attempt-02/order-ownership-first/` and `attempt-02/order-driver-first/`, each with its own
+per-driver subdirectories and its own `readback-verification.json`, so neither order can overwrite the other.
+
+### 17.9 Minor corrections absorbed (attempt-20 RV-6, RV-8, RV-9; attempt-21 MINOR-4/5/6)
+
+- Case 07: the winner performs exactly two guarded replacements, the loser exactly zero, and the counter gains exactly
+  one line overall.
+- `finalize`'s `--verification-json` is outcome-conditional in both grammar statements: required for `--outcome VERIFIED`,
+  optional for `SAFE_ABORT` (when supplied it must still be a readable JSON object, and it is never consulted for
+  SAFE_ABORT success).
+- The case-02/03/19 oracles assert the persisted reference form `reconcile:<relpath>:<sha256>` for the artifact each of
+  them produces, matching §16.6.
+- The reconcile artifact is pinned: the process writes the persisted record to `<operation --evidence-dir>/reconcile.json`
+  for its first reconciliation write in that directory, and `reconcile-2.json`, `reconcile-3.json`, … afterwards; the
+  persisted reference is `reconcile:<that file name>:<sha256 of its bytes>`.
+- `reconciliations[].original_observation` is pinned to `reference = "intent-checkpoint:<run_id>:rev<revision>"` (the
+  loaded intent checkpoint's own run and revision) with `trigger_outcome="UNKNOWN"` and
+  `manual_reconciliation_required=true`; the schema's free-string field is used as-is, never extended.
+
+### 17.10 Unchanged by this revision
+
+The goal contract and `PRIMARY_OUTCOME` (§16.8), closure and `DONE`, the R1–R7 fix contract, the substantive semantics
+of cases 01–19 (with only the literal and grammar corrections named in §17.1–§17.3 and §17.9), the one human gate, the
+read-only fences, and the three separately reported results.
 
 ## Revision 16 changes
 
@@ -69,15 +225,21 @@ shape, and every earlier line that named `CASE_ROOT_NN/state.json` or "through -
 
 - Adapter `CASE_ROOT_20/dispatcher-blocking.py` appends exactly one counter line to
   `CASE_ROOT_20/dispatch-counter.jsonl`, creates `CASE_ROOT_20/dispatch-started.barrier`, then blocks for up to 300 s
-  waiting for `CASE_ROOT_20/release.barrier`, which the driver never creates.
+  waiting for `CASE_ROOT_20/release.barrier`, which the driver never creates — while polling `os.getppid()` every
+  0.25 s and exiting by itself within ≤10 s of reparenting, because the dispatcher runs as a child process, not
+  in-process (Rev17 §17.5).
 - Driver: waits (bounded, ≤ 60 s) for `dispatch-started.barrier`; independently re-reads the state file and requires
   revision 1, `intent_state=INTENT_COMMITTED`, `dispatch_state=NOT_ATTEMPTED`, `intent.dispatch_outcome=NOT_ATTEMPTED`
-  and exactly one counter line; then sends `SIGKILL` to the prepare process (the adapter runs in-process, so the kill
-  ends it too) and records the kill, the signal and the raw process artifacts.
-- Kill-aftermath oracle: exactly one counter line; state bytes byte-identical to the independently hashed revision-1
-  bytes; no revision-2 record; `save_all_retry_allowed=false`; the only filesystem remainder permitted is the empty
-  control file `CASE_ROOT_20/state/.line-backup-state.lock`, which is never an authority signal and must not block the
-  next process (`flock` is released by process death).
+  and exactly one counter line; then sends `SIGKILL` to the prepare process — the child dispatcher survives the kill and
+  is observed to reparent and self-exit (§17.5; if it is still alive 15 s later the driver kills it and records
+  `orphan-forced-kill`, a fixture failure and TASK_REGRESSION, never an accepted path) — and records the kill, the
+  signal and the raw process artifacts.
+- Kill-aftermath oracle: exactly one counter line and no further bytes; state bytes byte-identical to the independently
+  hashed revision-1 bytes; no revision-2 record; `save_all_retry_allowed=false`; and, **within `CASE_ROOT_20/state/`**,
+  the only remainder is the empty control file `CASE_ROOT_20/state/.line-backup-state.lock`, which is never an authority
+  signal and must not block the next process (`flock` is released by process death). The protocol-mandated
+  `dispatch-started.barrier`, `dispatch-counter.jsonl` and the driver's own process records sit outside that claim and
+  are retained as evidence (Rev17 §17.5).
 - Recovery oracle: one fresh `resume --no-dispatch` (`--expected-revision 1`, `--expected-owner-id WRITER-CASE-20`)
   returns `RECOVERY_NO_DISPATCH` exit 0 with `reconciliation_state=BARRIER_COMMITTED`, `state_replaced=true`, revision
   2, one schema-valid `reconciliations[]` entry and **no** second counter line; the following `commit
@@ -87,28 +249,39 @@ shape, and every earlier line that named `CASE_ROOT_NN/state.json` or "through -
   that no product process survives to print a result, so the driver asserts the state and counter, never a prepare
   return code. Case 20 is the R1 proof; cases 02/03 remain the product-visible return-code proofs.
 
-### 16.3 Verification-evidence contract v1 and the finalize negative rows (fixes A-RV-3)
+### 16.3 Verification-evidence contract and the finalize negative rows (fixes A-RV-3; the v1 field list is corrected in place by Rev17 §17.2)
 
-`finalize --outcome VERIFIED` accepts only a verification result carrying the verifier's own evidence chain:
+`finalize --outcome VERIFIED` accepts only a verification result carrying the verifier's own acyclic evidence chain
+(Rev17 §17.2 is normative):
 
 - `result.json` written by `verify-only`, with `mode="verify_only"`, `run_id`/`group_key`/`fingerprint`/`destination`
   matching the run, `filesystem_status="PASS"`, `recognized_images == expected_images`, and a `verification_evidence`
-  object `{manifest_path, manifest_sha256, manifest_bytes, result_sha256, result_bytes}`.
-- `manifest.json` beside it (`evidence/<verify-run>/manifest.json`) whose own bytes/sha256 equal the values recorded in
-  `result.json`, and which lists every artifact of that verify run with `path`, `bytes`, `sha256`.
-- finalize recomputes, before any write: the sha256/bytes of the exact result bytes it read, the sha256/bytes of the
-  manifest, and the sha256/bytes of every listed artifact at its recorded path. Any mismatch is refused.
+  object `{manifest_path, manifest_bytes}` — never a hash of itself.
+- `manifest.json` written last beside it (`evidence/<verify-run>/manifest.json`), listing every artifact of that verify
+  run **including `result.json`** (each entry `{path, bytes, sha256}`, `path` relative to the evidence dir) plus
+  `result_summary` (the same verdict fields as the result) and `result_bytes`/`result_sha256` for the result it just
+  recorded.
+- finalize (and commit) recompute, before any write: the sha256/bytes of the exact result bytes it read, then require the
+  manifest's `result_summary`/`result_bytes`/`result_sha256` to equal the result exactly, its `result.json` entry to
+  re-hash to those bytes, and every other listed artifact to re-hash at its recorded path. Any missing or mismatching
+  element is refused; a result whose `run_id` is null (no `--run-id` on verify-only) is not consumable.
 
 Refusal classes stay as F3: `INVALID_VERIFICATION_EVIDENCE` (structure/status/count/chain defects) and
 `VERIFICATION_RUN_MISMATCH` (evidence belonging to another run), both exit 4, no revision change, no registry entry, no
-lock leak. A payload that merely looks like a result (hand-written or copied) therefore cannot finalize anything.
+lock leak. The chain proves internal consistency, completeness and post-hoc integrity of that verify run's evidence
+directory; it is not an authorship proof and does not survive a writer who rewrites that directory. What it forbids is
+every payload without a chain and every chain that disagrees with its result in any field or byte (Rev17 §17.2 replaces
+the v1 "merely looks like a result" claim).
 
-`CASE_ROOT_22` (`finalize-verification-negatives`) runs four literal sub-rows, each from a fresh isolated state at
+`CASE_ROOT_22` (`finalize-verification-negatives`) runs six literal sub-rows, each from a fresh isolated state at
 revision 2 with a completed dispatch record: 22a hand-authored PASS/57 JSON with no evidence chain →
 `INVALID_VERIFICATION_EVIDENCE` exit 4; 22b a real `verify-only` FAIL/0 result over an empty destination with a full
 chain → `INVALID_VERIFICATION_EVIDENCE` exit 4; 22c `{}` → `INVALID_VERIFICATION_EVIDENCE` exit 4; 22d another run's
-real result → `VERIFICATION_RUN_MISMATCH` exit 4. Every sub-row additionally asserts unchanged state bytes, unchanged
-revision, unchanged registry length and one refusal artifact under the case evidence dir.
+real result → `VERIFICATION_RUN_MISMATCH` exit 4; 22e a self-consistent hand-authored chain whose manifest
+`result_summary` disagrees with its result → `INVALID_VERIFICATION_EVIDENCE` exit 4; 22f a genuine chain with one
+`result.json` byte flipped after the manifest was written → `INVALID_VERIFICATION_EVIDENCE` exit 4. Every sub-row
+additionally asserts unchanged state bytes, unchanged revision, unchanged registry length and one refusal artifact under
+the case evidence dir.
 
 ### 16.4 The user-fact CONFIRMED record contract v1 (fixes A-RV-4 / B-RV-2, bounds the join path)
 
@@ -173,24 +346,27 @@ which never rewrites anything:
 - Enumerated legacy shapes are tolerated and reported per run in the result's `legacy_normalizations[]`:
   `intent.calibration` carrying extra keys (e.g. `first_row_point`, `row_step`) → `calibration.extra_keys`; a missing
   `intent.calibration` → `calibration.missing` with calibration reported `UNKNOWN`; a missing `contract_revision` →
-  `contract_revision.missing` (pre-RC2).
-- Any other strict-schema deviation makes that run `UNREADABLE_LEGACY`: reported, never repaired, with the album's
-  State axis `LEGACY_PROVENANCE_LIMITED` and the run named in the scoped blocker. Never a crash, never a rewrite.
-- A legacy or unreadable run never becomes Filesystem/Registry/Source PASS; the album result stays `NOT_ACHIEVED` with
-  exit 4, exactly as the real-state pass already specifies.
+  `contract_revision.missing` (pre-RC2). Every entry is the pinned §17.3 form `{run_id, kind, detail}`, one per affected
+  run.
+- Any other strict-schema deviation makes that run `UNREADABLE_LEGACY` (the fourth pinned `legacy_normalizations[]`
+  kind): reported, never repaired, with the album's State axis `LEGACY_PROVENANCE_LIMITED` and the run named in the
+  scoped blocker. Never a crash, never a rewrite.
+- A legacy or unreadable run yields Filesystem PASS preserved (an independent axis), Registry FAIL, Source UNRESOLVED,
+  State `LEGACY_PROVENANCE_LIMITED`, overall `UNKNOWN`, exit 4 and `failure_class=INPUT_PROVENANCE_LIMITED`. Registry
+  and Source never PASS; Filesystem may. Rev17 §17.3 corrects the former "never becomes Filesystem/Registry/Source PASS"
+  / `NOT_ACHIEVED` wording, exactly as the real-state pass already specifies.
 
-Mutation operations (`prepare`, `commit`, `finalize`, `resume`) load state strictly: a state whose runs are not all
-strictly valid is refused `INVALID_STATE_LEGACY` exit 4 with no write, except that `prepare` may append to a state whose
-only strict failures are the three enumerated legacy shapes — in that case the replacement must preserve every legacy
-run object with identical keys and values (no normalization, no rewrite) and the new run must be strictly valid. The
-real formal state therefore stays readable (State axis `LEGACY_PROVENANCE_LIMITED`, exit 4) and can never be mutated by
-this wave.
+Mutation operations (`prepare`, `commit`, `finalize`, `resume`) load state strictly: any state containing at least one
+run that is not strictly valid is refused `INVALID_STATE_LEGACY` exit 4 with no write — the former `prepare`-may-append
+exception is deleted (Rev17 §17.3). The real formal state therefore stays readable and can never be mutated by this
+wave.
 
 `CASE_ROOT_25` (`legacy-real-state-shape`) holds a read-only copy of the real formal state's shapes — one run with the
 extra calibration keys, one run without calibration, four runs without `contract_revision`, the real 楨 group key — plus
 a 57-file destination: 25a `verify-only --test-mode` → Filesystem PASS / Registry FAIL / Source UNRESOLVED / State
-`LEGACY_PROVENANCE_LIMITED`, overall `NOT_ACHIEVED`, exit 4, state bytes unchanged, `legacy_normalizations[]` naming
-every normalized run; 25b `transaction prepare` against the same state → `INVALID_STATE_LEGACY` exit 4, no write, no
+`LEGACY_PROVENANCE_LIMITED`, overall `UNKNOWN`, `failure_class=INPUT_PROVENANCE_LIMITED`, exit 4, state bytes
+unchanged, and `legacy_normalizations[]` exactly the §17.3 array `{run_id, kind, detail}` naming every normalized or
+unreadable run; 25b `transaction prepare` against the same state → `INVALID_STATE_LEGACY` exit 4, no write, no
 counter line.
 
 ### 16.6 Dispatch-continuity details: one reconcile grammar, refusal precedence, path conversion
@@ -237,8 +413,9 @@ counter line.
   JSON object (`INVALID_INPUT` exit 2 otherwise) but is never consulted for success, and the canonical 10B/19 rows omit
   it. SAFE_ABORT semantics are otherwise unchanged (revision 3, no registry entry, unresolved intent preserved).
 - **Status fixtures** (A-RV-10): the executable status manifest gains a nineteenth row `baseline-worsened`
-  (`baseline_delta=WORSENED`) whose oracle asserts the hard-failure routing (required verification INCOMPLETE, scoped
-  blocker, no DONE) — the branch is defined today but never executed.
+  (`baseline_delta=WORSENED`) whose oracle asserts the must-not-break routing — REQUIRED_VERIFICATION `FAIL`, CLOSURE
+  `FIX_REQUIRED`, blocker `BASELINE_REGRESSION_DELTA/FAIL/TASK_REGRESSION`, scoped blocker, no DONE (Rev17 §17.6; never
+  `INCOMPLETE`/`PENDING_REQUIRED_VERIFICATION`).
 - **Case numbering**: the literal root set is `-01`…`-25`; every "through -19" phrase is superseded by "through -25".
 
 ### 16.8 Wording corrections (B-RV-3, B-RV-4, B-RV-7)
@@ -265,8 +442,9 @@ status_fixture_driver,authority_baseline}.py`. `pyproject.toml` and `README.md` 
 
 ### 16.10 Post-fix durable evidence roots (A-RV-11)
 
-- Post-fix Phase-2 wave: `evidence/20260916-auto-verification/attempt-02/` (one subdirectory per driver, same names as
-  attempt-01) with its own `readback-verification.json`.
+- Post-fix Phase-2 wave: `evidence/20260916-auto-verification/attempt-02/` split into
+  `attempt-02/order-ownership-first/` and `attempt-02/order-driver-first/` (each with per-driver subdirectories and its
+  own `readback-verification.json`, Rev17 §17.8) so neither order can overwrite the other.
 - Post-fix acceptance wave (the 25-case transaction matrix plus the verifier, authority, status and legacy drivers):
   `evidence/20260916-acceptance/attempt-03/`.
 - Post-fix production verify-only pass over the real destination: `evidence/20260916-product-verify/attempt-04/`.
@@ -295,10 +473,12 @@ Call surface, exact:
   --dispatch-counter --evidence-dir`. The adapter pair is mandatory: a prepare that cannot bind its own dispatch window
   is refused with `MISSING_DISPATCHER`, exit 2, before any state read or write. There is no production `prepare` that
   commits an intent nobody can dispatch.
-- Test-mode `transaction prepare` (`--test-mode`, state path under `/private/tmp`, case roots `-01`…`-19`) uses the same
-  arguments minus `--config`/`--run-log`, plus the test-only fault flags `--dispatcher-outcome RETURNED|UNKNOWN`,
-  `--crash-after-dispatch`, `--pause-at`, `--barrier-file`, `--storage-fault`. `--source-evidence` is required and must
-  be a test-mode record (§15.3). Test-only flags remain rejected without `--test-mode`.
+- Test-mode `transaction prepare` (`--test-mode`, state path under `/private/tmp`, case roots `-01`…`-25`) uses the
+  canonical children `--config CASE_ROOT_NN/config/line_backup_config.json --run-log CASE_ROOT_NN/state/run_log.md
+  --state CASE_ROOT_NN/state/backup_state.json` (Rev17 §17.1; the former "minus `--config`/`--run-log`" rule is deleted),
+  plus the test-only fault flags `--dispatcher-outcome RETURNED|UNKNOWN`, `--crash-after-dispatch`, `--pause-at`,
+  `--barrier-file`, `--storage-fault`, `--storage-fault-slot`. `--source-evidence` is required and must be a test-mode
+  record (§15.3). Test-only flags remain rejected without `--test-mode`.
 - `transaction resume` keeps every existing parser option, so the authority rows still parse and still emit JSON result
   artifacts. Its semantics are fixed in this order: (1) authority validation, (2) adapter-flag semantic rejection,
   (3) operation logic. `resume` never dispatches in any mode. Supplying `--dispatcher`, `--dispatch-counter`,
@@ -351,7 +531,8 @@ result fields in every row; "no write" means state bytes and revision are unchan
 
 The barrier's `reconciliations[]` entry is schema-valid per `$defs/reconciliation`: `outcome=EVIDENCE_RECONCILED`,
 `trigger_outcome=UNKNOWN`, `blocking_intent_released=false`, `manual_reconciliation_required=true`, `proof=null`,
-`original_observation` naming the loaded intent checkpoint, and `evidence` = a hash-bearing reference
+`original_observation` pinned to `reference="intent-checkpoint:<run_id>:rev<revision>"` naming the loaded intent
+checkpoint (Rev17 §17.9), and `evidence` = a hash-bearing reference
 `reconcile:<relpath>:<sha256>` that always resolves inside the reconciling process's own `--evidence-dir` and is never a
 source binding (Rev16 §16.6 supersedes the `<kind>`-bearing form and the former "§15.2 base rules" phrase). `blocking_intent_released=true` is legal only for
 `outcome=ABORTED_BEFORE_SAVE_ALL_DISPATCH` carrying a `$defs/non_dispatch_proof` object
@@ -403,9 +584,12 @@ binding artifact is re-read **at its external recorded path** and re-hashed, wit
 reference and to the prepare record, realpath containment proven, and parsed content matching exactly — its own
 `group_key` and `app_identifier` equal the request's (UTF‑8 code-point equality; 禎 U+798E and 楨 U+6968 are never
 merged, normalized or folded) and its own `fingerprint` equal to the request's; for `user_fact:` the artifact must be the
-preserved user-fact record in the Rev13 format, recording `source_correspondence_result: CONFIRMED` with the exact
-question, answer, supplier and time, `raw_requested_group` equal to the requested key's group string exactly,
-`app_identifier` equal, and `fingerprint` equal. The recorded `raw_persisted_group` (the 楨 string) is evidence only: it
+§16.4 v1 CONFIRMED record (Rev17 §17.4 replaces this clause's former Rev13-format requirement, so a record that carries no
+`group_key` is correct), carrying `status` and `source_correspondence_result` `CONFIRMED`, the exact question, answer,
+supplier and time, evidence artifacts that re-hash at their recorded paths, `raw_requested_group` equal to the requested
+key's group string byte-for-byte, `app_identifier` equal, and `fingerprint` equal on all three fields; the request's key is
+compared only against `"line:" + app_identifier + ":" + raw_requested_group` reconstructed from the record, and no
+`group_key` key is required or consulted on the record. The recorded `raw_persisted_group` (the 楨 string) is evidence only: it
 is never used to satisfy the equality check, never merged, and never rewritten. The user fact recorded on 2026-09-16
 (part 1 answered, part 2 `UNANSWERED`, `source_correspondence_result_at_recording: UNRESOLVED`) therefore cannot
 confirm the source for this album. Any missing,
@@ -503,13 +687,15 @@ root, not only the two that caused the reproduced destruction: `tests/acceptance
 `tests/authority_baseline.py`, `tests/test_transaction_core.py`, `tests/legacy_false_positive_repro.py`,
 `tests/automation_verification/harness.py`, `tests/automation_verification/fixtures.py`, every
 `tests/automation_verification/run_phase2_r*.py` script, `run_all.py` and `verify_evidence.py`. Each creates only its own
-literal roots (case roots `-01`…`-19`, verifier roots, status roots, authority roots, phase-2 roots), writes an ownership
+literal roots (case roots `-01`…`-25`, verifier roots, status roots, authority roots, phase-2 roots), writes an ownership
 marker naming the driver id, TASK_ID, root path and creation time before any fixture content, never removes or overwrites
 a root that lacks its marker, and removes nothing by default — an explicit `--clean-owned` may remove only roots carrying
 its own marker, and only after the read-back verifier consumed them. Evidence is durable with a SHA-256/bytes manifest
 per attempt; `/private/tmp` is working space only. The read-back verifier runs the wave in both orders (ownership-last
-and ownership-first) and both runs must leave every manifest independently readable; a driver that violates the protocol
-is a TASK_REGRESSION, not an environment failure.
+and ownership-first) and both runs must leave every manifest independently readable, writing disjoint durable roots
+`evidence/20260916-auto-verification/attempt-02/order-ownership-first/` and
+`evidence/20260916-auto-verification/attempt-02/order-driver-first/` (Rev17 §17.8) so neither order can overwrite the
+other; a driver that violates the protocol is a TASK_REGRESSION, not an environment failure.
 
 ### 15.6 Revision binding, self-references and part-1 wording (fixes F‑6, F‑7)
 
@@ -799,7 +985,7 @@ Verified repository fact: DATA_PROJECT_ROOT currently contains only config/line_
 
 PRODUCT_BOUNDARY_DECISION: The task deliverable is an operator-facing reusable local product, not an acceptance-only fixture. Its product owner is the LINE album backup task deliverable; its consumers are the documented operator CLI commands below. The CLI and library are the single real process boundary for verify-only and offline resume/commit/duplicate behavior. The formal data project is an input/state authority and remains read-only. The plan makes no claim that another absent external producer already consumes this module. Any future integration with another producer is a new architecture/contract decision and requires a later approved plan revision plus independent review.
 
-Planned implementation files, to be created only after this plan is independently approved:
+Planned implementation files (existing modules are modified in place; `run_all.py` is new), created or edited only after this plan is independently approved:
 
 - /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/pyproject.toml
 - /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/__init__.py
@@ -819,9 +1005,9 @@ Packaging/build contract:
 - Working directory: /Users/hsiaojohnny/Documents/ChatGPT/Line_backup
 - Interpreter: /usr/bin/python3
 - Test command: cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m unittest discover -s /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests -p 'test_*.py' -v
-- Verify command: cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance verify-only --project-root /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state --config /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/config/line_backup_config.json --state /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json --destination /Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57 --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --evidence-dir /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-product-verify/attempt-01
+- Verify command: cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance verify-only --project-root /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state --config /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/config/line_backup_config.json --state /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json --destination /Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57 --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --evidence-dir /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-product-verify/attempt-04
 - Transaction test command: cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m unittest discover -s /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests -p 'test_transaction_*.py' -v
-- Transaction subprocess entry point (Rev15 §15.1; the dispatch window lives inside prepare): cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction prepare --project-root /private/tmp/line-backup-acceptance-case-01 --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id RUN-CASE-01 --owner-id WRITER-CASE-01 --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-case-01/destination --source-evidence /private/tmp/line-backup-acceptance-case-01/source-evidence.json --dispatcher /private/tmp/line-backup-acceptance-case-01/dispatcher-returned.py --dispatch-counter /private/tmp/line-backup-acceptance-case-01/dispatch-counter.jsonl --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --test-mode --dispatcher-outcome RETURNED
+- Transaction subprocess entry point (Rev15 §15.1; the dispatch window lives inside prepare; Rev17 §17.1 canonical children): cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction prepare --project-root /private/tmp/line-backup-acceptance-case-01 --config /private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-case-01/state/run_log.md --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id RUN-CASE-01 --owner-id WRITER-CASE-01 --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-case-01/destination --source-evidence /private/tmp/line-backup-acceptance-case-01/source-evidence.json --dispatcher /private/tmp/line-backup-acceptance-case-01/dispatcher-returned.py --dispatch-counter /private/tmp/line-backup-acceptance-case-01/dispatch-counter.jsonl --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --test-mode --dispatcher-outcome RETURNED
 - No command in the acceptance artifacts may leave DATA_PROJECT_ROOT, DATA_DESTINATION, TARGET_GROUP_KEY, CASE_ROOT, or EVIDENCE_DIR as an unresolved symbolic placeholder. Recorded argv must contain literal absolute paths.
 
 Operator CLI grammar and product call graph:
@@ -835,7 +1021,7 @@ Authority rule: every `verify-only` execution and every `transaction` execution 
 
 The fixed call graph is cli.main → verify.inspect_filesystem/bind_registry_state_source, or cli.main → transaction prepare/resume/commit/finalize/duplicate-check → source-evidence load/validate (prepare) → shared precondition evaluator → storage guarded compare-and-commit → dispatcher adapter once, inside prepare's uninterrupted dispatch window (resume never reaches the dispatcher). The status command calls status.evaluate. Tests invoke the CLI subprocess and never import a second transition model. The package is the operator-facing reusable product for this task; no absent external producer is claimed.
 
-State fixture schema (input precondition only): schema_version=2; contract_revision=1.0-rc2 for new cases; revision; current_run_id; active_writer_id; context_lock; verified_albums; and runs[]. Every run and every registry entry must validate against the versioned skill schema `schemas/schemas.json` `$defs/run` / `$defs/state` (`additionalProperties:false`) at every load and before every replacement; a payload that fails validation is refused with no write. A run therefore contains no `owner_id` and no `source_provenance` field (both would violate the schema): ownership is `active_writer_id` plus `intent.owner_execution_id`, and provenance is the §15.2 binding reference carried in the run's checkpoint-shaped `events[]` `evidence` string and in `verified_albums[].evidence`. Each run must contain run_id, mode, group_key, fingerprint {start_date,end_date,expected_images}, observed_title, title_confidence, destination, contract_revision, workflow_outcome, phase, checkpoint, intent_state, dispatch_state, dispatch_evidence, intent {action_id,committed_at,owner_execution_id,group_key,fingerprint,destination,calibration,save_all_retry_allowed,dispatch_outcome,trigger_outcome}, events, reconciliations, manual_reconciliation_required and reconciliation_reason. Case-01's literal initial fixture is recorded at /private/tmp/line-backup-acceptance-case-01/input-state.json with RUN-CASE-01, WRITER-CASE-01, target key line:jp.naver.line.mac:旻謙允禎成長日記, fingerprint 2024-05-13/2024-05-17/57, and destination /private/tmp/line-backup-acceptance-case-01/destination. Fixture creation establishes preconditions only; the independent oracle is computed before product execution.
+State fixture schema (input precondition only): schema_version=2; contract_revision=1.0-rc2 for new cases; revision; current_run_id; active_writer_id; context_lock; verified_albums; and runs[]. Validation scope is exactly Rev17 §17.3: every payload the product is about to replace and every new RC2 record must validate against the versioned skill schema `schemas/schemas.json` `$defs/run` / `$defs/state` (`additionalProperties:false`), and a payload that fails that scope is refused with no write; reading an existing authority state is governed only by §16.5's legacy read contract and is never gated by this sentence. A run therefore contains no `owner_id` and no `source_provenance` field (both would violate the schema): ownership is `active_writer_id` plus `intent.owner_execution_id`, and provenance is the §15.2 binding reference carried in the run's checkpoint-shaped `events[]` `evidence` string and in `verified_albums[].evidence`. Each run must contain run_id, mode, group_key, fingerprint {start_date,end_date,expected_images}, observed_title, title_confidence, destination, contract_revision, workflow_outcome, phase, checkpoint, intent_state, dispatch_state, dispatch_evidence, intent {action_id,committed_at,owner_execution_id,group_key,fingerprint,destination,calibration,save_all_retry_allowed,dispatch_outcome,trigger_outcome}, events, reconciliations, manual_reconciliation_required and reconciliation_reason. Case-01's literal initial fixture is recorded at /private/tmp/line-backup-acceptance-case-01/input-state.json with RUN-CASE-01, WRITER-CASE-01, target key line:jp.naver.line.mac:旻謙允禎成長日記, fingerprint 2024-05-13/2024-05-17/57, and destination /private/tmp/line-backup-acceptance-case-01/destination. Fixture creation establishes preconditions only; the independent oracle is computed before product execution.
 
 Concrete case directories and command protocol:
 
@@ -975,7 +1161,7 @@ A row with an internal read/command/artifact error has exact UNKNOWN overall bec
 
 The authority negative has one literal subprocess command: `cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance verify-only --project-root /private/tmp/line-backup-acceptance-authority/root-a --config /private/tmp/line-backup-acceptance-authority/root-b/config/line_backup_config.json --state /private/tmp/line-backup-acceptance-authority/root-b/state/backup_state.json --destination /private/tmp/line-backup-acceptance-authority/root-a/destination --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --evidence-dir /private/tmp/line-backup-acceptance-authority/evidence`. Its independently recorded pre/post hashes must show no read or write of `/private/tmp/line-backup-acceptance-authority/root-a` or `root-b` authority state/config, no registry/dispatch action, exit 2, and an error result with `INVALID_AUTHORITY`; only the isolated evidence directory may be written. The authority fixture is included in the verifier acceptance manifest alongside Cases 01–25.
 
-The authority manifest preserves six literal test-only authority negatives, but uses only the allowlisted fixture roots so the cases reach canonical-path validation instead of being rejected by an unrelated root policy. From cwd `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup` with `PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src`, the rows are: (1) `transaction prepare --project-root /private/tmp/line-backup-acceptance-case-01 --state /private/tmp/line-backup-acceptance-case-02/state/backup_state.json --run-id AUTH-PREPARE --owner-id AUTH-WRITER --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-case-01/destination --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence/authority-prepare --test-mode`, (2) `transaction resume --project-root /private/tmp/line-backup-acceptance-case-03 --state /private/tmp/line-backup-acceptance-case-04/state/backup_state.json --run-id AUTH-RESUME --expected-revision 1 --expected-owner-id AUTH-WRITER --dispatcher /private/tmp/line-backup-acceptance-case-03/dispatcher.py --dispatch-counter /private/tmp/line-backup-acceptance-case-03/counter.jsonl --evidence-dir /private/tmp/line-backup-acceptance-case-03/evidence/authority-resume --no-dispatch --test-mode`, (3) `transaction commit --project-root /private/tmp/line-backup-acceptance-case-05 --state /private/tmp/line-backup-acceptance-case-06/state/backup_state.json --run-id AUTH-COMMIT --expected-revision 1 --expected-owner-id AUTH-WRITER --verification-json /private/tmp/line-backup-acceptance-case-05/verification.json --evidence-dir /private/tmp/line-backup-acceptance-case-05/evidence/authority-commit --test-mode`, (4) `transaction finalize --project-root /private/tmp/line-backup-acceptance-case-07 --state /private/tmp/line-backup-acceptance-case-08/state/backup_state.json --run-id AUTH-FINALIZE --expected-revision 1 --expected-owner-id AUTH-WRITER --outcome SAFE_ABORT --verification-json /private/tmp/line-backup-acceptance-case-07/verification.json --evidence-dir /private/tmp/line-backup-acceptance-case-07/evidence/authority-finalize --test-mode`, and (5) `transaction duplicate-check --project-root /private/tmp/line-backup-acceptance-case-09 --state /private/tmp/line-backup-acceptance-case-10/state/backup_state.json --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-case-09/destination --evidence-dir /private/tmp/line-backup-acceptance-case-09/evidence/authority-duplicate --test-mode`. The sixth literal parser negative omits `--project-root`: `transaction resume --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id AUTH-NO-ROOT --expected-revision 1 --expected-owner-id AUTH-WRITER --dispatcher /private/tmp/line-backup-acceptance-case-01/dispatcher.py --dispatch-counter /private/tmp/line-backup-acceptance-case-01/counter.jsonl --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence/authority-no-root --no-dispatch --test-mode`. Each expected result is `INVALID_AUTHORITY`, exit 2 before state read/write or lock creation; the independent oracle hashes the selected and mismatched fixture states before and after, verifies zero counter lines/replacements/registry-owner changes, and retains each inputs/stdout/stderr/exit/result/manifest hash.
+The authority manifest preserves six literal test-only authority negatives, but uses only the allowlisted fixture roots so the cases reach canonical-path validation instead of being rejected by an unrelated root policy. From cwd `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup` with `PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src`, the rows are: (1) `transaction prepare --project-root /private/tmp/line-backup-acceptance-case-01 --config /private/tmp/line-backup-acceptance-case-02/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-case-02/state/run_log.md --state /private/tmp/line-backup-acceptance-case-02/state/backup_state.json --run-id AUTH-PREPARE --owner-id AUTH-WRITER --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-case-01/destination --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence/authority-prepare --test-mode`, (2) `transaction resume --project-root /private/tmp/line-backup-acceptance-case-03 --config /private/tmp/line-backup-acceptance-case-04/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-case-04/state/run_log.md --state /private/tmp/line-backup-acceptance-case-04/state/backup_state.json --run-id AUTH-RESUME --expected-revision 1 --expected-owner-id AUTH-WRITER --dispatcher /private/tmp/line-backup-acceptance-case-03/dispatcher.py --dispatch-counter /private/tmp/line-backup-acceptance-case-03/counter.jsonl --evidence-dir /private/tmp/line-backup-acceptance-case-03/evidence/authority-resume --no-dispatch --test-mode`, (3) `transaction commit --project-root /private/tmp/line-backup-acceptance-case-05 --config /private/tmp/line-backup-acceptance-case-06/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-case-06/state/run_log.md --state /private/tmp/line-backup-acceptance-case-06/state/backup_state.json --run-id AUTH-COMMIT --expected-revision 1 --expected-owner-id AUTH-WRITER --verification-json /private/tmp/line-backup-acceptance-case-05/verification.json --evidence-dir /private/tmp/line-backup-acceptance-case-05/evidence/authority-commit --test-mode`, (4) `transaction finalize --project-root /private/tmp/line-backup-acceptance-case-07 --config /private/tmp/line-backup-acceptance-case-08/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-case-08/state/run_log.md --state /private/tmp/line-backup-acceptance-case-08/state/backup_state.json --run-id AUTH-FINALIZE --expected-revision 1 --expected-owner-id AUTH-WRITER --outcome SAFE_ABORT --verification-json /private/tmp/line-backup-acceptance-case-07/verification.json --evidence-dir /private/tmp/line-backup-acceptance-case-07/evidence/authority-finalize --test-mode`, and (5) `transaction duplicate-check --project-root /private/tmp/line-backup-acceptance-case-09 --config /private/tmp/line-backup-acceptance-case-10/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-case-10/state/run_log.md --state /private/tmp/line-backup-acceptance-case-10/state/backup_state.json --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-case-09/destination --evidence-dir /private/tmp/line-backup-acceptance-case-09/evidence/authority-duplicate --test-mode`. The sixth literal parser negative omits `--project-root`: `transaction resume --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id AUTH-NO-ROOT --expected-revision 1 --expected-owner-id AUTH-WRITER --dispatcher /private/tmp/line-backup-acceptance-case-01/dispatcher.py --dispatch-counter /private/tmp/line-backup-acceptance-case-01/counter.jsonl --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence/authority-no-root --no-dispatch --test-mode`. Each expected result is `INVALID_AUTHORITY`, exit 2 before state read/write or lock creation; the independent oracle hashes the selected and mismatched fixture states before and after, verifies zero counter lines/replacements/registry-owner changes, and retains each inputs/stdout/stderr/exit/result/manifest hash.
 
 The same manifest adds five literal production-mode negatives against `/private/tmp/line-backup-acceptance-authority/production-root` (which has canonical `config/line_backup_config.json`, `state/backup_state.json`, `state/run_log.md`, and a contained destination prepared independently): (1) `transaction prepare --project-root /private/tmp/line-backup-acceptance-authority/production-root --run-log /private/tmp/line-backup-acceptance-authority/production-root/state/run_log.md --state /private/tmp/line-backup-acceptance-authority/production-root/state/backup_state.json --run-id AUTH-PROD-PREPARE --owner-id AUTH-PROD-WRITER --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-authority/production-root/destination --evidence-dir /private/tmp/line-backup-acceptance-authority/evidence/prod-prepare`, with `--config` omitted; (2) `transaction resume --project-root /private/tmp/line-backup-acceptance-authority/production-root --config /private/tmp/line-backup-acceptance-authority/alternate/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-authority/production-root/state/run_log.md --state /private/tmp/line-backup-acceptance-authority/production-root/state/backup_state.json --run-id AUTH-PROD-RESUME --expected-revision 1 --expected-owner-id AUTH-PROD-WRITER --dispatcher /private/tmp/line-backup-acceptance-authority/dispatcher.py --dispatch-counter /private/tmp/line-backup-acceptance-authority/counter.jsonl --evidence-dir /private/tmp/line-backup-acceptance-authority/evidence/prod-resume --no-dispatch`; (3) `transaction commit --project-root /private/tmp/line-backup-acceptance-authority/production-root --config /private/tmp/line-backup-acceptance-authority/production-root/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-authority/alternate/state/run_log.md --state /private/tmp/line-backup-acceptance-authority/production-root/state/backup_state.json --run-id AUTH-PROD-COMMIT --expected-revision 1 --expected-owner-id AUTH-PROD-WRITER --verification-json /private/tmp/line-backup-acceptance-authority/production-root/verification.json --evidence-dir /private/tmp/line-backup-acceptance-authority/evidence/prod-commit`; (4) `transaction finalize --project-root /private/tmp/line-backup-acceptance-authority/production-root --config /private/tmp/line-backup-acceptance-authority/production-root/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-authority/production-root/state/run_log.md --state /private/tmp/line-backup-acceptance-authority/alternate/state/backup_state.json --run-id AUTH-PROD-FINALIZE --expected-revision 1 --expected-owner-id AUTH-PROD-WRITER --outcome SAFE_ABORT --verification-json /private/tmp/line-backup-acceptance-authority/production-root/verification.json --evidence-dir /private/tmp/line-backup-acceptance-authority/evidence/prod-finalize`; and (5) `transaction duplicate-check --project-root /private/tmp/line-backup-acceptance-authority/production-root --config /private/tmp/line-backup-acceptance-authority/production-root/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-authority/production-root/state/run_log.md --state /private/tmp/line-backup-acceptance-authority/production-root/state/backup_state.json --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-authority/outside-destination --evidence-dir /private/tmp/line-backup-acceptance-authority/evidence/prod-duplicate`. These five no-`--test-mode` cases must all return `INVALID_AUTHORITY`, exit 2 before config/state/lock reads or any mutation; the independently computed oracle retains pre/post hashes for every canonical authority file, alternate path, lock/control directory, counter, registry/owner fields and replacement count. A missing required production authority option is normalized to `INVALID_AUTHORITY` rather than an ordinary usage success, so all authority failures have one stable safety result. These eleven authority rows are included in the acceptance manifest and cannot be satisfied by a product PASS line.
 
@@ -1005,17 +1191,17 @@ Fixed state and serialization protocol:
 Exact subprocess command grammar and case protocol:
 
 - Case roots are literal /private/tmp/line-backup-acceptance-case-01 through /private/tmp/line-backup-acceptance-case-25 (Rev16 §16.1/§16.7). Every recorded inputs.json contains fully expanded literal argv; the documentation names, the shorthand suffix `-NN` and the `…` ellipsis below are documentation abbreviations only and are never passed to a process as variables, and the driver rejects any argv containing an ellipsis or naming a non-existent root.
-- Prepare command uses transaction prepare with state, run-id, owner-id, --source-evidence, exact group-key, dates, count, destination, --dispatcher, --dispatch-counter and evidence-dir. Rev15 §15.1 moved the dispatch window into prepare: a prepare without the adapter pair is refused `MISSING_DISPATCHER` exit 2 with no write, and a prepare without --source-evidence is refused `MISSING_SOURCE_EVIDENCE` exit 2 with no write.
-- Resume command uses transaction resume with state, run-id, expected-revision, expected-owner-id, evidence-dir and (where a reload path is documented) --no-dispatch. Resume never dispatches in any mode: --no-dispatch is accepted and is a semantic no-op, and supplying --dispatcher, --dispatch-counter, --crash-after-dispatch or a non-default --dispatcher-outcome returns `INVALID_INPUT` exit 2 with no write, evaluated after authority validation and before any state read (Rev15 §15.1). Other test-only fault flags are accepted only for literal case roots with --test-mode.
-- Commit command uses transaction commit with state, run-id, expected-revision, expected-owner-id, verification-json and evidence-dir; it refuses with `CONFLICT_UNRESOLVED_DISPATCH` exit 4 and no write unless the loaded run carries the completed successful dispatch record (§15.1). Finalization uses transaction finalize with the same expected revision/owner, explicit outcome VERIFIED or SAFE_ABORT, verification-json and evidence-dir; --outcome VERIFIED additionally requires the §15.2 binding and otherwise refuses `BINDING_UNVERIFIED` exit 4 with no write.
-- Duplicate command uses transaction duplicate-check with exact group-key, dates, count, destination and evidence-dir. It is read-only, and it returns the shared evaluator's refusal classes (`CONFLICT_DUPLICATE_FINGERPRINT`, `AMBIGUOUS_FINGERPRINT`, `NEEDS_RECONCILIATION`, exit 4) whenever a conflicting or unresolved same-group association or intent exists.
+- Prepare command uses transaction prepare with --project-root, the canonical children `--config CASE_ROOT_NN/config/line_backup_config.json --run-log CASE_ROOT_NN/state/run_log.md --state CASE_ROOT_NN/state/backup_state.json` (Rev17 §17.1; `--state CASE_ROOT_NN/state.json` is not legal), run-id, owner-id, --source-evidence, exact group-key, dates, count, destination, --dispatcher, --dispatch-counter and evidence-dir. Rev15 §15.1 moved the dispatch window into prepare: a prepare without the adapter pair is refused `MISSING_DISPATCHER` exit 2 with no write, and a prepare without --source-evidence is refused `MISSING_SOURCE_EVIDENCE` exit 2 with no write.
+- Resume command uses transaction resume with --project-root, the same canonical children (`--config`, `--run-log`, `--state`; Rev17 §17.1), run-id, expected-revision, expected-owner-id, evidence-dir and (where a reload path is documented) --no-dispatch. Resume never dispatches in any mode: --no-dispatch is accepted and is a semantic no-op, and supplying --dispatcher, --dispatch-counter, --crash-after-dispatch or a non-default --dispatcher-outcome returns `INVALID_INPUT` exit 2 with no write, evaluated after authority validation and before any state read (Rev15 §15.1). Other test-only fault flags are accepted only for literal case roots with --test-mode.
+- Commit command uses transaction commit with --project-root, the canonical children (`--config`, `--run-log`, `--state`; Rev17 §17.1), run-id, expected-revision, expected-owner-id, verification-json and evidence-dir; it refuses with `CONFLICT_UNRESOLVED_DISPATCH` exit 4 and no write unless the loaded run carries the completed successful dispatch record (§15.1). Finalization uses transaction finalize with the same --project-root and canonical children (`--config`, `--run-log`, `--state`), expected revision/owner, explicit outcome VERIFIED or SAFE_ABORT, verification-json and evidence-dir; `--verification-json` is required for `--outcome VERIFIED` and optional for `SAFE_ABORT` (Rev17 §17.9; when supplied with SAFE_ABORT it must still be a readable JSON object and is never consulted for success); --outcome VERIFIED additionally requires the §15.2 binding and the §16.3/§17.2 evidence chain, and otherwise refuses `BINDING_UNVERIFIED` or the chain's refusal class, exit 4 with no write.
+- Duplicate command uses transaction duplicate-check with --project-root, the canonical children (`--config`, `--run-log`, `--state`; Rev17 §17.1), exact group-key, dates, count, destination and evidence-dir. It is read-only, and it returns the shared evaluator's refusal classes (`CONFLICT_DUPLICATE_FINGERPRINT`, `AMBIGUOUS_FINGERPRINT`, `NEEDS_RECONCILIATION`, exit 4) whenever a conflicting or unresolved same-group association or intent exists.
 - Status command uses status evaluate with a literal case input and output path. It is read-only.
-- The exact Case-01 prepare argv is: cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction prepare --project-root /private/tmp/line-backup-acceptance-case-01 --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id RUN-CASE-01 --owner-id WRITER-CASE-01 --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-case-01/destination --source-evidence /private/tmp/line-backup-acceptance-case-01/source-evidence.json --dispatcher /private/tmp/line-backup-acceptance-case-01/dispatcher-returned.py --dispatch-counter /private/tmp/line-backup-acceptance-case-01/dispatch-counter.jsonl --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --test-mode --dispatcher-outcome RETURNED
-- The exact Case-01 verifier argv pair is (run 1 before commit, run 2 after finalize): cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance verify-only --project-root /private/tmp/line-backup-acceptance-case-01 --config /private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --destination /private/tmp/line-backup-acceptance-case-01/destination --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence/verify-1 ; and the byte-identical argv with --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence/verify-2 for run 2.
-- The exact Case-01 commit argv is: cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction commit --project-root /private/tmp/line-backup-acceptance-case-01 --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id RUN-CASE-01 --expected-revision 2 --expected-owner-id WRITER-CASE-01 --verification-json /private/tmp/line-backup-acceptance-case-01/evidence/verify-1/result.json --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --test-mode
-- The exact Case-01 finalize argv is: cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction finalize --project-root /private/tmp/line-backup-acceptance-case-01 --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id RUN-CASE-01 --expected-revision 3 --expected-owner-id WRITER-CASE-01 --outcome VERIFIED --verification-json /private/tmp/line-backup-acceptance-case-01/evidence/verify-1/result.json --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --test-mode
-- The exact Case-01 closing argv triple is: (a) cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction duplicate-check --project-root /private/tmp/line-backup-acceptance-case-01 --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-case-01/destination --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --test-mode ; (b) the otherwise identical prepare argv with --destination /private/tmp/line-backup-acceptance-case-01/destination-2 --run-id RUN-CASE-01-B --owner-id WRITER-CASE-01-B and --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence/refusal ; (c) cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction resume --project-root /private/tmp/line-backup-acceptance-case-01 --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id RUN-CASE-01 --expected-revision 4 --expected-owner-id WRITER-CASE-01 --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --no-dispatch --test-mode
-- The exact Case-04 duplicate argv is unchanged and uses /private/tmp/line-backup-acceptance-case-04 with the same literal group key, dates, count, destination and --test-mode.
+- The exact Case-01 prepare argv is: cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction prepare --project-root /private/tmp/line-backup-acceptance-case-01 --config /private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-case-01/state/run_log.md --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id RUN-CASE-01 --owner-id WRITER-CASE-01 --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-case-01/destination --source-evidence /private/tmp/line-backup-acceptance-case-01/source-evidence.json --dispatcher /private/tmp/line-backup-acceptance-case-01/dispatcher-returned.py --dispatch-counter /private/tmp/line-backup-acceptance-case-01/dispatch-counter.jsonl --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --test-mode --dispatcher-outcome RETURNED
+- The exact Case-01 verifier argv pair is (run 1 before commit, run 2 after finalize): cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance verify-only --project-root /private/tmp/line-backup-acceptance-case-01 --config /private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --destination /private/tmp/line-backup-acceptance-case-01/destination --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --run-id RUN-CASE-01 --test-mode --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence/verify-1 ; and the byte-identical argv with --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence/verify-2 for run 2 (Rev17 §17.1/§17.2: `--test-mode` is required and `--run-id` is what makes the result consumable).
+- The exact Case-01 commit argv is: cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction commit --project-root /private/tmp/line-backup-acceptance-case-01 --config /private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-case-01/state/run_log.md --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id RUN-CASE-01 --expected-revision 2 --expected-owner-id WRITER-CASE-01 --verification-json /private/tmp/line-backup-acceptance-case-01/evidence/verify-1/result.json --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --test-mode
+- The exact Case-01 finalize argv is: cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction finalize --project-root /private/tmp/line-backup-acceptance-case-01 --config /private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-case-01/state/run_log.md --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id RUN-CASE-01 --expected-revision 3 --expected-owner-id WRITER-CASE-01 --outcome VERIFIED --verification-json /private/tmp/line-backup-acceptance-case-01/evidence/verify-1/result.json --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --test-mode
+- The exact Case-01 closing argv triple is: (a) cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction duplicate-check --project-root /private/tmp/line-backup-acceptance-case-01 --config /private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-case-01/state/run_log.md --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --group-key 'line:jp.naver.line.mac:旻謙允禎成長日記' --start-date 2024-05-13 --end-date 2024-05-17 --expected-images 57 --destination /private/tmp/line-backup-acceptance-case-01/destination --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --test-mode ; (b) the otherwise identical prepare argv (therefore with the same canonical children) with --destination /private/tmp/line-backup-acceptance-case-01/destination-2 --run-id RUN-CASE-01-B --owner-id WRITER-CASE-01-B and --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence/refusal ; (c) cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 -m line_backup_acceptance transaction resume --project-root /private/tmp/line-backup-acceptance-case-01 --config /private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json --run-log /private/tmp/line-backup-acceptance-case-01/state/run_log.md --state /private/tmp/line-backup-acceptance-case-01/state/backup_state.json --run-id RUN-CASE-01 --expected-revision 4 --expected-owner-id WRITER-CASE-01 --evidence-dir /private/tmp/line-backup-acceptance-case-01/evidence --no-dispatch --test-mode
+- The exact Case-04 duplicate argv is unchanged and uses /private/tmp/line-backup-acceptance-case-04 with the same literal group key, dates, count, destination, --test-mode and that root's canonical `--config`/`--run-log`/`--state` children (Rev17 §17.1).
 - The exact Case-07 prepare argv pair is the Case-01 prepare argv with --run-id/--owner-id RUN-CASE-07-A/WRITER-CASE-07-A and RUN-CASE-07-B/WRITER-CASE-07-B, --evidence-dir evidence-a/evidence-b, --pause-at ACQUIRE_BEFORE_LOCK and --barrier-file /private/tmp/line-backup-acceptance-case-07/acquire-ready.barrier; both include --source-evidence and the adapter pair, and the dispatcher must never run for the loser.
 - Cases 02/03 inject the fault on prepare (--crash-after-dispatch or --dispatcher-outcome UNKNOWN) and then use one fresh literal resume --no-dispatch as the reconciliation step. Case 05 uses barrier /private/tmp/line-backup-acceptance-case-05/commit-ready.barrier and releases it once. Case 07 uses only the single barrier /private/tmp/line-backup-acceptance-case-07/acquire-ready.barrier and has no fixed scheduler-selected winner.
 - Case 08 uses commit --test-mode --storage-fault WRITE_BEFORE_REPLACE and has exact exit 1. Case 09 uses finalize --test-mode --storage-fault READBACK_UNCERTAIN_AFTER_REPLACE (with the §15.2 binding and a product-verifier JSON), exact exit 1, then a fresh resume --no-dispatch carrying no adapter options.
@@ -1038,27 +1224,27 @@ Deterministic driver and literal case protocol:
   - `cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/acceptance_case_driver.py --case-id 10 --case-root /private/tmp/line-backup-acceptance-case-10 --pre-state /private/tmp/line-backup-acceptance-case-10/pre-state.json --state /private/tmp/line-backup-acceptance-case-10/state/backup_state.json --post-state /private/tmp/line-backup-acceptance-case-10/post-state.json --counter /private/tmp/line-backup-acceptance-case-10/counter.jsonl --result /private/tmp/line-backup-acceptance-case-10/result.json --manifest /private/tmp/line-backup-acceptance-case-10/manifest.json --stdout /private/tmp/line-backup-acceptance-case-10/stdout.log --stderr /private/tmp/line-backup-acceptance-case-10/stderr.log --exit-code /private/tmp/line-backup-acceptance-case-10/exit-code --evidence-dir /private/tmp/line-backup-acceptance-case-10/evidence`
   - `cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/acceptance_case_driver.py --case-id 11 --case-root /private/tmp/line-backup-acceptance-case-11 --pre-state /private/tmp/line-backup-acceptance-case-11/pre-state.json --state /private/tmp/line-backup-acceptance-case-11/state/backup_state.json --post-state /private/tmp/line-backup-acceptance-case-11/post-state.json --counter /private/tmp/line-backup-acceptance-case-11/counter.jsonl --result /private/tmp/line-backup-acceptance-case-11/result.json --manifest /private/tmp/line-backup-acceptance-case-11/manifest.json --stdout /private/tmp/line-backup-acceptance-case-11/stdout.log --stderr /private/tmp/line-backup-acceptance-case-11/stderr.log --exit-code /private/tmp/line-backup-acceptance-case-11/exit-code --evidence-dir /private/tmp/line-backup-acceptance-case-11/evidence`
   - `cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && PYTHONPATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src /usr/bin/python3 /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/acceptance_case_driver.py --case-id 12 --case-root /private/tmp/line-backup-acceptance-case-12 --pre-state /private/tmp/line-backup-acceptance-case-12/pre-state.json --state /private/tmp/line-backup-acceptance-case-12/state/backup_state.json --post-state /private/tmp/line-backup-acceptance-case-12/post-state.json --counter /private/tmp/line-backup-acceptance-case-12/counter.jsonl --result /private/tmp/line-backup-acceptance-case-12/result.json --manifest /private/tmp/line-backup-acceptance-case-12/manifest.json --stdout /private/tmp/line-backup-acceptance-case-12/stdout.log --stderr /private/tmp/line-backup-acceptance-case-12/stderr.log --exit-code /private/tmp/line-backup-acceptance-case-12/exit-code --evidence-dir /private/tmp/line-backup-acceptance-case-12/evidence`
-- The driver has one literal product argv array per process. Cases 01–04 and 06, 08–10, 11–12 use the exact CLI grammar above with the literal `/private/tmp/line-backup-acceptance-case-NN/...` paths, and Cases 13–19 and 20–25 use the byte-identical driver argv shape with `--case-id 13`…`--case-id 25` and every `-01` path suffix replaced by their own literal suffix (the recorded inputs.json always carries the fully expanded absolute argv; no placeholder reaches a process); Cases 05 and 07 launch the two literal argv arrays specified by the case protocol. No case uses a symbolic `CASE_ROOT`, `EVIDENCE_DIR`, or a dynamically generated command string.
+- The driver has one literal product argv array per process. Cases 01–04 and 06, 08–10, 11–12 use the exact CLI grammar above with the literal `/private/tmp/line-backup-acceptance-case-NN/...` paths, and Cases 13–19 and 20–25 use the byte-identical driver argv shape with `--case-id 13`…`--case-id 25` and every `-01` path suffix replaced by their own literal suffix (the recorded inputs.json always carries the fully expanded absolute argv; no placeholder reaches a process); Cases 05 and 07 launch the two literal argv arrays specified by the case protocol. No case uses a symbolic `CASE_ROOT`, `EVIDENCE_DIR`, or a dynamically generated command string. Every one of those literals and construction rules carries Rev17 §17.1's canonical `--config`/`--run-log`/`--state` children plus `--test-mode`; a literal or rule that omits them is invalid.
 
 Exact process-specific protocol, expected outcome, and next-step decision:
 
 - Case 01 runs the literal prepare / verify run 1 / commit / finalize / verify run 2 / duplicate-check / refused different-destination prepare / terminal resume argv already shown. Expected: prepare `PREPARED` exit 0 with exactly one counter line and revision 0→1→2; verify run 1 records `filesystem_status=PASS` and `recognized_images=57` and must **not** report an overall PASS (no association exists yet) while its JSON is the verifier result commit/finalize consume; commit `COMMITTED_VERIFICATION` exit 0 revision 2→3; finalize `FINALIZED` exit 0 revision 3→4 with the registry entry carrying the binding reference, `active_writer_id=null`, `context_lock=null`; verify run 2 `filesystem PASS / registry PASS / source CONFIRMED / state EXACT / overall PASS`, exit 0; duplicate-check `SKIP_DUPLICATE` exit 0; the different-destination prepare `CONFLICT_DUPLICATE_FINGERPRINT` exit 4 with unchanged state bytes and no second counter line; the terminal resume `SKIP_TERMINAL` exit 0 with no write. Any mismatch stops the wave as a transaction regression.
-- Case 02 starts from a fresh schema-valid revision-0 pre-state whose destination holds the 57-image fixture, the driver-authored test-mode source-evidence record and the binding fixture artifact (hashed by the driver before execution). It runs the Case-01 prepare argv with `dispatcher-crash-after-side-effect.py` and `--crash-after-dispatch`: the intent commit is durable at revision 1 (`intent_state=INTENT_COMMITTED`, `dispatch_state=NOT_ATTEMPTED`, `intent.trigger_outcome=NOT_APPLICABLE`, `intent.dispatch_outcome=NOT_ATTEMPTED`, `save_all_retry_allowed=false`), the adapter appends exactly one counter line and dies, and prepare returns `DISPATCHER_CRASH_AFTER_SIDE_EFFECT` exit 1 at revision 1. A fresh `resume --no-dispatch` (no adapter options) returns `RECOVERY_NO_DISPATCH` exit 0 with exactly one guarded replacement (revision 1→2), the barrier fields of §15.1 row 4, one schema-valid `reconciliations[]` entry and one checkpoint-shaped `events[]` entry, `reconciliation_state=BARRIER_COMMITTED`, `state_replaced=true`. A second, byte-identical resume is idempotent: `RECOVERY_NO_DISPATCH` exit 0, no write, revision 2, `reconciliation_state=ALREADY_RECONCILED`. `commit --expected-revision 2` then refuses `CONFLICT_UNRESOLVED_DISPATCH` exit 4 with no write, and `finalize --outcome SAFE_ABORT --expected-revision 2` exits 0 at revision 3 with no registry addition and the unresolved barrier preserved. Otherwise recovery acceptance stops.
-- Case 03 starts from the same revision-0 precondition and runs prepare with `dispatcher-unknown.py` and `--dispatcher-outcome UNKNOWN`: the pre-dispatch barrier is committed first (revision 1→2 with the row-4 fields), the adapter appends exactly one counter line, and prepare returns `DISPATCH_UNKNOWN` exit 1 at revision 2. A fresh `resume --no-dispatch` returns `RECOVERY_NO_DISPATCH` exit 0 with `reconciliation_state=ALREADY_RECONCILED` and no write, and the commit is refused `CONFLICT_UNRESOLVED_DISPATCH`. No retry interpretation is allowed.
+- Case 02 starts from a fresh schema-valid revision-0 pre-state whose destination holds the 57-image fixture, the driver-authored test-mode source-evidence record and the binding fixture artifact (hashed by the driver before execution). It runs the Case-01 prepare argv with `dispatcher-crash-after-side-effect.py` and `--crash-after-dispatch`: the intent commit is durable at revision 1 (`intent_state=INTENT_COMMITTED`, `dispatch_state=NOT_ATTEMPTED`, `intent.trigger_outcome=NOT_APPLICABLE`, `intent.dispatch_outcome=NOT_ATTEMPTED`, `save_all_retry_allowed=false`), the adapter appends exactly one counter line and dies, and prepare returns `DISPATCHER_CRASH_AFTER_SIDE_EFFECT` exit 1 at revision 1. A fresh `resume --no-dispatch` (no adapter options) returns `RECOVERY_NO_DISPATCH` exit 0 with exactly one guarded replacement (revision 1→2), the barrier fields of §15.1 row 4, one schema-valid `reconciliations[]` entry and one checkpoint-shaped `events[]` entry, `reconciliation_state=BARRIER_COMMITTED`, `state_replaced=true`, and an `evidence` string asserted to be exactly `reconcile:reconcile.json:<sha256 of reconcile.json>` per Rev17 §17.9. A second, byte-identical resume is idempotent: `RECOVERY_NO_DISPATCH` exit 0, no write, revision 2, `reconciliation_state=ALREADY_RECONCILED`. `commit --expected-revision 2` then refuses `CONFLICT_UNRESOLVED_DISPATCH` exit 4 with no write, and `finalize --outcome SAFE_ABORT --expected-revision 2` exits 0 at revision 3 with no registry addition and the unresolved barrier preserved. Otherwise recovery acceptance stops.
+- Case 03 starts from the same revision-0 precondition and runs prepare with `dispatcher-unknown.py` and `--dispatcher-outcome UNKNOWN`: the pre-dispatch barrier is committed first (revision 1→2 with the row-4 fields), the adapter appends exactly one counter line, and prepare returns `DISPATCH_UNKNOWN` exit 1 at revision 2. A fresh `resume --no-dispatch` returns `RECOVERY_NO_DISPATCH` exit 0 with `reconciliation_state=ALREADY_RECONCILED` and no write (no new reconcile artifact is written, so the persisted reference is unchanged), and the commit is refused `CONFLICT_UNRESOLVED_DISPATCH`. No retry interpretation is allowed.
 - Case 04 runs the exact duplicate-check argv already shown, then the terminal reconciliation resume without adapter options: `SKIP_DUPLICATE` then `SKIP_TERMINAL`, both exit 0, counter line count 0, no write. A separate row runs the same resume **with** `--dispatcher`/`--dispatch-counter` and requires `INVALID_INPUT` exit 2 with no write; the authority rows that fail authority validation still produce `INVALID_AUTHORITY` with their JSON error artifact, because authority is checked first.
 - Case 05 launches two literal `transaction commit` processes at expected-revision 1 with the paused barrier, releases it once, and requires exactly one winner plus one `CONFLICT_STALE_REVISION`, one replacement only; the pre-state run must carry the completed dispatch record so the §15.1 commit precondition is satisfied.
 - Case 06 runs commit with the wrong owner id: exact `CONFLICT_OWNER_RUN`, exit 4, no replacement.
-- Case 07 launches the two literal prepare argv arrays above with shared state and one barrier, executes `/usr/bin/touch /private/tmp/line-backup-acceptance-case-07/acquire-ready.barrier` once, and requires exactly one `PREPARED` exit 0 and exactly one `CONFLICT_ACTIVE_RUN` exit 4, with one replacement, exactly one counter line overall (the loser never dispatches) and no leaked lock.
+- Case 07 launches the two literal prepare argv arrays above with shared state and one barrier, executes `/usr/bin/touch /private/tmp/line-backup-acceptance-case-07/acquire-ready.barrier` once, and requires exactly one `PREPARED` exit 0 and exactly one `CONFLICT_ACTIVE_RUN` exit 4, with exactly two guarded replacements by the winner and zero by the loser, exactly one counter line overall (the loser never dispatches) and no leaked lock.
 - Case 08 runs commit with `--storage-fault WRITE_BEFORE_REPLACE`: exact exit 1, unchanged state bytes/revision and no terminal evidence.
 - Case 09 runs finalize with `--storage-fault READBACK_UNCERTAIN_AFTER_REPLACE` (the pre-state carries the completed dispatch record and the §15.2 binding, and the verification JSON is a real product verifier result): exit 1 with `READBACK_UNCERTAIN`, the independently read state is terminal VERIFIED revision 3 with released owner/context, the fresh `resume --no-dispatch` returns `SKIP_TERMINAL` exit 0 with no adapter options and no replacement, and the counter remains 0.
 - Case 10A runs the literal finalize VERIFIED argv and requires exit 0 with a replacement carrying verification, registry (with the binding reference), `workflow_outcome=VERIFIED`, `active_writer_id=null` and `context_lock=null`. Case 10B runs finalize SAFE_ABORT against a separate isolated state and requires revision 3, `workflow_outcome=SAFE_ABORT`, released ownership, preserved original intent/dispatch/trigger/dispatch-outcome values and `save_all_retry_allowed=false`, no registry addition, and terminal evidence recording the unresolved barrier; a VERIFIED registry entry or a cleared unresolved intent is a regression.
 - Cases 11 and 12 run status evaluate and duplicate-check only: legacy-limited and contradictory results as their fixtures specify, with the shared evaluator's refusal class where a same-fingerprint association exists (never the destination-scoped `NOT_DUPLICATE` bypass), no normalization and no dispatch.
 - Cases 13–19 execute the literal prepare/commit/finalize argv described in the grammar block, and their oracles are: 13/14 exit 2 with the exact class and zero state/counter/lock delta; 15–17 exit 4 with the exact class, unchanged state bytes and zero counter lines; 18 refusal exit 4 then `PREPARED` exit 0 with exactly one counter line for the released control; 19 `DISPATCH_UNKNOWN` exit 1 at revision 2, `CONFLICT_UNRESOLVED_DISPATCH` exit 4 no-write, then SAFE_ABORT exit 0 revision 3 with no registry entry. Every one of these rows is an independent oracle computed before product output; a product PASS line is never an oracle.
-- A case is accepted only when its literal process exit(s), independently computed post-state/counter/hash oracle and manifest read-back match. Case 01/04/06/08/09/10/11/12 and 13–19 failures are product/test regressions; Case 02/03/05/07 failures stop recovery/concurrency acceptance and prohibit production use. A pre-existing environment failure is REQUIRED_VERIFICATION=INCOMPLETE with baseline evidence, never product PASS.
+- A case is accepted only when its literal process exit(s), independently computed post-state/counter/hash oracle and manifest read-back match. Case 01/04/06/08/09/10/11/12, 13–19, 21, 22, 24 and 25 failures are product/test regressions; Case 02/03/05/07, 20 and 23 failures stop recovery/concurrency/duplicate-safety acceptance and prohibit production use (Rev17 §17.7). A pre-existing environment failure is REQUIRED_VERIFICATION=INCOMPLETE with baseline evidence, never product PASS.
 
 - Before execution, independently hash case.json/input-state.json and record byte length. After every process, independently hash state bytes, counter lines, stdout, stderr, exit, result and manifest.
 - The expected revision delta, counter line count, intent/dispatch/trigger values, registry, owner release, terminal outcome and retry permission are computed from the case specification before reading product output.
-- Counter oracles: case 01 exactly 1 line total (zero on the closing duplicate/refusal/resume steps); case 02 exactly 1; case 03 exactly 1 with UNKNOWN/retry=false; case 04 and 09 exactly 0; cases 05/07 exactly one winner/one conflict with at most one counter line per prepared winner (07: exactly one overall); case 08 no replacement; cases 13–18 zero counter lines (18's positive control exactly one); case 19 exactly 1; case 10A one guarded VERIFIED replacement and case 10B one guarded SAFE_ABORT replacement preserving the unresolved intent barrier. Any deviation is TASK_REGRESSION.
+- Counter oracles: case 01 exactly 1 line total (zero on the closing duplicate/refusal/resume steps); case 02 exactly 1; case 03 exactly 1 with UNKNOWN/retry=false; case 04 and 09 exactly 0; cases 05/07 exactly one winner/one conflict with at most one counter line per prepared winner (07: exactly one overall); case 08 no replacement; cases 13–18 zero counter lines (18's positive control exactly one); case 19 exactly 1; case 10A one guarded VERIFIED replacement and case 10B one guarded SAFE_ABORT replacement preserving the unresolved intent barrier. cases 20 exactly one line before the kill and still exactly one after recovery; 21 exactly 0; 22 unchanged by all six finalize refusals (the setup's single dispatch line remains the only line); 23a exactly 0, 23b exactly 0, 23c exactly 1; 24, 25a and 25b exactly 0 (verify-only never dispatches) — Rev17 §17.7. Any deviation is TASK_REGRESSION.
 - Every case retains case.json, inputs.json, pre-state.json/hash, post-state.json/hash, counter.jsonl/hash, stdout.log, stderr.log, exit-code, result.json and manifest.json. A product PASS line is never an oracle.
 
 
@@ -1130,7 +1316,7 @@ The named baseline subject is `AUTHORITATIVE_INPUT_AND_EXISTING_DESTINATION_INTE
 
 `cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && LC_ALL=C PATH=/usr/bin:/bin PYTHONHASHSEED=0 /usr/bin/python3 /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/authority_baseline.py --config /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/config/line_backup_config.json --state /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json --run-log /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/run_log.md --destination /Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57 --output /private/tmp/line-backup-acceptance-baseline/current.json`
 
-The script is read-only and emits a canonical JSON snapshot containing every named input's byte length/SHA-256 plus the structured destination inventory, per-file byte length/SHA-256/mtime/type and aggregate count/bytes. The driver copies that exact `current.json` byte-for-byte to `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-baseline/attempt-01/baseline-pre.json` and records its SHA-256/byte length, command argv, cwd, interpreter version and normalized environment fingerprint before product edits. After implementation it reruns the same literal command and environment with the same fixed output path, then independently compares `baseline-pre.json` with `/private/tmp/line-backup-acceptance-baseline/current.json`; only output-file contents are allowed to differ in the command capture. A missing/unreadable/mismatched pre-artifact routes `REQUIRED_VERIFICATION=INCOMPLETE`, blocker `REQUIRED_VERIFICATION/BLOCKED/INPUT_UNAVAILABLE`, next action `restore or recapture the exact pre-change baseline before acceptance`, and never PASS.
+The script is read-only and emits a canonical JSON snapshot containing every named input's byte length/SHA-256 plus the structured destination inventory, per-file byte length/SHA-256/mtime/type and aggregate count/bytes. The driver copies that exact `current.json` byte-for-byte to `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-baseline/attempt-02/baseline-pre.json` and records its SHA-256/byte length, command argv, cwd, interpreter version and normalized environment fingerprint before product edits. After implementation it reruns the same literal command and environment with the same fixed output path, then independently compares `baseline-pre.json` with `/private/tmp/line-backup-acceptance-baseline/current.json`; only output-file contents are allowed to differ in the command capture. A missing/unreadable/mismatched pre-artifact routes `REQUIRED_VERIFICATION=INCOMPLETE`, blocker `REQUIRED_VERIFICATION/BLOCKED/INPUT_UNAVAILABLE`, next action `restore or recapture the exact pre-change baseline before acceptance`, and never PASS.
 
 Executable status fixtures invoke status evaluate with a literal input JSON and compare all six statuses, scoped blocker, check metadata, baseline/failure class, waiver fields and closure. Required cases:
 
@@ -1159,7 +1345,7 @@ Every status row above is executable. The exact driver command is:
 
 `cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && LC_ALL=C PATH=/usr/bin:/bin PYTHONHASHSEED=0 /usr/bin/python3 /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/status_fixture_driver.py --manifest /private/tmp/line-backup-acceptance-status/fixture-manifest.json --evidence-dir /private/tmp/line-backup-acceptance-status/evidence --summary /private/tmp/line-backup-acceptance-status/summary.json`
 
-The literal manifest enumerates the 18 rows by ID, with one absolute input/output/evidence path per row under `/private/tmp/line-backup-acceptance-status/`: `candidate`, `implementation-blocked`, `replan-required`, `core-not-run`, `core-blocked`, `core-fail`, `baseline-unchanged`, `canonical-preexisting-debt`, `baseline-unavailable`, `all-required-waived`, `retention-waived`, `stage05-blocked`, `acceptance-product-defect`, `legacy-no-source`, `contradictory-axes`, `core-not-required-no-rationale`, `core-not-required-rationalized`, and `done`. For each ID, the manifest contains the full literal `status evaluate --input /private/tmp/line-backup-acceptance-status/<id>.input.json --output /private/tmp/line-backup-acceptance-status/<id>.output.json` argv, expected exit 0, all six expected statuses, scoped blocker fields, `CHECK_ID` metadata, baseline fields and waiver fields. The driver invokes that real status CLI in a subprocess, independently compares every field, and records each subprocess stdout/stderr/exit plus input/output/manifest SHA-256 and byte length. Per Rev15 §15.4 (F5 oracle), every row additionally asserts the emitted `evidence_basis == "scenario_table_non_acceptance"`; a row whose output omits or changes that field fails the driver, and no Stage-05 acceptance decision may cite status output as evidence. It never writes a product transition or fills expected values after reading output.
+The literal manifest enumerates the 19 rows by ID, with one absolute input/output/evidence path per row under `/private/tmp/line-backup-acceptance-status/`: `candidate`, `implementation-blocked`, `replan-required`, `core-not-run`, `core-blocked`, `core-fail`, `baseline-unchanged`, `baseline-worsened`, `canonical-preexisting-debt`, `baseline-unavailable`, `all-required-waived`, `retention-waived`, `stage05-blocked`, `acceptance-product-defect`, `legacy-no-source`, `contradictory-axes`, `core-not-required-no-rationale`, `core-not-required-rationalized`, and `done`. The nineteenth row `baseline-worsened` (Rev17 §17.6) uses /private/tmp/line-backup-acceptance-status/baseline-worsened.input.json and /private/tmp/line-backup-acceptance-status/baseline-worsened.output.json and expects PRIMARY `ACHIEVED`, IMPLEMENTATION `COMPLETE`, CORE `PASS`, REQUIRED_VERIFICATION `FAIL`, INDEPENDENT `PENDING`, CLOSURE `FIX_REQUIRED`, blocker `BASELINE_REGRESSION_DELTA/FAIL/TASK_REGRESSION` with `baseline_delta=WORSENED`. For each ID, the manifest contains the full literal `status evaluate --input /private/tmp/line-backup-acceptance-status/<id>.input.json --output /private/tmp/line-backup-acceptance-status/<id>.output.json` argv, expected exit 0, all six expected statuses, scoped blocker fields, `CHECK_ID` metadata, baseline fields and waiver fields. The driver invokes that real status CLI in a subprocess, independently compares every field, and records each subprocess stdout/stderr/exit plus input/output/manifest SHA-256 and byte length. Per Rev15 §15.4 (F5 oracle), every row additionally asserts the emitted `evidence_basis == "scenario_table_non_acceptance"`; a row whose output omits or changes that field fails the driver, and no Stage-05 acceptance decision may cite status output as evidence. It never writes a product transition or fills expected values after reading output.
 
 The baseline-unchanged fixture includes `BASELINE_REGRESSION_DELTA` with `baseline_artifact=/private/tmp/line-backup-acceptance-status/baseline-unchanged.baseline.json`, its literal command/cwd/interpreter/environment fingerprint, `baseline_delta=UNCHANGED`, and the unchanged pre-existing signature disclosed. The baseline-unavailable fixture points to `/private/tmp/line-backup-acceptance-status/missing-baseline.json` and must produce `REQUIRED_VERIFICATION=INCOMPLETE` with the scoped unavailable-input blocker. The canonical-preexisting-debt fixture preserves item-level `DOCUMENTATION_RETENTION_HEALTH CHECK_RESULT=FAIL`, class `PRE_EXISTING_REPOSITORY_FAILURE`, aggregate `INCOMPLETE`, and closure `PENDING_REQUIRED_VERIFICATION`. The retention-waived fixture preserves that original FAIL and adds `WAIVED_BY`, `WAIVER_SCOPE`, `RATIONALE`, `EVIDENCE`, `RESIDUAL_RISK`, `APPROVED_AT`, and `REVIEW_OR_EXPIRY_TRIGGER`; the independent oracle checks that the waiver never rewrites the original result. The rationalized CORE-NOT_REQUIRED fixture contains a nonempty Plan rationale in its input, while the no-rationale fixture must route REPLAN_REQUIRED.
 
