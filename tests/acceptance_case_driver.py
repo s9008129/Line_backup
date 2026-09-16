@@ -1145,6 +1145,17 @@ def case_22(case: Case, paths: dict) -> None:
         case.check(f"{label}.registry0", 0, len(state["verified_albums"]))
         refusal = sorted(p.name for p in (paths["evidence"] / f"{label}-refusal").glob("*.json"))
         case.check(f"{label}.refusal-artifact", True, "result.json" in refusal)
+        if label == "22f":
+            # Keep the raw tampered bytes under tamper-evidence/ and restore result.json: the chain
+            # manifest describes the untampered bytes, and every manifest copied into a durable
+            # evidence tree must stay independently readable by the read-back verifier.
+            tamper_dir = evidence / "tamper-evidence"
+            tamper_dir.mkdir(exist_ok=True)
+            (tamper_dir / "result.json.appended-space").write_bytes(blob + b" ")
+            (evidence / "result.json").write_bytes(blob)
+            case.note(f"22f tamper restored after the refusal check: original {len(blob)} bytes "
+                      f"sha256 {hashlib.sha256(blob).hexdigest()}; tampered {len(blob) + 1} bytes "
+                      f"sha256 {hashlib.sha256(blob + b' ').hexdigest()}")
         subcases[label] = True
     case.check("subcases", 6, len(subcases))
 

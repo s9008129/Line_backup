@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Execute the preserved legacy verifier against isolated 56/58-image inputs."""
+"""Execute the preserved legacy verifier against isolated 56/58-image inputs.
+
+Ownership protocol (Rev15 §15.5): this driver creates only its own literal root
+`/private/tmp/line-backup-legacy-false-positive`, writes the task ownership marker before any
+fixture content, never removes a root that lacks its marker, removes nothing by default, and
+supports `--clean-owned` for an explicit removal of its own marker-carrying root."""
 
 from __future__ import annotations
 
@@ -7,12 +12,15 @@ import argparse
 import base64
 import json
 import os
-import shutil
 import subprocess
+import sys
 from pathlib import Path
 
-
 WORK = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(WORK / "tests" / "automation_verification"))
+import harness as H  # noqa: E402
+
+DRIVER_ID = "legacy-false-positive-repro"
 LEGACY = WORK / "evidence/20260915-verify-only-57/verify-only.sh"
 BASE = Path("/private/tmp/line-backup-legacy-false-positive")
 GROUP = "line:jp.naver.line.mac:旻謙允楨成長日記"
@@ -26,8 +34,8 @@ def write_json(path: Path, value) -> None:
 
 def run_case(count: int) -> dict:
     root = BASE / str(count)
-    if root.exists():
-        shutil.rmtree(root)
+    H.ensure_owned_root(root, DRIVER_ID)
+    H.reset_owned_content(root)
     destination = root / "destination"
     (root / "config").mkdir(parents=True)
     (root / "state").mkdir()
@@ -66,18 +74,23 @@ def run_case(count: int) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--summary", required=True)
+    parser.add_argument("--clean-owned", action="store_true",
+                        help="explicitly remove the marker-carrying /private/tmp root after the run")
     ns = parser.parse_args()
-    if BASE.exists():
-        shutil.rmtree(BASE)
-    BASE.mkdir(parents=True)
+    H.ensure_owned_root(BASE, DRIVER_ID)
+    H.reset_owned_content(BASE)
     rows = [run_case(count) for count in (56, 58)]
     # The independent oracle is the fixture's actual filesystem count, not
     # the legacy output.  A reproduction succeeds only if the old process
     # accepts both wrong counts while the counts remain independently known.
     match = all(row["actual_image_files"] == row["count"] and row["legacy_claimed_pass"] for row in rows)
-    summary = {"schema_version": 1, "legacy_script": str(LEGACY), "rows": rows,
+    cleanup = None
+    if ns.clean_owned:
+        cleanup = H.clean_owned_root(BASE, DRIVER_ID)
+    summary = {"schema_version": 1, "driver_id": DRIVER_ID, "task_id": H.TASK_ID,
+               "legacy_script": str(LEGACY), "rows": rows,
                "independent_oracle": "old verifier accepted exact wrong counts 56 and 58",
-               "reproduction_match": match}
+               "reproduction_match": match, "cleanup": cleanup}
     Path(ns.summary).parent.mkdir(parents=True, exist_ok=True)
     Path(ns.summary).write_text(json.dumps(summary, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"reproduction_match": match, "counts": [r["actual_image_files"] for r in rows]}, sort_keys=True))
