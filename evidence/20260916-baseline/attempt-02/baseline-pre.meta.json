@@ -1,0 +1,35 @@
+{
+  "baseline_subject": "AUTHORITATIVE_INPUT_AND_EXISTING_DESTINATION_INTEGRITY",
+  "task_id": "T20260916-0102-01-line-backup-acceptance",
+  "plan_revision": 18,
+  "handoff_sha256": "9cf01d4eedc006cfff2217e3b610c8166cfb05c04919512e74a19f4aa20946c6",
+  "artifact_path": "evidence/20260916-baseline/attempt-02/baseline-pre.json",
+  "artifact_sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5",
+  "artifact_bytes": 19005,
+  "argv": [
+    "/Applications/Xcode.app/Contents/Developer/usr/bin/python3",
+    "tests/authority_baseline.py",
+    "--config",
+    "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/config/line_backup_config.json",
+    "--state",
+    "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json",
+    "--run-log",
+    "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/run_log.md",
+    "--destination",
+    "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+    "--output",
+    "/private/tmp/line-backup-acceptance-baseline/current.json"
+  ],
+  "shell_command": "cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && LC_ALL=C PATH=/usr/bin:/bin PYTHONHASHSEED=0 /usr/bin/python3 /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/authority_baseline.py --config .../config/line_backup_config.json --state .../state/backup_state.json --run-log .../state/run_log.md --destination .../album-2024-05-13_to_2024-05-17_57 --output /private/tmp/line-backup-acceptance-baseline/current.json",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "interpreter": "/usr/bin/python3",
+  "interpreter_version": "3.9.6 (default, May 22 2026, 11:13:45) \n[Clang 21.0.0 (clang-2100.1.1.101)]",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "env_fingerprint": {
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONHASHSEED": "0"
+  },
+  "captured_at_local": "2026-09-17",
+  "note": "Pre-change baseline copied byte-for-byte from /private/tmp/line-backup-acceptance-baseline/current.json before any product edit (Stage 04 FIRST_ACTION)."
+}
