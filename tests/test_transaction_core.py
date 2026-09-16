@@ -1,6 +1,14 @@
+"""Ownership-protocol-compliant core probes for the transaction authority boundary.
+
+Rev15 §15.5: the literal /private/tmp/line-backup-acceptance-case-01..25 roots are owned by
+tests/acceptance_case_driver.py (its ownership marker is authoritative).  This unit test
+therefore creates only its own private temp root, removes nothing shared, and asserts the
+authority boundary itself: a refused authority preflight performs no state read and leaves no
+lock file behind.  The happy-path revision protocol is covered end-to-end by the acceptance
+case driver (Case 01 and the rest of the 25-case matrix) through the real CLI.
+"""
 import json
 import os
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -8,42 +16,53 @@ import unittest
 from pathlib import Path
 
 
+WORKSPACE = Path(__file__).resolve().parents[1]
 GROUP = "line:jp.naver.line.mac:旻謙允禎成長日記"
 
 
 class TransactionCoreTests(unittest.TestCase):
-    def setUp(self):
-        self.tmp = Path("/private/tmp/line-backup-acceptance-case-12")
-        if self.tmp.exists(): shutil.rmtree(self.tmp)
-        self.root = self.tmp
-        self.root.mkdir()
-        self.state = {"schema_version": 2, "revision": 0, "current_run_id": None, "active_writer_id": None,
-                      "context_lock": None, "runs": [], "verified_albums": []}
-        (self.root / "state.json").write_text(json.dumps(self.state), encoding="utf-8")
-        (self.root / "destination").mkdir()
-        (self.root / "evidence").mkdir()
-
-    def tearDown(self):
-        if self.tmp.exists(): shutil.rmtree(self.tmp)
-
     def run_cli(self, *args):
-        return subprocess.run([sys.executable, "-m", "line_backup_acceptance", *args], cwd=Path(__file__).parents[1], env={**os.environ, "PYTHONPATH": str(Path(__file__).parents[1] / "src")}, capture_output=True, text=True)
+        return subprocess.run([sys.executable, "-m", "line_backup_acceptance", *args],
+                              cwd=WORKSPACE,
+                              env={**os.environ, "PYTHONPATH": str(WORKSPACE / "src")},
+                              capture_output=True, text=True)
 
-    def test_prepare_creates_one_owned_revision(self):
-        p = self.run_cli("transaction", "prepare", "--project-root", str(self.root), "--state", str(self.root / "state.json"), "--evidence-dir", str(self.root / "evidence"), "--test-mode", "--run-id", "RUN", "--owner-id", "OWNER", "--group-key", GROUP, "--start-date", "2024-05-13", "--end-date", "2024-05-17", "--expected-images", "57", "--destination", str(self.root / "destination"))
-        self.assertEqual(p.returncode, 0, p.stderr)
-        state = json.loads((self.root / "state.json").read_text())
-        self.assertEqual(state["revision"], 1)
-        self.assertEqual(state["active_writer_id"], "OWNER")
-        self.assertFalse(state["runs"][0]["intent"]["save_all_retry_allowed"])
+    def test_test_mode_refuses_non_literal_root_without_state_read(self):
+        with tempfile.TemporaryDirectory(prefix="line-backup-core-") as tmp:
+            root = Path(tmp)
+            state = root / "state" / "backup_state.json"
+            state.parent.mkdir(parents=True)
+            state.write_text(json.dumps({"schema_version": 2, "revision": 0, "current_run_id": None,
+                                         "active_writer_id": None, "context_lock": None,
+                                         "runs": [], "verified_albums": []}), encoding="utf-8")
+            before = state.read_bytes()
+            evidence = root / "evidence"
+            p = self.run_cli("transaction", "prepare", "--project-root", str(root), "--state", str(state),
+                             "--evidence-dir", str(evidence), "--test-mode", "--run-id", "RUN",
+                             "--owner-id", "OWNER", "--group-key", GROUP, "--start-date", "2024-05-13",
+                             "--end-date", "2024-05-17", "--expected-images", "57",
+                             "--destination", str(root / "destination"))
+            self.assertEqual(p.returncode, 2, p.stderr)
+            self.assertEqual(json.loads((evidence / "result.json").read_text(encoding="utf-8"))["failure_class"],
+                             "INVALID_AUTHORITY")
+            self.assertEqual(state.read_bytes(), before)
+            self.assertFalse((root / "state" / ".line-backup-state.lock").exists())
 
-    def test_authority_mismatch_happens_without_state_read(self):
-        other = Path("/private/tmp/line-backup-acceptance-case-11"); other.mkdir(parents=True, exist_ok=True)
-        ev = self.root / "evidence-authority"
-        p = self.run_cli("transaction", "prepare", "--project-root", str(self.root), "--state", str(other / "state.json"), "--evidence-dir", str(ev), "--test-mode", "--run-id", "RUN", "--owner-id", "OWNER")
-        self.assertEqual(p.returncode, 2)
-        self.assertEqual(json.loads((ev / "result.json").read_text())["failure_class"], "INVALID_AUTHORITY")
-        self.assertFalse((self.root / ".line-backup-state.lock").exists())
+    def test_production_authority_mismatch_happens_without_state_read(self):
+        with tempfile.TemporaryDirectory(prefix="line-backup-core-") as tmp:
+            root = Path(tmp)
+            (root / "state").mkdir(parents=True)
+            foreign_state = root / "other-state.json"
+            foreign_state.write_text("{}\n", encoding="utf-8")
+            evidence = root / "evidence"
+            p = self.run_cli("transaction", "prepare", "--project-root", str(root), "--state", str(foreign_state),
+                             "--evidence-dir", str(evidence), "--run-id", "RUN", "--owner-id", "OWNER")
+            self.assertEqual(p.returncode, 2, p.stderr)
+            self.assertEqual(json.loads((evidence / "result.json").read_text(encoding="utf-8"))["failure_class"],
+                             "INVALID_AUTHORITY")
+            self.assertEqual(foreign_state.read_text(encoding="utf-8"), "{}\n")
+            self.assertFalse((root / "state" / ".line-backup-state.lock").exists())
 
 
-if __name__ == "__main__": unittest.main()
+if __name__ == "__main__":
+    unittest.main()

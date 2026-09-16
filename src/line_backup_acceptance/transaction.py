@@ -324,10 +324,14 @@ def prepare(ns):
             return _result(evidence, exc.code, exc.message, exc.exit_code, revision=expected_revision,
                            state_replaced=False, dispatch_performed=False), exc.exit_code
         if ns.dispatcher_outcome == "UNKNOWN":
+            # Rev15 §15.1 row 4 / Rev16 §16.6: the ambiguity barrier is committed (revision
+            # 1->2 with the row-4 fields) *before* the adapter is invoked, so a crash in the
+            # dispatch window leaves exactly this barrier on disk.
             _commit_barrier(run, state, expected_revision + 1)
+            _replace(path, state, expected_revision + 1)
             observed = _dispatch(ns)
             return _result(evidence, "DISPATCH_UNKNOWN", "pre-dispatch ambiguity barrier committed; adapter invoked once",
-                           1, revision=state["revision"], dispatch_performed=True, state_replaced=state["revision"] > 1), 1
+                           1, revision=state["revision"], dispatch_performed=True, state_replaced=True), 1
         observed = _dispatch(ns)
         if ns.crash_after_dispatch or observed["returncode"] != 0:
             return _result(evidence, "DISPATCHER_CRASH_AFTER_SIDE_EFFECT",

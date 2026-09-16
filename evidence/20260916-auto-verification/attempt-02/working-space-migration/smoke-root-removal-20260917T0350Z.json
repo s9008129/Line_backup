@@ -1,0 +1,18 @@
+{
+  "action": "remove-task-owned-smoke-root",
+  "marker": {
+    "created_at": "2026-09-16T19:39:21Z",
+    "driver_id": "smoke",
+    "marker_version": 1,
+    "root": "/private/tmp/line-backup-acceptance-case-01",
+    "task_id": "T20260916-0102-01-line-backup-acceptance"
+  },
+  "post_removal_exists": false,
+  "pre_removal_inventory": {
+    "files": 114,
+    "listing_sha256": "490021ab4dc468ef1ba673c84ed94ea11a98bfd06966ad66b51a95ea5dd8c812",
+    "total_bytes": 205096
+  },
+  "reason": "workspace-only smoke (driver_id=smoke, same task) left this fixture root; the Rev18 acceptance driver requires its own ownership marker and must create the literal root itself",
+  "root": "/private/tmp/line-backup-acceptance-case-01"
+}
