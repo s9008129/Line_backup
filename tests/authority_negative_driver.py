@@ -1,195 +1,295 @@
 #!/usr/bin/env python3
-"""Literal authority-negative subprocess matrix with read-only oracle."""
+"""Literal authority-negative subprocess matrix with a read-only oracle (Rev15 §15.4 / Rev17/Rev18).
 
+Eleven rows: six test-only parser/canonical-path negatives on the allowlisted case
+roots (case-01…case-10) and five production-mode negatives against
+/private/tmp/line-backup-acceptance-authority/production-root.  Every row must
+return INVALID_AUTHORITY, exit 2, before any config/state/lock read or mutation.
+
+Ownership (Rev15 §15.5): the driver creates only its own literal root
+/private/tmp/line-backup-acceptance-authority (marker before any fixture content),
+never removes or overwrites a root lacking its marker, and removes nothing by
+default.  The case roots are foreign, read-only fixture paths pinned by the plan;
+the driver hashes only the state/config/run-log/lock/counter/dispatcher paths it
+references and never writes into them itself (the product only ever writes the
+pinned evidence subdirectories, which is the point of the rows).
+"""
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
-import os
 import shutil
 import subprocess
+import sys
+import time
 from pathlib import Path
 
+TESTS_DIR = Path(__file__).resolve().parent
+REPO = TESTS_DIR.parent
+sys.path.insert(0, str(TESTS_DIR / "automation_verification"))
+
+import harness as H  # noqa: E402
 
 BASE = Path("/private/tmp/line-backup-acceptance-authority")
-CASES = [Path(f"/private/tmp/line-backup-acceptance-case-{i:02d}") for i in range(1, 13)]
+DRIVER_ID = "authority-negative-driver"
 GROUP = "line:jp.naver.line.mac:旻謙允禎成長日記"
+CASE = lambda index: Path(f"/private/tmp/line-backup-acceptance-case-{index:02d}")  # noqa: E731
+PY = "/usr/bin/python3"
+TXN = [PY, "-m", "line_backup_acceptance", "transaction"]
+EXPECTED = {"failure_class": "INVALID_AUTHORITY", "exit_code": 2, "artifact_readback": "PASS_WITH_NO_STATE_WRITE"}
 
 
-def write_json(path: Path, value) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+def case_paths(root: Path) -> list:
+    """The fixture-state paths the plan names for the oracle (never the bulk tree)."""
+    return [root / "config" / "line_backup_config.json", root / "state" / "backup_state.json",
+            root / "state" / "run_log.md", root / ".line-backup-state.lock", root / "counter.jsonl",
+            root / "dispatcher.py"]
 
 
-def digest(path: Path) -> dict:
-    data = path.read_bytes() if path.exists() and path.is_file() else b"<missing>"
-    return {"exists": path.exists(), "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
-
-
-def state_digest(root: Path) -> dict:
-    paths = [root / "state.json", root / "config" / "line_backup_config.json", root / "state" / "backup_state.json",
-             root / "state" / "run_log.md", root / ".line-backup-state.lock", root / "counter.jsonl"]
-    return {str(path): digest(path) for path in paths}
-
-
-def env_for() -> dict:
-    env = os.environ.copy()
-    env["PYTHONPATH"] = str(Path(__file__).resolve().parents[1] / "src")
-    env["LC_ALL"] = "C"
-    env["PATH"] = "/usr/bin:/bin"
-    env["PYTHONHASHSEED"] = "0"
-    return env
-
-
-def run(argv: list[str], record: Path) -> dict:
-    record.mkdir(parents=True, exist_ok=True)
-    (record / "argv.json").write_text(json.dumps(argv, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    p = subprocess.run(argv, cwd=Path(__file__).resolve().parents[1], env=env_for(), capture_output=True, text=True, check=False)
-    (record / "stdout.log").write_text(p.stdout, encoding="utf-8")
-    (record / "stderr.log").write_text(p.stderr, encoding="utf-8")
-    (record / "exit-code").write_text(str(p.returncode) + "\n", encoding="utf-8")
-    try:
-        result = json.loads(p.stdout.strip().splitlines()[-1])
-    except (IndexError, json.JSONDecodeError):
-        result = None
-    return {"argv": argv, "exit_code": p.returncode, "result": result,
-            "stdout": str(record / "stdout.log"), "stderr": str(record / "stderr.log")}
-
-
-def setup_case_roots() -> None:
-    for root in CASES:
-        if root.exists():
-            shutil.rmtree(root)
-        (root / "evidence").mkdir(parents=True)
-        write_json(root / "state.json", {"schema_version": 2, "revision": 0, "current_run_id": None,
-                                          "active_writer_id": None, "context_lock": None, "runs": [],
-                                          "verified_albums": []})
-        (root / "dispatcher.py").write_text("#!/usr/bin/env python3\n", encoding="utf-8")
-        (root / "dispatcher.py").chmod(0o755)
-        (root / "counter.jsonl").touch()
-
-
-def setup_production() -> tuple[Path, Path]:
-    root = BASE / "production-root"
+def rows() -> list:
+    c = CASE
+    test_rows = [
+        ("auth-prepare", TXN + ["prepare", "--project-root", str(c(1)),
+                                "--config", str(c(2) / "config" / "line_backup_config.json"),
+                                "--run-log", str(c(2) / "state" / "run_log.md"),
+                                "--state", str(c(2) / "state" / "backup_state.json"),
+                                "--run-id", "AUTH-PREPARE", "--owner-id", "AUTH-WRITER", "--group-key", GROUP,
+                                "--start-date", "2024-05-13", "--end-date", "2024-05-17", "--expected-images", "57",
+                                "--destination", str(c(1) / "destination"),
+                                "--evidence-dir", str(c(1) / "evidence" / "authority-prepare"),
+                                "--test-mode"],
+         [c(1), c(2)], []),
+        ("auth-resume", TXN + ["resume", "--project-root", str(c(3)),
+                               "--config", str(c(4) / "config" / "line_backup_config.json"),
+                               "--run-log", str(c(4) / "state" / "run_log.md"),
+                               "--state", str(c(4) / "state" / "backup_state.json"),
+                               "--run-id", "AUTH-RESUME", "--expected-revision", "1",
+                               "--expected-owner-id", "AUTH-WRITER",
+                               "--dispatcher", str(c(3) / "dispatcher.py"),
+                               "--dispatch-counter", str(c(3) / "counter.jsonl"),
+                               "--evidence-dir", str(c(3) / "evidence" / "authority-resume"),
+                               "--no-dispatch", "--test-mode"],
+         [c(3), c(4)], [c(3) / "counter.jsonl"]),
+        ("auth-commit", TXN + ["commit", "--project-root", str(c(5)),
+                               "--config", str(c(6) / "config" / "line_backup_config.json"),
+                               "--run-log", str(c(6) / "state" / "run_log.md"),
+                               "--state", str(c(6) / "state" / "backup_state.json"),
+                               "--run-id", "AUTH-COMMIT", "--expected-revision", "1",
+                               "--expected-owner-id", "AUTH-WRITER",
+                               "--verification-json", str(c(5) / "verification.json"),
+                               "--evidence-dir", str(c(5) / "evidence" / "authority-commit"),
+                               "--test-mode"],
+         [c(5), c(6)], []),
+        ("auth-finalize", TXN + ["finalize", "--project-root", str(c(7)),
+                                 "--config", str(c(8) / "config" / "line_backup_config.json"),
+                                 "--run-log", str(c(8) / "state" / "run_log.md"),
+                                 "--state", str(c(8) / "state" / "backup_state.json"),
+                                 "--run-id", "AUTH-FINALIZE", "--expected-revision", "1",
+                                 "--expected-owner-id", "AUTH-WRITER", "--outcome", "SAFE_ABORT",
+                                 "--verification-json", str(c(7) / "verification.json"),
+                                 "--evidence-dir", str(c(7) / "evidence" / "authority-finalize"),
+                                 "--test-mode"],
+         [c(7), c(8)], []),
+        ("auth-duplicate", TXN + ["duplicate-check", "--project-root", str(c(9)),
+                                  "--config", str(c(10) / "config" / "line_backup_config.json"),
+                                  "--run-log", str(c(10) / "state" / "run_log.md"),
+                                  "--state", str(c(10) / "state" / "backup_state.json"),
+                                  "--group-key", GROUP, "--start-date", "2024-05-13", "--end-date", "2024-05-17",
+                                  "--expected-images", "57", "--destination", str(c(9) / "destination"),
+                                  "--evidence-dir", str(c(9) / "evidence" / "authority-duplicate"),
+                                  "--test-mode"],
+         [c(9), c(10)], []),
+        ("auth-no-root", TXN + ["resume",
+                                "--state", str(c(1) / "state" / "backup_state.json"),
+                                "--run-id", "AUTH-NO-ROOT", "--expected-revision", "1",
+                                "--expected-owner-id", "AUTH-WRITER",
+                                "--dispatcher", str(c(1) / "dispatcher.py"),
+                                "--dispatch-counter", str(c(1) / "counter.jsonl"),
+                                "--evidence-dir", str(c(1) / "evidence" / "authority-no-root"),
+                                "--no-dispatch", "--test-mode"],
+         [c(1)], [c(1) / "counter.jsonl"]),
+    ]
+    production = BASE / "production-root"
     alternate = BASE / "alternate"
-    for item in (root, alternate):
-        if item.exists():
-            shutil.rmtree(item)
-    backup = root / "backup"
+    prod_rows = [
+        ("prod-missing-config", TXN + ["prepare", "--project-root", str(production),
+                                       "--run-log", str(production / "state" / "run_log.md"),
+                                       "--state", str(production / "state" / "backup_state.json"),
+                                       "--run-id", "AUTH-PROD-PREPARE", "--owner-id", "AUTH-PROD-WRITER",
+                                       "--group-key", GROUP, "--start-date", "2024-05-13", "--end-date", "2024-05-17",
+                                       "--expected-images", "57", "--destination", str(production / "destination"),
+                                       "--evidence-dir", str(BASE / "evidence" / "prod-prepare")],
+         [production, alternate], []),
+        ("prod-alternate-config", TXN + ["resume", "--project-root", str(production),
+                                         "--config", str(alternate / "config" / "line_backup_config.json"),
+                                         "--run-log", str(production / "state" / "run_log.md"),
+                                         "--state", str(production / "state" / "backup_state.json"),
+                                         "--run-id", "AUTH-PROD-RESUME", "--expected-revision", "1",
+                                         "--expected-owner-id", "AUTH-PROD-WRITER",
+                                         "--dispatcher", str(BASE / "dispatcher.py"),
+                                         "--dispatch-counter", str(BASE / "counter.jsonl"),
+                                         "--evidence-dir", str(BASE / "evidence" / "prod-resume"), "--no-dispatch"],
+         [production, alternate], [BASE / "counter.jsonl"]),
+        ("prod-alternate-run-log", TXN + ["commit", "--project-root", str(production),
+                                          "--config", str(production / "config" / "line_backup_config.json"),
+                                          "--run-log", str(alternate / "state" / "run_log.md"),
+                                          "--state", str(production / "state" / "backup_state.json"),
+                                          "--run-id", "AUTH-PROD-COMMIT", "--expected-revision", "1",
+                                          "--expected-owner-id", "AUTH-PROD-WRITER",
+                                          "--verification-json", str(production / "verification.json"),
+                                          "--evidence-dir", str(BASE / "evidence" / "prod-commit")],
+         [production, alternate], []),
+        ("prod-alternate-state", TXN + ["finalize", "--project-root", str(production),
+                                        "--config", str(production / "config" / "line_backup_config.json"),
+                                        "--run-log", str(production / "state" / "run_log.md"),
+                                        "--state", str(alternate / "state" / "backup_state.json"),
+                                        "--run-id", "AUTH-PROD-FINALIZE", "--expected-revision", "1",
+                                        "--expected-owner-id", "AUTH-PROD-WRITER", "--outcome", "SAFE_ABORT",
+                                        "--verification-json", str(production / "verification.json"),
+                                        "--evidence-dir", str(BASE / "evidence" / "prod-finalize")],
+         [production, alternate], []),
+        ("prod-outside-destination", TXN + ["duplicate-check", "--project-root", str(production),
+                                            "--config", str(production / "config" / "line_backup_config.json"),
+                                            "--run-log", str(production / "state" / "run_log.md"),
+                                            "--state", str(production / "state" / "backup_state.json"),
+                                            "--group-key", GROUP, "--start-date", "2024-05-13",
+                                            "--end-date", "2024-05-17", "--expected-images", "57",
+                                            "--destination", str(BASE / "outside-destination"),
+                                            "--evidence-dir", str(BASE / "evidence" / "prod-duplicate")],
+         [production, alternate], []),
+    ]
+    return [{"label": label, "argv": argv, "mode": "test",
+             "touched": sorted({str(path) for root in roots for path in case_paths(root)}),
+             "counters": [str(path) for path in counters]}
+            for label, argv, roots, counters in test_rows] + [
+        {"label": label, "argv": argv, "mode": "production",
+         "touched": sorted({str(path) for root in roots for path in _production_paths(root)}),
+         "counters": [str(path) for path in counters]}
+        for label, argv, roots, counters in prod_rows]
+
+
+def _production_paths(root: Path) -> list:
+    return case_paths(root) + [root / "verification.json", BASE / "outside-destination",
+                               BASE / "dispatcher.py"]
+
+
+def snapshot(paths: list) -> dict:
+    return {path: H.sha256_file(Path(path)) if Path(path).is_file() else None for path in paths}
+
+
+def counter_lines(path: str) -> int:
+    target = Path(path)
+    if not target.is_file():
+        return 0
+    return len([line for line in target.read_text(encoding="utf-8").splitlines() if line.strip()])
+
+
+def chain_ok(evidence: Path) -> bool:
+    result_path, manifest_path = evidence / "result.json", evidence / "manifest.json"
+    if not (result_path.is_file() and manifest_path.is_file()):
+        return False
+    data = result_path.read_bytes()
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    names = {item["path"] for item in manifest.get("artifacts") or []}
+    return (manifest.get("result_sha256") == H.sha256_bytes(data)
+            and manifest.get("result_bytes") == len(data)
+            and "result.json" in names and "manifest.json" not in names)
+
+
+def build_fixtures() -> dict:
+    """Create only this driver's own literal root and the production fixture inside it."""
+    owned = H.ensure_owned_root(BASE, DRIVER_ID)
+    for child in sorted(BASE.iterdir()):
+        if child.name == H.MARKER_NAME:
+            continue
+        if child.is_dir():
+            shutil.rmtree(child)
+        else:
+            child.unlink()
+    production, alternate = BASE / "production-root", BASE / "alternate"
+    backup = production / "backup"
     destination = backup / "destination"
     destination.mkdir(parents=True)
-    (root / "config").mkdir()
-    (root / "state").mkdir()
-    config = {"schema_version": 2, "group_key": GROUP, "group_name": "fixture",
+    (production / "config").mkdir()
+    (production / "state").mkdir()
+    config = {"schema_version": 2, "group_key": GROUP, "group_name": "authority production fixture",
               "backup_root": str(backup), "app_identifier": "jp.naver.line.mac",
-              "max_albums_per_run": 1, "recovery_limit": 1, "poll_interval_seconds": 5,
-              "stable_samples": 3, "max_wait_seconds": 15}
-    write_json(root / "config" / "line_backup_config.json", config)
-    write_json(root / "state" / "backup_state.json", {"schema_version": 2, "revision": 0,
-                                                         "current_run_id": None, "active_writer_id": None,
-                                                         "context_lock": None, "runs": [], "verified_albums": []})
-    (root / "state" / "run_log.md").write_text("production fixture run log\n", encoding="utf-8")
+              "max_albums_per_run": 50, "recovery_limit": 1, "poll_interval_seconds": 5,
+              "stable_samples": 3, "max_wait_seconds": 60}
+    state = {"schema_version": 2, "revision": 1, "current_run_id": None, "active_writer_id": None,
+             "context_lock": None, "runs": [], "verified_albums": []}
+    H.write_json(production / "config" / "line_backup_config.json", config)
+    H.write_json(production / "state" / "backup_state.json", state)
+    (production / "state" / "run_log.md").write_text("authority production fixture run log\n", encoding="utf-8")
     (alternate / "config").mkdir(parents=True)
     (alternate / "state").mkdir()
-    write_json(alternate / "config" / "line_backup_config.json", config)
-    write_json(alternate / "state" / "backup_state.json", {"tamper": True})
-    (alternate / "state" / "run_log.md").write_text("alternate\n", encoding="utf-8")
-    return root, alternate
-
-
-def tx_prefix(root: Path, evidence: Path, *, operation: str, test: bool = False) -> list[str]:
-    value = ["/usr/bin/python3", "-m", "line_backup_acceptance", "transaction"]
-    value.append(operation)
-    if test:
-        value.extend(["--project-root", str(root), "--state", str(root / "state.json"),
-                      "--evidence-dir", str(evidence), "--test-mode"])
-    else:
-        value.extend(["--project-root", str(root), "--evidence-dir", str(evidence)])
-    return value
-
-
-def expected(result: dict | None, code: int) -> bool:
-    return (code == 2 and isinstance(result, dict) and result.get("failure_class") == "INVALID_AUTHORITY"
-            and result.get("artifact_readback") == "PASS_WITH_NO_STATE_WRITE")
+    H.write_json(alternate / "config" / "line_backup_config.json", config)
+    H.write_json(alternate / "state" / "backup_state.json", state)
+    (alternate / "state" / "run_log.md").write_text("alternate run log\n", encoding="utf-8")
+    (BASE / "dispatcher.py").write_text("#!/usr/bin/env python3\n", encoding="utf-8")
+    (BASE / "counter.jsonl").touch()
+    return owned
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--summary", default=str(BASE / "summary.json"))
-    ns = parser.parse_args()
-    if BASE.exists():
-        shutil.rmtree(BASE)
-    BASE.mkdir(parents=True)
-    setup_case_roots()
-    production, alternate = setup_production()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--summary", required=True)
+    ap.add_argument("--evidence-dir")
+    ap.add_argument("--clean-owned", action="store_true")
+    ns = ap.parse_args()
+
+    build_fixtures()
+    env = {"LC_ALL": "C", "LANG": "C", "PATH": "/usr/bin:/bin", "PYTHONHASHSEED": "0",
+           "PYTHONPATH": str(REPO / "src")}
     results = []
+    for row in rows():
+        label = row["label"]
+        evidence = Path(row["argv"][row["argv"].index("--evidence-dir") + 1])
+        before = snapshot(row["touched"])
+        counters_before = {path: counter_lines(path) for path in row["counters"]}
+        process = subprocess.run(row["argv"], cwd=REPO, env=env, capture_output=True, text=True, check=False)
+        after = snapshot(row["touched"])
+        counters_after = {path: counter_lines(path) for path in row["counters"]}
+        try:
+            product = json.loads(process.stdout.strip().splitlines()[-1])
+        except (IndexError, ValueError, json.JSONDecodeError):
+            product = {}
+        observed = {key: product.get(key) for key in EXPECTED}
+        checks = {
+            "exit_2": process.returncode == 2,
+            "invalid_authority": observed["failure_class"] == "INVALID_AUTHORITY",
+            "no_state_write": before == after,
+            "no_new_counter_lines": all(counters_after[path] == counters_before.get(path, 0)
+                                        for path in row["counters"]) if row["counters"] else True,
+            "result_artifact_readback": observed["artifact_readback"] == "PASS_WITH_NO_STATE_WRITE",
+            "evidence_chain_readback": chain_ok(evidence),
+        }
+        record = {"label": label, "mode": row["mode"], "argv": row["argv"], "exit_code": process.returncode,
+                  "expected": dict(EXPECTED), "observed": observed, "checks": checks,
+                  "before": before, "after": after, "counters_before": counters_before,
+                  "counters_after": counters_after,
+                  "match": bool(process.returncode == 2 and observed == EXPECTED and all(checks.values()))}
+        results.append(record)
 
-    test_rows = [
-        ("test-state-mismatch", tx_prefix(CASES[0], CASES[0] / "evidence" / "authority-state", operation="prepare", test=True)
-         + ["--state", str(CASES[1] / "state.json"), "--run-id", "AUTH-PREPARE", "--owner-id", "AUTH-WRITER",
-            "--group-key", GROUP, "--start-date", "2024-05-13", "--end-date", "2024-05-17", "--expected-images", "57",
-            "--destination", str(CASES[0] / "destination")]),
-        ("test-state-mismatch-resume", tx_prefix(CASES[2], CASES[2] / "evidence" / "authority-resume", operation="resume", test=True)
-         + ["--state", str(CASES[3] / "state.json"), "--run-id", "AUTH-RESUME", "--expected-revision", "1",
-            "--expected-owner-id", "AUTH-WRITER", "--dispatcher", str(CASES[2] / "dispatcher.py"),
-            "--dispatch-counter", str(CASES[2] / "counter.jsonl"), "--no-dispatch"]),
-        ("test-state-mismatch-commit", tx_prefix(CASES[4], CASES[4] / "evidence" / "authority-commit", operation="commit", test=True)
-         + ["--state", str(CASES[5] / "state.json"), "--run-id", "AUTH-COMMIT", "--expected-revision", "1",
-            "--expected-owner-id", "AUTH-WRITER", "--verification-json", str(CASES[4] / "verification.json")]),
-        ("test-state-mismatch-finalize", tx_prefix(CASES[6], CASES[6] / "evidence" / "authority-finalize", operation="finalize", test=True)
-         + ["--state", str(CASES[7] / "state.json"), "--run-id", "AUTH-FINALIZE", "--expected-revision", "1",
-            "--expected-owner-id", "AUTH-WRITER", "--outcome", "SAFE_ABORT", "--verification-json", str(CASES[6] / "verification.json")]),
-        ("test-state-mismatch-duplicate", tx_prefix(CASES[8], CASES[8] / "evidence" / "authority-duplicate", operation="duplicate-check", test=True)
-         + ["--state", str(CASES[9] / "state.json"), "--group-key", GROUP, "--start-date", "2024-05-13",
-            "--end-date", "2024-05-17", "--expected-images", "57", "--destination", str(CASES[8] / "destination")]),
-        ("test-missing-root", ["/usr/bin/python3", "-m", "line_backup_acceptance", "transaction", "resume",
-                               "--state", str(CASES[0] / "state.json"), "--run-id", "AUTH-NO-ROOT", "--expected-revision", "1",
-                               "--expected-owner-id", "AUTH-WRITER", "--dispatcher", str(CASES[0] / "dispatcher.py"),
-                               "--dispatch-counter", str(CASES[0] / "counter.jsonl"), "--evidence-dir",
-                               str(CASES[0] / "evidence" / "authority-no-root"), "--no-dispatch", "--test-mode"]),
-    ]
-    for label, argv in test_rows:
-        touched = {str(path): state_digest(path) for path in {Path(argv[argv.index("--project-root") + 1]) if "--project-root" in argv else CASES[0], CASES[0], CASES[1], CASES[2], CASES[3], CASES[4], CASES[5], CASES[6], CASES[7], CASES[8], CASES[9]}}
-        record = run(argv, BASE / "records" / label)
-        untouched = {path: state_digest(Path(path)) for path in touched}
-        ok = expected(record["result"], record["exit_code"]) and touched == untouched
-        results.append({"label": label, "process": record, "before": touched, "after": untouched, "match": ok})
-
-    production_rows = [
-        ("prod-missing-config", tx_prefix(production, BASE / "evidence" / "prod-prepare", operation="prepare")
-         + ["--run-log", str(production / "state" / "run_log.md"), "--state", str(production / "state" / "backup_state.json"),
-            "--run-id", "AUTH-PROD-PREPARE", "--owner-id", "AUTH-PROD-WRITER", "--group-key", GROUP,
-            "--start-date", "2024-05-13", "--end-date", "2024-05-17", "--expected-images", "57",
-            "--destination", str(production / "destination")]),
-        ("prod-alternate-config", tx_prefix(production, BASE / "evidence" / "prod-resume", operation="resume")
-         + ["--config", str(alternate / "config" / "line_backup_config.json"), "--run-log", str(production / "state" / "run_log.md"),
-            "--state", str(production / "state" / "backup_state.json"), "--run-id", "AUTH-PROD-RESUME", "--expected-revision", "1",
-            "--expected-owner-id", "AUTH-PROD-WRITER", "--dispatcher", str(BASE / "dispatcher.py"), "--dispatch-counter", str(BASE / "counter.jsonl"), "--no-dispatch"]),
-        ("prod-alternate-run-log", tx_prefix(production, BASE / "evidence" / "prod-commit", operation="commit")
-         + ["--config", str(production / "config" / "line_backup_config.json"), "--run-log", str(alternate / "state" / "run_log.md"),
-            "--state", str(production / "state" / "backup_state.json"), "--run-id", "AUTH-PROD-COMMIT", "--expected-revision", "1",
-            "--expected-owner-id", "AUTH-PROD-WRITER", "--verification-json", str(production / "verification.json")]),
-        ("prod-alternate-state", tx_prefix(production, BASE / "evidence" / "prod-finalize", operation="finalize")
-         + ["--config", str(production / "config" / "line_backup_config.json"), "--run-log", str(production / "state" / "run_log.md"),
-            "--state", str(alternate / "state" / "backup_state.json"), "--run-id", "AUTH-PROD-FINALIZE", "--expected-revision", "1",
-            "--expected-owner-id", "AUTH-PROD-WRITER", "--outcome", "SAFE_ABORT", "--verification-json", str(production / "verification.json")]),
-        ("prod-outside-destination", tx_prefix(production, BASE / "evidence" / "prod-duplicate", operation="duplicate-check")
-         + ["--config", str(production / "config" / "line_backup_config.json"), "--run-log", str(production / "state" / "run_log.md"),
-            "--state", str(production / "state" / "backup_state.json"), "--group-key", GROUP, "--start-date", "2024-05-13",
-            "--end-date", "2024-05-17", "--expected-images", "57", "--destination", str(BASE / "outside-destination")]),
-    ]
-    for label, argv in production_rows:
-        touched_paths = [production, alternate, BASE / "outside-destination"]
-        before = {str(path): state_digest(path) for path in touched_paths}
-        record = run(argv, BASE / "records" / label)
-        after = {str(path): state_digest(path) for path in touched_paths}
-        ok = expected(record["result"], record["exit_code"]) and before == after
-        results.append({"label": label, "process": record, "before": before, "after": after, "match": ok})
-
-    summary = {"schema_version": 1, "rows": results, "all_match": all(row["match"] for row in results)}
-    write_json(Path(ns.summary), summary)
-    print(json.dumps({"all_match": summary["all_match"], "failed": [r["label"] for r in results if not r["match"]]}, sort_keys=True))
+    summary = {"schema_version": 1, "driver_id": DRIVER_ID, "task_id": H.TASK_ID,
+               "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+               "program_hashes": H.program_hashes(), "rows": results,
+               "all_match": all(record["match"] for record in results)}
+    if ns.evidence_dir:
+        evidence_dir = Path(ns.evidence_dir)
+        evidence_dir.mkdir(parents=True, exist_ok=True)
+        H.write_json(evidence_dir / "summary.json", summary)
+        H.write_tree_manifest(evidence_dir)
+    cleanup = None
+    if ns.clean_owned:
+        cleanup = H.clean_owned_root(BASE, DRIVER_ID)
+        summary["cleanup"] = cleanup
+        H.write_json(Path(ns.summary), summary)
+    else:
+        H.write_json(Path(ns.summary), summary)
+    print(json.dumps({"all_match": summary["all_match"],
+                      "failed": [r["label"] for r in results if not r["match"]], "cleanup": cleanup},
+                     ensure_ascii=False, sort_keys=True))
     return 0 if summary["all_match"] else 1
 
 
