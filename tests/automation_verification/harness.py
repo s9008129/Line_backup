@@ -30,10 +30,19 @@ class RootOwnershipError(RuntimeError):
     """A literal root exists without this driver's ownership marker; refusing to touch it."""
 
 
+KEEP_ON_RESET = (MARKER_NAME, "process-records", "driver-records")
+
+
 def ensure_owned_root(root: Path, driver_id: str) -> dict:
-    """Rev15 §15.5: create this driver's own literal root and write the ownership marker
-    before any fixture content.  A root that exists without our marker is never removed
-    and never overwritten; that is a hard refusal (TASK_REGRESSION), not a cleanup."""
+    """Rev15 §15.5: every driver creates only its own literal roots and writes an ownership
+    marker before any fixture content; a root that lacks a marker is never removed or
+    overwritten (hard refusal, TASK_REGRESSION).
+
+    The product's test-mode authority pins the transaction roots to the literal case-root
+    namespace `-01`…`-25`, so several drivers of this wave legitimately share those roots.
+    A root that already carries a task-managed marker of this TASK_ID is therefore adopted
+    (the marker names the creating driver and is preserved); only `--clean-owned` removes a
+    root, and only when the marker names the removing driver."""
     root = Path(root)
     marker = root / MARKER_NAME
     if root.exists():
@@ -44,15 +53,34 @@ def ensure_owned_root(root: Path, driver_id: str) -> dict:
             owned = json.loads(marker.read_text(encoding="utf-8"))
         except Exception as exc:
             raise RootOwnershipError(f"{root} marker is unreadable: {exc}") from exc
-        if owned.get("driver_id") != driver_id or owned.get("task_id") != TASK_ID:
+        if owned.get("task_id") != TASK_ID or owned.get("root") != str(root):
             raise RootOwnershipError(
                 f"{root} marker belongs to {owned.get('driver_id')!r}/{owned.get('task_id')!r}, not {driver_id!r}")
-        return owned
+        return {**owned, "created": False, "adopted": owned.get("driver_id") != driver_id}
     root.mkdir(parents=True, exist_ok=True)
     owned = {"marker_version": 1, "driver_id": driver_id, "task_id": TASK_ID, "root": str(root),
              "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     write_json(marker, owned)
-    return owned
+    return {**owned, "created": True, "adopted": False}
+
+
+def reset_owned_content(root: Path) -> dict:
+    """Rebuild this driver's own fixture content inside an already-owned root.
+
+    Only paths this wave's drivers own are cleared; the ownership marker and every other
+    driver's `process-records/` and `driver-records/` subtrees are preserved, so no driver
+    ever deletes another driver's recorded artifacts."""
+    root = Path(root)
+    removed = []
+    for child in sorted(root.iterdir()):
+        if child.name in KEEP_ON_RESET:
+            continue
+        if child.is_dir():
+            shutil.rmtree(child)
+        else:
+            child.unlink()
+        removed.append(child.name)
+    return {"root": str(root), "removed": removed, "kept": list(KEEP_ON_RESET)}
 
 
 def clean_owned_root(root: Path, driver_id: str) -> dict:

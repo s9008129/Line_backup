@@ -1,79 +1,63 @@
 #!/usr/bin/env python3
-"""Phase 2 / R3 — prepare preconditions and the duplicate gate are bypassable.
+"""Phase 2 / R3 — prepare preconditions and the duplicate gate must refuse at the real entry.
 
-CLAIM  (a) `duplicate_check()` additionally requires the requested destination to equal a
-       registry destination, so the same group+fingerprint aimed at a NEW destination is
-       NOT_DUPLICATE; (b) `prepare()` only checks current_run_id/active_writer_id/context_lock,
-       so a historical non-terminal run (INTENT_COMMITTED or dispatch_state UNKNOWN,
-       workflow_outcome null) with cleared ownership does not block a new run at a new
-       destination; (c) the same dates with a changed expected count are a different
-       fingerprint and bypass the 57-image registry entry; (d) control: two ambiguous
-       registry entries for the same group/fingerprint/destination are rejected
-       (CONFLICT_DUPLICATE, exit 4); (e) the production entry (no --test-mode) accepts an
-       isolated fabricated project root and persists calibration [1,1]/HIGH and
-       source_provenance='test fixture' without any source observation.
-ENTRY  Real product CLI subprocesses (`python3 -m line_backup_acceptance transaction ...`).
-       Test-mode fixture roots only replace external I/O paths; no dispatcher is involved.
-ORACLE Persisted state JSON (registry / intent / calibration / provenance), CLI result JSON,
-       exit codes, pre/post state SHA-256. The side-effect surface here is persisted state.
-DECIDE (a)(b)(c)(e) reproduced -> the production entry must reject these before any side
-       effect; (d) must stay fail-closed after the fix.
+CLAIM (Rev14, reproduced pre-fix in attempt-01)
+  (a) duplicate-check additionally required the requested destination to equal the registry
+      destination, so the same group+fingerprint aimed at a NEW destination was NOT_DUPLICATE;
+  (b) prepare only checked current_run_id/active_writer_id/context_lock, so a historical
+      non-terminal run (INTENT_COMMITTED or dispatch UNKNOWN, cleared ownership) did not block
+      a new run;
+  (c) the same dates with a changed expected count were a different fingerprint and bypassed
+      the 57-image registry entry;
+  (d) control: two ambiguous entries were rejected (CONFLICT_DUPLICATE, exit 4);
+  (e) the production entry (no --test-mode) accepted an isolated fabricated root and persisted
+      a fixture calibration ([1,1]/HIGH) plus source_provenance='test fixture' with no source
+      observation.
+ENTRY  Real product CLI subprocesses (`transaction prepare|duplicate-check`).  Test-mode fixture
+       roots replace external I/O paths only; no dispatcher side effect occurs on any refusal.
+ORACLE Persisted state JSON (registry/intent/calibration), CLI result JSON, exit codes, pre/post
+       state SHA-256, and the independent dispatch counter.
+DECIDE Post-fix (this run) every reproduced bypass must be refused before any side effect:
+       (a) destination change -> CONFLICT_DUPLICATE_FINGERPRINT, (b) historical unresolved intent
+       -> NEEDS_RECONCILIATION, (c) count change -> AMBIGUOUS_FINGERPRINT, (d) stays
+       CONFLICT_DUPLICATE, (e) the production entry refuses fixture-derived content
+       (MISSING_SOURCE_EVIDENCE / INVALID_SOURCE_EVIDENCE) with zero writes.
 """
 from __future__ import annotations
 
 import argparse
 import json
-import shutil
 import sys
-import time
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from harness import (WORK, durable_copy_tree, program_hashes, read_json, run_product, sha256_file, write_json,
-                     write_tree_manifest)
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import fixtures as F  # noqa: E402
+import harness as H  # noqa: E402
 
-from fixtures import FP57, GROUP, make_run
-
+DRIVER_ID = "phase2-r3-preconditions"
+GROUP = F.GROUP
+FP57 = F.FP57
 CASE03 = Path("/private/tmp/line-backup-acceptance-case-03")
 CASE04 = Path("/private/tmp/line-backup-acceptance-case-04")
-CONFIG_KEYS = ["app_identifier", "backup_root", "group_key", "group_name", "max_albums_per_run", "max_wait_seconds",
-               "poll_interval_seconds", "recovery_limit", "schema_version", "stable_samples"]
+ATTEMPT_01 = H.WORK / "evidence/20260916-auto-verification/attempt-01/phase2-r3"
+PRE_FIX = {
+    "verdict": "REPRODUCED_PRECONDITION_GAPS",
+    "observation": ("destination change bypassed duplicate-check (NOT_DUPLICATE); a historical unresolved intent did "
+                    "not block prepare; count change 57->56 bypassed; an isolated production-shaped root accepted "
+                    "prepare without --test-mode and persisted calibration [1,1], confidence=HIGH, "
+                    "source_provenance='test fixture'; the two-entry ambiguity control already returned "
+                    "CONFLICT_DUPLICATE"),
+    "evidence": str(ATTEMPT_01 / "observation.json"),
+}
 
 
-def tx_common(case_root: Path, state_path: Path) -> list[str]:
-    return ["--project-root", str(case_root), "--state", str(state_path), "--test-mode"]
+def sha(path: Path) -> str:
+    return H.sha256_file(Path(path))
 
 
-def duplicate_check_args(common: list[str], *, destination: Path, expected_images: int, evidence_dir: Path) -> list[str]:
-    return ["transaction", "duplicate-check", *common, "--group-key", GROUP,
-            "--start-date", FP57["start_date"], "--end-date", FP57["end_date"],
-            "--expected-images", str(expected_images), "--destination", str(destination),
-            "--evidence-dir", str(evidence_dir)]
-
-
-def prepare_args(common: list[str], *, run_id: str, owner_id: str, destination: Path, evidence_dir: Path) -> list[str]:
-    return ["transaction", "prepare", *common, "--run-id", run_id, "--owner-id", owner_id,
-            "--group-key", GROUP, "--start-date", FP57["start_date"], "--end-date", FP57["end_date"],
-            "--expected-images", str(FP57["expected_images"]), "--destination", str(destination),
-            "--evidence-dir", str(evidence_dir)]
-
-
-def make_case_root(case_root: Path, state: dict, *, extra_dirs: tuple[Path, ...] = ()) -> Path:
-    """Rebuild a literal test-mode case root (state.json + destination dirs)."""
-    if case_root.exists():
-        shutil.rmtree(case_root)
-    case_root.mkdir(parents=True)
-    (case_root / "destination").mkdir()
-    for directory in extra_dirs:
-        directory.mkdir(parents=True, exist_ok=True)
-    state_path = case_root / "state.json"
-    write_json(state_path, state)
-    return state_path
-
-
-def base_state(*, runs: list[dict] | None = None, entries: list[dict] | None = None, revision: int = 0) -> dict:
-    return {"schema_version": 2, "revision": revision, "current_run_id": None, "active_writer_id": None,
-            "context_lock": None, "runs": runs or [], "verified_albums": entries or []}
+def read_json(path: Path):
+    return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
 def registry_entry(destination: Path, verified_run_id: str) -> dict:
@@ -83,371 +67,279 @@ def registry_entry(destination: Path, verified_run_id: str) -> dict:
 
 
 def terminal_run(run_id: str, owner: str, destination: Path) -> dict:
-    return make_run(run_id, owner, str(destination), workflow_outcome="VERIFIED", phase="VERIFIED",
-                    intent_state="SAVE_ALL_DISPATCH_ATTEMPTED", dispatch_state="SAVE_ALL_RETURNED",
-                    dispatch_outcome="RETURNED", trigger_outcome="UNKNOWN")
+    run = F.completed_dispatch_run(run_id, owner, str(destination))
+    run["workflow_outcome"] = "VERIFIED"
+    run["phase"] = "VERIFIED"
+    return run
 
 
-def snapshot_state(state_path: Path, ev: Path, tag: str) -> dict:
-    data = read_json(state_path)
-    meta = write_json(ev / f"{tag}.json", data)
-    return {"sha256": sha256_file(state_path), "bytes": state_path.stat().st_size, "durable": meta,
-            "excerpt": state_excerpt(data)}
+def base_state(*, runs: list[dict] | None = None, entries: list[dict] | None = None, revision: int = 0) -> dict:
+    state = F.fresh_state(revision=revision)
+    state["runs"] = runs or []
+    state["verified_albums"] = entries or []
+    return state
 
 
-def state_excerpt(state: dict) -> dict:
-    return {"revision": state.get("revision"), "current_run_id": state.get("current_run_id"),
-            "active_writer_id": state.get("active_writer_id"), "run_count": len(state.get("runs") or []),
-            "verified_album_count": len(state.get("verified_albums") or []),
-            "runs": [{"run_id": run.get("run_id"), "workflow_outcome": run.get("workflow_outcome"),
-                      "intent_state": run.get("intent_state"), "dispatch_state": run.get("dispatch_state"),
-                      "owner_id": run.get("owner_id"), "destination": run.get("destination")}
-                     for run in state.get("runs") or []]}
+def canonical_case_root(root: Path, state: dict, *, extra_dirs: tuple[str, ...] = ()) -> dict:
+    paths = F.write_canonical_root(root, state, destination_images=0)
+    for name in extra_dirs:
+        (root / name).mkdir(parents=True, exist_ok=True)
+    paths["source_evidence"] = F.source_evidence_record(root, name="source-evidence.json")["path"]
+    paths["counter"] = root / "dispatch-counter.jsonl"
+    paths["counter"].touch()
+    paths["dispatcher"] = H.write_dispatcher(root / "dispatcher.py", block_seconds=0.0)
+    return paths
 
 
-def do_run(ev: Path, name: str, args: list[str], *, timeout: float = 60) -> dict:
-    result = run_product(ev / name, args, timeout=timeout)
-    return {"name": name, "argv": result["argv"], "exit_code": result["exit_code"], "result": result["result"],
-            "record_dir_relative_to_evidence": name}
+def check_args(paths: dict, *, destination: Path, expected_images: int) -> list[str]:
+    return ["transaction", "duplicate-check", "--project-root", str(paths["case_root"]),
+            "--config", str(paths["config"]), "--run-log", str(paths["run_log"]), "--state", str(paths["state"]),
+            "--test-mode", "--group-key", GROUP, "--start-date", FP57["start_date"],
+            "--end-date", FP57["end_date"], "--expected-images", str(expected_images),
+            "--destination", str(destination), "--evidence-dir", str(Path(paths["case_root"]) / "evidence" / "duplicate")]
 
 
-def outcome(run: dict) -> tuple[int | None, str | None]:
-    return run.get("exit_code"), (run.get("result") or {}).get("result")
+def prepare_args(paths: dict, *, run_id: str, owner: str, destination: Path) -> list[str]:
+    return ["transaction", "prepare", "--project-root", str(paths["case_root"]),
+            "--config", str(paths["config"]), "--run-log", str(paths["run_log"]), "--state", str(paths["state"]),
+            "--test-mode", "--run-id", run_id, "--owner-id", owner, "--group-key", GROUP,
+            "--start-date", FP57["start_date"], "--end-date", FP57["end_date"],
+            "--expected-images", str(FP57["expected_images"]), "--destination", str(destination),
+            "--source-evidence", str(paths["source_evidence"]), "--dispatcher", str(paths["dispatcher"]),
+            "--dispatch-counter", str(paths["counter"]),
+            "--evidence-dir", str(Path(paths["case_root"]) / "evidence" / "prepare")]
 
 
-def base_record(subcase: str, claim: str, entry: str, oracle: str, expected_current: str, expected_safe: str) -> dict:
-    return {"subcase": subcase, "claim": claim, "entry": entry, "oracle": oracle,
-            "expected_current_behavior": expected_current, "expected_safe_behavior": expected_safe,
-            "program_hashes": program_hashes(), "dispatch": "none (prepare/duplicate-check never dispatch; no dispatcher passed)",
-            "runs": {}}
+def counter_lines(paths: dict) -> int:
+    return len(H.counter_entries(paths["counter"]))
 
 
-def subcase_a(case_root: Path, ev: Path) -> dict:
-    dest_a = case_root / "destination"
-    dest_b = case_root / "destination-B"
+def run_case(ev: Path, name: str, args: list[str], *, timeout: float = 60.0) -> dict:
+    rec = H.run_product(ev / name, args, timeout=timeout)
+    return {"name": name, "argv": rec["argv"], "exit_code": rec["exit_code"], "result": rec["result"]}
+
+
+def subcase_a(root: Path, ev: Path) -> dict:
+    dest_a, dest_b = root / "destination", root / "destination-B"
     state = base_state(runs=[terminal_run("RUN-A-HIST", "WRITER-A", dest_a)],
                        entries=[registry_entry(dest_a, "RUN-A-HIST")], revision=5)
-    state_path = make_case_root(case_root, state, extra_dirs=(dest_b,))
-    record = base_record(
-        "a",
-        "duplicate-check is bypassable by changing the destination: the registry gate requires an exact destination match, so the same group+fingerprint aimed at a new destination is NOT_DUPLICATE",
-        "python3 -m line_backup_acceptance transaction duplicate-check (real CLI, test-mode fixture root)",
-        "persisted registry entry (group+fp+destA) + CLI result JSON + exit codes; pre/post state SHA-256",
-        "changed destination -> NOT_DUPLICATE exit 0 (bypass); same-destination control -> SKIP_DUPLICATE exit 0",
-        "a terminal VERIFIED fingerprint in the group must gate regardless of destination; destination is part of the attempted run, not album identity",
-    )
-    record["pre_state"] = snapshot_state(state_path, ev, "a-pre-state")
-    common = tx_common(case_root, state_path)
-    record["runs"]["control_same_destination"] = do_run(
-        ev, "a-control-same-destination",
-        duplicate_check_args(common, destination=dest_a, expected_images=FP57["expected_images"],
-                             evidence_dir=case_root / "evidence" / "a-control"))
-    record["runs"]["changed_destination"] = do_run(
-        ev, "a-changed-destination",
-        duplicate_check_args(common, destination=dest_b, expected_images=FP57["expected_images"],
-                             evidence_dir=case_root / "evidence" / "a-changed"))
-    record["post_state"] = snapshot_state(state_path, ev, "a-post-state")
-    record["state_mutated_by_duplicate_check"] = record["post_state"]["sha256"] != record["pre_state"]["sha256"]
-    control = outcome(record["runs"]["control_same_destination"])
-    probe = outcome(record["runs"]["changed_destination"])
-    record["control_outcome"] = {"observed": list(control), "expected": [0, "SKIP_DUPLICATE"],
-                                 "matches": control == (0, "SKIP_DUPLICATE")}
-    if probe == (0, "NOT_DUPLICATE"):
-        record["verdict"] = "REPRODUCED_DUPLICATE_CHECK_DESTINATION_BYPASS"
-    elif probe[0] == 4:
-        record["verdict"] = "NOT_REPRODUCED"
-    elif probe[0] in (1, 2):
-        record["verdict"] = "INCONCLUSIVE_SETUP_FAILED"
-    else:
-        record["verdict"] = "CONTRADICTED"
-    record["durable_manifests"] = {"case_root": durable_copy_tree(case_root, ev / "a" / "case-root-durable")}
-    return record
+    paths = canonical_case_root(root, state, extra_dirs=("destination-B",))
+    pre = sha(paths["state"])
+    control = run_case(ev, "a-control-same-destination", check_args(paths, destination=dest_a, expected_images=57))
+    probe = run_case(ev, "a-changed-destination", check_args(paths, destination=dest_b, expected_images=57))
+    post = sha(paths["state"])
+    checks = {
+        "control.skip-duplicate": (control["exit_code"], (control["result"] or {}).get("result")) == (0, "SKIP_DUPLICATE"),
+        "probe.conflict-fingerprint": (probe["exit_code"], (probe["result"] or {}).get("result")) ==
+                                      (4, "CONFLICT_DUPLICATE_FINGERPRINT"),
+        "no-state-mutation": pre == post,
+    }
+    return {"subcase": "a", "claim": "a destination change must not bypass the fingerprint gate",
+            "entry": "real CLI transaction duplicate-check (test-mode fixture root)",
+            "oracle": "registry entry + CLI result JSON + exit codes + pre/post state SHA-256",
+            "expected_safe_behavior": ("changed destination -> CONFLICT_DUPLICATE_FINGERPRINT exit 4; same-destination "
+                                       "control -> SKIP_DUPLICATE exit 0; no state mutation"),
+            "control": control, "probe": probe, "pre_state_sha256": pre, "post_state_sha256": post,
+            "checks": checks, "verdict": "SAFE_DESTINATION_CHANGE_REFUSED" if all(checks.values()) else
+                                          "REGRESSION_OR_UNEXPECTED"}
 
 
-def subcase_b(case_root: Path, ev: Path) -> dict:
-    record = base_record(
-        "b",
-        "prepare does not scan historical non-terminal runs: an unresolved intent (INTENT_COMMITTED or dispatch_state UNKNOWN, workflow_outcome null) with current_run_id/active_writer_id/context_lock null does not block a new run at a new destination",
-        "python3 -m line_backup_acceptance transaction prepare (real CLI, test-mode fixture root)",
-        "persisted state (new run/owner/revision vs untouched historical run) + CLI result JSON + exit codes",
-        "both historical fixtures -> PREPARED exit 0 (bypass); active-run control -> CONFLICT_ACTIVE_RUN exit 4",
-        "a new run must search all prior intents for the same group/fingerprint and treat unresolved ones as a blocking barrier until proven non-dispatch release",
-    )
-    dest_old_1 = case_root / "destination-old-1"
-    state_path = make_case_root(
-        case_root,
-        base_state(runs=[make_run("RUN-B-HIST-INTENT", "WRITER-B0", str(dest_old_1), intent_state="INTENT_COMMITTED",
-                                  dispatch_state="NOT_ATTEMPTED", phase="SAVE_ALL_INTENT_COMMITTED")], revision=7),
-        extra_dirs=(dest_old_1,))
-    record["probe1_pre_state"] = snapshot_state(state_path, ev, "b-probe1-pre-state")
-    common = tx_common(case_root, state_path)
-    record["runs"]["probe1_prepare_intent_committed"] = do_run(
-        ev, "b-probe1-prepare",
-        prepare_args(common, run_id="RUN-B01", owner_id="WRITER-B01", destination=case_root / "destination-new-1",
-                     evidence_dir=case_root / "evidence" / "b-probe1"))
-    post1 = snapshot_state(state_path, ev, "b-probe1-post-state")
-    record["probe1_post_state_excerpt"] = post1["excerpt"]
-    record["durable_manifests"] = {"probe1_case_root": durable_copy_tree(case_root, ev / "b" / "probe1-case-root-durable")}
+def subcase_b(root: Path, ev: Path) -> dict:
+    dest_old = root / "destination-old"
+    state = base_state(runs=[F.make_run("RUN-B-HIST-INTENT", "WRITER-B0", str(dest_old))], revision=7)
+    paths = canonical_case_root(root, state, extra_dirs=("destination-old", "destination-new"))
+    pre1 = sha(paths["state"])
+    probe1 = run_case(ev, "b-probe1-intent-committed", prepare_args(paths, run_id="RUN-B01", owner="WRITER-B01",
+                                                                     destination=root / "destination-new"))
+    post1 = sha(paths["state"])
+    checks = {
+        "intent-committed.needs-reconciliation": (probe1["exit_code"], (probe1["result"] or {}).get("result")) ==
+                                                 (4, "NEEDS_RECONCILIATION"),
+        "intent-committed.no-state-write": pre1 == post1,
+        "intent-committed.no-dispatch": counter_lines(paths) == 0,
+    }
 
-    dest_old_2 = case_root / "destination-old-2"
-    state_path = make_case_root(
-        case_root,
-        base_state(runs=[make_run("RUN-B-HIST-UNKNOWN", "WRITER-B0B", str(dest_old_2), intent_state="TRIGGER_UNKNOWN",
-                                  dispatch_state="UNKNOWN", dispatch_outcome="UNKNOWN", trigger_outcome="UNKNOWN",
-                                  phase="TRIGGER_UNKNOWN")], revision=7),
-        extra_dirs=(dest_old_2,))
-    record["probe2_pre_state"] = snapshot_state(state_path, ev, "b-probe2-pre-state")
-    common = tx_common(case_root, state_path)
-    record["runs"]["probe2_prepare_dispatch_unknown"] = do_run(
-        ev, "b-probe2-prepare",
-        prepare_args(common, run_id="RUN-B02", owner_id="WRITER-B02", destination=case_root / "destination-new-2",
-                     evidence_dir=case_root / "evidence" / "b-probe2"))
-    post2 = snapshot_state(state_path, ev, "b-probe2-post-state")
-    record["probe2_post_state_excerpt"] = post2["excerpt"]
-    record["runs"]["control_active_run_prepare"] = do_run(
-        ev, "b-control-active-run",
-        prepare_args(common, run_id="RUN-B03", owner_id="WRITER-B03", destination=case_root / "destination-new-3",
-                     evidence_dir=case_root / "evidence" / "b-control"))
-    control_post = snapshot_state(state_path, ev, "b-control-post-state")
-    record["control_post_state_excerpt"] = control_post["excerpt"]
-    record["control_state_unchanged"] = control_post["sha256"] == post2["sha256"]
-    record["durable_manifests"]["probe2_case_root"] = durable_copy_tree(case_root, ev / "b" / "probe2-case-root-durable")
+    state2 = base_state(runs=[F.make_run("RUN-B-HIST-UNKNOWN", "WRITER-B0B", str(root / "destination-old"),
+                                         workflow_outcome="SAFE_ABORT", phase="SAFE_ABORT",
+                                         intent_state="SAVE_ALL_DISPATCH_ATTEMPTED", dispatch_state="UNKNOWN",
+                                         dispatch_outcome="UNKNOWN", trigger_outcome="UNKNOWN",
+                                         manual_reconciliation_required=True,
+                                         reconciliation_reason="dispatch outcome unresolved")], revision=8)
+    paths2 = canonical_case_root(root, state2, extra_dirs=("destination-old", "destination-new"))
+    pre2 = sha(paths2["state"])
+    probe2 = run_case(ev, "b-probe2-dispatch-unknown", prepare_args(paths2, run_id="RUN-B02", owner="WRITER-B02",
+                                                                    destination=root / "destination-new"))
+    post2 = sha(paths2["state"])
+    checks.update({
+        "dispatch-unknown.needs-reconciliation": (probe2["exit_code"], (probe2["result"] or {}).get("result")) ==
+                                                 (4, "NEEDS_RECONCILIATION"),
+        "dispatch-unknown.no-state-write": pre2 == post2,
+        "dispatch-unknown.no-dispatch": counter_lines(paths2) == 0,
+    })
 
-    probe1 = outcome(record["runs"]["probe1_prepare_intent_committed"])
-    probe2 = outcome(record["runs"]["probe2_prepare_dispatch_unknown"])
-    control = outcome(record["runs"]["control_active_run_prepare"])
-    record["probe1_result_revision_field"] = (record["runs"]["probe1_prepare_intent_committed"]["result"] or {}).get("revision")
-    record["probe1_persisted_revision"] = record["probe1_post_state_excerpt"]["revision"]
-    record["control_outcome"] = {"observed": list(control), "expected": [4, "CONFLICT_ACTIVE_RUN"],
-                                 "matches": control == (4, "CONFLICT_ACTIVE_RUN")}
-    if probe1 == (0, "PREPARED") and probe2 == (0, "PREPARED"):
-        record["verdict"] = "REPRODUCED_UNRESOLVED_INTENT_DOES_NOT_BLOCK_NEW_PREPARE"
-    elif probe1[0] == 4 or probe2[0] == 4:
-        record["verdict"] = "NOT_REPRODUCED"
-    elif probe1[0] in (1, 2) or probe2[0] in (1, 2):
-        record["verdict"] = "INCONCLUSIVE_SETUP_FAILED"
-    else:
-        record["verdict"] = "CONTRADICTED"
-    return record
+    state3 = base_state(runs=[F.make_run("RUN-B-HIST-ACTIVE", "WRITER-B0C", str(root / "destination-old"))], revision=9)
+    state3["current_run_id"] = "RUN-B-HIST-ACTIVE"
+    state3["active_writer_id"] = "WRITER-B0C"
+    paths3 = canonical_case_root(root, state3, extra_dirs=("destination-old", "destination-new"))
+    control = run_case(ev, "b-control-active-run", prepare_args(paths3, run_id="RUN-B03", owner="WRITER-B03",
+                                                                destination=root / "destination-new"))
+    checks["active-run.control"] = (control["exit_code"], (control["result"] or {}).get("result")) == \
+                                   (4, "CONFLICT_ACTIVE_RUN")
+    return {"subcase": "b", "claim": "a historical unresolved intent must block a new prepare until reconciled",
+            "entry": "real CLI transaction prepare (test-mode fixture root)",
+            "oracle": "persisted state SHA-256 pre/post + CLI result JSON + exit codes + counter",
+            "expected_safe_behavior": ("historical INTENT_COMMITTED and unresolved SAFE_ABORT both -> "
+                                       "NEEDS_RECONCILIATION exit 4 with no write and no dispatch; active-run control "
+                                       "-> CONFLICT_ACTIVE_RUN exit 4"),
+            "probe1": probe1, "probe2": probe2, "control": control, "checks": checks,
+            "verdict": "SAFE_UNRESOLVED_INTENT_BLOCKS_PREPARE" if all(checks.values()) else "REGRESSION_OR_UNEXPECTED"}
 
 
-def subcase_c(case_root: Path, ev: Path) -> dict:
-    dest_a = case_root / "destination"
+def subcase_c(root: Path, ev: Path) -> dict:
+    dest_a = root / "destination"
     state = base_state(runs=[terminal_run("RUN-C-HIST", "WRITER-C", dest_a)],
                        entries=[registry_entry(dest_a, "RUN-C-HIST")], revision=6)
-    state_path = make_case_root(case_root, state)
-    record = base_record(
-        "c",
-        "the fingerprint includes expected_images, so the same dates with a changed count (56 vs the registry 57) are NOT_DUPLICATE instead of a same-album reconciliation conflict",
-        "python3 -m line_backup_acceptance transaction duplicate-check (real CLI, test-mode fixture root)",
-        "persisted registry entry (2024-05-13..17, 57) + CLI result JSON + exit codes; pre/post state SHA-256",
-        "expected-images 56 -> NOT_DUPLICATE exit 0 (bypass); expected-images 57 control -> SKIP_DUPLICATE exit 0",
-        "a changed count for the same dates must trigger reconciliation against the historical fingerprint, not a silent new album",
-    )
-    record["pre_state"] = snapshot_state(state_path, ev, "c-pre-state")
-    common = tx_common(case_root, state_path)
-    record["runs"]["control_expected_57"] = do_run(
-        ev, "c-control-expected-57",
-        duplicate_check_args(common, destination=dest_a, expected_images=57, evidence_dir=case_root / "evidence" / "c-control"))
-    record["runs"]["probe_expected_56"] = do_run(
-        ev, "c-probe-expected-56",
-        duplicate_check_args(common, destination=dest_a, expected_images=56, evidence_dir=case_root / "evidence" / "c-probe"))
-    record["post_state"] = snapshot_state(state_path, ev, "c-post-state")
-    record["state_mutated_by_duplicate_check"] = record["post_state"]["sha256"] != record["pre_state"]["sha256"]
-    control = outcome(record["runs"]["control_expected_57"])
-    probe = outcome(record["runs"]["probe_expected_56"])
-    record["control_outcome"] = {"observed": list(control), "expected": [0, "SKIP_DUPLICATE"],
-                                 "matches": control == (0, "SKIP_DUPLICATE")}
-    if probe == (0, "NOT_DUPLICATE"):
-        record["verdict"] = "REPRODUCED_SAME_DATE_COUNT_CHANGE_BYPASS"
-    elif probe[0] == 4:
-        record["verdict"] = "NOT_REPRODUCED"
-    elif probe[0] in (1, 2):
-        record["verdict"] = "INCONCLUSIVE_SETUP_FAILED"
-    else:
-        record["verdict"] = "CONTRADICTED"
-    record["durable_manifests"] = {"case_root": durable_copy_tree(case_root, ev / "c" / "case-root-durable")}
-    return record
+    paths = canonical_case_root(root, state)
+    pre = sha(paths["state"])
+    control = run_case(ev, "c-control-expected-57", check_args(paths, destination=dest_a, expected_images=57))
+    probe = run_case(ev, "c-probe-expected-56", check_args(paths, destination=dest_a, expected_images=56))
+    post = sha(paths["state"])
+    checks = {
+        "control.skip-duplicate": (control["exit_code"], (control["result"] or {}).get("result")) == (0, "SKIP_DUPLICATE"),
+        "probe.ambiguous-fingerprint": (probe["exit_code"], (probe["result"] or {}).get("result")) ==
+                                       (4, "AMBIGUOUS_FINGERPRINT"),
+        "no-state-mutation": pre == post,
+    }
+    return {"subcase": "c", "claim": "a same-date count change must be a reconciliation conflict, not a silent new album",
+            "entry": "real CLI transaction duplicate-check (test-mode fixture root)",
+            "oracle": "registry entry + CLI result JSON + exit codes + pre/post state SHA-256",
+            "expected_safe_behavior": ("expected-images 56 -> AMBIGUOUS_FINGERPRINT exit 4; expected-images 57 "
+                                       "control -> SKIP_DUPLICATE exit 0; no state mutation"),
+            "control": control, "probe": probe, "checks": checks,
+            "verdict": "SAFE_COUNT_CHANGE_REFUSED" if all(checks.values()) else "REGRESSION_OR_UNEXPECTED"}
 
 
-def subcase_d(case_root: Path, ev: Path) -> dict:
-    dest_a = case_root / "destination"
+def subcase_d(root: Path, ev: Path) -> dict:
+    dest_a = root / "destination"
     state = base_state(runs=[terminal_run("RUN-D-HIST-1", "WRITER-D", dest_a)],
                        entries=[registry_entry(dest_a, "RUN-D-HIST-1"), registry_entry(dest_a, "RUN-D-HIST-2")],
                        revision=6)
-    state_path = make_case_root(case_root, state)
-    record = base_record(
-        "d",
-        "control: two ambiguous registry entries for the same group/fingerprint/destination must fail closed (CONFLICT_DUPLICATE exit 4); current behaviour is already correct",
-        "python3 -m line_backup_acceptance transaction duplicate-check (real CLI, test-mode fixture root)",
-        "persisted ambiguous registry + CLI result JSON + exit code; pre/post state SHA-256",
-        "ambiguous entries -> CONFLICT_DUPLICATE exit 4",
-        "unchanged after the fix: ambiguous terminal associations keep failing closed",
-    )
-    record["pre_state"] = snapshot_state(state_path, ev, "d-pre-state")
-    common = tx_common(case_root, state_path)
-    record["runs"]["ambiguous_registry"] = do_run(
-        ev, "d-ambiguous-registry",
-        duplicate_check_args(common, destination=dest_a, expected_images=57, evidence_dir=case_root / "evidence" / "d-ambiguous"))
-    record["post_state"] = snapshot_state(state_path, ev, "d-post-state")
-    record["state_mutated_by_duplicate_check"] = record["post_state"]["sha256"] != record["pre_state"]["sha256"]
-    probe = outcome(record["runs"]["ambiguous_registry"])
-    record["control_outcome"] = {"observed": list(probe), "expected": [4, "CONFLICT_DUPLICATE"],
-                                 "matches": probe == (4, "CONFLICT_DUPLICATE")}
-    if probe == (4, "CONFLICT_DUPLICATE"):
-        record["verdict"] = "NOT_REPRODUCED"
-        record["verdict_note"] = "control only: no bypass; duplicate-check fails closed exactly as required"
-    elif probe[0] in (1, 2):
-        record["verdict"] = "INCONCLUSIVE_SETUP_FAILED"
-    else:
-        record["verdict"] = "CONTRADICTED"
-    record["durable_manifests"] = {"case_root": durable_copy_tree(case_root, ev / "d" / "case-root-durable")}
-    return record
+    paths = canonical_case_root(root, state)
+    pre = sha(paths["state"])
+    probe = run_case(ev, "d-ambiguous-registry", check_args(paths, destination=dest_a, expected_images=57))
+    post = sha(paths["state"])
+    checks = {
+        "control.conflict-duplicate": (probe["exit_code"], (probe["result"] or {}).get("result")) ==
+                                      (4, "CONFLICT_DUPLICATE"),
+        "no-state-mutation": pre == post,
+    }
+    return {"subcase": "d", "claim": "the two-entry ambiguity control keeps failing closed",
+            "entry": "real CLI transaction duplicate-check (test-mode fixture root)",
+            "oracle": "ambiguous registry + CLI result JSON + exit codes + pre/post state SHA-256",
+            "expected_safe_behavior": "ambiguous entries -> CONFLICT_DUPLICATE exit 4, no write",
+            "probe": probe, "checks": checks,
+            "verdict": "SAFE_AMBIGUITY_FAILS_CLOSED" if all(checks.values()) else "REGRESSION_OR_UNEXPECTED"}
 
 
-def subcase_e(prod_case_root: Path, ev: Path) -> dict:
-    prod_root = prod_case_root / "prod-root"
-    if prod_case_root.exists():
-        shutil.rmtree(prod_case_root)
+def subcase_e(root: Path, ev: Path) -> dict:
+    prod_root = root / "prod-root"
+    H.ensure_owned_root(root, DRIVER_ID)
+    H.reset_owned_content(root)
     destination = prod_root / "backups" / "album-2024-05-13_to_2024-05-17_57"
     destination.mkdir(parents=True)
-    (prod_root / "state").mkdir()
-    config = {"schema_version": 2, "group_key": GROUP, "group_name": "旻謙允禎成長日記",
+    (prod_root / "state").mkdir(parents=True)
+    config = {"schema_version": 2, "group_key": GROUP, "group_name": F.GROUP_NAME,
               "backup_root": str(prod_root / "backups"), "app_identifier": "jp.naver.line.mac",
               "max_albums_per_run": 1, "recovery_limit": 1, "poll_interval_seconds": 5,
               "stable_samples": 3, "max_wait_seconds": 120}
-    write_json(prod_root / "config" / "line_backup_config.json", config)
-    write_json(prod_root / "state" / "backup_state.json", base_state(revision=0))
-    (prod_root / "state" / "run_log.md").write_text(
-        "# run_log (isolated fake production root; human-readable projection only)\n", encoding="utf-8")
-    record = base_record(
-        "e",
-        "the production entry (no --test-mode) accepts an isolated fabricated project root and persists a fixture calibration ([1,1], HIGH) plus source_provenance='test fixture' with no source observation",
-        "python3 -m line_backup_acceptance transaction prepare (real CLI, NO --test-mode, isolated fake production root)",
-        "persisted production state JSON (intent.calibration / source_provenance / observed_title) + CLI result JSON + exit code",
-        "prepare -> PREPARED exit 0 with fabricated calibration/provenance persisted",
-        "the production entry must reject fixture-derived content without a real source observation (or prove provenance); the real authority under /Users/hsiaojohnny/Documents/Codex is never touched",
-    )
-    record["production_root"] = str(prod_root)
-    record["config_keys"] = sorted(config)
-    record["config_keys_exact"] = sorted(config) == CONFIG_KEYS
-    record["config_durable"] = write_json(ev / "e-prod-config.json", config)
-    record["test_mode_flag_present"] = False
+    H.write_json(prod_root / "config" / "line_backup_config.json", config)
+    H.write_json(prod_root / "state" / "backup_state.json", base_state(revision=0))
+    (prod_root / "state" / "run_log.md").write_text("# run_log (isolated fake production root)\n", encoding="utf-8")
     state_path = prod_root / "state" / "backup_state.json"
-    record["pre_state"] = snapshot_state(state_path, ev, "e-prod-pre-state")
-    argv = ["transaction", "prepare",
-            "--project-root", str(prod_root),
+    dispatcher = H.write_dispatcher(prod_root / "dispatcher.py", block_seconds=0.0)
+    counter = prod_root / "dispatch-counter.jsonl"
+    counter.touch()
+    state_before = state_path.read_bytes()
+
+    base = ["transaction", "prepare", "--project-root", str(prod_root),
             "--config", str(prod_root / "config" / "line_backup_config.json"),
-            "--run-log", str(prod_root / "state" / "run_log.md"),
-            "--state", str(state_path),
-            "--evidence-dir", str(prod_root / "evidence" / "prod-prepare"),
+            "--run-log", str(prod_root / "state" / "run_log.md"), "--state", str(state_path),
             "--run-id", "RUN-PROD-R3", "--owner-id", "WRITER-PROD-R3", "--group-key", GROUP,
             "--start-date", FP57["start_date"], "--end-date", FP57["end_date"],
-            "--expected-images", str(FP57["expected_images"]), "--destination", str(destination)]
-    record["runs"]["production_prepare_no_test_mode"] = do_run(ev, "e-production-prepare", argv)
-    post = snapshot_state(state_path, ev, "e-prod-post-state")
-    record["post_state"] = post
-    record["post_state_excerpt"] = post["excerpt"]
-    record["result_revision_field"] = (record["runs"]["production_prepare_no_test_mode"]["result"] or {}).get("revision")
-    post_state_data = read_json(state_path)
-    run0 = (post_state_data.get("runs") or [{}])[0]
-    calibration = (run0.get("intent") or {}).get("calibration") or {}
-    record["persisted_run_fields"] = {key: run0.get(key) for key in
-                                      ("run_id", "group_key", "fingerprint", "observed_title", "title_confidence",
-                                       "source_provenance", "destination", "destination_initially_empty",
-                                       "intent_state", "dispatch_state", "workflow_outcome")}
-    record["persisted_calibration"] = calibration
-    record["fixture_fabrication_checks"] = {
-        "calibration_ellipsis_equals_1_1": calibration.get("ellipsis") == [1, 1],
-        "calibration_save_all_point_equals_1_1": calibration.get("save_all_point") == [1, 1],
-        "calibration_confidence": calibration.get("confidence"),
-        "source_provenance": run0.get("source_provenance"),
-        "source_observation_note": "no GUI/source adapter ran; the persisted content comes from _base_run() constants",
+            "--expected-images", str(FP57["expected_images"]), "--destination", str(destination),
+            "--dispatcher", str(dispatcher), "--dispatch-counter", str(counter),
+            "--evidence-dir", str(prod_root / "evidence" / "prod-prepare")]
+    e1 = run_case(ev, "e1-production-prepare-no-source-evidence", base)
+    state_after_e1 = state_path.read_bytes()
+    fixture_record = F.source_evidence_record(prod_root, name="fixture-source-evidence.json", test_mode=True,
+                                              binding_kind="fixture")
+    e2 = run_case(ev, "e2-production-prepare-fixture-record",
+                  base + ["--source-evidence", str(fixture_record["path"])])
+    state_after_e2 = state_path.read_bytes()
+    state_data = read_json(state_path)
+    checks = {
+        "e1.missing-source-evidence": (e1["exit_code"], (e1["result"] or {}).get("result")) ==
+                                      (2, "MISSING_SOURCE_EVIDENCE"),
+        "e1.no-state-write": state_after_e1 == state_before,
+        "e2.invalid-source-evidence": (e2["exit_code"], (e2["result"] or {}).get("failure_class")) ==
+                                      (2, "INVALID_SOURCE_EVIDENCE"),
+        "e2.no-state-write": state_after_e2 == state_before,
+        "no-run-persisted": state_data.get("runs") == [],
+        "no-fabricated-calibration": "calibration" not in json.dumps(state_data),
+        "zero-dispatch": len(H.counter_entries(counter)) == 0,
+        "revision-unchanged": state_data.get("revision") == 0,
     }
-    probe = outcome(record["runs"]["production_prepare_no_test_mode"])
-    if (probe == (0, "PREPARED") and calibration.get("ellipsis") == [1, 1]
-            and calibration.get("confidence") == "HIGH" and run0.get("source_provenance") == "test fixture"):
-        record["verdict"] = "REPRODUCED_PRODUCTION_ACCEPTS_FIXTURE_INTENT"
-    elif probe[0] in (4,):
-        record["verdict"] = "NOT_REPRODUCED"
-    elif probe[0] in (1, 2):
-        record["verdict"] = "NOT_REPRODUCED"
-        record["verdict_note"] = "production entry rejected the fabricated root (fail-closed); claim not reproduced"
-    else:
-        record["verdict"] = "CONTRADICTED"
-    record["durable_manifests"] = {"case_root": durable_copy_tree(prod_case_root, ev / "e" / "case-root-durable")}
-    return record
-
-
-def overall_verdict(subcases: list[dict]) -> str:
-    by_letter = {subcase["subcase"]: subcase["verdict"] for subcase in subcases}
-    expected = {"a": "REPRODUCED_DUPLICATE_CHECK_DESTINATION_BYPASS",
-                "b": "REPRODUCED_UNRESOLVED_INTENT_DOES_NOT_BLOCK_NEW_PREPARE",
-                "c": "REPRODUCED_SAME_DATE_COUNT_CHANGE_BYPASS",
-                "e": "REPRODUCED_PRODUCTION_ACCEPTS_FIXTURE_INTENT"}
-    hits = [letter for letter, verdict in expected.items() if by_letter.get(letter) == verdict]
-    control_ok = by_letter.get("d") == "NOT_REPRODUCED"
-    if len(hits) == len(expected) and control_ok:
-        return "REPRODUCED_R3_PRECONDITION_GAPS"
-    if not hits:
-        return "NOT_REPRODUCED"
-    return "REPRODUCED_R3_PARTIAL"
+    return {"subcase": "e", "claim": "the production entry (no --test-mode) must refuse fixture-derived content",
+            "entry": "real CLI transaction prepare (NO --test-mode, isolated fake production root)",
+            "oracle": "persisted production state bytes + CLI result JSON + exit code + counter",
+            "expected_safe_behavior": ("missing --source-evidence -> MISSING_SOURCE_EVIDENCE exit 2; a test-mode "
+                                       "fixture record -> INVALID_SOURCE_EVIDENCE exit 2; zero writes, zero dispatch"),
+            "production_root": str(prod_root),
+            "e1": e1, "e2": e2, "checks": checks,
+            "verdict": "SAFE_PRODUCTION_REFUSES_FIXTURE_CONTENT" if all(checks.values()) else "REGRESSION_OR_UNEXPECTED"}
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--case-root", required=True)
-    parser.add_argument("--evidence-dir", required=True)
-    ns = parser.parse_args()
-    case_root = Path(ns.case_root)
-    if case_root not in {CASE03, CASE04}:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--case-root", default=str(CASE03))
+    ap.add_argument("--evidence-dir", required=True)
+    ns = ap.parse_args()
+    case_root, ev = Path(ns.case_root), Path(ns.evidence_dir)
+    if case_root.resolve() != CASE03.resolve():
         print(json.dumps({"verdict": "INCONCLUSIVE_SETUP_FAILED",
-                          "reason": f"case root must be one of the literal roots {CASE03}, {CASE04}"}, ensure_ascii=False))
+                          "reason": f"R3 is bound to its literal case root {CASE03}"}, ensure_ascii=False))
         return 1
-    ev = Path(ns.evidence_dir)
-    if not ev.is_absolute():
-        ev = WORK / ev
-    if "phase2-r3" not in ev.parts:
-        print(json.dumps({"verdict": "INCONCLUSIVE_SETUP_FAILED",
-                          "reason": "evidence dir must be the dedicated phase2-r3 attempt directory"}, ensure_ascii=False))
-        return 1
-    prod_case_root = CASE04
-    if ev.exists():
-        shutil.rmtree(ev)
-    ev.mkdir(parents=True)
+    ev.mkdir(parents=True, exist_ok=True)
+    H.ensure_owned_root(case_root, DRIVER_ID)
+    H.reset_owned_content(case_root)
 
     observation = {
-        "claim": ("R3: transaction prepare lacks precondition checks and the duplicate gate is bypassable by "
-                  "destination change, by historical unresolved intent, and by same-date count change; the "
-                  "production entry (no --test-mode) accepts a fabricated root and persists fixture calibration "
-                  "with no source observation"),
-        "entry": ("real product CLI subprocesses (`python3 -m line_backup_acceptance transaction prepare|duplicate-check`); "
-                  "test-mode fixture roots replace external I/O paths only"),
-        "oracle": ("persisted state JSON (registry / intent / calibration / source_provenance), CLI result JSON and "
-                   "exit codes, pre/post state SHA-256; no dispatcher is involved, so persisted state is the "
-                   "side-effect surface"),
-        "decision": ("(a)(b)(c)(e) reproduced -> keep GUI/production dispatch blocked; Phase 4 must add pre-side-effect "
-                     "checks (history-wide unresolved-intent scan, destination-independent duplicate/fingerprint "
-                     "barrier, same-date count change as reconciliation, production rejection of fixture-derived "
-                     "calibration/provenance). (d) must stay fail-closed (CONFLICT_DUPLICATE/exit 4) after the fix."),
-        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "work": str(WORK),
+        "driver": DRIVER_ID,
+        "claim": ("pre-fix: the duplicate gate was bypassable by destination change and same-date count change, a "
+                  "historical unresolved intent did not block prepare, and the production entry accepted "
+                  "fixture-derived content; post-fix: every bypass is refused before any side effect"),
+        "entry": "real product CLI subprocesses (`transaction prepare|duplicate-check`)",
+        "oracle": "persisted state JSON + CLI result JSON + exit codes + pre/post state SHA-256 + counter",
+        "pre_fix": PRE_FIX,
+        "program_hashes": H.program_hashes(),
         "case_roots": {"test_mode": str(case_root), "production_fake_root": str(CASE04 / "prod-root")},
-        "program_hashes": program_hashes(),
-        "independent_side_effect_surface": ("no dispatcher is invoked by prepare/duplicate-check; the independent "
-                                            "oracle is the persisted state file plus CLI exit codes"),
     }
     subcases = [subcase_a(case_root, ev), subcase_b(case_root, ev), subcase_c(case_root, ev), subcase_d(case_root, ev),
-                subcase_e(prod_case_root, ev)]
+                subcase_e(CASE04, ev)]
     observation["subcases"] = subcases
-    observation["verdict"] = overall_verdict(subcases)
-    write_json(ev / "observation.json", observation)
-    write_tree_manifest(ev)
-    summary = {"verdict": observation["verdict"],
-               "subcases": {subcase["subcase"]: subcase["verdict"] for subcase in subcases},
-               "evidence_dir": str(ev)}
-    print(json.dumps(summary, ensure_ascii=False))
-    return 0
+    observation["checks"] = {f"{s['subcase']}.{k}": v for s in subcases for k, v in s["checks"].items()}
+    all_safe = all(v for v in observation["checks"].values())
+    observation["verdict"] = "SAFE_R3_PRECONDITION_REFUSALS" if all_safe else "REGRESSION_OR_UNEXPECTED"
+    observation["subcase_verdicts"] = {s["subcase"]: s["verdict"] for s in subcases}
+    H.write_json(ev / "observation.json", observation)
+    for root in (case_root, CASE04):
+        durable = ev / "case-root-durable" / root.name
+        H.durable_copy_tree(root, durable)
+    H.write_tree_manifest(ev)
+    print(json.dumps({"verdict": observation["verdict"],
+                      "failed": [k for k, v in observation["checks"].items() if not v],
+                      "subcases": observation["subcase_verdicts"]}, ensure_ascii=False))
+    return 0 if all_safe else 1
 
 
 if __name__ == "__main__":

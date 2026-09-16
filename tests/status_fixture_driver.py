@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import shutil
 import subprocess
 import sys
 import time
@@ -210,13 +209,7 @@ def manifest_rows() -> list:
 
 def ensure_root() -> None:
     H.ensure_owned_root(ROOT, DRIVER_ID)
-    for child in sorted(ROOT.iterdir()):
-        if child.name == H.MARKER_NAME:
-            continue
-        if child.is_dir():
-            shutil.rmtree(child)
-        else:
-            child.unlink()
+    H.reset_owned_content(ROOT)
 
 
 def main() -> int:

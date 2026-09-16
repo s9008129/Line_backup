@@ -14,7 +14,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import shutil
 import subprocess
 import sys
 import time
@@ -317,13 +316,7 @@ def entry_for(inventory: dict, relative_path: str):
 def reset_case_root(root: Path) -> dict:
     root = Path(root)
     owned = H.ensure_owned_root(root, DRIVER_ID)
-    for child in sorted(root.iterdir()):
-        if child.name == H.MARKER_NAME:
-            continue
-        if child.is_dir():
-            shutil.rmtree(child)
-        else:
-            child.unlink()
+    H.reset_owned_content(root)
     return owned
 
 

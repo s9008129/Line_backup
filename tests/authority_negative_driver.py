@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import shutil
 import subprocess
 import sys
 import time
@@ -199,13 +198,7 @@ def chain_ok(evidence: Path) -> bool:
 def build_fixtures() -> dict:
     """Create only this driver's own literal root and the production fixture inside it."""
     owned = H.ensure_owned_root(BASE, DRIVER_ID)
-    for child in sorted(BASE.iterdir()):
-        if child.name == H.MARKER_NAME:
-            continue
-        if child.is_dir():
-            shutil.rmtree(child)
-        else:
-            child.unlink()
+    H.reset_owned_content(BASE)
     production, alternate = BASE / "production-root", BASE / "alternate"
     backup = production / "backup"
     destination = backup / "destination"

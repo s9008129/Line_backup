@@ -1,331 +1,294 @@
 #!/usr/bin/env python3
-"""Phase 2 / R4 — `transaction finalize` trusts any JSON claim of VERIFIED.
+"""Phase 2 / R4 — `transaction finalize` must validate its verification evidence, and the
+transaction -> verify-only loop must close on real files.
 
-CLAIM  finalize() reads `--verification-json`, persists its content unchanged and, for
-       `--outcome VERIFIED`, appends a `verified_albums` entry without checking the
-       source of the JSON, its content, or whether it belongs to this run/group. The
-       entry it writes carries no `source_authority`, so the transaction -> verify-only
-       loop can never reach overall PASS even when the destination afterwards really
-       contains exactly the claimed files.
-ENTRY  Real CLI: `transaction prepare` + `transaction finalize` in the test-mode fixture
-       root /private/tmp/line-backup-acceptance-case-06, then `verify-only --test-mode`
-       over a byte-identical copy of the post-(a) state in the verifier fixture root
-       /private/tmp/line-backup-acceptance-verifier/r4 (canonical config/state children).
-ORACLE Persisted state after every commit (revision, run fields, registry entry),
-       destination inventory at finalize time (0 files) versus the fabricated claim
-       (PASS/57), the verbatim verify-only stdout/exit over the same state, and the
-       r4 state hash before/after verify-only (verify must not mutate state).
-DECIDE Fabricated / self-contradictory / foreign JSON producing VERIFIED entries, and a
-       verify-only result that cannot confirm the finalize-made entry from real files,
-       mean registry writes are not evidence-backed: finalize must validate the
-       verification source and run identity before the registry addition can commit.
+CLAIM (Rev14, reproduced pre-fix in attempt-01)  finalize() trusted any --verification-json:
+       arbitrary JSON (PASS/57, FAIL/0, {}, another run's result) produced a VERIFIED registry
+       entry, and the entry could never satisfy the verifier's source requirement, so the loop
+       never closed.
+ENTRY  Real CLI `transaction prepare` + `verify-only --test-mode` + `commit` + `finalize` in the
+       test-mode fixture root /private/tmp/line-backup-acceptance-case-06; the dispatcher adapter
+       replaces only external I/O and writes the 57 fixture images itself.
+ORACLE Persisted state after every commit (revision, run fields, registry entry), the real
+       destination inventory, the genuine verify-only chains (result.json + manifest.json), the
+       verbatim verify-only stdout/exit over the closed state, and state hashes.
+DECIDE Post-fix (this run): every fabricated / malformed / foreign / tampered payload must be
+       refused (INVALID_VERIFICATION_EVIDENCE or VERIFICATION_RUN_MISMATCH, exit 4, no registry
+       write), and the honest loop prepare -> verify -> commit -> finalize -> verify must reach
+       overall PASS with source CONFIRMED.
 """
 from __future__ import annotations
 
 import argparse
 import json
-import shutil
-import subprocess
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from fixtures import GROUP, make_png
-from harness import (durable_copy_tree, program_hashes, read_json, run_product, sha256_file, write_json,
-                     write_tree_manifest)
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import fixtures as F  # noqa: E402
+import harness as H  # noqa: E402
 
+DRIVER_ID = "phase2-r4-finalize-trust"
+GROUP = F.GROUP
+FP57 = F.FP57
+START, END, COUNT = FP57["start_date"], FP57["end_date"], FP57["expected_images"]
 CASE_ROOT = Path("/private/tmp/line-backup-acceptance-case-06")
-VERIFIER_ROOT = Path("/private/tmp/line-backup-acceptance-verifier/r4")
-BACKUP_ROOT = CASE_ROOT / "backups"
-ALBUM_A = BACKUP_ROOT / "album-a"
-ALBUM_B = BACKUP_ROOT / "album-b"
-ALBUM_C = BACKUP_ROOT / "album-c"
-ALBUM_D = BACKUP_ROOT / "album-d"
-START, END, COUNT = "2024-05-13", "2024-05-17", 57
-FP57 = {"start_date": START, "end_date": END, "expected_images": COUNT}
-GROUP_B = "line:jp.naver.line.mac:測試相簿-FAIL-宣稱"
-GROUP_C = "line:jp.naver.line.mac:測試相簿-空JSON"
-GROUP_D = "line:jp.naver.line.mac:測試相簿-別run"
-FP_B = {"start_date": "2024-06-01", "end_date": "2024-06-02", "expected_images": 3}
-FP_C = {"start_date": "2024-07-01", "end_date": "2024-07-02", "expected_images": 1}
-FP_D = {"start_date": "2024-08-01", "end_date": "2024-08-02", "expected_images": 2}
+ATTEMPT_01 = H.WORK / "evidence/20260916-auto-verification/attempt-01/phase2-r4"
+PRE_FIX = {
+    "verdict": "REPRODUCED_FINALIZE_TRUSTS_JSON",
+    "observation": ("finalize committed VERIFIED from arbitrary JSON (PASS/57, FAIL/0, {}, another run's JSON); the "
+                    "entry carried no source_authority and the transaction -> verify-only loop never reached PASS"),
+    "evidence": str(ATTEMPT_01 / "observation.json"),
+}
+
+DOWNLOADER = '''#!/usr/bin/env python3
+import argparse, json, os, struct, time, zlib
+p = argparse.ArgumentParser(); p.add_argument('--counter'); p.add_argument('--outcome')
+p.add_argument('--crash-after-dispatch', action='store_true')
+n = p.parse_args()
+with open(n.counter, 'a', encoding='utf-8') as fh:
+    fh.write(json.dumps({{'outcome': n.outcome, 'pid': os.getpid(), 'at': time.time()}}) + '\\n')
+dest = {dest!r}
+files = {files!r}
+os.makedirs(dest, exist_ok=True)
+def chunk(kind, data):
+    return struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data) & 0xFFFFFFFF)
+raw = b''.join(b'\\x00' + bytes((10, 20, 30) * 8) for _ in range(8))
+png = (b'\\x89PNG\\r\\n\\x1a\\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', 8, 8, 8, 2, 0, 0, 0))
+       + chunk(b'IDAT', zlib.compress(raw)) + chunk(b'IEND', b''))
+for i in range(files):
+    with open(os.path.join(dest, f'image-{{i:03d}}.png'), 'wb') as fh:
+        fh.write(png)
+raise SystemExit(1 if n.crash_after_dispatch else 0)
+'''
 
 
-def find_run(state: dict, run_id: str) -> dict | None:
-    return next((r for r in state.get("runs", []) if isinstance(r, dict) and r.get("run_id") == run_id), None)
+def read_json(path: Path):
+    return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
-def find_entry(state: dict, run_id: str) -> dict | None:
-    return next((e for e in state.get("verified_albums", []) if isinstance(e, dict) and e.get("verified_run_id") == run_id), None)
+def sha(path: Path) -> str:
+    return H.sha256_file(Path(path))
 
 
-def local_hashes() -> dict:
-    here = Path(__file__).resolve().parent
-    out = {}
-    for name in ("harness.py", "fixtures.py", Path(__file__).name):
-        item = here / name
-        out[name] = {"bytes": item.stat().st_size, "sha256": sha256_file(item)}
-    return out
+def write_downloader(path: Path, destination: Path, files: int) -> Path:
+    path.write_text(DOWNLOADER.format(dest=str(destination), files=files), encoding="utf-8")
+    path.chmod(0o755)
+    return path
+
+
+def base(paths: dict, operation: str, *extra: str) -> list[str]:
+    return ["transaction", operation, "--project-root", str(paths["case_root"]), "--config", str(paths["config"]),
+            "--run-log", str(paths["run_log"]), "--state", str(paths["state"]), "--test-mode", *extra]
+
+
+def verify_args(paths: dict, evidence_dir: Path, *, run_id: str | None) -> list[str]:
+    args = ["verify-only", "--project-root", str(paths["case_root"]), "--config", str(paths["config"]),
+            "--state", str(paths["state"]), "--test-mode", "--destination", str(paths["destination"]),
+            "--group-key", GROUP, "--start-date", START, "--end-date", END, "--expected-images", str(COUNT),
+            "--evidence-dir", str(evidence_dir)]
+    if run_id:
+        args += ["--run-id", run_id]
+    return args
+
+
+def build_closed_loop_fixture(root: Path, ev: Path) -> dict:
+    H.ensure_owned_root(root, DRIVER_ID)
+    H.reset_owned_content(root)
+    paths = F.write_canonical_root(root, F.fresh_state(), destination_name="backups/album-a")
+    paths["source_evidence"] = F.source_evidence_record(root, name="source-evidence.json")["path"]
+    paths["counter"] = root / "dispatch-counter.jsonl"
+    paths["counter"].touch()
+    paths["dispatcher"] = write_downloader(root / "downloader-adapter.py", Path(paths["destination"]), COUNT)
+    return paths
+
+
+def refutation_fixture(root: Path) -> dict:
+    """A separate canonical case root content for the finalize negatives (completed dispatch)."""
+    H.reset_owned_content(root)
+    destination = root / "backups" / "album-refusals"
+    destination.mkdir(parents=True)
+    state = F.fresh_state(revision=2)
+    run = F.completed_dispatch_run("RUN-R4-R", "WRITER-R4-R", str(destination))
+    state["runs"] = [run]
+    state["current_run_id"] = "RUN-R4-R"
+    state["active_writer_id"] = "WRITER-R4-R"
+    paths = F.write_canonical_root(root, state, destination_name="backups/album-refusals",
+                                   config_extra={"backup_root": str(root / "backups")})
+    paths["source_evidence"] = F.source_evidence_record(root, name="source-evidence.json")["path"]
+    return paths
+
+
+def finalize_args(paths: dict, run_id: str, owner: str, revision: int, verification: Path) -> list[str]:
+    return base(paths, "finalize", "--run-id", run_id, "--expected-revision", str(revision),
+                "--expected-owner-id", owner, "--outcome", "VERIFIED",
+                "--verification-json", str(verification), "--evidence-dir", str(Path(paths["case_root"]) / "evidence" / "finalize"))
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--case-root", default=str(CASE_ROOT))
     ap.add_argument("--evidence-dir", required=True)
     ns = ap.parse_args()
-    case_root = Path(ns.case_root)
-    ev = Path(ns.evidence_dir)
-    if case_root != CASE_ROOT:
-        print(json.dumps({"error": "R4 reproduction is bound to its assigned case root", "case_root": str(case_root)}))
-        return 2
+    case_root, ev = Path(ns.case_root), Path(ns.evidence_dir)
+    if case_root.resolve() != CASE_ROOT.resolve():
+        print(json.dumps({"verdict": "INCONCLUSIVE_SETUP_FAILED",
+                          "reason": f"R4 is bound to its literal case root {CASE_ROOT}"}, ensure_ascii=False))
+        return 1
     ev.mkdir(parents=True, exist_ok=True)
 
-    for root in (CASE_ROOT, VERIFIER_ROOT):
-        if root.exists():
-            shutil.rmtree(root)
-    BACKUP_ROOT.mkdir(parents=True)
-    ALBUM_A.mkdir()
-    state_path = case_root / "state.json"
-    state0 = {"schema_version": 2, "revision": 0, "current_run_id": None, "active_writer_id": None,
-              "context_lock": None, "runs": [], "verified_albums": []}
-    write_json(state_path, state0)
-    write_json(ev / "pre-state.json", state0)
+    record = {"driver": DRIVER_ID,
+              "claim": ("pre-fix: finalize trusted any JSON and the loop never closed; post-fix: fabricated/malformed/"
+                        "foreign/tampered evidence is refused and the honest loop reaches overall PASS"),
+              "entry": "real CLI prepare -> verify-only -> commit -> finalize -> verify-only (test-mode case-06)",
+              "oracle": ("persisted state after every commit + real destination inventory + genuine verify chains + "
+                         "verify-only result/exit + pre/post state hashes"),
+              "pre_fix": PRE_FIX, "case_root": str(case_root), "program_hashes": H.program_hashes()}
+    checks: dict[str, bool] = {}
 
-    record: dict = {
-        "claim": "transaction finalize trusts any --verification-json and writes a VERIFIED registry entry "
-                 "without source/content/run-association validation; the entry can never satisfy the verifier's "
-                 "source requirement, so the transaction -> verify-only loop never closes",
-        "entry": "real CLI transaction prepare/finalize (test-mode case-06) + verify-only --test-mode (verifier/r4)",
-        "oracle": "persisted state after each commit; registry entry fields; destination inventory at finalize time "
-                  "vs fabricated claim; verbatim verify-only stdout/exit; r4 state hash before/after verify-only",
-        "decision": "fabricated/contradictory/foreign JSON producing VERIFIED entries, and verify-only being unable "
-                    "to confirm the finalize-made entry from real files, mean finalize must validate the verification "
-                    "source and run identity before the registry addition can commit",
-        "program_hashes": {**program_hashes(), **local_hashes()},
-        "case_root": str(CASE_ROOT),
-        "verifier_root": str(VERIFIER_ROOT),
-        "subcases": {},
-        "observations": [],
-    }
+    # ---------------- closed loop ----------------
+    paths = build_closed_loop_fixture(case_root, ev)
+    prepare = H.run_product(ev / "closed-loop" / "01-prepare",
+                            base(paths, "prepare", "--run-id", "RUN-R4", "--owner-id", "WRITER-R4",
+                                 "--group-key", GROUP, "--start-date", START, "--end-date", END,
+                                 "--expected-images", str(COUNT), "--destination", str(paths["destination"]),
+                                 "--source-evidence", str(paths["source_evidence"]),
+                                 "--dispatcher", str(paths["dispatcher"]), "--dispatch-counter", str(paths["counter"]),
+                                 "--dispatcher-outcome", "RETURNED",
+                                 "--evidence-dir", str(case_root / "evidence" / "prepare")), timeout=120)
+    p_result = prepare["result"] or {}
+    dest_files = sorted(p.name for p in Path(paths["destination"]).iterdir())
+    record["closed_loop"] = {"prepare": {"exit_code": prepare["exit_code"], "result": p_result,
+                                         "counter_lines": len(H.counter_entries(paths["counter"])),
+                                         "destination_files": len(dest_files)},
+                             "argv": prepare["argv"]}
+    checks["prepare.prepared"] = p_result.get("result") == "PREPARED" and prepare["exit_code"] == 0
+    checks["prepare.dispatch"] = p_result.get("dispatch_performed") is True
+    checks["prepare.destination-57"] = len(dest_files) == COUNT
+    checks["prepare.counter-1"] = len(H.counter_entries(paths["counter"])) == 1
 
-    def tx(step: str, operation: str, extra: list[str]) -> dict:
-        before = read_json(state_path)
-        rec = run_product(ev / step, ["transaction", operation, "--project-root", str(CASE_ROOT),
-                                      "--state", str(state_path), "--test-mode",
-                                      "--evidence-dir", str(CASE_ROOT / "evidence" / step), *extra], timeout=120)
-        after = read_json(state_path)
-        write_json(ev / f"state-{step}.json", after)
-        rec["revision_before"], rec["revision_after"] = before.get("revision"), after.get("revision")
-        rec["result_code"] = (rec.get("result") or {}).get("result")
-        return rec
+    verify1_dir = case_root / "evidence" / "verify-1"
+    verify1 = H.run_product(ev / "closed-loop" / "02-verify-1", verify_args(paths, verify1_dir, run_id="RUN-R4"),
+                            timeout=120)
+    v1 = verify1["result"] or {}
+    record["closed_loop"]["verify_1"] = {"exit_code": verify1["exit_code"],
+                                         "filesystem": v1.get("filesystem_status"),
+                                         "registry": v1.get("registry_status"),
+                                         "source": v1.get("source_status"),
+                                         "overall": v1.get("overall_status")}
+    checks["verify1.filesystem-pass"] = v1.get("filesystem_status") == "PASS"
+    checks["verify1.consistent-axes"] = ((v1.get("registry_status"), v1.get("source_status")) != ("PASS", "CONFIRMED"))
 
-    def prepare(step: str, run_id: str, owner: str, group: str, fp: dict, dest: Path) -> dict:
-        return tx(step, "prepare", ["--run-id", run_id, "--owner-id", owner, "--group-key", group,
-                                    "--start-date", fp["start_date"], "--end-date", fp["end_date"],
-                                    "--expected-images", str(fp["expected_images"]), "--destination", str(dest)])
+    commit = H.run_product(ev / "closed-loop" / "03-commit",
+                           base(paths, "commit", "--run-id", "RUN-R4", "--expected-revision", "2",
+                                "--expected-owner-id", "WRITER-R4",
+                                "--verification-json", str(verify1_dir / "result.json"),
+                                "--evidence-dir", str(case_root / "evidence" / "commit")), timeout=120)
+    record["closed_loop"]["commit"] = {"exit_code": commit["exit_code"], "result": commit["result"]}
+    checks["commit.committed"] = (commit["result"] or {}).get("result") == "COMMITTED_VERIFICATION" \
+                                 and commit["exit_code"] == 0
 
-    def finalize(step: str, run_id: str, owner: str, verification: Path) -> dict:
-        revision = read_json(state_path)["revision"]
-        return tx(step, "finalize", ["--run-id", run_id, "--expected-revision", str(revision),
-                                     "--expected-owner-id", owner, "--verification-json", str(verification),
-                                     "--outcome", "VERIFIED"])
+    finalize = H.run_product(ev / "closed-loop" / "04-finalize",
+                             finalize_args(paths, "RUN-R4", "WRITER-R4", 3, verify1_dir / "result.json"),
+                             timeout=120)
+    record["closed_loop"]["finalize"] = {"exit_code": finalize["exit_code"], "result": finalize["result"]}
+    state = read_json(paths["state"])
+    entry = (state.get("verified_albums") or [None])[0]
+    record["closed_loop"]["registry_entry"] = entry
+    checks["finalize.finalized"] = (finalize["result"] or {}).get("result") == "FINALIZED" and finalize["exit_code"] == 0
+    checks["finalize.entry-bound"] = bool(entry) and entry.get("verified_run_id") == "RUN-R4"
 
-    # ---------------- (a) fabricated PASS/57 JSON on a non-terminal run ----------------
-    fake_a = {"schema_version": 1, "mode": "verify_only", "run_id": "RUN-R4A", "group_key": GROUP,
-              "fingerprint": FP57, "destination": str(ALBUM_A), "filesystem_status": "PASS",
-              "regular_files": 57, "recognized_images": 57, "zero_byte_files": 0,
-              "produced_by": "fabricated fixture; no filesystem scan was performed"}
-    verification_a = case_root / "verification-a.json"
-    write_json(verification_a, fake_a)
-    prep_a = prepare("a-prepare", "RUN-R4A", "WRITER-R4A", GROUP, FP57, ALBUM_A)
-    dest_files_at_finalize = sorted(p.name for p in ALBUM_A.iterdir())
-    fin_a = finalize("a-finalize", "RUN-R4A", "WRITER-R4A", verification_a)
-    shutil.copyfile(state_path, ev / "state-after-a.json")
-    state_a = read_json(state_path)
-    run_a = find_run(state_a, "RUN-R4A")
-    entry_a = find_entry(state_a, "RUN-R4A")
-    record["subcases"]["a_fabricated_pass_json_non_terminal_run"] = {
-        "input_verification_json": {"path": str(verification_a), "content": fake_a},
-        "run_before_finalize": {"run_id": "RUN-R4A", "phase": "SAVE_ALL_INTENT_COMMITTED",
-                                "terminal_before": False, "verification_before": None},
-        "destination_files_at_finalize_time": {"count": len(dest_files_at_finalize), "names": dest_files_at_finalize,
-                                               "note": "the fabricated JSON claims PASS/57 regular files while the "
-                                                       "destination was empty and was never scanned by the product"},
-        "prepare": {k: prep_a[k] for k in ("exit_code", "result", "revision_before", "revision_after", "record_dir")},
-        "finalize": {k: fin_a[k] for k in ("exit_code", "result", "revision_before", "revision_after", "record_dir")},
-        "persisted_state_after_a": state_a,
-        "persisted_state_after_a_sha256": sha256_file(ev / "state-after-a.json"),
-        "registry_entry_written": entry_a,
-        "registry_entry_keys": sorted(entry_a.keys()) if entry_a else None,
-        "entry_has_source_authority": ("source_authority" in entry_a) if entry_a else None,
-        "run_a_after_finalize": {k: (run_a or {}).get(k) for k in ("workflow_outcome", "phase", "contract_revision",
-                                                                   "observed_title", "source_provenance")},
-        "ownership_after_finalize": {"current_run_id": state_a.get("current_run_id"),
-                                     "active_writer_id": state_a.get("active_writer_id"),
-                                     "context_lock": state_a.get("context_lock")},
-    }
+    verify2_dir = case_root / "evidence" / "verify-2"
+    verify2 = H.run_product(ev / "closed-loop" / "05-verify-2", verify_args(paths, verify2_dir, run_id="RUN-R4"),
+                            timeout=120)
+    v2 = verify2["result"] or {}
+    record["closed_loop"]["verify_2"] = {"exit_code": verify2["exit_code"],
+                                         "axes": {k: v2.get(k) for k in ("filesystem_status", "registry_status",
+                                                                         "source_status", "state_status",
+                                                                         "overall_status")}}
+    checks["verify2.exit0"] = verify2["exit_code"] == 0
+    checks["verify2.overall-pass"] = v2.get("overall_status") == "PASS"
+    checks["verify2.registry-pass"] = v2.get("registry_status") == "PASS"
+    checks["verify2.source-confirmed"] = v2.get("source_status") == "CONFIRMED"
+    checks["verify2.state-exact"] = v2.get("state_status") == "EXACT"
 
-    # ---------------- (b1) JSON content itself claims FAIL ----------------
-    fake_b1 = {"schema_version": 1, "mode": "verify_only", "run_id": "RUN-R4B", "group_key": GROUP_B,
-               "fingerprint": FP_B, "destination": str(ALBUM_B), "filesystem_status": "FAIL",
-               "regular_files": 0, "recognized_images": 0, "zero_byte_files": 12, "failure_class": "INPUT_NEGATIVE",
-               "produced_by": "fabricated fixture whose content claims total failure"}
-    verification_b1 = case_root / "verification-b1-fail-claim.json"
-    write_json(verification_b1, fake_b1)
-    prep_b1 = prepare("b1-prepare", "RUN-R4B", "WRITER-R4B", GROUP_B, FP_B, ALBUM_B)
-    fin_b1 = finalize("b1-finalize", "RUN-R4B", "WRITER-R4B", verification_b1)
-    state_b1 = read_json(state_path)
-    run_b1 = find_run(state_b1, "RUN-R4B")
-    entry_b1 = find_entry(state_b1, "RUN-R4B")
-    record["subcases"]["b1_content_claims_fail"] = {
-        "input_verification_json": {"path": str(verification_b1), "content": fake_b1},
-        "prepare": {k: prep_b1[k] for k in ("exit_code", "result", "revision_before", "revision_after", "record_dir")},
-        "finalize": {k: fin_b1[k] for k in ("exit_code", "result", "revision_before", "revision_after", "record_dir")},
-        "run_b1_stored_verification": (run_b1 or {}).get("verification"),
-        "run_b1_workflow_outcome": (run_b1 or {}).get("workflow_outcome"),
-        "registry_entry_written": entry_b1,
-        "contradiction": "the stored verification evidence says FAIL / 0 recognized images / 12 zero-byte files, yet "
-                         "the run was finalized VERIFIED and a verified_albums entry was added (content never inspected)",
-    }
+    # ---------------- finalize refusals ----------------
+    # Preserve the genuine verify-1 chain outside the case root *before* the refusal fixture resets it;
+    # the payloads handed to the product must live inside the case root (test-mode authority).
+    import shutil as _sh
+    preserved_chain = ev / "refusals" / "inputs" / "genuine-chain"
+    if preserved_chain.exists():
+        _sh.rmtree(preserved_chain)
+    _sh.copytree(verify1_dir, preserved_chain)
 
-    # ---------------- (b2) completely empty JSON ----------------
-    verification_b2 = case_root / "verification-b2-empty.json"
-    write_json(verification_b2, {})
-    prep_b2 = prepare("b2-prepare", "RUN-R4C", "WRITER-R4C", GROUP_C, FP_C, ALBUM_C)
-    fin_b2 = finalize("b2-finalize", "RUN-R4C", "WRITER-R4C", verification_b2)
-    state_b2 = read_json(state_path)
-    run_b2 = find_run(state_b2, "RUN-R4C")
-    entry_b2 = find_entry(state_b2, "RUN-R4C")
-    record["subcases"]["b2_empty_json"] = {
-        "input_verification_json": {"path": str(verification_b2), "content": {}},
-        "prepare": {k: prep_b2[k] for k in ("exit_code", "result", "revision_before", "revision_after", "record_dir")},
-        "finalize": {k: fin_b2[k] for k in ("exit_code", "result", "revision_before", "revision_after", "record_dir")},
-        "run_b2_stored_verification": (run_b2 or {}).get("verification"),
-        "run_b2_workflow_outcome": (run_b2 or {}).get("workflow_outcome"),
-        "registry_entry_written": entry_b2,
-        "contradiction": "an empty JSON object {} was accepted as terminal verification evidence and produced a "
-                         "VERIFIED registry entry",
-    }
+    rpaths = refutation_fixture(case_root)
+    r_state_path = Path(rpaths["state"])
+    pre_sha = sha(r_state_path)
+    chain_dir = case_root / "evidence" / "genuine-chain"
+    chain_dir.parent.mkdir(parents=True, exist_ok=True)
+    _sh.copytree(preserved_chain, chain_dir)
 
-    # ---------------- (c) JSON belonging to another run / another group ----------------
-    prep_c = prepare("c-prepare", "RUN-R4D", "WRITER-R4D", GROUP_D, FP_D, ALBUM_D)
-    fin_c = finalize("c-finalize", "RUN-R4D", "WRITER-R4D", verification_a)
-    state_c = read_json(state_path)
-    run_d = find_run(state_c, "RUN-R4D")
-    entry_d = find_entry(state_c, "RUN-R4D")
-    stored_d = (run_d or {}).get("verification") or {}
-    record["subcases"]["c_foreign_run_group_json"] = {
-        "foreign_verification_json": {"path": str(verification_a), "content": fake_a,
-                                      "belongs_to": {"run_id": "RUN-R4A", "group_key": GROUP,
-                                                     "destination": str(ALBUM_A)}},
-        "target_run": {"run_id": "RUN-R4D", "group_key": GROUP_D, "destination": str(ALBUM_D)},
-        "prepare": {k: prep_c[k] for k in ("exit_code", "result", "revision_before", "revision_after", "record_dir")},
-        "finalize": {k: fin_c[k] for k in ("exit_code", "result", "revision_before", "revision_after", "record_dir")},
-        "run_d_stored_verification": stored_d,
-        "stored_verification_run_id": stored_d.get("run_id"),
-        "stored_verification_group_key": stored_d.get("group_key"),
-        "run_group_key": (run_d or {}).get("group_key"),
-        "run_workflow_outcome": (run_d or {}).get("workflow_outcome"),
-        "registry_entry_written": entry_d,
-        "cross_run_accepted": (stored_d.get("run_id") not in (None, "RUN-R4D")
-                               and (run_d or {}).get("workflow_outcome") == "VERIFIED"),
-    }
+    refusal_inputs = case_root / "evidence" / "refusals"
+    refusal_inputs.mkdir(parents=True, exist_ok=True)
+    fabricated = refusal_inputs / "fabricated-result.json"
+    H.write_json(fabricated, {"schema_version": 1, "mode": "verify_only", "run_id": "RUN-R4-R",
+                              "group_key": GROUP, "fingerprint": dict(FP57),
+                              "destination": str(rpaths["destination"]), "filesystem_status": "PASS",
+                              "recognized_images": COUNT, "expected_images": COUNT,
+                              "overall_status": "PASS", "exit_code": 0})
+    fail_claim = refusal_inputs / "fail-claim.json"
+    H.write_json(fail_claim, {"schema_version": 1, "overall_status": "FAIL", "recognized_images": 0})
+    empty_claim = refusal_inputs / "empty.json"
+    H.write_json(empty_claim, {})
 
-    # ---------------- (d) integration closed loop: verify-only over the same state ----------------
-    (VERIFIER_ROOT / "config").mkdir(parents=True)
-    (VERIFIER_ROOT / "state").mkdir(parents=True)
-    config_path = VERIFIER_ROOT / "config" / "line_backup_config.json"
-    config = {"schema_version": 2, "group_key": GROUP, "group_name": GROUP.rsplit(":", 1)[-1],
-              "backup_root": str(BACKUP_ROOT), "app_identifier": "jp.naver.line.mac", "max_albums_per_run": 1,
-              "recovery_limit": 1, "poll_interval_seconds": 5, "stable_samples": 3, "max_wait_seconds": 600}
-    write_json(config_path, config)
-    (VERIFIER_ROOT / "state" / "run_log.md").write_text("fixture run log (non-gating projection)\n", encoding="utf-8")
-    state_copy = VERIFIER_ROOT / "state" / "backup_state.json"
-    shutil.copyfile(ev / "state-after-a.json", state_copy)
-    state_copy_sha_before = sha256_file(state_copy)
-    pngs = [make_png(ALBUM_A / f"image-{index:03d}.png", size=8) for index in range(COUNT)]
-    probe = subprocess.run(["/usr/bin/file", "--mime-type", "-b", "--", str(pngs[0])], capture_output=True, text=True,
-                           check=False)
-    verify = run_product(ev / "d-verify-only", ["verify-only", "--project-root", str(VERIFIER_ROOT),
-                                                "--config", str(config_path), "--state", str(state_copy),
-                                                "--run-log", str(VERIFIER_ROOT / "state" / "run_log.md"),
-                                                "--destination", str(ALBUM_A), "--group-key", GROUP,
-                                                "--start-date", START, "--end-date", END,
-                                                "--expected-images", str(COUNT),
-                                                "--evidence-dir", str(VERIFIER_ROOT / "evidence" / "verify-only"),
-                                                "--test-mode"], timeout=120)
-    state_copy_sha_after = sha256_file(state_copy)
-    vres = verify.get("result") or {}
-    vfs = vres.get("filesystem") or {}
-    record["subcases"]["d_verify_only_closed_loop"] = {
-        "fixture_root": str(VERIFIER_ROOT),
-        "config": {"path": str(config_path), "content": config, "sha256": sha256_file(config_path)},
-        "state_copy": {"path": str(state_copy), "sha256_before": state_copy_sha_before,
-                       "sha256_after": state_copy_sha_after,
-                       "bytes_identical_to_persisted_state_after_a": state_copy_sha_before == sha256_file(ev / "state-after-a.json"),
-                       "field_rewrites": "NONE - the verified destination is literally state.run.destination "
-                                         "(album-a) as persisted by the transaction CLI; only backup_root is a "
-                                         "verifier-side config value, so no state field was adapted"},
-        "destination": {"path": str(ALBUM_A), "files": len(pngs),
-                        "total_bytes": sum(p.stat().st_size for p in pngs),
-                        "sample_file_probe": {"argv": ["/usr/bin/file", "--mime-type", "-b", "--", str(pngs[0])],
-                                              "exit_code": probe.returncode, "stdout": probe.stdout.strip()}},
-        "verify_only": {"exit_code": verify["exit_code"], "result": vres, "record_dir": verify["record_dir"]},
-        "observed_statuses": {k: vres.get(k) for k in ("filesystem_status", "registry_status", "source_status",
-                                                       "state_status", "overall_status", "failure_class")},
-        "filesystem_summary": {"regular_files": vfs.get("regular_files"), "recognized_images": vfs.get("recognized_images"),
-                               "total_bytes": vfs.get("total_bytes"), "error_codes": vfs.get("error_codes")},
-        "expected_statuses_from_task": {"allowed": ["registry FAIL or source UNRESOLVED"],
-                                        "observed": "recorded as-is; no expectation was rewritten"},
-        "registry_entry_used_by_verify_only": entry_a,
-        "verify_only_mutated_state": state_copy_sha_after != state_copy_sha_before,
-    }
+    rows = [
+        ("a-fabricated", fabricated, 4, "INVALID_VERIFICATION_EVIDENCE"),
+        ("b1-fail-claim", fail_claim, 4, "INVALID_VERIFICATION_EVIDENCE"),
+        ("b2-empty", empty_claim, 4, "INVALID_VERIFICATION_EVIDENCE"),
+        ("c-foreign-run-chain", chain_dir / "result.json", 4, "VERIFICATION_RUN_MISMATCH"),
+    ]
+    refusal_rows = {}
+    for name, payload_path, expect_exit, expect_class in rows:
+        rec = H.run_product(ev / "refusals" / name,
+                            finalize_args(rpaths, "RUN-R4-R", "WRITER-R4-R", 2, Path(payload_path)), timeout=120)
+        result = rec["result"] or {}
+        state_after = sha(r_state_path)
+        state_data = read_json(r_state_path)
+        refusal_rows[name] = {"exit_code": rec["exit_code"], "result": result,
+                              "state_unchanged": state_after == pre_sha,
+                              "registry_entries": len(state_data.get("verified_albums") or []),
+                              "argv": rec["argv"]}
+        checks[f"{name}.refused"] = rec["exit_code"] == expect_exit and result.get("result") == expect_class
+        checks[f"{name}.no-write"] = state_after == pre_sha and not (state_data.get("verified_albums") or [])
 
-    # ---------------- verdicts ----------------
-    a_reproduced = (fin_a["result_code"] == "FINALIZED" and entry_a is not None
-                    and entry_a.get("source_kind") == "filesystem_verification"
-                    and "source_authority" not in entry_a)
-    b1_reproduced = (fin_b1["result_code"] == "FINALIZED" and (run_b1 or {}).get("workflow_outcome") == "VERIFIED"
-                     and entry_b1 is not None)
-    b2_reproduced = (fin_b2["result_code"] == "FINALIZED" and (run_b2 or {}).get("workflow_outcome") == "VERIFIED"
-                     and entry_b2 is not None)
-    c_reproduced = (fin_c["result_code"] == "FINALIZED"
-                    and record["subcases"]["c_foreign_run_group_json"]["cross_run_accepted"] and entry_d is not None)
-    d_source_confirmed = vres.get("source_status") == "CONFIRMED"
-    d_reproduced = (not d_source_confirmed) and vres.get("overall_status") != "PASS"
-    subcase_verdicts = {
-        "a": "REPRODUCED_FAKE_JSON_FINALIZED" if a_reproduced else "NOT_REPRODUCED",
-        "b1": "REPRODUCED_FAIL_CLAIM_STILL_VERIFIED" if b1_reproduced else "NOT_REPRODUCED",
-        "b2": "REPRODUCED_EMPTY_JSON_STILL_VERIFIED" if b2_reproduced else "NOT_REPRODUCED",
-        "c": "REPRODUCED_CROSS_RUN_JSON_ACCEPTED" if c_reproduced else "NOT_REPRODUCED",
-        "d": "REPRODUCED_FINALIZE_ENTRY_NOT_SOURCE_CONFIRMED" if d_reproduced else "NOT_REPRODUCED",
-    }
-    all_reproduced = a_reproduced and b1_reproduced and b2_reproduced and c_reproduced and d_reproduced
-    any_reproduced = any([a_reproduced, b1_reproduced, b2_reproduced, c_reproduced, d_reproduced])
-    record["subcase_verdicts"] = subcase_verdicts
-    record["verdict"] = "R4_REPRODUCED" if all_reproduced else ("R4_PARTIALLY_REPRODUCED" if any_reproduced else "R4_NOT_REPRODUCED")
-    record["integrated_entry_cannot_reach_source_confirmed"] = not d_source_confirmed
-    record["rationale"] = ("finalize() writes only schema keys (group_key, fingerprint, verified_run_id, destinations, "
-                           "source_kind, evidence); the verifier requires entry.source_authority == "
-                           "'authoritative_exact_join' for source CONFIRMED, which the product never writes and the "
-                           "registry schema (additionalProperties=false) does not even allow, so the verified_albums "
-                           "entry produced by finalize can never close the verify-only loop")
+    # tampered genuine chain: change result.json bytes after its manifest was written
+    tampered_dir = case_root / "evidence" / "tampered-chain"
+    if tampered_dir.exists():
+        _sh.rmtree(tampered_dir)
+    _sh.copytree(chain_dir, tampered_dir)
+    tampered_target = tampered_dir / "result.json"
+    tampered_target.write_bytes(tampered_target.read_bytes() + b"\n")
+    rec = H.run_product(ev / "refusals" / "b3-tampered-chain",
+                        finalize_args(rpaths, "RUN-R4-R", "WRITER-R4-R", 2, tampered_dir / "result.json"), timeout=120)
+    result = rec["result"] or {}
+    state_after = sha(r_state_path)
+    refusal_rows["b3-tampered-chain"] = {"exit_code": rec["exit_code"], "result": result,
+                                         "state_unchanged": state_after == pre_sha,
+                                         "registry_entries": len(read_json(r_state_path).get("verified_albums") or [])}
+    checks["b3-tampered-chain.refused"] = rec["exit_code"] in (2, 4) and result.get("result") in {
+        "INVALID_VERIFICATION_EVIDENCE", "INVALID_INPUT"}
+    checks["b3-tampered-chain.no-write"] = state_after == pre_sha
+    record["refusals"] = refusal_rows
 
-    durable_case = durable_copy_tree(CASE_ROOT, ev / "case-root-durable")
-    durable_verifier = durable_copy_tree(VERIFIER_ROOT, ev / "verifier-root-durable")
-    record["durable_copies"] = {
-        "case_root_durable": {"path": str(ev / "case-root-durable"), "files": durable_case["files"],
-                              "total_bytes": durable_case["total_bytes"], "manifest_sha256": durable_case["manifest_sha256"]},
-        "verifier_root_durable": {"path": str(ev / "verifier-root-durable"), "files": durable_verifier["files"],
-                                  "total_bytes": durable_verifier["total_bytes"],
-                                  "manifest_sha256": durable_verifier["manifest_sha256"]},
-    }
-    write_json(ev / "observation.json", record)
-    write_tree_manifest(ev)
-    print(json.dumps({"verdict": record["verdict"], "subcase_verdicts": subcase_verdicts,
-                      "observed": record["subcases"]["d_verify_only_closed_loop"]["observed_statuses"]},
-                     ensure_ascii=False))
-    return 0
+    record["checks"] = checks
+    record["verdict"] = "SAFE_R4_REFUSALS_AND_CLOSED_LOOP" if all(checks.values()) else "REGRESSION_OR_UNEXPECTED"
+    H.write_json(ev / "observation.json", record)
+    H.durable_copy_tree(case_root, ev / "case-root-durable")
+    H.write_tree_manifest(ev)
+    print(json.dumps({"verdict": record["verdict"], "failed": [k for k, v in checks.items() if not v],
+                      "verify_2": record["closed_loop"]["verify_2"]["axes"]}, ensure_ascii=False))
+    return 0 if record["verdict"] == "SAFE_R4_REFUSALS_AND_CLOSED_LOOP" else 1
 
 
 if __name__ == "__main__":

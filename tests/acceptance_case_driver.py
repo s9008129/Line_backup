@@ -154,17 +154,12 @@ class Case:
 # ---------------------------------------------------------------------------
 
 def reset_case_root(root: Path) -> dict:
-    """Owned-root reset: keep the driver's marker, rebuild only this driver's case content."""
+    """Owned-root reset: keep the marker and every driver's recorded process artifacts,
+    rebuild only this driver's case content."""
     root = Path(root)
-    H.ensure_owned_root(root, DRIVER_ID)
-    for child in sorted(root.iterdir()):
-        if child.name in {H.MARKER_NAME, "process-records"}:
-            continue
-        if child.is_dir():
-            shutil.rmtree(child)
-        else:
-            child.unlink()
-    return {"root": str(root), "marker": H.MARKER_NAME}
+    owned = H.ensure_owned_root(root, DRIVER_ID)
+    H.reset_owned_content(root)
+    return {"root": str(root), "marker": H.MARKER_NAME, "adopted": owned.get("adopted", False)}
 
 
 def case_paths(root: Path, destination_name: str = "destination") -> dict:
