@@ -1,0 +1,45 @@
+{
+  "app_identifier": "jp.naver.line.mac",
+  "binding": {
+    "artifact": {
+      "bytes": 269,
+      "path": "/private/tmp/line-backup-acceptance-case-14/binding-fixture.json",
+      "sha256": "ea7d1e9030714e6a31da8e01f4b5211dfad7d3eee4b029a6c3b698c3b7c5e277"
+    },
+    "kind": "fixture"
+  },
+  "calibration": {
+    "confidence": "HIGH",
+    "dot_spacing": 24.0,
+    "ellipsis": [
+      1400,
+      300
+    ],
+    "evidence": "fixture calibration (test-mode, driver-authored)",
+    "observed_at": "2026-09-16T00:00:00Z",
+    "save_all_point": [
+      1200,
+      210
+    ],
+    "screenshot_height": 982,
+    "screenshot_width": 1512
+  },
+  "evidence_artifacts": [
+    {
+      "bytes": 269,
+      "path": "/private/tmp/line-backup-acceptance-case-14/binding-fixture.json",
+      "sha256": "ea7d1e9030714e6a31da8e01f4b5211dfad7d3eee4b029a6c3b698c3b7c5e277"
+    }
+  ],
+  "fingerprint": {
+    "end_date": "2024-05-17",
+    "expected_images": 56,
+    "start_date": "2024-05-13"
+  },
+  "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+  "observed_at": "2026-09-16T00:00:00Z",
+  "observed_title": "旻謙允禎成長日記",
+  "record_version": 1,
+  "test_mode": true,
+  "title_confidence": "HIGH"
+}

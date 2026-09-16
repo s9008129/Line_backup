@@ -1,0 +1,9 @@
+{
+  "dispatch_performed": false,
+  "exit_code": 4,
+  "message": "prepare precondition refused",
+  "result": "AMBIGUOUS_FINGERPRINT",
+  "revision": 5,
+  "schema_version": 1,
+  "state_replaced": false
+}

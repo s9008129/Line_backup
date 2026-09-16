@@ -1,0 +1,7 @@
+{
+  "source_path": "/private/tmp/line-backup-acceptance-baseline/stage05-post.json",
+  "durable_copy": "evidence/20260916-stage05/attempt-04/baseline/baseline-post-stage05.json",
+  "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5",
+  "bytes": 19005,
+  "note": "byte copy of the Stage 05 post-baseline artifact referenced by product-verify/reconciliation.json; byte-identical to baseline-pre-stage05.json and to evidence/20260916-baseline/attempt-02/baseline-pre.json (Stage 04 pre/post)"
+}

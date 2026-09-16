@@ -1,0 +1,10 @@
+{
+  "exit_code": 0,
+  "message": "terminal outcome committed",
+  "outcome": "VERIFIED",
+  "replacement": true,
+  "result": "FINALIZED",
+  "revision": 3,
+  "schema_version": 1,
+  "state_replaced": true
+}

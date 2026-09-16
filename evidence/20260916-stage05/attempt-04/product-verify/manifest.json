@@ -1,0 +1,74 @@
+{
+  "artifacts": [
+    {
+      "bytes": 667,
+      "path": "baseline-post-process/argv.json",
+      "sha256": "4dcad937bbcbf84cb391459fc96dbb7f1259f2c87a611e13c6d8b9c3e7cf4c7a"
+    },
+    {
+      "bytes": 2,
+      "path": "baseline-post-process/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "baseline-post-process/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "baseline-post-process/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 796,
+      "path": "process/argv.json",
+      "sha256": "4fcc4d2f7496de39224cb2008e476c2d9aa14ba0d0fd8c1e87fa6572be1f9ef8"
+    },
+    {
+      "bytes": 2,
+      "path": "process/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "path": "process/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16905,
+      "path": "process/stdout.log",
+      "sha256": "24416245828df502954667ffd82b56612654941c004e0cada90b61609a32114a"
+    },
+    {
+      "bytes": 18962,
+      "path": "product/inventory-1.json",
+      "sha256": "a6e2185af3b88eb5b5865db1e77d80d26e26bab1f39dc9bae6f7439261d99b55"
+    },
+    {
+      "bytes": 18962,
+      "path": "product/inventory-2.json",
+      "sha256": "6213529a642f21877d45c0402d9aac4363e5a0e927cd5f0b2c9d5303e9fcea19"
+    },
+    {
+      "bytes": 18962,
+      "path": "product/inventory-3.json",
+      "sha256": "4740d0fc9e8eefc1ec30be2b6d923b2255515d8868f2aa44c5225d6ae62cf8dc"
+    },
+    {
+      "bytes": 21569,
+      "path": "product/result.json",
+      "sha256": "001f0e9c68ee7473e26d687845d285e2c7f06a1932f46a040795d83186e6de52"
+    },
+    {
+      "bytes": 27357,
+      "path": "reconciliation.json",
+      "sha256": "1781138fb6863906da198a8afb8faea02ee0022cd7a035c259c52a6db66833b9"
+    }
+  ],
+  "files": 13,
+  "generated_at": "2026-09-16T22:27:35Z",
+  "root": "evidence/20260916-stage05/attempt-04/product-verify",
+  "schema_version": 1,
+  "total_bytes": 124184
+}

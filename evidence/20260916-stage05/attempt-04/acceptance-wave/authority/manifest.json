@@ -1,0 +1,14 @@
+{
+  "artifacts": [
+    {
+      "bytes": 56272,
+      "path": "summary.json",
+      "sha256": "b9a76096395866b0d74e99428bdcd6d7c6d4f15d652b4035bfc9221886e35dbc"
+    }
+  ],
+  "files": 1,
+  "generated_at": "2026-09-16T22:28:41Z",
+  "root": "evidence/20260916-stage05/attempt-04/acceptance-wave/authority",
+  "schema_version": 1,
+  "total_bytes": 56272
+}

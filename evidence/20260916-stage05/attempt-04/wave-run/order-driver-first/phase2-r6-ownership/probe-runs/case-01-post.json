@@ -1,0 +1,484 @@
+{
+  "active_writer_id": null,
+  "context_lock": null,
+  "current_run_id": null,
+  "revision": 4,
+  "runs": [
+    {
+      "album_id": null,
+      "batch_id": null,
+      "checkpoint": {
+        "at": "2026-09-16T22:29:51Z",
+        "evidence": "terminal VERIFIED with binding reference",
+        "phase": "VERIFIED"
+      },
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-01/destination",
+      "destination_initially_empty": true,
+      "dispatch_evidence": {
+        "action_id": "ACTION-RUN-CASE-01",
+        "download_started": false,
+        "execution_id": "WRITER-CASE-01",
+        "failure_boundary": "NONE",
+        "folder_chooser_appeared": false,
+        "observed_at": "2026-09-16T22:29:51Z",
+        "provenance": "external dispatcher adapter dispatcher.py (test-mode side-effect fake)",
+        "run_id": "RUN-CASE-01",
+        "save_all_click_count": 1,
+        "save_all_invocation_attempted": true
+      },
+      "dispatch_state": "SAVE_ALL_RETURNED",
+      "events": [
+        {
+          "at": "2026-09-16T22:29:51Z",
+          "evidence": "fixture:binding-fixture.json:e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c",
+          "phase": "SAVE_ALL_INTENT_COMMITTED"
+        },
+        {
+          "at": "2026-09-16T22:29:51Z",
+          "evidence": "adapter returned; trigger independently unconfirmed",
+          "phase": "SAVE_ALL_DISPATCH_ATTEMPTED"
+        },
+        {
+          "at": "2026-09-16T22:29:51Z",
+          "evidence": "verification committed from /private/tmp/line-backup-acceptance-case-01/evidence/verify-1/result.json",
+          "phase": "VERIFYING"
+        },
+        {
+          "at": "2026-09-16T22:29:51Z",
+          "evidence": "fixture:binding-fixture.json:e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c",
+          "phase": "VERIFIED"
+        }
+      ],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "intent": {
+        "action_id": "ACTION-RUN-CASE-01",
+        "calibration": {
+          "confidence": "HIGH",
+          "dot_spacing": 24.0,
+          "ellipsis": [
+            1400,
+            300
+          ],
+          "evidence": "fixture calibration (test-mode, driver-authored)",
+          "observed_at": "2026-09-16T00:00:00Z",
+          "save_all_point": [
+            1200,
+            210
+          ],
+          "screenshot_height": 982,
+          "screenshot_width": 1512
+        },
+        "committed_at": "2026-09-16T22:29:51Z",
+        "destination": "/private/tmp/line-backup-acceptance-case-01/destination",
+        "dispatch_outcome": "RETURNED",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "owner_execution_id": "WRITER-CASE-01",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "UNKNOWN"
+      },
+      "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+      "manual_reconciliation_required": false,
+      "mode": "backup_one",
+      "observed_title": "旻謙允禎成長日記",
+      "phase": "VERIFIED",
+      "reconciliation_reason": null,
+      "reconciliations": [],
+      "recovery_used": {},
+      "run_id": "RUN-CASE-01",
+      "runtime_errors": [],
+      "stop_reason": null,
+      "title_confidence": "HIGH",
+      "verification": {
+        "evidence": "product verifier result consumed from /private/tmp/line-backup-acceptance-case-01/evidence/verify-1/result.json",
+        "extensions": {
+          "png": 57
+        },
+        "image_files": 57,
+        "inventory": [
+          {
+            "mime": "image/png",
+            "mtime": "1789597791369911694",
+            "relative_path": "image-000.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791369987027",
+            "relative_path": "image-001.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370061027",
+            "relative_path": "image-002.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370129361",
+            "relative_path": "image-003.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370197277",
+            "relative_path": "image-004.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370264403",
+            "relative_path": "image-005.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370338194",
+            "relative_path": "image-006.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370408694",
+            "relative_path": "image-007.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370479695",
+            "relative_path": "image-008.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370564820",
+            "relative_path": "image-009.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370636653",
+            "relative_path": "image-010.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370710612",
+            "relative_path": "image-011.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370785403",
+            "relative_path": "image-012.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370863445",
+            "relative_path": "image-013.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791370944237",
+            "relative_path": "image-014.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371015154",
+            "relative_path": "image-015.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371088237",
+            "relative_path": "image-016.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371159654",
+            "relative_path": "image-017.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371236196",
+            "relative_path": "image-018.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371309862",
+            "relative_path": "image-019.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371378029",
+            "relative_path": "image-020.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371439654",
+            "relative_path": "image-021.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371511821",
+            "relative_path": "image-022.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371583321",
+            "relative_path": "image-023.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371662030",
+            "relative_path": "image-024.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371727530",
+            "relative_path": "image-025.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371812655",
+            "relative_path": "image-026.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371882863",
+            "relative_path": "image-027.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791371959863",
+            "relative_path": "image-028.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372024947",
+            "relative_path": "image-029.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372085322",
+            "relative_path": "image-030.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372157947",
+            "relative_path": "image-031.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372242156",
+            "relative_path": "image-032.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372314447",
+            "relative_path": "image-033.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372377239",
+            "relative_path": "image-034.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372449489",
+            "relative_path": "image-035.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372529698",
+            "relative_path": "image-036.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372604239",
+            "relative_path": "image-037.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372691406",
+            "relative_path": "image-038.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372784281",
+            "relative_path": "image-039.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791372856573",
+            "relative_path": "image-040.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373018657",
+            "relative_path": "image-041.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373101407",
+            "relative_path": "image-042.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373172782",
+            "relative_path": "image-043.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373239699",
+            "relative_path": "image-044.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373310907",
+            "relative_path": "image-045.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373380907",
+            "relative_path": "image-046.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373457283",
+            "relative_path": "image-047.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373531908",
+            "relative_path": "image-048.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373608324",
+            "relative_path": "image-049.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373686699",
+            "relative_path": "image-050.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373768908",
+            "relative_path": "image-051.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373852866",
+            "relative_path": "image-052.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791373941991",
+            "relative_path": "image-053.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791374020200",
+            "relative_path": "image-054.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791374091825",
+            "relative_path": "image-055.png",
+            "size": 74
+          },
+          {
+            "mime": "image/png",
+            "mtime": "1789597791374175450",
+            "relative_path": "image-056.png",
+            "size": 74
+          }
+        ],
+        "metadata_files": [],
+        "observed_at": "2026-09-16T22:29:51Z",
+        "other_entries": [],
+        "outcome": "PASS",
+        "partial_temp_files": 0,
+        "regular_files": 57,
+        "stable_samples": 3,
+        "subdirectories": 0,
+        "total_bytes": 4218,
+        "unrecognized_files": 0,
+        "zero_byte_files": 0
+      },
+      "workflow_outcome": "VERIFIED"
+    }
+  ],
+  "schema_version": 2,
+  "verified_albums": [
+    {
+      "destinations": [
+        "/private/tmp/line-backup-acceptance-case-01/destination"
+      ],
+      "evidence": "fixture:binding-fixture.json:e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c",
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "source_kind": "filesystem_verification",
+      "verified_run_id": "RUN-CASE-01"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "artifacts_checked": 0,
+  "ignored_names": [
+    "readback-verification.json"
+  ],
+  "manifests": 0,
+  "problems": [],
+  "root": "evidence/20260916-baseline/attempt-02",
+  "supplements": 0,
+  "uncovered_files": [
+    "baseline-pre.json",
+    "baseline-pre.meta.json"
+  ],
+  "verdict": "FAIL"
+}

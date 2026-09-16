@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/verify_evidence.py",
+    "--root",
+    "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first",
+    "--output",
+    "/private/tmp/line-backup-acceptance-wave/ownership-first-readback-draft.json"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "secrets_removed": true
+}

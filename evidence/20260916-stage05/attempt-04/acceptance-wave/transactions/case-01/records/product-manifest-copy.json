@@ -1,0 +1,2750 @@
+{
+  "artifacts": [
+    {
+      "bytes": 221,
+      "exists": true,
+      "path": ".driver-ownership.json",
+      "sha256": "e9660088e8d2d0a2a1ef1ae2ca05ea9b595431609a623c7a75ab7bbd3c9e8a94"
+    },
+    {
+      "bytes": 269,
+      "exists": true,
+      "path": "binding-fixture.json",
+      "sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c"
+    },
+    {
+      "bytes": 371,
+      "exists": true,
+      "path": "config/line_backup_config.json",
+      "sha256": "c6c7cfb0a1a85aff0626dceb4fc302dd406aacf45fa820cab3d54cfd6f6c1d6f"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-000.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-001.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-002.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-003.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-004.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-005.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-006.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-007.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-008.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-009.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-010.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-011.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-012.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-013.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-014.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-015.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-016.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-017.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-018.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-019.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-020.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-021.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-022.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-023.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-024.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-025.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-026.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-027.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-028.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-029.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-030.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-031.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-032.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-033.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-034.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-035.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-036.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-037.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-038.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-039.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-040.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-041.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-042.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-043.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-044.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-045.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-046.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-047.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-048.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-049.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-050.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-051.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-052.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-053.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-054.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-055.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-056.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 72,
+      "exists": true,
+      "path": "dispatch-counter.jsonl",
+      "sha256": "64a92e577752c03f597a6d0497a403b4f592e27e6692ffc15bc261de59511cfe"
+    },
+    {
+      "bytes": 484,
+      "exists": true,
+      "path": "dispatcher.py",
+      "sha256": "90111ca1486e18c9260b1e50eebcec14ffbcd70d2fd7f59306b3d773219b84b1"
+    },
+    {
+      "bytes": 222,
+      "exists": true,
+      "path": "driver-records/r6-ownership/probe.json",
+      "sha256": "147ce8ae1a59dc61b7ad3090be117f90a7c11f13ba75cbbd1fae24fd6a0faba1"
+    },
+    {
+      "bytes": 210,
+      "exists": true,
+      "path": "evidence/refusal/result.json",
+      "sha256": "bdf1545795e0e01fa6b713a3e2ad0697c89e973ea04db9f2950cecd9a5bc1d76"
+    },
+    {
+      "bytes": 216,
+      "exists": true,
+      "path": "evidence/result.json",
+      "sha256": "5570d3a51fc57b437f88d2721ba67aa60afff8d5e40c5fd785a7db7dd132fd22"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/verify-1/inventory-1.json",
+      "sha256": "58bdf8057fcd4ab6e95496185f9198a766a6241bf116d5cfd1ca7d90980486c4"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/verify-1/inventory-2.json",
+      "sha256": "58bdf8057fcd4ab6e95496185f9198a766a6241bf116d5cfd1ca7d90980486c4"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/verify-1/inventory-3.json",
+      "sha256": "58bdf8057fcd4ab6e95496185f9198a766a6241bf116d5cfd1ca7d90980486c4"
+    },
+    {
+      "bytes": 19026,
+      "exists": true,
+      "path": "evidence/verify-1/result.json",
+      "sha256": "1ba54f159423ecaba1f8f00baaf4562bd4d0bfd96a0760c64a2ae0c7f9f529c2"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/verify-2/inventory-1.json",
+      "sha256": "8018e94cd1afb110d46121478a19b139ee6ef71b9ace58b52f61dae90caf4d4c"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/verify-2/inventory-2.json",
+      "sha256": "8018e94cd1afb110d46121478a19b139ee6ef71b9ace58b52f61dae90caf4d4c"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/verify-2/inventory-3.json",
+      "sha256": "8018e94cd1afb110d46121478a19b139ee6ef71b9ace58b52f61dae90caf4d4c"
+    },
+    {
+      "bytes": 19028,
+      "exists": true,
+      "path": "evidence/verify-2/result.json",
+      "sha256": "5978c6778d5c7292fad6bbf3b1e5baebdb5cf4842f4ae3091a75fdfdb1489fad"
+    },
+    {
+      "bytes": 160,
+      "exists": true,
+      "path": "input-state.json",
+      "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+    },
+    {
+      "bytes": 898,
+      "exists": true,
+      "path": "process-records/01/commit/argv.json",
+      "sha256": "fd6b2d7c742e4722d99c94382fde8a90bffce6d01999159d820e85d8aa05d29d"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/01/commit/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/01/commit/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 171,
+      "exists": true,
+      "path": "process-records/01/commit/stdout.log",
+      "sha256": "a877192ff52c13f21d86753a87a5e3911393d18723f1d416a49e4a4b85b6b565"
+    },
+    {
+      "bytes": 946,
+      "exists": true,
+      "path": "process-records/01/duplicate/argv.json",
+      "sha256": "021454c3a81e24c9ace10bad02b1e1dd56f10e699981f992ef3a7474e54037e5"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/01/duplicate/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/01/duplicate/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 190,
+      "exists": true,
+      "path": "process-records/01/duplicate/stdout.log",
+      "sha256": "78ff575f3de3ca3f46bade853290e35c7a177eeecbc7a8ccf1b9689083a2b5a1"
+    },
+    {
+      "bytes": 933,
+      "exists": true,
+      "path": "process-records/01/finalize/argv.json",
+      "sha256": "2f98b818b65736de17c57bdbdfcda240b77d32ebb1527092406a41c2f01a2752"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/01/finalize/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/01/finalize/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 185,
+      "exists": true,
+      "path": "process-records/01/finalize/stdout.log",
+      "sha256": "d01fc15f9994f7c45a6d4a05aad5cb6e521520fe5482b923ab17a7575407e49b"
+    },
+    {
+      "bytes": 1339,
+      "exists": true,
+      "path": "process-records/01/prepare/argv.json",
+      "sha256": "1cf34706d34455f9f7ba23492d305969c1d11af9b7ff94485a7a332887c29656"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/01/prepare/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/01/prepare/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 193,
+      "exists": true,
+      "path": "process-records/01/prepare/stdout.log",
+      "sha256": "6f8d3e81b3faa0a3ff593b42d62914195387df247bc5763b9a1c7838c80f0b37"
+    },
+    {
+      "bytes": 1309,
+      "exists": true,
+      "path": "process-records/01/prepare-destination-2/argv.json",
+      "sha256": "7e1cc832ecc2560618365dfc8f2e5af06821af3f2419106e5fb140d4b508b09e"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/01/prepare-destination-2/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/01/prepare-destination-2/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 194,
+      "exists": true,
+      "path": "process-records/01/prepare-destination-2/stdout.log",
+      "sha256": "7e204bb4f3f546b45b043f78500df8e87998b4ddc49498f712393fc7d5ce3589"
+    },
+    {
+      "bytes": 811,
+      "exists": true,
+      "path": "process-records/01/resume-terminal/argv.json",
+      "sha256": "05740014b8edee7431ae6a5abc6d32496a518f553c017ae9b2e95c738bd862d6"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/01/resume-terminal/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/01/resume-terminal/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 200,
+      "exists": true,
+      "path": "process-records/01/resume-terminal/stdout.log",
+      "sha256": "6906e79e4c09ef768b7fe2523bfe5bdc9538203c8e02ffacb39fb3ad3d4bffb1"
+    },
+    {
+      "bytes": 967,
+      "exists": true,
+      "path": "process-records/01/verify-1/argv.json",
+      "sha256": "d27612353334a48ef9eb0543525264e2163b9dff6ddbefaa3f306859a5d98db1"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/01/verify-1/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/01/verify-1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14478,
+      "exists": true,
+      "path": "process-records/01/verify-1/stdout.log",
+      "sha256": "5541b43cbeead962412a43d15338243385108293afa1736f2efc24aa504df563"
+    },
+    {
+      "bytes": 967,
+      "exists": true,
+      "path": "process-records/01/verify-2/argv.json",
+      "sha256": "93f796a1d22f5922bcc2b3b0bdc4fc5ef29caaceac7dddffdde6fd49377e2659"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/01/verify-2/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/01/verify-2/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14480,
+      "exists": true,
+      "path": "process-records/01/verify-2/stdout.log",
+      "sha256": "cd1c2bd7bfaff0707b1fded9e2e4e2a0ca74dd22c629bfbc09091d0a92760a41"
+    },
+    {
+      "bytes": 1210,
+      "exists": true,
+      "path": "source-evidence.json",
+      "sha256": "de2d91c2220cf441401080ff27793c3017b45bd53489a8c3f4935da608f8e012"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "state/.line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14524,
+      "exists": true,
+      "path": "state/backup_state.json",
+      "sha256": "9cf41c69d3311113b5262d5013845210328c9770edcdb03730783f52203bb64f"
+    },
+    {
+      "bytes": 55,
+      "exists": true,
+      "path": "state/run_log.md",
+      "sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f"
+    }
+  ],
+  "case_id": "01",
+  "checks": [
+    {
+      "expected": "PREPARED",
+      "id": "prepare.code",
+      "match": true,
+      "observed": "PREPARED"
+    },
+    {
+      "expected": 2,
+      "id": "prepare.revision2",
+      "match": true,
+      "observed": 2
+    },
+    {
+      "expected": 1,
+      "id": "prepare.counter1",
+      "match": true,
+      "observed": 1
+    },
+    {
+      "expected": 4,
+      "id": "verify1.exit4",
+      "match": true,
+      "observed": 4
+    },
+    {
+      "expected": "PASS",
+      "id": "verify1.filesystem",
+      "match": true,
+      "observed": "PASS"
+    },
+    {
+      "expected": 57,
+      "id": "verify1.recognized57",
+      "match": true,
+      "observed": 57
+    },
+    {
+      "expected": true,
+      "id": "verify1.not-overall-pass",
+      "match": true,
+      "observed": true
+    },
+    {
+      "expected": "COMMITTED_VERIFICATION",
+      "id": "commit.code",
+      "match": true,
+      "observed": "COMMITTED_VERIFICATION"
+    },
+    {
+      "expected": 3,
+      "id": "commit.revision3",
+      "match": true,
+      "observed": 3
+    },
+    {
+      "expected": "FINALIZED",
+      "id": "finalize.code",
+      "match": true,
+      "observed": "FINALIZED"
+    },
+    {
+      "expected": "VERIFIED",
+      "id": "finalize.terminal",
+      "match": true,
+      "observed": "VERIFIED"
+    },
+    {
+      "expected": null,
+      "id": "finalize.released-owner",
+      "match": true,
+      "observed": null
+    },
+    {
+      "expected": null,
+      "id": "finalize.released-context",
+      "match": true,
+      "observed": null
+    },
+    {
+      "expected": true,
+      "id": "finalize.registry-reference",
+      "match": true,
+      "observed": true
+    },
+    {
+      "expected": "filesystem_verification",
+      "id": "finalize.source-kind",
+      "match": true,
+      "observed": "filesystem_verification"
+    },
+    {
+      "expected": 0,
+      "id": "verify2.exit0",
+      "match": true,
+      "observed": 0
+    },
+    {
+      "expected": "PASS",
+      "id": "verify2.filesystem_status",
+      "match": true,
+      "observed": "PASS"
+    },
+    {
+      "expected": "PASS",
+      "id": "verify2.registry_status",
+      "match": true,
+      "observed": "PASS"
+    },
+    {
+      "expected": "CONFIRMED",
+      "id": "verify2.source_status",
+      "match": true,
+      "observed": "CONFIRMED"
+    },
+    {
+      "expected": "EXACT",
+      "id": "verify2.state_status",
+      "match": true,
+      "observed": "EXACT"
+    },
+    {
+      "expected": "PASS",
+      "id": "verify2.overall_status",
+      "match": true,
+      "observed": "PASS"
+    },
+    {
+      "expected": "SKIP_DUPLICATE",
+      "id": "duplicate.code",
+      "match": true,
+      "observed": "SKIP_DUPLICATE"
+    },
+    {
+      "expected": 0,
+      "id": "duplicate.exit0",
+      "match": true,
+      "observed": 0
+    },
+    {
+      "expected": "CONFLICT_DUPLICATE_FINGERPRINT",
+      "id": "prepare2.code",
+      "match": true,
+      "observed": "CONFLICT_DUPLICATE_FINGERPRINT"
+    },
+    {
+      "expected": 4,
+      "id": "prepare2.exit4",
+      "match": true,
+      "observed": 4
+    },
+    {
+      "expected": "9cf41c69d3311113b5262d5013845210328c9770edcdb03730783f52203bb64f",
+      "id": "prepare2.state-unchanged",
+      "match": true,
+      "observed": "9cf41c69d3311113b5262d5013845210328c9770edcdb03730783f52203bb64f"
+    },
+    {
+      "expected": 1,
+      "id": "prepare2.no-second-dispatch",
+      "match": true,
+      "observed": 1
+    },
+    {
+      "expected": "SKIP_TERMINAL",
+      "id": "resume.code",
+      "match": true,
+      "observed": "SKIP_TERMINAL"
+    },
+    {
+      "expected": 0,
+      "id": "resume.exit0",
+      "match": true,
+      "observed": 0
+    },
+    {
+      "expected": 4,
+      "id": "final.revision4",
+      "match": true,
+      "observed": 4
+    },
+    {
+      "expected": 1,
+      "id": "final.runs1",
+      "match": true,
+      "observed": 1
+    },
+    {
+      "expected": 1,
+      "id": "final.albums1",
+      "match": true,
+      "observed": 1
+    },
+    {
+      "expected": 1,
+      "id": "final.counter1",
+      "match": true,
+      "observed": 1
+    }
+  ],
+  "independent_oracle_match": true,
+  "inputs": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "prepare",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--owner-id",
+        "WRITER-CASE-01",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-01/destination",
+        "--source-evidence",
+        "/private/tmp/line-backup-acceptance-case-01/source-evidence.json",
+        "--dispatcher",
+        "/private/tmp/line-backup-acceptance-case-01/dispatcher.py",
+        "--dispatch-counter",
+        "/private/tmp/line-backup-acceptance-case-01/dispatch-counter.jsonl",
+        "--dispatcher-outcome",
+        "RETURNED",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "prepare"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "verify-only",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-01/destination",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence/verify-1",
+        "--run-id",
+        "RUN-CASE-01"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "verify-1"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "commit",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-01",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-01/evidence/verify-1/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "commit"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--expected-revision",
+        "3",
+        "--expected-owner-id",
+        "WRITER-CASE-01",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-01/evidence/verify-1/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "finalize"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "verify-only",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-01/destination",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence/verify-2",
+        "--run-id",
+        "RUN-CASE-01"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "verify-2"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "duplicate-check",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-01/destination",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "duplicate"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "prepare",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01-B",
+        "--owner-id",
+        "WRITER-CASE-01-B",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-01/destination-2",
+        "--source-evidence",
+        "/private/tmp/line-backup-acceptance-case-01/source-evidence.json",
+        "--dispatcher",
+        "/private/tmp/line-backup-acceptance-case-01/dispatcher.py",
+        "--dispatch-counter",
+        "/private/tmp/line-backup-acceptance-case-01/dispatch-counter.jsonl",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence/refusal"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "prepare-destination-2"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "resume",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--expected-revision",
+        "4",
+        "--expected-owner-id",
+        "WRITER-CASE-01",
+        "--no-dispatch",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "resume-terminal"
+    }
+  ],
+  "notes": [
+    "fixture preconditions authored by the driver; oracle computed before product execution"
+  ],
+  "processes": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "prepare",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--owner-id",
+        "WRITER-CASE-01",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-01/destination",
+        "--source-evidence",
+        "/private/tmp/line-backup-acceptance-case-01/source-evidence.json",
+        "--dispatcher",
+        "/private/tmp/line-backup-acceptance-case-01/dispatcher.py",
+        "--dispatch-counter",
+        "/private/tmp/line-backup-acceptance-case-01/dispatch-counter.jsonl",
+        "--dispatcher-outcome",
+        "RETURNED",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence"
+      ],
+      "exit_code": 0,
+      "label": "prepare",
+      "record_dir": "process-records/01/prepare",
+      "result": {
+        "dispatch_performed": true,
+        "exit_code": 0,
+        "message": "intent committed and exactly one dispatch performed",
+        "result": "PREPARED",
+        "revision": 2,
+        "schema_version": 1,
+        "state_replaced": true
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "verify-only",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-01/destination",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence/verify-1",
+        "--run-id",
+        "RUN-CASE-01"
+      ],
+      "exit_code": 4,
+      "label": "verify-1",
+      "record_dir": "process-records/01/verify-1",
+      "result": {
+        "artifact_readback": "PASS",
+        "destination": "/private/tmp/line-backup-acceptance-case-01/destination",
+        "exit_code": 4,
+        "expected_images": 57,
+        "failure_class": "INPUT_NEGATIVE",
+        "filesystem": {
+          "entries": [
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491321820,
+              "relative_path": "image-000.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491391821,
+              "relative_path": "image-001.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491463987,
+              "relative_path": "image-002.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491529696,
+              "relative_path": "image-003.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491594363,
+              "relative_path": "image-004.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491663904,
+              "relative_path": "image-005.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491728154,
+              "relative_path": "image-006.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491794321,
+              "relative_path": "image-007.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491855988,
+              "relative_path": "image-008.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491919821,
+              "relative_path": "image-009.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491984072,
+              "relative_path": "image-010.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492048905,
+              "relative_path": "image-011.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492104572,
+              "relative_path": "image-012.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492165364,
+              "relative_path": "image-013.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492230947,
+              "relative_path": "image-014.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492299864,
+              "relative_path": "image-015.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492361364,
+              "relative_path": "image-016.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492430572,
+              "relative_path": "image-017.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492507406,
+              "relative_path": "image-018.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492582947,
+              "relative_path": "image-019.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492660948,
+              "relative_path": "image-020.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492732906,
+              "relative_path": "image-021.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492805239,
+              "relative_path": "image-022.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492876865,
+              "relative_path": "image-023.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492954865,
+              "relative_path": "image-024.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493031115,
+              "relative_path": "image-025.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493102907,
+              "relative_path": "image-026.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493173282,
+              "relative_path": "image-027.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493248990,
+              "relative_path": "image-028.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493325074,
+              "relative_path": "image-029.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493397199,
+              "relative_path": "image-030.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493467740,
+              "relative_path": "image-031.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493540074,
+              "relative_path": "image-032.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493615324,
+              "relative_path": "image-033.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493700991,
+              "relative_path": "image-034.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493780949,
+              "relative_path": "image-035.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493857324,
+              "relative_path": "image-036.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493926325,
+              "relative_path": "image-037.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493999450,
+              "relative_path": "image-038.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494075908,
+              "relative_path": "image-039.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494146533,
+              "relative_path": "image-040.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494222492,
+              "relative_path": "image-041.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494300242,
+              "relative_path": "image-042.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494379450,
+              "relative_path": "image-043.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494455034,
+              "relative_path": "image-044.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494524284,
+              "relative_path": "image-045.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494592867,
+              "relative_path": "image-046.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494661409,
+              "relative_path": "image-047.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494728076,
+              "relative_path": "image-048.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494796034,
+              "relative_path": "image-049.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494877576,
+              "relative_path": "image-050.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494947118,
+              "relative_path": "image-051.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682495010118,
+              "relative_path": "image-052.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682495071285,
+              "relative_path": "image-053.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682495132493,
+              "relative_path": "image-054.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682495188618,
+              "relative_path": "image-055.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682495242743,
+              "relative_path": "image-056.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            }
+          ],
+          "error_codes": [],
+          "observed_at": "2026-09-16T22:28:02Z",
+          "recognized_images": 57,
+          "regular_files": 57,
+          "root": "/private/tmp/line-backup-acceptance-case-01/destination",
+          "scan_error": null,
+          "total_bytes": 4218
+        },
+        "filesystem_status": "PASS",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "inventory_samples": 3,
+        "legacy_normalizations": [],
+        "mode": "verify_only",
+        "overall_status": "NOT_ACHIEVED",
+        "recognized_images": 57,
+        "registry_status": "FAIL",
+        "run_id": "RUN-CASE-01",
+        "schema_version": 1,
+        "source_kind": null,
+        "source_status": "UNRESOLVED",
+        "state_revision": 2,
+        "state_status": "EXACT"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "commit",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-01",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-01/evidence/verify-1/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence"
+      ],
+      "exit_code": 0,
+      "label": "commit",
+      "record_dir": "process-records/01/commit",
+      "result": {
+        "exit_code": 0,
+        "message": "verification committed",
+        "replacement": true,
+        "result": "COMMITTED_VERIFICATION",
+        "revision": 3,
+        "schema_version": 1,
+        "state_replaced": true
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--expected-revision",
+        "3",
+        "--expected-owner-id",
+        "WRITER-CASE-01",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-01/evidence/verify-1/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence"
+      ],
+      "exit_code": 0,
+      "label": "finalize",
+      "record_dir": "process-records/01/finalize",
+      "result": {
+        "exit_code": 0,
+        "message": "terminal outcome committed",
+        "outcome": "VERIFIED",
+        "replacement": true,
+        "result": "FINALIZED",
+        "revision": 4,
+        "schema_version": 1,
+        "state_replaced": true
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "verify-only",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-01/destination",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence/verify-2",
+        "--run-id",
+        "RUN-CASE-01"
+      ],
+      "exit_code": 0,
+      "label": "verify-2",
+      "record_dir": "process-records/01/verify-2",
+      "result": {
+        "artifact_readback": "PASS",
+        "destination": "/private/tmp/line-backup-acceptance-case-01/destination",
+        "exit_code": 0,
+        "expected_images": 57,
+        "failure_class": "NONE",
+        "filesystem": {
+          "entries": [
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491321820,
+              "relative_path": "image-000.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491391821,
+              "relative_path": "image-001.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491463987,
+              "relative_path": "image-002.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491529696,
+              "relative_path": "image-003.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491594363,
+              "relative_path": "image-004.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491663904,
+              "relative_path": "image-005.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491728154,
+              "relative_path": "image-006.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491794321,
+              "relative_path": "image-007.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491855988,
+              "relative_path": "image-008.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491919821,
+              "relative_path": "image-009.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682491984072,
+              "relative_path": "image-010.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492048905,
+              "relative_path": "image-011.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492104572,
+              "relative_path": "image-012.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492165364,
+              "relative_path": "image-013.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492230947,
+              "relative_path": "image-014.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492299864,
+              "relative_path": "image-015.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492361364,
+              "relative_path": "image-016.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492430572,
+              "relative_path": "image-017.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492507406,
+              "relative_path": "image-018.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492582947,
+              "relative_path": "image-019.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492660948,
+              "relative_path": "image-020.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492732906,
+              "relative_path": "image-021.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492805239,
+              "relative_path": "image-022.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492876865,
+              "relative_path": "image-023.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682492954865,
+              "relative_path": "image-024.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493031115,
+              "relative_path": "image-025.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493102907,
+              "relative_path": "image-026.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493173282,
+              "relative_path": "image-027.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493248990,
+              "relative_path": "image-028.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493325074,
+              "relative_path": "image-029.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493397199,
+              "relative_path": "image-030.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493467740,
+              "relative_path": "image-031.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493540074,
+              "relative_path": "image-032.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493615324,
+              "relative_path": "image-033.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493700991,
+              "relative_path": "image-034.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493780949,
+              "relative_path": "image-035.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493857324,
+              "relative_path": "image-036.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493926325,
+              "relative_path": "image-037.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682493999450,
+              "relative_path": "image-038.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494075908,
+              "relative_path": "image-039.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494146533,
+              "relative_path": "image-040.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494222492,
+              "relative_path": "image-041.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494300242,
+              "relative_path": "image-042.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494379450,
+              "relative_path": "image-043.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494455034,
+              "relative_path": "image-044.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494524284,
+              "relative_path": "image-045.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494592867,
+              "relative_path": "image-046.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494661409,
+              "relative_path": "image-047.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494728076,
+              "relative_path": "image-048.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494796034,
+              "relative_path": "image-049.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494877576,
+              "relative_path": "image-050.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682494947118,
+              "relative_path": "image-051.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682495010118,
+              "relative_path": "image-052.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682495071285,
+              "relative_path": "image-053.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682495132493,
+              "relative_path": "image-054.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682495188618,
+              "relative_path": "image-055.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789597682495242743,
+              "relative_path": "image-056.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            }
+          ],
+          "error_codes": [],
+          "observed_at": "2026-09-16T22:28:03Z",
+          "recognized_images": 57,
+          "regular_files": 57,
+          "root": "/private/tmp/line-backup-acceptance-case-01/destination",
+          "scan_error": null,
+          "total_bytes": 4218
+        },
+        "filesystem_status": "PASS",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "inventory_samples": 3,
+        "legacy_normalizations": [],
+        "mode": "verify_only",
+        "overall_status": "PASS",
+        "recognized_images": 57,
+        "registry_status": "PASS",
+        "run_id": "RUN-CASE-01",
+        "schema_version": 1,
+        "source_kind": "filesystem_verification",
+        "source_status": "CONFIRMED",
+        "state_revision": 4,
+        "state_status": "EXACT"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "duplicate-check",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-01/destination",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence"
+      ],
+      "exit_code": 0,
+      "label": "duplicate",
+      "record_dir": "process-records/01/duplicate",
+      "result": {
+        "dispatch_performed": false,
+        "exit_code": 0,
+        "message": "exact terminal association exists",
+        "replacement": false,
+        "result": "SKIP_DUPLICATE",
+        "schema_version": 1,
+        "state_replaced": false
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "prepare",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01-B",
+        "--owner-id",
+        "WRITER-CASE-01-B",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-01/destination-2",
+        "--source-evidence",
+        "/private/tmp/line-backup-acceptance-case-01/source-evidence.json",
+        "--dispatcher",
+        "/private/tmp/line-backup-acceptance-case-01/dispatcher.py",
+        "--dispatch-counter",
+        "/private/tmp/line-backup-acceptance-case-01/dispatch-counter.jsonl",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence/refusal"
+      ],
+      "exit_code": 4,
+      "label": "prepare-destination-2",
+      "record_dir": "process-records/01/prepare-destination-2",
+      "result": {
+        "dispatch_performed": false,
+        "exit_code": 4,
+        "message": "prepare precondition refused",
+        "result": "CONFLICT_DUPLICATE_FINGERPRINT",
+        "revision": 4,
+        "schema_version": 1,
+        "state_replaced": false
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "resume",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--expected-revision",
+        "4",
+        "--expected-owner-id",
+        "WRITER-CASE-01",
+        "--no-dispatch",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence"
+      ],
+      "exit_code": 0,
+      "label": "resume-terminal",
+      "record_dir": "process-records/01/resume-terminal",
+      "result": {
+        "dispatch_performed": false,
+        "exit_code": 0,
+        "message": "run is terminal; nothing to resume",
+        "reconciliation_state": "NONE",
+        "result": "SKIP_TERMINAL",
+        "schema_version": 1,
+        "state_replaced": false
+      }
+    }
+  ],
+  "root": "/private/tmp/line-backup-acceptance-case-01",
+  "schema_version": 1
+}

@@ -1,0 +1,9 @@
+{
+  "dispatch_performed": false,
+  "exit_code": 1,
+  "message": "injected read-back uncertainty after replacement",
+  "result": "READBACK_UNCERTAIN",
+  "revision": 1,
+  "schema_version": 1,
+  "state_replaced": true
+}

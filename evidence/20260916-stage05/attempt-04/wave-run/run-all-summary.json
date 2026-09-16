@@ -1,0 +1,378 @@
+{
+  "all_orders_safe": true,
+  "argv": [
+    "tests/automation_verification/run_all.py",
+    "--attempt-root",
+    "evidence/20260916-stage05/attempt-04/wave-run",
+    "--orders",
+    "driver-first,ownership-first",
+    "--timeout",
+    "5400"
+  ],
+  "attempt_root": "evidence/20260916-stage05/attempt-04/wave-run",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "driver": "wave-run-all",
+  "generated_at": "2026-09-16T22:30:03Z",
+  "host": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.9.6"
+  },
+  "interpreter": "3.9.6 (default, May 22 2026, 11:13:45) \n[Clang 21.0.0 (clang-2100.1.1.101)]",
+  "orders": [
+    {
+      "all_drivers_safe": true,
+      "drivers": [
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r1_crash_window.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r1"
+          ],
+          "driver": "phase2-r1",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_NO_SECOND_DISPATCH_AFTER_CRASH_WINDOW",
+          "finished_at": "2026-09-16T22:29:43Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r1/observation.json",
+          "safe": true,
+          "script": "run_phase2_r1_crash_window.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_NO_SECOND_DISPATCH_AFTER_CRASH_WINDOW\", \"checks\": {\"kill-window.revision1\": true, \"kill-window.intent-committed\": true, \"kill-window.not-attempted\": true, \"kill-window.counter-1\": true, \"kill-window.retry-false\": true, \"aftermath.state-bytes-identical\": true, \"aftermath.no-revision2\": true, \"aftermath.counter-still-1\": true, \"aftermath.state-dir\": true, \"resume.code\": true, \"resume.exit0\": true, \"resume.no-dispatch\": true, \"resume.barrier\": true, \"resume.revision2\": true, \"resume.counter-still-1\": true, \"commit.refused\": true, \"commit.exit4\": true, \"commit.no-replacement\": true}, \"counter_lines\": 1}",
+          "verdict": "SAFE_NO_SECOND_DISPATCH_AFTER_CRASH_WINDOW"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r2_loaded_intent.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r2"
+          ],
+          "driver": "phase2-r2",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_FRESH_PROCESS_NEVER_DISPATCHES",
+          "finished_at": "2026-09-16T22:29:43Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r2/observation.json",
+          "safe": true,
+          "script": "run_phase2_r2_loaded_intent.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_FRESH_PROCESS_NEVER_DISPATCHES\", \"failed\": []}",
+          "verdict": "SAFE_FRESH_PROCESS_NEVER_DISPATCHES"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r3_preconditions.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r3"
+          ],
+          "driver": "phase2-r3",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_R3_PRECONDITION_REFUSALS",
+          "finished_at": "2026-09-16T22:29:44Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r3/observation.json",
+          "safe": true,
+          "script": "run_phase2_r3_preconditions.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_R3_PRECONDITION_REFUSALS\", \"failed\": [], \"subcases\": {\"a\": \"SAFE_DESTINATION_CHANGE_REFUSED\", \"b\": \"SAFE_UNRESOLVED_INTENT_BLOCKS_PREPARE\", \"c\": \"SAFE_COUNT_CHANGE_REFUSED\", \"d\": \"SAFE_AMBIGUITY_FAILS_CLOSED\", \"e\": \"SAFE_PRODUCTION_REFUSES_FIXTURE_CONTENT\"}}",
+          "verdict": "SAFE_R3_PRECONDITION_REFUSALS"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r4_finalize_trust.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r4"
+          ],
+          "driver": "phase2-r4",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_R4_REFUSALS_AND_CLOSED_LOOP",
+          "finished_at": "2026-09-16T22:29:45Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r4/observation.json",
+          "safe": true,
+          "script": "run_phase2_r4_finalize_trust.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_R4_REFUSALS_AND_CLOSED_LOOP\", \"failed\": [], \"verify_2\": {\"filesystem_status\": \"PASS\", \"registry_status\": \"PASS\", \"source_status\": \"CONFIRMED\", \"state_status\": \"EXACT\", \"overall_status\": \"PASS\"}}",
+          "verdict": "SAFE_R4_REFUSALS_AND_CLOSED_LOOP"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r5_verifier_gaps.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r5"
+          ],
+          "driver": "phase2-r5",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_R5_AXIS_AND_READ_ERROR_CONTRACT",
+          "finished_at": "2026-09-16T22:29:48Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r5/observation.json",
+          "safe": true,
+          "script": "run_phase2_r5_verifier_gaps.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_R5_AXIS_AND_READ_ERROR_CONTRACT\", \"failed\": [], \"subcases\": {\"a_forged_source_authority\": \"SAFE_FORGED_STRING_NOT_CONFIRMED\", \"a2_valid_binding_control\": \"SAFE_VALID_BINDING_CONFIRMED\", \"b1_dangling_verified_run_id\": \"SAFE_DANGLING_VERIFIED_RUN_ID_REFUSED\", \"b2_safe_abort_run_linked\": \"SAFE_SAFE_ABORT_LINK_REFUSED\", \"b3_nonterminal_run_linked\": \"SAFE_NONTERMINAL_LINK_REFUSED\", \"c0_control_no_chmod\": \"SAFE_CONTROL_FORGED_BINDING_ONLY\", \"c_read_error_sample_2\": \"SAFE_ANY_SAMPLE_READ_ERROR_UNKNOWN\", \"d1_truncated_png\": \"SAFE_TRUNCATED_PNG_REFUSED\", \"d2_jpeg_missing_eoi\": \"SAFE_JPEG_MISSING_EOI_REFUSED\", \"d3_unsupported_image_type\": \"SAFE_UNSUPPORTED_TYPE_REFUSED\"}, \"manifest\": {\"files\": 735, \"total_bytes\": 1620535, \"manifest_sha256\": \"84617650079e47b5a48861795a2ac2840c44797671d59af9df3a85db46d0d8f6\"}}",
+          "verdict": "SAFE_R5_AXIS_AND_READ_ERROR_CONTRACT"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r6_status_selfcert.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r6-status"
+          ],
+          "driver": "phase2-r6-status",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_R6_STATUS_SCENARIO_LABELLED_NON_ACCEPTANCE",
+          "finished_at": "2026-09-16T22:29:48Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r6-status/observation.json",
+          "safe": true,
+          "script": "run_phase2_r6_status_selfcert.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"evidence_dir\": \"evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r6-status\", \"failed_oracles\": [], \"manifest_files\": 45, \"manifest_sha256\": \"6bb538fbfd10f3e9ed33a73e683dc6f4af5600cdebb95dede1ec58b860aa8e7b\", \"manifest_total_bytes\": 50933, \"subcases\": {\"a1-scenario-done-minimal\": true, \"a2-scenario-done-contradictory-facts\": true, \"b-scenario-baseline-unchanged-missing-artifact\": true, \"c-scenario-legacy-no-source\": true, \"c2a-generic-legacy-no-source-facts\": true, \"c2b-generic-done-payload-without-scenario\": true, \"c2c-generic-claimed-all-pass-no-evidence\": true}, \"verdict\": \"SAFE_R6_STATUS_SCENARIO_LABELLED_NON_ACCEPTANCE\"}",
+          "verdict": "SAFE_R6_STATUS_SCENARIO_LABELLED_NON_ACCEPTANCE"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r7_integration.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r7"
+          ],
+          "driver": "phase2-r7",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_R7_LOOP_CLOSED_AND_DUPLICATE_REFUSED",
+          "finished_at": "2026-09-16T22:29:49Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r7/observation.json",
+          "safe": true,
+          "script": "run_phase2_r7_integration.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_R7_LOOP_CLOSED_AND_DUPLICATE_REFUSED\", \"failed\": [], \"verify_2\": {\"filesystem_status\": \"PASS\", \"registry_status\": \"PASS\", \"source_status\": \"CONFIRMED\", \"state_status\": \"EXACT\", \"overall_status\": \"PASS\", \"failure_class\": \"NONE\"}, \"second_prepare\": \"CONFLICT_DUPLICATE_FINGERPRINT\"}",
+          "verdict": "SAFE_R7_LOOP_CLOSED_AND_DUPLICATE_REFUSED"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r6_harness_ownership.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r6-ownership"
+          ],
+          "driver": "phase2-r6-ownership",
+          "exit_code": 0,
+          "expected_safe_verdict": "NO_DELETION_OBSERVED",
+          "finished_at": "2026-09-16T22:29:52Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r6-ownership/observation.json",
+          "safe": true,
+          "script": "run_phase2_r6_harness_ownership.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"NO_DELETION_OBSERVED\", \"destroyed\": [], \"markers_changed\": [], \"probes_changed\": [], \"probed_roots\": 54, \"driver_exit_codes\": {\"authority_negative_driver\": 0, \"test_transaction_core\": 0, \"acceptance_case_driver_01\": 0}, \"manifest_sha256\": \"bcf2fa26427e6e5b2992ae3667674c2377e1a07cc5c6339210449386b2f25df7\"}",
+          "verdict": "NO_DELETION_OBSERVED"
+        }
+      ],
+      "final_readback": {
+        "argv": [
+          "/usr/bin/python3",
+          "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/verify_evidence.py",
+          "--root",
+          "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first",
+          "--output",
+          "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/readback-verification.json"
+        ],
+        "counts": {
+          "artifacts_checked": 3819,
+          "manifests": 37,
+          "supplements": 1
+        },
+        "exit_code": 0,
+        "problems": [],
+        "uncovered_files": [],
+        "verdict": "PASS"
+      },
+      "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/order-observation.json",
+      "order": "driver-first",
+      "order_manifest": {
+        "files": 1353,
+        "manifest_sha256": "fc6e16c4d231bcd8925bdb69f8c5cc15a8934e9710e700a00088815ca9fb512f",
+        "total_bytes": 2745371
+      },
+      "order_root": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first",
+      "order_safe": true
+    },
+    {
+      "all_drivers_safe": true,
+      "drivers": [
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r6_harness_ownership.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r6-ownership"
+          ],
+          "driver": "phase2-r6-ownership",
+          "exit_code": 0,
+          "expected_safe_verdict": "NO_DELETION_OBSERVED",
+          "finished_at": "2026-09-16T22:29:55Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r6-ownership/observation.json",
+          "safe": true,
+          "script": "run_phase2_r6_harness_ownership.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"NO_DELETION_OBSERVED\", \"destroyed\": [], \"markers_changed\": [], \"probes_changed\": [], \"probed_roots\": 54, \"driver_exit_codes\": {\"authority_negative_driver\": 0, \"test_transaction_core\": 0, \"acceptance_case_driver_01\": 0}, \"manifest_sha256\": \"af1e21caf2f2c89167b364afb3714040f8e509fc5bce9ca9da8d2ffb8744bad3\"}",
+          "verdict": "NO_DELETION_OBSERVED"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r1_crash_window.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r1"
+          ],
+          "driver": "phase2-r1",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_NO_SECOND_DISPATCH_AFTER_CRASH_WINDOW",
+          "finished_at": "2026-09-16T22:29:56Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r1/observation.json",
+          "safe": true,
+          "script": "run_phase2_r1_crash_window.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_NO_SECOND_DISPATCH_AFTER_CRASH_WINDOW\", \"checks\": {\"kill-window.revision1\": true, \"kill-window.intent-committed\": true, \"kill-window.not-attempted\": true, \"kill-window.counter-1\": true, \"kill-window.retry-false\": true, \"aftermath.state-bytes-identical\": true, \"aftermath.no-revision2\": true, \"aftermath.counter-still-1\": true, \"aftermath.state-dir\": true, \"resume.code\": true, \"resume.exit0\": true, \"resume.no-dispatch\": true, \"resume.barrier\": true, \"resume.revision2\": true, \"resume.counter-still-1\": true, \"commit.refused\": true, \"commit.exit4\": true, \"commit.no-replacement\": true}, \"counter_lines\": 1}",
+          "verdict": "SAFE_NO_SECOND_DISPATCH_AFTER_CRASH_WINDOW"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r2_loaded_intent.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r2"
+          ],
+          "driver": "phase2-r2",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_FRESH_PROCESS_NEVER_DISPATCHES",
+          "finished_at": "2026-09-16T22:29:56Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r2/observation.json",
+          "safe": true,
+          "script": "run_phase2_r2_loaded_intent.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_FRESH_PROCESS_NEVER_DISPATCHES\", \"failed\": []}",
+          "verdict": "SAFE_FRESH_PROCESS_NEVER_DISPATCHES"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r3_preconditions.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r3"
+          ],
+          "driver": "phase2-r3",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_R3_PRECONDITION_REFUSALS",
+          "finished_at": "2026-09-16T22:29:56Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r3/observation.json",
+          "safe": true,
+          "script": "run_phase2_r3_preconditions.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_R3_PRECONDITION_REFUSALS\", \"failed\": [], \"subcases\": {\"a\": \"SAFE_DESTINATION_CHANGE_REFUSED\", \"b\": \"SAFE_UNRESOLVED_INTENT_BLOCKS_PREPARE\", \"c\": \"SAFE_COUNT_CHANGE_REFUSED\", \"d\": \"SAFE_AMBIGUITY_FAILS_CLOSED\", \"e\": \"SAFE_PRODUCTION_REFUSES_FIXTURE_CONTENT\"}}",
+          "verdict": "SAFE_R3_PRECONDITION_REFUSALS"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r4_finalize_trust.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r4"
+          ],
+          "driver": "phase2-r4",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_R4_REFUSALS_AND_CLOSED_LOOP",
+          "finished_at": "2026-09-16T22:29:57Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r4/observation.json",
+          "safe": true,
+          "script": "run_phase2_r4_finalize_trust.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_R4_REFUSALS_AND_CLOSED_LOOP\", \"failed\": [], \"verify_2\": {\"filesystem_status\": \"PASS\", \"registry_status\": \"PASS\", \"source_status\": \"CONFIRMED\", \"state_status\": \"EXACT\", \"overall_status\": \"PASS\"}}",
+          "verdict": "SAFE_R4_REFUSALS_AND_CLOSED_LOOP"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r5_verifier_gaps.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r5"
+          ],
+          "driver": "phase2-r5",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_R5_AXIS_AND_READ_ERROR_CONTRACT",
+          "finished_at": "2026-09-16T22:30:01Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r5/observation.json",
+          "safe": true,
+          "script": "run_phase2_r5_verifier_gaps.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_R5_AXIS_AND_READ_ERROR_CONTRACT\", \"failed\": [], \"subcases\": {\"a_forged_source_authority\": \"SAFE_FORGED_STRING_NOT_CONFIRMED\", \"a2_valid_binding_control\": \"SAFE_VALID_BINDING_CONFIRMED\", \"b1_dangling_verified_run_id\": \"SAFE_DANGLING_VERIFIED_RUN_ID_REFUSED\", \"b2_safe_abort_run_linked\": \"SAFE_SAFE_ABORT_LINK_REFUSED\", \"b3_nonterminal_run_linked\": \"SAFE_NONTERMINAL_LINK_REFUSED\", \"c0_control_no_chmod\": \"SAFE_CONTROL_FORGED_BINDING_ONLY\", \"c_read_error_sample_2\": \"SAFE_ANY_SAMPLE_READ_ERROR_UNKNOWN\", \"d1_truncated_png\": \"SAFE_TRUNCATED_PNG_REFUSED\", \"d2_jpeg_missing_eoi\": \"SAFE_JPEG_MISSING_EOI_REFUSED\", \"d3_unsupported_image_type\": \"SAFE_UNSUPPORTED_TYPE_REFUSED\"}, \"manifest\": {\"files\": 735, \"total_bytes\": 1620592, \"manifest_sha256\": \"c08c79469a492dab556587b6ee13bb44101f4e64c5d4b06bee8af75c17eae4b6\"}}",
+          "verdict": "SAFE_R5_AXIS_AND_READ_ERROR_CONTRACT"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r6_status_selfcert.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r6-status"
+          ],
+          "driver": "phase2-r6-status",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_R6_STATUS_SCENARIO_LABELLED_NON_ACCEPTANCE",
+          "finished_at": "2026-09-16T22:30:01Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r6-status/observation.json",
+          "safe": true,
+          "script": "run_phase2_r6_status_selfcert.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"evidence_dir\": \"evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r6-status\", \"failed_oracles\": [], \"manifest_files\": 45, \"manifest_sha256\": \"dd90393fdc569cdf49563e44e0c2d7b7ad339a6e897cd885075b882f69e4547d\", \"manifest_total_bytes\": 50933, \"subcases\": {\"a1-scenario-done-minimal\": true, \"a2-scenario-done-contradictory-facts\": true, \"b-scenario-baseline-unchanged-missing-artifact\": true, \"c-scenario-legacy-no-source\": true, \"c2a-generic-legacy-no-source-facts\": true, \"c2b-generic-done-payload-without-scenario\": true, \"c2c-generic-claimed-all-pass-no-evidence\": true}, \"verdict\": \"SAFE_R6_STATUS_SCENARIO_LABELLED_NON_ACCEPTANCE\"}",
+          "verdict": "SAFE_R6_STATUS_SCENARIO_LABELLED_NON_ACCEPTANCE"
+        },
+        {
+          "argv": [
+            "/usr/bin/python3",
+            "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r7_integration.py",
+            "--evidence-dir",
+            "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r7"
+          ],
+          "driver": "phase2-r7",
+          "exit_code": 0,
+          "expected_safe_verdict": "SAFE_R7_LOOP_CLOSED_AND_DUPLICATE_REFUSED",
+          "finished_at": "2026-09-16T22:30:02Z",
+          "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/phase2-r7/observation.json",
+          "safe": true,
+          "script": "run_phase2_r7_integration.py",
+          "stderr_tail": "",
+          "stdout_tail": "{\"verdict\": \"SAFE_R7_LOOP_CLOSED_AND_DUPLICATE_REFUSED\", \"failed\": [], \"verify_2\": {\"filesystem_status\": \"PASS\", \"registry_status\": \"PASS\", \"source_status\": \"CONFIRMED\", \"state_status\": \"EXACT\", \"overall_status\": \"PASS\", \"failure_class\": \"NONE\"}, \"second_prepare\": \"CONFLICT_DUPLICATE_FINGERPRINT\"}",
+          "verdict": "SAFE_R7_LOOP_CLOSED_AND_DUPLICATE_REFUSED"
+        }
+      ],
+      "final_readback": {
+        "argv": [
+          "/usr/bin/python3",
+          "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/verify_evidence.py",
+          "--root",
+          "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first",
+          "--output",
+          "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/readback-verification.json"
+        ],
+        "counts": {
+          "artifacts_checked": 3819,
+          "manifests": 37,
+          "supplements": 1
+        },
+        "exit_code": 0,
+        "problems": [],
+        "uncovered_files": [],
+        "verdict": "PASS"
+      },
+      "observation": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/order-observation.json",
+      "order": "ownership-first",
+      "order_manifest": {
+        "files": 1353,
+        "manifest_sha256": "dc0c62159bfa031b4ae55d0b333bab688a8a672bb407970abcabe4f417121ae1",
+        "total_bytes": 2745822
+      },
+      "order_root": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first",
+      "order_safe": true
+    }
+  ],
+  "task_id": "T20260916-0102-01-line-backup-acceptance"
+}

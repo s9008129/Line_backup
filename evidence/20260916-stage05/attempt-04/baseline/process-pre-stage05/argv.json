@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/authority_baseline.py",
+    "--config",
+    "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/config/line_backup_config.json",
+    "--state",
+    "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json",
+    "--run-log",
+    "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/run_log.md",
+    "--destination",
+    "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+    "--output",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-stage05/attempt-04/baseline/baseline-pre-stage05.json"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "env": {
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONHASHSEED": "0"
+  },
+  "secrets_removed": true
+}

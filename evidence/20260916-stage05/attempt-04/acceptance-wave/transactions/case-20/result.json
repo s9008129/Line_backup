@@ -1,0 +1,10 @@
+{
+  "case_id": "20",
+  "failed_checks": [],
+  "independent_oracle_match": true,
+  "manifest": {
+    "bytes": 24117,
+    "exists": true,
+    "sha256": "6ddef92861085ee0a333c3f8e20411f1675176f90effb8cbd434277780f43352"
+  }
+}

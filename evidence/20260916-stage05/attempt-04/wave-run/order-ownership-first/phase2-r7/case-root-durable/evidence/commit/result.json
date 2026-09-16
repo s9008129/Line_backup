@@ -1,0 +1,9 @@
+{
+  "exit_code": 0,
+  "message": "verification committed",
+  "replacement": true,
+  "result": "COMMITTED_VERIFICATION",
+  "revision": 3,
+  "schema_version": 1,
+  "state_replaced": true
+}

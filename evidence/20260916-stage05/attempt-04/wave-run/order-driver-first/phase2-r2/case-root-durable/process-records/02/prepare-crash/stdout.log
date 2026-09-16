@@ -1,0 +1,1 @@
+{"dispatch_performed": true, "exit_code": 1, "message": "dispatcher died after its side effect; state stays at the committed intent revision", "result": "DISPATCHER_CRASH_AFTER_SIDE_EFFECT", "revision": 1, "schema_version": 1, "state_replaced": true}

@@ -1,0 +1,9 @@
+{
+  "dispatch_performed": true,
+  "exit_code": 1,
+  "message": "pre-dispatch ambiguity barrier committed; adapter invoked once",
+  "result": "DISPATCH_UNKNOWN",
+  "revision": 2,
+  "schema_version": 1,
+  "state_replaced": true
+}

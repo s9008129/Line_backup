@@ -1,0 +1,120 @@
+{
+  "rows": [
+    {
+      "root": "evidence/20260916-auto-verification/attempt-02/order-driver-first",
+      "recorded": {
+        "verdict": "PASS",
+        "manifests": 37,
+        "supplements": 1,
+        "artifacts_checked": 3819
+      },
+      "independent_reread": {
+        "verdict": "PASS",
+        "manifests": 37,
+        "supplements": 1,
+        "artifacts_checked": 3819
+      },
+      "problems_recorded": 0,
+      "problems_reread": 0,
+      "uncovered_recorded": 0,
+      "uncovered_reread": 0,
+      "identical": true
+    },
+    {
+      "root": "evidence/20260916-auto-verification/attempt-02/order-ownership-first",
+      "recorded": {
+        "verdict": "PASS",
+        "manifests": 37,
+        "supplements": 1,
+        "artifacts_checked": 3819
+      },
+      "independent_reread": {
+        "verdict": "PASS",
+        "manifests": 37,
+        "supplements": 1,
+        "artifacts_checked": 3819
+      },
+      "problems_recorded": 0,
+      "problems_reread": 0,
+      "uncovered_recorded": 0,
+      "uncovered_reread": 0,
+      "identical": true
+    },
+    {
+      "root": "evidence/20260916-acceptance/attempt-03",
+      "recorded": {
+        "verdict": "PASS",
+        "manifests": 45,
+        "supplements": 0,
+        "artifacts_checked": 4604
+      },
+      "independent_reread": {
+        "verdict": "PASS",
+        "manifests": 45,
+        "supplements": 0,
+        "artifacts_checked": 4604
+      },
+      "problems_recorded": 0,
+      "problems_reread": 0,
+      "uncovered_recorded": 0,
+      "uncovered_reread": 0,
+      "identical": true
+    },
+    {
+      "root": "evidence/20260916-product-verify/attempt-04",
+      "recorded": {
+        "verdict": "PASS",
+        "manifests": 2,
+        "supplements": 0,
+        "artifacts_checked": 17
+      },
+      "independent_reread": {
+        "verdict": "PASS",
+        "manifests": 2,
+        "supplements": 0,
+        "artifacts_checked": 17
+      },
+      "problems_recorded": 0,
+      "problems_reread": 0,
+      "uncovered_recorded": 0,
+      "uncovered_reread": 0,
+      "identical": true
+    },
+    {
+      "root": "evidence/20260916-route/attempt-02",
+      "recorded": {
+        "verdict": "PASS",
+        "manifests": 1,
+        "supplements": 0,
+        "artifacts_checked": 1
+      },
+      "independent_reread": {
+        "verdict": "PASS",
+        "manifests": 1,
+        "supplements": 0,
+        "artifacts_checked": 1
+      },
+      "problems_recorded": 0,
+      "problems_reread": 0,
+      "uncovered_recorded": 0,
+      "uncovered_reread": 0,
+      "identical": true
+    },
+    {
+      "root": "evidence/20260916-baseline/attempt-02",
+      "recorded": null,
+      "independent_reread": {
+        "verdict": "FAIL",
+        "manifests": 0,
+        "supplements": 0,
+        "artifacts_checked": 0
+      },
+      "uncovered_reread": [
+        "baseline-pre.json",
+        "baseline-pre.meta.json"
+      ],
+      "note": "no in-root manifest; generic readback reports the two files uncovered. Bytes independently pinned by: (a) reconciliation.json digest (ab6747f2...), (b) execution.md section 12, (c) this attempt-04 independent re-run baseline-pre-stage05.json byte-identical"
+    }
+  ],
+  "generated_at": "2026-09-16T22:33:45Z"
+}

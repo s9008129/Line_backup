@@ -1,0 +1,13 @@
+{
+  "artifacts_checked": 1,
+  "ignored_names": [
+    "manifest.json",
+    "readback-verification.json"
+  ],
+  "manifests": 1,
+  "problems": [],
+  "root": "evidence/20260916-route/attempt-02",
+  "supplements": 0,
+  "uncovered_files": [],
+  "verdict": "PASS"
+}

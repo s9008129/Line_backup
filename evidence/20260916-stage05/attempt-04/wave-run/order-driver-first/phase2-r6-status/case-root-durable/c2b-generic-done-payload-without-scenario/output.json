@@ -1,0 +1,14 @@
+{
+  "baseline_delta": "UNAVAILABLE",
+  "blocker": null,
+  "checks": [],
+  "core_acceptance_status": "NOT_RUN",
+  "failure_class": "PRODUCT_DEFECT",
+  "implementation_status": "NOT_STARTED",
+  "independent_acceptance_status": "PENDING",
+  "primary_outcome_status": "UNKNOWN",
+  "required_verification_status": "NOT_RUN",
+  "schema_version": 2,
+  "task_closure_status": "PENDING_CORE_ACCEPTANCE",
+  "waiver": null
+}

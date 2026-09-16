@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r4_finalize_trust.py",
+    "--evidence-dir",
+    "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r4"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "env_fingerprint": {
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONHASHSEED": "0",
+    "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src",
+    "PYTHONPYCACHEPREFIX": "/private/tmp/line-backup-acceptance-pycache"
+  },
+  "secrets_removed": true,
+  "started_at": "2026-09-16T22:29:44Z"
+}

@@ -1,0 +1,37 @@
+{
+  "task_id": "T20260916-0102-01-line-backup-acceptance",
+  "attempt": "e2e/attempt-04",
+  "captured_at_utc": "2026-09-16T22:26:29Z",
+  "freshness": {
+    "head_matches": true,
+    "tree_clean": true,
+    "plan_sha_matches": true,
+    "handoff_sha_matches": true,
+    "execution_sha_matches": true,
+    "expected": {
+      "head": "8cbc7d3b3d26dfbd40c59c3f0e0ee3b1feb1b428",
+      "plan_sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+      "handoff_sha256": "9cf01d4eedc006cfff2217e3b610c8166cfb05c04919512e74a19f4aa20946c6",
+      "execution_sha256": "d54011483e597bc572930b03fef7536a0743f8fb9d23744078b3b75953eb0242"
+    },
+    "note": "freshness-check against handoff/plan/execution identities; all must be true or Stage 05 stops"
+  },
+  "STAGE_04_REPORTED_PRIMARY_OUTCOME_STATUS": "UNKNOWN",
+  "STAGE_04_REPORTED_IMPLEMENTATION_STATUS": "COMPLETE",
+  "STAGE_04_REPORTED_CORE_ACCEPTANCE_STATUS": "BLOCKED",
+  "STAGE_04_REPORTED_REQUIRED_VERIFICATION_STATUS": "PASS",
+  "STAGE_04_REPORTED_INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+  "STAGE_04_REPORTED_TASK_CLOSURE_STATUS": "CORE_ACCEPTANCE_BLOCKED",
+  "STAGE_04_REPORTED_BASELINE_DELTA": "UNCHANGED",
+  "STAGE_04_EXECUTION_ARTIFACT": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/execution.md",
+  "STAGE_04_EXECUTION_ARTIFACT_SHA256": "d54011483e597bc572930b03fef7536a0743f8fb9d23744078b3b75953eb0242",
+  "PLAN_REVISION": 18,
+  "PLAN_SHA256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+  "HANDOFF_SHA256": "9cf01d4eedc006cfff2217e3b610c8166cfb05c04919512e74a19f4aa20946c6",
+  "evidence_root": "evidence/20260916-stage05/attempt-04/",
+  "stage04_scoped_blockers": [
+    "BLK-01-SOURCE-CORRESPONDENCE (CORE_ACCEPTANCE/BLOCKED/AUTHORITY_REQUIRED)",
+    "BLK-02-CUA-ROUTE-DECISION (CORE_ACCEPTANCE/BLOCKED/AUTHORITY_REQUIRED)",
+    "BLK-03-INDEPENDENT-ACCEPTANCE (INDEPENDENT_ACCEPTANCE/NOT_RUN; this attempt)"
+  ]
+}

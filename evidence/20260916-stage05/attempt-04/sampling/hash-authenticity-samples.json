@@ -1,0 +1,196 @@
+{
+  "note": "deterministic spread over 7 artifacts per tree manifest (first, last, 5 intermediate); recomputed sha256/bytes match manifest entries",
+  "all_ok": true,
+  "samples": [
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/manifest.json",
+      "index": 0,
+      "path": "driver-records/phase2-r1/argv.json",
+      "expected_sha256": "2bdd2c35aec601beb239d63ccef1f6f1732c042207ab9429114d1dfd4234e32e",
+      "actual_sha256": "2bdd2c35aec601beb239d63ccef1f6f1732c042207ab9429114d1dfd4234e32e",
+      "bytes": 641,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/manifest.json",
+      "index": 1,
+      "path": "driver-records/phase2-r1/exit-code",
+      "expected_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "actual_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/manifest.json",
+      "index": 270,
+      "path": "phase2-r4/closed-loop/01-prepare/stdout.log",
+      "expected_sha256": "6f8d3e81b3faa0a3ff593b42d62914195387df247bc5763b9a1c7838c80f0b37",
+      "actual_sha256": "6f8d3e81b3faa0a3ff593b42d62914195387df247bc5763b9a1c7838c80f0b37",
+      "bytes": 193,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/manifest.json",
+      "index": 676,
+      "path": "phase2-r5/case-root-durable/c-read-error-after-sample-1/backup_root/destination/image-035.png",
+      "expected_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "actual_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "bytes": 74,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/manifest.json",
+      "index": 811,
+      "path": "phase2-r5/case-root-durable/d1-truncated-png/backup_root/destination/image-036.png",
+      "expected_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "actual_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "bytes": 74,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/manifest.json",
+      "index": 1351,
+      "path": "phase2-r7/case-root-durable/state/run_log.md",
+      "expected_sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f",
+      "actual_sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f",
+      "bytes": 55,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/manifest.json",
+      "index": 1352,
+      "path": "phase2-r7/observation.json",
+      "expected_sha256": "00ab959a67804ee08485eaa54d647a6b8c933d351c69d4c21b65c3c85dd00bfd",
+      "actual_sha256": "00ab959a67804ee08485eaa54d647a6b8c933d351c69d4c21b65c3c85dd00bfd",
+      "bytes": 9723,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/manifest.json",
+      "index": 0,
+      "path": "driver-records/phase2-r1/argv.json",
+      "expected_sha256": "52cb5d5ce1cf9ef7d34c71e037ebf0fb59f547672e11ae16102e053ae7df6d9d",
+      "actual_sha256": "52cb5d5ce1cf9ef7d34c71e037ebf0fb59f547672e11ae16102e053ae7df6d9d",
+      "bytes": 644,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/manifest.json",
+      "index": 1,
+      "path": "driver-records/phase2-r1/exit-code",
+      "expected_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "actual_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/manifest.json",
+      "index": 270,
+      "path": "phase2-r4/closed-loop/01-prepare/stdout.log",
+      "expected_sha256": "6f8d3e81b3faa0a3ff593b42d62914195387df247bc5763b9a1c7838c80f0b37",
+      "actual_sha256": "6f8d3e81b3faa0a3ff593b42d62914195387df247bc5763b9a1c7838c80f0b37",
+      "bytes": 193,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/manifest.json",
+      "index": 676,
+      "path": "phase2-r5/case-root-durable/c-read-error-after-sample-1/backup_root/destination/image-035.png",
+      "expected_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "actual_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "bytes": 74,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/manifest.json",
+      "index": 811,
+      "path": "phase2-r5/case-root-durable/d1-truncated-png/backup_root/destination/image-036.png",
+      "expected_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "actual_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "bytes": 74,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/manifest.json",
+      "index": 1351,
+      "path": "phase2-r7/case-root-durable/state/run_log.md",
+      "expected_sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f",
+      "actual_sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f",
+      "bytes": 55,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/manifest.json",
+      "index": 1352,
+      "path": "phase2-r7/observation.json",
+      "expected_sha256": "00ab959a67804ee08485eaa54d647a6b8c933d351c69d4c21b65c3c85dd00bfd",
+      "actual_sha256": "00ab959a67804ee08485eaa54d647a6b8c933d351c69d4c21b65c3c85dd00bfd",
+      "bytes": 9723,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/acceptance-wave/manifest.json",
+      "index": 0,
+      "path": "acceptance-observation.json",
+      "expected_sha256": "6b769689d19b80ff0fbd0a0a2313c4a1799981a91f4c18e6a7d6ea536ee3fa38",
+      "actual_sha256": "6b769689d19b80ff0fbd0a0a2313c4a1799981a91f4c18e6a7d6ea536ee3fa38",
+      "bytes": 71321,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/acceptance-wave/manifest.json",
+      "index": 1,
+      "path": "authority/summary.json",
+      "expected_sha256": "b9a76096395866b0d74e99428bdcd6d7c6d4f15d652b4035bfc9221886e35dbc",
+      "actual_sha256": "b9a76096395866b0d74e99428bdcd6d7c6d4f15d652b4035bfc9221886e35dbc",
+      "bytes": 56272,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/acceptance-wave/manifest.json",
+      "index": 480,
+      "path": "transactions/case-05/destination/image-050.png",
+      "expected_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "actual_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "bytes": 74,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/acceptance-wave/manifest.json",
+      "index": 1202,
+      "path": "transactions/case-13/destination/image-048.png",
+      "expected_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "actual_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "bytes": 74,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/acceptance-wave/manifest.json",
+      "index": 1442,
+      "path": "transactions/case-16/destination/image-040.png",
+      "expected_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "actual_sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "bytes": 74,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/acceptance-wave/manifest.json",
+      "index": 2402,
+      "path": "verifier-fixture-rows.json",
+      "expected_sha256": "e189622b5727a4824485cbbeaac1aeea4a2b70e719da983f6f8a23d5b2d43b0e",
+      "actual_sha256": "e189622b5727a4824485cbbeaac1aeea4a2b70e719da983f6f8a23d5b2d43b0e",
+      "bytes": 112345,
+      "ok": true
+    },
+    {
+      "manifest": "evidence/20260916-stage05/attempt-04/acceptance-wave/manifest.json",
+      "index": 2403,
+      "path": "verifier-summary.json",
+      "expected_sha256": "a85d8ad92a497662d68b14e8d5717f52fe3d4cb95801ebe812661879bc4dbde7",
+      "actual_sha256": "a85d8ad92a497662d68b14e8d5717f52fe3d4cb95801ebe812661879bc4dbde7",
+      "bytes": 1358332,
+      "ok": true
+    }
+  ],
+  "generated_at": "2026-09-16T22:33:45Z"
+}

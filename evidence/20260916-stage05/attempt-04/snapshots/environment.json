@@ -1,0 +1,32 @@
+{
+  "task_id": "T20260916-0102-01-line-backup-acceptance",
+  "attempt": "e2e/attempt-04",
+  "recorded_at_utc": "2026-09-16T22:26:29Z",
+  "recorded_at_local": "2026-09-17 06:26:29 CST",
+  "head": "8cbc7d3b3d26dfbd40c59c3f0e0ee3b1feb1b428",
+  "git_status_porcelain": "",
+  "branch": "master",
+  "host": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  "interpreter": "3.9.6 (default, May 22 2026, 11:13:45) \n[Clang 21.0.0 (clang-2100.1.1.101)]",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "plan": {
+    "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md",
+    "sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+    "bytes": 204373
+  },
+  "handoff": {
+    "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/handoff.md",
+    "sha256": "9cf01d4eedc006cfff2217e3b610c8166cfb05c04919512e74a19f4aa20946c6",
+    "bytes": 21347
+  },
+  "execution": {
+    "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/execution.md",
+    "sha256": "d54011483e597bc572930b03fef7536a0743f8fb9d23744078b3b75953eb0242",
+    "bytes": 33676
+  },
+  "acceptance_mode": "INDEPENDENT_ACCEPTANCE (E2E_REQUIRED=NO): real CLI, formal read-only verify-only, R1-R7 repair evidence package, route status",
+  "gui_ax_attestation": "This Stage 05 session executes terminal commands only; no GUI/AX/Computer-Use input, no sudo/TCC interaction."
+}

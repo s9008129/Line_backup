@@ -1,0 +1,6 @@
+{
+  "case_id": "12",
+  "note": "executable status fixture; facts are driver-authored",
+  "scenario": "contradictory-axes",
+  "schema_version": 2
+}

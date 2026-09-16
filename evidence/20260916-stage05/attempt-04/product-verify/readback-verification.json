@@ -1,0 +1,13 @@
+{
+  "artifacts_checked": 17,
+  "ignored_names": [
+    "manifest.json",
+    "readback-verification.json"
+  ],
+  "manifests": 2,
+  "problems": [],
+  "root": "evidence/20260916-stage05/attempt-04/product-verify",
+  "supplements": 0,
+  "uncovered_files": [],
+  "verdict": "PASS"
+}

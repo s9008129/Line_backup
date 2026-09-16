@@ -1,0 +1,8 @@
+{
+  "at": 1789597688.6471949,
+  "orphan_pid": 12144,
+  "orphan_reparented_and_exited": true,
+  "pid": 12143,
+  "returncode": -9,
+  "signal": "SIGKILL"
+}

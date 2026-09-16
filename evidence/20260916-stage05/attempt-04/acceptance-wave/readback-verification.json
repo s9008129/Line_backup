@@ -1,0 +1,13 @@
+{
+  "artifacts_checked": 4604,
+  "ignored_names": [
+    "manifest.json",
+    "readback-verification.json"
+  ],
+  "manifests": 45,
+  "problems": [],
+  "root": "evidence/20260916-stage05/attempt-04/acceptance-wave",
+  "supplements": 0,
+  "uncovered_files": [],
+  "verdict": "PASS"
+}

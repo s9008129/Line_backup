@@ -1,0 +1,259 @@
+{
+  "artifacts": [
+    {
+      "bytes": 221,
+      "path": "case-root-durable/.driver-ownership.json",
+      "sha256": "4abf1fc3085bcc01542bd43cfe074e32621bc4b2dae4aac7bf7c00de230f1b68"
+    },
+    {
+      "bytes": 269,
+      "path": "case-root-durable/binding-fixture.json",
+      "sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c"
+    },
+    {
+      "bytes": 379,
+      "path": "case-root-durable/config/line_backup_config.json",
+      "sha256": "cd11f39ed4be04a343a672a1e67b8631dc2c37b8edd92500713117d153371865"
+    },
+    {
+      "bytes": 0,
+      "path": "case-root-durable/dispatch-counter.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 484,
+      "path": "case-root-durable/dispatcher.py",
+      "sha256": "90111ca1486e18c9260b1e50eebcec14ffbcd70d2fd7f59306b3d773219b84b1"
+    },
+    {
+      "bytes": 222,
+      "path": "case-root-durable/driver-records/r6-ownership/probe.json",
+      "sha256": "a6491b5e6792094b3e6db3b52e3fc7fd44c504a59c31095d9aedbdcd1c7b2718"
+    },
+    {
+      "bytes": 251,
+      "path": "case-root-durable/evidence/resume/reconcile.json",
+      "sha256": "5d54c2a2cc9c9db1d841140461aa5839cdceeae030aa3f72709e5a0c4b3ab9d4"
+    },
+    {
+      "bytes": 268,
+      "path": "case-root-durable/evidence/resume/result.json",
+      "sha256": "69a646b2f006c374745909815af53864685cd5e0e1511053f713f762241c63c6"
+    },
+    {
+      "bytes": 160,
+      "path": "case-root-durable/input-state.json",
+      "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+    },
+    {
+      "bytes": 898,
+      "path": "case-root-durable/process-records/02/commit-refused/argv.json",
+      "sha256": "664856b30e454186705029f7726a03c29348c1189b63afb34c672a3800bb94bd"
+    },
+    {
+      "bytes": 2,
+      "path": "case-root-durable/process-records/02/commit-refused/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "path": "case-root-durable/process-records/02/commit-refused/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 200,
+      "path": "case-root-durable/process-records/02/commit-refused/stdout.log",
+      "sha256": "c34af86a333a7c9e878da965888af8cd8e9802e25f25d541217e307391f6834a"
+    },
+    {
+      "bytes": 827,
+      "path": "case-root-durable/process-records/02/finalize-safe-abort/argv.json",
+      "sha256": "6311cddf834ea500a845348e451e8ced7695444316b12a160be61ab6c5e6c517"
+    },
+    {
+      "bytes": 2,
+      "path": "case-root-durable/process-records/02/finalize-safe-abort/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "case-root-durable/process-records/02/finalize-safe-abort/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 187,
+      "path": "case-root-durable/process-records/02/finalize-safe-abort/stdout.log",
+      "sha256": "b614396b9d1d3ed234840e58a335e86275c578fb6f443d0fa65612352a410434"
+    },
+    {
+      "bytes": 1325,
+      "path": "case-root-durable/process-records/02/prepare-crash/argv.json",
+      "sha256": "f61ccb42cdfaf5f636488d028eeb50a3fee135e2bcd7f3c045f389d7434bedb7"
+    },
+    {
+      "bytes": 2,
+      "path": "case-root-durable/process-records/02/prepare-crash/exit-code",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "bytes": 0,
+      "path": "case-root-durable/process-records/02/prepare-crash/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 251,
+      "path": "case-root-durable/process-records/02/prepare-crash/stdout.log",
+      "sha256": "78d638a2c075e29cdaacbd6702525d6cf2bc5d3273533a6953547b160c625841"
+    },
+    {
+      "bytes": 811,
+      "path": "case-root-durable/process-records/02/resume-1/argv.json",
+      "sha256": "1f3c2703bd4609b643f0e464a3e49df4bbe8ce2447eac99481e2b63fbc43f1b9"
+    },
+    {
+      "bytes": 2,
+      "path": "case-root-durable/process-records/02/resume-1/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "case-root-durable/process-records/02/resume-1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 250,
+      "path": "case-root-durable/process-records/02/resume-1/stdout.log",
+      "sha256": "12039b0e75ff52ed3fe76ffd11650e170164441f302cf1767c73044cd04b4639"
+    },
+    {
+      "bytes": 811,
+      "path": "case-root-durable/process-records/02/resume-2/argv.json",
+      "sha256": "18c9a4b86ed54940d9656d9aa8e5c490a8f368a99f582ecc16ae1962356b83fd"
+    },
+    {
+      "bytes": 2,
+      "path": "case-root-durable/process-records/02/resume-2/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "case-root-durable/process-records/02/resume-2/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 264,
+      "path": "case-root-durable/process-records/02/resume-2/stdout.log",
+      "sha256": "9612ada82a64d649509bc4666eb7cd15b7db0f9ea1fa4f12634aca02310da1b0"
+    },
+    {
+      "bytes": 1210,
+      "path": "case-root-durable/source-evidence.json",
+      "sha256": "30dd1bd3c6b29fec5a96a059f5f7224b8e73e41923154b0c4d432d41887ccfe8"
+    },
+    {
+      "bytes": 0,
+      "path": "case-root-durable/state/.line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3507,
+      "path": "case-root-durable/state/backup_state.json",
+      "sha256": "535f6dbd24aa6172376cf0dfdbbae0051486aa7c7059ff1cc639cd63f6568eef"
+    },
+    {
+      "bytes": 55,
+      "path": "case-root-durable/state/run_log.md",
+      "sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f"
+    },
+    {
+      "bytes": 791,
+      "path": "fresh-resume-loaded-intent/argv.json",
+      "sha256": "a60fbf3d98661c14348aede866a0f142e263cbd6f7f41b79405ef33cab0b3d09"
+    },
+    {
+      "bytes": 2,
+      "path": "fresh-resume-loaded-intent/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "fresh-resume-loaded-intent/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 250,
+      "path": "fresh-resume-loaded-intent/stdout.log",
+      "sha256": "12039b0e75ff52ed3fe76ffd11650e170164441f302cf1767c73044cd04b4639"
+    },
+    {
+      "bytes": 808,
+      "path": "fresh-resume-no-dispatch/argv.json",
+      "sha256": "df8ce7b0bbfeff2376668c3a2df7b1ccede8614a4f6a201fd3f4fc71fecba34c"
+    },
+    {
+      "bytes": 2,
+      "path": "fresh-resume-no-dispatch/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "fresh-resume-no-dispatch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 264,
+      "path": "fresh-resume-no-dispatch/stdout.log",
+      "sha256": "9612ada82a64d649509bc4666eb7cd15b7db0f9ea1fa4f12634aca02310da1b0"
+    },
+    {
+      "bytes": 972,
+      "path": "fresh-resume-with-adapter/argv.json",
+      "sha256": "912f6569f6b48f40cd76d9b08c15ff23fdfbc66ac8754ad631003d924a40b2fc"
+    },
+    {
+      "bytes": 2,
+      "path": "fresh-resume-with-adapter/exit-code",
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3"
+    },
+    {
+      "bytes": 0,
+      "path": "fresh-resume-with-adapter/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 137,
+      "path": "fresh-resume-with-adapter/stdout.log",
+      "sha256": "5e29a424991b1af4e9ff8a3f15bead0b1b7c82ee45a078a31498479dc3878613"
+    },
+    {
+      "bytes": 6470,
+      "path": "observation.json",
+      "sha256": "de1a21e4869a80fa02a77cc6d82848112ef1ac90c8e81cf81a07c108b6a40ab2"
+    },
+    {
+      "bytes": 1293,
+      "path": "prepare/argv.json",
+      "sha256": "9c014cdcd0616b81e66d7ce1bca2f77eddf06dee3d6879b041011ce10684b2c6"
+    },
+    {
+      "bytes": 2,
+      "path": "prepare/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "prepare/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 193,
+      "path": "prepare/stdout.log",
+      "sha256": "6f8d3e81b3faa0a3ff593b42d62914195387df247bc5763b9a1c7838c80f0b37"
+    }
+  ],
+  "files": 50,
+  "generated_at": "2026-09-16T22:29:43Z",
+  "root": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/phase2-r2",
+  "schema_version": 1,
+  "total_bytes": 24046
+}

@@ -1,0 +1,8 @@
+{
+  "action_id": "ACTION-RUN-R1",
+  "kind": "reconciliation_evidence",
+  "loaded_revision": 2,
+  "observation": "loaded intent never dispatched; ambiguity barrier committed without a second dispatch",
+  "run_id": "RUN-R1",
+  "schema_version": 1
+}

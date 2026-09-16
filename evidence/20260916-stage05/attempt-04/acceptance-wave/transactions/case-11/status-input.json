@@ -1,0 +1,6 @@
+{
+  "case_id": "11",
+  "note": "executable status fixture; facts are driver-authored",
+  "scenario": "legacy-no-source",
+  "schema_version": 2
+}

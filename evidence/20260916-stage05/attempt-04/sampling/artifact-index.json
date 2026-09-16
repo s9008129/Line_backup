@@ -1,0 +1,195 @@
+{
+  "generated_at": "2026-09-16T22:35:18Z",
+  "artifacts": [
+    {
+      "path": "evidence/20260916-stage05/attempt-04/snapshots/environment.json",
+      "bytes": 1427,
+      "sha256": "7b0c49985440287888593e5ba4c6230a3dc450a320d34795021bbc5a16c1e22a"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/snapshots/stage04-carry-forward.json",
+      "bytes": 1932,
+      "sha256": "ab4e6d893de09858bf811bc45ada1c86f43b9e807f5a2630b84f8c63955af525"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/baseline/baseline-pre-stage05.json",
+      "bytes": 19005,
+      "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/baseline/baseline-post-stage05.json",
+      "bytes": 19005,
+      "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/baseline/baseline-post-stage05.note.json",
+      "bytes": 517,
+      "sha256": "a77bcab54643b8ac1b9fa655ea3cae542f28a7dc8fbd1a37f7e7671c59d0f4ec"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/baseline/process-pre-stage05/argv.json",
+      "bytes": 943,
+      "sha256": "87708185ed74c772854f23a8d76832d12faadd81832317ec084ad465ed201e2c"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/baseline/process-pre-stage05/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/baseline/process-pre-stage05/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/baseline/process-pre-stage05/exit-code",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/product-verify/reconciliation.json",
+      "bytes": 27357,
+      "sha256": "1781138fb6863906da198a8afb8faea02ee0022cd7a035c259c52a6db66833b9"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/product-verify/manifest.json",
+      "bytes": 2244,
+      "sha256": "53b81abe144c48a1c1cafb3903a335b4a0e19210790187f2f2dbaed418206f9b"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/product-verify/readback-verification.json",
+      "bytes": 277,
+      "sha256": "fa41932ac5b3c1754cfb70ebed221d45472967b4fd8c1a92505afb0f6841200a"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/acceptance-wave/manifest.json",
+      "bytes": 433464,
+      "sha256": "636992bc165f8c79ed2c662c7e85061501236f4bd38d78af5679a96f3b3c5a59"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/acceptance-wave/readback-verification.json",
+      "bytes": 281,
+      "sha256": "c91ad0a7a04fcfe3c7fb8b0972491504a175ebadd8bd7019429501dc46d7023b"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/acceptance-wave/acceptance-observation.json",
+      "bytes": 71321,
+      "sha256": "6b769689d19b80ff0fbd0a0a2313c4a1799981a91f4c18e6a7d6ea536ee3fa38"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/acceptance-wave/verifier-summary.json",
+      "bytes": 1358332,
+      "sha256": "a85d8ad92a497662d68b14e8d5717f52fe3d4cb95801ebe812661879bc4dbde7"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/acceptance-wave/status-summary.json",
+      "bytes": 70980,
+      "sha256": "049d50d43b2a9e6addb58793cf69f5944a2f8cd3a5e60def243ac9677ec56177"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/acceptance-wave/authority-summary.json",
+      "bytes": 56272,
+      "sha256": "b9a76096395866b0d74e99428bdcd6d7c6d4f15d652b4035bfc9221886e35dbc"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/acceptance-wave/legacy-false-positive-summary.json",
+      "bytes": 1365,
+      "sha256": "974896748a5ec2eabfed87d3a0a00d1050216acaff47303fef58fe384b5620b2"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/acceptance-wave/verifier-fixture-rows.json",
+      "bytes": 112345,
+      "sha256": "e189622b5727a4824485cbbeaac1aeea4a2b70e719da983f6f8a23d5b2d43b0e"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/wave-run/run-all-summary.json",
+      "bytes": 23537,
+      "sha256": "9260d32acb9b164ee005fee98ee1ea65cf9b7aa99891a822df3f331ae0b715f0"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/manifest.json",
+      "bytes": 280025,
+      "sha256": "fc6e16c4d231bcd8925bdb69f8c5cc15a8934e9710e700a00088815ca9fb512f"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/readback-verification.json",
+      "bytes": 325,
+      "sha256": "1b1e2653ba750bb9924bf6ec7ae5da5d24205e3bd2f258e8f99cdb618aa89d6f"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/wave-run/order-driver-first/order-observation.json",
+      "bytes": 12300,
+      "sha256": "21e1d8c8f37ed4e8104b7378c620aa47a4002cda7b1f20fa908e31104cec5358"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/manifest.json",
+      "bytes": 280028,
+      "sha256": "dc0c62159bfa031b4ae55d0b333bab688a8a672bb407970abcabe4f417121ae1"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/readback-verification.json",
+      "bytes": 328,
+      "sha256": "107a1942c808b8c57bf09848a8a5b7eca3bb4a55e4dff701980fbf414fe16592"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/wave-run/order-ownership-first/order-observation.json",
+      "bytes": 12378,
+      "sha256": "ffcdd7bc2775ace5822895afc42016c405c22aee2e47ea6b6ac433bfde12cb36"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/readback/stage04-order-driver-first.readback.json",
+      "bytes": 326,
+      "sha256": "1e18941e175674246064f106c499080ae5897b9429045f0265c9f9b699c7158a"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/readback/stage04-order-ownership-first.readback.json",
+      "bytes": 329,
+      "sha256": "8f99e9f6745a8c645cc3bdae2e859a4eb49bacbd47619a36837a34b2c3588fc6"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/readback/stage04-acceptance-attempt03.readback.json",
+      "bytes": 268,
+      "sha256": "de8a2f8d95b5247eefcd950701308d2695a48e318414831b93c16e1669837084"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/readback/stage04-product-verify-attempt04.readback.json",
+      "bytes": 269,
+      "sha256": "b0d3826de43b2954988b87a16ce7872ee6c0b94003a32f6ed7f43ea8475c73c3"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/readback/stage04-route-attempt02.readback.json",
+      "bytes": 259,
+      "sha256": "4b7d5e4a4652f02a701fd7be5319f9c63d30419fffd9915c19c0966d32c9876b"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/readback/stage04-baseline-attempt02.readback.json",
+      "bytes": 298,
+      "sha256": "afe158d513e7d29020eac7e45b6954a70d931299ec44570d18e4710588a979dd"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/readback/stage05-order-driver-first.readback.json",
+      "bytes": 325,
+      "sha256": "1b1e2653ba750bb9924bf6ec7ae5da5d24205e3bd2f258e8f99cdb618aa89d6f"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/readback/stage05-order-ownership-first.readback.json",
+      "bytes": 328,
+      "sha256": "107a1942c808b8c57bf09848a8a5b7eca3bb4a55e4dff701980fbf414fe16592"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/readback/stage05-acceptance-wave.readback.json",
+      "bytes": 281,
+      "sha256": "c91ad0a7a04fcfe3c7fb8b0972491504a175ebadd8bd7019429501dc46d7023b"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/readback/recorded-vs-independent.json",
+      "bytes": 3232,
+      "sha256": "bc29d10fa833123fb032d5087c5d0afc4a6bc864a00292c9e0e916fc05e7fb88"
+    },
+    {
+      "path": "evidence/20260916-stage05/attempt-04/sampling/hash-authenticity-samples.json",
+      "bytes": 8920,
+      "sha256": "96bbe975e5d405925ad7bce16c402b2b2521025bf5ee85e632a7115010663bd9"
+    }
+  ]
+}
