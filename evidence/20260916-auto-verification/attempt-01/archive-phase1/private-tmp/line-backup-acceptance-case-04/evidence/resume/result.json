@@ -1,0 +1,8 @@
+{
+  "dispatch_performed": false,
+  "exit_code": 0,
+  "message": "matching run is terminal",
+  "result": "SKIP_TERMINAL",
+  "revision": 7,
+  "schema_version": 1
+}

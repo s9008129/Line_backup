@@ -1,0 +1,44 @@
+{
+  "artifacts": [
+    {
+      "bytes": 379,
+      "path": "config/line_backup_config.json",
+      "sha256": "972bc775b65e177817139dd5d679663b4aa4b14b2e40670de335378b1d5890ca"
+    },
+    {
+      "bytes": 15449,
+      "path": "evidence/verify-only/inventory-1.json",
+      "sha256": "da205b6469f7ddaca15ac27ef194257916dc4c0c27c88356eba7c828f5c0b90a"
+    },
+    {
+      "bytes": 15449,
+      "path": "evidence/verify-only/inventory-2.json",
+      "sha256": "da205b6469f7ddaca15ac27ef194257916dc4c0c27c88356eba7c828f5c0b90a"
+    },
+    {
+      "bytes": 15449,
+      "path": "evidence/verify-only/inventory-3.json",
+      "sha256": "da205b6469f7ddaca15ac27ef194257916dc4c0c27c88356eba7c828f5c0b90a"
+    },
+    {
+      "bytes": 17110,
+      "path": "evidence/verify-only/result.json",
+      "sha256": "cf1d6897d764b5595c60c7d2f42f6d645cff5a23c0c27461ac51f1122b42756d"
+    },
+    {
+      "bytes": 3367,
+      "path": "state/backup_state.json",
+      "sha256": "1f4e2d95af42e7c888e9a71b40198385df915d40696ffe31ee8e7d0650acefe2"
+    },
+    {
+      "bytes": 40,
+      "path": "state/run_log.md",
+      "sha256": "4e7acfc4e3144e9f3c612132849230b31a3c95855a7398ab17cd8e9954630be2"
+    }
+  ],
+  "files": 7,
+  "generated_at": "2026-09-16T12:06:55Z",
+  "root": "evidence/20260916-auto-verification/attempt-01/phase2-r4/verifier-root-durable",
+  "schema_version": 1,
+  "total_bytes": 67243
+}

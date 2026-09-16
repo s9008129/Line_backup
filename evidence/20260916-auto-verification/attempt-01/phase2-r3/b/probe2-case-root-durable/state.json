@@ -1,0 +1,128 @@
+{
+  "active_writer_id": "WRITER-B02",
+  "context_lock": null,
+  "current_run_id": "RUN-B02",
+  "revision": 8,
+  "runs": [
+    {
+      "album_id": null,
+      "checkpoint": {
+        "at": "2026-09-16T00:00:00Z",
+        "evidence": "fixture checkpoint",
+        "phase": "TRIGGER_UNKNOWN"
+      },
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-03/destination-old-2",
+      "destination_initially_empty": true,
+      "dispatch_evidence": null,
+      "dispatch_state": "UNKNOWN",
+      "events": [],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "intent": {
+        "action_id": "ACTION-RUN-B-HIST-UNKNOWN",
+        "calibration": {
+          "confidence": "HIGH",
+          "evidence": "fixture"
+        },
+        "committed_at": "2026-09-16T00:00:00Z",
+        "destination": "/private/tmp/line-backup-acceptance-case-03/destination-old-2",
+        "dispatch_outcome": "UNKNOWN",
+        "dispatch_state": "UNKNOWN",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "intent_state": "TRIGGER_UNKNOWN",
+        "owner_execution_id": "WRITER-B0B",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "UNKNOWN"
+      },
+      "intent_state": "TRIGGER_UNKNOWN",
+      "mode": "backup_one",
+      "observed_title": "旻謙允禎成長日記",
+      "owner_id": "WRITER-B0B",
+      "phase": "TRIGGER_UNKNOWN",
+      "reconciliations": [],
+      "run_id": "RUN-B-HIST-UNKNOWN",
+      "runtime_errors": [],
+      "source_provenance": "fixture source",
+      "title_confidence": "HIGH",
+      "verification": null,
+      "workflow_outcome": null
+    },
+    {
+      "album_id": null,
+      "checkpoint": {
+        "at": "2026-09-16T12:05:50Z",
+        "evidence": "intent committed with retry=false",
+        "phase": "SAVE_ALL_INTENT_COMMITTED"
+      },
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-03/destination-new-2",
+      "destination_initially_empty": true,
+      "dispatch_evidence": null,
+      "dispatch_state": "NOT_ATTEMPTED",
+      "events": [],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "intent": {
+        "action_id": "ACTION-RUN-B02",
+        "calibration": {
+          "confidence": "HIGH",
+          "dot_spacing": 1.0,
+          "ellipsis": [
+            1,
+            1
+          ],
+          "evidence": "test-mode adapter calibration fixture; no GUI authorization",
+          "observed_at": "2026-09-16T12:05:50Z",
+          "save_all_point": [
+            1,
+            1
+          ],
+          "screenshot_height": 1,
+          "screenshot_width": 1
+        },
+        "committed_at": "2026-09-16T12:05:50Z",
+        "destination": "/private/tmp/line-backup-acceptance-case-03/destination-new-2",
+        "dispatch_outcome": "NOT_ATTEMPTED",
+        "dispatch_state": "NOT_ATTEMPTED",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "intent_state": "INTENT_COMMITTED",
+        "owner_execution_id": "WRITER-B02",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "NOT_APPLICABLE"
+      },
+      "intent_state": "INTENT_COMMITTED",
+      "mode": "backup_one",
+      "observed_title": "旻謙允禎成長日記",
+      "owner_id": "WRITER-B02",
+      "phase": "SAVE_ALL_INTENT_COMMITTED",
+      "reconciliations": [],
+      "run_id": "RUN-B02",
+      "runtime_errors": [],
+      "source_provenance": "test fixture",
+      "title_confidence": "HIGH",
+      "verification": null,
+      "workflow_outcome": null
+    }
+  ],
+  "schema_version": 2,
+  "verified_albums": []
+}

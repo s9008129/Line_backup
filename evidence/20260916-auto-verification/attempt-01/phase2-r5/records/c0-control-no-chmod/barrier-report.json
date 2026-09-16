@@ -1,0 +1,33 @@
+{
+  "chmod_applied_mode": null,
+  "chmod_restored_mode": null,
+  "chmod_target": "image-042.jpg",
+  "pause_at": "SAMPLE_2_READY",
+  "saw_ready": true,
+  "target_per_sample": [
+    {
+      "error": null,
+      "error_code": null,
+      "mime": "image/jpeg",
+      "sample": 1,
+      "sha256": "f5a8de84a179dac7e6bbc3ca031b66d94956199af4de216d76633f522f770d0c",
+      "status": "OK"
+    },
+    {
+      "error": null,
+      "error_code": null,
+      "mime": "image/jpeg",
+      "sample": 2,
+      "sha256": "f5a8de84a179dac7e6bbc3ca031b66d94956199af4de216d76633f522f770d0c",
+      "status": "OK"
+    },
+    {
+      "error": null,
+      "error_code": null,
+      "mime": "image/jpeg",
+      "sample": 3,
+      "sha256": "f5a8de84a179dac7e6bbc3ca031b66d94956199af4de216d76633f522f770d0c",
+      "status": "OK"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "filesystem_status": "PASS",
+  "produced_by": "download-adapter inventory (external I/O replacement)",
+  "recognized_images": 57,
+  "regular_files": 57,
+  "zero_byte_files": 0
+}

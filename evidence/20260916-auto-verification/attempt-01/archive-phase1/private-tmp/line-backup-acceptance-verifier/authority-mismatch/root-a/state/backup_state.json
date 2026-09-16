@@ -1,0 +1,55 @@
+{
+  "active_writer_id": null,
+  "context_lock": null,
+  "current_run_id": null,
+  "revision": 7,
+  "runs": [
+    {
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-verifier/authority-mismatch/root-a/backup/destination",
+      "dispatch_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+      "events": [],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "intent": {
+        "dispatch_outcome": "RETURNED",
+        "dispatch_state": "SAVE_ALL_RETURNED",
+        "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "UNKNOWN"
+      },
+      "intent_state": "INTENT_COMMITTED",
+      "observed_title": "旻謙允禎成長日記",
+      "owner_id": null,
+      "phase": "VERIFIED",
+      "reconciliations": [],
+      "run_id": "RUN-FIXTURE",
+      "source_provenance": "fixture exact source",
+      "verification": {
+        "filesystem_status": "PASS"
+      },
+      "workflow_outcome": "VERIFIED"
+    }
+  ],
+  "schema_version": 2,
+  "verified_albums": [
+    {
+      "destinations": [
+        "/private/tmp/line-backup-acceptance-verifier/authority-mismatch/root-a/backup/destination"
+      ],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "source_authority": "authoritative_exact_join",
+      "source_kind": "filesystem_verification",
+      "verified_run_id": "RUN-FIXTURE"
+    }
+  ]
+}

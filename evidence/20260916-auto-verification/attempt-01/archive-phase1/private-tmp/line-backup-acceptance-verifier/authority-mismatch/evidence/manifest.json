@@ -1,0 +1,10 @@
+{
+  "artifacts": [
+    {
+      "bytes": 361,
+      "path": "result.json",
+      "sha256": "6e1eaf0f17833a3f2e4501eb8885a0c6a2a3a2e075adbf1d48815f2baf459058"
+    }
+  ],
+  "schema_version": 1
+}

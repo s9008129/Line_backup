@@ -1,0 +1,54 @@
+{
+  "after": {
+    "config": {
+      "bytes": 371,
+      "sha256": "0aa341f762139d49e1bd53b6aef7c2702dcdfc0129622f7093babe46278910fd"
+    },
+    "root": {
+      "bytes": 2145,
+      "sha256": "36def1c3720bbea6bcb15eab11e05cfba08d690f4afc1af6051d7d61d022f63c"
+    }
+  },
+  "before": {
+    "config": {
+      "bytes": 371,
+      "sha256": "0aa341f762139d49e1bd53b6aef7c2702dcdfc0129622f7093babe46278910fd"
+    },
+    "root": {
+      "bytes": 2145,
+      "sha256": "36def1c3720bbea6bcb15eab11e05cfba08d690f4afc1af6051d7d61d022f63c"
+    }
+  },
+  "fixture_builder_expected": {
+    "artifact_readback": "PASS",
+    "exit_code": 4,
+    "failure_class": "INPUT_NEGATIVE",
+    "filesystem_status": "PASS",
+    "overall_status": "NOT_ACHIEVED",
+    "registry_status": "FAIL",
+    "source_status": "UNRESOLVED",
+    "state_status": "AMBIGUOUS"
+  },
+  "manifest_expected": {
+    "artifact_readback": "PASS",
+    "exit_code": 4,
+    "failure_class": "INPUT_NEGATIVE",
+    "filesystem_status": "PASS",
+    "overall_status": "NOT_ACHIEVED",
+    "registry_status": "FAIL",
+    "source_status": "UNRESOLVED",
+    "state_status": "AMBIGUOUS"
+  },
+  "manifest_ok": true,
+  "match": true,
+  "observed": {
+    "artifact_readback": "PASS",
+    "exit_code": 4,
+    "failure_class": "INPUT_NEGATIVE",
+    "filesystem_status": "PASS",
+    "overall_status": "NOT_ACHIEVED",
+    "registry_status": "FAIL",
+    "source_status": "UNRESOLVED",
+    "state_status": "AMBIGUOUS"
+  }
+}

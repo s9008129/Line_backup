@@ -1,0 +1,267 @@
+{
+  "active_writer_id": "WRITER-R4C",
+  "context_lock": null,
+  "current_run_id": "RUN-R4C",
+  "revision": 5,
+  "runs": [
+    {
+      "album_id": null,
+      "checkpoint": {
+        "at": "2026-09-16T12:06:55Z",
+        "evidence": "terminal finalization",
+        "phase": "VERIFIED"
+      },
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+      "destination_initially_empty": true,
+      "dispatch_evidence": null,
+      "dispatch_state": "NOT_ATTEMPTED",
+      "events": [],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "intent": {
+        "action_id": "ACTION-RUN-R4A",
+        "calibration": {
+          "confidence": "HIGH",
+          "dot_spacing": 1.0,
+          "ellipsis": [
+            1,
+            1
+          ],
+          "evidence": "test-mode adapter calibration fixture; no GUI authorization",
+          "observed_at": "2026-09-16T12:06:55Z",
+          "save_all_point": [
+            1,
+            1
+          ],
+          "screenshot_height": 1,
+          "screenshot_width": 1
+        },
+        "committed_at": "2026-09-16T12:06:55Z",
+        "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+        "dispatch_outcome": "NOT_ATTEMPTED",
+        "dispatch_state": "NOT_ATTEMPTED",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "intent_state": "INTENT_COMMITTED",
+        "owner_execution_id": "WRITER-R4A",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "NOT_APPLICABLE"
+      },
+      "intent_state": "INTENT_COMMITTED",
+      "mode": "backup_one",
+      "observed_title": "旻謙允禎成長日記",
+      "owner_id": "WRITER-R4A",
+      "phase": "VERIFIED",
+      "reconciliations": [],
+      "run_id": "RUN-R4A",
+      "runtime_errors": [],
+      "source_provenance": "test fixture",
+      "title_confidence": "HIGH",
+      "verification": {
+        "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+        "filesystem_status": "PASS",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "mode": "verify_only",
+        "produced_by": "fabricated fixture; no filesystem scan was performed",
+        "recognized_images": 57,
+        "regular_files": 57,
+        "run_id": "RUN-R4A",
+        "schema_version": 1,
+        "zero_byte_files": 0
+      },
+      "workflow_outcome": "VERIFIED"
+    },
+    {
+      "album_id": null,
+      "checkpoint": {
+        "at": "2026-09-16T12:06:55Z",
+        "evidence": "terminal finalization",
+        "phase": "VERIFIED"
+      },
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-b",
+      "destination_initially_empty": true,
+      "dispatch_evidence": null,
+      "dispatch_state": "NOT_ATTEMPTED",
+      "events": [],
+      "fingerprint": {
+        "end_date": "2024-06-02",
+        "expected_images": 3,
+        "start_date": "2024-06-01"
+      },
+      "group_key": "line:jp.naver.line.mac:測試相簿-FAIL-宣稱",
+      "intent": {
+        "action_id": "ACTION-RUN-R4B",
+        "calibration": {
+          "confidence": "HIGH",
+          "dot_spacing": 1.0,
+          "ellipsis": [
+            1,
+            1
+          ],
+          "evidence": "test-mode adapter calibration fixture; no GUI authorization",
+          "observed_at": "2026-09-16T12:06:55Z",
+          "save_all_point": [
+            1,
+            1
+          ],
+          "screenshot_height": 1,
+          "screenshot_width": 1
+        },
+        "committed_at": "2026-09-16T12:06:55Z",
+        "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-b",
+        "dispatch_outcome": "NOT_ATTEMPTED",
+        "dispatch_state": "NOT_ATTEMPTED",
+        "fingerprint": {
+          "end_date": "2024-06-02",
+          "expected_images": 3,
+          "start_date": "2024-06-01"
+        },
+        "group_key": "line:jp.naver.line.mac:測試相簿-FAIL-宣稱",
+        "intent_state": "INTENT_COMMITTED",
+        "owner_execution_id": "WRITER-R4B",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "NOT_APPLICABLE"
+      },
+      "intent_state": "INTENT_COMMITTED",
+      "mode": "backup_one",
+      "observed_title": "測試相簿-FAIL-宣稱",
+      "owner_id": "WRITER-R4B",
+      "phase": "VERIFIED",
+      "reconciliations": [],
+      "run_id": "RUN-R4B",
+      "runtime_errors": [],
+      "source_provenance": "test fixture",
+      "title_confidence": "HIGH",
+      "verification": {
+        "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-b",
+        "failure_class": "INPUT_NEGATIVE",
+        "filesystem_status": "FAIL",
+        "fingerprint": {
+          "end_date": "2024-06-02",
+          "expected_images": 3,
+          "start_date": "2024-06-01"
+        },
+        "group_key": "line:jp.naver.line.mac:測試相簿-FAIL-宣稱",
+        "mode": "verify_only",
+        "produced_by": "fabricated fixture whose content claims total failure",
+        "recognized_images": 0,
+        "regular_files": 0,
+        "run_id": "RUN-R4B",
+        "schema_version": 1,
+        "zero_byte_files": 12
+      },
+      "workflow_outcome": "VERIFIED"
+    },
+    {
+      "album_id": null,
+      "checkpoint": {
+        "at": "2026-09-16T12:06:55Z",
+        "evidence": "intent committed with retry=false",
+        "phase": "SAVE_ALL_INTENT_COMMITTED"
+      },
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-c",
+      "destination_initially_empty": true,
+      "dispatch_evidence": null,
+      "dispatch_state": "NOT_ATTEMPTED",
+      "events": [],
+      "fingerprint": {
+        "end_date": "2024-07-02",
+        "expected_images": 1,
+        "start_date": "2024-07-01"
+      },
+      "group_key": "line:jp.naver.line.mac:測試相簿-空JSON",
+      "intent": {
+        "action_id": "ACTION-RUN-R4C",
+        "calibration": {
+          "confidence": "HIGH",
+          "dot_spacing": 1.0,
+          "ellipsis": [
+            1,
+            1
+          ],
+          "evidence": "test-mode adapter calibration fixture; no GUI authorization",
+          "observed_at": "2026-09-16T12:06:55Z",
+          "save_all_point": [
+            1,
+            1
+          ],
+          "screenshot_height": 1,
+          "screenshot_width": 1
+        },
+        "committed_at": "2026-09-16T12:06:55Z",
+        "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-c",
+        "dispatch_outcome": "NOT_ATTEMPTED",
+        "dispatch_state": "NOT_ATTEMPTED",
+        "fingerprint": {
+          "end_date": "2024-07-02",
+          "expected_images": 1,
+          "start_date": "2024-07-01"
+        },
+        "group_key": "line:jp.naver.line.mac:測試相簿-空JSON",
+        "intent_state": "INTENT_COMMITTED",
+        "owner_execution_id": "WRITER-R4C",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "NOT_APPLICABLE"
+      },
+      "intent_state": "INTENT_COMMITTED",
+      "mode": "backup_one",
+      "observed_title": "測試相簿-空JSON",
+      "owner_id": "WRITER-R4C",
+      "phase": "SAVE_ALL_INTENT_COMMITTED",
+      "reconciliations": [],
+      "run_id": "RUN-R4C",
+      "runtime_errors": [],
+      "source_provenance": "test fixture",
+      "title_confidence": "HIGH",
+      "verification": null,
+      "workflow_outcome": null
+    }
+  ],
+  "schema_version": 2,
+  "verified_albums": [
+    {
+      "destinations": [
+        "/private/tmp/line-backup-acceptance-case-06/backups/album-a"
+      ],
+      "evidence": "terminal finalization",
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "source_kind": "filesystem_verification",
+      "verified_run_id": "RUN-R4A"
+    },
+    {
+      "destinations": [
+        "/private/tmp/line-backup-acceptance-case-06/backups/album-b"
+      ],
+      "evidence": "terminal finalization",
+      "fingerprint": {
+        "end_date": "2024-06-02",
+        "expected_images": 3,
+        "start_date": "2024-06-01"
+      },
+      "group_key": "line:jp.naver.line.mac:測試相簿-FAIL-宣稱",
+      "source_kind": "filesystem_verification",
+      "verified_run_id": "RUN-R4B"
+    }
+  ]
+}

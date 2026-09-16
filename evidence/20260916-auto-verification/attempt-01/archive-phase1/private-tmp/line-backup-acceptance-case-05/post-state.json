@@ -1,0 +1,62 @@
+{
+  "active_writer_id": "WRITER-CASE-05",
+  "context_lock": null,
+  "current_run_id": "RUN-CASE-05",
+  "revision": 2,
+  "runs": [
+    {
+      "checkpoint": {
+        "at": "2026-09-16T08:33:01Z",
+        "evidence": "verification committed",
+        "phase": "VERIFYING"
+      },
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-05/destination",
+      "dispatch_state": "NOT_ATTEMPTED",
+      "events": [],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "intent": {
+        "action_id": "ACTION-RUN-CASE-05",
+        "calibration": {
+          "confidence": "HIGH",
+          "evidence": "fixture"
+        },
+        "destination": "/private/tmp/line-backup-acceptance-case-05/destination",
+        "dispatch_outcome": "NOT_ATTEMPTED",
+        "dispatch_state": "NOT_ATTEMPTED",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "intent_state": "INTENT_COMMITTED",
+        "owner_execution_id": "WRITER-CASE-05",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "NOT_APPLICABLE"
+      },
+      "intent_state": "INTENT_COMMITTED",
+      "observed_title": "旻謙允禎成長日記",
+      "owner_id": "WRITER-CASE-05",
+      "phase": "VERIFYING",
+      "reconciliations": [],
+      "run_id": "RUN-CASE-05",
+      "runtime_errors": [],
+      "source_provenance": "fixture source",
+      "verification": {
+        "filesystem_status": "PASS",
+        "recognized_images": 57,
+        "regular_files": 57,
+        "zero_byte_files": 0
+      },
+      "workflow_outcome": null
+    }
+  ],
+  "schema_version": 2,
+  "verified_albums": []
+}

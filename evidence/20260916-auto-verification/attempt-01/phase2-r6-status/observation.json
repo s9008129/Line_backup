@@ -1,0 +1,950 @@
+{
+  "case_root": "/private/tmp/line-backup-acceptance-status-r6",
+  "claim": "the real status-evaluate entry answers from a hard-coded scenario->tuple table, not from facts or evidence",
+  "comparisons": {
+    "a1_vs_a2": {
+      "a1_checks": [],
+      "a1_statuses": [
+        "ACHIEVED",
+        "COMPLETE",
+        "PASS",
+        "PASS",
+        "PASS",
+        "DONE"
+      ],
+      "a2_checks": [],
+      "a2_statuses": [
+        "ACHIEVED",
+        "COMPLETE",
+        "PASS",
+        "PASS",
+        "PASS",
+        "DONE"
+      ],
+      "blocker_identical_and_none": true,
+      "differing_output_keys": [
+        "baseline_delta",
+        "failure_class"
+      ],
+      "interpretation": "scenario 'done' returns the canned tuple regardless of facts; only passthrough echo fields (failure_class/baseline_delta) differ",
+      "status_axes_identical": true
+    },
+    "b_required_verification_without_evidence": {
+      "baseline_artifact": "/private/tmp/line-backup-acceptance-status-r6/artifacts/baseline-unchanged-missing.baseline.json",
+      "baseline_artifact_exists_at_run": false,
+      "input_fields_referencing_verification_evidence": [],
+      "interpretation": "required verification PASS + READY_FOR_INDEPENDENT_ACCEPTANCE with a nonexistent baseline artifact and no evidence reference",
+      "required_verification_status": "PASS"
+    },
+    "generic_branch_evidence_grounding": {
+      "c2c_output_byte_identical_to_scenario_done": true,
+      "c2c_statuses": [
+        "ACHIEVED",
+        "COMPLETE",
+        "PASS",
+        "PASS",
+        "PASS",
+        "DONE"
+      ],
+      "interpretation": "the generic branch is fact-driven but still accepts unevidenced caller-asserted PASS axes; evaluate() consults no evidence field on either path"
+    },
+    "scenario_vs_generic_done_payload": {
+      "a2_statuses": [
+        "ACHIEVED",
+        "COMPLETE",
+        "PASS",
+        "PASS",
+        "PASS",
+        "DONE"
+      ],
+      "c2b_statuses": [
+        "UNKNOWN",
+        "NOT_STARTED",
+        "NOT_RUN",
+        "NOT_RUN",
+        "PENDING",
+        "PENDING_CORE_ACCEPTANCE"
+      ],
+      "input_key_difference": "only the 'scenario' key",
+      "interpretation": "identical facts without the scenario key do not yield DONE -> DONE is keyed off the scenario name, not the facts",
+      "scenario_key_flips_closure_to_DONE": true
+    },
+    "scenario_vs_generic_legacy": {
+      "interpretation": "the generic branch reproduces the identical row when every axis is supplied as a fact -> the scenario table is a canned substitute for facts",
+      "output_byte_identical": true,
+      "shared_output_sha256": "f522a090508db20a9a25e9f6b1ab73acf61fa573a98859015e28cae530f8b98e"
+    }
+  },
+  "decision": "DONE / READY_FOR_INDEPENDENT_ACCEPTANCE answers produced by the scenario table must not be accepted as status evidence; routing must be grounded in evaluated facts (the generic branch is fact-driven but still trusts caller-asserted axes without evidence, so evidence grounding remains a separate gap)",
+  "driver_python_version": "3.9.6 (default, May 22 2026, 11:13:45) ",
+  "entry": "python3 -m line_backup_acceptance status evaluate --input X --output Y (real CLI, one fresh process per subcase)",
+  "failed_oracles": [],
+  "oracle": "written output JSON (six status axes + blocker) compared against canned tuples, missing baseline artifact asserted absent, and generic-branch controls with the same facts supplied as primary_outcome_status/... fields",
+  "oracle_evaluations": {
+    "a1_scenario_done_zero_facts_is_canned_DONE": true,
+    "a2_scenario_done_contradictory_facts_still_canned_DONE": true,
+    "b_missing_baseline_artifact_still_READY_FOR_INDEPENDENT_ACCEPTANCE": true,
+    "c2a_generic_branch_reproduces_legacy_row_from_facts_byte_identical": true,
+    "c2b_generic_branch_same_facts_without_scenario_is_not_DONE": true,
+    "c_legacy_no_source_control_is_CORE_ACCEPTANCE_BLOCKED": true
+  },
+  "product_env_fixed": {
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONHASHSEED": "0",
+    "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+  },
+  "product_python": "/usr/bin/python3",
+  "product_python_version": "Python 3.9.6",
+  "program_hashes": {
+    "authority.py": {
+      "bytes": 8522,
+      "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+    },
+    "cli.py": {
+      "bytes": 4583,
+      "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+    },
+    "common.py": {
+      "bytes": 4021,
+      "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+    },
+    "status.py": {
+      "bytes": 7454,
+      "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+    },
+    "transaction.py": {
+      "bytes": 13835,
+      "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+    },
+    "verifier.py": {
+      "bytes": 15541,
+      "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+    }
+  },
+  "schema_version": 1,
+  "subcases": {
+    "a1-scenario-done-minimal": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status-r6/a1-scenario-done-minimal/input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status-r6/a1-scenario-done-minimal/output.json"
+      ],
+      "blocker": null,
+      "exit_code": 0,
+      "id": "a1-scenario-done-minimal",
+      "input": {
+        "scenario": "done"
+      },
+      "input_digest": {
+        "bytes": 25,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/a1-scenario-done-minimal/input.json",
+        "sha256": "8d4d48d89a2cc1da61f0078656fd046e8a95fadc8e8588af341ce9405b437464"
+      },
+      "match": true,
+      "note": "zero facts: only the scenario name; no checks, no evidence fields",
+      "oracle": {
+        "blocker_is_none": true,
+        "exit_zero": true,
+        "output_written": true,
+        "statuses_match_expected": true,
+        "stdout_matches_output": true
+      },
+      "output": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [],
+        "core_acceptance_status": "PASS",
+        "failure_class": null,
+        "implementation_status": "COMPLETE",
+        "independent_acceptance_status": "PASS",
+        "primary_outcome_status": "ACHIEVED",
+        "required_verification_status": "PASS",
+        "schema_version": 2,
+        "task_closure_status": "DONE",
+        "waiver": null
+      },
+      "output_digest": {
+        "bytes": 363,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/a1-scenario-done-minimal/output.json",
+        "sha256": "cd102e4da7f1daa7841d82e8bc5458ae6820f689aebc8a8e9a30dc6011685aad"
+      },
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "statuses": [
+        "ACHIEVED",
+        "COMPLETE",
+        "PASS",
+        "PASS",
+        "PASS",
+        "DONE"
+      ],
+      "stderr_digest": {
+        "bytes": 0,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/a1-scenario-done-minimal/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout_digest": {
+        "bytes": 337,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/a1-scenario-done-minimal/stdout.log",
+        "sha256": "951aafe0c704f71c5232c36776fe86bf9c1ca00c7025766ad0bf876401daf5a0"
+      },
+      "stdout_last_line_equals_output": true
+    },
+    "a2-scenario-done-contradictory-facts": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status-r6/a2-scenario-done-contradictory-facts/input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status-r6/a2-scenario-done-contradictory-facts/output.json"
+      ],
+      "baseline_artifact": "/private/tmp/line-backup-acceptance-status-r6/artifacts/done-contradiction-missing.baseline.json",
+      "baseline_artifact_exists_at_run": false,
+      "blocker": null,
+      "exit_code": 0,
+      "id": "a2-scenario-done-contradictory-facts",
+      "input": {
+        "baseline_artifact": "/private/tmp/line-backup-acceptance-status-r6/artifacts/done-contradiction-missing.baseline.json",
+        "baseline_delta": "UNAVAILABLE",
+        "checks": [],
+        "failure_class": "PRODUCT_DEFECT",
+        "scenario": "done"
+      },
+      "input_digest": {
+        "bytes": 236,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/a2-scenario-done-contradictory-facts/input.json",
+        "sha256": "f8d4438f0cba012db5f28f9d41d6bc4791406ee6cb0ed20ee8994079577ccaef"
+      },
+      "match": true,
+      "note": "obviously contradictory facts (empty checks, missing baseline artifact, failure_class PRODUCT_DEFECT)",
+      "oracle": {
+        "baseline_artifact_absent": true,
+        "blocker_is_none": true,
+        "exit_zero": true,
+        "output_written": true,
+        "statuses_match_expected": true,
+        "stdout_matches_output": true
+      },
+      "output": {
+        "baseline_delta": "UNAVAILABLE",
+        "blocker": null,
+        "checks": [],
+        "core_acceptance_status": "PASS",
+        "failure_class": "PRODUCT_DEFECT",
+        "implementation_status": "COMPLETE",
+        "independent_acceptance_status": "PASS",
+        "primary_outcome_status": "ACHIEVED",
+        "required_verification_status": "PASS",
+        "schema_version": 2,
+        "task_closure_status": "DONE",
+        "waiver": null
+      },
+      "output_digest": {
+        "bytes": 384,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/a2-scenario-done-contradictory-facts/output.json",
+        "sha256": "43c2a1145e5c9f1740c374f07392b765b787417d570b2486cef3e2edf7b6fdf5"
+      },
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "statuses": [
+        "ACHIEVED",
+        "COMPLETE",
+        "PASS",
+        "PASS",
+        "PASS",
+        "DONE"
+      ],
+      "stderr_digest": {
+        "bytes": 0,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/a2-scenario-done-contradictory-facts/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout_digest": {
+        "bytes": 358,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/a2-scenario-done-contradictory-facts/stdout.log",
+        "sha256": "70408c170671e0bfa2c4f0edab5f8bcd9f9ad65da9048db0f66a718cc3e46d06"
+      },
+      "stdout_last_line_equals_output": true
+    },
+    "b-scenario-baseline-unchanged-missing-artifact": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status-r6/b-scenario-baseline-unchanged-missing-artifact/input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status-r6/b-scenario-baseline-unchanged-missing-artifact/output.json"
+      ],
+      "baseline_artifact": "/private/tmp/line-backup-acceptance-status-r6/artifacts/baseline-unchanged-missing.baseline.json",
+      "baseline_artifact_exists_at_run": false,
+      "blocker": null,
+      "exit_code": 0,
+      "id": "b-scenario-baseline-unchanged-missing-artifact",
+      "input": {
+        "baseline_artifact": "/private/tmp/line-backup-acceptance-status-r6/artifacts/baseline-unchanged-missing.baseline.json",
+        "baseline_delta": "UNCHANGED",
+        "checks": [
+          {
+            "BASELINE_REQUIRED": "YES",
+            "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_CLASSIFICATION_RULE": "new or worsened baseline signature is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "failure_class": null,
+        "scenario": "baseline-unchanged"
+      },
+      "input_digest": {
+        "bytes": 668,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/b-scenario-baseline-unchanged-missing-artifact/input.json",
+        "sha256": "3a4fbb46875a28b7cac34ea62fbfc67c37ff9ec3b6fd1a0108e330099fdc6888"
+      },
+      "match": true,
+      "note": "required verification PASS + READY_FOR_INDEPENDENT_ACCEPTANCE while the baseline artifact does not exist and no verification evidence is referenced",
+      "oracle": {
+        "baseline_artifact_absent": true,
+        "blocker_is_none": true,
+        "exit_zero": true,
+        "output_written": true,
+        "statuses_match_expected": true,
+        "stdout_matches_output": true
+      },
+      "output": {
+        "baseline_delta": "UNCHANGED",
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_REQUIRED": "YES",
+            "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_CLASSIFICATION_RULE": "new or worsened baseline signature is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "core_acceptance_status": "PASS",
+        "failure_class": null,
+        "implementation_status": "COMPLETE",
+        "independent_acceptance_status": "PENDING",
+        "primary_outcome_status": "ACHIEVED",
+        "required_verification_status": "PASS",
+        "schema_version": 2,
+        "task_closure_status": "READY_FOR_INDEPENDENT_ACCEPTANCE",
+        "waiver": null
+      },
+      "output_digest": {
+        "bytes": 833,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/b-scenario-baseline-unchanged-missing-artifact/output.json",
+        "sha256": "f6aa27074c604af1d2338bf0a7cc0026696174f92ad861ab9f920492e191347f"
+      },
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "statuses": [
+        "ACHIEVED",
+        "COMPLETE",
+        "PASS",
+        "PASS",
+        "PENDING",
+        "READY_FOR_INDEPENDENT_ACCEPTANCE"
+      ],
+      "stderr_digest": {
+        "bytes": 0,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/b-scenario-baseline-unchanged-missing-artifact/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout_digest": {
+        "bytes": 733,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/b-scenario-baseline-unchanged-missing-artifact/stdout.log",
+        "sha256": "006155621b7350d96959bd51d5303d1653ca566bd394d96570e65f475b65ba5d"
+      },
+      "stdout_last_line_equals_output": true
+    },
+    "c-scenario-legacy-no-source": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status-r6/c-scenario-legacy-no-source/input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status-r6/c-scenario-legacy-no-source/output.json"
+      ],
+      "blocker": "SOURCE_CORRESPONDENCE/BLOCKED/INPUT_UNAVAILABLE",
+      "exit_code": 0,
+      "id": "c-scenario-legacy-no-source",
+      "input": {
+        "checks": [
+          {
+            "BASELINE_REQUIRED": "NO",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_CLASSIFICATION_RULE": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "failure_class": "INPUT_UNAVAILABLE",
+        "scenario": "legacy-no-source"
+      },
+      "input_digest": {
+        "bytes": 511,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c-scenario-legacy-no-source/input.json",
+        "sha256": "4ebaa35b437e1879333ad5f70dffcf600b2e13eb542c5835ab56ccc554345788"
+      },
+      "match": true,
+      "note": "control group: current semantics CORE_ACCEPTANCE_BLOCKED",
+      "oracle": {
+        "blocker_match_expected": true,
+        "exit_zero": true,
+        "output_written": true,
+        "statuses_match_expected": true,
+        "stdout_matches_output": true
+      },
+      "output": {
+        "baseline_delta": null,
+        "blocker": "SOURCE_CORRESPONDENCE/BLOCKED/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_REQUIRED": "NO",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_CLASSIFICATION_RULE": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "core_acceptance_status": "BLOCKED",
+        "failure_class": "INPUT_UNAVAILABLE",
+        "implementation_status": "COMPLETE",
+        "independent_acceptance_status": "PENDING",
+        "primary_outcome_status": "UNKNOWN",
+        "required_verification_status": "PASS",
+        "schema_version": 2,
+        "task_closure_status": "CORE_ACCEPTANCE_BLOCKED",
+        "waiver": null
+      },
+      "output_digest": {
+        "bytes": 865,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c-scenario-legacy-no-source/output.json",
+        "sha256": "f522a090508db20a9a25e9f6b1ab73acf61fa573a98859015e28cae530f8b98e"
+      },
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "statuses": [
+        "UNKNOWN",
+        "COMPLETE",
+        "BLOCKED",
+        "PASS",
+        "PENDING",
+        "CORE_ACCEPTANCE_BLOCKED"
+      ],
+      "stderr_digest": {
+        "bytes": 0,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c-scenario-legacy-no-source/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout_digest": {
+        "bytes": 765,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c-scenario-legacy-no-source/stdout.log",
+        "sha256": "fdfeddb3863c1ef8ae07c1e48f61729cda16e5322b4bef8a933420b72192cfdd"
+      },
+      "stdout_last_line_equals_output": true
+    },
+    "c2a-generic-legacy-no-source-facts": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status-r6/c2a-generic-legacy-no-source-facts/input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status-r6/c2a-generic-legacy-no-source-facts/output.json"
+      ],
+      "blocker": "SOURCE_CORRESPONDENCE/BLOCKED/INPUT_UNAVAILABLE",
+      "exit_code": 0,
+      "id": "c2a-generic-legacy-no-source-facts",
+      "input": {
+        "blocker": "SOURCE_CORRESPONDENCE/BLOCKED/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_REQUIRED": "NO",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_CLASSIFICATION_RULE": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "core_acceptance_status": "BLOCKED",
+        "failure_class": "INPUT_UNAVAILABLE",
+        "implementation_status": "COMPLETE",
+        "independent_acceptance_status": "PENDING",
+        "primary_outcome_status": "UNKNOWN",
+        "required_verification_status": "PASS"
+      },
+      "input_digest": {
+        "bytes": 746,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2a-generic-legacy-no-source-facts/input.json",
+        "sha256": "31a038f00423e7dde2a3b42e96eb5184499ca8aa0500e20eadeaf60536062a03"
+      },
+      "match": true,
+      "note": "same facts via the generic branch: all axes supplied as primary_outcome_status/... fields",
+      "oracle": {
+        "blocker_match_expected": true,
+        "exit_zero": true,
+        "output_written": true,
+        "statuses_match_expected": true,
+        "stdout_matches_output": true
+      },
+      "output": {
+        "baseline_delta": null,
+        "blocker": "SOURCE_CORRESPONDENCE/BLOCKED/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_REQUIRED": "NO",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_CLASSIFICATION_RULE": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "core_acceptance_status": "BLOCKED",
+        "failure_class": "INPUT_UNAVAILABLE",
+        "implementation_status": "COMPLETE",
+        "independent_acceptance_status": "PENDING",
+        "primary_outcome_status": "UNKNOWN",
+        "required_verification_status": "PASS",
+        "schema_version": 2,
+        "task_closure_status": "CORE_ACCEPTANCE_BLOCKED",
+        "waiver": null
+      },
+      "output_digest": {
+        "bytes": 865,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2a-generic-legacy-no-source-facts/output.json",
+        "sha256": "f522a090508db20a9a25e9f6b1ab73acf61fa573a98859015e28cae530f8b98e"
+      },
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "statuses": [
+        "UNKNOWN",
+        "COMPLETE",
+        "BLOCKED",
+        "PASS",
+        "PENDING",
+        "CORE_ACCEPTANCE_BLOCKED"
+      ],
+      "stderr_digest": {
+        "bytes": 0,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2a-generic-legacy-no-source-facts/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout_digest": {
+        "bytes": 765,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2a-generic-legacy-no-source-facts/stdout.log",
+        "sha256": "fdfeddb3863c1ef8ae07c1e48f61729cda16e5322b4bef8a933420b72192cfdd"
+      },
+      "stdout_last_line_equals_output": true
+    },
+    "c2b-generic-done-payload-without-scenario": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status-r6/c2b-generic-done-payload-without-scenario/input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status-r6/c2b-generic-done-payload-without-scenario/output.json"
+      ],
+      "baseline_artifact": "/private/tmp/line-backup-acceptance-status-r6/artifacts/done-contradiction-missing.baseline.json",
+      "baseline_artifact_exists_at_run": false,
+      "blocker": null,
+      "exit_code": 0,
+      "id": "c2b-generic-done-payload-without-scenario",
+      "input": {
+        "baseline_artifact": "/private/tmp/line-backup-acceptance-status-r6/artifacts/done-contradiction-missing.baseline.json",
+        "baseline_delta": "UNAVAILABLE",
+        "checks": [],
+        "failure_class": "PRODUCT_DEFECT"
+      },
+      "input_digest": {
+        "bytes": 214,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2b-generic-done-payload-without-scenario/input.json",
+        "sha256": "cdfe99a209d0457a8b4e1a2fbbaa89499ae274a78a2b878f1ee4c3bfdcdf1db7"
+      },
+      "match": true,
+      "note": "exact (a2) payload minus the scenario key: generic branch must not turn it into DONE",
+      "oracle": {
+        "baseline_artifact_absent": true,
+        "blocker_is_none": true,
+        "exit_zero": true,
+        "output_written": true,
+        "statuses_match_expected": true,
+        "stdout_matches_output": true
+      },
+      "output": {
+        "baseline_delta": "UNAVAILABLE",
+        "blocker": null,
+        "checks": [],
+        "core_acceptance_status": "NOT_RUN",
+        "failure_class": "PRODUCT_DEFECT",
+        "implementation_status": "NOT_STARTED",
+        "independent_acceptance_status": "PENDING",
+        "primary_outcome_status": "UNKNOWN",
+        "required_verification_status": "NOT_RUN",
+        "schema_version": 2,
+        "task_closure_status": "PENDING_CORE_ACCEPTANCE",
+        "waiver": null
+      },
+      "output_digest": {
+        "bytes": 414,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2b-generic-done-payload-without-scenario/output.json",
+        "sha256": "bc58d66dca355a137c9aa07e76dd67c87a675313a564ede07b69c6777110b649"
+      },
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "statuses": [
+        "UNKNOWN",
+        "NOT_STARTED",
+        "NOT_RUN",
+        "NOT_RUN",
+        "PENDING",
+        "PENDING_CORE_ACCEPTANCE"
+      ],
+      "stderr_digest": {
+        "bytes": 0,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2b-generic-done-payload-without-scenario/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout_digest": {
+        "bytes": 388,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2b-generic-done-payload-without-scenario/stdout.log",
+        "sha256": "be574f35ecf7b0c3ff1cf4dd30ed640c6f8d4980970b9e652ba2226602abcabc"
+      },
+      "stdout_last_line_equals_output": true
+    },
+    "c2c-generic-claimed-all-pass-no-evidence": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status-r6/c2c-generic-claimed-all-pass-no-evidence/input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status-r6/c2c-generic-claimed-all-pass-no-evidence/output.json"
+      ],
+      "blocker": null,
+      "exit_code": 0,
+      "id": "c2c-generic-claimed-all-pass-no-evidence",
+      "input": {
+        "checks": [],
+        "core_acceptance_status": "PASS",
+        "implementation_status": "COMPLETE",
+        "independent_acceptance_status": "PASS",
+        "primary_outcome_status": "ACHIEVED",
+        "required_verification_status": "PASS"
+      },
+      "input_digest": {
+        "bytes": 219,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2c-generic-claimed-all-pass-no-evidence/input.json",
+        "sha256": "09ba115dfac9eb26d9a426a1ff4ea223f0e04e2ebe3220fec78edebce0f9001a"
+      },
+      "match": true,
+      "note": "extra control: generic branch is fact-driven but trusts unevidenced caller-asserted axes",
+      "oracle": {
+        "blocker_is_none": true,
+        "exit_zero": true,
+        "output_written": true,
+        "statuses_match_expected": true,
+        "stdout_matches_output": true
+      },
+      "output": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [],
+        "core_acceptance_status": "PASS",
+        "failure_class": null,
+        "implementation_status": "COMPLETE",
+        "independent_acceptance_status": "PASS",
+        "primary_outcome_status": "ACHIEVED",
+        "required_verification_status": "PASS",
+        "schema_version": 2,
+        "task_closure_status": "DONE",
+        "waiver": null
+      },
+      "output_digest": {
+        "bytes": 363,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2c-generic-claimed-all-pass-no-evidence/output.json",
+        "sha256": "cd102e4da7f1daa7841d82e8bc5458ae6820f689aebc8a8e9a30dc6011685aad"
+      },
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "statuses": [
+        "ACHIEVED",
+        "COMPLETE",
+        "PASS",
+        "PASS",
+        "PASS",
+        "DONE"
+      ],
+      "stderr_digest": {
+        "bytes": 0,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2c-generic-claimed-all-pass-no-evidence/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout_digest": {
+        "bytes": 337,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/c2c-generic-claimed-all-pass-no-evidence/stdout.log",
+        "sha256": "951aafe0c704f71c5232c36776fe86bf9c1ca00c7025766ad0bf876401daf5a0"
+      },
+      "stdout_last_line_equals_output": true
+    }
+  },
+  "task": "phase2-r6-status-selfcert",
+  "verdict": "REPRODUCED_R6_STATUS_SELF_CERTIFICATION",
+  "workdir_is_private_tmp": true
+}

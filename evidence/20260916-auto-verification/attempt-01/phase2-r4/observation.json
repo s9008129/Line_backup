@@ -1,0 +1,1133 @@
+{
+  "case_root": "/private/tmp/line-backup-acceptance-case-06",
+  "claim": "transaction finalize trusts any --verification-json and writes a VERIFIED registry entry without source/content/run-association validation; the entry can never satisfy the verifier's source requirement, so the transaction -> verify-only loop never closes",
+  "decision": "fabricated/contradictory/foreign JSON producing VERIFIED entries, and verify-only being unable to confirm the finalize-made entry from real files, mean finalize must validate the verification source and run identity before the registry addition can commit",
+  "durable_copies": {
+    "case_root_durable": {
+      "files": 70,
+      "manifest_sha256": "ba915510f05676f0340e131f8ffbb2282d17d661d932bdf52b4c618772b36ba7",
+      "path": "evidence/20260916-auto-verification/attempt-01/phase2-r4/case-root-durable",
+      "total_bytes": 18823
+    },
+    "verifier_root_durable": {
+      "files": 7,
+      "manifest_sha256": "aed8c9c1efd065f3a8de7ec96caa0501395455bf374634626b17352296f1f897",
+      "path": "evidence/20260916-auto-verification/attempt-01/phase2-r4/verifier-root-durable",
+      "total_bytes": 67243
+    }
+  },
+  "entry": "real CLI transaction prepare/finalize (test-mode case-06) + verify-only --test-mode (verifier/r4)",
+  "integrated_entry_cannot_reach_source_confirmed": true,
+  "observations": [],
+  "oracle": "persisted state after each commit; registry entry fields; destination inventory at finalize time vs fabricated claim; verbatim verify-only stdout/exit; r4 state hash before/after verify-only",
+  "program_hashes": {
+    "authority.py": {
+      "bytes": 8522,
+      "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+    },
+    "cli.py": {
+      "bytes": 4583,
+      "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+    },
+    "common.py": {
+      "bytes": 4021,
+      "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+    },
+    "fixtures.py": {
+      "bytes": 4481,
+      "sha256": "d551226c9497de6315a88298f1411aae4191604a163e8749fa32c95269c285b5"
+    },
+    "harness.py": {
+      "bytes": 7771,
+      "sha256": "e348a19763bb4cd62e57dce61ab3d69469b0a76a16bbef1cb75f9e8a778f0394"
+    },
+    "run_phase2_r4_finalize_trust.py": {
+      "bytes": 21997,
+      "sha256": "7750d497d7462bfbe7f9a3d7aa36136892760280931ac942d1295fd0b1258ed3"
+    },
+    "status.py": {
+      "bytes": 7454,
+      "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+    },
+    "transaction.py": {
+      "bytes": 13835,
+      "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+    },
+    "verifier.py": {
+      "bytes": 15541,
+      "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+    }
+  },
+  "rationale": "finalize() writes only schema keys (group_key, fingerprint, verified_run_id, destinations, source_kind, evidence); the verifier requires entry.source_authority == 'authoritative_exact_join' for source CONFIRMED, which the product never writes and the registry schema (additionalProperties=false) does not even allow, so the verified_albums entry produced by finalize can never close the verify-only loop",
+  "subcase_verdicts": {
+    "a": "REPRODUCED_FAKE_JSON_FINALIZED",
+    "b1": "REPRODUCED_FAIL_CLAIM_STILL_VERIFIED",
+    "b2": "REPRODUCED_EMPTY_JSON_STILL_VERIFIED",
+    "c": "REPRODUCED_CROSS_RUN_JSON_ACCEPTED",
+    "d": "REPRODUCED_FINALIZE_ENTRY_NOT_SOURCE_CONFIRMED"
+  },
+  "subcases": {
+    "a_fabricated_pass_json_non_terminal_run": {
+      "destination_files_at_finalize_time": {
+        "count": 0,
+        "names": [],
+        "note": "the fabricated JSON claims PASS/57 regular files while the destination was empty and was never scanned by the product"
+      },
+      "entry_has_source_authority": false,
+      "finalize": {
+        "exit_code": 0,
+        "record_dir": "evidence/20260916-auto-verification/attempt-01/phase2-r4/a-finalize",
+        "result": {
+          "exit_code": 0,
+          "message": "terminal outcome committed",
+          "outcome": "VERIFIED",
+          "result": "FINALIZED",
+          "revision": 2,
+          "schema_version": 1
+        },
+        "revision_after": 2,
+        "revision_before": 1
+      },
+      "input_verification_json": {
+        "content": {
+          "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+          "filesystem_status": "PASS",
+          "fingerprint": {
+            "end_date": "2024-05-17",
+            "expected_images": 57,
+            "start_date": "2024-05-13"
+          },
+          "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+          "mode": "verify_only",
+          "produced_by": "fabricated fixture; no filesystem scan was performed",
+          "recognized_images": 57,
+          "regular_files": 57,
+          "run_id": "RUN-R4A",
+          "schema_version": 1,
+          "zero_byte_files": 0
+        },
+        "path": "/private/tmp/line-backup-acceptance-case-06/verification-a.json"
+      },
+      "ownership_after_finalize": {
+        "active_writer_id": null,
+        "context_lock": null,
+        "current_run_id": null
+      },
+      "persisted_state_after_a": {
+        "active_writer_id": null,
+        "context_lock": null,
+        "current_run_id": null,
+        "revision": 2,
+        "runs": [
+          {
+            "album_id": null,
+            "checkpoint": {
+              "at": "2026-09-16T12:06:55Z",
+              "evidence": "terminal finalization",
+              "phase": "VERIFIED"
+            },
+            "contract_revision": "1.0-rc2",
+            "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+            "destination_initially_empty": true,
+            "dispatch_evidence": null,
+            "dispatch_state": "NOT_ATTEMPTED",
+            "events": [],
+            "fingerprint": {
+              "end_date": "2024-05-17",
+              "expected_images": 57,
+              "start_date": "2024-05-13"
+            },
+            "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+            "intent": {
+              "action_id": "ACTION-RUN-R4A",
+              "calibration": {
+                "confidence": "HIGH",
+                "dot_spacing": 1.0,
+                "ellipsis": [
+                  1,
+                  1
+                ],
+                "evidence": "test-mode adapter calibration fixture; no GUI authorization",
+                "observed_at": "2026-09-16T12:06:55Z",
+                "save_all_point": [
+                  1,
+                  1
+                ],
+                "screenshot_height": 1,
+                "screenshot_width": 1
+              },
+              "committed_at": "2026-09-16T12:06:55Z",
+              "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+              "dispatch_outcome": "NOT_ATTEMPTED",
+              "dispatch_state": "NOT_ATTEMPTED",
+              "fingerprint": {
+                "end_date": "2024-05-17",
+                "expected_images": 57,
+                "start_date": "2024-05-13"
+              },
+              "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+              "intent_state": "INTENT_COMMITTED",
+              "owner_execution_id": "WRITER-R4A",
+              "save_all_retry_allowed": false,
+              "trigger_outcome": "NOT_APPLICABLE"
+            },
+            "intent_state": "INTENT_COMMITTED",
+            "mode": "backup_one",
+            "observed_title": "旻謙允禎成長日記",
+            "owner_id": "WRITER-R4A",
+            "phase": "VERIFIED",
+            "reconciliations": [],
+            "run_id": "RUN-R4A",
+            "runtime_errors": [],
+            "source_provenance": "test fixture",
+            "title_confidence": "HIGH",
+            "verification": {
+              "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+              "filesystem_status": "PASS",
+              "fingerprint": {
+                "end_date": "2024-05-17",
+                "expected_images": 57,
+                "start_date": "2024-05-13"
+              },
+              "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+              "mode": "verify_only",
+              "produced_by": "fabricated fixture; no filesystem scan was performed",
+              "recognized_images": 57,
+              "regular_files": 57,
+              "run_id": "RUN-R4A",
+              "schema_version": 1,
+              "zero_byte_files": 0
+            },
+            "workflow_outcome": "VERIFIED"
+          }
+        ],
+        "schema_version": 2,
+        "verified_albums": [
+          {
+            "destinations": [
+              "/private/tmp/line-backup-acceptance-case-06/backups/album-a"
+            ],
+            "evidence": "terminal finalization",
+            "fingerprint": {
+              "end_date": "2024-05-17",
+              "expected_images": 57,
+              "start_date": "2024-05-13"
+            },
+            "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+            "source_kind": "filesystem_verification",
+            "verified_run_id": "RUN-R4A"
+          }
+        ]
+      },
+      "persisted_state_after_a_sha256": "1f4e2d95af42e7c888e9a71b40198385df915d40696ffe31ee8e7d0650acefe2",
+      "prepare": {
+        "exit_code": 0,
+        "record_dir": "evidence/20260916-auto-verification/attempt-01/phase2-r4/a-prepare",
+        "result": {
+          "exit_code": 0,
+          "message": "intent prepared",
+          "result": "PREPARED",
+          "revision": 1,
+          "run_id": "RUN-R4A",
+          "schema_version": 1
+        },
+        "revision_after": 1,
+        "revision_before": 0
+      },
+      "registry_entry_keys": [
+        "destinations",
+        "evidence",
+        "fingerprint",
+        "group_key",
+        "source_kind",
+        "verified_run_id"
+      ],
+      "registry_entry_written": {
+        "destinations": [
+          "/private/tmp/line-backup-acceptance-case-06/backups/album-a"
+        ],
+        "evidence": "terminal finalization",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "source_kind": "filesystem_verification",
+        "verified_run_id": "RUN-R4A"
+      },
+      "run_a_after_finalize": {
+        "contract_revision": "1.0-rc2",
+        "observed_title": "旻謙允禎成長日記",
+        "phase": "VERIFIED",
+        "source_provenance": "test fixture",
+        "workflow_outcome": "VERIFIED"
+      },
+      "run_before_finalize": {
+        "phase": "SAVE_ALL_INTENT_COMMITTED",
+        "run_id": "RUN-R4A",
+        "terminal_before": false,
+        "verification_before": null
+      }
+    },
+    "b1_content_claims_fail": {
+      "contradiction": "the stored verification evidence says FAIL / 0 recognized images / 12 zero-byte files, yet the run was finalized VERIFIED and a verified_albums entry was added (content never inspected)",
+      "finalize": {
+        "exit_code": 0,
+        "record_dir": "evidence/20260916-auto-verification/attempt-01/phase2-r4/b1-finalize",
+        "result": {
+          "exit_code": 0,
+          "message": "terminal outcome committed",
+          "outcome": "VERIFIED",
+          "result": "FINALIZED",
+          "revision": 4,
+          "schema_version": 1
+        },
+        "revision_after": 4,
+        "revision_before": 3
+      },
+      "input_verification_json": {
+        "content": {
+          "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-b",
+          "failure_class": "INPUT_NEGATIVE",
+          "filesystem_status": "FAIL",
+          "fingerprint": {
+            "end_date": "2024-06-02",
+            "expected_images": 3,
+            "start_date": "2024-06-01"
+          },
+          "group_key": "line:jp.naver.line.mac:測試相簿-FAIL-宣稱",
+          "mode": "verify_only",
+          "produced_by": "fabricated fixture whose content claims total failure",
+          "recognized_images": 0,
+          "regular_files": 0,
+          "run_id": "RUN-R4B",
+          "schema_version": 1,
+          "zero_byte_files": 12
+        },
+        "path": "/private/tmp/line-backup-acceptance-case-06/verification-b1-fail-claim.json"
+      },
+      "prepare": {
+        "exit_code": 0,
+        "record_dir": "evidence/20260916-auto-verification/attempt-01/phase2-r4/b1-prepare",
+        "result": {
+          "exit_code": 0,
+          "message": "intent prepared",
+          "result": "PREPARED",
+          "revision": 1,
+          "run_id": "RUN-R4B",
+          "schema_version": 1
+        },
+        "revision_after": 3,
+        "revision_before": 2
+      },
+      "registry_entry_written": {
+        "destinations": [
+          "/private/tmp/line-backup-acceptance-case-06/backups/album-b"
+        ],
+        "evidence": "terminal finalization",
+        "fingerprint": {
+          "end_date": "2024-06-02",
+          "expected_images": 3,
+          "start_date": "2024-06-01"
+        },
+        "group_key": "line:jp.naver.line.mac:測試相簿-FAIL-宣稱",
+        "source_kind": "filesystem_verification",
+        "verified_run_id": "RUN-R4B"
+      },
+      "run_b1_stored_verification": {
+        "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-b",
+        "failure_class": "INPUT_NEGATIVE",
+        "filesystem_status": "FAIL",
+        "fingerprint": {
+          "end_date": "2024-06-02",
+          "expected_images": 3,
+          "start_date": "2024-06-01"
+        },
+        "group_key": "line:jp.naver.line.mac:測試相簿-FAIL-宣稱",
+        "mode": "verify_only",
+        "produced_by": "fabricated fixture whose content claims total failure",
+        "recognized_images": 0,
+        "regular_files": 0,
+        "run_id": "RUN-R4B",
+        "schema_version": 1,
+        "zero_byte_files": 12
+      },
+      "run_b1_workflow_outcome": "VERIFIED"
+    },
+    "b2_empty_json": {
+      "contradiction": "an empty JSON object {} was accepted as terminal verification evidence and produced a VERIFIED registry entry",
+      "finalize": {
+        "exit_code": 0,
+        "record_dir": "evidence/20260916-auto-verification/attempt-01/phase2-r4/b2-finalize",
+        "result": {
+          "exit_code": 0,
+          "message": "terminal outcome committed",
+          "outcome": "VERIFIED",
+          "result": "FINALIZED",
+          "revision": 6,
+          "schema_version": 1
+        },
+        "revision_after": 6,
+        "revision_before": 5
+      },
+      "input_verification_json": {
+        "content": {},
+        "path": "/private/tmp/line-backup-acceptance-case-06/verification-b2-empty.json"
+      },
+      "prepare": {
+        "exit_code": 0,
+        "record_dir": "evidence/20260916-auto-verification/attempt-01/phase2-r4/b2-prepare",
+        "result": {
+          "exit_code": 0,
+          "message": "intent prepared",
+          "result": "PREPARED",
+          "revision": 1,
+          "run_id": "RUN-R4C",
+          "schema_version": 1
+        },
+        "revision_after": 5,
+        "revision_before": 4
+      },
+      "registry_entry_written": {
+        "destinations": [
+          "/private/tmp/line-backup-acceptance-case-06/backups/album-c"
+        ],
+        "evidence": "terminal finalization",
+        "fingerprint": {
+          "end_date": "2024-07-02",
+          "expected_images": 1,
+          "start_date": "2024-07-01"
+        },
+        "group_key": "line:jp.naver.line.mac:測試相簿-空JSON",
+        "source_kind": "filesystem_verification",
+        "verified_run_id": "RUN-R4C"
+      },
+      "run_b2_stored_verification": {},
+      "run_b2_workflow_outcome": "VERIFIED"
+    },
+    "c_foreign_run_group_json": {
+      "cross_run_accepted": true,
+      "finalize": {
+        "exit_code": 0,
+        "record_dir": "evidence/20260916-auto-verification/attempt-01/phase2-r4/c-finalize",
+        "result": {
+          "exit_code": 0,
+          "message": "terminal outcome committed",
+          "outcome": "VERIFIED",
+          "result": "FINALIZED",
+          "revision": 8,
+          "schema_version": 1
+        },
+        "revision_after": 8,
+        "revision_before": 7
+      },
+      "foreign_verification_json": {
+        "belongs_to": {
+          "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+          "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+          "run_id": "RUN-R4A"
+        },
+        "content": {
+          "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+          "filesystem_status": "PASS",
+          "fingerprint": {
+            "end_date": "2024-05-17",
+            "expected_images": 57,
+            "start_date": "2024-05-13"
+          },
+          "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+          "mode": "verify_only",
+          "produced_by": "fabricated fixture; no filesystem scan was performed",
+          "recognized_images": 57,
+          "regular_files": 57,
+          "run_id": "RUN-R4A",
+          "schema_version": 1,
+          "zero_byte_files": 0
+        },
+        "path": "/private/tmp/line-backup-acceptance-case-06/verification-a.json"
+      },
+      "prepare": {
+        "exit_code": 0,
+        "record_dir": "evidence/20260916-auto-verification/attempt-01/phase2-r4/c-prepare",
+        "result": {
+          "exit_code": 0,
+          "message": "intent prepared",
+          "result": "PREPARED",
+          "revision": 1,
+          "run_id": "RUN-R4D",
+          "schema_version": 1
+        },
+        "revision_after": 7,
+        "revision_before": 6
+      },
+      "registry_entry_written": {
+        "destinations": [
+          "/private/tmp/line-backup-acceptance-case-06/backups/album-d"
+        ],
+        "evidence": "terminal finalization",
+        "fingerprint": {
+          "end_date": "2024-08-02",
+          "expected_images": 2,
+          "start_date": "2024-08-01"
+        },
+        "group_key": "line:jp.naver.line.mac:測試相簿-別run",
+        "source_kind": "filesystem_verification",
+        "verified_run_id": "RUN-R4D"
+      },
+      "run_d_stored_verification": {
+        "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+        "filesystem_status": "PASS",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "mode": "verify_only",
+        "produced_by": "fabricated fixture; no filesystem scan was performed",
+        "recognized_images": 57,
+        "regular_files": 57,
+        "run_id": "RUN-R4A",
+        "schema_version": 1,
+        "zero_byte_files": 0
+      },
+      "run_group_key": "line:jp.naver.line.mac:測試相簿-別run",
+      "run_workflow_outcome": "VERIFIED",
+      "stored_verification_group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "stored_verification_run_id": "RUN-R4A",
+      "target_run": {
+        "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-d",
+        "group_key": "line:jp.naver.line.mac:測試相簿-別run",
+        "run_id": "RUN-R4D"
+      }
+    },
+    "d_verify_only_closed_loop": {
+      "config": {
+        "content": {
+          "app_identifier": "jp.naver.line.mac",
+          "backup_root": "/private/tmp/line-backup-acceptance-case-06/backups",
+          "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+          "group_name": "旻謙允禎成長日記",
+          "max_albums_per_run": 1,
+          "max_wait_seconds": 600,
+          "poll_interval_seconds": 5,
+          "recovery_limit": 1,
+          "schema_version": 2,
+          "stable_samples": 3
+        },
+        "path": "/private/tmp/line-backup-acceptance-verifier/r4/config/line_backup_config.json",
+        "sha256": "972bc775b65e177817139dd5d679663b4aa4b14b2e40670de335378b1d5890ca"
+      },
+      "destination": {
+        "files": 57,
+        "path": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+        "sample_file_probe": {
+          "argv": [
+            "/usr/bin/file",
+            "--mime-type",
+            "-b",
+            "--",
+            "/private/tmp/line-backup-acceptance-case-06/backups/album-a/image-000.png"
+          ],
+          "exit_code": 0,
+          "stdout": "image/png"
+        },
+        "total_bytes": 4218
+      },
+      "expected_statuses_from_task": {
+        "allowed": [
+          "registry FAIL or source UNRESOLVED"
+        ],
+        "observed": "recorded as-is; no expectation was rewritten"
+      },
+      "filesystem_summary": {
+        "error_codes": [],
+        "recognized_images": 57,
+        "regular_files": 57,
+        "total_bytes": 4218
+      },
+      "fixture_root": "/private/tmp/line-backup-acceptance-verifier/r4",
+      "observed_statuses": {
+        "failure_class": "INPUT_NEGATIVE",
+        "filesystem_status": "PASS",
+        "overall_status": "NOT_ACHIEVED",
+        "registry_status": "PASS",
+        "source_status": "UNRESOLVED",
+        "state_status": "EXACT"
+      },
+      "registry_entry_used_by_verify_only": {
+        "destinations": [
+          "/private/tmp/line-backup-acceptance-case-06/backups/album-a"
+        ],
+        "evidence": "terminal finalization",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "source_kind": "filesystem_verification",
+        "verified_run_id": "RUN-R4A"
+      },
+      "state_copy": {
+        "bytes_identical_to_persisted_state_after_a": true,
+        "field_rewrites": "NONE - the verified destination is literally state.run.destination (album-a) as persisted by the transaction CLI; only backup_root is a verifier-side config value, so no state field was adapted",
+        "path": "/private/tmp/line-backup-acceptance-verifier/r4/state/backup_state.json",
+        "sha256_after": "1f4e2d95af42e7c888e9a71b40198385df915d40696ffe31ee8e7d0650acefe2",
+        "sha256_before": "1f4e2d95af42e7c888e9a71b40198385df915d40696ffe31ee8e7d0650acefe2"
+      },
+      "verify_only": {
+        "exit_code": 4,
+        "record_dir": "evidence/20260916-auto-verification/attempt-01/phase2-r4/d-verify-only",
+        "result": {
+          "artifact_readback": "PASS",
+          "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+          "exit_code": 4,
+          "failure_class": "INPUT_NEGATIVE",
+          "filesystem": {
+            "entries": [
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415511725524,
+                "relative_path": "image-000.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415511823232,
+                "relative_path": "image-001.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415511915690,
+                "relative_path": "image-002.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512008398,
+                "relative_path": "image-003.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512083064,
+                "relative_path": "image-004.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512155606,
+                "relative_path": "image-005.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512227106,
+                "relative_path": "image-006.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512299105,
+                "relative_path": "image-007.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512368230,
+                "relative_path": "image-008.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512445105,
+                "relative_path": "image-009.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512529146,
+                "relative_path": "image-010.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512614979,
+                "relative_path": "image-011.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512685771,
+                "relative_path": "image-012.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512763228,
+                "relative_path": "image-013.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512839103,
+                "relative_path": "image-014.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415512924728,
+                "relative_path": "image-015.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513004853,
+                "relative_path": "image-016.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513096811,
+                "relative_path": "image-017.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513170935,
+                "relative_path": "image-018.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513251018,
+                "relative_path": "image-019.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513323018,
+                "relative_path": "image-020.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513402726,
+                "relative_path": "image-021.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513475392,
+                "relative_path": "image-022.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513542309,
+                "relative_path": "image-023.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513616434,
+                "relative_path": "image-024.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513683475,
+                "relative_path": "image-025.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513755600,
+                "relative_path": "image-026.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513825558,
+                "relative_path": "image-027.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513893391,
+                "relative_path": "image-028.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415513962974,
+                "relative_path": "image-029.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514037224,
+                "relative_path": "image-030.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514109432,
+                "relative_path": "image-031.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514179557,
+                "relative_path": "image-032.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514246265,
+                "relative_path": "image-033.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514314306,
+                "relative_path": "image-034.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514382389,
+                "relative_path": "image-035.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514446556,
+                "relative_path": "image-036.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514510805,
+                "relative_path": "image-037.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514573388,
+                "relative_path": "image-038.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514635222,
+                "relative_path": "image-039.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514709138,
+                "relative_path": "image-040.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415514943012,
+                "relative_path": "image-041.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415515145886,
+                "relative_path": "image-042.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415515248094,
+                "relative_path": "image-043.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415515334969,
+                "relative_path": "image-044.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415515461344,
+                "relative_path": "image-045.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415515604093,
+                "relative_path": "image-046.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415515709134,
+                "relative_path": "image-047.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415515797676,
+                "relative_path": "image-048.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415515881550,
+                "relative_path": "image-049.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415515967217,
+                "relative_path": "image-050.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415516054175,
+                "relative_path": "image-051.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415516133466,
+                "relative_path": "image-052.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415516214466,
+                "relative_path": "image-053.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415516301840,
+                "relative_path": "image-054.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415516384757,
+                "relative_path": "image-055.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              },
+              {
+                "mime": "image/png",
+                "mtime_ns": 1789560415516468256,
+                "relative_path": "image-056.png",
+                "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+                "size": 74,
+                "status": "OK",
+                "type": "regular"
+              }
+            ],
+            "error_codes": [],
+            "observed_at": "2026-09-16T12:06:55Z",
+            "recognized_images": 57,
+            "regular_files": 57,
+            "root": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+            "total_bytes": 4218
+          },
+          "filesystem_status": "PASS",
+          "fingerprint": {
+            "end_date": "2024-05-17",
+            "expected_images": 57,
+            "start_date": "2024-05-13"
+          },
+          "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+          "inventory_samples": 3,
+          "mode": "verify_only",
+          "overall_status": "NOT_ACHIEVED",
+          "registry_status": "PASS",
+          "schema_version": 1,
+          "source_status": "UNRESOLVED",
+          "state_revision": 2,
+          "state_status": "EXACT"
+        }
+      },
+      "verify_only_mutated_state": false
+    }
+  },
+  "verdict": "R4_REPRODUCED",
+  "verifier_root": "/private/tmp/line-backup-acceptance-verifier/r4"
+}

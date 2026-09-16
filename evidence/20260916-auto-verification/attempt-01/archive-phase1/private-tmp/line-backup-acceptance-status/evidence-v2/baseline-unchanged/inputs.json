@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "line_backup_acceptance",
+    "status",
+    "evaluate",
+    "--input",
+    "/private/tmp/line-backup-acceptance-status/baseline-unchanged.input.json",
+    "--output",
+    "/private/tmp/line-backup-acceptance-status/baseline-unchanged.output.json"
+  ],
+  "input": {
+    "scenario": "baseline-unchanged",
+    "checks": [
+      {
+        "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+        "GOAL_CRITICALITY": "CORE",
+        "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+        "CLOSURE_GATE": "HARD_CLEAN",
+        "BASELINE_REQUIRED": "YES",
+        "FAILURE_CLASSIFICATION_RULE": "new or worsened baseline signature is TASK_REGRESSION",
+        "WAIVER_ALLOWED": "NO",
+        "WAIVER_AUTHORITY": "NONE",
+        "CHECK_RESULT": "PASS",
+        "WAIVER_STATUS": "NOT_ALLOWED"
+      }
+    ],
+    "baseline_delta": "UNCHANGED",
+    "baseline_artifact": "/private/tmp/line-backup-acceptance-status/baseline-unchanged.baseline.json",
+    "failure_class": null
+  }
+}

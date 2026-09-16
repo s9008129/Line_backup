@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "line_backup_acceptance",
+    "status",
+    "evaluate",
+    "--input",
+    "/private/tmp/line-backup-acceptance-status/retention-waived.input.json",
+    "--output",
+    "/private/tmp/line-backup-acceptance-status/retention-waived.output.json"
+  ],
+  "input": {
+    "scenario": "retention-waived",
+    "checks": [
+      {
+        "CHECK_ID": "DOCUMENTATION_RETENTION_HEALTH",
+        "GOAL_CRITICALITY": "SUPPORTING",
+        "EVIDENCE_ROLE": "REPOSITORY_HEALTH",
+        "CLOSURE_GATE": "HARD_CLEAN",
+        "BASELINE_REQUIRED": "NO",
+        "FAILURE_CLASSIFICATION_RULE": "scoped retention debt",
+        "WAIVER_ALLOWED": "YES",
+        "WAIVER_AUTHORITY": "Project owner",
+        "CHECK_RESULT": "FAIL",
+        "WAIVER_STATUS": "APPROVED"
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "after": {
+    "config": {
+      "bytes": 367,
+      "sha256": "f9195b43b0247a0851c4f14c7bfa34cfe4dbe849511b24404109d9488e7225ba"
+    },
+    "root": {
+      "bytes": 1664,
+      "sha256": "971ddc201faf31f5ebf8d2691d7759fc37f7d92a22b4e04b028d641177c31beb"
+    }
+  },
+  "before": {
+    "config": {
+      "bytes": 367,
+      "sha256": "f9195b43b0247a0851c4f14c7bfa34cfe4dbe849511b24404109d9488e7225ba"
+    },
+    "root": {
+      "bytes": 1664,
+      "sha256": "971ddc201faf31f5ebf8d2691d7759fc37f7d92a22b4e04b028d641177c31beb"
+    }
+  },
+  "fixture_builder_expected": {
+    "artifact_readback": "PASS",
+    "exit_code": 0,
+    "failure_class": "NONE",
+    "filesystem_status": "PASS",
+    "overall_status": "PASS",
+    "registry_status": "PASS",
+    "source_status": "CONFIRMED",
+    "state_status": "EXACT"
+  },
+  "manifest_expected": {
+    "artifact_readback": "PASS",
+    "exit_code": 0,
+    "failure_class": "NONE",
+    "filesystem_status": "PASS",
+    "overall_status": "PASS",
+    "registry_status": "PASS",
+    "source_status": "CONFIRMED",
+    "state_status": "EXACT"
+  },
+  "manifest_ok": true,
+  "match": true,
+  "observed": {
+    "artifact_readback": "PASS",
+    "exit_code": 0,
+    "failure_class": "NONE",
+    "filesystem_status": "PASS",
+    "overall_status": "PASS",
+    "registry_status": "PASS",
+    "source_status": "CONFIRMED",
+    "state_status": "EXACT"
+  }
+}

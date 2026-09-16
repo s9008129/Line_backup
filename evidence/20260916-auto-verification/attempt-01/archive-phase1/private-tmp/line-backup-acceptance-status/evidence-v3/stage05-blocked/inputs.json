@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "line_backup_acceptance",
+    "status",
+    "evaluate",
+    "--input",
+    "/private/tmp/line-backup-acceptance-status/stage05-blocked.input.json",
+    "--output",
+    "/private/tmp/line-backup-acceptance-status/stage05-blocked.output.json"
+  ],
+  "input": {
+    "scenario": "stage05-blocked",
+    "checks": [
+      {
+        "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+        "GOAL_CRITICALITY": "CORE",
+        "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+        "CLOSURE_GATE": "HARD_CLEAN",
+        "BASELINE_REQUIRED": "NO",
+        "FAILURE_CLASSIFICATION_RULE": "illegal enum or routing is TASK_REGRESSION",
+        "WAIVER_ALLOWED": "NO",
+        "WAIVER_AUTHORITY": "NONE",
+        "CHECK_RESULT": "PASS",
+        "WAIVER_STATUS": "NOT_ALLOWED"
+      }
+    ]
+  }
+}

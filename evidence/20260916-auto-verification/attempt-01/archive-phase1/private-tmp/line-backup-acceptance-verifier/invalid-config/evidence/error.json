@@ -1,0 +1,4 @@
+{
+  "code": "INVALID_CONFIGURATION",
+  "message": "config keys do not match schema v2"
+}

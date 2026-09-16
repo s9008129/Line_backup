@@ -1,0 +1,39 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "line_backup_acceptance",
+    "status",
+    "evaluate",
+    "--input",
+    "/private/tmp/line-backup-acceptance-status/all-required-waived.input.json",
+    "--output",
+    "/private/tmp/line-backup-acceptance-status/all-required-waived.output.json"
+  ],
+  "input": {
+    "scenario": "all-required-waived",
+    "checks": [
+      {
+        "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+        "GOAL_CRITICALITY": "CORE",
+        "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+        "CLOSURE_GATE": "HARD_CLEAN",
+        "BASELINE_REQUIRED": "NO",
+        "FAILURE_CLASSIFICATION_RULE": "illegal enum or routing is TASK_REGRESSION",
+        "WAIVER_ALLOWED": "NO",
+        "WAIVER_AUTHORITY": "NONE",
+        "CHECK_RESULT": "PASS",
+        "WAIVER_STATUS": "NOT_ALLOWED"
+      }
+    ],
+    "waiver": {
+      "WAIVED_BY": "Project owner",
+      "WAIVER_SCOPE": "REQUIRED_VERIFICATION",
+      "RATIONALE": "approved scoped waiver",
+      "EVIDENCE": "owner approval",
+      "RESIDUAL_RISK": "tracked",
+      "APPROVED_AT": "2026-09-16T00:00:00Z",
+      "REVIEW_OR_EXPIRY_TRIGGER": "next acceptance"
+    }
+  }
+}

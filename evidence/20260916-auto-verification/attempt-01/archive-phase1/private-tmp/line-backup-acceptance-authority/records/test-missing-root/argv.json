@@ -1,0 +1,23 @@
+[
+  "/usr/bin/python3",
+  "-m",
+  "line_backup_acceptance",
+  "transaction",
+  "resume",
+  "--state",
+  "/private/tmp/line-backup-acceptance-case-01/state.json",
+  "--run-id",
+  "AUTH-NO-ROOT",
+  "--expected-revision",
+  "1",
+  "--expected-owner-id",
+  "AUTH-WRITER",
+  "--dispatcher",
+  "/private/tmp/line-backup-acceptance-case-01/dispatcher.py",
+  "--dispatch-counter",
+  "/private/tmp/line-backup-acceptance-case-01/counter.jsonl",
+  "--evidence-dir",
+  "/private/tmp/line-backup-acceptance-case-01/evidence/authority-no-root",
+  "--no-dispatch",
+  "--test-mode"
+]

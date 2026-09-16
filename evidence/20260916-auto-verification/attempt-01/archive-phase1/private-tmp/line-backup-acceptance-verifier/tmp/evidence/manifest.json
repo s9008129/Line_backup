@@ -1,0 +1,25 @@
+{
+  "artifacts": [
+    {
+      "bytes": 15461,
+      "path": "inventory-1.json",
+      "sha256": "81826fdaa02bbc6ea40c0fa6f4feffaa6f4950e64aaf7d539a0296b47798be9d"
+    },
+    {
+      "bytes": 15461,
+      "path": "inventory-2.json",
+      "sha256": "81826fdaa02bbc6ea40c0fa6f4feffaa6f4950e64aaf7d539a0296b47798be9d"
+    },
+    {
+      "bytes": 15461,
+      "path": "inventory-3.json",
+      "sha256": "81826fdaa02bbc6ea40c0fa6f4feffaa6f4950e64aaf7d539a0296b47798be9d"
+    },
+    {
+      "bytes": 17132,
+      "path": "result.json",
+      "sha256": "11188d3bc6d1e6ffc4d454c979a8fec4378565539e053c94397eb9c1a613ada9"
+    }
+  ],
+  "schema_version": 1
+}

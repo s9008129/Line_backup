@@ -1,0 +1,8 @@
+{
+  "dispatch_performed": false,
+  "exit_code": 0,
+  "message": "no exact terminal registry association",
+  "replacement": false,
+  "result": "NOT_DUPLICATE",
+  "schema_version": 1
+}

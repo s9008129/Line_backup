@@ -1,0 +1,13 @@
+{
+  "artifact_readback": "PASS",
+  "destination": "/private/tmp/line-backup-acceptance-verifier/outside/outside",
+  "exit_code": 4,
+  "failure_class": "INPUT_NEGATIVE",
+  "filesystem_status": "FAIL",
+  "mode": "verify_only",
+  "overall_status": "NOT_ACHIEVED",
+  "registry_status": "NOT_RUN",
+  "schema_version": 1,
+  "source_status": "NOT_RUN",
+  "state_status": "NOT_RUN"
+}

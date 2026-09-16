@@ -1,0 +1,27 @@
+{
+  "baseline_delta": "UNCHANGED",
+  "blocker": null,
+  "checks": [
+    {
+      "BASELINE_REQUIRED": "YES",
+      "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+      "CHECK_RESULT": "PASS",
+      "CLOSURE_GATE": "HARD_CLEAN",
+      "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+      "FAILURE_CLASSIFICATION_RULE": "new or worsened baseline signature is TASK_REGRESSION",
+      "GOAL_CRITICALITY": "CORE",
+      "WAIVER_ALLOWED": "NO",
+      "WAIVER_AUTHORITY": "NONE",
+      "WAIVER_STATUS": "NOT_ALLOWED"
+    }
+  ],
+  "core_acceptance_status": "PASS",
+  "failure_class": null,
+  "implementation_status": "COMPLETE",
+  "independent_acceptance_status": "PENDING",
+  "primary_outcome_status": "ACHIEVED",
+  "required_verification_status": "PASS",
+  "schema_version": 2,
+  "task_closure_status": "READY_FOR_INDEPENDENT_ACCEPTANCE",
+  "waiver": null
+}

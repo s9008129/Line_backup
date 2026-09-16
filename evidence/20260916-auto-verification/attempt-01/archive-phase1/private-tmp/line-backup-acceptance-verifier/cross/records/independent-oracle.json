@@ -1,0 +1,54 @@
+{
+  "after": {
+    "config": {
+      "bytes": 367,
+      "sha256": "17edee6f50127eafdcf1d4236120ead904e290728cb53aeefca2376638fba130"
+    },
+    "root": {
+      "bytes": 1570,
+      "sha256": "233b2ae7e4845bf76cd67d90e06eb81b482f1414e3c07a46f44a680674ec7c7d"
+    }
+  },
+  "before": {
+    "config": {
+      "bytes": 367,
+      "sha256": "17edee6f50127eafdcf1d4236120ead904e290728cb53aeefca2376638fba130"
+    },
+    "root": {
+      "bytes": 1570,
+      "sha256": "233b2ae7e4845bf76cd67d90e06eb81b482f1414e3c07a46f44a680674ec7c7d"
+    }
+  },
+  "fixture_builder_expected": {
+    "artifact_readback": "PASS",
+    "exit_code": 4,
+    "failure_class": "INPUT_NEGATIVE",
+    "filesystem_status": "PASS",
+    "overall_status": "NOT_ACHIEVED",
+    "registry_status": "FAIL",
+    "source_status": "UNRESOLVED",
+    "state_status": "STATE_CONTRADICTED"
+  },
+  "manifest_expected": {
+    "artifact_readback": "PASS",
+    "exit_code": 4,
+    "failure_class": "INPUT_NEGATIVE",
+    "filesystem_status": "PASS",
+    "overall_status": "NOT_ACHIEVED",
+    "registry_status": "FAIL",
+    "source_status": "UNRESOLVED",
+    "state_status": "STATE_CONTRADICTED"
+  },
+  "manifest_ok": true,
+  "match": true,
+  "observed": {
+    "artifact_readback": "PASS",
+    "exit_code": 4,
+    "failure_class": "INPUT_NEGATIVE",
+    "filesystem_status": "PASS",
+    "overall_status": "NOT_ACHIEVED",
+    "registry_status": "FAIL",
+    "source_status": "UNRESOLVED",
+    "state_status": "STATE_CONTRADICTED"
+  }
+}

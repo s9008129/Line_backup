@@ -1,0 +1,8 @@
+{
+  "artifacts_checked": 4859,
+  "manifests": 84,
+  "problems": [],
+  "root": "evidence/20260916-auto-verification/attempt-01",
+  "uncovered_files": [],
+  "verdict": "PASS"
+}

@@ -1,0 +1,1226 @@
+{
+  "case_roots": {
+    "production_fake_root": "/private/tmp/line-backup-acceptance-case-04/prod-root",
+    "test_mode": "/private/tmp/line-backup-acceptance-case-03"
+  },
+  "claim": "R3: transaction prepare lacks precondition checks and the duplicate gate is bypassable by destination change, by historical unresolved intent, and by same-date count change; the production entry (no --test-mode) accepts a fabricated root and persists fixture calibration with no source observation",
+  "decision": "(a)(b)(c)(e) reproduced -> keep GUI/production dispatch blocked; Phase 4 must add pre-side-effect checks (history-wide unresolved-intent scan, destination-independent duplicate/fingerprint barrier, same-date count change as reconciliation, production rejection of fixture-derived calibration/provenance). (d) must stay fail-closed (CONFLICT_DUPLICATE/exit 4) after the fix.",
+  "entry": "real product CLI subprocesses (`python3 -m line_backup_acceptance transaction prepare|duplicate-check`); test-mode fixture roots replace external I/O paths only",
+  "generated_at": "2026-09-16T12:05:50Z",
+  "independent_side_effect_surface": "no dispatcher is invoked by prepare/duplicate-check; the independent oracle is the persisted state file plus CLI exit codes",
+  "oracle": "persisted state JSON (registry / intent / calibration / source_provenance), CLI result JSON and exit codes, pre/post state SHA-256; no dispatcher is involved, so persisted state is the side-effect surface",
+  "program_hashes": {
+    "authority.py": {
+      "bytes": 8522,
+      "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+    },
+    "cli.py": {
+      "bytes": 4583,
+      "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+    },
+    "common.py": {
+      "bytes": 4021,
+      "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+    },
+    "status.py": {
+      "bytes": 7454,
+      "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+    },
+    "transaction.py": {
+      "bytes": 13835,
+      "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+    },
+    "verifier.py": {
+      "bytes": 15541,
+      "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+    }
+  },
+  "subcases": [
+    {
+      "claim": "duplicate-check is bypassable by changing the destination: the registry gate requires an exact destination match, so the same group+fingerprint aimed at a new destination is NOT_DUPLICATE",
+      "control_outcome": {
+        "expected": [
+          0,
+          "SKIP_DUPLICATE"
+        ],
+        "matches": true,
+        "observed": [
+          0,
+          "SKIP_DUPLICATE"
+        ]
+      },
+      "dispatch": "none (prepare/duplicate-check never dispatch; no dispatcher passed)",
+      "durable_manifests": {
+        "case_root": {
+          "artifacts": [
+            {
+              "bytes": 0,
+              "path": ".line-backup-state.lock",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 183,
+              "path": "evidence/a-changed/result.json",
+              "sha256": "cfbf238188aa729eaea2c4cf9fba2bc9cd3e785ceaf14fe21ff375166a607bc5"
+            },
+            {
+              "bytes": 188,
+              "path": "evidence/a-control/result.json",
+              "sha256": "98e1c4166414e86ef3ceaa56085861bd0cae7bd086e39e8111bc234c100d19eb"
+            },
+            {
+              "bytes": 2444,
+              "path": "state.json",
+              "sha256": "b9142c8e7db60097364766866bb713f7ecef7fe63c5b356ceb115250ee0f64a0"
+            }
+          ],
+          "files": 4,
+          "generated_at": "2026-09-16T12:05:50Z",
+          "manifest_bytes": 893,
+          "manifest_sha256": "e1faf93facd9cc48edcacb87a4dcb4e7af8250c8aad84a5c4eccd1a1a56009a8",
+          "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/a/case-root-durable",
+          "schema_version": 1,
+          "total_bytes": 2815
+        }
+      },
+      "entry": "python3 -m line_backup_acceptance transaction duplicate-check (real CLI, test-mode fixture root)",
+      "expected_current_behavior": "changed destination -> NOT_DUPLICATE exit 0 (bypass); same-destination control -> SKIP_DUPLICATE exit 0",
+      "expected_safe_behavior": "a terminal VERIFIED fingerprint in the group must gate regardless of destination; destination is part of the attempted run, not album identity",
+      "oracle": "persisted registry entry (group+fp+destA) + CLI result JSON + exit codes; pre/post state SHA-256",
+      "post_state": {
+        "bytes": 2444,
+        "durable": {
+          "bytes": 2444,
+          "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/a-post-state.json",
+          "sha256": "b9142c8e7db60097364766866bb713f7ecef7fe63c5b356ceb115250ee0f64a0"
+        },
+        "excerpt": {
+          "active_writer_id": null,
+          "current_run_id": null,
+          "revision": 5,
+          "run_count": 1,
+          "runs": [
+            {
+              "destination": "/private/tmp/line-backup-acceptance-case-03/destination",
+              "dispatch_state": "SAVE_ALL_RETURNED",
+              "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+              "owner_id": null,
+              "run_id": "RUN-A-HIST",
+              "workflow_outcome": "VERIFIED"
+            }
+          ],
+          "verified_album_count": 1
+        },
+        "sha256": "b9142c8e7db60097364766866bb713f7ecef7fe63c5b356ceb115250ee0f64a0"
+      },
+      "pre_state": {
+        "bytes": 2444,
+        "durable": {
+          "bytes": 2444,
+          "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/a-pre-state.json",
+          "sha256": "b9142c8e7db60097364766866bb713f7ecef7fe63c5b356ceb115250ee0f64a0"
+        },
+        "excerpt": {
+          "active_writer_id": null,
+          "current_run_id": null,
+          "revision": 5,
+          "run_count": 1,
+          "runs": [
+            {
+              "destination": "/private/tmp/line-backup-acceptance-case-03/destination",
+              "dispatch_state": "SAVE_ALL_RETURNED",
+              "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+              "owner_id": null,
+              "run_id": "RUN-A-HIST",
+              "workflow_outcome": "VERIFIED"
+            }
+          ],
+          "verified_album_count": 1
+        },
+        "sha256": "b9142c8e7db60097364766866bb713f7ecef7fe63c5b356ceb115250ee0f64a0"
+      },
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "runs": {
+        "changed_destination": {
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "line_backup_acceptance",
+            "transaction",
+            "duplicate-check",
+            "--project-root",
+            "/private/tmp/line-backup-acceptance-case-03",
+            "--state",
+            "/private/tmp/line-backup-acceptance-case-03/state.json",
+            "--test-mode",
+            "--group-key",
+            "line:jp.naver.line.mac:旻謙允禎成長日記",
+            "--start-date",
+            "2024-05-13",
+            "--end-date",
+            "2024-05-17",
+            "--expected-images",
+            "57",
+            "--destination",
+            "/private/tmp/line-backup-acceptance-case-03/destination-B",
+            "--evidence-dir",
+            "/private/tmp/line-backup-acceptance-case-03/evidence/a-changed"
+          ],
+          "exit_code": 0,
+          "name": "a-changed-destination",
+          "record_dir_relative_to_evidence": "a-changed-destination",
+          "result": {
+            "dispatch_performed": false,
+            "exit_code": 0,
+            "message": "no exact terminal registry association",
+            "replacement": false,
+            "result": "NOT_DUPLICATE",
+            "schema_version": 1
+          }
+        },
+        "control_same_destination": {
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "line_backup_acceptance",
+            "transaction",
+            "duplicate-check",
+            "--project-root",
+            "/private/tmp/line-backup-acceptance-case-03",
+            "--state",
+            "/private/tmp/line-backup-acceptance-case-03/state.json",
+            "--test-mode",
+            "--group-key",
+            "line:jp.naver.line.mac:旻謙允禎成長日記",
+            "--start-date",
+            "2024-05-13",
+            "--end-date",
+            "2024-05-17",
+            "--expected-images",
+            "57",
+            "--destination",
+            "/private/tmp/line-backup-acceptance-case-03/destination",
+            "--evidence-dir",
+            "/private/tmp/line-backup-acceptance-case-03/evidence/a-control"
+          ],
+          "exit_code": 0,
+          "name": "a-control-same-destination",
+          "record_dir_relative_to_evidence": "a-control-same-destination",
+          "result": {
+            "dispatch_performed": false,
+            "exit_code": 0,
+            "message": "exact terminal registry association exists",
+            "replacement": false,
+            "result": "SKIP_DUPLICATE",
+            "schema_version": 1
+          }
+        }
+      },
+      "state_mutated_by_duplicate_check": false,
+      "subcase": "a",
+      "verdict": "REPRODUCED_DUPLICATE_CHECK_DESTINATION_BYPASS"
+    },
+    {
+      "claim": "prepare does not scan historical non-terminal runs: an unresolved intent (INTENT_COMMITTED or dispatch_state UNKNOWN, workflow_outcome null) with current_run_id/active_writer_id/context_lock null does not block a new run at a new destination",
+      "control_outcome": {
+        "expected": [
+          4,
+          "CONFLICT_ACTIVE_RUN"
+        ],
+        "matches": true,
+        "observed": [
+          4,
+          "CONFLICT_ACTIVE_RUN"
+        ]
+      },
+      "control_post_state_excerpt": {
+        "active_writer_id": "WRITER-B02",
+        "current_run_id": "RUN-B02",
+        "revision": 8,
+        "run_count": 2,
+        "runs": [
+          {
+            "destination": "/private/tmp/line-backup-acceptance-case-03/destination-old-2",
+            "dispatch_state": "UNKNOWN",
+            "intent_state": "TRIGGER_UNKNOWN",
+            "owner_id": "WRITER-B0B",
+            "run_id": "RUN-B-HIST-UNKNOWN",
+            "workflow_outcome": null
+          },
+          {
+            "destination": "/private/tmp/line-backup-acceptance-case-03/destination-new-2",
+            "dispatch_state": "NOT_ATTEMPTED",
+            "intent_state": "INTENT_COMMITTED",
+            "owner_id": "WRITER-B02",
+            "run_id": "RUN-B02",
+            "workflow_outcome": null
+          }
+        ],
+        "verified_album_count": 0
+      },
+      "control_state_unchanged": true,
+      "dispatch": "none (prepare/duplicate-check never dispatch; no dispatcher passed)",
+      "durable_manifests": {
+        "probe1_case_root": {
+          "artifacts": [
+            {
+              "bytes": 0,
+              "path": ".line-backup-state.lock",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 140,
+              "path": "evidence/b-probe1/result.json",
+              "sha256": "7b393e70edcc6798bf4aa129ac500945f757323e11135c3deac0a8c965abe45d"
+            },
+            {
+              "bytes": 4248,
+              "path": "state.json",
+              "sha256": "a1c6bb2b2b83d4737520bb2ada1138750b0c3555ea37f8f096f98b88d183855c"
+            }
+          ],
+          "files": 3,
+          "generated_at": "2026-09-16T12:05:50Z",
+          "manifest_bytes": 735,
+          "manifest_sha256": "168bc130687816054f7522ddc4686cb57f28a733485a6d580767861814b90e3e",
+          "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/b/probe1-case-root-durable",
+          "schema_version": 1,
+          "total_bytes": 4388
+        },
+        "probe2_case_root": {
+          "artifacts": [
+            {
+              "bytes": 0,
+              "path": ".line-backup-state.lock",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 132,
+              "path": "evidence/b-control/result.json",
+              "sha256": "c8041a1a1472f67347deaac57d4172f49412e42e1599f5fd05bfccd53084faa8"
+            },
+            {
+              "bytes": 140,
+              "path": "evidence/b-probe2/result.json",
+              "sha256": "95fda523fb50b21bb5c33e2cd172f0ef62fece99e057e832b3caa832e39d6834"
+            },
+            {
+              "bytes": 4205,
+              "path": "state.json",
+              "sha256": "70c810fd7e70be6108d597111a7bfa380242dc25b0ce777606b0f2e32633ea3a"
+            }
+          ],
+          "files": 4,
+          "generated_at": "2026-09-16T12:05:50Z",
+          "manifest_bytes": 899,
+          "manifest_sha256": "1d9f9f84c7a9700edd6c2154e44efad66e94defd900735da2d1b50b5c56ddd52",
+          "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/b/probe2-case-root-durable",
+          "schema_version": 1,
+          "total_bytes": 4477
+        }
+      },
+      "entry": "python3 -m line_backup_acceptance transaction prepare (real CLI, test-mode fixture root)",
+      "expected_current_behavior": "both historical fixtures -> PREPARED exit 0 (bypass); active-run control -> CONFLICT_ACTIVE_RUN exit 4",
+      "expected_safe_behavior": "a new run must search all prior intents for the same group/fingerprint and treat unresolved ones as a blocking barrier until proven non-dispatch release",
+      "oracle": "persisted state (new run/owner/revision vs untouched historical run) + CLI result JSON + exit codes",
+      "probe1_persisted_revision": 8,
+      "probe1_post_state_excerpt": {
+        "active_writer_id": "WRITER-B01",
+        "current_run_id": "RUN-B01",
+        "revision": 8,
+        "run_count": 2,
+        "runs": [
+          {
+            "destination": "/private/tmp/line-backup-acceptance-case-03/destination-old-1",
+            "dispatch_state": "NOT_ATTEMPTED",
+            "intent_state": "INTENT_COMMITTED",
+            "owner_id": "WRITER-B0",
+            "run_id": "RUN-B-HIST-INTENT",
+            "workflow_outcome": null
+          },
+          {
+            "destination": "/private/tmp/line-backup-acceptance-case-03/destination-new-1",
+            "dispatch_state": "NOT_ATTEMPTED",
+            "intent_state": "INTENT_COMMITTED",
+            "owner_id": "WRITER-B01",
+            "run_id": "RUN-B01",
+            "workflow_outcome": null
+          }
+        ],
+        "verified_album_count": 0
+      },
+      "probe1_pre_state": {
+        "bytes": 2033,
+        "durable": {
+          "bytes": 2033,
+          "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/b-probe1-pre-state.json",
+          "sha256": "c767cd4fe86f3202904e4e75df6afc3e8240decbac23d288f9592cf564db5dbf"
+        },
+        "excerpt": {
+          "active_writer_id": null,
+          "current_run_id": null,
+          "revision": 7,
+          "run_count": 1,
+          "runs": [
+            {
+              "destination": "/private/tmp/line-backup-acceptance-case-03/destination-old-1",
+              "dispatch_state": "NOT_ATTEMPTED",
+              "intent_state": "INTENT_COMMITTED",
+              "owner_id": "WRITER-B0",
+              "run_id": "RUN-B-HIST-INTENT",
+              "workflow_outcome": null
+            }
+          ],
+          "verified_album_count": 0
+        },
+        "sha256": "c767cd4fe86f3202904e4e75df6afc3e8240decbac23d288f9592cf564db5dbf"
+      },
+      "probe1_result_revision_field": 1,
+      "probe2_post_state_excerpt": {
+        "active_writer_id": "WRITER-B02",
+        "current_run_id": "RUN-B02",
+        "revision": 8,
+        "run_count": 2,
+        "runs": [
+          {
+            "destination": "/private/tmp/line-backup-acceptance-case-03/destination-old-2",
+            "dispatch_state": "UNKNOWN",
+            "intent_state": "TRIGGER_UNKNOWN",
+            "owner_id": "WRITER-B0B",
+            "run_id": "RUN-B-HIST-UNKNOWN",
+            "workflow_outcome": null
+          },
+          {
+            "destination": "/private/tmp/line-backup-acceptance-case-03/destination-new-2",
+            "dispatch_state": "NOT_ATTEMPTED",
+            "intent_state": "INTENT_COMMITTED",
+            "owner_id": "WRITER-B02",
+            "run_id": "RUN-B02",
+            "workflow_outcome": null
+          }
+        ],
+        "verified_album_count": 0
+      },
+      "probe2_pre_state": {
+        "bytes": 1990,
+        "durable": {
+          "bytes": 1990,
+          "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/b-probe2-pre-state.json",
+          "sha256": "26ac10765d7314daf196814360f4c18405b5583a7476acceb6758e8d6cfa8458"
+        },
+        "excerpt": {
+          "active_writer_id": null,
+          "current_run_id": null,
+          "revision": 7,
+          "run_count": 1,
+          "runs": [
+            {
+              "destination": "/private/tmp/line-backup-acceptance-case-03/destination-old-2",
+              "dispatch_state": "UNKNOWN",
+              "intent_state": "TRIGGER_UNKNOWN",
+              "owner_id": "WRITER-B0B",
+              "run_id": "RUN-B-HIST-UNKNOWN",
+              "workflow_outcome": null
+            }
+          ],
+          "verified_album_count": 0
+        },
+        "sha256": "26ac10765d7314daf196814360f4c18405b5583a7476acceb6758e8d6cfa8458"
+      },
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "runs": {
+        "control_active_run_prepare": {
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "line_backup_acceptance",
+            "transaction",
+            "prepare",
+            "--project-root",
+            "/private/tmp/line-backup-acceptance-case-03",
+            "--state",
+            "/private/tmp/line-backup-acceptance-case-03/state.json",
+            "--test-mode",
+            "--run-id",
+            "RUN-B03",
+            "--owner-id",
+            "WRITER-B03",
+            "--group-key",
+            "line:jp.naver.line.mac:旻謙允禎成長日記",
+            "--start-date",
+            "2024-05-13",
+            "--end-date",
+            "2024-05-17",
+            "--expected-images",
+            "57",
+            "--destination",
+            "/private/tmp/line-backup-acceptance-case-03/destination-new-3",
+            "--evidence-dir",
+            "/private/tmp/line-backup-acceptance-case-03/evidence/b-control"
+          ],
+          "exit_code": 4,
+          "name": "b-control-active-run",
+          "record_dir_relative_to_evidence": "b-control-active-run",
+          "result": {
+            "exit_code": 4,
+            "message": "an active run already owns the state",
+            "result": "CONFLICT_ACTIVE_RUN",
+            "schema_version": 1
+          }
+        },
+        "probe1_prepare_intent_committed": {
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "line_backup_acceptance",
+            "transaction",
+            "prepare",
+            "--project-root",
+            "/private/tmp/line-backup-acceptance-case-03",
+            "--state",
+            "/private/tmp/line-backup-acceptance-case-03/state.json",
+            "--test-mode",
+            "--run-id",
+            "RUN-B01",
+            "--owner-id",
+            "WRITER-B01",
+            "--group-key",
+            "line:jp.naver.line.mac:旻謙允禎成長日記",
+            "--start-date",
+            "2024-05-13",
+            "--end-date",
+            "2024-05-17",
+            "--expected-images",
+            "57",
+            "--destination",
+            "/private/tmp/line-backup-acceptance-case-03/destination-new-1",
+            "--evidence-dir",
+            "/private/tmp/line-backup-acceptance-case-03/evidence/b-probe1"
+          ],
+          "exit_code": 0,
+          "name": "b-probe1-prepare",
+          "record_dir_relative_to_evidence": "b-probe1-prepare",
+          "result": {
+            "exit_code": 0,
+            "message": "intent prepared",
+            "result": "PREPARED",
+            "revision": 1,
+            "run_id": "RUN-B01",
+            "schema_version": 1
+          }
+        },
+        "probe2_prepare_dispatch_unknown": {
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "line_backup_acceptance",
+            "transaction",
+            "prepare",
+            "--project-root",
+            "/private/tmp/line-backup-acceptance-case-03",
+            "--state",
+            "/private/tmp/line-backup-acceptance-case-03/state.json",
+            "--test-mode",
+            "--run-id",
+            "RUN-B02",
+            "--owner-id",
+            "WRITER-B02",
+            "--group-key",
+            "line:jp.naver.line.mac:旻謙允禎成長日記",
+            "--start-date",
+            "2024-05-13",
+            "--end-date",
+            "2024-05-17",
+            "--expected-images",
+            "57",
+            "--destination",
+            "/private/tmp/line-backup-acceptance-case-03/destination-new-2",
+            "--evidence-dir",
+            "/private/tmp/line-backup-acceptance-case-03/evidence/b-probe2"
+          ],
+          "exit_code": 0,
+          "name": "b-probe2-prepare",
+          "record_dir_relative_to_evidence": "b-probe2-prepare",
+          "result": {
+            "exit_code": 0,
+            "message": "intent prepared",
+            "result": "PREPARED",
+            "revision": 1,
+            "run_id": "RUN-B02",
+            "schema_version": 1
+          }
+        }
+      },
+      "subcase": "b",
+      "verdict": "REPRODUCED_UNRESOLVED_INTENT_DOES_NOT_BLOCK_NEW_PREPARE"
+    },
+    {
+      "claim": "the fingerprint includes expected_images, so the same dates with a changed count (56 vs the registry 57) are NOT_DUPLICATE instead of a same-album reconciliation conflict",
+      "control_outcome": {
+        "expected": [
+          0,
+          "SKIP_DUPLICATE"
+        ],
+        "matches": true,
+        "observed": [
+          0,
+          "SKIP_DUPLICATE"
+        ]
+      },
+      "dispatch": "none (prepare/duplicate-check never dispatch; no dispatcher passed)",
+      "durable_manifests": {
+        "case_root": {
+          "artifacts": [
+            {
+              "bytes": 0,
+              "path": ".line-backup-state.lock",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 188,
+              "path": "evidence/c-control/result.json",
+              "sha256": "98e1c4166414e86ef3ceaa56085861bd0cae7bd086e39e8111bc234c100d19eb"
+            },
+            {
+              "bytes": 183,
+              "path": "evidence/c-probe/result.json",
+              "sha256": "cfbf238188aa729eaea2c4cf9fba2bc9cd3e785ceaf14fe21ff375166a607bc5"
+            },
+            {
+              "bytes": 2444,
+              "path": "state.json",
+              "sha256": "0b1264e489b5980009f601506d98527fa21bc705f9f918f3fcaf65b773363743"
+            }
+          ],
+          "files": 4,
+          "generated_at": "2026-09-16T12:05:50Z",
+          "manifest_bytes": 891,
+          "manifest_sha256": "aef9d3080e7f04c8b2f19f31a4dee7dc318e128f0d8f174e565b0b0121ade9ef",
+          "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/c/case-root-durable",
+          "schema_version": 1,
+          "total_bytes": 2815
+        }
+      },
+      "entry": "python3 -m line_backup_acceptance transaction duplicate-check (real CLI, test-mode fixture root)",
+      "expected_current_behavior": "expected-images 56 -> NOT_DUPLICATE exit 0 (bypass); expected-images 57 control -> SKIP_DUPLICATE exit 0",
+      "expected_safe_behavior": "a changed count for the same dates must trigger reconciliation against the historical fingerprint, not a silent new album",
+      "oracle": "persisted registry entry (2024-05-13..17, 57) + CLI result JSON + exit codes; pre/post state SHA-256",
+      "post_state": {
+        "bytes": 2444,
+        "durable": {
+          "bytes": 2444,
+          "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/c-post-state.json",
+          "sha256": "0b1264e489b5980009f601506d98527fa21bc705f9f918f3fcaf65b773363743"
+        },
+        "excerpt": {
+          "active_writer_id": null,
+          "current_run_id": null,
+          "revision": 6,
+          "run_count": 1,
+          "runs": [
+            {
+              "destination": "/private/tmp/line-backup-acceptance-case-03/destination",
+              "dispatch_state": "SAVE_ALL_RETURNED",
+              "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+              "owner_id": null,
+              "run_id": "RUN-C-HIST",
+              "workflow_outcome": "VERIFIED"
+            }
+          ],
+          "verified_album_count": 1
+        },
+        "sha256": "0b1264e489b5980009f601506d98527fa21bc705f9f918f3fcaf65b773363743"
+      },
+      "pre_state": {
+        "bytes": 2444,
+        "durable": {
+          "bytes": 2444,
+          "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/c-pre-state.json",
+          "sha256": "0b1264e489b5980009f601506d98527fa21bc705f9f918f3fcaf65b773363743"
+        },
+        "excerpt": {
+          "active_writer_id": null,
+          "current_run_id": null,
+          "revision": 6,
+          "run_count": 1,
+          "runs": [
+            {
+              "destination": "/private/tmp/line-backup-acceptance-case-03/destination",
+              "dispatch_state": "SAVE_ALL_RETURNED",
+              "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+              "owner_id": null,
+              "run_id": "RUN-C-HIST",
+              "workflow_outcome": "VERIFIED"
+            }
+          ],
+          "verified_album_count": 1
+        },
+        "sha256": "0b1264e489b5980009f601506d98527fa21bc705f9f918f3fcaf65b773363743"
+      },
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "runs": {
+        "control_expected_57": {
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "line_backup_acceptance",
+            "transaction",
+            "duplicate-check",
+            "--project-root",
+            "/private/tmp/line-backup-acceptance-case-03",
+            "--state",
+            "/private/tmp/line-backup-acceptance-case-03/state.json",
+            "--test-mode",
+            "--group-key",
+            "line:jp.naver.line.mac:旻謙允禎成長日記",
+            "--start-date",
+            "2024-05-13",
+            "--end-date",
+            "2024-05-17",
+            "--expected-images",
+            "57",
+            "--destination",
+            "/private/tmp/line-backup-acceptance-case-03/destination",
+            "--evidence-dir",
+            "/private/tmp/line-backup-acceptance-case-03/evidence/c-control"
+          ],
+          "exit_code": 0,
+          "name": "c-control-expected-57",
+          "record_dir_relative_to_evidence": "c-control-expected-57",
+          "result": {
+            "dispatch_performed": false,
+            "exit_code": 0,
+            "message": "exact terminal registry association exists",
+            "replacement": false,
+            "result": "SKIP_DUPLICATE",
+            "schema_version": 1
+          }
+        },
+        "probe_expected_56": {
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "line_backup_acceptance",
+            "transaction",
+            "duplicate-check",
+            "--project-root",
+            "/private/tmp/line-backup-acceptance-case-03",
+            "--state",
+            "/private/tmp/line-backup-acceptance-case-03/state.json",
+            "--test-mode",
+            "--group-key",
+            "line:jp.naver.line.mac:旻謙允禎成長日記",
+            "--start-date",
+            "2024-05-13",
+            "--end-date",
+            "2024-05-17",
+            "--expected-images",
+            "56",
+            "--destination",
+            "/private/tmp/line-backup-acceptance-case-03/destination",
+            "--evidence-dir",
+            "/private/tmp/line-backup-acceptance-case-03/evidence/c-probe"
+          ],
+          "exit_code": 0,
+          "name": "c-probe-expected-56",
+          "record_dir_relative_to_evidence": "c-probe-expected-56",
+          "result": {
+            "dispatch_performed": false,
+            "exit_code": 0,
+            "message": "no exact terminal registry association",
+            "replacement": false,
+            "result": "NOT_DUPLICATE",
+            "schema_version": 1
+          }
+        }
+      },
+      "state_mutated_by_duplicate_check": false,
+      "subcase": "c",
+      "verdict": "REPRODUCED_SAME_DATE_COUNT_CHANGE_BYPASS"
+    },
+    {
+      "claim": "control: two ambiguous registry entries for the same group/fingerprint/destination must fail closed (CONFLICT_DUPLICATE exit 4); current behaviour is already correct",
+      "control_outcome": {
+        "expected": [
+          4,
+          "CONFLICT_DUPLICATE"
+        ],
+        "matches": true,
+        "observed": [
+          4,
+          "CONFLICT_DUPLICATE"
+        ]
+      },
+      "dispatch": "none (prepare/duplicate-check never dispatch; no dispatcher passed)",
+      "durable_manifests": {
+        "case_root": {
+          "artifacts": [
+            {
+              "bytes": 0,
+              "path": ".line-backup-state.lock",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 134,
+              "path": "evidence/d-ambiguous/result.json",
+              "sha256": "5e1fe46d95bc5be889777938355f44451c3dea6098ae0b65b2c12bbd694367a4"
+            },
+            {
+              "bytes": 2905,
+              "path": "state.json",
+              "sha256": "392b3a3946b2969a71e5091263fa8f3137b0df5fd51949a37ba393b5cc4fd25d"
+            }
+          ],
+          "files": 3,
+          "generated_at": "2026-09-16T12:05:50Z",
+          "manifest_bytes": 731,
+          "manifest_sha256": "0e9d4927f5665cc2a3738e8906debb6ebeff78dd7df1d8160e363f307e46b9e8",
+          "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/d/case-root-durable",
+          "schema_version": 1,
+          "total_bytes": 3039
+        }
+      },
+      "entry": "python3 -m line_backup_acceptance transaction duplicate-check (real CLI, test-mode fixture root)",
+      "expected_current_behavior": "ambiguous entries -> CONFLICT_DUPLICATE exit 4",
+      "expected_safe_behavior": "unchanged after the fix: ambiguous terminal associations keep failing closed",
+      "oracle": "persisted ambiguous registry + CLI result JSON + exit code; pre/post state SHA-256",
+      "post_state": {
+        "bytes": 2905,
+        "durable": {
+          "bytes": 2905,
+          "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/d-post-state.json",
+          "sha256": "392b3a3946b2969a71e5091263fa8f3137b0df5fd51949a37ba393b5cc4fd25d"
+        },
+        "excerpt": {
+          "active_writer_id": null,
+          "current_run_id": null,
+          "revision": 6,
+          "run_count": 1,
+          "runs": [
+            {
+              "destination": "/private/tmp/line-backup-acceptance-case-03/destination",
+              "dispatch_state": "SAVE_ALL_RETURNED",
+              "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+              "owner_id": null,
+              "run_id": "RUN-D-HIST-1",
+              "workflow_outcome": "VERIFIED"
+            }
+          ],
+          "verified_album_count": 2
+        },
+        "sha256": "392b3a3946b2969a71e5091263fa8f3137b0df5fd51949a37ba393b5cc4fd25d"
+      },
+      "pre_state": {
+        "bytes": 2905,
+        "durable": {
+          "bytes": 2905,
+          "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/d-pre-state.json",
+          "sha256": "392b3a3946b2969a71e5091263fa8f3137b0df5fd51949a37ba393b5cc4fd25d"
+        },
+        "excerpt": {
+          "active_writer_id": null,
+          "current_run_id": null,
+          "revision": 6,
+          "run_count": 1,
+          "runs": [
+            {
+              "destination": "/private/tmp/line-backup-acceptance-case-03/destination",
+              "dispatch_state": "SAVE_ALL_RETURNED",
+              "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+              "owner_id": null,
+              "run_id": "RUN-D-HIST-1",
+              "workflow_outcome": "VERIFIED"
+            }
+          ],
+          "verified_album_count": 2
+        },
+        "sha256": "392b3a3946b2969a71e5091263fa8f3137b0df5fd51949a37ba393b5cc4fd25d"
+      },
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "runs": {
+        "ambiguous_registry": {
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "line_backup_acceptance",
+            "transaction",
+            "duplicate-check",
+            "--project-root",
+            "/private/tmp/line-backup-acceptance-case-03",
+            "--state",
+            "/private/tmp/line-backup-acceptance-case-03/state.json",
+            "--test-mode",
+            "--group-key",
+            "line:jp.naver.line.mac:旻謙允禎成長日記",
+            "--start-date",
+            "2024-05-13",
+            "--end-date",
+            "2024-05-17",
+            "--expected-images",
+            "57",
+            "--destination",
+            "/private/tmp/line-backup-acceptance-case-03/destination",
+            "--evidence-dir",
+            "/private/tmp/line-backup-acceptance-case-03/evidence/d-ambiguous"
+          ],
+          "exit_code": 4,
+          "name": "d-ambiguous-registry",
+          "record_dir_relative_to_evidence": "d-ambiguous-registry",
+          "result": {
+            "exit_code": 4,
+            "message": "ambiguous terminal registry association",
+            "result": "CONFLICT_DUPLICATE",
+            "schema_version": 1
+          }
+        }
+      },
+      "state_mutated_by_duplicate_check": false,
+      "subcase": "d",
+      "verdict": "NOT_REPRODUCED",
+      "verdict_note": "control only: no bypass; duplicate-check fails closed exactly as required"
+    },
+    {
+      "claim": "the production entry (no --test-mode) accepts an isolated fabricated project root and persists a fixture calibration ([1,1], HIGH) plus source_provenance='test fixture' with no source observation",
+      "config_durable": {
+        "bytes": 389,
+        "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/e-prod-config.json",
+        "sha256": "384339d1ab5cf7dd2ef13a09411e1661c58282daae5a4e27d6fbb7b28ddd6d3c"
+      },
+      "config_keys": [
+        "app_identifier",
+        "backup_root",
+        "group_key",
+        "group_name",
+        "max_albums_per_run",
+        "max_wait_seconds",
+        "poll_interval_seconds",
+        "recovery_limit",
+        "schema_version",
+        "stable_samples"
+      ],
+      "config_keys_exact": true,
+      "dispatch": "none (prepare/duplicate-check never dispatch; no dispatcher passed)",
+      "durable_manifests": {
+        "case_root": {
+          "artifacts": [
+            {
+              "bytes": 389,
+              "path": "prod-root/config/line_backup_config.json",
+              "sha256": "384339d1ab5cf7dd2ef13a09411e1661c58282daae5a4e27d6fbb7b28ddd6d3c"
+            },
+            {
+              "bytes": 144,
+              "path": "prod-root/evidence/prod-prepare/result.json",
+              "sha256": "252f84ec0443fd193f7461bbd0c0f553e6be910b2bb2b04d52c42377b149b080"
+            },
+            {
+              "bytes": 0,
+              "path": "prod-root/state/.line-backup-state.lock",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "bytes": 2469,
+              "path": "prod-root/state/backup_state.json",
+              "sha256": "59b15b5f3e64a685779ecf6316299e734f5fd0881fc7c61f7f2fc74973af4361"
+            },
+            {
+              "bytes": 74,
+              "path": "prod-root/state/run_log.md",
+              "sha256": "3e184b3dfc7f18649ec113a2eb339377240cb092df412979db09f4f352c6a3a9"
+            }
+          ],
+          "files": 5,
+          "generated_at": "2026-09-16T12:05:50Z",
+          "manifest_bytes": 1114,
+          "manifest_sha256": "c473ec031dbcf241854bf03d6f7eb696090f9052b4b9e463dad667c8083d9a59",
+          "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/e/case-root-durable",
+          "schema_version": 1,
+          "total_bytes": 3076
+        }
+      },
+      "entry": "python3 -m line_backup_acceptance transaction prepare (real CLI, NO --test-mode, isolated fake production root)",
+      "expected_current_behavior": "prepare -> PREPARED exit 0 with fabricated calibration/provenance persisted",
+      "expected_safe_behavior": "the production entry must reject fixture-derived content without a real source observation (or prove provenance); the real authority under /Users/hsiaojohnny/Documents/Codex is never touched",
+      "fixture_fabrication_checks": {
+        "calibration_confidence": "HIGH",
+        "calibration_ellipsis_equals_1_1": true,
+        "calibration_save_all_point_equals_1_1": true,
+        "source_observation_note": "no GUI/source adapter ran; the persisted content comes from _base_run() constants",
+        "source_provenance": "test fixture"
+      },
+      "oracle": "persisted production state JSON (intent.calibration / source_provenance / observed_title) + CLI result JSON + exit code",
+      "persisted_calibration": {
+        "confidence": "HIGH",
+        "dot_spacing": 1.0,
+        "ellipsis": [
+          1,
+          1
+        ],
+        "evidence": "test-mode adapter calibration fixture; no GUI authorization",
+        "observed_at": "2026-09-16T12:05:50Z",
+        "save_all_point": [
+          1,
+          1
+        ],
+        "screenshot_height": 1,
+        "screenshot_width": 1
+      },
+      "persisted_run_fields": {
+        "destination": "/private/tmp/line-backup-acceptance-case-04/prod-root/backups/album-2024-05-13_to_2024-05-17_57",
+        "destination_initially_empty": true,
+        "dispatch_state": "NOT_ATTEMPTED",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "intent_state": "INTENT_COMMITTED",
+        "observed_title": "旻謙允禎成長日記",
+        "run_id": "RUN-PROD-R3",
+        "source_provenance": "test fixture",
+        "title_confidence": "HIGH",
+        "workflow_outcome": null
+      },
+      "post_state": {
+        "bytes": 2469,
+        "durable": {
+          "bytes": 2469,
+          "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/e-prod-post-state.json",
+          "sha256": "59b15b5f3e64a685779ecf6316299e734f5fd0881fc7c61f7f2fc74973af4361"
+        },
+        "excerpt": {
+          "active_writer_id": "WRITER-PROD-R3",
+          "current_run_id": "RUN-PROD-R3",
+          "revision": 1,
+          "run_count": 1,
+          "runs": [
+            {
+              "destination": "/private/tmp/line-backup-acceptance-case-04/prod-root/backups/album-2024-05-13_to_2024-05-17_57",
+              "dispatch_state": "NOT_ATTEMPTED",
+              "intent_state": "INTENT_COMMITTED",
+              "owner_id": "WRITER-PROD-R3",
+              "run_id": "RUN-PROD-R3",
+              "workflow_outcome": null
+            }
+          ],
+          "verified_album_count": 0
+        },
+        "sha256": "59b15b5f3e64a685779ecf6316299e734f5fd0881fc7c61f7f2fc74973af4361"
+      },
+      "post_state_excerpt": {
+        "active_writer_id": "WRITER-PROD-R3",
+        "current_run_id": "RUN-PROD-R3",
+        "revision": 1,
+        "run_count": 1,
+        "runs": [
+          {
+            "destination": "/private/tmp/line-backup-acceptance-case-04/prod-root/backups/album-2024-05-13_to_2024-05-17_57",
+            "dispatch_state": "NOT_ATTEMPTED",
+            "intent_state": "INTENT_COMMITTED",
+            "owner_id": "WRITER-PROD-R3",
+            "run_id": "RUN-PROD-R3",
+            "workflow_outcome": null
+          }
+        ],
+        "verified_album_count": 0
+      },
+      "pre_state": {
+        "bytes": 160,
+        "durable": {
+          "bytes": 160,
+          "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/e-prod-pre-state.json",
+          "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+        },
+        "excerpt": {
+          "active_writer_id": null,
+          "current_run_id": null,
+          "revision": 0,
+          "run_count": 0,
+          "runs": [],
+          "verified_album_count": 0
+        },
+        "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+      },
+      "production_root": "/private/tmp/line-backup-acceptance-case-04/prod-root",
+      "program_hashes": {
+        "authority.py": {
+          "bytes": 8522,
+          "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+        },
+        "cli.py": {
+          "bytes": 4583,
+          "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+        },
+        "common.py": {
+          "bytes": 4021,
+          "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+        },
+        "status.py": {
+          "bytes": 7454,
+          "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+        },
+        "transaction.py": {
+          "bytes": 13835,
+          "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+        },
+        "verifier.py": {
+          "bytes": 15541,
+          "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+        }
+      },
+      "result_revision_field": 1,
+      "runs": {
+        "production_prepare_no_test_mode": {
+          "argv": [
+            "/usr/bin/python3",
+            "-m",
+            "line_backup_acceptance",
+            "transaction",
+            "prepare",
+            "--project-root",
+            "/private/tmp/line-backup-acceptance-case-04/prod-root",
+            "--config",
+            "/private/tmp/line-backup-acceptance-case-04/prod-root/config/line_backup_config.json",
+            "--run-log",
+            "/private/tmp/line-backup-acceptance-case-04/prod-root/state/run_log.md",
+            "--state",
+            "/private/tmp/line-backup-acceptance-case-04/prod-root/state/backup_state.json",
+            "--evidence-dir",
+            "/private/tmp/line-backup-acceptance-case-04/prod-root/evidence/prod-prepare",
+            "--run-id",
+            "RUN-PROD-R3",
+            "--owner-id",
+            "WRITER-PROD-R3",
+            "--group-key",
+            "line:jp.naver.line.mac:旻謙允禎成長日記",
+            "--start-date",
+            "2024-05-13",
+            "--end-date",
+            "2024-05-17",
+            "--expected-images",
+            "57",
+            "--destination",
+            "/private/tmp/line-backup-acceptance-case-04/prod-root/backups/album-2024-05-13_to_2024-05-17_57"
+          ],
+          "exit_code": 0,
+          "name": "e-production-prepare",
+          "record_dir_relative_to_evidence": "e-production-prepare",
+          "result": {
+            "exit_code": 0,
+            "message": "intent prepared",
+            "result": "PREPARED",
+            "revision": 1,
+            "run_id": "RUN-PROD-R3",
+            "schema_version": 1
+          }
+        }
+      },
+      "subcase": "e",
+      "test_mode_flag_present": false,
+      "verdict": "REPRODUCED_PRODUCTION_ACCEPTS_FIXTURE_INTENT"
+    }
+  ],
+  "verdict": "REPRODUCED_R3_PRECONDITION_GAPS",
+  "work": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup"
+}

@@ -1,0 +1,1 @@
+{"artifact_readback": "PASS_WITH_NO_STATE_WRITE", "error": "test mode requires one literal case root/state.json", "exit_code": 2, "failure_class": "INVALID_AUTHORITY", "filesystem_status": "NOT_RUN", "overall_status": "UNKNOWN", "registry_status": "NOT_RUN", "schema_version": 1, "source_status": "NOT_RUN", "state_status": "NOT_RUN"}

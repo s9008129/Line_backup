@@ -1,0 +1,39 @@
+{
+  "artifacts": [
+    {
+      "bytes": 0,
+      "path": ".line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "counter.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 437,
+      "path": "dispatcher.py",
+      "sha256": "b516d07338642cf81dff350d40989d3c3a3a199853c2425e647cc2b2d2d8ba2a"
+    },
+    {
+      "bytes": 139,
+      "path": "evidence/prepare-b/result.json",
+      "sha256": "06998b45dd9d1acfbfafd30a2d2878be7603dffb512de27436a69c1e6937e4c1"
+    },
+    {
+      "bytes": 189,
+      "path": "evidence/resume-b/result.json",
+      "sha256": "3acd4410d1f59eb93b6c3d64d5712a00d8faa15501ed6cdd4861a1b9c58e2595"
+    },
+    {
+      "bytes": 2359,
+      "path": "state.json",
+      "sha256": "2552531c318fcc7aadaa1b3adb0616e630f5b68327913e28a09ba1fdf04ef429"
+    }
+  ],
+  "files": 6,
+  "generated_at": "2026-09-16T11:50:31Z",
+  "root": "evidence/20260916-auto-verification/attempt-01/phase2-r2/case-root-durable",
+  "schema_version": 1,
+  "total_bytes": 3124
+}

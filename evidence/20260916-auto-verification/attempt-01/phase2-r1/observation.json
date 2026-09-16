@@ -1,0 +1,63 @@
+{
+  "case_root": "/private/tmp/line-backup-acceptance-case-01",
+  "claim": "normal-path crash window between dispatch side effect and barrier commit",
+  "dispatch_side_effect_count_after_fresh_resume": 2,
+  "entry": "python -m line_backup_acceptance transaction resume (real CLI)",
+  "final_run_fields": {
+    "dispatch_state": "SAVE_ALL_RETURNED",
+    "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+    "workflow_outcome": null
+  },
+  "first_dispatch_side_effect_observed": true,
+  "fresh_resume": {
+    "exit_code": 0,
+    "result": {
+      "dispatch_performed": true,
+      "exit_code": 0,
+      "message": "dispatcher returned; trigger remains independently unconfirmed",
+      "result": "DISPATCH_RETURNED",
+      "revision": 2,
+      "schema_version": 1
+    }
+  },
+  "kill": {
+    "pid": 50242,
+    "returncode": -9,
+    "signal": 9,
+    "stderr_tail": ""
+  },
+  "oracle": "independent dispatcher counter jsonl + persisted revision/intent fields",
+  "program_hashes": {
+    "authority.py": {
+      "bytes": 8522,
+      "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+    },
+    "cli.py": {
+      "bytes": 4583,
+      "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+    },
+    "common.py": {
+      "bytes": 4021,
+      "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+    },
+    "status.py": {
+      "bytes": 7454,
+      "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+    },
+    "transaction.py": {
+      "bytes": 13835,
+      "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+    },
+    "verifier.py": {
+      "bytes": 15541,
+      "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+    }
+  },
+  "state_at_kill": {
+    "dispatch_evidence": null,
+    "intent_state": "INTENT_COMMITTED",
+    "revision": 1,
+    "workflow_outcome": null
+  },
+  "verdict": "REPRODUCED_DUPLICATE_DISPATCH"
+}

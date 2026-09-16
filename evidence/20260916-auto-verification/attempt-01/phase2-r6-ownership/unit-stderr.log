@@ -1,0 +1,7 @@
+test_authority_mismatch_happens_without_state_read (tests.test_transaction_core.TransactionCoreTests) ... ok
+test_prepare_creates_one_owned_revision (tests.test_transaction_core.TransactionCoreTests) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.062s
+
+OK

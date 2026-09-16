@@ -1,0 +1,104 @@
+{
+  "claim": "drivers delete shared case roots (cross-test contamination)",
+  "destroyed_by_authority_driver": [
+    "/private/tmp/line-backup-acceptance-case-01",
+    "/private/tmp/line-backup-acceptance-case-02",
+    "/private/tmp/line-backup-acceptance-case-03",
+    "/private/tmp/line-backup-acceptance-case-04",
+    "/private/tmp/line-backup-acceptance-case-05",
+    "/private/tmp/line-backup-acceptance-case-06",
+    "/private/tmp/line-backup-acceptance-case-07",
+    "/private/tmp/line-backup-acceptance-case-08",
+    "/private/tmp/line-backup-acceptance-case-09",
+    "/private/tmp/line-backup-acceptance-case-10",
+    "/private/tmp/line-backup-acceptance-case-11",
+    "/private/tmp/line-backup-acceptance-case-12"
+  ],
+  "destroyed_by_unit_test": [
+    "/private/tmp/line-backup-acceptance-case-01",
+    "/private/tmp/line-backup-acceptance-case-02",
+    "/private/tmp/line-backup-acceptance-case-03",
+    "/private/tmp/line-backup-acceptance-case-04",
+    "/private/tmp/line-backup-acceptance-case-05",
+    "/private/tmp/line-backup-acceptance-case-06",
+    "/private/tmp/line-backup-acceptance-case-07",
+    "/private/tmp/line-backup-acceptance-case-08",
+    "/private/tmp/line-backup-acceptance-case-09",
+    "/private/tmp/line-backup-acceptance-case-10",
+    "/private/tmp/line-backup-acceptance-case-11",
+    "/private/tmp/line-backup-acceptance-case-12"
+  ],
+  "driver_exit_code": 0,
+  "entry": "python3 tests/authority_negative_driver.py / tests/test_transaction_core.py",
+  "markers_after_authority_driver": {
+    "/private/tmp/line-backup-acceptance-case-01": false,
+    "/private/tmp/line-backup-acceptance-case-02": false,
+    "/private/tmp/line-backup-acceptance-case-03": false,
+    "/private/tmp/line-backup-acceptance-case-04": false,
+    "/private/tmp/line-backup-acceptance-case-05": false,
+    "/private/tmp/line-backup-acceptance-case-06": false,
+    "/private/tmp/line-backup-acceptance-case-07": false,
+    "/private/tmp/line-backup-acceptance-case-08": false,
+    "/private/tmp/line-backup-acceptance-case-09": false,
+    "/private/tmp/line-backup-acceptance-case-10": false,
+    "/private/tmp/line-backup-acceptance-case-11": false,
+    "/private/tmp/line-backup-acceptance-case-12": false
+  },
+  "markers_after_unit_test": {
+    "/private/tmp/line-backup-acceptance-case-01": false,
+    "/private/tmp/line-backup-acceptance-case-02": false,
+    "/private/tmp/line-backup-acceptance-case-03": false,
+    "/private/tmp/line-backup-acceptance-case-04": false,
+    "/private/tmp/line-backup-acceptance-case-05": false,
+    "/private/tmp/line-backup-acceptance-case-06": false,
+    "/private/tmp/line-backup-acceptance-case-07": false,
+    "/private/tmp/line-backup-acceptance-case-08": false,
+    "/private/tmp/line-backup-acceptance-case-09": false,
+    "/private/tmp/line-backup-acceptance-case-10": false,
+    "/private/tmp/line-backup-acceptance-case-11": false,
+    "/private/tmp/line-backup-acceptance-case-12": false
+  },
+  "markers_before": {
+    "/private/tmp/line-backup-acceptance-case-01": true,
+    "/private/tmp/line-backup-acceptance-case-02": true,
+    "/private/tmp/line-backup-acceptance-case-03": true,
+    "/private/tmp/line-backup-acceptance-case-04": true,
+    "/private/tmp/line-backup-acceptance-case-05": true,
+    "/private/tmp/line-backup-acceptance-case-06": true,
+    "/private/tmp/line-backup-acceptance-case-07": true,
+    "/private/tmp/line-backup-acceptance-case-08": true,
+    "/private/tmp/line-backup-acceptance-case-09": true,
+    "/private/tmp/line-backup-acceptance-case-10": true,
+    "/private/tmp/line-backup-acceptance-case-11": true,
+    "/private/tmp/line-backup-acceptance-case-12": true
+  },
+  "oracle": "marker files in /private/tmp/line-backup-acceptance-case-01..12",
+  "program_hashes": {
+    "authority.py": {
+      "bytes": 8522,
+      "sha256": "a98964e374077d0bf7e81c8088a849c5d19fc9aa598ac02000f3bb414aec0f76"
+    },
+    "cli.py": {
+      "bytes": 4583,
+      "sha256": "a5bbbbf6bd6d39402660f219ed7732d41397a8c447716b9ddccac5c6ba1441a8"
+    },
+    "common.py": {
+      "bytes": 4021,
+      "sha256": "59a85c47b80f0c80a9beab5e1c6b4f277232ff24da0b68c52ab0895ed73a5ac5"
+    },
+    "status.py": {
+      "bytes": 7454,
+      "sha256": "20a95f7c24c0d7371ab4bf1ecfb56b841f2c8e9ba999995aaa543305bb4f9c36"
+    },
+    "transaction.py": {
+      "bytes": 13835,
+      "sha256": "c486edbeaa483fcc7ec5e6c2edf192a9f048aa5e99afdbbd513d2028e916ce13"
+    },
+    "verifier.py": {
+      "bytes": 15541,
+      "sha256": "b38ee6d5457a1a2f56917b403b05d95d499ff5518b22ab5ffe615326219dde29"
+    }
+  },
+  "unit_exit_code": 0,
+  "verdict": "REPRODUCED_CROSS_TEST_DELETION"
+}

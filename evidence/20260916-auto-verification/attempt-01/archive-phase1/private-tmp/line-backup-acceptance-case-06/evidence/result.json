@@ -1,0 +1,6 @@
+{
+  "exit_code": 4,
+  "message": "run/owner is not authoritative",
+  "result": "CONFLICT_OWNER_RUN",
+  "schema_version": 1
+}

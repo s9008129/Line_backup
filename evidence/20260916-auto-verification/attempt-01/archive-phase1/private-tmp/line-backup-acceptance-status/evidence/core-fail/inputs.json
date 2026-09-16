@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "line_backup_acceptance",
+    "status",
+    "evaluate",
+    "--input",
+    "/private/tmp/line-backup-acceptance-status/core-fail.input.json",
+    "--output",
+    "/private/tmp/line-backup-acceptance-status/core-fail.output.json"
+  ],
+  "id": "core-fail"
+}

@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "line_backup_acceptance",
+    "transaction",
+    "prepare",
+    "--project-root",
+    "/private/tmp/line-backup-acceptance-case-06",
+    "--state",
+    "/private/tmp/line-backup-acceptance-case-06/state.json",
+    "--test-mode",
+    "--evidence-dir",
+    "/private/tmp/line-backup-acceptance-case-06/evidence/b2-prepare",
+    "--run-id",
+    "RUN-R4C",
+    "--owner-id",
+    "WRITER-R4C",
+    "--group-key",
+    "line:jp.naver.line.mac:測試相簿-空JSON",
+    "--start-date",
+    "2024-07-01",
+    "--end-date",
+    "2024-07-02",
+    "--expected-images",
+    "1",
+    "--destination",
+    "/private/tmp/line-backup-acceptance-case-06/backups/album-c"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "env_extra": {},
+  "secrets_removed": true
+}

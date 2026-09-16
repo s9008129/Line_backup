@@ -1,0 +1,26 @@
+{
+  "active_writer_id": null,
+  "context_lock": null,
+  "current_run_id": null,
+  "revision": 7,
+  "runs": [
+    {
+      "destination": "/private/tmp/line-backup-acceptance-case-11/destination",
+      "events": [],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "owner_id": null,
+      "phase": "SAFE_ABORT",
+      "reconciliations": [],
+      "run_id": "RUN-CASE-11",
+      "runtime_errors": [],
+      "workflow_outcome": "SAFE_ABORT"
+    }
+  ],
+  "schema_version": 2,
+  "verified_albums": []
+}

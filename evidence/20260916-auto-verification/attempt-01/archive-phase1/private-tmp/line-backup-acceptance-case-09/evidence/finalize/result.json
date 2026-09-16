@@ -1,0 +1,8 @@
+{
+  "exit_code": 1,
+  "message": "injected read-back uncertainty after replacement",
+  "result": "READBACK_UNCERTAIN",
+  "revision": 3,
+  "schema_version": 1,
+  "terminal_committed": true
+}

@@ -1,0 +1,426 @@
+{
+  "artifacts": [
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": ".line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 24,
+      "exists": true,
+      "path": "counter.jsonl",
+      "sha256": "d5920612d8273e24218c7fb8fb199999a9102c8afae0f91b4d2feca66f163453"
+    },
+    {
+      "bytes": 364,
+      "exists": true,
+      "path": "dispatcher.py",
+      "sha256": "3e1b594115cee25d360e7b41492bb77947b9816bfbdc2821338bda0f0f6d3342"
+    },
+    {
+      "bytes": 154,
+      "exists": true,
+      "path": "evidence/result.json",
+      "sha256": "5db78d0bce8605cf3fe20b6a5a5a4c0ba99ae2020fae30bb3954073603066450"
+    },
+    {
+      "bytes": 160,
+      "exists": true,
+      "path": "input-state.json",
+      "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+    },
+    {
+      "bytes": 527,
+      "exists": true,
+      "path": "process-records/commit/argv.json",
+      "sha256": "2d12c5b8b7bce1b6a2b86c03f60a9bf51f78819af489c9812aba6c891ddafa88"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/commit/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/commit/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 126,
+      "exists": true,
+      "path": "process-records/commit/stdout.log",
+      "sha256": "7c82da0b0d381e6a2b551488a747a81c9ff22e5f06381a368e89168aa3c28040"
+    },
+    {
+      "bytes": 558,
+      "exists": true,
+      "path": "process-records/finalize/argv.json",
+      "sha256": "6b554699f8ae2b840c9d7d3f2440878fcbd72a2630fc935ef4f97da4244493c7"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/finalize/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/finalize/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 140,
+      "exists": true,
+      "path": "process-records/finalize/stdout.log",
+      "sha256": "396c36459d0b5489004abe495dbd8ab42ab2558435851dac1575ea0cf09b13a4"
+    },
+    {
+      "bytes": 642,
+      "exists": true,
+      "path": "process-records/prepare/argv.json",
+      "sha256": "6874c8e253f5d288ec819d4cbf73a10cc2f7dde2d7e438ebe1c27db2eef49be3"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/prepare/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/prepare/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 130,
+      "exists": true,
+      "path": "process-records/prepare/stdout.log",
+      "sha256": "6ac1cb9c20e3dd73395622330adec4924da5037718fe0a1f2ebf3c358734d6b1"
+    },
+    {
+      "bytes": 603,
+      "exists": true,
+      "path": "process-records/resume/argv.json",
+      "sha256": "2aeebd6079cc9142fdc85fcfdb549bb2dfc8c924e99cd2a89dda700523c0ab11"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/resume/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/resume/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 189,
+      "exists": true,
+      "path": "process-records/resume/stdout.log",
+      "sha256": "d52133a9a77161f84ddcc1be9986799d0a13fc4a5998e77564d7c8f84b409c7b"
+    },
+    {
+      "bytes": 3044,
+      "exists": true,
+      "path": "state.json",
+      "sha256": "437d99fa782110d955f6b004068afd8fd6b94bdeac2fe2e2023266d53e8b11c2"
+    },
+    {
+      "bytes": 108,
+      "exists": true,
+      "path": "verification.json",
+      "sha256": "1af764caf785db7dee31db45b5419d607d08abd9ca60631f60b5fc8fefef02fd"
+    }
+  ],
+  "case_id": "01",
+  "final": {
+    "active_writer_id": null,
+    "bytes": {
+      "bytes": 3044,
+      "exists": true,
+      "sha256": "437d99fa782110d955f6b004068afd8fd6b94bdeac2fe2e2023266d53e8b11c2"
+    },
+    "context_lock": null,
+    "counter_lines": 1,
+    "current_run_id": null,
+    "intent_axes": {
+      "dispatch_outcome": "RETURNED",
+      "dispatch_state": "SAVE_ALL_RETURNED",
+      "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+      "save_all_retry_allowed": false,
+      "trigger_outcome": "UNKNOWN"
+    },
+    "revision": 4,
+    "run": {
+      "album_id": null,
+      "checkpoint": {
+        "at": "2026-09-16T08:33:02Z",
+        "evidence": "terminal finalization",
+        "phase": "VERIFIED"
+      },
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-01/destination",
+      "destination_initially_empty": true,
+      "dispatch_evidence": {
+        "coordinate_invocation_attempted": true,
+        "outcome": "RETURNED",
+        "save_all_click_count": 1
+      },
+      "dispatch_state": "SAVE_ALL_RETURNED",
+      "events": [],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "intent": {
+        "action_id": "ACTION-RUN-CASE-01",
+        "calibration": {
+          "confidence": "HIGH",
+          "dot_spacing": 1.0,
+          "ellipsis": [
+            1,
+            1
+          ],
+          "evidence": "test-mode adapter calibration fixture; no GUI authorization",
+          "observed_at": "2026-09-16T08:33:01Z",
+          "save_all_point": [
+            1,
+            1
+          ],
+          "screenshot_height": 1,
+          "screenshot_width": 1
+        },
+        "committed_at": "2026-09-16T08:33:01Z",
+        "destination": "/private/tmp/line-backup-acceptance-case-01/destination",
+        "dispatch_outcome": "RETURNED",
+        "dispatch_state": "SAVE_ALL_RETURNED",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+        "owner_execution_id": "WRITER-CASE-01",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "UNKNOWN"
+      },
+      "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+      "mode": "backup_one",
+      "observed_title": "旻謙允禎成長日記",
+      "owner_id": "WRITER-CASE-01",
+      "phase": "VERIFIED",
+      "reconciliations": [],
+      "run_id": "RUN-CASE-01",
+      "runtime_errors": [],
+      "source_provenance": "test fixture",
+      "title_confidence": "HIGH",
+      "verification": {
+        "filesystem_status": "PASS",
+        "recognized_images": 57,
+        "regular_files": 57,
+        "zero_byte_files": 0
+      },
+      "workflow_outcome": "VERIFIED"
+    },
+    "verified_albums": [
+      {
+        "destinations": [
+          "/private/tmp/line-backup-acceptance-case-01/destination"
+        ],
+        "evidence": "terminal finalization",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "source_kind": "filesystem_verification",
+        "verified_run_id": "RUN-CASE-01"
+      }
+    ]
+  },
+  "independent_oracle_match": true,
+  "initial": {
+    "active_writer_id": null,
+    "bytes": {
+      "bytes": 160,
+      "exists": true,
+      "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+    },
+    "context_lock": null,
+    "counter_lines": 0,
+    "current_run_id": null,
+    "intent_axes": {
+      "dispatch_outcome": null,
+      "dispatch_state": null,
+      "intent_state": null,
+      "save_all_retry_allowed": null,
+      "trigger_outcome": null
+    },
+    "revision": 0,
+    "run": {},
+    "verified_albums": []
+  },
+  "processes": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "prepare",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--owner-id",
+        "WRITER-CASE-01",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-01/destination"
+      ],
+      "exit_code": 0,
+      "result": {
+        "exit_code": 0,
+        "message": "intent prepared",
+        "result": "PREPARED",
+        "revision": 1,
+        "run_id": "RUN-CASE-01",
+        "schema_version": 1
+      },
+      "stderr": "/private/tmp/line-backup-acceptance-case-01/process-records/prepare/stderr.log",
+      "stdout": "/private/tmp/line-backup-acceptance-case-01/process-records/prepare/stdout.log"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "resume",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--expected-revision",
+        "1",
+        "--expected-owner-id",
+        "WRITER-CASE-01",
+        "--dispatcher",
+        "/private/tmp/line-backup-acceptance-case-01/dispatcher.py",
+        "--dispatch-counter",
+        "/private/tmp/line-backup-acceptance-case-01/counter.jsonl"
+      ],
+      "exit_code": 0,
+      "result": {
+        "dispatch_performed": true,
+        "exit_code": 0,
+        "message": "dispatcher returned; trigger remains independently unconfirmed",
+        "result": "DISPATCH_RETURNED",
+        "revision": 2,
+        "schema_version": 1
+      },
+      "stderr": "/private/tmp/line-backup-acceptance-case-01/process-records/resume/stderr.log",
+      "stdout": "/private/tmp/line-backup-acceptance-case-01/process-records/resume/stdout.log"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "commit",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-01",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-01/verification.json"
+      ],
+      "exit_code": 0,
+      "result": {
+        "exit_code": 0,
+        "message": "verification committed",
+        "result": "COMMITTED_VERIFICATION",
+        "revision": 3,
+        "schema_version": 1
+      },
+      "stderr": "/private/tmp/line-backup-acceptance-case-01/process-records/commit/stderr.log",
+      "stdout": "/private/tmp/line-backup-acceptance-case-01/process-records/commit/stdout.log"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-01/evidence",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-01",
+        "--expected-revision",
+        "3",
+        "--expected-owner-id",
+        "WRITER-CASE-01",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-01/verification.json",
+        "--outcome",
+        "VERIFIED"
+      ],
+      "exit_code": 0,
+      "result": {
+        "exit_code": 0,
+        "message": "terminal outcome committed",
+        "outcome": "VERIFIED",
+        "result": "FINALIZED",
+        "revision": 4,
+        "schema_version": 1
+      },
+      "stderr": "/private/tmp/line-backup-acceptance-case-01/process-records/finalize/stderr.log",
+      "stdout": "/private/tmp/line-backup-acceptance-case-01/process-records/finalize/stdout.log"
+    }
+  ],
+  "schema_version": 1
+}

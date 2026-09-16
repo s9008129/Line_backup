@@ -1,0 +1,24 @@
+{
+  "artifacts": [
+    {
+      "bytes": 379,
+      "path": "config/line_backup_config.json",
+      "sha256": "8a72895c924765a8c744d078c7db0d3699d580aae0157c26df892a1195ad2ffb"
+    },
+    {
+      "bytes": 3141,
+      "path": "state/backup_state.json",
+      "sha256": "1b546e5e6200887c476851272b7adb3f6b3ecd353500bdf862193767598ed0ac"
+    },
+    {
+      "bytes": 16,
+      "path": "state/run_log.md",
+      "sha256": "03fc29f23b9d08310e6dc8c9b6b98f6e1b8067a3a383c68c41000a7865c83071"
+    }
+  ],
+  "files": 3,
+  "generated_at": "2026-09-16T11:53:13Z",
+  "root": "evidence/20260916-auto-verification/attempt-01/phase2-r7/verifier-root-durable",
+  "schema_version": 1,
+  "total_bytes": 3536
+}

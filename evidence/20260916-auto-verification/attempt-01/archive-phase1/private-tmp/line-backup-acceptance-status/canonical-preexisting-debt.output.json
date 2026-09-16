@@ -1,0 +1,27 @@
+{
+  "baseline_delta": null,
+  "blocker": "DOCUMENTATION_RETENTION_HEALTH/FAIL/PRE_EXISTING_REPOSITORY_FAILURE",
+  "checks": [
+    {
+      "BASELINE_REQUIRED": "NO",
+      "CHECK_ID": "DOCUMENTATION_RETENTION_HEALTH",
+      "CHECK_RESULT": "FAIL",
+      "CLOSURE_GATE": "HARD_CLEAN",
+      "EVIDENCE_ROLE": "REPOSITORY_HEALTH",
+      "FAILURE_CLASSIFICATION_RULE": "pre-existing missing retention evidence",
+      "GOAL_CRITICALITY": "SUPPORTING",
+      "WAIVER_ALLOWED": "YES",
+      "WAIVER_AUTHORITY": "Project owner",
+      "WAIVER_STATUS": "NOT_REQUESTED"
+    }
+  ],
+  "core_acceptance_status": "PASS",
+  "failure_class": "PRE_EXISTING_REPOSITORY_FAILURE",
+  "implementation_status": "COMPLETE",
+  "independent_acceptance_status": "PENDING",
+  "primary_outcome_status": "ACHIEVED",
+  "required_verification_status": "INCOMPLETE",
+  "schema_version": 2,
+  "task_closure_status": "PENDING_REQUIRED_VERIFICATION",
+  "waiver": null
+}

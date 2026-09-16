@@ -1,0 +1,54 @@
+{
+  "after": {
+    "config": {
+      "bytes": 370,
+      "sha256": "6ebf9b5be18ec35c629906551ff6c041bed7e376b973e174b912f819e8e63ed1"
+    },
+    "root": {
+      "bytes": 1670,
+      "sha256": "ff522bc4c04323776055ca2f62cd804c741235f4b3218b40a1f43a02b8345fdf"
+    }
+  },
+  "before": {
+    "config": {
+      "bytes": 370,
+      "sha256": "6ebf9b5be18ec35c629906551ff6c041bed7e376b973e174b912f819e8e63ed1"
+    },
+    "root": {
+      "bytes": 1670,
+      "sha256": "ff522bc4c04323776055ca2f62cd804c741235f4b3218b40a1f43a02b8345fdf"
+    }
+  },
+  "fixture_builder_expected": {
+    "artifact_readback": "FAIL_WITH_ERROR_ARTIFACT",
+    "exit_code": 1,
+    "failure_class": "INTERNAL_ARTIFACT_ERROR",
+    "filesystem_status": "PASS",
+    "overall_status": "UNKNOWN",
+    "registry_status": "NOT_RUN",
+    "source_status": "NOT_RUN",
+    "state_status": "UNKNOWN"
+  },
+  "manifest_expected": {
+    "artifact_readback": "FAIL_WITH_ERROR_ARTIFACT",
+    "exit_code": 1,
+    "failure_class": "INTERNAL_ARTIFACT_ERROR",
+    "filesystem_status": "PASS",
+    "overall_status": "UNKNOWN",
+    "registry_status": "NOT_RUN",
+    "source_status": "NOT_RUN",
+    "state_status": "UNKNOWN"
+  },
+  "manifest_ok": true,
+  "match": true,
+  "observed": {
+    "artifact_readback": "FAIL_WITH_ERROR_ARTIFACT",
+    "exit_code": 1,
+    "failure_class": "INTERNAL_ARTIFACT_ERROR",
+    "filesystem_status": "PASS",
+    "overall_status": "UNKNOWN",
+    "registry_status": "NOT_RUN",
+    "source_status": "NOT_RUN",
+    "state_status": "UNKNOWN"
+  }
+}

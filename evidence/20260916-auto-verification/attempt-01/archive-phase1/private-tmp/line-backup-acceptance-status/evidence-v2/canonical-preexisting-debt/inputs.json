@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "line_backup_acceptance",
+    "status",
+    "evaluate",
+    "--input",
+    "/private/tmp/line-backup-acceptance-status/canonical-preexisting-debt.input.json",
+    "--output",
+    "/private/tmp/line-backup-acceptance-status/canonical-preexisting-debt.output.json"
+  ],
+  "input": {
+    "scenario": "canonical-preexisting-debt",
+    "checks": [
+      {
+        "CHECK_ID": "DOCUMENTATION_RETENTION_HEALTH",
+        "GOAL_CRITICALITY": "SUPPORTING",
+        "EVIDENCE_ROLE": "REPOSITORY_HEALTH",
+        "CLOSURE_GATE": "HARD_CLEAN",
+        "BASELINE_REQUIRED": "NO",
+        "FAILURE_CLASSIFICATION_RULE": "pre-existing missing retention evidence",
+        "WAIVER_ALLOWED": "YES",
+        "WAIVER_AUTHORITY": "Project owner",
+        "CHECK_RESULT": "FAIL",
+        "WAIVER_STATUS": "NOT_REQUESTED"
+      }
+    ],
+    "failure_class": "PRE_EXISTING_REPOSITORY_FAILURE"
+  }
+}

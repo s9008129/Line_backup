@@ -1,0 +1,39 @@
+{
+  "artifacts": [
+    {
+      "bytes": 0,
+      "path": ".line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 126,
+      "path": "counter.jsonl",
+      "sha256": "e7b19ee40ab99055a5671380cfb49b553b3c89e0096e0d85b9983a05241576ad"
+    },
+    {
+      "bytes": 439,
+      "path": "dispatcher-blocking.py",
+      "sha256": "cf3ed726ccb1ad9117ff140eaf2d6681aa10b5bd1779bca9bbcec6a9f143eda8"
+    },
+    {
+      "bytes": 437,
+      "path": "dispatcher-second.py",
+      "sha256": "b516d07338642cf81dff350d40989d3c3a3a199853c2425e647cc2b2d2d8ba2a"
+    },
+    {
+      "bytes": 203,
+      "path": "evidence/second/result.json",
+      "sha256": "ddb5f4c53dbb552295c90156f4e24711e1303e2187cb74e75077591d4a53dd37"
+    },
+    {
+      "bytes": 2432,
+      "path": "state.json",
+      "sha256": "4450dcd35fec501a50b278a1922711995d9b7ce83e37e91a6f2f155b057fb1ad"
+    }
+  ],
+  "files": 6,
+  "generated_at": "2026-09-16T11:49:26Z",
+  "root": "evidence/20260916-auto-verification/attempt-01/phase2-r1/case-root-durable",
+  "schema_version": 1,
+  "total_bytes": 3637
+}

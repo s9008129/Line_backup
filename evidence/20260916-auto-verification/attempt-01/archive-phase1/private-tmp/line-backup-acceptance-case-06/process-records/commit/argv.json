@@ -1,0 +1,22 @@
+[
+  "/usr/bin/python3",
+  "-m",
+  "line_backup_acceptance",
+  "transaction",
+  "commit",
+  "--project-root",
+  "/private/tmp/line-backup-acceptance-case-06",
+  "--state",
+  "/private/tmp/line-backup-acceptance-case-06/state.json",
+  "--evidence-dir",
+  "/private/tmp/line-backup-acceptance-case-06/evidence",
+  "--test-mode",
+  "--run-id",
+  "RUN-CASE-06",
+  "--expected-revision",
+  "1",
+  "--expected-owner-id",
+  "WRITER-CASE-06-WRONG",
+  "--verification-json",
+  "/private/tmp/line-backup-acceptance-case-06/verification.json"
+]

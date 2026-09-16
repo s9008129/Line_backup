@@ -1,0 +1,8 @@
+{
+  "dispatch_performed": true,
+  "exit_code": 1,
+  "message": "dispatcher failed",
+  "result": "DISPATCHER_CRASH_AFTER_SIDE_EFFECT",
+  "revision": 2,
+  "schema_version": 1
+}

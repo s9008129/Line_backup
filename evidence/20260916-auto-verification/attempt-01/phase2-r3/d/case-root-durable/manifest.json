@@ -1,0 +1,24 @@
+{
+  "artifacts": [
+    {
+      "bytes": 0,
+      "path": ".line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 134,
+      "path": "evidence/d-ambiguous/result.json",
+      "sha256": "5e1fe46d95bc5be889777938355f44451c3dea6098ae0b65b2c12bbd694367a4"
+    },
+    {
+      "bytes": 2905,
+      "path": "state.json",
+      "sha256": "392b3a3946b2969a71e5091263fa8f3137b0df5fd51949a37ba393b5cc4fd25d"
+    }
+  ],
+  "files": 3,
+  "generated_at": "2026-09-16T12:05:50Z",
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r3/d/case-root-durable",
+  "schema_version": 1,
+  "total_bytes": 3039
+}

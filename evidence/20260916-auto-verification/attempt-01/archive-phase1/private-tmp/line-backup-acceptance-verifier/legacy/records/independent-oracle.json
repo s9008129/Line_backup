@@ -1,0 +1,54 @@
+{
+  "after": {
+    "config": {
+      "bytes": 368,
+      "sha256": "1fd769a3b4b53b46e3d0e5c4b608b6cb74039398eed1efc37e7f5e9916623e3e"
+    },
+    "root": {
+      "bytes": 1127,
+      "sha256": "f16d5707b5b44e07f791d31a5a5dad50547f4a070a55a1c0c153ab3412633851"
+    }
+  },
+  "before": {
+    "config": {
+      "bytes": 368,
+      "sha256": "1fd769a3b4b53b46e3d0e5c4b608b6cb74039398eed1efc37e7f5e9916623e3e"
+    },
+    "root": {
+      "bytes": 1127,
+      "sha256": "f16d5707b5b44e07f791d31a5a5dad50547f4a070a55a1c0c153ab3412633851"
+    }
+  },
+  "fixture_builder_expected": {
+    "artifact_readback": "PASS",
+    "exit_code": 4,
+    "failure_class": "INPUT_PROVENANCE_LIMITED",
+    "filesystem_status": "PASS",
+    "overall_status": "UNKNOWN",
+    "registry_status": "PASS",
+    "source_status": "UNRESOLVED",
+    "state_status": "LEGACY_PROVENANCE_LIMITED"
+  },
+  "manifest_expected": {
+    "artifact_readback": "PASS",
+    "exit_code": 4,
+    "failure_class": "INPUT_PROVENANCE_LIMITED",
+    "filesystem_status": "PASS",
+    "overall_status": "UNKNOWN",
+    "registry_status": "PASS",
+    "source_status": "UNRESOLVED",
+    "state_status": "LEGACY_PROVENANCE_LIMITED"
+  },
+  "manifest_ok": true,
+  "match": true,
+  "observed": {
+    "artifact_readback": "PASS",
+    "exit_code": 4,
+    "failure_class": "INPUT_PROVENANCE_LIMITED",
+    "filesystem_status": "PASS",
+    "overall_status": "UNKNOWN",
+    "registry_status": "PASS",
+    "source_status": "UNRESOLVED",
+    "state_status": "LEGACY_PROVENANCE_LIMITED"
+  }
+}

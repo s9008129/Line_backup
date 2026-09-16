@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "line_backup_acceptance",
+    "status",
+    "evaluate",
+    "--input",
+    "/private/tmp/line-backup-acceptance-status-r6/a2-scenario-done-contradictory-facts/input.json",
+    "--output",
+    "/private/tmp/line-backup-acceptance-status-r6/a2-scenario-done-contradictory-facts/output.json"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "env_extra": {},
+  "secrets_removed": true
+}

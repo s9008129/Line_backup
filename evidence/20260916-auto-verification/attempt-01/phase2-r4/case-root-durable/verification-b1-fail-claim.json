@@ -1,0 +1,18 @@
+{
+  "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-b",
+  "failure_class": "INPUT_NEGATIVE",
+  "filesystem_status": "FAIL",
+  "fingerprint": {
+    "end_date": "2024-06-02",
+    "expected_images": 3,
+    "start_date": "2024-06-01"
+  },
+  "group_key": "line:jp.naver.line.mac:測試相簿-FAIL-宣稱",
+  "mode": "verify_only",
+  "produced_by": "fabricated fixture whose content claims total failure",
+  "recognized_images": 0,
+  "regular_files": 0,
+  "run_id": "RUN-R4B",
+  "schema_version": 1,
+  "zero_byte_files": 12
+}

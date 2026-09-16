@@ -1,0 +1,12 @@
+{
+  "artifact_readback": "FAIL_WITH_ERROR_ARTIFACT",
+  "error": "injected evidence manifest read-back failure",
+  "exit_code": 1,
+  "failure_class": "INTERNAL_ARTIFACT_ERROR",
+  "filesystem_status": "PASS",
+  "overall_status": "UNKNOWN",
+  "registry_status": "NOT_RUN",
+  "schema_version": 1,
+  "source_status": "NOT_RUN",
+  "state_status": "UNKNOWN"
+}
