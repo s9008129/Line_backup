@@ -1,36 +1,39 @@
 #!/usr/bin/env python3
 """Phase 2 / R6 (status half) — `status evaluate` scenario table as self-certification.
 
-CLAIM  The real `status evaluate` entry routes the six Status-Contract-v2 axes from a hard-coded
-       `scenario` -> status-tuple table instead of from facts: `{"scenario": "done"}` with zero
-       facts (no checks, no evidence fields) returns the canned
+CLAIM (Rev14, reproduced pre-fix in attempt-01)  The real `status evaluate` entry routed the six
+       Status-Contract-v2 axes from a hard-coded `scenario` -> status-tuple table instead of from
+       facts: `{"scenario": "done"}` with zero facts returned the canned
        ACHIEVED/COMPLETE/PASS/PASS/PASS + DONE, and `{"scenario": "baseline-unchanged"}` pointing
-       at a nonexistent baseline artifact still returns required-verification PASS +
-       READY_FOR_INDEPENDENT_ACCEPTANCE. The generic (non-scenario) branch derives closure from
-       the supplied fact fields, so the same payload without `scenario` does not claim DONE.
+       at a nonexistent baseline artifact still returned required-verification PASS +
+       READY_FOR_INDEPENDENT_ACCEPTANCE -- indistinguishable from an evidence-grounded answer.
 ENTRY  Real CLI `python3 -m line_backup_acceptance status evaluate --input X --output Y`, one
        fresh process per subcase; no test flags, no in-process import of the evaluator.
-ORACLE The written output JSON: canned-tuple equality, identical routing axes across a minimal and
-       a contradictory `done` payload, a nonexistent baseline artifact recorded as absent, a
-       control group (`legacy-no-source` -> CORE_ACCEPTANCE_BLOCKED), and generic-branch controls
-       with the same facts supplied as `primary_outcome_status`/... fields.
-DECIDE A confirmed self-certified DONE/READY answer must not be accepted as status evidence; only
-       evidence-grounded facts may drive closure, so the scenario table stays fixture-only until
-       evaluated facts (never scenario names) determine the routing.
+ORACLE The written output JSON: canned-tuple equality, the emitted
+       `evidence_basis == "scenario_table_non_acceptance"` label on every scenario row (Rev15
+       §15.4 F5), a nonexistent baseline artifact recorded as absent, a control group
+       (`legacy-no-source` -> CORE_ACCEPTANCE_BLOCKED), and generic-branch controls with the same
+       facts supplied as `primary_outcome_status`/... fields.
+DECIDE Post-fix safe verdict: every scenario-table answer is explicitly labelled
+       `scenario_table_non_acceptance`, so a canned DONE/READY can no longer be mistaken for
+       acceptance evidence; the generic branch (facts, unmarked) stays fact-driven. A scenario row
+       that loses the label, or a scenario with illegal enum output, is TASK_REGRESSION.
 """
 from __future__ import annotations
 
 import argparse
 import json
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import harness as H  # noqa: E402
 from harness import (durable_copy_tree, program_hashes, read_json, run_product, sha256_bytes, write_json,
                      write_tree_manifest)
 
+DRIVER_ID = "phase2-r6-status-selfcert"
+EVIDENCE_BASIS = "scenario_table_non_acceptance"
 WORK = Path(__file__).resolve().parents[2]
 SRC = WORK / "src"
 DEFAULT_CASE_ROOT = Path("/private/tmp/line-backup-acceptance-status-r6")
@@ -189,9 +192,14 @@ def compare(records: dict, missing_ready: Path) -> dict:
             "interpretation": "scenario 'done' returns the canned tuple regardless of facts; only passthrough echo fields (failure_class/baseline_delta) differ",
         },
         "scenario_vs_generic_legacy": {
+            "status_axes_identical": c["statuses"] == c2a["statuses"] == LEGACY_TUPLE,
+            "scenario_output_labelled": (c["output"] or {}).get("evidence_basis") == EVIDENCE_BASIS,
+            "generic_output_unlabelled": "evidence_basis" not in (c2a["output"] or {}),
+            "scenario_output_sha256": c_sha, "generic_output_sha256": c2a_sha,
             "output_byte_identical": c_sha == c2a_sha and c["output_digest"]["exists"] and c2a["output_digest"]["exists"],
-            "shared_output_sha256": c_sha,
-            "interpretation": "the generic branch reproduces the identical row when every axis is supplied as a fact -> the scenario table is a canned substitute for facts",
+            "interpretation": ("post-fix the scenario row and the facts-driven generic row share the same axes, but only the "
+                               "scenario row carries evidence_basis=scenario_table_non_acceptance, so a canned row cannot pass "
+                               "as an evidence-grounded answer"),
         },
         "scenario_vs_generic_done_payload": {
             "a2_statuses": list(a2["statuses"] or []), "c2b_statuses": list(c2b["statuses"] or []),
@@ -222,41 +230,50 @@ def main() -> int:
     case_root, ev = Path(ns.case_root), Path(ns.evidence_dir)
     guard(case_root, ev, ns.allow_nonempty_evidence)
 
-    if case_root.exists():
-        shutil.rmtree(case_root)
-    case_root.mkdir(parents=True)
+    H.ensure_owned_root(case_root, DRIVER_ID)
+    H.reset_owned_content(case_root)
     specs = subcase_specs(case_root)
     records = {spec_id: run_subcase(spec_id, spec, case_root) for spec_id, spec in specs.items()}
     missing_ready = case_root / "artifacts" / "baseline-unchanged-missing.baseline.json"
     comparisons = compare(records, missing_ready)
     hashes = program_hashes()
 
+    def labelled(record: dict) -> bool:
+        return (record.get("output") or {}).get("evidence_basis") == EVIDENCE_BASIS
+
     decisive = {
-        "a1_scenario_done_zero_facts_is_canned_DONE": records["a1-scenario-done-minimal"]["match"] and
-            records["a1-scenario-done-minimal"]["statuses"] == DONE_TUPLE,
-        "a2_scenario_done_contradictory_facts_still_canned_DONE": records["a2-scenario-done-contradictory-facts"]["match"] and
+        "a1_scenario_done_zero_facts_is_canned_DONE_marked_non_acceptance": records["a1-scenario-done-minimal"]["match"] and
+            records["a1-scenario-done-minimal"]["statuses"] == DONE_TUPLE and labelled(records["a1-scenario-done-minimal"]),
+        "a2_scenario_done_contradictory_facts_still_canned_DONE_marked_non_acceptance": records["a2-scenario-done-contradictory-facts"]["match"] and
             records["a2-scenario-done-contradictory-facts"]["statuses"] == DONE_TUPLE and
-            comparisons["a1_vs_a2"]["status_axes_identical"],
-        "b_missing_baseline_artifact_still_READY_FOR_INDEPENDENT_ACCEPTANCE": records["b-scenario-baseline-unchanged-missing-artifact"]["match"] and
+            comparisons["a1_vs_a2"]["status_axes_identical"] and labelled(records["a2-scenario-done-contradictory-facts"]),
+        "b_missing_baseline_artifact_marked_non_acceptance": records["b-scenario-baseline-unchanged-missing-artifact"]["match"] and
             records["b-scenario-baseline-unchanged-missing-artifact"]["statuses"] == READY_TUPLE and
-            records["b-scenario-baseline-unchanged-missing-artifact"].get("baseline_artifact_exists_at_run") is False,
-        "c_legacy_no_source_control_is_CORE_ACCEPTANCE_BLOCKED": records["c-scenario-legacy-no-source"]["match"] and
-            records["c-scenario-legacy-no-source"]["statuses"] == LEGACY_TUPLE,
-        "c2a_generic_branch_reproduces_legacy_row_from_facts_byte_identical": records["c2a-generic-legacy-no-source-facts"]["match"] and
-            comparisons["scenario_vs_generic_legacy"]["output_byte_identical"],
-        "c2b_generic_branch_same_facts_without_scenario_is_not_DONE": records["c2b-generic-done-payload-without-scenario"]["match"] and
-            comparisons["scenario_vs_generic_done_payload"]["scenario_key_flips_closure_to_DONE"],
+            records["b-scenario-baseline-unchanged-missing-artifact"].get("baseline_artifact_exists_at_run") is False and
+            labelled(records["b-scenario-baseline-unchanged-missing-artifact"]),
+        "c_legacy_no_source_control_is_CORE_ACCEPTANCE_BLOCKED_marked": records["c-scenario-legacy-no-source"]["match"] and
+            records["c-scenario-legacy-no-source"]["statuses"] == LEGACY_TUPLE and
+            labelled(records["c-scenario-legacy-no-source"]),
+        "c2a_generic_branch_reproduces_same_axes_and_only_scenario_is_labelled": records["c2a-generic-legacy-no-source-facts"]["match"] and
+            comparisons["scenario_vs_generic_legacy"]["status_axes_identical"] and
+            comparisons["scenario_vs_generic_legacy"]["scenario_output_labelled"] and
+            comparisons["scenario_vs_generic_legacy"]["generic_output_unlabelled"],
+        "c2b_generic_branch_is_fact_driven_and_not_scenario_labelled": records["c2b-generic-done-payload-without-scenario"]["match"] and
+            comparisons["scenario_vs_generic_done_payload"]["scenario_key_flips_closure_to_DONE"] and
+            "evidence_basis" not in (records["c2b-generic-done-payload-without-scenario"].get("output") or {}),
     }
     failed = sorted(key for key, value in decisive.items() if not value)
-    verdict = "REPRODUCED_R6_STATUS_SELF_CERTIFICATION" if not failed else "NOT_REPRODUCED_R6_STATUS_SELF_CERTIFICATION"
+    verdict = "SAFE_R6_STATUS_SCENARIO_LABELLED_NON_ACCEPTANCE" if not failed else "REGRESSION_OR_UNEXPECTED"
     version = subprocess.run(["/usr/bin/python3", "--version"], capture_output=True, text=True, check=False)
 
     observation = {
         "schema_version": 1, "task": "phase2-r6-status-selfcert", "verdict": verdict, "failed_oracles": failed,
-        "claim": "the real status-evaluate entry answers from a hard-coded scenario->tuple table, not from facts or evidence",
+        "claim": "post-fix: every scenario-table answer is labelled non-acceptance, so a canned DONE/READY cannot be mistaken for evidence",
         "entry": "python3 -m line_backup_acceptance status evaluate --input X --output Y (real CLI, one fresh process per subcase)",
-        "oracle": "written output JSON (six status axes + blocker) compared against canned tuples, missing baseline artifact asserted absent, and generic-branch controls with the same facts supplied as primary_outcome_status/... fields",
-        "decision": "DONE / READY_FOR_INDEPENDENT_ACCEPTANCE answers produced by the scenario table must not be accepted as status evidence; routing must be grounded in evaluated facts (the generic branch is fact-driven but still trusts caller-asserted axes without evidence, so evidence grounding remains a separate gap)",
+        "oracle": "written output JSON (six status axes + blocker + evidence_basis) compared against canned tuples, missing baseline artifact asserted absent, and generic-branch controls with the same facts supplied as primary_outcome_status/... fields",
+        "decision": "scenario rows must carry evidence_basis=scenario_table_non_acceptance; the generic branch stays fact-driven and unlabelled; the residual observation that the generic branch trusts caller-asserted axes without evidence is recorded but non-gating (Stage 04/05 must verify facts against evidence separately)",
+        "pre_fix": {"attempt": "evidence/20260916-auto-verification/attempt-01/phase2-r6-status",
+                    "verdict": "REPRODUCED_R6_STATUS_SELF_CERTIFICATION"},
         "case_root": str(case_root), "workdir_is_private_tmp": str(case_root.resolve()).startswith("/private/tmp/"),
         "product_python": "/usr/bin/python3", "product_python_version": (version.stdout + version.stderr).strip(),
         "driver_python_version": sys.version.splitlines()[0],
