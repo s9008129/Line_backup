@@ -1,0 +1,159 @@
+{
+  "artifacts": [
+    {
+      "bytes": 221,
+      "path": ".driver-ownership.json",
+      "sha256": "265252dd6de1d3e920a8d7e66b419e769e62ae7b78c55d7d6d7386c3aecbbe5e"
+    },
+    {
+      "bytes": 269,
+      "path": "binding-fixture.json",
+      "sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c"
+    },
+    {
+      "bytes": 379,
+      "path": "config/line_backup_config.json",
+      "sha256": "c3725962a04d06b42207befe879dc2a14c4a45d6639e2babb7c08c931f470304"
+    },
+    {
+      "bytes": 222,
+      "path": "driver-records/r6-ownership/probe.json",
+      "sha256": "a9680b44fb92bff4d5f1e0833f246658c0594d09765d11c31060b06bb35cf455"
+    },
+    {
+      "bytes": 211,
+      "path": "evidence/finalize/result.json",
+      "sha256": "3899faa1acb14f8d936f3d64f31a20689b4d0673ddbafeb9779f7315895f58da"
+    },
+    {
+      "bytes": 17124,
+      "path": "evidence/genuine-chain/inventory-1.json",
+      "sha256": "2ca95017eb467101c09902c272fd961d2c9be62fe414e820829a509f1630e496"
+    },
+    {
+      "bytes": 17124,
+      "path": "evidence/genuine-chain/inventory-2.json",
+      "sha256": "2ca95017eb467101c09902c272fd961d2c9be62fe414e820829a509f1630e496"
+    },
+    {
+      "bytes": 17124,
+      "path": "evidence/genuine-chain/inventory-3.json",
+      "sha256": "2ca95017eb467101c09902c272fd961d2c9be62fe414e820829a509f1630e496"
+    },
+    {
+      "bytes": 19029,
+      "path": "evidence/genuine-chain/result.json",
+      "sha256": "a8b1667873685761952d7d49c879c45e1cd26c3e6f78f72dbd7525c9a5e29d0a"
+    },
+    {
+      "bytes": 3,
+      "path": "evidence/refusals/empty.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "bytes": 469,
+      "path": "evidence/refusals/fabricated-result.json",
+      "sha256": "68ae14ea052c7e4c64a31b4e448990a44d4270307bcd439596bff94eaaf3499b"
+    },
+    {
+      "bytes": 80,
+      "path": "evidence/refusals/fail-claim.json",
+      "sha256": "b7c09ebaab3f710aee35fe1f1316c74872bfb6f2c00a5b817447bde62007fb70"
+    },
+    {
+      "bytes": 17124,
+      "path": "evidence/tampered-chain/inventory-1.json",
+      "sha256": "2ca95017eb467101c09902c272fd961d2c9be62fe414e820829a509f1630e496"
+    },
+    {
+      "bytes": 17124,
+      "path": "evidence/tampered-chain/inventory-2.json",
+      "sha256": "2ca95017eb467101c09902c272fd961d2c9be62fe414e820829a509f1630e496"
+    },
+    {
+      "bytes": 17124,
+      "path": "evidence/tampered-chain/inventory-3.json",
+      "sha256": "2ca95017eb467101c09902c272fd961d2c9be62fe414e820829a509f1630e496"
+    },
+    {
+      "bytes": 19029,
+      "path": "evidence/tampered-chain/result.json",
+      "sha256": "a8b1667873685761952d7d49c879c45e1cd26c3e6f78f72dbd7525c9a5e29d0a"
+    },
+    {
+      "bytes": 19030,
+      "path": "evidence/tampered-chain/tamper-evidence/result.json.appended-newline",
+      "sha256": "8784948c69d8a89def66c9f51606e6b35fad974c50fcb1b727c64f5a5fc06cbe"
+    },
+    {
+      "bytes": 3151,
+      "path": "input-state.json",
+      "sha256": "8e51fc6ed4c7fceae47c9ac60f1f13719a1570f7d854bb519f19e02f24021b68"
+    },
+    {
+      "bytes": 904,
+      "path": "process-records/06/commit-wrong-owner/argv.json",
+      "sha256": "f5ca1db14ce6d71e866c0bb325ed832763f4c122f8881da841ed3aee94bf630b"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/06/commit-wrong-owner/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/06/commit-wrong-owner/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 171,
+      "path": "process-records/06/commit-wrong-owner/stdout.log",
+      "sha256": "01a5f030e09ee92f06be3634c6c115b89c5e9fff213bbd6943ca9c0bdf71dac1"
+    },
+    {
+      "bytes": 967,
+      "path": "process-records/06/verify-1/argv.json",
+      "sha256": "4f3992a0a83c5279ad536c79820ea2bae44a22ae3ca5ff4fa871e3680cddb3c7"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/06/verify-1/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/06/verify-1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14478,
+      "path": "process-records/06/verify-1/stdout.log",
+      "sha256": "c05bafcb567799d3a2f921bec8c6df16bcba2400e546957585acf1802ecbbd97"
+    },
+    {
+      "bytes": 1210,
+      "path": "source-evidence.json",
+      "sha256": "827f86d470aa722146e20e5d862fdf097705563f8597b9074818691459a8bd8b"
+    },
+    {
+      "bytes": 0,
+      "path": "state/.line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3151,
+      "path": "state/backup_state.json",
+      "sha256": "8e51fc6ed4c7fceae47c9ac60f1f13719a1570f7d854bb519f19e02f24021b68"
+    },
+    {
+      "bytes": 55,
+      "path": "state/run_log.md",
+      "sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f"
+    }
+  ],
+  "files": 30,
+  "generated_at": "2026-09-16T21:56:23Z",
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-ownership-first/phase2-r4/case-root-durable",
+  "schema_version": 1,
+  "total_bytes": 185777
+}

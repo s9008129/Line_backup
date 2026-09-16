@@ -1,0 +1,1 @@
+{"exit_code": 4, "message": "no completed successful dispatch record; commit is refused", "replacement": false, "result": "CONFLICT_UNRESOLVED_DISPATCH", "schema_version": 1, "state_replaced": false}

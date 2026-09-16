@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/verify_evidence.py",
+    "--root",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first",
+    "--output",
+    "/private/tmp/line-backup-acceptance-wave/driver-first-readback-draft.json"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "secrets_removed": true
+}

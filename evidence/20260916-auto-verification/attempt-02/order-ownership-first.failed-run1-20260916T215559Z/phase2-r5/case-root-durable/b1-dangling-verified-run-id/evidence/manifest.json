@@ -1,0 +1,45 @@
+{
+  "artifacts": [
+    {
+      "bytes": 17164,
+      "path": "inventory-1.json",
+      "sha256": "a8b716d751223331f54342e931b8a74b249e0972f9b77f0817b3ef529c7e533d"
+    },
+    {
+      "bytes": 17164,
+      "path": "inventory-2.json",
+      "sha256": "a8b716d751223331f54342e931b8a74b249e0972f9b77f0817b3ef529c7e533d"
+    },
+    {
+      "bytes": 17164,
+      "path": "inventory-3.json",
+      "sha256": "a8b716d751223331f54342e931b8a74b249e0972f9b77f0817b3ef529c7e533d"
+    },
+    {
+      "bytes": 19105,
+      "path": "result.json",
+      "sha256": "5acb59f44e50e00900a0903edd24d8e1d4da9e7a937d6c534c8553207ed60b67"
+    }
+  ],
+  "result_bytes": 19105,
+  "result_sha256": "5acb59f44e50e00900a0903edd24d8e1d4da9e7a937d6c534c8553207ed60b67",
+  "result_summary": {
+    "artifact_readback": "PASS",
+    "destination": "/private/tmp/line-backup-acceptance-verifier/r5/b1-dangling-verified-run-id/backup_root/destination",
+    "exit_code": 4,
+    "expected_images": 57,
+    "filesystem_status": "PASS",
+    "fingerprint": {
+      "end_date": "2024-05-17",
+      "expected_images": 57,
+      "start_date": "2024-05-13"
+    },
+    "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+    "mode": "verify_only",
+    "overall_status": "NOT_ACHIEVED",
+    "recognized_images": 57,
+    "run_id": null,
+    "schema_version": 1
+  },
+  "schema_version": 1
+}

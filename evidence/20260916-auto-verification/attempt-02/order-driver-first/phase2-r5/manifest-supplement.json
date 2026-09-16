@@ -1,0 +1,61 @@
+{
+  "files": [
+    {
+      "bytes": 1350,
+      "path": "case-root-durable/a-forged-source-authority/evidence/manifest.json",
+      "sha256": "b674b5baa37e2b3d380ae82a8fd18c62e13cf6d6724cc636b2fa75f6e286ce38"
+    },
+    {
+      "bytes": 1337,
+      "path": "case-root-durable/a2-valid-binding-control/evidence/manifest.json",
+      "sha256": "18b5883ec1f5e1fd9623723c6dd20ff6c5ecc8fd9e311967f84638b82a2ef543"
+    },
+    {
+      "bytes": 1352,
+      "path": "case-root-durable/b1-dangling-verified-run-id/evidence/manifest.json",
+      "sha256": "51d7a22330ce717b941863bbd587ddbbee3eabd3048ed5928cd353cb5e33d9dc"
+    },
+    {
+      "bytes": 1349,
+      "path": "case-root-durable/b2-safe-abort-run-linked/evidence/manifest.json",
+      "sha256": "867dbb53fac5a287c3335022e7ea94146789abd52fdad0daf55d2ffe53bd4d16"
+    },
+    {
+      "bytes": 1350,
+      "path": "case-root-durable/b3-nonterminal-run-linked/evidence/manifest.json",
+      "sha256": "a8bac0061dbb387ced5b00fd9de3de22bc73c0fd2d09d84110532f7e98a3882a"
+    },
+    {
+      "bytes": 1347,
+      "path": "case-root-durable/c-read-error-after-sample-1/evidence/manifest.json",
+      "sha256": "33f344b304822b4feb796a0c7e8b0e1ec313798cf642fd8b139cd40785d0fd8c"
+    },
+    {
+      "bytes": 1344,
+      "path": "case-root-durable/c0-control-no-chmod/evidence/manifest.json",
+      "sha256": "00bd10addb1b74306b3bc1e779121423c0f9f5540fa7d3d2d719e3623022e04b"
+    },
+    {
+      "bytes": 1341,
+      "path": "case-root-durable/d1-truncated-png/evidence/manifest.json",
+      "sha256": "5b3f6abae1ecacd1ccd8d24c99df4891287c9bd42b8ff709c711bb0ebc61188f"
+    },
+    {
+      "bytes": 1344,
+      "path": "case-root-durable/d2-jpeg-missing-eoi/evidence/manifest.json",
+      "sha256": "d9614d6eea17123023d5d10e0c2961d96000b31244983633700d96d5c177ad6b"
+    },
+    {
+      "bytes": 1350,
+      "path": "case-root-durable/d3-unsupported-image-type/evidence/manifest.json",
+      "sha256": "0858583af46d6c99f68407b41c7c219adfb3034c0b70008c7adc3464d7fcd15d"
+    },
+    {
+      "bytes": 126648,
+      "path": "case-root-durable/manifest.json",
+      "sha256": "9897f3143c9ceaee7604abbd4546e6dab0cc3cf9eaa895d97bcc070882e077c3"
+    }
+  ],
+  "note": "The shared harness tree manifest excludes files named manifest.json; this supplement records SHA-256+bytes for those verifier-owned chains. manifest-supplement.json is itself covered by manifest.json.",
+  "schema_version": 1
+}

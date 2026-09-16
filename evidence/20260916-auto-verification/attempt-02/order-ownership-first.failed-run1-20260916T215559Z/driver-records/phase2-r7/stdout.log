@@ -1,0 +1,1 @@
+{"verdict": "SAFE_R7_LOOP_CLOSED_AND_DUPLICATE_REFUSED", "failed": [], "verify_2": {"filesystem_status": "PASS", "registry_status": "PASS", "source_status": "CONFIRMED", "state_status": "EXACT", "overall_status": "PASS", "failure_class": "NONE"}, "second_prepare": "CONFLICT_DUPLICATE_FINGERPRINT"}

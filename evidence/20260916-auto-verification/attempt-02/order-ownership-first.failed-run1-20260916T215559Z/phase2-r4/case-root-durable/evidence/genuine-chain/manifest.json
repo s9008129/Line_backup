@@ -1,0 +1,45 @@
+{
+  "artifacts": [
+    {
+      "bytes": 17124,
+      "path": "inventory-1.json",
+      "sha256": "c32d8f1a7db019164e9278ba7704dfd0cd2f9503810f910bfc34acc8f474fb10"
+    },
+    {
+      "bytes": 17124,
+      "path": "inventory-2.json",
+      "sha256": "c32d8f1a7db019164e9278ba7704dfd0cd2f9503810f910bfc34acc8f474fb10"
+    },
+    {
+      "bytes": 17124,
+      "path": "inventory-3.json",
+      "sha256": "c32d8f1a7db019164e9278ba7704dfd0cd2f9503810f910bfc34acc8f474fb10"
+    },
+    {
+      "bytes": 19029,
+      "path": "result.json",
+      "sha256": "eddff03f62e3267154add2a8711f858b383e565289cbfddd42c14a7353ec6334"
+    }
+  ],
+  "result_bytes": 19029,
+  "result_sha256": "eddff03f62e3267154add2a8711f858b383e565289cbfddd42c14a7353ec6334",
+  "result_summary": {
+    "artifact_readback": "PASS",
+    "destination": "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+    "exit_code": 4,
+    "expected_images": 57,
+    "filesystem_status": "PASS",
+    "fingerprint": {
+      "end_date": "2024-05-17",
+      "expected_images": 57,
+      "start_date": "2024-05-13"
+    },
+    "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+    "mode": "verify_only",
+    "overall_status": "NOT_ACHIEVED",
+    "recognized_images": 57,
+    "run_id": "RUN-R4",
+    "schema_version": 1
+  },
+  "schema_version": 1
+}

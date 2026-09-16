@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r6_harness_ownership.py",
+    "--evidence-dir",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "env_fingerprint": {
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONHASHSEED": "0",
+    "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src",
+    "PYTHONPYCACHEPREFIX": "/private/tmp/line-backup-acceptance-pycache"
+  },
+  "secrets_removed": true,
+  "started_at": "2026-09-16T21:56:15Z"
+}

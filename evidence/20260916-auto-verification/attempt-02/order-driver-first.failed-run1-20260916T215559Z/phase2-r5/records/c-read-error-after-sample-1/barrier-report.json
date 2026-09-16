@@ -1,0 +1,33 @@
+{
+  "chmod_applied_mode": "0o0",
+  "chmod_restored_mode": "0o644",
+  "chmod_target": "image-042.png",
+  "pause_at": "SAMPLE_2_READY",
+  "saw_ready": true,
+  "target_per_sample": [
+    {
+      "error": null,
+      "error_code": null,
+      "mime": "image/png",
+      "sample": 1,
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+      "status": "OK"
+    },
+    {
+      "error": "[Errno 13] Permission denied: '/private/tmp/line-backup-acceptance-verifier/r5/c-read-error-after-sample-1/backup_root/destination/image-042.png'",
+      "error_code": "INTERNAL_READ_ERROR",
+      "mime": "cannot open: Permission denied",
+      "sample": 2,
+      "sha256": null,
+      "status": "READ_ERROR"
+    },
+    {
+      "error": "[Errno 13] Permission denied: '/private/tmp/line-backup-acceptance-verifier/r5/c-read-error-after-sample-1/backup_root/destination/image-042.png'",
+      "error_code": "INTERNAL_READ_ERROR",
+      "mime": "cannot open: Permission denied",
+      "sample": 3,
+      "sha256": null,
+      "status": "READ_ERROR"
+    }
+  ]
+}

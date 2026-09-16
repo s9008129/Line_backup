@@ -1,0 +1,1 @@
+{"verdict": "NO_DELETION_OBSERVED", "destroyed": [], "markers_changed": [], "probes_changed": [], "probed_roots": 53, "driver_exit_codes": {"authority_negative_driver": 0, "test_transaction_core": 0, "acceptance_case_driver_01": 0}, "manifest_sha256": "e43c52e6b0da3457539bea09149c7531c75524565d763724a5fa3d3b52dd58e2"}

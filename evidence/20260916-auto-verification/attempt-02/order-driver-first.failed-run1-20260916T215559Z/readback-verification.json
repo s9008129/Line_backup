@@ -1,0 +1,580 @@
+{
+  "artifacts_checked": 3587,
+  "ignored_names": [
+    "case-01-manifest.json",
+    "manifest-supplement.json",
+    "manifest.json",
+    "readback-verification.json"
+  ],
+  "manifests": 35,
+  "problems": [
+    {
+      "actual": 19030,
+      "expected": 19029,
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r4/case-root-durable/evidence/tampered-chain/manifest.json",
+      "path": "result.json",
+      "problem": "byte-length mismatch"
+    },
+    {
+      "actual": "4dec471a830c68af0c4dddb6e027ccaad4ea7d5be601690e8285c064f2d40f35",
+      "expected": "c1217a812620f4c16853e9909cbe6042f4af561364dc0aa24c8224b198e0406a",
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r4/case-root-durable/evidence/tampered-chain/manifest.json",
+      "path": "result.json",
+      "problem": "sha256 mismatch"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": ".driver-ownership.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "binding-fixture.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "config/line_backup_config.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-000.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-001.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-002.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-003.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-004.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-005.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-006.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-007.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-008.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-009.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-010.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-011.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-012.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-013.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-014.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-015.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-016.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-017.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-018.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-019.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-020.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-021.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-022.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-023.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-024.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-025.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-026.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-027.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-028.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-029.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-030.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-031.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-032.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-033.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-034.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-035.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-036.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-037.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-038.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-039.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-040.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-041.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-042.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-043.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-044.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-045.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-046.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-047.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-048.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-049.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-050.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-051.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-052.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-053.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-054.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-055.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "destination/image-056.png",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "dispatch-counter.jsonl",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "dispatcher.py",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "driver-records/r6-ownership/probe.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "evidence/refusal/result.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "evidence/result.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "evidence/verify-1/inventory-1.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "evidence/verify-1/inventory-2.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "evidence/verify-1/inventory-3.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "evidence/verify-1/result.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "evidence/verify-2/inventory-1.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "evidence/verify-2/inventory-2.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "evidence/verify-2/inventory-3.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "evidence/verify-2/result.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "input-state.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/commit/argv.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/commit/exit-code",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/commit/stderr.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/commit/stdout.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/duplicate/argv.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/duplicate/exit-code",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/duplicate/stderr.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/duplicate/stdout.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/finalize/argv.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/finalize/exit-code",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/finalize/stderr.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/finalize/stdout.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/prepare/argv.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/prepare/exit-code",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/prepare/stderr.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/prepare/stdout.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/prepare-destination-2/argv.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/prepare-destination-2/exit-code",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/prepare-destination-2/stderr.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/prepare-destination-2/stdout.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/resume-terminal/argv.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/resume-terminal/exit-code",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/resume-terminal/stderr.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/resume-terminal/stdout.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/verify-1/argv.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/verify-1/exit-code",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/verify-1/stderr.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/verify-1/stdout.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/verify-2/argv.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/verify-2/exit-code",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/verify-2/stderr.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "process-records/01/verify-2/stdout.log",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "source-evidence.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "state/.line-backup-state.lock",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "state/backup_state.json",
+      "problem": "missing"
+    },
+    {
+      "manifest": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+      "path": "state/run_log.md",
+      "problem": "missing"
+    }
+  ],
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first",
+  "supplements": 1,
+  "uncovered_files": [],
+  "verdict": "FAIL"
+}

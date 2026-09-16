@@ -1,0 +1,134 @@
+{
+  "artifacts": [
+    {
+      "bytes": 221,
+      "path": ".driver-ownership.json",
+      "sha256": "3db9d0c8b10ca1b0519cb0a5c7225848a724177ad73bb37cdcf5e4ba9452bbe6"
+    },
+    {
+      "bytes": 269,
+      "path": "binding-fixture.json",
+      "sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c"
+    },
+    {
+      "bytes": 379,
+      "path": "config/line_backup_config.json",
+      "sha256": "1e8031e8c971033e61299174619a7d5a7673f389c167a5928b7ea108e10db7ca"
+    },
+    {
+      "bytes": 0,
+      "path": "dispatch-counter.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 484,
+      "path": "dispatcher.py",
+      "sha256": "90111ca1486e18c9260b1e50eebcec14ffbcd70d2fd7f59306b3d773219b84b1"
+    },
+    {
+      "bytes": 222,
+      "path": "driver-records/r6-ownership/probe.json",
+      "sha256": "b61c6840d82e0c4aa1497185f95b5a35bca00731d11445452df120f4382e8610"
+    },
+    {
+      "bytes": 213,
+      "path": "evidence/duplicate/result.json",
+      "sha256": "222cb75a63a177613b0b91f06e28b50ef29d42ac5e18517922cde81541290411"
+    },
+    {
+      "bytes": 199,
+      "path": "evidence/prepare/result.json",
+      "sha256": "41a4413c1fb9b83400162b40b73fad5fd24ce68bd5050153cfd3f367d330fd3b"
+    },
+    {
+      "bytes": 4014,
+      "path": "input-state.json",
+      "sha256": "dcb3db28357ed1c83ab0613c52df5b60e7a4e0358c206969281a27a051bd0e6c"
+    },
+    {
+      "bytes": 898,
+      "path": "process-records/03/commit-refused/argv.json",
+      "sha256": "8717ea4043233ce81dffac7ac2f31d5fc21d5a3d7024e1fe2ab60eec990872cd"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/03/commit-refused/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/03/commit-refused/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 200,
+      "path": "process-records/03/commit-refused/stdout.log",
+      "sha256": "c34af86a333a7c9e878da965888af8cd8e9802e25f25d541217e307391f6834a"
+    },
+    {
+      "bytes": 1338,
+      "path": "process-records/03/prepare-unknown/argv.json",
+      "sha256": "13405edeb3280c3a831186bba3a1d29382af654e90338238589da5c3518576ab"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/03/prepare-unknown/exit-code",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/03/prepare-unknown/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 212,
+      "path": "process-records/03/prepare-unknown/stdout.log",
+      "sha256": "1e530728afd2588a7b3f67cd0121eee0d3b84b1f8764bfa9941545e7b7691c96"
+    },
+    {
+      "bytes": 811,
+      "path": "process-records/03/resume/argv.json",
+      "sha256": "b4c79a0a7a418da38b1167a42e0b89750f7353135c810df37397d5d1029e76d9"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/03/resume/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/03/resume/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 264,
+      "path": "process-records/03/resume/stdout.log",
+      "sha256": "9612ada82a64d649509bc4666eb7cd15b7db0f9ea1fa4f12634aca02310da1b0"
+    },
+    {
+      "bytes": 1210,
+      "path": "source-evidence.json",
+      "sha256": "06ab75321cb92390714eea638c5b5bba6b83b43f10abddfc8efb81f841e79e62"
+    },
+    {
+      "bytes": 0,
+      "path": "state/.line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4014,
+      "path": "state/backup_state.json",
+      "sha256": "dcb3db28357ed1c83ab0613c52df5b60e7a4e0358c206969281a27a051bd0e6c"
+    },
+    {
+      "bytes": 55,
+      "path": "state/run_log.md",
+      "sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f"
+    }
+  ],
+  "files": 25,
+  "generated_at": "2026-09-16T21:50:53Z",
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r3/case-root-durable/line-backup-acceptance-case-03",
+  "schema_version": 1,
+  "total_bytes": 15009
+}

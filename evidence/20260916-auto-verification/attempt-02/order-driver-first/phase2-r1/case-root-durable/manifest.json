@@ -1,0 +1,244 @@
+{
+  "artifacts": [
+    {
+      "bytes": 221,
+      "path": ".driver-ownership.json",
+      "sha256": "e9660088e8d2d0a2a1ef1ae2ca05ea9b595431609a623c7a75ab7bbd3c9e8a94"
+    },
+    {
+      "bytes": 269,
+      "path": "binding-fixture.json",
+      "sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c"
+    },
+    {
+      "bytes": 379,
+      "path": "config/line_backup_config.json",
+      "sha256": "f831a982cc72ac8dc38e8c0e137c8c7bac6350c18afa69186dae79ebd1be3416"
+    },
+    {
+      "bytes": 72,
+      "path": "dispatch-counter.jsonl",
+      "sha256": "0299b1666d4af0183da2deb77b14c0f98aa487daecbebf5cd85c4fd1e1057711"
+    },
+    {
+      "bytes": 0,
+      "path": "dispatch-started.barrier",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 772,
+      "path": "dispatcher-blocking.py",
+      "sha256": "1071df2a014a5cdd25ccbc5c32999ceffc2e3fc43682e1985881c7f937faf37a"
+    },
+    {
+      "bytes": 222,
+      "path": "driver-records/r6-ownership/probe.json",
+      "sha256": "a81e88fc282b2ca8773b21936ef52dca9210b3b55f7fc556e830e4ac304b2a2f"
+    },
+    {
+      "bytes": 214,
+      "path": "evidence/commit/result.json",
+      "sha256": "e3f7aef53ad4c131197a3acb917ac04f85a43414cf728c6a756eee1439c550d7"
+    },
+    {
+      "bytes": 247,
+      "path": "evidence/resume/reconcile.json",
+      "sha256": "3d8fff26dc7bfd06bc211cd164288aebf7b29af5e80739d88e0aca6780d98e1d"
+    },
+    {
+      "bytes": 268,
+      "path": "evidence/resume/result.json",
+      "sha256": "69a646b2f006c374745909815af53864685cd5e0e1511053f713f762241c63c6"
+    },
+    {
+      "bytes": 160,
+      "path": "input-state.json",
+      "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+    },
+    {
+      "bytes": 898,
+      "path": "process-records/01/commit/argv.json",
+      "sha256": "fd6b2d7c742e4722d99c94382fde8a90bffce6d01999159d820e85d8aa05d29d"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/01/commit/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/01/commit/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 171,
+      "path": "process-records/01/commit/stdout.log",
+      "sha256": "a877192ff52c13f21d86753a87a5e3911393d18723f1d416a49e4a4b85b6b565"
+    },
+    {
+      "bytes": 946,
+      "path": "process-records/01/duplicate/argv.json",
+      "sha256": "021454c3a81e24c9ace10bad02b1e1dd56f10e699981f992ef3a7474e54037e5"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/01/duplicate/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/01/duplicate/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 190,
+      "path": "process-records/01/duplicate/stdout.log",
+      "sha256": "78ff575f3de3ca3f46bade853290e35c7a177eeecbc7a8ccf1b9689083a2b5a1"
+    },
+    {
+      "bytes": 933,
+      "path": "process-records/01/finalize/argv.json",
+      "sha256": "2f98b818b65736de17c57bdbdfcda240b77d32ebb1527092406a41c2f01a2752"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/01/finalize/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/01/finalize/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 185,
+      "path": "process-records/01/finalize/stdout.log",
+      "sha256": "d01fc15f9994f7c45a6d4a05aad5cb6e521520fe5482b923ab17a7575407e49b"
+    },
+    {
+      "bytes": 1339,
+      "path": "process-records/01/prepare/argv.json",
+      "sha256": "1cf34706d34455f9f7ba23492d305969c1d11af9b7ff94485a7a332887c29656"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/01/prepare/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/01/prepare/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 193,
+      "path": "process-records/01/prepare/stdout.log",
+      "sha256": "6f8d3e81b3faa0a3ff593b42d62914195387df247bc5763b9a1c7838c80f0b37"
+    },
+    {
+      "bytes": 1309,
+      "path": "process-records/01/prepare-destination-2/argv.json",
+      "sha256": "7e1cc832ecc2560618365dfc8f2e5af06821af3f2419106e5fb140d4b508b09e"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/01/prepare-destination-2/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/01/prepare-destination-2/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 194,
+      "path": "process-records/01/prepare-destination-2/stdout.log",
+      "sha256": "7e204bb4f3f546b45b043f78500df8e87998b4ddc49498f712393fc7d5ce3589"
+    },
+    {
+      "bytes": 811,
+      "path": "process-records/01/resume-terminal/argv.json",
+      "sha256": "05740014b8edee7431ae6a5abc6d32496a518f553c017ae9b2e95c738bd862d6"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/01/resume-terminal/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/01/resume-terminal/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 200,
+      "path": "process-records/01/resume-terminal/stdout.log",
+      "sha256": "6906e79e4c09ef768b7fe2523bfe5bdc9538203c8e02ffacb39fb3ad3d4bffb1"
+    },
+    {
+      "bytes": 967,
+      "path": "process-records/01/verify-1/argv.json",
+      "sha256": "d27612353334a48ef9eb0543525264e2163b9dff6ddbefaa3f306859a5d98db1"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/01/verify-1/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/01/verify-1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14478,
+      "path": "process-records/01/verify-1/stdout.log",
+      "sha256": "ab198048455bad912ba9e2ec68b2226ab6fcaab8d282da4805a176a9af2a36c5"
+    },
+    {
+      "bytes": 967,
+      "path": "process-records/01/verify-2/argv.json",
+      "sha256": "93f796a1d22f5922bcc2b3b0bdc4fc5ef29caaceac7dddffdde6fd49377e2659"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/01/verify-2/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/01/verify-2/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14480,
+      "path": "process-records/01/verify-2/stdout.log",
+      "sha256": "d448fbef0d564d0fb4ae70abf7d8331367af6827c1307f90bfabdd4c8234d2f2"
+    },
+    {
+      "bytes": 1210,
+      "path": "source-evidence.json",
+      "sha256": "de2d91c2220cf441401080ff27793c3017b45bd53489a8c3f4935da608f8e012"
+    },
+    {
+      "bytes": 0,
+      "path": "state/.line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3710,
+      "path": "state/backup_state.json",
+      "sha256": "117b5d19c9b102de2e646a561d442fae9d6eed4de901ea65a6d40f0440861c19"
+    },
+    {
+      "bytes": 55,
+      "path": "state/run_log.md",
+      "sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f"
+    }
+  ],
+  "files": 47,
+  "generated_at": "2026-09-16T21:56:09Z",
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-02/order-driver-first/phase2-r1/case-root-durable",
+  "schema_version": 1,
+  "total_bytes": 46076
+}

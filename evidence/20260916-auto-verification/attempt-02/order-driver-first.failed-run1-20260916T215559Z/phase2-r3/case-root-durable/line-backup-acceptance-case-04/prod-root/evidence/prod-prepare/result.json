@@ -1,0 +1,15 @@
+{
+  "artifact_readback": "PASS",
+  "error": "test_mode mismatch between record and invocation",
+  "exit_code": 2,
+  "expected_images": null,
+  "failure_class": "INVALID_SOURCE_EVIDENCE",
+  "filesystem_status": "NOT_RUN",
+  "mode": "verify_only",
+  "overall_status": "UNKNOWN",
+  "recognized_images": null,
+  "registry_status": "NOT_RUN",
+  "schema_version": 1,
+  "source_status": "NOT_RUN",
+  "state_status": "NOT_RUN"
+}

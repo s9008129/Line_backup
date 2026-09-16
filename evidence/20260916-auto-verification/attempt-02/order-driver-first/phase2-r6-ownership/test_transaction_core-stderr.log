@@ -1,0 +1,7 @@
+test_production_authority_mismatch_happens_without_state_read (tests.test_transaction_core.TransactionCoreTests) ... ok
+test_test_mode_refuses_non_literal_root_without_state_read (tests.test_transaction_core.TransactionCoreTests) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.070s
+
+OK

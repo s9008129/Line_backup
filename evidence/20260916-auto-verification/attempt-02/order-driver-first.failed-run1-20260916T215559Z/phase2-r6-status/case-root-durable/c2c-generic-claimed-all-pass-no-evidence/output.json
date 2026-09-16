@@ -1,0 +1,14 @@
+{
+  "baseline_delta": null,
+  "blocker": null,
+  "checks": [],
+  "core_acceptance_status": "PASS",
+  "failure_class": null,
+  "implementation_status": "COMPLETE",
+  "independent_acceptance_status": "PASS",
+  "primary_outcome_status": "ACHIEVED",
+  "required_verification_status": "PASS",
+  "schema_version": 2,
+  "task_closure_status": "DONE",
+  "waiver": null
+}

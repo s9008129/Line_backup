@@ -1,0 +1,45 @@
+{
+  "artifacts": [
+    {
+      "bytes": 17134,
+      "path": "inventory-1.json",
+      "sha256": "32ea9d829d54ae68ad935d54ccb85d8c2eed964cf3d1e5ff953e970c9c271c3e"
+    },
+    {
+      "bytes": 17134,
+      "path": "inventory-2.json",
+      "sha256": "32ea9d829d54ae68ad935d54ccb85d8c2eed964cf3d1e5ff953e970c9c271c3e"
+    },
+    {
+      "bytes": 17134,
+      "path": "inventory-3.json",
+      "sha256": "32ea9d829d54ae68ad935d54ccb85d8c2eed964cf3d1e5ff953e970c9c271c3e"
+    },
+    {
+      "bytes": 19049,
+      "path": "result.json",
+      "sha256": "c60c6bcbc12a4c69d6ad83797067cb3f02bbf4f6bae098177f12f24c7c7c5138"
+    }
+  ],
+  "result_bytes": 19049,
+  "result_sha256": "c60c6bcbc12a4c69d6ad83797067cb3f02bbf4f6bae098177f12f24c7c7c5138",
+  "result_summary": {
+    "artifact_readback": "PASS",
+    "destination": "/private/tmp/line-backup-acceptance-case-09/backups/album-integration",
+    "exit_code": 4,
+    "expected_images": 57,
+    "filesystem_status": "PASS",
+    "fingerprint": {
+      "end_date": "2024-05-17",
+      "expected_images": 57,
+      "start_date": "2024-05-13"
+    },
+    "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+    "mode": "verify_only",
+    "overall_status": "NOT_ACHIEVED",
+    "recognized_images": 57,
+    "run_id": "RUN-R7",
+    "schema_version": 1
+  },
+  "schema_version": 1
+}

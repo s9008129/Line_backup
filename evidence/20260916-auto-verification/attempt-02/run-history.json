@@ -1,0 +1,94 @@
+{
+  "generated_at": "2026-09-16T21:56:00Z",
+  "note": "W-WAVE-RUN was executed twice into this pinned attempt root. Run 1 (drivers revision c5184ec) produced exact safe verdicts in both orders but its independent read-back failed on two fixture-recording defects; the failed tree is kept under the *.failed-run1-* names (append-only). Run 2 (drivers revision after the two recording fixes) is the final package: both orders safe, read-back PASS, every manifest independently readable.",
+  "run_1_failed": {
+    "drivers_safe_verdicts_in_run_1": true,
+    "problem_classes": [
+      {
+        "artifacts": [
+          "result.json"
+        ],
+        "cause": "the b3 negative scenario appended one newline to the chain result.json after its product manifest was written, and the stale manifest was durable-copied as-is",
+        "fix": "R4 restores the untampered bytes after the refusal assertion and keeps the raw tampered bytes under tampered-chain/tamper-evidence/result.json.appended-newline (hashes recorded in the refusal row), so the durable tree stays manifest-readable",
+        "manifest": "order-*/phase2-r4/case-root-durable/evidence/tampered-chain/manifest.json",
+        "problem": "byte-length/sha256 mismatch"
+      },
+      {
+        "artifacts": 110,
+        "cause": "acceptance_case_driver --manifest copies the case-root manifest whose artifact paths are relative to the case root into the evidence dir",
+        "fix": "R6-ownership stashes that copy in /private/tmp working space and durable-copies the whole case-01 root to probe-runs/case-01-durable (its manifest.json sits at the copy root, so every entry resolves against a byte-identical tree)",
+        "manifest": "order-*/phase2-r6-ownership/probe-runs/case-01-manifest.json",
+        "problem": "missing (paths resolve against the case root, not the evidence dir)"
+      }
+    ],
+    "readback_problems": 112,
+    "readback_verdict": "FAIL",
+    "renamed": {
+      "order-driver-first": "order-driver-first.failed-run1-20260916T215559Z",
+      "order-ownership-first": "order-ownership-first.failed-run1-20260916T215559Z",
+      "run-all-summary.json": "run-all-summary.failed-run1-20260916T215559Z.json"
+    },
+    "summary_sha256": "8a9b74ba3fb2d91b7e118bf7e7ad164917e5bd5047331a5ba1418483264d4a26"
+  },
+  "run_2_final": {
+    "independent_recheck": "verify_evidence.py re-run outside run_all: both orders PASS (/private/tmp/wave-final-readback-*.json)",
+    "order_driver_first": {
+      "order_manifest": {
+        "bytes": 280075,
+        "path": "order-driver-first/manifest.json",
+        "sha256": "3ca40f434cf3be38f410d22748f09a209477f67ee783612475c06ebb86e605c4"
+      },
+      "order_observation": {
+        "bytes": 13194,
+        "path": "order-driver-first/order-observation.json",
+        "sha256": "3ba4efdab83a631c4a51269a7162a614613272f7e63298993834b8617f7a9284"
+      },
+      "readback": {
+        "artifacts_checked": 3819,
+        "bytes": 375,
+        "manifests": 37,
+        "path": "order-driver-first/readback-verification.json",
+        "problems": 0,
+        "sha256": "02ed21cf6b6bc58f355f343899bd8a5246cc590ac23eb686ffc35f539ab01444",
+        "supplements": 1,
+        "uncovered_files": 0,
+        "verdict": "PASS"
+      }
+    },
+    "order_ownership_first": {
+      "order_manifest": {
+        "bytes": 280078,
+        "path": "order-ownership-first/manifest.json",
+        "sha256": "d262d0412fb1fea52ac163de48aaa4e61615405a878c5ef7941078dacddd194b"
+      },
+      "order_observation": {
+        "bytes": 13272,
+        "path": "order-ownership-first/order-observation.json",
+        "sha256": "12e73fd3e4f4a1aef87ded56c1044c8edbc17416c39a1c07a29f0e2ae99be264"
+      },
+      "readback": {
+        "artifacts_checked": 3819,
+        "bytes": 378,
+        "manifests": 37,
+        "path": "order-ownership-first/readback-verification.json",
+        "problems": 0,
+        "sha256": "43ad2b918130d0870911286b42a12bf71dd4529be2978425fe66bf244a3f9155",
+        "supplements": 1,
+        "uncovered_files": 0,
+        "verdict": "PASS"
+      }
+    },
+    "run_all_summary": {
+      "all_orders_safe": true,
+      "bytes": 25531,
+      "orders": {
+        "driver-first": "order_safe=true/readback=PASS",
+        "ownership-first": "order_safe=true/readback=PASS"
+      },
+      "path": "run-all-summary.json",
+      "sha256": "aebc2b5d3329779f46b26b51b2495fa5893cabc3d46b129c3264063fcee92a3e"
+    }
+  },
+  "schema_version": 1,
+  "task_id": "T20260916-0102-01-line-backup-acceptance"
+}

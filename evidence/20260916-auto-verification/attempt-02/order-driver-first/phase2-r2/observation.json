@@ -1,0 +1,187 @@
+{
+  "case_root": "/private/tmp/line-backup-acceptance-case-02",
+  "checks": {
+    "loaded-intent.barrier": true,
+    "loaded-intent.counter-0": true,
+    "loaded-intent.exit0": true,
+    "loaded-intent.no-dispatch": true,
+    "loaded-intent.reconciliations": true,
+    "loaded-intent.recovery-code": true,
+    "loaded-intent.revision2": true,
+    "loaded-intent.unknown-barrier": true,
+    "prepare.counter-1": true,
+    "prepare.dispatch-performed": true,
+    "prepare.prepared": true,
+    "prepare.record-complete": true,
+    "prepare.revision2": true,
+    "resume-no-dispatch.code": true,
+    "resume-no-dispatch.counter-1": true,
+    "resume-no-dispatch.exit0": true,
+    "resume-no-dispatch.no-dispatch": true,
+    "resume-no-dispatch.no-write": true,
+    "resume-with-adapter.invalid-input": true,
+    "resume-with-adapter.no-dispatch": true,
+    "resume-with-adapter.no-state-read": true
+  },
+  "claim": "pre-fix: a fresh process could dispatch a loaded intent (flag-dependent safety); post-fix: prepare owns the single dispatch and every fresh resume is reconciliation-only",
+  "driver": "phase2-r2-loaded-intent",
+  "entry": "real CLI transaction prepare then transaction resume (separate processes)",
+  "oracle": "independent dispatcher counter jsonl + persisted intent/dispatch fields + exit codes + state bytes before/after",
+  "pre_fix": {
+    "evidence": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r2/observation.json",
+    "observation": "prepare (process A) then fresh-process resume (process B) dispatched once; the same fixture with --no-dispatch performed no dispatch: safety depended on the caller's flag",
+    "verdict": "REPRODUCED_FRESH_PROCESS_DISPATCH"
+  },
+  "probe_a_prepare": {
+    "argv": [
+      "/usr/bin/python3",
+      "-m",
+      "line_backup_acceptance",
+      "transaction",
+      "prepare",
+      "--project-root",
+      "/private/tmp/line-backup-acceptance-case-02",
+      "--config",
+      "/private/tmp/line-backup-acceptance-case-02/config/line_backup_config.json",
+      "--run-log",
+      "/private/tmp/line-backup-acceptance-case-02/state/run_log.md",
+      "--state",
+      "/private/tmp/line-backup-acceptance-case-02/state/backup_state.json",
+      "--test-mode",
+      "--run-id",
+      "RUN-R2",
+      "--owner-id",
+      "WRITER-R2",
+      "--group-key",
+      "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "--start-date",
+      "2024-05-13",
+      "--end-date",
+      "2024-05-17",
+      "--expected-images",
+      "57",
+      "--destination",
+      "/private/tmp/line-backup-acceptance-case-02/destination",
+      "--source-evidence",
+      "/private/tmp/line-backup-acceptance-case-02/source-evidence.json",
+      "--dispatcher",
+      "/private/tmp/line-backup-acceptance-case-02/dispatcher.py",
+      "--dispatch-counter",
+      "/private/tmp/line-backup-acceptance-case-02/dispatch-counter.jsonl",
+      "--evidence-dir",
+      "/private/tmp/line-backup-acceptance-case-02/evidence/prepare"
+    ],
+    "counter_lines": 1,
+    "dispatch_state": "SAVE_ALL_RETURNED",
+    "exit_code": 0,
+    "intent_state": "SAVE_ALL_DISPATCH_ATTEMPTED",
+    "result": {
+      "dispatch_performed": true,
+      "exit_code": 0,
+      "message": "intent committed and exactly one dispatch performed",
+      "result": "PREPARED",
+      "revision": 2,
+      "schema_version": 1,
+      "state_replaced": true
+    },
+    "revision": 2
+  },
+  "probe_b_resume_with_adapter": {
+    "argv": [
+      "/usr/bin/python3",
+      "-m",
+      "line_backup_acceptance",
+      "transaction",
+      "resume",
+      "--project-root",
+      "/private/tmp/line-backup-acceptance-case-02",
+      "--config",
+      "/private/tmp/line-backup-acceptance-case-02/config/line_backup_config.json",
+      "--run-log",
+      "/private/tmp/line-backup-acceptance-case-02/state/run_log.md",
+      "--state",
+      "/private/tmp/line-backup-acceptance-case-02/state/backup_state.json",
+      "--test-mode",
+      "--run-id",
+      "RUN-R2",
+      "--expected-revision",
+      "2",
+      "--expected-owner-id",
+      "WRITER-R2",
+      "--evidence-dir",
+      "/private/tmp/line-backup-acceptance-case-02/evidence/resume",
+      "--dispatcher",
+      "/private/tmp/line-backup-acceptance-case-02/dispatcher.py",
+      "--dispatch-counter",
+      "/private/tmp/line-backup-acceptance-case-02/dispatch-counter.jsonl"
+    ],
+    "counter_lines": 1,
+    "exit_code": 2,
+    "result": {
+      "exit_code": 2,
+      "message": "resume never dispatches; adapter options are not accepted",
+      "result": "INVALID_INPUT",
+      "schema_version": 1
+    },
+    "state_unchanged": true
+  },
+  "probe_c_resume_no_dispatch": {
+    "counter_lines": 1,
+    "exit_code": 0,
+    "result": {
+      "dispatch_performed": false,
+      "exit_code": 0,
+      "message": "run already carries the barrier or a completed dispatch record",
+      "reconciliation_state": "ALREADY_RECONCILED",
+      "result": "RECOVERY_NO_DISPATCH",
+      "revision": 2,
+      "schema_version": 1,
+      "state_replaced": false
+    }
+  },
+  "probe_d_loaded_intent": {
+    "counter_lines": 0,
+    "dispatch_state": "UNKNOWN",
+    "exit_code": 0,
+    "intent_state": "TRIGGER_UNKNOWN",
+    "manual_reconciliation_required": true,
+    "result": {
+      "dispatch_performed": false,
+      "exit_code": 0,
+      "message": "ambiguity barrier committed; no dispatch performed",
+      "reconciliation_state": "BARRIER_COMMITTED",
+      "result": "RECOVERY_NO_DISPATCH",
+      "revision": 2,
+      "schema_version": 1,
+      "state_replaced": true
+    },
+    "revision": 2
+  },
+  "program_hashes": {
+    "authority.py": {
+      "bytes": 8952,
+      "sha256": "984318a6ca230b80e748faa8a2fef44f12aa34aa7c36ca4481b57012e922afb1"
+    },
+    "cli.py": {
+      "bytes": 5169,
+      "sha256": "162003558afa8690e63fecb445cbff5e2af9a76c9c88280d9a787b897a9bc49c"
+    },
+    "common.py": {
+      "bytes": 34351,
+      "sha256": "df9fe0bc6333a8afec6f0bc87b336cf905e3683a209cbc8155190d4e5a0c60c0"
+    },
+    "status.py": {
+      "bytes": 7921,
+      "sha256": "00e94973c91590f2a76f058d5e2339da2a52016fd317c9816650f0785273b0f9"
+    },
+    "transaction.py": {
+      "bytes": 42064,
+      "sha256": "3e535b6629ed90252cace6fccebfddd9494b4cdf8bfcf25768b90e1f013199f1"
+    },
+    "verifier.py": {
+      "bytes": 25377,
+      "sha256": "a07ffe450284ade34fce27f646bd4a0c37baccb65de5660e77aea3faf48b23b6"
+    }
+  },
+  "verdict": "SAFE_FRESH_PROCESS_NEVER_DISPATCHES"
+}

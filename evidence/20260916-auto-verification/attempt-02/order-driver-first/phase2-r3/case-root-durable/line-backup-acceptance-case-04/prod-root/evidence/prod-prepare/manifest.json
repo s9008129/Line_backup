@@ -1,0 +1,31 @@
+{
+  "artifacts": [
+    {
+      "bytes": 105,
+      "path": "error.json",
+      "sha256": "e9a721d69a778a28b7e87c7187826bee89466e482f1a24e120b097ed356be4a8"
+    },
+    {
+      "bytes": 421,
+      "path": "result.json",
+      "sha256": "92c1b4e8dc0a49bb9b1a94789ef93b0aa9cf8907e296eacb75f196a291efabb5"
+    }
+  ],
+  "result_bytes": 421,
+  "result_sha256": "92c1b4e8dc0a49bb9b1a94789ef93b0aa9cf8907e296eacb75f196a291efabb5",
+  "result_summary": {
+    "artifact_readback": "PASS",
+    "destination": null,
+    "exit_code": 2,
+    "expected_images": null,
+    "filesystem_status": "NOT_RUN",
+    "fingerprint": null,
+    "group_key": null,
+    "mode": "verify_only",
+    "overall_status": "UNKNOWN",
+    "recognized_images": null,
+    "run_id": null,
+    "schema_version": 1
+  },
+  "schema_version": 1
+}

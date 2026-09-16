@@ -1,0 +1,356 @@
+{
+  "case_root": "/private/tmp/line-backup-acceptance-case-06",
+  "checks": {
+    "a-fabricated.no-write": true,
+    "a-fabricated.refused": true,
+    "b1-fail-claim.no-write": true,
+    "b1-fail-claim.refused": true,
+    "b2-empty.no-write": true,
+    "b2-empty.refused": true,
+    "b3-tampered-chain.no-write": true,
+    "b3-tampered-chain.refused": true,
+    "c-foreign-run-chain.no-write": true,
+    "c-foreign-run-chain.refused": true,
+    "commit.committed": true,
+    "finalize.entry-bound": true,
+    "finalize.finalized": true,
+    "prepare.counter-1": true,
+    "prepare.destination-57": true,
+    "prepare.dispatch": true,
+    "prepare.prepared": true,
+    "verify1.consistent-axes": true,
+    "verify1.filesystem-pass": true,
+    "verify2.exit0": true,
+    "verify2.overall-pass": true,
+    "verify2.registry-pass": true,
+    "verify2.source-confirmed": true,
+    "verify2.state-exact": true
+  },
+  "claim": "pre-fix: finalize trusted any JSON and the loop never closed; post-fix: fabricated/malformed/foreign/tampered evidence is refused and the honest loop reaches overall PASS",
+  "closed_loop": {
+    "argv": [
+      "/usr/bin/python3",
+      "-m",
+      "line_backup_acceptance",
+      "transaction",
+      "prepare",
+      "--project-root",
+      "/private/tmp/line-backup-acceptance-case-06",
+      "--config",
+      "/private/tmp/line-backup-acceptance-case-06/config/line_backup_config.json",
+      "--run-log",
+      "/private/tmp/line-backup-acceptance-case-06/state/run_log.md",
+      "--state",
+      "/private/tmp/line-backup-acceptance-case-06/state/backup_state.json",
+      "--test-mode",
+      "--run-id",
+      "RUN-R4",
+      "--owner-id",
+      "WRITER-R4",
+      "--group-key",
+      "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "--start-date",
+      "2024-05-13",
+      "--end-date",
+      "2024-05-17",
+      "--expected-images",
+      "57",
+      "--destination",
+      "/private/tmp/line-backup-acceptance-case-06/backups/album-a",
+      "--source-evidence",
+      "/private/tmp/line-backup-acceptance-case-06/source-evidence.json",
+      "--dispatcher",
+      "/private/tmp/line-backup-acceptance-case-06/downloader-adapter.py",
+      "--dispatch-counter",
+      "/private/tmp/line-backup-acceptance-case-06/dispatch-counter.jsonl",
+      "--dispatcher-outcome",
+      "RETURNED",
+      "--evidence-dir",
+      "/private/tmp/line-backup-acceptance-case-06/evidence/prepare"
+    ],
+    "commit": {
+      "exit_code": 0,
+      "result": {
+        "exit_code": 0,
+        "message": "verification committed",
+        "replacement": true,
+        "result": "COMMITTED_VERIFICATION",
+        "revision": 3,
+        "schema_version": 1,
+        "state_replaced": true
+      }
+    },
+    "finalize": {
+      "exit_code": 0,
+      "result": {
+        "exit_code": 0,
+        "message": "terminal outcome committed",
+        "outcome": "VERIFIED",
+        "replacement": true,
+        "result": "FINALIZED",
+        "revision": 4,
+        "schema_version": 1,
+        "state_replaced": true
+      }
+    },
+    "prepare": {
+      "counter_lines": 1,
+      "destination_files": 57,
+      "exit_code": 0,
+      "result": {
+        "dispatch_performed": true,
+        "exit_code": 0,
+        "message": "intent committed and exactly one dispatch performed",
+        "result": "PREPARED",
+        "revision": 2,
+        "schema_version": 1,
+        "state_replaced": true
+      }
+    },
+    "registry_entry": {
+      "destinations": [
+        "/private/tmp/line-backup-acceptance-case-06/backups/album-a"
+      ],
+      "evidence": "fixture:binding-fixture.json:e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c",
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "source_kind": "filesystem_verification",
+      "verified_run_id": "RUN-R4"
+    },
+    "verify_1": {
+      "exit_code": 4,
+      "filesystem": "PASS",
+      "overall": "NOT_ACHIEVED",
+      "registry": "FAIL",
+      "source": "UNRESOLVED"
+    },
+    "verify_2": {
+      "axes": {
+        "filesystem_status": "PASS",
+        "overall_status": "PASS",
+        "registry_status": "PASS",
+        "source_status": "CONFIRMED",
+        "state_status": "EXACT"
+      },
+      "exit_code": 0
+    }
+  },
+  "driver": "phase2-r4-finalize-trust",
+  "entry": "real CLI prepare -> verify-only -> commit -> finalize -> verify-only (test-mode case-06)",
+  "oracle": "persisted state after every commit + real destination inventory + genuine verify chains + verify-only result/exit + pre/post state hashes",
+  "pre_fix": {
+    "evidence": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r4/observation.json",
+    "observation": "finalize committed VERIFIED from arbitrary JSON (PASS/57, FAIL/0, {}, another run's JSON); the entry carried no source_authority and the transaction -> verify-only loop never reached PASS",
+    "verdict": "REPRODUCED_FINALIZE_TRUSTS_JSON"
+  },
+  "program_hashes": {
+    "authority.py": {
+      "bytes": 8952,
+      "sha256": "984318a6ca230b80e748faa8a2fef44f12aa34aa7c36ca4481b57012e922afb1"
+    },
+    "cli.py": {
+      "bytes": 5169,
+      "sha256": "162003558afa8690e63fecb445cbff5e2af9a76c9c88280d9a787b897a9bc49c"
+    },
+    "common.py": {
+      "bytes": 34351,
+      "sha256": "df9fe0bc6333a8afec6f0bc87b336cf905e3683a209cbc8155190d4e5a0c60c0"
+    },
+    "status.py": {
+      "bytes": 7921,
+      "sha256": "00e94973c91590f2a76f058d5e2339da2a52016fd317c9816650f0785273b0f9"
+    },
+    "transaction.py": {
+      "bytes": 42064,
+      "sha256": "3e535b6629ed90252cace6fccebfddd9494b4cdf8bfcf25768b90e1f013199f1"
+    },
+    "verifier.py": {
+      "bytes": 25377,
+      "sha256": "a07ffe450284ade34fce27f646bd4a0c37baccb65de5660e77aea3faf48b23b6"
+    }
+  },
+  "refusals": {
+    "a-fabricated": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-06",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-06/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-06/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-06/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-R4-R",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-R4-R",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-06/evidence/refusals/fabricated-result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-06/evidence/finalize"
+      ],
+      "exit_code": 4,
+      "registry_entries": 0,
+      "result": {
+        "exit_code": 4,
+        "message": "no evidence chain (manifest.json) beside the result",
+        "replacement": false,
+        "result": "INVALID_VERIFICATION_EVIDENCE",
+        "schema_version": 1,
+        "state_replaced": false
+      },
+      "state_unchanged": true
+    },
+    "b1-fail-claim": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-06",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-06/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-06/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-06/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-R4-R",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-R4-R",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-06/evidence/refusals/fail-claim.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-06/evidence/finalize"
+      ],
+      "exit_code": 4,
+      "registry_entries": 0,
+      "result": {
+        "exit_code": 4,
+        "message": "no evidence chain (manifest.json) beside the result",
+        "replacement": false,
+        "result": "INVALID_VERIFICATION_EVIDENCE",
+        "schema_version": 1,
+        "state_replaced": false
+      },
+      "state_unchanged": true
+    },
+    "b2-empty": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-06",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-06/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-06/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-06/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-R4-R",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-R4-R",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-06/evidence/refusals/empty.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-06/evidence/finalize"
+      ],
+      "exit_code": 4,
+      "registry_entries": 0,
+      "result": {
+        "exit_code": 4,
+        "message": "no evidence chain (manifest.json) beside the result",
+        "replacement": false,
+        "result": "INVALID_VERIFICATION_EVIDENCE",
+        "schema_version": 1,
+        "state_replaced": false
+      },
+      "state_unchanged": true
+    },
+    "b3-tampered-chain": {
+      "exit_code": 4,
+      "registry_entries": 0,
+      "result": {
+        "exit_code": 4,
+        "message": "manifest result bytes/sha256 disagree with result.json",
+        "replacement": false,
+        "result": "INVALID_VERIFICATION_EVIDENCE",
+        "schema_version": 1,
+        "state_replaced": false
+      },
+      "state_unchanged": true
+    },
+    "c-foreign-run-chain": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-06",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-06/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-06/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-06/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-R4-R",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-R4-R",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-06/evidence/genuine-chain/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-06/evidence/finalize"
+      ],
+      "exit_code": 4,
+      "registry_entries": 0,
+      "result": {
+        "exit_code": 4,
+        "message": "verification run_id does not belong to this run",
+        "replacement": false,
+        "result": "VERIFICATION_RUN_MISMATCH",
+        "schema_version": 1,
+        "state_replaced": false
+      },
+      "state_unchanged": true
+    }
+  },
+  "verdict": "SAFE_R4_REFUSALS_AND_CLOSED_LOOP"
+}
