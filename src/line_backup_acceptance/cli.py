@@ -31,6 +31,7 @@ def parser() -> argparse.ArgumentParser:
     verify.add_argument("--start-date")
     verify.add_argument("--end-date")
     verify.add_argument("--expected-images", type=int)
+    verify.add_argument("--run-id")
     tx = sub.add_parser("transaction")
     txsub = tx.add_subparsers(dest="operation")
     for op in ("prepare", "resume", "commit", "finalize", "duplicate-check"):
@@ -48,10 +49,12 @@ def parser() -> argparse.ArgumentParser:
         p.add_argument("--dispatcher")
         p.add_argument("--dispatch-counter")
         p.add_argument("--verification-json")
+        p.add_argument("--source-evidence")
         p.add_argument("--outcome", choices=["VERIFIED", "SAFE_ABORT"])
         p.add_argument("--dispatcher-outcome", choices=["RETURNED", "UNKNOWN"], default="RETURNED")
         p.add_argument("--crash-after-dispatch", action="store_true")
         p.add_argument("--no-dispatch", action="store_true")
+        p.add_argument("--storage-fault-slot", choices=["intent", "dispatch"])
     st = sub.add_parser("status")
     stsub = st.add_subparsers(dest="operation")
     ev = stsub.add_parser("evaluate")
@@ -87,7 +90,13 @@ def main(argv=None) -> int:
             if ns.operation not in {"prepare", "resume", "commit", "finalize", "duplicate-check"}:
                 raise AcceptanceError("INVALID_INPUT", "transaction operation is required", 2)
             validate_transaction(ns)
-            if not ns.test_mode and (ns.pause_at or ns.barrier_file or ns.storage_fault or ns.dispatcher_outcome != "RETURNED" or ns.crash_after_dispatch or ns.no_dispatch and False):
+            # Rev15 §15.1 fixed order: (1) authority validation, (2) adapter-flag semantic
+            # rejection, (3) operation logic.  resume owns its own adapter-flag rejection
+            # (INVALID_INPUT, after authority and before any state read); every other operation
+            # refuses test-only fault flags without --test-mode here.
+            if ns.operation != "resume" and not ns.test_mode and (
+                    ns.pause_at or ns.barrier_file or ns.storage_fault or ns.storage_fault_slot
+                    or ns.crash_after_dispatch or ns.dispatcher_outcome not in (None, "RETURNED")):
                 raise AcceptanceError("INVALID_AUTHORITY", "test-only adapter flags require --test-mode", 2)
             fn = {"prepare": transaction.prepare, "resume": transaction.resume, "commit": transaction.commit,
                   "finalize": transaction.finalize, "duplicate-check": transaction.duplicate_check}[ns.operation]

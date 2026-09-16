@@ -8,7 +8,7 @@ from typing import Any
 from .common import AcceptanceError, exact_real_path, read_json, within
 
 
-CASE_ROOTS = {Path(f"/private/tmp/line-backup-acceptance-case-{i:02d}") for i in range(1, 13)}
+CASE_ROOTS = {Path(f"/private/tmp/line-backup-acceptance-case-{i:02d}") for i in range(1, 26)}
 VERIFIER_ROOT = Path("/private/tmp/line-backup-acceptance-verifier")
 CONFIG_KEYS = {
     "schema_version", "group_key", "group_name", "backup_root", "app_identifier",
@@ -48,8 +48,8 @@ def _validate_required_transaction_args(ns) -> None:
     required_by_operation = {
         "prepare": ("run_id", "owner_id", "group_key", "start_date", "end_date", "expected_images", "destination"),
         "resume": ("run_id", "expected_revision", "expected_owner_id"),
-        "commit": ("run_id", "expected_revision", "expected_owner_id", "verification_json"),
-        "finalize": ("run_id", "expected_revision", "expected_owner_id", "verification_json", "outcome"),
+        "commit": ("run_id", "expected_revision", "expected_owner_id"),
+        "finalize": ("run_id", "expected_revision", "expected_owner_id", "outcome"),
         "duplicate-check": ("group_key", "start_date", "end_date", "expected_images", "destination"),
     }
     for name in required_by_operation.get(getattr(ns, "operation", ""), ()):
@@ -70,16 +70,20 @@ def validate_verify(ns) -> dict[str, str]:
         raise AcceptanceError("INVALID_AUTHORITY", "config/state are not canonical children of project root", 2)
     _require_file(expected_config, "config")
     _require_file(expected_state, "state")
-    if ns.test_mode and not (root == VERIFIER_ROOT or within(root, VERIFIER_ROOT)):
-        raise AcceptanceError("INVALID_AUTHORITY", "verify test mode is outside the literal fixture root", 2)
-    if not ns.test_mode and root == VERIFIER_ROOT:
-        raise AcceptanceError("INVALID_AUTHORITY", "fixture root requires test mode", 2)
+    if ns.test_mode:
+        allowed = root in CASE_ROOTS or root == VERIFIER_ROOT or within(root, VERIFIER_ROOT)
+        if not allowed:
+            raise AcceptanceError("INVALID_AUTHORITY", "verify test mode is outside the literal fixture roots", 2)
+    else:
+        if root == VERIFIER_ROOT or within(root, VERIFIER_ROOT):
+            raise AcceptanceError("INVALID_AUTHORITY", "fixture root requires test mode", 2)
     return {"project_root": str(root), "config": str(expected_config), "state": str(expected_state),
             "run_log": str(root / "state" / "run_log.md"), "evidence_dir": str(evidence)}
 
 
 def _validate_fixture_paths(ns, root: Path) -> None:
-    for name in ("destination", "dispatcher", "dispatch_counter", "verification_json", "barrier_file"):
+    for name in ("destination", "dispatcher", "dispatch_counter", "verification_json", "barrier_file",
+                 "source_evidence"):
         value = getattr(ns, name, None)
         if value and not within(_absolute(value), root):
             raise AcceptanceError("INVALID_AUTHORITY", f"--{name.replace('_', '-')} is outside test root", 2)
@@ -94,16 +98,24 @@ def validate_transaction(ns) -> dict[str, Any]:
     if not exact_real_path(root) or not root.is_dir():
         raise AcceptanceError("INVALID_AUTHORITY", "project root is symlinked, missing, or not a directory", 2)
     if ns.test_mode:
-        nested_case10 = root.parent == Path("/private/tmp/line-backup-acceptance-case-10") and root.name in {"verified", "safe-abort"}
-        if (root not in CASE_ROOTS and not nested_case10) or state != root / "state.json":
-            raise AcceptanceError("INVALID_AUTHORITY", "test mode requires one literal case root/state.json", 2)
+        if root not in CASE_ROOTS:
+            raise AcceptanceError("INVALID_AUTHORITY", "test mode requires one literal case root", 2)
+        expected_config = root / "config" / "line_backup_config.json"
+        expected_run_log = root / "state" / "run_log.md"
+        expected_state = root / "state" / "backup_state.json"
+        if (_absolute(getattr(ns, "config", None)) != expected_config
+                or _absolute(getattr(ns, "run_log", None)) != expected_run_log
+                or state != expected_state):
+            raise AcceptanceError("INVALID_AUTHORITY", "test mode requires the canonical case-root children", 2)
+        _require_file(expected_config, "config")
+        _require_file(expected_state, "state")
+        _require_file(expected_run_log, "run-log")
         if not within(evidence, root):
             raise AcceptanceError("INVALID_AUTHORITY", "test evidence must remain under case root", 2)
-        if getattr(ns, "config", None) or getattr(ns, "run_log", None):
-            raise AcceptanceError("INVALID_AUTHORITY", "test mode does not accept config/run-log", 2)
         _validate_fixture_paths(ns, root)
         _validate_required_transaction_args(ns)
-        return {"project_root": str(root), "state": str(state), "evidence_dir": str(evidence), "test_mode": True}
+        return {"project_root": str(root), "config": str(expected_config), "run_log": str(expected_run_log),
+                "state": str(state), "evidence_dir": str(evidence), "test_mode": True}
 
     config = _absolute(getattr(ns, "config", None))
     run_log = _absolute(getattr(ns, "run_log", None))

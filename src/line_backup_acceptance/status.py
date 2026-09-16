@@ -26,6 +26,7 @@ def evaluate(value: dict) -> dict:
         "core-blocked": ("UNKNOWN", "COMPLETE", "BLOCKED", "NOT_RUN", "PENDING", "CORE_ACCEPTANCE_BLOCKED", "CORE_ACCEPTANCE/BLOCKED/AUTHORITY_REQUIRED"),
         "core-fail": ("NOT_ACHIEVED", "IN_PROGRESS", "FAIL", "NOT_RUN", "PENDING", "FIX_REQUIRED", "CORE_ACCEPTANCE/FAIL/TASK_REGRESSION"),
         "baseline-unchanged": ("ACHIEVED", "COMPLETE", "PASS", "PASS", "PENDING", "READY_FOR_INDEPENDENT_ACCEPTANCE", None),
+        "baseline-worsened": ("ACHIEVED", "COMPLETE", "PASS", "FAIL", "PENDING", "FIX_REQUIRED", "BASELINE_REGRESSION_DELTA/FAIL/TASK_REGRESSION"),
         "canonical-preexisting-debt": ("ACHIEVED", "COMPLETE", "PASS", "INCOMPLETE", "PENDING", "PENDING_REQUIRED_VERIFICATION", "DOCUMENTATION_RETENTION_HEALTH/FAIL/PRE_EXISTING_REPOSITORY_FAILURE"),
         "baseline-unavailable": ("ACHIEVED", "COMPLETE", "PASS", "INCOMPLETE", "PENDING", "PENDING_REQUIRED_VERIFICATION", "REQUIRED_VERIFICATION/BLOCKED/INPUT_UNAVAILABLE"),
         "all-required-waived": ("ACHIEVED", "COMPLETE", "PASS", "WAIVED", "PENDING", "READY_FOR_INDEPENDENT_ACCEPTANCE", None),
@@ -33,16 +34,16 @@ def evaluate(value: dict) -> dict:
         "stage05-blocked": ("ACHIEVED", "COMPLETE", "PASS", "PASS", "BLOCKED", "ACCEPTANCE_BLOCKED", "INDEPENDENT_ACCEPTANCE/BLOCKED/AUTHORITY_REQUIRED"),
         "acceptance-product-defect": ("UNKNOWN", "IN_PROGRESS", "PASS", "PASS", "FAIL", "FIX_REQUIRED", "INDEPENDENT_ACCEPTANCE/FAIL/PRODUCT_DEFECT"),
         "legacy-no-source": ("UNKNOWN", "COMPLETE", "BLOCKED", "PASS", "PENDING", "CORE_ACCEPTANCE_BLOCKED", "SOURCE_CORRESPONDENCE/BLOCKED/INPUT_UNAVAILABLE"),
-        "contradictory-axes": ("NOT_ACHIEVED", "COMPLETE", "FAIL", "FAIL", "PENDING", "FIX_REQUIRED", "CORE_ACCEPTANCE/FAIL/TASK_REGRESSION"),
+        "contradictory-axes": ("NOT_ACHIEVED", "IN_PROGRESS", "FAIL", "NOT_RUN", "PENDING", "FIX_REQUIRED", "CORE_ACCEPTANCE/FAIL/TASK_REGRESSION"),
         "core-not-required-no-rationale": ("UNKNOWN", "ESCALATED", "NOT_REQUIRED", "NOT_RUN", "PENDING", "REPLAN_REQUIRED", "IMPLEMENTATION/BLOCKED/TASK_REGRESSION"),
         "core-not-required-rationalized": ("ACHIEVED", "COMPLETE", "NOT_REQUIRED", "NOT_REQUIRED", "NOT_REQUIRED", "DONE", None),
         "done": ("ACHIEVED", "COMPLETE", "PASS", "PASS", "PASS", "DONE", None),
     }
     if scenario == "core-not-required-rationalized" and not str(value.get("plan_rationale", "")).strip():
-        return _out(value, "UNKNOWN", "ESCALATED", "NOT_REQUIRED", "NOT_RUN", "PENDING", "REPLAN_REQUIRED", "IMPLEMENTATION/BLOCKED/TASK_REGRESSION")
+        return _out(value, "UNKNOWN", "ESCALATED", "NOT_REQUIRED", "NOT_RUN", "PENDING", "REPLAN_REQUIRED", "IMPLEMENTATION/BLOCKED/TASK_REGRESSION", scenario=True)
     if scenario in scenarios:
         primary, impl, core, required, independent, closure, blocker = scenarios[scenario]
-        out = _out(value, primary, impl, core, required, independent, closure, blocker)
+        out = _out(value, primary, impl, core, required, independent, closure, blocker, scenario=True)
         if scenario == "retention-waived":
             out["waiver"] = {"WAIVED_BY": "Project owner", "WAIVER_SCOPE": "DOCUMENTATION_RETENTION_HEALTH", "RATIONALE": "scoped retention debt", "EVIDENCE": "pre-existing evidence", "RESIDUAL_RISK": "reproducibility debt", "APPROVED_AT": "2026-09-16T00:00:00Z", "REVIEW_OR_EXPIRY_TRIGGER": "next acceptance"}
         return out
@@ -81,15 +82,20 @@ def evaluate(value: dict) -> dict:
     return _out(value, primary, impl, core, required, independent, closure, blocker)
 
 
-def _out(value, primary, impl, core, required, independent, closure, blocker):
+def _out(value, primary, impl, core, required, independent, closure, blocker, *, scenario=False):
     if primary not in PRIMARY or impl not in IMPLEMENTATION or core not in CORE or required not in REQUIRED or independent not in INDEPENDENT or closure not in CLOSURE:
         raise AcceptanceError("INVALID_INPUT", "illegal Status Contract v2 enum", 2)
     checks = value.get("checks", [])
-    return {"schema_version": 2, "primary_outcome_status": primary, "implementation_status": impl,
-            "core_acceptance_status": core, "required_verification_status": required,
-            "independent_acceptance_status": independent, "task_closure_status": closure,
-            "blocker": blocker, "checks": checks, "baseline_delta": value.get("baseline_delta"),
-            "waiver": value.get("waiver"), "failure_class": value.get("failure_class")}
+    out = {"schema_version": 2, "primary_outcome_status": primary, "implementation_status": impl,
+           "core_acceptance_status": core, "required_verification_status": required,
+           "independent_acceptance_status": independent, "task_closure_status": closure,
+           "blocker": blocker, "checks": checks, "baseline_delta": value.get("baseline_delta"),
+           "waiver": value.get("waiver"), "failure_class": value.get("failure_class")}
+    if scenario:
+        # Rev15 §15.4 (F5): scenario inputs are facts the module does not verify; the emitted
+        # evidence basis marks this output as a non-acceptance demonstration.
+        out["evidence_basis"] = "scenario_table_non_acceptance"
+    return out
 
 
 def run(ns) -> tuple[dict, int]:
