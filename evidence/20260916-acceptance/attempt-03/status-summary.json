@@ -1,0 +1,2012 @@
+{
+  "all_match": true,
+  "created_at": "2026-09-16T22:06:46Z",
+  "driver_id": "status-fixture-driver",
+  "manifest": {
+    "bytes": 39242,
+    "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-acceptance/attempt-03/status-rows.json",
+    "sha256": "48697c5872cd45605d7246e5e83cd2a3dabfcb0540a90669c244fb95aa0f3308"
+  },
+  "passed": 19,
+  "program_hashes": {
+    "authority.py": {
+      "bytes": 8952,
+      "sha256": "984318a6ca230b80e748faa8a2fef44f12aa34aa7c36ca4481b57012e922afb1"
+    },
+    "cli.py": {
+      "bytes": 5169,
+      "sha256": "162003558afa8690e63fecb445cbff5e2af9a76c9c88280d9a787b897a9bc49c"
+    },
+    "common.py": {
+      "bytes": 34351,
+      "sha256": "df9fe0bc6333a8afec6f0bc87b336cf905e3683a209cbc8155190d4e5a0c60c0"
+    },
+    "status.py": {
+      "bytes": 7921,
+      "sha256": "00e94973c91590f2a76f058d5e2339da2a52016fd317c9816650f0785273b0f9"
+    },
+    "transaction.py": {
+      "bytes": 42064,
+      "sha256": "3e535b6629ed90252cace6fccebfddd9494b4cdf8bfcf25768b90e1f013199f1"
+    },
+    "verifier.py": {
+      "bytes": 25377,
+      "sha256": "a07ffe450284ade34fce27f646bd4a0c37baccb65de5660e77aea3faf48b23b6"
+    }
+  },
+  "rows": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/candidate.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/candidate.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "NOT_STARTED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "IN_PROGRESS"
+        },
+        "waiver": null
+      },
+      "id": "candidate",
+      "input": {
+        "bytes": 476,
+        "path": "/private/tmp/line-backup-acceptance-status/candidate.input.json",
+        "sha256": "47181538f2226c3e48f911db2f47e22acb13ccda4615a963bcf0f5e276975d40"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "NOT_STARTED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "IN_PROGRESS"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 838,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/candidate.output.json",
+        "sha256": "c3ab5c53c4c8a7486fe28687f310291ac4c84e59a70e05ff44456fd92ff22640"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/implementation-blocked.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/implementation-blocked.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "IMPLEMENTATION/BLOCKED/ENVIRONMENT_FAILURE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "BLOCKED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "IMPLEMENTATION_BLOCKED"
+        },
+        "waiver": null
+      },
+      "id": "implementation-blocked",
+      "input": {
+        "bytes": 489,
+        "path": "/private/tmp/line-backup-acceptance-status/implementation-blocked.input.json",
+        "sha256": "e9ebb7d65303a7c24ca481ec37721406d02f586f1badc6c03519b8d6b2c96de1"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "IMPLEMENTATION/BLOCKED/ENVIRONMENT_FAILURE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "BLOCKED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "IMPLEMENTATION_BLOCKED"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 885,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/implementation-blocked.output.json",
+        "sha256": "3592d5254a130f34094387826a9b5f0bd41209f24b96ca792b0e1145ffedc375"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/replan-required.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/replan-required.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "IMPLEMENTATION/BLOCKED/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "ESCALATED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "REPLAN_REQUIRED"
+        },
+        "waiver": null
+      },
+      "id": "replan-required",
+      "input": {
+        "bytes": 482,
+        "path": "/private/tmp/line-backup-acceptance-status/replan-required.input.json",
+        "sha256": "5f5e895e491a8691e804fc5d30d5ce57a73e0e8b6d3eb576d3c2784d9096bdd8"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "IMPLEMENTATION/BLOCKED/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "ESCALATED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "REPLAN_REQUIRED"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 876,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/replan-required.output.json",
+        "sha256": "2d0b14b60cd39e52db7675316b3f349321e487bd0b2a804c80a9fc1f887c9358"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/core-not-run.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/core-not-run.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/NOT_RUN/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "PENDING_CORE_ACCEPTANCE"
+        },
+        "waiver": null
+      },
+      "id": "core-not-run",
+      "input": {
+        "bytes": 479,
+        "path": "/private/tmp/line-backup-acceptance-status/core-not-run.input.json",
+        "sha256": "571be1ca99c40bd4d6e8df32ca258771f046c9ec7e3a2fa2eed453a42cd64c51"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/NOT_RUN/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "PENDING_CORE_ACCEPTANCE"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 886,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/core-not-run.output.json",
+        "sha256": "c7c073d00d73e5edc673552442fdee299cec506a359f4a7a39ca8df02039cf61"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/core-blocked.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/core-blocked.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/BLOCKED/AUTHORITY_REQUIRED",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "BLOCKED",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "CORE_ACCEPTANCE_BLOCKED"
+        },
+        "waiver": null
+      },
+      "id": "core-blocked",
+      "input": {
+        "bytes": 479,
+        "path": "/private/tmp/line-backup-acceptance-status/core-blocked.input.json",
+        "sha256": "8bc5e714422b876df2ea1c4e29a2b9f8eadefe569dede9f8b182128621975cab"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/BLOCKED/AUTHORITY_REQUIRED",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "BLOCKED",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "CORE_ACCEPTANCE_BLOCKED"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 887,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/core-blocked.output.json",
+        "sha256": "4fbf2e3c359ebde186c9c1b1baa3b1ae2dde25992bc8f399c37224e27569fcdf"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/core-fail.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/core-fail.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/FAIL/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "FAIL",
+          "implementation_status": "IN_PROGRESS",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "NOT_ACHIEVED",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "id": "core-fail",
+      "input": {
+        "bytes": 476,
+        "path": "/private/tmp/line-backup-acceptance-status/core-fail.input.json",
+        "sha256": "c229b2f75bd6e8a9035c957741625d8aa5b7147c3dd747ae0f31cd376f68ae53"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/FAIL/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "FAIL",
+          "implementation_status": "IN_PROGRESS",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "NOT_ACHIEVED",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 875,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/core-fail.output.json",
+        "sha256": "d9420cbe8ea4a2348139da729d454807ad3857de2275ce9e98103224d5548beb"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/baseline-unchanged.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/baseline-unchanged.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": "UNCHANGED",
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "BASELINE_DELTA",
+            "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "PASS",
+          "task_closure_status": "READY_FOR_INDEPENDENT_ACCEPTANCE"
+        },
+        "waiver": null
+      },
+      "id": "baseline-unchanged",
+      "input": {
+        "bytes": 1222,
+        "path": "/private/tmp/line-backup-acceptance-status/baseline-unchanged.input.json",
+        "sha256": "e57ebf194f60b61116fe30c918427018cf3081fc028bd6ee5182e597b6369a96"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": "UNCHANGED",
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "BASELINE_DELTA",
+            "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "PASS",
+          "task_closure_status": "READY_FOR_INDEPENDENT_ACCEPTANCE"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "baseline_evidence_echoed": [
+          "pre-existing: clean"
+        ],
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 870,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/baseline-unchanged.output.json",
+        "sha256": "1c58ba232c6ec2736694e4c35d3ce4829aa12cfb4719eb9ca99d91f58b22f64a"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/baseline-worsened.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/baseline-worsened.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": "WORSENED",
+        "blocker": "BASELINE_REGRESSION_DELTA/FAIL/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "BASELINE_DELTA",
+            "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "TASK_REGRESSION",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "FAIL",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "id": "baseline-worsened",
+      "input": {
+        "bytes": 1267,
+        "path": "/private/tmp/line-backup-acceptance-status/baseline-worsened.input.json",
+        "sha256": "47bb98c8fca67cf72446d9a93e701a327e88a0637536d3b6aa1692bad8787c3e"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": "WORSENED",
+        "blocker": "BASELINE_REGRESSION_DELTA/FAIL/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "BASELINE_DELTA",
+            "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "TASK_REGRESSION",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "FAIL",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true,
+        "worsened_signature_disclosed": true
+      },
+      "output": {
+        "bytes": 906,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/baseline-worsened.output.json",
+        "sha256": "c78193a7cca221cac9a7d0b08009d6d56d8835665d8d8b85385c69a8a3dee68a"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/canonical-preexisting-debt.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/canonical-preexisting-debt.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "DOCUMENTATION_RETENTION_HEALTH/FAIL/PRE_EXISTING_REPOSITORY_FAILURE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          },
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "DOCUMENTATION_RETENTION_HEALTH",
+            "CHECK_RESULT": "FAIL",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "REPOSITORY_HEALTH",
+            "FAILURE_ROUTING": "pre-existing missing retention evidence",
+            "GOAL_CRITICALITY": "SUPPORTING",
+            "WAIVER_ALLOWED": "YES",
+            "WAIVER_AUTHORITY": "Project owner",
+            "WAIVER_STATUS": "NOT_REQUESTED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "PRE_EXISTING_REPOSITORY_FAILURE",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "INCOMPLETE",
+          "task_closure_status": "PENDING_REQUIRED_VERIFICATION"
+        },
+        "waiver": null
+      },
+      "id": "canonical-preexisting-debt",
+      "input": {
+        "bytes": 974,
+        "path": "/private/tmp/line-backup-acceptance-status/canonical-preexisting-debt.input.json",
+        "sha256": "a124fb0cc462c276487d4f6dc8b6212bf89b1811513ca81b6e62c49847e661d3"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "DOCUMENTATION_RETENTION_HEALTH/FAIL/PRE_EXISTING_REPOSITORY_FAILURE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          },
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "DOCUMENTATION_RETENTION_HEALTH",
+            "CHECK_RESULT": "FAIL",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "REPOSITORY_HEALTH",
+            "FAILURE_ROUTING": "pre-existing missing retention evidence",
+            "GOAL_CRITICALITY": "SUPPORTING",
+            "WAIVER_ALLOWED": "YES",
+            "WAIVER_AUTHORITY": "Project owner",
+            "WAIVER_STATUS": "NOT_REQUESTED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "PRE_EXISTING_REPOSITORY_FAILURE",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "INCOMPLETE",
+          "task_closure_status": "PENDING_REQUIRED_VERIFICATION"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "original_fail_preserved": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 1375,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/canonical-preexisting-debt.output.json",
+        "sha256": "cc80bf70362608002f03c70811b2caf8bdf0e3095cd2088aa9b14a35dd8e0516"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/baseline-unavailable.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/baseline-unavailable.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": "UNAVAILABLE",
+        "blocker": "REQUIRED_VERIFICATION/BLOCKED/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_RULE": "BASELINE_DELTA",
+            "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+            "CHECK_RESULT": "BLOCKED",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "INPUT_UNAVAILABLE",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "INCOMPLETE",
+          "task_closure_status": "PENDING_REQUIRED_VERIFICATION"
+        },
+        "waiver": null
+      },
+      "id": "baseline-unavailable",
+      "input": {
+        "bytes": 642,
+        "path": "/private/tmp/line-backup-acceptance-status/baseline-unavailable.input.json",
+        "sha256": "c382d67d8e572561d91a0497fb775149d1713346549d5b05e80187df47d83766"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": "UNAVAILABLE",
+        "blocker": "REQUIRED_VERIFICATION/BLOCKED/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_RULE": "BASELINE_DELTA",
+            "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+            "CHECK_RESULT": "BLOCKED",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "INPUT_UNAVAILABLE",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "INCOMPLETE",
+          "task_closure_status": "PENDING_REQUIRED_VERIFICATION"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "missing_baseline_absent": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 938,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/baseline-unavailable.output.json",
+        "sha256": "723209a6fd1828cc373d4408635edb0ca1cd981cc71dad6abb9a2ae58787b3d2"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/all-required-waived.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/all-required-waived.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "WAIVED",
+          "task_closure_status": "READY_FOR_INDEPENDENT_ACCEPTANCE"
+        },
+        "waiver": {
+          "APPROVED_AT": "2026-09-16T00:00:00Z",
+          "EVIDENCE": "owner approval",
+          "RATIONALE": "approved scoped waiver",
+          "RESIDUAL_RISK": "tracked",
+          "REVIEW_OR_EXPIRY_TRIGGER": "next acceptance",
+          "WAIVED_BY": "Project owner",
+          "WAIVER_SCOPE": "REQUIRED_VERIFICATION"
+        }
+      },
+      "id": "all-required-waived",
+      "input": {
+        "bytes": 813,
+        "path": "/private/tmp/line-backup-acceptance-status/all-required-waived.input.json",
+        "sha256": "6610995f0438069264400eaae6a095b0b75cc08719b4daaeda03f278d1a20942"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "WAIVED",
+          "task_closure_status": "READY_FOR_INDEPENDENT_ACCEPTANCE"
+        },
+        "waiver": {
+          "APPROVED_AT": "2026-09-16T00:00:00Z",
+          "EVIDENCE": "owner approval",
+          "RATIONALE": "approved scoped waiver",
+          "RESIDUAL_RISK": "tracked",
+          "REVIEW_OR_EXPIRY_TRIGGER": "next acceptance",
+          "WAIVED_BY": "Project owner",
+          "WAIVER_SCOPE": "REQUIRED_VERIFICATION"
+        }
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 1135,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/all-required-waived.output.json",
+        "sha256": "4a7d4f26220969d627966a884613146ac76a86add3a615f12720a03d3c3bd8b1"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/retention-waived.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/retention-waived.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "DOCUMENTATION_RETENTION_HEALTH/WAIVED/PRE_EXISTING_REPOSITORY_FAILURE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          },
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "DOCUMENTATION_RETENTION_HEALTH",
+            "CHECK_RESULT": "FAIL",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "REPOSITORY_HEALTH",
+            "FAILURE_ROUTING": "pre-existing missing retention evidence",
+            "GOAL_CRITICALITY": "SUPPORTING",
+            "WAIVER_ALLOWED": "YES",
+            "WAIVER_AUTHORITY": "Project owner",
+            "WAIVER_STATUS": "APPROVED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "WAIVED",
+          "task_closure_status": "READY_FOR_INDEPENDENT_ACCEPTANCE"
+        },
+        "waiver": {
+          "APPROVED_AT": "2026-09-16T00:00:00Z",
+          "EVIDENCE": "pre-existing evidence",
+          "RATIONALE": "scoped retention debt",
+          "RESIDUAL_RISK": "reproducibility debt",
+          "REVIEW_OR_EXPIRY_TRIGGER": "next acceptance",
+          "WAIVED_BY": "Project owner",
+          "WAIVER_SCOPE": "DOCUMENTATION_RETENTION_HEALTH"
+        }
+      },
+      "id": "retention-waived",
+      "input": {
+        "bytes": 1260,
+        "path": "/private/tmp/line-backup-acceptance-status/retention-waived.input.json",
+        "sha256": "9990453d963b162f7b85c45a623cad9b805a935bb09f49e4095f677501e5d7a5"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "DOCUMENTATION_RETENTION_HEALTH/WAIVED/PRE_EXISTING_REPOSITORY_FAILURE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          },
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "DOCUMENTATION_RETENTION_HEALTH",
+            "CHECK_RESULT": "FAIL",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "REPOSITORY_HEALTH",
+            "FAILURE_ROUTING": "pre-existing missing retention evidence",
+            "GOAL_CRITICALITY": "SUPPORTING",
+            "WAIVER_ALLOWED": "YES",
+            "WAIVER_AUTHORITY": "Project owner",
+            "WAIVER_STATUS": "APPROVED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "WAIVED",
+          "task_closure_status": "READY_FOR_INDEPENDENT_ACCEPTANCE"
+        },
+        "waiver": {
+          "APPROVED_AT": "2026-09-16T00:00:00Z",
+          "EVIDENCE": "pre-existing evidence",
+          "RATIONALE": "scoped retention debt",
+          "RESIDUAL_RISK": "reproducibility debt",
+          "REVIEW_OR_EXPIRY_TRIGGER": "next acceptance",
+          "WAIVED_BY": "Project owner",
+          "WAIVER_SCOPE": "DOCUMENTATION_RETENTION_HEALTH"
+        }
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "original_fail_preserved": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true,
+        "waiver_fields": true,
+        "waiver_scope": true
+      },
+      "output": {
+        "bytes": 1652,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/retention-waived.output.json",
+        "sha256": "af2d5b761e996c77407ed42b3f4468400809904968694dc1aefb56e151f8bdaf"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/stage05-blocked.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/stage05-blocked.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "INDEPENDENT_ACCEPTANCE/BLOCKED/AUTHORITY_REQUIRED",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "BLOCKED",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "PASS",
+          "task_closure_status": "ACCEPTANCE_BLOCKED"
+        },
+        "waiver": null
+      },
+      "id": "stage05-blocked",
+      "input": {
+        "bytes": 482,
+        "path": "/private/tmp/line-backup-acceptance-status/stage05-blocked.input.json",
+        "sha256": "7de90bf8d5eafbc6498e5c850be1a940c4b425d6256c666cab66dd0d2db07690"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "INDEPENDENT_ACCEPTANCE/BLOCKED/AUTHORITY_REQUIRED",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "BLOCKED",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "PASS",
+          "task_closure_status": "ACCEPTANCE_BLOCKED"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 884,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/stage05-blocked.output.json",
+        "sha256": "a59d78085775473d653841df4fb93f251efdf7d8e09150bd4b4e2f9ccfe69b59"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/acceptance-product-defect.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/acceptance-product-defect.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "INDEPENDENT_ACCEPTANCE/FAIL/PRODUCT_DEFECT",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "PRODUCT_DEFECT",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "IN_PROGRESS",
+          "independent_acceptance_status": "FAIL",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "PASS",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "id": "acceptance-product-defect",
+      "input": {
+        "bytes": 529,
+        "path": "/private/tmp/line-backup-acceptance-status/acceptance-product-defect.input.json",
+        "sha256": "f20b50c68efe94088318a105b087c0806696957845c001407326ac9128e75e91"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "INDEPENDENT_ACCEPTANCE/FAIL/PRODUCT_DEFECT",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "PRODUCT_DEFECT",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "IN_PROGRESS",
+          "independent_acceptance_status": "FAIL",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "PASS",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 882,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/acceptance-product-defect.output.json",
+        "sha256": "36b594e36415370ce112137ebbf39ef2f26a955b941608685a7bd6a9d7485eac"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/legacy-no-source.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/legacy-no-source.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "SOURCE_CORRESPONDENCE/BLOCKED/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "BLOCKED",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "PASS",
+          "task_closure_status": "CORE_ACCEPTANCE_BLOCKED"
+        },
+        "waiver": null
+      },
+      "id": "legacy-no-source",
+      "input": {
+        "bytes": 483,
+        "path": "/private/tmp/line-backup-acceptance-status/legacy-no-source.input.json",
+        "sha256": "d8c164b81e6799ce53535b8c725e014a2832c2388ce020ac31413a64e721efbd"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "SOURCE_CORRESPONDENCE/BLOCKED/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "BLOCKED",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "PASS",
+          "task_closure_status": "CORE_ACCEPTANCE_BLOCKED"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 889,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/legacy-no-source.output.json",
+        "sha256": "4b16c890673fe8f7327c5e0834545e99fb5d02d056330f85dda735e6e9bc7878"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/contradictory-axes.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/contradictory-axes.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/FAIL/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          },
+          {
+            "CHECK_ID": "STAGE_04_SNAPSHOT",
+            "IMMUTABLE": "YES",
+            "STAGE_04_EXECUTION_ARTIFACT_SHA256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "STAGE_04_REPORTED_CORE_ACCEPTANCE_STATUS": "FAIL",
+            "STAGE_04_REPORTED_IMPLEMENTATION_STATUS": "COMPLETE",
+            "STAGE_04_REPORTED_REQUIRED_VERIFICATION_STATUS": "NOT_RUN"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "TASK_REGRESSION",
+        "statuses": {
+          "core_acceptance_status": "FAIL",
+          "implementation_status": "IN_PROGRESS",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "NOT_ACHIEVED",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "id": "contradictory-axes",
+      "input": {
+        "bytes": 898,
+        "path": "/private/tmp/line-backup-acceptance-status/contradictory-axes.input.json",
+        "sha256": "35abc2d6175f2269d88c7bb1def658cb9bc3babd706cd438cfd2100a5a2609bc"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/FAIL/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          },
+          {
+            "CHECK_ID": "STAGE_04_SNAPSHOT",
+            "IMMUTABLE": "YES",
+            "STAGE_04_EXECUTION_ARTIFACT_SHA256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "STAGE_04_REPORTED_CORE_ACCEPTANCE_STATUS": "FAIL",
+            "STAGE_04_REPORTED_IMPLEMENTATION_STATUS": "COMPLETE",
+            "STAGE_04_REPORTED_REQUIRED_VERIFICATION_STATUS": "NOT_RUN"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "TASK_REGRESSION",
+        "statuses": {
+          "core_acceptance_status": "FAIL",
+          "implementation_status": "IN_PROGRESS",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "NOT_ACHIEVED",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "stage_04_snapshot_immutable": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 1263,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/contradictory-axes.output.json",
+        "sha256": "dd2a615256e42b5d4f4b81f10a75a2d5b82b041e005f58df84cf92fa3144bb79"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/core-not-required-no-rationale.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/core-not-required-no-rationale.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "IMPLEMENTATION/BLOCKED/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "TASK_REGRESSION",
+        "statuses": {
+          "core_acceptance_status": "NOT_REQUIRED",
+          "implementation_status": "ESCALATED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "REPLAN_REQUIRED"
+        },
+        "waiver": null
+      },
+      "id": "core-not-required-no-rationale",
+      "input": {
+        "bytes": 535,
+        "path": "/private/tmp/line-backup-acceptance-status/core-not-required-no-rationale.input.json",
+        "sha256": "82fadb2f96881af1ee91860b3c2d49ce5d96c096daa4b8a8f021e80687b754ad"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": "IMPLEMENTATION/BLOCKED/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "TASK_REGRESSION",
+        "statuses": {
+          "core_acceptance_status": "NOT_REQUIRED",
+          "implementation_status": "ESCALATED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "REPLAN_REQUIRED"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "no_rationale_in_input": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 894,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/core-not-required-no-rationale.output.json",
+        "sha256": "a3747592dfb75a5ec77639ade17ccfe538bba9e3b7073ec6091fb522cecefc8f"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/core-not-required-rationalized.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/core-not-required-rationalized.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_REQUIRED",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "NOT_REQUIRED",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "NOT_REQUIRED",
+          "task_closure_status": "DONE"
+        },
+        "waiver": null
+      },
+      "id": "core-not-required-rationalized",
+      "input": {
+        "bytes": 623,
+        "path": "/private/tmp/line-backup-acceptance-status/core-not-required-rationalized.input.json",
+        "sha256": "8ffd94f7209275865a6692118c195562ddacefbb21d804c76d2053011a4b46bd"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_REQUIRED",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "NOT_REQUIRED",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "NOT_REQUIRED",
+          "task_closure_status": "DONE"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "rationale_in_input": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 844,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/core-not-required-rationalized.output.json",
+        "sha256": "e8b136759bd31b71d0879c6dfe89bf0b3d8d7a387610eaf537942589528a2d04"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/done.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/done.output.json"
+      ],
+      "exit_code": 0,
+      "expected": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PASS",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "PASS",
+          "task_closure_status": "DONE"
+        },
+        "waiver": null
+      },
+      "id": "done",
+      "input": {
+        "bytes": 471,
+        "path": "/private/tmp/line-backup-acceptance-status/done.input.json",
+        "sha256": "f4e01ec11ed55ad5a45d66ecf3d2804f022e92861d745ecc44eb48f8286c0647"
+      },
+      "match": true,
+      "observed": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PASS",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "PASS",
+          "task_closure_status": "DONE"
+        },
+        "waiver": null
+      },
+      "oracle": {
+        "baseline_delta": true,
+        "blocker": true,
+        "checks_preserved": true,
+        "evidence_basis": true,
+        "exit_0": true,
+        "failure_class": true,
+        "output_matches_stdout": true,
+        "output_parsed": true,
+        "schema_version_2": true,
+        "statuses": true,
+        "waiver": true
+      },
+      "output": {
+        "bytes": 820,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-status/done.output.json",
+        "sha256": "81ef6e4acb65a0c50735ca741cb86390af2ba33fb627eb1f1a52d1f750c6d710"
+      }
+    }
+  ],
+  "schema_version": 1,
+  "task_id": "T20260916-0102-01-line-backup-acceptance",
+  "total": 19
+}

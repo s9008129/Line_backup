@@ -1,0 +1,560 @@
+{
+  "artifacts": [
+    {
+      "bytes": 221,
+      "exists": true,
+      "path": ".driver-ownership.json",
+      "sha256": "f9cdab7ab2b2654fdc28e382dfd548008c67fd9ce829af9498734b82a949fffa"
+    },
+    {
+      "bytes": 269,
+      "exists": true,
+      "path": "binding-fixture.json",
+      "sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c"
+    },
+    {
+      "bytes": 371,
+      "exists": true,
+      "path": "config/line_backup_config.json",
+      "sha256": "324bc83f790cafb7b59b26b61737f2e02c4f81f675aa406d4799de54956958b3"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-000.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-001.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-002.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-003.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-004.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-005.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-006.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-007.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-008.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-009.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-010.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-011.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-012.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-013.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-014.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-015.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-016.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-017.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-018.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-019.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-020.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-021.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-022.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-023.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-024.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-025.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-026.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-027.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-028.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-029.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-030.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-031.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-032.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-033.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-034.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-035.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-036.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-037.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-038.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-039.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-040.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-041.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-042.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-043.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-044.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-045.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-046.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-047.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-048.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-049.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-050.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-051.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-052.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-053.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-054.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-055.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-056.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "dispatch-counter.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 484,
+      "exists": true,
+      "path": "dispatcher.py",
+      "sha256": "90111ca1486e18c9260b1e50eebcec14ffbcd70d2fd7f59306b3d773219b84b1"
+    },
+    {
+      "bytes": 141,
+      "exists": true,
+      "path": "evidence/result.json",
+      "sha256": "e0d7d669578d9dfa5d42815d0d15a6776d220735a13d595158dccb9313780c96"
+    },
+    {
+      "bytes": 160,
+      "exists": true,
+      "path": "input-state.json",
+      "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+    },
+    {
+      "bytes": 1198,
+      "exists": true,
+      "path": "process-records/13/prepare-no-source/argv.json",
+      "sha256": "835989b5262c6af020e9c441c864d627921ea9c21943b7cb04e19e66f68fb2ed"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/13/prepare-no-source/exit-code",
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/13/prepare-no-source/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 131,
+      "exists": true,
+      "path": "process-records/13/prepare-no-source/stdout.log",
+      "sha256": "61400f178d2b0c32560ff9de0bf1e632e595605581fd50c74ec195984b9a7659"
+    },
+    {
+      "bytes": 1210,
+      "exists": true,
+      "path": "source-evidence.json",
+      "sha256": "0bcf95670791469e5944bcbdfa9903b6a53c9f675913f89e57538358b592342d"
+    },
+    {
+      "bytes": 160,
+      "exists": true,
+      "path": "state/backup_state.json",
+      "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+    },
+    {
+      "bytes": 55,
+      "exists": true,
+      "path": "state/run_log.md",
+      "sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f"
+    }
+  ],
+  "case_id": "13",
+  "checks": [
+    {
+      "expected": "MISSING_SOURCE_EVIDENCE",
+      "id": "prepare.code",
+      "match": true,
+      "observed": "MISSING_SOURCE_EVIDENCE"
+    },
+    {
+      "expected": 2,
+      "id": "prepare.exit2",
+      "match": true,
+      "observed": 2
+    },
+    {
+      "expected": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b",
+      "id": "prepare.no-write",
+      "match": true,
+      "observed": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+    },
+    {
+      "expected": 0,
+      "id": "counter0",
+      "match": true,
+      "observed": 0
+    }
+  ],
+  "independent_oracle_match": true,
+  "inputs": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "prepare",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-13",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-13/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-13/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-13/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-13",
+        "--owner-id",
+        "WRITER-CASE-13",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-13/destination",
+        "--dispatcher",
+        "/private/tmp/line-backup-acceptance-case-13/dispatcher.py",
+        "--dispatch-counter",
+        "/private/tmp/line-backup-acceptance-case-13/dispatch-counter.jsonl",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-13/evidence"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "prepare-no-source"
+    }
+  ],
+  "notes": [
+    "fixture preconditions authored by the driver; oracle computed before product execution"
+  ],
+  "processes": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "prepare",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-13",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-13/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-13/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-13/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-13",
+        "--owner-id",
+        "WRITER-CASE-13",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-13/destination",
+        "--dispatcher",
+        "/private/tmp/line-backup-acceptance-case-13/dispatcher.py",
+        "--dispatch-counter",
+        "/private/tmp/line-backup-acceptance-case-13/dispatch-counter.jsonl",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-13/evidence"
+      ],
+      "exit_code": 2,
+      "label": "prepare-no-source",
+      "record_dir": "process-records/13/prepare-no-source",
+      "result": {
+        "exit_code": 2,
+        "message": "--source-evidence is required for prepare",
+        "result": "MISSING_SOURCE_EVIDENCE",
+        "schema_version": 1
+      }
+    }
+  ],
+  "root": "/private/tmp/line-backup-acceptance-case-13",
+  "schema_version": 1
+}

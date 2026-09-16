@@ -1,0 +1,12 @@
+{
+  "app_identifier": "jp.naver.line.mac",
+  "backup_root": "/private/tmp/line-backup-acceptance-case-10",
+  "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+  "group_name": "旻謙允禎成長日記",
+  "max_albums_per_run": 50,
+  "max_wait_seconds": 60,
+  "poll_interval_seconds": 5,
+  "recovery_limit": 1,
+  "schema_version": 2,
+  "stable_samples": 3
+}

@@ -1,0 +1,1 @@
+{"exit_code": 4, "message": "verification result is not a passing verify_only result", "replacement": false, "result": "INVALID_VERIFICATION_EVIDENCE", "schema_version": 1, "state_replaced": false}

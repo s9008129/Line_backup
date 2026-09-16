@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/authority_negative_driver.py",
+    "--summary",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-acceptance/attempt-03/authority-summary.json",
+    "--evidence-dir",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-acceptance/attempt-03/authority"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "secrets_removed": true
+}

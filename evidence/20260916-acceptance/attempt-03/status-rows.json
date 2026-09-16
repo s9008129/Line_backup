@@ -1,0 +1,966 @@
+{
+  "root": "/private/tmp/line-backup-acceptance-status",
+  "rows": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/candidate.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/candidate.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/candidate",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "NOT_STARTED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "IN_PROGRESS"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "candidate",
+      "input": "/private/tmp/line-backup-acceptance-status/candidate.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/candidate.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/implementation-blocked.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/implementation-blocked.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/implementation-blocked",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "IMPLEMENTATION/BLOCKED/ENVIRONMENT_FAILURE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "BLOCKED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "IMPLEMENTATION_BLOCKED"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "implementation-blocked",
+      "input": "/private/tmp/line-backup-acceptance-status/implementation-blocked.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/implementation-blocked.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/replan-required.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/replan-required.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/replan-required",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "IMPLEMENTATION/BLOCKED/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "ESCALATED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "REPLAN_REQUIRED"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "replan-required",
+      "input": "/private/tmp/line-backup-acceptance-status/replan-required.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/replan-required.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/core-not-run.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/core-not-run.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/core-not-run",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/NOT_RUN/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_RUN",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "PENDING_CORE_ACCEPTANCE"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "core-not-run",
+      "input": "/private/tmp/line-backup-acceptance-status/core-not-run.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/core-not-run.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/core-blocked.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/core-blocked.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/core-blocked",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/BLOCKED/AUTHORITY_REQUIRED",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "BLOCKED",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "CORE_ACCEPTANCE_BLOCKED"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "core-blocked",
+      "input": "/private/tmp/line-backup-acceptance-status/core-blocked.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/core-blocked.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/core-fail.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/core-fail.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/core-fail",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/FAIL/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "FAIL",
+          "implementation_status": "IN_PROGRESS",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "NOT_ACHIEVED",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "core-fail",
+      "input": "/private/tmp/line-backup-acceptance-status/core-fail.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/core-fail.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/baseline-unchanged.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/baseline-unchanged.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/baseline-unchanged",
+      "expected": {
+        "baseline_delta": "UNCHANGED",
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "BASELINE_DELTA",
+            "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "PASS",
+          "task_closure_status": "READY_FOR_INDEPENDENT_ACCEPTANCE"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "baseline-unchanged",
+      "input": "/private/tmp/line-backup-acceptance-status/baseline-unchanged.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/baseline-unchanged.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/baseline-worsened.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/baseline-worsened.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/baseline-worsened",
+      "expected": {
+        "baseline_delta": "WORSENED",
+        "blocker": "BASELINE_REGRESSION_DELTA/FAIL/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "BASELINE_DELTA",
+            "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "TASK_REGRESSION",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "FAIL",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "baseline-worsened",
+      "input": "/private/tmp/line-backup-acceptance-status/baseline-worsened.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/baseline-worsened.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/canonical-preexisting-debt.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/canonical-preexisting-debt.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/canonical-preexisting-debt",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "DOCUMENTATION_RETENTION_HEALTH/FAIL/PRE_EXISTING_REPOSITORY_FAILURE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          },
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "DOCUMENTATION_RETENTION_HEALTH",
+            "CHECK_RESULT": "FAIL",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "REPOSITORY_HEALTH",
+            "FAILURE_ROUTING": "pre-existing missing retention evidence",
+            "GOAL_CRITICALITY": "SUPPORTING",
+            "WAIVER_ALLOWED": "YES",
+            "WAIVER_AUTHORITY": "Project owner",
+            "WAIVER_STATUS": "NOT_REQUESTED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "PRE_EXISTING_REPOSITORY_FAILURE",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "INCOMPLETE",
+          "task_closure_status": "PENDING_REQUIRED_VERIFICATION"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "canonical-preexisting-debt",
+      "input": "/private/tmp/line-backup-acceptance-status/canonical-preexisting-debt.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/canonical-preexisting-debt.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/baseline-unavailable.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/baseline-unavailable.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/baseline-unavailable",
+      "expected": {
+        "baseline_delta": "UNAVAILABLE",
+        "blocker": "REQUIRED_VERIFICATION/BLOCKED/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_RULE": "BASELINE_DELTA",
+            "CHECK_ID": "BASELINE_REGRESSION_DELTA",
+            "CHECK_RESULT": "BLOCKED",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "INPUT_UNAVAILABLE",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "INCOMPLETE",
+          "task_closure_status": "PENDING_REQUIRED_VERIFICATION"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "baseline-unavailable",
+      "input": "/private/tmp/line-backup-acceptance-status/baseline-unavailable.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/baseline-unavailable.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/all-required-waived.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/all-required-waived.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/all-required-waived",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "WAIVED",
+          "task_closure_status": "READY_FOR_INDEPENDENT_ACCEPTANCE"
+        },
+        "waiver": {
+          "APPROVED_AT": "2026-09-16T00:00:00Z",
+          "EVIDENCE": "owner approval",
+          "RATIONALE": "approved scoped waiver",
+          "RESIDUAL_RISK": "tracked",
+          "REVIEW_OR_EXPIRY_TRIGGER": "next acceptance",
+          "WAIVED_BY": "Project owner",
+          "WAIVER_SCOPE": "REQUIRED_VERIFICATION"
+        }
+      },
+      "expected_exit": 0,
+      "id": "all-required-waived",
+      "input": "/private/tmp/line-backup-acceptance-status/all-required-waived.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/all-required-waived.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/retention-waived.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/retention-waived.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/retention-waived",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "DOCUMENTATION_RETENTION_HEALTH/WAIVED/PRE_EXISTING_REPOSITORY_FAILURE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          },
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "DOCUMENTATION_RETENTION_HEALTH",
+            "CHECK_RESULT": "FAIL",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "REPOSITORY_HEALTH",
+            "FAILURE_ROUTING": "pre-existing missing retention evidence",
+            "GOAL_CRITICALITY": "SUPPORTING",
+            "WAIVER_ALLOWED": "YES",
+            "WAIVER_AUTHORITY": "Project owner",
+            "WAIVER_STATUS": "APPROVED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "WAIVED",
+          "task_closure_status": "READY_FOR_INDEPENDENT_ACCEPTANCE"
+        },
+        "waiver": {
+          "APPROVED_AT": "2026-09-16T00:00:00Z",
+          "EVIDENCE": "pre-existing evidence",
+          "RATIONALE": "scoped retention debt",
+          "RESIDUAL_RISK": "reproducibility debt",
+          "REVIEW_OR_EXPIRY_TRIGGER": "next acceptance",
+          "WAIVED_BY": "Project owner",
+          "WAIVER_SCOPE": "DOCUMENTATION_RETENTION_HEALTH"
+        }
+      },
+      "expected_exit": 0,
+      "id": "retention-waived",
+      "input": "/private/tmp/line-backup-acceptance-status/retention-waived.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/retention-waived.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/stage05-blocked.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/stage05-blocked.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/stage05-blocked",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "INDEPENDENT_ACCEPTANCE/BLOCKED/AUTHORITY_REQUIRED",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "BLOCKED",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "PASS",
+          "task_closure_status": "ACCEPTANCE_BLOCKED"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "stage05-blocked",
+      "input": "/private/tmp/line-backup-acceptance-status/stage05-blocked.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/stage05-blocked.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/acceptance-product-defect.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/acceptance-product-defect.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/acceptance-product-defect",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "INDEPENDENT_ACCEPTANCE/FAIL/PRODUCT_DEFECT",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "PRODUCT_DEFECT",
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "IN_PROGRESS",
+          "independent_acceptance_status": "FAIL",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "PASS",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "acceptance-product-defect",
+      "input": "/private/tmp/line-backup-acceptance-status/acceptance-product-defect.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/acceptance-product-defect.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/legacy-no-source.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/legacy-no-source.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/legacy-no-source",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "SOURCE_CORRESPONDENCE/BLOCKED/INPUT_UNAVAILABLE",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "BLOCKED",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "PASS",
+          "task_closure_status": "CORE_ACCEPTANCE_BLOCKED"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "legacy-no-source",
+      "input": "/private/tmp/line-backup-acceptance-status/legacy-no-source.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/legacy-no-source.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/contradictory-axes.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/contradictory-axes.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/contradictory-axes",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "CORE_ACCEPTANCE/FAIL/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          },
+          {
+            "CHECK_ID": "STAGE_04_SNAPSHOT",
+            "IMMUTABLE": "YES",
+            "STAGE_04_EXECUTION_ARTIFACT_SHA256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "STAGE_04_REPORTED_CORE_ACCEPTANCE_STATUS": "FAIL",
+            "STAGE_04_REPORTED_IMPLEMENTATION_STATUS": "COMPLETE",
+            "STAGE_04_REPORTED_REQUIRED_VERIFICATION_STATUS": "NOT_RUN"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "TASK_REGRESSION",
+        "statuses": {
+          "core_acceptance_status": "FAIL",
+          "implementation_status": "IN_PROGRESS",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "NOT_ACHIEVED",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "FIX_REQUIRED"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "contradictory-axes",
+      "input": "/private/tmp/line-backup-acceptance-status/contradictory-axes.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/contradictory-axes.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/core-not-required-no-rationale.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/core-not-required-no-rationale.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/core-not-required-no-rationale",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": "IMPLEMENTATION/BLOCKED/TASK_REGRESSION",
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": "TASK_REGRESSION",
+        "statuses": {
+          "core_acceptance_status": "NOT_REQUIRED",
+          "implementation_status": "ESCALATED",
+          "independent_acceptance_status": "PENDING",
+          "primary_outcome_status": "UNKNOWN",
+          "required_verification_status": "NOT_RUN",
+          "task_closure_status": "REPLAN_REQUIRED"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "core-not-required-no-rationale",
+      "input": "/private/tmp/line-backup-acceptance-status/core-not-required-no-rationale.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/core-not-required-no-rationale.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/core-not-required-rationalized.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/core-not-required-rationalized.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/core-not-required-rationalized",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "NOT_REQUIRED",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "NOT_REQUIRED",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "NOT_REQUIRED",
+          "task_closure_status": "DONE"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "core-not-required-rationalized",
+      "input": "/private/tmp/line-backup-acceptance-status/core-not-required-rationalized.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/core-not-required-rationalized.output.json"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "status",
+        "evaluate",
+        "--input",
+        "/private/tmp/line-backup-acceptance-status/done.input.json",
+        "--output",
+        "/private/tmp/line-backup-acceptance-status/done.output.json"
+      ],
+      "evidence_dir": "/private/tmp/line-backup-acceptance-status/evidence/done",
+      "expected": {
+        "baseline_delta": null,
+        "blocker": null,
+        "checks": [
+          {
+            "BASELINE_RULE": "NONE",
+            "CHECK_ID": "STATUS_CLOSURE_CONTRACT",
+            "CHECK_RESULT": "PASS",
+            "CLOSURE_GATE": "HARD_CLEAN",
+            "EVIDENCE_ROLE": "MUST_NOT_BREAK",
+            "FAILURE_ROUTING": "illegal enum or routing is TASK_REGRESSION",
+            "GOAL_CRITICALITY": "CORE",
+            "WAIVER_ALLOWED": "NO",
+            "WAIVER_AUTHORITY": "NONE",
+            "WAIVER_STATUS": "NOT_ALLOWED"
+          }
+        ],
+        "evidence_basis": "scenario_table_non_acceptance",
+        "failure_class": null,
+        "statuses": {
+          "core_acceptance_status": "PASS",
+          "implementation_status": "COMPLETE",
+          "independent_acceptance_status": "PASS",
+          "primary_outcome_status": "ACHIEVED",
+          "required_verification_status": "PASS",
+          "task_closure_status": "DONE"
+        },
+        "waiver": null
+      },
+      "expected_exit": 0,
+      "id": "done",
+      "input": "/private/tmp/line-backup-acceptance-status/done.input.json",
+      "oracle_rule": "exit 0; schema_version=2; every field equals this row's independent expectation; checks preserved byte-for-byte; evidence_basis pinned; output==stdout",
+      "output": "/private/tmp/line-backup-acceptance-status/done.output.json"
+    }
+  ],
+  "schema_version": 2
+}

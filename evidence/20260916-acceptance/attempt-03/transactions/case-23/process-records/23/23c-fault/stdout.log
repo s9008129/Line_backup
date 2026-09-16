@@ -1,0 +1,1 @@
+{"dispatch_performed": true, "exit_code": 1, "message": "injected storage fault before replacement", "result": "WRITE_BEFORE_REPLACE", "revision": 1, "schema_version": 1, "state_replaced": false}

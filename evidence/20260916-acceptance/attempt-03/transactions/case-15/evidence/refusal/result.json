@@ -1,0 +1,9 @@
+{
+  "dispatch_performed": false,
+  "exit_code": 4,
+  "message": "prepare precondition refused",
+  "result": "CONFLICT_DUPLICATE",
+  "revision": 3,
+  "schema_version": 1,
+  "state_replaced": false
+}

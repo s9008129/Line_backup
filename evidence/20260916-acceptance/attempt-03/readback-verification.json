@@ -1,0 +1,13 @@
+{
+  "artifacts_checked": 4604,
+  "ignored_names": [
+    "manifest.json",
+    "readback-verification.json"
+  ],
+  "manifests": 45,
+  "problems": [],
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-acceptance/attempt-03",
+  "supplements": 0,
+  "uncovered_files": [],
+  "verdict": "PASS"
+}

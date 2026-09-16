@@ -1,0 +1,1 @@
+{"dispatch_performed": false, "exit_code": 0, "message": "ambiguity barrier committed; no dispatch performed", "reconciliation_state": "BARRIER_COMMITTED", "result": "RECOVERY_NO_DISPATCH", "revision": 2, "schema_version": 1, "state_replaced": true}

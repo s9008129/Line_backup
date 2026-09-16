@@ -1,0 +1,1 @@
+{"exit_code": 2, "message": "prepare requires the --dispatcher/--dispatch-counter pair", "result": "MISSING_DISPATCHER", "schema_version": 1}

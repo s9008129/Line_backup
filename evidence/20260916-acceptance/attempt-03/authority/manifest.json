@@ -1,0 +1,14 @@
+{
+  "artifacts": [
+    {
+      "bytes": 56272,
+      "path": "summary.json",
+      "sha256": "83c50f1ccf6dc6f56b595ac3a22faf961192e88163fecbcd74957f3617c9f515"
+    }
+  ],
+  "files": 1,
+  "generated_at": "2026-09-16T22:06:48Z",
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-acceptance/attempt-03/authority",
+  "schema_version": 1,
+  "total_bytes": 56272
+}

@@ -1,0 +1,1 @@
+{"exit_code": 4, "message": "strict schema deviation: run required keys", "result": "INVALID_STATE_LEGACY", "revision": 39, "schema_version": 1, "state_replaced": false}

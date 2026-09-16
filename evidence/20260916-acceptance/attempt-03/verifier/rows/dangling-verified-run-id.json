@@ -1,0 +1,897 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "line_backup_acceptance",
+    "verify-only",
+    "--project-root",
+    "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id",
+    "--config",
+    "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/config/line_backup_config.json",
+    "--state",
+    "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/backup_state.json",
+    "--destination",
+    "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/backup/destination",
+    "--group-key",
+    "line:jp.naver.line.mac:旻謙允禎成長日記",
+    "--start-date",
+    "2024-05-13",
+    "--end-date",
+    "2024-05-17",
+    "--expected-images",
+    "57",
+    "--evidence-dir",
+    "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence",
+    "--test-mode"
+  ],
+  "artifacts": {
+    "error.json": {
+      "exists": false,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence/error.json"
+    },
+    "inventory-1.json": {
+      "bytes": 17153,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence/inventory-1.json",
+      "sha256": "679a9c14cb11eefea890cf1aa56a5ddec3582a71e87d6ce8572c315addf52420"
+    },
+    "inventory-2.json": {
+      "bytes": 17153,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence/inventory-2.json",
+      "sha256": "679a9c14cb11eefea890cf1aa56a5ddec3582a71e87d6ce8572c315addf52420"
+    },
+    "inventory-3.json": {
+      "bytes": 17153,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence/inventory-3.json",
+      "sha256": "679a9c14cb11eefea890cf1aa56a5ddec3582a71e87d6ce8572c315addf52420"
+    },
+    "manifest.json": {
+      "bytes": 1341,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence/manifest.json",
+      "sha256": "52d252cdec66f31c06c6bdd3bd35826c587c29024c9a7039fafcd610c7541626"
+    },
+    "result.json": {
+      "bytes": 19083,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence/result.json",
+      "sha256": "880430d4ace239c4c2a1563072a887e20650f586f0cc19bc85360eb0e1a1f4c1"
+    }
+  },
+  "case": "dangling",
+  "chain": {
+    "artifacts": [
+      "inventory-1.json",
+      "inventory-2.json",
+      "inventory-3.json",
+      "result.json"
+    ],
+    "manifest_exists": true,
+    "ok": true,
+    "result_exists": true
+  },
+  "checks": {
+    "binding_state_recorded": {
+      "detail": null,
+      "ok": true
+    },
+    "chain_manifest_readback": {
+      "detail": {
+        "artifacts": [
+          "inventory-1.json",
+          "inventory-2.json",
+          "inventory-3.json",
+          "result.json"
+        ],
+        "manifest_exists": true,
+        "ok": true,
+        "result_exists": true
+      },
+      "ok": true
+    },
+    "config_unchanged": {
+      "detail": null,
+      "ok": true
+    },
+    "count_57_recognized": {
+      "detail": null,
+      "ok": true
+    },
+    "destination_unchanged": {
+      "detail": null,
+      "ok": true
+    },
+    "product_result_parsed": {
+      "detail": null,
+      "ok": true
+    },
+    "run_log_unchanged": {
+      "detail": null,
+      "ok": true
+    },
+    "sampling_expectation": {
+      "detail": {
+        "expect_sampling": true
+      },
+      "ok": true
+    },
+    "state_unchanged": {
+      "detail": {
+        "after": {
+          "bytes": 3934,
+          "exists": true,
+          "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/backup_state.json",
+          "sha256": "acc81a8b394bc42b18b9890d3f302c8dc1edaf979d4266fb315cf39b3b2faa3d"
+        },
+        "before": {
+          "bytes": 3934,
+          "exists": true,
+          "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/backup_state.json",
+          "sha256": "acc81a8b394bc42b18b9890d3f302c8dc1edaf979d4266fb315cf39b3b2faa3d"
+        }
+      },
+      "ok": true
+    }
+  },
+  "evidence_dir": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence",
+  "exit_code": 4,
+  "expected": {
+    "artifact_readback": "PASS",
+    "exit_code": 4,
+    "failure_class": "INPUT_NEGATIVE",
+    "filesystem_status": "PASS",
+    "overall_status": "NOT_ACHIEVED",
+    "registry_status": "FAIL",
+    "source_status": "UNRESOLVED",
+    "state_status": "EXACT"
+  },
+  "id": "dangling-verified-run-id",
+  "literal_manifest_row": {
+    "argv": [
+      "/usr/bin/python3",
+      "-m",
+      "line_backup_acceptance",
+      "verify-only",
+      "--project-root",
+      "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id",
+      "--config",
+      "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/config/line_backup_config.json",
+      "--state",
+      "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/backup_state.json",
+      "--destination",
+      "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/backup/destination",
+      "--group-key",
+      "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "--start-date",
+      "2024-05-13",
+      "--end-date",
+      "2024-05-17",
+      "--expected-images",
+      "57",
+      "--evidence-dir",
+      "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence",
+      "--test-mode"
+    ],
+    "case": "dangling",
+    "config": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/config/line_backup_config.json",
+    "destination": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/backup/destination",
+    "evidence_dir": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence",
+    "exit_code": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/records/exit-code",
+    "expected": {
+      "artifact_readback": "PASS",
+      "exit_code": 4,
+      "failure_class": "INPUT_NEGATIVE",
+      "filesystem_status": "PASS",
+      "overall_status": "NOT_ACHIEVED",
+      "registry_status": "FAIL",
+      "source_status": "UNRESOLVED",
+      "state_status": "EXACT"
+    },
+    "fixture-precondition": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/records/fixture-precondition.json",
+    "id": "dangling-verified-run-id",
+    "inventory-1": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence/inventory-1.json",
+    "inventory-2": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence/inventory-2.json",
+    "inventory-3": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence/inventory-3.json",
+    "manifest": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence/manifest.json",
+    "project_root": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id",
+    "result": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/evidence/result.json",
+    "run_log": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/run_log.md",
+    "state": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/backup_state.json",
+    "stderr": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/records/stderr.log",
+    "stdout": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/records/stdout.log"
+  },
+  "match": true,
+  "observed": {
+    "artifact_readback": "PASS",
+    "exit_code": 4,
+    "failure_class": "INPUT_NEGATIVE",
+    "filesystem_status": "PASS",
+    "overall_status": "NOT_ACHIEVED",
+    "registry_status": "FAIL",
+    "source_status": "UNRESOLVED",
+    "state_status": "EXACT"
+  },
+  "post_state": {
+    "authority_files": [
+      {
+        "bytes": 404,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/config/line_backup_config.json",
+        "sha256": "730cc88537c5c9406f5c4a6a24889880ea2ddc026ee2ed52a34c7f47e96a6640"
+      },
+      {
+        "bytes": 3934,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/backup_state.json",
+        "sha256": "acc81a8b394bc42b18b9890d3f302c8dc1edaf979d4266fb315cf39b3b2faa3d"
+      },
+      {
+        "bytes": 16,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/run_log.md",
+        "sha256": "03fc29f23b9d08310e6dc8c9b6b98f6e1b8067a3a383c68c41000a7865c83071"
+      }
+    ],
+    "authority_tree": null,
+    "binding": {
+      "bytes": 269,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/binding-fixture.json",
+      "sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c"
+    },
+    "binding_sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c",
+    "config": {
+      "bytes": 404,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/config/line_backup_config.json",
+      "sha256": "730cc88537c5c9406f5c4a6a24889880ea2ddc026ee2ed52a34c7f47e96a6640"
+    },
+    "destination": {
+      "entries": [
+        {
+          "bytes": 74,
+          "path": "image-000.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-001.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-002.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-003.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-004.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-005.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-006.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-007.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-008.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-009.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-010.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-011.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-012.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-013.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-014.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-015.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-016.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-017.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-018.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-019.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-020.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-021.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-022.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-023.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-024.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-025.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-026.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-027.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-028.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-029.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-030.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-031.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-032.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-033.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-034.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-035.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-036.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-037.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-038.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-039.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-040.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-041.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-042.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-043.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-044.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-045.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-046.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-047.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-048.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-049.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-050.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-051.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-052.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-053.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-054.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-055.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-056.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        }
+      ],
+      "files": 57,
+      "listing_sha256": "a44c8bead2de3ea9e7e9c352d868a87e47daaa0a2844d913628d1a22731632e6",
+      "root": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/backup/destination"
+    },
+    "run_log": {
+      "bytes": 16,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/run_log.md",
+      "sha256": "03fc29f23b9d08310e6dc8c9b6b98f6e1b8067a3a383c68c41000a7865c83071"
+    },
+    "state": {
+      "bytes": 3934,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/backup_state.json",
+      "sha256": "acc81a8b394bc42b18b9890d3f302c8dc1edaf979d4266fb315cf39b3b2faa3d"
+    }
+  },
+  "pre_state": {
+    "authority_files": [
+      {
+        "bytes": 404,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/config/line_backup_config.json",
+        "sha256": "730cc88537c5c9406f5c4a6a24889880ea2ddc026ee2ed52a34c7f47e96a6640"
+      },
+      {
+        "bytes": 3934,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/backup_state.json",
+        "sha256": "acc81a8b394bc42b18b9890d3f302c8dc1edaf979d4266fb315cf39b3b2faa3d"
+      },
+      {
+        "bytes": 16,
+        "exists": true,
+        "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/run_log.md",
+        "sha256": "03fc29f23b9d08310e6dc8c9b6b98f6e1b8067a3a383c68c41000a7865c83071"
+      }
+    ],
+    "authority_tree": null,
+    "binding": {
+      "bytes": 269,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/binding-fixture.json",
+      "sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c"
+    },
+    "binding_sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c",
+    "config": {
+      "bytes": 404,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/config/line_backup_config.json",
+      "sha256": "730cc88537c5c9406f5c4a6a24889880ea2ddc026ee2ed52a34c7f47e96a6640"
+    },
+    "destination": {
+      "entries": [
+        {
+          "bytes": 74,
+          "path": "image-000.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-001.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-002.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-003.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-004.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-005.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-006.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-007.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-008.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-009.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-010.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-011.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-012.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-013.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-014.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-015.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-016.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-017.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-018.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-019.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-020.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-021.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-022.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-023.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-024.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-025.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-026.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-027.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-028.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-029.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-030.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-031.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-032.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-033.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-034.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-035.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-036.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-037.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-038.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-039.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-040.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-041.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-042.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-043.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-044.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-045.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-046.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-047.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-048.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-049.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-050.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-051.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-052.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-053.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-054.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-055.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        },
+        {
+          "bytes": 74,
+          "path": "image-056.png",
+          "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+        }
+      ],
+      "files": 57,
+      "listing_sha256": "a44c8bead2de3ea9e7e9c352d868a87e47daaa0a2844d913628d1a22731632e6",
+      "root": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/backup/destination"
+    },
+    "run_log": {
+      "bytes": 16,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/run_log.md",
+      "sha256": "03fc29f23b9d08310e6dc8c9b6b98f6e1b8067a3a383c68c41000a7865c83071"
+    },
+    "state": {
+      "bytes": 3934,
+      "exists": true,
+      "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/state/backup_state.json",
+      "sha256": "acc81a8b394bc42b18b9890d3f302c8dc1edaf979d4266fb315cf39b3b2faa3d"
+    }
+  },
+  "records_dir": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/records"
+}
