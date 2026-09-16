@@ -118,7 +118,12 @@ def main() -> int:
     runs["test_transaction_core"] = run(
         ["/usr/bin/python3", "-m", "unittest", "-v", "tests.test_transaction_core"], cwd=H.WORK)
     case01 = Path("/private/tmp/line-backup-acceptance-case-01")
+    manifest_stash = Path("/private/tmp/line-backup-acceptance-wave/r6-ownership-case-01-manifest.json")
     if (case01 / H.MARKER_NAME).is_file():
+        # `--manifest` copies the case root's manifest, whose artifact paths are relative to the case
+        # root; stash it in working space and keep the resolvable copy inside the durable tree instead
+        # (`probe-runs/case-01-durable/manifest.json`, copied below with the whole case root).
+        manifest_stash.parent.mkdir(parents=True, exist_ok=True)
         runs["acceptance_case_driver_01"] = run(
             ["/usr/bin/python3", str(H.WORK / "tests/acceptance_case_driver.py"), "--case-id", "01",
              "--case-root", str(case01),
@@ -127,11 +132,18 @@ def main() -> int:
              "--post-state", str(probe_scratch / "case-01-post.json"),
              "--counter", str(probe_scratch / "case-01-counter.jsonl"),
              "--result", str(probe_scratch / "case-01-result.json"),
-             "--manifest", str(probe_scratch / "case-01-manifest.json"),
+             "--manifest", str(manifest_stash),
              "--stdout", str(probe_scratch / "case-01-stdout.log"),
              "--stderr", str(probe_scratch / "case-01-stderr.log"),
              "--exit-code", str(probe_scratch / "case-01-exit-code"),
              "--evidence-dir", str(probe_scratch)], cwd=H.WORK)
+        durable_chain = ev / "probe-runs" / "case-01-durable"
+        H.durable_copy_tree(case01, durable_chain)
+        record["case_01_chain"] = {"case_root": str(case01), "durable_copy": str(durable_chain),
+                                   "durable_manifest": str(durable_chain / "manifest.json"),
+                                   "stashed_manifest_copy": str(manifest_stash),
+                                   "stash_note": "the stash lives in working space only; the resolvable durable "
+                                                 "manifest is the copy at the case-01-durable root"}
     for name, run_record in runs.items():
         (ev / f"{name}-stdout.log").write_text(run_record["stdout"], encoding="utf-8")
         (ev / f"{name}-stderr.log").write_text(run_record["stderr"], encoding="utf-8")

@@ -183,14 +183,17 @@ def main() -> int:
     ap.add_argument("--timeout", type=float, default=5400.0)
     ns = ap.parse_args()
     attempt_root = Path(ns.attempt_root)
+    if attempt_root.exists() and (attempt_root / "run-all-summary.json").exists():
+        raise SystemExit(f"refusing: {attempt_root / 'run-all-summary.json'} already exists (append-only evidence); "
+                         "use a new attempt root or archive the previous summary explicitly")
     attempt_root.mkdir(parents=True, exist_ok=True)
     results = []
     for name in ns.orders.split(","):
         name = name.strip()
         if name not in ORDERS:
             raise SystemExit(f"unknown order {name!r}; choose from {sorted(ORDERS)}")
-        print(json.dumps({"running_order": name, "order_root": str(attempt_root / f'order-{name}')}),
-              ensure_ascii=False, flush=True)
+        print(json.dumps({"running_order": name, "order_root": str(attempt_root / f'order-{name}')},
+                         ensure_ascii=False), flush=True)
         results.append(run_order(name, attempt_root, ns.timeout))
     summary = {"driver": DRIVER_ID, "task_id": TASK_ID, "attempt_root": str(attempt_root),
                "argv": sys.argv, "cwd": str(H.WORK), "interpreter": sys.version,

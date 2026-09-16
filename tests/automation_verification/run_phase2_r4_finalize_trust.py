@@ -268,17 +268,36 @@ def main() -> int:
         _sh.rmtree(tampered_dir)
     _sh.copytree(chain_dir, tampered_dir)
     tampered_target = tampered_dir / "result.json"
-    tampered_target.write_bytes(tampered_target.read_bytes() + b"\n")
+    original_bytes = tampered_target.read_bytes()
+    tampered_bytes = original_bytes + b"\n"
+    tampered_target.write_bytes(tampered_bytes)
     rec = H.run_product(ev / "refusals" / "b3-tampered-chain",
                         finalize_args(rpaths, "RUN-R4-R", "WRITER-R4-R", 2, tampered_dir / "result.json"), timeout=120)
     result = rec["result"] or {}
     state_after = sha(r_state_path)
-    refusal_rows["b3-tampered-chain"] = {"exit_code": rec["exit_code"], "result": result,
-                                         "state_unchanged": state_after == pre_sha,
-                                         "registry_entries": len(read_json(r_state_path).get("verified_albums") or [])}
     checks["b3-tampered-chain.refused"] = rec["exit_code"] in (2, 4) and result.get("result") in {
         "INVALID_VERIFICATION_EVIDENCE", "INVALID_INPUT"}
     checks["b3-tampered-chain.no-write"] = state_after == pre_sha
+    # The copied chain manifest describes the untampered bytes.  Keep the raw tampered bytes under
+    # tamper-evidence/ (the refusal row proves the tamper) and restore the file, so every manifest in
+    # the durable tree stays independently readable by the read-back verifier.
+    tamper_evidence = tampered_dir / "tamper-evidence"
+    tamper_evidence.mkdir(exist_ok=True)
+    tamper_copy = tamper_evidence / "result.json.appended-newline"
+    tamper_copy.write_bytes(tampered_bytes)
+    tampered_target.write_bytes(original_bytes)
+    refusal_rows["b3-tampered-chain"] = {"exit_code": rec["exit_code"], "result": result,
+                                         "state_unchanged": state_after == pre_sha,
+                                         "registry_entries": len(read_json(r_state_path).get("verified_albums") or []),
+                                         "original": {"bytes": len(original_bytes),
+                                                      "sha256": H.sha256_bytes(original_bytes)},
+                                         "tampered": {"bytes": len(tampered_bytes),
+                                                      "sha256": H.sha256_bytes(tampered_bytes)},
+                                         "tampered_copy": str(tamper_copy.relative_to(case_root)),
+                                         "restored_after_refusal": True,
+                                         "restore_reason": "the copied chain manifest lists the untampered "
+                                                           "result.json; restoring keeps the durable tree readable "
+                                                           "while tamper-evidence/ retains the raw tampered bytes"}
     record["refusals"] = refusal_rows
 
     record["checks"] = checks
