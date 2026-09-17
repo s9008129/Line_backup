@@ -1,0 +1,78 @@
+{
+ "tool": "locate_album_card",
+ "frame": "/tmp/route5r_frame_pre.jpg",
+ "frame_sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+ "frame_size": [
+  327,
+  643
+ ],
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   17,
+   450,
+   126,
+   470
+  ]
+ },
+ "ocr_words_seen": [
+  "ree",
+  "=,",
+  "旻",
+  "議",
+  "允",
+  "禎",
+  "成",
+  "長",
+  "日",
+  "記",
+  "品",
+  "a",
+  "全",
+  "Aa",
+  "14",
+  "字",
+  "sa",
+  "ry",
+  "Kel",
+  "aur",
+  "~&",
+  "ae",
+  "~",
+  "—_-",
+  "7",
+  "2024/05/13~05/17",
+  ":",
+  "ui",
+  "GA",
+  "a",
+  "|",
+  "|",
+  "ow"
+ ],
+ "band_top_bright_row": 433,
+ "band_bottom_bright_row": 507,
+ "margin_above_px": 27,
+ "margin_below_px": 47,
+ "count_box": [
+  9,
+  472,
+  177,
+  502
+ ],
+ "count_digits_read": "",
+ "count_text": "UNREADABLE",
+ "click_point": [
+  29,
+  460
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "verdict": "ELIGIBLE"
+}

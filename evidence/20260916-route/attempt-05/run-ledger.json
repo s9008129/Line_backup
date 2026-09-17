@@ -197,6 +197,229 @@
    "chooser_interaction": false,
    "backup_state_write": false,
    "evidence": ["/tmp/route5_screen_recheck.png"]
+  },
+  {
+   "seq": 6,
+   "timestamp_local": "2026-09-17T18:32:32+0800",
+   "action_class": "read",
+   "event": "resume_binding_read_and_pre_observation",
+   "gui_input": false,
+   "surface": "LINE window 標準視窗 (jp.naver.line.mac)",
+   "frame_bytes": 63914,
+   "frame_size": [
+    327,
+    643
+   ],
+   "frame_sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+   "ax_bytes": 1316,
+   "ax_sha256": "0b6df5804ab352692d762baadb70ca747194a87c2946107845d74260a2f22952",
+   "ax_note": "album-list window, no menu/dialog overlay; list 'showing 0-100 of 101 items'; focused element 1 文字欄位 (settable) — a benign focus-state difference vs event 1's '8 文字', no overlay implication",
+   "observation_window": "window 4 of at most 5 read-only windows (resume of the owner-restored surface)",
+   "allowed_budget_before": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "evidence": [
+    "/tmp/route5r_frame_pre.jpg",
+    "/tmp/route5r_ax_pre.txt"
+   ],
+   "note": "cua.getApp('jp.naver.line.mac') succeeded on the restored surface (no -10005); this is the owner-directed resume pre-read, taken after the owner restored the LINE window (owner reply 「好了」, standing instruction 請繼續完成測試)."
+  }
+,
+  {
+   "seq": 7,
+   "timestamp_local": "2026-09-17T18:32–18:33+0800",
+   "action_class": "decision",
+   "event": "resume_decision_same_ledger_same_authorization",
+   "gui_input": false,
+   "decision": "continue the SAME run-ledger (events appended) under the SAME gate-3 authorization",
+   "rationale": [
+    "the 17:11–17:12:37 abort was a pre-input surface-availability event: zero inputs were sent and both authorized inputs (album-card click, album-level ⋮ click) remain fully unspent — continuing is not a retry and the authorization is neither reset nor extended",
+    "the owner restored the precondition and replied 「好了」; the standing instruction is to continue the test (請繼續完成測試), and closing the run as ROUTE_NOT_NEEDED requires the owner's explicit decision (Rev20 §20.3) which the owner has not given",
+    "the abort remains a historical fact: run_status NO_TARGET_ON_FRAME / ledger_state ABORTED_PRE_INPUT / the verbatim stop reason are preserved in historical_abort and in events 1–5 (unchanged)"
+   ],
+   "observation_windows": {
+    "cap": 5,
+    "used_before_resume": 3,
+    "used_after_resume": 5,
+    "detail": "pre-read 18:32:32 = window 4; single screen probe 18:36:47 = window 5; cap reached — no further observation windows remain"
+   },
+   "authorization_state": {
+    "album_card_input": "UNSPENT (0/1)",
+    "ellipsis_input": "UNSPENT (0/1)",
+    "note": "no reset, no extension, independent of attempt-03/04"
+   },
+   "owner_restore_evidence": [
+    "cua.getApp succeeded on the restored surface at ≈18:32 (no -10005, vs three failures at 17:11–17:12)",
+    "fresh read-only frame+AX captured 18:32:32",
+    "screen probe 18:36:47 confirms the window region content still matches the frame (crop_s1 vs frame MAD 2.12, title bbox top-left identical)"
+   ],
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false
+  }
+,
+  {
+   "seq": 8,
+   "timestamp_local": "2026-09-17T18:34:58+0800",
+   "action_class": "read",
+   "event": "read_only_locate_on_resumed_current_frame",
+   "gui_input": false,
+   "tool": {
+    "path": "evidence/20260916-route/tools/locate_album_card.py",
+    "sha256": "500fcadbe8cb47f1cd22f0d247ad7d7d65c84baef4000f2239e1872e340e98e4",
+    "note": "frozen SHA re-verified before use"
+   },
+   "input_frame": "/tmp/route5r_frame_pre.jpg",
+   "output_file": "evidence/20260916-route/attempt-05/album-card-locate-resume.json",
+   "output_sha256": "85bcbda2a8def94582bfffbf6f8aa6979a201de139eb46332ae02ee1dedcddd9",
+   "verdict": "ELIGIBLE",
+   "exit_code": 0,
+   "title": {
+    "texts": [
+     "2024/05/13~05/17"
+    ],
+    "bbox": [
+     17,
+     450,
+     126,
+     470
+    ]
+   },
+   "count_text": "UNREADABLE",
+   "count_rule_note": "frozen tool rule: only MISMATCH blocks; UNREADABLE does not (same class as the 17:03 run on the prior frame)",
+   "margin_above_px": 27,
+   "margin_below_px": 47,
+   "click_point": [
+    29,
+    460
+   ],
+   "click_point_derivation": "title left edge + 12 px, title vertical centre",
+   "allowed_budget_before": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "evidence": [
+    "evidence/20260916-route/attempt-05/album-card-locate-resume.json"
+   ],
+   "note": "new file name (append-only); album-card-locate.json from the aborted pre-flight is untouched; click_point [29,460] is derived from THIS resumed frame and supersedes the stale [29,445]"
+  }
+,
+  {
+   "seq": 9,
+   "timestamp_local": "2026-09-17T18:36:47–18:37:11+0800",
+   "action_class": "read",
+   "event": "screen_scope_probe_once_resume",
+   "gui_input": false,
+   "surface": "entire screen (screencapture -x, silent, no input events)",
+   "observation_window": "window 5 of at most 5 read-only windows (final observation window of the cap)",
+   "probe_path": "/tmp/route5r_screen_probe.png",
+   "probe_bytes": 2247376,
+   "probe_size": [
+    2294,
+    1490
+   ],
+   "probe_sha256": "8ba699d9a659aa973b53a86f7a806fee25f854b656d6d3af4eaebd16ae3fa4a2",
+   "window_localization": {
+    "origin_screen_px": [
+     0,
+     78
+    ],
+    "mad_gray_levels": 3.142124891281128,
+    "coarse_next_best_mad": 20.740800857543945,
+    "window_mad_sampled_step2": 3.1057732105255127,
+    "crop_s1_vs_frame_mad": 2.121796131134033
+   },
+   "acceptance": {
+    "rule": "exit 0 + decodable + frozen locate_album_card.py ELIGIBLE on the located window crop at scale 2 or scale 1",
+    "crop_scale_2_verdict": "TARGET_COUNT_MISMATCH",
+    "crop_scale_2_exit": 5,
+    "crop_scale_2_count": "5",
+    "crop_scale_1_verdict": "TARGET_COUNT_MISMATCH",
+    "crop_scale_1_exit": 5,
+    "crop_scale_1_count": "27",
+    "accepted_scale": null,
+    "screen_scope": "UNAVAILABLE"
+   },
+   "screen_scope_effect": "non-fatal per runbook S2: the run continues window-scoped; the S7/S9 screen captures are skipped; any menu AFFIRMATIVE must come from AX (the app-frame detector still runs in S10)",
+   "content_identity_check": "both crops found the target title with the same top-left bbox as the frame ([17,450,..]) and the located window region matches the frame (MAD 2.12/3.11) — the physical screen still shows the target window with unchanged content; the count MISMATCH is confined to the tiny digit region (OCR variance: frame=UNREADABLE, s1 crop='27', s2 crop='5'), the same phenomenon across all three readings",
+   "allowed_budget_before": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "evidence": [
+    "/tmp/route5r_screen_probe.png",
+    "/tmp/route5r_probe_crop_s2.png",
+    "/tmp/route5r_probe_crop_s1.png",
+    "/tmp/route5r_probe_locate.json",
+    "/tmp/route5r_crop_s2_locate.json",
+    "/tmp/route5r_crop_s1_locate.json",
+    "evidence/20260916-route/attempt-05/screen-probe-resume.json"
+   ]
+  }
+,
+  {
+   "seq": 10,
+   "timestamp_local": "2026-09-17T18:38+0800",
+   "action_class": "read",
+   "event": "pre_input_state_confirmation_about_to_send_input_1",
+   "gui_input": false,
+   "confirmation": "resumed pre-flight complete: binding OK (no -10005), current-frame locate ELIGIBLE (click [29,460]), surface content freshness confirmed by the S2r probe (window region MAD 2.12/3.11 vs frame), no overlay in the AX/frame/probe reads, both authorized inputs still unspent, zero retries",
+   "next_action": "send input #1 exactly once: normal left click at the S3r click_point [29,460] (album-card metadata), then immediate post observation + verify_album_open.py",
+   "allowed_budget_before": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "note": "no further observation windows remain (5/5); any failure from here stops read-only and notifies the owner"
   }
  ],
  "final_counts": {
@@ -211,11 +434,31 @@
   "backup_state_writes": 0
  },
  "route_result_sha256": null,
- "run_status": "NO_TARGET_ON_FRAME",
- "stop_reason": "Before input #1 and after all pre-flight reads completed (S1 read, S3 locate ELIGIBLE, S2 probe accepted at scale 1), the LINE window stopped being observable/bindable at ~17:11: cua.getApp failed three times with -10005 cgWindowNotFound while LINE isRunning=true and Finder binds fine, and a fresh read-only capture shows the screen has changed almost completely with the window content absent (full-screen template MAD 34.029 vs 3.678 on the probe). Per the runbook's precondition clause the run stops read-only: zero inputs were sent, both authorized budgets remain unspent, the menu was never opened by us, and the owner is notified immediately. No retry, no loop.",
- "owner_decision_required": true,
- "ledger_state": "ABORTED_PRE_INPUT",
+ "run_status": "IN_PROGRESS",
+ "stop_reason": null,
+ "owner_decision_required": false,
+ "ledger_state": "RESUMED_PRE_INPUT_PENDING_INPUT_1",
  "ledger_state_note": "Frozen before any click (PRE_FREEZE_FROZEN_PENDING_RUN, all counts 0) and completed after the pre-flight reads and the pre-input surface abort: the run appended events 1-5, final_counts (all zero), the run status NO_TARGET_ON_FRAME and the stop reason. No route-result.json was written because no route outcome exists before any input. Allowed budgets stayed album_card=1 / ellipsis=1 / app_acquisition=0 in both states; zero unlisted input occurred.",
+ "historical_abort": {
+  "status": "HISTORICAL — verbatim preserved; superseded by the owner-directed resume at 18:32–18:37+0800",
+  "run_status": "NO_TARGET_ON_FRAME",
+  "ledger_state": "ABORTED_PRE_INPUT",
+  "stop_reason": "Before input #1 and after all pre-flight reads completed (S1 read, S3 locate ELIGIBLE, S2 probe accepted at scale 1), the LINE window stopped being observable/bindable at ~17:11: cua.getApp failed three times with -10005 cgWindowNotFound while LINE isRunning=true and Finder binds fine, and a fresh read-only capture shows the screen has changed almost completely with the window content absent (full-screen template MAD 34.029 vs 3.678 on the probe). Per the runbook's precondition clause the run stops read-only: zero inputs were sent, both authorized budgets remain unspent, the menu was never opened by us, and the owner is notified immediately. No retry, no loop.",
+  "owner_decision_required": true,
+  "recorded_in_commit": "5f3da67"
+ },
+ "resume": {
+  "resumed_at_local": "2026-09-17T18:32–18:38+0800",
+  "owner_response": "「好了」(surface restored; standing instruction 請繼續完成測試)",
+  "owner_restore_evidence": "cua.getApp succeeded on the restored surface (no -10005; three failures at 17:11–17:12:37); fresh frame+AX at 18:32:32; the 18:36:47 probe re-finds the same window content on screen (MAD 2.12)",
+  "ledger_continuation": "same run_id, same authorization; events 6–10 appended; events 1–5 and the abort story left byte-identical",
+  "authorization_state": "album-card 0/1 and ⋮ 0/1 both UNSPENT — not a retry, no reset/extension",
+  "observation_windows_consumed": 5,
+  "screen_scope": "UNAVAILABLE (probe acceptance not met at scale 2 or 1; non-fatal per runbook S2)",
+  "counts_note": "final_counts still shows the all-zero pre-input snapshot; it will be replaced by the true final counts when the run closes (S11)"
+ },
+ "owner_decision": "resume with the same ledger and the same unspent authorization (owner restored the surface and replied 好了 under the standing 請繼續完成測試 instruction); closure as ROUTE_NOT_NEEDED was not requested and is not taken",
+ "next_action": "send input #1 exactly once at click_point [29,460] (S3r), then verify_album_open.py (S5)",
  "pre_freeze_recorded_at_local": "2026-09-17T17:02+0800",
  "notes": "Fresh attempt-05 ledger, written and committed before any input. Attempt-03/04 budgets are neither reset nor extended; every prior attempt and frozen record is preserved untouched. The abort at seq 5 left both authorized inputs unsent — the next step is owner-directed (Rev20 §20.3); nothing runs automatically."
 }
