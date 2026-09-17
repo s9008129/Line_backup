@@ -1,0 +1,43 @@
+{
+  "record_version": "1.0",
+  "kind": "source_identity_user_fact",
+  "status": "CONFIRMED",
+  "source_correspondence_result": "CONFIRMED",
+  "merge_prohibited": true,
+  "app_identifier": "jp.naver.line.mac",
+  "raw_requested_group": "旻謙允禎成長日記",
+  "raw_persisted_group": "旻謙允楨成長日記",
+  "fingerprint": {
+    "start_date": "2024-05-13",
+    "end_date": "2024-05-17",
+    "expected_images": 57
+  },
+  "question": {
+    "text": "「`Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57` 那 57 張，是不是就是 `旻謙允禎成長日記` 這個群組、2024/05/13～2024/05/17 的備份？」（可答「不知道」）",
+    "asked_at_local": "2026-09-17T08:46:44+0800"
+  },
+  "answer": {
+    "raw": "是",
+    "part_1": {
+      "text": "「你在 LINE 看到的那個群組，是『禎』還是『楨』？」（已於 2026-09-16 回答）",
+      "raw": "正確是「禎」"
+    },
+    "part_2": {
+      "text": "「`Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57` 那 57 張，是不是就是 `旻謙允禎成長日記` 這個群組、2024/05/13～2024/05/17 的備份？」（可答「不知道」）",
+      "raw": "是",
+      "confirms_same_source": true,
+      "confirmed_group_string": "旻謙允禎成長日記",
+      "confirmed_album": "2024/05/13～2024/05/17",
+      "confirmed_expected_images": 57
+    }
+  },
+  "supplied_by": "使用者本人（檔案擁有者）",
+  "recorded_at_local": "2026-09-17T09:12+0800",
+  "evidence": [
+    {
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-user-fact/human-gate-answer-20260917.json",
+      "bytes": 1438,
+      "sha256": "03ffff57d50a5f97e596749dfa6bbde50b5ab50253c1f34469cc896e89ef57f7"
+    }
+  ]
+}

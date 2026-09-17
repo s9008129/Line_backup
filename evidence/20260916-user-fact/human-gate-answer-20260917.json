@@ -1,0 +1,22 @@
+{
+  "artifact_type": "human_gate_conversation_excerpt",
+  "gate": "single human gate (Rev14 §Human gate; user-fact part 2 + one-shot ellipsis observation authorization)",
+  "session_id": "01a0a9f9-d915-7d10-89f4-1b6772c681a2",
+  "session_transcript": "/Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T19-28-38-01a0a9f9-d915-7d10-89f4-1b6772c681a2.jsonl",
+  "question_message_transcript": {
+    "line": 2826,
+    "ordinal": 2825,
+    "timestamp_utc": "2026-09-17T00:46:44.592Z"
+  },
+  "answer_message_transcript": {
+    "line": 2833,
+    "ordinal": 2832,
+    "timestamp_utc": "2026-09-17T01:09:49.913Z"
+  },
+  "question_verbatim_questions_only": "1.（必答，可答「不知道」）：「`Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57` 那 57 張，是不是就是 `旻謙允禎成長日記` 這個群組、2024/05/13～2024/05/17 的備份？」\n2.（選答）要不要授權一次右鍵選單觀察？（只允許一次）",
+  "answer_verbatim": "1.是\n2.授權",
+  "record_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json",
+  "record_sha256": "603ab720acf474d8350504827e6ebe3f9c281dd3a04bb627332322becf01bd1d",
+  "record_bytes": 1585,
+  "notes": "Verbatim transcript excerpts of the single human gate exchange. The observation itself is recorded separately in the route evidence (route-result.json / new run ledger)."
+}

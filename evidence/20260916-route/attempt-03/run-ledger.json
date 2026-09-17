@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-03",
+  "runtime/provider": "codex-desktop unified-computer-use (cua_repl)",
+  "app_bundle": "jp.naver.line.mac",
+  "raw_group": "旻謙允禎成長日記",
+  "album": "2024/05/13～2024/05/17",
+  "expected_count": 57,
+  "project_root": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state",
+  "parent_ledger_sha256": "9d6a159024f822003052fd7d538598d3a161f226c49ce14ea5c11d5c95c95aee",
+  "initial_input_counts": {
+    "app_acquisition_inputs": 0,
+    "navigation_inputs": 0,
+    "ellipsis_inputs": 0,
+    "menu_item_clicks": 0,
+    "save_all_clicks": 0,
+    "chooser_interactions": 0,
+    "backup_state_writes": 0
+  },
+  "budgets": {
+    "app_acquisition_input_budget": 0,
+    "navigation_input_budget": 0,
+    "ellipsis_input_budget": 1
+  },
+  "authorization": {
+    "gate": "single human gate (Rev14 §Human gate)",
+    "authorized_by": "使用者本人",
+    "authorized_at_local": "2026-09-17T09:09:49+0800",
+    "authorization_verbatim": "2.授權",
+    "authorization_evidence": "evidence/20260916-user-fact/human-gate-answer-20260917.json",
+    "scope": "exactly one current-target ellipsis observation input, immediate post observation, then stop"
+  },
+  "events": [],
+  "final_counts": null,
+  "route_result_sha256": null
+}
