@@ -1,0 +1,92 @@
+{
+  "artifact_type": "pre_acceptance_readiness_check",
+  "task_id": "T20260916-0102-01-line-backup-acceptance",
+  "checked_at_local": "2026-09-17T09:29:15+0800",
+  "checked_at_utc": "2026-09-17T01:29:15Z",
+  "plan_boundary": {
+    "plan_revision": 18,
+    "plan_sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+    "handoff_sha256": "9cf01d4eedc006cfff2217e3b610c8166cfb05c04919512e74a19f4aa20946c6"
+  },
+  "purpose": "Read-only pre-checks recorded ahead of the Stage-05 attempt-05 closing wave: user-fact anchor verification, gate-answer transcript verification, formal read-only invariants re-read after recent LINE activity, and route attempt-03 prerequisite state.",
+  "checks": {
+    "user_fact_record": {
+      "path": "evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json",
+      "bytes": 1746,
+      "sha256": "2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d",
+      "anchors_vs_plan_16_4": "PASS — status/source_correspondence_result=CONFIRMED; merge_prohibited=true; app_identifier=jp.naver.line.mac; raw_requested_group=旻謙允禎成長日記 (U+798E); fingerprint 2024-05-13/2024-05-17/57; answer.part_2.confirms_same_source=true with three matching confirmed values; question.text/answer.raw non-empty; evidence[0] re-hash at its recorded absolute path = 1438 bytes / 03ffff57d50a5f97e596749dfa6bbde50b5ab50253c1f34469cc896e89ef57f7 (PASS).",
+      "auxiliary_anomaly": {
+        "location": "evidence/20260916-user-fact/human-gate-answer-20260917.json fields record_sha256 / record_bytes",
+        "recorded_value": "603ab720acf474d8350504827e6ebe3f9c281dd3a04bb627332322becf01bd1d / 1585 bytes",
+        "actual_record": "2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d / 1746 bytes",
+        "analysis": "Not a self-hash and not reproducible: 13 serialization/subset variants of the current record (pretty/compact/sorted/ascii/newline, with/without evidence[] and other keys) do not reproduce the value; a workspace text scan finds the value only inside the excerpt itself. The §16.4-required binding direction (record.evidence[] -> artifact bytes/sha256) re-hashes correctly.",
+        "disposition": "Recorded for independent adjudication in Stage-05 attempt-05. No frozen evidence was rewritten (append-only preserved)."
+      }
+    },
+    "gate_answer_transcript_verification": {
+      "transcript": "/Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T19-28-38-01a0a9f9-d915-7d10-89f4-1b6772c681a2.jsonl",
+      "question": {
+        "line": 2826,
+        "ordinal": 2825,
+        "ts_utc": "2026-09-17T00:46:44.592Z",
+        "verified": "contains the part-2 question verbatim and the option path 「不要」→ route 標記為不需要/直接結案"
+      },
+      "answer": {
+        "line": 2833,
+        "ordinal": 2832,
+        "ts_utc": "2026-09-17T01:09:49.913Z",
+        "verbatim": "1.是\n2.授權"
+      },
+      "result": "PASS — cited line/ordinal/timestamps match the transcript; the recorded verbatim answer matches byte-for-byte.",
+      "authorization_wording_note": "The gate question described the once-only observation as 「右鍵選單觀察」; the approved plan's canonical permitted input is exactly one current-target ellipsis input (plan §Human-Gate). Execution follows the plan's mechanism; the wording divergence is recorded for attempt-05 adjudication."
+    },
+    "formal_read_only_invariants": {
+      "config": {
+        "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/config/line_backup_config.json",
+        "bytes": 372,
+        "sha256": "390cbdcf36a88c9f134c0ecb29d39018ebadf42babfb7a264a741337499d3b3b"
+      },
+      "state": {
+        "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json",
+        "bytes": 48146,
+        "sha256": "e9313a563bf298d4b1e9ae243c5d3d404ad1333f69cb71b156e68589a8ec2f59"
+      },
+      "run_log": {
+        "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/run_log.md",
+        "bytes": 15950,
+        "sha256": "a62dd07d1df1a34fb91a11d6eec6ac8aae7146abf9eb7011b78b1d27914158bf"
+      },
+      "destination": {
+        "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+        "files": 57,
+        "total_bytes": 17924900
+      },
+      "result": "UNCHANGED — matches the 2026-09-16 baseline readings after recent LINE usage; no formal write, no re-download."
+    },
+    "route_attempt_03_prerequisites": {
+      "ledger": {
+        "path": "evidence/20260916-route/attempt-03/run-ledger.json",
+        "sha256": "a1ec86eb186c85465ae9fc06c55b5c43d2aa671737eb4c64969ce44acfcdcb38",
+        "events": 0,
+        "note": "authorization recorded; observation events pending"
+      },
+      "line_app": {
+        "bundle": "jp.naver.line.mac",
+        "version": "26.0.2",
+        "running_at_checks": true
+      },
+      "target_surface": "NOT PRESENTED at check time (LINE showed unrelated chat surfaces, no album card). No GUI input was taken; ellipsis budget remains 1.",
+      "runtime_notes": "cua_repl session: on the chat surface the app AX state exposes no text values and no bounds (strings are visible only in screenshots); dynamic import of node:fs works from cua_repl, so AX text and screenshot bytes can be written directly into evidence."
+    }
+  },
+  "gui_input_counts_this_check": {
+    "app_acquisition_inputs": 0,
+    "navigation_inputs": 0,
+    "ellipsis_inputs": 0,
+    "menu_item_clicks": 0,
+    "save_all_clicks": 0,
+    "chooser_interactions": 0,
+    "backup_state_writes": 0
+  },
+  "produced_by": "Read-only supporting checks; no product, test, plan, evidence, formal-state or destination mutation."
+}
