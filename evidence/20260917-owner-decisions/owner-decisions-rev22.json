@@ -53,7 +53,7 @@
       "authorizes": [
         "branch (b) of Rev20 §20.3: the corrected route attempt-06, never inside Rev20 or Rev21",
         "the route's S3/S5/S6 verification bound to the v4 Vision reader (the only reader substitution); S5 (album-open) remains the gate that stops the run before any ⋮ input",
-        "the two at-most-once GUI inputs §20.2 already defines and that attempt-05 did not spend: (1) one album-card metadata left click that opens the target album, (2) one album-level ⋮ left click inside the opened album — observation only"
+        "a fresh, independent one-shot authorization for the two at-most-once GUI inputs §20.2 defines: (1) one album-card metadata left click that opens the target album — attempt-05 spent its own album-card input 1/1, so this is a NEW authorization and not a reuse of that spent input; (2) one album-level ⋮ left click inside the opened album — observation only; attempt-05 never sent it because its precondition failed"
       ],
       "not_authorized": [
         "any menu-item activation (explicitly including Save All), any chooser interaction, any keyboard input, any AX write action",
@@ -123,6 +123,18 @@
     ],
     "verified_by": "two independent read-only agents in this wave, agreeing on line 1063 as the only real user message carrying the answer"
   },
-  "recorded_at_local": "2026-09-17T21:55+0800",
+  "recorded_at_local": "2026-09-17T22:18+0800",
+  "correction_history": [
+    {
+      "id": "CORR-01",
+      "recorded_at_local": "2026-09-17T22:18+0800",
+      "finding": "review/attempt-32 finding RV-32-1 (MINOR, non-gating)",
+      "field": "decisions.item_1.authorizes[2]",
+      "was": "the two at-most-once GUI inputs §20.2 already defines and that attempt-05 did not spend",
+      "now": "a fresh, independent one-shot authorization for the two at-most-once GUI inputs §20.2 defines: the album-card input is a NEW authorization (attempt-05 spent its own 1/1) and the ellipsis input was never sent",
+      "reason": "attempt-05's frozen ledger (17b17203…) records album_card_inputs as SPENT (1/1) and the ellipsis input as UNSPENT because its precondition failed. The authorization reading is unchanged (gate-4 is a new one-shot gate) and plan.md §22.2 already stated it correctly; only this record's wording was corrected, before it is cited by gate-4 or bound into any ledger.",
+      "plan_hash_impact": "none — plan.md was not edited, so review/attempt-32's approval of Rev22 at SHA-256 426fe6a1c758e96667e970021a80e20b68396c5af6a4ccaf65672772c514734b remains valid"
+    }
+  ],
   "notes": "Verbatim transcript excerpts only; quoted texts are copied byte-for-byte. This artifact creates no authorization by itself and is not a gate: gate-4 plus the v4 runbook plus the frozen v4 toolchain are frozen under evidence/20260916-route/attempt-06/ before any input. Any further GUI input beyond the two inputs described above, and any change to the closure semantics, requires yet another plan revision, a new gate and a fresh review."
 }
