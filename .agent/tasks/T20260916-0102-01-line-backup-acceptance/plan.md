@@ -1,7 +1,7 @@
 # LINE album acceptance and reusable transaction process — revised candidate plan
 
 TASK_ID: T20260916-0102-01-line-backup-acceptance
-PLAN_REVISION: 18
+PLAN_REVISION: 19
 PLAN_STATUS: CANDIDATE
 TASK_CLASS: CRITICAL (persistent-state and safety-semantics changes: dispatch continuity, duplicate/refusal gating, provenance binding, success semantics)
 REVIEW_REQUIRED: YES
@@ -9,14 +9,158 @@ INDEPENDENT_ACCEPTANCE_REQUIRED: YES
 E2E_REQUIRED: NO
 E2E_RATIONALE: The only user journey for this album is a read-only verify-only pass over an existing destination; no production download is authorized in this wave. Real CLI, real formal read-only data, real evidence and (if granted) one real GUI observation are used; no fixture result may be reported as production E2E.
 ACCEPTED_BY_USER: YES
-PRIOR_REVIEW_ATTEMPT: 22, 23
-PRIOR_REVIEW_GATE: SPLIT (Rev17 at SHA256 5dd7ab19ce16175fb8e091762d73a50cebb6415ab895342c00a9a015ea1b866f; review/attempt-22 returned PLAN_APPROVED with three non-gating MINOR notes and review/attempt-23 returned PLAN_REVISION_REQUIRED with RV-23-1 MAJOR plus RV-23-2…RV-23-5; Rev18 answers attempt-23 and no approval exists for Rev18)
+PRIOR_REVIEW_ATTEMPT: 24, 25
+PRIOR_REVIEW_GATE: PLAN_APPROVED (Rev18 at SHA256 22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6; review/attempt-24 and review/attempt-25 each returned PLAN_APPROVED for that exact revision/hash with only non-gating residual notes; no approval exists for Rev19)
 PRIMARY_OUTCOME_STATUS: UNKNOWN
-IMPLEMENTATION_STATUS: NOT_STARTED
-CORE_ACCEPTANCE_STATUS: NOT_RUN
-REQUIRED_VERIFICATION_STATUS: NOT_RUN
-INDEPENDENT_ACCEPTANCE_STATUS: PENDING
-TASK_CLOSURE_STATUS: IN_PROGRESS
+IMPLEMENTATION_STATUS: COMPLETE
+CORE_ACCEPTANCE_STATUS: BLOCKED
+REQUIRED_VERIFICATION_STATUS: PASS
+INDEPENDENT_ACCEPTANCE_STATUS: PASS
+TASK_CLOSURE_STATUS: CORE_ACCEPTANCE_BLOCKED
+
+## Revision 19 changes
+
+Wave: **automation verification — closure-enabling corrections** (same task, same wave). Rev19 answers the two scoped
+blockers left open by Stage-05 attempt-05 (`e2e/attempt-05`, `FINAL_GATE: ACCEPTED_WITH_SCOPED_BLOCKER`: BLK-01
+`SOURCE_CORRESPONDENCE` UNRESOLVED, BLK-02 `CUA_ROUTE_DECISION` UNKNOWN) under the two owner decisions recorded on
+2026-09-17 (owner verbatim: "1.可以" → corrected versioned user-fact record; "2.要，授權給你" → one further ⋮ observation under a
+fresh gate). It changes no product code, no product command, no fixture, no status vocabulary, and authorizes no
+production side effect and no download.
+
+### 19.1 Corrected versioned user-fact record v1.1 (closes BLK-01)
+
+Stage-05 attempt-05 isolated BLK-01 to exactly one failed §16.4 equality: the v1 record's
+`answer.part_2.confirmed_album` reads `2024/05/13～2024/05/17` while the contract's canonical album label (plan.md:1189
+`TARGET_ALBUM`; the product derives it as start + `～` + short end) is `2024/05/13～05/17`; the other fifteen conditions pass and an
+in-memory single-field correction returns `user_fact_v1_matches(...) == True`. The owner has authorized a corrected
+re-authoring of that one field from the same preserved one-shot gate answer.
+
+Authoritative corrected instance: `evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1.json`,
+constructed deterministically from the v1 file and satisfying all of:
+
+- byte-identical to v1 except exactly one string leaf: `answer.part_2.confirmed_album` = `2024/05/13～05/17` (U+FF5E
+  preserved). Expected size 1,741 bytes (v1: 1,746) and expected SHA-256
+  `a8c1055137d14026f7ecbc15b4f06ee540b56114af3276b081a0be72d195c263`; the construction must assert both before writing and
+  must fail closed (stop, do not write) on any mismatch;
+- identical key set and no unknown key; `record_version` stays `"1.0"`; every other value — `kind`, `status`,
+  `source_correspondence_result`, `merge_prohibited`, `app_identifier`, `raw_requested_group`, `raw_persisted_group`,
+  `fingerprint.*`, `question.*`, `answer.raw`, both `part_2.text` fields, `part_2.confirms_same_source`,
+  `part_2.confirmed_group_string`, `part_2.confirmed_expected_images`, `supplied_by`, `recorded_at_local` and the single
+  `evidence[]` entry (`human-gate-answer-20260917.json`, 1,438 bytes, `03ffff57…`) — stays byte-identical and re-hashes;
+  the only differing line in a line diff is the `confirmed_album` line;
+- the v1 file and the gate artifact are never rewritten; v1 stays as history, including its recorded defect;
+- §16.4's matching rules themselves are unchanged (no normalization, no relaxation); only the authoritative record
+  instance is added by owner authorization.
+
+Grounding and provenance is recorded in
+`evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1-authoring-note.md` (never inside the record body,
+which may not gain or lose keys): the owner authorization verbatim with its session/transcript reference, the
+deterministic construction, both files' bytes/SHA-256, the one-line diff, the full §16.4 per-condition check with the
+exact command, the transcript grounding of the corrected value — the question actually asked at session-transcript line
+2826 (2026-09-17T00:46:44.592Z) used the canonical short label `2024/05/13～05/17` — and the recorded, non-repaired
+documentation anomalies: ANOM-01 (the gate artifact's stale record back-reference) and ANOM-02 (the long-form rendering
+of the question inside the frozen gate artifact, and of `question.text`/`part_2.text` inside the record; those
+non-matching text fields stay byte-identical here, and the transcript line is the authoritative text).
+
+Acceptance consequence: the §16.4 contract check over the v1.1 record is the source-correspondence basis for closure
+(plan.md:1594). With it passing, `SOURCE_CORRESPONDENCE=CONFIRMED` for this task, subject to independent re-verification
+at Stage 05 attempt-06. This is a task-level acceptance basis; it does not claim that the product CLI prints
+Source=CONFIRMED for the real destination, whose product-level Source axis stays UNRESOLVED as a disclosed consequence
+of the read-only legacy formal state (plan.md:1162, 1311–1318), and no state is written. `CASE_ROOT_24`'s fixtures
+already use the canonical label and are unaffected; no product, test, config, state or photo changes.
+
+### 19.2 Second one-shot ellipsis observation — route attempt-04 (answers BLK-02; owner decision 2)
+
+A fresh one-shot authorization, independent of the exhausted attempt-03 budget (no reset, no extension):
+`evidence/20260916-route/attempt-04/gate-2-authorization.json` records the owner's verbatim 2026-09-17 reply
+("2.要，授權給你"), its timestamp and session/transcript reference, the exact scope authorized (one current-target
+album-card ⋮ input, immediate post observation, then stop; nothing else), the question that was asked, and that the
+auxiliary question about whether a menu had appeared was left unanswered (recorded UNANSWERED; never assumed).
+
+Run shape (same hard boundaries as attempt-03; a v2 runbook is frozen before any click and archived with the run):
+
+- Budget: `ellipsis_input_budget=1`, `app_acquisition_input_budget=0`, `navigation_input_budget=0`; fresh private ledger
+  `evidence/20260916-route/attempt-04/run-ledger.json` whose `parent_ledger_sha256` is the attempt-03 run-ledger
+  (`77c4f86c21f61df08614d069d621816ede6a1465c794813b7977d2f784e5f2aa`); exactly one left click at a point derived from
+  the current frame by the frozen locator (no historical coordinate); zero retry; zero conversation images.
+- Forbidden unchanged: this run bringing LINE to the front, scrolling or navigation, `performSecondaryAction`/AXPress/
+  AXUIElementPerformAction, keyboard input, any menu item, Save All, any chooser, any state/config/run-log write.
+- The input is sent only if the current frame shows the target card (frozen locator verdict ELIGIBLE). If the target card
+  is not present, no input is sent: the run records `NO_TARGET_ON_FRAME`, uses at most five read-only observation windows,
+  and per the standing instruction notifies the owner immediately instead of retrying (never a long loop); then it stops.
+- New bounded observation leg: a screen-scoped capture. Before the click, one probe is executed exactly once
+  (`screencapture -x` to /tmp; read-only observation, sending no input events and producing no sound). It is accepted only
+  if it exits 0, decodes, and the frozen locator returns ELIGIBLE on a crop of the AX window bounds under scale 2 or
+  scale 1 (proving the image contains the real window content); the accepted scale is recorded. Otherwise
+  `screen_scope=UNAVAILABLE` (non-fatal) and the run proceeds window-scoped. If a new system permission dialogue is
+  observed after the probe, the run records `PERMISSION_PROMPT_OBSERVED` and stops with SAFE_ABORT without sending the
+  ellipsis input.
+- Post observation: the attempt-03 surfaces plus, when `screen_scope=AVAILABLE`, up to five screen-scoped captures within
+  about four seconds (each recorded with timestamp/bytes/SHA-256); no artificial delay is added around runtime captures.
+  Frame bytes are never committed (only bytes/size/SHA-256 are recorded), and the captures stay in /tmp so Stage 05 can
+  re-run the frozen detector on them.
+- AFFIRMATIVE requires machine-observable evidence in a captured surface: either new AX menu elements (role/subrole/
+  bounds) or a menu detected by the frozen analysis tool `evidence/20260916-route/tools/detect_menu_popup.py` (frozen and
+  self-tested before the click; detection requires both a new rectangular region absent from the corresponding pre
+  capture and at least two transcribed menu strings inside it). OCR alone, a human report alone, or an incomplete capture
+  yields UNKNOWN, never AFFIRMATIVE. An owner/observer witness may be recorded verbatim as supplementary context (for
+  example in `owner_action_requested`), but it never changes `route_status` and never substitutes for the
+  machine-observable evidence.
+- Result artifacts: `route-result.json`, `run-ledger.json`, `manifest.json`, `ellipsis-locate.json`,
+  `menu-analysis.json`, `screen-probe.json` (or an explicit `screen_scope=UNAVAILABLE` record), with
+  `route_status ∈ {AFFIRMATIVE, UNKNOWN, SAFE_ABORT}` and the decision/reason fields as attempt-03.
+
+### 19.3 Route resolution and the ROUTE_NOT_NEEDED rationale (Plan-authored; applied at Stage 05 attempt-06)
+
+This section provides the "explicit Plan rationale" required by plan.md:1490/1596 for this wave, so that a verifier may
+apply it as a Plan decision instead of authoring one itself. Attempt-04's outcome is routed as follows:
+
+- `AFFIRMATIVE` → the route is resolved: `route_status=AFFIRMATIVE` stands on machine-observable evidence; the route is no
+  longer a scoped blocker and no ROUTE_NOT_NEEDED is needed.
+- `UNKNOWN` / `SAFE_ABORT` / `NO_TARGET_ON_FRAME` → `route_status` is recorded honestly as its observed value and the route
+  observation is closed as `ROUTE_NOT_NEEDED (Plan rationale: Rev19 §19.3)` only when all of these preconditions are
+  re-verified by Stage 05 attempt-06: (1) exact source correspondence is CONFIRMED via the §19.1 v1.1 record; (2) no side
+  effect is needed — the existing 57 files are final for this wave, no download, no Save All and no state write is
+  authorized, and existing valid files may never be redownloaded; (3) attempt-04's artifacts honestly record the observed
+  outcome with zero side effects; (4) the residual uncertainty and the reason a further repetition inside this wave would
+  add no evidence (the observation limit is a property of the runtime's capturable surfaces, not of the product) are
+  recorded.
+- If the §19.1 precondition is not met (the v1.1 record does not pass the §16.4 check), `ROUTE_NOT_NEEDED` may not be
+  applied and both blockers stay open; no DONE.
+
+The rationale is a Plan scope decision under the plan's own clause; it waives nothing non-waivable and authorizes no
+production GUI step. Residual risk, to be carried into the final report: unless attempt-04 returns AFFIRMATIVE, the ⋮
+route remains unproven, and any later production Save-All flow must re-establish the route under its own new plan
+revision and gate with its own budget before it may act.
+
+Status consequence (re-derived by Stage 05 attempt-06 from fresh evidence, never assumed here): with
+`SOURCE_CORRESPONDENCE=CONFIRMED` and the route closed by either branch above, the two scoped CORE blockers close →
+`PRIMARY_OUTCOME_STATUS=ACHIEVED`, `CORE_ACCEPTANCE_STATUS=PASS`, `TASK_CLOSURE_STATUS=DONE`, with
+`IMPLEMENTATION_STATUS`/`REQUIRED_VERIFICATION_STATUS`/`INDEPENDENT_ACCEPTANCE_STATUS` retained from attempt-05's verified
+values and `BASELINE_REGRESSION_DELTA=UNCHANGED`. The disclosed Registry=FAIL and State=`LEGACY_PROVENANCE_LIMITED`
+axes remain axis facts, not contradictions, and are reported as such.
+
+### 19.4 Literals corrected in place
+
+- Header: `PLAN_REVISION: 19`; `PRIOR_REVIEW_ATTEMPT: 24, 25`; `PRIOR_REVIEW_GATE` now records that Rev18 at SHA256
+  `22a5e500…` was approved by both review/attempt-24 and review/attempt-25, and that no approval exists for Rev19.
+- Header status block: the stale authoring-time values are replaced with the attempt-05-verified values (PRIMARY
+  `UNKNOWN`, IMPLEMENTATION `COMPLETE`, CORE `BLOCKED`, REQUIRED_VERIFICATION `PASS`, INDEPENDENT `PASS`, CLOSURE
+  `CORE_ACCEPTANCE_BLOCKED`; each checkable in `evidence/20260916-stage05/attempt-05/closure-arithmetic.json`). The block
+  remains a writing-time snapshot and pre-claims nothing about the post-attempt-06 outcome.
+- §16.4's "a later answer is a new versioned file" now also covers the Rev19 §19.1 owner-authorized corrected
+  re-authoring of the same preserved answer.
+- The route section's "The single Human Gate … authorizes exactly this controlled experiment" now notes Rev19 §19.2's
+  second, fresh one-shot gate of identical scope, and that neither gate resets or extends the other's budget.
+- The closure paragraphs bind Stage 03 to "the current PLAN_REVISION at handoff time (19 at this writing)" and name
+  "this Revision 19"; both ROUTE_NOT_NEEDED clauses point to the §19.3 rationale.
+
+### 19.5 Unchanged by this revision
+
+Everything else, including the goal contract and `PRIMARY_OUTCOME`, closure and `DONE` criteria, the R1–R7 fix contract,
+cases 01–25 with their literals and oracles, §16.4's matching rules, the product command grammar, the read-only fences
+(no re-download; 禎/楨 never merged; formal config/state/run-log/photos read-only), the one-human-gate pattern, the
+three separately reported results, and all other §18.1–§18.5 decisions.
 
 ## Revision 18 changes
 
@@ -52,10 +196,11 @@ beyond what its oracle text already states.
 
 ### 18.4 Stale literals and supersession sentences restated as direct corrections (corrects the closure paragraphs and §16.1/§16.7/§17.8 wording; attempt-23 RV-23-4 / attempt-22 RV-1)
 
-The closure paragraphs now bind Stage 03 to "the current PLAN_REVISION at handoff time (18 at this writing)" and name
-"this Revision 18". The §16.1 and §16.7 sentences that read "… is superseded accordingly/by …" and the §17.8 range
-sentence are restated as direct corrections ("… was corrected in place to …"), so no leftover supersession sentence
-survives the "no new supersession layer" claim.
+The closure paragraphs now bind Stage 03 to "the current PLAN_REVISION at handoff time" and name the revision in force
+at handoff time (18 when this correction was authored; Rev19 §19.4 updates the written literal to 19). The §16.1 and
+§16.7 sentences that read "… is superseded accordingly/by …" and the §17.8 range sentence are restated as direct
+corrections ("… was corrected in place to …"), so no leftover supersession sentence survives the "no new supersession
+layer" claim.
 
 ### 18.5 Nineteenth status row added to the fixture table (corrects the status fixtures table; attempt-23 RV-23-5 / attempt-22 RV-3)
 
@@ -350,8 +495,8 @@ only (`status=PARTIAL`, part 2 `UNANSWERED`, `*_at_recording` keys, `facts.app_b
 
 A record supports `source_status=CONFIRMED` only in this exact v1 form, authored by the operator from the one-shot
 human-gate answer, stored under the WORK root at
-`evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json` (never rewritten; a later answer is a new
-versioned file):
+`evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json` (never rewritten; a later answer — or, as authorized in Rev19 §19.1, a corrected re-authoring of the same
+preserved answer under that section's single-leaf rule — is a new versioned file):
 
 ```json
 {"record_version":"1.0","kind":"source_identity_user_fact","status":"CONFIRMED",
@@ -1332,7 +1477,7 @@ New run ledger and route-result schema:
 - route-result.json includes documented_capability_ref, runtime/provider, app_bundle, raw group, album, count, project_root, parent/new ledger SHA, target-binding SHA, pre/post observation SHAs, exact candidate text/role/subrole/bounds/owner, same-item correlation, save_all_click_count=0, menu_item_click_count=0, chooser_state, backup_state_write_count=0, route_status=AFFIRMATIVE|UNKNOWN|SAFE_ABORT, decision and reason.
 - Missing, ambiguous, stale, uncorrelated or provider-mismatched evidence yields route_status=UNKNOWN and SAFE_ABORT. Historical coordinates and OCR-only evidence cannot yield AFFIRMATIVE.
 
-The single Human Gate, if route evidence remains necessary, authorizes exactly this controlled experiment:
+The single Human Gate, if route evidence remains necessary, authorizes exactly this controlled experiment (Rev19 §19.2 adds a second, fresh one-shot gate of identical scope for route attempt-04; neither gate resets or extends the other's budget, and each authorizes at most one ellipsis input):
 
 - App/bundle: LINE, jp.naver.line.mac.
 - Raw target: 旻謙允禎成長日記; album: 2024/05/13～05/17; expected count: 57.
@@ -1342,7 +1487,7 @@ The single Human Gate, if route evidence remains necessary, authorizes exactly t
 - Capture immediate post evidence and stop. This is not production authorization.
 - Production Save-All is outside this wave. Any later production route requires a separate later approved plan revision, fresh independent review, a newly created empty destination under /Users/hsiaojohnny/Downloads/LINE-Backup-PoC, exact group/album/count/destination gate and one atomic attempt with no retry after UNKNOWN. Existing valid 57 files may not be redownloaded.
 
-Legal separation: offline CLI acceptance, controlled GUI route observation and later production Save-All are separate checks and artifacts. If exact existing source is proven and no side effect is needed, ROUTE_NOT_NEEDED may be recorded with explicit Plan rationale; otherwise route is a scoped CORE blocker. Production results cannot retroactively complete this wave.
+Legal separation: offline CLI acceptance, controlled GUI route observation and later production Save-All are separate checks and artifacts. If exact existing source is proven and no side effect is needed, ROUTE_NOT_NEEDED may be recorded with explicit Plan rationale (Rev19 §19.3 provides that rationale and its preconditions for this wave); otherwise route is a scoped CORE blocker. Production results cannot retroactively complete this wave.
 
 ## Canonical Status Contract v2, routing fixtures, and blockers
 
@@ -1438,9 +1583,9 @@ A valid waiver preserves CHECK_RESULT and includes WAIVED_BY, WAIVER_SCOPE, RATI
 
 ## Closure and sequencing
 
-The root /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/handoff.md is historical/non-authoritative for this task because it predates this TASK_ID and revision. Stage 03 must create a fresh handoff bound to TASK_ID, the current PLAN_REVISION at handoff time (18 at this writing), the approved plan SHA, GOAL_ANCHOR, critical path, invariants, deferred/non-gating items and stop conditions.
+The root /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/handoff.md is historical/non-authoritative for this task because it predates this TASK_ID and revision. Stage 03 must create a fresh handoff bound to TASK_ID, the current PLAN_REVISION at handoff time (19 at this writing), the approved plan SHA, GOAL_ANCHOR, critical path, invariants, deferred/non-gating items and stop conditions.
 
-Stage 02 must independently review this Revision 18 and its exact hash. Stage 03 may compile handoff only for the approved revision/hash. Stage 04 repairs only the approved evidence harness and reruns the verifier/transaction/status wave; it must preserve prior attempts, write execution.md with the canonical six statuses, check matrix/results, scoped blockers, Stage 04 snapshot fields and artifact hashes. Stage 05 independently accepts the real CLI/evidence, snapshots immutable Stage 04 facts and does not modify product code.
+Stage 02 must independently review this Revision 19 and its exact hash. Stage 03 may compile handoff only for the approved revision/hash. Stage 04 repairs only the approved evidence harness and reruns the verifier/transaction/status wave; it must preserve prior attempts, write execution.md with the canonical six statuses, check matrix/results, scoped blockers, Stage 04 snapshot fields and artifact hashes. Stage 05 independently accepts the real CLI/evidence, snapshots immutable Stage 04 facts and does not modify product code.
 
 The current plan is not implementation approval. Offline read-only reconciliation, isolated fixture construction, baseline reproduction, and review preparation are authorized now. Product code edits, external formal-state writes, GUI input, deployment, and production download require the applicable later gate. Any semantic contract, product-boundary, E2E, or GUI-budget change increments PLAN_REVISION on the same TASK_ID, invalidates prior approvals and any handoff, and repeats independent review; it never continues under the same revision (Rev16 §16.8).
 
@@ -1448,7 +1593,7 @@ Canonical routing is subject-specific: implementation blockage uses IMPLEMENTATI
 
 DONE requires: PRIMARY_OUTCOME_STATUS=ACHIEVED; IMPLEMENTATION_STATUS=COMPLETE; CORE_ACCEPTANCE_STATUS=PASS or explicitly Plan-rationalized NOT_REQUIRED; REQUIRED_VERIFICATION_STATUS=PASS/NOT_REQUIRED/WAIVED; INDEPENDENT_ACCEPTANCE_STATUS=PASS/NOT_REQUIRED; exact source correspondence `CONFIRMED` based only on an authoritative exact join or one precise user fact in the preserved user-fact evidence format — Rev16 §16.4 pins that record's CONFIRMED v1 contract, and the preserved PARTIAL artifact alone can never confirm; no unresolved hard blocker; valid fresh durable artifacts; unrelated user work preserved. No plan rationale or technical similarity is an equivalent, and `UNRESOLVED`, `LEGACY_PROVENANCE_LIMITED`, or `CONTRADICTED` cannot be promoted to closure.
 
-If source identity remains unresolved after all authorized evidence, the legally correct result is PRIMARY_OUTCOME_STATUS=UNKNOWN with the source/core check BLOCKED and no DONE. If route evidence is unavailable but exact existing provenance has already been proven and no side effect is needed, record ROUTE_NOT_NEEDED with explicit Plan rationale; otherwise route remains a scoped CORE blocker. If an independent acceptance authority/tool is unavailable, preserve implementation/CORE/required-verification facts and route INDEPENDENT_ACCEPTANCE_STATUS=BLOCKED, TASK_CLOSURE_STATUS=ACCEPTANCE_BLOCKED. Never downgrade proven implementation because acceptance could not run.
+If source identity remains unresolved after all authorized evidence, the legally correct result is PRIMARY_OUTCOME_STATUS=UNKNOWN with the source/core check BLOCKED and no DONE. If route evidence is unavailable but exact existing provenance has already been proven and no side effect is needed, record ROUTE_NOT_NEEDED with explicit Plan rationale (Rev19 §19.3, for this wave); otherwise route remains a scoped CORE blocker. If an independent acceptance authority/tool is unavailable, preserve implementation/CORE/required-verification facts and route INDEPENDENT_ACCEPTANCE_STATUS=BLOCKED, TASK_CLOSURE_STATUS=ACCEPTANCE_BLOCKED. Never downgrade proven implementation because acceptance could not run.
 
 ## Owner view
 
