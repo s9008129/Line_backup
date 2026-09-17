@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-06",
+  "artifact": "evidence/20260916-route/attempt-06/run-ledger.json",
+  "runtime/provider": "codex-desktop unified-computer-use (cua_repl)",
+  "app_bundle": "jp.naver.line.mac",
+  "raw_group": "旻謙允禎成長日記",
+  "album": "2024/05/13～05/17",
+  "expected_count": 57,
+  "project_root": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state",
+  "parent_ledger_sha256": "17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218",
+  "plan_binding": {
+    "plan_revision": 23,
+    "plan_sha256": "4337e2b5c105901ce7c56956ecea5469894df2d2a29f099068c979584c71b6b2",
+    "plan_lines": 2093,
+    "plan_bytes": 284897,
+    "approvals": [
+      {
+        "review_attempt": 34,
+        "report": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review/attempt-34/review_report.md",
+        "report_sha256": "21c4bbb551070dbdfc7c155536c4651abc9492970311b739cf506dd1d2b8a57c",
+        "gate": "PLAN_APPROVED"
+      },
+      {
+        "review_attempt": 35,
+        "report": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review/attempt-35/review_report.md",
+        "report_sha256": "975142c3ad79098141a74e4bd1cebf107d8e307fc65ec42ef4c781e3d8c8582c",
+        "gate": "PLAN_APPROVED"
+      }
+    ],
+    "note": "both fresh independent reviews approved PLAN_REVISION 23 at exactly this SHA-256 (dual gate satisfied); no approval exists for any other revision"
+  },
+  "authorization": {
+    "gate": "gate-4 — fourth one-shot authorization: corrected route observation under the v4 Vision reader (Rev23 §22.2/§22.3); open the target album card, then one album-level ⋮ inside the album; observation only",
+    "authorized_by": "使用者本人",
+    "authorized_at_local": "2026-09-17T21:38:29.198+0800 (verbatim 1 選 B；2 用更正版紀錄, transcript line 1063)",
+    "authorization_verbatim": "1 選 B；2 用更正版紀錄",
+    "authorization_evidence": "evidence/20260916-route/attempt-06/gate-4-authorization.json",
+    "authorization_evidence_sha256": "e32ccd882b93b784e1faf3f3ea1df9732ab093e26f74a89622ac857159876272",
+    "authority_source_artifact": {
+      "artifact": "evidence/20260917-owner-decisions/owner-decisions-rev22.json",
+      "sha256": "0664b5fba0fc73b3516a790b8b2e783819892ffea3cf078c087cd68c09374b32",
+      "committed": "c301e5e"
+    },
+    "scope": "exactly one album-card metadata left click (this run's single navigation input; counted under BOTH navigation_inputs and album_card_inputs) then, only after the v4 verify_album_open.py returned ALBUM_OPEN_VERIFIED, exactly one album-level ⋮ left click (click_count=1 each); no menu item, no chooser, no keyboard, no AX write, zero retry",
+    "not_a_reset": "gate-4 is independent of gates 1–3: it neither resets nor extends any earlier one-shot budget; attempt-05's album-card input stays SPENT 1/1 and its frozen verdict stands"
+  },
+  "budgets": {
+    "album_card_input_budget": 1,
+    "navigation_input_budget": 1,
+    "ellipsis_input_budget": 1,
+    "retry_budget": 0,
+    "menu_item_budget": 0,
+    "keyboard_input_budget": 0,
+    "app_acquisition_input_budget": 0,
+    "conversation_images": 0,
+    "click_count_per_input": 1,
+    "read_only_observation_windows_max": 5,
+    "screen_capture_budget": 5,
+    "screen_capture_window_seconds": 4
+  },
+  "frozen_inputs": {
+    "gate_4_authorization_sha256": "e32ccd882b93b784e1faf3f3ea1df9732ab093e26f74a89622ac857159876272",
+    "route_runbook_sha256": "716bca926dcb76663afc9b937479da480dd9d1841fbb52b1224945e25e1963a8",
+    "tools": {
+      "v4/vision_reader.py": {"sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8", "bytes": 8369},
+      "v4/locate_album_card.py": {"sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162", "bytes": 7025},
+      "v4/verify_album_open.py": {"sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58", "bytes": 6981},
+      "v4/locate_album_ellipsis.py": {"sha256": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4", "bytes": 11436},
+      "detect_menu_popup.py (reused unchanged; tesseract; reader-block exempt)": {"sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc", "bytes": 6339},
+      "selftest_menu_popup.py (frozen detector self-test)": {"sha256": "db0917039f085b0d90196348de0d0038e8d6abcd18418c0e41c4037231fbbfdc", "bytes": 4018}
+    },
+    "vision_helper_source": {"path": "evidence/20260916-route/tools/vision/vision_ocr.swift", "sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32", "bytes": 1070},
+    "v4_selftest": {"path": "evidence/20260916-route/tools/selftest/v4/selftest-summary.json", "sha256": "5ad2be101f848ea6a99a8a02ffee8ef65f761fd8b3408bd21c7eb351f1b9fb8d", "bytes": 11718, "cases_total": 16, "cases_failed": 0, "result": "PASS"},
+    "parent_ledger": {"path": "evidence/20260916-route/attempt-05/run-ledger.json", "sha256": "17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218", "bytes": 29772}
+  },
+  "initial_counts": {
+    "album_card_input": 1,
+    "navigation_input": 1,
+    "ellipsis_input": 1,
+    "app_acquisition_input": 0,
+    "menu_item_input": 0,
+    "keyboard_input": 0,
+    "retry": 0
+  },
+  "state": "FROZEN_BEFORE_INPUTS",
+  "ledger_state": "FROZEN_BEFORE_INPUTS",
+  "events": [],
+  "inputs": {
+    "album_card": "UNSPENT (0/1)",
+    "ellipsis": "UNSPENT (0/1)"
+  },
+  "final_counts": null,
+  "route_result_sha256": null,
+  "run_status": "PRE_FREEZE_FROZEN_PENDING_RUN",
+  "stop_reason": null,
+  "owner_decision_required": null,
+  "route_outcome": null,
+  "next_action": null,
+  "ledger_state_note": "PLACEHOLDER — pre-frozen skeleton, written and committed before any input. Stage-04 runner: start from state FROZEN_BEFORE_INPUTS, append read/input events to events[] (mirror the attempt-05 event schema: seq, timestamp_local, action_class, event, gui_input, frame bytes/size/sha256, ax bytes/sha256, observation_window, budgets before/after, evidence paths in /tmp), mark inputs.album_card / inputs.ellipsis SPENT as consumed, and finalize with final_counts, run_status, stop_reason, ledger_state and (only when a route outcome was reached) route_result_sha256. Replace this note at finalization with the true closing statement; a run that stops before any route outcome writes no route-result.json and no manifest.json.",
+  "series_note": "evidence/20260916-route/attempt-06 is the route-run series; .agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-06 is the already-consumed Rev21-wave acceptance and e2e/attempt-07 is this wave's acceptance (RV-33-4) — never conflate.",
+  "pre_freeze_recorded_at_local": "2026-09-17T23:11+0800",
+  "notes": "Fresh attempt-06 ledger, written and frozen before any input (state FROZEN_BEFORE_INPUTS); attempt-05's ledger (17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218) and its STOPPED_AT_S5_TARGET_MISMATCH verdict are neither reset nor re-interpreted. gate-4 neither resets nor extends any earlier one-shot budget. The runner appends events and finalizes per ledger_state_note; this skeleton itself records zero GUI input (no clicks, no keyboard, no AX writes, no screenshots, no window activation, no app launch)."
+}

@@ -1,0 +1,119 @@
+{
+  "artifact_type": "human_gate_conversation_excerpt",
+  "gate": "fourth one-shot authorization: corrected route observation under the v4 Vision reader (Rev23 §22.2/§22.3; route attempt-06) — open the target album card, then one album-level ⋮ inside the album; observation only",
+  "session_id": "01a0af3c-6693-72b2-abf2-095a3317e9a4",
+  "session_transcript": "/Users/hsiaojohnny/.codex/sessions/2026/09/17/rollout-2026-09-17T19-59-26-01a0af3c-6693-72b2-abf2-095a3317e9a4.jsonl",
+  "prior_gate": {
+    "artifact": "evidence/20260916-route/attempt-05/gate-3-authorization.json",
+    "sha256": "05db1678c79fecc23e744c4d1549a32414859db86c0325e41ff3ceb33944f93c",
+    "note": "gate-4 is independent of gates 1–3: it neither resets nor extends any earlier one-shot budget; attempt-05's album-card input stays SPENT 1/1 and its frozen verdict stands"
+  },
+  "authority_artifact": {
+    "artifact": "evidence/20260917-owner-decisions/owner-decisions-rev22.json",
+    "sha256": "0664b5fba0fc73b3516a790b8b2e783819892ffea3cf078c087cd68c09374b32",
+    "committed": "c301e5e",
+    "role": "the transcript-bound authority source for PLAN_REVISION 22/23 §22.1–§22.3 and §22.4; gate-4 cites it and adds no interpretation of its own"
+  },
+  "plan_binding": {
+    "plan_revision": 23,
+    "plan_sha256": "4337e2b5c105901ce7c56956ecea5469894df2d2a29f099068c979584c71b6b2",
+    "plan_lines": 2093,
+    "plan_bytes": 284897,
+    "review_attempts": [
+      {
+        "attempt": 34,
+        "report": "review/attempt-34/review_report.md",
+        "report_sha256": "21c4bbb551070dbdfc7c155536c4651abc9492970311b739cf506dd1d2b8a57c",
+        "gate": "PLAN_APPROVED"
+      },
+      {
+        "attempt": 35,
+        "report": "review/attempt-35/review_report.md",
+        "report_sha256": "975142c3ad79098141a74e4bd1cebf107d8e307fc65ec42ef4c781e3d8c8582c",
+        "gate": "PLAN_APPROVED"
+      }
+    ],
+    "note": "both fresh independent reviews approved PLAN_REVISION 23 at exactly this SHA-256 (dual gate satisfied); no approval exists for any other revision"
+  },
+  "context_authorization": {
+    "line": 1063,
+    "ordinal": 1062,
+    "timestamp_utc": "2026-09-17T13:38:29.198Z",
+    "timestamp_local": "2026-09-17T21:38:29.198+0800",
+    "verbatim": "1 選 B；2 用更正版紀錄",
+    "role": "the owner's decision that this gate executes: answer 1 (= B) is read as Rev20 §20.3 branch (b) — one further corrected route attempt (route attempt-06) under a new PLAN_REVISION (23), a new one-shot gate (this file) and a fresh review, with S3/S5/S6 bound to the v4 Vision reader; answer 2 (= 更正版紀錄) adopts the corrected versioned record v1.1 per §22.4 and authorizes no input"
+  },
+  "option_presentation_transcript": [
+    {
+      "line": 1025,
+      "ordinal": 1024,
+      "timestamp_utc": "2026-09-17T13:27:32.926Z",
+      "timestamp_local": "2026-09-17T21:27:32.926+0800",
+      "role": "assistant message carrying the two-option framing and the reply example",
+      "verbatim_excerpt": "路線：**A** 記成「這條路不需要」關閉卡點 ／ **B** 開新修訂＋再授權一次「⋮ 只觀察」（不點任何選單項目；新修訂會把驗證改用新 Vision 讀取器）。建議 **B**。／ 來源紀錄：**(i)** 用您先前已同意的「更正版紀錄」 ／ **(ii)** 您重新給一次精確答案。建議 **(i)**。／ 回覆範例：「1 選 B；2 用更正版紀錄」"
+    },
+    {
+      "line": 1048,
+      "ordinal": 1047,
+      "timestamp_utc": "2026-09-17T13:30:01.805Z",
+      "timestamp_local": "2026-09-17T21:30:01.805+0800",
+      "role": "assistant message restating the same two questions in plain language, immediately before the owner's answer",
+      "verbatim_excerpt": "回覆範例：「1 選 B；2 用更正版紀錄」→ 我就用多個 subagent 平行把 Rev22 跑完。"
+    }
+  ],
+  "decided_interpretation": {
+    "target": "the album-level ⋮ inside the target album; opening the target album card is its directed precondition (Rev20 §20.3 branch (b) as read by §22.2; §22.3)",
+    "per_input_authority": [
+      {
+        "input": "album-card metadata left click that opens the target album (this run's single navigation input, click_count=1)",
+        "authority": "the owner's decision at transcript line 1063 (verbatim 1 選 B；2 用更正版紀錄), read as Rev20 §20.3 branch (b) with §22.2/§22.3's directed precondition; it is a NEW one-shot authorization — attempt-05 spent its own album-card input 1/1 (evidence/20260916-route/attempt-05/run-ledger.json, 17b17203…)",
+        "label": "gate-4 = fresh execution of the decision at transcript line 1063"
+      },
+      {
+        "input": "album-level ⋮ left click inside the opened album (click_count=1), sent only after the v4 verify_album_open.py returned ALBUM_OPEN_VERIFIED on the immediate post frame",
+        "authority": "the owner's decision at transcript line 1063 (verbatim 1 選 B；2 用更正版紀錄), executing §22.3's two-input envelope; attempt-05 never sent it because its S5 precondition failed",
+        "label": "gate-4 = fresh execution of the decision at transcript line 1063"
+      }
+    ],
+    "authorized_inputs_in_order": [
+      "exactly one album-card metadata left click that opens the target album (this run's single navigation input; click_count=1); counted under BOTH navigation_inputs and album_card_inputs — no extra navigation input is authorized",
+      "exactly one album-level ⋮ left click, sent only after the v4 verify_album_open.py returned ALBUM_OPEN_VERIFIED on the immediate post frame and the v4 locate_album_ellipsis.py returned ELIGIBLE (click_count=1)",
+      "observation only"
+    ],
+    "nothing_else": "no menu item, no chooser, no keyboard input, no scrolling, no state/config/run-log write, no AX write action, no performSecondaryAction, no bringing LINE to the front, zero retry, zero conversation images, no second attempt of either control",
+    "worst_case": "an opened album and an opened album-level menu on the owner's screen — the same class of observation-only side effect gate-3 authorized for one ⋮ input"
+  },
+  "alternative_reading": {
+    "reading": "if decision 1 meant only the ⋮ input and not its directed precondition, the album-card click is out of scope and the run must start from an already-open album view — which the frozen v4 toolchain cannot verify as the target album on a single frame — so the two-input attempt-06 must not be sent",
+    "handling": "recorded honestly for the reviewers (§22.2); a newer explicit owner correction supersedes the decided interpretation at any time; the run stops after the album entry if any precondition or the S5/S6 rules fail"
+  },
+  "scope": {
+    "album": "2024/05/13～05/17 (displayed title 2024/05/13~05/17), count 57",
+    "destination_read_only": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57 (never re-downloaded, never written)",
+    "group": "旻謙允禎成長日記 (禎 U+798E; never merged with 楨 U+6968)"
+  },
+  "budgets": {
+    "album_card_input_budget": 1,
+    "navigation_input_budget": 1,
+    "ellipsis_input_budget": 1,
+    "retry_budget": 0,
+    "menu_item_budget": 0,
+    "keyboard_input_budget": 0,
+    "app_acquisition_input_budget": 0,
+    "conversation_images": 0,
+    "click_count_per_input": 1,
+    "read_only_observation_windows_max": 5,
+    "screen_capture_budget": 5,
+    "screen_capture_window_seconds": 4
+  },
+  "not_authorized": [
+    "any menu-item activation (explicitly including Save All); any chooser interaction",
+    "any keyboard input; any AX write action (including performSecondaryAction / AXPress / AXUIElementPerformAction)",
+    "any second attempt of either control; any retry; any extra navigation input; any scrolling; bringing LINE to the front",
+    "any write to the destination, to formal config/state/registry/run-log, or any re-download",
+    "closing the route as ROUTE_NOT_NEEDED (the owner chose B, not A); that closure stays owner-reserved and must never run automatically"
+  ],
+  "recorded_in": "evidence/20260916-route/attempt-06/route-runbook.md",
+  "recorded_at_local": "2026-09-17T23:09+0800",
+  "notes": "Verbatim transcript excerpts only; the two quoted excerpts are copied byte-for-byte from the transcript-bound authority artifact evidence/20260917-owner-decisions/owner-decisions-rev22.json (0664b5fba0fc73b3516a790b8b2e783819892ffea3cf078c087cd68c09374b32, committed c301e5e), and the answer line was re-checked directly against the session transcript (line 1063, ordinal 1062, 2026-09-17T13:38:29.198Z). This gate authorizes exactly the two inputs described above and nothing else. gate-4, the v4 runbook and the v4 tool set are frozen before any input; attempt-05's ledger (17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218) stays byte-identical. Any further GUI input, any menu-item activation or any closure decision requires a new gate, a new plan revision and a fresh review."
+}
