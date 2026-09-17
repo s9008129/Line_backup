@@ -1,22 +1,166 @@
 # LINE album acceptance and reusable transaction process — revised candidate plan
 
 TASK_ID: T20260916-0102-01-line-backup-acceptance
-PLAN_REVISION: 19
+PLAN_REVISION: 20
 PLAN_STATUS: CANDIDATE
 TASK_CLASS: CRITICAL (persistent-state and safety-semantics changes: dispatch continuity, duplicate/refusal gating, provenance binding, success semantics)
 REVIEW_REQUIRED: YES
 INDEPENDENT_ACCEPTANCE_REQUIRED: YES
 E2E_REQUIRED: NO
-E2E_RATIONALE: The only user journey for this album is a read-only verify-only pass over an existing destination; no production download is authorized in this wave. Real CLI, real formal read-only data, real evidence and (if granted) one real GUI observation are used; no fixture result may be reported as production E2E.
+E2E_RATIONALE: The only user journey for this album is a read-only verify-only pass over an existing destination; no production download is authorized in this wave. Real CLI, real formal read-only data, real evidence and the bounded, owner-gated real GUI observations of the controlled route runs are used; no fixture result may be reported as production E2E.
 ACCEPTED_BY_USER: YES
-PRIOR_REVIEW_ATTEMPT: 24, 25
-PRIOR_REVIEW_GATE: PLAN_APPROVED (Rev18 at SHA256 22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6; review/attempt-24 and review/attempt-25 each returned PLAN_APPROVED for that exact revision/hash with only non-gating residual notes; no approval exists for Rev19)
+PRIOR_REVIEW_ATTEMPT: 26, 27
+PRIOR_REVIEW_GATE: PLAN_APPROVED (Rev19 at SHA256 10ec0f032788982bb9cb270918829ca4b30fdcfbf156b82ac442df29fca07aff; review/attempt-26 and review/attempt-27 each returned PLAN_APPROVED for that exact revision/hash with only non-gating residual notes; no approval exists for Rev20)
 PRIMARY_OUTCOME_STATUS: UNKNOWN
 IMPLEMENTATION_STATUS: COMPLETE
 CORE_ACCEPTANCE_STATUS: BLOCKED
 REQUIRED_VERIFICATION_STATUS: PASS
 INDEPENDENT_ACCEPTANCE_STATUS: PASS
 TASK_CLOSURE_STATUS: CORE_ACCEPTANCE_BLOCKED
+STAGE_04_REPORTED_BY_THE_REV19_WAVE (not independently verified; execution-rev19.md §1): PRIMARY UNKNOWN / IMPLEMENTATION COMPLETE / CORE PASS (scoped) / REQUIRED_VERIFICATION PASS / INDEPENDENT_ACCEPTANCE PENDING / TASK_CLOSURE READY_FOR_INDEPENDENT_ACCEPTANCE
+
+## Revision 20 changes
+
+Wave: **corrected route observation — the album's own ⋮ (owner-directed)**. Rev20 answers the owner's post-attempt-04 correction
+(2026-09-17, session transcript lines 6206/6224): attempt-04's one-shot ⋮ was the album *list* card's control (its observed menu
+was the card-management menu), while the control the route needs is the *album-level* ⋮ inside the album, which the owner directs
+us to reach by first opening the target album card. Rev20 therefore re-specifies the route-observation leg for the corrected route
+(route attempt-05) and records the owner's third one-shot gate (gate-3). It changes no product code, no product command, no
+fixture, no status vocabulary, and authorizes no production side effect, no menu-item activation and no download. Attempt-04's
+artifacts and the exhausted attempt-03/attempt-04 budgets are preserved as history: no reset, no extension, no rewrite.
+
+### 20.1 Owner correction and gate-3 (the third one-shot authorization)
+
+Verbatim owner messages that direct this revision (session `01a0a9f9-d915-7d10-89f4-1b6772c681a2`, transcript lines and local
+timestamps):
+
+- line 6206, 2026-09-17T16:00:03.652+0800: 「我跟你回覆我看到的畫面是「相簿列表」，不是「相簿本身」，要進入該相簿裡面才會有「⋮」」
+- line 6224, 2026-09-17T16:01:49.779+0800: 「你現在點擊到的是「相簿列表的⋮」，你應該先點進去「2024/0513~0517」這本相簿」
+- Context: the same owner had answered the route-continuation question at line 5091 (2026-09-17T14:59:40.847+0800), verbatim
+  「2.要，授權給你」 — continue the automatic-menu route with one further ⋮ observation under a fresh gate — and attempt-04 spent
+  that one-shot on the album-list card's ⋮ before the owner corrected the target.
+
+`[DECIDED]` interpretation and scope, recorded in `evidence/20260916-route/attempt-05/gate-3-authorization.json` together with the
+verbatim messages, timestamps, transcript references, this interpretation, the scope and the budgets:
+
+- The corrected target of the authorized ⋮ observation is the album-level ⋮ *inside* the target album; opening the target album
+  card is its directed precondition ("你應該先點進去…這本相簿"; "要進入該相簿裡面才會有「⋮」").
+- Gate-3 therefore authorizes exactly: (1) one album-card metadata left click that opens the target album (this run's single
+  navigation input), then (2) one album-level ⋮ left click, then observation only. Nothing else. Each input is sent only if every
+  precondition in §20.2 holds at the moment of that input; each input is at-most-once; zero retry.
+- The run never activates a menu item, never opens a chooser, sends no keyboard input and writes no state; the worst case of any
+  targeting error is an opened menu on the owner's screen — the same class of observation-only side effect the owner already
+  authorized for one ⋮ input.
+- Alternative reading recorded honestly: if the owner intended only the album entry click, the second input (the album-level ⋮)
+  is out of scope and must not be sent. The reviewers must judge this interpretation from the verbatim above; a newer explicit
+  owner correction supersedes this decision at any time.
+- Independent of the attempt-03 and attempt-04 budgets: gate-3 neither resets nor extends them, and each earlier gate still
+  authorizes at most its own one input.
+
+### 20.2 Corrected route attempt-05 (open the album → album-level ⋮; observation only)
+
+Preconditions (all must hold; otherwise no input is sent):
+
+1. The owner has LINE (`jp.naver.line.mac`) in the album-list state with the target card visible (title `2024/05/13～05/17`,
+   count 57) and no visible menu, dialog, chooser, photo viewer or system permission prompt on the current surface. A surface that
+   already shows such an overlay, or that cannot show the target card, stops the run read-only: record the failure, use at most
+   five read-only observation windows, notify the owner immediately (standing instruction: no long loops), stop.
+   `NO_TARGET_ON_FRAME` is recorded honestly.
+2. Frozen before any input (pre-freeze wave; committed before the run): gate-3
+   (`evidence/20260916-route/attempt-05/gate-3-authorization.json`), the v3 runbook
+   (`evidence/20260916-route/attempt-05/route-runbook.md`), and the v3 tools with their frozen self-tests under
+   `evidence/20260916-route/tools/`: `locate_album_card.py` (album-card metadata locator), `verify_album_open.py` (album-open
+   verifier), `locate_album_ellipsis.py` (album-level ⋮ locator). The attempt-04 detector `detect_menu_popup.py` and the v2
+   card-⋮ locator are reused unchanged (their SHAs recorded); the v2 locator's verdict is corroborating, never blocking, and it
+   never supplies the click point.
+3. Fresh `run-ledger.json` (`evidence/20260916-route/attempt-05/run-ledger.json`) whose `parent_ledger_sha256` is attempt-04's
+   final ledger `df0e9c44…`; budgets: `album_card_input_budget=1`, `ellipsis_input_budget=1`,
+   `app_acquisition_input_budget=0`, every other input class 0; `click_count=1` per input; zero retry; zero conversation images.
+4. Hard boundaries unchanged: no keyboard input, no menu-item activation, no Save All, no chooser, no state/config/run-log write,
+   no AXPress/AXUIElementPerformAction/AX write, no guessed or historical coordinate (every click point is derived from the
+   current frame by the frozen tools), no scrolling, no re-entry, and no second attempt at either control.
+
+Sequence (each step records its evidence; any deviation is SAFE_ABORT):
+
+- S1 binding read (zero input): app frame to `/tmp/route5_frame_pre.jpg` plus the AX state; bytes/size/SHA-256 recorded.
+- S2 screen-scope probe (executed once; read-only `screencapture -x`, no input events, no sound): accepted only if it exits 0,
+  decodes, and the frozen `locate_album_card.py` returns ELIGIBLE on a crop of the AX window bounds at scale 2 or scale 1 (proving
+  the capture contains the real window content); the accepted scale is recorded. Otherwise `screen_scope=UNAVAILABLE` (non-fatal;
+  the run stays window-scoped). If a new system permission dialogue is observed after the probe →
+  `PERMISSION_PROMPT_OBSERVED`, SAFE_ABORT, no input.
+- S3 card locate on the current frame: `locate_album_card.py` → verdict must be ELIGIBLE: the title date tokens match the target,
+  the metadata click point passes the frozen margin rules (≥10 px from the bright content bands above and below in the same frame,
+  inside the title row band), and, when the count text below the title is readable, it reads 57. A readable different count, unsafe
+  margins or a missing title → SAFE_ABORT, no input; record the read-only evidence and notify the owner.
+- S4 input #1: exactly one left click at the S3 point (the album-card metadata point).
+- S5 immediate post observation (zero input) plus `verify_album_open.py` on the fresh frame: `ALBUM_OPEN_VERIFIED` requires the
+  target date title found in the post frame AND a substantive surface change vs the pre frame (frame-diff fraction ≥5%); a
+  readable non-target count or a non-matching date → `TARGET_MISMATCH`; no surface change → `NO_EFFECT`; no readable title →
+  `INCONCLUSIVE`. Any non-verified verdict stops the run before any ⋮ input (record, notify the owner, stop).
+- S6 album-level ⋮ locate on the same post frame: `locate_album_ellipsis.py` → the full-frame vertical-three-dot census is
+  recorded; ELIGIBLE requires exactly one candidate inside the album-title row band (the same row as the verified title, to the
+  right of the title); candidates inside the group-title row band are never eligible. `NO_ELLIPSIS_FOUND`, `AMBIGUOUS_ELLIPSIS`
+  or `GROUP_LEVEL_ONLY` → no ⋮ input; record, notify the owner, stop.
+- S7 screen-scope pre-menu capture (`screencapture -x`, read-only) of the album-open state — the detector's screen-space pre frame.
+- S8 input #2: exactly one left click at the S6 point (the album-level ⋮).
+- S9 immediate post observation (zero input): app frame and AX state, then up to five screen-scope captures within about four
+  seconds (timestamps/bytes/SHA-256 only).
+- S10 detection and transcription: the frozen detector on (screen pre-menu vs each post capture) and (app pre vs app post); the
+  menu's items are transcribed per row. `AFFIRMATIVE` requires machine-observable evidence (a new AX menu element or the
+  detector's MENU_DETECTED: a new rectangular region plus ≥2 transcribed menu strings). OCR-only, human-report-only or an
+  incomplete capture yields `UNKNOWN`, never AFFIRMATIVE. The observed menu is checked against the documented capability
+  reference's item order (Select items / Rename album / Save All / Delete album / Share album) — recorded as a check, never used to
+  compute or click a row.
+- S11 stop and write the artifact set: `route-result.json`, `run-ledger.json` (FINAL with the counts and
+  `route_result_sha256`), `manifest.json`, `album-card-locate.json`, `album-open-verify.json`, `album-ellipsis-locate.json`,
+  `screen-probe.json`, `menu-analysis.json`, plus the durable `workflow-routing` §7.11 execution record `execution-rev20.md`.
+  Frames stay in /tmp (bytes/size/SHA-256 recorded only); prior attempts and frozen records are never touched; the menu may be
+  left open (no keyboard input is ever sent) and the owner is notified to close it.
+
+### 20.3 Route resolution and closure routing after attempt-05
+
+- `AFFIRMATIVE` → the corrected route is resolved at the album level: the album-level ⋮ is proven to yield a machine-observable
+  menu; `CUA_ROUTE_DECISION` is PASS for the corrected route; the route stops being a scoped CORE blocker. This authorizes no
+  menu-item activation; production Save-All remains outside every wave.
+- Non-AFFIRMATIVE (`UNKNOWN` / `SAFE_ABORT` / `NO_EFFECT` / `TARGET_MISMATCH` / `NO_ELLIPSIS_FOUND` / `AMBIGUOUS_ELLIPSIS` /
+  `GROUP_LEVEL_ONLY` / `NO_TARGET_ON_FRAME`) → recorded honestly with zero side effects; the route remains a scoped CORE blocker
+  and the owner is notified immediately. The owner's explicit decision then routes closure, and neither branch may run
+  automatically: (a) close the route as `ROUTE_NOT_NEEDED` with the explicit Plan rationale recorded in the owner-approved
+  decision, re-verified by Stage 05 with §19.3's four preconditions (source correspondence CONFIRMED via the v1.1 record; no side
+  effect is needed; the attempt artifacts honestly record a zero-side-effect outcome; the residual uncertainty and the reason
+  further repetition inside this wave would add no evidence are recorded) plus attempt-05's evidence (the census of every
+  vertical ⋮ candidate and the surface transcripts bound what the capturable surfaces contain); or (b) one further corrected
+  attempt under a NEW `PLAN_REVISION`, a new gate and a fresh review — never inside Rev20.
+- Expected closure tuple if `AFFIRMATIVE` and the §16.4 check over the v1.1 record passes (re-derived by Stage 05 attempt-06 from
+  fresh evidence, never assumed here): `PRIMARY_OUTCOME_STATUS=ACHIEVED`, `IMPLEMENTATION_STATUS=COMPLETE`,
+  `CORE_ACCEPTANCE_STATUS=PASS`, `REQUIRED_VERIFICATION_STATUS=PASS`, `INDEPENDENT_ACCEPTANCE_STATUS=PASS`,
+  `TASK_CLOSURE_STATUS=DONE`, `BASELINE_REGRESSION_DELTA=UNCHANGED`; the disclosed axis facts (Registry=FAIL,
+  State=`LEGACY_PROVENANCE_LIMITED`, product-level Source=`UNRESOLVED`) are reported as axis facts and are never promoted.
+- Attempt-04's artifacts remain as history: they answered their scoped question (the authorized list-card ⋮ does open a
+  machine-observable menu) and never established the album route.
+
+### 20.4 Literals corrected in place
+
+- Header: `PLAN_REVISION: 20`; `PRIOR_REVIEW_ATTEMPT: 26, 27`; `PRIOR_REVIEW_GATE` records that Rev19 at SHA256 `10ec0f03…` was
+  approved by both review/attempt-26 and review/attempt-27, and that no approval exists for Rev20. The status block keeps the
+  attempt-05-verified values and adds a clearly labelled line for the Rev19 wave's Stage-04-reported values (not independently
+  verified; `execution-rev19.md` §1), so the header is not stale and pre-claims nothing about attempt-06.
+- Route section: the E2E sentence and the budget sequence now note the Rev20 corrected run (one album-card navigation input plus
+  one album-level ellipsis input); the gate sentence now records gate-3 (§20.2) alongside the two earlier gates, each independent
+  with no reset or extension; the surface sentence now includes the album-open surface reached by the one directed album-card
+  input (still observation-only; no menu item).
+- Closure section: "the current PLAN_REVISION at handoff time (20 at this writing)"; "this Revision 20"; the
+  DONE/ROUTE_NOT_NEEDED sentence now points to Rev19 §19.3 (Rev19 wave) and Rev20 §20.3 (post-attempt-05, owner decision required
+  for closure).
+- Stage-05 sequencing: attempt-06 binds to the then-current revision (20) and re-derives closure per §20.3, including the
+  corrected-route evidence and the disclosed axis facts.
+
+### 20.5 Unchanged by this revision
+
+Everything else, including the goal contract and `PRIMARY_OUTCOME`, the DONE criteria, the R1–R7 fix contract, cases 01–25 with
+their literals and oracles, §16.4's matching rules, the product command grammar, the read-only fences (no re-download; 禎/楨
+never merged; formal config/state/run-log/photos read-only), the one-human-gate *pattern* (now three recorded gates), the three
+separately reported results, §18.x decisions, and the Rev19 §19.1/§19.2 records and attempt-04 artifacts (preserved as history).
 
 ## Revision 19 changes
 
@@ -1459,7 +1603,7 @@ Exact process-specific protocol, expected outcome, and next-step decision:
 
 ## Runtime route, ledger authority, GUI gate, and truthful E2E decision
 
-E2E_REQUIRED: NO for this wave. The primary object is an existing destination that must not be redownloaded, and no production download is authorized. A CUA/controller session includes one ellipsis GUI input and is not full user-journey E2E. Stage 05 independent acceptance remains mandatory for the actual CLI, transaction process, evidence package and route status.
+E2E_REQUIRED: NO for this wave. The primary object is an existing destination that must not be redownloaded, and no production download is authorized. A CUA/controller session includes at most one album-card navigation input and one ellipsis GUI input (Rev20 §20.2's corrected run: the directed album entry, then the album-level ⋮) and is not full user-journey E2E. Stage 05 independent acceptance remains mandatory for the actual CLI, transaction process, evidence package and route status.
 
 Authoritative historical ledger scope and budget:
 
@@ -1472,22 +1616,22 @@ New run ledger and route-result schema:
 
 - New private JSONL ledger schema_version=1 includes run_id, runtime/provider, app_bundle, raw_group, album, expected_count, project_root, parent_ledger_sha256, initial_input_counts, events, final_counts and route_result_sha256.
 - Every event includes timestamp, action_class, event, gui_input, surface, target_binding_sha256, allowed_budget_before/after, menu_item_click, save_all_click, chooser_interaction, backup_state_write and evidence paths. App acquisition/navigation inputs are counted separately from the exactly-one permitted target ellipsis input; no unlisted input is allowed.
-- Before the Human Gate, app acquisition and navigation are read-only and have GUI-input budgets of 0. After the gate, the user must already present the exact target album card; the controlled run has `app_acquisition_input_budget=0`, `navigation_input_budget=0`, and `ellipsis_input_budget=1`. If the exact target cannot be read in the current surface without navigation or extra input, the run records SAFE_ABORT and requests no additional action in this wave.
-- New ellipsis budget is exactly 1 only after explicit authorization. The sequence is target-binding read → one current-target ellipsis input → immediate post observation → stop. No input may bring LINE to front, navigate, scroll, select an album, choose a menu item, invoke Save-All, open a chooser, or write backup state.
+- Before the Human Gate, app acquisition and navigation are read-only and have GUI-input budgets of 0. After the gate, the user must already present the exact target album card; the controlled run has `app_acquisition_input_budget=0`, `navigation_input_budget=0`, and `ellipsis_input_budget=1`. If the exact target cannot be read in the current surface without navigation or extra input, the run records SAFE_ABORT and requests no additional action in this wave. Rev20 §20.2's corrected run changes only this: `album_card_input_budget=1` (the single directed album-card metadata input that opens the target album, at a current-frame-derived point) and `ellipsis_input_budget=1` (the album-level ⋮); `app_acquisition_input_budget` stays 0 and every other input class stays 0.
+- New ellipsis budget is exactly 1 only after explicit authorization. The sequence is target-binding read → one current-target ellipsis input → immediate post observation → stop. No input may bring LINE to front, navigate, scroll, select an album, choose a menu item, invoke Save-All, open a chooser, or write backup state. Rev20 §20.2's corrected sequence is target-binding read → one album-card metadata input → album-open verification → album-level ⋮ locate → screen pre-capture → one album-level ⋮ input → immediate post observation → stop; each input is at-most-once and the no-bring-to-front/no-navigation/no-menu-item/no-chooser/no-state-write prohibitions are unchanged.
 - route-result.json includes documented_capability_ref, runtime/provider, app_bundle, raw group, album, count, project_root, parent/new ledger SHA, target-binding SHA, pre/post observation SHAs, exact candidate text/role/subrole/bounds/owner, same-item correlation, save_all_click_count=0, menu_item_click_count=0, chooser_state, backup_state_write_count=0, route_status=AFFIRMATIVE|UNKNOWN|SAFE_ABORT, decision and reason.
 - Missing, ambiguous, stale, uncorrelated or provider-mismatched evidence yields route_status=UNKNOWN and SAFE_ABORT. Historical coordinates and OCR-only evidence cannot yield AFFIRMATIVE.
 
-The single Human Gate, if route evidence remains necessary, authorizes exactly this controlled experiment (Rev19 §19.2 adds a second, fresh one-shot gate of identical scope for route attempt-04; neither gate resets or extends the other's budget, and each authorizes at most one ellipsis input):
+The single Human Gate, if route evidence remains necessary, authorizes exactly this controlled experiment (Rev19 §19.2 adds a second, fresh one-shot gate of identical scope for route attempt-04; Rev20 §20.2 adds a third, fresh one-shot gate for the corrected route — open the target album via one directed album-card metadata input, then the album-level ⋮ via one input, observation only; none of the three gates resets or extends another's budget, and each input is at-most-once):
 
 - App/bundle: LINE, jp.naver.line.mac.
 - Raw target: 旻謙允禎成長日記; album: 2024/05/13～05/17; expected count: 57.
 - Data/project root: /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state, explicitly confirmed.
-- Surface: exact target album card and its ellipsis popup/menu only.
-- Permitted input: exactly one current-target ellipsis input, no guessed coordinate and no low-level AXPress/AXUIElementPerformAction; no menu-item, Save-All, chooser, keyboard shortcut or state input/write.
+- Surface: exact target album card and its ellipsis popup/menu only; Rev20 §20.2 extends the controlled surface to the album-open surface reached by the one directed album-card input and to the album-level ⋮ popup/menu (still observation-only; no menu item, no Save All).
+- Permitted input: exactly one current-target ellipsis input, no guessed coordinate and no low-level AXPress/AXUIElementPerformAction; no menu-item, Save-All, chooser, keyboard shortcut or state input/write. Rev20 §20.2 additionally permits exactly one album-card metadata input for the directed album entry (current-frame-derived point; frozen tool ELIGIBLE only).
 - Capture immediate post evidence and stop. This is not production authorization.
 - Production Save-All is outside this wave. Any later production route requires a separate later approved plan revision, fresh independent review, a newly created empty destination under /Users/hsiaojohnny/Downloads/LINE-Backup-PoC, exact group/album/count/destination gate and one atomic attempt with no retry after UNKNOWN. Existing valid 57 files may not be redownloaded.
 
-Legal separation: offline CLI acceptance, controlled GUI route observation and later production Save-All are separate checks and artifacts. If exact existing source is proven and no side effect is needed, ROUTE_NOT_NEEDED may be recorded with explicit Plan rationale (Rev19 §19.3 provides that rationale and its preconditions for this wave); otherwise route is a scoped CORE blocker. Production results cannot retroactively complete this wave.
+Legal separation: offline CLI acceptance, controlled GUI route observation and later production Save-All are separate checks and artifacts. If exact existing source is proven and no side effect is needed, ROUTE_NOT_NEEDED may be recorded with explicit Plan rationale (Rev19 §19.3 provides that rationale and its preconditions for the Rev19 wave; Rev20 §20.3 governs the post-attempt-05 state, where closure by ROUTE_NOT_NEEDED additionally requires the owner's explicit decision); otherwise route is a scoped CORE blocker. Production results cannot retroactively complete this wave.
 
 ## Canonical Status Contract v2, routing fixtures, and blockers
 
@@ -1583,9 +1727,9 @@ A valid waiver preserves CHECK_RESULT and includes WAIVED_BY, WAIVER_SCOPE, RATI
 
 ## Closure and sequencing
 
-The root /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/handoff.md is historical/non-authoritative for this task because it predates this TASK_ID and revision. Stage 03 must create a fresh handoff bound to TASK_ID, the current PLAN_REVISION at handoff time (19 at this writing), the approved plan SHA, GOAL_ANCHOR, critical path, invariants, deferred/non-gating items and stop conditions.
+The root /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/handoff.md is historical/non-authoritative for this task because it predates this TASK_ID and revision. Stage 03 must create a fresh handoff bound to TASK_ID, the current PLAN_REVISION at handoff time (20 at this writing), the approved plan SHA, GOAL_ANCHOR, critical path, invariants, deferred/non-gating items and stop conditions.
 
-Stage 02 must independently review this Revision 19 and its exact hash. Stage 03 may compile handoff only for the approved revision/hash. Stage 04 repairs only the approved evidence harness and reruns the verifier/transaction/status wave; it must preserve prior attempts, write execution.md with the canonical six statuses, check matrix/results, scoped blockers, Stage 04 snapshot fields and artifact hashes. Stage 05 independently accepts the real CLI/evidence, snapshots immutable Stage 04 facts and does not modify product code.
+Stage 02 must independently review this Revision 20 and its exact hash. Stage 03 may compile handoff only for the approved revision/hash. Stage 04 repairs only the approved evidence harness and reruns the verifier/transaction/status wave; it must preserve prior attempts, write execution.md with the canonical six statuses, check matrix/results, scoped blockers, Stage 04 snapshot fields and artifact hashes. Stage 05 independently accepts the real CLI/evidence, snapshots immutable Stage 04 facts and does not modify product code.
 
 The current plan is not implementation approval. Offline read-only reconciliation, isolated fixture construction, baseline reproduction, and review preparation are authorized now. Product code edits, external formal-state writes, GUI input, deployment, and production download require the applicable later gate. Any semantic contract, product-boundary, E2E, or GUI-budget change increments PLAN_REVISION on the same TASK_ID, invalidates prior approvals and any handoff, and repeats independent review; it never continues under the same revision (Rev16 §16.8).
 
@@ -1593,7 +1737,7 @@ Canonical routing is subject-specific: implementation blockage uses IMPLEMENTATI
 
 DONE requires: PRIMARY_OUTCOME_STATUS=ACHIEVED; IMPLEMENTATION_STATUS=COMPLETE; CORE_ACCEPTANCE_STATUS=PASS or explicitly Plan-rationalized NOT_REQUIRED; REQUIRED_VERIFICATION_STATUS=PASS/NOT_REQUIRED/WAIVED; INDEPENDENT_ACCEPTANCE_STATUS=PASS/NOT_REQUIRED; exact source correspondence `CONFIRMED` based only on an authoritative exact join or one precise user fact in the preserved user-fact evidence format — Rev16 §16.4 pins that record's CONFIRMED v1 contract, and the preserved PARTIAL artifact alone can never confirm; no unresolved hard blocker; valid fresh durable artifacts; unrelated user work preserved. No plan rationale or technical similarity is an equivalent, and `UNRESOLVED`, `LEGACY_PROVENANCE_LIMITED`, or `CONTRADICTED` cannot be promoted to closure.
 
-If source identity remains unresolved after all authorized evidence, the legally correct result is PRIMARY_OUTCOME_STATUS=UNKNOWN with the source/core check BLOCKED and no DONE. If route evidence is unavailable but exact existing provenance has already been proven and no side effect is needed, record ROUTE_NOT_NEEDED with explicit Plan rationale (Rev19 §19.3, for this wave); otherwise route remains a scoped CORE blocker. If an independent acceptance authority/tool is unavailable, preserve implementation/CORE/required-verification facts and route INDEPENDENT_ACCEPTANCE_STATUS=BLOCKED, TASK_CLOSURE_STATUS=ACCEPTANCE_BLOCKED. Never downgrade proven implementation because acceptance could not run.
+If source identity remains unresolved after all authorized evidence, the legally correct result is PRIMARY_OUTCOME_STATUS=UNKNOWN with the source/core check BLOCKED and no DONE. If route evidence is unavailable but exact existing provenance has already been proven and no side effect is needed, record ROUTE_NOT_NEEDED with explicit Plan rationale (Rev19 §19.3 for the Rev19 wave; Rev20 §20.3 for the post-attempt-05 state, with the owner's explicit decision); otherwise route remains a scoped CORE blocker. If an independent acceptance authority/tool is unavailable, preserve implementation/CORE/required-verification facts and route INDEPENDENT_ACCEPTANCE_STATUS=BLOCKED, TASK_CLOSURE_STATUS=ACCEPTANCE_BLOCKED. Never downgrade proven implementation because acceptance could not run.
 
 ## Owner view
 
