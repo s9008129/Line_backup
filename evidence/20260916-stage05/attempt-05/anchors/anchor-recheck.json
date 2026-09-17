@@ -1,0 +1,299 @@
+{
+  "anchors": {
+    "config": {
+      "bytes": 372,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 372,
+      "expected_sha256_prefix": "390cbdcf36a88c9f134c0ecb29d39018ebadf42babfb7a264a741337499d3b3b",
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/config/line_backup_config.json",
+      "recorded_bytes": 372,
+      "recorded_sha256_prefix": "390cbdcf",
+      "sha256": "390cbdcf36a88c9f134c0ecb29d39018ebadf42babfb7a264a741337499d3b3b",
+      "sha_match": true
+    },
+    "confirmed_v1": {
+      "bytes": 1746,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 1746,
+      "expected_sha256_prefix": "2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json",
+      "sha256": "2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d",
+      "sha_match": true
+    },
+    "ellipsis_locate": {
+      "bytes": 965,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 965,
+      "expected_sha256_prefix": "981abb32fb1024fb20686d4ea28266b6cb08a1aa358d1b1bc033b1726cc3fc6b",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-03/ellipsis-locate.json",
+      "sha256": "981abb32fb1024fb20686d4ea28266b6cb08a1aa358d1b1bc033b1726cc3fc6b",
+      "sha_match": true
+    },
+    "execution": {
+      "bytes": 33676,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 33676,
+      "expected_sha256_prefix": "d54011483e597bc572930b03fef7536a0743f8fb9d23744078b3b75953eb0242",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260916-0102-01-line-backup-acceptance/execution.md",
+      "sha256": "d54011483e597bc572930b03fef7536a0743f8fb9d23744078b3b75953eb0242",
+      "sha_match": true
+    },
+    "gate_answer": {
+      "bytes": 1438,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 1438,
+      "expected_sha256_prefix": "03ffff57d50a5f97e596749dfa6bbde50b5ab50253c1f34469cc896e89ef57f7",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-user-fact/human-gate-answer-20260917.json",
+      "sha256": "03ffff57d50a5f97e596749dfa6bbde50b5ab50253c1f34469cc896e89ef57f7",
+      "sha_match": true
+    },
+    "handoff": {
+      "bytes": 21347,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 21347,
+      "expected_sha256_prefix": "9cf01d4eedc006cfff2217e3b610c8166cfb05c04919512e74a19f4aa20946c6",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260916-0102-01-line-backup-acceptance/handoff.md",
+      "sha256": "9cf01d4eedc006cfff2217e3b610c8166cfb05c04919512e74a19f4aa20946c6",
+      "sha_match": true
+    },
+    "locator_tool": {
+      "bytes": 8943,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 8943,
+      "expected_sha256_prefix": "8c8b6fc704c09a476419492eef2cd999e472126312feff72093f2cfef715df9e",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/tools/locate_card_ellipsis.py",
+      "sha256": "8c8b6fc704c09a476419492eef2cd999e472126312feff72093f2cfef715df9e",
+      "sha_match": true
+    },
+    "parent_budget_env": {
+      "bytes": 4555,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 4555,
+      "expected_sha256_prefix": "a43d23d6166a3d2156c5e3a1ccd08cc394b8b283f9c3a2d007929db986922c95",
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/files-pasted-by-the-user-line/outputs/20260913T141849Z-menu-discovery-0d9a87b5-cef1-4815-b886-ccdb34fa803b/environment.json",
+      "sha256": "a43d23d6166a3d2156c5e3a1ccd08cc394b8b283f9c3a2d007929db986922c95",
+      "sha_match": true
+    },
+    "parent_ledger": {
+      "bytes": 4219,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 4219,
+      "expected_sha256_prefix": "9d6a159024f822003052fd7d538598d3a161f226c49ce14ea5c11d5c95c95aee",
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/files-pasted-by-the-user-line/outputs/20260913T141849Z-menu-discovery-0d9a87b5-cef1-4815-b886-ccdb34fa803b/actions.jsonl",
+      "sha256": "9d6a159024f822003052fd7d538598d3a161f226c49ce14ea5c11d5c95c95aee",
+      "sha_match": true
+    },
+    "parent_scope": {
+      "bytes": 1026,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 1026,
+      "expected_sha256_prefix": "6bb8795ecc1beac3d8ba49c79fd032ff1f1459fb7784fc4cb000a84ae7fe5aaa",
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/files-pasted-by-the-user-line/outputs/20260913T141849Z-menu-discovery-0d9a87b5-cef1-4815-b886-ccdb34fa803b/scope.json",
+      "sha256": "6bb8795ecc1beac3d8ba49c79fd032ff1f1459fb7784fc4cb000a84ae7fe5aaa",
+      "sha_match": true
+    },
+    "partial_fact": {
+      "bytes": 5530,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 5530,
+      "expected_sha256_prefix": "8af8c6fc1459bb77183f81122a23bd10799fb79060fb04f86abb792600e00fa4",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-user-fact/source-identity-user-fact.json",
+      "sha256": "8af8c6fc1459bb77183f81122a23bd10799fb79060fb04f86abb792600e00fa4",
+      "sha_match": true
+    },
+    "plan": {
+      "bytes": 204373,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 204373,
+      "expected_sha256_prefix": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md",
+      "sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+      "sha_match": true
+    },
+    "route_manifest": {
+      "bytes": 4251,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 4251,
+      "expected_sha256_prefix": "effaaaa0",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-03/manifest.json",
+      "sha256": "effaaaa0f59066539686abf8849b42523361002acfe3a12577aa6a323c64ca92",
+      "sha_match": true
+    },
+    "route_result": {
+      "bytes": 11201,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 11201,
+      "expected_sha256_prefix": "8b8a541a5af0bfad7cacbfaa2402037f9931b81368126d40f9896893ba1435f6",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-03/route-result.json",
+      "sha256": "8b8a541a5af0bfad7cacbfaa2402037f9931b81368126d40f9896893ba1435f6",
+      "sha_match": true
+    },
+    "route_runbook": {
+      "bytes": 4264,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 4264,
+      "expected_sha256_prefix": "4e5b865cb4f1d30623f9a0d7b619f7328bf1b721e9ba6fcf0963deaa0ada9cd1",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-03/route-runbook.md",
+      "sha256": "4e5b865cb4f1d30623f9a0d7b619f7328bf1b721e9ba6fcf0963deaa0ada9cd1",
+      "sha_match": true
+    },
+    "run_ledger": {
+      "bytes": 6915,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 6915,
+      "expected_sha256_prefix": "77c4f86c21f61df08614d069d621816ede6a1465c794813b7977d2f784e5f2aa",
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-03/run-ledger.json",
+      "sha256": "77c4f86c21f61df08614d069d621816ede6a1465c794813b7977d2f784e5f2aa",
+      "sha_match": true
+    },
+    "run_log": {
+      "bytes": 15950,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 15950,
+      "expected_sha256_prefix": "a62dd07d1df1a34fb91a11d6eec6ac8aae7146abf9eb7011b78b1d27914158bf",
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/run_log.md",
+      "recorded_bytes": 15950,
+      "recorded_sha256_prefix": "a62dd07d",
+      "sha256": "a62dd07d1df1a34fb91a11d6eec6ac8aae7146abf9eb7011b78b1d27914158bf",
+      "sha_match": true
+    },
+    "state": {
+      "bytes": 48146,
+      "bytes_match": true,
+      "exists": true,
+      "expected_bytes": 48146,
+      "expected_sha256_prefix": "e9313a563bf298d4b1e9ae243c5d3d404ad1333f69cb71b156e68589a8ec2f59",
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json",
+      "recorded_bytes": 48146,
+      "recorded_sha256_prefix": "e9313a56",
+      "sha256": "e9313a563bf298d4b1e9ae243c5d3d404ad1333f69cb71b156e68589a8ec2f59",
+      "sha_match": true
+    }
+  },
+  "attempt": "e2e/attempt-05",
+  "checked_at_utc": "2026-09-17T05:29:42.726830Z",
+  "destination": {
+    "entry_count": 57,
+    "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+    "sorted_inventory_sha256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+    "total_bytes": 17924900,
+    "zero_byte_files": 0
+  },
+  "regeneration": {
+    "anchor_field_changes": {
+      "config": {
+        "expected_bytes": [
+          null,
+          372
+        ],
+        "expected_sha256_prefix": [
+          "390cbdcf??",
+          "390cbdcf36a88c9f134c0ecb29d39018ebadf42babfb7a264a741337499d3b3b"
+        ],
+        "sha_match": [
+          false,
+          true
+        ]
+      },
+      "locator_tool": {
+        "expected_bytes": [
+          null,
+          8943
+        ],
+        "expected_sha256_prefix": [
+          "8c8b6fc704c09a476419492eef2cd999e472126312feff72093f2cfef715df9e",
+          "8c8b6fc704c09a476419492eef2cd999e472126312feff72093f2cfef715df9e"
+        ],
+        "sha_match": [
+          true,
+          true
+        ]
+      },
+      "run_log": {
+        "expected_bytes": [
+          15950,
+          15950
+        ],
+        "expected_sha256_prefix": [
+          null,
+          "a62dd07d1df1a34fb91a11d6eec6ac8aae7146abf9eb7011b78b1d27914158bf"
+        ],
+        "sha_match": [
+          false,
+          true
+        ]
+      },
+      "state": {
+        "expected_bytes": [
+          48146,
+          48146
+        ],
+        "expected_sha256_prefix": [
+          null,
+          "e9313a563bf298d4b1e9ae243c5d3d404ad1333f69cb71b156e68589a8ec2f59"
+        ],
+        "sha_match": [
+          false,
+          true
+        ]
+      }
+    },
+    "expectation_sources": [
+      "evidence/20260916-baseline/attempt-02/baseline-pre.json",
+      "evidence/20260916-route/attempt-03/pre-run-wait-observation-07.json",
+      "evidence/20260916-route/attempt-03/route-runbook.md",
+      "handoff.md"
+    ],
+    "observed_values_unchanged": true,
+    "prior_bytes": 9824,
+    "prior_sha256": "2189a10d69a24d30dbba641e83af523da01d0ec42b75f5987af79442de53fe2d",
+    "reason": "First generation recorded incomplete expectations for four anchors (config placeholder '390cbdcf??'; state/run_log null; locator_tool bytes null) and therefore reported sha_match=false for three anchors despite byte-identical observations. Regenerated pre-commit (append-only applies to committed history) with durable-record expectations; every observation re-derived identical.",
+    "regenerated_at_utc": "2026-09-17T05:36:00.339396Z",
+    "regeneration_tool": "evidence/20260916-stage05/attempt-05/tools/regenerate-anchor-recheck.py"
+  },
+  "schema_version": 1,
+  "user_fact_v1_contract": {
+    "album_label_expected_by_contract": "2024/05/13～05/17",
+    "all_conditions_pass": false,
+    "conditions": {
+      "answer_raw_nonempty": true,
+      "app_identifier": true,
+      "evidence_rehash": true,
+      "fingerprint_equal": true,
+      "kind": true,
+      "merge_prohibited_true": true,
+      "part2_confirmed_album_equal": false,
+      "part2_confirmed_expected_images_equal": true,
+      "part2_confirmed_group_string_equal": true,
+      "part2_confirms_same_source_true": true,
+      "question_text_nonempty": true,
+      "raw_requested_group_join": true,
+      "record_version_is_1.0": true,
+      "source_correspondence_result_CONFIRMED": true,
+      "status_CONFIRMED": true
+    },
+    "failed_conditions": [
+      "part2_confirmed_album_equal"
+    ],
+    "in_memory_single_field_correction_result": true,
+    "matcher_result": false,
+    "record_confirmed_album": "2024/05/13～2024/05/17"
+  }
+}

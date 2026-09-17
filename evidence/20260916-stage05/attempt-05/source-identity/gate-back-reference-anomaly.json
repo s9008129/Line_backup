@@ -1,0 +1,10 @@
+{
+  "actual_record_bytes": 1746,
+  "actual_record_sha256": "2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d",
+  "declared_matches_actual": false,
+  "declared_record_bytes": 1585,
+  "declared_record_sha256": "603ab720acf474d8350504827e6ebe3f9c281dd3a04bb627332322becf01bd1d",
+  "gate_declares_record_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json",
+  "variant_hits": {},
+  "variants_checked": 13
+}

@@ -1,0 +1,158 @@
+{
+  "checked_files": [
+    {
+      "declared_bytes": 965,
+      "declared_sha": "981abb32fb1024fb",
+      "exists": true,
+      "match": true,
+      "path": "ellipsis-locate.json"
+    },
+    {
+      "declared_bytes": 2004,
+      "declared_sha": "15874c00fa061fe1",
+      "exists": true,
+      "match": true,
+      "path": "parent-ledger-integrity-check.json"
+    },
+    {
+      "declared_bytes": 3200,
+      "declared_sha": "b0b37cafba49a10d",
+      "exists": true,
+      "match": true,
+      "path": "pre-run-wait-observation-02.json"
+    },
+    {
+      "declared_bytes": 2785,
+      "declared_sha": "01d38883b225870e",
+      "exists": true,
+      "match": true,
+      "path": "pre-run-wait-observation-03.json"
+    },
+    {
+      "declared_bytes": 3015,
+      "declared_sha": "a59274daadb7230b",
+      "exists": true,
+      "match": true,
+      "path": "pre-run-wait-observation-04.json"
+    },
+    {
+      "declared_bytes": 3527,
+      "declared_sha": "750e46066540716d",
+      "exists": true,
+      "match": true,
+      "path": "pre-run-wait-observation-05.json"
+    },
+    {
+      "declared_bytes": 7625,
+      "declared_sha": "868ea4efff878a89",
+      "exists": true,
+      "match": true,
+      "path": "pre-run-wait-observation-06.json"
+    },
+    {
+      "declared_bytes": 6350,
+      "declared_sha": "5c807ef688529ce9",
+      "exists": true,
+      "match": true,
+      "path": "pre-run-wait-observation-07.json"
+    },
+    {
+      "declared_bytes": 2508,
+      "declared_sha": "c6edc259315df6ec",
+      "exists": true,
+      "match": true,
+      "path": "pre-run-wait-observation.json"
+    },
+    {
+      "declared_bytes": 11201,
+      "declared_sha": "8b8a541a5af0bfad",
+      "exists": true,
+      "match": true,
+      "path": "route-result.json"
+    },
+    {
+      "declared_bytes": 4264,
+      "declared_sha": "4e5b865cb4f1d306",
+      "exists": true,
+      "match": true,
+      "path": "route-runbook.md"
+    },
+    {
+      "declared_bytes": 6915,
+      "declared_sha": "77c4f86c21f61df0",
+      "exists": true,
+      "match": true,
+      "path": "run-ledger.json"
+    }
+  ],
+  "external": [
+    {
+      "exists": true,
+      "match": true,
+      "path": "/tmp/route_frame_pre.jpg"
+    },
+    {
+      "exists": true,
+      "match": true,
+      "path": "/tmp/route_ax_pre.txt"
+    },
+    {
+      "exists": true,
+      "match": true,
+      "path": "/tmp/route_frame_post.jpg"
+    },
+    {
+      "exists": true,
+      "match": true,
+      "path": "/tmp/route_ax_post.txt"
+    },
+    {
+      "exists": true,
+      "match": true,
+      "path": "/tmp/route_frame_now.jpg"
+    }
+  ],
+  "integrity": {
+    "all_event_side_effect_flags_false": true,
+    "event_count": 7,
+    "event_seq": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "external_all_match_when_present": true,
+    "external_checked": 5,
+    "external_present": 5,
+    "issues": [],
+    "ledger_budgets": {
+      "app_acquisition_input_budget": 0,
+      "ellipsis_input_budget": 1,
+      "navigation_input_budget": 0
+    },
+    "ledger_final_counts": {
+      "app_acquisition_inputs": 0,
+      "backup_state_writes": 0,
+      "chooser_interactions": 0,
+      "ellipsis_inputs": 1,
+      "menu_item_clicks": 0,
+      "navigation_inputs": 0,
+      "save_all_clicks": 0
+    },
+    "ledger_route_result_sha_ok": true,
+    "ledger_stop_reason_present": true,
+    "locator_click_point": [
+      304,
+      446
+    ],
+    "locator_verdict": "ELIGIBLE",
+    "manifest_all_match": true,
+    "manifest_artifacts_checked": 12,
+    "route_decision": "STOP; NO_RETRY; NEW_GATE_REQUIRED_FOR_ANY_FURTHER_ELLIPSIS_INPUT",
+    "route_status": "UNKNOWN"
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,110 @@
+{
+  "attempt": "e2e/attempt-05",
+  "blockers": [
+    {
+      "class": "AUTHORITY_REQUIRED",
+      "evidence": "attempt-05 anchors/anchor-recheck.json (contract_all_pass=false; single failed equality answer.part_2.confirmed_album); in-memory single-field correction returns true",
+      "id": "BLK-01-SOURCE-CORRESPONDENCE",
+      "next_action": "Owner/planner decision: authorize a corrected versioned user-fact record authored from the same preserved one-shot gate answer using the contract-derived album label, or obtain a new precise user answer under a new gate/revision",
+      "owner": "owner/planner",
+      "result": "BLOCKED (UNRESOLVED)",
+      "scope": "CORE_ACCEPTANCE",
+      "subject": "SOURCE_CORRESPONDENCE",
+      "task_regression_evidence": "NONE",
+      "waiver_allowed": false
+    },
+    {
+      "class": "AUTHORITY_REQUIRED",
+      "evidence": "route attempt-03 integrity check PASS (12/12 artifacts; ledger consistent; zero side effects); observation ambiguous on every capturable surface",
+      "id": "BLK-02-CUA-ROUTE-DECISION",
+      "next_action": "None within this wave; any further ⋮ input requires a new user gate and a new PLAN_REVISION",
+      "owner": "user",
+      "result": "BLOCKED (UNKNOWN)",
+      "scope": "CORE_ACCEPTANCE",
+      "subject": "CUA_ROUTE_DECISION",
+      "task_regression_evidence": "NONE",
+      "waiver_allowed": false
+    },
+    {
+      "class": "n/a",
+      "evidence": "e2e/attempt-05/e2e_report.md + evidence/20260916-stage05/attempt-05/",
+      "id": "BLK-03-INDEPENDENT-ACCEPTANCE",
+      "next_action": "none",
+      "owner": "n/a",
+      "result": "PASS (CLOSED by e2e/attempt-05)",
+      "scope": "INDEPENDENT_ACCEPTANCE",
+      "task_regression_evidence": "NONE",
+      "waiver_allowed": false
+    },
+    {
+      "class": "DOCUMENTATION_DEFECT",
+      "evidence": "attempt-05 source-identity/gate-back-reference-anomaly.json (declared 603ab720…/1585 vs actual 2cd7eccd…/1746; 13 canonical variants, no match)",
+      "id": "ANOM-01-GATE-BACKREFERENCE",
+      "next_action": "Keep as history; not repaired (append-only evidence)",
+      "owner": "n/a",
+      "result": "RECORDED (non-gating)",
+      "scope": "DOCUMENTATION",
+      "subject": "human-gate-answer back-reference",
+      "task_regression_evidence": "NONE",
+      "waiver_allowed": false
+    }
+  ],
+  "execution_sha256": "d54011483e597bc572930b03fef7536a0743f8fb9d23744078b3b75953eb0242",
+  "final_gate": "ACCEPTED_WITH_SCOPED_BLOCKER",
+  "handoff_sha256": "9cf01d4eedc006cfff2217e3b610c8166cfb05c04919512e74a19f4aa20946c6",
+  "inputs": {
+    "route_not_needed_rationale_present_in_rev18": false,
+    "route_status": {
+      "backup_state_writes": 0,
+      "chooser_interactions": 0,
+      "decision": "STOP; NO_RETRY; NEW_GATE_REQUIRED_FOR_ANY_FURTHER_ELLIPSIS_INPUT",
+      "ellipsis_input_budget": 1,
+      "ellipsis_inputs_consumed": 1,
+      "evidence": [
+        "evidence/20260916-route/attempt-03/route-result.json",
+        "evidence/20260916-route/attempt-03/run-ledger.json",
+        "evidence/20260916-route/attempt-03/manifest.json"
+      ],
+      "menu_item_clicks": 0,
+      "result": "UNKNOWN",
+      "retry_performed": false,
+      "save_all_clicks": 0
+    },
+    "source_correspondence_basis": {
+      "actual_confirmed_album": "2024/05/13～2024/05/17",
+      "contract": "plan.md §16.4 v1 matching rules",
+      "contract_check": "FAILED",
+      "expected_album_label": "2024/05/13～05/17",
+      "failed_equalities": [
+        "answer.part_2.confirmed_album"
+      ],
+      "note": "plan.md §16.4: any failed equality yields UNRESOLVED with no partial match; a user fact does not rewrite config/state.",
+      "other_conditions_pass": true,
+      "record_bytes": 1746,
+      "record_path": "evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json",
+      "record_sha256": "2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d",
+      "result": "UNRESOLVED"
+    }
+  },
+  "plan_bytes": 204373,
+  "plan_lines": 1455,
+  "plan_revision": 18,
+  "plan_sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+  "policy_citations": [
+    "plan.md:345-375 (§16.4 v1 record contract and matching rules; failed equality yields UNRESOLVED)",
+    "plan.md:1355-1370 (policy table: CUA_ROUTE_DECISION CORE/HARD_CLEAN; missing/ambiguous route evidence is scoped BLOCKED/UNKNOWN)",
+    "plan.md:1345,1451 (ROUTE_NOT_NEEDED requires explicit Plan rationale; otherwise route remains a scoped CORE blocker)",
+    "plan.md:1439-1451 (closure and sequencing; DONE requirements; subject-specific routing)"
+  ],
+  "schema_version": 1,
+  "statuses": {
+    "BASELINE_REGRESSION_DELTA": "UNCHANGED",
+    "CORE_ACCEPTANCE_STATUS": "BLOCKED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PASS",
+    "PRIMARY_OUTCOME_STATUS": "UNKNOWN",
+    "REQUIRED_VERIFICATION_STATUS": "PASS",
+    "TASK_CLOSURE_STATUS": "CORE_ACCEPTANCE_BLOCKED"
+  },
+  "task_id": "T20260916-0102-01-line-backup-acceptance"
+}

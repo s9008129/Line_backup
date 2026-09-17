@@ -1,0 +1,34 @@
+{
+  "artifacts": [
+    {
+      "bytes": 12308,
+      "path": "anchors/anchor-recheck.json",
+      "sha256": "612252b98a22a236f318bd62a74ba8593cb0672cc41f20900ae2a269b8fc82d3"
+    },
+    {
+      "bytes": 3664,
+      "path": "route-integrity/route-integrity-check.json",
+      "sha256": "7d1c4f8ade54d09f7968f5eaa0d632a8933aa026fcb3511a2268e58c4dfe847d"
+    },
+    {
+      "bytes": 496,
+      "path": "source-identity/gate-back-reference-anomaly.json",
+      "sha256": "b6bf03cb0e8e76c0255ad0e51377eaf3473fa2d65a416b09fbe03ddd6a10c990"
+    },
+    {
+      "bytes": 5009,
+      "path": "closure-arithmetic.json",
+      "sha256": "9c9d8b0944dff1fa920102db588410496dbdddbb088881056de056b2a2408d78"
+    },
+    {
+      "bytes": 12666,
+      "path": "tools/regenerate-anchor-recheck.py",
+      "sha256": "3ea9ffcf858473dbd5661d10846d0a9169fbbbd82a72706cec91f462c6b0b336"
+    }
+  ],
+  "attempt": "e2e/attempt-05",
+  "regeneration_note": "anchors/anchor-recheck.json and this manifest were regenerated pre-commit; the anchor artifact's first generation (SHA-256 2189a10d69a24d30dbba641e83af523da01d0ec42b75f5987af79442de53fe2d, 9824 bytes) recorded incomplete expectation values for four anchors. Prior manifest SHA-256: 104603953aca0ef278f8d9e5c96708f05255efeb6b936ea07fdedf1eab34c069 (907 bytes). All observed bytes/SHA-256 are unchanged; see the anchor artifact's `regeneration` block.",
+  "schema_version": 1,
+  "write_order_note": "closure-arithmetic.json then manifest.json; manifest.json is excluded from its own artifacts[] list. tools/regenerate-anchor-recheck.py is listed because it produced the final anchors/anchor-recheck.json during the pre-commit regeneration.",
+  "written_last": true
+}
