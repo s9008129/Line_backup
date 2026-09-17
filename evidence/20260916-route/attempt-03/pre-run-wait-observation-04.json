@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-03",
+  "artifact_kind": "pre_run_wait_observation",
+  "artifact_role": "chronology_only_not_a_gate_decision",
+  "sequence": 4,
+  "task_id": "T20260916-0102-01-line-backup-acceptance",
+  "plan_revision": 18,
+  "plan_sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+  "app_bundle": "jp.naver.line.mac",
+  "raw_group": "旻謙允禎成長日記",
+  "album": "2024/05/13〜2024/05/17",
+  "expected_count": 57,
+  "human_gate_status": "AUTHORIZED_BY_USER",
+  "attempted_window_utc": {
+    "start": "2026-09-17T03:29:00Z",
+    "end": "2026-09-17T03:32:00Z"
+  },
+  "capture_anomaly": {
+    "first_poll_error": "Computer Use server error -10005: cgWindowNotFound",
+    "detail": "the LINE window was briefly not capturable (window not found by the capture server) at ~03:29Z while the app itself stayed running",
+    "recovery": "4 acquisition retries between 03:31:25.554Z and 03:31:58.005Z all succeeded; frame sizes 111,949 / 116,866 / 116,866 / 116,866 bytes",
+    "interpretation": "transient capture-server window lookup failure, not an app crash and not a user-visible action by the agent"
+  },
+  "surface_read_at_recovery": {
+    "window_present": true,
+    "open_conversation_kind": "1-to-1 chat (not the target group)",
+    "chat_list_visible_rows": "mixed 1-to-1 and group rows plus one sponsored row; none carried the canonical target group title",
+    "new_content_since_window_3": "a newly received file message appeared with local timestamp 11:31, so the surface changed between 03:28Z and 03:31Z",
+    "canonical_target_group_visible": false,
+    "album_grid_or_album_card_visible": false
+  },
+  "canonical_target_present": false,
+  "canonical_target_present_basis": "window read at recovery: the canonical group title was not among the visible chat-list rows and no album card/grid structure was present; AX still shows the chat-room structure (message list 0-100 of 328 items plus message input field)",
+  "gui_input_count": 0,
+  "input_counts": {
+    "app_acquisition_inputs": 0,
+    "navigation_inputs": 0,
+    "ellipsis_inputs": 0,
+    "menu_item_clicks": 0,
+    "save_all_clicks": 0,
+    "chooser_interactions": 0,
+    "backup_state_writes": 0
+  },
+  "ellipsis_budget_consumed": 0,
+  "process_note": "during the capture-recovery diagnostic four screenshots were shown to the conversation by the computer-use client (its default display behaviour, no emit:false); this consumed conversation image budget but performed no GUI input on LINE",
+  "frames_persisted": false,
+  "conclusion": "Fourth post-gate wait observation: the LINE window was briefly uncapturable, recovered on retry, and still showed no target album. The controlled run remains in PRE_RUN_WAIT with zero input consumed.",
+  "next_action": "await user-presented target (LINE frontmost on the exact album card with its ellipsis visible); then target-binding read -> exactly one current-target ellipsis input -> immediate post observation -> stop"
+}

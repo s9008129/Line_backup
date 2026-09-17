@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-03",
+  "artifact_kind": "parent_ledger_integrity_check",
+  "artifact_role": "read_only_verification_of_authoritative_historical_inputs_for_route_result_parent_ledger_sha256",
+  "task_id": "T20260916-0102-01-line-backup-acceptance",
+  "plan_revision": 18,
+  "plan_sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+  "checked_at_utc": "2026-09-17T03:30:40Z",
+  "historical_root": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/files-pasted-by-the-user-line/outputs/20260913T141849Z-menu-discovery-0d9a87b5-cef1-4815-b886-ccdb34fa803b",
+  "files": [
+    {
+      "name": "actions.jsonl",
+      "expected_bytes": 4219,
+      "actual_bytes": 4219,
+      "expected_sha256": "9d6a159024f822003052fd7d538598d3a161f226c49ce14ea5c11d5c95c95aee",
+      "actual_sha256": "9d6a159024f822003052fd7d538598d3a161f226c49ce14ea5c11d5c95c95aee",
+      "match": true
+    },
+    {
+      "name": "environment.json",
+      "expected_bytes": 4555,
+      "actual_bytes": 4555,
+      "expected_sha256": "a43d23d6166a3d2156c5e3a1ccd08cc394b8b283f9c3a2d007929db986922c95",
+      "actual_sha256": "a43d23d6166a3d2156c5e3a1ccd08cc394b8b283f9c3a2d007929db986922c95",
+      "match": true
+    },
+    {
+      "name": "scope.json",
+      "expected_bytes": 1026,
+      "actual_bytes": 1026,
+      "expected_sha256": "6bb8795ecc1beac3d8ba49c79fd032ff1f1459fb7784fc4cb000a84ae7fe5aaa",
+      "actual_sha256": "6bb8795ecc1beac3d8ba49c79fd032ff1f1459fb7784fc4cb000a84ae7fe5aaa",
+      "match": true
+    }
+  ],
+  "result": "ALL_MATCH",
+  "meaning": "the authoritative historical ledger/environment/scope artifacts cited by plan.md remain byte-identical to their recorded hashes, so route-result.json may cite parent_ledger_sha256=9d6a1590… without re-deriving it; the exhausted 2/2 historical ellipsis budget is unchanged and still cannot be reused",
+  "method": "python3 hashlib sha256 over the exact files; read-only, no writes to the historical root"
+}
