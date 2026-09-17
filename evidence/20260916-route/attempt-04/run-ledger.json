@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-04",
+  "runtime/provider": "codex-desktop unified-computer-use (cua_repl)",
+  "app_bundle": "jp.naver.line.mac",
+  "raw_group": "旻謙允禎成長日記",
+  "album": "2024/05/13～05/17",
+  "expected_count": 57,
+  "project_root": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state",
+  "parent_ledger_sha256": "77c4f86c21f61df08614d069d621816ede6a1465c794813b7977d2f784e5f2aa",
+  "initial_input_counts": {
+    "app_acquisition_inputs": 0,
+    "navigation_inputs": 0,
+    "ellipsis_inputs": 0,
+    "menu_item_clicks": 0,
+    "save_all_clicks": 0,
+    "chooser_interactions": 0,
+    "backup_state_writes": 0
+  },
+  "budgets": {
+    "app_acquisition_input_budget": 0,
+    "navigation_input_budget": 0,
+    "ellipsis_input_budget": 1
+  },
+  "authorization": {
+    "gate": "second one-shot ellipsis observation authorization (Rev19 §19.2)",
+    "authorized_by": "使用者本人",
+    "authorized_at_local": "2026-09-17T14:59:40.847+0800",
+    "authorization_verbatim": "2.要，授權給你",
+    "authorization_evidence": "evidence/20260916-route/attempt-04/gate-2-authorization.json",
+    "authorization_evidence_sha256": "f3d177904cccd57f790a1c8ddb4ee184251a6cfd6fddcffc73ebf0c97317c687",
+    "scope": "exactly one current-target ellipsis observation input, immediate post observation, then stop"
+  },
+  "events": [],
+  "final_counts": {
+    "app_acquisition_inputs": 0,
+    "navigation_inputs": 0,
+    "ellipsis_inputs": 0,
+    "menu_item_clicks": 0,
+    "save_all_clicks": 0,
+    "chooser_interactions": 0,
+    "backup_state_writes": 0
+  },
+  "route_status": null,
+  "stop_reason": null,
+  "route_result_sha256": null,
+  "ledger_state": "INITIAL_PRE_CLICK",
+  "ledger_state_note": "Frozen before any click. Budgets stay ellipsis=1 / app_acquisition=0 / navigation=0 in both the initial and the final ledger; consumed counts start at 0 and the single authorized input moves ellipsis_inputs to 1 in the final ledger. The orchestrator appends the run's events, final_counts (ellipsis_inputs 1), route_status, stop_reason and route_result_sha256 after the single authorized input and its immediate post observation."
+}

@@ -1,0 +1,155 @@
+{
+ "tool": "detect_menu_popup",
+ "tool_sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+ "cases": [
+  {
+   "case": "positive",
+   "args": [
+    "fixture-base.png",
+    "fixture-post-menu.png"
+   ],
+   "expected": {
+    "exit": 0,
+    "verdict": "MENU_DETECTED",
+    "ocr_status": "OK"
+   },
+   "observed": {
+    "exit": 0,
+    "verdict": "MENU_DETECTED",
+    "ocr_status": "OK",
+    "ocr_strings": [
+     "Save",
+     "All",
+     "Open",
+     "Album",
+     "Settings"
+    ],
+    "chosen_bbox": [
+     240,
+     300,
+     373,
+     373
+    ],
+    "reason": "new region plus transcribed menu strings"
+   },
+   "stderr_tail": null,
+   "ok": true
+  },
+  {
+   "case": "neg_hover",
+   "args": [
+    "fixture-base.png",
+    "fixture-post-hover.png"
+   ],
+   "expected": {
+    "exit": 3,
+    "verdict": "NOT_DETECTED",
+    "ocr_status": null
+   },
+   "observed": {
+    "exit": 3,
+    "verdict": "NOT_DETECTED",
+    "ocr_status": null,
+    "ocr_strings": null,
+    "chosen_bbox": null,
+    "reason": "no changed region meeting the geometry rule"
+   },
+   "stderr_tail": null,
+   "ok": true
+  },
+  {
+   "case": "neg_identical",
+   "args": [
+    "fixture-base.png",
+    "fixture-base.png"
+   ],
+   "expected": {
+    "exit": 3,
+    "verdict": "NOT_DETECTED",
+    "ocr_status": null
+   },
+   "observed": {
+    "exit": 3,
+    "verdict": "NOT_DETECTED",
+    "ocr_status": null,
+    "ocr_strings": null,
+    "chosen_bbox": null,
+    "reason": "no changed region meeting the geometry rule"
+   },
+   "stderr_tail": null,
+   "ok": true
+  },
+  {
+   "case": "fail_closed_no_ocr",
+   "args": [
+    "fixture-base.png",
+    "fixture-post-menu.png"
+   ],
+   "expected": {
+    "exit": 3,
+    "verdict": "NOT_DETECTED",
+    "ocr_status": "OCR_FAILED"
+   },
+   "observed": {
+    "exit": 3,
+    "verdict": "NOT_DETECTED",
+    "ocr_status": "OCR_FAILED",
+    "ocr_strings": [],
+    "chosen_bbox": [
+     240,
+     300,
+     373,
+     373
+    ],
+    "reason": "geometry present but OCR could not run (fail-closed)"
+   },
+   "stderr_tail": null,
+   "ok": true
+  },
+  {
+   "case": "bad_input_missing",
+   "args": [
+    "fixture-does-not-exist.png",
+    "fixture-base.png"
+   ],
+   "expected": {
+    "exit": 6,
+    "verdict": "BAD_INPUT",
+    "ocr_status": null
+   },
+   "observed": {
+    "exit": 6,
+    "verdict": "BAD_INPUT",
+    "ocr_status": null,
+    "ocr_strings": null,
+    "chosen_bbox": null,
+    "reason": "missing file: fixture-does-not-exist.png"
+   },
+   "stderr_tail": null,
+   "ok": true
+  },
+  {
+   "case": "bad_input_size",
+   "args": [
+    "fixture-base.png",
+    "_tmp_mismatch.png"
+   ],
+   "expected": {
+    "exit": 6,
+    "verdict": "BAD_INPUT",
+    "ocr_status": null
+   },
+   "observed": {
+    "exit": 6,
+    "verdict": "BAD_INPUT",
+    "ocr_status": null,
+    "ocr_strings": null,
+    "chosen_bbox": null,
+    "reason": "size mismatch between pre and post"
+   },
+   "stderr_tail": null,
+   "ok": true
+  }
+ ],
+ "all_ok": true
+}

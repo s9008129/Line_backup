@@ -1,0 +1,41 @@
+{
+  "artifact_type": "human_gate_conversation_excerpt",
+  "gate": "second one-shot ellipsis observation authorization (Rev19 §19.2), recorded together with the §19.1 corrected-record re-authoring authorization from the same owner answer message",
+  "session_id": "01a0a9f9-d915-7d10-89f4-1b6772c681a2",
+  "session_transcript": "/Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T19-28-38-01a0a9f9-d915-7d10-89f4-1b6772c681a2.jsonl",
+  "question_message_transcript": {
+    "line": 5084,
+    "ordinal": 5083,
+    "timestamp_utc": "2026-09-17T06:21:53.852Z",
+    "timestamp_local": "2026-09-17T14:21:53.852+0800"
+  },
+  "question_verbatim_questions_only": "決定 1：可不可以讓我用你上次那個「是」的答案，重做一份格式正確的確認紀錄？（你原本那份紀錄我不會動，會另外做一份修正版。）\n決定 2：「自動開選單」這條路，你還要繼續嗎？ 要 → 下次要請你再授權我「再點一次 ⋮」；不要 → 我就把它記成「這條路不做」，整個任務直接結案（照片照留、程式照用）\n順便確認一件事：上次點完那個 ⋮ 之後，你有看到 LINE 畫面吧？選單有彈出來嗎？（有／沒有／沒注意）——如果有的話請告訴我，我才能安排下一步。",
+  "answer_message_transcript": {
+    "line": 5091,
+    "ordinal": 5090,
+    "timestamp_utc": "2026-09-17T06:59:40.847Z",
+    "timestamp_local": "2026-09-17T14:59:40.847+0800"
+  },
+  "answer_verbatim": "1.可以\n2.要，授權給你",
+  "authorizations": {
+    "item_1": {
+      "answer_verbatim": "1.可以",
+      "authorizes": "re-authoring of the corrected user-fact record v1.1 (Rev19 §19.1)",
+      "scope": "deterministically construct evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1.json from the frozen v1 with exactly the single answer.part_2.confirmed_album leaf corrected to 2024/05/13～05/17 (U+FF5E); v1 and the one-shot gate artifact stay byte-identical; fail-closed on any assertion mismatch",
+      "recorded_in": "evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1-authoring-note.md"
+    },
+    "item_2": {
+      "answer_verbatim": "2.要，授權給你",
+      "authorizes": "second one-shot ⋮ observation (Rev19 §19.2; route attempt-04)",
+      "scope": "exactly one current-target album-card ⋮ input (normal left click at a current-frame-derived point, frozen locator ELIGIBLE only) plus immediate post observation, then stop; nothing else. Budgets ellipsis=1 / app_acquisition=0 / navigation=0; zero retry; zero conversation images; no menu item, no Save All, no chooser, no keyboard input, no state/config/run-log write, no bringing LINE to the front",
+      "recorded_in": "evidence/20260916-route/attempt-04/route-runbook.md"
+    }
+  },
+  "auxiliary_question": {
+    "question_verbatim": "上次點完那個 ⋮ 之後，你有看到 LINE 畫面吧？選單有彈出來嗎？（有／沒有／沒注意）",
+    "status": "UNANSWERED",
+    "notes": "The owner answered items 1 and 2 only. The menu-appearance question is recorded UNANSWERED and is never assumed; an observer report would be supplementary context at most and could never by itself change route_status (AFFIRMATIVE requires machine-observable evidence; Rev19 §19.2)."
+  },
+  "recorded_at_local": "2026-09-17T15:49+0800",
+  "notes": "Verbatim transcript excerpts of the second one-shot authorization exchange. The authorized observation itself is recorded separately under evidence/20260916-route/attempt-04/ (route-result.json, run-ledger.json) by the orchestrator-run attempt. This authorization is independent of the exhausted attempt-03 budget: no reset, no extension. Any further GUI input beyond the single ⋮ click requires a new gate, a new plan revision and a fresh review."
+}
