@@ -63,16 +63,49 @@
     "gate_4_authorization_sha256": "e32ccd882b93b784e1faf3f3ea1df9732ab093e26f74a89622ac857159876272",
     "route_runbook_sha256": "716bca926dcb76663afc9b937479da480dd9d1841fbb52b1224945e25e1963a8",
     "tools": {
-      "v4/vision_reader.py": {"sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8", "bytes": 8369},
-      "v4/locate_album_card.py": {"sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162", "bytes": 7025},
-      "v4/verify_album_open.py": {"sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58", "bytes": 6981},
-      "v4/locate_album_ellipsis.py": {"sha256": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4", "bytes": 11436},
-      "detect_menu_popup.py (reused unchanged; tesseract; reader-block exempt)": {"sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc", "bytes": 6339},
-      "selftest_menu_popup.py (frozen detector self-test)": {"sha256": "db0917039f085b0d90196348de0d0038e8d6abcd18418c0e41c4037231fbbfdc", "bytes": 4018}
+      "v4/vision_reader.py": {
+        "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+        "bytes": 8369
+      },
+      "v4/locate_album_card.py": {
+        "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+        "bytes": 7025
+      },
+      "v4/verify_album_open.py": {
+        "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+        "bytes": 6981
+      },
+      "v4/locate_album_ellipsis.py": {
+        "sha256": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+        "bytes": 11436
+      },
+      "detect_menu_popup.py (reused unchanged; tesseract; reader-block exempt)": {
+        "sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+        "bytes": 6339
+      },
+      "selftest_menu_popup.py (frozen detector self-test)": {
+        "sha256": "db0917039f085b0d90196348de0d0038e8d6abcd18418c0e41c4037231fbbfdc",
+        "bytes": 4018
+      }
     },
-    "vision_helper_source": {"path": "evidence/20260916-route/tools/vision/vision_ocr.swift", "sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32", "bytes": 1070},
-    "v4_selftest": {"path": "evidence/20260916-route/tools/selftest/v4/selftest-summary.json", "sha256": "5ad2be101f848ea6a99a8a02ffee8ef65f761fd8b3408bd21c7eb351f1b9fb8d", "bytes": 11718, "cases_total": 16, "cases_failed": 0, "result": "PASS"},
-    "parent_ledger": {"path": "evidence/20260916-route/attempt-05/run-ledger.json", "sha256": "17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218", "bytes": 29772}
+    "vision_helper_source": {
+      "path": "evidence/20260916-route/tools/vision/vision_ocr.swift",
+      "sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+      "bytes": 1070
+    },
+    "v4_selftest": {
+      "path": "evidence/20260916-route/tools/selftest/v4/selftest-summary.json",
+      "sha256": "5ad2be101f848ea6a99a8a02ffee8ef65f761fd8b3408bd21c7eb351f1b9fb8d",
+      "bytes": 11718,
+      "cases_total": 16,
+      "cases_failed": 0,
+      "result": "PASS"
+    },
+    "parent_ledger": {
+      "path": "evidence/20260916-route/attempt-05/run-ledger.json",
+      "sha256": "17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218",
+      "bytes": 29772
+    }
   },
   "initial_counts": {
     "album_card_input": 1,
@@ -83,22 +116,506 @@
     "keyboard_input": 0,
     "retry": 0
   },
-  "state": "FROZEN_BEFORE_INPUTS",
-  "ledger_state": "FROZEN_BEFORE_INPUTS",
-  "events": [],
+  "state": "CLOSED_AFTER_INPUT_1",
+  "ledger_state": "CLOSED_AFTER_INPUT_1",
+  "events": [
+    {
+      "seq": 1,
+      "timestamp_local": "2026-09-17T23:17:28+0800 (frame/AX file mtime) .. 23:17:33+0800 (size/SHA recorded)",
+      "action_class": "read",
+      "event": "target_binding_read_and_pre_observation",
+      "gui_input": false,
+      "surface": "LINE window 標準視窗 (jp.naver.line.mac)",
+      "frame_bytes": 62644,
+      "frame_size": [
+        327,
+        643
+      ],
+      "frame_sha256": "3dd1a3bf6d87b22e9f2fbd89884f2c459fb70d9ca4ecb160d96b16c363d19aec",
+      "ax_bytes": 1274,
+      "ax_sha256": "ae7cd9a0f5e0f3afb367a89e17a1fc5dfbbab3fa1c9c051c0147001c7f5a9e14",
+      "ax_note": "album-list window: 標準視窗 + text field (settable) + list 'showing 0-100 of 101 items' + scrollbar + close/min buttons + menu bar; no menu/dialog/chooser overlay. Target card visible per the S3 locate (title 2024/05/13~05/17, count 57).",
+      "observation_window": "window 1 of at most 5 read-only observation windows",
+      "allowed_budget_before": {
+        "album_card_inputs_used": 0,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "allowed_budget_after": {
+        "album_card_inputs_used": 0,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "menu_item_click": false,
+      "save_all_click": false,
+      "chooser_interaction": false,
+      "backup_state_write": false,
+      "evidence": [
+        "/tmp/route6_frame_pre.jpg",
+        "/tmp/route6_ax_pre.txt"
+      ],
+      "note": "getApp('jp.naver.line.mac') succeeded on the first attempt (no -10005); the recorded AX is the disableDiffing:true full re-read; the app-selection auto-display of the initial AX state contained the same content (AX text only, no image)."
+    },
+    {
+      "seq": 2,
+      "timestamp_local": "2026-09-17T23:17:58+0800",
+      "action_class": "read",
+      "event": "screen_scope_probe_once",
+      "gui_input": false,
+      "surface": "entire screen (screencapture -x, silent, no input events)",
+      "probe_path": "/tmp/route6_screen_probe.png",
+      "probe_exit_code": 0,
+      "probe_bytes": 2088390,
+      "probe_size": [
+        2294,
+        1490
+      ],
+      "probe_mode": "RGBA",
+      "probe_sha256": "b5309d823bbbe6b4cfa5cb3d4fa44e75d8a8b167765f57b6b93912af3a46ff6f",
+      "observation_window": "window 2 of at most 5 read-only observation windows",
+      "allowed_budget_before": {
+        "album_card_inputs_used": 0,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "allowed_budget_after": {
+        "album_card_inputs_used": 0,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "menu_item_click": false,
+      "save_all_click": false,
+      "chooser_interaction": false,
+      "backup_state_write": false,
+      "evidence": [
+        "/tmp/route6_screen_probe.png"
+      ],
+      "note": "probe decoded (2294x1490 RGBA); PERMISSION_PROMPT_OBSERVED=false (see screen-probe.json)"
+    },
+    {
+      "seq": 3,
+      "timestamp_local": "2026-09-17T23:18:07+0800 .. 23:18:22+0800",
+      "action_class": "read",
+      "event": "screen_probe_acceptance_by_frozen_v3_locator_on_located_window_crops",
+      "gui_input": false,
+      "surface": "frozen probe crops (window located by MAD template match on the 2x pre-frame at scale 2; scale 2 then scale 1)",
+      "localization": {
+        "method": "coarse full-probe MAD step 8 (template subsampled step 8) + refine step 1 over +/-8 px (subsampled step 2)",
+        "template": "whole 2x window frame 654x1286",
+        "origin_screen_px": [
+          0,
+          78
+        ],
+        "mapping": "screen_x=2*window_x ; screen_y=78+2*window_y",
+        "coarse_best_mad": 8.71420955657959,
+        "refined_best_mad": 3.1410818099975586,
+        "best_excluding_neighborhood_mad": 31.00045394897461,
+        "crop_s1_mad_vs_pre_frame": 2.1099729537963867
+      },
+      "scale_2_crop": {
+        "sha256": "f90ebea9793ff34716cf2c0ae78366c283e3adfbaff8ca867382b50a80f5d469",
+        "locator_verdict": "TARGET_COUNT_MISMATCH",
+        "exit_code": 5,
+        "count_digits_read": "5"
+      },
+      "scale_1_crop": {
+        "sha256": "7f656159d27a3c775a3ce32a290348125f4aa4424be6f8f27d7f2b22328fc652",
+        "locator_verdict": "TARGET_COUNT_MISMATCH",
+        "exit_code": 5,
+        "count_digits_read": "27",
+        "click_point": [
+          29,
+          481
+        ]
+      },
+      "accepted_scale": null,
+      "screen_scope": "UNAVAILABLE",
+      "decided_before_the_input": true,
+      "observation_window": "analysis of the window-2 capture (no new live capture)",
+      "allowed_budget_before": {
+        "album_card_inputs_used": 0,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "allowed_budget_after": {
+        "album_card_inputs_used": 0,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "menu_item_click": false,
+      "save_all_click": false,
+      "chooser_interaction": false,
+      "backup_state_write": false,
+      "evidence": [
+        "/tmp/route6_probe_crop_s2.png",
+        "/tmp/route6_probe_crop_s1.png",
+        "/tmp/route6_crop_s2_locate.json",
+        "/tmp/route6_crop_s1_locate.json",
+        "evidence/20260916-route/attempt-06/screen-probe.json"
+      ],
+      "note": "SUPPORTING/non-gating: neither scale ELIGIBLE (frozen v3 count-region misread 5/27 vs required 57); screen_scope=UNAVAILABLE; run continues window-scoped with the v4 reader as the official chain; crop click points never used"
+    },
+    {
+      "seq": 4,
+      "timestamp_local": "2026-09-17T23:18:35+0800",
+      "action_class": "read",
+      "event": "read_only_locate_on_current_frame",
+      "gui_input": false,
+      "surface": "frozen v4 locate_album_card.py on /tmp/route6_frame_pre.jpg",
+      "locator_verdict": "ELIGIBLE",
+      "locator_exit_code": 0,
+      "title": {
+        "texts": [
+          "2024/05/13~05/17"
+        ],
+        "bbox": [
+          15,
+          476,
+          129,
+          488
+        ]
+      },
+      "click_point": [
+        27,
+        482
+      ],
+      "click_point_derivation": "title left edge + 12 px, title vertical centre",
+      "count_digits_read": "57",
+      "count_text": "MATCH",
+      "margins": {
+        "above_px": 23,
+        "below_px": 51
+      },
+      "reader_block_present": true,
+      "reader_helper": {
+        "resolved_from": "build_path",
+        "binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+        "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+        "calls": [
+          {
+            "scale": 3,
+            "outcome": "ok",
+            "exit_code": 0
+          },
+          {
+            "scale": 10,
+            "outcome": "ok",
+            "exit_code": 0
+          }
+        ]
+      },
+      "note": "this current-frame-derived click point (not any historical or crop coordinate) is the point input #1 must use",
+      "allowed_budget_before": {
+        "album_card_inputs_used": 0,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "allowed_budget_after": {
+        "album_card_inputs_used": 0,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "menu_item_click": false,
+      "save_all_click": false,
+      "chooser_interaction": false,
+      "backup_state_write": false,
+      "evidence": [
+        "evidence/20260916-route/attempt-06/album-card-locate.json"
+      ],
+      "artifact_sha256": "b822012d28e2efeb268b5cd602c956afaf87fa666301aa67452ba597c3b81493"
+    },
+    {
+      "seq": 5,
+      "timestamp_local": "2026-09-17T23:18:35+0800 .. 23:18:47+0800",
+      "action_class": "decision",
+      "event": "pre_input_gate_confirmation_zero_input",
+      "gui_input": false,
+      "confirmation": "before sending input #1 every precondition held at that moment: S3 v4 locate ELIGIBLE on the fresh current frame (click [27,482]); AX/S1 reads show no menu/dialog/chooser/permission overlay; S2 probe decided (UNAVAILABLE, non-gating); both authorized inputs unspent; retry 0; the click target is exactly one plain left click at the S3 point",
+      "next_action": "send input #1 exactly once (album-card metadata left click)",
+      "allowed_budget_before": {
+        "album_card_inputs_used": 0,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "allowed_budget_after": {
+        "album_card_inputs_used": 0,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "menu_item_click": false,
+      "save_all_click": false,
+      "chooser_interaction": false,
+      "backup_state_write": false
+    },
+    {
+      "seq": 6,
+      "timestamp_local": "2026-09-17T23:18:47.330+0800 (click) .. 23:18:47.869+0800 (click returned)",
+      "action_class": "gui_input",
+      "event": "input_1_sent_album_card_click",
+      "gui_input": true,
+      "click_count": 1,
+      "retry_count": 0,
+      "params": {
+        "coordinate": [
+          27,
+          482
+        ],
+        "mouseButton": "left",
+        "clickCount": 1,
+        "source": "S3 click_point derived from /tmp/route6_frame_pre.jpg at 23:18:35 (album-card-locate.json)"
+      },
+      "click_error": null,
+      "input_total_in_this_run": 1,
+      "allowed_budget_before": {
+        "album_card_inputs_used": 0,
+        "album_card_input_budget": 1,
+        "navigation_inputs_used": 0,
+        "navigation_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "allowed_budget_after": {
+        "album_card_inputs_used": 1,
+        "album_card_input_budget": 1,
+        "navigation_inputs_used": 1,
+        "navigation_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "menu_item_click": false,
+      "save_all_click": false,
+      "chooser_interaction": false,
+      "backup_state_write": false,
+      "evidence": [
+        "/tmp/route6_frame_pre.jpg"
+      ],
+      "note": "exactly one normal left click, sent once, zero retries, no modifier; input #1 counts under BOTH navigation_inputs and album_card_inputs (budget alias, no additional liberty)"
+    },
+    {
+      "seq": 7,
+      "timestamp_local": "2026-09-17T23:18:58+0800 .. 23:19:07+0800",
+      "action_class": "read",
+      "event": "s5_post_observation_and_verify_album_open_verdict_album_open_verified",
+      "gui_input": false,
+      "post_frame": {
+        "path": "/tmp/route6_frame_post.jpg",
+        "bytes": 66686,
+        "size": [
+          327,
+          643
+        ],
+        "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3"
+      },
+      "post_ax": {
+        "path": "/tmp/route6_ax_post.txt",
+        "bytes": 232,
+        "sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa",
+        "summary": "only 標準視窗 with 關閉按鈕/縮到最小按鈕 and the menu bar - the album list/search/scrollbar elements are gone (custom-drawn view)"
+      },
+      "verify": {
+        "tool": "evidence/20260916-route/tools/v4/verify_album_open.py (frozen)",
+        "output": "evidence/20260916-route/attempt-06/album-open-verify.json",
+        "output_sha256": "a1e5fa491ac83f844f748683e51baf56e1b6d6f968e6f9d675a2fcb19486164d",
+        "verdict": "ALBUM_OPEN_VERIFIED",
+        "exit_code": 0,
+        "target_title_in_post": {
+          "texts": [
+            "2024/05/13~05/17"
+          ],
+          "bbox": [
+            15,
+            83,
+            204,
+            111
+          ]
+        },
+        "changed_fraction": 0.62538,
+        "count_box": [
+          7,
+          113,
+          175,
+          143
+        ],
+        "count_digits_read": "57",
+        "count_text": "MATCH",
+        "params": {
+          "delta": 12,
+          "min_diff_fraction": 0.05
+        },
+        "reader_block_present": true
+      },
+      "supporting_fact": "the post frame is byte-identical to the durable frozen attempt-05 album-open frame (evidence/20260917-vision-reader/frames/route5r_frame_post.jpg, 4cb8a6b4…): the click opened the same album view; the v4 Vision reader reads '57' where the frozen v3/tesseract rule read '75' (reader-layer difference, recorded evidence only; confidence is never a gate)",
+      "runbook_rule_applied": "S5 ALBUM_OPEN_VERIFIED permits proceeding to S6; the ⋮ input remains conditional on S6 ELIGIBLE",
+      "observation_window": "window 3 of at most 5 read-only observation windows",
+      "allowed_budget_before": {
+        "album_card_inputs_used": 1,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "allowed_budget_after": {
+        "album_card_inputs_used": 1,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "menu_item_click": false,
+      "save_all_click": false,
+      "chooser_interaction": false,
+      "backup_state_write": false,
+      "evidence": [
+        "/tmp/route6_frame_post.jpg",
+        "/tmp/route6_ax_post.txt",
+        "evidence/20260916-route/attempt-06/album-open-verify.json"
+      ]
+    },
+    {
+      "seq": 8,
+      "timestamp_local": "2026-09-17T23:19:19+0800",
+      "action_class": "read",
+      "event": "s6_album_level_ellipsis_locate_verdict_no_ellipsis_found_stop",
+      "gui_input": false,
+      "surface": "frozen v4 locate_album_ellipsis.py on /tmp/route6_frame_post.jpg (title-bbox 15,83,204,111 from S5; --expect-group-title 旻謙允禎成長日記)",
+      "locator_verdict": "NO_ELLIPSIS_FOUND",
+      "locator_exit_code": 3,
+      "album_title_band": {
+        "x0": 206,
+        "x1": 326,
+        "y0": 77,
+        "y1": 121
+      },
+      "census": {
+        "rows": 643,
+        "flat_rows": 283,
+        "marked_pixels": 8139,
+        "large_components": 58
+      },
+      "triples_total": 6,
+      "triples_summary": "1 non-text triple classified above_album_title_band (middle dot [304.5, 49.5]; dots at y=44.0/49.5/55.0, cx=304.5) - outside the album-title row band; 5 triples classified inside_text, blocked by readable multi-character OCR tokens ('57張照片' conf 1.0; '2024.05.18' conf 1.0); eligible candidates inside the album-title row band: 0",
+      "reader_block_present": true,
+      "runbook_rule_applied": "S6: only ELIGIBLE (exactly one candidate inside the album-title row band, right of the title) permits the ⋮ input; NO_ELLIPSIS_FOUND forbids it: record, notify the owner, stop - no retry, no alternate coordinates, no improvisation",
+      "inputs_sent_total": 1,
+      "ellipsis_input": "never sent (0/1) - the S6 gate failed",
+      "menu_opened_by_us": false,
+      "s7_s10_status": "S7-S10 were not executed (no input #2 => no post-menu capture; menu-analysis.json not applicable; the frozen tesseract detector was therefore never invoked in this run)",
+      "allowed_budget_before": {
+        "album_card_inputs_used": 1,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "allowed_budget_after": {
+        "album_card_inputs_used": 1,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "menu_item_click": false,
+      "save_all_click": false,
+      "chooser_interaction": false,
+      "backup_state_write": false,
+      "evidence": [
+        "evidence/20260916-route/attempt-06/album-ellipsis-locate.json"
+      ],
+      "artifact_sha256": "433e8693b1e23336628fab919042eca2c4903b0476c5a5ef22ff15f7d74edfb6"
+    },
+    {
+      "seq": 9,
+      "timestamp_local": "2026-09-17T23:25+0800 (finalization)",
+      "action_class": "decision",
+      "event": "stop_finalized_ledger_and_durable_execution_record",
+      "gui_input": false,
+      "stop_reason": "STOPPED_AT_S6_NO_ELLIPSIS_FOUND",
+      "ledger_state": "CLOSED_AFTER_INPUT_1",
+      "artifacts_written": [
+        {
+          "path": "evidence/20260916-route/attempt-06/album-card-locate.json",
+          "sha256": "b822012d28e2efeb268b5cd602c956afaf87fa666301aa67452ba597c3b81493"
+        },
+        {
+          "path": "evidence/20260916-route/attempt-06/album-open-verify.json",
+          "sha256": "a1e5fa491ac83f844f748683e51baf56e1b6d6f968e6f9d675a2fcb19486164d"
+        },
+        {
+          "path": "evidence/20260916-route/attempt-06/album-ellipsis-locate.json",
+          "sha256": "433e8693b1e23336628fab919042eca2c4903b0476c5a5ef22ff15f7d74edfb6"
+        },
+        {
+          "path": "evidence/20260916-route/attempt-06/screen-probe.json",
+          "sha256": "d696f442a9a835dc62f506722351d009690426db5afd748ecc9527782f27b07b"
+        }
+      ],
+      "route_result_json": "NOT written (stop before any route outcome; stop-artifact policy RV-32-4); manifest.json likewise not written",
+      "execution_record": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/execution-rev22.md (sha reported in the commit message; self-reference not embedded)",
+      "owner_notified": true,
+      "no_side_effects": "no menu item, no Save All, no chooser, no keyboard input, no AX write, no navigation/scroll, no destination/formal-state/run-log write, no re-download, zero conversation images",
+      "allowed_budget_before": {
+        "album_card_inputs_used": 1,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "allowed_budget_after": {
+        "album_card_inputs_used": 1,
+        "album_card_input_budget": 1,
+        "ellipsis_inputs_used": 0,
+        "ellipsis_input_budget": 1
+      },
+      "menu_item_click": false,
+      "save_all_click": false,
+      "chooser_interaction": false,
+      "backup_state_write": false
+    }
+  ],
   "inputs": {
-    "album_card": "UNSPENT (0/1)",
-    "ellipsis": "UNSPENT (0/1)"
+    "album_card": "SPENT (1/1)",
+    "ellipsis": "UNSPENT (0/1) - never sent; the S6 precondition ELIGIBLE failed"
   },
-  "final_counts": null,
+  "final_counts": {
+    "album_card_input": 1,
+    "navigation_input": 1,
+    "ellipsis_input": 0,
+    "app_acquisition_input": 0,
+    "menu_item_input": 0,
+    "keyboard_input": 0,
+    "retry": 0,
+    "observation_windows_used": 3,
+    "screen_captures_used": 1
+  },
   "route_result_sha256": null,
-  "run_status": "PRE_FREEZE_FROZEN_PENDING_RUN",
-  "stop_reason": null,
-  "owner_decision_required": null,
-  "route_outcome": null,
-  "next_action": null,
-  "ledger_state_note": "PLACEHOLDER — pre-frozen skeleton, written and committed before any input. Stage-04 runner: start from state FROZEN_BEFORE_INPUTS, append read/input events to events[] (mirror the attempt-05 event schema: seq, timestamp_local, action_class, event, gui_input, frame bytes/size/sha256, ax bytes/sha256, observation_window, budgets before/after, evidence paths in /tmp), mark inputs.album_card / inputs.ellipsis SPENT as consumed, and finalize with final_counts, run_status, stop_reason, ledger_state and (only when a route outcome was reached) route_result_sha256. Replace this note at finalization with the true closing statement; a run that stops before any route outcome writes no route-result.json and no manifest.json.",
+  "run_status": "STOPPED_AT_S6_NO_ELLIPSIS_FOUND",
+  "stop_reason": "Stopped at S6 after input #1 (and only input #1): S5 returned ALBUM_OPEN_VERIFIED (exit 0; target title readable in the post frame [15,83,204,111]; changed fraction 0.62538 >= 0.05; count '57' MATCH via the frozen v4 Vision reader), but the frozen v4 locate_album_ellipsis.py returned NO_ELLIPSIS_FOUND (exit 3) - the only non-text three-dot candidate lies above the album-title row band (middle dot [304.5,49.5] vs band [206..326]x[77..121]) and the album-title-row band itself contains zero eligible candidates. Per the runbook S6 the album-level ellipsis input was NOT sent (0/1), S7-S10 were not executed, no menu was opened, nothing else was touched, and the owner is notified immediately. The route observation therefore did not reach a machine-observable AFFIRMATIVE; the route stays a scoped CORE blocker (owner-reserved). Current surface state: the album view opened by input #1 (date-range title in the header, photo grid); no menu/dialog opened by us.",
+  "owner_decision_required": true,
+  "route_outcome": {
+    "route_status": "STOPPED_AT_S6 (NO_ELLIPSIS_FOUND) - album-level ⋮ capability NOT verified for the corrected route",
+    "inputs": {
+      "authorized": 2,
+      "sent": 1,
+      "album_card": "SPENT (1/1)",
+      "navigation": "SPENT (1/1, same click)",
+      "ellipsis": "UNSPENT (0/1) - precondition ELIGIBLE failed; sending it would violate the frozen runbook"
+    },
+    "route_result_json": "not written - no ⋮ observation was performed (stop-artifact policy RV-32-4; same as attempt-05)",
+    "surface_state_now": "album view open (date-range title in header, photo grid); no menu/dialog opened by us; no menu left open",
+    "owner_decision_required": true,
+    "no_side_effects_beyond_authorized_click": "no keyboard, no AX write, no scrolling, no bring-to-front, no app launch, no menu item, no Save All, no chooser, no destination/formal-state write"
+  },
+  "next_action": "OWNER DECISION REQUIRED (do not act autonomously): the corrected route's album-level ⋮ observation returned NO_ELLIPSIS_FOUND under the frozen v4 rule; decide the route-closure path (the plan reserves this to the owner; ROUTE_NOT_NEEDED must not be taken automatically). Any further attempt at this observation requires a NEW plan revision, a new one-shot authorization and a fresh review - this run's input #1 is spent and input #2 is never re-authorizable. Zero-input resume does not apply (input #1 was sent).",
+  "ledger_state_note": "FINAL. Fresh attempt-06 ledger: pre-frozen before any input (state FROZEN_BEFORE_INPUTS, commit 7a376b0) and finalized here after the run with events 1-9, the consumed counts, the stop reason and the closing statement. Exactly one GUI input was sent in this run: the album-card click (input #1; counted under BOTH navigation and album_card); the album-level ⋮ click (input #2) was never sent because the frozen S6 gate returned NO_ELLIPSIS_FOUND. No route-result.json / manifest.json (stop before any route outcome). attempt-05's ledger (17b17203…) and its STOPPED_AT_S5_TARGET_MISMATCH verdict are neither reset nor re-interpreted; gate-4 neither reset nor extended any earlier one-shot budget.",
   "series_note": "evidence/20260916-route/attempt-06 is the route-run series; .agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-06 is the already-consumed Rev21-wave acceptance and e2e/attempt-07 is this wave's acceptance (RV-33-4) — never conflate.",
   "pre_freeze_recorded_at_local": "2026-09-17T23:11+0800",
-  "notes": "Fresh attempt-06 ledger, written and frozen before any input (state FROZEN_BEFORE_INPUTS); attempt-05's ledger (17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218) and its STOPPED_AT_S5_TARGET_MISMATCH verdict are neither reset nor re-interpreted. gate-4 neither resets nor extends any earlier one-shot budget. The runner appends events and finalizes per ledger_state_note; this skeleton itself records zero GUI input (no clicks, no keyboard, no AX writes, no screenshots, no window activation, no app launch)."
+  "notes": "Fresh attempt-06 ledger, written and frozen before any input (state FROZEN_BEFORE_INPUTS); attempt-05's ledger (17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218) and its STOPPED_AT_S5_TARGET_MISMATCH verdict are neither reset nor re-interpreted. gate-4 neither resets nor extends any earlier one-shot budget. The runner appends events and finalizes per ledger_state_note; this skeleton itself records zero GUI input (no clicks, no keyboard, no AX writes, no screenshots, no window activation, no app launch).",
+  "finalized_at_local": "2026-09-17T23:25+0800",
+  "observation_windows_used": 3,
+  "screen_captures_used": 1
 }

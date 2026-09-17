@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-06",
+  "artifact": "evidence/20260916-route/attempt-06/screen-probe.json",
+  "purpose": "Screen-scope observation leg (Rev23 §22.3 S2): one read-only screen capture taken before the first authorized input; accepted only if the frozen v3 locate_album_card.py (500fcadb…) returns ELIGIBLE on a located window crop at scale 2 or scale 1. SUPPORTING / non-gating; reader-block exempt (RV-35-3).",
+  "probe": {
+    "path": "/tmp/route6_screen_probe.png",
+    "command": "screencapture -x /tmp/route6_screen_probe.png",
+    "exit_code": 0,
+    "bytes": 2088390,
+    "size": [
+      2294,
+      1490
+    ],
+    "mode": "RGBA",
+    "sha256": "b5309d823bbbe6b4cfa5cb3d4fa44e75d8a8b167765f57b6b93912af3a46ff6f",
+    "written_at_local": "2026-09-17T23:17:58+0800",
+    "input_events_sent": 0,
+    "sound": "none (-x: silent, no cursor drawn, no window highlight)"
+  },
+  "window_localization": {
+    "method": "alignment of the 2x LANCZOS-upscaled AX-window frame (/tmp/route6_frame_pre.jpg 327x643 -> 654x1286) against the probe by a mean-absolute-difference search over the window origin; coarse full-probe search step 8 with the template subsampled step 8, then refinement step 1 over +/-8 px with the template subsampled step 2",
+    "template": "the whole 2x window frame (654x1286) - no region excluded and no control-biased template; the uniqueness of the minimum is the guard",
+    "scale": 2,
+    "origin_screen_px": [
+      0,
+      78
+    ],
+    "mapping": "screen_x = 2*window_x ; screen_y = 78 + 2*window_y",
+    "coarse_best": {
+      "mad_gray_levels": 8.71420955657959,
+      "origin": [
+        0,
+        80
+      ]
+    },
+    "refined_best": {
+      "mad_gray_levels": 3.1410818099975586,
+      "origin": [
+        0,
+        78
+      ]
+    },
+    "uniqueness": {
+      "runner_up_adjacent": {
+        "mad_gray_levels": 16.11733055114746,
+        "origin": [
+          0,
+          72
+        ]
+      },
+      "best_excluding_best_neighborhood": {
+        "mad_gray_levels": 31.00045394897461,
+        "origin": [
+          0,
+          96
+        ]
+      }
+    },
+    "cross_check_crop_s1_vs_pre_frame": {
+      "mean_abs_diff_gray_levels": 2.1099729537963867,
+      "max_abs_difference": 252.0,
+      "note": "the scale-1 crop is content-identical to the app frame apart from screen->frame resampling"
+    },
+    "note": "clear unique minimum (3.14 vs next non-adjacent 31.00). The window origin moved vs the attempt-05 probe (was [0,62]); the fresh localization is re-derived from this run's own frame and probe only."
+  },
+  "acceptance": {
+    "rule": "exit 0 + decodable + frozen v3 locate_album_card.py ELIGIBLE on the located window crop at scale 2 or scale 1",
+    "probe_exit_code": 0,
+    "decode": "PIL Image.open -> (2294,1490) RGBA, readable",
+    "crop_scale_2": {
+      "path": "/tmp/route6_probe_crop_s2.png",
+      "size": [
+        654,
+        1286
+      ],
+      "bytes": 624476,
+      "sha256": "f90ebea9793ff34716cf2c0ae78366c283e3adfbaff8ca867382b50a80f5d469",
+      "locator_verdict": "TARGET_COUNT_MISMATCH",
+      "locator_exit_code": 5,
+      "locator_title_texts": [
+        "2024/05/13~05/17"
+      ],
+      "locator_title_bbox": [
+        33,
+        952,
+        253,
+        975
+      ],
+      "count_digits_read": "5",
+      "count_text": "MISMATCH",
+      "locator_output_file": "/tmp/route6_crop_s2_locate.json"
+    },
+    "crop_scale_1": {
+      "path": "/tmp/route6_probe_crop_s1.png",
+      "size": [
+        327,
+        643
+      ],
+      "bytes": 228428,
+      "sha256": "7f656159d27a3c775a3ce32a290348125f4aa4424be6f8f27d7f2b22328fc652",
+      "locator_verdict": "TARGET_COUNT_MISMATCH",
+      "locator_exit_code": 5,
+      "locator_title_texts": [
+        "2024/05/13~05/17"
+      ],
+      "locator_title_bbox": [
+        17,
+        476,
+        126,
+        487
+      ],
+      "count_digits_read": "27",
+      "count_text": "MISMATCH",
+      "click_point": [
+        29,
+        481
+      ],
+      "locator_output_file": "/tmp/route6_crop_s1_locate.json"
+    },
+    "accepted_scale": null,
+    "screen_scope": "UNAVAILABLE",
+    "decided_before_the_input": true,
+    "note": "Neither scale returned ELIGIBLE: at both scales the frozen v3 locator read the title correctly but read only '5' / '27' of the required count '57' (tesseract count-region limitation - the same reader class that read '75' on attempt-05's post frame). Per S2 the probe is SUPPORTING and non-gating: screen_scope=UNAVAILABLE, the run continues window-scoped with the frozen v4 reader as the official chain. The crop click points are evidence only and were NEVER used (input #1 used the S3 v4 click point [27,482])."
+  },
+  "cross_checks": [
+    "crop_s1 title bbox [17,476,126,487] (v3 locator) vs the S3 v4 locator on the pre frame [15,476,129,488]: same title text '2024/05/13~05/17', left/top edges within 2 px - the crop contains the same card row",
+    "the frozen v3 locator reads the count wrongly at both crop scales (5 / 27) while the frozen v4 Vision chain reads 57 on the same content - recorded as the reader-layer difference that motivated the v4 chain; no verdict here is derived from v3 for the official chain"
+  ],
+  "permission_prompt_check": {
+    "PERMISSION_PROMPT_OBSERVED": false,
+    "method": "no permission dialogue appeared on any readable surface: screencapture exited 0 and the probe decodes to live window content - the 2x frame template locates the LINE window inside the probe at a clear unique minimum (MAD 3.14 vs next 31.00), so the probe demonstrably contains the real window pixels rather than a permission overlay or a desktop-only capture; the S1 AX read and the S5 post AX read show no dialog/overlay",
+    "consequence": "no permission-prompt abort; screen_scope=UNAVAILABLE recorded (non-gating); the run continued window-scoped"
+  },
+  "ordering_local": "pre frame 23:17:28 -> AX 23:17:28 -> probe 23:17:58 -> localization 23:18:07-08 -> crops + frozen v3 runs 23:18:10-11 (locator outputs 23:18:21-22) -> S3 v4 locate 23:18:35 (ELIGIBLE) -> input #1 23:18:47 -> S5 post frame 23:18:58 (ALBUM_OPEN_VERIFIED) -> S6 23:19:19 (NO_ELLIPSIS_FOUND, stop; input #2 never sent)",
+  "environment_note": "the same machine/session as attempt-05; screen 2294x1490 @2x retained; the LINE window origin at probe time [0,78]"
+}
