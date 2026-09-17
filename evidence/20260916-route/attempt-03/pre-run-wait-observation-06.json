@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-03",
+  "artifact_kind": "pre_run_wait_observation",
+  "window_subtype": "post_user_action_check",
+  "artifact_role": "chronology_only_not_a_gate_decision",
+  "sequence": 6,
+  "task_id": "T20260916-0102-01-line-backup-acceptance",
+  "plan_revision": 18,
+  "plan_sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+  "app_bundle": "jp.naver.line.mac",
+  "raw_group": "旻謙允禎成長日記",
+  "album": "2024/05/13〜2024/05/17",
+  "expected_count": 57,
+  "human_gate_status": "AUTHORIZED_BY_USER",
+  "human_gate_authorized_at_local": "2026-09-17T09:09:49+0800",
+  "read_only_capture_window_local": {
+    "started": "2026-09-17T11:49:06+0800",
+    "completed": "2026-09-17T11:53:03+0800",
+    "utc": {
+      "start": "2026-09-17T03:49:06Z",
+      "end": "2026-09-17T03:53:03Z"
+    }
+  },
+  "user_actions_since_sequence_5": [
+    "使用者開啟目標群組「旻謙允禎成長日記」（相簿頁籤開啟中）；原話：「我已經開好群組了」",
+    "使用者以附圖釐清目標控制元件方向：「不是橫的『⋯』是直的『⋯』」（直排三點 ⋮）",
+    "使用者宣達新常駐指令並要求「請繼續完成測試」（見 user_directives）"
+  ],
+  "user_directives": [
+    {
+      "id": "D1-wait-retry-cap",
+      "verbatim": "下次遇到嘗試5次失敗就直接通知我介入，不要try兩小時",
+      "rule": "任何等待/重試最多 5 次失敗即停止並通知使用者介入，禁止長時間空轉",
+      "applies_to": "route attempt-03 的 PRE_RUN_WAIT 輪詢與同類未來等待",
+      "status_this_window": "ADOPTED — 本窗即為五次等待窗後的第一個升級/通知點",
+      "recorded_at_local": "2026-09-17T11:49:00+0800"
+    },
+    {
+      "id": "D2-ellipsis-orientation",
+      "verbatim": "我要釐清不是橫的「⋯ 」是直的「⋯ 」",
+      "rule": "目標控制元件＝相簿卡片上的直排三點 ⋮（垂直堆疊），不得以橫向省略號 … 作為定位目標",
+      "user_attachment": {
+        "path_hint": "<tmpdir>/codex-clipboard-elWJvH.png",
+        "bytes": 29122,
+        "sha256": "2fbf70e9a2fbf3473b72949be6a9fe67fb8b5fb2f18996d1a58ba349fd336d0b",
+        "dimensions": "648x316",
+        "ocr_high_confidence": ["2024/06/02~06/07 (conf 89.7)", "2024.06.09 (conf 96.1)"],
+        "ocr_low_confidence": ["65張照片 (conf ~35-62 片段)"],
+        "orientation_check": "以像素投影/ASCII 渲染確認三點為垂直堆疊（直排 ⋮），位於附圖右緣",
+        "note": "附圖所示卡片經 OCR 確認為 2024/06/02~06/07（非目標相簿）——解讀為 ⋮ 樣式示意；不得視為目標卡已呈現",
+        "persisted_to_repo": false,
+        "persistence_note": "檔案含使用者私人影像，僅記雜湊/尺寸/OCR，不落庫"
+      }
+    }
+  ],
+  "surface_evidence": {
+    "method": "唯讀 app acquisition（getApp emit:false）＋ getScreenshot({emit:false}) ＋ getAXState({emit:false, disableDiffing:true})；無 click/type/key/scroll；本窗未向對話輸出任何影像（conversation images emitted = 0）",
+    "frames": [
+      {
+        "captured_at_local": "2026-09-17T11:44（前序檢查點）",
+        "bytes": 69461,
+        "format": "JPEG (JFIF)",
+        "dimensions": "327x643",
+        "sha256": "26968389531473e9d12c971d55fcd5168f6bd96729a1c96607f9e100758e2016"
+      },
+      {
+        "captured_at_local": "2026-09-17T11:49",
+        "bytes": 69461,
+        "format": "JPEG (JFIF)",
+        "dimensions": "327x643",
+        "sha256": "26968389531473e9d12c971d55fcd5168f6bd96729a1c96607f9e100758e2016"
+      }
+    ],
+    "frame_stability": "兩次擷取（相隔約5分鐘）逐位元相同 → 表面靜止",
+    "ax_state": {
+      "sha256": "5e18ad7eb503ab0e6cc50e4fdbdb08fdc83a44c7744eac7b6a3652364caf559c",
+      "text_len_chars": 1181,
+      "structure": "標準視窗→文字欄位＋列表（showing 0-100 of 101 items，列無文字）＋捲軸",
+      "contains_target_words": false,
+      "false_positive_note": "AX 內的 '57'/'65' 僅為列索引數字，非張數",
+      "structure_change_vs_sequence_5": "seq5 為聊天室（訊息輸入欄）；本窗為列表結構 → 與使用者『已開好群組』一致"
+    },
+    "visible_surface_ocr_assist": {
+      "tool": "tesseract chi_tra+eng（僅輔助理解，非通過/判定依據）",
+      "readable_texts": ["旻謙允禎成長日記", "相簿", "記事本", "2024/06/02~06/07", "65張照片（低信心）"],
+      "target_texts_found": false
+    },
+    "visible_album_card": {
+      "title": "2024/06/02~06/07",
+      "count_text": "65張照片（使用者附圖 OCR 佐證）",
+      "is_target": false,
+      "reason": "日期與張數皆與目標不符（目標 2024/05/13〜2024/05/17、57 張）",
+      "menu_control_observed": "卡片標題列右側存在直排三點 ⋮（現幀約 x≈304、與標題行同高；僅為當幀紀錄，嚴禁作為後續點擊之歷史座標依據）",
+      "header_control_distinction": "視窗最上方群組標題旁另有一個 ⋮（群組選單），非本任務目標；目標是『相簿卡片』上的 ⋮"
+    }
+  },
+  "canonical_target_present": false,
+  "canonical_target_present_basis": "可見幀只含 2024/06/02~06/07（65張）卡片；全幀 OCR 無『2024/05/13〜05/17』或『57張』字樣；AX 不暴露相簿列文字；目標相簿卡不在可見表面（無導航輸入故無法由 agent 捲動呈現）",
+  "gui_input_count": 0,
+  "input_counts": {
+    "app_acquisition_inputs": 0,
+    "navigation_inputs": 0,
+    "ellipsis_inputs": 0,
+    "menu_item_clicks": 0,
+    "save_all_clicks": 0,
+    "chooser_interactions": 0,
+    "backup_state_writes": 0
+  },
+  "ellipsis_budget_consumed": 0,
+  "frames_persisted": false,
+  "images_emitted_to_conversation_in_this_window": 0,
+  "escalation": {
+    "decision": "維持 PRE_RUN_WAIT；依使用者指令 D1，於五次失敗等待窗後立即通知使用者介入：請求把目標相簿卡捲到可見、使卡片右側直排 ⋮ 完整露出；不追加自動輪詢",
+    "basis": "使用者已開啟目標群組且相簿頁籤開啟，但可見卡為非目標（2024/06/02~06/07、65張）；navigation_input_budget=0 使 agent 不得自行捲動；單次 ⋮ 輸入額度（1）不得用於非目標卡",
+    "wrong_card_guard": "嚴禁點擊可見非目標卡（2024/06/02~06/07）的 ⋮；誤點即立即終止並回報",
+    "replan_guard": "若使用者回報群組中不存在 2024/05/13〜05/17（57張）卡片，或主張目標實為其他相簿（例：2024/06/02~06/07、65張），屬語意變更 → 由 planner 以新 PLAN_REVISION 裁定；agent 不得自行改標的",
+    "resume_conditions": [
+      "使用者回報目標卡（2024/05/13〜2024/05/17、57張照片）已捲到可見且 ⋮ 完整露出：→ target-binding read → 恰好一次 ⋮ 輸入 → 立即 post 觀察 → stop → 寫 route-result.json",
+      "或由 planner 裁定替代路徑（ROUTE_NOT_NEEDED / SAFE_ABORT，需新 PLAN_REVISION＋獨立審查）"
+    ]
+  },
+  "conclusion": "第六個觀察窗（使用者開好群組後唯讀複查）：群組標題與相簿頁籤已就位，但可見的是非目標相簿卡（2024/06/02~06/07、65張）；目標卡（2024/05/13〜05/17、57張）仍未出現。零輸入、零影像輸出，單次 ⋮ 額度未消耗；依 D1 已把缺口通知使用者介入（捲動呈現目標卡）。",
+  "next_action": "等待使用者依 escalation 呈現目標卡；不得自動輪詢、不得捲動、不得點擊任何非目標元素"
+}
