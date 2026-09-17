@@ -1,0 +1,253 @@
+{
+ "step": "b",
+ "check": "V22_ROUTE_ATTEMPT_06_SINGLE_ONESHOT + route result re-derivation (closure fact 2)",
+ "captured_at_local": "2026-09-17T23:43:40+0800",
+ "artifacts_on_disk": {
+  "gate-4-authorization.json": {
+   "file": "gate-4-authorization.json",
+   "exists": true,
+   "bytes": 8979,
+   "sha256": "e32ccd882b93b784e1faf3f3ea1df9732ab093e26f74a89622ac857159876272"
+  },
+  "route-runbook.md": {
+   "file": "route-runbook.md",
+   "exists": true,
+   "bytes": 15707,
+   "sha256": "716bca926dcb76663afc9b937479da480dd9d1841fbb52b1224945e25e1963a8"
+  },
+  "run-ledger.json": {
+   "file": "run-ledger.json",
+   "exists": true,
+   "bytes": 28390,
+   "sha256": "906c14330605122e9b600359892d4400171d62564707d50af26ef8d8bb32fa2c"
+  },
+  "album-card-locate.json": {
+   "file": "album-card-locate.json",
+   "exists": true,
+   "bytes": 1715,
+   "sha256": "b822012d28e2efeb268b5cd602c956afaf87fa666301aa67452ba597c3b81493"
+  },
+  "album-open-verify.json": {
+   "file": "album-open-verify.json",
+   "exists": true,
+   "bytes": 2961,
+   "sha256": "a1e5fa491ac83f844f748683e51baf56e1b6d6f968e6f9d675a2fcb19486164d"
+  },
+  "album-ellipsis-locate.json": {
+   "file": "album-ellipsis-locate.json",
+   "exists": true,
+   "bytes": 8698,
+   "sha256": "433e8693b1e23336628fab919042eca2c4903b0476c5a5ef22ff15f7d74edfb6"
+  },
+  "screen-probe.json": {
+   "file": "screen-probe.json",
+   "exists": true,
+   "bytes": 6347,
+   "sha256": "d696f442a9a835dc62f506722351d009690426db5afd748ecc9527782f27b07b"
+  }
+ },
+ "artifact_sha_match_expected": {
+  "gate-4-authorization.json": true,
+  "route-runbook.md": true,
+  "run-ledger.json": true,
+  "album-card-locate.json": true,
+  "album-open-verify.json": true,
+  "album-ellipsis-locate.json": true,
+  "screen-probe.json": true
+ },
+ "ledger_artifact_sha_match": {
+  "authorization_evidence_sha256": "e32ccd882b93b784e1faf3f3ea1df9732ab093e26f74a89622ac857159876272",
+  "match_gate4": true
+ },
+ "frozen_inputs_pins": {
+  "gate_4_sha_pin": "e32ccd882b93b784e1faf3f3ea1df9732ab093e26f74a89622ac857159876272",
+  "gate_4_pin_match": true,
+  "runbook_sha_pin": "716bca926dcb76663afc9b937479da480dd9d1841fbb52b1224945e25e1963a8",
+  "runbook_pin_match": true,
+  "tools": {
+   "v4/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+   "v4/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+   "v4/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+   "v4/locate_album_ellipsis.py": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+   "detect_menu_popup.py (reused unchanged; tesseract; reader-block exempt)": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+   "selftest_menu_popup.py (frozen detector self-test)": "db0917039f085b0d90196348de0d0038e8d6abcd18418c0e41c4037231fbbfdc"
+  }
+ },
+ "parent_ledger": {
+  "recorded": "17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218",
+  "expected": "17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218",
+  "match": true,
+  "parent_file": {
+   "path": "evidence/20260916-route/attempt-05/run-ledger.json",
+   "bytes": 29772,
+   "sha256": "17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218"
+  },
+  "parent_file_rehash_match": true
+ },
+ "plan_binding": {
+  "plan_revision": 23,
+  "plan_sha256": "4337e2b5c105901ce7c56956ecea5469894df2d2a29f099068c979584c71b6b2",
+  "match_rev23_4337e2b5": true,
+  "plan_lines": 2093,
+  "plan_bytes": 284897,
+  "approvals": [
+   [
+    34,
+    "21c4bbb551070dbdfc7c155536c4651abc9492970311b739cf506dd1d2b8a57c",
+    "PLAN_APPROVED"
+   ],
+   [
+    35,
+    "975142c3ad79098141a74e4bd1cebf107d8e307fc65ec42ef4c781e3d8c8582c",
+    "PLAN_APPROVED"
+   ]
+  ]
+ },
+ "(vi)_exactly_once": {
+  "budgets": {
+   "album_card_input_budget": 1,
+   "navigation_input_budget": 1,
+   "ellipsis_input_budget": 1,
+   "retry_budget": 0,
+   "menu_item_budget": 0,
+   "keyboard_input_budget": 0,
+   "app_acquisition_input_budget": 0,
+   "conversation_images": 0,
+   "click_count_per_input": 1,
+   "read_only_observation_windows_max": 5,
+   "screen_capture_budget": 5,
+   "screen_capture_window_seconds": 4
+  },
+  "final_counts": {
+   "album_card_input": 1,
+   "navigation_input": 1,
+   "ellipsis_input": 0,
+   "app_acquisition_input": 0,
+   "menu_item_input": 0,
+   "keyboard_input": 0,
+   "retry": 0,
+   "observation_windows_used": 3,
+   "screen_captures_used": 1
+  },
+  "inputs": {
+   "album_card": "SPENT (1/1)",
+   "ellipsis": "UNSPENT (0/1) - never sent; the S6 precondition ELIGIBLE failed"
+  },
+  "event6_input1": {
+   "gui_input": true,
+   "click_count": 1,
+   "retry_count": 0,
+   "params": {
+    "coordinate": [
+     27,
+     482
+    ],
+    "mouseButton": "left",
+    "clickCount": 1,
+    "source": "S3 click_point derived from /tmp/route6_frame_pre.jpg at 23:18:35 (album-card-locate.json)"
+   },
+   "input_total_in_this_run": 1
+  },
+  "checks": {
+   "album_card_1_of_1": true,
+   "navigation_1_of_1_same_click": true,
+   "ellipsis_0_of_1_unspent": true,
+   "retry_0": true,
+   "menu_item_0": true,
+   "keyboard_0": true,
+   "app_acquisition_0": true,
+   "click_count_per_input_1": true,
+   "input1_counted_under_both": true,
+   "ellipsis_never_sent": true,
+   "observation_windows_3_of_5": true,
+   "screen_captures_1_of_5": true
+  }
+ },
+ "(vii)_S5": {
+  "verdict": "ALBUM_OPEN_VERIFIED",
+  "exit_code": 0,
+  "changed_fraction": 0.62538,
+  "title_bbox": [
+   15,
+   83,
+   204,
+   111
+  ],
+  "count": "57",
+  "count_text": "MATCH",
+  "reader_block_present": true,
+  "post_frame_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "check_album_open_verified": true
+ },
+ "(viii)_S6": {
+  "verdict": "NO_ELLIPSIS_FOUND",
+  "exit_code": 3,
+  "reader_block_present": true,
+  "ellipsis_input": "never sent (0/1) - the S6 gate failed",
+  "menu_opened_by_us": false,
+  "s7_s10_status": "S7-S10 were not executed (no input #2 => no post-menu capture; menu-analysis.json not applicable; the frozen tesseract detector was therefore never invoked in this run)",
+  "check_no_ellipsis_found_exit3": true
+ },
+ "(ix)_stop_artifact_policy": {
+  "route_result_sha256_field": null,
+  "route_result_json_absent": true,
+  "manifest_json_absent": true,
+  "menu_analysis_absent": true,
+  "git_tracked_files": [
+   "evidence/20260916-route/attempt-06/album-card-locate.json",
+   "evidence/20260916-route/attempt-06/album-ellipsis-locate.json",
+   "evidence/20260916-route/attempt-06/album-open-verify.json",
+   "evidence/20260916-route/attempt-06/anomaly-transient-pycache.json",
+   "evidence/20260916-route/attempt-06/gate-4-authorization.json",
+   "evidence/20260916-route/attempt-06/route-runbook.md",
+   "evidence/20260916-route/attempt-06/run-ledger.json",
+   "evidence/20260916-route/attempt-06/screen-probe.json"
+  ]
+ },
+ "(x)_zero_side_effects": {
+  "all_events_flags_false": true,
+  "run_status": "STOPPED_AT_S6_NO_ELLIPSIS_FOUND",
+  "state": "CLOSED_AFTER_INPUT_1",
+  "owner_decision_required": true,
+  "event9_no_side_effects": "no menu item, no Save All, no chooser, no keyboard input, no AX write, no navigation/scroll, no destination/formal-state/run-log write, no re-download, zero conversation images",
+  "route_outcome": {
+   "route_status": "STOPPED_AT_S6 (NO_ELLIPSIS_FOUND) - album-level ⋮ capability NOT verified for the corrected route",
+   "inputs": {
+    "authorized": 2,
+    "sent": 1,
+    "album_card": "SPENT (1/1)",
+    "navigation": "SPENT (1/1, same click)",
+    "ellipsis": "UNSPENT (0/1) - precondition ELIGIBLE failed; sending it would violate the frozen runbook"
+   },
+   "route_result_json": "not written - no ⋮ observation was performed (stop-artifact policy RV-32-4; same as attempt-05)",
+   "surface_state_now": "album view open (date-range title in header, photo grid); no menu/dialog opened by us; no menu left open",
+   "owner_decision_required": true,
+   "no_side_effects_beyond_authorized_click": "no keyboard, no AX write, no scrolling, no bring-to-front, no app launch, no menu item, no Save All, no chooser, no destination/formal-state write"
+  }
+ },
+ "json_verdicts": {
+  "album-card-locate": {
+   "verdict": "ELIGIBLE",
+   "exit_code": null
+  },
+  "album-open-verify": {
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "exit_code": null
+  },
+  "album-ellipsis-locate": {
+   "verdict": "NO_ELLIPSIS_FOUND",
+   "exit_code": null
+  },
+  "screen-probe": {
+   "screen_scope": null,
+   "exit_code": null
+  }
+ },
+ "verdict": {
+  "non_affirmative_confirmed": true,
+  "route_remains_scoped_core_blocker": true,
+  "route_not_needed_taken": false,
+  "owner_decision_required": true,
+  "statement": "attempt-06 returned a definitive non-AFFIRMATIVE (NO_ELLIPSIS_FOUND exit 3) after exactly one input; route stays a scoped CORE blocker; ROUTE_NOT_NEEDED is not taken (owner chose B); route closure belongs to the owner."
+ }
+}

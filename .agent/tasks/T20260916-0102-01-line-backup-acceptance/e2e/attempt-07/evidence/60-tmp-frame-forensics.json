@@ -1,0 +1,142 @@
+{
+ "step": "g-forensics",
+ "captured_at_local": "2026-09-17T23:50:16",
+ "tmp_files": {
+  "/tmp/route6_frame_pre.jpg": {
+   "path": "/tmp/route6_frame_pre.jpg",
+   "exists": true,
+   "bytes": 62644,
+   "sha256": "3dd1a3bf6d87b22e9f2fbd89884f2c459fb70d9ca4ecb160d96b16c363d19aec",
+   "inode": 124696053,
+   "mtime_local": "2026-09-17T23:17:28",
+   "mtime_ns": 1789658248476586165,
+   "ctime_local": "2026-09-17T23:17:28"
+  },
+  "/tmp/route6_frame_post.jpg": {
+   "path": "/tmp/route6_frame_post.jpg",
+   "exists": true,
+   "bytes": 66686,
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "inode": 124696180,
+   "mtime_local": "2026-09-17T23:18:58",
+   "mtime_ns": 1789658338952037982,
+   "ctime_local": "2026-09-17T23:18:58"
+  },
+  "/tmp/route5r_frame_post.jpg": {
+   "path": "/tmp/route5r_frame_post.jpg",
+   "exists": true,
+   "bytes": 66686,
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "inode": 124594685,
+   "mtime_local": "2026-09-17T18:43:22",
+   "mtime_ns": 1789641802764917380,
+   "ctime_local": "2026-09-17T18:43:22"
+  },
+  "/tmp/route6_ax_pre.txt": {
+   "path": "/tmp/route6_ax_pre.txt",
+   "exists": true,
+   "bytes": 1274,
+   "sha256": "ae7cd9a0f5e0f3afb367a89e17a1fc5dfbbab3fa1c9c051c0147001c7f5a9e14",
+   "inode": 124696054,
+   "mtime_local": "2026-09-17T23:17:28",
+   "mtime_ns": 1789658248476981634,
+   "ctime_local": "2026-09-17T23:17:28"
+  },
+  "/tmp/route6_ax_post.txt": {
+   "path": "/tmp/route6_ax_post.txt",
+   "exists": true,
+   "bytes": 232,
+   "sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa",
+   "inode": 124696181,
+   "mtime_local": "2026-09-17T23:18:58",
+   "mtime_ns": 1789658338952451814,
+   "ctime_local": "2026-09-17T23:18:58"
+  },
+  "/tmp/route5r_ax_post.txt": {
+   "path": "/tmp/route5r_ax_post.txt",
+   "exists": true,
+   "bytes": 232,
+   "sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa",
+   "inode": 124594691,
+   "mtime_local": "2026-09-17T18:43:22",
+   "mtime_ns": 1789641802829426140,
+   "ctime_local": "2026-09-17T18:43:22"
+  },
+  "/tmp/route6_ledger_pre_normalize.json": {
+   "path": "/tmp/route6_ledger_pre_normalize.json",
+   "exists": true,
+   "bytes": 28390,
+   "sha256": "437610357297a79b6332ab16222ba81331192f92420047cdb44fa17a6545bd31",
+   "inode": 124696835,
+   "mtime_local": "2026-09-17T23:30:18",
+   "mtime_ns": 1789659018130165910,
+   "ctime_local": "2026-09-17T23:30:18"
+  },
+  "/tmp/route6_baseline_current.json": {
+   "path": "/tmp/route6_baseline_current.json",
+   "exists": true,
+   "bytes": 19005,
+   "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5",
+   "inode": 124696434,
+   "mtime_local": "2026-09-17T23:23:15",
+   "mtime_ns": 1789658595119002931,
+   "ctime_local": "2026-09-17T23:23:15"
+  }
+ },
+ "post_frame_forensics": {
+  "route6_post_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "route5r_post_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "byte_identical": true,
+  "same_inode": false,
+  "route6_post_inode": 124696180,
+  "route5r_post_inode": 124594685,
+  "route6_post_mtime": "2026-09-17T23:18:58",
+  "route5r_post_mtime": "2026-09-17T18:43:22",
+  "durable_copy_route5r_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "durable_copy_byte_identical_and_independent_path": true,
+  "ax_post_route6_sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa",
+  "ax_post_route5r_sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa",
+  "ax_post_byte_identical": true,
+  "pre_frame_route6_sha256": "3dd1a3bf6d87b22e9f2fbd89884f2c459fb70d9ca4ecb160d96b16c363d19aec",
+  "pre_route6_vs_post_route6_differ": true
+ },
+ "durable_route5r_post_copy": {
+  "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+  "exists": true,
+  "bytes": 66686,
+  "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "inode": 124624927,
+  "mtime_local": "2026-09-17T20:04:51",
+  "mtime_ns": 1789646691295194671,
+  "ctime_local": "2026-09-17T20:04:51"
+ },
+ "pycache_scan_frozen_tool_dirs": {
+  "found": [],
+  "count": 0
+ },
+ "owner_briefing_artifact": {
+  "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260917-owner-briefing/owner-explanation-attempt-06.md",
+  "exists": true,
+  "bytes": 7993,
+  "sha256": "6557ff299155f4be3010f7fc096eac96e6cb51faf22eb64606a36bfc8d91bbcb",
+  "inode": 124697883,
+  "mtime_local": "2026-09-17T23:49:53",
+  "mtime_ns": 1789660193389018060,
+  "ctime_local": "2026-09-17T23:49:53",
+  "first_line": "# 這次測試為什麼「失敗」？瓶頸是什麼？（白話版）",
+  "git_status_porcelain": "?? evidence/20260917-owner-briefing/owner-explanation-attempt-06.md\n",
+  "last_commit_touching_dir": "8253d7d review(acceptance): Rev23 獨立雙複審通過（attempt-34 Carver、attempt-35 Noether，皆 PLAN_APPROVED、無 BLOCKER/MAJOR）＋白話說明獨立稽核 AUDIT_PASS",
+  "dir_listing": [
+   "owner-explanation-attempt-06.md",
+   "owner-explanation-rev22-audit.md",
+   "owner-explanation-rev22.md"
+  ]
+ },
+ "ledger_normalization_audit_copy": {
+  "path": "/tmp/route6_ledger_pre_normalize.json",
+  "present": true,
+  "sha256": "437610357297a79b6332ab16222ba81331192f92420047cdb44fa17a6545bd31",
+  "recorded_in_execution_rev22": "437610357297a79b6332ab16222ba81331192f92420047cdb44fa17a6545bd31",
+  "match": true
+ }
+}

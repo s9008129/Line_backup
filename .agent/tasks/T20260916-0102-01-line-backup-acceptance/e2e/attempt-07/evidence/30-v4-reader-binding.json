@@ -1,0 +1,132 @@
+{
+ "step": "c",
+ "check": "V22_S5_BOUND_TO_V4_READER",
+ "captured_at_local": "2026-09-17T23:45:02+0800",
+ "frozen_v4_tools": {
+  "v4/vision_reader.py": {
+   "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+   "expected": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+   "match": true
+  },
+  "v4/locate_album_card.py": {
+   "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+   "expected": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+   "match": true
+  },
+  "v4/verify_album_open.py": {
+   "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+   "expected": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+   "match": true
+  },
+  "v4/locate_album_ellipsis.py": {
+   "sha256": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+   "expected": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+   "match": true
+  }
+ },
+ "detector_exempt": {
+  "detect_menu_popup.py": {
+   "sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+   "expected": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+   "match": true
+  },
+  "selftest_menu_popup.py": {
+   "sha256": "db0917039f085b0d90196348de0d0038e8d6abcd18418c0e41c4037231fbbfdc",
+   "expected": "db0917039f085b0d90196348de0d0038e8d6abcd18418c0e41c4037231fbbfdc",
+   "match": true
+  },
+  "exempt_note": "the frozen tesseract-based detector is explicitly exempt from the v4-reader requirement (plan §22.3/§22.6; S10 only); it was never invoked in attempt-06 (S7-S10 not executed) and is only reused byte-identically"
+ },
+ "reader_blocks": {
+  "album-card-locate.json": {
+   "reader_block_present": true,
+   "helper_resolved_from": "build_path",
+   "helper_source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+   "helper_source_sha256_expected_match": true,
+   "helper_binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+   "helper_binary_present": true,
+   "calls": [
+    {
+     "scale": 3,
+     "outcome": "ok",
+     "exit_code": 0,
+     "stdout_sha256": "3356821d9de1e1ed22e637d35c0d020da3b70352d6e7c7348ee04bc9f172b14d",
+     "stdout_sha256_len": 64
+    },
+    {
+     "scale": 10,
+     "outcome": "ok",
+     "exit_code": 0,
+     "stdout_sha256": "313a055588102319d990233641d78524759e5e01953c0298667003c2a09b1c51",
+     "stdout_sha256_len": 64
+    }
+   ],
+   "all_calls_ok_exit0": true,
+   "all_calls_stdout_sha_recorded": true,
+   "mentions_detect_menu_popup": false,
+   "mentions_tesseract": false
+  },
+  "album-open-verify.json": {
+   "reader_block_present": true,
+   "helper_resolved_from": "build_path",
+   "helper_source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+   "helper_source_sha256_expected_match": true,
+   "helper_binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+   "helper_binary_present": true,
+   "calls": [
+    {
+     "scale": 3,
+     "outcome": "ok",
+     "exit_code": 0,
+     "stdout_sha256": "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+     "stdout_sha256_len": 64
+    },
+    {
+     "scale": 10,
+     "outcome": "ok",
+     "exit_code": 0,
+     "stdout_sha256": "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83",
+     "stdout_sha256_len": 64
+    }
+   ],
+   "all_calls_ok_exit0": true,
+   "all_calls_stdout_sha_recorded": true,
+   "mentions_detect_menu_popup": false,
+   "mentions_tesseract": false
+  },
+  "album-ellipsis-locate.json": {
+   "reader_block_present": true,
+   "helper_resolved_from": "build_path",
+   "helper_source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+   "helper_source_sha256_expected_match": true,
+   "helper_binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+   "helper_binary_present": true,
+   "calls": [
+    {
+     "scale": 3,
+     "outcome": "ok",
+     "exit_code": 0,
+     "stdout_sha256": "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+     "stdout_sha256_len": 64
+    }
+   ],
+   "all_calls_ok_exit0": true,
+   "all_calls_stdout_sha_recorded": true,
+   "mentions_detect_menu_popup": false,
+   "mentions_tesseract": false
+  }
+ },
+ "screen_probe_exempt": {
+  "reader_block_absent_is_expected": true,
+  "references_frozen_v3_locator_500fcadb": true,
+  "mentions_detect_menu_popup": false
+ },
+ "verdict": {
+  "all_three_v4_json_have_reader_block": true,
+  "all_helper_sources_4fc9fa2b": true,
+  "all_calls_ok_exit0_with_stdout_sha": true,
+  "no_tesseract_based_S3_S5_S6_verdict": true,
+  "detector_reused_byte_identical_and_exempt": true,
+  "statement": "S3/S5/S6 verdicts come only from the frozen v4 tools; each of the three JSONs carries the v4 reader block with helper.source_sha256=4fc9fa2b… and per-call ok/exit-0/stdout-sha256. The frozen tesseract detector (6ae9c250…) was exempt and never used for any S3/S5/S6 verdict; the only non-v4 use this run is the SUPPORTING S2 screen-scope probe (v3 locator 500fcadb…, reader-block exempt per RV-35-3)."
+ }
+}

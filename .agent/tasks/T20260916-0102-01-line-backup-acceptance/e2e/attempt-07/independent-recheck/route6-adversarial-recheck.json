@@ -1,0 +1,250 @@
+{
+ "schema": "route6-adversarial-recheck/v1",
+ "task_id": "T20260916-0102-01-line-backup-acceptance",
+ "wave": "Rev23 plan / route-run-series attempt-06; this report = independent adversarial re-check recorded under e2e/attempt-07/independent-recheck",
+ "role": "adversarial re-checker (read-only + offline replay; zero GUI input; no AX write; no frozen-artifact modification; no git commit; python always -B; no images in conversation)",
+ "generated_at_local": "2026-09-17T23:46:21+0800",
+ "workspace": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+ "claims_under_attack": [
+  {
+   "id": "R1",
+   "claim": "The attempt-06 post frame /tmp/route6_frame_post.jpg (66,686 B, sha256 4cb8a6b4...) is a true capture of the current surface, not a reused/copied older file, despite being bit-identical to attempt-05's /tmp/route5r_frame_post.jpg."
+  },
+  {
+   "id": "R2",
+   "claim": "The attempt-06 S6 verdict NO_ELLIPSIS_FOUND (exit 3) is geometrically correct and deterministic, not a reader-capability artifact."
+  }
+ ],
+ "evidence_inputs": [
+  {"path": "evidence/20260916-route/attempt-06/run-ledger.json", "bytes": 28390, "sha256": "906c14330605122e9b600359892d4400171d62564707d50af26ef8d8bb32fa2c"},
+  {"path": "evidence/20260916-route/attempt-05/run-ledger.json", "bytes": 29772, "sha256": "17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218"},
+  {"path": "evidence/20260916-route/attempt-06/album-ellipsis-locate.json", "bytes": 8698, "sha256": "433e8693b1e23336628fab919042eca2c4903b0476c5a5ef22ff15f7d74edfb6"},
+  {"path": "evidence/20260916-route/attempt-06/album-open-verify.json", "bytes": 2961, "sha256": "a1e5fa491ac83f844f748683e51baf56e1b6d6f968e6f9d675a2fcb19486164d"},
+  {"path": "evidence/20260916-route/attempt-06/album-card-locate.json", "bytes": 1715, "sha256": "b822012d28e2efeb268b5cd602c956afaf87fa666301aa67452ba597c3b81493"},
+  {"path": "evidence/20260916-route/attempt-05/album-open-verify.json", "bytes": 2249, "sha256": "ffa5d9633804f819473674f57a9979d56e849882f32dfcfa4a2b5b1326083a9b", "verdict": "TARGET_MISMATCH"},
+  {"path": "evidence/20260916-route/attempt-05/album-card-locate-resume.json", "bytes": 1033, "sha256": "85bcbda2a8def94582bfffbf6f8aa6979a201de139eb46332ae02ee1dedcddd9"},
+  {"path": "/tmp/route6_frame_pre.jpg", "bytes": 62644, "sha256": "3dd1a3bf6d87b22e9f2fbd89884f2c459fb70d9ca4ecb160d96b16c363d19aec", "size": [327, 643], "mtime_local": "2026-09-17T23:17:28"},
+  {"path": "/tmp/route6_frame_post.jpg", "bytes": 66686, "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3", "size": [327, 643], "mtime_local": "2026-09-17T23:18:58"},
+  {"path": "/tmp/route5r_frame_pre.jpg", "bytes": 63914, "sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531", "mtime_local": "2026-09-17T18:32:32"},
+  {"path": "/tmp/route5r_frame_post.jpg", "bytes": 66686, "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3", "mtime_local": "2026-09-17T18:43:22"},
+  {"path": "evidence/20260916-route/tools/v4/locate_album_ellipsis.py", "bytes": 11436, "sha256": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4"},
+  {"path": "evidence/20260916-route/tools/v4/verify_album_open.py", "bytes": 6981, "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58"},
+  {"path": "evidence/20260916-route/tools/v4/locate_album_card.py", "bytes": 7025, "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162"},
+  {"path": "evidence/20260916-route/tools/v4/vision_reader.py", "bytes": 8369, "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8"},
+  {"path": "evidence/20260916-route/tools/vision/vision_ocr.swift", "bytes": 1070, "sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"},
+  {"path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr", "bytes": 67200, "sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5", "exists": true},
+  {"path": "~/.codex/sessions/2026/09/17/rollout-2026-09-17T23-14-51-01a0afef-4f66-7a62-9083-7cffad8c25b6.jsonl", "bytes": 4975687, "sha256": "4d4101f5f0c5c97105bc5678977834f67c756738eeb97f96fd6d56644811ac54", "role": "runtime journal of the attempt-06 run (written by the harness, not by the run author)"},
+  {"path": "~/.codex/sessions/2026/09/16/rollout-2026-09-16T19-28-38-01a0a9f9-d915-7d10-89f4-1b6772c681a2.jsonl", "bytes": 81966783, "sha256": "8683ea202c90392e07443fbd39ebd59a5bbdd239930c917ef1779c4afa5cbf0a", "role": "runtime journal containing the attempt-05 run (long-running session; attempt-05 evidence is on lines 7719/7722)"}
+ ],
+ "checks": [
+  {
+   "id": "R1-01",
+   "command": "stat -f \"inode=%i size=%z mtime=%Sm birth=%SB ctime=%Sc nlink=%l\" -t \"%Y-%m-%dT%H:%M:%S\" on the four /tmp frames",
+   "observed": "route6 pre: inode 124696053, 62644 B, mtime=birth=ctime 2026-09-17T23:17:28, nlink 1; route6 post: inode 124696180, 66686 B, mtime=birth=ctime 2026-09-17T23:18:58, nlink 1; route5r pre: inode 124593912, 63914 B, 18:32:32; route5r post: inode 124594685, 66686 B, 18:43:22",
+   "expected": "two independent creation times (18:43 vs 23:18), distinct inodes, no hardlink to the frozen file",
+   "match": "PASS",
+   "note": "the 23:18:58 file is NOT an mtime-preserving copy of the 18:43 file (a 'cp -p' would carry 18:43); nlink=1 excludes hardlink aliasing. A non-preserving copy would also show 23:18:58, so mtime alone cannot exclude copying - closed by R1-10/R1-11."
+  },
+  {
+   "id": "R1-02",
+   "command": "shasum -a 256 /tmp/route6_frame_{pre,post}.jpg /tmp/route5r_frame_{pre,post}.jpg; cmp /tmp/route6_frame_post.jpg /tmp/route5r_frame_post.jpg; cmp /tmp/route6_frame_pre.jpg /tmp/route5r_frame_pre.jpg",
+   "observed": "post shas identical (4cb8a6b4... both); cmp post = identical; pre shas differ (3dd1a3bf... vs 3d926e7d...); cmp pre = differ, first differing byte 8661 (line 41)",
+   "expected": "post byte-identical to attempt-05's post; pre frames genuinely different",
+   "match": "PASS",
+   "note": "the byte-identity is a confirmed fact (the attempt-06 ledger event 7 discloses it as a supporting_fact); the question is its cause, resolved in R1-10/R1-11."
+  },
+  {
+   "id": "R1-03",
+   "command": "read evidence/20260916-route/attempt-06/run-ledger.json events[seq==7].post_frame (python3 -B)",
+   "observed": "path /tmp/route6_frame_post.jpg, bytes 66686, size [327,643], sha256 4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3; timestamp_local 23:18:58..23:19:07; reader-verified ALBUM_OPEN_VERIFIED with changed_fraction 0.62538",
+   "expected": "ledger values equal the on-disk file and the current date-time facts",
+   "match": "PASS"
+  },
+  {
+   "id": "R1-04",
+   "command": "read evidence/20260916-route/attempt-05/run-ledger.json events[seq==12].post_frame (python3 -B)",
+   "observed": "path /tmp/route5r_frame_post.jpg, bytes 66686, size [327,643], sha256 4cb8a6b4...; post_ax 232 B e17385e3...; verify verdict TARGET_MISMATCH (exit 4), count_digits_read '75', changed_fraction 0.646749",
+   "expected": "attempt-05's post frame is the same bytes; its frozen verdict is TARGET_MISMATCH even though the album had opened",
+   "match": "PASS"
+  },
+  {
+   "id": "R1-05",
+   "command": "python3 -B Pillow: open pre/post, compare sizes; sha compare",
+   "observed": "pre (327,643) sha 3dd1a3bf...; post (327,643) sha 4cb8a6b4...; pre != post",
+   "expected": "post size [327,643]; pre and post are different files/images",
+   "match": "PASS"
+  },
+  {
+   "id": "R1-06",
+   "command": "python3 -B Pillow per-pixel recompute of the frozen S5 rule (L-convert, count abs(pre-post) > delta 12, bbox of changed pixels, round(frac,6))",
+   "observed": "changed_pixels=131493, changed_fraction=0.62538, changed_bbox=[12,9,314,643]; 131493/210261 = 0.6253798850000714 -> round6 = 0.62538",
+   "expected": "independently reproduce the frozen S5 diff block exactly",
+   "match": "PASS",
+   "note": "exact reproduction; the S5 diff numbers are not approximations."
+  },
+  {
+   "id": "R1-07",
+   "command": "python3 -B Pillow variant rules: abs(diff) >= 12; RGB max-channel abs(diff) > 12",
+   "observed": ">=12 -> 132640 px / 0.630835 / bbox [0,9,327,643]; RGB max-channel >12 -> 141663 px / 0.673748; frozen tool JSON uses 131493 / 0.62538, which is exactly the strict '>' gray-level rule",
+   "expected": "recorded value must equal the frozen tool's own documented rule, not a looser/tighter variant",
+   "match": "PASS",
+   "note": "rule sensitivity is ~1-7% absolute; the recorded number is the frozen rule's output."
+  },
+  {
+   "id": "R1-08",
+   "command": "shasum -a 256 evidence/20260916-route/attempt-05/album-open-verify.json; stat; git log --oneline -- <that path>; git show --stat e1658b7 (attempt-06 close commit)",
+   "observed": "sha ffa5d9633804f819473674f57a9979d56e849882f32dfcfa4a2b5b1326083a9b = the frozen claim; verdict TARGET_MISMATCH; file mtime 2026-09-17T18:43; exactly 1 commit touches it (e53f67b, 2026-09-17 18:46:53); the attempt-06 close commit e1658b7 contains 0 attempt-05 paths; git status clean",
+   "expected": "attempt-05's frozen verdict still TARGET_MISMATCH and not overwritten by attempt-06",
+   "match": "PASS"
+  },
+  {
+   "id": "R1-09",
+   "command": "python3 -B Pillow/numpy: strict->12 diff of route6 pre vs route5r pre; MAD scan over vertical shifts dy in [-60,60] on rows 250..600",
+   "observed": "changed_pixels=109137 (0.519055) vs strict >12; best vertical alignment dy=26 gives MAD 2.140 vs MAD 54.494 at dy=0; the target card title centre moved 460 -> 482 (v3 bbox [17,450,126,470] attempt-05 vs v4 bbox [15,476,129,488] attempt-06), matching the two click points [29,460] vs [27,482]",
+   "expected": "the two pre frames are real captures of a changed (re-scrolled/re-laid-out) album list, not the same image",
+   "match": "PASS",
+   "note": "the 6-wave pre frame is therefore demonstrably a fresh capture of a genuinely different surface at 23:17:28; the post frame is covered separately (R1-10/R1-11)."
+  },
+  {
+   "id": "R1-10",
+   "command": "python3 -B parse ~/.codex/sessions/2026/09/17/rollout-2026-09-17T23-14-51-...jsonl (attempt-06 run journal): locate the call that writes /tmp/route6_frame_post.jpg",
+   "observed": "line 266 ts=2026-09-17T15:18:58.493Z (23:18:58 local) function_call js: `const shot = await app.getScreenshot({emit:false}); const ax = await app.getAXState({emit:false,disableDiffing:true}); fs.writeFileSync(\"/tmp/route6_frame_post.jpg\", shot); fs.writeFileSync(\"/tmp/route6_ax_post.txt\", ax,\"utf8\")`; line 269 output: `saved post frame bytes=66686 ax_chars=176 at 2026-09-17T15:18:58.952Z`",
+   "expected": "an independent, machine-written record that a live getScreenshot call produced the post frame at 23:18:58 with exactly 66,686 bytes",
+   "match": "PASS",
+   "note": "this journal is written by the runtime harness, not by the run's author; it corroborates the ledger timing and the file size. The file mtime/birth (23:18:58) has not changed since (verified at 23:46)."
+  },
+  {
+   "id": "R1-11",
+   "command": "python3 -B parse ~/.codex/sessions/2026/09/16/rollout-2026-09-16T19-28-38-...jsonl (attempt-05 run journal), lines 7719/7722",
+   "observed": "line 7719 ts=2026-09-17T10:43:21.711Z (18:43:21.711 local): one click at [29,460] then `getScreenshot({emit:false})` written to /tmp/route5r_frame_post.jpg; line 7722 result: {\"t1\":\"2026-09-17T10:43:22.267Z\",\"shotBytes\":66686,\"postSha\":\"4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3\",\"axBytes\":232,\"axSha\":\"e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa\"}",
+   "expected": "attempt-05's byte-identical post frame was itself a live capture at 18:43:22, including its own sha",
+   "match": "PASS",
+   "note": "both post frames are independently journaled live captures at their own times; the byte-identity is therefore a property of the identically rendered album view (same window origin [0,78] in both runs, no cursor in capture, no clock in the 327x643 window frame, scroll-independent album view), not file reuse."
+  },
+  {
+   "id": "R1-12",
+   "command": "rg over ~/.codex/sessions for writeFileSync/cp/mv/ditto/rsync/install touching route6_frame_post.jpg (and route5r_frame_post.jpg)",
+   "observed": "the only writes to /tmp/route6_frame_post.jpg in the entire session store are the two writeFileSync lines of the capture call (line 209/210/212/427 touch the pre frame; line 269 the post frame), plus later read-only sha/ls checks; no cp/mv/ditto/rsync/install of the post frames was found",
+   "expected": "no file-copy operation anywhere in the audited journal",
+   "match": "PASS",
+   "note": "absence of a copy in the journal cannot by itself exclude an unlogged copy; combined with R1-10/R1-11 it is affirmative evidence of live capture."
+  },
+  {
+   "id": "R1-13",
+   "command": "python3 -B parse JPEG APP segments/EXIF/TIFF IFD0/ExifIFD and ICC; xattr -px com.apple.provenance on the four /tmp frames, both AX files and the two repo copies",
+   "observed": "no EXIF DateTime/DateTimeOriginal in any frame (APP1 ExifIFD holds only 0xA002/0xA003 = 327x643 pixel dimensions); ICC profile = Apple 'Color LCD' in all frames; com.apple.provenance = 01 02 00 D7BF6146600553CF on all six /tmp files of both runs, and 01 02 00 77B186D035 110C33 on the repo copies created by the later phase0 writer",
+   "expected": "determine whether pure file forensics can separate 'fresh capture of identical content' from 'byte-identical copy'",
+   "match": "UNKNOWN",
+   "note": "no file-embedded timestamp exists, so offline-only file forensics cannot decide it; the provenance xattr is shared by everything written into /tmp in both runs (per-creator token), so it has no discriminating power. This limitation is closed by the independent journal evidence (R1-10/R1-11), not by metadata."
+  },
+  {
+   "id": "R1-14",
+   "command": "shasum -a 256 evidence/20260916-route/tools/v4/*.py evidence/20260916-route/tools/vision/vision_ocr.swift; ls -la of the helper build dir",
+   "observed": "tool source shas equal the values frozen in attempt-06/route-runbook.md (22a4e9ef / bb52aff1 / ffa82aed / b77e3d51; helper source 4fc9fa2b); helper binary /var/folders/0r/.../T/vision_ocr_v4_build/vision_ocr exists (67,200 B, sha c7087d98...), matching every reader block",
+   "expected": "replays run against the frozen v4 toolchain; fail-closed path (binary_missing) not triggered",
+   "match": "PASS"
+  },
+  {
+   "id": "R2-01",
+   "command": "/opt/homebrew/bin/python3 -B evidence/20260916-route/tools/v4/locate_album_ellipsis.py /tmp/route6_frame_post.jpg --expect-start 2024/05/13 --expect-end 2024/05/17 --title-bbox 15,83,204,111 --expect-group-title 旻謙允禎成長日記   (3 runs; stdout captured, no artifact written)",
+   "observed": "runs 1-3: exit code 3, verdict NO_ELLIPSIS_FOUND, frame_sha256 4cb8a6b4..., album_title_band {x0 206, x1 326, y0 77, y1 121}; stdout sha256 = 433e8693b1e23336628fab919042eca2c4903b0476c5a5ef22ff15f7d74edfb6 for all three, byte-identical to the frozen evidence/20260916-route/attempt-06/album-ellipsis-locate.json",
+   "expected": "identical verdict/exit each time and byte-identical to the frozen artifact",
+   "match": "PASS"
+  },
+  {
+   "id": "R2-02",
+   "command": "same replay with the journal-recorded argv form `--expect-group-title 「旻謙允禎成長日記」`",
+   "observed": "exit 3, NO_ELLIPSIS_FOUND, stdout sha 433e8693... again byte-identical to the frozen artifact",
+   "expected": "the recorded argv (with corner brackets) reproduces the artifact exactly",
+   "match": "PASS",
+   "note": "adversarial nuance: the tool only strips whitespace from --expect-group-title, so the bracket form can never match an OCR token; on this frame the group title is not present anyway (group_title_bbox null), so the argument form is inert here and the verdict is unchanged. It would silently fail to bind a group-title band on a frame that did show the group name."
+  },
+  {
+   "id": "R2-03",
+   "command": "python3 -B parse evidence/20260916-route/attempt-06/album-ellipsis-locate.json (census / dots / triples / band)",
+   "observed": "census {rows 643, flat_rows 283, marked_pixels 8139, large_components 58}; 58 dot components; 6 triples: #1 region above_album_title_band, middle (304.5,49.5), dots (304.5,44.0)/(304.5,49.5)/(304.5,55.0), blocker null; #2 inside_text middle (21.0,126.0) blocked by '57張照片' conf 1.0; #3 inside_text middle (72.6,144.5) blocked by '2024.05.18' conf 1.0; #4 inside_text middle (20.7,144.7) blocked by '2024.05.18' conf 1.0; #5 inside_text middle (54.0,145.0) blocked by '2024.05.18' conf 1.0; #6 inside_text middle (54.0,145.0) blocked by '2024.05.18' conf 1.0; eligible candidates inside the album-title band: 0",
+   "expected": "all triple candidates enumerated with position and rejection reason; exactly one non-text candidate; zero candidates inside the band",
+   "match": "PASS"
+  },
+  {
+   "id": "R2-04",
+   "command": "python3 -B independent Pillow census (row median, flat_tol 25, flat_fraction 0.6, delta 45) over band [206..326]x[77..121] and over x296-314/y38-62",
+   "observed": "marked pixels inside the band = 0; region x296-314/y38-62 contains exactly three small blobs (x=304-305): y43-45, y49-50, y54-56 (ASCII map captured in the run log); distances above band top y0=77: dot cy 44.0 -> 33.0 px, cy 49.5 -> 27.5 px, cy 55.0 -> 22.0 px; candidate cx 304.5 is inside the band's x-range but 27.5 px above its y-range",
+   "expected": "band contains no vertical-ellipsis candidate; the only non-text triple is a genuine 3-blob vertical glyph above the band",
+   "match": "PASS",
+   "note": "prompt's 'about 28-33 px above band top' matches the upper/middle dots; exact per-dot values are 33.0 / 27.5 / 22.0 px."
+  },
+  {
+   "id": "R2-05",
+   "command": "/opt/homebrew/bin/python3 -B evidence/20260916-route/tools/v4/locate_album_card.py /tmp/route6_frame_pre.jpg --expect-start 2024/05/13 --expect-end 2024/05/17 --expect-count 57   (2 runs)",
+   "observed": "exit 0, verdict ELIGIBLE, title bbox [15,476,129,488], click_point [27,482], count_digits_read '57', count_text MATCH, margins 23 above / 51 below; stdout sha b822012d... = frozen artifact in both runs",
+   "expected": "ELIGIBLE / click_point [27,482] / count 57 MATCH / byte-identical JSON",
+   "match": "PASS"
+  },
+  {
+   "id": "R2-06",
+   "command": "/opt/homebrew/bin/python3 -B evidence/20260916-route/tools/v4/verify_album_open.py /tmp/route6_frame_pre.jpg /tmp/route6_frame_post.jpg --expect-start 2024/05/13 --expect-end 2024/05/17 --expect-count 57 --delta 12   (2 runs)",
+   "observed": "exit 0, verdict ALBUM_OPEN_VERIFIED, target title [15,83,204,111], count_digits_read '57' MATCH, post_ocr_words_seen ['2024/05/13~05/17','57張照片','2024.05.18','1~'], diff 131493/0.62538/[12,9,314,643]; stdout sha a1e5fa49... = frozen artifact in both runs",
+   "expected": "ALBUM_OPEN_VERIFIED / count 57 / post_ocr_words_seen contains 57張照片 / byte-identical JSON",
+   "match": "PASS"
+  },
+  {
+   "id": "R2-07",
+   "command": "python3 -B read the reader block of all three v4 tool JSONs (album-ellipsis-locate / album-open-verify / album-card-locate)",
+   "observed": "all three carry reader.helper.source_sha256 = 4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32 and helper.binary_sha256 = c7087d98... with calls (3,ok,0) / (3,ok,0)+(10,ok,0) / (3,ok,0)+(10,ok,0)",
+   "expected": "v4 reader block present with the frozen helper source sha",
+   "match": "PASS",
+   "note": "attempt-05's frozen album-open-verify.json is v3-era and has no reader block; the runbook applies the reader-block rule only to the three attempt-06 v4 JSONs."
+  },
+  {
+   "id": "R2-08",
+   "command": "python3 -B vision_reader read of /tmp/route6_frame_post.jpg (scale 3; read-only, stdout only)",
+   "observed": "word boxes: '2024/05/13~05/17' [15,83,204,111] conf 1.0; '57張照片' [15,121,65,134] conf 1.0; '2024.05.18' [15,140,79,154] conf 1.0; '1~' [51,190,68,200] conf 0.3; no OCR text above y=83",
+   "expected": "layout context for the S6 geometry",
+   "match": "PASS",
+   "note": "the frame's only vertical-ellipsis glyph sits in an unlabelled row (y 44-55) at the far right (x 304.5) above the album header (title y 83-111, count y 121-134, date section y 140-154) - consistent with a toolbar/header action, but its identity is unproven."
+  },
+  {
+   "id": "R2-09",
+   "command": "judgment synthesis over R2-01..R2-08 (no new command)",
+   "observed": "the S6 stop was produced by the frozen geometric eligibility rule (band y [77..121] derived from the S5 title bbox, right of title x>=206): the unique non-text three-dot candidate's middle dot (304.5,49.5) is outside the band (27.5 px above y0) and the band contains zero candidates (also true at raw pixel level). The reader layer was demonstrably working in the same run (title conf 1.0, count 57 MATCH, '57張照片' conf 1.0, 58 dot components, no reader failure recorded).",
+   "expected": "decide reader-capability vs rule-geometry as the cause of the stop",
+   "match": "PASS",
+   "note": "conclusion: RULE-GEOMETRY stop, not a reading-capability failure. UNKNOWN (cannot be decided from this wave's evidence): whether the y~44-55 glyph is the album-level menu, whether LINE exposes the album-level menu only on hover or at another row, and whether any allowed observation could have reached it. The control was never clicked/hovered and no menu was opened."
+  },
+  {
+   "id": "R2-10",
+   "command": "python3 -B parse the attempt-06 run journal for the actual executed argv of the three v4 tools",
+   "observed": "L252 ts=23:18:35 card locate argv; L280 ts=23:19:13 verify argv with --delta 12; L287 ts=23:19:18 ellipsis argv with --title-bbox 15,83,204,111 and --expect-group-title 「旻謙允禎成長日記」; all match the runbook S3/S5/S6 command blocks and the execution-rev22.md record",
+   "expected": "the recorded argv in runbook/execution record matches what actually ran",
+   "match": "PASS"
+  }
+ ],
+ "summary": {
+  "R1": {"verdict": "NO_REUSE_OR_FORGERY_DETECTED__TRUE_CAPTURE_SUPPORTED", "passes": 13, "unknowns": 1, "fails": 0, "basis": "byte-identity is confirmed and self-disclosed; both post frames are independently journaled live getScreenshot captures at their own times (23:18:58.493Z with 66,686 bytes; 18:43:21.7Z with shotBytes 66686 / postSha 4cb8a6b4...); pre frames differ with a coherent ~26 px scroll shift; attempt-05's frozen TARGET_MISMATCH artifact is untouched"},
+  "R2": {"verdict": "DETERMINISTIC__STOP_CAUSED_BY_RULE_GEOMETRY_NOT_READING", "passes": 10, "unknowns": 1, "fails": 0, "basis": "3x replay exit 3 NO_ELLIPSIS_FOUND with stdout byte-identical to the frozen JSON; band contains zero candidates at both rule and raw-pixel level; the only non-text candidate is a real 3-blob vertical glyph 22-33 px above the band"}
+ },
+ "key_finding": "The runtime's own session journal independently records live getScreenshot() calls writing both post frames at their own times (attempt-06: 23:18:58.493Z -> /tmp/route6_frame_post.jpg, shot bytes 66686; attempt-05: 18:43:21.7-22.8Z -> /tmp/route5r_frame_post.jpg, shotBytes 66686 with postSha 4cb8a6b4...). The bit-identical post frame is therefore a property of the identically rendered album view (same window origin [0,78], no cursor in capture, no clock in the 327x643 frame, scroll-independent album content), not reuse of the attempt-05 file; the byte-identity was also disclosed by attempt-06 itself in ledger event 7.",
+ "forgery_assessment": {
+  "signs_of_forgery_or_reuse": "none found",
+  "signs_of_misleading": "none found; the byte-identity to attempt-05 was proactively disclosed in the attempt-06 ledger (event 7 supporting_fact)",
+  "replay_integrity": "all three v4 tool replays produced stdout byte-identical to the frozen artifacts (433e8693 / a1e5fa49 / b822012d), i.e. the artifacts are exactly reproducible from the frozen inputs + frozen tools",
+  "frozen_artifact_integrity": "attempt-05 album-open-verify.json (ffa5d963..., TARGET_MISMATCH) unchanged, last touched by commit e53f67b (18:46:53); the attempt-06 close commit e1658b7 touches 0 attempt-05 paths; git status clean",
+  "residual_uncertainty": "pure offline file forensics cannot separate a fresh capture from a byte-identical copy (no EXIF timestamp; shared provenance xattr); this is closed only by the independent runtime journal"
+ },
+ "uncertainties": [
+  "UNKNOWN: whether the only vertical-ellipsis glyph (x 304.5, dots y 44.0/49.5/55.0, 22-33 px above the album-title band) is the album-level menu - this wave never clicked or hovered it and no menu was opened.",
+  "UNKNOWN: whether LINE exposes an album-level menu control elsewhere (e.g. only on hover) or how the frozen band rule would need to change to reach it; no evidence in this wave covers it.",
+  "LATENT (not exercised): --expect-group-title 「...」 with corner brackets can never match an OCR token (the tool strips only whitespace); on this frame the group title is absent so the verdict is unaffected, but on a frame that showed the group name the argument form would silently fail to bind the group band.",
+  "LIMIT: the no-copy check (R1-12) covers the Codex session store; a copy performed by an unlogged process cannot be excluded by log search alone - though the mtime/birth (23:18:58, unchanged at 23:46) plus the journal capture record give no reason to suspect one.",
+  "NOTE: attempt-05's runtime journal lives in a long-running session file dated 2026-09-16 (rollout-2026-09-16T19-28-38) rather than in the 2026-09-17 folder; this is why a date-scoped journal search alone would miss the attempt-05 capture."
+ ],
+ "replay_hygiene": {
+  "gui_input": "none (no click, no screenshot, no AX write)",
+  "frozen_artifacts": "unmodified (verified by sha256 before/after; git status clean)",
+  "python": "always -B (bytecode writing disabled)",
+  "images": "no image data placed in the conversation; paths + sha256 only",
+  "scratch_files": "three zero-byte /tmp stderr captures (recheck_ellipsis_stderr_1..3) were created and then deleted; no other files were written outside the two deliverables",
+  "git": "no commits, no ref changes"
+ }
+}

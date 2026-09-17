@@ -1,0 +1,135 @@
+{
+ "step": "REVERIFY_ON_START",
+ "captured_at_local": "2026-09-17T23:42:16+0800",
+ "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+ "git": {
+  "head": {
+   "cmd": "git rev-parse HEAD",
+   "exit": 0,
+   "stdout": "dfbe669b2f0c0e8f111949e03f0882c560c544c8",
+   "stderr": ""
+  },
+  "branch": {
+   "cmd": "git branch --show-current",
+   "exit": 0,
+   "stdout": "master",
+   "stderr": ""
+  },
+  "status_porcelain_initial": {
+   "note": "captured before creating attempt-07 (clean); re-captured after",
+   "clean_output": ""
+  },
+  "status_after_attempt07_dir_created": "?? .agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-07/\n",
+  "log_oneline_3": {
+   "cmd": "git log --oneline -3",
+   "exit": 0,
+   "stdout": "dfbe669 evidence(route): attempt-06 transient __pycache__ 異常紀錄（未追蹤、已可逆移除；凍結 v4 源碼不變）\ne1658b7 evidence(route): attempt-06 Stage 04 收尾 — 恰一次相簿卡輸入（ALBUM_OPEN_VERIFIED）後 S6 判 NO_ELLIPSIS_FOUND 即停（⋮ 未送、零副作用）；FINAL ledger＋execution-rev22 入庫\n7a376b0 evidence(route): attempt-06 pre-freeze 凍結入庫（gate-4＋v4 runbook＋ledger skeleton）— 任何輸入之前完成",
+   "stderr": ""
+  }
+ },
+ "sha256": {
+  "plan.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md",
+   "bytes": 284897,
+   "sha256": "4337e2b5c105901ce7c56956ecea5469894df2d2a29f099068c979584c71b6b2"
+  },
+  "handoff.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/handoff.md",
+   "bytes": 37582,
+   "sha256": "19c9c6d33c9fc2ea5aff2cd35948c6c5d81cb788285d6432b590520412b6883a"
+  },
+  "review/attempt-34/review_report.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review/attempt-34/review_report.md",
+   "bytes": 21675,
+   "sha256": "21c4bbb551070dbdfc7c155536c4651abc9492970311b739cf506dd1d2b8a57c"
+  },
+  "review/attempt-35/review_report.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review/attempt-35/review_report.md",
+   "bytes": 27040,
+   "sha256": "975142c3ad79098141a74e4bd1cebf107d8e307fc65ec42ef4c781e3d8c8582c"
+  },
+  "execution-rev22.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/execution-rev22.md",
+   "bytes": 30711,
+   "sha256": "c9b590802c7b27f34796c8623005ad106343bcf0c43b23b799cdb94fcfade131"
+  },
+  "execution-rev21.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/execution-rev21.md",
+   "bytes": 51931,
+   "sha256": "baec21e6472d5c2649e316496b2a9ecb6687859669d01a9f951cb9dc12aec18e"
+  },
+  "execution-rev19.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/execution-rev19.md",
+   "bytes": 15174,
+   "sha256": "8302005a03261747bd25fc21e823937a70389b940a50019b0437d8ff4c38cbfa"
+  },
+  "execution.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/execution.md",
+   "bytes": 33676,
+   "sha256": "d54011483e597bc572930b03fef7536a0743f8fb9d23744078b3b75953eb0242"
+  },
+  "result.md (current, pre-overwrite)": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/result.md",
+   "bytes": 6873,
+   "sha256": "7c0f3ab62eade530da3bdd134640c3450f4ad28182de32579fcb55effea837cc"
+  },
+  "e2e/attempt-06/e2e_report.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-06/e2e_report.md",
+   "bytes": 22481,
+   "sha256": "14b44c949b7e0062936cdfd7f33bd1352b4953996c0c47ce1014a2fc61d15b95"
+  }
+ },
+ "checks": {
+  "plan_expected": "4337e2b5c105901ce7c56956ecea5469894df2d2a29f099068c979584c71b6b2",
+  "plan_match": true,
+  "plan_lines": "2093",
+  "handoff_expected": "19c9c6d33c9fc2ea5aff2cd35948c6c5d81cb788285d6432b590520412b6883a",
+  "handoff_match": true,
+  "handoff_body": {
+   "cmd": "sed '$d' .agent/tasks/T20260916-0102-01-line-backup-acceptance/handoff.md | shasum -a 256",
+   "exit": 0,
+   "stdout": "dde0380161897bdf208a525100e7a6ca7970c0f5173607b882474b9eef18f179  -",
+   "stderr": "",
+   "expected": "dde0380161897bdf208a525100e7a6ca7970c0f5173607b882474b9eef18f179",
+   "body_bytes": "37297",
+   "body_bytes_expected": "37297"
+  },
+  "review34": {
+   "sha256_expected": "21c4bbb551070dbdfc7c155536c4651abc9492970311b739cf506dd1d2b8a57c",
+   "match": true,
+   "tail": "PLAN_APPROVED",
+   "blocker_major_lines": "64:- No BLOCKER findings. No MAJOR findings.\n68:None for approval. Rev23 resolves every item it was required to resolve: RV-33-1 (MAJOR, §22.6 row scope) and RV-33-2/3/4 (MINOR) from review/attempt-33, plus the carried RV-32-2/3/4/5 items from review/attempt-32; the Rev23 delta is confined to those fixes and the header/new-block records. The single new MINOR (RV-34-1) is documentary, non-gating, and does not invalidate goal alignment, implementation, safety, compatibility, rollback or acceptance. Note that any edit to plan.md — including folding RV-34-1 into the text — creates a new revision and requires a fresh independent review before Stage 03 handoff (approval binds to this hash only)."
+  },
+  "review35": {
+   "sha256_expected": "975142c3ad79098141a74e4bd1cebf107d8e307fc65ec42ef4c781e3d8c8582c",
+   "match": true,
+   "tail": "PLAN_APPROVED",
+   "blocker_major_lines": "56:- New-contradiction / scope-growth probe result: no BLOCKER, no MAJOR; the new text introduces one MINOR precision defect (RV-35-1); the mandated budget/boundary cross-check surfaced two pre-existing wording defects (RV-35-2, RV-35-3) that do not change authorization. The diff is confined exactly as claimed.\n75:No BLOCKER findings. No MAJOR findings. Three MINOR findings; none is gating, and none changes a budget, gate, tool binding, authorization, requirement or closure semantic."
+  },
+  "result_md_git_blob": "6cb3089e7930b55118079dbcc777de6a2b47584a",
+  "result_md_hash_object": "6cb3089e7930b55118079dbcc777de6a2b47584a",
+  "python_runtimes": {
+   "homebrew": {
+    "cmd": "/opt/homebrew/bin/python3 --version",
+    "exit": 0,
+    "stdout": "Python 3.14.3",
+    "stderr": ""
+   },
+   "usr_bin": {
+    "cmd": "/usr/bin/python3 --version",
+    "exit": 0,
+    "stdout": "Python 3.9.6",
+    "stderr": ""
+   }
+  },
+  "env_vision_ocr_bin": "",
+  "tmp_frames_present": {
+   "/tmp/route6_frame_pre.jpg": true,
+   "/tmp/route6_frame_post.jpg": true,
+   "/tmp/route5r_frame_post.jpg": true,
+   "/tmp/route6_ax_pre.txt": true,
+   "/tmp/route6_ax_post.txt": true,
+   "/tmp/route6_ledger_pre_normalize.json": true
+  }
+ }
+}

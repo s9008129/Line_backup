@@ -1,0 +1,48 @@
+{
+ "step": "e2",
+ "check": "rev22-freeze-set reverify (71 items)",
+ "captured_at_local": "2026-09-17T23:45:49+0800",
+ "freeze_set_file": {
+  "path": "evidence/20260917-freeze-set/rev22-freeze-set.json",
+  "bytes": 54713,
+  "sha256": "fea6eb7a932f9beb513bcb7ba5b9a2c0d70002ca9ed5368d0d2dd924cc8f81ff"
+ },
+ "recorded_counts": {
+  "artifacts_total": 71,
+  "hash_claims_checked": 17,
+  "byte_claims_checked": 4,
+  "mismatch_count": 0
+ },
+ "artifacts_listed": 71,
+ "recomputed": {
+  "missing": [],
+  "sha_mismatches": [
+   {
+    "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md",
+    "recorded": "426fe6a1c758e96667e970021a80e20b68396c5af6a4ccaf65672772c514734b",
+    "actual": "4337e2b5c105901ce7c56956ecea5469894df2d2a29f099068c979584c71b6b2"
+   },
+   {
+    "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/handoff.md",
+    "recorded": "df595831eab25bb405d1f084f1113963ce911713515c4c31faaf34e9362f0888",
+    "actual": "19c9c6d33c9fc2ea5aff2cd35948c6c5d81cb788285d6432b590520412b6883a"
+   }
+  ],
+  "git_worktree_vs_head_divergences": []
+ },
+ "mismatch_count_recomputed": 2,
+ "verdict": "MISMATCH",
+ "groups": {
+  "1.v4-tool-set": 5,
+  "2.vision-helper": 1,
+  "3.self-tests": 3,
+  "4.detector": 1,
+  "5.attempt-05": 9,
+  "6.user-fact": 7,
+  "8.task-artifacts": 6,
+  "5.attempt-03": 13,
+  "5.attempt-04": 8,
+  "4.tools-py": 8,
+  "supplemental.tools-tree": 10
+ }
+}

@@ -1,10 +1,13 @@
-# Final task result — Stage05 closing owner
+# Final task result — Stage05 closing (Rev23 wave)
 
 TASK_ID: `T20260916-0102-01-line-backup-acceptance`
 FINAL_GATE: ACCEPTED_WITH_SCOPED_BLOCKER
-STAGE05_ATTEMPT: `e2e/attempt-05` (append-only; supersedes the interim statement made between attempt-04 and attempt-05)
+STAGE05_ATTEMPT: `e2e/attempt-07` (new, append-only). This is the current closing acceptance; it supersedes the attempt-05-era closing statement whose byte-identity (`7c0f3ab6…` / 6,873 B / git blob `6cb3089e…`) was re-confirmed immediately before this overwrite (provenance: `e2e/attempt-07/evidence/00-start-state.json`, `56-frozen-anchors-rehash.json`).
+PRE_COMMIT_CORRECTION (2026-09-18, pre-commit window after external audit `REPORT_AUDIT_ISSUES`): `e2e/attempt-07/e2e_report.md` TEST_MATRIX row `V22_S5_BOUND_TO_V4_READER` failure-class restored to the verbatim `plan.md` §22.6/handoff cell — pre 35,998 B / `03094c12f8eaf860f8adef342836ca436a424978b018e49e5b3d502744283a91` → post 37,600 B / `8e12eb1deb16e8e35f348636ab7a44ea67056785e80ae9ef776160dd08099af8` (pre-correction byte copy: `/tmp/attempt-07_e2e_report_pre_correction.md`); `e2e/attempt-07/evidence/51-baseline-compare.json` `destination_inventory` corrected to 57 with source + `prior_fields`/`correction` — pre 1,729 B / `a97588f3533338620af6b0f1302cdf68f6aed42f552f2723138305a223d2e588` → post 3,542 B / `6b6c0acd4333dfeba24cf2f6a3effba7f72ea2996a251bb619981df2faf00545`; this table's report row updated accordingly; six-column tuple and NEXT_ACTION unchanged. PRE_COMMIT_CORRECTION (second, same window, rendering-only): one unescaped literal `|` in TEST_MATRIX row `V22_SCREEN_SCOPE_PROBE` escaped as `\|` (required inside GFM tables) so every table line renders 10 columns (per-row re-count verified: all 10); report pre 37,600 B / `8e12eb1d…` → post 38,483 B / `6416a5f45d2d39bc056a4729a4a4b097eab4dca801cd417d41aea8d6936aba07`; no semantic change, six-column tuple and NEXT_ACTION unchanged.
+PLAN_REVISION: 23 (`plan.md` SHA-256 `4337e2b5…`, 284,897 B); `handoff.md` SHA-256 `19c9c6d3…`, 37,582 B — both unchanged at attempt end.
+ACCEPTANCE_MODE: INTEGRATION (zero GUI; read-only re-hash + offline replay over the retained `/tmp` frames and the durable frozen artifacts; `E2E_REQUIRED: NO` per plan/handoff header). This attempt ran no GUI input of its own and is never reported as live/production E2E.
 
-## Orthogonal final status
+## Orthogonal final status (Stage-05 derived, never assumed)
 
 PRIMARY_OUTCOME_STATUS: UNKNOWN
 IMPLEMENTATION_STATUS: COMPLETE
@@ -14,49 +17,66 @@ INDEPENDENT_ACCEPTANCE_STATUS: PASS
 TASK_CLOSURE_STATUS: CORE_ACCEPTANCE_BLOCKED
 BASELINE_REGRESSION_DELTA: UNCHANGED
 
-The reusable local CLI/package and its acceptance evidence are independently accepted. The primary user outcome is not closed because exact source correspondence and a safe current GUI route remain unresolved. Each is a scoped, non-waivable CORE blocker — not an implementation or evidence defect.
+The reusable local CLI/package and its acceptance evidence remain independently accepted. The primary user outcome is not closed because the corrected route attempt (attempt-06) stopped non-AFFIRMATIVELY and the route closure decision is owner-reserved. The scoped CORE blocker is `CUA_ROUTE_DECISION` (`AUTHORITY_REQUIRED`, waiver not allowed); it is a route-disposition question for the owner, not an implementation or evidence defect.
 
-## What this closing update records (new evidence since attempt-04)
+## The two closure facts required by §22.5 (both re-derived by this attempt from fresh evidence)
 
-- The one-shot human gate was answered (part 2 = 「是」; the ellipsis observation was authorized) and the route attempt-03 run consumed exactly one current-target ellipsis input with **zero side effects**: `route_status=UNKNOWN`, decision `STOP; NO_RETRY; NEW_GATE_REQUIRED_FOR_ANY_FURTHER_ELLIPSIS_INPUT` (frame/AX evidence captured immediately; popup-menu state is not observable on any permitted surface).
-- The preserved `CONFIRMED v1` user-fact record **fails the §16.4 exact-equality contract on one field**: `answer.part_2.confirmed_album` = `2024/05/13～2024/05/17` while the required album label is `2024/05/13～05/17`. Per §16.4, any failed equality yields `UNRESOLVED` and there is no partial match — so `SOURCE_CORRESPONDENCE` remains `UNRESOLVED` and **BLK-01 remains open**. The interim "resolved" statement is corrected by `e2e/attempt-05`; the record is never rewritten, and 禎 U+798E / 楨 U+6968 stay separate strings/keys.
-- ANOM-01 (documentation, non-gating): the gate-answer file's back-reference (`603ab720…` / 1,585 B) does not match the durable record (`2cd7eccd…` / 1,746 B); 13 canonical variants produce no match; recorded only, not repaired.
-- Pre-commit artifact correction (same session, before this commit): `anchors/anchor-recheck.json` was regenerated because its first pass recorded *incomplete* expectations for four anchors (config placeholder `390cbdcf??`; state/run_log null SHA expectation; locator_tool null byte expectation) and therefore reported `sha_match=false` for three anchors despite byte-identical observations. Expectations now come from the durable record through `tools/regenerate-anchor-recheck.py` (fail-closed; each expectation asserted present in a named durable source), every observation re-derived identical, and the prior artifact SHA-256 `2189a10d…` is preserved in its `regeneration` block. No committed evidence was altered; only this uncommitted attempt was corrected.
-- No product code, tests, plan, handoff, execution, formal config/state/registry/run-log, or the 57 photos were modified; the destination remains 57 files / 17,924,900 bytes with the recorded per-file inventory.
+1. **Closure fact 1 — §16.4 source correspondence over the adopted v1.1 record: `CONFIRMED`.**
+   Re-derived with the unmodified `user_fact_v1_matches` from `src/line_backup_acceptance/common.py`: `True` over `evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1.json` (`a8c10551…`) and `False` over the preserved v1 (`2cd7eccd…`); exactly one leaf differs (`answer.part_2.confirmed_album`: `2024/05/13～2024/05/17` → `2024/05/13～05/17`); both files' bytes unchanged; the record's `evidence[]` entry (human-gate-answer `03ffff57…`) re-hashes via `_rehash_evidence_entries`; no normalization, no 禎 U+798E / 楨 U+6968 merge (codepoints recorded). `BLK-01-SOURCE-CORRESPONDENCE` closes at task level; ANOM-01 stays recorded, non-gating. Evidence: `e2e/attempt-07/evidence/10-source-fact-rederive.json`.
+2. **Closure fact 2 — corrected route attempt-06: `NON-AFFIRMATIVE`.**
+   Re-derived only from the frozen attempt-06 artifacts: exactly one input in the whole run (one album-card click = also the single navigation input, `click_count 1`, retry 0, menu-item 0, keyboard 0, app-acquisition 0; ellipsis input `UNSPENT 0/1`), S5 verdict `ALBUM_OPEN_VERIFIED` (exit 0, v4 reader block present), S6 verdict `NO_ELLIPSIS_FOUND` (exit 3, reader block present, no input spent after the failed precondition), no `route-result.json` / `manifest.json` written (stop-artifact policy), zero side effects (no menu opened, destination untouched). All 7 frozen artifacts' SHA-256 match the ledger records and the ledger's `frozen_inputs` pins; parent ledger `17b17203…`; `plan_binding` → `4337e2b5…`. Evidence: `e2e/attempt-07/evidence/20-route-ledger-verify.json`.
+   **Consequence (§22.5, non-AFFIRMATIVE branch):** the route stays a scoped CORE blocker, `ROUTE_NOT_NEEDED` is **not** taken (the owner chose B; branch A/B is owner-reserved), attempt-05's frozen `TARGET_MISMATCH` verdict and artifacts stand and were never re-scored, and neither branch runs automatically.
+
+## Verification matrix (six §22.6 rows, adjudicated by attempt-07)
+
+1. `V22_SOURCE_RECORD_V1_1_CONFIRMED` — **PASS** (WAIVER NOT_ALLOWED). Evidence: `10-source-fact-rederive.json`.
+2. `V22_ROUTE_ATTEMPT_06_SINGLE_ONESHOT` — **PASS** (WAIVER NOT_ALLOWED). Evidence: `20-route-ledger-verify.json`.
+3. `V22_S5_BOUND_TO_V4_READER` — **PASS** (WAIVER NOT_ALLOWED). All three verdicts carry the v4 reader block (`helper.source_sha256 4fc9fa2b…`, binary `c7087d98…`); the exempt tesseract detector `6ae9c250…` was never invoked (S7–S10 not executed). Evidence: `30-v4-reader-binding.json`, `45-replay-summary.json`.
+4. `V22_AFFIRMATIVE_MACHINE_OBSERVABLE_ONLY` — **PASS (constraint honored; not positive route evidence)** (WAIVER NOT_ALLOWED). This wave produced no AFFIRMATIVE claim at all, so the row's failure classification could not have fired. This PASS must not be read as the album-level ⋮ being proven.
+5. `V22_PRIOR_EVIDENCE_IMMUTABLE` — **PASS** (WAIVER NOT_ALLOWED). 38-anchor re-hash 0 mismatch; freeze-set 69/71 prior-evidence rows byte-identical (2 authority rows disclosed as the wave's own approved plan/handoff advancement). Evidence: `55-freeze-set-reverify.json`, `56-frozen-anchors-rehash.json`.
+6. `V22_SCREEN_SCOPE_PROBE` — **FAIL (non-gating)** (WAIVER NOT_ALLOWED). Re-run of the frozen v3 locator on the retained probe crops reproduces `TARGET_COUNT_MISMATCH` (exit 5) byte-identically; `screen_scope=UNAVAILABLE` recorded; never a CORE failure (NFR-V22-4). Evidence: `70-s2-probe-rederivation.json`.
 
 ## Blockers (scoped)
 
-- `BLK-01-SOURCE-CORRESPONDENCE` — scope CORE_ACCEPTANCE; result `BLOCKED (UNRESOLVED)`; class `AUTHORITY_REQUIRED`; evidence: `evidence/20260916-stage05/attempt-05/anchors/anchor-recheck.json`; next_action: owner/planner decision on the record remedy (below); waiver_allowed: NO.
-- `BLK-02-CUA-ROUTE-DECISION` — scope CORE_ACCEPTANCE; result `BLOCKED (UNKNOWN)`; class `AUTHORITY_REQUIRED`; evidence: route attempt-03 result/ledger/manifest (integrity PASS; one ellipsis input consumed; no retry); next_action: any further ⋮ input requires a new user gate and a new PLAN_REVISION; waiver_allowed: NO.
-- `BLK-03-INDEPENDENT-ACCEPTANCE` — PASS (CLOSED by `e2e/attempt-05`).
-- `ANOM-01-GATE-BACKREFERENCE` — recorded, non-gating.
+- `CUA_ROUTE_DECISION` — scope CORE_ACCEPTANCE; result `BLOCKED (non-AFFIRMATIVE after the single corrected route attempt)`; class `AUTHORITY_REQUIRED`; waiver_allowed: NO; owner-reserved (`ROUTE_NOT_NEEDED` deliberately not taken; no agent may take either branch). Next action: owner disposition (A/B below).
+- `BLK-01-SOURCE-CORRESPONDENCE` — **CLOSED at task level** by closure fact 1 (v1.1 adoption; §16.4 CONFIRMED). The product-level Source axis remains `UNRESOLVED` (disclosed axis fact, never promoted).
+- `ANOM-01-GATE-BACKREFERENCE` — recorded, non-gating, not repaired. `ANOM-06-01` (transient `__pycache__`) recorded at HEAD `dfbe669`; no pycache exists now; every run in this attempt used `-B`.
 
-## Required next evidence (two independent items)
+## Changed fields vs the superseded result-①
 
-1. A contract-valid source record: either an **authorized corrected versioned user-fact record** authored from the same preserved one-shot gate answer using the contract-derived album label, or a **new precise user answer** recorded in the §16.4 v1 form. The existing record is never rewritten; no merge or normalization of 禎/楨.
-2. Route disposition: close BLK-02 as a scoped blocker, or open a new user gate + new PLAN_REVISION (fresh review) before any further ⋮ input. Recording `ROUTE_NOT_NEEDED` would likewise be a Plan-time semantic decision requiring a new revision.
+The six column values are unchanged (`UNKNOWN | COMPLETE | BLOCKED | PASS | PASS | CORE_ACCEPTANCE_BLOCKED`; `BASELINE_REGRESSION_DELTA=UNCHANGED`) because the route remained a scoped CORE blocker throughout. Substantive changes: (1) `SOURCE_CORRESPONDENCE` `UNRESOLVED` → `CONFIRMED` (BLK-01 closed); (2) the route subject advanced from attempt-05's frozen stop to a corrected one-shot attempt executed under gate-4 with a definitive non-AFFIRMATIVE machine verdict (`STOPPED_AT_S6_NO_ELLIPSIS_FOUND`, exit 3; ellipsis input never spent) — the `CUA_ROUTE_DECISION` blocker remains; (3) `INDEPENDENT_ACCEPTANCE_STATUS` `PENDING` (Stage-04 snapshot) → `PASS` (this attempt). No field was promoted; nothing was waived.
 
-Both are authority-side decisions; no product work is pending. Any such change voids prior approvals and requires fresh review (plan.md:1443-1447).
+## NEXT_ACTION (owner only — no agent may take either branch; no product work is pending)
+
+- **Option A** — close the route `ROUTE_NOT_NEEDED`-style with the owner's explicit decision. The §19.3/§20.3(a) preconditions are re-verified in this attempt (source correspondence `CONFIRMED` over v1.1; no side effect needed — the 57 files are final for this wave; attempt-06's artifacts honestly record the observed outcome with zero side effects; residual uncertainty recorded).
+- **Option B** — a NEW `PLAN_REVISION` + a new one-shot gate to re-examine the ⋮ position rule (and, if authorized, another bounded observation). **B requires a fresh independent review and cannot run inside Rev23.**
+- Any later production Save-All flow must re-establish the route under its own new revision and gate with its own budget before it may act.
 
 ## Durable artifact identities
 
 | Artifact | Bytes | SHA-256 |
 |---|---:|---|
-| `plan.md` Rev18 | 204373 | `22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6` |
-| `handoff.md` Rev18-bound | 21347 | `9cf01d4eedc006cfff2217e3b610c8166cfb05c04919512e74a19f4aa20946c6` |
-| `execution.md` (frozen Stage 04) | 33676 | `d54011483e597bc572930b03fef7536a0743f8fb9d23744078b3b75953eb0242` |
-| `e2e/attempt-04/e2e_report.md` | 23777 | `188ebeaa0a57c806ebe1b29c9f883d15d673efb7b046594a29897f355b85370f` |
-| `e2e/attempt-05/e2e_report.md` | 15846 | `a76697e0c7e796549f4acf5360a3286044acb045a8749b53ec1d0981b2a374b8` |
-| `evidence/20260916-stage05/attempt-05/manifest.json` | 1693 | `0a42042f13b9ff7966835b6d90f38e8690d7de5dfe4bf60440eef10e72a7c2c8` |
-| `…/attempt-05/anchors/anchor-recheck.json` | 12308 | `612252b98a22a236f318bd62a74ba8593cb0672cc41f20900ae2a269b8fc82d3` |
-| `…/attempt-05/tools/regenerate-anchor-recheck.py` | 12666 | `3ea9ffcf858473dbd5661d10846d0a9169fbbbd82a72706cec91f462c6b0b336` |
-| `…/attempt-05/route-integrity/route-integrity-check.json` | 3664 | `7d1c4f8ade54d09f7968f5eaa0d632a8933aa026fcb3511a2268e58c4dfe847d` |
-| `…/attempt-05/source-identity/gate-back-reference-anomaly.json` | 496 | `b6bf03cb0e8e76c0255ad0e51377eaf3473fa2d65a416b09fbe03ddd6a10c990` |
-| `…/attempt-05/closure-arithmetic.json` | 5009 | `9c9d8b0944dff1fa920102db588410496dbdddbb088881056de056b2a2408d78` |
-| `evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json` | 1746 | `2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d` |
+| `plan.md` Rev23 | 284897 | `4337e2b5c105901ce7c56956ecea5469894df2d2a29f099068c979584c71b6b2` |
+| `handoff.md` (Rev23-bound, STAGE-03) | 37582 | `19c9c6d33c9fc2ea5aff2cd35948c6c5d81cb788285d6432b590520412b6883a` |
+| `execution-rev22.md` (Stage-04 snapshot) | 30711 | `c9b590802c7b27f34796c8623005ad106343bcf0c43b23b799cdb94fcfade131` |
+| `e2e/attempt-06/e2e_report.md` | 22481 | `14b44c949b7e0062936cdfd7f33bd1352b4953996c0c47ce1014a2fc61d15b95` |
+| `e2e/attempt-07/e2e_report.md` (this closing's report) | 38483 | `6416a5f45d2d39bc056a4729a4a4b097eab4dca801cd417d41aea8d6936aba07` |
+| `evidence/20260916-route/attempt-06/run-ledger.json` (FINAL) | 28390 | `906c14330605122e9b600359892d4400171d62564707d50af26ef8d8bb32fa2c` |
+| `evidence/20260916-route/attempt-06/album-card-locate.json` | 1715 | `b822012d28e2efeb268b5cd602c956afaf87fa666301aa67452ba597c3b81493` |
+| `evidence/20260916-route/attempt-06/album-open-verify.json` | 2961 | `a1e5fa491ac83f844f748683e51baf56e1b6d6f968e6f9d675a2fcb19486164d` |
+| `evidence/20260916-route/attempt-06/album-ellipsis-locate.json` | 8698 | `433e8693b1e23336628fab919042eca2c4903b0476c5a5ef22ff15f7d74edfb6` |
+| `evidence/20260916-route/attempt-06/screen-probe.json` | 6347 | `d696f442a9a835dc62f506722351d009690426db5afd748ecc9527782f27b07b` |
+| `evidence/20260916-route/attempt-06/gate-4-authorization.json` | 8979 | `e32ccd882b93b784e1faf3f3ea1df9732ab093e26f74a89622ac857159876272` |
+| `evidence/20260916-route/attempt-06/route-runbook.md` | 15707 | `716bca926dcb76663afc9b937479da480dd9d1841fbb52b1224945e25e1963a8` |
+| `evidence/20260916-route/attempt-05/run-ledger.json` (parent ledger, unchanged) | 29772 | `17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218` |
+| `evidence/20260916-route/attempt-05/album-open-verify.json` (frozen TARGET_MISMATCH) | 2249 | `ffa5d9633804f819473674f57a9979d56e849882f32dfcfa4a2b5b1326083a9b` |
+| `evidence/20260916-route/attempt-05/vision-ocr-crosscheck.json` | 10707 | `d3ebbaed3db446cfbecd01d74d132764b6a675232b9db9edd2d1af3071dd6d5b` |
+| `evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1.json` (adopted) | 1741 | `a8c1055137d14026f7ecbc15b4f06ee540b56114af3276b081a0be72d195c263` |
+| `evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json` (preserved) | 1746 | `2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d` |
 | `evidence/20260916-user-fact/human-gate-answer-20260917.json` | 1438 | `03ffff57d50a5f97e596749dfa6bbde50b5ab50253c1f34469cc896e89ef57f7` |
-| `evidence/20260916-route/attempt-03/route-result.json` | 11201 | `8b8a541a5af0bfad7cacbfaa2402037f9931b81368126d40f9896893ba1435f6` |
-| `evidence/20260916-route/attempt-03/run-ledger.json` | 6915 | `77c4f86c21f61df08614d069d621816ede6a1465c794813b7977d2f784e5f2aa` |
-| `evidence/20260916-route/attempt-03/manifest.json` | 4251 | `effaaaa0f59066539686abf8849b42523361002acfe3a12577aa6a323c64ca92` |
 
-No product code, tests, plan, handoff, execution record, formal state/config/run log, or photos were edited to create this result artifact.
+Attempt-07 evidence (commands, timestamps, observed values per re-derivation step) is indexed in `e2e/attempt-07/e2e_report.md` and stored under `e2e/attempt-07/evidence/` (`00-start-state.json` … `99-end-state.json`). Offline replay note: both `/tmp/route6_frame_pre.jpg` (`3dd1a3bf…`) and `/tmp/route6_frame_post.jpg` (`4cb8a6b4…`) were still present and each frozen v4 tool re-ran byte-identically (`ELIGIBLE` / `ALBUM_OPEN_VERIFIED` / `NO_ELLIPSIS_FOUND` exit 3).
+
+## No-touch statement
+
+No frozen artifact was modified to create this closing: v1/v2/v3/v4 tools, self-tests, attempt-01..05 artifacts, attempts 02–06 reports, gates 1–3, both ledgers, archived handoffs, the destination's 57 files, and the formal config/state/run-log are all unchanged (38/38 anchors OK; baseline byte-identical `ab6747f2…`, 57 files / 17,924,900 B). No GUI input, no capture, no keyboard/AX write, and no conversation image was produced by this attempt.

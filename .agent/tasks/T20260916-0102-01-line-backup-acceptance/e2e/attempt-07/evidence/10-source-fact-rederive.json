@@ -1,0 +1,198 @@
+{
+ "step": "a",
+ "check": "V22_SOURCE_RECORD_V1_1_CONFIRMED (closure fact 1, §16.4 exact-equality re-derivation)",
+ "captured_at_local": "2026-09-17T23:42:36+0800",
+ "runtime": "3.14.3",
+ "python": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+ "loaded_module": {
+  "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/common.py",
+  "bytes": 34351,
+  "sha256": "df9fe0bc6333a8afec6f0bc87b336cf905e3683a209cbc8155190d4e5a0c60c0"
+ },
+ "function_source_sha256": "26ea4075cbc0c4558c5affac7c35562fcac045d699221e4fb358478614213f66",
+ "normalization_applied": "NONE — raw JSON parsed and compared with the module's exact-equality rules only; no Unicode normalization (NFC/NFD/NFKC), no case folding, no whitespace folding, no 禎(U+798E)/楨(U+6968) merge, no other rewrite was applied to any string before or after the call",
+ "files": {
+  "v1": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json",
+   "bytes": 1746,
+   "sha256": "2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d"
+  },
+  "v1.1": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1.json",
+   "bytes": 1741,
+   "sha256": "a8c1055137d14026f7ecbc15b4f06ee540b56114af3276b081a0be72d195c263"
+  }
+ },
+ "parameters": {
+  "app_identifier": "jp.naver.line.mac",
+  "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+  "fp": {
+   "start_date": "2024-05-13",
+   "end_date": "2024-05-17",
+   "expected_images": 57
+  },
+  "group_key_built_from_record": "line:jp.naver.line.mac:旻謙允禎成長日記",
+  "group_key_matches_expected_literal": true
+ },
+ "call_v1_1": {
+  "result": true,
+  "expected": true
+ },
+ "call_v1": {
+  "result": false,
+  "expected": false
+ },
+ "rehash_evidence_v1_1": {
+  "result": true,
+  "expected": true
+ },
+ "rehash_evidence_v1": {
+  "result": true,
+  "expected": true
+ },
+ "evidence_entry": {
+  "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-user-fact/human-gate-answer-20260917.json",
+  "bytes": 1438,
+  "sha256": "03ffff57d50a5f97e596749dfa6bbde50b5ab50253c1f34469cc896e89ef57f7"
+ },
+ "evidence_entry_rehashed_ok": true,
+ "leaf_diff": {
+  "keys_v1": 27,
+  "keys_v1_1": 27,
+  "differing": [
+   "/answer/part_2/confirmed_album"
+  ],
+  "details": {
+   "/answer/part_2/confirmed_album": {
+    "v1": "2024/05/13～2024/05/17",
+    "v1_1": "2024/05/13～05/17",
+    "v1_codepoints": [
+     "0x32",
+     "0x30",
+     "0x32",
+     "0x34",
+     "0x2f",
+     "0x30",
+     "0x35",
+     "0x2f",
+     "0x31",
+     "0x33",
+     "0xff5e",
+     "0x32",
+     "0x30",
+     "0x32",
+     "0x34",
+     "0x2f",
+     "0x30",
+     "0x35",
+     "0x2f",
+     "0x31",
+     "0x37"
+    ],
+    "v1_1_codepoints": [
+     "0x32",
+     "0x30",
+     "0x32",
+     "0x34",
+     "0x2f",
+     "0x30",
+     "0x35",
+     "0x2f",
+     "0x31",
+     "0x33",
+     "0xff5e",
+     "0x30",
+     "0x35",
+     "0x2f",
+     "0x31",
+     "0x37"
+    ]
+   }
+  }
+ },
+ "char_discipline": {
+  "v1_confirmed_album": {
+   "value": "2024/05/13～2024/05/17",
+   "codepoints": [
+    "0x32",
+    "0x30",
+    "0x32",
+    "0x34",
+    "0x2f",
+    "0x30",
+    "0x35",
+    "0x2f",
+    "0x31",
+    "0x33",
+    "0xff5e",
+    "0x32",
+    "0x30",
+    "0x32",
+    "0x34",
+    "0x2f",
+    "0x30",
+    "0x35",
+    "0x2f",
+    "0x31",
+    "0x37"
+   ],
+   "contains_ascii_tilde_0x7E": false,
+   "contains_ff5e_uwave": true
+  },
+  "v1_1_confirmed_album": {
+   "value": "2024/05/13～05/17",
+   "codepoints": [
+    "0x32",
+    "0x30",
+    "0x32",
+    "0x34",
+    "0x2f",
+    "0x30",
+    "0x35",
+    "0x2f",
+    "0x31",
+    "0x33",
+    "0xff5e",
+    "0x30",
+    "0x35",
+    "0x2f",
+    "0x31",
+    "0x37"
+   ],
+   "contains_ascii_tilde_0x7E": false,
+   "contains_ff5e_uwave": true
+  },
+  "raw_requested_group": {
+   "codepoints": [
+    "0x65fb",
+    "0x8b19",
+    "0x5141",
+    "0x798e",
+    "0x6210",
+    "0x9577",
+    "0x65e5",
+    "0x8a18"
+   ],
+   "contains_U798E": true,
+   "contains_U6968": false
+  },
+  "raw_persisted_group": {
+   "codepoints": [
+    "0x65fb",
+    "0x8b19",
+    "0x5141",
+    "0x6968",
+    "0x6210",
+    "0x9577",
+    "0x65e5",
+    "0x8a18"
+   ],
+   "contains_U798E": false,
+   "contains_U6968": true
+  }
+ },
+ "verdict": {
+  "check": "v1.1 → True, v1 → False, evidence re-hash OK, no normalization, no 禎/楨 merge",
+  "result": "CONFIRMED over the v1.1 record and over no other record"
+ }
+}

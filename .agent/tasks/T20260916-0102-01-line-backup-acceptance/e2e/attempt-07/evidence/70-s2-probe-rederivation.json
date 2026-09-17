@@ -1,0 +1,49 @@
+{
+ "step": "f-row6-supporting",
+ "check": "V22_SCREEN_SCOPE_PROBE re-derivation (SUPPORTING / NON_GATING)",
+ "captured_at_local": "2026-09-17T23:50:54",
+ "method": "offline re-run of the frozen v3 locate_album_card.py (500fcadb…) on the retained /tmp S2 probe crops; stdout only, no --out; exit codes observed directly; zero GUI",
+ "crops": {
+  "/tmp/route6_probe_crop_s2.png": {
+   "sha256": "f90ebea9793ff34716cf2c0ae78366c283e3adfbaff8ca867382b50a80f5d469",
+   "expected": "f90ebea9793ff34716cf2c0ae78366c283e3adfbaff8ca867382b50a80f5d469"
+  },
+  "/tmp/route6_probe_crop_s1.png": {
+   "sha256": "7f656159d27a3c775a3ce32a290348125f4aa4424be6f8f27d7f2b22328fc652",
+   "expected": "7f656159d27a3c775a3ce32a290348125f4aa4424be6f8f27d7f2b22328fc652"
+  }
+ },
+ "runs": [
+  {
+   "crop": "s2",
+   "cmd": "/opt/homebrew/bin/python3 -B evidence/20260916-route/tools/locate_album_card.py /tmp/route6_probe_crop_s2.png --expect-start 2024/05/13 --expect-end 2024/05/17 --expect-count 57",
+   "exit_code": 5,
+   "stdout_file": "70-s2-probe-s2.stdout.json",
+   "stdout_sha256": "a315f7a0e1d06b86ee23c8236fb7d2687382f392c16f91ca1844c1594414de7d",
+   "recorded_tmp_output_sha256": "a315f7a0e1d06b86ee23c8236fb7d2687382f392c16f91ca1844c1594414de7d",
+   "byte_identical_to_recorded": true,
+   "verdict": "TARGET_COUNT_MISMATCH",
+   "count_digits_read": "5"
+  },
+  {
+   "crop": "s1",
+   "cmd": "/opt/homebrew/bin/python3 -B evidence/20260916-route/tools/locate_album_card.py /tmp/route6_probe_crop_s1.png --expect-start 2024/05/13 --expect-end 2024/05/17 --expect-count 57",
+   "exit_code": 5,
+   "stdout_file": "70-s2-probe-s1.stdout.json",
+   "stdout_sha256": "ce1b0cedcd97d5c13f26e06f27d06b09d5df2d8ef3983f8c7e103b3aa3767073",
+   "recorded_tmp_output_sha256": "ce1b0cedcd97d5c13f26e06f27d06b09d5df2d8ef3983f8c7e103b3aa3767073",
+   "byte_identical_to_recorded": true,
+   "verdict": "TARGET_COUNT_MISMATCH",
+   "count_digits_read": "27"
+  }
+ ],
+ "frozen_screen_probe_artifact": "evidence/20260916-route/attempt-06/screen-probe.json",
+ "frozen_screen_probe_sha256": "d696f442a9a835dc62f506722351d009690426db5afd748ecc9527782f27b07b",
+ "result": {
+  "screen_scope": "UNAVAILABLE",
+  "both_scales_TARGET_COUNT_MISMATCH_exit5": true,
+  "never_a_CORE_failure": true,
+  "gating": "NON_GATING (NFR-V22-4); never reported as CORE failure",
+  "note": "re-derivation reproduces stage-04's SUPPORTING result byte-identically; the row's check result remains FAIL (non-gating) as recorded"
+ }
+}

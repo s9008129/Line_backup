@@ -1,0 +1,133 @@
+{
+ "step": "d",
+ "check": "offline replay of the frozen v4 tools over the attempt-06 frames (zero GUI)",
+ "captured_at_local": "2026-09-17T23:44:49+0800",
+ "replay_note": "stdout-only (no --out flag): the frozen attempt-06 artifacts were never opened for write; only attempt-07/evidence/** received new bytes",
+ "frames": {
+  "/tmp/route6_frame_pre.jpg": {
+   "path": "/tmp/route6_frame_pre.jpg",
+   "bytes": 62644,
+   "sha256": "3dd1a3bf6d87b22e9f2fbd89884f2c459fb70d9ca4ecb160d96b16c363d19aec"
+  },
+  "/tmp/route6_frame_post.jpg": {
+   "path": "/tmp/route6_frame_post.jpg",
+   "bytes": 66686,
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3"
+  }
+ },
+ "helper": {
+  "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+  "binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+  "matches_attempt06_binary_c7087d98": true
+ },
+ "runs": [
+  {
+   "id": "S3",
+   "cmd": "/opt/homebrew/bin/python3 -B evidence/20260916-route/tools/v4/locate_album_card.py /tmp/route6_frame_pre.jpg --expect-start 2024/05/13 --expect-end 2024/05/17 --expect-count 57",
+   "window_local": "23:44:02..23:44:03+0800",
+   "stdout_file": "40-replay-s3.stdout.json",
+   "exit_file": "40-replay-s3.exit.txt",
+   "stderr_file": "40-replay-s3.stderr.txt",
+   "expected_frozen_artifact": "album-card-locate.json",
+   "exit_code": 0,
+   "stdout_sha256": "b822012d28e2efeb268b5cd602c956afaf87fa666301aa67452ba597c3b81493",
+   "stdout_bytes": 1715,
+   "frozen_artifact_sha256": "b822012d28e2efeb268b5cd602c956afaf87fa666301aa67452ba597c3b81493",
+   "frozen_artifact_bytes": 1715,
+   "stdout_byte_identical_to_frozen_artifact": true,
+   "stderr": "",
+   "verdict_reproduced": "ELIGIBLE",
+   "reader_calls": [
+    {
+     "scale": 3,
+     "outcome": "ok",
+     "exit_code": 0,
+     "stdout_sha256": "3356821d9de1e1ed22e637d35c0d020da3b70352d6e7c7348ee04bc9f172b14d"
+    },
+    {
+     "scale": 10,
+     "outcome": "ok",
+     "exit_code": 0,
+     "stdout_sha256": "313a055588102319d990233641d78524759e5e01953c0298667003c2a09b1c51"
+    }
+   ],
+   "reader_helper": {
+    "resolved_from": "build_path",
+    "binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+    "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+   }
+  },
+  {
+   "id": "S5",
+   "cmd": "/opt/homebrew/bin/python3 -B evidence/20260916-route/tools/v4/verify_album_open.py /tmp/route6_frame_pre.jpg /tmp/route6_frame_post.jpg --expect-start 2024/05/13 --expect-end 2024/05/17 --expect-count 57 --delta 12",
+   "window_local": "23:44:14..23:44:15+0800",
+   "stdout_file": "41-replay-s5.stdout.json",
+   "exit_file": "41-replay-s5.exit.txt",
+   "stderr_file": "41-replay-s5.stderr.txt",
+   "expected_frozen_artifact": "album-open-verify.json",
+   "exit_code": 0,
+   "stdout_sha256": "a1e5fa491ac83f844f748683e51baf56e1b6d6f968e6f9d675a2fcb19486164d",
+   "stdout_bytes": 2961,
+   "frozen_artifact_sha256": "a1e5fa491ac83f844f748683e51baf56e1b6d6f968e6f9d675a2fcb19486164d",
+   "frozen_artifact_bytes": 2961,
+   "stdout_byte_identical_to_frozen_artifact": true,
+   "stderr": "",
+   "verdict_reproduced": "ALBUM_OPEN_VERIFIED",
+   "reader_calls": [
+    {
+     "scale": 3,
+     "outcome": "ok",
+     "exit_code": 0,
+     "stdout_sha256": "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426"
+    },
+    {
+     "scale": 10,
+     "outcome": "ok",
+     "exit_code": 0,
+     "stdout_sha256": "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+    }
+   ],
+   "reader_helper": {
+    "resolved_from": "build_path",
+    "binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+    "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+   }
+  },
+  {
+   "id": "S6",
+   "cmd": "/opt/homebrew/bin/python3 -B evidence/20260916-route/tools/v4/locate_album_ellipsis.py /tmp/route6_frame_post.jpg --expect-start 2024/05/13 --expect-end 2024/05/17 --title-bbox 15,83,204,111 --expect-group-title 旻謙允禎成長日記",
+   "window_local": "23:44:15+0800",
+   "stdout_file": "42-replay-s6.stdout.json",
+   "exit_file": "42-replay-s6.exit.txt",
+   "stderr_file": "42-replay-s6.stderr.txt",
+   "expected_frozen_artifact": "album-ellipsis-locate.json",
+   "exit_code": 3,
+   "stdout_sha256": "433e8693b1e23336628fab919042eca2c4903b0476c5a5ef22ff15f7d74edfb6",
+   "stdout_bytes": 8698,
+   "frozen_artifact_sha256": "433e8693b1e23336628fab919042eca2c4903b0476c5a5ef22ff15f7d74edfb6",
+   "frozen_artifact_bytes": 8698,
+   "stdout_byte_identical_to_frozen_artifact": true,
+   "stderr": "",
+   "verdict_reproduced": "NO_ELLIPSIS_FOUND",
+   "reader_calls": [
+    {
+     "scale": 3,
+     "outcome": "ok",
+     "exit_code": 0,
+     "stdout_sha256": "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426"
+    }
+   ],
+   "reader_helper": {
+    "resolved_from": "build_path",
+    "binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+    "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+   }
+  }
+ ],
+ "verdict": {
+  "verdicts_reproduced": true,
+  "all_stdout_byte_identical_to_frozen_artifacts": true,
+  "pycache_created_by_replay": false,
+  "statement": "All three frozen v4 verdicts reproduced on the retained /tmp frames: ELIGIBLE (exit 0) / ALBUM_OPEN_VERIFIED (exit 0) / NO_ELLIPSIS_FOUND (exit 3); the replay stdout is byte-identical to the frozen attempt-06 JSONs and reused the same helper binary c7087d98…; zero GUI input was used."
+ }
+}

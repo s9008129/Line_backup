@@ -1,0 +1,97 @@
+{
+ "step": "g-end-state",
+ "captured_at_local": "2026-09-17T23:51:27",
+ "git": {
+  "head": {
+   "cmd": "git rev-parse HEAD",
+   "exit": 0,
+   "stdout": "dfbe669b2f0c0e8f111949e03f0882c560c544c8\n",
+   "stderr": ""
+  },
+  "branch": {
+   "cmd": "git branch --show-current",
+   "exit": 0,
+   "stdout": "master\n",
+   "stderr": ""
+  },
+  "status_porcelain": {
+   "cmd": "git status --porcelain",
+   "exit": 0,
+   "stdout": "?? .agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-07/\n?? evidence/20260917-owner-briefing/owner-explanation-attempt-06.md\n",
+   "stderr": ""
+  },
+  "log_oneline_3": {
+   "cmd": "git log --oneline -3",
+   "exit": 0,
+   "stdout": "dfbe669 evidence(route): attempt-06 transient __pycache__ 異常紀錄（未追蹤、已可逆移除；凍結 v4 源碼不變）\ne1658b7 evidence(route): attempt-06 Stage 04 收尾 — 恰一次相簿卡輸入（ALBUM_OPEN_VERIFIED）後 S6 判 NO_ELLIPSIS_FOUND 即停（⋮ 未送、零副作用）；FINAL ledger＋execution-rev22 入庫\n7a376b0 evidence(route): attempt-06 pre-freeze 凍結入庫（gate-4＋v4 runbook＋ledger skeleton）— 任何輸入之前完成\n",
+   "stderr": ""
+  }
+ },
+ "rehash": {
+  "plan.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md",
+   "bytes": 284897,
+   "sha256": "4337e2b5c105901ce7c56956ecea5469894df2d2a29f099068c979584c71b6b2"
+  },
+  "handoff.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/handoff.md",
+   "bytes": 37582,
+   "sha256": "19c9c6d33c9fc2ea5aff2cd35948c6c5d81cb788285d6432b590520412b6883a"
+  },
+  "review/attempt-34": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review/attempt-34/review_report.md",
+   "bytes": 21675,
+   "sha256": "21c4bbb551070dbdfc7c155536c4651abc9492970311b739cf506dd1d2b8a57c"
+  },
+  "review/attempt-35": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review/attempt-35/review_report.md",
+   "bytes": 27040,
+   "sha256": "975142c3ad79098141a74e4bd1cebf107d8e307fc65ec42ef4c781e3d8c8582c"
+  },
+  "execution-rev22.md": {
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/execution-rev22.md",
+   "bytes": 30711,
+   "sha256": "c9b590802c7b27f34796c8623005ad106343bcf0c43b23b799cdb94fcfade131"
+  }
+ },
+ "attempt06_artifacts_rehash": {
+  "gate-4-authorization.json": {
+   "bytes": 8979,
+   "sha256": "e32ccd882b93b784e1faf3f3ea1df9732ab093e26f74a89622ac857159876272"
+  },
+  "route-runbook.md": {
+   "bytes": 15707,
+   "sha256": "716bca926dcb76663afc9b937479da480dd9d1841fbb52b1224945e25e1963a8"
+  },
+  "run-ledger.json": {
+   "bytes": 28390,
+   "sha256": "906c14330605122e9b600359892d4400171d62564707d50af26ef8d8bb32fa2c"
+  },
+  "album-card-locate.json": {
+   "bytes": 1715,
+   "sha256": "b822012d28e2efeb268b5cd602c956afaf87fa666301aa67452ba597c3b81493"
+  },
+  "album-open-verify.json": {
+   "bytes": 2961,
+   "sha256": "a1e5fa491ac83f844f748683e51baf56e1b6d6f968e6f9d675a2fcb19486164d"
+  },
+  "album-ellipsis-locate.json": {
+   "bytes": 8698,
+   "sha256": "433e8693b1e23336628fab919042eca2c4903b0476c5a5ef22ff15f7d74edfb6"
+  },
+  "screen-probe.json": {
+   "bytes": 6347,
+   "sha256": "d696f442a9a835dc62f506722351d009690426db5afd748ecc9527782f27b07b"
+  }
+ },
+ "route6_frames_present": {
+  "/tmp/route6_frame_pre.jpg": {
+   "exists": true,
+   "sha256": "3dd1a3bf6d87b22e9f2fbd89884f2c459fb70d9ca4ecb160d96b16c363d19aec"
+  },
+  "/tmp/route6_frame_post.jpg": {
+   "exists": true,
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3"
+  }
+ }
+}

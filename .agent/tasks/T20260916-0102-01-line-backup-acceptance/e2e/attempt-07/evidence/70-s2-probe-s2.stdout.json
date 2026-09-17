@@ -1,0 +1,86 @@
+{
+ "tool": "locate_album_card",
+ "frame": "/tmp/route6_probe_crop_s2.png",
+ "frame_sha256": "f90ebea9793ff34716cf2c0ae78366c283e3adfbaff8ca867382b50a80f5d469",
+ "frame_size": [
+  654,
+  1286
+ ],
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   33,
+   952,
+   253,
+   975
+  ]
+ },
+ "ocr_words_seen": [
+  "ee",
+  "旻",
+  "謙",
+  "允",
+  "禎",
+  "成",
+  "長",
+  "日",
+  "記",
+  "[«}}",
+  "vi=pin",
+  "記事",
+  "本",
+  "2024/05/20~05/24",
+  "。",
+  "53",
+  "°",
+  ",",
+  "-",
+  "3",
+  "_——_",
+  "ae",
+  "2024/05/13~05/17",
+  ":",
+  "57",
+  "°",
+  "aoa.",
+  "vr",
+  "~~",
+  "—",
+  "LE",
+  "z",
+  "r",
+  "be",
+  "|",
+  "—",
+  "’",
+  "-",
+  "%",
+  ":",
+  "="
+ ],
+ "band_top_bright_row": 919,
+ "band_bottom_bright_row": 1066,
+ "margin_above_px": 44,
+ "margin_below_px": 103,
+ "count_box": [
+  25,
+  977,
+  193,
+  1007
+ ],
+ "count_digits_read": "5",
+ "count_text": "MISMATCH",
+ "click_point": [
+  45,
+  963
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "verdict": "TARGET_COUNT_MISMATCH"
+}

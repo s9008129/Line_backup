@@ -1,0 +1,56 @@
+{
+ "step": "e",
+ "check": "BASELINE_REGRESSION_DELTA (literal argv re-run)",
+ "captured_at_local": "2026-09-17T23:45:48+0800",
+ "literal_argv": "cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup && LC_ALL=C PATH=/usr/bin:/bin PYTHONHASHSEED=0 /usr/bin/python3 /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/authority_baseline.py --config /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/config/line_backup_config.json --state /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json --run-log /Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/run_log.md --destination /Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57 --output /private/tmp/line-backup-acceptance-baseline/current.json",
+ "exit_code": 0,
+ "current": {
+  "path": "/private/tmp/line-backup-acceptance-baseline/current.json",
+  "bytes": 19005,
+  "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5"
+ },
+ "pre": {
+  "path": "evidence/20260916-baseline/attempt-01/baseline-pre.json",
+  "bytes": 19005,
+  "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5"
+ },
+ "byte_identical": true,
+ "cmp_argv_recorded": "cmp -s /private/tmp/line-backup-acceptance-baseline/current.json evidence/20260916-baseline/attempt-01/baseline-pre.json",
+ "destination_inventory": {
+  "files": 57,
+  "files_source": "derived (pre-commit correction 2026-09-18): evidence/20260916-baseline/attempt-01/baseline-pre.json destination.entries length == 57 and destination.regular_files == 57; independent read-only walk of the destination on 2026-09-18 counted 57 files / 17,924,900 bytes, matching 56-frozen-anchors-rehash.json destination_inventory_recheck. The prior null meant 'not populated in this field', never a negative observation.",
+  "bytes": 17924900
+ },
+ "pre_expected": {
+  "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5",
+  "bytes": 19005,
+  "files": 57,
+  "total_bytes": 17924900
+ },
+ "verdict": {
+  "baseline_delta": "UNCHANGED",
+  "files_57": true,
+  "bytes_17924900": true
+ },
+ "prior_fields": {
+  "destination_inventory.files": null,
+  "verdict.files_57": false
+ },
+ "correction": {
+  "reason": "the two fields were unpopulated pre-commit placeholders (null/false) and could be misread as 'not 57 files'; the byte-identical comparison (byte_identical true) and pre_expected.files (57) already implied equality with the 57-file pre-baseline. Corrected to the independently verifiable value with its source; never a negative observation.",
+  "corrected_at_local": "2026-09-18T00:19:40+0800",
+  "source": "baseline-pre.json destination.entries length (57) + destination.regular_files (57); read-only destination walk 2026-09-18 (57 files / 17,924,900 B)"
+ },
+ "pre_commit_correction": {
+  "reason": "external independent audit (REPORT_AUDIT_ISSUES) flagged this file's misleading destination_inventory fields during the pre-commit correction window; the sibling e2e_report.md TEST_MATRIX row was corrected in the same window",
+  "pre_correction": {
+   "bytes": 1729,
+   "sha256": "a97588f3533338620af6b0f1302cdf68f6aed42f552f2723138305a223d2e588"
+  },
+  "post_correction": "recorded in result.md PRE_COMMIT_CORRECTION and the owner-facing reply - this file cannot embed its own final digest (self-reference)",
+  "sibling_report_post_correction": {
+   "bytes": 37600,
+   "sha256": "8e12eb1deb16e8e35f348636ab7a44ea67056785e80ae9ef776160dd08099af8"
+  }
+ }
+}

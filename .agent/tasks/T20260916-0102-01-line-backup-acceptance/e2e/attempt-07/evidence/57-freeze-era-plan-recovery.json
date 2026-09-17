@@ -1,0 +1,38 @@
+{
+ "step": "e3-supplement",
+ "check": "freeze-set plan.md/handoff.md rows as historical Rev22-era pins (corroboration of the 2 recomputed rows in the Rev22-scoped freeze set; read-only git history)",
+ "captured_at_local": "2026-09-17T23:58:38+0800",
+ "freeze_commit": "a68f89091f381415fb4b017558fe4924112e126c",
+ "commands": [
+  "git cat-file -p a68f89091f381415fb4b017558fe4924112e126c:.agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md | shasum -a 256",
+  "git cat-file -p a68f89091f381415fb4b017558fe4924112e126c:.agent/tasks/T20260916-0102-01-line-backup-acceptance/handoff.md | shasum -a 256",
+  "git rev-parse a68f89091f381415fb4b017558fe4924112e126c:.agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md",
+  "git rev-parse a68f89091f381415fb4b017558fe4924112e126c:.agent/tasks/T20260916-0102-01-line-backup-acceptance/handoff.md"
+ ],
+ "observed": {
+  "plan_at_freeze": {
+   "bytes": 278141,
+   "sha256": "426fe6a1c758e96667e970021a80e20b68396c5af6a4ccaf65672772c514734b",
+   "recorded_in_freeze_set": "426fe6a1c758e96667e970021a80e20b68396c5af6a4ccaf65672772c514734b",
+   "matches_recorded": true,
+   "git_blob": "ad53d40506f2a0e60f986a887b1cbfde15290e11"
+  },
+  "handoff_at_freeze": {
+   "bytes": 37807,
+   "sha256": "df595831eab25bb405d1f084f1113963ce911713515c4c31faaf34e9362f0888",
+   "recorded_in_freeze_set": "df595831eab25bb405d1f084f1113963ce911713515c4c31faaf34e9362f0888",
+   "matches_recorded": true,
+   "git_blob": "e5b7be97694d13b884c941861696d65a669535bb"
+  },
+  "current_worktree": {
+   "plan": "4337e2b5c105901ce7c56956ecea5469894df2d2a29f099068c979584c71b6b2",
+   "handoff": "19c9c6d33c9fc2ea5aff2cd35948c6c5d81cb788285d6432b590520412b6883a"
+  },
+  "handoff_history_r21": {
+   "sha256": "df595831eab25bb405d1f084f1113963ce911713515c4c31faaf34e9362f0888",
+   "note": "freeze-era handoff preserved byte-identically in handoff-history (verified in 56-frozen-anchors-rehash.json)"
+  }
+ },
+ "verdict": "CONFIRMED_DESIGN_FACT_NON_GATING",
+ "rationale": "The Rev22-scoped freeze set (fea6eb7a…, handoff.md line 49: 'do not refresh mid-wave; compare the plan row against the freeze-era revision') recorded plan.md/handoff.md at their Rev22-era bytes. Those exact bytes are still retrievable at freeze commit a68f890 and match the recorded values; the current worktree files are the approved Rev23 plan (4337e2b5…, reviews 34/35 PLAN_APPROVED) and the regenerated Stage-03 handoff (19c9c6d3…). Hence the 2 recomputed freeze-set rows are the by-design Rev22→Rev23 authority advancement, not a prior-evidence byte change; the other 69/71 rows re-verified byte-identical with 0 mismatch."
+}

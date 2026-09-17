@@ -1,0 +1,45 @@
+{
+ "step": "post-close-final-state",
+ "captured_at_local": "2026-09-17T23:59:04+0800",
+ "note": "Final on-disk state after the three authorized Stage-05 deliverables (attempt-07 report + evidence; result.md overwritten to the Stage-05 closing version). The only tracked-file modification is the authorized result.md overwrite; HEAD/branch unchanged; zero frozen artifacts touched.",
+ "git": {
+  "status_porcelain": {
+   "cmd": "git status --porcelain",
+   "exit": 0,
+   "stdout": " M .agent/tasks/T20260916-0102-01-line-backup-acceptance/result.md\n?? .agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-07/\n?? evidence/20260917-owner-briefing/owner-explanation-attempt-06.md\n",
+   "stderr": ""
+  },
+  "head": {
+   "cmd": "git rev-parse HEAD",
+   "exit": 0,
+   "stdout": "dfbe669b2f0c0e8f111949e03f0882c560c544c8\n",
+   "stderr": ""
+  },
+  "branch": {
+   "cmd": "git branch --show-current",
+   "exit": 0,
+   "stdout": "master\n",
+   "stderr": ""
+  }
+ },
+ "deliverables": {
+  "e2e_report.md": {
+   "bytes": 35998,
+   "sha256": "03094c12f8eaf860f8adef342836ca436a424978b018e49e5b3d502744283a91"
+  },
+  "result.md": {
+   "bytes": 11217,
+   "sha256": "daf5ba11e41583a5c69a733b52e2ce7010c9041096f4f75f1e0ab6199c73485e",
+   "git_blob": "0175f3dabca8b525e7706ae435214be878c2ebba",
+   "pre_overwrite_sha256": "7c0f3ab62eade530da3bdd134640c3450f4ad28182de32579fcb55effea837cc",
+   "pre_overwrite_git_blob": "6cb3089e7930b55118079dbcc777de6a2b47584a"
+  },
+  "evidence/57-freeze-era-plan-recovery.json": {
+   "bytes": 2630,
+   "sha256": "f96306b6d61316ab98de34ee4ff27a2e2683792ceb26873eb72eac28813be4be"
+  }
+ },
+ "frozen_touched": false,
+ "gui_used": false,
+ "pycache_created": false
+}
