@@ -1,7 +1,7 @@
 # LINE album acceptance and reusable transaction process — revised candidate plan
 
 TASK_ID: T20260916-0102-01-line-backup-acceptance
-PLAN_REVISION: 22
+PLAN_REVISION: 23
 PLAN_STATUS: CANDIDATE
 TASK_CLASS: CRITICAL (persistent-state and safety-semantics changes: dispatch continuity, duplicate/refusal gating, provenance binding, success semantics)
 REVIEW_REQUIRED: YES
@@ -10,8 +10,8 @@ E2E_REQUIRED: NO
 E2E_RATIONALE: The only user journey for this album is a read-only verify-only pass over an existing destination; no production download is authorized in this wave. Real CLI, real formal read-only data, real evidence and the bounded, owner-gated real GUI observations of the controlled route runs are used; no fixture result may be reported as production E2E. Rev21 adds a second, offline acceptance subject (the Vision-reader wave) whose acceptance is INTEGRATION-level replay over durable frozen artifacts (§21.5-§21.6); it contains no GUI input and is never reported as live E2E.
 ACCEPTANCE_MODE: INTEGRATION for the Rev21 wave (offline replay over durable frozen frames and versioned tools; §21.6). The album-data subject keeps its previous E2E decision. Rev22 adds the owner-gated live GUI route observation (attempt-06) as a second subject of the same album-data result; its independent acceptance is `e2e/attempt-07`, which must re-derive both closure facts from fresh evidence (§22.5) and must not run any GUI input of its own.
 ACCEPTED_BY_USER: YES (Rev21's direction - replace the official reader with macOS-native Vision and build a bounded AI-Agent acceptance test - is set by the owner's own command file GOAL-vision-agent-next-conversation.md and H3.0 §1; §21.7 carries the plain-language owner view for confirmation at the next owner interaction. Rev22's two decisions are set by the owner's own answer at transcript line 1063, session 01a0af3c-6693-72b2-abf2-095a3317e9a4, verbatim `1 選 B；2 用更正版紀錄`; §22.1-§22.2 and evidence/20260917-owner-decisions/owner-decisions-rev22.json carry the transcript-bound record)
-PRIOR_REVIEW_ATTEMPT: 30, 31
-PRIOR_REVIEW_GATE: PLAN_APPROVED (Rev21 at SHA256 466bda4ad79897cf5f6395beafc0a70c57d99ed4dc15f4b78328fb5c69b68190; review/attempt-30 at 92d5be16aa21ce0a07b6dbe0210ab00cf6d995198ecb59599146ed59d8284729 and review/attempt-31 at c80a14da9a6449226052230c8c7a635e8b2eb997ed4cf67dfb0dda22f6ab0aa5 each returned PLAN_APPROVED for that exact revision/hash with no BLOCKER/MAJOR finding; Rev20 at SHA256 4919d87148c68ea3d70cbb9abd258edbd0bfa0b55be5123f7202251e557db17c was approved by review/attempt-28 and review/attempt-29; no approval exists for Rev22)
+PRIOR_REVIEW_ATTEMPT: 30, 31, 32, 33
+PRIOR_REVIEW_GATE: PLAN_APPROVED (Rev21 at SHA256 466bda4ad79897cf5f6395beafc0a70c57d99ed4dc15f4b78328fb5c69b68190; review/attempt-30 at 92d5be16aa21ce0a07b6dbe0210ab00cf6d995198ecb59599146ed59d8284729 and review/attempt-31 at c80a14da9a6449226052230c8c7a635e8b2eb997ed4cf67dfb0dda22f6ab0aa5 each returned PLAN_APPROVED for that exact revision/hash with no BLOCKER/MAJOR finding; Rev20 at SHA256 4919d87148c68ea3d70cbb9abd258edbd0bfa0b55be5123f7202251e557db17c was approved by review/attempt-28 and review/attempt-29; Rev22 at SHA256 426fe6a1c758e96667e970021a80e20b68396c5af6a4ccaf65672772c514734b was approved by review/attempt-32 - report 4259f956987f5eeb10c44d6ef45767b1ed19c225fabaaa6eb62a0d4c7f2a427c, five MINOR findings, no BLOCKER/MAJOR - and review/attempt-33 - report c2b28063c947dcc7846eae71c4308c3c7e2e0e7b451e263bad34eb670327b614 - returned PLAN_REVISION_REQUIRED for that same revision/hash on RV-33-1 (MAJOR; fixed in Rev23 23.1), so the Rev22 dual gate was never satisfied and Rev22 is superseded by Rev23; no approval exists for Rev23)
 PRIMARY_OUTCOME_STATUS: UNKNOWN
 IMPLEMENTATION_STATUS: COMPLETE
 CORE_ACCEPTANCE_STATUS: BLOCKED
@@ -19,9 +19,60 @@ REQUIRED_VERIFICATION_STATUS: PASS
 INDEPENDENT_ACCEPTANCE_STATUS: PASS
 TASK_CLOSURE_STATUS: CORE_ACCEPTANCE_BLOCKED
 REV21_WAVE_STATUS (wave closed; corrected in Rev22 §22.8): the Rev21 Stage 04 wave is committed at 287e2f5 (v4 toolchain + 16/16 self-test + agent-e2e C1-C5) and was independently accepted by e2e/attempt-06 (report SHA256 14b44c949b7e0062936cdfd7f33bd1352b4953996c0c47ce1014a2fc61d15b95; wave-scoped result ② = ACHIEVED / COMPLETE / PASS / PASS, frozen set 21 anchors UNCHANGED). The task-level tuple above (L15-L20) is the result ① tuple and is unchanged by that wave.
-REV22_WAVE_STATUS (Stage 04 not started; nothing pre-claimed): PRIMARY_OUTCOME_STATUS UNKNOWN / IMPLEMENTATION_STATUS COMPLETE / CORE_ACCEPTANCE_STATUS BLOCKED / REQUIRED_VERIFICATION_STATUS PASS / INDEPENDENT_ACCEPTANCE_STATUS PENDING / TASK_CLOSURE_STATUS IN_PROGRESS - to be re-derived by Stage 05 from fresh evidence, never assumed here
-PHASE_0_BASELINE_COMMITTED: evidence/20260917-vision-reader/phase0/baseline.json (commit adf1829) - handoff H3.0 §3 anchors re-computed 15/15 match; Vision helper rebuilt with swiftc; C1/C3/C5 readings and 5x per-frame determinism reproduced byte-identically against the recorded raw stdout SHAs; the four volatile frozen frames preserved byte-identically under evidence/20260917-vision-reader/frames/
+REV22_WAVE_STATUS (Stage 04 not started; nothing pre-claimed): PRIMARY_OUTCOME_STATUS UNKNOWN / IMPLEMENTATION_STATUS COMPLETE / CORE_ACCEPTANCE_STATUS BLOCKED / REQUIRED_VERIFICATION_STATUS PASS / INDEPENDENT_ACCEPTANCE_STATUS PENDING / TASK_CLOSURE_STATUS IN_PROGRESS - to be re-derived by Stage 05 from fresh evidence, never assumed here - Rev22 review outcome: review/attempt-32 PLAN_APPROVED (report 4259f956…; MINOR only) and review/attempt-33 PLAN_REVISION_REQUIRED (report c2b28063…; RV-33-1 MAJOR plus MINOR RV-33-2/3/4); Rev23 supersedes Rev22 with exactly those fixes - budgets, gate-4 pattern, tool bindings, owner authority and closure semantics unchanged (23.1-23.2)
+PHASE_0_BASELINE_COMMITTED: evidence/20260917-vision-reader/phase0/baseline.json (commit adf1829) - handoff H3.0 §3 anchors re-computed: 14/14 recorded SHA-256 anchors match with zero mismatches (16 rows; the other 2 informational rows carry no recorded SHA; corrects the earlier "15/15" literal per handoff RV-30-1 and Rev23 23.1); Vision helper rebuilt with swiftc; C1/C3/C5 readings and 5x per-frame determinism reproduced byte-identically against the recorded raw stdout SHAs; the four volatile frozen frames preserved byte-identically under evidence/20260917-vision-reader/frames/
 STAGE_04_REPORTED_BY_THE_REV19_WAVE (not independently verified; execution-rev19.md §1): PRIMARY UNKNOWN / IMPLEMENTATION COMPLETE / CORE PASS (scoped) / REQUIRED_VERIFICATION PASS / INDEPENDENT_ACCEPTANCE PENDING / TASK_CLOSURE READY_FOR_INDEPENDENT_ACCEPTANCE
+
+## Revision 23 changes
+
+Wave: **the review-driven replan of Rev22 - an exact-fix revision with no scope change.** Rev22 was reviewed in two fresh independent
+contexts: `review/attempt-32` returned `PLAN_APPROVED` for Rev22 at SHA256 `426fe6a1…` (five MINOR findings, no BLOCKER/MAJOR), while
+`review/attempt-33` returned `PLAN_REVISION_REQUIRED` for the same revision/hash on one MAJOR finding (`RV-33-1`): the §22.6 row
+`V22_S5_BOUND_TO_V4_READER` classified "a tesseract-based verdict anywhere in the attempt-06 chain" as `TASK_REGRESSION`, but §22.3 and
+§20.2's S10 mandate reusing the frozen tesseract-based `detect_menu_popup.py` byte-identically - as written, the row contradicted the plan's
+own procedure and could classify a fully correct attempt-06 as a regression. Rev23 fixes exactly the reviewed findings and nothing else: no
+budget, gate, tool binding, owner authority, requirement, closure semantic or owner-visible behavior changes. The wave itself (one corrected
+route attempt-06 under gate-4 with the v4 reader, plus adoption of the v1.1 record) is unchanged in every operational respect. Per the
+closure-section rule, this revision invalidates prior approvals: Rev23 must earn its own fresh independent review before Stage 03 compiles
+the handoff.
+
+### 23.1 Review-response corrections
+
+- `RV-33-1` (MAJOR; §22.6 row `V22_S5_BOUND_TO_V4_READER`): the failure class is scoped to the S3/S5/S6 stop-or-continue verdicts, with the
+  frozen detector explicitly exempt: "attempt-06's S3/S5/S6 stop-or-continue decisions must come from the frozen v4 verifier/tools and their
+  JSON must carry the v4 reader block; the frozen tesseract-based `detect_menu_popup.py` (§20.2 S10, reused byte-identically per §22.3) is
+  explicitly exempt from the v4-reader requirement; a tesseract-based S3/S5/S6 stop-or-continue verdict, or a missing reader block in any v4
+  tool JSON, is TASK_REGRESSION."
+- `RV-33-2` (§22.1): the option-presentation excerpt is now attributed to transcript line 1025 (2026-09-17T21:27:32.926+0800), where its
+  bytes actually live; line 1048 restates the same two questions in plain language and carries only the `回覆範例` line. The decisions
+  artifact already binds both lines; no excerpt bytes changed.
+- `RV-33-3` / `RV-32-3` (`## Closure and sequencing`): "the current PLAN_REVISION at handoff time (21 at this writing)" is corrected to
+  "(23 at this writing)", and "Stage 02 must independently review this Revision 21" to "this Revision 23".
+- `RV-33-4` (the attempt-06 number homonym across series): §19.1, §19.3 (title, first precondition, status consequence) and §20.3's closure
+  sentence now say "Stage 05 of the current wave (`e2e/attempt-07`)" instead of "Stage 05 attempt-06". Series note for every reader:
+  `evidence/20260916-route/attempt-NN` is the route-run series; `.agent/tasks/<TASK_ID>/e2e/attempt-NN` is the acceptance series - the
+  Rev22 wave's route run is route attempt-06, while `e2e/attempt-06` is the already-consumed Rev21-wave acceptance and `e2e/attempt-07` is
+  this wave's acceptance.
+- `RV-33-5` (MINOR; note-only, carried to the handoff, no plan semantic change): the v4 reader may record helper outcome `ok` for empty
+  stdout while returning zero words; that is the refusal path (`unreadable`), never a successful empty read. Stage 03's handoff must carry
+  this one-line note.
+- `RV-32-2` (§22.8): the "six rows" bullet now states the rows are wave-scoped in §22.6 and incorporated by reference from there, matching
+  where they actually live.
+- `RV-32-4` (MINOR; carried to the handoff): Stage 03's handoff carries the one-sentence stop-artifact policy for both stop shapes - a run
+  that stops before any route outcome writes no `route-result.json`/`manifest.json`; the final ledger records the stop with events, final
+  counts and stop reason (attempt-05's `ledger_state_note` precedent).
+- `RV-32-5` (MINOR): the three "15/15" literals (header L23, §21.2 L221, requirement row L1707) are corrected to the measured "14/14
+  recorded SHA-256 anchors, zero mismatches (16 rows; 2 informational rows without a recorded SHA)", matching handoff RV-30-1's earlier
+  correction; do not propagate "15/15".
+- Header: `PLAN_REVISION: 22` → `23`; `PRIOR_REVIEW_ATTEMPT: 30, 31` → `30, 31, 32, 33`; `PRIOR_REVIEW_GATE` records both Rev22 review
+  outcomes and that no approval exists for Rev23; `REV22_WAVE_STATUS` notes the review outcome and the supersession.
+
+### 23.2 Unchanged by this revision
+
+Everything else - §22.1-§22.9 apart from the corrections listed above, §21.x, §20.x, §19.x, §16.4, the requirement table, the status
+vocabulary, the routing fixtures, the freeze set, the budgets (album-card 1 / ellipsis 1 / navigation 1 / retry 0 / menu-item 0 / keyboard 0 /
+conversation-images 0), the gate-4 pattern, the v1.1 adoption and the owner-visible §22.7 summary - is unchanged and keeps its recorded
+values.
 
 ## Revision 22 changes
 
@@ -42,7 +93,8 @@ Owner authority (verbatim, transcript-bound; the full record with byte-exact exc
 
 - line 1034, 2026-09-17T21:29:07.582+0800 (the request that produced the option presentation), verbatim:
   `請深度梳理上下文後，用白話、一般人或非技術人員可以理解的方式告訴我，為什麼這一次做的測試失敗了，以及它的瓶頸是什麼。`
-- line 1048, 2026-09-17T21:30:01.805+0800 (the option presentation immediately before the answer), verbatim (excerpt):
+- line 1025, 2026-09-17T21:27:32.926+0800 (the option presentation; the excerpt bytes quoted here live at this line - line 1048
+  restates the same two questions in plain language and carries only the `回覆範例` line), verbatim (excerpt):
   「路線：**A** 記成「這條路不需要」關閉卡點 ／ **B** 開新修訂＋再授權一次「⋮ 只觀察」（不點任何選單項目；新修訂會把驗證改用新 Vision
   讀取器）。建議 **B**。」 and 「來源紀錄：**(i)** 用您先前已同意的「更正版紀錄」… ／ **(ii)** 您重新給一次精確答案。建議 **(i)**。」
 - line 1063, 2026-09-17T21:38:29.198+0800 (the decision itself), verbatim: `1 選 B；2 用更正版紀錄`
@@ -155,7 +207,7 @@ re-authorize input #2.
 |---|---|---|---|---|---|---|---|---|---|
 | V22_SOURCE_RECORD_V1_1_CONFIRMED | CORE | OUTCOME | HARD_CLEAN | YES | §16.4 must re-derive CONFIRMED over the v1.1 record and over no other record; any normalization or merge of 禎/楨, or any byte change to the v1 file, is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
 | V22_ROUTE_ATTEMPT_06_SINGLE_ONESHOT | CORE | OUTCOME | HARD_CLEAN | YES | more than one album-card click, more than one ⋮ click, any retry, any menu-item/chooser/keyboard input, or any input spent after a failed precondition is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
-| V22_S5_BOUND_TO_V4_READER | CORE | OUTCOME | HARD_CLEAN | YES | attempt-06's stop-or-continue decision must come from the frozen v4 verifier and its JSON must carry the v4 reader block; a tesseract-based verdict anywhere in the attempt-06 chain is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V22_S5_BOUND_TO_V4_READER | CORE | OUTCOME | HARD_CLEAN | YES | attempt-06's S3/S5/S6 stop-or-continue decisions must come from the frozen v4 verifier/tools and their JSON must carry the v4 reader block; the frozen tesseract-based detect_menu_popup.py (§20.2 S10, reused byte-identically per §22.3) is explicitly exempt from the v4-reader requirement; a tesseract-based S3/S5/S6 stop-or-continue verdict, or a missing reader block in any v4 tool JSON, is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
 | V22_AFFIRMATIVE_MACHINE_OBSERVABLE_ONLY | CORE | OUTCOME | HARD_CLEAN | YES | an OCR-only, human-report-only or incomplete observation reported as AFFIRMATIVE is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
 | V22_PRIOR_EVIDENCE_IMMUTABLE | CORE | MUST_NOT_BREAK | HARD_CLEAN | YES | any byte change to a v1/v2/v3 tool, the v3 self-test, an attempt-01..05 artifact, gates 1-3, either ledger, an archived handoff, or the destination/formal state is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
 | V22_SCREEN_SCOPE_PROBE | SUPPORTING | DIAGNOSTIC | NON_GATING | NO | a failed screen probe records `screen_scope=UNAVAILABLE`; it never blocks and is never reported as a CORE failure | NO | NONE | NOT_RUN | NOT_ALLOWED |
@@ -179,7 +231,7 @@ re-authorize input #2.
   (`c80a14da…`) for that exact revision/hash; no approval exists for Rev22.
 - Header: `REV21_WAVE_STATUS: …` corrected to the committed and independently accepted state.
 - Header: `REV22_WAVE_STATUS: …` added.
-- `§Canonical Status Contract v2` check matrix: six rows added (§22.6).
+- `§Canonical Status Contract v2` check matrix: six wave-scoped rows added as §22.6 and incorporated by reference from there (the canonical matrix body itself is unchanged); the S5 row's scope is corrected in Rev23 §23.1.
 
 ### 22.9 Unchanged by this revision
 
@@ -218,7 +270,7 @@ REQUIREMENTS (wave-scoped IDs; `REQ-VR-*` / `NFR-VR-*` / `OOS-VR-*`):
 
 Committed in `adf1829` as `evidence/20260917-vision-reader/phase0/` (`baseline.json`, `phase0_baseline.py`, `readings/{pre,post,s1,s2}.txt`) plus `evidence/20260917-vision-reader/frames/` (four byte-identical preservation copies + `manifest.json`):
 
-- Every H3.0 §3 SHA anchor re-computed: 15/15 match (`handoff_sha_mismatches: []`), including plan.md `4919d871…`, both Rev20 approvals, the Stage-03 handoff `ab88e496…`, the attempt-05 run-ledger `17b17203…`, the Vision cross-check `d3ebbaed…`, the Vision helper source `4fc9fa2b…`, the three v3 tools and the 13-case v3 self-test summary `17840e91…`.
+- Every H3.0 §3 SHA anchor re-computed: 14/14 recorded SHA-256 anchors match, zero mismatches (`handoff_sha_mismatches: []`; 16 rows, 2 informational rows without a recorded SHA), including plan.md `4919d871…`, both Rev20 approvals, the Stage-03 handoff `ab88e496…`, the attempt-05 run-ledger `17b17203…`, the Vision cross-check `d3ebbaed…`, the Vision helper source `4fc9fa2b…`, the three v3 tools and the 13-case v3 self-test summary `17840e91…`.
 - The Vision helper rebuilt with `swiftc -O` (exit 0; Swift 6.3.3, arm64, macOS 26.6.2). The rebuilt binary is not byte-identical to the recorded volatile `/tmp/vision_ocr` (swiftc output is not byte-deterministic), so equivalence is established the strong way: the rebuilt helper's stdout on all four frozen frames is byte-identical to the recorded `raw_stdout_sha256` values (post `5c86dda8…`, pre `07e3e156…`, s1 `561bb131…`, s2 `abf9d75e…`), and re-running each frame 5 times yields identical stdout each time.
 - C1/C3/C5 sanity readings reproduce with zero input and zero UI: the post frame reads `57張照片` conf 1.00 (C1) and `2024/05/13~05/17` conf 1.00 (C3); the pre frame reads the title conf 1.00 (C3); s1/s2 read `57` conf 1.00 (C5).
 - The four frames existed only in `/tmp` (volatile). Byte-identical preservation copies (SHA-256 equal to the cross-check values) are now committed under the wave root, so the C1-C5 test is re-runnable after a reboot. No image is ever placed in the conversation.
@@ -418,8 +470,8 @@ Sequence (each step records its evidence; any deviation is SAFE_ABORT):
   further repetition inside this wave would add no evidence are recorded) plus attempt-05's evidence (the census of every
   vertical ⋮ candidate and the surface transcripts bound what the capturable surfaces contain); or (b) one further corrected
   attempt under a NEW `PLAN_REVISION`, a new gate and a fresh review — never inside Rev20.
-- Expected closure tuple if `AFFIRMATIVE` and the §16.4 check over the v1.1 record passes (re-derived by Stage 05 attempt-06 from
-  fresh evidence, never assumed here): `PRIMARY_OUTCOME_STATUS=ACHIEVED`, `IMPLEMENTATION_STATUS=COMPLETE`,
+- Expected closure tuple if `AFFIRMATIVE` and the §16.4 check over the v1.1 record passes (re-derived by Stage 05 of the current wave -
+  `e2e/attempt-07` - from fresh evidence, never assumed here): `PRIMARY_OUTCOME_STATUS=ACHIEVED`, `IMPLEMENTATION_STATUS=COMPLETE`,
   `CORE_ACCEPTANCE_STATUS=PASS`, `REQUIRED_VERIFICATION_STATUS=PASS`, `INDEPENDENT_ACCEPTANCE_STATUS=PASS`,
   `TASK_CLOSURE_STATUS=DONE`, `BASELINE_REGRESSION_DELTA=UNCHANGED`; the disclosed axis facts (Registry=FAIL,
   State=`LEGACY_PROVENANCE_LIMITED`, product-level Source=`UNRESOLVED`) are reported as axis facts and are never promoted.
@@ -495,7 +547,7 @@ non-matching text fields stay byte-identical here, and the transcript line is th
 
 Acceptance consequence: the §16.4 contract check over the v1.1 record is the source-correspondence basis for closure
 (plan.md:1594). With it passing, `SOURCE_CORRESPONDENCE=CONFIRMED` for this task, subject to independent re-verification
-at Stage 05 attempt-06. This is a task-level acceptance basis; it does not claim that the product CLI prints
+at Stage 05 of the current wave (`e2e/attempt-07`). This is a task-level acceptance basis; it does not claim that the product CLI prints
 Source=CONFIRMED for the real destination, whose product-level Source axis stays UNRESOLVED as a disclosed consequence
 of the read-only legacy formal state (plan.md:1162, 1311–1318), and no state is written. `CASE_ROOT_24`'s fixtures
 already use the canonical label and are unaffected; no product, test, config, state or photo changes.
@@ -541,7 +593,7 @@ Run shape (same hard boundaries as attempt-03; a v2 runbook is frozen before any
   `menu-analysis.json`, `screen-probe.json` (or an explicit `screen_scope=UNAVAILABLE` record), with
   `route_status ∈ {AFFIRMATIVE, UNKNOWN, SAFE_ABORT}` and the decision/reason fields as attempt-03.
 
-### 19.3 Route resolution and the ROUTE_NOT_NEEDED rationale (Plan-authored; applied at Stage 05 attempt-06)
+### 19.3 Route resolution and the ROUTE_NOT_NEEDED rationale (Plan-authored; applied at Stage 05 of the current wave - `e2e/attempt-07`)
 
 This section provides the "explicit Plan rationale" required by plan.md:1490/1596 for this wave, so that a verifier may
 apply it as a Plan decision instead of authoring one itself. Attempt-04's outcome is routed as follows:
@@ -550,7 +602,7 @@ apply it as a Plan decision instead of authoring one itself. Attempt-04's outcom
   longer a scoped blocker and no ROUTE_NOT_NEEDED is needed.
 - `UNKNOWN` / `SAFE_ABORT` / `NO_TARGET_ON_FRAME` → `route_status` is recorded honestly as its observed value and the route
   observation is closed as `ROUTE_NOT_NEEDED (Plan rationale: Rev19 §19.3)` only when all of these preconditions are
-  re-verified by Stage 05 attempt-06: (1) exact source correspondence is CONFIRMED via the §19.1 v1.1 record; (2) no side
+  re-verified by Stage 05 of the current wave (`e2e/attempt-07`): (1) exact source correspondence is CONFIRMED via the §19.1 v1.1 record; (2) no side
   effect is needed — the existing 57 files are final for this wave, no download, no Save All and no state write is
   authorized, and existing valid files may never be redownloaded; (3) attempt-04's artifacts honestly record the observed
   outcome with zero side effects; (4) the residual uncertainty and the reason a further repetition inside this wave would
@@ -564,7 +616,7 @@ production GUI step. Residual risk, to be carried into the final report: unless 
 route remains unproven, and any later production Save-All flow must re-establish the route under its own new plan
 revision and gate with its own budget before it may act.
 
-Status consequence (re-derived by Stage 05 attempt-06 from fresh evidence, never assumed here): with
+Status consequence (re-derived by Stage 05 of the current wave - `e2e/attempt-07` - from fresh evidence, never assumed here): with
 `SOURCE_CORRESPONDENCE=CONFIRMED` and the route closed by either branch above, the two scoped CORE blockers close →
 `PRIMARY_OUTCOME_STATUS=ACHIEVED`, `CORE_ACCEPTANCE_STATUS=PASS`, `TASK_CLOSURE_STATUS=DONE`, with
 `IMPLEMENTATION_STATUS`/`REQUIRED_VERIFICATION_STATUS`/`INDEPENDENT_ACCEPTANCE_STATUS` retained from attempt-05's verified
@@ -1704,7 +1756,7 @@ Test-only fault flags are rejected unless --test-mode is present and the state p
 | Independent acceptance | Rev1/Rev2/Rev3/Rev4/Rev5/Rev6/Rev7/Rev8/Rev9/Rev10 reports exist; attempts 11/12 have snapshots without reports; attempt 13 reviewed Rev11; Rev12 was approved but Stage 05 attempt 02 rejected evidence | Fresh review of the current revision (Rev15) and its exact hash, then Stage 05 acceptance of actual CLI/evidence | CORE / MUST_NOT_BREAK | HARD_CLEAN |
 | Vision reader replaces tesseract in the official chain (Rev21 REQ-VR-1/REQ-VR-2) | tesseract is the reader of the frozen v3 tools; the attempt-05 cross-check shows Vision reads the same frozen frames correctly (post `57張照片` conf 1.00; frozen tesseract `75`) | New v4 tool set (v3 logic + Vision reader) with the v4 self-test matrix green; v3 files byte-identical; no GUI input | CORE / OUTCOME | HARD_CLEAN |
 | AI-Agent acceptance test proves the replacement (Rev21 REQ-VR-3/REQ-VR-4) | Phase 0: C1/C3/C5 and 5x determinism reproduced offline on the four durable frozen frames; the frozen v3 S5 verdict stays `TARGET_MISMATCH` | Bounded, append-only agent test (C1-C5) green in one attempt with raw evidence + SHA table; C4 labelled DEMONSTRATION_ONLY; 5-failure stop rule enforced | CORE / OUTCOME | HARD_CLEAN |
-| v3/v2 frozen evidence unchanged (Rev21 OOS-VR-2) | All §3 anchors re-verified in Phase 0 (15/15 match); v3 tools + v3 self-test summary are frozen artifacts of attempt-05 | Post-change SHA re-check shows every prior artifact byte-identical; `baseline_delta=UNCHANGED` | CORE / MUST_NOT_BREAK | HARD_CLEAN |
+| v3/v2 frozen evidence unchanged (Rev21 OOS-VR-2) | All §3 anchors re-verified in Phase 0 (14/14 recorded SHA-256 anchors match, zero mismatches; 16 rows, 2 without a recorded SHA); v3 tools + v3 self-test summary are frozen artifacts of attempt-05 | Post-change SHA re-check shows every prior artifact byte-identical; `baseline_delta=UNCHANGED` | CORE / MUST_NOT_BREAK | HARD_CLEAN |
 | Live screen-capture layer (Rev21 §21.5 deferred) | Not executed; may raise an OS permission prompt (an unbidden UI event) and adds no evidence for C1-C5 | Non-gating by Plan decision; never required for closure | BEST_EFFORT / DIAGNOSTIC | NON_GATING |
 
 ## Source, registry, and legacy outcome contract
@@ -2024,9 +2076,9 @@ A valid waiver preserves CHECK_RESULT and includes WAIVED_BY, WAIVER_SCOPE, RATI
 
 ## Closure and sequencing
 
-The root /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/handoff.md is historical/non-authoritative for this task because it predates this TASK_ID and revision. Stage 03 must create a fresh handoff bound to TASK_ID, the current PLAN_REVISION at handoff time (21 at this writing), the approved plan SHA, GOAL_ANCHOR, critical path, invariants, deferred/non-gating items and stop conditions. For the Rev21 wave the handoff additionally binds: the v4 tool set as the official reader of the official chain, the four durable frame SHAs, the C1-C5 acceptance, the 5-failure stop rule, the DEMONSTRATION_ONLY label of C4, and the owner-reserved route decision.
+The root /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/handoff.md is historical/non-authoritative for this task because it predates this TASK_ID and revision. Stage 03 must create a fresh handoff bound to TASK_ID, the current PLAN_REVISION at handoff time (23 at this writing), the approved plan SHA, GOAL_ANCHOR, critical path, invariants, deferred/non-gating items and stop conditions. For the Rev21 wave the handoff additionally binds: the v4 tool set as the official reader of the official chain, the four durable frame SHAs, the C1-C5 acceptance, the 5-failure stop rule, the DEMONSTRATION_ONLY label of C4, and the owner-reserved route decision.
 
-Stage 02 must independently review this Revision 21 and its exact hash. Stage 03 may compile handoff only for the approved revision/hash. Stage 04 repairs only the approved evidence harness and reruns the verifier/transaction/status wave; for the Rev21 wave it builds the v4 reader/tools and the v4 self-test, runs the C1-C5 agent test, writes the append-only attempt evidence, and must preserve prior attempts and write execution.md with the canonical six statuses, check matrix/results, scoped blockers, Stage 04 snapshot fields and artifact hashes. Stage 05 independently accepts the real CLI/evidence, snapshots immutable Stage 04 facts and does not modify product code; for the Rev21 wave it consumes the next unused e2e attempt number and re-runs the same frozen inputs rather than trusting the Stage-04 summary.
+Stage 02 must independently review this Revision 23 and its exact hash. Stage 03 may compile handoff only for the approved revision/hash. Stage 04 repairs only the approved evidence harness and reruns the verifier/transaction/status wave; for the Rev21 wave it builds the v4 reader/tools and the v4 self-test, runs the C1-C5 agent test, writes the append-only attempt evidence, and must preserve prior attempts and write execution.md with the canonical six statuses, check matrix/results, scoped blockers, Stage 04 snapshot fields and artifact hashes. Stage 05 independently accepts the real CLI/evidence, snapshots immutable Stage 04 facts and does not modify product code; for the Rev21 wave it consumes the next unused e2e attempt number and re-runs the same frozen inputs rather than trusting the Stage-04 summary.
 
 The current plan is not implementation approval. Offline read-only reconciliation, isolated fixture construction, baseline reproduction, and review preparation are authorized now. Product code edits, external formal-state writes, GUI input, deployment, and production download require the applicable later gate. Any semantic contract, product-boundary, E2E, or GUI-budget change increments PLAN_REVISION on the same TASK_ID, invalidates prior approvals and any handoff, and repeats independent review; it never continues under the same revision (Rev16 §16.8).
 
