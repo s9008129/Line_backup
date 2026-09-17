@@ -1,0 +1,77 @@
+{
+ "frame_sha256": "26968389531473e9d12c971d55fcd5168f6bd96729a1c96607f9e100758e2016",
+ "frame_size": [
+  327,
+  643
+ ],
+ "expected": {
+  "start": "2024/06/02",
+  "end": "2024/06/07"
+ },
+ "title": {
+  "texts": [
+   "2024/06/02~06/07"
+  ],
+  "bbox": [
+   17,
+   424,
+   131,
+   444
+  ]
+ },
+ "title_band": {
+  "x0": 135,
+  "x1": 326,
+  "y0": 418,
+  "y1": 454
+ },
+ "band_median_gray": 46,
+ "small_components": [
+  {
+   "cx": 304.5,
+   "cy": 435.0,
+   "area": 6,
+   "w": 2,
+   "h": 3,
+   "polarity": "light"
+  },
+  {
+   "cx": 304.5,
+   "cy": 440.5,
+   "area": 4,
+   "w": 2,
+   "h": 2,
+   "polarity": "light"
+  },
+  {
+   "cx": 304.29,
+   "cy": 446.0,
+   "area": 7,
+   "w": 3,
+   "h": 3,
+   "polarity": "light"
+  }
+ ],
+ "nearby_texts_below_title": [],
+ "triples_found": 1,
+ "verdict": "ELIGIBLE",
+ "ellipsis_polarity": "light",
+ "ellipsis_dots": [
+  [
+   304.5,
+   435.0
+  ],
+  [
+   304.5,
+   440.5
+  ],
+  [
+   304.3,
+   446.0
+  ]
+ ],
+ "click_point": [
+  304,
+  440
+ ]
+}

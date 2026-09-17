@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-03",
+  "artifact_kind": "pre_run_wait_revalidation",
+  "window_subtype": "single_poll_revalidation_plus_tooling_freeze_plus_invariant_recheck",
+  "artifact_role": "chronology_only_not_a_gate_decision",
+  "sequence": 7,
+  "task_id": "T20260916-0102-01-line-backup-acceptance",
+  "plan_revision": 18,
+  "plan_sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+  "app_bundle": "jp.naver.line.mac",
+  "raw_group": "旻謙允禎成長日記",
+  "album": "2024/05/13～2024/05/17",
+  "expected_count": 57,
+  "human_gate_status": "AUTHORIZED_BY_USER",
+  "revalidation": {
+    "captured_at_local": "2026-09-17T11:54:34+0800",
+    "utc": "2026-09-17T03:54:34Z",
+    "method": "唯讀 app acquisition（emit:false）＋ getScreenshot({emit:false}) ＋ getAXState({emit:false, disableDiffing:true})；零輸入、對對話輸出影像 0 張",
+    "frame": {
+      "bytes": 69461,
+      "size": [327, 643],
+      "sha256": "26968389531473e9d12c971d55fcd5168f6bd96729a1c96607f9e100758e2016"
+    },
+    "ax": {
+      "chars": 1181,
+      "sha256": "5e18ad7eb503ab0e6cc50e4fdbdb08fdc83a44c7744eac7b6a3652364caf559c"
+    },
+    "comparison_to_sequence_6": "frame 與 AX 皆逐位元相同 → 使用者尚未捲動；可見卡仍為非目標（2024/06/02~06/07、65張）；目標卡未呈現"
+  },
+  "formal_invariants_recheck": {
+    "checked_at_local": "2026-09-17T11:56+0800",
+    "method": "SHA-256 重新計算（檔案內容）＋ destination 檔案數/總位元組",
+    "values": {
+      "config": {"path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/config/line_backup_config.json", "bytes": 372, "sha256": "390cbdcf36a88c9f134c0ecb29d39018ebadf42babfb7a264a741337499d3b3b"},
+      "state": {"path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json", "bytes": 48146, "sha256": "e9313a563bf298d4b1e9ae243c5d3d404ad1333f69cb71b156e68589a8ec2f59"},
+      "run_log": {"path": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/run_log.md", "bytes": 15950, "sha256": "a62dd07d1df1a34fb91a11d6eec6ac8aae7146abf9eb7011b78b1d27914158bf"},
+      "user_fact_confirmed_v1": {"path": "evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json", "bytes": 1746, "sha256": "2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d"},
+      "plan": {"bytes": 204373, "sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6"},
+      "handoff": {"bytes": 21347, "sha256": "9cf01d4eedc006cfff2217e3b610c8166cfb05c04919512e74a19f4aa20946c6"},
+      "execution_frozen": {"bytes": 33676, "sha256": "d54011483e597bc572930b03fef7536a0743f8fb9d23744078b3b75953eb0242"},
+      "route_ledger": {"bytes": 1323, "sha256": "a1ec86eb186c85465ae9fc06c55b5c43d2aa671737eb4c64969ce44acfcdcb38"},
+      "observation_06": {"bytes": 7625, "sha256": "868ea4efff878a89d67a83a09c9640bd23d062ac66926f28c2f47585781ab9c7"},
+      "destination": {"files": 57, "total_bytes": 17924900}
+    },
+    "comparison": "ALL_MATCH — 與 2026-09-17T09:29 就緒檢查（readiness-check.json）及既有記錄一致；等待期間正式唯讀資產零漂移"
+  },
+  "tooling_freeze": {
+    "locator": {
+      "path": "evidence/20260916-route/tools/locate_card_ellipsis.py",
+      "bytes": 8943,
+      "sha256": "8c8b6fc704c09a476419492eef2cd999e472126312feff72093f2cfef715df9e",
+      "note": "只定位、永不送輸入；點擊點必須由當幀三點推導；歷史座標不使用",
+      "selftests": [
+        {
+          "case": "可見非目標卡（2024/06/02~06/07）",
+          "result": "ELIGIBLE",
+          "click_point": [304, 440],
+          "out": "evidence/20260916-route/tools/selftest/eligible-nontarget-card-20260917.json",
+          "out_sha256": "5287f8e382b5776ca5c8215b110e01ffc2e3e12484397f39ca28aa2429b0a75f"
+        },
+        {
+          "case": "在非目標幀上要求目標標題（2024/05/13~2024/05/17）",
+          "result": "TARGET_TITLE_NOT_FOUND (exit 2)",
+          "out": "evidence/20260916-route/tools/selftest/refusal-target-absent-20260917.json",
+          "out_sha256": "b59be1355e267f972cde8d9ded6eb2ce8f8b607af2cddf74ca2ed31b6f67ba24"
+        }
+      ]
+    },
+    "runbook": {
+      "path": "evidence/20260916-route/attempt-03/route-runbook.md",
+      "bytes": 4264,
+      "sha256": "4e5b865cb4f1d30623f9a0d7b619f7328bf1b721e9ba6fcf0963deaa0ada9cd1"
+    },
+    "documented_capability_ref": {
+      "path": "~/.codex/skills/line-album-backup/references/ui-procedure.md",
+      "bytes": 27769,
+      "sha256": "3a1bc29e7cc379ee41166387133125245f017c8f7a78799b27d920df09b75627"
+    }
+  },
+  "correction_note": {
+    "about_commit": "49fd90c",
+    "issue": "commit 訊息將 observation-06 記為 7,445 B；實際入庫檔案為 7,625 B（SHA-256 868ea4ef… 正確）。純文字筆數筆誤，檔案內容自 commit 起未變。",
+    "action": "於本 artifact 記錄更正；不改寫歷史、不重寫已凍結證據"
+  },
+  "gui_input_count": 0,
+  "input_counts": {
+    "app_acquisition_inputs": 0,
+    "navigation_inputs": 0,
+    "ellipsis_inputs": 0,
+    "menu_item_clicks": 0,
+    "save_all_clicks": 0,
+    "chooser_interactions": 0,
+    "backup_state_writes": 0
+  },
+  "ellipsis_budget_consumed": 0,
+  "images_emitted_to_conversation_in_this_window": 0,
+  "frames_persisted": false,
+  "escalation": {
+    "decision": "維持 PRE_RUN_WAIT；不自動輪詢；繼續等待使用者呈現目標卡（依 D1：下一次失敗/逾時即再通知）",
+    "resume_conditions": [
+      "使用者回報目標卡（2024/05/13～2024/05/17、57張照片）已可見：→ 依 route-runbook.md S1–S5 執行唯一一次 ⋮ 輸入",
+      "或 planner 裁定替代路徑（需新 PLAN_REVISION＋獨立審查）"
+    ]
+  },
+  "conclusion": "第七次觀察（單次複查）：畫面自 seq6 起未變（逐位元相同），目標卡仍未呈現；正式唯讀資產零漂移；唯一一次 ⋮ 輸入的事前工具（locator＋runbook）已凍結並以兩個自測案例驗證（ELIGIBLE 定位／目標缺席拒絕）。輸入 0、額度 1 未消耗。",
+  "next_action": "等待使用者呈現目標卡；屆時依 route-runbook.md 執行 S1–S5（不得使用歷史座標、不得重試）"
+}
