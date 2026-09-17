@@ -1,0 +1,87 @@
+{
+ "schema_version": 1,
+ "run_id": "20260917-route-attempt-05",
+ "runtime/provider": "codex-desktop unified-computer-use (cua_repl)",
+ "app_bundle": "jp.naver.line.mac",
+ "raw_group": "旻謙允禎成長日記",
+ "album": "2024/05/13～05/17",
+ "expected_count": 57,
+ "project_root": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state",
+ "parent_ledger_sha256": "df0e9c446acf127c59c5827e4d50bc37a8be5e4cbc56722e7b61734866f19dd6",
+ "initial_input_counts": {
+  "app_acquisition_inputs": 0,
+  "navigation_inputs": 0,
+  "album_card_inputs": 0,
+  "ellipsis_inputs": 0,
+  "menu_item_clicks": 0,
+  "save_all_clicks": 0,
+  "chooser_interactions": 0,
+  "keyboard_inputs": 0,
+  "backup_state_writes": 0
+ },
+ "budgets": {
+  "app_acquisition_input_budget": 0,
+  "navigation_input_budget": 1,
+  "album_card_input_budget": 1,
+  "ellipsis_input_budget": 1,
+  "menu_item_budget": 0,
+  "keyboard_input_budget": 0,
+  "click_count_per_input": 1,
+  "retry_budget": 0,
+  "conversation_images": 0
+ },
+ "authorization": {
+  "gate": "third one-shot authorization: corrected route observation (Rev20 §20.1/§20.2) — open the target album card, then one album-level ⋮ inside the album",
+  "authorized_by": "使用者本人",
+  "authorized_at_local": "2026-09-17T14:59:40.847+0800 (「2.要，授權給你」, transcript line 5091) retargeted by 2026-09-17T16:00:03.652+0800 (line 6206) and 16:01:49.779+0800 (line 6224)",
+  "authorization_verbatim": "我跟你回覆我看到的畫面是「相簿列表」，不是「相簿本身」，要進入該相簿裡面才會有「⋮」 / 你現在點擊到的是「相簿列表的⋮」，你應該先點進去「2024/0513~0517」這本相簿",
+  "authorization_evidence": "evidence/20260916-route/attempt-05/gate-3-authorization.json",
+  "authorization_evidence_sha256": "05db1678c79fecc23e744c4d1549a32414859db86c0325e41ff3ceb33944f93c",
+  "scope": "exactly one album-card metadata left click (single navigation input) then, only after ALBUM_OPEN_VERIFIED, exactly one album-level ⋮ left click, immediate post observation, then stop"
+ },
+ "plan_binding": {
+  "plan_revision": 20,
+  "plan_sha256": "4919d87148c68ea3d70cbb9abd258edbd0bfa0b55be5123f7202251e557db17c",
+  "handoff_sha256": "ab88e496e7ab24214247a1cc3c5fc65b751e439d3c46238433f65d02361484a4",
+  "review_attempts": [
+   "review/attempt-28",
+   "review/attempt-29"
+  ]
+ },
+ "frozen_inputs": {
+  "route_runbook_sha256": "b78f1c9133ae4b77f922b650800f93f030a8aec7014a0db36bf272f5a3010019",
+  "tools": {
+   "locate_album_card.py": {
+    "sha256": "500fcadbe8cb47f1cd22f0d247ad7d7d65c84baef4000f2239e1872e340e98e4",
+    "bytes": 7389
+   },
+   "verify_album_open.py": {
+    "sha256": "80504262025cf10202c8938612b5be73f91809578f1317f36733f52b513fa74b",
+    "bytes": 6818
+   },
+   "locate_album_ellipsis.py": {
+    "sha256": "60e3120abb312f189f785f12ee4047f4365028a8759ae88874eebb06046a7deb",
+    "bytes": 11273
+   },
+   "detect_menu_popup.py (reused unchanged)": {
+    "sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+    "bytes": 6339
+   },
+   "locate_card_ellipsis.py (reused unchanged, corroborating only)": {
+    "sha256": "8c8b6fc704c09a476419492eef2cd999e472126312feff72093f2cfef715df9e",
+    "bytes": 8943
+   }
+  },
+  "selftest": {
+   "script_sha256": "94a41092e2c72a95bf833fea64f7c607979512133034c43abeaa0aedf9f0bf13",
+   "summary_sha256": "17840e915680308fb721a937462d22898c3adb1aa125e3cb2469f74c31344324",
+   "result": "PASS"
+  }
+ },
+ "events": [],
+ "final_counts": null,
+ "route_result_sha256": null,
+ "run_status": "PRE_FREEZE_FROZEN_PENDING_RUN",
+ "pre_freeze_recorded_at_local": "2026-09-17T17:02+0800",
+ "notes": "Fresh attempt-05 ledger, written and committed before any input. Attempt-03/04 budgets are neither reset nor extended; every prior attempt and frozen record is preserved untouched."
+}

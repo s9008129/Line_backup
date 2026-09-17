@@ -1,0 +1,81 @@
+{
+  "artifact_type": "human_gate_conversation_excerpt",
+  "gate": "third one-shot authorization: corrected route observation (Rev20 §20.1/§20.2; route attempt-05) — open the target album card, then one album-level ⋮ inside the album",
+  "session_id": "01a0a9f9-d915-7d10-89f4-1b6772c681a2",
+  "session_transcript": "/Users/hsiaojohnny/.codex/sessions/2026/09/16/rollout-2026-09-16T19-28-38-01a0a9f9-d915-7d10-89f4-1b6772c681a2.jsonl",
+  "prior_gate": {
+    "artifact": "evidence/20260916-route/attempt-04/gate-2-authorization.json",
+    "sha256": "f3d177904cccd57f790a1c8ddb4ee184251a6cfd6fddcffc73ebf0c97317c687",
+    "note": "gate-3 is independent of gate-2 and of gate-1: it neither resets nor extends either earlier one-shot budget"
+  },
+  "context_authorization": {
+    "line": 5091,
+    "ordinal": 5090,
+    "timestamp_utc": "2026-09-17T06:59:40.847Z",
+    "timestamp_local": "2026-09-17T14:59:40.847+0800",
+    "verbatim": "1.可以\n2.要，授權給你",
+    "role": "the owner's decision to continue the automatic-menu route with one further ⋮ observation under a fresh gate; attempt-04 spent that observation on the album-list card's ⋮ before the owner corrected the target (below)"
+  },
+  "correction_messages": [
+    {
+      "line": 6206,
+      "ordinal": 6205,
+      "timestamp_utc": "2026-09-17T08:00:03.652Z",
+      "timestamp_local": "2026-09-17T16:00:03.652+0800",
+      "verbatim": "我跟你回覆我看到的畫面是「相簿列表」，不是「相簿本身」，要進入該相簿裡面才會有「⋮」"
+    },
+    {
+      "line": 6224,
+      "ordinal": 6223,
+      "timestamp_utc": "2026-09-17T08:01:49.779Z",
+      "timestamp_local": "2026-09-17T16:01:49.779+0800",
+      "verbatim": "你現在點擊到的是「相簿列表的⋮」，你應該先點進去「2024/0513~0517」這本相簿"
+    }
+  ],
+  "decided_interpretation": {
+    "target": "the album-level ⋮ inside the target album; opening the target album card is its directed precondition (「要進入該相簿裡面才會有「⋮」」; 「你應該先點進去…這本相簿」)",
+    "per_input_authority": [
+      {
+        "input": "album-card metadata left click that opens the target album (single navigation input, click_count=1)",
+        "authority": "the owner's imperative correction, transcript lines 6206/6224 (「你應該先點進去『2024/0513~0517』這本相簿」; 「要進入該相簿裡面才會有「⋮」」)",
+        "label": "gate-3 = corrected execution of the context grant at line 5091"
+      },
+      {
+        "input": "album-level ⋮ left click inside the opened album (click_count=1)",
+        "authority": "the explicit grant at transcript line 5091 (「2.要，授權給你」), given in answer to the question whose 要-branch promised one further ⋮ observation, retargeted by the 6206/6224 correction to the album-level control",
+        "label": "gate-3 = corrected execution of the context grant at line 5091"
+      }
+    ],
+    "authorized_inputs_in_order": [
+      "exactly one album-card metadata left click that opens the target album (this run's single navigation input; click_count=1)",
+      "exactly one album-level ⋮ left click, sent only after the album-open verifier returned ALBUM_OPEN_VERIFIED on the immediate post frame (click_count=1)",
+      "observation only"
+    ],
+    "nothing_else": "no menu item, no chooser, no keyboard input, no scrolling, no state/config/run-log write, no AX write action, no bringing LINE to the front, zero retry, zero conversation images",
+    "worst_case": "an opened menu or an opened album on the owner's screen — the same class of observation-only side effect the owner already authorized for one ⋮ input"
+  },
+  "alternative_reading": {
+    "reading": "if the owner intended only the album entry click, the second input (the album-level ⋮) is out of scope and must not be sent",
+    "handling": "recorded honestly for the reviewers; a newer explicit owner correction supersedes the decided interpretation at any time; the run stops after the album entry if any precondition or the S5 verify rule fails"
+  },
+  "scope": {
+    "album": "2024/05/13～05/17 (displayed title 2024/05/13~05/17), count 57",
+    "destination_read_only": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57 (never re-downloaded, never written)",
+    "group": "旻謙允禎成長日記 (禎 U+798E; never merged with 楨 U+6968)"
+  },
+  "budgets": {
+    "album_card_input_budget": 1,
+    "ellipsis_input_budget": 1,
+    "app_acquisition_input_budget": 0,
+    "navigation_input_budget": 1,
+    "menu_item_budget": 0,
+    "keyboard_input_budget": 0,
+    "click_count_per_input": 1,
+    "retry_budget": 0,
+    "conversation_images": 0,
+    "read_only_observation_windows_max": 5
+  },
+  "recorded_in": "evidence/20260916-route/attempt-05/route-runbook.md",
+  "recorded_at_local": "2026-09-17T17:01+0800",
+  "notes": "Verbatim transcript excerpts only; the quoted texts are copied byte-for-byte from the session transcript. The authorized observation itself is recorded separately under evidence/20260916-route/attempt-05/ by the orchestrator-run attempt. Any further GUI input beyond the two inputs described above requires a new gate, a new plan revision and a fresh review."
+}

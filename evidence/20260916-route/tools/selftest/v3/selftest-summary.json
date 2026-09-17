@@ -1,0 +1,223 @@
+{
+ "tool": "v3-selftest",
+ "interpreter": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+ "interpreter_version": "3.14.3",
+ "fixtures_dir": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/v3selftest_gk84nk1l",
+ "cases": [
+  {
+   "name": "card_ok",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true
+   },
+   "exit": 0,
+   "expect_exit": 0,
+   "verdict": "ELIGIBLE",
+   "expect_verdict": "ELIGIBLE",
+   "click_point": [
+    29,
+    440
+   ],
+   "count_text": "UNREADABLE",
+   "detail": null
+  },
+  {
+   "name": "card_notitle",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true
+   },
+   "exit": 2,
+   "expect_exit": 2,
+   "verdict": "TARGET_TITLE_NOT_FOUND",
+   "expect_verdict": "TARGET_TITLE_NOT_FOUND",
+   "click_point": null,
+   "count_text": null,
+   "detail": null
+  },
+  {
+   "name": "card_count58",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true
+   },
+   "exit": 5,
+   "expect_exit": 5,
+   "verdict": "TARGET_COUNT_MISMATCH",
+   "expect_verdict": "TARGET_COUNT_MISMATCH",
+   "click_point": [
+    29,
+    440
+   ],
+   "count_text": "MISMATCH",
+   "detail": null
+  },
+  {
+   "name": "card_tight_margins",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true
+   },
+   "exit": 4,
+   "expect_exit": 4,
+   "verdict": "UNSAFE_MARGINS",
+   "expect_verdict": "UNSAFE_MARGINS",
+   "click_point": [
+    29,
+    440
+   ],
+   "count_text": "UNREADABLE",
+   "detail": null
+  },
+  {
+   "name": "verify_open",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true
+   },
+   "exit": 0,
+   "expect_exit": 0,
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "expect_verdict": "ALBUM_OPEN_VERIFIED",
+   "click_point": null,
+   "count_text": "UNREADABLE",
+   "detail": null
+  },
+  {
+   "name": "verify_no_effect",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true
+   },
+   "exit": 3,
+   "expect_exit": 3,
+   "verdict": "NO_EFFECT",
+   "expect_verdict": "NO_EFFECT",
+   "click_point": null,
+   "count_text": "UNREADABLE",
+   "detail": null
+  },
+  {
+   "name": "verify_target_mismatch",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true
+   },
+   "exit": 4,
+   "expect_exit": 4,
+   "verdict": "TARGET_MISMATCH",
+   "expect_verdict": "TARGET_MISMATCH",
+   "click_point": null,
+   "count_text": null,
+   "detail": null
+  },
+  {
+   "name": "verify_inconclusive",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true
+   },
+   "exit": 5,
+   "expect_exit": 5,
+   "verdict": "INCONCLUSIVE",
+   "expect_verdict": "INCONCLUSIVE",
+   "click_point": null,
+   "count_text": null,
+   "detail": null
+  },
+  {
+   "name": "ellipsis_one_dot_control",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true,
+    "click_point": true
+   },
+   "exit": 0,
+   "expect_exit": 0,
+   "verdict": "ELIGIBLE",
+   "expect_verdict": "ELIGIBLE",
+   "click_point": [
+    300,
+    47
+   ],
+   "count_text": null,
+   "detail": null
+  },
+  {
+   "name": "ellipsis_ocr_derived_title",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true,
+    "click_point": true
+   },
+   "exit": 0,
+   "expect_exit": 0,
+   "verdict": "ELIGIBLE",
+   "expect_verdict": "ELIGIBLE",
+   "click_point": [
+    300,
+    47
+   ],
+   "count_text": null,
+   "detail": null
+  },
+  {
+   "name": "ellipsis_two_in_band",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true
+   },
+   "exit": 4,
+   "expect_exit": 4,
+   "verdict": "AMBIGUOUS_ELLIPSIS",
+   "expect_verdict": "AMBIGUOUS_ELLIPSIS",
+   "click_point": null,
+   "count_text": null,
+   "detail": null
+  },
+  {
+   "name": "ellipsis_group_level_only",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true
+   },
+   "exit": 5,
+   "expect_exit": 5,
+   "verdict": "GROUP_LEVEL_ONLY",
+   "expect_verdict": "GROUP_LEVEL_ONLY",
+   "click_point": null,
+   "count_text": null,
+   "detail": null
+  },
+  {
+   "name": "ellipsis_none",
+   "passed": true,
+   "checks": {
+    "exit": true,
+    "verdict": true
+   },
+   "exit": 3,
+   "expect_exit": 3,
+   "verdict": "NO_ELLIPSIS_FOUND",
+   "expect_verdict": "NO_ELLIPSIS_FOUND",
+   "click_point": null,
+   "count_text": null,
+   "detail": null
+  }
+ ],
+ "cases_total": 13,
+ "cases_failed": 0,
+ "result": "PASS"
+}
