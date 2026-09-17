@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-04",
+  "artifact": "manifest.json",
+  "wave": "Rev19 W-ROUTE-ATTEMPT-04 + W-DELTA-RECORD (Stage 04)",
+  "write_order": ["route-runbook.md + gate-2-authorization.json + ellipsis-locate.json (frozen before the input, committed earlier)",
+                 "screen-probe.json", "menu-analysis.json", "route-result.json", "run-ledger.json", "manifest.json"],
+  "artifacts": [
+    {"path": "evidence/20260916-route/attempt-04/route-runbook.md", "bytes": 7101, "sha256": "302538920b108a6836059f27eff034cd7769b09b1dc47de843bfb8b78d5cdac8", "role": "frozen v2 runbook (written before any click)"},
+    {"path": "evidence/20260916-route/attempt-04/gate-2-authorization.json", "bytes": 3821, "sha256": "f3d177904cccd57f790a1c8ddb4ee184251a6cfd6fddcffc73ebf0c97317c687", "role": "owner authorization verbatim (Rev19 §19.2)"},
+    {"path": "evidence/20260916-route/attempt-04/ellipsis-locate.json", "bytes": 965, "sha256": "e7b661c3dbfbcf7f9809738842ea512a91a698d3b44cc5b27a21a715715cbc80", "role": "frozen locator output on the pre frame"},
+    {"path": "evidence/20260916-route/attempt-04/screen-probe.json", "bytes": 5243, "sha256": "912e962b04f749fccc674c9764d30b7ecbf422f56b385a4edd9a477418ef0882", "role": "screen-scope probe, acceptance and window localization"},
+    {"path": "evidence/20260916-route/attempt-04/menu-analysis.json", "bytes": 11910, "sha256": "81d430bd4fb6e9da2bb1ba6c9fc358acdd2ec76dfe9e6ad08986bcb129820875", "role": "frozen detector verdicts (window + screen scoped) and the menu transcription"},
+    {"path": "evidence/20260916-route/attempt-04/route-result.json", "bytes": 15747, "sha256": "6f71c5e772bf3326b5664f54470d300c24dbf1c961efef761a0813941dfd7d52", "role": "run result; route_status AFFIRMATIVE; decision/reason/scope note"},
+    {"path": "evidence/20260916-route/attempt-04/run-ledger.json", "bytes": 11463, "sha256": "df0e9c446acf127c59c5827e4d50bc37a8be5e4cbc56722e7b61734866f19dd6", "role": "final run ledger (9 events, final_counts, route_result_sha256)"}
+  ],
+  "tool_artifacts": [
+    {"path": "evidence/20260916-route/tools/detect_menu_popup.py", "bytes": 6339, "sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc"},
+    {"path": "evidence/20260916-route/tools/locate_card_ellipsis.py", "bytes": 8943, "sha256": "8c8b6fc704c09a476419492eef2cd999e472126312feff72093f2cfef715df9e"},
+    {"path": "evidence/20260916-route/tools/selftest/selftest-summary.json", "bytes": 2946, "sha256": "d8ffc1290347da13816f988adbe47656d42c60041ef701bf159b9d4c52a76557"}
+  ],
+  "external_observation_artifacts": [
+    {"path": "/tmp/route_frame_pre.jpg", "bytes": 65990, "sha256": "b3221bc7e79cdc9ecb27572b61ebd97085d25d5fdb75a3a9bfde7e3169fc8636"},
+    {"path": "/tmp/route_ax_pre.json", "bytes": 1614, "sha256": "5dd5846d0d38cc24976d423d1e60001187d71bd63667e37a3d305edd8dba7e01"},
+    {"path": "/tmp/route_ax_after_probe.json", "bytes": 1614, "sha256": "5dd5846d0d38cc24976d423d1e60001187d71bd63667e37a3d305edd8dba7e01"},
+    {"path": "/tmp/route_frame_post.jpg", "bytes": 66140, "sha256": "251de9652ef564c5ef399e67c0f04782b160e76ab2c6e7a4e94c789725c24634"},
+    {"path": "/tmp/route_ax_post.json", "bytes": 1614, "sha256": "5dd5846d0d38cc24976d423d1e60001187d71bd63667e37a3d305edd8dba7e01"},
+    {"path": "/tmp/route_screen_probe.png", "bytes": 1959901, "sha256": "18f38b6fe612f754fbb69bc0b443b3930a4d73fe3adf840ced4211a17a8b511d"},
+    {"path": "/tmp/route_screen_probe_crop_s2.png", "bytes": 676681, "sha256": "73b0aa7f8935155ae24cb1aa12e7cb5e845a4b38a166d220ed328cf737b8ed8f"},
+    {"path": "/tmp/route_screen_probe_crop_s1.png", "bytes": 244718, "sha256": "d6755c7a8a9bcc5c94e51f0e67ae50427fd916642cf397096756cd8436d97598"},
+    {"path": "/tmp/route_screen_post_1.png", "bytes": 1984294, "sha256": "2402420abcb1d0afdaada6c3feb15570e46c9a076f1896ce63cf01ed5f196591", "ms_since_input": 488},
+    {"path": "/tmp/route_screen_post_2.png", "bytes": 1984135, "sha256": "73aa5967d6e0b489958ec682aedba4bd4553f0eea9b3e5066c2fd2d8843e0c17", "ms_since_input": 631},
+    {"path": "/tmp/route_screen_post_3.png", "bytes": 1984331, "sha256": "7367d973f86f45b16db9dd2587347f5b0373e46fd2b3715d935241fba7a7c9fa", "ms_since_input": 732},
+    {"path": "/tmp/route_screen_post_4.png", "bytes": 1984181, "sha256": "2bd368e52993f362c33151144aa44df0c50e803f050804d5e4c4a096581a6b13", "ms_since_input": 836},
+    {"path": "/tmp/route_screen_post_5.png", "bytes": 1984241, "sha256": "ac64922c437324e6c4c25c79c2f06e809755e0b6c6cb01a2f2cb9a58fa3a25c4", "ms_since_input": 940},
+    {"path": "/tmp/route_screen_post_caps.json", "bytes": 917, "sha256": "8ac0cf7baf1f6e7e87ce5429b23acec1f4abbf99b060bc450c1b40c811c9ae58", "role": "capture log (the five captures' path/ms/bytes/sha256)"}
+  ],
+  "external_artifacts_note": "Frame, probe, crop and capture bytes live in /tmp for this run and are deliberately NOT committed (attempt-03 frame policy: bytes/size/SHA-256 only). They are listed here so the run chain stays verifiable and so Stage 05 can re-run the frozen detector on the identical files.",
+  "route_status": "AFFIRMATIVE",
+  "verification": {
+    "result_to_ledger": "run-ledger.json.route_result_sha256 == sha256(route-result.json) == 6f71c5e7...",
+    "ledger_chain": "this ledger's parent_ledger_sha256 == 77c4f86c... (attempt-03 run-ledger)",
+    "budget_arithmetic": "budgets ellipsis=1 / app_acquisition=0 / navigation=0; final_counts ellipsis_inputs=1 and every other input class 0; no unlisted input",
+    "artifact_hashes_recomputed_after_write": true,
+    "prior_attempts_untouched": ["attempt-01", "attempt-02", "attempt-03 (incl. its run-ledger 77c4f86c..., route-result 8b8a541a..., manifest effaaaa0...)"]
+  },
+  "notes": [
+    "Production config/state/run-log and the 57 existing files were never written or re-downloaded in this wave.",
+    "The menu produced by the single input was left open and untouched; the owner was asked to close it themselves.",
+    "The owner's two post-run messages about the album list and the in-album ⋮ are recorded verbatim in route-result.json:supplemental_owner_observations as supplementary context (never part of route_status) and are routed as an escalation for a later plan revision."
+  ]
+}

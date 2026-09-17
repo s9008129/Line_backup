@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-04",
+  "artifact": "screen-probe.json",
+  "purpose": "Screen-scope observation leg (Rev19 §19.2): one read-only screen capture taken before the single authorized input, accepted only if the frozen locator returns ELIGIBLE on a crop of the AX window bounds at scale 2 or scale 1.",
+  "probe": {
+    "path": "/tmp/route_screen_probe.png",
+    "command": "screencapture -x /tmp/route_screen_probe.png",
+    "bytes": 1959901,
+    "size": [2294, 1490],
+    "mode": "RGBA",
+    "sha256": "18f38b6fe612f754fbb69bc0b443b3930a4d73fe3adf840ced4211a17a8b511d",
+    "written_at_local": "2026-09-17T15:56:42+0800",
+    "input_events_sent": 0,
+    "sound": "none (-x: silent, no cursor drawn, no window highlight)"
+  },
+  "window_localization": {
+    "method": "alignment of the 2x-upscaled AX-window frame (/tmp/route_frame_pre.jpg, 327x643 from line.getScreenshot) against the probe by a mean-absolute-difference search over the window origin; independently re-run after the input (read-only, no GUI input, no new capture)",
+    "scale": 2,
+    "origin_screen_px": [0, 66],
+    "mapping": "screen_x = 2*window_x ; screen_y = 66 + 2*window_y",
+    "mad_gray_levels": 3.298,
+    "max_abs_difference": 232,
+    "sampled_pixels": 208553,
+    "search_skipped": "the ellipsis-control rectangle in 2x space (window x 290-345, y 370-490) so the control's own hover/press change cannot bias the alignment",
+    "cross_checks": [
+      "frame title bbox [17,435,126,446] -> screen [34,936,252,958]; the captured screen surfaces read the title text at screen (33,935)-(252,957) - match",
+      "frame count label '57' at [16,452,29,461] -> screen [32,970,58,988]; fresh OCR of the pre frame reads '57' at (16,452,13x9) and the post capture reads a trailing '7' at (33,972) - match",
+      "frame ellipsis control [303,440,306,453] -> screen [606,946,613,972]; the probe-vs-post difference over the whole screen contains a halo exactly at screen [588,932,628,979] - match"
+    ],
+    "note": "The localization was recorded during the capture step by an NCC template match; it has been independently re-verified after the input by this MAD search plus the three cross-checks above. Both derivations give the same offset and scale."
+  },
+  "acceptance": {
+    "rule": "exit 0 + decodable + frozen locator ELIGIBLE on an AX-window-bounds crop at scale 2 or scale 1",
+    "probe_exit_code": 0,
+    "decode": "PIL Image.open -> (2294,1490) RGBA, readable",
+    "crop_scale_2": {
+      "path": "/tmp/route_screen_probe_crop_s2.png",
+      "size": [654, 1286],
+      "bytes": 676681,
+      "sha256": "73b0aa7f8935155ae24cb1aa12e7cb5e845a4b38a166d220ed328cf737b8ed8f",
+      "written_at_local": "2026-09-17T15:57:02+0800",
+      "locator_verdict": "NO_ELLIPSIS_FOUND",
+      "locator_exit_code": 3,
+      "locator_title_bbox": [33, 870, 253, 893],
+      "note": "at 2x the control's dots fall below the frozen locator's scale-1 geometry rule, so this scale is not accepted; the title is still read, proving the crop contains the real window content"
+    },
+    "crop_scale_1": {
+      "path": "/tmp/route_screen_probe_crop_s1.png",
+      "size": [327, 643],
+      "bytes": 244718,
+      "sha256": "d6755c7a8a9bcc5c94e51f0e67ae50427fd916642cf397096756cd8436d97598",
+      "written_at_local": "2026-09-17T15:57:16+0800",
+      "locator_verdict": "ELIGIBLE",
+      "locator_exit_code": 0,
+      "triples_found": 1,
+      "triples_rejected": 0,
+      "title_texts": ["2024/05/13", "~05/17"],
+      "title_bbox": [17, 435, 126, 446],
+      "ellipsis_dots": [[304.5, 441.0], [304.5, 446.5], [304.5, 452.0]],
+      "click_point": [304, 446],
+      "equality_with_the_pre_frame_run": "identical click_point [304,446] and identical title bbox to the pre-frame locator run recorded in attempt-04/ellipsis-locate.json",
+      "locator_output_file": "/tmp/det4/locate-on-s1-crop.json (re-run after the input, read-only, on the frozen crop)"
+    },
+    "accepted_scale": 1,
+    "screen_scope": "AVAILABLE",
+    "decided_before_the_input": true,
+    "ordering_local": "probe 15:56:42 -> s2 crop 15:57:02 -> s1 crop 15:57:16 -> single authorized input ~15:57:37.6 -> post frame 15:57:38 -> five screen captures written 15:57:39"
+  },
+  "permission_prompt_check": {
+    "PERMISSION_PROMPT_OBSERVED": false,
+    "method": "AX re-read immediately after the probe (/tmp/route_ax_after_probe.json) is byte-identical to the pre read (/tmp/route_ax_pre.json): 1614 bytes, SHA-256 5dd5846d0d38cc24976d423d1e60001187d71bd63667e37a3d305edd8dba7e01; no new dialogue element and no permission surface appeared",
+    "consequence": "no SAFE_ABORT; the run continued to the single authorized input"
+  },
+  "notes": [
+    "screencapture -x is read-only: it sends no input event, produces no sound, and neither raises nor activates any window.",
+    "The crop rectangles were derived from the AX window bounds of 標準視窗 (jp.naver.line.mac) at the offsets recorded above; the crops are analysis derivatives of the same probe (no additional capture).",
+    "Frame and crop bytes are never committed (attempt-03 policy); only bytes/size/SHA-256 are recorded and the files stay in /tmp so Stage 05 can re-run the frozen tools on them."
+  ]
+}

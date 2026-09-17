@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-04",
+  "artifact": "menu-analysis.json",
+  "purpose": "Machine-observable verdict surface for the single authorized ⋮ input (Rev19 §19.2): window-scoped and screen-scoped runs of the frozen detector, the menu's machine transcription, and the honest limits of each surface.",
+  "detector": {
+    "path": "evidence/20260916-route/tools/detect_menu_popup.py",
+    "bytes": 6339,
+    "sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+    "frozen_before_any_click": true,
+    "selftest_summary": {"path": "evidence/20260916-route/tools/selftest/selftest-summary.json", "bytes": 2946, "sha256": "d8ffc1290347da13816f988adbe47656d42c60041ef701bf159b9d4c52a76557"},
+    "rules": "geometry: at least one 4-connected changed-pixel component (|post-pre| > delta) with bbox >= min_w x min_h and >= min_pixels; text: at least min_strings OCR strings of min_strlen chars or more inside that bbox. OCR alone or geometry alone never yields MENU_DETECTED; an OCR failure is fail-closed to NOT_DETECTED."
+  },
+  "params": {"delta": 12, "min_w": 40, "min_h": 20, "min_pixels": 200, "min_strings": 2, "min_strlen": 2},
+  "window_scoped": {
+    "pre": {"path": "/tmp/route_frame_pre.jpg", "bytes": 65990, "size": [327, 643], "sha256": "b3221bc7e79cdc9ecb27572b61ebd97085d25d5fdb75a3a9bfde7e3169fc8636"},
+    "post": {"path": "/tmp/route_frame_post.jpg", "bytes": 66140, "size": [327, 643], "sha256": "251de9652ef564c5ef399e67c0f04782b160e76ab2c6e7a4e94c789725c24634"},
+    "verdict": "NOT_DETECTED",
+    "exit_code": 3,
+    "changed_pixels_total": 306,
+    "largest_component": {"bbox": [294, 432, 315, 456], "pixels": 296, "w": 21, "h": 24},
+    "reason": "no changed region meeting the geometry rule - the only change in the window surface is the 21x24 hover/press halo exactly on the ⋮ control at window [303,440,306,453]",
+    "detector_output": {
+      "tool": "detect_menu_popup",
+      "pre": "/tmp/route_frame_pre.jpg",
+      "post": "/tmp/route_frame_post.jpg",
+      "params": {"delta": 12, "min_w": 40, "min_h": 20, "min_pixels": 200, "min_strings": 2, "min_strlen": 2},
+      "pre_sha256": "b3221bc7e79cdc9ecb27572b61ebd97085d25d5fdb75a3a9bfde7e3169fc8636",
+      "post_sha256": "251de9652ef564c5ef399e67c0f04782b160e76ab2c6e7a4e94c789725c24634",
+      "pre_size": [327, 643],
+      "post_size": [327, 643],
+      "changed_pixels_total": 306,
+      "components": [
+        {"bbox": [294, 432, 315, 456], "pixels": 296, "w": 21, "h": 24},
+        {"bbox": [298, 446, 299, 448], "pixels": 2, "w": 1, "h": 2},
+        {"bbox": [297, 450, 298, 452], "pixels": 2, "w": 1, "h": 2},
+        {"bbox": [314, 442, 315, 443], "pixels": 1, "w": 1, "h": 1},
+        {"bbox": [298, 441, 299, 442], "pixels": 1, "w": 1, "h": 1},
+        {"bbox": [296, 446, 297, 447], "pixels": 1, "w": 1, "h": 1},
+        {"bbox": [296, 448, 297, 449], "pixels": 1, "w": 1, "h": 1},
+        {"bbox": [315, 445, 316, 446], "pixels": 1, "w": 1, "h": 1},
+        {"bbox": [312, 452, 313, 453], "pixels": 1, "w": 1, "h": 1}
+      ],
+      "verdict": "NOT_DETECTED",
+      "reason": "no changed region meeting the geometry rule"
+    },
+    "interpretation": "A window-scoped capture of the LINE window did not contain the popup menu this input produced, so the window-scoped detector could not see it. NOT_DETECTED here is a property of this observation surface, not a counter-proof that the menu opened; the menu itself was captured by the screen-scoped leg below."
+  },
+  "screen_scoped": {
+    "pre": {"path": "/tmp/route_screen_probe.png", "bytes": 1959901, "size": [2294, 1490], "sha256": "18f38b6fe612f754fbb69bc0b443b3930a4d73fe3adf840ced4211a17a8b511d"},
+    "caps": [
+      {"n": 1, "path": "/tmp/route_screen_post_1.png", "bytes": 1984294, "sha256": "2402420abcb1d0afdaada6c3feb15570e46c9a076f1896ce63cf01ed5f196591", "ms_since_input": 488, "verdict": "MENU_DETECTED", "exit_code": 0, "changed_pixels_total": 58422, "chosen_bbox": [20, 72, 254, 312], "largest_component": {"bbox": [20, 72, 254, 312], "pixels": 55620}, "ocr_status": "OK", "ocr_strings": ["(EQUA", "Dh", "fi", "RASS"]},
+      {"n": 2, "path": "/tmp/route_screen_post_2.png", "bytes": 1984135, "sha256": "73aa5967d6e0b489958ec682aedba4bd4553f0eea9b3e5066c2fd2d8843e0c17", "ms_since_input": 631, "verdict": "MENU_DETECTED", "exit_code": 0, "changed_pixels_total": 58202, "chosen_bbox": [20, 72, 254, 312], "largest_component": {"bbox": [20, 72, 254, 312], "pixels": 55620}, "ocr_status": "OK", "ocr_strings": ["(EQUA", "Dh", "fi", "RASS"]},
+      {"n": 3, "path": "/tmp/route_screen_post_3.png", "bytes": 1984331, "sha256": "7367d973f86f45b16db9dd2587347f5b0373e46fd2b3715d935241fba7a7c9fa", "ms_since_input": 732, "verdict": "MENU_DETECTED", "exit_code": 0, "changed_pixels_total": 58340, "chosen_bbox": [20, 72, 254, 312], "largest_component": {"bbox": [20, 72, 254, 312], "pixels": 55620}, "ocr_status": "OK", "ocr_strings": ["(EQUA", "Dh", "fi", "RASS"]},
+      {"n": 4, "path": "/tmp/route_screen_post_4.png", "bytes": 1984181, "sha256": "2bd368e52993f362c33151144aa44df0c50e803f050804d5e4c4a096581a6b13", "ms_since_input": 836, "verdict": "MENU_DETECTED", "exit_code": 0, "changed_pixels_total": 58387, "chosen_bbox": [20, 72, 254, 312], "largest_component": {"bbox": [20, 72, 254, 312], "pixels": 55620}, "ocr_status": "OK", "ocr_strings": ["(EQUA", "Dh", "fi", "RASS"]},
+      {"n": 5, "path": "/tmp/route_screen_post_5.png", "bytes": 1984241, "sha256": "ac64922c437324e6c4c25c79c2f06e809755e0b6c6cb01a2f2cb9a58fa3a25c4", "ms_since_input": 940, "verdict": "MENU_DETECTED", "exit_code": 0, "changed_pixels_total": 58241, "chosen_bbox": [20, 72, 254, 312], "largest_component": {"bbox": [20, 72, 254, 312], "pixels": 55620}, "ocr_status": "OK", "ocr_strings": ["(EQUA", "Dh", "fi", "RASS"]}
+    ],
+    "timing_source": "/tmp/route_screen_post_caps.json (path/ms/bytes/sha256 recorded at capture time; no artificial delay was added)",
+    "aggregate": {
+      "verdict": "MENU_DETECTED 5/5",
+      "chosen_bbox": [20, 72, 254, 312],
+      "chosen_bbox_identical_in_all_caps": true,
+      "changed_pixels_total_range": [58202, 58422],
+      "largest_component_pixels_identical_in_all_caps": 55620,
+      "other_changed_components": "each cap also contains the same small components reported by the detector (the ⋮-control halo at screen [588,932,628,979] roughly 1047 px, screen text redraws outside the LINE window around x 957-1139 / y 1029-1051, and the menu-bar clock area [2246,15,2267,41]); none of them meets or competes with the chosen region"
+    },
+    "stability": {
+      "cap1_vs_cap5": {"region": [10, 60, 280, 330], "delta": 12, "changed_pixels": 0},
+      "note": "between +488 ms and +940 ms after the input the menu region is pixel-identical: the menu was already fully rendered at the first capture and stayed stable, so the detection is not a transient repaint artefact"
+    },
+    "full_output_note": "cap 1's detector output is embedded verbatim below; caps 2-5 were run with the identical frozen tool and params on the identical pre image (their detector JSONs differ only in the small noise components) and each returned the same verdict, the same chosen_bbox and the same transcribed strings"
+  },
+  "screen_scoped_cap1_detector_output_verbatim": {
+    "tool": "detect_menu_popup",
+    "pre": "/tmp/route_screen_probe.png",
+    "post": "/tmp/route_screen_post_1.png",
+    "params": {"delta": 12, "min_w": 40, "min_h": 20, "min_pixels": 200, "min_strings": 2, "min_strlen": 2},
+    "pre_sha256": "18f38b6fe612f754fbb69bc0b443b3930a4d73fe3adf840ced4211a17a8b511d",
+    "post_sha256": "2402420abcb1d0afdaada6c3feb15570e46c9a076f1896ce63cf01ed5f196591",
+    "pre_size": [2294, 1490],
+    "post_size": [2294, 1490],
+    "changed_pixels_total": 58422,
+    "components": [
+      {"bbox": [20, 72, 254, 312], "pixels": 55620, "w": 234, "h": 240},
+      {"bbox": [588, 932, 628, 979], "pixels": 1047, "w": 40, "h": 47},
+      {"bbox": [2246, 15, 2267, 41], "pixels": 309, "w": 21, "h": 26},
+      {"bbox": [1042, 1033, 1055, 1051], "pixels": 186, "w": 13, "h": 18},
+      {"bbox": [957, 1029, 972, 1046], "pixels": 183, "w": 15, "h": 17},
+      {"bbox": [1127, 1029, 1139, 1046], "pixels": 139, "w": 12, "h": 17},
+      {"bbox": [1002, 1029, 1014, 1046], "pixels": 128, "w": 12, "h": 17},
+      {"bbox": [1029, 1033, 1041, 1046], "pixels": 126, "w": 12, "h": 13},
+      {"bbox": [973, 1033, 985, 1047], "pixels": 124, "w": 12, "h": 14},
+      {"bbox": [987, 1033, 999, 1046], "pixels": 103, "w": 12, "h": 13}
+    ],
+    "chosen_bbox": [20, 72, 254, 312],
+    "ocr_status": "OK",
+    "ocr_strings": ["(EQUA", "Dh", "fi", "RASS"],
+    "verdict": "MENU_DETECTED",
+    "reason": "new region plus transcribed menu strings"
+  },
+  "menu_identity": {
+    "method": "OCR of the detected region of capture 1 (6x LANCZOS upscale, tesseract chi_tra+eng, one pass per item row with --psm 7 and --psm 6, then the same box with --psm 11); all coordinates below are mapped back to screen pixels",
+    "panel": {"screen_bbox_text_rows": [96, 292], "screen_panel_bbox_incl_shadow": [20, 72, 254, 312], "size_screen_px": [234, 240], "size_window_px": [117, 120], "row_pitch_screen_px": 54, "row_pitch_window_px": 27, "text_left_edge_screen_x": 58},
+    "items": [
+      {"n": 1, "texts": ["上", "傳", "項目"], "joined": "上傳項目", "text_screen_y": 98, "text_window_y": 16, "confidence": [93.1, 91.4, 96.4]},
+      {"n": 2, "texts": ["修改", "相", "簿", "名", "稱"], "joined": "修改相簿名稱", "text_screen_y": 152, "text_window_y": 43, "confidence": [96.7, 93.3, 0.0, 93.1, 92.9]},
+      {"n": 3, "texts": ["分", "享", "相", "簿"], "joined": "分享相簿", "text_screen_y": 206, "text_window_y": 70, "confidence": [43.1, 96.3, 96.8, 66.4]},
+      {"n": 4, "texts": ["刪除", "相", "簿"], "joined": "刪除相簿", "text_screen_y": 260, "text_window_y": 97, "confidence": [42.0, 25.1, 25.1]}
+    ],
+    "baseline_in_the_probe": "the same rectangle in the pre probe contains the LINE window's own header content, not a menu: uniform dark background (gray 46) with the group-title row at screen y around 156-176 and the tab labels 相簿 / 記事本 at screen y around 226-248, i.e. the menu overlaid the header area",
+    "anchoring": "UNKNOWN. The menu rendered at the window's upper-left (window y 3 to 123) while the input point is window (304,446) = screen (608,958), and the only change at the input point itself is the control's 21x24 halo. Whether the popup is anchored to the current mouse position (a runtime that delivers the click without moving the system cursor) or to some app-chosen position cannot be decided from these captures; no cursor position was recorded.",
+    "interpretation": "The four transcribed items are album-management actions of an album card (上傳項目 / 修改相簿名稱 / 分享相簿 / 刪除相簿). There is no download or Save-All item in this menu. The owner states verbatim, after the run, that this is the album-list ⋮ menu and that the intended control is inside the album (route-result.json: supplemental_owner_observations).",
+    "limits": [
+      "tesseract on this UI returns noisy strings; the frozen detector's own transcription inside the chosen bbox is the four strings above (satisfying the frozen text rule of two strings or more), while the per-row passes carry the item identity",
+      "the item order and pitch are read from text rows inside the detected region; no AX menu element, role, subrole or bounds exist in any captured AX tree (window-scoped AX was byte-identical before and after: 5dd5846d0d38cc24976d423d1e60001187d71bd63667e37a3d305edd8dba7e01)",
+      "no menu item was clicked, no menu item was activated, no keyboard input was sent and the menu was left open (no Escape, no click) so the owner can close it; nothing about the menu's own behaviour was exercised"
+    ]
+  }
+}

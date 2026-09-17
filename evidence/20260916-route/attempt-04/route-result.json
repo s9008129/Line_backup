@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-04",
+  "artifact": "route-result.json",
+  "runtime_provider": "codex-desktop unified-computer-use (cua_repl)",
+  "documented_capability_ref": {
+    "path": "/Users/hsiaojohnny/.codex/skills/line-album-backup/references/ui-procedure.md",
+    "bytes": 27769,
+    "sha256": "3a1bc29e7cc379ee41166387133125245f017c8f7a78799b27d920df09b75627"
+  },
+  "app_bundle": "jp.naver.line.mac",
+  "raw_group": "旻謙允禎成長日記",
+  "album": "2024/05/13～2024/05/17",
+  "count": {
+    "expected": 57,
+    "observed_text": "57",
+    "observed_bbox": [16.0, 452.0, 29.0, 461.0],
+    "observed_bbox_coordinate_space": "window-relative pixels of the 327x643 window frame",
+    "method": "fresh tesseract chi_tra+eng OCR (10x upscale, psm 7) of the pre frame's count-label crop (window x 10-175, y 448-470); OCR is auxiliary evidence only and is not a decision basis"
+  },
+  "project_root": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state",
+  "parent_ledger_sha256": "77c4f86c21f61df08614d069d621816ede6a1465c794813b7977d2f784e5f2aa",
+  "new_run_ledger_sha256_initial": "fa025e6836ca8d4f5ead284dedbae63271b59e289b7d13f54af20ed1cecf7b90",
+  "new_run_ledger_sha256_final": null,
+  "new_run_ledger_sha256_final_note": "Intentionally not recorded here: run-ledger.json carries route_result_sha256, so putting the ledger's own final hash inside this result would be circular. The final ledger hash is listed in manifest.json (write order: screen-probe.json -> menu-analysis.json -> route-result.json -> run-ledger.json -> manifest.json).",
+  "authorization": {
+    "gate": "second one-shot ellipsis observation authorization (Rev19 §19.2)",
+    "authorized_at_local": "2026-09-17T14:59:40.847+0800",
+    "authorization_verbatim": "2.要，授權給你",
+    "evidence_path": "evidence/20260916-route/attempt-04/gate-2-authorization.json",
+    "evidence_bytes": 3821,
+    "evidence_sha256": "f3d177904cccd57f790a1c8ddb4ee184251a6cfd6fddcffc73ebf0c97317c687",
+    "scope": "exactly one current-target album-card ⋮ input (normal left click, click_count=1, at a current-frame-derived point), immediate post observation, then stop; independent of the exhausted attempt-03 budget"
+  },
+  "target_binding": {
+    "method": "cua.getApp(\"jp.naver.line.mac\", {emit:false}) - read-only binding, zero GUI input; the owner presented the target card after their 2026-09-17T15:55:29.932+0800 message (transcript line 5995)",
+    "window_root": "0 標準視窗 (LINE); app-level menu bar 109 present (110 LINE, 111 顯示, 112 好友, 113 視窗, 114 常見問題); 115 AX elements; window child list: 1 文字欄位, 2 列表 (showing 0-100 of 101 items), rows 3-105, 106 捲軸 (value 1092), 107 關閉按鈕, 108 縮到最小按鈕",
+    "frame": {
+      "path": "/tmp/route_frame_pre.jpg",
+      "bytes": 65990,
+      "size": [327, 643],
+      "sha256": "b3221bc7e79cdc9ecb27572b61ebd97085d25d5fdb75a3a9bfde7e3169fc8636",
+      "captured_at_local": "2026-09-17T15:56:08+0800"
+    },
+    "ax": {
+      "path": "/tmp/route_ax_pre.json",
+      "bytes": 1614,
+      "sha256": "5dd5846d0d38cc24976d423d1e60001187d71bd63667e37a3d305edd8dba7e01",
+      "focused_element": "2 列表"
+    },
+    "freshness_recheck": {
+      "surfaces": [
+        {"path": "/tmp/route_ax_after_probe.json", "bytes": 1614, "sha256": "5dd5846d0d38cc24976d423d1e60001187d71bd63667e37a3d305edd8dba7e01", "result": "BYTE_IDENTICAL_TO_PRE_AX"},
+        {"path": "/tmp/route_screen_probe.png", "sha256": "18f38b6fe612f754fbb69bc0b443b3930a4d73fe3adf840ced4211a17a8b511d", "method": "the frozen locator was re-run on the probe's scale-1 AX-window crop and returned ELIGIBLE with the identical click point [304,446] and title bbox [17,435,126,446]"}
+      ],
+      "consequence": "the pre frame is the current surface at the moment of the input, so the click point is derived from the current frame (screen probe + frozen locator), not from a historical coordinate"
+    }
+  },
+  "screen_probe": {
+    "screen_scope": "AVAILABLE",
+    "accepted_scale": 1,
+    "probe_sha256": "18f38b6fe612f754fbb69bc0b443b3930a4d73fe3adf840ced4211a17a8b511d",
+    "acceptance_basis": "exit 0 + decodable + frozen locator ELIGIBLE on the scale-1 AX-window crop (d6755c7a...), while the scale-2 crop (73b0aa7f...) returned NO_ELLIPSIS_FOUND",
+    "PERMISSION_PROMPT_OBSERVED": false,
+    "detail": "evidence/20260916-route/attempt-04/screen-probe.json"
+  },
+  "locate": {
+    "tool": "evidence/20260916-route/tools/locate_card_ellipsis.py",
+    "tool_bytes": 8943,
+    "tool_sha256": "8c8b6fc704c09a476419492eef2cd999e472126312feff72093f2cfef715df9e",
+    "argv_note": "python3 <tool> /tmp/route_frame_pre.jpg --expect-start 2024/05/13 --expect-end 2024/05/17 --out evidence/20260916-route/attempt-04/ellipsis-locate.json",
+    "verdict": "ELIGIBLE",
+    "exit_code": 0,
+    "evidence_path": "evidence/20260916-route/attempt-04/ellipsis-locate.json",
+    "evidence_bytes": 965,
+    "evidence_sha256": "e7b661c3dbfbcf7f9809738842ea512a91a698d3b44cc5b27a21a715715cbc80",
+    "title_texts": ["2024/05/13~05/17"],
+    "title_bbox": [17, 435, 126, 446],
+    "triples_found": 1,
+    "triples_rejected": 0
+  },
+  "candidate": {
+    "kind": "vertical ellipsis control of the target album card row",
+    "text_observed": ":",
+    "text_note": "OCR renders the three stacked dots as a colon; the geometric three-dot triple is the decision basis, not the OCR character",
+    "role": "UNKNOWN",
+    "role_detail": "the window accessibility tree does not expose the album-row ellipsis control (only generic rows and one 文字 per row), so role/subrole cannot be read",
+    "ax_index": null,
+    "bounds": {"x0": 302.79, "y0": 439.50, "x1": 305.79, "y1": 453.50, "coordinate_space": "window-relative pixels of the 327x643 window frame", "derivation": "envelope of the three detected dots and their 2-3 px sizes"},
+    "dots": [[304.3, 441.0], [304.5, 446.5], [304.5, 452.0]],
+    "dot_size_px": [[3, 3], [2, 2], [2, 3]],
+    "dot_polarity": "light on dark",
+    "column_deviation_px": 0.2,
+    "row_spacing_px": [5.5, 5.5],
+    "orientation": "vertical (single column, monotonically increasing y) - matches the owner's standing clarification D2 that the target control is the vertical ⋮, not the horizontal ⋯",
+    "owner": "album card row of the target album 2024/05/13～05/17 inside window 標準視窗 of LINE",
+    "owner_is_not": ["group-title ellipsis near the group header", "the non-target card 2024/06/02~06/07 (65 items)"]
+  },
+  "same_item_correlation": {
+    "method": "row-band containment on the current frame",
+    "title_band": {"x0": 130, "x1": 326, "y0": 429, "y1": 456},
+    "band_median_gray": 46,
+    "title_bbox": [17, 435, 126, 446],
+    "candidate_y_range": [439.50, 453.50],
+    "contained_in_title_row_band": true,
+    "count_text": {"text": "57", "bbox": [16.0, 452.0, 29.0, 461.0], "left_aligned_with_title_x0": 17},
+    "result": "the located ⋮ lies in the same card row band as the target title and the count label 57, so the control belongs to the target card"
+  },
+  "input": {
+    "kind": "single target ellipsis input (normal left click)",
+    "count": 1,
+    "coordinates": [304, 446],
+    "coordinate_space": "window-relative pixels of the 327x643 window frame; screen position (608,958) under the verified 2x mapping",
+    "derivation": "frozen locator on the current frame; identical click_point from the pre-frame run and from the independent probe-crop run",
+    "sent_at_local": "2026-09-17T15:57:37.6+0800 (derived: post frame written 15:57:38, and the capture log records the first screen capture at +488 ms and the last at +940 ms after the input)",
+    "retries": 0,
+    "forbidden_inputs_used": []
+  },
+  "pre_observation": {
+    "frame_sha256": "b3221bc7e79cdc9ecb27572b61ebd97085d25d5fdb75a3a9bfde7e3169fc8636",
+    "frame_bytes": 65990,
+    "ax_sha256": "5dd5846d0d38cc24976d423d1e60001187d71bd63667e37a3d305edd8dba7e01",
+    "ax_bytes": 1614
+  },
+  "post_observation": {
+    "frame_path": "/tmp/route_frame_post.jpg",
+    "frame_sha256": "251de9652ef564c5ef399e67c0f04782b160e76ab2c6e7a4e94c789725c24634",
+    "frame_bytes": 66140,
+    "frame_size": [327, 643],
+    "frame_written_at_local": "2026-09-17T15:57:38+0800",
+    "ax_path": "/tmp/route_ax_post.json",
+    "ax_sha256": "5dd5846d0d38cc24976d423d1e60001187d71bd63667e37a3d305edd8dba7e01",
+    "ax_bytes": 1614,
+    "ax_structure_change": "none - the window-scoped AX JSON is byte-identical to the pre read (115 elements, same focused element 2 列表)",
+    "ax_menu_elements_added": 0,
+    "screen_scoped_captures": {
+      "count": 5,
+      "window_ms": [488, 940],
+      "paths_sha256": "see menu-analysis.json / screen_scoped.caps (each capture recorded with ms/bytes/sha256)",
+      "detector_verdict": "MENU_DETECTED 5/5 (frozen detector, same params, chosen_bbox [20,72,254,312] identical in all five)"
+    }
+  },
+  "effect_observation": {
+    "window_scoped": {
+      "changed_pixels_gt12": 306,
+      "largest_component": {"bbox": [294, 432, 315, 456], "pixels": 296, "w": 21, "h": 24},
+      "observed_change": "a 21x24 hover/press halo exactly on the ⋮ control; no menu rectangle anywhere in the window surface",
+      "detector_verdict": "NOT_DETECTED (geometry rule)",
+      "interpretation": "this surface alone cannot decide the menu question; it shows the input was delivered to the located control"
+    },
+    "screen_scoped": {
+      "new_region": {"bbox": [20, 72, 254, 312], "size_px": [234, 240], "changed_pixels_total": [58202, 58422]},
+      "menu_items_transcribed": ["上傳項目", "修改相簿名稱", "分享相簿", "刪除相簿"],
+      "transcription_method": "per-row tesseract chi_tra+eng (6x, psm 7/6) over capture 1; see menu-analysis.json:menu_identity",
+      "stability": "cap1 vs cap5 inside the menu region: 0 changed pixels (delta 12)",
+      "detector_verdict": "MENU_DETECTED 5/5",
+      "anchoring": "the menu rendered at the window's upper-left (window y 3..123), not adjacent to the input point at window (304,446); mechanism not observable"
+    },
+    "no_unexpected_screen": true,
+    "menu_state": "OPEN_AND_UNEXERCISED",
+    "menu_left_open": true,
+    "menu_left_open_note": "no Escape, no click and no keyboard input were sent (any of those would have been an input); the menu is left for the owner to close"
+  },
+  "route_status": "AFFIRMATIVE",
+  "route_status_basis": "Rev19 §19.2's frozen AFFIRMATIVE rule: machine-observable evidence in a captured surface - the frozen detector returned MENU_DETECTED on 5/5 screen-scoped captures (a new rectangular region plus at least two transcribed strings inside it, with the region present in no pre capture). No OCR-only, human-only or incomplete-capture evidence is used for this verdict.",
+  "route_scope_note": {
+    "what_this_verdict_answers": "the frozen one-shot question: does one authorized ⋮ input on the located target-card control produce a machine-observable menu in a captured surface? Yes.",
+    "what_it_does_not_establish": "the menu's items are album-management actions (上傳項目 / 修改相簿名稱 / 分享相簿 / 刪除相簿) with no download or Save-All entry, and no menu item was exercised. The in-album ⋮ route that the owner later identified as the intended control (see supplemental_owner_observations) remains unobserved, so no download/Save-All route is established by this run.",
+    "production_boundary": "Production Save-All/chooser is outside this wave (plan.md:1485-1490) and no later production route may act without its own new plan revision and gate."
+  },
+  "decision": "STOP; NO_RETRY; NO_FURTHER_GUI_INPUT_IN_THIS_WAVE",
+  "reason": [
+    "The single authorized input was executed exactly once at a point derived from the current frame, against the located target-card control (vertical ⋮, album 2024/05/13～05/17, 57).",
+    "The route question is AFFIRMATIVE on machine-observable evidence: five screen-scoped captures within one second of the input show a new 234x240 region containing a four-item menu, stable across the burst.",
+    "The window-scoped surface and the AX tree show no menu element (AX byte-identical; window-scoped detector NOT_DETECTED); both are surface limitations recorded honestly, not counter-evidence.",
+    "No menu item, no Save All, no chooser, no keyboard input and no state/config/run-log write occurred; the menu was left open and untouched.",
+    "Per the frozen runbook this wave ends here: no retry and no additional input. Any further GUI input (including the owner-directed in-album route) requires a new gate, a new PLAN_REVISION and a fresh review."
+  ],
+  "supplemental_owner_observations": [
+    {
+      "received_local": "2026-09-17T15:55:29.932+0800",
+      "transcript_line": 5995,
+      "ordinal": 5994,
+      "verbatim": "好了",
+      "role": "gate precondition: the owner presented the target card before the run; not part of the verdict"
+    },
+    {
+      "received_local": "2026-09-17T16:00:03.652+0800",
+      "transcript_line": 6206,
+      "ordinal": 6205,
+      "verbatim": "我跟你回覆我看到的畫面是「相簿列表」，不是「相簿本身」，要進入該相簿裡面才會有「⋮」",
+      "role": "owner UI fact supplied after the run; supplementary, never part of route_status"
+    },
+    {
+      "received_local": "2026-09-17T16:01:49.779+0800",
+      "transcript_line": 6224,
+      "ordinal": 6223,
+      "verbatim": "你現在點擊到的是「相簿列表的⋮」，你應該先點進去「2024/0513~0517」這本相簿",
+      "role": "owner identification of the observed menu plus a direction for a later corrected route; supplementary, never part of route_status"
+    }
+  ],
+  "supplemental_note": "Per Rev19 §19.2 an owner/observer report is recorded verbatim as supplementary context and never changes route_status; the two post-run observations above identify the observed menu as the album-list ⋮ menu and name the in-album ⋮ as the intended control. They are new evidence about the route model and are routed as an escalation for a later plan revision, not applied inside this run.",
+  "owner_action_requested": "請使用者自行把仍開著的 ⋮ 選單關掉（點空白處或按 Esc；本 run 不會送出任何按鍵或額外點擊）。",
+  "side_effects_guaranteed_absent": [
+    "no menu item clicked or activated",
+    "no Save All invoked",
+    "no chooser opened",
+    "no download initiated",
+    "no production config/state/run-log written",
+    "no navigation, no scroll, no keyboard input",
+    "no LINE window brought to the front by this run"
+  ],
+  "evidence_paths": [
+    "evidence/20260916-route/attempt-04/route-runbook.md",
+    "evidence/20260916-route/attempt-04/gate-2-authorization.json",
+    "evidence/20260916-route/attempt-04/ellipsis-locate.json",
+    "evidence/20260916-route/attempt-04/screen-probe.json",
+    "evidence/20260916-route/attempt-04/menu-analysis.json",
+    "evidence/20260916-route/attempt-04/run-ledger.json",
+    "evidence/20260916-route/attempt-04/manifest.json",
+    "evidence/20260916-route/tools/locate_card_ellipsis.py",
+    "evidence/20260916-route/tools/detect_menu_popup.py",
+    "evidence/20260916-route/tools/selftest/selftest-summary.json",
+    "/tmp/route_frame_pre.jpg (frame bytes are never committed; only bytes/size/SHA-256 are recorded)",
+    "/tmp/route_ax_pre.json",
+    "/tmp/route_ax_after_probe.json",
+    "/tmp/route_frame_post.jpg",
+    "/tmp/route_ax_post.json",
+    "/tmp/route_screen_probe.png",
+    "/tmp/route_screen_probe_crop_s1.png",
+    "/tmp/route_screen_probe_crop_s2.png",
+    "/tmp/route_screen_post_1.png .. /tmp/route_screen_post_5.png",
+    "/tmp/route_screen_post_caps.json"
+  ]
+}
