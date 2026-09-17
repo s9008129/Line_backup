@@ -1,0 +1,345 @@
+{
+ "schema_version": 1,
+ "artifact": "phase0-baseline",
+ "wave": "20260917-vision-reader",
+ "purpose": "H3.0 §10 Phase 0 read-only baseline: repo anchor, handoff §3 SHA re-check, Vision helper rebuild, C1/C3/C5 offline sanity + C2-style determinism probe on the frozen attempt-05 frames, and byte-identical preservation copies of those volatile frames.",
+ "generated_at_local": "2026-09-17T20:04:49+0800",
+ "task_id": "T20260916-0102-01-line-backup-acceptance",
+ "plan_revision_at_baseline": 20,
+ "inputs_sent": 0,
+ "ui_interaction": "none (no click, no keyboard, no AX write, no window activation, no capture)",
+ "formal_data_writes": 0,
+ "images_in_conversation": 0,
+ "repo": {
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "branch": "master",
+  "head": "1343b55a0e5b26a6e921ed35f21928efcff0a6ad",
+  "head_subject": "docs(handoff): 新對話交接 H3.0 ＋ /goal 啟動指令 — macOS 內建 Vision 取代 tesseract、建立 AI Agent 自主自動化測試作業",
+  "status_porcelain": [
+   "?? evidence/20260917-vision-reader/"
+  ],
+  "status_note": "lines are this wave's own new untracked files; no tracked modification",
+  "remotes": null,
+  "remote_note": "no git remote is configured; committed evidence cannot leave this machine"
+ },
+ "handoff_sha_table": [
+  {
+   "item": "plan.md (Rev20)",
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md",
+   "observed_sha256": "4919d87148c68ea3d70cbb9abd258edbd0bfa0b55be5123f7202251e557db17c",
+   "recorded_sha256": "4919d87148c68ea3d70cbb9abd258edbd0bfa0b55be5123f7202251e557db17c",
+   "match": true
+  },
+  {
+   "item": "review attempt-28 report",
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review/attempt-28/review_report.md",
+   "observed_sha256": "d9bf574facc636c97bfbe080769cce9ed30e5b05c31f7ef0847b0552b99ea09d",
+   "recorded_sha256": "d9bf574facc636c97bfbe080769cce9ed30e5b05c31f7ef0847b0552b99ea09d",
+   "match": true
+  },
+  {
+   "item": "review attempt-29 report",
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review/attempt-29/review_report.md",
+   "observed_sha256": "540fda1a35590fc4047a49723a204879395c2258ec1597c4d036093f69872683",
+   "recorded_sha256": "540fda1a35590fc4047a49723a204879395c2258ec1597c4d036093f69872683",
+   "match": true
+  },
+  {
+   "item": "task handoff (Stage 03, Rev20)",
+   "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/handoff.md",
+   "observed_sha256": "ab88e496e7ab24214247a1cc3c5fc65b751e439d3c46238433f65d02361484a4",
+   "recorded_sha256": "ab88e496e7ab24214247a1cc3c5fc65b751e439d3c46238433f65d02361484a4",
+   "match": true
+  },
+  {
+   "item": "route attempt-05 run-ledger",
+   "path": "evidence/20260916-route/attempt-05/run-ledger.json",
+   "observed_sha256": "17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218",
+   "recorded_sha256": "17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218",
+   "match": true
+  },
+  {
+   "item": "route attempt-05 vision crosscheck",
+   "path": "evidence/20260916-route/attempt-05/vision-ocr-crosscheck.json",
+   "observed_sha256": "d3ebbaed3db446cfbecd01d74d132764b6a675232b9db9edd2d1af3071dd6d5b",
+   "recorded_sha256": "d3ebbaed3db446cfbecd01d74d132764b6a675232b9db9edd2d1af3071dd6d5b",
+   "match": true
+  },
+  {
+   "item": "Vision helper source",
+   "path": "evidence/20260916-route/tools/vision/vision_ocr.swift",
+   "observed_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+   "recorded_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+   "match": true
+  },
+  {
+   "item": "Vision helper README",
+   "path": "evidence/20260916-route/tools/vision/README.md",
+   "observed_sha256": "9fa083d551da6d89fd9e385d228e3041802e1595457169af28b324013318767d",
+   "recorded_sha256": "9fa083d551da6d89fd9e385d228e3041802e1595457169af28b324013318767d",
+   "match": true
+  },
+  {
+   "item": "v3 selftest summary",
+   "path": "evidence/20260916-route/tools/selftest/v3/selftest-summary.json",
+   "observed_sha256": "17840e915680308fb721a937462d22898c3adb1aa125e3cb2469f74c31344324",
+   "recorded_sha256": "17840e915680308fb721a937462d22898c3adb1aa125e3cb2469f74c31344324",
+   "match": true
+  },
+  {
+   "item": "v3 tool locate_album_card.py",
+   "path": "evidence/20260916-route/tools/locate_album_card.py",
+   "observed_sha256": "500fcadbe8cb47f1cd22f0d247ad7d7d65c84baef4000f2239e1872e340e98e4",
+   "recorded_sha256": "500fcadbe8cb47f1cd22f0d247ad7d7d65c84baef4000f2239e1872e340e98e4",
+   "match": true
+  },
+  {
+   "item": "v3 tool verify_album_open.py",
+   "path": "evidence/20260916-route/tools/verify_album_open.py",
+   "observed_sha256": "80504262025cf10202c8938612b5be73f91809578f1317f36733f52b513fa74b",
+   "recorded_sha256": "80504262025cf10202c8938612b5be73f91809578f1317f36733f52b513fa74b",
+   "match": true
+  },
+  {
+   "item": "v3 tool locate_album_ellipsis.py",
+   "path": "evidence/20260916-route/tools/locate_album_ellipsis.py",
+   "observed_sha256": "60e3120abb312f189f785f12ee4047f4365028a8759ae88874eebb06046a7deb",
+   "recorded_sha256": "60e3120abb312f189f785f12ee4047f4365028a8759ae88874eebb06046a7deb",
+   "match": true
+  },
+  {
+   "item": "v2 tool detect_menu_popup.py",
+   "path": "evidence/20260916-route/tools/detect_menu_popup.py",
+   "observed_sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+   "recorded_sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+   "match": true
+  },
+  {
+   "item": "v2 tool locate_card_ellipsis.py",
+   "path": "evidence/20260916-route/tools/locate_card_ellipsis.py",
+   "observed_sha256": "8c8b6fc704c09a476419492eef2cd999e472126312feff72093f2cfef715df9e",
+   "recorded_sha256": "8c8b6fc704c09a476419492eef2cd999e472126312feff72093f2cfef715df9e",
+   "match": true
+  },
+  {
+   "item": "root handoff H3.0",
+   "path": "handoff-vision-agent-2026-09-17.md",
+   "observed_sha256": "e1d248b95ae6803209f0b0af63abd20031811d1a541d63a8e7b0555cc9eca8bc",
+   "recorded_sha256": null
+  },
+  {
+   "item": "root GOAL command file",
+   "path": "GOAL-vision-agent-next-conversation.md",
+   "observed_sha256": "fd7038fe087c4b0f1385ac33cb4f1a9427bcd70721490e5fd816faeca6f4c29e",
+   "recorded_sha256": null
+  }
+ ],
+ "handoff_sha_mismatches": [],
+ "helper_rebuild": {
+  "source_path": "evidence/20260916-route/tools/vision/vision_ocr.swift",
+  "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+  "command": "swiftc -O evidence/20260916-route/tools/vision/vision_ocr.swift -o /tmp/vision_ocr_phase0_build",
+  "returncode": 0,
+  "stderr": "",
+  "binary_path": "/tmp/vision_ocr_phase0_build",
+  "binary_bytes": 67560,
+  "binary_sha256": "ad140ef70c45860d3dee2a11d943c277d177dc91b0c56530350fc4b5126cc56b",
+  "swiftc_version": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)\nTarget: arm64-apple-macosx26.0",
+  "os": "ProductName:\t\tmacOS | ProductVersion:\t\t26.6.2 | BuildVersion:\t\t25G83",
+  "arch": "arm64",
+  "recorded_volatile_binary": {
+   "path": "/tmp/vision_ocr",
+   "bytes": 67192,
+   "sha256": "f54628e8f42fb65200bf98bf5cc6463937d28781c673c22e5ca8b9418ae3f6c9"
+  },
+  "byte_identical_to_recorded": true,
+  "note": "swiftc output is not byte-deterministic; equivalence is established by re-reading the exact recorded frames and reproducing the recorded stdout bytes (see sanity/determinism)."
+ },
+ "frozen_frames_tmp": {
+  "runs_per_frame": 5,
+  "frames": [
+   {
+    "label": "post",
+    "tmp_path": "/tmp/route5r_frame_post.jpg",
+    "role": "post frame after the single authorized album-card click (S5 input)",
+    "size_px": [
+     327,
+     643
+    ],
+    "recorded_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+    "present_in_tmp": true,
+    "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+    "bytes": 66686,
+    "match_recorded": true,
+    "stdout_sha256_per_run": [
+     "5c86dda8ab2b80fa0ce8177891bb312dae0d4693e4fc8e4d1ad813947f5a3a32",
+     "5c86dda8ab2b80fa0ce8177891bb312dae0d4693e4fc8e4d1ad813947f5a3a32",
+     "5c86dda8ab2b80fa0ce8177891bb312dae0d4693e4fc8e4d1ad813947f5a3a32",
+     "5c86dda8ab2b80fa0ce8177891bb312dae0d4693e4fc8e4d1ad813947f5a3a32",
+     "5c86dda8ab2b80fa0ce8177891bb312dae0d4693e4fc8e4d1ad813947f5a3a32"
+    ],
+    "exit_codes": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "deterministic": true,
+    "reading_path": "evidence/20260917-vision-reader/phase0/readings/post.txt",
+    "reading_sha256": "5c86dda8ab2b80fa0ce8177891bb312dae0d4693e4fc8e4d1ad813947f5a3a32",
+    "reading_lines": [
+     "px[14,88,201,110]\tconf=1.00\t2024/05/13~05/17",
+     "px[12,120,66,136]\tconf=1.00\t57張照片",
+     "px[12,140,80,154]\tconf=0.50\t2024.05.18"
+    ]
+   },
+   {
+    "label": "pre",
+    "tmp_path": "/tmp/route5r_frame_pre.jpg",
+    "role": "pre frame before the click",
+    "size_px": [
+     327,
+     643
+    ],
+    "recorded_sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+    "present_in_tmp": true,
+    "sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+    "bytes": 63914,
+    "match_recorded": true,
+    "stdout_sha256_per_run": [
+     "07e3e15605e27631e504898419eb51f1425f6715d4f318d5c827f60cae83e4fb",
+     "07e3e15605e27631e504898419eb51f1425f6715d4f318d5c827f60cae83e4fb",
+     "07e3e15605e27631e504898419eb51f1425f6715d4f318d5c827f60cae83e4fb",
+     "07e3e15605e27631e504898419eb51f1425f6715d4f318d5c827f60cae83e4fb",
+     "07e3e15605e27631e504898419eb51f1425f6715d4f318d5c827f60cae83e4fb"
+    ],
+    "exit_codes": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "deterministic": true,
+    "reading_path": "evidence/20260917-vision-reader/phase0/readings/pre.txt",
+    "reading_sha256": "07e3e15605e27631e504898419eb51f1425f6715d4f318d5c827f60cae83e4fb",
+    "reading_lines": [
+     "px[116,46,213,58]\tconf=0.50\t旻議允禎成長日記",
+     "px[66,80,94,96]\tconf=0.50\t相簿",
+     "px[223,80,263,96]\tconf=1.00\t記事本",
+     "px[14,102,32,114]\tconf=1.00\t53",
+     "px[16,449,130,463]\tconf=1.00\t2024/05/13~05/17",
+     "px[14,467,32,479]\tconf=0.50\t57",
+     "px[275,593,291,609]\tconf=0.30\t十"
+    ]
+   },
+   {
+    "label": "s1",
+    "tmp_path": "/tmp/route5r_probe_crop_s1.png",
+    "role": "screen-probe crop at scale 1 (frozen locator read 27)",
+    "size_px": [
+     327,
+     643
+    ],
+    "recorded_sha256": "aea53a0df8c4ef20488446dbccc42fa84ecd72c36aad71d42199f20b9e30f5c3",
+    "present_in_tmp": true,
+    "sha256": "aea53a0df8c4ef20488446dbccc42fa84ecd72c36aad71d42199f20b9e30f5c3",
+    "bytes": 87400,
+    "match_recorded": true,
+    "stdout_sha256_per_run": [
+     "561bb131a8a58a3360bb134dfa2ee1fc9ab3ae2554b29e567c89900dd4c36bfe",
+     "561bb131a8a58a3360bb134dfa2ee1fc9ab3ae2554b29e567c89900dd4c36bfe",
+     "561bb131a8a58a3360bb134dfa2ee1fc9ab3ae2554b29e567c89900dd4c36bfe",
+     "561bb131a8a58a3360bb134dfa2ee1fc9ab3ae2554b29e567c89900dd4c36bfe",
+     "561bb131a8a58a3360bb134dfa2ee1fc9ab3ae2554b29e567c89900dd4c36bfe"
+    ],
+    "exit_codes": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "deterministic": true,
+    "reading_path": "evidence/20260917-vision-reader/phase0/readings/s1.txt",
+    "reading_sha256": "561bb131a8a58a3360bb134dfa2ee1fc9ab3ae2554b29e567c89900dd4c36bfe",
+    "reading_lines": [
+     "px[116,46,211,58]\tconf=0.50\t旻謙允禎成長日記",
+     "px[66,80,94,96]\tconf=1.00\t相簿",
+     "px[223,80,263,96]\tconf=0.50\t記事本",
+     "px[14,102,32,114]\tconf=0.50\t53",
+     "px[14,449,130,463]\tconf=1.00\t2024/05/13~05/17",
+     "px[12,467,32,481]\tconf=1.00\t57"
+    ]
+   },
+   {
+    "label": "s2",
+    "tmp_path": "/tmp/route5r_probe_crop_s2.png",
+    "role": "screen-probe crop at scale 2 (frozen locator read 5)",
+    "size_px": [
+     654,
+     1286
+    ],
+    "recorded_sha256": "7b9d0a19323e0f7341d2ee9722415251195531dc067b773f231676729c63721b",
+    "present_in_tmp": true,
+    "sha256": "7b9d0a19323e0f7341d2ee9722415251195531dc067b773f231676729c63721b",
+    "bytes": 248922,
+    "match_recorded": true,
+    "stdout_sha256_per_run": [
+     "abf9d75eeab903cfafeb3ca20875461b34d4014ef1719d8e6db58bee2150e39e",
+     "abf9d75eeab903cfafeb3ca20875461b34d4014ef1719d8e6db58bee2150e39e",
+     "abf9d75eeab903cfafeb3ca20875461b34d4014ef1719d8e6db58bee2150e39e",
+     "abf9d75eeab903cfafeb3ca20875461b34d4014ef1719d8e6db58bee2150e39e",
+     "abf9d75eeab903cfafeb3ca20875461b34d4014ef1719d8e6db58bee2150e39e"
+    ],
+    "exit_codes": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "deterministic": true,
+    "reading_path": "evidence/20260917-vision-reader/phase0/readings/s2.txt",
+    "reading_sha256": "abf9d75eeab903cfafeb3ca20875461b34d4014ef1719d8e6db58bee2150e39e",
+    "reading_lines": [
+     "px[230,90,424,118]\tconf=1.00\t旻謙允禎成長日記",
+     "px[138,160,188,186]\tconf=1.00\t相簿",
+     "px[452,160,526,188]\tconf=1.00\t記事本",
+     "px[30,206,60,226]\tconf=0.50\t53",
+     "px[30,900,256,926]\tconf=1.00\t2024/05/13~05/17",
+     "px[30,934,62,958]\tconf=1.00\t57",
+     "px[552,1186,582,1216]\tconf=0.30\t十"
+    ]
+   }
+  ],
+  "determinism_all_identical": true
+ },
+ "preservation_copies": [
+  {
+   "src_tmp": "/tmp/route5r_frame_post.jpg",
+   "dst": "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "byte_identical": true
+  },
+  {
+   "src_tmp": "/tmp/route5r_frame_pre.jpg",
+   "dst": "evidence/20260917-vision-reader/frames/route5r_frame_pre.jpg",
+   "sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+   "byte_identical": true
+  },
+  {
+   "src_tmp": "/tmp/route5r_probe_crop_s1.png",
+   "dst": "evidence/20260917-vision-reader/frames/route5r_probe_crop_s1.png",
+   "sha256": "aea53a0df8c4ef20488446dbccc42fa84ecd72c36aad71d42199f20b9e30f5c3",
+   "byte_identical": true
+  },
+  {
+   "src_tmp": "/tmp/route5r_probe_crop_s2.png",
+   "dst": "evidence/20260917-vision-reader/frames/route5r_probe_crop_s2.png",
+   "sha256": "7b9d0a19323e0f7341d2ee9722415251195531dc067b773f231676729c63721b",
+   "byte_identical": true
+  }
+ ]
+}

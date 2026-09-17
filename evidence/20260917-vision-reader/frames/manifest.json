@@ -1,0 +1,54 @@
+{
+ "schema_version": 1,
+ "artifact": "frames-manifest",
+ "wave": "20260917-vision-reader",
+ "generated_at_local": "2026-09-17T20:04:54+0800",
+ "origin": "attempt-05 frozen frames captured 2026-09-17 (see evidence/20260916-route/attempt-05/vision-ocr-crosscheck.json)",
+ "note": "byte-identical preservation copies of the volatile /tmp frames recorded by the attempt-05 cross-check; SHA-256 must equal the crosscheck values",
+ "frames": [
+  {
+   "label": "post",
+   "path": "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+   "origin_tmp_path": "/tmp/route5r_frame_post.jpg",
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "size_px": [
+    327,
+    643
+   ],
+   "role": "post frame after the single authorized album-card click (S5 input)"
+  },
+  {
+   "label": "pre",
+   "path": "evidence/20260917-vision-reader/frames/route5r_frame_pre.jpg",
+   "origin_tmp_path": "/tmp/route5r_frame_pre.jpg",
+   "sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+   "size_px": [
+    327,
+    643
+   ],
+   "role": "pre frame before the click"
+  },
+  {
+   "label": "s1",
+   "path": "evidence/20260917-vision-reader/frames/route5r_probe_crop_s1.png",
+   "origin_tmp_path": "/tmp/route5r_probe_crop_s1.png",
+   "sha256": "aea53a0df8c4ef20488446dbccc42fa84ecd72c36aad71d42199f20b9e30f5c3",
+   "size_px": [
+    327,
+    643
+   ],
+   "role": "screen-probe crop at scale 1 (frozen locator read 27)"
+  },
+  {
+   "label": "s2",
+   "path": "evidence/20260917-vision-reader/frames/route5r_probe_crop_s2.png",
+   "origin_tmp_path": "/tmp/route5r_probe_crop_s2.png",
+   "sha256": "7b9d0a19323e0f7341d2ee9722415251195531dc067b773f231676729c63721b",
+   "size_px": [
+    654,
+    1286
+   ],
+   "role": "screen-probe crop at scale 2 (frozen locator read 5)"
+  }
+ ]
+}
