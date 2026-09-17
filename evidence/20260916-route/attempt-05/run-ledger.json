@@ -420,12 +420,129 @@
    "chooser_interaction": false,
    "backup_state_write": false,
    "note": "no further observation windows remain (5/5); any failure from here stops read-only and notifies the owner"
+  },
+  {
+   "seq": 11,
+   "timestamp_local": "2026-09-17T18:43:21.727+0800 (click) .. 18:43:22.267+0800 (click returned)",
+   "action_class": "gui_input",
+   "event": "input_1_sent_album_card_click",
+   "gui_input": true,
+   "click_count": 1,
+   "retry_count": 0,
+   "params": {
+    "coordinate": [
+     29,
+     460
+    ],
+    "mouseButton": "left",
+    "clickCount": 1,
+    "source": "S3r click_point derived from /tmp/route5r_frame_pre.jpg at 18:34:58 (album-card-locate-resume.json)"
+   },
+   "click_error": null,
+   "input_total_in_this_run": 1,
+   "allowed_budget_before": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 1,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "evidence": [
+    "/tmp/route5r_frame_pre.jpg",
+    "evidence/20260916-route/attempt-05/album-open-verify.json"
+   ],
+   "note": "exactly one left click, sent once, zero retries. The immediately-prior zero-input binding call (getApp) had returned an AX state identical to event 6 (album list, no overlay) — the last freshness check before the click."
+  }
+,
+  {
+   "seq": 12,
+   "timestamp_local": "2026-09-17T18:43:22–18:52+0800",
+   "action_class": "read",
+   "event": "s5_post_observation_and_verify_album_open_verdict_target_mismatch_stop",
+   "gui_input": false,
+   "post_frame": {
+    "path": "/tmp/route5r_frame_post.jpg",
+    "bytes": 66686,
+    "size": [
+     327,
+     643
+    ],
+    "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3"
+   },
+   "post_ax": {
+    "path": "/tmp/route5r_ax_post.txt",
+    "bytes": 232,
+    "sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa",
+    "summary": "only '0 標準視窗' with 關閉按鈕/縮到最小按鈕 and the menu bar — the album list/search/scrollbar elements are gone (custom-drawn view)"
+   },
+   "verify": {
+    "tool": "evidence/20260916-route/tools/verify_album_open.py (frozen)",
+    "output": "evidence/20260916-route/attempt-05/album-open-verify.json",
+    "output_sha256": "ffa5d9633804f819473674f57a9979d56e849882f32dfcfa4a2b5b1326083a9b",
+    "verdict": "TARGET_MISMATCH",
+    "exit_code": 4,
+    "target_title_in_post": {
+     "texts": [
+      "2024/05/13~05/17"
+     ],
+     "bbox": [
+      17,
+      88,
+      200,
+      107
+     ]
+    },
+    "changed_fraction": 0.646749,
+    "count_box": [
+     9,
+     109,
+     177,
+     139
+    ],
+    "count_digits_read": "75",
+    "count_text": "MISMATCH"
+   },
+   "supporting_read_only_analysis": "analysis of the already-captured post frame only (no new captures, no new inputs): the date-range title now sits in a top header position (y≈88-107), a bright photo grid fills the window below y≈240, and the AX window is bare — the surface navigated into an album-like view; the count box area under the title is extremely dim (pixel max 127, no clear glyphs) so the '75' reading is OCR-level noise on a faint region, but the frozen rule is fail-closed and its verdict stands",
+   "runbook_rule_applied": "S5: any verdict other than ALBUM_OPEN_VERIFIED forbids the ⋮ input: record the evidence, notify the owner immediately, stop. No retry.",
+   "inputs_sent_total": 1,
+   "ellipsis_input": "never sent (0/1)",
+   "menu_opened_by_us": false,
+   "allowed_budget_before": {
+    "album_card_inputs_used": 1,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 1,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "evidence": [
+    "/tmp/route5r_frame_post.jpg",
+    "/tmp/route5r_ax_post.txt",
+    "evidence/20260916-route/attempt-05/album-open-verify.json"
+   ]
   }
  ],
  "final_counts": {
   "app_acquisition_inputs": 0,
-  "navigation_inputs": 0,
-  "album_card_inputs": 0,
+  "navigation_inputs": 1,
+  "album_card_inputs": 1,
   "ellipsis_inputs": 0,
   "menu_item_clicks": 0,
   "save_all_clicks": 0,
@@ -434,10 +551,10 @@
   "backup_state_writes": 0
  },
  "route_result_sha256": null,
- "run_status": "IN_PROGRESS",
- "stop_reason": null,
- "owner_decision_required": false,
- "ledger_state": "RESUMED_PRE_INPUT_PENDING_INPUT_1",
+ "run_status": "STOPPED_AT_S5_TARGET_MISMATCH",
+ "stop_reason": "Stopped at S5 after input #1: the frozen verify_album_open.py returned TARGET_MISMATCH (exit 4) — the target date title is readable in the post frame ([17,88,200,107]) and 64.7% of pixels changed (the album view opened), but the count box under the title read '75' where 57 is required, and the frozen rule is fail-closed. Per the runbook S5, the album-level ⋮ input was NOT sent, nothing else was touched, and the owner is notified immediately. Route observation therefore remains unverified; closure requires the owner's explicit decision (Rev20 §20.3). Current surface state: the album-like view is open; no menu was opened by us.",
+ "owner_decision_required": true,
+ "ledger_state": "CLOSED_AFTER_INPUT_1",
  "ledger_state_note": "Frozen before any click (PRE_FREEZE_FROZEN_PENDING_RUN, all counts 0) and completed after the pre-flight reads and the pre-input surface abort: the run appended events 1-5, final_counts (all zero), the run status NO_TARGET_ON_FRAME and the stop reason. No route-result.json was written because no route outcome exists before any input. Allowed budgets stayed album_card=1 / ellipsis=1 / app_acquisition=0 in both states; zero unlisted input occurred.",
  "historical_abort": {
   "status": "HISTORICAL — verbatim preserved; superseded by the owner-directed resume at 18:32–18:37+0800",
@@ -458,7 +575,20 @@
   "counts_note": "final_counts still shows the all-zero pre-input snapshot; it will be replaced by the true final counts when the run closes (S11)"
  },
  "owner_decision": "resume with the same ledger and the same unspent authorization (owner restored the surface and replied 好了 under the standing 請繼續完成測試 instruction); closure as ROUTE_NOT_NEEDED was not requested and is not taken",
- "next_action": "send input #1 exactly once at click_point [29,460] (S3r), then verify_album_open.py (S5)",
+ "next_action": "OWNER DECISION REQUIRED (do not act autonomously): (a) confirm on screen whether the currently open album view is the target album 2024/05/13~05/17 and what photo count it shows; (b) decide whether to close the route as ROUTE_NOT_NEEDED, or to open a new plan revision / new one-shot authorization for the album-level ⋮ observation from the current view (the existing input #2 authorization is conditioned on ALBUM_OPEN_VERIFIED, which did not occur). No autonomous retry: the run is stopped.",
+ "route_outcome": {
+  "route_status": "STOPPED_AT_S5 (TARGET_MISMATCH) — route capability NOT verified",
+  "inputs": {
+   "authorized": 2,
+   "sent": 1,
+   "album_card": "SPENT (1/1)",
+   "ellipsis": "UNSPENT (0/1) but precondition ALBUM_OPEN_VERIFIED failed; sending it would violate the frozen runbook"
+  },
+  "route_result_json": "not written — no ⋮ observation was performed (same policy as the NO_TARGET_ON_FRAME abort)",
+  "surface_state_now": "album-like view open (date-range title in header, photo grid); no menu/dialog opened by us",
+  "owner_decision_required": true,
+  "no_side_effects_beyond_authorized_click": "no keyboard, no AX writes, no menu item, no Save All, no chooser, no state/config/run-log writes, no re-download"
+ },
  "pre_freeze_recorded_at_local": "2026-09-17T17:02+0800",
  "notes": "Fresh attempt-05 ledger, written and committed before any input. Attempt-03/04 budgets are neither reset nor extended; every prior attempt and frozen record is preserved untouched. The abort at seq 5 left both authorized inputs unsent — the next step is owner-directed (Rev20 §20.3); nothing runs automatically."
 }
