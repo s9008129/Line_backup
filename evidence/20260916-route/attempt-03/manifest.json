@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-03",
+  "artifact": "manifest.json",
+  "written_last": true,
+  "write_order_note": "route-result.json then run-ledger.json then manifest.json; manifest.json is excluded from its own artifacts[] list, and route-result.json deliberately omits the ledger's final hash (circularity).",
+  "artifacts": [
+    {
+      "path": "ellipsis-locate.json",
+      "bytes": 965,
+      "sha256": "981abb32fb1024fb20686d4ea28266b6cb08a1aa358d1b1bc033b1726cc3fc6b"
+    },
+    {
+      "path": "parent-ledger-integrity-check.json",
+      "bytes": 2004,
+      "sha256": "15874c00fa061fe155b853ba912c7279f763b55b51bcb489c585607c8a3ea044"
+    },
+    {
+      "path": "pre-run-wait-observation-02.json",
+      "bytes": 3200,
+      "sha256": "b0b37cafba49a10dbfdaf36fcde83e73cb65bdf23f392a35cc2a4b4334f3dff3"
+    },
+    {
+      "path": "pre-run-wait-observation-03.json",
+      "bytes": 2785,
+      "sha256": "01d38883b225870ec20a0ecfa6720dd220e37bac4b2de5ecf8a402a75b1e49a2"
+    },
+    {
+      "path": "pre-run-wait-observation-04.json",
+      "bytes": 3015,
+      "sha256": "a59274daadb7230b14e4367c10391eb8caec0c0b1f189a1e3f46f2659811692e"
+    },
+    {
+      "path": "pre-run-wait-observation-05.json",
+      "bytes": 3527,
+      "sha256": "750e46066540716d92e43cee73544914b3acf27b70f637aaef16733847e2b126"
+    },
+    {
+      "path": "pre-run-wait-observation-06.json",
+      "bytes": 7625,
+      "sha256": "868ea4efff878a89d67a83a09c9640bd23d062ac66926f28c2f47585781ab9c7"
+    },
+    {
+      "path": "pre-run-wait-observation-07.json",
+      "bytes": 6350,
+      "sha256": "5c807ef688529ce9737594462bfa72b5747ea42f5699202ac9fbeac2e7f2322e"
+    },
+    {
+      "path": "pre-run-wait-observation.json",
+      "bytes": 2508,
+      "sha256": "c6edc259315df6ec02ab7ad89e0337bd914ff28328e414ef213d4a4731e04396"
+    },
+    {
+      "path": "route-result.json",
+      "bytes": 11201,
+      "sha256": "8b8a541a5af0bfad7cacbfaa2402037f9931b81368126d40f9896893ba1435f6"
+    },
+    {
+      "path": "route-runbook.md",
+      "bytes": 4264,
+      "sha256": "4e5b865cb4f1d30623f9a0d7b619f7328bf1b721e9ba6fcf0963deaa0ada9cd1"
+    },
+    {
+      "path": "run-ledger.json",
+      "bytes": 6915,
+      "sha256": "77c4f86c21f61df08614d069d621816ede6a1465c794813b7977d2f784e5f2aa"
+    }
+  ],
+  "written_by_this_run": [
+    "ellipsis-locate.json",
+    "route-result.json",
+    "run-ledger.json"
+  ],
+  "pre_existing_in_this_attempt_dir": [
+    "parent-ledger-integrity-check.json",
+    "pre-run-wait-observation-02.json",
+    "pre-run-wait-observation-03.json",
+    "pre-run-wait-observation-04.json",
+    "pre-run-wait-observation-05.json",
+    "pre-run-wait-observation-06.json",
+    "pre-run-wait-observation-07.json",
+    "pre-run-wait-observation.json",
+    "route-runbook.md"
+  ],
+  "external_observation_artifacts": [
+    {
+      "path": "/tmp/route_frame_pre.jpg",
+      "bytes": 64927,
+      "sha256": "ba043980f97c669b11adde838d81167ed45929d617a104f9ae3378c809f67fad"
+    },
+    {
+      "path": "/tmp/route_ax_pre.txt",
+      "bytes": 1274,
+      "sha256": "fa0aa753a86993cae9a1fc4cf3fb560387ecfe17c7506ce0491e191235cc21de"
+    },
+    {
+      "path": "/tmp/route_frame_post.jpg",
+      "bytes": 65175,
+      "sha256": "dbbd8083b8563dcacfa1f361bd16117a087bd0fc9dfb4588ef0fd488d17508da"
+    },
+    {
+      "path": "/tmp/route_ax_post.txt",
+      "bytes": 1274,
+      "sha256": "5846fc0a30f7d8bab88f8494c2f8d0a4a75cc65205c836faeafb70b5b03c8aae"
+    },
+    {
+      "path": "/tmp/route_frame_now.jpg",
+      "bytes": 64927,
+      "sha256": "ba043980f97c669b11adde838d81167ed45929d617a104f9ae3378c809f67fad"
+    }
+  ],
+  "external_artifacts_note": "Frame and AX captures live in /tmp for this run and are deliberately NOT committed (attempt-03 frame policy: bytes/size/SHA-256 only). They are listed here so the run chain stays verifiable.",
+  "route_status": "UNKNOWN",
+  "verification": {
+    "result_to_ledger": "run-ledger.json.route_result_sha256 equals the sha256 of route-result.json in artifacts[]",
+    "ledger_to_result_counts": "final_counts.ellipsis_inputs=1, budgets.ellipsis_input_budget=1, no unlisted input",
+    "parent_ledger_sha256_matches": "9d6a159024f822003052fd7d538598d3a161f226c49ce14ea5c11d5c95c95aee"
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-03",
+  "artifact": "route-result.json",
+  "runtime_provider": "codex-desktop unified-computer-use (cua_repl)",
+  "documented_capability_ref": {
+    "path": "/Users/hsiaojohnny/.codex/skills/line-album-backup/references/ui-procedure.md",
+    "bytes": 27769,
+    "sha256": "3a1bc29e7cc379ee41166387133125245f017c8f7a78799b27d920df09b75627"
+  },
+  "app_bundle": "jp.naver.line.mac",
+  "raw_group": "旻謙允禎成長日記",
+  "album": "2024/05/13～2024/05/17",
+  "count": {
+    "expected": 57,
+    "observed_text": "57",
+    "observed_bbox": [16.3, 452.8, 29.3, 462.5],
+    "method": "tesseract chi_tra+eng OCR of the card-row crop (x 10-170, y 450-485, 10x, psm 7); OCR is auxiliary evidence only and is not a decision basis"
+  },
+  "project_root": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state",
+  "parent_ledger_sha256": "9d6a159024f822003052fd7d538598d3a161f226c49ce14ea5c11d5c95c95aee",
+  "new_run_ledger_sha256_initial": "a1ec86eb186c85465ae9fc06c55b5c43d2aa671737eb4c64969ce44acfcdcb38",
+  "new_run_ledger_sha256_final": null,
+  "new_run_ledger_sha256_final_note": "Intentionally not recorded here: run-ledger.json carries route_result_sha256, so putting the ledger's own final hash inside this result would be circular. The final ledger hash is listed in manifest.json (write order: route-result.json -> run-ledger.json -> manifest.json).",
+  "target_binding": {
+    "method": "cua.getApp(\"jp.naver.line.mac\", {emit:false}) - read-only binding, zero GUI input",
+    "window_root": "0 標準視窗 (LINE) ; app-level menu bar 109 present; 115 AX elements",
+    "frame": {
+      "path": "/tmp/route_frame_pre.jpg",
+      "bytes": 64927,
+      "size": [327, 643],
+      "sha256": "ba043980f97c669b11adde838d81167ed45929d617a104f9ae3378c809f67fad",
+      "captured_at_local": "2026-09-17T13:13+0800"
+    },
+    "ax": {
+      "path": "/tmp/route_ax_pre.txt",
+      "bytes": 1274,
+      "sha256": "fa0aa753a86993cae9a1fc4cf3fb560387ecfe17c7506ce0491e191235cc21de",
+      "focused_element": "2 列表"
+    },
+    "freshness_recheck": {
+      "captured_at_local": "2026-09-17T13:15+0800 (immediately before the input, before 13:15:47.910+0800)",
+      "method": "cua.getApp(..., {emit:false}) + line.getScreenshot({emit:false}), zero GUI input, zero conversation images",
+      "frame_path": "/tmp/route_frame_now.jpg",
+      "bytes": 64927,
+      "sha256": "ba043980f97c669b11adde838d81167ed45929d617a104f9ae3378c809f67fad",
+      "result": "BYTE_IDENTICAL_TO_PRE_FRAME",
+      "consequence": "the pre frame is the current surface, so the click point is derived from the current frame and not from a historical coordinate"
+    }
+  },
+  "locate": {
+    "tool": "evidence/20260916-route/tools/locate_card_ellipsis.py",
+    "tool_sha256": "8c8b6fc704c09a476419492eef2cd999e472126312feff72093f2cfef715df9e",
+    "argv_note": "python3 <tool> /tmp/route_frame_pre.jpg --expect-start 2024/05/13 --expect-end 2024/05/17 --out evidence/20260916-route/attempt-03/ellipsis-locate.json",
+    "verdict": "ELIGIBLE",
+    "exit_code": 0,
+    "evidence_path": "evidence/20260916-route/attempt-03/ellipsis-locate.json",
+    "title_texts": ["2024/05/13~05/17"],
+    "title_bbox": [17, 435, 126, 455],
+    "triples_found": 1,
+    "triples_rejected": 0
+  },
+  "candidate": {
+    "kind": "vertical ellipsis (⋮) control of the target album card",
+    "text_observed": ":",
+    "text_note": "OCR renders the three stacked dots as a colon; the geometric three-dot triple is the decision basis, not the OCR character",
+    "role": "UNKNOWN",
+    "role_detail": "the window accessibility tree does not expose the album-row ellipsis control; only generic rows/文字 are present, so role and subrole cannot be read",
+    "subrole": "UNKNOWN",
+    "ax_index": null,
+    "bounds": {"x0": 303.0, "y0": 440.0, "x1": 306.5, "y1": 453.5, "coordinate_space": "window-relative pixels of the 327x643 window frame"},
+    "dots": [[304.3, 441.0], [304.5, 446.5], [304.5, 452.0]],
+    "dot_size_px": [[3, 3], [2, 2], [2, 3]],
+    "dot_polarity": "light on dark",
+    "column_deviation_px": 0.2,
+    "row_spacing_px": [5.5, 5.5],
+    "orientation": "vertical (single column, monotonically increasing y) - matches the user's standing clarification D2 that the target control is the vertical ⋮, not the horizontal ⋯",
+    "owner": "album card row of the target album 2024/05/13～05/17 inside window 標準視窗 of LINE",
+    "owner_is_not": ["group-title ellipsis near the group header", "the non-target card 2024/06/02~06/07 (65 items)"]
+  },
+  "same_item_correlation": {
+    "method": "row-band containment on the current frame",
+    "title_band": {"x0": 130, "x1": 326, "y0": 429, "y1": 465},
+    "title_bbox": [17, 435, 126, 455],
+    "candidate_y_range": [440.0, 453.5],
+    "contained_in_title_row_band": true,
+    "count_text": {"text": "57", "bbox": [16.3, 452.8, 29.3, 462.5], "left_aligned_with_title_x0": 17},
+    "result": "SAME_ITEM",
+    "reason": "the candidate sits in the same row band as the target title and shares the row's left alignment with the count text; the only album title visible with a legible date in the frame is the expected 2024/05/13~05/17, and the other visible card title in earlier windows (2024/06/02~06/07) is not present in this frame",
+    "group_header_row_y": [44, 60],
+    "group_header_ellipsis_excluded": true
+  },
+  "input": {
+    "authorization": {
+      "gate": "single human gate (Rev18 §Human gate)",
+      "authorized_by": "使用者本人",
+      "authorized_at_local": "2026-09-17T09:09:49+0800",
+      "authorization_verbatim": "2.授權",
+      "authorization_evidence": "evidence/20260916-user-fact/human-gate-answer-20260917.json"
+    },
+    "api": "await line.click([304, 446])",
+    "point": [304, 446],
+    "point_derivation": "centre dot of the located vertical three-dot triple in the current frame",
+    "mouse_button": "left",
+    "click_count": 1,
+    "ellipsis_inputs_used": 1,
+    "ellipsis_input_budget": 1,
+    "sent_at_utc": "2026-09-17T05:15:47.910Z",
+    "returned_at_utc": "2026-09-17T05:15:48.438Z",
+    "sent_at_local": "2026-09-17T13:15:47.910+0800",
+    "retries": 0,
+    "forbidden_inputs_used": []
+  },
+  "pre_observation": {
+    "frame_sha256": "ba043980f97c669b11adde838d81167ed45929d617a104f9ae3378c809f67fad",
+    "frame_bytes": 64927,
+    "ax_sha256": "fa0aa753a86993cae9a1fc4cf3fb560387ecfe17c7506ce0491e191235cc21de",
+    "ax_bytes": 1274
+  },
+  "post_observation": {
+    "captured_at_utc": "2026-09-17T05:15:55.492Z",
+    "captured_at_local": "2026-09-17T13:15:55.492+0800",
+    "frame_path": "/tmp/route_frame_post.jpg",
+    "frame_sha256": "dbbd8083b8563dcacfa1f361bd16117a087bd0fc9dfb4588ef0fd488d17508da",
+    "frame_bytes": 65175,
+    "frame_size": [327, 643],
+    "ax_path": "/tmp/route_ax_post.txt",
+    "ax_sha256": "5846fc0a30f7d8bab88f8494c2f8d0a4a75cc65205c836faeafb70b5b03c8aae",
+    "ax_bytes": 1274,
+    "ax_focused_element": "8 文字",
+    "ax_structure_change": "none - 115 elements, identical tree; only the focused-element line differs from the pre observation (2 列表 -> 8 文字)",
+    "ax_menu_elements_added": 0
+  },
+  "effect_observation": {
+    "changed_pixels_gt2": {"rows": [408, 479], "cols": [272, 326], "count": 2068},
+    "changed_pixels_gt12": {"rows": [430, 458], "cols": [290, 316], "count": 524},
+    "outside_that_region": "byte-level identical to the pre frame (no other pixel changed anywhere in the window)",
+    "observed_change": [
+      "a soft lightening halo (+1..+7 gray levels, neutral chroma) over roughly 55x72 px centred on the ellipsis control",
+      "the three crisp light dots of the pre frame (gray ~180-220) are no longer present at their pre positions; a light neutral glyph (gray 100-208) appears around (306, 448)",
+      "no menu rectangle, no new panel, no album view, no dialog and no download chooser were rendered anywhere inside the captured window surface"
+    ],
+    "interpretation": "consistent with the input being delivered to the targeted control (pointer/hover or pressed state on the ⋮); whether LINE opened its context menu is NOT observable in this surface, because a macOS popup menu is drawn in a separate window that a window-scoped capture does not include",
+    "no_unexpected_screen": true,
+    "menu_state": "UNOBSERVABLE",
+    "menu_left_open": "unknown - no key input (no Escape) was sent; nothing else was clicked"
+  },
+  "counts": {
+    "app_acquisition_inputs": 0,
+    "navigation_inputs": 0,
+    "ellipsis_inputs": 1,
+    "menu_item_click_count": 0,
+    "save_all_click_count": 0,
+    "chooser_state": "none",
+    "chooser_interactions": 0,
+    "backup_state_write_count": 0,
+    "conversation_images_emitted": 0,
+    "screenshots_to_disk": 3,
+    "keyboard_inputs": 0,
+    "scrolls": 0
+  },
+  "route_status": "UNKNOWN",
+  "decision": "STOP; NO_RETRY; NEW_GATE_REQUIRED_FOR_ANY_FURTHER_ELLIPSIS_INPUT",
+  "reason": [
+    "The single authorized input was executed exactly once, at a point derived from the current frame, against the correlated target album card control (vertical ⋮, 2024/05/13～05/17, 57).",
+    "The route was NOT affirmed: no menu text, no menu role/subrole, no menu item order and no menu bounds could be observed in any captured surface. The accessibility tree gained no menu element and the window frame gained no menu rectangle.",
+    "A window-scoped screenshot cannot contain a macOS popup menu, so the absence of menu pixels is not proof that the menu failed to open; equally, the localized visual change at the control is not proof that it did. The outcome is therefore genuinely undetermined, which the schema maps to UNKNOWN.",
+    "Per the frozen runbook, no retry is permitted and no additional input may be used in this wave; any further attempt requires a new user gate and a new PLAN_REVISION."
+  ],
+  "owner_action_requested": "請使用者自行目視確認：LINE 視窗上是否出現了 ⋮ 選單（若已出現請自行按 Esc 或點空白處關閉）。本 run 不會送出任何按鍵或額外點擊。",
+  "side_effects_guaranteed_absent": [
+    "no menu item clicked",
+    "no Save All invoked",
+    "no chooser opened",
+    "no download initiated",
+    "no production config/state/run-log written",
+    "no LINE window brought to the front by this run (the title bar was pixel-identical before and after, i.e. the window's active state did not change)"
+  ],
+  "evidence_paths": [
+    "evidence/20260916-route/attempt-03/route-runbook.md",
+    "evidence/20260916-route/attempt-03/ellipsis-locate.json",
+    "evidence/20260916-route/attempt-03/run-ledger.json",
+    "evidence/20260916-route/attempt-03/route-result.json",
+    "evidence/20260916-route/attempt-03/manifest.json",
+    "evidence/20260916-route/tools/locate_card_ellipsis.py",
+    "evidence/20260916-route/tools/selftest/eligible-nontarget-card-20260917.json",
+    "evidence/20260916-route/tools/selftest/refusal-target-absent-20260917.json",
+    "/tmp/route_frame_pre.jpg (frame bytes are never committed; only bytes/size/SHA-256 are recorded)",
+    "/tmp/route_ax_pre.txt",
+    "/tmp/route_frame_post.jpg",
+    "/tmp/route_ax_post.txt"
+  ]
+}

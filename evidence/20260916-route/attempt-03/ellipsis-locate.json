@@ -1,0 +1,77 @@
+{
+ "frame_sha256": "ba043980f97c669b11adde838d81167ed45929d617a104f9ae3378c809f67fad",
+ "frame_size": [
+  327,
+  643
+ ],
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17"
+ },
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   17,
+   435,
+   126,
+   455
+  ]
+ },
+ "title_band": {
+  "x0": 130,
+  "x1": 326,
+  "y0": 429,
+  "y1": 465
+ },
+ "band_median_gray": 46,
+ "small_components": [
+  {
+   "cx": 304.29,
+   "cy": 441.0,
+   "area": 7,
+   "w": 3,
+   "h": 3,
+   "polarity": "light"
+  },
+  {
+   "cx": 304.5,
+   "cy": 446.5,
+   "area": 4,
+   "w": 2,
+   "h": 2,
+   "polarity": "light"
+  },
+  {
+   "cx": 304.5,
+   "cy": 452.0,
+   "area": 6,
+   "w": 2,
+   "h": 3,
+   "polarity": "light"
+  }
+ ],
+ "nearby_texts_below_title": [],
+ "triples_found": 1,
+ "verdict": "ELIGIBLE",
+ "ellipsis_polarity": "light",
+ "ellipsis_dots": [
+  [
+   304.3,
+   441.0
+  ],
+  [
+   304.5,
+   446.5
+  ],
+  [
+   304.5,
+   452.0
+  ]
+ ],
+ "click_point": [
+  304,
+  446
+ ]
+}
