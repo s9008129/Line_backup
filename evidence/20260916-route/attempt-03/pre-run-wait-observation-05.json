@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-03",
+  "artifact_kind": "pre_run_wait_observation",
+  "artifact_role": "chronology_only_not_a_gate_decision",
+  "sequence": 5,
+  "task_id": "T20260916-0102-01-line-backup-acceptance",
+  "plan_revision": 18,
+  "plan_sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+  "app_bundle": "jp.naver.line.mac",
+  "raw_group": "旻謙允禎成長日記",
+  "album": "2024/05/13〜2024/05/17",
+  "expected_count": 57,
+  "human_gate_status": "AUTHORIZED_BY_USER",
+  "human_gate_authorized_at_local": "2026-09-17T09:09:49+0800",
+  "observation_window_utc": {
+    "start": "2026-09-17T03:32:59.816Z",
+    "end": "2026-09-17T03:34:20.494Z",
+    "poll_count": 5,
+    "poll_interval_s": 20,
+    "poll_method": "read-only app acquisition plus getScreenshot({emit:false}) and getAXState({emit:false,disableDiffing:true}); no click/type/key/scroll; no image emitted to the conversation in this window"
+  },
+  "window_result": {
+    "distinct_frame_hashes": 2,
+    "distinct_ax_fingerprints": 1,
+    "frames": [
+      {
+        "window_part": "polls 1-2",
+        "bytes": 116866,
+        "sha256_prefix12": "f49eb25e5221"
+      },
+      {
+        "window_part": "polls 3-5",
+        "bytes": 116819,
+        "sha256_prefix12": "91bb76fab1fb"
+      }
+    ],
+    "change_note": "a small repaint happened between poll 2 and poll 3 (47 bytes smaller); the accessibility tree did not change at all, so this is incidental UI repaint (e.g. timestamp/unread badge), not navigation",
+    "ax_text_len_chars": 1800,
+    "ax_sha256_prefix12": "b445c97d9dc1",
+    "ax_contains_target_words": false,
+    "ax_contains_album_word": false,
+    "ax_contains_message_input_field": true
+  },
+  "canonical_target_present": false,
+  "canonical_target_present_basis": "unchanged chat-room accessibility structure plus no canonical group/album text; the exact target album card never appeared in any of the five post-gate observation windows",
+  "gui_input_count": 0,
+  "input_counts": {
+    "app_acquisition_inputs": 0,
+    "navigation_inputs": 0,
+    "ellipsis_inputs": 0,
+    "menu_item_clicks": 0,
+    "save_all_clicks": 0,
+    "chooser_interactions": 0,
+    "backup_state_writes": 0
+  },
+  "ellipsis_budget_consumed": 0,
+  "frames_persisted": false,
+  "images_emitted_to_conversation_in_this_window": 0,
+  "escalation": {
+    "decision": "route attempt-03 stays in PRE_RUN_WAIT and the task goal is reported as blocked pending one user action",
+    "basis": "the gate was answered 2026-09-17T01:09:49Z and five read-only observation windows (01:37–01:55Z, 03:21Z, 03:25–03:28Z, 03:31–03:32Z, 03:32:59–03:34:20Z) all found the exact target absent; every remaining deliverable (route-result.json, Stage 05 attempt-05, result.md closure) depends on the target being presented",
+    "resume_conditions": [
+      "user presents the exact target album card in LINE and reports ready: then target-binding read -> exactly one ellipsis input -> immediate post observation -> stop",
+      "or user explicitly chooses the alternative path ROUTE_NOT_NEEDED with a Plan rationale (Rev19) and a fresh independent review"
+    ]
+  },
+  "conclusion": "Fifth post-gate wait window: still no target album and no navigation; zero GUI input consumed and the single authorised ellipsis input is still unspent. Waiting on the user is now an explicit blocked condition rather than an unbounded silent wait.",
+  "next_action": "wait for the user action named in escalation.resume_conditions"
+}
