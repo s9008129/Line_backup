@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "artifact": "anomaly-transient-pycache.json",
+  "run_id": "20260917-route-attempt-06",
+  "observed_at_local": "2026-09-17T23:45+0800",
+  "observation": "an untracked transient __pycache__/ directory appeared under evidence/20260916-route/tools/v4/ during the Stage-04 attempt-06 tool executions (python bytecode cache produced by importing the frozen v4 modules); it was never tracked and never committed",
+  "disposition": "recorded here (append-only) and removed from the working tree by a reversible move to /tmp before the Stage-05 verification; the directory contained only compiled .pyc caches of the frozen v4 sources",
+  "not_committed": true,
+  "removed": true,
+  "frozen_sources_unaffected": "the four v4 sources remain byte-identical to the freeze set (vision_reader.py 22a4e9ef…, locate_album_card.py bb52aff1…, verify_album_open.py ffa82aed…, locate_album_ellipsis.py b77e3d51…)",
+  "precedent": "the attempt-05 wave recorded the same class of transient cache as an anomaly (e2e/attempt-06/evidence/anomaly-transient-pycache.json) rather than silently committing or ignoring it"
+}
