@@ -1,23 +1,146 @@
 # LINE album acceptance and reusable transaction process — revised candidate plan
 
 TASK_ID: T20260916-0102-01-line-backup-acceptance
-PLAN_REVISION: 20
+PLAN_REVISION: 21
 PLAN_STATUS: CANDIDATE
 TASK_CLASS: CRITICAL (persistent-state and safety-semantics changes: dispatch continuity, duplicate/refusal gating, provenance binding, success semantics)
 REVIEW_REQUIRED: YES
 INDEPENDENT_ACCEPTANCE_REQUIRED: YES
 E2E_REQUIRED: NO
-E2E_RATIONALE: The only user journey for this album is a read-only verify-only pass over an existing destination; no production download is authorized in this wave. Real CLI, real formal read-only data, real evidence and the bounded, owner-gated real GUI observations of the controlled route runs are used; no fixture result may be reported as production E2E.
-ACCEPTED_BY_USER: YES
-PRIOR_REVIEW_ATTEMPT: 26, 27
-PRIOR_REVIEW_GATE: PLAN_APPROVED (Rev19 at SHA256 10ec0f032788982bb9cb270918829ca4b30fdcfbf156b82ac442df29fca07aff; review/attempt-26 and review/attempt-27 each returned PLAN_APPROVED for that exact revision/hash with only non-gating residual notes; no approval exists for Rev20)
+E2E_RATIONALE: The only user journey for this album is a read-only verify-only pass over an existing destination; no production download is authorized in this wave. Real CLI, real formal read-only data, real evidence and the bounded, owner-gated real GUI observations of the controlled route runs are used; no fixture result may be reported as production E2E. Rev21 adds a second, offline acceptance subject (the Vision-reader wave) whose acceptance is INTEGRATION-level replay over durable frozen artifacts (§21.5-§21.6); it contains no GUI input and is never reported as live E2E.
+ACCEPTANCE_MODE: INTEGRATION for the Rev21 wave (offline replay over durable frozen frames and versioned tools; §21.6). The album-data subject keeps its previous E2E decision.
+ACCEPTED_BY_USER: YES (Rev21's direction - replace the official reader with macOS-native Vision and build a bounded AI-Agent acceptance test - is set by the owner's own command file GOAL-vision-agent-next-conversation.md and H3.0 §1; §21.7 carries the plain-language owner view for confirmation at the next owner interaction)
+PRIOR_REVIEW_ATTEMPT: 28, 29
+PRIOR_REVIEW_GATE: PLAN_APPROVED (Rev20 at SHA256 4919d87148c68ea3d70cbb9abd258edbd0bfa0b55be5123f7202251e557db17c; review/attempt-28 at d9bf574facc636c97bfbe080769cce9ed30e5b05c31f7ef0847b0552b99ea09d and review/attempt-29 at 540fda1a35590fc4047a49723a204879395c2258ec1597c4d036093f69872683 each returned PLAN_APPROVED for that exact revision/hash with only non-gating residual notes; Rev19 at SHA256 10ec0f03... was approved by review/attempt-26 and review/attempt-27; no approval exists for Rev21)
 PRIMARY_OUTCOME_STATUS: UNKNOWN
 IMPLEMENTATION_STATUS: COMPLETE
 CORE_ACCEPTANCE_STATUS: BLOCKED
 REQUIRED_VERIFICATION_STATUS: PASS
 INDEPENDENT_ACCEPTANCE_STATUS: PASS
 TASK_CLOSURE_STATUS: CORE_ACCEPTANCE_BLOCKED
+REV21_WAVE_STATUS (Stage 04 not started; nothing pre-claimed): PRIMARY_OUTCOME_STATUS UNKNOWN / IMPLEMENTATION_STATUS NOT_STARTED / CORE_ACCEPTANCE_STATUS NOT_RUN / REQUIRED_VERIFICATION_STATUS NOT_RUN / INDEPENDENT_ACCEPTANCE_STATUS PENDING / TASK_CLOSURE_STATUS IN_PROGRESS - to be re-derived by Stage 05 from fresh evidence, never assumed here
+PHASE_0_BASELINE_COMMITTED: evidence/20260917-vision-reader/phase0/baseline.json (commit adf1829) - handoff H3.0 §3 anchors re-computed 15/15 match; Vision helper rebuilt with swiftc; C1/C3/C5 readings and 5x per-frame determinism reproduced byte-identically against the recorded raw stdout SHAs; the four volatile frozen frames preserved byte-identically under evidence/20260917-vision-reader/frames/
 STAGE_04_REPORTED_BY_THE_REV19_WAVE (not independently verified; execution-rev19.md §1): PRIMARY UNKNOWN / IMPLEMENTATION COMPLETE / CORE PASS (scoped) / REQUIRED_VERIFICATION PASS / INDEPENDENT_ACCEPTANCE PENDING / TASK_CLOSURE READY_FOR_INDEPENDENT_ACCEPTANCE
+
+## Revision 21 changes
+
+Wave: **macOS-native Vision reader replaces tesseract in the official route-verification chain, plus a bounded, re-runnable AI-Agent acceptance test that proves the replacement** (owner-directed; H3.0). Rev21 answers the owner's 2026-09-17 direction carried by `handoff-vision-agent-2026-09-17.md` (H3.0) and the companion command file `GOAL-vision-agent-next-conversation.md`: (1) replace the OCR reader actually used by the three v3 route tools with the macOS Vision framework (`VNRecognizeTextRequest`), and (2) build a bounded, append-only-evidence agent test that proves the reader is effective and that the attempt-05 blocker disappears (the frozen tesseract reader said `75` where the frame shows `57`). Rev21 adds new versioned artifacts only. It modifies no frozen v3/v2 tool byte, no route ledger, no attempt artifact, no formal config/state/run-log, and it authorizes no GUI input, no menu item, no chooser, no keyboard/AX write, no capture and no download.
+
+### 21.1 Authority, scope, and Goal Contract delta
+
+Verbatim owner authority (2026-09-17; quoted in H3.0 §1 and restated in `GOAL-vision-agent-next-conversation.md`):
+
+- 「1.我要你改成 macOS 內建 Vision。2.完成後我要你撰寫一個詳細精準的 GOAL 指令。……我要在新的討論串去實作這個 macOS 的 Vision，然後再搭配整個 GOAL 功能來去做一個 AI Agent 的自動化測試作業。」
+- 「第一，我們要先把 macOS 內建的 Vision 這個功能來取代目前的 OCR。第二，你要做一個 AI Agent 的自主自動化測試，來測試我們所做的這一個視覺化辨識有沒有效，有沒有辦法來解決目前的問題。」
+- `GOAL-vision-agent-next-conversation.md` 【任務】: "把正式驗證鏈的 OCR 讀取器，由 tesseract 換成 macOS 內建 Vision（VNRecognizeTextRequest）。「正式」＝ evidence/20260916-route/tools/ 下三個 v3 工具實際使用的讀取器。這是語意變更：必須走完整流程（Rev21 規劃 → fresh 雙複審 → 重編 task handoff → fresh 實作 → 獨立驗收）"; and 【範圍】: only the one album's toolchain, destination read-only.
+- Owner-reserved: the route closure decision (A `ROUTE_NOT_NEEDED` / B a new one-shot ⋮ gate) — H3.0 §7/§11 and the command file's 【路線待決】: "我還沒選——先問我，不要自己做。" Rev21 therefore grants nothing over the route and the route stays stopped.
+
+`PRIMARY_OUTCOME` (§Goal contract) is unchanged: the primary object of this task is still whether the existing 57-image destination is a valid backup of the exact LINE source and whether the reusable transaction path is proven. Rev21 changes the plan's CORE list for the **reusable capability** result only, by adding the two owner-directed CORE requirements below. It states honestly that the album-data result is not advanced by this wave.
+
+REQUIREMENTS (wave-scoped IDs; `REQ-VR-*` / `NFR-VR-*` / `OOS-VR-*`):
+
+- `REQ-VR-1` — CORE, result ②. The reader used by the official route-verification chain is a macOS-native Vision reader built only from system frameworks (Foundation + Vision + AppKit, no third-party dependency), delivered as a new versioned tool set (`tools/v4/`) that supersedes the v3 reader role in the official chain; the frozen v3 files remain byte-identical history. Trace: owner direction above; H3.0 §6.
+- `REQ-VR-2` — CORE. v4 preserves every v3 gating rule, verdict, exit code, refusal path and geometric parameter; the only semantic delta is the reader layer. No acceptance rule is loosened or tightened in this revision (H3.0 §5.3: thresholds are not to be relaxed ad hoc).
+- `REQ-VR-3` — CORE, result ②. A bounded, zero-GUI, re-runnable agent acceptance test (C1-C5, §21.5) runs on the four durable frozen attempt-05 frames and proves: the count `57` is read where the frozen tesseract read `75`/`27`/`5` (C1/C5); the date title reads on both pre and post frames (C3); repeated runs are byte-identical (C2); and the frozen S5 verification logic reaches `ALBUM_OPEN_VERIFIED` once the reader is swapped (C4, labelled `DEMONSTRATION_ONLY`).
+- `REQ-VR-4` — CORE, MUST_NOT_BREAK. The agent loop is bounded: 5 cumulative failures stop the loop, write stop evidence and notify the owner; no long retry; every attempt is append-only (JSON + SHA-256) and no attempt is rewritten or deleted.
+- `NFR-VR-1` — CORE. No third-party dependency; zero images in the conversation (paths and SHA-256 only); zero GUI input; formal config/state/run-log/destination read-only; `禎` (U+798E) and `楨` (U+6968) are never merged or normalized.
+- `NFR-VR-2` — SUPPORTING (non-gating). The helper build is reproducible from the frozen Swift source and its build record is stored; acceptance binds to observed readings, not to binary bytes (swiftc output is not byte-deterministic — measured in Phase 0).
+- `OOS-VR-1` — out of scope: any GUI input (including the route's ⋮), any menu-item activation (Save All named explicitly), any chooser, any keyboard input, any AX write, any production Save-All/download.
+- `OOS-VR-2` — out of scope: any modification of the v2/v3 tools, the v3 self-test artifacts, attempt-01..05 route evidence, run-ledgers, gate authorizations, formal config/state/run-log, or the 57 photos.
+- `OOS-VR-3` — out of scope: the route's closure decision and any route continuation; owner-reserved, and if chosen later it requires a NEW revision and a NEW one-shot gate.
+- `OOS-VR-4` — out of scope: a live screen-capture layer and any claim that the offline replay is live E2E (§21.5 deferred item).
+
+### 21.2 Verified Phase 0 state (committed baseline, read-only)
+
+Committed in `adf1829` as `evidence/20260917-vision-reader/phase0/` (`baseline.json`, `phase0_baseline.py`, `readings/{pre,post,s1,s2}.txt`) plus `evidence/20260917-vision-reader/frames/` (four byte-identical preservation copies + `manifest.json`):
+
+- Every H3.0 §3 SHA anchor re-computed: 15/15 match (`handoff_sha_mismatches: []`), including plan.md `4919d871…`, both Rev20 approvals, the Stage-03 handoff `ab88e496…`, the attempt-05 run-ledger `17b17203…`, the Vision cross-check `d3ebbaed…`, the Vision helper source `4fc9fa2b…`, the three v3 tools and the 13-case v3 self-test summary `17840e91…`.
+- The Vision helper rebuilt with `swiftc -O` (exit 0; Swift 6.3.3, arm64, macOS 26.6.2). The rebuilt binary is not byte-identical to the recorded volatile `/tmp/vision_ocr` (swiftc output is not byte-deterministic), so equivalence is established the strong way: the rebuilt helper's stdout on all four frozen frames is byte-identical to the recorded `raw_stdout_sha256` values (post `5c86dda8…`, pre `07e3e156…`, s1 `561bb131…`, s2 `abf9d75e…`), and re-running each frame 5 times yields identical stdout each time.
+- C1/C3/C5 sanity readings reproduce with zero input and zero UI: the post frame reads `57張照片` conf 1.00 (C1) and `2024/05/13~05/17` conf 1.00 (C3); the pre frame reads the title conf 1.00 (C3); s1/s2 read `57` conf 1.00 (C5).
+- The four frames existed only in `/tmp` (volatile). Byte-identical preservation copies (SHA-256 equal to the cross-check values) are now committed under the wave root, so the C1-C5 test is re-runnable after a reboot. No image is ever placed in the conversation.
+
+### 21.3 Semantic contract of the Vision reader (the only semantic change in this wave)
+
+The wave changes exactly one thing: **which reader produces the OCR token stream the frozen gating rules consume**. Everything downstream of the token stream is unchanged (`REQ-VR-2`).
+
+- Reader module: `evidence/20260916-route/tools/v4/vision_reader.py`. It renders the requested scale to a temporary PNG under the process temporary directory, invokes the Vision helper binary, parses stdout lines of the form `px[x0,y0,x1,y1]\tconf=NN\tTEXT` and returns v3-shaped word records `{text, conf, x, y, w, h}` in original-frame coordinates (pixel values divided by the scale), i.e. exactly the record shape the v3 `locate_album_card._tsv_rows` produces. Vision observations are line-level; the helper's own line boxes are the token unit and no re-tokenization is performed (measured: on all four frames the title, count and group-name lines each arrive as one observation).
+- Helper resolution order: `$VISION_OCR_BIN` if set, else a build path under the process temporary directory; if absent, build once from the frozen Swift source `evidence/20260916-route/tools/vision/vision_ocr.swift` (SHA `4fc9fa2b…`) with `swiftc -O`, recording the binary path/size/SHA in the emitted result. The helper source is never edited.
+- Scales and geometry: unchanged from v3 — frame reads at 3x LANCZOS upscale, count-region reads at 10x (the v3 `ocr_digits_region` parameters), and every bbox/margin/band/click-point rule is byte-for-byte the v3 rule.
+- Value normalization: unchanged from v3 — the count region's digit extraction keeps v3's `digits()` (strip non-digits) and v3's classification (`expect_count in digits_read` → MATCH; a different plausible read of at most 3 digits → MISMATCH; a longer non-plausible read → AMBIGUOUS_READ, which never refuses; empty → UNREADABLE, which never refuses). `57張照片` normalizes to `57` (measured conf 1.00 at 3x/6x/10x on the post frame).
+- Confidence: `conf` is recorded evidence and never a gate (unchanged from v3). C1/C3/C5 are judged by the tool-level rules, and the raw conf values are recorded alongside.
+- Determinism: for a given input image the helper's stdout bytes must be identical across repeats; the v4 tools' JSON output contains no timestamps, so repeated tool runs on the same input must also be byte-identical. C2 measures both.
+- Fail-closed: helper missing/unbuildable, non-zero exit, load failure, timeout, or unparsable output yields no words (or an empty region read) and the run then follows the frozen refusal paths — `TARGET_TITLE_NOT_FOUND(2)`, `BAD_FRAME(6)`, or a recorded `UNREADABLE` count that never refuses. A reader failure never crashes the tool and never produces a guessed value.
+- Text is never rewritten: no case folding, no width normalization, no merge of `禎`/`楨`, and no use of historical coordinates (H3.0 §9.6/§9.8).
+
+### 21.4 Toolchain replacement (v4) and self-test update strategy
+
+New artifacts (all append-only; nothing is overwritten and no v3 file is touched):
+
+| Artifact | Role |
+|---|---|
+| `evidence/20260916-route/tools/v4/vision_reader.py` | the Vision reader module (§21.3) |
+| `evidence/20260916-route/tools/v4/locate_album_card.py` | v4 album-card locator (v3 logic + Vision reader) |
+| `evidence/20260916-route/tools/v4/verify_album_open.py` | v4 album-open verifier (the S5 tool that failed at attempt-05) |
+| `evidence/20260916-route/tools/v4/locate_album_ellipsis.py` | v4 album-level ⋮ locator |
+| `evidence/20260916-route/tools/v4/README.md` | v4 usage, reader contract, helper resolution, fail-closed notes |
+| `evidence/20260916-route/tools/selftest/v4/run_selftest.py` + `selftest-summary.json` + `README.md` | the v4 self-test matrix (§below) |
+
+- Versioning decision (`DEC-VR-1`): the replacement is delivered as a new `v4/` tool set rather than an in-place edit of the frozen v3 files. Evidence: the v3 files are frozen artifacts bound by SHA-256 in the attempt-05 run-ledger and the 13-case self-test summary; editing them in place would break the reproducibility of every recorded frozen verdict and contradicts the append-only rule (H3.0 §9). The official chain is defined by the Stage-03 handoff: for Rev21 and after, the official reader is v4, and any future route run must use v4 under a new gate; the v3 files remain the frozen historical chain. Rejected alternative: in-place v3 edit (destroys frozen-artifact reproducibility; no audit trail of the previous reader).
+- v4 keeps the v3 sibling-loading convention (the three v4 tools load the v4 `locate_album_card.py` from their own directory, which in turn imports `vision_reader`), so the v4 set is self-contained and never imports v3 modules.
+- Self-test update strategy: the v3 self-test artifacts stay frozen and untouched. A new `selftest/v4/` runner renders the same synthetic geometry as v3 (no real screen content) and must (a) re-express the full v3 verdict/exit matrix against v4 (13 cases: card eligible / no title / count 58 / unsafe margins; album-open verified / no effect / target mismatch / inconclusive; ellipsis one control / OCR-derived title / two in band / group-level only / none), and (b) add the reader-layer cases: count-region normalization (`57張照片` → MATCH), helper-unavailable fail-closed (`$VISION_OCR_BIN` pointed at a nonexistent path — must refuse through a documented refusal path, never crash), and a determinism probe (5 identical runs on one fixture). Target matrix: 16 cases, `result: PASS`, `cases_failed: 0`. The v4 README pins the case list; the summary is the frozen evidence of the matrix.
+- `BASELINE_REGRESSION_DELTA` for this wave uses the wave's own pre-change baseline: the committed Phase 0 `baseline.json` plus the four frame SHAs; the post-change run must show `UNCHANGED` for every prior signature (v3 tool SHAs, v3 self-test summary SHA, route evidence SHAs) and may not silently omit any.
+
+### 21.5 AI-Agent acceptance test (C1-C5) — bounded, offline, re-runnable
+
+Purpose: prove with re-runnable, append-only evidence that the Vision reader is effective and that the attempt-05 blocker is a reader artifact, not a data problem. Zero GUI input, zero capture, zero formal-data writes.
+
+- Inputs (durable): `evidence/20260917-vision-reader/frames/route5r_frame_pre.jpg` (`3d926e7d…`), `..._post.jpg` (`4cb8a6b4…`), `route5r_probe_crop_s1.png` (`aea53a0d…`), `route5r_probe_crop_s2.png` (`7b9d0a19…`) — each re-hashed at test start; a mismatch is an immediate stop with evidence (never a silent continue).
+- Location: `evidence/20260916-route/agent-e2e/` — `README.md`, `runner/run_agent_e2e.py` (deterministic orchestrator, no model calls in the loop), and one append-only directory per attempt: `attempt-NN/{summary.json, raw/*, SHA256SUMS}`. Attempt numbering starts at `attempt-01` for this wave and never reuses or rewrites a directory.
+- Checks:
+
+| ID | Check | Judgement (tool-level rule, unchanged from v3) | Failure class |
+|---|---|---|---|
+| C1 | post frame count read | the v4 card locator's count box below the title yields a digit read containing `57` (raw line + conf recorded) | reader/regression failure |
+| C2 | determinism | 5 repeats per input: helper stdout bytes identical, and v4 tool JSON bytes identical, per input | reader nondeterminism failure |
+| C3 | date title on pre and post frames | the v4 title rule finds `2024/05/13~05/17` on both frames (digit-token rule; bbox recorded) | reader/rule failure |
+| C4 | frozen S5 replay (`DEMONSTRATION_ONLY`) | `v4/verify_album_open.py` on (pre, post) returns `ALBUM_OPEN_VERIFIED` exit 0, recorded next to the frozen v3 result (`TARGET_MISMATCH` exit 4, count read `75`) | toolchain failure |
+| C5 | s1/s2 crop count reads | same as C1 for both crops (frozen locator read `27` and `5`) | reader/regression failure |
+
+- Bounded loop (`REQ-VR-4`): the runner attempts each check once per attempt; cumulative failures are counted in the attempt summary; at 5 cumulative failures the loop stops, writes the stop reason and evidence, and the owner is notified for intervention. Long retry is forbidden. A failed attempt is preserved; a later run continues at the next attempt number.
+- Attempt summary (`summary.json`) records: attempt id, timestamp, runner argv, python version, helper binary path/size/SHA, each check's raw command, exit code, parsed verdict, SHA-256 of every raw artifact, `failures_total`, `stop_reason`, `inputs_sent: 0`, `ui_interaction: none`, and the frame SHAs used.
+- Acceptance: one attempt with all five checks PASS, plus the v4 self-test matrix green, satisfies the wave's CORE acceptance. The wave's Stage 05 then independently re-runs the same inputs and re-derives the tuple.
+- Deferred, explicitly non-gating (`OOS-VR-4`): a live read-only screen-capture layer. Rationale recorded: it may trigger an OS screen-recording permission prompt (an unbidden UI event), the route is stopped, and it adds no evidence for the C1-C5 claims. It is not executed in this wave and cannot block closure.
+
+### 21.6 Gating, veto, and closure semantics for this wave
+
+- The wave's CORE set is `REQ-VR-1..4`; its status tuple is reported as the reusable-capability result (result ②) and is never mixed into the album-data result (result ①). A wave CORE failure keeps result ② open; it never rewrites result ①.
+- Non-gating (no global veto): `NFR-VR-2` (build record), the v4 README/docs, and the deferred live-capture layer. None of them may block the wave's closure; conversely no supporting failure may mask a CORE failure.
+- C4 is `DEMONSTRATION_ONLY`: it never flips attempt-05's frozen verdict, never sets `CUA_ROUTE_DECISION`, never authorizes the ⋮ input, and never changes §20.3's routing. The route stays stopped with `owner_decision_required: true` until the owner decides (A or B). If the owner later chooses B, the new revision must bind its S5 verification to the v4 reader and carry a new one-shot gate; Rev21 itself grants nothing over the route.
+- Stage 05 for this wave binds to the approved Rev21 hash and consumes the next unused `.agent/tasks/<TASK_ID>/e2e/attempt-NN/` (06 at this writing; a later route-closure acceptance takes the number after it). `ACCEPTANCE_MODE: INTEGRATION` — offline replay over durable artifacts, never reported as live E2E.
+- Definition of done for this wave: `REQ-VR-1..4` verified with durable evidence; v3 frozen artifacts byte-identical; no GUI input, no formal-data write, no image in the conversation; independent acceptance PASS; all prior route/closure facts preserved.
+
+### 21.7 Owner view (白話，給非技術主持人)
+
+- 這版要做什麼：把「看圖讀字」的引擎從舊的 tesseract 換成 macOS 內建的 Vision，並且用一個「不會亂跑、可以重複驗證」的 AI Agent 測試，證明換了之後原本卡住的地方（57 被讀成 75）會消失。
+- 真正必要的（CORE）：新的 Vision 讀取器＋它對應的新版工具（v4）；以及那個測試要能在四個已凍結的畫面上重跑、留下可查證的紀錄（C1–C5）。
+- 支撐性、不擋結案的：建置紀錄、說明文件；「即時看目前螢幕」那層明確先不做（可能會跳出系統權限視窗，而且對證明沒有幫助）。
+- 什麼會卡住整套：只有 CORE 失敗才會（例如新版工具的自測不過、或測試讀不到 57）。失敗最多累積 5 次就停下來通知你，不會無限重試。
+- 我刻意不做什麼：不點任何畫面、不點 ⋮、不碰選單（Save All 尤其禁止）、不下載、不改 57 張、不改正式資料、不動舊版工具與舊證據。
+- 還在等你的一件事：路線 attempt-05 的收尾（A 結案「不需要」／B 再授權一次「⋮ 只觀察」）。我沒有自己決定，也不會在這版裡偷做。
+
+### 21.8 Literals corrected in place
+
+- Header: `PLAN_REVISION: 21`; `PRIOR_REVIEW_ATTEMPT: 28, 29` and `PRIOR_REVIEW_GATE` now record that Rev20 at `4919d871…` was approved by review attempts 28/29 (the prior text still said attempts 26/27 approved Rev19 and that no approval existed for Rev20, which the commit `1c8777c` had made stale) and that no approval exists for Rev21; the status block keeps the previous wave's verified values and adds a clearly labelled Rev21-wave line plus the committed Phase 0 baseline line, so the header is neither stale nor pre-claiming.
+- `§Critical path`: items 8-9 added for this wave.
+- `§Requirement, current evidence, and closure`: the Vision-reader rows added.
+- `§Runtime route, ledger authority, GUI gate, and truthful E2E decision`: sentence added for the wave's INTEGRATION acceptance and the unchanged `E2E_REQUIRED: NO`.
+- `§Canonical Status Contract v2` check matrix: four rows added (`VISION_READER_TOOLCHAIN_V4`, `VISION_AGENT_E2E_C1_C5`, `VISION_READER_FAILCLOSED_MATRIX`, `V3_FROZEN_EVIDENCE_UNCHANGED`).
+- `§Closure and sequencing`: "the current PLAN_REVISION at handoff time (21 at this writing)"; the wave's Stage 04/05 sequencing sentences.
+- `§Owner view`: OCR is no longer deferred; this wave is CORE for the reusable-capability result; the two owner-visible open items are named.
+
+### 21.9 Unchanged by this revision
+
+Everything else, including the Goal contract and `PRIMARY_OUTCOME`, the DONE criteria, the R1-R7 fix contract, cases 01-25 with their literals and oracles, §16.4's matching rules, the product command grammar, the read-only fences (no re-download; `禎`/`楨` never merged; formal config/state/run-log/photos read-only), the one-human-gate pattern (three recorded gates, each independent), the three separately reported results, §18.x decisions, and the Rev19 §19.1/§19.2/§20.x records with the attempt-03/04/05 artifacts (preserved as history; the route remains stopped and owner-reserved).
 
 ## Revision 20 changes
 
@@ -1401,6 +1524,8 @@ Test-only fault flags are rejected unless --test-mode is present and the state p
 5. Run all verifier axis-correct negative cases, transaction cases, status/closure cases, then run the product verifier against DATA_DESTINATION without formal-state mutation.
 6. Reconcile current source identity and state/registry/intent/writer evidence. Current default from existing evidence is SOURCE_CORRESPONDENCE=UNRESOLVED and STATE_ASSOCIATION=LEGACY_PROVENANCE_LIMITED; this stops exact goal acceptance while still reporting filesystem findings.
 7. Check documented CUA capability and the existing ledger. If route evidence remains necessary, request exactly one fresh controlled observation gate. This gate permits one ellipsis GUI input only, never Save-All/menu-item/chooser/state writes. A later production Save-All route requires a separate later approved plan revision, fresh review, and a separate one-time production gate.
+8. (Rev21 wave) Deliver the Vision reader and the versioned v4 tool set by replacing only the reader layer of the frozen v3 logic (REQ-VR-1/REQ-VR-2), then prove the frozen refusal matrix against v4 with the new 16-case self-test. No GUI input, no v3 byte touched.
+9. (Rev21 wave) Run the bounded agent acceptance test on the durable frozen attempt-05 frames (C1-C5, §21.5) and package the append-only evidence; Stage 05 independently re-runs the same inputs. The route itself stays stopped and owner-reserved; C4 stays DEMONSTRATION_ONLY.
 
 ## Requirement, current evidence, and closure
 
@@ -1413,6 +1538,10 @@ Test-only fault flags are rejected unless --test-mode is present and the state p
 | Current Save-All route decision | Historical menu observation found no affirmative Save All; controller/bridge are read-only observation tools | Separate route status from offline acceptance; only controlled observation may establish candidate route | CORE / OUTCOME | HARD_CLEAN |
 | Bridge/service | No backup-state integration | Non-gating; deploy only after route-specific causal proof and a later approved plan | SUPPORTING / DIAGNOSTIC | NON_GATING |
 | Independent acceptance | Rev1/Rev2/Rev3/Rev4/Rev5/Rev6/Rev7/Rev8/Rev9/Rev10 reports exist; attempts 11/12 have snapshots without reports; attempt 13 reviewed Rev11; Rev12 was approved but Stage 05 attempt 02 rejected evidence | Fresh review of the current revision (Rev15) and its exact hash, then Stage 05 acceptance of actual CLI/evidence | CORE / MUST_NOT_BREAK | HARD_CLEAN |
+| Vision reader replaces tesseract in the official chain (Rev21 REQ-VR-1/REQ-VR-2) | tesseract is the reader of the frozen v3 tools; the attempt-05 cross-check shows Vision reads the same frozen frames correctly (post `57張照片` conf 1.00; frozen tesseract `75`) | New v4 tool set (v3 logic + Vision reader) with the v4 self-test matrix green; v3 files byte-identical; no GUI input | CORE / OUTCOME | HARD_CLEAN |
+| AI-Agent acceptance test proves the replacement (Rev21 REQ-VR-3/REQ-VR-4) | Phase 0: C1/C3/C5 and 5x determinism reproduced offline on the four durable frozen frames; the frozen v3 S5 verdict stays `TARGET_MISMATCH` | Bounded, append-only agent test (C1-C5) green in one attempt with raw evidence + SHA table; C4 labelled DEMONSTRATION_ONLY; 5-failure stop rule enforced | CORE / OUTCOME | HARD_CLEAN |
+| v3/v2 frozen evidence unchanged (Rev21 OOS-VR-2) | All §3 anchors re-verified in Phase 0 (15/15 match); v3 tools + v3 self-test summary are frozen artifacts of attempt-05 | Post-change SHA re-check shows every prior artifact byte-identical; `baseline_delta=UNCHANGED` | CORE / MUST_NOT_BREAK | HARD_CLEAN |
+| Live screen-capture layer (Rev21 §21.5 deferred) | Not executed; may raise an OS permission prompt (an unbidden UI event) and adds no evidence for C1-C5 | Non-gating by Plan decision; never required for closure | BEST_EFFORT / DIAGNOSTIC | NON_GATING |
 
 ## Source, registry, and legacy outcome contract
 
@@ -1603,7 +1732,7 @@ Exact process-specific protocol, expected outcome, and next-step decision:
 
 ## Runtime route, ledger authority, GUI gate, and truthful E2E decision
 
-E2E_REQUIRED: NO for this wave. The primary object is an existing destination that must not be redownloaded, and no production download is authorized. A CUA/controller session includes at most one album-card navigation input and one ellipsis GUI input (Rev20 §20.2's corrected run: the directed album entry, then the album-level ⋮) and is not full user-journey E2E. Stage 05 independent acceptance remains mandatory for the actual CLI, transaction process, evidence package and route status.
+E2E_REQUIRED: NO for this wave. The primary object is an existing destination that must not be redownloaded, and no production download is authorized. A CUA/controller session includes at most one album-card navigation input and one ellipsis GUI input (Rev20 §20.2's corrected run: the directed album entry, then the album-level ⋮) and is not full user-journey E2E. Stage 05 independent acceptance remains mandatory for the actual CLI, transaction process, evidence package and route status. Rev21's Vision-reader wave is judged separately under ACCEPTANCE_MODE=INTEGRATION (offline replay over the durable frozen frames and the v4 tools; §21.5-§21.6): it sends no input and is never presented as live E2E.
 
 Authoritative historical ledger scope and budget:
 
@@ -1659,6 +1788,10 @@ Every material check includes CHECK_ID, GOAL_CRITICALITY, EVIDENCE_ROLE, CLOSURE
 | STATUS_CLOSURE_CONTRACT | CORE | MUST_NOT_BREAK | HARD_CLEAN | NO | illegal enum/routing/self-waiver is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
 | INDEPENDENT_ACCEPTANCE | CORE | MUST_NOT_BREAK | HARD_CLEAN | NO | missing independent result remains PENDING/BLOCKED | NO | NONE | NOT_RUN | NOT_ALLOWED |
 | BASELINE_REGRESSION_DELTA | CORE | MUST_NOT_BREAK | BASELINE_DELTA | YES | rerunning the identical command/environment shows a new or worsened failure signature, or an old signature is silently omitted | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| VISION_READER_TOOLCHAIN_V4 | CORE | OUTCOME | HARD_CLEAN | YES | the v4 set must be present and its self-test matrix green (16 cases, cases_failed 0); a reader-layer regression that changes a verdict/exit code is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| VISION_AGENT_E2E_C1_C5 | CORE | OUTCOME | HARD_CLEAN | YES | a failed/absent check or a non-append-only attempt invalidates the wave's CORE acceptance; C4 stays DEMONSTRATION_ONLY and can never flip a frozen route verdict | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| VISION_READER_FAILCLOSED_MATRIX | CORE | MUST_NOT_BREAK | HARD_CLEAN | NO | helper-unavailable/unparsable input must reach a documented refusal path with a non-zero exit; a crash or a guessed value is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V3_FROZEN_EVIDENCE_UNCHANGED | CORE | MUST_NOT_BREAK | HARD_CLEAN | YES | any byte change to a v2/v3 tool, the v3 self-test summary, a route ledger/artifact or the attempt-05 frames is TASK_REGRESSION and stops the wave | NO | NONE | NOT_RUN | NOT_ALLOWED |
 | BRIDGE_READINESS | SUPPORTING | DIAGNOSTIC | NON_GATING | NO | non-gating unless route-specific necessity is proved | YES | Project owner, exact scope | NOT_RUN | NOT_REQUESTED |
 | DOCUMENTATION_RETENTION_HEALTH | SUPPORTING | REPOSITORY_HEALTH | HARD_CLEAN | NO | within the exact task-evidence scope, missing raw commands, stdout/stderr/exit, or manifest/hash read-back would make independent acceptance non-reproducible and could invalidate provenance; unrelated repository documentation never enters this gate | YES | Project owner, exact scope | NOT_RUN | NOT_REQUESTED |
 
@@ -1727,9 +1860,9 @@ A valid waiver preserves CHECK_RESULT and includes WAIVED_BY, WAIVER_SCOPE, RATI
 
 ## Closure and sequencing
 
-The root /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/handoff.md is historical/non-authoritative for this task because it predates this TASK_ID and revision. Stage 03 must create a fresh handoff bound to TASK_ID, the current PLAN_REVISION at handoff time (20 at this writing), the approved plan SHA, GOAL_ANCHOR, critical path, invariants, deferred/non-gating items and stop conditions.
+The root /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/handoff.md is historical/non-authoritative for this task because it predates this TASK_ID and revision. Stage 03 must create a fresh handoff bound to TASK_ID, the current PLAN_REVISION at handoff time (21 at this writing), the approved plan SHA, GOAL_ANCHOR, critical path, invariants, deferred/non-gating items and stop conditions. For the Rev21 wave the handoff additionally binds: the v4 tool set as the official reader of the official chain, the four durable frame SHAs, the C1-C5 acceptance, the 5-failure stop rule, the DEMONSTRATION_ONLY label of C4, and the owner-reserved route decision.
 
-Stage 02 must independently review this Revision 20 and its exact hash. Stage 03 may compile handoff only for the approved revision/hash. Stage 04 repairs only the approved evidence harness and reruns the verifier/transaction/status wave; it must preserve prior attempts, write execution.md with the canonical six statuses, check matrix/results, scoped blockers, Stage 04 snapshot fields and artifact hashes. Stage 05 independently accepts the real CLI/evidence, snapshots immutable Stage 04 facts and does not modify product code.
+Stage 02 must independently review this Revision 21 and its exact hash. Stage 03 may compile handoff only for the approved revision/hash. Stage 04 repairs only the approved evidence harness and reruns the verifier/transaction/status wave; for the Rev21 wave it builds the v4 reader/tools and the v4 self-test, runs the C1-C5 agent test, writes the append-only attempt evidence, and must preserve prior attempts and write execution.md with the canonical six statuses, check matrix/results, scoped blockers, Stage 04 snapshot fields and artifact hashes. Stage 05 independently accepts the real CLI/evidence, snapshots immutable Stage 04 facts and does not modify product code; for the Rev21 wave it consumes the next unused e2e attempt number and re-runs the same frozen inputs rather than trusting the Stage-04 summary.
 
 The current plan is not implementation approval. Offline read-only reconciliation, isolated fixture construction, baseline reproduction, and review preparation are authorized now. Product code edits, external formal-state writes, GUI input, deployment, and production download require the applicable later gate. Any semantic contract, product-boundary, E2E, or GUI-budget change increments PLAN_REVISION on the same TASK_ID, invalidates prior approvals and any handoff, and repeats independent review; it never continues under the same revision (Rev16 §16.8).
 
@@ -1741,4 +1874,4 @@ If source identity remains unresolved after all authorized evidence, the legally
 
 ## Owner view
 
-Essential: prove whether the existing 57 files can be safely attributed to the exact requested LINE source and prove real reusable recovery/duplicate behavior before any new GUI side effect. Filesystem health alone is insufficient. The new local CLI/package is the explicit reusable product boundary for this task; it must not be confused with an absent external producer. Supporting: bridge/service diagnosis only if causal evidence proves necessity. Deferred: production Save-All/download, bridge repair, migration, OCR, and historical cleanup. The largest remaining risk is still that the 57 files are valid but the original source namespace/provenance was never captured.
+Essential: (a) prove whether the existing 57 files can be safely attributed to the exact requested LINE source and prove real reusable recovery/duplicate behavior before any new GUI side effect; and (b) - owner-directed in Rev21 - make the official verification chain read screens with the macOS-native Vision engine and prove that replacement with a bounded, re-runnable agent test, because the current reader is what stopped the last controlled route run (57 misread as 75). Filesystem health alone is insufficient. The new local CLI/package is the explicit reusable product boundary for this task; it must not be confused with an absent external producer. Rev21's Vision wave adds no GUI input and no production side effect: its acceptance is an offline replay on already-frozen frames, and its C4 replay is explicitly a demonstration that cannot flip the frozen route verdict. Supporting (non-gating): bridge/service diagnosis only if causal evidence proves necessity; the v4 build/documentation record; a live read-only capture layer is deferred for this wave (it may raise an OS permission prompt and adds no evidence). Deferred: production Save-All/download, bridge repair, migration, and historical cleanup. OCR is no longer deferred: it is now CORE in the form of the Vision-reader wave. The two owner-visible open items are (1) the route attempt-05 closure decision (A `ROUTE_NOT_NEEDED` / B a new one-shot ⋮ gate) - owner-reserved, not taken by any agent - and (2) exact source correspondence. The largest remaining risk is still that the 57 files are valid but the original source namespace/provenance was never captured; the wave's own largest risk is that a future macOS/Vision change could alter readings, which the deterministic C2/v4 self-test would surface loudly instead of silently.
