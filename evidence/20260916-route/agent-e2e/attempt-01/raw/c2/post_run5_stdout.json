@@ -1,0 +1,78 @@
+{
+ "tool": "locate_album_card",
+ "frame": "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+ "frame_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+ "frame_size": [
+  327,
+  643
+ ],
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   15,
+   83,
+   204,
+   111
+  ]
+ },
+ "ocr_words_seen": [
+  "2024/05/13~05/17",
+  "57張照片",
+  "2024.05.18",
+  "1~"
+ ],
+ "band_top_bright_row": null,
+ "band_bottom_bright_row": 226,
+ "margin_above_px": null,
+ "margin_below_px": 129,
+ "count_box": [
+  7,
+  113,
+  175,
+  143
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "click_point": [
+  27,
+  97
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "verdict": "UNSAFE_MARGINS",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+    "stdout_bytes": 160,
+    "lines_parsed": 4
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83",
+    "stdout_bytes": 40,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

@@ -1,0 +1,191 @@
+{
+ "purpose": "RV-30-4 count sweep (3x/6x/10x) raw evidence",
+ "input": "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+ "input_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+ "count_box": [
+  7,
+  113,
+  175,
+  143
+ ],
+ "frame_reads": {
+  "3x": {
+   "read": "20240513051757202405181",
+   "expected_count_present": true,
+   "best_line": {
+    "text": "57張照片",
+    "digits": "57",
+    "conf": 1.0,
+    "bbox": [
+     15,
+     121,
+     65,
+     134
+    ]
+   },
+   "match_lines": [
+    {
+     "text": "57張照片",
+     "digits": "57",
+     "conf": 1.0,
+     "bbox": [
+      15,
+      121,
+      65,
+      134
+     ]
+    }
+   ],
+   "line_count": 4
+  },
+  "6x": {
+   "read": "20240513051757202405181",
+   "expected_count_present": true,
+   "best_line": {
+    "text": "57張照片",
+    "digits": "57",
+    "conf": 1.0,
+    "bbox": [
+     14,
+     120,
+     65,
+     134
+    ]
+   },
+   "match_lines": [
+    {
+     "text": "57張照片",
+     "digits": "57",
+     "conf": 1.0,
+     "bbox": [
+      14,
+      120,
+      65,
+      134
+     ]
+    }
+   ],
+   "line_count": 4
+  },
+  "10x": {
+   "read": "20240513051757202405181",
+   "expected_count_present": true,
+   "best_line": {
+    "text": "57張照片",
+    "digits": "57",
+    "conf": 1.0,
+    "bbox": [
+     15,
+     121,
+     65,
+     134
+    ]
+   },
+   "match_lines": [
+    {
+     "text": "57張照片",
+     "digits": "57",
+     "conf": 1.0,
+     "bbox": [
+      15,
+      121,
+      65,
+      134
+     ]
+    }
+   ],
+   "line_count": 4
+  }
+ },
+ "count_region_reads": {
+  "3x": {
+   "read": "57",
+   "expected_count_present": true,
+   "best_line": {
+    "text": "57張照片",
+    "digits": "57",
+    "conf": 1.0,
+    "bbox": [
+     8,
+     7,
+     58,
+     21
+    ]
+   },
+   "match_lines": [
+    {
+     "text": "57張照片",
+     "digits": "57",
+     "conf": 1.0,
+     "bbox": [
+      8,
+      7,
+      58,
+      21
+     ]
+    }
+   ],
+   "line_count": 1
+  },
+  "6x": {
+   "read": "57",
+   "expected_count_present": true,
+   "best_line": {
+    "text": "57張照片",
+    "digits": "57",
+    "conf": 1.0,
+    "bbox": [
+     8,
+     7,
+     58,
+     20
+    ]
+   },
+   "match_lines": [
+    {
+     "text": "57張照片",
+     "digits": "57",
+     "conf": 1.0,
+     "bbox": [
+      8,
+      7,
+      58,
+      20
+     ]
+    }
+   ],
+   "line_count": 1
+  },
+  "10x": {
+   "read": "57",
+   "expected_count_present": true,
+   "best_line": {
+    "text": "57張照片",
+    "digits": "57",
+    "conf": 1.0,
+    "bbox": [
+     8,
+     8,
+     60,
+     20
+    ]
+   },
+   "match_lines": [
+    {
+     "text": "57張照片",
+     "digits": "57",
+     "conf": 1.0,
+     "bbox": [
+      8,
+      8,
+      60,
+      20
+     ]
+    }
+   ],
+   "line_count": 1
+  }
+ },
+ "official_count_region_read": "57",
+ "method": "v4_locate_album_card.ocr_words"
+}
