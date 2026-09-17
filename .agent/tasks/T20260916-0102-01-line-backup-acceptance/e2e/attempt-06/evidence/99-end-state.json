@@ -1,0 +1,25 @@
+{
+ "captured_at": "2026-09-17T21:16:05+08:00",
+ "head": "287e2f563178d8b8905e9efd52a3dcdc5bb4e224",
+ "git_status_porcelain": "?? .agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-06/\n?? evidence/20260916-route/agent-e2e/attempt-02/\n",
+ "plan_sha256": "466bda4ad79897cf5f6395beafc0a70c57d99ed4dc15f4b78328fb5c69b68190",
+ "handoff_sha256": "df595831eab25bb405d1f084f1113963ce911713515c4c31faaf34e9362f0888",
+ "v4_tool_shas": {
+  "vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "locate_album_ellipsis.py": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+  "README.md": "ed3ebf0aad53024f3e4fe7d4886faa9b37c048e2fdf95513ab3bc7bafe677f23"
+ },
+ "v4_dir_listing": [
+  "README.md",
+  "locate_album_card.py",
+  "locate_album_ellipsis.py",
+  "verify_album_open.py",
+  "vision_reader.py"
+ ],
+ "destination_recount": {
+  "files": 57,
+  "bytes": 17924900
+ }
+}

@@ -1,0 +1,181 @@
+{
+ "tool": "verify_album_open",
+ "pre": "evidence/20260917-vision-reader/frames/route5r_frame_pre.jpg",
+ "post": "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+ "post_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+ "pre_size": [
+  327,
+  643
+ ],
+ "post_size": [
+  327,
+  643
+ ],
+ "post_ocr_words_seen": [
+  "2024/05/13~05/17",
+  "57張照片",
+  "2024.05.18",
+  "1~"
+ ],
+ "target_title_in_post": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   15,
+   83,
+   204,
+   111
+  ]
+ },
+ "date_like_tokens_in_post": [
+  "2024.05.18",
+  "2024/05/13~05/17"
+ ],
+ "count_box": [
+  7,
+  113,
+  175,
+  143
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "diff": {
+  "changed_pixels": 135986,
+  "changed_fraction": 0.646749,
+  "changed_bbox": [
+   12,
+   9,
+   314,
+   643
+  ],
+  "changed_grid_8x8": [
+   [
+    176,
+    31,
+    69,
+    372,
+    363,
+    58,
+    0,
+    190
+   ],
+   [
+    983,
+    1377,
+    1085,
+    1136,
+    1163,
+    1031,
+    954,
+    499
+   ],
+   [
+    1938,
+    3075,
+    2844,
+    3233,
+    3288,
+    2993,
+    3259,
+    1936
+   ],
+   [
+    2000,
+    3074,
+    2958,
+    2800,
+    2853,
+    2906,
+    2916,
+    1799
+   ],
+   [
+    1860,
+    3003,
+    2967,
+    2776,
+    2304,
+    2766,
+    3036,
+    1884
+   ],
+   [
+    2045,
+    3014,
+    3014,
+    3114,
+    2589,
+    3080,
+    2980,
+    1844
+   ],
+   [
+    1766,
+    3237,
+    3093,
+    2992,
+    2663,
+    2648,
+    2386,
+    1663
+   ],
+   [
+    1952,
+    2995,
+    2924,
+    2916,
+    2964,
+    3017,
+    2012,
+    1123
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "ALBUM_OPEN_VERIFIED",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+    "stdout_bytes": 160,
+    "lines_parsed": 4
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83",
+    "stdout_bytes": 40,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

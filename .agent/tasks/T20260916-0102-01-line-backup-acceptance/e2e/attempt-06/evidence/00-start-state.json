@@ -1,0 +1,31 @@
+{
+ "captured_at": "2026-09-17T21:11:14+08:00",
+ "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+ "head": "287e2f563178d8b8905e9efd52a3dcdc5bb4e224",
+ "git_status_porcelain": "",
+ "python": {
+  "executable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+  "version": "3.14.3 (main, Feb  3 2026, 15:32:20) [Clang 17.0.0 (clang-1700.6.3.2)]"
+ },
+ "plan_sha256": "466bda4ad79897cf5f6395beafc0a70c57d99ed4dc15f4b78328fb5c69b68190",
+ "handoff_sha256": "df595831eab25bb405d1f084f1113963ce911713515c4c31faaf34e9362f0888",
+ "execution_rev21_sha256": "baec21e6472d5c2649e316496b2a9ecb6687859669d01a9f951cb9dc12aec18e",
+ "execution_rev21_git_blob": "b9465f3a4558941e294cb9a10d86304700728194",
+ "review_attempt_30": "92d5be16aa21ce0a07b6dbe0210ab00cf6d995198ecb59599146ed59d8284729",
+ "review_attempt_31": "c80a14da9a6449226052230c8c7a635e8b2eb997ed4cf67dfb0dda22f6ab0aa5",
+ "helper_binary": {
+  "path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+  "exists": true,
+  "sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5"
+ },
+ "frames_observed": {
+  "route5r_frame_pre.jpg": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+  "route5r_frame_post.jpg": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "route5r_probe_crop_s1.png": "aea53a0df8c4ef20488446dbccc42fa84ecd72c36aad71d42199f20b9e30f5c3",
+  "route5r_probe_crop_s2.png": "7b9d0a19323e0f7341d2ee9722415251195531dc067b773f231676729c63721b"
+ },
+ "env": {
+  "VISION_OCR_BIN": null,
+  "CUA_ROUTE_DECISION": null
+ }
+}

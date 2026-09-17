@@ -1,0 +1,352 @@
+{
+ "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+ "entry_count_total": 57,
+ "regular_file_count": 57,
+ "total_bytes": 17924900,
+ "zero_byte_files": 0,
+ "newest_mtime": "2026-09-07T15:53:46+08:00",
+ "entries": [
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_1.jpg",
+   "regular": true,
+   "size": 171644,
+   "mtime": "2026-09-07T15:53:12+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_10.jpg",
+   "regular": true,
+   "size": 246171,
+   "mtime": "2026-09-07T15:53:17+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_11.jpg",
+   "regular": true,
+   "size": 262276,
+   "mtime": "2026-09-07T15:53:18+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_12.jpg",
+   "regular": true,
+   "size": 328802,
+   "mtime": "2026-09-07T15:53:19+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_13.jpg",
+   "regular": true,
+   "size": 345602,
+   "mtime": "2026-09-07T15:53:19+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_14.jpg",
+   "regular": true,
+   "size": 465359,
+   "mtime": "2026-09-07T15:53:20+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_15.jpg",
+   "regular": true,
+   "size": 255447,
+   "mtime": "2026-09-07T15:53:21+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_16.jpg",
+   "regular": true,
+   "size": 248698,
+   "mtime": "2026-09-07T15:53:21+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_17.jpg",
+   "regular": true,
+   "size": 322768,
+   "mtime": "2026-09-07T15:53:22+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_18.jpg",
+   "regular": true,
+   "size": 328846,
+   "mtime": "2026-09-07T15:53:22+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_19.jpg",
+   "regular": true,
+   "size": 199046,
+   "mtime": "2026-09-07T15:53:23+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_2.jpg",
+   "regular": true,
+   "size": 228239,
+   "mtime": "2026-09-07T15:53:13+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_20.jpg",
+   "regular": true,
+   "size": 286945,
+   "mtime": "2026-09-07T15:53:24+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_21.jpg",
+   "regular": true,
+   "size": 273545,
+   "mtime": "2026-09-07T15:53:24+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_22.jpg",
+   "regular": true,
+   "size": 262155,
+   "mtime": "2026-09-07T15:53:25+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_23.jpg",
+   "regular": true,
+   "size": 219692,
+   "mtime": "2026-09-07T15:53:26+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_24.jpg",
+   "regular": true,
+   "size": 207839,
+   "mtime": "2026-09-07T15:53:26+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_25.jpg",
+   "regular": true,
+   "size": 227747,
+   "mtime": "2026-09-07T15:53:27+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_26.jpg",
+   "regular": true,
+   "size": 226735,
+   "mtime": "2026-09-07T15:53:27+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_27.jpg",
+   "regular": true,
+   "size": 230826,
+   "mtime": "2026-09-07T15:53:28+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_28.jpg",
+   "regular": true,
+   "size": 211881,
+   "mtime": "2026-09-07T15:53:29+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_29.jpg",
+   "regular": true,
+   "size": 241006,
+   "mtime": "2026-09-07T15:53:29+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_3.jpg",
+   "regular": true,
+   "size": 460400,
+   "mtime": "2026-09-07T15:53:14+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_30.jpg",
+   "regular": true,
+   "size": 284427,
+   "mtime": "2026-09-07T15:53:30+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_31.jpg",
+   "regular": true,
+   "size": 191617,
+   "mtime": "2026-09-07T15:53:30+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_32.jpg",
+   "regular": true,
+   "size": 324337,
+   "mtime": "2026-09-07T15:53:31+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_33.jpg",
+   "regular": true,
+   "size": 458640,
+   "mtime": "2026-09-07T15:53:32+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_34.jpg",
+   "regular": true,
+   "size": 323134,
+   "mtime": "2026-09-07T15:53:32+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_35.jpg",
+   "regular": true,
+   "size": 269934,
+   "mtime": "2026-09-07T15:53:33+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_36.jpg",
+   "regular": true,
+   "size": 307450,
+   "mtime": "2026-09-07T15:53:34+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_37.jpg",
+   "regular": true,
+   "size": 301995,
+   "mtime": "2026-09-07T15:53:34+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_38.jpg",
+   "regular": true,
+   "size": 168437,
+   "mtime": "2026-09-07T15:53:34+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_39.jpg",
+   "regular": true,
+   "size": 398380,
+   "mtime": "2026-09-07T15:53:35+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_4.jpg",
+   "regular": true,
+   "size": 244575,
+   "mtime": "2026-09-07T15:53:14+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_40.jpg",
+   "regular": true,
+   "size": 384643,
+   "mtime": "2026-09-07T15:53:36+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_41.jpg",
+   "regular": true,
+   "size": 240992,
+   "mtime": "2026-09-07T15:53:36+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_42.jpg",
+   "regular": true,
+   "size": 291197,
+   "mtime": "2026-09-07T15:53:36+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_43.jpg",
+   "regular": true,
+   "size": 234870,
+   "mtime": "2026-09-07T15:53:37+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_44.jpg",
+   "regular": true,
+   "size": 533384,
+   "mtime": "2026-09-07T15:53:38+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_45.jpg",
+   "regular": true,
+   "size": 524758,
+   "mtime": "2026-09-07T15:53:38+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_46.jpg",
+   "regular": true,
+   "size": 406447,
+   "mtime": "2026-09-07T15:53:39+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_47.jpg",
+   "regular": true,
+   "size": 378744,
+   "mtime": "2026-09-07T15:53:40+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_48.jpg",
+   "regular": true,
+   "size": 301237,
+   "mtime": "2026-09-07T15:53:40+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_49.jpg",
+   "regular": true,
+   "size": 213087,
+   "mtime": "2026-09-07T15:53:41+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_5.jpg",
+   "regular": true,
+   "size": 228108,
+   "mtime": "2026-09-07T15:53:15+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_50.jpg",
+   "regular": true,
+   "size": 378427,
+   "mtime": "2026-09-07T15:53:41+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_51.jpg",
+   "regular": true,
+   "size": 320985,
+   "mtime": "2026-09-07T15:53:42+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_52.jpg",
+   "regular": true,
+   "size": 217720,
+   "mtime": "2026-09-07T15:53:43+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_53.jpg",
+   "regular": true,
+   "size": 555922,
+   "mtime": "2026-09-07T15:53:44+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_54.jpg",
+   "regular": true,
+   "size": 526352,
+   "mtime": "2026-09-07T15:53:45+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_55.jpg",
+   "regular": true,
+   "size": 514745,
+   "mtime": "2026-09-07T15:53:45+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_56.jpg",
+   "regular": true,
+   "size": 251953,
+   "mtime": "2026-09-07T15:53:46+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_57.jpg",
+   "regular": true,
+   "size": 275365,
+   "mtime": "2026-09-07T15:53:46+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_6.jpg",
+   "regular": true,
+   "size": 419919,
+   "mtime": "2026-09-07T15:53:15+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_7.jpg",
+   "regular": true,
+   "size": 368322,
+   "mtime": "2026-09-07T15:53:16+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_8.jpg",
+   "regular": true,
+   "size": 401912,
+   "mtime": "2026-09-07T15:53:16+08:00"
+  },
+  {
+   "name": "LINE_ALBUM_20240513～0517_260907_9.jpg",
+   "regular": true,
+   "size": 431216,
+   "mtime": "2026-09-07T15:53:17+08:00"
+  }
+ ]
+}

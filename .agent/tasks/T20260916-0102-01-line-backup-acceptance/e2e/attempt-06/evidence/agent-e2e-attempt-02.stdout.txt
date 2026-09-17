@@ -1,0 +1,29 @@
+{
+ "attempt": "attempt-02",
+ "result": "PASS",
+ "failures_total": 0,
+ "stop_reason": null,
+ "checks": [
+  {
+   "check_id": "C1",
+   "status": "PASS"
+  },
+  {
+   "check_id": "C2",
+   "status": "PASS"
+  },
+  {
+   "check_id": "C3",
+   "status": "PASS"
+  },
+  {
+   "check_id": "C4",
+   "status": "PASS"
+  },
+  {
+   "check_id": "C5",
+   "status": "PASS"
+  }
+ ],
+ "summary": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/agent-e2e/attempt-02/summary.json"
+}

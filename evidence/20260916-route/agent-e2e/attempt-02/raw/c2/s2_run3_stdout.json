@@ -1,0 +1,80 @@
+{
+ "tool": "locate_album_card",
+ "frame": "evidence/20260917-vision-reader/frames/route5r_probe_crop_s2.png",
+ "frame_sha256": "7b9d0a19323e0f7341d2ee9722415251195531dc067b773f231676729c63721b",
+ "frame_size": [
+  654,
+  1286
+ ],
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   30,
+   899,
+   256,
+   923
+  ]
+ },
+ "ocr_words_seen": [
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "53",
+  "2024/05/13~05/17",
+  "57"
+ ],
+ "band_top_bright_row": 867,
+ "band_bottom_bright_row": 1014,
+ "margin_above_px": 44,
+ "margin_below_px": 103,
+ "count_box": [
+  22,
+  925,
+  190,
+  955
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "click_point": [
+  42,
+  911
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "verdict": "ELIGIBLE",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+    "stdout_bytes": 249,
+    "lines_parsed": 6
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323",
+    "stdout_bytes": 33,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

@@ -1,0 +1,22 @@
+{
+ "id": "ANOM-06-01",
+ "observed_at": "2026-09-17T21:16:00+08:00",
+ "subject": "transient tools/v4/__pycache__ created by ordinary tool execution",
+ "files": [
+  {
+   "name": "vision_reader.cpython-314.pyc",
+   "mtime": "2026-09-17T21:11:47+08:00",
+   "sha256": "4f2c74ffa53eedabfd48cdd6127dac1b60a1bd2dd2f400bac0064659852868db"
+  },
+  {
+   "name": "locate_album_card.cpython-314.pyc",
+   "mtime": "2026-09-17T21:12:03+08:00",
+   "sha256": "eb5b7acd4f9fc3bef954315e395fff0d7e4e086060377842a16ad423352610cf"
+  }
+ ],
+ "cause": "v4 tool children (and the runner's in-process/child imports of the v4 modules) resolve vision_reader/locate_album_card via importlib; python bytecode caching is enabled in those child processes, so __pycache__ appears inside the frozen v4 tool dir. Runner v1.1.0 sets sys.dont_write_bytecode only for its own process (run_agent_e2e.py:51-53); the flag does not propagate to subprocess children.",
+ "impact": "none observed: no tracked/frozen file byte changed (v4 tool SHAs re-verified identical after cleanup); untracked cache dir only",
+ "action_taken": "recorded file names/SHAs/mtimes, then removed the directory; tools/v4 back to the exact 5 committed files",
+ "classification": "NON_GATING (hygiene); not IMPLEMENTER_FIX/PLANNER_REPLAN: no approved semantic/contract/verification meaning is violated and no acceptance criterion requires a repair in this wave",
+ "future_note": "a future revision could set PYTHONDONTWRITEBYTECODE for runner child env (or use -B) so normal runs never leave caches in the frozen dir"
+}

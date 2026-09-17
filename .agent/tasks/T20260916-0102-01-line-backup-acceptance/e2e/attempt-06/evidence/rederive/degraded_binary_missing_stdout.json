@@ -1,0 +1,37 @@
+{
+ "tool": "locate_album_card",
+ "frame": "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+ "frame_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+ "frame_size": [
+  327,
+  643
+ ],
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "title": null,
+ "ocr_words_seen": [],
+ "verdict": "TARGET_TITLE_NOT_FOUND",
+ "reader": {
+  "helper": {
+   "resolved_from": "env",
+   "binary_path": "/nonexistent/vision_ocr_v4_acceptance",
+   "binary_sha256": null,
+   "binary_bytes": null,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "binary_missing",
+    "exit_code": null,
+    "stderr_excerpt": "helper binary missing: /nonexistent/vision_ocr_v4_acceptance",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 0,
+    "lines_parsed": 0
+   }
+  ]
+ }
+}

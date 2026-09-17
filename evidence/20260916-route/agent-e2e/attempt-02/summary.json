@@ -1,0 +1,1728 @@
+{
+ "schema_version": 1,
+ "artifact": "agent-e2e-attempt-summary",
+ "wave": "20260917-vision-reader",
+ "task_id": "T20260916-0102-01-line-backup-acceptance",
+ "plan_revision": 21,
+ "runner": {
+  "rel": "evidence/20260916-route/agent-e2e/runner/run_agent_e2e.py",
+  "sha256": "cd0aa1511ae45af32cb4497ddc0a7532053a4ebfd13fdaea55f451e13f06c93c",
+  "version": "1.1.0"
+ },
+ "attempt": "attempt-02",
+ "timestamp_local": "2026-09-17T21:11:47+08:00",
+ "runner_argv": [
+  "evidence/20260916-route/agent-e2e/runner/run_agent_e2e.py",
+  "--attempt",
+  "02"
+ ],
+ "python": {
+  "executable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+  "version": "3.14.3",
+  "full_version": "3.14.3 (main, Feb  3 2026, 15:32:20) [Clang 17.0.0 (clang-1700.6.3.2)]"
+ },
+ "result": "PASS",
+ "stop_reason": null,
+ "stop_phase": null,
+ "failures_total": 0,
+ "prior_failures_total": 0,
+ "attempt_failures": 0,
+ "bounded_loop": {
+  "prior_failures_total": 0,
+  "threshold": 5,
+  "threshold_already_reached": false,
+  "decision_rule": "failures_total continues across attempts; at 5 the loop stops with a recorded stop_reason and no further check is executed"
+ },
+ "inputs_sent": 0,
+ "ui_interaction": "none",
+ "gui_inputs_sent": 0,
+ "screen_captures": 0,
+ "model_or_api_calls": 0,
+ "formal_data_writes": 0,
+ "route_semantics": {
+  "cua_route_decision": "not_set",
+  "route_closure_decided": false,
+  "gui_input_authorized": false,
+  "c4_label": "DEMONSTRATION_ONLY"
+ },
+ "plan": {
+  "rel": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md",
+  "revision_pin": 21,
+  "sha256_pin": "466bda4ad79897cf5f6395beafc0a70c57d99ed4dc15f4b78328fb5c69b68190",
+  "sha256_observed": "466bda4ad79897cf5f6395beafc0a70c57d99ed4dc15f4b78328fb5c69b68190",
+  "match": true
+ },
+ "handoff": {
+  "rel": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/handoff.md",
+  "sha256_observed": "df595831eab25bb405d1f084f1113963ce911713515c4c31faaf34e9362f0888"
+ },
+ "env": {
+  "VISION_OCR_BIN": null,
+  "CUA_ROUTE_DECISION_present": false
+ },
+ "frames": {
+  "post": {
+   "label": "post",
+   "rel": "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+   "abs": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+   "pinned_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "size_bytes": 66686,
+   "match": true
+  },
+  "pre": {
+   "label": "pre",
+   "rel": "evidence/20260917-vision-reader/frames/route5r_frame_pre.jpg",
+   "abs": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260917-vision-reader/frames/route5r_frame_pre.jpg",
+   "pinned_sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+   "sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+   "size_bytes": 63914,
+   "match": true
+  },
+  "s1": {
+   "label": "s1",
+   "rel": "evidence/20260917-vision-reader/frames/route5r_probe_crop_s1.png",
+   "abs": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260917-vision-reader/frames/route5r_probe_crop_s1.png",
+   "pinned_sha256": "aea53a0df8c4ef20488446dbccc42fa84ecd72c36aad71d42199f20b9e30f5c3",
+   "sha256": "aea53a0df8c4ef20488446dbccc42fa84ecd72c36aad71d42199f20b9e30f5c3",
+   "size_bytes": 87400,
+   "match": true
+  },
+  "s2": {
+   "label": "s2",
+   "rel": "evidence/20260917-vision-reader/frames/route5r_probe_crop_s2.png",
+   "abs": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260917-vision-reader/frames/route5r_probe_crop_s2.png",
+   "pinned_sha256": "7b9d0a19323e0f7341d2ee9722415251195531dc067b773f231676729c63721b",
+   "sha256": "7b9d0a19323e0f7341d2ee9722415251195531dc067b773f231676729c63721b",
+   "size_bytes": 248922,
+   "match": true
+  }
+ },
+ "v4_tools": {
+  "vision_reader.py": {
+   "name": "vision_reader.py",
+   "rel": "evidence/20260916-route/tools/v4/vision_reader.py",
+   "abs": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/tools/v4/vision_reader.py",
+   "required": true,
+   "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+   "size_bytes": 8369
+  },
+  "locate_album_card.py": {
+   "name": "locate_album_card.py",
+   "rel": "evidence/20260916-route/tools/v4/locate_album_card.py",
+   "abs": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/tools/v4/locate_album_card.py",
+   "required": true,
+   "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+   "size_bytes": 7025
+  },
+  "verify_album_open.py": {
+   "name": "verify_album_open.py",
+   "rel": "evidence/20260916-route/tools/v4/verify_album_open.py",
+   "abs": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/tools/v4/verify_album_open.py",
+   "required": true,
+   "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+   "size_bytes": 6981
+  },
+  "locate_album_ellipsis.py": {
+   "name": "locate_album_ellipsis.py",
+   "rel": "evidence/20260916-route/tools/v4/locate_album_ellipsis.py",
+   "abs": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/tools/v4/locate_album_ellipsis.py",
+   "required": false,
+   "sha256": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+   "size_bytes": 11436
+  },
+  "README.md": {
+   "name": "README.md",
+   "rel": "evidence/20260916-route/tools/v4/README.md",
+   "abs": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/tools/v4/README.md",
+   "required": false,
+   "sha256": "ed3ebf0aad53024f3e4fe7d4886faa9b37c048e2fdf95513ab3bc7bafe677f23",
+   "size_bytes": 8052
+  }
+ },
+ "v4_selftest_summary": {
+  "rel": "evidence/20260916-route/tools/selftest/v4/selftest-summary.json",
+  "sha256": "5ad2be101f848ea6a99a8a02ffee8ef65f761fd8b3408bd21c7eb351f1b9fb8d",
+  "parsed": {
+   "tool": "v4-selftest",
+   "interpreter": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+   "interpreter_version": "3.14.3",
+   "fixtures_dir": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/v4selftest_jb0h38jr",
+   "cases": [
+    {
+     "name": "card_ok",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true
+     },
+     "exit": 0,
+     "expect_exit": 0,
+     "verdict": "ELIGIBLE",
+     "expect_verdict": "ELIGIBLE",
+     "click_point": [
+      28,
+      440
+     ],
+     "count_text": "MATCH",
+     "detail": null
+    },
+    {
+     "name": "card_notitle",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true
+     },
+     "exit": 2,
+     "expect_exit": 2,
+     "verdict": "TARGET_TITLE_NOT_FOUND",
+     "expect_verdict": "TARGET_TITLE_NOT_FOUND",
+     "click_point": null,
+     "count_text": null,
+     "detail": null
+    },
+    {
+     "name": "card_count58",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true
+     },
+     "exit": 5,
+     "expect_exit": 5,
+     "verdict": "TARGET_COUNT_MISMATCH",
+     "expect_verdict": "TARGET_COUNT_MISMATCH",
+     "click_point": [
+      28,
+      440
+     ],
+     "count_text": "MISMATCH",
+     "detail": null
+    },
+    {
+     "name": "card_tight_margins",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true
+     },
+     "exit": 4,
+     "expect_exit": 4,
+     "verdict": "UNSAFE_MARGINS",
+     "expect_verdict": "UNSAFE_MARGINS",
+     "click_point": [
+      27,
+      441
+     ],
+     "count_text": "MATCH",
+     "detail": null
+    },
+    {
+     "name": "verify_open",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true
+     },
+     "exit": 0,
+     "expect_exit": 0,
+     "verdict": "ALBUM_OPEN_VERIFIED",
+     "expect_verdict": "ALBUM_OPEN_VERIFIED",
+     "click_point": null,
+     "count_text": "UNREADABLE",
+     "detail": null
+    },
+    {
+     "name": "verify_no_effect",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true
+     },
+     "exit": 3,
+     "expect_exit": 3,
+     "verdict": "NO_EFFECT",
+     "expect_verdict": "NO_EFFECT",
+     "click_point": null,
+     "count_text": "MATCH",
+     "detail": null
+    },
+    {
+     "name": "verify_target_mismatch",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true
+     },
+     "exit": 4,
+     "expect_exit": 4,
+     "verdict": "TARGET_MISMATCH",
+     "expect_verdict": "TARGET_MISMATCH",
+     "click_point": null,
+     "count_text": null,
+     "detail": null
+    },
+    {
+     "name": "verify_inconclusive",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true
+     },
+     "exit": 5,
+     "expect_exit": 5,
+     "verdict": "INCONCLUSIVE",
+     "expect_verdict": "INCONCLUSIVE",
+     "click_point": null,
+     "count_text": null,
+     "detail": null
+    },
+    {
+     "name": "ellipsis_one_dot_control",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true,
+      "click_point": true
+     },
+     "exit": 0,
+     "expect_exit": 0,
+     "verdict": "ELIGIBLE",
+     "expect_verdict": "ELIGIBLE",
+     "click_point": [
+      300,
+      47
+     ],
+     "count_text": null,
+     "detail": null
+    },
+    {
+     "name": "ellipsis_ocr_derived_title",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true,
+      "click_point": true
+     },
+     "exit": 0,
+     "expect_exit": 0,
+     "verdict": "ELIGIBLE",
+     "expect_verdict": "ELIGIBLE",
+     "click_point": [
+      300,
+      47
+     ],
+     "count_text": null,
+     "detail": null
+    },
+    {
+     "name": "ellipsis_two_in_band",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true
+     },
+     "exit": 4,
+     "expect_exit": 4,
+     "verdict": "AMBIGUOUS_ELLIPSIS",
+     "expect_verdict": "AMBIGUOUS_ELLIPSIS",
+     "click_point": null,
+     "count_text": null,
+     "detail": null
+    },
+    {
+     "name": "ellipsis_group_level_only",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true
+     },
+     "exit": 5,
+     "expect_exit": 5,
+     "verdict": "GROUP_LEVEL_ONLY",
+     "expect_verdict": "GROUP_LEVEL_ONLY",
+     "click_point": null,
+     "count_text": null,
+     "detail": null
+    },
+    {
+     "name": "ellipsis_none",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true
+     },
+     "exit": 3,
+     "expect_exit": 3,
+     "verdict": "NO_ELLIPSIS_FOUND",
+     "expect_verdict": "NO_ELLIPSIS_FOUND",
+     "click_point": null,
+     "count_text": null,
+     "detail": null
+    },
+    {
+     "name": "count_normalization",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true,
+      "count_text": true,
+      "count_prefix": true
+     },
+     "exit": 0,
+     "expect_exit": 0,
+     "verdict": "ELIGIBLE",
+     "expect_verdict": "ELIGIBLE",
+     "click_point": [
+      27,
+      441
+     ],
+     "count_text": "MATCH",
+     "detail": {
+      "count_digits_read": "57",
+      "count_text": "MATCH",
+      "count_box": [
+       7,
+       450,
+       175,
+       480
+      ],
+      "cjk_font_path": "/System/Library/Fonts/Hiragino Sans GB.ttc",
+      "cjk_font_used": "/System/Library/Fonts/Hiragino Sans GB.ttc",
+      "cjk_font_fallback_blocks": false,
+      "fixture": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/v4selftest_jb0h38jr/card_cjk_count.png"
+     }
+    },
+    {
+     "name": "helper_unavailable_failclosed",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true,
+      "no_traceback": true,
+      "reader_outcome": true,
+      "no_rebuild": true
+     },
+     "exit": 2,
+     "expect_exit": 2,
+     "verdict": "TARGET_TITLE_NOT_FOUND",
+     "expect_verdict": "TARGET_TITLE_NOT_FOUND",
+     "click_point": null,
+     "count_text": null,
+     "detail": {
+      "env": {
+       "VISION_OCR_BIN": "/nonexistent/vision_ocr_v4_selftest"
+      },
+      "reader_calls_first": {
+       "scale": 3,
+       "outcome": "binary_missing",
+       "exit_code": null,
+       "stderr_excerpt": "helper binary missing: /nonexistent/vision_ocr_v4_selftest",
+       "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+       "stdout_bytes": 0,
+       "lines_parsed": 0
+      },
+      "build_binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+      "build_binary_sha256_before": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+      "build_binary_sha256_after": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+      "rebuild_detected": false,
+      "stderr_tail": ""
+     }
+    },
+    {
+     "name": "determinism_5x",
+     "passed": true,
+     "checks": {
+      "exit": true,
+      "verdict": true,
+      "stdout_bytes_identical": true
+     },
+     "exit": 0,
+     "expect_exit": 0,
+     "verdict": "ELIGIBLE",
+     "expect_verdict": "ELIGIBLE",
+     "click_point": null,
+     "count_text": null,
+     "detail": {
+      "stdout_sha256": [
+       "4c1f872ca5d5deb0e71fbd36928d5d473310e6994a32aaa685d9ef1cb62d11fc",
+       "4c1f872ca5d5deb0e71fbd36928d5d473310e6994a32aaa685d9ef1cb62d11fc",
+       "4c1f872ca5d5deb0e71fbd36928d5d473310e6994a32aaa685d9ef1cb62d11fc",
+       "4c1f872ca5d5deb0e71fbd36928d5d473310e6994a32aaa685d9ef1cb62d11fc",
+       "4c1f872ca5d5deb0e71fbd36928d5d473310e6994a32aaa685d9ef1cb62d11fc"
+      ],
+      "runs": [
+       {
+        "run": 1,
+        "exit": 0,
+        "stdout_sha256": "4c1f872ca5d5deb0e71fbd36928d5d473310e6994a32aaa685d9ef1cb62d11fc",
+        "raw_file": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/v4selftest_jb0h38jr/determinism_5x_run1.json"
+       },
+       {
+        "run": 2,
+        "exit": 0,
+        "stdout_sha256": "4c1f872ca5d5deb0e71fbd36928d5d473310e6994a32aaa685d9ef1cb62d11fc",
+        "raw_file": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/v4selftest_jb0h38jr/determinism_5x_run2.json"
+       },
+       {
+        "run": 3,
+        "exit": 0,
+        "stdout_sha256": "4c1f872ca5d5deb0e71fbd36928d5d473310e6994a32aaa685d9ef1cb62d11fc",
+        "raw_file": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/v4selftest_jb0h38jr/determinism_5x_run3.json"
+       },
+       {
+        "run": 4,
+        "exit": 0,
+        "stdout_sha256": "4c1f872ca5d5deb0e71fbd36928d5d473310e6994a32aaa685d9ef1cb62d11fc",
+        "raw_file": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/v4selftest_jb0h38jr/determinism_5x_run4.json"
+       },
+       {
+        "run": 5,
+        "exit": 0,
+        "stdout_sha256": "4c1f872ca5d5deb0e71fbd36928d5d473310e6994a32aaa685d9ef1cb62d11fc",
+        "raw_file": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/v4selftest_jb0h38jr/determinism_5x_run5.json"
+       }
+      ],
+      "identical": true,
+      "unparsed": []
+     }
+    }
+   ],
+   "reader_helper_sample": {
+    "resolved_from": "build_path",
+    "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+    "binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+    "binary_bytes": 67200,
+    "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+   },
+   "cases_total": 16,
+   "cases_failed": 0,
+   "result": "PASS",
+   "expectations_pinned_to": {
+    "v3_summary_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/tools/selftest/v3/selftest-summary.json",
+    "v3_summary_sha256_pinned": "17840e915680308fb721a937462d22898c3adb1aa125e3cb2469f74c31344324",
+    "v3_summary_sha256_at_run_start": "17840e915680308fb721a937462d22898c3adb1aa125e3cb2469f74c31344324",
+    "v3_summary_sha256_after_run": "17840e915680308fb721a937462d22898c3adb1aa125e3cb2469f74c31344324",
+    "v3_summary_unchanged": true,
+    "v3_case_literals": "cases 1-13 carry the frozen v3 summary's expect_exit/expect_verdict verbatim; the two ellipsis control cases keep the v3 click_point [300,47] with the +-2 tolerance",
+    "v4_reader_layer_literals": "cases 14-16 are new reader-layer expectations from plan Rev21 sec 21.4: count_normalization, helper_unavailable_failclosed, determinism_5x"
+   },
+   "reader_layer_cases": [
+    {
+     "name": "count_normalization",
+     "layer": "reader",
+     "expectation": "a card fixture whose 10x count region contains 57張照片 (system CJK font; block fallback if unavailable) must yield exit 0 / ELIGIBLE / count_text MATCH with count_digits_read starting with 57"
+    },
+    {
+     "name": "helper_unavailable_failclosed",
+     "layer": "reader",
+     "expectation": "VISION_OCR_BIN=/nonexistent/vision_ocr_v4_selftest must refuse through the documented TARGET_TITLE_NOT_FOUND exit 2 path with no traceback, reader.calls[0].outcome=binary_missing, and no rebuild of the fixed build-path binary"
+    },
+    {
+     "name": "determinism_5x",
+     "layer": "reader",
+     "expectation": "five identical runs of the card_ok argv must produce five byte-identical stdout JSON documents (one SHA-256); raw copies are kept in fixtures_dir"
+    }
+   ],
+   "env_policy": "VISION_OCR_BIN is cleared for the default-path cases so the v4 reader's own helper resolution is exercised; only helper_unavailable_failclosed sets it (nonexistent path).",
+   "fixture_notes": {
+    "synthetic_only": "all fixtures are drawn pixel by pixel; no real screen content",
+    "cjk_font_path": "/System/Library/Fonts/Hiragino Sans GB.ttc",
+    "cjk_font_used": "/System/Library/Fonts/Hiragino Sans GB.ttc",
+    "cjk_font_fallback_blocks": false,
+    "pingfang_available": false
+   },
+   "tool_shas": {
+    "before": {
+     "vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+     "locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+     "verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+     "locate_album_ellipsis.py": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4"
+    },
+    "after": {
+     "vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+     "locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+     "verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+     "locate_album_ellipsis.py": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4"
+    },
+    "stable_during_run": true,
+    "tools_dir": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/tools/v4"
+   }
+  }
+ },
+ "helper": {
+  "source": "tool_json",
+  "json_path": "$.reader.helper",
+  "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+  "binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+  "binary_bytes": 67200,
+  "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+  "resolved_from": "build_path",
+  "runner_resolved": {
+   "env_VISION_OCR_BIN": null,
+   "resolution_method": "unresolved",
+   "path": null,
+   "size_bytes": null,
+   "sha256": null,
+   "build": null
+  }
+ },
+ "helper_from_tool_json": [
+  {
+   "json_path": "$.reader.helper",
+   "candidate": {
+    "resolved_from": "build_path",
+    "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+    "binary_sha256": "c7087d98a1035db39b39906b8da995fa41e3ed52ac4b34481d1213d4fe6eb0b5",
+    "binary_bytes": 67200,
+    "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+   },
+   "source": "C1 locate_album_card"
+  }
+ ],
+ "checks": [
+  {
+   "check_id": "C1",
+   "title": {
+    "texts": [
+     "2024/05/13~05/17"
+    ],
+    "bbox": [
+     15,
+     83,
+     204,
+     111
+    ]
+   },
+   "judgement_rule": "count_digits_read contains '57'",
+   "frame": "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+   "frame_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "commands": [
+    {
+     "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "evidence/20260916-route/tools/v4/locate_album_card.py",
+      "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+      "--expect-start",
+      "2024/05/13",
+      "--expect-end",
+      "2024/05/17",
+      "--expect-count",
+      "57"
+     ],
+     "exit_code": 4,
+     "timed_out": false,
+     "parsed_verdict": "UNSAFE_MARGINS",
+     "stdout_sha256": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+     "raw_stdout": "raw/c1_post_stdout.json",
+     "stderr_tail": ""
+    }
+   ],
+   "count_digits_read": "57",
+   "count_box": [
+    7,
+    113,
+    175,
+    143
+   ],
+   "count_text": "MATCH",
+   "pass": true,
+   "reader_lines": {
+    "frame_lines": [
+     {
+      "text": "2024/05/13~05/17",
+      "conf": 1.0,
+      "x": 14.666666666666666,
+      "y": 83.33333333333333,
+      "w": 189.33333333333334,
+      "h": 27.666666666666668
+     },
+     {
+      "text": "57張照片",
+      "conf": 1.0,
+      "x": 15.0,
+      "y": 120.66666666666667,
+      "w": 50.333333333333336,
+      "h": 13.0
+     },
+     {
+      "text": "2024.05.18",
+      "conf": 1.0,
+      "x": 15.0,
+      "y": 140.0,
+      "w": 63.666666666666664,
+      "h": 13.666666666666666
+     },
+     {
+      "text": "1~",
+      "conf": 0.3,
+      "x": 51.333333333333336,
+      "y": 189.66666666666666,
+      "w": 17.0,
+      "h": 10.333333333333334
+     }
+    ],
+    "count_region_lines": [
+     {
+      "text": "57張照片",
+      "conf": 1.0,
+      "x": 8.5,
+      "y": 7.6,
+      "w": 51.6,
+      "h": 12.6
+     }
+    ],
+    "method": "v4_locate_album_card.ocr_words",
+    "note": "supplementary raw lines for C1/C5 evidence; the tool JSON above is the authoritative judgement input",
+    "count_box": [
+     7,
+     113,
+     175,
+     143
+    ]
+   },
+   "rv30_4_sweep": {
+    "purpose": "RV-30-4 count sweep (3x/6x/10x) raw evidence",
+    "input": "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+    "input_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+    "count_box": [
+     7,
+     113,
+     175,
+     143
+    ],
+    "frame_reads": {
+     "3x": {
+      "read": "20240513051757202405181",
+      "expected_count_present": true,
+      "best_line": {
+       "text": "57張照片",
+       "digits": "57",
+       "conf": 1.0,
+       "bbox": [
+        15,
+        121,
+        65,
+        134
+       ]
+      },
+      "match_lines": [
+       {
+        "text": "57張照片",
+        "digits": "57",
+        "conf": 1.0,
+        "bbox": [
+         15,
+         121,
+         65,
+         134
+        ]
+       }
+      ],
+      "line_count": 4
+     },
+     "6x": {
+      "read": "20240513051757202405181",
+      "expected_count_present": true,
+      "best_line": {
+       "text": "57張照片",
+       "digits": "57",
+       "conf": 1.0,
+       "bbox": [
+        14,
+        120,
+        65,
+        134
+       ]
+      },
+      "match_lines": [
+       {
+        "text": "57張照片",
+        "digits": "57",
+        "conf": 1.0,
+        "bbox": [
+         14,
+         120,
+         65,
+         134
+        ]
+       }
+      ],
+      "line_count": 4
+     },
+     "10x": {
+      "read": "20240513051757202405181",
+      "expected_count_present": true,
+      "best_line": {
+       "text": "57張照片",
+       "digits": "57",
+       "conf": 1.0,
+       "bbox": [
+        15,
+        121,
+        65,
+        134
+       ]
+      },
+      "match_lines": [
+       {
+        "text": "57張照片",
+        "digits": "57",
+        "conf": 1.0,
+        "bbox": [
+         15,
+         121,
+         65,
+         134
+        ]
+       }
+      ],
+      "line_count": 4
+     }
+    },
+    "count_region_reads": {
+     "3x": {
+      "read": "57",
+      "expected_count_present": true,
+      "best_line": {
+       "text": "57張照片",
+       "digits": "57",
+       "conf": 1.0,
+       "bbox": [
+        8,
+        7,
+        58,
+        21
+       ]
+      },
+      "match_lines": [
+       {
+        "text": "57張照片",
+        "digits": "57",
+        "conf": 1.0,
+        "bbox": [
+         8,
+         7,
+         58,
+         21
+        ]
+       }
+      ],
+      "line_count": 1
+     },
+     "6x": {
+      "read": "57",
+      "expected_count_present": true,
+      "best_line": {
+       "text": "57張照片",
+       "digits": "57",
+       "conf": 1.0,
+       "bbox": [
+        8,
+        7,
+        58,
+        20
+       ]
+      },
+      "match_lines": [
+       {
+        "text": "57張照片",
+        "digits": "57",
+        "conf": 1.0,
+        "bbox": [
+         8,
+         7,
+         58,
+         20
+        ]
+       }
+      ],
+      "line_count": 1
+     },
+     "10x": {
+      "read": "57",
+      "expected_count_present": true,
+      "best_line": {
+       "text": "57張照片",
+       "digits": "57",
+       "conf": 1.0,
+       "bbox": [
+        8,
+        8,
+        60,
+        20
+       ]
+      },
+      "match_lines": [
+       {
+        "text": "57張照片",
+        "digits": "57",
+        "conf": 1.0,
+        "bbox": [
+         8,
+         8,
+         60,
+         20
+        ]
+       }
+      ],
+      "line_count": 1
+     }
+    },
+    "official_count_region_read": "57",
+    "method": "v4_locate_album_card.ocr_words"
+   },
+   "status": "PASS"
+  },
+  {
+   "check_id": "C2",
+   "title": "determinism: 5 repeats per input",
+   "judgement_rule": "per input: 5 v4 locate_album_card stdout JSON byte-identical (SHA-256), and helper stdout identical across the repeats (tool-JSON reader stdouts when present; runner direct helper probe otherwise)",
+   "repeats": 5,
+   "inputs": {
+    "post": {
+     "runs": [
+      {
+       "run": 1,
+       "exit_code": 4,
+       "timed_out": false,
+       "parsed_verdict": "UNSAFE_MARGINS",
+       "stdout_sha256": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+       "raw_stdout": "raw/c2/post_run1_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+        "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+       ]
+      },
+      {
+       "run": 2,
+       "exit_code": 4,
+       "timed_out": false,
+       "parsed_verdict": "UNSAFE_MARGINS",
+       "stdout_sha256": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+       "raw_stdout": "raw/c2/post_run2_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+        "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+       ]
+      },
+      {
+       "run": 3,
+       "exit_code": 4,
+       "timed_out": false,
+       "parsed_verdict": "UNSAFE_MARGINS",
+       "stdout_sha256": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+       "raw_stdout": "raw/c2/post_run3_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+        "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+       ]
+      },
+      {
+       "run": 4,
+       "exit_code": 4,
+       "timed_out": false,
+       "parsed_verdict": "UNSAFE_MARGINS",
+       "stdout_sha256": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+       "raw_stdout": "raw/c2/post_run4_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+        "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+       ]
+      },
+      {
+       "run": 5,
+       "exit_code": 4,
+       "timed_out": false,
+       "parsed_verdict": "UNSAFE_MARGINS",
+       "stdout_sha256": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+       "raw_stdout": "raw/c2/post_run5_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+        "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+       ]
+      }
+     ],
+     "stdout_sha256s": [
+      "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+      "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+      "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+      "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+      "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35"
+     ],
+     "stdout_bytes_identical": true,
+     "reader_field_present": true,
+     "reader_stdout_sha256_sequences": [
+      [
+       "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+       "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+      ],
+      [
+       "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+       "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+      ],
+      [
+       "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+       "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+      ],
+      [
+       "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+       "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+      ],
+      [
+       "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+       "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+      ]
+     ],
+     "helper_stdout_identical_via_tool_json": true,
+     "direct_helper_probe": null,
+     "helper_stdout_evidence_available": true,
+     "helper_stdout_identical": true,
+     "input_pass": true
+    },
+    "pre": {
+     "runs": [
+      {
+       "run": 1,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+       "raw_stdout": "raw/c2/pre_run1_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "f38778f7ad115e751d783b668ecd1497ca6746b826771a4e06d1ac326e3ef5b1",
+        "15439c4a9275870348378ce7312805284935c38644d8d8a13505735ca38159eb"
+       ]
+      },
+      {
+       "run": 2,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+       "raw_stdout": "raw/c2/pre_run2_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "f38778f7ad115e751d783b668ecd1497ca6746b826771a4e06d1ac326e3ef5b1",
+        "15439c4a9275870348378ce7312805284935c38644d8d8a13505735ca38159eb"
+       ]
+      },
+      {
+       "run": 3,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+       "raw_stdout": "raw/c2/pre_run3_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "f38778f7ad115e751d783b668ecd1497ca6746b826771a4e06d1ac326e3ef5b1",
+        "15439c4a9275870348378ce7312805284935c38644d8d8a13505735ca38159eb"
+       ]
+      },
+      {
+       "run": 4,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+       "raw_stdout": "raw/c2/pre_run4_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "f38778f7ad115e751d783b668ecd1497ca6746b826771a4e06d1ac326e3ef5b1",
+        "15439c4a9275870348378ce7312805284935c38644d8d8a13505735ca38159eb"
+       ]
+      },
+      {
+       "run": 5,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+       "raw_stdout": "raw/c2/pre_run5_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "f38778f7ad115e751d783b668ecd1497ca6746b826771a4e06d1ac326e3ef5b1",
+        "15439c4a9275870348378ce7312805284935c38644d8d8a13505735ca38159eb"
+       ]
+      }
+     ],
+     "stdout_sha256s": [
+      "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+      "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+      "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+      "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+      "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba"
+     ],
+     "stdout_bytes_identical": true,
+     "reader_field_present": true,
+     "reader_stdout_sha256_sequences": [
+      [
+       "f38778f7ad115e751d783b668ecd1497ca6746b826771a4e06d1ac326e3ef5b1",
+       "15439c4a9275870348378ce7312805284935c38644d8d8a13505735ca38159eb"
+      ],
+      [
+       "f38778f7ad115e751d783b668ecd1497ca6746b826771a4e06d1ac326e3ef5b1",
+       "15439c4a9275870348378ce7312805284935c38644d8d8a13505735ca38159eb"
+      ],
+      [
+       "f38778f7ad115e751d783b668ecd1497ca6746b826771a4e06d1ac326e3ef5b1",
+       "15439c4a9275870348378ce7312805284935c38644d8d8a13505735ca38159eb"
+      ],
+      [
+       "f38778f7ad115e751d783b668ecd1497ca6746b826771a4e06d1ac326e3ef5b1",
+       "15439c4a9275870348378ce7312805284935c38644d8d8a13505735ca38159eb"
+      ],
+      [
+       "f38778f7ad115e751d783b668ecd1497ca6746b826771a4e06d1ac326e3ef5b1",
+       "15439c4a9275870348378ce7312805284935c38644d8d8a13505735ca38159eb"
+      ]
+     ],
+     "helper_stdout_identical_via_tool_json": true,
+     "direct_helper_probe": null,
+     "helper_stdout_evidence_available": true,
+     "helper_stdout_identical": true,
+     "input_pass": true
+    },
+    "s1": {
+     "runs": [
+      {
+       "run": 1,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+       "raw_stdout": "raw/c2/s1_run1_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "72a70ad1c2f49abd74898ef696603b3981a8a97f8125555e6edce30cad5cf16d",
+        "d7bac6d8ce807ebe2eaa3e01fb91b846db78eba6d5416b434efe791eda0d53f2"
+       ]
+      },
+      {
+       "run": 2,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+       "raw_stdout": "raw/c2/s1_run2_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "72a70ad1c2f49abd74898ef696603b3981a8a97f8125555e6edce30cad5cf16d",
+        "d7bac6d8ce807ebe2eaa3e01fb91b846db78eba6d5416b434efe791eda0d53f2"
+       ]
+      },
+      {
+       "run": 3,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+       "raw_stdout": "raw/c2/s1_run3_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "72a70ad1c2f49abd74898ef696603b3981a8a97f8125555e6edce30cad5cf16d",
+        "d7bac6d8ce807ebe2eaa3e01fb91b846db78eba6d5416b434efe791eda0d53f2"
+       ]
+      },
+      {
+       "run": 4,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+       "raw_stdout": "raw/c2/s1_run4_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "72a70ad1c2f49abd74898ef696603b3981a8a97f8125555e6edce30cad5cf16d",
+        "d7bac6d8ce807ebe2eaa3e01fb91b846db78eba6d5416b434efe791eda0d53f2"
+       ]
+      },
+      {
+       "run": 5,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+       "raw_stdout": "raw/c2/s1_run5_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "72a70ad1c2f49abd74898ef696603b3981a8a97f8125555e6edce30cad5cf16d",
+        "d7bac6d8ce807ebe2eaa3e01fb91b846db78eba6d5416b434efe791eda0d53f2"
+       ]
+      }
+     ],
+     "stdout_sha256s": [
+      "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+      "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+      "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+      "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+      "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4"
+     ],
+     "stdout_bytes_identical": true,
+     "reader_field_present": true,
+     "reader_stdout_sha256_sequences": [
+      [
+       "72a70ad1c2f49abd74898ef696603b3981a8a97f8125555e6edce30cad5cf16d",
+       "d7bac6d8ce807ebe2eaa3e01fb91b846db78eba6d5416b434efe791eda0d53f2"
+      ],
+      [
+       "72a70ad1c2f49abd74898ef696603b3981a8a97f8125555e6edce30cad5cf16d",
+       "d7bac6d8ce807ebe2eaa3e01fb91b846db78eba6d5416b434efe791eda0d53f2"
+      ],
+      [
+       "72a70ad1c2f49abd74898ef696603b3981a8a97f8125555e6edce30cad5cf16d",
+       "d7bac6d8ce807ebe2eaa3e01fb91b846db78eba6d5416b434efe791eda0d53f2"
+      ],
+      [
+       "72a70ad1c2f49abd74898ef696603b3981a8a97f8125555e6edce30cad5cf16d",
+       "d7bac6d8ce807ebe2eaa3e01fb91b846db78eba6d5416b434efe791eda0d53f2"
+      ],
+      [
+       "72a70ad1c2f49abd74898ef696603b3981a8a97f8125555e6edce30cad5cf16d",
+       "d7bac6d8ce807ebe2eaa3e01fb91b846db78eba6d5416b434efe791eda0d53f2"
+      ]
+     ],
+     "helper_stdout_identical_via_tool_json": true,
+     "direct_helper_probe": null,
+     "helper_stdout_evidence_available": true,
+     "helper_stdout_identical": true,
+     "input_pass": true
+    },
+    "s2": {
+     "runs": [
+      {
+       "run": 1,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+       "raw_stdout": "raw/c2/s2_run1_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+        "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+       ]
+      },
+      {
+       "run": 2,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+       "raw_stdout": "raw/c2/s2_run2_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+        "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+       ]
+      },
+      {
+       "run": 3,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+       "raw_stdout": "raw/c2/s2_run3_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+        "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+       ]
+      },
+      {
+       "run": 4,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+       "raw_stdout": "raw/c2/s2_run4_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+        "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+       ]
+      },
+      {
+       "run": 5,
+       "exit_code": 0,
+       "timed_out": false,
+       "parsed_verdict": "ELIGIBLE",
+       "stdout_sha256": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+       "raw_stdout": "raw/c2/s2_run5_stdout.json",
+       "reader_stdout_sha256_sequence": [
+        "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+        "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+       ]
+      }
+     ],
+     "stdout_sha256s": [
+      "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+      "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+      "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+      "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+      "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322"
+     ],
+     "stdout_bytes_identical": true,
+     "reader_field_present": true,
+     "reader_stdout_sha256_sequences": [
+      [
+       "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+       "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+      ],
+      [
+       "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+       "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+      ],
+      [
+       "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+       "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+      ],
+      [
+       "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+       "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+      ],
+      [
+       "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+       "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+      ]
+     ],
+     "helper_stdout_identical_via_tool_json": true,
+     "direct_helper_probe": null,
+     "helper_stdout_evidence_available": true,
+     "helper_stdout_identical": true,
+     "input_pass": true
+    }
+   },
+   "pass": true,
+   "status": "PASS"
+  },
+  {
+   "check_id": "C3",
+   "title": "date title on pre and post frames",
+   "judgement_rule": "v4 locate_album_card title is non-null on both frames",
+   "frames": {
+    "pre": {
+     "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "evidence/20260916-route/tools/v4/locate_album_card.py",
+      "evidence/20260917-vision-reader/frames/route5r_frame_pre.jpg",
+      "--expect-start",
+      "2024/05/13",
+      "--expect-end",
+      "2024/05/17",
+      "--expect-count",
+      "57"
+     ],
+     "exit_code": 0,
+     "timed_out": false,
+     "parsed_verdict": "ELIGIBLE",
+     "stdout_sha256": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+     "raw_stdout": "raw/c3_pre_stdout.json",
+     "stderr_tail": "",
+     "frame_pass": true,
+     "title": {
+      "texts": [
+       "2024/05/13~05/17"
+      ],
+      "bbox": [
+       15,
+       449,
+       129,
+       462
+      ]
+     },
+     "title_texts": [
+      "2024/05/13~05/17"
+     ],
+     "title_bbox": [
+      15,
+      449,
+      129,
+      462
+     ],
+     "derived_digits": "202405130517",
+     "derived_start_present": true,
+     "derived_end_present": true
+    },
+    "post": {
+     "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "evidence/20260916-route/tools/v4/locate_album_card.py",
+      "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+      "--expect-start",
+      "2024/05/13",
+      "--expect-end",
+      "2024/05/17",
+      "--expect-count",
+      "57"
+     ],
+     "exit_code": 4,
+     "timed_out": false,
+     "parsed_verdict": "UNSAFE_MARGINS",
+     "stdout_sha256": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+     "raw_stdout": "raw/c3_post_stdout.json",
+     "stderr_tail": "",
+     "frame_pass": true,
+     "title": {
+      "texts": [
+       "2024/05/13~05/17"
+      ],
+      "bbox": [
+       15,
+       83,
+       204,
+       111
+      ]
+     },
+     "title_texts": [
+      "2024/05/13~05/17"
+     ],
+     "title_bbox": [
+      15,
+      83,
+      204,
+      111
+     ],
+     "derived_digits": "202405130517",
+     "derived_start_present": true,
+     "derived_end_present": true
+    }
+   },
+   "pass": true,
+   "status": "PASS"
+  },
+  {
+   "check_id": "C4",
+   "title": "frozen S5 replay (DEMONSTRATION_ONLY)",
+   "judgement_rule": "v4 verify_album_open on (pre, post) returns ALBUM_OPEN_VERIFIED with exit 0",
+   "demonstration_only": true,
+   "never_flips_frozen_verdict": true,
+   "sets_cua_route_decision": false,
+   "authorizes_gui": false,
+   "frozen_v3_result": {
+    "path": "evidence/20260916-route/attempt-05/album-open-verify.json",
+    "expected_sha256": "ffa5d9633804f819473674f57a9979d56e849882f32dfcfa4a2b5b1326083a9b",
+    "observed_sha256": "ffa5d9633804f819473674f57a9979d56e849882f32dfcfa4a2b5b1326083a9b",
+    "match": true,
+    "verdict": "TARGET_MISMATCH",
+    "count_digits_read": "75",
+    "count_text": "MISMATCH",
+    "exit_code": 4,
+    "exit_code_source": "evidence/20260916-route/attempt-05/run-ledger.json events[seq=12].verify.exit_code"
+   },
+   "commands": [
+    {
+     "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "evidence/20260916-route/tools/v4/verify_album_open.py",
+      "evidence/20260917-vision-reader/frames/route5r_frame_pre.jpg",
+      "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+      "--expect-start",
+      "2024/05/13",
+      "--expect-end",
+      "2024/05/17",
+      "--expect-count",
+      "57"
+     ],
+     "exit_code": 0,
+     "timed_out": false,
+     "parsed_verdict": "ALBUM_OPEN_VERIFIED",
+     "stdout_sha256": "0633d43f8af30279b163710f9e7f1c6b389558d90fd7cd7b49c6f6b66705b498",
+     "raw_stdout": "raw/c4_stdout.json",
+     "stderr_tail": ""
+    }
+   ],
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "count_digits_read": "57",
+   "count_text": "MATCH",
+   "target_title_in_post": {
+    "texts": [
+     "2024/05/13~05/17"
+    ],
+    "bbox": [
+     15,
+     83,
+     204,
+     111
+    ]
+   },
+   "diff_changed_fraction": 0.646749,
+   "pass": true,
+   "status": "PASS"
+  },
+  {
+   "check_id": "C5",
+   "title": "s1/s2 crop count reads (v4 locate_album_card)",
+   "judgement_rule": "count_digits_read contains '57' on both crops",
+   "crops": {
+    "s1": {
+     "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "evidence/20260916-route/tools/v4/locate_album_card.py",
+      "evidence/20260917-vision-reader/frames/route5r_probe_crop_s1.png",
+      "--expect-start",
+      "2024/05/13",
+      "--expect-end",
+      "2024/05/17",
+      "--expect-count",
+      "57"
+     ],
+     "exit_code": 0,
+     "timed_out": false,
+     "parsed_verdict": "ELIGIBLE",
+     "stdout_sha256": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+     "raw_stdout": "raw/c5_s1_stdout.json",
+     "stderr_tail": "",
+     "count_digits_read": "57",
+     "count_box": [
+      7,
+      464,
+      175,
+      494
+     ],
+     "count_text": "MATCH",
+     "title": {
+      "texts": [
+       "2024/05/13~05/17"
+      ],
+      "bbox": [
+       15,
+       449,
+       128,
+       462
+      ]
+     },
+     "crop_pass": true,
+     "reader_lines": {
+      "frame_lines": [
+       {
+        "text": "旻謙允禎成長日記",
+        "conf": 1.0,
+        "x": 115.0,
+        "y": 45.0,
+        "w": 97.0,
+        "h": 15.0
+       },
+       {
+        "text": "相簿",
+        "conf": 1.0,
+        "x": 67.33333333333333,
+        "y": 80.33333333333333,
+        "w": 26.0,
+        "h": 14.0
+       },
+       {
+        "text": "記事本",
+        "conf": 1.0,
+        "x": 225.0,
+        "y": 80.0,
+        "w": 37.666666666666664,
+        "h": 14.666666666666666
+       },
+       {
+        "text": "53",
+        "conf": 1.0,
+        "x": 16.0,
+        "y": 102.0,
+        "w": 15.666666666666666,
+        "h": 11.0
+       },
+       {
+        "text": "2024/05/13~05/17",
+        "conf": 1.0,
+        "x": 15.0,
+        "y": 449.3333333333333,
+        "w": 113.0,
+        "h": 12.333333333333334
+       },
+       {
+        "text": "57",
+        "conf": 1.0,
+        "x": 16.0,
+        "y": 467.3333333333333,
+        "w": 14.666666666666666,
+        "h": 12.0
+       },
+       {
+        "text": "+",
+        "conf": 0.3,
+        "x": 271.0,
+        "y": 588.0,
+        "w": 27.0,
+        "h": 26.0
+       }
+      ],
+      "count_region_lines": [
+       {
+        "text": "57",
+        "conf": 1.0,
+        "x": 8.5,
+        "y": 3.2,
+        "w": 14.7,
+        "h": 10.7
+       }
+      ],
+      "method": "v4_locate_album_card.ocr_words",
+      "note": "supplementary raw lines for C1/C5 evidence; the tool JSON above is the authoritative judgement input",
+      "count_box": [
+       7,
+       464,
+       175,
+       494
+      ]
+     }
+    },
+    "s2": {
+     "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "evidence/20260916-route/tools/v4/locate_album_card.py",
+      "evidence/20260917-vision-reader/frames/route5r_probe_crop_s2.png",
+      "--expect-start",
+      "2024/05/13",
+      "--expect-end",
+      "2024/05/17",
+      "--expect-count",
+      "57"
+     ],
+     "exit_code": 0,
+     "timed_out": false,
+     "parsed_verdict": "ELIGIBLE",
+     "stdout_sha256": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+     "raw_stdout": "raw/c5_s2_stdout.json",
+     "stderr_tail": "",
+     "count_digits_read": "57",
+     "count_box": [
+      22,
+      925,
+      190,
+      955
+     ],
+     "count_text": "MATCH",
+     "title": {
+      "texts": [
+       "2024/05/13~05/17"
+      ],
+      "bbox": [
+       30,
+       899,
+       256,
+       923
+      ]
+     },
+     "crop_pass": true,
+     "reader_lines": {
+      "frame_lines": [
+       {
+        "text": "旻謙允禎成長日記",
+        "conf": 1.0,
+        "x": 230.0,
+        "y": 89.66666666666667,
+        "w": 194.0,
+        "h": 28.0
+       },
+       {
+        "text": "相簿",
+        "conf": 0.5,
+        "x": 134.66666666666666,
+        "y": 160.66666666666666,
+        "w": 52.333333333333336,
+        "h": 28.0
+       },
+       {
+        "text": "記事本",
+        "conf": 1.0,
+        "x": 450.3333333333333,
+        "y": 160.66666666666666,
+        "w": 74.66666666666667,
+        "h": 26.333333333333332
+       },
+       {
+        "text": "53",
+        "conf": 1.0,
+        "x": 31.666666666666668,
+        "y": 205.66666666666666,
+        "w": 28.0,
+        "h": 18.666666666666668
+       },
+       {
+        "text": "2024/05/13~05/17",
+        "conf": 1.0,
+        "x": 30.0,
+        "y": 899.0,
+        "w": 226.0,
+        "h": 24.333333333333332
+       },
+       {
+        "text": "57",
+        "conf": 1.0,
+        "x": 31.666666666666668,
+        "y": 934.6666666666666,
+        "w": 30.0,
+        "h": 22.333333333333332
+       }
+      ],
+      "count_region_lines": [
+       {
+        "text": "57",
+        "conf": 1.0,
+        "x": 10.7,
+        "y": 11.5,
+        "w": 25.9,
+        "h": 17.8
+       }
+      ],
+      "method": "v4_locate_album_card.ocr_words",
+      "note": "supplementary raw lines for C1/C5 evidence; the tool JSON above is the authoritative judgement input",
+      "count_box": [
+       22,
+       925,
+       190,
+       955
+      ]
+     }
+    }
+   },
+   "pass": true,
+   "status": "PASS"
+  }
+ ],
+ "frozen_reference": {
+  "album_open_verify": "evidence/20260916-route/attempt-05/album-open-verify.json",
+  "album_open_verify_sha256_pin": "ffa5d9633804f819473674f57a9979d56e849882f32dfcfa4a2b5b1326083a9b"
+ },
+ "raw_artifacts": {
+  "raw/c1_post_stdout.json": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+  "raw/c1_reader_lines.json": "4f9e41f6a77ebb3b05ace3f5fdbac1869be14e6f84d56cea037d0bfdbe42e19d",
+  "raw/c2/post_run1_stdout.json": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+  "raw/c2/post_run2_stdout.json": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+  "raw/c2/post_run3_stdout.json": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+  "raw/c2/post_run4_stdout.json": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+  "raw/c2/post_run5_stdout.json": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+  "raw/c2/pre_run1_stdout.json": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+  "raw/c2/pre_run2_stdout.json": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+  "raw/c2/pre_run3_stdout.json": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+  "raw/c2/pre_run4_stdout.json": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+  "raw/c2/pre_run5_stdout.json": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+  "raw/c2/s1_run1_stdout.json": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+  "raw/c2/s1_run2_stdout.json": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+  "raw/c2/s1_run3_stdout.json": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+  "raw/c2/s1_run4_stdout.json": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+  "raw/c2/s1_run5_stdout.json": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+  "raw/c2/s2_run1_stdout.json": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+  "raw/c2/s2_run2_stdout.json": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+  "raw/c2/s2_run3_stdout.json": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+  "raw/c2/s2_run4_stdout.json": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+  "raw/c2/s2_run5_stdout.json": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+  "raw/c3_post_stdout.json": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+  "raw/c3_pre_stdout.json": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+  "raw/c4_frozen_v3_comparison.json": "c0ddb2d9f2b45f7686d2cb9d5f26974127d9759f5ab16fff4f93aa98127f391c",
+  "raw/c4_stdout.json": "0633d43f8af30279b163710f9e7f1c6b389558d90fd7cd7b49c6f6b66705b498",
+  "raw/c5_s1_reader_lines.json": "9e8b4601221cd55098f14194fcd0c0b7e6dd341ac6b92507cb8bf36fa14c3cff",
+  "raw/c5_s1_stdout.json": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+  "raw/c5_s2_reader_lines.json": "b3df0c4f93e3f20bff84839a0ee71b7c1228646f3e151a113a2d05639e9fbbfe",
+  "raw/c5_s2_stdout.json": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+  "raw/preflight.json": "c16daad8bcbb6284e13036eb5ec289c295c597eecbb7a9a3dabb9e70a227b929",
+  "raw/rv30_4_frame_10x_lines.json": "2dd38de7cb0c87d7f2625789e5b6c890d99d9bb8a41aa1d80c4fc284f6208cf3",
+  "raw/rv30_4_frame_3x_lines.json": "9b0f90b47bd60f0ef873547c162f7a6bcced7d3a860ddb8279f542a6a5ba7968",
+  "raw/rv30_4_frame_6x_lines.json": "abf295f1a437ec3f0995dc943380b8e844a5095b4915e76a1c9f53890b17aabd",
+  "raw/rv30_4_region_10x_lines.json": "425a26362696d6e7d403b5cba337cbe9ba273b5bc423d70707e75c853221e414",
+  "raw/rv30_4_region_3x_lines.json": "2f9be4859c92ed18a7101cd3840a8f79f424aaf6da832db76b1143c00fb249d8",
+  "raw/rv30_4_region_6x_lines.json": "334d8337a0b2c1ffaceb4ba931a3630db685368698deb9d5eedf2e10fcfe106f",
+  "raw/rv30_4_sweep.json": "22837fcd60a7cec8959d260888d258b8f4b0f37f406b14351149d7939eb3da25"
+ },
+ "raw_reconcile": {
+  "missing_from_disk": [],
+  "added_from_disk": []
+ },
+ "artifacts_dir": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/agent-e2e/attempt-02",
+ "acceptance_mode": "INTEGRATION (offline replay over durable frozen frames; never reported as live E2E)"
+}

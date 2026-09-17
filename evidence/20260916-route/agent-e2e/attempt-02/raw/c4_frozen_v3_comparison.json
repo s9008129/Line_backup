@@ -1,0 +1,11 @@
+{
+ "path": "evidence/20260916-route/attempt-05/album-open-verify.json",
+ "expected_sha256": "ffa5d9633804f819473674f57a9979d56e849882f32dfcfa4a2b5b1326083a9b",
+ "observed_sha256": "ffa5d9633804f819473674f57a9979d56e849882f32dfcfa4a2b5b1326083a9b",
+ "match": true,
+ "verdict": "TARGET_MISMATCH",
+ "count_digits_read": "75",
+ "count_text": "MISMATCH",
+ "exit_code": 4,
+ "exit_code_source": "evidence/20260916-route/attempt-05/run-ledger.json events[seq=12].verify.exit_code"
+}

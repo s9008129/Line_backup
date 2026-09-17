@@ -1,0 +1,189 @@
+{
+ "generated_at": "2026-09-17T21:13:07+08:00",
+ "attempt_dir": "evidence/20260916-route/agent-e2e/attempt-02",
+ "method": "verifier re-execution of the exact commands; bytes compared to recorded raws",
+ "checks": {
+  "C2_determinism": {
+   "inputs": {
+    "post": {
+     "stdout_sha_set_size": 1,
+     "stdout_sha256": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+     "helper_stdout_sequences_equal": true,
+     "helper_call_count": 2,
+     "helper_stdout_sha256s": [
+      "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+      "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83"
+     ],
+     "pass": true
+    },
+    "pre": {
+     "stdout_sha_set_size": 1,
+     "stdout_sha256": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+     "helper_stdout_sequences_equal": true,
+     "helper_call_count": 2,
+     "helper_stdout_sha256s": [
+      "f38778f7ad115e751d783b668ecd1497ca6746b826771a4e06d1ac326e3ef5b1",
+      "15439c4a9275870348378ce7312805284935c38644d8d8a13505735ca38159eb"
+     ],
+     "pass": true
+    },
+    "s1": {
+     "stdout_sha_set_size": 1,
+     "stdout_sha256": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+     "helper_stdout_sequences_equal": true,
+     "helper_call_count": 2,
+     "helper_stdout_sha256s": [
+      "72a70ad1c2f49abd74898ef696603b3981a8a97f8125555e6edce30cad5cf16d",
+      "d7bac6d8ce807ebe2eaa3e01fb91b846db78eba6d5416b434efe791eda0d53f2"
+     ],
+     "pass": true
+    },
+    "s2": {
+     "stdout_sha_set_size": 1,
+     "stdout_sha256": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+     "helper_stdout_sequences_equal": true,
+     "helper_call_count": 2,
+     "helper_stdout_sha256s": [
+      "c43ae12bc2e37a6cf91d7c6b2cb5f615e2e808031ce600823f8b59b564c05783",
+      "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+     ],
+     "pass": true
+    }
+   },
+   "pass": true
+  }
+ },
+ "fresh_execution": {
+  "post": {
+   "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "evidence/20260916-route/tools/v4/locate_album_card.py",
+    "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+    "--expect-start",
+    "2024/05/13",
+    "--expect-end",
+    "2024/05/17",
+    "--expect-count",
+    "57"
+   ],
+   "exit_code": 4,
+   "stdout_sha256": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+   "stderr_len": 0,
+   "recorded_raw": "raw/c1_post_stdout.json",
+   "recorded_raw_sha256": "8a922c2e67415eb9ac6865837a4f7b91dc96d8451e21f4c9d57e0482833b4a35",
+   "byte_identical_to_recorded": true,
+   "byte_identical_to_c2_run1": true
+  },
+  "pre": {
+   "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "evidence/20260916-route/tools/v4/locate_album_card.py",
+    "evidence/20260917-vision-reader/frames/route5r_frame_pre.jpg",
+    "--expect-start",
+    "2024/05/13",
+    "--expect-end",
+    "2024/05/17",
+    "--expect-count",
+    "57"
+   ],
+   "exit_code": 0,
+   "stdout_sha256": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+   "stderr_len": 0,
+   "recorded_raw": "raw/c3_pre_stdout.json",
+   "recorded_raw_sha256": "706cb73919f807bccbc19ace165897e2f8369848340449ff7539b11425ef7fba",
+   "byte_identical_to_recorded": true,
+   "byte_identical_to_c2_run1": true
+  },
+  "s1": {
+   "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "evidence/20260916-route/tools/v4/locate_album_card.py",
+    "evidence/20260917-vision-reader/frames/route5r_probe_crop_s1.png",
+    "--expect-start",
+    "2024/05/13",
+    "--expect-end",
+    "2024/05/17",
+    "--expect-count",
+    "57"
+   ],
+   "exit_code": 0,
+   "stdout_sha256": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+   "stderr_len": 0,
+   "recorded_raw": "raw/c5_s1_stdout.json",
+   "recorded_raw_sha256": "c4d129d0b4292f6e486a7cc334b2058832b6aa3a531a9fe38dd15aab3e83f4e4",
+   "byte_identical_to_recorded": true,
+   "byte_identical_to_c2_run1": true
+  },
+  "s2": {
+   "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "evidence/20260916-route/tools/v4/locate_album_card.py",
+    "evidence/20260917-vision-reader/frames/route5r_probe_crop_s2.png",
+    "--expect-start",
+    "2024/05/13",
+    "--expect-end",
+    "2024/05/17",
+    "--expect-count",
+    "57"
+   ],
+   "exit_code": 0,
+   "stdout_sha256": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+   "stderr_len": 0,
+   "recorded_raw": "raw/c5_s2_stdout.json",
+   "recorded_raw_sha256": "28a3cfd4e9009cc15d2f29d171a8905434fa81d42c3c1114b9d6d5dbfd74e322",
+   "byte_identical_to_recorded": true,
+   "byte_identical_to_c2_run1": true
+  },
+  "verify_pre_post": {
+   "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "evidence/20260916-route/tools/v4/verify_album_open.py",
+    "evidence/20260917-vision-reader/frames/route5r_frame_pre.jpg",
+    "evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+    "--expect-start",
+    "2024/05/13",
+    "--expect-end",
+    "2024/05/17",
+    "--expect-count",
+    "57"
+   ],
+   "exit_code": 0,
+   "stdout_sha256": "0633d43f8af30279b163710f9e7f1c6b389558d90fd7cd7b49c6f6b66705b498",
+   "stderr_len": 0,
+   "recorded_raw": "raw/c4_stdout.json",
+   "recorded_raw_sha256": "0633d43f8af30279b163710f9e7f1c6b389558d90fd7cd7b49c6f6b66705b498",
+   "byte_identical_to_recorded": true
+  }
+ },
+ "judgements": {
+  "C1": {
+   "count_digits_read": "57",
+   "contains_57": true,
+   "count_text": "MATCH",
+   "verdict": "UNSAFE_MARGINS",
+   "exit_code_observed": 4
+  },
+  "C3": {
+   "pre_titles": [
+    "2024/05/13~05/17"
+   ],
+   "post_titles": [
+    "2024/05/13~05/17"
+   ],
+   "pre_has_expected": true,
+   "post_has_expected": true
+  },
+  "C5": {
+   "s1_count": "57",
+   "s2_count": "57",
+   "s1_contains_57": true,
+   "s2_contains_57": true
+  },
+  "C4": {
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "exit_code_observed": 0,
+   "count_digits_read": "57",
+   "count_text": "MATCH"
+  }
+ }
+}
