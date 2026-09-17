@@ -1,0 +1,156 @@
+{
+ "schema_version": 1,
+ "run_id": "20260917-route-attempt-05",
+ "artifact": "vision-ocr-crosscheck.json",
+ "classification": "SUPPLEMENTARY_NON_AUTHORITATIVE",
+ "generated_at_local": "2026-09-17T19:08:35+0800",
+ "purpose": "Owner-Q&A cross-check (read-only): re-read the exact frozen attempt-05 frames with the macOS-native Vision framework OCR to test whether the frozen tesseract-based reader misread the tiny photo-count digits (frozen readings 75 / 27 / 5 where the expected value is 57). This artifact does not change any frozen verdict and cannot substitute for the frozen toolchain.",
+ "input_events_sent": 0,
+ "ui_interaction": "none - read-only analysis of already-frozen frames/crops; no new capture, no click, no keyboard, no AX write, no state/config/run-log writes, no images sent into the conversation",
+ "frozen_context": {
+  "run_ledger": {
+   "path": "evidence/20260916-route/attempt-05/run-ledger.json",
+   "sha256": "17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218",
+   "run_status": "STOPPED_AT_S5_TARGET_MISMATCH",
+   "ledger_state": "CLOSED_AFTER_INPUT_1",
+   "owner_decision_required": true
+  },
+  "album_open_verify": {
+   "path": "evidence/20260916-route/attempt-05/album-open-verify.json",
+   "sha256": "ffa5d9633804f819473674f57a9979d56e849882f32dfcfa4a2b5b1326083a9b",
+   "tool": "evidence/20260916-route/tools/verify_album_open.py",
+   "tool_sha256": "80504262025cf10202c8938612b5be73f91809578f1317f36733f52b513fa74b",
+   "reader": "tesseract 5.5.1 (leptonica 1.85.0), invoked via stdin/stdout",
+   "title_read": "2024/05/13~05/17",
+   "title_bbox_px": [17, 88, 200, 107],
+   "count_box_px": [9, 109, 177, 139],
+   "count_digits_read": "75",
+   "expected_count": "57",
+   "verdict": "TARGET_MISMATCH",
+   "exit_code": 4,
+   "changed_fraction": 0.646749
+  },
+  "screen_probe_resume": {
+   "path": "evidence/20260916-route/attempt-05/screen-probe-resume.json",
+   "sha256": "7d6565c569b889a3ecd12eff6b4809f73f5efeeaddc807c9dae9342f0f39b496",
+   "crop_scale_1_frozen": {"path": "/tmp/route5r_probe_crop_s1.png", "locator_verdict": "TARGET_COUNT_MISMATCH", "locator_exit_code": 5, "count_digits_read": "27"},
+   "crop_scale_2_frozen": {"path": "/tmp/route5r_probe_crop_s2.png", "locator_verdict": "TARGET_COUNT_MISMATCH", "locator_exit_code": 5, "count_digits_read": "5"},
+   "screen_scope": "UNAVAILABLE"
+  },
+  "frozen_verdict_unchanged": true
+ },
+ "tool": {
+  "name": "macOS Vision framework text recognition (VNRecognizeTextRequest)",
+  "os_native": true,
+  "helper_source": {"path": "/tmp/vision_ocr.swift", "bytes": 1070, "sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"},
+  "helper_binary": {"path": "/tmp/vision_ocr", "bytes": 67192, "sha256": "f54628e8f42fb65200bf98bf5cc6463937d28781c673c22e5ca8b9418ae3f6c9"},
+  "compiled_with": "Apple Swift 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101), arm64-apple-macosx26.0",
+  "recognition_level": "accurate",
+  "recognition_languages": ["zh-Hant", "en-US"],
+  "uses_language_correction": false,
+  "invocation": "/tmp/vision_ocr <image>",
+  "stdout_format": "px[x0,y0,x1,y1]\tconf=NN\tTEXT",
+  "frozen_toolchain": false,
+  "adoption_note": "Adopting this reader inside the official verification chain is a semantic change: it requires a new plan revision + independent review + explicit owner decision. Until then every frozen verdict stands."
+ },
+ "inputs": [
+  {
+   "label": "post frame (after the single authorized album-card left click)",
+   "path": "/tmp/route5r_frame_post.jpg",
+   "bytes": 66686,
+   "size_px": [327, 643],
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "raw_stdout": "/tmp/vc_crosscheck_post.txt",
+   "raw_stdout_sha256": "5c86dda8ab2b80fa0ce8177891bb312dae0d4693e4fc8e4d1ad813947f5a3a32"
+  },
+  {
+   "label": "pre frame (before the click)",
+   "path": "/tmp/route5r_frame_pre.jpg",
+   "bytes": 63914,
+   "size_px": [327, 643],
+   "sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+   "raw_stdout": "/tmp/vc_crosscheck_pre.txt",
+   "raw_stdout_sha256": "07e3e15605e27631e504898419eb51f1425f6715d4f318d5c827f60cae83e4fb"
+  },
+  {
+   "label": "s1 probe crop (screen probe at scale 1)",
+   "path": "/tmp/route5r_probe_crop_s1.png",
+   "bytes": 87400,
+   "size_px": [327, 643],
+   "sha256": "aea53a0df8c4ef20488446dbccc42fa84ecd72c36aad71d42199f20b9e30f5c3",
+   "raw_stdout": "/tmp/vc_crosscheck_s1.txt",
+   "raw_stdout_sha256": "561bb131a8a58a3360bb134dfa2ee1fc9ab3ae2554b29e567c89900dd4c36bfe"
+  },
+  {
+   "label": "s2 probe crop (screen probe at scale 2)",
+   "path": "/tmp/route5r_probe_crop_s2.png",
+   "bytes": 248922,
+   "size_px": [654, 1286],
+   "sha256": "7b9d0a19323e0f7341d2ee9722415251195531dc067b773f231676729c63721b",
+   "raw_stdout": "/tmp/vc_crosscheck_s2.txt",
+   "raw_stdout_sha256": "abf9d75eeab903cfafeb3ca20875461b34d4014ef1719d8e6db58bee2150e39e"
+  }
+ ],
+ "observations": [
+  {
+   "input": "post_frame_full",
+   "readings": [
+    {"raw_line": "px[14,88,201,110]\tconf=1.00\t2024/05/13~05/17", "bbox_px": [14, 88, 201, 110], "confidence": 1.0, "text": "2024/05/13~05/17"},
+    {"raw_line": "px[12,120,66,136]\tconf=1.00\t57張照片", "bbox_px": [12, 120, 66, 136], "confidence": 1.0, "text": "57張照片"},
+    {"raw_line": "px[12,140,80,154]\tconf=0.50\t2024.05.18", "bbox_px": [12, 140, 80, 154], "confidence": 0.5, "text": "2024.05.18"}
+   ]
+  },
+  {
+   "input": "pre_frame_full",
+   "readings": [
+    {"raw_line": "px[116,46,213,58]\tconf=0.50\t旻議允禎成長日記", "bbox_px": [116, 46, 213, 58], "confidence": 0.5, "text": "旻議允禎成長日記"},
+    {"raw_line": "px[66,80,94,96]\tconf=0.50\t相簿", "bbox_px": [66, 80, 94, 96], "confidence": 0.5, "text": "相簿"},
+    {"raw_line": "px[223,80,263,96]\tconf=1.00\t記事本", "bbox_px": [223, 80, 263, 96], "confidence": 1.0, "text": "記事本"},
+    {"raw_line": "px[14,102,32,114]\tconf=1.00\t53", "bbox_px": [14, 102, 32, 114], "confidence": 1.0, "text": "53"},
+    {"raw_line": "px[16,449,130,463]\tconf=1.00\t2024/05/13~05/17", "bbox_px": [16, 449, 130, 463], "confidence": 1.0, "text": "2024/05/13~05/17"},
+    {"raw_line": "px[14,467,32,479]\tconf=0.50\t57", "bbox_px": [14, 467, 32, 479], "confidence": 0.5, "text": "57"},
+    {"raw_line": "px[275,593,291,609]\tconf=0.30\t十", "bbox_px": [275, 593, 291, 609], "confidence": 0.3, "text": "十"}
+   ]
+  },
+  {
+   "input": "s1_probe_crop_scale_1",
+   "readings": [
+    {"raw_line": "px[116,46,211,58]\tconf=0.50\t旻謙允禎成長日記", "bbox_px": [116, 46, 211, 58], "confidence": 0.5, "text": "旻謙允禎成長日記"},
+    {"raw_line": "px[66,80,94,96]\tconf=1.00\t相簿", "bbox_px": [66, 80, 94, 96], "confidence": 1.0, "text": "相簿"},
+    {"raw_line": "px[223,80,263,96]\tconf=0.50\t記事本", "bbox_px": [223, 80, 263, 96], "confidence": 0.5, "text": "記事本"},
+    {"raw_line": "px[14,102,32,114]\tconf=0.50\t53", "bbox_px": [14, 102, 32, 114], "confidence": 0.5, "text": "53"},
+    {"raw_line": "px[14,449,130,463]\tconf=1.00\t2024/05/13~05/17", "bbox_px": [14, 449, 130, 463], "confidence": 1.0, "text": "2024/05/13~05/17"},
+    {"raw_line": "px[12,467,32,481]\tconf=1.00\t57", "bbox_px": [12, 467, 32, 481], "confidence": 1.0, "text": "57"}
+   ]
+  },
+  {
+   "input": "s2_probe_crop_scale_2",
+   "readings": [
+    {"raw_line": "px[230,90,424,118]\tconf=1.00\t旻謙允禎成長日記", "bbox_px": [230, 90, 424, 118], "confidence": 1.0, "text": "旻謙允禎成長日記"},
+    {"raw_line": "px[138,160,188,186]\tconf=1.00\t相簿", "bbox_px": [138, 160, 188, 186], "confidence": 1.0, "text": "相簿"},
+    {"raw_line": "px[452,160,526,188]\tconf=1.00\t記事本", "bbox_px": [452, 160, 526, 188], "confidence": 1.0, "text": "記事本"},
+    {"raw_line": "px[30,206,60,226]\tconf=0.50\t53", "bbox_px": [30, 206, 60, 226], "confidence": 0.5, "text": "53"},
+    {"raw_line": "px[30,900,256,926]\tconf=1.00\t2024/05/13~05/17", "bbox_px": [30, 900, 256, 926], "confidence": 1.0, "text": "2024/05/13~05/17"},
+    {"raw_line": "px[30,934,62,958]\tconf=1.00\t57", "bbox_px": [30, 934, 62, 958], "confidence": 1.0, "text": "57"},
+    {"raw_line": "px[552,1186,582,1216]\tconf=0.30\t十", "bbox_px": [552, 1186, 582, 1216], "confidence": 0.3, "text": "十"}
+   ]
+  }
+ ],
+ "key_findings": [
+  "On the exact frozen post frame (same bytes, SHA 4cb8a6b4…), Vision reads the photo-count line as 57張照片 with confidence 1.00 at px[12,120,66,136] - inside the neighbourhood of the frozen count_box [9,109,177,139] where the frozen tesseract reader read 75. Strong supplementary evidence that the navigation reached the target album showing 57 photos, and that the frozen TARGET_MISMATCH came from reader variance on tiny glyphs.",
+  "The frozen probe crops show the same phenomenon: the frozen locator read 27 (scale 1) and 5 (scale 2) while Vision read 57 at confidence 1.00 in both sizes. Two independent frozen readings failed the same glyphs that Vision read consistently.",
+  "Album-card identity is consistent across pre/post: pre frame card title 2024/05/13~05/17 with 57 below it; post frame header title 2024/05/13~05/17 with 57張照片 below it.",
+  "Resolution effect (relevant to owner questions about image compression/size): on the 1x pre frame Vision misread the group name as 旻議允禎成長日記 (conf 0.50, 謙→議) but read 旻謙允禎成長日記 correctly at 2x (conf 1.00); the count digits 57 read at confidence 1.00 at both 1x and 2x. For this failure, engine choice mattered more than upscaling, while upscaling helped the harder glyphs.",
+  "Frozen verdict unchanged: this artifact is supplementary and non-authoritative; it does NOT grant ALBUM_OPEN_VERIFIED and does not reopen attempt-05."
+ ],
+ "limitations": [
+  "Produced outside the frozen toolchain; cannot flip any frozen gate by itself.",
+  "Vision line bboxes are per-line text boxes, not the frozen tool's scale-1 count-box geometry; coordinates are not directly interchangeable with frozen outputs.",
+  "The raw stdout files live in /tmp and are not committed; the SHA-256 values here bind the exact bytes, and every reading is transcribed verbatim as a raw_line.",
+  "No new UI input was sent; this does not re-run the route step and no capture was taken."
+ ],
+ "owner_decision_required": [
+  "Route decision: (a) explicitly declare ROUTE_NOT_NEEDED to close, or (b) grant a new one-time authorization to click the in-album vertical ellipsis exactly once (observe only, never click any menu item) so S6-S11 can complete.",
+  "Toolchain decision: whether to adopt the macOS-native Vision OCR as an official reading aid. If yes, open a new plan revision + independent review + fresh authorization before touching the frozen toolchain."
+ ]
+}
