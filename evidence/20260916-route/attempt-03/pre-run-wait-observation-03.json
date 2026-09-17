@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "run_id": "20260917-route-attempt-03",
+  "artifact_kind": "pre_run_wait_observation",
+  "artifact_role": "chronology_only_not_a_gate_decision",
+  "sequence": 3,
+  "task_id": "T20260916-0102-01-line-backup-acceptance",
+  "plan_revision": 18,
+  "plan_sha256": "22a5e5003116051d46ae5aef8d7baf06c46f873459a219946f86719c2b8107e6",
+  "app_bundle": "jp.naver.line.mac",
+  "raw_group": "旻謙允禎成長日記",
+  "album": "2024/05/13〜2024/05/17",
+  "expected_count": 57,
+  "human_gate_status": "AUTHORIZED_BY_USER",
+  "observation_window_utc": {
+    "start": "2026-09-17T03:25:25.479Z",
+    "end": "2026-09-17T03:28:08.521Z",
+    "poll_count": 10,
+    "poll_interval_s": 18,
+    "poll_method": "read-only app.getScreenshot({emit:false}) + app.getAXState({emit:false,disableDiffing:true}) via cua_repl; no click/type/key/scroll performed; no image emitted to the conversation"
+  },
+  "window_result": {
+    "distinct_frame_hashes": 1,
+    "distinct_ax_fingerprints": 1,
+    "frame_sha256_full_of_first_and_last_poll": "5dae4e017fa976d5cb38298453af38a2aeeae140b3567f37408155f482b6bd5a",
+    "frame_bytes": 21801,
+    "first_last_frame_identical": true,
+    "ax_sha256_prefix12": "b445c97d9dc1",
+    "ax_text_len_chars": 1800,
+    "interpretation": "the LINE window was completely static across the whole 2m43s window, so no user interaction occurred during it"
+  },
+  "canonical_target_present": false,
+  "canonical_target_present_basis": "AX-structure-only read: still the chat-room structure (chat list 34 rows + message list showing 0-100 of 328 items + message input field); no canonical group/album text and no album/grid structure",
+  "residual_uncertainty": "MEDIUM: the currently open chat cannot be named from AX alone and no image was published, so target presence is judged from AX structure and absence of any window change",
+  "gui_input_count": 0,
+  "input_counts": {
+    "app_acquisition_inputs": 0,
+    "navigation_inputs": 0,
+    "ellipsis_inputs": 0,
+    "menu_item_clicks": 0,
+    "save_all_clicks": 0,
+    "chooser_interactions": 0,
+    "backup_state_writes": 0
+  },
+  "ellipsis_budget_consumed": 0,
+  "frames_persisted": false,
+  "frames_persistence_note": "no frame persisted; transient /tmp copies deleted after hashing (avoid storing unrelated private chat content and respect the conversation image budget)",
+  "conclusion": "Third post-gate read-only wait window: the exact target album card never appeared and the surface never changed, so the controlled run remains in PRE_RUN_WAIT with zero input consumed.",
+  "next_action": "await user-presented target (LINE frontmost on the exact album card with its ellipsis visible); then target-binding read -> exactly one current-target ellipsis input -> immediate post observation -> stop"
+}
