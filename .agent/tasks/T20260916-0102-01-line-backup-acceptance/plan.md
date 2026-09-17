@@ -1,26 +1,190 @@
 # LINE album acceptance and reusable transaction process — revised candidate plan
 
 TASK_ID: T20260916-0102-01-line-backup-acceptance
-PLAN_REVISION: 21
+PLAN_REVISION: 22
 PLAN_STATUS: CANDIDATE
 TASK_CLASS: CRITICAL (persistent-state and safety-semantics changes: dispatch continuity, duplicate/refusal gating, provenance binding, success semantics)
 REVIEW_REQUIRED: YES
 INDEPENDENT_ACCEPTANCE_REQUIRED: YES
 E2E_REQUIRED: NO
 E2E_RATIONALE: The only user journey for this album is a read-only verify-only pass over an existing destination; no production download is authorized in this wave. Real CLI, real formal read-only data, real evidence and the bounded, owner-gated real GUI observations of the controlled route runs are used; no fixture result may be reported as production E2E. Rev21 adds a second, offline acceptance subject (the Vision-reader wave) whose acceptance is INTEGRATION-level replay over durable frozen artifacts (§21.5-§21.6); it contains no GUI input and is never reported as live E2E.
-ACCEPTANCE_MODE: INTEGRATION for the Rev21 wave (offline replay over durable frozen frames and versioned tools; §21.6). The album-data subject keeps its previous E2E decision.
-ACCEPTED_BY_USER: YES (Rev21's direction - replace the official reader with macOS-native Vision and build a bounded AI-Agent acceptance test - is set by the owner's own command file GOAL-vision-agent-next-conversation.md and H3.0 §1; §21.7 carries the plain-language owner view for confirmation at the next owner interaction)
-PRIOR_REVIEW_ATTEMPT: 28, 29
-PRIOR_REVIEW_GATE: PLAN_APPROVED (Rev20 at SHA256 4919d87148c68ea3d70cbb9abd258edbd0bfa0b55be5123f7202251e557db17c; review/attempt-28 at d9bf574facc636c97bfbe080769cce9ed30e5b05c31f7ef0847b0552b99ea09d and review/attempt-29 at 540fda1a35590fc4047a49723a204879395c2258ec1597c4d036093f69872683 each returned PLAN_APPROVED for that exact revision/hash with only non-gating residual notes; Rev19 at SHA256 10ec0f03... was approved by review/attempt-26 and review/attempt-27; no approval exists for Rev21)
+ACCEPTANCE_MODE: INTEGRATION for the Rev21 wave (offline replay over durable frozen frames and versioned tools; §21.6). The album-data subject keeps its previous E2E decision. Rev22 adds the owner-gated live GUI route observation (attempt-06) as a second subject of the same album-data result; its independent acceptance is `e2e/attempt-07`, which must re-derive both closure facts from fresh evidence (§22.5) and must not run any GUI input of its own.
+ACCEPTED_BY_USER: YES (Rev21's direction - replace the official reader with macOS-native Vision and build a bounded AI-Agent acceptance test - is set by the owner's own command file GOAL-vision-agent-next-conversation.md and H3.0 §1; §21.7 carries the plain-language owner view for confirmation at the next owner interaction. Rev22's two decisions are set by the owner's own answer at transcript line 1063, session 01a0af3c-6693-72b2-abf2-095a3317e9a4, verbatim `1 選 B；2 用更正版紀錄`; §22.1-§22.2 and evidence/20260917-owner-decisions/owner-decisions-rev22.json carry the transcript-bound record)
+PRIOR_REVIEW_ATTEMPT: 30, 31
+PRIOR_REVIEW_GATE: PLAN_APPROVED (Rev21 at SHA256 466bda4ad79897cf5f6395beafc0a70c57d99ed4dc15f4b78328fb5c69b68190; review/attempt-30 at 92d5be16aa21ce0a07b6dbe0210ab00cf6d995198ecb59599146ed59d8284729 and review/attempt-31 at c80a14da9a6449226052230c8c7a635e8b2eb997ed4cf67dfb0dda22f6ab0aa5 each returned PLAN_APPROVED for that exact revision/hash with no BLOCKER/MAJOR finding; Rev20 at SHA256 4919d87148c68ea3d70cbb9abd258edbd0bfa0b55be5123f7202251e557db17c was approved by review/attempt-28 and review/attempt-29; no approval exists for Rev22)
 PRIMARY_OUTCOME_STATUS: UNKNOWN
 IMPLEMENTATION_STATUS: COMPLETE
 CORE_ACCEPTANCE_STATUS: BLOCKED
 REQUIRED_VERIFICATION_STATUS: PASS
 INDEPENDENT_ACCEPTANCE_STATUS: PASS
 TASK_CLOSURE_STATUS: CORE_ACCEPTANCE_BLOCKED
-REV21_WAVE_STATUS (Stage 04 not started; nothing pre-claimed): PRIMARY_OUTCOME_STATUS UNKNOWN / IMPLEMENTATION_STATUS NOT_STARTED / CORE_ACCEPTANCE_STATUS NOT_RUN / REQUIRED_VERIFICATION_STATUS NOT_RUN / INDEPENDENT_ACCEPTANCE_STATUS PENDING / TASK_CLOSURE_STATUS IN_PROGRESS - to be re-derived by Stage 05 from fresh evidence, never assumed here
+REV21_WAVE_STATUS (wave closed; corrected in Rev22 §22.8): the Rev21 Stage 04 wave is committed at 287e2f5 (v4 toolchain + 16/16 self-test + agent-e2e C1-C5) and was independently accepted by e2e/attempt-06 (report SHA256 14b44c949b7e0062936cdfd7f33bd1352b4953996c0c47ce1014a2fc61d15b95; wave-scoped result ② = ACHIEVED / COMPLETE / PASS / PASS, frozen set 21 anchors UNCHANGED). The task-level tuple above (L15-L20) is the result ① tuple and is unchanged by that wave.
+REV22_WAVE_STATUS (Stage 04 not started; nothing pre-claimed): PRIMARY_OUTCOME_STATUS UNKNOWN / IMPLEMENTATION_STATUS COMPLETE / CORE_ACCEPTANCE_STATUS BLOCKED / REQUIRED_VERIFICATION_STATUS PASS / INDEPENDENT_ACCEPTANCE_STATUS PENDING / TASK_CLOSURE_STATUS IN_PROGRESS - to be re-derived by Stage 05 from fresh evidence, never assumed here
 PHASE_0_BASELINE_COMMITTED: evidence/20260917-vision-reader/phase0/baseline.json (commit adf1829) - handoff H3.0 §3 anchors re-computed 15/15 match; Vision helper rebuilt with swiftc; C1/C3/C5 readings and 5x per-frame determinism reproduced byte-identically against the recorded raw stdout SHAs; the four volatile frozen frames preserved byte-identically under evidence/20260917-vision-reader/frames/
 STAGE_04_REPORTED_BY_THE_REV19_WAVE (not independently verified; execution-rev19.md §1): PRIMARY UNKNOWN / IMPLEMENTATION COMPLETE / CORE PASS (scoped) / REQUIRED_VERIFICATION PASS / INDEPENDENT_ACCEPTANCE PENDING / TASK_CLOSURE READY_FOR_INDEPENDENT_ACCEPTANCE
+
+## Revision 22 changes
+
+Wave: **the owner's two decisions after the Rev21 wave — corrected route attempt-06 under the v4 reader, and adoption of the corrected versioned
+source record (v1.1)**. Rev22 answers `OOS-VR-3` and the Rev20 §20.3 disposition question. At transcript line 1063 (session
+`01a0af3c-6693-72b2-abf2-095a3317e9a4`, ordinal 1062, 2026-09-17T13:38:29.198Z; local 21:38:29) the owner answered verbatim
+`1 選 B；2 用更正版紀錄`: branch **(b)** — one further corrected route attempt (attempt-06) under a NEW `PLAN_REVISION`, a new gate and a fresh
+review, with the route's S5 (and S3/S6) verification bound to the v4 Vision reader — and the **corrected versioned record**
+`…confirmed.v1.1.json` as the source-record remedy for BLK-01. Rev22 authorizes exactly the two at-most-once GUI inputs of §22.3 and nothing else.
+It changes no product code, no command, no fixture and no status vocabulary, and it authorizes no menu-item activation, no Save All, no chooser, no
+keyboard/AX write, no download and no state/config/run-log write. No frozen v1/v2/v3 tool byte, no attempt-01..05 artifact, no ledger and no formal
+state is modified; the v1 record is never rewritten.
+
+### 22.1 Authority, scope, and Goal Contract delta
+
+Owner authority (verbatim, transcript-bound; the full record with byte-exact excerpts is
+`evidence/20260917-owner-decisions/owner-decisions-rev22.json`):
+
+- line 1034, 2026-09-17T21:29:07.582+0800 (the request that produced the option presentation), verbatim:
+  `請深度梳理上下文後，用白話、一般人或非技術人員可以理解的方式告訴我，為什麼這一次做的測試失敗了，以及它的瓶頸是什麼。`
+- line 1048, 2026-09-17T21:30:01.805+0800 (the option presentation immediately before the answer), verbatim (excerpt):
+  「路線：**A** 記成「這條路不需要」關閉卡點 ／ **B** 開新修訂＋再授權一次「⋮ 只觀察」（不點任何選單項目；新修訂會把驗證改用新 Vision
+  讀取器）。建議 **B**。」 and 「來源紀錄：**(i)** 用您先前已同意的「更正版紀錄」… ／ **(ii)** 您重新給一次精確答案。建議 **(i)**。」
+- line 1063, 2026-09-17T21:38:29.198+0800 (the decision itself), verbatim: `1 選 B；2 用更正版紀錄`
+
+Goal Contract delta — the wave's CORE set:
+
+- `REQ-V22-1` — CORE, result ①. The source-record subject closes: the §16.4 exact-equality contract re-derives `CONFIRMED` over the v1.1 record
+  (never over v1), so `SOURCE_CORRESPONDENCE` moves from `UNRESOLVED` to `CONFIRMED` — re-derived by Stage 05 from fresh evidence, never assumed here.
+- `REQ-V22-2` — CORE, result ①. The corrected route attempt-06 runs once under the v4 reader (§22.3): a machine-observable `AFFIRMATIVE` at the album
+  level is `CUA_ROUTE_DECISION=PASS` for the corrected route; any non-AFFIRMATIVE outcome is recorded honestly and leaves the route a scoped CORE blocker.
+- `NFR-V22-1` — CORE, MUST_NOT_BREAK. The v4 reader is the only reader substitution; every v1/v2/v3 tool byte, the v3 self-test, the attempt-01..05
+  artifacts, gates 1-3, both ledgers and the archived handoffs stay byte-identical.
+- `NFR-V22-2` — CORE, MUST_NOT_BREAK. At-most-once inputs: `retry_budget=0`, `click_count_per_input=1`, `menu_item_budget=0`, `keyboard_input_budget=0`,
+  `conversation_images=0`; a stop after input #1 never re-authorizes input #2.
+- `NFR-V22-3` — CORE, MUST_NOT_BREAK. The 57-file destination and every formal config/state/registry/run-log stay read-only; no re-download;
+  `禎` U+798E and `楨` U+6968 are never merged or normalized.
+- `NFR-V22-4` — SUPPORTING (non-gating). The screen-scope probe, the v4 README and the build record; a failed probe records `screen_scope=UNAVAILABLE`
+  and never blocks the run or the wave.
+
+Out of scope: `OOS-V22-1` any menu-item activation (explicitly Save All), any chooser, any production Save-All route; `OOS-V22-2` any write into the
+destination or any re-download; `OOS-V22-3` recording `ROUTE_NOT_NEEDED` — the owner chose B, not A, and that closure stays owner-reserved;
+`OOS-V22-4` any GUI input beyond §22.3's two inputs.
+
+### 22.2 What the owner decided, and how it is read
+
+- **Decision 1 (= B)** is read as branch (b) of §20.3: one further corrected route attempt, under a new revision, a new one-shot gate and a fresh
+  review, with S3/S5/S6 bound to the v4 reader and no menu-item activation. It is not a reset and not an extension of gate-3 or of attempt-05's spent
+  budget: attempt-05's single navigation input stays spent and its frozen verdict stands.
+- **Decision 2 (= 更正版紀錄)** is read as option (i): the corrected versioned record
+  `evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1.json` becomes the effective record for `source_status`. The preserved v1 record
+  is never rewritten and stays as the unsuccessful variant; `merge_prohibited` and the 禎/楨 byte-for-byte rule are unchanged.
+- **Alternative reading (recorded honestly, for the reviewers).** If decision 1 meant *only* the ⋮ input and not its directed precondition, the
+  album-card click is out of scope and the run must then start from an already-open album view — which the frozen v4 toolchain cannot verify as the
+  target album on a single frame — so the two-input attempt-06 of §22.3 must not be sent. §22.3 records each input's authority explicitly; a newer
+  explicit owner correction supersedes this reading at any time.
+
+### 22.3 Corrected route attempt-06 (the only authorized GUI input in this wave)
+
+**Preconditions (all must hold; otherwise no input is sent):**
+
+1. The owner has LINE (`jp.naver.line.mac`) in the album-list state with the target card visible (title `2024/05/13～05/17`, count 57) and no visible
+   menu, dialog, chooser, photo viewer or system permission prompt on the current surface. A surface that cannot show the target card stops the run
+   read-only: record `NO_TARGET_ON_FRAME`, use at most five read-only observation windows, notify the owner immediately (standing instruction: no long
+   loops), stop, zero inputs.
+2. Frozen before any input, and committed before the run: gate-4 (`evidence/20260916-route/attempt-06/gate-4-authorization.json`, which cites the
+   owner-decision artifact above), the v4 runbook (`evidence/20260916-route/attempt-06/route-runbook.md`), and the v4 tool set under
+   `evidence/20260916-route/tools/v4/` — `vision_reader.py` `22a4e9ef…`, `locate_album_card.py` `bb52aff1…`, `verify_album_open.py` `ffa82aed…`,
+   `locate_album_ellipsis.py` `b77e3d51…` — together with the frozen Vision helper source
+   `evidence/20260916-route/tools/vision/vision_ocr.swift` `4fc9fa2b…` and the v4 self-test
+   `evidence/20260916-route/tools/selftest/v4/selftest-summary.json` `5ad2be10…` (16 cases, `cases_failed 0`, 5× byte-identical stdout determinism).
+   The unchanged detector `detect_menu_popup.py` `6ae9c250…` and its frozen self-test `d8ffc129…` are reused byte-identically; the v3 tool set and its
+   13/13 self-test `17840e91…` stay frozen and are not used by this run's verdicts. The v2 card-⋮ locator's verdict is corroborating, never blocking, and
+   it never supplies a click point.
+3. A fresh `run-ledger.json` whose `parent_ledger_sha256` is attempt-05's final ledger `17b17203…`; budgets: `album_card_input_budget 1`,
+   `ellipsis_input_budget 1`, `navigation_input_budget 1`, `app_acquisition_input_budget 0`, `menu_item_budget 0`, `keyboard_input_budget 0`,
+   `click_count_per_input 1`, `retry_budget 0`, `conversation_images 0`, read-only observation windows ≤5, screen captures ≤5 within about four seconds
+   of input #2.
+
+**Steps.** §20.2's S1-S11 apply unchanged, with exactly these substitutions and additions:
+
+- S3 uses the v4 album-card locator; the click point still comes from its `click_point` field only.
+- S5 uses the v4 album-open verifier, whose verdict is the run's stop-or-continue gate before any ⋮ input. `ALBUM_OPEN_VERIFIED` requires the target
+  date title in the post frame AND a frame-diff fraction ≥5% at the frozen `--delta 12`; a readable non-target or mismatching count → `TARGET_MISMATCH`;
+  no surface change → `NO_EFFECT`; no readable title → `INCONCLUSIVE`. The v4 count region is read at 10× through the Vision helper; a confidence value
+  is recorded evidence and is never a gate.
+- S6 uses the v4 album-level ⋮ locator on the same post frame; `ELIGIBLE` requires exactly one candidate in the album-title row band (the row of the
+  verified title, to the right of it); `NO_ELLIPSIS_FOUND`, `AMBIGUOUS_ELLIPSIS` or `GROUP_LEVEL_ONLY` → no ⋮ input.
+- Every attempt-06 tool JSON must carry the v4 `reader` block (`helper.resolved_from`, `helper.binary_sha256`, per-call `outcome`, `exit_code`,
+  `stdout_sha256`). A `binary_missing`, `build_failed`, `nonzero_exit`, `unparsable` or `timeout` outcome reaches the tool's frozen refusal path
+  (non-zero exit, no guessed value) and stops the run before the next input.
+- Attempt-05's frozen `TARGET_MISMATCH` verdict and its artifacts are never overwritten, re-scored or re-interpreted; the v4 reader is applied only to
+  attempt-06's own fresh frames.
+- S11 additionally writes the durable execution record `execution-rev22.md`; frames stay in /tmp (bytes/size/SHA-256 recorded only); the menu may be
+  left open and the owner is told to close it.
+
+**Resume rule.** If the run stops with zero inputs spent (for example a preflight surface failure), the same ledger may be resumed with the same
+unspent authorization after the owner restores the surface — exactly as attempt-05's resume did. A run that spends input #1 and then stops does not
+re-authorize input #2.
+
+### 22.4 Source-record adoption: the corrected versioned record v1.1 (BLK-01's remedy)
+
+- `evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1.json`, 1,741 bytes, SHA-256
+  `a8c1055137d14026f7ecbc15b4f06ee540b56114af3276b081a0be72d195c263`, authored from the same preserved one-shot gate answer under Rev19 §19.1's
+  single-leaf rule, becomes the effective record for `source_status`.
+- The preserved v1 record (`…confirmed.v1.json`, 1,746 bytes, SHA-256
+  `2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d`) is never rewritten, never edited in place and never deleted; it stays as the
+  unsuccessful variant.
+- Contract re-derivation (independently re-run read-only twice in this wave): `user_fact_v1_matches` (`src/line_backup_acceptance/common.py:533`) →
+  `False` for v1 and `True` for v1.1; exactly one leaf differs (`answer.part_2.confirmed_album`: `2024/05/13～2024/05/17` → `2024/05/13～05/17`, a
+  duplicated year component; both values use U+FF5E and neither file contains an ASCII tilde) and the other 26 leaves are identical; the `evidence[]`
+  entry re-hashes (`human-gate-answer-20260917.json`, 1,438 bytes, `03ffff57…`).
+- Consequence: `SOURCE_CORRESPONDENCE=CONFIRMED` once Stage 05 re-derives the check from fresh evidence; `BLK-01` then closes. `ANOM-01` (the
+  gate-answer back-reference mismatch, `603ab720…` / 1,585 B vs `2cd7eccd…` / 1,746 B) stays recorded and non-gating.
+
+### 22.5 Gating, veto, and closure semantics for this wave
+
+- §20.3 branch (b) plus the closure tuple §20.3 already declares: if attempt-06 returns `AFFIRMATIVE` **and** the §16.4 check over v1.1 passes (both
+  re-derived by Stage 05 from fresh evidence), then `PRIMARY_OUTCOME_STATUS=ACHIEVED`, `IMPLEMENTATION_STATUS=COMPLETE`, `CORE_ACCEPTANCE_STATUS=PASS`,
+  `REQUIRED_VERIFICATION_STATUS=PASS`, `INDEPENDENT_ACCEPTANCE_STATUS=PASS`, `TASK_CLOSURE_STATUS=DONE`,
+  `BASELINE_REGRESSION_DELTA=UNCHANGED`; the disclosed axis facts (Registry=FAIL, State=`LEGACY_PROVENANCE_LIMITED`, product-level Source=`UNRESOLVED`)
+  are reported as axis facts and are never promoted.
+- Any non-AFFIRMATIVE outcome: recorded honestly with zero side effects; the route stays a scoped CORE blocker; the owner is notified immediately;
+  `ROUTE_NOT_NEEDED` is **not** taken (the owner chose B) and neither branch may run automatically.
+- A preflight surface failure spends no input, is not a route result and changes no status; it is a `resume`-eligible stop (§22.3).
+- No supporting item may block the wave (base L117 rule, §22.9); conversely no supporting pass may mask a CORE failure.
+
+### 22.6 Verification matrix rows added
+
+| CHECK_ID | Criticality | Evidence role | Gate | Baseline | Failure classification | Waiver allowed | Authority | Check result | Waiver status |
+|---|---|---|---|---|---|---|---|---|---|
+| V22_SOURCE_RECORD_V1_1_CONFIRMED | CORE | OUTCOME | HARD_CLEAN | YES | §16.4 must re-derive CONFIRMED over the v1.1 record and over no other record; any normalization or merge of 禎/楨, or any byte change to the v1 file, is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V22_ROUTE_ATTEMPT_06_SINGLE_ONESHOT | CORE | OUTCOME | HARD_CLEAN | YES | more than one album-card click, more than one ⋮ click, any retry, any menu-item/chooser/keyboard input, or any input spent after a failed precondition is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V22_S5_BOUND_TO_V4_READER | CORE | OUTCOME | HARD_CLEAN | YES | attempt-06's stop-or-continue decision must come from the frozen v4 verifier and its JSON must carry the v4 reader block; a tesseract-based verdict anywhere in the attempt-06 chain is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V22_AFFIRMATIVE_MACHINE_OBSERVABLE_ONLY | CORE | OUTCOME | HARD_CLEAN | YES | an OCR-only, human-report-only or incomplete observation reported as AFFIRMATIVE is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V22_PRIOR_EVIDENCE_IMMUTABLE | CORE | MUST_NOT_BREAK | HARD_CLEAN | YES | any byte change to a v1/v2/v3 tool, the v3 self-test, an attempt-01..05 artifact, gates 1-3, either ledger, an archived handoff, or the destination/formal state is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V22_SCREEN_SCOPE_PROBE | SUPPORTING | DIAGNOSTIC | NON_GATING | NO | a failed screen probe records `screen_scope=UNAVAILABLE`; it never blocks and is never reported as a CORE failure | NO | NONE | NOT_RUN | NOT_ALLOWED |
+
+### 22.7 Owner view (白話，給非技術主持人)
+
+- 您選 **B**：會再走一次「開相簿 → 看一眼相簿裡的 ⋮」，這次把「判斷對不對」的那雙眼睛換成 macOS 內建的 Vision 讀取器（它已在同一張冷凍畫面上
+  讀出「57張照片」、信心 1.00，而舊引擎讀成「75」）。每個動作仍然只有一次、不重試，而且**不會點任何選單項目**。
+- 您選「更正版紀錄」：那份紀錄的「相簿日期寫法」與規定的短格式不同（多寫了一次年份），更正版已備妥並通過全部「一字不差」的檢核；原檔一字不改，
+  只採用更正版。
+- 兩件事都成立時整體才會結案（①相簿資料 PASS）；任一件不成立就照實記錄、立刻回報，不會自行放行。
+- 最大風險：執行時「相簿列表」畫面必須保持可見；若不在，這次不會送出任何輸入，只會記錄後請您復原畫面再續。
+
+### 22.8 Literals corrected in place
+
+- Header: `PLAN_REVISION: 21` → `PLAN_REVISION: 22`.
+- Header: `ACCEPTANCE_MODE: …` extended with the Rev22 album-data subject and its `e2e/attempt-07` acceptance.
+- Header: `ACCEPTED_BY_USER: …` extended with the Rev22 owner decisions and their transcript binding.
+- Header: `PRIOR_REVIEW_ATTEMPT: 28, 29` → `PRIOR_REVIEW_ATTEMPT: 30, 31`.
+- Header: `PRIOR_REVIEW_GATE: …` updated — Rev21 at SHA256 `466bda4a…` was approved by review/attempt-30 (`92d5be16…`) and review/attempt-31
+  (`c80a14da…`) for that exact revision/hash; no approval exists for Rev22.
+- Header: `REV21_WAVE_STATUS: …` corrected to the committed and independently accepted state.
+- Header: `REV22_WAVE_STATUS: …` added.
+- `§Canonical Status Contract v2` check matrix: six rows added (§22.6).
+
+### 22.9 Unchanged by this revision
+
+Everything else, including the Goal contract, §16.4 and its matching rules, §19.1, §19.3, §20.1-§20.4, §21.1-§21.9, the requirement table, the status
+vocabulary, the routing fixtures, the product boundary and the closure rules, is unchanged and keeps its recorded values.
 
 ## Revision 21 changes
 

@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "artifact_type": "owner_decision_record",
+  "artifact": "owner-decisions-rev22.json",
+  "gate": "Rev22 owner decisions (transcript-bound): (1) route = branch (b) of Rev20 §20.3 — one further corrected route attempt (attempt-06) under a NEW PLAN_REVISION, a new one-shot gate and a fresh review, with the route's S3/S5/S6 verification bound to the v4 Vision reader; (2) source-record remedy = the corrected versioned record source-identity-user-fact.confirmed.v1.1.json",
+  "purpose": "Records, byte-for-byte and transcript-bound, the owner's two answers after the Rev21 acceptance attempt (e2e/attempt-06) and how this wave reads them. It is the authority source for PLAN_REVISION 22 (§22.1-§22.3) and for the corrected-record adoption (§22.4). It authorizes no input by itself: the runbook and the toolchain freeze, and gate-4, are frozen separately under evidence/20260916-route/attempt-06/ before any input.",
+  "session_id": "01a0af3c-6693-72b2-abf2-095a3317e9a4",
+  "session_transcript": "/Users/hsiaojohnny/.codex/sessions/2026/09/17/rollout-2026-09-17T19-59-26-01a0af3c-6693-72b2-abf2-095a3317e9a4.jsonl",
+  "question_message_transcript": {
+    "line": 1034,
+    "ordinal": 1033,
+    "timestamp_utc": "2026-09-17T13:29:07.582Z",
+    "timestamp_local": "2026-09-17T21:29:07.582+0800",
+    "verbatim": "請深度梳理上下文後，用白話、一般人或非技術人員可以理解的方式告訴我，為什麼這一次做的測試失敗了，以及它的瓶頸是什麼。",
+    "role": "the owner's request that produced the option presentation the decision answers (it also asks for a plain-language account of attempt-05's stop, which is answered in §22.7 and in the owner briefing)"
+  },
+  "option_presentation_transcript": [
+    {
+      "line": 1025,
+      "ordinal": 1024,
+      "timestamp_utc": "2026-09-17T13:27:32.926Z",
+      "role": "assistant message carrying the two-option framing and the reply example",
+      "verbatim_excerpt": "路線：**A** 記成「這條路不需要」關閉卡點 ／ **B** 開新修訂＋再授權一次「⋮ 只觀察」（不點任何選單項目；新修訂會把驗證改用新 Vision 讀取器）。建議 **B**。／ 來源紀錄：**(i)** 用您先前已同意的「更正版紀錄」 ／ **(ii)** 您重新給一次精確答案。建議 **(i)**。／ 回覆範例：「1 選 B；2 用更正版紀錄」"
+    },
+    {
+      "line": 1048,
+      "ordinal": 1047,
+      "timestamp_utc": "2026-09-17T13:30:01.805Z",
+      "role": "assistant message restating the same two questions in plain language, immediately before the owner's answer",
+      "verbatim_excerpt": "回覆範例：「1 選 B；2 用更正版紀錄」→ 我就用多個 subagent 平行把 Rev22 跑完。"
+    }
+  ],
+  "answer_message_transcript": {
+    "line": 1063,
+    "ordinal": 1062,
+    "timestamp_utc": "2026-09-17T13:38:29.198Z",
+    "timestamp_local": "2026-09-17T21:38:29.198+0800",
+    "payload_path": "$.payload.content[0].text",
+    "role": "user"
+  },
+  "answer_echo_transcript": {
+    "line": 1064,
+    "ordinal": 1063,
+    "timestamp_utc": "2026-09-17T13:38:29.199Z",
+    "client_id": "6fde96ee-c8b9-439e-8d5b-12b51818eb8f",
+    "role": "event_msg item_completed UserMessage echo of the same logical message"
+  },
+  "answer_verbatim": "1 選 B；2 用更正版紀錄",
+  "decisions": {
+    "item_1": {
+      "answer_verbatim": "1 選 B",
+      "decision": "BRANCH_B — one further corrected route attempt (attempt-06) under a NEW PLAN_REVISION, a new one-shot gate and a fresh review, with S3/S5/S6 bound to the v4 Vision reader",
+      "authorizes": [
+        "branch (b) of Rev20 §20.3: the corrected route attempt-06, never inside Rev20 or Rev21",
+        "the route's S3/S5/S6 verification bound to the v4 Vision reader (the only reader substitution); S5 (album-open) remains the gate that stops the run before any ⋮ input",
+        "the two at-most-once GUI inputs §20.2 already defines and that attempt-05 did not spend: (1) one album-card metadata left click that opens the target album, (2) one album-level ⋮ left click inside the opened album — observation only"
+      ],
+      "not_authorized": [
+        "any menu-item activation (explicitly including Save All), any chooser interaction, any keyboard input, any AX write action",
+        "any retry, any second click, any extra navigation input, any scrolling",
+        "any write to the destination, to formal config/state/registry/run-log, or any re-download",
+        "closing the route as ROUTE_NOT_NEEDED (the owner chose B, not A); that closure stays owner-reserved"
+      ],
+      "budgets": {
+        "album_card_input_budget": 1,
+        "ellipsis_input_budget": 1,
+        "navigation_input_budget": 1,
+        "app_acquisition_input_budget": 0,
+        "menu_item_budget": 0,
+        "keyboard_input_budget": 0,
+        "click_count_per_input": 1,
+        "retry_budget": 0,
+        "conversation_images": 0,
+        "read_only_observation_windows_max": 5,
+        "screen_capture_budget": 5,
+        "screen_capture_window_seconds": 4
+      },
+      "worst_case": "an opened album and an opened album-level menu on the owner's screen — the same class of observation-only side effect the owner authorized for one ⋮ input under gate-3",
+      "not_a_reset": "gate-4 is independent of gate-1, gate-2 and gate-3: it neither resets nor extends any earlier one-shot budget; attempt-05's spent navigation input stays spent and its frozen TARGET_MISMATCH verdict stands"
+    },
+    "item_2": {
+      "answer_verbatim": "2 用更正版紀錄",
+      "decision": "OPTION_I — adopt the already-prepared corrected versioned record as the source-record remedy for BLK-01",
+      "adopted_record": {
+        "path": "evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1.json",
+        "bytes": 1741,
+        "sha256": "a8c1055137d14026f7ecbc15b4f06ee540b56114af3276b081a0be72d195c263"
+      },
+      "superseded_record": {
+        "path": "evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json",
+        "bytes": 1746,
+        "sha256": "2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d",
+        "disposition": "never rewritten, never edited in place, never deleted; retained as the unsuccessful variant"
+      },
+      "contract_recheck": {
+        "matcher": "line_backup_acceptance.common.user_fact_v1_matches",
+        "source_line": "src/line_backup_acceptance/common.py:533",
+        "result_v1": false,
+        "result_v1_1": true,
+        "differing_leaf_count": 1,
+        "differing_leaf": "$.answer.part_2.confirmed_album",
+        "v1_value": "2024/05/13～2024/05/17",
+        "v1_1_value": "2024/05/13～05/17",
+        "nature_of_difference": "a duplicated year component in the second half of the album label (5 bytes); both values use U+FF5E, no ASCII tilde appears in either file",
+        "evidence_entry_rehashed": {
+          "path": "evidence/20260916-user-fact/human-gate-answer-20260917.json",
+          "bytes": 1438,
+          "sha256": "03ffff57d50a5f97e596749dfa6bbde50b5ab50253c1f34469cc896e89ef57f7"
+        },
+        "independent_verifications": 2,
+        "note": "re-derived read-only by two independent agents in this wave; the frozen tools and the product code were not modified to obtain the result"
+      },
+      "consequence": "SOURCE_CORRESPONDENCE moves from UNRESOLVED to CONFIRMED once Stage 05 re-derives the §16.4 check from fresh evidence; BLK-01 then closes. ANOM-01 (the gate-answer back-reference mismatch) stays recorded and non-gating."
+    }
+  },
+  "transcription_integrity": {
+    "method": "the session rollout was parsed line-by-line and every string value was visited; the two owner texts were matched as complete strings, not substrings",
+    "answer_occurrences_total": 4,
+    "answer_occurrences_as_real_user_message": 1,
+    "other_occurrences": [
+      "line 1143 (type=compacted, a conversation-compaction snapshot holding two copies of the same text)",
+      "assistant/reasoning quotations and tool-message echoes (including the subagent-notification relay); none of them is a user turn"
+    ],
+    "verified_by": "two independent read-only agents in this wave, agreeing on line 1063 as the only real user message carrying the answer"
+  },
+  "recorded_at_local": "2026-09-17T21:55+0800",
+  "notes": "Verbatim transcript excerpts only; quoted texts are copied byte-for-byte. This artifact creates no authorization by itself and is not a gate: gate-4 plus the v4 runbook plus the frozen v4 toolchain are frozen under evidence/20260916-route/attempt-06/ before any input. Any further GUI input beyond the two inputs described above, and any change to the closure semantics, requires yet another plan revision, a new gate and a fresh review."
+}
