@@ -1,0 +1,107 @@
+{
+ "schema_version": 1,
+ "run_id": "20260918-route-attempt-07",
+ "artifact": "evidence/20260916-route/attempt-07/screen-probe.json",
+ "purpose": "Screen-scope observation leg (Rev24 §24.3 S2): one read-only screen capture taken before the first authorized input; accepted only if the frozen v3 locate_album_card.py (500fcadb…) returns ELIGIBLE on a located window crop at scale 2 or scale 1. SUPPORTING / non-gating; reader-block exempt (RV-35-3).",
+ "probe": {
+  "path": "/tmp/route7_screen_probe.png",
+  "command": "screencapture -x /tmp/route7_screen_probe.png",
+  "exit_code": 0,
+  "bytes": 2179397,
+  "size": [
+   2294,
+   1490
+  ],
+  "mode": "RGBA",
+  "sha256": "ca43751c5a5cf167db883456c0c11e77a64efbb4f7e83bd68d0a64995c09d6a7",
+  "written_at_local": "2026-09-18T11:20:36+0800",
+  "input_events_sent": 0,
+  "sound": "none (-x: silent, no cursor drawn, no window highlight)"
+ },
+ "window_localization": {
+  "method": "Codex-CLI runtime has no CUA getApp/getScreenshot/getAXState; AX window bounds unavailable. Substitute (read-only): System Events window enumeration of process LINE at 11:20 — WIN1 (album-list, empty name) pos (0,27)pt size 327x643pt; WIN2 (LINE) pos (0,36)pt size 1147x699pt; desktop bounds 0,0,1147,745pt; Retina 2x (2294x1490px). Crop origin = WIN1 pos in px (0,54), size 654x1286px; scale-1 crop = LANCZOS half (327x643). No MAD template search (no window-scoped AX frame exists in this runtime: S1 itself is the screen capture). Recorded honestly; acceptance rule unchanged.",
+  "scale": 2,
+  "origin_screen_px": [
+   0,
+   54
+  ],
+  "origin_source": "System Events WIN1 position (0,27)pt x2 (read-only, zero input)",
+  "mapping": "screen_x = 2*window_x ; screen_y = 54 + 2*window_y (WIN1 origin)",
+  "desktop_points": [
+   1147,
+   745
+  ],
+  "retina": 2
+ },
+ "acceptance": {
+  "rule": "exit 0 + decodable + frozen v3 locate_album_card.py ELIGIBLE on the located window crop at scale 2 or scale 1",
+  "probe_exit_code": 0,
+  "decode": "PIL Image.open -> (2294,1490) RGBA, readable",
+  "frozen_v3_locator_sha256": "500fcadbe8cb47f1cd22f0d247ad7d7d65c84baef4000f2239e1872e340e98e4",
+  "crop_scale_2": {
+   "path": "/tmp/route7_probe_crop_s2.png",
+   "size": [
+    654,
+    1286
+   ],
+   "bytes": 775080,
+   "sha256": "7e6c05caed8b151d64dbed83c69382a7875c7fd61cb832d5edb3457baf976d82",
+   "locator_verdict": "TARGET_COUNT_MISMATCH",
+   "locator_exit_code": 5,
+   "locator_title_texts": [
+    "2024/05/13~05/17"
+   ],
+   "locator_title_bbox": [
+    33,
+    830,
+    253,
+    853
+   ],
+   "count_digits_read": "5",
+   "count_text": "MISMATCH",
+   "locator_output_file": "/tmp/route7_crop_s2_locate.json"
+  },
+  "crop_scale_1": {
+   "path": "/tmp/route7_probe_crop_s1.png",
+   "size": [
+    327,
+    643
+   ],
+   "bytes": 279169,
+   "sha256": "a12ba42109c1b976e3e7a5eeea99677c05e3991107c84774bc142717a5a4da92",
+   "locator_verdict": "TARGET_COUNT_MISMATCH",
+   "locator_exit_code": 5,
+   "locator_title_texts": [
+    "2024/05/13~05/17"
+   ],
+   "locator_title_bbox": [
+    17,
+    415,
+    126,
+    426
+   ],
+   "count_digits_read": "27",
+   "count_text": "MISMATCH",
+   "click_point": [
+    29,
+    420
+   ],
+   "locator_output_file": "/tmp/route7_crop_s1_locate.json"
+  },
+  "accepted_scale": null,
+  "screen_scope": "UNAVAILABLE",
+  "decided_before_the_input": true,
+  "note": "Neither scale ELIGIBLE: frozen v3 reads title correctly but count as 5/27 vs required 57 (same tesseract count-region limitation as attempt-06 S2). Per S2 SUPPORTING/non-gating: screen_scope=UNAVAILABLE; run continued with the frozen v4 reader as official chain. Crop click points evidence-only, NEVER used."
+ },
+ "cross_checks": [
+  "crop-s2 title [33,830,253,853] in crop px => screen px (33,884)-(253,907); S3 v4 title on the S1 screen frame [30,883,257,907]: same text 2024/05/13~05/17, left/top within 3px/1px — same card row",
+  "frozen v3 misreads count at both scales (5/27) while frozen v4 Vision reads 57 on the same content (S3 ELIGIBLE) — reader-layer difference, same as attempt-06; no verdict derived from v3 for the official chain"
+ ],
+ "permission_prompt_check": {
+  "PERMISSION_PROMPT_OBSERVED": false,
+  "method": "screencapture exit 0; probe decodes to live pixels; crops contain the same LINE card row as S3; osascript System Events queries succeed (no permission dialogue); no dialog/overlay readable in probe OCR beyond normal desktop content",
+  "consequence": "no permission-prompt abort; screen_scope=UNAVAILABLE recorded (non-gating)"
+ },
+ "ordering_local": "S1 pre frame 11:18:29 (prior turn; sha 2897…) -> S3 v4 locate ELIGIBLE (this turn, on S1 frame) -> stability re-read 11:20:15 (sha 83c1…, same click [42,895]) -> S2 probe 11:20:36 (sha ca43…) -> crops + frozen v3 runs (MISMATCH 5/27) -> S4 input #1 11:20:49 -> S5 post 11:20:54 (sha 25af…, NO_EFFECT) -> stop; S6-S10 not executed",
+ "environment_note": "Codex-CLI shell runtime (no CUA executor): captures via screencapture -x, clicks via osascript System Events; screen 2294x1490 @2x; LINE frontmost; WIN1 origin in px (0,54)"
+}

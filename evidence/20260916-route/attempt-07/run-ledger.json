@@ -2,7 +2,7 @@
  "schema_version": 1,
  "run_id": "20260918-route-attempt-07",
  "artifact": "evidence/20260916-route/attempt-07/run-ledger.json",
- "runtime/provider": "codex-desktop unified-computer-use (cua_repl)",
+ "runtime/provider": "codex-cli shell (screencapture -x + osascript System Events click at) — skeleton assumed cua_repl; no CUA executor exists in this runtime; recorded honestly per Rev24 §24.3",
  "app_bundle": "jp.naver.line.mac",
  "raw_group": "旻謙允禎成長日記",
  "album": "2024/05/13～05/17",
@@ -151,30 +151,348 @@
   "keyboard_input": 0,
   "retry": 0
  },
- "state": "FROZEN_BEFORE_INPUTS",
- "ledger_state": "FROZEN_BEFORE_INPUTS",
- "events": [],
- "inputs": [],
+ "state": "CLOSED_AFTER_INPUT_1",
+ "ledger_state": "CLOSED_AFTER_INPUT_1",
+ "events": [
+  {
+   "seq": 1,
+   "timestamp_local": "2026-09-18T11:18:29+0800 (file mtime; captured prior turn, zero input)",
+   "action_class": "read",
+   "event": "s1_binding_read_pre_observation",
+   "gui_input": false,
+   "surface": "entire screen (screencapture -x; Codex-CLI runtime has no CUA getScreenshot; LINE frontmost per later System Events query)",
+   "frame_path": "/tmp/route7_frame_pre.jpg",
+   "frame_bytes": 2136819,
+   "frame_size": [
+    2294,
+    1490
+   ],
+   "frame_mode": "RGBA",
+   "frame_sha256": "2897628770ddacd125be3e8224ea4dfdd970aa1056acb9ca277c060553e7e7d3",
+   "observation_window": "window 1 of at most 5 read-only observation windows",
+   "allowed_budget_before": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "note": "S1 frame inherited from prior turn; stability confirmed by the 11:20:15 re-read (same ELIGIBLE, same click) before any input."
+  },
+  {
+   "seq": 2,
+   "timestamp_local": "this turn (after S1, before any input)",
+   "action_class": "read",
+   "event": "s3_album_card_locate_eligible",
+   "gui_input": false,
+   "surface": "frozen v4 locate_album_card.py on /tmp/route7_frame_pre.jpg (--expect-start 2024/05/13 --expect-end 2024/05/17 --expect-count 57)",
+   "locator_verdict": "ELIGIBLE",
+   "locator_exit_code": 0,
+   "title_texts": [
+    "2024/05/13~05/17"
+   ],
+   "title_bbox": [
+    30,
+    883,
+    257,
+    907
+   ],
+   "count_digits_read": "57",
+   "count_text": "MATCH",
+   "click_point": [
+    42,
+    895
+   ],
+   "click_point_derivation": "title left edge + 12 px, title vertical centre (screen px; this frame only; historical coordinates never used)",
+   "reader_block_present": true,
+   "artifact": "evidence/20260916-route/attempt-07/album-card-locate.json",
+   "artifact_sha256": "94694c921171f98c53b7fc79a350d0f7faf635c234ed17cf894b87f9fb0fd624",
+   "observation_window": "analysis of the window-1 capture (no new live capture)",
+   "allowed_budget_before": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "runbook_rule_applied": "S3: only ELIGIBLE permits input #1; historical coordinates never live."
+  },
+  {
+   "seq": 3,
+   "timestamp_local": "2026-09-18T11:20:15+0800",
+   "action_class": "read",
+   "event": "stability_reread_same_card_same_click",
+   "gui_input": false,
+   "surface": "fresh screencapture -x /tmp/route7_frame_pre_fresh.png (read-only, pre-input stability check)",
+   "frame_bytes": 2086180,
+   "frame_size": [
+    2294,
+    1490
+   ],
+   "frame_sha256": "83c16f0ba45410496553b522ee370a0321e7ed4ce173eb3bceef1d3ab94e5655",
+   "locator": "frozen v4 locate_album_card.py -> ELIGIBLE, title [30,883,257,907], count 57 MATCH, click [42,895] (identical to S3)",
+   "locator_output_file": "/tmp/route7_fresh_locate.json",
+   "observation_window": "window 2 of at most 5 read-only observation windows",
+   "allowed_budget_before": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "note": "Surface stable (only clock 11:18->11:20 and terminal transcript changed); official S1/S3 remain the 11:18 frame + its ELIGIBLE; this re-read is supporting evidence only."
+  },
+  {
+   "seq": 4,
+   "timestamp_local": "2026-09-18T11:20:36+0800",
+   "action_class": "read",
+   "event": "s2_screen_scope_probe_once_unavailable",
+   "gui_input": false,
+   "surface": "entire screen (screencapture -x, silent, no input events)",
+   "probe_path": "/tmp/route7_screen_probe.png",
+   "probe_exit_code": 0,
+   "probe_bytes": 2179397,
+   "probe_size": [
+    2294,
+    1490
+   ],
+   "probe_mode": "RGBA",
+   "probe_sha256": "ca43751c5a5cf167db883456c0c11e77a64efbb4f7e83bd68d0a64995c09d6a7",
+   "window_substitute": "System Events WIN1 pos (0,27)pt size 327x643pt -> origin px (0,54), crop 654x1286 (AX unavailable in this runtime; recorded honestly)",
+   "crop_s2": {
+    "path": "/tmp/route7_probe_crop_s2.png",
+    "bytes": 775080,
+    "sha256": "7e6c05caed8b151d64dbed83c69382a7875c7fd61cb832d5edb3457baf976d82",
+    "locator_verdict": "TARGET_COUNT_MISMATCH",
+    "exit_code": 5,
+    "count_digits_read": "5"
+   },
+   "crop_s1": {
+    "path": "/tmp/route7_probe_crop_s1.png",
+    "bytes": 279169,
+    "sha256": "a12ba42109c1b976e3e7a5eeea99677c05e3991107c84774bc142717a5a4da92",
+    "locator_verdict": "TARGET_COUNT_MISMATCH",
+    "exit_code": 5,
+    "count_digits_read": "27",
+    "click_point": [
+     29,
+     420
+    ]
+   },
+   "accepted_scale": null,
+   "screen_scope": "UNAVAILABLE",
+   "decided_before_the_input": true,
+   "permission_prompt_observed": false,
+   "observation_window": "window 3 of at most 5 read-only observation windows",
+   "allowed_budget_before": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "evidence": [
+    "/tmp/route7_screen_probe.png",
+    "/tmp/route7_probe_crop_s2.png",
+    "/tmp/route7_probe_crop_s1.png",
+    "/tmp/route7_crop_s2_locate.json",
+    "/tmp/route7_crop_s1_locate.json",
+    "evidence/20260916-route/attempt-07/screen-probe.json"
+   ],
+   "note": "SUPPORTING/non-gating: neither scale ELIGIBLE (frozen v3 count-region 5/27 vs 57); screen_scope=UNAVAILABLE; run continues with v4 chain; crop click points never used."
+  },
+  {
+   "seq": 5,
+   "timestamp_local": "2026-09-18T11:20:49+0800",
+   "action_class": "input",
+   "event": "s4_input_1_album_card_single_left_click",
+   "gui_input": true,
+   "surface": "S3 click_point [42,895]px -> Cocoa points {21,448}pt (px/2; y 447.5 rounded to 448, inside title band pts y 441.5..453.5)",
+   "method": "osascript System Events: tell application \"System Events\" to click at {21, 448} (plain left click, clickCount=1, no modifier; no activate/bring-to-front; LINE already frontmost)",
+   "tool_result": "exit 0, returned 'window 1 of application process LINE' (hit LINE WIN1, the 327x643 album-list window)",
+   "counts_after": "album_card 1/1 SPENT; navigation 1/1 SPENT (budget alias, same single click); ellipsis 0/1; retry 0; menu 0; keyboard 0",
+   "allowed_budget_before": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 1,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "note": "Exactly one GUI input; historical coordinates (304,50)/(305,50) never used; no fallback; no third input will follow."
+  },
+  {
+   "seq": 6,
+   "timestamp_local": "2026-09-18T11:20:54+0800",
+   "action_class": "read",
+   "event": "s5_post_observation_and_open_verify_no_effect_stop",
+   "gui_input": false,
+   "surface": "screencapture -x /tmp/route7_frame_post.jpg then frozen v4 verify_album_open.py (pre /tmp/route7_frame_pre.jpg, --delta 12)",
+   "post_bytes": 2131730,
+   "post_size": [
+    2294,
+    1490
+   ],
+   "post_sha256": "25afd0cda061bdf11135bffabd56641e0c4dd17afc75e0551f761664169b9361",
+   "verifier_verdict": "NO_EFFECT",
+   "verifier_exit_code": 3,
+   "changed_fraction": 0.047343,
+   "changed_pixels": 161820,
+   "changed_bbox": [
+    676,
+    14,
+    2261,
+    978
+   ],
+   "target_title_in_post": {
+    "texts": [
+     "2024/05/13~05/17"
+    ],
+    "bbox": [
+     30,
+     883,
+     257,
+     907
+    ]
+   },
+   "count_digits_read": "57",
+   "count_text": "MATCH",
+   "reader_block_present": true,
+   "artifact": "evidence/20260916-route/attempt-07/album-open-verify.json",
+   "artifact_sha256": "aa0a2161d844b5cf7583514d2269c4db61f210c3cc85b57afa0f9d8b471a83ff",
+   "supporting_reread": "same post vs fresh pre /tmp/route7_frame_pre_fresh.png -> NO_EFFECT, changed 0.014715, bbox [678,270,1795,977] (/tmp/route7_verify_fresh_pre.json): rules out stale-pre artifact",
+   "runbook_rule_applied": "S5: only ALBUM_OPEN_VERIFIED continues; NO_EFFECT -> record, notify, stop; no ellipsis input (S6-S10 not executed)",
+   "observation_window": "window 4 of at most 5 read-only observation windows",
+   "allowed_budget_before": {
+    "album_card_inputs_used": 1,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 1,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false,
+   "note": "Post still shows the album LIST (same title bbox/count); change bbox is on the right-side terminal area, not the LINE card; input #1 had no observable open effect."
+  },
+  {
+   "seq": 7,
+   "timestamp_local": "2026-09-18T11:2x+0800 (finalization)",
+   "action_class": "decision",
+   "event": "stop_finalized_ledger_and_durable_execution_record",
+   "gui_input": false,
+   "stop_reason": "STOPPED_AT_S5_NO_EFFECT",
+   "ledger_state": "CLOSED_AFTER_INPUT_1",
+   "artifacts_written": [
+    {
+     "path": "evidence/20260916-route/attempt-07/album-card-locate.json",
+     "sha256": "94694c921171f98c53b7fc79a350d0f7faf635c234ed17cf894b87f9fb0fd624"
+    },
+    {
+     "path": "evidence/20260916-route/attempt-07/album-open-verify.json",
+     "sha256": "aa0a2161d844b5cf7583514d2269c4db61f210c3cc85b57afa0f9d8b471a83ff"
+    },
+    {
+     "path": "evidence/20260916-route/attempt-07/screen-probe.json",
+     "sha256": "38130a6a540c099b3ca88e979a72684a467e158b4a78ce64bf4334ccdba6f77c"
+    }
+   ],
+   "route_result_json": "NOT written (stop before any route outcome; stop-artifact policy RV-32-4); manifest.json likewise not written",
+   "execution_record": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/execution-rev24.md",
+   "owner_notified": true,
+   "no_side_effects": "no menu item, no Save All, no chooser, no keyboard input, no AX write, no scroll, no bring-to-front, no app launch, no destination write, no formal config/state/run-log write, no re-download, zero conversation images",
+   "allowed_budget_before": {
+    "album_card_inputs_used": 1,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "allowed_budget_after": {
+    "album_card_inputs_used": 1,
+    "album_card_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1
+   },
+   "menu_item_click": false,
+   "save_all_click": false,
+   "chooser_interaction": false,
+   "backup_state_write": false
+  }
+ ],
+ "inputs": {
+  "album_card": "SPENT (1/1) — input #1 sent 11:20:49+0800 via osascript click at {21,448}pt (= S3 click [42,895]px /2); clickCount=1, no modifier; tool returned 'window 1 of application process LINE'",
+  "ellipsis": "UNSPENT (0/1) — never sent; S5 precondition ALBUM_OPEN_VERIFIED failed (NO_EFFECT), so S6–S8 were not executed per runbook"
+ },
  "final_counts": {
-  "album_card_inputs_used": 0,
-  "navigation_inputs_used": 0,
+  "album_card_inputs_used": 1,
+  "navigation_inputs_used": 1,
   "ellipsis_inputs_used": 0,
   "menu_item_inputs_used": 0,
   "keyboard_inputs_used": 0,
-  "read_only_observation_windows_used": 0,
-  "screen_captures_used": 0
+  "read_only_observation_windows_used": 4,
+  "screen_captures_used": 4
  },
  "route_result_sha256": null,
- "run_status": "FROZEN_BEFORE_INPUTS",
- "stop_reason": null,
+ "run_status": "CLOSED_AFTER_INPUT_1",
+ "stop_reason": "STOPPED_AT_S5_NO_EFFECT",
  "owner_decision_required": false,
  "route_outcome": null,
- "next_action": "run S1-S11 once under gate-5; S6 bound to v5; historical coordinates never live; S6 never fallback to v4",
- "ledger_state_note": "Pre-freeze skeleton committed before any input per §24.3/V24_GATE5_FROZEN_BEFORE_INPUT. No route-result.json/manifest.json exists at this state (stop-artifact policy).",
+ "next_action": "STOP: input #1 SPENT 1/1 with NO_EFFECT at S5; input #2 is forbidden (S5 precondition failed). No further route input under gate-5. Owner decides next (resume-eligible only for a zero-input preflight shape, never a retry of the spent input).",
+ "ledger_state_note": "FINAL. gate-5 spent 1/2 (card SPENT, ellipsis UNSPENT-never-sent). attempt-05/06 frozen verdicts untouched. No route-result.json/manifest.json per stop-artifact policy.",
  "series_note": "evidence/20260916-route/attempt-07 is the route-run series; .agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-08 is this wave's Stage 05 (route attempt-07 ≠ e2e/attempt-07).",
  "pre_freeze_recorded_at_local": "2026-09-18T11:20+0800",
- "notes": "gate-5, the Rev24 runbook and this ledger skeleton are frozen before any input; a missing/late gate or missing 906c1433 parent binding is TASK_REGRESSION.",
- "finalized_at_local": null,
- "observation_windows_used": 0,
- "screen_captures_used": 0
+ "notes": "FINAL: exactly one GUI input (S4 card click); S5 NO_EFFECT on both pre choices; S6-S10 not executed; runtime honestly recorded as Codex-CLI shell (skeleton assumed cua_repl).",
+ "finalized_at_local": "2026-09-18T11:25+0800",
+ "observation_windows_used": 4,
+ "screen_captures_used": 4
 }

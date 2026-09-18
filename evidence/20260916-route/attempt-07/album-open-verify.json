@@ -1,0 +1,239 @@
+{
+ "tool": "verify_album_open",
+ "pre": "/tmp/route7_frame_pre.jpg",
+ "post": "/tmp/route7_frame_post.jpg",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "2897628770ddacd125be3e8224ea4dfdd970aa1056acb9ca277c060553e7e7d3",
+ "post_sha256": "25afd0cda061bdf11135bffabd56641e0c4dd17afc75e0551f761664169b9361",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "post_ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "032°C",
+  "00",
+  "9月18日週五 11:20",
+  "d1",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/13~05/17",
+  "57",
+  "幼音山広",
+  "• Line_backup 一：查看已開啟內容 | Line_backup — codex -m muse-spark-..•",
+  "...v run media_toolbox.py",
+  "...ort=\"xhigh\"、 sleep",
+  "...max\"、node_repl…",
+  "十",
+  "\"too1\"：\"1ocate_album_card\"，",
+  "（ctrl + t to view transcript）",
+  "TARGET_COUNT_MISMATCH 5 ［'2024/05/13~05/17'］",
+  "$1 TARGET_COUNT_MISMATCH 27 ［'2024/05/13~05/17'］ ［29，420］",
+  "date \"+%Y-%m-%dT%H：%M：%S.%3N%z\"",
+  "S4 input #1：",
+  "exactly one plain left click at S3 click_point",
+  "［42,895］px",
+  "｛21,448｝pt（px/2, y rounded to nearest inside title band 441.5..453.5pt）",
+  "2026-09-18T11:20:49.3N+0800",
+  "window 1 of application process",
+  "CLICK_EXIT=0",
+  "2026-09-18T11:20:49.3N+0800",
+  "• Working （3m",
+  "07s • esc",
+  "to",
+  "interrupt）•1 background terminal running• /ps",
+  "tO…",
+  ">Ask Codex to do",
+  "anything",
+  "muse-spark-1.3-contributor xhigh",
+  "•~/Documents/ChatGPT/. Pursuing goal",
+  "（46m）",
+  "昨天",
+  "上午 10:54",
+  "十",
+  "Q",
+  "目",
+  "類型：觸價單",
+  "觸發價格：502.00美元",
+  "委託價格：503.00美元",
+  "股數：3股",
+  "成交條件：ANY",
+  "諸存|另存新檔！分享|傳送至Keep筆記",
+  "已讀",
+  "下午 10:32",
+  "設定睡覺",
+  "20260918094522_投資簡報.pdf",
+  "下載期限：~9月25日 上午 10:54",
+  "檔案大小：3.2MB"
+ ],
+ "target_title_in_post": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   30,
+   883,
+   257,
+   907
+  ]
+ },
+ "date_like_tokens_in_post": [
+  "$1 TARGET_COUNT_MISMATCH 27 ［'2024/05/13~05/17'］ ［29，420］",
+  "2024/05/13~05/17",
+  "2026-09-18T11:20:49.3N+0800",
+  "TARGET_COUNT_MISMATCH 5 ［'2024/05/13~05/17'］"
+ ],
+ "count_box": [
+  22,
+  909,
+  190,
+  939
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "diff": {
+  "changed_pixels": 161820,
+  "changed_fraction": 0.047343,
+  "changed_bbox": [
+   676,
+   14,
+   2261,
+   978
+  ],
+  "changed_grid_8x8": [
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    278
+   ],
+   [
+    0,
+    0,
+    0,
+    82,
+    1797,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    5798,
+    10598,
+    9206,
+    5439,
+    426,
+    0
+   ],
+   [
+    0,
+    0,
+    13431,
+    22007,
+    18030,
+    17575,
+    3836,
+    0
+   ],
+   [
+    0,
+    0,
+    8433,
+    13779,
+    13757,
+    13814,
+    3450,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    84,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "NO_EFFECT",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "f54628e8f42fb65200bf98bf5cc6463937d28781c673c22e5ca8b9418ae3f6c9",
+   "binary_bytes": 67192,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "07306d34aa54039e93dd96eff2a035d30dfb404b552c7d1aabaed1c8d00f8550",
+    "stdout_bytes": 3677,
+    "lines_parsed": 68
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323",
+    "stdout_bytes": 33,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}
