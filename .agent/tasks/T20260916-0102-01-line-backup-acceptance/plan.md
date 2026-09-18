@@ -1,17 +1,17 @@
 # LINE album acceptance and reusable transaction process — revised candidate plan
 
 TASK_ID: T20260916-0102-01-line-backup-acceptance
-PLAN_REVISION: 23
+PLAN_REVISION: 24
 PLAN_STATUS: CANDIDATE
 TASK_CLASS: CRITICAL (persistent-state and safety-semantics changes: dispatch continuity, duplicate/refusal gating, provenance binding, success semantics)
 REVIEW_REQUIRED: YES
 INDEPENDENT_ACCEPTANCE_REQUIRED: YES
 E2E_REQUIRED: NO
 E2E_RATIONALE: The only user journey for this album is a read-only verify-only pass over an existing destination; no production download is authorized in this wave. Real CLI, real formal read-only data, real evidence and the bounded, owner-gated real GUI observations of the controlled route runs are used; no fixture result may be reported as production E2E. Rev21 adds a second, offline acceptance subject (the Vision-reader wave) whose acceptance is INTEGRATION-level replay over durable frozen artifacts (§21.5-§21.6); it contains no GUI input and is never reported as live E2E.
-ACCEPTANCE_MODE: INTEGRATION for the Rev21 wave (offline replay over durable frozen frames and versioned tools; §21.6). The album-data subject keeps its previous E2E decision. Rev22 adds the owner-gated live GUI route observation (attempt-06) as a second subject of the same album-data result; its independent acceptance is `e2e/attempt-07`, which must re-derive both closure facts from fresh evidence (§22.5) and must not run any GUI input of its own.
-ACCEPTED_BY_USER: YES (Rev21's direction - replace the official reader with macOS-native Vision and build a bounded AI-Agent acceptance test - is set by the owner's own command file GOAL-vision-agent-next-conversation.md and H3.0 §1; §21.7 carries the plain-language owner view for confirmation at the next owner interaction. Rev22's two decisions are set by the owner's own answer at transcript line 1063, session 01a0af3c-6693-72b2-abf2-095a3317e9a4, verbatim `1 選 B；2 用更正版紀錄`; §22.1-§22.2 and evidence/20260917-owner-decisions/owner-decisions-rev22.json carry the transcript-bound record)
-PRIOR_REVIEW_ATTEMPT: 30, 31, 32, 33
-PRIOR_REVIEW_GATE: PLAN_APPROVED (Rev21 at SHA256 466bda4ad79897cf5f6395beafc0a70c57d99ed4dc15f4b78328fb5c69b68190; review/attempt-30 at 92d5be16aa21ce0a07b6dbe0210ab00cf6d995198ecb59599146ed59d8284729 and review/attempt-31 at c80a14da9a6449226052230c8c7a635e8b2eb997ed4cf67dfb0dda22f6ab0aa5 each returned PLAN_APPROVED for that exact revision/hash with no BLOCKER/MAJOR finding; Rev20 at SHA256 4919d87148c68ea3d70cbb9abd258edbd0bfa0b55be5123f7202251e557db17c was approved by review/attempt-28 and review/attempt-29; Rev22 at SHA256 426fe6a1c758e96667e970021a80e20b68396c5af6a4ccaf65672772c514734b was approved by review/attempt-32 - report 4259f956987f5eeb10c44d6ef45767b1ed19c225fabaaa6eb62a0d4c7f2a427c, five MINOR findings, no BLOCKER/MAJOR - and review/attempt-33 - report c2b28063c947dcc7846eae71c4308c3c7e2e0e7b451e263bad34eb670327b614 - returned PLAN_REVISION_REQUIRED for that same revision/hash on RV-33-1 (MAJOR; fixed in Rev23 23.1), so the Rev22 dual gate was never satisfied and Rev22 is superseded by Rev23; no approval exists for Rev23)
+ACCEPTANCE_MODE: INTEGRATION for the Rev21 wave (offline replay over durable frozen frames and versioned tools; §21.6). The album-data subject keeps its previous E2E decision. Rev22 adds the owner-gated live GUI route observation (attempt-06) as a second subject of the same album-data result; its independent acceptance is `e2e/attempt-07`, which must re-derive both closure facts from fresh evidence (§22.5) and must not run any GUI input of its own. Rev24 adds the corrected route attempt (attempt-07) as a third subject; its independent acceptance is `e2e/attempt-08`, which must re-derive the corrected-route and §16.4 closure facts from fresh evidence (§24.5) and must not run any GUI input of its own.
+ACCEPTED_BY_USER: YES (Rev21's direction - replace the official reader with macOS-native Vision and build a bounded AI-Agent acceptance test - is set by the owner's own command file GOAL-vision-agent-next-conversation.md and H3.0 §1; §21.7 carries the plain-language owner view for confirmation at the next owner interaction. Rev22's two decisions are set by the owner's own answer at transcript line 1063, session 01a0af3c-6693-72b2-abf2-095a3317e9a4, verbatim `1 選 B；2 用更正版紀錄`; §22.1-§22.2 and evidence/20260917-owner-decisions/owner-decisions-rev22.json carry the transcript-bound record. Rev24's direction is set by the owner's own answer at transcript line 2427 of the same session, verbatim message beginning `B我要用一個新的計畫來取代原本的計畫。…`; §24.1-§24.2 and evidence/20260918-owner-decisions/owner-decisions-rev24.json carry the transcript-bound record)
+PRIOR_REVIEW_ATTEMPT: 34, 35
+PRIOR_REVIEW_GATE: PLAN_APPROVED (Rev21 at SHA256 466bda4ad79897cf5f6395beafc0a70c57d99ed4dc15f4b78328fb5c69b68190; review/attempt-30 at 92d5be16aa21ce0a07b6dbe0210ab00cf6d995198ecb59599146ed59d8284729 and review/attempt-31 at c80a14da9a6449226052230c8c7a635e8b2eb997ed4cf67dfb0dda22f6ab0aa5 each returned PLAN_APPROVED for that exact revision/hash with no BLOCKER/MAJOR finding; Rev20 at SHA256 4919d87148c68ea3d70cbb9abd258edbd0bfa0b55be5123f7202251e557db17c was approved by review/attempt-28 and review/attempt-29; Rev22 at SHA256 426fe6a1c758e96667e970021a80e20b68396c5af6a4ccaf65672772c514734b was approved by review/attempt-32 - report 4259f956987f5eeb10c44d6ef45767b1ed19c225fabaaa6eb62a0d4c7f2a427c, five MINOR findings, no BLOCKER/MAJOR - and review/attempt-33 - report c2b28063c947dcc7846eae71c4308c3c7e2e0e7b451e263bad34eb670327b614 - returned PLAN_REVISION_REQUIRED for that same revision/hash on RV-33-1 (MAJOR; fixed in Rev23 23.1), so the Rev22 dual gate was never satisfied; Rev23 at SHA256 4337e2b5c105901ce7c56956ecea5469894df2d2a29f099068c979584c71b6b2 was approved by review/attempt-34 - report 21c4bbb551070dbdfc7c155536c4651abc9492970311b739cf506dd1d2b8a57c - and review/attempt-35 - report 975142c3ad79098141a74e4bd1cebf107d8e307fc65ec42ef4c781e3d8c8582c - each returning PLAN_APPROVED for that exact revision/hash with no BLOCKER/MAJOR finding; no approval exists for Rev24)
 PRIMARY_OUTCOME_STATUS: UNKNOWN
 IMPLEMENTATION_STATUS: COMPLETE
 CORE_ACCEPTANCE_STATUS: BLOCKED
@@ -19,9 +19,244 @@ REQUIRED_VERIFICATION_STATUS: PASS
 INDEPENDENT_ACCEPTANCE_STATUS: PASS
 TASK_CLOSURE_STATUS: CORE_ACCEPTANCE_BLOCKED
 REV21_WAVE_STATUS (wave closed; corrected in Rev22 §22.8): the Rev21 Stage 04 wave is committed at 287e2f5 (v4 toolchain + 16/16 self-test + agent-e2e C1-C5) and was independently accepted by e2e/attempt-06 (report SHA256 14b44c949b7e0062936cdfd7f33bd1352b4953996c0c47ce1014a2fc61d15b95; wave-scoped result ② = ACHIEVED / COMPLETE / PASS / PASS, frozen set 21 anchors UNCHANGED). The task-level tuple above (L15-L20) is the result ① tuple and is unchanged by that wave.
-REV22_WAVE_STATUS (Stage 04 not started; nothing pre-claimed): PRIMARY_OUTCOME_STATUS UNKNOWN / IMPLEMENTATION_STATUS COMPLETE / CORE_ACCEPTANCE_STATUS BLOCKED / REQUIRED_VERIFICATION_STATUS PASS / INDEPENDENT_ACCEPTANCE_STATUS PENDING / TASK_CLOSURE_STATUS IN_PROGRESS - to be re-derived by Stage 05 from fresh evidence, never assumed here - Rev22 review outcome: review/attempt-32 PLAN_APPROVED (report 4259f956…; MINOR only) and review/attempt-33 PLAN_REVISION_REQUIRED (report c2b28063…; RV-33-1 MAJOR plus MINOR RV-33-2/3/4); Rev23 supersedes Rev22 with exactly those fixes - budgets, gate-4 pattern, tool bindings, owner authority and closure semantics unchanged (23.1-23.2)
+REV22_WAVE_STATUS (final, corrected in Rev24 §24.8): PRIMARY_OUTCOME_STATUS UNKNOWN / IMPLEMENTATION_STATUS COMPLETE / CORE_ACCEPTANCE_STATUS BLOCKED / REQUIRED_VERIFICATION_STATUS PASS / INDEPENDENT_ACCEPTANCE_STATUS PASS / TASK_CLOSURE_STATUS CORE_ACCEPTANCE_BLOCKED - per the independent Stage 05 `e2e/attempt-07/e2e_report.md` `6416a5f4…` (six rows: five PASS plus one non-gating SUPPORTING FAIL; §16.4 over the v1.1 record re-derived CONFIRMED, BLK-01 closed at task level); the sole remaining scoped blocker is `CUA_ROUTE_DECISION` (owner-reserved): route attempt-06 stopped at S6 `NO_ELLIPSIS_FOUND`, the ⋮ input was never sent and the run had zero side effects. Rev22 review outcome: review/attempt-32 PLAN_APPROVED (report 4259f956…; MINOR only) and review/attempt-33 PLAN_REVISION_REQUIRED (report c2b28063…; RV-33-1 MAJOR plus MINOR RV-33-2/3/4); Rev23 superseded Rev22 with exactly those fixes and closed its own dual gate (attempts 34/35); Rev24 supersedes Rev23 as the active candidate plan - budgets, gate pattern, tool bindings, owner authority and closure semantics unchanged (23.1-23.2, 24.1-24.5)
+REV24_WAVE_STATUS (Stage 04 not started; nothing pre-claimed): PRIMARY_OUTCOME_STATUS UNKNOWN / IMPLEMENTATION_STATUS COMPLETE / CORE_ACCEPTANCE_STATUS BLOCKED / REQUIRED_VERIFICATION_STATUS PASS / INDEPENDENT_ACCEPTANCE_STATUS PENDING / TASK_CLOSURE_STATUS IN_PROGRESS - to be re-derived by Stage 05 (`e2e/attempt-08`) from fresh evidence, never assumed here; the wave's work item is the corrected route attempt-07 under gate-5 (§24.3-§24.4) with the v5 position rule; no review exists for Rev24 yet (next free attempts: 36, 37)
 PHASE_0_BASELINE_COMMITTED: evidence/20260917-vision-reader/phase0/baseline.json (commit adf1829) - handoff H3.0 §3 anchors re-computed: 14/14 recorded SHA-256 anchors match with zero mismatches (16 rows; the other 2 informational rows carry no recorded SHA; corrects the earlier "15/15" literal per handoff RV-30-1 and Rev23 23.1); Vision helper rebuilt with swiftc; C1/C3/C5 readings and 5x per-frame determinism reproduced byte-identically against the recorded raw stdout SHAs; the four volatile frozen frames preserved byte-identically under evidence/20260917-vision-reader/frames/
 STAGE_04_REPORTED_BY_THE_REV19_WAVE (not independently verified; execution-rev19.md §1): PRIMARY UNKNOWN / IMPLEMENTATION COMPLETE / CORE PASS (scoped) / REQUIRED_VERIFICATION PASS / INDEPENDENT_ACCEPTANCE PENDING / TASK_CLOSURE READY_FOR_INDEPENDENT_ACCEPTANCE
+
+## Revision 24 changes
+
+Wave: **the owner-directed continuation of the corrected route verification under a corrected position rule — Rev24 supersedes Rev23 as the active
+candidate plan.** Rev23 was reviewed in two fresh independent contexts and both returned `PLAN_APPROVED` for Rev23 at SHA256 `4337e2b5…`
+(`review/attempt-34` report `21c4bbb5…`, `review/attempt-35` report `975142c3…`; zero BLOCKER/MAJOR), so Rev23 closed its own review gate and stays
+frozen as history. The Rev22 wave then ran: its Stage 04 (route attempt-06 under gate-4) and its Stage 05 (`e2e/attempt-07`) are committed and were
+independently accepted; the route stopped at S6 with a machine-observable `NO_ELLIPSIS_FOUND` — the ⋮ input was never sent and the run had zero side
+effects. In this conversation the owner was shown a single decision (A = record the route as not needed and close; B = a new revision, a fresh review
+and one new "observe only" authorization) and at transcript line 2427 (session `01a0af3c-6693-72b2-abf2-095a3317e9a4`, ordinal 2426,
+2026-09-18T00:06:40.115Z; local 08:06:40) answered with a message beginning verbatim `B我要用一個新的計畫來取代原本的計畫。…` (the complete
+882-byte verbatim and the 2405 option presentation are recorded byte-exactly, with per-excerpt SHA-256, in
+`evidence/20260918-owner-decisions/owner-decisions-rev24.json` `be1f5173…`). Rev24 is the resulting plan: **the album-level ⋮ position rule is
+corrected (v5) so that it matches the real LINE album-view geometry, and the corrected route is re-run exactly once as route attempt-07 under a new
+one-shot gate-5**, with the same at-most-once budgets, the same closure semantics and the same immutable prior evidence. Rev24 changes no product
+code, no command, no fixture and no status vocabulary; it authorizes no menu-item activation (explicitly Save All), no chooser, no keyboard/AX write,
+no download and no state/config/run-log write.
+
+### 24.1 Authority, scope, and Goal Contract delta
+
+Owner authority (verbatim, transcript-bound; the full record with byte-exact excerpts and per-excerpt hashes is
+`evidence/20260918-owner-decisions/owner-decisions-rev24.json`, 9,872 B, SHA-256 `be1f5173…`):
+
+- line 2365, 2026-09-18T08:02:00.270+0800 (the owner's question that produced the option presentation), verbatim:
+  `所以我現在還要決策什麼？你用白話跟我說。` (60 B, SHA-256 `2e729d03…`).
+- line 2405, 2026-09-18T08:02:44.793+0800 (the option presentation; A = record the route as `ROUTE_NOT_NEEDED` and close, B = a new revision plus one
+  further "observe only" authorization), verbatim excerpt: 「**選項 B — 再驗一次** - 會先做一份新修訂計畫＋重新規劃＋全新獨立審查，然後你再給一次新的「只觀察」
+  授權，才會再打開相簿看一眼 ⋮（全程不點任何選單項目）。」 (470 B excerpt, SHA-256 `5674299e…`; full message 1,931 B, `14905585…`). A was
+  presented and **not** chosen.
+- line 2427, 2026-09-18T08:06:40.115+0800 (the decision itself), verbatim (882 B, SHA-256
+  `a600ac4c9af8e3e44327f4566f5388985a79658b43a6eeb435915edec6f9e9ec`): the message beginning `B我要用一個新的計畫來取代原本的計畫。…` — the complete
+  bytes are quoted in the record; the two earlier, aborted drafts of the same instruction (lines 2412 `caf2f7d7…`, 304 B and 2420 `a8caf86d…`,
+  430 B) are superseded by line 2427 and are never used as authority.
+
+Goal Contract delta — the wave's CORE set:
+
+- `REQ-V24-1` — CORE, result ①. The corrected route attempt-07 runs once under gate-5 with its S6 stop-or-continue decision bound to the corrected v5
+  locator (§24.3): a machine-observable `AFFIRMATIVE` at the album level is `CUA_ROUTE_DECISION=PASS` for the corrected route; any non-AFFIRMATIVE
+  outcome is recorded honestly and leaves the route a scoped CORE blocker.
+- `REQ-V24-2` — CORE, result ①. The correction is demonstrated on durable evidence *before* the live input: the offline replay of v5 over the
+  committed attempt-06 post frame `4cb8a6b4…` must return `ELIGIBLE` with `ellipsis_dots [[304.5,44.0],[304.5,49.5],[304.5,55.0]]` and `click_point
+  [304,50]`, and the frozen v4 bytes over the same frame must still return `NO_ELLIPSIS_FOUND` (§24.6).
+- `NFR-V24-1` — CORE, MUST_NOT_BREAK. The v5 directory is additive only: every v1/v2/v3/v4 tool byte, the v3 and v4 self-tests, the attempt-01..06
+  artifacts, `e2e/attempt-02..07`, gates 1-4, every ledger, the archived handoffs and the `result.md` history stay byte-identical.
+- `NFR-V24-2` — CORE, MUST_NOT_BREAK. At-most-once inputs (mirrored from gate-4): `retry_budget=0`, `click_count_per_input=1`, `menu_item_budget=0`,
+  `keyboard_input_budget=0`, `conversation_images=0`; a stop after input #1 never re-authorizes input #2.
+- `NFR-V24-3` — CORE, MUST_NOT_BREAK. The 57-file destination and every formal config/state/registry/run-log stay read-only; no re-download;
+  `禎` U+798E and `楨` U+6968 are never merged or normalized.
+- `NFR-V24-4` — SUPPORTING (non-gating). The screen-scope probe, the v5 README and the build record; a failed probe records `screen_scope=UNAVAILABLE`
+  and never blocks the run or the wave.
+
+Out of scope: `OOS-V24-1` any menu-item activation (explicitly Save All); `OOS-V24-2` any write into the destination or any re-download;
+`OOS-V24-3` recording `ROUTE_NOT_NEEDED` — the owner chose B, not A, and that closure stays owner-reserved; `OOS-V24-4` any GUI input beyond §24.3's
+two inputs; `OOS-V24-5` any further route revision inside Rev24 — a failed attempt-07 routes to a NEW revision, never to an amendment of this one.
+
+### 24.2 What the owner decided, and how it is read
+
+- **B** is read again as §20.3 branch (b): one further corrected route attempt — the third in the route series (attempt-07, kept distinct from the
+  e2e series' attempt numbering per the §23.1 RV-33-4 series-homonym rule) — under a NEW `PLAN_REVISION` (Rev24), a new one-shot gate (gate-5) and a
+  fresh review, with the album-level ⋮ position rule corrected and S6 bound to the corrected locator. It is not a reset: gate-4 is spent and is never
+  extended or re-issued; attempt-05's and attempt-06's frozen verdicts and spent budgets stand.
+- The correction is confined to the position rule. The reader (v4 Vision), the album-card locator, the album-open verifier, the frozen tesseract
+  detector, every budget and every closure semantic are unchanged.
+- **Alternative reading (recorded for reviewers).** If line 2427 were read as authorizing a different target, a different album, or a menu-item path,
+  §24.3's inputs would not apply and the run must stop read-only; a newer explicit owner correction supersedes this reading at any time.
+- The next conversation runs the wave autonomously (the owner's own instruction); the gate-5 authorization is thereby pre-granted and must not be
+  re-asked. Only the recorded escalation conditions (§24.3-§24.5) stop the run.
+
+### 24.3 Corrected route attempt-07 (the only authorized GUI input in this wave)
+
+**Preconditions (all must hold; otherwise no input is sent):**
+
+1. The owner has LINE (`jp.naver.line.mac`) in the album-list state with the target card visible (title `2024/05/13～05/17`, count 57) and no visible
+   menu, dialog, chooser, photo viewer or system permission prompt on the current surface. A surface that cannot show the target card stops the run
+   read-only: record `NO_TARGET_ON_FRAME`, use at most five read-only observation windows, notify the owner immediately, stop, zero inputs.
+2. Frozen before any input, and committed before the run: gate-5 (`evidence/20260916-route/attempt-07/gate-5-authorization.json`, §24.4), the Rev24
+   runbook (`evidence/20260916-route/attempt-07/route-runbook.md`), and the v5 tool set under `evidence/20260916-route/tools/v5/` — the corrected
+   `locate_album_ellipsis.py` (its SHA-256 recorded in that directory's README and in the runbook) together with byte-identical copies of the v4
+   `vision_reader.py` `22a4e9ef…`, `locate_album_card.py` `bb52aff1…` and `verify_album_open.py` `ffa82aed…` — the v5 self-test
+   `evidence/20260916-route/tools/selftest/v5/selftest-summary.json` (≥20 cases, `cases_failed 0`), and the frozen Vision helper source
+   `evidence/20260916-route/tools/vision/vision_ocr.swift` `4fc9fa2b…`. The v4 tool set and its 16/16 self-test `5ad2be10…` stay frozen; the
+   unchanged detector `detect_menu_popup.py` `6ae9c250…` and its frozen self-test script
+   `evidence/20260916-route/tools/selftest/selftest_menu_popup.py` `db091703…` (4,018 B) are reused byte-identically and are exempt from the reader
+   block; the v3 tool set and its 13/13 self-test `17840e91…` stay frozen and are not used by this run's verdicts.
+3. A fresh `run-ledger.json` whose `parent_ledger_sha256` is attempt-06's FINAL ledger `906c1433…`; budgets mirror gate-4: `album_card_input_budget 1`,
+   `ellipsis_input_budget 1`, `navigation_input_budget 1`, `app_acquisition_input_budget 0`, `menu_item_budget 0`, `keyboard_input_budget 0`,
+   `click_count_per_input 1`, `retry_budget 0`, `conversation_images 0`, read-only observation windows ≤5, screen captures ≤5 within about four
+   seconds of input #2.
+
+**The v5 corrected position rule (the semantic delta of this revision).**
+
+- Problem [VERIFIED against the durable attempt-06 evidence]: the v4 rule made a triple eligible only when its middle dot lay inside the album-title
+  row band derived from the verified title bbox (`band.y0 = max(0, ty0-6)`, `band.y1 = ty1+10`). On the real attempt-06 post frame (327×643,
+  `4cb8a6b4…`) the album-level ⋮ is at `(304.5, 44.0) / (304.5, 49.5) / (304.5, 55.0)` — 33.5 px **above** the title strip top (`ty0 = 83`,
+  `band.y0 = 77`) — so it was classified `above_album_title_band` and was not eligible; the only other five triples were `inside_text` (the
+  `57張照片` and `2024.05.18` glyph runs). Verdict `NO_ELLIPSIS_FOUND`
+  (`evidence/20260916-route/attempt-06/album-ellipsis-locate.json`). The v4 self-test's album fixture drew its control dots *inside* the synthetic
+  title strip (`selftest/v4/run_selftest.py`, `album_frame()`), so the 16/16 result was genuine but blind to the real geometry: the blind spot was the
+  fixture, not the reader.
+- Corrected rule (v5): census, dot, triple and text-blocking logic and all detection constants stay byte-identical to v4. The title strip is derived
+  exactly as in v4 (`band = {x0: tx1+2, x1: width-1, y0: max(0, ty0-6), y1: min(height-1, ty1+10)}`). A NEW header region is derived from the same
+  verified title bbox: `header = {x0: tx1+2, x1: width-1, y1: max(0, ty0-7), y0: max(0, ty0-7-header_depth)}`, with the new documented parameter
+  `--header-depth` defaulting to **60**. A triple is eligible **iff** its middle dot is (a) not `inside_text` (unchanged), (b) not inside the
+  group-title band when one is given or readable (unchanged), and (c) inside `header`. A triple inside the title strip is recorded `in_title_strip`
+  and is **not** eligible (the strip carries the date and count text rows; admitting it re-admits exactly the region where glyph triples can hide
+  behind a reader hiccup). Above the header bound → `above_header_band`; below the title strip → `below_album_title_band`.
+- Rejected alternative, recorded for the reviewers: keeping the title strip eligible as a *union* with the header region. It was rejected because the
+  strip is text-only on the real surface and every real-frame triple inside it is a glyph run; the union would widen the eligible region without any
+  real-frame support and increase the wrong-coordinate risk class (a click onto text if the text blocker ever misses a word).
+- Exit codes and verdict vocabulary are unchanged: 0 `ELIGIBLE`, 2 `TARGET_TITLE_NOT_FOUND`, 3 `NO_ELLIPSIS_FOUND`, 4 `AMBIGUOUS_ELLIPSIS`,
+  5 `GROUP_LEVEL_ONLY`, 6 `BAD_FRAME`; `ELIGIBLE` still requires **exactly one** eligible candidate; group-band-only candidates still yield
+  `GROUP_LEVEL_ONLY`.
+- Why 60: the observed offset is 33.5 px above the strip top; 60 px is a deliberately bounded containment window (≈27 px headroom). A deeper window
+  would sweep in unrelated chrome and could turn a benign frame into `AMBIGUOUS_ELLIPSIS`; anything farther above the strip is fail-closed
+  (`NO_ELLIPSIS_FOUND`), never guessed.
+- Planning-time validation (zero GUI; a throwaway `/tmp` prototype, not a committed artifact): on the committed post frame `4cb8a6b4…` invoked with
+  `--title-bbox 15,83,204,111`, the corrected rule yields exactly one eligible candidate — `ellipsis_dots [[304.5,44.0],[304.5,49.5],[304.5,55.0]]`,
+  `click_point [304,50]` — while the v4 bytes on the same frame remain `NO_ELLIPSIS_FOUND`. Stage 04 must reproduce both results as durable evidence
+  (§24.6) before gate-5 is frozen.
+- v5 self-test requirements (`evidence/20260916-route/tools/selftest/v5/`): the 16 v4 cases re-expressed against corrected real-geometry fixtures
+  (positive control above the title strip at the observed offset; OCR-derived title; two candidates in the header → `AMBIGUOUS_ELLIPSIS`; group-only →
+  `GROUP_LEVEL_ONLY`; none → `NO_ELLIPSIS_FOUND`; card/verify/reader/helper/determinism cases re-bound to the v5 tool set) **plus** at least four
+  v5-specific cases: dots inside the title strip → `NO_ELLIPSIS_FOUND` (the corrected semantics), dots beyond `header_depth` → `NO_ELLIPSIS_FOUND`,
+  dots above but left of the title's right edge → `NO_ELLIPSIS_FOUND`, and a 5× determinism replay of the real-geometry positive; target ≥20 cases,
+  `cases_failed 0`, recorded in `selftest/v5/selftest-summary.json` together with the v5 tool SHAs.
+- v5 README requirements: the corrected geometry (with the observed real-frame numbers), the rejected alternative, the `header_depth` bound rationale
+  and the offline-replay commands are documented under `evidence/20260916-route/tools/v5/README.md`.
+
+**Steps.** §20.2's S1-S11 apply unchanged, with exactly these substitutions and additions:
+
+- S3 and S5 keep the frozen v4 tools byte-identically; S5's verdict remains the run's stop-or-continue gate before any ⋮ input.
+- S6 uses the v5 locator on the same post frame: `/opt/homebrew/bin/python3
+  evidence/20260916-route/tools/v5/locate_album_ellipsis.py /tmp/route7_frame_post.jpg --expect-start 2024/05/13 --expect-end 2024/05/17
+  --title-bbox <S5's target title bbox> --expect-group-title 「旻謙允禎成長日記」 --header-depth 60
+  --out evidence/20260916-route/attempt-07/album-ellipsis-locate.json`. Its `ELIGIBLE` is the only state that permits the ⋮ input, and its
+  `click_point` is the only coordinate source; historical coordinates — including the planning-time `(304,50)` and the v4-era `(305,50)` — are never
+  used as live input. `NO_ELLIPSIS_FOUND`, `AMBIGUOUS_ELLIPSIS`, `GROUP_LEVEL_ONLY`, `TARGET_TITLE_NOT_FOUND`, `BAD_FRAME` or any reader failure → no
+  ⋮ input: record, notify the owner, stop.
+- Every attempt-07 tool JSON (S3/S5/S6) must carry the v4 `reader` block; the detector stays exempt (S10).
+- S8 sends exactly one left click at the v5 `click_point`; S9-S10 observe and transcribe exactly as in attempt-06; S11 additionally writes the durable
+  execution record `execution-rev24.md`. Frames stay in /tmp (bytes/size/SHA-256 recorded only); the menu may be left open and the owner is told to
+  close it.
+- Attempt-05's and attempt-06's frozen `TARGET_MISMATCH` / `NO_ELLIPSIS_FOUND` verdicts and their artifacts are never overwritten, re-scored or
+  re-interpreted; v5 is applied only to attempt-07's own fresh frames.
+- **Stop-artifact policy** (unchanged): a stop before any route outcome writes no `route-result.json`/`manifest.json`; the ledger, the tool JSONs and
+  the recorded frame hashes are the record.
+
+**Resume rule.** Same as §22.3: a stop with zero inputs spent is resume-eligible with the same unspent authorization after the owner restores the
+surface; a run that spends input #1 and then stops does not re-authorize input #2.
+
+### 24.4 New one-shot gate-5 pattern
+
+Gate-5 mirrors gate-4's 17-key schema exactly (`artifact_type`, `gate`, `session_id`, `session_transcript`, `prior_gate`, `authority_artifact`,
+`plan_binding`, `context_authorization`, `option_presentation_transcript`, `decided_interpretation`, `alternative_reading`, `scope`, `budgets`,
+`not_authorized`, `recorded_in`, `recorded_at_local`, `notes`), with:
+
+- `prior_gate` = gate-4 (`e32ccd88…`), recorded as spent by attempt-06 and never extended or re-issued.
+- `authority_artifact` = `evidence/20260918-owner-decisions/owner-decisions-rev24.json` (`be1f5173…`) together with this plan at its exact Rev24
+  hash; `plan_binding` = the Rev24 revision/hash/lines/bytes plus `review_attempts` = `review/attempt-36` and `review/attempt-37`, both `PLAN_APPROVED`
+  for that exact revision/hash, plus the series-homonym note (§23.1 RV-33-4).
+- `context_authorization` = transcript line 2427 (ordinal 2426, 2026-09-18T00:06:40.115Z; local 08:06:40), the 882-byte verbatim answer and its
+  SHA-256; `option_presentation_transcript` = line 2405 (ordinal 2404) with the 470-byte excerpt and its SHA-256.
+- `decided_interpretation` = {target: the album-level ⋮ of the opened target album `2024/05/13～05/17` inside `jp.naver.line.mac`;
+  per_input_authority: the owner's B at line 2427; authorized_inputs_in_order: [album-card left click ×1 at the S3 click point, album-level ⋮ left
+  click ×1 at the S6 v5 click point]; nothing_else: true; worst_case: the ⋮ input opens a menu that is observed, transcribed by the frozen detector
+  and left for the owner to close; no item is ever selected}.
+- `budgets`: the 12 mirrored keys of §24.3 precondition 3. `not_authorized`: any menu item (explicitly Save All), any chooser, any keyboard, any AX
+  write, any third or retried input, any download, any destination or formal-state write, and any coordinate not derived from the current frame.
+- The gate artifact is committed before any input; a gate edited after the run starts, or a missing gate, invalidates the attempt.
+
+### 24.5 Gating, veto, and closure semantics for this wave
+
+- §20.3 branch (b) plus the closure tuple §20.3 already declares: if attempt-07 returns a machine-observable `AFFIRMATIVE` **and** the §16.4 check over
+  the adopted v1.1 record still re-derives `CONFIRMED` (both re-derived by Stage 05 `e2e/attempt-08` from fresh evidence, never assumed here), then
+  `PRIMARY_OUTCOME_STATUS=ACHIEVED`, `IMPLEMENTATION_STATUS=COMPLETE`, `CORE_ACCEPTANCE_STATUS=PASS`, `REQUIRED_VERIFICATION_STATUS=PASS`,
+  `INDEPENDENT_ACCEPTANCE_STATUS=PASS`, `TASK_CLOSURE_STATUS=DONE`, `BASELINE_REGRESSION_DELTA=UNCHANGED`; the disclosed axis facts (Registry=FAIL,
+  State=`LEGACY_PROVENANCE_LIMITED`, product-level Source=`UNRESOLVED`) are reported as axis facts and are never promoted.
+- Any non-AFFIRMATIVE outcome: recorded honestly with zero side effects; the route stays a scoped CORE blocker; the owner is notified immediately;
+  `ROUTE_NOT_NEEDED` is **not** taken (the owner chose B); no branch may run automatically; a further attempt would need a NEW revision (OOS-V24-5).
+- A preflight surface failure spends no input, is not a route result and changes no status; it is a `resume`-eligible stop (§24.3).
+- Gate-5 is the wave's only new gate; gates 1-4 and the §20.3 tuple semantics are unchanged.
+- No supporting item may block the wave; conversely no supporting pass may mask a CORE failure.
+
+### 24.6 Verification matrix rows added
+
+| CHECK_ID | Criticality | Evidence role | Gate | Baseline | Failure classification | Waiver allowed | Authority | Check result | Waiver status |
+|---|---|---|---|---|---|---|---|---|---|
+| V24_RULE_REPLAY_COMMITTED_FRAME | CORE | OUTCOME | HARD_CLEAN | YES | v5 over `4cb8a6b4…` with the S5 title bbox must return exit 0 `ELIGIBLE` with `ellipsis_dots [[304.5,44.0],[304.5,49.5],[304.5,55.0]]` and `click_point [304,50]`; any other verdict or point is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V24_V4_BASELINE_FROZEN | CORE | MUST_NOT_BREAK | HARD_CLEAN | YES | the v4 bytes over the same frame must still return `NO_ELLIPSIS_FOUND`; a changed v4 verdict, or any byte change to a v1-v4 tool, is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V24_V5_SELFTEST | CORE | OUTCOME | HARD_CLEAN | YES | `selftest/v5/selftest-summary.json` must record ≥20 cases, `cases_failed 0`, including the corrected-geometry positive and the four v5-specific negatives of §24.3; a missing summary or any failed case is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V24_ROUTE_ATTEMPT_07_SINGLE_ONESHOT | CORE | OUTCOME | HARD_CLEAN | YES | more than one album-card click, more than one ⋮ click, any retry, any menu-item/chooser/keyboard/AX input, or any input spent after a failed precondition is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V24_S6_BOUND_TO_V5 | CORE | OUTCOME | HARD_CLEAN | YES | attempt-07's S6 stop-or-continue decision and its click point must come from the frozen v5 locator and its JSON must carry the v4 reader block; S3/S5 stay bound to the frozen v4 tools; the frozen tesseract detector (§20.2 S10) stays exempt; a v4-based S6 verdict, a v5 JSON without a reader block, or a click point from anywhere but the current frame is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V24_AFFIRMATIVE_MACHINE_OBSERVABLE_ONLY | CORE | OUTCOME | HARD_CLEAN | YES | an OCR-only, human-report-only or incomplete observation reported as AFFIRMATIVE is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V24_PRIOR_EVIDENCE_IMMUTABLE | CORE | MUST_NOT_BREAK | HARD_CLEAN | YES | any byte change to a v1/v2/v3/v4 tool, the v3/v4 self-tests, an attempt-01..06 artifact, `e2e/attempt-02..07`, gates 1-4, any ledger, an archived handoff, the `result.md` history, or the destination/formal state is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V24_GATE5_FROZEN_BEFORE_INPUT | CORE | MUST_NOT_BREAK | HARD_CLEAN | YES | gate-5, the Rev24 runbook and the ledger skeleton must be frozen and committed before any input; a missing gate, a gate written after the run started, or a ledger without the `906c1433…` parent binding is TASK_REGRESSION | NO | NONE | NOT_RUN | NOT_ALLOWED |
+| V24_SCREEN_SCOPE_PROBE | SUPPORTING | DIAGNOSTIC | NON_GATING | NO | a failed screen probe records `screen_scope=UNAVAILABLE`; it never blocks and is never reported as a CORE failure | NO | NONE | NOT_RUN | NOT_ALLOWED |
+
+### 24.7 Owner view (白話，給非技術主持人)
+
+- 上一輪不是「眼睛」壞了，也不是照片有問題：是**找 ⋮ 的規矩畫錯位置**。那條規矩假設 ⋮ 與日期標題同一列；真實畫面把 ⋮ 放在標題**上方**約 33 像素，所以
+  工具誠實地回報「找不到」（⋮ 沒有被點、沒有任何副作用）。更關鍵的是：舊的自測圖也把 ⋮ 畫在同一列，所以自測 16/16 全過卻測不到真實幾何。
+- 這次只修這條規矩（v5），並且先用**同一張已保存的真實畫面**離線證明「新規矩會找到它、舊規矩仍然找不到」——這一步在真正碰畫面之前完成。
+- 之後一樣：開相簿一次、⋮ 一次，只觀察、不點任何選單項目；每個動作只有一次、不重試。
+- 兩種結果都會誠實結案：找到（機器證據成立→路線通過、可結案）或沒找到（照實記錄、立刻回報您；路線維持卡點，不會自動亂跑，也不會偷偷再試）。
+- 開跑前請把 LINE 停在相簿列表、目標卡可見；跑的時候不要動滑鼠鍵盤；跑完若選單仍開著，請您自行關閉（agent 不會點任何選單）。
+
+### 24.8 Literals corrected in place
+
+- Header: `PLAN_REVISION: 23` → `PLAN_REVISION: 24`.
+- Header: `ACCEPTED_BY_USER` extended with the Rev24 owner decision (transcript line 2427, verbatim `B…`; record
+  `evidence/20260918-owner-decisions/owner-decisions-rev24.json`).
+- Header: `ACCEPTANCE_MODE` extended with the Rev24 wave's acceptance (`e2e/attempt-08`, the third subject of the album-data result).
+- Header: `PRIOR_REVIEW_ATTEMPT: 30, 31, 32, 33` → `PRIOR_REVIEW_ATTEMPT: 34, 35`.
+- Header: `PRIOR_REVIEW_GATE` corrected — Rev23 at SHA256 `4337e2b5c105901ce7c56956ecea5469894df2d2a29f099068c979584c71b6b2` was approved by
+  `review/attempt-34` (report `21c4bbb5…`) and `review/attempt-35` (report `975142c3…`), both `PLAN_APPROVED` for that exact revision/hash with zero
+  BLOCKER/MAJOR; the historical chain (Rev21 by attempts 30/31; the Rev22 dual gate never satisfied) is retained; **no approval exists for Rev24**.
+- Header: `REV22_WAVE_STATUS` corrected to its final Stage-05 state — `PRIMARY_OUTCOME_STATUS UNKNOWN / IMPLEMENTATION_STATUS COMPLETE /
+  CORE_ACCEPTANCE_STATUS BLOCKED / REQUIRED_VERIFICATION_STATUS PASS / INDEPENDENT_ACCEPTANCE_STATUS PASS / TASK_CLOSURE_STATUS
+  CORE_ACCEPTANCE_BLOCKED` — per `e2e/attempt-07/e2e_report.md` `6416a5f4…` (six rows: five PASS plus one non-gating SUPPORTING FAIL); the sole
+  remaining scoped blocker is `CUA_ROUTE_DECISION` (owner-reserved); attempt-06 stopped at S6 `NO_ELLIPSIS_FOUND`, the ⋮ input was never sent and the
+  run had zero side effects.
+- Header: `REV24_WAVE_STATUS` added (Stage 04 not started; nothing pre-claimed).
+- §22.3 precondition 2: the detector's "frozen self-test `d8ffc129…`" literal is corrected to name the self-test script
+  `evidence/20260916-route/tools/selftest/selftest_menu_popup.py` `db091703…` (4,018 B); `d8ffc129…` is the frozen
+  `evidence/20260916-route/tools/selftest/selftest-summary.json` (2,946 B) and is recorded here as that file's identity. Documentation literal only -
+  no semantic change.
+
+### 24.9 Unchanged by this revision
+
+Everything else — the Goal contract and `PRIMARY_OUTCOME`, the DONE criteria and the §20.3 closure tuple, §16.4 and its matching rules, §19.1/§19.3 and
+their preconditions, §20.1-§20.4, §21.1-§21.9, §22.1-§22.9 and §23.1-§23.2 apart from the corrections listed above, the requirement table, the status
+vocabulary, the routing fixtures, the product boundary and command grammar, the read-only fences (no re-download; `禎`/`楨` never merged; destination
+and formal config/state/run-log read-only), the one-human-gate pattern, the three separately reported results, and the at-most-once budget shape — is
+unchanged and keeps its recorded values.
 
 ## Revision 23 changes
 
@@ -145,7 +380,9 @@ destination or any re-download; `OOS-V22-3` recording `ROUTE_NOT_NEEDED` — the
    `locate_album_ellipsis.py` `b77e3d51…` — together with the frozen Vision helper source
    `evidence/20260916-route/tools/vision/vision_ocr.swift` `4fc9fa2b…` and the v4 self-test
    `evidence/20260916-route/tools/selftest/v4/selftest-summary.json` `5ad2be10…` (16 cases, `cases_failed 0`, 5× byte-identical stdout determinism).
-   The unchanged detector `detect_menu_popup.py` `6ae9c250…` and its frozen self-test `d8ffc129…` are reused byte-identically; the v3 tool set and its
+  The unchanged detector `detect_menu_popup.py` `6ae9c250…` and its frozen self-test script
+  `evidence/20260916-route/tools/selftest/selftest_menu_popup.py` `db091703…` (4,018 B) are reused byte-identically; the frozen
+  `evidence/20260916-route/tools/selftest/selftest-summary.json` `d8ffc129…` (2,946 B) is recorded by that identity (corrected literal, §24.8); the v3 tool set and its
    13/13 self-test `17840e91…` stay frozen and are not used by this run's verdicts. The v2 card-⋮ locator's verdict is corroborating, never blocking, and
    it never supplies a click point.
 3. A fresh `run-ledger.json` whose `parent_ledger_sha256` is attempt-05's final ledger `17b17203…`; budgets: `album_card_input_budget 1`,

@@ -1,0 +1,145 @@
+{
+ "schema_version": 1,
+ "artifact_type": "owner_decision_record",
+ "artifact": "evidence/20260918-owner-decisions/owner-decisions-rev24.json",
+ "gate": "Rev24 owner decision (transcript line 2427): B - a NEW plan revision (Rev24) replaces Rev23, carrying a corrected album-level ellipsis position rule (v5) and one new one-shot 'observe only' authorization (gate-5) for route attempt-07, with a fresh independent review; plus the owner's instruction that this conversation produce the three hand-off artifacts for the next conversation.",
+ "purpose": "Transcript-bound authority for Rev24 (plan.md 24.1) and for gate-5 (24.4): exactly which GUI inputs the next conversation may send, once each, and what remains unauthorized.",
+ "session_id": "01a0af3c-6693-72b2-abf2-095a3317e9a4",
+ "session_transcript": "/Users/hsiaojohnny/.codex/sessions/2026/09/17/rollout-2026-09-17T19-59-26-01a0af3c-6693-72b2-abf2-095a3317e9a4.jsonl",
+ "question_message_transcript": {
+  "line": 2365,
+  "ordinal": 2364,
+  "timestamp_utc": "2026-09-18T00:02:00.270Z",
+  "timestamp_local": "2026-09-18T08:02:00.270+0800",
+  "payload_path": "$.payload.content[0].text",
+  "role": "user",
+  "bytes": 60,
+  "sha256": "2e729d0339bc1574d9869b7054da586259f7dde584fb6ef85c28135796850364",
+  "verbatim": "所以我現在還要決策什麼？你用白話跟我說。"
+ },
+ "option_presentation_transcript": [
+  {
+   "line": 2405,
+   "ordinal": 2404,
+   "timestamp_utc": "2026-09-18T00:02:44.793Z",
+   "timestamp_local": "2026-09-18T08:02:44.793+0800",
+   "role": "assistant",
+   "turn_id": "01a0b1d1-eda0-7eb0-a52c-09ac7a786c9e",
+   "full_message_bytes": 1931,
+   "full_message_sha256": "14905585890cb158957b0e20e34abe6ec8bac26439c8b18187d3f58076ff8752",
+   "verbatim_excerpt_bytes": 470,
+   "verbatim_excerpt_sha256": "5674299eb0fc6d11f7fb507086bdf6215dffe06df44477aeff96387f273f9eda",
+   "verbatim_excerpt": "**選項 B — 再驗一次**\n- 會先做一份新修訂計畫＋重新規劃＋全新獨立審查，然後你再給一次新的「只觀察」授權，才會再打開相簿看一眼 ⋮（全程不點任何選單項目）。\n- 代價：多花一輪時間、會再打開一次相簿；同一套畫面設定下很可能停在同一條位置規則，不保證有進展；新授權一樣一次性、不重試。\n- 若這次看到機器肯定的結果 → 一樣能結案。"
+  }
+ ],
+ "answer_message_transcript": {
+  "line": 2427,
+  "ordinal": 2426,
+  "timestamp_utc": "2026-09-18T00:06:40.115Z",
+  "timestamp_local": "2026-09-18T08:06:40.115+0800",
+  "payload_path": "$.payload.content[0].text",
+  "role": "user",
+  "turn_id": "01a0b1d6-32c3-7c50-8466-11685c5a7830",
+  "bytes": 882,
+  "chars": 356,
+  "sha256": "a600ac4c9af8e3e44327f4566f5388985a79658b43a6eeb435915edec6f9e9ec"
+ },
+ "answer_echo_transcript": {
+  "line": 2428,
+  "ordinal": 2427,
+  "timestamp_utc": "2026-09-18T00:06:40.116Z",
+  "role": "user",
+  "client_id": "143b072f-23ad-41e3-92fb-07111b1c983a",
+  "note": "UserMessage echo; text byte-identical to answer_message_transcript"
+ },
+ "answer_verbatim": "B我要用一個新的計畫來取代原本的計畫。在新的計畫裡，我要你詳細且精準地撰寫。我等一下會重啟一個新的對話，來進行接下來的 Agent 自主測試自動化作業。一樣我會用\n  Codex 的 goal 的方式，這個功能來進行 Agent 全自主的測試。\n所以你等一下必須給我三樣東西：\n  第一，你必須重新擬定這一個新的測試計畫。\n  第二，你必須給我重新在新對話中 Agent 自主自動化測試的 goal 指令，以及要帶到新對話的相關交接 handoff 文件。\n  總共是三件事情：\n  第一，一個新的測試計畫。\n  第二，一個 goal 的精準指令，讓後續有新對話接手的 Agent 可以自主完成相關的測試。\n\n\n第三，梳理我們現在討論的關鍵重點邏輯，以及在新對話中要交接的相關意圖與邏輯的 handoff 文件。",
+ "superseded_draft_answers": [
+  {
+   "line": 2412,
+   "ordinal": 2411,
+   "timestamp_utc": "2026-09-18T00:06:14.768Z",
+   "timestamp_local": "2026-09-18T08:06:14.768+0800",
+   "role": "user",
+   "turn_id": "01a0b1d5-cfbb-7dc0-8862-4c7421df4c8b",
+   "bytes": 304,
+   "sha256": "caf2f7d789c3429fa9bc4e956ea1da6782c50afd4f6983ce952e565160ca4038",
+   "verbatim": "B我要用一個新的計畫來取代原本的計畫。在新的計畫裡，我要你詳細且精準地撰寫。我等一下會重啟一個新的對話，來進行接下來的 Agent 自主測試自動化作業。一樣我會用 Codex 的 goal 的方式，這個功能來進行 Agent 全自主的測試。",
+   "aborted": {
+    "turn_aborted_line": 2416,
+    "reason": "interrupted",
+    "duration_ms": 5671
+   },
+   "disposition": "superseded by line 2427; retained as history, never used as authority"
+  },
+  {
+   "line": 2420,
+   "ordinal": 2419,
+   "timestamp_utc": "2026-09-18T00:06:20.436Z",
+   "timestamp_local": "2026-09-18T08:06:20.436+0800",
+   "role": "user",
+   "turn_id": "01a0b1d5-e5f3-7b63-8d7f-db59f29a6d0b",
+   "bytes": 430,
+   "sha256": "a8caf86dc8e92338777157dae54904a689525a8fe653f1f7b08f3311ca7383b9",
+   "verbatim": "所以你等一下必須給我三樣東西：\n第一，你必須重新擬定這一個新的測試計畫。\n第二，你必須給我重新在新對話中 Agent 自主自動化測試的 goal 指令，以及要帶到新對話的相關交接 handoff 文件。\n總共是三件事情：\n第一，一個新的測試計畫。\n第二，一個 goal 的精準指令，讓後續有新對話接手的 Agent 可以自主完成相關的測試。",
+   "aborted": {
+    "turn_aborted_line": 2423,
+    "reason": "interrupted",
+    "duration_ms": 1361
+   },
+   "disposition": "superseded by line 2427 (which is the complete superset, adding the third deliverable); retained as history, never used as authority"
+  }
+ ],
+ "decisions": {
+  "item_1": {
+   "answer_verbatim": "B",
+   "decision": "branch (b) of plan 20.3 again: one further corrected route attempt (route attempt-07) under a NEW PLAN_REVISION (Rev24), a new one-shot gate (gate-5) and a fresh independent review, with the album-level ellipsis position rule corrected (v5) and the route's S6 stop-or-continue decision bound to the corrected locator; S3/S5 keep the frozen v4 tools byte-identically.",
+   "authorizes": [
+    "one new PLAN_REVISION (Rev24) that supersedes Rev23 as the active candidate plan",
+    "one new one-shot gate-5 binding this decision, the Rev24 hash and both fresh reviews (review/attempt-36, review/attempt-37)",
+    "exactly two at-most-once GUI inputs in route attempt-07: one album-card left click (S4) and one album-level ellipsis left click (S8), each exactly once, no retry",
+    "read-only observation of whatever the ellipsis input opens (S9-S10) - observation only"
+   ],
+   "not_authorized": [
+    "any menu-item activation, explicitly Save All (儲存全部)",
+    "any chooser interaction, any keyboard input, any AX write",
+    "any third input, any retry, any second album-card click or second ellipsis click",
+    "any download, any write into the destination, or any write into formal config/state/run-log",
+    "using historical coordinates (including (304,50) or (305,50)) as live input"
+   ],
+   "budgets": {
+    "album_card_input_budget": 1,
+    "ellipsis_input_budget": 1,
+    "navigation_input_budget": 1,
+    "app_acquisition_input_budget": 0,
+    "menu_item_budget": 0,
+    "keyboard_input_budget": 0,
+    "click_count_per_input": 1,
+    "retry_budget": 0,
+    "conversation_images": 0,
+    "read_only_observation_windows_max": 5,
+    "screen_capture_budget": 5,
+    "screen_capture_window_seconds": 4
+   },
+   "worst_case": "the ellipsis input opens a menu; it is observed, recorded by the frozen detector and left for the owner to close; no item is ever selected; if the input opens nothing machine-observable the outcome is non-AFFIRMATIVE, recorded honestly, and the route stays a scoped CORE blocker.",
+   "not_a_reset": true
+  },
+  "item_2": {
+   "answer_verbatim": "the owner's three-deliverables instruction (see answer_verbatim)",
+   "decision": "this conversation must produce three artifacts for the NEXT conversation: (1) the new test plan = .agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md at PLAN_REVISION 24; (2) a precise /goal instruction = GOAL-rev24-next-conversation.md; (3) the intent-and-logic handoff = handoff-rev24-agent-autonomous-2026-09-18.md (H4.0). The next conversation then runs the whole Rev24 wave autonomously via Codex's goal feature.",
+   "consequence": "the next conversation does not need to ask the owner again for the gate-5 authorization; the only stop-and-notify cases are the escalation conditions recorded in Rev24 24.3-24.5 and in H4.0."
+  }
+ },
+ "transcription_integrity": {
+  "method": "direct JSONL line extraction (line 2427) and byte-level SHA-256 over $.payload.content[0].text; echo line cross-checked; aborted-draft turns separated by recorded turn_aborted events",
+  "answer_occurrences_total": 4,
+  "answer_occurrences_as_real_user_message": 1,
+  "other_occurrences": [
+   "quotation inside the recon subagent transcript 01a0b1d9-1f15-7b92-92c9-d65b505abb8d",
+   "quotation inside the two hand-off drafting subagent transcripts 01a0b1e0-a74e-7eb1-a808-83bc230f43b6 and 01a0b1e0-a788-7180-9e04-f76e24923592"
+  ],
+  "independent_mirror": "~/.codex/history.jsonl contains the same text (2 matching lines)",
+  "verified_by": "single extraction pass in this conversation; the answer bytes re-hashed twice"
+ },
+ "recorded_at_local": "2026-09-18T09:05+0800",
+ "notes": "Line/ordinal/bytes/sha256 are stable at recording time (parent transcript, 2,475 lines, not rewritten). The final message at line 2427 is the complete superset of the two aborted drafts. Option A (record the route as not needed) was presented and NOT chosen; ROUTE_NOT_NEEDED remains owner-reserved."
+}
