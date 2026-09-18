@@ -1,0 +1,180 @@
+{
+ "schema_version": 1,
+ "run_id": "20260918-route-attempt-07",
+ "artifact": "evidence/20260916-route/attempt-07/run-ledger.json",
+ "runtime/provider": "codex-desktop unified-computer-use (cua_repl)",
+ "app_bundle": "jp.naver.line.mac",
+ "raw_group": "旻謙允禎成長日記",
+ "album": "2024/05/13～05/17",
+ "expected_count": 57,
+ "project_root": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state",
+ "parent_ledger_sha256": "906c14330605122e9b600359892d4400171d62564707d50af26ef8d8bb32fa2c",
+ "plan_binding": {
+  "plan_revision": 24,
+  "plan_sha256": "40eb01980c7e11f96b4b12c2db8f53728852f1ab6ca452dfb5e865fd5435a003",
+  "plan_lines": 2330,
+  "plan_bytes": 313461,
+  "approvals": [
+   {
+    "review_attempt": 36,
+    "report": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review/attempt-36/review_report.md",
+    "report_sha256": "f7a9d3ebaae5c56f7a93c1d98edebb127a331f784bf19b60aa2984598519aec5",
+    "gate": "PLAN_APPROVED"
+   },
+   {
+    "review_attempt": 37,
+    "report": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review/attempt-37/review_report.md",
+    "report_sha256": "941580825840a3b14bc1da8cb3abf5cec748179481714d445c80ebc3140f1506",
+    "gate": "PLAN_APPROVED"
+   }
+  ],
+  "note": "both fresh independent reviews approved PLAN_REVISION 24 at exactly this SHA-256 (dual gate satisfied); no approval exists for any other revision"
+ },
+ "authorization": {
+  "gate": "gate-5 — fifth one-shot authorization: corrected route observation under the v5 corrected position rule (Rev24 §24.3/§24.4); open the target album card, then one album-level ⋮ inside the album; observation only",
+  "authorized_by": "使用者本人",
+  "authorized_at_local": "2026-09-18T08:06:40.115+0800 (verbatim B…, transcript line 2427, 882 B a600ac4c…)",
+  "authorization_verbatim": "B我要用一個新的計畫來取代原本的計畫。… (full 882 B in owner-decisions-rev24.json)",
+  "authorization_evidence": "evidence/20260916-route/attempt-07/gate-5-authorization.json",
+  "authorization_evidence_sha256": "2817b122e17f782f71392d951546aff5f7cee41d9f01f73b7c0a8091f33114a5",
+  "authority_source_artifact": {
+   "artifact": "evidence/20260918-owner-decisions/owner-decisions-rev24.json",
+   "sha256": "be1f5173de9219bfba2a547223542dde17c6e6a23f653274122f0d8dcbe2360d",
+   "committed": "92a167e"
+  },
+  "scope": "exactly one album-card metadata left click (this run's single navigation input; counted under BOTH navigation_inputs and album_card_inputs) then, only after the v4 verify_album_open.py returned ALBUM_OPEN_VERIFIED and the v5 locate_album_ellipsis.py returned ELIGIBLE, exactly one album-level ⋮ left click at the v5 click_point (click_count=1 each); no menu item, no chooser, no keyboard, no AX write, zero retry",
+  "not_a_reset": "gate-5 is independent of gates 1–4: it neither resets nor extends any earlier one-shot budget; attempt-05's album-card input stays SPENT 1/1, attempt-06's album-card input stays SPENT 1/1, and both frozen verdicts stand"
+ },
+ "budgets": {
+  "album_card_input_budget": 1,
+  "navigation_input_budget": 1,
+  "ellipsis_input_budget": 1,
+  "retry_budget": 0,
+  "menu_item_budget": 0,
+  "keyboard_input_budget": 0,
+  "app_acquisition_input_budget": 0,
+  "conversation_images": 0,
+  "click_count_per_input": 1,
+  "read_only_observation_windows_max": 5,
+  "screen_capture_budget": 5,
+  "screen_capture_window_seconds": 4
+ },
+ "frozen_inputs": {
+  "gate_5_authorization_sha256": "2817b122e17f782f71392d951546aff5f7cee41d9f01f73b7c0a8091f33114a5",
+  "route_runbook_sha256": "a9669a99ea9a488c0df96a454ea5da8a60441da35cc2e77f8e23db014f6b5107",
+  "tools": {
+   "v5/vision_reader.py": {
+    "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+    "bytes": 8369
+   },
+   "v5/locate_album_card.py": {
+    "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+    "bytes": 7025
+   },
+   "v5/verify_album_open.py": {
+    "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+    "bytes": 6981
+   },
+   "v5/locate_album_ellipsis.py": {
+    "sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+    "bytes": 12713
+   },
+   "v5/README.md": {
+    "sha256": "feb32635099d76c31dc52cc6ca92ce9f21ba7eb3dd215d312eea45f16901129e",
+    "bytes": 4816
+   },
+   "v4/locate_album_ellipsis.py (frozen baseline; S6 must not fallback)": {
+    "sha256": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+    "bytes": 11436
+   },
+   "detect_menu_popup.py (reused unchanged; tesseract; reader-block exempt)": {
+    "sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+    "bytes": 6339
+   },
+   "selftest_menu_popup.py (frozen detector self-test)": {
+    "sha256": "db0917039f085b0d90196348de0d0038e8d6abcd18418c0e41c4037231fbbfdc",
+    "bytes": 4018
+   }
+  },
+  "vision_helper_source": {
+   "path": "evidence/20260916-route/tools/vision/vision_ocr.swift",
+   "sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+   "bytes": 1070
+  },
+  "v5_selftest": {
+   "path": "evidence/20260916-route/tools/selftest/v5/selftest-summary.json",
+   "sha256": "e207f5029940d90b7cfae379ef67bddd3c976abebb12d6772c111c93dea5d5bf",
+   "bytes": 13306,
+   "cases_total": 21,
+   "cases_failed": 0,
+   "result": "PASS"
+  },
+  "offline_replay": {
+   "v5_ELIGIBLE": {
+    "path": "evidence/20260916-route/attempt-07/v5-offline-replay.json",
+    "sha256": "5ad6aa01ca0eb5f52ab8812ebdcb03c3b27fd6a82904166f7d9cff115dd3b455",
+    "verdict": "ELIGIBLE",
+    "ellipsis_dots": [
+     [
+      304.5,
+      44.0
+     ],
+     [
+      304.5,
+      49.5
+     ],
+     [
+      304.5,
+      55.0
+     ]
+    ],
+    "click_point": [
+     304,
+     50
+    ],
+    "frame_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3"
+   },
+   "v4_NO_ELLIPSIS_FOUND": {
+    "path": "evidence/20260916-route/attempt-07/v4-baseline-replay.json",
+    "sha256": "126b3c92be34f09e78287d356b2fce7d27437a0f61678f8fc32e5c6cc6684b03",
+    "verdict": "NO_ELLIPSIS_FOUND",
+    "frame_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3"
+   }
+  }
+ },
+ "initial_counts": {
+  "album_card_input": 1,
+  "navigation_input": 1,
+  "ellipsis_input": 1,
+  "app_acquisition_input": 0,
+  "menu_item_input": 0,
+  "keyboard_input": 0,
+  "retry": 0
+ },
+ "state": "FROZEN_BEFORE_INPUTS",
+ "ledger_state": "FROZEN_BEFORE_INPUTS",
+ "events": [],
+ "inputs": [],
+ "final_counts": {
+  "album_card_inputs_used": 0,
+  "navigation_inputs_used": 0,
+  "ellipsis_inputs_used": 0,
+  "menu_item_inputs_used": 0,
+  "keyboard_inputs_used": 0,
+  "read_only_observation_windows_used": 0,
+  "screen_captures_used": 0
+ },
+ "route_result_sha256": null,
+ "run_status": "FROZEN_BEFORE_INPUTS",
+ "stop_reason": null,
+ "owner_decision_required": false,
+ "route_outcome": null,
+ "next_action": "run S1-S11 once under gate-5; S6 bound to v5; historical coordinates never live; S6 never fallback to v4",
+ "ledger_state_note": "Pre-freeze skeleton committed before any input per §24.3/V24_GATE5_FROZEN_BEFORE_INPUT. No route-result.json/manifest.json exists at this state (stop-artifact policy).",
+ "series_note": "evidence/20260916-route/attempt-07 is the route-run series; .agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-08 is this wave's Stage 05 (route attempt-07 ≠ e2e/attempt-07).",
+ "pre_freeze_recorded_at_local": "2026-09-18T11:20+0800",
+ "notes": "gate-5, the Rev24 runbook and this ledger skeleton are frozen before any input; a missing/late gate or missing 906c1433 parent binding is TASK_REGRESSION.",
+ "finalized_at_local": null,
+ "observation_windows_used": 0,
+ "screen_captures_used": 0
+}

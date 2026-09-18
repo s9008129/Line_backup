@@ -1,0 +1,120 @@
+{
+  "artifact_type": "human_gate_conversation_excerpt",
+  "gate": "fifth one-shot authorization: corrected route observation under the v5 corrected position rule (Rev24 §24.3/§24.4; route attempt-07) — open the target album card, then one album-level ⋮ inside the album; observation only",
+  "session_id": "01a0af3c-6693-72b2-abf2-095a3317e9a4",
+  "session_transcript": "/Users/hsiaojohnny/.codex/sessions/2026/09/17/rollout-2026-09-17T19-59-26-01a0af3c-6693-72b2-abf2-095a3317e9a4.jsonl",
+  "prior_gate": {
+    "artifact": "evidence/20260916-route/attempt-06/gate-4-authorization.json",
+    "sha256": "e32ccd882b93b784e1faf3f3ea1df9732ab093e26f74a89622ac857159876272",
+    "note": "gate-4 is spent by attempt-06 (CLOSED_AFTER_INPUT_1, S6 NO_ELLIPSIS_FOUND, ⋮ never sent) and is never extended or re-issued; gate-5 is independent of gates 1–4: it neither resets nor extends any earlier one-shot budget; attempt-05's album-card input stays SPENT 1/1, attempt-06's album-card input stays SPENT 1/1, and both frozen verdicts stand"
+  },
+  "authority_artifact": {
+    "artifact": "evidence/20260918-owner-decisions/owner-decisions-rev24.json",
+    "sha256": "be1f5173de9219bfba2a547223542dde17c6e6a23f653274122f0d8dcbe2360d",
+    "committed": "92a167e",
+    "role": "the transcript-bound authority source for PLAN_REVISION 24 §24.1–§24.4; gate-5 cites it and adds no interpretation of its own"
+  },
+  "plan_binding": {
+    "plan_revision": 24,
+    "plan_sha256": "40eb01980c7e11f96b4b12c2db8f53728852f1ab6ca452dfb5e865fd5435a003",
+    "plan_lines": 2330,
+    "plan_bytes": 313461,
+    "review_attempts": [
+      {
+        "attempt": 36,
+        "report": "review/attempt-36/review_report.md",
+        "report_sha256": "f7a9d3ebaae5c56f7a93c1d98edebb127a331f784bf19b60aa2984598519aec5",
+        "gate": "PLAN_APPROVED"
+      },
+      {
+        "attempt": 37,
+        "report": "review/attempt-37/review_report.md",
+        "report_sha256": "941580825840a3b14bc1da8cb3abf5cec748179481714d445c80ebc3140f1506",
+        "gate": "PLAN_APPROVED"
+      }
+    ],
+    "note": "both fresh independent reviews approved PLAN_REVISION 24 at exactly this SHA-256 (dual gate satisfied); no approval exists for any other revision. Series-homonym note (§23.1 RV-33-4): route attempt-07 ≠ e2e/attempt-07 (consumed by the Rev22 wave, report 6416a5f4…); this wave's Stage 05 is e2e/attempt-08."
+  },
+  "context_authorization": {
+    "line": 2427,
+    "ordinal": 2426,
+    "timestamp_utc": "2026-09-18T00:06:40.115Z",
+    "timestamp_local": "2026-09-18T08:06:40.115+0800",
+    "verbatim": "B我要用一個新的計畫來取代原本的計畫。在新的計畫裡，我要你詳細且精準地撰寫。我等一下會重啟一個新的對話，來進行接下來的 Agent 自主測試自動化作業。一樣我會用\n  Codex 的 goal 的方式，這個功能來進行 Agent 全自主的測試。\n所以你等一下必須給我三樣東西：\n  第一，你必須重新擬定這一個新的測試計畫。\n  第二，你必須給我重新在新對話中 Agent 自主自動化測試的 goal 指令，以及要帶到新對話的相關交接 handoff 文件。\n  總共是三件事情：\n  第一，一個新的測試計畫。\n  第二，一個 goal 的精準指令，讓後續有新對話接手的 Agent 可以自主完成相關的測試。\n\n\n第三，梳理我們現在討論的關鍵重點邏輯，以及在新對話中要交接的相關意圖與邏輯的 handoff 文件。",
+    "verbatim_sha256": "a600ac4c9af8e3e44327f4566f5388985a79658b43a6eeb435915edec6f9e9ec",
+    "verbatim_bytes": 882,
+    "role": "the owner's decision that this gate executes: answer B is read as §20.3 branch (b) — one further corrected route attempt (route attempt-07) under a NEW PLAN_REVISION (24), a new one-shot gate (this file) and a fresh review, with S6 bound to the corrected v5 locator and S3/S5 on the frozen v4 tools; the three hand-off artifacts (new plan + GOAL + handoff) are the same decision's second half and authorize no input of their own"
+  },
+  "option_presentation_transcript": [
+    {
+      "line": 2405,
+      "ordinal": 2404,
+      "timestamp_utc": "2026-09-18T00:02:44.793Z",
+      "timestamp_local": "2026-09-18T08:02:44.793+0800",
+      "role": "assistant message carrying the A/B framing for the route closure",
+      "verbatim_excerpt": "**選項 B — 再驗一次**\n- 會先做一份新修訂計畫＋重新規劃＋全新獨立審查，然後你再給一次新的「只觀察」授權，才會再打開相簿看一眼 ⋮（全程不點任何選單項目）。\n- 代價：多花一輪時間、會再打開一次相簿；同一套畫面設定下很可能停在同一條位置規則，不保證有進展；新授權一樣一次性、不重試。\n- 若這次看到機器肯定的結果 → 一樣能結案。",
+      "verbatim_excerpt_sha256": "5674299eb0fc6d11f7fb507086bdf6215dffe06df44477aeff96387f273f9eda",
+      "verbatim_excerpt_bytes": 470,
+      "full_message_sha256": "14905585890cb158957b0e20e34abe6ec8bac26439c8b18187d3f58076ff8752",
+      "full_message_bytes": 1931
+    }
+  ],
+  "decided_interpretation": {
+    "target": "the album-level ⋮ inside the opened target album 2024/05/13～05/17 (inside jp.naver.line.mac); opening the target album card is its directed precondition (Rev20 §20.3 branch (b) as read by §24.2; §24.3)",
+    "per_input_authority": [
+      {
+        "input": "album-card metadata left click that opens the target album (this run's single navigation input, click_count=1)",
+        "authority": "the owner's B at transcript line 2427 (882 B a600ac4c…), read as §20.3 branch (b) with §24.2/§24.3's directed precondition; it is a NEW one-shot authorization — attempt-05 spent its own album-card input 1/1 (17b17203…), attempt-06 spent its own album-card input 1/1 (906c1433…)",
+        "label": "gate-5 = fresh execution of the decision at transcript line 2427"
+      },
+      {
+        "input": "album-level ⋮ left click inside the opened album (click_count=1) at the v5 click_point, sent only after the v4 verify_album_open.py returned ALBUM_OPEN_VERIFIED on the immediate post frame and the v5 locate_album_ellipsis.py returned ELIGIBLE",
+        "authority": "the owner's B at transcript line 2427 (882 B a600ac4c…), executing §24.3's two-input envelope; attempt-06 never sent it because its v4 S6 precondition failed (NO_ELLIPSIS_FOUND)",
+        "label": "gate-5 = fresh execution of the decision at transcript line 2427"
+      }
+    ],
+    "authorized_inputs_in_order": [
+      "exactly one album-card metadata left click that opens the target album (this run's single navigation input; click_count=1); counted under BOTH navigation_inputs and album_card_inputs — no extra navigation input is authorized",
+      "exactly one album-level ⋮ left click at the v5 S6 click_point, sent only after the v4 verify_album_open.py returned ALBUM_OPEN_VERIFIED on the immediate post frame and the v5 locate_album_ellipsis.py returned ELIGIBLE (click_count=1)",
+      "observation only"
+    ],
+    "nothing_else": true,
+    "nothing_else_text": "no menu item, no chooser, no keyboard input, no scrolling, no state/config/run-log write, no AX write action, no performSecondaryAction, no bringing LINE to the front, zero retry, zero conversation images, no second attempt of either control",
+    "worst_case": "an opened album and an opened album-level menu on the owner's screen — the same class of state the owner explicitly accepted for observation; the menu is observed, transcribed by the frozen detector and left for the owner to close; no item is ever selected (explicitly Save All)"
+  },
+  "alternative_reading": {
+    "reading": "if line 2427 were read as authorizing a different target, a different album, or a menu-item path, §24.3's inputs would not apply and the run must stop read-only",
+    "handling": "recorded honestly for the reviewers (§24.2); a newer explicit owner correction supersedes the decided interpretation at any time; the run stops before any input if the surface or the target does not match"
+  },
+  "scope": {
+    "album": "2024/05/13～05/17 (displayed title 2024/05/13~05/17), count 57",
+    "destination_read_only": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57 (never re-downloaded, never written)",
+    "group": "旻謙允禎成長日記 (禎 U+798E; never merged with 楨 U+6968)"
+  },
+  "budgets": {
+    "album_card_input_budget": 1,
+    "navigation_input_budget": 1,
+    "ellipsis_input_budget": 1,
+    "retry_budget": 0,
+    "menu_item_budget": 0,
+    "keyboard_input_budget": 0,
+    "app_acquisition_input_budget": 0,
+    "conversation_images": 0,
+    "click_count_per_input": 1,
+    "read_only_observation_windows_max": 5,
+    "screen_capture_budget": 5,
+    "screen_capture_window_seconds": 4
+  },
+  "not_authorized": [
+    "any menu-item activation (explicitly including Save All); any chooser interaction",
+    "any keyboard input; any AX write action (including performSecondaryAction / AXPress / AXUIElementPerformAction)",
+    "any second attempt of either control; any retry; any extra navigation input; any scrolling; bringing LINE to the front",
+    "any write to the destination, to formal config/state/registry/run-log, or any re-download",
+    "any coordinate not derived from the current frame (explicitly (304,50) and (305,50) as live input); any S6 fallback to the v4 rule",
+    "closing the route as ROUTE_NOT_NEEDED (the owner chose B, not A); that closure stays owner-reserved and must never run automatically",
+    "any third or retried input; any amendment of Rev24 inside Rev24 (a failed attempt-07 routes to a NEW revision, OOS-V24-5)"
+  ],
+  "recorded_in": "evidence/20260916-route/attempt-07/route-runbook.md",
+  "recorded_at_local": "2026-09-18T11:20+0800",
+  "notes": "Verbatim transcript excerpts only; the quoted excerpts are copied byte-for-byte from the transcript-bound authority artifact evidence/20260918-owner-decisions/owner-decisions-rev24.json (be1f5173de9219bfba2a547223542dde17c6e6a23f653274122f0d8dcbe2360d, committed 92a167e), and the answer line was re-checked directly against the session transcript (line 2427, ordinal 2426, 2026-09-18T00:06:40.115Z). This gate authorizes exactly the two inputs described above and nothing else. gate-5, the Rev24 runbook and the ledger skeleton (parent 906c14330605122e9b600359892d4400171d62564707d50af26ef8d8bb32fa2c) are frozen before any input; attempt-05's ledger (17b172031a38ea6b5c66ebfedacf748aa1f08b12d572263d13eef02f54465218) and attempt-06's FINAL ledger stay byte-identical. Any further GUI input, any menu-item activation or any closure decision requires a new gate, a new plan revision and a fresh review."
+}
