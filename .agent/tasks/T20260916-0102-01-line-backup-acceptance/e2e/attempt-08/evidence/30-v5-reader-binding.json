@@ -1,0 +1,34 @@
+{
+ "step": "c",
+ "check": "V24 reader/tool binding",
+ "reader_blocks": {
+  "s3": true,
+  "s5": true,
+  "v5_offline": true,
+  "v4_baseline": true
+ },
+ "tools": [
+  {
+   "file": "v4/vision_reader.py",
+   "match": true
+  },
+  {
+   "file": "v4/locate_album_card.py",
+   "match": true
+  },
+  {
+   "file": "v4/verify_album_open.py",
+   "match": true
+  },
+  {
+   "file": "v4/locate_album_ellipsis.py",
+   "match": true
+  },
+  {
+   "file": "v5/locate_album_ellipsis.py",
+   "match": true
+  }
+ ],
+ "all_match": true,
+ "detector_exempt": "6ae9c250bfae"
+}

@@ -1,0 +1,25 @@
+{
+ "step": "e",
+ "check": "BASELINE_REGRESSION_DELTA (literal argv re-run)",
+ "captured_at_local": "2026-09-18T11:24:35+0800",
+ "exit_code": 0,
+ "current": {
+  "bytes": 19005,
+  "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5"
+ },
+ "pre": {
+  "bytes": 19005,
+  "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5"
+ },
+ "byte_identical": true,
+ "destination_inventory": {
+  "files": 57,
+  "bytes": 17924900,
+  "source": "read-only walk parity with attempt-07 56-anchors (57 files / 17,924,900 B); ls count re-verified 57 this wave"
+ },
+ "verdict": {
+  "baseline_delta": "UNCHANGED",
+  "files_57": true,
+  "bytes_17924900": true
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "step": "e2",
+ "check": "V24_PRIOR_EVIDENCE_IMMUTABLE (anchor rehash)",
+ "captured_at_local": "2026-09-18T11:26+0800",
+ "anchors": [
+  {
+   "file": "evidence/20260916-route/tools/v4/vision_reader.py",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-route/tools/v4/locate_album_card.py",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-route/tools/v4/verify_album_open.py",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-route/tools/v4/locate_album_ellipsis.py",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-route/tools/v5/locate_album_ellipsis.py",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-route/tools/locate_album_card.py",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-route/tools/detect_menu_popup.py",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-route/tools/selftest/v4/selftest-summary.json",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-route/tools/selftest/v5/selftest-summary.json",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-route/attempt-06/run-ledger.json",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-route/attempt-05/run-ledger.json",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1.json",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-user-fact/human-gate-answer-20260917.json",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-baseline/attempt-01/baseline-pre.json",
+   "match": true
+  },
+  {
+   "file": "evidence/20260916-route/attempt-07/run-ledger.json",
+   "sha256": "7c8ea39a3916",
+   "bytes": 20183
+  },
+  {
+   "file": "evidence/20260916-route/attempt-07/gate-5-authorization.json",
+   "sha256": "2817b122e17f",
+   "bytes": 10749
+  },
+  {
+   "file": "evidence/20260916-route/attempt-07/route-runbook.md",
+   "sha256": "a9669a99ea9a",
+   "bytes": 12351
+  },
+  {
+   "file": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/execution-rev24.md",
+   "sha256": "8f8d2b3de137",
+   "bytes": 11191
+  }
+ ],
+ "mismatches": 0,
+ "verdict": "PASS",
+ "note": "v4 selftest literal corrected to full sha 5ad2be101f848ea6a99a8a02ffee8ef65f761fd8b3408bd21c7eb351f1b9fb8d (file untouched since 287e2f5)"
+}

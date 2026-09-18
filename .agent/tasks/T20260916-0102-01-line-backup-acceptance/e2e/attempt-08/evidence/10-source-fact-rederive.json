@@ -1,0 +1,44 @@
+{
+ "step": "a",
+ "check": "V24_SOURCE_RECORD_V1_1_CONFIRMED (§16.4 exact-equality re-derivation)",
+ "captured_at_local": "2026-09-18T11:24+0800",
+ "module": {
+  "path": "src/line_backup_acceptance/common.py",
+  "sha256": "df9fe0bc6333a8afec6f0bc87b336cf905e3683a209cbc8155190d4e5a0c60c0"
+ },
+ "normalization_applied": "NONE — no NFC/NFD/NFKC, no case/whitespace folding, no U+798E/U+6968 merge",
+ "files": {
+  "v1": {
+   "sha256": "2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d",
+   "bytes": 1746
+  },
+  "v1.1": {
+   "sha256": "a8c1055137d14026f7ecbc15b4f06ee540b56114af3276b081a0be72d195c263",
+   "bytes": 1741
+  }
+ },
+ "call_v1_1": {
+  "result": true,
+  "expected": true
+ },
+ "call_v1": {
+  "result": false,
+  "expected": false
+ },
+ "rehash_evidence_v1_1": true,
+ "raw_requested_group_codepoints": [
+  "0x65fb",
+  "0x8b19",
+  "0x5141",
+  "0x798e",
+  "0x6210",
+  "0x9577",
+  "0x65e5",
+  "0x8a18"
+ ],
+ "raw_contains_U798E": true,
+ "raw_contains_U6968": false,
+ "verdict": {
+  "result": "CONFIRMED over the v1.1 record and over no other record"
+ }
+}

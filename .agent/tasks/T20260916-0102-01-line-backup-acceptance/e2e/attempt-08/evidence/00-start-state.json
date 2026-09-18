@@ -1,0 +1,25 @@
+{
+ "step": "start",
+ "check": "REVERIFY_ON_START (Rev24 §24.3/§24.5)",
+ "captured_at_local": "2026-09-18T11:24+0800",
+ "plan": {
+  "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md",
+  "sha256": "40eb01980c7e11f96b4b12c2db8f53728852f1ab6ca452dfb5e865fd5435a003",
+  "bytes": 313461
+ },
+ "handoff_body_sha256": "fee9858146ae2752dda9bdd557820a69fcc0022130d2526fc89c90ab8bdee88d",
+ "reviews": {
+  "attempt-36": "f7a9d3ebaae5",
+  "attempt-37": "941580825840"
+ },
+ "head": "b2c4664a4f73f01c428dd16f48c801adbd4e4541",
+ "result_md_pre": {
+  "sha256": "bd00d9c9377a01530093e35a158280fb975f66fe493198b6ff315b21223207c0",
+  "bytes": 12542
+ },
+ "attempt07_ledger": "7c8ea39a3916",
+ "gate5": "2817b122e17f",
+ "git_status_start": "only untracked e2e/attempt-08 tree",
+ "gui_inputs": 0,
+ "handoff_bytes": 39073
+}

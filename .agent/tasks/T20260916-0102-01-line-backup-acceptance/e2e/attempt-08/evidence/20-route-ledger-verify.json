@@ -1,0 +1,51 @@
+{
+ "step": "b",
+ "check": "V24 corrected-route re-derivation (attempt-07, §24.5 fact 2)",
+ "captured_at_local": "2026-09-18T11:26+0800",
+ "ledger": {
+  "path": "evidence/20260916-route/attempt-07/run-ledger.json",
+  "sha256": "7c8ea39a391617f3276b4e3e40043086317c73719baf3b51bdf3d356ea2f032f",
+  "state": "CLOSED_AFTER_INPUT_1",
+  "stop_reason": "STOPPED_AT_S5_NO_EFFECT",
+  "parent": "906c14330605"
+ },
+ "artifacts": {
+  "album-card-locate": "94694c921171",
+  "album-open-verify": "aa0a2161d844",
+  "screen-probe": "38130a6a540c"
+ },
+ "s3": {
+  "verdict": "ELIGIBLE",
+  "click": [
+   42,
+   895
+  ],
+  "frame": "2897628770dd",
+  "reader": true,
+  "replay_verdict": "ELIGIBLE",
+  "replay_match": true
+ },
+ "s5": {
+  "verdict": "NO_EFFECT",
+  "changed": 0.047343,
+  "reader": true,
+  "replay_verdict": "NO_EFFECT",
+  "replay_match": true
+ },
+ "budgets": {
+  "card": "1/1 SPENT",
+  "navigation": "1/1 SPENT (alias)",
+  "ellipsis": "0/1 UNSPENT-never-sent",
+  "retry": 0,
+  "menu": 0,
+  "keyboard": 0,
+  "within_budget": true
+ },
+ "stop_artifact_policy": {
+  "route_result_json": "absent (correct)",
+  "manifest_json": "absent (correct)"
+ },
+ "verdict": {
+  "route": "STOPPED_AT_S5_NO_EFFECT; input #2 never sent; v5 got no live test; AFFIRMATIVE not reached"
+ }
+}

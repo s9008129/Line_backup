@@ -1,0 +1,134 @@
+{
+ "tool": "locate_album_card",
+ "frame": "/tmp/route7_frame_pre.jpg",
+ "frame_sha256": "2897628770ddacd125be3e8224ea4dfdd970aa1056acb9ca277c060553e7e7d3",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   30,
+   883,
+   257,
+   907
+  ]
+ },
+ "ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "032°C",
+  "⑧",
+  "00",
+  "9月18日週五 11:18",
+  "d1",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "QS",
+  "目",
+  "• Line_backup 一：查看已開啟內容 |Line_backup — codex -m muse-spark-..",
+  "...v run media_toolbox.py",
+  "...ing_effort=\"xhigh\"",
+  "..max\"，node_repl •••十",
+  "2024/05/13~05/17",
+  "57",
+  "• Ran pgrep -f1 \"LINE\" 2>&1 | head",
+  "-n 5;echo \"---\"；1s /Applications/ | grep -i",
+  "echo \"---helper---\"；1s -la",
+  "\"$｛TMPDIR｝vision_ocr_v4_build/\" 2>&1；",
+  "\"---too1s---\"； which screencapture cliclick 2>&1：echo",
+  "\"---git---\"；",
+  "/Applications/LINE.app/Contents/MacOS/LINE",
+  "5084 /Applications/LINE.app/Contents/XPCServices/LINE.MediaService.xpc/",
+  "+22 lines",
+  "（ctrl+t",
+  "to view transcript）",
+  "f9f5d07 handoff（acceptance）：Rev24 交接重編-綁 PLAN_REVISION",
+  "24/ 40eb0198",
+  "，我已經打開了",
+  "• Working （41s • esc to interrupt）",
+  "，Ask Codex to do anything",
+  "muse-spark-1.3-contributor xhigh",
+  "•~/Documents/ChatGPT/. Pursuing goal",
+  "（43m）",
+  "昨天",
+  "上午 10:54",
+  "十",
+  "類型：觸價單",
+  "觸發價格：502.00美元",
+  "委託價格：503.00美元",
+  "股數：3股",
+  "成交條件：ANY",
+  "諸存|另存新檔！分享|傳送至Keep筆記",
+  "已讀",
+  "下午 10:32",
+  "設定睡覺",
+  "20260918094522_投資簡報.pdf",
+  "下載期限：~9月25日 上午 10:54",
+  "檔案大小：3.2MB",
+  "儲存！另存新檔 分享|傳送至Keep筆記",
+  "十",
+  "輸入訊息",
+  "TUCSONL Premium",
+  "續航突破900公里*"
+ ],
+ "band_top_bright_row": 72,
+ "band_bottom_bright_row": 1002,
+ "margin_above_px": 823,
+ "margin_below_px": 107,
+ "count_box": [
+  22,
+  909,
+  190,
+  939
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "click_point": [
+  42,
+  895
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "verdict": "ELIGIBLE",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "f54628e8f42fb65200bf98bf5cc6463937d28781c673c22e5ca8b9418ae3f6c9",
+   "binary_bytes": 67192,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "f57cd5a3a7765755f6abfcd84ad2104e3791d6b0aff9b8c91ed307ca84b0fe79",
+    "stdout_bytes": 3389,
+    "lines_parsed": 61
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323",
+    "stdout_bytes": 33,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

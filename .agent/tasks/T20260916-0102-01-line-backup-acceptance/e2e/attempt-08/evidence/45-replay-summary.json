@@ -1,0 +1,39 @@
+{
+ "step": "d",
+ "check": "replay summary",
+ "s3": {
+  "verdict": "ELIGIBLE",
+  "exit": 0
+ },
+ "s5": {
+  "verdict": "NO_EFFECT",
+  "exit": 3
+ },
+ "v5_offline": {
+  "verdict": "ELIGIBLE",
+  "exit": 0,
+  "dots": [
+   [
+    304.5,
+    44.0
+   ],
+   [
+    304.5,
+    49.5
+   ],
+   [
+    304.5,
+    55.0
+   ]
+  ],
+  "click": [
+   304,
+   50
+  ]
+ },
+ "v4_baseline": {
+  "verdict": "NO_ELLIPSIS_FOUND",
+  "exit": 3
+ },
+ "dual": "v5 ELIGIBLE + v4 NO_ELLIPSIS_FOUND on the same frozen frame 4cb8a6b4 (baseline not overturned)"
+}
