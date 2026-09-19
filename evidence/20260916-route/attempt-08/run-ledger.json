@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "run_id": "20260919-route-attempt-08",
+  "artifact": "evidence/20260916-route/attempt-08/run-ledger.json",
+  "runtime/provider": "cua_repl native app binding for read-only observation and bounded clicks; frozen v4/v5 tools for machine verdicts",
+  "app_bundle": "jp.naver.line.mac",
+  "raw_group": "旻謙允禎成長日記",
+  "album": "2024/05/13～05/17",
+  "expected_count": 57,
+  "parent_ledger_sha256": "7c8ea39a391617f3276b4e3e40043086317c73719baf3b51bdf3d356ea2f032f",
+  "plan_binding": {
+    "plan_revision": 25,
+    "plan_sha256": "a1a408b026c5559f38e4a28666e49da087c483e1bf3eec4bbb16f48d7dbc7686",
+    "plan_lines": 601,
+    "plan_bytes": 20069,
+    "reviews": [
+      {"report": "evidence/20260919-rev25-plan-review/attempt-01/review-01-top-down.md", "sha256": "e7d8eee6face3452b3a7447ff54c075a5c0e880078929ab8d327341f98b99892", "gate": "PLAN_APPROVED"},
+      {"report": "evidence/20260919-rev25-plan-review/attempt-01/review-02-bottom-up.md", "sha256": "a0208caa5b464e8e366a043453787ee9fdb65e3497811adb56f0141c927eb141", "gate": "PLAN_APPROVED"}
+    ]
+  },
+  "authorization": {
+    "gate": "gate-6 — sixth one-shot authorization for Rev25 route attempt-08",
+    "artifact": "evidence/20260916-route/attempt-08/gate-6-authorization.json",
+    "sha256": "c37205bf9c53cd7025f5ed4b47b691618a8d308ebecebf61100c827c509520f5",
+    "authorized_by": "使用者本人",
+    "scope": "one current-frame-derived album-card click; only after ALBUM_OPEN_VERIFIED and live v5 ELIGIBLE, one album-level ellipsis click; observation only"
+  },
+  "frozen_inputs": {
+    "route_runbook_sha256": "595e7bd4a8ca55d118c389609ff78987d23d7b1d248d0c22d3375004efc6548a",
+    "tools": {
+      "v4/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+      "v4/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+      "v4/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+      "v4/locate_album_ellipsis.py": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+      "v5/locate_album_ellipsis.py": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+      "detect_menu_popup.py": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+      "vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+    }
+  },
+  "budgets": {
+    "album_card_inputs_used": 0,
+    "album_card_input_budget": 1,
+    "navigation_inputs_used": 0,
+    "navigation_input_budget": 1,
+    "ellipsis_inputs_used": 0,
+    "ellipsis_input_budget": 1,
+    "retry_count": 0,
+    "menu_item_inputs_used": 0,
+    "keyboard_inputs_used": 0,
+    "chooser_interactions": 0,
+    "app_acquisition_inputs": 0,
+    "scroll_inputs": 0,
+    "ax_write_inputs": 0,
+    "save_all_dispatch_attempted": false,
+    "click_count_per_input": 1,
+    "gui_input_count": 0
+  },
+  "events": [
+    {
+      "seq": 1,
+      "timestamp_local": "2026-09-19T20:12:59+0800",
+      "event": "gate6_authorization_and_runbook_frozen_before_input",
+      "gui_input": false,
+      "artifacts": [
+        {"path": "evidence/20260916-route/attempt-08/gate-6-authorization.json", "sha256": "c37205bf9c53cd7025f5ed4b47b691618a8d308ebecebf61100c827c509520f5"},
+        {"path": "evidence/20260916-route/attempt-08/route-runbook.md", "sha256": "595e7bd4a8ca55d118c389609ff78987d23d7b1d248d0c22d3375004efc6548a"}
+      ],
+      "note": "preflight artifacts frozen; no UI input has been sent"
+    }
+  ],
+  "run_status": "OPEN_BEFORE_INPUT",
+  "stop_reason": null,
+  "route_outcome": null,
+  "owner_notified": false,
+  "next_action": "S1/S2 read-only current-frame binding; no input until S3 ELIGIBLE"
+}

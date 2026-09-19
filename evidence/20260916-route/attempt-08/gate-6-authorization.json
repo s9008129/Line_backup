@@ -1,0 +1,109 @@
+{
+  "artifact_type": "human_gate_conversation_excerpt",
+  "gate": "sixth one-shot authorization: Rev25 route attempt-08 — open the exact target album once, then only after fresh ALBUM_OPEN_VERIFIED and live v5 ELIGIBLE click the album-level ⋮ once; observation only",
+  "session_id": "current-chat-rev25-gate6-20260919",
+  "session_transcript": "current user message in this conversation; no external transcript path available",
+  "prior_gate": {
+    "artifact": "evidence/20260916-route/attempt-07/gate-5-authorization.json",
+    "sha256": "2817b122e17f782f71392d951546aff5f7cee41d9f01f73b7c0a8091f33114a5",
+    "note": "gate-5 was consumed by attempt-07 and is not extended or reused"
+  },
+  "authority_artifact": {
+    "artifact": "current user message",
+    "sha256": "b18781815ad1824385bd67e11c7b3707305200b9a066e375de917c8193d324d4",
+    "bytes": 289,
+    "role": "explicit owner one-shot authorization"
+  },
+  "plan_binding": {
+    "plan_revision": 25,
+    "plan_path": "PLAN-2026-09-19-rev25-final.md",
+    "plan_sha256": "a1a408b026c5559f38e4a28666e49da087c483e1bf3eec4bbb16f48d7dbc7686",
+    "plan_lines": 601,
+    "plan_bytes": 20069,
+    "review_attempts": [
+      {
+        "attempt": "review-01-top-down",
+        "report": "evidence/20260919-rev25-plan-review/attempt-01/review-01-top-down.md",
+        "report_sha256": "e7d8eee6face3452b3a7447ff54c075a5c0e880078929ab8d327341f98b99892",
+        "gate": "PLAN_APPROVED"
+      },
+      {
+        "attempt": "review-02-bottom-up",
+        "report": "evidence/20260919-rev25-plan-review/attempt-01/review-02-bottom-up.md",
+        "report_sha256": "a0208caa5b464e8e366a043453787ee9fdb65e3497811adb56f0141c927eb141",
+        "gate": "PLAN_APPROVED"
+      }
+    ],
+    "parent_route_attempt_07_final_ledger": {
+      "path": "evidence/20260916-route/attempt-07/run-ledger.json",
+      "sha256": "7c8ea39a391617f3276b4e3e40043086317c73719baf3b51bdf3d356ea2f032f"
+    },
+    "route_tool_shas": {
+      "v4_vision_reader": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+      "v4_locate_album_card": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+      "v4_verify_album_open": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+      "v4_locate_album_ellipsis": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+      "v5_locate_album_ellipsis": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+      "detect_menu_popup": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+      "vision_ocr_swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+    }
+  },
+  "context_authorization": {
+    "authorized_by": "使用者本人",
+    "authorization_text_normalized": "我明確授權 Rev25 gate-6：允許一次目前畫面導出的相簿卡點擊；只有確認相簿成功開啟後，才允許再點一次相簿內的 ⋮；只觀察選單，不點 Save All、不下載、不碰 chooser、不重試、不使用鍵盤、不捲動、不寫入任何狀態。",
+    "authorization_text_sha256": "b18781815ad1824385bd67e11c7b3707305200b9a066e375de917c8193d324d4",
+    "gui_input_count_before_route": 0
+  },
+  "option_presentation_transcript": {
+    "status": "OWNER_EXPLICITLY_AUTHORIZED",
+    "source": "current user message"
+  },
+  "decided_interpretation": {
+    "target": "album 2024/05/13～05/17, count 57, inside jp.naver.line.mac, group 旻謙允禎成長日記 (禎 U+798E)",
+    "authorized_order": [
+      "one current-frame-derived album-card/navigation left click",
+      "only after fresh ALBUM_OPEN_VERIFIED, one live-v5-derived album-level ellipsis left click",
+      "observation only"
+    ],
+    "nothing_else": true
+  },
+  "alternative_reading": {
+    "reading": "Any mismatch in app, group, album, count, current frame, or precondition is a stop before the next input.",
+    "handling": "Do not repair by retrying or by using a historical coordinate."
+  },
+  "scope": {
+    "app_bundle": "jp.naver.line.mac",
+    "group": "旻謙允禎成長日記 (禎 U+798E; never merged with 楨 U+6968)",
+    "album": "2024/05/13～05/17",
+    "expected_images": 57,
+    "destination_read_only": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57"
+  },
+  "budgets": {
+    "album_card_input_budget": 1,
+    "navigation_input_budget": 1,
+    "ellipsis_input_budget": 1,
+    "retry_budget": 0,
+    "menu_item_budget": 0,
+    "keyboard_input_budget": 0,
+    "chooser_interaction_budget": 0,
+    "app_acquisition_input_budget": 0,
+    "scroll_budget": 0,
+    "ax_write_budget": 0,
+    "save_all_budget": 0,
+    "conversation_images": 0,
+    "click_count_per_input": 1,
+    "read_only_observation_windows_max": 5,
+    "screen_capture_budget": 5,
+    "screen_capture_window_seconds": 4
+  },
+  "not_authorized": [
+    "any retry, second attempt, double click, extra navigation, scroll, keyboard, AX write, chooser, download, Save All, or menu-item activation",
+    "any app acquisition input or bring-to-front action by the agent",
+    "any historical coordinate, including [42,895], [304,50], or [305,50], as a live input",
+    "any v4 fallback for live v5 ellipsis location",
+    "any destination or formal config/state/run-log write"
+  ],
+  "recorded_in": "evidence/20260916-route/attempt-08/gate-6-authorization.json",
+  "recorded_at_local": "2026-09-19T20:10:25+0800",
+  "notes": "Authorization is active for this one route only. Gate-6 is spent only by authorized GUI inputs; if S3/S5/S6 preconditions fail, stop fail-closed and record the unspent input budget."
+}
