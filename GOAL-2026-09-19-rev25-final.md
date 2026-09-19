@@ -33,14 +33,56 @@ F. 只有 owner 在本輪明確授權 gate-6 後，才執行 route attempt-08：
 G. Rev25 永遠不點 Save All，不碰 chooser，不下載，不寫 formal state/config/run-log；
 H. route 關閉後用 e2e/attempt-09 做零 GUI 獨立重算。
 
-【程式基線硬閘】
-先確認以下 commit 是 HEAD 的 ancestor：
-8fb622e4f2a25a2b1297894855303fdc671dafd3
+【Phase -1：先解除 stale clone blocker，零 GUI；這一步明確授權】
+Canonical plan 是 repo 根目錄：
+PLAN-2026-09-19-rev25-final.md
 
-如果不是，停止並回報，不要自行 cherry-pick/force/reset。
+不要要求 ~/Downloads/PLAN-20260919-rev25-final.md，也不要把 Downloads 裡的副本當權威。
+
+先跑：
+git status --porcelain=v1 --branch
+git remote get-url origin
+git rev-parse HEAD
+
+要求：
+- 工作樹/index 乾淨
+- branch = master
+- origin 是 s9008129/Line_backup
+
+若不符合就停止；不得 stash/reset/rebase/cherry-pick/force/discard。
+
+若符合，這個 goal 明確允許執行：
+git fetch --prune origin master
+
+fetch 後跑：
+git cat-file -e 8fb622e4f2a25a2b1297894855303fdc671dafd3^{commit}
+git merge-base --is-ancestor 8fb622e4f2a25a2b1297894855303fdc671dafd3 origin/master
+git merge-base --is-ancestor HEAD origin/master
+
+三者都必須 exit 0。
+
+若工作樹仍乾淨且 local HEAD 是 origin/master 的 ancestor，這個 goal 明確允許且只允許一次：
+git merge --ff-only origin/master
+
+也可用 git pull --ff-only origin master 取代，但兩者不可都做。
+禁止 reset/rebase/cherry-pick/force。若不能純 fast-forward，停止並回報 divergence。
+
+fast-forward 後必須確認：
+git status --porcelain=v1 --branch
+git rev-parse HEAD
+git merge-base --is-ancestor 8fb622e4f2a25a2b1297894855303fdc671dafd3 HEAD
+test -f PLAN-2026-09-19-rev25-final.md
+test -f GOAL-2026-09-19-rev25-final.md
+
+只有以上全部通過，才進 Phase 0。fetch/ff-only 不構成任何 LINE GUI 授權。
+
+【程式基線硬閘】
+required repair baseline：
+8fb622e4f2a25a2b1297894855303fdc671dafd3
+它必須是同步後 HEAD 的 ancestor。
 
 【Phase 0：必須先動態驗證修補，零 GUI】
-先跑：
+同步完成後再跑：
 git status --short
 git rev-parse HEAD
 git merge-base --is-ancestor 8fb622e4f2a25a2b1297894855303fdc671dafd3 HEAD
