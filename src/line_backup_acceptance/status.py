@@ -48,7 +48,7 @@ def evaluate(value: dict) -> dict:
             out["waiver"] = {"WAIVED_BY": "Project owner", "WAIVER_SCOPE": "DOCUMENTATION_RETENTION_HEALTH", "RATIONALE": "scoped retention debt", "EVIDENCE": "pre-existing evidence", "RESIDUAL_RISK": "reproducibility debt", "APPROVED_AT": "2026-09-16T00:00:00Z", "REVIEW_OR_EXPIRY_TRIGGER": "next acceptance"}
         return out
     if value.get("core_rationale_required") and value.get("core_not_required") and not value.get("plan_rationale"):
-        return _out(value, "UNKNOWN", "REPLAN_REQUIRED", "NOT_REQUIRED", "NOT_RUN", "PENDING", "REPLAN_REQUIRED", "CORE_ACCEPTANCE/NOT_REQUIRED/PLAN_RATIONALE_MISSING")
+        return _out(value, "UNKNOWN", "ESCALATED", "NOT_REQUIRED", "NOT_RUN", "PENDING", "REPLAN_REQUIRED", "CORE_ACCEPTANCE/NOT_REQUIRED/PLAN_RATIONALE_MISSING")
     primary = value.get("primary_outcome_status", "UNKNOWN")
     impl = value.get("implementation_status", "NOT_STARTED")
     core = value.get("core_acceptance_status", "NOT_RUN")
@@ -66,7 +66,7 @@ def evaluate(value: dict) -> dict:
         closure = "PENDING_CORE_ACCEPTANCE"
     elif core == "BLOCKED":
         closure = "CORE_ACCEPTANCE_BLOCKED"
-    elif core == "FAIL" or independent == "FAIL":
+    elif core == "FAIL" or required == "FAIL" or independent == "FAIL":
         closure = "FIX_REQUIRED"
     elif required == "INCOMPLETE":
         closure = "PENDING_REQUIRED_VERIFICATION"
