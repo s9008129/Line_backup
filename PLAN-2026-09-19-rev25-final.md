@@ -97,9 +97,97 @@ Known Rev24 live result remains immutable:
 14. Do not post screenshots into the conversation. Report paths, hashes, sizes, dimensions, and verdicts.
 15. A new GUI attempt requires a new owner one-shot authorization artifact. This plan and its GOAL are **not themselves GUI authorization**.
 
-## 5. Phase 0 — repaired-core dynamic preflight (zero GUI)
+## 5. Phase -1 — local-clone bootstrap (zero GUI; narrowly authorized)
 
-### 5.1 Repository gate
+This phase exists only to resolve a stale local clone. It is the **only** pre-Phase-0 write permission and may update only Git remote-tracking refs plus a clean local branch by fast-forward.
+
+Canonical Rev25 plan path after synchronization:
+
+`PLAN-2026-09-19-rev25-final.md`
+
+Do **not** require a copy under `~/Downloads`, and do not treat `PLAN-20260919-rev25-final.md` as the canonical file.
+
+### 5.1 Preconditions
+
+Run:
+
+```bash
+git status --porcelain=v1 --branch
+git remote get-url origin
+git rev-parse HEAD
+```
+
+Hard requirements:
+
+- working tree/index are clean;
+- current branch is `master`;
+- `origin` points to the intended `s9008129/Line_backup` repository.
+
+If any requirement fails, stop. Do not stash, reset, rebase, cherry-pick, force-update, or discard user work.
+
+### 5.2 Read remote state
+
+The following is explicitly authorized:
+
+```bash
+git fetch --prune origin master
+```
+
+This fetch is not a GUI action and does not authorize any LINE interaction.
+
+After fetch, verify:
+
+```bash
+git cat-file -e 8fb622e4f2a25a2b1297894855303fdc671dafd3^{commit}
+git merge-base --is-ancestor 8fb622e4f2a25a2b1297894855303fdc671dafd3 origin/master
+git merge-base --is-ancestor HEAD origin/master
+```
+
+All three commands must exit 0.
+
+### 5.3 Fast-forward only
+
+If and only if the worktree is still clean and local `HEAD` is an ancestor of `origin/master`, the following branch update is explicitly authorized:
+
+```bash
+git merge --ff-only origin/master
+```
+
+Equivalent `git pull --ff-only origin master` is acceptable, but do not perform both.
+
+Forbidden recovery paths:
+
+- `git reset` of any kind;
+- `git rebase`;
+- `git cherry-pick`;
+- force push/update;
+- deleting or overwriting local files to make the merge work.
+
+If fast-forward cannot be completed exactly, stop and report the divergence.
+
+### 5.4 Bootstrap acceptance
+
+After fast-forward:
+
+```bash
+git status --porcelain=v1 --branch
+git rev-parse HEAD
+git merge-base --is-ancestor 8fb622e4f2a25a2b1297894855303fdc671dafd3 HEAD
+test -f PLAN-2026-09-19-rev25-final.md
+test -f GOAL-2026-09-19-rev25-final.md
+```
+
+Required:
+
+- clean worktree;
+- baseline ancestor check exit 0;
+- both canonical Rev25 files exist in the repository root.
+
+Only then proceed to Phase 0.
+
+## 6. Phase 0 — repaired-core dynamic preflight (zero GUI)
+
+### 6.1 Repository gate
 
 Run from the repository root:
 
@@ -115,7 +203,7 @@ Acceptance:
 - ancestor check exits 0;
 - if there are local changes, do not discard them automatically; stop and record them.
 
-### 5.2 Focused regression suite
+### 6.2 Focused regression suite
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /usr/bin/python3 -B tests/test_transaction_core.py
@@ -127,7 +215,7 @@ Must exit 0. The following new regressions must be present and pass:
 - generic missing CORE rationale emits legal `ESCALATED / REPLAN_REQUIRED`;
 - generic required-verification FAIL emits `FIX_REQUIRED`.
 
-### 5.3 Full acceptance wave
+### 6.3 Full acceptance wave
 
 Use a **new append-only root**, for example:
 
@@ -160,7 +248,7 @@ Mandatory spot-checks in the generated Case 03 and Case 23 evidence:
 - writer ownership remains retained;
 - no extra dispatch occurs.
 
-### 5.4 Full automation-verification wave
+### 6.4 Full automation-verification wave
 
 Use another fresh append-only root:
 
@@ -176,9 +264,9 @@ Hard pass conditions:
 - both `driver-first` and `ownership-first` orders safe
 - each final read-back verdict `PASS`.
 
-### 5.5 Phase 0 stop rule
+### 6.5 Phase 0 stop rule
 
-Any failure in 5.1–5.4 means:
+Any failure in 6.1–6.4 means:
 
 - **no LINE GUI input**
 - classify as `TASK_REGRESSION` or evidence/environment failure as supported by the data
@@ -187,7 +275,7 @@ Any failure in 5.1–5.4 means:
 
 Do not continue by waiving a failed regression.
 
-## 6. Phase 1 — baseline and historical integrity replay (zero GUI)
+## 7. Phase 1 — baseline and historical integrity replay (zero GUI)
 
 Recompute, do not trust prose:
 
@@ -205,7 +293,7 @@ Recompute, do not trust prose:
 
 If any historical artifact changed unexpectedly, stop. Do not “repair” history.
 
-## 7. Phase 2 — S5 NO_EFFECT diagnosis (zero GUI)
+## 8. Phase 2 — S5 NO_EFFECT diagnosis (zero GUI)
 
 Create a new append-only diagnostic directory under:
 
@@ -281,9 +369,9 @@ Write `s5-hypothesis-matrix.md` with rows such as:
 
 Every row must be one of `SUPPORTED`, `REJECTED`, `UNKNOWN`, with explicit evidence. Do not manufacture a winner.
 
-## 8. Phase 3 — route-tool decision and Rev25 review gate (zero GUI)
+## 9. Phase 3 — route-tool decision and Rev25 review gate (zero GUI)
 
-### 8.1 Tool immutability
+### 9.1 Tool immutability
 
 Never modify frozen v4/v5 files.
 
@@ -298,7 +386,7 @@ If Phase 2 produces evidence that the card click-point strategy itself needs cor
 
 If Phase 2 does not justify a tool change, do not create v6 just to make progress.
 
-### 8.2 Fresh review
+### 9.2 Fresh review
 
 Before any GUI gate:
 
@@ -308,7 +396,7 @@ Before any GUI gate:
 - reviews must explicitly verify Phase 0 passed and that the proposed S3 click derivation is current-frame based;
 - any review rejection requires a new plan content hash and both reviews repeated.
 
-### 8.3 Draft gate-6
+### 9.3 Draft gate-6
 
 Create but do not spend a new gate-6 artifact mirroring gate-5's 17-key top-level schema:
 
@@ -339,7 +427,7 @@ Gate-6 must bind:
 - the selected click-point derivation;
 - the one-shot budgets below.
 
-### 8.4 Owner authorization hard stop
+### 9.4 Owner authorization hard stop
 
 At this point stop and ask the owner for a **new explicit one-shot authorization**.
 
@@ -359,7 +447,7 @@ Minimum authorized envelope, if the owner chooses to proceed:
 
 The current request to author this plan does not consume or grant gate-6.
 
-## 9. Phase 4 — live route attempt-08 (only after owner explicitly authorizes gate-6)
+## 10. Phase 4 — live route attempt-08 (only after owner explicitly authorizes gate-6)
 
 Create a new route directory; do not reuse attempt-07:
 
@@ -444,7 +532,7 @@ Write a FINAL append-only ledger containing:
 - runtime/provider truth
 - explicit statement: `SAVE_ALL_DISPATCH_ATTEMPTED=NO`.
 
-## 10. Phase 5 — independent acceptance e2e/attempt-09 (zero GUI)
+## 11. Phase 5 — independent acceptance e2e/attempt-09 (zero GUI)
 
 After route attempt-08 closes, create:
 
@@ -464,7 +552,7 @@ Required checks:
 - if S7 occurred, menu observation recomputes;
 - no Save All, chooser, download, or formal state write occurred.
 
-## 11. Rev25 success definitions
+## 12. Rev25 success definitions
 
 Keep three results separate.
 
@@ -495,7 +583,7 @@ A future revision must separately prove, exactly once:
 - crash/restart recovery
 - LINE restart/machine restart behavior.
 
-## 12. Reporting and commits
+## 13. Reporting and commits
 
 At each completed phase:
 
