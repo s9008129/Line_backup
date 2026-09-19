@@ -21,6 +21,14 @@ def _absolute(path: str | None) -> Path | None:
     return Path(os.path.abspath(path)) if path else None
 
 
+def _within_fixture_root(path: Path, root: Path) -> bool:
+    """Require both lexical and symlink-resolved containment under a canonical fixture root."""
+    absolute = Path(os.path.abspath(path))
+    real = Path(os.path.realpath(absolute))
+    real_root = Path(os.path.realpath(root))
+    return within(absolute, root) and within(real, real_root)
+
+
 def _require_file(path: Path, label: str) -> None:
     if not exact_real_path(path) or not path.is_file():
         raise AcceptanceError("INVALID_AUTHORITY", f"{label} is not the canonical readable authority file", 2)
@@ -85,7 +93,7 @@ def _validate_fixture_paths(ns, root: Path) -> None:
     for name in ("destination", "dispatcher", "dispatch_counter", "verification_json", "barrier_file",
                  "source_evidence"):
         value = getattr(ns, name, None)
-        if value and not within(_absolute(value), root):
+        if value and not _within_fixture_root(_absolute(value), root):
             raise AcceptanceError("INVALID_AUTHORITY", f"--{name.replace('_', '-')} is outside test root", 2)
 
 
@@ -110,7 +118,7 @@ def validate_transaction(ns) -> dict[str, Any]:
         _require_file(expected_config, "config")
         _require_file(expected_state, "state")
         _require_file(expected_run_log, "run-log")
-        if not within(evidence, root):
+        if not _within_fixture_root(evidence, root):
             raise AcceptanceError("INVALID_AUTHORITY", "test evidence must remain under case root", 2)
         _validate_fixture_paths(ns, root)
         _validate_required_transaction_args(ns)
