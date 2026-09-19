@@ -442,9 +442,8 @@ def _reconcile_record(run: dict, state: dict, evidence: Path) -> dict:
                "run_id": run["run_id"], "action_id": run["intent"]["action_id"],
                "loaded_revision": state.get("revision"),
                "observation": "loaded intent never dispatched; ambiguity barrier committed without a second dispatch"}
-    data = json_bytes(payload)
-    (evidence / name).write_bytes(data)
-    digest = sha256_bytes(data)
+    meta = atomic_write_json(evidence / name, payload)
+    digest = meta["sha256"]
     entry = {"reconciliation_id": f"RECON-{run['run_id']}-{index}",
              "recorded_at": _utc(), "run_id": run["run_id"], "action_id": run["intent"]["action_id"],
              "execution_id": run["intent"]["owner_execution_id"], "outcome": "EVIDENCE_RECONCILED",
@@ -516,6 +515,19 @@ def _owner_gate(state: dict, run: dict | None, ns) -> str | None:
     return None
 
 
+def _dispatch_complete(run: dict) -> bool:
+    """Return True only for the single schema-valid completed Save All dispatch shape."""
+    intent = run.get("intent") or {}
+    evidence_block = run.get("dispatch_evidence") or {}
+    return (run.get("intent_state") == "SAVE_ALL_DISPATCH_ATTEMPTED"
+            and run.get("dispatch_state") == "SAVE_ALL_RETURNED"
+            and run.get("manual_reconciliation_required") is False
+            and intent.get("dispatch_outcome") == "RETURNED"
+            and evidence_block.get("save_all_click_count") == 1
+            and evidence_block.get("save_all_invocation_attempted") is True
+            and evidence_block.get("failure_boundary") == "NONE")
+
+
 def commit(ns):
     auth = validate_transaction(ns)
     path, evidence = Path(auth["state"]), Path(auth["evidence_dir"])
@@ -530,16 +542,7 @@ def commit(ns):
         if conflict:
             return _result(evidence, conflict, "run/owner/revision is not authoritative", 4,
                            replacement=False, state_replaced=False), 4
-        intent = run.get("intent") or {}
-        evidence_block = run.get("dispatch_evidence") or {}
-        dispatch_complete = (run.get("intent_state") == "SAVE_ALL_DISPATCH_ATTEMPTED"
-                             and run.get("dispatch_state") == "SAVE_ALL_RETURNED"
-                             and run.get("manual_reconciliation_required") is False
-                             and intent.get("dispatch_outcome") == "RETURNED"
-                             and evidence_block.get("save_all_click_count") == 1
-                             and evidence_block.get("save_all_invocation_attempted") is True
-                             and evidence_block.get("failure_boundary") == "NONE")
-        if not dispatch_complete:
+        if not _dispatch_complete(run):
             return _result(evidence, "CONFLICT_UNRESOLVED_DISPATCH", "no completed successful dispatch record; commit is refused", 4,
                            replacement=False, state_replaced=False), 4
         try:
@@ -596,6 +599,10 @@ def finalize(ns):
                            replacement=False, state_replaced=False), 4
         if terminal(run):
             return _result(evidence, "CONFLICT_STALE_REVISION", "run is already terminal", 4,
+                           replacement=False, state_replaced=False), 4
+        if ns.outcome == "VERIFIED" and not _dispatch_complete(run):
+            return _result(evidence, "CONFLICT_UNRESOLVED_DISPATCH",
+                           "no completed successful dispatch record; VERIFIED finalization is refused", 4,
                            replacement=False, state_replaced=False), 4
         expected_revision = state.get("revision")
         if ns.outcome == "VERIFIED":
