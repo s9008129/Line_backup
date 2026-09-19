@@ -1,0 +1,26 @@
+{
+  "plan_revision": 25,
+  "plan_sha256": "a1a408b026c5559f38e4a28666e49da087c483e1bf3eec4bbb16f48d7dbc7686",
+  "review_reports": [
+    {
+      "path": "evidence/20260919-rev25-plan-review/attempt-01/review-01-top-down.md",
+      "sha256": "e7d8eee6face3452b3a7447ff54c075a5c0e880078929ab8d327341f98b99892",
+      "gate": "PLAN_APPROVED"
+    },
+    {
+      "path": "evidence/20260919-rev25-plan-review/attempt-01/review-02-bottom-up.md",
+      "sha256": "a0208caa5b464e8e366a043453787ee9fdb65e3497811adb56f0141c927eb141",
+      "gate": "PLAN_APPROVED"
+    }
+  ],
+  "checks": {
+    "same_exact_plan_sha": true,
+    "both_plan_approved": true,
+    "phase0_passed_before_review": true,
+    "s3_current_frame_required": true,
+    "historical_coordinate_fallback_forbidden": true,
+    "gui_input_count": 0,
+    "gate6_spent": false
+  },
+  "verdict": "PASS"
+}

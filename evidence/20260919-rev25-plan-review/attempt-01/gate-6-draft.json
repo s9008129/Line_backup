@@ -1,0 +1,119 @@
+{
+  "artifact_type": "human_gate_conversation_excerpt_draft",
+  "gate": "sixth one-shot authorization draft for Rev25 route attempt-08 — NOT AUTHORIZED and NOT SPENT",
+  "session_id": "rev25-gate-6-draft-20260919",
+  "session_transcript": "NOT_YET_AUTHORIZED — a new owner transcript is required before any GUI input",
+  "prior_gate": {
+    "artifact": "evidence/20260916-route/attempt-07/gate-5-authorization.json",
+    "sha256": "2817b122e17f782f71392d951546aff5f7cee41d9f01f73b7c0a8091f33114a5",
+    "note": "gate-5 was consumed by attempt-07's one album-card input and stopped at S5 NO_EFFECT; it is not extended or reused"
+  },
+  "authority_artifact": {
+    "status": "NOT_AUTHORIZED",
+    "artifact": "NONE",
+    "required": "new explicit owner one-shot authorization after this draft"
+  },
+  "plan_binding": {
+    "plan_revision": 25,
+    "plan_path": "PLAN-2026-09-19-rev25-final.md",
+    "plan_sha256": "a1a408b026c5559f38e4a28666e49da087c483e1bf3eec4bbb16f48d7dbc7686",
+    "plan_lines": 601,
+    "plan_bytes": 20069,
+    "review_attempts": [
+      {
+        "attempt": "review-01-top-down",
+        "report": "evidence/20260919-rev25-plan-review/attempt-01/review-01-top-down.md",
+        "report_sha256": "e7d8eee6face3452b3a7447ff54c075a5c0e880078929ab8d327341f98b99892",
+        "gate": "PLAN_APPROVED"
+      },
+      {
+        "attempt": "review-02-bottom-up",
+        "report": "evidence/20260919-rev25-plan-review/attempt-01/review-02-bottom-up.md",
+        "report_sha256": "a0208caa5b464e8e366a043453787ee9fdb65e3497811adb56f0141c927eb141",
+        "gate": "PLAN_APPROVED"
+      }
+    ],
+    "parent_route_attempt_07_final_ledger": {
+      "path": "evidence/20260916-route/attempt-07/run-ledger.json",
+      "sha256": "7c8ea39a391617f3276b4e3e40043086317c73719baf3b51bdf3d356ea2f032f",
+      "recorded_parent_attempt_06_final_sha256": "906c14330605122e9b600359892d4400171d62564707d50af26ef8d8bb32fa2c"
+    },
+    "route_tools": [
+      {"path": "evidence/20260916-route/tools/v4/vision_reader.py", "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8"},
+      {"path": "evidence/20260916-route/tools/v4/locate_album_card.py", "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162"},
+      {"path": "evidence/20260916-route/tools/v4/verify_album_open.py", "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58"},
+      {"path": "evidence/20260916-route/tools/v4/locate_album_ellipsis.py", "sha256": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4"},
+      {"path": "evidence/20260916-route/tools/v5/vision_reader.py", "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8"},
+      {"path": "evidence/20260916-route/tools/v5/locate_album_card.py", "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162"},
+      {"path": "evidence/20260916-route/tools/v5/verify_album_open.py", "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58"},
+      {"path": "evidence/20260916-route/tools/v5/locate_album_ellipsis.py", "sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418"},
+      {"path": "evidence/20260916-route/tools/detect_menu_popup.py", "sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc"},
+      {"path": "evidence/20260916-route/tools/vision/vision_ocr.swift", "sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"}
+    ],
+    "selected_click_point_derivation": "DRAFT ONLY: S3 must derive the album-card point from the immediate fresh frame and current window geometry; no historical coordinate is eligible. S6 must derive its point from a live v5 ELIGIBLE frame only.",
+    "v6": "NOT_CREATED — Phase 2 did not prove a replacement card hitbox rule"
+  },
+  "context_authorization": {
+    "status": "NOT_GRANTED",
+    "source": "Rev25 plan authoring request",
+    "explicit_owner_authorization_required": true,
+    "gui_input_count": 0
+  },
+  "option_presentation_transcript": {
+    "status": "NOT_PRESENTED",
+    "note": "No gate-6 A/B owner decision exists in this draft; a new owner decision must be captured before spending the gate"
+  },
+  "decided_interpretation": {
+    "status": "DRAFT_ONLY_NOT_OWNER_DECIDED",
+    "target": "album 2024/05/13～05/17, count 57, inside jp.naver.line.mac, group 旻謙允禎成長日記 (禎 U+798E)",
+    "authorized_order_if_owner_later_authorizes": [
+      "one current-frame-derived album-card/navigation left click",
+      "only after fresh ALBUM_OPEN_VERIFIED, one live-v5-derived album-level ellipsis left click",
+      "observation only"
+    ],
+    "no_semantic_shortcut": "S5 NO_EFFECT stops the route; offline v5 proof cannot substitute for live v5 proof"
+  },
+  "alternative_reading": {
+    "reading": "If the owner does not explicitly authorize this exact target and envelope, this draft remains unspent and the run stays zero-input.",
+    "handling": "Any target, window, precondition, or scope mismatch is a read-only stop."
+  },
+  "scope": {
+    "app": "jp.naver.line.mac",
+    "group": "旻謙允禎成長日記 (禎 U+798E; never merged with 楨 U+6968)",
+    "album": "2024/05/13～05/17",
+    "expected_images": 57,
+    "destination_read_only": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+    "destination_write": false,
+    "formal_state_write": false
+  },
+  "budgets": {
+    "album_card_input_budget": 1,
+    "navigation_input_budget": 1,
+    "ellipsis_input_budget": 1,
+    "retry_budget": 0,
+    "menu_item_budget": 0,
+    "keyboard_input_budget": 0,
+    "chooser_interaction_budget": 0,
+    "app_acquisition_input_budget": 0,
+    "scroll_budget": 0,
+    "ax_write_budget": 0,
+    "save_all_budget": 0,
+    "conversation_images": 0,
+    "click_count_per_input": 1,
+    "read_only_observation_windows_max": 5,
+    "screen_capture_budget": 5,
+    "screen_capture_window_seconds": 4
+  },
+  "not_authorized": [
+    "any GUI input before a new explicit owner authorization",
+    "any menu-item activation, including Save All; any chooser interaction; any download",
+    "any keyboard input, AX write, scroll, app acquisition, activate, bring-to-front, retry, double click, or extra navigation",
+    "any historical coordinate, including [42,895], [304,50], or [305,50], as a live input",
+    "any v4 fallback for live v5 ellipsis location",
+    "any write to the existing destination or formal config/state/run-log",
+    "any modification of frozen v4/v5 or historical evidence"
+  ],
+  "recorded_in": "evidence/20260919-rev25-plan-review/attempt-01/gate-6-draft.json",
+  "recorded_at_local": "2026-09-19T19:15:47+0800",
+  "notes": "DRAFT ONLY / NOT SPENT. Phase 0, Phase 1, and Phase 2 are committed zero-GUI evidence. Two exact-SHA fresh reviews are PLAN_APPROVED. GUI_INPUT_COUNT remains 0. Stop here and obtain a new explicit owner one-shot authorization before any Phase 4 action."
+}
