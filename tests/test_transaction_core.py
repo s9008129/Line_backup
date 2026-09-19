@@ -17,6 +17,11 @@ from pathlib import Path
 
 
 WORKSPACE = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(WORKSPACE / "src"))
+
+from line_backup_acceptance.authority import _within_fixture_root  # noqa: E402
+from line_backup_acceptance.status import evaluate  # noqa: E402
+
 GROUP = "line:jp.naver.line.mac:旻謙允禎成長日記"
 
 
@@ -62,6 +67,32 @@ class TransactionCoreTests(unittest.TestCase):
                              "INVALID_AUTHORITY")
             self.assertEqual(foreign_state.read_text(encoding="utf-8"), "{}\n")
             self.assertFalse((root / "state" / ".line-backup-state.lock").exists())
+
+
+    def test_fixture_containment_rejects_symlink_escape(self):
+        with tempfile.TemporaryDirectory(prefix="line-backup-fixture-root-") as root_tmp:
+            with tempfile.TemporaryDirectory(prefix="line-backup-fixture-outside-") as outside_tmp:
+                root = Path(root_tmp)
+                outside = Path(outside_tmp)
+                link = root / "escape"
+                link.symlink_to(outside, target_is_directory=True)
+                self.assertFalse(_within_fixture_root(link / "future.json", root))
+                self.assertTrue(_within_fixture_root(root / "safe" / "future.json", root))
+
+    def test_generic_missing_core_rationale_uses_legal_escalated_enum(self):
+        result = evaluate({"core_rationale_required": True, "core_not_required": True})
+        self.assertEqual(result["implementation_status"], "ESCALATED")
+        self.assertEqual(result["task_closure_status"], "REPLAN_REQUIRED")
+
+    def test_generic_required_verification_fail_routes_fix_required(self):
+        result = evaluate({
+            "primary_outcome_status": "ACHIEVED",
+            "implementation_status": "COMPLETE",
+            "core_acceptance_status": "PASS",
+            "required_verification_status": "FAIL",
+            "independent_acceptance_status": "PENDING",
+        })
+        self.assertEqual(result["task_closure_status"], "FIX_REQUIRED")
 
 
 if __name__ == "__main__":
