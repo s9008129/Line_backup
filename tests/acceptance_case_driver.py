@@ -471,11 +471,31 @@ def case_03(case: Case, paths: dict) -> None:
     case.check("resume.no-new-reconcile", reconcile_before,
                sorted(p.name for p in paths["evidence"].glob("reconcile*.json")))
 
+    chain = paths["evidence"] / "verify-unresolved"
+    case.cli("verify-unresolved", verify_args(paths, chain, "--run-id", "RUN-CASE-03"))
+    case.check("verify-unresolved.filesystem-pass", "PASS",
+               (case.processes[-1]["result"] or {}).get("filesystem_status"))
+
     case.cli("commit-refused", tx_args(paths, "commit", "--run-id", "RUN-CASE-03", "--expected-revision", "2",
                                        "--expected-owner-id", "WRITER-CASE-03",
-                                       "--verification-json", str(paths["evidence"] / "verify-1" / "result.json"),
-                                       "--evidence-dir", str(paths["evidence"])))
+                                       "--verification-json", str(chain / "result.json"),
+                                       "--evidence-dir", str(paths["evidence"] / "commit-refused")))
     case.check("commit.code", "CONFLICT_UNRESOLVED_DISPATCH", code_of(case.processes[-1]))
+
+    before_finalize = sha(paths["state"])
+    case.cli("finalize-verified-refused", tx_args(paths, "finalize", "--run-id", "RUN-CASE-03",
+                                                  "--expected-revision", "2",
+                                                  "--expected-owner-id", "WRITER-CASE-03",
+                                                  "--outcome", "VERIFIED",
+                                                  "--verification-json", str(chain / "result.json"),
+                                                  "--evidence-dir", str(paths["evidence"] / "finalize-refused")))
+    rec = case.processes[-1]
+    case.check("finalize-unresolved.code", "CONFLICT_UNRESOLVED_DISPATCH", code_of(rec))
+    case.check("finalize-unresolved.exit4", 4, rec["exit_code"])
+    case.check("finalize-unresolved.no-write", before_finalize["sha256"], sha(paths["state"])["sha256"])
+    state = read_json(paths["state"])
+    case.check("finalize-unresolved.no-registry", 0, len(state["verified_albums"]))
+    case.check("finalize-unresolved.owner-retained", "WRITER-CASE-03", state.get("active_writer_id"))
     case.check("counter1", 1, counter_lines(paths))
 
 
@@ -1214,6 +1234,27 @@ def case_23(case: Case, paths: dict) -> None:
     case.check("23b.counter0", 0, counter_lines(paths))
     state = read_json(paths["state"])
     case.check("23b.persisted-intent", "INTENT_COMMITTED", state["runs"][0].get("intent_state"))
+
+    chain = paths["evidence"] / "23b-verify"
+    case.cli("23b-verify", verify_args(paths, chain, "--run-id", "RUN-CASE-23B"))
+    case.check("23b.verify-filesystem-pass", "PASS",
+               (case.processes[-1]["result"] or {}).get("filesystem_status"))
+    before_finalize = sha(paths["state"])
+    case.cli("23b-finalize-refused", tx_args(paths, "finalize", "--run-id", "RUN-CASE-23B",
+                                             "--expected-revision", "1",
+                                             "--expected-owner-id", "WRITER-CASE-23B",
+                                             "--outcome", "VERIFIED",
+                                             "--verification-json", str(chain / "result.json"),
+                                             "--evidence-dir", str(paths["evidence"] / "23b-finalize-refused")))
+    rec = case.processes[-1]
+    case.check("23b.finalize-code", "CONFLICT_UNRESOLVED_DISPATCH", code_of(rec))
+    case.check("23b.finalize-exit4", 4, rec["exit_code"])
+    case.check("23b.finalize-no-write", before_finalize["sha256"], sha(paths["state"])["sha256"])
+    state = read_json(paths["state"])
+    case.check("23b.finalize-no-registry", 0, len(state["verified_albums"]))
+    case.check("23b.finalize-owner-retained", "WRITER-CASE-23B", state.get("active_writer_id"))
+    case.check("23b.finalize-counter0", 0, counter_lines(paths))
+
     case.cli("23b-resume", tx_args(paths, "resume", "--run-id", "RUN-CASE-23B", "--expected-revision", "1",
                                    "--expected-owner-id", "WRITER-CASE-23B", "--no-dispatch",
                                    "--evidence-dir", str(paths["evidence"] / "23b-resume")))
