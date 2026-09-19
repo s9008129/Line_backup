@@ -1,0 +1,9 @@
+{
+  "active_writer_id": null,
+  "context_lock": null,
+  "current_run_id": null,
+  "revision": 0,
+  "runs": [],
+  "schema_version": 2,
+  "verified_albums": []
+}

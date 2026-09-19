@@ -1,0 +1,13 @@
+{
+  "artifacts_checked": 4644,
+  "ignored_names": [
+    "manifest.json",
+    "readback-verification.json"
+  ],
+  "manifests": 47,
+  "problems": [],
+  "root": "evidence/20260919-rev25-preflight/attempt-01",
+  "supplements": 0,
+  "uncovered_files": [],
+  "verdict": "PASS"
+}

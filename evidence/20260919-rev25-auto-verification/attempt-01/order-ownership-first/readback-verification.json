@@ -1,0 +1,14 @@
+{
+  "artifacts_checked": 3843,
+  "ignored_names": [
+    "manifest-supplement.json",
+    "manifest.json",
+    "readback-verification.json"
+  ],
+  "manifests": 37,
+  "problems": [],
+  "root": "evidence/20260919-rev25-auto-verification/attempt-01/order-ownership-first",
+  "supplements": 1,
+  "uncovered_files": [],
+  "verdict": "PASS"
+}

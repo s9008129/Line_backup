@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/status_fixture_driver.py",
+    "--manifest",
+    "evidence/20260919-rev25-preflight/attempt-01/status-rows.json",
+    "--evidence-dir",
+    "evidence/20260919-rev25-preflight/attempt-01/status",
+    "--summary",
+    "evidence/20260919-rev25-preflight/attempt-01/status-summary.json"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "secrets_removed": true
+}

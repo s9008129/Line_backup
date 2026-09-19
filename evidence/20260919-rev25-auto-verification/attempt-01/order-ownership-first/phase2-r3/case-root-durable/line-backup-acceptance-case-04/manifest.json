@@ -1,0 +1,124 @@
+{
+  "artifacts": [
+    {
+      "bytes": 221,
+      "path": ".driver-ownership.json",
+      "sha256": "f13edbedf2191537ade3ad1c25d88f5e9389433ee9bd4c2fec40eaf26b36effa"
+    },
+    {
+      "bytes": 222,
+      "path": "driver-records/r6-ownership/probe.json",
+      "sha256": "39f2e5491d66f06d13d720d5d04afddc138c51a2f262e8b271acaf85ceaa1dc4"
+    },
+    {
+      "bytes": 946,
+      "path": "process-records/04/duplicate/argv.json",
+      "sha256": "cccc337130a02ef8f34071842f4f45fc293b459a104e3017ab3603c0b52aa16c"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/04/duplicate/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/04/duplicate/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 190,
+      "path": "process-records/04/duplicate/stdout.log",
+      "sha256": "78ff575f3de3ca3f46bade853290e35c7a177eeecbc7a8ccf1b9689083a2b5a1"
+    },
+    {
+      "bytes": 983,
+      "path": "process-records/04/resume-adapter/argv.json",
+      "sha256": "ff90c6987113bd2ed01dd1ad856a73c097316399d37305743023823751f2a5f0"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/04/resume-adapter/exit-code",
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/04/resume-adapter/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 137,
+      "path": "process-records/04/resume-adapter/stdout.log",
+      "sha256": "5e29a424991b1af4e9ff8a3f15bead0b1b7c82ee45a078a31498479dc3878613"
+    },
+    {
+      "bytes": 811,
+      "path": "process-records/04/resume-terminal/argv.json",
+      "sha256": "e4421a3e965ae67a8b35e013b70335d2a3224be76a47635eee7fcae748f7af81"
+    },
+    {
+      "bytes": 2,
+      "path": "process-records/04/resume-terminal/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "path": "process-records/04/resume-terminal/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 200,
+      "path": "process-records/04/resume-terminal/stdout.log",
+      "sha256": "6906e79e4c09ef768b7fe2523bfe5bdc9538203c8e02ffacb39fb3ad3d4bffb1"
+    },
+    {
+      "bytes": 269,
+      "path": "prod-root/binding-fixture.json",
+      "sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c"
+    },
+    {
+      "bytes": 389,
+      "path": "prod-root/config/line_backup_config.json",
+      "sha256": "384339d1ab5cf7dd2ef13a09411e1661c58282daae5a4e27d6fbb7b28ddd6d3c"
+    },
+    {
+      "bytes": 0,
+      "path": "prod-root/dispatch-counter.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 484,
+      "path": "prod-root/dispatcher.py",
+      "sha256": "90111ca1486e18c9260b1e50eebcec14ffbcd70d2fd7f59306b3d773219b84b1"
+    },
+    {
+      "bytes": 105,
+      "path": "prod-root/evidence/prod-prepare/error.json",
+      "sha256": "e9a721d69a778a28b7e87c7187826bee89466e482f1a24e120b097ed356be4a8"
+    },
+    {
+      "bytes": 421,
+      "path": "prod-root/evidence/prod-prepare/result.json",
+      "sha256": "92c1b4e8dc0a49bb9b1a94789ef93b0aa9cf8907e296eacb75f196a291efabb5"
+    },
+    {
+      "bytes": 1230,
+      "path": "prod-root/fixture-source-evidence.json",
+      "sha256": "2da6d7e1f1481101edfec9307533909a31cd8bb787ba6d14bf7e35d3dd1945a4"
+    },
+    {
+      "bytes": 160,
+      "path": "prod-root/state/backup_state.json",
+      "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+    },
+    {
+      "bytes": 42,
+      "path": "prod-root/state/run_log.md",
+      "sha256": "e9aea5035ff12aca468257e61a67684884b0aa153dcd259ad4bc48fdfba11954"
+    }
+  ],
+  "files": 23,
+  "generated_at": "2026-09-19T10:57:49Z",
+  "root": "evidence/20260919-rev25-auto-verification/attempt-01/order-ownership-first/phase2-r3/case-root-durable/line-backup-acceptance-case-04",
+  "schema_version": 1,
+  "total_bytes": 6816
+}

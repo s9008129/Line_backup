@@ -1,0 +1,193 @@
+{
+  "after_fresh_resume": {
+    "counter_lines": 1,
+    "dispatch_state": "UNKNOWN",
+    "intent_state": "TRIGGER_UNKNOWN",
+    "manual_reconciliation_required": true,
+    "reconciliations": 1,
+    "revision": 2
+  },
+  "after_kill": {
+    "counter_lines": 1,
+    "has_revision2_record": false,
+    "retry_allowed": false,
+    "revision": 1,
+    "state_bytes_identical_to_kill_window": true,
+    "state_dir_names": [
+      ".line-backup-state.lock",
+      "backup_state.json",
+      "run_log.md"
+    ],
+    "state_sha256": "bf2534ed8947134f325872e156d7ddad5e16505d8f4552ade00183568ffdcfef"
+  },
+  "case_root": "/private/tmp/line-backup-acceptance-case-01",
+  "checks": {
+    "aftermath.counter-still-1": true,
+    "aftermath.no-revision2": true,
+    "aftermath.state-bytes-identical": true,
+    "aftermath.state-dir": true,
+    "commit.exit4": true,
+    "commit.no-replacement": true,
+    "commit.refused": true,
+    "kill-window.counter-1": true,
+    "kill-window.intent-committed": true,
+    "kill-window.not-attempted": true,
+    "kill-window.retry-false": true,
+    "kill-window.revision1": true,
+    "resume.barrier": true,
+    "resume.code": true,
+    "resume.counter-still-1": true,
+    "resume.exit0": true,
+    "resume.no-dispatch": true,
+    "resume.revision2": true
+  },
+  "claim": "pre-fix: a SIGKILL inside the dispatch window left the intent committed and a fresh resume dispatched again; post-fix: the loaded intent is reconciliation-only and at-most-once holds",
+  "commit_after_barrier": {
+    "argv": [
+      "/usr/bin/python3",
+      "-m",
+      "line_backup_acceptance",
+      "transaction",
+      "commit",
+      "--project-root",
+      "/private/tmp/line-backup-acceptance-case-01",
+      "--config",
+      "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+      "--run-log",
+      "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+      "--state",
+      "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+      "--test-mode",
+      "--run-id",
+      "RUN-R1",
+      "--expected-revision",
+      "2",
+      "--expected-owner-id",
+      "WRITER-R1",
+      "--verification-json",
+      "/private/tmp/line-backup-acceptance-case-01/verification-not-used.json",
+      "--evidence-dir",
+      "/private/tmp/line-backup-acceptance-case-01/evidence/commit"
+    ],
+    "exit_code": 4,
+    "result": {
+      "exit_code": 4,
+      "message": "no completed successful dispatch record; commit is refused",
+      "replacement": false,
+      "result": "CONFLICT_UNRESOLVED_DISPATCH",
+      "schema_version": 1,
+      "state_replaced": false
+    },
+    "state_replaced": false
+  },
+  "dispatch_started_barrier": true,
+  "driver": "phase2-r1-crash-window",
+  "entry": "real CLI transaction prepare (killed mid-dispatch) then transaction resume (fresh process)",
+  "fixture": {
+    "config": "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+    "destination": "/private/tmp/line-backup-acceptance-case-01/destination",
+    "run_log": "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+    "source_evidence": "/private/tmp/line-backup-acceptance-case-01/source-evidence.json"
+  },
+  "fresh_resume": {
+    "argv": [
+      "/usr/bin/python3",
+      "-m",
+      "line_backup_acceptance",
+      "transaction",
+      "resume",
+      "--project-root",
+      "/private/tmp/line-backup-acceptance-case-01",
+      "--config",
+      "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+      "--run-log",
+      "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+      "--state",
+      "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+      "--test-mode",
+      "--run-id",
+      "RUN-R1",
+      "--expected-revision",
+      "1",
+      "--expected-owner-id",
+      "WRITER-R1",
+      "--no-dispatch",
+      "--evidence-dir",
+      "/private/tmp/line-backup-acceptance-case-01/evidence/resume"
+    ],
+    "exit_code": 0,
+    "result": {
+      "dispatch_performed": false,
+      "exit_code": 0,
+      "message": "ambiguity barrier committed; no dispatch performed",
+      "reconciliation_state": "BARRIER_COMMITTED",
+      "result": "RECOVERY_NO_DISPATCH",
+      "revision": 2,
+      "schema_version": 1,
+      "state_replaced": true
+    }
+  },
+  "kill": {
+    "dispatcher_pid": 30910,
+    "pid": 30909,
+    "returncode": -9,
+    "signal": "SIGKILL",
+    "stderr_tail": "",
+    "stdout_tail": ""
+  },
+  "kill_window": {
+    "counter_lines": 1,
+    "dispatch_state": "NOT_ATTEMPTED",
+    "intent_dispatch_outcome": "NOT_ATTEMPTED",
+    "intent_state": "INTENT_COMMITTED",
+    "revision": 1,
+    "save_all_retry_allowed": false,
+    "state_sha256": "bf2534ed8947134f325872e156d7ddad5e16505d8f4552ade00183568ffdcfef"
+  },
+  "oracle": "independent dispatcher counter jsonl + persisted revision/intent/dispatch fields + state bytes before/after the kill + post-kill `state/` directory content",
+  "orphan": {
+    "orphan_forced_kill": false,
+    "pid": 30910,
+    "reparented_and_self_exited": true
+  },
+  "pre_fix": {
+    "evidence": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r1/observation.json",
+    "observation": "normal-path resume is SIGKILLed after the dispatcher side effect (state revision 1, INTENT_COMMITTED, no dispatch_evidence); fresh resume dispatched again; counter 1->2",
+    "verdict": "REPRODUCED_DUPLICATE_DISPATCH"
+  },
+  "pre_state": {
+    "bytes": 160,
+    "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+  },
+  "pre_state_excerpt": {
+    "revision": 0,
+    "runs": 0
+  },
+  "program_hashes": {
+    "authority.py": {
+      "bytes": 9330,
+      "sha256": "e0d32d27d5a06a50a60d413c7d17a997490da087583c3ce070e49d951ca8cd27"
+    },
+    "cli.py": {
+      "bytes": 5169,
+      "sha256": "162003558afa8690e63fecb445cbff5e2af9a76c9c88280d9a787b897a9bc49c"
+    },
+    "common.py": {
+      "bytes": 34551,
+      "sha256": "7b0956f9bfb84d7dfb77e095f1626a1d1a1a1aabc543be4bdeff42cbcbf929aa"
+    },
+    "status.py": {
+      "bytes": 7937,
+      "sha256": "1c8c27edf204d9243e8773cd830e16566269fb3814faa332dd8237c71587180e"
+    },
+    "transaction.py": {
+      "bytes": 42374,
+      "sha256": "95ae935162ffc49636bc461dfe64c86f5e915080f45022e667dbb1d4ba9bcc8d"
+    },
+    "verifier.py": {
+      "bytes": 25377,
+      "sha256": "a07ffe450284ade34fce27f646bd4a0c37baccb65de5660e77aea3faf48b23b6"
+    }
+  },
+  "verdict": "SAFE_NO_SECOND_DISPATCH_AFTER_CRASH_WINDOW"
+}

@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "line_backup_acceptance",
+    "transaction",
+    "commit",
+    "--project-root",
+    "/private/tmp/line-backup-acceptance-case-01",
+    "--config",
+    "/private/tmp/line-backup-acceptance-case-01/config/line_backup_config.json",
+    "--run-log",
+    "/private/tmp/line-backup-acceptance-case-01/state/run_log.md",
+    "--state",
+    "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+    "--test-mode",
+    "--run-id",
+    "RUN-CASE-01",
+    "--expected-revision",
+    "2",
+    "--expected-owner-id",
+    "WRITER-CASE-01",
+    "--verification-json",
+    "/private/tmp/line-backup-acceptance-case-01/evidence/verify-1/result.json",
+    "--evidence-dir",
+    "/private/tmp/line-backup-acceptance-case-01/evidence"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "env_extra": {},
+  "secrets_removed": true
+}

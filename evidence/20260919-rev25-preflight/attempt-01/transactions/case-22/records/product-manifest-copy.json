@@ -1,0 +1,2937 @@
+{
+  "artifacts": [
+    {
+      "bytes": 221,
+      "exists": true,
+      "path": ".driver-ownership.json",
+      "sha256": "34f76e2c6df1da705461e9ce45b5cf6eb0c0fbb7c0c11927526f6f3fb73458f1"
+    },
+    {
+      "bytes": 269,
+      "exists": true,
+      "path": "binding-fixture.json",
+      "sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c"
+    },
+    {
+      "bytes": 371,
+      "exists": true,
+      "path": "config/line_backup_config.json",
+      "sha256": "eb73970c8cfe9fe666d6e546d05874b31dec0b4940ff06a89ff272d56a57ade4"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-000.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-001.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-002.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-003.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-004.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-005.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-006.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-007.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-008.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-009.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-010.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-011.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-012.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-013.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-014.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-015.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-016.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-017.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-018.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-019.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-020.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-021.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-022.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-023.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-024.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-025.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-026.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-027.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-028.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-029.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-030.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-031.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-032.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-033.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-034.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-035.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-036.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-037.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-038.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-039.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-040.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-041.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-042.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-043.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-044.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-045.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-046.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-047.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-048.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-049.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-050.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-051.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-052.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-053.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-054.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-055.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-056.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "dispatch-counter.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 484,
+      "exists": true,
+      "path": "dispatcher.py",
+      "sha256": "90111ca1486e18c9260b1e50eebcec14ffbcd70d2fd7f59306b3d773219b84b1"
+    },
+    {
+      "bytes": 492,
+      "exists": true,
+      "path": "evidence/22a/result.json",
+      "sha256": "e927c806277eba5792ffdd8ed6ccb1c2447d466a1fd196b92e18afaf5f9f2efe"
+    },
+    {
+      "bytes": 208,
+      "exists": true,
+      "path": "evidence/22a-refusal/result.json",
+      "sha256": "b13fb1c15e2f6896f2c3372c120c567df9f14ef2d0e97734b179c45995f95e8a"
+    },
+    {
+      "bytes": 247,
+      "exists": true,
+      "path": "evidence/22b/inventory-1.json",
+      "sha256": "c3c66fdb496a6d223069c7f283461e50a85448cf90419ec5bffbe1832ca30798"
+    },
+    {
+      "bytes": 247,
+      "exists": true,
+      "path": "evidence/22b/inventory-2.json",
+      "sha256": "c3c66fdb496a6d223069c7f283461e50a85448cf90419ec5bffbe1832ca30798"
+    },
+    {
+      "bytes": 247,
+      "exists": true,
+      "path": "evidence/22b/inventory-3.json",
+      "sha256": "c3c66fdb496a6d223069c7f283461e50a85448cf90419ec5bffbe1832ca30798"
+    },
+    {
+      "bytes": 964,
+      "exists": true,
+      "path": "evidence/22b/result.json",
+      "sha256": "ba9bde0fa78b240de6b0f4b5cccba91c7c8753cf192eaf41d615e4f41eacd7be"
+    },
+    {
+      "bytes": 212,
+      "exists": true,
+      "path": "evidence/22b-refusal/result.json",
+      "sha256": "a1f48957d72bdb979cbd87d4dca5b9974746e9c462da0cf38ff3ae82f2d84e89"
+    },
+    {
+      "bytes": 3,
+      "exists": true,
+      "path": "evidence/22c/result.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "bytes": 208,
+      "exists": true,
+      "path": "evidence/22c-refusal/result.json",
+      "sha256": "b13fb1c15e2f6896f2c3372c120c567df9f14ef2d0e97734b179c45995f95e8a"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/22d/inventory-1.json",
+      "sha256": "ff6ac49f1ae4bd95f2cc5d41341a96100722c46c0e717c016d017211c3f073a3"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/22d/inventory-2.json",
+      "sha256": "7caeb2c78d78e85c6b0eac1b4baf907b60647f665078c81969dabf5ce4657f7c"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/22d/inventory-3.json",
+      "sha256": "7caeb2c78d78e85c6b0eac1b4baf907b60647f665078c81969dabf5ce4657f7c"
+    },
+    {
+      "bytes": 19032,
+      "exists": true,
+      "path": "evidence/22d/result.json",
+      "sha256": "69796e7fca073d30483d75a2c9aa1affb8d0aac614b76572370bd55cbe2e2a0b"
+    },
+    {
+      "bytes": 200,
+      "exists": true,
+      "path": "evidence/22d-refusal/result.json",
+      "sha256": "3e7de714b110630837e04af8e58fa064424976991f3f8a48400f49e28a099119"
+    },
+    {
+      "bytes": 492,
+      "exists": true,
+      "path": "evidence/22e/result.json",
+      "sha256": "e927c806277eba5792ffdd8ed6ccb1c2447d466a1fd196b92e18afaf5f9f2efe"
+    },
+    {
+      "bytes": 207,
+      "exists": true,
+      "path": "evidence/22e-refusal/result.json",
+      "sha256": "9ce7d3aa86cb1fea41f681b92e2c1ff76e6aaef7c654956d4b594c0a57ad9f90"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/22f/inventory-1.json",
+      "sha256": "7caeb2c78d78e85c6b0eac1b4baf907b60647f665078c81969dabf5ce4657f7c"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/22f/inventory-2.json",
+      "sha256": "7caeb2c78d78e85c6b0eac1b4baf907b60647f665078c81969dabf5ce4657f7c"
+    },
+    {
+      "bytes": 17120,
+      "exists": true,
+      "path": "evidence/22f/inventory-3.json",
+      "sha256": "46e45c6bbbc7b94f50df08816fadb84c182a0a1634314ee52bdb3952845dad54"
+    },
+    {
+      "bytes": 19026,
+      "exists": true,
+      "path": "evidence/22f/result.json",
+      "sha256": "7c66ea11b4b25f0c2665b40e54722af0085e2193506dae29fedeccad4e000caf"
+    },
+    {
+      "bytes": 19027,
+      "exists": true,
+      "path": "evidence/22f/tamper-evidence/result.json.appended-space",
+      "sha256": "ef7328e1faa2d01217836eec111f3a448b0998146a6429c2b74dc543c479aa06"
+    },
+    {
+      "bytes": 211,
+      "exists": true,
+      "path": "evidence/22f-refusal/result.json",
+      "sha256": "3899faa1acb14f8d936f3d64f31a20689b4d0673ddbafeb9779f7315895f58da"
+    },
+    {
+      "bytes": 3228,
+      "exists": true,
+      "path": "input-state.json",
+      "sha256": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b"
+    },
+    {
+      "bytes": 968,
+      "exists": true,
+      "path": "process-records/22/22b-verify/argv.json",
+      "sha256": "1c07062104ecc2a17c0fd583b3738e5ac8dc4dbe8614c800bc1ab10d60197f49"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/22/22b-verify/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/22/22b-verify/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 872,
+      "exists": true,
+      "path": "process-records/22/22b-verify/stdout.log",
+      "sha256": "c85de9683a9fde05102b4254e2cbeeace254dce4e47781968b51bb2f858b4114"
+    },
+    {
+      "bytes": 968,
+      "exists": true,
+      "path": "process-records/22/22d-verify/argv.json",
+      "sha256": "13d6474cb6f10195a8cfe46380657a468c76f0ecea9a5917051ff7786c596c08"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/22/22d-verify/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/22/22d-verify/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14484,
+      "exists": true,
+      "path": "process-records/22/22d-verify/stdout.log",
+      "sha256": "c9033f1dbe1f2f22126673a0f7b1439e5ecad21de562b26d624b5cc00f1c3ac2"
+    },
+    {
+      "bytes": 962,
+      "exists": true,
+      "path": "process-records/22/22f-verify/argv.json",
+      "sha256": "7f2be725abaec5c42e66ac00e5d468ab76c02ad33a57c9664a52c79db1e80132"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/22/22f-verify/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/22/22f-verify/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14478,
+      "exists": true,
+      "path": "process-records/22/22f-verify/stdout.log",
+      "sha256": "f9b778ab6d1264fca0b1805f4dceb8dd0dfeb9caafb683294ac8f51b9d4afb5b"
+    },
+    {
+      "bytes": 940,
+      "exists": true,
+      "path": "process-records/22/finalize-22a/argv.json",
+      "sha256": "64aaffba664c3eacd377a0e176994ca70ba4bd31a3f2bd27252fdd6aa54e750d"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/22/finalize-22a/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/22/finalize-22a/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 194,
+      "exists": true,
+      "path": "process-records/22/finalize-22a/stdout.log",
+      "sha256": "170707e0c091fef96e2bdac94165677ea9beee4d4079df89d9210ff5c4ac6d78"
+    },
+    {
+      "bytes": 940,
+      "exists": true,
+      "path": "process-records/22/finalize-22b/argv.json",
+      "sha256": "03d45ffe3355993cc5458e626d9a2bf18c17029c8bf0841068ae4cc16da695f1"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/22/finalize-22b/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/22/finalize-22b/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 198,
+      "exists": true,
+      "path": "process-records/22/finalize-22b/stdout.log",
+      "sha256": "a427e17c2c17cf0ea5d77da9986a07bb9cabd128855cc4c2e92b934e631c956e"
+    },
+    {
+      "bytes": 940,
+      "exists": true,
+      "path": "process-records/22/finalize-22c/argv.json",
+      "sha256": "3d88b7056d53ee74bfca521c6d26e2639baf393b9350fa5d4f8669db1888f5a0"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/22/finalize-22c/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/22/finalize-22c/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 194,
+      "exists": true,
+      "path": "process-records/22/finalize-22c/stdout.log",
+      "sha256": "170707e0c091fef96e2bdac94165677ea9beee4d4079df89d9210ff5c4ac6d78"
+    },
+    {
+      "bytes": 940,
+      "exists": true,
+      "path": "process-records/22/finalize-22d/argv.json",
+      "sha256": "0a102fb06652dd7ea6a12cfed5d05e2dc7ff408f542c26b083008000b1ddb828"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/22/finalize-22d/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/22/finalize-22d/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 186,
+      "exists": true,
+      "path": "process-records/22/finalize-22d/stdout.log",
+      "sha256": "1fefea30f8d58f4d8429493bbcba39ab89dd71cb78408aeadd310ffc6641ae0e"
+    },
+    {
+      "bytes": 940,
+      "exists": true,
+      "path": "process-records/22/finalize-22e/argv.json",
+      "sha256": "09c5dc5c6ff72fc39ce3431a5d55aac8ac09cf164aed72b9a0f15eaa789a5fc8"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/22/finalize-22e/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/22/finalize-22e/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 193,
+      "exists": true,
+      "path": "process-records/22/finalize-22e/stdout.log",
+      "sha256": "f0d4f5c91da015d1929d08d4ccc8830bb2f76a104bf697a0a98e414ff312e5c2"
+    },
+    {
+      "bytes": 940,
+      "exists": true,
+      "path": "process-records/22/finalize-22f/argv.json",
+      "sha256": "216d7592a45f68864c879c807e127fc0f55e706680b5dfffc5b8f3c5006b3ef1"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/22/finalize-22f/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/22/finalize-22f/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 197,
+      "exists": true,
+      "path": "process-records/22/finalize-22f/stdout.log",
+      "sha256": "6a6c2a0c7eeb4dae8815bc61855f3ea03a090845527cf76f35914976f4d6690a"
+    },
+    {
+      "bytes": 1210,
+      "exists": true,
+      "path": "source-evidence.json",
+      "sha256": "5623b88edb3c65b3e2579710bf900ad66eac5bd0461a3f4fdd35d9c0a061356a"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "state/.line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3228,
+      "exists": true,
+      "path": "state/backup_state.json",
+      "sha256": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b"
+    },
+    {
+      "bytes": 55,
+      "exists": true,
+      "path": "state/run_log.md",
+      "sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f"
+    }
+  ],
+  "case_id": "22",
+  "checks": [
+    {
+      "expected": "INVALID_VERIFICATION_EVIDENCE",
+      "id": "22a.code",
+      "match": true,
+      "observed": "INVALID_VERIFICATION_EVIDENCE"
+    },
+    {
+      "expected": 4,
+      "id": "22a.exit4",
+      "match": true,
+      "observed": 4
+    },
+    {
+      "expected": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b",
+      "id": "22a.no-write",
+      "match": true,
+      "observed": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b"
+    },
+    {
+      "expected": 2,
+      "id": "22a.revision2",
+      "match": true,
+      "observed": 2
+    },
+    {
+      "expected": 0,
+      "id": "22a.registry0",
+      "match": true,
+      "observed": 0
+    },
+    {
+      "expected": true,
+      "id": "22a.refusal-artifact",
+      "match": true,
+      "observed": true
+    },
+    {
+      "expected": "FAIL",
+      "id": "22b.verify-fail",
+      "match": true,
+      "observed": "FAIL"
+    },
+    {
+      "expected": "INVALID_VERIFICATION_EVIDENCE",
+      "id": "22b.code",
+      "match": true,
+      "observed": "INVALID_VERIFICATION_EVIDENCE"
+    },
+    {
+      "expected": 4,
+      "id": "22b.exit4",
+      "match": true,
+      "observed": 4
+    },
+    {
+      "expected": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b",
+      "id": "22b.no-write",
+      "match": true,
+      "observed": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b"
+    },
+    {
+      "expected": 2,
+      "id": "22b.revision2",
+      "match": true,
+      "observed": 2
+    },
+    {
+      "expected": 0,
+      "id": "22b.registry0",
+      "match": true,
+      "observed": 0
+    },
+    {
+      "expected": true,
+      "id": "22b.refusal-artifact",
+      "match": true,
+      "observed": true
+    },
+    {
+      "expected": "INVALID_VERIFICATION_EVIDENCE",
+      "id": "22c.code",
+      "match": true,
+      "observed": "INVALID_VERIFICATION_EVIDENCE"
+    },
+    {
+      "expected": 4,
+      "id": "22c.exit4",
+      "match": true,
+      "observed": 4
+    },
+    {
+      "expected": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b",
+      "id": "22c.no-write",
+      "match": true,
+      "observed": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b"
+    },
+    {
+      "expected": 2,
+      "id": "22c.revision2",
+      "match": true,
+      "observed": 2
+    },
+    {
+      "expected": 0,
+      "id": "22c.registry0",
+      "match": true,
+      "observed": 0
+    },
+    {
+      "expected": true,
+      "id": "22c.refusal-artifact",
+      "match": true,
+      "observed": true
+    },
+    {
+      "expected": "VERIFICATION_RUN_MISMATCH",
+      "id": "22d.code",
+      "match": true,
+      "observed": "VERIFICATION_RUN_MISMATCH"
+    },
+    {
+      "expected": 4,
+      "id": "22d.exit4",
+      "match": true,
+      "observed": 4
+    },
+    {
+      "expected": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b",
+      "id": "22d.no-write",
+      "match": true,
+      "observed": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b"
+    },
+    {
+      "expected": 2,
+      "id": "22d.revision2",
+      "match": true,
+      "observed": 2
+    },
+    {
+      "expected": 0,
+      "id": "22d.registry0",
+      "match": true,
+      "observed": 0
+    },
+    {
+      "expected": true,
+      "id": "22d.refusal-artifact",
+      "match": true,
+      "observed": true
+    },
+    {
+      "expected": "INVALID_VERIFICATION_EVIDENCE",
+      "id": "22e.code",
+      "match": true,
+      "observed": "INVALID_VERIFICATION_EVIDENCE"
+    },
+    {
+      "expected": 4,
+      "id": "22e.exit4",
+      "match": true,
+      "observed": 4
+    },
+    {
+      "expected": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b",
+      "id": "22e.no-write",
+      "match": true,
+      "observed": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b"
+    },
+    {
+      "expected": 2,
+      "id": "22e.revision2",
+      "match": true,
+      "observed": 2
+    },
+    {
+      "expected": 0,
+      "id": "22e.registry0",
+      "match": true,
+      "observed": 0
+    },
+    {
+      "expected": true,
+      "id": "22e.refusal-artifact",
+      "match": true,
+      "observed": true
+    },
+    {
+      "expected": "INVALID_VERIFICATION_EVIDENCE",
+      "id": "22f.code",
+      "match": true,
+      "observed": "INVALID_VERIFICATION_EVIDENCE"
+    },
+    {
+      "expected": 4,
+      "id": "22f.exit4",
+      "match": true,
+      "observed": 4
+    },
+    {
+      "expected": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b",
+      "id": "22f.no-write",
+      "match": true,
+      "observed": "e5246e2f13349f7abc772414dffbf0d21e216b5ebd72b6fe38e549b7c567d26b"
+    },
+    {
+      "expected": 2,
+      "id": "22f.revision2",
+      "match": true,
+      "observed": 2
+    },
+    {
+      "expected": 0,
+      "id": "22f.registry0",
+      "match": true,
+      "observed": 0
+    },
+    {
+      "expected": true,
+      "id": "22f.refusal-artifact",
+      "match": true,
+      "observed": true
+    },
+    {
+      "expected": 6,
+      "id": "subcases",
+      "match": true,
+      "observed": 6
+    }
+  ],
+  "independent_oracle_match": true,
+  "inputs": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22a/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22a-refusal"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "finalize-22a"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "verify-only",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-22/empty-destination",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--run-id",
+        "RUN-CASE-22",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22b"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "22b-verify"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22b/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22b-refusal"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "finalize-22b"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22c/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22c-refusal"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "finalize-22c"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "verify-only",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-22/destination",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22d",
+        "--run-id",
+        "RUN-CASE-22-OTHER"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "22d-verify"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22d/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22d-refusal"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "finalize-22d"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22e/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22e-refusal"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "finalize-22e"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "verify-only",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-22/destination",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22f",
+        "--run-id",
+        "RUN-CASE-22"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "22f-verify"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22f/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22f-refusal"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "finalize-22f"
+    }
+  ],
+  "notes": [
+    "fixture preconditions authored by the driver; oracle computed before product execution",
+    "22f tamper restored after the refusal check: original 19026 bytes sha256 7c66ea11b4b25f0c2665b40e54722af0085e2193506dae29fedeccad4e000caf; tampered 19027 bytes sha256 ef7328e1faa2d01217836eec111f3a448b0998146a6429c2b74dc543c479aa06"
+  ],
+  "processes": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22a/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22a-refusal"
+      ],
+      "exit_code": 4,
+      "label": "finalize-22a",
+      "record_dir": "process-records/22/finalize-22a",
+      "result": {
+        "exit_code": 4,
+        "message": "no evidence chain (manifest.json) beside the result",
+        "replacement": false,
+        "result": "INVALID_VERIFICATION_EVIDENCE",
+        "schema_version": 1,
+        "state_replaced": false
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "verify-only",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-22/empty-destination",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--run-id",
+        "RUN-CASE-22",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22b"
+      ],
+      "exit_code": 4,
+      "label": "22b-verify",
+      "record_dir": "process-records/22/22b-verify",
+      "result": {
+        "artifact_readback": "PASS",
+        "destination": "/private/tmp/line-backup-acceptance-case-22/empty-destination",
+        "exit_code": 4,
+        "expected_images": 57,
+        "failure_class": "INPUT_NEGATIVE",
+        "filesystem": {
+          "entries": [],
+          "error_codes": [],
+          "observed_at": "2026-09-19T10:54:20Z",
+          "recognized_images": 0,
+          "regular_files": 0,
+          "root": "/private/tmp/line-backup-acceptance-case-22/empty-destination",
+          "scan_error": null,
+          "total_bytes": 0
+        },
+        "filesystem_status": "FAIL",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "inventory_samples": 3,
+        "mode": "verify_only",
+        "overall_status": "NOT_ACHIEVED",
+        "recognized_images": 0,
+        "registry_status": "NOT_RUN",
+        "run_id": "RUN-CASE-22",
+        "schema_version": 1,
+        "source_status": "NOT_RUN",
+        "state_revision": 2,
+        "state_status": "NOT_RUN"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22b/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22b-refusal"
+      ],
+      "exit_code": 4,
+      "label": "finalize-22b",
+      "record_dir": "process-records/22/finalize-22b",
+      "result": {
+        "exit_code": 4,
+        "message": "verification result is not a passing verify_only result",
+        "replacement": false,
+        "result": "INVALID_VERIFICATION_EVIDENCE",
+        "schema_version": 1,
+        "state_replaced": false
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22c/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22c-refusal"
+      ],
+      "exit_code": 4,
+      "label": "finalize-22c",
+      "record_dir": "process-records/22/finalize-22c",
+      "result": {
+        "exit_code": 4,
+        "message": "no evidence chain (manifest.json) beside the result",
+        "replacement": false,
+        "result": "INVALID_VERIFICATION_EVIDENCE",
+        "schema_version": 1,
+        "state_replaced": false
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "verify-only",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-22/destination",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22d",
+        "--run-id",
+        "RUN-CASE-22-OTHER"
+      ],
+      "exit_code": 4,
+      "label": "22d-verify",
+      "record_dir": "process-records/22/22d-verify",
+      "result": {
+        "artifact_readback": "PASS",
+        "destination": "/private/tmp/line-backup-acceptance-case-22/destination",
+        "exit_code": 4,
+        "expected_images": 57,
+        "failure_class": "INPUT_NEGATIVE",
+        "filesystem": {
+          "entries": [
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259808790584,
+              "relative_path": "image-000.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259808902541,
+              "relative_path": "image-001.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809004873,
+              "relative_path": "image-002.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809104038,
+              "relative_path": "image-003.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809202079,
+              "relative_path": "image-004.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809299786,
+              "relative_path": "image-005.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809397201,
+              "relative_path": "image-006.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809495408,
+              "relative_path": "image-007.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809596865,
+              "relative_path": "image-008.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809696031,
+              "relative_path": "image-009.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809798113,
+              "relative_path": "image-010.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809895570,
+              "relative_path": "image-011.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809991569,
+              "relative_path": "image-012.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810093401,
+              "relative_path": "image-013.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810201025,
+              "relative_path": "image-014.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810301107,
+              "relative_path": "image-015.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810397439,
+              "relative_path": "image-016.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810506521,
+              "relative_path": "image-017.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810607936,
+              "relative_path": "image-018.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810709435,
+              "relative_path": "image-019.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810803309,
+              "relative_path": "image-020.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810897891,
+              "relative_path": "image-021.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810991807,
+              "relative_path": "image-022.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811084514,
+              "relative_path": "image-023.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811189846,
+              "relative_path": "image-024.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811283053,
+              "relative_path": "image-025.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811375593,
+              "relative_path": "image-026.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811479842,
+              "relative_path": "image-027.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811585466,
+              "relative_path": "image-028.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811678756,
+              "relative_path": "image-029.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811773297,
+              "relative_path": "image-030.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811867004,
+              "relative_path": "image-031.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811964836,
+              "relative_path": "image-032.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812064127,
+              "relative_path": "image-033.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812170042,
+              "relative_path": "image-034.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812276499,
+              "relative_path": "image-035.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812371581,
+              "relative_path": "image-036.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812485080,
+              "relative_path": "image-037.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812588370,
+              "relative_path": "image-038.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812689410,
+              "relative_path": "image-039.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812787159,
+              "relative_path": "image-040.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812880783,
+              "relative_path": "image-041.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812984032,
+              "relative_path": "image-042.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813084697,
+              "relative_path": "image-043.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813180571,
+              "relative_path": "image-044.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813277820,
+              "relative_path": "image-045.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813373527,
+              "relative_path": "image-046.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813466859,
+              "relative_path": "image-047.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813568066,
+              "relative_path": "image-048.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813663107,
+              "relative_path": "image-049.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813756981,
+              "relative_path": "image-050.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813855604,
+              "relative_path": "image-051.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813950978,
+              "relative_path": "image-052.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259814045477,
+              "relative_path": "image-053.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259814140059,
+              "relative_path": "image-054.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259814238225,
+              "relative_path": "image-055.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259814341682,
+              "relative_path": "image-056.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            }
+          ],
+          "error_codes": [],
+          "observed_at": "2026-09-19T10:54:21Z",
+          "recognized_images": 57,
+          "regular_files": 57,
+          "root": "/private/tmp/line-backup-acceptance-case-22/destination",
+          "scan_error": null,
+          "total_bytes": 4218
+        },
+        "filesystem_status": "PASS",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "inventory_samples": 3,
+        "legacy_normalizations": [],
+        "mode": "verify_only",
+        "overall_status": "NOT_ACHIEVED",
+        "recognized_images": 57,
+        "registry_status": "FAIL",
+        "run_id": "RUN-CASE-22-OTHER",
+        "schema_version": 1,
+        "source_kind": null,
+        "source_status": "UNRESOLVED",
+        "state_revision": 2,
+        "state_status": "EXACT"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22d/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22d-refusal"
+      ],
+      "exit_code": 4,
+      "label": "finalize-22d",
+      "record_dir": "process-records/22/finalize-22d",
+      "result": {
+        "exit_code": 4,
+        "message": "verification run_id does not belong to this run",
+        "replacement": false,
+        "result": "VERIFICATION_RUN_MISMATCH",
+        "schema_version": 1,
+        "state_replaced": false
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22e/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22e-refusal"
+      ],
+      "exit_code": 4,
+      "label": "finalize-22e",
+      "record_dir": "process-records/22/finalize-22e",
+      "result": {
+        "exit_code": 4,
+        "message": "manifest result_summary disagrees with result.json",
+        "replacement": false,
+        "result": "INVALID_VERIFICATION_EVIDENCE",
+        "schema_version": 1,
+        "state_replaced": false
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "verify-only",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-22/destination",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22f",
+        "--run-id",
+        "RUN-CASE-22"
+      ],
+      "exit_code": 4,
+      "label": "22f-verify",
+      "record_dir": "process-records/22/22f-verify",
+      "result": {
+        "artifact_readback": "PASS",
+        "destination": "/private/tmp/line-backup-acceptance-case-22/destination",
+        "exit_code": 4,
+        "expected_images": 57,
+        "failure_class": "INPUT_NEGATIVE",
+        "filesystem": {
+          "entries": [
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259808790584,
+              "relative_path": "image-000.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259808902541,
+              "relative_path": "image-001.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809004873,
+              "relative_path": "image-002.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809104038,
+              "relative_path": "image-003.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809202079,
+              "relative_path": "image-004.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809299786,
+              "relative_path": "image-005.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809397201,
+              "relative_path": "image-006.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809495408,
+              "relative_path": "image-007.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809596865,
+              "relative_path": "image-008.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809696031,
+              "relative_path": "image-009.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809798113,
+              "relative_path": "image-010.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809895570,
+              "relative_path": "image-011.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259809991569,
+              "relative_path": "image-012.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810093401,
+              "relative_path": "image-013.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810201025,
+              "relative_path": "image-014.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810301107,
+              "relative_path": "image-015.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810397439,
+              "relative_path": "image-016.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810506521,
+              "relative_path": "image-017.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810607936,
+              "relative_path": "image-018.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810709435,
+              "relative_path": "image-019.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810803309,
+              "relative_path": "image-020.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810897891,
+              "relative_path": "image-021.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259810991807,
+              "relative_path": "image-022.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811084514,
+              "relative_path": "image-023.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811189846,
+              "relative_path": "image-024.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811283053,
+              "relative_path": "image-025.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811375593,
+              "relative_path": "image-026.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811479842,
+              "relative_path": "image-027.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811585466,
+              "relative_path": "image-028.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811678756,
+              "relative_path": "image-029.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811773297,
+              "relative_path": "image-030.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811867004,
+              "relative_path": "image-031.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259811964836,
+              "relative_path": "image-032.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812064127,
+              "relative_path": "image-033.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812170042,
+              "relative_path": "image-034.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812276499,
+              "relative_path": "image-035.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812371581,
+              "relative_path": "image-036.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812485080,
+              "relative_path": "image-037.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812588370,
+              "relative_path": "image-038.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812689410,
+              "relative_path": "image-039.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812787159,
+              "relative_path": "image-040.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812880783,
+              "relative_path": "image-041.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259812984032,
+              "relative_path": "image-042.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813084697,
+              "relative_path": "image-043.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813180571,
+              "relative_path": "image-044.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813277820,
+              "relative_path": "image-045.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813373527,
+              "relative_path": "image-046.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813466859,
+              "relative_path": "image-047.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813568066,
+              "relative_path": "image-048.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813663107,
+              "relative_path": "image-049.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813756981,
+              "relative_path": "image-050.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813855604,
+              "relative_path": "image-051.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259813950978,
+              "relative_path": "image-052.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259814045477,
+              "relative_path": "image-053.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259814140059,
+              "relative_path": "image-054.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259814238225,
+              "relative_path": "image-055.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            },
+            {
+              "failure_class": null,
+              "mime": "image/png",
+              "mtime_ns": 1789815259814341682,
+              "relative_path": "image-056.png",
+              "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+              "size": 74,
+              "status": "OK",
+              "type": "regular"
+            }
+          ],
+          "error_codes": [],
+          "observed_at": "2026-09-19T10:54:22Z",
+          "recognized_images": 57,
+          "regular_files": 57,
+          "root": "/private/tmp/line-backup-acceptance-case-22/destination",
+          "scan_error": null,
+          "total_bytes": 4218
+        },
+        "filesystem_status": "PASS",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "inventory_samples": 3,
+        "legacy_normalizations": [],
+        "mode": "verify_only",
+        "overall_status": "NOT_ACHIEVED",
+        "recognized_images": 57,
+        "registry_status": "FAIL",
+        "run_id": "RUN-CASE-22",
+        "schema_version": 1,
+        "source_kind": null,
+        "source_status": "UNRESOLVED",
+        "state_revision": 2,
+        "state_status": "EXACT"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-22",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-22/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-22/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-22/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-22",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-22",
+        "--outcome",
+        "VERIFIED",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22f/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-22/evidence/22f-refusal"
+      ],
+      "exit_code": 4,
+      "label": "finalize-22f",
+      "record_dir": "process-records/22/finalize-22f",
+      "result": {
+        "exit_code": 4,
+        "message": "manifest result bytes/sha256 disagree with result.json",
+        "replacement": false,
+        "result": "INVALID_VERIFICATION_EVIDENCE",
+        "schema_version": 1,
+        "state_replaced": false
+      }
+    }
+  ],
+  "root": "/private/tmp/line-backup-acceptance-case-22",
+  "schema_version": 1
+}

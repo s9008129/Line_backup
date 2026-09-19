@@ -1,0 +1,1914 @@
+{
+  "case_01_chain": {
+    "case_root": "/private/tmp/line-backup-acceptance-case-01",
+    "durable_copy": "evidence/20260919-rev25-auto-verification/attempt-01/order-driver-first/phase2-r6-ownership/probe-runs/case-01-durable",
+    "durable_manifest": "evidence/20260919-rev25-auto-verification/attempt-01/order-driver-first/phase2-r6-ownership/probe-runs/case-01-durable/manifest.json",
+    "stash_note": "the stash lives in working space only; the resolvable durable manifest is the copy at the case-01-durable root",
+    "stashed_manifest_copy": "/private/tmp/line-backup-acceptance-wave/r6-ownership-case-01-manifest.json"
+  },
+  "claim": "shared case roots and recorded evidence survive every driver run",
+  "deletion_evidence_passed": true,
+  "destroyed_roots": [],
+  "driver_exit_codes": {
+    "acceptance_case_driver_01": 0,
+    "authority_negative_driver": 0,
+    "test_transaction_core": 0
+  },
+  "entry": "authority_negative_driver + unittest tests.test_transaction_core + acceptance_case_driver --case-id 01, all as real subprocesses",
+  "markers_changed": [],
+  "markers_present": [
+    "/private/tmp/line-backup-acceptance-authority",
+    "/private/tmp/line-backup-acceptance-case-01",
+    "/private/tmp/line-backup-acceptance-case-02",
+    "/private/tmp/line-backup-acceptance-case-03",
+    "/private/tmp/line-backup-acceptance-case-04",
+    "/private/tmp/line-backup-acceptance-case-05",
+    "/private/tmp/line-backup-acceptance-case-06",
+    "/private/tmp/line-backup-acceptance-case-07",
+    "/private/tmp/line-backup-acceptance-case-08",
+    "/private/tmp/line-backup-acceptance-case-09",
+    "/private/tmp/line-backup-acceptance-case-10",
+    "/private/tmp/line-backup-acceptance-case-11",
+    "/private/tmp/line-backup-acceptance-case-12",
+    "/private/tmp/line-backup-acceptance-case-13",
+    "/private/tmp/line-backup-acceptance-case-14",
+    "/private/tmp/line-backup-acceptance-case-15",
+    "/private/tmp/line-backup-acceptance-case-16",
+    "/private/tmp/line-backup-acceptance-case-17",
+    "/private/tmp/line-backup-acceptance-case-18",
+    "/private/tmp/line-backup-acceptance-case-19",
+    "/private/tmp/line-backup-acceptance-case-20",
+    "/private/tmp/line-backup-acceptance-case-21",
+    "/private/tmp/line-backup-acceptance-case-22",
+    "/private/tmp/line-backup-acceptance-case-23",
+    "/private/tmp/line-backup-acceptance-case-24",
+    "/private/tmp/line-backup-acceptance-case-25",
+    "/private/tmp/line-backup-acceptance-status-r6",
+    "/private/tmp/line-backup-acceptance-verifier/56",
+    "/private/tmp/line-backup-acceptance-verifier/58",
+    "/private/tmp/line-backup-acceptance-verifier/artifact",
+    "/private/tmp/line-backup-acceptance-verifier/authority",
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-deleted",
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-mutated",
+    "/private/tmp/line-backup-acceptance-verifier/bytes",
+    "/private/tmp/line-backup-acceptance-verifier/crdownload",
+    "/private/tmp/line-backup-acceptance-verifier/cross",
+    "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id",
+    "/private/tmp/line-backup-acceptance-verifier/download",
+    "/private/tmp/line-backup-acceptance-verifier/duplicate",
+    "/private/tmp/line-backup-acceptance-verifier/file-command",
+    "/private/tmp/line-backup-acceptance-verifier/filepart",
+    "/private/tmp/line-backup-acceptance-verifier/forged-binding",
+    "/private/tmp/line-backup-acceptance-verifier/hidden",
+    "/private/tmp/line-backup-acceptance-verifier/incomplete",
+    "/private/tmp/line-backup-acceptance-verifier/invalid-config",
+    "/private/tmp/line-backup-acceptance-verifier/jpeg-missing-eoi",
+    "/private/tmp/line-backup-acceptance-verifier/legacy",
+    "/private/tmp/line-backup-acceptance-verifier/mtime",
+    "/private/tmp/line-backup-acceptance-verifier/nonterminal-linked",
+    "/private/tmp/line-backup-acceptance-verifier/outside",
+    "/private/tmp/line-backup-acceptance-verifier/part",
+    "/private/tmp/line-backup-acceptance-verifier/partial",
+    "/private/tmp/line-backup-acceptance-verifier/r5",
+    "/private/tmp/line-backup-acceptance-verifier/read-error-sample-2",
+    "/private/tmp/line-backup-acceptance-verifier/safe",
+    "/private/tmp/line-backup-acceptance-verifier/safe-abort-linked",
+    "/private/tmp/line-backup-acceptance-verifier/special",
+    "/private/tmp/line-backup-acceptance-verifier/symlink-entry",
+    "/private/tmp/line-backup-acceptance-verifier/temp",
+    "/private/tmp/line-backup-acceptance-verifier/text",
+    "/private/tmp/line-backup-acceptance-verifier/tmp",
+    "/private/tmp/line-backup-acceptance-verifier/truncated-png",
+    "/private/tmp/line-backup-acceptance-verifier/unreadable",
+    "/private/tmp/line-backup-acceptance-verifier/unsupported-image-type",
+    "/private/tmp/line-backup-acceptance-verifier/valid",
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group",
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group-link"
+  ],
+  "oracle": "ownership markers, driver-records probe artifacts, root existence before/after",
+  "probe_placement": {
+    "/private/tmp/line-backup-acceptance-authority": {
+      "adopted_marker_driver": "authority-negative-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-authority"
+    },
+    "/private/tmp/line-backup-acceptance-case-01": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-01"
+    },
+    "/private/tmp/line-backup-acceptance-case-02": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-02"
+    },
+    "/private/tmp/line-backup-acceptance-case-03": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-03"
+    },
+    "/private/tmp/line-backup-acceptance-case-04": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-04"
+    },
+    "/private/tmp/line-backup-acceptance-case-05": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-05"
+    },
+    "/private/tmp/line-backup-acceptance-case-06": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-06"
+    },
+    "/private/tmp/line-backup-acceptance-case-07": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-07"
+    },
+    "/private/tmp/line-backup-acceptance-case-08": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-08"
+    },
+    "/private/tmp/line-backup-acceptance-case-09": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-09"
+    },
+    "/private/tmp/line-backup-acceptance-case-10": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-10"
+    },
+    "/private/tmp/line-backup-acceptance-case-11": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-11"
+    },
+    "/private/tmp/line-backup-acceptance-case-12": {
+      "adopted_marker_driver": "acceptance-case-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-case-12"
+    },
+    "/private/tmp/line-backup-acceptance-status-r6": {
+      "adopted_marker_driver": "phase2-r6-status-selfcert",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-status-r6"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/56": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/56"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/58": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/58"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/artifact": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/artifact"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/authority": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/authority"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-deleted": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/binding-artifact-deleted"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-mutated": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/binding-artifact-mutated"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/bytes": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/bytes"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/crdownload": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/crdownload"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/cross": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/cross"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/download": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/download"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/duplicate": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/duplicate"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/file-command": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/file-command"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/filepart": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/filepart"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/forged-binding": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/forged-binding"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/hidden": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/hidden"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/incomplete": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/incomplete"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/invalid-config": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/invalid-config"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/jpeg-missing-eoi": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/jpeg-missing-eoi"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/legacy": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/legacy"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/mtime": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/mtime"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/nonterminal-linked": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/nonterminal-linked"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/outside": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/outside"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/part": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/part"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/partial": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/partial"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/r5": {
+      "adopted_marker_driver": "phase2-r5-verifier-gaps",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/r5"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/read-error-sample-2": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/read-error-sample-2"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/safe": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/safe"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/safe-abort-linked": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/safe-abort-linked"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/special": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/special"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/symlink-entry": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/symlink-entry"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/temp": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/temp"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/text": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/text"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/tmp": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/tmp"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/truncated-png": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/truncated-png"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/unreadable": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/unreadable"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/unsupported-image-type": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/unsupported-image-type"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/valid": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/valid"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/wrong-group"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group-link": {
+      "adopted_marker_driver": "verifier-fixture-driver",
+      "marker_driver_hint": "existing",
+      "placed_at": "2026-09-19T10:57:32Z",
+      "probe": "phase2-r6-ownership",
+      "root": "/private/tmp/line-backup-acceptance-verifier/wrong-group-link"
+    }
+  },
+  "probe_root_candidates": [
+    "/private/tmp/line-backup-acceptance-case-01",
+    "/private/tmp/line-backup-acceptance-case-02",
+    "/private/tmp/line-backup-acceptance-case-03",
+    "/private/tmp/line-backup-acceptance-case-04",
+    "/private/tmp/line-backup-acceptance-case-05",
+    "/private/tmp/line-backup-acceptance-case-06",
+    "/private/tmp/line-backup-acceptance-case-07",
+    "/private/tmp/line-backup-acceptance-case-08",
+    "/private/tmp/line-backup-acceptance-case-09",
+    "/private/tmp/line-backup-acceptance-case-10",
+    "/private/tmp/line-backup-acceptance-case-11",
+    "/private/tmp/line-backup-acceptance-case-12",
+    "/private/tmp/line-backup-acceptance-authority",
+    "/private/tmp/line-backup-acceptance-status-r6",
+    "/private/tmp/line-backup-acceptance-verifier/56",
+    "/private/tmp/line-backup-acceptance-verifier/58",
+    "/private/tmp/line-backup-acceptance-verifier/artifact",
+    "/private/tmp/line-backup-acceptance-verifier/authority",
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-deleted",
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-mutated",
+    "/private/tmp/line-backup-acceptance-verifier/bytes",
+    "/private/tmp/line-backup-acceptance-verifier/crdownload",
+    "/private/tmp/line-backup-acceptance-verifier/cross",
+    "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id",
+    "/private/tmp/line-backup-acceptance-verifier/download",
+    "/private/tmp/line-backup-acceptance-verifier/duplicate",
+    "/private/tmp/line-backup-acceptance-verifier/file-command",
+    "/private/tmp/line-backup-acceptance-verifier/filepart",
+    "/private/tmp/line-backup-acceptance-verifier/forged-binding",
+    "/private/tmp/line-backup-acceptance-verifier/hidden",
+    "/private/tmp/line-backup-acceptance-verifier/incomplete",
+    "/private/tmp/line-backup-acceptance-verifier/invalid-config",
+    "/private/tmp/line-backup-acceptance-verifier/jpeg-missing-eoi",
+    "/private/tmp/line-backup-acceptance-verifier/legacy",
+    "/private/tmp/line-backup-acceptance-verifier/mtime",
+    "/private/tmp/line-backup-acceptance-verifier/nonterminal-linked",
+    "/private/tmp/line-backup-acceptance-verifier/outside",
+    "/private/tmp/line-backup-acceptance-verifier/part",
+    "/private/tmp/line-backup-acceptance-verifier/partial",
+    "/private/tmp/line-backup-acceptance-verifier/r5",
+    "/private/tmp/line-backup-acceptance-verifier/read-error-sample-2",
+    "/private/tmp/line-backup-acceptance-verifier/safe",
+    "/private/tmp/line-backup-acceptance-verifier/safe-abort-linked",
+    "/private/tmp/line-backup-acceptance-verifier/special",
+    "/private/tmp/line-backup-acceptance-verifier/symlink-entry",
+    "/private/tmp/line-backup-acceptance-verifier/temp",
+    "/private/tmp/line-backup-acceptance-verifier/text",
+    "/private/tmp/line-backup-acceptance-verifier/tmp",
+    "/private/tmp/line-backup-acceptance-verifier/truncated-png",
+    "/private/tmp/line-backup-acceptance-verifier/unreadable",
+    "/private/tmp/line-backup-acceptance-verifier/unsupported-image-type",
+    "/private/tmp/line-backup-acceptance-verifier/valid",
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group",
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group-link"
+  ],
+  "probes_missing_or_changed": [],
+  "probes_present": [
+    "/private/tmp/line-backup-acceptance-authority",
+    "/private/tmp/line-backup-acceptance-case-01",
+    "/private/tmp/line-backup-acceptance-case-02",
+    "/private/tmp/line-backup-acceptance-case-03",
+    "/private/tmp/line-backup-acceptance-case-04",
+    "/private/tmp/line-backup-acceptance-case-05",
+    "/private/tmp/line-backup-acceptance-case-06",
+    "/private/tmp/line-backup-acceptance-case-07",
+    "/private/tmp/line-backup-acceptance-case-08",
+    "/private/tmp/line-backup-acceptance-case-09",
+    "/private/tmp/line-backup-acceptance-case-10",
+    "/private/tmp/line-backup-acceptance-case-11",
+    "/private/tmp/line-backup-acceptance-case-12",
+    "/private/tmp/line-backup-acceptance-status-r6",
+    "/private/tmp/line-backup-acceptance-verifier/56",
+    "/private/tmp/line-backup-acceptance-verifier/58",
+    "/private/tmp/line-backup-acceptance-verifier/artifact",
+    "/private/tmp/line-backup-acceptance-verifier/authority",
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-deleted",
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-mutated",
+    "/private/tmp/line-backup-acceptance-verifier/bytes",
+    "/private/tmp/line-backup-acceptance-verifier/crdownload",
+    "/private/tmp/line-backup-acceptance-verifier/cross",
+    "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id",
+    "/private/tmp/line-backup-acceptance-verifier/download",
+    "/private/tmp/line-backup-acceptance-verifier/duplicate",
+    "/private/tmp/line-backup-acceptance-verifier/file-command",
+    "/private/tmp/line-backup-acceptance-verifier/filepart",
+    "/private/tmp/line-backup-acceptance-verifier/forged-binding",
+    "/private/tmp/line-backup-acceptance-verifier/hidden",
+    "/private/tmp/line-backup-acceptance-verifier/incomplete",
+    "/private/tmp/line-backup-acceptance-verifier/invalid-config",
+    "/private/tmp/line-backup-acceptance-verifier/jpeg-missing-eoi",
+    "/private/tmp/line-backup-acceptance-verifier/legacy",
+    "/private/tmp/line-backup-acceptance-verifier/mtime",
+    "/private/tmp/line-backup-acceptance-verifier/nonterminal-linked",
+    "/private/tmp/line-backup-acceptance-verifier/outside",
+    "/private/tmp/line-backup-acceptance-verifier/part",
+    "/private/tmp/line-backup-acceptance-verifier/partial",
+    "/private/tmp/line-backup-acceptance-verifier/r5",
+    "/private/tmp/line-backup-acceptance-verifier/read-error-sample-2",
+    "/private/tmp/line-backup-acceptance-verifier/safe",
+    "/private/tmp/line-backup-acceptance-verifier/safe-abort-linked",
+    "/private/tmp/line-backup-acceptance-verifier/special",
+    "/private/tmp/line-backup-acceptance-verifier/symlink-entry",
+    "/private/tmp/line-backup-acceptance-verifier/temp",
+    "/private/tmp/line-backup-acceptance-verifier/text",
+    "/private/tmp/line-backup-acceptance-verifier/tmp",
+    "/private/tmp/line-backup-acceptance-verifier/truncated-png",
+    "/private/tmp/line-backup-acceptance-verifier/unreadable",
+    "/private/tmp/line-backup-acceptance-verifier/unsupported-image-type",
+    "/private/tmp/line-backup-acceptance-verifier/valid",
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group",
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group-link"
+  ],
+  "program_hashes": {
+    "authority.py": {
+      "bytes": 9330,
+      "sha256": "e0d32d27d5a06a50a60d413c7d17a997490da087583c3ce070e49d951ca8cd27"
+    },
+    "cli.py": {
+      "bytes": 5169,
+      "sha256": "162003558afa8690e63fecb445cbff5e2af9a76c9c88280d9a787b897a9bc49c"
+    },
+    "common.py": {
+      "bytes": 34551,
+      "sha256": "7b0956f9bfb84d7dfb77e095f1626a1d1a1a1aabc543be4bdeff42cbcbf929aa"
+    },
+    "status.py": {
+      "bytes": 7937,
+      "sha256": "1c8c27edf204d9243e8773cd830e16566269fb3814faa332dd8237c71587180e"
+    },
+    "transaction.py": {
+      "bytes": 42374,
+      "sha256": "95ae935162ffc49636bc461dfe64c86f5e915080f45022e667dbb1d4ba9bcc8d"
+    },
+    "verifier.py": {
+      "bytes": 25377,
+      "sha256": "a07ffe450284ade34fce27f646bd4a0c37baccb65de5660e77aea3faf48b23b6"
+    }
+  },
+  "roots_after": {
+    "/private/tmp/line-backup-acceptance-authority": {
+      "exists": true,
+      "marker": "5b6dcb4610bd892e74b2141e59ce4272a0482d7a599264463b336d2ac0252c6e",
+      "probe": {
+        "bytes": 227,
+        "path": "/private/tmp/line-backup-acceptance-authority/driver-records/r6-ownership/probe.json",
+        "sha256": "3c3f3b99ff5fcbbf5953addb45342b1b712e97240c2ca54802fa6292d1ca1958"
+      },
+      "root": "/private/tmp/line-backup-acceptance-authority"
+    },
+    "/private/tmp/line-backup-acceptance-case-01": {
+      "exists": true,
+      "marker": "9d7d71ba2ff6c4737543e32b67710718cf29d452440c07c5e7450f9803b12c07",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-01/driver-records/r6-ownership/probe.json",
+        "sha256": "cd565462eff9da8506450321677091af45132742f4a68462bdd9c12ded39a49c"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-01"
+    },
+    "/private/tmp/line-backup-acceptance-case-02": {
+      "exists": true,
+      "marker": "ee22f2ebf18f3011847c27dcf8a947879eae963e168e94df67cd6f27f5c5e7f1",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-02/driver-records/r6-ownership/probe.json",
+        "sha256": "ad3476be73f8f1655e483562a3dab3e9d3bac3c112c8cb8dd78a4e0ce24936bd"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-02"
+    },
+    "/private/tmp/line-backup-acceptance-case-03": {
+      "exists": true,
+      "marker": "22aba95e7f58ea65499bd002fef01c0d21f5441faccda182e0ae16329a347c48",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-03/driver-records/r6-ownership/probe.json",
+        "sha256": "674a8bebbbde105a4f6fd6a3683ca86984a650061c787cfbfb4a0f1d7b2b02a3"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-03"
+    },
+    "/private/tmp/line-backup-acceptance-case-04": {
+      "exists": true,
+      "marker": "f13edbedf2191537ade3ad1c25d88f5e9389433ee9bd4c2fec40eaf26b36effa",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-04/driver-records/r6-ownership/probe.json",
+        "sha256": "0d4caae08f80e4108457755a8a643444242b8972e3e5e484d69ab6c89c4dd2e1"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-04"
+    },
+    "/private/tmp/line-backup-acceptance-case-05": {
+      "exists": true,
+      "marker": "87f20cb58936996d9c73632e6f81e5953e5fdbe7d4e4d78f6542948d783d56d3",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-05/driver-records/r6-ownership/probe.json",
+        "sha256": "ea4adb59f085a35a551861eb3b4f337a50a039e445a6eb48b8f6f1ed506c2c57"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-05"
+    },
+    "/private/tmp/line-backup-acceptance-case-06": {
+      "exists": true,
+      "marker": "fe5aa1581be203a75b0282f9d09c588f6e85992362644a9f2cc98dd44508643e",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-06/driver-records/r6-ownership/probe.json",
+        "sha256": "c3cd2c8ab5b411c70a01a8f4e8afb4126f27ea77fd0f7f4a2e4ee1fe0302f544"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-06"
+    },
+    "/private/tmp/line-backup-acceptance-case-07": {
+      "exists": true,
+      "marker": "19eb32ac88c2440c0407e8ee5d3d9bcc7cf546040b7feaef2c18482cd940483d",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-07/driver-records/r6-ownership/probe.json",
+        "sha256": "bd44a3d834620e07e1362653f11db02795af07bbe4be84c5255f3e0e1e51759d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-07"
+    },
+    "/private/tmp/line-backup-acceptance-case-08": {
+      "exists": true,
+      "marker": "e5b76e54be04990abe64eed5b890e5bc901d74350f5948b11e588336f6850bf0",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-08/driver-records/r6-ownership/probe.json",
+        "sha256": "4e17b1c888541fee72f7d98694fd60148a5b7a1ff18e95d3d339de4605267b47"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-08"
+    },
+    "/private/tmp/line-backup-acceptance-case-09": {
+      "exists": true,
+      "marker": "9989b56de83a3e55594217889747ced024fec45c7be022df7f977bd62778c9f3",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-09/driver-records/r6-ownership/probe.json",
+        "sha256": "9e071fca0cbd1d4b090f05cf20622910815fa14747d1ba4d14991cf5ff8b3bea"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-09"
+    },
+    "/private/tmp/line-backup-acceptance-case-10": {
+      "exists": true,
+      "marker": "d49c2c779df259866efe2470295b48fe89f67c33f2609e41cd7d12747b60b43d",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-10/driver-records/r6-ownership/probe.json",
+        "sha256": "fa2dcce414e508890106686cd4cb5f55c32e9811cfc0bdbdcf1e476ac468e7bc"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-10"
+    },
+    "/private/tmp/line-backup-acceptance-case-11": {
+      "exists": true,
+      "marker": "9ea1ce85b4f20a128e99bf6181884f5e8c359c4efa875dc4f694b78c0ee62bc5",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-11/driver-records/r6-ownership/probe.json",
+        "sha256": "bf443c0b7def4c8059cc616764da121d0a94653edf6e47f64293df6099f0ac42"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-11"
+    },
+    "/private/tmp/line-backup-acceptance-case-12": {
+      "exists": true,
+      "marker": "d856f6371ed0a10e6e37b0aac8364267d8bee03ab65f6445fd2b2f99b52d910e",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-12/driver-records/r6-ownership/probe.json",
+        "sha256": "3a5bd727e338610f8031976f302000201f2f605d29ea1400747339316c52074c"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-12"
+    },
+    "/private/tmp/line-backup-acceptance-case-13": {
+      "exists": true,
+      "marker": "587d69262833d1f793653d45e51819459fca66e917659de44782229b3bb895f6",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-13"
+    },
+    "/private/tmp/line-backup-acceptance-case-14": {
+      "exists": true,
+      "marker": "36e94e3fac5d8bf0593b2f2bbdb9b4460193f3b7db6d716114a7ea66ba149506",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-14"
+    },
+    "/private/tmp/line-backup-acceptance-case-15": {
+      "exists": true,
+      "marker": "019c0f7b55ea64ef422b0cc5cc1f121496f8ba8dbefca3460798a5d1ad175fef",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-15"
+    },
+    "/private/tmp/line-backup-acceptance-case-16": {
+      "exists": true,
+      "marker": "02c8593ff05cffe703be899a82d03534195c5379f099b58298def4531165cfcf",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-16"
+    },
+    "/private/tmp/line-backup-acceptance-case-17": {
+      "exists": true,
+      "marker": "bd09fe29f3a397899ff2dc36d15fee447871ed94b52f3b70b9a17d9c888a5b98",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-17"
+    },
+    "/private/tmp/line-backup-acceptance-case-18": {
+      "exists": true,
+      "marker": "48ffbab302d9ad50a4557b8cf54b4bd88c1ed1cb1ddaa606a17682f6617f44f7",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-18"
+    },
+    "/private/tmp/line-backup-acceptance-case-19": {
+      "exists": true,
+      "marker": "408d8b235d90f85ab02c03cde341812f9583bd892b4d1ee1fcb85eb8dd6da0ee",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-19"
+    },
+    "/private/tmp/line-backup-acceptance-case-20": {
+      "exists": true,
+      "marker": "ef6291dd2a6de430a398397f66b69fcd95762231130b61ff683ea0f8d1e35a53",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-20"
+    },
+    "/private/tmp/line-backup-acceptance-case-21": {
+      "exists": true,
+      "marker": "897ef13ab71c55a7673b26620916a649bfeb43097db50dc55a16a72443efc3c4",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-21"
+    },
+    "/private/tmp/line-backup-acceptance-case-22": {
+      "exists": true,
+      "marker": "34f76e2c6df1da705461e9ce45b5cf6eb0c0fbb7c0c11927526f6f3fb73458f1",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-22"
+    },
+    "/private/tmp/line-backup-acceptance-case-23": {
+      "exists": true,
+      "marker": "c2f105c1adc77593e9507f84a6093a3ac1cd1bfc4e2367117f3836682932002a",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-23"
+    },
+    "/private/tmp/line-backup-acceptance-case-24": {
+      "exists": true,
+      "marker": "7c8610dfab970d822c4fef3255e884ef4e2de7d167d42a04add5815dc7d17cd4",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-24"
+    },
+    "/private/tmp/line-backup-acceptance-case-25": {
+      "exists": true,
+      "marker": "75270bc1732033d26b92a822ad77df548df9ba36b6f8d381efcbd05a555c1981",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-25"
+    },
+    "/private/tmp/line-backup-acceptance-status-r6": {
+      "exists": true,
+      "marker": "e51e669e218aabfce5fb7edb8cef3e5d2919e84175aa6e2d9fbe6a7f4c6bc678",
+      "probe": {
+        "bytes": 227,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/driver-records/r6-ownership/probe.json",
+        "sha256": "aa2880e00fad0455c2fc844b6bbff7c9f4ac918aafcb5078e48b1c87bd41da7b"
+      },
+      "root": "/private/tmp/line-backup-acceptance-status-r6"
+    },
+    "/private/tmp/line-backup-acceptance-verifier": {
+      "exists": true,
+      "marker": null,
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-verifier"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/56": {
+      "exists": true,
+      "marker": "49e133fd1073f858327fdeffdc462c95d65ce0c2fd0676dbd9be18ad982dd26a",
+      "probe": {
+        "bytes": 227,
+        "path": "/private/tmp/line-backup-acceptance-verifier/56/driver-records/r6-ownership/probe.json",
+        "sha256": "1dd84f49e8a3cd597de379bd6b9fffda024e01b65e9d106134871bc0861a824a"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/56"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/58": {
+      "exists": true,
+      "marker": "fabdc127f3d15824cc16a6fb7f53eaf855d5fbc624b596ae43bf6f47d658e92f",
+      "probe": {
+        "bytes": 227,
+        "path": "/private/tmp/line-backup-acceptance-verifier/58/driver-records/r6-ownership/probe.json",
+        "sha256": "99a5685c8b64c8cfbeec816320b3fe72be0f3be11c62d294542a4908e20a416a"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/58"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/artifact": {
+      "exists": true,
+      "marker": "39534da42859ad3de87cc2626b706b852e5cce341eac6bde859a41321fad0f46",
+      "probe": {
+        "bytes": 233,
+        "path": "/private/tmp/line-backup-acceptance-verifier/artifact/driver-records/r6-ownership/probe.json",
+        "sha256": "2479d9406962ef8433c0f1dcd1fba448d28297ba733207eb500df81c36ad4d25"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/artifact"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/authority": {
+      "exists": true,
+      "marker": "3e3e5084ed169d52016a5d0880f4ff2a7d5cb47985268156340f338c41b08d25",
+      "probe": {
+        "bytes": 234,
+        "path": "/private/tmp/line-backup-acceptance-verifier/authority/driver-records/r6-ownership/probe.json",
+        "sha256": "4f316ecc4c78e3c78869b6465364374193cef2d6fa5d4506caf89be8b866ca79"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/authority"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-deleted": {
+      "exists": true,
+      "marker": "0c6ee37d9f823add69bbf4a8850fd37266e9f0fc85207ca82eae3eeec1e6c2fb",
+      "probe": {
+        "bytes": 249,
+        "path": "/private/tmp/line-backup-acceptance-verifier/binding-artifact-deleted/driver-records/r6-ownership/probe.json",
+        "sha256": "54aef7a071996cb041c9db20751f591b606024f55ad4fa66ee41e54429718e2b"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/binding-artifact-deleted"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-mutated": {
+      "exists": true,
+      "marker": "230886686d554c8c9b835980adeae2d77c01f17d7211a735d25ea85f68a297ce",
+      "probe": {
+        "bytes": 249,
+        "path": "/private/tmp/line-backup-acceptance-verifier/binding-artifact-mutated/driver-records/r6-ownership/probe.json",
+        "sha256": "ae4fd82596e6cf9da5e4d322e5fd2f57e9f7abf27a22a811fc80477eb5ab274f"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/binding-artifact-mutated"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/bytes": {
+      "exists": true,
+      "marker": "acf1bbc4c0db58fd24cb0c3a7620770c05f72387b09b3dbc1bdf5e95e9825afe",
+      "probe": {
+        "bytes": 230,
+        "path": "/private/tmp/line-backup-acceptance-verifier/bytes/driver-records/r6-ownership/probe.json",
+        "sha256": "ba87359b43b044af441a398f135028ada4bb2ce643737b015ff8cde49dcaf0fc"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/bytes"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/crdownload": {
+      "exists": true,
+      "marker": "998ad58fa2ce24d9b6d28436cf0123b16dee91bc9466870db00112f9c87501e5",
+      "probe": {
+        "bytes": 235,
+        "path": "/private/tmp/line-backup-acceptance-verifier/crdownload/driver-records/r6-ownership/probe.json",
+        "sha256": "78967b967d11967b5085e38aa1a096bc493cf46386001deaa9693b13471af05e"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/crdownload"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/cross": {
+      "exists": true,
+      "marker": "fb620d684f69a32842606440c000538096c8b940c76ecb0660b1f2ca26dfd8ae",
+      "probe": {
+        "bytes": 230,
+        "path": "/private/tmp/line-backup-acceptance-verifier/cross/driver-records/r6-ownership/probe.json",
+        "sha256": "204309746f859fce4125b548417fbf4b740b0de0c971aec1996279ac9d80bbf7"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/cross"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id": {
+      "exists": true,
+      "marker": "44bd73bbcdee63d8b048f69aee260805e665cb2b9f1d207a8af922bc45c815dc",
+      "probe": {
+        "bytes": 249,
+        "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/driver-records/r6-ownership/probe.json",
+        "sha256": "f90f80f9209bcd5f456c37fbd8827caa2b876a002a3f65f89323726e88235f0f"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/download": {
+      "exists": true,
+      "marker": "77526b26bff03b18ad148d67761163e3eb93bb871a59c39ad602bd7f5c12a1dc",
+      "probe": {
+        "bytes": 233,
+        "path": "/private/tmp/line-backup-acceptance-verifier/download/driver-records/r6-ownership/probe.json",
+        "sha256": "e711baace968fc178c924dac8e0e3b0a5209e0ca5e0f262de956713bb121ed4d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/download"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/duplicate": {
+      "exists": true,
+      "marker": "c9b18baab5e1cb33f3442a7ef7e9c7904b462171f08dda477708dc9f7b07244a",
+      "probe": {
+        "bytes": 234,
+        "path": "/private/tmp/line-backup-acceptance-verifier/duplicate/driver-records/r6-ownership/probe.json",
+        "sha256": "565337e39e889532683340209a609be89c5bc941500045ca2e27a2b8253aacfd"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/duplicate"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/file-command": {
+      "exists": true,
+      "marker": "e70070688e68674d3de8744fed11a6dbc75b1d654d3b448190eff0fb292bf380",
+      "probe": {
+        "bytes": 237,
+        "path": "/private/tmp/line-backup-acceptance-verifier/file-command/driver-records/r6-ownership/probe.json",
+        "sha256": "df6f4b08038d3e7cb5a34e00e3484f042c0cbbce610ae9d2aed4952e763e92ea"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/file-command"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/filepart": {
+      "exists": true,
+      "marker": "148ac527769fa31baa8cee0dc8371cd984327d0ade8f9f0482b339da05de4986",
+      "probe": {
+        "bytes": 233,
+        "path": "/private/tmp/line-backup-acceptance-verifier/filepart/driver-records/r6-ownership/probe.json",
+        "sha256": "cd6aefd0cc720b87f0060393748bc222f289bc2e1aa6a0de3cb128010b3623db"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/filepart"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/forged-binding": {
+      "exists": true,
+      "marker": "24a72b65f1c2feed13bd564f68c5d4ab29fd25c0d962974b3f7bdb6b44e7ace9",
+      "probe": {
+        "bytes": 239,
+        "path": "/private/tmp/line-backup-acceptance-verifier/forged-binding/driver-records/r6-ownership/probe.json",
+        "sha256": "fb5e25de7cc64e4ddd737eb7042455b81313d80302628573c61ed5764eb70c28"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/forged-binding"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/hidden": {
+      "exists": true,
+      "marker": "4303f3dc04ba1a7b0e7a8607053dff643b9c6ebf41a3f64e102f7c45bc4da6da",
+      "probe": {
+        "bytes": 231,
+        "path": "/private/tmp/line-backup-acceptance-verifier/hidden/driver-records/r6-ownership/probe.json",
+        "sha256": "0126c580527c96df7877fee47504330301dd07d060be8ab05878ae1b8d075a64"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/hidden"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/incomplete": {
+      "exists": true,
+      "marker": "603a3cdac88ea601e42dec180a70950156ce826b22b40dc57d0233bb451edd8b",
+      "probe": {
+        "bytes": 235,
+        "path": "/private/tmp/line-backup-acceptance-verifier/incomplete/driver-records/r6-ownership/probe.json",
+        "sha256": "f399c0ea006c3f532b148da5298e6da5a1e1dbc8caf02656e3444d712cc4782c"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/incomplete"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/invalid-config": {
+      "exists": true,
+      "marker": "ab5e1d5cc1c313a32e13d570126c431c63aff99f557af53cb7657ddf438bc4cd",
+      "probe": {
+        "bytes": 239,
+        "path": "/private/tmp/line-backup-acceptance-verifier/invalid-config/driver-records/r6-ownership/probe.json",
+        "sha256": "d1a7a9306e43249f619fcc16a5fd943c2d14057d375215ed408971de35d763d6"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/invalid-config"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/jpeg-missing-eoi": {
+      "exists": true,
+      "marker": "0ba5d8ed81b631ac6ef1b4aa2e5d243079c5ea111824059e43b35c7355c21792",
+      "probe": {
+        "bytes": 241,
+        "path": "/private/tmp/line-backup-acceptance-verifier/jpeg-missing-eoi/driver-records/r6-ownership/probe.json",
+        "sha256": "8432c868d404d229b74c7823b78a7a325c64dc6725c5388b4428375a8b1f3c2c"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/jpeg-missing-eoi"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/legacy": {
+      "exists": true,
+      "marker": "9ac7d68c346239bfc33e520c51e86084f001916750b2c6ac105acdf062a6a428",
+      "probe": {
+        "bytes": 231,
+        "path": "/private/tmp/line-backup-acceptance-verifier/legacy/driver-records/r6-ownership/probe.json",
+        "sha256": "42a217703e82b5f6852e5fd1c152be238716b8c05d1933e69c4869c23a5be4b1"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/legacy"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/mtime": {
+      "exists": true,
+      "marker": "ae115515c4bf9fca5e691cac9940085d9c043a4b71ebbf7df05a72f6ff760f89",
+      "probe": {
+        "bytes": 230,
+        "path": "/private/tmp/line-backup-acceptance-verifier/mtime/driver-records/r6-ownership/probe.json",
+        "sha256": "91551241a12a1acd89aa33839e04d39da5360f0c5fa016d760573049dfcc43b4"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/mtime"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/nonterminal-linked": {
+      "exists": true,
+      "marker": "43b7077ffd06377c0ea6cab6df80f8335846708602fa1a339f6907cbee5d338b",
+      "probe": {
+        "bytes": 243,
+        "path": "/private/tmp/line-backup-acceptance-verifier/nonterminal-linked/driver-records/r6-ownership/probe.json",
+        "sha256": "2d8877906e8bf07f1b4cda20a092d6eb056835e42908d19b72f936f9ced4a14d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/nonterminal-linked"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/outside": {
+      "exists": true,
+      "marker": "3c6d97f454529fab6dca97f5790ecf9beff761f7a0b7801b5401d1f095662a4b",
+      "probe": {
+        "bytes": 232,
+        "path": "/private/tmp/line-backup-acceptance-verifier/outside/driver-records/r6-ownership/probe.json",
+        "sha256": "32bbc1cdba2046a7decc5363e69eb428dd155b20c2e9c956d4313c58af3b9ba2"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/outside"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/part": {
+      "exists": true,
+      "marker": "0abe54a49a864abf1c78cd8c4ff44ef3ec423fbfa443a0164f180a6644a1bdf0",
+      "probe": {
+        "bytes": 229,
+        "path": "/private/tmp/line-backup-acceptance-verifier/part/driver-records/r6-ownership/probe.json",
+        "sha256": "d3ecb7ffac826b20d7161d98137dda0a18973e2c19c65bb4a49985ddaea4980f"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/part"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/partial": {
+      "exists": true,
+      "marker": "a6bdb2ae5c38af014f9dd084547972c539b399c62e07989dc2366fdde38b34b0",
+      "probe": {
+        "bytes": 232,
+        "path": "/private/tmp/line-backup-acceptance-verifier/partial/driver-records/r6-ownership/probe.json",
+        "sha256": "ca5a675c99779d2ea2a79acbdeb6a9118bb2f0d8017ad26903be43412e8a5240"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/partial"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/r5": {
+      "exists": true,
+      "marker": "4de0001af45324f9e56d51fae95c9016f3b4e7f6c95fd20bfa1c0fa544bd4a7a",
+      "probe": {
+        "bytes": 227,
+        "path": "/private/tmp/line-backup-acceptance-verifier/r5/driver-records/r6-ownership/probe.json",
+        "sha256": "06a941fe8abd5e77bb2da2f52267954eac1220f8fcf6fb7195b7a50c0452615b"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/r5"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/read-error-sample-2": {
+      "exists": true,
+      "marker": "ed36b2a82502446dbfde30f25f44859f7940e2fb0e71ec0bb82305df7c2923cb",
+      "probe": {
+        "bytes": 244,
+        "path": "/private/tmp/line-backup-acceptance-verifier/read-error-sample-2/driver-records/r6-ownership/probe.json",
+        "sha256": "0a6fe611e4b6baebca1deaa35ba767cc3ef95788d6adf3e5214cc22056930656"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/read-error-sample-2"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/safe": {
+      "exists": true,
+      "marker": "789508f90816704210e0e9bcdae361a9c89f9e29680542895de7fc938d66b8de",
+      "probe": {
+        "bytes": 229,
+        "path": "/private/tmp/line-backup-acceptance-verifier/safe/driver-records/r6-ownership/probe.json",
+        "sha256": "4cf27908c22ef0ab0e6ec63c1db0e2cf6e7a8b25588af7ea5ed2bcf8ab8bc50f"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/safe"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/safe-abort-linked": {
+      "exists": true,
+      "marker": "e18464bbe76f1f6eeb78a254740833aa9ed952b13791c12ccc029600f626e0fc",
+      "probe": {
+        "bytes": 242,
+        "path": "/private/tmp/line-backup-acceptance-verifier/safe-abort-linked/driver-records/r6-ownership/probe.json",
+        "sha256": "807c4da919f1c75652e740819d03820dcbf7559177e25a2ddf871b4fb5d35d6b"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/safe-abort-linked"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/special": {
+      "exists": true,
+      "marker": "f6ea65efe97602b9cd12318c9179a5dcccef65635f4371d2c12487fcf404ae8b",
+      "probe": {
+        "bytes": 232,
+        "path": "/private/tmp/line-backup-acceptance-verifier/special/driver-records/r6-ownership/probe.json",
+        "sha256": "d9fb6f60dc970113da969feaf9558ee540be52e5d4a4a2a1181d6a2e6312d10d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/special"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/symlink-entry": {
+      "exists": true,
+      "marker": "b592e863f43549c133b3f07c701b622c306cd5c15a3101b54af8cd9d4527ab29",
+      "probe": {
+        "bytes": 238,
+        "path": "/private/tmp/line-backup-acceptance-verifier/symlink-entry/driver-records/r6-ownership/probe.json",
+        "sha256": "8385629c3c280602b39d91fd400b89239907c60111af812bb7b4132807fa264a"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/symlink-entry"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/temp": {
+      "exists": true,
+      "marker": "d0b22ea40bf25fbaf3e4237f13ce58473820523f71b7a9339eee13872f8928b4",
+      "probe": {
+        "bytes": 229,
+        "path": "/private/tmp/line-backup-acceptance-verifier/temp/driver-records/r6-ownership/probe.json",
+        "sha256": "69c6a3f80ef0597565b2e77672198b1c7fe10a010588ff9048b08f5227bddabf"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/temp"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/text": {
+      "exists": true,
+      "marker": "445eca9de2cbcb80a63270c541b18f577e59c9a950ac8829ad03cffc6ff6cb3f",
+      "probe": {
+        "bytes": 229,
+        "path": "/private/tmp/line-backup-acceptance-verifier/text/driver-records/r6-ownership/probe.json",
+        "sha256": "4500501acede72e837a3ec73afdec6b90d59b63dd1de024a2b691f0a48dccc1d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/text"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/tmp": {
+      "exists": true,
+      "marker": "4becd6f386af92f1d3e3a992a7701bf78e5471f2deaacff6ec448eaa4bd52622",
+      "probe": {
+        "bytes": 228,
+        "path": "/private/tmp/line-backup-acceptance-verifier/tmp/driver-records/r6-ownership/probe.json",
+        "sha256": "202841afdd9af37c46799ce209eee160e3a207c8570f454d6155d72d604e20cf"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/tmp"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/truncated-png": {
+      "exists": true,
+      "marker": "c65e6999faf7683d8940344e78bd4e7391b620b775f61520500e5bf19eb32598",
+      "probe": {
+        "bytes": 238,
+        "path": "/private/tmp/line-backup-acceptance-verifier/truncated-png/driver-records/r6-ownership/probe.json",
+        "sha256": "7b7ba0708228a45d757b66a159640aa36d0b176bc78bef7d0c7b217d22c4dc87"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/truncated-png"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/unreadable": {
+      "exists": true,
+      "marker": "798e0a50a49b02ad3dd68831b6b42104ff004802a4aa1173c89204c4f2e44f57",
+      "probe": {
+        "bytes": 235,
+        "path": "/private/tmp/line-backup-acceptance-verifier/unreadable/driver-records/r6-ownership/probe.json",
+        "sha256": "01186a3b8f991e195f508d231b75cd9752754909f8d48c1b86ad3e878807375f"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/unreadable"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/unsupported-image-type": {
+      "exists": true,
+      "marker": "eaeabcb7bc91b4793fcd91995d3583b7df8df7289955f97267ca1d21c6ddab0f",
+      "probe": {
+        "bytes": 247,
+        "path": "/private/tmp/line-backup-acceptance-verifier/unsupported-image-type/driver-records/r6-ownership/probe.json",
+        "sha256": "cdab9c9272e9e59a66b66a16d59afd99c534a06aec9338b61a42f33a4d06b383"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/unsupported-image-type"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/valid": {
+      "exists": true,
+      "marker": "07d5067ee94f0336336a8fc11e5a2a94167e791d5299876f63007df17e988363",
+      "probe": {
+        "bytes": 230,
+        "path": "/private/tmp/line-backup-acceptance-verifier/valid/driver-records/r6-ownership/probe.json",
+        "sha256": "d27542b50f89f20f8ef13a49246972e4614e4c4a723f5f42737d2908fc5f45f5"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/valid"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group": {
+      "exists": true,
+      "marker": "1a4468aa9a87e27a905b6b99a79c7fc020ad3d9b215165dad9926ee22dc79d64",
+      "probe": {
+        "bytes": 236,
+        "path": "/private/tmp/line-backup-acceptance-verifier/wrong-group/driver-records/r6-ownership/probe.json",
+        "sha256": "3db91facc06b22816d2b23cd3ce25076e3fc45d58d2eedb6cdf0fc4290b81b3d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/wrong-group"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group-link": {
+      "exists": true,
+      "marker": "160f561f124979495d896322d594387e9be37fb953efe5ced391124f6555bba6",
+      "probe": {
+        "bytes": 241,
+        "path": "/private/tmp/line-backup-acceptance-verifier/wrong-group-link/driver-records/r6-ownership/probe.json",
+        "sha256": "414ca65c29530908d1787f25082cdc19e4f6752bf6358c99893a48f688e12701"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/wrong-group-link"
+    }
+  },
+  "roots_before": {
+    "/private/tmp/line-backup-acceptance-authority": {
+      "exists": true,
+      "marker": "5b6dcb4610bd892e74b2141e59ce4272a0482d7a599264463b336d2ac0252c6e",
+      "probe": {
+        "bytes": 227,
+        "path": "/private/tmp/line-backup-acceptance-authority/driver-records/r6-ownership/probe.json",
+        "sha256": "3c3f3b99ff5fcbbf5953addb45342b1b712e97240c2ca54802fa6292d1ca1958"
+      },
+      "root": "/private/tmp/line-backup-acceptance-authority"
+    },
+    "/private/tmp/line-backup-acceptance-case-01": {
+      "exists": true,
+      "marker": "9d7d71ba2ff6c4737543e32b67710718cf29d452440c07c5e7450f9803b12c07",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-01/driver-records/r6-ownership/probe.json",
+        "sha256": "cd565462eff9da8506450321677091af45132742f4a68462bdd9c12ded39a49c"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-01"
+    },
+    "/private/tmp/line-backup-acceptance-case-02": {
+      "exists": true,
+      "marker": "ee22f2ebf18f3011847c27dcf8a947879eae963e168e94df67cd6f27f5c5e7f1",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-02/driver-records/r6-ownership/probe.json",
+        "sha256": "ad3476be73f8f1655e483562a3dab3e9d3bac3c112c8cb8dd78a4e0ce24936bd"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-02"
+    },
+    "/private/tmp/line-backup-acceptance-case-03": {
+      "exists": true,
+      "marker": "22aba95e7f58ea65499bd002fef01c0d21f5441faccda182e0ae16329a347c48",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-03/driver-records/r6-ownership/probe.json",
+        "sha256": "674a8bebbbde105a4f6fd6a3683ca86984a650061c787cfbfb4a0f1d7b2b02a3"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-03"
+    },
+    "/private/tmp/line-backup-acceptance-case-04": {
+      "exists": true,
+      "marker": "f13edbedf2191537ade3ad1c25d88f5e9389433ee9bd4c2fec40eaf26b36effa",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-04/driver-records/r6-ownership/probe.json",
+        "sha256": "0d4caae08f80e4108457755a8a643444242b8972e3e5e484d69ab6c89c4dd2e1"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-04"
+    },
+    "/private/tmp/line-backup-acceptance-case-05": {
+      "exists": true,
+      "marker": "87f20cb58936996d9c73632e6f81e5953e5fdbe7d4e4d78f6542948d783d56d3",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-05/driver-records/r6-ownership/probe.json",
+        "sha256": "ea4adb59f085a35a551861eb3b4f337a50a039e445a6eb48b8f6f1ed506c2c57"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-05"
+    },
+    "/private/tmp/line-backup-acceptance-case-06": {
+      "exists": true,
+      "marker": "fe5aa1581be203a75b0282f9d09c588f6e85992362644a9f2cc98dd44508643e",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-06/driver-records/r6-ownership/probe.json",
+        "sha256": "c3cd2c8ab5b411c70a01a8f4e8afb4126f27ea77fd0f7f4a2e4ee1fe0302f544"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-06"
+    },
+    "/private/tmp/line-backup-acceptance-case-07": {
+      "exists": true,
+      "marker": "19eb32ac88c2440c0407e8ee5d3d9bcc7cf546040b7feaef2c18482cd940483d",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-07/driver-records/r6-ownership/probe.json",
+        "sha256": "bd44a3d834620e07e1362653f11db02795af07bbe4be84c5255f3e0e1e51759d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-07"
+    },
+    "/private/tmp/line-backup-acceptance-case-08": {
+      "exists": true,
+      "marker": "e5b76e54be04990abe64eed5b890e5bc901d74350f5948b11e588336f6850bf0",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-08/driver-records/r6-ownership/probe.json",
+        "sha256": "4e17b1c888541fee72f7d98694fd60148a5b7a1ff18e95d3d339de4605267b47"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-08"
+    },
+    "/private/tmp/line-backup-acceptance-case-09": {
+      "exists": true,
+      "marker": "9989b56de83a3e55594217889747ced024fec45c7be022df7f977bd62778c9f3",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-09/driver-records/r6-ownership/probe.json",
+        "sha256": "9e071fca0cbd1d4b090f05cf20622910815fa14747d1ba4d14991cf5ff8b3bea"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-09"
+    },
+    "/private/tmp/line-backup-acceptance-case-10": {
+      "exists": true,
+      "marker": "d49c2c779df259866efe2470295b48fe89f67c33f2609e41cd7d12747b60b43d",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-10/driver-records/r6-ownership/probe.json",
+        "sha256": "fa2dcce414e508890106686cd4cb5f55c32e9811cfc0bdbdcf1e476ac468e7bc"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-10"
+    },
+    "/private/tmp/line-backup-acceptance-case-11": {
+      "exists": true,
+      "marker": "9ea1ce85b4f20a128e99bf6181884f5e8c359c4efa875dc4f694b78c0ee62bc5",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-11/driver-records/r6-ownership/probe.json",
+        "sha256": "bf443c0b7def4c8059cc616764da121d0a94653edf6e47f64293df6099f0ac42"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-11"
+    },
+    "/private/tmp/line-backup-acceptance-case-12": {
+      "exists": true,
+      "marker": "d856f6371ed0a10e6e37b0aac8364267d8bee03ab65f6445fd2b2f99b52d910e",
+      "probe": {
+        "bytes": 222,
+        "path": "/private/tmp/line-backup-acceptance-case-12/driver-records/r6-ownership/probe.json",
+        "sha256": "3a5bd727e338610f8031976f302000201f2f605d29ea1400747339316c52074c"
+      },
+      "root": "/private/tmp/line-backup-acceptance-case-12"
+    },
+    "/private/tmp/line-backup-acceptance-case-13": {
+      "exists": true,
+      "marker": "587d69262833d1f793653d45e51819459fca66e917659de44782229b3bb895f6",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-13"
+    },
+    "/private/tmp/line-backup-acceptance-case-14": {
+      "exists": true,
+      "marker": "36e94e3fac5d8bf0593b2f2bbdb9b4460193f3b7db6d716114a7ea66ba149506",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-14"
+    },
+    "/private/tmp/line-backup-acceptance-case-15": {
+      "exists": true,
+      "marker": "019c0f7b55ea64ef422b0cc5cc1f121496f8ba8dbefca3460798a5d1ad175fef",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-15"
+    },
+    "/private/tmp/line-backup-acceptance-case-16": {
+      "exists": true,
+      "marker": "02c8593ff05cffe703be899a82d03534195c5379f099b58298def4531165cfcf",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-16"
+    },
+    "/private/tmp/line-backup-acceptance-case-17": {
+      "exists": true,
+      "marker": "bd09fe29f3a397899ff2dc36d15fee447871ed94b52f3b70b9a17d9c888a5b98",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-17"
+    },
+    "/private/tmp/line-backup-acceptance-case-18": {
+      "exists": true,
+      "marker": "48ffbab302d9ad50a4557b8cf54b4bd88c1ed1cb1ddaa606a17682f6617f44f7",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-18"
+    },
+    "/private/tmp/line-backup-acceptance-case-19": {
+      "exists": true,
+      "marker": "408d8b235d90f85ab02c03cde341812f9583bd892b4d1ee1fcb85eb8dd6da0ee",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-19"
+    },
+    "/private/tmp/line-backup-acceptance-case-20": {
+      "exists": true,
+      "marker": "ef6291dd2a6de430a398397f66b69fcd95762231130b61ff683ea0f8d1e35a53",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-20"
+    },
+    "/private/tmp/line-backup-acceptance-case-21": {
+      "exists": true,
+      "marker": "897ef13ab71c55a7673b26620916a649bfeb43097db50dc55a16a72443efc3c4",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-21"
+    },
+    "/private/tmp/line-backup-acceptance-case-22": {
+      "exists": true,
+      "marker": "34f76e2c6df1da705461e9ce45b5cf6eb0c0fbb7c0c11927526f6f3fb73458f1",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-22"
+    },
+    "/private/tmp/line-backup-acceptance-case-23": {
+      "exists": true,
+      "marker": "c2f105c1adc77593e9507f84a6093a3ac1cd1bfc4e2367117f3836682932002a",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-23"
+    },
+    "/private/tmp/line-backup-acceptance-case-24": {
+      "exists": true,
+      "marker": "7c8610dfab970d822c4fef3255e884ef4e2de7d167d42a04add5815dc7d17cd4",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-24"
+    },
+    "/private/tmp/line-backup-acceptance-case-25": {
+      "exists": true,
+      "marker": "75270bc1732033d26b92a822ad77df548df9ba36b6f8d381efcbd05a555c1981",
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-case-25"
+    },
+    "/private/tmp/line-backup-acceptance-status-r6": {
+      "exists": true,
+      "marker": "e51e669e218aabfce5fb7edb8cef3e5d2919e84175aa6e2d9fbe6a7f4c6bc678",
+      "probe": {
+        "bytes": 227,
+        "path": "/private/tmp/line-backup-acceptance-status-r6/driver-records/r6-ownership/probe.json",
+        "sha256": "aa2880e00fad0455c2fc844b6bbff7c9f4ac918aafcb5078e48b1c87bd41da7b"
+      },
+      "root": "/private/tmp/line-backup-acceptance-status-r6"
+    },
+    "/private/tmp/line-backup-acceptance-verifier": {
+      "exists": true,
+      "marker": null,
+      "probe": null,
+      "root": "/private/tmp/line-backup-acceptance-verifier"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/56": {
+      "exists": true,
+      "marker": "49e133fd1073f858327fdeffdc462c95d65ce0c2fd0676dbd9be18ad982dd26a",
+      "probe": {
+        "bytes": 227,
+        "path": "/private/tmp/line-backup-acceptance-verifier/56/driver-records/r6-ownership/probe.json",
+        "sha256": "1dd84f49e8a3cd597de379bd6b9fffda024e01b65e9d106134871bc0861a824a"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/56"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/58": {
+      "exists": true,
+      "marker": "fabdc127f3d15824cc16a6fb7f53eaf855d5fbc624b596ae43bf6f47d658e92f",
+      "probe": {
+        "bytes": 227,
+        "path": "/private/tmp/line-backup-acceptance-verifier/58/driver-records/r6-ownership/probe.json",
+        "sha256": "99a5685c8b64c8cfbeec816320b3fe72be0f3be11c62d294542a4908e20a416a"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/58"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/artifact": {
+      "exists": true,
+      "marker": "39534da42859ad3de87cc2626b706b852e5cce341eac6bde859a41321fad0f46",
+      "probe": {
+        "bytes": 233,
+        "path": "/private/tmp/line-backup-acceptance-verifier/artifact/driver-records/r6-ownership/probe.json",
+        "sha256": "2479d9406962ef8433c0f1dcd1fba448d28297ba733207eb500df81c36ad4d25"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/artifact"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/authority": {
+      "exists": true,
+      "marker": "3e3e5084ed169d52016a5d0880f4ff2a7d5cb47985268156340f338c41b08d25",
+      "probe": {
+        "bytes": 234,
+        "path": "/private/tmp/line-backup-acceptance-verifier/authority/driver-records/r6-ownership/probe.json",
+        "sha256": "4f316ecc4c78e3c78869b6465364374193cef2d6fa5d4506caf89be8b866ca79"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/authority"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-deleted": {
+      "exists": true,
+      "marker": "0c6ee37d9f823add69bbf4a8850fd37266e9f0fc85207ca82eae3eeec1e6c2fb",
+      "probe": {
+        "bytes": 249,
+        "path": "/private/tmp/line-backup-acceptance-verifier/binding-artifact-deleted/driver-records/r6-ownership/probe.json",
+        "sha256": "54aef7a071996cb041c9db20751f591b606024f55ad4fa66ee41e54429718e2b"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/binding-artifact-deleted"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/binding-artifact-mutated": {
+      "exists": true,
+      "marker": "230886686d554c8c9b835980adeae2d77c01f17d7211a735d25ea85f68a297ce",
+      "probe": {
+        "bytes": 249,
+        "path": "/private/tmp/line-backup-acceptance-verifier/binding-artifact-mutated/driver-records/r6-ownership/probe.json",
+        "sha256": "ae4fd82596e6cf9da5e4d322e5fd2f57e9f7abf27a22a811fc80477eb5ab274f"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/binding-artifact-mutated"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/bytes": {
+      "exists": true,
+      "marker": "acf1bbc4c0db58fd24cb0c3a7620770c05f72387b09b3dbc1bdf5e95e9825afe",
+      "probe": {
+        "bytes": 230,
+        "path": "/private/tmp/line-backup-acceptance-verifier/bytes/driver-records/r6-ownership/probe.json",
+        "sha256": "ba87359b43b044af441a398f135028ada4bb2ce643737b015ff8cde49dcaf0fc"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/bytes"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/crdownload": {
+      "exists": true,
+      "marker": "998ad58fa2ce24d9b6d28436cf0123b16dee91bc9466870db00112f9c87501e5",
+      "probe": {
+        "bytes": 235,
+        "path": "/private/tmp/line-backup-acceptance-verifier/crdownload/driver-records/r6-ownership/probe.json",
+        "sha256": "78967b967d11967b5085e38aa1a096bc493cf46386001deaa9693b13471af05e"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/crdownload"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/cross": {
+      "exists": true,
+      "marker": "fb620d684f69a32842606440c000538096c8b940c76ecb0660b1f2ca26dfd8ae",
+      "probe": {
+        "bytes": 230,
+        "path": "/private/tmp/line-backup-acceptance-verifier/cross/driver-records/r6-ownership/probe.json",
+        "sha256": "204309746f859fce4125b548417fbf4b740b0de0c971aec1996279ac9d80bbf7"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/cross"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id": {
+      "exists": true,
+      "marker": "44bd73bbcdee63d8b048f69aee260805e665cb2b9f1d207a8af922bc45c815dc",
+      "probe": {
+        "bytes": 249,
+        "path": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id/driver-records/r6-ownership/probe.json",
+        "sha256": "f90f80f9209bcd5f456c37fbd8827caa2b876a002a3f65f89323726e88235f0f"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/dangling-verified-run-id"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/download": {
+      "exists": true,
+      "marker": "77526b26bff03b18ad148d67761163e3eb93bb871a59c39ad602bd7f5c12a1dc",
+      "probe": {
+        "bytes": 233,
+        "path": "/private/tmp/line-backup-acceptance-verifier/download/driver-records/r6-ownership/probe.json",
+        "sha256": "e711baace968fc178c924dac8e0e3b0a5209e0ca5e0f262de956713bb121ed4d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/download"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/duplicate": {
+      "exists": true,
+      "marker": "c9b18baab5e1cb33f3442a7ef7e9c7904b462171f08dda477708dc9f7b07244a",
+      "probe": {
+        "bytes": 234,
+        "path": "/private/tmp/line-backup-acceptance-verifier/duplicate/driver-records/r6-ownership/probe.json",
+        "sha256": "565337e39e889532683340209a609be89c5bc941500045ca2e27a2b8253aacfd"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/duplicate"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/file-command": {
+      "exists": true,
+      "marker": "e70070688e68674d3de8744fed11a6dbc75b1d654d3b448190eff0fb292bf380",
+      "probe": {
+        "bytes": 237,
+        "path": "/private/tmp/line-backup-acceptance-verifier/file-command/driver-records/r6-ownership/probe.json",
+        "sha256": "df6f4b08038d3e7cb5a34e00e3484f042c0cbbce610ae9d2aed4952e763e92ea"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/file-command"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/filepart": {
+      "exists": true,
+      "marker": "148ac527769fa31baa8cee0dc8371cd984327d0ade8f9f0482b339da05de4986",
+      "probe": {
+        "bytes": 233,
+        "path": "/private/tmp/line-backup-acceptance-verifier/filepart/driver-records/r6-ownership/probe.json",
+        "sha256": "cd6aefd0cc720b87f0060393748bc222f289bc2e1aa6a0de3cb128010b3623db"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/filepart"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/forged-binding": {
+      "exists": true,
+      "marker": "24a72b65f1c2feed13bd564f68c5d4ab29fd25c0d962974b3f7bdb6b44e7ace9",
+      "probe": {
+        "bytes": 239,
+        "path": "/private/tmp/line-backup-acceptance-verifier/forged-binding/driver-records/r6-ownership/probe.json",
+        "sha256": "fb5e25de7cc64e4ddd737eb7042455b81313d80302628573c61ed5764eb70c28"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/forged-binding"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/hidden": {
+      "exists": true,
+      "marker": "4303f3dc04ba1a7b0e7a8607053dff643b9c6ebf41a3f64e102f7c45bc4da6da",
+      "probe": {
+        "bytes": 231,
+        "path": "/private/tmp/line-backup-acceptance-verifier/hidden/driver-records/r6-ownership/probe.json",
+        "sha256": "0126c580527c96df7877fee47504330301dd07d060be8ab05878ae1b8d075a64"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/hidden"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/incomplete": {
+      "exists": true,
+      "marker": "603a3cdac88ea601e42dec180a70950156ce826b22b40dc57d0233bb451edd8b",
+      "probe": {
+        "bytes": 235,
+        "path": "/private/tmp/line-backup-acceptance-verifier/incomplete/driver-records/r6-ownership/probe.json",
+        "sha256": "f399c0ea006c3f532b148da5298e6da5a1e1dbc8caf02656e3444d712cc4782c"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/incomplete"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/invalid-config": {
+      "exists": true,
+      "marker": "ab5e1d5cc1c313a32e13d570126c431c63aff99f557af53cb7657ddf438bc4cd",
+      "probe": {
+        "bytes": 239,
+        "path": "/private/tmp/line-backup-acceptance-verifier/invalid-config/driver-records/r6-ownership/probe.json",
+        "sha256": "d1a7a9306e43249f619fcc16a5fd943c2d14057d375215ed408971de35d763d6"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/invalid-config"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/jpeg-missing-eoi": {
+      "exists": true,
+      "marker": "0ba5d8ed81b631ac6ef1b4aa2e5d243079c5ea111824059e43b35c7355c21792",
+      "probe": {
+        "bytes": 241,
+        "path": "/private/tmp/line-backup-acceptance-verifier/jpeg-missing-eoi/driver-records/r6-ownership/probe.json",
+        "sha256": "8432c868d404d229b74c7823b78a7a325c64dc6725c5388b4428375a8b1f3c2c"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/jpeg-missing-eoi"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/legacy": {
+      "exists": true,
+      "marker": "9ac7d68c346239bfc33e520c51e86084f001916750b2c6ac105acdf062a6a428",
+      "probe": {
+        "bytes": 231,
+        "path": "/private/tmp/line-backup-acceptance-verifier/legacy/driver-records/r6-ownership/probe.json",
+        "sha256": "42a217703e82b5f6852e5fd1c152be238716b8c05d1933e69c4869c23a5be4b1"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/legacy"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/mtime": {
+      "exists": true,
+      "marker": "ae115515c4bf9fca5e691cac9940085d9c043a4b71ebbf7df05a72f6ff760f89",
+      "probe": {
+        "bytes": 230,
+        "path": "/private/tmp/line-backup-acceptance-verifier/mtime/driver-records/r6-ownership/probe.json",
+        "sha256": "91551241a12a1acd89aa33839e04d39da5360f0c5fa016d760573049dfcc43b4"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/mtime"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/nonterminal-linked": {
+      "exists": true,
+      "marker": "43b7077ffd06377c0ea6cab6df80f8335846708602fa1a339f6907cbee5d338b",
+      "probe": {
+        "bytes": 243,
+        "path": "/private/tmp/line-backup-acceptance-verifier/nonterminal-linked/driver-records/r6-ownership/probe.json",
+        "sha256": "2d8877906e8bf07f1b4cda20a092d6eb056835e42908d19b72f936f9ced4a14d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/nonterminal-linked"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/outside": {
+      "exists": true,
+      "marker": "3c6d97f454529fab6dca97f5790ecf9beff761f7a0b7801b5401d1f095662a4b",
+      "probe": {
+        "bytes": 232,
+        "path": "/private/tmp/line-backup-acceptance-verifier/outside/driver-records/r6-ownership/probe.json",
+        "sha256": "32bbc1cdba2046a7decc5363e69eb428dd155b20c2e9c956d4313c58af3b9ba2"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/outside"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/part": {
+      "exists": true,
+      "marker": "0abe54a49a864abf1c78cd8c4ff44ef3ec423fbfa443a0164f180a6644a1bdf0",
+      "probe": {
+        "bytes": 229,
+        "path": "/private/tmp/line-backup-acceptance-verifier/part/driver-records/r6-ownership/probe.json",
+        "sha256": "d3ecb7ffac826b20d7161d98137dda0a18973e2c19c65bb4a49985ddaea4980f"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/part"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/partial": {
+      "exists": true,
+      "marker": "a6bdb2ae5c38af014f9dd084547972c539b399c62e07989dc2366fdde38b34b0",
+      "probe": {
+        "bytes": 232,
+        "path": "/private/tmp/line-backup-acceptance-verifier/partial/driver-records/r6-ownership/probe.json",
+        "sha256": "ca5a675c99779d2ea2a79acbdeb6a9118bb2f0d8017ad26903be43412e8a5240"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/partial"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/r5": {
+      "exists": true,
+      "marker": "4de0001af45324f9e56d51fae95c9016f3b4e7f6c95fd20bfa1c0fa544bd4a7a",
+      "probe": {
+        "bytes": 227,
+        "path": "/private/tmp/line-backup-acceptance-verifier/r5/driver-records/r6-ownership/probe.json",
+        "sha256": "06a941fe8abd5e77bb2da2f52267954eac1220f8fcf6fb7195b7a50c0452615b"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/r5"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/read-error-sample-2": {
+      "exists": true,
+      "marker": "ed36b2a82502446dbfde30f25f44859f7940e2fb0e71ec0bb82305df7c2923cb",
+      "probe": {
+        "bytes": 244,
+        "path": "/private/tmp/line-backup-acceptance-verifier/read-error-sample-2/driver-records/r6-ownership/probe.json",
+        "sha256": "0a6fe611e4b6baebca1deaa35ba767cc3ef95788d6adf3e5214cc22056930656"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/read-error-sample-2"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/safe": {
+      "exists": true,
+      "marker": "789508f90816704210e0e9bcdae361a9c89f9e29680542895de7fc938d66b8de",
+      "probe": {
+        "bytes": 229,
+        "path": "/private/tmp/line-backup-acceptance-verifier/safe/driver-records/r6-ownership/probe.json",
+        "sha256": "4cf27908c22ef0ab0e6ec63c1db0e2cf6e7a8b25588af7ea5ed2bcf8ab8bc50f"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/safe"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/safe-abort-linked": {
+      "exists": true,
+      "marker": "e18464bbe76f1f6eeb78a254740833aa9ed952b13791c12ccc029600f626e0fc",
+      "probe": {
+        "bytes": 242,
+        "path": "/private/tmp/line-backup-acceptance-verifier/safe-abort-linked/driver-records/r6-ownership/probe.json",
+        "sha256": "807c4da919f1c75652e740819d03820dcbf7559177e25a2ddf871b4fb5d35d6b"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/safe-abort-linked"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/special": {
+      "exists": true,
+      "marker": "f6ea65efe97602b9cd12318c9179a5dcccef65635f4371d2c12487fcf404ae8b",
+      "probe": {
+        "bytes": 232,
+        "path": "/private/tmp/line-backup-acceptance-verifier/special/driver-records/r6-ownership/probe.json",
+        "sha256": "d9fb6f60dc970113da969feaf9558ee540be52e5d4a4a2a1181d6a2e6312d10d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/special"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/symlink-entry": {
+      "exists": true,
+      "marker": "b592e863f43549c133b3f07c701b622c306cd5c15a3101b54af8cd9d4527ab29",
+      "probe": {
+        "bytes": 238,
+        "path": "/private/tmp/line-backup-acceptance-verifier/symlink-entry/driver-records/r6-ownership/probe.json",
+        "sha256": "8385629c3c280602b39d91fd400b89239907c60111af812bb7b4132807fa264a"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/symlink-entry"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/temp": {
+      "exists": true,
+      "marker": "d0b22ea40bf25fbaf3e4237f13ce58473820523f71b7a9339eee13872f8928b4",
+      "probe": {
+        "bytes": 229,
+        "path": "/private/tmp/line-backup-acceptance-verifier/temp/driver-records/r6-ownership/probe.json",
+        "sha256": "69c6a3f80ef0597565b2e77672198b1c7fe10a010588ff9048b08f5227bddabf"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/temp"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/text": {
+      "exists": true,
+      "marker": "445eca9de2cbcb80a63270c541b18f577e59c9a950ac8829ad03cffc6ff6cb3f",
+      "probe": {
+        "bytes": 229,
+        "path": "/private/tmp/line-backup-acceptance-verifier/text/driver-records/r6-ownership/probe.json",
+        "sha256": "4500501acede72e837a3ec73afdec6b90d59b63dd1de024a2b691f0a48dccc1d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/text"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/tmp": {
+      "exists": true,
+      "marker": "4becd6f386af92f1d3e3a992a7701bf78e5471f2deaacff6ec448eaa4bd52622",
+      "probe": {
+        "bytes": 228,
+        "path": "/private/tmp/line-backup-acceptance-verifier/tmp/driver-records/r6-ownership/probe.json",
+        "sha256": "202841afdd9af37c46799ce209eee160e3a207c8570f454d6155d72d604e20cf"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/tmp"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/truncated-png": {
+      "exists": true,
+      "marker": "c65e6999faf7683d8940344e78bd4e7391b620b775f61520500e5bf19eb32598",
+      "probe": {
+        "bytes": 238,
+        "path": "/private/tmp/line-backup-acceptance-verifier/truncated-png/driver-records/r6-ownership/probe.json",
+        "sha256": "7b7ba0708228a45d757b66a159640aa36d0b176bc78bef7d0c7b217d22c4dc87"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/truncated-png"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/unreadable": {
+      "exists": true,
+      "marker": "798e0a50a49b02ad3dd68831b6b42104ff004802a4aa1173c89204c4f2e44f57",
+      "probe": {
+        "bytes": 235,
+        "path": "/private/tmp/line-backup-acceptance-verifier/unreadable/driver-records/r6-ownership/probe.json",
+        "sha256": "01186a3b8f991e195f508d231b75cd9752754909f8d48c1b86ad3e878807375f"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/unreadable"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/unsupported-image-type": {
+      "exists": true,
+      "marker": "eaeabcb7bc91b4793fcd91995d3583b7df8df7289955f97267ca1d21c6ddab0f",
+      "probe": {
+        "bytes": 247,
+        "path": "/private/tmp/line-backup-acceptance-verifier/unsupported-image-type/driver-records/r6-ownership/probe.json",
+        "sha256": "cdab9c9272e9e59a66b66a16d59afd99c534a06aec9338b61a42f33a4d06b383"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/unsupported-image-type"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/valid": {
+      "exists": true,
+      "marker": "07d5067ee94f0336336a8fc11e5a2a94167e791d5299876f63007df17e988363",
+      "probe": {
+        "bytes": 230,
+        "path": "/private/tmp/line-backup-acceptance-verifier/valid/driver-records/r6-ownership/probe.json",
+        "sha256": "d27542b50f89f20f8ef13a49246972e4614e4c4a723f5f42737d2908fc5f45f5"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/valid"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group": {
+      "exists": true,
+      "marker": "1a4468aa9a87e27a905b6b99a79c7fc020ad3d9b215165dad9926ee22dc79d64",
+      "probe": {
+        "bytes": 236,
+        "path": "/private/tmp/line-backup-acceptance-verifier/wrong-group/driver-records/r6-ownership/probe.json",
+        "sha256": "3db91facc06b22816d2b23cd3ce25076e3fc45d58d2eedb6cdf0fc4290b81b3d"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/wrong-group"
+    },
+    "/private/tmp/line-backup-acceptance-verifier/wrong-group-link": {
+      "exists": true,
+      "marker": "160f561f124979495d896322d594387e9be37fb953efe5ced391124f6555bba6",
+      "probe": {
+        "bytes": 241,
+        "path": "/private/tmp/line-backup-acceptance-verifier/wrong-group-link/driver-records/r6-ownership/probe.json",
+        "sha256": "414ca65c29530908d1787f25082cdc19e4f6752bf6358c99893a48f688e12701"
+      },
+      "root": "/private/tmp/line-backup-acceptance-verifier/wrong-group-link"
+    }
+  },
+  "runs": {
+    "acceptance_case_driver_01": {
+      "argv": [
+        "/usr/bin/python3",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/acceptance_case_driver.py",
+        "--case-id",
+        "01",
+        "--case-root",
+        "/private/tmp/line-backup-acceptance-case-01",
+        "--pre-state",
+        "evidence/20260919-rev25-auto-verification/attempt-01/order-driver-first/phase2-r6-ownership/probe-runs/case-01-pre.json",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-01/state/backup_state.json",
+        "--post-state",
+        "evidence/20260919-rev25-auto-verification/attempt-01/order-driver-first/phase2-r6-ownership/probe-runs/case-01-post.json",
+        "--counter",
+        "evidence/20260919-rev25-auto-verification/attempt-01/order-driver-first/phase2-r6-ownership/probe-runs/case-01-counter.jsonl",
+        "--result",
+        "evidence/20260919-rev25-auto-verification/attempt-01/order-driver-first/phase2-r6-ownership/probe-runs/case-01-result.json",
+        "--manifest",
+        "/private/tmp/line-backup-acceptance-wave/r6-ownership-case-01-manifest.json",
+        "--stdout",
+        "evidence/20260919-rev25-auto-verification/attempt-01/order-driver-first/phase2-r6-ownership/probe-runs/case-01-stdout.log",
+        "--stderr",
+        "evidence/20260919-rev25-auto-verification/attempt-01/order-driver-first/phase2-r6-ownership/probe-runs/case-01-stderr.log",
+        "--exit-code",
+        "evidence/20260919-rev25-auto-verification/attempt-01/order-driver-first/phase2-r6-ownership/probe-runs/case-01-exit-code",
+        "--evidence-dir",
+        "evidence/20260919-rev25-auto-verification/attempt-01/order-driver-first/phase2-r6-ownership/probe-runs"
+      ],
+      "exit_code": 0
+    },
+    "authority_negative_driver": {
+      "argv": [
+        "/usr/bin/python3",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/authority_negative_driver.py",
+        "--summary",
+        "evidence/20260919-rev25-auto-verification/attempt-01/order-driver-first/phase2-r6-ownership/probe-runs/authority-summary.json"
+      ],
+      "exit_code": 0
+    },
+    "test_transaction_core": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.test_transaction_core"
+      ],
+      "exit_code": 0
+    }
+  },
+  "skipped_unowned": [],
+  "verdict": "NO_DELETION_OBSERVED"
+}

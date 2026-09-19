@@ -1,0 +1,105 @@
+{
+  "active_writer_id": "WRITER-R2-D",
+  "context_lock": null,
+  "current_run_id": "RUN-R2-D",
+  "revision": 2,
+  "runs": [
+    {
+      "album_id": null,
+      "batch_id": null,
+      "checkpoint": {
+        "at": "2026-09-19T10:57:16Z",
+        "evidence": "ambiguity barrier committed",
+        "phase": "TRIGGER_UNKNOWN"
+      },
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-02/destination-d",
+      "destination_initially_empty": true,
+      "dispatch_evidence": null,
+      "dispatch_state": "UNKNOWN",
+      "events": [
+        {
+          "at": "2026-09-19T10:57:16Z",
+          "evidence": "ambiguity barrier committed without a second dispatch",
+          "phase": "TRIGGER_UNKNOWN"
+        },
+        {
+          "at": "2026-09-19T10:57:16Z",
+          "evidence": "reconcile:reconcile.json:5d54c2a2cc9c9db1d841140461aa5839cdceeae030aa3f72709e5a0c4b3ab9d4",
+          "phase": "TRIGGER_UNKNOWN"
+        }
+      ],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "intent": {
+        "action_id": "ACTION-RUN-R2-D",
+        "calibration": {
+          "confidence": "HIGH",
+          "dot_spacing": 24.0,
+          "ellipsis": [
+            1400,
+            300
+          ],
+          "evidence": "fixture calibration (test-mode, driver-authored)",
+          "observed_at": "2026-09-16T00:00:00Z",
+          "save_all_point": [
+            1200,
+            210
+          ],
+          "screenshot_height": 982,
+          "screenshot_width": 1512
+        },
+        "committed_at": "2026-09-16T00:00:00Z",
+        "destination": "/private/tmp/line-backup-acceptance-case-02/destination-d",
+        "dispatch_outcome": "UNKNOWN",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "owner_execution_id": "WRITER-R2-D",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "UNKNOWN"
+      },
+      "intent_state": "TRIGGER_UNKNOWN",
+      "manual_reconciliation_required": true,
+      "mode": "backup_one",
+      "observed_title": "旻謙允禎成長日記",
+      "phase": "SAVE_ALL_INTENT_COMMITTED",
+      "reconciliation_reason": "dispatch outcome unresolved; reconciliation required",
+      "reconciliations": [
+        {
+          "action_id": "ACTION-RUN-R2-D",
+          "blocking_intent_released": false,
+          "evidence": "reconcile:reconcile.json:5d54c2a2cc9c9db1d841140461aa5839cdceeae030aa3f72709e5a0c4b3ab9d4",
+          "execution_id": "WRITER-R2-D",
+          "manual_reconciliation_required": true,
+          "original_observation": {
+            "reference": "intent-checkpoint:RUN-R2-D:rev2",
+            "trigger_outcome": "UNKNOWN"
+          },
+          "outcome": "EVIDENCE_RECONCILED",
+          "proof": null,
+          "reconciliation_id": "RECON-RUN-R2-D-1",
+          "recorded_at": "2026-09-19T10:57:16Z",
+          "run_id": "RUN-R2-D",
+          "trigger_outcome": "UNKNOWN"
+        }
+      ],
+      "recovery_used": {},
+      "run_id": "RUN-R2-D",
+      "runtime_errors": [],
+      "stop_reason": null,
+      "title_confidence": "HIGH",
+      "verification": null,
+      "workflow_outcome": "IN_PROGRESS"
+    }
+  ],
+  "schema_version": 2,
+  "verified_albums": []
+}

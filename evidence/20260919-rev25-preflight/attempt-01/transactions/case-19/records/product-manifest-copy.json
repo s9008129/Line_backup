@@ -1,0 +1,831 @@
+{
+  "artifacts": [
+    {
+      "bytes": 221,
+      "exists": true,
+      "path": ".driver-ownership.json",
+      "sha256": "408d8b235d90f85ab02c03cde341812f9583bd892b4d1ee1fcb85eb8dd6da0ee"
+    },
+    {
+      "bytes": 269,
+      "exists": true,
+      "path": "binding-fixture.json",
+      "sha256": "e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c"
+    },
+    {
+      "bytes": 371,
+      "exists": true,
+      "path": "config/line_backup_config.json",
+      "sha256": "dd3c37d53e9111fd4c381cd826520b018be40ce5c19702100b3cc21fb76d9379"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-000.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-001.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-002.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-003.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-004.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-005.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-006.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-007.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-008.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-009.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-010.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-011.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-012.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-013.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-014.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-015.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-016.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-017.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-018.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-019.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-020.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-021.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-022.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-023.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-024.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-025.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-026.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-027.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-028.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-029.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-030.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-031.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-032.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-033.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-034.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-035.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-036.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-037.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-038.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-039.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-040.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-041.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-042.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-043.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-044.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-045.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-046.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-047.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-048.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-049.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-050.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-051.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-052.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-053.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-054.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-055.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 74,
+      "exists": true,
+      "path": "destination/image-056.png",
+      "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129"
+    },
+    {
+      "bytes": 72,
+      "exists": true,
+      "path": "dispatch-counter.jsonl",
+      "sha256": "bee003b20851f64c4fa8e126b8927561eea5bb712db5cfe837ec3328da13236b"
+    },
+    {
+      "bytes": 484,
+      "exists": true,
+      "path": "dispatcher.py",
+      "sha256": "90111ca1486e18c9260b1e50eebcec14ffbcd70d2fd7f59306b3d773219b84b1"
+    },
+    {
+      "bytes": 214,
+      "exists": true,
+      "path": "evidence/commit/result.json",
+      "sha256": "e3f7aef53ad4c131197a3acb917ac04f85a43414cf728c6a756eee1439c550d7"
+    },
+    {
+      "bytes": 205,
+      "exists": true,
+      "path": "evidence/finalize/result.json",
+      "sha256": "495c75047cf48a76163de09738d710cf36efc6a9655fb0b702da30b500564d86"
+    },
+    {
+      "bytes": 228,
+      "exists": true,
+      "path": "evidence/result.json",
+      "sha256": "34883c53d19b6ee6c53de7d85710c0509836f2f7997c02e728a212c716a08ec3"
+    },
+    {
+      "bytes": 160,
+      "exists": true,
+      "path": "input-state.json",
+      "sha256": "b52421d1d3af09f4dfb270a32ff67fef4ab80a369773173bc93dd730e5556b1b"
+    },
+    {
+      "bytes": 905,
+      "exists": true,
+      "path": "process-records/19/commit-refused/argv.json",
+      "sha256": "59424147f4496e73caf0603caf9b8af6885ed259ecd3173e753e920925a3df47"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/19/commit-refused/exit-code",
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/19/commit-refused/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 200,
+      "exists": true,
+      "path": "process-records/19/commit-refused/stdout.log",
+      "sha256": "c34af86a333a7c9e878da965888af8cd8e9802e25f25d541217e307391f6834a"
+    },
+    {
+      "bytes": 836,
+      "exists": true,
+      "path": "process-records/19/finalize-safe-abort/argv.json",
+      "sha256": "61bc67aa96e124e44d899557a14cfd3f8cdce2ec8ee4ecd4387665e09c4de142"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/19/finalize-safe-abort/exit-code",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/19/finalize-safe-abort/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 187,
+      "exists": true,
+      "path": "process-records/19/finalize-safe-abort/stdout.log",
+      "sha256": "b614396b9d1d3ed234840e58a335e86275c578fb6f443d0fa65612352a410434"
+    },
+    {
+      "bytes": 1338,
+      "exists": true,
+      "path": "process-records/19/prepare-unknown/argv.json",
+      "sha256": "647d22b0df1e123b72cd2aa36fc7e569f89f59918ed747280aa2bb42856f6af4"
+    },
+    {
+      "bytes": 2,
+      "exists": true,
+      "path": "process-records/19/prepare-unknown/exit-code",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "process-records/19/prepare-unknown/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 212,
+      "exists": true,
+      "path": "process-records/19/prepare-unknown/stdout.log",
+      "sha256": "1e530728afd2588a7b3f67cd0121eee0d3b84b1f8764bfa9941545e7b7691c96"
+    },
+    {
+      "bytes": 1210,
+      "exists": true,
+      "path": "source-evidence.json",
+      "sha256": "c6cc58ef2daca00469af74e7e379c07cd9b09c50686e6543474cee08246253de"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "state/.line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3016,
+      "exists": true,
+      "path": "state/backup_state.json",
+      "sha256": "1d3ac98ffafccaba19c7a02398f4abd6591d2853802e5b30d68e01ccde7b30ea"
+    },
+    {
+      "bytes": 55,
+      "exists": true,
+      "path": "state/run_log.md",
+      "sha256": "85f0a3e43581ca5c2ab26e87e94a7124071a344ea93e03c5780d19992123224f"
+    }
+  ],
+  "case_id": "19",
+  "checks": [
+    {
+      "expected": "DISPATCH_UNKNOWN",
+      "id": "prepare.code",
+      "match": true,
+      "observed": "DISPATCH_UNKNOWN"
+    },
+    {
+      "expected": 2,
+      "id": "prepare.revision2",
+      "match": true,
+      "observed": 2
+    },
+    {
+      "expected": 1,
+      "id": "prepare.counter1",
+      "match": true,
+      "observed": 1
+    },
+    {
+      "expected": "CONFLICT_UNRESOLVED_DISPATCH",
+      "id": "commit.code",
+      "match": true,
+      "observed": "CONFLICT_UNRESOLVED_DISPATCH"
+    },
+    {
+      "expected": 4,
+      "id": "commit.exit4",
+      "match": true,
+      "observed": 4
+    },
+    {
+      "expected": "FINALIZED",
+      "id": "finalize.code",
+      "match": true,
+      "observed": "FINALIZED"
+    },
+    {
+      "expected": 0,
+      "id": "finalize.exit0",
+      "match": true,
+      "observed": 0
+    },
+    {
+      "expected": 3,
+      "id": "finalize.revision3",
+      "match": true,
+      "observed": 3
+    },
+    {
+      "expected": 0,
+      "id": "finalize.no-registry",
+      "match": true,
+      "observed": 0
+    },
+    {
+      "expected": "TRIGGER_UNKNOWN",
+      "id": "finalize.barrier-preserved",
+      "match": true,
+      "observed": "TRIGGER_UNKNOWN"
+    },
+    {
+      "expected": 1,
+      "id": "finalize.counter1",
+      "match": true,
+      "observed": 1
+    }
+  ],
+  "independent_oracle_match": true,
+  "inputs": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "prepare",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-19",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-19/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-19/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-19/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-19",
+        "--owner-id",
+        "WRITER-CASE-19",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-19/destination",
+        "--source-evidence",
+        "/private/tmp/line-backup-acceptance-case-19/source-evidence.json",
+        "--dispatcher",
+        "/private/tmp/line-backup-acceptance-case-19/dispatcher.py",
+        "--dispatch-counter",
+        "/private/tmp/line-backup-acceptance-case-19/dispatch-counter.jsonl",
+        "--dispatcher-outcome",
+        "UNKNOWN",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-19/evidence"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "prepare-unknown"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "commit",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-19",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-19/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-19/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-19/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-19",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-19",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-19/evidence/verify-1/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-19/evidence/commit"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "commit-refused"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-19",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-19/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-19/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-19/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-19",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-19",
+        "--outcome",
+        "SAFE_ABORT",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-19/evidence/finalize"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "env": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src"
+      },
+      "label": "finalize-safe-abort"
+    }
+  ],
+  "notes": [
+    "fixture preconditions authored by the driver; oracle computed before product execution"
+  ],
+  "processes": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "prepare",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-19",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-19/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-19/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-19/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-19",
+        "--owner-id",
+        "WRITER-CASE-19",
+        "--group-key",
+        "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "--start-date",
+        "2024-05-13",
+        "--end-date",
+        "2024-05-17",
+        "--expected-images",
+        "57",
+        "--destination",
+        "/private/tmp/line-backup-acceptance-case-19/destination",
+        "--source-evidence",
+        "/private/tmp/line-backup-acceptance-case-19/source-evidence.json",
+        "--dispatcher",
+        "/private/tmp/line-backup-acceptance-case-19/dispatcher.py",
+        "--dispatch-counter",
+        "/private/tmp/line-backup-acceptance-case-19/dispatch-counter.jsonl",
+        "--dispatcher-outcome",
+        "UNKNOWN",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-19/evidence"
+      ],
+      "exit_code": 1,
+      "label": "prepare-unknown",
+      "record_dir": "process-records/19/prepare-unknown",
+      "result": {
+        "dispatch_performed": true,
+        "exit_code": 1,
+        "message": "pre-dispatch ambiguity barrier committed; adapter invoked once",
+        "result": "DISPATCH_UNKNOWN",
+        "revision": 2,
+        "schema_version": 1,
+        "state_replaced": true
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "commit",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-19",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-19/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-19/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-19/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-19",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-19",
+        "--verification-json",
+        "/private/tmp/line-backup-acceptance-case-19/evidence/verify-1/result.json",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-19/evidence/commit"
+      ],
+      "exit_code": 4,
+      "label": "commit-refused",
+      "record_dir": "process-records/19/commit-refused",
+      "result": {
+        "exit_code": 4,
+        "message": "no completed successful dispatch record; commit is refused",
+        "replacement": false,
+        "result": "CONFLICT_UNRESOLVED_DISPATCH",
+        "schema_version": 1,
+        "state_replaced": false
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "line_backup_acceptance",
+        "transaction",
+        "finalize",
+        "--project-root",
+        "/private/tmp/line-backup-acceptance-case-19",
+        "--config",
+        "/private/tmp/line-backup-acceptance-case-19/config/line_backup_config.json",
+        "--run-log",
+        "/private/tmp/line-backup-acceptance-case-19/state/run_log.md",
+        "--state",
+        "/private/tmp/line-backup-acceptance-case-19/state/backup_state.json",
+        "--test-mode",
+        "--run-id",
+        "RUN-CASE-19",
+        "--expected-revision",
+        "2",
+        "--expected-owner-id",
+        "WRITER-CASE-19",
+        "--outcome",
+        "SAFE_ABORT",
+        "--evidence-dir",
+        "/private/tmp/line-backup-acceptance-case-19/evidence/finalize"
+      ],
+      "exit_code": 0,
+      "label": "finalize-safe-abort",
+      "record_dir": "process-records/19/finalize-safe-abort",
+      "result": {
+        "exit_code": 0,
+        "message": "terminal outcome committed",
+        "outcome": "SAFE_ABORT",
+        "replacement": true,
+        "result": "FINALIZED",
+        "revision": 3,
+        "schema_version": 1,
+        "state_replaced": true
+      }
+    }
+  ],
+  "root": "/private/tmp/line-backup-acceptance-case-19",
+  "schema_version": 1
+}

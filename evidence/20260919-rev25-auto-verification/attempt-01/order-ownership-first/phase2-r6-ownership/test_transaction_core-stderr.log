@@ -1,0 +1,10 @@
+test_fixture_containment_rejects_symlink_escape (tests.test_transaction_core.TransactionCoreTests) ... ok
+test_generic_missing_core_rationale_uses_legal_escalated_enum (tests.test_transaction_core.TransactionCoreTests) ... ok
+test_generic_required_verification_fail_routes_fix_required (tests.test_transaction_core.TransactionCoreTests) ... ok
+test_production_authority_mismatch_happens_without_state_read (tests.test_transaction_core.TransactionCoreTests) ... ok
+test_test_mode_refuses_non_literal_root_without_state_read (tests.test_transaction_core.TransactionCoreTests) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.363s
+
+OK

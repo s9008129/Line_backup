@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "line_backup_acceptance",
+    "transaction",
+    "duplicate-check",
+    "--project-root",
+    "/private/tmp/line-backup-acceptance-case-16",
+    "--config",
+    "/private/tmp/line-backup-acceptance-case-16/config/line_backup_config.json",
+    "--run-log",
+    "/private/tmp/line-backup-acceptance-case-16/state/run_log.md",
+    "--state",
+    "/private/tmp/line-backup-acceptance-case-16/state/backup_state.json",
+    "--test-mode",
+    "--group-key",
+    "line:jp.naver.line.mac:旻謙允禎成長日記",
+    "--start-date",
+    "2024-05-13",
+    "--end-date",
+    "2024-05-17",
+    "--expected-images",
+    "57",
+    "--destination",
+    "/private/tmp/line-backup-acceptance-case-16/destination",
+    "--evidence-dir",
+    "/private/tmp/line-backup-acceptance-case-16/evidence"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "env_extra": {},
+  "secrets_removed": true
+}

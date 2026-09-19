@@ -1,0 +1,607 @@
+{
+  "artifact_readback": "PASS",
+  "destination": "/private/tmp/line-backup-acceptance-case-01/destination",
+  "exit_code": 0,
+  "expected_images": 57,
+  "failure_class": "NONE",
+  "filesystem": {
+    "entries": [
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462851554011,
+        "relative_path": "image-000.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462851669218,
+        "relative_path": "image-001.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462851778467,
+        "relative_path": "image-002.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462851879549,
+        "relative_path": "image-003.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462851979214,
+        "relative_path": "image-004.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462852078547,
+        "relative_path": "image-005.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462852186295,
+        "relative_path": "image-006.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462852570957,
+        "relative_path": "image-007.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462852750955,
+        "relative_path": "image-008.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462852879953,
+        "relative_path": "image-009.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462852991452,
+        "relative_path": "image-010.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462853106826,
+        "relative_path": "image-011.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462853214991,
+        "relative_path": "image-012.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462853324614,
+        "relative_path": "image-013.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462853439613,
+        "relative_path": "image-014.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462853551112,
+        "relative_path": "image-015.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462853653277,
+        "relative_path": "image-016.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462853753068,
+        "relative_path": "image-017.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462853853566,
+        "relative_path": "image-018.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462853957940,
+        "relative_path": "image-019.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462854065689,
+        "relative_path": "image-020.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462854165104,
+        "relative_path": "image-021.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462854275311,
+        "relative_path": "image-022.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462854376101,
+        "relative_path": "image-023.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462854486767,
+        "relative_path": "image-024.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462854588349,
+        "relative_path": "image-025.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462854686389,
+        "relative_path": "image-026.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462854789971,
+        "relative_path": "image-027.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462854894095,
+        "relative_path": "image-028.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462854991510,
+        "relative_path": "image-029.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462855104426,
+        "relative_path": "image-030.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462855204841,
+        "relative_path": "image-031.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462855309298,
+        "relative_path": "image-032.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462855412422,
+        "relative_path": "image-033.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462855511754,
+        "relative_path": "image-034.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462855609045,
+        "relative_path": "image-035.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462855705252,
+        "relative_path": "image-036.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462855808334,
+        "relative_path": "image-037.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462855912791,
+        "relative_path": "image-038.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462856012831,
+        "relative_path": "image-039.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462856115830,
+        "relative_path": "image-040.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462856312911,
+        "relative_path": "image-041.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462856464659,
+        "relative_path": "image-042.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462856587282,
+        "relative_path": "image-043.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462856694698,
+        "relative_path": "image-044.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462856797905,
+        "relative_path": "image-045.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462856917653,
+        "relative_path": "image-046.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462857022235,
+        "relative_path": "image-047.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462857134901,
+        "relative_path": "image-048.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462857236108,
+        "relative_path": "image-049.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462857333940,
+        "relative_path": "image-050.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462857440022,
+        "relative_path": "image-051.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462857550604,
+        "relative_path": "image-052.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462857647769,
+        "relative_path": "image-053.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462857743976,
+        "relative_path": "image-054.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462857843225,
+        "relative_path": "image-055.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      },
+      {
+        "failure_class": null,
+        "mime": "image/png",
+        "mtime_ns": 1789815462858040556,
+        "relative_path": "image-056.png",
+        "sha256": "2149da9621a6458c054b222732f899f9e8f2e4cfba7a89dbd30289b7bf20c129",
+        "size": 74,
+        "status": "OK",
+        "type": "regular"
+      }
+    ],
+    "error_codes": [],
+    "observed_at": "2026-09-19T10:57:44Z",
+    "recognized_images": 57,
+    "regular_files": 57,
+    "root": "/private/tmp/line-backup-acceptance-case-01/destination",
+    "scan_error": null,
+    "total_bytes": 4218
+  },
+  "filesystem_status": "PASS",
+  "fingerprint": {
+    "end_date": "2024-05-17",
+    "expected_images": 57,
+    "start_date": "2024-05-13"
+  },
+  "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+  "inventory_samples": 3,
+  "legacy_normalizations": [],
+  "mode": "verify_only",
+  "overall_status": "PASS",
+  "recognized_images": 57,
+  "registry_status": "PASS",
+  "run_id": "RUN-CASE-01",
+  "schema_version": 1,
+  "source_kind": "filesystem_verification",
+  "source_status": "CONFIRMED",
+  "state_revision": 4,
+  "state_status": "EXACT"
+}

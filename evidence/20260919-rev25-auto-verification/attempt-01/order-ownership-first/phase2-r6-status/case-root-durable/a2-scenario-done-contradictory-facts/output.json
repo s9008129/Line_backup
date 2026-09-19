@@ -1,0 +1,15 @@
+{
+  "baseline_delta": "UNAVAILABLE",
+  "blocker": null,
+  "checks": [],
+  "core_acceptance_status": "PASS",
+  "evidence_basis": "scenario_table_non_acceptance",
+  "failure_class": "PRODUCT_DEFECT",
+  "implementation_status": "COMPLETE",
+  "independent_acceptance_status": "PASS",
+  "primary_outcome_status": "ACHIEVED",
+  "required_verification_status": "PASS",
+  "schema_version": 2,
+  "task_closure_status": "DONE",
+  "waiver": null
+}

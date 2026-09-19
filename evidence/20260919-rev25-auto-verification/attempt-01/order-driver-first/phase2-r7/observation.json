@@ -1,0 +1,298 @@
+{
+  "case_root": "/private/tmp/line-backup-acceptance-case-09",
+  "checks": {
+    "commit.committed": true,
+    "dup1.not-duplicate": true,
+    "dup2.skip-duplicate": true,
+    "finalize.binding-rehashed-externally": true,
+    "finalize.entry-bound": true,
+    "finalize.finalized": true,
+    "prepare.destination-57": true,
+    "prepare.dispatch-once": true,
+    "prepare.prepared": true,
+    "prepare2.no-extra-dispatch": true,
+    "prepare2.no-state-write": true,
+    "prepare2.refused": true,
+    "resume.skip-terminal": true,
+    "verify1.filesystem-pass": true,
+    "verify1.not-yet-confirmed": true,
+    "verify2.exit0": true,
+    "verify2.overall-pass": true,
+    "verify2.registry-pass": true,
+    "verify2.source-confirmed": true,
+    "verify2.state-exact": true
+  },
+  "claim": "post-fix: the transaction -> finalize -> verify-only loop closes and the duplicate gate refuses bypass",
+  "commit": {
+    "exit_code": 0,
+    "result": {
+      "exit_code": 0,
+      "message": "verification committed",
+      "replacement": true,
+      "result": "COMMITTED_VERIFICATION",
+      "revision": 3,
+      "schema_version": 1,
+      "state_replaced": true
+    }
+  },
+  "driver": "phase2-r7-integration",
+  "duplicate_check_after": {
+    "exit_code": 0,
+    "result": {
+      "dispatch_performed": false,
+      "exit_code": 0,
+      "message": "exact terminal association exists",
+      "replacement": false,
+      "result": "SKIP_DUPLICATE",
+      "schema_version": 1,
+      "state_replaced": false
+    }
+  },
+  "duplicate_check_before": {
+    "argv": [
+      "/usr/bin/python3",
+      "-m",
+      "line_backup_acceptance",
+      "transaction",
+      "duplicate-check",
+      "--project-root",
+      "/private/tmp/line-backup-acceptance-case-09",
+      "--config",
+      "/private/tmp/line-backup-acceptance-case-09/config/line_backup_config.json",
+      "--run-log",
+      "/private/tmp/line-backup-acceptance-case-09/state/run_log.md",
+      "--state",
+      "/private/tmp/line-backup-acceptance-case-09/state/backup_state.json",
+      "--test-mode",
+      "--group-key",
+      "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "--start-date",
+      "2024-05-13",
+      "--end-date",
+      "2024-05-17",
+      "--expected-images",
+      "57",
+      "--destination",
+      "/private/tmp/line-backup-acceptance-case-09/backups/album-integration",
+      "--evidence-dir",
+      "/private/tmp/line-backup-acceptance-case-09/evidence/dup1"
+    ],
+    "exit_code": 0,
+    "result": {
+      "dispatch_performed": false,
+      "exit_code": 0,
+      "message": "no same-group association and no same-fingerprint intent or run exists",
+      "replacement": false,
+      "result": "NOT_DUPLICATE",
+      "schema_version": 1,
+      "state_replaced": false
+    }
+  },
+  "entry": "real CLI duplicate-check -> prepare -> verify-1 -> commit -> finalize -> verify-2 -> duplicate-check -> terminal resume -> second-destination prepare",
+  "finalize": {
+    "exit_code": 0,
+    "external_rehash": {
+      "anchors_match": true,
+      "external_rehash_ok": true,
+      "kind": "fixture",
+      "parses": true,
+      "reference": "fixture:binding-fixture.json:e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c",
+      "resolved": "/private/tmp/line-backup-acceptance-case-09/binding-fixture.json",
+      "sha256_matches": true
+    },
+    "registry_entry": {
+      "destinations": [
+        "/private/tmp/line-backup-acceptance-case-09/backups/album-integration"
+      ],
+      "evidence": "fixture:binding-fixture.json:e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c",
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "source_kind": "filesystem_verification",
+      "verified_run_id": "RUN-R7"
+    },
+    "result": {
+      "exit_code": 0,
+      "message": "terminal outcome committed",
+      "outcome": "VERIFIED",
+      "replacement": true,
+      "result": "FINALIZED",
+      "revision": 4,
+      "schema_version": 1,
+      "state_replaced": true
+    }
+  },
+  "oracle": "state/registry + destination inventory + independent counter + genuine verify chains + external re-hash of the exported binding",
+  "pre_fix": {
+    "evidence": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/phase2-r7/observation.json",
+    "observation": "prepare -> resume (1 side effect) -> commit -> finalize VERIFIED; verify-only then reported source UNRESOLVED / overall NOT_ACHIEVED, and a second prepare for the same fingerprint at a new destination returned PREPARED",
+    "verdict": "REPRODUCED_NON_CLOSING_LOOP_AND_DUPLICATE_BYPASS"
+  },
+  "prepare": {
+    "argv": [
+      "/usr/bin/python3",
+      "-m",
+      "line_backup_acceptance",
+      "transaction",
+      "prepare",
+      "--project-root",
+      "/private/tmp/line-backup-acceptance-case-09",
+      "--config",
+      "/private/tmp/line-backup-acceptance-case-09/config/line_backup_config.json",
+      "--run-log",
+      "/private/tmp/line-backup-acceptance-case-09/state/run_log.md",
+      "--state",
+      "/private/tmp/line-backup-acceptance-case-09/state/backup_state.json",
+      "--test-mode",
+      "--run-id",
+      "RUN-R7",
+      "--owner-id",
+      "WRITER-R7",
+      "--group-key",
+      "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "--start-date",
+      "2024-05-13",
+      "--end-date",
+      "2024-05-17",
+      "--expected-images",
+      "57",
+      "--destination",
+      "/private/tmp/line-backup-acceptance-case-09/backups/album-integration",
+      "--source-evidence",
+      "/private/tmp/line-backup-acceptance-case-09/source-evidence.json",
+      "--dispatcher",
+      "/private/tmp/line-backup-acceptance-case-09/downloader-adapter.py",
+      "--dispatch-counter",
+      "/private/tmp/line-backup-acceptance-case-09/dispatch-counter.jsonl",
+      "--dispatcher-outcome",
+      "RETURNED",
+      "--evidence-dir",
+      "/private/tmp/line-backup-acceptance-case-09/evidence/prepare"
+    ],
+    "counter_lines": 1,
+    "destination_files": 57,
+    "exit_code": 0,
+    "result": {
+      "dispatch_performed": true,
+      "exit_code": 0,
+      "message": "intent committed and exactly one dispatch performed",
+      "result": "PREPARED",
+      "revision": 2,
+      "schema_version": 1,
+      "state_replaced": true
+    }
+  },
+  "prepare_second_destination": {
+    "argv": [
+      "/usr/bin/python3",
+      "-m",
+      "line_backup_acceptance",
+      "transaction",
+      "prepare",
+      "--project-root",
+      "/private/tmp/line-backup-acceptance-case-09",
+      "--config",
+      "/private/tmp/line-backup-acceptance-case-09/config/line_backup_config.json",
+      "--run-log",
+      "/private/tmp/line-backup-acceptance-case-09/state/run_log.md",
+      "--state",
+      "/private/tmp/line-backup-acceptance-case-09/state/backup_state.json",
+      "--test-mode",
+      "--run-id",
+      "RUN-R7-B",
+      "--owner-id",
+      "WRITER-R7B",
+      "--group-key",
+      "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "--start-date",
+      "2024-05-13",
+      "--end-date",
+      "2024-05-17",
+      "--expected-images",
+      "57",
+      "--destination",
+      "/private/tmp/line-backup-acceptance-case-09/backups/album-integration-second",
+      "--source-evidence",
+      "/private/tmp/line-backup-acceptance-case-09/source-evidence.json",
+      "--dispatcher",
+      "/private/tmp/line-backup-acceptance-case-09/downloader-adapter.py",
+      "--dispatch-counter",
+      "/private/tmp/line-backup-acceptance-case-09/dispatch-counter.jsonl",
+      "--dispatcher-outcome",
+      "RETURNED",
+      "--evidence-dir",
+      "/private/tmp/line-backup-acceptance-case-09/evidence/prepare2"
+    ],
+    "counter_lines": 1,
+    "exit_code": 4,
+    "result": {
+      "dispatch_performed": false,
+      "exit_code": 4,
+      "message": "prepare precondition refused",
+      "result": "CONFLICT_DUPLICATE_FINGERPRINT",
+      "revision": 4,
+      "schema_version": 1,
+      "state_replaced": false
+    },
+    "state_unchanged": true
+  },
+  "program_hashes": {
+    "authority.py": {
+      "bytes": 9330,
+      "sha256": "e0d32d27d5a06a50a60d413c7d17a997490da087583c3ce070e49d951ca8cd27"
+    },
+    "cli.py": {
+      "bytes": 5169,
+      "sha256": "162003558afa8690e63fecb445cbff5e2af9a76c9c88280d9a787b897a9bc49c"
+    },
+    "common.py": {
+      "bytes": 34551,
+      "sha256": "7b0956f9bfb84d7dfb77e095f1626a1d1a1a1aabc543be4bdeff42cbcbf929aa"
+    },
+    "status.py": {
+      "bytes": 7937,
+      "sha256": "1c8c27edf204d9243e8773cd830e16566269fb3814faa332dd8237c71587180e"
+    },
+    "transaction.py": {
+      "bytes": 42374,
+      "sha256": "95ae935162ffc49636bc461dfe64c86f5e915080f45022e667dbb1d4ba9bcc8d"
+    },
+    "verifier.py": {
+      "bytes": 25377,
+      "sha256": "a07ffe450284ade34fce27f646bd4a0c37baccb65de5660e77aea3faf48b23b6"
+    }
+  },
+  "terminal_resume": {
+    "exit_code": 0,
+    "result": {
+      "dispatch_performed": false,
+      "exit_code": 0,
+      "message": "run is terminal; nothing to resume",
+      "reconciliation_state": "NONE",
+      "result": "SKIP_TERMINAL",
+      "schema_version": 1,
+      "state_replaced": false
+    }
+  },
+  "verdict": "SAFE_R7_LOOP_CLOSED_AND_DUPLICATE_REFUSED",
+  "verify_1": {
+    "axes": {
+      "failure_class": "INPUT_NEGATIVE",
+      "filesystem_status": "PASS",
+      "overall_status": "NOT_ACHIEVED",
+      "registry_status": "FAIL",
+      "source_status": "UNRESOLVED",
+      "state_status": "EXACT"
+    },
+    "exit_code": 4
+  },
+  "verify_2": {
+    "axes": {
+      "failure_class": "NONE",
+      "filesystem_status": "PASS",
+      "overall_status": "PASS",
+      "registry_status": "PASS",
+      "source_status": "CONFIRMED",
+      "state_status": "EXACT"
+    },
+    "exit_code": 0
+  }
+}

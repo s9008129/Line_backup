@@ -1,0 +1,10 @@
+{
+  "dispatch_performed": false,
+  "exit_code": 0,
+  "message": "run already carries the barrier or a completed dispatch record",
+  "reconciliation_state": "ALREADY_RECONCILED",
+  "result": "RECOVERY_NO_DISPATCH",
+  "revision": 2,
+  "schema_version": 1,
+  "state_replaced": false
+}

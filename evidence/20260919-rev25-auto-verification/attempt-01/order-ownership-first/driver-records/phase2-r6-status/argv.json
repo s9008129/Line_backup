@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/automation_verification/run_phase2_r6_status_selfcert.py",
+    "--evidence-dir",
+    "evidence/20260919-rev25-auto-verification/attempt-01/order-ownership-first/phase2-r6-status"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "env_fingerprint": {
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONHASHSEED": "0",
+    "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src",
+    "PYTHONPYCACHEPREFIX": "/private/tmp/line-backup-acceptance-pycache"
+  },
+  "secrets_removed": true,
+  "started_at": "2026-09-19T10:57:59Z"
+}

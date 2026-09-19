@@ -1,0 +1,14 @@
+{
+  "artifacts": [
+    {
+      "bytes": 56272,
+      "path": "summary.json",
+      "sha256": "e5b453a74a708c4acb1592036d395d7bfc0fa110b25552939fcc73f6f3f7d2af"
+    }
+  ],
+  "files": 1,
+  "generated_at": "2026-09-19T10:55:10Z",
+  "root": "evidence/20260919-rev25-preflight/attempt-01/authority",
+  "schema_version": 1,
+  "total_bytes": 56272
+}

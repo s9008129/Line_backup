@@ -1,0 +1,103 @@
+{
+  "active_writer_id": null,
+  "context_lock": null,
+  "current_run_id": null,
+  "revision": 3,
+  "runs": [
+    {
+      "album_id": null,
+      "batch_id": null,
+      "checkpoint": {
+        "at": "2026-09-19T10:54:12Z",
+        "evidence": "terminal SAFE_ABORT: unresolved dispatch barrier preserved",
+        "phase": "SAFE_ABORT"
+      },
+      "contract_revision": "1.0-rc2",
+      "destination": "/private/tmp/line-backup-acceptance-case-10/destination",
+      "destination_initially_empty": true,
+      "dispatch_evidence": {
+        "action_id": "ACTION-RUN-CASE-10B",
+        "download_started": false,
+        "execution_id": "WRITER-CASE-10B",
+        "failure_boundary": "NONE",
+        "folder_chooser_appeared": false,
+        "observed_at": "2026-09-16T00:00:00Z",
+        "provenance": "fixture dispatcher adapter (test-mode side-effect fake)",
+        "run_id": "RUN-CASE-10B",
+        "save_all_click_count": 1,
+        "save_all_invocation_attempted": true
+      },
+      "dispatch_state": "UNKNOWN",
+      "events": [
+        {
+          "at": "2026-09-16T00:00:00Z",
+          "evidence": "fixture:binding-fixture.json:e55e435968d9278a261a8755acd696b78d88176dc9c3a75b47fc62cebd20af6c",
+          "phase": "SAVE_ALL_INTENT_COMMITTED"
+        },
+        {
+          "at": "2026-09-16T00:00:00Z",
+          "evidence": "fixture dispatch record",
+          "phase": "SAVE_ALL_DISPATCH_ATTEMPTED"
+        },
+        {
+          "at": "2026-09-19T10:54:12Z",
+          "evidence": "terminal SAFE_ABORT: unresolved dispatch barrier preserved",
+          "phase": "SAFE_ABORT"
+        }
+      ],
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "intent": {
+        "action_id": "ACTION-RUN-CASE-10B",
+        "calibration": {
+          "confidence": "HIGH",
+          "dot_spacing": 24.0,
+          "ellipsis": [
+            1400,
+            300
+          ],
+          "evidence": "fixture calibration (test-mode, driver-authored)",
+          "observed_at": "2026-09-16T00:00:00Z",
+          "save_all_point": [
+            1200,
+            210
+          ],
+          "screenshot_height": 982,
+          "screenshot_width": 1512
+        },
+        "committed_at": "2026-09-16T00:00:00Z",
+        "destination": "/private/tmp/line-backup-acceptance-case-10/destination",
+        "dispatch_outcome": "UNKNOWN",
+        "fingerprint": {
+          "end_date": "2024-05-17",
+          "expected_images": 57,
+          "start_date": "2024-05-13"
+        },
+        "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+        "owner_execution_id": "WRITER-CASE-10B",
+        "save_all_retry_allowed": false,
+        "trigger_outcome": "UNKNOWN"
+      },
+      "intent_state": "TRIGGER_UNKNOWN",
+      "manual_reconciliation_required": true,
+      "mode": "backup_one",
+      "observed_title": "旻謙允禎成長日記",
+      "phase": "SAFE_ABORT",
+      "reconciliation_reason": "fixture unresolved dispatch barrier",
+      "reconciliations": [],
+      "recovery_used": {},
+      "run_id": "RUN-CASE-10B",
+      "runtime_errors": [],
+      "stop_reason": "SAFE_ABORT_UNRESOLVED_DISPATCH",
+      "title_confidence": "HIGH",
+      "verification": null,
+      "workflow_outcome": "SAFE_ABORT"
+    }
+  ],
+  "schema_version": 2,
+  "verified_albums": []
+}

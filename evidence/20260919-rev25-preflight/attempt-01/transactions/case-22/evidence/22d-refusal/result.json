@@ -1,0 +1,8 @@
+{
+  "exit_code": 4,
+  "message": "verification run_id does not belong to this run",
+  "replacement": false,
+  "result": "VERIFICATION_RUN_MISMATCH",
+  "schema_version": 1,
+  "state_replaced": false
+}
