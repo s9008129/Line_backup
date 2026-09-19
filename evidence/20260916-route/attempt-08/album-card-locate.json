@@ -1,0 +1,134 @@
+{
+ "tool": "locate_album_card",
+ "frame": "evidence/20260916-route/attempt-08/frame-pre.png",
+ "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   37,
+   963,
+   267,
+   990
+  ]
+ },
+ "ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/13~05/17",
+  "57",
+  "十",
+  "仰白意 万芯叉I口煳豆",
+  "LINE TV〈再見1987〉熱播中",
+  "z",
+  "C28°C",
+  "03",
+  "9月19日週六 20:14",
+  "d1",
+  "T",
+  "11.16",
+  "①",
+  "10.15",
+  "0.14",
+  "9.10",
+  "• Line_backup 一”說明下一步操作 I Line_backup —codex --profile implem..•",
+  "...e-mode-host",
+  "..heck2 - -zsh",
+  "..ds l -zsh•.",
+  "...ode-host",
+  "十",
+  "L ［master",
+  "6e6803c］ Rev25",
+  "attempt-08 授權",
+  "Phase 4：意圖/凍結",
+  "runbook ledger；證據 /parent/too1",
+  "gate-6 route",
+  "preflight；變更/新",
+  "GUI 0；下一",
+  "100644 evidence/20260916-route/attempt-08/route-runbook.md",
+  "100644 evidence/20260916-route/attempt-98/run-ledger.json",
+  "• Used",
+  "computer",
+  "L S1/S2 讀取",
+  "•L",
+  "action",
+  "LINE",
+  "即時狀態與視窗",
+  "• Used",
+  "computer",
+  "1",
+  "action",
+  "L確認",
+  "LINE 相簿列表仍在目前視窗",
+  "• Used",
+  "computer",
+  "• 1",
+  "action",
+  "L Captured screenshot•S1 擷取 fresh LINE 相簿列表",
+  "• Planning full-screen terminal capture （5m 34s • esc to interrupt）",
+  "8.14"
+ ],
+ "band_top_bright_row": 72,
+ "band_bottom_bright_row": null,
+ "margin_above_px": 904,
+ "margin_below_px": null,
+ "count_box": [
+  29,
+  992,
+  197,
+  1022
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "click_point": [
+  49,
+  976
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "verdict": "UNSAFE_MARGINS",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "6a05675979342d3e570152a4378d73dc0edf1096689406d45c87f74b67ede7e2",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "0f0e27228cf730d428a22331fbb503177eba3c346db7073263607b93169ec583",
+    "stdout_bytes": 3313,
+    "lines_parsed": 67
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "87ce6d03a4b637d9ac61d4e8331a443336a6220e9d3ba88b5045dd9da8c8a326",
+    "stdout_bytes": 32,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

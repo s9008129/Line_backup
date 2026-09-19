@@ -1,0 +1,22 @@
+{
+  "check": "attempt_08_start_state",
+  "captured_at_local": "2026-09-19T20:14:05+0800",
+  "head": "6e6803c",
+  "gui_input_count_before": 0,
+  "authorization_sha256": "c37205bf9c53cd7025f5ed4b47b691618a8d308ebecebf61100c827c509520f5",
+  "parent_route_ledger_sha256": "7c8ea39a391617f3276b4e3e40043086317c73719baf3b51bdf3d356ea2f032f",
+  "plan_revision": 25,
+  "plan_sha256": "a1a408b026c5559f38e4a28666e49da087c483e1bf3eec4bbb16f48d7dbc7686",
+  "target": {
+    "app": "jp.naver.line.mac",
+    "group": "旻謙允禎成長日記",
+    "album": "2024/05/13～05/17",
+    "expected_images": 57
+  },
+  "frozen_pre_input_artifacts": {
+    "gate6": "c37205bf9c53cd7025f5ed4b47b691618a8d308ebecebf61100c827c509520f5",
+    "route_runbook": "595e7bd4a8ca55d118c389609ff78987d23d7b1d248d0c22d3375004efc6548a",
+    "run_ledger_skeleton": "7f6cf7a1b6413c511293d3d823d6214e06cbf0a729bb887cfeb38f61c7d296ea"
+  },
+  "verdict": "PASS_ZERO_INPUT_START"
+}

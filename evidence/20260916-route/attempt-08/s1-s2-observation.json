@@ -1,0 +1,31 @@
+{
+  "check": "attempt_08_S1_S2_read_only_observation",
+  "captured_at_local": "2026-09-19T20:14:05+0800",
+  "runtime": "cua_repl native LINE app binding",
+  "gui_input_count": 0,
+  "ax": {
+    "app": "LINE",
+    "standard_window": true,
+    "list_visible": true,
+    "list_range": "0-100 of 101 items",
+    "focused_element": "row 3",
+    "secondary_actions_used": false,
+    "write_actions": 0
+  },
+  "visual": {
+    "target_group_visible": "旻謙允禎成長日記",
+    "albums_surface_visible": true,
+    "target_card_visible_at_top": true,
+    "target_card_text": "2024/05/13～05/17",
+    "target_count_text": "57",
+    "unknown_overlay": false,
+    "permission_prompt": false
+  },
+  "fresh_screen_capture": {
+    "path": "evidence/20260916-route/attempt-08/frame-pre.png",
+    "bytes": 2129675,
+    "size": [2294, 1490],
+    "sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18"
+  },
+  "verdict": "S2_SUPPORTING_PASS_S3_REQUIRED"
+}

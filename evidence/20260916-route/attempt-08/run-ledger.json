@@ -66,11 +66,36 @@
         {"path": "evidence/20260916-route/attempt-08/route-runbook.md", "sha256": "595e7bd4a8ca55d118c389609ff78987d23d7b1d248d0c22d3375004efc6548a"}
       ],
       "note": "preflight artifacts frozen; no UI input has been sent"
+    },
+    {
+      "seq": 2,
+      "timestamp_local": "2026-09-19T20:14:05+0800",
+      "event": "S1_S2_fresh_binding_and_current_surface_read",
+      "gui_input": false,
+      "artifacts": [
+        {"path": "evidence/20260916-route/attempt-08/frame-pre.png", "sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18", "bytes": 2129675, "size": [2294, 1490]},
+        {"path": "evidence/20260916-route/attempt-08/s1-s2-observation.json", "sha256": "23a74da8ab844b142c0d10660da7222257bcd0016721840461b51a4443db6b37"}
+      ],
+      "surface": "LINE front/current app; target group and top album card visually present; no permission prompt or unknown overlay observed",
+      "note": "fresh CUA AX read and fresh screen capture; no click, scroll, keyboard, AX write, or app acquisition input"
+    },
+    {
+      "seq": 3,
+      "timestamp_local": "2026-09-19T20:14:05+0800",
+      "event": "S3_card_locator_nonaffirmative_stop",
+      "gui_input": false,
+      "artifacts": [
+        {"path": "evidence/20260916-route/attempt-08/album-card-locate.json", "sha256": "07437fb8359a47be5fd6daaf0c4696a57bedb277402f19f83d56eb74b57f0585", "verdict": "UNSAFE_MARGINS", "exit_code": 4}
+      ],
+      "observed": {"title": "2024/05/13~05/17", "title_bbox": [37, 963, 267, 990], "count": "57", "click_point_candidate": [49, 976], "margin_below_px": null},
+      "stop_reason": "S3 not ELIGIBLE; full-card/adjacent safety margin is not proven",
+      "note": "candidate point is not sent; no historical point fallback; ellipsis remains unspent"
     }
   ],
-  "run_status": "OPEN_BEFORE_INPUT",
-  "stop_reason": null,
+  "pre_input_skeleton_sha256": "7f6cf7a1b6413c511293d3d823d6214e06cbf0a729bb887cfeb38f61c7d296ea",
+  "run_status": "CLOSED_BEFORE_INPUT",
+  "stop_reason": "STOPPED_AT_S3_UNSAFE_MARGINS",
   "route_outcome": null,
-  "owner_notified": false,
-  "next_action": "S1/S2 read-only current-frame binding; no input until S3 ELIGIBLE"
+  "owner_notified": true,
+  "next_action": "Owner may reposition the visible target surface; any continuation requires a fresh read-only S1-S3 observation and must not reuse this candidate point"
 }

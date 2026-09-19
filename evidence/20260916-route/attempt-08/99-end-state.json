@@ -1,0 +1,23 @@
+{
+  "check": "attempt_08_end_state",
+  "captured_at_local": "2026-09-19T20:14:05+0800",
+  "run_status": "CLOSED_BEFORE_INPUT",
+  "stop_reason": "STOPPED_AT_S3_UNSAFE_MARGINS",
+  "gui_inputs": 0,
+  "album_card_inputs": 0,
+  "navigation_inputs": 0,
+  "ellipsis_inputs": 0,
+  "retry_inputs": 0,
+  "menu_item_inputs": 0,
+  "keyboard_inputs": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "save_all_dispatch_attempted": false,
+  "chooser_interaction": false,
+  "download": false,
+  "destination_write": false,
+  "formal_state_write": false,
+  "route_result_written": false,
+  "manifest_written": false,
+  "note": "S3 was UNSAFE_MARGINS despite title/count OCR; candidate click was not sent and no old coordinate was reused"
+}
