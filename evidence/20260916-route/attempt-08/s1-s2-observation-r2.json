@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "attempt": "08",
+  "phase": "S1_S2",
+  "timestamp_local": "2026-09-19T20:24:47+0800",
+  "app_bundle": "jp.naver.line.mac",
+  "surface": "LINE front/current app",
+  "ax_read": {
+    "performed": true,
+    "result": "LINE window present; albums list surface present; focused row remains visible"
+  },
+  "frame": {
+    "path": "evidence/20260916-route/attempt-08/frame-pre-r2.png",
+    "sha256": "2226ded9c29c7ab99bb8126d21f625e6a65e61a6aa94c14eda8d5875a201d08a",
+    "bytes": 2135317,
+    "size": [2294, 1490]
+  },
+  "target_binding": {
+    "group": "旻謙允禎成長日記",
+    "album_expected": "2024/05/13～05/17",
+    "album_visible": "2024/05/13~05/17",
+    "count_expected": 57,
+    "count_visible": 57,
+    "album_card_visible": true,
+    "album_tab_visible": true,
+    "ellipsis_visible": true
+  },
+  "surface_safety": {
+    "permission_prompt_observed": false,
+    "unknown_overlay_observed": false,
+    "scroll_sent": false,
+    "keyboard_sent": false,
+    "ax_write_sent": false,
+    "gui_inputs_sent": 0
+  },
+  "note": "Fresh read-only S1-S2 after owner repositioning; no click was sent. S3 is separately recorded in album-card-locate-r2.json."
+}

@@ -90,12 +90,36 @@
       "observed": {"title": "2024/05/13~05/17", "title_bbox": [37, 963, 267, 990], "count": "57", "click_point_candidate": [49, 976], "margin_below_px": null},
       "stop_reason": "S3 not ELIGIBLE; full-card/adjacent safety margin is not proven",
       "note": "candidate point is not sent; no historical point fallback; ellipsis remains unspent"
+    },
+    {
+      "seq": 4,
+      "timestamp_local": "2026-09-19T20:24:47+0800",
+      "event": "S1_S2_fresh_binding_and_current_surface_read_after_owner_adjustment",
+      "gui_input": false,
+      "artifacts": [
+        {"path": "evidence/20260916-route/attempt-08/frame-pre-r2.png", "sha256": "2226ded9c29c7ab99bb8126d21f625e6a65e61a6aa94c14eda8d5875a201d08a", "bytes": 2135317, "size": [2294, 1490]},
+        {"path": "evidence/20260916-route/attempt-08/s1-s2-observation-r2.json", "sha256": "28e1e5d68304efc735a6df491efc45d818b0b8eaf1462fa6b1f2c430728b31f5"}
+      ],
+      "surface": "LINE front/current app; target group and album card visible; no permission prompt or unknown overlay observed",
+      "note": "fresh CUA AX read and fresh screen capture after owner repositioning; no click, scroll, keyboard, AX write, or app acquisition input"
+    },
+    {
+      "seq": 5,
+      "timestamp_local": "2026-09-19T20:24:47+0800",
+      "event": "S3_card_locator_nonaffirmative_stop_after_owner_adjustment",
+      "gui_input": false,
+      "artifacts": [
+        {"path": "evidence/20260916-route/attempt-08/album-card-locate-r2.json", "sha256": "55d088f8d3c12f7081312c3b33bc01b972b1f818dcb634d6630f822af28d6a5b", "verdict": "UNSAFE_MARGINS", "exit_code": 4}
+      ],
+      "observed": {"title": "2024/05/13~05/17", "title_bbox": [37, 926, 263, 953], "count": "57", "click_point_candidate": [49, 939], "margin_below_px": null},
+      "stop_reason": "S3 not ELIGIBLE after owner adjustment; full-card/adjacent safety margin is still not proven",
+      "note": "candidate point is not sent; no historical point fallback; album-card and ellipsis input budgets remain unused"
     }
   ],
   "pre_input_skeleton_sha256": "7f6cf7a1b6413c511293d3d823d6214e06cbf0a729bb887cfeb38f61c7d296ea",
   "run_status": "CLOSED_BEFORE_INPUT",
-  "stop_reason": "STOPPED_AT_S3_UNSAFE_MARGINS",
+  "stop_reason": "STOPPED_AT_S3_UNSAFE_MARGINS_AFTER_OWNER_ADJUSTMENT",
   "route_outcome": null,
   "owner_notified": true,
-  "next_action": "Owner may reposition the visible target surface; any continuation requires a fresh read-only S1-S3 observation and must not reuse this candidate point"
+  "next_action": "Further owner repositioning is required to make the frozen v4 margin check ELIGIBLE; any continuation requires another fresh read-only S1-S3 observation and must not reuse either candidate point"
 }
