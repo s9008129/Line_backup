@@ -1,0 +1,36 @@
+{
+  "check": "offline_s5_changed_fraction_sensitivity",
+  "source_artifact": {
+    "path": "evidence/20260916-route/attempt-07/album-open-verify.json",
+    "sha256": "aa0a2161d844b5cf7583514d2269c4db61f210c3cc85b57afa0f9d8b471a83ff"
+  },
+  "recorded_delta": 12,
+  "recorded_dimensions": [2294, 1490],
+  "recorded_changed_pixels": 161820,
+  "exact_fraction_from_recorded_count": 0.0473426446580809,
+  "verifier_rounded_fraction": 0.047343,
+  "frozen_min_diff_fraction": 0.05,
+  "frozen_verdict": "NO_EFFECT",
+  "threshold_sweep_using_verifier_rounded_value": [
+    {"min_diff_fraction": 0.04, "numeric_gate_passes": true},
+    {"min_diff_fraction": 0.045, "numeric_gate_passes": true},
+    {"min_diff_fraction": 0.047, "numeric_gate_passes": true},
+    {"min_diff_fraction": 0.047342, "numeric_gate_passes": true},
+    {"min_diff_fraction": 0.047343, "numeric_gate_passes": true},
+    {"min_diff_fraction": 0.047344, "numeric_gate_passes": false},
+    {"min_diff_fraction": 0.048, "numeric_gate_passes": false},
+    {"min_diff_fraction": 0.05, "numeric_gate_passes": false},
+    {"min_diff_fraction": 0.055, "numeric_gate_passes": false},
+    {"min_diff_fraction": 0.06, "numeric_gate_passes": false}
+  ],
+  "delta_sweep": {
+    "status": "UNAVAILABLE",
+    "reason": "attempt-07 S5 pre/post frames are not retained in the repository; the frozen JSON records the applied delta=12 result only"
+  },
+  "interpretation": {
+    "numeric_boundary": "The recorded result is just below the frozen 0.05 gate; lower thresholds would change only the numeric gate.",
+    "semantic_safety": "Lowering the threshold is not a proven route fix: the changed bbox is [676,14,2261,978], while the LINE title/count remained the album-list surface.",
+    "rev24_mutated": false
+  },
+  "verdict": "PASS"
+}

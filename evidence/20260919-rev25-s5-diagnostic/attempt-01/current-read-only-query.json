@@ -1,0 +1,31 @@
+{
+  "check": "current_focus_z_order_read_only",
+  "gui_input_count": 0,
+  "queries": [
+    {
+      "command": "osascript -e 'tell application \"System Events\" to tell application process \"LINE\" to return {frontmost, count of windows, position of window 1, size of window 1, name of window 1}'",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "System Events could not obtain application process LINE (-1728)",
+      "meaning": "current LINE focus/window geometry unavailable"
+    },
+    {
+      "command": "osascript -e 'tell application \"System Events\" to return {name of first application process whose frontmost is true, unix id of first application process whose frontmost is true}'",
+      "exit_code": 0,
+      "stdout": "Safari, 986",
+      "meaning": "Safari was current frontmost application"
+    },
+    {
+      "command": "pgrep -x LINE",
+      "exit_code": 1,
+      "stdout": "",
+      "meaning": "no current exact-name LINE process observed"
+    },
+    {
+      "command": "sdef '/System/Library/CoreServices/System Events.app' | rg -n -C 3 'click|at position|point'",
+      "exit_code": 0,
+      "matched_definition": "process click parameter 'at' is the { x, y } location at which to click, in global coordinates"
+    }
+  ],
+  "verdict": "PASS_READ_ONLY"
+}
