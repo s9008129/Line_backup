@@ -1,0 +1,94 @@
+{
+  "check": "fresh_stage05_attempt08_internal_consistency",
+  "plan": {
+    "bytes": 313461,
+    "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/plan.md",
+    "sha256": "40eb01980c7e11f96b4b12c2db8f53728852f1ab6ca452dfb5e865fd5435a003"
+  },
+  "report": {
+    "bytes": 13106,
+    "path": ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-08/e2e_report.md",
+    "sha256": "f7bf7b2007b90c7360f814022929e0b926e0f1aba4cb46fe5cd9d236d08969f"
+  },
+  "checks": {
+    "anchors_pass": true,
+    "baseline_unchanged": true,
+    "end_zero_gui": true,
+    "evidence_files_exist": true,
+    "plan_sha_matches_report": true,
+    "reader_binding_all_match": true,
+    "replay_semantics": true,
+    "report_e2e_required_no": true,
+    "report_plan_revision_24": true,
+    "report_zero_gui": true,
+    "route_budgets": true,
+    "route_stop_s5": true,
+    "source_v1_1_true": true,
+    "source_v1_false": true
+  },
+  "selected_facts": {
+    "anchors": {
+      "mismatches": 0,
+      "verdict": "PASS"
+    },
+    "baseline": {
+      "baseline_delta": "UNCHANGED",
+      "current": {
+        "bytes": 19005,
+        "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5"
+      },
+      "pre": {
+        "bytes": 19005,
+        "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5"
+      },
+      "destination_files": 57,
+      "destination_bytes": 17924900
+    },
+    "end": {
+      "gui_inputs": 0,
+      "head": "b2c4664a4f73f01c428dd16f48c801adbd4e4541",
+      "note": "zero GUI in Stage 05"
+    },
+    "replay": {
+      "s3": {
+        "exit": 0,
+        "verdict": "ELIGIBLE"
+      },
+      "s5": {
+        "exit": 3,
+        "verdict": "NO_EFFECT"
+      },
+      "v5_offline": {
+        "click": [304, 50],
+        "dots": [[304.5, 44.0], [304.5, 49.5], [304.5, 55.0]],
+        "exit": 0,
+        "verdict": "ELIGIBLE"
+      },
+      "v4_baseline": {
+        "exit": 3,
+        "verdict": "NO_ELLIPSIS_FOUND"
+      }
+    },
+    "route": {
+      "budgets": {
+        "card": "1/1 SPENT",
+        "ellipsis": "0/1 UNSPENT-never-sent",
+        "keyboard": 0,
+        "menu": 0,
+        "navigation": "1/1 SPENT (alias)",
+        "retry": 0,
+        "within_budget": true
+      },
+      "parent": "906c14330605",
+      "s3": "ELIGIBLE",
+      "s5": "NO_EFFECT",
+      "state": "CLOSED_AFTER_INPUT_1",
+      "stop_reason": "STOPPED_AT_S5_NO_EFFECT"
+    },
+    "source": {
+      "v1_1": true,
+      "v1": false
+    }
+  },
+  "verdict": "PASS"
+}

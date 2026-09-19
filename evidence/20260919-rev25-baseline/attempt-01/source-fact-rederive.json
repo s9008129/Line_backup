@@ -1,0 +1,45 @@
+{
+  "check": "fresh_zero_gui_source_fact_rederive",
+  "files": {
+    "v1": {
+      "bytes": 1746,
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.json",
+      "sha256": "2cd7eccdb99da5dc15324f3cb89160d5c283651d8bda550e34cbd5cec44b1d5d"
+    },
+    "v1.1": {
+      "bytes": 1741,
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-user-fact/source-identity-user-fact.confirmed.v1.1.json",
+      "sha256": "a8c1055137d14026f7ecbc15b4f06ee540b56114af3276b081a0be72d195c263"
+    }
+  },
+  "call_v1": {
+    "expected": false,
+    "result": false
+  },
+  "call_v1_1": {
+    "expected": true,
+    "result": true
+  },
+  "module": {
+    "bytes": 34551,
+    "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/common.py",
+    "sha256": "7b0956f9bfb84d7dfb77e095f1626a1d1a1a1aabc543be4bdeff42cbcbf929aa"
+  },
+  "normalization_applied": "NONE",
+  "raw_contains_U6968": false,
+  "raw_contains_U798E": true,
+  "raw_requested_group": "旻謙允禎成長日記",
+  "raw_requested_group_codepoints": [
+    "U+65FB",
+    "U+8B19",
+    "U+5141",
+    "U+798E",
+    "U+6210",
+    "U+9577",
+    "U+65E5",
+    "U+8A18"
+  ],
+  "v1_1_confirmed_album": "2024/05/13～05/17",
+  "v1_confirmed_album": "2024/05/13～2024/05/17",
+  "verdict": "PASS"
+}
