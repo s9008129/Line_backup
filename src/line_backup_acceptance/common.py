@@ -434,7 +434,9 @@ def classify_legacy_run(run) -> tuple[str | None, str]:
 
 import re as _re
 
-WORK_ROOT = Path("/Users/hsiaojohnny/Documents/ChatGPT/Line_backup")
+# Default to the checked-out repository root; operators may pin a different canonical
+# workspace explicitly without baking one owner's home directory into the package.
+WORK_ROOT = Path(os.environ.get("LINE_BACKUP_WORK_ROOT", str(Path(__file__).resolve().parents[2])))
 BINDING_KINDS = ("join", "user_fact", "fixture")
 RECONCILE_KIND = "reconcile"
 _SHA256_RE = _re.compile(r"^[0-9a-f]{64}$")
