@@ -1,0 +1,48 @@
+{
+ "tool": "manual_read_only_ocr_of_menu_region",
+ "gui_input": false,
+ "source_frame": "evidence/20260916-route/attempt-13/frame-menu-post1.png",
+ "source_frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+ "region_px": [
+  1247,
+  127,
+  1494,
+  478
+ ],
+ "method": "PIL crop -> 3x LANCZOS upscale -> tesseract -l chi_tra+eng --psm 6 (same preprocessing family as the frozen detect_menu_popup.py OCR)",
+ "raw_stdout_lines": [
+  ">",
+  "",
+  "選擇項目",
+  "修改相簿名稱",
+  "儲存全部",
+  "刪除相簿",
+  "分享相簿"
+ ],
+ "menu_items_read_top_to_bottom": [
+  "選擇項目",
+  "修改相簿名稱",
+  "儲存全部",
+  "刪除相簿",
+  "分享相簿"
+ ],
+ "save_all_localized_equivalent": {
+  "text": "儲存全部",
+  "meaning": "Save All",
+  "affirmatively_identified_in_menu": true,
+  "clicked": false,
+  "dispatch_attempted": false
+ },
+ "per_row_ocr_attempt": {
+  "method": "5 row bands of the same region, --psm 7",
+  "result": "unreliable (rows too tight for psm 7); recorded for transparency only, NOT used",
+  "row_outputs": [
+   ">",
+   "ann",
+   "",
+   "",
+   "Dh e"
+  ]
+ },
+ "note": "The leading '>' line is the mouse cursor glyph inside the region (the menu opened under the pointer); it is not a menu item."
+}

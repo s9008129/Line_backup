@@ -1,0 +1,25 @@
+{
+ "phase": "S5_ellipsis_click_intent_pre_dispatch",
+ "recorded_at_local": "2026-09-21T15:31+0800",
+ "gates_passed_before_dispatch": {
+  "line_frontmost": "yes (15:29:23 and 15:30:12-14 AX reads; pid 3337)",
+  "s3_album_open_verifier_formal_window_pair": "ALBUM_OPEN_VERIFIED (exit 0; title [15,83,204,111]; changed 0.661173)",
+  "s3_supporting_screen_pair": "ALBUM_OPEN_VERIFIED (exit 0; changed 0.306162)",
+  "s4_frozen_v5_live_locator": "ELIGIBLE (exit 0; frame_sha 4cb8a6b4…; dots [[304.5,44.0],[304.5,49.5],[304.5,55.0]]; click_point [304,50]; exactly one header_band triple)",
+  "s5_gate_a_live_surface_unchanged": "pre-click CU window frame byte-identical to the S4 frame (4cb8a6b4…) at 15:29:12; CU AX reports no tree change",
+  "s5_gate_b_target_window_identity": "AX window 0 (337,30) 327x643 main+focused+is_ax_focused_window, pid 3337 — identical in all reads (15:25:10 / 15:29:23 / 15:30:12-14)",
+  "s5_gate_b_deviation": "AX window-list ORDER of the two background windows permuted once between 15:25:10 (…,(0,30),(-2,37)) and 15:29:23 (…,(-2,37),(0,30)); stable since; no window added/removed/moved/resized; target window unaffected. Recorded as a literal gate-(b) paraphrase failure; owner-stated conditions (frontmost / ALBUM_OPEN_VERIFIED / v5 ELIGIBLE / current surface-frame-geometry unchanged) all hold.",
+  "s5_gate_c_fresh_frame_binding": "pre-click full-screen frame-menu-pre.png 0118b12f… binds to the CU shot (dims exact, MAD 2.255 <= 12) -> current pixels at the target rect are the album window itself (no occlusion), incl. the toolbar/ellipsis zone (visual crop frame-menu-pre-toolbar.png)"
+ },
+ "dispatch_plan": {
+  "api": "cua_repl @oai/sky sky.click",
+  "app": "jp.naver.line.mac",
+  "window_screenshot_coords": [304, 50],
+  "derivation": "frozen v5 click_point from THIS round's fresh live window frame (4cb8a6b4…); window-screenshot space == window-local pt (1 px = 1 pt); historical [304,50]/[305,50] never used as input",
+  "mouse_button": "left",
+  "click_count": 1
+ },
+ "budget": {"ellipsis_click": 1, "retry": 0, "second_click": 0},
+ "post_click_capture_plan": ["full-screen #1 ~0.4s", "full-screen #2 ~1.4s", "CU window post frame ~2-3s; frozen menu detector pairs A (window) and B (screen)"],
+ "no_input_after_dispatch": "no Escape, no click-outside, no menu item, no Save All, no chooser, no keyboard, no scroll"
+}

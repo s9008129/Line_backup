@@ -1,0 +1,54 @@
+{
+ "check": "attempt_13_start_state",
+ "captured_at_local": "2026-09-21T15:2x+0800 (pre-input block)",
+ "repo": {
+  "branch": "## master...origin/master [ahead 4]",
+  "head": "d27b50e224e9a6f65659ff514938a7b815b40faa",
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "untracked_present": [
+   "evidence/20260916-route/attempt-11/ (untouched)",
+   "tools/v4/__pycache__, tools/v6/__pycache__, tools/v6/selftest/__pycache__ (never added)"
+  ],
+  "no_amend_reset_rebase_fetch_pull_push": true
+ },
+ "attempt_12_verification": {
+  "immutable": true,
+  "rehashed": {
+   "frame-pre.png": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+   "frame-post.png": "7bd54308d916f8b7f0f78221a660d94b1f2985ebb19ce638c4591d780a00bca3",
+   "album-card-locate-v6.json": "05bcea90f31587435a1c16b522938eeabc32b06788d4d85b002559eb5b036875",
+   "album-open-verify.json": "e99aa1a65d8c6999acbd7a5371a153d1990c514c70bbf8d5c285de7db2949ab6",
+   "run-ledger.json": "992df1a2c1997c3305d4a1ed5c4c7eaaf1d2108ab7defd15213ef082ac15c0f2",
+   "99-scope-status.json": "9e13be0507d420f02668ecdb2cba4f355ffb658915429bf647187ceaa7ee42f4"
+  },
+  "counts": {
+   "album_card_inputs_used": 1,
+   "navigation_inputs_used": 1,
+   "ellipsis_inputs_used": 0,
+   "retry_count": 0,
+   "save_all_dispatch_attempted": false,
+   "gui_input_count": 1
+  },
+  "s5_verdict": "ALBUM_OPEN_VERIFIED"
+ },
+ "frozen_v5_gate": {
+  "expected_locator_sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "actual_locator_sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "match": true,
+  "verify_album_open_v5_sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "vision_reader_v5_sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "vision_ocr_swift_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+  "detect_menu_popup_sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc"
+ },
+ "attempt_slot": {
+  "selected": "attempt-13",
+  "reason": "attempt-13 did not exist; attempt-12 not modified"
+ },
+ "attempt_tools_copied_byte_identical_from_attempt12": {
+  "tools/ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+  "tools/validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68",
+  "binary": "/tmp/attempt13-ax_window_bounds sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae"
+ },
+ "gui_input_count_so_far": 0,
+ "verdict": "PASS_ZERO_INPUT_START"
+}

@@ -1,0 +1,35 @@
+{
+ "artifact_type": "owner_one_shot_gui_authorization_record (normalized; recorded before any input)",
+ "session": "current user message in this conversation",
+ "authorization_normalized": "fresh read-only album-open revalidation -> fresh live frame -> frozen v5 ellipsis locator -> only if live v5 = ELIGIBLE, click the album-level ellipsis exactly once -> fresh menu observation -> stop",
+ "verbatim_key_clauses": {
+  "allowed": "本輪授權只允許：fresh read-only album-open revalidation / fresh live frame / frozen v5 ellipsis locator / 若且僅若 live v5 = ELIGIBLE，點擊 album-level ⋮ 一次 / fresh menu observation / stop",
+  "forbidden": "第二次 album-card click / retry / double click / menu item click / Save All / chooser / Go to Folder / keyboard / scroll / AX write / app acquisition / bring-to-front / download / destination write / formal backup-state / transaction commit",
+  "historical_never": "任何歷史 [304,50] / [305,50] 以及其他舊 candidate 都永遠不得作 live input",
+  "save_all_boundary": "本輪 save_all_budget = 0；即使 menu 中明確讀到 Save All 或等價文字，也只能記錄 evidence，不得 click",
+  "final_sentence": "本輪授權只到一次 album-level ellipsis click 與 menu observation；沒有授權、也沒有執行任何 Save All 或 menu-item activation。",
+  "final_state_rule": "若 menu surface affirmatively observed：最後狀態只能寫 READY_FOR_SAVE_ALL_PLAN_AND_NEW_AUTHORIZATION（不得寫 READY_TO_SAVE_ALL 或 BACKUP_COMPLETE）"
+ },
+ "budgets": {
+  "album_card_click": 0,
+  "navigation_click": 0,
+  "ellipsis_click": 1,
+  "retry": 0,
+  "double_click": 0,
+  "menu_item_click": 0,
+  "save_all": 0,
+  "chooser": 0,
+  "go_to_folder": 0,
+  "keyboard": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "app_acquisition": 0,
+  "bring_to_front": 0,
+  "download": 0,
+  "destination_write": 0,
+  "formal_transaction_state_write": 0
+ },
+ "frozen_tools_modification": "NONE (v4/v5/v6 read-only use; never modified)",
+ "user_precondition": "album 2024/05/13～05/17 (57) is the current LINE surface (opened by the authorized attempt-12 click)",
+ "recorded_at_local": "2026-09-21T15:2x+0800 (pre-input block)"
+}

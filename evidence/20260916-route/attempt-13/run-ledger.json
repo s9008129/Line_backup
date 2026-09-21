@@ -1,0 +1,256 @@
+{
+ "schema_version": 1,
+ "artifact": "evidence/20260916-route/attempt-13/run-ledger.json",
+ "run_id": "20260921-route-attempt-13",
+ "route_attempt": 13,
+ "state": "CLOSED_AFTER_ONE_ELLIPSIS_CLICK_AND_MENU_OBSERVATION",
+ "runtime_provider": "codex-cli host shell (screencapture -x; read-only AX tool /tmp/attempt13-ax_window_bounds) + cua_repl @oai/sky (read-only get_app_state; exactly one sky.click) + frozen offline tools (v5 album-open verifier, v5 ellipsis locator, detect_menu_popup)",
+ "app_bundle": "jp.naver.line.mac",
+ "raw_group": "旻謙允禎成長日記",
+ "album": "2024/05/13～05/17",
+ "expected_count": 57,
+ "parent_attempt": {
+  "attempt-12": "immutable; its single album-card click opened this album in the previous round; not modified; its candidate [39,926] is not used as input this round",
+  "attempt-10": "untouched; candidate [39,923] never used",
+  "attempt-11": "untouched; inactive-window AX fallback path explicitly NOT used this round"
+ },
+ "authorization": {
+  "artifact": "authorization-record.json",
+  "ellipsis_click_budget": 1,
+  "everything_else": 0
+ },
+ "runbook": {
+  "artifact": "route-runbook.md",
+  "sha256": "a4f0137d531281964c4fc49d10099d2936ca0a9fb50d6d394127d1bd9e95a9f1",
+  "predeclared_pairings": [
+   "S3 formal: attempt-12/cua-window-s1.jpg (92ea7991…) vs fresh live window frame",
+   "menu pair A: S4 live window frame vs post-click CU window frame",
+   "menu pair B: fresh pre-click full-screen frame vs post-click full-screen frame(s)"
+  ],
+  "predeclared_affirmative_rule": "new AX menu elements OR detect_menu_popup.py MENU_DETECTED; OCR-only/visual-only would be UNKNOWN",
+  "predeclared_pairB_disqualifier": "every changed component entirely outside the LINE album window rect => unrelated screen noise"
+ },
+ "input_record_final": {
+  "gui_input_count": 1,
+  "ellipsis_inputs_used": 1,
+  "album_card_inputs_used": 0,
+  "navigation_inputs_used": 0,
+  "retry_count": 0,
+  "second_ellipsis_click": 0,
+  "double_click": 0,
+  "menu_item_inputs_used": 0,
+  "save_all_dispatch_attempted": false,
+  "chooser_interactions": 0,
+  "go_to_folder_inputs": 0,
+  "keyboard_inputs_used": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "bring_to_front_inputs": 0,
+  "app_acquisition_inputs": 0,
+  "downloads": 0,
+  "destination_writes": 0,
+  "formal_state_writes": 0
+ },
+ "historical_reference_only": {
+  "attempt_12_album_card_inputs": 1,
+  "attempt_12_navigation_inputs": 1,
+  "attempt_13_new_album_card_inputs": 0,
+  "attempt_13_new_navigation_inputs": 0,
+  "historical_ellipsis_coordinates_never_used_as_input": [
+   [
+    304,
+    50
+   ],
+   [
+    305,
+    50
+   ]
+  ],
+  "note": "the live candidate this round is numerically [304,50] but was freshly derived by the frozen v5 locator from THIS round's fresh frame (frame_sha 4cb8a6b4…); no historical coordinate value was read as input"
+ },
+ "events": [
+  {
+   "seq": 1,
+   "phase": "S1_ax_pre",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:25:10+0800",
+   "event": "ax_window_bounds_readonly jp.naver.line.mac",
+   "evidence": [
+    "s1-ax-pre.json"
+   ],
+   "result": "ax_frontmost=true; frontmost_application=jp.naver.line.mac; pid 3337; window 0 (337,30) 327x643 title '' main=true focused=true is_ax_focused_window=true; window_count=3; no permission prompt; display 2x (1147x745 pt)"
+  },
+  {
+   "seq": 2,
+   "phase": "S1_cu_surface_read",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:25 .. 15:26+0800",
+   "event": "cua_repl sky read-only app-window state/screenshot (zero input)",
+   "evidence": [
+    "cua-window-s1.jpg",
+    "cua-ax-state-s1.txt"
+   ],
+   "result": "album-open surface visible: title 2024/05/13～05/17, 57張照片, photo grid, ⋮ top-right; no album list, no overlay; window frame byte-identical (4cb8a6b4…) to attempt-12's post-click album-open frame"
+  },
+  {
+   "seq": 3,
+   "phase": "S2_fresh_frame",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:26+0800",
+   "event": "screencapture -x frame-pre.png (silent)",
+   "evidence": [
+    "frame-pre.png"
+   ],
+   "result": "fresh full-screen frame 2294x1490 px, sha256 0e22f7546938cbe95023cfc352aaf5e1166651a9e78a29f16eae9ac857287638; toolbar/ellipsis zone unoccluded"
+  },
+  {
+   "seq": 4,
+   "phase": "S2_ax_post",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:26:26+0800",
+   "event": "ax_window_bounds_readonly (post-frame)",
+   "evidence": [
+    "s2-ax-post.json"
+   ],
+   "result": "window list identical to S1 (position (337,30), size 327x643, same pid, same frontmost)"
+  },
+  {
+   "seq": 5,
+   "phase": "S2_geometry_binding",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:26+0800",
+   "event": "live-window-geometry.json (frame-SHA-bound to 0e22f754…) + validate_live_geometry.py",
+   "evidence": [
+    "live-window-geometry.json",
+    "geometry-binding.json"
+   ],
+   "result": "frame device-pixel rect [674,60,1328,1346] (= point rect [337,30,664,673] x scale 2); dims exact; gray MAD 2.255 <= 12 -> GEOMETRY_BINDING_PASS; the screen pixels in that rect are the LINE album window itself"
+  },
+  {
+   "seq": 6,
+   "phase": "S3_frozen_v5_album_open_revalidation",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:27 .. 15:28+0800",
+   "event": "frozen v5 verify_album_open.py on the fresh frame (formal window-space pair + supporting screen pair)",
+   "evidence": [
+    "s3-album-open-verify-window.json",
+    "s3-album-open-verify-screen-supporting.json"
+   ],
+   "result": "formal window pair ALBUM_OPEN_VERIFIED (exit 0; target title bbox [15,83,204,111] = '2024/05/13~05/17'; changed_fraction 0.661173; count_text MATCH '57'); supporting screen pair ALBUM_OPEN_VERIFIED"
+  },
+  {
+   "seq": 7,
+   "phase": "S4_frozen_v5_ellipsis_locator",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:28+0800",
+   "event": "frozen v5 locate_album_ellipsis.py on the SAME fresh live window frame",
+   "evidence": [
+    "s4-album-ellipsis-locate.json"
+   ],
+   "result": "verdict ELIGIBLE (exit 0); frame_sha 4cb8a6b4…; dots [[304.5,44.0],[304.5,49.5],[304.5,55.0]]; click_point [304,50]; exactly one header_band triple (header band x0=206 x1=326 y0=16 y1=76)"
+  },
+  {
+   "seq": 8,
+   "phase": "S5_preclick_freshness_gates",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:29:12 .. 15:30:14+0800",
+   "event": "pre-click freshness re-read (CU window screenshot + AX window list) + frame-menu-pre.png binding",
+   "evidence": [
+    "cua-window-preclick.jpg",
+    "s5-preclick-ax.json",
+    "frame-menu-pre.png",
+    "geometry-binding-preclick.json",
+    "s5-click-intent.json"
+   ],
+   "result": "CU window screenshot byte-identical to the locator frame (4cb8a6b4…); AX target window identical in all reads; frame-menu-pre.png 0118b12f… GEOMETRY_BINDING_PASS (MAD 2.255). Recorded deviation: AX background-window list ORDER permuted once between 15:25:10 and 15:29:23 (no window added/removed/moved/resized; target window unaffected)",
+   "deviation": "AX window-list order permutation of two background windows; recorded as a literal gate paraphrase miss; owner-stated conditions (frontmost / ALBUM_OPEN_VERIFIED / v5 ELIGIBLE / surface-frame-geometry unchanged) all held"
+  },
+  {
+   "seq": 9,
+   "phase": "S5_ellipsis_click_dispatch",
+   "action_class": "gui_input",
+   "gui_input": true,
+   "timestamp_local": "2026-09-21T15:31:06.857+0800 .. 15:31:07.393+0800",
+   "event": "exactly one album-level ⋮ left click (the ONLY input of this round)",
+   "params": {
+    "api": "sky.click",
+    "app": "jp.naver.line.mac",
+    "window_screenshot_coords": [
+     304,
+     50
+    ],
+    "mouse_button": "left",
+    "click_count": 1
+   },
+   "derivation": "frozen v5 click_point from THIS round's fresh live window frame (4cb8a6b4…); window-screenshot space == window-local pt; historical [304,50]/[305,50] never used as input",
+   "result": "dispatch returned ok; ellipsis budget consumed permanently"
+  },
+  {
+   "seq": 10,
+   "phase": "S6_post_click_captures",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:31:07 .. 15:31:09+0800",
+   "event": "fresh post-click captures (read-only)",
+   "evidence": [
+    "frame-menu-post1.png",
+    "cua-window-s6.jpg",
+    "frame-menu-post2.png",
+    "cua-ax-state-s6.txt"
+   ],
+   "result": "full-screen #1 7ccb6f9e… (≈0.4 s), CU window 1e434895… (≈1.2 s, shows the ⋮ hover/active delta bbox [286,33,322,66]), full-screen #2 fed17018… (≈2.2 s); AX reports no accessibility-tree change"
+  },
+  {
+   "seq": 11,
+   "phase": "S6_frozen_menu_detector",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:35:08+0800",
+   "event": "frozen detect_menu_popup.py on pair A and pair B (defaults)",
+   "evidence": [
+    "s6-menu-pairA.json",
+    "s6-menu-pairB1.json",
+    "s6-menu-pairB2.json",
+    "s6-menu-ocr.json",
+    "s6-menu-crop-post1.png",
+    "s6-menu-crop-pre.png"
+   ],
+   "result": "pair A NOT_DETECTED (exit 3; only the 36x33 px ⋮ hover delta — macOS menus are not part of the app-window surface); pair B1/B2 MENU_DETECTED (exit 0; chosen bbox [1247,127,1494,478], 59723/59724 px; OCR 選擇/項目/修改/儲存/刪除). Chosen component OVERLAPS the LINE window rect (x 1247..1328 inside; straddles the right edge) -> NOT disqualified by the pre-declared pair-B rule"
+  },
+  {
+   "seq": 12,
+   "phase": "S6_verdict",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:35+0800",
+   "event": "menu surface verdict (decision rule D)",
+   "evidence": [
+    "s6-menu-observation.json"
+   ],
+   "result": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED; items read top-to-bottom 選擇項目 / 修改相簿名稱 / 儲存全部 / 刪除相簿 / 分享相簿; 儲存全部 (Save All localized) affirmatively identified as evidence only; no menu item activated; no further input of any kind; menu left open for the owner"
+  }
+ ],
+ "verdict": {
+  "s3_album_open": "ALBUM_OPEN_VERIFIED",
+  "s4_v5_locator": "ELIGIBLE",
+  "candidate": [
+   304,
+   50
+  ],
+  "candidate_dispatched": true,
+  "s6_menu_surface": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED",
+  "save_all_localized_identified": "儲存全部 (Save All) — evidence only, NOT clicked",
+  "stop_reason": "D_MENU_OBSERVED_STOP (no Save All, no menu item, no retry)"
+ },
+ "scope_status": "ROUTE SUCCESS = MENU_SURFACE_AFFIRMATIVELY_OBSERVED; ellipsis budget permanently consumed; save_all_budget = 0 and NOT attempted; any Save All action requires an independent next revision / owner authorization",
+ "end_state": "READY_FOR_SAVE_ALL_PLAN_AND_NEW_AUTHORIZATION",
+ "finalized_at_local": "2026-09-21T15:36+0800"
+}

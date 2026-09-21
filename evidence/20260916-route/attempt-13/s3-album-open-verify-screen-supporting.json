@@ -1,0 +1,228 @@
+{
+ "tool": "verify_album_open",
+ "pre": "evidence/20260916-route/attempt-12/frame-pre.png",
+ "post": "evidence/20260916-route/attempt-13/frame-pre.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+ "post_sha256": "0e22f7546938cbe95023cfc352aaf5e1166651a9e78a29f16eae9ac857287638",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "post_ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友 視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/13~05/17",
+  "57張照片",
+  "2024.05.18",
+  "1v",
+  "10",
+  "2024/05/13~05/17",
+  "57",
+  "99%",
+  "熱評",
+  "配戴舒適滿意度*",
+  "ULTTAw",
+  "矽冰理日期 近親",
+  "中l",
+  "十",
+  "S:31°C",
+  "00",
+  "9月21日週一 15:26",
+  "Q",
+  "目",
+  "：",
+  "也們星期一～四都是到4點，",
+  "up -：Line_backup - codex -m deepseek-v4.1-flash --sand...",
+  ".../yt_down_txt - -zsh",
+  "...rt=\"max\"、node",
+  "十",
+  "False，",
+  "5:10+08:00",
+  "'subrole'：'AXStandardwindow' ｝",
+  "CU window",
+  "for LINE（album-open",
+  "07:26:05.663Z\"",
+  "\"t1\"：\"2026-09-21T07:26:06.341Z\"，",
+  "\"/Applications/LINE.app\"，",
+  "or/r3qmjfbnoz57mtmdxmnp60c80000gn/T/com.openai.sky.CUAServ",
+  "ishot 2026-09-21 at 15.26.06.jpeg\"， \"bytes\"： 66686，",
+  "-add6577a0ae16f2fbe529ef09c7c3f7bbaoob225705c6560b3\"",
+  "$43，",
+  "-window-s1.jpg",
+  "oture + AX post + write geometry （this round's rect from .",
+  "iing",
+  "1a×",
+  "• ~/Documents/ChatGPT/Line_backup"
+ ],
+ "target_title_in_post": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   704,
+   233,
+   1077,
+   277
+  ]
+ },
+ "date_like_tokens_in_post": [
+  "\"t1\"：\"2026-09-21T07:26:06.341Z\"，",
+  "2024.05.18",
+  "2024/05/13~05/17",
+  "ishot 2026-09-21 at 15.26.06.jpeg\"， \"bytes\"： 66686，"
+ ],
+ "count_box": [
+  696,
+  279,
+  864,
+  309
+ ],
+ "count_digits_read": "",
+ "count_text": "UNREADABLE",
+ "diff": {
+  "changed_pixels": 1046480,
+  "changed_fraction": 0.306162,
+  "changed_bbox": [
+   25,
+   13,
+   2261,
+   1427
+  ],
+  "changed_grid_8x8": [
+   [
+    1204,
+    0,
+    4353,
+    4004,
+    2626,
+    0,
+    185,
+    255
+   ],
+   [
+    0,
+    0,
+    11850,
+    23670,
+    21240,
+    25049,
+    18058,
+    235
+   ],
+   [
+    0,
+    0,
+    22872,
+    47005,
+    35591,
+    24473,
+    26969,
+    15327
+   ],
+   [
+    0,
+    0,
+    28128,
+    50037,
+    37447,
+    11514,
+    18070,
+    26699
+   ],
+   [
+    0,
+    0,
+    28496,
+    51774,
+    37530,
+    14782,
+    20100,
+    27044
+   ],
+   [
+    0,
+    0,
+    29713,
+    50221,
+    44245,
+    47333,
+    41119,
+    16363
+   ],
+   [
+    0,
+    0,
+    31401,
+    50259,
+    30012,
+    6233,
+    6233,
+    2575
+   ],
+   [
+    8146,
+    9994,
+    11373,
+    16389,
+    8284,
+    0,
+    0,
+    0
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "ALBUM_OPEN_VERIFIED",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "d37fa4efc861e0f094163cee83acb477bd1316613c3a961196fbfe290339f4da",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "9dd29cee5e3d190b96764b342610c380d9c6fbd61ade3213fe09c4681589bbde",
+    "stdout_bytes": 2487,
+    "lines_parsed": 49
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 0,
+    "lines_parsed": 0
+   }
+  ]
+ }
+}

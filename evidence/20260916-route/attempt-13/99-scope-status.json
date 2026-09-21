@@ -1,0 +1,174 @@
+{
+ "check": "attempt_13_end_state",
+ "captured_at_local": "2026-09-21T15:37+0800",
+ "run_status": "CLOSED_AFTER_ONE_ELLIPSIS_CLICK_AND_MENU_OBSERVATION",
+ "stop_reason": "D_MENU_SURFACE_AFFIRMATIVELY_OBSERVED_STOP",
+ "s1": {
+  "app_bundle": "jp.naver.line.mac",
+  "line_frontmost": true,
+  "line_pid": 3337,
+  "window": "index 0, position (337,30), size 327x643, title '', main, focused, is_ax_focused_window",
+  "album_open_surface": "title 2024/05/13～05/17, 57張照片, photo grid, ⋮ visible; no album list, no permission prompt, no overlay",
+  "window_frame_byte_identical_to_attempt12_post_click_frame": true
+ },
+ "s2": {
+  "frame_pre_sha256": "0e22f7546938cbe95023cfc352aaf5e1166651a9e78a29f16eae9ac857287638",
+  "frame_size_px": [
+   2294,
+   1490
+  ],
+  "ax_pre_post_identical": true,
+  "geometry_binding": "GEOMETRY_BINDING_PASS (mad 2.255)",
+  "frame_rect_px": [
+   674,
+   60,
+   1328,
+   1346
+  ]
+ },
+ "s3": {
+  "verdict": "ALBUM_OPEN_VERIFIED",
+  "formal_pair": "attempt-12/cua-window-s1.jpg (92ea7991…) vs attempt-13/cua-window-s1.jpg (4cb8a6b4…)",
+  "title_bbox_post": [
+   15,
+   83,
+   204,
+   111
+  ],
+  "changed_fraction": 0.661173,
+  "count_text": "MATCH",
+  "supporting_screen_pair": "ALBUM_OPEN_VERIFIED"
+ },
+ "s4": {
+  "tool": "tools/v5/locate_album_ellipsis.py",
+  "tool_sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "frozen_binding_match": true,
+  "verdict": "ELIGIBLE",
+  "input_frame_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "click_point": [
+   304,
+   50
+  ],
+  "candidate_source": "freshly derived from THIS round's fresh frame by the frozen v5 locator"
+ },
+ "s5": {
+  "candidate_dispatched": true,
+  "dispatch": "sky.click app=jp.naver.line.mac x=304 y=50 left click_count=1",
+  "dispatch_start_local": "2026-09-21T15:31:06.857+0800",
+  "dispatch_return_local": "2026-09-21T15:31:07.393+0800",
+  "dispatch_ok": true,
+  "preclick_gates": "CU window byte-identical (4cb8a6b4…); AX target window identical; frame-menu-pre.png 0118b12f… binding PASS"
+ },
+ "s6": {
+  "menu_frames": {
+   "post1": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+   "post2": "fed170184cf7ae32b998c7fe4d903cd0a5fb4d655e38e7f6cae493c5148e346b",
+   "window_post": "1e4348958ec83a51fe89bb31f1539faa63d991f52ad69dda2b9bbf33e207668e"
+  },
+  "frozen_detector": {
+   "pairA_window_space": "NOT_DETECTED (exit 3)",
+   "pairB1_screen_space": "MENU_DETECTED (exit 0; chosen bbox [1247,127,1494,478]; OCR 選擇/項目/修改/儲存/刪除)",
+   "pairB2_screen_space": "MENU_DETECTED (exit 0; same bbox; OCR includes 選擇/項目/修改/儲存/刪除)"
+  },
+  "pairB_disqualifier_check": "chosen component OVERLAPS the LINE window rect (crosses right edge x=1328) -> NOT unrelated noise",
+  "ax_menu_affirmation": "NEGATIVE (no accessibility-tree change)",
+  "menu_items_read": [
+   "選擇項目",
+   "修改相簿名稱",
+   "儲存全部",
+   "刪除相簿",
+   "分享相簿"
+  ],
+  "save_all_affirmatively_identified": true,
+  "save_all_clicked": false,
+  "menu_surface_verdict": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED"
+ },
+ "budgets": {
+  "gui_input_count": 1,
+  "ellipsis_inputs_used": 1,
+  "album_card_inputs_used": 0,
+  "navigation_inputs_used": 0,
+  "retry_count": 0,
+  "second_ellipsis_click": 0,
+  "double_click": 0,
+  "menu_item_inputs_used": 0,
+  "save_all_dispatch_attempted": false,
+  "chooser_interactions": 0,
+  "go_to_folder_inputs": 0,
+  "keyboard_inputs_used": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "bring_to_front_inputs": 0,
+  "app_acquisition_inputs": 0,
+  "downloads": 0,
+  "destination_writes": 0,
+  "formal_state_writes": 0
+ },
+ "historical_inputs_reference": {
+  "attempt_12_album_card_inputs": 1,
+  "attempt_12_navigation_inputs": 1,
+  "attempt_13_new_album_card_inputs": 0,
+  "attempt_13_new_navigation_inputs": 0,
+  "historical_ellipsis_coordinates_never_used_as_input": [
+   [
+    304,
+    50
+   ],
+   [
+    305,
+    50
+   ]
+  ]
+ },
+ "attempt_12_immutability": "attempt-12 untouched (all six re-hashed files unchanged; SHAs identical to 00-start-state.json)",
+ "attempt_11_untouched": true,
+ "frozen_tools_unchanged": {
+  "v5/locate_album_ellipsis.py": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "v5/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "v5/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "v4/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "v4/locate_album_ellipsis.py": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+  "v4/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "v6/locate_album_card.py": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "tools/detect_menu_popup.py": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+ },
+ "artifact_sha256": {
+  "00-start-state.json": "a13ab7339bcab7a633c0bbe735a234795aaef861ee432670aa53be792b91a055",
+  "authorization-record.json": "f4135d7d6247406affcd70ef38e05f54a6f6bdc4f36cc1817fb5dfde90457367",
+  "route-runbook.md": "a4f0137d531281964c4fc49d10099d2936ca0a9fb50d6d394127d1bd9e95a9f1",
+  "s1-ax-pre.json": "7d323f3ef2a5bdb5452494ff6d35371db99ac52c3c852933bdb875dc4b57ba4a",
+  "cua-window-s1.jpg": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "cua-ax-state-s1.txt": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa",
+  "frame-pre.png": "0e22f7546938cbe95023cfc352aaf5e1166651a9e78a29f16eae9ac857287638",
+  "s2-ax-post.json": "0643126e488a3fe3b4e5cd8baaae8c41359e39a34ec88313f03b1574e2257645",
+  "live-window-geometry.json": "e9fdf0f1acb9c87044767dbc5255f711f71a14abcae2893b5aec50415cecf6c6",
+  "geometry-binding.json": "b8f6ec0babd64a385118fd25c2bde5a8ccadf9c0135406cb08f261278804e34a",
+  "s3-album-open-verify-window.json": "2f3d08770c678687c5effbf0f1df6a8398de26587116873c34000682ec7e385c",
+  "s3-album-open-verify-screen-supporting.json": "d77742deb22b0b03b7eaeb274228889ebf3a3f128552011c0ab41f3ebdca3fd5",
+  "s4-album-ellipsis-locate.json": "17290acdaa29ccbf405279665c4932c9a2eb4f284af6ef54d6f6d4c0cfc99d6e",
+  "cua-window-preclick.jpg": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "s5-preclick-ax.json": "a55d7318cbd34646ee6c253f692560aa573ffe372fc6f4303072bd36f8b7e215",
+  "frame-menu-pre.png": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+  "geometry-binding-preclick.json": "288dba46bc5a4e14350e991070c22851d3679d95ce38ca9dfd597ddce88f076a",
+  "s5-click-intent.json": "417cff16f06d2034847464befb85b25d2cd963f64c47778bba1f97c04a20075f",
+  "frame-menu-post1.png": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+  "s6-menu-crop-post1.png": "881d2fb8dcbd210bdd62621781a11805c9daba0d1f4bed9189fade3001f91019",
+  "s6-menu-crop-pre.png": "3ab917550325faee336aff4d0dd4c361271910e5ae68919e705c0884cfe22eb2",
+  "cua-window-s6.jpg": "1e4348958ec83a51fe89bb31f1539faa63d991f52ad69dda2b9bbf33e207668e",
+  "frame-menu-post2.png": "fed170184cf7ae32b998c7fe4d903cd0a5fb4d655e38e7f6cae493c5148e346b",
+  "cua-ax-state-s6.txt": "138060609c93f7f2bb9f9cbe0e470ff522fc07c4950b854a8a144c9049e4d914",
+  "zoom-post-topright.png": "0524396fcc1a0983d0d3eb577359013ca6909f6504f7a3515f4ef61161d1ec47",
+  "s6-menu-pairA.json": "c490bfbc0b5b9ce64f2ddf2543012883c4dde09fdd7f264985397aa67ccbf1d7",
+  "s6-menu-pairB1.json": "d1dc6257fe67e61c5975649bcbda754b66b74e4c98ae102919fa1d7d2e87e021",
+  "s6-menu-pairB2.json": "5de155283ae0d989259f29624a723f5ab70aa438170cad9fd9f53f847128285c",
+  "s6-menu-ocr.json": "5a6ad4c8a30378ff85b3d1a87b5c2a9313dde7efed0a9f0f0ae0f2f0cfed434a",
+  "s6-menu-observation.json": "d841b41c3239b4c14f581cca1bcfe992c68872c8ace9b99102dafe2a6d4a3fb2",
+  "run-ledger.json": "d194a21fe4a67e82ae0ae106dd06a1a9b6d87e4127082bb0f79e239c6cecb1d0",
+  "tools/ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+  "tools/validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"
+ },
+ "end_state": "READY_FOR_SAVE_ALL_PLAN_AND_NEW_AUTHORIZATION",
+ "next_step": "本輪 ellipsis budget 已永久消費；menu surface 已肯定觀測；Save All 未授權未執行。任何 Save All / menu-item / chooser / destination write 都需要 owner 新的獨立 one-shot GUI authorization（下一個 revision）。",
+ "note": "fresh album-open revalidation (S3) → frozen v5 ELLIPSIS ELIGIBLE on THIS round's fresh frame (S4) → exactly one ⋮ click (S5) → menu surface affirmatively observed by the frozen detector plus OCR/visual (S6) → stop. No retry, no historical coordinate as input, no v4 fallback, no frozen-tool modification, no Save All."
+}

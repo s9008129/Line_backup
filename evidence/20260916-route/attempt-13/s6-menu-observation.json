@@ -1,0 +1,180 @@
+{
+ "phase": "S6_menu_observation_after_the_single_ellipsis_click",
+ "attempt": "attempt-13",
+ "captured_local": "2026-09-21T15:31:07+0800 .. 15:31:09+0800 (post-click captures); detector runs 2026-09-21T15:35:08+0800",
+ "input_after_click": "none (no Escape, no click-outside, no menu-item activation, no keyboard, no scroll, no second click)",
+ "line_window_rect_px": [
+  674,
+  60,
+  1328,
+  1346
+ ],
+ "line_window_rect_pt": [
+  337,
+  30,
+  664,
+  673
+ ],
+ "frames": {
+  "pre_full_screen": {
+   "path": "frame-menu-pre.png",
+   "sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+   "when": "pre-click (S5 gate c), 15:29"
+  },
+  "post1_full_screen": {
+   "path": "frame-menu-post1.png",
+   "sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+   "when": "≈0.4 s after the click returned"
+  },
+  "post2_full_screen": {
+   "path": "frame-menu-post2.png",
+   "sha256": "fed170184cf7ae32b998c7fe4d903cd0a5fb4d655e38e7f6cae493c5148e346b",
+   "when": "≈2.2 s after the click returned"
+  },
+  "post_window_cu": {
+   "path": "cua-window-s6.jpg",
+   "sha256": "1e4348958ec83a51fe89bb31f1539faa63d991f52ad69dda2b9bbf33e207668e",
+   "when": "≈1.2 s after the click returned",
+   "note": "app-window screenshot does not contain the popup menu (macOS menus render in their own window layer); only the ⋮ hover/active delta bbox [286,33,322,66] px is visible in window space"
+  },
+  "pre_window_cu": {
+   "path": "cua-window-preclick.jpg",
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "note": "byte-identical to the S4 locator input frame cua-window-s1.jpg and to the attempt-12 post-click frame"
+  },
+  "menu_region_crop_post": {
+   "path": "s6-menu-crop-post1.png",
+   "sha256": "881d2fb8dcbd210bdd62621781a11805c9daba0d1f4bed9189fade3001f91019",
+   "source": "frame-menu-post1.png crop (1217,97,1524,508) at 2x"
+  },
+  "menu_region_crop_pre": {
+   "path": "s6-menu-crop-pre.png",
+   "sha256": "3ab917550325faee336aff4d0dd4c361271910e5ae68919e705c0884cfe22eb2",
+   "source": "frame-menu-pre.png same crop (menu absent before the click; only the ⋮ and the background window behind the LINE window edge)"
+  }
+ },
+ "frozen_detector": {
+  "tool": "evidence/20260916-route/tools/detect_menu_popup.py",
+  "tool_sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "params": "defaults: delta 12, min-w 40, min-h 20, min-pixels 200, min-strings 2, min-strlen 2",
+  "pairA_window_space": {
+   "pre": "cua-window-s1.jpg",
+   "post": "cua-window-s6.jpg",
+   "artifact": "s6-menu-pairA.json",
+   "artifact_sha256": "c490bfbc0b5b9ce64f2ddf2543012883c4dde09fdd7f264985397aa67ccbf1d7",
+   "verdict": "NOT_DETECTED",
+   "exit_code": 3,
+   "reason": "no changed region meeting the geometry rule",
+   "changed_pixels_total": 903,
+   "components": [
+    {
+     "bbox": [
+      286,
+      33,
+      322,
+      66
+     ],
+     "pixels": 903
+    }
+   ]
+  },
+  "pairB1_screen_space": {
+   "pre": "frame-menu-pre.png",
+   "post": "frame-menu-post1.png",
+   "artifact": "s6-menu-pairB1.json",
+   "artifact_sha256": "d1dc6257fe67e61c5975649bcbda754b66b74e4c98ae102919fa1d7d2e87e021",
+   "verdict": "MENU_DETECTED",
+   "exit_code": 0,
+   "chosen_bbox": [
+    1247,
+    127,
+    1494,
+    478
+   ],
+   "chosen_pixels": 59723,
+   "ocr_status": "OK",
+   "ocr_strings": [
+    "選擇",
+    "項目",
+    "修改",
+    "儲存",
+    "刪除"
+   ],
+   "changed_pixels_total": 105869
+  },
+  "pairB2_screen_space": {
+   "pre": "frame-menu-pre.png",
+   "post": "frame-menu-post2.png",
+   "artifact": "s6-menu-pairB2.json",
+   "artifact_sha256": "5de155283ae0d989259f29624a723f5ab70aa438170cad9fd9f53f847128285c",
+   "verdict": "MENU_DETECTED",
+   "exit_code": 0,
+   "chosen_bbox": [
+    1247,
+    127,
+    1494,
+    478
+   ],
+   "chosen_pixels": 59724,
+   "ocr_status": "OK",
+   "ocr_strings": [
+    "Va",
+    "選擇",
+    "項目",
+    "修改",
+    "儲存",
+    "刪除"
+   ],
+   "changed_pixels_total": 106069,
+   "note": "'Va' is OCR noise from the partially visible background text at the menu's right edge"
+  }
+ },
+ "runbook_disqualifier_check_pairB": {
+  "rule": "if EVERY changed component lies entirely outside the LINE album window rect, the detection is unrelated screen noise, NOT menu evidence",
+  "chosen_component_classification": "OVERLAPS_WINDOW_RECT (menu bbox x 1247..1494 crosses the window right edge at x=1328; overlap width 81 px ≈ 40.5 pt)",
+  "result": "NOT DISQUALIFIED — the chosen component is the menu, and it straddles the LINE window's right edge",
+  "other_top_components": "the remaining components of the top-10 list lie outside the menu region (e.g. [1829,456,1869,472], [1929,460,1955,476], [1979,455,2002,472], [2246,14,2261,35], [1460,723,1473,741]) and are attributed to unrelated background-window/Codex UI updates; they are NOT used as menu evidence",
+  "menu_anchor_consistency": "the click point (window-local 304,50 pt = screen pt 641,80) lies inside the menu bbox top-left region; the click landed exactly on the ⋮ (window-space delta bbox [286,33,322,66] contains the candidate 304,50)"
+ },
+ "ax_state_after_click": {
+  "artifact": "cua-ax-state-s6.txt",
+  "artifact_sha256": "138060609c93f7f2bb9f9cbe0e470ff522fc07c4950b854a8a144c9049e4d914",
+  "ax_text": "There has been no change in the accessibility tree for Window: \"\". The focused UI element is 0 標準視窗 Secondary Actions: Raise",
+  "new_ax_menu_elements": false,
+  "note": "AX-based menu affirmation is NEGATIVE; affirmative evidence rests on the frozen detector verdict (pairB1+B2 MENU_DETECTED) plus visual/OCR confirmation"
+ },
+ "visual_transcription": {
+  "method": "read-only inspection of s6-menu-crop-post1.png with view_image",
+  "observed_items_top_to_bottom": [
+   "選擇項目",
+   "修改相簿名稱",
+   "儲存全部",
+   "刪除相簿",
+   "分享相簿"
+  ],
+  "save_all_equivalent": "儲存全部 affirmatively identified (evidence only; NOT clicked)"
+ },
+ "save_all_identification": {
+  "affirmatively_identified": true,
+  "localized_strings": [
+   "儲存全部"
+  ],
+  "clicked": false,
+  "dispatch_attempted": false
+ },
+ "menu_surface_verdict": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED",
+ "decision_rule_applied": "D — live v5 ELIGIBLE, exactly one ⋮ click dispatched, menu surface affirmatively observed",
+ "after_click_inputs": {
+  "ellipsis_clicks": 1,
+  "menu_item_clicks": 0,
+  "save_all_dispatches": 0,
+  "keyboard_inputs": 0,
+  "scroll_inputs": 0,
+  "escape_or_outside_clicks": 0,
+  "retries": 0,
+  "choosers": 0,
+  "downloads": 0
+ },
+ "gui_inputs_this_round": 1,
+ "menu_left_open_for_owner": true
+}

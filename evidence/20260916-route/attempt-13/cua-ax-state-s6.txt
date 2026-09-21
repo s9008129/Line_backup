@@ -1,0 +1,2 @@
+There has been no change in the accessibility tree for Window: "".
+The focused UI element is 0 標準視窗 Secondary Actions: Raise
