@@ -1,0 +1,89 @@
+{
+ "artifact": "S2 menu-presence determination (fail-closed) - rev27 Gate A attempt-02",
+ "recorded_at_local": "2026-09-21T16:23+0800",
+ "fresh_frame": {
+  "path": "evidence/20260921-rev27-save-all/attempt-02/frame-s1.png",
+  "sha256": "ae68034c71a29d589f2849ad994d521335d54ee4c93b1f8b7eac9c6fa59941bc",
+  "size": [
+   2294,
+   1490
+  ]
+ },
+ "frozen_detector_result": {
+  "path": "evidence/20260921-rev27-save-all/attempt-02/s2-menu-detect.json",
+  "sha256": "f21db30636213807dabf300da8008753ec2383c73b006ae8a274f9b397d74109",
+  "verdict": "MENU_DETECTED",
+  "chosen_bbox": [
+   1827,
+   0,
+   2294,
+   78
+  ],
+  "ocr_strings": [
+   "Y9A218is—",
+   "16:19"
+  ],
+  "affirmative_rule": "MENU_DETECTED AND chosen bbox overlaps the fresh LINE window rect",
+  "chosen_bbox_vs_fresh_window_rect": {
+   "window_rect_px": [
+    674,
+    60,
+    1328,
+    1346
+   ],
+   "intersection_px": [
+    1827,
+    60,
+    1328,
+    78
+   ],
+   "intersection_area_px": 0,
+   "result": "FAIL (zero overlap; the chosen bbox is the system menu-bar clock area [1827,0,2294,78], a false positive caused by the clock reading 16:19 vs 15:29 in the reference frame)"
+  }
+ },
+ "independent_roi_evidence": {
+  "method": "gray-level mean absolute difference (MAD, numpy) over pre-declared regions; references are byte-authenticated attempt-13 frames",
+  "menu_roi_px": [
+   1247,
+   127,
+   1494,
+   478
+  ],
+  "frame-s1_vs_menu_absent_reference": 2.517,
+  "frame-s1_vs_menu_open_reference": 25.275,
+  "control_menu_open_vs_menu_absent": 25.187,
+  "conclusion": "the fresh frame's menu ROI is near-identical to the menu-ABSENT reference (2.517) and far from the menu-OPEN reference (25.275): NO menu popup is present",
+  "window_region_px": [
+   674,
+   60,
+   1328,
+   1346
+  ],
+  "frame-s1_vs_menu_absent_reference_in_window_region": 0.12,
+  "note": "0.12 = micro-differences only (a fading scroll indicator; 14x144 px); the album surface itself is unchanged"
+ },
+ "ellipsis_control_position_consistency": {
+  "frame_px": [
+   1282,
+   160
+  ],
+  "window_local_pt": [
+   304.5,
+   50.0
+  ],
+  "note": "the album-level ellipsis control is visible at the same absolute position as attempt-13's clicked control (window-local (304,50)); the control did not move, it is simply not activated"
+ },
+ "benign_observed_differences": {
+  "menu_bar_strip_mad": 16.326,
+  "explanation": "the translucent menu bar sits over a changed wallpaper (dynamic desktop); the menu titles LINE/顯示/好友/視窗/常見問題 are identical, but luminance behind them changed. Also the clock (15:29 -> 16:19) and the weather/battery status items differ. None of this is a window occlusion or overlay."
+ },
+ "overlay_checks": {
+  "permission_prompt": "none observed (CU AX text lists only the focused standard window; AX window list has 3 standard LINE windows only)",
+  "unknown_overlay": "none observed (window region MAD 0.12 vs the authenticated album-open reference)",
+  "occluding_window": "none over the LINE window rect [674,60,1328,1346] (terminal window is fully to its right, x>1328)"
+ },
+ "verdict": "MENU_NOT_PRESENT",
+ "decision": "STOP - zero GUI input; final scoped blocker: MENU_NOT_PRESENT_REQUIRES_NEW_ELLIPSIS_AUTHORIZATION",
+ "save_all_budget_consumed": 0,
+ "gui_inputs_sent": 0
+}

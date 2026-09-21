@@ -1,0 +1,12 @@
+Window: "", App: LINE.
+0 標準視窗 Secondary Actions: Raise
+	1 關閉按鈕
+	2 縮到最小按鈕
+3 menu bar
+	4 LINE
+	5 顯示
+	6 好友
+	7 視窗
+	8 常見問題
+
+The focused UI element is 0 標準視窗 Secondary Actions: Raise

@@ -1,0 +1,51 @@
+{
+ "tool": "locate_save_all_menu_item",
+ "version": "v7",
+ "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/frame-menu-post1.png",
+ "params": {
+  "upscale": 3,
+  "ocr_lang": "chi_tra+eng",
+  "ocr_psm": "6",
+  "min_overlap_px": 20.0,
+  "row_tol_fraction": 0.6,
+  "row_tol_min_px": 8.0
+ },
+ "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "detector": {
+  "json": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-rev27-save-all/attempt-02/selftest/det-positive.json",
+  "json_sha256": "54b13f4fc18e59c0c0ecffaa4e8f6b497d282d2c34c2794222910393634c270f",
+  "tool": "detect_menu_popup",
+  "verdict": "MENU_DETECTED",
+  "pre": "(fixture)",
+  "post": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/frame-menu-post1.png",
+  "post_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+  "chosen_bbox": [
+   1247,
+   127,
+   1494,
+   478
+  ]
+ },
+ "geometry": {
+  "json": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-rev27-save-all/attempt-02/selftest/geo-binding-fail.json",
+  "json_sha256": "1e5c24d8e510befed2ce55f32de2a09dbf21e4db698451e47fff522ba743a48f",
+  "frame_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+  "capture_scale": 2,
+  "window_index": 0,
+  "window_position_points": [
+   337,
+   30
+  ],
+  "window_size_points": [
+   327,
+   643
+  ]
+ },
+ "verdict": "BAD_INPUT",
+ "reason": "geometry json is not bound to this frame",
+ "exit_code": 6
+}

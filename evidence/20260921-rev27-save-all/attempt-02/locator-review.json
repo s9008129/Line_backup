@@ -1,0 +1,35 @@
+{
+ "artifact": "independent locator review - plan PLAN-2026-09-21-rev27-save-all.md section 5.3 requirement (created + self-tested + frozen + independently reviewed within the Gate A round before any click)",
+ "round": "rev27 Save All Gate A - attempt-02",
+ "reviewed_at_local": "2026-09-21T16:19+0800",
+ "reviewer_context": "separate read-only review pass executed in a fresh reasoning context after the tool was frozen; the reviewer modified nothing (tool, fixtures and freeze record unchanged during review); review precedes any GUI input",
+ "reviewed_tool": {
+  "path": "evidence/20260921-rev27-save-all/attempt-02/tools/locate_save_all_menu_item.py",
+  "sha256": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+  "bytes": 16538,
+  "freeze_record": {"path": "evidence/20260921-rev27-save-all/attempt-02/locator-freeze.json", "sha256": "2621cce593615056d34ba5c235ea5e1700da7f9aa23806ed70a287d796c48bce"}
+ },
+ "plan_section_5_3_property_checks": [
+  {"id": 1, "property": "inputs bind frame SHA + fresh detector bbox + frame-bound geometry; report carries all three", "verdict": "PASS", "evidence": "lines 205-223: detector JSON must be tool=detect_menu_popup, verdict=MENU_DETECTED, post==frame path, post_sha256==frame SHA, valid chosen_bbox inside frame bounds, else BAD_INPUT 6; lines 228-244: geometry frame_sha256 must equal the frame SHA, window rect/capture scale must be present, else BAD_INPUT 6; result.detector + result.geometry carry json paths, json SHAs, chosen_bbox, window rect"},
+  {"id": 2, "property": "text-first identification: tesseract word boxes inside the menu bbox (chi_tra+eng), exactly one matching row else NOT_FOUND/AMBIGUOUS", "verdict": "PASS", "evidence": "lines 246-253 crop(bbox)+LANCZOS upscale 3x then tesseract -l chi_tra+eng --psm 6 tsv via stdin, OCR failure => BAD_INPUT 6 (fail-closed); lines 264-281: rows clustered by vertical center, row text = whitespace-stripped left-to-right word concatenation (multi-glyph splits allowed); >1 target row => AMBIGUOUS 4 (line 278), 0 => NOT_FOUND 2 (line 281)"},
+  {"id": 3, "property": "cross-check, not computation: observed rows must agree with the reference order; contradicting set => MENU_CONTENT_UNEXPECTED", "verdict": "PASS", "evidence": "lines 47, 283-307: REFERENCE_ORDER = [選擇項目, 修改相簿名稱, target, 刪除相簿, 分享相簿]; containment hits are matched only against OBSERVED CJK rows and must be strictly increasing around the observed target row index; the candidate row index comes from target_rows (observed OCR row), never from a reference-list position; no row-index arithmetic anywhere"},
+  {"id": 4, "property": "candidate = midpoint of (observed text box x-range intersect addressable region x-range), y = observed text box vertical center; overlap >= 20 px; inside menu bbox, addressable region and row extent else NOT_ADDRESSABLE", "verdict": "PASS", "evidence": "lines 177 (default --min-overlap-px 20.0), 310-334: addressable = window rect ∩ menu bbox ∩ frame bounds; overlap < min => NOT_ADDRESSABLE 3 (line 330); lines 335-351: candidate checks candidate_inside_menu_bbox / candidate_inside_addressable_region / candidate_within_row_extent, any failure => NOT_ADDRESSABLE 3 (line 350); no formula rows, no attempt-13 numbers"},
+  {"id": 5, "property": "output spaces: frame px, screen pt (= px/scale), app-local pt (= screen pt - window origin pt); app-local is the dispatch form; uncomputable => NOT_ADDRESSABLE", "verdict": "PASS", "evidence": "lines 333-347: candidate_frame/candidate_screen/candidate_app_local computed from the round's own bound geometry (wx, wy from geometry json); geometry missing window rect/scale => BAD_INPUT 6 (line 244), so app-local is always computable under the accepted input contract"},
+  {"id": 6, "property": "hard prohibitions: no literal coordinates, no row-index arithmetic, no formula rows, no reuse of any attempt-13 number", "verdict": "PASS", "evidence": "programmatic grep for the barred literals (304, 305, 39, 923, 926, 1313) over the tool source yields zero matches; the docstring/params contain only the 20 px overlap rule and OCR parameters; the only text constants are the target item and the reference-order item names"}
+ ],
+ "adversarial_checks": [
+  {"check": "input capability", "verdict": "PASS", "evidence": "imports are argparse/hashlib/io/json/re/subprocess/PIL only; subprocess is used exclusively for tesseract (OCR + --version); no sky/osascript/CGEvent/AX-write/app-acquisition/bring-to-front code; the only file write is the --out evidence JSON (line 159); stdout carries the same payload"},
+  {"check": "fail-closed coverage of every early error", "verdict": "PASS", "evidence": "every error path returns a distinct non-ELIGIBLE verdict with exit code 6/2/4/5/3 and never emits a candidate; ELIGIBLE 0 is reachable only after all binding, text, cross-check, overlap and containment checks pass (line 353)"},
+  {"check": "determinism", "verdict": "PASS", "evidence": "the positive fixture was run twice; result-positive1.json and result-positive2.json are byte-identical (sha256 b97bd7730ddc5dcf381ad393a405002f540213cffe0cf3b43121bb4dbdebe785 both)"},
+  {"check": "negative/failure fixtures actually exercise the fail-closed paths", "verdict": "PASS", "evidence": "menu-absent frame => NOT_FOUND 2; detector bound to the pre frame => BAD_INPUT 6; shifted-window fixture => NOT_ADDRESSABLE 3; synthetic two-target frame => AMBIGUOUS 4; synthetic order-contradiction frame => MENU_CONTENT_UNEXPECTED 5; all stderr files empty (clean exits)"},
+  {"check": "fixture-derived coordinates carry no live authority", "verdict": "PASS", "evidence": "selftest fixtures reuse the attempt-13 menu frame and a shifted-window fixture; the produced candidate (e.g. frame_px [1313.5, 332.333] / app_local [319.75, 136.167]) is recorded only inside selftest artifacts and is structurally unreachable from the live path, which requires a fresh frame + fresh detector JSON + fresh frame-bound geometry"}
+ ],
+ "residual_risks_and_notes": [
+  "the review is a separate pass within this round, not an independent agent; it is declared as such",
+  "the click-safety residual risk (menu auto-close between final gate and click) is handled by the S4 final freshness gate (<=15 s) and the S5 fail-closed surface classification, not by this tool",
+  "the tool consumes the window rect only from the frame-bound geometry JSON; a stale or mismatched geometry is rejected by SHA binding"
+ ],
+ "verdict": "LOCATOR_REVIEW_PASS",
+ "next_allowed_action": "v7 locator may be used on this round's fresh frame after the frozen menu detector produces a MENU_DETECTED bbox; any verdict other than ELIGIBLE stops the round with zero GUI input",
+ "gui_inputs_sent": 0
+}

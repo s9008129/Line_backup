@@ -1,0 +1,28 @@
+{
+ "tool": "detect_menu_popup",
+ "pre": "(fixture)",
+ "post": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-rev27-save-all/attempt-02/selftest/frame-synth-unexpected.png",
+ "post_sha256": "d8e9f5632d875300c661758b8d1f27cdd48cb53a593afdff770268f9f6c504ee",
+ "params": {
+  "delta": 12,
+  "min_w": 40,
+  "min_h": 20,
+  "min_pixels": 200,
+  "min_strings": 2,
+  "min_strlen": 2
+ },
+ "chosen_bbox": [
+  1247,
+  127,
+  1494,
+  478
+ ],
+ "ocr_status": "OK",
+ "ocr_strings": [
+  "選擇",
+  "儲存"
+ ],
+ "verdict": "MENU_DETECTED",
+ "reason": "fixture: chosen_bbox/post/post_sha256 sourced from attempt-13 s6-menu-pairB1.json; other fields fixture-only",
+ "fixture_note": "synthetic unexpected fixture"
+}

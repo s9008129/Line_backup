@@ -1,0 +1,237 @@
+{
+ "tool": "verify_album_open",
+ "pre": "evidence/20260916-route/attempt-12/frame-pre.png",
+ "post": "evidence/20260921-rev27-save-all/attempt-02/frame-s1.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+ "post_sha256": "ae68034c71a29d589f2849ad994d521335d54ee4c93b1f8b7eac9c6fa59941bc",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "post_ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友 視窗",
+  "常見問題",
+  "全部",
+  "好友°",
+  "群組",
+  "官方帳號°",
+  "社群°",
+  "Q",
+  "999+",
+  "（LINE",
+  "团",
+  "搜尋聊天和訊息",
+  "高雄神通-立寶（9）",
+  "群組通話已結束。",
+  "2025.11",
+  "1141015無人機.（18）",
+  "@AII 請問這個托盤是誰家",
+  "的？",
+  "2025.10",
+  "旻謙允禎成長日記（3）",
+  "蘇保母傳送了貼圖",
+  "2025.10",
+  "嘉義縣稅AI應用產官..（8）",
+  "jasondodoyu@gmail.com",
+  "2025.9",
+  "嘉義縣無人機考照班...",
+  "（9）",
+  "葉文雄傳送了貼圖",
+  "2025.8",
+  "嘉義縣政府暨所屬.",
+  "（52） 2025.7",
+  "各位先進大家好，我們今天",
+  "有收到外部情資，提供參….",
+  "無人機_電作科（4）",
+  "何宏明傳送了貼圖",
+  "AD",
+  "網友",
+  "99%",
+  "配戴舒適滿意度",
+  "博士倫|奥澈",
+  "UCTTA…",
+  "（矽水眼日期 近視）",
+  "2024/05/13~05/17",
+  "57張照片",
+  "2024.05.18",
+  "1v",
+  "⑦",
+  "贝女，",
+  "中l",
+  "十",
+  "• 31°C",
+  "⑦2",
+  "00",
+  "9月21日週一 16:19",
+  "Q",
+  "：",
+  "也們星期一~四都是到4點，",
+  "up -： Line_backup - codex -m deepseek-v4.1-flash --sand..."
+ ],
+ "target_title_in_post": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   704,
+   233,
+   1077,
+   277
+  ]
+ },
+ "date_like_tokens_in_post": [
+  "2024.05.18",
+  "2024/05/13~05/17"
+ ],
+ "count_box": [
+  696,
+  279,
+  864,
+  309
+ ],
+ "count_digits_read": "",
+ "count_text": "UNREADABLE",
+ "diff": {
+  "changed_pixels": 1695214,
+  "changed_fraction": 0.495958,
+  "changed_bbox": [
+   0,
+   0,
+   2294,
+   1490
+  ],
+  "changed_grid_8x8": [
+   [
+    12211,
+    11554,
+    13489,
+    10451,
+    11052,
+    6212,
+    8552,
+    13722
+   ],
+   [
+    31998,
+    42054,
+    21180,
+    23670,
+    22203,
+    25281,
+    18328,
+    477
+   ],
+   [
+    44472,
+    49626,
+    31533,
+    47005,
+    34728,
+    23159,
+    25243,
+    13290
+   ],
+   [
+    44733,
+    49883,
+    36130,
+    50037,
+    36465,
+    9853,
+    16238,
+    26865
+   ],
+   [
+    38808,
+    41340,
+    35138,
+    51774,
+    38892,
+    18333,
+    22551,
+    26927
+   ],
+   [
+    27422,
+    27649,
+    33990,
+    50221,
+    44535,
+    48300,
+    41957,
+    16459
+   ],
+   [
+    44907,
+    50186,
+    42830,
+    50259,
+    29798,
+    5641,
+    5641,
+    3468
+   ],
+   [
+    19996,
+    26305,
+    15343,
+    16389,
+    8284,
+    0,
+    0,
+    177
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "ALBUM_OPEN_VERIFIED",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "d37fa4efc861e0f094163cee83acb477bd1316613c3a961196fbfe290339f4da",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "a2031aee440c9456ff7a2aaaa80ad5851975275dfe911aabcc059ba4212aa8d7",
+    "stdout_bytes": 4467,
+    "lines_parsed": 92
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 0,
+    "lines_parsed": 0
+   }
+  ]
+ }
+}

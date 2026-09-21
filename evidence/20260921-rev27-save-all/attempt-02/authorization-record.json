@@ -1,0 +1,63 @@
+{
+ "round": "rev27 Save All Gate A — one-shot Save-All dispatch observation",
+ "granted_by": "owner (explicit one-shot authorization in this session; exact plan SHA binding)",
+ "bound_to_plan": {
+  "plan": "PLAN-2026-09-21-rev27-save-all.md",
+  "sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052",
+  "reviews": [
+   {"path": "evidence/20260921-rev27-save-all/attempt-01/review-01-top-down.md", "sha256": "652170a110ee2eca5465c874f149b064fcb19399c0f85dc52344af39738abf67", "verdict": "PLAN_APPROVED"},
+   {"path": "evidence/20260921-rev27-save-all/attempt-01/review-02-adversarial-gui-filesystem.md", "sha256": "aba1a586e16941e4ceb12c988c4338e4af76aa096aed42b63233347c794bcd0d", "verdict": "PLAN_APPROVED"}
+  ]
+ },
+ "authorized_sequence": [
+  "fresh read-only revalidation",
+  "fresh menu verification (frozen detector)",
+  "fresh machine-derived 儲存全部 menu-item candidate (new frozen v7-class locator)",
+  "exactly one Save All menu-item left click (if and only if every precondition holds)",
+  "read-only observation of the resulting surface",
+  "STOP"
+ ],
+ "budgets": {
+  "save_all_menu_item_click": 1,
+  "staging_setup_mkdir": 2,
+  "ellipsis_click": 0,
+  "album_card_click": 0,
+  "navigation_click": 0,
+  "retry": 0,
+  "double_click": 0,
+  "other_menu_item_click": 0,
+  "chooser_interaction": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "app_acquisition": 0,
+  "bring_to_front": 0,
+  "destination_confirm": 0,
+  "cleanup_delete": 0,
+  "formal_state_write": 0,
+  "download": 0,
+  "destination_write": "only the two empty staging mkdirs; accepted baseline is read-only"
+ },
+ "explicitly_not_authorized": [
+  "chooser navigation of any kind",
+  "keyboard / path entry / Go to Folder / Return",
+  "destination confirmation",
+  "download completion operations",
+  "second Save All or any retry",
+  "ellipsis reopen",
+  "any other menu item",
+  "cleanup / delete",
+  "formal backup-state or transaction-state writes"
+ ],
+ "owner_decisions": {
+  "OD-1": "no formal live transaction/state/config write (evidence-only bookkeeping)",
+  "OD-3": "staging PRESERVE (no cleanup/delete/reuse)"
+ },
+ "hard_stops": [
+  "if the menu is not present: STOP (MENU_NOT_PRESENT_REQUIRES_NEW_ELLIPSIS_AUTHORIZATION); never reopen the ellipsis; never use a historical menu coordinate",
+  "if fresh v7 locator verdict != ELIGIBLE: STOP with zero GUI input; no fallback, no threshold tuning, no retry",
+  "if the final freshness gate deviates in any way: ABORTED_BEFORE_DISPATCH with zero input",
+  "after the click: observation only; no input of any kind; UNKNOWN dispatch forbids retry forever"
+ ]
+}

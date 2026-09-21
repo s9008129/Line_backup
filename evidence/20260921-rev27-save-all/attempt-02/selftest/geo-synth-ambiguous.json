@@ -1,0 +1,22 @@
+{
+ "artifact": "(selftest fixture)",
+ "frame_sha256": "ba933c71fb9e16624ea9d1a0d18da663c6b97853df9d04b27eec1aca6a85f6d6",
+ "capture_scale": 2,
+ "window_index": 0,
+ "window_position_points": [
+  337,
+  30
+ ],
+ "window_size_points": [
+  327,
+  643
+ ],
+ "window_point_rect": [
+  337,
+  30,
+  664,
+  673
+ ],
+ "source": "selftest fixture derived from attempt-13 live-window-geometry.json (window rect) for self-test only; not an execution input",
+ "fixture_note": "synthetic ambiguous fixture"
+}

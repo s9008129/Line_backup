@@ -1,0 +1,30 @@
+{
+ "artifact": "v7 Save All menu-item locator freeze record (plan PLAN-2026-09-21-rev27-save-all.md section 5.3: created + self-tested + frozen BEFORE any click)",
+ "round": "rev27 Save All Gate A - attempt-02",
+ "frozen_at_local": "2026-09-21T16:18+0800",
+ "tool": {
+  "path": "evidence/20260921-rev27-save-all/attempt-02/tools/locate_save_all_menu_item.py",
+  "sha256": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+  "bytes": 16538,
+  "mtime_local": "2026-09-21T16:14:50+0800",
+  "class": "v7-class menu-item locator; new this round; read-only analysis only (no GUI input capability, no AX write, no app acquisition, no bring-to-front)",
+  "history": "written before its self-test; self-test executed against frozen fixtures at 16:14; SHA-256 taken after the self-test and recorded here at freeze time; no modification after freeze"
+ },
+ "self_test": {
+  "fixtures_dir": "evidence/20260921-rev27-save-all/attempt-02/selftest/",
+  "runs": [
+   {"name": "positive-1", "frame": "evidence/20260916-route/attempt-13/frame-menu-post1.png", "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090", "result": "selftest/result-positive1.json", "result_sha256": "b97bd7730ddc5dcf381ad393a405002f540213cffe0cf3b43121bb4dbdebe785", "verdict": "ELIGIBLE", "exit_code": 0},
+   {"name": "positive-2 (determinism repeat)", "frame": "evidence/20260916-route/attempt-13/frame-menu-post1.png", "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090", "result": "selftest/result-positive2.json", "result_sha256": "b97bd7730ddc5dcf381ad393a405002f540213cffe0cf3b43121bb4dbdebe785", "verdict": "ELIGIBLE", "exit_code": 0, "note": "byte-identical to positive-1 => deterministic"},
+   {"name": "negative (menu-absent frame)", "frame": "evidence/20260916-route/attempt-13/frame-menu-pre.png", "frame_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6", "result": "selftest/result-negative.json", "result_sha256": "c5f77a0751f9648d790ba5360239504b12739574d759101ba340dfd08a5cb6c4", "verdict": "NOT_FOUND", "exit_code": 2},
+   {"name": "binding-fail (detector json bound to the pre frame, invoked with the post frame)", "frame": "evidence/20260916-route/attempt-13/frame-menu-post1.png", "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090", "result": "selftest/result-binding-fail.json", "result_sha256": "18be13b4dc98e852ed5cba61c1d05025aff0a812fe01e6fac5701b306d1ace38", "verdict": "BAD_INPUT", "exit_code": 6},
+   {"name": "not-addressable (fixture window origin shifted so the overlap is below the rule)", "frame": "evidence/20260916-route/attempt-13/frame-menu-post1.png", "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090", "result": "selftest/result-not-addressable.json", "result_sha256": "c8355bbd1440a341836e2b2088d961334d0e0ee8772f06814797420a5aff16e8", "verdict": "NOT_ADDRESSABLE", "exit_code": 3},
+   {"name": "synthetic AMBIGUOUS (two target rows)", "frame": "selftest/frame-synth-ambiguous.png", "frame_sha256": "ba933c71fb9e16624ea9d1a0d18da663c6b97853df9d04b27eec1aca6a85f6d6", "result": "selftest/result-ambiguous.json", "result_sha256": "5a2c8db79dbe1e6b1b0ad274ed0c87477c5d1cec3938f352d8fcee435f4d80ce", "verdict": "AMBIGUOUS", "exit_code": 4},
+   {"name": "synthetic MENU_CONTENT_UNEXPECTED (row-order contradiction)", "frame": "selftest/frame-synth-unexpected.png", "frame_sha256": "d8e9f5632d875300c661758b8d1f27cdd48cb53a593afdff770268f9f6c504ee", "result": "selftest/result-unexpected.json", "result_sha256": "b1ed7c80b40ca5194a4928b82c80e2809c48570c745d3fe79417937b5ce82f0f", "verdict": "MENU_CONTENT_UNEXPECTED", "exit_code": 5}
+  ],
+  "stderr_all_empty": true,
+  "fixture_authority_note": "all fixture-derived candidates are self-test artifacts with NO live authority and are never used as click input; only a fresh frame/S2/S4-derived candidate may ever be dispatched"
+ },
+ "freeze_rule": "any byte change to the tool after this record invalidates this freeze and requires a fresh self-test + fresh independent review before any click; a modified tool must not be used in this round",
+ "verification_command": "shasum -a 256 evidence/20260921-rev27-save-all/attempt-02/tools/locate_save_all_menu_item.py",
+ "gui_inputs_sent": 0
+}

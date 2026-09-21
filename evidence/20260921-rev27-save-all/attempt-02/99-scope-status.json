@@ -1,0 +1,164 @@
+{
+ "artifact": "rev27 Save All Gate A closing scope status (attempt-02)",
+ "round": "rev27 Save All Gate A - one-shot Save-All dispatch observation (owner-authorized)",
+ "phase": "closing",
+ "captured_at_local": "2026-09-21T16:26+0800",
+ "final_outcome": "STOPPED_FAIL_CLOSED__MENU_NOT_PRESENT__ZERO_GUI_INPUT",
+ "scoped_blocker": "MENU_NOT_PRESENT_REQUIRES_NEW_ELLIPSIS_AUTHORIZATION",
+ "primary_outcome": "NOT_REACHED (Save All dispatch was gated on a fresh affirmatively-observed menu; the menu was not present, so no dispatch was permitted and none occurred)",
+ "safety_outcome": "SATISFIED - fail-closed stop with zero GUI input, zero staging writes, accepted baseline proven unchanged",
+ "save_all": {
+  "budget": 1,
+  "used": 0,
+  "dispatch_state": "NOT_ATTEMPTED",
+  "click_count": 0
+ },
+ "gui_input_count": 0,
+ "menu_item_inputs": 0,
+ "chooser_interactions": 0,
+ "keyboard_inputs": 0,
+ "scroll_inputs": 0,
+ "ax_write_inputs": 0,
+ "app_acquisition_inputs": 0,
+ "bring_to_front_inputs": 0,
+ "downloads": 0,
+ "destination_writes": 0,
+ "cleanup_delete_operations": 0,
+ "formal_state_writes": 0,
+ "retries": 0,
+ "staging_mkdir_used": 0,
+ "baseline": {
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+  "file_count": 57,
+  "total_bytes": 17924900,
+  "manifest_digest_sha256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "unchanged": true
+ },
+ "album_state_left_open": "ALBUM_OPEN_VERIFIED (2024/05/13~05/17, 57) - left exactly as-is; no menu popup present; nothing was clicked",
+ "owner_handoff_note": "the LINE album window is open and untouched; the menu popup is closed; the next round requires a NEW owner authorization for one album-level ellipsis click (the ellipsis budget of attempt-13 and the Save All budget of this round are both consumed/expired without dispatch)",
+ "frozen_assets_untouched": {
+  "attempt_12": "untouched",
+  "attempt_13": "untouched",
+  "frozen_v4_v5_v6": "untouched",
+  "rev27_plan_and_reviews": "untouched"
+ },
+ "new_evidence": [
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/00-start-state.json",
+   "sha256": "cf2c562de3302e86c3663d727d7f492fb009d115aaf470384a6730bdf88c5d8e"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/authorization-record.json",
+   "sha256": "b5335136f9986993405e142588291f51d8320e2a57415fc6657cc39bf93489a5"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/baseline-inventory-end.json",
+   "sha256": "9b2d2a1245cdf1eb1c251bdd6b2b133d7d6e4775c44efd6c1d099307476ee850"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/cua-ax-state-s1.txt",
+   "sha256": "e81926ed1f66e62b358ab13e671d64cd3777329e44f8b165682255a9dd5f4470"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/cua-window-s1.jpg",
+   "sha256": "5c5015c240276446111ea39a15579648ccbe2f4d44c5e0205cfb59e8dc7ea7e1"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/frame-s1.png",
+   "sha256": "ae68034c71a29d589f2849ad994d521335d54ee4c93b1f8b7eac9c6fa59941bc"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/geometry-binding.json",
+   "sha256": "d63b5ba33a450bc310237db69dfd92f67bfdfe75276e0368df144a680d3bc5c4"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/geometry-binding.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/live-window-geometry.json",
+   "sha256": "bf30ebcbc11196daa5d5e891572bf5e48a251366ef539c90ab6d53fada9af59a"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/locator-freeze.json",
+   "sha256": "2621cce593615056d34ba5c235ea5e1700da7f9aa23806ed70a287d796c48bce"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/locator-review.json",
+   "sha256": "2c69ff043b7b9f82f1d3d73128d77562ec5317c37d1ece66d6f38dca8f8bf63b"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/locator-review.md",
+   "sha256": "40f50b01cd4251c15431deb825899f1284daf5e532dace14c14c40e8fe464af0"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/route-runbook.md",
+   "sha256": "e6071024766221090755e450c8edb130492815268884bd2130a229f9f7cd487c"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/run-ledger.json",
+   "sha256": "79edaca68426e775a0863aeb816307890b2904d8d83c2b6ecda61d73b0f3ba95"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s1-ax-pre.json",
+   "sha256": "7ba19f9a53d8f9df5ad1aecbd33fec6a656716f819e4b6ba4f0e1131a4939d55"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s1-ax-pre.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s1-s2-surface-revalidation.json",
+   "sha256": "42645c30ee8f24c38db95a3e1c8c1e5ba56ad1a65c2b49688a1df1b173c66c62"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s2-ax-post.json",
+   "sha256": "9cd5545c6947f10cd84a43cef6a4838d493f77aedd949902bda9e6b9aee675e8"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s2-ax-post.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s2-menu-absence-proof.json",
+   "sha256": "f76bea516a1f2e14800d96d812ae76876337a8f4cfabff31faf2099caf53259b"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s2-menu-absence-roi-ref-post2.png",
+   "sha256": "ae3a0f094cef682802de0f750c88d7df9327ab8266a937aa1460e38c0d23240b"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s2-menu-absence-roi-ref-pre.png",
+   "sha256": "5c1846a1547bfec4f24f2290d93a554cde28dbda2dfa6f52769df87bcf13fc86"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s2-menu-absence-roi-s1.png",
+   "sha256": "3919599021eb9b55f621d394dd849a6dcbf5e4cdeb789f9fbc86b4cc6dea6208"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s2-menu-detect.json",
+   "sha256": "f21db30636213807dabf300da8008753ec2383c73b006ae8a274f9b397d74109"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s2-menu-detect.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s3-album-open-verify-screen-supporting.json",
+   "sha256": "0b4c47a19be54017420ebf628a32977d5044a03ee2dca8a87fc2d73648f75343"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s3-album-open-verify-screen-supporting.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s3-album-open-verify-window.json",
+   "sha256": "1ad63d6aac51e55d2f471de0016dde3aac3412447f3340cd0b014afe38bac0fa"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s3-album-open-verify-window.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+ ],
+ "gui_inputs_sent": 0
+}

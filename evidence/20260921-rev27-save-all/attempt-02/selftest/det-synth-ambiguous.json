@@ -1,0 +1,28 @@
+{
+ "tool": "detect_menu_popup",
+ "pre": "(fixture)",
+ "post": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-rev27-save-all/attempt-02/selftest/frame-synth-ambiguous.png",
+ "post_sha256": "ba933c71fb9e16624ea9d1a0d18da663c6b97853df9d04b27eec1aca6a85f6d6",
+ "params": {
+  "delta": 12,
+  "min_w": 40,
+  "min_h": 20,
+  "min_pixels": 200,
+  "min_strings": 2,
+  "min_strlen": 2
+ },
+ "chosen_bbox": [
+  1247,
+  127,
+  1494,
+  478
+ ],
+ "ocr_status": "OK",
+ "ocr_strings": [
+  "選擇",
+  "儲存"
+ ],
+ "verdict": "MENU_DETECTED",
+ "reason": "fixture: chosen_bbox/post/post_sha256 sourced from attempt-13 s6-menu-pairB1.json; other fields fixture-only",
+ "fixture_note": "synthetic ambiguous fixture"
+}

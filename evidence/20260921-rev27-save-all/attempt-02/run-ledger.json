@@ -1,0 +1,208 @@
+{
+ "artifact": "rev27 Save All Gate A run ledger (append-only route evidence)",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-02",
+ "round": "rev27 Save All Gate A - one-shot Save-All dispatch observation (owner-authorized; plan db972849...)",
+ "outcome": "STOPPED_FAIL_CLOSED_BEFORE_ANY_GUI_INPUT__MENU_NOT_PRESENT",
+ "timeline_local": {
+  "16:10-16:11": "start state + authorization record + runbook (pre-declared before any live observation)",
+  "16:13-16:14": "v7 locator created + self-tested on frozen fixtures (positive x2 byte-identical; 5 fail-closed fixtures)",
+  "16:18": "locator frozen (sha256 ea09c1ca...; locator-freeze.json) + independent locator review (LOCATOR_REVIEW_PASS)",
+  "16:19:08": "S1 read-only AX pre read (s1-ax-pre.json)",
+  "16:19:22-16:19:27": "fresh CU window state + screenshot (cua-window-s1.jpg)",
+  "16:19:35": "fresh full-screen frame (frame-s1.png); S2 AX post read 16:19:40 (identical)",
+  "16:20:03-16:20:13": "album-open formal + supporting pairs ALBUM_OPEN_VERIFIED; geometry binding PASS (MAD 2.268)",
+  "16:20:27": "frozen menu detector on fresh frame: bbox does not overlap the window (affirmative rule FAIL)",
+  "16:23-16:24": "menu-absence proof (ROI MAD vs menu-absent 2.517 / vs menu-open 25.275); baseline end read unchanged",
+  "16:25": "S1/S2 consolidated; STOP decision recorded"
+ },
+ "git": {
+  "status_porcelain_branch": "## master...origin/master [ahead 6]",
+  "head": "194e0d84933913e78cad8e45c38de075ab857222",
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "no_fetch_pull_reset_rebase_amend_push": true
+ },
+ "authorization_binding": {
+  "plan": {
+   "path": "PLAN-2026-09-21-rev27-save-all.md",
+   "sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052",
+   "match": true
+  },
+  "review_1": "652170a110ee2eca5465c874f149b064fcb19399c0f85dc52344af39738abf67 PLAN_APPROVED",
+  "review_2": "aba1a586e16941e4ceb12c988c4338e4af76aa096aed42b63233347c794bcd0d PLAN_APPROVED"
+ },
+ "historical_prerequisites_rehashed": {
+  "attempt_12": "immutable; v6 ELIGIBLE; 1 album-card click; ALBUM_OPEN_VERIFIED; retry 0",
+  "attempt_13": "immutable; ALBUM_OPEN_VERIFIED; v5 ELIGIBLE; 1 ellipsis click; MENU_SURFACE_AFFIRMATIVELY_OBSERVED (then); menu-item 0; SaveAll 0; chooser 0; download 0; retry 0"
+ },
+ "frozen_tools": {
+  "detect_menu_popup.py": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "v5/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "v5/locate_album_ellipsis.py (reference only, NOT used this round)": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "v6/locate_album_card.py (not used)": "d55a974f...",
+  "new_v7_locator": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+  "v7_locator_review": "LOCATOR_REVIEW_PASS (locator-review.json)"
+ },
+ "S1_read_only_revalidation": {
+  "line_frontmost_pre_post": true,
+  "focused_album_window": "(337,30) 327x643 pt, identical pre/post; window list identical",
+  "fresh_frame": {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/frame-s1.png",
+   "sha256": "ae68034c71a29d589f2849ad994d521335d54ee4c93b1f8b7eac9c6fa59941bc"
+  },
+  "album_open_formal": "ALBUM_OPEN_VERIFIED (title 2024/05/13~05/17; count 57 MATCH)",
+  "album_open_supporting": {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s3-album-open-verify-screen-supporting.json",
+   "sha256": "0b4c47a19be54017420ebf628a32977d5044a03ee2dca8a87fc2d73648f75343"
+  },
+  "geometry_binding": "GEOMETRY_BINDING_PASS (MAD 2.268)",
+  "no_permission_prompt": true,
+  "no_unknown_overlay": true,
+  "no_occluding_window": true
+ },
+ "S2_menu_surface": {
+  "detector_pair": {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s2-menu-detect.json",
+   "sha256": "f21db30636213807dabf300da8008753ec2383c73b006ae8a274f9b397d74109"
+  },
+  "detector_chosen_bbox": [
+   1827,
+   0,
+   2294,
+   78
+  ],
+  "bbox_overlaps_window_rect": false,
+  "determination": {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/s2-menu-absence-proof.json",
+   "sha256": "f76bea516a1f2e14800d96d812ae76876337a8f4cfabff31faf2099caf53259b"
+  },
+  "verdict": "MENU_NOT_PRESENT",
+  "basis": "affirmative rule (MENU_DETECTED AND bbox overlaps fresh window rect) FAILED - bbox is the system menu-bar clock area; independent ROI comparison vs menu-absent reference MAD 2.517 vs menu-open reference MAD 25.275"
+ },
+ "staging_preflight": {
+  "performed": false,
+  "staging_setup_mkdir_used": 0,
+  "reason": "stopped at S1/S2 per the pre-declared order (read-only checks precede staging so a menu-absent STOP performs zero filesystem writes)",
+  "staging_dir_exists": false
+ },
+ "save_all_intent_record": {
+  "written": false,
+  "reason": "S3 not reached; no dispatch possible"
+ },
+ "save_all_dispatch": {
+  "budget": 1,
+  "used": 0,
+  "dispatch_state": "NOT_ATTEMPTED",
+  "note": "the GUI click call was never invoked; ABORTED_BEFORE_SAVE_ALL_DISPATCH by construction (menu absent)"
+ },
+ "input_counters": {
+  "historical_album_card_inputs": 1,
+  "new_album_card_inputs": 0,
+  "historical_navigation_inputs": 1,
+  "new_navigation_inputs": 0,
+  "historical_ellipsis_inputs": 1,
+  "new_ellipsis_inputs": 0,
+  "save_all_menu_item_click": 0,
+  "other_menu_item_click": 0,
+  "chooser_interaction": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "app_acquisition": 0,
+  "bring_to_front": 0,
+  "double_click": 0,
+  "retry": 0,
+  "destination_confirm": 0,
+  "download_confirm": 0,
+  "cleanup_delete": 0,
+  "formal_state_write": 0,
+  "destination_write": 0,
+  "gui_input_count_this_round": 0
+ },
+ "filesystem_tripwire": {
+  "accepted_baseline": {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/baseline-inventory-end.json",
+   "sha256": "9b2d2a1245cdf1eb1c251bdd6b2b133d7d6e4775c44efd6c1d099307476ee850"
+  },
+  "accepted_baseline_unchanged": true,
+  "fresh_staging": {
+   "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/",
+   "exists": false,
+   "entries": null,
+   "bytes": null
+  },
+  "unexpected_pre_confirm_filesystem_write": false
+ },
+ "decision": {
+  "rule": "owner decision tree: S1 menu absent -> STOP with zero GUI input",
+  "verdict": "STOP",
+  "scoped_blocker": "MENU_NOT_PRESENT_REQUIRES_NEW_ELLIPSIS_AUTHORIZATION",
+  "what_would_be_needed_next": "a fresh owner authorization for a new album-level ellipsis click (new round) to reopen the menu, then a re-granted Save All Gate A"
+ },
+ "evidence_manifest": {
+  "00-start-state.json": "cf2c562de3302e86c3663d727d7f492fb009d115aaf470384a6730bdf88c5d8e",
+  "authorization-record.json": "b5335136f9986993405e142588291f51d8320e2a57415fc6657cc39bf93489a5",
+  "baseline-inventory-end.json": "9b2d2a1245cdf1eb1c251bdd6b2b133d7d6e4775c44efd6c1d099307476ee850",
+  "cua-ax-state-s1.txt": "e81926ed1f66e62b358ab13e671d64cd3777329e44f8b165682255a9dd5f4470",
+  "cua-window-s1.jpg": "5c5015c240276446111ea39a15579648ccbe2f4d44c5e0205cfb59e8dc7ea7e1",
+  "frame-s1.png": "ae68034c71a29d589f2849ad994d521335d54ee4c93b1f8b7eac9c6fa59941bc",
+  "geometry-binding.json": "d63b5ba33a450bc310237db69dfd92f67bfdfe75276e0368df144a680d3bc5c4",
+  "geometry-binding.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "live-window-geometry.json": "bf30ebcbc11196daa5d5e891572bf5e48a251366ef539c90ab6d53fada9af59a",
+  "locator-freeze.json": "2621cce593615056d34ba5c235ea5e1700da7f9aa23806ed70a287d796c48bce",
+  "locator-review.json": "2c69ff043b7b9f82f1d3d73128d77562ec5317c37d1ece66d6f38dca8f8bf63b",
+  "locator-review.md": "40f50b01cd4251c15431deb825899f1284daf5e532dace14c14c40e8fe464af0",
+  "route-runbook.md": "e6071024766221090755e450c8edb130492815268884bd2130a229f9f7cd487c",
+  "s1-ax-pre.json": "7ba19f9a53d8f9df5ad1aecbd33fec6a656716f819e4b6ba4f0e1131a4939d55",
+  "s1-ax-pre.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s1-s2-surface-revalidation.json": "42645c30ee8f24c38db95a3e1c8c1e5ba56ad1a65c2b49688a1df1b173c66c62",
+  "s2-ax-post.json": "9cd5545c6947f10cd84a43cef6a4838d493f77aedd949902bda9e6b9aee675e8",
+  "s2-ax-post.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s2-menu-absence-proof.json": "f76bea516a1f2e14800d96d812ae76876337a8f4cfabff31faf2099caf53259b",
+  "s2-menu-absence-roi-ref-post2.png": "ae3a0f094cef682802de0f750c88d7df9327ab8266a937aa1460e38c0d23240b",
+  "s2-menu-absence-roi-ref-pre.png": "5c1846a1547bfec4f24f2290d93a554cde28dbda2dfa6f52769df87bcf13fc86",
+  "s2-menu-absence-roi-s1.png": "3919599021eb9b55f621d394dd849a6dcbf5e4cdeb789f9fbc86b4cc6dea6208",
+  "s2-menu-detect.json": "f21db30636213807dabf300da8008753ec2383c73b006ae8a274f9b397d74109",
+  "s2-menu-detect.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s3-album-open-verify-screen-supporting.json": "0b4c47a19be54017420ebf628a32977d5044a03ee2dca8a87fc2d73648f75343",
+  "s3-album-open-verify-screen-supporting.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s3-album-open-verify-window.json": "1ad63d6aac51e55d2f471de0016dde3aac3412447f3340cd0b014afe38bac0fa",
+  "s3-album-open-verify-window.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "evidence_manifest_dirs": {
+  "selftest": {
+   "det-negative.json": "7363aeb9e9122d40dfcc06918732a9f4034c94c9d9d46436ee52ef6e00ebd5e1",
+   "det-positive.json": "54b13f4fc18e59c0c0ecffaa4e8f6b497d282d2c34c2794222910393634c270f",
+   "det-synth-ambiguous.json": "af2680938be50ae4cd39bbb7071300e3f7e0e3da315795004502448e18898d3c",
+   "det-synth-unexpected.json": "8d358a74cbf1d20d018ea8c7323c81e61f2105481ed951a79ff76a6f71f726f3",
+   "frame-synth-ambiguous.png": "ba933c71fb9e16624ea9d1a0d18da663c6b97853df9d04b27eec1aca6a85f6d6",
+   "frame-synth-unexpected.png": "d8e9f5632d875300c661758b8d1f27cdd48cb53a593afdff770268f9f6c504ee",
+   "geo-binding-fail.json": "1e5c24d8e510befed2ce55f32de2a09dbf21e4db698451e47fff522ba743a48f",
+   "geo-negative.json": "5b3c857addbe15adfa3bff868f0034c2b0762ca378833dd8a6d65adeb209a3be",
+   "geo-not-addressable.json": "d8fa25aae505f5c6298cfcd15e3fc75737b92fb4d91391fa9a0f9b2d899cdb8e",
+   "geo-positive.json": "f0950dc95a6b15f44ae406202bc58e7093aa4f5e925ccfd5f2d249a8df952398",
+   "geo-synth-ambiguous.json": "70b56ffbc2b421328e40aaecf033b2e781ed198551411544a2b9ab8b999bbe5c",
+   "geo-synth-unexpected.json": "69849d745b1be255261cf9b9c97f2da02948cddd0a97fef8bbb5e19f0faacb6c",
+   "result-ambiguous.json": "5a2c8db79dbe1e6b1b0ad274ed0c87477c5d1cec3938f352d8fcee435f4d80ce",
+   "result-ambiguous.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "result-binding-fail.json": "18be13b4dc98e852ed5cba61c1d05025aff0a812fe01e6fac5701b306d1ace38",
+   "result-binding-fail.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "result-negative.json": "c5f77a0751f9648d790ba5360239504b12739574d759101ba340dfd08a5cb6c4",
+   "result-negative.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "result-not-addressable.json": "c8355bbd1440a341836e2b2088d961334d0e0ee8772f06814797420a5aff16e8",
+   "result-not-addressable.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "result-positive1.json": "b97bd7730ddc5dcf381ad393a405002f540213cffe0cf3b43121bb4dbdebe785",
+   "result-positive1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "result-positive2.json": "b97bd7730ddc5dcf381ad393a405002f540213cffe0cf3b43121bb4dbdebe785",
+   "result-positive2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "result-unexpected.json": "b1ed7c80b40ca5194a4928b82c80e2809c48570c745d3fe79417937b5ce82f0f",
+   "result-unexpected.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tools": {
+   "ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+   "locate_save_all_menu_item.py": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+   "validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"
+  }
+ },
+ "gui_inputs_sent": 0
+}

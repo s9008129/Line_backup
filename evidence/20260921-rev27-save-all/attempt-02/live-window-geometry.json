@@ -1,0 +1,16 @@
+{
+ "artifact": "live-window-geometry (rev27 Gate A, attempt-02) - fresh read-only AX observation of the FOCUSED LINE window, bound to THIS round's fresh frame SHA",
+ "frame": "evidence/20260921-rev27-save-all/attempt-02/frame-s1.png",
+ "frame_sha256": "ae68034c71a29d589f2849ad994d521335d54ee4c93b1f8b7eac9c6fa59941bc",
+ "capture_scale": 2,
+ "window_index": 0,
+ "window_position_points": [337, 30],
+ "window_size_points": [327, 643],
+ "window_point_rect": [337, 30, 664, 673],
+ "window_identity": {"title": "", "role": "AXWindow", "subrole": "AXStandardWindow", "main": true, "focused": true, "is_ax_focused_window": true},
+ "source": "read-only AX window-bounds observation via evidence/20260921-rev27-save-all/attempt-02/tools/ax_window_bounds.swift (sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6; binary /tmp/rev27ga/ax_window_bounds sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae) at 2026-09-21T16:19+0800 (pre: s1-ax-pre.json) and 2026-09-21T16:19:35+0800 (post: s2-ax-post.json, window list identical); display: nsscreen_backing_scale_factor 2, cg_display_mode_pixel_wh 2294x1490 vs display_bounds_points 1147x745",
+ "coordinate_space": "full-screen capture device pixels (screencapture -x at scale 2); frame_px = point * 2; app-local pt = screen pt - window origin pt; NOT historical geometry; no attempt-10/11/12/13 geometry value reused",
+ "generated_from": "this run's fresh read-only AX observation of the focused LINE album-open window (rev27 Gate A attempt-02)",
+ "gui_inputs_sent": 0,
+ "generated_at_local": "2026-09-21T16:20+0800"
+}

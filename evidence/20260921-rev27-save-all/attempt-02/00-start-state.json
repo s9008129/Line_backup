@@ -1,0 +1,123 @@
+{
+ "check": "rev27_save_all_gate_a_start_state",
+ "captured_at_local": "2026-09-21T16:10+0800",
+ "round": "rev27 Save All Gate A — one-shot Save-All dispatch observation (owner-authorized)",
+ "attempt_slot": {
+  "selected": "evidence/20260921-rev27-save-all/attempt-02/",
+  "series": "rev27-save-all (per approved plan section 13); route lineage continues attempt-13",
+  "reason": "attempt-02 did not exist in this series; attempt-12 and attempt-13 untouched; attempt-11 (untracked) and __pycache__ untouched"
+ },
+ "git": {
+  "status_porcelain_branch": "## master...origin/master [ahead 6]",
+  "head": "194e0d84933913e78cad8e45c38de075ab857222",
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "log_head_7": [
+   "194e0d8 Rev27 Save All / chooser / filesystem safety planning (zero GUI input): Rev27 plan + two PLAN_APPROVED reviews",
+   "802ee4c Rev29 route attempt-13 one-shot ellipsis click + menu observation (ellipsis 1, Save All 0)",
+   "d27b50e Rev27 attempt-12 one-shot album-card click + S5 (album-card 1, ALBUM_OPEN_VERIFIED)",
+   "57a0602 Rev26 attempt-10 live v6 zero-input verification",
+   "5139b3f Rev26 v6 redesign",
+   "d3728e7 Rev25 attempt-09 zero-input S1-S3",
+   "a9e523e Rev25 gate-6 safe-stop evidence"
+  ],
+  "untracked_left_untouched": [
+   "evidence/20260916-route/attempt-11/",
+   "evidence/20260916-route/tools/v4/__pycache__/",
+   "evidence/20260916-route/tools/v6/__pycache__/",
+   "evidence/20260916-route/tools/v6/selftest/__pycache__/"
+  ],
+  "no_fetch_pull_reset_rebase_amend_push": true
+ },
+ "authorization_binding": {
+  "plan": {"path": "PLAN-2026-09-21-rev27-save-all.md", "sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052", "match": true},
+  "review_1": {"path": "evidence/20260921-rev27-save-all/attempt-01/review-01-top-down.md", "sha256": "652170a110ee2eca5465c874f149b064fcb19399c0f85dc52344af39738abf67", "recorded_verdict": "PLAN_APPROVED", "match": true},
+  "review_2": {"path": "evidence/20260921-rev27-save-all/attempt-01/review-02-adversarial-gui-filesystem.md", "sha256": "aba1a586e16941e4ceb12c988c4338e4af76aa096aed42b63233347c794bcd0d", "recorded_verdict": "PLAN_APPROVED", "match": true}
+ },
+ "attempt_12_prerequisite_rehashed_this_round": {
+  "immutable": true,
+  "frame-pre.png": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+  "frame-post.png": "7bd54308d916f8b7f0f78221a660d94b1f2985ebb19ce638c4591d780a00bca3",
+  "album-card-locate-v6.json": "05bcea90f31587435a1c16b522938eeabc32b06788d4d85b002559eb5b036875",
+  "album-open-verify.json": "e99aa1a65d8c6999acbd7a5371a153d1990c514c70bbf8d5c285de7db2949ab6",
+  "run-ledger.json": "992df1a2c1997c3305d4a1ed5c4c7eaaf1d2108ab7defd15213ef082ac15c0f2",
+  "99-scope-status.json": "9e13be0507d420f02668ecdb2cba4f355ffb658915429bf647187ceaa7ee42f4",
+  "all_match_attempt13_start_state_values": true,
+  "facts": {"fresh_v6": "ELIGIBLE", "album_card_clicks": 1, "s5": "ALBUM_OPEN_VERIFIED", "retry": 0}
+ },
+ "attempt_13_prerequisite_rehashed_this_round": {
+  "immutable": true,
+  "frame-pre.png": "0e22f7546938cbe95023cfc352aaf5e1166651a9e78a29f16eae9ac857287638",
+  "s3-album-open-verify-window.json": "2f3d08770c678687c5effbf0f1df6a8398de26587116873c34000682ec7e385c",
+  "s4-album-ellipsis-locate.json": "17290acdaa29ccbf405279665c4932c9a2eb4f284af6ef54d6f6d4c0cfc99d6e",
+  "s5-click-intent.json": "417cff16f06d2034847464befb85b25d2cd963f64c47778bba1f97c04a20075f",
+  "frame-menu-post1.png": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+  "frame-menu-post2.png": "fed170184cf7ae32b998c7fe4d903cd0a5fb4d655e38e7f6cae493c5148e346b",
+  "s6-menu-ocr.json": "5a6ad4c8a30378ff85b3d1a87b5c2a9313dde7efed0a9f0f0ae0f2f0cfed434a",
+  "s6-menu-observation.json": "d841b41c3239b4c14f581cca1bcfe992c68872c8ace9b99102dafe2a6d4a3fb2",
+  "run-ledger.json": "d194a21fe4a67e82ae0ae106dd06a1a9b6d87e4127082bb0f79e239c6cecb1d0",
+  "99-scope-status.json": "4188d3d44117e6951a7918d40ee27d742633979788c5a83ec38effc783f1353a",
+  "all_match_committed_values": true,
+  "facts": {
+   "s3_album_open": "ALBUM_OPEN_VERIFIED",
+   "frozen_v5_live": "ELIGIBLE",
+   "ellipsis_click": 1,
+   "s6_menu_surface": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED",
+   "save_all_localized_identified": "儲存全部 (Save All) affirmatively identified — evidence only",
+   "menu_item_clicks": 0,
+   "save_all_dispatch": 0,
+   "chooser": 0,
+   "download": 0,
+   "retry": 0
+  }
+ },
+ "frozen_tool_shas_rehashed_this_round": {
+  "tools/v5/locate_album_ellipsis.py": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "tools/v5/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v5/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "tools/v5/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "tools/v6/locate_album_card.py": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "tools/detect_menu_popup.py": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "tools/vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+  "attempt_local_copies_byte_identical": {
+   "tools/ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+   "tools/validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68",
+   "copied_from": "evidence/20260916-route/attempt-13/tools/ (byte-identical; read-only observation tools)"
+  }
+ },
+ "accepted_baseline_preread": {
+  "label": "READ_ONLY_ACCEPTED_BASELINE",
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+  "file_count": 57,
+  "total_bytes": 17924900,
+  "manifest_digest_sha256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "expected_digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "match": true
+ },
+ "budgets_this_round": {
+  "save_all_menu_item_click": 1,
+  "staging_setup_mkdir": 2,
+  "ellipsis_click": 0,
+  "album_card_click": 0,
+  "navigation_click": 0,
+  "retry": 0,
+  "double_click": 0,
+  "other_menu_item_click": 0,
+  "chooser_interaction": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "app_acquisition": 0,
+  "bring_to_front": 0,
+  "destination_confirm": 0,
+  "cleanup_delete": 0,
+  "formal_state_config_write": 0,
+  "download": 0
+ },
+ "owner_decisions": {
+  "OD-1": "no formal live transaction/state/config write; Gate A state lives only in this round's append-only evidence",
+  "OD-3": "staging = PRESERVE; the fresh staging directory created for preflight is never deleted/cleaned/reused by this round"
+ },
+ "gui_input_count_so_far": 0,
+ "verdict": "PASS_ZERO_INPUT_START"
+}

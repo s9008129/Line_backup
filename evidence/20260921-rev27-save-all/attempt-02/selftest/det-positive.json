@@ -1,0 +1,28 @@
+{
+ "tool": "detect_menu_popup",
+ "pre": "(fixture)",
+ "post": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/frame-menu-post1.png",
+ "post_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+ "params": {
+  "delta": 12,
+  "min_w": 40,
+  "min_h": 20,
+  "min_pixels": 200,
+  "min_strings": 2,
+  "min_strlen": 2
+ },
+ "chosen_bbox": [
+  1247,
+  127,
+  1494,
+  478
+ ],
+ "ocr_status": "OK",
+ "ocr_strings": [
+  "選擇",
+  "儲存"
+ ],
+ "verdict": "MENU_DETECTED",
+ "reason": "fixture: chosen_bbox/post/post_sha256 sourced from attempt-13 s6-menu-pairB1.json; other fields fixture-only",
+ "fixture_note": "positive fixture"
+}
