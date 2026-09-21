@@ -1,0 +1,59 @@
+{
+ "artifact": "Rev27b review freeze: exact artifacts under review",
+ "note": "reviewers must recompute the plan SHA from disk; review verdicts bind to these SHAs",
+ "artifacts": {
+  "plan": {
+   "path": "PLAN-2026-09-21-rev27b-lineage-guard.md",
+   "sha256": "7a179d15f61033611dec333d246b6d8c590901c06c182628533e442feae10a7c"
+  },
+  "guard": {
+   "path": "evidence/20260916-route/tools/v7/album_detail_lineage_guard.py",
+   "sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52"
+  },
+  "guard_readme": {
+   "path": "evidence/20260916-route/tools/v7/README.md",
+   "sha256": "b0dfe46e1d54a2b3782b604060392caa622f570aa75587b73b8d3d5d36902608"
+  },
+  "selftest_runner": {
+   "path": "evidence/20260916-route/tools/v7/selftest/run_selftest.py",
+   "sha256": "7574e888c15c4374c75a659373c6e02170e9b23abee13304348090f23104fcc6"
+  },
+  "selftest_results": {
+   "path": "evidence/20260916-route/tools/v7/selftest/results.json",
+   "sha256": "affb3602698f7c5b0d9f8d8df01759a074738dd095bd32cf638a1300ec0ae4df"
+  },
+  "replay_record": {
+   "path": "evidence/20260921-lineage-guard-replan/replay/replay-record.json",
+   "sha256": "adeede98894c87e0dff86d8ccb0b4c430e7fec25f15478a2eabfa221c1bea396"
+  },
+  "root_cause_md": {
+   "path": "evidence/20260921-lineage-guard-replan/attempt-01/root-cause-classification.md",
+   "sha256": "85ab2f01588915cf5333b05d685e2e7439171f92fbf059d9fad6d44df249d57c"
+  },
+  "root_cause_json": {
+   "path": "evidence/20260921-lineage-guard-replan/attempt-01/root-cause-classification.json",
+   "sha256": "10863eba83d24d071e4a003cfecba0a604a33edc88cf01b77c90d110d20ec93b"
+  },
+  "evidence_rehash": {
+   "path": "evidence/20260921-lineage-guard-replan/attempt-01/evidence-rehash.json",
+   "sha256": "a47eca359cb07dc01790edf7e6c6943e6d4181fd82530b11bf017933947d1ff0"
+  },
+  "frozen_verify_v4": {
+   "path": "evidence/20260916-route/tools/v4/verify_album_open.py",
+   "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58"
+  },
+  "frozen_verify_v5": {
+   "path": "evidence/20260916-route/tools/v5/verify_album_open.py",
+   "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58"
+  }
+ },
+ "frozen_tools_untouched": [
+  "tools/v4",
+  "tools/v5",
+  "tools/v6",
+  "attempt-12",
+  "attempt-13",
+  "attempt-03",
+  "accepted baseline"
+ ]
+}

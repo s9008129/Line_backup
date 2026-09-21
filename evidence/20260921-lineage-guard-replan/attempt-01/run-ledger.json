@@ -1,0 +1,151 @@
+{
+ "artifact": "Rev27b ALBUM_DETAIL_WINDOW_LINEAGE_GUARD replan run ledger (attempt-01)",
+ "attempt": "evidence/20260921-lineage-guard-replan/attempt-01/",
+ "round": "zero-GUI safety replan: close the attempt-03 frozen-verifier false-positive exposure",
+ "outcome": "COMPLETE__GUARD_BUILT_TESTED_AND_REPLAYED__ATTEMPT_03_COMPOSITE_NEVER_PASSES__BOTH_REVIEWS_PLAN_APPROVED__READY_FOR_NEW_ALBUM_REOPEN_AUTHORIZATION",
+ "timeline_local": [
+  "19:43 read-only git baseline (status/HEAD/origin/log); attempt-11 + pycache untracked left untouched",
+  "19:44-19:47 read-only re-hash of attempt-12 (20/20), attempt-13 (33/33), attempt-03 (34/34): ALL_RECORDED_HASHES_MATCH",
+  "19:47-19:52 root-cause classification (OBSERVED/INFERRED/UNKNOWN); guard v7 implemented + README; selftest 22/22; offline replay record",
+  "19:47-19:52 plan PLAN-2026-09-21-rev27b-lineage-guard.md written (rev27b-1); review freeze written",
+  "19:52-19:56 two fresh independent reviews ran read-only (live guard executions, adversarial /tmp batteries); both PLAN_APPROVED for plan sha256 7a179d15...",
+  "19:56-19:58 review artifacts persisted; final manifest hashed; ledger + closing scope status"
+ ],
+ "git": {
+  "status_porcelain_branch": "## master...origin/master [ahead 8]",
+  "untracked_at_round_start_and_end": [
+   "?? PLAN-2026-09-21-rev27b-lineage-guard.md",
+   "?? evidence/20260916-route/attempt-11/",
+   "?? evidence/20260916-route/tools/v4/__pycache__/",
+   "?? evidence/20260916-route/tools/v5/__pycache__/",
+   "?? evidence/20260916-route/tools/v6/__pycache__/",
+   "?? evidence/20260916-route/tools/v6/selftest/__pycache__/",
+   "?? evidence/20260916-route/tools/v7/",
+   "?? evidence/20260921-lineage-guard-replan/"
+  ],
+  "head": "7a341f0d6a2e6eb75d78b30cb8e69d139fe96fed",
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "ahead_count": 8,
+  "log_head_9": [
+   "7a341f0 Rev27 Save All Gate A attempt-03 (fail-closed STOP, zero GUI input; MENU_NOT_PRESENT)",
+   "c4f7759 Rev27 Save All Gate A attempt-02 (fail-closed STOP, zero GUI input)",
+   "194e0d8 Rev27 Save All / chooser / filesystem safety planning (plan baseline, both reviews PLAN_APPROVED)",
+   "802ee4c Rev29 route attempt-13 one-shot GUI execution (ellipsis click=1, menu affirmatively observed, Save All=0)",
+   "d27b50e Rev27 attempt-12 one-shot GUI execution (album-card click=1)",
+   "57a0602 Rev26 first live v6 zero-input verification (route attempt-10)",
+   "5139b3f Rev26 v6 replan",
+   "d3728e7 Rev25 attempt-09 zero-input S1-S3 observation",
+   "a9e523e Rev25 gate-6 relocated safe-stop evidence"
+  ],
+  "no_fetch_pull_reset_rebase_amend_push": true,
+  "untracked_preserved": [
+   "evidence/20260916-route/attempt-11/ (not added, not deleted)",
+   "evidence/20260916-route/tools/v4/__pycache__/",
+   "evidence/20260916-route/tools/v5/__pycache__/",
+   "evidence/20260916-route/tools/v6/__pycache__/",
+   "evidence/20260916-route/tools/v6/selftest/__pycache__/"
+  ]
+ },
+ "historical_evidence_rehash": {
+  "method": "attempt-01/rehash-evidence.py re-computed sha256 of every file and re-verified recorded manifests",
+  "attempt_12": {"recorded_entries": 20, "verified": 20, "missing": 0, "mismatch": 0},
+  "attempt_13": {"recorded_entries": 33, "verified": 33, "missing": 0, "mismatch": 0},
+  "attempt_03": {"recorded_entries": 34, "verified": 34, "missing": 0, "mismatch": 0},
+  "verdict": "ALL_RECORDED_HASHES_MATCH",
+  "record": {"path": "evidence/20260921-lineage-guard-replan/attempt-01/evidence-rehash.json", "sha256": "a47eca359cb07dc01790edf7e6c6943e6d4181fd82530b11bf017933947d1ff0"}
+ },
+ "root_cause": {
+  "frozen_verifier_signals": "gray frames pre/post + frozen Vision OCR title/count + changed_fraction >= 0.05; no window identity, no AX evidence, no geometry, no surface classification",
+  "why_album_list_passes": "the list surface shows the same target date-range title (bbox y ~70% of window height) and the count 57; any repaint satisfies changed_fraction; attempt-03's pre frame came from attempt-12, so 0.530517 measured inter-round drift",
+  "reliable_detail_signals_found": "chrome-only AX tree (focused window is the element), focused/main standard window identity, header band title (y 13% in the detail), 張照片 token, pixel binding MAD ~2.2 vs 65.8-79.7 for wrong bindings",
+  "classification": "frozen verifier false-positive exposure (signal insufficiency), NOT a modified verdict; attempt-03 remains unchanged",
+  "record": {"path": "evidence/20260921-lineage-guard-replan/attempt-01/root-cause-classification.json", "sha256": "10863eba83d24d071e4a003cfecba0a604a33edc88cf01b77c90d110d20ec93b"}
+ },
+ "guard": {
+  "path": "evidence/20260916-route/tools/v7/album_detail_lineage_guard.py",
+  "sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "checks": ["C0 evidence/schema/frame-scale", "C1 bundle+frontmost+trusted", "C2 exactly one focused+main window, same window, standard, not minimized", "C3 no duplicate-geometry ambiguity, target inside frame", "C4 chrome-only custom-drawn detail AX surface", "C5 frame/window pixel binding at inventory-derived rect (dims exact, gray MAD <= 12)", "C6 detail header context via frozen Vision reader (title band <= 30%, 張照片 digits == count, no 相簿/記事本 tabs)", "C7 optional composite binding: frozen verdict == ALBUM_OPEN_VERIFIED AND frozen post_sha256 == this frame sha256"],
+  "fail_closed": true,
+  "historical_coordinate_dependency": "none (all rects derive from the current inventory; [337,30] remains evidence only)",
+  "frozen_tools_modified": "none (v4/v5/v6 and the frozen album-open verifier untouched; v4/v5 verify_album_open.py both ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58)"
+ },
+ "selftest": {
+  "runner": {"path": "evidence/20260916-route/tools/v7/selftest/run_selftest.py", "sha256": "7574e888c15c4374c75a659373c6e02170e9b23abee13304348090f23104fcc6"},
+  "results": {"path": "evidence/20260916-route/tools/v7/selftest/results.json", "sha256": "affb3602698f7c5b0d9f8d8df01759a074738dd095bd32cf638a1300ec0ae4df", "verdict": "SELFTEST_PASS", "cases": "22/22", "determinism_repeat_byte_identical": true, "attempt_03_sweep_all_combinations_refused": true},
+  "reviewer_note": "reviewers did not re-execute run_selftest.py (writes into repo); both independently replayed the sweep and key negatives instead"
+ },
+ "offline_replay": {
+  "record": {"path": "evidence/20260921-lineage-guard-replan/replay/replay-record.json", "sha256": "adeede98894c87e0dff86d8ccb0b4c430e7fec25f15478a2eabfa221c1bea396", "verdict": "REPLAY_PASS"},
+  "attempt_12_pre_click": "REFUSED (SURFACE_AX_NOT_FULL_TREE:DIFF_FORM) — lineage guard refuses the album-list pre-click surface",
+  "attempt_12_post_click_strict": "REFUSED (SURFACE_AX_NOT_FULL_TREE:DIFF_FORM) — evidence-shape limitation of the saved same-round CU state",
+  "attempt_12_post_click_bridged": "VERIFIED via documented byte-identical-screenshot bridge (window shot sha256 4cb8a6b4... identical across attempt-12 S5 / attempt-13); composite PASS with same-round frozen artifact",
+  "attempt_13_album_detail": "VERIFIED (mad_mean 2.259, title y-frac 0.1726, 57張照片) — attempt-13 detail lineage confirmed",
+  "attempt_03": "REFUSED (SURFACE_HAS_LIST_CONTROLS, SURFACE_HAS_LIST_ROWS, FOCUSED_ELEMENT_NOT_WINDOW) even with its own frozen ALBUM_OPEN_VERIFIED verdict supplied; composite can never PASS"
+ },
+ "reviews": {
+  "plan": {"path": "PLAN-2026-09-21-rev27b-lineage-guard.md", "sha256": "7a179d15f61033611dec333d246b6d8c590901c06c182628533e442feae10a7c"},
+  "review_1": {"path": "evidence/20260921-lineage-guard-replan/review/attempt-01/review-01-top-down.json", "lens": "top-down state/surface-identity", "verdict": "PLAN_APPROVED", "sha256_recomputed_from_disk": true},
+  "review_2": {"path": "evidence/20260921-lineage-guard-replan/review/attempt-01/review-02-adversarial.json", "lens": "adversarial false-positive", "verdict": "PLAN_APPROVED", "adversarial_false_positive_obtained": false},
+  "review_freeze": {"path": "evidence/20260921-lineage-guard-replan/review/attempt-01/review-freeze.json", "sha256": "a67fd26eaef9d0da0b1a3fe412df444f6c4a2abd454795d7e67f02e718844e3a"}
+ },
+ "input_counters_this_round": {
+  "gui_input": 0,
+  "album_card_click": 0,
+  "ellipsis_click": 0,
+  "menu_item_click": 0,
+  "save_all_click": 0,
+  "chooser_interaction": 0,
+  "keyboard": 0,
+  "scroll": 0,
+  "escape": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "navigation_click": 0,
+  "double_click": 0,
+  "retry": 0,
+  "download": 0,
+  "destination_write": 0,
+  "destination_confirmation": 0,
+  "filesystem_destination_write": 0,
+  "staging_mkdir": 0,
+  "cleanup_delete": 0,
+  "formal_state_or_config_write": 0
+ },
+ "historical_context_counters": {
+  "attempt_12_album_card_input": 1,
+  "attempt_13_ellipsis_input": 1,
+  "attempt_03_save_all_input": 0,
+  "note": "recorded for continuity only; this round performed no GUI input of any kind"
+ },
+ "repository_writes_this_round": {
+  "new": [
+   "PLAN-2026-09-21-rev27b-lineage-guard.md",
+   "evidence/20260916-route/tools/v7/ (guard + README + selftest)",
+   "evidence/20260921-lineage-guard-replan/ (attempt-01 analysis, replay, reviews)"
+  ],
+  "modified_historical": [],
+  "modified_frozen_tools": [],
+  "accepted_baseline_touched": false,
+  "staging_touched": false
+ },
+ "artifact_sha256": {
+  "PLAN-2026-09-21-rev27b-lineage-guard.md": "7a179d15f61033611dec333d246b6d8c590901c06c182628533e442feae10a7c",
+  "evidence/20260916-route/tools/v7/README.md": "b0dfe46e1d54a2b3782b604060392caa622f570aa75587b73b8d3d5d36902608",
+  "evidence/20260916-route/tools/v7/album_detail_lineage_guard.py": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "evidence/20260916-route/tools/v7/selftest/run_selftest.py": "7574e888c15c4374c75a659373c6e02170e9b23abee13304348090f23104fcc6",
+  "evidence/20260916-route/tools/v7/selftest/results.json": "affb3602698f7c5b0d9f8d8df01759a074738dd095bd32cf638a1300ec0ae4df",
+  "evidence/20260921-lineage-guard-replan/attempt-01/rehash-evidence.py": "3b033300e1c4fa4b3fed7b0cc9f57dce45e7e222c003e1f7ea239659b9224172",
+  "evidence/20260921-lineage-guard-replan/attempt-01/evidence-rehash.json": "a47eca359cb07dc01790edf7e6c6943e6d4181fd82530b11bf017933947d1ff0",
+  "evidence/20260921-lineage-guard-replan/attempt-01/root-cause-classification.md": "85ab2f01588915cf5333b05d685e2e7439171f92fbf059d9fad6d44df249d57c",
+  "evidence/20260921-lineage-guard-replan/attempt-01/root-cause-classification.json": "10863eba83d24d071e4a003cfecba0a604a33edc88cf01b77c90d110d20ec93b",
+  "evidence/20260921-lineage-guard-replan/replay/build-replay-record.py": "d50d7c03fecdcee25a4a2315bf1dd3d0963fcc25f33bbcc7c7d12ac781e02836",
+  "evidence/20260921-lineage-guard-replan/replay/replay-record.json": "adeede98894c87e0dff86d8ccb0b4c430e7fec25f15478a2eabfa221c1bea396",
+  "evidence/20260921-lineage-guard-replan/review/attempt-01/review-freeze.json": "a67fd26eaef9d0da0b1a3fe412df444f6c4a2abd454795d7e67f02e718844e3a",
+  "evidence/20260921-lineage-guard-replan/review/attempt-01/review-01-top-down.json": "781ea223a1b41598dc1f50a848bf73f6362ae1843bf7ab41e5ef6280c875d25d",
+  "evidence/20260921-lineage-guard-replan/review/attempt-01/review-01-top-down.md": "7bb56780db04188c15784ee6af1ba164af7942a78e2db33940edafbb8dfcfe6c",
+  "evidence/20260921-lineage-guard-replan/review/attempt-01/review-02-adversarial.json": "6fa05bdba534e308cb89da378c6ee7b3b0776238bfcb947fce45bdadb4610228",
+  "evidence/20260921-lineage-guard-replan/review/attempt-01/review-02-adversarial.md": "9736f7a127f8bc8fdca187c823d2284ab441b127d39af74180745897f640874b"
+ },
+ "artifact_manifest_note": "the full file-level manifest (including selftest fixtures/outs and replay outputs) is captured in 99-scope-status.json::artifact_sha256_full"
+}

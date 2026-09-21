@@ -1,0 +1,525 @@
+{
+ "artifact": "album_detail_lineage_guard v7 selftest + offline replay results",
+ "guard": {
+  "path": "evidence/20260916-route/tools/v7/album_detail_lineage_guard.py",
+  "sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52"
+ },
+ "fixtures": {
+  "inventory-two-main-windows.json": "a5f5fa26e401c31a875d35b8a57c3e9bc78b4bbe6773de423ec1749e16d2cffb",
+  "inventory-two-focused-windows.json": "005653ed3e9d9f5b53e963b8689c75df0b0a3c241fdec261e26aacec1ca3adbb",
+  "inventory-wrong-line-window.json": "e6b15c440cea2e6724ef18d1d9a9e74e90c34204453ebba931a1905ff800a333",
+  "inventory-a13-group-focused-detail-unfocused.json": "defaf5e76ec1b83b892cd6070f901183669cbe93186ed1c52da5b3a359262ef8",
+  "inventory-a03-historical-coordinate-injection.json": "9392a9bd70a5fda96b03feaeba63bf383b7ac915dde899736550358dd87c7158",
+  "inventory-truncated.json": "9dbc84255aaf842bacff52a53bd230dad4610fe51e6e6e16961ba7e8a90cbc8e",
+  "inventory-missing-display.json": "f8bb547c0bc2ff3d3f2717555c60899f48af798836ab007beab9ee0aa73ad10b",
+  "state-synthetic-list.txt": "42649a58a29ca4985cd33a5b31c57d46df80b82b83d7019a83ccdb87db6ba433",
+  "state-empty.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "frame-occluded-detail-bottom.png": "534d657fae567da4de50e7ccc6241fa7dca8d5d33ac2a14abdd7f7034ecaadd6"
+ },
+ "cases": [
+  {
+   "name": "pos-attempt-13-detail-strict",
+   "description": "attempt-13 detail surface, same-round inventory+state+shot+frame",
+   "expected": {
+    "exit_code": 0,
+    "verified": true,
+    "reason_prefixes": [],
+    "composite": "NOT_EVALUATED"
+   },
+   "actual": {
+    "exit_code": 0,
+    "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+    "refusal_reasons": [],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "pos-attempt-12-post-bridged",
+   "description": "attempt-12 post-click surface via the byte-identical window screenshot bridge (a13 s1 inventory/state; a12 frame-post binds at MAD 2.259)",
+   "expected": {
+    "exit_code": 0,
+    "verified": true,
+    "reason_prefixes": [],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 0,
+    "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+    "refusal_reasons": [],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "pos-attempt-12-composite-bridged",
+   "description": "as above + frozen attempt-12 album-open verdict bound to the same frame",
+   "expected": {
+    "exit_code": 0,
+    "verified": true,
+    "reason_prefixes": [],
+    "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE_PASS"
+   },
+   "actual": {
+    "exit_code": 0,
+    "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+    "refusal_reasons": [],
+    "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE_PASS"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-attempt-12-pre-strict",
+   "description": "attempt-12 pre-click must refuse; its saved S1 CU state text is the no-change form, so the refusal is the AX-form check (full-tree list refusals are covered by the attempt-03 cases)",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_AX_NOT_FULL_TREE"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_AX_NOT_FULL_TREE:DIFF_FORM"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-detail-exists-but-group-focused",
+   "description": "a detail window exists but the group/list window is the focused/main window -> the guard must refuse (never verify off an unfocused window)",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_HAS_LIST_CONTROLS"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_HAS_LIST_CONTROLS",
+     "SURFACE_HAS_LIST_ROWS",
+     "FOCUSED_ELEMENT_NOT_WINDOW"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-attempt-12-post-strict-ax-diff-form",
+   "description": "attempt-12 post-click with its actual CU diff-form state text: the guard requires a full-tree AX read in the same round -> refuse",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_AX_NOT_FULL_TREE"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_AX_NOT_FULL_TREE:DIFF_FORM"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-attempt-03-regression-frozen-verdict",
+   "description": "attempt-03 list surface WITH its frozen ALBUM_OPEN_VERIFIED artifact: guard refuses, composite must never pass",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_HAS_LIST_CONTROLS"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_HAS_LIST_CONTROLS",
+     "SURFACE_HAS_LIST_ROWS",
+     "FOCUSED_ELEMENT_NOT_WINDOW"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-attempt-03-count57-no-detail",
+   "description": "count 57 visible but no detail surface (attempt-03 strict)",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_HAS_LIST_CONTROLS"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_HAS_LIST_CONTROLS",
+     "SURFACE_HAS_LIST_ROWS",
+     "FOCUSED_ELEMENT_NOT_WINDOW"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-detail-title-but-list-controls-active",
+   "description": "detail window pixels but the focused window's AX tree is the list tree (list controls still active) -> refuse",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_HAS_LIST_CONTROLS"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_HAS_LIST_CONTROLS",
+     "SURFACE_HAS_LIST_ROWS",
+     "FOCUSED_ELEMENT_NOT_WINDOW"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-wrong-line-window",
+   "description": "the big LINE window is the focused/main window; its AX state is a list surface -> refuse",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_HAS_LIST_CONTROLS"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_HAS_LIST_CONTROLS",
+     "SURFACE_HAS_LIST_ROWS",
+     "FOCUSED_ELEMENT_NOT_WINDOW"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-multiple-focused-windows",
+   "description": "two ax-focused windows -> ambiguous -> refuse",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "TARGET_AMBIGUOUS"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "TARGET_AMBIGUOUS",
+     "focused_windows=2"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-two-main-windows",
+   "description": "two main windows -> ambiguous -> refuse",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "TARGET_AMBIGUOUS"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "TARGET_AMBIGUOUS",
+     "main_windows=2"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-missing-ax-tree-diff-form",
+   "description": "CU 'no change' diff form is not a full tree -> refuse",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_AX_NOT_FULL_TREE"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_AX_NOT_FULL_TREE:DIFF_FORM"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-empty-ax-tree",
+   "description": "empty AX state text -> refuse",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_AX_NOT_FULL_TREE"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_AX_NOT_FULL_TREE:EMPTY"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-stale-frame-binding",
+   "description": "attempt-13 detail screenshot against attempt-03's frame -> binding fails",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "BINDING_FAILED"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "BINDING_FAILED"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-occluded-detail",
+   "description": "attempt-13 frame with the detail-window region partly painted over -> binding fails",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "BINDING_FAILED"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "BINDING_FAILED"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-malformed-evidence-truncated",
+   "description": "truncated inventory JSON -> refuse at evidence stage",
+   "expected": {
+    "exit_code": 6,
+    "verified": false,
+    "reason_prefixes": [
+     "EVIDENCE_"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 6,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "EVIDENCE_MALFORMED"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-malformed-evidence-missing-display",
+   "description": "inventory without display block -> refuse",
+   "expected": {
+    "exit_code": 6,
+    "verified": false,
+    "reason_prefixes": [
+     "EVIDENCE_"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 6,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "EVIDENCE_MALFORMED"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-historical-coordinate-injection",
+   "description": "a03 list state with the group window's rect injected as the historical [337,30] -> coordinates alone never verify -> refuse",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_HAS_LIST_CONTROLS"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_HAS_LIST_CONTROLS",
+     "SURFACE_HAS_LIST_ROWS",
+     "FOCUSED_ELEMENT_NOT_WINDOW"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-wrong-album-title",
+   "description": "detail surface but a different expected album title -> refuse",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "HEADER_TITLE_NOT_FOUND"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "HEADER_TITLE_NOT_FOUND"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-count-mismatch-in-header",
+   "description": "detail header says 57 photos but the round expects 58 -> refuse",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "PHOTO_COUNT_CONTEXT_MISSING_OR_MISMATCH"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "PHOTO_COUNT_CONTEXT_MISSING_OR_MISMATCH"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true
+  },
+  {
+   "name": "neg-frozen-artifact-not-bound",
+   "description": "lineage verified but the frozen artifact's post frame is another round's capture -> composite FAIL",
+   "expected": {
+    "exit_code": 3,
+    "verified": true,
+    "reason_prefixes": [],
+    "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE_FAIL"
+   },
+   "actual": {
+    "exit_code": 3,
+    "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+    "refusal_reasons": [],
+    "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE_FAIL"
+   },
+   "pass": true
+  }
+ ],
+ "determinism": {
+  "repeat_byte_identical": true
+ },
+ "attempt_03_sweep": {
+  "combos": [
+   {
+    "combo": 0,
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "verified": false
+   },
+   {
+    "combo": 1,
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "verified": false
+   },
+   {
+    "combo": 2,
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "verified": false
+   },
+   {
+    "combo": 3,
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "verified": false
+   },
+   {
+    "combo": 4,
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "verified": false
+   }
+  ],
+  "no_combo_verified": true
+ },
+ "totals": {
+  "cases": 22,
+  "passed": 22,
+  "failed": []
+ },
+ "verdict": "SELFTEST_PASS"
+}

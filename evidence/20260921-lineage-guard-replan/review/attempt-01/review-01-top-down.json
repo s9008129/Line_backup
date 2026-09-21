@@ -1,0 +1,38 @@
+{
+ "review": "review-01-top-down",
+ "lens": "top-down state/surface-identity review",
+ "reviewed_artifact": "PLAN-2026-09-21-rev27b-lineage-guard.md",
+ "reviewed_sha256": "7a179d15f61033611dec333d246b6d8c590901c06c182628533e442feae10a7c",
+ "sha256_recomputed_by_reviewer": true,
+ "sha256_recomputation_command": "shasum -a 256 PLAN-2026-09-21-rev27b-lineage-guard.md",
+ "reviewer_workspace": "fresh independent context (read-only; no repo writes during review; mtime 19:52:02 unchanged)",
+ "date_local": "2026-09-21",
+ "checklist": {
+  "goal_alignment_composite_rule_closes_attempt_03_gap": "PASS",
+  "root_cause_matches_disk_attempt_03_frozen_artifact_changed_fraction_0_530517_title_bbox_15_449_list_surface": "PASS",
+  "guard_read_only_deterministic_no_coordinate_hardcode": "PASS",
+  "guard_live_run_exit_0_verified_c4_chrome_only_c5_mad_2_259_c6_title_y_frac_0_1726_57_photos": "PASS",
+  "guard_repeat_run_byte_identical": "PASS",
+  "attempt_03_regression_six_independent_recombinations_all_refused": "PASS",
+  "frozen_album_open_verifier_unmodified_v4_v5_both_ffa82aed": "PASS",
+  "ambiguity_missing_wrong_windows_refuse_target_ambiguous_focused_windows_2": "PASS",
+  "selftest_results_22_of_22_repeat_byte_identical_replay_pass": "PASS",
+  "album_card_click_never_merged_with_ellipsis_or_menu_step": "PASS",
+  "save_all_chooser_download_not_part_of_this_revision": "PASS",
+  "this_revision_gui_input_zero": "PASS"
+ },
+ "key_findings": [
+  "attempt-03 frozen artifact s3-album-open-verify-window.json shows verdict ALBUM_OPEN_VERIFIED with changed_fraction 0.530517 and title bbox [15,449,...] consistent with the album-list surface; pre-frame was from attempt-12 (contributing cause, recorded not re-judged)",
+  "C7 binds frozen post_sha256 == this round's frame sha256, so a verdict computed over another round's frames can never compose",
+  "attempt-13 rect [337,30,327,643] in the guard replay matches attempt-13/s1-ax-pre.json window 0 exactly; inventory-derived, not hard-coded",
+  "six independent attempt-03 recombinations (incl. injected [337,30] copy in /tmp) all REFUSED before C7 could evaluate; composite can never be reached, let alone PASS"
+ ],
+ "observations_non_blocking": [
+  "O1 reviewer did not re-execute run_selftest.py (it writes into the repo selftest/out); results.json affb3602... was read and the guard was executed live instead",
+  "O2 reviewer spot-verified key evidence hashes rather than all 20/33/34 rehash entries",
+  "O3 CU AX-state text is bound to the screenshot only by runbook contract (not cryptographic pairing); C5 pixel binding + C6 OCR still enforce the detail surface",
+  "O4 Vision-OCR cross-OS determinism remains a recorded UNKNOWN",
+  "O5 attempt-12 bridged replay remains a documented evidence-shape limitation (its same-round CU state was diff-form)"
+ ],
+ "verdict": "PLAN_APPROVED"
+}

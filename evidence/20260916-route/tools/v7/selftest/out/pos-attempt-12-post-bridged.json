@@ -1,0 +1,195 @@
+{
+ "tool": "album_detail_lineage_guard",
+ "version": "v7",
+ "purpose": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED for the CURRENT focused LINE window; fail-closed; current-round evidence only",
+ "no_historical_coordinates": true,
+ "gui_inputs": 0,
+ "thresholds": {
+  "mad_max": 12.0,
+  "header_y_frac_max": 0.3,
+  "list_markers": [
+   "列表",
+   "文字欄位"
+  ],
+  "detail_chrome": [
+   "關閉按鈕",
+   "縮到最小按鈕"
+  ],
+  "list_tab_tokens": [
+   "相簿",
+   "記事本"
+  ],
+  "photo_context_token": "張照片"
+ },
+ "inputs": {
+  "window_inventory": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/s1-ax-pre.json",
+   "sha256": "7d323f3ef2a5bdb5452494ff6d35371db99ac52c3c852933bdb875dc4b57ba4a"
+  },
+  "window_ax_state": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/cua-ax-state-s1.txt",
+   "sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa"
+  },
+  "window_screenshot": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-12/cua-window-s5.jpg",
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3"
+  },
+  "frame": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-12/frame-post.png",
+   "sha256": "7bd54308d916f8b7f0f78221a660d94b1f2985ebb19ce638c4591d780a00bca3"
+  }
+ },
+ "checks": [
+  {
+   "id": "C0_SCHEMA",
+   "verdict": "PASS",
+   "detail": "ok"
+  },
+  {
+   "id": "C0_FRAME_SCALE",
+   "verdict": "PASS",
+   "detail": {
+    "frame_size": [
+     2294,
+     1490
+    ],
+    "scale": 2.0,
+    "display_bounds_points": [
+     0,
+     0,
+     1147,
+     745
+    ],
+    "cg_display_mode_pixel_wh": [
+     2294,
+     1490
+    ],
+    "expected_frame_px": [
+     2294,
+     1490
+    ]
+   }
+  },
+  {
+   "id": "C1_FRONTMOST",
+   "verdict": "PASS",
+   "detail": {
+    "bundle_id": "jp.naver.line.mac",
+    "frontmost_application": "jp.naver.line.mac",
+    "ax_frontmost": true,
+    "ax_api_trusted": true
+   }
+  },
+  {
+   "id": "C2_TARGET_UNIQUE",
+   "verdict": "PASS",
+   "detail": "single focused main target"
+  },
+  {
+   "id": "C3_GEOMETRY_DOUBT",
+   "verdict": "PASS",
+   "detail": {
+    "duplicate_geometry_indexes": [],
+    "target_inside_frame": true
+   }
+  },
+  {
+   "id": "C4_AX_SURFACE_CLASS",
+   "verdict": "PASS",
+   "detail": {
+    "state_form": "FULL_TREE",
+    "standard_window": true,
+    "close_button": true,
+    "minimize_button": true,
+    "list_element": false,
+    "row_tokens": 0,
+    "focused_is_window": true
+   }
+  },
+  {
+   "id": "C5_BINDING",
+   "verdict": "PASS",
+   "detail": {
+    "rect_px": [
+     674,
+     60,
+     1328,
+     1346
+    ],
+    "crop_size": [
+     654,
+     1286
+    ],
+    "downscaled_size": [
+     327,
+     643
+    ],
+    "screenshot_size": [
+     327,
+     643
+    ],
+    "dims_exact": true,
+    "mad_mean": 2.259,
+    "fraction_gt8": 0.064391,
+    "mad_max": 12.0,
+    "meaning": "the focused window's own pixels equal the frame region at its rect => window visible/unoccluded; binding derived from this round's inventory only"
+   }
+  },
+  {
+   "id": "C6_HEADER_CONTEXT",
+   "verdict": "PASS",
+   "detail": {
+    "reader_dir": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/tools/v5",
+    "reader_error": "",
+    "scale": 3,
+    "title": {
+     "texts": [
+      "2024/05/13~05/17"
+     ],
+     "bbox": [
+      15,
+      83,
+      204,
+      111
+     ]
+    },
+    "title_y_frac": 0.1726,
+    "photo_context_token": [
+     "57張照片"
+    ],
+    "list_tab_tokens": [],
+    "words_seen": [
+     "2024/05/13~05/17",
+     "57張照片",
+     "2024.05.18",
+     "1~"
+    ]
+   }
+  }
+ ],
+ "frozen_album_open": {
+  "provided": false
+ },
+ "composite": {
+  "verdict": "NOT_EVALUATED",
+  "reasons": []
+ },
+ "derived_target_window": {
+  "index": 0,
+  "title": "",
+  "role": "AXWindow",
+  "subrole": "AXStandardWindow",
+  "rect_pt": [
+   337,
+   30,
+   327,
+   643
+  ],
+  "main": true,
+  "is_ax_focused_window": true,
+  "source": "derived from THIS round's AX inventory; no historical coordinate used"
+ },
+ "lineage_verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+ "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+ "refusal_reasons": []
+}

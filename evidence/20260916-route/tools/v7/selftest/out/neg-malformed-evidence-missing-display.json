@@ -1,0 +1,65 @@
+{
+ "tool": "album_detail_lineage_guard",
+ "version": "v7",
+ "purpose": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED for the CURRENT focused LINE window; fail-closed; current-round evidence only",
+ "no_historical_coordinates": true,
+ "gui_inputs": 0,
+ "thresholds": {
+  "mad_max": 12.0,
+  "header_y_frac_max": 0.3,
+  "list_markers": [
+   "列表",
+   "文字欄位"
+  ],
+  "detail_chrome": [
+   "關閉按鈕",
+   "縮到最小按鈕"
+  ],
+  "list_tab_tokens": [
+   "相簿",
+   "記事本"
+  ],
+  "photo_context_token": "張照片"
+ },
+ "inputs": {
+  "window_inventory": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/tools/v7/selftest/generated/inventory-missing-display.json",
+   "sha256": "f8bb547c0bc2ff3d3f2717555c60899f48af798836ab007beab9ee0aa73ad10b"
+  },
+  "window_ax_state": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/cua-ax-state-s1.txt",
+   "sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa"
+  },
+  "window_screenshot": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/cua-window-s1.jpg",
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3"
+  },
+  "frame": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/frame-pre.png",
+   "sha256": "0e22f7546938cbe95023cfc352aaf5e1166651a9e78a29f16eae9ac857287638"
+  }
+ },
+ "checks": [
+  {
+   "id": "C0_SCHEMA",
+   "verdict": "REFUSE",
+   "detail": [
+    "display.nsscreen_backing_scale_factor",
+    "display.display_bounds_points",
+    "display.cg_display_mode_pixel_wh"
+   ]
+  }
+ ],
+ "frozen_album_open": {
+  "provided": false
+ },
+ "composite": {
+  "verdict": "NOT_EVALUATED",
+  "reasons": []
+ },
+ "verdict": "REFUSED",
+ "refusal_reasons": [
+  "EVIDENCE_MALFORMED"
+ ],
+ "exit_code": 6
+}

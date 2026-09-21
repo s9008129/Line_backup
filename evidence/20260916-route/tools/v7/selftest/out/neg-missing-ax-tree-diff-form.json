@@ -1,0 +1,131 @@
+{
+ "tool": "album_detail_lineage_guard",
+ "version": "v7",
+ "purpose": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED for the CURRENT focused LINE window; fail-closed; current-round evidence only",
+ "no_historical_coordinates": true,
+ "gui_inputs": 0,
+ "thresholds": {
+  "mad_max": 12.0,
+  "header_y_frac_max": 0.3,
+  "list_markers": [
+   "列表",
+   "文字欄位"
+  ],
+  "detail_chrome": [
+   "關閉按鈕",
+   "縮到最小按鈕"
+  ],
+  "list_tab_tokens": [
+   "相簿",
+   "記事本"
+  ],
+  "photo_context_token": "張照片"
+ },
+ "inputs": {
+  "window_inventory": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/s1-ax-pre.json",
+   "sha256": "7d323f3ef2a5bdb5452494ff6d35371db99ac52c3c852933bdb875dc4b57ba4a"
+  },
+  "window_ax_state": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/cua-ax-state-s6.txt",
+   "sha256": "138060609c93f7f2bb9f9cbe0e470ff522fc07c4950b854a8a144c9049e4d914"
+  },
+  "window_screenshot": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/cua-window-s1.jpg",
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3"
+  },
+  "frame": {
+   "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/frame-pre.png",
+   "sha256": "0e22f7546938cbe95023cfc352aaf5e1166651a9e78a29f16eae9ac857287638"
+  }
+ },
+ "checks": [
+  {
+   "id": "C0_SCHEMA",
+   "verdict": "PASS",
+   "detail": "ok"
+  },
+  {
+   "id": "C0_FRAME_SCALE",
+   "verdict": "PASS",
+   "detail": {
+    "frame_size": [
+     2294,
+     1490
+    ],
+    "scale": 2.0,
+    "display_bounds_points": [
+     0,
+     0,
+     1147,
+     745
+    ],
+    "cg_display_mode_pixel_wh": [
+     2294,
+     1490
+    ],
+    "expected_frame_px": [
+     2294,
+     1490
+    ]
+   }
+  },
+  {
+   "id": "C1_FRONTMOST",
+   "verdict": "PASS",
+   "detail": {
+    "bundle_id": "jp.naver.line.mac",
+    "frontmost_application": "jp.naver.line.mac",
+    "ax_frontmost": true,
+    "ax_api_trusted": true
+   }
+  },
+  {
+   "id": "C2_TARGET_UNIQUE",
+   "verdict": "PASS",
+   "detail": "single focused main target"
+  },
+  {
+   "id": "C3_GEOMETRY_DOUBT",
+   "verdict": "PASS",
+   "detail": {
+    "duplicate_geometry_indexes": [],
+    "target_inside_frame": true
+   }
+  },
+  {
+   "id": "C4_AX_SURFACE_CLASS",
+   "verdict": "REFUSE",
+   "detail": {
+    "state_form": "DIFF_FORM"
+   }
+  }
+ ],
+ "frozen_album_open": {
+  "provided": false
+ },
+ "composite": {
+  "verdict": "NOT_EVALUATED",
+  "reasons": []
+ },
+ "derived_target_window": {
+  "index": 0,
+  "title": "",
+  "role": "AXWindow",
+  "subrole": "AXStandardWindow",
+  "rect_pt": [
+   337,
+   30,
+   327,
+   643
+  ],
+  "main": true,
+  "is_ax_focused_window": true,
+  "source": "derived from THIS round's AX inventory; no historical coordinate used"
+ },
+ "verdict": "REFUSED",
+ "refusal_reasons": [
+  "SURFACE_AX_NOT_FULL_TREE:DIFF_FORM"
+ ],
+ "exit_code": 2
+}

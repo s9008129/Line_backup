@@ -1,0 +1,98 @@
+{
+ "artifact": "Rev27b replan: root-cause classification of the attempt-03 frozen-verifier false positive",
+ "gui_inputs": 0,
+ "frozen_tools_unchanged": {
+  "v4_verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "v5_verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "note": "the frozen verifier is byte-identical in v4 and v5 and is not modified; v7 adds a separate guard"
+ },
+ "questions": {
+  "q1_signals_used_by_frozen_verifier": {
+   "OBSERVED": [
+    "two same-size gray frames (pre/post)",
+    "frozen Vision OCR on the POST frame: target title token window (start+end digits), date-like tokens, best-effort count digits below the title",
+    "changed_fraction = fraction of pixels with gray diff > 12",
+    "rule: ALBUM_OPEN_VERIFIED = title readable AND changed_fraction >= 0.05",
+    "no window identity, no AX evidence, no geometry, no surface classification",
+    "docstring contract: both frames must be the ones captured for this run"
+   ]
+  },
+  "q2_signals_also_present_on_album_list": {
+   "OBSERVED": [
+    "target title: the list's date-range section header shows '2024/05/13~05/17' (attempt-03 window OCR bbox [15,449,129,462], y ~70% of 643; attempt-12 pre [15,425,129,439])",
+    "count 57: shown directly below that header on both list shots",
+    "changed_fraction >= 0.05: any repaint satisfies it; measured 0.530517 (window pair) and 0.425940 (screen pair) on pure list-to-list attempt-03 'verifications'"
+   ]
+  },
+  "q3_why_title_count_change_insufficient": {
+   "OBSERVED": [
+    "the verifier reads pixels, not surfaces; the list surface produces the same title/count tokens",
+    "the change test compares two frames from different rounds in attempt-03, so it measured inter-round drift, not a click effect",
+    "detail-vs-list discriminators that the verifier never looks at: AX tree class, focused/main window identity, header band position, photo-count phrase, pixel binding"
+   ]
+  },
+  "q4_reliable_differences_after_attempt_12_click": {
+   "OBSERVED": [
+    "focused-window CU AX tree changed from list tree (IDs 0-107: search field, list with 101 rows) to chrome-only standard window (cua-ax-state-s5.txt)",
+    "focused-window screenshot shows the album detail: title in top header (y 83/643 = 13%), '57張照片', photo grid (cua-window-s5.jpg, sha256 4cb8a6b4...)",
+    "next-round steady state (attempt-13): 3 LINE windows, detail window 327x643 focused+main at [337,30] beside group window [0,30] (list) and main window [-2,37] 1147x699",
+    "the detail window screenshot is byte-identical across attempt-12 S5, attempt-13 preclick and attempt-13 S1 (4cb8a6b4...)",
+    "pixel binding: detail shot binds to frame crops at the detail rect with dims exact, gray MAD ~2.2-2.26; cross-surface/cross-round bindings measure 65.8-79.7"
+   ]
+  },
+  "q5_attempt_13_detail_identity_signals": {
+   "OBSERVED": [
+    "single AX-focused + main + non-minimized AXStandardWindow (focus and main agree)",
+    "CU AX tree: standard window + close/minimize chrome only; no 列表, no 文字欄位, no rows; focused UI element is the window itself",
+    "window screenshot OCR: title bbox [15,83,204,111] (bottom 111/643 = 17.3% <= 30%), '57張照片' present, no 相簿/記事本 tabs",
+    "dims-exact pixel binding to the same-round frame at the rect derived from the same-round inventory (MAD 2.259)"
+   ]
+  },
+  "q6_attempt_03_missing_signals": {
+   "OBSERVED": [
+    "no detail window in the AX inventory (window_count = 2)",
+    "AX-focused/main window is the group window; its CU AX tree contains 文字欄位 + 列表 (101 rows) and the focused element is the text field",
+    "its screenshot OCR is the list surface: group name header, 相簿/記事本 tabs, title at y ~70%, '57' alone, no '張照片'",
+    "no detail screenshot binds to attempt-03's frame (MAD 79.671 at the would-be detail rect)",
+    "frozen verifier still returned ALBUM_OPEN_VERIFIED because it never inspected any of this"
+   ]
+  }
+ },
+ "false_positive_anatomy": {
+  "window_pair_run": {
+   "pre": "evidence/20260916-route/attempt-12/cua-window-s1.jpg (sha256 92ea7991..., list surface)",
+   "post": "evidence/20260921-rev27-save-all/attempt-03/cua-window-s1.jpg (sha256 3d926e7d..., list surface)",
+   "changed_fraction": 0.530517,
+   "title_bbox": [15, 449, 129, 462],
+   "count_text": "MATCH",
+   "verdict": "ALBUM_OPEN_VERIFIED"
+  },
+  "screen_pair_run": {
+   "pre": "evidence/20260916-route/attempt-12/frame-pre.png (sha256 b88f7e09...)",
+   "post": "evidence/20260921-rev27-save-all/attempt-03/frame-s1.png (sha256 0979cb78...)",
+   "changed_fraction": 0.42594,
+   "verdict": "ALBUM_OPEN_VERIFIED"
+  },
+  "root_cause": "the frozen verifier's rules are surface-agnostic; both 'pre' frames were historical (violating its own same-run input contract) and every post surface was the album list, which itself shows the target title and count"
+ },
+ "classification": {
+  "OBSERVED": [
+   "all of questions.q1-q6 OBSERVED entries",
+   "all recorded hashes re-verified from disk (evidence-rehash.json: attempt-12 20/20, attempt-13 33/33, attempt-03 34/34)"
+  ],
+  "INFERRED": [
+   "attempt-03 exposed a verifier false-positive path: ALBUM_OPEN_VERIFIED is necessary but never sufficient evidence of the correct album detail",
+   "the detail window's identity is {focused/main custom-drawn window (chrome-only AX tree) + pixel-bound window screenshot + album header context}",
+   "[337,30] is evidence of the lineage position, not a stable identity: the guard derives all rects from the current inventory and refuses when binding fails"
+  ],
+  "UNKNOWN": [
+   "whether a future LINE build renders the detail view with AX elements (guard refuses unless it can positively classify the surface)",
+   "whether window index ordering in the frozen AX tool implies front-to-back z-order (undocumented; the guard does not rely on it)",
+   "whether the CU window screenshot scale is always 1x points (observed 1x; guard derives scale from the inventory display block and refuses on mismatch)"
+  ]
+ },
+ "closure": {
+  "guard": "evidence/20260916-route/tools/v7/album_detail_lineage_guard.py (sha256 cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52)",
+  "selftest": "evidence/20260916-route/tools/v7/selftest/results.json (22/22 PASS, deterministic, attempt-03 sweep clean)"
+ }
+}

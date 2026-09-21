@@ -1,0 +1,6 @@
+{
+  "ax_api_trusted" : true,
+  "ax_frontmost" : true,
+  "bundle_id" : "jp.naver.line.mac",
+  "display" : {
+    "capture_scale_note" : "screencapture -x writes device pixels: frame_px = point_rect * ba

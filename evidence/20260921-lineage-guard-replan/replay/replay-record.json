@@ -1,0 +1,223 @@
+{
+ "artifact": "Rev27b offline replay record (no GUI input, existing evidence only)",
+ "source_results": {
+  "path": "evidence/20260916-route/tools/v7/selftest/results.json",
+  "sha256": "affb3602698f7c5b0d9f8d8df01759a074738dd095bd32cf638a1300ec0ae4df",
+  "guard_sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52"
+ },
+ "replays": [
+  {
+   "replay": "attempt-12-pre-click",
+   "case": "neg-attempt-12-pre-strict",
+   "expectation": "must REFUSE (expected: attempt-12 pre-click is the album list)",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_AX_NOT_FULL_TREE"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_AX_NOT_FULL_TREE:DIFF_FORM"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true,
+   "guard_output": {
+    "path": "evidence/20260921-lineage-guard-replan/replay/out/attempt-12-pre-click.json",
+    "sha256": "564095570b63a1f20d5ff746bead4f87e6d59b789b7b979189532593a07e8f49"
+   }
+  },
+  {
+   "replay": "attempt-12-post-click-strict",
+   "case": "neg-attempt-12-post-strict-ax-diff-form",
+   "expectation": "REFUSED under the strict contract: the saved same-round CU state is a diff form, not a full tree (evidence-shape gap; the surface itself is bridged below)",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_AX_NOT_FULL_TREE"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_AX_NOT_FULL_TREE:DIFF_FORM"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true,
+   "guard_output": {
+    "path": "evidence/20260921-lineage-guard-replan/replay/out/attempt-12-post-click-strict.json",
+    "sha256": "e1b8d6258139f86d0e03055a8d543b072e7521146f017e19d9c5fe2da3c4b269"
+   }
+  },
+  {
+   "replay": "attempt-12-post-click-bridged",
+   "case": "pos-attempt-12-post-bridged",
+   "expectation": "VERIFIED via the documented bridge: window screenshot byte-identical to the attempt-13 detail read, frame-post binds at MAD 2.259",
+   "expected": {
+    "exit_code": 0,
+    "verified": true,
+    "reason_prefixes": [],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 0,
+    "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+    "refusal_reasons": [],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true,
+   "guard_output": {
+    "path": "evidence/20260921-lineage-guard-replan/replay/out/attempt-12-post-click-bridged.json",
+    "sha256": "c9bf3fef36134d7d7647569a70a2e45e083cc2681cf5780147cc6b45609287ce"
+   }
+  },
+  {
+   "replay": "attempt-12-post-click-composite-bridged",
+   "case": "pos-attempt-12-composite-bridged",
+   "expectation": "VERIFIED + composite PASS (frozen attempt-12 verdict bound to frame-post)",
+   "expected": {
+    "exit_code": 0,
+    "verified": true,
+    "reason_prefixes": [],
+    "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE_PASS"
+   },
+   "actual": {
+    "exit_code": 0,
+    "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+    "refusal_reasons": [],
+    "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE_PASS"
+   },
+   "pass": true,
+   "guard_output": {
+    "path": "evidence/20260921-lineage-guard-replan/replay/out/attempt-12-post-click-composite-bridged.json",
+    "sha256": "3618a032ca8dbffad5495f181d2e676095583e42148ae4b91500ef9e0c2a9c91"
+   }
+  },
+  {
+   "replay": "attempt-13-album-detail",
+   "case": "pos-attempt-13-detail-strict",
+   "expectation": "VERIFIED (same-round inventory/state/shot/frame)",
+   "expected": {
+    "exit_code": 0,
+    "verified": true,
+    "reason_prefixes": [],
+    "composite": "NOT_EVALUATED"
+   },
+   "actual": {
+    "exit_code": 0,
+    "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+    "refusal_reasons": [],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true,
+   "guard_output": {
+    "path": "evidence/20260921-lineage-guard-replan/replay/out/attempt-13-album-detail.json",
+    "sha256": "9a44813cf3aefe05ffa087d2bb282d046f2572f5968a63e83fc6772f0c5be6c9"
+   }
+  },
+  {
+   "replay": "attempt-03-regression-with-frozen-verdict",
+   "case": "neg-attempt-03-regression-frozen-verdict",
+   "expectation": "must REFUSE even though the frozen verifier says ALBUM_OPEN_VERIFIED; composite must never PASS",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_HAS_LIST_CONTROLS"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_HAS_LIST_CONTROLS",
+     "SURFACE_HAS_LIST_ROWS",
+     "FOCUSED_ELEMENT_NOT_WINDOW"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true,
+   "guard_output": {
+    "path": "evidence/20260921-lineage-guard-replan/replay/out/attempt-03-regression-with-frozen-verdict.json",
+    "sha256": "4ad7d3df9c4762cab7225a626a6ec2e4f7fca28a1cbc5d84e0caccd6aedfbe50"
+   }
+  },
+  {
+   "replay": "attempt-03-count57-no-detail",
+   "case": "neg-attempt-03-count57-no-detail",
+   "expectation": "must REFUSE (57 visible on the list surface, no detail window)",
+   "expected": {
+    "exit_code": 2,
+    "verified": false,
+    "reason_prefixes": [
+     "SURFACE_HAS_LIST_CONTROLS"
+    ],
+    "composite": null
+   },
+   "actual": {
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "refusal_reasons": [
+     "SURFACE_HAS_LIST_CONTROLS",
+     "SURFACE_HAS_LIST_ROWS",
+     "FOCUSED_ELEMENT_NOT_WINDOW"
+    ],
+    "composite": "NOT_EVALUATED"
+   },
+   "pass": true,
+   "guard_output": {
+    "path": "evidence/20260921-lineage-guard-replan/replay/out/attempt-03-count57-no-detail.json",
+    "sha256": "4ad7d3df9c4762cab7225a626a6ec2e4f7fca28a1cbc5d84e0caccd6aedfbe50"
+   }
+  }
+ ],
+ "attempt_03_sweep": {
+  "combos": [
+   {
+    "combo": 0,
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "verified": false
+   },
+   {
+    "combo": 1,
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "verified": false
+   },
+   {
+    "combo": 2,
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "verified": false
+   },
+   {
+    "combo": 3,
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "verified": false
+   },
+   {
+    "combo": 4,
+    "exit_code": 2,
+    "verdict": "REFUSED",
+    "verified": false
+   }
+  ],
+  "no_combo_verified": true
+ },
+ "determinism": {
+  "repeat_byte_identical": true
+ },
+ "verdict": "REPLAY_PASS"
+}

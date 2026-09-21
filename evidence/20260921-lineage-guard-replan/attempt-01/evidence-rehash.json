@@ -1,0 +1,53 @@
+{
+ "artifact": "lineage-guard replan: read-only evidence re-hash (attempt-01)",
+ "method": "sha256 of every file; recorded manifests re-verified against disk",
+ "attempts": {
+  "attempt-12": {
+   "dir": "evidence/20260916-route/attempt-12",
+   "files_on_disk": 21,
+   "bytes_on_disk": 5152369,
+   "recorded_manifest_source": "evidence/20260916-route/attempt-12/99-scope-status.json::artifact_sha256",
+   "recorded_verification": {
+    "entries": 20,
+    "verified": 20,
+    "missing": [],
+    "mismatch": []
+   },
+   "files_not_in_recorded_manifest": [
+    "evidence/20260916-route/attempt-12/99-scope-status.json"
+   ]
+  },
+  "attempt-13": {
+   "dir": "evidence/20260916-route/attempt-13",
+   "files_on_disk": 34,
+   "bytes_on_disk": 10232310,
+   "recorded_manifest_source": "evidence/20260916-route/attempt-13/99-scope-status.json::artifact_sha256",
+   "recorded_verification": {
+    "entries": 33,
+    "verified": 33,
+    "missing": [],
+    "mismatch": []
+   },
+   "files_not_in_recorded_manifest": [
+    "evidence/20260916-route/attempt-13/99-scope-status.json"
+   ]
+  },
+  "attempt-03": {
+   "dir": "evidence/20260921-rev27-save-all/attempt-03",
+   "files_on_disk": 36,
+   "bytes_on_disk": 2118724,
+   "recorded_manifest_source": "evidence/20260921-rev27-save-all/attempt-03/run-ledger.json::evidence_manifest(+dirs)",
+   "recorded_verification": {
+    "entries": 34,
+    "verified": 34,
+    "missing": [],
+    "mismatch": []
+   },
+   "files_not_in_recorded_manifest": [
+    "evidence/20260921-rev27-save-all/attempt-03/99-scope-status.json",
+    "evidence/20260921-rev27-save-all/attempt-03/run-ledger.json"
+   ]
+  }
+ },
+ "verdict": "ALL_RECORDED_HASHES_MATCH"
+}

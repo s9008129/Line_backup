@@ -1,0 +1,70 @@
+{
+ "review": "review-02-adversarial",
+ "lens": "adversarial false-positive review (attack the guard; try to compose a PASS from wrong surfaces)",
+ "reviewed_artifact": "PLAN-2026-09-21-rev27b-lineage-guard.md",
+ "reviewed_sha256": "7a179d15f61033611dec333d246b6d8c590901c06c182628533e442feae10a7c",
+ "sha256_recomputed_by_reviewer": true,
+ "sha256_recomputation_command": "shasum -a 256 PLAN-2026-09-21-rev27b-lineage-guard.md",
+ "guard_sha256_observed": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+ "reviewer_workspace": "fresh independent context; synthetic JSON batteries written to /tmp only; no repo writes",
+ "date_local": "2026-09-21",
+ "adversarial_attempts": [
+  {
+   "id": "i",
+   "attack": "attempt-13 inventory+state combined with attempt-03 shot/frame",
+   "observed": "exit 2 REFUSED BINDING_FAILED, MAD 74.53; deeper variant (a03 inventory + a13 detail state + a03 shot/frame + a03 frozen artifacts): C4 PASS, C5 PASS MAD 2.15, C6 REFUSED x3 TITLE_NOT_IN_HEADER_BAND (y-frac 0.7185) + PHOTO_COUNT_CONTEXT_MISSING_OR_MISMATCH (no 張照片 token) + LIST_TAB_MARKERS_PRESENT (相簿,記事本); composite never evaluated; a03 window-screenshot as --frame -> exit 6 EVIDENCE_MALFORMED:frame_scale",
+   "false_positive_obtained": false
+  },
+  {
+   "id": "ii_iii",
+   "attack": "attempt-13 inventory/state/shot combined with attempt-03 frame",
+   "observed": "exit 2 REFUSED BINDING_FAILED, MAD 79.67",
+   "false_positive_obtained": false
+  },
+  {
+   "id": "iv",
+   "attack": "attempt-03 inventory with focused rect hard-set to historical [337,30] (historical-coordinate injection)",
+   "observed": "with a03 list state -> exit 2 REFUSED C4 (SURFACE_HAS_LIST_CONTROLS/ROWS, FOCUSED_ELEMENT_NOT_WINDOW); with a13 detail state -> REFUSED BINDING_FAILED 74.53",
+   "false_positive_obtained": false
+  },
+  {
+   "id": "v",
+   "attack": "window-set ambiguity: duplicate geometry; two focused windows; focused+main pair; wrong LINE window (group [0,30] focused + detail shot; oversized LINE offscreen)",
+   "observed": "GEOMETRY_DOUBT; TARGET_AMBIGUOUS focused_windows=2; both; BINDING_FAILED 65.82; GEOMETRY_DOUBT (offscreen)",
+   "false_positive_obtained": false
+  },
+  {
+   "id": "vi",
+   "attack": "composite-binding attacks: a13 verified lineage + attempt-03 frozen artifact; same-round screen-supporting artifact; a12-bridged composition",
+   "observed": "a13 + a03 window frozen -> exit 3 ALBUM_OPEN_VERIFIED_COMPOSITE_FAIL (FROZEN_POST_FRAME_NOT_BOUND); a13 + a13 same-round screen-supporting -> exit 0 composite PASS (legitimate); a12-bridged (a13 AX + a12 frame-post + a12 frozen) -> exit 0 composite PASS (documented bridge; pixels are a genuine detail window)",
+   "false_positive_obtained": false
+  },
+  {
+   "id": "vii",
+   "attack": "selftest sweep combos 0-4 re-run independently; extra list sample (a12-pre list pixels + a13 state); missing file/frame",
+   "observed": "none verified; a12-pre list pixels + a13 state -> C6 refused (y 0.6827, tabs); missing file/frame -> exit 6",
+   "false_positive_obtained": false
+  }
+ ],
+ "hole_classes_analysis": [
+  "C4 is satisfiable by a mismatched/doctored chrome-only state text (guard L285-288 checks only form/tree facts parsed from text; diff forms refused L76-78). Real a03 list pixels + a13 state text passed C4. No pairing exists between state text and screenshot; C6 was the backstop and refused every real list-pixel set. Not a surviving false positive on available evidence, but C4 alone is not surface proof.",
+  "C5 cannot pass with a wrong window: needs shot.size == rect (L323-324) and MAD <= 12 (L329); wrong-rect attempts measured 65.8-79.7.",
+  "C6 cannot pass with either real list screenshot (both show 相簿/記事本, no 張照片 token, title y-frac 0.68-0.72 > 0.30).",
+  "C7 refuses an unbound frozen artifact: L407-408 requires post_sha256 == this frame sha256; other-round artifact -> COMPOSITE_FAIL."
+ ],
+ "checklist": {
+  "attempt_03_false_positive_path_closed": "PASS",
+  "frozen_verifier_unmodified": "PASS",
+  "no_historical_coordinate_or_window_position_hardcode": "PASS",
+  "current_ax_window_evidence_required_ambiguous_refuses": "PASS",
+  "album_click_not_merged_with_ellipsis": "PASS",
+  "save_all_chooser_download_not_in_this_revision": "PASS"
+ },
+ "observations_non_blocking": [
+  "O1 cross-round byte-identical surfaces can compose via the documented bridge (pixels there are a genuine detail window)",
+  "O2 C7 binds only post_sha256 (as the plan states); pre_sha256 is only checked for presence",
+  "O3 --reader-dir imports code from a caller-supplied directory (tool-trust boundary; default is frozen v5)",
+  "O4 selftest results.json reports SELFTEST_PASS (22/22); reviewer did not re-execute run_selftest.py (it writes into the repo) and instead independently replayed its sweep and key negatives"
+ ],
+ "verdict": "PLAN_APPROVED"
+}
