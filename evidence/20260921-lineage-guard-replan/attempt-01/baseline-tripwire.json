@@ -1,0 +1,37 @@
+{
+ "artifact": "Rev27b lineage-guard replan closing read-only tripwire: accepted baseline + staging",
+ "attempt": "evidence/20260921-lineage-guard-replan/attempt-01/",
+ "produced_at_local": "2026-09-21T19:59",
+ "appended_after": "main evidence commit c8cf5424e445077cc7e0f8b8d89409cf5cfe54dc (append-only addition to the same attempt dir; no committed file was modified)",
+ "method": "read-only: sorted 'relpath\\tsize\\tsha256\\n' manifest over all files under the accepted baseline dir; sha256 of the concatenated manifest (same method as attempt-03 baseline-inventory-pre.json)",
+ "accepted_baseline": {
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+  "file_count": 57,
+  "total_bytes": 17924900,
+  "manifest_digest_sha256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "expected_digest_recorded_attempt_03": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "match": true,
+  "unchanged": true
+ },
+ "staging": {
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging",
+  "exists": false,
+  "note": "OD-3 preserve; this zero-GUI round performed staging_setup_mkdir = 0 and never created, cleaned or reused any staging directory"
+ },
+ "input_counters_this_round": {
+  "gui_input": 0,
+  "album_card_click": 0,
+  "ellipsis_click": 0,
+  "save_all_click": 0,
+  "chooser_interaction": 0,
+  "keyboard": 0,
+  "scroll": 0,
+  "download": 0,
+  "filesystem_destination_write": 0,
+  "staging_mkdir": 0,
+  "retry": 0,
+  "formal_state_or_config_write": 0
+ },
+ "writes_outside_repo_evidence": 0,
+ "verdict": "BASELINE_UNCHANGED__STAGING_NOT_PRESENT__ZERO_GUI_AND_DESTINATION_WRITES"
+}
