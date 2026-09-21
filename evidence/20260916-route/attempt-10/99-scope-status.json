@@ -1,0 +1,38 @@
+{
+ "check": "attempt_10_end_state",
+ "captured_at_local": "2026-09-21T14:10+0800",
+ "run_status": "CLOSED_BEFORE_INPUT",
+ "stop_reason": "STOPPED_AT_S3_ELIGIBLE_ZERO_INPUT",
+ "s3_verdict": "ELIGIBLE",
+ "candidate_point": [
+  39,
+  923
+ ],
+ "candidate_dispatched": false,
+ "deterministic_replay": "BYTE_IDENTICAL",
+ "final_scoped_status": "READY_FOR_NEW_ONE_SHOT_GUI_AUTHORIZATION",
+ "gui_inputs": 0,
+ "album_card_inputs": 0,
+ "navigation_inputs": 0,
+ "ellipsis_inputs": 0,
+ "retry_inputs": 0,
+ "menu_item_inputs": 0,
+ "keyboard_inputs": 0,
+ "scroll_inputs": 0,
+ "ax_write_inputs": 0,
+ "bring_to_front_inputs": 0,
+ "app_acquisition_inputs": 0,
+ "save_all_dispatch_attempted": false,
+ "chooser_interaction": false,
+ "download": false,
+ "destination_write": false,
+ "artifact_sha256": {
+  "frame-pre.png": "5433afdee81f30cf32fffd79044ce4e85be776b45807a81acf886c773de23962",
+  "live-window-geometry.json": "be0de3b4dc2d36990ab961883a7647afde4784f265af12cbe23601cdb588c23c",
+  "album-card-locate-v6.json": "c96a10ed7759c711e5ff3a572ab6f7fa753888561bdb7a0322dc95e4bc0a0d0f",
+  "album-card-locate-v6-replay.json": "c96a10ed7759c711e5ff3a572ab6f7fa753888561bdb7a0322dc95e4bc0a0d0f",
+  "s1-ax-pre.json": "2e2306a811eb2d569b82f9820f61cdae08017b3c372d31934a27032aef252d1a",
+  "s2-ax-post.json": "df8e75d257f0ec67ae3b27d861d566e5b043ceb2ccf2c0ab0ff043dd6ea55ca5"
+ },
+ "note": "Fresh S1 + fresh S2 frame + read-only AX post-observation + frozen v6 S3 on the same fresh frame; verdict ELIGIBLE; candidate [39,923] NOT sent; no gate created or consumed; no threshold/fallback/historical-coordinate use."
+}

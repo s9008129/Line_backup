@@ -1,0 +1,381 @@
+{
+ "tool": "locate_album_card_v6",
+ "tool_sha256": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+ "scope": "album-card S3 safety location only; offline evidence; never dispatched",
+ "frame": "evidence/20260916-route/attempt-10/frame-pre.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "constants": {
+  "content_diff": 60,
+  "band_frac_threshold": 0.45,
+  "band_min_rows": 20,
+  "strip_frac_max": 0.3,
+  "strip_min_rows": 40,
+  "bg_mad_max": 5.0,
+  "sep_min": "max(24, title_height * 1.0)",
+  "roi_inset_px": 8,
+  "roi_right_tail_px": 120,
+  "roi_candidate_margin_px": 16,
+  "control_max_wh": [
+   48,
+   80
+  ],
+  "control_min_gap_px": 100,
+  "cluster_min_px": 5,
+  "cluster_merge_gap": 12,
+  "scan_range_px": 500
+ },
+ "provenance": {
+  "title_count_logic_copied_from": {
+   "path": "evidence/20260916-route/tools/v4/locate_album_card.py",
+   "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162"
+  },
+  "reader": {
+   "module": "evidence/20260916-route/tools/v4/vision_reader.py",
+   "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8"
+  },
+  "historical_coordinates_used": false,
+  "fallback_to_v4_candidate": false
+ },
+ "frame_sha256": "5433afdee81f30cf32fffd79044ce4e85be776b45807a81acf886c773de23962",
+ "frame_bytes": 2054431,
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   27,
+   910,
+   257,
+   937
+  ]
+ },
+ "ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  ".11.16",
+  "10.15",
+  "10.14",
+  "5.9.10",
+  "5.8.14",
+  "2024/05/13~05/17",
+  "57",
+  ".7.22",
+  "99%",
+  "熱評",
+  "配戴舒適滿意度*",
+  "UUTFAw",
+  "（遊水護日期 近視",
+  "031°C",
+  "⑦2",
+  "00",
+  "9月21日週一 14:09",
+  "旻謙允禎成長日記（3） 公",
+  "• • • • Line_backup —：Line_backup - codex -m deepseek-v4.1-flash --sand...",
+  "..v run medla_toolbox.py",
+  "-./yt_down_txt --zsh…（",
+  "...rt=\"max\"、node",
+  "+46",
+  "lines",
+  "sent.",
+  "S3",
+  "is",
+  "（ctrl",
+  "+t to view",
+  "transcript）",
+  "separately recorded in album-card-locate-r2.json.\"",
+  "Q",
+  "：",
+  "• Explored",
+  "L Read run-ledger.json",
+  "• Al1 frozen SHAs match",
+  "+ both PLAN_APPROVED",
+  "reviews），and attempt-10",
+  "is free - that's the new attempt. Now starting the S1 read-only AX observation",
+  "via cua_repl （zero input）.",
+  "• Computer Use binding",
+  "is available,but its",
+  "app API exposes no",
+  "window-geometry",
+  "（verified by",
+  "introspection）．Let me capture",
+  "a read-only CU",
+  "window screenshot",
+  "to confirm the current",
+  "surface state before",
+  "designing the S1",
+  "geometry read."
+ ],
+ "window_geometry": {
+  "path": "evidence/20260916-route/attempt-10/live-window-geometry.json",
+  "rect": [
+   0,
+   64,
+   654,
+   1350
+  ],
+  "source": "read-only AX window-bounds observation of LINE window index 0 (title '', role AXWindow/AXStandardWindow, main=true, is_ax_focused_window=true, pid 3337) via evidence/20260916-route/attempt-10/tools/ax_window_bounds.swift (sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6) / binary sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae, read at 2026-09-21T14:09:04+0800 (pre) and 2026-09-21T14:09:04+0800 (post, byte-identical); position_points (0,32), size_points (327,643) x capture scale 2 (NSScreen.backingScaleFactor=2.0; CGDisplayMode pixel 2294x1490 vs bounds 1147x745 pt) = frame device-pixel rect; bound to THIS frame's SHA-256; NOT historical geometry; NOT produced by the offline replay extractor; no attempt-08/09 geometry value used",
+  "frame_sha256": "5433afdee81f30cf32fffd79044ce4e85be776b45807a81acf886c773de23962",
+  "raw": {
+   "x0": 0,
+   "y0": 64,
+   "x1": 654,
+   "y1": 1350,
+   "source": "read-only AX window-bounds observation of LINE window index 0 (title '', role AXWindow/AXStandardWindow, main=true, is_ax_focused_window=true, pid 3337) via evidence/20260916-route/attempt-10/tools/ax_window_bounds.swift (sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6) / binary sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae, read at 2026-09-21T14:09:04+0800 (pre) and 2026-09-21T14:09:04+0800 (post, byte-identical); position_points (0,32), size_points (327,643) x capture scale 2 (NSScreen.backingScaleFactor=2.0; CGDisplayMode pixel 2294x1490 vs bounds 1147x745 pt) = frame device-pixel rect; bound to THIS frame's SHA-256; NOT historical geometry; NOT produced by the offline replay extractor; no attempt-08/09 geometry value used",
+   "frame_sha256": "5433afdee81f30cf32fffd79044ce4e85be776b45807a81acf886c773de23962",
+   "coordinate_space": "full-screen capture device pixels (screencapture -x at 2x); the window ROI and any click point share this space",
+   "window_point_rect": [
+    0,
+    32,
+    327,
+    675
+   ],
+   "transform": {
+    "formula": "frame_px = window_pt * 2",
+    "scale": 2,
+    "provenance": "NSScreen.backingScaleFactor=2.0 and CGDisplayMode pixel size 2294x1490 vs display bounds 1147x745 pt, read by the same read-only AX tool",
+    "frame_size_px": [
+     2294,
+     1490
+    ]
+   },
+   "generated_from": "this run's read-only AX observation of the LINE album-list AX window; the frame crop at this rect reproduces the read-only CU window screenshot (MAD 2.2 gray levels, pre-declared bound 12.0; nearest +/-4px shifts 11.6-17.4)",
+   "binding_validation": {
+    "tool": "validate_live_geometry",
+    "frame": "evidence/20260916-route/attempt-10/frame-pre.png",
+    "cu_shot": "/tmp/attempt10/cua-window-s1-formal.jpg",
+    "ax_json": "/tmp/attempt10/s1-ax-pre-raw.json",
+    "window_index": 0,
+    "ax_window": {
+     "focused": false,
+     "index": 0,
+     "is_ax_focused_window": true,
+     "main": true,
+     "minimized": false,
+     "position_points": [
+      0,
+      32
+     ],
+     "role": "AXWindow",
+     "size_points": [
+      327,
+      643
+     ],
+     "subrole": "AXStandardWindow",
+     "title": ""
+    },
+    "frame_size": [
+     2294,
+     1490
+    ],
+    "cu_shot_size": [
+     327,
+     643
+    ],
+    "capture_scale": 2,
+    "pass_rule": {
+     "dims_exact": true,
+     "mad_mean_max": 12.0
+    },
+    "frame_crop_px": [
+     0,
+     64,
+     654,
+     1350
+    ],
+    "dims_checks": {
+     "cu_shot_dims_equal_ax_pt": true,
+     "frame_crop_inside_frame": true,
+     "frame_scale_matches_display": true
+    },
+    "crop_size_px": [
+     654,
+     1286
+    ],
+    "comparison": {
+     "method": "frame crop (x2) downscaled by 2 with LANCZOS vs CU window screenshot; gray MAD",
+     "mad_mean": 2.2,
+     "pixels_gt8_gray": 11735,
+     "fraction_gt8_gray": 0.05581
+    },
+    "shift_diagnostics": {
+     "dx-4_dy-4": 17.195,
+     "dx+0_dy-4": 12.84,
+     "dx+4_dy-4": 16.804,
+     "dx-4_dy+0": 11.815,
+     "dx+0_dy+0": 2.2,
+     "dx+4_dy+0": 11.619,
+     "dx-4_dy+4": 17.394,
+     "dx+0_dy+4": 13.239,
+     "dx+4_dy+4": 17.404
+    },
+    "verdict": "GEOMETRY_BINDING_PASS"
+   },
+   "historical_geometry_used": false,
+   "offline_replay_extractor_used": false,
+   "attempt_08_09_geometry_copied": false,
+   "gui_inputs_sent": 0
+  }
+ },
+ "coordinate_space": "current-frame screenshot pixels (device pixels of the full-screen capture); window ROI and click_point share this space",
+ "click_point": [
+  39,
+  923
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "candidate_bounds": {
+  "title_width_px": 230,
+  "candidate_x": 39,
+  "roi_left_margin_px": 39,
+  "roi_right_margin_px": 615
+ },
+ "identity": {
+  "title_bbox": [
+   27,
+   910,
+   257,
+   937
+  ],
+  "title_inset_px": {
+   "left": 27,
+   "top": 846,
+   "right": 397,
+   "bottom": 413
+  },
+  "count_box": [
+   19,
+   939,
+   187,
+   969
+  ],
+  "roi_right_tail_px": 397
+ },
+ "count_box": [
+  19,
+  939,
+  187,
+  969
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "background": {
+  "sample_rect": [
+   281,
+   910,
+   341,
+   937
+  ],
+  "color": [
+   45,
+   46,
+   48
+  ],
+  "mad": 0.0
+ },
+ "structure": {
+  "scan_y_range": [
+   423,
+   1349
+  ],
+  "above_band_runs": [
+   [
+    423,
+    583
+   ],
+   [
+    586,
+    877
+   ]
+  ],
+  "below_band_runs": [
+   [
+    1024,
+    1315
+   ],
+   [
+    1318,
+    1349
+   ]
+  ],
+  "above_band_bottom_row": 877,
+  "below_band_top_row": 1024
+ },
+ "margins": {
+  "margin_above_px": 46,
+  "margin_below_px": 101,
+  "sep_min_px": 27,
+  "rule": "max(24, round(title_height*1.0))",
+  "title_height_px": 27
+ },
+ "strip": {
+  "rows_total": 146,
+  "rows_kept": 146,
+  "frac_max_used": 0.3,
+  "clusters": [
+   {
+    "bbox": [
+     607,
+     921,
+     611,
+     946
+    ],
+    "width": 5,
+    "height": 26,
+    "px": 56
+   }
+  ]
+ },
+ "control": {
+  "control_width_px": 5,
+  "control_height_px": 26,
+  "gap_right_of_title_px": 350,
+  "gap_left_of_candidate_px": 568
+ },
+ "verdict": "ELIGIBLE",
+ "dispatch": {
+  "dispatched": false,
+  "note": "offline evidence only; no input was sent"
+ },
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "d37fa4efc861e0f094163cee83acb477bd1316613c3a961196fbfe290339f4da",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "12315bef25cd4e62040a1102f4b33d5af803d745b302d3d7de82a5e286226800",
+    "stdout_bytes": 3462,
+    "lines_parsed": 69
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "5fb8e9f4b37eda23318e187cc51585720cfbcbb2a48f8917bbb90b64982fd219",
+    "stdout_bytes": 32,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

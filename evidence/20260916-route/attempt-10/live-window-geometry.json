@@ -1,0 +1,100 @@
+{
+ "x0": 0,
+ "y0": 64,
+ "x1": 654,
+ "y1": 1350,
+ "source": "read-only AX window-bounds observation of LINE window index 0 (title '', role AXWindow/AXStandardWindow, main=true, is_ax_focused_window=true, pid 3337) via evidence/20260916-route/attempt-10/tools/ax_window_bounds.swift (sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6) / binary sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae, read at 2026-09-21T14:09:04+0800 (pre) and 2026-09-21T14:09:04+0800 (post, byte-identical); position_points (0,32), size_points (327,643) x capture scale 2 (NSScreen.backingScaleFactor=2.0; CGDisplayMode pixel 2294x1490 vs bounds 1147x745 pt) = frame device-pixel rect; bound to THIS frame's SHA-256; NOT historical geometry; NOT produced by the offline replay extractor; no attempt-08/09 geometry value used",
+ "frame_sha256": "5433afdee81f30cf32fffd79044ce4e85be776b45807a81acf886c773de23962",
+ "coordinate_space": "full-screen capture device pixels (screencapture -x at 2x); the window ROI and any click point share this space",
+ "window_point_rect": [
+  0,
+  32,
+  327,
+  675
+ ],
+ "transform": {
+  "formula": "frame_px = window_pt * 2",
+  "scale": 2,
+  "provenance": "NSScreen.backingScaleFactor=2.0 and CGDisplayMode pixel size 2294x1490 vs display bounds 1147x745 pt, read by the same read-only AX tool",
+  "frame_size_px": [
+   2294,
+   1490
+  ]
+ },
+ "generated_from": "this run's read-only AX observation of the LINE album-list AX window; the frame crop at this rect reproduces the read-only CU window screenshot (MAD 2.2 gray levels, pre-declared bound 12.0; nearest +/-4px shifts 11.6-17.4)",
+ "binding_validation": {
+  "tool": "validate_live_geometry",
+  "frame": "evidence/20260916-route/attempt-10/frame-pre.png",
+  "cu_shot": "/tmp/attempt10/cua-window-s1-formal.jpg",
+  "ax_json": "/tmp/attempt10/s1-ax-pre-raw.json",
+  "window_index": 0,
+  "ax_window": {
+   "focused": false,
+   "index": 0,
+   "is_ax_focused_window": true,
+   "main": true,
+   "minimized": false,
+   "position_points": [
+    0,
+    32
+   ],
+   "role": "AXWindow",
+   "size_points": [
+    327,
+    643
+   ],
+   "subrole": "AXStandardWindow",
+   "title": ""
+  },
+  "frame_size": [
+   2294,
+   1490
+  ],
+  "cu_shot_size": [
+   327,
+   643
+  ],
+  "capture_scale": 2,
+  "pass_rule": {
+   "dims_exact": true,
+   "mad_mean_max": 12.0
+  },
+  "frame_crop_px": [
+   0,
+   64,
+   654,
+   1350
+  ],
+  "dims_checks": {
+   "cu_shot_dims_equal_ax_pt": true,
+   "frame_crop_inside_frame": true,
+   "frame_scale_matches_display": true
+  },
+  "crop_size_px": [
+   654,
+   1286
+  ],
+  "comparison": {
+   "method": "frame crop (x2) downscaled by 2 with LANCZOS vs CU window screenshot; gray MAD",
+   "mad_mean": 2.2,
+   "pixels_gt8_gray": 11735,
+   "fraction_gt8_gray": 0.05581
+  },
+  "shift_diagnostics": {
+   "dx-4_dy-4": 17.195,
+   "dx+0_dy-4": 12.84,
+   "dx+4_dy-4": 16.804,
+   "dx-4_dy+0": 11.815,
+   "dx+0_dy+0": 2.2,
+   "dx+4_dy+0": 11.619,
+   "dx-4_dy+4": 17.394,
+   "dx+0_dy+4": 13.239,
+   "dx+4_dy+4": 17.404
+  },
+  "verdict": "GEOMETRY_BINDING_PASS"
+ },
+ "historical_geometry_used": false,
+ "offline_replay_extractor_used": false,
+ "attempt_08_09_geometry_copied": false,
+ "gui_inputs_sent": 0
+}

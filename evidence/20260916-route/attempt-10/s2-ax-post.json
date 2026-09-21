@@ -1,0 +1,257 @@
+{
+ "schema_version": 1,
+ "attempt": "10",
+ "phase": "S2_fresh_frame_and_ax_post",
+ "capture": {
+  "command": "screencapture -x evidence/20260916-route/attempt-10/frame-pre.png",
+  "exit_code": 0,
+  "timestamp_local": "2026-09-21T14:09:04+0800",
+  "path": "evidence/20260916-route/attempt-10/frame-pre.png",
+  "bytes": 2054431,
+  "size_px": [
+   2294,
+   1490
+  ],
+  "mode": "RGBA",
+  "sha256": "5433afdee81f30cf32fffd79044ce4e85be776b45807a81acf886c773de23962",
+  "fresh_this_run": true,
+  "sound": "none (-x: silent, no cursor drawn, no window highlight)"
+ },
+ "ax_post": {
+  "tool_local": "2026-09-21T14:09:04+0800",
+  "tool_source_sha256": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+  "tool_binary_sha256": "1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae",
+  "tool_output": {
+   "ax_api_trusted": true,
+   "ax_frontmost": true,
+   "bundle_id": "jp.naver.line.mac",
+   "display": {
+    "capture_scale_note": "screencapture -x writes device pixels: frame_px = point_rect * backing_scale_factor",
+    "cg_display_mode_pixel_wh": [
+     2294,
+     1490
+    ],
+    "cg_display_pixels_wh": [
+     1147,
+     745
+    ],
+    "display_bounds_points": [
+     0,
+     0,
+     1147,
+     745
+    ],
+    "main_display_id": 1,
+    "nsscreen_backing_scale_factor": 2,
+    "nsscreen_frame_points": [
+     0,
+     0,
+     1147,
+     745
+    ]
+   },
+   "frontmost_application": "jp.naver.line.mac",
+   "pid": 3337,
+   "running": true,
+   "timestamp_local": "2026-09-21T14:09:04+08:00",
+   "tool": "ax_window_bounds_readonly",
+   "version": 2,
+   "window_count": 2,
+   "windows": [
+    {
+     "focused": false,
+     "index": 0,
+     "is_ax_focused_window": true,
+     "main": true,
+     "minimized": false,
+     "position_points": [
+      0,
+      32
+     ],
+     "role": "AXWindow",
+     "size_points": [
+      327,
+      643
+     ],
+     "subrole": "AXStandardWindow",
+     "title": ""
+    },
+    {
+     "focused": false,
+     "index": 1,
+     "is_ax_focused_window": false,
+     "main": false,
+     "minimized": false,
+     "position_points": [
+      -2,
+      37
+     ],
+     "role": "AXWindow",
+     "size_points": [
+      1147,
+      699
+     ],
+     "subrole": "AXStandardWindow",
+     "title": "LINE"
+    }
+   ]
+  }
+ },
+ "pre_post_comparison": {
+  "same_line_window": true,
+  "position_equal": true,
+  "size_equal": true,
+  "app_identity_equal": true,
+  "ax_raw_byte_identical": true,
+  "target_surface_equal": true,
+  "overlay_transition": false,
+  "gui_input_during_bracket": false
+ },
+ "frame_window_region_ocr": {
+  "region_px": [
+   0,
+   64,
+   654,
+   1350
+  ],
+  "reader_sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "words": [
+   {
+    "text": "旻謙允禎成長日記",
+    "conf": 1.0,
+    "x": 115.0,
+    "y": 45.0,
+    "w": 97.0,
+    "h": 15.0
+   },
+   {
+    "text": "相簿",
+    "conf": 1.0,
+    "x": 67.33333333333333,
+    "y": 80.33333333333333,
+    "w": 26.0,
+    "h": 14.0
+   },
+   {
+    "text": "記事本",
+    "conf": 1.0,
+    "x": 225.0,
+    "y": 80.33333333333333,
+    "w": 37.666666666666664,
+    "h": 14.0
+   },
+   {
+    "text": "2024/05/13~05/17",
+    "conf": 1.0,
+    "x": 14.0,
+    "y": 421.3333333333333,
+    "w": 114.0,
+    "h": 15.0
+   },
+   {
+    "text": "57",
+    "conf": 1.0,
+    "x": 15.0,
+    "y": 440.0,
+    "w": 15.666666666666666,
+    "h": 11.333333333333334
+   },
+   {
+    "text": "+",
+    "conf": 0.3,
+    "x": 270.0,
+    "y": 587.0,
+    "w": 29.0,
+    "h": 28.0
+   }
+  ]
+ },
+ "frame_binding_validation": {
+  "tool": "validate_live_geometry",
+  "frame": "evidence/20260916-route/attempt-10/frame-pre.png",
+  "cu_shot": "/tmp/attempt10/cua-window-s1-formal.jpg",
+  "ax_json": "/tmp/attempt10/s1-ax-pre-raw.json",
+  "window_index": 0,
+  "ax_window": {
+   "focused": false,
+   "index": 0,
+   "is_ax_focused_window": true,
+   "main": true,
+   "minimized": false,
+   "position_points": [
+    0,
+    32
+   ],
+   "role": "AXWindow",
+   "size_points": [
+    327,
+    643
+   ],
+   "subrole": "AXStandardWindow",
+   "title": ""
+  },
+  "frame_size": [
+   2294,
+   1490
+  ],
+  "cu_shot_size": [
+   327,
+   643
+  ],
+  "capture_scale": 2,
+  "pass_rule": {
+   "dims_exact": true,
+   "mad_mean_max": 12.0
+  },
+  "frame_crop_px": [
+   0,
+   64,
+   654,
+   1350
+  ],
+  "dims_checks": {
+   "cu_shot_dims_equal_ax_pt": true,
+   "frame_crop_inside_frame": true,
+   "frame_scale_matches_display": true
+  },
+  "crop_size_px": [
+   654,
+   1286
+  ],
+  "comparison": {
+   "method": "frame crop (x2) downscaled by 2 with LANCZOS vs CU window screenshot; gray MAD",
+   "mad_mean": 2.2,
+   "pixels_gt8_gray": 11735,
+   "fraction_gt8_gray": 0.05581
+  },
+  "shift_diagnostics": {
+   "dx-4_dy-4": 17.195,
+   "dx+0_dy-4": 12.84,
+   "dx+4_dy-4": 16.804,
+   "dx-4_dy+0": 11.815,
+   "dx+0_dy+0": 2.2,
+   "dx+4_dy+0": 11.619,
+   "dx-4_dy+4": 17.394,
+   "dx+0_dy+4": 13.239,
+   "dx+4_dy+4": 17.404
+  },
+  "verdict": "GEOMETRY_BINDING_PASS"
+ },
+ "verdict": "WINDOW_GEOMETRY_STABLE_DURING_CAPTURE",
+ "input_counters": {
+  "gui_input_count": 0,
+  "album_card_inputs_used": 0,
+  "navigation_inputs_used": 0,
+  "ellipsis_inputs_used": 0,
+  "retry_count": 0,
+  "menu_item_inputs_used": 0,
+  "keyboard_inputs_used": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "chooser_interactions": 0,
+  "app_acquisition_inputs": 0,
+  "bring_to_front_inputs": 0,
+  "save_all_dispatch_attempted": false
+ },
+ "verdict_note": "verdict is computed from the eight comparison fields; the two negative assertions (overlay_transition, gui_input_during_bracket) must be false. Initial write used a naive all(values) expression that mis-read the negative fields; corrected in place before any decision used this file."
+}

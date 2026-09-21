@@ -1,0 +1,48 @@
+{
+ "check": "attempt_10_start_state",
+ "captured_at_local": "2026-09-21T14:02+0800",
+ "branch_line": "## master...origin/master [ahead 2]",
+ "head": "5139b3f92f05dfcbc1b86e63a05df720fc7a8613",
+ "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+ "local_ahead_count": 2,
+ "log_3": [
+  "5139b3f Rev26 v6 重規劃：以 attempt-08/09 證據重設計 album-card S3 安全判定",
+  "d3728e7 Rev25 attempt-09：零輸入 fresh S1-S3 觀察與安全停機",
+  "a9e523e Rev25 gate-6：記錄重定位後的安全停機證據"
+ ],
+ "untracked_allowed_only": [
+  "evidence/20260916-route/tools/v4/__pycache__/",
+  "evidence/20260916-route/tools/v6/__pycache__/",
+  "evidence/20260916-route/tools/v6/selftest/__pycache__/"
+ ],
+ "tracked_modifications": [],
+ "unknown_untracked": [],
+ "target": {
+  "app": "jp.naver.line.mac",
+  "group": "旻謙允禎成長日記",
+  "album": "2024/05/13～05/17",
+  "expected_count": 57
+ },
+ "frozen_inputs_verified": {
+  "v6/README.md": "7527ce3dfc8a5919a7f04b25fd1df623aa702be3359c421468206181bacea5f2",
+  "v6/extract_window_geometry.py": "b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8",
+  "v6/locate_album_card.py": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "v6/selftest/run_selftest.py": "104ed68ec6c0a8cc2a8696e4a11a0374e0cc824bcfbbbfad009be4ad837e7f84",
+  "review-01-top-down.md": "f15b485367445c8cba35aa80e11e746872e4431c1481d8a73259740de473f78e",
+  "review-02-bottom-up.md": "5a068e1db71f44f90ae0412f59e47ba6a6a42799bc691cd52fcdbca58b7c369f",
+  "reviews_gate": "PLAN_APPROVED (both, re-read verbatim)"
+ },
+ "attempt_slot": {
+  "selected": "attempt-10",
+  "reason": "attempt-10 did not exist; attempt-08/09 were not reopened"
+ },
+ "gui_authorization": {
+  "gate": null,
+  "gate_6": "historical artifact of attempt-08; NOT modified, NOT reused, NOT consumed as authorization for attempt-10",
+  "gui_input_authorized_this_attempt": false,
+  "new_gate_created": false,
+  "scope": "owner-ordered zero-input live v6 S1-S3 verification only"
+ },
+ "gui_input_count": 0,
+ "verdict": "PASS_ZERO_INPUT_START"
+}

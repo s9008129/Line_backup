@@ -1,0 +1,277 @@
+{
+ "schema_version": 1,
+ "attempt": "10",
+ "phase": "S1_ax_pre",
+ "app_bundle": "jp.naver.line.mac",
+ "timestamp_local": {
+  "cu_ax_state_and_screenshot_utc": [
+   "2026-09-21T06:08:55.947Z",
+   "2026-09-21T06:08:56.089Z"
+  ],
+  "cu_ax_state_and_screenshot_local": [
+   "2026-09-21T14:08:55.947+0800",
+   "2026-09-21T14:08:56.089+0800"
+  ],
+  "ax_window_bounds_tool_local": "2026-09-21T14:09:04+0800"
+ },
+ "line_window_identity": {
+  "selected": {
+   "focused": false,
+   "index": 0,
+   "is_ax_focused_window": true,
+   "main": true,
+   "minimized": false,
+   "position_points": [
+    0,
+    32
+   ],
+   "role": "AXWindow",
+   "size_points": [
+    327,
+    643
+   ],
+   "subrole": "AXStandardWindow",
+   "title": ""
+  },
+  "selection_rule": "the AX window whose size (327x643 pt) equals the read-only CU window screenshot size (327x643 px == pt); it is also the app's main window and the AX focused window",
+  "other_line_window": {
+   "focused": false,
+   "index": 1,
+   "is_ax_focused_window": false,
+   "main": false,
+   "minimized": false,
+   "position_points": [
+    -2,
+    37
+   ],
+   "role": "AXWindow",
+   "size_points": [
+    1147,
+    699
+   ],
+   "subrole": "AXStandardWindow",
+   "title": "LINE"
+  }
+ },
+ "app_identity": {
+  "frontmost_application": "jp.naver.line.mac",
+  "ax_frontmost": true,
+  "pid": 3337,
+  "is_running": true
+ },
+ "display": {
+  "capture_scale_note": "screencapture -x writes device pixels: frame_px = point_rect * backing_scale_factor",
+  "cg_display_mode_pixel_wh": [
+   2294,
+   1490
+  ],
+  "cg_display_pixels_wh": [
+   1147,
+   745
+  ],
+  "display_bounds_points": [
+   0,
+   0,
+   1147,
+   745
+  ],
+  "main_display_id": 1,
+  "nsscreen_backing_scale_factor": 2,
+  "nsscreen_frame_points": [
+   0,
+   0,
+   1147,
+   745
+  ]
+ },
+ "cu_read": {
+  "method": "cua_repl read-only app binding: cua.getApp('jp.naver.line.mac'); app.getAXState({emit:false, disableDiffing:true}); app.getScreenshot({emit:false})",
+  "input_events_sent": 0,
+  "ax_state_text_sha256": "d7227c5b25f686614ba4f856e2b89ff8d981399fbbfd7977237116bdcaa7a00b",
+  "ax_state_text": "Window: \"\", App: LINE.\n0 標準視窗 Secondary Actions: Raise\n\t1 文字欄位 (settable) Secondary Actions: Raise\n\t2 列表 (showing 0-100 of 101 items)\n\t\t3 row\n\t\t4 row\n\t\t5 row\n\t\t6 row\n\t\t\t7 文字\n\t\t8 row\n\t\t\t9 文字\n\t\t10 row\n\t\t11 row\n\t\t12 row\n\t\t13 row\n\t\t14 row\n\t\t15 row\n\t\t16 row\n\t\t17 row\n\t\t18 row\n\t\t19 row\n\t\t20 row\n\t\t21 row\n\t\t22 row\n\t\t23 row\n\t\t24 row\n\t\t25 row\n\t\t26 row\n\t\t27 row\n\t\t28 row\n\t\t29 row\n\t\t30 row\n\t\t31 row\n\t\t32 row\n\t\t33 row\n\t\t34 row\n\t\t35 row\n\t\t36 row\n\t\t37 row\n\t\t38 row\n\t\t39 row\n\t\t40 row\n\t\t41 row\n\t\t42 row\n\t\t43 row\n\t\t44 row\n\t\t45 row\n\t\t46 row\n\t\t47 row\n\t\t48 row\n\t\t49 row\n\t\t50 row\n\t\t51 row\n\t\t52 row\n\t\t53 row\n\t\t54 row\n\t\t55 row\n\t\t56 row\n\t\t57 row\n\t\t58 row\n\t\t59 row\n\t\t60 row\n\t\t61 row\n\t\t62 row\n\t\t63 row\n\t\t64 row\n\t\t65 row\n\t\t66 row\n\t\t67 row\n\t\t68 row\n\t\t69 row\n\t\t70 row\n\t\t71 row\n\t\t72 row\n\t\t73 row\n\t\t74 row\n\t\t75 row\n\t\t76 row\n\t\t77 row\n\t\t78 row\n\t\t79 row\n\t\t80 row\n\t\t81 row\n\t\t82 row\n\t\t83 row\n\t\t84 row\n\t\t85 row\n\t\t86 row\n\t\t87 row\n\t\t88 row\n\t\t89 row\n\t\t90 row\n\t\t91 row\n\t\t92 row\n\t\t93 row\n\t\t94 row\n\t\t95 row\n\t\t96 row\n\t\t97 row\n\t\t98 row\n\t\t99 row\n\t\t100 row\n\t\t101 row\n\t\t102 row\n\t\t103 row\n\t\t104 row\n\t105 捲軸 (settable) 1104\n\t106 關閉按鈕\n\t107 縮到最小按鈕\n108 menu bar\n\t109 LINE\n\t110 顯示\n\t111 好友\n\t112 視窗\n\t113 常見問題\n\nThe focused UI element is 1 文字欄位 (settable) Secondary Actions: Raise",
+  "window_screenshot": {
+   "repo_path": "evidence/20260916-route/attempt-10/cua-window-s1.jpg",
+   "bytes": 65356,
+   "size_px": [
+    327,
+    643
+   ],
+   "format": "jpeg",
+   "sha256": "c53fbaad6796b130cc50da5a7298e0afbab2e6d48e81114563265d50539c1891",
+   "note": "read-only window-scoped screenshot from the CU layer; 1x (px == pt); it shows the same LINE album-list window whose AX bounds are read below"
+  }
+ },
+ "ax_window_bounds_provenance": {
+  "tool_source": "evidence/20260916-route/attempt-10/tools/ax_window_bounds.swift",
+  "tool_source_sha256": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+  "tool_binary": "/tmp/attempt10/ax_window_bounds",
+  "tool_binary_sha256": "1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae",
+  "api": "AXUIElementCopyAttributeValue on the LINE process (kAXWindows/kAXPosition/kAXSize/kAXTitle/kAXRole/kAXSubrole/kAXMinimized/kAXMain/kAXFocused/kAXFocusedWindow) + read-only NSWorkspace/NSScreen/CGDisplay reads",
+  "input_events_sent": 0,
+  "tool_output": {
+   "ax_api_trusted": true,
+   "ax_frontmost": true,
+   "bundle_id": "jp.naver.line.mac",
+   "display": {
+    "capture_scale_note": "screencapture -x writes device pixels: frame_px = point_rect * backing_scale_factor",
+    "cg_display_mode_pixel_wh": [
+     2294,
+     1490
+    ],
+    "cg_display_pixels_wh": [
+     1147,
+     745
+    ],
+    "display_bounds_points": [
+     0,
+     0,
+     1147,
+     745
+    ],
+    "main_display_id": 1,
+    "nsscreen_backing_scale_factor": 2,
+    "nsscreen_frame_points": [
+     0,
+     0,
+     1147,
+     745
+    ]
+   },
+   "frontmost_application": "jp.naver.line.mac",
+   "pid": 3337,
+   "running": true,
+   "timestamp_local": "2026-09-21T14:09:04+08:00",
+   "tool": "ax_window_bounds_readonly",
+   "version": 2,
+   "window_count": 2,
+   "windows": [
+    {
+     "focused": false,
+     "index": 0,
+     "is_ax_focused_window": true,
+     "main": true,
+     "minimized": false,
+     "position_points": [
+      0,
+      32
+     ],
+     "role": "AXWindow",
+     "size_points": [
+      327,
+      643
+     ],
+     "subrole": "AXStandardWindow",
+     "title": ""
+    },
+    {
+     "focused": false,
+     "index": 1,
+     "is_ax_focused_window": false,
+     "main": false,
+     "minimized": false,
+     "position_points": [
+      -2,
+      37
+     ],
+     "role": "AXWindow",
+     "size_points": [
+      1147,
+      699
+     ],
+     "subrole": "AXStandardWindow",
+     "title": "LINE"
+    }
+   ]
+  }
+ },
+ "surface": {
+  "album_list_surface_present": true,
+  "album_tab_visible": "相簿",
+  "notebook_tab_visible": "記事本",
+  "group_title_visible": "旻謙允禎成長日記",
+  "group_title_codepoints": [
+   "0x65fb",
+   "0x8b19",
+   "0x5141",
+   "0x798e",
+   "0x6210",
+   "0x9577",
+   "0x65e5",
+   "0x8a18"
+  ],
+  "group_codepoints_match_U798E": true,
+  "target_album_visible": "2024/05/13~05/17",
+  "count_expected": 57,
+  "count_visible": "57",
+  "permission_prompt_observed": false,
+  "unknown_overlay_observed": false,
+  "adjacent_app_windows": "Codex terminal window on the right of the LINE album-list window; no occlusion of the album-list window (the CU window screenshot and the S2 frame crop agree, MAD 2.200)",
+  "ax_tree_shows": "one standard window (text field, 101-item list, scrollbar, close/minimize buttons) plus the LINE menu bar; no dialog/sheet/permission surface in the AX tree"
+ },
+ "ocr": {
+  "reader": "evidence/20260916-route/tools/v4/vision_reader.py",
+  "reader_sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "source": "read-only CU window screenshot (this S1)",
+  "words": [
+   {
+    "text": "旻謙允禎成長日記",
+    "conf": 0.5,
+    "x": 114.0,
+    "y": 45.0,
+    "w": 98.0,
+    "h": 15.0
+   },
+   {
+    "text": "相簿",
+    "conf": 0.5,
+    "x": 67.33333333333333,
+    "y": 80.33333333333333,
+    "w": 26.0,
+    "h": 14.0
+   },
+   {
+    "text": "記事本",
+    "conf": 1.0,
+    "x": 224.33333333333334,
+    "y": 80.33333333333333,
+    "w": 38.333333333333336,
+    "h": 14.0
+   },
+   {
+    "text": "2024/05/13~05/17",
+    "conf": 1.0,
+    "x": 13.0,
+    "y": 421.3333333333333,
+    "w": 116.0,
+    "h": 15.0
+   },
+   {
+    "text": "57",
+    "conf": 1.0,
+    "x": 15.0,
+    "y": 440.0,
+    "w": 15.666666666666666,
+    "h": 11.333333333333334
+   }
+  ]
+ },
+ "input_counters": {
+  "gui_input_count": 0,
+  "album_card_inputs_used": 0,
+  "navigation_inputs_used": 0,
+  "ellipsis_inputs_used": 0,
+  "retry_count": 0,
+  "menu_item_inputs_used": 0,
+  "keyboard_inputs_used": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "chooser_interactions": 0,
+  "app_acquisition_inputs": 0,
+  "bring_to_front_inputs": 0,
+  "save_all_dispatch_attempted": false
+ },
+ "gate": {
+  "stop_condition_observed": false,
+  "decision": "S1_PASS_ZERO_INPUT; proceed to S2 fresh frame + AX post-observation"
+ }
+}
