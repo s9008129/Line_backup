@@ -1,0 +1,172 @@
+{
+ "artifact": "S1/S2 read-only surface revalidation + fresh menu determination (attempt-03)",
+ "recorded_at_local": "2026-09-21T18:42",
+ "fresh_full_frame": {
+  "path": "evidence/20260921-rev27-save-all/attempt-03/frame-s1.png",
+  "sha256": "0979cb7823aafd811f156de5b5b8458fbc5e54660292b0ea40723e0f89819a29",
+  "size_px": [
+   2294,
+   1490
+  ]
+ },
+ "ax_window_reads": {
+  "pre": {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s1-ax-pre.json",
+   "sha256": "8ceb57e97532e7862e6c58c8344aca13e0af7510d6e179ea2e0925eae46b8f95"
+  },
+  "post": {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s2-ax-post.json",
+   "sha256": "eee8af7ee9256b7fd6f192cbc8894b84cf1563337520c1e19d995fd6c5e45ae4"
+  },
+  "comparison": "IDENTICAL (semantic fields: frontmost_application, ax_frontmost, display, all windows title/role/subrole/position/size/minimized/main/focused/is_ax_focused_window)"
+ },
+ "window_inventory_change_vs_lineage": {
+  "attempt_13_and_attempt_02": [
+   {
+    "title": "",
+    "rect_pt": [
+     337,
+     30
+    ],
+    "size_pt": [
+     327,
+     643
+    ],
+    "main": true,
+    "focused": true,
+    "note": "album-detail window (owner of the attempt-13 menu)"
+   },
+   {
+    "title": "LINE",
+    "rect_pt": [
+     -2,
+     37
+    ],
+    "size_pt": [
+     1147,
+     699
+    ],
+    "note": "LINE main window"
+   },
+   {
+    "title": "",
+    "rect_pt": [
+     0,
+     30
+    ],
+    "size_pt": [
+     327,
+     643
+    ],
+    "note": "group window (album list)"
+   }
+  ],
+  "this_round": [
+   {
+    "title": "",
+    "rect_pt": [
+     0,
+     33
+    ],
+    "size_pt": [
+     327,
+     643
+    ],
+    "main": true,
+    "ax_focused": true,
+    "note": "group window (album list) - now AX-focused/main"
+   },
+   {
+    "title": "LINE",
+    "rect_pt": [
+     0,
+     37
+    ],
+    "size_pt": [
+     1147,
+     699
+    ],
+    "note": "LINE main window - shifted"
+   }
+  ],
+  "album_detail_window_open": false,
+  "material_change": true,
+  "note": "the album-detail window that owned the attempt-13 menu ([337,30], 327x643) no longer exists; the group window moved [0,30]->[0,33] and the main window [-2,37]->[0,37]; the album list is also scrolled slightly differently than the attempt-12 reference (the previous section's count '53' is now visible at the top edge). This predates this round's live phase (first fresh AX read at 18:36 already shows the 2-window state)."
+ },
+ "cu_window_observation": {
+  "screenshot": "evidence/20260921-rev27-save-all/attempt-03/cua-window-s1.jpg",
+  "screenshot_sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+  "screenshot_size_px": [
+   327,
+   643
+  ],
+  "ax_text_file": "evidence/20260921-rev27-save-all/attempt-03/cua-ax-state-s1.txt",
+  "ax_text_sha256": "0b6df5804ab352692d762baadb70ca747194a87c2946107845d74260a2f22952",
+  "captured_window": "AX-focused window (index 0; the group window)",
+  "read_only": true,
+  "ax_tree_summary": "standard window + search text field (focused element) + album list (101 rows) + scrollbar + window buttons + app menu bar; no menu/popup elements"
+ },
+ "album_open_formal_window_pair": {
+  "tool": "evidence/20260916-route/tools/v5/verify_album_open.py",
+  "tool_sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "pre": "evidence/20260916-route/attempt-12/cua-window-s1.jpg",
+  "post": "evidence/20260921-rev27-save-all/attempt-03/cua-window-s1.jpg",
+  "result_json": "evidence/20260921-rev27-save-all/attempt-03/s3-album-open-verify-window.json",
+  "result_sha256": "bfb34f63c497aa08958400e84b952abb2e4be767449cb81a99a819a46443ed6b",
+  "verdict": "ALBUM_OPEN_VERIFIED",
+  "title_read": [
+   "2024/05/13~05/17"
+  ],
+  "title_bbox": [
+   15,
+   449,
+   129,
+   462
+  ],
+  "count_digits_read": "57",
+  "count_text": "MATCH",
+  "changed_fraction": 0.530517,
+  "exit_code": 0,
+  "window_identity_note": "the post frame is the group/album-list window (title read at vertical mid-window, y~449 px, i.e. the scrolled section header). The frozen instrument returns ALBUM_OPEN_VERIFIED by its rules (title+count readable, substantive change); it does NOT re-establish the attempt-13 album-detail surface."
+ },
+ "album_open_supporting_screen_pair": {
+  "pre": "evidence/20260916-route/attempt-12/frame-pre.png",
+  "post": "evidence/20260921-rev27-save-all/attempt-03/frame-s1.png",
+  "result_json": "evidence/20260921-rev27-save-all/attempt-03/s3-album-open-verify-screen-supporting.json",
+  "result_sha256": "3fad7e2f5ddcd11eb36ed156b9535a77eb90fdd841244f2b7421455b804537ee",
+  "verdict": "ALBUM_OPEN_VERIFIED",
+  "title_read": [
+   "2024/05/13~05/17"
+  ],
+  "count_text": "MATCH",
+  "exit_code": 0
+ },
+ "geometry_binding": {
+  "geometry": "evidence/20260921-rev27-save-all/attempt-03/live-window-geometry.json",
+  "geometry_sha256": "aaaf832243b1bbf3fae356f2fabbcaa6f2c09bd7d8bef30dbd7f4a2528c6cc0e",
+  "validation": "evidence/20260921-rev27-save-all/attempt-03/geometry-binding.json",
+  "validation_sha256": "e1c1516517b31b9754113e0b1dec0f4c1bbd8dea160b4f8dd4c8aa5f47bd792d",
+  "verdict": "GEOMETRY_BINDING_PASS",
+  "mad_mean": 2.141,
+  "dims_exact": true
+ },
+ "overlay_and_prompt_checks": {
+  "permission_prompt": "none",
+  "unknown_overlay": "none",
+  "occluding_window": "the host terminal window covers most of the LINE MAIN window (behind it); the AX-focused group window (px rect [0,66,654,1286]) is fully visible and unoccluded; no popup/menu surface anywhere on the frame (see s2-menu-absence-proof.json)"
+ },
+ "count_context": {
+  "target_title": "2024/05/13~05/17",
+  "target_count": "57 (MATCH)",
+  "note": "'53' at the top edge belongs to a previous, scrolled-off album section (its title is cropped above the viewport); it is not attached to the target header; no contradiction with the expected 57"
+ },
+ "menu_surface_check": {
+  "detector_pair_result": "evidence/20260921-rev27-save-all/attempt-03/s2-menu-detect.json",
+  "detector_pair_result_sha256": "feb1d799c6fe922d98fa54892202db504efdc8d20fb812c7043389edbd9c05f0",
+  "determination_file": "evidence/20260921-rev27-save-all/attempt-03/s2-menu-absence-proof.json",
+  "verdict": "MENU_NOT_PRESENT",
+  "basis": "frozen detector returned MENU_DETECTED with the WHOLE-FRAME bbox [0,0,2294,1490] (its changed region is the host terminal window + the moved/closed LINE windows; OCR strings are terminal text); the menu-like-region property fails; the pre-declared ROI cross-check is INDETERMINATE (the ROI background is now occupied by the terminal window) -> treated as NOT_PRESENT (fail-closed); no menu-owner window exists (album-detail closed); the fresh AX tree has no menu elements"
+ },
+ "conclusion": "S1: LINE frontmost; target title+count readable (frozen instrument: ALBUM_OPEN_VERIFIED) but on the group/album-list window - the album-detail window of the attempt-13 lineage is NOT open (material surface change). S2: fresh menu determination = MENU_NOT_PRESENT => fail-closed STOP before any GUI input and before any staging mkdir",
+ "gui_inputs_sent": 0
+}

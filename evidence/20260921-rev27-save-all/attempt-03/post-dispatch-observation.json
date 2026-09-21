@@ -1,0 +1,45 @@
+{
+ "artifact": "S5 post-dispatch read-only observation record (attempt-03)",
+ "recorded_at_local": "2026-09-21T18:42",
+ "status": "NOT_DISPATCHED",
+ "reason": "no Save All click was ever dispatched (menu not present)",
+ "observed_surface_at_stop": {
+  "new_modal_panel_or_window": "none observed",
+  "line_windows": [
+   {
+    "title": "",
+    "role": "AXWindow",
+    "rect_points": [
+     [
+      0,
+      33
+     ],
+     [
+      327,
+      643
+     ]
+    ],
+    "main": true,
+    "ax_focused": true
+   },
+   {
+    "title": "LINE",
+    "role": "AXWindow",
+    "rect_points": [
+     [
+      0,
+      37
+     ],
+     [
+      1147,
+      699
+     ]
+    ]
+   }
+  ],
+  "ax_tree_of_focused_window": "text field + album list (101 rows) + scrollbar + window buttons + app menu bar; no menu/popup elements",
+  "chooser": "NOT_OBSERVED (no dispatch; also no chooser surface in AX or frame)",
+  "filesystem_side_effect": "none (baseline unchanged; staging not created)"
+ },
+ "gui_inputs_after_stop": 0
+}

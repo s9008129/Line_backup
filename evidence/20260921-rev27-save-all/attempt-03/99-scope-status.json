@@ -1,0 +1,178 @@
+{
+ "artifact": "rev27 Save All Gate A closing scope status (attempt-03)",
+ "round": "rev27 Save All Gate A - one-shot Save-All dispatch observation (owner-authorized)",
+ "phase": "closing",
+ "captured_at_local": "2026-09-21T18:43",
+ "final_outcome": "STOPPED_FAIL_CLOSED__MENU_NOT_PRESENT__SURFACE_CHANGED__ZERO_GUI_INPUT",
+ "scoped_blocker": "MENU_NOT_PRESENT_REQUIRES_NEW_ELLIPSIS_AUTHORIZATION",
+ "primary_outcome": "NOT_REACHED (Save All dispatch was gated on a fresh affirmatively-observed menu; the fresh determination is MENU_NOT_PRESENT, so no dispatch was permitted and none occurred)",
+ "safety_outcome": "SATISFIED - fail-closed stop with zero GUI input, zero staging writes, accepted baseline proven unchanged",
+ "save_all": {
+  "budget": 1,
+  "used": 0,
+  "dispatch_state": "NOT_ATTEMPTED",
+  "click_count": 0
+ },
+ "gui_input_count": 0,
+ "menu_item_inputs": 0,
+ "chooser_interactions": 0,
+ "keyboard_inputs": 0,
+ "scroll_inputs": 0,
+ "ax_write_inputs": 0,
+ "app_acquisition_inputs": 0,
+ "bring_to_front_inputs": 0,
+ "downloads": 0,
+ "destination_writes": 0,
+ "cleanup_delete_operations": 0,
+ "formal_state_writes": 0,
+ "retries": 0,
+ "staging_mkdir_used": 0,
+ "baseline": {
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+  "file_count": 57,
+  "total_bytes": 17924900,
+  "manifest_digest_sha256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "unchanged": true
+ },
+ "album_state_left_open": "group window (album list, AX-focused, rect [0,33] 327x643) with the target section 2024/05/13~05/17 / 57 visible; LINE main window behind the host terminal; the album-detail window is NOT open; no menu popup present; nothing was clicked",
+ "surface_change_observed": "vs attempts 13/02: the album-detail window ([337,30]) is gone; windows moved by 2-3 pt; album list slightly scrolled differently. Recorded, not repaired.",
+ "owner_handoff_note": "keep hands off the keyboard/pointer while any of this is open; the menu is closed and the album-detail window is not open. The next round requires new owner authorizations: (a) a fresh album-card interaction to reopen the album-detail window, (b) a fresh album-level ellipsis click to reopen the menu - then a re-granted Save All Gate A. The attempt-13 ellipsis budget and this round's Save All budget are consumed/expired without dispatch.",
+ "frozen_assets_untouched": {
+  "attempt_12": "untouched",
+  "attempt_13": "untouched",
+  "attempt_02": "untouched",
+  "frozen_v4_v5_v6": "untouched",
+  "rev27_plan_and_reviews": "untouched"
+ },
+ "new_evidence": [
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/00-start-state.json",
+   "sha256": "8e6b41b76daa019be54b3f80a9432bf10255a83ecccd4a2426ecb0d114a049e0"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/authorization-record.json",
+   "sha256": "c7d5aff8f9fd556f105439a6b554b0b2ca5754e8c4406bc1dad35014a59640ac"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/baseline-inventory-end.json",
+   "sha256": "97d7a604bb8642cb647dd25f548a5f57839a2836aa1c7ae90acba3fc83bdb811"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/baseline-inventory-pre.json",
+   "sha256": "99c64bc0cab30e6f8ed0b60f6340613387d38e8601c109e87f8100f4a04a7b71"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/cua-ax-state-s1.txt",
+   "sha256": "0b6df5804ab352692d762baadb70ca747194a87c2946107845d74260a2f22952"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/cua-window-s1.bin",
+   "sha256": "6e874cdcf11d889e9bbbc2f30d9d97372c389325110ca2b33b963fe927296fa8"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/cua-window-s1.jpg",
+   "sha256": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/frame-s1.png",
+   "sha256": "0979cb7823aafd811f156de5b5b8458fbc5e54660292b0ea40723e0f89819a29"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/geometry-binding.json",
+   "sha256": "e1c1516517b31b9754113e0b1dec0f4c1bbd8dea160b4f8dd4c8aa5f47bd792d"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/geometry-binding.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/geometry-binding.stdout",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/live-window-geometry.json",
+   "sha256": "aaaf832243b1bbf3fae356f2fabbcaa6f2c09bd7d8bef30dbd7f4a2528c6cc0e"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/post-dispatch-observation.json",
+   "sha256": "7764409299f19fe0694e08212382a1f290b5e6ae5ddbc26cc41d1b2b34a83670"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/route-runbook.md",
+   "sha256": "6d869baea2fb4b30e72aa63adc2453bd7bd15b422de9b5be028e0385c952d73a"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/run-ledger.json",
+   "sha256": "a3749e4492839c9483bad91fdef239a5a47171020025c954dd1c0b64cd57e5bc"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s1-ax-pre.json",
+   "sha256": "8ceb57e97532e7862e6c58c8344aca13e0af7510d6e179ea2e0925eae46b8f95"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s1-ax-pre.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s1-s2-surface-revalidation.json",
+   "sha256": "88327e546661fe1f573eccbc33bbb9de4d7bccd915bd64ddb4f252effba7e088"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s2-ax-post.json",
+   "sha256": "eee8af7ee9256b7fd6f192cbc8894b84cf1563337520c1e19d995fd6c5e45ae4"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s2-ax-post.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s2-menu-absence-proof.json",
+   "sha256": "713d05d119d874b2ecfa8c96e2b9fdd605cbf4d5f470151dd8bf9e441e0c5082"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s2-menu-detect.json",
+   "sha256": "feb1d799c6fe922d98fa54892202db504efdc8d20fb812c7043389edbd9c05f0"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s2-menu-detect.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s2-menu-detect.stdout",
+   "sha256": "feb1d799c6fe922d98fa54892202db504efdc8d20fb812c7043389edbd9c05f0"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s3-album-open-verify-screen-supporting.json",
+   "sha256": "3fad7e2f5ddcd11eb36ed156b9535a77eb90fdd841244f2b7421455b804537ee"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s3-album-open-verify-screen-supporting.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s3-album-open-verify-screen-supporting.stdout",
+   "sha256": "3fad7e2f5ddcd11eb36ed156b9535a77eb90fdd841244f2b7421455b804537ee"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s3-album-open-verify-window.json",
+   "sha256": "bfb34f63c497aa08958400e84b952abb2e4be767449cb81a99a819a46443ed6b"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s3-album-open-verify-window.stderr",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s3-album-open-verify-window.stdout",
+   "sha256": "bfb34f63c497aa08958400e84b952abb2e4be767449cb81a99a819a46443ed6b"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/save-all-click-intent.json",
+   "sha256": "e74a8d4f5bc3323146cace1a534b8786a8c93dee27e029d2b6f06d56d96c6a79"
+  },
+  {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/staging-preflight.json",
+   "sha256": "82d59ef79d8caf5831f71dd709ba3f2ac2738cedd62f74e2233ffc98f948e3dd"
+  }
+ ],
+ "gui_inputs_sent": 0
+}

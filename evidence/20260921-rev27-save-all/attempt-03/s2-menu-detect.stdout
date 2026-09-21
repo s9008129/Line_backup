@@ -1,0 +1,262 @@
+{
+ "tool": "detect_menu_popup",
+ "pre": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+ "post": "evidence/20260921-rev27-save-all/attempt-03/frame-s1.png",
+ "params": {
+  "delta": 12,
+  "min_w": 40,
+  "min_h": 20,
+  "min_pixels": 200,
+  "min_strings": 2,
+  "min_strlen": 2
+ },
+ "pre_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+ "post_sha256": "0979cb7823aafd811f156de5b5b8458fbc5e54660292b0ea40723e0f89819a29",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "changed_pixels_total": 2077340,
+ "components": [
+  {
+   "bbox": [
+    0,
+    0,
+    2294,
+    1490
+   ],
+   "pixels": 1606571,
+   "w": 2294,
+   "h": 1490
+  },
+  {
+   "bbox": [
+    32,
+    304,
+    632,
+    989
+   ],
+   "pixels": 333874,
+   "w": 600,
+   "h": 685
+  },
+  {
+   "bbox": [
+    0,
+    88,
+    651,
+    1330
+   ],
+   "pixels": 41043,
+   "w": 651,
+   "h": 1242
+  },
+  {
+   "bbox": [
+    112,
+    0,
+    680,
+    51
+   ],
+   "pixels": 19141,
+   "w": 568,
+   "h": 51
+  },
+  {
+   "bbox": [
+    707,
+    0,
+    933,
+    52
+   ],
+   "pixels": 5936,
+   "w": 226,
+   "h": 52
+  },
+  {
+   "bbox": [
+    1302,
+    1354,
+    1374,
+    1426
+   ],
+   "pixels": 4127,
+   "w": 72,
+   "h": 72
+  },
+  {
+   "bbox": [
+    896,
+    24,
+    1079,
+    52
+   ],
+   "pixels": 2593,
+   "w": 183,
+   "h": 28
+  },
+  {
+   "bbox": [
+    8,
+    88,
+    108,
+    120
+   ],
+   "pixels": 2524,
+   "w": 100,
+   "h": 32
+  },
+  {
+   "bbox": [
+    2268,
+    1134,
+    2282,
+    1220
+   ],
+   "pixels": 1172,
+   "w": 14,
+   "h": 86
+  },
+  {
+   "bbox": [
+    1357,
+    0,
+    1418,
+    41
+   ],
+   "pixels": 1090,
+   "w": 61,
+   "h": 41
+  }
+ ],
+ "chosen_bbox": [
+  0,
+  0,
+  2294,
+  1490
+ ],
+ "ocr_status": "OK",
+ "ocr_strings": [
+  "ee",
+  "[人",
+  "Line_backup",
+  "Line_backup",
+  "codex",
+  "-m",
+  "deepseek-v4.1-flash",
+  "--sand...",
+  "<<'",
+  "PATCH!",
+  "***k",
+  "Begin",
+  "Patch",
+  "vi=pin",
+  "記事",
+  ",。",
+  "+176",
+  "lines",
+  "53",
+  "Success.",
+  "Updated",
+  "the",
+  "following",
+  "files:",
+  "evidence/20260921-rev27-save-—all/attempt—@3/route—runbook.md",
+  "6d869baea2fFb4b30e72aab63adc2453bd7bd15b422de9b5be028e0385c952d73a",
+  "Gamti",
+  "Za",
+  "evidence/20260921-rev27-save—all/attempt—@3/route-runbook.md",
+  "aod",
+  ">.",
+  "Ran",
+  "cd",
+  "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "&&",
+  "ATT=evidence/20260921-rev27-save—all/attempt-—03",
+  "&&",
+  "swiftc",
+  "-o",
+  "/tmp/",
+  "attempt@3-ax_window_bounds",
+  "$ATT/tools/ax_window_bounds.swift",
+  "2>&1",
+  "head",
+  "ws",
+  "+13",
+  "lines",
+  "exit=0",
+  "ge",
+  "ai",
+  "ip.",
+  "ax",
+  "_frontmost:",
+  "True",
+  ",,",
+  "+8",
+  "lines",
+  "(ctrl",
+  "to",
+  "view",
+  "transcript)",
+  "LINE",
+  "AXWindow",
+  "AXStandardWindow",
+  "[@,",
+  "37]",
+  "[1147,",
+  "699]",
+  "minimized",
+  "False",
+  "main",
+  "False",
+  "focused",
+  "False",
+  "axfocused",
+  "False",
+  "fy,",
+  "ie",
+  "Timing",
+  "note:",
+  "it's",
+  "~18:39now.",
+  "(4m",
+  "3@s",
+  "esc",
+  "to",
+  "interrupt)",
+  "\\—~",
+  "“5",
+  "Ask",
+  "Codex",
+  "to",
+  "do",
+  "anything",
+  "deepseek-v4.1-flash",
+  "max",
+  "~/Documents/ChatGPT/Line_backup",
+  "Ao",
+  "yo",
+  "GUI",
+  "操作",
+  "2024/05/13~05/17",
+  "5/7",
+  "iS.)",
+  "menu-item",
+  "candidate",
+  "left",
+  "click",
+  "—_",
+  "~}",
+  "ace",
+  "詢問",
+  "ChatGPT",
+  "sv",
+  "Ge"
+ ],
+ "verdict": "MENU_DETECTED",
+ "reason": "new region plus transcribed menu strings"
+}

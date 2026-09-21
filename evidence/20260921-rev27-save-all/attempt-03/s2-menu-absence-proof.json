@@ -1,0 +1,147 @@
+{
+ "artifact": "S2 menu-presence determination (fail-closed) - rev27 Gate A attempt-03",
+ "recorded_at_local": "2026-09-21T18:42",
+ "fresh_frame": {
+  "path": "evidence/20260921-rev27-save-all/attempt-03/frame-s1.png",
+  "sha256": "0979cb7823aafd811f156de5b5b8458fbc5e54660292b0ea40723e0f89819a29",
+  "size": [
+   2294,
+   1490
+  ]
+ },
+ "frozen_detector_result": {
+  "path": "evidence/20260921-rev27-save-all/attempt-03/s2-menu-detect.json",
+  "sha256": "feb1d799c6fe922d98fa54892202db504efdc8d20fb812c7043389edbd9c05f0",
+  "pre": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+  "pre_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+  "verdict": "MENU_DETECTED",
+  "exit_code": 0,
+  "chosen_bbox": [
+   0,
+   0,
+   2294,
+   1490
+  ],
+  "changed_pixels_total": 2077340,
+  "components_bboxes": [
+   [
+    0,
+    0,
+    2294,
+    1490
+   ],
+   [
+    32,
+    304,
+    632,
+    989
+   ],
+   [
+    0,
+    88,
+    651,
+    1330
+   ],
+   [
+    112,
+    0,
+    680,
+    51
+   ],
+   [
+    707,
+    0,
+    933,
+    52
+   ],
+   [
+    1302,
+    1354,
+    1374,
+    1426
+   ],
+   [
+    896,
+    24,
+    1079,
+    52
+   ],
+   [
+    8,
+    88,
+    108,
+    120
+   ],
+   [
+    2268,
+    1134,
+    2282,
+    1220
+   ],
+   [
+    1357,
+    0,
+    1418,
+    41
+   ]
+  ],
+  "ocr_strings_sample": [
+   "ee",
+   "[人",
+   "Line_backup",
+   "Line_backup",
+   "codex",
+   "-m",
+   "deepseek-v4.1-flash",
+   "--sand...",
+   "<<'",
+   "PATCH!",
+   "***k",
+   "Begin",
+   "Patch",
+   "vi=pin",
+   "記事",
+   ",。",
+   "+176",
+   "lines",
+   "53",
+   "Success.",
+   "Updated",
+   "the",
+   "following",
+   "files:"
+  ],
+  "affirmative_rule": "MENU_DETECTED AND chosen bbox overlaps the fresh LINE window rect",
+  "bbox_is_whole_frame": true,
+  "bbox_overlap_result": "trivially true (whole-frame bbox overlaps every window rect) => the bbox-overlap test degenerates this round; the menu-like-region property is violated (a full-screen component is not a bounded popup)",
+  "false_positive_explanation": "the changed region is the host terminal window plus the moved/closed LINE windows; the OCR strings are terminal text ('Line_backup', 'codex', 'Begin', 'Patch', 'route-runbook.md', 'Success.', ...), not menu items"
+ },
+ "independent_roi_evidence": {
+  "method": "gray-level mean absolute difference (MAD, numpy) over the pre-declared read-only comparison region; references are byte-authenticated attempt-13 frames",
+  "menu_roi_px": [
+   1247,
+   127,
+   1494,
+   478
+  ],
+  "measurements": {
+   "fresh_vs_menu_absent_reference": 25.918,
+   "fresh_vs_menu_open_reference_post1": 42.684,
+   "fresh_vs_menu_open_reference_post2": 42.685,
+   "control_menu_open_post1_vs_absent": 25.185,
+   "control_menu_open_post2_vs_absent": 25.187
+  },
+  "pre_declared_rule": "ABSENT if MAD(fresh,absent)<=12.0 AND < MAD(fresh,open); PRESENT only if MAD(fresh,open)<=12.0 AND < MAD(fresh,absent); otherwise INDETERMINATE",
+  "rule_result": "INDETERMINATE (25.918 > 12.0 and 42.684 > 12.0) - the ROI background is now occupied by the host terminal window, so the absolute-reference comparison cannot classify; treated as NOT_PRESENT (fail-closed per the runbook)",
+  "old_detail_window_region_mad_vs_menu_absent_reference": 80.085,
+  "note": "the ROI is a read-only comparison region only; it is never used as a click input, and no historical coordinate is dispatched"
+ },
+ "independent_absence_factors": [
+  "no menu-owner window: the album-detail window ([337,30] in attempts 13/02) is not in the fresh AX window list (2 windows only)",
+  "the fresh read-only AX tree of the focused window contains no menu/popup elements (text field + 101-row list + scrollbar + window buttons + the app menu bar only; focused element = the search text field)",
+  "the detector's only 'new' region is the whole frame; no bounded menu-like component appears at any window edge",
+  "visual read-only scan of the fresh frame (halves at 1x): no popup anywhere"
+ ],
+ "conclusion": "MENU_NOT_PRESENT",
+ "gui_inputs_sent": 0
+}

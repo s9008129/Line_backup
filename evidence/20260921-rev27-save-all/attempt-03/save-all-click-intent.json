@@ -1,0 +1,13 @@
+{
+ "artifact": "S3 Save All click intent record (attempt-03)",
+ "recorded_at_local": "2026-09-21T18:42",
+ "written": false,
+ "reason": "S3 not reached: the fresh menu determination is MENU_NOT_PRESENT; no dispatch is possible or permitted",
+ "dispatch_state": "NOT_ATTEMPTED",
+ "save_all_menu_item_click_budget": 1,
+ "save_all_menu_item_click_used": 0,
+ "save_all_retry_allowed": false,
+ "retry_budget": 0,
+ "formal_state_write": false,
+ "fresh_candidate": "NONE (no fresh menu frame existed, so no candidate could be derived)"
+}

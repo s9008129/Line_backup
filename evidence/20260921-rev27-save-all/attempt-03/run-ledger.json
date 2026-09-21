@@ -1,0 +1,390 @@
+{
+ "artifact": "rev27 Save All Gate A attempt-03 run ledger",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-03/",
+ "round": "rev27 Save All Gate A - one-shot Save-All dispatch observation (owner-authorized)",
+ "outcome": "STOPPED_FAIL_CLOSED_BEFORE_ANY_GUI_INPUT__MENU_NOT_PRESENT__SURFACE_CHANGED_VS_LINEAGE",
+ "timeline_local": [
+  "18:35 pre-round read-only binding: git status/HEAD/origin/log; plan SHA; both review SHAs; attempt-12/13 rehash; attempt-02 rehash (57 files); frozen tool rehash; baseline manifest recomputation (57/17924900/b7debe92...)",
+  "18:36 attempt-03 pre-declared artifacts written (00-start-state.json, authorization-record.json, route-runbook.md); AX pre-read; frame-s1.png; AX post-read (identical)",
+  "18:37-18:39 read-only CU get_app_state (window screenshot + AX text; no input)",
+  "18:39-18:40 frozen verify_album_open window pair + supporting pair; validate_live_geometry; frozen detect_menu_popup",
+  "18:41 ROI cross-check computed (numpy MAD) + absence analysis",
+  "18:42 S1/S2 records, inventories, not-executed records written; ledger + scope status"
+ ],
+ "git": {
+  "status_porcelain_branch": "## master...origin/master [ahead 7]",
+  "untracked": [
+   "?? evidence/20260916-route/attempt-11/",
+   "?? evidence/20260916-route/tools/v4/__pycache__/",
+   "?? evidence/20260916-route/tools/v5/__pycache__/",
+   "?? evidence/20260916-route/tools/v6/__pycache__/",
+   "?? evidence/20260916-route/tools/v6/selftest/__pycache__/",
+   "?? evidence/20260921-rev27-save-all/attempt-03/"
+  ],
+  "head": "c4f77597cb8b943e07a959ec359eb0b254028012",
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "log_head_7": [
+   "c4f7759 意圖： Rev27 Save All Gate A one-shot 執行（route attempt-02）：fresh read-only revalidation → fresh menu verification → fresh machine-derived「儲存全部」candidate → 若且僅若全鏈成立才 exactly one Save All menu-item click → read-only 觀察後停止。實際結果：fresh frame 證實 attempt-13 的 menu 已不存在 → 依 owner 決策樹在零 GUI input 下 fail-closed STOP，Save All 未 dispatch（0/1）。",
+   "194e0d8 意圖： Rev27 Save All / chooser / filesystem safety planning（零 GUI input）：在 attempt-13 已證明 ALBUM_OPEN_VERIFIED → live frozen v5 ELIGIBLE → exactly one ellipsis click → MENU_SURFACE_AFFIRMATIVELY_OBSERVED →「儲存全部」affirmatively identified 的基礎上，設計下一個真正產生 filesystem side effect 的 bounded Save-All 交易（Gate A/B/C 分段），並以兩份獨立 review 對 exact plan SHA 做 PLAN_APPROVED。",
+   "802ee4c 意圖： Rev29 route attempt-13 one-shot GUI 執行：fresh read-only album-open revalidation → fresh frame → frozen v5 ellipsis locator；若且僅若 live v5=ELIGIBLE，對本輪 fresh frame 當下導出的 candidate 執行一次 album-level ⋮ 左鍵；立即 fresh menu observation 後無條件停止（ellipsis click=1，其餘全部=0，Save All=0）。",
+   "d27b50e 意圖： Rev27 attempt-12 one-shot GUI 執行：fresh read-only revalidation；若且僅若 frozen v6=ELIGIBLE，對本輪 fresh frame 導出的 candidate 執行一次 album-card 左鍵；立即 fresh S5 驗證後無條件停止（album-card click=1，其餘全部=0）。 變更： 新增 append-only evidence/20260916-route/attempt-12/（S1 read-only AX pre + CU surface read、fresh frame-pre、frame-SHA 綁定的 live-window-geometry 與 geometry-binding 驗證、frozen v6 S3、pre-click freshness re-read、唯一一次 click 記錄、fresh frame-post 與 frozen v4 S5、CU post 佐證、run-ledger、closing status）。未修改 attempt-10/11、未修改 frozen v4/v5/v6、未重用 [39,923] 或任何 historical coordinate、未使用 attempt-11 inactive-window fallback、未 touch 任何既有 57 檔。",
+   "57a0602 意圖： Rev26 第一次 live v6 zero-input 驗證（route attempt-10）：以 fresh frame + read-only AX 視窗幾何，對 jp.naver.line.mac／旻謙允禎成長日記／2024/05/13～05/17／expected 57 跑一次 frozen v6 album-card S3；全程禁止任何 LINE GUI input。",
+   "5139b3f Rev26 v6 重規劃：以 attempt-08/09 證據重設計 album-card S3 安全判定",
+   "d3728e7 Rev25 attempt-09：零輸入 fresh S1-S3 觀察與安全停機"
+  ],
+  "head_contains_plan_baseline_commit": {
+   "commit": "194e0d84933913e78cad8e45c38de075ab857222",
+   "position": "HEAD~1",
+   "ancestor": true,
+   "note": "the owner brief expected HEAD=194e0d8 with ahead 6 (plan-baseline moment); the pre-authorized attempt-02 evidence commit c4f7759 advanced local master by one. Observed ahead count 7 (+1 for attempt-02 evidence). No fetch/pull/reset/rebase/amend/push performed."
+  },
+  "untracked_left_untouched": [
+   "evidence/20260916-route/attempt-11/",
+   "evidence/20260916-route/tools/v4/__pycache__/",
+   "evidence/20260916-route/tools/v6/__pycache__/",
+   "evidence/20260916-route/tools/v6/selftest/__pycache__/"
+  ],
+  "no_fetch_pull_reset_rebase_amend_push": true
+ },
+ "authorization_binding": {
+  "plan": {
+   "path": "PLAN-2026-09-21-rev27-save-all.md",
+   "sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052",
+   "match": true
+  },
+  "review_1": {
+   "path": "evidence/20260921-rev27-save-all/attempt-01/review-01-top-down.md",
+   "sha256": "652170a110ee2eca5465c874f149b064fcb19399c0f85dc52344af39738abf67",
+   "recorded_verdict": "PLAN_APPROVED",
+   "match": true
+  },
+  "review_2": {
+   "path": "evidence/20260921-rev27-save-all/attempt-01/review-02-adversarial-gui-filesystem.md",
+   "sha256": "aba1a586e16941e4ceb12c988c4338e4af76aa096aed42b63233347c794bcd0d",
+   "recorded_verdict": "PLAN_APPROVED",
+   "match": true
+  }
+ },
+ "historical_prerequisites_rehashed": {
+  "attempt_12": {
+   "dir": "evidence/20260916-route/attempt-12",
+   "files": {
+    "frame-pre.png": {
+     "expected": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+     "got": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+     "match": true
+    },
+    "frame-post.png": {
+     "expected": "7bd54308d916f8b7f0f78221a660d94b1f2985ebb19ce638c4591d780a00bca3",
+     "got": "7bd54308d916f8b7f0f78221a660d94b1f2985ebb19ce638c4591d780a00bca3",
+     "match": true
+    },
+    "album-card-locate-v6.json": {
+     "expected": "05bcea90f31587435a1c16b522938eeabc32b06788d4d85b002559eb5b036875",
+     "got": "05bcea90f31587435a1c16b522938eeabc32b06788d4d85b002559eb5b036875",
+     "match": true
+    },
+    "album-open-verify.json": {
+     "expected": "e99aa1a65d8c6999acbd7a5371a153d1990c514c70bbf8d5c285de7db2949ab6",
+     "got": "e99aa1a65d8c6999acbd7a5371a153d1990c514c70bbf8d5c285de7db2949ab6",
+     "match": true
+    },
+    "run-ledger.json": {
+     "expected": "992df1a2c1997c3305d4a1ed5c4c7eaaf1d2108ab7defd15213ef082ac15c0f2",
+     "got": "992df1a2c1997c3305d4a1ed5c4c7eaaf1d2108ab7defd15213ef082ac15c0f2",
+     "match": true
+    },
+    "99-scope-status.json": {
+     "expected": "9e13be0507d420f02668ecdb2cba4f355ffb658915429bf647187ceaa7ee42f4",
+     "got": "9e13be0507d420f02668ecdb2cba4f355ffb658915429bf647187ceaa7ee42f4",
+     "match": true
+    }
+   },
+   "all_match": true,
+   "facts": {
+    "fresh_v6": "ELIGIBLE",
+    "album_card_clicks": 1,
+    "s5": "ALBUM_OPEN_VERIFIED",
+    "retry": 0
+   }
+  },
+  "attempt_13": {
+   "dir": "evidence/20260916-route/attempt-13",
+   "files": {
+    "frame-pre.png": {
+     "expected": "0e22f7546938cbe95023cfc352aaf5e1166651a9e78a29f16eae9ac857287638",
+     "got": "0e22f7546938cbe95023cfc352aaf5e1166651a9e78a29f16eae9ac857287638",
+     "match": true
+    },
+    "s3-album-open-verify-window.json": {
+     "expected": "2f3d08770c678687c5effbf0f1df6a8398de26587116873c34000682ec7e385c",
+     "got": "2f3d08770c678687c5effbf0f1df6a8398de26587116873c34000682ec7e385c",
+     "match": true
+    },
+    "s4-album-ellipsis-locate.json": {
+     "expected": "17290acdaa29ccbf405279665c4932c9a2eb4f284af6ef54d6f6d4c0cfc99d6e",
+     "got": "17290acdaa29ccbf405279665c4932c9a2eb4f284af6ef54d6f6d4c0cfc99d6e",
+     "match": true
+    },
+    "s5-click-intent.json": {
+     "expected": "417cff16f06d2034847464befb85b25d2cd963f64c47778bba1f97c04a20075f",
+     "got": "417cff16f06d2034847464befb85b25d2cd963f64c47778bba1f97c04a20075f",
+     "match": true
+    },
+    "frame-menu-post1.png": {
+     "expected": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+     "got": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+     "match": true
+    },
+    "frame-menu-post2.png": {
+     "expected": "fed170184cf7ae32b998c7fe4d903cd0a5fb4d655e38e7f6cae493c5148e346b",
+     "got": "fed170184cf7ae32b998c7fe4d903cd0a5fb4d655e38e7f6cae493c5148e346b",
+     "match": true
+    },
+    "s6-menu-ocr.json": {
+     "expected": "5a6ad4c8a30378ff85b3d1a87b5c2a9313dde7efed0a9f0f0ae0f2f0cfed434a",
+     "got": "5a6ad4c8a30378ff85b3d1a87b5c2a9313dde7efed0a9f0f0ae0f2f0cfed434a",
+     "match": true
+    },
+    "s6-menu-observation.json": {
+     "expected": "d841b41c3239b4c14f581cca1bcfe992c68872c8ace9b99102dafe2a6d4a3fb2",
+     "got": "d841b41c3239b4c14f581cca1bcfe992c68872c8ace9b99102dafe2a6d4a3fb2",
+     "match": true
+    },
+    "run-ledger.json": {
+     "expected": "d194a21fe4a67e82ae0ae106dd06a1a9b6d87e4127082bb0f79e239c6cecb1d0",
+     "got": "d194a21fe4a67e82ae0ae106dd06a1a9b6d87e4127082bb0f79e239c6cecb1d0",
+     "match": true
+    },
+    "99-scope-status.json": {
+     "expected": "4188d3d44117e6951a7918d40ee27d742633979788c5a83ec38effc783f1353a",
+     "got": "4188d3d44117e6951a7918d40ee27d742633979788c5a83ec38effc783f1353a",
+     "match": true
+    }
+   },
+   "all_match": true,
+   "facts": {
+    "s3_album_open": "ALBUM_OPEN_VERIFIED",
+    "frozen_v5_live": "ELIGIBLE",
+    "ellipsis_click": 1,
+    "s6_menu_surface": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED",
+    "save_all_localized_identified": "儲存全部 (Save All) affirmatively identified — evidence only",
+    "menu_item_clicks": 0,
+    "save_all_dispatch": 0,
+    "chooser": 0,
+    "download": 0,
+    "retry": 0
+   }
+  }
+ },
+ "frozen_tools": {
+  "route_tools": {
+   "tools/v5/locate_album_ellipsis.py": {
+    "expected": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+    "got": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+    "match": true
+   },
+   "tools/v5/verify_album_open.py": {
+    "expected": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+    "got": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+    "match": true
+   },
+   "tools/v5/vision_reader.py": {
+    "expected": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+    "got": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+    "match": true
+   },
+   "tools/v5/locate_album_card.py": {
+    "expected": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+    "got": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+    "match": true
+   },
+   "tools/v6/locate_album_card.py": {
+    "expected": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+    "got": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+    "match": true
+   },
+   "tools/detect_menu_popup.py": {
+    "expected": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+    "got": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+    "match": true
+   },
+   "tools/vision/vision_ocr.swift": {
+    "expected": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+    "got": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+    "match": true
+   }
+  },
+  "v7_locator": {
+   "path": "evidence/20260921-rev27-save-all/attempt-02/tools/locate_save_all_menu_item.py",
+   "sha256": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+   "frozen_sha256_from_attempt_02": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+   "match": true
+  },
+  "attempt_02_readonly_helpers": {
+   "tools/ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+   "tools/validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"
+  }
+ },
+ "S1_read_only_revalidation": {
+  "frame": {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/frame-s1.png",
+   "sha256": "0979cb7823aafd811f156de5b5b8458fbc5e54660292b0ea40723e0f89819a29"
+  },
+  "ax_window_reads_identical": true,
+  "frontmost_application": "jp.naver.line.mac",
+  "ax_frontmost": true,
+  "window_inventory": "2 standard LINE windows (group window [0,33] 327x643 main/ax-focused; LINE main [0,37] 1147x699); the album-detail window of attempts 13/02 is NOT open",
+  "surface_change_vs_lineage": true,
+  "album_open_formal_pair": {
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "count_text": "MATCH",
+   "window_identity_note": "post frame is the group/album-list window (title read mid-window at bbox [15, 449, 129, 462]); the instrument's verdict does not re-establish the attempt-13 album-detail surface"
+  },
+  "geometry_binding": "GEOMETRY_BINDING_PASS (mad_mean 2.141, dims exact)",
+  "permission_prompt": "none",
+  "unknown_overlay": "none"
+ },
+ "S2_menu_surface": {
+  "detector_pair": {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s2-menu-detect.json",
+   "sha256": "feb1d799c6fe922d98fa54892202db504efdc8d20fb812c7043389edbd9c05f0"
+  },
+  "detector_verdict": "MENU_DETECTED",
+  "detector_chosen_bbox": [
+   0,
+   0,
+   2294,
+   1490
+  ],
+  "determination": {
+   "path": "evidence/20260921-rev27-save-all/attempt-03/s2-menu-absence-proof.json",
+   "sha256": "713d05d119d874b2ecfa8c96e2b9fdd605cbf4d5f470151dd8bf9e441e0c5082"
+  },
+  "verdict": "MENU_NOT_PRESENT",
+  "basis": "whole-frame detector false positive explained (changed region = host terminal + moved/closed windows; OCR strings = terminal text); no menu-like bounded component; ROI cross-check INDETERMINATE by the absolute rule (ROI background changed) -> treated as NOT_PRESENT (fail-closed); no menu-owner window; AX tree contains no menu elements"
+ },
+ "staging_preflight": {
+  "artifact": "S0 staging preflight record (attempt-03)",
+  "recorded_at_local": "2026-09-21T18:42",
+  "performed": false,
+  "staging_setup_mkdir_used": 0,
+  "staging_setup_mkdir_budget": 2,
+  "run_id": "NOT_GENERATED (the fresh RUN-<ts>-01 id is generated only when S0 executes)",
+  "staging_path": "NOT_CREATED",
+  "staging_root": {
+   "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging",
+   "exists": false
+  },
+  "reason": "the round stopped at S1/S2 per the pre-declared order: the fresh menu determination is MENU_NOT_PRESENT, so the staging preflight branch (which strictly precedes any GUI input) was not entered; zero filesystem writes",
+  "eleven_point_preflight": "NOT_EXECUTED (branch not taken)",
+  "od3_note": "no staging directory was created this round; nothing exists to preserve or clean"
+ },
+ "save_all_intent_record": {
+  "written": false,
+  "reason": "S3 not reached; no dispatch possible"
+ },
+ "save_all_dispatch": {
+  "budget": 1,
+  "used": 0,
+  "dispatch_state": "NOT_ATTEMPTED",
+  "note": "the GUI click call was never invoked; ABORTED_BEFORE_SAVE_ALL_DISPATCH by construction (menu absent; no candidate existed)"
+ },
+ "input_counters": {
+  "historical_album_card_inputs": 1,
+  "new_album_card_inputs": 0,
+  "historical_navigation_inputs": 1,
+  "new_navigation_inputs": 0,
+  "historical_ellipsis_inputs": 1,
+  "new_ellipsis_inputs": 0,
+  "save_all_menu_item_click": 0,
+  "save_all_used": 0,
+  "other_menu_item_click": 0,
+  "chooser_interaction": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "app_acquisition": 0,
+  "bring_to_front": 0,
+  "double_click": 0,
+  "retry": 0,
+  "destination_confirm": 0,
+  "download_confirm": 0,
+  "cleanup_delete": 0,
+  "formal_state_write": 0,
+  "destination_write": 0,
+  "staging_setup_mkdir": 0,
+  "gui_input_count_this_round": 0
+ },
+ "filesystem_tripwire": {
+  "accepted_baseline": {
+   "pre": "evidence/20260921-rev27-save-all/attempt-03/baseline-inventory-pre.json",
+   "pre_sha256": "99c64bc0cab30e6f8ed0b60f6340613387d38e8601c109e87f8100f4a04a7b71",
+   "end": "evidence/20260921-rev27-save-all/attempt-03/baseline-inventory-end.json",
+   "end_sha256": "97d7a604bb8642cb647dd25f548a5f57839a2836aa1c7ae90acba3fc83bdb811",
+   "digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+   "unchanged": true
+  },
+  "fresh_staging": {
+   "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/",
+   "exists": false,
+   "entries": null,
+   "bytes": null
+  },
+  "unexpected_pre_confirm_filesystem_write": false
+ },
+ "decision": {
+  "rule": "owner decision tree: menu not present -> STOP with zero GUI input",
+  "verdict": "STOP",
+  "scoped_blocker": "MENU_NOT_PRESENT_REQUIRES_NEW_ELLIPSIS_AUTHORIZATION",
+  "secondary_observation": "material surface change vs the attempt-13 lineage: the album-detail window (menu owner) is not open; windows moved; the route's original surface is not restored",
+  "what_would_be_needed_next": "a fresh owner authorization round covering (a) reopening the album-detail window (a fresh album-card interaction on the group window) and (b) a fresh album-level ellipsis click to reopen the menu; then a re-granted Save All Gate A"
+ },
+ "notes": {
+  "scratch_artifact": "cua-window-s1.bin (91 bytes, created 18:37 by an initial mis-parse of the screenshot URL as a data URL; retained undeleted so the cleanup/delete budget stays 0; carries no LINE state; superseded by cua-window-s1.jpg)",
+  "locator_prepared_but_unused": "tools/locate_save_all_menu_item.py was copied byte-identical (ea09c1ca...) as the conditional dispatch-branch tool; it was never executed this round (S2b not reached; no candidate, no click)",
+  "read_only_helpers": "tools/ax_window_bounds.swift (5c615a90...), tools/validate_live_geometry.py (ea4230e4...) used read-only"
+ },
+ "evidence_manifest": {
+  "00-start-state.json": "8e6b41b76daa019be54b3f80a9432bf10255a83ecccd4a2426ecb0d114a049e0",
+  "authorization-record.json": "c7d5aff8f9fd556f105439a6b554b0b2ca5754e8c4406bc1dad35014a59640ac",
+  "baseline-inventory-end.json": "97d7a604bb8642cb647dd25f548a5f57839a2836aa1c7ae90acba3fc83bdb811",
+  "baseline-inventory-pre.json": "99c64bc0cab30e6f8ed0b60f6340613387d38e8601c109e87f8100f4a04a7b71",
+  "cua-ax-state-s1.txt": "0b6df5804ab352692d762baadb70ca747194a87c2946107845d74260a2f22952",
+  "cua-window-s1.bin": "6e874cdcf11d889e9bbbc2f30d9d97372c389325110ca2b33b963fe927296fa8",
+  "cua-window-s1.jpg": "3d926e7df9a5737942e1483641a787ac8f522a2c5e7af38fab06a6e3f573d531",
+  "frame-s1.png": "0979cb7823aafd811f156de5b5b8458fbc5e54660292b0ea40723e0f89819a29",
+  "geometry-binding.json": "e1c1516517b31b9754113e0b1dec0f4c1bbd8dea160b4f8dd4c8aa5f47bd792d",
+  "geometry-binding.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "geometry-binding.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "live-window-geometry.json": "aaaf832243b1bbf3fae356f2fabbcaa6f2c09bd7d8bef30dbd7f4a2528c6cc0e",
+  "post-dispatch-observation.json": "7764409299f19fe0694e08212382a1f290b5e6ae5ddbc26cc41d1b2b34a83670",
+  "route-runbook.md": "6d869baea2fb4b30e72aa63adc2453bd7bd15b422de9b5be028e0385c952d73a",
+  "s1-ax-pre.json": "8ceb57e97532e7862e6c58c8344aca13e0af7510d6e179ea2e0925eae46b8f95",
+  "s1-ax-pre.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s1-s2-surface-revalidation.json": "88327e546661fe1f573eccbc33bbb9de4d7bccd915bd64ddb4f252effba7e088",
+  "s2-ax-post.json": "eee8af7ee9256b7fd6f192cbc8894b84cf1563337520c1e19d995fd6c5e45ae4",
+  "s2-ax-post.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s2-menu-absence-proof.json": "713d05d119d874b2ecfa8c96e2b9fdd605cbf4d5f470151dd8bf9e441e0c5082",
+  "s2-menu-detect.json": "feb1d799c6fe922d98fa54892202db504efdc8d20fb812c7043389edbd9c05f0",
+  "s2-menu-detect.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s2-menu-detect.stdout": "feb1d799c6fe922d98fa54892202db504efdc8d20fb812c7043389edbd9c05f0",
+  "s3-album-open-verify-screen-supporting.json": "3fad7e2f5ddcd11eb36ed156b9535a77eb90fdd841244f2b7421455b804537ee",
+  "s3-album-open-verify-screen-supporting.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s3-album-open-verify-screen-supporting.stdout": "3fad7e2f5ddcd11eb36ed156b9535a77eb90fdd841244f2b7421455b804537ee",
+  "s3-album-open-verify-window.json": "bfb34f63c497aa08958400e84b952abb2e4be767449cb81a99a819a46443ed6b",
+  "s3-album-open-verify-window.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s3-album-open-verify-window.stdout": "bfb34f63c497aa08958400e84b952abb2e4be767449cb81a99a819a46443ed6b",
+  "save-all-click-intent.json": "e74a8d4f5bc3323146cace1a534b8786a8c93dee27e029d2b6f06d56d96c6a79",
+  "staging-preflight.json": "82d59ef79d8caf5831f71dd709ba3f2ac2738cedd62f74e2233ffc98f948e3dd"
+ },
+ "evidence_manifest_dirs": {
+  "tools": {
+   "ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+   "locate_save_all_menu_item.py": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+   "validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"
+  }
+ },
+ "gui_inputs_sent": 0
+}

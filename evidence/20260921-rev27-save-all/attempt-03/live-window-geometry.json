@@ -1,0 +1,75 @@
+{
+ "artifact": "frame-bound live window geometry (attempt-03)",
+ "captured_at_local": "2026-09-21T18:42",
+ "frame": {
+  "path": "evidence/20260921-rev27-save-all/attempt-03/frame-s1.png",
+  "sha256": "0979cb7823aafd811f156de5b5b8458fbc5e54660292b0ea40723e0f89819a29",
+  "size_px": [
+   2294,
+   1490
+  ]
+ },
+ "capture_scale": 2,
+ "display": {
+  "cg_display_mode_pixel_wh": [
+   2294,
+   1490
+  ],
+  "display_bounds_points": [
+   0,
+   0,
+   1147,
+   745
+  ],
+  "nsscreen_backing_scale_factor": 2
+ },
+ "ax_source": {
+  "path": "evidence/20260921-rev27-save-all/attempt-03/s1-ax-pre.json",
+  "sha256": "8ceb57e97532e7862e6c58c8344aca13e0af7510d6e179ea2e0925eae46b8f95"
+ },
+ "ax_frontmost": true,
+ "frontmost_application": "jp.naver.line.mac",
+ "focused_window_index": 0,
+ "window_point_rect": {
+  "origin": [
+   0,
+   33
+  ],
+  "size": [
+   327,
+   643
+  ]
+ },
+ "window_px_rect": [
+  0,
+  66,
+  654,
+  1352
+ ],
+ "all_line_windows_px_rects": [
+  [
+   0,
+   66,
+   654,
+   1352
+  ],
+  [
+   0,
+   74,
+   2294,
+   1472
+  ]
+ ],
+ "binding_validation": {
+  "path": "evidence/20260921-rev27-save-all/attempt-03/geometry-binding.json",
+  "verdict": "GEOMETRY_BINDING_PASS",
+  "mad_mean": null,
+  "dims_exact": null
+ },
+ "window_inventory_change_vs_lineage": {
+  "attempt_13_and_attempt_02": "3 standard LINE windows: album-detail ['', (337,30), 327x643, focused/main], LINE main ['LINE', (-2,37), 1147x699], album-list/group ['', (0,30), 327x643]",
+  "this_round": "2 standard LINE windows: group window ['', (0,33), 327x643, main/ax-focused], LINE main ['LINE', (0,37), 1147x699]",
+  "album_detail_window": "NOT OPEN (the [337,30] window of attempts 13/02 no longer exists)",
+  "implication": "the surface of the attempt-13 menu is not restored; see s1-s2-surface-revalidation.json"
+ }
+}
