@@ -1,0 +1,309 @@
+{
+ "tool": "locate_album_card_v6",
+ "tool_sha256": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+ "scope": "album-card S3 safety location only; offline evidence; never dispatched",
+ "frame": "evidence/20260916-route/attempt-12/frame-pre.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "constants": {
+  "content_diff": 60,
+  "band_frac_threshold": 0.45,
+  "band_min_rows": 20,
+  "strip_frac_max": 0.3,
+  "strip_min_rows": 40,
+  "bg_mad_max": 5.0,
+  "sep_min": "max(24, title_height * 1.0)",
+  "roi_inset_px": 8,
+  "roi_right_tail_px": 120,
+  "roi_candidate_margin_px": 16,
+  "control_max_wh": [
+   48,
+   80
+  ],
+  "control_min_gap_px": 100,
+  "cluster_min_px": 5,
+  "cluster_merge_gap": 12,
+  "scan_range_px": 500
+ },
+ "provenance": {
+  "title_count_logic_copied_from": {
+   "path": "evidence/20260916-route/tools/v4/locate_album_card.py",
+   "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162"
+  },
+  "reader": {
+   "module": "evidence/20260916-route/tools/v4/vision_reader.py",
+   "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8"
+  },
+  "historical_coordinates_used": false,
+  "fallback_to_v4_candidate": false
+ },
+ "frame_sha256": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+ "frame_bytes": 2046280,
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   27,
+   913,
+   257,
+   940
+  ]
+ },
+ "ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/13~05/17",
+  "57",
+  "000",
+  "網及",
+  "99%",
+  "熱評",
+  "配戴舒適滿意度*",
+  "十",
+  "ULTFAw",
+  "（遊水護日期 近視",
+  ".11.16",
+  "10.15",
+  "10.14",
+  "5.9.10",
+  "5.8.14",
+  ".7.22",
+  "031°C",
+  "00",
+  "9月21日週一 15:08",
+  "旻謙允禎成長日記（3） G",
+  "•",
+  "• Line_backup —：Line_backup — codex -m deepseek-v4.1-flash --sand...",
+  "...v run media_toolbox.py",
+  "…./yt_down_txt — -zsh。.",
+  "…•screencapture",
+  "十",
+  "chrome-native-hosts-v2.json",
+  "• Explored",
+  "L Search oai/sky\\Inode_rep1\\|get_app_statel|cua-window-$1 in run-ledger.json",
+  "Read run-ledger.json",
+  "• Now starting S1 （read-only AX pre",
+  "already",
+  "LINE window 327x643 at （0,30））•Next,the",
+  "captured",
+  "read-only",
+  "above：",
+  "window",
+  "ax_frontmost=true，",
+  "state",
+  "read.",
+  "• Viewed Image",
+  "L /tmp/attempt12/cua-window-$1.jpg",
+  "• S1 CU surface",
+  "clean. Now let me confirm what frozen v6 verifies,then",
+  "capture the",
+  "fresh full-screen frame （S2）.",
+  "• Let me run the",
+  "commands. （13m 31s",
+  "to",
+  "interrupt）",
+  ">Esk Codex to do anything",
+  "deepseek-v4.1-flash max"
+ ],
+ "window_geometry": {
+  "path": "evidence/20260916-route/attempt-12/live-window-geometry.json",
+  "rect": [
+   0,
+   60,
+   654,
+   1346
+  ],
+  "source": "read-only AX window-bounds observation of LINE window index 0 (title '', role AXWindow/AXStandardWindow, main=true, is_ax_focused_window=true, pid 3337) via evidence/20260916-route/attempt-12/tools/ax_window_bounds.swift (sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6) / binary sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae, read at 2026-09-21T15:06:41+0800 (pre) and 2026-09-21T15:08:31+0800 (post, byte-identical window list); position_points (0,30), size_points (327,643) x capture scale 2 (NSScreen.backingScaleFactor=2.0; CGDisplayMode pixel 2294x1490 vs bounds 1147x745 pt) = frame device-pixel rect; bound to THIS frame's SHA-256; NOT historical geometry; NOT produced by the offline replay extractor; no attempt-10/11 geometry value reused",
+  "frame_sha256": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+  "raw": {
+   "x0": 0,
+   "y0": 60,
+   "x1": 654,
+   "y1": 1346,
+   "source": "read-only AX window-bounds observation of LINE window index 0 (title '', role AXWindow/AXStandardWindow, main=true, is_ax_focused_window=true, pid 3337) via evidence/20260916-route/attempt-12/tools/ax_window_bounds.swift (sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6) / binary sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae, read at 2026-09-21T15:06:41+0800 (pre) and 2026-09-21T15:08:31+0800 (post, byte-identical window list); position_points (0,30), size_points (327,643) x capture scale 2 (NSScreen.backingScaleFactor=2.0; CGDisplayMode pixel 2294x1490 vs bounds 1147x745 pt) = frame device-pixel rect; bound to THIS frame's SHA-256; NOT historical geometry; NOT produced by the offline replay extractor; no attempt-10/11 geometry value reused",
+   "frame_sha256": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+   "coordinate_space": "full-screen capture device pixels (screencapture -x at 2x); the window ROI and any click point share this space",
+   "window_point_rect": [
+    0,
+    30,
+    327,
+    673
+   ],
+   "transform": {
+    "formula": "frame_px = window_pt * 2",
+    "scale": 2,
+    "provenance": "NSScreen.backingScaleFactor=2.0 and CGDisplayMode pixel size 2294x1490 vs display bounds 1147x745 pt, read by the same read-only AX tool",
+    "frame_size_px": [
+     2294,
+     1490
+    ]
+   },
+   "generated_from": "this run's fresh read-only AX observation of the LINE album-list AX window (attempt-12)",
+   "gui_inputs_sent": 0,
+   "attempt": "12",
+   "generated_at_local": "2026-09-21T15:08+0800"
+  }
+ },
+ "coordinate_space": "current-frame screenshot pixels (device pixels of the full-screen capture); window ROI and click_point share this space",
+ "click_point": [
+  39,
+  926
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "candidate_bounds": {
+  "title_width_px": 230,
+  "candidate_x": 39,
+  "roi_left_margin_px": 39,
+  "roi_right_margin_px": 615
+ },
+ "identity": {
+  "title_bbox": [
+   27,
+   913,
+   257,
+   940
+  ],
+  "title_inset_px": {
+   "left": 27,
+   "top": 853,
+   "right": 397,
+   "bottom": 406
+  },
+  "count_box": [
+   19,
+   942,
+   187,
+   972
+  ],
+  "roi_right_tail_px": 397
+ },
+ "count_box": [
+  19,
+  942,
+  187,
+  972
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "background": {
+  "sample_rect": [
+   281,
+   913,
+   341,
+   940
+  ],
+  "color": [
+   45,
+   46,
+   48
+  ],
+  "mad": 0.0
+ },
+ "structure": {
+  "scan_y_range": [
+   426,
+   1345
+  ],
+  "above_band_runs": [
+   [
+    426,
+    587
+   ],
+   [
+    590,
+    881
+   ]
+  ],
+  "below_band_runs": [
+   [
+    1028,
+    1319
+   ],
+   [
+    1322,
+    1345
+   ]
+  ],
+  "above_band_bottom_row": 881,
+  "below_band_top_row": 1028
+ },
+ "margins": {
+  "margin_above_px": 45,
+  "margin_below_px": 102,
+  "sep_min_px": 27,
+  "rule": "max(24, round(title_height*1.0))",
+  "title_height_px": 27
+ },
+ "strip": {
+  "rows_total": 146,
+  "rows_kept": 146,
+  "frac_max_used": 0.3,
+  "clusters": [
+   {
+    "bbox": [
+     607,
+     925,
+     611,
+     950
+    ],
+    "width": 5,
+    "height": 26,
+    "px": 56
+   }
+  ]
+ },
+ "control": {
+  "control_width_px": 5,
+  "control_height_px": 26,
+  "gap_right_of_title_px": 350,
+  "gap_left_of_candidate_px": 568
+ },
+ "verdict": "ELIGIBLE",
+ "dispatch": {
+  "dispatched": false,
+  "note": "offline evidence only; no input was sent"
+ },
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "d37fa4efc861e0f094163cee83acb477bd1316613c3a961196fbfe290339f4da",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "156456dc2e4da86ea525656954882eb8cf3c7cac013cd102c875e54ea15dd0ba",
+    "stdout_bytes": 3289,
+    "lines_parsed": 66
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "87ce6d03a4b637d9ac61d4e8331a443336a6220e9d3ba88b5045dd9da8c8a326",
+    "stdout_bytes": 32,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

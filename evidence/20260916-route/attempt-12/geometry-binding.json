@@ -1,0 +1,71 @@
+{
+ "tool": "validate_live_geometry",
+ "frame": "frame-pre.png",
+ "cu_shot": "/tmp/attempt12/cua-window-s1.jpg",
+ "ax_json": "s1-ax-pre.json",
+ "window_index": 0,
+ "ax_window": {
+  "focused": false,
+  "index": 0,
+  "is_ax_focused_window": true,
+  "main": true,
+  "minimized": false,
+  "position_points": [
+   0,
+   30
+  ],
+  "role": "AXWindow",
+  "size_points": [
+   327,
+   643
+  ],
+  "subrole": "AXStandardWindow",
+  "title": ""
+ },
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "cu_shot_size": [
+  327,
+  643
+ ],
+ "capture_scale": 2,
+ "pass_rule": {
+  "dims_exact": true,
+  "mad_mean_max": 12.0
+ },
+ "frame_crop_px": [
+  0,
+  60,
+  654,
+  1346
+ ],
+ "dims_checks": {
+  "cu_shot_dims_equal_ax_pt": true,
+  "frame_crop_inside_frame": true,
+  "frame_scale_matches_display": true
+ },
+ "crop_size_px": [
+  654,
+  1286
+ ],
+ "comparison": {
+  "method": "frame crop (x2) downscaled by 2 with LANCZOS vs CU window screenshot; gray MAD",
+  "mad_mean": 2.185,
+  "pixels_gt8_gray": 11667,
+  "fraction_gt8_gray": 0.05549
+ },
+ "shift_diagnostics": {
+  "dx-4_dy-4": 17.146,
+  "dx+0_dy-4": 12.798,
+  "dx+4_dy-4": 16.771,
+  "dx-4_dy+0": 11.789,
+  "dx+0_dy+0": 2.185,
+  "dx+4_dy+0": 11.592,
+  "dx-4_dy+4": 17.355,
+  "dx+0_dy+4": 13.189,
+  "dx+4_dy+4": 17.351
+ },
+ "verdict": "GEOMETRY_BINDING_PASS"
+}

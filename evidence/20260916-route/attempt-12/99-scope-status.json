@@ -1,0 +1,102 @@
+{
+ "check": "attempt_12_end_state",
+ "captured_at_local": "2026-09-21T15:13+0800",
+ "run_status": "CLOSED_AFTER_ONE_AUTHORIZED_ALBUM_CARD_CLICK_AND_S5_VERIFICATION",
+ "stop_reason": "S5_ALBUM_OPEN_VERIFIED_STOP",
+ "s1": {
+  "line_frontmost": true,
+  "window": "index 0, position (0,30), size 327x643, title '', main, is_ax_focused_window",
+  "album_list_surface": "showing 0-100 of 101 items",
+  "group_correct": true,
+  "album_visible": "2024/05/13～05/17",
+  "count_visible": "57",
+  "permission_prompt_or_overlay": false
+ },
+ "s2": {
+  "frame_pre_sha256": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+  "ax_pre_post_identical": true,
+  "geometry_binding": "GEOMETRY_BINDING_PASS (mad 2.185)",
+  "frame_rect_px": [
+   0,
+   60,
+   654,
+   1346
+  ]
+ },
+ "s3": {
+  "verdict": "ELIGIBLE",
+  "candidate_point_frame_px": [
+   39,
+   926
+  ],
+  "candidate_source": "frozen v6 on THIS round's fresh frame"
+ },
+ "s4": {
+  "candidate_dispatched": true,
+  "dispatch": "sky.click app=jp.naver.line.mac x=19.5 y=433 left click_count=1",
+  "dispatch_ok": true
+ },
+ "s5": {
+  "verdict": "ALBUM_OPEN_VERIFIED",
+  "changed_fraction": 0.200179,
+  "title_bbox_post": [
+   704,
+   233,
+   1077,
+   277
+  ],
+  "post_frame_sha256": "7bd54308d916f8b7f0f78221a660d94b1f2985ebb19ce638c4591d780a00bca3",
+  "cross_check": "post-click CU window screenshot sha256 4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3 byte-identical to attempt-05's post-click album-open frame"
+ },
+ "album_opened": true,
+ "gui_inputs": 1,
+ "album_card_inputs": 1,
+ "navigation_inputs": 1,
+ "ellipsis_inputs": 0,
+ "retry_inputs": 0,
+ "double_click_inputs": 0,
+ "second_album_click_inputs": 0,
+ "menu_item_inputs": 0,
+ "keyboard_inputs": 0,
+ "scroll_inputs": 0,
+ "ax_write_inputs": 0,
+ "bring_to_front_inputs": 0,
+ "app_acquisition_inputs": 0,
+ "save_all_dispatch_attempted": false,
+ "chooser_interaction": false,
+ "download": false,
+ "destination_write": false,
+ "formal_state_write": false,
+ "artifact_sha256": {
+  "00-start-state.json": "b84fdc1115dafe50d507481de074a95e21746a3c65233909ebeebf92c1a7f8a3",
+  "authorization-record.json": "c96651e9edc842458762341c92f8618e61551114e59ab57e98dcb0543a826c35",
+  "s1-ax-pre.json": "fe5f3d685b7e2270c296b055923a8a3938925195453dae911e05368d42f0c0c3",
+  "cua-window-s1.jpg": "92ea79915f13c68bec6473ed224bb0e51662aaa846167df37fc25e54872e5a47",
+  "cua-ax-state-s1.txt": "0a09779b35e63ba0062c6f5a2bd746feabb3f528a0f64d824519ec9c819fccb4",
+  "frame-pre.png": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+  "s2-ax-post.json": "e45a78244d4a304a325791aaf86b0b7ee96061e1d24e5fa14257518fd9dcfc60",
+  "live-window-geometry.json": "fdd68d750b3bb2d2b2fbf9c4ae6724cdfd30c69b94d3d1e07adba9d681092296",
+  "geometry-binding.json": "cf2d915a288fcca41992025c55b8e55a440f250c435d12da4b4915cf4a945298",
+  "album-card-locate-v6.json": "05bcea90f31587435a1c16b522938eeabc32b06788d4d85b002559eb5b036875",
+  "s4-preclick-ax.json": "0a47be443e46fb953f6765c55d7b62258b2c773e50dbcdd4e2bbca38fe06e64f",
+  "cua-window-preclick.jpg": "92ea79915f13c68bec6473ed224bb0e51662aaa846167df37fc25e54872e5a47",
+  "s4-click-intent.json": "37d74365285032dcdee81cc62d494b245ae01d8c735b9b8b62308ca1f327c762",
+  "frame-post.png": "7bd54308d916f8b7f0f78221a660d94b1f2985ebb19ce638c4591d780a00bca3",
+  "album-open-verify.json": "e99aa1a65d8c6999acbd7a5371a153d1990c514c70bbf8d5c285de7db2949ab6",
+  "cua-window-s5.jpg": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "cua-ax-state-s5.txt": "d124af38d5dc3f32095a7939713e67b51c98e113e44f50563e49e478546cc4a6",
+  "run-ledger.json": "992df1a2c1997c3305d4a1ed5c4c7eaaf1d2108ab7defd15213ef082ac15c0f2",
+  "tools/ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+  "tools/validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"
+ },
+ "frozen_tools_unchanged": {
+  "v6/locate_album_card.py": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "v6/extract_window_geometry.py": "b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8",
+  "v4/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "v4/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "v4/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+ },
+ "next_step": "本輪 album-card budget 已消費；無任何授權剩餘（ellipsis/menu/Save All/chooser/download/destination write 全部未授權未執行）。任何後續輸入需要 owner 新的 one-shot GUI authorization。",
+ "note": "fresh S1/S2 → frozen v6 ELIGIBLE on THIS frame → exactly one click at THIS frame's candidate → fresh S5 ALBUM_OPEN_VERIFIED → stop. No retry, no second click, no historical coordinate, no fallback path, no frozen-tool modification."
+}

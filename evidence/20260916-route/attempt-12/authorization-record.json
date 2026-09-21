@@ -1,0 +1,44 @@
+{
+ "artifact_type": "owner_one_shot_gui_authorization_record (normalized transcription; no external transcript path)",
+ "session": "current user message in this conversation",
+ "authorization_normalized": "本輪明確一次性 GUI 授權：fresh read-only revalidation；若且僅若 frozen v6 = ELIGIBLE，對該 fresh frame 當下導出的 candidate 執行一次相簿卡左鍵點擊；立即 fresh post-click verification；無論結果如何停止。本次授權只允許 album-card click = 1。",
+ "verbatim_key_clauses": {
+  "click_clause": "本次授權只允許：album-card click = 1",
+  "zero_clause": "其餘全部：retry = 0 / second album click = 0 / double click = 0 / ellipsis click = 0 / menu item = 0 / Save All = 0 / chooser = 0 / keyboard = 0 / scroll = 0 / AX write = 0 / app acquisition = 0 / bring-to-front = 0 / download = 0",
+  "no_historical": "不得沿用 attempt-10 candidate [39,923]。不得沿用 attempt-11 或任何歷史 coordinate。",
+  "observation_rule": "因為使用者已手動讓 LINE frontmost，本輪不要依賴 attempt-11 新增的 inactive-window AX fallback 作為點擊安全鏈。優先使用已在 attempt-10 成功取得 frontmost LINE window geometry 的 read-only observation path。",
+  "stop_rule": "如果目前 LINE 仍不是 frontmost、AX window geometry 不肯定、或需要 fallback / bring-to-front 才能取得 geometry：立即停止。不要自行修復 UI。",
+  "no_ellipsis_saveall_sentence": "本輪沒有授權任何 ellipsis 或 Save All 操作。"
+ },
+ "budgets": {
+  "album_card_click": 1,
+  "navigation_click": 1,
+  "gui_input_count": 1,
+  "retry": 0,
+  "second_album_click": 0,
+  "double_click": 0,
+  "ellipsis_click": 0,
+  "menu_item": 0,
+  "save_all": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "app_acquisition": 0,
+  "bring_to_front": 0,
+  "download": 0,
+  "destination_write": 0,
+  "formal_transaction_state_write": 0
+ },
+ "frozen_tools_modification": "NONE (v4/v5/v6 read-only use; never modified)",
+ "user_preconditions_at_authorization": {
+  "line_foreground": "user manually brought LINE to front; LINE fully visible; nothing occluding the target card",
+  "group": "旻謙允禎成長日記",
+  "album": "2024/05/13～05/17",
+  "count": 57,
+  "user_scrolled": false,
+  "user_clicked_album_card": false
+ },
+ "recorded_at_local": "2026-09-21T15:05+0800",
+ "recorded_by": "agent (attempt-12); budget semantics mirror gate-6 accounting (read-only CU app binding/state read counted as 0 app-acquisition inputs, as in attempt-10)"
+}

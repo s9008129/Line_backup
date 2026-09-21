@@ -1,0 +1,2 @@
+There has been no change in the accessibility tree for Window: "".
+The focused UI element is 1 文字欄位 (settable) Secondary Actions: Raise

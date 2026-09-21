@@ -1,0 +1,215 @@
+{
+ "schema_version": 1,
+ "artifact": "evidence/20260916-route/attempt-12/run-ledger.json",
+ "run_id": "20260921-route-attempt-12",
+ "route_attempt": 12,
+ "state": "CLOSED_AFTER_ONE_ALBUM_CARD_CLICK_AND_S5_VERIFY",
+ "runtime/provider": "codex-cli host shell (screencapture -x; read-only AX window-bounds tool /tmp/attempt12/ax_window_bounds) + cua_repl @oai/sky (read-only get_app_state; one sky.click) + frozen offline tools (v6 S3, v4 S5)",
+ "app_bundle": "jp.naver.line.mac",
+ "raw_group": "旻謙允禎成長日記",
+ "album": "2024/05/13～05/17",
+ "expected_count": 57,
+ "parent_attempt": {
+  "attempt-11": "untouched, not reused (its inactive-window AX fallback path was explicitly forbidden this round)",
+  "attempt-10": "untouched; its candidate [39,923] and geometry (0,32) were NOT reused"
+ },
+ "authorization": {
+  "artifact": "evidence/20260916-route/attempt-12/authorization-record.json",
+  "album_card_click_budget": 1,
+  "everything_else": 0
+ },
+ "events": [
+  {
+   "seq": 1,
+   "phase": "S1_ax_pre",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:06:41+0800",
+   "event": "ax_window_bounds_readonly jp.naver.line.mac",
+   "evidence": [
+    "s1-ax-pre.json"
+   ],
+   "result": "ax_frontmost=true; frontmost_application=jp.naver.line.mac; pid 3337; windows: [0] (0,30) 327x643 title '' main=true is_ax_focused_window=true; [1] (-2,37) 1147x699 title 'LINE'; display 1147x745 pt, backing scale 2, capture 2294x1490 px"
+  },
+  {
+   "seq": 2,
+   "phase": "S1_cu_state_read",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:07:42+0800 .. 15:07:55+0800",
+   "event": "cua_repl sky.get_app_state(jp.naver.line.mac) (read-only; zero input)",
+   "evidence": [
+    "cua-window-s1.jpg",
+    "cua-ax-state-s1.txt"
+   ],
+   "result": "window screenshot 327x643 px (== AX pt size); AX text: Window \"\" / 標準視窗 / 文字欄位 (settable) / 列表 (showing 0-100 of 101 items) = album-list surface; visual: group 旻謙允禎成長日記, tabs 相簿(selected)/記事本, first card 2024/05/13～05/17 with 57, no permission prompt, no overlay"
+  },
+  {
+   "seq": 3,
+   "phase": "S2_fresh_frame",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:08:00+0800",
+   "event": "screencapture -x frame-pre.png (silent, no cursor)",
+   "frame": {
+    "path": "frame-pre.png",
+    "bytes": 2046280,
+    "size_px": [
+     2294,
+     1490
+    ],
+    "sha256": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58"
+   },
+   "occlusion_check": "frame crop at the AX rect is identical to the CU window screenshot (binding below); target card region fully visible, no Terminal/Chrome/other window overlapping the LINE album window rect; LINE menubar visible (frontmost)"
+  },
+  {
+   "seq": 4,
+   "phase": "S2_ax_post",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:08:31+0800",
+   "event": "ax_window_bounds_readonly jp.naver.line.mac (post-frame)",
+   "evidence": [
+    "s2-ax-post.json"
+   ],
+   "result": "window list byte-identical to S1 (position (0,30), size 327x643); LINE still frontmost; same pid"
+  },
+  {
+   "seq": 5,
+   "phase": "S2_geometry_binding",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:08+0800",
+   "event": "live-window-geometry.json (frame-SHA-bound: b88f7e…) + validate_live_geometry.py",
+   "evidence": [
+    "live-window-geometry.json",
+    "geometry-binding.json"
+   ],
+   "result": "rect [0,60,654,1346] (point rect [0,30,327,673] x scale 2); dims exact (654x1286 crop vs 327x643 CU shot); gray MAD 2.185 <= 12.0; shift neighbours 11.6-17.4; verdict GEOMETRY_BINDING_PASS"
+  },
+  {
+   "seq": 6,
+   "phase": "S3_frozen_v6",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:09+0800",
+   "event": "frozen v6 locate_album_card.py on the fresh frame + fresh frame-SHA-bound geometry",
+   "evidence": [
+    "album-card-locate-v6.json"
+   ],
+   "result": "verdict ELIGIBLE (exit 0); title OCR 2024/05/13~05/17 bbox [27,913,257,940]; count MATCH 57 (box [19,942,187,972]); margins above 45 px / below 102 px >= sep_min 27 px; single strip control (⋮ cluster 5x26 at x 607-611, gap_left_of_candidate 568 px, gap_right_of_title 350 px); click_point [39,926] derived from THIS frame (no historical coordinate)"
+  },
+  {
+   "seq": 7,
+   "phase": "S4_preclick_freshness",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:09:52+0800 (CU) / 15:10:00+0800 (AX)",
+   "event": "pre-click freshness re-read (CU window screenshot + AX window list)",
+   "evidence": [
+    "cua-window-preclick.jpg",
+    "s4-preclick-ax.json"
+   ],
+   "result": "CU window screenshot byte-identical to the binding-time shot (sha256 92ea79915f13c68bec6473ed224bb0e51662aaa846167df37fc25e54872e5a47); AX window list identical; UI unchanged since binding"
+  },
+  {
+   "seq": 8,
+   "phase": "S4_click_dispatch",
+   "action_class": "gui_input",
+   "gui_input": true,
+   "timestamp_local": "2026-09-21T15:11:39.600+0800 .. 15:11:40.135+0800",
+   "event": "exactly one album-card left click (attempt-12)",
+   "params": {
+    "api": "sky.click",
+    "app": "jp.naver.line.mac",
+    "window_screenshot_coords": [
+     19.5,
+     433
+    ],
+    "conversion": "window px = (frame px - [0,60]) / 2 ; [(39-0)/2, (926-60)/2] = [19.5, 433]",
+    "mouse_button": "left",
+    "click_count": 1,
+    "source": "frozen v6 click_point [39,926] from THIS round's frame-pre.png"
+   },
+   "dispatch": "ok",
+   "click_error": null,
+   "retry_count": 0,
+   "evidence": [
+    "s4-click-intent.json"
+   ],
+   "note": "single dispatch; no retry possible in this round by authorization"
+  },
+  {
+   "seq": 9,
+   "phase": "S5_post_frame",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:11:41.636+0800 .. 15:11:41.774+0800 (~1.5 s settle after click returned)",
+   "event": "screencapture -x frame-post.png",
+   "frame": {
+    "path": "frame-post.png",
+    "bytes": 2858232,
+    "size_px": [
+     2294,
+     1490
+    ],
+    "sha256": "7bd54308d916f8b7f0f78221a660d94b1f2985ebb19ce638c4591d780a00bca3"
+   },
+   "note": "no input between click and capture; no re-capture; single post frame"
+  },
+  {
+   "seq": 10,
+   "phase": "S5_verify",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:11+0800",
+   "event": "frozen v4 verify_album_open.py (pre=frame-pre.png, post=frame-post.png, --delta 12)",
+   "evidence": [
+    "album-open-verify.json"
+   ],
+   "result": "verdict ALBUM_OPEN_VERIFIED (exit 0); target title 2024/05/13~05/17 readable in post at bbox [704,233,1077,277]; changed_fraction 0.200179 >= 0.05; count box UNREADABLE (non-refusing); date_like tokens include the target range"
+  },
+  {
+   "seq": 11,
+   "phase": "S5_supporting_readonly",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T15:11:59+0800",
+   "event": "post-click read-only CU window state (supporting)",
+   "evidence": [
+    "cua-window-s5.jpg",
+    "cua-ax-state-s5.txt"
+   ],
+   "result": "album view visible: header 2024/05/13～05/17, '57張照片', photo grid; AX tree changed completely (list element IDs 0-107 removed; bare standard window) = custom-drawn album view; CU window screenshot sha256 4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3 is BYTE-IDENTICAL to attempt-05's post-click album-open window frame (2026-09-17), an independent cross-round confirmation of the opened view"
+  }
+ ],
+ "input_record": {
+  "gui_input_count": 1,
+  "album_card_inputs_used": 1,
+  "navigation_inputs_used": 1,
+  "ellipsis_inputs_used": 0,
+  "retry_count": 0,
+  "double_click_inputs": 0,
+  "second_album_click_inputs": 0,
+  "menu_item_inputs_used": 0,
+  "keyboard_inputs_used": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "bring_to_front_inputs": 0,
+  "app_acquisition_inputs": 0,
+  "save_all_dispatch_attempted": false,
+  "chooser_interactions": 0,
+  "downloads": 0,
+  "destination_writes": 0,
+  "formal_state_writes": 0
+ },
+ "verdict": {
+  "s3": "ELIGIBLE",
+  "s5": "ALBUM_OPEN_VERIFIED",
+  "album_opened": true,
+  "candidate_dispatched": true,
+  "stop_reason": "S5_ALBUM_OPEN_VERIFIED_STOP (no ellipsis, no menu, no Save All; stop as authorized)"
+ },
+ "scope_status": "CLOSED_AFTER_ONE_AUTHORIZED_CLICK; album-card budget permanently consumed; no further GUI authorization exists in this round",
+ "finalized_at_local": "2026-09-21T15:13+0800"
+}

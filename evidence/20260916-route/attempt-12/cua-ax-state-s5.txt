@@ -1,0 +1,6 @@
+The following is a diff from the previous accessibility tree for Window: "" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 0-107
++114 標準視窗 Secondary Actions: Raise
++	115 關閉按鈕
++	116 縮到最小按鈕
+The focused UI element is 114 標準視窗 Secondary Actions: Raise

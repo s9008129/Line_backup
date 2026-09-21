@@ -1,0 +1,222 @@
+{
+ "tool": "verify_album_open",
+ "pre": "evidence/20260916-route/attempt-12/frame-pre.png",
+ "post": "evidence/20260916-route/attempt-12/frame-post.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+ "post_sha256": "7bd54308d916f8b7f0f78221a660d94b1f2985ebb19ce638c4591d780a00bca3",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "post_ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友 視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/13~05/17",
+  "57張照片",
+  "2024.05.18",
+  "1v",
+  "10",
+  ">24/05/13~05/17",
+  "57",
+  "99%",
+  "熱評",
+  "配戴舒適滿意度*",
+  "ULTTA",
+  "（ 水護日期 近視",
+  "中l",
+  "十",
+  "031°C",
+  "G2",
+  "00",
+  "9月21日週一 15:11",
+  "Q",
+  "：",
+  "up - codex -m deepseek-v4.1-flash --sand...",
+  "/n_txt--zsh..（",
+  "..rt=\"max\"、node",
+  "十",
+  "【S2）．",
+  "e.png",
+  "926］",
+  "frame px）.Running a zero-input pre-",
+  "le click.",
+  "V6 ELIGIBLE at fresh candidate ［39, 926］，",
+  "writing",
+  "the click",
+  "intent",
+  "record,then",
+  "ncapture -x. Let me",
+  "structure the call wi.",
+  "s/ChatGPT/Line_backup"
+ ],
+ "target_title_in_post": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   704,
+   233,
+   1077,
+   277
+  ]
+ },
+ "date_like_tokens_in_post": [
+  "2024.05.18",
+  "2024/05/13~05/17",
+  ">24/05/13~05/17"
+ ],
+ "count_box": [
+  696,
+  279,
+  864,
+  309
+ ],
+ "count_digits_read": "",
+ "count_text": "UNREADABLE",
+ "diff": {
+  "changed_pixels": 684225,
+  "changed_fraction": 0.200179,
+  "changed_bbox": [
+   9,
+   13,
+   2261,
+   1427
+  ],
+  "changed_grid_8x8": [
+   [
+    1204,
+    0,
+    4353,
+    4004,
+    2626,
+    0,
+    185,
+    389
+   ],
+   [
+    0,
+    0,
+    11850,
+    23670,
+    12470,
+    879,
+    423,
+    0
+   ],
+   [
+    0,
+    0,
+    22872,
+    47005,
+    30754,
+    1738,
+    1133,
+    0
+   ],
+   [
+    0,
+    0,
+    28128,
+    50037,
+    35872,
+    6532,
+    3376,
+    0
+   ],
+   [
+    2142,
+    0,
+    28496,
+    51774,
+    33538,
+    4368,
+    2323,
+    0
+   ],
+   [
+    964,
+    0,
+    29713,
+    50221,
+    28275,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    31401,
+    50259,
+    27065,
+    0,
+    0,
+    0
+   ],
+   [
+    8146,
+    9994,
+    11373,
+    16389,
+    8284,
+    0,
+    0,
+    0
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "ALBUM_OPEN_VERIFIED",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "d37fa4efc861e0f094163cee83acb477bd1316613c3a961196fbfe290339f4da",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "a9abb2bf55c4ecaf1e6f3e76c48d57293e435ce912d7721096b4efba6045a47d",
+    "stdout_bytes": 2006,
+    "lines_parsed": 44
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 0,
+    "lines_parsed": 0
+   }
+  ]
+ }
+}

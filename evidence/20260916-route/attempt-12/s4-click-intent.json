@@ -1,0 +1,26 @@
+{
+ "phase": "S4_click_intent_pre_dispatch",
+ "recorded_at_local": "2026-09-21T15:10+0800",
+ "authorization": "owner one-shot: album-card click = 1 only if frozen v6 = ELIGIBLE on this round's fresh frame",
+ "gates_passed_before_dispatch": {
+  "s1_ax_pre": "PASS (frontmost jp.naver.line.mac, window 0 (0,30) 327x643 title '', CU AX text list 0-100 of 101 items)",
+  "s2_fresh_frame_sha256": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+  "s2_ax_post_identical": true,
+  "geometry_binding": "GEOMETRY_BINDING_PASS (mad 2.185, dims exact 654x1286 crop vs 327x643 CU shot)",
+  "s3_frozen_v6_verdict": "ELIGIBLE",
+  "preclick_freshness": "CU window screenshot byte-identical to binding-time shot (sha256 92ea79915f13c68bec6473ed224bb0e51662aaa846167df37fc25e54872e5a47); AX pre-click read identical window list at 2026-09-21T15:10:00+0800"
+ },
+ "fresh_candidate_frame_px": [39, 926],
+ "candidate_derivation": "frozen v6: title bbox [27,913,257,940] -> click_point = [tx0+12, (ty0+ty1)//2] = [39,926]",
+ "dispatch_plan": {
+  "api": "cua_repl @oai/sky sky.click",
+  "app": "jp.naver.line.mac",
+  "window_screenshot_coords": [19.5, 433],
+  "conversion": "window px = (candidate_frame_px - frame_rect_origin) / 2 ; x: (39-0)/2=19.5 ; y: (926-60)/2=433 ; 1 window-screenshot px == 1 window pt (CU shot 327x643 px for 327x643 pt window; binding mad 2.185)",
+  "mouse_button": "left",
+  "click_count": 1
+ },
+ "historical_coordinates_used": false,
+ "attempt10_candidate_reuse": false,
+ "retry_policy": "0 retries; a failed dispatch call is a stop condition, never retried"
+}
