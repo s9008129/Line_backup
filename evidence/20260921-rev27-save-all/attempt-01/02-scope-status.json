@@ -1,0 +1,65 @@
+{
+  "round": "rev27-save-all-chooser-filesystem-safety-planning",
+  "phase": "closing",
+  "captured_at_local": "2026-09-21",
+  "gui_input_count": 0,
+  "menu_item_inputs": 0,
+  "save_all_dispatches": 0,
+  "chooser_interactions": 0,
+  "keyboard_inputs": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "bring_to_front_inputs": 0,
+  "app_acquisition_inputs": 0,
+  "downloads": 0,
+  "destination_writes": 0,
+  "cleanup_delete_operations": 0,
+  "formal_state_writes": 0,
+  "retries": 0,
+  "baseline_writes": 0,
+  "frozen_tools_modified": 0,
+  "historical_attempts_modified": "none (attempt-10/11/12/13 untouched; attempt-11 and __pycache__ left untracked)",
+  "line_menu_current_state": "not inspected this round (contextual fact only; not consumed; zero GUI input)",
+  "artifacts": {
+    "plan": {
+      "path": "PLAN-2026-09-21-rev27-save-all.md",
+      "sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052"
+    },
+    "baseline_audit": {
+      "path": "evidence/20260921-rev27-save-all/attempt-01/00-baseline-audit.json",
+      "sha256": "871f9fc53aaf388aaf4cdb3d2a2844e1f60953851ee0a9651725f4c66e66f8e7"
+    },
+    "save_all_flow_evidence": {
+      "path": "evidence/20260921-rev27-save-all/attempt-01/01-save-all-flow-evidence.md",
+      "sha256": "df6cce06991dd86601990f5f177d3424ff559db9a7fa45e7ad963f402c981eb3"
+    },
+    "review_01_md": {
+      "path": "evidence/20260921-rev27-save-all/attempt-01/review-01-top-down.md",
+      "sha256": "652170a110ee2eca5465c874f149b064fcb19399c0f85dc52344af39738abf67"
+    },
+    "review_01_json": {
+      "path": "evidence/20260921-rev27-save-all/attempt-01/review-01-top-down.json",
+      "sha256": "2a23da88bee9a8d3d97cfc2c8216418610005a04fdaff57f1fdfda2a5c86e752"
+    },
+    "review_02_md": {
+      "path": "evidence/20260921-rev27-save-all/attempt-01/review-02-adversarial-gui-filesystem.md",
+      "sha256": "aba1a586e16941e4ceb12c988c4338e4af76aa096aed42b63233347c794bcd0d"
+    },
+    "review_02_json": {
+      "path": "evidence/20260921-rev27-save-all/attempt-01/review-02-adversarial-gui-filesystem.json",
+      "sha256": "abc44a0292ce7b310f3621000925c2f06fdff32bc376bd5ecbc4a7b16c036a77"
+    }
+  },
+  "reviews": {
+    "review_01_top_down": "PLAN_APPROVED",
+    "review_02_adversarial_gui_filesystem": "PLAN_APPROVED",
+    "both_bound_to_plan_sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052"
+  },
+  "owner_decisions_open": [
+    "OD-1: record a reconciliation note in live backup_state.json after Gate C? (default: no)",
+    "OD-2: disposition if Gate A ends with a chooser left open (default: hands off; no input)",
+    "OD-3: staging retention/cleanup after the test (default: PRESERVE; no deletion)"
+  ],
+  "route_success_definition_this_round": "not applicable (planning round): success = baseline verified unchanged, plan produced, two independent PLAN_APPROVED reviews at the exact plan SHA, zero GUI input, zero filesystem side effects",
+  "end_state": "READY_FOR_SAVE_ALL_GATE_A_AUTHORIZATION"
+}

@@ -1,0 +1,32 @@
+{
+ "review": "review-01-top-down",
+ "lens": "top-down transaction / data-integrity review",
+ "reviewed_artifact": "PLAN-2026-09-21-rev27-save-all.md",
+ "reviewed_sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052",
+ "date_local": "2026-09-21",
+ "superseded_draft_shas": [
+  "19238547ae101612778c23bc8235fbf733baf099da3735b97e8495bc6c6d44c8",
+  "15aebb1aab06f1124112d509c91601afad8367587ac959543ad0a0c25ed6485d",
+  "259031226b4843f34dc76384bba9e28e67ae9e04ea12db1733d479b39f7208da"
+ ],
+ "checklist": {
+  "accepted_baseline_never_written": "PASS",
+  "fresh_staging_required": "PASS",
+  "save_all_at_most_once": "PASS",
+  "unknown_dispatch_no_retry": "PASS",
+  "chooser_not_bundled_into_gate_a": "PASS",
+  "keyboard_forbidden_unless_gate_b_authorizes": "PASS",
+  "no_automatic_ellipsis_reopen": "PASS",
+  "no_historical_menu_coordinate": "PASS",
+  "no_cleanup_delete_without_authorization": "PASS",
+  "57_count_alone_insufficient": "PASS",
+  "filesystem_verification_independent": "PASS",
+  "duplicate_protection_preserved": "PASS"
+ },
+ "observations_non_blocking": [
+  "O1 route-ledger substrate (not live state) is a justified deviation; OD-1 keeps the owner in control",
+  "O2 Gate A round must budget locator freeze + review time before any click",
+  "O3 OD-1 / OD-3 defaults are the conservative choices"
+ ],
+ "verdict": "PLAN_APPROVED"
+}

@@ -1,0 +1,50 @@
+{
+ "review": "review-02-adversarial-gui-filesystem",
+ "lens": "adversarial GUI / filesystem side-effect review",
+ "reviewed_artifact": "PLAN-2026-09-21-rev27-save-all.md",
+ "reviewed_sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052",
+ "date_local": "2026-09-21",
+ "superseded_draft_shas": [
+  "19238547ae101612778c23bc8235fbf733baf099da3735b97e8495bc6c6d44c8",
+  "15aebb1aab06f1124112d509c91601afad8367587ac959543ad0a0c25ed6485d",
+  "259031226b4843f34dc76384bba9e28e67ae9e04ea12db1733d479b39f7208da"
+ ],
+ "attacks": {
+  "A1_menu_close_race_before_click": "CONTAINED (<=15 s gate + next-action rule + miss-classification)",
+  "A2_menu_geometry_hover_change": "CONTAINED (fresh-frame-only derivation)",
+  "A3_double_or_second_activation": "CONTAINED (click_count=1, retry 0 forever)",
+  "A4_wrong_row_activation": "CONTAINED (text-first + row-set cross-check; stop; no retry)",
+  "A5_chooser_bundled_into_gate_a": "PASS (forbidden in Gate A)",
+  "A6_keyboard_escape_smuggling": "PASS (keyboard=0 incl. Escape)",
+  "A7_accidental_confirm_unknown_default": "CONTAINED (hands-off note, tripwire, Gate B never accepts defaults)",
+  "A8_staging_not_fresh_or_symlink_escape": "PASS (6-check preflight, fail-closed)",
+  "A9_historical_coordinates_reappear": "PASS (I3 + locator prohibitions)",
+  "A10_false_completion_from_count_or_stability": "PASS (C1-C8 + zero-byte hazard)",
+  "A11_cleanup_or_delete": "PASS (PRESERVE; no deletion)",
+  "A12_duplicate_protection_bypass": "PASS (two layers; content multiset; no second destination)",
+  "A13_detector_pre_frame_binding_fails": "PASS (fail-closed stop)",
+  "A14_unexpected_chooser_or_dialog": "PASS (fail-closed UNKNOWN)",
+  "A15_line_close_crash_restart": "PASS (matrix rows 18-20)",
+  "A16_clipboard_paste_as_destination_write": "PASS (system-side, separately enumerated)"
+ },
+ "residual_risks_accepted_non_blocking": [
+  "R1 owner-side accidental confirmation of an open chooser (documented, mitigated)",
+  "R2 menu-close race producing one non-destructive unintended click (contained, reportable)",
+  "R3 LINE chooser default and rename behavior remain UNKNOWN; never relied upon"
+ ],
+ "checklist": {
+  "accepted_baseline_never_written": "PASS",
+  "fresh_staging_required": "PASS",
+  "save_all_at_most_once": "PASS",
+  "unknown_dispatch_no_retry": "PASS",
+  "chooser_not_bundled_into_gate_a": "PASS",
+  "keyboard_forbidden_unless_gate_b_authorizes": "PASS",
+  "no_automatic_ellipsis_reopen": "PASS",
+  "no_historical_menu_coordinate": "PASS",
+  "no_cleanup_delete_without_authorization": "PASS",
+  "57_count_alone_insufficient": "PASS",
+  "filesystem_verification_independent": "PASS",
+  "duplicate_protection_preserved": "PASS"
+ },
+ "verdict": "PLAN_APPROVED"
+}

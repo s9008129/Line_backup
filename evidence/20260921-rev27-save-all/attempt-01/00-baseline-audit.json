@@ -1,0 +1,128 @@
+{
+ "round": "rev27-save-all-chooser-filesystem-safety-planning",
+ "phase": "A_B_repository_and_baseline_reestablishment",
+ "captured_at_local": "2026-09-21",
+ "gui_input_this_round": 0,
+ "git": {
+  "status_porcelain_branch": "## master...origin/master [ahead 5]",
+  "head": "802ee4c39fbd80bcda6fe5155a812d842e7e9928",
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "log_head_6": [
+   "802ee4c 意圖： Rev29 route attempt-13 one-shot GUI 執行：fresh read-only album-open revalidation -> fresh frame -> frozen v5 ellipsis locator；若且僅若 live v5=ELIGIBLE，對本輪 fresh frame 當下導出的 candidate 執行一次 album-level ⋮ 左鍵；立即 fresh menu observation 後無條件停止（ellipsis click=1，其餘全部=0，Save All=0）。",
+   "d27b50e 意圖： Rev27 attempt-12 one-shot GUI 執行：fresh read-only revalidation；若且僅若 frozen v6=ELIGIBLE，對本輪 fresh frame 導出的 candidate 執行一次 album-card 左鍵；立即 fresh S5 驗證後無條件停止（album-card click=1，其餘全部=0）。",
+   "57a0602 意圖： Rev26 第一次 live v6 zero-input 驗證（route attempt-10）：以 fresh frame + read-only AX 視窗幾何，對 jp.naver.line.mac／旻謙允禎成長日記／2024/05/13～05/17／expected 57 跑一次 frozen v6 album-card S3；全程禁止任何 LINE GUI input。",
+   "5139b3f Rev26 v6 重規劃：以 attempt-08/09 證據重設計 album-card S3 安全判定",
+   "d3728e7 Rev25 attempt-09：零輸入 fresh S1-S3 觀察與安全停機",
+   "a9e523e Rev25 gate-6：記錄重定位後的安全停機證據"
+  ],
+  "untracked_left_untouched": [
+   "evidence/20260916-route/attempt-11/",
+   "evidence/20260916-route/tools/v4/__pycache__/",
+   "evidence/20260916-route/tools/v6/__pycache__/",
+   "evidence/20260916-route/tools/v6/selftest/__pycache__/"
+  ],
+  "no_fetch_pull_reset_rebase_amend_push": true
+ },
+ "attempt_13_evidence_rehashed_this_round": {
+  "frame-pre.png": "0e22f7546938cbe95023cfc352aaf5e1166651a9e78a29f16eae9ac857287638",
+  "s3-album-open-verify-window.json": "2f3d08770c678687c5effbf0f1df6a8398de26587116873c34000682ec7e385c",
+  "s4-album-ellipsis-locate.json": "17290acdaa29ccbf405279665c4932c9a2eb4f284af6ef54d6f6d4c0cfc99d6e",
+  "s5-click-intent.json": "417cff16f06d2034847464befb85b25d2cd963f64c47778bba1f97c04a20075f",
+  "frame-menu-post1.png": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+  "frame-menu-post2.png": "fed170184cf7ae32b998c7fe4d903cd0a5fb4d655e38e7f6cae493c5148e346b",
+  "s6-menu-ocr.json": "5a6ad4c8a30378ff85b3d1a87b5c2a9313dde7efed0a9f0f0ae0f2f0cfed434a",
+  "s6-menu-observation.json": "d841b41c3239b4c14f581cca1bcfe992c68872c8ace9b99102dafe2a6d4a3fb2",
+  "run-ledger.json": "d194a21fe4a67e82ae0ae106dd06a1a9b6d87e4127082bb0f79e239c6cecb1d0",
+  "99-scope-status.json": "4188d3d44117e6951a7918d40ee27d742633979788c5a83ec38effc783f1353a",
+  "all_match_committed_values": true
+ },
+ "attempt_13_fact_confirmation": {
+  "s3_album_open": "ALBUM_OPEN_VERIFIED (formal window pair, exit 0)",
+  "s4_frozen_v5_live": "ELIGIBLE (exit 0; input frame 4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3; click_point [304,50])",
+  "ellipsis_click": 1,
+  "ellipsis_budget_permanently_consumed": true,
+  "s6_menu_surface": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED",
+  "save_all_localized_identified": "儲存全部 (Save All) affirmatively identified as evidence only",
+  "menu_items_read_top_to_bottom": [
+   "選擇項目",
+   "修改相簿名稱",
+   "儲存全部",
+   "刪除相簿",
+   "分享相簿"
+  ],
+  "menu_item_clicks": 0,
+  "save_all_dispatch": 0,
+  "chooser": 0,
+  "download": 0,
+  "retry": 0,
+  "end_state": "READY_FOR_SAVE_ALL_PLAN_AND_NEW_AUTHORIZATION",
+  "menu_left_open_for_owner_at_end_of_attempt_13": true
+ },
+ "frozen_tool_shas_rehashed_this_round": {
+  "v5/locate_album_ellipsis.py": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "v5/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "v5/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "v5/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "v6/locate_album_card.py": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "tools/detect_menu_popup.py": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "v5_locator_sha_matches_historical_frozen_binding": true
+ },
+ "baseline_destination_audit": {
+  "label": "READ_ONLY_ACCEPTED_BASELINE",
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+  "file_count": 57,
+  "total_bytes": 17924900,
+  "all_extensions": {
+   ".jpg": 57
+  },
+  "non_regular_entries": 0,
+  "symlinks": 0,
+  "temporary_or_incomplete_files": 0,
+  "hidden_entries": 0,
+  "directory_mtime_local": "2026-09-07 15:53:46",
+  "fresh_manifest_digest_sha256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "fresh_manifest_definition": "sorted lines 'relative_path\\tsize\\tsha256' joined with \\n plus trailing \\n; sha256 over that byte string",
+  "frozen_reference": {
+   "path": "evidence/20260916-baseline/attempt-01/baseline-pre.json",
+   "sha256": "ab6747f28b22557458baba2f38e9af6770257ce4cee27a26d78f3726761685b5",
+   "comparison_this_round": {
+    "frozen_entries": 57,
+    "disk_entries": 57,
+    "missing": 0,
+    "extra": 0,
+    "size_mismatch": 0,
+    "sha256_mismatch": 0,
+    "mtime_ns_mismatch": 0
+   }
+  },
+  "state_registry_reference": {
+   "state_file": "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json",
+   "revision": 39,
+   "verified_run_id": "RUN-20260907-154331-01",
+   "note": "fingerprint 2024-05-13/2024-05-17/57 is VERIFIED with this destination; the engine's duplicate gate will refuse a second backup of this fingerprint to any new destination"
+  },
+  "writes_this_round": 0,
+  "baseline_write_rule": "the next Save All live test must never download into this directory; it is READ-ONLY for the route test"
+ },
+ "staging_strategy_recommendation": {
+  "root": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/",
+  "run_id_pattern": "RUN-YYYYMMDD-HHMMSS-01 (generated fresh at Gate A execution time)",
+  "path_pattern": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/<run_id>/",
+  "rationale": "stays inside the configured backup_root (authority rule: validate_destination requires destination within backup_root realpath); distinct from the accepted baseline; unique per run; never reused",
+  "created_by": "Gate A preflight: exactly one mkdir of the frozen path, then full proof read-back",
+  "must_not_exist_or_must_be_machine_proven_empty": true,
+  "no_symlink_escape": "realpath(path) == abspath(path) required; parent realpath within backup_root required",
+  "cleanup_policy": "PRESERVE as evidence after the test; no deletion without separate explicit owner authorization"
+ },
+ "budgets_this_round": {
+  "gui_input": 0,
+  "save_all": 0,
+  "menu_item": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "download": 0,
+  "destination_write": 0,
+  "cleanup_delete": 0,
+  "formal_transaction_state_write": 0
+ }
+}
