@@ -1,0 +1,134 @@
+{
+ "tool": "locate_album_card",
+ "frame": "evidence/20260916-route/attempt-09/frame-pre.png",
+ "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   27,
+   1096,
+   257,
+   1123
+  ]
+ },
+ "ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "2024/05/20~05/24",
+  "53",
+  "記事本",
+  "2024/05/13~05/17",
+  "57",
+  "•",
+  "十",
+  "詢問 ChatGPT",
+  "•29°C",
+  "の",
+  "00",
+  "9月21日週一 08:54",
+  "chatgpt.com",
+  "C",
+  "十",
+  "L",
+  "Codex",
+  "Usage • Settings",
+  "C",
+  "Q",
+  "目",
+  "邹是到4點，",
+  "rization gate，但尚未授權點擊」",
+  "replar",
+  "56",
+  "• Line_backup —：Line_backup - codex -m deepseek-v4.1-flash --sand...",
+  "...devtools-mcp • uv run media_toolbox.py",
+  "•••",
+  "...l_reasoning_effort=\"max\"、node",
+  "十",
+  "L Read README.md",
+  "esh fro",
+  "• Ran git 1s-files evidence/20260916-route/attempt-08/；",
+  "\"---gitignore---\"；",
+  "cat .gitignore; echo",
+  "\"—--attempt list---\"；1s evidence/20260916-route/ |",
+  "grep attempt; echo",
+  "\"---date---\"； date +%Y-%m-%dT%H ：%M：%5%z",
+  "evidence/20260916-route/attempt-08/00-start-state.json",
+  "evidence/20260916-route/attempt-08/99-end-state.json",
+  "… +26 lines （ctrl + t to view transcript）",
+  "2026-09-21T08:52:45+0800",
+  "7還看‘3",
+  "通過：git",
+  "Status",
+  "乾淨、HEAD = a9e523e7..",
+  "attempt 是",
+  "attempt-09。現在初始化",
+  "個呼叫只做",
+  "surface inventory）",
+  "origin/master 同步•下一個未使用",
+  "CUA runtime 做",
+  "read-only 觀察（第一"
+ ],
+ "band_top_bright_row": 35,
+ "band_bottom_bright_row": null,
+ "margin_above_px": 1074,
+ "margin_below_px": null,
+ "count_box": [
+  19,
+  1125,
+  187,
+  1155
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "click_point": [
+  39,
+  1109
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "verdict": "UNSAFE_MARGINS",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "d37fa4efc861e0f094163cee83acb477bd1316613c3a961196fbfe290339f4da",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "8e64a3aa3bbea6107645d7a0f26736f4850b1dcf175bc4ca740f5d637aef3763",
+    "stdout_bytes": 3708,
+    "lines_parsed": 72
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "5fb8e9f4b37eda23318e187cc51585720cfbcbb2a48f8917bbb90b64982fd219",
+    "stdout_bytes": 32,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

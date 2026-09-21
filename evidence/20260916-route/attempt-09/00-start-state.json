@@ -1,0 +1,30 @@
+{
+ "check": "attempt_09_start_state",
+ "captured_at_local": "2026-09-21T08:52:45+0800",
+ "branch": "master",
+ "git_status_porcelain_branch": "## master...origin/master",
+ "head": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+ "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+ "worktree_clean_before_start": true,
+ "gui_input_count_before": 0,
+ "gui_authorization": {
+  "gate": null,
+  "gate_6_state": "UNCONSUMED_AND_ATTEMPT_BOUND_TO_ATTEMPT_08",
+  "reused_for_attempt_09": false,
+  "gui_input_authorized_this_attempt": false,
+  "note": "Owner-ordered zero-input S1-S3 observation wave. gate-6 is not an input authorization for any new attempt and was not treated as one."
+ },
+ "parent_route_ledger_sha256": "0df02dc4bd1b68694f76789a6cd6494fa2299bae26cc669145592d8e3d575469",
+ "target": {
+  "app": "jp.naver.line.mac",
+  "group": "旻謙允禎成長日記",
+  "album": "2024/05/13～05/17",
+  "expected_images": 57
+ },
+ "frozen_inputs": {
+  "v4/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "v4/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+ },
+ "verdict": "PASS_ZERO_INPUT_START"
+}

@@ -1,0 +1,147 @@
+{
+ "schema_version": 1,
+ "run_id": "20260921-route-attempt-09",
+ "artifact": "evidence/20260916-route/attempt-09/run-ledger.json",
+ "runtime/provider": "codex-cli host shell (screencapture -x for the fresh frame) + cua_repl read-only app binding for the S2 AX surface read; frozen v4 offline tools for machine verdicts; zero GUI input",
+ "app_bundle": "jp.naver.line.mac",
+ "raw_group": "旻謙允禎成長日記",
+ "album": "2024/05/13～05/17",
+ "expected_count": 57,
+ "parent_ledger_sha256": "0df02dc4bd1b68694f76789a6cd6494fa2299bae26cc669145592d8e3d575469",
+ "authorization": {
+  "gate": null,
+  "gate_6": "UNCONSUMED and attempt-bound to attempt-08; NOT reused, NOT extended, NOT treated as an input authorization for attempt-09",
+  "scope": "owner-ordered zero-input observation only (S1-S3); no GUI input authorized or sent this attempt",
+  "authorized_by": "使用者本人 (本輪唯一任務指示)"
+ },
+ "frozen_inputs": {
+  "v4/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "v4/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+  "attempt_08_album_card_locate_r2": "55d088f8d3c12f7081312c3b33bc01b972b1f818dcb634d6630f822af28d6a5b",
+  "attempt_08_frame_pre_r2": "2226ded9c29c7ab99bb8126d21f625e6a65e61a6aa94c14eda8d5875a201d08a",
+  "attempt_08_run_ledger": "0df02dc4bd1b68694f76789a6cd6494fa2299bae26cc669145592d8e3d575469"
+ },
+ "input_record": {
+  "gui_input_count": 0,
+  "album_card_inputs_used": 0,
+  "navigation_inputs_used": 0,
+  "ellipsis_inputs_used": 0,
+  "keyboard_inputs_used": 0,
+  "scroll_inputs": 0,
+  "chooser_interactions": 0,
+  "save_all_dispatch_attempted": false
+ },
+ "budgets": {
+  "gui_input_count": 0,
+  "album_card_inputs_used": 0,
+  "album_card_input_budget": 0,
+  "navigation_inputs_used": 0,
+  "navigation_input_budget": 0,
+  "ellipsis_inputs_used": 0,
+  "ellipsis_input_budget": 0,
+  "retry_count": 0,
+  "menu_item_inputs_used": 0,
+  "keyboard_inputs_used": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "bring_to_front_inputs": 0,
+  "app_acquisition_inputs": 0,
+  "chooser_interactions": 0,
+  "downloads": 0,
+  "destination_writes": 0,
+  "formal_state_writes": 0,
+  "save_all_dispatch_attempted": false
+ },
+ "events": [
+  {
+   "seq": 1,
+   "timestamp_local": "2026-09-21T08:52:45+0800",
+   "event": "S0_repository_safety",
+   "gui_input": false,
+   "observed": {
+    "branch": "master",
+    "head": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+    "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+    "worktree_clean": true
+   },
+   "note": "pre-existing worktree clean; no reset/stash/rebase performed"
+  },
+  {
+   "seq": 2,
+   "timestamp_local": "2026-09-21T08:54:25+0800",
+   "event": "S1_fresh_frame_captured",
+   "gui_input": false,
+   "artifacts": [
+    {
+     "path": "evidence/20260916-route/attempt-09/frame-pre.png",
+     "sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+     "bytes": 1818039,
+     "size": [
+      2294,
+      1490
+     ]
+    }
+   ],
+   "note": "screencapture -x (silent, no cursor, no window highlight); fresh this run; no prior frame used as live input source"
+  },
+  {
+   "seq": 3,
+   "timestamp_local": "2026-09-21T08:54:25+0800..08:55:21+0800 (interval containing the read-only AX observation)",
+   "event": "S2_read_only_surface_observation",
+   "gui_input": false,
+   "artifacts": [
+    {
+     "path": "evidence/20260916-route/attempt-09/s1-s2-observation.json",
+     "sha256": "8b060348b77a3066cbb4d58064bb963b0943e2c914aef291f8d7c27cad91bfba"
+    }
+   ],
+   "surface": "LINE window present and bound read-only via cua_repl; group 旻謙允禎成長日記, albums surface (相簿/記事本), target album 2024/05/13~05/17 and count 57 all confirmed from the same fresh frame (OCR words + visual); no permission prompt or unknown overlay over the target area; no scroll, keyboard, AX write, bring-to-front, or app-acquisition input"
+  },
+  {
+   "seq": 4,
+   "timestamp_local": "2026-09-21T08:55:21+0800",
+   "event": "S3_card_locator_unsafe_margins_stop",
+   "gui_input": false,
+   "artifacts": [
+    {
+     "path": "evidence/20260916-route/attempt-09/album-card-locate.json",
+     "sha256": "c4b4443c1471c1671812b3e4f29214094e5fb7e46e7900e7e22b5ef1ade3d06a",
+     "verdict": "UNSAFE_MARGINS",
+     "exit_code": 4
+    },
+    {
+     "path": "evidence/20260916-route/attempt-09/s3-comparison-attempt08.json",
+     "sha256": "0115b5f10a3badba9741c57a1c360723e2bb4a0a6965e50776fea6eeb18034f7"
+    }
+   ],
+   "observed": {
+    "title": "2024/05/13~05/17",
+    "title_bbox": [
+     27,
+     1096,
+     257,
+     1123
+    ],
+    "band_top_bright_row": 35,
+    "band_bottom_bright_row": null,
+    "margin_above_px": 1074,
+    "margin_below_px": null,
+    "count_digits_read": "57",
+    "count_text": "MATCH",
+    "click_point_candidate": [
+     39,
+     1109
+    ]
+   },
+   "stop_reason": "S3 not ELIGIBLE: margin_below_px is null (same failure mode as attempt-08 r1/r2 after a distinct window resize)",
+   "note": "candidate point recorded as evidence only and NOT dispatched; no historical coordinate reuse; every input category remains 0"
+  }
+ ],
+ "run_status": "CLOSED_BEFORE_INPUT",
+ "stop_reason": "STOPPED_AT_S3_UNSAFE_MARGINS",
+ "scoped_blocker": "FROZEN_V4_S3_UNSAFE_MARGINS_AFTER_DISTINCT_WINDOW_RESIZE",
+ "route_outcome": null,
+ "owner_notified": true,
+ "next_action": "Enter replan/review of the frozen safety-margin architecture; do NOT ask the owner for a third window arrangement; any future GUI input requires a new explicit one-shot authorization and must not reuse gate-6."
+}

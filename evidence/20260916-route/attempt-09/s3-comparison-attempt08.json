@@ -1,0 +1,109 @@
+{
+ "schema_version": 1,
+ "purpose": "Read-only comparison of the fresh attempt-09 S3 UNSAFE_MARGINS numbers against attempt-08 (r1 and r2) frames; no threshold change, no tool change, no fallback, no input.",
+ "attempt_rows": [
+  {
+   "attempt": "08-r1",
+   "frame": "evidence/20260916-route/attempt-08/frame-pre.png",
+   "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+   "title_bbox": [
+    37,
+    963,
+    267,
+    990
+   ],
+   "title_center_y": 976,
+   "band_top_bright_row": 72,
+   "band_bottom_bright_row": null,
+   "margin_above_px": 904,
+   "margin_below_px": null,
+   "count_digits_read": "57",
+   "count_text": "MATCH",
+   "click_point": [
+    49,
+    976
+   ],
+   "verdict": "UNSAFE_MARGINS"
+  },
+  {
+   "attempt": "08-r2",
+   "frame": "evidence/20260916-route/attempt-08/frame-pre-r2.png",
+   "frame_sha256": "2226ded9c29c7ab99bb8126d21f625e6a65e61a6aa94c14eda8d5875a201d08a",
+   "title_bbox": [
+    37,
+    926,
+    263,
+    953
+   ],
+   "title_center_y": 939,
+   "band_top_bright_row": 601,
+   "band_bottom_bright_row": null,
+   "margin_above_px": 338,
+   "margin_below_px": null,
+   "count_digits_read": "57",
+   "count_text": "MATCH",
+   "click_point": [
+    49,
+    939
+   ],
+   "verdict": "UNSAFE_MARGINS"
+  },
+  {
+   "attempt": "09",
+   "frame": "evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "title_bbox": [
+    27,
+    1096,
+    257,
+    1123
+   ],
+   "title_center_y": 1109,
+   "band_top_bright_row": 35,
+   "band_bottom_bright_row": null,
+   "margin_above_px": 1074,
+   "margin_below_px": null,
+   "count_digits_read": "57",
+   "count_text": "MATCH",
+   "click_point": [
+    39,
+    1109
+   ],
+   "verdict": "UNSAFE_MARGINS"
+  }
+ ],
+ "stable_failure_mode": "margin_below_px = null in all three distinct window arrangements (no full-row-bright band found below the title row).",
+ "supporting_row_mean_analysis": {
+  "method": "read-only recomputation of per-row mean grayscale from the frozen frames; thresholds and tools unchanged",
+  "a08_r2": {
+   "below_title_full_row_max": {
+    "value": 91.8,
+    "y": 1353
+   },
+   "first_full_row_at_or_above_100_below_title": null,
+   "line_window_region_x0_600_max": {
+    "value": 211.9,
+    "y": 1356
+   }
+  },
+  "a09": {
+   "below_title_full_row_max": {
+    "value": 66.7,
+    "y": 1168
+   },
+   "first_full_row_at_or_above_100_below_title": null,
+   "line_window_region_x0_600_max": {
+    "value": 155.8,
+    "y": 1212
+   }
+  },
+  "interpretation": "The frozen bright-band rule evaluates the mean of the ENTIRE frame row (>=100). On these full-screen 2294x1490 frames the LINE window occupies roughly 25% of the width, so even bright album-grid rows inside the LINE window cannot lift the full-row mean to 100. The fresh owner resize did reveal more bright content below the target caption (window-region max 155.8 at y=1212), but the frozen rule still cannot detect a band there."
+ },
+ "conclusion": "Same failure mode as attempt-08 after a distinct window resize; verdicts unchanged; no threshold, fallback, or tool change was made; no historical coordinate was reused.",
+ "no_change_statement": {
+  "threshold_changed": false,
+  "fallback_used": false,
+  "frozen_tools_modified": false,
+  "historical_coordinates_reused": false
+ }
+}

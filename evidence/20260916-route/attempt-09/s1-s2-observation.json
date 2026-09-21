@@ -1,0 +1,76 @@
+{
+ "schema_version": 1,
+ "attempt": "09",
+ "phase": "S1_S2",
+ "timestamp_local": "2026-09-21T08:54:25+0800",
+ "app_bundle": "jp.naver.line.mac",
+ "surface": "LINE front/current app; macOS menu bar shows LINE menus at capture time",
+ "ax_read": {
+  "performed": true,
+  "method": "cua_repl read-only app binding: cua.getApp(\"jp.naver.line.mac\")",
+  "result": "LINE bound; one standard window present (AX window title empty); window contains a settable text field, a list (showing 0-100 of 101 items) with row/text children, a scrollbar, and the LINE menu bar (LINE/顯示/好友/視窗/常見問題); reported focused UI element is the text field; no dialog or permission window in the AX tree",
+  "input_events_sent": 0
+ },
+ "frame": {
+  "path": "evidence/20260916-route/attempt-09/frame-pre.png",
+  "capture_command": "screencapture -x",
+  "exit_code": 0,
+  "sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+  "bytes": 1818039,
+  "size": [
+   2294,
+   1490
+  ],
+  "mode": "RGBA",
+  "captured_at_local": "2026-09-21T08:54:25+0800",
+  "fresh_this_run": true,
+  "prior_frames_used_as_live_input": false
+ },
+ "target_binding": {
+  "group": "旻謙允禎成長日記",
+  "group_visible": true,
+  "album_expected": "2024/05/13～05/17",
+  "album_visible": "2024/05/13~05/17",
+  "count_expected": 57,
+  "count_visible": 57,
+  "album_card_visible": true,
+  "album_tab_visible": true,
+  "notebook_tab_visible": true,
+  "ellipsis_visible": true,
+  "adjacent_album_above": "2024/05/20~05/24 / 53",
+  "adjacent_content_below": "further album card content is visible below the target caption (owner resize revealed more of it)"
+ },
+ "surface_safety": {
+  "permission_prompt_observed": false,
+  "unknown_overlay_observed": false,
+  "adjacent_app_windows_present": true,
+  "target_area_occlusion": "none over the target album card area; other app windows sit right of and below the LINE window",
+  "scroll_sent": false,
+  "keyboard_sent": false,
+  "ax_write_sent": false,
+  "bring_to_front": false,
+  "app_acquisition_input": false,
+  "gui_inputs_sent": 0
+ },
+ "machine_readable_confirmation": {
+  "source": "frozen v4 locate_album_card.py OCR words on this same frame (see album-card-locate.json)",
+  "words_confirming_surface": [
+   "旻謙允禎成長日記",
+   "相簿",
+   "記事本",
+   "2024/05/13~05/17",
+   "57",
+   "2024/05/20~05/24",
+   "53"
+  ],
+  "menu_bar_words": [
+   "LINE",
+   "顯示",
+   "好友",
+   "視窗",
+   "常見問題"
+  ],
+  "clock_word": "9月21日週一 08:54"
+ },
+ "note": "Fresh read-only S1-S2 with zero GUI input (no click, scroll, keyboard, AX write, bring-to-front, or app-acquisition input). S3 is separately recorded in album-card-locate.json."
+}
