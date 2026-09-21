@@ -1,0 +1,24 @@
+{
+ "gate_result": "BOTH_PLAN_APPROVED",
+ "gui_input_count": 0,
+ "note": "Phase F 兩份獨立 review 的 SHA-256；append-only；不改動 artifact-freeze.json（該 63 檔凍結於審查開始前，SHA 於兩份 review 中記錄）。",
+ "reviewed_freeze_manifest": {
+  "artifact_count": 63,
+  "path": "evidence/20260921-replan-v6/attempt-01/artifact-freeze.json",
+  "sha256": "d6d705def55c052026d3045da7fd76e08c082517fd30e3cc8669aedae0eeb2db"
+ },
+ "reviews": [
+  {
+   "gate": "PLAN_APPROVED",
+   "path": "evidence/20260921-replan-v6/review/attempt-01/review-01-top-down.md",
+   "sha256": "f15b485367445c8cba35aa80e11e746872e4431c1481d8a73259740de473f78e"
+  },
+  {
+   "gate": "PLAN_APPROVED",
+   "path": "evidence/20260921-replan-v6/review/attempt-01/review-02-bottom-up.md",
+   "sha256": "5a068e1db71f44f90ae0412f59e47ba6a6a42799bc691cd52fcdbca58b7c369f"
+  }
+ ],
+ "schema": "v6-review-freeze/1",
+ "scope": "允許規劃/執行下一輪 zero-input live v6 S1-S3；不構成任何 click/GUI 授權。"
+}

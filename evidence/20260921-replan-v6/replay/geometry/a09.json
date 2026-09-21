@@ -1,0 +1,112 @@
+{
+ "diagnostics": {
+  "border_columns": {
+   "0": {
+    "rows": 1229,
+    "y_max": 1314,
+    "y_min": 57
+   },
+   "1910": {
+    "rows": 709,
+    "y_max": 1170,
+    "y_min": 462
+   },
+   "1911": {
+    "rows": 693,
+    "y_max": 1162,
+    "y_min": 470
+   },
+   "653": {
+    "rows": 1141,
+    "y_max": 1307,
+    "y_min": 102
+   },
+   "752": {
+    "rows": 631,
+    "y_max": 1156,
+    "y_min": 190
+   },
+   "753": {
+    "rows": 670,
+    "y_max": 1169,
+    "y_min": 187
+   }
+  },
+  "candidate_rects": [
+   {
+    "x0": 0,
+    "x1": 653,
+    "y0": 102,
+    "y1": 1307
+   },
+   {
+    "x0": 653,
+    "x1": 1910,
+    "y0": 462,
+    "y1": 1170
+   },
+   {
+    "x0": 752,
+    "x1": 1910,
+    "y0": 462,
+    "y1": 1156
+   },
+   {
+    "x0": 753,
+    "x1": 1910,
+    "y0": 462,
+    "y1": 1169
+   }
+  ],
+  "rects_containing_title": [
+   {
+    "x0": 0,
+    "x1": 653,
+    "y0": 102,
+    "y1": 1307
+   }
+  ],
+  "title": {
+   "bbox": [
+    27,
+    1096,
+    257,
+    1123
+   ],
+   "texts": [
+    "2024/05/13~05/17"
+   ]
+  }
+ },
+ "frame": "evidence/20260916-route/attempt-09/frame-pre.png",
+ "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "method": {
+  "constants": {
+   "left_step_min": 8,
+   "line_color": [
+    56,
+    92
+   ],
+   "min_run_rows": 300,
+   "min_span_rows": 400,
+   "min_window_h": 400,
+   "min_window_w": 200,
+   "right_step_min": 12,
+   "side_k": 6,
+   "span_overlap_min": 300,
+   "title_inset_min": 8
+  },
+  "tool": "evidence/20260916-route/tools/v6/extract_window_geometry.py",
+  "tool_sha256": "b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8"
+ },
+ "schema": "v6-window-geometry/1",
+ "source": "offline deterministic extraction from this frame by evidence/20260916-route/tools/v6/extract_window_geometry.py (sha256 b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8): window border-line columns detected in this frame's own pixels (left column x=0 rows 57..1314; right column x=653 rows 102..1307); rect = the nearest right border column over the overlapping vertical span; unique rect containing the machine-read target title. No historical coordinate used; rect is in full-screen capture device-pixel coordinates.",
+ "x0": 0,
+ "x1": 653,
+ "y0": 102,
+ "y1": 1307
+}

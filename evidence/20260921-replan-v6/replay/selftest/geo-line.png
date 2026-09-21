@@ -1,0 +1,123 @@
+{
+ "diagnostics": {
+  "border_columns": {
+   "10": {
+    "rows": 1212,
+    "y_max": 1334,
+    "y_min": 123
+   },
+   "1906": {
+    "rows": 709,
+    "y_max": 908,
+    "y_min": 200
+   },
+   "1907": {
+    "rows": 693,
+    "y_max": 900,
+    "y_min": 208
+   },
+   "350": {
+    "rows": 430,
+    "y_max": 1409,
+    "y_min": 130
+   },
+   "663": {
+    "rows": 1041,
+    "y_max": 1376,
+    "y_min": 119
+   },
+   "748": {
+    "rows": 1113,
+    "y_max": 1309,
+    "y_min": 172
+   },
+   "749": {
+    "rows": 1119,
+    "y_max": 1309,
+    "y_min": 172
+   }
+  },
+  "candidate_rects": [
+   {
+    "x0": 10,
+    "x1": 350,
+    "y0": 130,
+    "y1": 1334
+   },
+   {
+    "x0": 350,
+    "x1": 663,
+    "y0": 130,
+    "y1": 1376
+   },
+   {
+    "x0": 663,
+    "x1": 1906,
+    "y0": 200,
+    "y1": 908
+   },
+   {
+    "x0": 748,
+    "x1": 1906,
+    "y0": 200,
+    "y1": 908
+   },
+   {
+    "x0": 749,
+    "x1": 1906,
+    "y0": 200,
+    "y1": 908
+   }
+  ],
+  "rects_containing_title": [
+   {
+    "x0": 10,
+    "x1": 350,
+    "y0": 130,
+    "y1": 1334
+   }
+  ],
+  "title": {
+   "bbox": [
+    37,
+    963,
+    267,
+    990
+   ],
+   "texts": [
+    "2024/05/13~05/17"
+   ]
+  }
+ },
+ "frame": "evidence/20260921-replan-v6/replay/negatives/a08r1-extra-border-line.png",
+ "frame_sha256": "0b2770ec669bf30b04c34b6579a6f534bae1c7f364fc5f8e1b0d0229518597d5",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "method": {
+  "constants": {
+   "left_step_min": 8,
+   "line_color": [
+    56,
+    92
+   ],
+   "min_run_rows": 300,
+   "min_span_rows": 400,
+   "min_window_h": 400,
+   "min_window_w": 200,
+   "right_step_min": 12,
+   "side_k": 6,
+   "span_overlap_min": 300,
+   "title_inset_min": 8
+  },
+  "tool": "evidence/20260916-route/tools/v6/extract_window_geometry.py",
+  "tool_sha256": "b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8"
+ },
+ "schema": "v6-window-geometry/1",
+ "source": "offline deterministic extraction from this frame by evidence/20260916-route/tools/v6/extract_window_geometry.py (sha256 b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8): window border-line columns detected in this frame's own pixels (left column x=10 rows 123..1334; right column x=350 rows 130..1409); rect = the nearest right border column over the overlapping vertical span; unique rect containing the machine-read target title. No historical coordinate used; rect is in full-screen capture device-pixel coordinates.",
+ "x0": 10,
+ "x1": 350,
+ "y0": 130,
+ "y1": 1334
+}

@@ -1,0 +1,134 @@
+{
+ "diagnostics": {
+  "border_columns": {
+   "10": {
+    "rows": 1212,
+    "y_max": 1334,
+    "y_min": 123
+   },
+   "1882": {
+    "rows": 709,
+    "y_max": 892,
+    "y_min": 184
+   },
+   "1883": {
+    "rows": 693,
+    "y_max": 884,
+    "y_min": 192
+   },
+   "663": {
+    "rows": 1041,
+    "y_max": 1376,
+    "y_min": 119
+   },
+   "724": {
+    "rows": 693,
+    "y_max": 883,
+    "y_min": 128
+   },
+   "725": {
+    "rows": 709,
+    "y_max": 892,
+    "y_min": 184
+   },
+   "748": {
+    "rows": 392,
+    "y_max": 1309,
+    "y_min": 162
+   },
+   "749": {
+    "rows": 402,
+    "y_max": 1309,
+    "y_min": 162
+   }
+  },
+  "candidate_rects": [
+   {
+    "x0": 10,
+    "x1": 663,
+    "y0": 123,
+    "y1": 1334
+   },
+   {
+    "x0": 663,
+    "x1": 1882,
+    "y0": 184,
+    "y1": 892
+   },
+   {
+    "x0": 724,
+    "x1": 1882,
+    "y0": 184,
+    "y1": 883
+   },
+   {
+    "x0": 725,
+    "x1": 1882,
+    "y0": 184,
+    "y1": 892
+   },
+   {
+    "x0": 748,
+    "x1": 1882,
+    "y0": 184,
+    "y1": 892
+   },
+   {
+    "x0": 749,
+    "x1": 1882,
+    "y0": 184,
+    "y1": 892
+   }
+  ],
+  "rects_containing_title": [
+   {
+    "x0": 10,
+    "x1": 663,
+    "y0": 123,
+    "y1": 1334
+   }
+  ],
+  "title": {
+   "bbox": [
+    37,
+    926,
+    263,
+    953
+   ],
+   "texts": [
+    "2024/05/13~05/17"
+   ]
+  }
+ },
+ "frame": "evidence/20260916-route/attempt-08/frame-pre-r2.png",
+ "frame_sha256": "2226ded9c29c7ab99bb8126d21f625e6a65e61a6aa94c14eda8d5875a201d08a",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "method": {
+  "constants": {
+   "left_step_min": 8,
+   "line_color": [
+    56,
+    92
+   ],
+   "min_run_rows": 300,
+   "min_span_rows": 400,
+   "min_window_h": 400,
+   "min_window_w": 200,
+   "right_step_min": 12,
+   "side_k": 6,
+   "span_overlap_min": 300,
+   "title_inset_min": 8
+  },
+  "tool": "evidence/20260916-route/tools/v6/extract_window_geometry.py",
+  "tool_sha256": "b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8"
+ },
+ "schema": "v6-window-geometry/1",
+ "source": "offline deterministic extraction from this frame by evidence/20260916-route/tools/v6/extract_window_geometry.py (sha256 b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8): window border-line columns detected in this frame's own pixels (left column x=10 rows 123..1334; right column x=663 rows 119..1376); rect = the nearest right border column over the overlapping vertical span; unique rect containing the machine-read target title. No historical coordinate used; rect is in full-screen capture device-pixel coordinates.",
+ "x0": 10,
+ "x1": 663,
+ "y0": 123,
+ "y1": 1334
+}

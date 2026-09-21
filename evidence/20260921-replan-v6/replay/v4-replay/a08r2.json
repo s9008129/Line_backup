@@ -1,0 +1,130 @@
+{
+ "tool": "locate_album_card",
+ "frame": "evidence/20260916-route/attempt-08/frame-pre-r2.png",
+ "frame_sha256": "2226ded9c29c7ab99bb8126d21f625e6a65e61a6aa94c14eda8d5875a201d08a",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   37,
+   926,
+   263,
+   953
+  ]
+ },
+ "ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/13~05/17",
+  "57",
+  "十",
+  "你甘意心口糊風",
+  "LINE TV〈再見1987〉熱播中",
+  "28°C",
+  "03",
+  "9月19日週六 20:24",
+  "d1",
+  "• Line_backup 一：說明下一步操作 I Line_backup — codex --profile implem..•",
+  "….plement --yolo、codex-code-mode-host •••",
+  "•..t--yolo、codex-code-mode-host",
+  "十",
+  "T",
+  "11.16",
+  "0.15",
+  "0.14",
+  "9.10",
+  "8.14",
+  "• 收到。由於上一輪在",
+  "下做一次新的零輸入",
+  "S3 前完全沒有輸入，gate-6 仍未消費；我會在同一 attempt-08",
+  "S1-$3，重新導出座標。若仍非",
+  "ELIGIBLE，我仍不會點擊。",
+  "• Used computer",
+  "Li",
+  "重新讀取調整後的",
+  "action",
+  "LINE 相簿列表",
+  "• Context compacted• 1m 14s",
+  "• 收到。接下來我會重新讀取目前畫面並重新判定目標相簿卡的安全點；這一步仍不會點",
+  "擊。只有畫面重新判定為安全後，才會執行你授權的那一次相簿卡點擊。",
+  "• Used",
+  "computer",
+  "L Captured",
+  "1 action",
+  "screenshot",
+  "重新讀取調整後的 LINE 畫面",
+  "• Planning sequential",
+  "command execution （1m 37s • esc",
+  "to interrupt）",
+  ">Esk Codex to",
+  "do anything",
+  "gpt-5.6-1una",
+  "max•~/Documents/ChatGPT/Line_bac. Goal stalled （/goal resume）",
+  "開始聊天吧！",
+  "7.22",
+  "4"
+ ],
+ "band_top_bright_row": 601,
+ "band_bottom_bright_row": null,
+ "margin_above_px": 338,
+ "margin_below_px": null,
+ "count_box": [
+  29,
+  955,
+  197,
+  985
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "click_point": [
+  49,
+  939
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "verdict": "UNSAFE_MARGINS",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "d37fa4efc861e0f094163cee83acb477bd1316613c3a961196fbfe290339f4da",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "21ac49f136e4efc1349dd5afb27d62b016cd0a604f568dbf42a1eca8a5842cf5",
+    "stdout_bytes": 3073,
+    "lines_parsed": 56
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "f3463a03318f3628ae58a0a7488cf632220d14c4aaf608eeea97df2ac76de12f",
+    "stdout_bytes": 32,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

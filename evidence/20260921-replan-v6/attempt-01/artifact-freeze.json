@@ -1,0 +1,322 @@
+{
+ "artifact_count": 63,
+ "artifacts": [
+  {
+   "bytes": 8741,
+   "path": "evidence/20260916-route/tools/v6/README.md",
+   "sha256": "7527ce3dfc8a5919a7f04b25fd1df623aa702be3359c421468206181bacea5f2"
+  },
+  {
+   "bytes": 10032,
+   "path": "evidence/20260916-route/tools/v6/extract_window_geometry.py",
+   "sha256": "b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8"
+  },
+  {
+   "bytes": 22218,
+   "path": "evidence/20260916-route/tools/v6/locate_album_card.py",
+   "sha256": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142"
+  },
+  {
+   "bytes": 17843,
+   "path": "evidence/20260916-route/tools/v6/selftest/run_selftest.py",
+   "sha256": "104ed68ec6c0a8cc2a8696e4a11a0374e0cc824bcfbbbfad009be4ad837e7f84"
+  },
+  {
+   "bytes": 7762,
+   "path": "evidence/20260921-replan-v6/attempt-01/architecture-decision.md",
+   "sha256": "e03c4be0c1679bbcc5a8e157c65f9c33983fcf31ea97e2f61c44ac8489dba547"
+  },
+  {
+   "bytes": 15058,
+   "path": "evidence/20260921-replan-v6/attempt-01/v4-failure-analysis.json",
+   "sha256": "10faba9a3dc8412b3c3190738ca647b1cd839714833743d9f11a05b6457276f4"
+  },
+  {
+   "bytes": 9599,
+   "path": "evidence/20260921-replan-v6/attempt-01/v4-failure-analysis.md",
+   "sha256": "d6d14727da03b8f6b34f240f4faadc6c293ad3ce878c9ef4c2e478f66b10fab6"
+  },
+  {
+   "bytes": 7922,
+   "path": "evidence/20260921-replan-v6/attempt-01/v4-v6-comparison.md",
+   "sha256": "2a35103afdc51aa08a746fad6ece1dc79d49a26cd824bbb931bbb225b649e5ef"
+  },
+  {
+   "bytes": 8662,
+   "path": "evidence/20260921-replan-v6/replay/a08r1-v6.json",
+   "sha256": "c3da9a2461d0417c524af78606ee36c0f0da8f642d07693a98474681e05e9d96"
+  },
+  {
+   "bytes": 9222,
+   "path": "evidence/20260921-replan-v6/replay/a08r2-v6.json",
+   "sha256": "8edb193fcd027dfbff21aa2c0847656c63707cc845ab08d9806f47b515901b24"
+  },
+  {
+   "bytes": 8823,
+   "path": "evidence/20260921-replan-v6/replay/a09-v6.json",
+   "sha256": "a637db0a109c8aeff547e95bc171a82e3cb306c34f096c49c6f754a64e4b48a0"
+  },
+  {
+   "bytes": 5276,
+   "path": "evidence/20260921-replan-v6/replay/analyze_row_domains.py",
+   "sha256": "0a55fe989bc4c035dbbbde836c160478770d84ebc13715e323b51dc8d01cc5e5"
+  },
+  {
+   "bytes": 11804,
+   "path": "evidence/20260921-replan-v6/replay/build_phase_a_json.py",
+   "sha256": "274e249bf6006ceb586d084c648188f26f7bebab9c3daacddcaf130ad9d72c6c"
+  },
+  {
+   "bytes": 2272,
+   "path": "evidence/20260921-replan-v6/replay/geometry/a08r1.json",
+   "sha256": "2fa739c4749e3b91bd43f321a36b9ae2b98b6a76166162e6b428495ceea0e80e"
+  },
+  {
+   "bytes": 2555,
+   "path": "evidence/20260921-replan-v6/replay/geometry/a08r2.json",
+   "sha256": "3701746aa4a06ba77b8391b9872c8271f68f329b50fcf2367ee9e9c59b5fa4d7"
+  },
+  {
+   "bytes": 2270,
+   "path": "evidence/20260921-replan-v6/replay/geometry/a09.json",
+   "sha256": "8886ceb43d39d17ce6c77f6da53224eed5f6e9bed51ea4dc425463aa2ba48022"
+  },
+  {
+   "bytes": 1490925,
+   "path": "evidence/20260921-replan-v6/replay/negatives/a08r1-extra-border-line.png",
+   "sha256": "0b2770ec669bf30b04c34b6579a6f534bae1c7f364fc5f8e1b0d0229518597d5"
+  },
+  {
+   "bytes": 1490653,
+   "path": "evidence/20260921-replan-v6/replay/negatives/a08r1-extra-strip-cluster.png",
+   "sha256": "73ad6cd17093894c343135fe24040f2053ebf6350f08dee3371dce2fb289497a"
+  },
+  {
+   "bytes": 1479359,
+   "path": "evidence/20260921-replan-v6/replay/negatives/a08r1-grid-above-30px-closer.png",
+   "sha256": "826fb94daabdbf601953d210593a2821e8684f319c7d9cb33fefc42422a3554a"
+  },
+  {
+   "bytes": 1241757,
+   "path": "evidence/20260921-replan-v6/replay/negatives/a09-grid-below-100px-closer.png",
+   "sha256": "c6b40618386f4e90818b0d001029a5d8b15200077b4ca292b9409e7b35ae6908"
+  },
+  {
+   "bytes": 1280738,
+   "path": "evidence/20260921-replan-v6/replay/negatives/a09-title-erased.png",
+   "sha256": "7047fcf3b11136e8a5d1b3a69b2daf414cfa42b1df6054d26a5ee85e8fb108fb"
+  },
+  {
+   "bytes": 406,
+   "path": "evidence/20260921-replan-v6/replay/negatives/geometry-candidate-left-of-inset.json",
+   "sha256": "187d07acde0924edfb3d71a7bdc1de7ecf4c5891992e19bd0c341b1f5b42fb5e"
+  },
+  {
+   "bytes": 402,
+   "path": "evidence/20260921-replan-v6/replay/negatives/geometry-full-frame.json",
+   "sha256": "b5a4bc4526fd941713996b123bc7e1f3b4357168917131cd8e38e2f3f5fa31f9"
+  },
+  {
+   "bytes": 32,
+   "path": "evidence/20260921-replan-v6/replay/negatives/geometry-missing-fields.json",
+   "sha256": "85b57426d34a295c36cf4d7077afb4538aa80ce2f599d299b2956295c026dbdf"
+  },
+  {
+   "bytes": 17,
+   "path": "evidence/20260921-replan-v6/replay/negatives/geometry-not-json.json",
+   "sha256": "c7f910be18317ad8e932b23bf1e6e4b21212a6817178b05ba21550c17366c5fe"
+  },
+  {
+   "bytes": 407,
+   "path": "evidence/20260921-replan-v6/replay/negatives/geometry-out-of-frame.json",
+   "sha256": "a515a60361544a943cd4ae45cd7092914c9d0f6bcb5101cec5b2b9974032ea20"
+  },
+  {
+   "bytes": 418,
+   "path": "evidence/20260921-replan-v6/replay/negatives/geometry-right-tail-clipped.json",
+   "sha256": "1ce586e3d0c5643b2cdc9b228043c61d4d4fd9afac140deb1771ea4ea29a9de4"
+  },
+  {
+   "bytes": 418,
+   "path": "evidence/20260921-replan-v6/replay/negatives/geometry-title-above-roi.json",
+   "sha256": "3ef82db15a34087322ab4afa0bb668934e8d25389fae413e92374334c1a73c65"
+  },
+  {
+   "bytes": 402,
+   "path": "evidence/20260921-replan-v6/replay/negatives/geometry-too-small.json",
+   "sha256": "fc3ee600344e2b218d6f652228ecc2dc4b8ca6753d75eb978a1b5866e7ee5fdc"
+  },
+  {
+   "bytes": 10,
+   "path": "evidence/20260921-replan-v6/replay/negatives/malformed-frame.png",
+   "sha256": "91a3072fe20c0552bfa0c3c90362af3d455a5fd4b9ec5c0c3035ade2b2258d70"
+  },
+  {
+   "bytes": 4733,
+   "path": "evidence/20260921-replan-v6/replay/row-domain-recompute.json",
+   "sha256": "7887b9d740686844072402cb3c9326fe1942bb36398b8cef19631574a748a493"
+  },
+  {
+   "bytes": 2298,
+   "path": "evidence/20260921-replan-v6/replay/selftest/geo-dots.png",
+   "sha256": "3dd4de252d23dc05f84a0e8aa8565b7b37b74f57823cbb4a7fed04f23ea6a2c7"
+  },
+  {
+   "bytes": 2298,
+   "path": "evidence/20260921-replan-v6/replay/selftest/geo-down.png",
+   "sha256": "568dbc4c455fd3cb71a259630c8335771ae5c57e75b8c96550a458e1fa132ccb"
+  },
+  {
+   "bytes": 2438,
+   "path": "evidence/20260921-replan-v6/replay/selftest/geo-line.png",
+   "sha256": "0db15c9051e2287eb3dabd97b9be6feaf423c846d420a82d28295f2337e01cb6"
+  },
+  {
+   "bytes": 2301,
+   "path": "evidence/20260921-replan-v6/replay/selftest/geo-up.png",
+   "sha256": "9bd2a85f3a6ae8c5550be83b2616431ca2dc05a4d0ee9552d38f6625e7a1a9e5"
+  },
+  {
+   "bytes": 8704,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-ambiguous_strip_cluster.json",
+   "sha256": "5c024d841ab2ad33eb1e1e3543b4b96f02f7a8ad4c48bb8c2b8b25eb9e24a37f"
+  },
+  {
+   "bytes": 4609,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-candidate_out_of_bounds.json",
+   "sha256": "caf68ac5bd425387bdcde0ec85598805ad01ccd18f355ac1c9483143d2619267"
+  },
+  {
+   "bytes": 7561,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-extractor_ambiguous_border_line.json",
+   "sha256": "1aee3c96f0b2fc94b8e34c57451a056ce3026a27bd08c64be1f2d1d24105146e"
+  },
+  {
+   "bytes": 3675,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-geometry_missing_fields.json",
+   "sha256": "7030c4140b2aa9811b14eada8048ae41e7ee4e179d2468f86ff9a29eb4d628b1"
+  },
+  {
+   "bytes": 3686,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-geometry_not_json.json",
+   "sha256": "54785117c008766bcf3c7062e76f7cafaf35b91689da2d8fab1aee82d2d9de24"
+  },
+  {
+   "bytes": 3689,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-geometry_out_of_frame.json",
+   "sha256": "5de0835d9cd4a550df181c90727fde7e1c03efe334d78c0c0cb35d71d10f5f25"
+  },
+  {
+   "bytes": 8607,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-insufficient_lower_separation.json",
+   "sha256": "5d91c06d108769c3ba5ab68c7891825526b61c99f0825f47e0c17e1da9985e65"
+  },
+  {
+   "bytes": 8398,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-insufficient_upper_separation.json",
+   "sha256": "365e15879157e166d3023af074fe4557cc506f22060cf0ba41d6598803c0b9d1"
+  },
+  {
+   "bytes": 1430,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-malformed_frame.json",
+   "sha256": "e872276264d8d3e3fa365ec5351d56b230b226cdd7572fe9249f0986d692b965"
+  },
+  {
+   "bytes": 3671,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-missing_geometry.json",
+   "sha256": "fee03cf3b852e025df79f29fa39376fa9b23cc01e365707135c13ac777908202"
+  },
+  {
+   "bytes": 3517,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-no_target_title.json",
+   "sha256": "a94b50db9df13203449b3b43eb95383be16ce7bfaa46ee61a9db6a129735f177"
+  },
+  {
+   "bytes": 5632,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-roi_is_full_frame.json",
+   "sha256": "33ad10c66ae782bf21460dfe3adc277ea0f4b2aa4aeed03b5cba49f95bb88a38"
+  },
+  {
+   "bytes": 3673,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-roi_too_small.json",
+   "sha256": "a60050bc89ce4f9533570ce97f3c6a78e785bfa26496642d4e313c70db25bb49"
+  },
+  {
+   "bytes": 4868,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-target_above_roi.json",
+   "sha256": "b9a24c4dc678520798de80261fab145874a5d15e3d73debe485ae06187149490"
+  },
+  {
+   "bytes": 4869,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-target_near_roi_edge.json",
+   "sha256": "a2baf7f177c92d5a3d3cdd49145a28658eb54a3bda52b31742d8a66cafc4ed49"
+  },
+  {
+   "bytes": 3703,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-unbound_geometry_sha.json",
+   "sha256": "01d665a67f0509eedda75311496a383a48fd7ab69decb780feb93014b4ada26d"
+  },
+  {
+   "bytes": 7836,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-wrong_count.json",
+   "sha256": "7a95050824676c248140b93b61ac675dcc50e6ec13ee60af29637dc31ed745c3"
+  },
+  {
+   "bytes": 3508,
+   "path": "evidence/20260921-replan-v6/replay/selftest/neg-wrong_date.json",
+   "sha256": "383b77eaa1e6266f73e5098c681250b5515d09717ab7c98fd3d595500dd4b28a"
+  },
+  {
+   "bytes": 2272,
+   "path": "evidence/20260921-replan-v6/replay/selftest/regen-a08r1-geometry.json",
+   "sha256": "2fa739c4749e3b91bd43f321a36b9ae2b98b6a76166162e6b428495ceea0e80e"
+  },
+  {
+   "bytes": 2555,
+   "path": "evidence/20260921-replan-v6/replay/selftest/regen-a08r2-geometry.json",
+   "sha256": "3701746aa4a06ba77b8391b9872c8271f68f329b50fcf2367ee9e9c59b5fa4d7"
+  },
+  {
+   "bytes": 2270,
+   "path": "evidence/20260921-replan-v6/replay/selftest/regen-a09-geometry.json",
+   "sha256": "8886ceb43d39d17ce6c77f6da53224eed5f6e9bed51ea4dc425463aa2ba48022"
+  },
+  {
+   "bytes": 8677,
+   "path": "evidence/20260921-replan-v6/replay/selftest/replay-a08r1-v6.json",
+   "sha256": "14e02d02a09102be498366448a83eaf4d98de9017b943322454a57b96025b597"
+  },
+  {
+   "bytes": 9237,
+   "path": "evidence/20260921-replan-v6/replay/selftest/replay-a08r2-v6.json",
+   "sha256": "35dcc20f4bca729e33dd2369ee0d2521e4879bac62c3249a8f16816b91eeabee"
+  },
+  {
+   "bytes": 8838,
+   "path": "evidence/20260921-replan-v6/replay/selftest/replay-a09-v6.json",
+   "sha256": "940eab2d31c0761cddb165ff9f095804548f3ad23493b114f5985c9c0ac10e33"
+  },
+  {
+   "bytes": 14833,
+   "path": "evidence/20260921-replan-v6/replay/selftest/results.json",
+   "sha256": "6ee5f22f3909ead4b72d0b70076c7c766e8f90e8254b73440c9dadfe774da260"
+  },
+  {
+   "bytes": 2900,
+   "path": "evidence/20260921-replan-v6/replay/v4-replay/a08r1.json",
+   "sha256": "ddd15fc479169dbd242d0b26115b074e1e05a8a65993ac295d026bcf5fc8ffc9"
+  },
+  {
+   "bytes": 3136,
+   "path": "evidence/20260921-replan-v6/replay/v4-replay/a08r2.json",
+   "sha256": "0f22541399f7c4a91d76ba49c05baa50791762e7a7874d7095679b3fe5eef779"
+  },
+  {
+   "bytes": 3061,
+   "path": "evidence/20260921-replan-v6/replay/v4-replay/a09.json",
+   "sha256": "c4b4443c1471c1671812b3e4f29214094e5fb7e46e7900e7e22b5ef1ade3d06a"
+  }
+ ],
+ "note": "SHA-256 of every v6 replan artifact frozen before the Phase F reviews. This manifest does not include its own hash; it is recorded in the commit message and in the review artifacts.",
+ "schema": "v6-replan-freeze/1"
+}

@@ -1,0 +1,14 @@
+{
+ "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-08/frame-pre.png",
+ "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "schema": "v6-window-geometry/1",
+ "source": "selftest fabricated ROI (left edge 40) - test input, not a route artifact",
+ "x0": 40,
+ "x1": 663,
+ "y0": 123,
+ "y1": 1334
+}

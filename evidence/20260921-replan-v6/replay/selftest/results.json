@@ -1,0 +1,531 @@
+{
+ "adversarial_notes": {
+  "extractor_ambiguous_border_line": {
+   "extractor_exit": 0,
+   "extractor_rect": [
+    10,
+    130,
+    350,
+    1334
+   ],
+   "note": "the extractor itself returns GEOMETRY_OK on the painted frame; v6's independent right-tail check (identity-not-ROI-bound) is the gate"
+  }
+ },
+ "cases": [
+  {
+   "click_point": [
+    49,
+    976
+   ],
+   "click_point_equals_frame_ocr_derivation": true,
+   "exit": 0,
+   "expected_exit": [
+    0
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-08/frame-pre.png",
+   "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+   "geometry_byte_identical_to_committed": true,
+   "geometry_committed": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-replan-v6/replay/geometry/a08r1.json",
+   "id": "replay-a08r1",
+   "kind": "replay",
+   "margins": {
+    "margin_above_px": 45,
+    "margin_below_px": 102,
+    "rule": "max(24, round(title_height*1.0))",
+    "sep_min_px": 27,
+    "title_height_px": 27
+   },
+   "passed": true,
+   "verdict": "ELIGIBLE"
+  },
+  {
+   "click_point": [
+    49,
+    939
+   ],
+   "click_point_equals_frame_ocr_derivation": true,
+   "exit": 0,
+   "expected_exit": [
+    0
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-08/frame-pre-r2.png",
+   "frame_sha256": "2226ded9c29c7ab99bb8126d21f625e6a65e61a6aa94c14eda8d5875a201d08a",
+   "geometry_byte_identical_to_committed": true,
+   "geometry_committed": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-replan-v6/replay/geometry/a08r2.json",
+   "id": "replay-a08r2",
+   "kind": "replay",
+   "margins": {
+    "margin_above_px": 44,
+    "margin_below_px": 103,
+    "rule": "max(24, round(title_height*1.0))",
+    "sep_min_px": 27,
+    "title_height_px": 27
+   },
+   "passed": true,
+   "verdict": "ELIGIBLE"
+  },
+  {
+   "click_point": [
+    39,
+    1109
+   ],
+   "click_point_equals_frame_ocr_derivation": true,
+   "exit": 0,
+   "expected_exit": [
+    0
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "geometry_byte_identical_to_committed": true,
+   "geometry_committed": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-replan-v6/replay/geometry/a09.json",
+   "id": "replay-a09",
+   "kind": "replay",
+   "margins": {
+    "margin_above_px": 46,
+    "margin_below_px": 101,
+    "rule": "max(24, round(title_height*1.0))",
+    "sep_min_px": 27,
+    "title_height_px": 27
+   },
+   "passed": true,
+   "verdict": "ELIGIBLE"
+  },
+  {
+   "click_point": null,
+   "desc": "expected start/end that do not exist in the frame -> TARGET_TITLE_NOT_FOUND",
+   "dispatched": null,
+   "exit": 2,
+   "expected_exit": [
+    2
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "geometry": null,
+   "id": "wrong_date",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "TARGET_TITLE_NOT_FOUND"
+  },
+  {
+   "click_point": [
+    39,
+    1109
+   ],
+   "desc": "readable count 57 != expected 58 -> TARGET_COUNT_MISMATCH",
+   "dispatched": null,
+   "exit": 5,
+   "expected_exit": [
+    5
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "geometry": null,
+   "id": "wrong_count",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "TARGET_COUNT_MISMATCH"
+  },
+  {
+   "click_point": null,
+   "desc": "title band erased -> TARGET_TITLE_NOT_FOUND (before geometry is trusted)",
+   "dispatched": null,
+   "exit": 2,
+   "expected_exit": [
+    2
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-replan-v6/replay/negatives/a09-title-erased.png",
+   "frame_sha256": "7047fcf3b11136e8a5d1b3a69b2daf414cfa42b1df6054d26a5ee85e8fb108fb",
+   "geometry": null,
+   "id": "no_target_title",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "TARGET_TITLE_NOT_FOUND"
+  },
+  {
+   "click_point": null,
+   "desc": "no --window-geometry -> WINDOW_ROI_MISSING_OR_INVALID",
+   "dispatched": null,
+   "exit": 7,
+   "expected_exit": [
+    7
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "geometry": null,
+   "id": "missing_geometry",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "WINDOW_ROI_MISSING_OR_INVALID"
+  },
+  {
+   "click_point": null,
+   "desc": "geometry of a different frame (sha mismatch) -> WINDOW_ROI_MISSING_OR_INVALID",
+   "dispatched": null,
+   "exit": 7,
+   "expected_exit": [
+    7
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "geometry": null,
+   "id": "unbound_geometry_sha",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "WINDOW_ROI_MISSING_OR_INVALID"
+  },
+  {
+   "click_point": null,
+   "desc": "geometry file unreadable -> WINDOW_ROI_MISSING_OR_INVALID",
+   "dispatched": null,
+   "exit": 7,
+   "expected_exit": [
+    7
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "geometry": null,
+   "id": "geometry_not_json",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "WINDOW_ROI_MISSING_OR_INVALID"
+  },
+  {
+   "click_point": null,
+   "desc": "geometry missing fields -> WINDOW_ROI_MISSING_OR_INVALID",
+   "dispatched": null,
+   "exit": 7,
+   "expected_exit": [
+    7
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "geometry": null,
+   "id": "geometry_missing_fields",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "WINDOW_ROI_MISSING_OR_INVALID"
+  },
+  {
+   "click_point": null,
+   "desc": "rect outside frame -> WINDOW_ROI_MISSING_OR_INVALID",
+   "dispatched": null,
+   "exit": 7,
+   "expected_exit": [
+    7
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "geometry": null,
+   "id": "geometry_out_of_frame",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "WINDOW_ROI_MISSING_OR_INVALID"
+  },
+  {
+   "click_point": null,
+   "desc": "ROI width 199 < 200 -> WINDOW_ROI_MISSING_OR_INVALID",
+   "dispatched": null,
+   "exit": 7,
+   "expected_exit": [
+    7
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "geometry": null,
+   "id": "roi_too_small",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "WINDOW_ROI_MISSING_OR_INVALID"
+  },
+  {
+   "click_point": [
+    49,
+    976
+   ],
+   "desc": "ROI right tail 320-267=53 < 120 -> IDENTITY_NOT_ROI_BOUND",
+   "dispatched": null,
+   "exit": 8,
+   "expected_exit": [
+    8
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-08/frame-pre.png",
+   "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+   "geometry": null,
+   "id": "target_near_roi_edge",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "IDENTITY_NOT_ROI_BOUND"
+  },
+  {
+   "click_point": [
+    49,
+    976
+   ],
+   "desc": "title top 963 above ROI top 980 -> IDENTITY_NOT_ROI_BOUND",
+   "dispatched": null,
+   "exit": 8,
+   "expected_exit": [
+    8
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-08/frame-pre.png",
+   "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+   "geometry": null,
+   "id": "target_above_roi",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "IDENTITY_NOT_ROI_BOUND"
+  },
+  {
+   "click_point": [
+    49,
+    976
+   ],
+   "desc": "candidate x=49 < ROI left 40+16 -> CANDIDATE_OUT_OF_BOUNDS",
+   "dispatched": null,
+   "exit": 11,
+   "expected_exit": [
+    11
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-08/frame-pre.png",
+   "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+   "geometry": null,
+   "id": "candidate_out_of_bounds",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "CANDIDATE_OUT_OF_BOUNDS"
+  },
+  {
+   "click_point": [
+    39,
+    1109
+   ],
+   "desc": "ROI = whole screenshot (foreign content in domain) -> must refuse (4/9/10 acceptable)",
+   "dispatched": null,
+   "exit": 9,
+   "expected_exit": [
+    4,
+    9,
+    10
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "geometry": null,
+   "id": "roi_is_full_frame",
+   "kind": "negative",
+   "note": "any refusal is acceptable here; ELIGIBLE would be a safety failure",
+   "passed": true,
+   "verdict": "CARD_STRUCTURE_UNRESOLVED"
+  },
+  {
+   "click_point": [
+    49,
+    946
+   ],
+   "desc": "grid above moved 30 px closer (margin_above ~15 px < 27) -> UNSAFE_MARGINS",
+   "dispatched": null,
+   "exit": 4,
+   "expected_exit": [
+    4
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-replan-v6/replay/negatives/a08r1-grid-above-30px-closer.png",
+   "frame_sha256": "826fb94daabdbf601953d210593a2821e8684f319c7d9cb33fefc42422a3554a",
+   "geometry": null,
+   "id": "insufficient_upper_separation",
+   "kind": "negative",
+   "margins": {
+    "margin_above_px": 15,
+    "margin_below_px": 102,
+    "rule": "max(24, round(title_height*1.0))",
+    "sep_min_px": 27,
+    "title_height_px": 27
+   },
+   "passed": true,
+   "structure": {
+    "above_band_bottom_row": 931,
+    "above_band_runs": [
+     [
+      446,
+      637
+     ],
+     [
+      640,
+      931
+     ]
+    ],
+    "below_band_runs": [
+     [
+      1048,
+      1303
+     ]
+    ],
+    "below_band_top_row": 1048,
+    "scan_y_range": [
+     446,
+     1303
+    ]
+   },
+   "verdict": "UNSAFE_MARGINS"
+  },
+  {
+   "click_point": [
+    42,
+    1108
+   ],
+   "desc": "grid below moved 100 px closer (margin_below < 24 px floor) -> UNSAFE_MARGINS",
+   "dispatched": null,
+   "exit": 4,
+   "expected_exit": [
+    4
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-replan-v6/replay/negatives/a09-grid-below-100px-closer.png",
+   "frame_sha256": "c6b40618386f4e90818b0d001029a5d8b15200077b4ca292b9409e7b35ae6908",
+   "geometry": null,
+   "id": "insufficient_lower_separation",
+   "kind": "negative",
+   "margins": {
+    "margin_above_px": 45,
+    "margin_below_px": 17,
+    "rule": "max(24, round(title_height*1.0))",
+    "sep_min_px": 24,
+    "title_height_px": 23
+   },
+   "passed": true,
+   "structure": {
+    "above_band_bottom_row": 1063,
+    "above_band_runs": [
+     [
+      608,
+      769
+     ],
+     [
+      772,
+      1063
+     ]
+    ],
+    "below_band_runs": [
+     [
+      1125,
+      1206
+     ]
+    ],
+    "below_band_top_row": 1125,
+    "scan_y_range": [
+     608,
+     1206
+    ]
+   },
+   "verdict": "UNSAFE_MARGINS"
+  },
+  {
+   "click_point": [
+    49,
+    976
+   ],
+   "desc": "second control-like cluster inside the caption strip -> STRIP_CONTENT_UNEXPECTED",
+   "dispatched": null,
+   "exit": 10,
+   "expected_exit": [
+    10
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-replan-v6/replay/negatives/a08r1-extra-strip-cluster.png",
+   "frame_sha256": "73ad6cd17093894c343135fe24040f2053ebf6350f08dee3371dce2fb289497a",
+   "geometry": null,
+   "id": "ambiguous_strip_cluster",
+   "kind": "negative",
+   "passed": true,
+   "strip_clusters": [
+    {
+     "bbox": [
+      617,
+      975,
+      621,
+      1000
+     ],
+     "height": 26,
+     "px": 56,
+     "width": 5
+    },
+    {
+     "bbox": [
+      119,
+      1043,
+      121,
+      1057
+     ],
+     "height": 15,
+     "px": 27,
+     "width": 3
+    }
+   ],
+   "verdict": "STRIP_CONTENT_UNEXPECTED"
+  },
+  {
+   "click_point": [
+    49,
+    976
+   ],
+   "desc": "painted extra border-like line narrows the extracted ROI -> v6 must refuse (8)",
+   "dispatched": null,
+   "exit": 8,
+   "expected_exit": [
+    8
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-replan-v6/replay/negatives/a08r1-extra-border-line.png",
+   "frame_sha256": "0b2770ec669bf30b04c34b6579a6f534bae1c7f364fc5f8e1b0d0229518597d5",
+   "geometry": null,
+   "id": "extractor_ambiguous_border_line",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "IDENTITY_NOT_ROI_BOUND"
+  },
+  {
+   "click_point": null,
+   "desc": "undecodable frame file -> BAD_FRAME",
+   "dispatched": null,
+   "exit": 6,
+   "expected_exit": [
+    6
+   ],
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260921-replan-v6/replay/negatives/malformed-frame.png",
+   "frame_sha256": "91a3072fe20c0552bfa0c3c90362af3d455a5fd4b9ec5c0c3035ade2b2258d70",
+   "geometry": null,
+   "id": "malformed_frame",
+   "kind": "negative",
+   "passed": true,
+   "verdict": "BAD_FRAME"
+  }
+ ],
+ "global_assertions": [
+  {
+   "assertion": "no_historical_click_coordinate_literal_in_v6_sources",
+   "detail": "none of the five historical points appear",
+   "ok": true
+  },
+  {
+   "assertion": "candidate_derived_per_frame",
+   "detail": "replay click points: [[49, 976], [49, 939], [39, 1109]]",
+   "ok": true
+  },
+  {
+   "assertion": "no_negative_case_eligible_or_dispatched",
+   "detail": "18 negative cases",
+   "ok": true
+  },
+  {
+   "assertion": "attempt07_replay_not_possible_frame_absent",
+   "detail": "attempt-07 frame sha 2897628770ddacd125be3e8224ea4dfdd970aa1056acb9ca277c060553e7e7d3 is not preserved on disk; attempt-07 replay is recorded as not-possible rather than simulated",
+   "ok": true
+  }
+ ],
+ "gui_input_count": 0,
+ "interpreter": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+ "schema": "v6-selftest-results/1",
+ "summary": {
+  "all_passed": true,
+  "cases_passed": 21,
+  "cases_total": 21,
+  "global_assertions_passed": 4,
+  "global_assertions_total": 4,
+  "note": "ELIGIBLE is not a success criterion; every negative case must refuse with its expected code or be a documented refusal-set member."
+ }
+}

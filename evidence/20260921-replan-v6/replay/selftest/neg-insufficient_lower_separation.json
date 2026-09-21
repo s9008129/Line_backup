@@ -1,0 +1,366 @@
+{
+ "tool": "locate_album_card_v6",
+ "tool_sha256": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+ "scope": "album-card S3 safety location only; offline evidence; never dispatched",
+ "frame": "evidence/20260921-replan-v6/replay/negatives/a09-grid-below-100px-closer.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "constants": {
+  "content_diff": 60,
+  "band_frac_threshold": 0.45,
+  "band_min_rows": 20,
+  "strip_frac_max": 0.3,
+  "strip_min_rows": 40,
+  "bg_mad_max": 5.0,
+  "sep_min": "max(24, title_height * 1.0)",
+  "roi_inset_px": 8,
+  "roi_right_tail_px": 120,
+  "roi_candidate_margin_px": 16,
+  "control_max_wh": [
+   48,
+   80
+  ],
+  "control_min_gap_px": 100,
+  "cluster_min_px": 5,
+  "cluster_merge_gap": 12,
+  "scan_range_px": 500
+ },
+ "provenance": {
+  "title_count_logic_copied_from": {
+   "path": "evidence/20260916-route/tools/v4/locate_album_card.py",
+   "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162"
+  },
+  "reader": {
+   "module": "evidence/20260916-route/tools/v4/vision_reader.py",
+   "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8"
+  },
+  "historical_coordinates_used": false,
+  "fallback_to_v4_candidate": false
+ },
+ "frame_sha256": "c6b40618386f4e90818b0d001029a5d8b15200077b4ca292b9409e7b35ae6908",
+ "frame_bytes": 1241757,
+ "frame_size": [
+  2294,
+  1390
+ ],
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   30,
+   1097,
+   257,
+   1120
+  ]
+ },
+ "ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "•29°C",
+  "00",
+  "9月21日週一 08:54",
+  "chatgpt.com",
+  "C",
+  "十",
+  "L",
+  "旻謙允禎成長日記",
+  "Codex",
+  "相簿",
+  "2024/05/20~05/24",
+  "53",
+  "記事本",
+  "Usage • Settings",
+  "C",
+  "Q",
+  "目",
+  "2024/05/13~05/17",
+  "邹是到4點，",
+  "rization gate，但尚未授權點擊」",
+  "replar",
+  "56",
+  "• Line_backup —：Line_backup - codex -m deepseek-v4.1-flash --sand...",
+  "...devtools-mcp • uv run media_toolbox.py",
+  "••",
+  "...l_reasoning_effort=\"max\" 、node",
+  "十",
+  "L Read README.md",
+  "esh fro",
+  "• Ran git 1s-files evidence/20260916-route/attempt-08/：echo",
+  "\"---gitignore---\"；",
+  "cat.gitignore; echo",
+  "\"—--attempt list---\"；1s evidence/20260916-route/ |",
+  "grep attempt; echo \"---date---\"； date +%Y-%m-%dT%H ：%M：%5%z",
+  "evidence/20260916-route/attempt-08/00-start-state.json",
+  "evidence/20260916-route/attempt-08/99-end-state.json",
+  "… +26 lines （ctrl + t to view transcript）",
+  "2026-09-21T08:52:45+0800",
+  "7還看°38",
+  "通過：git",
+  "乾淨、HEAD = a9e523e7..",
+  "與 origin/master 同步。下一個未使用",
+  "的",
+  "attempt 是",
+  "attempt-09。現在初始化",
+  "CUA runtime 做",
+  "read-only 觀察",
+  "個呼叫只做 surface inventory）",
+  "•",
+  "Go.",
+  "（5m 11s • esc to interrupt）",
+  "果終於",
+  "點擊的】，Bsk Codex to do anything",
+  "<",
+  "侖山进，结杏炫舌西咨，"
+ ],
+ "window_geometry": {
+  "path": "evidence/20260921-replan-v6/replay/selftest/geo-down.png",
+  "rect": [
+   0,
+   102,
+   653,
+   1207
+  ],
+  "source": "offline deterministic extraction from this frame by evidence/20260916-route/tools/v6/extract_window_geometry.py (sha256 b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8): window border-line columns detected in this frame's own pixels (left column x=0 rows 57..1214; right column x=653 rows 102..1207); rect = the nearest right border column over the overlapping vertical span; unique rect containing the machine-read target title. No historical coordinate used; rect is in full-screen capture device-pixel coordinates.",
+  "frame_sha256": "c6b40618386f4e90818b0d001029a5d8b15200077b4ca292b9409e7b35ae6908",
+  "raw": {
+   "diagnostics": {
+    "border_columns": {
+     "0": {
+      "rows": 1129,
+      "y_max": 1214,
+      "y_min": 57
+     },
+     "1910": {
+      "rows": 663,
+      "y_max": 1124,
+      "y_min": 462
+     },
+     "1911": {
+      "rows": 655,
+      "y_max": 1124,
+      "y_min": 470
+     },
+     "653": {
+      "rows": 1045,
+      "y_max": 1207,
+      "y_min": 102
+     },
+     "752": {
+      "rows": 599,
+      "y_max": 1124,
+      "y_min": 190
+     },
+     "753": {
+      "rows": 628,
+      "y_max": 1124,
+      "y_min": 187
+     }
+    },
+    "candidate_rects": [
+     {
+      "x0": 0,
+      "x1": 653,
+      "y0": 102,
+      "y1": 1207
+     },
+     {
+      "x0": 653,
+      "x1": 1910,
+      "y0": 462,
+      "y1": 1124
+     },
+     {
+      "x0": 752,
+      "x1": 1910,
+      "y0": 462,
+      "y1": 1124
+     },
+     {
+      "x0": 753,
+      "x1": 1910,
+      "y0": 462,
+      "y1": 1124
+     }
+    ],
+    "rects_containing_title": [
+     {
+      "x0": 0,
+      "x1": 653,
+      "y0": 102,
+      "y1": 1207
+     }
+    ],
+    "title": {
+     "bbox": [
+      30,
+      1097,
+      257,
+      1120
+     ],
+     "texts": [
+      "2024/05/13~05/17"
+     ]
+    }
+   },
+   "frame": "evidence/20260921-replan-v6/replay/negatives/a09-grid-below-100px-closer.png",
+   "frame_sha256": "c6b40618386f4e90818b0d001029a5d8b15200077b4ca292b9409e7b35ae6908",
+   "frame_size": [
+    2294,
+    1390
+   ],
+   "method": {
+    "constants": {
+     "left_step_min": 8,
+     "line_color": [
+      56,
+      92
+     ],
+     "min_run_rows": 300,
+     "min_span_rows": 400,
+     "min_window_h": 400,
+     "min_window_w": 200,
+     "right_step_min": 12,
+     "side_k": 6,
+     "span_overlap_min": 300,
+     "title_inset_min": 8
+    },
+    "tool": "evidence/20260916-route/tools/v6/extract_window_geometry.py",
+    "tool_sha256": "b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8"
+   },
+   "schema": "v6-window-geometry/1",
+   "source": "offline deterministic extraction from this frame by evidence/20260916-route/tools/v6/extract_window_geometry.py (sha256 b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8): window border-line columns detected in this frame's own pixels (left column x=0 rows 57..1214; right column x=653 rows 102..1207); rect = the nearest right border column over the overlapping vertical span; unique rect containing the machine-read target title. No historical coordinate used; rect is in full-screen capture device-pixel coordinates.",
+   "x0": 0,
+   "x1": 653,
+   "y0": 102,
+   "y1": 1207
+  }
+ },
+ "coordinate_space": "current-frame screenshot pixels (device pixels of the full-screen capture); window ROI and click_point share this space",
+ "click_point": [
+  42,
+  1108
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "candidate_bounds": {
+  "title_width_px": 227,
+  "candidate_x": 42,
+  "roi_left_margin_px": 42,
+  "roi_right_margin_px": 611
+ },
+ "identity": {
+  "title_bbox": [
+   30,
+   1097,
+   257,
+   1120
+  ],
+  "title_inset_px": {
+   "left": 30,
+   "top": 995,
+   "right": 396,
+   "bottom": 87
+  },
+  "count_box": [
+   22,
+   1122,
+   190,
+   1152
+  ],
+  "roi_right_tail_px": 396
+ },
+ "count_box": [
+  22,
+  1122,
+  190,
+  1152
+ ],
+ "count_digits_read": "",
+ "count_text": "UNREADABLE",
+ "background": {
+  "sample_rect": [
+   281,
+   1097,
+   341,
+   1120
+  ],
+  "color": [
+   45,
+   46,
+   48
+  ],
+  "mad": 0.0
+ },
+ "structure": {
+  "scan_y_range": [
+   608,
+   1206
+  ],
+  "above_band_runs": [
+   [
+    608,
+    769
+   ],
+   [
+    772,
+    1063
+   ]
+  ],
+  "below_band_runs": [
+   [
+    1125,
+    1206
+   ]
+  ],
+  "above_band_bottom_row": 1063,
+  "below_band_top_row": 1125
+ },
+ "margins": {
+  "margin_above_px": 45,
+  "margin_below_px": 17,
+  "sep_min_px": 24,
+  "rule": "max(24, round(title_height*1.0))",
+  "title_height_px": 23
+ },
+ "strip": {
+  "rows_total": 61,
+  "rows_kept": 61,
+  "frac_max_used": 0.3
+ },
+ "verdict": "UNSAFE_MARGINS",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "d37fa4efc861e0f094163cee83acb477bd1316613c3a961196fbfe290339f4da",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "3ebe644a01da3adfd11e4cac6ed60742bfc6c147c6e6148c62998b705fe8b346",
+    "stdout_bytes": 3304,
+    "lines_parsed": 63
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 0,
+    "lines_parsed": 0
+   }
+  ]
+ }
+}

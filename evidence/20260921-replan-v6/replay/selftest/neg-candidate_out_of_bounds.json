@@ -1,0 +1,180 @@
+{
+ "tool": "locate_album_card_v6",
+ "tool_sha256": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+ "scope": "album-card S3 safety location only; offline evidence; never dispatched",
+ "frame": "evidence/20260916-route/attempt-08/frame-pre.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "constants": {
+  "content_diff": 60,
+  "band_frac_threshold": 0.45,
+  "band_min_rows": 20,
+  "strip_frac_max": 0.3,
+  "strip_min_rows": 40,
+  "bg_mad_max": 5.0,
+  "sep_min": "max(24, title_height * 1.0)",
+  "roi_inset_px": 8,
+  "roi_right_tail_px": 120,
+  "roi_candidate_margin_px": 16,
+  "control_max_wh": [
+   48,
+   80
+  ],
+  "control_min_gap_px": 100,
+  "cluster_min_px": 5,
+  "cluster_merge_gap": 12,
+  "scan_range_px": 500
+ },
+ "provenance": {
+  "title_count_logic_copied_from": {
+   "path": "evidence/20260916-route/tools/v4/locate_album_card.py",
+   "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162"
+  },
+  "reader": {
+   "module": "evidence/20260916-route/tools/v4/vision_reader.py",
+   "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8"
+  },
+  "historical_coordinates_used": false,
+  "fallback_to_v4_candidate": false
+ },
+ "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+ "frame_bytes": 2129675,
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "title": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   37,
+   963,
+   267,
+   990
+  ]
+ },
+ "ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/13~05/17",
+  "57",
+  "十",
+  "仰白意 万芯叉I口煳豆",
+  "LINE TV〈再見1987〉熱播中",
+  "z",
+  "C28°C",
+  "03",
+  "9月19日週六 20:14",
+  "d1",
+  "T",
+  "11.16",
+  "①",
+  "10.15",
+  "0.14",
+  "9.10",
+  "• Line_backup 一”說明下一步操作 I Line_backup —codex --profile implem..•",
+  "...e-mode-host",
+  "..heck2 - -zsh",
+  "..ds l -zsh•.",
+  "...ode-host",
+  "十",
+  "L ［master",
+  "6e6803c］ Rev25",
+  "attempt-08 授權",
+  "Phase 4：意圖/凍結",
+  "runbook ledger；證據 /parent/too1",
+  "gate-6 route",
+  "preflight；變更/新",
+  "GUI 0；下一",
+  "100644 evidence/20260916-route/attempt-08/route-runbook.md",
+  "100644 evidence/20260916-route/attempt-98/run-ledger.json",
+  "• Used",
+  "computer",
+  "L S1/S2 讀取",
+  "•L",
+  "action",
+  "LINE",
+  "即時狀態與視窗",
+  "• Used",
+  "computer",
+  "1",
+  "action",
+  "L確認",
+  "LINE 相簿列表仍在目前視窗",
+  "• Used",
+  "computer",
+  "• 1",
+  "action",
+  "L Captured screenshot•S1 擷取 fresh LINE 相簿列表",
+  "• Planning full-screen terminal capture （5m 34s • esc to interrupt）",
+  "8.14"
+ ],
+ "window_geometry": {
+  "path": "evidence/20260921-replan-v6/replay/negatives/geometry-candidate-left-of-inset.json",
+  "rect": [
+   40,
+   123,
+   663,
+   1334
+  ],
+  "source": "selftest fabricated ROI (left edge 40) - test input, not a route artifact",
+  "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+  "raw": {
+   "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-08/frame-pre.png",
+   "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+   "frame_size": [
+    2294,
+    1490
+   ],
+   "schema": "v6-window-geometry/1",
+   "source": "selftest fabricated ROI (left edge 40) - test input, not a route artifact",
+   "x0": 40,
+   "x1": 663,
+   "y0": 123,
+   "y1": 1334
+  }
+ },
+ "coordinate_space": "current-frame screenshot pixels (device pixels of the full-screen capture); window ROI and click_point share this space",
+ "click_point": [
+  49,
+  976
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "candidate_bounds": {
+  "title_width_px": 230,
+  "candidate_x": 49,
+  "roi_left_margin_px": 9,
+  "roi_right_margin_px": 614
+ },
+ "verdict": "CANDIDATE_OUT_OF_BOUNDS",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "d37fa4efc861e0f094163cee83acb477bd1316613c3a961196fbfe290339f4da",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "0f0e27228cf730d428a22331fbb503177eba3c346db7073263607b93169ec583",
+    "stdout_bytes": 3313,
+    "lines_parsed": 67
+   }
+  ]
+ }
+}

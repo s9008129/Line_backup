@@ -1,0 +1,197 @@
+{
+ "bright_threshold": 100,
+ "conclusion_observed": "In every one of the three frozen frames the frozen v4 rule reproduces band_bottom_bright_row = null and margin_below_px = null (UNSAFE_MARGINS, exit 4), although the same rule restricted to the LINE-window x-range finds a bright band immediately below the target caption. The failure is a spatial-domain mismatch: v4 averages the entire screenshot row (2294 px) while the LINE window occupies only ~29% of it; bright photo rows inside the window cannot lift the full-row mean to 100.",
+ "frames": {
+  "a08r1": {
+   "frame": "evidence/20260916-route/attempt-08/frame-pre.png",
+   "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+   "frame_size": [
+    2294,
+    1490
+   ],
+   "full_row_domain": {
+    "band_top_row_composition": {
+     "full_row_mean": 164.87,
+     "note": "v4 band_top row is a FULL-FRAME row mean; the LINE window contributes only this fraction of the row",
+     "roi_frac_of_frame": 0.2851,
+     "roi_row_mean": 158.81,
+     "y": 72
+    },
+    "max_mean_below_title": {
+     "value": 78.878,
+     "y": 1101
+    },
+    "mean_at_title_rows": [
+     43.86,
+     49.11,
+     45.42
+    ],
+    "rule_recompute": {
+     "band_bottom": null,
+     "band_top": 72,
+     "margin_above": 904,
+     "margin_below": null
+    }
+   },
+   "roi": [
+    10,
+    123,
+    663,
+    1334
+   ],
+   "roi_domain": {
+    "max_mean_above_title": {
+     "y": 457
+    },
+    "max_mean_below_title": {
+     "value": 161.875,
+     "y": 1101
+    },
+    "rule_recompute": {
+     "band_bottom": 1078,
+     "band_top": 931,
+     "margin_above": 45,
+     "margin_below": 102
+    }
+   },
+   "roi_width_frac_of_frame": 0.2851,
+   "roi_width_px": 654,
+   "title_bbox": [
+    37,
+    963,
+    267,
+    990
+   ],
+   "title_center_y": 976,
+   "v4_frozen_verdict": "UNSAFE_MARGINS"
+  },
+  "a08r2": {
+   "frame": "evidence/20260916-route/attempt-08/frame-pre-r2.png",
+   "frame_sha256": "2226ded9c29c7ab99bb8126d21f625e6a65e61a6aa94c14eda8d5875a201d08a",
+   "frame_size": [
+    2294,
+    1490
+   ],
+   "full_row_domain": {
+    "band_top_row_composition": {
+     "full_row_mean": 103.291,
+     "note": "v4 band_top row is a FULL-FRAME row mean; the LINE window contributes only this fraction of the row",
+     "roi_frac_of_frame": 0.2851,
+     "roi_row_mean": 147.732,
+     "y": 601
+    },
+    "max_mean_below_title": {
+     "value": 91.836,
+     "y": 1353
+    },
+    "mean_at_title_rows": [
+     39.4,
+     49.63,
+     45.58
+    ],
+    "rule_recompute": {
+     "band_bottom": null,
+     "band_top": 601,
+     "margin_above": 338,
+     "margin_below": null
+    }
+   },
+   "roi": [
+    10,
+    123,
+    663,
+    1334
+   ],
+   "roi_domain": {
+    "max_mean_above_title": {
+     "y": 421
+    },
+    "max_mean_below_title": {
+     "value": 206.754,
+     "y": 1356
+    },
+    "rule_recompute": {
+     "band_bottom": 1042,
+     "band_top": 895,
+     "margin_above": 44,
+     "margin_below": 103
+    }
+   },
+   "roi_width_frac_of_frame": 0.2851,
+   "roi_width_px": 654,
+   "title_bbox": [
+    37,
+    926,
+    263,
+    953
+   ],
+   "title_center_y": 939,
+   "v4_frozen_verdict": "UNSAFE_MARGINS"
+  },
+  "a09": {
+   "frame": "evidence/20260916-route/attempt-09/frame-pre.png",
+   "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+   "frame_size": [
+    2294,
+    1490
+   ],
+   "full_row_domain": {
+    "band_top_row_composition": {
+     "full_row_mean": 106.406,
+     "note": "v4 band_top row is a FULL-FRAME row mean; the LINE window contributes only this fraction of the row",
+     "roi_frac_of_frame": 0.2851,
+     "roi_row_mean": 103.031,
+     "y": 35
+    },
+    "max_mean_below_title": {
+     "value": 66.679,
+     "y": 1168
+    },
+    "mean_at_title_rows": [
+     49.82,
+     61.18,
+     51.69
+    ],
+    "rule_recompute": {
+     "band_bottom": null,
+     "band_top": 35,
+     "margin_above": 1074,
+     "margin_below": null
+    }
+   },
+   "roi": [
+    0,
+    102,
+    653,
+    1307
+   ],
+   "roi_domain": {
+    "max_mean_above_title": {
+     "y": 589
+    },
+    "max_mean_below_title": {
+     "value": 151.94,
+     "y": 1213
+    },
+    "rule_recompute": {
+     "band_bottom": 1210,
+     "band_top": 1063,
+     "margin_above": 46,
+     "margin_below": 101
+    }
+   },
+   "roi_width_frac_of_frame": 0.2851,
+   "roi_width_px": 654,
+   "title_bbox": [
+    27,
+    1096,
+    257,
+    1123
+   ],
+   "title_center_y": 1109,
+   "v4_frozen_verdict": "UNSAFE_MARGINS"
+  }
+ },
+ "method": "per-row mean grayscale over (a) the full frame row (v4 domain) and (b) the extracted LINE-window ROI x-range (v6 domain); frozen v4 rule semantics (first row >= 100 scanning away from the title box); read-only",
+ "schema": "v6-phaseA-row-domain-recompute/1"
+}

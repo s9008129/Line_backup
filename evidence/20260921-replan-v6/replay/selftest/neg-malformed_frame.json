@@ -1,0 +1,50 @@
+{
+ "tool": "locate_album_card_v6",
+ "tool_sha256": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+ "scope": "album-card S3 safety location only; offline evidence; never dispatched",
+ "frame": "evidence/20260921-replan-v6/replay/negatives/malformed-frame.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "constants": {
+  "content_diff": 60,
+  "band_frac_threshold": 0.45,
+  "band_min_rows": 20,
+  "strip_frac_max": 0.3,
+  "strip_min_rows": 40,
+  "bg_mad_max": 5.0,
+  "sep_min": "max(24, title_height * 1.0)",
+  "roi_inset_px": 8,
+  "roi_right_tail_px": 120,
+  "roi_candidate_margin_px": 16,
+  "control_max_wh": [
+   48,
+   80
+  ],
+  "control_min_gap_px": 100,
+  "cluster_min_px": 5,
+  "cluster_merge_gap": 12,
+  "scan_range_px": 500
+ },
+ "provenance": {
+  "title_count_logic_copied_from": {
+   "path": "evidence/20260916-route/tools/v4/locate_album_card.py",
+   "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162"
+  },
+  "reader": {
+   "module": "evidence/20260916-route/tools/v4/vision_reader.py",
+   "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8"
+  },
+  "historical_coordinates_used": false,
+  "fallback_to_v4_candidate": false
+ },
+ "frame_sha256": "91a3072fe20c0552bfa0c3c90362af3d455a5fd4b9ec5c0c3035ade2b2258d70",
+ "frame_bytes": 10,
+ "verdict": "BAD_FRAME",
+ "reader": {
+  "helper": null,
+  "calls": []
+ }
+}

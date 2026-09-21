@@ -1,0 +1,387 @@
+{
+ "attempt07": {
+  "frame_preserved": false,
+  "note": "attempt-07's analysed frame (/tmp/route7_frame_pre.jpg, sha 2897628770dd) no longer exists on disk; its window-local recomputation is impossible and is not fabricated. Even there the full-row >=100 row below the title cannot be produced by the LINE window alone at 28.5 % width; whether that row was the card's real grid boundary or a composite of unrelated bright screen content is UNKNOWN without the frame.",
+  "recorded": {
+   "band_bottom_bright_row": 1002,
+   "band_top_bright_row": 72,
+   "click_point": [
+    42,
+    895
+   ],
+   "click_point_derivation": "title left edge + 12 px, title vertical centre",
+   "count_box": [
+    22,
+    909,
+    190,
+    939
+   ],
+   "count_digits_read": "57",
+   "count_text": "MATCH",
+   "expected": {
+    "count": "57",
+    "end": "2024/05/17",
+    "start": "2024/05/13"
+   },
+   "frame": "/tmp/route7_frame_pre.jpg",
+   "frame_sha256": "2897628770ddacd125be3e8224ea4dfdd970aa1056acb9ca277c060553e7e7d3",
+   "frame_size": [
+    2294,
+    1490
+   ],
+   "margin_above_px": 823,
+   "margin_below_px": 107,
+   "ocr_words_seen": [
+    "LINE",
+    "顯示",
+    "好友",
+    "視窗",
+    "常見問題",
+    "032°C",
+    "⑧",
+    "00",
+    "9月18日週五 11:18",
+    "d1",
+    "旻謙允禎成長日記",
+    "相簿",
+    "記事本",
+    "QS",
+    "目",
+    "• Line_backup 一：查看已開啟內容 |Line_backup — codex -m muse-spark-..",
+    "...v run media_toolbox.py",
+    "...ing_effort=\"xhigh\"",
+    "..max\"，node_repl •••十",
+    "2024/05/13~05/17",
+    "57",
+    "• Ran pgrep -f1 \"LINE\" 2>&1 | head",
+    "-n 5;echo \"---\"；1s /Applications/ | grep -i",
+    "echo \"---helper---\"；1s -la",
+    "\"$｛TMPDIR｝vision_ocr_v4_build/\" 2>&1；",
+    "\"---too1s---\"； which screencapture cliclick 2>&1：echo",
+    "\"---git---\"；",
+    "/Applications/LINE.app/Contents/MacOS/LINE",
+    "5084 /Applications/LINE.app/Contents/XPCServices/LINE.MediaService.xpc/",
+    "+22 lines",
+    "（ctrl+t",
+    "to view transcript）",
+    "f9f5d07 handoff（acceptance）：Rev24 交接重編-綁 PLAN_REVISION",
+    "24/ 40eb0198",
+    "，我已經打開了",
+    "• Working （41s • esc to interrupt）",
+    "，Ask Codex to do anything",
+    "muse-spark-1.3-contributor xhigh",
+    "•~/Documents/ChatGPT/. Pursuing goal",
+    "（43m）",
+    "昨天",
+    "上午 10:54",
+    "十",
+    "類型：觸價單",
+    "觸發價格：502.00美元",
+    "委託價格：503.00美元",
+    "股數：3股",
+    "成交條件：ANY",
+    "諸存|另存新檔！分享|傳送至Keep筆記",
+    "已讀",
+    "下午 10:32",
+    "設定睡覺",
+    "20260918094522_投資簡報.pdf",
+    "下載期限：~9月25日 上午 10:54",
+    "檔案大小：3.2MB",
+    "儲存！另存新檔 分享|傳送至Keep筆記",
+    "十",
+    "輸入訊息",
+    "TUCSONL Premium",
+    "續航突破900公里*"
+   ],
+   "reader": {
+    "calls": [
+     {
+      "exit_code": 0,
+      "lines_parsed": 61,
+      "outcome": "ok",
+      "scale": 3,
+      "stderr_excerpt": "",
+      "stdout_bytes": 3389,
+      "stdout_sha256": "f57cd5a3a7765755f6abfcd84ad2104e3791d6b0aff9b8c91ed307ca84b0fe79"
+     },
+     {
+      "exit_code": 0,
+      "lines_parsed": 1,
+      "outcome": "ok",
+      "scale": 10,
+      "stderr_excerpt": "",
+      "stdout_bytes": 33,
+      "stdout_sha256": "be795938537ec9bf60d61fe38a141d36835067fc6d28a97d72af146c4d805323"
+     }
+    ],
+    "helper": {
+     "binary_bytes": 67192,
+     "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+     "binary_sha256": "f54628e8f42fb65200bf98bf5cc6463937d28781c673c22e5ca8b9418ae3f6c9",
+     "resolved_from": "build_path",
+     "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+    }
+   },
+   "title": {
+    "bbox": [
+     30,
+     883,
+     257,
+     907
+    ],
+    "texts": [
+     "2024/05/13~05/17"
+    ]
+   },
+   "tool": "locate_album_card",
+   "verdict": "ELIGIBLE"
+  }
+ },
+ "conclusions": {
+  "inferred": [
+   "v4's margin_above_px values (904/338/1074) are not a card-local signal at all: they measure the distance from the title to wallpaper/menu-bar rows.",
+   "Any v4 'ELIGIBLE' outcome on a full-screen frame depends on unrelated screen content brightening the same row; it is arrangement-luck, not a property of the target card's local safety.",
+   "The failure is architectural (full-screenshot row domain vs window-local card content), not a screen-placement problem: in all three frames the card's local structure (grid above / caption strip / grid below) is intact."
+  ],
+  "observed": [
+   "attempt-08 r1/r2 and attempt-09 all reproduce exit 4 UNSAFE_MARGINS with band_bottom_bright_row=null and margin_below_px=null.",
+   "The maximum FULL-ROW mean below the title is 78.878 (a08r1, y=1101), 91.836 (a08r2, y=1353) and 66.679 (a09, y=1168) - all below the frozen bright=100 threshold, so the bottom band can never be found in these frames.",
+   "The same v4 rule restricted to the LINE-window x-range finds the bottom band at y=1078 / 1042 / 1210 with margins 45/102, 44/103, 46/101 px.",
+   "The three v4 band_top rows are y=72 (full-row mean 164.870; the wallpaper row above the LINE window, whose top edge is y≈123), y=601 (mean 103.291; a row inside the grid above), y=35 (mean 106.406; the macOS menu-bar row above the window).",
+   "The LINE window occupies 28.5 % of the frame width; even a fully white window row could contribute at most 72.7 to the full-row mean.",
+   "The frozen frames, ledgers and attempt-09 S1-S2 evidence all record zero GUI input; the album-card click, Save All, chooser and download counts are 0."
+  ],
+  "unknown": [
+   "Which pixels lifted attempt-07's row y=1002 to mean >= 100 (frame not preserved).",
+   "Whether any other display arrangement could make v4 report a non-null but semantically wrong bottom margin (no frame available to test)."
+  ]
+ },
+ "gui_input_count": 0,
+ "inputs_sha256": {
+  "attempt-07/album-card-locate.json": "94694c921171f98c53b7fc79a350d0f7faf635c234ed17cf894b87f9fb0fd624",
+  "attempt-07/screen-probe.json": "38130a6a540c099b3ca88e979a72684a467e158b4a78ce64bf4334ccdba6f77c",
+  "attempt-08/album-card-locate-r2.json": "55d088f8d3c12f7081312c3b33bc01b972b1f818dcb634d6630f822af28d6a5b",
+  "attempt-08/album-card-locate.json": "07437fb8359a47be5fd6daaf0c4696a57bedb277402f19f83d56eb74b57f0585",
+  "attempt-08/frame-pre-r2.png": "2226ded9c29c7ab99bb8126d21f625e6a65e61a6aa94c14eda8d5875a201d08a",
+  "attempt-08/frame-pre.png": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+  "attempt-08/run-ledger.json": "0df02dc4bd1b68694f76789a6cd6494fa2299bae26cc669145592d8e3d575469",
+  "attempt-09/album-card-locate.json": "c4b4443c1471c1671812b3e4f29214094e5fb7e46e7900e7e22b5ef1ade3d06a",
+  "attempt-09/frame-pre.png": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+  "attempt-09/run-ledger.json": "229fcb30fb237c5ce0561333ab63ae293446e07b15b157a73dcfb205027cb9b6",
+  "attempt-09/s1-s2-observation.json": "8b060348b77a3066cbb4d58064bb963b0943e2c914aef291f8d7c27cad91bfba",
+  "attempt-09/s3-comparison-attempt08.json": "0115b5f10a3badba9741c57a1c360723e2bb4a0a6965e50776fea6eeb18034f7",
+  "tools/v4/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "tools/v4/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8"
+ },
+ "replay": {
+  "command": "/opt/homebrew/bin/python3 evidence/20260916-route/tools/v4/locate_album_card.py <frame> --expect-start 2024/05/13 --expect-end 2024/05/17 --expect-count 57 --out <out>",
+  "determinism": "two independent replays of the same frame are byte-identical except reader.helper.binary_sha256 (locally rebuilt Vision helper binary); the frozen attempt-09 output is byte-identical to the replay including the helper hash",
+  "frozen_vs_replay": {
+   "a08r1": "identical to attempts evidence except helper binary hash",
+   "a08r2": "identical to attempts evidence except helper binary hash",
+   "a09": "byte-identical to the frozen attempts evidence"
+  },
+  "per_frame": {
+   "a08r1": {
+    "frame": "evidence/20260916-route/attempt-08/frame-pre.png",
+    "frame_sha256": "9f0d35f1a59e1077aee9fbb4797da14e7754a3b946bc9a07aa6d244b76eaae18",
+    "roi": [
+     10,
+     123,
+     663,
+     1334
+    ],
+    "roi_local_max_below_title": {
+     "value": 161.875,
+     "y": 1101
+    },
+    "roi_local_v4_rule_recompute": {
+     "band_bottom": 1078,
+     "band_top": 931,
+     "margin_above": 45,
+     "margin_below": 102
+    },
+    "title_bbox": [
+     37,
+     963,
+     267,
+     990
+    ],
+    "title_center_y": 976,
+    "v4_full_row_max_below_title": {
+     "value": 78.878,
+     "y": 1101
+    },
+    "v4_full_row_recompute": {
+     "band_bottom": null,
+     "band_top": 72,
+     "margin_above": 904,
+     "margin_below": null
+    },
+    "v6_click_point": [
+     49,
+     976
+    ],
+    "v6_margins": {
+     "margin_above_px": 45,
+     "margin_below_px": 102,
+     "rule": "max(24, round(title_height*1.0))",
+     "sep_min_px": 27,
+     "title_height_px": 27
+    },
+    "v6_verdict": "ELIGIBLE"
+   },
+   "a08r2": {
+    "frame": "evidence/20260916-route/attempt-08/frame-pre-r2.png",
+    "frame_sha256": "2226ded9c29c7ab99bb8126d21f625e6a65e61a6aa94c14eda8d5875a201d08a",
+    "roi": [
+     10,
+     123,
+     663,
+     1334
+    ],
+    "roi_local_max_below_title": {
+     "value": 206.754,
+     "y": 1356
+    },
+    "roi_local_v4_rule_recompute": {
+     "band_bottom": 1042,
+     "band_top": 895,
+     "margin_above": 44,
+     "margin_below": 103
+    },
+    "title_bbox": [
+     37,
+     926,
+     263,
+     953
+    ],
+    "title_center_y": 939,
+    "v4_full_row_max_below_title": {
+     "value": 91.836,
+     "y": 1353
+    },
+    "v4_full_row_recompute": {
+     "band_bottom": null,
+     "band_top": 601,
+     "margin_above": 338,
+     "margin_below": null
+    },
+    "v6_click_point": [
+     49,
+     939
+    ],
+    "v6_margins": {
+     "margin_above_px": 44,
+     "margin_below_px": 103,
+     "rule": "max(24, round(title_height*1.0))",
+     "sep_min_px": 27,
+     "title_height_px": 27
+    },
+    "v6_verdict": "ELIGIBLE"
+   },
+   "a09": {
+    "frame": "evidence/20260916-route/attempt-09/frame-pre.png",
+    "frame_sha256": "ae0de47df43026af0ae851dfcda59c125a5f0f919f143f197a47fe6774667a5a",
+    "roi": [
+     0,
+     102,
+     653,
+     1307
+    ],
+    "roi_local_max_below_title": {
+     "value": 151.94,
+     "y": 1213
+    },
+    "roi_local_v4_rule_recompute": {
+     "band_bottom": 1210,
+     "band_top": 1063,
+     "margin_above": 46,
+     "margin_below": 101
+    },
+    "title_bbox": [
+     27,
+     1096,
+     257,
+     1123
+    ],
+    "title_center_y": 1109,
+    "v4_full_row_max_below_title": {
+     "value": 66.679,
+     "y": 1168
+    },
+    "v4_full_row_recompute": {
+     "band_bottom": null,
+     "band_top": 35,
+     "margin_above": 1074,
+     "margin_below": null
+    },
+    "v6_click_point": [
+     39,
+     1109
+    ],
+    "v6_margins": {
+     "margin_above_px": 46,
+     "margin_below_px": 101,
+     "rule": "max(24, round(title_height*1.0))",
+     "sep_min_px": 27,
+     "title_height_px": 27
+    },
+    "v6_verdict": "ELIGIBLE"
+   }
+  }
+ },
+ "replay_sha256": {
+  "geometry/a08r1.json": "2fa739c4749e3b91bd43f321a36b9ae2b98b6a76166162e6b428495ceea0e80e",
+  "geometry/a08r2.json": "3701746aa4a06ba77b8391b9872c8271f68f329b50fcf2367ee9e9c59b5fa4d7",
+  "geometry/a09.json": "8886ceb43d39d17ce6c77f6da53224eed5f6e9bed51ea4dc425463aa2ba48022",
+  "row-domain-recompute.json": "7887b9d740686844072402cb3c9326fe1942bb36398b8cef19631574a748a493",
+  "v4-replay/a08r1.json": "ddd15fc479169dbd242d0b26115b074e1e05a8a65993ac295d026bcf5fc8ffc9",
+  "v4-replay/a08r2.json": "0f22541399f7c4a91d76ba49c05baa50791762e7a7874d7095679b3fe5eef779",
+  "v4-replay/a09.json": "c4b4443c1471c1671812b3e4f29214094e5fb7e46e7900e7e22b5ef1ade3d06a",
+  "v6-replay/a08r1-v6.json": "c3da9a2461d0417c524af78606ee36c0f0da8f642d07693a98474681e05e9d96",
+  "v6-replay/a08r2-v6.json": "8edb193fcd027dfbff21aa2c0847656c63707cc845ab08d9806f47b515901b24",
+  "v6-replay/a09-v6.json": "a637db0a109c8aeff547e95bc171a82e3cb306c34f096c49c6f754a64e4b48a0"
+ },
+ "schema": "v6-phaseA-v4-failure-analysis/1",
+ "statement": "Frozen v4's band/margin rule is evaluated on the mean of the ENTIRE screenshot row. On full-screen frames where the LINE window occupies ≈28.5 % of the row width, no window-local brightness can lift that mean to the frozen bright=100 threshold below the title, so v4 returns UNSAFE_MARGINS with band_bottom_bright_row=null / margin_below_px=null in three distinct arrangements - a spatial-domain mismatch, not a screen-placement defect.",
+ "task": {
+  "album": "2024/05/13～05/17",
+  "expected_count": 57,
+  "group": "旻謙允禎成長日記"
+ },
+ "v4_mechanism_observed": {
+  "band_bottom_bright_row": {
+   "how": "scan y downward from title y1+1 to height-1; first y with row_mean(y) >= 100; null if none.",
+   "lines": "L104-L112 (bottom loop), L169"
+  },
+  "band_top_bright_row": {
+   "how": "scan y upward from title y0-1 to 0; first y with row_mean(y) >= 100; null if none.",
+   "lines": "L104-L112 (bright_band_edges top loop), L169"
+  },
+  "bright_threshold": 100,
+  "click_point_derivation": "click_point = [x0+12, (y0+y1)//2] iff 0 <= x0+12 <= width-20 and x0+12 <= x1+40; null otherwise (frozen v4 rule, unchanged in v6)",
+  "count": {
+   "how": "crop box (x0-8, y1+2, x0+160, y1+32) from the title bbox; OCR at scale 10; digits concatenated; MATCH iff '57' occurs; MISMATCH refuses (exit 5); UNREADABLE does not refuse.",
+   "lines": "L118-L124 (ocr_digits_region), L175-L186 (call + verdict)"
+  },
+  "margin_definitions": {
+   "margin_above_px": "center_y - band_top",
+   "margin_below_px": "band_bottom - center_y"
+  },
+  "row_mean_spatial_domain": {
+   "how": "row_mean(im, y) = (sum over x in range(im.size[0]) of pixel_gray(x, y)) / im.size[0]; the domain is ALL x of the image passed to the tool. In attempt-08/09 that image is the full-screen capture (2294x1490 px), so the domain is the full screenshot row, NOT the LINE window and NOT the album card.",
+   "lines": "L96-L101",
+   "max_possible_window_contribution_if_row_were_white": 72.7,
+   "measured_window_width_share": 0.2851
+  },
+  "source": "evidence/20260916-route/tools/v4/locate_album_card.py",
+  "source_sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "title": {
+   "how": "OCR (macOS Vision via frozen vision_reader, scale 3) -> find_title(): concatenates digit runs of up to 4 consecutive words; keeps spans whose digits contain '20240513' and then '20240517' or its last 4 digits '0517'; picks the minimal span; bbox = union of the selected words' boxes (full-frame pixel coordinates).",
+   "lines": "locate_album_card.py L68-L88 (find_title), L150-L151 (call)"
+  },
+  "unsafe_margins_boolean_condition": "click_point is None or margin_above_px is None or margin_below_px is None or margin_above_px < 10 or margin_below_px < 10",
+  "unsafe_margins_lines": "L196-L198"
+ }
+}
