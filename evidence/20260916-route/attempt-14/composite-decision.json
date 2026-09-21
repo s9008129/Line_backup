@@ -1,0 +1,65 @@
+{
+ "phase": "S6_composite_decision",
+ "recorded_at_local": "2026-09-21T20:13:04+0800",
+ "runbook_rule": "runbook decision rule 5: PASS only if (a) window-space frozen verdict == ALBUM_OPEN_VERIFIED, (b) frame-space frozen verdict == ALBUM_OPEN_VERIFIED, and (c) the v7 guard exits 0 with lineage ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED and composite == ALBUM_OPEN_VERIFIED_COMPOSITE_PASS; any other combination = ALBUM_OPEN_COMPOSITE_REFUSED, recorded with exact reasons, STOP, no retry, no manual override",
+ "owner_rule": "ALBUM_OPEN_VERIFIED_COMPOSITE = frozen album-open verifier == ALBUM_OPEN_VERIFIED AND v7 ALBUM_DETAIL_WINDOW_LINEAGE_GUARD == ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+ "frozen_album_open_verifier": {
+  "tool": "tools/v5/verify_album_open.py sha256 ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58 (byte-identical to v4)",
+  "window_pair_formal": {
+   "artifact": "s5-album-open-verify-window.json",
+   "sha256": "3e03c5a39a52153aa1d04fa29a0a75e074323126b908fb1457b8d41ba6dc49c5",
+   "pre": "cua-window-preclick.jpg 8b27c1e0a8bcd284e06a47521c47f7ee2c2b21a342764739c8e7620b3474ced4",
+   "post": "cua-window-s5.jpg 4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "title_bbox": [
+    15,
+    83,
+    204,
+    111
+   ],
+   "count_text": "MATCH (57)",
+   "changed_fraction": 0.661616
+  },
+  "frame_pair_supporting": {
+   "artifact": "s5-album-open-verify-frame.json",
+   "sha256": "229b19b1714dd6c648176fe781c37bb6de0facf537eddcd999e9ce96de831e5c",
+   "pre": "frame-pre.png 7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d",
+   "post": "frame-post.png da198011cb788d3190132b8cb9ff135c337caa012ce3ffa1cce1dcc6e4d5d26a",
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "title_bbox": [
+    704,
+    240,
+    1080,
+    283
+   ],
+   "count_text": "UNREADABLE (recorded; never refuses)",
+   "changed_fraction": 0.24038,
+   "note": "this artifact is the C7 machine-binding object: its post_sha256 == frame-post.png sha256 (the guard C7 requires exactly that)"
+  }
+ },
+ "v7_lineage_guard": {
+  "tool": "tools/v7/album_detail_lineage_guard.py sha256 cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "artifact": "v7-lineage-guard.json",
+  "sha256": "9e7eb7d3bc7dfb201ca40d1fc6b3b627b14ab9b719e2bac10976878a47fbc616",
+  "exit_code": 0,
+  "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+  "refusal_reasons": [],
+  "checks": "C0_SCHEMA / C0_FRAME_SCALE / C1_FRONTMOST / C2_TARGET_UNIQUE / C3_GEOMETRY_DOUBT / C4_AX_SURFACE_CLASS / C5_BINDING / C6_HEADER_CONTEXT all PASS",
+  "c4_ax_surface": "FULL_TREE; standard_window true; close/minimize chrome; list_element false; row_tokens 0; focused_is_window true",
+  "c5_binding": "rect_px [674,66,1328,1352]; crop 654x1286 downscaled 327x643 == screenshot; dims exact; mad_mean 2.2761 <= 12.0",
+  "c6_header": "title 2024/05/13~05/17 y-frac 0.1726 <= 0.30; 57張照片; no 相簿/記事本 tab tokens",
+  "c7_composite": "frozen verdict ALBUM_OPEN_VERIFIED; frozen post_sha256 == frame-post da198011…; bound_to_frame true",
+  "derived_target_window": "index 0, (337,33) 327x643 pt, AXWindow/AXStandardWindow, main+focused — derived from THIS round's inventory; no historical coordinate"
+ },
+ "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+ "decision": "PASS",
+ "exact_commands": [
+  "python3 tools/v5/verify_album_open.py attempt-14/cua-window-preclick.jpg attempt-14/cua-window-s5.jpg --expect-start 2024/05/13 --expect-end 2024/05/17 --expect-count 57 --out attempt-14/s5-album-open-verify-window.json",
+  "python3 tools/v5/verify_album_open.py attempt-14/frame-pre.png attempt-14/frame-post.png --expect-start 2024/05/13 --expect-end 2024/05/17 --expect-count 57 --out attempt-14/s5-album-open-verify-frame.json",
+  "python3 tools/v7/album_detail_lineage_guard.py --window-inventory attempt-14/s6-ax-post.json --window-ax-state attempt-14/cua-ax-state-s5.txt --window-screenshot attempt-14/cua-window-s5.jpg --frame attempt-14/frame-post.png --expect-start 2024/05/13 --expect-end 2024/05/17 --expect-count 57 --frozen-album-open-json attempt-14/s5-album-open-verify-frame.json --out attempt-14/v7-lineage-guard.json"
+ ],
+ "critical_regression": "attempt-03 (frozen verifier ALBUM_OPEN_VERIFIED on an album-list surface) stays blocked by v7 (selftest 22/22 + replay REFUSED); this round's composite was established by the chrome-only AX surface class (C4) + frame/window pixel binding (C5) + bound header context (C6) + frozen frame binding (C7) — title + 57 + changed_fraction alone were never used as the decision",
+ "stop_boundary": "S6 complete; the round stops unconditionally. ellipsis locator / ellipsis click / menu workflow / Save All / chooser / keyboard / download were NOT performed and are NOT authorized",
+ "next_authorization": "READY_FOR_NEW_ELLIPSIS_AUTHORIZATION (NOT READY_FOR_SAVE_ALL)",
+ "manual_override": false
+}

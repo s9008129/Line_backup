@@ -1,0 +1,27 @@
+{
+ "phase": "S4_click_intent_pre_dispatch",
+ "recorded_at_local": "2026-09-21T20:09+0800",
+ "authorization": "owner one-shot: NEW album-card click = 1 only if frozen v6 = ELIGIBLE on this round's fresh frame",
+ "gates_passed_before_dispatch": {
+  "s1_album_list_identity": "PASS (s1-surface-revalidation.json: frontmost jp.naver.line.mac, window 0 (0,33) 327x643 focused+main, CU AX text shows 標準視窗/文字欄位/列表 0-100 of 101 items; visual: 旻謙允禎成長日記 + tabs 相簿/記事本 + card 2024/05/13～05/17 with 57)",
+  "s2_fresh_frame_sha256": "7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d",
+  "s2_ax_post_identical": true,
+  "geometry_binding": "GEOMETRY_BINDING_PASS (mad 2.214, dims exact 654x1286 crop vs 327x643 CU shot)",
+  "s3_frozen_v6_verdict": "ELIGIBLE",
+  "preclick_freshness": "CU window screenshot byte-identical to binding-time shot (sha256 8b27c1e0a8bcd284e06a47521c47f7ee2c2b21a342764739c8e7620b3474ced4); AX pre-click read identical window list at 2026-09-21T20:09:01+0800; LINE frontmost"
+ },
+ "fresh_candidate_frame_px": [39, 932],
+ "candidate_derivation": "frozen v6 (locate_album_card.py sha256 d55a974f...) on THIS round's frame-pre.png: title bbox [27,917,257,947] -> click_point = [tx0+12, (ty0+ty1)//2] = [39,932]; count_digits_read 57 MATCH; control ⋮ [607,929,611,954]",
+ "dispatch_plan": {
+  "api": "cua_repl: lineApp.click(Vec2, {mouseButton:'left', clickCount:1})",
+  "app": "jp.naver.line.mac (pid 1030)",
+  "window_screenshot_coords": [19.5, 433],
+  "conversion": "window px = (frame px - rect_origin [0,66]) / 2 ; x: (39-0)/2=19.5 ; y: (932-66)/2=433 ; 1 CU window-screenshot px == 1 window pt (shot 327x643 px for 327x643 pt window; binding mad 2.214)",
+  "mouse_button": "left",
+  "click_count": 1
+ },
+ "historical_coordinates_used": false,
+ "attempt_12_13_candidate_reuse": false,
+ "retry_policy": "0 retries; a failed dispatch call is a stop condition, never retried; budget consumed once dispatched",
+ "dispatch_state_before_dispatch": "SAVE_ALBUM_CARD_DISPATCH_NOT_ATTEMPTED"
+}

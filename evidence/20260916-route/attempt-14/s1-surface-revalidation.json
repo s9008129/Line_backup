@@ -1,0 +1,27 @@
+{
+ "phase": "S1_fresh_album_list_surface_revalidation",
+ "recorded_at_local": "2026-09-21T20:08+0800",
+ "gui_inputs_sent": 0,
+ "ax_read": {
+  "tool": "/tmp/attempt14/ax_window_bounds (from attempt-14/tools/ax_window_bounds.swift, sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6; binary sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae)",
+  "evidence": "s1-ax-pre.json",
+  "result": "ax_api_trusted=true; ax_frontmost=true; frontmost_application=jp.naver.line.mac; bundle_id=jp.naver.line.mac; pid 1030; window_count=2; window[0] (0,33) 327x643, is_ax_focused_window=true, main=true, role AXWindow/AXStandardWindow, title ''; window[1] (0,37) 1147x699 title 'LINE'; display 1147x745 pt, backing scale 2, capture 2294x1490 px"
+ },
+ "cu_read": {
+  "tool": "cua_repl getApp(jp.naver.line.mac); getAXState({disableDiffing:true}); getScreenshot (read-only; zero input)",
+  "evidence": ["cua-ax-state-s1.txt", "cua-window-s1.jpg"],
+  "ax_form": "FULL_TREE (disableDiffing)",
+  "ax_summary": "Window \"\", App: LINE. -> 0 標準視窗 / 1 文字欄位 (settable) / 2 列表 (showing 0-100 of 101 items) with rows 3-104 / 105 捲軸 / 106 關閉按鈕 / 107 縮到最小按鈕 / menu bar = ALBUM-LIST surface; focused UI element = 1 文字欄位 (search field)",
+  "window_screenshot": {"path": "cua-window-s1.jpg", "size_px": [327, 643], "bytes": 65356, "sha256": "8b27c1e0a8bcd284e06a47521c47f7ee2c2b21a342764739c8e7620b3474ced4", "note": "327x643 px == focused window pt size (1 px = 1 pt)"}
+ },
+ "visual_identity_check": {
+  "group_title_present": "旻謙允禎成長日記 (top header)",
+  "tabs": "相簿 (selected) / 記事本",
+  "target_card": "2024/05/13～05/17 with 57 below it; card region visible including ⋮ control at the right of the title row",
+  "surface": "album-list surface (photo grid + album cards list), NOT an album-detail window",
+  "unknown_overlay": "none",
+  "permission_prompt": "none",
+  "occluding_window": "none over the LINE window (frame binding in S2 machine-checks occlusion)"
+ },
+ "verdict": "S1_ALBUM_LIST_IDENTITY_PASS"
+}

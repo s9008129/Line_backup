@@ -1,0 +1,366 @@
+{
+ "schema_version": 1,
+ "artifact": "evidence/20260916-route/attempt-14/run-ledger.json",
+ "run_id": "20260921-route-attempt-14",
+ "route_attempt": 14,
+ "state": "CLOSED_AFTER_ONE_ALBUM_CARD_REOPEN_CLICK_AND_COMPOSITE_DECISION",
+ "runtime_provider": "codex-cli host shell (screencapture -x; read-only AX tool /tmp/attempt14/ax_window_bounds) + cua_repl session (read-only getAXState/getScreenshot; exactly one lineApp.click) + frozen offline tools (v5 album-open verifier, v6 album-card locator, v7 album-detail lineage guard)",
+ "app_bundle": "jp.naver.line.mac",
+ "raw_group": "旻謙允禎成長日記",
+ "album": "2024/05/13～05/17",
+ "expected_count": 57,
+ "parent_attempt": {
+  "attempt-12": "immutable; historical album-card click = 1 (frozen v6 ELIGIBLE, frozen album-open verifier ALBUM_OPEN_VERIFIED); its candidate [39,926] not used as input this round",
+  "attempt-13": "immutable; historical ellipsis click = 1, menu observed, Save All = 0; its coordinates [304,50]/[305,50] not used as input",
+  "attempt-10": "untouched; candidate [39,923] never used",
+  "attempt-11": "untouched; inactive-window fallback never used",
+  "rev27_attempt_03": "immutable; frozen album-open verifier false-positive exposure (ALBUM_OPEN_VERIFIED on an album-LIST surface) — the reason this round's success requires the v7 lineage guard (composite)"
+ },
+ "authorization": {
+  "artifact": "authorization-record.json",
+  "sha256": "6246444c1a044a2ad54d78527852f700adaa756514c46d66ed90e5126883f6df",
+  "scope": "owner one-shot: fresh album-list revalidation -> frozen v6 S3 -> only if ELIGIBLE exactly one album-card left click at the fresh-frame-derived candidate -> fresh frozen album-open verification -> fresh v7 lineage guard -> composite decision -> STOP",
+  "new_album_card_click_budget": 1,
+  "everything_else": 0,
+  "not_authorized_this_round": [
+   "ellipsis locator/click",
+   "menu workflow",
+   "Save All",
+   "chooser",
+   "keyboard",
+   "download",
+   "second album-card click",
+   "retry"
+  ]
+ },
+ "runbook": {
+  "artifact": "route-runbook.md",
+  "sha256": "f992fb668a89b0232ef8435080e007a6bbe7fe57bb26d4937dc1d3319705c3a5",
+  "predeclared_pairings": [
+   "S5 formal (window space): this round's fresh pre-click CU window screenshot (album list) vs this round's fresh post-click CU window screenshot",
+   "S5 supporting (frame space): frame-pre.png vs frame-post.png (the C7 binding object)",
+   "S6 guard: fresh post-click inventory + full-tree CU AX text + CU window screenshot + frame-post.png + frozen frame-space verifier artifact"
+  ],
+  "predeclared_capture_rule_6": "post-click CU AX read uses getAXState({disableDiffing:true}) for the full-tree form (amended BEFORE any input); diff form would be recorded as-is and refused by the guard; no re-captures"
+ },
+ "input_record_final": {
+  "gui_input_count": 1,
+  "album_card_inputs_used": 1,
+  "navigation_inputs_used": 1,
+  "retry_count": 0,
+  "second_album_card_click": 0,
+  "double_click": 0,
+  "ellipsis_inputs_used": 0,
+  "ellipsis_locator_invocations": 0,
+  "menu_item_inputs_used": 0,
+  "save_all_dispatch_attempted": false,
+  "save_all_budget": {
+   "budget": 0,
+   "used": 0
+  },
+  "chooser_interactions": 0,
+  "go_to_folder_inputs": 0,
+  "keyboard_inputs_used": 0,
+  "escape_inputs": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "bring_to_front_inputs": 0,
+  "app_read_handle_getApp_calls": "1 (S1; cua_repl read handle required by the runtime's documented read API; no launch/activation/bring-to-front observed — LINE was frontmost before and throughout; not a UI input event)",
+  "app_acquisition_state_changes": 0,
+  "downloads": 0,
+  "destination_writes": 0,
+  "formal_state_writes": 0
+ },
+ "historical_reference_only": {
+  "historical_album_card_clicks": 1,
+  "historical_ellipsis_clicks": 1,
+  "historical_save_all_dispatches": 0,
+  "historical_clicks_reset": false,
+  "historical_coordinates_never_used_as_input": [
+   [
+    39,
+    923
+   ],
+   [
+    39,
+    926
+   ],
+   [
+    304,
+    50
+   ],
+   [
+    305,
+    50
+   ]
+  ],
+  "note": "this round's candidate [39,932] was freshly derived by frozen v6 from THIS round's frame-pre.png; no historical coordinate value was read as input"
+ },
+ "events": [
+  {
+   "seq": 1,
+   "phase": "S0_setup",
+   "action_class": "write_evidence",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:06 .. 20:07+0800",
+   "event": "authorization-record + pre-declared runbook + 00-start-state + read-only observation tools copied byte-identical from attempt-13",
+   "evidence": [
+    "authorization-record.json",
+    "route-runbook.md",
+    "00-start-state.json",
+    "tools/ax_window_bounds.swift",
+    "tools/validate_live_geometry.py"
+   ],
+   "result": "frozen tool SHAs re-verified from disk; attempt-14 is a new unused slot; no historical attempt reopened"
+  },
+  {
+   "seq": 2,
+   "phase": "S1_ax_pre",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:07:05+0800",
+   "event": "ax_window_bounds_readonly jp.naver.line.mac",
+   "evidence": [
+    "s1-ax-pre.json"
+   ],
+   "result": "ax_frontmost=true; frontmost_application=jp.naver.line.mac; bundle jp.naver.line.mac; pid 1030; window_count=2; window 0 (0,33) 327x643 title '' main=true is_ax_focused_window=true; window 1 (0,37) 1147x699 'LINE'; display 2x (1147x745 pt)"
+  },
+  {
+   "seq": 3,
+   "phase": "S1_cu_surface_read",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:07+0800",
+   "event": "cua_repl read-only app state: getAXState({disableDiffing:true}) + getScreenshot (zero input)",
+   "evidence": [
+    "cua-ax-state-s1.txt",
+    "cua-window-s1.jpg"
+   ],
+   "result": "FULL_TREE: 標準視窗 / 文字欄位 (settable) / 列表 (showing 0-100 of 101 items) with rows 3-104 / 捲軸 / 關閉按鈕 / 縮到最小按鈕 / menu bar => ALBUM-LIST surface; window screenshot 327x643, 65356 bytes, sha256 8b27c1e0…"
+  },
+  {
+   "seq": 4,
+   "phase": "S1_verdict",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:08+0800",
+   "event": "S1 surface revalidation verdict",
+   "evidence": [
+    "s1-surface-revalidation.json"
+   ],
+   "result": "S1_ALBUM_LIST_IDENTITY_PASS (旻謙允禎成長日記; tabs 相簿(selected)/記事本; target card 2024/05/13～05/17 with 57 fully visible; no unknown overlay; no permission prompt; no occluding window)"
+  },
+  {
+   "seq": 5,
+   "phase": "S2_fresh_frame",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:08+0800",
+   "event": "screencapture -x frame-pre.png (silent)",
+   "evidence": [
+    "frame-pre.png"
+   ],
+   "result": "fresh full-screen frame 2294x1490 px, sha256 7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d"
+  },
+  {
+   "seq": 6,
+   "phase": "S2_ax_post",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:08:12+0800",
+   "event": "ax_window_bounds_readonly (post-frame)",
+   "evidence": [
+    "s2-ax-post.json"
+   ],
+   "result": "window list identical to S1 (only timestamp differs); app remains frontmost; no overlay transition"
+  },
+  {
+   "seq": 7,
+   "phase": "S2_geometry_binding",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:08+0800",
+   "event": "live-window-geometry.json (frame-SHA-bound) + validate_live_geometry.py",
+   "evidence": [
+    "live-window-geometry.json",
+    "geometry-binding.json",
+    "s2-frame-geometry.json"
+   ],
+   "result": "rect_px [0,66,654,1352]; dims exact 654x1286 crop vs 327x643 CU shot; MAD 2.214 <= 12.0; VERDICT GEOMETRY_BINDING_PASS; S2_FRAME_AND_BINDING_PASS"
+  },
+  {
+   "seq": 8,
+   "phase": "S3_frozen_v6_locator",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:08+0800",
+   "event": "frozen v6 locate_album_card.py on THIS round's frame-pre.png + frame-bound geometry",
+   "evidence": [
+    "album-card-locate-v6.json",
+    "s3-v6.stdout"
+   ],
+   "result": "verdict ELIGIBLE (exit 0); title bbox [27,917,257,947]; count_digits_read 57 MATCH; sep margins 47/100 px >= 30; single ⋮ strip control [607,929,611,954]; click_point [39,932] (title left edge + 12 px, vertical centre); frame_sha 7e16ddff…; historical coordinates not used"
+  },
+  {
+   "seq": 9,
+   "phase": "S4_preclick_freshness_gates",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:09:01+0800",
+   "event": "pre-click freshness re-read (CU window screenshot + AX window list) + click intent",
+   "evidence": [
+    "cua-window-preclick.jpg",
+    "s4-preclick-ax.json",
+    "s4-click-intent.json"
+   ],
+   "result": "CU window screenshot byte-identical to the S2 binding-time shot (8b27c1e0…); AX window list identical to S1/S2; LINE frontmost; no overlay; intent recorded (window coords [19.5,433] = (frame [39,932] - rect_origin [0,66]) / 2); predeclared dispatch_state = SAVE_ALBUM_CARD_DISPATCH_NOT_ATTEMPTED"
+  },
+  {
+   "seq": 10,
+   "phase": "S4_album_card_click_dispatch",
+   "action_class": "gui_input",
+   "gui_input": true,
+   "timestamp_local": "2026-09-21T20:09:15.949 .. 20:09:16.464+0800",
+   "event": "exactly one album-card left click (the ONLY input of this round)",
+   "params": {
+    "api": "lineApp.click",
+    "app": "jp.naver.line.mac (pid 1030)",
+    "window_screenshot_coords": [
+     19.5,
+     433
+    ],
+    "mouse_button": "left",
+    "click_count": 1
+   },
+   "derivation": "frozen v6 click_point [39,932] from THIS round's fresh frame-pre.png (frame device pixels), converted with THIS round's rect/scale; no historical coordinate used",
+   "result": "dispatch RETURNED ok; album-card budget 1/1 consumed permanently; no second click; no retry ever"
+  },
+  {
+   "seq": 11,
+   "phase": "S5_post_click_captures",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:09:19 .. 20:09:23+0800",
+   "event": "fresh post-click captures (read-only)",
+   "evidence": [
+    "frame-post.png",
+    "s6-ax-post.json"
+   ],
+   "result": "frame-post.png 2294x1490 sha256 da198011cb788d3190132b8cb9ff135c337caa012ce3ffa1cce1dcc6e4d5d26a; AX window_count=3: window 0 (337,33) 327x643 focused+main (NEW, was the list at (0,33) pre-click), window 1 (0,33) 327x643 (former list window), window 2 (0,37) 1147x699 'LINE' — topology matches the attempt-13 album-detail lineage"
+  },
+  {
+   "seq": 12,
+   "phase": "S5_frozen_album_open_verifier",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:12:59 .. 20:13:00+0800",
+   "event": "frozen v5 verify_album_open.py — formal window pair + supporting frame pair (defaults; the frozen reader)",
+   "evidence": [
+    "s5-album-open-verify-window.json",
+    "s5-album-open-verify-frame.json",
+    "s5-verify-window.stdout",
+    "s5-verify-frame.stdout"
+   ],
+   "result": "window pair ALBUM_OPEN_VERIFIED (exit 0; title [15,83,204,111]; count MATCH 57; changed_fraction 0.661616); frame pair ALBUM_OPEN_VERIFIED (exit 0; title [704,240,1080,283]; count UNREADABLE recorded; changed_fraction 0.24038; post_sha256 da198011… == frame-post)"
+  },
+  {
+   "seq": 13,
+   "phase": "S5_post_click_cu_read",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:12:04+0800",
+   "event": "post-click read-only CU observation (full-tree AX + window screenshot; zero input)",
+   "evidence": [
+    "cua-ax-state-s5.txt",
+    "cua-window-s5.jpg",
+    "s5-post-click-cu-observation.json"
+   ],
+   "result": "FULL_TREE chrome-only (標準視窗 + 關閉/縮到最小按鈕; no 列表/文字欄位/rows; focused element = the window itself); window screenshot 327x643, 66686 bytes, sha256 4cb8a6b4… — byte-identical to attempt-13's album-detail window shot; guard C5 binds it to frame-post at MAD 2.2761"
+  },
+  {
+   "seq": 14,
+   "phase": "S6_v7_lineage_guard",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:13:04+0800",
+   "event": "frozen v7 album_detail_lineage_guard.py on THIS round's fresh evidence + frozen frame-space verifier artifact",
+   "evidence": [
+    "v7-lineage-guard.json",
+    "s6-v7-guard.stdout"
+   ],
+   "result": "exit 0; verdict ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED; refusal_reasons []; C0-C7 all PASS; C5 mad 2.2761; C6 title y-frac 0.1726 + 57張照片 + no tab tokens; C7 bound_to_frame true; composite ALBUM_OPEN_VERIFIED_COMPOSITE_PASS"
+  },
+  {
+   "seq": 15,
+   "phase": "S6_composite_decision",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-21T20:13:04+0800",
+   "event": "composite decision (runbook rule 5)",
+   "evidence": [
+    "composite-decision.json"
+   ],
+   "result": "ALBUM_OPEN_VERIFIED_COMPOSITE (PASS); round stops unconditionally; no ellipsis/menu/Save All/chooser/keyboard/download"
+  }
+ ],
+ "verdict": {
+  "s1_album_list_identity": "S1_ALBUM_LIST_IDENTITY_PASS",
+  "s2_frame_binding": "GEOMETRY_BINDING_PASS (mad 2.214)",
+  "s3_frozen_v6": "ELIGIBLE",
+  "candidate": [
+   39,
+   932
+  ],
+  "candidate_space": "frame-pre.png device pixels (fresh this round)",
+  "candidate_dispatched": true,
+  "dispatch_state": "RETURNED",
+  "dispatch_result": "ok",
+  "s5_frozen_window_pair": "ALBUM_OPEN_VERIFIED",
+  "s5_frozen_frame_pair": "ALBUM_OPEN_VERIFIED",
+  "s6_v7_lineage": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+  "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+  "stop_reason": "S6_COMPLETE_STOP (no ellipsis, no menu, no Save All, no retry)"
+ },
+ "scope_status": "ROUTE SUCCESS = ALBUM_OPEN_VERIFIED_COMPOSITE; exactly one authorized album-card reopening click consumed; ellipsis/menu/Save All NOT performed and NOT authorized; any ellipsis action requires a new independent owner authorization",
+ "end_state": "ALBUM_OPEN_VERIFIED_COMPOSITE + READY_FOR_NEW_ELLIPSIS_AUTHORIZATION",
+ "artifact_manifest_sha256": {
+  "00-start-state.json": "35144dc7d65f967cfa8c4f268856faa722e81e2bc0e2c49601936cf36c272f56",
+  "album-card-locate-v6.json": "7d16a2cc8801b425ef4ef63696c2bb1598ea8cbb5ec6cbe81a462f521f4c3182",
+  "authorization-record.json": "6246444c1a044a2ad54d78527852f700adaa756514c46d66ed90e5126883f6df",
+  "composite-decision.json": "7b85b6613328a92bee17ae30d3884974b8d8750f816dbfe535f2d0831bc7194d",
+  "cua-ax-state-s1.txt": "bb59cf234ea746a2e059773c4447fd68df3af0119c249e4ca1b57c1a64685611",
+  "cua-ax-state-s5.txt": "e81926ed1f66e62b358ab13e671d64cd3777329e44f8b165682255a9dd5f4470",
+  "cua-window-preclick.jpg": "8b27c1e0a8bcd284e06a47521c47f7ee2c2b21a342764739c8e7620b3474ced4",
+  "cua-window-s1.jpg": "8b27c1e0a8bcd284e06a47521c47f7ee2c2b21a342764739c8e7620b3474ced4",
+  "cua-window-s5.jpg": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "frame-post.png": "da198011cb788d3190132b8cb9ff135c337caa012ce3ffa1cce1dcc6e4d5d26a",
+  "frame-pre.png": "7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d",
+  "geometry-binding.json": "3064aceeae6196a2aba31f8efa34181e5ec3947ef4881e7ccc2b304863d00561",
+  "live-window-geometry.json": "52387562c8ec7f009c07c0636e2e80ce41fcdd696d8c6d9f8b9f377529659509",
+  "route-runbook.md": "f992fb668a89b0232ef8435080e007a6bbe7fe57bb26d4937dc1d3319705c3a5",
+  "s1-ax-pre.json": "d612c17efdbab70caf1ab724cf2ad50daab5ed26da2af27357aceaf7692f8074",
+  "s1-ax-pre.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s1-surface-revalidation.json": "0b7b1516005382f492a98af61c2a641654472cd55e3bcb8569bd2566311fe1f6",
+  "s2-ax-post.json": "bbdbfa08003d52df69f059e52bf788db69045d1a7ae121d8ced2ac4b7420a5fc",
+  "s2-ax-post.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s2-frame-geometry.json": "8ad0022b12f6cdbf45c8ecd4e63ab9363297fcdbbba22b8490c1610d57908aa7",
+  "s3-v6.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s3-v6.stdout": "7d16a2cc8801b425ef4ef63696c2bb1598ea8cbb5ec6cbe81a462f521f4c3182",
+  "s4-click-intent.json": "550d70f68ca28b99e23c208d058d15aa72dc88285349f178fcd772e3d74c2cea",
+  "s4-preclick-ax.json": "bcfdede4315f273a76334fd3d7a12cc9fb296e6663b8dda684cd7019de581155",
+  "s5-album-open-verify-frame.json": "229b19b1714dd6c648176fe781c37bb6de0facf537eddcd999e9ce96de831e5c",
+  "s5-album-open-verify-window.json": "3e03c5a39a52153aa1d04fa29a0a75e074323126b908fb1457b8d41ba6dc49c5",
+  "s5-post-click-cu-observation.json": "9251caa54725be906099b06d7496de1d7aa0092832c62bfa1c34f71bc1a659d3",
+  "s5-verify-frame.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s5-verify-frame.stdout": "229b19b1714dd6c648176fe781c37bb6de0facf537eddcd999e9ce96de831e5c",
+  "s5-verify-window.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s5-verify-window.stdout": "3e03c5a39a52153aa1d04fa29a0a75e074323126b908fb1457b8d41ba6dc49c5",
+  "s6-ax-post.json": "943c29d38520914d99b997bcec9ad49456e599169f710bd39995fd1d31bfe078",
+  "s6-v7-guard.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s6-v7-guard.stdout": "9e7eb7d3bc7dfb201ca40d1fc6b3b627b14ab9b719e2bac10976878a47fbc616",
+  "v7-lineage-guard.json": "9e7eb7d3bc7dfb201ca40d1fc6b3b627b14ab9b719e2bac10976878a47fbc616",
+  "tools/ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+  "tools/validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"
+ },
+ "finalized_at_local": "2026-09-21T20:14+0800"
+}

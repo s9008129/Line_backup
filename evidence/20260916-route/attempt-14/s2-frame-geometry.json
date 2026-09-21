@@ -1,0 +1,37 @@
+{
+ "phase": "S2_fresh_frame_and_stable_window_binding",
+ "recorded_at_local": "2026-09-21T20:08+0800",
+ "gui_inputs_sent": 0,
+ "fresh_frame": {
+  "path": "frame-pre.png",
+  "size_px": [2294, 1490],
+  "sha256": "7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d",
+  "tool": "screencapture -x (host, silent, no cursor)"
+ },
+ "ax_post_identical": true,
+ "ax_post_evidence": "s2-ax-post.json",
+ "stable_window_check": {
+  "same_line_window_identity": "window[0] pid 1030 (0,33) 327x643 focused+main in both pre and post reads",
+  "pre_post_geometry_stable": true,
+  "app_remains_frontmost": true,
+  "album_list_surface_unchanged": "CU read (cua-ax-state-s1.txt) and frame binding confirm the list surface at frame time",
+  "overlay_transition": "none observed"
+ },
+ "geometry": {
+  "path": "live-window-geometry.json",
+  "frame_sha256_bound": "7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d",
+  "rect_px": [0, 66, 654, 1352],
+  "source": "AX-derived; no historical geometry reused"
+ },
+ "binding": {
+  "tool": "tools/validate_live_geometry.py (sha256 ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68)",
+  "evidence": "geometry-binding.json",
+  "crop_size_px": [654, 1286],
+  "cu_shot_size": [327, 643],
+  "dims_checks": {"cu_shot_dims_equal_ax_pt": true, "frame_crop_inside_frame": true, "frame_scale_matches_display": true},
+  "mad_mean": 2.214,
+  "pass_rule": "dims exact AND mad_mean <= 12.0",
+  "verdict": "GEOMETRY_BINDING_PASS"
+ },
+ "verdict": "S2_FRAME_AND_BINDING_PASS"
+}

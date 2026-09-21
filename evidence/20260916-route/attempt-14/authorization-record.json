@@ -1,0 +1,33 @@
+{
+ "artifact": "Rev27b route attempt-14 owner one-shot authorization record",
+ "round": "Rev27b album reopen: fresh album-list revalidation -> frozen v6 S3 -> exactly one album-card click -> frozen album-open verification -> v7 ALBUM_DETAIL_WINDOW_LINEAGE_GUARD -> composite decision -> STOP",
+ "authorization_text_source": "owner user message authorizing Rev27b one-shot album reopen GUI operation (this round)",
+ "budgets": {
+  "new_album_card_click": 1,
+  "second_album_card_click": 0,
+  "retry": 0,
+  "double_click": 0,
+  "ellipsis_click": 0,
+  "menu_item_click": 0,
+  "save_all": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "download": 0,
+  "destination_write": 0
+ },
+ "not_authorized_this_round": [
+  "ellipsis locator / ellipsis click / menu workflow",
+  "Save All / chooser / keyboard / download",
+  "any second album-card click or retry of any kind"
+ ],
+ "historical_inputs_not_reset": {
+  "attempt_12_album_card_click": 1,
+  "attempt_13_ellipsis_click": 1,
+  "note": "historical clicks remain consumed; this round adds exactly one new reopening click under a new owner authorization, new attempt and fresh evidence"
+ },
+ "composite_rule": "ALBUM_OPEN_VERIFIED_COMPOSITE = frozen album-open verifier == ALBUM_OPEN_VERIFIED AND album_detail_lineage_guard(v7) == ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED (with the guard's C7 frozen-artifact frame binding when supplied)"
+}

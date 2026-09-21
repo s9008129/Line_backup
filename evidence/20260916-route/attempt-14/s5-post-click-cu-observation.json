@@ -1,0 +1,32 @@
+{
+ "phase": "S5_post_click_read_only_cu_observation",
+ "recorded_at_local": "2026-09-21T20:12:04+0800",
+ "gui_inputs_sent": 0,
+ "api": "cua_repl session (app handle bound at S1): lineApp.getAXState({disableDiffing:true, emit:false}) + lineApp.getScreenshot({emit:false}) — read-only; zero input",
+ "capture_rule": "runbook capture rule 6 (amended BEFORE any input, after reading the runtime's documented API): disableDiffing requests the fresh full-tree form; no re-captures beyond this one",
+ "ax_state": {
+  "path": "cua-ax-state-s5.txt",
+  "sha256": "e81926ed1f66e62b358ab13e671d64cd3777329e44f8b165682255a9dd5f4470",
+  "form": "FULL_TREE",
+  "chars": 176,
+  "content": "Window: \"\", App: LINE. -> 0 標準視窗 Secondary Actions: Raise / 1 關閉按鈕 / 2 縮到最小按鈕 / 3 menu bar (LINE/顯示/好友/視窗/常見問題); The focused UI element is 0 標準視窗 Secondary Actions: Raise",
+  "characteristics": "chrome-only custom-drawn window: NO 列表 / NO 文字欄位 / zero row entries; focused UI element = the window itself — album-detail surface class, identical form to attempt-13's album-detail AX read"
+ },
+ "window_screenshot": {
+  "path": "cua-window-s5.jpg",
+  "size_px": [
+   327,
+   643
+  ],
+  "bytes": 66686,
+  "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "note": "1 CU window-screenshot px == 1 window pt; equals focused window size_points 327x643; byte-identical to attempt-13's post-album-open album-detail window screenshot (attempt-13/cua-window-s1.jpg, sha256 4cb8a6b4…)"
+ },
+ "cross_checks": {
+  "focused_window_identity": "s6-ax-post.json (native read-only AX, 20:09:23+0800): window 0 (337,33) 327x643, focused+main, is_ax_focused_window=true, pid 1030, bundle jp.naver.line.mac",
+  "window_content_unchanged_since_post_click": "v7 guard C5: frame-post.png crop at rect_px [674,66,1328,1352] (== [337,33]pt x scale 2) binds to this screenshot with dims exact and gray MAD 2.2761 <= 12.0 => the surface observed in this read equals the immediate post-click frame content; no change occurred between the click and this read",
+  "surface_class": "album-detail window lineage (custom-drawn chrome-only AX tree + bound header context) — the surface class that owned the attempt-13 menu lineage",
+  "no_overlay": "no unknown overlay, no permission dialog, no chooser in the observed surface"
+ },
+ "no_captures_beyond_this_one": true
+}

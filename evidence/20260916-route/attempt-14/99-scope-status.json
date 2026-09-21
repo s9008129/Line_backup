@@ -1,0 +1,165 @@
+{
+ "check": "attempt_14_end_state",
+ "captured_at_local": "2026-09-21T20:15+0800",
+ "run_status": "CLOSED_AFTER_ONE_ALBUM_CARD_REOPEN_CLICK_AND_COMPOSITE_DECISION",
+ "stop_reason": "S6_COMPLETE_STOP",
+ "composite_status": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+ "run_ledger": {
+  "path": "run-ledger.json",
+  "sha256": "e54086f203bf04f9c484d889e7c661b5c94f8855ced44ca17a7abbba3a5f0485"
+ },
+ "s1": {
+  "app_bundle": "jp.naver.line.mac",
+  "line_frontmost": true,
+  "line_pid": 1030,
+  "window": "index 0, (0,33) 327x643, main, is_ax_focused_window, role AXWindow/AXStandardWindow",
+  "album_list_identity": "旻謙允禎成長日記; tabs 相簿(selected)/記事本; target card 2024/05/13～05/17 with 57 fully visible; no unknown overlay; no permission prompt; no occluding window",
+  "verdict": "S1_ALBUM_LIST_IDENTITY_PASS"
+ },
+ "s2": {
+  "frame_pre_sha256": "7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d",
+  "frame_size_px": [
+   2294,
+   1490
+  ],
+  "ax_pre_post_identical": true,
+  "geometry_binding": "GEOMETRY_BINDING_PASS (mad 2.214; dims exact; rect_px [0,66,654,1352])",
+  "verdict": "S2_FRAME_AND_BINDING_PASS"
+ },
+ "s3": {
+  "tool": "frozen v6 locate_album_card.py",
+  "tool_sha256": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "verdict": "ELIGIBLE",
+  "title_bbox": [
+   27,
+   917,
+   257,
+   947
+  ],
+  "count": "57 MATCH",
+  "click_point": [
+   39,
+   932
+  ],
+  "candidate_source": "freshly derived from THIS round's frame-pre.png by the frozen v6 locator; no historical coordinate"
+ },
+ "s4": {
+  "candidate_dispatched": true,
+  "dispatch": "lineApp.click([19.5,433], left, clickCount 1) on jp.naver.line.mac (window-screenshot coords derived from fresh v6 click_point)",
+  "dispatch_start_local": "2026-09-21T20:09:15.949+0800",
+  "dispatch_return_local": "2026-09-21T20:09:16.464+0800",
+  "dispatch_result": "ok",
+  "dispatch_state": "RETURNED",
+  "budget": "album-card 1/1 consumed permanently; no second click; no retry",
+  "preclick_gates": "CU window byte-identical (8b27c1e0…); AX window list identical; LINE frontmost; intent read-back OK"
+ },
+ "s5": {
+  "frame_post_sha256": "da198011cb788d3190132b8cb9ff135c337caa012ce3ffa1cce1dcc6e4d5d26a",
+  "post_click_window_set": "3 windows: 0 (337,33) 327x643 focused+main NEW detail; 1 (0,33) former list; 2 (0,37) 1147x699 'LINE'",
+  "frozen_album_open_verifier": {
+   "window_pair_formal": "ALBUM_OPEN_VERIFIED (title [15,83,204,111]; count MATCH 57; changed 0.661616)",
+   "frame_pair_supporting": "ALBUM_OPEN_VERIFIED (title [704,240,1080,283]; changed 0.24038; post=frame-post da198011…)"
+  },
+  "cu_post_read": "FULL_TREE chrome-only AX; window screenshot 327x643 4cb8a6b4… (byte-identical to attempt-13 album-detail shot); bound to frame-post at MAD 2.2761"
+ },
+ "s6": {
+  "v7_guard": {
+   "tool_sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+   "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+   "refusal_reasons": [],
+   "checks": "C0-C7 all PASS",
+   "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE_PASS",
+   "exit_code": 0
+  },
+  "composite_decision": "ALBUM_OPEN_VERIFIED_COMPOSITE (PASS)"
+ },
+ "budgets": {
+  "gui_input_count": 1,
+  "album_card_inputs_used": 1,
+  "navigation_inputs_used": 1,
+  "retry_count": 0,
+  "second_album_card_click": 0,
+  "double_click": 0,
+  "ellipsis_inputs_used": 0,
+  "menu_item_inputs_used": 0,
+  "save_all_dispatch_attempted": false,
+  "save_all_used": 0,
+  "chooser_interactions": 0,
+  "keyboard_inputs_used": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "bring_to_front_inputs": 0,
+  "app_acquisition_state_changes": 0,
+  "downloads": 0,
+  "destination_writes": 0,
+  "formal_state_writes": 0
+ },
+ "historical_inputs_reference": {
+  "attempt_12_album_card_clicks": 1,
+  "attempt_13_ellipsis_clicks": 1,
+  "attempt_03_save_all_dispatches": 0,
+  "historical_clicks_reset": false
+ },
+ "immutability": {
+  "frozen_tools_unchanged_this_round": {
+   "tools/v4/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+   "tools/v5/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+   "tools/v5/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+   "tools/v5/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+   "tools/v6/locate_album_card.py": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+   "tools/v6/extract_window_geometry.py": "b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8",
+   "tools/v7/album_detail_lineage_guard.py": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+   "tools/vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "historical_attempts": "attempt-12 / attempt-13 / Rev27 attempt-03 not modified (read-only this round; no writes outside attempt-14)",
+  "rev27b_plan_reviews": "PLAN-2026-09-21-rev27b-lineage-guard.md, review-01, review-02, review-freeze.json, 99-scope-status.json (lineage replan) not modified"
+ },
+ "authorization_recap": "本輪只授權一次 fresh album-card reopening click 與 composite album-detail verification；沒有授權任何 ellipsis、menu-item、Save All、chooser 或 download 操作。",
+ "next_authorization": "READY_FOR_NEW_ELLIPSIS_AUTHORIZATION",
+ "status_strings_not_written": [
+  "READY_FOR_ELLIPSIS",
+  "READY_FOR_SAVE_ALL",
+  "READY_TO_DOWNLOAD",
+  "BACKUP_COMPLETE"
+ ],
+ "artifact_manifest_sha256": {
+  "00-start-state.json": "35144dc7d65f967cfa8c4f268856faa722e81e2bc0e2c49601936cf36c272f56",
+  "album-card-locate-v6.json": "7d16a2cc8801b425ef4ef63696c2bb1598ea8cbb5ec6cbe81a462f521f4c3182",
+  "authorization-record.json": "6246444c1a044a2ad54d78527852f700adaa756514c46d66ed90e5126883f6df",
+  "composite-decision.json": "7b85b6613328a92bee17ae30d3884974b8d8750f816dbfe535f2d0831bc7194d",
+  "cua-ax-state-s1.txt": "bb59cf234ea746a2e059773c4447fd68df3af0119c249e4ca1b57c1a64685611",
+  "cua-ax-state-s5.txt": "e81926ed1f66e62b358ab13e671d64cd3777329e44f8b165682255a9dd5f4470",
+  "cua-window-preclick.jpg": "8b27c1e0a8bcd284e06a47521c47f7ee2c2b21a342764739c8e7620b3474ced4",
+  "cua-window-s1.jpg": "8b27c1e0a8bcd284e06a47521c47f7ee2c2b21a342764739c8e7620b3474ced4",
+  "cua-window-s5.jpg": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "frame-post.png": "da198011cb788d3190132b8cb9ff135c337caa012ce3ffa1cce1dcc6e4d5d26a",
+  "frame-pre.png": "7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d",
+  "geometry-binding.json": "3064aceeae6196a2aba31f8efa34181e5ec3947ef4881e7ccc2b304863d00561",
+  "live-window-geometry.json": "52387562c8ec7f009c07c0636e2e80ce41fcdd696d8c6d9f8b9f377529659509",
+  "route-runbook.md": "f992fb668a89b0232ef8435080e007a6bbe7fe57bb26d4937dc1d3319705c3a5",
+  "run-ledger.json": "e54086f203bf04f9c484d889e7c661b5c94f8855ced44ca17a7abbba3a5f0485",
+  "s1-ax-pre.json": "d612c17efdbab70caf1ab724cf2ad50daab5ed26da2af27357aceaf7692f8074",
+  "s1-ax-pre.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s1-surface-revalidation.json": "0b7b1516005382f492a98af61c2a641654472cd55e3bcb8569bd2566311fe1f6",
+  "s2-ax-post.json": "bbdbfa08003d52df69f059e52bf788db69045d1a7ae121d8ced2ac4b7420a5fc",
+  "s2-ax-post.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s2-frame-geometry.json": "8ad0022b12f6cdbf45c8ecd4e63ab9363297fcdbbba22b8490c1610d57908aa7",
+  "s3-v6.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s3-v6.stdout": "7d16a2cc8801b425ef4ef63696c2bb1598ea8cbb5ec6cbe81a462f521f4c3182",
+  "s4-click-intent.json": "550d70f68ca28b99e23c208d058d15aa72dc88285349f178fcd772e3d74c2cea",
+  "s4-preclick-ax.json": "bcfdede4315f273a76334fd3d7a12cc9fb296e6663b8dda684cd7019de581155",
+  "s5-album-open-verify-frame.json": "229b19b1714dd6c648176fe781c37bb6de0facf537eddcd999e9ce96de831e5c",
+  "s5-album-open-verify-window.json": "3e03c5a39a52153aa1d04fa29a0a75e074323126b908fb1457b8d41ba6dc49c5",
+  "s5-post-click-cu-observation.json": "9251caa54725be906099b06d7496de1d7aa0092832c62bfa1c34f71bc1a659d3",
+  "s5-verify-frame.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s5-verify-frame.stdout": "229b19b1714dd6c648176fe781c37bb6de0facf537eddcd999e9ce96de831e5c",
+  "s5-verify-window.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s5-verify-window.stdout": "3e03c5a39a52153aa1d04fa29a0a75e074323126b908fb1457b8d41ba6dc49c5",
+  "s6-ax-post.json": "943c29d38520914d99b997bcec9ad49456e599169f710bd39995fd1d31bfe078",
+  "s6-v7-guard.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s6-v7-guard.stdout": "9e7eb7d3bc7dfb201ca40d1fc6b3b627b14ab9b719e2bac10976878a47fbc616",
+  "v7-lineage-guard.json": "9e7eb7d3bc7dfb201ca40d1fc6b3b627b14ab9b719e2bac10976878a47fbc616",
+  "tools/ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+  "tools/validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"
+ }
+}
