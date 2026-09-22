@@ -1,7 +1,7 @@
 {
  "phase": "S5_ellipsis_click_intent",
  "attempt": "attempt-15",
- "recorded_at_local": "2026-09-22T16:18+0800",
+ "recorded_at_local": "2026-09-22T16:16:08+0800",
  "intent_written": false,
  "dispatch_attempted": false,
  "dispatch_state": "NOT_ATTEMPTED",
@@ -9,8 +9,15 @@
  "gui_input_count": 0,
  "ellipsis_inputs_used": 0,
  "reason": "the gate (fresh composite PASS AND frozen v5 ELIGIBLE AND surface/geometry unchanged) was never reached; the composite was REFUSED and the ellipsis locator was not run (S4 not executed)",
- "budget": {"ellipsis_click_budget": 1, "used": 0, "retry": 0, "second_click": 0},
+ "budget": {
+  "ellipsis_click_budget": 1,
+  "used": 0,
+  "retry": 0,
+  "second_click": 0
+ },
  "no_dispatch_proof": "no click API call was issued this round by any layer: the cua_repl session performed only getApp (read handle), getAXState and getScreenshot — all read-only; the host shell performed only read-only AX reads, screencapture and offline python analysis",
  "derivation_would_have_been": "n/a — no candidate existed because the frozen v5 locator was never invoked",
- "no_input_after_dispatch": "n/a (nothing was dispatched; no Escape, no click-outside, no menu item, no Save All, no keyboard, no scroll were issued)"
+ "no_input_after_dispatch": "n/a (nothing was dispatched; no Escape, no click-outside, no menu item, no Save All, no keyboard, no scroll were issued)",
+ "timestamp_note": "recorded_at_local corrected at close-out to this artifact's actual filesystem mtime (+0800). The earlier hand-typed label was up to ~3 minutes ahead of the host clock. No claim in this round depends on the label: ordering is anchored to the AX tool's own timestamps (s1-ax-pre.json 2026-09-22T16:14:14+08:00, s2-ax-post.json 2026-09-22T16:15:34+08:00) and to the frame hash chain.",
+ "recorded_at_local_original_handtyped": "2026-09-22T16:18+0800"
 }

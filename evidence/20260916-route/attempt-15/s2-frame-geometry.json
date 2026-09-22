@@ -1,7 +1,7 @@
 {
  "phase": "S2_read_only_stability_and_frame_window_binding",
  "attempt": "attempt-15",
- "recorded_at_local": "2026-09-22T16:17+0800",
+ "recorded_at_local": "2026-09-22T16:15:52+0800",
  "gui_inputs_sent": 0,
  "sequence": "read-only AX pre (s1-ax-pre.json) -> fresh full-screen frame (frame-s1.png) -> read-only AX post (s2-ax-post.json)",
  "ax_post": {
@@ -11,9 +11,23 @@
  "binding": {
   "tool": "tools/validate_live_geometry.py sha256 ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68 (byte-identical copy from attempt-14)",
   "evidence": "s2-frame-window-binding.json",
-  "inputs": {"frame": "frame-s1.png bac5ebb2…", "cu_shot": "s1-window-cu.jpg 2e22d760…", "ax": "s1-ax-pre.json 46928741…", "window_index": 0},
-  "frame_crop_px": [0, 66, 654, 1352],
-  "dims_checks": {"cu_shot_dims_equal_ax_pt": true, "frame_crop_inside_frame": true, "frame_scale_matches_display": true},
+  "inputs": {
+   "frame": "frame-s1.png bac5ebb2…",
+   "cu_shot": "s1-window-cu.jpg 2e22d760…",
+   "ax": "s1-ax-pre.json 46928741…",
+   "window_index": 0
+  },
+  "frame_crop_px": [
+   0,
+   66,
+   654,
+   1352
+  ],
+  "dims_checks": {
+   "cu_shot_dims_equal_ax_pt": true,
+   "frame_crop_inside_frame": true,
+   "frame_scale_matches_display": true
+  },
   "mad_mean": 2.045,
   "pass_rule": "dims exact AND mad_mean <= 12.0 (pre-declared bound, unchanged)",
   "verdict": "GEOMETRY_BINDING_PASS"
@@ -26,5 +40,7 @@
   "screenshot_retries": 0
  },
  "verdict": "S2_STABILITY_AND_BINDING_PASS",
- "meaning": "the frame used by every read-only artifact of this round is pixel-bound to the focused LINE window and the surface did not change under observation; the S1 conclusion (album-list, not album-detail) is therefore not an artifact of a stale or occluded capture"
+ "meaning": "the frame used by every read-only artifact of this round is pixel-bound to the focused LINE window and the surface did not change under observation; the S1 conclusion (album-list, not album-detail) is therefore not an artifact of a stale or occluded capture",
+ "timestamp_note": "recorded_at_local corrected at close-out to this artifact's actual filesystem mtime (+0800). The earlier hand-typed label was up to ~3 minutes ahead of the host clock. No claim in this round depends on the label: ordering is anchored to the AX tool's own timestamps (s1-ax-pre.json 2026-09-22T16:14:14+08:00, s2-ax-post.json 2026-09-22T16:15:34+08:00) and to the frame hash chain.",
+ "recorded_at_local_original_handtyped": "2026-09-22T16:17+0800"
 }

@@ -1,7 +1,7 @@
 {
  "phase": "S4_frozen_v5_fresh_ellipsis_locator",
  "attempt": "attempt-15",
- "recorded_at_local": "2026-09-22T16:18+0800",
+ "recorded_at_local": "2026-09-22T16:16:08+0800",
  "executed": false,
  "invocations": 0,
  "reason": "S4 is gated on the fresh composite PASS (runbook step 5 and the owner's S4: 只有 fresh composite PASS 才可執行). The composite was REFUSED, so the locator was NOT invoked.",
@@ -11,9 +11,20 @@
   "expected": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
   "match": true
  },
- "prohibited_and_not_done": ["v4 locator fallback", "historical-coordinate fallback ([304,50] / [305,50])", "threshold adjustment", "retry", "invocation on any other frame"],
+ "prohibited_and_not_done": [
+  "v4 locator fallback",
+  "historical-coordinate fallback ([304,50] / [305,50])",
+  "threshold adjustment",
+  "retry",
+  "invocation on any other frame"
+ ],
  "frame_sha256_that_would_have_been_the_input": "n/a (not invoked)",
- "recorded_frame_sha256_for_traceability": {"s1-window-cu.jpg": "2e22d760463e395431dd875527cf1f20da7b19460c7149111566af851ebc0d21", "frame-s1.png": "bac5ebb2a59354b8cae2dd7981f21d47bebf1564340869d76122a9b2df33efb4"},
+ "recorded_frame_sha256_for_traceability": {
+  "s1-window-cu.jpg": "2e22d760463e395431dd875527cf1f20da7b19460c7149111566af851ebc0d21",
+  "frame-s1.png": "bac5ebb2a59354b8cae2dd7981f21d47bebf1564340869d76122a9b2df33efb4"
+ },
  "fresh_v5_verdict": "NOT_RUN",
- "ellipsis_input_count": 0
+ "ellipsis_input_count": 0,
+ "timestamp_note": "recorded_at_local corrected at close-out to this artifact's actual filesystem mtime (+0800). The earlier hand-typed label was up to ~3 minutes ahead of the host clock. No claim in this round depends on the label: ordering is anchored to the AX tool's own timestamps (s1-ax-pre.json 2026-09-22T16:14:14+08:00, s2-ax-post.json 2026-09-22T16:15:34+08:00) and to the frame hash chain.",
+ "recorded_at_local_original_handtyped": "2026-09-22T16:18+0800"
 }

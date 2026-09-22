@@ -39,7 +39,10 @@
   "ellipsis_locator_invocations": 0,
   "menu_item_inputs_used": 0,
   "save_all_dispatch_attempted": false,
-  "save_all_budget": {"budget": 0, "used": 0},
+  "save_all_budget": {
+   "budget": 0,
+   "used": 0
+  },
   "chooser_interactions": 0,
   "go_to_folder_inputs": 0,
   "keyboard_inputs_used": 0,
@@ -59,58 +62,187 @@
   "historical_ellipsis_clicks": 1,
   "historical_save_all_dispatches": 0,
   "historical_clicks_reset": false,
-  "historical_coordinates_never_used_as_input": [[39, 923], [39, 926], [39, 932], [304, 50], [305, 50]],
+  "historical_coordinates_never_used_as_input": [
+   [
+    39,
+    923
+   ],
+   [
+    39,
+    926
+   ],
+   [
+    39,
+    932
+   ],
+   [
+    304,
+    50
+   ],
+   [
+    305,
+    50
+   ]
+  ],
   "note": "no candidate was produced this round (the frozen v5 locator was never invoked); the historical values above appear only as documentation"
  },
  "events": [
-  {"seq": 1, "phase": "S0_setup", "action_class": "write_evidence", "gui_input": false, "timestamp_local": "2026-09-22T16:13 .. 16:15+0800",
+  {
+   "seq": 1,
+   "phase": "S0_setup",
+   "action_class": "write_evidence",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:13:49 .. 16:14:10+0800",
    "event": "frozen tool SHAs re-verified from disk; attempt-15 created; authorization-record + pre-declared runbook + 00-start-state written; read-only AX tool compiled to /tmp/attempt15/ax_window_bounds (binary byte-identical to attempt-10/12/13/14)",
-   "evidence": ["authorization-record.json", "route-runbook.md", "00-start-state.json", "tools/ax_window_bounds.swift", "tools/validate_live_geometry.py"],
-   "result": "v5 ellipsis locator sha256 == expected 6a015ea6…; frozen verifier ffa82aed… (== v4); v7 guard cdff187e…; no historical attempt reopened"},
-  {"seq": 2, "phase": "S1_ax_pre", "action_class": "read", "gui_input": false, "timestamp_local": "2026-09-22T16:14+0800",
+   "evidence": [
+    "authorization-record.json",
+    "route-runbook.md",
+    "00-start-state.json",
+    "tools/ax_window_bounds.swift",
+    "tools/validate_live_geometry.py"
+   ],
+   "result": "v5 ellipsis locator sha256 == expected 6a015ea6…; frozen verifier ffa82aed… (== v4); v7 guard cdff187e…; no historical attempt reopened"
+  },
+  {
+   "seq": 2,
+   "phase": "S1_ax_pre",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:14:14+0800",
    "event": "ax_window_bounds_readonly jp.naver.line.mac",
-   "evidence": ["s1-ax-pre.json"],
+   "evidence": [
+    "s1-ax-pre.json"
+   ],
    "result": "frontmost=jp.naver.line.mac; pid 21064; window_count=2; window[0] (0,33) 327x643 main+focused; window[1] (0,37) 1147x699 'LINE'",
-   "finding": "the attempt-14 album-detail window ([337,33] 327x643) is ABSENT; LINE pid changed 1030 -> 21064 (LINE was restarted externally)"},
-  {"seq": 3, "phase": "S1_fresh_frame", "action_class": "read", "gui_input": false, "timestamp_local": "2026-09-22T16:14+0800",
+   "finding": "the attempt-14 album-detail window ([337,33] 327x643) is ABSENT; LINE pid changed 1030 -> 21064 (LINE was restarted externally)"
+  },
+  {
+   "seq": 3,
+   "phase": "S1_fresh_frame",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:14:18+0800",
    "event": "screencapture -x frame-s1.png (silent, zero input)",
-   "evidence": ["frame-s1.png"], "result": "2294x1490 px, sha256 bac5ebb2…"},
-  {"seq": 4, "phase": "S1_read_only_surface_read", "action_class": "read", "gui_input": false, "timestamp_local": "2026-09-22T16:15+0800",
-   "event": "cua_repl read-only: bound the LINE app handle, then getAXState({disableDiffing:true}) and getScreenshot (both zero input)",
-   "evidence": ["s1-ax-state-cu.txt", "s1-window-cu.jpg"],
-   "result": "FULL_TREE = 標準視窗 / 文字欄位 (search) / 列表 (showing 0-100 of 101 items) with rows / 捲軸 / 關閉按鈕 / 縮到最小按鈕 / menu bar => ALBUM-LIST surface class; window screenshot 327x643, 62887 bytes, sha256 2e22d760…"},
-  {"seq": 5, "phase": "S1_window_ocr", "action_class": "read", "gui_input": false, "timestamp_local": "2026-09-22T16:15+0800",
+   "evidence": [
+    "frame-s1.png"
+   ],
+   "result": "2294x1490 px, sha256 bac5ebb2…"
+  },
+  {
+   "seq": 4,
+   "phase": "S1_window_ocr",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:14:49+0800",
    "event": "frozen v5 reader OCR of the frame-s1.png window crop (read-only)",
-   "evidence": ["s1-window-crop.png", "s1-window-ocr.json"],
-   "result": "旻謙允禎成長日記 / 相簿 / 記事本 / 2024/05/20~05/24 53 / 2024/05/13~05/17 57 => album-LIST cards, not an album-detail header"},
-  {"seq": 6, "phase": "S1_visual_read", "action_class": "read", "gui_input": false, "timestamp_local": "2026-09-22T16:16+0800",
+   "evidence": [
+    "s1-window-crop.png",
+    "s1-window-ocr.json"
+   ],
+   "result": "旻謙允禎成長日記 / 相簿 / 記事本 / 2024/05/20~05/24 53 / 2024/05/13~05/17 57 => album-LIST cards, not an album-detail header"
+  },
+  {
+   "seq": 5,
+   "phase": "S1_read_only_surface_read",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:14:22 .. 16:14:24+0800",
+   "event": "cua_repl read-only: bound the LINE app handle, then getAXState({disableDiffing:true}) and getScreenshot (both zero input)",
+   "evidence": [
+    "s1-ax-state-cu.txt",
+    "s1-window-cu.jpg"
+   ],
+   "result": "FULL_TREE = 標準視窗 / 文字欄位 (search) / 列表 (showing 0-100 of 101 items) with rows / 捲軸 / 關閉按鈕 / 縮到最小按鈕 / menu bar => ALBUM-LIST surface class; window screenshot 327x643, 62887 bytes, sha256 2e22d760…"
+  },
+  {
+   "seq": 6,
+   "phase": "S1_visual_read",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:14:50+0800",
    "event": "read-only visual read of s1-window-cu.jpg",
-   "evidence": ["s1-window-cu.jpg"],
-   "result": "tabs 相簿(selected)/記事本 + two album cards each with its own ⋮ + photo grid + green compose button => album-list surface; no album-detail markers"},
-  {"seq": 7, "phase": "S1_verdict", "action_class": "read", "gui_input": false, "timestamp_local": "2026-09-22T16:16+0800",
+   "evidence": [
+    "s1-window-cu.jpg"
+   ],
+   "result": "tabs 相簿(selected)/記事本 + two album cards each with its own ⋮ + photo grid + green compose button => album-list surface; no album-detail markers"
+  },
+  {
+   "seq": 7,
+   "phase": "S1_verdict",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:14:50+0800 (verdict formed) / 16:15:48+0800 (artifact written)",
    "event": "S1 album-detail gate verdict",
-   "evidence": ["s1-surface-revalidation.json"],
-   "result": "S1_ALBUM_DETAIL_GATE_FAIL__NOT_IN_ALBUM_DETAIL -> STOP per the runbook and the owner's S1 instruction; no reopen, no album-card click, no navigation, no bring-to-front"},
-  {"seq": 8, "phase": "S2_stability_binding", "action_class": "read", "gui_input": false, "timestamp_local": "2026-09-22T16:17+0800",
+   "evidence": [
+    "s1-surface-revalidation.json"
+   ],
+   "result": "S1_ALBUM_DETAIL_GATE_FAIL__NOT_IN_ALBUM_DETAIL -> STOP per the runbook and the owner's S1 instruction; no reopen, no album-card click, no navigation, no bring-to-front"
+  },
+  {
+   "seq": 8,
+   "phase": "S2_stability_binding",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:15:34+0800 (AX post + binding) / 16:15:52+0800 (geometry record)",
    "event": "read-only AX post read + frame/window binding validation on the S1 evidence",
-   "evidence": ["s2-ax-post.json", "s2-frame-window-binding.json", "s2-frame-geometry.json"],
-   "result": "window list identical to the AX pre read; GEOMETRY_BINDING_PASS (dims exact, MAD 2.045 <= 12.0) => the window is unoccluded and its pixels equal frame-s1.png; no screenshot retry"},
-  {"seq": 9, "phase": "S3_composite", "action_class": "read", "gui_input": false, "timestamp_local": "2026-09-22T16:18+0800",
+   "evidence": [
+    "s2-ax-post.json",
+    "s2-frame-window-binding.json",
+    "s2-frame-geometry.json"
+   ],
+   "result": "window list identical to the AX pre read; GEOMETRY_BINDING_PASS (dims exact, MAD 2.045 <= 12.0) => the window is unoccluded and its pixels equal frame-s1.png; no screenshot retry"
+  },
+  {
+   "seq": 9,
+   "phase": "S3_composite",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:15:23 .. 16:16:02+0800",
    "event": "frozen album-open verifier (frame pair + window pair, offline) then the approved v7 lineage guard (offline) on this round's evidence",
-   "evidence": ["d1-verifier-frame-diagnostic.json", "d2-verifier-window-diagnostic.json", "d3-lineage-guard-diagnostic.json", "s3-composite-decision.json"],
-   "result": "frozen verifier = ALBUM_OPEN_VERIFIED in BOTH spaces (false positive: its title rule was satisfied by the album-list card caption 2024/05/13~05/17 and count 57 — the attempt-03 class, reproduced live); v7 guard = REFUSED (exit 2; SURFACE_HAS_LIST_CONTROLS, SURFACE_HAS_LIST_ROWS, FOCUSED_ELEMENT_NOT_WINDOW; C0-C3 PASS, C4 REFUSE) => composite = ALBUM_OPEN_COMPOSITE_REFUSED => owner decision rule A"},
-  {"seq": 10, "phase": "S4_not_executed", "action_class": "read", "gui_input": false, "timestamp_local": "2026-09-22T16:18+0800",
+   "evidence": [
+    "d1-verifier-frame-diagnostic.json",
+    "d2-verifier-window-diagnostic.json",
+    "d3-lineage-guard-diagnostic.json",
+    "s3-composite-decision.json"
+   ],
+   "result": "frozen verifier = ALBUM_OPEN_VERIFIED in BOTH spaces (false positive: its title rule was satisfied by the album-list card caption 2024/05/13~05/17 and count 57 — the attempt-03 class, reproduced live); v7 guard = REFUSED (exit 2; SURFACE_HAS_LIST_CONTROLS, SURFACE_HAS_LIST_ROWS, FOCUSED_ELEMENT_NOT_WINDOW; C0-C3 PASS, C4 REFUSE) => composite = ALBUM_OPEN_COMPOSITE_REFUSED => owner decision rule A"
+  },
+  {
+   "seq": 10,
+   "phase": "S4_not_executed",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:16:08+0800",
    "event": "frozen v5 ellipsis locator invocation",
-   "evidence": ["s4-ellipsis-locator-not-executed.json"],
-   "result": "NOT INVOKED (0 invocations) — S4 is gated on the composite PASS; no v4 fallback, no historical-coordinate fallback, no threshold change, no retry"},
-  {"seq": 11, "phase": "S5_not_dispatched", "action_class": "none", "gui_input": false, "timestamp_local": "2026-09-22T16:18+0800",
+   "evidence": [
+    "s4-ellipsis-locator-not-executed.json"
+   ],
+   "result": "NOT INVOKED (0 invocations) — S4 is gated on the composite PASS; no v4 fallback, no historical-coordinate fallback, no threshold change, no retry"
+  },
+  {
+   "seq": 11,
+   "phase": "S5_not_dispatched",
+   "action_class": "none",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:16:08+0800",
    "event": "ellipsis click",
-   "evidence": ["s5-click-intent.json"],
-   "result": "NOT_ATTEMPTED; click_count 0; gui_input_count 0; ellipsis budget 1/0 used; no second click, no retry"},
-  {"seq": 12, "phase": "S6_not_executed", "action_class": "none", "gui_input": false, "timestamp_local": "2026-09-22T16:18+0800",
+   "evidence": [
+    "s5-click-intent.json"
+   ],
+   "result": "NOT_ATTEMPTED; click_count 0; gui_input_count 0; ellipsis budget 1/0 used; no second click, no retry"
+  },
+  {
+   "seq": 12,
+   "phase": "S6_not_executed",
+   "action_class": "none",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T16:16:08+0800",
    "event": "menu observation",
-   "evidence": ["s6-menu-observation-not-executed.json"],
-   "result": "NOT_OBSERVED_NO_CLICK_DISPATCHED; Save All 0; chooser 0; keyboard 0; scroll 0; download 0"}
+   "evidence": [
+    "s6-menu-observation-not-executed.json"
+   ],
+   "result": "NOT_OBSERVED_NO_CLICK_DISPATCHED; Save All 0; chooser 0; keyboard 0; scroll 0; download 0"
+  }
  ],
  "round_end_state": {
   "surface_left_untouched": "album-list window (0,33) 327x643, LINE frontmost, pid 21064",
@@ -118,5 +250,28 @@
   "menu_open": false,
   "next_step_requires_a_new_owner_authorization": "an album-card reopening click (album-detail is not open); the ellipsis/Save All chain remains unconsumed for a later authorized round",
   "scoped_status": "BLOCKED_NOT_IN_ALBUM_DETAIL__FRESH_COMPOSITE_REFUSED"
+ },
+ "seq_4_5_swap_note": "events 4 and 5 were swapped during the timestamp correction pass so that the ledger reflects the real wall-clock order: the frozen-reader OCR of the frame crop (16:14:22-24) ran BEFORE the CU read-only AX/screenshot read (16:14:49).",
+ "timestamp_correction": {
+  "reason": "the per-event timestamp_local labels were hand-typed during the round and were up to ~3 minutes ahead of the host clock",
+  "authoritative_anchors": {
+   "ax_tool_s1_ax_pre": "2026-09-22T16:14:14+08:00",
+   "ax_tool_s2_ax_post": "2026-09-22T16:15:34+08:00",
+   "pre_check_ax_read": "2026-09-22T16:13:19+08:00",
+   "round_end_read_only_check": "2026-09-22T16:17:24+08:00",
+   "round_span": "2026-09-22T16:13:19 .. 16:17:38+0800"
+  },
+  "artifact_mtimes_used": {
+   "ellipsis-click-intent.json": "2026-09-22T16:17:09+0800",
+   "s1-surface-revalidation.json": "2026-09-22T16:15:48+0800",
+   "s2-frame-geometry.json": "2026-09-22T16:15:52+0800",
+   "s3-composite-decision.json": "2026-09-22T16:16:02+0800",
+   "s4-ellipsis-locator-not-executed.json": "2026-09-22T16:16:08+0800",
+   "s5-click-intent.json": "2026-09-22T16:16:08+0800",
+   "s6-menu-observation-not-executed.json": "2026-09-22T16:16:08+0800",
+   "run-ledger.json": "2026-09-22T16:16:19+0800"
+  },
+  "interleaving_note": "the artifact WRITE order was interleaved relative to the gate order (the S3 offline diagnostics consumed S1 evidence and ran before the S2 post read); the ledger keeps the logical gate order S1 -> S2 -> S3 and states each event's real time range",
+  "no_claim_depends_on_labels": true
  }
 }

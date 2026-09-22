@@ -1,7 +1,7 @@
 {
  "phase": "S3_fresh_composite_album_detail_verification",
  "attempt": "attempt-15",
- "recorded_at_local": "2026-09-22T16:18+0800",
+ "recorded_at_local": "2026-09-22T16:16:02+0800",
  "gui_inputs_sent": 0,
  "owner_rule": "ALBUM_OPEN_VERIFIED_COMPOSITE = frozen album-open verifier == ALBUM_OPEN_VERIFIED AND approved v7 ALBUM_DETAIL_WINDOW_LINEAGE_GUARD == ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
  "frozen_album_open_verifier": {
@@ -12,7 +12,17 @@
    "post": "frame-s1.png bac5ebb2a59354b8cae2dd7981f21d47bebf1564340869d76122a9b2df33efb4 (THIS round)",
    "verdict": "ALBUM_OPEN_VERIFIED",
    "exit_code": 0,
-   "target_title_in_post": {"texts": ["2024/05/13~05/17"], "bbox": [30, 1096, 257, 1120]},
+   "target_title_in_post": {
+    "texts": [
+     "2024/05/13~05/17"
+    ],
+    "bbox": [
+     30,
+     1096,
+     257,
+     1120
+    ]
+   },
    "count_text": "MATCH",
    "changed_fraction": 0.579931
   },
@@ -22,7 +32,17 @@
    "post": "s1-window-cu.jpg 2e22d760463e395431dd875527cf1f20da7b19460c7149111566af851ebc0d21 (THIS round)",
    "verdict": "ALBUM_OPEN_VERIFIED",
    "exit_code": 0,
-   "target_title_in_post": {"texts": ["2024/05/13~05/17"], "bbox": [15, 516, 129, 528]},
+   "target_title_in_post": {
+    "texts": [
+     "2024/05/13~05/17"
+    ],
+    "bbox": [
+     15,
+     516,
+     129,
+     528
+    ]
+   },
    "count_text": "MATCH",
    "changed_fraction": 0.667104
   },
@@ -40,10 +60,24 @@
   },
   "exit_code": 2,
   "verdict": "REFUSED",
-  "refusal_reasons": ["SURFACE_HAS_LIST_CONTROLS", "SURFACE_HAS_LIST_ROWS", "FOCUSED_ELEMENT_NOT_WINDOW"],
-  "checks": {"C0_SCHEMA": "PASS", "C0_FRAME_SCALE": "PASS", "C1_FRONTMOST": "PASS", "C2_TARGET_UNIQUE": "PASS", "C3_GEOMETRY_DOUBT": "PASS", "C4_AX_SURFACE_CLASS": "REFUSE"},
+  "refusal_reasons": [
+   "SURFACE_HAS_LIST_CONTROLS",
+   "SURFACE_HAS_LIST_ROWS",
+   "FOCUSED_ELEMENT_NOT_WINDOW"
+  ],
+  "checks": {
+   "C0_SCHEMA": "PASS",
+   "C0_FRAME_SCALE": "PASS",
+   "C1_FRONTMOST": "PASS",
+   "C2_TARGET_UNIQUE": "PASS",
+   "C3_GEOMETRY_DOUBT": "PASS",
+   "C4_AX_SURFACE_CLASS": "REFUSE"
+  },
   "c4_basis": "the focused window's AX tree contains 列表 (list control) and row entries and the focused element is the 文字欄位 search field — the album-list surface class, not the chrome-only album-detail class",
-  "composite": {"verdict": "NOT_EVALUATED", "note": "the guard refuses before C5/C6/C7, so the composite rule is never reached"}
+  "composite": {
+   "verdict": "NOT_EVALUATED",
+   "note": "the guard refuses before C5/C6/C7, so the composite rule is never reached"
+  }
  },
  "composite": "ALBUM_OPEN_COMPOSITE_REFUSED",
  "decision": "FAIL",
@@ -55,5 +89,7 @@
  },
  "manual_override": false,
  "retry": 0,
- "note_on_label": "D1/D2/D3 are read-only offline analyses of evidence captured in S1/S2; they added no capture and no input. They are recorded as the composite step because the owner's composite rule is defined over these two tools, and their verdicts decide the round."
+ "note_on_label": "D1/D2/D3 are read-only offline analyses of evidence captured in S1/S2; they added no capture and no input. They are recorded as the composite step because the owner's composite rule is defined over these two tools, and their verdicts decide the round.",
+ "timestamp_note": "recorded_at_local corrected at close-out to this artifact's actual filesystem mtime (+0800). The earlier hand-typed label was up to ~3 minutes ahead of the host clock. No claim in this round depends on the label: ordering is anchored to the AX tool's own timestamps (s1-ax-pre.json 2026-09-22T16:14:14+08:00, s2-ax-post.json 2026-09-22T16:15:34+08:00) and to the frame hash chain.",
+ "recorded_at_local_original_handtyped": "2026-09-22T16:18+0800"
 }
