@@ -1,0 +1,154 @@
+{
+ "record": "attempt-18 owner one-shot authorization (REV27B-ELLIPSIS-AFTER-ATTEMPT17: fresh read-only album-detail composite revalidation + fresh frozen v5 ellipsis locator + exactly one album-level ellipsis click + fresh menu observation ONLY)",
+ "recorded_at_local": "2026-09-22T17:45+0800",
+ "authorization_id": "REV27B-ELLIPSIS-AFTER-ATTEMPT17",
+ "authorization_type": "ELLIPSIS_ONLY",
+ "authorization_source": "owner's message in this conversation (this round only)",
+ "owner_statement_verbatim": [
+  "AUTHORIZATION_TYPE = ELLIPSIS_ONLY",
+  "AUTHORIZATION_ID = REV27B-ELLIPSIS-AFTER-ATTEMPT17",
+  "這是一個全新的 owner one-shot authorization。",
+  "它不是 album reopen authorization。",
+  "它不是 Save All authorization。",
+  "它不是 chooser authorization。",
+  "本輪唯一 GUI input budget：album-level ellipsis click = 1",
+  "allowed_gui_inputs: ellipsis_click = 1",
+  "forbidden_gui_inputs: album_card_click = 0 / navigation = 0 / second_ellipsis = 0 / retry = 0 / menu_item = 0 / Save_All = 0 / chooser = 0 / keyboard = 0 / scroll = 0 / AX_write = 0 / bring_to_front = 0 / app_acquisition = 0 / download = 0 / destination_write = 0",
+  "allowed_locator: frozen v5 ellipsis locator",
+  "required_precondition: ALBUM_OPEN_VERIFIED_COMPOSITE from fresh current evidence",
+  "才授權：exactly one left click 到本輪 fresh v5-derived album-level ellipsis candidate。",
+  "一旦 click call 被送出：ellipsis_used = 1; gui_input_count = 1。無論結果：不得第二次 click。不得 retry。",
+  "本輪可以辨識「儲存全部」。但禁止 activation。",
+  "不論 menu 是否成功：本輪在 menu observation 後停止。",
+  "本輪 authorization type = ELLIPSIS_ONLY；只授權一次 fresh album-level ellipsis click 與 menu observation。沒有授權或執行 album-card reopening、menu-item activation、Save All、chooser、path entry、confirm 或 download。"
+ ],
+ "new_attempt": 18,
+ "authorization_chain": {
+  "attempt_14": "album-reopen authorization: LEGALLY CONSUMED at attempt-14; owner explicitly forbids re-running it.",
+  "attempt_15": "zero-GUI-input ellipsis round (LINE externally restarted); stopped at S1; nothing transferable.",
+  "attempt_16": "zero-GUI-input ellipsis round; stopped at S1 with composite refused; nothing transferable.",
+  "attempt_17": "ALBUM_REOPEN_ONLY round under separate owner authorization REV27B-ALBUM-REOPEN-AFTER-ATTEMPT16: album-list identity PASS -> frozen v6 ELIGIBLE -> exactly one album-card click ([39,939]) -> frozen album-open verifier ALBUM_OPEN_VERIFIED (both spaces) -> v7 ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED -> composite ALBUM_OPEN_VERIFIED_COMPOSITE -> READY_FOR_NEW_ELLIPSIS_AUTHORIZATION. attempt-17 is immutable and NOT re-run.",
+  "this_round": "fresh read-only album-detail composite revalidation (S1-S3) -> iff composite PASS and frozen v5 ELIGIBLE (S4): exactly one album-level ellipsis click (S5) -> fresh menu observation only (S6) -> STOP."
+ },
+ "known_safe_state_at_authorization": {
+  "local_head_actual": "f314d74a7621b877bd5a797a63fddeec4e40814a",
+  "local_head_expected_by_owner": "f314d74a7621b877bd5a797a63fddeec4e40814a",
+  "head_matches": true,
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "ahead_actual": 16,
+  "ahead_expected_by_owner": 16,
+  "ahead_matches": true,
+  "attempt_17": "completed; composite ALBUM_OPEN_VERIFIED_COMPOSITE; retry 0; ellipsis 0; frozen v5 invocations 0; Save All 0; LINE left on album-detail",
+  "attempt_18_slot": "did not exist before this round; attempts 01-17 are not reopened and were not modified"
+ },
+ "authorized_this_round": {
+  "ellipsis_click_budget": 1,
+  "allowed_locator": "frozen v5 ellipsis locator (tools/v5/locate_album_ellipsis.py sha256 6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418)",
+  "precondition_verifiers": [
+   "frozen album-open verifier (tools/v5/verify_album_open.py sha256 ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58)",
+   "v7 album-detail lineage guard (tools/v7/album_detail_lineage_guard.py sha256 cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52)"
+  ],
+  "menu_observation": "read-only only (frozen detect_menu_popup.py + OCR + visual); no menu-item activation"
+ },
+ "not_authorized_this_round": [
+  "album-card reopening click",
+  "navigation",
+  "second ellipsis click / retry",
+  "any menu-item activation",
+  "Save All (Gate A or otherwise)",
+  "chooser",
+  "keyboard / Escape",
+  "scroll",
+  "AX write",
+  "bring-to-front",
+  "app acquisition",
+  "download",
+  "destination write"
+ ],
+ "hard_budgets": {
+  "album_card": 0,
+  "navigation": 0,
+  "ellipsis": "0 or 1 (<= 1)",
+  "second_ellipsis": 0,
+  "retry": 0,
+  "menu_item": 0,
+  "save_all": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "download": 0,
+  "destination_write": 0
+ },
+ "decision_rules": {
+  "A": "fresh composite FAIL -> ellipsis 0 -> STOP",
+  "B": "composite PASS but frozen v5 != ELIGIBLE -> ellipsis 0 -> STOP",
+  "C": "v5 ELIGIBLE -> ellipsis click once -> menu not affirmative -> ellipsis 1, retry 0, STOP",
+  "D": "v5 ELIGIBLE -> ellipsis click once -> MENU_SURFACE_AFFIRMATIVELY_OBSERVED and 儲存全部 affirmatively identified -> scoped status READY_FOR_SAVE_ALL_GATE_A_AUTHORIZATION with Save All used = 0 -> STOP"
+ },
+ "historical_prerequisite": {
+  "artifact_manifest_rehash": "attempt-17 99-scope-status.json artifact_manifest_sha256: 43/43 entries byte-consistent from disk this round (0 mismatch, 0 missing)",
+  "verified_content": {
+   "authorization_type": "ALBUM_REOPEN_ONLY",
+   "album_list_identity": "PASS",
+   "frozen_v6": "ELIGIBLE",
+   "album_card_clicks": 1,
+   "frozen_album_open_verifier": "ALBUM_OPEN_VERIFIED (window pair + frame pair)",
+   "v7_lineage": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+   "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+   "frozen_v5_invocations": 0,
+   "ellipsis": 0,
+   "save_all": 0,
+   "retry": 0
+  },
+  "attempt_17_immutable": true
+ },
+ "safety_tools_gate": {
+  "frozen_v5_ellipsis_locator_sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "frozen_v5_ellipsis_locator_matches_expected": true,
+  "frozen_album_open_verifier_sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "v7_lineage_guard_sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "rev27b_plan_review_artifacts": "evidence/20260921-lineage-guard-replan/{review/attempt-01/*, attempt-01/*, replay/*} present and unmodified",
+  "v7_selftest_results_sha256": "affb3602698f7c5b0d9f8d8df01759a074738dd095bd32cf638a1300ec0ae4df",
+  "v4_ellipsis_locator_sha256_NOT_used": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+  "historical_coordinates_never_used_as_input": [
+   [
+    304,
+    50
+   ],
+   [
+    305,
+    50
+   ]
+  ],
+  "frozen_tools_not_modified": "v4, v5, v6, v7, frozen verifier, frozen menu detector, frozen vision reader — read-only this round"
+ },
+ "known_non_blocking_disclosure": {
+  "id": "KNOWN_NON_BLOCKING_PROVENANCE_LABEL_TYPO",
+  "detail": "attempt-17/live-window-geometry.json 'source' string labels both AX reads 16:51:23; authoritative timestamps are s1-ax-pre.json 16:50:00 and s2-ax-post.json 16:51:23",
+  "action_taken": "none — attempt-17 and the v6-consumed geometry artifact are NOT modified and attempt-17 is NOT re-run; the disclosure is recorded only"
+ },
+ "lineage_from_git_log": "HEAD f314d74a (attempt-17: one album-card reopening click; composite ALBUM_OPEN_VERIFIED_COMPOSITE) <- e6ebf404 (attempt-16) <- 35a5b3d (attempt-15 timestamp closeout) <- aa08730 (attempt-15 evidence closeout) <- b1aa265 (attempt-15 ellipsis round) <- b2719cc (attempt-14 album reopen) <- ... <- a9e523e7 (origin/master) => ahead 16 == owner-stated expectation",
+ "authorization_scope_check": {
+  "artifact": "authorization-scope-check.json",
+  "verdict": "AUTHORIZATION_SCOPE_MATCH",
+  "authorization_type": "ELLIPSIS_ONLY",
+  "frozen_v5_allowed": true,
+  "ellipsis_budget": 1,
+  "save_all_budget": 0
+ },
+ "gui_authorization": {
+  "kind": "owner one-shot authorization in the current user message (this round)",
+  "authorization_type": "ELLIPSIS_ONLY",
+  "authorization_id": "REV27B-ELLIPSIS-AFTER-ATTEMPT17",
+  "ellipsis_click_budget": 1,
+  "everything_else": 0,
+  "historical_ellipsis_clicks": 1,
+  "historical_album_card_clicks": 2,
+  "historical_inputs_reset": false,
+  "transfer_from_previous_rounds": "none (owner-stated)"
+ }
+}

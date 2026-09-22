@@ -1,0 +1,226 @@
+{
+ "check": "attempt_18_start_state",
+ "captured_at_local": "2026-09-22T17:44+0800",
+ "branch_line": "## master...origin/master [ahead 16]",
+ "head": "f314d74a7621b877bd5a797a63fddeec4e40814a",
+ "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+ "ahead": 16,
+ "owner_expected_head": "f314d74a7621b877bd5a797a63fddeec4e40814a",
+ "owner_expected_ahead": 16,
+ "head_matches_owner_expectation": true,
+ "deviation_recorded": false,
+ "untracked_present": [
+  "evidence/20260916-route/attempt-11/ (untouched; historical, not reused)",
+  "evidence/20260916-route/tools/v4/__pycache__/, tools/v5/__pycache__/, tools/v6/__pycache__/, tools/v6/selftest/__pycache__/ (untouched; never added)"
+ ],
+ "tracked_modifications": [],
+ "read_only_git_commands_used": [
+  "git status --porcelain=v1 --branch",
+  "git rev-parse HEAD",
+  "git rev-parse origin/master",
+  "git log -18 --oneline"
+ ],
+ "git_commands_forbidden_and_not_used": [
+  "fetch",
+  "pull",
+  "push",
+  "reset",
+  "rebase",
+  "amend",
+  "stash"
+ ],
+ "target": {
+  "app": "jp.naver.line.mac",
+  "group": "旻謙允禎成長日記",
+  "album": "2024/05/13～05/17",
+  "expected_count": 57
+ },
+ "attempt_17_reverified_from_disk": {
+  "method": "attempt-17/99-scope-status.json artifact_manifest_sha256 re-hashed from disk",
+  "entries": 43,
+  "consistent": 43,
+  "mismatch": 0,
+  "missing": 0,
+  "content_verified": {
+   "authorization_type": "ALBUM_REOPEN_ONLY",
+   "album_list_identity": "S1_ALBUM_LIST_IDENTITY_PASS",
+   "frozen_v6": "ELIGIBLE",
+   "album_card_candidate": [
+    39,
+    939
+   ],
+   "candidate_dispatched": true,
+   "frozen_album_open_verifier": "ALBUM_OPEN_VERIFIED (window pair + frame pair)",
+   "v7_lineage": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+   "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+   "frozen_v5_invocations": 0,
+   "ellipsis": 0,
+   "save_all": 0,
+   "retry": 0,
+   "gui_input_count": 1
+  },
+  "verdict": "CONSISTENT_WITH_OWNER_STATEMENT",
+  "attempt_17_immutable": true
+ },
+ "frozen_tools_reverified_from_disk": {
+  "tools/v5/locate_album_ellipsis.py": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "tools/v5/locate_album_ellipsis.py_expected": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "tools/v5/locate_album_ellipsis.py_matches_expected": true,
+  "tools/v5/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v4/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v5/verify_album_open.py_byte_identical_to_v4": true,
+  "tools/v5/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "tools/v5/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "tools/v7/album_detail_lineage_guard.py": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "tools/detect_menu_popup.py": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "tools/vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+  "tools/v6/locate_album_card.py (NOT used this round)": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "tools/v4/locate_album_ellipsis.py (NOT used; v4 fallback forbidden)": "b77e3d51d43e6cb4a0a1b7bf2e9e1179a2718d7867ac01b5344fbcd07cef96c4",
+  "tools/v7/selftest/results.json": "affb3602698f7c5b0d9f8d8df01759a074738dd095bd32cf638a1300ec0ae4df"
+ },
+ "rev27b_plan_review_artifacts_present_unmodified": [
+  "evidence/20260921-lineage-guard-replan/review/attempt-01/{review-01-top-down.json,review-01-top-down.md,review-02-adversarial.json,review-02-adversarial.md,review-freeze.json}",
+  "evidence/20260921-lineage-guard-replan/attempt-01/{root-cause-classification.json,root-cause-classification.md,baseline-tripwire.json,evidence-rehash.json,rehash-evidence.py,run-ledger.json,99-scope-status.json}",
+  "evidence/20260921-lineage-guard-replan/replay/{replay-record.json,build-replay-record.py,out/*}"
+ ],
+ "frozen_tools_not_modified": "v4, v5, v6, v7, frozen album-open verifier, frozen menu detector, frozen vision reader/helper source — read-only this round",
+ "attempt_tools_copied_byte_identical_from_attempt17": {
+  "tools/ax_window_bounds.swift": {
+   "sha256": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+   "compiled_binary": "/tmp/attempt18/ax_window_bounds",
+   "compiled_binary_sha256": "1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae",
+   "byte_identical_to_attempt_10_12_13_14_15_16_17": true
+  },
+  "tools/validate_live_geometry.py": {
+   "sha256": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"
+  }
+ },
+ "attempt_slot": {
+  "selected": "attempt-18",
+  "reason": "attempt-18 did not exist; attempts 01-17 are not reopened and were never modified this round"
+ },
+ "environment_note_observed_at_S1_ax_pre": {
+  "line_pid": 21064,
+  "line_pid_at_attempt_17": 21064,
+  "line_restarted_since_attempt_17": false,
+  "ax_window_count_now": 3,
+  "windows_now": [
+   {
+    "index": 0,
+    "position_points": [
+     0,
+     33
+    ],
+    "size_points": [
+     327,
+     643
+    ],
+    "main": true,
+    "is_ax_focused_window": true,
+    "title": ""
+   },
+   {
+    "index": 1,
+    "position_points": [
+     15,
+     55
+    ],
+    "size_points": [
+     327,
+     643
+    ],
+    "main": false,
+    "is_ax_focused_window": false,
+    "title": ""
+   },
+   {
+    "index": 2,
+    "position_points": [
+     0,
+     37
+    ],
+    "size_points": [
+     1147,
+     699
+    ],
+    "main": false,
+    "is_ax_focused_window": false,
+    "title": "LINE"
+   }
+  ],
+  "attempt_17_end_windows": [
+   {
+    "index": 0,
+    "position_points": [
+     337,
+     33
+    ],
+    "size_points": [
+     327,
+     643
+    ],
+    "main": true,
+    "is_ax_focused_window": true,
+    "title": "",
+    "class": "album-detail (attempt-17 end)"
+   },
+   {
+    "index": 1,
+    "position_points": [
+     0,
+     33
+    ],
+    "size_points": [
+     327,
+     643
+    ],
+    "main": false,
+    "is_ax_focused_window": false,
+    "title": "",
+    "class": "album-list"
+   },
+   {
+    "index": 2,
+    "position_points": [
+     0,
+     37
+    ],
+    "size_points": [
+     1147,
+     699
+    ],
+    "main": false,
+    "is_ax_focused_window": false,
+    "title": "LINE",
+    "class": "wide LINE window"
+   }
+  ],
+  "delta_vs_attempt_17_end": "the [337,33] 327x643 album-detail window is ABSENT from the AX list; the focused+main window is now [0,33] 327x643 (the window attempt-17 classified as album-list); a same-size window at [15,55] is new relative to attempt-17's list; pid unchanged (no LINE restart). External change between attempt-17 end (16:54) and this round (17:40); this round sent zero input.",
+  "meaning": "whether the CONTENT of the focused window is still album-detail is decided freshly in S1 (CU AX + window screenshot + OCR + visual); it is NOT assumed.",
+  "read_only_this_read": true
+ },
+ "gui_authorization": {
+  "kind": "owner one-shot authorization in the current user message (this round)",
+  "authorization_type": "ELLIPSIS_ONLY",
+  "authorization_id": "REV27B-ELLIPSIS-AFTER-ATTEMPT17",
+  "ellipsis_click_budget": 1,
+  "everything_else": 0,
+  "historical_ellipsis_clicks": 1,
+  "historical_album_card_clicks": 2,
+  "historical_inputs_reset": false
+ },
+ "historical_facts_preserved": {
+  "attempt_12": "one historical album-card click; frozen v6 ELIGIBLE; frozen album-open verifier ALBUM_OPEN_VERIFIED",
+  "attempt_13": "frozen v5 ELIGIBLE; one historical ellipsis click; menu observed (選擇項目/修改相簿名稱/儲存全部/刪除相簿/分享相簿); Save All 0",
+  "attempt_14": "one historical album-card reopening click; composite ALBUM_OPEN_VERIFIED_COMPOSITE; ellipsis 0",
+  "attempt_15": "zero-input round; frozen verifier false-positive ALBUM_OPEN_VERIFIED on the album-LIST surface; v7 REFUSED",
+  "attempt_16": "zero-input round; same album-list false positive; v7 REFUSED; ellipsis NOT_RUN; Save All 0",
+  "attempt_17": "one album-card reopening click; composite ALBUM_OPEN_VERIFIED_COMPOSITE; frozen v5 never invoked",
+  "rev27_attempt_03": "frozen verifier ALBUM_OPEN_VERIFIED on an album-LIST surface; v7 replay REFUSED; the frozen verifier alone is never sufficient"
+ },
+ "known_non_blocking_disclosure": {
+  "id": "KNOWN_NON_BLOCKING_PROVENANCE_LABEL_TYPO",
+  "detail": "attempt-17/live-window-geometry.json 'source' string labels both AX reads 16:51:23; authoritative timestamps are s1-ax-pre.json 16:50:00 and s2-ax-post.json 16:51:23",
+  "action_taken": "none — attempt-17 and the v6-consumed geometry artifact are NOT modified and attempt-17 is NOT re-run"
+ }
+}

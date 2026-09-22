@@ -1,0 +1,241 @@
+{
+ "tool": "verify_album_open",
+ "pre": "../attempt-17/frame-pre.png",
+ "post": "frame-s1.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "6b37df75a8aa1ac48466c1167178916cdf6f432c30f4b08fa332329c2443caed",
+ "post_sha256": "8d260f4e122d900c20ff48a038091b9e8c6d9f0fa5c262df299ae78dceffb8b9",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "post_ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "0:28°C",
+  "C2",
+  "Developer",
+  "•• • Line_backup —：Line_backup - codex -m deepseek-v4.1-flash --sand...",
+  "...ax\"、python …",
+  "..\"max\"、grep",
+  "...X\"•node•",
+  ".ermetrics",
+  "十",
+  "evidence/20260916-route/attempt-18",
+  "jp.naver.line.mac > s1-ax-pre.json",
+  "… +5",
+  "lines",
+  "exit=0",
+  "｛",
+  "&&",
+  "/tmp/attempt18/ax_window_bounds",
+  "2＞",
+  "$1-ax-pre.stderri",
+  "echo \"exit=$？\"；",
+  "+90",
+  "lines",
+  "（ctrl +tto",
+  "View transcript）",
+  "｝",
+  "•Used",
+  "computer• 1 action",
+  "L Bind",
+  "read-only LINE app handle",
+  "Used",
+  "computer",
+  "• 1 action",
+  "L Read-only CU AX full tree + window screenshot",
+  "• Let me capture the frame now. （3m 39s •esc to interrupt）",
+  ">Esk Codex to do anything",
+  "deepseek-v4.1-flash max•~/Documents/ChatGPT/Line_backup Pursuing goal （2m）",
+  "00",
+  "9月22日週二 17:41",
+  "山",
+  "B.8 27B Splash",
+  "•••",
+  "凶Load",
+  "Inference",
+  "+ 保存預設為⋯.",
+  "Ing",
+  ">",
+  "<",
+  "1",
+  "<",
+  "2024/05/13~05/17",
+  "57",
+  "2026-09-22 17:40:39"
+ ],
+ "target_title_in_post": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   27,
+   933,
+   257,
+   960
+  ]
+ },
+ "date_like_tokens_in_post": [
+  "2024/05/13~05/17",
+  "2026-09-22 17:40:39",
+  "2026-09-22 17:41:01",
+  "：\"qwen3.8-27b-splash\"",
+  "［INFO］ ［qwen3.8-27b-splash］ Prompt processing progress: 47.3%",
+  "［INFO］ ［qwen3.8-27b-splash］ Prompt processing progress: 72.1%"
+ ],
+ "count_box": [
+  19,
+  962,
+  187,
+  992
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "diff": {
+  "changed_pixels": 2190610,
+  "changed_fraction": 0.640893,
+  "changed_bbox": [
+   0,
+   8,
+   2294,
+   1490
+  ],
+  "changed_grid_8x8": [
+   [
+    15,
+    0,
+    21165,
+    30327,
+    30879,
+    31350,
+    33824,
+    34414
+   ],
+   [
+    4852,
+    5199,
+    26382,
+    40669,
+    40754,
+    40438,
+    48703,
+    53111
+   ],
+   [
+    21647,
+    23628,
+    19539,
+    23816,
+    22013,
+    19950,
+    36375,
+    53196
+   ],
+   [
+    21954,
+    18422,
+    15048,
+    12245,
+    8703,
+    5136,
+    32427,
+    53196
+   ],
+   [
+    19812,
+    27063,
+    30827,
+    42635,
+    43170,
+    41858,
+    48066,
+    53480
+   ],
+   [
+    10241,
+    4603,
+    39439,
+    53147,
+    53382,
+    53350,
+    53037,
+    53196
+   ],
+   [
+    22191,
+    21301,
+    39155,
+    53136,
+    53382,
+    53378,
+    53187,
+    53186
+   ],
+   [
+    36194,
+    37683,
+    44940,
+    53190,
+    53382,
+    53283,
+    53382,
+    52957
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "ALBUM_OPEN_VERIFIED",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "b45aca6dfc77c7038a3f26289dbb4ebe98734e474f3f7ae116acfb51acee3b21",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "e7398cdec0a6f637974c83603b26e11999988518ed507385f1fd004118278323",
+    "stdout_bytes": 4287,
+    "lines_parsed": 81
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "87ce6d03a4b637d9ac61d4e8331a443336a6220e9d3ba88b5045dd9da8c8a326",
+    "stdout_bytes": 32,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

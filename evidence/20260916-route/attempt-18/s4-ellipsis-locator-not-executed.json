@@ -1,0 +1,29 @@
+{
+ "phase": "S4_frozen_v5_ellipsis_locator",
+ "attempt": "attempt-18",
+ "recorded_at_local": "2026-09-22T17:44+0800",
+ "gui_input": false,
+ "invocations": 0,
+ "verdict": "NOT_EXECUTED",
+ "reason": "S4 is gated on the fresh composite PASS (runbook decision 5 / owner S4). Composite = ALBUM_OPEN_COMPOSITE_REFUSED, so the frozen v5 locator was NOT invoked.",
+ "fresh_frame_sha256": "8d260f4e122d900c20ff48a038091b9e8c6d9f0fa5c262df299ae78dceffb8b9",
+ "frozen_v5_sha256_reverified_for_integrity_only": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+ "no_fallback_used": {
+  "v4_locator": false,
+  "historical_coordinates": false,
+  "threshold_adjustment": false,
+  "retry": false,
+  "second_frame_attempt": false
+ },
+ "historical_coordinates_never_used_as_input": [
+  [
+   304,
+   50
+  ],
+  [
+   305,
+   50
+  ]
+ ],
+ "ellipsis_inputs": 0
+}

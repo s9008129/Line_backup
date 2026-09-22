@@ -1,0 +1,33 @@
+{
+ "phase": "S6_menu_observation",
+ "attempt": "attempt-18",
+ "recorded_at_local": "2026-09-22T17:44+0800",
+ "gui_input": false,
+ "verdict": "NOT_OBSERVED_NO_CLICK_DISPATCHED",
+ "reason": "no ellipsis click was dispatched (composite refused), so no menu can exist; no screenshot pair, no menu detector run, no OCR — nothing was clicked, nothing was dismissed",
+ "menu_surface_affirmative": false,
+ "save_all_affirmatively_identified": false,
+ "after_click_inputs": {
+  "ellipsis_clicks": 0,
+  "menu_item_clicks": 0,
+  "save_all_dispatches": 0,
+  "keyboard_inputs": 0,
+  "scroll_inputs": 0,
+  "escape_or_outside_clicks": 0,
+  "choosers": 0,
+  "downloads": 0
+ },
+ "budgets_final": {
+  "menu_item": 0,
+  "save_all": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition_changes": 0,
+  "download": 0,
+  "destination_write": 0
+ }
+}

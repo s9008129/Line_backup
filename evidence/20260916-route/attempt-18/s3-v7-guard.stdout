@@ -1,0 +1,139 @@
+{
+ "tool": "album_detail_lineage_guard",
+ "version": "v7",
+ "purpose": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED for the CURRENT focused LINE window; fail-closed; current-round evidence only",
+ "no_historical_coordinates": true,
+ "gui_inputs": 0,
+ "thresholds": {
+  "mad_max": 12.0,
+  "header_y_frac_max": 0.3,
+  "list_markers": [
+   "列表",
+   "文字欄位"
+  ],
+  "detail_chrome": [
+   "關閉按鈕",
+   "縮到最小按鈕"
+  ],
+  "list_tab_tokens": [
+   "相簿",
+   "記事本"
+  ],
+  "photo_context_token": "張照片"
+ },
+ "inputs": {
+  "window_inventory": {
+   "path": "s2-ax-post.json",
+   "sha256": "01a68a2cc76975689b00e5b72f4b61c31348d0ab851d05d4ae9669705e743da4"
+  },
+  "window_ax_state": {
+   "path": "s1-ax-state-cu.txt",
+   "sha256": "19a3ebf9044a0cfd92e8742ef33ce0e045af0c5318078b2b601f57bd68376a90"
+  },
+  "window_screenshot": {
+   "path": "s1-window-cu.jpg",
+   "sha256": "bc833dd10c6a0e8ee5d4347fba4b438319b225f2fb27065920eaf2e9e405a9ed"
+  },
+  "frame": {
+   "path": "frame-s1.png",
+   "sha256": "8d260f4e122d900c20ff48a038091b9e8c6d9f0fa5c262df299ae78dceffb8b9"
+  }
+ },
+ "checks": [
+  {
+   "id": "C0_SCHEMA",
+   "verdict": "PASS",
+   "detail": "ok"
+  },
+  {
+   "id": "C0_FRAME_SCALE",
+   "verdict": "PASS",
+   "detail": {
+    "frame_size": [
+     2294,
+     1490
+    ],
+    "scale": 2.0,
+    "display_bounds_points": [
+     0,
+     0,
+     1147,
+     745
+    ],
+    "cg_display_mode_pixel_wh": [
+     2294,
+     1490
+    ],
+    "expected_frame_px": [
+     2294,
+     1490
+    ]
+   }
+  },
+  {
+   "id": "C1_FRONTMOST",
+   "verdict": "PASS",
+   "detail": {
+    "bundle_id": "jp.naver.line.mac",
+    "frontmost_application": "jp.naver.line.mac",
+    "ax_frontmost": true,
+    "ax_api_trusted": true
+   }
+  },
+  {
+   "id": "C2_TARGET_UNIQUE",
+   "verdict": "PASS",
+   "detail": "single focused main target"
+  },
+  {
+   "id": "C3_GEOMETRY_DOUBT",
+   "verdict": "PASS",
+   "detail": {
+    "duplicate_geometry_indexes": [],
+    "target_inside_frame": true
+   }
+  },
+  {
+   "id": "C4_AX_SURFACE_CLASS",
+   "verdict": "REFUSE",
+   "detail": {
+    "state_form": "FULL_TREE",
+    "standard_window": true,
+    "close_button": true,
+    "minimize_button": true,
+    "list_element": true,
+    "row_tokens": 100,
+    "focused_is_window": false
+   }
+  }
+ ],
+ "frozen_album_open": {
+  "provided": false
+ },
+ "composite": {
+  "verdict": "NOT_EVALUATED",
+  "reasons": []
+ },
+ "derived_target_window": {
+  "index": 0,
+  "title": "",
+  "role": "AXWindow",
+  "subrole": "AXStandardWindow",
+  "rect_pt": [
+   0,
+   33,
+   327,
+   643
+  ],
+  "main": true,
+  "is_ax_focused_window": true,
+  "source": "derived from THIS round's AX inventory; no historical coordinate used"
+ },
+ "verdict": "REFUSED",
+ "refusal_reasons": [
+  "SURFACE_HAS_LIST_CONTROLS",
+  "SURFACE_HAS_LIST_ROWS",
+  "FOCUSED_ELEMENT_NOT_WINDOW"
+ ],
+ "exit_code": 2
+}

@@ -1,0 +1,61 @@
+{
+ "phase": "S2_frame_window_binding_and_stability",
+ "attempt": "attempt-18",
+ "recorded_at_local": "2026-09-22T17:44+0800",
+ "gui_inputs_sent": 0,
+ "ax_pre": {
+  "path": "s1-ax-pre.json",
+  "timestamp_local": "2026-09-22T17:40:45+08:00",
+  "sha256": "fb954311e6c91ac8f63b9ead37ffd830ee0d9a09b48cc61feb1acb9dd3905767"
+ },
+ "ax_post": {
+  "path": "s2-ax-post.json",
+  "timestamp_local": "2026-09-22T17:42:23+08:00",
+  "sha256": "01a68a2cc76975689b00e5b72f4b61c31348d0ab851d05d4ae9669705e743da4"
+ },
+ "stability": {
+  "windows_identical": true,
+  "display_identical": true,
+  "pid_identical": true,
+  "note": "the only byte difference between the two AX JSONs is the read timestamp field"
+ },
+ "frame": {
+  "path": "frame-s1.png",
+  "sha256": "8d260f4e122d900c20ff48a038091b9e8c6d9f0fa5c262df299ae78dceffb8b9",
+  "size_px": [
+   2294,
+   1490
+  ],
+  "captured_at_local": "2026-09-22T17:41+0800"
+ },
+ "live_window_geometry": {
+  "path": "live-window-geometry.json",
+  "file_sha256": "9d5ff27d9dd50995753d4004936b0accbeec37b0176230db108e1bb52a10012f",
+  "rect_px": [
+   0,
+   66,
+   654,
+   1352
+  ],
+  "window_point_rect": [
+   0,
+   33,
+   327,
+   643
+  ],
+  "frame_sha256_inside_geometry_file": "8d260f4e122d900c20ff48a038091b9e8c6d9f0fa5c262df299ae78dceffb8b9",
+  "equals_this_round_frame": true
+ },
+ "binding": {
+  "validator": "tools/validate_live_geometry.py (sha256 ea4230e4...)",
+  "artifact": "geometry-binding.json",
+  "file_sha256": "f880f71f4cbb2521ba8f0bbab394b50fec1600a4da9390661cc4dd525716f2e0",
+  "window_index": 0,
+  "dims_exact": true,
+  "mad_mean": 2.01,
+  "mad_mean_max": 12.0,
+  "verdict": "GEOMETRY_BINDING_PASS"
+ },
+ "verdict": "GEOMETRY_BINDING_PASS",
+ "note": "S2 binding PASS does NOT change the S1 surface verdict: the window that binds is the album-LIST window. Binding was still recorded because the owner's evidence list requires AX pre/post, geometry binding, and a fresh frame."
+}

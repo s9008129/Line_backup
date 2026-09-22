@@ -1,0 +1,43 @@
+{
+ "artifact": "evidence/20260916-route/attempt-18/authorization-scope-check.json",
+ "recorded_at_local": "2026-09-22T17:45+0800",
+ "check": "authorization anti-replay scope check established BEFORE attempt creation and BEFORE any LINE input",
+ "authorization_type": "ELLIPSIS_ONLY",
+ "authorization_id": "REV27B-ELLIPSIS-AFTER-ATTEMPT17",
+ "allowed_gui_inputs": {
+  "ellipsis_click": 1
+ },
+ "forbidden_gui_inputs": {
+  "album_card_click": 0,
+  "navigation": 0,
+  "second_ellipsis": 0,
+  "retry": 0,
+  "menu_item": 0,
+  "save_all": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "download": 0,
+  "destination_write": 0
+ },
+ "allowed_locator": "frozen v5 ellipsis locator (tools/v5/locate_album_ellipsis.py sha256 6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418)",
+ "required_precondition": "ALBUM_OPEN_VERIFIED_COMPOSITE from fresh current evidence (frozen album-open verifier ALBUM_OPEN_VERIFIED AND v7 ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED)",
+ "runbook_scope_mismatch_triggers_checked": {
+  "album_card_reopening_click_present_in_runbook": false,
+  "frozen_v6_used_as_this_round_gui_locator": false,
+  "save_all_menu_item_activation_present_in_runbook": false,
+  "chooser_navigation_present_in_runbook": false,
+  "keyboard_path_entry_present_in_runbook": false,
+  "destination_confirm_present_in_runbook": false,
+  "frozen_v4_ellipsis_fallback_present_in_runbook": false,
+  "historical_coordinate_as_input_present_in_runbook": false
+ },
+ "frozen_v5_allowed": true,
+ "ellipsis_budget": 1,
+ "save_all_budget": 0,
+ "verdict": "AUTHORIZATION_SCOPE_MATCH",
+ "note": "the runbook and the execution plan for this round contain exactly one GUI input (one album-level ellipsis click); no album-card reopening, no frozen v5->v6 role swap, no Save All activation, no chooser, no keyboard path entry, no destination confirm. The round is executed under this scope only."
+}

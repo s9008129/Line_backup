@@ -1,0 +1,170 @@
+{
+ "phase": "S3_fresh_composite_revalidation (read-only, zero GUI input)",
+ "attempt": "attempt-18",
+ "recorded_at_local": "2026-09-22T17:44+0800",
+ "gui_inputs_sent": 0,
+ "predeclared_decision": "runbook decision 2/3/4: window-space formal frozen pair + frame-space supporting pair; guard with this round's evidence; PASS only if both frozen verdicts ALBUM_OPEN_VERIFIED AND guard exit 0 with ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+ "frozen_album_open_verifier": {
+  "tool_sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "window_space_formal_pair": {
+   "pre": "../attempt-17/cua-window-preclick.jpg",
+   "pre_sha256": "eac18de8806c23d9bc320a14a84ceda1a7b8add8d1ac832785021411386aab2a",
+   "post": "s1-window-cu.jpg",
+   "post_sha256": "bc833dd10c6a0e8ee5d4347fba4b438319b225f2fb27065920eaf2e9e405a9ed",
+   "artifact": "s3-frozen-window-pair.json",
+   "artifact_sha256": "e1e6c3089ac584e547b358d54c7153f875324a6918f4a4352f703acceb77be99",
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "changed_fraction": 0.276304,
+   "target_title_in_post": {
+    "texts": [
+     "2024/05/13~05/17"
+    ],
+    "bbox": [
+     15,
+     434,
+     129,
+     447
+    ]
+   },
+   "count_text": "MATCH",
+   "exit_code": 0
+  },
+  "frame_space_supporting_pair": {
+   "pre": "../attempt-17/frame-pre.png",
+   "pre_sha256": "6b37df75a8aa1ac48466c1167178916cdf6f432c30f4b08fa332329c2443caed",
+   "post": "frame-s1.png",
+   "post_sha256": "8d260f4e122d900c20ff48a038091b9e8c6d9f0fa5c262df299ae78dceffb8b9",
+   "artifact": "s3-frozen-frame-pair.json",
+   "artifact_sha256": "88e344237b833177ed3533ec1989e6252a3d5c74fbf5161cad71060284eee905",
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "changed_fraction": 0.640893,
+   "target_title_in_post": {
+    "texts": [
+     "2024/05/13~05/17"
+    ],
+    "bbox": [
+     27,
+     933,
+     257,
+     960
+    ]
+   },
+   "count_text": "MATCH",
+   "exit_code": 0
+  },
+  "false_positive_class": "attempt-03 / attempt-15 / attempt-16 class REPRODUCED LIVE: on the album-LIST surface the target date-range string and the count 57 are readable (the list card caption) and the changed_fraction threshold is met, so the frozen verifier returns ALBUM_OPEN_VERIFIED without any album-detail window existing. The frozen verifier alone is NEVER album-detail success."
+ },
+ "v7_lineage_guard": {
+  "tool_sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "artifact": "s3-v7-lineage-guard.json",
+  "artifact_sha256": "24debe4d20369c2d05055c874e10322c161e81bd214fa0d26e57e495f7cdde43",
+  "inputs": {
+   "window-inventory": "s2-ax-post.json",
+   "window-ax-state": "s1-ax-state-cu.txt",
+   "window-screenshot": "s1-window-cu.jpg",
+   "frame": "frame-s1.png",
+   "frozen-album-open-json": "s3-frozen-frame-pair.json"
+  },
+  "exit_code": 2,
+  "verdict": "REFUSED",
+  "refusal_reasons": [
+   "SURFACE_HAS_LIST_CONTROLS",
+   "SURFACE_HAS_LIST_ROWS",
+   "FOCUSED_ELEMENT_NOT_WINDOW"
+  ],
+  "checks": [
+   {
+    "id": "C0_SCHEMA",
+    "verdict": "PASS",
+    "detail": "ok"
+   },
+   {
+    "id": "C0_FRAME_SCALE",
+    "verdict": "PASS",
+    "detail": {
+     "frame_size": [
+      2294,
+      1490
+     ],
+     "scale": 2.0,
+     "display_bounds_points": [
+      0,
+      0,
+      1147,
+      745
+     ],
+     "cg_display_mode_pixel_wh": [
+      2294,
+      1490
+     ],
+     "expected_frame_px": [
+      2294,
+      1490
+     ]
+    }
+   },
+   {
+    "id": "C1_FRONTMOST",
+    "verdict": "PASS",
+    "detail": {
+     "bundle_id": "jp.naver.line.mac",
+     "frontmost_application": "jp.naver.line.mac",
+     "ax_frontmost": true,
+     "ax_api_trusted": true
+    }
+   },
+   {
+    "id": "C2_TARGET_UNIQUE",
+    "verdict": "PASS",
+    "detail": "single focused main target"
+   },
+   {
+    "id": "C3_GEOMETRY_DOUBT",
+    "verdict": "PASS",
+    "detail": {
+     "duplicate_geometry_indexes": [],
+     "target_inside_frame": true
+    }
+   },
+   {
+    "id": "C4_AX_SURFACE_CLASS",
+    "verdict": "REFUSE",
+    "detail": {
+     "state_form": "FULL_TREE",
+     "standard_window": true,
+     "close_button": true,
+     "minimize_button": true,
+     "list_element": true,
+     "row_tokens": 100,
+     "focused_is_window": false
+    }
+   }
+  ],
+  "note": "C0-C3 PASS (frontmost, single focused+main target, no duplicate geometry, frame scale); C4 REFUSES because the focused window's AX tree carries the album-LIST surface (列表 + 文字欄位 + 100 row tokens and the focused element is the list, not the window). C5/C6 were not reached."
+ },
+ "composite": {
+  "rule": "frozen verifier ALBUM_OPEN_VERIFIED AND v7 ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+  "verdict": "ALBUM_OPEN_COMPOSITE_REFUSED",
+  "decision": "FAIL",
+  "reasons": [
+   "frozen verifier = ALBUM_OPEN_VERIFIED (false positive, window pair and frame pair)",
+   "v7 lineage guard = REFUSED (exit 2): SURFACE_HAS_LIST_CONTROLS, SURFACE_HAS_LIST_ROWS, FOCUSED_ELEMENT_NOT_WINDOW",
+   "the live surface is the album-LIST, not the album-detail"
+  ]
+ },
+ "owner_decision": {
+  "rule": "A (fresh composite FAIL -> ellipsis used = 0 -> STOP)",
+  "consequences": {
+   "frozen_v5_locator_invocations": 0,
+   "ellipsis_inputs": 0,
+   "gui_input_count": 0,
+   "menu_observation": "NOT_EXECUTED (no click dispatched)",
+   "save_all": 0,
+   "chooser": 0,
+   "download": 0,
+   "retry": 0
+  }
+ },
+ "no_manual_override": true,
+ "no_retry": true
+}

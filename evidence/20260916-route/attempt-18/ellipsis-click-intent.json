@@ -1,0 +1,38 @@
+{
+ "phase": "S5_ellipsis_click_intent / dispatch record",
+ "attempt": "attempt-18",
+ "authorization_type": "ELLIPSIS_ONLY",
+ "authorization_id": "REV27B-ELLIPSIS-AFTER-ATTEMPT17",
+ "recorded_at_local": "2026-09-22T17:44+0800",
+ "dispatch_state": "NOT_ATTEMPTED",
+ "reason": "precondition not met (fresh composite = ALBUM_OPEN_COMPOSITE_REFUSED; frozen v5 not invoked; verdict NOT_EXECUTED). Owner decision rule A: ellipsis 0, STOP.",
+ "click_count": 0,
+ "ellipsis_inputs_used": 0,
+ "gui_input_count": 0,
+ "retry_count": 0,
+ "second_click": 0,
+ "ellipsis_budget": {
+  "budget": 1,
+  "used": 0,
+  "transferred": false
+ },
+ "click_candidate": null,
+ "durable_record_if_dispatched": {
+  "fresh_frame_sha256": "8d260f4e122d900c20ff48a038091b9e8c6d9f0fa5c262df299ae78dceffb8b9",
+  "v5_sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "fresh_candidate": null,
+  "timestamp": null,
+  "click_count": 0,
+  "note": "no dispatch occurred; recorded for completeness"
+ },
+ "historical_coordinates_never_used_as_input": [
+  [
+   304,
+   50
+  ],
+  [
+   305,
+   50
+  ]
+ ]
+}

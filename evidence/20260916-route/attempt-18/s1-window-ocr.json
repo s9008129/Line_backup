@@ -1,0 +1,72 @@
+{
+ "tool": "read_only_window_ocr (frozen v5 locate_album_card.ocr_words / macOS Vision reader)",
+ "source_frame": "frame-s1.png",
+ "source_frame_sha256": "8d260f4e122d900c20ff48a038091b9e8c6d9f0fa5c262df299ae78dceffb8b9",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "b45aca6dfc77c7038a3f26289dbb4ebe98734e474f3f7ae116acfb51acee3b21",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "a93758c84f68c39ad5e6faf6f62c34ebcf147dbb8787cd308bf08b65c1794e32",
+    "stdout_bytes": 217,
+    "lines_parsed": 5
+   }
+  ]
+ },
+ "window": {
+  "index": 0,
+  "position_points": [
+   0,
+   33
+  ],
+  "size_points": [
+   327,
+   643
+  ],
+  "is_ax_focused_window": true,
+  "main": true
+ },
+ "rect_px": [
+  0,
+  66,
+  654,
+  1352
+ ],
+ "ocr_words_seen": [
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/13~05/17",
+  "57"
+ ],
+ "title_candidate_2024_05_13_to_2024_05_17": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   32,
+   867,
+   256,
+   892
+  ]
+ },
+ "expected_tokens_present": {
+  "group_旻謙允禎成長日記": true,
+  "tab_相簿": true,
+  "tab_記事本": true,
+  "album_range_2024/05/13~05/17": true,
+  "count_57": true
+ },
+ "photo_count_context_token_張照片": [],
+ "list_controls_present_in_AX": true,
+ "gui_input": false
+}
