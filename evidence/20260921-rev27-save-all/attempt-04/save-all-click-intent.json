@@ -1,0 +1,13 @@
+{
+ "artifact": "save-all-click-intent.json",
+ "attempt": "attempt-04",
+ "status": "NOT_WRITTEN",
+ "reason": "no fresh Save All candidate exists (MENU_NOT_PRESENT) and the mandatory fresh ALBUM_OPEN_VERIFIED_COMPOSITE was not obtained (v7 REFUSED NOT_FRONTMOST); per the pre-declared order the intent record is only written after a fresh eligible candidate exists, immediately before any dispatch.",
+ "save_all_budget": 1,
+ "save_all_used": 0,
+ "dispatch_state": "NOT_ATTEMPTED",
+ "save_all_retry_allowed": false,
+ "retry_budget": 0,
+ "chooser_budget": 0,
+ "click_calls_sent": 0
+}

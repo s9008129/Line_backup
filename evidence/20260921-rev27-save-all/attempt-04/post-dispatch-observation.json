@@ -1,0 +1,16 @@
+{
+ "artifact": "post-dispatch-observation.json",
+ "attempt": "attempt-04",
+ "status": "NOT_DISPATCHED",
+ "reason": "zero Save All click calls were sent this round (see save-all-click-intent.json); there is no post-dispatch surface to observe.",
+ "post_dispatch_frames": [],
+ "chooser_verdict": "NOT_OBSERVED (no dispatch, no chooser surface)",
+ "filesystem_side_effects": "none (baseline unchanged; staging absent)",
+ "keyboard": 0,
+ "escape": 0,
+ "scroll": 0,
+ "ax_write": 0,
+ "chooser_interaction": 0,
+ "destination_confirm": 0,
+ "download": 0
+}

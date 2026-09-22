@@ -1,0 +1,49 @@
+{
+ "artifact": "composite-decision.json",
+ "attempt": "attempt-04",
+ "frozen_album_open_verifier": {
+  "tool": "tools/v5/verify_album_open.py",
+  "tool_sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "window_pair": {
+   "pre": "evidence/20260916-route/attempt-19/a4-precheck-window-cu.jpg",
+   "pre_sha256": "b9be8bfc60678c648740d567ced176909ea242e5ea12202dd2c8606fc6659ff1",
+   "post": "evidence/20260921-rev27-save-all/attempt-04/s1-window-cu.jpg",
+   "post_sha256": "2413de034a7bf016c411290c8657badced41fad34e321ab83c4e16b2f33ba3fb",
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "count_text": "MATCH",
+   "changed_fraction": 0.65452,
+   "artifact": "evidence/20260921-rev27-save-all/attempt-04/s3-album-open-verify-window.json",
+   "exit_code": 0
+  },
+  "screen_pair_supporting": {
+   "pre": "evidence/20260916-route/attempt-19/frame-s1.png",
+   "post": "evidence/20260921-rev27-save-all/attempt-04/frame-s1.png",
+   "verdict": "INCONCLUSIVE",
+   "reason": "the fresh full-screen frame is the OTHER application (OCR: 媒體工具箱 text); no album title on screen",
+   "artifact": "evidence/20260921-rev27-save-all/attempt-04/s3-album-open-verify-screen-supporting.json",
+   "exit_code": 5
+  }
+ },
+ "v7_lineage_guard": {
+  "tool": "tools/v7/album_detail_lineage_guard.py",
+  "tool_sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "artifact": "evidence/20260921-rev27-save-all/attempt-04/s3-v7-lineage-guard.json",
+  "exit_code": 2,
+  "verdict": "REFUSED",
+  "refusal_reasons": [
+   "NOT_FRONTMOST"
+  ],
+  "checks_seen": {
+   "C0_SCHEMA": "PASS",
+   "C0_FRAME_SCALE": "PASS",
+   "C1_FRONTMOST": "REFUSE (bundle_id jp.naver.line.mac; frontmost_application null; ax_frontmost false)",
+   "C2_C7": "not evaluated (fail-closed)"
+  },
+  "composite_field": "NOT_EVALUATED"
+ },
+ "composite_verdict": "ALBUM_OPEN_COMPOSITE_REFUSED",
+ "composite_reason": "v7 lineage guard REFUSED (NOT_FRONTMOST): the live system state changed externally after attempt-19 — LINE is no longer the frontmost application and its album-detail window is fully occluded. The frozen verifier window-pair (window-layer content) verified the album-detail is still loaded in the window, but the mandatory v7 lineage guard cannot pass on a non-frontmost, occluded window; per the pre-declared composite rule this is NOT the composite PASS required before any Save All candidate may be derived.",
+ "no_false_positive_override": true,
+ "attempt_03_type_false_positive_note": "the window-pair ALBUM_OPEN_VERIFIED is NOT treated as album-detail success on its own (attempt-03 rule: title + 57 + changed_fraction alone are insufficient); the v7 lineage guard is mandatory and it REFUSED.",
+ "gui_inputs_after_decision": 0
+}

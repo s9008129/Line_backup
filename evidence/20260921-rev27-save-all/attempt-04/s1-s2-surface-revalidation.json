@@ -1,0 +1,123 @@
+{
+ "artifact": "s1-s2-surface-revalidation.json",
+ "attempt": "attempt-04",
+ "phase": "S1 fresh current-surface revalidation + S2 fresh menu determination (read-only; ZERO GUI input)",
+ "captured_at_local": "2026-09-22T21:11:05+0800 (AX/frame) .. 21:14+0800 (detector/OCR)",
+ "app": {
+  "bundle_id": "jp.naver.line.mac",
+  "pid": 21064,
+  "running": true
+ },
+ "system_frontmost_state": {
+  "ax_frontmost": false,
+  "frontmost_application": null,
+  "independent_checks": [
+   {
+    "method": "osascript System Events frontmost process",
+    "result": "python3"
+   },
+   {
+    "method": "lsappinfo front",
+    "result": "ASN:0x0-0x369369: LSDisplayName=python3 pid=56589 CFBundleIdentifier=NULL"
+   },
+   {
+    "method": "ps",
+    "result": "pid 56589 = /Users/hsiaojohnny/dev/yt_down_txt/.venv/bin/python3 media_toolbox.py (owner's separate work; started 20:54 local)"
+   }
+  ],
+  "verdict": "LINE IS NOT THE FRONTMOST APPLICATION (external state change since attempt-19; attempt-19 read ax_frontmost=true / frontmost_application=jp.naver.line.mac)"
+ },
+ "line_window_inventory": {
+  "window_count": 3,
+  "windows": [
+   {
+    "index": 0,
+    "focused": true,
+    "main": true,
+    "is_ax_focused_window": true,
+    "position_points": [
+     330,
+     50
+    ],
+    "size_points": [
+     327,
+     643
+    ],
+    "title": "",
+    "role": "AXWindow",
+    "subrole": "AXStandardWindow"
+   },
+   {
+    "index": 1,
+    "focused": false,
+    "main": false,
+    "position_points": [
+     0,
+     49
+    ],
+    "size_points": [
+     327,
+     643
+    ],
+    "title": ""
+   },
+   {
+    "index": 2,
+    "focused": false,
+    "main": false,
+    "position_points": [
+     -1,
+     37
+    ],
+    "size_points": [
+     1147,
+     699
+    ],
+    "title": "LINE"
+   }
+  ],
+  "note": "attempt-19 ended with the album-detail focused/main at [337,49] 327x643; the focused/main window has since moved to [330,50] (external change; zero input from this round). ax_pre and ax_post lists are identical."
+ },
+ "fresh_evidence": {
+  "ax_pre": {
+   "path": "evidence/20260921-rev27-save-all/attempt-04/s1-ax-pre.json",
+   "sha256": "287759fef79a9433e4a4ed3a841064a97d4d531f2105cc7b16f94ab2daa94747"
+  },
+  "ax_post": {
+   "path": "evidence/20260921-rev27-save-all/attempt-04/s2-ax-post.json",
+   "sha256": "287759fef79a9433e4a4ed3a841064a97d4d531f2105cc7b16f94ab2daa94747"
+  },
+  "ax_pre_post_identical_windows": true,
+  "frame": {
+   "path": "evidence/20260921-rev27-save-all/attempt-04/frame-s1.png",
+   "sha256": "818d89033ee0603adf67e914d2cfc581627b32342a7b32660c61e667eac3ef93"
+  },
+  "cu_window_shot": {
+   "path": "evidence/20260921-rev27-save-all/attempt-04/s1-window-cu.jpg",
+   "sha256": "2413de034a7bf016c411290c8657badced41fad34e321ab83c4e16b2f33ba3fb",
+   "content": "LINE window layer still shows the album-detail: title 2024/05/13～05/17, 57張照片, 2024.05.18, photo grid, ellipsis at top-right; NO menu in the window layer"
+  },
+  "cu_ax_state": {
+   "path": "evidence/20260921-rev27-save-all/attempt-04/s1-ax-state-cu.txt",
+   "sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa",
+   "note": "byte-identical to attempt-19's post-click AX text (e17385e3…): standard window chrome only, no list controls"
+  },
+  "geometry_binding": {
+   "path": "evidence/20260921-rev27-save-all/attempt-04/geometry-binding.json",
+   "sha256": "e1d7bc44768849331917abdb14f62d156e0e4a92e886b099fca1392468001084",
+   "verdict": "GEOMETRY_BINDING_FAIL",
+   "mad_mean": 77.866,
+   "reason": "the full-screen frame crop of the LINE window rect now contains the OTHER application's pixels (the LINE window is occluded), mad_mean above the pre-declared 12.0 bound"
+  }
+ },
+ "occlusion_and_overlays": {
+  "frontmost_app_window": "a full-window app (媒體下載與逐字稿工具箱 / python3) covers the display, including the LINE window rect",
+  "other_app_modal": "the frontmost app shows its own completion alert (簡報圖組完成：7/7 頁; buttons 開啟資料夾 / Close / 開啟 PDF) — this is the OTHER app's dialog, NOT a macOS permission prompt for LINE",
+  "permission_prompt_seen": false,
+  "unknown_overlay_over_line": false,
+  "direct_conclusion": "the album-detail LINE window exists and its window-layer content is unchanged, but it is fully occluded by the frontmost application; on-screen state is NOT the verified album-detail surface of attempt-19"
+ },
+ "s1_verdict": "S1_FAIL_CLOSED (LINE not frontmost; window occluded; frame/window binding FAIL) -> STOP with zero GUI input per the pre-declared runbook; NO reopen, NO ellipsis, NO bring-to-front",
+ "s2_verdict": "MENU_NOT_PRESENT (see s2-menu-absence-proof.json) -> STOP; blocker MENU_NOT_PRESENT_REQUIRES_NEW_ELLIPSIS_AUTHORIZATION",
+ "gui_inputs_sent": 0
+}

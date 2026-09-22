@@ -1,0 +1,93 @@
+{
+  "ax_api_trusted" : true,
+  "ax_frontmost" : false,
+  "bundle_id" : "jp.naver.line.mac",
+  "display" : {
+    "capture_scale_note" : "screencapture -x writes device pixels: frame_px = point_rect * backing_scale_factor",
+    "cg_display_mode_pixel_wh" : [
+      2294,
+      1490
+    ],
+    "cg_display_pixels_wh" : [
+      1147,
+      745
+    ],
+    "display_bounds_points" : [
+      0,
+      0,
+      1147,
+      745
+    ],
+    "main_display_id" : 1,
+    "nsscreen_backing_scale_factor" : 2,
+    "nsscreen_frame_points" : [
+      0,
+      0,
+      1147,
+      745
+    ]
+  },
+  "frontmost_application" : null,
+  "pid" : 21064,
+  "running" : true,
+  "timestamp_local" : "2026-09-22T21:11:05+08:00",
+  "tool" : "ax_window_bounds_readonly",
+  "version" : 2,
+  "window_count" : 3,
+  "windows" : [
+    {
+      "focused" : true,
+      "index" : 0,
+      "is_ax_focused_window" : true,
+      "main" : true,
+      "minimized" : false,
+      "position_points" : [
+        330,
+        50
+      ],
+      "role" : "AXWindow",
+      "size_points" : [
+        327,
+        643
+      ],
+      "subrole" : "AXStandardWindow",
+      "title" : ""
+    },
+    {
+      "focused" : false,
+      "index" : 1,
+      "is_ax_focused_window" : false,
+      "main" : false,
+      "minimized" : false,
+      "position_points" : [
+        0,
+        49
+      ],
+      "role" : "AXWindow",
+      "size_points" : [
+        327,
+        643
+      ],
+      "subrole" : "AXStandardWindow",
+      "title" : ""
+    },
+    {
+      "focused" : false,
+      "index" : 2,
+      "is_ax_focused_window" : false,
+      "main" : false,
+      "minimized" : false,
+      "position_points" : [
+        -1,
+        37
+      ],
+      "role" : "AXWindow",
+      "size_points" : [
+        1147,
+        699
+      ],
+      "subrole" : "AXStandardWindow",
+      "title" : "LINE"
+    }
+  ]
+}

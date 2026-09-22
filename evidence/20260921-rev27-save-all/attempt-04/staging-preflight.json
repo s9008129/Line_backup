@@ -1,0 +1,13 @@
+{
+ "artifact": "staging-preflight.json",
+ "attempt": "attempt-04",
+ "status": "NOT_EXECUTED",
+ "reason": "pre-declared conditional order: the staging preflight runs only if the fresh menu chain holds. This round stopped at the composite gate (v7 REFUSED NOT_FRONTMOST) and the fresh menu determination was MENU_NOT_PRESENT; therefore no run_id was generated, no staging path was chosen, and ZERO staging mkdir was performed.",
+ "staging_setup_mkdir_used": 0,
+ "staging_setup_mkdir_budget": 2,
+ "staging_root_state_at_end": {
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging",
+  "exists": false
+ },
+ "staging_cleanup_delete": 0
+}

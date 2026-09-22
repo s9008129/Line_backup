@@ -1,0 +1,30 @@
+{
+ "artifact": "s2-menu-roi-crosscheck.json",
+ "roi_px": [
+  1245,
+  163,
+  1494,
+  516
+ ],
+ "method": "gray MAD over attempted-19 menu ROI between THIS round's fresh frame and the two byte-authenticated attempt-19 references",
+ "references": {
+  "menu_open": {
+   "path": "attempt-19/frame-menu-post1.png",
+   "sha256": "e321069d86d04f2017e3a972a013fedcac51195ba1e4ba1d9e61df476f8169a2"
+  },
+  "menu_absent": {
+   "path": "attempt-19/frame-menu-pre.png",
+   "sha256": "56959e940b6a0a3f37fbd83b77e9bf7f2b557f63a114a837b088efb7720ce7be"
+  }
+ },
+ "fresh_frame": {
+  "path": "evidence/20260921-rev27-save-all/attempt-04/frame-s1.png",
+  "sha256": "818d89033ee0603adf67e914d2cfc581627b32342a7b32660c61e667eac3ef93"
+ },
+ "mad_fresh_vs_menu_open": 37.745,
+ "mad_fresh_vs_menu_absent": 26.574,
+ "pre_declared_rule": "affirmative requires mad_fresh_vs_menu_open <= 12.0 AND strictly smaller than mad_fresh_vs_menu_absent",
+ "rule_pass": false,
+ "verdict": "MENU_ROI_NEGATIVE",
+ "note": "the whole-frame detector MENU_DETECTED (component bbox [0,51,2294,1490], 2.4M px) is the known whole-frame false-positive mode (attempts 02/03 precedent): the entire screen changed because a different application became frontmost; the component is not a popup anchored at the LINE ellipsis"
+}

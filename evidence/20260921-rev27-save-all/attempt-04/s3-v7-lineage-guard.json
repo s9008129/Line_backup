@@ -1,0 +1,96 @@
+{
+ "tool": "album_detail_lineage_guard",
+ "version": "v7",
+ "purpose": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED for the CURRENT focused LINE window; fail-closed; current-round evidence only",
+ "no_historical_coordinates": true,
+ "gui_inputs": 0,
+ "thresholds": {
+  "mad_max": 12.0,
+  "header_y_frac_max": 0.3,
+  "list_markers": [
+   "列表",
+   "文字欄位"
+  ],
+  "detail_chrome": [
+   "關閉按鈕",
+   "縮到最小按鈕"
+  ],
+  "list_tab_tokens": [
+   "相簿",
+   "記事本"
+  ],
+  "photo_context_token": "張照片"
+ },
+ "inputs": {
+  "window_inventory": {
+   "path": "evidence/20260921-rev27-save-all/attempt-04/s1-ax-pre.json",
+   "sha256": "287759fef79a9433e4a4ed3a841064a97d4d531f2105cc7b16f94ab2daa94747"
+  },
+  "window_ax_state": {
+   "path": "evidence/20260921-rev27-save-all/attempt-04/s1-ax-state-cu.txt",
+   "sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa"
+  },
+  "window_screenshot": {
+   "path": "evidence/20260921-rev27-save-all/attempt-04/s1-window-cu.jpg",
+   "sha256": "2413de034a7bf016c411290c8657badced41fad34e321ab83c4e16b2f33ba3fb"
+  },
+  "frame": {
+   "path": "evidence/20260921-rev27-save-all/attempt-04/frame-s1.png",
+   "sha256": "818d89033ee0603adf67e914d2cfc581627b32342a7b32660c61e667eac3ef93"
+  }
+ },
+ "checks": [
+  {
+   "id": "C0_SCHEMA",
+   "verdict": "PASS",
+   "detail": "ok"
+  },
+  {
+   "id": "C0_FRAME_SCALE",
+   "verdict": "PASS",
+   "detail": {
+    "frame_size": [
+     2294,
+     1490
+    ],
+    "scale": 2.0,
+    "display_bounds_points": [
+     0,
+     0,
+     1147,
+     745
+    ],
+    "cg_display_mode_pixel_wh": [
+     2294,
+     1490
+    ],
+    "expected_frame_px": [
+     2294,
+     1490
+    ]
+   }
+  },
+  {
+   "id": "C1_FRONTMOST",
+   "verdict": "REFUSE",
+   "detail": {
+    "bundle_id": "jp.naver.line.mac",
+    "frontmost_application": null,
+    "ax_frontmost": false,
+    "ax_api_trusted": true
+   }
+  }
+ ],
+ "frozen_album_open": {
+  "provided": false
+ },
+ "composite": {
+  "verdict": "NOT_EVALUATED",
+  "reasons": []
+ },
+ "verdict": "REFUSED",
+ "refusal_reasons": [
+  "NOT_FRONTMOST"
+ ],
+ "exit_code": 2
+}

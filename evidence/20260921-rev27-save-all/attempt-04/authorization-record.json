@@ -1,0 +1,45 @@
+{
+ "artifact": "authorization-record.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-04",
+ "authorization_type": "SAVE_ALL_GATE_A",
+ "authorization_id": "REV27-SAVE-ALL-GATE-A-AFTER-ATTEMPT19",
+ "owner_one_shot": true,
+ "round_scope": "fresh read-only album-detail composite revalidation -> fresh menu revalidation on the current live surface -> (only if all gates PASS) fresh machine-derived 儲存全部 candidate -> exactly one Save All menu-item click -> resulting-surface observation only -> STOP",
+ "not_authorized": [
+  "album-card click",
+  "ellipsis click",
+  "any other menu item",
+  "chooser navigation",
+  "keyboard (incl. Escape)",
+  "Go to Folder",
+  "path entry",
+  "Return",
+  "chooser confirm/cancel",
+  "download-completion operation",
+  "cleanup/delete"
+ ],
+ "dispatch_semantics": {
+  "not_sent": "dispatch_state = NOT_ATTEMPTED",
+  "sent_returned": "dispatch_state = RETURNED",
+  "possibly_sent_ambiguous": "dispatch_state = UNKNOWN; save_all_used=1; retry=0; manual_reconciliation_required=true; never click again"
+ },
+ "gate_a_excludes_chooser": true,
+ "hard_counters": {
+  "album_card": 0,
+  "ellipsis": 0,
+  "save_all_menu_item_click": "<= 1",
+  "other_menu_item": 0,
+  "retry": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "chooser_interaction": 0,
+  "destination_confirm": 0,
+  "download_completion_action": 0,
+  "cleanup_delete": 0,
+  "staging_mkdir": "<= 2"
+ },
+ "staging_policy": "PRESERVE (no cleanup/delete this round)",
+ "stop_boundary": "After the resulting-surface observation this round stops unconditionally; chooser operation (Gate B) requires a NEW owner one-shot authorization."
+}

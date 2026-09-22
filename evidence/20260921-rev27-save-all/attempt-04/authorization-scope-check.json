@@ -1,0 +1,58 @@
+{
+ "artifact": "authorization-scope-check.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-04",
+ "authorization_type": "SAVE_ALL_GATE_A",
+ "authorization_id": "REV27-SAVE-ALL-GATE-A-AFTER-ATTEMPT19",
+ "checked_at_local": "2026-09-22T21:10:36.239574+0800",
+ "sequence_disclosure": "Only an empty attempt directory (mkdir, no artifact) was created before this file; authorization-scope-check.json is the FIRST artifact recorded in attempt-04 and was written before any LINE observation, any frame capture, any filesystem staging write, or any GUI input.",
+ "runbook_scanned": {
+  "path": "evidence/20260921-rev27-save-all/attempt-04/route-runbook.md",
+  "sha256": "1a0f50fc48ffd69b952db367972cb440c209b4d6ec12f58a08daa4c1451a83a6",
+  "scanned_before_any_live_observation": true,
+  "scan_terms": [
+   "album-card reopening",
+   "v6 album-card GUI locator as this round's execution goal",
+   "ellipsis activation",
+   "chooser interaction",
+   "Go to Folder",
+   "keyboard path entry",
+   "destination confirmation",
+   "Save All beyond exactly one menu-item click"
+  ],
+  "findings": "All occurrences of album-card/reopen/v6/ellipsis/chooser/path-entry/Return/destination terms in the runbook are historical context, explicit prohibitions, STOP rules, or post-dispatch observation-only classification questions. There is NO execution goal for album reopening, NO v6 locator invocation in this round's plan, NO ellipsis activation, NO chooser interaction, NO keyboard path entry, NO destination confirmation.",
+  "verdict": "AUTHORIZATION_SCOPE_MATCH"
+ },
+ "allowed_gui_inputs": {
+  "save_all_menu_item_click": 1
+ },
+ "allowed_filesystem_preflight": {
+  "staging_setup_mkdir": "<= 2 (empty staging parent and/or leaf only; no other writes)"
+ },
+ "forbidden_gui_inputs": {
+  "album_card_click": 0,
+  "ellipsis_click": 0,
+  "other_menu_item_click": 0,
+  "retry": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "chooser_navigation": 0,
+  "go_to_folder": 0,
+  "path_entry": 0,
+  "destination_confirm": 0,
+  "download_completion_action": 0,
+  "cleanup_delete": 0
+ },
+ "required_gate_chain_before_click": [
+  "accepted baseline unchanged (57 files / 17,924,900 bytes / digest b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd)",
+  "fresh staging preflight PASS (empty leaf)",
+  "LINE frontmost; fresh ALBUM_OPEN_VERIFIED_COMPOSITE",
+  "fresh MENU_SURFACE_AFFIRMATIVELY_OBSERVED with 儲存全部 affirmatively identified",
+  "fresh unique Save All candidate from this round's frame",
+  "durable save-all-click-intent.json read-back PASS"
+ ],
+ "mismatch_rule": "If the runbook contained any forbidden goal above -> AUTHORIZATION_SCOPE_MISMATCH, STOP BEFORE ATTEMPT CREATION. Not triggered."
+}

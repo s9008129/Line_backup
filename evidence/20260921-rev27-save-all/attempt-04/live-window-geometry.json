@@ -1,0 +1,28 @@
+{
+ "x0": 660,
+ "y0": 100,
+ "x1": 1314,
+ "y1": 1386,
+ "source": "read-only AX window-bounds observation of the FOCUSED LINE window index 0 (title '', role AXWindow/AXStandardWindow, main=True, is_ax_focused_window=True, pid 21064) via attempt-04/tools/ax_window_bounds.swift (sha256 5c615a90…)/ binary sha256 1c34c62c…, read at 2026-09-22T21:11:05.22+08:00 (pre) and 21:11:05.38+08:00 (post, identical window list); position_points [330, 50], size_points [327, 643] x capture scale 2 = frame device-pixel rect; bound to THIS frame's SHA-256; NOT historical geometry. NOTE: this round's system-wide frontmost application is NOT LINE (frontmost_application=null / python3) and the LINE window is occluded on screen; the geometry binding is expected to fail closed.",
+ "frame_sha256": "818d89033ee0603adf67e914d2cfc581627b32342a7b32660c61e667eac3ef93",
+ "coordinate_space": "full-screen capture device pixels (screencapture -x at 2x); the window ROI and any click point share this space",
+ "window_point_rect": [
+  330,
+  50,
+  327,
+  643
+ ],
+ "transform": {
+  "formula": "frame_px = window_pt * 2",
+  "scale": 2,
+  "provenance": "NSScreen.backingScaleFactor=2 and display bounds [0, 0, 1147, 745] pt vs CG display pixels [2294, 1490]"
+ },
+ "frame_size_px": [
+  2294,
+  1490
+ ],
+ "generated_from": "this run's fresh read-only AX observation of the FOCUSED LINE window (attempt-04)",
+ "gui_inputs_sent": 0,
+ "attempt": "04",
+ "generated_at_local": "2026-09-22T21:12+0800"
+}

@@ -1,0 +1,225 @@
+{
+ "tool": "detect_menu_popup",
+ "pre": "evidence/20260916-route/attempt-19/frame-menu-pre.png",
+ "post": "evidence/20260921-rev27-save-all/attempt-04/frame-s1.png",
+ "params": {
+  "delta": 12,
+  "min_w": 40,
+  "min_h": 20,
+  "min_pixels": 200,
+  "min_strings": 2,
+  "min_strlen": 2
+ },
+ "pre_sha256": "56959e940b6a0a3f37fbd83b77e9bf7f2b557f63a114a837b088efb7720ce7be",
+ "post_sha256": "818d89033ee0603adf67e914d2cfc581627b32342a7b32660c61e667eac3ef93",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "changed_pixels_total": 2529691,
+ "components": [
+  {
+   "bbox": [
+    0,
+    51,
+    2294,
+    1490
+   ],
+   "pixels": 2418034,
+   "w": 2294,
+   "h": 1439
+  },
+  {
+   "bbox": [
+    1329,
+    1000,
+    1798,
+    1084
+   ],
+   "pixels": 39188,
+   "w": 469,
+   "h": 84
+  },
+  {
+   "bbox": [
+    2040,
+    492,
+    2192,
+    600
+   ],
+   "pixels": 15378,
+   "w": 152,
+   "h": 108
+  },
+  {
+   "bbox": [
+    518,
+    10,
+    1678,
+    51
+   ],
+   "pixels": 11693,
+   "w": 1160,
+   "h": 41
+  },
+  {
+   "bbox": [
+    1981,
+    36,
+    2132,
+    51
+   ],
+   "pixels": 1495,
+   "w": 151,
+   "h": 15
+  },
+  {
+   "bbox": [
+    1359,
+    1288,
+    1414,
+    1315
+   ],
+   "pixels": 1029,
+   "w": 55,
+   "h": 27
+  },
+  {
+   "bbox": [
+    1555,
+    1288,
+    1610,
+    1315
+   ],
+   "pixels": 1028,
+   "w": 55,
+   "h": 27
+  },
+  {
+   "bbox": [
+    2040,
+    610,
+    2192,
+    718
+   ],
+   "pixels": 1012,
+   "w": 152,
+   "h": 108
+  },
+  {
+   "bbox": [
+    1817,
+    40,
+    1947,
+    51
+   ],
+   "pixels": 964,
+   "w": 130,
+   "h": 11
+  },
+  {
+   "bbox": [
+    1444,
+    1289,
+    1469,
+    1315
+   ],
+   "pixels": 592,
+   "w": 25,
+   "h": 26
+  }
+ ],
+ "chosen_bbox": [
+  0,
+  51,
+  2294,
+  1490
+ ],
+ "ocr_status": "OK",
+ "ocr_strings": [
+  "eee",
+  "媒體",
+  "工具",
+  "媒體",
+  "工具",
+  "Et",
+  "YouTube",
+  "Apple",
+  "Podcast",
+  "URL",
+  "PDF",
+  "Markdown",
+  "取得",
+  "ChatGPT",
+  "[lH",
+  "£8",
+  "NotebookLM",
+  "Podcast",
+  "簡報",
+  "ee",
+  "URL",
+  "(YouTube",
+  "Apple",
+  "Podcast)",
+  "YouTube",
+  ",%840%E8%B2%A1%E7%B6%93%E7%9A%93%E8%A7%92/id1488295306?i=1000791025571",
+  "Facebook",
+  "PDF",
+  "Markdown",
+  "||",
+  "選擇",
+  "...",
+  "Apple",
+  "Podcast",
+  "eee",
+  "簡報",
+  "完成",
+  "媒體",
+  "簡報",
+  "完成",
+  ":7/7",
+  "Be",
+  "選擇",
+  "...",
+  "PDF",
+  "儲存",
+  "完成",
+  "使用",
+  "PDF)",
+  "查看",
+  "壓縮",
+  "語意",
+  "抽取",
+  "抽取",
+  "資料",
+  "“簡報",
+  "完成",
+  ":7/7",
+  "PDF",
+  "儲存",
+  "完成",
+  "使用",
+  "PDF)",
+  "BS",
+  "狀態",
+  "環境",
+  "檢查",
+  "登入",
+  "ChatGpT",
+  "=A",
+  "NotebookiM",
+  "重新",
+  "“|",
+  "重新",
+  "執行",
+  "失敗",
+  "項目",
+  "輸出"
+ ],
+ "verdict": "MENU_DETECTED",
+ "reason": "new region plus transcribed menu strings"
+}

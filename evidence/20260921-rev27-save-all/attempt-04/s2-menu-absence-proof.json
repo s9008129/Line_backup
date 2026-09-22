@@ -1,0 +1,54 @@
+{
+ "artifact": "s2-menu-absence-proof.json",
+ "attempt": "attempt-04",
+ "phase": "S2 fresh menu determination (read-only; fail-closed)",
+ "detector_raw_run": {
+  "tool": "tools/detect_menu_popup.py",
+  "tool_sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "pre": "evidence/20260916-route/attempt-19/frame-menu-pre.png",
+  "post": "evidence/20260921-rev27-save-all/attempt-04/frame-s1.png",
+  "raw_verdict": "MENU_DETECTED",
+  "exit_code": 0,
+  "artifact": "evidence/20260921-rev27-save-all/attempt-04/s2-menu-detect.json",
+  "why_this_is_a_whole_frame_false_positive": {
+   "chosen_component_bbox_px": [
+    0,
+    51,
+    2294,
+    1490
+   ],
+   "chosen_component_pixels": 2418034,
+   "explanation": "the entire screen changed between the album-detail reference and this round's frame because a different application became frontmost; the 'new region' is the whole screen, not a popup anchored at the LINE ellipsis. Same known detector failure mode as attempts 02/03 (whole-frame false positive).",
+   "ocr_strings_are_not_menu_items": "the detector's OCR strings are the OTHER app's UI text (媒體/工具/Podcast/簡報/PDF/選擇…); they are not the LINE album popup items and do not include 儲存全部"
+  }
+ },
+ "roi_crosscheck": {
+  "artifact": "evidence/20260921-rev27-save-all/attempt-04/s2-menu-roi-crosscheck.json",
+  "roi_px": [
+   1245,
+   163,
+   1494,
+   516
+  ],
+  "mad_fresh_vs_menu_open": 37.745,
+  "mad_fresh_vs_menu_absent": 26.574,
+  "pre_declared_rule": "affirmative requires mad_fresh_vs_menu_open <= 12.0 AND strictly smaller than mad_fresh_vs_menu_absent",
+  "rule_pass": false,
+  "verdict": "MENU_ROI_NEGATIVE"
+ },
+ "roi_ocr": {
+  "artifact": "evidence/20260921-rev27-save-all/attempt-04/s2-menu-ocr.json",
+  "result": "ROI contains the OTHER application's text (以得來源 ~ 依勾選並 / Podcast) …); no menu items; 儲存全部 NOT present"
+ },
+ "independent_supporting_facts": [
+  "LINE is not the frontmost application (python3 is frontmost) — macOS popup menus do not persist while their app is deactivated",
+  "the window-layer CU shot shows the album-detail with NO menu",
+  "the full-screen frame shows the OTHER application and its own modal alert; no LINE popup anywhere on screen"
+ ],
+ "verdict": "MENU_NOT_PRESENT",
+ "per_pre_declared_rule": "detector MENU_DETECTED but ROI cross-check contradicts -> treated as MENU_NOT_PRESENT -> STOP",
+ "save_all_input": 0,
+ "scoped_blocker": "MENU_NOT_PRESENT_REQUIRES_NEW_ELLIPSIS_AUTHORIZATION",
+ "additional_context": "even before the menu gate, the mandatory fresh composite gate failed this round (v7 REFUSED NOT_FRONTMOST; see composite-decision.json). A new owner round is required after the live state is restored to LINE-frontmost album-detail with a freshly opened ellipsis menu.",
+ "never_reclicked_ellipsis": true
+}

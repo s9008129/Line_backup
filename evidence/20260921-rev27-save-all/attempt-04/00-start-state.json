@@ -1,0 +1,101 @@
+{
+ "artifact": "00-start-state.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-04",
+ "recorded_at_local": "2026-09-22T21:10:56+0800",
+ "authorization": {
+  "type": "SAVE_ALL_GATE_A",
+  "id": "REV27-SAVE-ALL-GATE-A-AFTER-ATTEMPT19",
+  "owner_one_shot": true
+ },
+ "repository": {
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "head": "198d3719a342edbe5f40d0e34736329fcfc407a2",
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "head_expected_by_owner": "198d3719a342edbe5f40d0e34736329fcfc407a2",
+  "head_matches_owner_known": true,
+  "ahead": 18,
+  "ahead_expected": 18,
+  "status_porcelain_branch": "## master...origin/master [ahead 18]\n?? evidence/20260916-route/attempt-11/\n?? evidence/20260916-route/tools/v4/__pycache__/\n?? evidence/20260916-route/tools/v5/__pycache__/\n?? evidence/20260916-route/tools/v6/__pycache__/\n?? evidence/20260916-route/tools/v6/selftest/__pycache__/\n?? evidence/20260921-rev27-save-all/attempt-04/",
+  "untracked_expected_left_untouched": [
+   "evidence/20260916-route/attempt-11/",
+   "evidence/20260916-route/tools/v4/__pycache__/",
+   "evidence/20260916-route/tools/v5/__pycache__/",
+   "evidence/20260916-route/tools/v6/__pycache__/",
+   "evidence/20260916-route/tools/v6/selftest/__pycache__/"
+  ],
+  "log_tail": "198d371 意圖： Rev27d route attempt-19 one-shot ALBUM_REOPEN_THEN_ELLIPSIS 執行（owner 明確授權 REV27B-ROUTE-TO-MENU-AFTER-ATTEMPT18）：在同一個 uninterrupted attempt 內，依 fresh current state 條件式完成 album-list → 最多一次 album-card reopening click → composite verification → 最多一次 ellipsis click → menu observation → STOP；最大 GUI input ≤ 2；Save All / menu-item / chooser / keyboard / download 全部 0；不得重跑 attempt-17/18，且 attempt-18 未消費的 ellipsis budget 不轉移。 實際結果： S1 = ALBUM_LIST_VERIFIED（Branch A；focused+main [0,49] 327x643；AX 文字欄位＋列表 0-100 of 101＋rows＋捲軸；OCR 旻謙允禎成長日記/相簿/記事本/2024/05/13~05/17/57；無張照片 token；attempt-18 的 [15,55] 視窗已消失，屬外部變化、本輪零輸入）。A2 = GEOMETRY_BINDING_PASS（dims exact、MAD 2.114、retry 0）。A3 = frozen v6 ELIGIBLE（唯一一次；title bbox [30,976,257,1000] → click_point [42,988] frame px；count 57 MATCH）。A4 = exactly one album-card 左鍵於 window-space [21,445]（18:15:47.871+0800 dispatch；pre-click CU shot 與 binding-time byte-identical、AX 未變；budget 永久消費）。A5 = 新 focused+main detail window [337,49] 出現（AX 僅標準視窗 chrome、無 list controls）；post-click binding MAD 2.228 PASS；frozen album-open verifier window pair ALBUM_OPEN_VERIFIED（changed 0.653688、count MATCH）＋ frame pair ALBUM_OPEN_VERIFIED（supporting）＋ v7 lineage guard exit 0 = ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED（C0–C6 全 PASS）→ composite = ALBUM_OPEN_VERIFIED_COMPOSITE。E1 = E1_STABILITY_PASS（fresh CU shot 與 composite-time byte-identical）。E2 = frozen v5 唯一一次 ELIGIBLE（dots [[304.5,44],[304.5,49.5],[304.5,55]] 單一 header_band triple → click_point [304,50]；frame 為本輪 fresh capture；因 detail surface 逐位元一致，數值與歷史 [304,50] 巧合相同——已於 ellipsis-click-intent.json 記錄獨立推導；未讀入任何歷史座標）。E3 = exactly one ellipsis 左鍵 [304,50]（18:19:43.889+0800 dispatch；無第二次、無 retry）。MENU = MENU_SURFACE_AFFIRMATIVELY_OBSERVED（frozen detector pair B MENU_DETECTED bbox [1245,163,1494,516]、OCR 選擇/項目/修改/儲存/刪除；pair A 因 macOS popup 不在 window layer 而 NOT_DETECTED，為已知行為）；machine-readable items：選擇項目/修改相簿名稱/儲存全部/刪除相簿/分享相簿；「儲存全部」AFFIRMATIVELY_IDENTIFIED（僅讀取、未 activation）；menu 保持開啟未 dismiss。 變更： 新增 append-only evidence/20260916-route/attempt-19/（authorization-record、scope-check、pre-declared runbook、00-start-state、S1 AX/CU/OCR/視覺與 surface-classification、A2 geometry/binding、frozen v6 結果、album-card-click-intent 與 dispatch、A5 post-click 證據與 binding、frozen verifier 雙 pair、v7 lineage、composite-decision、E1 stability、frozen v5 結果、ellipsis-click-intent 與 dispatch、menu frames/detector/OCR/observation、run-ledger、99-scope-status 68 檔 manifest）；未修改 attempt-17/18 或任何歷史 attempt、v4/v5/v6/v7 或 frozen tools；未 add attempt-11/pycache；未 push。 證據： run-ledger.json 7ae56286…、99-scope-status.json（68/68 manifest 一致）、frame-s1.png 9fd22150…、album-card-locate-v6.json 6c25537a…、frame-post.png 92d0674f…、a5-v7-lineage-guard.json（composite ALBUM_OPEN_VERIFIED_COMPOSITE_PASS）、ellipsis-locate-v5.json 1c9722fc…、frame-menu-post1.png e321069d…、s6-menu-observation.json 6bc86527…、s6-menu-ocr.json 00fc880e…。 下一步／scoped status： READY_FOR_SAVE_ALL_GATE_A_AUTHORIZATION（Save All 仍為 0、chooser 0、download 0、retry 0，GUI input 總數 2）；真正 Save All activation 必須由 owner 再發出新的 one-shot authorization（AUTHORIZATION_TYPE = SAVE_ALL_GATE_A）。\n2d93e88 意圖： Rev27d route attempt-18 one-shot ellipsis 執行（owner 明確授權 ELLIPSIS_ONLY / REV27B-ELLIPSIS-AFTER-ATTEMPT17）：fresh read-only album-detail composite revalidation（frozen album-open verifier + v7 lineage guard）→ 若且僅若 composite PASS 且 frozen v5 = ELIGIBLE 才對本輪 fresh frame 導出的 album-level ⋮ candidate 執行 exactly one 左鍵 → fresh menu observation → STOP；不含 album-card reopening/navigation/Save All/chooser/menu-item/keyboard/scroll/download，且不得重跑 attempt-14 或 attempt-17。\nf314d74 意圖： Rev27d route attempt-17 one-shot album reopen 執行（owner 明確授權 ALBUM_REOPEN_ONLY / REV27B-ALBUM-REOPEN-AFTER-ATTEMPT16）：fresh album-list revalidation → fresh frame/window binding → frozen v6 album-card S3 → 若且僅若全鏈 PASS 才對本輪 fresh candidate 執行 exactly one album-card 左鍵 → fresh frozen album-open verification（window 正式＋frame 佐證）→ fresh v7 ALBUM_DETAIL_WINDOW_LINEAGE_GUARD → composite decision → STOP；不含 ellipsis（frozen v5 明確禁用、禁止 fallback）/menu/Save All/chooser/keyboard/scroll/download/retry，亦不重跑 attempt-14。\ne6ebf40 意圖： Rev27c route attempt-16 one-shot ellipsis 執行（owner 明確授權）：fresh read-only album-detail composite revalidation → fresh frozen v5 ellipsis locator → 若且僅若 composite PASS 且 v5 = ELIGIBLE 才對本輪 fresh candidate 執行 exactly one album-level ⋮ 左鍵 → fresh menu observation → STOP；不含 Save All/chooser/keyboard/scroll/download，且不得重跑 attempt-14 的 album-reopen。 實際結果： S1 = S1_ALBUM_DETAIL_GATE_FAIL__NOT_IN_ALBUM_DETAIL（focused LINE 視窗即為 album-list：AX 列表 101 項＋文字欄位搜尋框（focused）＋rows；card 2024/05/13～05/17＋57；attempt-14 的 album-detail 視窗不存在，LINE 自 attempt-15 後未再重啟）→ 依 owner S1 與 runbook 在零 GUI input 下 STOP。S2 = S2_STABILITY_AND_BINDING_PASS（AX pre/post 完全相同；GEOMETRY_BINDING_PASS dims exact、MAD 2.112、retry screenshot 0）；S3 = frozen album-open verifier 兩個 space 皆 ALBUM_OPEN_VERIFIED（false positive：title 由 list card caption 2024/05/13~05/17＋57 滿足——attempt-03 class 再現）＋ v7 lineage guard = REFUSED（exit 2；SURFACE_HAS_LIST_CONTROLS / SURFACE_HAS_LIST_ROWS / FOCUSED_ELEMENT_NOT_WINDOW）→ composite = ALBUM_OPEN_COMPOSITE_REFUSED → owner decision rule A；S4 = NOT EXECUTED（0 invocations；gated on composite PASS；無 v4 fallback、無歷史座標 fallback [304,50]/[305,50]、無 threshold 調整）；S5 = NOT DISPATCHED（click_count 0、gui_input_count 0、ellipsis budget 1/0 永久不轉移）；S6 = NOT EXECUTED（menu NOT_OBSERVED_NO_CLICK_DISPATCHED）；Save All/chooser/download/retry 全部 0。另記：Gate A 事實偏離——HEAD 35a5b3da…（owner 預期 b2719cc…）、ahead 14（預期 11），成因是 attempt-15 三個已授權 append-only evidence commits；origin/master 不變；attempt-14 8/8 檔案 hash 一致未動。 變更： 新增 append-only evidence/20260916-route/attempt-16/（authorization-record、pre-declared runbook、00-start-state、S1 AX＋CU＋OCR＋視覺讀取、S2 AX post＋geometry＋binding、S3 d1/d2/d3 frozen verifier＋v7 guard 診斷與 composite decision、S4/S5/S6 未執行紀錄、ellipsis-click-intent、run-ledger、99-scope-status）；未修改 attempt-14/15、歷史 attempts、v4/v5/v6/v7 或任何 frozen tool；未 add attempt-11/pycache；未 push。 證據： run-ledger.json、99-scope-status.json（30 檔 manifest 內附）、frame-s1.png d0581391…、s1-window-cu.jpg eac18de8…、s2-frame-window-binding.json MAD 2.112、d1 7b85…d1、d3 REFUSED。 下一步／scoped status： BLOCKED_NOT_IN_ALBUM_DETAIL__FRESH_COMPOSITE_REFUSED（非 READY_FOR_SAVE_ALL_GATE_A_AUTHORIZATION）；需 owner (a) 互動式重開 album-detail（或授權新的 album-card reopening 一輪）後，(b) 再發新的 one-shot ellipsis 授權；本輪未消耗的 ellipsis budget 不可轉移。\n35a5b3d 意圖： attempt-15 時戳精確化（零 GUI input、零語意變更）：把輪內手打的 recorded_at_local 標籤校正為各 artifact 的實際檔案系統 mtime，並在 run-ledger 重新錨定事件時間。",
+  "forbidden_git_ops_used": [
+   "none of fetch/pull/push/reset/rebase/amend/stash"
+  ]
+ },
+ "rev27_plan_gate": {
+  "plan_path": "PLAN-2026-09-21-rev27-save-all.md",
+  "plan_sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052",
+  "plan_sha256_expected": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052",
+  "plan_match": true,
+  "reviews": [
+   {
+    "path": "evidence/20260921-rev27-save-all/attempt-01/review-01-top-down.json",
+    "sha256": "2a23da88bee9a8d3d97cfc2c8216418610005a04fdaff57f1fdfda2a5c86e752",
+    "verdict": "PLAN_APPROVED",
+    "reviewed_sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052"
+   },
+   {
+    "path": "evidence/20260921-rev27-save-all/attempt-01/review-02-adversarial-gui-filesystem.json",
+    "sha256": "abc44a0292ce7b310f3621000925c2f06fdff32bc376bd5ecbc4a7b16c036a77",
+    "verdict": "PLAN_APPROVED",
+    "reviewed_sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052"
+   }
+  ],
+  "gate_a_rule": "fresh menu verification -> exactly one Save All activation -> resulting-surface observation only -> STOP; Gate A excludes chooser interaction"
+ },
+ "attempt_19_prerequisite_rehash": {
+  "path": "evidence/20260916-route/attempt-19/99-scope-status.json",
+  "manifest_entries": 68,
+  "manifest_verified_ok": 68,
+  "manifest_mismatches": 0,
+  "authorization_type": "ALBUM_REOPEN_THEN_ELLIPSIS",
+  "initial_surface": "ALBUM_LIST_VERIFIED (Branch A)",
+  "frozen_v6": "ELIGIBLE (card candidate [42,988] frame px -> window [21,445])",
+  "album_card_dispatch": 1,
+  "frozen_album_open_verifier": "ALBUM_OPEN_VERIFIED",
+  "v7_lineage": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+  "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+  "frozen_v5": "ELIGIBLE (candidate [304,50])",
+  "ellipsis_dispatch": 1,
+  "menu_surface": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED (pair B MENU_DETECTED bbox [1245,163,1494,516])",
+  "save_all_identification": "儲存全部 AFFIRMATIVELY_IDENTIFIED (read only)",
+  "save_all_dispatch": 0,
+  "menu_item_clicks": 0,
+  "chooser": 0,
+  "download": 0,
+  "retry": 0,
+  "final_status": "READY_FOR_SAVE_ALL_GATE_A_AUTHORIZATION",
+  "immutable": true,
+  "line_left_state": "LINE frontmost; focused+main album-detail window [337,49] 327x643; menu LEFT OPEN (no dismissal input)"
+ },
+ "frozen_tools_sha256_verified_from_disk": {
+  "tools/detect_menu_popup.py": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "tools/v5/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v7/album_detail_lineage_guard.py": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "tools/v5/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "tools/vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+ },
+ "round_local_tools_copied_from_attempt03": {
+  "tools/ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+  "tools/locate_save_all_menu_item.py": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+  "tools/validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68",
+  "compiled_binary": "/tmp/attempt04/ax_window_bounds (sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae)"
+ },
+ "accepted_baseline_preflight": {
+  "file_count": 57,
+  "total_bytes": 17924900,
+  "manifest_digest_sha256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "expected_digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "match": true
+ },
+ "attempt_slot": "attempt-04 (next unused Rev27 Gate-A attempt; attempt-01/02/03 immutable)",
+ "round_order": "P0 artifacts -> S1 surface revalidation -> S2 fresh menu determination (absent => STOP, zero GUI, zero staging mkdir) -> S0 staging preflight -> S2b frozen locator candidate -> S3 intent -> S4 exactly one Save All click -> S5 observation only -> STOP",
+ "gui_inputs_used_so_far": 0,
+ "filesystem_writes_so_far": "attempt evidence artifacts only (repo); zero writes to backup root/staging/baseline"
+}

@@ -1,0 +1,114 @@
+{
+ "artifact": "run-ledger.json",
+ "attempt": "attempt-04",
+ "gate": "Rev27 Save All Gate A (authorization SAVE_ALL_GATE_A / REV27-SAVE-ALL-GATE-A-AFTER-ATTEMPT19)",
+ "started_local": "2026-09-22T21:05+0800",
+ "closed_local": "2026-09-22T21:14:41+0800",
+ "outcome": "FAIL_CLOSED_STOP — fresh composite REFUSED (v7 NOT_FRONTMOST) and fresh menu NOT_PRESENT; zero GUI input; zero staging mkdir; Save All 0/1",
+ "events": [
+  {
+   "t": "21:05",
+   "event": "repo gate read-only: HEAD 198d3719… == owner-known; origin/master a9e523e7…; ahead 18; log -20 reviewed; untracked attempt-11 + 4 __pycache__ left untouched; no fetch/pull/push/reset/rebase/amend/stash"
+  },
+  {
+   "t": "21:06",
+   "event": "plan gate: PLAN-2026-09-21-rev27-save-all.md sha db972849… == expected; both reviews PLAN_APPROVED with exact plan-SHA binding (2a23da88…, abc44a02…)"
+  },
+  {
+   "t": "21:07",
+   "event": "attempt-19 re-hash: 99-scope-status manifest 68/68 byte-consistent; ALBUM_REOPEN_THEN_ELLIPSIS chain re-verified as prerequisite; attempt-19 immutable"
+  },
+  {
+   "t": "21:08",
+   "event": "accepted baseline preflight read-only: 57 files / 17,924,900 bytes / digest b7debe92… MATCH"
+  },
+  {
+   "t": "21:09",
+   "event": "P0 written BEFORE any live observation: route-runbook.md 1a0f50fc…, authorization-scope-check.json (AUTHORIZATION_SCOPE_MATCH; first artifact in the attempt), authorization-record.json, 00-start-state.json"
+  },
+  {
+   "t": "21:10",
+   "event": "round-local tools copied byte-identical from attempt-03; ax_window_bounds compiled to /tmp/attempt04 (1c34c62c…)"
+  },
+  {
+   "t": "21:11:05.22",
+   "event": "S1 AX pre read-only: ax_frontmost=false; frontmost_application=null; 3 LINE windows; focused/main [330,50] 327x643 (attempt-19 ended at [337,49] — external change)"
+  },
+  {
+   "t": "21:11:05.28",
+   "event": "fresh full-screen frame captured (frame-s1.png 818d8903…)"
+  },
+  {
+   "t": "21:11:05.38",
+   "event": "S1 AX post read-only: window list identical to pre"
+  },
+  {
+   "t": "21:12",
+   "event": "independent frontmost checks read-only: osascript -> python3; lsappinfo front -> python3 (pid 56589, owner's media_toolbox) — LINE is NOT frontmost"
+  },
+  {
+   "t": "21:12",
+   "event": "read-only CU capture of the LINE window: s1-window-cu.jpg 2413de03… still shows the album-detail (title 2024/05/13～05/17, 57張照片, grid); AX text byte-identical to attempt-19 post-click (e17385e3…); no menu in the window layer"
+  },
+  {
+   "t": "21:13",
+   "event": "geometry binding: live-window-geometry.json (frame-bound, window index 0) + validate_live_geometry.py -> GEOMETRY_BINDING_FAIL (mad 77.866; the frame crop of the LINE rect is the occluding app's pixels)"
+  },
+  {
+   "t": "21:13",
+   "event": "frozen album-open verifier: window pair -> ALBUM_OPEN_VERIFIED (count MATCH, changed 0.65452); screen pair (supporting) -> INCONCLUSIVE (fresh screen is the other app)"
+  },
+  {
+   "t": "21:13",
+   "event": "v7 lineage guard on this round's fresh evidence -> REFUSED (NOT_FRONTMOST, exit 2; C0 PASS, C1 REFUSE, C2-C7 not evaluated) => composite ALBUM_OPEN_COMPOSITE_REFUSED"
+  },
+  {
+   "t": "21:14",
+   "event": "S2 frozen menu detector raw run -> MENU_DETECTED but whole-frame false positive (component [0,51,2294,1490], 2.4M px; OCR = other app's text; no menu anchor)"
+  },
+  {
+   "t": "21:14",
+   "event": "S2 ROI cross-check [1245,163,1494,516]: mad fresh-vs-open 37.745, fresh-vs-absent 26.574 -> MENU_ROI_NEGATIVE; ROI OCR: no menu items, 儲存全部 absent => MENU_NOT_PRESENT"
+  },
+  {
+   "t": "21:15",
+   "event": "STOP executed fail-closed: zero GUI input, zero staging mkdir, Save All 0/1, retry 0; markers written (staging NOT_EXECUTED, intent NOT_WRITTEN, post NOT_DISPATCHED)"
+  },
+  {
+   "t": "21:16",
+   "event": "baseline post inventory: unchanged 57/17,924,900/b7debe92…; staging root absent; no unexpected filesystem write"
+  }
+ ],
+ "hard_counters": {
+  "album_card": 0,
+  "ellipsis": 0,
+  "save_all_menu_item_click": 0,
+  "save_all_used": 0,
+  "save_all_budget": 1,
+  "other_menu_item": 0,
+  "retry": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "chooser_interaction": 0,
+  "go_to_folder": 0,
+  "destination_confirm": 0,
+  "download_completion_action": 0,
+  "cleanup_delete": 0,
+  "staging_mkdir": 0,
+  "staging_mkdir_budget": 2,
+  "gui_input_count": 0
+ },
+ "disclosures": [
+  "cua.getApp(\"jp.naver.line.mac\") was used read-only to obtain a window handle for AX/screenshot reads (NO launch, NO activation, NO bring-to-front). Same established precedent as attempts 17/18/19 where this did not count as app acquisition.",
+  "osascript/lsappinfo were used read-only to independently confirm the frontmost application; no input was sent.",
+  "The frozen detector's MENU_DETECTED raw output this round is the known whole-frame false positive (attempts 02/03 precedent) and was NOT treated as menu presence.",
+  "attempt-19's open menu cannot persist across app deactivation; no attempt was made to re-open it (ellipsis budget 0)."
+ ],
+ "scoped_blocker": "MENU_NOT_PRESENT_REQUIRES_NEW_ELLIPSIS_AUTHORIZATION",
+ "additional_blocking_condition": "fresh composite refused: v7 REFUSED (NOT_FRONTMOST) — the live state changed externally (LINE not frontmost; album-detail window occluded by the owner's other frontmost app with its own modal)",
+ "no_unused_budget_transfer": "the unused Save All budget (0 of 1 used) does NOT transfer to any future round; a new owner authorization is required"
+}

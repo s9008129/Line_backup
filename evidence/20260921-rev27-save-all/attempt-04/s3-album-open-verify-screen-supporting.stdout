@@ -1,0 +1,192 @@
+{
+ "tool": "verify_album_open",
+ "pre": "evidence/20260916-route/attempt-19/frame-s1.png",
+ "post": "evidence/20260921-rev27-save-all/attempt-04/frame-s1.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866",
+ "post_sha256": "818d89033ee0603adf67e914d2cfc581627b32342a7b32660c61e667eac3ef93",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "post_ocr_words_seen": [
+  "python3",
+  "•27°C",
+  "03",
+  "9月22日週二 21:11",
+  "媒體下載與逐字稿工具箱",
+  "一鍵工作流",
+  "媒體工具箱",
+  "下載•轉錄•壓縮",
+  "一鍵工作流",
+  "YouTube",
+  "Facebook",
+  "Apple Podcast",
+  "本地轉錄",
+  "音檔壓縮",
+  "YouTube / Apple Podcast URL 或本地 PDF/ Markdown 取得來源 依勾選並行產出 ChatGPT 圖片與 NotebookLM Podcast / 簡報。",
+  "來源類型",
+  "來源網址",
+  "本地 PDF/Markdown",
+  "URL（YouTube / Apple Podcast）",
+  "%84%E8%B2%A1%E7%B6%93%E7%9A%93%E8%A7%92/id1488295306?i=1000791025571",
+  "媒體/逐字稿",
+  "語意抽取",
+  "抽取主題",
+  "可選生圖分支",
+  "：1F：",
+  "開啟資料夾",
+  "Close",
+  "簡報圖組完成：7/7頁。",
+  "PDF 已儲存完成，請使用「開啟 PDF」查看。",
+  "簡報圖組完成",
+  "簡報圖組完成：717頁。",
+  "PDF 已儲存完成，請使用「開啟 PDF」查看。",
+  "選擇⋯.",
+  "選擇⋯",
+  "開啟 PDF",
+  "100%",
+  "分支狀態：生圖：完成",
+  "環境檢查",
+  "登入 ChatGPT",
+  "登入 NotebookLM",
+  "只重新生圖",
+  "重新執行失敗項目",
+  "開啟輸出位置",
+  "取消工作",
+  "開始一鍵工作流"
+ ],
+ "target_title_in_post": null,
+ "date_like_tokens_in_post": [],
+ "diff": {
+  "changed_pixels": 2490239,
+  "changed_fraction": 0.728553,
+  "changed_bbox": [
+   0,
+   10,
+   2294,
+   1490
+  ],
+  "changed_grid_8x8": [
+   [
+    35041,
+    34683,
+    32499,
+    33902,
+    34301,
+    32193,
+    31791,
+    31303
+   ],
+   [
+    52709,
+    53013,
+    47445,
+    44341,
+    38089,
+    35714,
+    33680,
+    34247
+   ],
+   [
+    50513,
+    51985,
+    29969,
+    24524,
+    26659,
+    26551,
+    14523,
+    26581
+   ],
+   [
+    50263,
+    51318,
+    43038,
+    51818,
+    52353,
+    38139,
+    12431,
+    20268
+   ],
+   [
+    53278,
+    49952,
+    43275,
+    52862,
+    53361,
+    35328,
+    12173,
+    13932
+   ],
+   [
+    52664,
+    53111,
+    41768,
+    41134,
+    41765,
+    36597,
+    18875,
+    21000
+   ],
+   [
+    51181,
+    50827,
+    36321,
+    42350,
+    37258,
+    31555,
+    31297,
+    41922
+   ],
+   [
+    44434,
+    52565,
+    45692,
+    48246,
+    46882,
+    41481,
+    40574,
+    50695
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "INCONCLUSIVE",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "b45aca6dfc77c7038a3f26289dbb4ebe98734e474f3f7ae116acfb51acee3b21",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "d46694ade780b8437dcf1aa8936dae2ac6c5085f1df2197badd3af177b32ebde",
+    "stdout_bytes": 2473,
+    "lines_parsed": 45
+   }
+  ]
+ }
+}

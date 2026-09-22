@@ -1,0 +1,24 @@
+{
+ "artifact": "s2-menu-ocr.json",
+ "roi_px": [
+  1245,
+  163,
+  1494,
+  516
+ ],
+ "method": "PIL crop of THIS round's fresh frame -> 3x LANCZOS -> tesseract -l chi_tra+eng --psm 6 (same preprocessing family as the frozen detector OCR)",
+ "ocr_lines": [
+  "以得來源 ~ 依勾選並",
+  "Podcast)",
+  "700B60%930%E70%9A'"
+ ],
+ "save_all_present": false,
+ "menu_items_expected": [
+  "選擇項目",
+  "修改相簿名稱",
+  "儲存全部",
+  "刪除相簿",
+  "分享相簿"
+ ],
+ "conclusion": "the ROI contains the OTHER application's content (not a LINE popup menu); no menu items, no 儲存全部"
+}
