@@ -1,0 +1,173 @@
+{
+ "check": "attempt_15_end_state",
+ "attempt": "attempt-15",
+ "captured_at_local": "2026-09-22T16:19+0800",
+ "head": "b2719cce7afee777e0d304c6547cd6079865650f",
+ "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+ "branch_line": "## master...origin/master [ahead 11]",
+ "attempt_14_untouched": true,
+ "attempt_14_files_modified_this_round": [],
+ "historical_attempts_untouched": "attempt-01 .. attempt-14 (including Rev27 attempt-03) not modified; no writes outside evidence/20260916-route/attempt-15/",
+ "frozen_tools_untouched": {
+  "tools/v4": "not modified",
+  "tools/v5": "not modified (v5/locate_album_ellipsis.py sha256 6a015ea6… re-verified read-only; the only side effect of using it would have been a __pycache__ entry, and the locator was never imported or run)",
+  "tools/v6": "not modified",
+  "tools/v7": "not modified (guard sha256 cdff187e… re-verified)",
+  "tools/detect_menu_popup.py": "not modified (6ae9c250…)",
+  "tools/vision/vision_ocr.swift": "not modified (4fc9fa2b…); the frozen reader rebuilt its own helper binary from the frozen source into its own temp build dir (documented behaviour of the frozen vision_reader module, outside the repository)"
+ },
+ "approved_plans_reviews_untouched": "PLAN-2026-09-21-rev27b-lineage-guard.md and evidence/20260921-lineage-guard-replan/** not modified",
+ "round_summary": {
+  "S1": "S1_ALBUM_DETAIL_GATE_FAIL__NOT_IN_ALBUM_DETAIL — LINE was restarted externally (pid 1030 -> 21064) and the album-detail window no longer exists; the focused LINE window is the album-list surface (AX list control + search field + rows; card 2024/05/13～05/17 with 57)",
+  "S2": "S2_STABILITY_AND_BINDING_PASS (AX pre/post identical; GEOMETRY_BINDING_PASS dims exact, MAD 2.045)",
+  "S3": "frozen album-open verifier = ALBUM_OPEN_VERIFIED in BOTH spaces (false positive on the album-list surface — title satisfied by the card caption 2024/05/13~05/17 and count 57); v7 lineage guard = REFUSED (SURFACE_HAS_LIST_CONTROLS, SURFACE_HAS_LIST_ROWS, FOCUSED_ELEMENT_NOT_WINDOW) => composite = ALBUM_OPEN_COMPOSITE_REFUSED => owner decision rule A",
+  "S4": "NOT EXECUTED (0 invocations; gated on composite PASS)",
+  "S5": "NOT DISPATCHED (click_count 0, gui_input_count 0)",
+  "S6": "NOT EXECUTED (no post-click moment; menu NOT_OBSERVED_NO_CLICK_DISPATCHED)"
+ },
+ "input_record_final": {
+  "gui_input_count": 0,
+  "album_card_inputs_used": 0,
+  "navigation_inputs_used": 0,
+  "ellipsis_inputs_used": 0,
+  "ellipsis_locator_invocations": 0,
+  "menu_item_inputs_used": 0,
+  "save_all_dispatch_attempted": false,
+  "save_all_budget": {
+   "budget": 0,
+   "used": 0
+  },
+  "chooser_interactions": 0,
+  "keyboard_inputs_used": 0,
+  "escape_inputs": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "bring_to_front_inputs": 0,
+  "downloads": 0,
+  "destination_writes": 0,
+  "retry_count": 0
+ },
+ "budget_ledger": {
+  "new_album_card_click": {
+   "budget": 0,
+   "used": 0
+  },
+  "navigation": {
+   "budget": 0,
+   "used": 0
+  },
+  "ellipsis_click": {
+   "budget": 1,
+   "used": 0,
+   "note": "the one-shot budget was NOT consumed; it remains unspent but is NOT transferable to another round without a new owner authorization"
+  },
+  "retry": {
+   "budget": 0,
+   "used": 0
+  },
+  "menu_item_click": {
+   "budget": 0,
+   "used": 0
+  },
+  "save_all": {
+   "budget": 0,
+   "used": 0
+  },
+  "chooser": {
+   "budget": 0,
+   "used": 0
+  },
+  "keyboard": {
+   "budget": 0,
+   "used": 0
+  },
+  "scroll": {
+   "budget": 0,
+   "used": 0
+  },
+  "ax_write": {
+   "budget": 0,
+   "used": 0
+  },
+  "bring_to_front": {
+   "budget": 0,
+   "used": 0
+  },
+  "app_acquisition_state_change": {
+   "budget": 0,
+   "used": 0,
+   "note": "1 read-only getApp handle call was required by the runtime's documented read API; no launch/activation/bring-to-front, no state change"
+  },
+  "download": {
+   "budget": 0,
+   "used": 0
+  },
+  "destination_write": {
+   "budget": 0,
+   "used": 0
+  }
+ },
+ "frozen_bindings_reverified_this_round": {
+  "tools/v5/locate_album_ellipsis.py": {
+   "sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+   "expected": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+   "match": true
+  },
+  "tools/v5/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v5/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "tools/v5/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "tools/v7/album_detail_lineage_guard.py": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "tools/detect_menu_popup.py": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "tools/vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+  "tools/v4/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v6/locate_album_card.py": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "tools/v6/extract_window_geometry.py": "b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8",
+  "PLAN-2026-09-21-rev27b-lineage-guard.md": "7a179d15f61033611dec333d246b6d8c590901c06c182628533e442feae10a7c",
+  "tools/v7/selftest/results.json": "affb3602698f7c5b0d9f8d8df01759a074738dd095bd32cf638a1300ec0ae4df",
+  "lineage replan replay-record.json": "adeede98894c87e0dff86d8ccb0b4c430e7fec25f15478a2eabfa221c1bea396"
+ },
+ "authorization_recap": "本輪只授權一次 fresh album-level ellipsis click 與 menu observation；沒有授權或執行 Save All、chooser、path entry、confirm 或 download。該唯一一次 ellipsis click 未被消費（composite REFUSED，前一步即停）。",
+ "next_step_requires_new_owner_authorization": "album-detail is NOT open (LINE restarted externally). A later authorized round needs (a) a fresh album-card reopening click, then (b) this same composite + frozen v5 + one ellipsis click + menu observation chain.",
+ "scoped_status": "BLOCKED_NOT_IN_ALBUM_DETAIL__FRESH_COMPOSITE_REFUSED",
+ "status_strings_not_written": [
+  "READY_FOR_ELLIPSIS",
+  "READY_FOR_SAVE_ALL_GATE_A_AUTHORIZATION",
+  "READY_FOR_SAVE_ALL",
+  "READY_TO_DOWNLOAD",
+  "BACKUP_COMPLETE",
+  "ALBUM_OPEN_VERIFIED_COMPOSITE"
+ ],
+ "artifact_manifest_sha256": {
+  "00-start-state.json": "8155eef32328315bb1f39628518aae469a19ce94fe0bfc47589de74a55c59078",
+  "authorization-record.json": "428d4acf57bdb5afc366edcdc95e219f4968725223de121e7bc832e17eacc372",
+  "d1-verifier-frame-diagnostic.json": "df16ea941d87651519aab7ca15a11528d61c6a2a936b5a3f960d1e1eeeae0f16",
+  "d2-verifier-window-diagnostic.json": "26cdd3ad2c19d4182d27c20042516fa63d100357032e36a927aa82fa079dfcbd",
+  "d3-lineage-guard-diagnostic.json": "3b9316659b6b3fbcc8e4a3986c6fce92aef9ad1bde7499070ec5447b36dfb724",
+  "frame-s1.png": "bac5ebb2a59354b8cae2dd7981f21d47bebf1564340869d76122a9b2df33efb4",
+  "route-runbook.md": "fc9b733e0fd4cc2776e14980a29910943f97d81b6d68bf9e3f5a871639166073",
+  "run-ledger.json": "8d7b479895c7bd84d4d4c15543cb80c72d57d0543f2fd7c9a8e8c745a82b8249",
+  "s1-ax-pre.json": "46928741d4cf8e031133e76065c524290619a14e915055c956ef22a7c7d42e90",
+  "s1-ax-pre.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s1-ax-state-cu.txt": "a4917b70a0dd1cd0a882bf099b57f98c2a1fbb022bc56f9ef78dc32e355f65cf",
+  "s1-surface-revalidation.json": "cd11e02e7d771b04365e5cc16c8c7c6bc1f75687cecb34d2ce340c2329ee7b64",
+  "s1-window-crop.png": "11b3ce299d84e72502db065d33c67b5a37bf3f959477e4e5dac3cfb7a2b2d7a0",
+  "s1-window-cu.jpg": "2e22d760463e395431dd875527cf1f20da7b19460c7149111566af851ebc0d21",
+  "s1-window-ocr.json": "653454e9b8bcd6b329c992d611a5e6295d70295d134a82b2335415e174baf112",
+  "s2-ax-post.json": "f1e9ce6dcf1e95cb15f4f500063de8b675cc20c9d85fc0e9d75b7dbcad32dca4",
+  "s2-ax-post.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s2-frame-geometry.json": "cd0f7b9ba6eb1dcc0fa4fd4dafd3b403505ba6d8777a57b65737b78faf0c2ac5",
+  "s2-frame-window-binding.json": "9e6f8a3148c46b76d1025aef9082170305fc6f4798f0ba36d01574af8d24734c",
+  "s3-composite-decision.json": "1dfb1b82dc1abbcf01083740bf7297872a1c2299bb451234954333d84e6d724f",
+  "s3-d1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s3-d1.stdout": "df16ea941d87651519aab7ca15a11528d61c6a2a936b5a3f960d1e1eeeae0f16",
+  "s3-d2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s3-d2.stdout": "26cdd3ad2c19d4182d27c20042516fa63d100357032e36a927aa82fa079dfcbd",
+  "s3-d3.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "s3-d3.stdout": "3b9316659b6b3fbcc8e4a3986c6fce92aef9ad1bde7499070ec5447b36dfb724",
+  "s4-ellipsis-locator-not-executed.json": "f110318db7bde3a05b0e170c99cbefd741bda74865f4a77cb8d81107292eb307",
+  "s5-click-intent.json": "6f55d4568d12797a9d1087a132d7a49116405dd3740c1c9ce7c37a3ee5e2c4e4",
+  "s6-menu-observation-not-executed.json": "99acde5428adb6d5dd03976ea0ef7690af80927e70e7f0649ff47f852374e7ed",
+  "tools/ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+  "tools/validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"
+ }
+}

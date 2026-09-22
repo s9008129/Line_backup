@@ -1,0 +1,18 @@
+{
+ "phase": "S6_menu_observation",
+ "attempt": "attempt-15",
+ "recorded_at_local": "2026-09-22T16:18+0800",
+ "executed": false,
+ "reason": "no ellipsis click was dispatched (S5 not reached), so there is no post-click moment to observe",
+ "post_click_menu_frame": null,
+ "frozen_menu_detector_runs": 0,
+ "menu_surface_verdict": "NOT_OBSERVED_NO_CLICK_DISPATCHED",
+ "save_all_affirmatively_identified": false,
+ "menu_item_clicks": 0,
+ "save_all_dispatch": 0,
+ "keyboard_inputs": 0,
+ "scroll_inputs": 0,
+ "escape_or_outside_clicks": 0,
+ "retries": 0,
+ "menu_left_open_for_owner": false
+}

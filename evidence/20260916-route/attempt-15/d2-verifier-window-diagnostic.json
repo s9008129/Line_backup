@@ -1,0 +1,186 @@
+{
+ "tool": "verify_album_open",
+ "pre": "../attempt-14/cua-window-preclick.jpg",
+ "post": "s1-window-cu.jpg",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "8b27c1e0a8bcd284e06a47521c47f7ee2c2b21a342764739c8e7620b3474ced4",
+ "post_sha256": "2e22d760463e395431dd875527cf1f20da7b19460c7149111566af851ebc0d21",
+ "pre_size": [
+  327,
+  643
+ ],
+ "post_size": [
+  327,
+  643
+ ],
+ "post_ocr_words_seen": [
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/20~05/24",
+  "53",
+  "：",
+  "2024/05/13~05/17",
+  "57",
+  "十"
+ ],
+ "target_title_in_post": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   15,
+   516,
+   129,
+   528
+  ]
+ },
+ "date_like_tokens_in_post": [
+  "2024/05/13~05/17",
+  "2024/05/20~05/24"
+ ],
+ "count_box": [
+  7,
+  530,
+  175,
+  560
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "diff": {
+  "changed_pixels": 140266,
+  "changed_fraction": 0.667104,
+  "changed_bbox": [
+   16,
+   102,
+   311,
+   643
+  ],
+  "changed_grid_8x8": [
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1134,
+    2276,
+    2200,
+    1964,
+    2271,
+    2238,
+    2209,
+    1342
+   ],
+   [
+    1977,
+    3122,
+    2636,
+    3267,
+    3305,
+    3041,
+    3088,
+    1555
+   ],
+   [
+    1730,
+    3015,
+    2874,
+    2602,
+    2089,
+    3163,
+    2915,
+    1386
+   ],
+   [
+    1717,
+    2894,
+    2602,
+    2832,
+    2293,
+    2783,
+    2867,
+    1726
+   ],
+   [
+    1976,
+    3187,
+    3239,
+    3083,
+    3224,
+    3162,
+    3146,
+    1732
+   ],
+   [
+    1898,
+    3114,
+    2890,
+    3090,
+    2451,
+    3228,
+    3055,
+    1652
+   ],
+   [
+    1879,
+    2779,
+    2869,
+    2904,
+    2852,
+    2859,
+    1885,
+    999
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "ALBUM_OPEN_VERIFIED",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "b45aca6dfc77c7038a3f26289dbb4ebe98734e474f3f7ae116acfb51acee3b21",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "37e947f678829bcf1835754c88cfb763477724829135747d8e7ad035d4710631",
+    "stdout_bytes": 360,
+    "lines_parsed": 9
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "2fbde227f9a333c3b3722424a707b4c41e288822b2ed4e659d6017f2f753e7cd",
+    "stdout_bytes": 31,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

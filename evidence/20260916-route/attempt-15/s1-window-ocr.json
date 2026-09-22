@@ -1,0 +1,45 @@
+{
+ "phase": "S1_window_surface_ocr_readonly",
+ "window_index": 0,
+ "rect_pt": [
+  0,
+  33,
+  327,
+  643
+ ],
+ "crop_size": [
+  327,
+  643
+ ],
+ "crop_sha256": "11b3ce299d84e72502db065d33c67b5a37bf3f959477e4e5dac3cfb7a2b2d7a0",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "b45aca6dfc77c7038a3f26289dbb4ebe98734e474f3f7ae116acfb51acee3b21",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "4834298238418efffcdf5ef2ba9dfe1a736eaaeb9fb5f445cc4e381169a39b04",
+    "stdout_bytes": 324,
+    "lines_parsed": 8
+   }
+  ]
+ },
+ "words": [
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/20~05/24",
+  "53",
+  "：",
+  "2024/05/13~05/17",
+  "57"
+ ]
+}

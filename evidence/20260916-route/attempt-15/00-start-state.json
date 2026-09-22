@@ -1,0 +1,116 @@
+{
+ "check": "attempt_15_start_state",
+ "captured_at_local": "2026-09-22T16:15+0800",
+ "branch_line": "## master...origin/master [ahead 11]",
+ "head": "b2719cce7afee777e0d304c6547cd6079865650f",
+ "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+ "ahead": 11,
+ "ahead_11_is_expected": true,
+ "untracked_present": [
+  "evidence/20260916-route/attempt-11/ (untouched; historical, not reused)",
+  "evidence/20260916-route/tools/v4/__pycache__/, tools/v5/__pycache__/, tools/v6/__pycache__/, tools/v6/selftest/__pycache__/ (untouched; never added)"
+ ],
+ "tracked_modifications": [],
+ "read_only_git_commands_used": [
+  "git status --porcelain=v1 --branch",
+  "git rev-parse HEAD",
+  "git rev-parse origin/master",
+  "git log -12 --oneline"
+ ],
+ "git_commands_forbidden_and_not_used": [
+  "fetch",
+  "pull",
+  "push",
+  "reset",
+  "rebase",
+  "amend",
+  "stash"
+ ],
+ "target": {
+  "app": "jp.naver.line.mac",
+  "group": "旻謙允禎成長日記",
+  "album": "2024/05/13～05/17",
+  "expected_count": 57
+ },
+ "attempt_14_reverified_from_disk": {
+  "00-start-state.json": "35144dc7d65f967cfa8c4f268856faa722e81e2bc0e2c49601936cf36c272f56",
+  "frame-pre.png": "7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d",
+  "frame-post.png": "da198011cb788d3190132b8cb9ff135c337caa012ce3ffa1cce1dcc6e4d5d26a",
+  "album-card-locate-v6.json": "7d16a2cc8801b425ef4ef63696c2bb1598ea8cbb5ec6cbe81a462f521f4c3182",
+  "v7-lineage-guard.json": "9e7eb7d3bc7dfb201ca40d1fc6b3b627b14ab9b719e2bac10976878a47fbc616",
+  "composite-decision.json": "7b85b6613328a92bee17ae30d3884974b8d8750f816dbfe535f2d0831bc7194d",
+  "run-ledger.json": "e54086f203bf04f9c484d889e7c661b5c94f8855ced44ca17a7abbba3a5f0485",
+  "99-scope-status.json": "856733761b575da073cf8e506e26c0648042506de7814ffb047f117c519820ab",
+  "cua-window-preclick.jpg (S3 formal pre, re-hashed)": "8b27c1e0a8bcd284e06a47521c47f7ee2c2b21a342764739c8e7620b3474ced4",
+  "cua-window-s5.jpg (attempt-14 album-detail window frame, re-hashed)": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "s5-album-open-verify-frame.json (re-hashed)": "229b19b1714dd6c648176fe781c37bb6de0facf537eddcd999e9ce96de831e5c",
+  "s5-album-open-verify-window.json (re-hashed)": "3e03c5a39a52153aa1d04fa29a0a75e074323126b908fb1457b8d41ba6dc49c5",
+  "authorization-record.json (re-hashed)": "6246444c1a044a2ad54d78527852f700adaa756514c46d66ed90e5126883f6df"
+ },
+ "attempt_14_content_checks": {
+  "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE (decision PASS)",
+  "album_card_reopening_click_consumed": true,
+  "album_card_inputs_used": 1,
+  "retry_count": 0,
+  "ellipsis_inputs_used": 0,
+  "save_all_budget_used": 0,
+  "chooser_interactions": 0,
+  "downloads": 0,
+  "end_surface": "album-detail window ([337,33] 327x643 pt) left open for the owner",
+  "next_authorization_recorded_by_attempt-14": "READY_FOR_NEW_ELLIPSIS_AUTHORIZATION (NOT READY_FOR_SAVE_ALL)",
+  "verdict": "CONSISTENT_WITH_OWNER_STATEMENT"
+ },
+ "frozen_tools_reverified_from_disk": {
+  "tools/v5/locate_album_ellipsis.py": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "tools/v5/locate_album_ellipsis.py_expected": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "tools/v5/locate_album_ellipsis.py_matches_expected": true,
+  "tools/v5/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v4/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v5/verify_album_open.py_byte_identical_to_v4": true,
+  "tools/v5/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "tools/v5/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "tools/vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+  "tools/v7/album_detail_lineage_guard.py": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "tools/detect_menu_popup.py": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "tools/v6/locate_album_card.py (not used this round)": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "tools/v6/extract_window_geometry.py (not used this round)": "b396d6a85c9b068a1b9d6e584acbd4f9e6b1b14ccad8a11ef32b11797627b7d8"
+ },
+ "frozen_tools_not_modified": "v4, v5, v6, v7, frozen album-open verifier, frozen menu detector, frozen vision reader/helper source — read-only this round",
+ "rev27b_safety_artifacts_reverified": {
+  "plan": {"path": "PLAN-2026-09-21-rev27b-lineage-guard.md", "sha256": "7a179d15f61033611dec333d246b6d8c590901c06c182628533e442feae10a7c"},
+  "guard_selftest_results": {"path": "evidence/20260916-route/tools/v7/selftest/results.json", "sha256": "affb3602698f7c5b0d9f8d8df01759a074738dd095bd32cf638a1300ec0ae4df", "verdict": "SELFTEST_PASS 22/22; attempt-03 regression refused"},
+  "replay_record": {"path": "evidence/20260921-lineage-guard-replan/replay/replay-record.json", "sha256": "adeede98894c87e0dff86d8ccb0b4c430e7fec25f15478a2eabfa221c1bea396", "verdict": "REPLAY_PASS"},
+  "scope_status": {"path": "evidence/20260921-lineage-guard-replan/attempt-01/99-scope-status.json", "sha256": "8291438f8621e54e47491d616946ea7d27dffe92c8941cb6421a4c3452ef62ee"}
+ },
+ "attempt_tools_copied_byte_identical_from_attempt14": {
+  "tools/ax_window_bounds.swift": {"sha256": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6", "compiled_binary": "/tmp/attempt15/ax_window_bounds", "compiled_binary_sha256": "1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae", "compiled_binary_byte_identical_to_attempt_10_12_13_14": true},
+  "tools/validate_live_geometry.py": {"sha256": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"}
+ },
+ "attempt_slot": {
+  "selected": "attempt-15",
+  "reason": "attempt-15 did not exist; attempts 01-14 are not reopened and were never modified this round"
+ },
+ "environment_note_observed_before_S0_writes": {
+  "line_pid": 21064,
+  "line_pid_at_attempt_14": 1030,
+  "line_process_restarted_since_attempt_14": true,
+  "line_ax_window_count_now": 2,
+  "line_ax_window_count_at_attempt_14_end": 3,
+  "meaning": "the attempt-14 album-detail window ([337,33] 327x643) is not present in the current read-only AX window inventory; LINE had already been restarted by the owner/user before this round began. Recorded before S0 declarations and re-checked read-only in S1; it does not change the runbook (S1's album-detail gate decides the round)."
+ },
+ "gui_authorization": {
+  "kind": "owner one-shot authorization in the current user message (this round)",
+  "scope": "fresh read-only album-detail composite revalidation -> fresh frozen v5 ellipsis locator -> only if composite PASS and v5 ELIGIBLE exactly one album-level ellipsis left click -> fresh menu observation -> STOP",
+  "ellipsis_click_budget": 1,
+  "everything_else": 0,
+  "historical_album_card_clicks": 1,
+  "historical_ellipsis_clicks": 1,
+  "historical_inputs_reset": false
+ },
+ "historical_facts_preserved": {
+  "attempt_12": "one historical album-card click; frozen v6 ELIGIBLE; frozen album-open verifier ALBUM_OPEN_VERIFIED",
+  "attempt_13": "frozen v5 ELIGIBLE; one historical ellipsis click; menu observed; Save All 0",
+  "attempt_14": "one historical album-card reopening click; composite ALBUM_OPEN_VERIFIED_COMPOSITE; ellipsis 0",
+  "rev27_attempt_03": "frozen verifier ALBUM_OPEN_VERIFIED on an album-LIST surface; v7 replay REFUSED; the frozen verifier alone is never sufficient"
+ }
+}

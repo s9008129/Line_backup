@@ -1,0 +1,59 @@
+{
+ "phase": "S1_fresh_read_only_album_detail_observation",
+ "attempt": "attempt-15",
+ "recorded_at_local": "2026-09-22T16:16+0800",
+ "gui_inputs_sent": 0,
+ "ax_read_pre": {
+  "tool": "/tmp/attempt15/ax_window_bounds (from attempt-15/tools/ax_window_bounds.swift sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6; compiled binary sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae, byte-identical to attempt-10/12/13/14)",
+  "evidence": "s1-ax-pre.json",
+  "result": "ax_api_trusted=true; ax_frontmost=true; frontmost_application=jp.naver.line.mac; bundle_id=jp.naver.line.mac; pid 21064; window_count=2; window[0] (0,33) 327x643 is_ax_focused_window=true main=true role AXWindow/AXStandardWindow title ''; window[1] (0,37) 1147x699 title 'LINE'; display 1147x745 pt, backing scale 2, capture 2294x1490 px",
+  "note_no_album_detail_window": "the attempt-14 album-detail window ([337,33] 327x643) is ABSENT from the inventory (window_count 2 now vs 3 at attempt-14 end)"
+ },
+ "cu_read": {
+  "tool": "cua_repl app handle bound to jp.naver.line.mac (read handle: 1 getApp call, zero state change, no launch/activation/bring-to-front); getAXState({disableDiffing:true}) + getScreenshot, both read-only, zero input",
+  "evidence": ["s1-ax-state-cu.txt", "s1-window-cu.jpg"],
+  "ax_form": "FULL_TREE (disableDiffing)",
+  "ax_summary": "Window \"\", App: LINE. -> 0 標準視窗 / 1 文字欄位 (settable) / 2 列表 (showing 0-100 of 101 items) with row entries / 捲軸 (settable) / 關閉按鈕 / 縮到最小按鈕 / menu bar; The focused UI element is 1 文字欄位 (settable)",
+  "ax_surface_class": "ALBUM-LIST surface class: LIST control + search TEXT FIELD + 101 rows + scroller present; NOT the chrome-only album-detail class (attempt-13/14 album-detail read was: 0 標準視窗 + 關閉按鈕 + 縮到最小按鈕 + menu bar only, focused element = the window itself)",
+  "window_screenshot": {"path": "s1-window-cu.jpg", "size_px": [327, 643], "bytes": 62887, "sha256": "2e22d760463e395431dd875527cf1f20da7b19460c7149111566af851ebc0d21", "note": "327x643 px == focused window pt size (1 px = 1 pt)"}
+ },
+ "fresh_full_screen_frame": {
+  "path": "frame-s1.png",
+  "sha256": "bac5ebb2a59354b8cae2dd7981f21d47bebf1564340869d76122a9b2df33efb4",
+  "size_px": [2294, 1490],
+  "captured_with": "screencapture -x (silent, read-only, zero input)"
+ },
+ "window_space_ocr_read": {
+  "method": "read-only OCR of the frame-s1.png crop at the focused window rect [0,33,327,643] pt (x2 px) downscaled to 327x643, using the frozen v5 macOS Vision reader (tools/v5/locate_album_card.py + vision_reader.py)",
+  "artifact": "s1-window-ocr.json",
+  "window_crop_png": {"path": "s1-window-crop.png", "sha256": "11b3ce299d84e72502db065d33c67b5a37bf3f959477e4e5dac3cfb7a2b2d7a0"},
+  "tokens": ["旻謙允禎成長日記", "相簿", "記事本", "2024/05/20~05/24", "53", "：", "2024/05/13~05/17", "57"]
+ },
+ "identity_checks": {
+  "app_bundle": "jp.naver.line.mac (PASS)",
+  "line_frontmost": "PASS (ax_frontmost=true; frontmost_application=jp.naver.line.mac; also true in the S2 post read)",
+  "current_target_window_unambiguous": "PASS (exactly one main + is_ax_focused_window window; no duplicate geometry)",
+  "target_album_2024_05_13_to_05_17_present_on_surface": "PRESENT AS AN ALBUM-LIST CARD (title 2024/05/13~05/17 with 57 below it); this is the album-list card, not an opened album-detail header",
+  "57_photo_context_present": "YES (card caption 57) — read-only",
+  "album_detail_surface_still_present": "NO — FAIL",
+  "album_list_active_surface": "YES — the FOCUSED surface is the album-list (相簿 tab selected): LIST(101) + search field + rows + tabs 相簿/記事本 + album cards + green compose button",
+  "unknown_overlay": "none observed; frame/window binding PASS (MAD 2.045) proves the window is unoccluded and the observed content equals frame-s1.png",
+  "permission_prompt": "none observed",
+  "occluding_window": "none (binding PASS)"
+ },
+ "visual_observation": {
+  "method": "read-only view of s1-window-cu.jpg",
+  "observed": "group header 旻謙允禎成長日記; tabs 相簿 (selected) / 記事本; album cards 2024/05/20～05/24 + 53 and 2024/05/13～05/17 + 57, each with its own album-card-level ⋮; photo-grid thumbnails; green compose button bottom right",
+  "no_album_detail_markers": "no date-range header band at the top of the window, no back control, no photo-count header context"
+ },
+ "environment_finding": {
+  "line_pid_now": 21064,
+  "line_pid_at_attempt_14": 1030,
+  "line_restarted_since_attempt_14": true,
+  "ax_window_count_now": 2,
+  "ax_window_count_at_attempt_14_end": 3,
+  "finding": "LINE was restarted by the owner/user between attempt-14 and this round. The attempt-14 album-detail window no longer exists; the app returned to the album-list surface. This is an EXTERNAL state change, not caused by this round (zero input was sent)."
+ },
+ "verdict": "S1_ALBUM_DETAIL_GATE_FAIL__NOT_IN_ALBUM_DETAIL",
+ "action": "STOP per runbook S1 and per this round's authorization. No album reopen, no album-card click, no navigation, no bring-to-front, no ellipsis."
+}

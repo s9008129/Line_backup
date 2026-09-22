@@ -1,0 +1,19 @@
+{
+ "phase": "S4_frozen_v5_fresh_ellipsis_locator",
+ "attempt": "attempt-15",
+ "recorded_at_local": "2026-09-22T16:18+0800",
+ "executed": false,
+ "invocations": 0,
+ "reason": "S4 is gated on the fresh composite PASS (runbook step 5 and the owner's S4: 只有 fresh composite PASS 才可執行). The composite was REFUSED, so the locator was NOT invoked.",
+ "tool_binding_reverified": {
+  "path": "evidence/20260916-route/tools/v5/locate_album_ellipsis.py",
+  "sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "expected": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "match": true
+ },
+ "prohibited_and_not_done": ["v4 locator fallback", "historical-coordinate fallback ([304,50] / [305,50])", "threshold adjustment", "retry", "invocation on any other frame"],
+ "frame_sha256_that_would_have_been_the_input": "n/a (not invoked)",
+ "recorded_frame_sha256_for_traceability": {"s1-window-cu.jpg": "2e22d760463e395431dd875527cf1f20da7b19460c7149111566af851ebc0d21", "frame-s1.png": "bac5ebb2a59354b8cae2dd7981f21d47bebf1564340869d76122a9b2df33efb4"},
+ "fresh_v5_verdict": "NOT_RUN",
+ "ellipsis_input_count": 0
+}

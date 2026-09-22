@@ -1,0 +1,59 @@
+{
+ "phase": "S3_fresh_composite_album_detail_verification",
+ "attempt": "attempt-15",
+ "recorded_at_local": "2026-09-22T16:18+0800",
+ "gui_inputs_sent": 0,
+ "owner_rule": "ALBUM_OPEN_VERIFIED_COMPOSITE = frozen album-open verifier == ALBUM_OPEN_VERIFIED AND approved v7 ALBUM_DETAIL_WINDOW_LINEAGE_GUARD == ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+ "frozen_album_open_verifier": {
+  "tool": "tools/v5/verify_album_open.py sha256 ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58 (byte-identical to v4)",
+  "frame_space_pair": {
+   "artifact": "d1-verifier-frame-diagnostic.json",
+   "pre": "attempt-14/frame-pre.png 7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d (byte-authenticated pre-click album-LIST frame of the transition being revalidated; no fresh list state can exist in a zero-navigation round)",
+   "post": "frame-s1.png bac5ebb2a59354b8cae2dd7981f21d47bebf1564340869d76122a9b2df33efb4 (THIS round)",
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "exit_code": 0,
+   "target_title_in_post": {"texts": ["2024/05/13~05/17"], "bbox": [30, 1096, 257, 1120]},
+   "count_text": "MATCH",
+   "changed_fraction": 0.579931
+  },
+  "window_space_pair": {
+   "artifact": "d2-verifier-window-diagnostic.json",
+   "pre": "attempt-14/cua-window-preclick.jpg 8b27c1e0a8bcd284e06a47521c47f7ee2c2b21a342764739c8e7620b3474ced4 (album-LIST window frame)",
+   "post": "s1-window-cu.jpg 2e22d760463e395431dd875527cf1f20da7b19460c7149111566af851ebc0d21 (THIS round)",
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "exit_code": 0,
+   "target_title_in_post": {"texts": ["2024/05/13~05/17"], "bbox": [15, 516, 129, 528]},
+   "count_text": "MATCH",
+   "changed_fraction": 0.667104
+  },
+  "critical_finding": "BOTH frozen-verifier pairs returned ALBUM_OPEN_VERIFIED while the actual surface is the album-LIST surface (S1). The verifier's title rule was satisfied by the album-list CARD caption 2024/05/13~05/17 and its count text 57, and the change rule was satisfied by ordinary list re-rendering. This is the exact attempt-03 false-positive class, reproduced live in this round; it is the reason the owner's composite requires the v7 guard."
+ },
+ "v7_lineage_guard": {
+  "tool": "tools/v7/album_detail_lineage_guard.py sha256 cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "artifact": "d3-lineage-guard-diagnostic.json",
+  "inputs": {
+   "window_inventory": "s1-ax-pre.json 46928741…",
+   "window_ax_state": "s1-ax-state-cu.txt a4917b70…",
+   "window_screenshot": "s1-window-cu.jpg 2e22d760…",
+   "frame": "frame-s1.png bac5ebb2…",
+   "frozen_album_open_json": "d1-verifier-frame-diagnostic.json (C7 binding object: its post_sha256 == frame-s1.png)"
+  },
+  "exit_code": 2,
+  "verdict": "REFUSED",
+  "refusal_reasons": ["SURFACE_HAS_LIST_CONTROLS", "SURFACE_HAS_LIST_ROWS", "FOCUSED_ELEMENT_NOT_WINDOW"],
+  "checks": {"C0_SCHEMA": "PASS", "C0_FRAME_SCALE": "PASS", "C1_FRONTMOST": "PASS", "C2_TARGET_UNIQUE": "PASS", "C3_GEOMETRY_DOUBT": "PASS", "C4_AX_SURFACE_CLASS": "REFUSE"},
+  "c4_basis": "the focused window's AX tree contains 列表 (list control) and row entries and the focused element is the 文字欄位 search field — the album-list surface class, not the chrome-only album-detail class",
+  "composite": {"verdict": "NOT_EVALUATED", "note": "the guard refuses before C5/C6/C7, so the composite rule is never reached"}
+ },
+ "composite": "ALBUM_OPEN_COMPOSITE_REFUSED",
+ "decision": "FAIL",
+ "rule_applied": "owner decision rule A — fresh composite FAIL -> ellipsis used = 0 -> STOP",
+ "why_this_is_the_authorized_verdict": "the composite is defined as verifier AND guard. The verifier is a false positive here (proven above) and the guard REFUSES, so the composite cannot be established. No manual override, no retry, no re-run on another frame.",
+ "independence_from_attempt_03": {
+  "attempt_03": "frozen verifier ALBUM_OPEN_VERIFIED on an album-LIST surface; the v7 guard replay REFUSED",
+  "this_round": "same protection fires again, on a DIFFERENT and newly restarted LINE session (pid 21064), with this round's own fresh evidence"
+ },
+ "manual_override": false,
+ "retry": 0,
+ "note_on_label": "D1/D2/D3 are read-only offline analyses of evidence captured in S1/S2; they added no capture and no input. They are recorded as the composite step because the owner's composite rule is defined over these two tools, and their verdicts decide the round."
+}
