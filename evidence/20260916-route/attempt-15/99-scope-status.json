@@ -1,7 +1,7 @@
 {
  "check": "attempt_15_end_state",
  "attempt": "attempt-15",
- "captured_at_local": "2026-09-22T16:19+0800",
+ "captured_at_local": "2026-09-22T16:20+0800",
  "head": "b2719cce7afee777e0d304c6547cd6079865650f",
  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
  "branch_line": "## master...origin/master [ahead 11]",
@@ -143,6 +143,7 @@
   "d1-verifier-frame-diagnostic.json": "df16ea941d87651519aab7ca15a11528d61c6a2a936b5a3f960d1e1eeeae0f16",
   "d2-verifier-window-diagnostic.json": "26cdd3ad2c19d4182d27c20042516fa63d100357032e36a927aa82fa079dfcbd",
   "d3-lineage-guard-diagnostic.json": "3b9316659b6b3fbcc8e4a3986c6fce92aef9ad1bde7499070ec5447b36dfb724",
+  "ellipsis-click-intent.json": "e1ca1e3484b42821bc00813896c9695d5b8e3e4ab41c418954c52944167930d0",
   "frame-s1.png": "bac5ebb2a59354b8cae2dd7981f21d47bebf1564340869d76122a9b2df33efb4",
   "route-runbook.md": "fc9b733e0fd4cc2776e14980a29910943f97d81b6d68bf9e3f5a871639166073",
   "run-ledger.json": "8d7b479895c7bd84d4d4c15543cb80c72d57d0543f2fd7c9a8e8c745a82b8249",
@@ -169,5 +170,6 @@
   "s6-menu-observation-not-executed.json": "99acde5428adb6d5dd03976ea0ef7690af80927e70e7f0649ff47f852374e7ed",
   "tools/ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
   "tools/validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"
- }
+ },
+ "regenerated_note": "regenerated at close to add the exact-named artifact `ellipsis-click-intent.json` requested by the owner's evidence list (twin of s5-click-intent.json, describing the same non-event) and to refresh the manifest accordingly; no other field was changed except this note and the manifest"
 }
