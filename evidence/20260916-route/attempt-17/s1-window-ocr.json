@@ -1,0 +1,99 @@
+{
+ "phase": "S1_window_surface_ocr_readonly",
+ "attempt": "attempt-17",
+ "window_index": 0,
+ "rect_pt": [
+  0,
+  33,
+  327,
+  643
+ ],
+ "crop_size": [
+  327,
+  643
+ ],
+ "crop_sha256": "33afe3ae0a37a3a84842da97ce762487f5f8b468adc354b4f67fa0bc888d136a",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "b45aca6dfc77c7038a3f26289dbb4ebe98734e474f3f7ae116acfb51acee3b21",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "381c538e87addae1d7130f9fe5866fdf94b750f03df72fabe57efebab9fd1e87",
+    "stdout_bytes": 213,
+    "lines_parsed": 5
+   }
+  ]
+ },
+ "expected_tokens": [
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/13~05/17",
+  "57"
+ ],
+ "words": [
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "2024/05/13~05/17",
+  "57"
+ ],
+ "expected_tokens_present": {
+  "旻謙允禎成長日記": true,
+  "相簿": true,
+  "記事本": true,
+  "2024/05/13~05/17": true,
+  "57": true
+ },
+ "words_full": [
+  {
+   "text": "旻謙允禎成長日記",
+   "conf": 1.0,
+   "x": 115.0,
+   "y": 45.0,
+   "w": 97.0,
+   "h": 15.0
+  },
+  {
+   "text": "相簿",
+   "conf": 1.0,
+   "x": 67.33333333333333,
+   "y": 80.33333333333333,
+   "w": 26.0,
+   "h": 14.0
+  },
+  {
+   "text": "記事本",
+   "conf": 1.0,
+   "x": 225.0,
+   "y": 80.33333333333333,
+   "w": 37.666666666666664,
+   "h": 14.333333333333334
+  },
+  {
+   "text": "2024/05/13~05/17",
+   "conf": 1.0,
+   "x": 15.0,
+   "y": 429.6666666666667,
+   "w": 114.0,
+   "h": 13.333333333333334
+  },
+  {
+   "text": "57",
+   "conf": 1.0,
+   "x": 16.0,
+   "y": 447.6666666666667,
+   "w": 14.666666666666666,
+   "h": 12.0
+  }
+ ]
+}

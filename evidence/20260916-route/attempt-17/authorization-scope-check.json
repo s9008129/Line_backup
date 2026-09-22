@@ -1,0 +1,64 @@
+{
+ "check": "authorization anti-replay scope check (performed at planning time before any live observation and before attempt creation; recorded now)",
+ "checked_at_local": "2026-09-22T16:50+0800",
+ "authorization_type": "ALBUM_REOPEN_ONLY",
+ "authorization_id": "REV27B-ALBUM-REOPEN-AFTER-ATTEMPT16",
+ "owner_declared_scope": {
+  "allowed_gui_inputs": {
+   "album_card_click": 1
+  },
+  "forbidden_gui_inputs": {
+   "ellipsis": 0,
+   "menu_item": 0,
+   "Save_All": 0,
+   "chooser": 0,
+   "keyboard": 0,
+   "scroll": 0,
+   "AX_write": 0,
+   "bring_to_front": 0,
+   "app_acquisition": 0,
+   "retry": 0
+  },
+  "allowed_locator": "frozen v6 album-card locator",
+  "post_click_verifiers": [
+   "frozen album-open verifier",
+   "v7 album-detail lineage guard"
+  ],
+  "explicitly_forbidden_tool": "frozen v5 ellipsis locator"
+ },
+ "agent_planned_runbook_scope": {
+  "gui_inputs_planned": {
+   "album_card_click": 1,
+   "second_album_card_click": 0,
+   "ellipsis_click": 0,
+   "menu_item_click": 0,
+   "keyboard": 0,
+   "scroll": 0,
+   "ax_write": 0,
+   "bring_to_front": 0,
+   "retry": 0
+  },
+  "navigation_planned": "album-card click only (navigation budget 1, not otherwise used)",
+  "locator_planned": "frozen v6 album-card locator ONLY",
+  "verifiers_planned": [
+   "frozen album-open verifier",
+   "v7 album-detail lineage guard"
+  ],
+  "menu_observation_planned": false,
+  "save_all_planned": false,
+  "chooser_planned": false
+ },
+ "mismatch_checks": {
+  "runbook_mentions_frozen_v5_ellipsis_locator_as_planned_step": false,
+  "runbook_ellipsis_click_budget_gt_0": false,
+  "runbook_menu_observation_as_execution_goal": false,
+  "runbook_mentions_save_all_as_planned_action": false,
+  "runbook_mentions_chooser_as_planned_action": false
+ },
+ "verdict": "AUTHORIZATION_SCOPE_MATCH (no AUTHORIZATION_SCOPE_MISMATCH)",
+ "frozen_v5_allowed": false,
+ "ellipsis_budget": 0,
+ "save_all_budget": 0,
+ "attempt_created_after_check": true,
+ "note": "frozen v5 ellipsis locator SHA is re-hashed for integrity only; it is explicitly forbidden to execute this round. Historical ellipsis coordinates [304,50]/[305,50] and historical album-card coordinates [39,923]/[39,926]/[39,932] are documentation only and are never used as inputs."
+}

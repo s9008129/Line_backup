@@ -1,0 +1,181 @@
+{
+ "tool": "verify_album_open",
+ "pre": "evidence/20260916-route/attempt-17/cua-window-preclick.jpg",
+ "post": "evidence/20260916-route/attempt-17/cua-window-s5.jpg",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "eac18de8806c23d9bc320a14a84ceda1a7b8add8d1ac832785021411386aab2a",
+ "post_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+ "pre_size": [
+  327,
+  643
+ ],
+ "post_size": [
+  327,
+  643
+ ],
+ "post_ocr_words_seen": [
+  "2024/05/13~05/17",
+  "57張照片",
+  "2024.05.18",
+  "1~"
+ ],
+ "target_title_in_post": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   15,
+   83,
+   204,
+   111
+  ]
+ },
+ "date_like_tokens_in_post": [
+  "2024.05.18",
+  "2024/05/13~05/17"
+ ],
+ "count_box": [
+  7,
+  113,
+  175,
+  143
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "diff": {
+  "changed_pixels": 138594,
+  "changed_fraction": 0.659152,
+  "changed_bbox": [
+   12,
+   9,
+   314,
+   643
+  ],
+  "changed_grid_8x8": [
+   [
+    176,
+    31,
+    69,
+    372,
+    363,
+    58,
+    0,
+    190
+   ],
+   [
+    1218,
+    1953,
+    1864,
+    1916,
+    1940,
+    1770,
+    1711,
+    955
+   ],
+   [
+    1941,
+    3309,
+    2834,
+    3258,
+    3199,
+    2937,
+    3316,
+    1940
+   ],
+   [
+    1792,
+    3061,
+    2936,
+    2707,
+    2027,
+    2777,
+    2997,
+    1814
+   ],
+   [
+    1842,
+    2814,
+    2806,
+    2736,
+    2273,
+    2900,
+    2901,
+    1705
+   ],
+   [
+    2073,
+    3176,
+    3221,
+    3223,
+    2954,
+    3184,
+    3033,
+    1885
+   ],
+   [
+    1732,
+    3143,
+    2934,
+    2856,
+    2491,
+    2281,
+    1867,
+    1637
+   ],
+   [
+    1795,
+    2759,
+    2978,
+    2865,
+    2820,
+    3027,
+    2078,
+    1174
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "ALBUM_OPEN_VERIFIED",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "b45aca6dfc77c7038a3f26289dbb4ebe98734e474f3f7ae116acfb51acee3b21",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "71d0b4d4b7191c4d6e8e544c4dfd2cef0dfe71e8996bf931b47975eb37e4b426",
+    "stdout_bytes": 160,
+    "lines_parsed": 4
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "5dc8079e1f9b8a6081e5d47aa96b5e81554a69c8178daa527e8cb94515ac0d83",
+    "stdout_bytes": 40,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

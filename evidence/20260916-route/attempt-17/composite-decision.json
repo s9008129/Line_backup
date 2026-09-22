@@ -1,0 +1,57 @@
+{
+ "phase": "S6_composite_decision",
+ "attempt": "attempt-17",
+ "recorded_at_local": "2026-09-22T16:53+0800",
+ "authorization": "owner one-shot ALBUM_REOPEN_ONLY (REV27B-ALBUM-REOPEN-AFTER-ATTEMPT16)",
+ "inputs": {
+  "window_space_formal_pair": {
+   "pre": "cua-window-preclick.jpg",
+   "post": "cua-window-s5.jpg",
+   "pre_sha256": "eac18de8806c23d9bc320a14a84ceda1a7b8add8d1ac832785021411386aab2a",
+   "post_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3"
+  },
+  "frame_space_supporting_pair": {
+   "pre": "frame-pre.png",
+   "post": "frame-post.png",
+   "pre_sha256": "6b37df75a8aa1ac48466c1167178916cdf6f432c30f4b08fa332329c2443caed",
+   "post_sha256": "b778322652f638e21ffb47f29515e0c2fb80b2db5cfd6c3edacea0da62a7d2c4"
+  },
+  "guard_inputs": {
+   "window_inventory": "s6-ax-post.json",
+   "window_ax_state": "cua-ax-state-s5.txt",
+   "window_screenshot": "cua-window-s5.jpg",
+   "frame": "frame-post.png",
+   "frozen_album_open_json": "s5-album-open-verify-frame.json"
+  }
+ },
+ "verdicts": {
+  "frozen_verifier_window_pair": {
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "exit_code": 0,
+   "changed_fraction": 0.659152,
+   "title_in_post": [
+    "2024/05/13~05/17"
+   ],
+   "count_text": "MATCH"
+  },
+  "frozen_verifier_frame_pair": {
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "exit_code": 0,
+   "changed_fraction": 0.192432,
+   "count_text": "UNREADABLE"
+  },
+  "v7_lineage_guard": {
+   "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+   "exit_code": 0,
+   "checks_all_pass": true,
+   "refusal_reasons": []
+  },
+  "guard_composite": "ALBUM_OPEN_VERIFIED_COMPOSITE_PASS"
+ },
+ "rule": "PASS only if (a) window-space frozen verdict == ALBUM_OPEN_VERIFIED AND (b) frame-space frozen verdict == ALBUM_OPEN_VERIFIED AND (c) guard exits 0 with ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED and composite == ALBUM_OPEN_VERIFIED_COMPOSITE_PASS",
+ "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+ "decision": "PASS",
+ "attempt_03_false_positive_class_check": "the frozen verifier alone is NEVER used: the composite additionally required v7 ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED on this round's own evidence (C4 surface class: full tree, chrome-only, focused element = window; C5 binding PASS; C6 header context PASS). Both hold; the attempt-03/15/16 false-positive pattern does not apply here.",
+ "stop": "S6_COMPLETE_STOP — no ellipsis (frozen v5 never invoked), no menu observation, no menu-item, no Save All, no chooser, no keyboard/scroll/AX-write, no retry",
+ "scoped_next_status": "READY_FOR_NEW_ELLIPSIS_AUTHORIZATION (a real Save All click still requires its own later one-shot owner authorization)"
+}

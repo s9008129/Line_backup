@@ -1,0 +1,87 @@
+{
+ "record": "attempt-17 owner one-shot authorization (REV27B-ALBUM-REOPEN-AFTER-ATTEMPT16: fresh album-reopen only — album-list revalidation + exactly one album-card reopening click + composite verification)",
+ "recorded_at_local": "2026-09-22T16:50+0800",
+ "authorization_id": "REV27B-ALBUM-REOPEN-AFTER-ATTEMPT16",
+ "authorization_type": "ALBUM_REOPEN_ONLY",
+ "authorization_source": "owner's message in this conversation (this round only)",
+ "owner_statement_verbatim": [
+  "AUTHORIZATION_TYPE = ALBUM_REOPEN_ONLY",
+  "AUTHORIZATION_ID = REV27B-ALBUM-REOPEN-AFTER-ATTEMPT16",
+  "allowed_gui_inputs: album_card_click = 1",
+  "forbidden_gui_inputs: ellipsis = 0 / menu_item = 0 / Save_All = 0 / chooser = 0 / keyboard = 0 / scroll = 0 / AX_write = 0 / bring_to_front = 0 / app_acquisition = 0 / retry = 0",
+  "allowed_locator: frozen v6 album-card locator",
+  "post-click verifiers: frozen album-open verifier + v7 album-detail lineage guard",
+  "explicitly forbidden tool: frozen v5 ellipsis locator",
+  "重點：S1 的成功條件就是確認「目前仍是 album-list」。不要因為不是 album-detail 而 STOP。本輪的目的正是從 album-list 重新開啟 album-detail。",
+  "才授權：exactly one left click 到本輪 fresh v6-derived album-card candidate。",
+  "無論 composite PASS 或 FAIL：S6 後立即 STOP。本輪禁止執行 frozen v5。",
+  "如果 composite PASS：唯一下一步狀態：READY_FOR_NEW_ELLIPSIS_AUTHORIZATION。",
+  "本輪 authorization type = ALBUM_REOPEN_ONLY；只授權一次 fresh album-card reopening click 與 composite verification。沒有授權或執行 frozen-v5 ellipsis workflow、ellipsis click、menu-item、Save All、chooser 或 download。"
+ ],
+ "new_attempt": 17,
+ "authorization_chain": {
+  "attempt_14_album_reopen_authorization": "LEGALLY CONSUMED at attempt-14; the owner explicitly forbids re-running it; this round is a NEW, independent one-shot authorization with its own fresh click budget.",
+  "attempt_15": "zero-GUI-input round (LINE externally restarted; album-detail absent; composite refused). No budget used; nothing transferable.",
+  "attempt_16": "zero-GUI-input ellipsis-authorization round that stopped at S1 because the surface was album-list, not album-detail. It was NOT an album-reopen attempt; its unused ellipsis budget is NOT transferred (owner-stated).",
+  "this_round": "fresh read-only album-list revalidation (S1) -> frame/window binding (S2) -> frozen v6 album-card locator (S3) -> iff all PASS exactly one album-card reopening click (S4) -> fresh post-click observation + frozen album-open verifier (S5) + v7 lineage guard (S6) -> composite decision -> STOP."
+ },
+ "known_safe_state_at_authorization": {
+  "local_head_actual": "e6ebf404c948fd382fa093572ab68fcede2ed547",
+  "local_head_expected_by_owner": "e6ebf404c948fd382fa093572ab68fcede2ed547",
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "ahead": 15,
+  "attempt_14": "completed; composite ALBUM_OPEN_VERIFIED_COMPOSITE; retry 0; ellipsis 0; Save All 0",
+  "attempt_16_end_state": "BLOCKED_NOT_IN_ALBUM_DETAIL__FRESH_COMPOSITE_REFUSED; zero GUI input; album-list surface left open; ellipsis 0; Save All 0; chooser 0; download 0"
+ },
+ "authorized_this_round": {
+  "album_card_click_budget": 1,
+  "navigation_budget": 1,
+  "allowed_locator": "frozen v6 album-card locator (tools/v6/locate_album_card.py sha256 d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142)",
+  "post_click_verifiers": [
+   "frozen album-open verifier (tools/v5/verify_album_open.py sha256 ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58)",
+   "v7 album-detail lineage guard (tools/v7/album_detail_lineage_guard.py sha256 cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52)"
+  ]
+ },
+ "not_authorized_this_round": [
+  "frozen v5 ellipsis locator (explicitly forbidden)",
+  "ellipsis click",
+  "menu observation workflow (not a goal of this round)",
+  "any menu-item activation",
+  "Save All (Gate A or otherwise)",
+  "chooser",
+  "keyboard",
+  "scroll",
+  "AX write",
+  "bring-to-front",
+  "app acquisition",
+  "retry (any step)",
+  "second/double album-card click",
+  "download",
+  "destination write"
+ ],
+ "hard_budgets": {
+  "album_card": "0 or 1",
+  "second_album_card": 0,
+  "navigation": "0 or 1",
+  "retry": 0,
+  "ellipsis": 0,
+  "menu_item": 0,
+  "save_all": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "download": 0,
+  "destination_write": 0
+ },
+ "decision_rules": {
+  "A": "S1 not album-list (or target uncertain / count mismatch / LINE not frontmost / occluded / ambiguous) -> STOP; GUI input 0",
+  "B": "S2 binding FAIL or S3 frozen v6 != ELIGIBLE -> STOP; album-card 0",
+  "C": "click dispatched but frozen verifier != ALBUM_OPEN_VERIFIED -> composite FAIL -> STOP; no retry",
+  "D": "verifier ALBUM_OPEN_VERIFIED but v7 REFUSED -> ALBUM_OPEN_COMPOSITE_REFUSED (exact refusal reasons recorded) -> STOP; no retry",
+  "E": "verifier ALBUM_OPEN_VERIFIED AND v7 ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED -> ALBUM_OPEN_VERIFIED_COMPOSITE -> scoped next status READY_FOR_NEW_ELLIPSIS_AUTHORIZATION (Save All still 0)"
+ },
+ "stop_boundary": "After S6 the round stops unconditionally whether the composite PASSes or FAILs. frozen v5 is never executed. Ellipsis/menu-item/Save All/chooser/keyboard/scroll/AX-write/download remain unauthorized even on composite PASS; a real Save All click needs a further NEW owner one-shot authorization."
+}

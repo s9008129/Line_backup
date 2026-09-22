@@ -1,0 +1,60 @@
+{
+ "phase": "S2_frame_window_binding_and_stability",
+ "attempt": "attempt-17",
+ "recorded_at_local": "2026-09-22T16:53+0800",
+ "gui_inputs_sent": 0,
+ "ax_pre": {
+  "path": "s1-ax-pre.json",
+  "timestamp_local": "2026-09-22T16:50:00+08:00",
+  "sha256": "cbf959f08e391d7d0770cd55c49973ff88a699669ec0a19f3e2d6e5d87a50bb8"
+ },
+ "ax_post": {
+  "path": "s2-ax-post.json",
+  "timestamp_local": "2026-09-22T16:51:23+08:00",
+  "sha256": "e35509787bf02779d11e0aa296685c62018cc862eedf0e3cb3fa93046d880166"
+ },
+ "stability": {
+  "windows_identical": true,
+  "display_identical": true,
+  "pid_identical": true,
+  "note": "the only byte difference between the two AX JSONs is the read timestamp field; window list, display geometry and pid are identical"
+ },
+ "frame": {
+  "path": "frame-pre.png",
+  "sha256": "6b37df75a8aa1ac48466c1167178916cdf6f432c30f4b08fa332329c2443caed",
+  "size_px": [
+   2294,
+   1490
+  ],
+  "captured_at_local": "2026-09-22T16:51:22+0800"
+ },
+ "live_window_geometry": {
+  "path": "live-window-geometry.json",
+  "file_sha256": "f1a35c5e644d8d38ac5858e93403b05f7c4d6eae2ef384239e3a67958dc7ab59",
+  "rect_px": [
+   0,
+   66,
+   654,
+   1352
+  ],
+  "window_point_rect": [
+   0,
+   33,
+   327,
+   643
+  ],
+  "frame_sha256_inside_geometry_file": "6b37df75a8aa1ac48466c1167178916cdf6f432c30f4b08fa332329c2443caed",
+  "equals_this_round_frame": true
+ },
+ "binding": {
+  "validator": "tools/validate_live_geometry.py (sha256 ea4230e4...)",
+  "artifact": "geometry-binding.json",
+  "file_sha256": "40bc74e73e31fea59f138876a597f7fbaf0e8b469324f55564a98666e906efaa",
+  "dims_exact": true,
+  "mad_mean": 2.112,
+  "mad_mean_max": 12.0,
+  "verdict": "GEOMETRY_BINDING_PASS"
+ },
+ "verdict": "GEOMETRY_BINDING_PASS",
+ "note_timestamp_precision": "the `source` string inside live-window-geometry.json prints the 16:51:23 read time for BOTH reads (a labelling slip of the generator); the authoritative read timestamps are s1-ax-pre.json timestamp_local=2026-09-22T16:50:00+08:00 (pre) and s2-ax-post.json timestamp_local=2026-09-22T16:51:23+08:00 (post). The geometry file is left byte-unchanged because frozen v6 consumed it and embeds its source string."
+}

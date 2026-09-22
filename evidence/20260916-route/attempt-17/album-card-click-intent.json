@@ -1,0 +1,34 @@
+{
+ "phase": "S4_album_card_click_intent_pre_dispatch",
+ "recorded_at_local": "2026-09-22T16:52+0800",
+ "authorization": "owner one-shot ALBUM_REOPEN_ONLY (REV27B-ALBUM-REOPEN-AFTER-ATTEMPT16): NEW album-card click = 1 only if S1 album-list identity PASS AND S2 binding PASS AND S3 frozen v6 = ELIGIBLE AND surface unchanged",
+ "gates_passed_before_dispatch": {
+  "s1_album_list_identity": "PASS (s1-surface-revalidation.json: frontmost jp.naver.line.mac; window[0] (0,33) 327x643 focused+main; CU AX FULL_TREE 標準視窗/文字欄位/列表 0-100 of 101 items/捲軸; window screenshot + OCR tokens 旻謙允禎成長日記 / 相簿 / 記事本 / 2024/05/13~05/17 / 57; visual: album card with its own ⋮)",
+  "s2_fresh_frame_sha256": "6b37df75a8aa1ac48466c1167178916cdf6f432c30f4b08fa332329c2443caed",
+  "s2_ax_post_identical": true,
+  "geometry_binding": "GEOMETRY_BINDING_PASS (mad 2.112, dims exact 654x1286 crop vs 327x643 CU shot)",
+  "s3_frozen_v6_verdict": "ELIGIBLE (frame-bound; count MATCH 57; margins above/below 44/103 px >= sep_min 27)",
+  "preclick_freshness": "CU window screenshot byte-identical to binding-time shot (sha256 eac18de8806c23d9bc320a14a84ceda1a7b8add8d1ac832785021411386aab2a); AX pre-click read identical window list at 2026-09-22T16:52:08+0800; LINE frontmost",
+  "no_overlay_or_permission_prompt": "fresh pre-click CU window screenshot byte-identical to the binding-time shot (no overlay transition); no permission prompt observed"
+ },
+ "fresh_candidate_frame_px": [
+  39,
+  939
+ ],
+ "candidate_derivation": "frozen v6 (locate_album_card.py sha256 d55a974f...) on THIS round's frame-pre.png: title bbox [27,926,253,953] -> click_point = [tx0+12, (ty0+ty1)//2] = [39,939]; count_digits_read 57 MATCH; control ⋮ [607,939,611,964]; margins above/below 44/103 px >= sep_min 27",
+ "candidate_independence": "derived exclusively from this round's frame-pre.png (frame_sha256 6b37df75...) + this round's live-window-geometry.json; no historical candidate was read or reused ([39,923]/[39,926]/[39,932]/[304,50]/[305,50] are documentation only). x=39 numerically coincides with the historical card-candidate x because the title's left edge sits at the same place in the window; y=939 is this round's own value from the title's fresh bbox.",
+ "dispatch_plan": {
+  "api": "cua_repl: lineApp.click(Vec2, {mouseButton:'left', clickCount:1})",
+  "app": "jp.naver.line.mac (pid 21064)",
+  "window_screenshot_coords": [
+   19.5,
+   436.5
+  ],
+  "conversion": "window px = (frame px - rect origin px)/2 ; x: (39-0)/2=19.5 ; y: (939-66)/2=436.5 ; 1 CU window-screenshot px == 1 window pt (shot 327x643 px for 327x643 pt window; binding mad 2.112)",
+  "mouse_button": "left",
+  "click_count": 1
+ },
+ "historical_coordinates_used": false,
+ "retry_policy": "0 retries; a failed dispatch call is a stop condition, never retried; budget consumed once dispatched",
+ "dispatch_state_before_dispatch": "ALBUM_CARD_DISPATCH_NOT_ATTEMPTED"
+}

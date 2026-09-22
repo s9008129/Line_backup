@@ -1,0 +1,80 @@
+{
+ "phase": "S1_fresh_read_only_album_list_identity",
+ "attempt": "attempt-17",
+ "recorded_at_local": "2026-09-22T16:51+0800",
+ "gui_inputs_sent": 0,
+ "ax_read_pre": {
+  "tool": "/tmp/attempt17/ax_window_bounds (compiled from attempt-17/tools/ax_window_bounds.swift sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6; binary 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae)",
+  "evidence": "s1-ax-pre.json",
+  "tool_timestamp_local": "2026-09-22T16:50:00+08:00",
+  "result": "ax_api_trusted=true; ax_frontmost=true; frontmost_application=jp.naver.line.mac; pid 21064; window_count=2; window[0] (0,33) 327x643 is_ax_focused_window=true main=true title ''; window[1] (0,37) 1147x699 title 'LINE'; display 1147x745 pt, backing scale 2, capture 2294x1490 px",
+  "target_window_unambiguous": "exactly one main + is_ax_focused_window window; no duplicate geometry"
+ },
+ "cu_read": {
+  "tool": "cua_repl app handle bound to jp.naver.line.mac (read handle: 1 getApp call, zero state change, no launch/activation/bring-to-front); getAXState({disableDiffing:true}) + getScreenshot, both read-only, zero input",
+  "evidence": [
+   "s1-ax-state-cu.txt",
+   "cua-window-s1.jpg"
+  ],
+  "ax_form": "FULL_TREE (disableDiffing)",
+  "ax_summary": "Window \"\", App: LINE. -> 0 標準視窗 / 1 文字欄位 (settable, FOCUSED) / 2 列表 (showing 0-100 of 101 items) with row entries / 捲軸 (settable) / 關閉按鈕 / 縮到最小按鈕 / menu bar",
+  "ax_surface_class": "ALBUM-LIST surface class: LIST control + search TEXT FIELD + 101 list items + scroller present; NOT the chrome-only album-detail class",
+  "window_screenshot": {
+   "path": "cua-window-s1.jpg",
+   "size_px": [
+    327,
+    643
+   ],
+   "bytes": 65103,
+   "sha256": "eac18de8806c23d9bc320a14a84ceda1a7b8add8d1ac832785021411386aab2a",
+   "note": "327x643 px == focused window pt size (1 px = 1 pt)"
+  }
+ },
+ "fresh_full_screen_frame": {
+  "path": "frame-pre.png",
+  "sha256": "6b37df75a8aa1ac48466c1167178916cdf6f432c30f4b08fa332329c2443caed",
+  "size_px": [
+   2294,
+   1490
+  ],
+  "captured_with": "screencapture -x (silent, read-only, zero input)"
+ },
+ "window_space_ocr_read": {
+  "method": "read-only OCR of frame-pre.png crop at the focused window rect [0,33,327,643] pt (x2 px) downscaled to 327x643 via the frozen v5 macOS Vision reader (tools/v5/vision_reader.py sha256 22a4e9ef…, helper source 4fc9fa2b…)",
+  "artifact": "s1-window-ocr.json",
+  "tokens": [
+   "旻謙允禎成長日記",
+   "相簿",
+   "記事本",
+   "2024/05/13~05/17",
+   "57"
+  ],
+  "expected_tokens_present": {
+   "旻謙允禎成長日記": true,
+   "相簿": true,
+   "記事本": true,
+   "2024/05/13~05/17": true,
+   "57": true
+  }
+ },
+ "visual_observation": {
+  "method": "read-only visual read of cua-window-s1.jpg",
+  "observed": "group header 旻謙允禎成長日記; tabs 相簿 (selected) / 記事本; photo grid album card with caption 2024/05/13～05/17 + 57 and the card's own ⋮ at the card's right edge; green compose button bottom right",
+  "no_album_detail_markers": "no date-range header band, no back control, no photo-count header context"
+ },
+ "identity_checks": {
+  "app_bundle": "jp.naver.line.mac (PASS)",
+  "line_frontmost": "PASS (ax_frontmost=true; frontmost_application=jp.naver.line.mac)",
+  "current_target_window_unambiguous": "PASS (exactly one main + is_ax_focused_window window)",
+  "current_surface_is_album_list": "PASS — CU AX FULL_TREE (list + search field + 101 rows + scroller) AND visual (tabs 相簿/記事本 + album card) agree; this round's S1 success condition",
+  "group_旻謙允禎成長日記": "PRESENT (OCR conf 1.0; visual header)",
+  "target_album_2024_05_13_to_05_17": "PRESENT AS AN ALBUM-LIST CARD (OCR; visual caption below the photo grid)",
+  "count_57": "PRESENT (OCR '57' below the caption; visual)",
+  "target_card_fully_visible": "YES — the card (photo grid + caption strip + its ⋮) is fully inside the window; no clipping",
+  "no_unknown_overlay": "none observed",
+  "no_permission_prompt": "none observed",
+  "occlusion": "window unoccluded proven by S2 binding PASS (mad 2.112)"
+ },
+ "verdict": "S1_ALBUM_LIST_IDENTITY_PASS",
+ "action": "proceed to S2 (fresh frame/window binding)"
+}

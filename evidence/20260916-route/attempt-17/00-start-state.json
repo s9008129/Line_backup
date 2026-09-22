@@ -1,0 +1,132 @@
+{
+ "check": "attempt_17_start_state",
+ "captured_at_local": "2026-09-22T16:51+0800",
+ "branch_line": "## master...origin/master [ahead 15]",
+ "head": "e6ebf404c948fd382fa093572ab68fcede2ed547",
+ "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+ "ahead": 15,
+ "owner_expected_head": "e6ebf404c948fd382fa093572ab68fcede2ed547",
+ "owner_expected_ahead": 15,
+ "head_matches_owner_expectation": true,
+ "deviation_recorded": false,
+ "read_only_git_commands_used": [
+  "git status --porcelain=v1 --branch",
+  "git rev-parse HEAD",
+  "git rev-parse origin/master",
+  "git log -17 --oneline"
+ ],
+ "git_commands_forbidden_and_not_used": [
+  "fetch",
+  "pull",
+  "push",
+  "reset",
+  "rebase",
+  "amend",
+  "stash"
+ ],
+ "untracked_left_untouched": [
+  "evidence/20260916-route/attempt-11/",
+  "evidence/20260916-route/tools/v4/__pycache__/",
+  "evidence/20260916-route/tools/v5/__pycache__/",
+  "evidence/20260916-route/tools/v6/__pycache__/",
+  "evidence/20260916-route/tools/v6/selftest/__pycache__/"
+ ],
+ "lineage_from_git_log": "HEAD e6ebf404 (attempt-16, zero-GUI-input ellipsis round) <- 35a5b3d (attempt-15 timestamp closeout) <- aa08730 (attempt-15 evidence closeout) <- b1aa265 (attempt-15 ellipsis round) <- b2719cc (attempt-14 album reopen: composite ALBUM_OPEN_VERIFIED_COMPOSITE) <- ... <- a9e523e7 (origin/master) => ahead 15 == owner-stated expectation",
+ "authorization_scope_check": {
+  "artifact": "authorization-scope-check.json",
+  "verdict": "AUTHORIZATION_SCOPE_MATCH",
+  "authorization_type": "ALBUM_REOPEN_ONLY",
+  "frozen_v5_allowed": false,
+  "ellipsis_budget": 0,
+  "save_all_budget": 0
+ },
+ "frozen_tools_reverified_from_disk": {
+  "tools/v6/locate_album_card.py": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "tools/v6/locate_album_card.py_expected": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "tools/v5/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v4/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v5/verify_album_open.py_byte_identical_to_v4": true,
+  "tools/v5/vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+  "tools/vision/vision_ocr.swift": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32",
+  "tools/v7/album_detail_lineage_guard.py": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "tools/v5/locate_album_ellipsis.py (re-hashed for integrity ONLY; executing it is FORBIDDEN this round)": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418"
+ },
+ "frozen_tools_not_modified": "v4, v5, v6, v7, frozen album-open verifier, frozen vision reader/helper source — read-only this round; frozen v5 never executed",
+ "attempt_tools_copied_byte_identical_from_attempt16": {
+  "tools/ax_window_bounds.swift": {
+   "sha256": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+   "compiled_binary": "/tmp/attempt17/ax_window_bounds",
+   "compiled_binary_sha256": "1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae",
+   "compiled_binary_byte_identical_to_attempt_10_12_13_14_15_16": true
+  },
+  "tools/validate_live_geometry.py": {
+   "sha256": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68"
+  }
+ },
+ "attempt_slot": {
+  "selected": "attempt-17",
+  "reason": "attempt-17 did not exist; attempts 01-16 are not reopened and were never modified this round"
+ },
+ "environment_note_observed_at_S1_ax_pre": {
+  "line_pid": 21064,
+  "line_pid_at_attempt_14": 1030,
+  "line_pid_at_attempt_15": 21064,
+  "line_pid_at_attempt_16": 21064,
+  "line_restarted_since_attempt_14": true,
+  "line_restarted_since_attempt_15": false,
+  "ax_window_count_now": 2,
+  "windows_now": [
+   {
+    "index": 0,
+    "position_points": [
+     0,
+     33
+    ],
+    "size_points": [
+     327,
+     643
+    ],
+    "main": true,
+    "ax_focused": true,
+    "title": ""
+   },
+   {
+    "index": 1,
+    "position_points": [
+     0,
+     37
+    ],
+    "size_points": [
+     1147,
+     699
+    ],
+    "main": false,
+    "ax_focused": false,
+    "title": "LINE"
+   }
+  ],
+  "album_detail_window_present": false,
+  "meaning": "the attempt-14 album-detail window ([337,33] 327x643) is still absent; the focused 327x643 window at [0,33] carried the album-list surface at attempt-16 end. Whether its CONTENT is still album-list is decided freshly in S1 (CU AX + window screenshot + OCR + visual reads).",
+  "read_only_this_read": true
+ },
+ "historical_facts_preserved": {
+  "attempt_12": "one historical album-card click; frozen v6 ELIGIBLE; frozen album-open verifier ALBUM_OPEN_VERIFIED",
+  "attempt_13": "frozen v5 ELIGIBLE; one historical ellipsis click; menu observed; Save All 0",
+  "attempt_14": "one historical album-card reopening click; composite ALBUM_OPEN_VERIFIED_COMPOSITE; ellipsis 0",
+  "attempt_15": "zero-input round; frozen verifier false-positive ALBUM_OPEN_VERIFIED on the album-LIST surface; v7 REFUSED; composite REFUSED",
+  "attempt_16": "zero-input round; same album-list false positive; v7 REFUSED; ellipsis NOT_RUN; Save All 0",
+  "rev27_attempt_03": "frozen verifier ALBUM_OPEN_VERIFIED on an album-LIST surface; v7 replay REFUSED; the frozen verifier alone is never sufficient"
+ },
+ "gui_authorization": {
+  "kind": "owner one-shot authorization in the current user message (this round)",
+  "authorization_type": "ALBUM_REOPEN_ONLY",
+  "authorization_id": "REV27B-ALBUM-REOPEN-AFTER-ATTEMPT16",
+  "new_album_card_click_budget": 1,
+  "navigation_budget": 1,
+  "everything_else": 0,
+  "frozen_v5_ellipsis_locator": "explicitly forbidden this round",
+  "historical_album_card_clicks": 1,
+  "historical_ellipsis_clicks": 1,
+  "historical_inputs_reset": false
+ }
+}
