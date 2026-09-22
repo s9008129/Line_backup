@@ -1,0 +1,66 @@
+{
+ "artifact": "evidence/20260916-route/attempt-19/composite-decision.json",
+ "phase": "A5_composite_decision",
+ "recorded_at_local": "2026-09-22T18:17:20",
+ "gui_inputs_sent": 1,
+ "album_card_used": 1,
+ "ellipsis_used": 0,
+ "inputs": {
+  "window_pair": {
+   "pre": "a4-precheck-window-cu.jpg (byte-identical to s1-window-cu.jpg)",
+   "post": "a5-postclick-window-cu.jpg"
+  },
+  "frame_pair": {
+   "pre": "frame-s1.png",
+   "post": "frame-post.png"
+  }
+ },
+ "frozen_album_open_verifier": {
+  "tool": "tools/v5/verify_album_open.py",
+  "tool_sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "window_pair": {
+   "artifact": "a5-album-open-verify-window.json",
+   "exit_code": 0,
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "changed_fraction": 0.653688,
+   "count_digits_read": "57",
+   "count_text": "MATCH",
+   "title": [
+    "2024/05/13~05/17"
+   ]
+  },
+  "frame_pair": {
+   "artifact": "a5-album-open-verify-frame.json",
+   "exit_code": 0,
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "changed_fraction": 0.197949,
+   "count_text": "UNREADABLE",
+   "title": [
+    "2024/05/13~05/17"
+   ]
+  }
+ },
+ "v7_lineage_guard": {
+  "tool": "tools/v7/album_detail_lineage_guard.py",
+  "tool_sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "artifact": "a5-v7-lineage-guard.json",
+  "exit_code": 0,
+  "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+  "checks": {
+   "C0_SCHEMA": "PASS",
+   "C0_FRAME_SCALE": "PASS",
+   "C1_FRONTMOST": "PASS",
+   "C2_TARGET_UNIQUE": "PASS",
+   "C3_GEOMETRY_DOUBT": "PASS",
+   "C4_AX_SURFACE_CLASS": "PASS",
+   "C5_BINDING": "PASS",
+   "C6_HEADER_CONTEXT": "PASS"
+  },
+  "refusal_reasons": null
+ },
+ "composite_rule": "frozen album-open verifier == ALBUM_OPEN_VERIFIED AND lineage guard == ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED AND frozen post frame sha256 == this round's frame sha256",
+ "composite_verdict": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+ "composite_pass": true,
+ "false_positive_note": "the attempt-03/15/16/18 class false positive (frozen verifier alone ALBUM_OPEN_VERIFIED) is NOT treated as success; the v7 guard PASSes on the same current evidence chain: chrome-only AX FULL_TREE, no list controls/rows, focused_is_window, header context title 2024/05/13~05/17 + 57張照片, binding mad 2.232",
+ "next": "COMMON ELLIPSIS GATE (E1 stability -> E2 frozen v5 -> E3 at most one ellipsis click)"
+}

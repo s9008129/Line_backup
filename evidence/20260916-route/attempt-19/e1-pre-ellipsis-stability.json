@@ -1,0 +1,91 @@
+{
+ "artifact": "evidence/20260916-route/attempt-19/e1-pre-ellipsis-stability.json",
+ "phase": "E1_common_ellipsis_gate",
+ "recorded_at_local": "2026-09-22T18:18:37",
+ "gui_inputs_sent": 1,
+ "album_card_used": 1,
+ "ellipsis_used": 0,
+ "checks": {
+  "same_verified_detail_window": {
+   "ax_inventory": "e1-precheck-ax.json",
+   "frontmost": "jp.naver.line.mac",
+   "pid": 21064,
+   "windows": [
+    {
+     "pos": [
+      337,
+      49
+     ],
+     "size": [
+      327,
+      643
+     ],
+     "title": "",
+     "focused": true,
+     "main": true
+    },
+    {
+     "pos": [
+      0,
+      49
+     ],
+     "size": [
+      327,
+      643
+     ],
+     "title": "",
+     "focused": false,
+     "main": false
+    },
+    {
+     "pos": [
+      -1,
+      37
+     ],
+     "size": [
+      1147,
+      699
+     ],
+     "title": "LINE",
+     "focused": false,
+     "main": false
+    }
+   ],
+   "verdict": "PASS (focused+main [337,49] 327x643 detail window unchanged; same as composite-time a5-ax-post.json)"
+  },
+  "line_still_frontmost": {
+   "value": true,
+   "verdict": "PASS"
+  },
+  "no_surface_transition": {
+   "fresh_cu_shot": "e1-precheck-window-cu.jpg",
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "composite_time_shot": "a5-postclick-window-cu.jpg",
+   "composite_time_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+   "byte_identical": true,
+   "verdict": "PASS"
+  },
+  "no_overlay": {
+   "ax_state": "e1-precheck-ax-state.txt",
+   "ax_chrome_only": true,
+   "verdict": "PASS"
+  },
+  "geometry_still_consistent": {
+   "point_rect": [
+    337,
+    49,
+    327,
+    643
+   ],
+   "px_rect": [
+    674,
+    98,
+    654,
+    1286
+   ],
+   "verdict": "PASS"
+  }
+ },
+ "verdict": "E1_STABILITY_PASS",
+ "next": "E2 frozen v5 (one invocation on this verified frame)"
+}

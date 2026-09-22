@@ -1,0 +1,335 @@
+{
+ "schema_version": 1,
+ "artifact": "evidence/20260916-route/attempt-19/run-ledger.json",
+ "run_id": "20260922-route-attempt-19",
+ "route_attempt": 19,
+ "state": "CLOSED_AFTER_MENU_AFFIRMATIVE__READY_FOR_SAVE_ALL_GATE_A_AUTHORIZATION",
+ "runtime_provider": "codex-cli host shell (read-only AX tool /tmp/attempt19/ax_window_bounds, screencapture -x, frozen offline tools) + cua_repl session (read-only getApp handle / getAXState / getScreenshot; exactly one album-card click and one ellipsis click; no other input)",
+ "app_bundle": "jp.naver.line.mac",
+ "raw_group": "旻謙允禎成長日記",
+ "album": "2024/05/13～05/17",
+ "expected_count": 57,
+ "authorization": {
+  "artifact": "authorization-record.json",
+  "type": "ALBUM_REOPEN_THEN_ELLIPSIS",
+  "id": "REV27B-ROUTE-TO-MENU-AFTER-ATTEMPT18",
+  "scope": "one uninterrupted attempt: album-list -> <=1 album-card click -> composite -> <=1 ellipsis click -> menu observation -> STOP",
+  "album_card_budget": 1,
+  "album_card_used": 1,
+  "ellipsis_budget": 1,
+  "ellipsis_used": 1,
+  "retry": 0,
+  "menu_item": 0,
+  "save_all": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "download": 0,
+  "destination_write": 0
+ },
+ "gate_a_baseline": {
+  "head": "2d93e88148fb878fad69149919f320eeda99117a",
+  "owner_expected_head": "2d93e88148fb878fad69149919f320eeda99117a",
+  "head_match": true,
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "ahead": 17,
+  "owner_expected_ahead": 17,
+  "deviation": false,
+  "attempt_18_manifest": "36/36 byte-consistent from disk; attempt-18 immutable and not re-run; its unspent ellipsis budget NOT transferred"
+ },
+ "events": [
+  {
+   "seq": 1,
+   "phase": "S0_setup",
+   "action_class": "write_evidence",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:10+0800",
+   "event": "authorization scope check (ALBUM_REOPEN_THEN_ELLIPSIS; album_card 1; ellipsis 1; total GUI <=2; Save All/menu-item/chooser/keyboard/retry 0) -> AUTHORIZATION_SCOPE_MATCH; runbook scanned for forbidden activation tokens -> NO_MATCH; attempt-19 created (new unused slot); read-only tools copied byte-identical from attempt-18 + compiled to /tmp/attempt19/ax_window_bounds (1c34c62c…); frozen tool SHAs re-verified from disk incl. v5 ellipsis locator == 6a015ea6… (expected)",
+   "evidence": [
+    "authorization-scope-check.json",
+    "authorization-record.json",
+    "00-start-state.json",
+    "route-runbook.md"
+   ],
+   "result": "no mismatch; no historical attempt reopened"
+  },
+  {
+   "seq": 2,
+   "phase": "S1_read_only",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:11:05+08:00",
+   "event": "ax_window_bounds_readonly jp.naver.line.mac (pre) + CU AX FULL_TREE + CU window screenshot",
+   "evidence": [
+    "s1-ax-pre.json",
+    "s1-ax-state-cu.txt",
+    "s1-window-cu.jpg"
+   ],
+   "result": "frontmost=jp.naver.line.mac; pid 21064; window_count 2 ([0,49] 327x643 focused+main; [-1,37] 1147x699 LINE chat). AX: 文字欄位 + 列表 0-100 of 101 + rows + 捲軸 => list controls",
+   "finding": "the attempt-18 [15,55] extra window is gone; the focused window moved [0,33]->[0,49] (external change; zero input by this round)"
+  },
+  {
+   "seq": 3,
+   "phase": "S1_classification",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:11:47+08:00",
+   "event": "fresh full-screen frame + window-rect crop + frozen-reader OCR + visual read",
+   "evidence": [
+    "frame-s1.png",
+    "s1-window-crop.png",
+    "s1-window-ocr.json"
+   ],
+   "result": "OCR tokens 旻謙允禎成長日記 / 相簿 / 記事本 / 2024/05/13~05/17 / 57; no 張照片 token; visual: tabs 相簿/記事本 + album card caption + 57 + card ⋮ + green compose => ALBUM_LIST_VERIFIED (Branch A)",
+   "classification": "A"
+  },
+  {
+   "seq": 4,
+   "phase": "A2_binding",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:11:50+08:00",
+   "event": "AX post read + frame-SHA-bound live-window-geometry + validate_live_geometry",
+   "evidence": [
+    "s2-ax-post.json",
+    "live-window-geometry.json",
+    "geometry-binding.json",
+    "s2-frame-window-binding.json"
+   ],
+   "result": "AX pre/post identical except timestamp; GEOMETRY_BINDING_PASS (dims exact; mad 2.114 <= 12.0; minimum at zero shift); screenshot retries 0"
+  },
+  {
+   "seq": 5,
+   "phase": "A3_frozen_v6",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:14+0800",
+   "event": "exactly ONE frozen v6 locate_album_card.py invocation on THIS round's frame + frame-bound geometry",
+   "evidence": [
+    "album-card-locate-v6.json"
+   ],
+   "result": "ELIGIBLE (exit 0); click_point [42,988] frame px = title left edge + 12 px, title vertical centre of THIS frame's title bbox [30,976,257,1000]; count 57 MATCH; control ⋮ [607,989,611,1014]; margins above/below 43/104 >= sep_min 24"
+  },
+  {
+   "seq": 6,
+   "phase": "A4_preclick_gates",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:15+0800",
+   "event": "pre-click freshness re-read (CU window screenshot + AX inventory)",
+   "evidence": [
+    "a4-precheck-window-cu.jpg",
+    "a4-precheck-ax.json",
+    "album-card-click-intent.json"
+   ],
+   "result": "pre-click CU shot byte-identical to binding-time shot (b9be8bfc…); AX window list identical; frontmost; no overlay/permission prompt; candidate window-space [21,445]"
+  },
+  {
+   "seq": 7,
+   "phase": "A4_dispatch",
+   "action_class": "gui_input",
+   "gui_input": true,
+   "event": "EXACTLY ONE album-card left click via cua_repl lineApp.click([21,445], {mouseButton:'left', clickCount:1})",
+   "result": "dispatched 2026-09-22T10:15:47.871Z (=18:15:47.871+0800); returned 10:15:48.403Z; result undefined (no error); click_count=1; album-card budget consumed forever; no second click, no retry"
+  },
+  {
+   "seq": 8,
+   "phase": "A5_post_click_evidence",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:16:07+08:00",
+   "event": "fresh post-click CU window observation + full-screen frame + AX inventory + binding",
+   "evidence": [
+    "a5-postclick-ax-state.txt",
+    "a5-postclick-window-cu.jpg",
+    "frame-post.png",
+    "a5-ax-post.json",
+    "a5-frame-window-binding.json"
+   ],
+   "result": "a NEW focused+main window [337,49] 327x643 appeared (album-detail); AX FULL_TREE = 標準視窗 + 關閉/縮到最小 only (no list controls/rows); visual: header 2024/05/13～05/17 + 57張照片 + 2024.05.18 + album-level ⋮ top-right + photo grid; post-click binding GEOMETRY_BINDING_PASS (mad 2.228)"
+  },
+  {
+   "seq": 9,
+   "phase": "A5_verifier",
+   "action_class": "read",
+   "gui_input": false,
+   "event": "frozen album-open verifier on THIS round's pairs (window formal, frame supporting)",
+   "evidence": [
+    "a5-album-open-verify-window.json",
+    "a5-album-open-verify-frame.json"
+   ],
+   "result": "window pair = ALBUM_OPEN_VERIFIED (exit 0; changed_fraction 0.653688; count MATCH 57; title 2024/05/13~05/17); frame pair = ALBUM_OPEN_VERIFIED (exit 0; changed 0.197949; count UNREADABLE)"
+  },
+  {
+   "seq": 10,
+   "phase": "A5_v7_lineage",
+   "action_class": "read",
+   "gui_input": false,
+   "event": "approved v7 album_detail_lineage_guard.py on THIS round's post-click evidence",
+   "evidence": [
+    "a5-v7-lineage-guard.json"
+   ],
+   "result": "exit 0; ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED; C0-C6 all PASS; composite ALBUM_OPEN_VERIFIED_COMPOSITE_PASS; frozen frame pair bound (post_sha256 == frame-post.png)"
+  },
+  {
+   "seq": 11,
+   "phase": "A5_composite",
+   "action_class": "write_evidence",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:17+0800",
+   "event": "composite decision recorded",
+   "evidence": [
+    "composite-decision.json"
+   ],
+   "result": "ALBUM_OPEN_VERIFIED_COMPOSITE (window ALBUM_OPEN_VERIFIED AND frame ALBUM_OPEN_VERIFIED AND v7 lineage verified)"
+  },
+  {
+   "seq": 12,
+   "phase": "E1_stability",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:18+0800",
+   "event": "immediate pre-ellipsis stability check (fresh CU window screenshot + AX)",
+   "evidence": [
+    "e1-precheck-window-cu.jpg",
+    "e1-precheck-ax-state.txt",
+    "e1-precheck-ax.json",
+    "e1-pre-ellipsis-stability.json"
+   ],
+   "result": "E1_STABILITY_PASS: fresh CU shot byte-identical to composite-time shot (4cb8a6b4…); AX chrome-only detail; frontmost; geometry consistent [674,98,654,1286]"
+  },
+  {
+   "seq": 13,
+   "phase": "E2_frozen_v5",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:19+0800",
+   "event": "exactly ONE frozen v5 locate_album_ellipsis.py invocation on the verified detail window frame",
+   "evidence": [
+    "ellipsis-locate-v5.json",
+    "ellipsis-click-intent.json"
+   ],
+   "result": "ELIGIBLE (exit 0); dots [[304.5,44.0],[304.5,49.5],[304.5,55.0]] single header_band triple; click_point [304,50]; frame_sha256 4cb8a6b4… (THIS round's fresh capture). DOCUMENTED COINCIDENCE: this frame is byte-identical to attempt-13's historical cua-window-s1.jpg (deterministic rendering), so the numeric candidate coincides with historical [304,50]; derivation is from THIS round's frame only — no historical input read"
+  },
+  {
+   "seq": 14,
+   "phase": "E3_preclick",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:19:34+0800",
+   "event": "final pre-dispatch read: fresh CU window shot + fresh full-screen pre frame",
+   "evidence": [
+    "e2-preclick-window-cu.jpg",
+    "frame-menu-pre.png"
+   ],
+   "result": "preclick CU shot byte-identical to composite-time shot (4cb8a6b4…); frame-menu-pre.png captured (56959e94…)"
+  },
+  {
+   "seq": 15,
+   "phase": "E3_dispatch",
+   "action_class": "gui_input",
+   "gui_input": true,
+   "event": "EXACTLY ONE ellipsis left click via cua_repl lineApp.click([304,50], {mouseButton:'left', clickCount:1})",
+   "result": "dispatched 2026-09-22T10:19:43.889Z (=18:19:43.889+0800); returned 10:19:44.492Z; result undefined (no error); click_count=1; ellipsis budget consumed forever; no second click, no retry"
+  },
+  {
+   "seq": 16,
+   "phase": "MENU_capture",
+   "action_class": "read",
+   "gui_input": false,
+   "event": "post-click captures: full-screen post1 (+1.14 s), CU window post (+2.34 s), full-screen post2 (+3.49 s); no dismissals",
+   "evidence": [
+    "frame-menu-post1.png",
+    "cua-window-s6.jpg",
+    "frame-menu-post2.png",
+    "s6-capture-timeline.json"
+   ],
+   "result": "menu visible and persisting in both full-screen frames; CU window shot only shows the ellipsis active delta (popup layer not included)"
+  },
+  {
+   "seq": 17,
+   "phase": "MENU_observation",
+   "action_class": "read",
+   "gui_input": false,
+   "timestamp_local": "2026-09-22T18:21+0800",
+   "event": "frozen detect_menu_popup.py pair A (window) + pair B (screen) + region OCR + visual read",
+   "evidence": [
+    "s6-menu-pairA.json",
+    "s6-menu-pairB1.json",
+    "s6-menu-ocr.json",
+    "s6-menu-observation.json"
+   ],
+   "result": "pair A NOT_DETECTED (expected; popup not in window layer); pair B MENU_DETECTED (bbox [1245,163,1494,516]; ocr 選擇/項目/修改/儲存/刪除) => MENU_SURFACE_AFFIRMATIVELY_OBSERVED; OCR items 選擇項目/修改相簿名稱/儲存全部/刪除相簿/分享相簿 => 儲存全部 AFFIRMATIVELY_IDENTIFIED; no activation"
+  },
+  {
+   "seq": 18,
+   "phase": "STOP",
+   "action_class": "write_evidence",
+   "gui_input": false,
+   "event": "round closed at the authorization boundary",
+   "result": "scoped status READY_FOR_SAVE_ALL_GATE_A_AUTHORIZATION with Save All 0; menu left open for the owner; no Save All / chooser / download / keyboard / Escape / click-outside"
+  }
+ ],
+ "input_record_final": {
+  "gui_input_count": 2,
+  "album_card_click": 1,
+  "ellipsis_click": 1,
+  "retry_count": 0,
+  "ellipsis_locator_invocations": 1,
+  "v6_locator_invocations": 1,
+  "menu_item_inputs_used": 0,
+  "save_all_dispatch_attempted": false,
+  "save_all_budget": {
+   "budget": 0,
+   "used": 0
+  },
+  "chooser_interactions": 0,
+  "keyboard_inputs_used": 0,
+  "escape_inputs": 0,
+  "scroll_inputs": 0,
+  "ax_write_inputs": 0,
+  "bring_to_front_inputs": 0,
+  "app_read_handle_getApp_calls": 4,
+  "app_acquisition_state_changes": 0,
+  "screenshot_retries": 0,
+  "downloads": 0,
+  "destination_writes": 0,
+  "formal_state_writes": 0
+ },
+ "historical_reference_only": {
+  "historical_ellipsis_clicks": 2,
+  "historical_album_card_clicks": 3,
+  "historical_coordinates_never_used_as_input": [
+   [
+    39,
+    923
+   ],
+   [
+    39,
+    926
+   ],
+   [
+    39,
+    932
+   ],
+   [
+    304,
+    50
+   ],
+   [
+    305,
+    50
+   ]
+  ],
+  "note": "attempt-19's fresh album-card candidate [42,988] frame px and fresh ellipsis candidate [304,50] window space were both derived from this round's own frames; the ellipsis value numerically coincides with the historical value only because the detail surface renders byte-identically (documented in ellipsis-click-intent.json)"
+ },
+ "budget_consumed_forever": {
+  "album_card": true,
+  "ellipsis": true
+ },
+ "scoped_status": "READY_FOR_SAVE_ALL_GATE_A_AUTHORIZATION"
+}

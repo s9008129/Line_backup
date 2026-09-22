@@ -1,0 +1,71 @@
+{
+ "artifact": "evidence/20260916-route/attempt-19/album-card-click-intent.json",
+ "phase": "A4",
+ "recorded_at_local": "2026-09-22T18:15:22",
+ "authorization": "ALBUM_REOPEN_THEN_ELLIPSIS / REV27B-ROUTE-TO-MENU-AFTER-ATTEMPT18 (owner one-shot)",
+ "budget": {
+  "album_card_click": 1,
+  "this_dispatch_uses": 1,
+  "second_click": 0,
+  "retry": 0
+ },
+ "locator": {
+  "tool": "tools/v6/locate_album_card.py",
+  "tool_sha256": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "result_artifact": "album-card-locate-v6.json",
+  "verdict": "ELIGIBLE",
+  "invocations_before_dispatch": 1
+ },
+ "fresh_frame": {
+  "path": "frame-s1.png",
+  "sha256": "9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866"
+ },
+ "fresh_candidate_frame_px": [
+  42,
+  988
+ ],
+ "fresh_candidate_derivation": "v6 click_point_derivation: title left edge + 12 px, title vertical centre; from THIS frame's OCR title bbox [30,976,257,1000] (fresh, not historical)",
+ "window_point_rect": [
+  0,
+  49,
+  327,
+  643
+ ],
+ "frame_px_rect": [
+  0,
+  98,
+  654,
+  1384
+ ],
+ "click_conversion": "window_pt = (frame_px - rect_origin_px)/2",
+ "click_point_window_space": [
+  21.0,
+  445.0
+ ],
+ "pre_dispatch_checks": {
+  "binding": "GEOMETRY_BINDING_PASS",
+  "fresh_precheck_cu_shot_byte_identical_to_binding_shot": true,
+  "ax_window_inventory_unchanged": true,
+  "line_frontmost": true,
+  "surface_still_album_list": true
+ },
+ "dispatch": {
+  "dispatched": false,
+  "note": "to be dispatched exactly once immediately after this artifact is written"
+ },
+ "historical_coordinates_never_used": [
+  [
+   39,
+   923
+  ],
+  [
+   39,
+   926
+  ],
+  [
+   39,
+   932
+  ]
+ ],
+ "note": "the fresh candidate [42,988] frame px is numerically distinct from every historical card coordinate and was derived solely from this round's frame + geometry"
+}

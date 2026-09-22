@@ -1,0 +1,36 @@
+{
+ "phase": "A2/B frame-window binding and stability",
+ "attempt": "attempt-19",
+ "recorded_at_local": "2026-09-22T18:13+0800",
+ "gui_inputs_sent": 0,
+ "ax_pre": {"path": "s1-ax-pre.json", "timestamp_local": "2026-09-22T18:11:05+08:00", "sha256": "eb168e63cd98b0653492b64f7e800f9c236dff9a69baff93053b795d91824d61"},
+ "ax_post": {"path": "s2-ax-post.json", "timestamp_local": "2026-09-22T18:11:50+08:00", "sha256": "dc9a806774385bf54cd0ae98343e914142563741b42932910b60edf9a3e0056d"},
+ "stability": {
+  "windows_identical": true,
+  "display_identical": true,
+  "pid_identical": true,
+  "frontmost_identical": true,
+  "note": "the only byte difference between the two AX JSONs is the read timestamp field; window list, geometry, pid, frontmost all identical"
+ },
+ "frame": {"path": "frame-s1.png", "sha256": "9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866", "size_px": [2294, 1490], "captured_at_local": "2026-09-22T18:11:47+08:00"},
+ "cu_shot": {"path": "s1-window-cu.jpg", "sha256": "b9be8bfc60678c648740d567ced176909ea242e5ea12202dd2c8606fc6659ff1", "size_px": [327, 643]},
+ "live_window_geometry": {
+  "path": "live-window-geometry.json",
+  "rect_px": [0, 98, 654, 1384],
+  "window_point_rect": [0, 49, 327, 643],
+  "frame_sha256_inside_geometry_file": "9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866",
+  "equals_this_round_frame": true
+ },
+ "binding": {
+  "validator": "tools/validate_live_geometry.py (sha256 ea4230e4...)",
+  "artifact": "geometry-binding.json",
+  "window_index": 0,
+  "dims_exact": true,
+  "mad_mean": 2.114,
+  "mad_mean_max": 12.0,
+  "shift_minimum_at_zero": true,
+  "verdict": "GEOMETRY_BINDING_PASS"
+ },
+ "verdict": "GEOMETRY_BINDING_PASS",
+ "screenshot_retries": 0
+}

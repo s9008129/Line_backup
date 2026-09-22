@@ -1,0 +1,56 @@
+{
+ "artifact": "evidence/20260916-route/attempt-19/authorization-scope-check.json",
+ "recorded_at_local": "2026-09-22T18:10+0800",
+ "check": "authorization anti-replay scope check established BEFORE attempt creation and BEFORE any LINE input; runbook (route-runbook.md sha256 aaa4510424a1de0442da60e543bf77b6caed69d9f66bddede5f1ce71d4678fe6) scanned for forbidden activation tokens",
+ "authorization_type": "ALBUM_REOPEN_THEN_ELLIPSIS",
+ "authorization_id": "REV27B-ROUTE-TO-MENU-AFTER-ATTEMPT18",
+ "allowed": {
+  "frozen_v6_album_card_locator": true,
+  "album_card_budget": 1,
+  "frozen_v5_ellipsis_locator": true,
+  "ellipsis_budget": 1,
+  "max_total_gui_input": 2
+ },
+ "conditional_gates": {
+  "album_card_click_requires": "fresh current state = verified album-list (S1 class A) AND frozen v6 = ELIGIBLE",
+  "ellipsis_click_requires": "fresh ALBUM_OPEN_VERIFIED_COMPOSITE (frozen album-open verifier ALBUM_OPEN_VERIFIED AND v7 ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED from the same current evidence chain) AND frozen v5 = ELIGIBLE",
+  "required_between_them": "ALBUM_OPEN_VERIFIED_COMPOSITE"
+ },
+ "forbidden": {
+  "second_album_card_click": 0,
+  "second_ellipsis_click": 0,
+  "double_click": 0,
+  "retry_budget": 0,
+  "menu_item_budget": 0,
+  "save_all_budget": 0,
+  "chooser_budget": 0,
+  "keyboard_budget": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "download": 0,
+  "destination_write": 0
+ },
+ "runbook_scope_mismatch_triggers_checked": {
+  "save_all_activation_present_in_runbook": false,
+  "chooser_navigation_present_in_runbook": false,
+  "go_to_folder_present_in_runbook": false,
+  "path_entry_present_in_runbook": false,
+  "return_present_in_runbook": false,
+  "destination_confirm_present_in_runbook": false,
+  "download_completion_present_in_runbook": false,
+  "frozen_v4_ellipsis_fallback_present_in_runbook": false,
+  "historical_coordinate_as_input_present_in_runbook": false,
+  "second_click_or_retry_path_present_in_runbook": false
+ },
+ "runbook_forbidden_token_scan": {
+  "method": "grep -n -i -E 'save all activation|chooser navigation|go to folder|path entry|destination confirm|download completion' route-runbook.md",
+  "matches": 0,
+  "result": "NO_MATCH_forbidden_activation_tokens",
+  "residual_mentions_of_save_all_chooser_download_are_prohibitions_only": true
+ },
+ "verdict": "AUTHORIZATION_SCOPE_MATCH",
+ "note": "one uninterrupted attempt; at most one conditional album-card reopening click (Branch A only) and at most one conditional album-level ellipsis click (after composite PASS); no Save All / chooser / Go to Folder / path entry / Return / destination confirm / download anywhere in the pre-declared runbook or execution plan"
+}

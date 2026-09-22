@@ -1,0 +1,68 @@
+{
+ "artifact": "evidence/20260916-route/attempt-19/authorization-record.json",
+ "recorded_at_local": "2026-09-22T18:10+0800",
+ "source": "owner message (this round), one-shot authorization",
+ "authorization_type": "ALBUM_REOPEN_THEN_ELLIPSIS",
+ "authorization_id": "REV27B-ROUTE-TO-MENU-AFTER-ATTEMPT18",
+ "verbatim_owner_scope": [
+  "它取代「album reopen 與 ellipsis 必須分成兩個不同 Codex 回合」的做法，原因是 live evidence 已重複證明：attempt-17 結束時 album-detail 已正確開啟，但 attempt-18 開始前 LINE 又自行回到 album-list。",
+  "因此本次授權允許在「同一個 uninterrupted attempt」內，依 fresh current state 條件式完成：album-list → 最多一次 album-card reopening click → composite verification → 最多一次 ellipsis click → menu observation → STOP",
+  "這不是 Save All authorization。",
+  "album_card_click <= 1 / ellipsis_click <= 1 / 最大總 GUI input <= 2",
+  "album-card click 只有在 fresh current state = verified album-list 且 frozen v6 = ELIGIBLE 時才可用。",
+  "ellipsis click 只有在 fresh current state 已經得到 ALBUM_OPEN_VERIFIED_COMPOSITE 且 frozen v5 = ELIGIBLE 時才可用。",
+  "任何一個 GUI dispatch 發生後，其 budget 永久消費。不得因 failure 再點一次。",
+  "attempt-18 未消費的 ellipsis budget 不得移轉。本授權是一個全新的 authorization。"
+ ],
+ "hard_budget": {
+  "album_card_click_max": 1,
+  "ellipsis_click_max": 1,
+  "max_total_gui_input": 2,
+  "second_album_card_click": 0,
+  "second_ellipsis_click": 0,
+  "retry": 0,
+  "double_click": 0,
+  "menu_item_click": 0,
+  "save_all": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "download": 0,
+  "destination_write": 0
+ },
+ "gate_a_baseline_from_owner": {
+  "owner_known_head": "2d93e88148fb878fad69149919f320eeda99117a",
+  "expected_ahead": 17,
+  "owner_note": "不要把 prompt 中 origin/master 的手抄 SHA 當真；由 disk 唯讀取得完整值。HEAD 不符 2d93e881 時僅在可由 owner-authorized append-only evidence commits 完整解釋時才可繼續，否則 STOP。"
+ },
+ "decision_matrix": {
+  "S1_A_album_list": "fresh binding -> frozen v6 (must be ELIGIBLE) -> exactly one album-card click -> fresh post-click composite verification -> if PASS continue IN THE SAME ROUND to ellipsis gate; do not end the round",
+  "S1_B_detail_candidate": "album_card_used = 0; no card click; fresh binding + composite directly; if composite FAIL STOP and NEVER fall back to clicking a card as repair",
+  "S1_C_ambiguous_or_other": "STOP, GUI input 0, no bring-to-front",
+  "v6_not_eligible": "STOP, GUI 0",
+  "composite_fail_after_album_click": "STOP, GUI 1, no retry",
+  "composite_fail_at_start_detail": "STOP, GUI 0",
+  "composite_pass_v5_not_eligible": "STOP, ellipsis 0, no v4 fallback / no threshold change / no retry",
+  "ellipsis_dispatched_menu_not_affirmative": "STOP, no second ellipsis click",
+  "menu_affirmative_with_save_all_identified": "READY_FOR_SAVE_ALL_GATE_A_AUTHORIZATION with Save All still 0, then STOP",
+  "any_surface_change_or_unknown_competing_window": "STOP"
+ },
+ "hard_rule_false_positive": {
+  "statement": "frozen verifier ALBUM_OPEN_VERIFIED 永遠不能單獨授權 v5 或 ellipsis；必須有同一 current evidence chain 的 v7 = ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED（ALBUM_OPEN_VERIFIED_COMPOSITE）。",
+  "applies_to": ["attempt-03", "attempt-15", "attempt-16", "attempt-18"]
+ },
+ "known_state_at_round_start": {
+  "local_head": "2d93e88148fb878fad69149919f320eeda99117a",
+  "attempt_18": "completed; S1 album-list; frozen verifier false positive; v7 REFUSED; composite REFUSED; GUI input 0; committed 2d93e88",
+  "attempt_17": "completed; one album-card reopening click; composite ALBUM_OPEN_VERIFIED_COMPOSITE; frozen v5 never invoked; immutable",
+  "attempt_18_unspent_ellipsis_budget_transferred": false,
+  "save_all_dispatch": 0,
+  "chooser": 0,
+  "download": 0
+ },
+ "stop_boundary": "MENU OBSERVATION 後無條件 STOP；即使「儲存全部」清楚可讀也不得 activation；真正 Save All click 必須由 owner 再發新的 one-shot authorization。"
+}

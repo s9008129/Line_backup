@@ -1,0 +1,61 @@
+{
+ "artifact": "evidence/20260916-route/attempt-19/surface-classification.json",
+ "phase": "S1 (read-only)",
+ "recorded_at_local": "2026-09-22T18:13+0800",
+ "gui_inputs_sent_at_S1": 0,
+ "app_bundle": "jp.naver.line.mac",
+ "line_pid": 21064,
+ "line_pid_at_attempt_18": 21064,
+ "line_restarted_since_attempt_18": false,
+ "line_frontmost": true,
+ "frontmost_evidence": {
+  "ax_tool_frontmost_application": "jp.naver.line.mac",
+  "ax_tool_ax_frontmost": true,
+  "menu_bar_visual": "LINE / 顯示 / 好友 / 視窗 / 常見問題 (LINE is the active app)"
+ },
+ "windows_observed": {
+  "window_count": 2,
+  "focused_main_target": {"index": 0, "position_points": [0, 49], "size_points": [327, 643], "title": "", "is_ax_focused_window": true, "main": true, "role": "AXWindow/AXStandardWindow"},
+  "other_line_window": {"index": 1, "position_points": [-1, 37], "size_points": [1147, 699], "title": "LINE", "class": "wide LINE group-chat window (same object as prior rounds' wide window; partially covered by the harness terminal; does not carry the album-list and is not a competing target)"},
+  "delta_vs_attempt_18": "attempt-18 had 3 windows: [0,33] focused+main, an uncharacterized [15,55] same-size window, and [0,37] 1147x699 'LINE'. Now 2 windows: the [15,55] window is absent; the focused+main window is at [0,49] (moved down 16pt). External change between rounds; zero input sent by this round.",
+  "unresolved_competing_target_windows": false
+ },
+ "target_identity": {
+  "group": "旻謙允禎成長日記",
+  "album": "2024/05/13～05/17",
+  "expected_count": 57,
+  "album_range_present": true,
+  "count_57_present": true,
+  "group_title_present": true
+ },
+ "ax_structure_focused_window": {
+  "has_text_field": true,
+  "text_field_detail": "1 文字欄位 (settable)",
+  "has_list_control": true,
+  "list_detail": "2 列表 (showing 0-100 of 101 items)",
+  "rows_present": true,
+  "row_count_reported": 101,
+  "has_scrollbar": true,
+  "focused_ui_element": "2 列表"
+ },
+ "visual_and_ocr_evidence": {
+  "frame": "frame-s1.png",
+  "frame_sha256": "9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866",
+  "window_shot": "s1-window-cu.jpg",
+  "window_shot_sha256": "b9be8bfc60678c648740d567ced176909ea242e5ea12202dd2c8606fc6659ff1",
+  "ocr_tokens": ["旻謙允禎成長日記", "相簿", "記事本", "2024/05/13~05/17", "57"],
+  "ocr_photo_count_context_token_張照片": "absent",
+  "visual_read": "window header 旻謙允禎成長日記 with collapse icon; tabs 相簿 (selected, underlined) / 記事本; 2x2 photo grid of the album card; card caption 2024/05/13～05/17 with count 57 and the card's own ⋮ at the caption row; green compose button bottom-right => album-LIST surface, NOT album-detail",
+  "list_controls_confirmed_in_ax": true
+ },
+ "occlusion_and_prompt_state": {
+  "unknown_overlay": false,
+  "permission_prompt": false,
+  "target_window_occluded": false,
+  "note": "the harness terminal window and the wide LINE group-chat window are beside/behind; the target album-list window (x px 0..654) is fully visible and on top; the bottom-of-screen banner 點連結給出 LINE 認證碼恐被盜 is a chat-message element of the wide LINE chat window below the target, not an overlay on the target"
+ },
+ "classification_rule_applied": "runbook item 2 rule A: AX list controls (列表/文字欄位) with rows AND window screenshot/OCR show the group's album-list (tabs 相簿/記事本, card caption 2024/05/13～05/17 + 57, card ⋮)",
+ "classification": "ALBUM_LIST_VERIFIED",
+ "branch": "A",
+ "next": "Branch A: fresh album-list geometry binding (already captured: s1-ax-pre 18:11:05 -> frame-s1.png 18:11:47 -> s2-ax-post 18:11:50) -> frozen v6 -> at most one album-card click"
+}

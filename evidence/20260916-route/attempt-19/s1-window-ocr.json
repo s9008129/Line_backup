@@ -1,0 +1,99 @@
+{
+ "tool": "read_only_window_ocr (frozen v5 locate_album_card.ocr_words / macOS Vision reader)",
+ "source_frame": "frame-s1.png",
+ "source_frame_sha256": "9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "b45aca6dfc77c7038a3f26289dbb4ebe98734e474f3f7ae116acfb51acee3b21",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "44154a7fa457900b16ee0f557689fcab79d2acf7e6205c94757272ba662801ab",
+    "stdout_bytes": 217,
+    "lines_parsed": 5
+   }
+  ]
+ },
+ "window": {
+  "focused": false,
+  "index": 0,
+  "is_ax_focused_window": true,
+  "main": true,
+  "minimized": false,
+  "position_points": [
+   0,
+   49
+  ],
+  "role": "AXWindow",
+  "size_points": [
+   327,
+   643
+  ],
+  "subrole": "AXStandardWindow",
+  "title": ""
+ },
+ "rect_px": [
+  0,
+  98,
+  654,
+  1384
+ ],
+ "ocr_words_seen": [
+  "旻謙允禎成長日記",
+  "相簿",
+  "2024/05/13~05/17",
+  "57",
+  "記事本"
+ ],
+ "word_records": [
+  {
+   "text": "旻謙允禎成長日記",
+   "conf": 1.0,
+   "x": 230.0,
+   "y": 89.66666666666667,
+   "w": 194.0,
+   "h": 28.0
+  },
+  {
+   "text": "相簿",
+   "conf": 0.5,
+   "x": 136.33333333333334,
+   "y": 160.66666666666666,
+   "w": 50.666666666666664,
+   "h": 26.333333333333332
+  },
+  {
+   "text": "2024/05/13~05/17",
+   "conf": 0.5,
+   "x": 31.666666666666668,
+   "y": 878.6666666666666,
+   "w": 224.33333333333334,
+   "h": 26.0
+  },
+  {
+   "text": "57",
+   "conf": 1.0,
+   "x": 31.666666666666668,
+   "y": 914.0,
+   "w": 30.0,
+   "h": 22.333333333333332
+  },
+  {
+   "text": "記事本",
+   "conf": 1.0,
+   "x": 450.3333333333333,
+   "y": 160.66666666666666,
+   "w": 74.66666666666667,
+   "h": 26.333333333333332
+  }
+ ],
+ "gui_input": false
+}

@@ -1,0 +1,152 @@
+{
+ "tool": "detect_menu_popup",
+ "pre": "frame-menu-pre.png",
+ "post": "frame-menu-post1.png",
+ "params": {
+  "delta": 12,
+  "min_w": 40,
+  "min_h": 20,
+  "min_pixels": 200,
+  "min_strings": 2,
+  "min_strlen": 2
+ },
+ "pre_sha256": "56959e940b6a0a3f37fbd83b77e9bf7f2b557f63a114a837b088efb7720ce7be",
+ "post_sha256": "e321069d86d04f2017e3a972a013fedcac51195ba1e4ba1d9e61df476f8169a2",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "changed_pixels_total": 80051,
+ "components": [
+  {
+   "bbox": [
+    1245,
+    163,
+    1494,
+    516
+   ],
+   "pixels": 55459,
+   "w": 249,
+   "h": 353
+  },
+  {
+   "bbox": [
+    12,
+    952,
+    74,
+    1017
+   ],
+   "pixels": 2980,
+   "w": 62,
+   "h": 65
+  },
+  {
+   "bbox": [
+    1402,
+    336,
+    1426,
+    361
+   ],
+   "pixels": 365,
+   "w": 24,
+   "h": 25
+  },
+  {
+   "bbox": [
+    1429,
+    303,
+    1453,
+    327
+   ],
+   "pixels": 357,
+   "w": 24,
+   "h": 24
+  },
+  {
+   "bbox": [
+    1377,
+    302,
+    1401,
+    327
+   ],
+   "pixels": 354,
+   "w": 24,
+   "h": 25
+  },
+  {
+   "bbox": [
+    1351,
+    302,
+    1374,
+    327
+   ],
+   "pixels": 294,
+   "w": 23,
+   "h": 25
+  },
+  {
+   "bbox": [
+    1468,
+    338,
+    1491,
+    361
+   ],
+   "pixels": 294,
+   "w": 23,
+   "h": 23
+  },
+  {
+   "bbox": [
+    1403,
+    302,
+    1425,
+    327
+   ],
+   "pixels": 236,
+   "w": 22,
+   "h": 25
+  },
+  {
+   "bbox": [
+    1546,
+    726,
+    1559,
+    742
+   ],
+   "pixels": 177,
+   "w": 13,
+   "h": 16
+  },
+  {
+   "bbox": [
+    1588,
+    726,
+    1601,
+    742
+   ],
+   "pixels": 170,
+   "w": 13,
+   "h": 16
+  }
+ ],
+ "chosen_bbox": [
+  1245,
+  163,
+  1494,
+  516
+ ],
+ "ocr_status": "OK",
+ "ocr_strings": [
+  "選擇",
+  "項目",
+  "修改",
+  "儲存",
+  "刪除"
+ ],
+ "verdict": "MENU_DETECTED",
+ "reason": "new region plus transcribed menu strings"
+}

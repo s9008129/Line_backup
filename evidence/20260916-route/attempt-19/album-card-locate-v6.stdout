@@ -1,0 +1,297 @@
+{
+ "tool": "locate_album_card_v6",
+ "tool_sha256": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+ "scope": "album-card S3 safety location only; offline evidence; never dispatched",
+ "frame": "frame-s1.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "constants": {
+  "content_diff": 60,
+  "band_frac_threshold": 0.45,
+  "band_min_rows": 20,
+  "strip_frac_max": 0.3,
+  "strip_min_rows": 40,
+  "bg_mad_max": 5.0,
+  "sep_min": "max(24, title_height * 1.0)",
+  "roi_inset_px": 8,
+  "roi_right_tail_px": 120,
+  "roi_candidate_margin_px": 16,
+  "control_max_wh": [
+   48,
+   80
+  ],
+  "control_min_gap_px": 100,
+  "cluster_min_px": 5,
+  "cluster_merge_gap": 12,
+  "scan_range_px": 500
+ },
+ "provenance": {
+  "title_count_logic_copied_from": {
+   "path": "evidence/20260916-route/tools/v4/locate_album_card.py",
+   "sha256": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162"
+  },
+  "reader": {
+   "module": "evidence/20260916-route/tools/v4/vision_reader.py",
+   "sha256": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8"
+  },
+  "historical_coordinates_used": false,
+  "fallback_to_v4_candidate": false
+ },
+ "frame_sha256": "9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866",
+ "frame_bytes": 1928790,
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "title": {
+  "texts": [
+   "202405/13~05/17"
+  ],
+  "bbox": [
+   30,
+   976,
+   257,
+   1000
+  ]
+ },
+ "ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "202405/13~05/17",
+  "57",
+  "十",
+  "點連結給出 LINE 認證碼恐被盜",
+  "27°C",
+  "00",
+  "9月22日週二 18:11",
+  "旻謙允禎成長日記（3）",
+  "Q",
+  "目",
+  "•",
+  "5 湘湘這禮拜開始星期二、四上到5點，弟弟他們星期一～四都是到4點，",
+  "•• • Line_backup —：Line_backup - codex -m deepseek-v4.1-flash --sand...",
+  "...n_txt —-zsh",
+  "..\"max\"、node",
+  "...X\"• node",
+  ".ermetrics",
+  "十",
+  "\"seq\"：7，",
+  "+51 lines（ctrl + t to view transcript）",
+  "0，",
+  "66，",
+  "Ran cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/",
+  "evidence/20260916-route/attempt-18 &&",
+  "echo \"=== geometry-binding.json ===\"",
+  "&& cat geometry-binding.json && echo",
+  "\"=== s2-frame-window-binding.json",
+  ". +2 lines",
+  "=== geometry-binding.json ===",
+  "｛",
+  "+158 lines（ctrl + t to view transcript）",
+  "\"generated_at_local\"：\"2026-09-22T17:43+0800\"",
+  "• Let",
+  "me run",
+  "it",
+  "and then immediately AX post. （3m 11s • esc to interrupt）",
+  "Ask Codex",
+  "to",
+  "do anything",
+  "deepseek-v4.1-flash",
+  "max• ~/Documents/ChatGPT/Line_backup Pursuing goal （3m）",
+  "下午 12:32",
+  "輸入訊息",
+  "©"
+ ],
+ "window_geometry": {
+  "path": "live-window-geometry.json",
+  "rect": [
+   0,
+   98,
+   654,
+   1384
+  ],
+  "source": "read-only AX window-bounds observation of the FOCUSED LINE window index 0 (title '', role AXWindow/AXStandardWindow, main=True, is_ax_focused_window=True, pid 21064) via evidence/20260916-route/attempt-19/tools/ax_window_bounds.swift (sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6) / binary sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae, read at 2026-09-22T18:11:05+08:00 (pre) and 2026-09-22T18:11:50+08:00 (post, identical window list); position_points [0, 49], size_points [327, 643] x capture scale 2 = frame device-pixel rect; bound to THIS frame's SHA-256; NOT historical geometry",
+  "frame_sha256": "9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866",
+  "raw": {
+   "x0": 0,
+   "y0": 98,
+   "x1": 654,
+   "y1": 1384,
+   "source": "read-only AX window-bounds observation of the FOCUSED LINE window index 0 (title '', role AXWindow/AXStandardWindow, main=True, is_ax_focused_window=True, pid 21064) via evidence/20260916-route/attempt-19/tools/ax_window_bounds.swift (sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6) / binary sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae, read at 2026-09-22T18:11:05+08:00 (pre) and 2026-09-22T18:11:50+08:00 (post, identical window list); position_points [0, 49], size_points [327, 643] x capture scale 2 = frame device-pixel rect; bound to THIS frame's SHA-256; NOT historical geometry",
+   "frame_sha256": "9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866",
+   "coordinate_space": "full-screen capture device pixels (screencapture -x at 2x); the window ROI and any click point share this space",
+   "window_point_rect": [
+    0,
+    49,
+    327,
+    643
+   ],
+   "transform": {
+    "formula": "frame_px = window_pt * 2",
+    "scale": 2,
+    "provenance": "NSScreen.backingScaleFactor=2 and display bounds [0, 0, 1147, 745] pt vs CG display pixels [2294, 1490], read by the same read-only AX tool"
+   },
+   "frame_size_px": [
+    2294,
+    1490
+   ],
+   "generated_from": "this run's fresh read-only AX observation of the FOCUSED LINE window (attempt-19)",
+   "gui_inputs_sent": 0,
+   "attempt": "19",
+   "generated_at_local": "2026-09-22T18:12+0800"
+  }
+ },
+ "coordinate_space": "current-frame screenshot pixels (device pixels of the full-screen capture); window ROI and click_point share this space",
+ "click_point": [
+  42,
+  988
+ ],
+ "click_point_derivation": "title left edge + 12 px, title vertical centre",
+ "candidate_bounds": {
+  "title_width_px": 227,
+  "candidate_x": 42,
+  "roi_left_margin_px": 42,
+  "roi_right_margin_px": 612
+ },
+ "identity": {
+  "title_bbox": [
+   30,
+   976,
+   257,
+   1000
+  ],
+  "title_inset_px": {
+   "left": 30,
+   "top": 878,
+   "right": 397,
+   "bottom": 384
+  },
+  "count_box": [
+   22,
+   1002,
+   190,
+   1032
+  ],
+  "roi_right_tail_px": 397
+ },
+ "count_box": [
+  22,
+  1002,
+  190,
+  1032
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "background": {
+  "sample_rect": [
+   281,
+   976,
+   341,
+   1000
+  ],
+  "color": [
+   45,
+   46,
+   48
+  ],
+  "mad": 0.0
+ },
+ "structure": {
+  "scan_y_range": [
+   488,
+   1383
+  ],
+  "above_band_runs": [
+   [
+    488,
+    651
+   ],
+   [
+    654,
+    945
+   ]
+  ],
+  "below_band_runs": [
+   [
+    1092,
+    1383
+   ]
+  ],
+  "above_band_bottom_row": 945,
+  "below_band_top_row": 1092
+ },
+ "margins": {
+  "margin_above_px": 43,
+  "margin_below_px": 104,
+  "sep_min_px": 24,
+  "rule": "max(24, round(title_height*1.0))",
+  "title_height_px": 24
+ },
+ "strip": {
+  "rows_total": 146,
+  "rows_kept": 146,
+  "frac_max_used": 0.3,
+  "clusters": [
+   {
+    "bbox": [
+     607,
+     989,
+     611,
+     1014
+    ],
+    "width": 5,
+    "height": 26,
+    "px": 56
+   }
+  ]
+ },
+ "control": {
+  "control_width_px": 5,
+  "control_height_px": 26,
+  "gap_right_of_title_px": 350,
+  "gap_left_of_candidate_px": 565
+ },
+ "verdict": "ELIGIBLE",
+ "dispatch": {
+  "dispatched": false,
+  "note": "offline evidence only; no input was sent"
+ },
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "b45aca6dfc77c7038a3f26289dbb4ebe98734e474f3f7ae116acfb51acee3b21",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "2f8bb2df3e55249410ecc3e3af6db989036ebc5deebbf00f3128a5754707c184",
+    "stdout_bytes": 2796,
+    "lines_parsed": 52
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "b527622263a28dec3b42fc1f385fe8efcf94ee2d2a0f816abe99d13b455d1685",
+    "stdout_bytes": 33,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}

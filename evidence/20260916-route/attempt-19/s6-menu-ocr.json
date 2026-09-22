@@ -1,0 +1,37 @@
+{
+ "tool": "manual_read_only_ocr_of_menu_region",
+ "gui_input": false,
+ "source_frame": "evidence/20260916-route/attempt-19/frame-menu-post1.png",
+ "source_frame_sha256": "e321069d86d04f2017e3a972a013fedcac51195ba1e4ba1d9e61df476f8169a2",
+ "region_px": [
+  1245,
+  163,
+  1494,
+  516
+ ],
+ "method": "PIL crop -> 3x LANCZOS upscale -> tesseract -l chi_tra+eng --psm 6 (same preprocessing family as the frozen detect_menu_popup.py OCR)",
+ "tesseract_exit": 0,
+ "raw_stdout_lines": [
+  ">",
+  "選擇項目",
+  "修改相簿名稱",
+  "儲存全部",
+  "刪除相簿",
+  "分享相簿"
+ ],
+ "menu_items_read_top_to_bottom": [
+  "選擇項目",
+  "修改相簿名稱",
+  "儲存全部",
+  "刪除相簿",
+  "分享相簿"
+ ],
+ "save_all_localized_equivalent": {
+  "text": "儲存全部",
+  "meaning": "Save All",
+  "affirmatively_identified_in_menu": true,
+  "clicked": false,
+  "dispatch_attempted": false
+ },
+ "note": "lines starting with a cursor glyph (the menu opened under the pointer) are not menu items"
+}

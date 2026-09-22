@@ -1,0 +1,60 @@
+{
+ "artifact": "evidence/20260916-route/attempt-19/ellipsis-click-intent.json",
+ "phase": "E3_ellipsis_click_intent_pre_dispatch",
+ "recorded_at_local": "2026-09-22T18:19+0800",
+ "authorization": "ALBUM_REOPEN_THEN_ELLIPSIS / REV27B-ROUTE-TO-MENU-AFTER-ATTEMPT18; ellipsis_budget 1, consumed only now",
+ "gates_passed_before_dispatch": {
+  "fresh_composite": "ALBUM_OPEN_VERIFIED_COMPOSITE (frozen verifier window pair ALBUM_OPEN_VERIFIED + frame pair ALBUM_OPEN_VERIFIED supporting; v7 ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED exit 0; composite-decision.json)",
+  "e1_stability": "E1_STABILITY_PASS (e1-pre-ellipsis-stability.json; fresh CU shot byte-identical to composite-time shot 4cb8a6b4...)",
+  "frozen_v5": "ELIGIBLE (exit 0; ellipsis-locate-v5.json)"
+ },
+ "locator": {
+  "tool": "tools/v5/locate_album_ellipsis.py",
+  "tool_sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "invocations": 1,
+  "input_frame": "a5-postclick-window-cu.jpg",
+  "input_frame_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "input_frame_captured_at": "2026-09-22T18:15:49+0800 (this round, immediately after this round's album-card click)",
+  "title_bbox_input": [
+   15,
+   83,
+   204,
+   111
+  ],
+  "title_bbox_source": "this round's window-space frozen verifier post title bbox (a5-album-open-verify-window.json)",
+  "verdict": "ELIGIBLE",
+  "exit_code": 0
+ },
+ "fresh_candidate_window_space": [
+  304,
+  50
+ ],
+ "fresh_candidate_derivation": "dots detected from THIS frame's pixels: triple [[304.5,44.0],[304.5,49.5],[304.5,55.0]] classified region=header_band (single header-band triple; other triples inside_text); click_point = rounded middle dot (304.5,49.5) -> [304,50]; NOT read from any historical artifact",
+ "candidate_independence_and_documented_coincidence": {
+  "statement": "the fresh value [304,50] numerically coincides with the historical ellipsis coordinates [304,50]/[305,50]; it was produced by this round's own single frozen-v5 run on this round's fresh frame",
+  "byte_identity_fact": "this round's fresh detail-window CU frame (a5-postclick-window-cu.jpg) is byte-identical (sha256 4cb8a6b4...) to attempt-13's historical cua-window-s1.jpg; the album-detail surface renders deterministically, so identical pixels produce an identical candidate. No historical frame, coordinate, or result was used as an input to this round's derivation.",
+  "historical_coordinates_never_used": [
+   [
+    304,
+    50
+   ],
+   [
+    305,
+    50
+   ]
+  ]
+ },
+ "dispatch_plan": {
+  "api": "cua_repl: lineApp.click(Vec2, {mouseButton:'left', clickCount:1})",
+  "app": "jp.naver.line.mac (pid 21064)",
+  "window_space": [
+   304,
+   50
+  ],
+  "coordinate_space": "read-only CU window screenshot pixels (1 px = 1 pt of the focused window)",
+  "mouse_button": "left",
+  "click_count": 1
+ },
+ "retry_policy": "0 retries; a failed dispatch call is a stop condition, never retried; ellipsis budget consumed forever once dispatched",
+ "dispatch_state_before_dispatch": "ELLIPSIS_DISPATCH_NOT_ATTEMPTED"
+}
