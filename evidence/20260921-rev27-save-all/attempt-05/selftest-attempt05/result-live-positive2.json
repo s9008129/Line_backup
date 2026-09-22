@@ -1,0 +1,363 @@
+{
+ "tool": "locate_save_all_menu_item",
+ "version": "v7",
+ "frame": "frame-menu-post1.png",
+ "params": {
+  "upscale": 3,
+  "ocr_lang": "chi_tra+eng",
+  "ocr_psm": "6",
+  "min_overlap_px": 20.0,
+  "row_tol_fraction": 0.6,
+  "row_tol_min_px": 8.0,
+  "median_word_height_px": 48.333,
+  "row_tol_px": 29.0
+ },
+ "frame_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "detector": {
+  "json": "s6-menu-pairB1.json",
+  "json_sha256": "c3f841cd2d119b11b607339ea44897f7503fed1fa94040e8c893c4dc2c6c2abd",
+  "tool": "detect_menu_popup",
+  "verdict": "MENU_DETECTED",
+  "pre": "frame-s1.png",
+  "post": "frame-menu-post1.png",
+  "post_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+  "chosen_bbox": [
+   1231,
+   149,
+   1489,
+   500
+  ]
+ },
+ "geometry": {
+  "json": "live-window-geometry-post1.json",
+  "json_sha256": "f746275dde3d2440b6cee1f4eac03422f1e6945a3aae6473a82f4a9006de4349",
+  "frame_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+  "capture_scale": 2,
+  "window_index": 1,
+  "window_position_points": [
+   329,
+   41
+  ],
+  "window_size_points": [
+   327,
+   643
+  ]
+ },
+ "ocr": {
+  "returncode": 0,
+  "command": [
+   "tesseract",
+   "-",
+   "stdout",
+   "-l",
+   "chi_tra+eng",
+   "--psm",
+   "6",
+   "tsv"
+  ],
+  "upscale": 3,
+  "tesseract_version": "tesseract 5.5.1",
+  "word_count": 19,
+  "words": [
+   {
+    "text": "選擇",
+    "conf": 87.29,
+    "box_frame_px": [
+     1283.0,
+     232.333,
+     1333.0,
+     256.667
+    ]
+   },
+   {
+    "text": "項目",
+    "conf": 96.81,
+    "box_frame_px": [
+     1342.333,
+     233.667,
+     1382.0,
+     256.667
+    ]
+   },
+   {
+    "text": "-",
+    "conf": 35.51,
+    "box_frame_px": [
+     1478.333,
+     244.667,
+     1489.0,
+     245.0
+    ]
+   },
+   {
+    "text": "修改",
+    "conf": 96.72,
+    "box_frame_px": [
+     1282.667,
+     286.0,
+     1437.0,
+     310.667
+    ]
+   },
+   {
+    "text": "相",
+    "conf": 93.2,
+    "box_frame_px": [
+     1344.667,
+     273.333,
+     1369.0,
+     321.667
+    ]
+   },
+   {
+    "text": "簿",
+    "conf": 92.67,
+    "box_frame_px": [
+     1368.667,
+     273.333,
+     1399.333,
+     321.667
+    ]
+   },
+   {
+    "text": "名",
+    "conf": 93.18,
+    "box_frame_px": [
+     1399.0,
+     273.333,
+     1417.333,
+     321.667
+    ]
+   },
+   {
+    "text": "般",
+    "conf": 49.77,
+    "box_frame_px": [
+     1417.0,
+     273.333,
+     1438.667,
+     321.667
+    ]
+   },
+   {
+    "text": "儲存",
+    "conf": 96.95,
+    "box_frame_px": [
+     1282.667,
+     340.333,
+     1385.0,
+     365.0
+    ]
+   },
+   {
+    "text": "全",
+    "conf": 96.99,
+    "box_frame_px": [
+     1341.667,
+     327.333,
+     1366.0,
+     375.667
+    ]
+   },
+   {
+    "text": "部",
+    "conf": 96.56,
+    "box_frame_px": [
+     1365.667,
+     327.333,
+     1384.333,
+     375.667
+    ]
+   },
+   {
+    "text": "刪除",
+    "conf": 96.79,
+    "box_frame_px": [
+     1283.0,
+     381.333,
+     1345.333,
+     429.667
+    ]
+   },
+   {
+    "text": "相",
+    "conf": 93.23,
+    "box_frame_px": [
+     1345.0,
+     394.333,
+     1358.0,
+     418.667
+    ]
+   },
+   {
+    "text": "簿",
+    "conf": 92.61,
+    "box_frame_px": [
+     1366.0,
+     394.0,
+     1384.667,
+     418.667
+    ]
+   },
+   {
+    "text": "t",
+    "conf": 0.46,
+    "box_frame_px": [
+     1477.667,
+     411.0,
+     1488.0,
+     428.0
+    ]
+   },
+   {
+    "text": "分",
+    "conf": 93.13,
+    "box_frame_px": [
+     1283.333,
+     448.0,
+     1385.0,
+     472.667
+    ]
+   },
+   {
+    "text": "享",
+    "conf": 93.19,
+    "box_frame_px": [
+     1321.0,
+     435.333,
+     1345.667,
+     483.667
+    ]
+   },
+   {
+    "text": "相",
+    "conf": 92.88,
+    "box_frame_px": [
+     1345.333,
+     435.333,
+     1366.667,
+     483.667
+    ]
+   },
+   {
+    "text": "簿",
+    "conf": 93.08,
+    "box_frame_px": [
+     1366.333,
+     435.333,
+     1385.0,
+     483.667
+    ]
+   }
+  ]
+ },
+ "rows": [
+  {
+   "index": 0,
+   "text": "選擇項目-",
+   "mean_cy_px": 244.833,
+   "box_frame_px": [
+    1283.0,
+    232.333,
+    1489.0,
+    256.667
+   ],
+   "word_count": 3
+  },
+  {
+   "index": 1,
+   "text": "修改相簿名般",
+   "mean_cy_px": 297.667,
+   "box_frame_px": [
+    1282.667,
+    273.333,
+    1438.667,
+    321.667
+   ],
+   "word_count": 5
+  },
+  {
+   "index": 2,
+   "text": "儲存全部",
+   "mean_cy_px": 351.889,
+   "box_frame_px": [
+    1282.667,
+    327.333,
+    1385.0,
+    375.667
+   ],
+   "word_count": 3
+  },
+  {
+   "index": 3,
+   "text": "刪除相簿t",
+   "mean_cy_px": 409.458,
+   "box_frame_px": [
+    1283.0,
+    381.333,
+    1488.0,
+    429.667
+   ],
+   "word_count": 4
+  },
+  {
+   "index": 4,
+   "text": "分享相簿",
+   "mean_cy_px": 459.708,
+   "box_frame_px": [
+    1283.333,
+    435.333,
+    1385.0,
+    483.667
+   ],
+   "word_count": 4
+  }
+ ],
+ "reference_order": [
+  "選擇項目",
+  "修改相簿名稱",
+  "儲存全部",
+  "刪除相簿",
+  "分享相簿"
+ ],
+ "cross_check": {
+  "item_row_indices": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "item_row_texts": [
+   "選擇項目-",
+   "修改相簿名般",
+   "儲存全部",
+   "刪除相簿t",
+   "分享相簿"
+  ],
+  "reference_hits": {
+   "選擇項目": [
+    0
+   ],
+   "修改相簿名稱": [],
+   "儲存全部": [
+    2
+   ],
+   "刪除相簿": [
+    3
+   ],
+   "分享相簿": [
+    4
+   ]
+  },
+  "strict_order": false,
+  "identified_row_index": 2
+ },
+ "verdict": "MENU_CONTENT_UNEXPECTED",
+ "reason": "reference item order not found around the identified row",
+ "exit_code": 5
+}

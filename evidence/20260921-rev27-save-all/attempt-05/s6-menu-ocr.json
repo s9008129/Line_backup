@@ -1,0 +1,31 @@
+{
+ "artifact": "s6-menu-ocr.json",
+ "method": "PIL crop of the fresh detector chosen_bbox + margin 4 -> 3x LANCZOS -> tesseract -l chi_tra+eng --psm 6",
+ "region_px": [
+  1231,
+  149,
+  1489,
+  500
+ ],
+ "crop_file": "frame-menu-post1-crop.png",
+ "crop_sha256": "aa56c08844e5b521aedd5ffaa086bdddc45a4acdc027111b3bf813f60c4ed315",
+ "raw_lines": [
+  "選擇項目",
+  "修改相簿名般",
+  "儲存全部",
+  "刪除相簿   L",
+  "分享相簿"
+ ],
+ "items_top_to_bottom": [
+  "選擇項目",
+  "修改相簿名般",
+  "儲存全部",
+  "刪除相簿   L",
+  "分享相簿"
+ ],
+ "save_all_text": "儲存全部",
+ "save_all_present": true,
+ "save_all_affirmatively_identified": true,
+ "save_all_clicked": false,
+ "save_all_dispatch_attempted": false
+}

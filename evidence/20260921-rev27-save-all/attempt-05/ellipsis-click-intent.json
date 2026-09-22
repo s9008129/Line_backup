@@ -1,0 +1,80 @@
+{
+ "artifact": "ellipsis-click-intent.json",
+ "authorization_type": "ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27-ELLIPSIS-TO-SAVE-ALL-GATE-A-AFTER-ATTEMPT04",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-05",
+ "phase": "S5_ellipsis_click_intent",
+ "written_at_local": "2026-09-22T23:23:39+08:00",
+ "composite_prerequisite": {
+  "artifact": "composite-decision.json",
+  "sha256": "dd9565b8f7cb7a2b8449d0f33d54d722e9a1ce543c7ea163dbf6bd3efb606cf4",
+  "verdict": "ALBUM_OPEN_VERIFIED_COMPOSITE"
+ },
+ "fresh_frame": {
+  "path": "s1-window-cu.jpg",
+  "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "captured_this_round_at": "2026-09-22T23:18+0800 (S1 read-only CU window screenshot)"
+ },
+ "fullscreen_frame": {
+  "path": "frame-s1.png",
+  "sha256": "99394bfe2f1634987780d152e955656a3d8293af9a6965ee3a8932f7893b47c1"
+ },
+ "frozen_v5": {
+  "tool": "evidence/20260916-route/tools/v5/locate_album_ellipsis.py",
+  "tool_sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "result_artifact": "ellipsis-locate-v5.json",
+  "result_sha256": "911b729964a37b684745483f821c818ed8ff3e8d8be8e81a1248e2d4e0b86e57",
+  "verdict": "ELIGIBLE",
+  "exit_code": 0
+ },
+ "candidate": {
+  "click_point_window_local_pt": [
+   304,
+   50
+  ],
+  "dots": [
+   [
+    304.5,
+    44.0
+   ],
+   [
+    304.5,
+    49.5
+   ],
+   [
+    304.5,
+    55.0
+   ]
+  ],
+  "header_band": {
+   "x0": 206,
+   "x1": 326,
+   "y1": 76,
+   "y0": 16
+  },
+  "title_band": {
+   "x0": 206,
+   "x1": 326,
+   "y0": 77,
+   "y1": 121
+  }
+ },
+ "derivation": "fresh single run of frozen v5 on THIS round's S1 capture (s1-window-cu.jpg), with --title-bbox taken from THIS round's own album-open-verify-window.json target_title_in_post.bbox [15,83,204,111]; the candidate [304,50] is the center of the header-band vertical dot triple [[304.5,44.0],[304.5,49.5],[304.5,55.0]] computed from this frame's pixels. Numeric coincidence with historical [304,50] is acknowledged and does NOT constitute reuse: no historical coordinate was read or fed to any tool this round.",
+ "historical_coordinate_barrier": "no read of historical candidates; v4 fallback not used; thresholds not tuned; single locator run, no retry",
+ "click_form": "exactly one left click via cua_repl lineApp.click([304,50], {mouseButton:'left', clickCount:1}); window-local point space",
+ "budgets": {
+  "ellipsis_budget": 1,
+  "ellipsis_used": 0,
+  "gui_input_count": 0,
+  "retry_budget": 0,
+  "second_ellipsis": 0
+ },
+ "pre_dispatch_freshness_gate": {
+  "line_frontmost": true,
+  "ax_frontmost": true,
+  "cu_shot_unchanged_vs_s1": true,
+  "ax_text_unchanged": true,
+  "menu_absent_preclick": true
+ },
+ "dispatch_state": "NOT_ATTEMPTED"
+}

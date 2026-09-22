@@ -1,0 +1,102 @@
+{
+ "artifact": "locator-freeze-attempt05.json (plan PLAN-2026-09-21-rev27-save-all.md 5.3: created + self-tested + frozen BEFORE any click)",
+ "round": "rev27 ELLIPSIS_THEN_SAVE_ALL_GATE_A - attempt-05",
+ "frozen_at_local": "2026-09-22T23:44:39+08:00",
+ "tool": {
+  "path": "evidence/20260921-rev27-save-all/attempt-05/tools/locate_save_all_menu_item.py",
+  "sha256": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+  "bytes": 16538,
+  "class": "v7-class menu-item locator (read-only analysis only; no GUI input capability)",
+  "history": "byte-identical copy of attempt-04/tools/locate_save_all_menu_item.py (itself byte-identical to attempt-02's frozen tool, sha ea09c1ca...); SHA-256 re-verified from disk THIS round; no modification after freeze"
+ },
+ "self_test": {
+  "fixtures_authority": "fixture-derived candidates (e.g. [1313.5,332.333]) have NO live authority and are never click input; only the fresh frame-derived candidate may be dispatched - and this round none was established",
+  "runs": [
+   {
+    "name": "fixture-positive (attempt-13 menu-post1 + attempt-02 fixtures)",
+    "result": "selftest-attempt05/result-fixture-positive.json",
+    "result_sha256": "b97bd7730ddc5dcf381ad393a405002f540213cffe0cf3b43121bb4dbdebe785",
+    "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/frame-menu-post1.png",
+    "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+    "verdict": "ELIGIBLE",
+    "exit_code": 0,
+    "note": "byte-identical to attempt-02 result-positive1 (b97bd773...) -> tool works and is deterministic across rounds"
+   },
+   {
+    "name": "live-determinism-1 (THIS round menu frame)",
+    "result": "selftest-attempt05/result-live-positive1.json",
+    "result_sha256": "7e92e2529f3665ca3fce1e859b4ff6b4f3a06d133d20808335077e2773e5811f",
+    "frame": "frame-menu-post1.png",
+    "frame_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+    "verdict": "MENU_CONTENT_UNEXPECTED",
+    "exit_code": 5,
+    "note": "reference item 修改相簿名稱 OCR'd as 修改相簿名般 (glyph conf 49.77); target row 儲存全部 identified cleanly"
+   },
+   {
+    "name": "live-determinism-2",
+    "result": "selftest-attempt05/result-live-positive2.json",
+    "result_sha256": "7e92e2529f3665ca3fce1e859b4ff6b4f3a06d133d20808335077e2773e5811f",
+    "frame": "frame-menu-post1.png",
+    "frame_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+    "verdict": "MENU_CONTENT_UNEXPECTED",
+    "exit_code": 5,
+    "note": "byte-identical to live-determinism-1 -> deterministic"
+   },
+   {
+    "name": "negative (attempt-13 menu-absent frame)",
+    "result": "selftest-attempt05/result-negative.json",
+    "result_sha256": "c5f77a0751f9648d790ba5360239504b12739574d759101ba340dfd08a5cb6c4",
+    "frame": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/frame-menu-pre.png",
+    "frame_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+    "verdict": "NOT_FOUND",
+    "exit_code": 2,
+    "note": "same sha as attempt-02 result-negative (c5f77a07...)"
+   },
+   {
+    "name": "binding-fail (geometry bound to a different frame)",
+    "result": "selftest-attempt05/result-binding-fail.json",
+    "result_sha256": "18be13b4dc98e852ed5cba61c1d05025aff0a812fe01e6fac5701b306d1ace38",
+    "frame": "same post1",
+    "frame_sha256": "7ccb...",
+    "verdict": "BAD_INPUT",
+    "exit_code": 6,
+    "note": "same sha as attempt-02 (18be13b4...)"
+   },
+   {
+    "name": "not-addressable (shifted window origin)",
+    "result": "selftest-attempt05/result-not-addressable.json",
+    "result_sha256": "c8355bbd1440a341836e2b2088d961334d0e0ee8772f06814797420a5aff16e8",
+    "frame": "same post1",
+    "frame_sha256": "7ccb...",
+    "verdict": "NOT_ADDRESSABLE",
+    "exit_code": 3,
+    "note": "same sha as attempt-02 (c8355bbd...)"
+   },
+   {
+    "name": "synthetic AMBIGUOUS",
+    "result": "selftest-attempt05/result-ambiguous.json",
+    "result_sha256": "5a2c8db79dbe1e6b1b0ad274ed0c87477c5d1cec3938f352d8fcee435f4d80ce",
+    "frame": "attempt-02/selftest/frame-synth-ambiguous.png",
+    "frame_sha256": "ba933c71fb9e16624ea9d1a0d18da663c6b97853df9d04b27eec1aca6a85f6d6",
+    "verdict": "AMBIGUOUS",
+    "exit_code": 4,
+    "note": "same sha as attempt-02 (5a2c8db7...)"
+   },
+   {
+    "name": "synthetic MENU_CONTENT_UNEXPECTED",
+    "result": "selftest-attempt05/result-unexpected.json",
+    "result_sha256": "b1ed7c80b40ca5194a4928b82c80e2809c48570c745d3fe79417937b5ce82f0f",
+    "frame": "attempt-02/selftest/frame-synth-unexpected.png",
+    "frame_sha256": "d8e9f5632d875300c661758b8d1f27cdd48cb53a593afdff770268f9f6c504ee",
+    "verdict": "MENU_CONTENT_UNEXPECTED",
+    "exit_code": 5,
+    "note": "same sha as attempt-02 (b1ed7c80...)"
+   }
+  ],
+  "all_expected_fixture_verdicts_reproduced": true
+ },
+ "outcome": "on THIS round's live menu frame the locator returned MENU_CONTENT_UNEXPECTED (deterministic, 2 byte-identical runs) because the row-cluster text of reference item 修改相簿名稱 contained a single-glyph OCR misread (稱 -> 般, conf 49.77). Per plan 5.1.4/5.3.3 any non-ELIGIBLE verdict -> STOP: no Save-All candidate exists, no Save-All click.",
+ "freeze_rule": "any byte change to the tool after this record invalidates this freeze and requires a fresh self-test + fresh independent review before any click",
+ "verification_command": "shasum -a 256 evidence/20260921-rev27-save-all/attempt-05/tools/locate_save_all_menu_item.py",
+ "gui_inputs_sent_during_freeze_and_selftest": 0
+}

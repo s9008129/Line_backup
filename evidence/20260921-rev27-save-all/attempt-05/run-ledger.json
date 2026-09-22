@@ -1,0 +1,124 @@
+{
+  "artifact": "run-ledger.json",
+  "attempt": "evidence/20260921-rev27-save-all/attempt-05",
+  "gate": "Rev27 ELLIPSIS_THEN_SAVE_ALL_GATE_A (authorization ELLIPSIS_THEN_SAVE_ALL_GATE_A / REV27-ELLIPSIS-TO-SAVE-ALL-GATE-A-AFTER-ATTEMPT04)",
+  "started_local": "2026-09-22T23:16+0800",
+  "closed_local": "2026-09-22T23:44+0800",
+  "outcome": "STOP at the S6 gate — fresh menu surface affirmatively observed and 「儲存全部」affirmatively identified, but the fresh Save-All candidate could not be established because the frozen Save-All locator returned MENU_CONTENT_UNEXPECTED (byte-identical over 2 live runs). ellipsis_used 1/1; total GUI input 1; Save All NOT dispatched (0/1); staging mkdir 0/2; retry 0; menu left open untouched for the owner.",
+  "events": [
+    {
+      "t": "23:16",
+      "event": "repo gate read-only: HEAD b72f55fd94db9233e3740ba4ea93737ab67aefd2 == owner-known b72f55f; origin/master a9e523e7d2b91ec1775bba573003a7a1671ef945; ahead 19; log -21 reviewed; untracked attempt-11 + 4 __pycache__ left untouched; no fetch/pull/push/reset/rebase/amend/stash"
+    },
+    {
+      "t": "23:16",
+      "event": "safety artifact gate: frozen v5 ellipsis locator 6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418 == expected; frozen album-open verifier ffa82aed…; v7 lineage guard cdff187e…; menu detector 6ae9c250…; save-all locator ea09c1ca…; Rev27b plan 7a179d15… with both PLAN_APPROVED reviews bound to that exact SHA; Rev27 Save All plan db972849… == expected with both PLAN_APPROVED reviews bound to that exact SHA; v7 selftest/replay 22/22 PASS"
+    },
+    {
+      "t": "23:16",
+      "event": "historical prerequisites re-read from disk, immutable: attempt-19 chain (ALBUM_OPEN_VERIFIED_COMPOSITE, frozen v5 ELIGIBLE, ellipsis 1, MENU_SURFACE_AFFIRMATIVELY_OBSERVED, 「儲存全部」affirmatively identified, Save All 0, retry 0) and Rev27 Save All attempt-04 (SAVE_ALL_GATE_A; GUI 0; Save All 0; staging mkdir 0; blocker MENU_NOT_PRESENT_REQUIRES_NEW_ELLIPSIS_AUTHORIZATION; baseline unchanged)"
+    },
+    {
+      "t": "23:16:32",
+      "event": "P0 written BEFORE any live observation: authorization-scope-check.json (first artifact in the attempt; AUTHORIZATION_SCOPE_MATCH, no forbidden goal present), authorization-record.json, 00-start-state.json"
+    },
+    {
+      "t": "23:17–23:18",
+      "event": "S1 read-only observation: ax_frontmost=true, frontmost_application=jp.naver.line.mac (pid 21064); focused+main detail window [329,41] 327x643pt; fresh full-screen frame-s1.png 99394bfe… (23:18); AX post identical to pre; album title 2024/05/13～05/17 + 57張照片 visible; photo grid present; no menu present; no overlay/permission prompt/occlusion"
+    },
+    {
+      "t": "23:19",
+      "event": "S2 frame/window binding: live-window-geometry.json (frame-bound) + validate_live_geometry.py -> GEOMETRY_BINDING_PASS (MAD 2.266; dims exact); single fresh capture, no retry"
+    },
+    {
+      "t": "23:21:14",
+      "event": "S3 composite: frozen album-open verifier window pair -> ALBUM_OPEN_VERIFIED (exit 0; count MATCH 57; changed 0.653688) and frame pair -> ALBUM_OPEN_VERIFIED (supporting; changed 0.659075); v7 lineage guard on this round's fresh evidence -> ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED (exit 0; C0–C6 all PASS; refusals none) => composite-decision.json = ALBUM_OPEN_VERIFIED_COMPOSITE"
+    },
+    {
+      "t": "23:23",
+      "event": "S4 frozen v5 ellipsis locator, single run on this round's fresh verified frame: ELIGIBLE; dots [[304.5,44.0],[304.5,49.5],[304.5,55.0]] single header_band triple -> click_point [304,50] window-local pt; title bbox [15,83,204,111] read from this round's own verify JSON; candidate derivation recorded in ellipsis-click-intent.json; numeric coincidence with the historical [304,50] documented as an independent derivation (the detail surface is byte-identical to the attempt-19 reference frame); no historical coordinate was read as input"
+    },
+    {
+      "t": "23:24",
+      "event": "S5 ellipsis invocation 1: lineApp.click([304,50]) REFUSED_BEFORE_SEND by the CU harness (app-state re-query required); independent fresh full-screen frame s5-ellipsis-refused-invocation-frame.png 2c3ffc44… shows no menu and an unchanged album-detail surface => zero input reached the UI; budget NOT consumed"
+    },
+    {
+      "t": "23:26:15.938–23:26:16.454",
+      "event": "S5 recovery (read-only cua.getApp handle re-query + freshness gate re-run), then the single authorized dispatch: lineApp.click([304,50], left, clickCount 1) RETURNED => ellipsis_used=1, gui_input_count=1, retry=0; no second ellipsis click in any case"
+    },
+    {
+      "t": "23:26",
+      "event": "S6 fresh menu capture: frame-menu-post1.png 2f6bf83d… and frame-menu-post2.png c00a271a…; frozen detector pair B (same-session pre frame-s1.png) -> MENU_DETECTED, popup-shaped component bbox [1231,149,1489,500] 71482 px (second largest 589 px; whole-frame planref pair 1.38M px classified WHOLE_FRAME_FALSE_POSITIVE and rejected); new AXDialog [612,93,137,167]pt appeared post-click over the popup; ROI cross-check shift-search MAD 3.279 (menu-open ref) vs 26.745 (menu-absent ref) => MENU_SURFACE_AFFIRMATIVELY_OBSERVED"
+    },
+    {
+      "t": "23:38:59",
+      "event": "fresh menu OCR: 選擇項目 / 修改相簿名般 (single-glyph misread of 稱) / 儲存全部 / 刪除相簿 / 分享相簿 => 「儲存全部」AFFIRMATIVELY_IDENTIFIED (read-only; not activated)"
+    },
+    {
+      "t": "23:39:15",
+      "event": "S6 reference binding check: s6-ref-binding-check.json BINDING_PASS (MAD 0.86); frozen save-all locator live runs 1 and 2 on frame-menu-post1.png -> MENU_CONTENT_UNEXPECTED (exit 5), byte-identical artifacts (7e92e252…) => deterministic; cause: the reference item 修改相簿名稱 OCR'd as 修改相簿名般 (glyph conf 49.77) breaks strict reference-item ordering; the target row 儲存全部 itself was clean"
+    },
+    {
+      "t": "23:43:56",
+      "event": "STOP executed fail-closed per plan PLAN-2026-09-21-rev27-save-all.md 5.1.4 / 5.3.3 (any locator verdict other than ELIGIBLE -> STOP): save_all_candidate = NO_CANDIDATE_ESTABLISHED; zero additional GUI input; menu left open exactly as-is (no Escape, no click-outside, no menu-item activation); S6 menu observation and stop blocks recorded"
+    },
+    {
+      "t": "23:38:59 / 23:44",
+      "event": "accepted baseline end tripwire (baseline-inventory-end.json): 57 files / 17,924,900 bytes / manifest digest b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd MATCH; staging root /Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging does not exist (S8 never reached; 0 of 2 mkdir); no unexpected pre-confirm filesystem write"
+    },
+    {
+      "t": "23:44",
+      "event": "closing artifacts: run-ledger.json (this file), locator-freeze-attempt05.json f6c4f2ef…, locator-review-attempt05.md f37db768…, selftest-attempt05/ (8 runs: fixture-positive ELIGIBLE b97bd773… byte-identical to attempt-02; live ×2 MENU_CONTENT_UNEXPECTED 7e92e252…; negative NOT_FOUND c5f77a07…; binding-fail BAD_INPUT; not-addressable NOT_ADDRESSABLE; ambiguous AMBIGUOUS; unexpected MENU_CONTENT_UNEXPECTED), 99-scope-status.json"
+    }
+  ],
+  "hard_counters": {
+    "album_card": 0,
+    "navigation": 0,
+    "ellipsis_budget": 1,
+    "ellipsis_used": 1,
+    "second_ellipsis": 0,
+    "save_all_menu_item_budget": 1,
+    "save_all_used": 0,
+    "second_save_all": 0,
+    "other_menu_item_click": 0,
+    "retry": 0,
+    "double_click": 0,
+    "gui_input_count": 1,
+    "gui_input_budget": 2,
+    "chooser_interaction": 0,
+    "keyboard": 0,
+    "escape": 0,
+    "scroll": 0,
+    "ax_write": 0,
+    "bring_to_front": 0,
+    "app_acquisition": 0,
+    "go_to_folder": 0,
+    "path_entry": 0,
+    "return_key": 0,
+    "destination_confirm": 0,
+    "download_completion_action": 0,
+    "cleanup_delete": 0,
+    "staging_mkdir": 0,
+    "staging_mkdir_budget": 2
+  },
+  "dispatch_states": {
+    "ellipsis_invocation_1": "REFUSED_BEFORE_SEND (proven: no input reached the UI)",
+    "ellipsis_invocation_2": "RETURNED",
+    "ellipsis_dispatch_state_final": "RETURNED",
+    "save_all_dispatch": "NOT_ATTEMPTED (0 of 1; candidate never established)",
+    "save_all_candidate": "NO_CANDIDATE_ESTABLISHED (frozen locator MENU_CONTENT_UNEXPECTED, deterministic ×2)",
+    "manual_reconciliation_required": false
+  },
+  "disclosures": [
+    "cua.getApp(\"jp.naver.line.mac\") was used read-only twice to obtain a window handle (S1 reads and the post-refusal state re-query after the harness declined invocation 1). No launch, no activation, no bring-to-front; same established precedent as attempts 17/18/19 where this did not count as app acquisition.",
+    "The first ellipsis invocation was refused by the harness BEFORE any input event was delivered; this was verified independently with a fresh full-screen frame showing no menu and an unchanged surface. The single authorized click was then dispatched once after the required read-only re-query. No second click, no retry.",
+    "The fresh v5 candidate [304,50] numerically equals the historical coordinate [304,50]; this is a coincidence because the detail surface capture this round is byte-identical to the attempt-19 reference frame. The value was derived only from this round's fresh frame; no historical coordinate was read or reused (ellipsis-click-intent.json records the full derivation).",
+    "The frozen menu detector's plan-reference pair on the whole frame returned raw MENU_DETECTED with a 1.38M px component — the known whole-frame false-positive mode (attempts 02/03/04). It was classified and rejected; affirmative evidence is the same-session popup-shaped pair-B component (71482 px), the newly appeared AXDialog, the ROI cross-check, and the clean menu OCR.",
+    "The open menu is left exactly as-is for the owner; no Escape, no click-outside, no scroll, no keyboard, no menu-item activation. Any future Save-All identification round must freshly re-verify the menu (it may auto-close) and requires a new owner authorization; the ellipsis budget is fully consumed and must not be reused.",
+    "attempt-19, Rev27 attempt-04, all historical attempts, frozen tools v4–v7, the frozen verifier, the accepted baseline, and the approved plans/reviews were re-read only and not modified. No pycache added, no push."
+  ],
+  "scoped_blocker": "SAVE_ALL_CANDIDATE_LOCATOR_MENU_CONTENT_UNEXPECTED",
+  "scoped_status": "SAVE_ALL_GATE_A_STOPPED_AT_S6_SAVE_ALL_NOT_DISPATCHED",
+  "no_unused_budget_transfer": "the unused Save All budget (0 of 1 used) does NOT transfer to any future round; a new owner one-shot authorization is required",
+  "next_action_requires": "A NEW owner one-shot authorization. A future round must freshly re-verify the live menu (it may auto-close) and must not reopen the ellipsis under this round's authorization."
+}

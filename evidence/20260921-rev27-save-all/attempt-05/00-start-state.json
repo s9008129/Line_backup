@@ -1,0 +1,140 @@
+{
+ "artifact": "00-start-state.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-05/",
+ "recorded_at_local": "2026-09-22T23:16:45+0800",
+ "authorization": {
+  "type": "ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+  "id": "REV27-ELLIPSIS-TO-SAVE-ALL-GATE-A-AFTER-ATTEMPT04",
+  "owner_one_shot": true
+ },
+ "attempt_placement_rationale": "Placed in the Rev27 Gate-A lineage directory (evidence/20260921-rev27-save-all/) as attempt-05 because the authorization id is AFTER-ATTEMPT04 and this round's terminal action is the Gate-A Save-All dispatch; the ellipsis step is re-done inside this same attempt per the owner's combined authorization.",
+ "repository": {
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "head": "b72f55fd94db9233e3740ba4ea93737ab67aefd2",
+  "head_owner_known_prefix": "b72f55f",
+  "head_matches_owner_known": true,
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "ahead": 19,
+  "status_porcelain_branch": "## master...origin/master [ahead 19]\n?? evidence/20260916-route/attempt-11/\n?? evidence/20260916-route/tools/v4/__pycache__/\n?? evidence/20260916-route/tools/v5/__pycache__/\n?? evidence/20260916-route/tools/v6/__pycache__/\n?? evidence/20260916-route/tools/v6/selftest/__pycache__/\n?? evidence/20260921-rev27-save-all/attempt-05/",
+  "untracked_left_untouched": [
+   "evidence/20260916-route/attempt-11/",
+   "evidence/20260916-route/tools/v4/__pycache__/",
+   "evidence/20260916-route/tools/v5/__pycache__/",
+   "evidence/20260916-route/tools/v6/__pycache__/",
+   "evidence/20260916-route/tools/v6/selftest/__pycache__/"
+  ],
+  "forbidden_git_ops_used": []
+ },
+ "safety_artifact_gate": {
+  "frozen_v5_ellipsis_locator": {
+   "path": "evidence/20260916-route/tools/v5/locate_album_ellipsis.py",
+   "sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+   "expected": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+   "match": true
+  },
+  "frozen_album_open_verifier": {
+   "path": "evidence/20260916-route/tools/v5/verify_album_open.py",
+   "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+   "match": true
+  },
+  "v7_lineage_guard": {
+   "path": "evidence/20260916-route/tools/v7/album_detail_lineage_guard.py",
+   "sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+   "match": true
+  },
+  "v7_selftest_replay": {
+   "path": "evidence/20260916-route/tools/v7/selftest/results.json",
+   "sha256": "affb3602698f7c5b0d9f8d8df01759a074738dd095bd32cf638a1300ec0ae4df",
+   "cases": "22/22 PASS"
+  },
+  "rev27b_plan": {
+   "path": "PLAN-2026-09-21-rev27b-lineage-guard.md",
+   "sha256": "7a179d15f61033611dec333d246b6d8c590901c06c182628533e442feae10a7c",
+   "reviews": [
+    {
+     "path": "evidence/20260921-lineage-guard-replan/review/attempt-01/review-01-top-down.json",
+     "sha256": "781ea223a1b41598dc1f50a848bf73f6362ae1843bf7ab41e5ef6280c875d25d",
+     "verdict": "PLAN_APPROVED",
+     "reviewed_sha256": "7a179d15f61033611dec333d246b6d8c590901c06c182628533e442feae10a7c"
+    },
+    {
+     "path": "evidence/20260921-lineage-guard-replan/review/attempt-01/review-02-adversarial.json",
+     "sha256": "6fa05bdba534e308cb89da378c6ee7b3b0776238bfcb947fce45bdadb4610228",
+     "verdict": "PLAN_APPROVED",
+     "reviewed_sha256": "7a179d15f61033611dec333d246b6d8c590901c06c182628533e442feae10a7c"
+    }
+   ]
+  },
+  "rev27_save_all_plan": {
+   "path": "PLAN-2026-09-21-rev27-save-all.md",
+   "sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052",
+   "expected": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052",
+   "match": true,
+   "reviews": [
+    {
+     "path": "evidence/20260921-rev27-save-all/attempt-01/review-01-top-down.json",
+     "sha256": "2a23da88bee9a8d3d97cfc2c8216418610005a04fdaff57f1fdfda2a5c86e752",
+     "verdict": "PLAN_APPROVED",
+     "reviewed_sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052"
+    },
+    {
+     "path": "evidence/20260921-rev27-save-all/attempt-01/review-02-adversarial-gui-filesystem.json",
+     "sha256": "abc44a0292ce7b310f3621000925c2f06fdff32bc376bd5ecbc4a7b16c036a77",
+     "verdict": "PLAN_APPROVED",
+     "reviewed_sha256": "db972849af43dc124df1834c5877aa1caa6db092c57c0539ecd3da1b3cb14052"
+    }
+   ]
+  },
+  "menu_detector": {
+   "path": "evidence/20260916-route/tools/detect_menu_popup.py",
+   "sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc"
+  },
+  "v5_reader_dir": {
+   "vision_reader.py": "22a4e9ef86c419bdb80723484b3745fe61d848c77fc45c34e0b73e9d4b8801b8",
+   "locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162"
+  }
+ },
+ "round_local_tools": {
+  "tools/ax_window_bounds.swift": "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+  "tools/validate_live_geometry.py": "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68",
+  "tools/locate_save_all_menu_item.py": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+  "compiled": "/tmp/attempt05/ax_window_bounds 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae"
+ },
+ "historical_prerequisites": {
+  "attempt_19": {
+   "manifest": "68/68 byte-consistent",
+   "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+   "frozen_v5": "ELIGIBLE",
+   "ellipsis_dispatch": 1,
+   "menu": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED",
+   "save_all_identification": "儲存全部 (read only)",
+   "save_all": 0,
+   "retry": 0
+  },
+  "attempt_04": {
+   "manifest": "43/43 byte-consistent",
+   "authorization_type": "SAVE_ALL_GATE_A",
+   "gui_input": 0,
+   "save_all": 0,
+   "staging_mkdir": 0,
+   "line_frontmost": false,
+   "blocker": "MENU_NOT_PRESENT_REQUIRES_NEW_ELLIPSIS_AUTHORIZATION",
+   "accepted_baseline": "unchanged"
+  }
+ },
+ "accepted_baseline_preflight": {
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+  "file_count": 57,
+  "total_bytes": 17924900,
+  "manifest_digest_sha256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "expected_digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "match": true,
+  "non_regular_files": []
+ },
+ "staging_root_pre_state": {
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging",
+  "exists": false
+ },
+ "round_order": "P0 -> S1 -> S2 -> S3 -> S4 -> S5 (ellipsis, <=1) -> S6 (menu + candidate) -> S7 baseline -> S8 staging -> S9 intent -> S10 (Save All, <=1) -> S11 observation -> STOP",
+ "gui_inputs_used_so_far": 0
+}

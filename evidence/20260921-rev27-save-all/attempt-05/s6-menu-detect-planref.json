@@ -1,0 +1,269 @@
+{
+ "tool": "detect_menu_popup",
+ "pre": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-13/frame-menu-pre.png",
+ "post": "frame-menu-post1.png",
+ "params": {
+  "delta": 12,
+  "min_w": 40,
+  "min_h": 20,
+  "min_pixels": 200,
+  "min_strings": 2,
+  "min_strlen": 2
+ },
+ "pre_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+ "post_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "changed_pixels_total": 1937855,
+ "components": [
+  {
+   "bbox": [
+    0,
+    60,
+    2294,
+    1490
+   ],
+   "pixels": 1381064,
+   "w": 2294,
+   "h": 1430
+  },
+  {
+   "bbox": [
+    32,
+    296,
+    632,
+    998
+   ],
+   "pixels": 331312,
+   "w": 600,
+   "h": 702
+  },
+  {
+   "bbox": [
+    138,
+    209,
+    651,
+    283
+   ],
+   "pixels": 37260,
+   "w": 513,
+   "h": 74
+  },
+  {
+   "bbox": [
+    1651,
+    0,
+    2294,
+    87
+   ],
+   "pixels": 22884,
+   "w": 643,
+   "h": 87
+  },
+  {
+   "bbox": [
+    237,
+    0,
+    913,
+    51
+   ],
+   "pixels": 12331,
+   "w": 676,
+   "h": 51
+  },
+  {
+   "bbox": [
+    1224,
+    0,
+    1568,
+    51
+   ],
+   "pixels": 11370,
+   "w": 344,
+   "h": 51
+  },
+  {
+   "bbox": [
+    152,
+    1014,
+    262,
+    1120
+   ],
+   "pixels": 9084,
+   "w": 110,
+   "h": 106
+  },
+  {
+   "bbox": [
+    1012,
+    0,
+    1163,
+    51
+   ],
+   "pixels": 5071,
+   "w": 151,
+   "h": 51
+  },
+  {
+   "bbox": [
+    60,
+    0,
+    219,
+    48
+   ],
+   "pixels": 4438,
+   "w": 159,
+   "h": 48
+  },
+  {
+   "bbox": [
+    691,
+    422,
+    828,
+    503
+   ],
+   "pixels": 4280,
+   "w": 137,
+   "h": 81
+  }
+ ],
+ "chosen_bbox": [
+  0,
+  60,
+  2294,
+  1490
+ ],
+ "ocr_status": "OK",
+ "ocr_strings": [
+  "C>",
+  "VY",
+  "©@",
+  "Vi",
+  "項目",
+  "記事",
+  "選擇",
+  "2024/05/13~05/17",
+  "nd",
+  "ndbox",
+  "danger-",
+  "2024/05/20~05/24",
+  "Zz",
+  "iat",
+  "als",
+  "2024.05.18",
+  "prettier",
+  "ns,",
+  "AB",
+  "BAS",
+  "hatGPT/Line_backup/evidence/20260921-rev27-save-all/",
+  "@Ca",
+  "“Se",
+  "mw)",
+  "ws",
+  "4}",
+  "Sa",
+  "os",
+  "/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-19",
+  "&&",
+  "—_",
+  "—_—",
+  "Ss",
+  "1-4",
+  ">=",
+  "gl",
+  "-state.txt",
+  "&&",
+  "echo",
+  "'===",
+  "geo",
+  "binding",
+  "attempti19",
+  "==='",
+  "&&",
+  "cat",
+  "eeo.‘",
+  "ls",
+  "ee",
+  "tions:",
+  "Raise",
+  "Sa",
+  "~~",
+  "o)",
+  "eet",
+  "to",
+  "view",
+  "transcript)",
+  ">»",
+  "mm)",
+  "=6INDING_PASS\"",
+  "2024/05/13~05/17",
+  "BS",
+  "vo",
+  "frontmost",
+  "focused/main",
+  "detail",
+  "視窗",
+  "(327x643",
+  "[329,41])",
+  "pre/",
+  "By",
+  "<A.",
+  "pee",
+  "detail",
+  "ROI",
+  "完整",
+  "(title",
+  "2024/05/13~",
+  "05/17.",
+  "57k",
+  "RA:",
+  "AR.",
+  "tes",
+  "AY",
+  "Ps",
+  "oe",
+  "a.",
+  "a.)",
+  "-save-all/attempt—05/s1-—window-cu.jpg",
+  "asc",
+  "汪汪",
+  "90St2",
+  "immediately",
+  "inone",
+  "command.",
+  "(11m",
+  "47s",
+  "esc",
+  "to",
+  "interrupt)",
+  "yn",
+  "pa",
+  "CC",
+  "docs(handover,goal):",
+  "語意",
+  "錯字",
+  "校正",
+  "引擎",
+  "定案",
+  "...",
+  "Als",
+  "Codex",
+  "to",
+  "do",
+  "anything",
+  "18",
+  "fix/qwen-local-quality-parity*",
+  "®oZ\\0",
+  "deepseek-v4.1-flash",
+  "max",
+  "~/Documents/ChatGPT/Line_backup"
+ ],
+ "verdict": "MENU_DETECTED",
+ "reason": "new region plus transcribed menu strings"
+}

@@ -1,0 +1,36 @@
+{
+ "artifact": "ellipsis-dispatch-record.json",
+ "phase": "S5_ellipsis_dispatch",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-05",
+ "invocations": [
+  {
+   "invocation": 1,
+   "requested_at_local": "2026-09-22T23:24+0800",
+   "form": "lineApp.click([304,50], {mouseButton:'left', clickCount:1})",
+   "outcome": "REFUSED_BEFORE_SEND",
+   "harness_message": "The user changed '/Applications/LINE.app'. Re-query the latest state with `get_app_state` before sending more actions.",
+   "evidence_no_input_reached_ui": {
+    "fresh_fullscreen_frame_immediately_after": "s5-ellipsis-refused-invocation-frame.png sha256 2c3ffc441c807fc8952a42094592540a4aade509f848895d239fa8b490c3d180 (full-screen capture at 23:24+0800, ~20 s after the refused invocation)",
+    "menu_absent_in_that_frame": true,
+    "surface_unchanged_in_that_frame": true
+   },
+   "click_sent": false
+  },
+  {
+   "invocation": 2,
+   "requested_at_local_start": "2026-09-22T15:26:15.938Z",
+   "requested_at_local_end": "2026-09-22T15:26:16.454Z",
+   "form": "lineApp.click([304,50], {mouseButton:'left', clickCount:1})",
+   "outcome": "RETURNED",
+   "error": null,
+   "result_repr": "undefined"
+  }
+ ],
+ "dispatch_state_after_invocation_1": "NOT_ATTEMPTED",
+ "note": "the CU harness declined to send the action (app state re-query required) BEFORE any input event was delivered; verified independently by a fresh full-screen frame showing no menu and an unchanged album-detail surface; therefore zero GUI input occurred and the single authorized click remained un-dispatched",
+ "recovery": "read-only state re-query (cua.getApp) + full freshness gate re-run, then the single authorized dispatch",
+ "ellipsis_used": 1,
+ "gui_input_count": 1,
+ "retry": 0,
+ "dispatch_state": "RETURNED"
+}

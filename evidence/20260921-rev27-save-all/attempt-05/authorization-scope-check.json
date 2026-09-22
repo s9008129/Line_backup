@@ -1,0 +1,65 @@
+{
+ "artifact": "authorization-scope-check.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-05",
+ "authorization_type": "ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27-ELLIPSIS-TO-SAVE-ALL-GATE-A-AFTER-ATTEMPT04",
+ "checked_at_local": "2026-09-22T23:16:32.624496+0800",
+ "sequence_disclosure": "Only an empty attempt directory (mkdir, no artifact) was created before this file; authorization-scope-check.json is the FIRST artifact recorded in attempt-05 and was written before any LINE observation, any frame capture, any staging mkdir, or any GUI input.",
+ "runbook_scanned": {
+  "path": "evidence/20260921-rev27-save-all/attempt-05/route-runbook.md",
+  "sha256": "5099c4ca94d48c8054269520ca49ae51e52a250c56f6f399efb15df4e7e7485a",
+  "scanned_before_any_live_observation": true,
+  "scan_terms": [
+   "album reopening",
+   "album-card click as this round's goal",
+   "chooser navigation",
+   "Go to Folder",
+   "path typing",
+   "Return",
+   "chooser confirm",
+   "download completion action"
+  ],
+  "findings": "All occurrences are historical context, budgets, explicit prohibitions, or post-dispatch observation-only questions. There is NO execution goal for album reopening or album-card clicks, NO chooser navigation, NO Go to Folder, NO path typing, NO Return, NO chooser confirm, NO download completion action in this round's runbook.",
+  "verdict": "AUTHORIZATION_SCOPE_MATCH"
+ },
+ "allowed_gui_inputs": {
+  "ellipsis_click": 1,
+  "save_all_menu_item_click": 1,
+  "max_total_gui_input": 2
+ },
+ "allowed_filesystem_preflight": {
+  "staging_setup_mkdir": "<= 2 (empty staging parent and/or leaf only)"
+ },
+ "required_between_ellipsis_and_save_all": [
+  "MENU_SURFACE_AFFIRMATIVELY_OBSERVED",
+  "SAVE_ALL_ITEM_AFFIRMATIVELY_IDENTIFIED",
+  "accepted baseline tripwire PASS",
+  "fresh staging preflight PASS",
+  "durable Save-All intent PASS"
+ ],
+ "forbidden_gui_inputs": {
+  "album_card_click": 0,
+  "navigation": 0,
+  "second_ellipsis": 0,
+  "second_save_all": 0,
+  "retry": 0,
+  "double_click": 0,
+  "other_menu_item_click": 0,
+  "chooser_interaction": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "go_to_folder": 0,
+  "path_entry": 0,
+  "return": 0,
+  "destination_confirm": 0,
+  "download_completion_gui": 0,
+  "cleanup_delete": 0
+ },
+ "frozen_v6_gui_execution": false,
+ "frozen_v5_ellipsis_locator": true,
+ "mismatch_rule": "If the runbook contained any forbidden goal above -> AUTHORIZATION_SCOPE_MISMATCH, STOP BEFORE LIVE ATTEMPT EXECUTION. Not triggered."
+}

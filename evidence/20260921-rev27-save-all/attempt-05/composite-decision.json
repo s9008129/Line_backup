@@ -1,0 +1,79 @@
+{
+ "artifact": "evidence/20260921-rev27-save-all/attempt-05/composite-decision.json",
+ "phase": "S3_composite_decision",
+ "recorded_at_local": "2026-09-22T23:21:14+08:00",
+ "gui_inputs_sent": 0,
+ "ellipsis_used": 0,
+ "inputs": {
+  "window_pair": {
+   "pre": "evidence/20260916-route/attempt-19/a4-precheck-window-cu.jpg (sha256 b9be8bfc60678c648740d567ced176909ea242e5ea12202dd2c8606fc6659ff1; album-list reference)",
+   "post": "s1-window-cu.jpg (this round)"
+  },
+  "frame_pair": {
+   "pre": "evidence/20260916-route/attempt-19/frame-s1.png (sha256 9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866; album-list reference)",
+   "post": "frame-s1.png (this round)"
+  }
+ },
+ "frozen_album_open_verifier": {
+  "tool": "evidence/20260916-route/tools/v5/verify_album_open.py",
+  "tool_sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "window_pair": {
+   "artifact": "album-open-verify-window.json",
+   "artifact_sha256": "c6793fc7b8d5367112062ac3212d043fa19393e17edbd59cc5b29021bc2bb42e",
+   "exit_code": 0,
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "changed_fraction": 0.653688,
+   "count_digits_read": "57",
+   "count_text": "MATCH",
+   "title": [
+    "2024/05/13~05/17"
+   ]
+  },
+  "frame_pair": {
+   "artifact": "album-open-verify-frame.json",
+   "artifact_sha256": "b6abcbe417c59e6078b2125e2e45458556993458463505f71536000962a97dee",
+   "exit_code": 0,
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "changed_fraction": 0.659075,
+   "count_text": "UNREADABLE",
+   "title": [
+    "2024/05/13~05/17"
+   ],
+   "post_sha256": "99394bfe2f1634987780d152e955656a3d8293af9a6965ee3a8932f7893b47c1"
+  }
+ },
+ "v7_lineage_guard": {
+  "tool": "evidence/20260916-route/tools/v7/album_detail_lineage_guard.py",
+  "tool_sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "artifact": "v7-lineage-guard.json",
+  "artifact_sha256": "81f515ca7c6780cbe937a1060bc0adf4756cefddd91d3b3ccb8c6cfdbfc09898",
+  "exit_code": 0,
+  "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+  "checks": {
+   "C0_SCHEMA": "PASS",
+   "C0_FRAME_SCALE": "PASS",
+   "C1_FRONTMOST": "PASS",
+   "C2_TARGET_UNIQUE": "PASS",
+   "C3_GEOMETRY_DOUBT": "PASS",
+   "C4_AX_SURFACE_CLASS": "PASS",
+   "C5_BINDING": "PASS",
+   "C6_HEADER_CONTEXT": "PASS"
+  },
+  "refusal_reasons": null,
+  "frozen_album_open_binding": {
+   "provided": true,
+   "bound_to_frame": true,
+   "post_sha256": "99394bfe2f1634987780d152e955656a3d8293af9a6965ee3a8932f7893b47c1"
+  },
+  "composite_block": {
+   "rule": "frozen album-open verifier == ALBUM_OPEN_VERIFIED AND lineage guard == ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED AND frozen post frame sha256 == this round's frame sha256",
+   "verdict": "ALBUM_OPEN_VERIFIED_COMPOSITE_PASS",
+   "reasons": []
+  }
+ },
+ "composite_rule": "frozen album-open verifier == ALBUM_OPEN_VERIFIED AND lineage guard == ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED AND frozen post frame sha256 == this round's frame sha256",
+ "composite_verdict": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+ "composite_pass": true,
+ "false_positive_note": "the attempt-03/15/16/18 class false positive (frozen verifier alone ALBUM_OPEN_VERIFIED) is NOT treated as success; the v7 guard PASSes on the same current evidence chain: chrome-only AX FULL_TREE, no list controls/rows, focused_is_window, header context title 2024/05/13~05/17 + 57張照片, binding mad 2.266",
+ "next": "S4 frozen v5 ellipsis locator on this round's fresh verified frame"
+}

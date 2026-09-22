@@ -1,0 +1,54 @@
+{
+ "artifact": "s6-menu-roi-crosscheck.json",
+ "roi_size_px": [
+  240,
+  340
+ ],
+ "roi_mine_px": [
+  1231,
+  149,
+  1471,
+  489
+ ],
+ "roi_a19_px": [
+  1245,
+  163,
+  1485,
+  503
+ ],
+ "method": "gray MAD over an identical-size 240x340 ROI anchored at each frame's own detector menu-bbox top-left (window-relative equivalent region); my window origin [329,41]pt vs attempt-19 [337,49]pt",
+ "references": {
+  "menu_open": {
+   "path": "evidence/20260916-route/attempt-19/frame-menu-post1.png",
+   "sha256": "e321069d86d04f2017e3a972a013fedcac51195ba1e4ba1d9e61df476f8169a2"
+  },
+  "menu_absent": {
+   "path": "evidence/20260916-route/attempt-19/frame-menu-pre.png",
+   "sha256": "56959e940b6a0a3f37fbd83b77e9bf7f2b557f63a114a837b088efb7720ce7be"
+  }
+ },
+ "fresh_frame": {
+  "path": "frame-menu-post1.png",
+  "sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880"
+ },
+ "mad_fresh_vs_menu_open": 16.511,
+ "mad_fresh_vs_menu_absent": 27.222,
+ "mad_control_menu_open_vs_menu_absent": 24.422,
+ "pre_declared_rule": "affirmative requires mad_fresh_vs_menu_open <= 12.0 AND strictly smaller than mad_fresh_vs_menu_absent",
+ "rule_pass": false,
+ "verdict": "MENU_ROI_NEGATIVE",
+ "shift_search": {
+  "method": "minimum gray MAD over +/-8 px translation search (alignment diagnostic, same spirit as the geometry validator's shift_diagnostics); the direct same-anchor values above are kept unchanged",
+  "min_mad_vs_menu_open": {
+   "mad": 3.279,
+   "dx": 2,
+   "dy": 2
+  },
+  "min_mad_vs_menu_absent": {
+   "mad": 26.745,
+   "dx": 2,
+   "dy": -8
+  },
+  "interpretation": "after best alignment the fresh menu ROI matches the menu-open reference far better than the menu-absent reference; the residual direct-anchor MAD (16.5) is explained by subpixel rendering phase / a few-px anchor offset, the same phase difference that flips the 稱 glyph in OCR. The ROI check is SUPPORTING evidence only; the decisive affirmative evidence is the popup-shaped pair-B component (71482 px vs whole-screen 3.4M px) plus the newly appeared AXDialog [612,93,137,167]pt and the clean 儲存全部 OCR."
+ }
+}

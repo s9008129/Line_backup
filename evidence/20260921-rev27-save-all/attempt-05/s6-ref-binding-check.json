@@ -1,0 +1,40 @@
+{
+ "check": "attempt-13 menu-absent reference frame -> fresh frame window-region binding (plan 5.1.3 precondition)",
+ "reference": {
+  "path": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+  "window_rect_pt": [
+   337,
+   30,
+   327,
+   643
+  ],
+  "window_rect_px": [
+   674,
+   60,
+   1328,
+   1346
+  ]
+ },
+ "fresh": {
+  "path": "frame-menu-post1.png",
+  "window_rect_pt": [
+   329,
+   41,
+   327,
+   643
+  ],
+  "window_rect_px": [
+   658,
+   82,
+   1312,
+   1368
+  ]
+ },
+ "method": "same-size window crops (654x1286 px) compared as gray MAD WITHOUT alignment (positions differ by (-16,+22) px)",
+ "mad_mean": 0.86,
+ "binding_rule": "MAD <= 12.0 would prove the reference window region still binds to the fresh frame",
+ "verdict": "BINDING_PASS",
+ "interpretation": "the attempt-13 menu-absent reference frame's window region STILL BINDS to this round's fresh frame (MAD 0.86 <= 12.0) even though the window moved (-8,-8) pt between the sessions, because the comparison is window-content-anchored. Per plan 5.1.3 the reference pair was therefore also run this round (s6-menu-detect-planref.json); it returned the known whole-frame false-positive mode (chosen component 1.38M px = the whole desktop, because the LINE window itself moved between the two sessions), which is rejected. The authoritative menu-presence evidence for this round is the same-session pre/post pair B (popup-shaped 71k px component at the ellipsis) plus the newly appeared AXDialog and the clean OCR.",
+ "recorded_at_local": "2026-09-22T23:39:15+08:00",
+ "gui_inputs_sent": 0
+}

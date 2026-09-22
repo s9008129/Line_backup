@@ -1,0 +1,39 @@
+{
+ "tool": "detect_menu_popup",
+ "pre": "s5-preclick-window-cu.jpg",
+ "post": "s6-window-cu.jpg",
+ "params": {
+  "delta": 12,
+  "min_w": 40,
+  "min_h": 20,
+  "min_pixels": 200,
+  "min_strings": 2,
+  "min_strlen": 2
+ },
+ "pre_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+ "post_sha256": "c71c03d92f27ed626b02066807d224e71c19c6dc74be3068fc67ea553ddf3c22",
+ "pre_size": [
+  327,
+  643
+ ],
+ "post_size": [
+  327,
+  643
+ ],
+ "changed_pixels_total": 1009,
+ "components": [
+  {
+   "bbox": [
+    286,
+    32,
+    323,
+    67
+   ],
+   "pixels": 1009,
+   "w": 37,
+   "h": 35
+  }
+ ],
+ "verdict": "NOT_DETECTED",
+ "reason": "no changed region meeting the geometry rule"
+}

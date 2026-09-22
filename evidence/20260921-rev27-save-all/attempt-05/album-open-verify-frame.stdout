@@ -1,0 +1,238 @@
+{
+ "tool": "verify_album_open",
+ "pre": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-19/frame-s1.png",
+ "post": "frame-s1.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866",
+ "post_sha256": "99394bfe2f1634987780d152e955656a3d8293af9a6965ee3a8932f7893b47c1",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "post_ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "•26°C",
+  "C2",
+  "00",
+  "9月22日週二 23:18",
+  "旻謙允禎成長日記",
+  "相簿",
+  "2024/05/20~05/24",
+  "53",
+  "記事本",
+  "2024/05/13~05/17",
+  "57張照片",
+  "2024.05.18",
+  "：： Line_backup - codex -m deepseek-v4.1-flash --sandbox danger-full-ac...",
+  "e-for-byte. Now beginning S1 - fresh",
+  "read-only",
+  "album-detail",
+  "中1",
+  "/ 2>/dev/nu11; echo",
+  "'—--'； cat /Users/hsiaojohnny/Documents/ChatGPT/",
+  "260921-rev27-save-a11/attempt-05/tools/ax_window_bounds.swift |",
+  "nnny",
+  "wheel",
+  "• view transcript）",
+  "L（）",
+  "110）",
+  "Sep 22",
+  "23:15.",
+  "byte-consistent. Proceeding",
+  "to",
+  "S1 - fresh album-detail observation.",
+  "/Documents/ChatGPT/Line_backup/evidence/20260921-rev27-save-a11/",
+  "256 /tmp/attempt05/ax_window_bounds && /tmp/attempt05/",
+  "er.line.mac",
+  "> /tmp/s1-ax-pre-raw.json && shasum -a 256 /tmp/",
+  "1f0f4fbf56412616828425b7e4f03d8ef0cb106ac /tmp/s1-ax-pre-raw.json",
+  ".line.mac",
+  "transcript）",
+  "indow None",
+  "None main= False focused= False min= False",
+  "ardwindow None None main= False focused= False min= False",
+  "2024/05/13~05/17",
+  "57",
+  "$1-ax-pre-raw.json'））",
+  "十",
+  "• view",
+  "None",
+  "shot and",
+  "transcript）",
+  "AX",
+  "post. Let me proceed with the S1 capturesequence. （3m 27..",
+  "• docs（handover,goal）：語意/ 銷字校正引擎定案...",
+  "8& fix/qwen-local-quality-parity*",
+  "A0",
+  "Ask Codex to do anything",
+  "deepseek-v4.1-flash"
+ ],
+ "target_title_in_post": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   687,
+   256,
+   1064,
+   300
+  ]
+ },
+ "date_like_tokens_in_post": [
+  "2024.05.18",
+  "2024/05/13~05/17",
+  "2024/05/20~05/24"
+ ],
+ "count_box": [
+  679,
+  302,
+  847,
+  332
+ ],
+ "count_digits_read": "",
+ "count_text": "UNREADABLE",
+ "diff": {
+  "changed_pixels": 2252759,
+  "changed_fraction": 0.659075,
+  "changed_bbox": [
+   0,
+   0,
+   2294,
+   1490
+  ],
+  "changed_grid_8x8": [
+   [
+    23818,
+    20936,
+    20175,
+    16074,
+    27256,
+    44717,
+    44442,
+    45171
+   ],
+   [
+    7966,
+    8138,
+    14909,
+    24723,
+    30732,
+    41128,
+    41185,
+    41552
+   ],
+   [
+    32248,
+    37704,
+    21300,
+    17718,
+    23916,
+    19766,
+    36831,
+    52748
+   ],
+   [
+    41180,
+    44029,
+    43173,
+    50618,
+    33882,
+    6896,
+    32468,
+    53094
+   ],
+   [
+    38629,
+    44690,
+    44391,
+    51548,
+    34593,
+    8519,
+    34248,
+    52796
+   ],
+   [
+    23843,
+    24525,
+    40405,
+    51268,
+    39353,
+    30130,
+    39307,
+    53012
+   ],
+   [
+    40672,
+    35074,
+    42374,
+    50059,
+    41228,
+    38831,
+    48509,
+    53196
+   ],
+   [
+    40478,
+    46454,
+    49371,
+    37307,
+    29376,
+    28733,
+    28856,
+    30491
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "ALBUM_OPEN_VERIFIED",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "b45aca6dfc77c7038a3f26289dbb4ebe98734e474f3f7ae116acfb51acee3b21",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "65649dfda3cbf63b811996800c27a23f248a146808d75c43f33a32264cdbe621",
+    "stdout_bytes": 3444,
+    "lines_parsed": 64
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 0,
+    "lines_parsed": 0
+   }
+  ]
+ }
+}

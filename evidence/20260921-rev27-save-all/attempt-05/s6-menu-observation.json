@@ -1,0 +1,219 @@
+{
+ "artifact": "s6-menu-observation.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-05",
+ "phase": "S6 fresh menu observation after the single ellipsis click",
+ "recorded_at_local": "2026-09-22T23:43:56+08:00",
+ "input_after_click": "none (no Escape, no click-outside, no menu-item activation, no keyboard, no scroll, no second click; the menu is left open)",
+ "frames": {
+  "pre_full_screen": {
+   "path": "frame-s1.png",
+   "sha256": "99394bfe2f1634987780d152e955656a3d8293af9a6965ee3a8932f7893b47c1",
+   "when": "S1 pre-click 23:18"
+  },
+  "post1_full_screen": {
+   "path": "frame-menu-post1.png",
+   "sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+   "when": "23:26, ~14 s after dispatch"
+  },
+  "post2_full_screen": {
+   "path": "frame-menu-post2.png",
+   "sha256": "c00a271adbfd69058a3cec38684319171bbd069108ac3ffc9e3e5251d0652b2a",
+   "when": "23:26, ~16 s after dispatch"
+  },
+  "pre_window_cu": {
+   "path": "s5-preclick-window-cu.jpg",
+   "sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3"
+  },
+  "post_window_cu": {
+   "path": "s6-window-cu.jpg",
+   "sha256": "c71c03d92f27ed626b02066807d224e71c19c6dc74be3068fc67ea553ddf3c22"
+  }
+ },
+ "frozen_menu_detector": {
+  "tool": "evidence/20260916-route/tools/detect_menu_popup.py",
+  "tool_sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "pair_A_window": {
+   "artifact": "s6-menu-pairA.json",
+   "exit_code": 3,
+   "verdict": "NOT_DETECTED",
+   "reason": "no changed region meeting the geometry rule",
+   "expected": "window-scoped CU screenshots do not contain the macOS popup layer (same behaviour as attempt-13/19 pair A)"
+  },
+  "pair_B1_screen_same_session": {
+   "artifact": "s6-menu-pairB1.json",
+   "artifact_sha256": "c3f841cd2d119b11b607339ea44897f7503fed1fa94040e8c893c4dc2c6c2abd",
+   "pre": "frame-s1.png (this round, pre-click, menu-absent reference, same window position)",
+   "post": "frame-menu-post1.png",
+   "exit_code": 0,
+   "verdict": "MENU_DETECTED",
+   "chosen_bbox_px": [
+    1231,
+    149,
+    1489,
+    500
+   ],
+   "component_px": 71482,
+   "second_largest_component_px": 589,
+   "changed_pixels_total": 171289,
+   "ocr_strings": [
+    "選擇",
+    "項目",
+    "修改",
+    "儲存",
+    "刪除"
+   ]
+  },
+  "pair_B2_screen": {
+   "artifact": "s6-menu-pairB2.json",
+   "artifact_sha256": "ff473df16b0b7496573d88cada32f506f318ecec194992eb39660a9298e75b12",
+   "exit_code": 0,
+   "verdict": "MENU_DETECTED",
+   "chosen_bbox_px": [
+    1231,
+    149,
+    1489,
+    500
+   ],
+   "note": "identical to pair B1 -> the menu is stable across post1/post2"
+  },
+  "plan_reference_pair_check": {
+   "artifact": "s6-menu-detect-planref.json",
+   "artifact_sha256": "36e9efe708ccdc501cb4e5b5f543eaca68c65b8716b8e44be5a755b23a60fb26",
+   "pre": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+   "post": "frame-menu-post1.png",
+   "exit_code": 0,
+   "raw_verdict": "MENU_DETECTED",
+   "chosen_bbox_px": [
+    0,
+    60,
+    2294,
+    1490
+   ],
+   "component_px": 1381064,
+   "classification": "WHOLE_FRAME_FALSE_POSITIVE (known mode, attempts 02/03/04): the LINE window moved between the attempt-13 session and this round, so the whole screen region is 'changed'; the chosen component is 1.38M px, not a popup anchored at the ellipsis; its OCR strings are the whole desktop's text, not menu items",
+   "role": "documented for completeness (plan 5.1.3 reference); NOT used as affirmative evidence"
+  }
+ },
+ "menu_surface_evidence": {
+  "popup_shaped_component": "the same-session pair B selects a single 249x351-ish component of 71482 changed px anchored at the detail-window ellipsis (next largest component 589 px) - categorically not the whole-frame false-positive mode",
+  "ax_dialog_corroboration": {
+   "pre_click_ax_windows": 3,
+   "post_click_ax_windows": 4,
+   "new_window": {
+    "subrole": "AXDialog",
+    "position_points": [
+     612,
+     93
+    ],
+    "size_points": [
+     137,
+     167
+    ],
+    "frame_px_rect": [
+     1224,
+     186,
+     1498,
+     520
+    ]
+   },
+   "note": "a new AXDialog window appeared post-click exactly over the detected popup; independent machine-level corroboration"
+  },
+  "roi_crosscheck": {
+   "artifact": "s6-menu-roi-crosscheck.json",
+   "artifact_sha256": "8684b87f4d67b219a2f9a280e3d68068b041601a38d7b782a7ae654d23e59a9f",
+   "direct_same_anchor": {
+    "mad_fresh_vs_menu_open": 16.511,
+    "mad_fresh_vs_menu_absent": 27.222,
+    "mad_control": 24.422
+   },
+   "shift_search": {
+    "method": "minimum gray MAD over +/-8 px translation search (alignment diagnostic, same spirit as the geometry validator's shift_diagnostics); the direct same-anchor values above are kept unchanged",
+    "min_mad_vs_menu_open": {
+     "mad": 3.279,
+     "dx": 2,
+     "dy": 2
+    },
+    "min_mad_vs_menu_absent": {
+     "mad": 26.745,
+     "dx": 2,
+     "dy": -8
+    },
+    "interpretation": "after best alignment the fresh menu ROI matches the menu-open reference far better than the menu-absent reference; the residual direct-anchor MAD (16.5) is explained by subpixel rendering phase / a few-px anchor offset, the same phase difference that flips the 稱 glyph in OCR. The ROI check is SUPPORTING evidence only; the decisive affirmative evidence is the popup-shaped pair-B component (71482 px vs whole-screen 3.4M px) plus the newly appeared AXDialog [612,93,137,167]pt and the clean 儲存全部 OCR."
+   },
+   "interpretation": "supporting evidence: after best alignment the fresh menu ROI matches the byte-authenticated attempt-19 menu-open reference (MAD 3.279) and not the menu-absent reference (26.745); the direct same-anchor MAD 16.5 is explained by a ~2 px anchor offset / subpixel phase"
+  },
+  "visual_read": "frame-menu-post1.png / frame-menu-post2.png show a dark popup with shadow and rounded corners anchored below-left of the album-detail ellipsis, reading top-to-bottom 選擇項目 / 修改相簿名稱 / 儲存全部 / 刪除相簿 / 分享相簿; no other LINE popup is open",
+  "menu_bbox_px": [
+   1231,
+   149,
+   1489,
+   500
+  ]
+ },
+ "menu_ocr": {
+  "artifact": "s6-menu-ocr.json",
+  "artifact_sha256": "b7072248c9547883567d46cfa75f9543b7c3bb02d72c549df95eb2794802b2f1",
+  "region_px": [
+   1231,
+   149,
+   1489,
+   500
+  ],
+  "method": "PIL crop of the fresh detector chosen_bbox + margin 4 -> 3x LANCZOS -> tesseract -l chi_tra+eng --psm 6",
+  "raw_lines": [
+   "選擇項目",
+   "修改相簿名般",
+   "儲存全部",
+   "刪除相簿   L",
+   "分享相簿"
+  ],
+  "items_top_to_bottom": [
+   "選擇項目",
+   "修改相簿名稱 (OCR line read 修改相簿名般 - single-glyph misread of 稱, conf 49.77)",
+   "儲存全部",
+   "刪除相簿",
+   "分享相簿"
+  ],
+  "save_all_text": "儲存全部",
+  "save_all_affirmatively_identified": true,
+  "save_all_clicked": false,
+  "save_all_dispatch_attempted": false
+ },
+ "menu_surface_verdict": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED",
+ "save_all_verdict": "儲存全部 AFFIRMATIVELY_IDENTIFIED on this round's fresh menu frame (clean OCR, conf 96.95/96.99/96.56, plus visual read)",
+ "save_all_candidate": {
+  "verdict": "NO_CANDIDATE_ESTABLISHED",
+  "locator": "tools/locate_save_all_menu_item.py (sha256 ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a)",
+  "locator_verdict": "MENU_CONTENT_UNEXPECTED",
+  "locator_exit_code": 5,
+  "reason": "reference item order not found around the identified row: the reference item 修改相簿名稱 was OCR'd in the row-cluster text as 修改相簿名般 (single-glyph misread, glyph confidence 49.77); the target row 儲存全部 itself was identified cleanly (row index 2)",
+  "runs": [
+   {
+    "name": "live-determinism-1",
+    "artifact": "selftest-attempt05/result-live-positive1.json",
+    "sha256": "7e92e2529f3665ca3fce1e859b4ff6b4f3a06d133d20808335077e2773e5811f",
+    "verdict": "MENU_CONTENT_UNEXPECTED",
+    "exit_code": 5
+   },
+   {
+    "name": "live-determinism-2",
+    "artifact": "selftest-attempt05/result-live-positive2.json",
+    "sha256": "7e92e2529f3665ca3fce1e859b4ff6b4f3a06d133d20808335077e2773e5811f",
+    "verdict": "MENU_CONTENT_UNEXPECTED",
+    "exit_code": 5,
+    "note": "byte-identical to run 1 -> deterministic"
+   }
+  ],
+  "rule": "plan PLAN-2026-09-21-rev27-save-all.md 5.1.4: fresh menu-item identification by the frozen locator must be ELIGIBLE with a single fresh candidate; ANY other verdict -> STOP. 5.3.3: a contradicting row set -> MENU_CONTENT_UNEXPECTED -> STOP.",
+  "no_fallback_used": "no v4/legacy fallback, no threshold change, no manual coordinate construction, no re-run with different inputs"
+ },
+ "stop": {
+  "decision": "STOP at the S6 gate; Save All NOT dispatched",
+  "gui_input_total_this_round": 1,
+  "save_all_used": 0,
+  "staging_mkdir_used": 0,
+  "baseline_tripwire": "unchanged (see baseline-inventory-end.json)",
+  "blocker": "SAVE_ALL_CANDIDATE_LOCATOR_MENU_CONTENT_UNEXPECTED (plan failure-table row 3 class: identification not affirmatively verifiable by the frozen locator; zero additional input)",
+  "left_as_is": "the open menu is left exactly as-is for the owner (no Escape, no click-outside)"
+ }
+}

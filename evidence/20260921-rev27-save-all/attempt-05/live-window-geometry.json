@@ -1,0 +1,28 @@
+{
+ "x0": 658,
+ "y0": 82,
+ "x1": 1312,
+ "y1": 1368,
+ "source": "read-only AX window-bounds observation of the FOCUSED LINE window index 0 (title '', role AXWindow/AXStandardWindow, main=True, is_ax_focused_window=True, pid 21064) via evidence/20260921-rev27-save-all/attempt-05/tools/ax_window_bounds.swift (sha256 5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6) / binary sha256 1c34c62c6183a4db8f809edc9fdfc7a9ade4db63837a9c24090cd7770156d6ae, read at 2026-09-22T23:17:46+08:00 (pre) and 2026-09-22T23:18:11+08:00 (post, identical window list); position_points [329, 41], size_points [327, 643] x capture scale 2 = frame device-pixel rect; bound to THIS frame's SHA-256; NOT historical geometry",
+ "frame_sha256": "99394bfe2f1634987780d152e955656a3d8293af9a6965ee3a8932f7893b47c1",
+ "coordinate_space": "full-screen capture device pixels (screencapture -x at 2x); the window ROI and any click point share this space",
+ "window_point_rect": [
+  329,
+  41,
+  327,
+  643
+ ],
+ "transform": {
+  "formula": "frame_px = window_pt * 2",
+  "scale": 2,
+  "provenance": "NSScreen.backingScaleFactor=2 and display bounds [0, 0, 1147, 745] pt vs CG display pixels [2294, 1490], read by the same read-only AX tool"
+ },
+ "frame_size_px": [
+  2294,
+  1490
+ ],
+ "generated_from": "this run's fresh read-only AX observation of the FOCUSED LINE window (attempt-05 rev27 ELLIPSIS_THEN_SAVE_ALL_GATE_A)",
+ "gui_inputs_sent": 0,
+ "attempt": "05",
+ "generated_at_local": "2026-09-22T23:19:49+08:00"
+}
