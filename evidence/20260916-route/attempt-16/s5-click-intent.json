@@ -1,0 +1,21 @@
+{
+ "phase": "S5_ellipsis_click_intent",
+ "attempt": "attempt-16",
+ "recorded_at_local": "2026-09-22T16:33+0800",
+ "intent_written": false,
+ "dispatch_attempted": false,
+ "dispatch_state": "NOT_ATTEMPTED",
+ "click_count": 0,
+ "gui_input_count": 0,
+ "ellipsis_inputs_used": 0,
+ "reason": "the gate (fresh composite PASS AND frozen v5 ELIGIBLE AND surface/geometry unchanged) was never reached; the composite was REFUSED and the ellipsis locator was not run (S4 not executed)",
+ "budget": {
+  "ellipsis_click_budget": 1,
+  "used": 0,
+  "retry": 0,
+  "second_click": 0
+ },
+ "no_dispatch_proof": "no click API call was issued this round by any layer: the cua_repl session performed only getApp (read handle), getAXState and getScreenshot — all read-only; the host shell performed only read-only AX reads, screencapture and offline python analysis",
+ "derivation_would_have_been": "n/a — no candidate existed because the frozen v5 locator was never invoked",
+ "no_input_after_dispatch": "n/a (nothing was dispatched; no Escape, no click-outside, no menu item, no Save All, no keyboard, no scroll were issued)"
+}

@@ -1,0 +1,28 @@
+{
+ "phase": "S4_frozen_v5_fresh_ellipsis_locator",
+ "attempt": "attempt-16",
+ "recorded_at_local": "2026-09-22T16:33+0800",
+ "executed": false,
+ "invocations": 0,
+ "reason": "S4 is gated on the fresh composite PASS (runbook decision 5 and the owner's S4: 只有 fresh composite PASS 才可執行). The fresh composite = ALBUM_OPEN_COMPOSITE_REFUSED (S1 album-detail gate FAIL; v7 guard REFUSED), so the frozen v5 locator was NOT invoked. Ellipsis input = 0.",
+ "tool_binding_reverified": {
+  "path": "evidence/20260916-route/tools/v5/locate_album_ellipsis.py",
+  "sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "expected": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "match": true
+ },
+ "prohibited_and_not_done": [
+  "v4 locator fallback",
+  "historical-coordinate fallback ([304,50] / [305,50])",
+  "threshold adjustment",
+  "retry",
+  "invocation on any other frame"
+ ],
+ "frame_sha256_that_would_have_been_the_input": "n/a (not invoked)",
+ "recorded_frame_sha256_for_traceability": {
+  "s1-window-cu.jpg": "eac18de8806c23d9bc320a14a84ceda1a7b8add8d1ac832785021411386aab2a",
+  "frame-s1.png": "d058139168683cda6546b0d52adb0e23dea3fc5d3aa4bd5e082c0c084f0ee6ab"
+ },
+ "fresh_v5_verdict": "NOT_RUN",
+ "ellipsis_input_count": 0
+}

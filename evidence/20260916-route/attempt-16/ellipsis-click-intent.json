@@ -1,0 +1,40 @@
+{
+ "artifact_role": "canonical ellipsis click-intent record for this round (the owner's requested evidence name). The step-indexed twin is s5-click-intent.json; both describe the same non-event.",
+ "phase": "S5_ellipsis_click_intent",
+ "attempt": "attempt-16",
+ "recorded_at_local": "2026-09-22T16:33+0800",
+ "intent_written": false,
+ "intent_status": "NO_INTENT_WRITTEN__GATE_NOT_REACHED",
+ "gates_passed_before_dispatch": {
+  "S1_album_detail_gate": "FAIL — S1_ALBUM_DETAIL_GATE_FAIL__NOT_IN_ALBUM_DETAIL (the focused LINE window is the album-list surface; the attempt-14 album-detail window does not exist)",
+  "S2_stability_binding": "PASS (AX pre/post identical; GEOMETRY_BINDING_PASS, dims exact, MAD 2.112)",
+  "S3_fresh_composite": "FAIL — frozen album-open verifier = ALBUM_OPEN_VERIFIED (false positive on the album-list surface; attempt-03 class) AND v7 lineage guard = REFUSED => ALBUM_OPEN_COMPOSITE_REFUSED",
+  "S4_frozen_v5_verdict": "NOT_RUN (gated on the composite PASS)"
+ },
+ "dispatch_decision": "NOT_AUTHORIZED_BY_THE_GATE",
+ "dispatch_state": "NOT_ATTEMPTED",
+ "click_count": 0,
+ "gui_input_count": 0,
+ "ellipsis_inputs_used": 0,
+ "retry": 0,
+ "second_click": 0,
+ "budget": {
+  "ellipsis_click_budget": 1,
+  "used": 0,
+  "remaining_but_not_transferable": 1
+ },
+ "fresh_frame_sha256": {
+  "s1-window-cu.jpg": "eac18de8806c23d9bc320a14a84ceda1a7b8add8d1ac832785021411386aab2a",
+  "frame-s1.png": "d058139168683cda6546b0d52adb0e23dea3fc5d3aa4bd5e082c0c084f0ee6ab"
+ },
+ "frozen_v5_sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+ "fresh_v5_candidate": null,
+ "candidate_derivation": "n/a — the frozen v5 locator was never invoked, so no candidate exists and no historical coordinate ([304,50] / [305,50]) was read, compared or reused",
+ "timestamp_of_dispatch": null,
+ "no_input_proof": "no click/type/key/scroll/drag API call was issued by any layer this round; the cua_repl session performed only getApp (read handle), getAXState and getScreenshot — all read-only",
+ "downstream_artifacts_that_do_not_exist_because_nothing_was_dispatched": {
+  "post_click_menu_frame": "does not exist (no post-click moment)",
+  "menu_detector_ocr_evidence": "does not exist (frozen detect_menu_popup.py was not run; 0 runs)",
+  "see_instead": "s6-menu-observation-not-executed.json"
+ }
+}

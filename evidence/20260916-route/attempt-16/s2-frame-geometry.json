@@ -1,0 +1,45 @@
+{
+ "phase": "S2_read_only_stability_and_frame_window_binding",
+ "attempt": "attempt-16",
+ "recorded_at_local": "2026-09-22T16:33+0800",
+ "gui_inputs_sent": 0,
+ "sequence": "read-only AX pre (s1-ax-pre.json) -> fresh full-screen frame (frame-s1.png) -> read-only AX post (s2-ax-post.json)",
+ "ax_post": {
+  "evidence": "s2-ax-post.json",
+  "tool_timestamp_local": "2026-09-22T16:32:23+08:00",
+  "result": "pid 21064 (unchanged); frontmost_application=jp.naver.line.mac; ax_frontmost=true; window_count=2; window[0] (0,33) 327x643; window[1] (0,37) 1147x699 — window list identical to the AX pre read (only the timestamp differs)"
+ },
+ "binding": {
+  "tool": "tools/validate_live_geometry.py sha256 ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68 (byte-identical copy from attempt-15)",
+  "evidence": "s2-frame-window-binding.json",
+  "inputs": {
+   "frame": "frame-s1.png d0581391…",
+   "cu_shot": "s1-window-cu.jpg eac18de8…",
+   "ax": "s1-ax-pre.json d841f635…",
+   "window_index": 0
+  },
+  "frame_crop_px": [
+   0,
+   66,
+   654,
+   1352
+  ],
+  "dims_checks": {
+   "cu_shot_dims_equal_ax_pt": true,
+   "frame_crop_inside_frame": true,
+   "frame_scale_matches_display": true
+  },
+  "mad_mean": 2.112,
+  "pass_rule": "dims exact AND mad_mean <= 12.0 (pre-declared bound, unchanged)",
+  "verdict": "GEOMETRY_BINDING_PASS"
+ },
+ "checks": {
+  "same_target_line_window": "PASS (window[0] (0,33) 327x643 in both reads; pid 21064 unchanged)",
+  "geometry_stable": "PASS (pre and post window lists identical)",
+  "app_remains_frontmost": "PASS",
+  "surface_stable": "PASS (binding MAD 2.112 <= 12.0; no overlay transition between the frame and the CU window read)",
+  "screenshot_retries": 0
+ },
+ "verdict": "S2_STABILITY_AND_BINDING_PASS",
+ "meaning": "the frame used by every read-only artifact of this round is pixel-bound to the focused LINE window and the surface did not change under observation; the S1 conclusion (album-list, not album-detail) is therefore not an artifact of a stale or occluded capture"
+}

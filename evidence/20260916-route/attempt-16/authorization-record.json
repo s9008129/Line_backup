@@ -1,0 +1,65 @@
+{
+ "record": "attempt-16 owner one-shot authorization (Rev27c re-issue: fresh album-detail composite revalidation + frozen v5 ellipsis one-shot)",
+ "recorded_at_local": "2026-09-22T16:31+0800",
+ "authorization_source": "owner's message in this conversation (this round only)",
+ "owner_statement_verbatim": "本輪唯一授權：fresh read-only album-detail composite revalidation → fresh frozen v5 ellipsis locator → 若且僅若 composite PASS 且 v5 = ELIGIBLE → exactly one album-level ellipsis click → fresh menu observation → STOP。本輪不授權 Save All。",
+ "new_attempt": 16,
+ "authorization_chain": {
+  "attempt_14_album_reopen_authorization": "LEGALLY CONSUMED at attempt-14 (attempt-14 ended in album-detail with the reopening click spent). The owner explicitly forbids re-running it; this round performs NO album-card click and NO navigation.",
+  "attempt_15": "A previous round under the same authorization text ran and stopped at S1 with ZERO GUI input (LINE had been externally restarted; the album-detail surface was gone). attempt-15's ellipsis budget was NOT consumed and is NOT transferable; this round runs under its own fresh owner authorization."
+ },
+ "known_safe_state_at_authorization": {
+  "local_head_expected_by_owner": "b2719cce7afee777e0d304c6547cd6079865650f",
+  "local_head_actual": "35a5b3daea6f48f2e0ca758c5dcfe7ffccb6d0e1",
+  "ahead_expected_by_owner": 11,
+  "ahead_actual": 14,
+  "deviation_explained": "The three extra commits are attempt-15's OWN authorized append-only evidence commits (b1aa265 main evidence, aa08730 ellipsis-click-intent + manifest closeout, 35a5b3d timestamp-precision closeout; zero semantic change, zero GUI input). attempt-14 is untouched (all 8 attempt-14 evidence files re-hashed from disk this round and consistent with attempt-14's own manifest). This deviation is recorded and surfaced to the owner in the final report; it changes no safety gate.",
+  "attempt_14": "completed; fresh frozen v6 = ELIGIBLE; exactly one fresh album-card reopening click dispatched; frozen album-open verifier = ALBUM_OPEN_VERIFIED; v7 lineage guard = ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED; composite = ALBUM_OPEN_VERIFIED_COMPOSITE; retry = 0; LINE left on album-detail at attempt-14 end; ellipsis not consumed; Save All = 0; chooser = 0; download = 0",
+  "attempt_15_end_state": "BLOCKED_NOT_IN_ALBUM_DETAIL__FRESH_COMPOSITE_REFUSED; zero GUI input; LINE pid 21064; album-list surface left open"
+ },
+ "authorized_this_round": {
+  "fresh_album_detail_composite_revalidation": "read-only (frozen album-open verifier + approved v7 lineage guard)",
+  "fresh_frozen_v5_ellipsis_locator": "read-only, at most one invocation, on this round's fresh album-detail frame only",
+  "ellipsis_click_budget": 1,
+  "menu_observation": "read-only (frozen menu detector / OCR path + fresh captures)"
+ },
+ "not_authorized_this_round": [
+  "Save All (Gate A or otherwise)",
+  "any menu-item click",
+  "second ellipsis click",
+  "retry of any step",
+  "album-card click / album reopen / navigation / bring-to-front",
+  "chooser",
+  "keyboard",
+  "scroll",
+  "Escape / click-outside (menu dismissal)",
+  "AX write",
+  "download",
+  "destination write",
+  "v4 ellipsis fallback or historical-coordinate fallback",
+  "threshold adjustment"
+ ],
+ "hard_budgets": {
+  "new_album_card_click": 0,
+  "navigation": 0,
+  "ellipsis_click": 1,
+  "retry": 0,
+  "menu_item_click": 0,
+  "save_all": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "download": 0,
+  "destination_write": 0
+ },
+ "decision_outcomes": {
+  "A": "fresh composite FAIL -> ellipsis used = 0 -> STOP",
+  "B": "composite PASS but v5 != ELIGIBLE -> ellipsis used = 0 -> STOP",
+  "C": "v5 ELIGIBLE -> one ellipsis click -> menu not affirmative -> ellipsis used = 1, retry = 0 -> STOP",
+  "D": "v5 ELIGIBLE -> one ellipsis click -> MENU_SURFACE_AFFIRMATIVELY_OBSERVED -> 儲存全部 affirmatively identified -> final scoped status READY_FOR_SAVE_ALL_GATE_A_AUTHORIZATION (Save All used = 0)"
+ },
+ "stop_boundary": "Even when the menu appears and 儲存全部 is clearly readable, this round STOPS. Extending into Save All Gate A is forbidden; the real Save All click requires a NEW one-shot owner authorization."
+}

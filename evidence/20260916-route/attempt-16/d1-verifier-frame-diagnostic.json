@@ -1,0 +1,237 @@
+{
+ "tool": "verify_album_open",
+ "pre": "../attempt-14/frame-pre.png",
+ "post": "frame-s1.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d",
+ "post_sha256": "d058139168683cda6546b0d52adb0e23dea3fc5d3aa4bd5e082c0c084f0ee6ab",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "post_ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "記事本",
+  "10.14",
+  "4:30",
+  "557",
+  "4:25",
+  "255",
+  "3:24",
+  "2024/05/13~05/17",
+  "57",
+  "F 2:51",
+  "31",
+  "2:48",
+  "十",
+  "9/23 限量登場",
+  "代言人小卡特餐",
+  "z",
+  "•29°C",
+  "03",
+  "9月22日週二 16:31",
+  "• • • Line_backup -：Line_backup - codex -m deepseek-v4.1-flash --sand..•",
+  "...la_toolbox.py",
+  "••",
+  "...max\"•Sleep",
+  "•..ncapture",
+  "•.ermetrics",
+  "十",
+  "# Rev27c route",
+  "attempt-16 - one-shot",
+  "el1ipsis",
+  "runbook （pre-declared",
+  ". +162 lines",
+  "L runbook written",
+  "51",
+  "evidence/20260916-route/attempt-16/route-runbook.md",
+  "BEFORE",
+  "• Ran cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "+8 1ines",
+  "--- seq 1 SO_setup 2026-09-22T16:13:49",
+  "•• 16:14:10+0800",
+  "event:frozen tool SHAs re-verified from",
+  "attempt-15",
+  "… +73 lines（ctrl + t to view transcript）",
+  "s6-menu-observation-not-executed.json",
+  "drwxI-XI-X",
+  "4 hsiaojohnny staff",
+  "• Let me run steps 1-2 now. （3m 00s • esc to interrupt）",
+  ">Esk Codex to do anything",
+  "deepseek-v4.1-flash",
+  "maX",
+  "•~/Documents/ChatGPT/Line_backup",
+  "Pursuing goal",
+  "（2m）",
+  "Q"
+ ],
+ "target_title_in_post": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   27,
+   926,
+   253,
+   953
+  ]
+ },
+ "date_like_tokens_in_post": [
+  "--- seq 1 SO_setup 2026-09-22T16:13:49",
+  "2024/05/13~05/17"
+ ],
+ "count_box": [
+  19,
+  955,
+  187,
+  985
+ ],
+ "count_digits_read": "57",
+ "count_text": "MATCH",
+ "diff": {
+  "changed_pixels": 1411709,
+  "changed_fraction": 0.413015,
+  "changed_bbox": [
+   0,
+   0,
+   2294,
+   1490
+  ],
+  "changed_grid_8x8": [
+   [
+    9902,
+    15677,
+    38621,
+    43823,
+    42278,
+    47604,
+    26197,
+    14230
+   ],
+   [
+    7117,
+    7680,
+    27376,
+    37915,
+    37422,
+    36635,
+    17707,
+    0
+   ],
+   [
+    26294,
+    29050,
+    18953,
+    7550,
+    4381,
+    2575,
+    10490,
+    0
+   ],
+   [
+    26133,
+    24235,
+    22787,
+    17341,
+    14833,
+    12548,
+    12040,
+    0
+   ],
+   [
+    24833,
+    29835,
+    39454,
+    50653,
+    50843,
+    51309,
+    26116,
+    0
+   ],
+   [
+    12681,
+    7182,
+    35016,
+    46457,
+    46314,
+    13494,
+    951,
+    0
+   ],
+   [
+    27635,
+    25657,
+    13030,
+    8217,
+    9661,
+    12092,
+    0,
+    0
+   ],
+   [
+    43418,
+    42437,
+    42359,
+    42683,
+    43427,
+    15966,
+    5166,
+    5429
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "ALBUM_OPEN_VERIFIED",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "b45aca6dfc77c7038a3f26289dbb4ebe98734e474f3f7ae116acfb51acee3b21",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "e97a6f226a04eb87ea89e48c2db97450ecddb7e0a9bcec0deda52195c51f9ed3",
+    "stdout_bytes": 3264,
+    "lines_parsed": 67
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "f3463a03318f3628ae58a0a7488cf632220d14c4aaf608eeea97df2ac76de12f",
+    "stdout_bytes": 32,
+    "lines_parsed": 1
+   }
+  ]
+ }
+}
