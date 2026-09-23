@@ -1,0 +1,93 @@
+{
+ "check": "rev27c_start_state",
+ "captured_at_local": "2026-09-23T09:23+0800",
+ "authorization_type": "ZERO_GUI_SAVE_ALL_LOCATOR_REPLAN",
+ "authorization_id": "REV27C-SAVE-ALL-CANDIDATE-LOCATOR-AFTER-ATTEMPT05",
+ "working_directory": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+ "branch_line": "## master...origin/master [ahead 20]",
+ "head": "905520ec99f18262bbff24fc1eb18ef0535ebf83",
+ "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+ "ahead": 20,
+ "owner_expected_head": "905520ec99f18262bbff24fc1eb18ef0535ebf83",
+ "owner_expected_origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+ "owner_expected_ahead": 20,
+ "head_matches_owner_expectation": true,
+ "deviation_recorded": false,
+ "tracked_modifications_at_start": [],
+ "untracked_present_untouched": [
+  "evidence/20260916-route/attempt-11/ (historical, not reused, not added, not deleted)",
+  "evidence/20260916-route/tools/v4/__pycache__/, tools/v5/__pycache__/, tools/v6/__pycache__/, tools/v6/selftest/__pycache__/ (never added, never deleted)"
+ ],
+ "read_only_git_commands_used": [
+  "git status --porcelain=v1 --branch",
+  "git rev-parse HEAD",
+  "git rev-parse origin/master",
+  "git rev-list --count origin/master..HEAD",
+  "git log -22 --oneline"
+ ],
+ "git_commands_forbidden_and_not_used": ["fetch", "pull", "push", "reset", "rebase", "amend", "stash"],
+ "target_identity": {
+  "app": "jp.naver.line.mac",
+  "group": "旻謙允禎成長日記",
+  "album": "2024/05/13～05/17",
+  "expected_count": 57
+ },
+ "attempt_05_reverified_from_disk": {
+  "method": "evidence/20260921-rev27-save-all/attempt-05/99-scope-status.json artifact_manifest_sha256 re-hashed from disk",
+  "entries": 75,
+  "consistent": 75,
+  "mismatch": 0,
+  "missing": 0,
+  "files_not_in_manifest": ["99-scope-status.json (cannot contain its own sha; expected)"],
+  "content_verified": {
+   "authorization_type": "ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+   "authorization_id": "REV27-ELLIPSIS-TO-SAVE-ALL-GATE-A-AFTER-ATTEMPT04",
+   "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+   "frozen_v5": "ELIGIBLE",
+   "ellipsis_dispatch": "1 of 1",
+   "fresh_menu_verdict": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED",
+   "save_all_affirmative": "AFFIRMATIVELY_IDENTIFIED",
+   "save_all_candidate": "NO_CANDIDATE_ESTABLISHED (MENU_CONTENT_UNEXPECTED, exit 5)",
+   "save_all_dispatch": "NOT_ATTEMPTED (0 of 1)",
+   "chooser": "NOT_OBSERVED",
+   "retry": 0,
+   "gui_input_count": 1,
+   "baseline_post": "UNCHANGED"
+  },
+  "verdict": "CONSISTENT_WITH_OWNER_STATEMENT",
+  "attempt_05_immutable": true
+ },
+ "frozen_tools_reverified_from_disk": {
+  "tools/v4/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v5/verify_album_open.py": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "tools/v5/locate_album_ellipsis.py": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "tools/v5/locate_album_card.py": "bb52aff1dda8a03845fc82f253a801c010e1bfa6f4cf1d07e5ab4f1365421162",
+  "tools/v6/locate_album_card.py": "d55a974fd61f3494d3ab7c26705a35bb6e91b39eefeb1bd95de5527a988d9142",
+  "tools/v7/album_detail_lineage_guard.py": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "tools/detect_menu_popup.py": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "existing_frozen_save_all_locator_v7_class": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a (recorded in the v8 docstring; not modified by this round)"
+ },
+ "accepted_baseline_reference": {
+  "files": 57,
+  "bytes": 17924900,
+  "manifest_digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "note": "read-only reference value carried from attempt-05 evidence; this round performs zero destination writes (no staging mkdir, no download)"
+ },
+ "gui_capability_used_this_round": {
+  "gui_input_count": 0,
+  "album_card": 0,
+  "ellipsis": 0,
+  "menu_item_save_all": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "download": 0,
+  "staging_mkdir": 0,
+  "destination_write": 0,
+  "line_interaction_of_any_kind": 0
+ }
+}

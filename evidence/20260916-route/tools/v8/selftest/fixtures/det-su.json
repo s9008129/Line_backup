@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest detector fixture (attempt-02 synthetic unexpected-content frame)",
+ "tool": "detect_menu_popup",
+ "verdict": "MENU_DETECTED",
+ "pre": "(fixture)",
+ "post": "evidence/20260921-rev27-save-all/attempt-02/selftest/frame-synth-unexpected.png",
+ "post_sha256": "d8e9f5632d875300c661758b8d1f27cdd48cb53a593afdff770268f9f6c504ee",
+ "chosen_bbox": [1247, 127, 1494, 478],
+ "source": "from evidence/20260921-rev27-save-all/attempt-02/selftest/det-synth-unexpected.json; post path re-rooted",
+ "fixture_note": "negative fixture: v7 refusals MENU_CONTENT_UNEXPECTED must stay refusals under v8"
+}

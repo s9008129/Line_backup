@@ -1,0 +1,55 @@
+{
+ "artifact": "locator-freeze.json (Rev27c: v8 Save All candidate locator created, self-tested, replayed and frozen BEFORE any future live authorization)",
+ "round": "rev27c ZERO_GUI_SAVE_ALL_LOCATOR_REPLAN",
+ "authorization_id": "REV27C-SAVE-ALL-CANDIDATE-LOCATOR-AFTER-ATTEMPT05",
+ "frozen_at_local": "2026-09-23T09:35+0800",
+ "tool": {
+  "path": "evidence/20260916-route/tools/v8/locate_save_all_menu_item.py",
+  "sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+  "bytes": 29465,
+  "class": "v8-class Save All menu-item locator (read-only analysis only; no GUI input capability; sole write site is --out)",
+  "history": "append-only successor of the frozen v7-class locator sha256 ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a; the v7 file (copies in evidence/20260921-rev27-save-all/attempt-02..05/tools/) is byte-untouched (re-verified from disk this round)",
+  "pre_freeze_correction": {
+   "found_by": "the deterministic selftest (case s22/c15 family)",
+   "defect": "the draft computed intersect(intersect(window_rect, bbox), frame_rect) and raised an unhandled TypeError when the window rect and menu bbox were disjoint, instead of the documented NOT_ADDRESSABLE refusal",
+   "fix": "two-stage intersection with an explicit None check; applied BEFORE freeze; frozen sha above is the fixed file",
+   "coverage": "selftest cases s22-window-disjoint and c15-window-disjoint now both return NOT_ADDRESSABLE (exit 3) with no candidate"
+  }
+ },
+ "self_test": {
+  "script": {
+   "path": "evidence/20260916-route/tools/v8/selftest/run_selftest.py",
+   "sha256": "c94fc4074f0cd323ee53fe09428b0d38b61af04f5993ceb344acaa02e236f462"
+  },
+  "results": {
+   "path": "evidence/20260916-route/tools/v8/selftest/results.json",
+   "sha256": "943f293995b8ecc3f51ad9fc672c1fe899ba37312dc377d14a809ee118affe6a",
+   "cases_total": 43,
+   "cases_passed": 43,
+   "global_assertions_passed": 9,
+   "global_assertions_total": 9,
+   "all_pass": true,
+   "eligible_cases": ["s01-baseline-eligible", "s09-non-target-1sub-attempt05-class", "s10-non-target-multirow-1sub-each", "c01-attempt-05-typo-closed", "c02-attempt-13-replay", "c03-attempt-19-replay", "c04-attempt-05-origin-shifted-input-derived"],
+   "refusal_cases": 25,
+   "determinism": "the whole selftest was executed twice; results.json byte-identical across runs (sha 943f2939...); every CLI case byte-identical across its two internal runs"
+  },
+  "fixture_authority": "the fixtures under tools/v8/selftest/fixtures/ are selftest inputs only; their declared frame bindings were re-verified against the real frames (global assertion g09); fixture-derived candidates have NO live authority and are never click input"
+ },
+ "offline_replay": {
+  "script": "evidence/20260923-rev27c-save-all-locator/replay/build-replay-record.py (sha256 034f6abbca1fc09b25c326ff69d44c330e77f3e0cded293241ee689763d9a7f0)",
+  "record": {
+   "path": "evidence/20260923-rev27c-save-all-locator/replay/replay-record.json",
+   "sha256": "2afcd7bec8f6e28826fbf0687c7dd2c604eed7b7746bc854ab2913368ac51540"
+  },
+  "runs": [
+   {"name": "attempt-05-replay", "frame_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880", "verdict": "ELIGIBLE", "exit_code": 0, "candidate_frame_px": [1297.333, 351.5], "candidate_app_local_pt": [319.667, 134.75], "run_pair_sha256": "e8f53bd3b7827fad944322dd5e26db004be43359aa4559959eb8513dc17f6868", "byte_identical": true, "note": "the false-negative this revision closes; v7 refused this frame (MENU_CONTENT_UNEXPECTED)"},
+   {"name": "attempt-13-replay", "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090", "verdict": "ELIGIBLE", "exit_code": 0, "candidate_frame_px": [1313.5, 332.333], "candidate_app_local_pt": [319.75, 136.167], "run_pair_sha256": "b802113b44387222196253c91b840f31830d02bee50a485021f6a0768635f525", "byte_identical": true, "note": "candidate numerically identical to the historical v7 candidate; the historical value was compared only, never used as input"},
+   {"name": "attempt-19-replay", "frame_sha256": "e321069d86d04f2017e3a972a013fedcac51195ba1e4ba1d9e61df476f8169a2", "verdict": "ELIGIBLE", "exit_code": 0, "candidate_frame_px": [1313.5, 370.333], "candidate_app_local_pt": [319.75, 136.167], "run_pair_sha256": "768c5cda80d4deac5694fbb7643926f313dba1b30414ed7ddbca634b1b32a859", "byte_identical": true, "note": "first machine-derived candidate for this historical frame (v7 never produced one; attempt-19 stopped at menu observation)"}
+  ],
+  "inputs_authority": "replay-only frame-SHA re-bindings of the rounds' own AX geometry evidence; OFFLINE REPLAY INPUT ONLY - no live authority"
+ },
+ "outcome": "v8 closes the attempt-05 false-negative (ELIGIBLE, unique current-frame-derived candidate, byte-identical re-runs) while every refusal class in the negative matrix still refuses. An offline ELIGIBLE verdict is NOT a live click authorization; any live round must freshly re-verify the whole chain under a new owner authorization citing Rev27c and the v8 sha.",
+ "freeze_rule": "any byte change to the v8 tool, the selftest, the fixtures or the replay record after this record invalidates this freeze and requires a fresh self-test + fresh independent reviews before any click",
+ "verification_command": "shasum -a 256 evidence/20260916-route/tools/v8/locate_save_all_menu_item.py evidence/20260916-route/tools/v8/selftest/run_selftest.py evidence/20260916-route/tools/v8/selftest/results.json evidence/20260923-rev27c-save-all-locator/replay/replay-record.json",
+ "gui_inputs_sent_during_freeze_selftest_and_replay": 0
+}

@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest detector fixture (attempt-02 synthetic ambiguous-content frame)",
+ "tool": "detect_menu_popup",
+ "verdict": "MENU_DETECTED",
+ "pre": "(fixture)",
+ "post": "evidence/20260921-rev27-save-all/attempt-02/selftest/frame-synth-ambiguous.png",
+ "post_sha256": "ba933c71fb9e16624ea9d1a0d18da663c6b97853df9d04b27eec1aca6a85f6d6",
+ "chosen_bbox": [1247, 127, 1494, 478],
+ "source": "from evidence/20260921-rev27-save-all/attempt-02/selftest/det-synth-ambiguous.json; post path re-rooted",
+ "fixture_note": "negative fixture: two target rows must stay AMBIGUOUS under v8"
+}

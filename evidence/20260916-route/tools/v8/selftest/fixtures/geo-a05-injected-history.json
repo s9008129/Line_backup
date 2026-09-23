@@ -1,0 +1,15 @@
+{
+ "artifact": "v8 selftest geometry fixture (attempt-05 frame with DECOY historical-coordinate fields injected)",
+ "frame_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+ "capture_scale": 2,
+ "window_index": 1,
+ "window_position_points": [329, 41],
+ "window_size_points": [327, 643],
+ "window_point_rect": [329, 41, 656, 684],
+ "historical_candidate_window_local_pt": [304, 50],
+ "historical_candidate_frame_px": [1313.5, 332.333],
+ "fallback_candidate_app_local_pt": [42, 988],
+ "historical_coordinates_note": "DECOY FIELDS. These are the historical v5 ellipsis / v7 candidate coordinates. The locator must ignore every unknown field and derive its candidate from this frame's own OCR, the menu bbox and the window rect above; a candidate equal to any decoy means the injection was consumed and the case must fail.",
+ "source": "geo-a05.json plus deliberately injected decoy history fields",
+ "fixture_note": "negative-for-injection fixture: proves historical coordinates cannot be injected through the geometry input"
+}

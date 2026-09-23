@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest detector fixture (attempt-05 frame, crop that excludes the target row)",
+ "tool": "detect_menu_popup",
+ "verdict": "MENU_DETECTED",
+ "pre": "evidence/20260921-rev27-save-all/attempt-05/s6-window-cu.jpg",
+ "post": "evidence/20260921-rev27-save-all/attempt-05/frame-menu-post1.png",
+ "post_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+ "chosen_bbox": [1231, 149, 1489, 300],
+ "source": "frame binding from s6-menu-pairB1.json verbatim; chosen_bbox bottom edge lowered to 300 so the crop ends above the 儲存全部 row (y 327-376 in that frame)",
+ "fixture_note": "negative fixture: exercises 'target outside the popup crop' with real OCR"
+}

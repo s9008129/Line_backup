@@ -1,0 +1,673 @@
+{
+ "case": "s01-baseline-eligible",
+ "input": {
+  "bbox": [
+   1231.0,
+   149.0,
+   1489.0,
+   500.0
+  ],
+  "frame_size": [
+   2294,
+   1490
+  ],
+  "rows": [
+   [
+    {
+     "box": [
+      1282.0,
+      222.0,
+      1332.0,
+      246.0
+     ],
+     "conf": 87.289,
+     "text": "選擇"
+    },
+    {
+     "box": [
+      1341.0,
+      222.0,
+      1382.0,
+      246.0
+     ],
+     "conf": 96.814,
+     "text": "項目"
+    }
+   ],
+   [
+    {
+     "box": [
+      1282.0,
+      286.0,
+      1330.0,
+      310.0
+     ],
+     "conf": 96.723,
+     "text": "修改"
+    },
+    {
+     "box": [
+      1330.0,
+      274.0,
+      1355.0,
+      322.0
+     ],
+     "conf": 93.195,
+     "text": "相"
+    },
+    {
+     "box": [
+      1355.0,
+      274.0,
+      1381.0,
+      322.0
+     ],
+     "conf": 92.673,
+     "text": "簿"
+    },
+    {
+     "box": [
+      1381.0,
+      274.0,
+      1400.0,
+      322.0
+     ],
+     "conf": 93.175,
+     "text": "名"
+    },
+    {
+     "box": [
+      1400.0,
+      274.0,
+      1420.0,
+      322.0
+     ],
+     "conf": 80.0,
+     "text": "稱"
+    }
+   ],
+   [
+    {
+     "box": [
+      1282.0,
+      326.0,
+      1385.0,
+      352.0
+     ],
+     "conf": 96.955,
+     "text": "儲存"
+    },
+    {
+     "box": [
+      1341.0,
+      326.0,
+      1366.0,
+      374.0
+     ],
+     "conf": 96.985,
+     "text": "全"
+    },
+    {
+     "box": [
+      1365.0,
+      326.0,
+      1384.0,
+      374.0
+     ],
+     "conf": 96.556,
+     "text": "部"
+    }
+   ],
+   [
+    {
+     "box": [
+      1282.0,
+      390.0,
+      1330.0,
+      414.0
+     ],
+     "conf": 96.79,
+     "text": "刪除"
+    },
+    {
+     "box": [
+      1330.0,
+      378.0,
+      1355.0,
+      426.0
+     ],
+     "conf": 93.1,
+     "text": "相"
+    },
+    {
+     "box": [
+      1355.0,
+      378.0,
+      1384.0,
+      426.0
+     ],
+     "conf": 92.9,
+     "text": "簿"
+    }
+   ],
+   [
+    {
+     "box": [
+      1282.0,
+      442.0,
+      1330.0,
+      466.0
+     ],
+     "conf": 96.5,
+     "text": "分享"
+    },
+    {
+     "box": [
+      1330.0,
+      430.0,
+      1355.0,
+      478.0
+     ],
+     "conf": 93.3,
+     "text": "相"
+    },
+    {
+     "box": [
+      1355.0,
+      430.0,
+      1384.0,
+      478.0
+     ],
+     "conf": 92.8,
+     "text": "簿"
+    }
+   ]
+  ],
+  "scale": 2,
+  "window_pos": [
+   329,
+   41
+  ],
+  "window_size": [
+   327,
+   643
+  ]
+ },
+ "result": {
+  "addressable_region_frame_px": [
+   1231.0,
+   149.0,
+   1312.0,
+   500.0
+  ],
+  "candidate": {
+   "app_local_pt": [
+    319.5,
+    134.0
+   ],
+   "frame_px": [
+    1297.0,
+    350.0
+   ],
+   "screen_pt": [
+    648.5,
+    175.0
+   ]
+  },
+  "candidate_derivation": {
+   "edge_margin_px": 7.2,
+   "neighbor_separation_px": 12.0,
+   "rule": "x = midpoint(x_safe); y = midpoint(y_safe)",
+   "x_safe_frame_px": [
+    1284.0,
+    1310.0
+   ],
+   "y_safe_frame_px": [
+    334.0,
+    366.0
+   ]
+  },
+  "checks": [
+   {
+    "class": "HARD",
+    "detail": {
+     "area_fraction": 0.026,
+     "bbox_frame_px": [
+      1231.0,
+      149.0,
+      1489.0,
+      500.0
+     ],
+     "bbox_h_px": 351.0,
+     "bbox_w_px": 258.0,
+     "height_fraction": 0.236,
+     "limits": {
+      "max_area_fraction": 0.3,
+      "max_height_fraction": 0.8,
+      "max_width_fraction": 0.5
+     },
+     "width_fraction": 0.112
+    },
+    "name": "popup_shape",
+    "pass": true
+   },
+   {
+    "class": "HARD",
+    "detail": {
+     "matching_row_indices": [
+      2
+     ],
+     "rule": "exact string, no fuzzy/partial matching",
+     "target_item": "儲存全部"
+    },
+    "name": "target_unique_row",
+    "pass": true
+   },
+   {
+    "class": "HARD",
+    "detail": {
+     "expected_item_count": 5,
+     "item_row_cjk_texts": [
+      "選擇項目",
+      "修改相簿名稱",
+      "儲存全部",
+      "刪除相簿",
+      "分享相簿"
+     ],
+     "item_row_indices": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "matches": [
+      {
+       "expected": "選擇項目",
+       "observed_cjk_text": "選擇項目",
+       "pass": true,
+       "row_index": 0,
+       "span": null,
+       "tier": "EXACT"
+      },
+      {
+       "expected": "修改相簿名稱",
+       "observed_cjk_text": "修改相簿名稱",
+       "pass": true,
+       "row_index": 1,
+       "span": null,
+       "tier": "EXACT"
+      },
+      {
+       "expected": "儲存全部",
+       "observed_cjk_text": "儲存全部",
+       "pass": true,
+       "row_index": 2,
+       "span": null,
+       "tier": "EXACT"
+      },
+      {
+       "expected": "刪除相簿",
+       "observed_cjk_text": "刪除相簿",
+       "pass": true,
+       "row_index": 3,
+       "span": null,
+       "tier": "EXACT"
+      },
+      {
+       "expected": "分享相簿",
+       "observed_cjk_text": "分享相簿",
+       "pass": true,
+       "row_index": 4,
+       "span": null,
+       "tier": "EXACT"
+      }
+     ],
+     "target_position_ok": true
+    },
+    "name": "reference_structure",
+    "pass": true
+   },
+   {
+    "class": "HARD",
+    "detail": {
+     "band_height_range_px": [
+      16.0,
+      175.5
+     ],
+     "consecutive_band_gaps_px": [
+      28.0,
+      4.0,
+      4.0,
+      4.0
+     ],
+     "item_bands_frame_px": [
+      {
+       "band_frame_px": [
+        1282.0,
+        222.0,
+        1382.0,
+        246.0
+       ],
+       "row_index": 0
+      },
+      {
+       "band_frame_px": [
+        1282.0,
+        274.0,
+        1420.0,
+        322.0
+       ],
+       "row_index": 1
+      },
+      {
+       "band_frame_px": [
+        1282.0,
+        326.0,
+        1385.0,
+        374.0
+       ],
+       "row_index": 2
+      },
+      {
+       "band_frame_px": [
+        1282.0,
+        378.0,
+        1384.0,
+        426.0
+       ],
+       "row_index": 3
+      },
+      {
+       "band_frame_px": [
+        1282.0,
+        430.0,
+        1384.0,
+        478.0
+       ],
+       "row_index": 4
+      }
+     ],
+     "outside_bbox": [],
+     "overlapping_pairs": [],
+     "target_band_height_px": 48.0,
+     "target_spread_tolerance_px": 12.0,
+     "target_word_center_spread_px": 11.0
+    },
+    "name": "row_geometry",
+    "pass": true
+   },
+   {
+    "class": "HARD",
+    "detail": {
+     "addressable_x_range": [
+      1231.0,
+      1312.0
+     ],
+     "min_required_px": 20.0,
+     "overlap_width_px": 30.0,
+     "overlap_x_range": [
+      1282.0,
+      1312.0
+     ],
+     "target_band_x_range": [
+      1282.0,
+      1385.0
+     ]
+    },
+    "name": "x_overlap",
+    "pass": true
+   },
+   {
+    "class": "HARD",
+    "detail": {
+     "x_edge_px": 2.0,
+     "x_safe_frame_px": [
+      1284.0,
+      1310.0
+     ]
+    },
+    "name": "x_safe_region",
+    "pass": true
+   },
+   {
+    "class": "HARD",
+    "detail": {
+     "constraints": {
+      "above_bottom_plus_sep": 334.0,
+      "band_bottom_minus_edge": 366.8,
+      "band_top_plus_edge": 333.2,
+      "below_top_minus_sep": 366.0
+     },
+     "edge_margin_px": 7.2,
+     "neighbor_separation_px": 12.0,
+     "y_safe_frame_px": [
+      334.0,
+      366.0
+     ]
+    },
+    "name": "y_safe_region",
+    "pass": true
+   },
+   {
+    "class": "HARD",
+    "detail": {
+     "candidate_clear_of_neighbor_rows": true,
+     "candidate_clear_of_row_edges": true,
+     "candidate_inside_addressable_region": true,
+     "candidate_inside_menu_bbox": true,
+     "candidate_inside_target_band": true,
+     "candidate_inside_y_safe_region": true
+    },
+    "name": "candidate_placement",
+    "pass": true
+   }
+  ],
+  "clearances_px": {
+   "candidate_to_above_band": 28.0,
+   "candidate_to_band_bottom": 24.0,
+   "candidate_to_band_top": 24.0,
+   "candidate_to_bbox_bottom": 150.0,
+   "candidate_to_bbox_left": 66.0,
+   "candidate_to_bbox_right": 192.0,
+   "candidate_to_bbox_top": 201.0,
+   "candidate_to_below_band": 28.0
+  },
+  "exit_code": 0,
+  "neighbors": {
+   "above": {
+    "band_frame_px": [
+     1282.0,
+     274.0,
+     1420.0,
+     322.0
+    ],
+    "cjk_text": "修改相簿名稱",
+    "expected": "修改相簿名稱",
+    "row_index": 1
+   },
+   "below": {
+    "band_frame_px": [
+     1282.0,
+     378.0,
+     1384.0,
+     426.0
+    ],
+    "cjk_text": "刪除相簿",
+    "expected": "刪除相簿",
+    "row_index": 3
+   }
+  },
+  "params": {
+   "edge_fraction": 0.15,
+   "edge_min_px": 6.0,
+   "max_band_h_bbox_fraction": 0.5,
+   "median_word_height_px": 48.0,
+   "min_band_h_px": 16.0,
+   "min_overlap_px": 20.0,
+   "neighbor_sep_px": 12.0,
+   "non_target_substitution_tolerance": 1,
+   "ocr_lang": "chi_tra+eng",
+   "ocr_psm": "6",
+   "row_tol_fraction": 0.6,
+   "row_tol_min_px": 8.0,
+   "row_tol_px": 28.8,
+   "upscale": 3,
+   "x_edge_px": 2.0
+  },
+  "reason": "exactly one exact-match target row; five-item reference structure matched (single-glyph tolerance on non-target rows); row geometry and candidate safe regions pass",
+  "rows": [
+   {
+    "band_frame_px": [
+     1282.0,
+     222.0,
+     1382.0,
+     246.0
+    ],
+    "cjk_text": "選擇項目",
+    "index": 0,
+    "mean_cy_px": 234.0,
+    "text": "選擇項目",
+    "word_count": 2
+   },
+   {
+    "band_frame_px": [
+     1282.0,
+     274.0,
+     1420.0,
+     322.0
+    ],
+    "cjk_text": "修改相簿名稱",
+    "index": 1,
+    "mean_cy_px": 298.0,
+    "text": "修改相簿名稱",
+    "word_count": 5
+   },
+   {
+    "band_frame_px": [
+     1282.0,
+     326.0,
+     1385.0,
+     374.0
+    ],
+    "cjk_text": "儲存全部",
+    "index": 2,
+    "mean_cy_px": 346.333,
+    "text": "儲存全部",
+    "word_count": 3
+   },
+   {
+    "band_frame_px": [
+     1282.0,
+     378.0,
+     1384.0,
+     426.0
+    ],
+    "cjk_text": "刪除相簿",
+    "index": 3,
+    "mean_cy_px": 402.0,
+    "text": "刪除相簿",
+    "word_count": 3
+   },
+   {
+    "band_frame_px": [
+     1282.0,
+     430.0,
+     1384.0,
+     478.0
+    ],
+    "cjk_text": "分享相簿",
+    "index": 4,
+    "mean_cy_px": 454.0,
+    "text": "分享相簿",
+    "word_count": 3
+   }
+  ],
+  "signal_classes": {
+   "HARD": [
+    "popup_shape",
+    "target_unique_row",
+    "reference_structure",
+    "row_geometry",
+    "x_overlap",
+    "x_safe_region",
+    "y_safe_region",
+    "candidate_placement"
+   ],
+   "SUPPORTING": [
+    "supporting_signals"
+   ]
+  },
+  "supporting_signals": {
+   "consecutive_band_gaps_px": [
+    28.0,
+    4.0,
+    4.0,
+    4.0
+   ],
+   "note": "observed but not thresholded; every refusal-driving gate is in `checks` (class HARD)",
+   "row_match_tiers": [
+    "EXACT",
+    "EXACT",
+    "EXACT",
+    "EXACT",
+    "EXACT"
+   ],
+   "target_word_confidences": [
+    96.955,
+    96.985,
+    96.556
+   ]
+  },
+  "target": {
+   "band_frame_px": [
+    1282.0,
+    326.0,
+    1385.0,
+    374.0
+   ],
+   "cjk_text": "儲存全部",
+   "row_index": 2,
+   "text": "儲存全部",
+   "words": [
+    {
+     "box_frame_px": [
+      1282.0,
+      326.0,
+      1385.0,
+      352.0
+     ],
+     "conf": 96.955,
+     "text": "儲存"
+    },
+    {
+     "box_frame_px": [
+      1341.0,
+      326.0,
+      1366.0,
+      374.0
+     ],
+     "conf": 96.985,
+     "text": "全"
+    },
+    {
+     "box_frame_px": [
+      1365.0,
+      326.0,
+      1384.0,
+      374.0
+     ],
+     "conf": 96.556,
+     "text": "部"
+    }
+   ]
+  },
+  "verdict": "ELIGIBLE",
+  "window_rect_px": [
+   658.0,
+   82.0,
+   1312.0,
+   1368.0
+  ]
+ }
+}

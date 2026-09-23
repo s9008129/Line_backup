@@ -1,0 +1,378 @@
+{
+ "tool": "locate_save_all_menu_item",
+ "version": "v8",
+ "class": "v8-class Save All menu-item locator; append-only successor of the frozen v7-class locator ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+ "frame": "evidence/20260921-rev27-save-all/attempt-02/selftest/frame-synth-ambiguous.png",
+ "tool_sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+ "frame_sha256": "ba933c71fb9e16624ea9d1a0d18da663c6b97853df9d04b27eec1aca6a85f6d6",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "detector": {
+  "json": "evidence/20260916-route/tools/v8/selftest/fixtures/det-sa.json",
+  "json_sha256": "566903e8fe47da29e3aa3a495e1cfd32a420c839d18da6c1f283928610cbf4f2",
+  "tool": "detect_menu_popup",
+  "verdict": "MENU_DETECTED",
+  "pre": "(fixture)",
+  "post": "evidence/20260921-rev27-save-all/attempt-02/selftest/frame-synth-ambiguous.png",
+  "post_sha256": "ba933c71fb9e16624ea9d1a0d18da663c6b97853df9d04b27eec1aca6a85f6d6",
+  "chosen_bbox": [
+   1247,
+   127,
+   1494,
+   478
+  ]
+ },
+ "geometry": {
+  "json": "evidence/20260916-route/tools/v8/selftest/fixtures/geo-sa.json",
+  "json_sha256": "cd4fdf1b2a93bcad42f4e88e507a433726b68758772dec29fe71008d1acfa51e",
+  "frame_sha256": "ba933c71fb9e16624ea9d1a0d18da663c6b97853df9d04b27eec1aca6a85f6d6",
+  "capture_scale": 2,
+  "window_index": 0,
+  "window_position_points": [
+   337,
+   30
+  ],
+  "window_size_points": [
+   327,
+   643
+  ]
+ },
+ "ocr": {
+  "returncode": 0,
+  "command": [
+   "tesseract",
+   "-",
+   "stdout",
+   "-l",
+   "chi_tra+eng",
+   "--psm",
+   "6",
+   "tsv"
+  ],
+  "upscale": 3,
+  "tesseract_version": "tesseract 5.5.1",
+  "word_count": 18,
+  "words": [
+   {
+    "text": ">",
+    "conf": 95.21,
+    "box_frame_px": [
+     1274.0,
+     147.0,
+     1300.0,
+     180.0
+    ]
+   },
+   {
+    "text": "選擇",
+    "conf": 96.333,
+    "box_frame_px": [
+     1299.0,
+     210.333,
+     1349.0,
+     234.333
+    ]
+   },
+   {
+    "text": "項目",
+    "conf": 95.248,
+    "box_frame_px": [
+     1360.0,
+     211.667,
+     1398.0,
+     234.667
+    ]
+   },
+   {
+    "text": "修改",
+    "conf": 96.07,
+    "box_frame_px": [
+     1298.667,
+     264.0,
+     1453.0,
+     288.667
+    ]
+   },
+   {
+    "text": "相",
+    "conf": 93.236,
+    "box_frame_px": [
+     1360.333,
+     254.333,
+     1387.333,
+     302.333
+    ]
+   },
+   {
+    "text": "簿",
+    "conf": 93.071,
+    "box_frame_px": [
+     1387.333,
+     254.333,
+     1414.333,
+     302.333
+    ]
+   },
+   {
+    "text": "名",
+    "conf": 93.198,
+    "box_frame_px": [
+     1414.333,
+     254.333,
+     1435.333,
+     302.333
+    ]
+   },
+   {
+    "text": "稱",
+    "conf": 36.94,
+    "box_frame_px": [
+     1435.333,
+     254.333,
+     1453.333,
+     302.333
+    ]
+   },
+   {
+    "text": "儲存",
+    "conf": 96.821,
+    "box_frame_px": [
+     1299.0,
+     318.333,
+     1400.667,
+     342.667
+    ]
+   },
+   {
+    "text": "全",
+    "conf": 96.791,
+    "box_frame_px": [
+     1357.0,
+     308.333,
+     1381.333,
+     356.0
+    ]
+   },
+   {
+    "text": "部",
+    "conf": 96.702,
+    "box_frame_px": [
+     1381.0,
+     308.333,
+     1402.0,
+     356.0
+    ]
+   },
+   {
+    "text": "儲存",
+    "conf": 96.821,
+    "box_frame_px": [
+     1299.0,
+     372.333,
+     1400.667,
+     396.667
+    ]
+   },
+   {
+    "text": "全",
+    "conf": 96.791,
+    "box_frame_px": [
+     1357.0,
+     362.333,
+     1381.333,
+     410.0
+    ]
+   },
+   {
+    "text": "部",
+    "conf": 96.702,
+    "box_frame_px": [
+     1381.0,
+     362.333,
+     1402.0,
+     410.0
+    ]
+   },
+   {
+    "text": "分",
+    "conf": 93.159,
+    "box_frame_px": [
+     1299.333,
+     426.0,
+     1401.0,
+     450.667
+    ]
+   },
+   {
+    "text": "享",
+    "conf": 93.164,
+    "box_frame_px": [
+     1337.0,
+     416.333,
+     1361.0,
+     464.333
+    ]
+   },
+   {
+    "text": "相",
+    "conf": 93.062,
+    "box_frame_px": [
+     1361.0,
+     416.333,
+     1382.0,
+     464.333
+    ]
+   },
+   {
+    "text": "簿",
+    "conf": 92.887,
+    "box_frame_px": [
+     1382.0,
+     416.333,
+     1400.0,
+     464.333
+    ]
+   }
+  ]
+ },
+ "params": {
+  "upscale": 3,
+  "ocr_lang": "chi_tra+eng",
+  "ocr_psm": "6",
+  "row_tol_fraction": 0.6,
+  "row_tol_min_px": 8.0,
+  "median_word_height_px": 47.667,
+  "row_tol_px": 28.6,
+  "min_overlap_px": 20.0,
+  "x_edge_px": 2.0,
+  "edge_fraction": 0.15,
+  "edge_min_px": 6.0,
+  "neighbor_sep_px": 12.0,
+  "min_band_h_px": 16.0,
+  "max_band_h_bbox_fraction": 0.5,
+  "non_target_substitution_tolerance": 1
+ },
+ "rows": [
+  {
+   "index": 0,
+   "text": ">",
+   "cjk_text": "",
+   "mean_cy_px": 163.5,
+   "band_frame_px": [
+    1274.0,
+    147.0,
+    1300.0,
+    180.0
+   ],
+   "word_count": 1
+  },
+  {
+   "index": 1,
+   "text": "選擇項目",
+   "cjk_text": "選擇項目",
+   "mean_cy_px": 222.75,
+   "band_frame_px": [
+    1299.0,
+    210.333,
+    1398.0,
+    234.667
+   ],
+   "word_count": 2
+  },
+  {
+   "index": 2,
+   "text": "修改相簿名稱",
+   "cjk_text": "修改相簿名稱",
+   "mean_cy_px": 277.933,
+   "band_frame_px": [
+    1298.667,
+    254.333,
+    1453.333,
+    302.333
+   ],
+   "word_count": 5
+  },
+  {
+   "index": 3,
+   "text": "儲存全部",
+   "cjk_text": "儲存全部",
+   "mean_cy_px": 331.611,
+   "band_frame_px": [
+    1299.0,
+    308.333,
+    1402.0,
+    356.0
+   ],
+   "word_count": 3
+  },
+  {
+   "index": 4,
+   "text": "儲存全部",
+   "cjk_text": "儲存全部",
+   "mean_cy_px": 385.611,
+   "band_frame_px": [
+    1299.0,
+    362.333,
+    1402.0,
+    410.0
+   ],
+   "word_count": 3
+  },
+  {
+   "index": 5,
+   "text": "分享相簿",
+   "cjk_text": "分享相簿",
+   "mean_cy_px": 439.833,
+   "band_frame_px": [
+    1299.333,
+    416.333,
+    1401.0,
+    464.333
+   ],
+   "word_count": 4
+  }
+ ],
+ "checks": [
+  {
+   "name": "popup_shape",
+   "class": "HARD",
+   "pass": true,
+   "detail": {
+    "bbox_frame_px": [
+     1247.0,
+     127.0,
+     1494.0,
+     478.0
+    ],
+    "bbox_w_px": 247.0,
+    "bbox_h_px": 351.0,
+    "area_fraction": 0.025,
+    "width_fraction": 0.108,
+    "height_fraction": 0.236,
+    "limits": {
+     "max_area_fraction": 0.3,
+     "max_width_fraction": 0.5,
+     "max_height_fraction": 0.8
+    }
+   }
+  },
+  {
+   "name": "target_unique_row",
+   "class": "HARD",
+   "pass": false,
+   "detail": {
+    "matching_row_indices": [
+     3,
+     4
+    ],
+    "target_item": "儲存全部",
+    "rule": "exact string, no fuzzy/partial matching"
+   }
+  }
+ ],
+ "verdict": "AMBIGUOUS",
+ "exit_code": 4,
+ "reason": "target item text found in more than one row"
+}

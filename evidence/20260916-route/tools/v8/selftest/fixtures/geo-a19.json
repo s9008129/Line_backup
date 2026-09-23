@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest geometry fixture (attempt-19 menu frame)",
+ "frame_sha256": "e321069d86d04f2017e3a972a013fedcac51195ba1e4ba1d9e61df476f8169a2",
+ "capture_scale": 2,
+ "window_index": 0,
+ "window_position_points": [337, 49],
+ "window_size_points": [327, 643],
+ "window_point_rect": [337, 49, 664, 692],
+ "source": "matches evidence/20260923-rev27c-save-all-locator/replay/inputs/attempt-19-menu-frame-geometry.json (same values; that replay input cites evidence/20260916-route/attempt-19/a5-frame-window-binding.json)",
+ "fixture_note": "self-test input only; confers no live authority"
+}

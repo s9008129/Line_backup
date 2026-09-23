@@ -1,0 +1,93 @@
+{
+ "schema": "rev27c-root-cause/1",
+ "artifact": "evidence/20260923-rev27c-save-all-locator/attempt-01/root-cause-classification.json",
+ "captured_at_local": "2026-09-23T09:34+0800",
+ "authorization_type": "ZERO_GUI_SAVE_ALL_LOCATOR_REPLAN",
+ "authorization_id": "REV27C-SAVE-ALL-CANDIDATE-LOCATOR-AFTER-ATTEMPT05",
+ "method": "read-only re-reading of attempt-05 evidence on disk, the frozen v7-class locator source, and this round's v8 offline replays; no live capture, no LINE interaction",
+ "question_1_was_exact_all_items_a_necessary_condition": {
+  "answer": "YES",
+  "label": "OBSERVED",
+  "statement": "The v7-class locator required an exact OCR substring hit for every one of the five reference items AND strict top-to-bottom order before it would derive a Save All candidate.",
+  "evidence": [
+   "evidence/20260921-rev27-save-all/attempt-05/selftest-attempt05/result-live-positive1.json: cross_check.reference_hits = {選擇項目:[0], 修改相簿名稱:[], 儲存全部:[2], 刪除相簿:[3], 分享相簿:[4]}; cross_check.strict_order=false; verdict MENU_CONTENT_UNEXPECTED; reason 'reference item order not found around the identified row'",
+   "frozen v7-class source (sha256 ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a, copies in attempt-02..05 tools/): exact-containment reference check with no substitution tolerance"
+  ]
+ },
+ "question_2_was_the_target_itself_read_correctly": {
+  "answer": "YES",
+  "label": "OBSERVED",
+  "statement": "The target item 儲存全部 was read cleanly on the attempt-05 frame; it was row 2 and the only reference item that failed was a non-target row.",
+  "evidence": [
+   "v7 rows: row2 text '儲存全部', band [1282.667,327.333,1385.0,375.667]",
+   "v8 replay of the same frame (replay/out/attempt-05-replay-1.json): target cjk_text 儲存全部, word confidences 96.955 / 96.985 / 96.556, row_match_tiers[2]=EXACT"
+  ]
+ },
+ "question_3_was_the_failure_caused_only_by_a_non_target_ocr_error": {
+  "answer": "YES",
+  "label": "OBSERVED",
+  "statement": "Exactly one non-target item failed: 修改相簿名稱 was OCR'd as 修改相簿名般 (single glyph 稱 -> 般, word conf 49.772). The other four reference items hit exactly, so the refusal is fully explained by that one non-target glyph.",
+  "evidence": [
+   "v7 rows: row1 text '修改相簿名般' (5 words; the 般 word conf 49.772)",
+   "v7 cross_check.reference_hits: only 修改相簿名稱 is empty",
+   "attempt-05 99-scope-status.json: 'reference item 修改相簿名稱 OCR 誤讀 as 修改相簿名般 broke strict reference ordering; target row 儲存全部 itself clean'",
+   "v8 replay: the same row is accepted at tier TOLERANT_1_SUB (length-equal, one substituted character) and the verdict becomes ELIGIBLE"
+  ]
+ },
+ "question_4_is_the_reference_item_exact_text_a_necessary_safety_signal": {
+  "answer": "NO",
+  "label": "INFERRED",
+  "statement": "The exact text of a NON-TARGET reference item is not a necessary safety signal for establishing the Save All candidate. The signals that actually prevent a wrong click are: (a) the menu surface was affirmatively detected on THIS frame; (b) the target string is exact and must occupy exactly one OCR row inside the verified popup bbox; (c) that row must be the middle row (3rd of exactly five, in the reference order) with neighbors still matching 修改相簿名稱-ish / 刪除相簿-ish within one substituted character; (d) the candidate must sit in the row's safe interior, clear of row edges and both neighbor rows, inside the addressable region. A single-glyph misread of a neighbor row changes none of these facts about where the target is.",
+  "why_the_v7_strictness_was_not_required": [
+   "the v7 strict check never influenced row geometry or candidate computation; it only decided whether to continue at all",
+   "row identity of the target comes from the target's own exact OCR text plus row clustering, not from the other rows",
+   "the position constraint (target must be the 3rd of five rows in reference order) already detects a wrong menu that merely happens to contain the same target string elsewhere"
+  ],
+  "residual_unknown": {
+   "label": "UNKNOWN",
+   "statement": "No formal proof exists that no other LINE (or system) popup could present the same five-row shape with 儲存全部 as the middle row; the safety argument is a bounded risk reduction, not a proof.",
+   "bounding_measures": [
+    "the tolerance is exactly one substituted character per non-target row, length-equal only, no insertions/deletions, target tolerance 0",
+    "item count must be exactly five in the reference order; two or more damaged characters in the same row refuse",
+    "the candidate must pass the popup-shape rule, band-in-bbox rule, neighbor-separation rule and the placement checks",
+    "outside the locator: the live route still requires the single-ellipsis provenance, baseline tripwire, staging preflight, durable intent and an at-most-once dispatch, and a human owner authorizes each live round"
+   ]
+  }
+ },
+ "v7_vs_v8_row_table_attempt05_frame": {
+  "v7": {
+   "rows": ["選擇項目-", "修改相簿名般", "儲存全部", "刪除相簿t", "分享相簿"],
+   "reference_hits": {"選擇項目": [0], "修改相簿名稱": [], "儲存全部": [2], "刪除相簿": [3], "分享相簿": [4]},
+   "strict_order": false,
+   "verdict": "MENU_CONTENT_UNEXPECTED",
+   "exit_code": 5,
+   "candidate": null
+  },
+  "v8": {
+   "rows_cjk": ["選擇項目", "修改相簿名般", "儲存全部", "刪除相簿", "分享相簿"],
+   "row_match_tiers": ["EXACT", "TOLERANT_1_SUB", "EXACT", "EXACT", "EXACT"],
+   "verdict": "ELIGIBLE",
+   "exit_code": 0,
+   "candidate_frame_px": [1297.333, 351.5],
+   "candidate_app_local_pt": [319.667, 134.75]
+  }
+ },
+ "classification_summary": {
+  "OBSERVED": [
+   "v7 demanded exact OCR text for all five reference items plus strict order",
+   "the target row itself was clean (row 2, 儲存全部, conf 96.955/96.985/96.556)",
+   "exactly one non-target item failed: 修改相簿名稱 -> 修改相簿名般 (conf 49.772)",
+   "that single non-target glyph fully explains the MENU_CONTENT_UNEXPECTED refusal",
+   "v8 accepts the same frame, same OCR, at TOLERANT_1_SUB on that row and returns ELIGIBLE with a unique candidate",
+   "all attempt-05 evidence on disk is unmodified (75/75 manifest entries re-hashed)"
+  ],
+  "INFERRED": [
+   "the non-target reference text is not a necessary safety signal; the required signals are menu detection, target exactness+uniqueness, target row position/order, and row/candidate geometry",
+   "the one-glyph tolerance cannot move the target row or the candidate because both derive from the target's own band and the bbox, not from neighbor text"
+  ],
+  "UNKNOWN": [
+   "no formal proof that no other popup can present the same five-row shape with the target in the middle row; mitigated by the bounded tolerance and the out-of-scope live-route gates"
+  ]
+ },
+ "conclusion": "attempt-05 was a genuine fail-closed false-negative. The v8 revision removes exactly that dependency (single substituted character tolerated on each NON-target row, length-equal only) while the target itself, the menu surface, the row structure/order and all geometry remain hard gates. No override, no fuzzy target match, no historical coordinates, no geometry relaxation."
+}

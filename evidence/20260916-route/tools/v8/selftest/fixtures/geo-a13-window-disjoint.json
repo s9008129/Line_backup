@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest geometry fixture (attempt-13 frame, window rect disjoint from the menu bbox)",
+ "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+ "capture_scale": 2,
+ "window_index": 0,
+ "window_position_points": [10, 10],
+ "window_size_points": [100, 100],
+ "window_point_rect": [10, 10, 110, 110],
+ "source": "synthetic disjoint window rect (wrong app/window binding class)",
+ "fixture_note": "negative fixture: a menu that does not intersect the app window must refuse as NOT_ADDRESSABLE"
+}

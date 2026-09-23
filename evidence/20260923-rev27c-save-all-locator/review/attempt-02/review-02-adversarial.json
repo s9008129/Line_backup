@@ -1,0 +1,108 @@
+{
+ "schema": "rev27c-review/2",
+ "review": "review-02-adversarial",
+ "reviewer_note": "fresh-context independent adversarial review",
+ "reviewed_at_local": "2026-09-23T10:40+0800",
+ "gui_input_count": 0,
+ "network_access": false,
+ "git_mutations": 0,
+ "reviewed_plan_revision": "rev27c-2",
+ "targets": {
+  "plan_sha256_computed": "906e949b34a5f48f46135b240b8b00a1df147a45d30da6e462c2fc4e5b1d8110",
+  "bound_artifacts": {
+   "PLAN-2026-09-23-rev27c-save-all-locator.md": {"computed_sha256": "906e949b34a5f48f46135b240b8b00a1df147a45d30da6e462c2fc4e5b1d8110", "expected_sha256": "906e949b34a5f48f46135b240b8b00a1df147a45d30da6e462c2fc4e5b1d8110", "match": true},
+   "evidence/20260916-route/tools/v8/locate_save_all_menu_item.py": {"computed_sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86", "expected_sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86", "match": true},
+   "evidence/20260916-route/tools/v8/selftest/run_selftest.py": {"computed_sha256": "c94fc4074f0cd323ee53fe09428b0d38b61af04f5993ceb344acaa02e236f462", "expected_sha256": "c94fc4074f0cd323ee53fe09428b0d38b61af04f5993ceb344acaa02e236f462", "match": true},
+   "evidence/20260916-route/tools/v8/selftest/results.json": {"computed_sha256": "943f293995b8ecc3f51ad9fc672c1fe899ba37312dc377d14a809ee118affe6a", "expected_sha256": "943f293995b8ecc3f51ad9fc672c1fe899ba37312dc377d14a809ee118affe6a", "match": true},
+   "evidence/20260923-rev27c-save-all-locator/replay/replay-record.json": {"computed_sha256": "2afcd7bec8f6e28826fbf0687c7dd2c604eed7b7746bc854ab2913368ac51540", "expected_sha256": "2afcd7bec8f6e28826fbf0687c7dd2c604eed7b7746bc854ab2913368ac51540", "match": true},
+   "evidence/20260923-rev27c-save-all-locator/injection-supplemental/run_injection_case.py": {"computed_sha256": "cdc8fb0521d2ca9ad57534d7a791633529120f13e1c7e185fcd4e7db585ee9ee", "expected_sha256": "cdc8fb0521d2ca9ad57534d7a791633529120f13e1c7e185fcd4e7db585ee9ee", "match": true},
+   "evidence/20260923-rev27c-save-all-locator/injection-supplemental/results.json": {"computed_sha256": "36ebf7a335903a587e975447cb9d6793a25579933e1f054ae6a70aadfcd1aca4", "expected_sha256": "36ebf7a335903a587e975447cb9d6793a25579933e1f054ae6a70aadfcd1aca4", "match": true},
+   "evidence/20260923-rev27c-save-all-locator/injection-supplemental/README.md": {"computed_sha256": "377902059a032d51f2ad5e8e8756ab4fccae96112d01c7bada7a85d83075dc2d", "expected_sha256": "377902059a032d51f2ad5e8e8756ab4fccae96112d01c7bada7a85d83075dc2d", "match": true},
+   "evidence/20260921-rev27-save-all/attempt-02..05/tools/locate_save_all_menu_item.py (4 files byte-identical)": {"computed_sha256": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a", "expected_sha256": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a", "match": true},
+   "evidence/20260916-route/tools/v8/selftest/fixtures/geo-a05-injected-history.json (scratch, not bound)": {"computed_sha256": "842cb93330e3183cf5c3cc7cd28e69b5714084499aa994f49cdc93d7fa2f3418", "expected_sha256": "842cb93330e3183cf5c3cc7cd28e69b5714084499aa994f49cdc93d7fa2f3418", "match": true},
+   "evidence/20260916-route/tools/v8/selftest/out/c19-historical-coordinate-injection.json (scratch, not bound)": {"computed_sha256": "ab4c577a9575b2e937df83f439f09eba06a9f222dc183a5f287bc5730124ba5e", "expected_sha256": "ab4c577a9575b2e937df83f439f09eba06a9f222dc183a5f287bc5730124ba5e", "match": true}
+  },
+  "supporting_reverified": {
+   "evidence/20260921-rev27-save-all/attempt-05/frame-menu-post1.png": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+   "evidence/20260921-rev27-save-all/attempt-05/live-window-geometry-post1.json": "f746275dde3d2440b6cee1f4eac03422f1e6945a3aae6473a82f4a9006de4349",
+   "evidence/20260921-rev27-save-all/attempt-05/s6-menu-pairB1.json": "c3f841cd2d119b11b607339ea44897f7503fed1fa94040e8c893c4dc2c6c2abd",
+   "evidence/20260916-route/attempt-13/frame-menu-post1.png": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+   "evidence/20260916-route/attempt-13/s6-menu-pairB1.json": "d1dc6257fe67e61c5975649bcbda754b66b74e4c98ae102919fa1d7d2e87e021",
+   "evidence/20260916-route/attempt-19/frame-menu-post1.png": "e321069d86d04f2017e3a972a013fedcac51195ba1e4ba1d9e61df476f8169a2",
+   "evidence/20260921-rev27-save-all/attempt-05/selftest-attempt05/result-live-positive1.json": "7e92e2529f3665ca3fce1e859b4ff6b4f3a06d133d20808335077e2773e5811f"
+  },
+  "reproduced_outputs_x2_or_byte_identical": {
+   "attempt-05 v8 replay stdout (x2, == replay-record attempt-05-replay-1/2)": "e8f53bd3b7827fad944322dd5e26db004be43359aa4559959eb8513dc17f6868",
+   "attempt-13 v8 replay stdout (x2, == replay-record)": "b802113b44387222196253c91b840f31830d02bee50a485021f6a0768635f525",
+   "attempt-19 v8 replay stdout (x2, == replay-record)": "768c5cda80d4deac5694fbb7643926f313dba1b30414ed7ddbca634b1b32a859",
+   "decoy-injected attempt-05 stdout (x2, == withdrawn c19 scratch == supplemental record)": "ab4c577a9575b2e937df83f439f09eba06a9f222dc183a5f287bc5730124ba5e",
+   "mirror selftest results.json (x2)": "943f293995b8ecc3f51ad9fc672c1fe899ba37312dc377d14a809ee118affe6a",
+   "mirror selftest stdout (x2 byte-identical, 327643 bytes)": "bc9cf22fbdd1e5c6e4bc9012f19205ff8f2b688cbb86f014635c19434eb9a1d5",
+   "mirror injection-supplemental results.json (x2)": "36ebf7a335903a587e975447cb9d6793a25579933e1f054ae6a70aadfcd1aca4",
+   "frozen v7 offline reproduction of attempt-05 (exit 5, == live result-live-positive1.json)": "7e92e2529f3665ca3fce1e859b4ff6b4f3a06d133d20808335077e2773e5811f",
+   "c01 case output (== supplemental clean-control sha)": "c92f415148e19391a9343273c7a141155da597b0131f764b41fb0934fc14fa3b"
+  },
+  "mismatches": []
+ },
+ "goal_baseline": {
+  "primary_outcome": "A reviewed, fail-closed v8 Save All candidate locator that closes the attempt-05 false negative (non-target OCR typo 修改相簿名般 vs 修改相簿名稱 broke v7 strict reference order -> exit 5 with no candidate) while preserving exact target identity, fresh frame-bound menu surface, geometry safety, no historical-coordinate fallback, refusal on ambiguity, zero GUI input in this round.",
+  "core_acceptance": ["attempt-05 offline replay -> ELIGIBLE with a unique current-frame-derived candidate", "negative matrix all refuses with no candidate", "target exact/non-fuzzy and structure/order/geometry gates remain hard", "deterministic byte-identical reruns", "frozen SHAs intact"],
+  "out_of_scope": ["any live GUI input", "Save All dispatch (at-most-once, outside the locator)", "chooser (future Gate B observation only)"]
+ },
+ "checklist": [
+  {"item": "target 儲存全部 still requires affirmative exact recognition (no fuzzy/similar/partial)", "pass": true, "evidence": "Exact substring only: TARGET_ITEM in r['cjk_text'] (locate_save_all_menu_item.py:297-306); match_reference called with tolerance 0 for the target (326-329). Probes: 1-substituted target -> NOT_FOUND; truncated -> NOT_FOUND; similar 保存全部 -> NOT_FOUND (selftest s03/s04/s08; g05 violations [])."},
+  {"item": "non-target OCR typos cannot alone cause a false negative (attempt-05 -> ELIGIBLE; 1 substitution per non-target row tolerated)", "pass": true, "evidence": "NON_TARGET_SUBSTITUTION_TOLERANCE=1 (:88) in a length-equal window (match_reference :209-226). Frozen-CLI attempt-05 replay x2 byte-identical e8f53bd3 -> ELIGIBLE, tiers [EXACT,TOLERANT_1_SUB,EXACT,EXACT,EXACT]; selftest s09/s10/c01 ELIGIBLE; 2-sub and length-change refuse (s11/s12, E11/F02)."},
+  {"item": "relaxing non-target OCR cannot let a wrong menu or wrong row pass", "pass": true, "evidence": "Hard structure gate: exactly 5 CJK item rows in reference order with the target as item row 3 (:311-334); band/geometry (:335-376); addressability + y-safe (:377-433); placement (:435-454). Probes: target moved to 4th -> MENU_CONTENT_UNEXPECTED (E09); neighbors swapped -> MENU_CONTENT_UNEXPECTED (E10/E25); 6th CJK row -> refuse (E24b/s14); duplicate row -> refuse (s25); 2-sub -> refuse (E11); mid insertion -> refuse (F04); band overlap -> ROW_GEOMETRY_UNSAFE (F07/s16)."},
+  {"item": "candidate derived from the current frame's own evidence only", "pass": true, "evidence": "evaluate() consumes only frame size, bbox, scale, window rect, OCR words (:232-506); inputs SHA-bound (:571-580, :590-598); c04 origin-shift changes app-local accordingly (g08); E32 independent arithmetic reproduced the candidate midpoint exactly."},
+  {"item": "no historical-coordinate fallback anywhere (bound supplemental test targets this)", "pass": true, "evidence": "g07_no_historical_constants_or_extra_writes forbidden_hits [] and exactly 1 write site; no coordinate literals in source. Decoy fixture 842cb933 ([304,50], [1313.5,332.333], [42,988]) -> byte-identical decision/candidate to clean control (my reruns x2 = ab4c577a, the withdrawn c19 scratch bytes); supplemental 11/11 PASS, results 36ebf7a3 reproduced x2 in a /tmp mirror."},
+  {"item": "attempt-05 replay candidate unique and reproducible (run x2)", "pass": true, "evidence": "Frozen CLI x2 byte-identical e8f53bd3 (== replay-record run pair); single candidate frame_px [1297.333,351.5], screen_pt [648.667,175.75], app_local_pt [319.667,134.75]; attempt-13 x2 b802113b and attempt-19 x2 768c5cda also reproduced."},
+  {"item": "every ambiguous negative-matrix case REFUSES", "pass": true, "evidence": "43/43 cases pass at expected verdict/exit: 7 ELIGIBLE + 36 refusals (NOT_FOUND 8, NOT_ADDRESSABLE 4, AMBIGUOUS 2, MENU_CONTENT_UNEXPECTED 8, BAD_INPUT 10, ROW_GEOMETRY_UNSAFE 4). My per-case scan of all 43 output files: zero candidate keys on any refusal (g02 leaks []); my CLI refusal batch (c07/c08 exit 2, c09/c10/c13/c14 exit 6, c15/c16 exit 3) leaked nothing."},
+  {"item": "Save All stays at-most-once (locator never clicks; dispatch outside it)", "pass": true, "evidence": "No GUI/input/network capability; imports :61-69; only subprocess is tesseract OCR (:121-153); only write site is --out (:514-519). attempt-05: save_all_dispatch 0 of 1, second_save_all 0; plan §8 GUI 0."},
+  {"item": "chooser not part of this revision", "pass": true, "evidence": "No chooser code/strings in the v8 locator or selftest; plan keeps chooser as future Gate B observation-only (§4/§8, NOT READY_FOR_CHOOSER_GATE_B); attempt-05 chooser NOT_OBSERVED / 0."}
+ ],
+ "independent_experiments": [
+  {"name": "bound-artifact SHA verification", "method": "shasum -a 256 on all 10 bound artifacts + plan", "result": "all computed SHAs equal the review-request expected SHAs; zero mismatches"},
+  {"name": "frozen v7 offline reproduction of the root cause", "method": "run attempt-05/tools/locate_save_all_menu_item.py on the attempt-05 frame + bound detector/geometry, output to /tmp", "result": "exit 5 MENU_CONTENT_UNEXPECTED; rows [選擇項目-, 修改相簿名般, 儲存全部, 刪除相簿t, 分享相簿]; no candidate; stdout sha 7e92e252 == recorded live result-live-positive1.json bytes"},
+  {"name": "v8 CLI replay determinism x2 (attempt-05/13/19 + decoy-injected attempt-05)", "method": "frozen CLI from the attempt working directories with the recorded argv spellings, outputs to /tmp", "result": "byte-identical pairs: e8f53bd3, b802113b, 768c5cda, ab4c577a (all equal to the frozen replay/supplemental records)"},
+  {"name": "refusal batch + candidate-leak scan", "method": "CLI on c07/c08 (pre frame), c09 stale SHA, c10 wrong-frame detector, c13 whole-screen bbox, c14 bbox outside frame, c15 disjoint window, c16 x-overlap below rule; scan every stdout JSON for a candidate key", "result": "exit codes 2/2/6/6/6/6/3/3 as expected; zero candidate keys on every refusal"},
+  {"name": "full selftest in a /tmp mirror, x2", "method": "mirror of tools/v8/selftest (tool+frames symlinked, script+fixtures copied); never run in place", "result": "43/43 PASS; results.json sha reproduced 943f2939; stdout byte-identical x2 (bc9cf22f, 327643 B); all 43 out/ files byte-identical to the repository copies"},
+  {"name": "injection supplemental in a /tmp mirror, x2", "method": "mirror copy of injection-supplemental", "result": "11/11 PASS; results 36ebf7a3 reproduced; decoys absent from candidate; deterministic x2"},
+  {"name": "33 synthetic evaluate() probes (round 1, E01-E33)", "method": "import the v8 module (dont_write_bytecode) and drive evaluate() with attempt-05-shaped word boxes; bbox/window/order/overlap/boundary variants", "result": "all safety-relevant refusals observed, zero candidate leaks. Five printed expectation lines are probe-construction/label artifacts (E07/E17/E26 row-clusterer merge; E12 construction re-encoded the 6-char reference; E14 ASCII X stripped by the documented CJK projection), each re-tested correctly in round 2"},
+  {"name": "13 corrected probes (round 2, F01-F12/F14)", "method": "same harness with fixed constructions", "result": "all expectations met, zero leaks: AMBIGUOUS (two target rows), deletion/mid-insertion/2-sub refusals, band overlap and spread -> ROW_GEOMETRY_UNSAFE, two 1-sub rows -> ELIGIBLE, x-overlap boundary 20.0 accepted / 19.8 refused, bbox touching frame edge accepted"},
+  {"name": "typed-malformed input probes (M1/M2)", "method": "CLI with geometry/detector JSONs that are parseable but wrong-typed, outputs to /tmp", "result": "window_position_points length 1/4 or long string -> uncaught ValueError rc 1, empty stdout, no --out file; chosen_bbox numeric strings -> ValueError at float(); null sha / 3-element bbox / missing fields stay clean BAD_INPUT 6; fractional bbox accepted ELIGIBLE rc 0"},
+  {"name": "path-string binding probe", "method": "same frame passed under a different path spelling; repo-relative vs absolute geometry arg", "result": "different spelling -> BAD_INPUT 6 (detector post path equality); repo-relative geometry arg -> same ELIGIBLE decision but different stdout sha (argv echoed)"},
+  {"name": "plan §0 claim verification", "method": "read attempt-01 run-ledger events, restored SHAs from disk, withdrawn-fixture references in run_selftest.py, locator-freeze.json counter vs results.json", "result": "add/withdraw episode recorded; current run_selftest.py c94fc407 and results.json 943f2939 equal the plan binding; c19 unreferenced by the frozen runner; locator-freeze.json refusal_cases 25 is stale vs authoritative 43/7/36/2 (plan documents this)"},
+  {"name": "attempt-05 evidence read", "method": "read 99-scope-status, composite-decision, ellipsis-dispatch-record, locator-freeze-attempt05, result-live-positive1", "result": "GUI 1 (the single ellipsis click), Save All dispatch 0 of 1, chooser 0, v7 MENU_CONTENT_UNEXPECTED exit 5, frozen v7 sha ea09c1ca; attempt-05 untouched"}
+ ],
+ "findings": [
+  {"id": "M1", "title": "typed-malformed geometry crashes (rc 1) instead of documented BAD_INPUT 6", "severity": "low", "blocking": false, "detail": "window_position_points/window_size_points present but not unpackable into two numbers -> uncaught ValueError, rc 1, empty stdout, no --out record. Fail-closed (no candidate). Reproduced 3x (length 1, length 4, long string). Not covered by the bound 43-case matrix (c18 covers unparseable JSON only, which returns 6 cleanly)."},
+  {"id": "M2", "title": "typed-malformed detector chosen_bbox crashes (rc 1)", "severity": "low", "blocking": false, "detail": "chosen_bbox = numeric strings that pass the lexicographic ordering pre-check ('c' > 'a') then raises at float(v). Fail-closed. Very narrow input class; producers emit numbers."},
+  {"id": "O1", "title": "detector binding includes the exact post path string", "severity": "info", "blocking": false, "detail": "Same frame + same SHA via a different spelling -> BAD_INPUT 6. Deliberate path+SHA binding; the future live invocation must pass the detector's recorded string verbatim (fail-closed if not)."},
+  {"id": "O2", "title": "output echoes argv path strings; byte-identity is per identical argv", "severity": "info", "blocking": false, "detail": "Cycle-1 F4/R5 independently re-confirmed: repo-relative vs absolute geometry argument yields the same verdict/candidate with a different stdout sha (b59882e8 vs b802113b)."},
+  {"id": "O3", "title": "tolerance wording nuance: row-level insertions can be hidden by the length-equal window", "severity": "info", "blocking": false, "detail": "A non-target row with an inserted glyph at the end or before the last reference character still passes via an EXACT containment window or a 1-substitution shifted window (E13/F03 ELIGIBLE). Mid-row insertions, deletions and >=2 substitutions refuse (F02/F04/E11). Requires the exact 5-row structure; candidate still derives from the exact target row only."},
+  {"id": "O4", "title": "documentation nit: locator-freeze.json refusal_cases 25 is stale", "severity": "info", "blocking": false, "detail": "Authoritative from results.json: 43 cases, 7 ELIGIBLE, 36 refusal-verdict, refusal-class 2 (c07/c08), 9/9 global assertions. Already documented in plan §0; artifact intentionally left untouched."}
+ ],
+ "residual_risks": [
+  "RR1: a hypothetical different menu with the same five-row shape, exact 儲存全部 in the middle and every non-target row within one glyph would pass (plan §2.4 UNKNOWN; bounded by the live gates outside the locator).",
+  "RR2: target containment — a middle row containing 儲存全部 with extra CJK glyphs (e.g. 儲存全部備註, probe F05) is accepted; constrained by the exactly-five-row structure and middle position.",
+  "RR3: non-CJK stripping inside the target occurrence (儲存全.部, 儲存全1部 accepted) cannot admit a wrong CJK sequence but is a widening vs v7.",
+  "RR4: row-level insertion classes mapping to a tolerated window (O3), bounded as stated.",
+  "RR5 (new): typed-malformed inputs crash with rc 1 instead of a machine-readable BAD_INPUT 6 record (M1/M2); recommend typed validation + matrix cases in a future revision (a tool change invalidates the freeze).",
+  "RR6: offline ELIGIBLE confers no live authority; the attempt-05 menu may be gone; a future live round must re-derive fresh evidence under a new owner authorization citing Rev27c and the v8 SHA (plan §5).",
+  "RR7: the accepted-baseline tripwire (57 files / 17,924,900 bytes / digest b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd) was not re-derived by this review (baseline directory outside the repo); attempt-05 scope status records it UNCHANGED.",
+  "RR8: path-spelling sensitivity (O1/O2) for future automated invocation; fail-closed.",
+  "RR9: the withdrawn c19 scratch files remain inside selftest/fixtures|out (documented non-binding; unreferenced by the frozen runner), so a naive out/ scan sees a 44th eligible-looking file."
+ ],
+ "process_notes": [
+  "The selftest and injection scripts were never executed in place; all execution output went to /tmp/rev27c/; python was always run with -B.",
+  "git status shows no tracked modifications; attempt-11 and the pre-existing __pycache__ trees are untracked and were left untouched.",
+  "Two sibling cycle-2 files (review-01-top-down.{md,json}) appeared under this same attempt-02 directory while this review was running; they were not written by me and were not used as evidence (fresh-context independence)."
+ ],
+ "not_re_derived": [
+  "accepted-baseline manifest digest (RR7)",
+  "the attempt-05 live actions themselves (impossible offline; the frozen v7 code re-executed on the same bound inputs reproduced the live result artifact byte-exactly)",
+  "the intermediate overwritten selftest bytes of the add/withdraw episode (0dde65b3/c83e2ed6), which exist only in the ledger/plan narrative",
+  "cycle-1 F1-F6/R1-R8 were read as inputs, not approvals; they were independently re-confirmed where they intersect this checklist (F1-F3 semantics, F4/R5 argv echo, F5 doc nit, F6 resolution)"
+ ],
+ "verdict": "PLAN_APPROVED"
+}

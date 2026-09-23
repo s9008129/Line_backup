@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest geometry fixture (attempt-02 synthetic unexpected frame)",
+ "frame_sha256": "d8e9f5632d875300c661758b8d1f27cdd48cb53a593afdff770268f9f6c504ee",
+ "capture_scale": 2,
+ "window_index": 0,
+ "window_position_points": [337, 30],
+ "window_size_points": [327, 643],
+ "window_point_rect": [337, 30, 664, 673],
+ "source": "window rect taken from the attempt-13 session (the synthetic frames were derived from the attempt-13 post frame); re-bound to this frame's sha",
+ "fixture_note": "self-test input only; confers no live authority"
+}

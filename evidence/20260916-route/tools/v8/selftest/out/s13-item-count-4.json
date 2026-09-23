@@ -1,0 +1,299 @@
+{
+ "case": "s13-item-count-4",
+ "input": {
+  "bbox": [
+   1231.0,
+   149.0,
+   1489.0,
+   500.0
+  ],
+  "frame_size": [
+   2294,
+   1490
+  ],
+  "rows": [
+   [
+    {
+     "box": [
+      1282.0,
+      222.0,
+      1332.0,
+      246.0
+     ],
+     "conf": 87.289,
+     "text": "選擇"
+    },
+    {
+     "box": [
+      1341.0,
+      222.0,
+      1382.0,
+      246.0
+     ],
+     "conf": 96.814,
+     "text": "項目"
+    }
+   ],
+   [
+    {
+     "box": [
+      1282.0,
+      286.0,
+      1330.0,
+      310.0
+     ],
+     "conf": 96.723,
+     "text": "修改"
+    },
+    {
+     "box": [
+      1330.0,
+      274.0,
+      1355.0,
+      322.0
+     ],
+     "conf": 93.195,
+     "text": "相"
+    },
+    {
+     "box": [
+      1355.0,
+      274.0,
+      1381.0,
+      322.0
+     ],
+     "conf": 92.673,
+     "text": "簿"
+    },
+    {
+     "box": [
+      1381.0,
+      274.0,
+      1400.0,
+      322.0
+     ],
+     "conf": 93.175,
+     "text": "名"
+    },
+    {
+     "box": [
+      1400.0,
+      274.0,
+      1420.0,
+      322.0
+     ],
+     "conf": 80.0,
+     "text": "稱"
+    }
+   ],
+   [
+    {
+     "box": [
+      1282.0,
+      326.0,
+      1385.0,
+      352.0
+     ],
+     "conf": 96.955,
+     "text": "儲存"
+    },
+    {
+     "box": [
+      1341.0,
+      326.0,
+      1366.0,
+      374.0
+     ],
+     "conf": 96.985,
+     "text": "全"
+    },
+    {
+     "box": [
+      1365.0,
+      326.0,
+      1384.0,
+      374.0
+     ],
+     "conf": 96.556,
+     "text": "部"
+    }
+   ],
+   [
+    {
+     "box": [
+      1282.0,
+      390.0,
+      1330.0,
+      414.0
+     ],
+     "conf": 96.79,
+     "text": "刪除"
+    },
+    {
+     "box": [
+      1330.0,
+      378.0,
+      1355.0,
+      426.0
+     ],
+     "conf": 93.1,
+     "text": "相"
+    },
+    {
+     "box": [
+      1355.0,
+      378.0,
+      1384.0,
+      426.0
+     ],
+     "conf": 92.9,
+     "text": "簿"
+    }
+   ]
+  ],
+  "scale": 2,
+  "window_pos": [
+   329,
+   41
+  ],
+  "window_size": [
+   327,
+   643
+  ]
+ },
+ "result": {
+  "checks": [
+   {
+    "class": "HARD",
+    "detail": {
+     "area_fraction": 0.026,
+     "bbox_frame_px": [
+      1231.0,
+      149.0,
+      1489.0,
+      500.0
+     ],
+     "bbox_h_px": 351.0,
+     "bbox_w_px": 258.0,
+     "height_fraction": 0.236,
+     "limits": {
+      "max_area_fraction": 0.3,
+      "max_height_fraction": 0.8,
+      "max_width_fraction": 0.5
+     },
+     "width_fraction": 0.112
+    },
+    "name": "popup_shape",
+    "pass": true
+   },
+   {
+    "class": "HARD",
+    "detail": {
+     "matching_row_indices": [
+      2
+     ],
+     "rule": "exact string, no fuzzy/partial matching",
+     "target_item": "儲存全部"
+    },
+    "name": "target_unique_row",
+    "pass": true
+   },
+   {
+    "class": "HARD",
+    "detail": {
+     "expected_item_count": 5,
+     "item_row_cjk_texts": [
+      "選擇項目",
+      "修改相簿名稱",
+      "儲存全部",
+      "刪除相簿"
+     ],
+     "item_row_indices": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "matches": [],
+     "target_position_ok": null
+    },
+    "name": "reference_structure",
+    "pass": false
+   }
+  ],
+  "exit_code": 5,
+  "params": {
+   "edge_fraction": 0.15,
+   "edge_min_px": 6.0,
+   "max_band_h_bbox_fraction": 0.5,
+   "median_word_height_px": 48.0,
+   "min_band_h_px": 16.0,
+   "min_overlap_px": 20.0,
+   "neighbor_sep_px": 12.0,
+   "non_target_substitution_tolerance": 1,
+   "ocr_lang": "chi_tra+eng",
+   "ocr_psm": "6",
+   "row_tol_fraction": 0.6,
+   "row_tol_min_px": 8.0,
+   "row_tol_px": 28.8,
+   "upscale": 3,
+   "x_edge_px": 2.0
+  },
+  "reason": "five-item reference structure not matched around the target row",
+  "rows": [
+   {
+    "band_frame_px": [
+     1282.0,
+     222.0,
+     1382.0,
+     246.0
+    ],
+    "cjk_text": "選擇項目",
+    "index": 0,
+    "mean_cy_px": 234.0,
+    "text": "選擇項目",
+    "word_count": 2
+   },
+   {
+    "band_frame_px": [
+     1282.0,
+     274.0,
+     1420.0,
+     322.0
+    ],
+    "cjk_text": "修改相簿名稱",
+    "index": 1,
+    "mean_cy_px": 298.0,
+    "text": "修改相簿名稱",
+    "word_count": 5
+   },
+   {
+    "band_frame_px": [
+     1282.0,
+     326.0,
+     1385.0,
+     374.0
+    ],
+    "cjk_text": "儲存全部",
+    "index": 2,
+    "mean_cy_px": 346.333,
+    "text": "儲存全部",
+    "word_count": 3
+   },
+   {
+    "band_frame_px": [
+     1282.0,
+     378.0,
+     1384.0,
+     426.0
+    ],
+    "cjk_text": "刪除相簿",
+    "index": 3,
+    "mean_cy_px": 402.0,
+    "text": "刪除相簿",
+    "word_count": 3
+   }
+  ],
+  "verdict": "MENU_CONTENT_UNEXPECTED"
+ }
+}

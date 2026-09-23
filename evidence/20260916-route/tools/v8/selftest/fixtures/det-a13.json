@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest detector fixture (attempt-13 menu frame binding)",
+ "tool": "detect_menu_popup",
+ "verdict": "MENU_DETECTED",
+ "pre": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+ "post": "evidence/20260916-route/attempt-13/frame-menu-post1.png",
+ "post_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+ "chosen_bbox": [1247, 127, 1494, 478],
+ "source": "verdict/post/post_sha256/chosen_bbox copied verbatim from evidence/20260916-route/attempt-13/s6-menu-pairB1.json (sha256 d1dc6257fe67e61c5975649bcbda754b66b74e4c98ae102919fa1d7d2e87e021); post/pre paths re-rooted to repo-relative form",
+ "fixture_note": "self-test input only; confers no live authority"
+}

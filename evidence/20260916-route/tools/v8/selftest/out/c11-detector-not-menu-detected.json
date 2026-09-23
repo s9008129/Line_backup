@@ -1,0 +1,25 @@
+{
+ "tool": "locate_save_all_menu_item",
+ "version": "v8",
+ "class": "v8-class Save All menu-item locator; append-only successor of the frozen v7-class locator ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+ "frame": "evidence/20260916-route/attempt-13/frame-menu-post1.png",
+ "tool_sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+ "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "detector": {
+  "json": "evidence/20260916-route/tools/v8/selftest/fixtures/det-not-detected.json",
+  "json_sha256": "2dcda7d2d49765172e32f98b06ad6504906f2067e1afafdfc0aff9cf560a3cff",
+  "tool": "detect_menu_popup",
+  "verdict": "MENU_NOT_PRESENT",
+  "pre": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+  "post": "evidence/20260916-route/attempt-13/frame-menu-post1.png",
+  "post_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+  "chosen_bbox": null
+ },
+ "verdict": "BAD_INPUT",
+ "reason": "detector json is not a MENU_DETECTED result",
+ "exit_code": 6
+}

@@ -1,0 +1,126 @@
+{
+ "artifact": "Rev27c review freeze: exact artifacts under review",
+ "round": "evidence/20260923-rev27c-save-all-locator",
+ "authorization_type": "ZERO_GUI_SAVE_ALL_LOCATOR_REPLAN",
+ "authorization_id": "REV27C-SAVE-ALL-CANDIDATE-LOCATOR-AFTER-ATTEMPT05",
+ "note": "reviewers recomputed every SHA below from disk; each cycle-2 review verdict binds to these bytes; the plan bytes were unchanged after both reviews completed (re-verified)",
+ "plan": {
+  "path": "PLAN-2026-09-23-rev27c-save-all-locator.md",
+  "revision": "rev27c-2",
+  "sha256": "906e949b34a5f48f46135b240b8b00a1df147a45d30da6e462c2fc4e5b1d8110"
+ },
+ "artifacts": {
+  "locator_v8": {
+   "path": "evidence/20260916-route/tools/v8/locate_save_all_menu_item.py",
+   "sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86"
+  },
+  "selftest_runner": {
+   "path": "evidence/20260916-route/tools/v8/selftest/run_selftest.py",
+   "sha256": "c94fc4074f0cd323ee53fe09428b0d38b61af04f5993ceb344acaa02e236f462"
+  },
+  "selftest_results": {
+   "path": "evidence/20260916-route/tools/v8/selftest/results.json",
+   "sha256": "943f293995b8ecc3f51ad9fc672c1fe899ba37312dc377d14a809ee118affe6a",
+   "summary": "43/43 cases, 9/9 global assertions; run x2 byte-identical"
+  },
+  "replay_record": {
+   "path": "evidence/20260923-rev27c-save-all-locator/replay/replay-record.json",
+   "sha256": "2afcd7bec8f6e28826fbf0687c7dd2c604eed7b7746bc854ab2913368ac51540"
+  },
+  "root_cause_md": {
+   "path": "evidence/20260923-rev27c-save-all-locator/attempt-01/root-cause-classification.md",
+   "sha256": "255c8c50e0663750eebc94afd969dad966dec9719b13e69bbbf4f7b40192d80b"
+  },
+  "root_cause_json": {
+   "path": "evidence/20260923-rev27c-save-all-locator/attempt-01/root-cause-classification.json",
+   "sha256": "521111234632b799f86438601799bf4474757ac9f1a7cd141999fd94300971b1"
+  },
+  "injection_supplemental_script": {
+   "path": "evidence/20260923-rev27c-save-all-locator/injection-supplemental/run_injection_case.py",
+   "sha256": "cdc8fb0521d2ca9ad57534d7a791633529120f13e1c7e185fcd4e7db585ee9ee"
+  },
+  "injection_supplemental_results": {
+   "path": "evidence/20260923-rev27c-save-all-locator/injection-supplemental/results.json",
+   "sha256": "36ebf7a335903a587e975447cb9d6793a25579933e1f054ae6a70aadfcd1aca4",
+   "summary": "11/11 checks pass; run x2 byte-identical"
+  },
+  "injection_supplemental_readme": {
+   "path": "evidence/20260923-rev27c-save-all-locator/injection-supplemental/README.md",
+   "sha256": "377902059a032d51f2ad5e8e8756ab4fccae96112d01c7bada7a85d83075dc2d"
+  },
+  "frozen_v7_locator_unmodified": {
+   "path": "evidence/20260921-rev27-save-all/attempt-05/tools/locate_save_all_menu_item.py",
+   "sha256": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a"
+  },
+  "frozen_verify_v5": {
+   "path": "evidence/20260916-route/tools/v5/verify_album_open.py",
+   "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58"
+  },
+  "frozen_v5_ellipsis_locator": {
+   "path": "evidence/20260916-route/tools/v5/locate_album_ellipsis.py",
+   "sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418"
+  },
+  "frozen_menu_detector": {
+   "path": "evidence/20260916-route/tools/detect_menu_popup.py",
+   "sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc"
+  },
+  "frozen_v7_lineage_guard": {
+   "path": "evidence/20260916-route/tools/v7/album_detail_lineage_guard.py",
+   "sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52"
+  },
+  "disclosed_scratch_fixture": {
+   "path": "evidence/20260916-route/tools/v8/selftest/fixtures/geo-a05-injected-history.json",
+   "sha256": "842cb93330e3183cf5c3cc7cd28e69b5714084499aa994f49cdc93d7fa2f3418",
+   "status": "left on disk, NOT part of the frozen binding"
+  },
+  "disclosed_scratch_output": {
+   "path": "evidence/20260916-route/tools/v8/selftest/out/c19-historical-coordinate-injection.json",
+   "sha256": "ab4c577a9575b2e937df83f439f09eba06a9f222dc183a5f287bc5730124ba5e",
+   "status": "left on disk, NOT part of the frozen binding"
+  }
+ },
+ "reviews": {
+  "cycle_1": {
+   "review_01_top_down": {
+    "dir": "evidence/20260923-rev27c-save-all-locator/review/attempt-01",
+    "gate": "PLAN_REVISION_REQUIRED",
+    "json_sha256": "bd9f4d4867c55f045d9865e96ab76c898e93729c06a0f2e0d158078014e9e97d",
+    "md_sha256": "10144de6a9cb8ba8783c683bb7b362bf4443ecab32c1261f1ba01f817b8e077a",
+    "triggered": "review-driven replan rev27c-1 -> rev27c-2 (F6/R8: witnessed the transient post-freeze selftest modification)",
+    "note": "cycle-1 review-02 was closed without artifacts after the replan trigger; recorded as history"
+   },
+   "review_02_adversarial": {
+    "artifacts": "none (closed before writing)"
+   }
+  },
+  "cycle_2": {
+   "review_01_top_down": {
+    "dir": "evidence/20260923-rev27c-save-all-locator/review/attempt-02",
+    "gate": "PLAN_APPROVED",
+    "reviewed_plan_revision": "rev27c-2",
+    "reviewed_plan_sha256": "906e949b34a5f48f46135b240b8b00a1df147a45d30da6e462c2fc4e5b1d8110",
+    "json_sha256": "e90ec35106a9221715a2636ecd8e561cd94524a599ad8dd3e7ac806ed4295137",
+    "md_sha256": "b7d4c6b803e15afe2158d2cda6019421ce67e1dcbe0eb41442d0eab9e57eac87"
+   },
+   "review_02_adversarial": {
+    "dir": "evidence/20260923-rev27c-save-all-locator/review/attempt-02",
+    "gate": "PLAN_APPROVED",
+    "reviewed_plan_revision": "rev27c-2",
+    "reviewed_plan_sha256": "906e949b34a5f48f46135b240b8b00a1df147a45d30da6e462c2fc4e5b1d8110",
+    "json_sha256": "69bf597248606cf0e8f27947631c41eaa97950d2aa6634e13bdc507ab70777d8",
+    "md_sha256": "83d902608f569728cef46815b66aa8ec211463ad225adf40ca8bdfa298f88a61"
+   }
+  }
+ },
+ "frozen_tools_untouched": [
+  "tools/v4",
+  "tools/v5",
+  "tools/v6",
+  "tools/v7",
+  "frozen v7 save-all locator",
+  "evidence/20260921-rev27-save-all/attempt-05",
+  "historical attempts",
+  "accepted baseline"
+ ],
+ "gate_summary": "both cycle-2 reviews PLAN_APPROVED on the exact bytes above; readiness = READY_FOR_REV27C_LIVE_AUTHORIZATION (offline only; no live click authorized this round)"
+}

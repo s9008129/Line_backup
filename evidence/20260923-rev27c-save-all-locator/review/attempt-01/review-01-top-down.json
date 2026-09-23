@@ -1,0 +1,100 @@
+{
+ "schema": "rev27c-review/1",
+ "review": "review-01-top-down",
+ "reviewer_note": "fresh-context independent review",
+ "reviewed_at_local": "2026-09-23",
+ "targets": {
+  "plan_sha256": "30ef72400b8e02ca7e83e1dddf5d3dcae8e9f440e599fb3b081a5fa9fee5e6fe",
+  "tool_sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+  "selftest_script_sha256": "c94fc4074f0cd323ee53fe09428b0d38b61af04f5993ceb344acaa02e236f462",
+  "selftest_results_sha256": "943f293995b8ecc3f51ad9fc672c1fe899ba37312dc377d14a809ee118affe6a",
+  "replay_record_sha256": "2afcd7bec8f6e28826fbf0687c7dd2c604eed7b7746bc854ab2913368ac51540",
+  "replay_out_sha256": {
+   "attempt-05": "e8f53bd3b7827fad944322dd5e26db004be43359aa4559959eb8513dc17f6868",
+   "attempt-13": "b802113b44387222196253c91b840f31830d02bee50a485021f6a0768635f525",
+   "attempt-19": "768c5cda80d4deac5694fbb7643926f313dba1b30414ed7ddbca634b1b32a859"
+  }
+ },
+ "checklist": [
+  {
+   "item": "target 儲存全部 still requires affirmative exact recognition (no fuzzy matching)",
+   "pass": true,
+   "evidence": "code: target matched only as an exact substring of the row's CJK text (tolerance 0; match_reference called with tolerance 0 for the target position; no similarity/partial matcher exists); probes X3a 儲存全郜 -> NOT_FOUND, X3b truncated 儲存全 -> NOT_FOUND, P6 split-word -> NOT_FOUND; matrix s03/s04/s08 refuse similar strings; g05 pass"
+  },
+  {
+   "item": "non-target OCR typo cannot alone cause a false negative (attempt-05 case ELIGIBLE; 1 substituted char per non-target row, length-equal only)",
+   "pass": true,
+   "evidence": "independent CLI replay of attempt-05 -> ELIGIBLE exit 0, tiers [EXACT, TOLERANT_1_SUB, EXACT, EXACT, EXACT], byte-identical x2 = frozen e8f53bd3...; synthetic 修改相簿名般 probe -> ELIGIBLE; probes P3 (2 subs same row) and P4 (length change) -> MENU_CONTENT_UNEXPECTED; matrix s09/s10 ELIGIBLE, s11/s12 refuse; g06 pass"
+  },
+  {
+   "item": "relaxing non-target OCR cannot let a wrong menu or a wrong row pass (structure/order/target-position/geometry remain hard)",
+   "pass": true,
+   "evidence": "probe P1 (target physically 4th) -> MENU_CONTENT_UNEXPECTED; P2 (neighbors swapped) -> MENU_CONTENT_UNEXPECTED; X2a (different 5-item menu, >=2 subs) -> MENU_CONTENT_UNEXPECTED; X4 (target in 2 rows) -> AMBIGUOUS; P5 (band overlap) -> ROW_GEOMETRY_UNSAFE exit 7; Q1 (word-center spread) -> ROW_GEOMETRY_UNSAFE; X5c (19.8px overlap) -> NOT_ADDRESSABLE; X6 (window disjoint) -> NOT_ADDRESSABLE; X7 (whole-screen bbox) -> BAD_INPUT; documented boundary: X2b (a single non-target row with exactly 1 substituted char) remains accepted by design"
+  },
+  {
+   "item": "the candidate is derived from the current frame's own evidence only",
+   "pass": true,
+   "evidence": "evaluate() consumes only frame size, detector bbox, scale, window rect and this frame's OCR words; all three inputs are SHA-bound (frame<->detector<->geometry); X5a (origin +10pt) keeps frame/screen candidate and shifts app-local by exactly (-10,-10); c04 (+7pt) likewise; three replay frames produce three frame-specific candidates; g08 pass"
+  },
+  {
+   "item": "no historical-coordinate fallback anywhere",
+   "pass": true,
+   "evidence": "g07-equivalent static scan: forbidden_hits [] and exactly 1 write site; no embedded coordinate constants; no file reads besides args.frame/detector/geometry; attempt-13 candidate equality with the historical v7 value is an explicit comparison in the replay record (compared, not used); replay geometry inputs labeled 'OFFLINE REPLAY INPUT ONLY'"
+  },
+  {
+   "item": "the attempt-05 replay candidate is unique and reproducible (run x2 byte-identical)",
+   "pass": true,
+   "evidence": "my CLI runs x2 byte-identical to each other and to the frozen attempt-05-replay-1/2.json (e8f53bd3...); one candidate only; replay out: 3 pairs byte-identical (cmp) with shas e8f53bd3/b802113b/768c5cda; record determinism.byte_identical true"
+  },
+  {
+   "item": "all ambiguous negative-matrix cases REFUSE",
+   "pass": true,
+   "evidence": "at the bound revision (results.json 943f..., 43 cases): 43/43 pass; eligible set = s01,s09,s10,c01-c04; 36 refusal-verdict cases with expected verdict+exit each; no refusal-class case is ELIGIBLE (g02 pass); no refusal output carries a candidate; my re-runs of c09/c10/c15 and 12+ refusal probes all refused with the documented exit codes. Post-freeze on-disk state (c83e..., 44 cases incl. c19) reports 44/44 + 9/9 globals (verified) but is not the plan-bound artifact (see F6)"
+  },
+  {
+   "item": "Save All stays at-most-once (the locator itself never clicks; dispatch is outside it)",
+   "pass": true,
+   "evidence": "no input/GUI/network capability in the tool (no pynput/Quartz/CGEvent/AppKit/osascript/click; no socket/urllib/requests); only subprocess is tesseract; the CLI emits at most one candidate and returns; the single-click dispatch and its budget are outside this revision (Rev27 chain unchanged; attempt-05 ellipsis 1/1, Save All 0/1)"
+  },
+  {
+   "item": "the chooser is not part of this revision",
+   "pass": true,
+   "evidence": "zero 'chooser' references in the v8 tool and the selftest script; the plan mentions chooser only as a future Gate B observation-only step (NO chooser interaction; §4/§8); the replay record covers candidate establishment only"
+  }
+ ],
+ "independent_experiments": [
+  "CLI replay attempt-05 (x2): frozen v8 tool with --out /tmp -> ELIGIBLE, candidate frame_px [1297.333,351.5], app_local_pt [319.667,134.75], tiers [EXACT,TOLERANT_1_SUB,EXACT,EXACT,EXACT]; stdout sha256 e8f53bd3... byte-identical across runs and equal to the frozen replay out file",
+  "CLI replay attempt-13: ELIGIBLE, candidate frame_px [1313.5,332.333] (= historical v7 candidate, compared only), stdout sha256 b802113b... == frozen out file",
+  "CLI replay attempt-19: ELIGIBLE, candidate frame_px [1313.5,370.333], stdout sha256 768c5cda... == frozen out file",
+  "CLI spot-run c01 (x2): stdout sha256 c92f415148e19391a9343273c7a141155da597b0131f764b41fb0934fc14fa3b, byte-identical across runs, equals the c01 stdout SHA recorded in results.json",
+  "CLI spot-run c04 (origin-shifted geometry): ELIGIBLE, app_local_pt [316.167,127.75], screen_pt_y unchanged 175.75 -> candidate follows current inputs",
+  "CLI spot-run c09 (stale frame binding): BAD_INPUT exit 6; c10 (wrong-frame detector): BAD_INPUT exit 6; c15 (window disjoint): NOT_ADDRESSABLE exit 3",
+  "evaluate() probes: B0 baseline ELIGIBLE (8/8 HARD checks); X2a wrong-menu >=2 subs refused; X2b single 1-sub non-target row accepted (documented boundary); X3a target 1-sub refused; X3b target truncated refused; X3c target + extra CJK suffix accepted (inherited substring semantics); X4 target twice -> AMBIGUOUS; X5a origin +10pt input-derived; X5b overlap exactly 20.0px -> ELIGIBLE (boundary constant '>='); X5c overlap 19.8px -> NOT_ADDRESSABLE; X6 window disjoint refused; X7 whole-screen bbox -> BAD_INPUT",
+  "evaluate() probes (physically-moved rows; a list-order swap is inert because rows are re-clustered from geometry): P1 target physically 4th -> MENU_CONTENT_UNEXPECTED; P2 neighbors physically swapped -> MENU_CONTENT_UNEXPECTED; P3 non-target 2-sub refused; P4 non-target length change refused; P5 band overlap -> ROW_GEOMETRY_UNSAFE; P6 target word dropped into another row -> NOT_FOUND",
+  "evaluate() probe Q1: isolated word-center spread violation (28px > 13px tolerance) -> ROW_GEOMETRY_UNSAFE exit 7",
+  "evaluate() probe Q2: non-CJK OCR noise inside target (儲存全.部) -> cjk_text 儲存全部 -> ELIGIBLE (noise normalization; no CJK glyph substitution admitted)",
+  "evaluate() probe4: own-coordinates attempt-05-class typo (修改相簿名般, glyph conf 49.772) -> ELIGIBLE, tiers [EXACT,TOLERANT_1_SUB,EXACT,EXACT,EXACT], candidate frame [1287.0,356.6]",
+  "c19-historical-coordinate-injection (post-freeze case; first-hand re-run after detecting the incident): decoy historical-coordinate fields injected into the geometry fixture are ignored -> ELIGIBLE, candidate frame [1297.333,351.5], app-local [319.667,134.75]; no decoy value appears in the output",
+  "end-of-review SHA re-verification: plan/tool/replay-record still match the plan-bound SHAs; run_selftest.py (c94f... -> 0dde65b3ef7687660b46b6eb7f4de869ec0b0dbc28c4928e440427192705a7ee, mtime 09:43:55) and results.json (943f... -> c83e2ed6654164d63e0a0c163d3d69d37fcbfed4dc74a92cbda1c76682da1116, mtime 09:44:18) do not; fixtures/out rewritten 09:43-09:44; new fixture geo-a05-injected-history.json 842cb93330e3183cf5c3cc7cd28e69b5714084499aa994f49cdc93d7fa2f3418",
+  "static scans: input/write/network/GUI API grep (only tesseract subprocess; single --out write site); g07-equivalent forbidden-token scan -> []; numeric-constant grep -> no coordinate constants; no __pycache__ created (python3 -B)"
+ ],
+ "findings": [
+  "F1 (bounded tolerance, by design): a non-target row differing from its reference by exactly one substituted character is accepted (probe X2b: 分享相片 accepted). This is the deliberate, documented single-glyph tolerance; >=2 substitutions or any length change still refuse (P3/P4), so the residual wrong-menu class is 'nearly identical menu' and is explicitly acknowledged in the plan.",
+  "F2 (inherited containment semantics): target identity is exact-substring containment on the CJK-only row text, so a row containing 儲存全部 with extra glyphs (e.g. 儲存全部相簿) would be accepted as the target row (probe X3c). Same containment semantics as frozen v7; no substitution/insertion/deletion of CJK characters in the target is ever accepted; no such item exists in the observed LINE menu.",
+  "F3 (v8-only, narrow normalization): non-CJK characters are stripped before matching, so OCR punctuation noise inside the target occurrence no longer causes refusal (probe Q2: 儲存全.部 -> ELIGIBLE). This widening vs v7 is limited to non-CJK noise and cannot admit a substituted/truncated CJK target; it aligns with the observed noise class (選擇項目-, 刪除相簿t).",
+  "F4 (reproducibility nuance, not a defect): the output JSON echoes input path strings, so byte-identity requires identical argv strings; my re-runs used the replay builder's argv forms and matched byte-for-byte, while a repo-relative geometry arg yields semantically identical but byte-different JSON.",
+  "F5 (minor documentation inconsistency, non-blocking): attempt-01/locator-freeze.json states refusal_cases 25, while results.json reports refusal_cases 2 (refusal-class count) with 36 refusal-verdict cases (43-case bound version: 7 eligible; 44-case post-freeze version: 8 eligible); substantive claims (all pass, 9/9 globals, eligible sets) agree, so the 25 counter should be read as a stale summary field.",
+  "F6 (freeze invalidation, drives the gate): during this review a concurrent post-freeze modification replaced run_selftest.py and results.json on disk (c94fc407.../943f2939... -> 0dde65b3ef7687660b46b6eb7f4de869ec0b0dbc28c4928e440427192705a7ee/c83e2ed6654164d63e0a0c163d3d69d37fcbfed4dc74a92cbda1c76682da1116, mtimes 09:43:55/09:44:18), added fixture geo-a05-injected-history.json (842cb93330e3183cf5c3cc7cd28e69b5714084499aa994f49cdc93d7fa2f3418, decoy historical coordinates, new case c19-historical-coordinate-injection, results now 44/44 + 9/9) and rewrote fixtures/ + out/. The plan file and freeze record still bind the old SHAs; per the round's freeze rule the rev27c-1 freeze is invalidated, the plan's approval precondition (bound selftest SHAs on disk) fails, and a new plan revision (rev27c-2) re-binding the new artifact set after a fresh freeze + fresh independent reviews is required. This reviewer made no repo writes outside the two review files and performed no restoration; the unchanged locator c5ad... and the design analysis here remain valid inputs to the next review cycle, not approvals."
+ ],
+ "residual_risks": [
+  "R1: a hypothetical menu with the same five-row shape, exact 儲存全部 at the middle, and every non-target row within 1 substituted glyph would pass; no formal proof such a menu cannot exist; bounded by the 1-glyph window rule plus the outside live-route gates (single-ellipsis provenance, baseline tripwire, at-most-once dispatch, post-click observation).",
+  "R2: target containment semantics accept a middle-row item that merely contains 儲存全部 (no CJK substitution tolerated); inherited from v7; not observed in the real menu; constrained by the exact five-row neighbor structure and middle position.",
+  "R3: non-CJK stripping inside the target occurrence is a narrow widening vs v7; can never admit a wrong CJK glyph sequence.",
+  "R4: offline ELIGIBLE confers no live authority; the attempt-05 menu may not persist; any future live round must re-derive fresh evidence under a new owner authorization citing Rev27c + the v8 SHA (menu-persistence rule).",
+  "R5: byte-identity across differently-invoked runs is not guaranteed (path strings echoed); determinism holds per fixed inputs/argv.",
+  "R6: not re-verified in this review (out of scope or deliberately not re-run): the accepted-baseline digest (57 files / 17,924,900 bytes) and the 'selftest ran twice, results.json byte-identical' claim; per-case determinism (43/43) and my own x2 CLI reruns support them; git status shows no tracked modifications.",
+  "R7: unknown future OCR variation beyond the modeled classes is covered only by the bounded tolerance design; anything outside it refuses (conservative direction).",
+  "R8: the post-freeze concurrent modification (F6) leaves the repository state inconsistent with the plan and freeze bindings; no future live authorization may cite Rev27c or the old SHAs until a new plan revision re-binds the current bytes after a fresh freeze + fresh reviews. The new state's self-reported 44/44 + 9/9 and my c19 spot-run suggest internal consistency, but one spot-run is not a review; the new artifact set must be re-reviewed in full by the next cycle."
+ ],
+ "verdict": "PLAN_REVISION_REQUIRED"
+}

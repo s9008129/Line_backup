@@ -1,0 +1,206 @@
+{
+ "schema": "rev27c-review/2",
+ "review": "review-01-top-down",
+ "reviewer_note": "fresh-context independent review",
+ "reviewed_at_local": "2026-09-23",
+ "gui_input_count": 0,
+ "reviewed_plan_revision": "rev27c-2",
+ "targets": {
+  "plan": "906e949b34a5f48f46135b240b8b00a1df147a45d30da6e462c2fc4e5b1d8110",
+  "locator_v8": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+  "selftest_script": "c94fc4074f0cd323ee53fe09428b0d38b61af04f5993ceb344acaa02e236f462",
+  "selftest_results": "943f293995b8ecc3f51ad9fc672c1fe899ba37312dc377d14a809ee118affe6a",
+  "replay_record": "2afcd7bec8f6e28826fbf0687c7dd2c604eed7b7746bc854ab2913368ac51540",
+  "frozen_v7_locator_attempts_02_to_05": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+  "injection_supplemental_script": "cdc8fb0521d2ca9ad57534d7a791633529120f13e1c7e185fcd4e7db585ee9ee",
+  "injection_supplemental_results": "36ebf7a335903a587e975447cb9d6793a25579933e1f054ae6a70aadfcd1aca4",
+  "injection_supplemental_readme": "377902059a032d51f2ad5e8e8756ab4fccae96112d01c7bada7a85d83075dc2d",
+  "scratch_geo_a05_injected_history_not_bound": "842cb93330e3183cf5c3cc7cd28e69b5714084499aa994f49cdc93d7fa2f3418",
+  "scratch_c19_output_not_bound": "ab4c577a9575b2e937df83f439f09eba06a9f222dc183a5f287bc5730124ba5e",
+  "selftest_out_c01_stdout": "c92f415148e19391a9343273c7a141155da597b0131f764b41fb0934fc14fa3b",
+  "injection_supplemental_out_clean_control": "c92f415148e19391a9343273c7a141155da597b0131f764b41fb0934fc14fa3b",
+  "injection_supplemental_out_injected": "ab4c577a9575b2e937df83f439f09eba06a9f222dc183a5f287bc5730124ba5e",
+  "replay_out_attempt_05_pair": "e8f53bd3b7827fad944322dd5e26db004be43359aa4559959eb8513dc17f6868",
+  "replay_out_attempt_13_pair": "b802113b44387222196253c91b840f31830d02bee50a485021f6a0768635f525",
+  "replay_out_attempt_19_pair": "768c5cda80d4deac5694fbb7643926f313dba1b30414ed7ddbca634b1b32a859",
+  "attempt_05_menu_frame": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+  "gate_a_v5_ellipsis_locator": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "gate_a_v5_album_open_verifier": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "gate_a_v7_lineage_guard": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "gate_a_detect_menu_popup": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc"
+ },
+ "goal_baseline": "Attempt-05 affirmatively observed a fresh LINE album menu and read the target 儲存全部 cleanly, but the frozen v7 Save All locator refused with MENU_CONTENT_UNEXPECTED (exit 5) and established no candidate because the non-target row 修改相簿名稱 was OCR-misread as 修改相簿名般 (one glyph, conf 49.772). The owner did not authorize a manual override. CORE outcome: replace only the candidate-establishment component with an append-only, fail-closed v8 locator that closes this false negative while keeping target identity exact, menu/window identity frame-SHA-bound, geometry hard, every ambiguity refusing with no candidate, and the candidate derived solely from the current frame's own evidence. SUPPORTING: unchanged live-route definition and the menu-persistence rule (design only). BEST_EFFORT: none. This round is zero GUI input; an offline ELIGIBLE is not a live click authorization.",
+ "checklist": [
+  {
+   "item": "target 儲存全部 still requires affirmative exact recognition (no fuzzy/similar/partial)",
+   "pass": true,
+   "evidence": "Source read line by line: target matched only as an exact substring of the row CJK text (target_rows check plus match_reference with tolerance 0 for item_rows[2]); no similarity matcher exists. Independent probes: 儲存全郜 (1 substituted glyph) -> NOT_FOUND exit 2; 儲存全 (truncated) -> NOT_FOUND exit 2; target split across rows -> NOT_FOUND exit 2; selftest s03/s04/s06/s08 and c05 refuse, re-run in a /tmp staging copy: 43/43 cases PASS. Residual containment nuance (a row containing 儲存全部 plus extra CJK glyphs is accepted; v7-identical) recorded as F-01."
+  },
+  {
+   "item": "non-target OCR typos cannot alone cause a false negative (attempt-05 -> ELIGIBLE; 1 substitution per non-target row tolerated)",
+   "pass": true,
+   "evidence": "Frozen v8 CLI on the attempt-05 frame x2 (outputs to /tmp): ELIGIBLE exit 0, byte-identical runs and equal to the frozen selftest c01 stdout c92f4151..., exactly one candidate frame px [1297.333, 351.5] (app-local [319.667, 134.75]); row match tiers [EXACT, TOLERANT_1_SUB, EXACT, EXACT, EXACT]. 2 substitutions in one non-target row -> MENU_CONTENT_UNEXPECTED (s11, probe P7); a lost character -> refuse (s12, probe P19); multiple non-target rows with 1 substitution each -> ELIGIBLE (s10, probe P16)."
+  },
+  {
+   "item": "relaxing non-target OCR cannot let a wrong menu or a wrong row pass (structure, order, target position, geometry all still hard)",
+   "pass": true,
+   "evidence": "Structure requires exactly five CJK item rows in reference order with the target as item_rows[2]. Independent probes: target physically 4th -> MENU_CONTENT_UNEXPECTED exit 5; 6th CJK row -> exit 5; order swap (s15) and wrong 5-item menu (s07/c05) refuse; duplicate context row (s25) refuses; band overlap -> ROW_GEOMETRY_UNSAFE exit 7 (P12/s16/s17); x-overlap < 20 px -> NOT_ADDRESSABLE exit 3 (P14/s23/c16); whole-screen bbox -> BAD_INPUT exit 6 (P15/s20/c13); two target rows -> AMBIGUOUS exit 4 (P13/s05/c06). Full frozen-selftest re-run: zero refusal-class case ELIGIBLE and no candidate on any refusal."
+  },
+  {
+   "item": "the candidate is derived from the current frame's own evidence only",
+   "pass": true,
+   "evidence": "Source read: candidate = midpoint(x_safe, y_safe) with x_safe = band-x-range INTERSECT addressable region shrunk 2 px and addressable region = window rect INTERSECT bbox INTERSECT frame; all three inputs SHA-bound (detector post path + post_sha256 equal the frame; geometry frame_sha256 equal the frame). Independent probe: /tmp geometry with window origin +10 pt -> deterministic input-following shift (frame x 1297.333 -> 1307.333, app-local x 319.667 -> 314.667, screen y unchanged); selftest c04 (+7 pt) passes in my re-run; the three replay frames yield three distinct frame-specific candidates."
+  },
+  {
+   "item": "no historical-coordinate fallback anywhere (bound supplemental test targets this)",
+   "pass": true,
+   "evidence": "Static scan of the frozen tool: zero hits for 304/988/1313/1297/351.5/332.333/319.75/136.167 and for socket/urllib/requests/Quartz/AppKit/pynput/CGEvent/osascript; the only subprocess is tesseract; exactly one write site (--out). Supplemental injection test re-executed from a /tmp copy x2: 11/11 checks PASS, results.json 36ebf7a3..., injected CLI stdout ab4c577a... byte-identical to the withdrawn scratch output and decision-identical to the clean control c92f4151...; the candidate differs from every injected decoy and the decoy fields are present in the fixture."
+  },
+  {
+   "item": "the attempt-05 replay candidate is unique and reproducible (run x2)",
+   "pass": true,
+   "evidence": "CLI on the attempt-05 frame x2 byte-identical (c92f4151) with exactly one candidate; replay-form run with attempt-05's own detector/geometry x2 byte-identical e8f53bd3 and byte-equal to the replay-record out file; attempt-13 b802113b and attempt-19 768c5cda reproduced independently x2 and byte-compared to the replay-record out files; the attempt-13 candidate [1313.5, 332.333] equals the historical v7 candidate from attempt-02 result-positive1.json (compared only, never an input)."
+  },
+  {
+   "item": "every ambiguous case in the negative matrix REFUSES",
+   "pass": true,
+   "evidence": "Full frozen selftest re-executed twice in a /tmp staging copy (tool and script SHA-verified): 43/43 cases PASS, 9/9 global assertions PASS, results.json reproduced byte-identically as 943f2939; 7 ELIGIBLE (s01, s09, s10, c01-c04) and 36 refusal-verdict + 2 refusal-class cases; a script audit found no refusal payload and no refusal out/ file carrying a candidate or target block; expected exit codes 2/3/4/5/6/7 observed. Additional independent probes cover ambiguous classes (two targets, split target, band overlap, empty y-safe, low x-overlap, whole-screen bbox, extra CJK row)."
+  },
+  {
+   "item": "Save All stays at-most-once (dispatch is outside this locator; the locator produces one candidate and never clicks)",
+   "pass": true,
+   "evidence": "The tool has no input/GUI/network capability (no click/keyboard/Quartz/CGEvent/AppKit/osascript; only tesseract subprocesses) and exactly one write site (--out); it emits at most one candidate JSON and returns. The single-click dispatch is outside it: plan §4 keeps exactly one Save All click (at-most-once, no retry, no fallback), and attempt-05 hard counters record save_all_used 0/1, retry 0, gui_input_count 1 (ellipsis only)."
+  },
+  {
+   "item": "the chooser is not part of this revision (Gate B remains future work)",
+   "pass": true,
+   "evidence": "Plan §4 ends at resulting-surface / chooser observation only (NO chooser interaction) and §5/§8 exclude READY_FOR_CHOOSER_GATE_B; the attempt-05 route-runbook S11 and 99-scope-status record chooser NOT_OBSERVED with chooser budget and chooser interaction both 0. This revision authorizes no live GUI input at all."
+  }
+ ],
+ "independent_experiments": [
+  {
+   "id": "X01",
+   "what": "shasum -a 256 verification from disk of every bound and disclosed artifact",
+   "result": "All matched: plan 906e949b; v8 tool c5ad4686; selftest script c94fc407; selftest results 943f2939; replay record 2afcd7be; frozen v7 copies x4 ea09c1ca; supplemental script/results/README cdc8fb05/36ebf7a3/37790205; scratch 842cb933 and ab4c577a."
+  },
+  {
+   "id": "X02",
+   "what": "frozen v8 CLI on attempt-05 frame with clean geometry x2, outputs to /tmp",
+   "result": "ELIGIBLE exit 0 both runs; stdout byte-identical c92f4151... equal to the frozen selftest c01 stdout; exactly one candidate [1297.333, 351.5] frame px."
+  },
+  {
+   "id": "X03",
+   "what": "frozen v8 CLI on attempt-05 frame with the decoy-injected geometry x2",
+   "result": "ELIGIBLE exit 0 both runs; stdout byte-identical ab4c577a... equal to the withdrawn c19 scratch output; decision and candidate identical to the clean control; candidate differs from all three injected decoys."
+  },
+  {
+   "id": "X04",
+   "what": "replay-form CLI runs x2 each: attempt-05 (own detector/geometry), attempt-13 and attempt-19 (replay inputs)",
+   "result": "attempt-05 e8f53bd3, attempt-13 b802113b, attempt-19 768c5cda; each reproduced twice byte-identically and byte-compared equal to the corresponding replay-record out file."
+  },
+  {
+   "id": "X05",
+   "what": "full frozen selftest re-execution x2 in a /tmp staging copy with SHA-verified tool and script",
+   "result": "43/43 cases PASS, 9/9 global assertions PASS; results.json 943f2939 reproduced; run 2 was byte-identical to run 1 for results.json, all out/ file hashes and stdout. The script was deliberately not run in place (it rewrites its own outputs)."
+  },
+  {
+   "id": "X06",
+   "what": "audit of the reproduced selftest results and out/ files for candidates on refusal cases",
+   "result": "7 ELIGIBLE; 36 refusal-verdict and 2 refusal-class cases; no refusal case ELIGIBLE; no refusal payload or out/ file carries a candidate or target block."
+  },
+  {
+   "id": "X07",
+   "what": "supplemental injection script re-executed x2 from a /tmp copy",
+   "result": "11/11 checks PASS; results.json 36ebf7a3 reproduced; clean control c92f4151, injected outputs ab4c577a twice; stdout and stderr byte-identical across runs."
+  },
+  {
+   "id": "X08",
+   "what": "static scan of the frozen v8 source for GUI/network APIs, historical constants and write sites",
+   "result": "Zero hits for decoy/coordinate tokens and for GUI/network APIs; only tesseract subprocesses; exactly one write site (--out); all other file access is read-only input or hashing."
+  },
+  {
+   "id": "X09",
+   "what": "synthetic evaluate() probes P1-P21",
+   "result": "Target fuzzy/partial/split and 1-sub target refuse; 2-sub non-target row, lost character, target-4th-position, count/order violations, band overlap, two targets, low x-overlap and whole-screen bbox all refuse. Accepted classes: non-CJK target noise, target containment (儲存全部相簿, 不儲存全部), 1-sub and some 1-insertion non-target rows (documented residuals)."
+  },
+  {
+   "id": "X10",
+   "what": "origin-shift geometry probe (+10 pt window origin) with the frozen CLI and a /tmp geometry file",
+   "result": "Deterministic current-input dependence: frame px x 1297.333 -> 1307.333, app-local x 319.667 -> 314.667, screen y unchanged; selftest case c04 (+7 pt) also passes in my re-run."
+  },
+  {
+   "id": "X11",
+   "what": "attempt-05 immutability re-verification from its 99-scope-status artifact_manifest_sha256",
+   "result": "75/75 manifest entries re-hashed consistent, 0 mismatch, 0 missing; only 99-scope-status.json itself is absent from its own manifest (expected); frozen v7 locator copies identical across attempts 02-05."
+  },
+  {
+   "id": "X12",
+   "what": "read of attempt-05 live refusal evidence and scope status",
+   "result": "result-live-positive1.json matches plan §2 quotes: rows [選擇項目-, 修改相簿名般, 儲存全部, 刪除相簿t, 分享相簿], reference_hits 修改相簿名稱 empty, strict_order false, identified_row_index 2, verdict MENU_CONTENT_UNEXPECTED exit 5; 般 conf 49.77. Scope status: gui_input_count 1, save_all_used 0, retry 0, chooser NOT_OBSERVED."
+  },
+  {
+   "id": "X13",
+   "what": "live-route gate comparison and repository state",
+   "result": "Plan §4 chain matches the attempt-05 route-runbook S1-S11 with only the candidate component replaced; frozen v5 ellipsis, v5 verifier, v7 lineage guard and menu detector SHAs spot-verified against the runbook. git status shows no tracked modifications (0 lines with untracked excluded; git diff empty)."
+  },
+  {
+   "id": "X14",
+   "what": "explicitly not re-derived in this review",
+   "result": "Accepted-baseline digest 57 files / 17,924,900 bytes / b7debe92 (baseline path is outside the repository scope of this review); the transient withdrawn selftest bytes 0dde65b3 / c83e2ed6 (not present on disk); a byte-level diff of rev27c-1 versus rev27c-2 plan text (no rev27c-1 snapshot on disk)."
+  }
+ ],
+ "findings": [
+  {
+   "id": "F-01",
+   "severity": "non-blocking",
+   "title": "target containment semantics (carried cycle-1 F2/R2)",
+   "detail": "A middle row containing 儲存全部 plus extra CJK glyphs is accepted (probes: 儲存全部相簿 -> ELIGIBLE; 不儲存全部 -> ELIGIBLE). Identical semantics to frozen v7 exact substring containment; no CJK substitution, insertion or deletion inside the target occurrence is ever accepted; bounded by the exact five-row order, the middle position and the outside live-route gates."
+  },
+  {
+   "id": "F-02",
+   "severity": "non-blocking",
+   "title": "non-CJK stripping inside the target occurrence (carried cycle-1 F3/R3)",
+   "detail": "Punctuation noise inside the target occurrence (儲存全.部) is accepted because matching runs on CJK-only row text. This widening versus v7 is limited to non-CJK noise and cannot admit a substituted or truncated CJK target; it covers the observed trailing-noise class (選擇項目-, 刪除相簿t)."
+  },
+  {
+   "id": "F-03",
+   "severity": "non-blocking",
+   "title": "documentation precision: one-glyph CJK insertions in non-target rows",
+   "detail": "The tolerant matcher scans length-equal windows, so a non-target row with one inserted CJK glyph can also pass (probe 修改相簿名和稱 -> ELIGIBLE), and exact containment accepts rows of any length containing the reference item. Plan §3 and the tool docstring phrase the boundary as length-equal windows with no insertions/deletions; the effective accepted class is slightly wider. Target identity, structure, order, target position and geometry remain hard, so this is a wording precision nit, not a safety change."
+  },
+  {
+   "id": "F-04",
+   "severity": "non-blocking",
+   "title": "extra non-CJK rows are not counted as item rows",
+   "detail": "An extra OCR row with no CJK text inside the menu bbox does not affect the five-CJK-item structure check (probe: extra Latin row -> ELIGIBLE). The candidate stays bounded to the exact target row band, so no wrong-row redirect was demonstrated; this class is outside the enumerated negative matrix and belongs to the acknowledged near-identical-menu residual."
+  },
+  {
+   "id": "F-05",
+   "severity": "non-blocking",
+   "title": "stale freeze-record counter (carried cycle-1 F5/R7)",
+   "detail": "attempt-01/locator-freeze.json states refusal_cases 25; plan §0 documents this as stale and leaves the record untouched. Authoritative counts re-derived: 43 cases, 7 ELIGIBLE, 36 refusal-verdict cases, 2 refusal-class cases (c07, c08), 9/9 global assertions."
+  },
+  {
+   "id": "F-06",
+   "severity": "non-blocking",
+   "title": "cycle-1 freeze invalidation resolved by rev27c-2 (carried F6/R8)",
+   "detail": "Current selftest and results bytes equal the rev27c-1-bound SHAs recorded in the cycle-1 review targets (c94fc407 / 943f2939); the transient replacement bytes (0dde65b3 / c83e2ed6) are not on disk and were not re-derived; run-ledger.json records the add/withdraw episode. rev27c-2 re-binds the restored bytes and adds the bound supplemental injection test; this review was conducted against the current bytes."
+  },
+  {
+   "id": "F-07",
+   "severity": "non-blocking",
+   "title": "revision-delta evidence limit",
+   "detail": "The rev27c-2 claim of a documentation-and-binding-only change cannot be byte-diffed because no rev27c-1 plan snapshot is on disk. It is corroborated by identical locator, selftest, results and replay SHAs across both cycle bindings, an unchanged nine-item checklist, and a live-route chain matching the attempt-05 runbook."
+  }
+ ],
+ "residual_risks": [
+  "R-01: a hypothetical five-row CJK menu with an exact 儲存全部 middle row and every non-target row within the bounded tolerance would pass; no formal proof such a menu cannot exist; bounded by the tolerance window and the outside live-route gates (plan §2 residual, disclosed).",
+  "R-02: the containment and non-CJK-noise residuals F-01/F-02 remain; they are v7-identical or non-CJK-only and are not exercised by the observed LINE menu.",
+  "R-03: an offline ELIGIBLE is not live authority; the attempt-05 menu may not persist; any future live round must re-derive fresh composite, ellipsis, menu detection and candidate under a new owner authorization citing Rev27c and the v8 SHA.",
+  "R-04: byte-identity holds per fixed inputs and argv; paths are echoed into the output, so differently-invoked runs are semantically equal but not necessarily byte-equal.",
+  "R-05: unknown future OCR variation outside the modeled classes refuses (conservative direction); there is no widening beyond the documented bounded tolerance.",
+  "R-06: not re-derived in this review: the accepted-baseline digest (57 files / 17,924,900 bytes / b7debe92) because the baseline path is outside the repository scope; the transient withdrawn selftest bytes; the rev27c-1 plan bytes.",
+  "R-07: the non-locator Gate A components were not executed this round (design only); their frozen SHAs match the runbook, but live behavior remains to be re-verified in any future authorized round."
+ ],
+ "verdict": "PLAN_APPROVED"
+}

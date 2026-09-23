@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest geometry fixture (attempt-05 menu frame, this round's own AX rect)",
+ "frame_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+ "capture_scale": 2,
+ "window_index": 1,
+ "window_position_points": [329, 41],
+ "window_size_points": [327, 643],
+ "window_point_rect": [329, 41, 656, 684],
+ "source": "verbatim window rect/scale from evidence/20260921-rev27-save-all/attempt-05/live-window-geometry-post1.json (sha256 f746275dde3d2440b6cee1f4eac03422f1e6945a3aae6473a82f4a9006de4349)",
+ "fixture_note": "self-test input only; confers no live authority"
+}

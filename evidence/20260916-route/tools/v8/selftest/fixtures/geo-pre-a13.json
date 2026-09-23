@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest geometry fixture (attempt-13 PRE frame: menu not yet open)",
+ "frame_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+ "capture_scale": 2,
+ "window_index": 0,
+ "window_position_points": [337, 30],
+ "window_size_points": [327, 643],
+ "window_point_rect": [337, 30, 664, 673],
+ "source": "same session window rect as geo-a13.json; bound to the PRE frame sha",
+ "fixture_note": "self-test input only; confers no live authority"
+}

@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest detector fixture (attempt-13 PRE frame: menu not yet open)",
+ "tool": "detect_menu_popup",
+ "verdict": "MENU_DETECTED",
+ "pre": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+ "post": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+ "post_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+ "chosen_bbox": [1247, 127, 1494, 478],
+ "source": "frame binding and bbox from the attempt-02 det-negative fixture (menu-absent frame, same bbox as the later menu frames)",
+ "fixture_note": "negative fixture: menu-absent frame must never yield a Save All candidate"
+}

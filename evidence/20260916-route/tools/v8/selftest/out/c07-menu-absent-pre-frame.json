@@ -1,0 +1,266 @@
+{
+ "tool": "locate_save_all_menu_item",
+ "version": "v8",
+ "class": "v8-class Save All menu-item locator; append-only successor of the frozen v7-class locator ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+ "frame": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+ "tool_sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+ "frame_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "detector": {
+  "json": "evidence/20260916-route/tools/v8/selftest/fixtures/det-a13-pre.json",
+  "json_sha256": "6c58bcef51ac3d4f1d581ac60838c833e9d566aeedff00be73412c1dff113d00",
+  "tool": "detect_menu_popup",
+  "verdict": "MENU_DETECTED",
+  "pre": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+  "post": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+  "post_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+  "chosen_bbox": [
+   1247,
+   127,
+   1494,
+   478
+  ]
+ },
+ "geometry": {
+  "json": "evidence/20260916-route/tools/v8/selftest/fixtures/geo-pre-a13.json",
+  "json_sha256": "1fe36e94a7555a34c21d8e15e1676976b83c323af75ef969d51352e7a605c118",
+  "frame_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+  "capture_scale": 2,
+  "window_index": 0,
+  "window_position_points": [
+   337,
+   30
+  ],
+  "window_size_points": [
+   327,
+   643
+  ]
+ },
+ "ocr": {
+  "returncode": 0,
+  "command": [
+   "tesseract",
+   "-",
+   "stdout",
+   "-l",
+   "chi_tra+eng",
+   "--psm",
+   "6",
+   "tsv"
+  ],
+  "upscale": 3,
+  "tesseract_version": "tesseract 5.5.1",
+  "word_count": 11,
+  "words": [
+   {
+    "text": "也",
+    "conf": 85.645,
+    "box_frame_px": [
+     1328.0,
+     336.333,
+     1353.0,
+     360.667
+    ]
+   },
+   {
+    "text": "們",
+    "conf": 92.459,
+    "box_frame_px": [
+     1355.667,
+     337.0,
+     1371.667,
+     360.667
+    ]
+   },
+   {
+    "text": "星期",
+    "conf": 93.212,
+    "box_frame_px": [
+     1375.0,
+     336.333,
+     1494.0,
+     360.667
+    ]
+   },
+   {
+    "text": "一",
+    "conf": 93.558,
+    "box_frame_px": [
+     1439.667,
+     335.0,
+     1456.0,
+     367.333
+    ]
+   },
+   {
+    "text": "~",
+    "conf": 96.978,
+    "box_frame_px": [
+     1456.0,
+     335.0,
+     1470.333,
+     367.333
+    ]
+   },
+   {
+    "text": "四",
+    "conf": 95.282,
+    "box_frame_px": [
+     1470.0,
+     335.0,
+     1492.667,
+     367.333
+    ]
+   },
+   {
+    "text": "—",
+    "conf": 90.512,
+    "box_frame_px": [
+     1364.333,
+     405.333,
+     1385.333,
+     407.667
+    ]
+   },
+   {
+    "text": ":",
+    "conf": 82.7,
+    "box_frame_px": [
+     1405.667,
+     397.333,
+     1406.0,
+     411.667
+    ]
+   },
+   {
+    "text": "Line_k",
+    "conf": 63.827,
+    "box_frame_px": [
+     1418.333,
+     394.333,
+     1494.0,
+     418.0
+    ]
+   },
+   {
+    "text": "條",
+    "conf": 30.008,
+    "box_frame_px": [
+     1271.0,
+     440.0,
+     1297.0,
+     464.0
+    ]
+   },
+   {
+    "text": "wy",
+    "conf": 25.065,
+    "box_frame_px": [
+     1458.333,
+     456.0,
+     1494.0,
+     475.667
+    ]
+   }
+  ]
+ },
+ "params": {
+  "upscale": 3,
+  "ocr_lang": "chi_tra+eng",
+  "ocr_psm": "6",
+  "row_tol_fraction": 0.6,
+  "row_tol_min_px": 8.0,
+  "median_word_height_px": 24.0,
+  "row_tol_px": 14.4,
+  "min_overlap_px": 20.0,
+  "x_edge_px": 2.0,
+  "edge_fraction": 0.15,
+  "edge_min_px": 6.0,
+  "neighbor_sep_px": 12.0,
+  "min_band_h_px": 16.0,
+  "max_band_h_bbox_fraction": 0.5,
+  "non_target_substitution_tolerance": 1
+ },
+ "rows": [
+  {
+   "index": 0,
+   "text": "也們星期一~四",
+   "cjk_text": "也們星期一四",
+   "mean_cy_px": 349.889,
+   "band_frame_px": [
+    1328.0,
+    335.0,
+    1494.0,
+    367.333
+   ],
+   "word_count": 6
+  },
+  {
+   "index": 1,
+   "text": "—:Line_k",
+   "cjk_text": "",
+   "mean_cy_px": 405.722,
+   "band_frame_px": [
+    1364.333,
+    394.333,
+    1494.0,
+    418.0
+   ],
+   "word_count": 3
+  },
+  {
+   "index": 2,
+   "text": "條wy",
+   "cjk_text": "條",
+   "mean_cy_px": 458.917,
+   "band_frame_px": [
+    1271.0,
+    440.0,
+    1494.0,
+    475.667
+   ],
+   "word_count": 2
+  }
+ ],
+ "checks": [
+  {
+   "name": "popup_shape",
+   "class": "HARD",
+   "pass": true,
+   "detail": {
+    "bbox_frame_px": [
+     1247.0,
+     127.0,
+     1494.0,
+     478.0
+    ],
+    "bbox_w_px": 247.0,
+    "bbox_h_px": 351.0,
+    "area_fraction": 0.025,
+    "width_fraction": 0.108,
+    "height_fraction": 0.236,
+    "limits": {
+     "max_area_fraction": 0.3,
+     "max_width_fraction": 0.5,
+     "max_height_fraction": 0.8
+    }
+   }
+  },
+  {
+   "name": "target_unique_row",
+   "class": "HARD",
+   "pass": false,
+   "detail": {
+    "matching_row_indices": [],
+    "target_item": "儲存全部",
+    "rule": "exact string, no fuzzy/partial matching"
+   }
+  }
+ ],
+ "verdict": "NOT_FOUND",
+ "exit_code": 2,
+ "reason": "target item text not found in any row"
+}

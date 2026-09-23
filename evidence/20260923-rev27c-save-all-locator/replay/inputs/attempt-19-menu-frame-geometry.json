@@ -1,0 +1,22 @@
+{
+ "artifact": "attempt-19-menu-frame-geometry.json (Rev27c offline replay input)",
+ "frame_sha256": "e321069d86d04f2017e3a972a013fedcac51195ba1e4ba1d9e61df476f8169a2",
+ "capture_scale": 2,
+ "window_index": 0,
+ "window_position_points": [
+  337,
+  49
+ ],
+ "window_size_points": [
+  327,
+  643
+ ],
+ "window_point_rect": [
+  337,
+  49,
+  664,
+  692
+ ],
+ "provenance": "window rect [337,49] 327x643 from evidence/20260916-route/attempt-19/a5-frame-window-binding.json (ax_window position [337,49], size [327,643]; verdict GEOMETRY_BINDING_PASS, MAD 2.228, bound there to this round's frame-post.png) and scale 2 from evidence/20260916-route/attempt-19/live-window-geometry.json; corroborated offline in replay-record.json by a window-region MAD check between frame-post.png and frame-menu-post1.png over the region left of the popup overlay. Re-bound to the menu frame sha for this offline replay only.",
+ "authority": "OFFLINE REPLAY INPUT ONLY - confers no live authority; a future live round must produce its own fresh AX read bound to its own fresh frame"
+}

@@ -1,0 +1,22 @@
+{
+ "artifact": "attempt-13-menu-frame-geometry.json (Rev27c offline replay input)",
+ "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+ "capture_scale": 2,
+ "window_index": 0,
+ "window_position_points": [
+  337,
+  30
+ ],
+ "window_size_points": [
+  327,
+  643
+ ],
+ "window_point_rect": [
+  337,
+  30,
+  664,
+  673
+ ],
+ "provenance": "window rect [337,30] 327x643 from evidence/20260916-route/attempt-13/live-window-geometry.json (sha256 e9fdf0f1acb9c87044767dbc5255f711f71a14abcae2893b5aec50415cecf6c6; AX read of the focused+main album-detail window, pre/post identical in the same uninterrupted session as the menu frames) and evidence/20260916-route/attempt-13/geometry-binding-preclick.json (sha256 288dba46bc5a4e14350e991070c22851d3679d95ce38ca9dfd597ddce88f076a; binds the same rect to this session's frame-menu-pre.png at MAD 2.255). Re-bound to the menu frame sha for this offline replay only.",
+ "authority": "OFFLINE REPLAY INPUT ONLY - confers no live authority; a future live round must produce its own fresh AX read bound to its own fresh frame"
+}

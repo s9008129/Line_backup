@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest detector fixture (MENU_DETECTED but no chosen_bbox)",
+ "tool": "detect_menu_popup",
+ "verdict": "MENU_DETECTED",
+ "pre": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+ "post": "evidence/20260916-route/attempt-13/frame-menu-post1.png",
+ "post_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+ "chosen_bbox": null,
+ "source": "binding fields from evidence/20260916-route/attempt-13/s6-menu-pairB1.json; chosen_bbox deliberately null",
+ "fixture_note": "negative fixture"
+}

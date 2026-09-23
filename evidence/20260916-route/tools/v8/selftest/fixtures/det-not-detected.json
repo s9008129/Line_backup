@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest detector fixture (verdict is not MENU_DETECTED)",
+ "tool": "detect_menu_popup",
+ "verdict": "MENU_NOT_PRESENT",
+ "pre": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+ "post": "evidence/20260916-route/attempt-13/frame-menu-post1.png",
+ "post_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+ "chosen_bbox": null,
+ "source": "shape taken from evidence/20260921-rev27-save-all/attempt-05/s6-menu-pairA.json (verdict NOT_DETECTED, no usable bbox); binding fields re-rooted",
+ "fixture_note": "negative fixture: a non-detection result must be refused before any OCR"
+}

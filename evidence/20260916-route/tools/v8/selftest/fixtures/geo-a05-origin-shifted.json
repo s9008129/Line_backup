@@ -1,0 +1,11 @@
+{
+ "artifact": "v8 selftest geometry fixture (attempt-05 frame, origin shifted +7pt for input-derivation checks)",
+ "frame_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+ "capture_scale": 2,
+ "window_index": 1,
+ "window_position_points": [336, 48],
+ "window_size_points": [327, 643],
+ "window_point_rect": [336, 48, 663, 691],
+ "source": "derived from geo-a05.json by adding (+7,+7) to the window origin only",
+ "fixture_note": "self-test input only; used to prove the candidate follows current inputs (no historical-coordinate constant)"
+}

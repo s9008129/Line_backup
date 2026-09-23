@@ -1,0 +1,45 @@
+{
+ "tool": "locate_save_all_menu_item",
+ "version": "v8",
+ "class": "v8-class Save All menu-item locator; append-only successor of the frozen v7-class locator ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+ "frame": "evidence/20260916-route/attempt-13/frame-menu-post1.png",
+ "tool_sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+ "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "detector": {
+  "json": "evidence/20260916-route/tools/v8/selftest/fixtures/det-a13.json",
+  "json_sha256": "d4092c71a7cdbab1308598424150630b861277fe21000911ee64a83fe5264fe7",
+  "tool": "detect_menu_popup",
+  "verdict": "MENU_DETECTED",
+  "pre": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+  "post": "evidence/20260916-route/attempt-13/frame-menu-post1.png",
+  "post_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+  "chosen_bbox": [
+   1247,
+   127,
+   1494,
+   478
+  ]
+ },
+ "geometry": {
+  "json": "evidence/20260916-route/tools/v8/selftest/fixtures/geo-a13-pre-binding.json",
+  "json_sha256": "1ac84e9b8c18f74548308aede2b753baa758e07163218ab296654230cebf404d",
+  "frame_sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+  "capture_scale": 2,
+  "window_index": 0,
+  "window_position_points": [
+   337,
+   30
+  ],
+  "window_size_points": [
+   327,
+   643
+  ]
+ },
+ "verdict": "BAD_INPUT",
+ "reason": "geometry json is not bound to this frame",
+ "exit_code": 6
+}

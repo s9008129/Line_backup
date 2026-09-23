@@ -1,0 +1,9 @@
+{
+ "tool": "locate_save_all_menu_item",
+ "version": "v8",
+ "class": "v8-class Save All menu-item locator; append-only successor of the frozen v7-class locator ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+ "frame": "evidence/20260916-route/attempt-13/no-such-frame.png",
+ "verdict": "BAD_INPUT",
+ "reason": "missing input: 'evidence/20260916-route/attempt-13/no-such-frame.png'",
+ "exit_code": 6
+}

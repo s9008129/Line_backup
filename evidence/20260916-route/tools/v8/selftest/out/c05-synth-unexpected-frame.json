@@ -1,0 +1,301 @@
+{
+ "tool": "locate_save_all_menu_item",
+ "version": "v8",
+ "class": "v8-class Save All menu-item locator; append-only successor of the frozen v7-class locator ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+ "frame": "evidence/20260921-rev27-save-all/attempt-02/selftest/frame-synth-unexpected.png",
+ "tool_sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+ "frame_sha256": "d8e9f5632d875300c661758b8d1f27cdd48cb53a593afdff770268f9f6c504ee",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "detector": {
+  "json": "evidence/20260916-route/tools/v8/selftest/fixtures/det-su.json",
+  "json_sha256": "0b089d944925f2e4a58ac50275636ac26d0dfbf43befad1f6d70b6b06fecf593",
+  "tool": "detect_menu_popup",
+  "verdict": "MENU_DETECTED",
+  "pre": "(fixture)",
+  "post": "evidence/20260921-rev27-save-all/attempt-02/selftest/frame-synth-unexpected.png",
+  "post_sha256": "d8e9f5632d875300c661758b8d1f27cdd48cb53a593afdff770268f9f6c504ee",
+  "chosen_bbox": [
+   1247,
+   127,
+   1494,
+   478
+  ]
+ },
+ "geometry": {
+  "json": "evidence/20260916-route/tools/v8/selftest/fixtures/geo-su.json",
+  "json_sha256": "54e34598831e61950e0bb9d504c02d1ee2b55e644511b3a9d8ba5b3222830084",
+  "frame_sha256": "d8e9f5632d875300c661758b8d1f27cdd48cb53a593afdff770268f9f6c504ee",
+  "capture_scale": 2,
+  "window_index": 0,
+  "window_position_points": [
+   337,
+   30
+  ],
+  "window_size_points": [
+   327,
+   643
+  ]
+ },
+ "ocr": {
+  "returncode": 0,
+  "command": [
+   "tesseract",
+   "-",
+   "stdout",
+   "-l",
+   "chi_tra+eng",
+   "--psm",
+   "6",
+   "tsv"
+  ],
+  "upscale": 3,
+  "tesseract_version": "tesseract 5.5.1",
+  "word_count": 11,
+  "words": [
+   {
+    "text": ">",
+    "conf": 95.21,
+    "box_frame_px": [
+     1274.0,
+     147.0,
+     1300.333,
+     180.0
+    ]
+   },
+   {
+    "text": "選擇",
+    "conf": 95.807,
+    "box_frame_px": [
+     1299.0,
+     210.333,
+     1349.0,
+     234.667
+    ]
+   },
+   {
+    "text": "項目",
+    "conf": 93.629,
+    "box_frame_px": [
+     1360.667,
+     211.333,
+     1398.0,
+     234.667
+    ]
+   },
+   {
+    "text": "修改",
+    "conf": 96.07,
+    "box_frame_px": [
+     1298.667,
+     264.0,
+     1453.0,
+     288.667
+    ]
+   },
+   {
+    "text": "相",
+    "conf": 93.236,
+    "box_frame_px": [
+     1360.333,
+     254.333,
+     1387.333,
+     302.333
+    ]
+   },
+   {
+    "text": "簿",
+    "conf": 93.071,
+    "box_frame_px": [
+     1387.333,
+     254.333,
+     1414.333,
+     302.333
+    ]
+   },
+   {
+    "text": "名",
+    "conf": 93.198,
+    "box_frame_px": [
+     1414.333,
+     254.333,
+     1435.333,
+     302.333
+    ]
+   },
+   {
+    "text": "稱",
+    "conf": 36.94,
+    "box_frame_px": [
+     1435.333,
+     254.333,
+     1453.333,
+     302.333
+    ]
+   },
+   {
+    "text": "儲存",
+    "conf": 96.91,
+    "box_frame_px": [
+     1298.667,
+     318.333,
+     1401.0,
+     343.0
+    ]
+   },
+   {
+    "text": "全",
+    "conf": 96.96,
+    "box_frame_px": [
+     1357.333,
+     308.333,
+     1381.333,
+     356.333
+    ]
+   },
+   {
+    "text": "部",
+    "conf": 96.814,
+    "box_frame_px": [
+     1381.333,
+     308.333,
+     1402.333,
+     356.333
+    ]
+   }
+  ]
+ },
+ "params": {
+  "upscale": 3,
+  "ocr_lang": "chi_tra+eng",
+  "ocr_psm": "6",
+  "row_tol_fraction": 0.6,
+  "row_tol_min_px": 8.0,
+  "median_word_height_px": 48.0,
+  "row_tol_px": 28.8,
+  "min_overlap_px": 20.0,
+  "x_edge_px": 2.0,
+  "edge_fraction": 0.15,
+  "edge_min_px": 6.0,
+  "neighbor_sep_px": 12.0,
+  "min_band_h_px": 16.0,
+  "max_band_h_bbox_fraction": 0.5,
+  "non_target_substitution_tolerance": 1
+ },
+ "rows": [
+  {
+   "index": 0,
+   "text": ">",
+   "cjk_text": "",
+   "mean_cy_px": 163.5,
+   "band_frame_px": [
+    1274.0,
+    147.0,
+    1300.333,
+    180.0
+   ],
+   "word_count": 1
+  },
+  {
+   "index": 1,
+   "text": "選擇項目",
+   "cjk_text": "選擇項目",
+   "mean_cy_px": 222.75,
+   "band_frame_px": [
+    1299.0,
+    210.333,
+    1398.0,
+    234.667
+   ],
+   "word_count": 2
+  },
+  {
+   "index": 2,
+   "text": "修改相簿名稱",
+   "cjk_text": "修改相簿名稱",
+   "mean_cy_px": 277.933,
+   "band_frame_px": [
+    1298.667,
+    254.333,
+    1453.333,
+    302.333
+   ],
+   "word_count": 5
+  },
+  {
+   "index": 3,
+   "text": "儲存全部",
+   "cjk_text": "儲存全部",
+   "mean_cy_px": 331.778,
+   "band_frame_px": [
+    1298.667,
+    308.333,
+    1402.333,
+    356.333
+   ],
+   "word_count": 3
+  }
+ ],
+ "checks": [
+  {
+   "name": "popup_shape",
+   "class": "HARD",
+   "pass": true,
+   "detail": {
+    "bbox_frame_px": [
+     1247.0,
+     127.0,
+     1494.0,
+     478.0
+    ],
+    "bbox_w_px": 247.0,
+    "bbox_h_px": 351.0,
+    "area_fraction": 0.025,
+    "width_fraction": 0.108,
+    "height_fraction": 0.236,
+    "limits": {
+     "max_area_fraction": 0.3,
+     "max_width_fraction": 0.5,
+     "max_height_fraction": 0.8
+    }
+   }
+  },
+  {
+   "name": "target_unique_row",
+   "class": "HARD",
+   "pass": true,
+   "detail": {
+    "matching_row_indices": [
+     3
+    ],
+    "target_item": "儲存全部",
+    "rule": "exact string, no fuzzy/partial matching"
+   }
+  },
+  {
+   "name": "reference_structure",
+   "class": "HARD",
+   "pass": false,
+   "detail": {
+    "expected_item_count": 5,
+    "item_row_indices": [
+     1,
+     2,
+     3
+    ],
+    "item_row_cjk_texts": [
+     "選擇項目",
+     "修改相簿名稱",
+     "儲存全部"
+    ],
+    "matches": [],
+    "target_position_ok": null
+   }
+  }
+ ],
+ "verdict": "MENU_CONTENT_UNEXPECTED",
+ "exit_code": 5,
+ "reason": "five-item reference structure not matched around the target row"
+}

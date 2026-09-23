@@ -1,0 +1,212 @@
+{
+ "artifact": "evidence/20260923-rev27c-save-all-locator/injection-supplemental/results.json",
+ "authority": "OFFLINE TEST ONLY - an ELIGIBLE verdict here is not a live click authorization",
+ "checks": [
+  {
+   "detail": {
+    "actual": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+    "expected": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86"
+   },
+   "name": "frozen_tool_binding",
+   "pass": true
+  },
+  {
+   "detail": {
+    "actual": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+    "expected": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880"
+   },
+   "name": "frame_binding",
+   "pass": true
+  },
+  {
+   "detail": {
+    "actual": "842cb93330e3183cf5c3cc7cd28e69b5714084499aa994f49cdc93d7fa2f3418",
+    "expected": "842cb93330e3183cf5c3cc7cd28e69b5714084499aa994f49cdc93d7fa2f3418"
+   },
+   "name": "injected_fixture_binding",
+   "pass": true
+  },
+  {
+   "detail": {
+    "fallback_candidate_app_local_pt": [
+     42,
+     988
+    ],
+    "historical_candidate_frame_px": [
+     1313.5,
+     332.333
+    ],
+    "historical_candidate_window_local_pt": [
+     304,
+     50
+    ]
+   },
+   "name": "decoy_fields_actually_present",
+   "pass": true
+  },
+  {
+   "detail": {
+    "exit_code": 0,
+    "verdict": "ELIGIBLE"
+   },
+   "name": "injected_verdict_eligible",
+   "pass": true
+  },
+  {
+   "detail": {
+    "exit_code": 0,
+    "verdict": "ELIGIBLE"
+   },
+   "name": "clean_control_verdict_eligible",
+   "pass": true
+  },
+  {
+   "detail": {
+    "clean_candidate": {
+     "app_local_pt": [
+      319.667,
+      134.75
+     ],
+     "frame_px": [
+      1297.333,
+      351.5
+     ],
+     "screen_pt": [
+      648.667,
+      175.75
+     ]
+    },
+    "injected_candidate": {
+     "app_local_pt": [
+      319.667,
+      134.75
+     ],
+     "frame_px": [
+      1297.333,
+      351.5
+     ],
+     "screen_pt": [
+      648.667,
+      175.75
+     ]
+    }
+   },
+   "name": "injection_has_zero_effect_on_decision",
+   "pass": true
+  },
+  {
+   "detail": {
+    "app_local_pt": [
+     319.667,
+     134.75
+    ],
+    "frame_px": [
+     1297.333,
+     351.5
+    ],
+    "screen_pt": [
+     648.667,
+     175.75
+    ]
+   },
+   "name": "candidate_equals_current_frame_derivation",
+   "pass": true
+  },
+  {
+   "detail": {
+    "candidate": {
+     "app_local_pt": [
+      319.667,
+      134.75
+     ],
+     "frame_px": [
+      1297.333,
+      351.5
+     ],
+     "screen_pt": [
+      648.667,
+      175.75
+     ]
+    },
+    "decoys": {
+     "fallback_candidate_app_local_pt": [
+      42.0,
+      988.0
+     ],
+     "historical_candidate_frame_px": [
+      1313.5,
+      332.333
+     ],
+     "historical_candidate_window_local_pt": [
+      304.0,
+      50.0
+     ]
+    }
+   },
+   "name": "candidate_differs_from_every_decoy",
+   "pass": true
+  },
+  {
+   "detail": {
+    "run1_stdout_sha256": "ab4c577a9575b2e937df83f439f09eba06a9f222dc183a5f287bc5730124ba5e",
+    "run2_stdout_sha256": "ab4c577a9575b2e937df83f439f09eba06a9f222dc183a5f287bc5730124ba5e"
+   },
+   "name": "injected_run_deterministic_x2",
+   "pass": true
+  },
+  {
+   "detail": {
+    "out_files": [
+     "evidence/20260923-rev27c-save-all-locator/injection-supplemental/out/clean-control.json",
+     "evidence/20260923-rev27c-save-all-locator/injection-supplemental/out/injected-run-1.json",
+     "evidence/20260923-rev27c-save-all-locator/injection-supplemental/out/injected-run-2.json"
+    ]
+   },
+   "name": "out_files_written",
+   "pass": true
+  }
+ ],
+ "decoys_injected": {
+  "fallback_candidate_app_local_pt": [
+   42.0,
+   988.0
+  ],
+  "historical_candidate_frame_px": [
+   1313.5,
+   332.333
+  ],
+  "historical_candidate_window_local_pt": [
+   304.0,
+   50.0
+  ]
+ },
+ "gui_input_count": 0,
+ "inputs": {
+  "detector_json": "evidence/20260916-route/tools/v8/selftest/fixtures/det-a05.json",
+  "frame": {
+   "path": "evidence/20260921-rev27-save-all/attempt-05/frame-menu-post1.png",
+   "sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880"
+  },
+  "geometry_clean": "evidence/20260916-route/tools/v8/selftest/fixtures/geo-a05.json",
+  "geometry_injected": {
+   "path": "evidence/20260916-route/tools/v8/selftest/fixtures/geo-a05-injected-history.json",
+   "sha256": "842cb93330e3183cf5c3cc7cd28e69b5714084499aa994f49cdc93d7fa2f3418"
+  }
+ },
+ "role": "SUPPLEMENTAL negative test for the attempt-05 negative-matrix item 'historical-coordinate injection'; not part of the reviewed v8 selftest binding (run_selftest.py c94fc407..., results.json 943f2939..., 43 cases)",
+ "run_outputs": {
+  "clean_control": "evidence/20260923-rev27c-save-all-locator/injection-supplemental/out/clean-control.json",
+  "injected_run_1": "evidence/20260923-rev27c-save-all-locator/injection-supplemental/out/injected-run-1.json",
+  "injected_run_2": "evidence/20260923-rev27c-save-all-locator/injection-supplemental/out/injected-run-2.json"
+ },
+ "schema": "rev27c-injection-supplemental/1",
+ "summary": {
+  "all_pass": true,
+  "checks_passed": 11,
+  "checks_total": 11
+ },
+ "tool": {
+  "path": "evidence/20260916-route/tools/v8/locate_save_all_menu_item.py",
+  "sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86"
+ }
+}

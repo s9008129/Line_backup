@@ -1,0 +1,729 @@
+{
+ "artifact": "Rev27c offline replay record (zero GUI input)",
+ "tool": {
+  "path": "evidence/20260916-route/tools/v8/locate_save_all_menu_item.py",
+  "sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86"
+ },
+ "inputs_authority": "replay-only frame-SHA re-bindings of the rounds' own AX geometry evidence; no live authority",
+ "runs": {
+  "attempt-13-replay-1": {
+   "name": "attempt-13-replay-1.json",
+   "exit_code": 0,
+   "stdout_sha256": "b802113b44387222196253c91b840f31830d02bee50a485021f6a0768635f525",
+   "verdict": "ELIGIBLE",
+   "reason": "exactly one exact-match target row; five-item reference structure matched (single-glyph tolerance on non-target rows); row geometry and candidate safe regions pass",
+   "candidate": {
+    "frame_px": [
+     1313.5,
+     332.333
+    ],
+    "screen_pt": [
+     656.75,
+     166.167
+    ],
+    "app_local_pt": [
+     319.75,
+     136.167
+    ]
+   },
+   "target": {
+    "text": "儲存全部",
+    "row_index": 3,
+    "cjk_text": "儲存全部",
+    "band_frame_px": [
+     1299.0,
+     308.333,
+     1400.667,
+     356.333
+    ],
+    "words": [
+     {
+      "text": "儲存",
+      "conf": 96.813,
+      "box_frame_px": [
+       1299.0,
+       318.333,
+       1400.667,
+       342.667
+      ]
+     },
+     {
+      "text": "全",
+      "conf": 96.994,
+      "box_frame_px": [
+       1357.667,
+       308.333,
+       1381.667,
+       356.333
+      ]
+     },
+     {
+      "text": "部",
+      "conf": 96.207,
+      "box_frame_px": [
+       1381.667,
+       308.333,
+       1399.667,
+       356.333
+      ]
+     }
+    ]
+   },
+   "row_tiers": [
+    "EXACT",
+    "EXACT",
+    "EXACT",
+    "EXACT",
+    "EXACT"
+   ],
+   "checks": [
+    {
+     "name": "popup_shape",
+     "pass": true
+    },
+    {
+     "name": "target_unique_row",
+     "pass": true
+    },
+    {
+     "name": "reference_structure",
+     "pass": true
+    },
+    {
+     "name": "row_geometry",
+     "pass": true
+    },
+    {
+     "name": "x_overlap",
+     "pass": true
+    },
+    {
+     "name": "x_safe_region",
+     "pass": true
+    },
+    {
+     "name": "y_safe_region",
+     "pass": true
+    },
+    {
+     "name": "candidate_placement",
+     "pass": true
+    }
+   ],
+   "inputs": {
+    "frame": "evidence/20260916-route/attempt-13/frame-menu-post1.png",
+    "frame_sha256": "7ccb6f9e0df63a8271f951f3fc351cf65f70095573a1200576508d6eaee0e090",
+    "detector_json": "evidence/20260916-route/attempt-13/s6-menu-pairB1.json",
+    "detector_sha256": "d1dc6257fe67e61c5975649bcbda754b66b74e4c98ae102919fa1d7d2e87e021",
+    "geometry_json": "evidence/20260923-rev27c-save-all-locator/replay/inputs/attempt-13-menu-frame-geometry.json",
+    "geometry_sha256": "ee177b7ce066f794e6c5eb96f29aa22a47d63ec3632d24fcd2456548d8a3d715"
+   }
+  },
+  "attempt-13-replay-2": {
+   "name": "attempt-13-replay-2.json",
+   "exit_code": 0,
+   "stdout_sha256": "b802113b44387222196253c91b840f31830d02bee50a485021f6a0768635f525",
+   "verdict": "ELIGIBLE",
+   "reason": "exactly one exact-match target row; five-item reference structure matched (single-glyph tolerance on non-target rows); row geometry and candidate safe regions pass",
+   "candidate": {
+    "frame_px": [
+     1313.5,
+     332.333
+    ],
+    "screen_pt": [
+     656.75,
+     166.167
+    ],
+    "app_local_pt": [
+     319.75,
+     136.167
+    ]
+   },
+   "target": {
+    "text": "儲存全部",
+    "row_index": 3,
+    "cjk_text": "儲存全部",
+    "band_frame_px": [
+     1299.0,
+     308.333,
+     1400.667,
+     356.333
+    ],
+    "words": [
+     {
+      "text": "儲存",
+      "conf": 96.813,
+      "box_frame_px": [
+       1299.0,
+       318.333,
+       1400.667,
+       342.667
+      ]
+     },
+     {
+      "text": "全",
+      "conf": 96.994,
+      "box_frame_px": [
+       1357.667,
+       308.333,
+       1381.667,
+       356.333
+      ]
+     },
+     {
+      "text": "部",
+      "conf": 96.207,
+      "box_frame_px": [
+       1381.667,
+       308.333,
+       1399.667,
+       356.333
+      ]
+     }
+    ]
+   },
+   "row_tiers": [
+    "EXACT",
+    "EXACT",
+    "EXACT",
+    "EXACT",
+    "EXACT"
+   ],
+   "checks": [
+    {
+     "name": "popup_shape",
+     "pass": true
+    },
+    {
+     "name": "target_unique_row",
+     "pass": true
+    },
+    {
+     "name": "reference_structure",
+     "pass": true
+    },
+    {
+     "name": "row_geometry",
+     "pass": true
+    },
+    {
+     "name": "x_overlap",
+     "pass": true
+    },
+    {
+     "name": "x_safe_region",
+     "pass": true
+    },
+    {
+     "name": "y_safe_region",
+     "pass": true
+    },
+    {
+     "name": "candidate_placement",
+     "pass": true
+    }
+   ]
+  },
+  "attempt-19-replay-1": {
+   "name": "attempt-19-replay-1.json",
+   "exit_code": 0,
+   "stdout_sha256": "768c5cda80d4deac5694fbb7643926f313dba1b30414ed7ddbca634b1b32a859",
+   "verdict": "ELIGIBLE",
+   "reason": "exactly one exact-match target row; five-item reference structure matched (single-glyph tolerance on non-target rows); row geometry and candidate safe regions pass",
+   "candidate": {
+    "frame_px": [
+     1313.5,
+     370.333
+    ],
+    "screen_pt": [
+     656.75,
+     185.167
+    ],
+    "app_local_pt": [
+     319.75,
+     136.167
+    ]
+   },
+   "target": {
+    "text": "儲存全部",
+    "row_index": 3,
+    "cjk_text": "儲存全部",
+    "band_frame_px": [
+     1299.0,
+     346.333,
+     1400.667,
+     394.333
+    ],
+    "words": [
+     {
+      "text": "儲存",
+      "conf": 96.813,
+      "box_frame_px": [
+       1299.0,
+       356.333,
+       1400.667,
+       380.667
+      ]
+     },
+     {
+      "text": "全",
+      "conf": 96.994,
+      "box_frame_px": [
+       1357.667,
+       346.333,
+       1381.667,
+       394.333
+      ]
+     },
+     {
+      "text": "部",
+      "conf": 96.207,
+      "box_frame_px": [
+       1381.667,
+       346.333,
+       1399.667,
+       394.333
+      ]
+     }
+    ]
+   },
+   "row_tiers": [
+    "EXACT",
+    "EXACT",
+    "EXACT",
+    "EXACT",
+    "EXACT"
+   ],
+   "checks": [
+    {
+     "name": "popup_shape",
+     "pass": true
+    },
+    {
+     "name": "target_unique_row",
+     "pass": true
+    },
+    {
+     "name": "reference_structure",
+     "pass": true
+    },
+    {
+     "name": "row_geometry",
+     "pass": true
+    },
+    {
+     "name": "x_overlap",
+     "pass": true
+    },
+    {
+     "name": "x_safe_region",
+     "pass": true
+    },
+    {
+     "name": "y_safe_region",
+     "pass": true
+    },
+    {
+     "name": "candidate_placement",
+     "pass": true
+    }
+   ],
+   "inputs": {
+    "frame": "frame-menu-post1.png",
+    "frame_sha256": "e321069d86d04f2017e3a972a013fedcac51195ba1e4ba1d9e61df476f8169a2",
+    "detector_json": "s6-menu-pairB1.json",
+    "detector_sha256": "258da97488338a8508703ce331a9e883198eef26dc83a4e8810e77eaadc18bd6",
+    "geometry_json": "evidence/20260923-rev27c-save-all-locator/replay/inputs/attempt-19-menu-frame-geometry.json",
+    "geometry_sha256": "be1911944e9a58a0998bcc7e2a32d755de08f14c0b04a927293d10b8f0162039"
+   }
+  },
+  "attempt-19-replay-2": {
+   "name": "attempt-19-replay-2.json",
+   "exit_code": 0,
+   "stdout_sha256": "768c5cda80d4deac5694fbb7643926f313dba1b30414ed7ddbca634b1b32a859",
+   "verdict": "ELIGIBLE",
+   "reason": "exactly one exact-match target row; five-item reference structure matched (single-glyph tolerance on non-target rows); row geometry and candidate safe regions pass",
+   "candidate": {
+    "frame_px": [
+     1313.5,
+     370.333
+    ],
+    "screen_pt": [
+     656.75,
+     185.167
+    ],
+    "app_local_pt": [
+     319.75,
+     136.167
+    ]
+   },
+   "target": {
+    "text": "儲存全部",
+    "row_index": 3,
+    "cjk_text": "儲存全部",
+    "band_frame_px": [
+     1299.0,
+     346.333,
+     1400.667,
+     394.333
+    ],
+    "words": [
+     {
+      "text": "儲存",
+      "conf": 96.813,
+      "box_frame_px": [
+       1299.0,
+       356.333,
+       1400.667,
+       380.667
+      ]
+     },
+     {
+      "text": "全",
+      "conf": 96.994,
+      "box_frame_px": [
+       1357.667,
+       346.333,
+       1381.667,
+       394.333
+      ]
+     },
+     {
+      "text": "部",
+      "conf": 96.207,
+      "box_frame_px": [
+       1381.667,
+       346.333,
+       1399.667,
+       394.333
+      ]
+     }
+    ]
+   },
+   "row_tiers": [
+    "EXACT",
+    "EXACT",
+    "EXACT",
+    "EXACT",
+    "EXACT"
+   ],
+   "checks": [
+    {
+     "name": "popup_shape",
+     "pass": true
+    },
+    {
+     "name": "target_unique_row",
+     "pass": true
+    },
+    {
+     "name": "reference_structure",
+     "pass": true
+    },
+    {
+     "name": "row_geometry",
+     "pass": true
+    },
+    {
+     "name": "x_overlap",
+     "pass": true
+    },
+    {
+     "name": "x_safe_region",
+     "pass": true
+    },
+    {
+     "name": "y_safe_region",
+     "pass": true
+    },
+    {
+     "name": "candidate_placement",
+     "pass": true
+    }
+   ]
+  },
+  "attempt-05-replay-1": {
+   "name": "attempt-05-replay-1.json",
+   "exit_code": 0,
+   "stdout_sha256": "e8f53bd3b7827fad944322dd5e26db004be43359aa4559959eb8513dc17f6868",
+   "verdict": "ELIGIBLE",
+   "reason": "exactly one exact-match target row; five-item reference structure matched (single-glyph tolerance on non-target rows); row geometry and candidate safe regions pass",
+   "candidate": {
+    "frame_px": [
+     1297.333,
+     351.5
+    ],
+    "screen_pt": [
+     648.667,
+     175.75
+    ],
+    "app_local_pt": [
+     319.667,
+     134.75
+    ]
+   },
+   "target": {
+    "text": "儲存全部",
+    "row_index": 2,
+    "cjk_text": "儲存全部",
+    "band_frame_px": [
+     1282.667,
+     327.333,
+     1385.0,
+     375.667
+    ],
+    "words": [
+     {
+      "text": "儲存",
+      "conf": 96.955,
+      "box_frame_px": [
+       1282.667,
+       340.333,
+       1385.0,
+       365.0
+      ]
+     },
+     {
+      "text": "全",
+      "conf": 96.985,
+      "box_frame_px": [
+       1341.667,
+       327.333,
+       1366.0,
+       375.667
+      ]
+     },
+     {
+      "text": "部",
+      "conf": 96.556,
+      "box_frame_px": [
+       1365.667,
+       327.333,
+       1384.333,
+       375.667
+      ]
+     }
+    ]
+   },
+   "row_tiers": [
+    "EXACT",
+    "TOLERANT_1_SUB",
+    "EXACT",
+    "EXACT",
+    "EXACT"
+   ],
+   "checks": [
+    {
+     "name": "popup_shape",
+     "pass": true
+    },
+    {
+     "name": "target_unique_row",
+     "pass": true
+    },
+    {
+     "name": "reference_structure",
+     "pass": true
+    },
+    {
+     "name": "row_geometry",
+     "pass": true
+    },
+    {
+     "name": "x_overlap",
+     "pass": true
+    },
+    {
+     "name": "x_safe_region",
+     "pass": true
+    },
+    {
+     "name": "y_safe_region",
+     "pass": true
+    },
+    {
+     "name": "candidate_placement",
+     "pass": true
+    }
+   ],
+   "inputs": {
+    "frame": "frame-menu-post1.png",
+    "frame_sha256": "2f6bf83d8962e0eb129c5fe342e8c27fcc964add50c11a147a6bc4a0fa76c880",
+    "detector_json": "s6-menu-pairB1.json (attempt-05's own run)",
+    "detector_sha256": "c3f841cd2d119b11b607339ea44897f7503fed1fa94040e8c893c4dc2c6c2abd",
+    "geometry_json": "live-window-geometry-post1.json (attempt-05's own AX read, frame-bound)",
+    "geometry_sha256": "f746275dde3d2440b6cee1f4eac03422f1e6945a3aae6473a82f4a9006de4349"
+   }
+  },
+  "attempt-05-replay-2": {
+   "name": "attempt-05-replay-2.json",
+   "exit_code": 0,
+   "stdout_sha256": "e8f53bd3b7827fad944322dd5e26db004be43359aa4559959eb8513dc17f6868",
+   "verdict": "ELIGIBLE",
+   "reason": "exactly one exact-match target row; five-item reference structure matched (single-glyph tolerance on non-target rows); row geometry and candidate safe regions pass",
+   "candidate": {
+    "frame_px": [
+     1297.333,
+     351.5
+    ],
+    "screen_pt": [
+     648.667,
+     175.75
+    ],
+    "app_local_pt": [
+     319.667,
+     134.75
+    ]
+   },
+   "target": {
+    "text": "儲存全部",
+    "row_index": 2,
+    "cjk_text": "儲存全部",
+    "band_frame_px": [
+     1282.667,
+     327.333,
+     1385.0,
+     375.667
+    ],
+    "words": [
+     {
+      "text": "儲存",
+      "conf": 96.955,
+      "box_frame_px": [
+       1282.667,
+       340.333,
+       1385.0,
+       365.0
+      ]
+     },
+     {
+      "text": "全",
+      "conf": 96.985,
+      "box_frame_px": [
+       1341.667,
+       327.333,
+       1366.0,
+       375.667
+      ]
+     },
+     {
+      "text": "部",
+      "conf": 96.556,
+      "box_frame_px": [
+       1365.667,
+       327.333,
+       1384.333,
+       375.667
+      ]
+     }
+    ]
+   },
+   "row_tiers": [
+    "EXACT",
+    "TOLERANT_1_SUB",
+    "EXACT",
+    "EXACT",
+    "EXACT"
+   ],
+   "checks": [
+    {
+     "name": "popup_shape",
+     "pass": true
+    },
+    {
+     "name": "target_unique_row",
+     "pass": true
+    },
+    {
+     "name": "reference_structure",
+     "pass": true
+    },
+    {
+     "name": "row_geometry",
+     "pass": true
+    },
+    {
+     "name": "x_overlap",
+     "pass": true
+    },
+    {
+     "name": "x_safe_region",
+     "pass": true
+    },
+    {
+     "name": "y_safe_region",
+     "pass": true
+    },
+    {
+     "name": "candidate_placement",
+     "pass": true
+    }
+   ]
+  }
+ },
+ "notes": [
+  "Every verdict in this record is OFFLINE and confers NO live click authorization; the attempt-05 menu may no longer exist, and any future round must freshly re-verify the live menu under a new owner one-shot authorization."
+ ],
+ "attempt-19-window-binding-corrob": {
+  "method": "gray MAD between frame-post.png and frame-menu-post1.png over the window rect region left of the popup overlay (menu bbox x0=1245), both cropped at the SAME frame coordinates from the [337,49] window rect",
+  "region_px": [
+   674,
+   98,
+   1245,
+   1384
+  ],
+  "mad_mean": 0.01,
+  "rule": "MAD <= 12.0 supports that the window rect of the bound frame-post.png still describes the menu frame's window position",
+  "pass": true
+ },
+ "determinism": {
+  "attempt-05": {
+   "run1_sha256": "e8f53bd3b7827fad944322dd5e26db004be43359aa4559959eb8513dc17f6868",
+   "run2_sha256": "e8f53bd3b7827fad944322dd5e26db004be43359aa4559959eb8513dc17f6868",
+   "byte_identical": true
+  },
+  "attempt-13": {
+   "run1_sha256": "b802113b44387222196253c91b840f31830d02bee50a485021f6a0768635f525",
+   "run2_sha256": "b802113b44387222196253c91b840f31830d02bee50a485021f6a0768635f525",
+   "byte_identical": true
+  },
+  "attempt-19": {
+   "run1_sha256": "768c5cda80d4deac5694fbb7643926f313dba1b30414ed7ddbca634b1b32a859",
+   "run2_sha256": "768c5cda80d4deac5694fbb7643926f313dba1b30414ed7ddbca634b1b32a859",
+   "byte_identical": true
+  }
+ },
+ "historical_candidate_consistency": {
+  "attempt-13": {
+   "historical": {
+    "source": "evidence/20260921-rev27-save-all/attempt-02/selftest/result-positive1.json (frozen v7-class locator, ELIGIBLE)",
+    "historical_candidate_frame_px": [
+     1313.5,
+     332.333
+    ]
+   },
+   "v8_replay_candidate_frame_px": [
+    1313.5,
+    332.333
+   ],
+   "identical": true,
+   "note": "the historical candidate was NOT used as an input; it is only compared against the candidate re-derived by v8 from the frame's own OCR and bound geometry"
+  },
+  "attempt-19": {
+   "historical": "no candidate was ever produced for this frame by the v7-class locator (attempt-19 stopped at menu observation)",
+   "v8_replay_candidate_frame_px": [
+    1313.5,
+    370.333
+   ],
+   "note": "v8 establishes the first machine-derived candidate for this historical frame"
+  },
+  "attempt-05": {
+   "historical": "v7-class locator REFUSED (MENU_CONTENT_UNEXPECTED, no candidate) on this frame",
+   "v8_replay_candidate_frame_px": [
+    1297.333,
+    351.5
+   ],
+   "note": "the false-negative this revision closes"
+  }
+ }
+}
