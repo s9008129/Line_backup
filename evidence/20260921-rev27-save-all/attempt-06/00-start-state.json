@@ -1,0 +1,149 @@
+{
+ "artifact": "00-start-state.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-06/",
+ "recorded_at_local": "2026-09-23T10:39:37+0800",
+ "authorization": {
+  "type": "REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+  "id": "REV27C-LIVE-GATE-A-AFTER-LOCATOR-V8",
+  "owner_one_shot": true
+ },
+ "attempt_placement_rationale": "Placed in the Rev27 Gate-A lineage directory (evidence/20260921-rev27-save-all/) as attempt-06: the authorization id is LIVE-GATE-A-AFTER-LOCATOR-V8, the direct successor of attempt-05 (which stopped at the pre-fix v7 locator), and the terminal action is again the Gate-A Save-All dispatch with the ellipsis re-done inside the same uninterrupted attempt.",
+ "repository": {
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "head": "f3ab3ee1732af1a1cc21ba7449aeef12e0b92075",
+  "head_owner_known_prefix": "f3ab3ee",
+  "head_matches_owner_known": true,
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "ahead": 21,
+  "status_porcelain_branch": "## master...origin/master [ahead 21]\n?? evidence/20260916-route/attempt-11/\n?? evidence/20260916-route/tools/v4/__pycache__/\n?? evidence/20260916-route/tools/v5/__pycache__/\n?? evidence/20260916-route/tools/v6/__pycache__/\n?? evidence/20260916-route/tools/v6/selftest/__pycache__/\n?? evidence/20260921-rev27-save-all/attempt-06/",
+  "untracked_left_untouched": [
+   "evidence/20260916-route/attempt-11/",
+   "evidence/20260916-route/tools/v4/__pycache__/",
+   "evidence/20260916-route/tools/v5/__pycache__/",
+   "evidence/20260916-route/tools/v6/__pycache__/",
+   "evidence/20260916-route/tools/v6/selftest/__pycache__/"
+  ],
+  "forbidden_git_ops_used": []
+ },
+ "safety_artifact_gate": {
+  "rev27c_plan_rev27c_2": {
+   "path": "PLAN-2026-09-23-rev27c-save-all-locator.md",
+   "sha256": "906e949b34a5f48f46135b240b8b00a1df147a45d30da6e462c2fc4e5b1d8110",
+   "expected": "906e949b34a5f48f46135b240b8b00a1df147a45d30da6e462c2fc4e5b1d8110",
+   "match": true
+  },
+  "v8_save_all_locator": {
+   "path": "evidence/20260916-route/tools/v8/locate_save_all_menu_item.py",
+   "sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+   "expected": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+   "match": true
+  },
+  "v8_selftest_runner": {
+   "path": "evidence/20260916-route/tools/v8/selftest/run_selftest.py",
+   "sha256": "c94fc4074f0cd323ee53fe09428b0d38b61af04f5993ceb344acaa02e236f462",
+   "expected": "c94fc4074f0cd323ee53fe09428b0d38b61af04f5993ceb344acaa02e236f462",
+   "match": true
+  },
+  "v8_selftest_results": {
+   "path": "evidence/20260916-route/tools/v8/selftest/results.json",
+   "sha256": "943f293995b8ecc3f51ad9fc672c1fe899ba37312dc377d14a809ee118affe6a",
+   "expected": "943f293995b8ecc3f51ad9fc672c1fe899ba37312dc377d14a809ee118affe6a",
+   "match": true,
+   "note": "43/43 cases, 9/9 global assertions, all_pass true"
+  },
+  "offline_replay_record": {
+   "path": "evidence/20260923-rev27c-save-all-locator/replay/replay-record.json",
+   "sha256": "2afcd7bec8f6e28826fbf0687c7dd2c604eed7b7746bc854ab2913368ac51540",
+   "expected": "2afcd7bec8f6e28826fbf0687c7dd2c604eed7b7746bc854ab2913368ac51540",
+   "match": true,
+   "note": "attempt-05 ELIGIBLE unique candidate; historical positives consistent"
+  },
+  "injection_supplemental_script": {
+   "path": "evidence/20260923-rev27c-save-all-locator/injection-supplemental/run_injection_case.py",
+   "sha256": "cdc8fb0521d2ca9ad57534d7a791633529120f13e1c7e185fcd4e7db585ee9ee",
+   "expected": "cdc8fb0521d2ca9ad57534d7a791633529120f13e1c7e185fcd4e7db585ee9ee",
+   "match": true
+  },
+  "injection_supplemental_results": {
+   "path": "evidence/20260923-rev27c-save-all-locator/injection-supplemental/results.json",
+   "sha256": "36ebf7a335903a587e975447cb9d6793a25579933e1f054ae6a70aadfcd1aca4",
+   "expected": "36ebf7a335903a587e975447cb9d6793a25579933e1f054ae6a70aadfcd1aca4",
+   "match": true,
+   "note": "11/11 checks pass; all_pass true"
+  },
+  "injection_supplemental_readme": {
+   "path": "evidence/20260923-rev27c-save-all-locator/injection-supplemental/README.md",
+   "sha256": "377902059a032d51f2ad5e8e8756ab4fccae96112d01c7bada7a85d83075dc2d",
+   "expected": "377902059a032d51f2ad5e8e8756ab4fccae96112d01c7bada7a85d83075dc2d",
+   "match": true
+  },
+  "review_freeze": {
+   "path": "evidence/20260923-rev27c-save-all-locator/review/attempt-02/review-freeze.json",
+   "sha256": "cdda9e02903b4b97b7b938b3917891bfbe787a4c5c98eef0d546c6b750da6c74",
+   "expected": "cdda9e02903b4b97b7b938b3917891bfbe787a4c5c98eef0d546c6b750da6c74",
+   "match": true
+  },
+  "review_1_top_down": {
+   "path": "evidence/20260923-rev27c-save-all-locator/review/attempt-02/review-01-top-down.json",
+   "sha256": "e90ec35106a9221715a2636ecd8e561cd94524a599ad8dd3e7ac806ed4295137",
+   "expected": "e90ec35106a9221715a2636ecd8e561cd94524a599ad8dd3e7ac806ed4295137",
+   "match": true,
+   "verdict": "PLAN_APPROVED",
+   "reviewed_plan_revision": "rev27c-2"
+  },
+  "review_2_adversarial": {
+   "path": "evidence/20260923-rev27c-save-all-locator/review/attempt-02/review-02-adversarial.json",
+   "sha256": "69bf597248606cf0e8f27947631c41eaa97950d2aa6634e13bdc507ab70777d8",
+   "expected": "69bf597248606cf0e8f27947631c41eaa97950d2aa6634e13bdc507ab70777d8",
+   "match": true,
+   "verdict": "PLAN_APPROVED",
+   "reviewed_plan_revision": "rev27c-2"
+  },
+  "frozen_v5_ellipsis_locator": {
+   "path": "evidence/20260916-route/tools/v5/locate_album_ellipsis.py",
+   "sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+   "expected": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+   "match": true
+  },
+  "frozen_album_open_verifier_v5": {
+   "path": "evidence/20260916-route/tools/v5/verify_album_open.py",
+   "sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+   "expected": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+   "match": true
+  },
+  "approved_v7_lineage_guard": {
+   "path": "evidence/20260916-route/tools/v7/album_detail_lineage_guard.py",
+   "sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+   "expected": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+   "match": true
+  },
+  "approved_menu_detector": {
+   "path": "evidence/20260916-route/tools/detect_menu_popup.py",
+   "sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+   "expected": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+   "match": true
+  },
+  "frozen_v7_saveall_locator_unmodified": {
+   "path": "evidence/20260921-rev27-save-all/attempt-05/tools/locate_save_all_menu_item.py",
+   "sha256": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+   "expected": "ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+   "match": true,
+   "note": "NOT executed this round"
+  },
+  "overall": "ALL_BOUND_SHAS_MATCH; Review 1 = PLAN_APPROVED; Review 2 = PLAN_APPROVED; offline replay attempt-05 = ELIGIBLE (unique candidate); selftests 43/43 + 9/9 all_pass; injection 11/11 all_pass; target fuzzy matching FORBIDDEN; historical-coordinate fallback FORBIDDEN; v8 source matches the committed review freeze exactly"
+ },
+ "owner_prepared_start_state": {
+  "statement": "LINE frontmost; target album 2024/05/13～05/17 (57 photos) open; photo grid visible; album-level ⋮ visible; ⋮ popup menu NOT open; no occluding app/window.",
+  "codex_must_not": [
+   "bring-to-front",
+   "app acquisition",
+   "album reopening",
+   "album-card click"
+  ],
+  "mismatch_rule": "fail closed"
+ },
+ "planned_route": "S1 fresh read-only album-detail observation -> S2 frame/window binding -> S3 composite (frozen verifier AND v7 lineage) -> S4 frozen v5 ellipsis locator -> S5 exactly one ellipsis click -> S6 fresh menu observation -> S7 approved v8 Save All locator -> S8 baseline tripwire -> S9 staging preflight -> S10 durable intent -> S11 exactly one Save All click -> S12 resulting-surface/chooser observation only -> STOP",
+ "environment": {
+  "note": "capture scale 2 (2294x1490 px frame = 1147x745 pt) will be re-verified from the fresh AX read before any crop math"
+ }
+}

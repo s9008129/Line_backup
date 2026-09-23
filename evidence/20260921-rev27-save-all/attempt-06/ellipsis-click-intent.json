@@ -1,0 +1,50 @@
+{
+ "artifact": "evidence/20260921-rev27-save-all/attempt-06/ellipsis-click-intent.json",
+ "phase": "S5_ellipsis_click_intent",
+ "attempt": "06",
+ "authorization_type": "REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27C-LIVE-GATE-A-AFTER-LOCATOR-V8",
+ "recorded_at_local": "2026-09-23T10:48:30+0800",
+ "preconditions_bound": {
+  "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+  "composite_decision_sha256": "045e4f26afbcfc29cbad3a54ea5ba5192f5bd6205c1e608b6564989d8d0e2352",
+  "frozen_v7_lineage_guard_verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+  "frozen_album_open_verifier_verdict": "ALBUM_OPEN_VERIFIED",
+  "v5_locator_result": "ellipsis-locate-v5.json",
+  "v5_locator_result_sha256": "0b32f6959fe25b06898f3c7723677671480b31ffa6c4f49fed3e59d51be4df34",
+  "v5_locator_verdict": "ELIGIBLE",
+  "v5_tool": "evidence/20260916-route/tools/v5/locate_album_ellipsis.py",
+  "v5_tool_sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "v5_input_frame": "s1-window-cu.jpg",
+  "v5_input_frame_sha256": "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+  "fresh_frame": "frame-s1.png",
+  "fresh_frame_sha256": "2bfecc64aa223f4aa3ea643c9ce15334dea7dcb0e0a356a8bbe59b6f919b53bc",
+  "geometry_binding_verdict": "GEOMETRY_BINDING_PASS",
+  "geometry_binding_sha256": "0af613ab67dc9d92e7cbc6e9bb7fde49abd127a06d28356023fbf4e40befe8bf"
+ },
+ "candidate": {
+  "space": "window-local pt (CU click space; 1 pt = 1 px at capture scale 2)",
+  "click_point": [304, 50],
+  "derivation": {
+  "rule": "frozen v5: single header_band dot triple (album-level ellipsis) -> dot centers [304.5,44],[304.5,49.5],[304.5,55] -> click_point = [round(304.5), round(mid y 49.5)]",
+  "dot_triple": [[304.5, 44.0], [304.5, 49.5], [304.5, 55.0]],
+  "source": "THIS round's fresh CU window shot (s1-window-cu.jpg, sha256 4cb8a6b4...) with title bbox from THIS round's frozen verify_album_open window result"
+  },
+  "coincidence_note": "The numerically identical historical-looking value [304,50] was NOT used as input. It was derived solely from this round's fresh frame. It coincides numerically with values seen in prior attempts because the album-detail surface is pixel-identical (this round's s1-window-cu.jpg is byte-identical to attempt-05's window shot); attempt-19/attempt-05 set this exact precedent and it is disclosed here. No historical coordinate was read at any point.",
+  "historical_coordinate_input": false,
+  "historical_coordinate_fallback": "FORBIDDEN"
+ },
+ "budgets": {
+  "ellipsis_budget": 1,
+  "ellipsis_used": 0,
+  "save_all_budget": 1,
+  "save_all_used": 0,
+  "maximum_total_gui_input": 2,
+  "gui_inputs_sent_so_far": 0,
+  "retry": 0,
+  "second_ellipsis": "FORBIDDEN",
+  "chooser_interaction": 0
+ },
+ "dispatch_state": "NOT_ATTEMPTED",
+ "dispatch_form": "exactly one left click via CU harness: app.click([304,50], {mouseButton:'left', clickCount:1}); dispatch only as the very next action after a fresh read-only freshness gate (LINE frontmost, fresh CU state equivalent to s1 state, composite still holding); if any freshness check fails -> STOP with ellipsis budget unspent"
+}

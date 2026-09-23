@@ -1,0 +1,17 @@
+{
+ "artifact": "evidence/20260921-rev27-save-all/attempt-06/ellipsis-dispatch-record.json",
+ "phase": "S5_ellipsis_dispatch_record",
+ "attempt": "06",
+ "authorization_type": "REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27C-LIVE-GATE-A-AFTER-LOCATOR-V8",
+ "recorded_at_local": "2026-09-23T10:50:35+0800",
+ "intent": "ellipsis-click-intent.json (sha256 120d793e627e19ba97d12f6c9313b741f6ca44f767a8722c3ac9878c90b42b75, written BEFORE the freshness gate)",
+ "dispatch_state": "NOT_ATTEMPTED",
+ "ellipsis_used": 0,
+ "gui_inputs_sent": 0,
+ "reason": "S5 pre-click freshness gate FAIL (LINE not frontmost; unrelated full-display python3 window occluding; fresh CU state changed) -> fail-closed STOP before any click. The click call was never issued; no second attempt; no retry.",
+ "candidate_not_clicked": {"space": "window-local pt", "click_point": [304, 50], "derived_this_round": true},
+ "budget_transfer": "the unused ellipsis budget (0 of 1) and the unused Save All budget (0 of 1) do NOT transfer to any future round; a new owner authorization is required",
+ "menu_reopened": false,
+ "save_all_dispatch": false
+}

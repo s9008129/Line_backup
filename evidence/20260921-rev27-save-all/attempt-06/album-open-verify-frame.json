@@ -1,0 +1,237 @@
+{
+ "tool": "verify_album_open",
+ "pre": "../../20260916-route/attempt-19/frame-s1.png",
+ "post": "frame-s1.png",
+ "expected": {
+  "start": "2024/05/13",
+  "end": "2024/05/17",
+  "count": "57"
+ },
+ "params": {
+  "delta": 12,
+  "min_diff_fraction": 0.05
+ },
+ "pre_sha256": "9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866",
+ "post_sha256": "2bfecc64aa223f4aa3ea643c9ce15334dea7dcb0e0a356a8bbe59b6f919b53bc",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "post_ocr_words_seen": [
+  "LINE",
+  "顯示",
+  "好友",
+  "視窗",
+  "常見問題",
+  "旻謙允禎成長日記",
+  "相簿",
+  "2024/05/13~05/17",
+  "57張照片",
+  "2024.05.18",
+  "邝1",
+  "2024/05/13~05/17",
+  "57",
+  "十",
+  "•韓流美味",
+  "正宗韓式辣醬系列",
+  "0:30°C",
+  "03",
+  "9月23日週三",
+  "10:39",
+  "〇",
+  "• Line_backup —“Line_backup - codex -m deepseek-v4.1-flash --sand..",
+  "..max\"•node",
+  "...max\"、sleep ••",
+  "…ermetrics",
+  ".toolbox.py ••• 十",
+  "… +12 1ines",
+  "5c615a90451919cc7fa0a2dbbe5875a1f4c8ea2c910d1fc070845ebae3e06ff6",
+  "ax_window_bounds.swift",
+  "ea4230e4aa90a1662b7c7c7059810c087af70ff1f4a46f92ab75b89d7518da68",
+  "+4 lines（ctrl+t to view transcript）",
+  "• Ran cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/",
+  "evidence/20260921-rev27-save-al1/attempt-06 &&",
+  "swift tools/",
+  "ax_window_bounds.swift jp.naver.line.mac",
+  "> s1-ax-pre.json 2>",
+  "… +2 lines",
+  "swift rc=0",
+  "-rW-I--I-- 1 hsiaojohnny staff",
+  "s1-ax-pre.json",
+  "+59 lines （ctrl+t to view transcript）",
+  "Then take",
+  "fresh full-screen frame",
+  "and CU window shot.（1m 59s • esc",
+  "to",
+  "interr..",
+  "Ask Codex to",
+  "do anything",
+  "deepseek-v4.1-flash",
+  "max• ~/.. Pursuing",
+  "goal （1m）",
+  "A3 warnings• f2",
+  "to",
+  "view",
+  "美股投資學-財女珍妮-20260923三-費半續強台股創高反彈剛開始_投資簡報.pdf",
+  "下載期限：～9月30日 上午 10:30",
+  "檔案大小：3.6MB",
+  "已讀",
+  "0:30",
+  "儲存！另存新檔！分享！傳送至Keep筆記"
+ ],
+ "target_title_in_post": {
+  "texts": [
+   "2024/05/13~05/17"
+  ],
+  "bbox": [
+   450,
+   233,
+   827,
+   277
+  ]
+ },
+ "date_like_tokens_in_post": [
+  "2024.05.18",
+  "2024/05/13~05/17"
+ ],
+ "count_box": [
+  442,
+  279,
+  610,
+  309
+ ],
+ "count_digits_read": "",
+ "count_text": "UNREADABLE",
+ "diff": {
+  "changed_pixels": 1777952,
+  "changed_fraction": 0.520164,
+  "changed_bbox": [
+   0,
+   0,
+   2294,
+   1490
+  ],
+  "changed_grid_8x8": [
+   [
+    10677,
+    10924,
+    7461,
+    8035,
+    9082,
+    10411,
+    12878,
+    14680
+   ],
+   [
+    20092,
+    17179,
+    13621,
+    22887,
+    22064,
+    24749,
+    25252,
+    25361
+   ],
+   [
+    36390,
+    44880,
+    24019,
+    21536,
+    23197,
+    22486,
+    37165,
+    44887
+   ],
+   [
+    40826,
+    48268,
+    49850,
+    40928,
+    12819,
+    9516,
+    33269,
+    43667
+   ],
+   [
+    41373,
+    47283,
+    51235,
+    43417,
+    25832,
+    26316,
+    29188,
+    26167
+   ],
+   [
+    27307,
+    35615,
+    50912,
+    43074,
+    43753,
+    42713,
+    47317,
+    43007
+   ],
+   [
+    41119,
+    42858,
+    50032,
+    33044,
+    6970,
+    6763,
+    7148,
+    6399
+   ],
+   [
+    39287,
+    49545,
+    36425,
+    17169,
+    6601,
+    6601,
+    6595,
+    7831
+   ]
+  ]
+ },
+ "rules": [
+  "ALBUM_OPEN_VERIFIED = target title readable in post AND changed_fraction >= min_diff_fraction",
+  "TARGET_MISMATCH = readable non-target date-like title OR readable plausible count != expected",
+  "NO_EFFECT = changed_fraction < min_diff_fraction (checked before the title rule)",
+  "INCONCLUSIVE = surface changed but no target title readable"
+ ],
+ "verdict": "ALBUM_OPEN_VERIFIED",
+ "reader": {
+  "helper": {
+   "resolved_from": "build_path",
+   "binary_path": "/var/folders/0r/r3qmjfbn0z57mtmdxmnp60c80000gn/T/vision_ocr_v4_build/vision_ocr",
+   "binary_sha256": "1e71a4f9b5fcc0bbb4d601ee2e5280e0c8c71b4b13f597aef75c870161920611",
+   "binary_bytes": 67200,
+   "source_sha256": "4fc9fa2be748f0620344bdfd501f7ef2d3349f6f03fc29290dd91550f3523b32"
+  },
+  "calls": [
+   {
+    "scale": 3,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "f837f2b86d48044cf4fe34d4d02e05f660a7aae1de5d9cd7e655f38d4faf4311",
+    "stdout_bytes": 3260,
+    "lines_parsed": 60
+   },
+   {
+    "scale": 10,
+    "outcome": "ok",
+    "exit_code": 0,
+    "stderr_excerpt": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 0,
+    "lines_parsed": 0
+   }
+  ]
+ }
+}

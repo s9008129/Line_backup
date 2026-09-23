@@ -1,0 +1,16 @@
+{
+ "artifact": "evidence/20260921-rev27-save-all/attempt-06/s6-s12-not-executed.json",
+ "attempt": "06",
+ "recorded_at_local": "2026-09-23T10:50:40+0800",
+ "reason": "S5 pre-click freshness gate FAIL -> fail-closed STOP with zero GUI input. All downstream phases were NOT executed.",
+ "phases": {
+  "S6_menu_observation": "NOT_EXECUTED (no ellipsis click dispatched; the album-level popup menu remains closed as in the owner-prepared start state; no fresh menu frame exists for this round)",
+  "S7_v8_save_all_locator": "NOT_EXECUTED",
+  "S8_baseline_pre_save_all_tripwire": "NOT_EXECUTED (however a read-only end-of-attempt baseline inventory WAS run: 57 files / 17,924,900 bytes / digest b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd -> unchanged)",
+  "S9_staging_preflight": "NOT_EXECUTED (staging root /Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging still ABSENT; staging mkdir 0 of 2; PRESERVE policy)",
+  "S10_durable_save_all_intent": "NOT_WRITTEN",
+  "S11_save_all_dispatch": "NOT_ATTEMPTED (save_all_used 0 of 1)",
+  "S12_resulting_surface_observation": "NOT_EXECUTED (nothing dispatched; no post-Save-All surface exists)",
+  "chooser": "NOT_OBSERVED (no Save All dispatch; no chooser interaction 0)"
+ }
+}

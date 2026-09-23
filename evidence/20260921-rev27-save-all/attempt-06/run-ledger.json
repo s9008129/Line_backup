@@ -1,0 +1,52 @@
+{
+ "artifact": "evidence/20260921-rev27-save-all/attempt-06/run-ledger.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-06",
+ "gate": "Rev27c ELLIPSIS_THEN_SAVE_ALL_GATE_A (authorization REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A / REV27C-LIVE-GATE-A-AFTER-LOCATOR-V8)",
+ "started_local": "2026-09-23T10:39+0800",
+ "closed_local": "2026-09-23T10:51+0800",
+ "outcome": "STOP at the S5 pre-click freshness gate. All pre-live gate checks PASSED (authorization anti-replay AUTHORIZATION_SCOPE_MATCH; Rev27c artifact re-hash zero mismatches; legacy frozen tools re-hash exact; accepted-baseline pre-gate 57/17,924,900/b7debe92 MATCH) and S1-S4 PASSED (fresh album-detail state; frame-bound geometry binding; frozen verifier + v7 lineage composite ALBUM_OPEN_VERIFIED_COMPOSITE; frozen v5 ELIGIBLE with a fresh-derived candidate). At 10:48:27 the final S5 freshness gate observed LINE NO LONGER frontmost (ax_frontmost=false, frontmost_application=null) with an unrelated full-display normal-layer window owned by python3 pid 20010 ('媒體下載與逐字稿工具箱', plus a floating modal '簡報尚未全部完成') stacked in front of the LINE detail window, and the fresh CU window capture changed in the window-chrome key-state region only (album content unchanged). Fail-closed STOP: ZERO GUI input was ever sent (ellipsis 0 of 1, Save All 0 of 1, total GUI 0), staging mkdir 0 of 2, retry 0. No bring-to-front, no app acquisition, no album-card, no navigation, no click of any kind.",
+ "events": [
+  {"t": "2026-09-23T10:39:15+0800", "event": "route-runbook.md pre-declared (sha256 ef85922e...), BEFORE any live observation"},
+  {"t": "2026-09-23T10:39:24+0800", "event": "authorization-record.json + authorization-scope-check.json -> AUTHORIZATION_SCOPE_MATCH; anti-replay gate PASS; no forbidden execution goals in runbook"},
+  {"t": "2026-09-23T10:39:37+0800", "event": "00-start-state.json: all bound SHAs re-hashed from disk (plan rev27c-2 906e949b, v8 c5ad4686, selftests 943f2939, replay 2afcd7be, injection 36ebf7a3, freeze cdda9e02, review1 e90ec351 PLAN_APPROVED, review2 69bf5972 PLAN_APPROVED, v5 6a015ea6, verifier ffa82aed, v7 cdff187e, detector 6ae9c250, v7 save-all locator ea09c1ca unmodified/not executed) - zero mismatches"},
+  {"t": "2026-09-23T10:39:37+0800", "event": "baseline-inventory-initial.json READ_ONLY_ACCEPTED_BASELINE: 57 files / 17,924,900 bytes / digest b7debe92... MATCH; staging root absent"},
+  {"t": "2026-09-23T10:39:50+0800", "event": "S1 read-only AX pre: LINE frontmost true, focused+main detail window [211,29,327x643] unambiguous"},
+  {"t": "2026-09-23T10:39:54+0800", "event": "S1 fresh full-screen frame frame-s1.png (2bfecc64)"},
+  {"t": "2026-09-23T10:40:12+0800", "event": "S1 fresh CU window capture s1-window-cu.jpg (4cb8a6b4) - byte-identical to attempt-05's window shot (album-detail surface pixel-identical)"},
+  {"t": "2026-09-23T10:42:49+0800", "event": "S1 read-only CG z-order dump: LINE detail window in front of Terminal; no occluding normal-layer window"},
+  {"t": "2026-09-23T10:43:32+0800", "event": "S2 read-only AX post: identical window list; frontmost still true (LAST observation of frontmost=true this round)"},
+  {"t": "2026-09-23T10:43:50+0800", "event": "S2 geometry-binding.json: GEOMETRY_BINDING_PASS (dims exact; MAD 2.203 <= 12.0); live-window-geometry.json frame-SHA-bound"},
+  {"t": "2026-09-23T10:45:12+0800", "event": "S3 frozen verify_album_open window pair -> ALBUM_OPEN_VERIFIED (changed 0.653688; count MATCH 57); frame pair also ALBUM_OPEN_VERIFIED (supporting)"},
+  {"t": "2026-09-23T10:45:44+0800", "event": "S3 approved v7 lineage guard -> ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED (C0-C6 all PASS)"},
+  {"t": "2026-09-23T10:46:31+0800", "event": "S3 composite-decision.json -> ALBUM_OPEN_VERIFIED_COMPOSITE"},
+  {"t": "2026-09-23T10:46:40+0800", "event": "S4 frozen v5 single invocation -> ELIGIBLE; unique header_band dot triple; click_point [304,50] window-local pt; derived ONLY from this round's fresh capture (numerical coincidence with historical value disclosed; no historical coordinate read)"},
+  {"t": "2026-09-23T10:48:05+0800", "event": "S5 ellipsis-click-intent.json written BEFORE dispatch (budgets ellipsis 1/used 0; dispatch_state NOT_ATTEMPTED)"},
+  {"t": "2026-09-23T10:48:26+0800", "event": "S5 freshness gate read-only captures: fresh CU shot s5-preclick-window-cu.jpg (2413de03) + fresh CU AX text (identical to s1 text)"},
+  {"t": "2026-09-23T10:48:27+0800", "event": "S5 freshness probe 1: ax_frontmost=FALSE, frontmost_application=null -> GATE FAIL"},
+  {"t": "2026-09-23T10:48:46+0800", "event": "S5 freshness probe 2 (repeat, stable): ax_frontmost=FALSE; CG z-order shows python3 pid 20010 full-display normal-layer window z=9 IN FRONT of LINE detail window z=10"},
+  {"t": "2026-09-23T10:49:04+0800", "event": "S5 full-screen read-only capture s5-preclick-fullscreen.png (ef0c03e8): python3 toolbox window '媒體下載與逐字稿工具箱' + modal '簡報尚未全部完成' in front; LINE not visible; menu bar active app = python3 -> visual confirmation of the occlusion"},
+  {"t": "2026-09-23T10:49:53+0800", "event": "end-of-attempt read-only baseline inventory: 57 files / 17,924,900 bytes / digest b7debe92... MATCH (unchanged); staging root still absent"},
+  {"t": "2026-09-23T10:51:00+0800", "event": "fail-closed STOP closed out: s5-preclick-freshness-gate.json FRESHNESS_GATE_FAIL, ellipsis-dispatch-record.json NOT_ATTEMPTED, s6-s12-not-executed.json; ZERO GUI input for the entire round"}
+ ],
+ "hard_counters": {
+  "album_card": 0, "navigation": 0, "ellipsis": 0, "save_all": 0, "total_gui_input": 0,
+  "retry": 0, "second_ellipsis": 0, "second_save_all": 0, "other_menu_item": 0,
+  "chooser_interaction": 0, "keyboard": 0, "escape": 0, "scroll": 0, "ax_write": 0,
+  "bring_to_front": 0, "app_acquisition": 0, "go_to_folder": 0, "path_entry": 0,
+  "return_key": 0, "destination_confirm": 0, "download_completion_gui": 0,
+  "cleanup_delete": 0, "staging_mkdir": 0
+ },
+ "dispatch_states": {"ellipsis": "NOT_ATTEMPTED", "save_all": "NOT_ATTEMPTED", "chooser": "NOT_PRESENT"},
+ "disclosures": [
+  "External foreground break: LINE was frontmost at 10:43:32 (read-only AX) and no longer frontmost at 10:48:27 (read-only AX); the change was external (user's other tool, python3 pid 20010, came forward). This attempt sent ZERO GUI input at any point, so it cannot have caused the change.",
+  "The fresh CU window capture differs from the binding-time capture ONLY in the traffic-light button region (bbox (0,0,49,33): dimmed non-key-window rendering); album content pixels are unchanged and the CU AX text is byte-identical. Nevertheless the S5 gate's 'LINE still frontmost' precondition failed, so the round stops fail-closed.",
+  "The attempt-05 menu was NOT reused and no menu evidence was created this round (no ellipsis click was sent; the popup menu remains closed as in the owner-prepared start state).",
+  "The fresh v5 candidate [304,50] numerically coincides with historical values because the album-detail surface is pixel-identical to attempt-05; it was derived ONLY from this round's fresh frame (documented in ellipsis-click-intent.json). No historical coordinate was read as input.",
+  "recorded_at_local fields in this round's artifacts are approximate human labels; file mtimes and embedded evidence timestamps are authoritative.",
+  "Rev27c review-recorded non-blocking item (some malformed v8 inputs may exit 1 instead of a refusal code) was NOT triggered this round; v8 was never executed. The f3ab3ee commit-message provenance note stands unchanged."
+ ],
+ "scoped_blocker": "LIVE_STATE_NO_LONGER_OWNER_PREPARED_AT_S5_FRESHNESS_GATE: LINE not frontmost; unrelated full-display window occluding; S5 freshness gate FAIL",
+ "scoped_status": "REV27C_GATE_A_STOPPED_AT_S5_FRESHNESS_GATE_ZERO_GUI_INPUT_ELLIPSIS_AND_SAVE_ALL_NOT_DISPATCHED",
+ "no_unused_budget_transfer": "the unused ellipsis budget (0 of 1) and the unused Save All budget (0 of 1) do NOT transfer to any future round; a new owner one-shot authorization is required",
+ "next_action_requires": "A NEW owner one-shot authorization, AND re-establishment of the owner-prepared start state (LINE frontmost, target album 2024/05/13～05/17 with 57-photo grid visible, album-level ⋮ visible, popup menu closed, NO occluding app/window). This round's S1-S4 evidence and the derived candidate are stale for any future round; a future round must re-derive everything fresh from its own frame."
+}

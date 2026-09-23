@@ -1,0 +1,75 @@
+{
+ "artifact": "evidence/20260921-rev27-save-all/attempt-06/s5-preclick-freshness-gate.json",
+ "phase": "S5_preclick_freshness_gate",
+ "attempt": "06",
+ "authorization_type": "REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27C-LIVE-GATE-A-AFTER-LOCATOR-V8",
+ "recorded_at_local": "2026-09-23T10:50:30+0800",
+ "verdict": "FRESHNESS_GATE_FAIL",
+ "stop": true,
+ "dispatch": "NOT_ATTEMPTED (zero GUI input sent; ellipsis budget 0/1; Save All budget 0/1)",
+ "checks": {
+  "line_still_frontmost": {
+   "required": true,
+   "observed": false,
+   "evidence": [
+    "s5-preclick-ax.json (2026-09-23T10:48:27+08:00): ax_frontmost=false, frontmost_application=null, pid 969",
+    "s5-preclick-ax-probe2.json (2026-09-23T10:48:46+08:00): stable repeat, ax_frontmost=false"
+   ]
+  },
+  "fresh_cu_state_equivalent": {
+   "required": true,
+   "observed": "CHANGED",
+   "evidence": [
+    "s5-preclick-window-cu.jpg sha256 2413de034a7bf016c411290c8657badced41fad34e321ab83c4e16b2f33ba3fb differs from binding-time s1-window-cu.jpg sha256 4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+    "pixel diff s1 vs s5-preclick CU shots is confined to bbox (0,0,49,33) = the window traffic-light buttons (now rendered in the dimmed non-key-window style); album content pixels unchanged; 552 px changed (>12 gray)",
+    "s5-preclick-ax-state-cu.txt is byte-identical to s1-ax-state-cu.txt (CU AX text unchanged)"
+   ]
+  },
+  "composite_still_holding": {
+   "content_unchanged": "album-detail surface content identical (CU AX text identical; image diff limited to window-chrome key state)",
+   "but": "the frozen verifier/v7 composite chain requires frontmost=true (v7 C1_FRONTMOST); live frontmost is now false, so the fresh composite precondition cannot be re-affirmed at dispatch time"
+  },
+  "occlusion_observed": {
+   "occluding_normal_layer_window": {
+    "owner": "python3",
+    "owner_pid": 20010,
+    "window_name": "媒體下載與逐字稿工具箱",
+    "layer": 0,
+    "bounds_x_y_w_h": [0, 26, 1147, 728],
+    "alpha": 1,
+    "z_index": 9,
+    "relation": "stacked IN FRONT of the LINE detail window (LINE window index 0, [211,29,327x643], z_index 10) in CGWindowList front-to-back order"
+   },
+   "floating_layer_window": {
+    "owner": "python3",
+    "owner_pid": 20010,
+    "window_name": "簡報尚未全部完成",
+    "layer": 8,
+    "bounds_x_y_w_h": [340, 251, 447, 255],
+    "z_index": 8
+   },
+   "full_screen_confirmation": {
+    "file": "s5-preclick-fullscreen.png",
+    "sha256": "ef0c03e844aea091b4e3f85d9e9520cb9f6d9bf5641bd875c3df4a343a2f3d01",
+    "observed": "full-display '媒體下載與逐字稿工具箱' toolbox window plus a modal alert '簡報尚未全部完成' in front; LINE not visible; menu bar active app = python3"
+   },
+   "zorder_evidence": "s5-preclick-zorder-probe2.json (read-only CGWindowList dump at 10:48:46)"
+  }
+ },
+ "timeline": {
+  "last_known_frontmost_true": "2026-09-23T10:43:32+08:00 (s1-ax-post.json)",
+  "first_observed_frontmost_false": "2026-09-23T10:48:27+08:00 (s5-preclick-ax.json)",
+  "note": "The external break occurred between those two read-only observations. This attempt sent ZERO GUI input at any time before, during, or after the break; all actions in the interval were read-only captures/hashes and repo artifact writes."
+ },
+ "decision": "FAIL CLOSED per route-runbook S5 ('require LINE still frontmost, fresh CU state equivalent, composite still holding' -> else STOP with the ellipsis budget unspent) and per the owner-prepared start state ('若 live evidence 與上述不符：fail closed'). No bring-to-front, no app acquisition, no click, no retry. The ellipsis click was NOT dispatched.",
+ "budgets": {
+  "ellipsis_used": 0,
+  "save_all_used": 0,
+  "gui_inputs_sent_total": 0,
+  "staging_mkdir": 0,
+  "retry": 0
+ },
+ "manual_reconciliation_required": false,
+ "dispatch_state": "NOT_ATTEMPTED"
+}

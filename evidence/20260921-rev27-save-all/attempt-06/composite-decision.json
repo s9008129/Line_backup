@@ -1,0 +1,64 @@
+{
+ "artifact": "evidence/20260921-rev27-save-all/attempt-06/composite-decision.json",
+ "phase": "S3_composite_decision",
+ "recorded_at_local": "2026-09-23T10:46:31+0800",
+ "gui_inputs_sent": 0,
+ "ellipsis_used": 0,
+ "inputs": {
+  "window_pair": {
+   "pre": "evidence/20260916-route/attempt-19/a4-precheck-window-cu.jpg (sha256 b9be8bfc60678c648740d567ced176909ea242e5ea12202dd2c8606fc6659ff1; album-list reference)",
+   "post": "s1-window-cu.jpg (this round; sha256 4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3)"
+  },
+  "frame_pair": {
+   "pre": "evidence/20260916-route/attempt-19/frame-s1.png (sha256 9fd22150d9eb39834bd63a23602bfd68af047ad87ae197adc86e3e24fd86c866; album-list reference)",
+   "post": "frame-s1.png (this round; sha256 2bfecc64aa223f4aa3ea643c9ce15334dea7dcb0e0a356a8bbe59b6f919b53bc)"
+  }
+ },
+ "frozen_album_open_verifier": {
+  "tool": "evidence/20260916-route/tools/v5/verify_album_open.py",
+  "tool_sha256": "ffa82aed789f9e752c26cc3ae1380c69b8cfe8badbf2567c0ac36693a373cf58",
+  "window_pair": {
+   "artifact": "album-open-verify-window.json",
+   "artifact_sha256": "a3cce30eca7a9af87b481da71c9c76e5f8ebb679d64ac43487f75c03e2b06a64",
+   "exit_code": 0,
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "changed_fraction": 0.653688,
+   "count_digits_read": "57",
+   "count_text": "MATCH",
+   "title": [
+    "2024/05/13~05/17"
+   ]
+  },
+  "frame_pair": {
+   "artifact": "album-open-verify-frame.json",
+   "artifact_sha256": "4c68e37245c3d237340df1a9c06058a3a6873fb4ef875cc0c435e8d6c75db469",
+   "exit_code": 0,
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "changed_fraction": 0.520164,
+   "count_text": "UNREADABLE"
+  }
+ },
+ "v7_lineage_guard": {
+  "tool": "evidence/20260916-route/tools/v7/album_detail_lineage_guard.py",
+  "tool_sha256": "cdff187e0b4f2fab2ba537e99aaacc810279c14f28a995d034fc76c73b6dde52",
+  "artifact": "v7-lineage-guard.json",
+  "artifact_sha256": "6959a5b674d9c75827ebea9e84c6d2b1a67fe7cd23977c89f21418024144635a",
+  "exit_code": 0,
+  "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+  "checks": {
+   "C0_SCHEMA": "PASS",
+   "C0_FRAME_SCALE": "PASS",
+   "C1_FRONTMOST": "PASS",
+   "C2_TARGET_UNIQUE": "PASS",
+   "C3_GEOMETRY_DOUBT": "PASS",
+   "C4_AX_SURFACE_CLASS": "PASS",
+   "C5_BINDING": "PASS",
+   "C6_HEADER_CONTEXT": "PASS"
+  },
+  "composite_in_tool": "ALBUM_OPEN_VERIFIED_COMPOSITE_PASS"
+ },
+ "composite_rule": "frozen verifier ALBUM_OPEN_VERIFIED (window pair) AND v7 ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED AND frozen post frame sha256 == this round's frame sha256",
+ "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+ "fresh_evidence_only": true,
+ "note": "attempt-03/15/16/18 precedent: title + 57 + changed_fraction alone is NOT sufficient; v7 lineage check is mandatory and PASSED here."
+}
