@@ -1,0 +1,73 @@
+{
+ "artifact": "00-start-state.json",
+ "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+ "authorization_type": "ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+ "authorization_id": "REV27D-RECONCILE-ATTEMPT07-SAVE-ALL",
+ "recorded_at_local": "2026-09-23T13:22+0800",
+ "repo": {
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "head": "2447a03fddf6a56ae8fb41639b35421087de846b",
+  "origin_master": "a9e523e7d2b91ec1775bba573003a7a1671ef945",
+  "ahead": 24,
+  "branch": "master...origin/master [ahead 24]",
+  "untracked_pre_existing_left_alone": [
+   "evidence/20260916-route/attempt-11/",
+   "evidence/20260916-route/tools/v4/__pycache__/",
+   "evidence/20260916-route/tools/v5/__pycache__/",
+   "evidence/20260916-route/tools/v6/__pycache__/",
+   "evidence/20260916-route/tools/v6/selftest/__pycache__/"
+  ],
+  "no_fetch_no_pull_no_push_no_reset_no_rebase_no_amend_no_stash": true
+ },
+ "budgets_declared": {
+  "gui_input": 0,
+  "click": 0,
+  "ellipsis": 0,
+  "save_all": 0,
+  "chooser": 0,
+  "keyboard": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "staging_mkdir": 0,
+  "destination_write": 0,
+  "download": 0,
+  "cleanup": 0,
+  "push": 0,
+  "attempt_07_modification": 0,
+  "accepted_baseline_modification": 0
+ },
+ "allowed": [
+  "repo append-only evidence under evidence/20260923-rev27d-save-all-reconciliation/",
+  "read-only filesystem inspection",
+  "read-only local unified-log inspection (bounded window around 11:29:18 +0800)",
+  "local commit of the new evidence directory (no push)"
+ ],
+ "attempt07_rehash_at_start": {
+  "dir": "evidence/20260921-rev27-save-all/attempt-07/",
+  "manifest_source": "99-scope-status.json artifact_manifest_sha256",
+  "manifest_entries": 154,
+  "verified_ok": 154,
+  "mismatch": 0,
+  "missing": 0,
+  "extra_files_excluding_scope_status": [],
+  "scope_status_is_the_155th_file": true,
+  "attempt07_modified_this_round": false
+ },
+ "accepted_baseline_at_start": {
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+  "files": 57,
+  "bytes": 17924900,
+  "digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+  "recomputed_this_round": true,
+  "match": true
+ },
+ "staging_at_start": {
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/RUN-20260923-111908-01",
+  "entries": 0,
+  "bytes": 0,
+  "untouched": true
+ },
+ "gui_inputs_sent_this_round": 0
+}

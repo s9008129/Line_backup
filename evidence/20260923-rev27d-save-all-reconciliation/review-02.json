@@ -1,0 +1,120 @@
+{
+  "reviewer": "review-02",
+  "role": "adversarial-at-most-once/false-retry",
+  "verdict": "ADVERSARIAL_REVIEW_APPROVED",
+  "checks": [
+    {
+      "item": "1. RETURNED != semantic activation (no artifact treats the returned click call as activation proof)",
+      "result": "PASS",
+      "basis": "semantic-classification.json (dispatch_state_unchanged + guard), root-cause-analysis.md section 0 and root-cause-analysis.json.returned_definition, hit-test-reconstruction.json.not_claimed, system-log-observation.json labels the click-moment signal 'not activation evidence'. No artifact upgrades RETURNED; affirmative_activation_evidence=[] is honest."
+    },
+    {
+      "item": "2. Menu disappearance != activation proof",
+      "result": "PASS",
+      "basis": "root-cause-analysis.md section 4; root-cause-analysis.json.menu_dismissal_alternative (menu_disappearance_as_activation_proof REJECTED, axdialog_disappearance_as_activation_proof REJECTED); semantic-classification.json.why_not_CONFIRMED_NO_CHOOSER. Verified myself that the AXDialog disappeared (4 AX windows at 11:29:06 -> 3 after) and that no activation semantics are attached."
+    },
+    {
+      "item": "3. Chooser absence != miss proof",
+      "result": "PASS",
+      "basis": "Guard in semantic-classification.json; root-cause-analysis.json.chooser_absence.interpretation; filesystem-reconciliation.json no-writes facts are not used to infer non-activation; historical RUN-20260908-124357-01 (returned, no chooser, trigger UNKNOWN) cited correctly as an unresolved precedent."
+    },
+    {
+      "item": "4. Exact click hit-test provenance (classification dependence on SAVE_ALL_HIT_CONFIRMED justified)",
+      "result": "PASS (spot-checked against attempt-07 evidence; minor non-material inconsistencies noted in caveats)",
+      "basis": "Verified cited SHAs match attempt-07: s11e-v8-locate-save-all.json 5f5ba237... (candidate local [319.75,135.25], x_safe [1049,1074], y_safe [322.333,334.667], ELIGIBLE), s11e-preclick-frame.png d545043d..., s11e-final-gate.json fd44018d... 14/14 PASS at 11:29:06, s11e-preclick-ax.json 668bed55... (AXDialog [494,81,137x167], detail window [211,29,327x643] focused+main), dispatch record args [320,135] -> screen [531,164] / frame px [1062,328], s12-cg-window-list.json 24af6134... (Software Cursor bounds (468,101,126x126) -> center (531,164) = reconstructed point; only CG-set change vs 11:09 is that overlay). My own pixel re-measurement reproduces the post-click cursor cluster at bbox x[1046,1085] y[306,350], centroid (1066.0,329.6) px (within ~4 px of the point), with no residual cluster at the old ellipsis position; screen-global prediction px (640,270) is ~426 px away and refuted. Margins >=5.67 px inside y_safe / >=11.67 px inside the band; worst-case anchor interpretation (3.2 px) stays inside. SAVE_ALL_HIT_CONFIRMED is justified."
+    },
+    {
+      "item": "5. No retry unless non-activation is affirmatively proven (a..d)",
+      "result": "PASS",
+      "basis": "(a) classification = SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE; why_not_DISMISSED_WITHOUT_ACTIVATION holds in-popup dismissal (H2) unprovable. (b) retry-policy.json: retry_allowed_now=false, retry_allowed_ever_without_new_authorization=false, applied consequence NO RETRY; repo-wide fixed-string search for 'ELIGIBLE_TO_PLAN_NEW_SAVE_ALL_RETRY_REVISION' = 0 hits; no eligibility conclusion anywhere. (c) No artifact/ledger performs or schedules a dispatch: data-only round directory, no scheduling tokens, no file outside the round directory written after 13:20 (find), no modified tracked files (git status), section 8 explicitly design-only. (d) Conditional policy matches Section K in effect: retry design only under affirmative non-activation (DISMISSED classification), only future, never executed this round, and still requiring a new reviewed plan + new owner one-shot authorization + fresh entire live chain; applied branch = no retry, barrier remains."
+    },
+    {
+      "item": "6. No historical coordinate fallback",
+      "result": "PASS",
+      "basis": "historical-success-comparison.json marks coordinate space, menu geometry, row geometry, click API and versions UNKNOWN (explicitly INSUFFICIENT for mechanism comparison) and re-affirms that no historical coordinate may feed a future dispatch; retry-policy design prerequisites require current-evidence-derived coordinates only; hit-test and coordinate-chain record historical_coordinate_input_used=false. Spot-checked archived backup_state.json/run_log.md: calibration ((305,50), (350,148.4)) retained but coordinate space/consumer genuinely undocumented. Historical coordinates appear only as historical record, never as dispatch inputs."
+    },
+    {
+      "item": "7. No live GUI input by this round; no overclaiming in system-log/filesystem artifacts",
+      "result": "PASS",
+      "basis": "Counters all 0 in 00-start-state.json, authorization-record.json, authorization-scope-check.json. Independent unified-log check 13:15-13:50: 0 tccd lines mentioning com.openai.sky.CUAService, 0 LINE TCCAccessRequest event-trust lines, 0 kTCCServiceScreenCapture preflights, 0 swift-frontend AX lines; only unrelated LM Studio 'splash' ListenEvent preflights (13:21:09/13:22:01, authValue=1 denied). Forensic crops verified as exact nearest-neighbor 4x crops of stored attempt-07 frames (mean abs diff 0.0) - no fresh capture. system-log-observation.json labels silence UNKNOWN and warns against over-reading; filesystem-reconciliation.json verdict scoped to 'anywhere checked' with explicit residual; the ambiguous openAndSavePanelService 27832.4 line is labeled UNKNOWN (agreed)."
+    }
+  ],
+  "falsification_attempts": [
+    {
+      "attempt": "'RETURNED + menu closed = activation' overclaim",
+      "outcome": "FAILED TO FALSIFY - no artifact makes this claim; guards present and consistent."
+    },
+    {
+      "attempt": "Strongest false-retry loophole: 'chooser absent => click missed => DISMISSED_WITHOUT_ACTIVATION => design-eligible retry'",
+      "outcome": "LOOPHOLE DOES NOT EXIST - chooser absence is explicitly not miss proof, and outside-click dismissal is geometrically excluded (all falsified mappings >=420 px off; two physical anchors + semantic ellipsis anchor agree). The DISMISSED classification is affirmatively unreachable from retained evidence."
+    },
+    {
+      "attempt": "Attack the hit test directly (the load-bearing exclusion for outside-click dismissal)",
+      "outcome": "FAILED TO FALSIFY - all cited SHAs match attempt-07; my independent pixel re-measurement reproduces the cursor anchor within ~4 px; the point sits >=5.67 px inside the v8 y-safe band. Minor internal measurement inconsistencies exist but are ~2 px scale and cannot flip the verdict."
+    },
+    {
+      "attempt": "Hidden retry authorization / eligibility verdict",
+      "outcome": "NONE FOUND - 'ELIGIBLE_TO_PLAN_NEW_SAVE_ALL_RETRY_REVISION' 0 occurrences repo-wide; retry forbidden now and ever without new authorization; no owner-directed retry request."
+    },
+    {
+      "attempt": "Hidden scheduling or ledger mutation (anything that would perform/schedule a Save All dispatch)",
+      "outcome": "NONE FOUND - data-only round directory, no scheduling tokens, no writes outside the round directory after 13:20, no modified tracked files; attempt-07 close-out untouched (manifest spot-checked)."
+    },
+    {
+      "attempt": "Historical-coordinate leak into a future dispatch design",
+      "outcome": "NONE FOUND - historical coordinates only described as history and explicitly banned; design prerequisites mandate current-evidence-derived coordinates."
+    },
+    {
+      "attempt": "Falsify the round's zero-GUI-input claim with independent log forensics",
+      "outcome": "FAILED TO FALSIFY - no CUAService/LINE/screen-capture/AX signals in the round's window; crops provably derived from stored frames. (Absence-based corroboration, not absolute proof - noted.)"
+    },
+    {
+      "attempt": "Overclaiming in log/filesystem artifacts (silence-as-proof)",
+      "outcome": "NONE FOUND - silence and uncovered roots are labeled UNKNOWN/residual; the ambiguous panel-service log line is labeled UNKNOWN and does not tip the classification."
+    }
+  ],
+  "caveats": [
+    "Glyph-centroid values differ between coordinate-chain.json ((1064.5,329.3) px) and hit-test-reconstruction.json/root-cause-analysis.md ((1064.4,331.2) px) - different isolation methods, ~2 px apart; anchors discriminate a ~420 px question, so non-verdict-changing, but the two numbers should not be cited as the same measurement.",
+    "'v8 candidate identical across S7 and S11e' is loose wording: the actual difference is 0.083 pt (0.167 px).",
+    "The claim that the Software Cursor overlay 'did not exist in the pre-click window lists' is true of those two lists, but attempt-07's run-ledger disclosed the overlay as present on screen for the whole session; the anchor stays valid because its center matches the last click position and no pointer action occurred after 11:29:18, but the absence-in-lists should not be read as proof the overlay was created by the Save-All click.",
+    "retry-policy.json barrier-lift condition #2 ('different, evidence-backed product/chooser behavior ... with an approved plan') is textually broader than the strict 'affirmative non-activation proof' criterion; it cannot yield an illegitimate retry because the same block requires a new reviewed plan + new owner one-shot authorization + fresh full live chain and retry_allowed_ever_without_new_authorization=false.",
+    "Section 8 design content and design_prerequisites_for_a_future_retry_revision exist under INDETERMINATE; they are explicitly inert/advisory (nothing executed, only 'if a future revision is ever authorized'), matching Section K in effect; if Section K were read literally as forbidding any retry design before affirmative non-activation, only that sentence would need relabeling.",
+    "Disclosed residuals confirmed: native translation empirically pinned (compiled binary, not source-audited); freshest menu snapshot 12.4 s before dispatch; bounded log has no affirmative panel-creation signal but coverage is not exhaustive.",
+    "Round directory is untracked in git at review time (no commit made by this reviewer); log-based no-GUI corroboration is absence-based; declared counters are self-reported (now log-consistent).",
+    "The authorization's Section K verbatim text is not retained in the repository; compliance was verified 'in effect' against the task's paraphrase and against attempt-07's own next_action_requires."
+  ],
+  "created_at": "2026-09-23T13:54:45+0800",
+  "artifacts_reviewed_sha256": {
+    "evidence/20260923-rev27d-save-all-reconciliation/review-02.md": "24a5cc81d6af6fff58ea39ddaa815f8ba08649fd12c03e37cee4c60c15599ecd",
+    "evidence/20260923-rev27d-save-all-reconciliation/semantic-classification.json": "b70ababceca657bb2fbc3a63a26a6c12d2673998a123eeb66bb938ac9091403a",
+    "evidence/20260923-rev27d-save-all-reconciliation/retry-policy.json": "f3ae6f5f906141187daa9b4aca78bbff612eedc4703ffa6eaa820a9fc73258d3",
+    "evidence/20260923-rev27d-save-all-reconciliation/root-cause-analysis.md": "16bcd9e0efa2d72ffff5790d2ef13ffce21d3a43eca0df0747a9bc9c3b8665cb",
+    "evidence/20260923-rev27d-save-all-reconciliation/root-cause-analysis.json": "f58a402abe54c4bdced83812248f5bf1cc20c4ddde0c7c84019b36b3a61a2aa1",
+    "evidence/20260923-rev27d-save-all-reconciliation/hit-test-reconstruction.json": "d3235bde77bba1b66e889c8e931ce5a0be4700266129df9739d9b94b3a596c95",
+    "evidence/20260923-rev27d-save-all-reconciliation/historical-success-comparison.md": "9dccb55daa39e730626954986bc313c4179a46134c371bba7f064df5f140b97b",
+    "evidence/20260923-rev27d-save-all-reconciliation/historical-success-comparison.json": "48ea119dc0f0f7a7382e9b753136b8aca34aea308527544dc637cf852b8777e1",
+    "evidence/20260923-rev27d-save-all-reconciliation/system-log-observation.json": "78b69dcd725e17d09e7ccff08e3baa4e8bbe51daafc06a7747ee43a351fc25e8",
+    "evidence/20260923-rev27d-save-all-reconciliation/system-log-raw-excerpt.txt": "50bb6a15983c685315234fd52a17c495432b9b05f1cb8aea3b8d6c9f9f8e897e",
+    "evidence/20260923-rev27d-save-all-reconciliation/filesystem-reconciliation.json": "7d33f400ea85c787fb8e259d6634ebb52bc36efceec80f8279cef2646b85a4ef",
+    "evidence/20260923-rev27d-save-all-reconciliation/coordinate-chain.json": "42d45fbb3568a8a9edf18f5914c4e0df1fb2c70fcbc516c3c2b803ab236bab48",
+    "evidence/20260923-rev27d-save-all-reconciliation/dispatch-api-semantics.md": "46a40de468e40bca989f9e194bcea45a67b42e70acd2873c5ad5e9548f39efe7",
+    "evidence/20260923-rev27d-save-all-reconciliation/authorization-record.json": "e9a816a3caadfd7fe8445132f4bc92f2aab1ade0daf7ce1051083440d4d927d3",
+    "evidence/20260923-rev27d-save-all-reconciliation/authorization-scope-check.json": "142077cf5e7496f335e130acb9fe7b52e1d4ba8cf08ac79b8fbcf8fa988f3264",
+    "evidence/20260923-rev27d-save-all-reconciliation/00-start-state.json": "3921aa1987167a1bfdb823b5ce402c71ce5585e9367b9bbe5fe413807b2657a7",
+    "evidence/20260921-rev27-save-all/attempt-07/save-all-dispatch-record.json": "81b6cb2590d4585c51f6ee80f379eab3e7cb1eb5d10e7a58414c8749b237d555",
+    "evidence/20260921-rev27-save-all/attempt-07/save-all-click-intent.json": "bead5155c984c9ba9e8fb68c3a5d71a11088a2b4eed5ad2b0272763ddcaa3325",
+    "evidence/20260921-rev27-save-all/attempt-07/s11e-v8-locate-save-all.json": "5f5ba237bb198d6f363a58cfa29141ca571429b78714c27b35a1a2b63c46a996",
+    "evidence/20260921-rev27-save-all/attempt-07/s11e-final-gate.json": "fd44018d5b179383d577e0ab8b2195e6bf72de0b3468eb0f857b6d52a45f57cc",
+    "evidence/20260921-rev27-save-all/attempt-07/s11e-preclick-ax.json": "668bed55234f1a275fba246eb7d5ec51e7d9cf7ab116872795166d8e5af60d56",
+    "evidence/20260921-rev27-save-all/attempt-07/s11e-preclick-frame.png": "d545043d3048e71231a502b413c1bc2a7d98db1a8a329d7d3a77916401bf64fc",
+    "evidence/20260921-rev27-save-all/attempt-07/s12-cg-window-list.json": "24af61348bc8d74f317851eb3a095e1baac83e742c7cf1fab033f007c232a29a",
+    "evidence/20260921-rev27-save-all/attempt-07/v8-locate-save-all.json": "8a08d654f118611fe649c8bd90da6782b7ce5ecda793d2140a35f5ed11205599",
+    "evidence/20260921-rev27-save-all/attempt-07/post-save-all-frame-1.png": "0f3e1ad733f0981a050f26e5f3c78d173132a57c1a16c8ff92857488fc3c1fbe",
+    "evidence/20260921-rev27-save-all/attempt-07/post-save-all-frame-2.png": "07d288bbd08ba47556b792af3c6036ecdc9eb859db1f0d2e8a4294f7c147d191",
+    "evidence/20260921-rev27-save-all/attempt-07/frame-menu-post1.png": "ca83f28e60336013f751a5fd716cdfad6803e5eb34a0fdfba837151ca69942f3",
+    "evidence/20260921-rev27-save-all/attempt-07/frame-s1.png": "ca7e0fc9c640cfebb05b7d5dedf5318137d2db1b30090c5399b3d38d9717d4a6",
+    "evidence/20260921-rev27-save-all/attempt-07/99-scope-status.json": "2086f70b650f424bdf93fb72ea5e43cbb444f5a59370d07855f8be9da9046483",
+    "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json": "e9313a563bf298d4b1e9ae243c5d3d404ad1333f69cb71b156e68589a8ec2f59",
+    "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/run_log.md": "a62dd07d1df1a34fb91a11d6eec6ac8aae7146abf9eb7011b78b1d27914158bf"
+  }
+}

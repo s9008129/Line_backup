@@ -1,0 +1,55 @@
+{
+  "artifact": "root-cause-analysis.json",
+  "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+  "subject": "semantic effect of the single Save All dispatch in evidence/20260921-rev27-save-all/attempt-07/ (2026-09-23T11:29:18.383+0800)",
+  "returned_definition": {
+    "dispatch_state_RETURNED_means": "the CU click API call returned normally (return value undefined)",
+    "does_not_mean": "SAVE_ALL_SEMANTIC_ACTIVATION_CONFIRMED",
+    "attempt07_historical_verdict_modified": false
+  },
+  "coordinate_chain_verdict": "COORDINATE_CHAIN_RECONSTRUCTED_WINDOW_LOCAL_TO_SCREEN_GLOBAL_WITH_DUAL_ANCHORS",
+  "hit_test_verdict": "SAVE_ALL_HIT_CONFIRMED",
+  "physical_point": {"dispatching_args_window_local_pt": [320,135], "screen_pt": [531,164], "frame_px": [1062,328], "scale": 2},
+  "falsified_mappings": {
+    "screen_global_pt": {"predicted_px": [640,270], "refuted_by": "software cursor overlay center px (1062,328) and glyph centroids; >=420 px x-gap"},
+    "window_local_x2_scale_error": {"predicted_px": [1702,598], "refuted_by": "same"},
+    "other_window_origin_0_29": {"predicted_px": [640,328], "refuted_by": "same"},
+    "other_window_origin_-1_35": {"predicted_px": [638,318], "refuted_by": "same"},
+    "no_translation": {"predicted_px": [640,270], "refuted_by": "same"}
+  },
+  "surviving_mapping": "native translation = window-local pt + window origin (211,29), scale 1; documented JS contract (app-window screenshot space, window-relative) + JS passthrough (no conversion) + two independent physical anchors + ellipsis semantic anchor",
+  "menu_dismissal_alternative": {
+    "outside_click_dismissal": "GEOMETRICALLY_EXCLUDED_UNDER_PROVEN_MAPPING (point inside popup bbox and inside target row; all outside-popup mappings physically refuted)",
+    "click_on_main_window_instead_of_popup": "UNSUPPORTED (popup frame covers the point; this popup historically receives and acts on clicks)",
+    "menu_disappearance_as_activation_proof": "REJECTED (app-drawn AXDialog-style popup; dismissal semantics app-defined)",
+    "axdialog_disappearance_as_activation_proof": "REJECTED (no activation semantics; AX never exposed popup items)",
+    "in_popup_dismissal_without_action": "CANNOT_BE_EXCLUDED (open residual)"
+  },
+  "chooser_absence": {
+    "observation": "no chooser/panel/new window in any post-dispatch frame (11:29:34..11:37:23), AX (3 reads), CG window list, or process state",
+    "interpretation": "chooser absence is NOT proof of miss; consistent with both non-activation and failed/absent downstream panel display",
+    "hypotheses_unproven": ["H2 in-popup dismissal without action", "H3 activation executed but panel creation/display failed", "H4 menu already closed pre-click (no positive support; window-region MAD 0.137 shows no surface interaction artifact)", "H6 delivery/handling race (LINE event-trust check at 11:29:17.913 precedes the recorded dispatch completion)"],
+    "excluded": ["coordinate-space mismatch / outside-click dismissal", "harness clicked elsewhere"]
+  },
+  "root_cause_statement": "UNDETERMINED: click physically landed inside the fresh 儲存全部 row safe interior under proven semantics; menu closed; no chooser/panel/file-operation/write followed; whether the item action executed remains unproven either way.",
+  "semantic_classification": "SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE",
+  "retry_policy": "NO_RETRY; reconciliation barrier remains (save_all budget 1/1 consumed; retry 0)",
+  "next_version_architecture_design_only": [
+    "screen-global dispatch path (remove reliance on native window-local translation)",
+    "popup-relative candidate derivation bound to fresh popup geometry",
+    "AXPress on the identified menu item only if fresh read-only verification proves AX exposure",
+    "post-dispatch software-cursor read-back as a machine anchor (overlay center must equal intended point)",
+    "fresh hit-test immediately before dispatch, recomputing the screen point and re-reading window origin/popup bbox"
+  ],
+  "design_non_negotiables": ["current evidence derived", "no historical coordinates", "at-most-once", "exact 儲存全部 target, v8-lineage identity preserved", "fail closed", "accepted baseline unchanged"],
+  "artifacts_referenced": [
+    "coordinate-chain.json",
+    "dispatch-api-semantics.md",
+    "hit-test-reconstruction.json",
+    "historical-success-comparison.json",
+    "system-log-observation.json",
+    "filesystem-reconciliation.json",
+    "semantic-classification.json",
+    "retry-policy.json"
+  ]
+}

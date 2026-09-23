@@ -1,0 +1,33 @@
+{
+  "artifact": "retry-policy.json",
+  "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+  "state": "SAVE_ALL_RECONCILIATION_BARRIER_REMAINS",
+  "at_most_once_rule": {
+    "historical_save_all_budget": 1,
+    "historical_save_all_used": 1,
+    "this_round_save_all": 0,
+    "retry_allowed_now": false,
+    "retry_allowed_ever_without_new_authorization": false
+  },
+  "conditional_policy": [
+    {"classification": "SAVE_ALL_SEMANTIC_ACTIVATION_CONFIRMED_NO_CHOOSER", "consequence": "no retry; a new product/chooser-behavior investigation revision is required"},
+    {"classification": "SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE", "consequence": "no retry; permanent reconciliation barrier remains"},
+    {"classification": "SAVE_ALL_CLICK_DISMISSED_MENU_WITHOUT_ACTIVATION", "consequence": "retry may be DESIGNED in a future revision only (never executed in this round); still requires a new reviewed plan, a new owner one-shot authorization, and a fresh entire live chain"}
+  ],
+  "this_round_classification": "SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE",
+  "applied_consequence": "NO RETRY; reconciliation barrier remains. Design-only work (root-cause-analysis.md section 8) is permitted; execution is not.",
+  "barrier_lift_conditions": [
+    "a future owner-authorized round affirmatively proves non-activation (hit evidence showing a miss), OR",
+    "a future investigation determines a different, evidence-backed product/chooser behavior explaining this outcome with an approved plan",
+    "in either case: new reviewed plan + new owner one-shot authorization + fresh full live chain (fresh menu, fresh candidate, fresh gates, at-most-once preserved)"
+  ],
+  "forbidden_now": ["any Save All dispatch", "any GUI input", "any chooser interaction", "any staging/destination write", "any hot-fix of the live chain"],
+  "design_prerequisites_for_a_future_retry_revision": [
+    "current-evidence-derived coordinates only (no historical coordinates)",
+    "at-most-once preserved",
+    "exact 「儲存全部」 target identity (v8-lineage)",
+    "fail-closed gates",
+    "fresh hit-test immediately before dispatch",
+    "activation-observability plan for the immediate post-dispatch window (panel/chooser detection within seconds)"
+  ]
+}

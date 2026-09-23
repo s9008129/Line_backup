@@ -1,0 +1,79 @@
+{
+  "artifact": "hit-test-reconstruction.json",
+  "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+  "question": "Can the actual physical click point of the single Save All dispatch be machine-proven to fall inside the fresh 「儲存全部」 target row safe interior at dispatch time?",
+  "verdict": "SAVE_ALL_HIT_CONFIRMED",
+  "reconstruction": {
+    "dispatch_call": "lineApp.click([320,135], {mouseButton:'left', clickCount:1}) @ 2026-09-23T11:29:18.383+0800 (attempt-07/save-all-dispatch-record.json)",
+    "v8_candidate_source": "s11e-v8-locate-save-all.json (fresh frame d545043d3048e71231a502b413c1bc2a7d98db1a8a329d7d3a77916401bf64fc, sha256 5f5ba237bb198d6f363a58cfa29141ca571429b78714c27b35a1a2b63c46a996, ELIGIBLE)",
+    "v8_candidate_window_local_pt": [319.75, 135.25],
+    "rounded_dispatch_arg_window_local_pt": [320, 135],
+    "window_origin_pt": [211, 29],
+    "window_size_pt": [327, 643],
+    "physical_screen_pt": [531, 164],
+    "physical_frame_px": [1062, 328],
+    "scale_px_per_pt": 2
+  },
+  "coordinatespaces_proven": {
+    "js_documented": "app-window screenshot space = window-relative (types/window/Click.d.ts 89ca15e9…; types/window2/Click.d.ts 3820ce4d…)",
+    "js_passthrough": "create_tinysky_alt.js d8c19eb3… -> click.js 02090128… -> client.js b5addc3c… (no conversion; IPC coordinate:[x,y])",
+    "native_pinned": "window-origin translation scale 1 (compiled binary; pinned empirically)",
+    "anchors": [
+      {"anchor": "software cursor overlay window", "evidence": "s12-cg-window-list.json (sha256 24af61348bc8d74f317851eb3a095e1baac83e742c7cf1fab033f007c232a29a), bounds pt (468,101,126x126) center (531,164)", "class": "PHYSICAL", "independent_of_mapping_assumption": true},
+      {"anchor": "rendered cursor glyph offset cross-calibration", "evidence": "ellipsis click point px (1030,158) -> glyph centroid (1032.6,161.4); Save All click point px (1062,328) -> glyph centroid (1064.4,331.2); same +2.5,+3.3 px offset (<=0.2 px agreement)", "class": "PHYSICAL",
+       "source_frames": ["post-save-all-frame-1.png (0f3e1ad733f0981a050f26e5f3c78d173132a57c1a16c8ff92857488fc3c1fbe)", "post-save-all-frame-2.png (07d288bbd08ba47556b792af3c6036ecdc9eb859db1f0d2e8a4294f7c147d191)", "frame-menu-post1.png (ca83f28e60336013f751a5fd716cdfad6803e5eb34a0fdfba837151ca69942f3)"]},
+      {"anchor": "ellipsis semantic activation", "evidence": "ellipsis click window-local [304,50] opened the popup; screen-global/other-origin interpretations would have missed and no menu would exist", "class": "SEMANTIC"}
+    ],
+    "falsified_mappings": ["screen-global px (640,270)", "scale-2 px (1702,598)", "origin [0,29] px (640,328)", "origin [-1,35] px (638,318)", "no-translation px (640,270)"]
+  },
+  "dispatch_time_geometry": {
+    "freshest_menu_snapshot": {"frame": "s11e-preclick-frame.png", "sha256": "d545043d3048e71231a502b413c1bc2a7d98db1a8a329d7d3a77916401bf64fc", "gate": "s11e-final-gate.json (S11E_FINAL_GATE_PASS 14/14, sha256 fd44018d5b179383d577e0ab8b2195e6bf72de0b3468eb0f857b6d52a45f57cc)", "gate_time": "2026-09-23T11:29:06+0800", "interval_to_dispatch_s": 12.4},
+    "window_origin_stability": "detail window [211,29] 327x643 observed unchanged at 11:08, 11:11, 11:19, 11:25, 11:27, 11:29:06, 11:29:36, 11:31:05, 11:37:23",
+    "candidate_stability": "v8 candidate identical across S7 (11:16, 8a08d654…) and S11e (11:29:06, 5f5ba237…) runs",
+    "popup_bbox_frame_px": [1008, 182, 1246, 485],
+    "ax_dialog_rect_frame_px": [988, 162, 1262, 496],
+    "target_row": {
+      "cjk_text": "儲存全部",
+      "text_band_frame_px": [1047.0, 316.333, 1148.333, 340.667],
+      "row_mean_cy_px": 328.556,
+      "x_safe_frame_px": [1049.0, 1074.0],
+      "y_safe_frame_px": [322.333, 334.667],
+      "neighbor_above_band_bottom_px": 294.667,
+      "neighbor_below_band_top_px": 361.0
+    }
+  },
+  "hit_test": {
+    "point_inside_target_band": true,
+    "point_inside_x_safe": true,
+    "point_inside_y_safe": true,
+    "point_inside_popup_bbox": true,
+    "point_inside_axdialog_rect": true,
+    "point_inside_label_ink_x_span": true,
+    "point_inside_first_glyph_span": true,
+    "point_in_neighboring_row": false,
+    "margins_frame_px": {"band_top": 11.667, "band_bottom": 12.667, "band_left": 15.0, "band_right": 86.333, "x_safe_left": 13.0, "x_safe_right": 12.0, "y_safe_top": 5.667, "y_safe_bottom": 6.667, "popup_left": 54.0, "popup_right": 184.0, "popup_top": 146.0, "popup_bottom": 157.0, "above_row_band_bottom": 33.333, "below_row_band_top": 33.0},
+    "margins_pt": {"band_top": 5.833, "band_bottom": 6.333, "band_left": 7.5, "band_right": 43.167},
+    "anchor_error_budget": "glyph-offset cross-calibration agreement <=0.2 px; overlay-center vs reconstructed point <=0.0 px; worst-case alternative interpretation (glyph-centroid-centered overlay) shifts the point by ~1.6 pt (3.2 px) and still leaves >=4.2 pt to the nearest band edge"
+  },
+  "criteria_checklist": [
+    {"criterion": "coordinate-space semantics proven", "satisfied": true, "basis": "documented JS contract + JS passthrough + dual physical anchors + semantic anchor; native binary opacity disclosed as residual"},
+    {"criterion": "dispatch-time menu geometry fresh", "satisfied": true, "basis": "S11e gate 14/14 PASS 12.4 s before dispatch; dispatch was the very next action; no input or observed state change in between; residual interval disclosed"},
+    {"criterion": "target row fresh", "satisfied": true, "basis": "row derived from the same S11e frame by v8; candidate identical to the S7 re-derivation"},
+    {"criterion": "actual click point deterministically reconstructed", "satisfied": true, "basis": "args [320,135] + origin (211,29) => (531,164) pt / px (1062,328); corroborated by overlay center"},
+    {"criterion": "point falls inside target row safe interior", "satisfied": true, "basis": "inside band, x_safe, y_safe; margins >=5.83 pt vertical"},
+    {"criterion": "sufficient margin from row boundaries", "satisfied": true, "basis": ">=5.83 pt (11.67 px) vertical, >=7.5 pt horizontal, >> anchor error budget"},
+    {"criterion": "point not inside neighboring row", "satisfied": true, "basis": ">=33.0 px to adjacent row bands; y_safe bounded by neighbor separation 12 px"},
+    {"criterion": "no stale geometry", "satisfied": true, "basis": "candidate freshly derived from the fresh frame; no historical coordinate used (historical_coordinate_input=false); window origin stable"},
+    {"criterion": "no conversion ambiguity", "satisfied": true, "basis": "all alternative mappings falsified by >=420 px; only surviving mapping corroborated by two independent physical anchors"}
+  ],
+  "disclosed_residuals": [
+    {"id": "R1", "residual": "native SkyComputerUseService is a compiled binary; the translation is proven empirically (software cursor overlay + glyph cross-calibration + semantic ellipsis anchor) rather than by source audit", "impact": "none observed; no competing mapping survives the anchors", "label": "supported-empirically"},
+    {"id": "R2", "residual": "12.4 s unobserved interval between the S11e gate frame and the dispatch; no input and no observed change occurred in between; menu-present-at-dispatch is supported (post frames show no album-surface interaction artifact; window-region MAD 0.137 vs pre-ellipsis) but not literally captured at t=dispatch", "impact": "bounded; does not move the reconstructed point", "label": "disclosed"},
+    {"id": "R3", "residual": "the rendered-cursor-based anchors depend on the harness cursor being drawn at the click point; the overlay-center measurement (R3a) is independent of the glyph's internal offset, and the glyph cross-calibration agreement (<=0.2 px across two clicks) pins the relation", "impact": "bounded by the margin analysis", "label": "supported"}
+  ],
+  "not_claimed": [
+    "the menu item's activation handler executed (that is the semantic classification; see semantic-classification.json)",
+    "the chooser failed/succeeded for any particular reason",
+    "any retry is authorized"
+  ]
+}

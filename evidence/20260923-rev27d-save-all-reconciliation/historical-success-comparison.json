@@ -1,0 +1,39 @@
+{
+  "artifact": "historical-success-comparison.json",
+  "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+  "evidence_used": [
+    "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/backup_state.json",
+    "/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state/state/run_log.md",
+    "evidence/20260921-rev27-save-all/attempt-01/01-save-all-flow-evidence.md",
+    "evidence/20260915-capability-matrix.md"
+  ],
+  "successful_run": {
+    "run_id": "RUN-20260907-154331-01",
+    "calibration": {"screenshot": "327x643", "ellipsis": [305,50], "dot_spacing": 6, "first_row_point": [350,83.6], "row_step": 32.4, "save_all_point": [350,148.4], "confidence": "HIGH"},
+    "dispatch": "Atomic dispatch action EAD45337-0C56-45E1-B5C8-D79812ACBC04; exactly one ellipsis click and one Save All click; returned without error",
+    "trigger_outcome": "CHOOSER_CONFIRMED (macOS 打開 folder chooser appeared; Go to Folder + one confirmation; download 0/57)",
+    "coordinate_space_of_recorded_point": "UNKNOWN (point x=350 exceeds the recorded 327-wide screenshot; consumer not documented)",
+    "menu_geometry_recorded": "NO -> UNKNOWN",
+    "save_all_row_geometry_recorded": "NO -> UNKNOWN",
+    "click_api_recorded": "NO (mechanism name only) -> UNKNOWN",
+    "versions_recorded": "NO -> UNKNOWN"
+  },
+  "failure_precedents": [
+    {"run_id": "RUN-20260907-101314-01", "shape": "dispatch then SAFE_ABORT; owner attestation: popup click missed Save All; chooser never appeared", "class": "AFFIRMATIVE_MISS_PRECEDENT"},
+    {"run_id": "RUN-20260908-124357-01", "shape": "one ellipsis + one Save All invocation returned without error; no chooser; trigger UNKNOWN; failure_boundary AFTER_SAVE_ALL_INVOCATION; save_all_click_count 1", "class": "RETURNED_WITHOUT_CHOOSER_PRECEDENT"},
+    {"run_id": "RUN-20260907-132845-01", "shape": "calibration first-row click entered selection mode 已選擇0個項目; cancelled", "class": "WRONG_EFFECT_PRECEDENT"},
+    {"source": "evidence/20260915-capability-matrix.md", "shape": "one prior coordinate activated Rename (修改相簿名稱)", "class": "WRONG_ROW_ACTIVATION_PRECEDENT"}
+  ],
+  "comparison_attempt07_vs_historical": {
+    "candidate_derivation": {"historical": "formula/row-order calibration, not machine-verified against row geometry", "attempt07": "fresh OCR+geometry-derived safe-region midpoint; hit-test verified this round"},
+    "click_mechanism": {"historical": "atomic dispatch action (internals not retained) -> UNKNOWN", "attempt07": "CU IPC lineApp.click([320,135]) documented + empirically anchored"},
+    "coordinates_and_geometry": {"historical": "UNKNOWN", "attempt07": "fully reconstructed"},
+    "outcome": {"historical": "CHOOSER_CONFIRMED", "attempt07": "no chooser observed; semantic effect INDETERMINATE"},
+    "filesystem": {"historical": "download after confirmation", "attempt07": "no writes at all"}
+  },
+  "answers": {
+    "did_historical_success_use_a_different_coordinate_mapping_or_dispatch_mechanism": "UNKNOWN - retained evidence does not document the old coordinate space or mechanism internals; the recorded 'atomic dispatch action' is not the same documented CU click path, but no field-level comparison is possible",
+    "evidence_sufficiency": "INSUFFICIENT for mechanism comparison; SUFFICIENT to show the historical scheme had miss and wrong-row precedents and that no historical dispatch was ever machine-verified against row geometry"
+  },
+  "rule_reaffirmed": "no historical coordinate may feed any future dispatch; only current-evidence-derived candidates"
+}

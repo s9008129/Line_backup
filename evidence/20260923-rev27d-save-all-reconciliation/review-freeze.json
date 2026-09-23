@@ -1,0 +1,70 @@
+{
+  "artifact": "evidence/20260923-rev27d-save-all-reconciliation/review-freeze.json",
+  "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+  "frozen_at_local": "2026-09-23T14:00+0800",
+  "freeze_scope": "All round artifacts present at freeze time except review-freeze.json itself: 25 files (20 top-level + 5 forensic crops). run-ledger.json is included. 99-scope-status.json is the round's closing manifest and covers every file including this one.",
+  "reviews": [
+    {
+      "review_id": "review-01",
+      "role": "coordinate-space / dispatch-semantics review (fresh context)",
+      "reviewer": "Meitner (independent subagent)",
+      "verdict": "COORDINATE_REVIEW_APPROVED",
+      "file": "review-01.md",
+      "file_sha256": "295c517480ac9d292bc8836181ed49edb6e2d7b03df9bc67981fc6e1dcb0bb7c",
+      "json": "review-01.json",
+      "json_sha256": "115f3fb926647bc179de0dac2455932c6742cd47de409126df37e6b55eacea8f",
+      "recorded_artifact_hashes_verified_at_freeze": "46/46 match disk",
+      "summary": "Independently re-derived the full chain ([319.75,135.25] -> [320,135] -> (531,164) pt -> (1062,328) px); re-audited the installed @oai/sky sources (SHA-256s match quoted text); re-measured the cursor glyph cross-calibration with PIL (reproduced <=0.5 px); all alternative mappings refuted by >=424 px in x; margins >=5.83 pt inside the fresh row with >=33 px to neighbor rows; residuals disclosed (R1 compiled native layer, R2 12.4 s interval)."
+    },
+    {
+      "review_id": "review-02",
+      "role": "adversarial at-most-once / false-retry review (fresh context)",
+      "reviewer": "Confucius (independent subagent)",
+      "verdict": "ADVERSARIAL_REVIEW_APPROVED",
+      "file": "review-02.md",
+      "file_sha256": "24a5cc81d6af6fff58ea39ddaa815f8ba08649fd12c03e37cee4c60c15599ecd",
+      "json": "review-02.json",
+      "json_sha256": "b706f2a90ddaeaf599f160e903c8b74d23e97ed3fef21260e59be15210f97928",
+      "recorded_artifact_hashes_verified_at_freeze": "31/31 match disk",
+      "summary": "Hunted the false-retry loophole (\"chooser absent / menu closed => missed => DISMISSED_WITHOUT_ACTIVATION => design-eligible retry\"): it does not exist. Re-verified all cited attempt-07 SHAs byte-match; independently re-measured the post-click cursor cluster (~4 px from the reconstructed point; screen-global prediction ~426 px off); confirmed DISMISSED is affirmatively unreachable (affirmative_non_activation_evidence: []); confirmed ELIGIBLE_TO_PLAN_NEW_SAVE_ALL_RETRY_REVISION has 0 occurrences repo-wide; confirmed nothing schedules a dispatch (no writes outside the round dir after 13:20; no modified tracked files); zero-GUI corroborated by the bounded log forensics."
+    }
+  ],
+  "cross_review_checklist": {
+    "RETURNED_not_semantic_activation": {"review_01": "confirmed", "review_02": "confirmed"},
+    "menu_disappearance_not_activation_proof": {"review_01": "confirmed", "review_02": "confirmed"},
+    "chooser_absence_not_miss_proof": {"review_01": "confirmed", "review_02": "confirmed"},
+    "exact_click_hit_test_provenance": {"review_01": "independently reproduced", "review_02": "independently reproduced"},
+    "no_retry_unless_non_activation_affirmatively_proven": {"review_01": "confirmed", "review_02": "confirmed"},
+    "no_historical_coordinate_fallback": {"review_01": "confirmed", "review_02": "confirmed"},
+    "no_live_GUI_input_in_this_round": {"review_01": "corroborated", "review_02": "corroborated by log forensics"}
+  },
+  "disclosed_errata_disposition": "Both reviews recorded documentation-level errata (displacement sign slip and S7/S11e y_safe bound mix in coordinate-chain.json; one loose origin [-1,35] prediction line; two unreconciled cursor-centroid tables; slightly optimistic <=0.2 px wording; JS-layer hop framing in dispatch-api-semantics.md; provenance nuance). Per append-only review discipline these reviewed artifacts are NOT modified after the fact: the reviews approve a specific hash-frozen revision, and post-review edits would invalidate the recorded hashes. Both reviewers explicitly classified the errata as non-blocking and not requiring a revision. A future evidence revision may reconcile the documentation.",
+  "frozen_artifact_sha256": {
+    "00-start-state.json": "3921aa1987167a1bfdb823b5ce402c71ce5585e9367b9bbe5fe413807b2657a7",
+    "authorization-record.json": "e9a816a3caadfd7fe8445132f4bc92f2aab1ade0daf7ce1051083440d4d927d3",
+    "authorization-scope-check.json": "142077cf5e7496f335e130acb9fe7b52e1d4ba8cf08ac79b8fbcf8fa988f3264",
+    "coordinate-chain.json": "42d45fbb3568a8a9edf18f5914c4e0df1fb2c70fcbc516c3c2b803ab236bab48",
+    "dispatch-api-semantics.md": "46a40de468e40bca989f9e194bcea45a67b42e70acd2873c5ad5e9548f39efe7",
+    "filesystem-reconciliation.json": "7d33f400ea85c787fb8e259d6634ebb52bc36efceec80f8279cef2646b85a4ef",
+    "forensic-crops/beneath-clickpoint-frame-s1-4x.png": "a89c7ae4d438935abcc68d20fc364891b8fe75b4ef12dd7527f792938fb965ed",
+    "forensic-crops/beneath-popup-region-frame-s1-1x.png": "a02ab18d24a3fb5ce44c37ea102c87a2f623c88263e76541a207725a51c1b9a2",
+    "forensic-crops/cursor-ellipsis-frame-menu-post1-3x.png": "0253106c33cc857c9b61e0c3488f2a33e1b6480e81f45d2823d591e908a8d5c6",
+    "forensic-crops/cursor-saveall-post-frame-1-4x.png": "dc6580a08e22f5367aae5594f908452e55f6cfe114574aa12b650ec49ee377f7",
+    "forensic-crops/target-row-s11e-preclick-4x.png": "98dbbc29e808afbac017c763f6588ceb2bf6fd14c5573b9fbc6ffbaad756c72a",
+    "historical-success-comparison.json": "48ea119dc0f0f7a7382e9b753136b8aca34aea308527544dc637cf852b8777e1",
+    "historical-success-comparison.md": "9dccb55daa39e730626954986bc313c4179a46134c371bba7f064df5f140b97b",
+    "hit-test-reconstruction.json": "d3235bde77bba1b66e889c8e931ce5a0be4700266129df9739d9b94b3a596c95",
+    "retry-policy.json": "f3ae6f5f906141187daa9b4aca78bbff612eedc4703ffa6eaa820a9fc73258d3",
+    "review-01.json": "115f3fb926647bc179de0dac2455932c6742cd47de409126df37e6b55eacea8f",
+    "review-01.md": "295c517480ac9d292bc8836181ed49edb6e2d7b03df9bc67981fc6e1dcb0bb7c",
+    "review-02.json": "b706f2a90ddaeaf599f160e903c8b74d23e97ed3fef21260e59be15210f97928",
+    "review-02.md": "24a5cc81d6af6fff58ea39ddaa815f8ba08649fd12c03e37cee4c60c15599ecd",
+    "root-cause-analysis.json": "f58a402abe54c4bdced83812248f5bf1cc20c4ddde0c7c84019b36b3a61a2aa1",
+    "root-cause-analysis.md": "16bcd9e0efa2d72ffff5790d2ef13ffce21d3a43eca0df0747a9bc9c3b8665cb",
+    "run-ledger.json": "926bfbdc451ac9bfa948b3faac1b9e232fd56f52a436b86fc14593c3531030d6",
+    "semantic-classification.json": "b70ababceca657bb2fbc3a63a26a6c12d2673998a123eeb66bb938ac9091403a",
+    "system-log-observation.json": "78b69dcd725e17d09e7ccff08e3baa4e8bbe51daafc06a7747ee43a351fc25e8",
+    "system-log-raw-excerpt.txt": "50bb6a15983c685315234fd52a17c495432b9b05f1cb8aea3b8d6c9f9f8e897e"
+  },
+  "freeze_statement": "Both review verdicts (COORDINATE_REVIEW_APPROVED, ADVERSARIAL_REVIEW_APPROVED) apply to this hash-frozen artifact revision. Any post-freeze edit to a frozen artifact would invalidate the applicable review approval for that artifact; no such edit was made. The round's semantic classification (SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE), hit-test verdict (SAVE_ALL_HIT_CONFIRMED), and retry policy (NO RETRY; SAVE_ALL_RECONCILIATION_BARRIER_REMAINS) are frozen as reviewed."
+}

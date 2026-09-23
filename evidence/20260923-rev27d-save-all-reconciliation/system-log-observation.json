@@ -1,0 +1,34 @@
+{
+  "artifact": "system-log-observation.json",
+  "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+  "method": "read-only bounded unified-log query; /usr/bin/log show; no other log collection",
+  "query": {
+    "cmd": "/usr/bin/log show --start '2026-09-23 11:28:48' --end '2026-09-23 11:29:48' --style syslog --predicate 'process == \"LINE\" OR senderImagePath CONTAINS \"jp.naver.line.mac\" OR process == \"openAndSavePanelService\" OR process == \"sandboxd\" OR process == \"tccd\" OR eventMessage CONTAINS \"jp.naver.line.mac\" OR eventMessage CONTAINS \"NSOpenPanel\" OR eventMessage CONTAINS \"NSSavePanel\"'",
+    "window": "2026-09-23 11:28:48 -> 11:29:48 +0800 (dispatch at 11:29:18.383)",
+    "raw_capture_lines": 6571,
+    "excerpt_file": "system-log-raw-excerpt.txt (TCC request/result lines, LINE[969] lines, panel-service TCC line; runningboardd assertion dumps omitted)"
+  },
+  "findings": [
+    {"time": "11:29:06.482", "process": "LINE[969]", "event": "TCCAccessRequest kTCCServiceAccessibility (msgID 969.18), attribution accessing=com.apple.swift-frontend (Xcode toolchain, Terminal-responsible)", "reading": "the harness's read-only AX verification at the S11e gate", "verdict": "NO_FILE_OPERATION_SIGNAL"},
+    {"time": "11:29:17.669", "process": "tccd[404]", "event": "CUAService (pid 47469, com.openai.sky.CUAService, SkyComputerUseService) preflight kTCCServiceListenEvent, result authValue=2 (allowed)", "reading": "harness event-post permission setup ~0.7 s before the recorded dispatch completion", "verdict": "HARNESS_PRE_DISPATCH_PERMISSION"},
+    {"time": "11:29:17.730", "process": "tccd[404]", "event": "CUAService preflight kTCCServiceAccessibility, allowed", "reading": "same", "verdict": "HARNESS_PRE_DISPATCH_PERMISSION"},
+    {"time": "11:29:17.736", "process": "tccd[404]", "event": "CUAService preflight kTCCServiceScreenCapture, allowed; replayd (658.x) ScreenCapture checks", "reading": "same", "verdict": "HARNESS_PRE_DISPATCH_PERMISSION"},
+    {"time": "11:29:17.912", "process": "LINE[969]", "event": "TCCAccessRequest kTCCServiceAccessibility (msgID 969.19), attribution accessing=com.openai.sky.CUAService -> the target app checked the synthetic-event sender's accessibility trust", "reading": "event-delivery began ~0.5 s before the recorded dispatch completion; no error", "verdict": "EVENT_DELIVERY_CORROBORATION (interpretation label SUPPORTED; not activation evidence)"},
+    {"time": "11:29:17.925", "process": "openAndSavePanelService[27832]", "event": "TCCAccessRequest kTCCServiceAccessibility (msgID 27832.4), accessing=CUAService, allowed; service is long-lived (since 10:30:22) and hosts panel connections for LINE/Safari/Preview", "reading": "same-moment event-trust pattern involving the panel service; interpretation UNKNOWN (no panel creation is implied by this line; the service also appears in runningboardd bookkeeping only)", "verdict": "UNKNOWN"},
+    {"time": "11:29:18.525", "process": "LINE[969]", "event": "CoreSpotlight end-index-batch + index-items (only occurrence in the window)", "reading": "semantics UNKNOWN (routine index activity possible; timing ~0.1-0.6 s after the click event)", "verdict": "UNKNOWN"},
+    {"time": "11:28:48..11:29:48", "process": "sandboxd", "event": "no lines", "reading": "no sandbox denial anywhere in the window", "verdict": "NO_SANDBOX_DENIAL"},
+    {"time": "11:28:48..11:29:48", "process": "openAndSavePanelService", "event": "no NSOpenPanel/NSSavePanel creation events; only XPC/assertion bookkeeping + the 27832.4 TCC preflight", "reading": "NO affirmative panel-creation evidence; log coverage is not proof of absence", "verdict": "UNKNOWN"},
+    {"time": "11:28:48..11:29:48", "process": "LINE[969]", "event": "no crash/diagnostic; process alive and frontmost throughout (frame/AX/process reads)", "reading": "no app error", "verdict": "NO_APP_ERROR"},
+    {"time": "11:28:48..11:29:48", "process": "any", "event": "no file-operation request lines for the save flow", "reading": "NO affirmative file-operation evidence; absence not proof", "verdict": "UNKNOWN"}
+  ],
+  "answers": {
+    "NSOpenPanel_folder_panel_creation": "UNKNOWN (no affirmative evidence; silence is not proof)",
+    "panel_creation_failure": "UNKNOWN (no failure events observed; no sandbox denials)",
+    "sandbox_denial": "NO (none observed in the window)",
+    "permission_issue": "NO (all captured TCC preflights allowed; authValue=2)",
+    "file_operation_request": "UNKNOWN (none observed; coverage not exhaustive)",
+    "app_error_or_crash": "NO (no crash/diagnostic evidence; process healthy)",
+    "no_relevant_event": "the window contains harness pre-dispatch permission preflights and one LINE event-trust check at the click moment, but no panel/file-operation events"
+  },
+  "interpretation_caution": "Silence in the captured window must not be over-read as proof that no panel was created or that no activation occurred; the query only shows there is no affirmative log evidence of either."
+}

@@ -1,0 +1,45 @@
+{
+ "artifact": "authorization-record.json",
+ "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+ "authorization_type": "ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+ "authorization_id": "REV27D-RECONCILE-ATTEMPT07-SAVE-ALL",
+ "owner_one_shot": true,
+ "round_scope": "ZERO GUI input round. Reconcile the semantic effect of the single Save All dispatch in Rev27c Gate A attempt-07 (2026-09-23T11:29:18.383+0800). Reconstruct the full coordinate chain from source+evidence; decide SAVE_ALL_HIT_CONFIRMED / SAVE_ALL_HIT_REFUSED / SAVE_ALL_HIT_INDETERMINATE; independently analyse the menu-dismissal alternative; compare with historical successful Save All evidence; bounded read-only system-log forensic; read-only filesystem reconciliation; classify SAVE_ALL_SEMANTIC_ACTIVATION_CONFIRMED_NO_CHOOSER / SAVE_ALL_CLICK_DISMISSED_MENU_WITHOUT_ACTIVATION / SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE; write append-only Rev27d evidence; two fresh reviews; commit locally only.",
+ "explicitly_forbidden_this_round": [
+  "any LINE GUI operation (click/ellipsis/Save All/chooser/keyboard/Escape/scroll)",
+  "AX write",
+  "bring-to-front",
+  "app acquisition",
+  "re-opening the menu or re-clicking ellipsis/Save All",
+  "creating a new staging run",
+  "download",
+  "cleanup/delete",
+  "modifying attempt-07 or any historical evidence",
+  "modifying the accepted baseline",
+  "modifying frozen v4/v5/v6/v7/v8 tools, approved plans/reviews",
+  "push or any history rewrite"
+ ],
+ "save_all_budget": {
+  "historical_consumed": 1,
+  "this_round": 0,
+  "retry": "FORBIDDEN"
+ },
+ "hard_counters_this_round": {
+  "gui_input": 0,
+  "click": 0,
+  "ellipsis": 0,
+  "save_all": 0,
+  "chooser_interaction": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "staging_mkdir": 0,
+  "destination_write": 0,
+  "download": 0,
+  "cleanup": 0
+ },
+ "recorded_at_local": "2026-09-23T13:22+0800"
+}

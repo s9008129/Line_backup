@@ -1,0 +1,146 @@
+{
+ "artifact": "coordinate-chain.json",
+ "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+ "purpose": "Independent reconstruction of every coordinate space in the attempt-07 Save All dispatch chain, from the v8 candidate through the click call arguments to the expected physical screen point, plus the machine anchors that pin the physical point.",
+ "spaces_defined": {
+  "frame_px": "full-screen screencapture pixel coordinate (origin = display top-left); scale 2 px per pt (verified: window rect px [422,58,1076,1344] == window pt [211,29,327x643] x2)",
+  "screen_pt": "macOS global display coordinate in points; screen_pt = frame_px / 2",
+  "window_local_pt": "point relative to the LINE detail-window top-left; window_local_pt = screen_pt - window_origin_pt (211,29)",
+  "cu_app_window_screenshot_pt": "the coordinate space accepted by the harness click for an app binding; equals window_local_pt; basis: s1-window-cu.jpg is 327x643 pt, exactly the window size (1:1, no shadow margin, no additional offset)",
+  "dispatch_call_args": "lineApp.click([320,135], {mouseButton:'left', clickCount:1}) - integers in cu_app_window_screenshot_pt"
+ },
+ "fresh_geometry_source": {
+  "frame": "s11e-preclick-frame.png",
+  "frame_sha256": "d545043d3048e71231a502b413c1bc2a7d98db1a8a329d7d3a77916401bf64fc",
+  "frame_size_px": [2294, 1490],
+  "captured": "S11e final freshness gate, 2026-09-23T11:29:06+0800 (12.4 s before the dispatch)",
+  "ax_window_read": {
+   "file": "s11e-preclick-ax.json",
+   "sha256": "668bed55234f1a275fba246eb7d5ec51e7d9cf7ab116872795166d8e5af60d56",
+   "frontmost": "jp.naver.line.mac",
+   "detail_window": {"role": "AXWindow", "subrole": "AXStandardWindow", "focused": true, "main": true, "position_points": [211, 29], "size_points": [327, 643]}
+  },
+  "detector": {
+   "file": "s11e-menu-detect.json",
+   "sha256": "009c705f7767b0354064c3a3ec3e1261a6257b2a40f559b0338ab60d29158775",
+   "verdict": "MENU_DETECTED",
+   "popup_bbox_frame_px": [1008, 182, 1246, 485]
+  },
+  "v8_result": {
+   "file": "s11e-v8-locate-save-all.json",
+   "sha256": "5f5ba237bb198d6f363a58cfa29141ca571429b78714c27b35a1a2b63c46a996",
+   "verdict": "ELIGIBLE",
+   "candidate_frame_px": [1061.5, 328.5],
+   "candidate_screen_pt": [530.75, 164.25],
+   "candidate_app_local_pt": [319.75, 135.25],
+   "x_safe_frame_px": [1049.0, 1074.0],
+   "y_safe_frame_px": [322.333, 334.667]
+  }
+ },
+ "chain": [
+  {"step": 1, "space": "frame_px", "value": [1061.5, 328.5], "derivation": "v8 midpoint rule: x = midpoint(x_safe [1049,1074]); y = midpoint(y_safe [322.333,334.667]); x_safe = band_left+2 px and overlap_right-2 px; y_safe = band_top+6 px and band_bottom-6 px; overlap/addressable x range = popup bbox x [1008,1246] intersected with the LINE window rect x [422,1076] = [1008,1076]"},
+  {"step": 2, "space": "screen_pt", "value": [530.75, 164.25], "derivation": "frame_px / 2"},
+  {"step": 3, "space": "window_local_pt", "value": [319.75, 135.25], "derivation": "screen_pt - window origin (211,29)"},
+  {"step": 4, "space": "dispatch_call_args", "value": [320, 135], "derivation": "round to integer window-local pt; displacement (+0.25,+0.25) pt; still strictly inside x_safe [313.5,326] window_local, y_safe [132.17,138.5] window_local, inside target band [312.5,363.17]x[129.17,141.33] window_local"},
+  {"step": 5, "space": "expected_physical_screen_pt", "value": [531, 164], "derivation": "click call [320,135] + window origin (211,29) = (531,164) screen pt; expected frame px (1062,328)"}
+ ],
+ "dispatch_api_semantics": {
+  "call": "lineApp.click([320,135], {mouseButton:'left', clickCount:1})",
+  "js_layer_chain": [
+   "@oai/cua dist/lib/js/oai_js_cua/src/tinysky_alt/create_tinysky_alt.js: computer binding click:(e,o)=>t.click({app:i, x:e[0], y:e[1], mouse_button, click_count}) - no coordinate conversion",
+   "@oai/sky dist/project/cua/sky_js/src/targets/mac/click.js: client.click({app, clickCount, elementIndex, mouseButton, x, y})",
+   "@oai/sky dist/project/cua/sky_js/src/targets/mac/client.js: MacComputerUseClient.click -> performAction(app, {click:{at:{coordinate:[[x,y]]}, clickCount, mouseButton}}) -> IPC ComputerUseIPCAppPerformActionRequest"
+  ],
+  "documented_semantics": [
+   "@oai/sky .../types/window/Click.d.ts: x = 'X coordinate in the app-window screenshot.' / 'Click ... a coordinate in the app window.'",
+   "@oai/sky .../types/window2/Click.d.ts: x = 'Window-relative X coordinate.'"
+  ],
+  "native_layer": "SkyComputerUseService (compiled binary, /Users/hsiaojohnny/.codex/computer-use/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService) - conversion not source-auditable; behaviour pinned empirically below",
+  "coordinate_space_conclusion": "window-local pt (app-window screenshot space); native layer translates by the app window origin to screen-global pt (empirically anchored; the app-window screenshot is 1:1 with the window in pt, 327x643, no offset)"
+ },
+ "physical_anchors": [
+  {
+   "anchor": "semantic anchor - ellipsis click activated the popup",
+   "detail": "the single authorized ellipsis click at window-local [304,50] (screen [515,79] pt, frame px [1030,158]) at 11:11:53 caused the album-level popup to open (fresh detector MENU_DETECTED, new AXDialog window, OCR identified 5 items). If the native layer had interpreted the coordinate as screen-global, the physical point would have been screen (304,50) = window-local (93,21) (title-bar region) where no album-level ellipsis exists, and no menu would have opened. Also, if it had used any other LINE window as origin ([0,29] or [-1,35]), the click would have missed the ellipsis (a 4x4-pt control at window-local (304,50)).",
+   "class": "SEMANTIC (activation outcome)"
+  },
+  {
+   "anchor": "physical anchor - OS cursor artifact after the ellipsis click",
+   "detail": "cursor overlay cluster (diff vs frame-s1) in frame-menu-post1/post2: bbox px x[1011,1049] y[141,178], centroids (1029.54,159.51) and (1029.52,159.49) px = (514.8,79.8) pt; vs ellipsis click point px (1030,158): delta (-0.46,+1.51) px",
+   "class": "PHYSICAL (rendered pointer)"
+  },
+  {
+   "anchor": "physical anchor - OS cursor artifact after the Save All click",
+   "detail": "cursor overlay cluster (diff vs frame-s1) in post-save-all-frame-1/2 and s12-current-frame: bbox px x[1043,1085] y[310,351]; centroids (1064.59,329.35), (1064.45,329.32), (1064.48,329.34) px = (532.2,164.7) pt; vs click point px (1062,328): delta (+2.59,+1.35) px (1.30,0.67 pt)",
+   "class": "PHYSICAL (rendered pointer)"
+  }
+ ],
+ "dispatch_time_geometry": {
+  "window": {"origin_pt": [211, 29], "size_pt": [327, 643], "frame_px_rect": [422, 58, 1076, 1344]},
+  "popup_bbox": {"frame_px": [1008, 182, 1246, 485], "screen_pt": [504.0, 91.0, 623.0, 242.5], "window_local_pt": [293.0, 62.0, 412.0, 213.5]},
+  "ax_dialog_rect": {"position_pt": [494, 81], "size_pt": [137, 167], "screen_pt": [494, 81, 631, 248], "frame_px": [988, 162, 1262, 496], "window_local_pt": [283, 52, 420, 219]},
+  "target_row": {
+   "cjk_text": "儲存全部",
+   "row_index_zero_based": 2,
+   "band_frame_px": [1047.0, 316.333, 1148.333, 340.667],
+   "band_screen_pt": [523.5, 158.167, 574.167, 170.333],
+   "band_window_local_pt": [312.5, 129.167, 363.167, 141.333],
+   "row_mean_cy_frame_px": 328.556,
+   "label_ink_x_span_frame_px": [1047.0, 1148.333],
+   "first_glyph_span_frame_px": [1047.0, 1097.0],
+   "x_safe_frame_px": [1049.0, 1074.0],
+   "y_safe_frame_px": [322.333, 334.667]
+  },
+  "neighbor_rows": {
+   "above_修改相簿名稱_band_bottom_frame_px": 294.667,
+   "below_刪除相簿_band_top_frame_px": 361.0
+  }
+ },
+ "final_click_point": {
+  "window_local_pt": [320, 135],
+  "screen_pt": [531, 164],
+  "frame_px": [1062, 328],
+  "inside_target_band": true,
+  "inside_x_safe": true,
+  "inside_y_safe": true,
+  "inside_popup_bbox": true,
+  "inside_ax_dialog_rect": true,
+  "inside_label_ink_x_span": true,
+  "inside_first_glyph_span": true,
+  "margins_frame_px": {
+   "to_band_left": 15.0,
+   "to_band_right": 86.333,
+   "to_band_top": 11.667,
+   "to_band_bottom": 12.667,
+   "to_x_safe_left": 13.0,
+   "to_x_safe_right": 12.0,
+   "to_y_safe_top": 5.667,
+   "to_y_safe_bottom": 6.667,
+   "to_popup_bbox_left": 54.0,
+   "to_popup_bbox_right": 184.0,
+   "to_popup_bbox_top": 146.0,
+   "to_popup_bbox_bottom": 157.0,
+   "to_ax_dialog_left": 74.0,
+   "to_ax_dialog_right": 200.0,
+   "to_ax_dialog_top": 166.0,
+   "to_ax_dialog_bottom": 168.0,
+   "to_above_row_band_bottom": 33.333,
+   "to_below_row_band_top": 33.0
+  },
+  "margins_pt": {
+   "to_band_top": 5.833,
+   "to_band_bottom": 6.333,
+   "to_band_left": 7.5,
+   "to_band_right": 43.167
+  },
+  "row_center_offset_frame_px": -0.556
+ },
+ "stale_geometry_check": {
+  "historical_coordinate_input_used": false,
+  "candidate_rederived_at_S7_and_S11e_from_fresh_frames": true,
+  "candidate_stability_S7_vs_S11e": {"frame_px": [1061.5, 328.5], "app_local_pt_S7": [319.75, 135.333], "app_local_pt_S11e": [319.75, 135.25]},
+  "window_origin_stability": "detail window position [211,29] observed unchanged in pre-attempt reads (11:08), the S11e gate (11:29:06) and all three post-dispatch reads (11:29:36, 11:31:05, 11:37:23)",
+  "unobserved_interval": "12.4 s between the S11e gate frame and the dispatch click; no GUI input and no state-changing action occurred in between (only local reads); no evidence of any geometry change; residual disclosed in hit-test-reconstruction.json"
+ },
+ "verdict": "COORDINATE_CHAIN_RECONSTRUCTED_WINDOW_LOCAL_TO_SCREEN_GLOBAL_WITH_DUAL_ANCHORS"
+}

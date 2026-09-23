@@ -1,0 +1,45 @@
+{
+  "artifact": "evidence/20260923-rev27d-save-all-reconciliation/run-ledger.json",
+  "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+  "authorization_type": "ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+  "authorization_id": "REV27D-RECONCILE-ATTEMPT07-SAVE-ALL",
+  "started_local": "2026-09-23T13:22+0800 (recorded in 00-start-state.json; first on-disk artifact 13:27:45)",
+  "closed_local": "2026-09-23T13:59+0800",
+  "subject": "Reconcile the semantic effect of the single Save All dispatch in evidence/20260921-rev27-save-all/attempt-07/ (2026-09-23T11:29:18.383+0800).",
+  "outcome": "Root-cause analysis complete: the click API coordinate space is the app-window screenshot space (window-local pt), the full chain was independently reconstructed (v8 candidate [319.75,135.25] window-local -> dispatch [320,135] -> screen pt (531,164) -> frame px (1062,328)), all discrete alternative mappings were falsified by >=420 px, and the reconstructed point is machine-proven inside the fresh 「儲存全部」 target row safe interior -> SAVE_ALL_HIT_CONFIRMED. Nevertheless the semantic effect stays SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE: there is no affirmative activation evidence (no chooser/panel/window/log/filesystem signal) and no affirmative non-activation evidence; menu disappearance is not activation proof; chooser absence is not miss proof. dispatch_state RETURNED (attempt-07 verdict) left unmodified. NO RETRY. Final sentence: SAVE_ALL_RECONCILIATION_BARRIER_REMAINS.",
+  "events": [
+    {"t": "2026-09-23T13:22", "event": "00-start-state.json: round constraints declared (zero GUI; read-only; budgets all 0); repo baseline recorded (HEAD 2447a03f, origin/master a9e523e7, ahead 24); attempt-07 re-hash at start 154/154 OK; accepted baseline 57/17,924,900/b7debe92 MATCH; staging RUN-20260923-111908-01 0 entries / 0 bytes"},
+    {"t": "2026-09-23T13:27:45", "event": "Round evidence directory created; 5 forensic crops derived read-only from stored attempt-07 frames (beneath-clickpoint-frame-s1-4x, beneath-popup-region-frame-s1-1x, cursor-ellipsis-frame-menu-post1-3x, cursor-saveall-post-frame-1-4x, target-row-s11e-preclick-4x) - no fresh screen capture, no AX read, no CG window list"},
+    {"t": "2026-09-23T13:34:18", "event": "authorization-record.json + authorization-scope-check.json (AUTHORIZATION_SCOPE_MATCH; zero-GUI scope confirmed); coordinate-chain.json: all seven coordinate spaces defined and the chain reconstructed from source + fresh attempt-07 evidence"},
+    {"t": "2026-09-23T13:44:01", "event": "dispatch-api-semantics.md + root-cause-analysis.{md,json}: audited installed @oai/sky sources (types/window/Click.d.ts, types/window2/Click.d.ts, create_tinysky_alt.js -> click.js -> client.js -> IPC) - documented space is the app-window screenshot = window-local; no conversion in any auditable JS layer; native SkyComputerUseService is a compiled binary (pinned empirically, disclosed as R1)"},
+    {"t": "2026-09-23T13:44:23", "event": "hit-test-reconstruction.json -> SAVE_ALL_HIT_CONFIRMED (point px (1062,328) inside x_safe [1049,1074] / y_safe [322.333,334.667]; inside popup bbox and AXDialog rect; margins >=5.83 pt vertical, >=7.5 pt horizontal; >=33 px to neighbor row bands) + semantic-classification.json -> SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE (H1 excluded, H2/H3/H4 unproven/unsupported)"},
+    {"t": "2026-09-23T13:44:37", "event": "filesystem-reconciliation.json (no post-dispatch writes anywhere checked; staging 0/0; baseline byte-identical; no 57-file or 0-byte burst; LINE container writes start 11:42:03, unrelated) + retry-policy.json (historical Save All budget 1/1 consumed; retry_allowed_now false; barrier-lift conditions)"},
+    {"t": "2026-09-23T13:44:50", "event": "system-log-observation.json: ONE bounded read-only /usr/bin/log show over 11:28:48..11:29:48 (6571 raw lines; 72,951-byte excerpt kept): CUAService TCC preflights 11:29:17.669-.742, LINE event-trust check 11:29:17.913, openAndSavePanelService 27832.4 TCC preflight 11:29:17.925, no sandboxd lines, no panel-creation events, no crash -> panel creation UNKNOWN, no sandbox denial, no app error; silence not over-read"},
+    {"t": "2026-09-23T13:45:14", "event": "historical-success-comparison.{json,md}: RUN-20260907-154331-01 used a formula/calibration coordinate (350,148.4) never machine-verified against row geometry (x exceeds the 327-wide screenshot; space UNKNOWN); historical miss/wrong-row precedents recorded; no historical coordinate may feed any future dispatch"},
+    {"t": "2026-09-23T13:56:40", "event": "Two fresh independent reviews complete: review-01 (coordinate-space / dispatch-semantics) -> COORDINATE_REVIEW_APPROVED; review-02 (adversarial at-most-once / false-retry) -> ADVERSARIAL_REVIEW_APPROVED. Both re-verified attempt-07 hashes and independently re-measured the anchors; errata disclosed are documentation-level and non-blocking."},
+    {"t": "2026-09-23T13:59", "event": "Close-out: review-freeze.json + run-ledger.json + 99-scope-status.json written; final read-only re-verification (attempt-07 154/154; baseline b7debe92 MATCH; staging 0/0; reviews' recorded hashes 46/46 and 31/31 verified); local commit of this directory only (no push)"}
+  ],
+  "hard_counters": {
+    "gui_input": 0, "click": 0, "ellipsis": 0, "save_all": 0, "chooser": 0, "keyboard": 0, "escape": 0, "scroll": 0, "ax_write": 0,
+    "bring_to_front": 0, "app_acquisition": 0, "line_operation": 0, "menu_reopen": 0, "retry": 0,
+    "staging_mkdir": 0, "destination_write": 0, "download": 0, "cleanup": 0,
+    "attempt07_modification": 0, "historical_attempt_modification": 0, "accepted_baseline_modification": 0, "frozen_tools_modification": 0,
+    "push": 0, "system_log_queries_bounded": 1
+  },
+  "verification_rechecks_at_closeout": {
+    "attempt07_rehash": "154/154 byte-identical vs its own 99-scope-status.json manifest; only extra file is 99-scope-status.json itself",
+    "accepted_baseline": "57 files / 17,924,900 bytes / b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd MATCH (same manifest method as attempt-07: sha256 over sorted relpath\\tsize\\tsha256 concatenation)",
+    "staging": "RUN-20260923-111908-01: exists, 0 entries, 0 bytes, dir untouched",
+    "review_hash_integrity": "review-01.json: 46/46 recorded artifact hashes match disk; review-02.json: 31/31 match disk",
+    "git": "master...origin/master [ahead 24] before commit; only untracked additions are this round directory and pre-existing items left alone"
+  },
+  "dispatch_states": {"save_all": "RETURNED (historical; click API call returned; attempt-07 verdict unmodified)", "chooser": "NOT_OBSERVED", "retry": "NOT_ATTEMPTED"},
+  "verdicts": {
+    "hit_test": "SAVE_ALL_HIT_CONFIRMED",
+    "semantic_classification": "SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE",
+    "review_01": "COORDINATE_REVIEW_APPROVED",
+    "review_02": "ADVERSARIAL_REVIEW_APPROVED",
+    "final_sentence": "SAVE_ALL_RECONCILIATION_BARRIER_REMAINS"
+  },
+  "local_commit": "one local commit of this directory only; no push; HEAD/origin/ahead reported in the round's final report"
+}

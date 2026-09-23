@@ -1,0 +1,26 @@
+{
+  "artifact": "semantic-classification.json",
+  "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+  "classification": "SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE",
+  "allowed_vocabulary": ["SAVE_ALL_SEMANTIC_ACTIVATION_CONFIRMED_NO_CHOOSER", "SAVE_ALL_CLICK_DISMISSED_MENU_WITHOUT_ACTIVATION", "SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE"],
+  "why_not_CONFIRMED_NO_CHOOSER": "There is NO affirmative evidence that the menu item activated. Activation evidence would be an observable downstream effect (panel/chooser creation, window transition, file-operation request, log signal). None observed: no chooser in any frame (11:29:34..11:37:23), no new AX window (3 windows = pre-popup set), no CG window-set change except the harness software cursor, no panel/file-operation signals in the bounded log window, no filesystem writes anywhere checked, staging 0/0, baseline unchanged. Menu disappearance alone is not activation proof (app-drawn AXDialog popup; dismissal semantics app-defined).",
+  "why_not_DISMISSED_WITHOUT_ACTIVATION": "The click physically landed inside the fresh target row safe interior (SAVE_ALL_HIT_CONFIRMED), so an outside-click dismissal is geometrically excluded. An in-popup dismissal without action execution cannot be affirmatively proven either — it is only one unproven hypothesis (H2). No coordinate/hit evidence shows the click missed the row.",
+  "affirmative_activation_evidence": [],
+  "affirmative_non_activation_evidence": [],
+  "hypotheses_open": [
+    {"id": "H2", "hypothesis": "in-popup dismissal without action execution (custom popup closed on the click without running the menu item)", "evidence_for": "no chooser appeared", "evidence_against": "none", "status": "UNPROVEN"},
+    {"id": "H3", "hypothesis": "activation executed but the AppKit save panel was never created/displayed (creation failure, sandbox/permission, or suppressed)", "evidence_for": "none", "evidence_against": "no panel-creation attempt, no sandbox denial, no crash in the bounded log window (absence not proof)", "status": "UNPROVEN"},
+    {"id": "H4", "hypothesis": "menu had already closed before the click (click would have landed on the album surface)", "evidence_for": "none", "evidence_against": "post-dispatch window region effectively identical to pre-ellipsis state (MAD 0.137) and no selection/viewer artifact", "status": "UNSUPPORTED"}
+  ],
+  "excluded_hypotheses": [
+    {"id": "H1", "hypothesis": "coordinate-space mismatch (click landed outside the popup / on a wrong location)", "reason": "all alternative mappings falsified by >=420 px via software cursor overlay and glyph cross-calibration; point inside popup bbox and target row; see hit-test-reconstruction.json"}
+  ],
+  "guards": [
+    "RETURNED != semantic activation",
+    "menu disappearance != activation proof",
+    "chooser absence != miss proof",
+    "no retry unless non-activation is affirmatively proven (it is not)"
+  ],
+  "dispatch_state_unchanged": "RETURNED (click API call returned normally; attempt-07 historical verdict unmodified)",
+  "final_sentence": "SAVE_ALL_RECONCILIATION_BARRIER_REMAINS"
+}

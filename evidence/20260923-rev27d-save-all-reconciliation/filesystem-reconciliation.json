@@ -1,0 +1,43 @@
+{
+  "artifact": "filesystem-reconciliation.json",
+  "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+  "method": "read-only; nothing created, renamed, deleted, or written outside this round's evidence directory; staging never touched",
+  "dispatch_timestamp": "2026-09-23T11:29:18.383+0800",
+  "accepted_baseline": {
+    "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+    "files": 57,
+    "bytes": 17924900,
+    "digest_algorithm": "sha256 over sorted 'relpath\\tsize\\tsha256\\n' concatenation",
+    "digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+    "recomputed_this_round": true,
+    "match": true,
+    "changed": false
+  },
+  "staging": {
+    "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/RUN-20260923-111908-01",
+    "entries": 0,
+    "bytes": 0,
+    "dir_mtime_local": "2026-09-23 11:19:08.839914",
+    "unchanged_since_creation": true
+  },
+  "post_dispatch_scans": {
+    "window": "after 2026-09-23T11:29:18 local",
+    "downloads_desktop_documents_non_repo_new_files": {"count": 0, "note": "every file newer than the cutoff under ~/Downloads, ~/Desktop, ~/Documents outside this repo was excluded; count = 0 (excluding .DS_Store); repo-internal files newer than the cutoff = 177 (attempt-07 close-out artifacts + this round's evidence)"},
+    "ds_store_note": "owner-side Finder .DS_Store activity in ~/Downloads subfolders (mtime ~13:20) is unrelated to LINE; no LINE_ALBUM-like content anywhere new",
+    "burst_checks": {
+      "57_file_burst": "NONE",
+      "zero_byte_burst": "NONE outside repo stderr artifacts (0-byte .stderr files belong to attempt-07 close-out commands, inside repo)",
+      "partial_or_temp_files": "NONE",
+      "new_directories_relevant_to_backup": "NONE",
+      "renamed_same_content_files": "NONE (no non-repo new files exist at all in the scanned roots, so renamed copies are also excluded)"
+    },
+    "line_app_container_metadata_only": {
+      "scope": "~/Library/Containers/jp.naver.line.mac and ~/Library/Group Containers/VUTU7AKEUR.jp.naver.line.mac file mtimes only (no content read)",
+      "writes_within_dispatch_window_or_before_11_42_03": "NONE; first LINE-container write after the dispatch is 11:42:03 (sticker cache), then 12:04:41 (LINE.ini), 12:29:43-12:37:14 (cache/message DB), 13:38-13:39 (advertisement/DB) — routine LINE bookkeeping, all >=12 min after the dispatch",
+      "panel_or_save_named_artifacts": "none (only the system-managed 'Saved Application State' directory name matches)"
+    },
+    "poc_non_staging": "no new files"
+  },
+  "verdict": "NO_POST_DISPATCH_WRITES_ANYWHERE_CHECKED; staging empty; accepted baseline byte-identical",
+  "residual": "none of the scans found any post-dispatch artifact; absence of writes outside the scanned roots cannot be proven, but no destination outside the scanned set is known to this workflow"
+}

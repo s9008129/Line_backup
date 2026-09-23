@@ -1,0 +1,33 @@
+{
+ "artifact": "authorization-scope-check.json",
+ "round": "Rev27d ZERO_GUI_SAVE_ALL_DISPATCH_RECONCILIATION",
+ "checked_at_local": "2026-09-23T13:23+0800",
+ "sequence_disclosure": "Before this file only read-only commands had run (git inspection; attempt-07 manifest re-hash; baseline/staging/fs scans; bounded /usr/bin/log reads). No file in this round's evidence directory existed except forensic-crops/ (derived read-only from attempt-07 frames). No LINE observation, no frame capture, no GUI input.",
+ "scope_assertions": {
+  "no_gui_input_so_far": true,
+  "no_staging_mkdir": true,
+  "no_destination_write": true,
+  "attempt_07_untouched": true,
+  "accepted_baseline_untouched": true,
+  "no_push": true
+ },
+ "planned_actions_match_authorization": [
+  "re-hash attempt-07 (read-only)",
+  "coordinate-chain forensics from source+evidence (read-only)",
+  "dispatch-API semantics reading from installed app bundle (read-only)",
+  "historical comparison from repo evidence + archived skill references (read-only)",
+  "bounded unified-log query (+/- 30 s window) for LINE/panel/sandbox/file-op signals (read-only)",
+  "filesystem reconciliation (read-only)",
+  "append-only Rev27d artifacts in this directory",
+  "two fresh reviews",
+  "local commit of this directory only (no push)"
+ ],
+ "forbidden_action_audit": {
+  "gui_actions_performed": 0,
+  "save_all_dispatches": 0,
+  "staging_writes": 0,
+  "attempt_07_writes": 0,
+  "baseline_writes": 0
+ },
+ "verdict": "AUTHORIZATION_SCOPE_MATCH"
+}
