@@ -1,0 +1,149 @@
+{
+ "tool": "detect_menu_popup",
+ "pre": "frame-s1.png",
+ "post": "s11b-preclick-frame.png",
+ "params": {
+  "delta": 12,
+  "min_w": 40,
+  "min_h": 20,
+  "min_pixels": 200,
+  "min_strings": 2,
+  "min_strlen": 2
+ },
+ "pre_sha256": "ca7e0fc9c640cfebb05b7d5dedf5318137d2db1b30090c5399b3d38d9717d4a6",
+ "post_sha256": "484d57f4b83d92e3f10e01bb70c70e6a8bfd9d7f584812784e4fc259bb043937",
+ "pre_size": [
+  2294,
+  1490
+ ],
+ "post_size": [
+  2294,
+  1490
+ ],
+ "changed_pixels_total": 279504,
+ "components": [
+  {
+   "bbox": [
+    1670,
+    72,
+    2254,
+    200
+   ],
+   "pixels": 71685,
+   "w": 584,
+   "h": 128
+  },
+  {
+   "bbox": [
+    1008,
+    182,
+    1246,
+    481
+   ],
+   "pixels": 59046,
+   "w": 238,
+   "h": 299
+  },
+  {
+   "bbox": [
+    158,
+    880,
+    264,
+    986
+   ],
+   "pixels": 8413,
+   "w": 106,
+   "h": 106
+  },
+  {
+   "bbox": [
+    158,
+    738,
+    264,
+    844
+   ],
+   "pixels": 8399,
+   "w": 106,
+   "h": 106
+  },
+  {
+   "bbox": [
+    158,
+    1022,
+    264,
+    1128
+   ],
+   "pixels": 8303,
+   "w": 106,
+   "h": 106
+  },
+  {
+   "bbox": [
+    158,
+    1164,
+    264,
+    1270
+   ],
+   "pixels": 7872,
+   "w": 106,
+   "h": 106
+  },
+  {
+   "bbox": [
+    158,
+    596,
+    264,
+    702
+   ],
+   "pixels": 7714,
+   "w": 106,
+   "h": 106
+  },
+  {
+   "bbox": [
+    1916,
+    2,
+    2008,
+    50
+   ],
+   "pixels": 3785,
+   "w": 92,
+   "h": 48
+  },
+  {
+   "bbox": [
+    345,
+    740,
+    422,
+    837
+   ],
+   "pixels": 2317,
+   "w": 77,
+   "h": 97
+  },
+  {
+   "bbox": [
+    317,
+    598,
+    363,
+    695
+   ],
+   "pixels": 1336,
+   "w": 46,
+   "h": 97
+  }
+ ],
+ "chosen_bbox": [
+  1670,
+  72,
+  2254,
+  200
+ ],
+ "ocr_status": "OK",
+ "ocr_strings": [
+  "RAT",
+  "a8"
+ ],
+ "verdict": "MENU_DETECTED",
+ "reason": "new region plus transcribed menu strings"
+}

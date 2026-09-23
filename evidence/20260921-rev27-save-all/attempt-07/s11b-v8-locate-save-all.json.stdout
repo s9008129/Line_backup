@@ -1,0 +1,160 @@
+{
+ "tool": "locate_save_all_menu_item",
+ "version": "v8",
+ "class": "v8-class Save All menu-item locator; append-only successor of the frozen v7-class locator ea09c1ca4b97cf2f3a1c210f43a5ae7bc026d1db12bbc12768ff510d60b4012a",
+ "frame": "s11b-preclick-frame.png",
+ "tool_sha256": "c5ad46861706a9a2c1c4d477caeda2a809c87c5488844f14a4d3efb34c668a86",
+ "frame_sha256": "484d57f4b83d92e3f10e01bb70c70e6a8bfd9d7f584812784e4fc259bb043937",
+ "frame_size": [
+  2294,
+  1490
+ ],
+ "detector": {
+  "json": "s11b-menu-detect.json",
+  "json_sha256": "6ceb5b58cb4b4fc50c11ff2c4ca372ac75d737d84bb78dc70ac71bc8b01a1dd2",
+  "tool": "detect_menu_popup",
+  "verdict": "MENU_DETECTED",
+  "pre": "frame-s1.png",
+  "post": "s11b-preclick-frame.png",
+  "post_sha256": "484d57f4b83d92e3f10e01bb70c70e6a8bfd9d7f584812784e4fc259bb043937",
+  "chosen_bbox": [
+   1670,
+   72,
+   2254,
+   200
+  ]
+ },
+ "geometry": {
+  "json": "s11b-menu-frame-geometry.json",
+  "json_sha256": "4189321594dbe8fce53be3387e356b92873cc2b2b70641653c6bd277a717d2cb",
+  "frame_sha256": "484d57f4b83d92e3f10e01bb70c70e6a8bfd9d7f584812784e4fc259bb043937",
+  "capture_scale": 2,
+  "window_index": 1,
+  "window_position_points": [
+   211,
+   29
+  ],
+  "window_size_points": [
+   327,
+   643
+  ]
+ },
+ "ocr": {
+  "returncode": 0,
+  "command": [
+   "tesseract",
+   "-",
+   "stdout",
+   "-l",
+   "chi_tra+eng",
+   "--psm",
+   "6",
+   "tsv"
+  ],
+  "upscale": 3,
+  "tesseract_version": "tesseract 5.5.1",
+  "word_count": 3,
+  "words": [
+   {
+    "text": "|",
+    "conf": 88.938,
+    "box_frame_px": [
+     1670.0,
+     101.0,
+     1674.0,
+     143.333
+    ]
+   },
+   {
+    "text": "RAT",
+    "conf": 55.799,
+    "box_frame_px": [
+     1701.333,
+     97.667,
+     1743.0,
+     127.0
+    ]
+   },
+   {
+    "text": "ae",
+    "conf": 40.512,
+    "box_frame_px": [
+     1752.667,
+     97.667,
+     1772.333,
+     127.0
+    ]
+   }
+  ]
+ },
+ "params": {
+  "upscale": 3,
+  "ocr_lang": "chi_tra+eng",
+  "ocr_psm": "6",
+  "row_tol_fraction": 0.6,
+  "row_tol_min_px": 8.0,
+  "median_word_height_px": 29.333,
+  "row_tol_px": 17.6,
+  "min_overlap_px": 20.0,
+  "x_edge_px": 2.0,
+  "edge_fraction": 0.15,
+  "edge_min_px": 6.0,
+  "neighbor_sep_px": 12.0,
+  "min_band_h_px": 16.0,
+  "max_band_h_bbox_fraction": 0.5,
+  "non_target_substitution_tolerance": 1
+ },
+ "rows": [
+  {
+   "index": 0,
+   "text": "|RATae",
+   "cjk_text": "",
+   "mean_cy_px": 115.611,
+   "band_frame_px": [
+    1670.0,
+    97.667,
+    1772.333,
+    143.333
+   ],
+   "word_count": 3
+  }
+ ],
+ "checks": [
+  {
+   "name": "popup_shape",
+   "class": "HARD",
+   "pass": true,
+   "detail": {
+    "bbox_frame_px": [
+     1670.0,
+     72.0,
+     2254.0,
+     200.0
+    ],
+    "bbox_w_px": 584.0,
+    "bbox_h_px": 128.0,
+    "area_fraction": 0.022,
+    "width_fraction": 0.255,
+    "height_fraction": 0.086,
+    "limits": {
+     "max_area_fraction": 0.3,
+     "max_width_fraction": 0.5,
+     "max_height_fraction": 0.8
+    }
+   }
+  },
+  {
+   "name": "target_unique_row",
+   "class": "HARD",
+   "pass": false,
+   "detail": {
+    "matching_row_indices": [],
+    "target_item": "儲存全部",
+    "rule": "exact string, no fuzzy/partial matching"
+   }
+  }
+ ],
+ "verdict": "NOT_FOUND",
+ "exit_code": 2,
+ "reason": "target item text not found in any row"
+}

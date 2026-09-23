@@ -1,0 +1,34 @@
+{
+ "artifact": "s6-menu-ocr.json",
+ "method": "PIL crop of the fresh detector chosen_bbox + margin 4 -> 3x LANCZOS -> tesseract -l chi_tra+eng --psm 6 (input path cwd-local; leptonica could not open an absolute /tmp path under the harness sandbox, so the upscaled crop was written into this attempt directory for the OCR call and moved out afterwards)",
+ "region_px": [
+  994,
+  123,
+  1247,
+  484
+ ],
+ "crop_file": "frame-menu-post1-crop.png",
+ "crop_sha256": "8546afb719b600da2d33a00352cda016d17dbba74bdd5904a2da8017dac58428",
+ "raw_lines": [
+  "Vi",
+  "選擇項目",
+  "修改相簿名稱",
+  "儲存全部        I",
+  "刪除相簿",
+  "分享相簿"
+ ],
+ "items_top_to_bottom": [
+  "Vi",
+  "選擇項目",
+  "修改相簿名稱",
+  "儲存全部        I",
+  "刪除相簿",
+  "分享相簿"
+ ],
+ "save_all_text": "儲存全部",
+ "save_all_present": true,
+ "save_all_affirmatively_identified": true,
+ "target_non_target_note": "this round's OCR rendered every item line without a target-relevant corruption: 選擇項目 / 修改相簿名稱 / 儲存全部 / 刪除相簿 / 分享相簿 (attempt-05's 修改相簿名稱->修改相簿名般 typo did not recur on this frame)",
+ "save_all_clicked": false,
+ "save_all_dispatch_attempted": false
+}

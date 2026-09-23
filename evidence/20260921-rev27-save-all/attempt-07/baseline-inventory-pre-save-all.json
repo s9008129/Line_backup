@@ -1,0 +1,22 @@
+{
+ "artifact": "baseline-inventory-pre-save-all.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-07/",
+ "recorded_at_local": "2026-09-23T11:18:00+0800",
+ "label": "READ_ONLY_ACCEPTED_BASELINE_PRE_SAVE_ALL",
+ "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+ "method": "sorted 'relpath\\tsize\\tsha256\\n' manifest; sha256 of the concatenated manifest",
+ "file_count": 57,
+ "total_bytes": 17924900,
+ "manifest_digest_sha256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+ "expected_digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+ "match": true,
+ "identical_to_initial": true,
+ "non_regular_files": [],
+ "symlinks": 0,
+ "zero_byte_files": [],
+ "staging_root_status": {
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging",
+  "exists": false
+ },
+ "gui_input_count": 1
+}

@@ -1,0 +1,140 @@
+{
+ "artifact": "s11d-final-guard.json",
+ "phase": "S11d_final_pre_click_guard",
+ "attempt": "07",
+ "recorded_at_local": "2026-09-23T11:28:15+0800",
+ "authorization_type": "REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27C-LIVE-GATE-A-AFTER-ATTEMPT06",
+ "checks": [
+  {
+   "name": "guard_ax_frontmost",
+   "pass": true,
+   "detail": {
+    "ax_api_trusted": true,
+    "frontmost": true,
+    "frontmost_application": "jp.naver.line.mac"
+   }
+  },
+  {
+   "name": "guard_detail_window_identity",
+   "pass": true,
+   "detail": {
+    "matches": 1,
+    "pos": [
+     211,
+     29
+    ],
+    "size": [
+     327,
+     643
+    ]
+   }
+  },
+  {
+   "name": "guard_ax_menu_dialog_identity",
+   "pass": true,
+   "detail": {
+    "expected_rect_pt": [
+     494,
+     81,
+     137,
+     167
+    ],
+    "click_pt": [
+     530.75,
+     164.25
+    ],
+    "dialogs": [
+     {
+      "focused": false,
+      "index": 0,
+      "is_ax_focused_window": false,
+      "main": false,
+      "minimized": false,
+      "position_points": [
+       494,
+       81
+      ],
+      "role": "AXWindow",
+      "size_points": [
+       137,
+       167
+      ],
+      "subrole": "AXDialog",
+      "title": ""
+     }
+    ]
+   }
+  },
+  {
+   "name": "references_byte_authenticated",
+   "pass": true,
+   "detail": {
+    "open_sha": "e321069d86d04f2017e3a972a013fedcac51195ba1e4ba1d9e61df476f8169a2",
+    "absent_sha": "56959e940b6a0a3f37fbd83b77e9bf7f2b557f63a114a837b088efb7720ce7be"
+   }
+  },
+  {
+   "name": "menu_roi_guard_affirmative",
+   "pass": false,
+   "detail": {
+    "anchor_px": [
+     1008,
+     182
+    ],
+    "roi_size_px": [
+     240,
+     340
+    ],
+    "mad_guard_vs_menu_open": 23.722,
+    "mad_guard_vs_menu_absent": 29.82,
+    "pre_declared_rule": "mad<=12.0 AND mad_open<mad_absent"
+   }
+  }
+ ],
+ "ax": {
+  "path": "s11d-preclick-ax.json",
+  "sha256": "4eedf8def671d14086e97fcb7de180da47558181548346787c1ed15229960bf8",
+  "menu_dialog": {
+   "focused": false,
+   "index": 0,
+   "is_ax_focused_window": false,
+   "main": false,
+   "minimized": false,
+   "position_points": [
+    494,
+    81
+   ],
+   "role": "AXWindow",
+   "size_points": [
+    137,
+    167
+   ],
+   "subrole": "AXDialog",
+   "title": ""
+  }
+ },
+ "soft_signals": [
+  {
+   "name": "guard_roi_vs_s11c_validated_roi",
+   "mad": 0.0,
+   "detail": "same-anchor gray MAD of guard frame vs validated S11c frame (rendering stability)"
+  }
+ ],
+ "frames": {
+  "guard_frame": {
+   "path": "s11d-guard-frame.png",
+   "sha256": "8c12857240d1d219648d8b6c8bda96c77dec3cf54977aad9210cffb018fd788f"
+  },
+  "validated_frame": {
+   "path": "s11c-preclick-frame.png",
+   "sha256": "99aa2e529ee60057ae120339401d6f2a710ce1853f3ac9d6e226fcb2d1179004"
+  }
+ },
+ "gui_inputs_sent_so_far": 1,
+ "save_all_used": 0,
+ "verdict": "S11D_FINAL_GUARD_FAIL",
+ "failed_checks": [
+  "menu_roi_guard_affirmative"
+ ]
+}

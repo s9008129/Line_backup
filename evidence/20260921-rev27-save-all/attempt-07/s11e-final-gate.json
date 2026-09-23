@@ -1,0 +1,343 @@
+{
+ "artifact": "s11e-final-gate.json",
+ "phase": "S11c_final_freshness_gate_at_dispatch_moment",
+ "attempt": "07",
+ "recorded_at_local": "2026-09-23T11:29:06+0800",
+ "authorization_type": "REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27C-LIVE-GATE-A-AFTER-ATTEMPT06",
+ "method": "read-only re-derivation at dispatch moment; zero GUI input; fresh AX + fresh frame + fresh detector run + fresh v8 run",
+ "checks": [
+  {
+   "name": "ax_trusted_frontmost",
+   "pass": true,
+   "detail": {
+    "ax_api_trusted": true,
+    "frontmost": true,
+    "frontmost_application": "jp.naver.line.mac"
+   }
+  },
+  {
+   "name": "detail_window_identity",
+   "pass": true,
+   "detail": {
+    "matches": 1,
+    "pos": [
+     211,
+     29
+    ],
+    "size": [
+     327,
+     643
+    ],
+    "expected_pos": [
+     211,
+     29
+    ],
+    "expected_size": [
+     327,
+     643
+    ]
+   }
+  },
+  {
+   "name": "fresh_frame_valid",
+   "pass": true,
+   "detail": {
+    "size_px": [
+     2294,
+     1490
+    ],
+    "sha256": "d545043d3048e71231a502b413c1bc2a7d98db1a8a329d7d3a77916401bf64fc"
+   }
+  },
+  {
+   "name": "pre_frame_pinned",
+   "pass": true,
+   "detail": {
+    "sha256": "ca7e0fc9c640cfebb05b7d5dedf5318137d2db1b30090c5399b3d38d9717d4a6",
+    "expected": "ca7e0fc9c640cfebb05b7d5dedf5318137d2db1b30090c5399b3d38d9717d4a6"
+   }
+  },
+  {
+   "name": "menu_detector_fresh",
+   "pass": true,
+   "detail": {
+    "verdict": "MENU_DETECTED",
+    "chosen_bbox": [
+     1008,
+     182,
+     1246,
+     485
+    ],
+    "returncode": 0,
+    "post_sha256": "d545043d3048e71231a502b413c1bc2a7d98db1a8a329d7d3a77916401bf64fc"
+   }
+  },
+  {
+   "name": "menu_bbox_sanity",
+   "pass": true,
+   "detail": {
+    "bbox": [
+     1008,
+     182,
+     1246,
+     485
+    ],
+    "window_rect_px": [
+     422,
+     58,
+     1076,
+     1344
+    ],
+    "overlap": true
+   }
+  },
+  {
+   "name": "ax_dialog_contains_menu_bbox",
+   "pass": true,
+   "detail": {
+    "menu_bbox_pt": [
+     504.0,
+     91.0,
+     623.0,
+     242.5
+    ],
+    "dialog": {
+     "focused": false,
+     "index": 0,
+     "is_ax_focused_window": false,
+     "main": false,
+     "minimized": false,
+     "position_points": [
+      494,
+      81
+     ],
+     "role": "AXWindow",
+     "size_points": [
+      137,
+      167
+     ],
+     "subrole": "AXDialog",
+     "title": ""
+    }
+   }
+  },
+  {
+   "name": "v8_fresh_eligible",
+   "pass": true,
+   "detail": {
+    "verdict": "ELIGIBLE",
+    "exit_code": 0,
+    "returncode": 0,
+    "reason": "exactly one exact-match target row; five-item reference structure matched (single-glyph tolerance on non-target rows); row geometry and candidate safe regions pass"
+   }
+  },
+  {
+   "name": "v8_all_hard_checks_pass",
+   "pass": true,
+   "detail": {
+    "hard_pass": true,
+    "check_names": [
+     "popup_shape",
+     "target_unique_row",
+     "reference_structure",
+     "row_geometry",
+     "x_overlap",
+     "x_safe_region",
+     "y_safe_region",
+     "candidate_placement"
+    ]
+   }
+  },
+  {
+   "name": "v8_candidate_stable",
+   "pass": true,
+   "detail": {
+    "fresh_app_local_pt": [
+     319.75,
+     135.25
+    ],
+    "s11_app_local_pt": [
+     319.75,
+     135.25
+    ]
+   }
+  },
+  {
+   "name": "click_point_in_fresh_safe_regions",
+   "pass": true,
+   "detail": {
+    "click_frame_px": [
+     1062,
+     328
+    ],
+    "x_safe_frame_px": [
+     1049.0,
+     1074.0
+    ],
+    "y_safe_frame_px": [
+     322.333,
+     334.667
+    ],
+    "rule": "x = midpoint(x_safe); y = midpoint(y_safe)"
+   }
+  },
+  {
+   "name": "baseline_unchanged",
+   "pass": true,
+   "detail": {
+    "files": 57,
+    "bytes": 17924900,
+    "digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd"
+   }
+  },
+  {
+   "name": "staging_still_empty",
+   "pass": true,
+   "detail": {
+    "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/RUN-20260923-111908-01",
+    "entries": []
+   }
+  },
+  {
+   "name": "intent_hash_match",
+   "pass": true,
+   "detail": {
+    "sha256": "bead5155c984c9ba9e8fb68c3a5d71a11088a2b4eed5ad2b0272763ddcaa3325",
+    "expected": "bead5155c984c9ba9e8fb68c3a5d71a11088a2b4eed5ad2b0272763ddcaa3325"
+   }
+  }
+ ],
+ "fresh_ax": {
+  "path": "s11e-preclick-ax.json",
+  "sha256": "668bed55234f1a275fba246eb7d5ec51e7d9cf7ab116872795166d8e5af60d56",
+  "ax_api_trusted": true,
+  "frontmost": true,
+  "frontmost_application": "jp.naver.line.mac",
+  "window_count": 4
+ },
+ "detail_window": {
+  "focused": true,
+  "index": 1,
+  "is_ax_focused_window": true,
+  "main": true,
+  "minimized": false,
+  "position_points": [
+   211,
+   29
+  ],
+  "role": "AXWindow",
+  "size_points": [
+   327,
+   643
+  ],
+  "subrole": "AXStandardWindow",
+  "title": ""
+ },
+ "menu_detector": {
+  "json": "s11e-menu-detect.json",
+  "sha256": "009c705f7767b0354064c3a3ec3e1261a6257b2a40f559b0338ab60d29158775",
+  "verdict": "MENU_DETECTED",
+  "chosen_bbox": [
+   1008,
+   182,
+   1246,
+   485
+  ]
+ },
+ "ax_dialog": {
+  "focused": false,
+  "index": 0,
+  "is_ax_focused_window": false,
+  "main": false,
+  "minimized": false,
+  "position_points": [
+   494,
+   81
+  ],
+  "role": "AXWindow",
+  "size_points": [
+   137,
+   167
+  ],
+  "subrole": "AXDialog",
+  "title": ""
+ },
+ "v8": {
+  "json": "s11e-v8-locate-save-all.json",
+  "sha256": "5f5ba237bb198d6f363a58cfa29141ca571429b78714c27b35a1a2b63c46a996",
+  "verdict": "ELIGIBLE",
+  "reason": "exactly one exact-match target row; five-item reference structure matched (single-glyph tolerance on non-target rows); row geometry and candidate safe regions pass",
+  "candidate": {
+   "frame_px": [
+    1061.5,
+    328.5
+   ],
+   "screen_pt": [
+    530.75,
+    164.25
+   ],
+   "app_local_pt": [
+    319.75,
+    135.25
+   ]
+  },
+  "checks": [
+   {
+    "name": "popup_shape",
+    "pass": true
+   },
+   {
+    "name": "target_unique_row",
+    "pass": true
+   },
+   {
+    "name": "reference_structure",
+    "pass": true
+   },
+   {
+    "name": "row_geometry",
+    "pass": true
+   },
+   {
+    "name": "x_overlap",
+    "pass": true
+   },
+   {
+    "name": "x_safe_region",
+    "pass": true
+   },
+   {
+    "name": "y_safe_region",
+    "pass": true
+   },
+   {
+    "name": "candidate_placement",
+    "pass": true
+   }
+  ]
+ },
+ "soft_signals": [
+  {
+   "name": "menu_bbox_close_to_s11",
+   "pass": true,
+   "detail": {
+    "max_abs_delta_px": 3
+   }
+  }
+ ],
+ "gui_inputs_sent_so_far": 1,
+ "save_all_used": 0,
+ "click_point_app_local_pt": [
+  320,
+  135
+ ],
+ "dispatch_immediately_follows": true,
+ "verdict": "S11E_FINAL_GATE_PASS",
+ "failed_checks": [],
+ "verdict_label_correction": {
+  "from": "S11B_FINAL_GATE_PASS",
+  "to": "S11E_FINAL_GATE_PASS",
+  "reason": "uppercase label inherited from the s11b script template (sed replaced s11b/S11b but not S11B); no other field changed; all bindings were already S11e (fresh_ax s11e-preclick-ax.json, detector s11e-menu-detect.json, v8 s11e-v8-locate-save-all.json)"
+ }
+}

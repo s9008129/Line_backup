@@ -1,0 +1,161 @@
+{
+ "artifact": "post-save-all-observation.json",
+ "phase": "S12_resulting_surface_observation_only (read-only; ZERO GUI input after the single Save All dispatch)",
+ "attempt": "07",
+ "authorization_type": "REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27C-LIVE-GATE-A-AFTER-ATTEMPT06",
+ "recorded_at_local": "2026-09-23T11:41:07+0800",
+ "method": "read-only only: fresh full-screen frames (screencapture), read-only AX window reads, read-only CG window list, read-only OCR of the post-click frame, read-only process observation, read-only filesystem inventories. No click, no keyboard, no Escape, no scroll, no AX write, no bring-to-front, no app acquisition, no chooser interaction. The CU REPL session's lineApp binding still exists but NO further CU/GUI action was or will be issued.",
+ "observation_window_local": {
+  "first": "2026-09-23T11:29:34+0800",
+  "last": "2026-09-23T11:37:23+0800"
+ },
+ "inputs": {
+  "frames": [
+   {
+    "path": "post-save-all-frame-1.png",
+    "sha256": "0f3e1ad733f0981a050f26e5f3c78d173132a57c1a16c8ff92857488fc3c1fbe",
+    "when": "11:29:34, ~16 s after dispatch"
+   },
+   {
+    "path": "post-save-all-frame-2.png",
+    "sha256": "07d288bbd08ba47556b792af3c6036ecdc9eb859db1f0d2e8a4294f7c147d191",
+    "when": "11:29:36"
+   },
+   {
+    "path": "s12-current-frame.png",
+    "when": "11:31:05"
+   },
+   {
+    "path": "s12-end-frame.png",
+    "sha256": "9e8ecdadbedd2d7d8778ecf5b3809236fcf78ecae8802e4eeb37b04a35513c41",
+    "when": "11:37:23"
+   }
+  ],
+  "ax": [
+   "s12-post-ax.json (11:29:36)",
+   "s12-current-ax.json (11:31:05)",
+   "s12-end-ax.json (11:37:23)"
+  ],
+  "cg_window_list": "s12-cg-window-list.json (11:32)",
+  "ocr": "post-save-all-ocr.txt",
+  "pre_dispatch_comparators": [
+   "frame-s1.png (ca7e0fc9...)",
+   "s11e-preclick-frame.png (d545043d...)",
+   "frame-menu-post1.png (ca83f28e...)",
+   "s1-window-zorder.json"
+  ]
+ },
+ "answers": {
+  "1_menu_disappeared": {
+   "answer": true,
+   "evidence": "the AXDialog window [494,81,137x167] present pre-dispatch (s11e-preclick-ax.json, 4 windows) is gone; s12-post-ax/current/end all show 3 windows, the same 3 that existed before the ellipsis click (s1-ax-pre.json); the CG window set post-click equals the pre-ellipsis CG window set (see close_out_checks.cg_window_set_diff)"
+  },
+  "2_new_panel_modal_or_window": {
+   "answer": false,
+   "evidence": "no new top-level window, no AXDialog/AXSheet, no change in the CG window set (owner/window_number/bounds) other than the CU harness 'Software Cursor' overlay; the album-detail window remained focused+main throughout"
+  },
+  "3_process_app_identity": {
+   "answer": "jp.naver.line.mac (pid 969) still running and still frontmost (ax_frontmost=true, frontmost_application=jp.naver.line.mac at 11:29:36, 11:31:05 and 11:37:23); prior-session read-only process check showed LINE idle (~0.7 % CPU) with no CPU spike"
+  },
+  "4_window_panel_role": {
+   "answer": "the active window remains the album-detail AXStandardWindow [211,29] 327x643, focused=true, main=true, subrole AXStandardWindow; no dialog/sheet role present"
+  },
+  "5_title": {
+   "answer": "'' (empty) - unchanged from before the dispatch"
+  },
+  "6_visible_controls": {
+   "answer": "unchanged album-detail surface (album header '2024/05/13~05/17', '57張照片', photo grid); no new control visible"
+  },
+  "7_visible_fields": {
+   "answer": "none new"
+  },
+  "8_visible_buttons": {
+   "answer": "none new; no chooser buttons (no Save/Cancel/Go to Folder style buttons) anywhere in any post-dispatch frame"
+  },
+  "9_chooser_affirmatively_observed": {
+   "answer": false,
+   "evidence": "no chooser panel/modal/sheet in any of 4 post-dispatch frames, 3 read-only AX reads, the CG window list, or the process check"
+  },
+  "10_chooser_type": {
+   "answer": "NOT_OBSERVED (not applicable)"
+  },
+  "11_destination_safely_readable": {
+   "answer": "NOT_OBSERVED (not applicable - no chooser present)"
+  },
+  "12_staging_still_empty": {
+   "answer": true,
+   "evidence": "staging-inventory-post-save-all.json 0 entries / 0 bytes (11:29:36), staging-inventory-end.json 0 entries / 0 bytes (11:37:23), re-verified read-only at close-out 0 entries"
+  },
+  "13_accepted_baseline_unchanged": {
+   "answer": true,
+   "evidence": "baseline-inventory-post-save-all.json (11:29:36) and baseline-inventory-end.json (11:37:23): 57 files / 17,924,900 bytes / digest b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd, match=true; independently recomputed read-only at close-out: identical"
+  }
+ },
+ "close_out_checks": {
+  "note": "computed read-only during close-out (S13) from the stored frames and inventories; no new GUI action and no new screenshot",
+  "window_region_mad_vs_pre_ellipsis_frame": {
+   "region_px": [
+    422,
+    58,
+    1076,
+    1344
+   ],
+   "frame_s1_vs_post_save_all_frame_1": 0.137,
+   "frame_s1_vs_post_save_all_frame_2": 0.136,
+   "frame_s1_vs_s12_end_frame": 0.321,
+   "scale": "0-255 gray levels",
+   "reading": "the album-detail window region is effectively identical before the ellipsis click and after Save All - the menu is dismissed and no overlay/sheet occupies that region"
+  },
+  "menu_region_mad_vs_menu_open_frames": {
+   "region_px": [
+    1008,
+    182,
+    1246,
+    485
+   ],
+   "s11e_preclick_frame_menu_open_vs_post_save_all_frame_1": 28.512,
+   "frame_menu_post1_menu_open_vs_post_save_all_frame_1": 29.61,
+   "reading": "the menu region changed strongly - the popup pixels are replaced by album content (menu dismissed)"
+  },
+  "cg_window_set_diff": {
+   "comparator": "s1-window-zorder.json (29 layer>=0 entries, pre-ellipsis) vs s12-cg-window-list.json (30 entries, post-Save-All)",
+   "only_in_post": [
+    {
+     "owner": "ChatGPT Computer Use",
+     "window_number": 862,
+     "window_name": "Software Cursor",
+     "bounds": {
+      "x": 468,
+      "y": 101,
+      "width": 126,
+      "height": 126
+     },
+     "layer": 102,
+     "interpretation": "the CU harness cursor overlay for this automation session, not an application window"
+    }
+   ],
+   "only_in_pre": [],
+   "reading": "no window appeared and no window disappeared across the Save All dispatch"
+  },
+  "staging_recheck": {
+   "entries": 0,
+   "bytes": 0
+  },
+  "baseline_recheck": {
+   "files": 57,
+   "bytes": 17924900,
+   "digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+   "match": true
+  }
+ },
+ "interpretation": {
+  "observed": "the popup menu is dismissed; the album-detail surface is pixel-equivalent to the pre-ellipsis state; there is no chooser, sheet, panel or new window; no file appeared in the staging directory; the accepted baseline is untouched",
+  "inferred": "the single click was accepted by the open popup (the AXDialog disappeared with a click whose coordinates were inside the AXDialog rect), i.e. the menu-item activation was delivered to LINE",
+  "unknown": "whether LINE acted on '儲存全部' to open an OS save/chooser surface that is not visible in any captured surface, or the activation was a no-op in this state. The evidence available to this attempt cannot distinguish these; reconciliation with the owner is required",
+  "not_done": "no escalation of GUI input to investigate; no second click; no keyboard/Escape; the round stops here",
+  "next_gate": "Gate B (chooser) cannot be entered because no chooser was affirmatively observed - a new owner authorization and a fresh attempt are required for any further action"
+ },
+ "gui_inputs_after_dispatch": 0,
+ "verdict": "S12_OBSERVED_MENU_DISMISSED_NO_CHOOSER_AFFIRMATIVELY_OBSERVED"
+}

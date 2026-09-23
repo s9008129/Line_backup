@@ -1,0 +1,203 @@
+{
+ "artifact": "s6-menu-observation.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-07",
+ "phase": "S6 fresh menu observation after the single ellipsis click",
+ "recorded_at_local": "2026-09-23T11:17:00+0800",
+ "input_after_click": "none (no Escape, no click-outside, no menu-item activation, no keyboard, no scroll, no second click; the menu is left open)",
+ "frames": {
+  "pre_full_screen": {
+   "path": "frame-s1.png",
+   "sha256": "ca7e0fc9c640cfebb05b7d5dedf5318137d2db1b30090c5399b3d38d9717d4a6",
+   "when": "S1 11:08:35"
+  },
+  "post1_full_screen": {
+   "path": "frame-menu-post1.png",
+   "sha256": "ca83f28e60336013f751a5fd716cdfad6803e5eb34a0fdfba837151ca69942f3",
+   "when": "11:11:56, ~2.7 s after dispatch"
+  },
+  "post2_full_screen": {
+   "path": "frame-menu-post2.png",
+   "sha256": "b3ba8814c249031e6abeb765bbaf5a5ebde830a3c295e844f081ea2fca8d877a",
+   "when": "11:11:58"
+  },
+  "pre_window_cu": {
+   "path": "s5-preclick-window-cu.jpg",
+   "sha256": "d7a6330320f5b0589e587e7ae3887fbf0541a9cc28e6326a9ea2b43b9d51a1dd"
+  },
+  "post_window_cu": {
+   "path": "s6-window-cu.jpg",
+   "sha256": "07183f98eaff3722df26a5c23320b6c9c270418eb4b2571727d80aec699938c3"
+  },
+  "post_ax_state_cu": {
+   "path": "s6-ax-state-cu.txt",
+   "sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa",
+   "note": "identical to the pre-click AX text; the popup is a separate AXDialog window, not a child of this window"
+  }
+ },
+ "frozen_menu_detector": {
+  "tool": "evidence/20260916-route/tools/detect_menu_popup.py",
+  "tool_sha256": "6ae9c250bfaec7c639482deafa65b0c66f85927a21584e3dac6c9511c7f740bc",
+  "pair_A_window": {
+   "artifact": "s6-menu-pairA.json",
+   "sha256": "dff4c2d05999906a2b47be37edbcd60121eff6c7c1a6f7a86081e681c979e5f6",
+   "exit_code": 3,
+   "verdict": "NOT_DETECTED",
+   "reason": "no changed region meeting the geometry rule",
+   "changed_pixels_total": 1041,
+   "expected": "window-scoped CU screenshots do not contain the macOS popup layer (same behaviour as attempt-13/19/05 pair A); the only changed component is the 36x36 px ellipsis button highlight at [286,32,322,68]"
+  },
+  "pair_B1_screen_same_session": {
+   "artifact": "s6-menu-pairB1.json",
+   "sha256": "0c67f57fe27e8656e51490e147f61589a5098031390482bab3074028deec6a3c",
+   "exit_code": 0,
+   "verdict": "MENU_DETECTED",
+   "pre": "frame-s1.png",
+   "post": "frame-menu-post1.png",
+   "chosen_bbox_px": [
+    994,
+    123,
+    1247,
+    484
+   ],
+   "component_px": 62703,
+   "second_largest_component_px": 191,
+   "changed_pixels_total": 128739,
+   "ocr_strings": [
+    "Vi",
+    "選擇",
+    "項目",
+    "修改",
+    "儲存",
+    "刪除"
+   ],
+   "popup_shape_check": "component 62703 px (component 2: 191 px) at the ellipsis anchor; bbox 253x361 px overlaps the fresh LINE window rect px [422,58,1076,1344] on x 994-1076"
+  },
+  "pair_B2_screen": {
+   "artifact": "s6-menu-pairB2.json",
+   "sha256": "39ab6eaa0829da330cde41942cbd705328862d2676bd33abad854a3d88a58aa4",
+   "exit_code": 0,
+   "verdict": "MENU_DETECTED",
+   "chosen_bbox_px": [
+    994,
+    123,
+    1247,
+    484
+   ],
+   "component_px": 62704
+  },
+  "planref_attempt13_pre": {
+   "artifact": "s6-menu-detect-planref.json",
+   "sha256": "0286744a8fd4bbc92bf03004080ce12c772bd510fa124f1e17f9c33c35235257",
+   "exit_code": 0,
+   "verdict": "MENU_DETECTED",
+   "chosen_bbox_px": [
+    0,
+    0,
+    2294,
+    1490
+   ],
+   "known_false_positive_mode": "whole-frame component (desktop differs between sessions); rejected as evidence; recorded for completeness exactly as attempt-05 did"
+  }
+ },
+ "ax_corroboration": {
+  "artifact": "s6-postclick-ax.json",
+  "sha256": "8b3dac34138ff1f9a8b4bad14d8111ae9c20a816663dc49679b5e3785bd93ca5",
+  "new_window": {
+   "index": 0,
+   "subrole": "AXDialog",
+   "position_points": [
+    494,
+    81
+   ],
+   "size_points": [
+    137,
+    167
+   ],
+   "frame_px_rect": [
+    988,
+    162,
+    1262,
+    496
+   ],
+   "note": "a fourth window of class AXDialog appeared after the click (pre-click inventory had 3 windows, all AXStandardWindow); its rect corroborates the detector bbox [994,123,1247,484]"
+  },
+  "detail_window": {
+   "index": 1,
+   "subrole": "AXStandardWindow",
+   "position_points": [
+    211,
+    29
+   ],
+   "size_points": [
+    327,
+    643
+   ],
+   "main": true,
+   "focused": true
+  }
+ },
+ "roi_crosscheck": {
+  "artifact": "s6-menu-roi-crosscheck.json",
+  "mad_fresh_vs_menu_open": 5.621,
+  "mad_fresh_vs_menu_absent": 24.614,
+  "mad_control_menu_open_vs_menu_absent": 24.422,
+  "rule_pass": true,
+  "verdict": "MENU_ROI_AFFIRMATIVE",
+  "shift_search": {
+   "method": "minimum gray MAD over +/-8 px translation search (alignment diagnostic, same spirit as the geometry validator's shift_diagnostics); the direct same-anchor values above are kept unchanged",
+   "min_mad_vs_menu_open": {
+    "mad": 0.224,
+    "dx": 1,
+    "dy": 0
+   },
+   "min_mad_vs_menu_absent": {
+    "mad": 24.509,
+    "dx": 0,
+    "dy": -5
+   }
+  }
+ },
+ "menu_ocr": {
+  "artifact": "s6-menu-ocr.json",
+  "sha256": "7491ead3f21522d25b59362b99a350195de7b3ea4ecd6f851533208ac57d3895",
+  "region_px": [
+   994,
+   123,
+   1247,
+   484
+  ],
+  "items_top_to_bottom": [
+   "Vi",
+   "選擇項目",
+   "修改相簿名稱",
+   "儲存全部        I",
+   "刪除相簿",
+   "分享相簿"
+  ],
+  "save_all_present": true,
+  "save_all_affirmatively_identified": true
+ },
+ "menu_geometry_binding": {
+  "artifact": "live-window-geometry-post1.json",
+  "sha256": "2d862ca2c42d30c988237f971279fa315995ecc2889f1791327438381dc1cfe7",
+  "frame_sha256": "ca83f28e60336013f751a5fd716cdfad6803e5eb34a0fdfba837151ca69942f3",
+  "window_position_points": [
+   211,
+   29
+  ],
+  "window_size_points": [
+   327,
+   643
+  ]
+ },
+ "verdicts": {
+  "detector_pairB": "MENU_DETECTED",
+  "roi_crosscheck": "MENU_ROI_AFFIRMATIVE",
+  "ax_new_dialog": "AXDialog appeared",
+  "target_儲存全部_affirmative": true,
+  "menu_surface": "MENU_SURFACE_AFFIRMATIVELY_OBSERVED",
+  "save_all_clicked": false,
+  "save_all_dispatch_attempted": false
+ },
+ "gui_inputs_sent": 1
+}

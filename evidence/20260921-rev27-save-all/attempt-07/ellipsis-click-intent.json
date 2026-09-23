@@ -1,0 +1,66 @@
+{
+ "artifact": "ellipsis-click-intent.json",
+ "phase": "S5_ellipsis_click_intent",
+ "attempt": "07",
+ "authorization_type": "REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27C-LIVE-GATE-A-AFTER-ATTEMPT06",
+ "recorded_at_local": "2026-09-23T11:12:00+0800",
+ "preconditions_bound": {
+  "composite": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+  "composite_decision_sha256": "7eedd7971a4c349916697613d10085413c260ea2b74982cafc89621850a66dc5",
+  "frozen_v7_lineage_guard_verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+  "frozen_album_open_verifier_verdict": "ALBUM_OPEN_VERIFIED",
+  "v5_locator_result": "ellipsis-locate-v5.json",
+  "v5_locator_result_sha256": "4e6a230ef394e5f0479f604a2c03afeefbdeeb3fadbbc5a7ff91b43b250c95a2",
+  "v5_locator_verdict": "ELIGIBLE",
+  "v5_tool": "evidence/20260916-route/tools/v5/locate_album_ellipsis.py",
+  "v5_tool_sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "v5_input_frame": "s1-window-cu.jpg",
+  "v5_input_frame_sha256": "d7a6330320f5b0589e587e7ae3887fbf0541a9cc28e6326a9ea2b43b9d51a1dd",
+  "fresh_frame": "frame-s1.png",
+  "fresh_frame_sha256": "ca7e0fc9c640cfebb05b7d5dedf5318137d2db1b30090c5399b3d38d9717d4a6",
+  "geometry_binding_verdict": "GEOMETRY_BINDING_PASS",
+  "geometry_binding_sha256": "96b8717436c81973faed44e33e037fa2962b616abd71bed9f7743f273aeecdf2"
+ },
+ "candidate": {
+  "space": "window-local pt (CU click space; 1 pt = 1 px at capture scale 2)",
+  "click_point": [
+   304,
+   50
+  ],
+  "derivation": {
+   "rule": "frozen v5: single header_band dot triple (album-level ellipsis) -> dot centers [304.5,44],[304.5,49.5],[304.5,55] -> click_point = [round(304.5), round(mid y 49.5)]",
+   "dot_triple": [
+    [
+     304.5,
+     44.0
+    ],
+    [
+     304.5,
+     49.5
+    ],
+    [
+     304.5,
+     55.0
+    ]
+   ],
+   "source": "THIS round's fresh CU window shot (s1-window-cu.jpg, sha256 d7a63303...) with title bbox [15,83,203,111] from THIS round's frozen verify_album_open window result"
+  },
+  "coincidence_note": "The numerically identical historical-looking value [304,50] was NOT used as input. It was derived solely from this round's fresh frame. It coincides numerically with values seen in prior attempts because the album-detail surface layout is identical (the header band and the ellipsis glyph render at the same window-local coordinates); attempt-19/attempt-05/attempt-06 set this exact precedent and it is disclosed here. No historical coordinate was read at any point.",
+  "historical_coordinate_input": false,
+  "historical_coordinate_fallback": "FORBIDDEN"
+ },
+ "budgets": {
+  "ellipsis_budget": 1,
+  "ellipsis_used": 0,
+  "save_all_budget": 1,
+  "save_all_used": 0,
+  "maximum_total_gui_input": 2,
+  "gui_inputs_sent_so_far": 0,
+  "retry": 0,
+  "second_ellipsis": "FORBIDDEN",
+  "chooser_interaction": 0
+ },
+ "dispatch_state": "NOT_ATTEMPTED",
+ "dispatch_form": "exactly one left click via CU harness: app.click([304,50], {mouseButton:'left', clickCount:1}); dispatch only as the very next action after a fresh read-only freshness gate (LINE frontmost, fresh CU state equivalent to s1 state, composite still holding); if any freshness check fails -> STOP with ellipsis budget unspent"
+}

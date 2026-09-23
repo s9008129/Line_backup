@@ -1,0 +1,188 @@
+{
+ "artifact": "evidence/20260921-rev27-save-all/attempt-07/run-ledger.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-07",
+ "gate": "Rev27c ELLIPSIS_THEN_SAVE_ALL_GATE_A (authorization REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A / REV27C-LIVE-GATE-A-AFTER-ATTEMPT06)",
+ "started_local": "2026-09-23T11:06+0800",
+ "closed_local": "2026-09-23T11:41:27+0800",
+ "outcome": "Gate A ran end-to-end and the authorized dispatch chain completed. All pre-live gates PASSED (authorization anti-replay AUTHORIZATION_SCOPE_MATCH; accepted-baseline pre-gate 57/17,924,900/b7debe92 MATCH). S1-S7 PASSED (fresh album-detail state; frame-bound geometry; frozen verifier + v7 lineage composite ALBUM_OPEN_VERIFIED_COMPOSITE; frozen v5 ELIGIBLE with a fresh-derived candidate [304,50] window-local pt; exactly one ellipsis click; MENU_SURFACE_AFFIRMATIVELY_OBSERVED with '儲存全部' affirmatively identified; approved v8 Save All locator ELIGIBLE with candidate [319.75,135.25] local). S8 baseline tripwire PASS, S9 staging preflight PASS, S10 durable intent PASS, and after a failed-then-repeated final freshness gate chain (S11b FAIL, S11c PASS, S11d FAIL, S11e PASS) exactly ONE Save All click was dispatched at 11:29:18+0800 (dispatch_state RETURNED). S12 read-only observation: the popup menu is dismissed, the album surface is pixel-equivalent to the pre-ellipsis state, NO chooser/panel/modal/window appeared, the staging directory stayed empty and the accepted baseline is unchanged. Total GUI input for the round = 2 (1 ellipsis + 1 Save All) - the exact authorized maximum.",
+ "events": [
+  {
+   "t": "2026-09-23T11:06",
+   "event": "route-runbook.md pre-declared (sha256 2f994aad...) BEFORE any live observation"
+  },
+  {
+   "t": "2026-09-23T11:07:30",
+   "event": "authorization-record.json + authorization-scope-check.json -> AUTHORIZATION_SCOPE_MATCH; no forbidden execution goal found in the runbook (album-card click, album reopen, chooser navigation, path entry, confirm, download completion all absent as goals)"
+  },
+  {
+   "t": "2026-09-23T11:07",
+   "event": "00-start-state.json: all bound SHAs re-hashed from disk (plan rev27c-2, v8 c5ad4686, selftests, replay, injection, freeze, review1 PLAN_APPROVED, review2 PLAN_APPROVED, v5 6a015ea6, verifier ffa82aed, v7 cdff187e, detector 6ae9c250) - zero mismatches"
+  },
+  {
+   "t": "2026-09-23T11:08",
+   "event": "baseline-inventory-initial.json: 57 files / 17,924,900 bytes / digest b7debe92... MATCH"
+  },
+  {
+   "t": "2026-09-23T11:08:35",
+   "event": "S1 read-only AX pre/post + fresh full-screen frame frame-s1.png (ca7e0fc9...) + fresh CU window shot s1-window-cu.jpg (d7a63303...); LINE frontmost; focused+main detail window [211,29,327x643]; popup menu closed; CG z-order shows no occluding normal-layer window"
+  },
+  {
+   "t": "2026-09-23T11:09",
+   "event": "S2 geometry-binding.json -> GEOMETRY_BINDING_PASS; live-window-geometry.json bound to the fresh frame SHA"
+  },
+  {
+   "t": "2026-09-23T11:10",
+   "event": "S3 frozen verify_album_open -> ALBUM_OPEN_VERIFIED; approved v7 lineage guard -> ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED; composite-decision.json -> ALBUM_OPEN_VERIFIED_COMPOSITE"
+  },
+  {
+   "t": "2026-09-23T11:10",
+   "event": "S4 frozen v5 single invocation -> ELIGIBLE; unique header_band dot triple; click_point [304,50] window-local pt derived ONLY from this round's fresh capture (numeric coincidence with historical value disclosed; no historical coordinate read)"
+  },
+  {
+   "t": "2026-09-23T11:12:00",
+   "event": "S5 ellipsis-click-intent.json written BEFORE dispatch (budgets ellipsis 1/used 0; dispatch_state NOT_ATTEMPTED)"
+  },
+  {
+   "t": "2026-09-23T11:11:53",
+   "event": "S5 DISPATCH: exactly one left click at [304,50] window-local pt (screen [515,79], frame px [1030,158]) -> dispatch_state RETURNED; ellipsis_used=1; GUI total=1"
+  },
+  {
+   "t": "2026-09-23T11:11:56",
+   "event": "S6 fresh post-click frames frame-menu-post1.png (ca83f28e..., ~2.7 s after dispatch) and frame-menu-post2.png (b3ba8814...)"
+  },
+  {
+   "t": "2026-09-23T11:12",
+   "event": "S6 frozen menu detector pair B1/B2 -> MENU_DETECTED bbox px [994,123,1247,484]; s6-postclick-ax.json shows a NEW AXDialog window [494,81,137x167] (pre-click inventory had 3 windows, all AXStandardWindow); pair A (window-scoped CU shots) NOT_DETECTED as expected (popup layer is not in window-scoped shots)"
+  },
+  {
+   "t": "2026-09-23T11:14",
+   "event": "S6 menu ROI crosscheck -> MENU_ROI_AFFIRMATIVE (mad fresh-vs-open 5.621; shift-search min 0.224)"
+  },
+  {
+   "t": "2026-09-23T11:15",
+   "event": "S6 menu OCR: items 選擇項目 / 修改相簿名稱 / 儲存全部 / 刪除相簿 / 分享相簿; '儲存全部' affirmatively identified (confidences ~96.9/96.7/96.5)"
+  },
+  {
+   "t": "2026-09-23T11:17:00",
+   "event": "S6 menu-observation -> MENU_SURFACE_AFFIRMATIVELY_OBSERVED; save_all_clicked=false"
+  },
+  {
+   "t": "2026-09-23T11:16",
+   "event": "S7 approved v8 locator -> ELIGIBLE; candidate app-local [319.75,135.33]; all 8 hard checks pass (popup_shape, target_unique_row, reference_structure, row_geometry, x_overlap, x_safe_region, y_safe_region, candidate_placement)"
+  },
+  {
+   "t": "2026-09-23T11:18",
+   "event": "S8 baseline tripwire re-verified: baseline-inventory-pre-save-all.json digest b7debe92... MATCH"
+  },
+  {
+   "t": "2026-09-23T11:19:08",
+   "event": "S9 fresh staging preflight -> STAGING_PREFLIGHT_PASS; run_id RUN-20260923-111908-01 created with mkdir 2 of 2 (staging root + leaf); 0 entries / 0 bytes; leaf absent before / exists after; canonical root; no symlink escape; neither ancestor nor descendant of the accepted baseline"
+  },
+  {
+   "t": "2026-09-23T11:20:00",
+   "event": "S10 save-all-click-intent.json written (sha256 bead5155...), binding authorization, run_id, staging path, baseline inventory SHA+digest, staging preflight SHA, composite SHA, fresh menu frame SHA, detector SHA, menu observation SHA, v8 source/result SHAs, candidate + derivation, ellipsis_used=1, save_all_used=0, dispatch_state NOT_ATTEMPTED"
+  },
+  {
+   "t": "2026-09-23T11:21:00",
+   "event": "S11 final freshness gate -> S11_FINAL_GATE_PASS (dispatch_immediately_follows=true)"
+  },
+  {
+   "t": "2026-09-23T11:25:23",
+   "event": "S11b dispatch-moment gate -> S11B_FINAL_GATE_FAIL: the fresh menu detector matched the macOS Control Center brightness HUD component px [1670,72,2254,200] (outside the LINE window rect px [422,58,1076,1344]); v8 NOT_FOUND on that bbox. FAIL-CLOSED - NO dispatch was made; GUI input stayed at 1"
+  },
+  {
+   "t": "2026-09-23T11:26:20",
+   "event": "S11c retry of the same read-only gate (fresh frame + fresh detector) -> MENU_DETECTED at the LINE popup bbox px [1008,182,1246,485]; AXDialog containment true; v8 fresh ELIGIBLE; all 14 checks PASS -> S11C_FINAL_GATE_PASS"
+  },
+  {
+   "t": "2026-09-23T11:28:15",
+   "event": "S11d final pre-click guard -> S11D_FINAL_GUARD_FAIL (menu_roi_guard_affirmative failed: MAD 23.722 vs attempt-19 'menu open' reference, threshold 12.0). The guard's ROI anchor was that frame's detector bbox corner (1008,182) while the reference's own anchor was its own bbox corner (1245,163) - an anchor mismatch, not an observed state change (soft signal: same-anchor gray MAD vs the validated S11c frame = 0.0). FAIL-CLOSED - NO dispatch was made; GUI input stayed at 1"
+  },
+  {
+   "t": "2026-09-23T11:29:06",
+   "event": "S11e repeated read-only dispatch-moment gate -> S11E_FINAL_GATE_PASS: 14/14 checks (fresh AX 668bed55..., fresh frame d545043d..., detector MENU_DETECTED px [1008,182,1246,485], AXDialog containment true, v8 fresh ELIGIBLE 5f5ba237..., candidate unchanged [319.75,135.25], rounded click point inside fresh safe regions, baseline/staging/intent unchanged)"
+  },
+  {
+   "t": "2026-09-23T11:29:18",
+   "event": "S11 DISPATCH: exactly one left click at [320,135] app-local pt (screen [531,164], frame px [1062,328], inside the AXDialog rect [494,81,137x167]) -> dispatch_state RETURNED; save_all_used=1; GUI total=2"
+  },
+  {
+   "t": "2026-09-23T11:29:34",
+   "event": "S12 read-only post-dispatch frames post-save-all-frame-1.png (0f3e1ad7...) and post-save-all-frame-2.png (07d288bb...)"
+  },
+  {
+   "t": "2026-09-23T11:29:36",
+   "event": "S12 s12-post-ax.json: AXDialog GONE (3 windows, the same 3 as pre-ellipsis); baseline-inventory-post-save-all.json MATCH; staging-inventory-post-save-all.json 0/0"
+  },
+  {
+   "t": "2026-09-23T11:31:05",
+   "event": "S12 s12-current-frame.png + s12-current-ax.json: still 3 windows, no chooser"
+  },
+  {
+   "t": "2026-09-23T11:32",
+   "event": "S12 s12-cg-window-list.json (30 entries): the CG window set equals the pre-ellipsis set; the only addition is the CU harness 'Software Cursor' overlay (window 862)"
+  },
+  {
+   "t": "2026-09-23T11:37:23",
+   "event": "S12 end-of-attempt: s12-end-frame.png (9e8ecdad...) + s12-end-ax.json (3 windows, LINE frontmost) + baseline-inventory-end.json MATCH + staging-inventory-end.json 0/0. Still no chooser"
+  },
+  {
+   "t": "2026-09-23T11:41:27+0800",
+   "event": "S13 close-out (this ledger): independent read-only recomputation - baseline 57/17,924,900/b7debe92 MATCH; staging 0 entries; window-region MAD pre-ellipsis vs post-Save-All 0.137/0.136/0.321 (menu dismissed, surface unchanged); menu-region MAD vs menu-open frames 28.5/29.6; CG window set diff = cursor overlay only. Zero GUI input during S12/S13"
+  }
+ ],
+ "hard_counters": {
+  "album_card": 0,
+  "navigation": 0,
+  "ellipsis": 1,
+  "save_all": 1,
+  "total_gui_input": 2,
+  "retry": 0,
+  "second_ellipsis": 0,
+  "second_save_all": 0,
+  "other_menu_item": 0,
+  "chooser_interaction": 0,
+  "keyboard": 0,
+  "escape": 0,
+  "scroll": 0,
+  "ax_write": 0,
+  "bring_to_front": 0,
+  "app_acquisition": 0,
+  "go_to_folder": 0,
+  "path_entry": 0,
+  "return_key": 0,
+  "destination_confirm": 0,
+  "download_completion_gui": 0,
+  "cleanup_delete": 0,
+  "staging_mkdir": 2
+ },
+ "dispatch_states": {
+  "ellipsis": "RETURNED",
+  "save_all": "RETURNED",
+  "chooser": "NOT_OBSERVED"
+ },
+ "disclosures": [
+  "Save All dispatch is permanent and final for this authorization: save_all_used=1, GUI total=2 (the authorized maximum). A second Save All click is permanently forbidden without a separate reconciliation revision, regardless of what any future observation shows.",
+  "The S11 gate chain contains two FAILED gates (S11b, S11d) before the PASSED S11e gate. Both failures were fail-closed with ZERO dispatch and zero GUI input: S11b was a detector false-positive on a macOS Control Center HUD component outside the LINE window; S11d was an ROI-anchor mismatch against a historical reference anchor, not an observed state change. Retry counters in the authorization refer to the ellipsis/Save-All budget actions, not to read-only re-derivations; the read-only gate re-runs consumed no GUI budget and no retry budget of the authorized actions.",
+  "Label-inheritance note: s11c-final-gate.json and s11e-final-gate.json were written by a shared script template and initially carried the uppercase template label S11B_FINAL_GATE_PASS. Both files were corrected in place to S11C_FINAL_GATE_PASS / S11E_FINAL_GATE_PASS with an explicit verdict_label_correction note; no other field was changed, and all bindings in both files were already S11c/S11e.",
+  "The CU harness 'Software Cursor' overlay (window 862, 126x126 at [468,101], layer 102) was present on screen for the whole session, including during the menu frames and after the dispatch. It is an automation-harness overlay, not an application window; it does not appear to have interfered with the detected popup bbox or the click, and it is disclosed for completeness.",
+  "The owner's Terminal window (pid 951, [509,154] 580x379) sits in the CG z-order behind the LINE detail window ([211,29] 327x643) and does not occlude it.",
+  "Menus persistence rule honored: no attempt was made to check whether the attempt-05 menu still existed, no menu state was relied upon from a prior round; the menu used here was created fresh by this round's single ellipsis click and its evidence is frame-bound to this round.",
+  "Unused-budget rule: budgets were fully consumed (ellipsis 1 of 1, Save All 1 of 1). Nothing transfers to a future round; a future round requires a NEW owner one-shot authorization.",
+  "Rev27c review-recorded non-blocking item (some malformed v8 inputs may exit 1 instead of a designated refusal code) was NOT triggered: v8 was executed only on legitimate live frames and exited 0/ELIGIBLE, and on the S11b HUD bbox it exited 2/NOT_FOUND with a candidate absent. No v8 hot-fix was made at any point.",
+  "The f3ab3ee commit-message provenance note (commit message references pre-append ledger bytes while the committed scope-status manifest carries the current ledger hash) stands unchanged and was not modified.",
+  "All recorded_at_local labels are approximate human labels; file mtimes and embedded evidence timestamps are authoritative.",
+  "ZERO GUI input was sent during S12 and S13 (observation and close-out). No click, keyboard, Escape, scroll, AX write, bring-to-front or app acquisition occurred after the single Save All click."
+ ],
+ "scoped_status": "REV27C_GATE_A_COMPLETED_SAVE_ALL_DISPATCHED_RETURNED_CHOOSER_NOT_OBSERVED",
+ "scoped_blocker": "NO_CHOOSER_AFFIRMATIVELY_OBSERVED_AFTER_SAVE_ALL_DISPATCH (Gate B cannot be entered; the resulting surface is the unchanged album detail, the menu is dismissed, and no save/chooser panel exists in any observed surface)",
+ "ready_for_status_lines": "NONE - READY_FOR_CHOOSER_GATE_B_AUTHORIZATION does NOT apply (no chooser was affirmatively observed). READY_TO_SAVE_ALL / READY_TO_DOWNLOAD / BACKUP_COMPLETE never apply.",
+ "next_action_requires": "A NEW owner one-shot authorization (and, if the owner wants to retry the Save All activation, a separate reconciliation revision first, because the Save All budget is consumed and a second click is permanently forbidden under this authorization). Any future round must re-derive everything fresh from its own frame: fresh album-detail composite, fresh v5 candidate, fresh ellipsis activation, fresh menu evidence and fresh v8 candidate. Nothing in this attempt is a valid input to a future round.",
+ "accepted_baseline_not_modified": true,
+ "staging_not_modified": true,
+ "attempt_05_not_modified": true,
+ "historical_attempts_not_modified": true,
+ "frozen_tools_not_modified": true,
+ "plan_reviews_not_modified": true,
+ "gui_inputs_sent_total": 2
+}

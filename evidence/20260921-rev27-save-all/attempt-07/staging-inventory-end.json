@@ -1,0 +1,10 @@
+{
+ "artifact": "staging-inventory-end.json",
+ "recorded_at_local": "2026-09-23T11:37:23+0800",
+ "label": "READ_ONLY_STAGING_END_OF_ATTEMPT",
+ "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/RUN-20260923-111908-01",
+ "entries": [],
+ "entry_count": 0,
+ "total_bytes": 0,
+ "policy": "PRESERVE"
+}

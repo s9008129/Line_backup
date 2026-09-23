@@ -1,0 +1,22 @@
+{
+ "artifact": "s11-menu-frame-geometry.json",
+ "frame_sha256": "dc12c88e37f92cd5df5e118300c9cefe38b7cc91019b2317ccd3c47bf7e94795",
+ "capture_scale": 2,
+ "window_index": 1,
+ "window_position_points": [
+  211,
+  29
+ ],
+ "window_size_points": [
+  327,
+  643
+ ],
+ "window_point_rect": [
+  211,
+  29,
+  538,
+  672
+ ],
+ "provenance": "fresh read-only AX read at 2026-09-23T11:19:45+08:00 (s11-preclick-ax.json): detail window index 1, AXStandardWindow, main+focused, position [211,29] size [327,643]; bound to the S11 fresh frame sha; NOT historical geometry",
+ "gui_inputs_sent": 1
+}

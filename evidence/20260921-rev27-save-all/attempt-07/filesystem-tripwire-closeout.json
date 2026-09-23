@@ -1,0 +1,90 @@
+{
+ "artifact": "filesystem-tripwire-closeout.json",
+ "phase": "S13_filesystem_tripwire_close_out (read-only)",
+ "attempt": "07",
+ "recorded_at_local": "2026-09-23T11:41:07+0800",
+ "accepted_baseline": {
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+  "method": "sorted 'relpath\\tsize\\tsha256\\n' manifest; sha256 of the concatenated manifest",
+  "checkpoints": [
+   {
+    "when": "11:08 initial",
+    "artifact": "baseline-inventory-initial.json",
+    "files": 57,
+    "bytes": 17924900,
+    "digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+    "match": true
+   },
+   {
+    "when": "11:18 pre-Save-All",
+    "artifact": "baseline-inventory-pre-save-all.json (sha256 f1c17e10...)",
+    "files": 57,
+    "bytes": 17924900,
+    "digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+    "match": true
+   },
+   {
+    "when": "11:29:36 immediate post-Save-All",
+    "artifact": "baseline-inventory-post-save-all.json",
+    "files": 57,
+    "bytes": 17924900,
+    "digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+    "match": true
+   },
+   {
+    "when": "11:37:23 end-of-attempt",
+    "artifact": "baseline-inventory-end.json",
+    "files": 57,
+    "bytes": 17924900,
+    "digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+    "match": true
+   },
+   {
+    "when": "close-out (this file)",
+    "artifact": "independent read-only recomputation",
+    "files": 57,
+    "bytes": 17924900,
+    "digest": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+    "match": true
+   }
+  ],
+  "unchanged": true
+ },
+ "staging": {
+  "run_id": "RUN-20260923-111908-01",
+  "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/RUN-20260923-111908-01",
+  "mkdir_calls": 2,
+  "checkpoints": [
+   {
+    "when": "11:19:08 preflight (staging-preflight.json)",
+    "entries": 0,
+    "bytes": 0
+   },
+   {
+    "when": "11:29:36 immediate post-Save-All (staging-inventory-post-save-all.json)",
+    "entries": 0,
+    "bytes": 0
+   },
+   {
+    "when": "11:37:23 end-of-attempt (staging-inventory-end.json)",
+    "entries": 0,
+    "bytes": 0
+   },
+   {
+    "when": "close-out (this file)",
+    "entries": 0,
+    "bytes": 0
+   }
+  ],
+  "policy": "PRESERVE - nothing created, moved or deleted",
+  "cleanup_or_delete_performed": false
+ },
+ "unexpected_pre_confirm_filesystem_write": false,
+ "unexpected_write_detail": "No save/download artifact appeared before any chooser confirmation, because no chooser was ever observed and no destination was ever confirmed. No file was written to the staging directory at any checkpoint.",
+ "non_blocking_notes": [
+  "A prior-session read-only observation noted mtime churn (11:37:31) in one of LINE's own group-container 'tmp' directories (path not re-verified at close-out; the glob /Users/hsiaojohnny/Library/Group Containers/*LINE* resolved to VUTU7AKEUR.jp.naver.line.mac). That is LINE's own lock/tmp housekeeping; no new file was observed, and it is outside the accepted baseline and outside the staging root, neither of which changed.",
+  "The accepted baseline and the staging root are neither ancestors nor descendants of each other (proven in staging-preflight.json)."
+ ],
+ "gui_inputs_at_close_out": 2,
+ "verdict": "FILESYSTEM_TRIPWIRE_CLEAN"
+}

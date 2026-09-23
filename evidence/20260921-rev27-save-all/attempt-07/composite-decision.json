@@ -1,0 +1,72 @@
+{
+ "artifact": "composite-decision.json",
+ "phase": "S3_fresh_composite_revalidation",
+ "attempt": "07",
+ "authorization_type": "REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27C-LIVE-GATE-A-AFTER-ATTEMPT06",
+ "recorded_at_local": "2026-09-23T11:11:00+0800",
+ "rule": "frozen album-open verifier == ALBUM_OPEN_VERIFIED (window pair) AND approved v7 lineage guard == ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED AND guard composite PASS => ALBUM_OPEN_VERIFIED_COMPOSITE",
+ "evidence": {
+  "frozen_album_open_verifier_window_pair": {
+   "path": "album-open-verify-window.json",
+   "sha256": "32b80e2f31337c95a52df6626ffd429633c22dd8f8eadf9f75f94c00248f5c98",
+   "pre": "../../20260916-route/attempt-19/a4-precheck-window-cu.jpg",
+   "post": "s1-window-cu.jpg",
+   "pre_sha256": "b9be8bfc60678c648740d567ced176909ea242e5ea12202dd2c8606fc6659ff1",
+   "post_sha256": "d7a6330320f5b0589e587e7ae3887fbf0541a9cc28e6326a9ea2b43b9d51a1dd",
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "changed_fraction": 0.665235,
+   "count_text": "MATCH",
+   "target_title_in_post": [
+    "2024/05/13~05/17"
+   ]
+  },
+  "frozen_album_open_verifier_frame_pair_supporting": {
+   "path": "album-open-verify-frame.json",
+   "sha256": "b606e5ce90b71ea82b5c6aabe541d2d38b85002a9720e3466903ba288111202d",
+   "pre": "../../20260916-route/attempt-19/frame-s1.png",
+   "post": "frame-s1.png",
+   "verdict": "ALBUM_OPEN_VERIFIED",
+   "changed_fraction": 0.507525
+  },
+  "approved_v7_lineage_guard": {
+   "path": "v7-lineage-guard.json",
+   "sha256": "e855d57270969b83ff19e2826f8ee5ea73abd32b3ffead57563994620b836c4b",
+   "verdict": "ALBUM_DETAIL_WINDOW_LINEAGE_VERIFIED",
+   "exit_code": 0,
+   "checks": {
+    "C0_SCHEMA": "PASS",
+    "C0_FRAME_SCALE": "PASS",
+    "C1_FRONTMOST": "PASS",
+    "C2_TARGET_UNIQUE": "PASS",
+    "C3_GEOMETRY_DOUBT": "PASS",
+    "C4_AX_SURFACE_CLASS": "PASS",
+    "C5_BINDING": "PASS",
+    "C6_HEADER_CONTEXT": "PASS"
+   },
+   "guard_composite": "ALBUM_OPEN_VERIFIED_COMPOSITE_PASS",
+   "frozen_bound_to_frame": true,
+   "frozen_post_sha256": "ca7e0fc9c640cfebb05b7d5dedf5318137d2db1b30090c5399b3d38d9717d4a6"
+  }
+ },
+ "sequencing_disclosure": "The v7 guard was first dispatched in the same parallel tool batch as the frame-pair verifier that writes its --frozen-album-open-json input; the guard therefore ran before that file existed and refused fail-closed with FROZEN_ARTIFACT_MISSING (exit 3, no candidate, no GUI input). After the verifier finished, the guard was re-run once on the identical, unchanged input files and returned exit 0. No evidence file was modified between the two runs; this is a read-only sequencing correction, not a threshold/evidence retry.",
+ "fresh_frame_sha256": "ca7e0fc9c640cfebb05b7d5dedf5318137d2db1b30090c5399b3d38d9717d4a6",
+ "fresh_cu_shot_sha256": "d7a6330320f5b0589e587e7ae3887fbf0541a9cc28e6326a9ea2b43b9d51a1dd",
+ "geometry_binding": {
+  "path": "geometry-binding.json",
+  "sha256": "96b8717436c81973faed44e33e037fa2962b616abd71bed9f7743f273aeecdf2",
+  "verdict": "GEOMETRY_BINDING_PASS"
+ },
+ "composite": {
+  "verdict": "ALBUM_OPEN_VERIFIED_COMPOSITE",
+  "conditions": {
+   "album_open_verified": true,
+   "lineage_verified": true,
+   "lineage_guard_exit_zero": true,
+   "frozen_post_frame_bound_to_this_frame": true
+  }
+ },
+ "note_precedent": "title + 57 + changed_fraction alone is NOT sufficient (attempt-03/15/16/18 precedent); the composite additionally requires the v7 window-lineage class checks (C0-C6) derived exclusively from this round's evidence.",
+ "historical_coordinate_input": false,
+ "gui_inputs_sent": 0
+}

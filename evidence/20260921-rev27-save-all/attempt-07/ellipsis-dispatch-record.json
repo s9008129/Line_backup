@@ -1,0 +1,75 @@
+{
+ "artifact": "evidence/20260921-rev27-save-all/attempt-07/ellipsis-dispatch-record.json",
+ "phase": "S5_ellipsis_dispatch_record (reconstructed at close-out; provenance note below)",
+ "attempt": "07",
+ "authorization_type": "REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27C-LIVE-GATE-A-AFTER-ATTEMPT06",
+ "recorded_at_local": "2026-09-23T11:40:54+0800",
+ "provenance": "This standalone record is written during close-out (S13). Event facts come from the live session record of this attempt; they are corroborated by disk evidence: the pre-dispatch intent ellipsis-click-intent.json (recorded 11:12:00, dispatch_state NOT_ATTEMPTED), the menu-present frames frame-menu-post1.png (11:12, ~2.7 s after dispatch) and frame-menu-post2.png (11:12), the AXDialog appearing in s6-postclick-ax.json, and the S6 menu observation (recorded 11:17:00). The recorded_at_local labels are approximate; file mtimes and embedded evidence timestamps are authoritative.",
+ "event_local": "2026-09-23T11:11:53+0800",
+ "tool": "computer-use harness (CU); exactly one left click: app.click([304,50], {mouseButton:'left', clickCount:1})",
+ "target": {
+  "space": "window-local pt",
+  "click_point": [
+   304,
+   50
+  ],
+  "screen_pt": [
+   515,
+   79
+  ],
+  "frame_px": [
+   1030,
+   158
+  ],
+  "window_binding": {
+   "position_points": [
+    211,
+    29
+   ],
+   "size_points": [
+    327,
+    643
+   ],
+   "frame": "frame-s1.png",
+   "frame_sha256": "ca7e0fc9c640cfebb05b7d5dedf5318137d2db1b30090c5399b3d38d9717d4a6"
+  }
+ },
+ "derivation": {
+  "v5_locator_result": "ellipsis-locate-v5.json",
+  "v5_locator_result_sha256": "4e6a230ef394e5f0479f604a2c03afeefbdeeb3fadbbc5a7ff91b43b250c95a2",
+  "v5_tool": "evidence/20260916-route/tools/v5/locate_album_ellipsis.py",
+  "v5_tool_sha256": "6a015ea65058fe6c43a66fa07714e8f887e05507258d3a949f6f6807556b6418",
+  "v5_verdict": "ELIGIBLE",
+  "unique_dot_triple_pt": [
+   [
+    304.5,
+    44.0
+   ],
+   [
+    304.5,
+    49.5
+   ],
+   [
+    304.5,
+    55.0
+   ]
+  ],
+  "historical_coordinate_input": false,
+  "historical_coordinate_fallback": "FORBIDDEN",
+  "coincidence_note": "The numerically identical historical-looking value [304,50] was derived ONLY from this round's fresh frame (see ellipsis-click-intent.json); no historical coordinate was read as input."
+ },
+ "dispatch_state": "RETURNED",
+ "return_value": "undefined (the CU click call completed without error; the harness returns no value on success)",
+ "ellipsis_used": 1,
+ "gui_inputs_sent_after": 1,
+ "retry": 0,
+ "second_ellipsis": "FORBIDDEN_NOT_PERFORMED",
+ "other_menu_item": 0,
+ "post_state_evidence": [
+  "frame-menu-post1.png (ca83f28e...)",
+  "frame-menu-post2.png (b3ba8814...)",
+  "s6-postclick-ax.json (8b3dac34...)",
+  "s6-menu-observation.json"
+ ]
+}

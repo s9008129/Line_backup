@@ -1,0 +1,55 @@
+{
+ "artifact": "live-window-geometry-post1.json",
+ "x0": 422,
+ "y0": 58,
+ "x1": 1076,
+ "y1": 1344,
+ "source": "read-only AX window-bounds observation of the FOCUSED LINE window (main=True, is_ax_focused_window=True, index 1, subrole AXStandardWindow, pid 969) via attempt-07/tools/ax_window_bounds.swift; read at 2026-09-23T11:12:50+08:00 (post-click with menu open); position_points [211, 29], size_points [327, 643] x capture scale 2; detail-window rect unchanged from S2 pre-click observation; bound to THIS menu frame's SHA-256; NOT historical geometry",
+ "frame_sha256": "ca83f28e60336013f751a5fd716cdfad6803e5eb34a0fdfba837151ca69942f3",
+ "coordinate_space": "full-screen capture device pixels (screencapture -x at 2x); window ROI and click point share this space",
+ "window_point_rect": [
+  211,
+  29,
+  327,
+  643
+ ],
+ "window_position_points": [
+  211,
+  29
+ ],
+ "window_size_points": [
+  327,
+  643
+ ],
+ "window_index": 1,
+ "capture_scale": 2,
+ "transform": {
+  "formula": "frame_px = window_pt * 2",
+  "scale": 2
+ },
+ "frame_size_px": [
+  2294,
+  1490
+ ],
+ "menu_dialog_ax_corroboration": {
+  "subrole": "AXDialog",
+  "position_points": [
+   494,
+   81
+  ],
+  "size_points": [
+   137,
+   167
+  ],
+  "frame_px_rect": [
+   988,
+   162,
+   1262,
+   496
+  ],
+  "note": "the open ellipsis menu appears as an AXDialog window whose frame-px rect [988,162,1262,496] independently corroborates the detector menu bbox [994,123,1247,484] (overlap; the detector region additionally includes the drop-shadow/rounded-corner band)"
+ },
+ "generated_from": "this round's fresh read-only AX observation, post-click (attempt-07)",
+ "gui_inputs_sent": 0,
+ "generated_at_local": "2026-09-23T11:16:00+0800"
+}

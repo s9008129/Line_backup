@@ -1,0 +1,164 @@
+{
+ "artifact": "authorization-scope-check.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-07",
+ "authorization_type": "REV27C_ELLIPSIS_THEN_SAVE_ALL_GATE_A",
+ "authorization_id": "REV27C-LIVE-GATE-A-AFTER-ATTEMPT06",
+ "checked_at_local": "2026-09-23T11:07:30+0800",
+ "sequence_disclosure": "Before this file, only the attempt-07 directory with tools/ (fresh byte-identical read-only helper copies), the pre-declared route-runbook.md and authorization-record.json were created. No LINE observation, no frame capture, no staging mkdir, and no GUI input has occurred.",
+ "runbook_scanned": {
+  "path": "evidence/20260921-rev27-save-all/attempt-07/route-runbook.md",
+  "sha256": "2f994aad638a79ee0788cec2923cf7a466b7ff8166aad977debe01d98d826648",
+  "scanned_before_any_live_observation": true,
+  "scan_terms": [
+   "album-card click as this round's goal",
+   "album reopening",
+   "chooser navigation",
+   "path typing / path entry",
+   "Return",
+   "chooser confirm",
+   "download completion action"
+  ],
+  "occurrence_map": {
+   "album-card click as this round's goal": [
+    {
+     "line": 6,
+     "text": "- Budgets: `ellipsis_click <= 1`, `save_all_menu_item_click <= 1`, total GUI input <= 2, `staging mkdir <= 2`; everything else 0 (album-card, navigation, second ellipsis, second Save All, retry, other menu-item, chooser interaction, keyboar"
+    },
+    {
+     "line": 7,
+     "text": "- Owner-prepared start state (owner statement, re-stated for this round): LINE frontmost; target album opened; `2024/05/13～05/17` with 57-photo context and photo grid visible; album-level ⋮ visible; ⋮ popup menu NOT open; no occluding app. "
+    },
+    {
+     "line": 75,
+     "text": "album-card 0; navigation 0; ellipsis <= 1; Save All <= 1; total GUI <= 2; retry 0; second ellipsis 0; second Save All 0; other menu item 0; chooser interaction 0; keyboard 0 (Escape included); scroll 0; AX write 0; bring-to-front 0; app acq"
+    }
+   ],
+   "album reopening": [
+    {
+     "line": 7,
+     "text": "- Owner-prepared start state (owner statement, re-stated for this round): LINE frontmost; target album opened; `2024/05/13～05/17` with 57-photo context and photo grid visible; album-level ⋮ visible; ⋮ popup menu NOT open; no occluding app. "
+    },
+    {
+     "line": 28,
+     "text": "- Any mismatch -> **STOP**, GUI input 0, no reopen/navigate/bring-to-front."
+    }
+   ],
+   "chooser navigation": [
+    {
+     "line": 6,
+     "text": "- Budgets: `ellipsis_click <= 1`, `save_all_menu_item_click <= 1`, total GUI input <= 2, `staging mkdir <= 2`; everything else 0 (album-card, navigation, second ellipsis, second Save All, retry, other menu-item, chooser interaction, keyboar"
+    },
+    {
+     "line": 58,
+     "text": "- `save-all-click-intent.json` with: authorization type/id, run_id, staging path, baseline inventory SHA, staging-preflight SHA, fresh composite SHA, fresh menu frame SHA, menu detector SHA, menu observation SHA, v8 source SHA, v8 result SH"
+    },
+    {
+     "line": 65,
+     "text": "- Capture post frames (~0.4 s, ~2.2 s) + read-only CU/AX. Answer the 13 questions: menu disappeared? new panel/modal/window? process/app identity? window/panel role? title? visible controls? visible fields? visible buttons? chooser affirmat"
+    },
+    {
+     "line": 66,
+     "text": "- `CHOOSER_AFFIRMATIVELY_OBSERVED` only if THIS round's fresh evidence proves it; never upgrade from historical runs. Ambiguous -> record exact evidence and STOP."
+    },
+    {
+     "line": 67,
+     "text": "- Filesystem tripwire (pre-Save-All, immediate post-Save-All, end): baseline digest must remain `b7debe92…`; staging inventory read-only; if staging gains any file before a chooser confirm -> `UNEXPECTED_PRE_CONFIRM_FILESYSTEM_WRITE` -> STO"
+    },
+    {
+     "line": 68,
+     "text": "- **STOP.** No chooser interaction of any kind (no click, keyboard, Escape, Cmd+Shift+G, Go to Folder, path entry, Return, confirm, cancel, click outside, scroll, AX write). Gate B requires a NEW owner authorization."
+    },
+    {
+     "line": 75,
+     "text": "album-card 0; navigation 0; ellipsis <= 1; Save All <= 1; total GUI <= 2; retry 0; second ellipsis 0; second Save All 0; other menu item 0; chooser interaction 0; keyboard 0 (Escape included); scroll 0; AX write 0; bring-to-front 0; app acq"
+    },
+    {
+     "line": 78,
+     "text": "ALBUM_OPEN_VERIFIED_COMPOSITE + v5 ELIGIBLE + ellipsis = 1 + MENU_SURFACE_AFFIRMATIVELY_OBSERVED + target 儲存全部 affirmative + v8 ELIGIBLE + baseline PASS + staging PASS + Save All = 1 + dispatch_state = RETURNED + CHOOSER_AFFIRMATIVELY_OBSER"
+    }
+   ],
+   "path typing / path entry": [
+    {
+     "line": 6,
+     "text": "- Budgets: `ellipsis_click <= 1`, `save_all_menu_item_click <= 1`, total GUI input <= 2, `staging mkdir <= 2`; everything else 0 (album-card, navigation, second ellipsis, second Save All, retry, other menu-item, chooser interaction, keyboar"
+    },
+    {
+     "line": 68,
+     "text": "- **STOP.** No chooser interaction of any kind (no click, keyboard, Escape, Cmd+Shift+G, Go to Folder, path entry, Return, confirm, cancel, click outside, scroll, AX write). Gate B requires a NEW owner authorization."
+    }
+   ],
+   "Return": [
+    {
+     "line": 6,
+     "text": "- Budgets: `ellipsis_click <= 1`, `save_all_menu_item_click <= 1`, total GUI input <= 2, `staging mkdir <= 2`; everything else 0 (album-card, navigation, second ellipsis, second Save All, retry, other menu-item, chooser interaction, keyboar"
+    },
+    {
+     "line": 62,
+     "text": "- Dispatch semantics: not sent -> `NOT_ATTEMPTED`; sent+returned -> `RETURNED`; possibly sent/ambiguous -> `UNKNOWN` (then `save_all_used = 1`, `retry = 0`, `manual_reconciliation_required = true`; never click again without a reconciliation"
+    },
+    {
+     "line": 68,
+     "text": "- **STOP.** No chooser interaction of any kind (no click, keyboard, Escape, Cmd+Shift+G, Go to Folder, path entry, Return, confirm, cancel, click outside, scroll, AX write). Gate B requires a NEW owner authorization."
+    },
+    {
+     "line": 78,
+     "text": "ALBUM_OPEN_VERIFIED_COMPOSITE + v5 ELIGIBLE + ellipsis = 1 + MENU_SURFACE_AFFIRMATIVELY_OBSERVED + target 儲存全部 affirmative + v8 ELIGIBLE + baseline PASS + staging PASS + Save All = 1 + dispatch_state = RETURNED + CHOOSER_AFFIRMATIVELY_OBSER"
+    }
+   ],
+   "chooser confirm": [
+    {
+     "line": 6,
+     "text": "- Budgets: `ellipsis_click <= 1`, `save_all_menu_item_click <= 1`, total GUI input <= 2, `staging mkdir <= 2`; everything else 0 (album-card, navigation, second ellipsis, second Save All, retry, other menu-item, chooser interaction, keyboar"
+    },
+    {
+     "line": 67,
+     "text": "- Filesystem tripwire (pre-Save-All, immediate post-Save-All, end): baseline digest must remain `b7debe92…`; staging inventory read-only; if staging gains any file before a chooser confirm -> `UNEXPECTED_PRE_CONFIRM_FILESYSTEM_WRITE` -> STO"
+    },
+    {
+     "line": 68,
+     "text": "- **STOP.** No chooser interaction of any kind (no click, keyboard, Escape, Cmd+Shift+G, Go to Folder, path entry, Return, confirm, cancel, click outside, scroll, AX write). Gate B requires a NEW owner authorization."
+    },
+    {
+     "line": 75,
+     "text": "album-card 0; navigation 0; ellipsis <= 1; Save All <= 1; total GUI <= 2; retry 0; second ellipsis 0; second Save All 0; other menu item 0; chooser interaction 0; keyboard 0 (Escape included); scroll 0; AX write 0; bring-to-front 0; app acq"
+    }
+   ],
+   "download completion action": [
+    {
+     "line": 6,
+     "text": "- Budgets: `ellipsis_click <= 1`, `save_all_menu_item_click <= 1`, total GUI input <= 2, `staging mkdir <= 2`; everything else 0 (album-card, navigation, second ellipsis, second Save All, retry, other menu-item, chooser interaction, keyboar"
+    },
+    {
+     "line": 55,
+     "text": "- Fresh `run_id = RUN-YYYYMMDD-HHMMSS-01`; path `/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/<run_id>/`; mkdir <= 2 (parent only if machine-proven absent + leaf). Machine proofs (all required): authorized canonical root, no symlink"
+    },
+    {
+     "line": 75,
+     "text": "album-card 0; navigation 0; ellipsis <= 1; Save All <= 1; total GUI <= 2; retry 0; second ellipsis 0; second Save All 0; other menu item 0; chooser interaction 0; keyboard 0 (Escape included); scroll 0; AX write 0; bring-to-front 0; app acq"
+    },
+    {
+     "line": 78,
+     "text": "ALBUM_OPEN_VERIFIED_COMPOSITE + v5 ELIGIBLE + ellipsis = 1 + MENU_SURFACE_AFFIRMATIVELY_OBSERVED + target 儲存全部 affirmative + v8 ELIGIBLE + baseline PASS + staging PASS + Save All = 1 + dispatch_state = RETURNED + CHOOSER_AFFIRMATIVELY_OBSER"
+    }
+   ]
+  },
+  "per_term_verdicts": {
+   "album-card click as this round's goal": "NOT_A_GOAL: every occurrence is inside a budget-0 clause, a predecessor disclosure, or a STOP rule; no line assigns an album-card click as this round's action",
+   "album reopening": "NOT_A_GOAL: occurrences only in the owner-prepared-state / no-reopen prohibition and the attempt-05/06 lineage text",
+   "chooser navigation": "NOT_A_GOAL: occurrences only in budget-0 clauses, the S12 absolute boundary and the STOP rule; no chooser action is planned",
+   "path typing / path entry": "NOT_A_GOAL: occurrences only in budget-0 clauses and the S12 absolute boundary",
+   "Return": "NOT_A_GOAL: 'Return' never appears as a planned key action; occurrences are the word inside budget-0 lists or unrelated text (no keystroke is planned)",
+   "chooser confirm": "NOT_A_GOAL: occurrences only in prohibition lists / STOP rules ('destination confirm' budget 0)",
+   "download completion action": "NOT_A_GOAL: occurrences only in budget-0 clauses ('download-completion 0')"
+  }
+ },
+ "declared_goals": {
+  "ellipsis_click": "<= 1 (album-level ⋮ on the fresh v5 candidate)",
+  "save_all_menu_item_click": "<= 1 (fresh v8 candidate 儲存全部)",
+  "total_gui_input": "<= 2",
+  "staging_mkdir": "<= 2 (staging preflight only, after S6+S8 PASS)"
+ },
+ "forbidden_goals_found": [],
+ "verdict": "AUTHORIZATION_SCOPE_MATCH",
+ "gui_inputs_sent": 0
+}

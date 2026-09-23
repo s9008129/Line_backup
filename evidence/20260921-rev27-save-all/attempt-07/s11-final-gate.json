@@ -1,0 +1,65 @@
+{
+ "artifact": "s11-final-gate.json",
+ "phase": "S11 final freshness gate immediately before the single Save All dispatch",
+ "recorded_at_local": "2026-09-23T11:21:00+0800",
+ "checks": {
+  "line_still_frontmost": {
+   "ax_frontmost": true,
+   "frontmost_application": "jp.naver.line.mac",
+   "ts": "2026-09-23T11:19:45+08:00"
+  },
+  "same_detail_lineage": {
+   "index": 1,
+   "subrole": "AXStandardWindow",
+   "position_points": [
+    211,
+    29
+   ],
+   "size_points": [
+    327,
+    643
+   ],
+   "main": true,
+   "focused": true,
+   "note": "same rect as the S2/S3 detail window; the AXDialog index 0 is the open menu popup"
+  },
+  "menu_still_present_fresh_frame": {
+   "frame": "s11-preclick-frame.png",
+   "sha256": "dc12c88e37f92cd5df5e118300c9cefe38b7cc91019b2317ccd3c47bf7e94795",
+   "detector": "MENU_DETECTED",
+   "chosen_bbox_px": [
+    1008,
+    182,
+    1246,
+    482
+   ]
+  },
+  "fresh_candidate_still_valid": {
+   "v8_result": "s11-v8-locate-save-all.json",
+   "sha256": "2eb763f295f322766b9b34c3cb4a6eb44e280a9aef8180875dc92b6011e2761f",
+   "verdict": "ELIGIBLE",
+   "candidate_app_local_pt": [
+    319.75,
+    135.25
+   ],
+   "agreement_with_S7_candidate": "same safe point (S7 [319.75,135.333] vs S11 [319.75,135.25]; delta 0.083 px) -> rounded click point [320,135] valid under both"
+  },
+  "baseline_unchanged_since_S8": {
+   "manifest_digest_sha256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd",
+   "matches_S8": true
+  },
+  "staging_preflight_PASS": "STAGING_PREFLIGHT_PASS",
+  "intent_PASS": {
+   "path": "save-all-click-intent.json",
+   "sha256": "bead5155c984c9ba9e8fb68c3a5d71a11088a2b4eed5ad2b0272763ddcaa3325",
+   "dispatch_state": "NOT_ATTEMPTED"
+  }
+ },
+ "click_point_app_local_pt": [
+  320,
+  135
+ ],
+ "dispatch_immediately_follows": true,
+ "gui_inputs_sent_so_far": 1,
+ "verdict": "S11_FINAL_GATE_PASS"
+}

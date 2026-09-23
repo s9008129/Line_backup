@@ -1,0 +1,80 @@
+{
+ "artifact": "staging-preflight.json",
+ "attempt": "evidence/20260921-rev27-save-all/attempt-07/",
+ "phase": "S9_fresh_staging_preflight (strictly before Save All; only after S6+S8 PASS)",
+ "recorded_at_local": "2026-09-23T11:19:08",
+ "run_id": "RUN-20260923-111908-01",
+ "staging_path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/RUN-20260923-111908-01",
+ "mkdir_calls": [
+  {
+   "mkdir": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging",
+   "at": "2026-09-23T11:19:08.839600"
+  },
+  {
+   "mkdir": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/RUN-20260923-111908-01",
+   "at": "2026-09-23T11:19:08.839641"
+  }
+ ],
+ "staging_mkdir_used": 2,
+ "staging_mkdir_budget": 2,
+ "policy": "PRESERVE (no cleanup/delete at any point)",
+ "proofs": {
+  "authorized_root": {
+   "path": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC",
+   "exists": true,
+   "is_symlink": false,
+   "realpath": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC",
+   "realpath_equals_path": true
+  },
+  "ancestors_not_symlinks": {
+   "/Users": {
+    "is_symlink": false,
+    "exists": true
+   },
+   "/Users/hsiaojohnny": {
+    "is_symlink": false,
+    "exists": true
+   },
+   "/Users/hsiaojohnny/Downloads": {
+    "is_symlink": false,
+    "exists": true
+   },
+   "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC": {
+    "is_symlink": false,
+    "exists": true
+   }
+  },
+  "run_id_unique": {
+   "run_id": "RUN-20260923-111908-01",
+   "leaf_existed_before": false,
+   "sibling_entries": [],
+   "staging_existed_before": false
+  },
+  "leaf_absent_before_exists_after": {
+   "absent_before": true,
+   "exists_after": true,
+   "is_symlink": false
+  },
+  "empty_after_creation": {
+   "entries": [],
+   "entry_count": 0,
+   "bytes": 0
+  },
+  "not_baseline_ancestor_or_descendant": {
+   "baseline": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57",
+   "leaf": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/RUN-20260923-111908-01",
+   "commonpath": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC",
+   "leaf_is_ancestor_of_baseline": false,
+   "leaf_is_descendant_of_baseline": false,
+   "equal": false
+  },
+  "writable": {
+   "write_probe_ok": true,
+   "probe_removed": true,
+   "entries_after_probe": []
+  }
+ },
+ "all_proofs_pass": true,
+ "verdict": "STAGING_PREFLIGHT_PASS",
+ "gui_inputs_sent": 1
+}
