@@ -1,0 +1,29 @@
+{
+ "artifact": "post-dispatch-destination-scan.json",
+ "phase": "S13_additional_read_only_destination_scan (belt-and-braces check for a silent pre-confirm write)",
+ "attempt": "07",
+ "recorded_at_local": "2026-09-23T11:42:23+0800",
+ "purpose": "Because no chooser was observed, this close-out additionally checked the owner's common destination folders (outside the accepted baseline and outside the staging root) for any file written around or after the Save All dispatch.",
+ "method": "read-only find/stat; no writes, no GUI, no cleanup",
+ "commands_and_results": [
+  {
+   "command": "find ~/Downloads -newermt '2026-09-23 10:45' -not -path 'Downloads/LINE-Backup-PoC/*'",
+   "result": "only the owner's OWN concurrent work: Downloads/photo/...投資簡報_2e2b74bd/....pdf (mtime 10:53:58, Preview export), Downloads/podcast/.yt_down_txt/... (mtime 10:53:58, the owner's own transcript-download tool), Downloads/.DS_Store (10:54:21)"
+  },
+  {
+   "command": "find ~/Desktop -newermt '2026-09-23 10:45'",
+   "result": "no matches"
+  },
+  {
+   "command": "find ~/Documents -maxdepth 2 -newermt '2026-09-23 10:45'",
+   "result": "no matches"
+  },
+  {
+   "command": "find ~/Downloads ~/Desktop -newermt '2026-09-23 11:29:18' -not -path 'Downloads/LINE-Backup-PoC/*'",
+   "result": "NO MATCHES - nothing was written to ~/Downloads or ~/Desktop at or after the Save All dispatch moment"
+  }
+ ],
+ "interpretation": "No file appeared in any common destination at or after the dispatch; combined with the empty staging directory and the unchanged accepted baseline, there is no evidence of any LINE-originated write. The only recent writes in ~/Downloads predate the dispatch by ~35 minutes and belong to the owner's own separate work (PDF export from Preview and the podcast/transcript tool), not to this attempt or to LINE.",
+ "verdict": "NO_SILENT_PRE_CONFIRM_WRITE_ANYWHERE_CHECKED",
+ "gui_inputs": 0
+}

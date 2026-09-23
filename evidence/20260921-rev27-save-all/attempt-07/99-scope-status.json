@@ -67,8 +67,8 @@
  "frozen_tools_not_modified": true,
  "plan_reviews_not_modified": true,
  "staging_not_modified": true,
- "artifact_count": 153,
- "artifact_total_bytes_excluding_this_file": 37773303,
+ "artifact_count": 154,
+ "artifact_total_bytes_excluding_this_file": 37775203,
  "artifact_manifest_sha256": {
   "00-start-state.json": "83cf0461bb808a1bfb43c2f36d6ceb4efd4a3f0462053a0a00a0883242309272",
   "album-open-verify-frame.json": "b606e5ce90b71ea82b5c6aabe541d2d38b85002a9720e3466903ba288111202d",
@@ -101,6 +101,7 @@
   "live-window-geometry-post1.json": "2d862ca2c42d30c988237f971279fa315995ecc2889f1791327438381dc1cfe7",
   "live-window-geometry.json": "aed990c5356028f4b19e5a28f3f325e979ce85742d895a9d3871e4d873a4374d",
   "menu_crop_3x.tmp.png": "76625936876b9ff17126c3f3242df0b9c5f5aa3d6ef9d078c786c9b12b58a3cc",
+  "post-dispatch-destination-scan.json": "c58b27c9d154b8350ccbb00e1c1985ebd4d80d1922d0f08f49a99eff8a138e49",
   "post-save-all-frame-1-context.png": "b0ac43bc6c2bb86b27b3f98a1237fc5048168813ffbe0d8f41a5a60002c30328",
   "post-save-all-frame-1-window.png": "941f94ab1a545f4b97d41e7fc70e3ffb94d249ac7a93dc586a808edd55cd1b68",
   "post-save-all-frame-1.png": "0f3e1ad733f0981a050f26e5f3c78d173132a57c1a16c8ff92857488fc3c1fbe",
@@ -224,5 +225,6 @@
   "v8-locate-save-all.json": "8a08d654f118611fe649c8bd90da6782b7ce5ecda793d2140a35f5ed11205599",
   "v8-locate-save-all.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
  },
- "manifest_note": "sha256 of every file in this attempt directory except 99-scope-status.json itself; sorted by relative path"
+ "manifest_note": "sha256 of every file in this attempt directory except 99-scope-status.json itself; sorted by relative path; regenerated at 2026-09-23T11:42:23+0800 to include post-dispatch-destination-scan.json (second local commit)",
+ "s13_addendum": "post-dispatch-destination-scan.json: read-only scan of ~/Downloads, ~/Desktop, ~/Documents found NO file written at or after the Save All dispatch moment (11:29:18); the only recent Downloads entries predate it and belong to the owner's own concurrent work. Verdict NO_SILENT_PRE_CONFIRM_WRITE_ANYWHERE_CHECKED."
 }
