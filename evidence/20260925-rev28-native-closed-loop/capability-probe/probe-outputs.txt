@@ -1,0 +1,37 @@
+CGPreflightScreenCaptureAccess=true
+CGPreflightPostEventAccess=true
+AXIsProcessTrusted=true
+SCShareableContent.OK windows=6 apps=3 displays=1 lineWindows=0
+  win id=483 app=com.apple.WindowManager frame=(0.0, 0.0, 1147.0, 745.0) title=Wallpaper onScreen=true
+  win id=3 app= frame=(0.0, 0.0, 1147.0, 745.0) title=Display 1 Backstop onScreen=true
+  win id=265 app=com.apple.Terminal frame=(0.0, 62.0, 1147.0, 683.0) title=Line_backup — ⠦ Line_backup — codex -m deepseek-v4.1-flash --sandbox danger-full-access -c model_provider="ollama_cloud" -c model_providers.ollama_cloud.name="Ollama Cloud" -c model_providers.ollama_cloud.base_url="https://ollama.com/v1" -c model_providers.ollama_cloud.env_key="OLLAMA_API_KEY" -c model_providers.ollama_cloud.wire_api="responses" -c model_providers.ollama_cloud.requires_openai_auth=false -c model_providers.ollama_cloud.supports_websockets=false -c model_providers.ollama_cloud.supports_standalone_web_search=false -c web_search="disabled" -c model_context_window=1048576 -c model_auto_compact_token_limit=786432 -c model_supports_reasoning_summaries=true -c model_reasoning_effort="max" ▸ probe — 161×47 onScreen=true
+  win id=363 app= frame=(0.0, 0.0, 1147.0, 26.0) title=Menubar onScreen=true
+  win id=360 app=com.apple.Terminal frame=(0.0, 26.0, 1147.0, 68.0) title= onScreen=true
+  win id=362 app=com.apple.WindowManager frame=(0.0, 0.0, 1147.0, 745.0) title=Fullscreen Backdrop onScreen=true
+=====
+NSApp initialized
+target windowID=265 frame=(0.0, 62.0, 1147.0, 683.0)
+filter created
+contentRect=(0.0, 62.0, 1147.0, 683.0) pointPixelScale=2.0
+capture returned
+captured sdrImage px=2294x1438
+=====
+=== SCShareableContent windows=8 apps=3 ===
+SC win id=363 layer=24 onScreen=true active=true app= pid=599 frame=(0.0, 0.0, 1147.0, 26.0) title=Menubar
+SC win id=494 layer=2147483630 onScreen=true active=true app= pid=599 frame=(1121.0, 1.0, 28.0, 28.0) title=StatusIndicator
+SC win id=493 layer=2147483630 onScreen=true active=true app= pid=599 frame=(1121.0, 1.0, 28.0, 28.0) title=StatusIndicator
+SC win id=360 layer=0 onScreen=true active=true app=com.apple.Terminal pid=1911 frame=(0.0, 26.0, 1147.0, 68.0) title=
+SC win id=3 layer=-2147483626 onScreen=true active=true app= pid=599 frame=(0.0, 0.0, 1147.0, 745.0) title=Display 1 Backstop
+SC win id=265 layer=0 onScreen=true active=true app=com.apple.Terminal pid=1911 frame=(0.0, 62.0, 1147.0, 683.0) title=Line_backup — ⠏ Line_backup — codex -m d
+SC win id=362 layer=-2147483622 onScreen=true active=true app=com.apple.WindowManager pid=1023 frame=(0.0, 0.0, 1147.0, 745.0) title=Fullscreen Backdrop
+SC win id=483 layer=-2147483624 onScreen=true active=true app=com.apple.WindowManager pid=1023 frame=(0.0, 0.0, 1147.0, 745.0) title=Wallpaper
+=== CGWindowListCopyWindowInfo ===
+CG win id=494 layer=2147483630 owner=Window Server bounds=["Y": 1, "X": 1121, "Height": 28, "Width": 28]
+CG win id=493 layer=2147483630 owner=Window Server bounds=["Y": 1, "X": 1121, "Height": 28, "Width": 28]
+CG win id=363 layer=24 owner=Window Server bounds=["Y": 0, "X": 0, "Height": 26, "Width": 1147]
+CG win id=360 layer=0 owner=終端機 bounds=["Y": 26, "X": 0, "Height": 68, "Width": 1147]
+CG win id=265 layer=0 owner=終端機 bounds=["Y": 62, "X": 0, "Height": 683, "Width": 1147]
+=== NSScreen ===
+screen frame=(0.0, 0.0, 1147.0, 745.0) backingScaleFactor=2.0 deviceDescription=[__C.NSDeviceDescriptionKey(_rawValue: NSDeviceIsScreen): YES, __C.NSDeviceDescriptionKey(_rawValue: NSDeviceResolution): NSSize: {144, 144}, __C.NSDeviceDescriptionKey(_rawValue: NSDeviceSize): NSSize: {1147, 745}, __C.NSDeviceDescriptionKey(_rawValue: NSDeviceBitsPerSample): 8, __C.NSDeviceDescriptionKey(_rawValue: NSDeviceColorSpaceName): NSCalibratedRGBColorSpace, __C.NSDeviceDescriptionKey(_rawValue: NSScreenNumber): 1]
+=====
+NO WIN 70

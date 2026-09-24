@@ -1,0 +1,5 @@
+probe record written: /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260925-rev28-native-closed-loop/capability-probe-exec/probe-record-20260925T074610+0800.json
+overallStatus=PASS
+trust ax=true screenCapture=true postEvent=true
+sck status=OK windows=7 displays=1
+vision status=OK exactMatch=true strings=["儲存全部", "57張照片"]

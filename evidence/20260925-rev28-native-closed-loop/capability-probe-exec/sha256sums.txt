@@ -1,0 +1,6 @@
+rev28 capability-probe-exec evidence checksums
+generated_at: 2026-09-25T07:46:16+0800
+3a74417139bb2c09e571fae5b15d77dd811a1578e12802051365e6f06ff7e782  evidence/20260925-rev28-native-closed-loop/capability-probe-exec/build-log.txt
+499748933e2e089e05275c92147894a95705ab4c8cd8beb50af73ed9918d4b13  evidence/20260925-rev28-native-closed-loop/capability-probe-exec/probe-record-20260925T074610+0800.json
+5d37afeb895c3afe3dda8aed12f4f254dcf00a5e341679d2f38a5c756aadd796  evidence/20260925-rev28-native-closed-loop/capability-probe-exec/probe-stdout.txt
+557f42b16571229256d2fcc28c436bf86e39c554c850ad2fd8dd16cbbf0809ab  evidence/20260925-rev28-native-closed-loop/capability-probe-exec/sha256sums.txt

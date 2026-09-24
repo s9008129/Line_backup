@@ -1,0 +1,27 @@
+{
+  "probe_round": "rev28-stage01-capability-probe",
+  "recorded_at_local": "2026-09-25T06:50+0800",
+  "environment": {
+    "macos_product_version": "27.0",
+    "macos_build": "26A428",
+    "xcode_version": "26.6 (17F113)",
+    "default_macos_sdk": "MacOSX26.5.sdk (SDK version 26.5)",
+    "swift_version": "Apple Swift 6.3.3 (swiftlang-6.3.3.1.3)",
+    "line_app_version": "26.0.2 (build 3828)",
+    "line_running_at_probe": false,
+    "display": "single display 1147x745 pt, backingScaleFactor 2.0",
+    "note_parallel_agent_activity": "another Terminal window titled 'convert ...' (windowID 70) was observed and later disappeared between probes; treat other sessions as potential focus theft / occlusion sources"
+  },
+  "capability_probe_results": {
+    "CGPreflightScreenCaptureAccess": true,
+    "CGPreflightPostEventAccess": true,
+    "AXIsProcessTrusted": true,
+    "SCShareableContent_excludingDesktopWindows": "OK (windows=6-8, apps=3, displays=1; LINE not running so lineWindows=0)",
+    "capture_desktopIndependentWindow_SCScreenshotConfiguration_includeChildWindows_false": "OK px=2294x1366 = 1147x683 pt * 2.0 (equals SCWindow.frame exactly)",
+    "capture_desktopIndependentWindow_SCScreenshotConfiguration_includeChildWindows_true": "OK px=2294x1438 = 1147x719 pt * 2.0 (union with child titlebar window frame y=26..94; NOT equal to SCWindow.frame)",
+    "captureImage_SCStreamConfiguration_default": "OK px=1920x1080 (default dimensions; explicit width/height required for deterministic size)",
+    "first_capture_attempt_without_NSApplication_init": "crashed with 'Assertion failed: (did_initialize), function CGS_REQUIRE_INIT' - a GUI-eligible process context (NSApplication.shared + run loop) is mandatory for SCScreenshotManager in this tool process",
+    "window_frame_vs_capture_bbox_hypothesis": "capture bounding box for includeChildWindows=true equals the union of SCWindow.frame(s) of the window and its included child windows; includeChildWindows=false equals the window frame exactly (HYPOTHESIS to be proven by the synthetic harness)",
+    "cross_check_SCWindow_vs_CGWindowList": "SCWindow.windowID/frame matched CGWindowListCopyWindowInfo kCGWindowNumber/kCGWindowBounds for all observed windows (Terminal content window 265 frame (0,62,1147,683))"
+  }
+}

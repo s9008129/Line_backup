@@ -1,0 +1,48 @@
+{
+  "argv" : [
+    "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28probe",
+    "evidence\/20260925-rev28-native-closed-loop\/capability-probe-exec"
+  ],
+  "finishedAtISO8601" : "2026-09-25T07:46:10.445+08:00",
+  "hostOSBuild" : "26A428",
+  "hostOSVersion" : "27.0.0",
+  "notes" : [
+    "TCC\/trust results are evaluated by macOS for this launched binary's responsible-process context (the parent process that launched it).",
+    "No mouse\/keyboard events were posted; CGEvent construction was an object-creation smoke check only."
+  ],
+  "overallStatus" : "PASS",
+  "parentPID" : 34884,
+  "pid" : 34886,
+  "probeID" : "rev28probe-1790293556-34886",
+  "processExecutablePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28probe",
+  "quartz" : {
+    "keyboardEventConstructionOK" : true,
+    "mouseEventConstructionOK" : true,
+    "onScreenWindowInfoCount" : 7
+  },
+  "schemaVersion" : "rev28.capability-probe.v1",
+  "screenCaptureKit" : {
+    "applicationCount" : 3,
+    "displayCount" : 1,
+    "status" : "OK",
+    "windowCount" : 7
+  },
+  "sdkPathFromEnvironment" : "\/Applications\/Xcode.app\/Contents\/Developer\/Platforms\/MacOSX.platform\/Developer\/SDKs\/MacOSX26.5.sdk",
+  "startedAtISO8601" : "2026-09-25T07:45:56.700+08:00",
+  "swiftVersionFromEnvironment" : "swift-driver version: 1.148.6 Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "trust" : {
+    "axIsProcessTrusted" : true,
+    "cgPreflightPostEventAccess" : true,
+    "cgPreflightScreenCaptureAccess" : true
+  },
+  "vision" : {
+    "expectedExactStringsFound" : true,
+    "expectedRelaxedSubstringFound" : true,
+    "recognizedStrings" : [
+      "儲存全部",
+      "57張照片"
+    ],
+    "status" : "OK"
+  }
+}

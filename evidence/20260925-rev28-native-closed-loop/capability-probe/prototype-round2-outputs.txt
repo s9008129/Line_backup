@@ -1,0 +1,27 @@
+### markers4 (ignoreShadows/ignoreClipping matrix)
+window frameTL=(300.0, 121.0, 400.0, 364.0) content size=(400.0, 332.0)
+marker TL: viewLocal=(20.0, 20.0) windowTL=(20.0,52.0) screenTL=(320.0, 173.0)
+marker TR: viewLocal=(380.0, 20.0) windowTL=(380.0,52.0) screenTL=(680.0, 173.0)
+marker BL: viewLocal=(20.0, 312.0) windowTL=(20.0,344.0) screenTL=(320.0, 465.0)
+marker BR: viewLocal=(380.0, 312.0) windowTL=(380.0,344.0) screenTL=(680.0, 465.0)
+windowNumber=858; SC windows: 35:(8.0, 214.0, 360.0, 180.0) | 36:(0.0, 0.0, 1147.0, 26.0) | 858:(300.0, 121.0, 400.0, 364.0) | 34:(188.0, 34.0, 180.0, 180.0) | 18:(0.0, 0.0, 1147.0, 745.0) | 49:(0.0, 0.0, 1147.0, 745.0) | 3:(0.0, 0.0, 1147.0, 745.0) | 33:(8.0, 34.0, 180.0, 180.0) | 37:(0.0, 0.0, 1147.0, 63.0) | 61:(0.0, 0.0, 1147.0, 745.0)
+SCWindow.frame=(300.0, 121.0, 400.0, 364.0) contentRect=(300.0, 121.0, 400.0, 364.0)
+DEFAULT capture px=800x728
+  full-frame SHA later; clusters:
+  magenta(TL) px=[(39.5, 103.5, 400)] cyan(TR) px=[] yellow(BL) px=[(39.5, 687.5, 400)] green(BR) px=[]
+cfg=default px=1024x952 pt=512.0x476.0 magenta=[(151.5, 179.5, 400)]
+cfg=ignoreShadows px=800x728 pt=400.0x364.0 magenta=[(39.5, 103.5, 400)]
+cfg=ignoreClipping px=1024x952 pt=512.0x476.0 magenta=[(151.5, 179.5, 400)]
+cfg=both px=800x728 pt=400.0x364.0 magenta=[(39.5, 103.5, 400)]
+
+### childunion3 (union rule with ignoreShadows=true)
+mainID=866 mainAppKit=(240.0, 320.0, 400.0, 332.0) mainTopLeft=(240.0, 93.0, 400.0, 332.0)
+childID=867 childAppKit=(560.0, 569.0, 200.0, 150.0) childTopLeft=(560.0, 26.0, 200.0, 150.0)
+expected union (pt) = (240.0, 26.0, 520.0, 399.0)
+SC win id=866 frame=(240.0, 93.0, 400.0, 332.0) owner=
+SC win id=867 frame=(560.0, 26.0, 200.0, 150.0) owner=
+filter contentRect=(240.0, 93.0, 400.0, 332.0) scale=2.0
+includeChildWindows=false ignoreShadows=false px=1024x888 pt=512.0x444.0
+includeChildWindows=true ignoreShadows=false px=1152x946 pt=576.0x473.0
+includeChildWindows=false ignoreShadows=true px=800x664 pt=400.0x332.0
+includeChildWindows=true ignoreShadows=true px=1040x798 pt=520.0x399.0
