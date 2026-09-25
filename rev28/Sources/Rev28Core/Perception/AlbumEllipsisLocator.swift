@@ -272,8 +272,8 @@ public enum AlbumEllipsisLocator {
                           abs(b.center.x - c.center.x) <= 3 else { continue }
                     let firstGap = b.center.y - a.center.y
                     let secondGap = c.center.y - b.center.y
-                    guard (3...10).contains(firstGap),
-                          (3...10).contains(secondGap),
+                    guard firstGap >= 3, firstGap <= 10,
+                          secondGap >= 3, secondGap <= 10,
                           c.center.y - a.center.y <= 24 else { continue }
                     result.append([a, b, c])
                 }
