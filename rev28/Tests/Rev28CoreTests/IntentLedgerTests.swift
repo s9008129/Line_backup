@@ -46,4 +46,29 @@ final class IntentLedgerTests: XCTestCase {
         try text.write(to: url, atomically: true, encoding: .utf8)
         XCTAssertThrowsError(try IntentLedger(fileURL: url))
     }
+    func testSaveAllEmpiricalClassificationIsConservativeAndPersisted() throws {
+        let preSideEffect = SaveAllEmpiricalClassRecord.derive(
+            postconditionOutcome: "CHOOSER_VERIFIED",
+            chooserAffirmed: true,
+            attributableFilesystemWriteObservedBeforeChooser: false,
+            postconditionEvidenceSHA256: String(repeating: "a", count: 64),
+            tripwireEvidenceSHA256: String(repeating: "b", count: 64)
+        )
+        XCTAssertEqual(preSideEffect.classification, .preSideEffectObserved)
+
+        let indeterminate = SaveAllEmpiricalClassRecord.derive(
+            postconditionOutcome: "NO_CHOOSER_OBSERVED",
+            chooserAffirmed: false,
+            attributableFilesystemWriteObservedBeforeChooser: false,
+            postconditionEvidenceSHA256: String(repeating: "c", count: 64),
+            tripwireEvidenceSHA256: String(repeating: "d", count: 64)
+        )
+        XCTAssertEqual(indeterminate.classification, .irreversibleOrIndeterminate)
+
+        let url = try temporaryLedger()
+        let ledger = try IntentLedger(fileURL: url)
+        try preSideEffect.append(to: ledger)
+        XCTAssertEqual(ledger.count(kind: "saveAllEmpiricalClassRecord"), 1)
+        XCTAssertEqual(ledger.entries.last?.payload["classification"], "PRE_SIDE_EFFECT_OBSERVED")
+    }
 }
