@@ -94,6 +94,19 @@ final class StagingVerifierTests: XCTestCase {
         XCTAssertTrue(StagingVerifier.isStable(snapshots: snapshots))
     }
 
+    func testUnstableSamplesReturnNamedOutcome() {
+        let records = goodRecords.map { record($0.name, $0.size, $0.sha256, mtime: 24) }
+        let snapshots = [
+            StagingSnapshot(observedAt: 20, files: records),
+            StagingSnapshot(observedAt: 22, files: records),
+            StagingSnapshot(observedAt: 25, files: records),
+        ]
+        XCTAssertEqual(
+            StagingVerifier.verifyStableSnapshots(snapshots, policy: policy()).outcome,
+            .stagingUnstable
+        )
+    }
+
     func testRecentModificationIsNotQuiescent() {
         let records = goodRecords.map { record($0.name, $0.size, $0.sha256, mtime: 24) }
         let snapshots = [
