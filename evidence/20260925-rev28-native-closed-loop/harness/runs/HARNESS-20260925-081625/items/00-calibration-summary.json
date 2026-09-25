@@ -1,0 +1,40 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 50756,
+  "finishedAtISO8601" : "2026-09-25T08:16:26.115+08:00",
+  "frozen" : [
+    {
+      "name" : "restart-observe-only-fixture-v1.json",
+      "path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/frozen\/restart-observe-only-fixture-v1.json",
+      "sha256" : "146b373a93c7a1ab02041e079c95eed645a7dd46d45ef518bc4a49bc8128a93f"
+    }
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 50757,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "points=4 sigkill=4 chainVerified=4 observeOnly=4 zeroNewIrreversible=true controlAllowed=1",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-081625\/items\/09-restart-observe-only.json",
+      "evidenceSHA256" : "146b373a93c7a1ab02041e079c95eed645a7dd46d45ef518bc4a49bc8128a93f",
+      "item" : 9,
+      "name" : "restart-observe-only",
+      "verdict" : "PASS"
+    }
+  ],
+  "notes" : [
+
+  ],
+  "occluderPID" : 50758,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-081625",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:16:25.428+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PASS"
+}

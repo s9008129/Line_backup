@@ -1,0 +1,138 @@
+{
+  "barredShadowBearingCells" : [
+    {
+      "barredFromGeometry" : true,
+      "ignoreShadows" : false,
+      "includeChildWindows" : true,
+      "maxOriginPaddingObservedPt" : 14,
+      "maxPerSideDeltaObservedPt" : 14,
+      "observedActivated" : true,
+      "requestedActivated" : true,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:13:13.101+08:00",
+          "expectedBBoxPt" : [
+            516,
+            220,
+            290,
+            192
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 440,
+          "imageWidthPx" : 628,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 14,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=true;activated=true;includeChildWindows=true;ignoreShadows=false)"
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              685,
+              254
+            ],
+            "foundMarkerPixel" : [
+              43,
+              31
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -147.5,
+            "measuredOriginOffsetYPt" : -18.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 14,
+            "left" : 12,
+            "right" : 12,
+            "top" : 14
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : true,
+          "stateKey" : "settled=true;activated=true;includeChildWindows=true;ignoreShadows=false"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:13:14.207+08:00",
+          "expectedBBoxPt" : [
+            525,
+            220,
+            285,
+            189
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 434,
+          "imageWidthPx" : 618,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 14,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              699,
+              257
+            ],
+            "foundMarkerPixel" : [
+              42,
+              31
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -153,
+            "measuredOriginOffsetYPt" : -21.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 14,
+            "left" : 12,
+            "right" : 12,
+            "top" : 14
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : true,
+          "stateKey" : "settled=true;activated=true;includeChildWindows=true;ignoreShadows=false"
+        }
+      ],
+      "settled" : true,
+      "shadowsOn" : true,
+      "stateKey" : "settled=true;activated=true;includeChildWindows=true;ignoreShadows=false"
+    }
+  ],
+  "cells" : [
+
+  ],
+  "expectedBBoxUnionRule" : "expectedBBox = union of freshly read SCWindow.frame of included windows (main [+ popup child window when includeChildWindows=true])",
+  "frozenRuleCount" : 0,
+  "noRuleFailClosedDetail" : "stateKey=settled=true;activated=true;includeChildWindows=true;ignoreShadows=false validity=invalid violations=[\"noFrozenRule(stateKey=settled=true;activated=true;includeChildWindows=true;ignoreShadows=false)\"]",
+  "noRuleFailClosedProved" : true,
+  "occludedCapture" : {
+    "atISO8601" : "2026-09-25T08:13:16.640+08:00",
+    "captureSurvivesFullOcclusion" : true,
+    "expectedBBoxPt" : [
+      170,
+      146,
+      800,
+      600
+    ],
+    "heightDeltaPt" : 0,
+    "imageHeightPx" : 1200,
+    "imageWidthPx" : 1600,
+    "markerFound" : true,
+    "occluderCoverFrameTopLeft" : [
+      170,
+      146,
+      800,
+      600
+    ],
+    "occluderCoverHitsAtCapture" : 0,
+    "scale" : 2,
+    "widthDeltaPt" : 0
+  },
+  "shadowBearingBarredFromGeometry" : true
+}

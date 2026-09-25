@@ -1,0 +1,40 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 48701,
+  "finishedAtISO8601" : "2026-09-25T08:12:36.529+08:00",
+  "frozen" : [
+    {
+      "name" : "tripwire-attribution-ladder-v1.json",
+      "path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/frozen\/tripwire-attribution-ladder-v1.json",
+      "sha256" : "d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216"
+    }
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 48702,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "l1StagingRunDir:stagingExpectedEvidence,l2ApprovedRoot:attributedExternalWriteObserved,l2ApprovedRoot:abortedUnattributedFilesystemWrite,l3OutsideApprovedRoot:environmentalContext,l3OutsideApprovedRoot:abortedWriteOutsideApprovedRoot,l2ApprovedRoot:abortedBaselineModified,l3OutsideApprovedRoot:preDispatchContext",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-081236\/items\/08-tripwire-attribution.json",
+      "evidenceSHA256" : "d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216",
+      "item" : 8,
+      "name" : "tripwire-attribution",
+      "verdict" : "PASS"
+    }
+  ],
+  "notes" : [
+
+  ],
+  "occluderPID" : 48703,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-081236",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:12:36.294+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PASS"
+}

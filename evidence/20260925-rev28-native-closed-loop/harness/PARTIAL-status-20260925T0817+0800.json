@@ -1,0 +1,187 @@
+{
+ "NOT_FROZEN": [
+  "capture-geometry-rulebook-v1.json (partial matrix; guard added: only a complete 16-cell matrix may freeze)",
+  "capture-matrix-v1.json (partial matrix)",
+  "postcondition-bounds-v1.json (item 5 not run)",
+  "postcondition-latency-observations-v1.json (item 5 not run)"
+ ],
+ "artifactKind": "W2 harness calibration — CONVERGENT PARTIAL status (owner STOP-AND-CONVERGE)",
+ "branch": "master",
+ "buildResult": "xcrun swift build --package-path rev28 -> Build complete!",
+ "buildTestLog": {
+  "path": "evidence/20260925-rev28-native-closed-loop/harness/build-test-log-20260925T0817+0800.txt",
+  "sha256": "91ae29a28c6ae65b66e7024478e725790f35ed18e0987ede6ce95a6443f4943e"
+ },
+ "canonicalFrozenArtifacts": [
+  {
+   "name": "tripwire-attribution-ladder-v1.json",
+   "sha256": "d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216",
+   "sourceRun": "HARNESS-20260925-081236",
+   "validation": "FROZEN_VALIDATED (item 8 PASS)"
+  },
+  {
+   "name": "restart-observe-only-fixture-v1.json",
+   "sha256": "146b373a93c7a1ab02041e079c95eed645a7dd46d45ef518bc4a49bc8128a93f",
+   "sourceRun": "HARNESS-20260925-081625",
+   "validation": "FROZEN_VALIDATED (item 9 PASS)"
+  },
+  {
+   "name": "chooser-affirmation-predicate-v1.json",
+   "reason": "published before the freeze-on-partial guard was added; item 6 proof verdict was PARTIAL (realPanel=refused: notNewWindow because the harness presents the panel as a sheet). Treat as NOT FROZEN. Cannot be rewritten in place (append-only); next session must republish after repairing the panel presentation, under an explicit naming decision.",
+   "sha256": "20399c4f27b6f9f3828b55a972f686ab6dcf495252d4032977aa83322f334f3b",
+   "sourceRun": "HARNESS-20260925-081519",
+   "validation": "PROVISIONAL_NOT_VALIDATED"
+  },
+  {
+   "name": "chooser-ax-calibration-v1.json",
+   "reason": "same run/guard as chooser-affirmation-predicate-v1.json; AX shape observations themselves are valid (see item 6 calibration PASS), but the paired predicate freeze is not validated.",
+   "sha256": "43e221f1d6803b67c930bab5bce974a60323f29d277a80d2c0bd29283bfa0443",
+   "sourceRun": "HARNESS-20260925-081519",
+   "validation": "PROVISIONAL_NOT_VALIDATED"
+  }
+ ],
+ "driverDefectsFixedThisSession": [
+  "Rev28Core/Diagnostics/DiagnosticHooks.swift: LineReader deallocated immediately at all three call sites (inline LineReader(...).start() + weak self in the readability handler) -> stdin/stdout JSON-lines protocol never delivered anything; fixed with deliberate strong self-capture (cycle broken on EOF). This was the root cause of every earlier \"timeout waiting for reply\".",
+  "rev28ctl/EvidenceRun.swift: writeFrozen did not ensure the canonical frozen/ parent dir -> missingParent driverError after a PASS item 8 record.",
+  "rev28ctl/HarnessCalibration.swift (item 1): a --max-cells partial matrix could publish canonical frozen rule book; now guarded (complete matrix only) + NOT_FROZEN note.",
+  "rev28ctl/HarnessCalibration.swift (item 6): a PARTIAL chooser proof could publish canonical frozen predicate; now guarded (proof PASS only) + NOT_FROZEN note.",
+  "rev28occluder/main.swift: added missing hitReport command (driver already called it; previously unknownCommand).",
+  "Rev28Core/Chooser/FolderChooserDriver.swift: defaultButtonElement search depth 7 -> 12 (native panel nests the prompt button ~8-10 levels below the host window; depth 7 silently produced defaultButtonMissing).",
+  "Tests/Rev28CoreTests/OcrEngineTests.swift: testDiscriminatesZhenGlyphsInAlbumTitleContext was accidentally nested inside testQuadIsInCapturePixelSpace (never collected/run); split into two sibling tests -> swift test now runs 28/28."
+ ],
+ "generatedAtISO8601": "2026-09-25T08:17:49+0800",
+ "handoffSHA256": "d1a86814b2a2cc40431a31cadd08eb7d80e87a3969a6ace2d20b1ee3a7a35ed6",
+ "headAtSessionStart": "ff04f2da9e1afea9b2ca73a64fe9323a4e495803",
+ "itemStatus": [
+  {
+   "blocker": "full 16-cell per-state matrix not run (owner STOP-AND-CONVERGE: freeze deferred); no canonical rule book published",
+   "detail": "cells=0/8 shadowFree, barred=1/8 shadowBearing, frozenRules=0 (PARTIAL: --max-cells 1 of 16), validationsAsExpected=0/0, noRuleFailClosed=true, occlusionCapture=true",
+   "evidencePath": "evidence/20260925-rev28-native-closed-loop/harness/runs/HARNESS-20260925-081309/items/01-capture-matrix.json",
+   "evidenceSHA256": "a37ae4a65fe6a6b41e11f8bb82227cd9a6b4b64308de712243c8520daf986467",
+   "item": 1,
+   "name": "capture-matrix+rule-freeze",
+   "run": "HARNESS-20260925-081309",
+   "status": "PARTIAL"
+  },
+  {
+   "blocker": "rowBoxes/safeInterior rows empty because FrameCaptureService had no frozen rule book (item 1 dependency); OCR/Vision localization itself proven",
+   "detail": "menuRowMatches=1, countMatch=true, titleMatch=true, 楨Found=true, 楨-title-absent-with-other-label=true, restored=true, ambiguityMatches=2 -> refused",
+   "evidencePath": "evidence/20260925-rev28-native-closed-loop/harness/runs/HARNESS-20260925-081401/items/02-vision-localization.json",
+   "evidenceSHA256": "c9ba184ef89419d2b296d79c0d4973e64be1b837db8446d4565e6d6948adb415",
+   "item": 2,
+   "name": "vision-localization",
+   "run": "HARNESS-20260925-081401",
+   "status": "PARTIAL"
+  },
+  {
+   "blocker": "requires canonical capture-geometry-rulebook-v1.json (full matrix freeze)",
+   "detail": "frozen rule book unavailable (item 1 must run first)",
+   "evidencePath": "evidence/20260925-rev28-native-closed-loop/harness/runs/HARNESS-20260925-081321/items/03-coordinate-transforms.json",
+   "evidenceSHA256": "b615dc231e5343323a9ad87e988c1cf54038013b26dac8b0fdb95d2c32de06e9",
+   "item": 3,
+   "name": "coordinate-transforms",
+   "run": "HARNESS-20260925-081321",
+   "status": "NOT_RUN"
+  },
+  {
+   "blocker": "harness popup not topmost while the peer occluder is active/raised; first post-cover click consumed by peer activation; routing proof not established",
+   "detail": "popupHits=0 mainHitsAtPopup=0 coverHits=0 popupTopmost=false; mainHitsAfterMainClick=1 (delivery works for main window); occluderCoverHitsAfterCoveredPopupClick=1 (click at popup point landed on the peer occluder cover)",
+   "evidencePath": "evidence/20260925-rev28-native-closed-loop/harness/runs/HARNESS-20260925-081620/items/04-quartz-routing.json",
+   "evidenceSHA256": "c6af2e49a94682b9dd9a9cf9f463b2af2fa3c8ece62cf9e807409f330d267c49",
+   "item": 4,
+   "name": "quartz-routing",
+   "run": "HARNESS-20260925-081620",
+   "status": "PARTIAL"
+  },
+  {
+   "blocker": "needs 20 real NSOpenPanel latency samples + bounds freeze",
+   "detail": "not attempted (owner STOP-AND-CONVERGE: >=20-run latency freeze explicitly deferred)",
+   "item": 5,
+   "name": "postcondition-latency+bounds-freeze",
+   "run": null,
+   "status": "NOT_RUN"
+  },
+  {
+   "blocker": null,
+   "detail": "panel role=AXWindow subrole=AXStandardWindow nodes=145 buttonTitles include 開啟/Cancel; pressedButtonDescription=role=AXButton title=開啟",
+   "evidencePath": "evidence/20260925-rev28-native-closed-loop/harness/runs/HARNESS-20260925-081519/items/06-chooser-ax-calibration.json",
+   "evidenceSHA256": "43e221f1d6803b67c930bab5bce974a60323f29d277a80d2c0bd29283bfa0443",
+   "item": 6,
+   "name": "chooser-ax-calibration",
+   "run": "HARNESS-20260925-081519",
+   "status": "PASS"
+  },
+  {
+   "blocker": "real NSOpenPanel is presented by the harness as an attached sheet (not a new standalone AXWindow), so the fail-closed notNewWindow clause refuses it; navigationReflected=false (path candidates unread)",
+   "detail": "realPanel=refused(notNewWindow) fakeSame=refused/frozenPredicateMismatch emptyCensus=refused occluderLookAlike=refused/frozenPredicateMismatch nav=false marker=true panelClosedResponse=1 inputPosts=3",
+   "evidencePath": "evidence/20260925-rev28-native-closed-loop/harness/runs/HARNESS-20260925-081519/items/06-chooser-predicate-proof.json",
+   "evidenceSHA256": "948b5cb39f2e9586805dce357c5fa89529479f15d7a3676063780f49eaca3e97",
+   "item": 6,
+   "name": "chooser-predicate-proof",
+   "run": "HARNESS-20260925-081519",
+   "status": "PARTIAL"
+  },
+  {
+   "blocker": "requires frozen rule book (code guards on it)",
+   "detail": "not attempted this session",
+   "item": 7,
+   "name": "focus-theft",
+   "run": null,
+   "status": "NOT_RUN"
+  },
+  {
+   "blocker": null,
+   "detail": "all 7 ladder classifications matched: L1 staging expected; L2 attributable non-abort; L2 unattributable abortedUnattributedFilesystemWrite; L3 attributable abortedWriteOutsideApprovedRoot; L3 unattributable environmentalContext (non-abort); baseline-modified abortedBaselineModified; pre-dispatch preDispatchContext",
+   "evidencePath": "evidence/20260925-rev28-native-closed-loop/harness/runs/HARNESS-20260925-081236/items/08-tripwire-attribution.json",
+   "evidenceSHA256": "d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216",
+   "item": 8,
+   "name": "tripwire-attribution",
+   "run": "HARNESS-20260925-081236",
+   "status": "PASS"
+  },
+  {
+   "blocker": null,
+   "detail": "points=4 sigkill=4 chainVerified=4 observeOnly=4 zeroNewIrreversible=true controlAllowed=1",
+   "evidencePath": "evidence/20260925-rev28-native-closed-loop/harness/runs/HARNESS-20260925-081625/items/09-restart-observe-only.json",
+   "evidenceSHA256": "146b373a93c7a1ab02041e079c95eed645a7dd46d45ef518bc4a49bc8128a93f",
+   "item": 9,
+   "name": "restart-observe-only",
+   "run": "HARNESS-20260925-081625",
+   "status": "PASS"
+  }
+ ],
+ "lineInteraction": "ZERO (no launch, no clicks, no AX writes to LINE; GUI input posted only to own harness/occluder windows)",
+ "openW2Items": [
+  "item 1 full 16-cell per-state capture matrix + rule freeze (canonical) — code ready, --max-cells guard present",
+  "item 2 rerun after item 1 freeze (row boxes + safe interior repeatability need a rule book)",
+  "item 3 coordinate transforms (blocked on item 1 freeze)",
+  "item 4 quartz routing: popup-not-topmost-over-peer-occluder finding must be resolved (window level/z-order or occluder activation policy)",
+  "item 5 postcondition >=20 NSOpenPanel latency samples + bounds freeze + routing outcomes",
+  "item 6 chooser predicate: real panel refused (notNewWindow) because the harness presents it as a sheet; decide panel presentation (standalone window vs sheet) and republish the freeze",
+  "item 7 focus theft (blocked on item 1 freeze)"
+ ],
+ "planRevision": 3,
+ "planSHA256": "63b25602b215a3e9514fa76db8bd34c097f4bec40f370381d218c57f62745828",
+ "residualRisk": [
+  "Item 4 routing evidence shows the popup is not topmost while the peer occluder is active; the production routing assumption (popup above occluders) is therefore NOT proven and must be re-proven after the harness fix.",
+  "The item 6 predicate currently refuses a real NSOpenPanel in this harness shape; if LINE presents its chooser as a sheet, the frozen predicate would refuse a genuine chooser (fail-closed but blocking) — needs an explicit decision.",
+  "Provisional chooser v1 artifacts in harness/frozen/ cannot be overwritten (append-only); a republish decision is required."
+ ],
+ "runSummaries": {
+  "HARNESS-20260925-080909": "6e8618849086150f329b8d38f21cd9c146f675100c515a2a6d223a0a710d3b9a",
+  "HARNESS-20260925-081032": "438eb26321bcc6d050870949e55d862b1a2ccdd7349fd5f6549b3d5b0cac3956",
+  "HARNESS-20260925-081214": "f485dae144fec2a1cc37421ff4017332e8c2710bd7c8cadda0db7455a8063c7e",
+  "HARNESS-20260925-081236": "e36e7b1b954f5fd9ae824e7010ad38e8dfd6cffa0287a99c6fc7ae46c0ab5679",
+  "HARNESS-20260925-081309": "6d73d04b11d24eed11708878e925d5ddef31a4d497bfe30700d16513cbfee567",
+  "HARNESS-20260925-081321": "d0ae5cd19bf4a97a94ebcbf3caa251bef29e07c0d65e0a6816407b0d7747a1f7",
+  "HARNESS-20260925-081401": "5ab839267f0d7621f1bc44f41b531c16427acf6712014eb60dd1faae012f6f3a",
+  "HARNESS-20260925-081431": "2be9cf3da914f3017b5675793d92c5b6dcff2ba6dbba7415724d7e04b5f3499d",
+  "HARNESS-20260925-081519": "7ee7e7d4fe2c3c929bfcbe569ef36e7ed3a2c0b3599829f2c6b2d9a6df0b5675",
+  "HARNESS-20260925-081620": "b5d526324f53d89c5627cc3b221270486ab3551d6f4c7e5313fb0e2ef167e583",
+  "HARNESS-20260925-081625": "512e6ee69cf8b7f2ac562ce52504cd63701fd8b58d459ad1535454ab3a43fbba"
+ },
+ "sdkPath": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+ "swiftVersion": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)",
+ "taskID": "T20260925-0647-01-rev28-native-closed-loop",
+ "testResult": "xcrun swift test --package-path rev28 -> Executed 28 tests, with 0 failures (0 unexpected)"
+}

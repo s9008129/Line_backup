@@ -1,0 +1,69 @@
+{
+  "allExpectedOutcomesMatched" : true,
+  "approvedRoot" : "\/tmp\/rev28-harness-HARNESS-20260925-081214",
+  "atISO8601" : "2026-09-25T08:12:14.965+08:00",
+  "baselinePathEvent" : {
+    "aborts" : true,
+    "level" : "l2ApprovedRoot",
+    "outcome" : "abortedBaselineModified",
+    "path" : "\/tmp\/rev28-harness-HARNESS-20260925-081214\/synthetic-accepted-baseline-fixture",
+    "rationale" : "accepted baseline must stay byte-identical; any modification aborts immediately regardless of attribution"
+  },
+  "baselineUntouchedNote" : "modifiesAcceptedBaseline=true is a synthetic classification flag on a fixture path; no accepted-baseline path was read or written",
+  "classifications" : [
+    {
+      "aborts" : false,
+      "level" : "l1StagingRunDir",
+      "outcome" : "stagingExpectedEvidence",
+      "path" : "\/tmp\/rev28-harness-HARNESS-20260925-081214\/staging-run\/photos\/photo-000.jpg",
+      "rationale" : "L1 writes are the expected chooser-effect signal and are evidence"
+    },
+    {
+      "aborts" : false,
+      "level" : "l2ApprovedRoot",
+      "outcome" : "attributedExternalWriteObserved",
+      "path" : "\/tmp\/rev28-harness-HARNESS-20260925-081214\/attributable-writes\/photo-000.jpg",
+      "rationale" : "L2 attributable-but-unexpected write: non-fatal, disclosed as a side-effect observation"
+    },
+    {
+      "aborts" : true,
+      "level" : "l2ApprovedRoot",
+      "outcome" : "abortedUnattributedFilesystemWrite",
+      "path" : "\/tmp\/rev28-harness-HARNESS-20260925-081214\/unattributed\/x.bin",
+      "rationale" : "L2 unattributable write inside the approved root fails closed (no retry)"
+    },
+    {
+      "aborts" : false,
+      "level" : "l3OutsideApprovedRoot",
+      "outcome" : "environmentalContext",
+      "path" : "\/tmp\/rev28-outside-HARNESS-20260925-081214\/y.bin",
+      "rationale" : "L3 unattributable activity is environmental context (concurrent-machine-activity caveat); does not abort"
+    },
+    {
+      "aborts" : true,
+      "level" : "l3OutsideApprovedRoot",
+      "outcome" : "abortedWriteOutsideApprovedRoot",
+      "path" : "\/tmp\/rev28-outside-HARNESS-20260925-081214\/attributable\/photo-000.jpg",
+      "rationale" : "attributable-to-this-run write outside the approved root is a scope violation"
+    },
+    {
+      "aborts" : true,
+      "level" : "l2ApprovedRoot",
+      "outcome" : "abortedBaselineModified",
+      "path" : "\/tmp\/rev28-harness-HARNESS-20260925-081214\/synthetic-accepted-baseline-fixture",
+      "rationale" : "accepted baseline must stay byte-identical; any modification aborts immediately regardless of attribution"
+    },
+    {
+      "aborts" : false,
+      "level" : "l3OutsideApprovedRoot",
+      "outcome" : "preDispatchContext",
+      "path" : "\/tmp\/rev28-outside-HARNESS-20260925-081214\/pre-dispatch.bin",
+      "rationale" : "pre-dispatch environmental activity is context (>=10 s baseline) and never aborts by itself"
+    }
+  ],
+  "fixtureRoot" : "\/tmp\/rev28-harness-HARNESS-20260925-081214",
+  "harnessPID" : 48524,
+  "occluderPID" : 48525,
+  "outsideDir" : "\/tmp\/rev28-outside-HARNESS-20260925-081214",
+  "stagingRunDir" : "\/tmp\/rev28-harness-HARNESS-20260925-081214\/staging-run"
+}

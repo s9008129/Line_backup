@@ -70,7 +70,6 @@ final class OcrEngineTests: XCTestCase {
     }
 
 
-    func testQuadIsInCapturePixelSpace() async throws {
     func testDiscriminatesZhenGlyphsInAlbumTitleContext() async throws {
         // 禎 (U+798E) vs 楨 (U+6968): exact matching, never normalized or merged.
         // The fixture uses the real album-title context (the production surface);
@@ -96,6 +95,8 @@ final class OcrEngineTests: XCTestCase {
             "楨 variant title must not read as 禎, got \(zhenVariant)"
         )
     }
+
+    func testQuadIsInCapturePixelSpace() async throws {
         guard let image = TestImageFactory.image(text: "儲存全部", fontSize: 120) else {
             throw XCTSkip("fixture rendering failed")
         }

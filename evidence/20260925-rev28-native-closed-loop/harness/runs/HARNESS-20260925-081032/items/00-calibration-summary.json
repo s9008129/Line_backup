@@ -1,0 +1,29 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 47172,
+  "finishedAtISO8601" : "2026-09-25T08:10:52.939+08:00",
+  "frozen" : [
+
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 47173,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+
+  ],
+  "notes" : [
+    "driverError: Error Domain=rev28ctl Code=2 \"rev28harness: timeout waiting for reply to writeFiles\" UserInfo={NSLocalizedDescription=rev28harness: timeout waiting for reply to writeFiles}"
+  ],
+  "occluderPID" : 47174,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-081032",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:10:32.910+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "FAIL"
+}

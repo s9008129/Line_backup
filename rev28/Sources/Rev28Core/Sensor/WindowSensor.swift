@@ -92,3 +92,53 @@ public enum WindowSensor {
         }
     }
 }
+
+// MARK: - CGWindowList inventory (plan §ARCHITECTURE §10: the postcondition
+// observation runs against SC and CG inventories with the same identity binding).
+
+/// A Sendable snapshot of one on-screen `CGWindowListCopyWindowInfo` entry.
+public struct CGWindowSnapshot: Equatable, Codable, Sendable {
+    public let windowNumber: UInt32
+    public let frame: CGRect
+    public let layer: Int
+    public let ownerPID: Int32
+    public let name: String?
+
+    public init(windowNumber: UInt32, frame: CGRect, layer: Int, ownerPID: Int32, name: String?) {
+        self.windowNumber = windowNumber
+        self.frame = frame
+        self.layer = layer
+        self.ownerPID = ownerPID
+        self.name = name
+    }
+}
+
+public enum CGWindowInventory {
+    /// On-screen, desktop-elements-excluded window list, ordered front-to-back as
+    /// the window server reports it.
+    public static func onScreenWindows() -> [CGWindowSnapshot] {
+        guard let infoList = CGWindowListCopyWindowInfo(
+            [.optionOnScreenOnly, .excludeDesktopElements],
+            kCGNullWindowID
+        ) as? [[String: Any]] else {
+            return []
+        }
+        return infoList.compactMap { info in
+            guard let number = (info[kCGWindowNumber as String] as? NSNumber)?.uint32Value,
+                  let boundsDict = info[kCGWindowBounds as String] as? [String: Any],
+                  let frame = CGRect(dictionaryRepresentation: boundsDict as CFDictionary),
+                  let ownerPID = (info[kCGWindowOwnerPID as String] as? NSNumber)?.int32Value else {
+                return nil
+            }
+            let layer = (info[kCGWindowLayer as String] as? NSNumber)?.intValue ?? 0
+            let name = info[kCGWindowName as String] as? String
+            return CGWindowSnapshot(
+                windowNumber: number,
+                frame: frame,
+                layer: layer,
+                ownerPID: ownerPID,
+                name: name
+            )
+        }
+    }
+}

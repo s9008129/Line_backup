@@ -1,0 +1,2 @@
+{"atISO8601":"2026-09-25T08:16:25.530+08:00","kind":"intent.saved","payload":{"fixture":"afterDispatch"},"selfHash":"b3b16cc369603baa9da574f961a8ad6d8872f5e7dd89f76ae41abbca59a174c7","seq":1}
+{"atISO8601":"2026-09-25T08:16:25.533+08:00","kind":"dispatch.irreversible","payload":{"fixture":"afterDispatch","surface":"synthetic"},"prev":"b3b16cc369603baa9da574f961a8ad6d8872f5e7dd89f76ae41abbca59a174c7","selfHash":"7e040ab77b21d9eca6d33b4726bbac3dc4a518234e6767bf0024c2aa19a254c1","seq":2}

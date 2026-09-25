@@ -1,0 +1,3 @@
+{"event":"ready","pid":48525,"startTimeUnix":1790295134.9019098}
+{"bytes":64,"id":"c1","ok":true,"path":"\/tmp\/rev28-harness-HARNESS-20260925-081214\/unattributed\/x.bin"}
+{"bytes":64,"id":"c2","ok":true,"path":"\/tmp\/rev28-outside-HARNESS-20260925-081214\/y.bin"}

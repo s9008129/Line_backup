@@ -1,0 +1,26 @@
+{
+ "artifactKind": "PROVISIONAL / NOT VALIDATED marker for canonical frozen artifacts",
+ "files": [
+  {
+   "name": "chooser-affirmation-predicate-v1.json",
+   "reason": "published before the freeze-on-partial guard was added; item 6 proof verdict was PARTIAL (realPanel=refused: notNewWindow because the harness presents the panel as a sheet). Treat as NOT FROZEN. Cannot be rewritten in place (append-only); next session must republish after repairing the panel presentation, under an explicit naming decision.",
+   "sha256": "20399c4f27b6f9f3828b55a972f686ab6dcf495252d4032977aa83322f334f3b",
+   "sourceRun": "HARNESS-20260925-081519",
+   "validation": "PROVISIONAL_NOT_VALIDATED"
+  },
+  {
+   "name": "chooser-ax-calibration-v1.json",
+   "reason": "same run/guard as chooser-affirmation-predicate-v1.json; AX shape observations themselves are valid (see item 6 calibration PASS), but the paired predicate freeze is not validated.",
+   "sha256": "43e221f1d6803b67c930bab5bce974a60323f29d277a80d2c0bd29283bfa0443",
+   "sourceRun": "HARNESS-20260925-081519",
+   "validation": "PROVISIONAL_NOT_VALIDATED"
+  }
+ ],
+ "generatedAtISO8601": "2026-09-25T08:17:49+0800",
+ "message": "chooser-affirmation-predicate-v1.json and chooser-ax-calibration-v1.json in this directory were published by run HARNESS-20260925-081519 while the item 6 proof verdict was PARTIAL (realPanel=refused, cause notNewWindow). They must be treated as NOT FROZEN until item 6 is re-run to PASS after the harness panel-presentation repair. Append-only rules forbid rewriting them in place.",
+ "statusRecord": {
+  "path": "evidence/20260925-rev28-native-closed-loop/harness/PARTIAL-status-20260925T0817+0800.json",
+  "sha256": "49bc7a2cfada259f104e7eb6d4711e32c54a400463b65d2a2920fc6ab090e7fa"
+ },
+ "taskID": "T20260925-0647-01-rev28-native-closed-loop"
+}

@@ -1,0 +1,4 @@
+e36e7b1b954f5fd9ae824e7010ad38e8dfd6cffa0287a99c6fc7ae46c0ab5679  00-calibration-summary.json
+d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216  08-tripwire-attribution.json
+d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216  canonical-frozen/tripwire-attribution-ladder-v1.json
+d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216  frozen/tripwire-attribution-ladder-v1.json

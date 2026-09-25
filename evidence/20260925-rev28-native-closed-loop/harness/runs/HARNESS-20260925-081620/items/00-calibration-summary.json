@@ -1,0 +1,36 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 50709,
+  "finishedAtISO8601" : "2026-09-25T08:16:25.394+08:00",
+  "frozen" : [
+
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 50710,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "popupHits=0 mainHitsAtPopup=0 coverHits=0 popupTopmost=false",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-081620\/items\/04-quartz-routing.json",
+      "evidenceSHA256" : "c6af2e49a94682b9dd9a9cf9f463b2af2fa3c8ece62cf9e807409f330d267c49",
+      "item" : 4,
+      "name" : "quartz-routing",
+      "verdict" : "PARTIAL"
+    }
+  ],
+  "notes" : [
+
+  ],
+  "occluderPID" : 50711,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-081620",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:16:20.059+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PARTIAL"
+}

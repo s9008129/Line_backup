@@ -1,0 +1,53 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 50218,
+  "finishedAtISO8601" : "2026-09-25T08:15:30.459+08:00",
+  "frozen" : [
+    {
+      "name" : "chooser-affirmation-predicate-v1.json",
+      "path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/frozen\/chooser-affirmation-predicate-v1.json",
+      "sha256" : "20399c4f27b6f9f3828b55a972f686ab6dcf495252d4032977aa83322f334f3b"
+    },
+    {
+      "name" : "chooser-ax-calibration-v1.json",
+      "path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/frozen\/chooser-ax-calibration-v1.json",
+      "sha256" : "43e221f1d6803b67c930bab5bce974a60323f29d277a80d2c0bd29283bfa0443"
+    }
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 50220,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "panel role=AXWindow subrole=AXStandardWindow nodes=145 defaultButton=?",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-081519\/items\/06-chooser-ax-calibration.json",
+      "evidenceSHA256" : "43e221f1d6803b67c930bab5bce974a60323f29d277a80d2c0bd29283bfa0443",
+      "item" : 6,
+      "name" : "chooser-ax-calibration",
+      "verdict" : "PASS"
+    },
+    {
+      "detail" : "realPanel=refused fakeSame=refused\/frozenPredicateMismatch emptyCensus=refused occluderLookAlike=refused\/frozenPredicateMismatch nav=false marker=true",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-081519\/items\/06-chooser-predicate-proof.json",
+      "evidenceSHA256" : "948b5cb39f2e9586805dce357c5fa89529479f15d7a3676063780f49eaca3e97",
+      "item" : 6,
+      "name" : "chooser-predicate-proof",
+      "verdict" : "PARTIAL"
+    }
+  ],
+  "notes" : [
+
+  ],
+  "occluderPID" : 50221,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-081519",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:15:19.012+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PARTIAL"
+}

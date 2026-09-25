@@ -1,0 +1,45 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 48991,
+  "finishedAtISO8601" : "2026-09-25T08:13:16.676+08:00",
+  "frozen" : [
+
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 48992,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "cells=0\/8 shadowFree, barred=1\/8 shadowBearing, frozenRules=0 (PARTIAL: --max-cells) validationsAsExpected=0\/0 noRuleFailClosed=true occlusionCapture=true",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-081309\/items\/01-capture-matrix.json",
+      "evidenceSHA256" : "a37ae4a65fe6a6b41e11f8bb82227cd9a6b4b64308de712243c8520daf986467",
+      "item" : 1,
+      "name" : "capture-matrix+rule-freeze",
+      "verdict" : "PARTIAL"
+    },
+    {
+      "detail" : "per-state validation of frozen rule book",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-081309\/items\/01-frozen-rule-validation.json",
+      "evidenceSHA256" : "ace810d7e2cbb4f8c40ce09dc8e191ae466adb4e1a7d49c59f2215b411d38b05",
+      "item" : 1,
+      "name" : "frozen-rule-validation",
+      "verdict" : "PASS"
+    }
+  ],
+  "notes" : [
+    "PARTIAL: capture matrix limited to the first 1 of 16 cells by --max-cells; the frozen rule book is PARTIAL \/ NOT_FROZEN for the remaining states",
+    "NOT_FROZEN: capture-geometry-rulebook-v1.json and capture-matrix-v1.json were NOT written to the canonical frozen\/ dir (partial matrix: --max-cells partial run); rerun the full 16-cell matrix to freeze"
+  ],
+  "occluderPID" : 48993,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-081309",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:13:09.948+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PARTIAL"
+}

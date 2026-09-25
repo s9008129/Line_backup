@@ -1,0 +1,84 @@
+{
+  "atISO8601" : "2026-09-25T08:15:21.851+08:00",
+  "axDumpNodeCount" : 145,
+  "axNodeCount" : 145,
+  "buttonTitles" : [
+    "?",
+    "?",
+    "?",
+    "?",
+    "?",
+    "?",
+    "?",
+    "Name",
+    "Date Modified",
+    "Size",
+    "Kind",
+    "?",
+    "?",
+    "?",
+    "?",
+    "back",
+    "forward",
+    "",
+    "New Folder",
+    "Cancel",
+    "開啟"
+  ],
+  "harnessOwnedSCWindows" : [
+
+  ],
+  "harnessPID" : 50220,
+  "panelWindowFound" : true,
+  "panelWindowFramePt" : [
+    160,
+    140,
+    800,
+    600
+  ],
+  "panelWindowRole" : "AXWindow",
+  "panelWindowSubrole" : "AXStandardWindow",
+  "panelWindowTitle" : "rev28 harness main",
+  "pathValueCandidates" : [
+
+  ],
+  "popUpRoles" : [
+    "AXPopUpButton"
+  ],
+  "rolesObserved" : [
+    "AXButton",
+    "AXCell",
+    "AXColumn",
+    "AXGroup",
+    "AXImage",
+    "AXMenuButton",
+    "AXOutline",
+    "AXPopUpButton",
+    "AXRow",
+    "AXScrollArea",
+    "AXScrollBar",
+    "AXSheet",
+    "AXSplitGroup",
+    "AXSplitter",
+    "AXStaticText",
+    "AXTextField",
+    "AXValueIndicator",
+    "AXWindow"
+  ],
+  "subrolesObserved" : [
+    "AXCloseButton",
+    "AXDecrementArrow",
+    "AXDecrementPage",
+    "AXIncrementArrow",
+    "AXIncrementPage",
+    "AXMinimizeButton",
+    "AXOutlineRow",
+    "AXSearchField",
+    "AXSegment",
+    "AXStandardWindow",
+    "AXZoomButton"
+  ],
+  "textFieldRoles" : [
+    "AXTextField"
+  ]
+}

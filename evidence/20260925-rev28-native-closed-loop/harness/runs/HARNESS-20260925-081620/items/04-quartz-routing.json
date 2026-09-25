@@ -1,0 +1,39 @@
+{
+  "atISO8601" : "2026-09-25T08:16:25.391+08:00",
+  "lastMainHitLocal" : [
+    200,
+    188
+  ],
+  "mainHitsAfterCoveredMainClick" : 1,
+  "mainHitsAfterMainClick" : 1,
+  "mainHitsAfterPopupClick" : 0,
+  "mainRowPointScreen" : [
+    360,
+    360
+  ],
+  "mainWindowNotReceivingPopupEventProved" : true,
+  "occluderCoverFrameTopLeft" : [
+    160,
+    140,
+    800,
+    600
+  ],
+  "occluderCoverHitsAfterCoveredMainClick" : 0,
+  "occluderCoverHitsAfterCoveredPopupClick" : 1,
+  "occluderOccludesMainWindowProved" : false,
+  "popupFrameTopLeft" : [
+    280,
+    220,
+    240,
+    60
+  ],
+  "popupHitsAfterCoveredPopupClick" : 0,
+  "popupHitsAfterMainClick" : 0,
+  "popupHitsAfterPopupClick" : 0,
+  "popupReceivesEventProved" : false,
+  "popupRowPointScreen" : [
+    400,
+    250
+  ],
+  "popupTopmostOverOccluderProved" : false
+}

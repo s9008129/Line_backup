@@ -1,0 +1,3 @@
+{"atISO8601":"2026-09-25T08:16:25.598+08:00","kind":"intent.saved","payload":{"fixture":"midPostcondition"},"selfHash":"83c433adf8b2163651b6e872e322bbabff9e6929a74a35465dee727d82f7f2f0","seq":1}
+{"atISO8601":"2026-09-25T08:16:25.600+08:00","kind":"dispatch.saveAll","payload":{"fixture":"midPostcondition","surface":"synthetic"},"prev":"83c433adf8b2163651b6e872e322bbabff9e6929a74a35465dee727d82f7f2f0","selfHash":"5ec54e3a155b8a63df27fa6701d8d95e652c4a49a4c44841eb25817c06a39f1a","seq":2}
+{"atISO8601":"2026-09-25T08:16:25.600+08:00","kind":"postcondition.armed","payload":{"bounds":"plan-time"},"prev":"5ec54e3a155b8a63df27fa6701d8d95e652c4a49a4c44841eb25817c06a39f1a","selfHash":"262ede8fed53692b9f4053408115fd17db610a57e5b135477a1c99b73402959c","seq":3}

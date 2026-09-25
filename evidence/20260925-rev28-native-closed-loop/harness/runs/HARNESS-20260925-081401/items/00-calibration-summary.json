@@ -1,0 +1,36 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 49509,
+  "finishedAtISO8601" : "2026-09-25T08:14:19.664+08:00",
+  "frozen" : [
+
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 49510,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "menuRowMatches=1 countMatch=true titleMatch=true rowBoxDeviation=0.0 safePointDeviation=0.0 楨Found=true ambiguityMatches=2",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-081401\/items\/02-vision-localization.json",
+      "evidenceSHA256" : "c9ba184ef89419d2b296d79c0d4973e64be1b837db8446d4565e6d6948adb415",
+      "item" : 2,
+      "name" : "vision-localization",
+      "verdict" : "PARTIAL"
+    }
+  ],
+  "notes" : [
+
+  ],
+  "occluderPID" : 49511,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-081401",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:14:01.006+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PARTIAL"
+}

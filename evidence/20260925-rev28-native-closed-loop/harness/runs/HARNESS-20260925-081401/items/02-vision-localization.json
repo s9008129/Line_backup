@@ -1,0 +1,64 @@
+{
+  "ambiguityMatchCount" : 2,
+  "ambiguityMenuRows" : [
+    "選擇項目",
+    "儲存全部",
+    "儲存全部",
+    "刪除相簿",
+    "分享相簿"
+  ],
+  "ambiguityRefused" : true,
+  "atISO8601" : "2026-09-25T08:14:19.662+08:00",
+  "countFixture" : "57張照片",
+  "discriminatorExpectedTitleAbsentWithOtherLabel" : true,
+  "discriminatorExpectedTitleFoundAfterRestore" : true,
+  "discriminatorOtherTitleFound" : true,
+  "exactCountMatch" : true,
+  "exactMenuRowMatch" : true,
+  "exactMenuRowMatchCount" : 1,
+  "exactTitleMatch" : true,
+  "menuRows" : [
+    "選擇項目",
+    "修改相簿名稱",
+    "儲存全部",
+    "刪除相簿",
+    "分享相簿"
+  ],
+  "otherTitleFixture" : "旻謙允楨成長日記",
+  "recognizedStrings" : [
+    "•• rev28 harness main",
+    "旻謙允禎成長日記",
+    "57張照片",
+    "選擇項目",
+    "修改相簿名稱",
+    "儲存全部",
+    "刪除相簿",
+    "分享相簿",
+    "• • rev28 harness main",
+    "旻謙允禎成長日記",
+    "57張照片",
+    "選擇項目",
+    "修改相簿名稱",
+    "儲存全部",
+    "刪除相簿",
+    "分享相簿",
+    "• • rev28 harness main",
+    "旻謙允禎成長日記",
+    "57張照片",
+    "選擇項目",
+    "修改相簿名稱",
+    "儲存全部",
+    "刪除相簿",
+    "分享相簿"
+  ],
+  "rowBoxMaxCornerDeviationPt" : 0,
+  "rowBoxesLocalPtAcrossCaptures" : [
+
+  ],
+  "safeInteriorDispatchable" : false,
+  "safePointMaxDeviationPt" : 0,
+  "safePointsLocalPtAcrossCaptures" : [
+
+  ],
+  "titleFixture" : "旻謙允禎成長日記"
+}

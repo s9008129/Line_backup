@@ -1,0 +1,36 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 48523,
+  "finishedAtISO8601" : "2026-09-25T08:12:14.967+08:00",
+  "frozen" : [
+
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 48524,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "l1StagingRunDir:stagingExpectedEvidence,l2ApprovedRoot:attributedExternalWriteObserved,l2ApprovedRoot:abortedUnattributedFilesystemWrite,l3OutsideApprovedRoot:environmentalContext,l3OutsideApprovedRoot:abortedWriteOutsideApprovedRoot,l2ApprovedRoot:abortedBaselineModified,l3OutsideApprovedRoot:preDispatchContext",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-081214\/items\/08-tripwire-attribution.json",
+      "evidenceSHA256" : "3d131959a1fb137bb410e1e2deeef65c3021c84b223424a2cf00fb3049bef60b",
+      "item" : 8,
+      "name" : "tripwire-attribution",
+      "verdict" : "PASS"
+    }
+  ],
+  "notes" : [
+    "driverError: missingParent(\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/frozen)"
+  ],
+  "occluderPID" : 48525,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-081214",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:12:14.574+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "FAIL"
+}

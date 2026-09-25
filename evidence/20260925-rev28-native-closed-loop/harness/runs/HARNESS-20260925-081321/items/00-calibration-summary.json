@@ -1,0 +1,36 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 49117,
+  "finishedAtISO8601" : "2026-09-25T08:13:23.066+08:00",
+  "frozen" : [
+
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 49118,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "frozen rule book unavailable (item 1 must run first)",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-081321\/items\/03-coordinate-transforms.json",
+      "evidenceSHA256" : "b615dc231e5343323a9ad87e988c1cf54038013b26dac8b0fdb95d2c32de06e9",
+      "item" : 3,
+      "name" : "coordinate-transforms",
+      "verdict" : "NOT_RUN"
+    }
+  ],
+  "notes" : [
+    "driverError: Error Domain=rev28ctl Code=5 \"occluder hitReport failed: unknownCommand:hitReport\" UserInfo={NSLocalizedDescription=occluder hitReport failed: unknownCommand:hitReport}"
+  ],
+  "occluderPID" : 49119,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-081321",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:13:21.763+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "FAIL"
+}

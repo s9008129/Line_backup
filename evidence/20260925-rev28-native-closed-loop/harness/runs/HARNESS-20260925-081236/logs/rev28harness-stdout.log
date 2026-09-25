@@ -1,0 +1,4 @@
+{"event":"ready","pid":48702,"startTimeUnix":1790295156.3572068}
+{"id":"c1","mode":"normal","ok":true,"written":["\/tmp\/rev28-harness-HARNESS-20260925-081236\/staging-run\/photos\/photo-000.jpg","\/tmp\/rev28-harness-HARNESS-20260925-081236\/staging-run\/photos\/photo-001.jpg"]}
+{"id":"c2","mode":"normal","ok":true,"written":["\/tmp\/rev28-harness-HARNESS-20260925-081236\/attributable-writes\/photo-000.jpg"]}
+{"id":"c3","mode":"normal","ok":true,"written":["\/tmp\/rev28-outside-HARNESS-20260925-081236\/attributable\/photo-000.jpg"]}

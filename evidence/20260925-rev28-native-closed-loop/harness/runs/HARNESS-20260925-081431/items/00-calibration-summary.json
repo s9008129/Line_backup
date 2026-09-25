@@ -1,0 +1,36 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 49785,
+  "finishedAtISO8601" : "2026-09-25T08:14:36.117+08:00",
+  "frozen" : [
+
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 49786,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "panel role=AXWindow subrole=AXStandardWindow nodes=144 defaultButton=?",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-081431\/items\/06-chooser-ax-calibration.json",
+      "evidenceSHA256" : "e42cd6e68c2ab79baf07f1889acf6564a7958600c9f04b7b1a0c5307badcffe9",
+      "item" : 6,
+      "name" : "chooser-ax-calibration",
+      "verdict" : "PASS"
+    }
+  ],
+  "notes" : [
+    "driverError: defaultButtonMissing"
+  ],
+  "occluderPID" : 49787,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-081431",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:14:31.573+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "FAIL"
+}
