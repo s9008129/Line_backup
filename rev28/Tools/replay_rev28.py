@@ -97,6 +97,11 @@ def main() -> int:
     gate = load_json(root, "evidence/20260921-rev27-save-all/attempt-07/s11e-final-gate.json")
     require(all(c.get("pass") is True for c in gate.get("checks", [])), "attempt07:final-gate", failures)
 
+    ellipsis = load_json(root, "evidence/20260916-route/attempt-07/v5-offline-replay.json")
+    require(ellipsis.get("verdict") == "ELIGIBLE", "attempt07:ellipsis-not-eligible", failures)
+    require(ellipsis.get("ellipsis_dots") == [[304.5, 44.0], [304.5, 49.5], [304.5, 55.0]], "attempt07:ellipsis-structure", failures)
+    require(ellipsis.get("click_point") == [304, 50], "attempt07:ellipsis-point", failures)
+
     card12 = load_json(root, "evidence/20260916-route/attempt-12/album-card-locate-v6.json")
     require(card12.get("verdict") == "ELIGIBLE", "attempt12:album-card", failures)
     require(str(card12.get("count_digits_read")) == "57", "attempt12:count", failures)
@@ -120,6 +125,8 @@ def main() -> int:
             "save_all_v8_reference_structure": rows,
             "save_all_v8_hard_check_count": len(hard),
             "attempt07_final_gate_all_pass": all(c.get("pass") is True for c in gate.get("checks", [])),
+            "attempt07_ellipsis_verdict": ellipsis.get("verdict"),
+            "attempt07_ellipsis_dots": ellipsis.get("ellipsis_dots"),
             "attempt12_album_card_verdict": card12.get("verdict"),
             "attempt12_count": str(card12.get("count_digits_read")),
             "attempt13_geometry_verdict": geometry13.get("verdict"),
