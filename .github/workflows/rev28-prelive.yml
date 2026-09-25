@@ -1,0 +1,156 @@
+name: Rev28 macOS pre-live verification
+
+on:
+  push:
+    branches:
+      - rev28-ci-prelive-hardening
+    paths:
+      - "rev28/**"
+      - "evidence/20260925-rev28-native-closed-loop/harness/frozen/**"
+      - ".github/workflows/rev28-prelive.yml"
+  pull_request:
+    paths:
+      - "rev28/**"
+      - "evidence/20260925-rev28-native-closed-loop/harness/frozen/**"
+      - ".github/workflows/rev28-prelive.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rev28-prelive-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  macos27:
+    name: macOS 27 capability + Rev28 harness
+    runs-on: xcode-27
+    timeout-minutes: 45
+    env:
+      CI_EVIDENCE_ROOT: ${{ runner.temp }}/rev28-ci
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Record runner environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$CI_EVIDENCE_ROOT/environment"
+          {
+            echo "date_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "runner_arch=$RUNNER_ARCH"
+            echo "runner_os=$RUNNER_OS"
+            sw_vers
+            uname -a
+            xcode-select -p
+            xcodebuild -version
+            swift --version
+            xcrun --sdk macosx --show-sdk-path
+          } | tee "$CI_EVIDENCE_ROOT/environment/runner.txt"
+
+      - name: Build Rev28
+        shell: bash
+        run: |
+          set -euo pipefail
+          swift build --package-path rev28 2>&1 | tee "$CI_EVIDENCE_ROOT/build.log"
+
+      - name: Run Rev28 unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          swift test --package-path rev28 2>&1 | tee "$CI_EVIDENCE_ROOT/swift-test.log"
+
+      - name: Executable-context capability probe
+        id: probe
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p "$CI_EVIDENCE_ROOT/probe"
+          export REV28_SDK_PATH="$(xcrun --sdk macosx --show-sdk-path)"
+          export REV28_SWIFT_VERSION="$(swift --version | head -n 1)"
+          ./rev28/.build/debug/rev28probe "$CI_EVIDENCE_ROOT/probe" 2>&1 | tee "$CI_EVIDENCE_ROOT/probe/stdout.log"
+          rc=${PIPESTATUS[0]}
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          exit "$rc"
+
+      - name: Prepare isolated W2 evidence root
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$CI_EVIDENCE_ROOT/harness/frozen"
+          cp -R evidence/20260925-rev28-native-closed-loop/harness/frozen/. "$CI_EVIDENCE_ROOT/harness/frozen/"
+          shasum -a 256 "$CI_EVIDENCE_ROOT/harness/frozen/"* > "$CI_EVIDENCE_ROOT/harness/frozen-source-sha256.txt"
+
+      - name: W2 item 5 postcondition calibration
+        id: item5
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -uo pipefail
+          export REV28_SDK_PATH="$(xcrun --sdk macosx --show-sdk-path)"
+          export REV28_SWIFT_VERSION="$(swift --version | head -n 1)"
+          ./rev28/.build/debug/rev28ctl harness-calibrate \
+            --evidence "$CI_EVIDENCE_ROOT/harness" \
+            --items 5 \
+            --binary-dir "$PWD/rev28/.build/debug" \
+            2>&1 | tee "$CI_EVIDENCE_ROOT/item5.log"
+          rc=${PIPESTATUS[0]}
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          exit "$rc"
+
+      - name: Process census after headed tests
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          pgrep -fl 'rev28harness|rev28occluder|rev28ctl|LINE' | tee "$CI_EVIDENCE_ROOT/process-census-after.txt"
+          pkill -TERM -f rev28harness || true
+          pkill -TERM -f rev28occluder || true
+          pkill -TERM -f rev28ctl || true
+
+      - name: Summarize capability result
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Rev28 macOS 27 pre-live"
+            echo
+            echo "- capability probe exit: ${{ steps.probe.outputs.exit_code || 'not-run' }}"
+            echo "- W2 item 5 exit: ${{ steps.item5.outputs.exit_code || 'not-run' }}"
+            echo "- runner: xcode-27"
+            echo
+            echo "A failing capability or headed-harness step is evidence about GitHub-hosted runner limits; it is not treated as production LINE acceptance."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rev28-macos27-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/rev28-ci
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce deterministic tests
+        if: always()
+        shell: bash
+        run: |
+          test -s "$CI_EVIDENCE_ROOT/swift-test.log"
+
+      - name: Enforce headed capability gate
+        if: always()
+        shell: bash
+        run: |
+          probe="${{ steps.probe.outputs.exit_code }}"
+          item5="${{ steps.item5.outputs.exit_code }}"
+          if [[ "$probe" != "0" ]]; then
+            echo "macOS 27 hosted runner cannot satisfy the current executable-context capability contract (probe=$probe)." >&2
+            exit 1
+          fi
+          if [[ "$item5" != "0" ]]; then
+            echo "W2 item 5 did not pass on the hosted macOS 27 runner (item5=$item5)." >&2
+            exit 1
+          fi
