@@ -232,3 +232,71 @@ public enum LedgerResume {
         decide(entries: entries).allowedNewIrreversibleDispatches == 0
     }
 }
+
+
+// MARK: - Save All empirical risk-class record (plan §ARCHITECTURE §9)
+
+public enum SaveAllEmpiricalClassification: String, Codable, Sendable {
+    case preSideEffectObserved = "PRE_SIDE_EFFECT_OBSERVED"
+    case irreversibleOrIndeterminate = "IRREVERSIBLE_OR_INDETERMINATE"
+}
+
+public struct SaveAllEmpiricalClassRecord: Equatable, Codable, Sendable {
+    public let classification: SaveAllEmpiricalClassification
+    public let postconditionOutcome: String
+    public let chooserAffirmed: Bool
+    public let attributableFilesystemWriteObservedBeforeChooser: Bool
+    public let postconditionEvidenceSHA256: String
+    public let tripwireEvidenceSHA256: String
+
+    public init(
+        classification: SaveAllEmpiricalClassification,
+        postconditionOutcome: String,
+        chooserAffirmed: Bool,
+        attributableFilesystemWriteObservedBeforeChooser: Bool,
+        postconditionEvidenceSHA256: String,
+        tripwireEvidenceSHA256: String
+    ) {
+        self.classification = classification
+        self.postconditionOutcome = postconditionOutcome
+        self.chooserAffirmed = chooserAffirmed
+        self.attributableFilesystemWriteObservedBeforeChooser = attributableFilesystemWriteObservedBeforeChooser
+        self.postconditionEvidenceSHA256 = postconditionEvidenceSHA256
+        self.tripwireEvidenceSHA256 = tripwireEvidenceSHA256
+    }
+
+    /// Conservative classification: Save All is eligible for a future
+    /// PRE_SIDE_EFFECT review only when a chooser was affirmatively observed
+    /// and there was no attributable filesystem write before that chooser.
+    public static func derive(
+        postconditionOutcome: String,
+        chooserAffirmed: Bool,
+        attributableFilesystemWriteObservedBeforeChooser: Bool,
+        postconditionEvidenceSHA256: String,
+        tripwireEvidenceSHA256: String
+    ) -> SaveAllEmpiricalClassRecord {
+        let classification: SaveAllEmpiricalClassification =
+            chooserAffirmed && !attributableFilesystemWriteObservedBeforeChooser
+            ? .preSideEffectObserved
+            : .irreversibleOrIndeterminate
+        return SaveAllEmpiricalClassRecord(
+            classification: classification,
+            postconditionOutcome: postconditionOutcome,
+            chooserAffirmed: chooserAffirmed,
+            attributableFilesystemWriteObservedBeforeChooser: attributableFilesystemWriteObservedBeforeChooser,
+            postconditionEvidenceSHA256: postconditionEvidenceSHA256,
+            tripwireEvidenceSHA256: tripwireEvidenceSHA256
+        )
+    }
+
+    public func append(to ledger: IntentLedger) throws {
+        try ledger.append(kind: "saveAllEmpiricalClassRecord", payload: [
+            "classification": classification.rawValue,
+            "postconditionOutcome": postconditionOutcome,
+            "chooserAffirmed": chooserAffirmed ? "1" : "0",
+            "filesystemWriteBeforeChooser": attributableFilesystemWriteObservedBeforeChooser ? "1" : "0",
+            "postconditionEvidenceSHA256": postconditionEvidenceSHA256,
+            "tripwireEvidenceSHA256": tripwireEvidenceSHA256,
+        ])
+    }
+}

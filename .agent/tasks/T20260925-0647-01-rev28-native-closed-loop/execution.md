@@ -217,3 +217,76 @@ Commit/push scope and authority:
 - Stage only the three modified Rev28 source files, this task's `execution.md`, `handoff.md`, `handoff.sha256`, the new archived handoff, and `evidence/20260925-rev28-native-closed-loop/**`. Preserve unrelated Rev27e plans/task/evidence and pre-existing `__pycache__` directories; never use `git add -A`.
 - Plan R25 says no push. The owner has now explicitly authorized `add`, `commit`, and `push` for this closeout checkpoint; this current instruction overrides the plan only for this push. Use ordinary `git push origin master`, no force/rebase. Verify exact commit message, pushed HEAD/upstream and final tree, then report any push rejection without rewriting history.
 - This is a checkpoint, not task completion. Do not create `result.md`; independent Stage 05 has not run.
+
+
+## Update 4 — GitHub-hosted macOS 27 pre-live finalization
+
+date: 2026-09-25
+branch: `rev28-prelive-finalization`
+base: `master@9db32f68d271272fd8ac5a6337522534e88d9ab2`
+plan: revision 3 / SHA-256 `63b25602b215a3e9514fa76db8bd34c097f4bec40f370381d218c57f62745828` (unchanged)
+
+Owner authorized autonomous testing/fixing in GitHub Actions and requested a PR that leaves only real-Mac production work. The repository was made public so macOS hosted Actions could be used extensively.
+
+### Recovered implementation lineage
+GitHub retained a deleted historical branch whose first-parent chain was a direct descendant of the current master checkpoint (34 commits ahead, 0 behind). That chain already contained W3 structural locators/replay, W4 policy/ledger/staging verifier, W5 adversarial coverage and the macOS-27 workflow. It was restored to `rev28-prelive-finalization` and reverified rather than reimplemented independently. No historical master commit was rewritten.
+
+### W2 item-5 root cause and repair
+Historical headed run `36121480850` proved the hosted runner had working AX/ScreenCapture/PostEvent/SCK, but item 5 failed only in the late-affirmative fixture: the monitor returned `noChooserObserved` while a concurrent diagnostic sampler immediately affirmed the same panel. Root cause was test perturbation/timing, not production bounds or missing hosted GUI capability:
+1. the late panel was placed only ~200 ms before the one forensic sample;
+2. a second diagnostic SCK/AX sampler ran concurrently with the monitor.
+
+Fix `6236185a83315895e0fe5afce57fea73347db61e`:
+- no production predicate/cadence/hard-cap/result meaning changed;
+- late panel now appears strictly after the 1.0 s test hard cap with substantial settling margin before the 1.9 s forensic sample;
+- diagnostic sampling occurs only after the monitor completes.
+
+### Hosted validation
+Run `36123508929` on GitHub-hosted `xcode-27`:
+- deterministic job PASS;
+- headed job PASS;
+- independent rerun (attempt 2) PASS;
+- item-5 max observed panel latency: 108.05 ms / 108.36 ms across the two successful attempts;
+- both attempts: `within=chooserVerified`, `timeout=noChooserObserved`, `late=chooserObservedAfterWindow`, `monitorPosts=0`.
+
+Final hardening run `36124211295` on head `e65905b6de6379d88ae30e2388dd1a999c4e4096`: SUCCESS.
+- non-Vision deterministic suite: 87 tests / 0 failures;
+- canonical adversarial matrix G01–G22 + X01–X03: 25/25 PASS, executed twice;
+- historical replay: all 20 reviewed SHA-bound fixtures, executed twice with byte-identical output;
+- hosted headed primitives: AX=true, ScreenCapture=true, PostEvent=true, ScreenCaptureKit=OK (5 windows / 1 display);
+- W2 item 5 PASS with 20 NSOpenPanel samples; max 78.634977 ms, median 44.315100 ms, p95 78.634977 ms;
+- validated outcomes: within-window chooser verified; timeout no chooser; late chooser observed after window; zero monitor input;
+- frozen plan-time bounds retained unchanged: 150 ms cadence / 8 s fast phase, 500 ms cadence to 15 s hard cap.
+
+Hosted Vision remains unavailable with `unknownError` in both the production Swift `RecognizeTextRequest` path and the diagnostic legacy `VNRecognizeTextRequest` path. Real-Mac Vision had previously passed. CI now treats Vision as non-authoritative only when the exact known `unknownError` signature is reproduced; any other unsupported-Vision failure makes the workflow fail rather than silently degrading the OCR contract.
+
+### New durable item-5 evidence
+Append-only files added:
+- `harness/frozen/postcondition-bounds-v2.json` — SHA-256 `14b45107ef9d9df2032575ff161fa08302ce81dd555d09cee9ef3df68ffbb7da`;
+- `harness/frozen/postcondition-latency-observations-v2.json` — SHA-256 `74085354d27abe22f4aee39d92287ff91a589c6ea50007034a9b9371b88dad35`;
+- `harness/frozen/sha256sums-HARNESS-20260925-103224.txt`;
+- `harness/runs/HARNESS-20260925-103224/items/05-postcondition-proofs.json` — SHA-256 `7088ae0021b78f2d3c834ba19e25bf626a9d63e0b1e9b895f51af134821cfc53`;
+- `harness/ci-w2-item5-freeze-provenance.json` binding Actions run/artifact/head.
+
+The old v1 provisional files were not modified or overwritten.
+
+### W3/W4/W5 status
+W3 implemented and verified: epoch/frame-bound album/detail/menu/Save-All locators, native reviewed-v5 ellipsis locator, 20-fixture SHA-bound deterministic replay.
+
+W4 implemented and verified: state transitions, action-risk budgets, exactly-once Save All/confirmation, dispatch-readiness gate, hash-chained ledger/observe-only resume, conservative Save-All empirical classification, exact staging verifier, monotonic postcondition deadline hardening.
+
+W5 implemented and verified: canonical 25-case adversarial matrix (G01–G22 + X01–X03), deterministic reruns.
+
+### Remaining gates
+- `V-09` independent exact-SHA reviews are still required; the implementing session does not self-certify independence.
+- Real Mac only: executable-context Vision/TCC recheck; baseline/staging preflight; Phase A read-only LINE reconnaissance; conditional exactly-once Phase B; filesystem/content proof; Stage-05 independent disk recomputation.
+
+No LINE production interaction occurred in GitHub Actions. CI evidence cannot claim `DUPLICATE_CONTENT_CONFIRMED`.
+
+Orthogonal status:
+- PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
+- IMPLEMENTATION_STATUS: PRE_LIVE_READY
+- CORE_ACCEPTANCE_STATUS: NOT_RUN
+- REQUIRED_VERIFICATION_STATUS: PRE_LIVE_CI_COMPLETE; V-09_AND_LIVE_GATES_PENDING
+- INDEPENDENT_ACCEPTANCE_STATUS: PENDING
+- TASK_CLOSURE_STATUS: IN_PROGRESS

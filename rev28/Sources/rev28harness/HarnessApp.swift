@@ -551,7 +551,7 @@ final class HarnessController: NSObject, NSApplicationDelegate {
                     let payload = Data(repeating: 0x44, count: 1024)
                     DispatchQueue.main.asyncAfter(deadline: .now() + Double(step) * 0.4) {
                         if let handle = try? FileHandle(forWritingTo: url) {
-                            try? handle.seekToEnd()
+                            _ = try? handle.seekToEnd()
                             try? handle.write(contentsOf: payload)
                             try? handle.close()
                             self.emit([

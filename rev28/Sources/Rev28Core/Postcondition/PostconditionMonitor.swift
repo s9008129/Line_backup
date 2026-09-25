@@ -95,6 +95,11 @@ public enum PostconditionMonitorError: Error, CustomStringConvertible {
 public enum PostconditionMonitor {
     /// Runs the bounded observation window. Each sample is verdict-eligible;
     /// the sampler itself owns capture/AX/CG evidence collection.
+    ///
+    /// The deadline is evaluated *after* each sampler call. This is important:
+    /// a slow ScreenCaptureKit/AX sample can start before the hard cap and return
+    /// after it. Such an affirmation is late evidence and must never be promoted
+    /// to `chooserVerified`.
     public static func run(
         bounds: PostconditionBounds,
         sampler: @escaping @Sendable () async -> PostconditionSample,
@@ -107,34 +112,45 @@ public enum PostconditionMonitor {
     ) async -> PostconditionOutcome {
         let start = monotonicNow()
         var sampleCount = 0
+
         while true {
             let sample = await sampler()
             sampleCount += 1
+            let elapsed = max(0, monotonicNow() - start)
+
             if let affirmation = sample.affirmed {
-                return .chooserVerified(affirmation)
+                if elapsed <= bounds.hardCapSeconds {
+                    return .chooserVerified(affirmation)
+                }
+                return .chooserObservedAfterWindow(
+                    sampleCount: sampleCount,
+                    lateSampleSeconds: elapsed,
+                    affirmation: affirmation
+                )
             }
-            let elapsed = monotonicNow() - start
+
             if elapsed >= bounds.hardCapSeconds {
                 // Plan §10 outcome routing: affirmative first observed only after
                 // the hard cap (the single late forensic sample) ->
                 // CHOOSER_OBSERVED_AFTER_WINDOW; no affirmative by the hard cap ->
                 // NO_CHOOSER_OBSERVED (scoped indeterminate, no retry).
-                let lateDelay = bounds.lateForensicSampleDelaySeconds
-                await sleep(lateDelay)
+                await sleep(bounds.lateForensicSampleDelaySeconds)
                 let lateSample = await sampler()
                 sampleCount += 1
+                let lateElapsed = max(0, monotonicNow() - start)
                 if let affirmation = lateSample.affirmed {
                     return .chooserObservedAfterWindow(
                         sampleCount: sampleCount,
-                        lateSampleSeconds: monotonicNow() - start,
+                        lateSampleSeconds: lateElapsed,
                         affirmation: affirmation
                     )
                 }
                 return .noChooserObserved(
                     sampleCount: sampleCount,
-                    observedSeconds: monotonicNow() - start
+                    observedSeconds: lateElapsed
                 )
             }
+
             let cadence = Double(bounds.cadenceMilliseconds(atElapsedSeconds: elapsed)) / 1000.0
             await sleep(min(cadence, max(0.001, bounds.hardCapSeconds - elapsed)))
         }

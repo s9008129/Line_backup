@@ -1,0 +1,272 @@
+name: Rev28 macOS 27 pre-live
+
+on:
+  push:
+    branches:
+      - master
+      - rev28-prelive-finalization
+    paths:
+      - "rev28/**"
+      - ".github/workflows/rev28-macos27.yml"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "rev28/**"
+      - ".github/workflows/rev28-macos27.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rev28-macos27-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deterministic:
+    name: Deterministic Swift contract
+    runs-on: xcode-27
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Record runner and toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            sw_vers
+            uname -a
+            xcodebuild -version
+            swift --version
+            xcrun --sdk macosx --show-sdk-path
+          } | tee "$RUNNER_TEMP/rev28-host.txt"
+
+      - name: Build Rev28
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          xcrun swift build --package-path rev28
+
+      - name: Run deterministic Rev28 tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          # OcrEngineTests exercise Apple's on-device Vision runtime and are
+          # intentionally executed in the headed/runtime job below. Everything
+          # else is a deterministic contract gate.
+          xcrun swift test --package-path rev28 --skip OcrEngineTests
+
+      - name: Run adversarial matrix twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          xcrun swift test --package-path rev28 --filter AdversarialMatrixTests
+          xcrun swift test --package-path rev28 --filter AdversarialMatrixTests
+
+      - name: Run SHA-bound historical replay twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONDONTWRITEBYTECODE=1
+          mkdir -p "$RUNNER_TEMP/rev28-replay"
+          python3 rev28/Tools/replay_rev28.py --root . --output "$RUNNER_TEMP/rev28-replay/run-1.json"
+          python3 rev28/Tools/replay_rev28.py --root . --output "$RUNNER_TEMP/rev28-replay/run-2.json"
+          cmp "$RUNNER_TEMP/rev28-replay/run-1.json" "$RUNNER_TEMP/rev28-replay/run-2.json"
+
+      - name: Upload deterministic evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rev28-deterministic-evidence
+          path: |
+            ${{ runner.temp }}/rev28-host.txt
+            ${{ runner.temp }}/rev28-replay
+          if-no-files-found: warn
+
+  headed-macos27:
+    name: Headed macOS 27 capability + W2 item 5
+    needs: deterministic
+    runs-on: xcode-27
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Record GUI environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            sw_vers
+            uname -a
+            xcodebuild -version
+            swift --version
+            echo "uid=$(id -u)"
+            echo "console_user=$(stat -f '%Su' /dev/console || true)"
+            pgrep -fl 'WindowServer|loginwindow' || true
+          } | tee "$RUNNER_TEMP/rev28-headed-host.txt"
+
+      - name: Build Rev28 executables
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          xcrun swift build --package-path rev28
+
+      - name: Vision runtime parity diagnostic
+        id: vision_tests
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          mkdir -p "$RUNNER_TEMP/rev28-vision"
+          xcrun swift test --package-path rev28 --filter OcrEngineTests \
+            2>&1 | tee "$RUNNER_TEMP/rev28-vision/ocr-tests.txt"
+
+      - name: Executable-context capability probe
+        id: capability
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/rev28-capability"
+          mkdir -p "$out"
+          set +e
+          REV28_SDK_PATH="$(xcrun --sdk macosx --show-sdk-path)" \
+          REV28_SWIFT_VERSION="$(swift --version | head -n 1)" \
+            ./rev28/.build/debug/rev28probe "$out" 2>&1 | tee "$out/stdout.txt"
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Classify hosted headed capabilities
+        id: classify
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import glob, json, os
+          files = sorted(glob.glob(os.path.join(os.environ["RUNNER_TEMP"], "rev28-capability", "probe-record-*.json")))
+          core = False
+          vision = False
+          detail = "probe-record-missing"
+          if files:
+              with open(files[-1], "r", encoding="utf-8") as f:
+                  record = json.load(f)
+              trust = record.get("trust", {})
+              sck = record.get("screenCaptureKit", {})
+              vision_record = record.get("vision", {})
+              core = bool(
+                  trust.get("axIsProcessTrusted")
+                  and trust.get("cgPreflightScreenCaptureAccess")
+                  and trust.get("cgPreflightPostEventAccess")
+                  and sck.get("status") == "OK"
+              )
+              vision = bool(
+                  vision_record.get("status") == "OK"
+                  and vision_record.get("expectedExactStringsFound")
+              )
+              detail = (
+                  f"ax={trust.get('axIsProcessTrusted')} "
+                  f"screen={trust.get('cgPreflightScreenCaptureAccess')} "
+                  f"post={trust.get('cgPreflightPostEventAccess')} "
+                  f"sck={sck.get('status')} vision={vision_record.get('status')}"
+              )
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+              out.write(f"core_supported={'true' if core else 'false'}\n")
+              out.write(f"vision_supported={'true' if vision else 'false'}\n")
+              out.write(f"detail={detail}\n")
+          PY
+
+      - name: Enforce bounded hosted Vision limitation
+        if: steps.classify.outputs.vision_supported != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import glob, json, os, pathlib, sys
+
+          records = sorted(glob.glob(os.path.join(os.environ["RUNNER_TEMP"], "rev28-capability", "probe-record-*.json")))
+          if not records:
+              raise SystemExit("capability probe record missing while Vision is unsupported")
+          with open(records[-1], "r", encoding="utf-8") as f:
+              record = json.load(f)
+          vision = record.get("vision", {})
+          error = vision.get("error")
+          if vision.get("status") != "ERROR" or error != "unknownError":
+              raise SystemExit(f"unexpected hosted Vision failure: status={vision.get('status')} error={error!r}")
+
+          log_path = pathlib.Path(os.environ["RUNNER_TEMP"]) / "rev28-vision" / "ocr-tests.txt"
+          text = log_path.read_text(encoding="utf-8", errors="replace") if log_path.exists() else ""
+          if "unknownError" not in text:
+              raise SystemExit("Vision parity diagnostics did not reproduce the known unknownError")
+          print("Hosted Vision limitation matches the bounded known signature: unknownError.")
+          PY
+
+      - name: Prepare isolated W2 evidence
+        if: steps.classify.outputs.core_supported == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/rev28-harness"
+          mkdir -p "$root"
+          cp -R evidence/20260925-rev28-native-closed-loop/harness/frozen "$root/frozen"
+
+      - name: Run W2 item 5 on native NSOpenPanel
+        id: item5
+        if: steps.classify.outputs.core_supported == 'true'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          REV28_SDK_PATH="$(xcrun --sdk macosx --show-sdk-path)" \
+          REV28_SWIFT_VERSION="$(swift --version | head -n 1)" \
+            ./rev28/.build/debug/rev28ctl harness-calibrate \
+              --evidence "$RUNNER_TEMP/rev28-harness" \
+              --items 5 \
+              2>&1 | tee "$RUNNER_TEMP/rev28-harness/item5-console.txt"
+
+      - name: Publish capability status
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Rev28 macOS 27 hosted headed capability"
+            echo
+            echo "- capability probe exit: ${{ steps.capability.outputs.exit_code || 'not-run' }}"
+            echo "- SCK/AX/Quartz core supported: ${{ steps.classify.outputs.core_supported || 'false' }}"
+            echo "- Vision modern probe supported: ${{ steps.classify.outputs.vision_supported || 'false' }}"
+            echo "- Vision parity tests: ${{ steps.vision_tests.outcome || 'skipped' }}"
+            echo "- W2 item 5: ${{ steps.item5.outcome || 'skipped' }}"
+            echo "- detail: ${{ steps.classify.outputs.detail || 'not-available' }}"
+            echo
+            echo "Vision runtime diagnostics are not allowed to weaken production OCR requirements."
+            echo "W2 item 5 is enforced only when the hosted runner exposes its required SCK/AX/Quartz primitives."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload headed evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rev28-macos27-headed-evidence
+          path: |
+            ${{ runner.temp }}/rev28-headed-host.txt
+            ${{ runner.temp }}/rev28-capability
+            ${{ runner.temp }}/rev28-vision
+            ${{ runner.temp }}/rev28-harness
+          if-no-files-found: warn
+
+      - name: Enforce W2 item 5 when hosted core primitives are available
+        if: steps.classify.outputs.core_supported == 'true' && steps.item5.outcome != 'success'
+        shell: bash
+        run: |
+          echo "Hosted macOS 27 exposes SCK/AX/Quartz, but W2 item 5 failed."
+          exit 1
