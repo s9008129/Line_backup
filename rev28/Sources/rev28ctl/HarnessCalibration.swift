@@ -381,19 +381,47 @@ private struct ChooserSamplerContext: Sendable {
 /// hopping through MainActor while the bounded observation loop is suspended.
 private enum ChooserAffirmationSampler {
     static func sample(context: ChooserSamplerContext) async -> PostconditionSample {
+        // Cadence-critical negative sampling must stay cheap. SCShareableContent
+        // and a deep AX dump can occasionally block for seconds on a hosted
+        // WindowServer; invoking both on every negative sample destroys the
+        // monitor's <=150 ms observation cadence. Use the synchronous CG
+        // inventory only as an early *candidate presence* gate. A positive
+        // result still requires fresh SCK + CG + AX evidence and the full frozen
+        // chooser predicate before it can affirm.
+        let cgInventory = CGWindowInventory.onScreenWindows()
+        let newCGCandidateIDs = Set(cgInventory.compactMap { window -> UInt32? in
+            guard window.ownerPID == context.harnessPID,
+                  window.windowNumber != context.mainWindowID,
+                  window.windowNumber != context.popupWindowID,
+                  !context.preWindowIDs.contains(window.windowNumber) else {
+                return nil
+            }
+            return window.windowNumber
+        })
+        guard !newCGCandidateIDs.isEmpty else {
+            return PostconditionSample(affirmed: nil, note: "noNewCGChooserCandidate")
+        }
+
         do {
             let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-            let cgInventory = CGWindowInventory.onScreenWindows()
             let postCensus = Array(Set(content.windows.compactMap { $0.owningApplication?.processID })).sorted()
             let candidates = content.windows.filter { window in
                 window.owningApplication?.processID == context.harnessPID
                     && window.isOnScreen
-                    && window.windowID != context.mainWindowID
-                    && window.windowID != context.popupWindowID
+                    && newCGCandidateIDs.contains(window.windowID)
             }
             var rejectionDetails: [String] = []
+            if candidates.isEmpty {
+                return PostconditionSample(
+                    affirmed: nil,
+                    note: "newCGCandidatePendingFreshSCK ids=\(newCGCandidateIDs.sorted())"
+                )
+            }
             for window in candidates {
-                guard let axElement = matchingAXWindow(pid: context.harnessPID, frame: window.frame) else { continue }
+                guard let axElement = matchingAXWindow(pid: context.harnessPID, frame: window.frame) else {
+                    rejectionDetails.append("windowID=\(window.windowID) cause=axWindowNotYetMatched")
+                    continue
+                }
                 let dump = AXDriver.dump(element: axElement, pid: context.harnessPID, maxDepth: 8, maxNodes: 500)
                 let candidate = ChooserCandidate(
                     windowID: window.windowID,
@@ -421,10 +449,10 @@ private enum ChooserAffirmationSampler {
                     rejectionDetails.append("windowID=\(window.windowID) cause=\(cause.rawValue) \(detail)")
                 }
             }
-            let note = rejectionDetails.isEmpty
-                ? "noEligibleChooserCandidate"
-                : rejectionDetails.joined(separator: "; ")
-            return PostconditionSample(affirmed: nil, note: note)
+            return PostconditionSample(
+                affirmed: nil,
+                note: rejectionDetails.isEmpty ? "noEligibleChooserCandidate" : rejectionDetails.joined(separator: "; ")
+            )
         } catch {
             return PostconditionSample(affirmed: nil, note: "samplerError:\(error)")
         }
@@ -2233,8 +2261,14 @@ final class HarnessCalibrationDriver {
         // (a) within-window: real panel appears while the monitor observes.
         let withinBounds = PostconditionBounds(fastCadenceMs: 150, fastPhaseSeconds: 8.0, slowCadenceMs: 500, hardCapSeconds: 15.0, lateForensicSampleDelaySeconds: 0.5)
         func makeSamplerContext() async throws -> ChooserSamplerContext {
-            let preCensus = try await onScreenWindowOwnerPIDs()
-            let preWindowIDs = Set(try await freshContent().windows.map { $0.windowID })
+            // One pre-dispatch SCK snapshot binds both the process census and
+            // window-ID set. Avoid two expensive back-to-back enumerations and
+            // guarantee both facts describe the same pre-dispatch instant.
+            let preContent = try await freshContent()
+            let preCensus = Array(Set(preContent.windows.filter { $0.isOnScreen }.compactMap {
+                $0.owningApplication?.processID
+            })).sorted()
+            let preWindowIDs = Set(preContent.windows.map { $0.windowID })
             return ChooserSamplerContext(
                 harnessPID: harnessPID(),
                 mainWindowID: mainWindowNumber(),
