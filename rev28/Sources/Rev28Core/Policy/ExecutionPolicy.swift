@@ -85,3 +85,49 @@ public struct LiveDispatchBudget: Equatable, Codable, Sendable {
         destinationConfirmations = 1
     }
 }
+
+
+public enum DispatchRefusal: String, Codable, Sendable {
+    case applicationInactive
+    case targetNotFrontmost
+    case staleWindowIdentity
+    case staleCandidate
+    case unsafeGeometry
+}
+
+public struct DispatchReadiness: Equatable, Codable, Sendable {
+    public let applicationActive: Bool
+    public let targetFrontmost: Bool
+    public let identityFresh: Bool
+    public let candidateFresh: Bool
+    public let geometrySafe: Bool
+
+    public init(
+        applicationActive: Bool,
+        targetFrontmost: Bool,
+        identityFresh: Bool,
+        candidateFresh: Bool,
+        geometrySafe: Bool
+    ) {
+        self.applicationActive = applicationActive
+        self.targetFrontmost = targetFrontmost
+        self.identityFresh = identityFresh
+        self.candidateFresh = candidateFresh
+        self.geometrySafe = geometrySafe
+    }
+}
+
+public enum DispatchReadinessEvaluator {
+    public static func refusal(for readiness: DispatchReadiness) -> DispatchRefusal? {
+        if !readiness.applicationActive { return .applicationInactive }
+        if !readiness.targetFrontmost { return .targetNotFrontmost }
+        if !readiness.identityFresh { return .staleWindowIdentity }
+        if !readiness.candidateFresh { return .staleCandidate }
+        if !readiness.geometrySafe { return .unsafeGeometry }
+        return nil
+    }
+
+    public static func isEligible(_ readiness: DispatchReadiness) -> Bool {
+        refusal(for: readiness) == nil
+    }
+}
