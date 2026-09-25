@@ -2292,7 +2292,11 @@ final class HarnessCalibrationDriver {
             proof.timeoutDetail = "samples=\(count) late=\(seconds) affirmed=\(affirmation != nil)"
         }
 
-        // (c) late-affirmative: panel appears after the hard cap -> CHOOSER_OBSERVED_AFTER_WINDOW.
+        // (c) late-affirmative: panel appears strictly after the hard cap but
+        // comfortably before the single forensic sample. Keep the diagnostic
+        // sampler out of the observation window: a second concurrent SCK/AX
+        // sampler would perturb the system under test and can race WindowServer
+        // inventory propagation on hosted runners.
         let lateBounds = PostconditionBounds(fastCadenceMs: 60, fastPhaseSeconds: 0.6, slowCadenceMs: 120, hardCapSeconds: 1.0, lateForensicSampleDelaySeconds: 0.9)
         let lateSamplerContext = try await makeSamplerContext()
         let lateTask = Task.detached {
@@ -2300,11 +2304,14 @@ final class HarnessCalibrationDriver {
                 await ChooserAffirmationSampler.sample(context: lateSamplerContext)
             }
         }
-        await sleep(milliseconds: 300)
+        await sleep(milliseconds: 100)
         let lateDestination = run.fixturesDir.appendingPathComponent("postcondition-late")
         try EvidenceIO.ensureDirectory(lateDestination)
-        _ = try await harnessCall("showPanel", params: ["delayMs": 1400.0, "directory": lateDestination.path, "marker": "late.marker"])
+        // Target appearance ~= 1.25 s after monitor start: > 1.0 s hard cap,
+        // with ~0.65 s settling margin before the 1.9 s forensic sample.
+        _ = try await harnessCall("showPanel", params: ["delayMs": 1150.0, "directory": lateDestination.path, "marker": "late.marker"])
         let latePanelShown = await harness.waitForEvent("panelShown", timeoutSeconds: 4)
+        let lateOutcome = await lateTask.value
         if latePanelShown != nil {
             let diagnostic = await ChooserAffirmationSampler.sample(context: lateSamplerContext)
             proof.lateDiagnosticAffirmed = diagnostic.affirmed != nil
@@ -2312,7 +2319,6 @@ final class HarnessCalibrationDriver {
         } else {
             proof.lateDiagnosticDetail = "panelShown event was not observed"
         }
-        let lateOutcome = await lateTask.value
         switch lateOutcome {
         case let .chooserObservedAfterWindow(count, seconds, affirmation):
             proof.lateOutcome = "chooserObservedAfterWindow"
