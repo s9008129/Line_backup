@@ -122,16 +122,16 @@ public enum StructuralLocators {
         let groupMatches = OcrTextIdentity.exactMatches(in: items, expected: groupTitle)
         let countMatches = OcrTextIdentity.exactMatches(in: items, expected: countText)
         guard groupMatches.count == 1 else {
-            throw StructuralLocatorError(
+            return .failure(StructuralLocatorError(
                 refusal: groupMatches.count > 1 ? .ambiguousIdentity : .missingIdentity,
                 detail: "groupTitle matches=\(groupMatches.count)"
-            )
+            ))
         }
         guard countMatches.count == 1 else {
-            throw StructuralLocatorError(
+            return .failure(StructuralLocatorError(
                 refusal: countMatches.count > 1 ? .ambiguousIdentity : .missingIdentity,
                 detail: "countText matches=\(countMatches.count)"
-            )
+            ))
         }
         return .success(())
     }
