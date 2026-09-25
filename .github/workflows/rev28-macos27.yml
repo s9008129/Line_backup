@@ -1,0 +1,167 @@
+name: Rev28 macOS 27 pre-live
+
+on:
+  push:
+    branches:
+      - rev28-ci-prelive-hardening
+  pull_request:
+    paths:
+      - "rev28/**"
+      - ".github/workflows/rev28-macos27.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rev28-macos27-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deterministic:
+    name: Deterministic Swift contract
+    runs-on: xcode-27
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Record runner and toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            sw_vers
+            uname -a
+            xcodebuild -version
+            swift --version
+            xcrun --sdk macosx --show-sdk-path
+          } | tee "$RUNNER_TEMP/rev28-host.txt"
+
+      - name: Build Rev28
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          xcrun swift build --package-path rev28
+
+      - name: Run Rev28 unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          xcrun swift test --package-path rev28
+
+      - name: Upload deterministic host record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rev28-deterministic-host
+          path: ${{ runner.temp }}/rev28-host.txt
+          if-no-files-found: warn
+
+  headed-macos27:
+    name: Headed macOS 27 capability + W2 item 5
+    needs: deterministic
+    runs-on: xcode-27
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Record GUI environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            sw_vers
+            uname -a
+            xcodebuild -version
+            swift --version
+            echo "uid=$(id -u)"
+            echo "console_user=$(stat -f '%Su' /dev/console || true)"
+            pgrep -fl 'WindowServer|loginwindow' || true
+          } | tee "$RUNNER_TEMP/rev28-headed-host.txt"
+
+      - name: Build Rev28 executables
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          xcrun swift build --package-path rev28
+
+      - name: Executable-context capability probe
+        id: capability
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/rev28-capability"
+          mkdir -p "$out"
+          set +e
+          REV28_SDK_PATH="$(xcrun --sdk macosx --show-sdk-path)" \
+          REV28_SWIFT_VERSION="$(swift --version | head -n 1)" \
+            ./rev28/.build/debug/rev28probe "$out" 2>&1 | tee "$out/stdout.txt"
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          if [[ "$rc" -eq 0 ]]; then
+            echo "supported=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "supported=false" >> "$GITHUB_OUTPUT"
+          fi
+          exit 0
+
+      - name: Prepare isolated W2 evidence
+        if: steps.capability.outputs.supported == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/rev28-harness"
+          mkdir -p "$root"
+          cp -R evidence/20260925-rev28-native-closed-loop/harness/frozen "$root/frozen"
+
+      - name: Run W2 item 5 on native NSOpenPanel
+        id: item5
+        if: steps.capability.outputs.supported == 'true'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          REV28_SDK_PATH="$(xcrun --sdk macosx --show-sdk-path)" \
+          REV28_SWIFT_VERSION="$(swift --version | head -n 1)" \
+            ./rev28/.build/debug/rev28ctl harness-calibrate \
+              --evidence "$RUNNER_TEMP/rev28-harness" \
+              --items 5 \
+              2>&1 | tee "$RUNNER_TEMP/rev28-harness/item5-console.txt"
+
+      - name: Publish capability status
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Rev28 macOS 27 headed capability"
+            echo
+            echo "- capability probe exit: ${{ steps.capability.outputs.exit_code || 'not-run' }}"
+            echo "- headed primitives supported: ${{ steps.capability.outputs.supported || 'false' }}"
+            echo "- W2 item 5 step outcome: ${{ steps.item5.outcome || 'skipped' }}"
+            echo
+            if [[ "${{ steps.capability.outputs.supported || 'false' }}" != "true" ]]; then
+              echo "The GitHub-hosted runner is treated as an unsupported headed environment for this revision; deterministic CI remains authoritative and no production semantics are weakened."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload headed evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rev28-macos27-headed-evidence
+          path: |
+            ${{ runner.temp }}/rev28-headed-host.txt
+            ${{ runner.temp }}/rev28-capability
+            ${{ runner.temp }}/rev28-harness
+          if-no-files-found: warn
+
+      - name: Enforce W2 item 5 when headed primitives are available
+        if: steps.capability.outputs.supported == 'true' && steps.item5.outcome != 'success'
+        shell: bash
+        run: |
+          echo "GitHub macOS 27 exposes the required headed primitives, but W2 item 5 failed."
+          exit 1
