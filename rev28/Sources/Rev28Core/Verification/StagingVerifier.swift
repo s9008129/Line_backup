@@ -118,8 +118,15 @@ public enum StagingVerifier {
               let first = snapshots.first,
               let last = snapshots.last,
               last.observedAt - first.observedAt >= minimumSpanSeconds else { return false }
-        let signature: (StagingSnapshot) -> [(String, UInt64, TimeInterval)] = {
-            $0.files.sorted { $0.name < $1.name }.map { ($0.name, $0.size, $0.modificationTime) }
+        struct FileStabilitySignature: Equatable {
+            let name: String
+            let size: UInt64
+            let modificationTime: TimeInterval
+        }
+        let signature: (StagingSnapshot) -> [FileStabilitySignature] = {
+            $0.files.sorted { $0.name < $1.name }.map {
+                FileStabilitySignature(name: $0.name, size: $0.size, modificationTime: $0.modificationTime)
+            }
         }
         let lastSig = signature(last)
         guard snapshots.suffix(minimumSamples).allSatisfy({ signature($0) == lastSig }) else { return false }
