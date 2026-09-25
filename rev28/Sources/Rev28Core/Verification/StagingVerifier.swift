@@ -7,6 +7,7 @@ public enum StagingOutcome: String, Codable, Sendable {
     case stagingIncomplete = "STAGING_INCOMPLETE"
     case stagingExtraFiles = "STAGING_EXTRA_FILES"
     case stagingDuplicateContent = "STAGING_DUPLICATE_CONTENT"
+    case stagingUnstable = "STAGING_UNSTABLE"
     case contentMismatchAgainstAcceptedBaseline = "CONTENT_MISMATCH_AGAINST_ACCEPTED_BASELINE"
 }
 
@@ -77,6 +78,33 @@ public enum StagingVerifier {
     public static func contentMultisetDigest(_ hashes: [String]) -> String {
         let joined = hashes.sorted().joined(separator: "\n")
         return SHA256.hash(data: Data(joined.utf8)).map { String(format: "%02x", $0) }.joined()
+    }
+
+    public static func verifyStableSnapshots(
+        _ snapshots: [StagingSnapshot],
+        policy: StagingPolicy = .rev28Accepted,
+        minimumSamples: Int = 3,
+        minimumSpanSeconds: Double = 4,
+        quiescenceSeconds: Double = 5
+    ) -> StagingVerification {
+        guard let last = snapshots.last else {
+            return StagingVerification(
+                outcome: .stagingUnstable,
+                fileCount: 0,
+                totalBytes: 0,
+                contentMultisetSHA256: nil,
+                detail: "no staging samples"
+            )
+        }
+        guard isStable(
+            snapshots: snapshots,
+            minimumSamples: minimumSamples,
+            minimumSpanSeconds: minimumSpanSeconds,
+            quiescenceSeconds: quiescenceSeconds
+        ) else {
+            return result(.stagingUnstable, last, nil, "size/mtime samples not yet stable and quiescent")
+        }
+        return verify(snapshot: last, policy: policy)
     }
 
     public static func verify(snapshot: StagingSnapshot, policy: StagingPolicy = .rev28Accepted) -> StagingVerification {
