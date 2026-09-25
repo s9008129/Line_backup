@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - rev28-ci-prelive-hardening
+    paths:
+      - "rev28/**"
+      - ".github/workflows/rev28-macos27.yml"
   pull_request:
     paths:
       - "rev28/**"
