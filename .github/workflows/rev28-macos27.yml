@@ -53,12 +53,24 @@ jobs:
           # else is a deterministic contract gate.
           xcrun swift test --package-path rev28 --skip OcrEngineTests
 
-      - name: Upload deterministic host record
+      - name: Run SHA-bound historical replay twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONDONTWRITEBYTECODE=1
+          mkdir -p "$RUNNER_TEMP/rev28-replay"
+          python3 rev28/Tools/replay_rev28.py --root . --output "$RUNNER_TEMP/rev28-replay/run-1.json"
+          python3 rev28/Tools/replay_rev28.py --root . --output "$RUNNER_TEMP/rev28-replay/run-2.json"
+          cmp "$RUNNER_TEMP/rev28-replay/run-1.json" "$RUNNER_TEMP/rev28-replay/run-2.json"
+
+      - name: Upload deterministic evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rev28-deterministic-host
-          path: ${{ runner.temp }}/rev28-host.txt
+          name: rev28-deterministic-evidence
+          path: |
+            ${{ runner.temp }}/rev28-host.txt
+            ${{ runner.temp }}/rev28-replay
           if-no-files-found: warn
 
   headed-macos27:
