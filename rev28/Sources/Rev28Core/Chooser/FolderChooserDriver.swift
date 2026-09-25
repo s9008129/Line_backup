@@ -129,9 +129,9 @@ public enum FolderChooserDriver {
         return candidates.filter { seen.insert($0).inserted }
     }
 
-    /// Posts ⇧⌘G, waits for the Go-to-folder entry, types the destination path
-    /// (Unicode keyboard events) and confirms with Return. Returns the observed
-    /// path candidates after navigation.
+    /// Posts ⇧⌘G, updates the newly focused path field through AX when it is
+    /// settable (otherwise replaces its text with Unicode keyboard events),
+    /// verifies the field value, and confirms navigation with Return.
     @discardableResult
     public static func navigateToDestination(
         pid: pid_t,
@@ -142,23 +142,47 @@ public enum FolderChooserDriver {
         try QuartzActuator.postGoToFolderChord()
         // Wait for the entry sheet (a new focused text field appears).
         let deadline = Date().addingTimeInterval(timeoutSeconds)
-        var entryAppeared = false
+        var pathField: AXUIElement?
         while Date() < deadline {
-            if let focused = AXDriver.firstDescendant(of: AXDriver.appElement(pid: pid), maxDepth: 8, matching: { element in
-                AXDriver.role(of: element) == (kAXTextFieldRole as String)
-            }) {
-                let current = AXDriver.valueAsString(focused) ?? ""
-                if !current.hasSuffix(target) {
-                    entryAppeared = true
+            if let raw = AXDriver.copyAttribute(AXDriver.appElement(pid: pid), kAXFocusedUIElementAttribute as String),
+               CFGetTypeID(raw) == AXUIElementGetTypeID() {
+                let focused = raw as! AXUIElement
+                if AXDriver.role(of: focused) == (kAXTextFieldRole as String) {
+                    pathField = focused
                     break
                 }
             }
             usleep(120_000)
         }
-        guard entryAppeared else { throw FolderChooserDriverError.goToFolderEntryMissing }
+        guard let pathField else { throw FolderChooserDriverError.goToFolderEntryMissing }
 
-        try QuartzActuator.postUnicodeText(target)
-        usleep(180_000)
+        var settable = DarwinBoolean(false)
+        if AXUIElementIsAttributeSettable(pathField, kAXValueAttribute as CFString, &settable) == .success,
+           settable.boolValue {
+            _ = AXUIElementSetAttributeValue(pathField, kAXValueAttribute as CFString, target as CFString)
+        }
+
+        if AXDriver.valueAsString(pathField) != target {
+            // Native panels can prefill this field with the previous folder.
+            // Replace it explicitly so the next run's path cannot be appended
+            // to stale history.
+            try QuartzActuator.postKeyChord(keyCode: 0, flags: [.maskCommand])
+            usleep(80_000)
+            try QuartzActuator.postUnicodeText(target)
+        }
+
+        var pathReflected = false
+        while Date() < deadline {
+            if AXDriver.valueAsString(pathField) == target {
+                pathReflected = true
+                break
+            }
+            usleep(60_000)
+        }
+        guard pathReflected else {
+            throw FolderChooserDriverError.pathEntryFailed("focused AXTextField did not reflect the requested destination")
+        }
+
         try QuartzActuator.postReturnKey()
 
         // Wait until the panel reports the destination among its path candidates.

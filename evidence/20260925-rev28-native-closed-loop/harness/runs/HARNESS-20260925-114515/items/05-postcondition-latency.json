@@ -1,0 +1,132 @@
+{
+  "atISO8601" : "2026-09-25T11:45:25.228+08:00",
+  "delayedPanelScheduledMs" : 900,
+  "delayedPanelShownMs" : 1060.6720447540283,
+  "maxMs" : 275.38394927978516,
+  "medianMs" : 27.56786346435547,
+  "p95Ms" : 275.38394927978516,
+  "runCount" : 20,
+  "samples" : [
+    {
+      "delayMs" : 0,
+      "run" : 1,
+      "shownEventAt" : 1790307916.87537,
+      "willShowToShownMs" : 20.80392837524414
+    },
+    {
+      "delayMs" : 0,
+      "run" : 2,
+      "shownEventAt" : 1790307917.281774,
+      "willShowToShownMs" : 24.343013763427734
+    },
+    {
+      "delayMs" : 0,
+      "run" : 3,
+      "shownEventAt" : 1790307917.632701,
+      "willShowToShownMs" : 39.775848388671875
+    },
+    {
+      "delayMs" : 0,
+      "run" : 4,
+      "shownEventAt" : 1790307917.9787889,
+      "willShowToShownMs" : 22.939682006835938
+    },
+    {
+      "delayMs" : 0,
+      "run" : 5,
+      "shownEventAt" : 1790307918.31785,
+      "willShowToShownMs" : 22.599220275878906
+    },
+    {
+      "delayMs" : 0,
+      "run" : 6,
+      "shownEventAt" : 1790307918.653496,
+      "willShowToShownMs" : 37.81700134277344
+    },
+    {
+      "delayMs" : 0,
+      "run" : 7,
+      "shownEventAt" : 1790307919.000392,
+      "willShowToShownMs" : 23.617982864379883
+    },
+    {
+      "delayMs" : 0,
+      "run" : 8,
+      "shownEventAt" : 1790307919.332669,
+      "willShowToShownMs" : 40.36211967468262
+    },
+    {
+      "delayMs" : 0,
+      "run" : 9,
+      "shownEventAt" : 1790307919.672171,
+      "willShowToShownMs" : 26.769161224365234
+    },
+    {
+      "delayMs" : 0,
+      "run" : 10,
+      "shownEventAt" : 1790307920.0093908,
+      "willShowToShownMs" : 27.56786346435547
+    },
+    {
+      "delayMs" : 0,
+      "run" : 11,
+      "shownEventAt" : 1790307920.3572931,
+      "willShowToShownMs" : 40.08817672729492
+    },
+    {
+      "delayMs" : 0,
+      "run" : 12,
+      "shownEventAt" : 1790307920.703778,
+      "willShowToShownMs" : 35.69912910461426
+    },
+    {
+      "delayMs" : 0,
+      "run" : 13,
+      "shownEventAt" : 1790307921.046802,
+      "willShowToShownMs" : 23.41318130493164
+    },
+    {
+      "delayMs" : 0,
+      "run" : 14,
+      "shownEventAt" : 1790307921.386342,
+      "willShowToShownMs" : 34.67106819152832
+    },
+    {
+      "delayMs" : 0,
+      "run" : 15,
+      "shownEventAt" : 1790307921.731111,
+      "willShowToShownMs" : 37.88614273071289
+    },
+    {
+      "delayMs" : 0,
+      "run" : 16,
+      "shownEventAt" : 1790307922.084286,
+      "willShowToShownMs" : 39.35694694519043
+    },
+    {
+      "delayMs" : 0,
+      "run" : 17,
+      "shownEventAt" : 1790307922.4289021,
+      "willShowToShownMs" : 23.2851505279541
+    },
+    {
+      "delayMs" : 0,
+      "run" : 18,
+      "shownEventAt" : 1790307922.775244,
+      "willShowToShownMs" : 25.448083877563477
+    },
+    {
+      "delayMs" : 0,
+      "run" : 19,
+      "shownEventAt" : 1790307923.125068,
+      "willShowToShownMs" : 26.739835739135742
+    },
+    {
+      "delayMs" : 0,
+      "run" : 20,
+      "shownEventAt" : 1790307923.676772,
+      "willShowToShownMs" : 275.38394927978516
+    }
+  ],
+  "scheduledDelayMs" : 0
+}

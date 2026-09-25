@@ -1,0 +1,47 @@
+{
+  "argv" : [
+    "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28probe",
+    "evidence\/20260925-rev28-native-closed-loop\/capability-probe-exec"
+  ],
+  "finishedAtISO8601" : "2026-09-25T08:36:49.667+08:00",
+  "hostOSBuild" : "26A428",
+  "hostOSVersion" : "27.0.0",
+  "notes" : [
+    "TCC\/trust results are evaluated by macOS for this launched binary's responsible-process context (the parent process that launched it).",
+    "No mouse\/keyboard events were posted; CGEvent construction was an object-creation smoke check only."
+  ],
+  "overallStatus" : "PASS",
+  "parentPID" : 56785,
+  "pid" : 63254,
+  "probeID" : "rev28probe-1790296592-63254",
+  "processExecutablePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28probe",
+  "quartz" : {
+    "keyboardEventConstructionOK" : true,
+    "mouseEventConstructionOK" : true,
+    "onScreenWindowInfoCount" : 6
+  },
+  "schemaVersion" : "rev28.capability-probe.v1",
+  "screenCaptureKit" : {
+    "applicationCount" : 3,
+    "displayCount" : 1,
+    "status" : "OK",
+    "windowCount" : 6
+  },
+  "sdkPathFromEnvironment" : "MacOSX26.5.sdk",
+  "startedAtISO8601" : "2026-09-25T08:36:32.165+08:00",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "trust" : {
+    "axIsProcessTrusted" : true,
+    "cgPreflightPostEventAccess" : true,
+    "cgPreflightScreenCaptureAccess" : true
+  },
+  "vision" : {
+    "expectedExactStringsFound" : true,
+    "expectedRelaxedSubstringFound" : true,
+    "recognizedStrings" : [
+      "儲存全部",
+      "57張照片"
+    ],
+    "status" : "OK"
+  }
+}

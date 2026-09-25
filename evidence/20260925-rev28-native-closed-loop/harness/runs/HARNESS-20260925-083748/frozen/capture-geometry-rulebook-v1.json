@@ -1,0 +1,54 @@
+{
+  "frozenAtISO8601" : "2026-09-25T08:38:20.514+08:00",
+  "ruleID" : "rev28-capture-geometry-v1",
+  "rules" : {
+    "settled=false;activated=false;includeChildWindows=false;ignoreShadows=true" : {
+      "maxOriginPaddingPt" : 1,
+      "maxPerSideSizeDeltaPt" : 1,
+      "notes" : "W2 calibration run HARNESS-20260925-083748; samples=2; observed maxPerSide=0.0 pt; observed originPadding=0.0 pt",
+      "originPaddingPt" : 0
+    },
+    "settled=false;activated=false;includeChildWindows=true;ignoreShadows=true" : {
+      "maxOriginPaddingPt" : 1,
+      "maxPerSideSizeDeltaPt" : 1,
+      "notes" : "W2 calibration run HARNESS-20260925-083748; samples=2; observed maxPerSide=0.0 pt; observed originPadding=0.0 pt",
+      "originPaddingPt" : 0
+    },
+    "settled=false;activated=true;includeChildWindows=false;ignoreShadows=true" : {
+      "maxOriginPaddingPt" : 1,
+      "maxPerSideSizeDeltaPt" : 1,
+      "notes" : "W2 calibration run HARNESS-20260925-083748; samples=2; observed maxPerSide=0.0 pt; observed originPadding=0.0 pt",
+      "originPaddingPt" : 0
+    },
+    "settled=false;activated=true;includeChildWindows=true;ignoreShadows=true" : {
+      "maxOriginPaddingPt" : 1,
+      "maxPerSideSizeDeltaPt" : 1,
+      "notes" : "W2 calibration run HARNESS-20260925-083748; samples=2; observed maxPerSide=0.0 pt; observed originPadding=0.0 pt",
+      "originPaddingPt" : 0
+    },
+    "settled=true;activated=false;includeChildWindows=false;ignoreShadows=true" : {
+      "maxOriginPaddingPt" : 1,
+      "maxPerSideSizeDeltaPt" : 1,
+      "notes" : "W2 calibration run HARNESS-20260925-083748; samples=2; observed maxPerSide=0.0 pt; observed originPadding=0.0 pt",
+      "originPaddingPt" : 0
+    },
+    "settled=true;activated=false;includeChildWindows=true;ignoreShadows=true" : {
+      "maxOriginPaddingPt" : 1,
+      "maxPerSideSizeDeltaPt" : 1,
+      "notes" : "W2 calibration run HARNESS-20260925-083748; samples=2; observed maxPerSide=0.0 pt; observed originPadding=0.0 pt",
+      "originPaddingPt" : 0
+    },
+    "settled=true;activated=true;includeChildWindows=false;ignoreShadows=true" : {
+      "maxOriginPaddingPt" : 1,
+      "maxPerSideSizeDeltaPt" : 1,
+      "notes" : "W2 calibration run HARNESS-20260925-083748; samples=2; observed maxPerSide=0.0 pt; observed originPadding=0.0 pt",
+      "originPaddingPt" : 0
+    },
+    "settled=true;activated=true;includeChildWindows=true;ignoreShadows=true" : {
+      "maxOriginPaddingPt" : 1,
+      "maxPerSideSizeDeltaPt" : 1,
+      "notes" : "W2 calibration run HARNESS-20260925-083748; samples=2; observed maxPerSide=0.0 pt; observed originPadding=0.0 pt",
+      "originPaddingPt" : 0
+    }
+  }
+}

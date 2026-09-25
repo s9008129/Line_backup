@@ -1,0 +1,45 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 54408,
+  "finishedAtISO8601" : "2026-09-25T11:45:34.647+08:00",
+  "frozen" : [
+
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 54410,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "within=chooserObservedAfterWindow timeout=noChooserObserved late=noChooserObserved\/affirmed=false monitorPosts=0 maxLatencyMs=275.38394927978516 ",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-114515\/items\/05-postcondition-bounds.json",
+      "evidenceSHA256" : "65fe1617e0e930f53a7a957e4f9ed0a4949efabb5937d46d417bdff2789e7397",
+      "item" : 5,
+      "name" : "postcondition-bounds-freeze",
+      "verdict" : "PARTIAL"
+    },
+    {
+      "detail" : "within=chooserObservedAfterWindow timeout=noChooserObserved late=noChooserObserved\/affirmed=false monitorPosts=0 maxLatencyMs=275.38394927978516 ",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-114515\/items\/05-postcondition-proofs.json",
+      "evidenceSHA256" : "69926e42ea592151c8a8f32a83993aa4cda405490df9fa200dd370240564eeb0",
+      "item" : 5,
+      "name" : "postcondition-proofs",
+      "verdict" : "PARTIAL"
+    }
+  ],
+  "notes" : [
+    "Loaded canonical chooser predicate SHA-256 0472aa0a364711fd357f872d93c5ad7e13b393cc267dbbc6244d47a20de6f3f2, checksum file sha256sums-HARNESS-20260925-112927.txt",
+    "NOT_FROZEN: postcondition bounds and latency were not published because the within-window, timeout, or late-affirmative proof was partial"
+  ],
+  "occluderPID" : 54411,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-114515",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T11:45:15.307+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PARTIAL"
+}

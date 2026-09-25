@@ -168,3 +168,52 @@ Blockers (scoped, not task-blocking):
 
 Residual risk: the harness popup was observed below an activated peer occluder window (item 4), and a real NSOpenPanel presented as a sheet is refused by the chooser predicate (item 6, notNewWindow). Both are fail-closed behaviours, but if either shape matches production routing/hosting, later live phases would stall rather than misfire; both must be resolved by evidence before live use.
 LINE interaction this session: 0 (no launch, no clicks, no AX writes; GUI events posted only to own harness/occluder windows).
+
+## Update 3 — closeout checkpoint and fresh-session handoff
+
+checkpoint_time: 2026-09-25T12:00+08:00
+branch: master
+pre_closeout_HEAD: 9c29648 (origin/master matched before this closeout; no fetch/rebase performed)
+owner_request: finish a coherent checkpoint, write a detailed commit message with intent/work/next steps, `git add`, commit, push, and leave a precise handoff for a new conversation before shutdown.
+
+Stage-03 freshness and handoff:
+- Recomputed plan SHA-256 `63b25602b215a3e9514fa76db8bd34c097f4bec40f370381d218c57f62745828`; review attempts 05 and 06 both remain `PLAN_APPROVED` for revision 3 and that exact hash. No plan edit or semantic replan was made.
+- Archived the prior handoff byte-identically as `handoff-history/handoff-plan-r3-20260925T1200+0800.md` (SHA-256 `10a46357ae0ef81ebf1baa8d4e6b14d89235857ec6dc10c8f42a89b54e7969dd`).
+- Compiled current continuation handoff at `handoff.md`; its bound SHA-256 is `af250fdb398749216d396a55df0ae8814de3ab294fc6b4b3783965990fe73cde` (`handoff.sha256` updated). It records all nine W2 item states, provisional-vs-validated artifacts, the current code delta, six orthogonal statuses, acceptance matrix, stop conditions and exact first action for a fresh Stage-04 session.
+- Archived the actual current `swift test` output as `evidence/20260925-rev28-native-closed-loop/harness/build-test-log-20260925T1156+0800.txt` (SHA-256 `4d7dc802ee87b40599a9e8e58fd41c63b35417f223c7ac9fab18cf9f2fd12bc2`); only trailing whitespace was removed from the copied log.
+
+Closeout verification actually observed:
+- `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun swift test --package-path rev28` → exit 0; build complete; 28 tests, 0 failures.
+- `git diff --check` → PASS after source changes and again after the handoff was written.
+- Last process census → no `rev28harness`, `rev28occluder`, `rev28ctl`, or LINE process. The extra orphan harness/occluder pairs requested closed earlier were terminated; LINE was not opened.
+- No GUI rerun was done for item 5 after the latest sampler/event/boundary changes. Its 20-sample run `HARNESS-20260925-114515` is PARTIAL: within scenario became `chooserObservedAfterWindow` at 5.19 s, timeout was `noChooserObserved`, late scenario had no eligible chooser; zero further input. Existing `postcondition-bounds-v1.json` and `postcondition-latency-observations-v1.json` remain provisional (hashes `da5795423ddc3a2a80dac4aef632ea6e7b0fd80f2f016d054d784453d5155f90` and `7ee9a9e5dc07333c06c56a56a4fcac241ccba89d7abdc80aac22359d06b3b647`).
+- W2 item 6 PASS is bound to run `HARNESS-20260925-112927`: real chooser affirmed, lookalikes and invalid ownership cases refused, exact destination reflected, one AXPress action, marker verified. v2 predicate/calibration SHAs: `0472aa0a364711fd357f872d93c5ad7e13b393cc267dbbc6244d47a20de6f3f2` / `13aa01a2fa5d2b2d3e52d28e17a1b421ac25e6943fda1c44a572be610ef7e569`.
+
+Verification matrix (current evidence; no waiver):
+| CHECK_ID | GOAL_CRITICALITY | EVIDENCE_ROLE | CLOSURE_GATE | BASELINE_REQUIRED | WAIVER_ALLOWED | WAIVER_STATUS | CHECK_RESULT |
+|---|---|---|---|---|---|---|---|
+| V-01 | CORE | DIAGNOSTIC | NON_GATING | NO | NO | NOT_ALLOWED | PASS (earlier executable-context probe; not rerun in closeout) |
+| V-02 | CORE | DIAGNOSTIC | NON_GATING | NO | NO | NOT_ALLOWED | PARTIAL (W2 items 1–4, 6–9 pass; item 5 incomplete) |
+| V-03 | CORE | MUST_NOT_BREAK | HARD_CLEAN | NO | NO | NOT_ALLOWED | NOT_RUN (live phase gated) |
+| V-04 | CORE | OUTCOME | HARD_CLEAN | NO | NO | NOT_ALLOWED | NOT_RUN (no live Save All) |
+| V-05 | CORE | OUTCOME | HARD_CLEAN | NO | NO | NOT_ALLOWED | NOT_RUN (no live chooser) |
+| V-06 | CORE | OUTCOME | HARD_CLEAN | NO | NO | NOT_ALLOWED | NOT_RUN (no production staging run) |
+| V-07 | CORE | MUST_NOT_BREAK | HARD_CLEAN | NO | NO | NOT_ALLOWED | NOT_RUN for closeout; baseline was previously verified, reverify before live work |
+| V-08 | SUPPORTING | DIAGNOSTIC | NON_GATING | NO | NO | NOT_ALLOWED | NOT_RUN (W3/W5 outstanding) |
+| V-09 | CORE | DIAGNOSTIC | HARD_CLEAN | NO | NO | NOT_ALLOWED | NOT_RUN (pre-live reviews not started) |
+| V-10 | CORE | OUTCOME | HARD_CLEAN | NO | NO | NOT_ALLOWED | NOT_RUN (Stage 05 pending) |
+| V-11 | SUPPORTING | REPOSITORY_HEALTH | NON_GATING | NO | NO | NOT_ALLOWED | PARTIAL at this checkpoint; final staged-scope audit and push verification remain to record in the commit/push result |
+
+Orthogonal status at closeout:
+PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
+IMPLEMENTATION_STATUS: IN_PROGRESS
+CORE_ACCEPTANCE_STATUS: NOT_RUN
+REQUIRED_VERIFICATION_STATUS: INCOMPLETE (V-02 partial and later required gates pending; no waiver)
+INDEPENDENT_ACCEPTANCE_STATUS: PENDING
+TASK_CLOSURE_STATUS: IN_PROGRESS
+NEXT_ACTION: Fresh Stage 04 session re-verifies plan/review/handoff hashes, git/upstream, baseline/staging and environment; reruns item 5 on latest source in the synthetic harness; audits W2 items 1–9; only then starts W3. No LINE until all plan pre-live gates pass.
+
+Commit/push scope and authority:
+- Stage only the three modified Rev28 source files, this task's `execution.md`, `handoff.md`, `handoff.sha256`, the new archived handoff, and `evidence/20260925-rev28-native-closed-loop/**`. Preserve unrelated Rev27e plans/task/evidence and pre-existing `__pycache__` directories; never use `git add -A`.
+- Plan R25 says no push. The owner has now explicitly authorized `add`, `commit`, and `push` for this closeout checkpoint; this current instruction overrides the plan only for this push. Use ordinary `git push origin master`, no force/rebase. Verify exact commit message, pushed HEAD/upstream and final tree, then report any push rejection without rewriting history.
+- This is a checkpoint, not task completion. Do not create `result.md`; independent Stage 05 has not run.

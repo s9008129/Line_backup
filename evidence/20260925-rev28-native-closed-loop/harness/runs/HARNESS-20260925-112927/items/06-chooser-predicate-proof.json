@@ -1,0 +1,31 @@
+{
+  "atISO8601" : "2026-09-25T11:29:40.154+08:00",
+  "confirmationAction" : "axPressDefaultButton",
+  "confirmedDirectory" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-112927\/fixtures\/panel-destination",
+  "emptyCensusFakeCause" : "frozenPredicateMismatch",
+  "emptyCensusFakeVerdict" : "refused",
+  "fakeSameProcessCause" : "frozenPredicateMismatch",
+  "fakeSameProcessDetail" : "no AX node with pop-up-button role [\"AXPopUpButton\"]",
+  "fakeSameProcessVerdict" : "refused",
+  "inputPostsDuringFixture" : 4,
+  "markerPath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-112927\/fixtures\/panel-destination\/rev28-panel-commit.marker",
+  "markerVerified" : true,
+  "navigationCandidatesAfter" : [
+
+  ],
+  "navigationReflected" : true,
+  "notNewCause" : "notNewWindow",
+  "notNewVerdict" : "refused",
+  "occluderLookAlikeCause" : "frozenPredicateMismatch",
+  "occluderLookAlikeVerdict" : "refused",
+  "ownershipUnboundCause" : "ownershipUnbound",
+  "ownershipUnboundVerdict" : "refused",
+  "panelClosedResponse" : 1,
+  "panelDirectoryAfterNavigation" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-112927\/fixtures\/panel-destination",
+  "pidReuseCause" : "pidReuse",
+  "pidReuseVerdict" : "refused",
+  "predicateID" : "rev28-chooser-affirmation-v1",
+  "pressedButtonDescription" : "role=AXButton title=開啟",
+  "realPanelDetail" : "keyWindowAtShown=true appActiveAtShown=true; navigationFocus active=true keyWindow=true; navigationDriverError=destinationMismatch(requested=\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-112927\/fixtures\/panel-destination, observed=[])",
+  "realPanelVerdict" : "affirmed"
+}

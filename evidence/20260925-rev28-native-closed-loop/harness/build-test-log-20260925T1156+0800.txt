@@ -1,0 +1,446 @@
+[0/1] Planning build
+Building for debugging...
+[0/11] Write sources
+[1/11] Write swift-version--58304C5D6DBC2206.txt
+[2/6] Write Objects.LinkFileList
+[3/8] Linking rev28PackageTests
+[5/8] Compiling rev28ctl HarnessCalibration.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:897:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 895 |     private func item01CaptureMatrix() async throws {
+ 896 |         try await refreshHarnessState()
+ 897 |         try await harnessCall("setShadows", params: ["on": true])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 898 |         try await harnessCall("activate")
+ 899 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:898:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 896 |         try await refreshHarnessState()
+ 897 |         try await harnessCall("setShadows", params: ["on": true])
+ 898 |         try await harnessCall("activate")
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 899 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+ 900 |         await waitForSettle(1.2)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:899:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 897 |         try await harnessCall("setShadows", params: ["on": true])
+ 898 |         try await harnessCall("activate")
+ 899 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 900 |         await waitForSettle(1.2)
+ 901 |
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:933:27: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 931 |         for combo in combos {
+ 932 |             if combo.includeChild {
+ 933 |                 try await harnessCall("showPopup", params: ["dx": 700.0, "dy": 560.0])
+     |                           `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 934 |             } else {
+ 935 |                 try await harnessCall("hidePopup")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:935:27: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 933 |                 try await harnessCall("showPopup", params: ["dx": 700.0, "dy": 560.0])
+ 934 |             } else {
+ 935 |                 try await harnessCall("hidePopup")
+     |                           `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 936 |             }
+ 937 |             try await harnessCall("setShadows", params: ["on": combo.shadowsOn])
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:937:23: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 935 |                 try await harnessCall("hidePopup")
+ 936 |             }
+ 937 |             try await harnessCall("setShadows", params: ["on": combo.shadowsOn])
+     |                       `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+ 938 |             if combo.activated {
+ 939 |                 _ = try await harnessCall("activate")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:942:31: warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+ 940 |                 if let cover = occluderCoveredFrameTopLeft {
+ 941 |                     _ = cover
+ 942 |                     try await occluderCall("hide")
+     |                               `- warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+ 943 |                     occluderCoveredFrameTopLeft = nil
+ 944 |                 }
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1123:27: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1121 |         for cell in (cells + barredCells) {
+1122 |             if cell.includeChildWindows {
+1123 |                 try await harnessCall("showPopup", params: ["dx": 700.0, "dy": 560.0])
+     |                           `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1124 |             } else {
+1125 |                 try await harnessCall("hidePopup")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1125:27: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1123 |                 try await harnessCall("showPopup", params: ["dx": 700.0, "dy": 560.0])
+1124 |             } else {
+1125 |                 try await harnessCall("hidePopup")
+     |                           `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1126 |             }
+1127 |             try await harnessCall("setShadows", params: ["on": cell.shadowsOn])
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1127:23: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1125 |                 try await harnessCall("hidePopup")
+1126 |             }
+1127 |             try await harnessCall("setShadows", params: ["on": cell.shadowsOn])
+     |                       `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1128 |             if cell.requestedActivated {
+1129 |                 _ = try await harnessCall("activate")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1176:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1174 |         // Capture must survive full occlusion by the separate-process occluder.
+1175 |         var occludedRecord: OccludedCaptureRecord?
+1176 |         try await harnessCall("hidePopup")
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1177 |         try await harnessCall("setShadows", params: ["on": true])
+1178 |         _ = try await harnessCall("activate")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1177:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1175 |         var occludedRecord: OccludedCaptureRecord?
+1176 |         try await harnessCall("hidePopup")
+1177 |         try await harnessCall("setShadows", params: ["on": true])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1178 |         _ = try await harnessCall("activate")
+1179 |         await waitForSettle(0.8)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1210:19: warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+1208 |             }
+1209 |         }
+1210 |         try await occluderCall("hide")
+     |                   `- warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+1211 |         _ = try await harnessCall("activate")
+1212 |
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1242:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1240 |
+1241 |     private func item02VisionLocalization() async throws {
+1242 |         try await harnessCall("hidePopup")
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1243 |         try await harnessCall("setShadows", params: ["on": true])
+1244 |         _ = try await harnessCall("activate")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1243:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1241 |     private func item02VisionLocalization() async throws {
+1242 |         try await harnessCall("hidePopup")
+1243 |         try await harnessCall("setShadows", params: ["on": true])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1244 |         _ = try await harnessCall("activate")
+1245 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1245:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1243 |         try await harnessCall("setShadows", params: ["on": true])
+1244 |         _ = try await harnessCall("activate")
+1245 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1246 |         try await harnessCall("setTitle", params: ["title": "旻謙允禎成長日記"])
+1247 |         try await harnessCall("setCountText", params: ["text": "57張照片"])
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1246:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1244 |         _ = try await harnessCall("activate")
+1245 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+1246 |         try await harnessCall("setTitle", params: ["title": "旻謙允禎成長日記"])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1247 |         try await harnessCall("setCountText", params: ["text": "57張照片"])
+1248 |         let defaultRows = ["選擇項目", "修改相簿名稱", "儲存全部", "刪除相簿", "分享相簿"]
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1247:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1245 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+1246 |         try await harnessCall("setTitle", params: ["title": "旻謙允禎成長日記"])
+1247 |         try await harnessCall("setCountText", params: ["text": "57張照片"])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1248 |         let defaultRows = ["選擇項目", "修改相簿名稱", "儲存全部", "刪除相簿", "分享相簿"]
+1249 |         _ = try await harnessCall("setMenuRows", params: ["rows": defaultRows])
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1317:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1315 |
+1316 |         // 禎/楨 discriminator fixture on real captures.
+1317 |         try await harnessCall("setTitle", params: ["title": "旻謙允楨成長日記"])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1318 |         await waitForSettle(0.8)
+1319 |         var otherFound = false
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1330:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1328 |             }
+1329 |         }
+1330 |         try await harnessCall("setTitle", params: ["title": "旻謙允禎成長日記"])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1331 |         await waitForSettle(0.8)
+1332 |         var expectedRestored = false
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1395:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1393 |             return
+1394 |         }
+1395 |         try await harnessCall("hidePopup")
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1396 |         try await harnessCall("setShadows", params: ["on": true])
+1397 |         _ = try await harnessCall("activate")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1396:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1394 |         }
+1395 |         try await harnessCall("hidePopup")
+1396 |         try await harnessCall("setShadows", params: ["on": true])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1397 |         _ = try await harnessCall("activate")
+1398 |         await waitForSettle(0.8)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1561:19: warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+1559 |
+1560 |     private func item04QuartzRouting() async throws {
+1561 |         try await occluderCall("hide")
+     |                   `- warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+1562 |         try await harnessCall("hidePopup")
+1563 |         _ = try await harnessCall("activate")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1562:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1560 |     private func item04QuartzRouting() async throws {
+1561 |         try await occluderCall("hide")
+1562 |         try await harnessCall("hidePopup")
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1563 |         _ = try await harnessCall("activate")
+1564 |         try await harnessCall("setShadows", params: ["on": true])
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1564:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1562 |         try await harnessCall("hidePopup")
+1563 |         _ = try await harnessCall("activate")
+1564 |         try await harnessCall("setShadows", params: ["on": true])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1565 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+1566 |         await waitForSettle(1.0)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1565:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1563 |         _ = try await harnessCall("activate")
+1564 |         try await harnessCall("setShadows", params: ["on": true])
+1565 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1566 |         await waitForSettle(1.0)
+1567 |         _ = try await harnessCall("hitReport", params: ["reset": true])
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1651:19: warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+1649 |         let coverHitsAfterCoveredPopupClick = (occluderAfterPopup["coverHits"] as? NSNumber)?.intValue ?? -1
+1650 |
+1651 |         try await occluderCall("hide")
+     |                   `- warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+1652 |         _ = try await harnessCall("activate")
+1653 |         try await harnessCall("hidePopup")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1653:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1651 |         try await occluderCall("hide")
+1652 |         _ = try await harnessCall("activate")
+1653 |         try await harnessCall("hidePopup")
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1654 |
+1655 |         let popupReceives = popupHitsAfterPopupClick >= 1 && mainHitsAfterPopupClick == 0
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1698:19: warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+1696 |
+1697 |     private func item06ChooserPredicate() async throws {
+1698 |         try await occluderCall("hide")
+     |                   `- warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+1699 |         _ = try await harnessCall("activate")
+1700 |         try await harnessCall("hidePopup")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1700:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1698 |         try await occluderCall("hide")
+1699 |         _ = try await harnessCall("activate")
+1700 |         try await harnessCall("hidePopup")
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1701 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+1702 |         await waitForSettle(1.0)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1701:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1699 |         _ = try await harnessCall("activate")
+1700 |         try await harnessCall("hidePopup")
+1701 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1702 |         await waitForSettle(1.0)
+1703 |
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:1714:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1712 |         let preWindowIDs = Set(try await freshContent().windows.map { $0.windowID })
+1713 |
+1714 |         try await harnessCall("showPanel", params: ["delayMs": 0, "directory": startDirectory.path, "marker": markerName, "expectedDirectory": destination.path])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+1715 |         _ = await harness.waitForEvent("panelWillShow", timeoutSeconds: 8)
+1716 |         let shownEvent = await harness.waitForEvent("panelShown", timeoutSeconds: 8)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2124:19: warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+2122 |
+2123 |     private func item05Postcondition() async throws {
+2124 |         try await occluderCall("hide")
+     |                   `- warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+2125 |         _ = try await harnessCall("activate")
+2126 |         try await harnessCall("hidePopup")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2126:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2124 |         try await occluderCall("hide")
+2125 |         _ = try await harnessCall("activate")
+2126 |         try await harnessCall("hidePopup")
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2127 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+2128 |         await waitForSettle(0.8)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2127:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2125 |         _ = try await harnessCall("activate")
+2126 |         try await harnessCall("hidePopup")
+2127 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2128 |         await waitForSettle(0.8)
+2129 |         try await refreshHarnessState()
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2136:23: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2134 |             try EvidenceIO.ensureDirectory(destination)
+2135 |             let commandAt = Date().timeIntervalSince1970
+2136 |             try await harnessCall("showPanel", params: ["delayMs": 0, "directory": destination.path, "marker": "latency-\(index).marker"])
+     |                       `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2137 |             let willShow = await harness.waitForEvent("panelWillShow", timeoutSeconds: 8)
+2138 |             let shown = await harness.waitForEvent("panelShown", timeoutSeconds: 8)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2148:23: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2146 |             ))
+2147 |             _ = commandAt
+2148 |             try await harnessCall("closePanel")
+     |                       `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2149 |             _ = await harness.waitForEvent("panelClosed", timeoutSeconds: 6)
+2150 |             await sleep(milliseconds: 150)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2158:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2156 |         let delayedScheduledMs = 900
+2157 |         let dispatchAt = Date().timeIntervalSince1970
+2158 |         try await harnessCall("showPanel", params: ["delayMs": Double(delayedScheduledMs), "directory": delayedDestination.path, "marker": "latency-delayed.marker"])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2159 |         _ = await harness.waitForEvent("panelWillShow", timeoutSeconds: 8)
+2160 |         let delayedShown = await harness.waitForEvent("panelShown", timeoutSeconds: 8)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2162:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2160 |         let delayedShown = await harness.waitForEvent("panelShown", timeoutSeconds: 8)
+2161 |         let delayedShownMs = (((delayedShown?["at"] as? NSNumber)?.doubleValue ?? 0) - dispatchAt) * 1000.0
+2162 |         try await harnessCall("closePanel")
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2163 |         _ = await harness.waitForEvent("panelClosed", timeoutSeconds: 6)
+2164 |         await sleep(milliseconds: 200)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2256:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2254 |         let withinDestination = run.fixturesDir.appendingPathComponent("postcondition-within")
+2255 |         try EvidenceIO.ensureDirectory(withinDestination)
+2256 |         try await harnessCall("showPanel", params: ["delayMs": 0, "directory": withinDestination.path, "marker": "within.marker"])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2257 |         _ = await harness.waitForEvent("panelShown", timeoutSeconds: 6)
+2258 |         let withinOutcome = await withinTask.value
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2306:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2304 |         let lateDestination = run.fixturesDir.appendingPathComponent("postcondition-late")
+2305 |         try EvidenceIO.ensureDirectory(lateDestination)
+2306 |         try await harnessCall("showPanel", params: ["delayMs": 1400.0, "directory": lateDestination.path, "marker": "late.marker"])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2307 |         let latePanelShown = await harness.waitForEvent("panelShown", timeoutSeconds: 4)
+2308 |         if latePanelShown != nil {
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2360:19: warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+2358 |
+2359 |     private func item07FocusTheft() async throws {
+2360 |         try await occluderCall("hide")
+     |                   `- warning: result of call to 'occluderCall(_:params:timeout:)' is unused [#no-usage]
+2361 |         _ = try await harnessCall("activate")
+2362 |         try await harnessCall("hidePopup")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2362:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2360 |         try await occluderCall("hide")
+2361 |         _ = try await harnessCall("activate")
+2362 |         try await harnessCall("hidePopup")
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2363 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+2364 |         await waitForSettle(1.0)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2363:19: warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2361 |         _ = try await harnessCall("activate")
+2362 |         try await harnessCall("hidePopup")
+2363 |         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+     |                   `- warning: result of call to 'harnessCall(_:params:timeout:)' is unused [#no-usage]
+2364 |         await waitForSettle(1.0)
+2365 |         try await refreshHarnessState()
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/HarnessCalibration.swift:2372:13: warning: variable 'dispatches' was never mutated; consider changing to 'let' constant
+2370 |         }
+2371 |         let identity = try await captureWindowIdentity(ruleBook: ruleBook)
+2372 |         var dispatches = 0
+     |             `- warning: variable 'dispatches' was never mutated; consider changing to 'let' constant
+2373 |
+2374 |         let baseline = try await dispatchPrecondition(identity: identity, epoch: identity.captureEpoch)
+[6/8] Emitting module rev28ctl
+[6/9] Write Objects.LinkFileList
+[7/9] Linking rev28ctl
+[8/9] Applying rev28ctl
+Build complete! (5.63s)
+Test Suite 'All tests' started at 2026-09-25 11:56:50.606.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-25 11:56:50.607.
+Test Suite 'CoordinateTransformTests' started at 2026-09-25 11:56:50.607.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testCapturePixelConversionUsesRecordedBBox]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testCapturePixelConversionUsesRecordedBBox]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testDeltaBeyondToleranceFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testDeltaBeyondToleranceFailsClosed]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testExactGeometryPassesWithinRule]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testExactGeometryPassesWithinRule]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testFrozenOriginPaddingShiftsRecordedBBox]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testFrozenOriginPaddingShiftsRecordedBBox]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testNoFrozenRuleFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testNoFrozenRuleFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testPaddingBeyondMaximumFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testPaddingBeyondMaximumFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testRoundTripsPreservePoint]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testRoundTripsPreservePoint]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSafeInteriorMarginRefusesNearBoundary]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSafeInteriorMarginRefusesNearBoundary]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testScaleMismatchDetected]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testScaleMismatchDetected]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSmallDeltaWithinTolerancePasses]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSmallDeltaWithinTolerancePasses]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testStateWithoutRuleFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testStateWithoutRuleFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testWindowLocalToScreenUsesWindowOriginOnly]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testWindowLocalToScreenUsesWindowOriginOnly]' passed (0.000 seconds).
+Test Suite 'CoordinateTransformTests' passed at 2026-09-25 11:56:50.611.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.003 (0.004) seconds
+Test Suite 'OcrEngineTests' started at 2026-09-25 11:56:50.611.
+Test Case '-[Rev28CoreTests.OcrEngineTests testDiscriminatesZhenGlyphsInAlbumTitleContext]' started.
+Test Case '-[Rev28CoreTests.OcrEngineTests testDiscriminatesZhenGlyphsInAlbumTitleContext]' passed (0.423 seconds).
+Test Case '-[Rev28CoreTests.OcrEngineTests testQuadIsInCapturePixelSpace]' started.
+Test Case '-[Rev28CoreTests.OcrEngineTests testQuadIsInCapturePixelSpace]' passed (0.136 seconds).
+Test Case '-[Rev28CoreTests.OcrEngineTests testRecognizesCountIdentity]' started.
+Test Case '-[Rev28CoreTests.OcrEngineTests testRecognizesCountIdentity]' passed (0.126 seconds).
+Test Case '-[Rev28CoreTests.OcrEngineTests testRecognizesMenuRowIdentity]' started.
+Test Case '-[Rev28CoreTests.OcrEngineTests testRecognizesMenuRowIdentity]' passed (0.119 seconds).
+Test Suite 'OcrEngineTests' passed at 2026-09-25 11:56:51.414.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.803 (0.803) seconds
+Test Suite 'WindowIdentityTests' started at 2026-09-25 11:56:51.414.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testBundleMismatchInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testBundleMismatchInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testDefaultConfigurationsAreExplicit]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testDefaultConfigurationsAreExplicit]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFrameMovementBeyondToleranceInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFrameMovementBeyondToleranceInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFrameMovementWithinToleranceStaysValid]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFrameMovementWithinToleranceStaysValid]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFreshIdentityHasNoViolations]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFreshIdentityHasNoViolations]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testIsFreshConvenienceMatchesViolations]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testIsFreshConvenienceMatchesViolations]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testNonZeroLayerInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testNonZeroLayerInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testOffscreenInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testOffscreenInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testPidReuseRejectedByStartTime]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testPidReuseRejectedByStartTime]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testStaleEpochInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testStaleEpochInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testStaleWindowIDInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testStaleWindowIDInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testUnionBBoxUsesAllIncludedWindows]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testUnionBBoxUsesAllIncludedWindows]' passed (0.000 seconds).
+Test Suite 'WindowIdentityTests' passed at 2026-09-25 11:56:51.416.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-25 11:56:51.416.
+	 Executed 28 tests, with 0 failures (0 unexpected) in 0.807 (0.809) seconds
+Test Suite 'All tests' passed at 2026-09-25 11:56:51.416.
+	 Executed 28 tests, with 0 failures (0 unexpected) in 0.807 (0.810) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

@@ -1,0 +1,53 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 51392,
+  "finishedAtISO8601" : "2026-09-25T11:39:47.430+08:00",
+  "frozen" : [
+    {
+      "name" : "postcondition-bounds-v1.json",
+      "path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/frozen\/postcondition-bounds-v1.json",
+      "sha256" : "da5795423ddc3a2a80dac4aef632ea6e7b0fd80f2f016d054d784453d5155f90"
+    },
+    {
+      "name" : "postcondition-latency-observations-v1.json",
+      "path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/frozen\/postcondition-latency-observations-v1.json",
+      "sha256" : "7ee9a9e5dc07333c06c56a56a4fcac241ccba89d7abdc80aac22359d06b3b647"
+    }
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 51393,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "within=chooserVerified timeout=noChooserObserved late=noChooserObserved\/affirmed=false monitorPosts=0 maxLatencyMs=42.920827865600586 ",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-113932\/items\/05-postcondition-bounds.json",
+      "evidenceSHA256" : "da5795423ddc3a2a80dac4aef632ea6e7b0fd80f2f016d054d784453d5155f90",
+      "item" : 5,
+      "name" : "postcondition-bounds-freeze",
+      "verdict" : "PARTIAL"
+    },
+    {
+      "detail" : "within=chooserVerified timeout=noChooserObserved late=noChooserObserved\/affirmed=false monitorPosts=0 maxLatencyMs=42.920827865600586 ",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-113932\/items\/05-postcondition-proofs.json",
+      "evidenceSHA256" : "2fd3c8ef15cd40d8e48fb4f1d6aac233bd5b128d860c38a1ae8162ce7b853e30",
+      "item" : 5,
+      "name" : "postcondition-proofs",
+      "verdict" : "PARTIAL"
+    }
+  ],
+  "notes" : [
+    "Loaded canonical chooser predicate SHA-256 0472aa0a364711fd357f872d93c5ad7e13b393cc267dbbc6244d47a20de6f3f2, checksum file sha256sums-HARNESS-20260925-112927.txt"
+  ],
+  "occluderPID" : 51394,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-113932",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T11:39:32.673+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PARTIAL"
+}

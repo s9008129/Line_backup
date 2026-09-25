@@ -1,0 +1,25 @@
+{
+  "frozenAtISO8601" : "2026-09-25T11:45:25.230+08:00",
+  "frozenBounds" : {
+    "fastCadenceMs" : 150,
+    "fastPhaseSeconds" : 8,
+    "hardCapSeconds" : 15,
+    "lateForensicSampleDelaySeconds" : 30,
+    "slowCadenceMs" : 500
+  },
+  "latencyEvidenceName" : "05-postcondition-latency.json",
+  "latencyEvidenceSHA256" : "84955cc945f459c116fefe77a07045bbc7083dc9ea323e59363cc52eda94ca9f",
+  "maxObservedMs" : 275.38394927978516,
+  "measuredRuns" : 20,
+  "medianObservedMs" : 27.56786346435547,
+  "p95ObservedMs" : 275.38394927978516,
+  "planTimeBounds" : {
+    "fastCadenceMs" : 150,
+    "fastPhaseSeconds" : 8,
+    "hardCapSeconds" : 15,
+    "lateForensicSampleDelaySeconds" : 30,
+    "slowCadenceMs" : 500
+  },
+  "rationale" : "max observed real-NSOpenPanel appearance latency 275.38394927978516 ms and delayed-panel dispatch-to-visible 1060.6720447540283 ms are far below the 8.0 s fast phase; plan-time bounds ≤150 ms\/8.0 s then ≤500 ms to hard cap 15.0 s are retained unchanged (no silent extension; a later insufficiency is a replan).",
+  "runID" : "HARNESS-20260925-114515"
+}

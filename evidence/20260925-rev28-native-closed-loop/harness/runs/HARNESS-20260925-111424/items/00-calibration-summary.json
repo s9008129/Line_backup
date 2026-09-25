@@ -1,0 +1,44 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 37935,
+  "finishedAtISO8601" : "2026-09-25T11:14:36.208+08:00",
+  "frozen" : [
+
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 37942,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "panel role=AXWindow subrole=AXStandardWindow nodes=138 defaultButton=?",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-111424\/items\/06-chooser-ax-calibration.json",
+      "evidenceSHA256" : "4bde7a1e7157f13a85adead781c27f8e76048de7ad3bab65f2d9737706e278d6",
+      "item" : 6,
+      "name" : "chooser-ax-calibration",
+      "verdict" : "PASS"
+    },
+    {
+      "detail" : "realPanel=affirmed fakeSame=refused\/frozenPredicateMismatch emptyCensus=refused occluderLookAlike=refused\/frozenPredicateMismatch nav=false marker=false",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-111424\/items\/06-chooser-predicate-proof.json",
+      "evidenceSHA256" : "61d53cab47bd68c4fa099b70c6e5603c6df2f6b025fc65bb0d190642a89b5b58",
+      "item" : 6,
+      "name" : "chooser-predicate-proof",
+      "verdict" : "PARTIAL"
+    }
+  ],
+  "notes" : [
+    "NOT_FROZEN: chooser-affirmation-predicate-v2.json and chooser-ax-calibration-v2.json were NOT written to the canonical frozen\/ dir (proof verdict PARTIAL: realPanel=affirmed nav=false)"
+  ],
+  "occluderPID" : 37943,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-111424",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T11:14:25.001+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PARTIAL"
+}

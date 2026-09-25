@@ -318,15 +318,21 @@ final class HarnessController: NSObject, NSApplicationDelegate {
             let delayMs = (params["delayMs"] as? NSNumber)?.intValue ?? 0
             let directory = params["directory"] as? String ?? NSTemporaryDirectory()
             let marker = params["marker"] as? String ?? "rev28-panel-commit.marker"
-            showPanel(delayMs: delayMs, directory: directory, markerName: marker)
+            let expectedDirectory = params["expectedDirectory"] as? String
+            showPanel(delayMs: delayMs, directory: directory, markerName: marker, expectedDirectory: expectedDirectory)
             reply(id: id, ok: true)
         case "closePanel":
             if let panel {
-                mainWindow.endSheet(panel, returnCode: .cancel)
+                panel.cancel(nil)
                 reply(id: id, ok: true)
             } else {
                 reply(id: id, ok: false, error: "noPanel")
             }
+        case "focusPanel":
+            guard let panel, panel.isVisible else { reply(id: id, ok: false, error: "panelNotVisible"); return }
+            NSApp.activate(ignoringOtherApps: true)
+            panel.makeKeyAndOrderFront(nil)
+            reply(id: id, ok: true, extra: ["active": NSApp.isActive, "keyWindow": panel.isKeyWindow])
         case "showFakeChooser":
             let dx = (params["dx"] as? NSNumber)?.doubleValue ?? 60
             let dy = (params["dy"] as? NSNumber)?.doubleValue ?? 60
@@ -374,14 +380,15 @@ final class HarnessController: NSObject, NSApplicationDelegate {
             "countText": mainContent.countText,
             "mainWindowNumber": mainWindow.windowNumber,
             "popupWindowNumber": popupWindow.windowNumber,
-            "panelVisible": mainWindow.attachedSheet?.isVisible ?? false,
+            "panelVisible": panel?.isVisible ?? (mainWindow.attachedSheet?.isVisible ?? false),
             "startTimeUnix": startedAt.timeIntervalSince1970,
         ]
         if popupWindow.isVisible {
             object["popupFrameTopLeft"] = topLeftFrame(of: popupWindow)
         }
         if let panel {
-            object["panelWindowNumber"] = mainWindow.attachedSheet?.windowNumber ?? 0
+            object["panelWindowNumber"] = panel.windowNumber
+            object["panelKeyWindow"] = panel.isKeyWindow
             object["panelDirectory"] = panel.directoryURL?.path ?? ""
             if let url = panel.url { object["panelSelectedURL"] = url.path }
         }
@@ -404,9 +411,9 @@ final class HarnessController: NSObject, NSApplicationDelegate {
         return object
     }
 
-    private func showPanel(delayMs: Int, directory: String, markerName: String) {
+    private func showPanel(delayMs: Int, directory: String, markerName: String, expectedDirectory: String?) {
         if let panel {
-            mainWindow.endSheet(panel, returnCode: .cancel)
+            panel.cancel(nil)
             self.panel = nil
         }
         panelShownEmitted = false
@@ -423,22 +430,28 @@ final class HarnessController: NSObject, NSApplicationDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(delayMs) / 1000.0) { [weak self] in
             guard let self, self.panel === newPanel else { return }
             self.emit(["event": "panelWillShow", "at": Date().timeIntervalSince1970])
-            newPanel.beginSheetModal(for: self.mainWindow) { [weak self] response in
-                self?.handlePanelCompletion(response: response, panel: newPanel, markerName: markerName)
+            // Calibrate the frozen chooser predicate against the standalone
+            // NSOpenPanel window shape described by the Rev28 plan.
+            newPanel.begin { [weak self] response in
+                self?.handlePanelCompletion(response: response, panel: newPanel, markerName: markerName, expectedDirectory: expectedDirectory)
             }
+            NSApp.activate(ignoringOtherApps: true)
+            newPanel.makeKeyAndOrderFront(nil)
             self.pollPanelVisible(panel: newPanel, attempts: 300)
         }
     }
 
     private func pollPanelVisible(panel: NSOpenPanel, attempts: Int) {
         guard attempts > 0 else { return }
-        if mainWindow.attachedSheet?.isVisible == true {
+        if panel.isVisible {
             if !panelShownEmitted {
                 panelShownEmitted = true
                 emit([
                     "event": "panelShown",
                     "at": Date().timeIntervalSince1970,
-                    "windowNumber": mainWindow.attachedSheet?.windowNumber ?? 0,
+                    "windowNumber": panel.windowNumber,
+                    "keyWindow": panel.isKeyWindow,
+                    "appActive": NSApp.isActive,
                 ])
             }
             return
@@ -448,19 +461,29 @@ final class HarnessController: NSObject, NSApplicationDelegate {
         }
     }
 
-    private func handlePanelCompletion(response: NSApplication.ModalResponse, panel: NSOpenPanel, markerName: String) {
+    private func handlePanelCompletion(response: NSApplication.ModalResponse, panel: NSOpenPanel, markerName: String, expectedDirectory: String?) {
         var extra: [String: Any] = ["event": "panelClosed", "response": Int(response.rawValue), "at": Date().timeIntervalSince1970]
         if response == .OK {
-            let chosen = panel.url ?? panel.directoryURL
-            if let chosen {
-                let markerURL = chosen.appendingPathComponent(markerName)
+            let chosenDirectory = panel.directoryURL?.standardizedFileURL
+            let selectedURL = panel.url?.standardizedFileURL
+            if let chosenDirectory {
+                extra["chosenDirectory"] = chosenDirectory.path
+            }
+            if let selectedURL {
+                extra["selectedURL"] = selectedURL.path
+            }
+            let expectedURL = expectedDirectory.map { URL(fileURLWithPath: $0).standardizedFileURL }
+            if let chosenDirectory, let expectedURL, chosenDirectory.path == expectedURL.path {
+                let markerURL = expectedURL.appendingPathComponent(markerName)
                 do {
                     try Data("rev28 harness panel commit".utf8).write(to: markerURL, options: .atomic)
                     extra["markerPath"] = markerURL.path
-                    extra["chosenDirectory"] = chosen.path
                 } catch {
                     extra["markerError"] = String(describing: error)
                 }
+            } else {
+                extra["markerSuppressed"] = "chosenDirectoryDidNotMatchExpectedRunDestination"
+                extra["expectedDirectory"] = expectedURL?.path ?? ""
             }
         }
         emit(extra)

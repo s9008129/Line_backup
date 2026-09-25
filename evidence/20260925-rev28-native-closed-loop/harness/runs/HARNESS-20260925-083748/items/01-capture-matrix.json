@@ -1,0 +1,1682 @@
+{
+  "barredShadowBearingCells" : [
+    {
+      "barredFromGeometry" : true,
+      "ignoreShadows" : false,
+      "includeChildWindows" : true,
+      "maxOriginPaddingObservedPt" : 46,
+      "maxPerSideDeltaObservedPt" : 46,
+      "observedActivated" : true,
+      "requestedActivated" : true,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:37:51.324+08:00",
+          "expectedBBoxPt" : [
+            165,
+            143,
+            940,
+            620
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1424,
+          "imageWidthPx" : 2038,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 46,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=true;activated=true;includeChildWindows=true;ignoreShadows=false)"
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              334,
+              177
+            ],
+            "foundMarkerPixel" : [
+              137,
+              95
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -100.5,
+            "measuredOriginOffsetYPt" : 13.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 46,
+            "left" : 39.5,
+            "right" : 39.5,
+            "top" : 46
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : true,
+          "stateKey" : "settled=true;activated=true;includeChildWindows=true;ignoreShadows=false"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:37:52.508+08:00",
+          "expectedBBoxPt" : [
+            170,
+            146,
+            940,
+            620
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1424,
+          "imageWidthPx" : 2038,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 46,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              344,
+              183
+            ],
+            "foundMarkerPixel" : [
+              137,
+              95
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -105.5,
+            "measuredOriginOffsetYPt" : 10.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 46,
+            "left" : 39.5,
+            "right" : 39.5,
+            "top" : 46
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : true,
+          "stateKey" : "settled=true;activated=true;includeChildWindows=true;ignoreShadows=false"
+        }
+      ],
+      "settled" : true,
+      "shadowsOn" : true,
+      "stateKey" : "settled=true;activated=true;includeChildWindows=true;ignoreShadows=false"
+    },
+    {
+      "barredFromGeometry" : true,
+      "ignoreShadows" : false,
+      "includeChildWindows" : false,
+      "maxOriginPaddingObservedPt" : 56,
+      "maxPerSideDeltaObservedPt" : 56,
+      "observedActivated" : true,
+      "requestedActivated" : true,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:37:54.276+08:00",
+          "expectedBBoxPt" : [
+            175,
+            149,
+            800,
+            600
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1424,
+          "imageWidthPx" : 1824,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 56,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=true;activated=true;includeChildWindows=false;ignoreShadows=false)"
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              354,
+              189
+            ],
+            "foundMarkerPixel" : [
+              137,
+              95
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -110.5,
+            "measuredOriginOffsetYPt" : 7.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 56,
+            "left" : 56,
+            "right" : 56,
+            "top" : 56
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : true,
+          "stateKey" : "settled=true;activated=true;includeChildWindows=false;ignoreShadows=false"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:37:55.408+08:00",
+          "expectedBBoxPt" : [
+            180,
+            152,
+            800,
+            600
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1424,
+          "imageWidthPx" : 1824,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 56,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              364,
+              195
+            ],
+            "foundMarkerPixel" : [
+              137,
+              95
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -115.5,
+            "measuredOriginOffsetYPt" : 4.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 56,
+            "left" : 56,
+            "right" : 56,
+            "top" : 56
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : true,
+          "stateKey" : "settled=true;activated=true;includeChildWindows=false;ignoreShadows=false"
+        }
+      ],
+      "settled" : true,
+      "shadowsOn" : true,
+      "stateKey" : "settled=true;activated=true;includeChildWindows=false;ignoreShadows=false"
+    },
+    {
+      "barredFromGeometry" : true,
+      "ignoreShadows" : false,
+      "includeChildWindows" : true,
+      "maxOriginPaddingObservedPt" : 23,
+      "maxPerSideDeltaObservedPt" : 23,
+      "observedActivated" : false,
+      "requestedActivated" : false,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:02.810+08:00",
+          "expectedBBoxPt" : [
+            205,
+            167,
+            940,
+            620
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1326,
+          "imageWidthPx" : 1972,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 23,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=true;activated=false;includeChildWindows=true;ignoreShadows=false)"
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              414,
+              225
+            ],
+            "foundMarkerPixel" : [
+              54,
+              104
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -182,
+            "measuredOriginOffsetYPt" : -6
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 21.5,
+            "left" : 23,
+            "right" : 23,
+            "top" : 21.5
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : true,
+          "stateKey" : "settled=true;activated=false;includeChildWindows=true;ignoreShadows=false"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:03.957+08:00",
+          "expectedBBoxPt" : [
+            210,
+            170,
+            940,
+            620
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1326,
+          "imageWidthPx" : 1972,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 23,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              424,
+              231
+            ],
+            "foundMarkerPixel" : [
+              54,
+              104
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -187,
+            "measuredOriginOffsetYPt" : -9
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 21.5,
+            "left" : 23,
+            "right" : 23,
+            "top" : 21.5
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : true,
+          "stateKey" : "settled=true;activated=false;includeChildWindows=true;ignoreShadows=false"
+        }
+      ],
+      "settled" : true,
+      "shadowsOn" : true,
+      "stateKey" : "settled=true;activated=false;includeChildWindows=true;ignoreShadows=false"
+    },
+    {
+      "barredFromGeometry" : true,
+      "ignoreShadows" : false,
+      "includeChildWindows" : false,
+      "maxOriginPaddingObservedPt" : 23,
+      "maxPerSideDeltaObservedPt" : 23,
+      "observedActivated" : false,
+      "requestedActivated" : false,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:05.737+08:00",
+          "expectedBBoxPt" : [
+            215,
+            173,
+            800,
+            600
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1292,
+          "imageWidthPx" : 1692,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 23,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=true;activated=false;includeChildWindows=false;ignoreShadows=false)"
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              434,
+              237
+            ],
+            "foundMarkerPixel" : [
+              54,
+              104
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -192,
+            "measuredOriginOffsetYPt" : -12
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 23,
+            "left" : 23,
+            "right" : 23,
+            "top" : 23
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : true,
+          "stateKey" : "settled=true;activated=false;includeChildWindows=false;ignoreShadows=false"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:06.842+08:00",
+          "expectedBBoxPt" : [
+            220,
+            176,
+            800,
+            600
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1292,
+          "imageWidthPx" : 1692,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 23,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              444,
+              243
+            ],
+            "foundMarkerPixel" : [
+              54,
+              104
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -197,
+            "measuredOriginOffsetYPt" : -15
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 23,
+            "left" : 23,
+            "right" : 23,
+            "top" : 23
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : true,
+          "stateKey" : "settled=true;activated=false;includeChildWindows=false;ignoreShadows=false"
+        }
+      ],
+      "settled" : true,
+      "shadowsOn" : true,
+      "stateKey" : "settled=true;activated=false;includeChildWindows=false;ignoreShadows=false"
+    },
+    {
+      "barredFromGeometry" : true,
+      "ignoreShadows" : false,
+      "includeChildWindows" : true,
+      "maxOriginPaddingObservedPt" : 46,
+      "maxPerSideDeltaObservedPt" : 46,
+      "observedActivated" : true,
+      "requestedActivated" : true,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:14.636+08:00",
+          "expectedBBoxPt" : [
+            246,
+            192,
+            940,
+            620
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1424,
+          "imageWidthPx" : 2038,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 46,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=false;activated=true;includeChildWindows=true;ignoreShadows=false)"
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              496,
+              275
+            ],
+            "foundMarkerPixel" : [
+              137,
+              95
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -181.5,
+            "measuredOriginOffsetYPt" : -35.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 46,
+            "left" : 39.5,
+            "right" : 39.5,
+            "top" : 46
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : true,
+          "stateKey" : "settled=false;activated=true;includeChildWindows=true;ignoreShadows=false"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:14.767+08:00",
+          "expectedBBoxPt" : [
+            252,
+            196,
+            940,
+            620
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1424,
+          "imageWidthPx" : 2038,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 46,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              508,
+              283
+            ],
+            "foundMarkerPixel" : [
+              137,
+              95
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -187.5,
+            "measuredOriginOffsetYPt" : -39.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 46,
+            "left" : 39.5,
+            "right" : 39.5,
+            "top" : 46
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : true,
+          "stateKey" : "settled=false;activated=true;includeChildWindows=true;ignoreShadows=false"
+        }
+      ],
+      "settled" : false,
+      "shadowsOn" : true,
+      "stateKey" : "settled=false;activated=true;includeChildWindows=true;ignoreShadows=false"
+    },
+    {
+      "barredFromGeometry" : true,
+      "ignoreShadows" : false,
+      "includeChildWindows" : false,
+      "maxOriginPaddingObservedPt" : 56,
+      "maxPerSideDeltaObservedPt" : 56,
+      "observedActivated" : true,
+      "requestedActivated" : true,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:15.460+08:00",
+          "expectedBBoxPt" : [
+            258,
+            200,
+            800,
+            600
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1424,
+          "imageWidthPx" : 1824,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 56,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=false;activated=true;includeChildWindows=false;ignoreShadows=false)"
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              520,
+              291
+            ],
+            "foundMarkerPixel" : [
+              137,
+              95
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -193.5,
+            "measuredOriginOffsetYPt" : -43.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 56,
+            "left" : 56,
+            "right" : 56,
+            "top" : 56
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : true,
+          "stateKey" : "settled=false;activated=true;includeChildWindows=false;ignoreShadows=false"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:15.589+08:00",
+          "expectedBBoxPt" : [
+            264,
+            204,
+            800,
+            600
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1424,
+          "imageWidthPx" : 1824,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 56,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              532,
+              299
+            ],
+            "foundMarkerPixel" : [
+              137,
+              95
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -199.5,
+            "measuredOriginOffsetYPt" : -47.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 56,
+            "left" : 56,
+            "right" : 56,
+            "top" : 56
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : true,
+          "stateKey" : "settled=false;activated=true;includeChildWindows=false;ignoreShadows=false"
+        }
+      ],
+      "settled" : false,
+      "shadowsOn" : true,
+      "stateKey" : "settled=false;activated=true;includeChildWindows=false;ignoreShadows=false"
+    },
+    {
+      "barredFromGeometry" : true,
+      "ignoreShadows" : false,
+      "includeChildWindows" : true,
+      "maxOriginPaddingObservedPt" : 23,
+      "maxPerSideDeltaObservedPt" : 23,
+      "observedActivated" : false,
+      "requestedActivated" : false,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:17.891+08:00",
+          "expectedBBoxPt" : [
+            294,
+            224,
+            940,
+            620
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1326,
+          "imageWidthPx" : 1972,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 23,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=false;activated=false;includeChildWindows=true;ignoreShadows=false)"
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              592,
+              339
+            ],
+            "foundMarkerPixel" : [
+              54,
+              104
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -271,
+            "measuredOriginOffsetYPt" : -63
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 21.5,
+            "left" : 23,
+            "right" : 23,
+            "top" : 21.5
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : true,
+          "stateKey" : "settled=false;activated=false;includeChildWindows=true;ignoreShadows=false"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:18.027+08:00",
+          "expectedBBoxPt" : [
+            300,
+            228,
+            940,
+            620
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1326,
+          "imageWidthPx" : 1972,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 23,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              604,
+              347
+            ],
+            "foundMarkerPixel" : [
+              54,
+              104
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -277,
+            "measuredOriginOffsetYPt" : -67
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 21.5,
+            "left" : 23,
+            "right" : 23,
+            "top" : 21.5
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : true,
+          "stateKey" : "settled=false;activated=false;includeChildWindows=true;ignoreShadows=false"
+        }
+      ],
+      "settled" : false,
+      "shadowsOn" : true,
+      "stateKey" : "settled=false;activated=false;includeChildWindows=true;ignoreShadows=false"
+    },
+    {
+      "barredFromGeometry" : true,
+      "ignoreShadows" : false,
+      "includeChildWindows" : false,
+      "maxOriginPaddingObservedPt" : 23,
+      "maxPerSideDeltaObservedPt" : 23,
+      "observedActivated" : false,
+      "requestedActivated" : false,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:18.757+08:00",
+          "expectedBBoxPt" : [
+            306,
+            232,
+            800,
+            600
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1292,
+          "imageWidthPx" : 1692,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 23,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=false;activated=false;includeChildWindows=false;ignoreShadows=false)"
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              616,
+              355
+            ],
+            "foundMarkerPixel" : [
+              54,
+              104
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -283,
+            "measuredOriginOffsetYPt" : -71
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 23,
+            "left" : 23,
+            "right" : 23,
+            "top" : 23
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : true,
+          "stateKey" : "settled=false;activated=false;includeChildWindows=false;ignoreShadows=false"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:18.877+08:00",
+          "expectedBBoxPt" : [
+            312,
+            236,
+            800,
+            600
+          ],
+          "ignoreShadows" : false,
+          "imageHeightPx" : 1292,
+          "imageWidthPx" : 1692,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 23,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              628,
+              363
+            ],
+            "foundMarkerPixel" : [
+              54,
+              104
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -289,
+            "measuredOriginOffsetYPt" : -75
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 23,
+            "left" : 23,
+            "right" : 23,
+            "top" : 23
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : true,
+          "stateKey" : "settled=false;activated=false;includeChildWindows=false;ignoreShadows=false"
+        }
+      ],
+      "settled" : false,
+      "shadowsOn" : true,
+      "stateKey" : "settled=false;activated=false;includeChildWindows=false;ignoreShadows=false"
+    }
+  ],
+  "cells" : [
+    {
+      "barredFromGeometry" : false,
+      "ignoreShadows" : true,
+      "includeChildWindows" : true,
+      "maxOriginPaddingObservedPt" : 0,
+      "maxPerSideDeltaObservedPt" : 0,
+      "observedActivated" : true,
+      "requestedActivated" : true,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:37:57.116+08:00",
+          "expectedBBoxPt" : [
+            185,
+            155,
+            940,
+            620
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1240,
+          "imageWidthPx" : 1880,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=true;activated=true;includeChildWindows=true;ignoreShadows=true)"
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              374,
+              201
+            ],
+            "foundMarkerPixel" : [
+              25,
+              19
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -176.5,
+            "measuredOriginOffsetYPt" : -36.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : false,
+          "stateKey" : "settled=true;activated=true;includeChildWindows=true;ignoreShadows=true"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:37:58.247+08:00",
+          "expectedBBoxPt" : [
+            190,
+            158,
+            940,
+            620
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1240,
+          "imageWidthPx" : 1880,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              384,
+              207
+            ],
+            "foundMarkerPixel" : [
+              25,
+              19
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -181.5,
+            "measuredOriginOffsetYPt" : -39.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : false,
+          "stateKey" : "settled=true;activated=true;includeChildWindows=true;ignoreShadows=true"
+        }
+      ],
+      "settled" : true,
+      "shadowsOn" : false,
+      "stateKey" : "settled=true;activated=true;includeChildWindows=true;ignoreShadows=true"
+    },
+    {
+      "barredFromGeometry" : false,
+      "ignoreShadows" : true,
+      "includeChildWindows" : false,
+      "maxOriginPaddingObservedPt" : 0,
+      "maxPerSideDeltaObservedPt" : 0,
+      "observedActivated" : true,
+      "requestedActivated" : true,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:37:59.953+08:00",
+          "expectedBBoxPt" : [
+            195,
+            161,
+            800,
+            600
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1200,
+          "imageWidthPx" : 1600,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=true;activated=true;includeChildWindows=false;ignoreShadows=true)"
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              394,
+              213
+            ],
+            "foundMarkerPixel" : [
+              25,
+              19
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -186.5,
+            "measuredOriginOffsetYPt" : -42.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : false,
+          "stateKey" : "settled=true;activated=true;includeChildWindows=false;ignoreShadows=true"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:01.101+08:00",
+          "expectedBBoxPt" : [
+            200,
+            164,
+            800,
+            600
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1200,
+          "imageWidthPx" : 1600,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              404,
+              219
+            ],
+            "foundMarkerPixel" : [
+              25,
+              19
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -191.5,
+            "measuredOriginOffsetYPt" : -45.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : false,
+          "stateKey" : "settled=true;activated=true;includeChildWindows=false;ignoreShadows=true"
+        }
+      ],
+      "settled" : true,
+      "shadowsOn" : false,
+      "stateKey" : "settled=true;activated=true;includeChildWindows=false;ignoreShadows=true"
+    },
+    {
+      "barredFromGeometry" : false,
+      "ignoreShadows" : true,
+      "includeChildWindows" : true,
+      "maxOriginPaddingObservedPt" : 0,
+      "maxPerSideDeltaObservedPt" : 0,
+      "observedActivated" : false,
+      "requestedActivated" : false,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:08.572+08:00",
+          "expectedBBoxPt" : [
+            225,
+            179,
+            940,
+            620
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1240,
+          "imageWidthPx" : 1880,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=true;activated=false;includeChildWindows=true;ignoreShadows=true)"
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              454,
+              249
+            ],
+            "foundMarkerPixel" : [
+              8,
+              72
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -225,
+            "measuredOriginOffsetYPt" : -34
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : false,
+          "stateKey" : "settled=true;activated=false;includeChildWindows=true;ignoreShadows=true"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:11.061+08:00",
+          "expectedBBoxPt" : [
+            230,
+            182,
+            940,
+            620
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1240,
+          "imageWidthPx" : 1880,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              464,
+              255
+            ],
+            "foundMarkerPixel" : [
+              8,
+              72
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -230,
+            "measuredOriginOffsetYPt" : -37
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : false,
+          "stateKey" : "settled=true;activated=false;includeChildWindows=true;ignoreShadows=true"
+        }
+      ],
+      "settled" : true,
+      "shadowsOn" : false,
+      "stateKey" : "settled=true;activated=false;includeChildWindows=true;ignoreShadows=true"
+    },
+    {
+      "barredFromGeometry" : false,
+      "ignoreShadows" : true,
+      "includeChildWindows" : false,
+      "maxOriginPaddingObservedPt" : 0,
+      "maxPerSideDeltaObservedPt" : 0,
+      "observedActivated" : false,
+      "requestedActivated" : false,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:12.774+08:00",
+          "expectedBBoxPt" : [
+            235,
+            185,
+            800,
+            600
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1200,
+          "imageWidthPx" : 1600,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=true;activated=false;includeChildWindows=false;ignoreShadows=true)"
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              474,
+              261
+            ],
+            "foundMarkerPixel" : [
+              8,
+              72
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -235,
+            "measuredOriginOffsetYPt" : -40
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : false,
+          "stateKey" : "settled=true;activated=false;includeChildWindows=false;ignoreShadows=true"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:13.898+08:00",
+          "expectedBBoxPt" : [
+            240,
+            188,
+            800,
+            600
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1200,
+          "imageWidthPx" : 1600,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              484,
+              267
+            ],
+            "foundMarkerPixel" : [
+              8,
+              72
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -240,
+            "measuredOriginOffsetYPt" : -43
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : true,
+          "shadowsOn" : false,
+          "stateKey" : "settled=true;activated=false;includeChildWindows=false;ignoreShadows=true"
+        }
+      ],
+      "settled" : true,
+      "shadowsOn" : false,
+      "stateKey" : "settled=true;activated=false;includeChildWindows=false;ignoreShadows=true"
+    },
+    {
+      "barredFromGeometry" : false,
+      "ignoreShadows" : true,
+      "includeChildWindows" : true,
+      "maxOriginPaddingObservedPt" : 0,
+      "maxPerSideDeltaObservedPt" : 0,
+      "observedActivated" : true,
+      "requestedActivated" : true,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:16.267+08:00",
+          "expectedBBoxPt" : [
+            270,
+            208,
+            940,
+            620
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1240,
+          "imageWidthPx" : 1880,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=false;activated=true;includeChildWindows=true;ignoreShadows=true)"
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              544,
+              307
+            ],
+            "foundMarkerPixel" : [
+              25,
+              19
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -261.5,
+            "measuredOriginOffsetYPt" : -89.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : false,
+          "stateKey" : "settled=false;activated=true;includeChildWindows=true;ignoreShadows=true"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:16.386+08:00",
+          "expectedBBoxPt" : [
+            276,
+            212,
+            940,
+            620
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1240,
+          "imageWidthPx" : 1880,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              556,
+              315
+            ],
+            "foundMarkerPixel" : [
+              25,
+              19
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -267.5,
+            "measuredOriginOffsetYPt" : -93.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : false,
+          "stateKey" : "settled=false;activated=true;includeChildWindows=true;ignoreShadows=true"
+        }
+      ],
+      "settled" : false,
+      "shadowsOn" : false,
+      "stateKey" : "settled=false;activated=true;includeChildWindows=true;ignoreShadows=true"
+    },
+    {
+      "barredFromGeometry" : false,
+      "ignoreShadows" : true,
+      "includeChildWindows" : false,
+      "maxOriginPaddingObservedPt" : 0,
+      "maxPerSideDeltaObservedPt" : 0,
+      "observedActivated" : true,
+      "requestedActivated" : true,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:17.060+08:00",
+          "expectedBBoxPt" : [
+            282,
+            216,
+            800,
+            600
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1200,
+          "imageWidthPx" : 1600,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=false;activated=true;includeChildWindows=false;ignoreShadows=true)"
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              568,
+              323
+            ],
+            "foundMarkerPixel" : [
+              25,
+              19
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -273.5,
+            "measuredOriginOffsetYPt" : -97.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : false,
+          "stateKey" : "settled=false;activated=true;includeChildWindows=false;ignoreShadows=true"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:17.171+08:00",
+          "expectedBBoxPt" : [
+            288,
+            220,
+            800,
+            600
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1200,
+          "imageWidthPx" : 1600,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : true,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              580,
+              331
+            ],
+            "foundMarkerPixel" : [
+              25,
+              19
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -279.5,
+            "measuredOriginOffsetYPt" : -101.5
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : true,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : false,
+          "stateKey" : "settled=false;activated=true;includeChildWindows=false;ignoreShadows=true"
+        }
+      ],
+      "settled" : false,
+      "shadowsOn" : false,
+      "stateKey" : "settled=false;activated=true;includeChildWindows=false;ignoreShadows=true"
+    },
+    {
+      "barredFromGeometry" : false,
+      "ignoreShadows" : true,
+      "includeChildWindows" : true,
+      "maxOriginPaddingObservedPt" : 0,
+      "maxPerSideDeltaObservedPt" : 0,
+      "observedActivated" : false,
+      "requestedActivated" : false,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:19.570+08:00",
+          "expectedBBoxPt" : [
+            318,
+            240,
+            940,
+            620
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1240,
+          "imageWidthPx" : 1880,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=false;activated=false;includeChildWindows=true;ignoreShadows=true)"
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              640,
+              371
+            ],
+            "foundMarkerPixel" : [
+              8,
+              72
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -318,
+            "measuredOriginOffsetYPt" : -95
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : false,
+          "stateKey" : "settled=false;activated=false;includeChildWindows=true;ignoreShadows=true"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:19.692+08:00",
+          "expectedBBoxPt" : [
+            324,
+            244,
+            940,
+            620
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1240,
+          "imageWidthPx" : 1880,
+          "includeChildWindows" : true,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              652,
+              379
+            ],
+            "foundMarkerPixel" : [
+              8,
+              72
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -324,
+            "measuredOriginOffsetYPt" : -99
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : false,
+          "stateKey" : "settled=false;activated=false;includeChildWindows=true;ignoreShadows=true"
+        }
+      ],
+      "settled" : false,
+      "shadowsOn" : false,
+      "stateKey" : "settled=false;activated=false;includeChildWindows=true;ignoreShadows=true"
+    },
+    {
+      "barredFromGeometry" : false,
+      "ignoreShadows" : true,
+      "includeChildWindows" : false,
+      "maxOriginPaddingObservedPt" : 0,
+      "maxPerSideDeltaObservedPt" : 0,
+      "observedActivated" : false,
+      "requestedActivated" : false,
+      "samples" : [
+        {
+          "attempt" : 1,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:20.390+08:00",
+          "expectedBBoxPt" : [
+            330,
+            248,
+            800,
+            600
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1200,
+          "imageWidthPx" : 1600,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleValidity" : "invalid",
+          "noRuleViolations" : [
+            "noFrozenRule(stateKey=settled=false;activated=false;includeChildWindows=false;ignoreShadows=true)"
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              664,
+              387
+            ],
+            "foundMarkerPixel" : [
+              8,
+              72
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -330,
+            "measuredOriginOffsetYPt" : -103
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : false,
+          "stateKey" : "settled=false;activated=false;includeChildWindows=false;ignoreShadows=true"
+        },
+        {
+          "attempt" : 2,
+          "backingScaleFactor" : 2,
+          "capturedAtISO8601" : "2026-09-25T08:38:20.509+08:00",
+          "expectedBBoxPt" : [
+            336,
+            252,
+            800,
+            600
+          ],
+          "ignoreShadows" : true,
+          "imageHeightPx" : 1200,
+          "imageWidthPx" : 1600,
+          "includeChildWindows" : false,
+          "measuredMaxPerSideDeltaPt" : 0,
+          "noRuleViolations" : [
+
+          ],
+          "observedActivated" : false,
+          "originProbe" : {
+            "expectedMarkerScreenPt" : [
+              676,
+              395
+            ],
+            "foundMarkerPixel" : [
+              8,
+              72
+            ],
+            "markerFound" : true,
+            "measuredOriginOffsetXPt" : -336,
+            "measuredOriginOffsetYPt" : -107
+          },
+          "perSideDeltaPt" : {
+            "bottom" : 0,
+            "left" : 0,
+            "right" : 0,
+            "top" : 0
+          },
+          "requestedActivated" : false,
+          "scale" : 2,
+          "settled" : false,
+          "shadowsOn" : false,
+          "stateKey" : "settled=false;activated=false;includeChildWindows=false;ignoreShadows=true"
+        }
+      ],
+      "settled" : false,
+      "shadowsOn" : false,
+      "stateKey" : "settled=false;activated=false;includeChildWindows=false;ignoreShadows=true"
+    }
+  ],
+  "expectedBBoxUnionRule" : "expectedBBox = union of freshly read SCWindow.frame of included windows (main [+ popup child window when includeChildWindows=true])",
+  "frozenRuleCount" : 8,
+  "noRuleFailClosedDetail" : "stateKey=settled=false;activated=false;includeChildWindows=false;ignoreShadows=true validity=invalid violations=[\"noFrozenRule(stateKey=settled=false;activated=false;includeChildWindows=false;ignoreShadows=true)\"]",
+  "noRuleFailClosedProved" : true,
+  "occludedCapture" : {
+    "atISO8601" : "2026-09-25T08:38:34.576+08:00",
+    "captureSurvivesFullOcclusion" : true,
+    "expectedBBoxPt" : [
+      336,
+      252,
+      800,
+      600
+    ],
+    "heightDeltaPt" : 0,
+    "imageHeightPx" : 1200,
+    "imageWidthPx" : 1600,
+    "markerFound" : true,
+    "occluderCoverFrameTopLeft" : [
+      336,
+      252,
+      800,
+      600
+    ],
+    "occluderCoverHitsAtCapture" : 0,
+    "scale" : 2,
+    "widthDeltaPt" : 0
+  },
+  "shadowBearingBarredFromGeometry" : true
+}

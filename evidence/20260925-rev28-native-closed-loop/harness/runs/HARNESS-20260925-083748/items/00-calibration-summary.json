@@ -1,0 +1,53 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 63846,
+  "finishedAtISO8601" : "2026-09-25T08:38:34.621+08:00",
+  "frozen" : [
+    {
+      "name" : "capture-geometry-rulebook-v1.json",
+      "path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/frozen\/capture-geometry-rulebook-v1.json",
+      "sha256" : "09e1cf2ae181f519f9ed47979e0286212f0b051f197ced6909a9789f2f1a62ed"
+    },
+    {
+      "name" : "capture-matrix-v1.json",
+      "path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/frozen\/capture-matrix-v1.json",
+      "sha256" : "e008478201770f0496d6a252680ae2a737473c32a70db888ebd2bf4aafb7ba7b"
+    }
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 63847,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "cells=8\/8 shadowFree, barred=8\/8 shadowBearing, frozenRules=8 (complete matrix) validationsAsExpected=16\/16 noRuleFailClosed=true occlusionCapture=true",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-083748\/items\/01-capture-matrix.json",
+      "evidenceSHA256" : "e008478201770f0496d6a252680ae2a737473c32a70db888ebd2bf4aafb7ba7b",
+      "item" : 1,
+      "name" : "capture-matrix+rule-freeze",
+      "verdict" : "PASS"
+    },
+    {
+      "detail" : "per-state validation of frozen rule book",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-083748\/items\/01-frozen-rule-validation.json",
+      "evidenceSHA256" : "ef52d9b08cc614851b360002da87c7302405c6567febadea933639c3e6bf99c1",
+      "item" : 1,
+      "name" : "frozen-rule-validation",
+      "verdict" : "PASS"
+    }
+  ],
+  "notes" : [
+
+  ],
+  "occluderPID" : 63848,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-083748",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:37:48.086+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PASS"
+}

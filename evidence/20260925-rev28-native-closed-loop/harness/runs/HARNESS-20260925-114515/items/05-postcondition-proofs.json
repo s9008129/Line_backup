@@ -1,0 +1,14 @@
+{
+  "atISO8601" : "2026-09-25T11:45:34.644+08:00",
+  "lateAffirmationNonNil" : false,
+  "lateDetail" : "samples=13 observed=2.0107062499992026",
+  "lateDiagnosticAffirmed" : false,
+  "lateDiagnosticDetail" : "noEligibleChooserCandidate",
+  "lateOutcome" : "noChooserObserved",
+  "monitorInputPosts" : 0,
+  "timeoutDetail" : "samples=13 observed=1.4481937919990742",
+  "timeoutOutcome" : "noChooserObserved",
+  "withinWindowDetail" : "samples=24 late=5.1918275829993945 affirmed=true",
+  "withinWindowOutcome" : "chooserObservedAfterWindow",
+  "zeroFurtherInputDuringMonitors" : true
+}

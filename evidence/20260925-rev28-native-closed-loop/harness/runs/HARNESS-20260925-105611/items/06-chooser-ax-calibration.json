@@ -1,0 +1,77 @@
+{
+  "atISO8601" : "2026-09-25T10:56:15.253+08:00",
+  "axDumpNodeCount" : 138,
+  "axNodeCount" : 138,
+  "buttonTitles" : [
+    "?",
+    "?",
+    "?",
+    "?",
+    "Name",
+    "Date Modified",
+    "Size",
+    "Kind",
+    "?",
+    "?",
+    "?",
+    "?",
+    "back",
+    "forward",
+    "",
+    "New Folder",
+    "Cancel",
+    "開啟"
+  ],
+  "harnessOwnedSCWindows" : [
+
+  ],
+  "harnessPID" : 28772,
+  "panelWindowFound" : true,
+  "panelWindowFramePt" : [
+    133,
+    94,
+    880,
+    448
+  ],
+  "panelWindowRole" : "AXWindow",
+  "panelWindowSubrole" : "AXStandardWindow",
+  "panelWindowTitle" : "rev28 harness chooser",
+  "pathValueCandidates" : [
+
+  ],
+  "popUpRoles" : [
+    "AXPopUpButton"
+  ],
+  "rolesObserved" : [
+    "AXButton",
+    "AXCell",
+    "AXColumn",
+    "AXGroup",
+    "AXImage",
+    "AXMenuButton",
+    "AXOutline",
+    "AXPopUpButton",
+    "AXRow",
+    "AXScrollArea",
+    "AXScrollBar",
+    "AXSplitGroup",
+    "AXSplitter",
+    "AXStaticText",
+    "AXTextField",
+    "AXValueIndicator",
+    "AXWindow"
+  ],
+  "subrolesObserved" : [
+    "AXDecrementArrow",
+    "AXDecrementPage",
+    "AXIncrementArrow",
+    "AXIncrementPage",
+    "AXOutlineRow",
+    "AXSearchField",
+    "AXSegment",
+    "AXStandardWindow"
+  ],
+  "textFieldRoles" : [
+    "AXTextField"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "atISO8601" : "2026-09-25T08:50:42.148+08:00",
+  "dispatchesPostedDuringFixture" : 0,
+  "focusLostDetail" : "baseline=ok; afterTheft=focusLost",
+  "focusLostDetected" : true,
+  "frameChangeDetail" : "afterMove=frameChanged; afterRefresh=ok",
+  "frameChangeDetected" : true,
+  "identityRefreshAllowed" : true,
+  "recoveredAfterReactivation" : true
+}

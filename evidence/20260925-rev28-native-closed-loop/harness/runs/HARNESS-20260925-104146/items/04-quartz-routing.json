@@ -1,0 +1,61 @@
+{
+  "atISO8601" : "2026-09-25T10:41:52.768+08:00",
+  "harnessActiveAtCoveredPopupClick" : false,
+  "lastCoverHitLocal" : [
+    200,
+    380
+  ],
+  "lastMainHitLocal" : [
+    200,
+    188
+  ],
+  "lastPopupHitLocal" : [
+    120,
+    30
+  ],
+  "mainHitsAfterCoveredMainClick" : 1,
+  "mainHitsAfterCoveredPopupClick" : 1,
+  "mainHitsAfterMainClick" : 1,
+  "mainHitsAfterPopupClick" : 0,
+  "mainRowPointScreen" : [
+    360,
+    360
+  ],
+  "mainWindowNotReceivingPopupEventProved" : true,
+  "occluderActiveAtCoveredPopupClick" : true,
+  "occluderCoverFrameTopLeft" : [
+    160,
+    140,
+    800,
+    600
+  ],
+  "occluderCoverHitsAfterCoveredMainClick" : 1,
+  "occluderCoverHitsAfterCoveredPopupClick" : 1,
+  "occluderCoverVisibleAtCoveredPopupClick" : true,
+  "occluderOccludesMainWindowProved" : true,
+  "popupFrameRaisedAfterOccluderTopLeft" : [
+    280,
+    220,
+    240,
+    60
+  ],
+  "popupFrameTopLeft" : [
+    280,
+    220,
+    240,
+    60
+  ],
+  "popupHitsAfterCoveredPopupClick" : 2,
+  "popupHitsAfterMainClick" : 1,
+  "popupHitsAfterPopupClick" : 1,
+  "popupReceivesEventProved" : true,
+  "popupRowPointAfterOccluderScreen" : [
+    400,
+    250
+  ],
+  "popupRowPointScreen" : [
+    400,
+    250
+  ],
+  "popupTopmostOverOccluderProved" : true
+}

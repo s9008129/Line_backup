@@ -1,0 +1,4 @@
+c1fcc41cc45b8628e2bb954e33242118b79baabba831b04f23c17b57e378cf7d  00-calibration-summary.json
+4d9e59d3cc5b6524d70f81012adca50faefab702a65c7f46e95b66979f77aed4  02-vision-localization.json
+09e1cf2ae181f519f9ed47979e0286212f0b051f197ced6909a9789f2f1a62ed  loaded-canonical/capture-geometry-rulebook-v1.json
+e008478201770f0496d6a252680ae2a737473c32a70db888ebd2bf4aafb7ba7b  loaded-canonical/capture-matrix-v1.json

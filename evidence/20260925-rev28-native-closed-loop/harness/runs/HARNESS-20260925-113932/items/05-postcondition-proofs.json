@@ -1,0 +1,12 @@
+{
+  "atISO8601" : "2026-09-25T11:39:47.421+08:00",
+  "lateAffirmationNonNil" : false,
+  "lateDetail" : "samples=13 observed=1.935111541999504",
+  "lateOutcome" : "noChooserObserved",
+  "monitorInputPosts" : 0,
+  "timeoutDetail" : "samples=13 observed=1.4554467080015456",
+  "timeoutOutcome" : "noChooserObserved",
+  "withinWindowDetail" : "windowID=4851 ownerPID=51393 predicateID=rev28-chooser-affirmation-v1 at=2026-09-25T11:39:43.352+08:00",
+  "withinWindowOutcome" : "chooserVerified",
+  "zeroFurtherInputDuringMonitors" : true
+}

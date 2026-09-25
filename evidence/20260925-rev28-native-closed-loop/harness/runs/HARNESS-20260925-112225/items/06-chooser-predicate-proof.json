@@ -1,0 +1,31 @@
+{
+  "atISO8601" : "2026-09-25T11:22:38.608+08:00",
+  "confirmationAction" : "axPressDefaultButton",
+  "confirmedDirectory" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-112225\/fixtures\/panel-start",
+  "emptyCensusFakeCause" : "",
+  "emptyCensusFakeVerdict" : "notEvaluated",
+  "fakeSameProcessCause" : "",
+  "fakeSameProcessDetail" : "",
+  "fakeSameProcessVerdict" : "notEvaluated",
+  "inputPostsDuringFixture" : 4,
+  "markerPath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-112225\/fixtures\/panel-destination\/rev28-panel-commit.marker",
+  "markerVerified" : false,
+  "navigationCandidatesAfter" : [
+
+  ],
+  "navigationReflected" : false,
+  "notNewCause" : "",
+  "notNewVerdict" : "notEvaluated",
+  "occluderLookAlikeCause" : "",
+  "occluderLookAlikeVerdict" : "notEvaluated",
+  "ownershipUnboundCause" : "",
+  "ownershipUnboundVerdict" : "notEvaluated",
+  "panelClosedResponse" : 1,
+  "panelDirectoryAfterNavigation" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-112225\/fixtures\/panel-start",
+  "pidReuseCause" : "",
+  "pidReuseVerdict" : "notEvaluated",
+  "predicateID" : "rev28-chooser-affirmation-v1",
+  "pressedButtonDescription" : "role=AXButton title=開啟",
+  "realPanelDetail" : "; navigationDriverError=goToFolderEntryMissing",
+  "realPanelVerdict" : "notEvaluated"
+}

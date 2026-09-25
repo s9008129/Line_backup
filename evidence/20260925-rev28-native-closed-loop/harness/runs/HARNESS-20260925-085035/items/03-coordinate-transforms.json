@@ -1,0 +1,28 @@
+{
+  "atISO8601" : "2026-09-25T08:50:38.281+08:00",
+  "backingScaleFactor" : 2,
+  "expectedBBoxMarkerErrorPt" : 543,
+  "localToPixelToLocalMaxErrorPt" : 0,
+  "localToScreenMaxErrorPt" : 0,
+  "movedFrameTopLeft" : [
+    280,
+    66,
+    800,
+    632
+  ],
+  "pixelToScreenToPixelMaxErrorPt" : 0,
+  "recordedBBoxDrivesTransform" : true,
+  "recordedBBoxMarkerErrorPt" : 543,
+  "safeInteriorDetail" : "boundary+0.5pt refused=true; center allowed=true",
+  "safeInteriorRefusalDemonstrated" : true,
+  "scaleObserved" : 2,
+  "screenShiftAfterMoveErrorPt" : 0,
+  "startFrameTopLeft" : [
+    200,
+    26,
+    800,
+    632
+  ],
+  "wrongScaleDetail" : "validateScale->scaleMismatch(pointPixelScale=1.0, backingScaleFactor=2.0); evaluate(scale\/2)->sizeDeltaExceedsTolerance(stateKey=settled=true;activated=true;includeChildWindows=false;ignoreShadows=true, perSidePt=[t=316.0,l=400.0,b=316.0,r=400.0], allowed=1.0)",
+  "wrongScaleDetected" : true
+}

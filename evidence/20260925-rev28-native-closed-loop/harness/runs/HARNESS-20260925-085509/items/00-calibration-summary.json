@@ -1,0 +1,36 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 73189,
+  "finishedAtISO8601" : "2026-09-25T08:55:13.287+08:00",
+  "frozen" : [
+
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 73190,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "roundTripMaxError=0.0 move(+\/-\/return)=0.0\/0.0\/0.0 wrongScale=true safeInterior=true bboxDifferential=false",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-085509\/items\/03-coordinate-transforms.json",
+      "evidenceSHA256" : "d370e57aacd13ce37dcf88ba2e634824b108ee8e948e0d4ce437f2248daba87a",
+      "item" : 3,
+      "name" : "coordinate-transforms",
+      "verdict" : "PASS"
+    }
+  ],
+  "notes" : [
+    "Loaded canonical capture freeze: rulebook SHA-256 09e1cf2ae181f519f9ed47979e0286212f0b051f197ced6909a9789f2f1a62ed, matrix SHA-256 e008478201770f0496d6a252680ae2a737473c32a70db888ebd2bf4aafb7ba7b, checksum file sha256sums-HARNESS-20260925-083748.txt"
+  ],
+  "occluderPID" : 73191,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-085509",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:55:09.357+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PASS"
+}

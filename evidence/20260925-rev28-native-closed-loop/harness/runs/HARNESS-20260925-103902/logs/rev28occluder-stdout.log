@@ -1,0 +1,6 @@
+{"event":"ready","pid":19265,"startTimeUnix":1790303942.132113}
+{"id":"c1","ok":true}
+{"coverHits":0,"id":"c2","lookalikeHits":0,"ok":true}
+{"frameTopLeft":{"h":600,"w":800,"x":160,"y":140},"id":"c3","ok":true}
+{"active":false,"coverFrameTopLeft":{"h":600,"w":800,"x":160,"y":140},"coverHits":0,"coverVisible":true,"id":"c4","lastCoverHitLocal":{},"lastLookalikeHitLocal":{},"lookalikeHits":0,"lookalikeVisible":false,"ok":true,"pid":19265,"startTimeUnix":1790303942.132113}
+{"active":false,"coverFrameTopLeft":{"h":600,"w":800,"x":160,"y":140},"coverHits":0,"coverVisible":true,"id":"c5","lastCoverHitLocal":{},"lastLookalikeHitLocal":{},"lookalikeHits":0,"lookalikeVisible":false,"ok":true,"pid":19265,"startTimeUnix":1790303942.132113}

@@ -1,0 +1,44 @@
+{
+  "axTrusted" : true,
+  "backingScaleFactor" : 2,
+  "driverExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28ctl",
+  "driverPID" : 70788,
+  "finishedAtISO8601" : "2026-09-25T08:50:42.149+08:00",
+  "frozen" : [
+
+  ],
+  "harnessExecutable" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/rev28\/.build\/debug\/rev28harness",
+  "harnessPID" : 70797,
+  "hostOSVersion" : "Version 27.0 (Build 26A428)",
+  "items" : [
+    {
+      "detail" : "roundTripMaxError=0.0 moveShiftError=0.0 wrongScale=true safeInterior=true markerError(recorded\/expected)=543.0\/543.0",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-085035\/items\/03-coordinate-transforms.json",
+      "evidenceSHA256" : "7093197ae6506e84df4a7e5229275b577746035c3b1a22439c2db5b2aaa1f8ba",
+      "item" : 3,
+      "name" : "coordinate-transforms",
+      "verdict" : "PASS"
+    },
+    {
+      "detail" : "focusLost=true recovered=true frameChanged=true refreshAllowed=true dispatches=0",
+      "evidencePath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-085035\/items\/07-focus-theft.json",
+      "evidenceSHA256" : "43b7560223e7138c78ffd1bbb746a529c850e9b588d29dc8ac1d6979314d239f",
+      "item" : 7,
+      "name" : "focus-theft",
+      "verdict" : "PASS"
+    }
+  ],
+  "notes" : [
+    "Loaded canonical capture freeze: rulebook SHA-256 09e1cf2ae181f519f9ed47979e0286212f0b051f197ced6909a9789f2f1a62ed, matrix SHA-256 e008478201770f0496d6a252680ae2a737473c32a70db888ebd2bf4aafb7ba7b, checksum file sha256sums-HARNESS-20260925-083748.txt"
+  ],
+  "occluderPID" : 70798,
+  "postEventTrusted" : true,
+  "runID" : "HARNESS-20260925-085035",
+  "screenCaptureTrusted" : true,
+  "screenHeightPt" : 745,
+  "sdkPath" : "unknown",
+  "startedAtISO8601" : "2026-09-25T08:50:35.628+08:00",
+  "swiftVersion" : "unknown",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "verdict" : "PASS"
+}

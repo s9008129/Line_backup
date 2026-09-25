@@ -1,0 +1,162 @@
+[
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : false,
+    "expectedVerdict" : "valid",
+    "observedValidity" : "valid",
+    "stateKey" : "settled=true;activated=true;includeChildWindows=true;ignoreShadows=true",
+    "violations" : [
+
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : false,
+    "expectedVerdict" : "valid",
+    "observedValidity" : "valid",
+    "stateKey" : "settled=true;activated=true;includeChildWindows=false;ignoreShadows=true",
+    "violations" : [
+
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : false,
+    "expectedVerdict" : "valid",
+    "observedValidity" : "valid",
+    "stateKey" : "settled=true;activated=false;includeChildWindows=true;ignoreShadows=true",
+    "violations" : [
+
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : false,
+    "expectedVerdict" : "valid",
+    "observedValidity" : "valid",
+    "stateKey" : "settled=true;activated=false;includeChildWindows=false;ignoreShadows=true",
+    "violations" : [
+
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : false,
+    "expectedVerdict" : "valid",
+    "observedValidity" : "valid",
+    "stateKey" : "settled=false;activated=true;includeChildWindows=true;ignoreShadows=true",
+    "violations" : [
+
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : false,
+    "expectedVerdict" : "valid",
+    "observedValidity" : "valid",
+    "stateKey" : "settled=false;activated=true;includeChildWindows=false;ignoreShadows=true",
+    "violations" : [
+
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : false,
+    "expectedVerdict" : "valid",
+    "observedValidity" : "valid",
+    "stateKey" : "settled=false;activated=false;includeChildWindows=true;ignoreShadows=true",
+    "violations" : [
+
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : false,
+    "expectedVerdict" : "valid",
+    "observedValidity" : "valid",
+    "stateKey" : "settled=false;activated=false;includeChildWindows=false;ignoreShadows=true",
+    "violations" : [
+
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : true,
+    "expectedVerdict" : "invalid",
+    "observedValidity" : "invalid",
+    "stateKey" : "settled=true;activated=true;includeChildWindows=true;ignoreShadows=false",
+    "violations" : [
+      "noFrozenRule(stateKey=settled=true;activated=true;includeChildWindows=true;ignoreShadows=false)"
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : true,
+    "expectedVerdict" : "invalid",
+    "observedValidity" : "invalid",
+    "stateKey" : "settled=true;activated=true;includeChildWindows=false;ignoreShadows=false",
+    "violations" : [
+      "noFrozenRule(stateKey=settled=true;activated=true;includeChildWindows=false;ignoreShadows=false)"
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : true,
+    "expectedVerdict" : "invalid",
+    "observedValidity" : "invalid",
+    "stateKey" : "settled=true;activated=false;includeChildWindows=true;ignoreShadows=false",
+    "violations" : [
+      "noFrozenRule(stateKey=settled=true;activated=false;includeChildWindows=true;ignoreShadows=false)"
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : true,
+    "expectedVerdict" : "invalid",
+    "observedValidity" : "invalid",
+    "stateKey" : "settled=true;activated=false;includeChildWindows=false;ignoreShadows=false",
+    "violations" : [
+      "noFrozenRule(stateKey=settled=true;activated=false;includeChildWindows=false;ignoreShadows=false)"
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : true,
+    "expectedVerdict" : "invalid",
+    "observedValidity" : "invalid",
+    "stateKey" : "settled=false;activated=true;includeChildWindows=true;ignoreShadows=false",
+    "violations" : [
+      "noFrozenRule(stateKey=settled=false;activated=true;includeChildWindows=true;ignoreShadows=false)"
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : true,
+    "expectedVerdict" : "invalid",
+    "observedValidity" : "invalid",
+    "stateKey" : "settled=false;activated=true;includeChildWindows=false;ignoreShadows=false",
+    "violations" : [
+      "noFrozenRule(stateKey=settled=false;activated=true;includeChildWindows=false;ignoreShadows=false)"
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : true,
+    "expectedVerdict" : "invalid",
+    "observedValidity" : "invalid",
+    "stateKey" : "settled=false;activated=false;includeChildWindows=true;ignoreShadows=false",
+    "violations" : [
+      "noFrozenRule(stateKey=settled=false;activated=false;includeChildWindows=true;ignoreShadows=false)"
+    ]
+  },
+  {
+    "asExpected" : true,
+    "barredFromGeometry" : true,
+    "expectedVerdict" : "invalid",
+    "observedValidity" : "invalid",
+    "stateKey" : "settled=false;activated=false;includeChildWindows=false;ignoreShadows=false",
+    "violations" : [
+      "noFrozenRule(stateKey=settled=false;activated=false;includeChildWindows=false;ignoreShadows=false)"
+    ]
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "atISO8601" : "2026-09-25T10:45:04.132+08:00",
+  "confirmationAction" : "axPressDefaultButton",
+  "emptyCensusFakeCause" : "frozenPredicateMismatch",
+  "emptyCensusFakeVerdict" : "refused",
+  "fakeSameProcessCause" : "frozenPredicateMismatch",
+  "fakeSameProcessDetail" : "no AX node with pop-up-button role [\"AXPopUpButton\"]",
+  "fakeSameProcessVerdict" : "refused",
+  "inputPostsDuringFixture" : 3,
+  "markerPath" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/evidence\/20260925-rev28-native-closed-loop\/harness\/runs\/HARNESS-20260925-104450\/fixtures\/panel-destination\/rev28-panel-commit.marker",
+  "markerVerified" : false,
+  "navigationCandidatesAfter" : [
+
+  ],
+  "navigationReflected" : false,
+  "notNewCause" : "notNewWindow",
+  "notNewVerdict" : "refused",
+  "occluderLookAlikeCause" : "frozenPredicateMismatch",
+  "occluderLookAlikeVerdict" : "refused",
+  "ownershipUnboundCause" : "ownershipUnbound",
+  "ownershipUnboundVerdict" : "refused",
+  "panelClosedResponse" : 1,
+  "pidReuseCause" : "pidReuse",
+  "pidReuseVerdict" : "refused",
+  "predicateID" : "rev28-chooser-affirmation-v1",
+  "pressedButtonDescription" : "role=AXButton title=開啟",
+  "realPanelDetail" : "",
+  "realPanelVerdict" : "affirmed"
+}

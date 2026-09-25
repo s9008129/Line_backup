@@ -165,18 +165,22 @@ struct VisionLocalizationRecord: Codable {
 
 struct TransformRecord: Codable {
     let startFrameTopLeft: [Double]
-    let movedFrameTopLeft: [Double]
+    let positiveMoveFrameTopLeft: [Double]
+    let negativeMoveFrameTopLeft: [Double]
     let scaleObserved: Double
     let backingScaleFactor: Double
     let localToScreenMaxErrorPt: Double
     let localToPixelToLocalMaxErrorPt: Double
     let pixelToScreenToPixelMaxErrorPt: Double
-    let screenShiftAfterMoveErrorPt: Double
+    let screenShiftAfterPositiveMoveErrorPt: Double
+    let screenShiftAfterNegativeMoveErrorPt: Double
+    let screenReturnToStartErrorPt: Double
     let wrongScaleDetected: Bool
     let wrongScaleDetail: String
     let safeInteriorRefusalDemonstrated: Bool
     let safeInteriorDetail: String
-    let recordedBBoxDrivesTransform: Bool
+    let recordedBBoxDifferentialObserved: Bool
+    let recordedBBoxObservationDetail: String
     let recordedBBoxMarkerErrorPt: Double
     let expectedBBoxMarkerErrorPt: Double
     let atISO8601: String
@@ -185,6 +189,8 @@ struct TransformRecord: Codable {
 struct RoutingRecord: Codable {
     let popupFrameTopLeft: [Double]
     let popupRowPointScreen: [Double]
+    let popupFrameRaisedAfterOccluderTopLeft: [Double]
+    let popupRowPointAfterOccluderScreen: [Double]
     let popupHitsAfterPopupClick: Int
     let mainHitsAfterPopupClick: Int
     let lastPopupHitLocal: [Double]?
@@ -197,7 +203,11 @@ struct RoutingRecord: Codable {
     let mainHitsAfterCoveredMainClick: Int
     let lastCoverHitLocal: [Double]?
     let popupHitsAfterCoveredPopupClick: Int
+    let mainHitsAfterCoveredPopupClick: Int
     let occluderCoverHitsAfterCoveredPopupClick: Int
+    let harnessActiveAtCoveredPopupClick: Bool
+    let occluderActiveAtCoveredPopupClick: Bool
+    let occluderCoverVisibleAtCoveredPopupClick: Bool
     let popupTopmostOverOccluderProved: Bool
     let popupReceivesEventProved: Bool
     let mainWindowNotReceivingPopupEventProved: Bool
@@ -245,9 +255,11 @@ struct ChooserPredicateProofRecord: Codable {
     var notNewCause: String
     var navigationReflected: Bool
     var navigationCandidatesAfter: [String]
+    var panelDirectoryAfterNavigation: String?
     var pressedButtonDescription: String?
     var confirmationAction: String
     var panelClosedResponse: Int?
+    var confirmedDirectory: String?
     var markerPath: String?
     var markerVerified: Bool
     var inputPostsDuringFixture: Int
@@ -295,6 +307,8 @@ struct PostconditionProofRecord: Codable {
     var lateOutcome: String
     var lateDetail: String
     var lateAffirmationNonNil: Bool
+    var lateDiagnosticAffirmed: Bool
+    var lateDiagnosticDetail: String
     var zeroFurtherInputDuringMonitors: Bool
     var monitorInputPosts: Int
     var atISO8601: String
@@ -353,6 +367,83 @@ struct RestartFixtureRecord: Codable {
     let atISO8601: String
 }
 
+private struct ChooserSamplerContext: Sendable {
+    let harnessPID: Int32
+    let mainWindowID: UInt32
+    let popupWindowID: UInt32
+    let predicate: ChooserAffirmationPredicate
+    let preCensus: [Int32]
+    let preWindowIDs: Set<UInt32>
+}
+
+/// Postcondition sampling runs outside the driver actor. Keeping this helper
+/// independent of HarnessCalibrationDriver prevents each monitor sample from
+/// hopping through MainActor while the bounded observation loop is suspended.
+private enum ChooserAffirmationSampler {
+    static func sample(context: ChooserSamplerContext) async -> PostconditionSample {
+        do {
+            let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+            let cgInventory = CGWindowInventory.onScreenWindows()
+            let postCensus = Array(Set(content.windows.compactMap { $0.owningApplication?.processID })).sorted()
+            let candidates = content.windows.filter { window in
+                window.owningApplication?.processID == context.harnessPID
+                    && window.isOnScreen
+                    && window.windowID != context.mainWindowID
+                    && window.windowID != context.popupWindowID
+            }
+            var rejectionDetails: [String] = []
+            for window in candidates {
+                guard let axElement = matchingAXWindow(pid: context.harnessPID, frame: window.frame) else { continue }
+                let dump = AXDriver.dump(element: axElement, pid: context.harnessPID, maxDepth: 8, maxNodes: 500)
+                let candidate = ChooserCandidate(
+                    windowID: window.windowID,
+                    frame: window.frame,
+                    onScreen: true,
+                    presentInSCInventory: true,
+                    presentInCGInventory: cgInventory.contains { $0.windowNumber == window.windowID },
+                    isNewRelativeToPreDispatchInventory: !context.preWindowIDs.contains(window.windowID),
+                    owner: ProcessIdentity.reading(pid: context.harnessPID),
+                    pidReuseDetected: false,
+                    axNodes: dump.nodes,
+                    preDispatchCensusPIDs: context.preCensus,
+                    postDispatchCensusPIDs: postCensus
+                )
+                switch ChooserAffirmationEvaluator.evaluate(candidate: candidate, predicate: context.predicate) {
+                case .affirmed:
+                    return PostconditionSample(affirmed: ChooserAffirmation(
+                        windowID: window.windowID,
+                        frame: window.frame,
+                        ownerPID: context.harnessPID,
+                        predicateID: context.predicate.predicateID,
+                        affirmedAtISO8601: EvidenceIO.iso8601()
+                    ))
+                case let .refused(cause, detail):
+                    rejectionDetails.append("windowID=\(window.windowID) cause=\(cause.rawValue) \(detail)")
+                }
+            }
+            let note = rejectionDetails.isEmpty
+                ? "noEligibleChooserCandidate"
+                : rejectionDetails.joined(separator: "; ")
+            return PostconditionSample(affirmed: nil, note: note)
+        } catch {
+            return PostconditionSample(affirmed: nil, note: "samplerError:\(error)")
+        }
+    }
+
+    private static func matchingAXWindow(pid: Int32, frame: CGRect) -> AXUIElement? {
+        var best: (element: AXUIElement, distance: Double)?
+        for window in AXDriver.windows(ofApp: pid) {
+            guard let axFrame = AXDriver.frame(of: window) else { continue }
+            let distance = Double(abs(axFrame.minX - frame.minX) + abs(axFrame.minY - frame.minY)
+                + abs(axFrame.width - frame.width) + abs(axFrame.height - frame.height))
+            if distance <= 6, best == nil || distance < best!.distance {
+                best = (window, distance)
+            }
+        }
+        return best?.element
+    }
+}
+
 // MARK: - Driver
 
 @MainActor
@@ -381,8 +472,205 @@ final class HarnessCalibrationDriver {
 
     private func wants(_ item: Int) -> Bool { options.items.isEmpty || options.items.contains(item) }
 
+    /// Dependent calibration items run in fresh evidence runs after item 1 has
+    /// published its immutable canonical artifacts. Load that exact freeze only
+    /// when item 1 is not part of this invocation, and fail closed unless a
+    /// canonical checksum file binds both the rule book and its complete matrix.
+    private func loadFrozenRuleBookIfNeeded() throws {
+        guard !wants(1), [2, 3, 7].contains(where: { wants($0) }) else { return }
+
+        let frozenDirectory = run.canonicalFrozenDir
+        let ruleBookName = "capture-geometry-rulebook-v1.json"
+        let matrixName = "capture-matrix-v1.json"
+        let ruleBookURL = frozenDirectory.appendingPathComponent(ruleBookName)
+        let matrixURL = frozenDirectory.appendingPathComponent(matrixName)
+        let ruleBookData = try Data(contentsOf: ruleBookURL)
+        let matrixData = try Data(contentsOf: matrixURL)
+        let ruleBookSHA = EvidenceIO.sha256Hex(ruleBookData)
+        let matrixSHA = EvidenceIO.sha256Hex(matrixData)
+
+        let sumFiles = try FileManager.default.contentsOfDirectory(
+            at: frozenDirectory,
+            includingPropertiesForKeys: nil
+        ).filter {
+            $0.lastPathComponent.hasPrefix("sha256sums-HARNESS-")
+                && $0.pathExtension == "txt"
+        }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+
+        var sumRecords: [(url: URL, entries: [String: String])] = []
+        for sumURL in sumFiles {
+            let contents = try String(contentsOf: sumURL, encoding: .utf8)
+            var entries: [String: String] = [:]
+            for line in contents.split(whereSeparator: \.isNewline) {
+                let columns = line.split(whereSeparator: { $0.isWhitespace })
+                guard columns.count == 2 else { continue }
+                let name = String(columns[1])
+                guard entries[name] == nil else {
+                    throw NSError(domain: "rev28ctl", code: 31, userInfo: [
+                        NSLocalizedDescriptionKey: "duplicate entry for \(name) in \(sumURL.lastPathComponent)"
+                    ])
+                }
+                entries[name] = String(columns[0])
+            }
+            sumRecords.append((sumURL, entries))
+        }
+
+        let pairedRecords = sumRecords.filter {
+            $0.entries[ruleBookName] != nil && $0.entries[matrixName] != nil
+        }
+        let allRuleBookHashes = Set(sumRecords.compactMap { $0.entries[ruleBookName] })
+        let allMatrixHashes = Set(sumRecords.compactMap { $0.entries[matrixName] })
+        guard pairedRecords.count == 1,
+              allRuleBookHashes == [ruleBookSHA],
+              allMatrixHashes == [matrixSHA],
+              pairedRecords[0].entries[ruleBookName] == ruleBookSHA,
+              pairedRecords[0].entries[matrixName] == matrixSHA else {
+            throw NSError(domain: "rev28ctl", code: 32, userInfo: [
+                NSLocalizedDescriptionKey: "canonical capture artifacts lack one matching append-only SHA-256 pair"
+            ])
+        }
+
+        let ruleBook = try JSONDecoder().decode(CaptureGeometryRuleBook.self, from: ruleBookData)
+        let matrix = try JSONDecoder().decode(CaptureMatrixRecord.self, from: matrixData)
+        var expectedRuleKeys = Set<String>()
+        var expectedBarredKeys = Set<String>()
+        for settled in [false, true] {
+            for activated in [false, true] {
+                for includeChildWindows in [false, true] {
+                    expectedRuleKeys.insert(CaptureGeometryRules.stateKey(CaptureGeometryState(
+                        settled: settled,
+                        activated: activated,
+                        includeChildWindows: includeChildWindows,
+                        ignoreShadows: true
+                    )))
+                    expectedBarredKeys.insert(CaptureGeometryRules.stateKey(CaptureGeometryState(
+                        settled: settled,
+                        activated: activated,
+                        includeChildWindows: includeChildWindows,
+                        ignoreShadows: false
+                    )))
+                }
+            }
+        }
+
+        let completeShadowFreeMatrix = matrix.cells.count == 8
+            && Set(matrix.cells.map(\.stateKey)) == expectedRuleKeys
+            && matrix.cells.allSatisfy {
+                !$0.shadowsOn && $0.ignoreShadows && !$0.barredFromGeometry
+                    && $0.requestedActivated == $0.observedActivated
+                    && !$0.samples.isEmpty
+                    && $0.samples.allSatisfy { $0.scale == $0.backingScaleFactor }
+            }
+        let completeShadowBearingMatrix = matrix.barredShadowBearingCells.count == 8
+            && Set(matrix.barredShadowBearingCells.map(\.stateKey)) == expectedBarredKeys
+            && matrix.barredShadowBearingCells.allSatisfy {
+                $0.shadowsOn && !$0.ignoreShadows && $0.barredFromGeometry
+                    && $0.requestedActivated == $0.observedActivated
+                    && !$0.samples.isEmpty
+                    && $0.samples.allSatisfy { $0.scale == $0.backingScaleFactor }
+            }
+        let validRules = ruleBook.rules.values.allSatisfy {
+            $0.maxPerSideSizeDeltaPt.isFinite
+                && $0.maxPerSideSizeDeltaPt >= 0
+                && $0.originPaddingPt.isFinite
+                && $0.originPaddingPt >= 0
+                && $0.maxOriginPaddingPt.isFinite
+                && $0.maxOriginPaddingPt >= $0.originPaddingPt
+        }
+        guard ruleBook.ruleID == "rev28-capture-geometry-v1",
+              Set(ruleBook.rules.keys) == expectedRuleKeys,
+              validRules,
+              matrix.frozenRuleCount == 8,
+              matrix.shadowBearingBarredFromGeometry,
+              matrix.noRuleFailClosedProved,
+              completeShadowFreeMatrix,
+              completeShadowBearingMatrix,
+              matrix.occludedCapture?.captureSurvivesFullOcclusion == true else {
+            throw NSError(domain: "rev28ctl", code: 33, userInfo: [
+                NSLocalizedDescriptionKey: "canonical capture artifacts do not prove the complete validated 16-cell matrix"
+            ])
+        }
+
+        frozenRuleBook = ruleBook
+        run.recordSHA(name: "loaded-canonical/\(ruleBookName)", sha: ruleBookSHA)
+        run.recordSHA(name: "loaded-canonical/\(matrixName)", sha: matrixSHA)
+        notes.append(
+            "Loaded canonical capture freeze: rulebook SHA-256 \(ruleBookSHA), matrix SHA-256 \(matrixSHA), checksum file \(pairedRecords[0].url.lastPathComponent)"
+        )
+    }
+
+    /// The postcondition monitor can run independently once item 6 has
+    /// published its immutable predicate freeze. Validate that exact canonical
+    /// artifact and checksum before using it in a fresh driver process.
+    private func loadFrozenPredicateIfNeeded() throws {
+        guard wants(5), !wants(6) else { return }
+
+        let frozenDirectory = run.canonicalFrozenDir
+        let predicateName = "chooser-affirmation-predicate-v2.json"
+        let predicateURL = frozenDirectory.appendingPathComponent(predicateName)
+        let predicateData = try Data(contentsOf: predicateURL)
+        let predicateSHA = EvidenceIO.sha256Hex(predicateData)
+        let sumFiles = try FileManager.default.contentsOfDirectory(
+            at: frozenDirectory,
+            includingPropertiesForKeys: nil
+        ).filter {
+            $0.lastPathComponent.hasPrefix("sha256sums-HARNESS-")
+                && $0.pathExtension == "txt"
+        }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+
+        var referencedSHAs: [String] = []
+        var matchingFiles: [URL] = []
+        for sumURL in sumFiles {
+            let contents = try String(contentsOf: sumURL, encoding: .utf8)
+            var entries: [String: String] = [:]
+            for line in contents.split(whereSeparator: \.isNewline) {
+                let columns = line.split(whereSeparator: { $0.isWhitespace })
+                guard columns.count == 2 else { continue }
+                let name = String(columns[1])
+                guard entries[name] == nil else {
+                    throw NSError(domain: "rev28ctl", code: 34, userInfo: [
+                        NSLocalizedDescriptionKey: "duplicate entry for \(name) in \(sumURL.lastPathComponent)"
+                    ])
+                }
+                entries[name] = String(columns[0])
+            }
+            if let sha = entries[predicateName] {
+                referencedSHAs.append(sha)
+                matchingFiles.append(sumURL)
+            }
+        }
+        guard matchingFiles.count == 1, Set(referencedSHAs) == [predicateSHA] else {
+            throw NSError(domain: "rev28ctl", code: 35, userInfo: [
+                NSLocalizedDescriptionKey: "canonical chooser predicate lacks one matching append-only SHA-256 record"
+            ])
+        }
+
+        let predicate = try JSONDecoder().decode(ChooserAffirmationPredicate.self, from: predicateData)
+        guard predicate.predicateID == "rev28-chooser-affirmation-v1",
+              predicate.ax.windowRole == "AXWindow",
+              predicate.ax.allowedSubroles.contains("AXStandardWindow"),
+              predicate.ax.requiresTextField,
+              predicate.ax.requiresPopUpButton,
+              predicate.ax.requiresPathAffordance,
+              predicate.ownership.requiresOwningPIDInCensusUnion,
+              predicate.ownership.requiresStableProcessInstance,
+              predicate.ownership.emptyPreCensusWidensRefusal else {
+            throw NSError(domain: "rev28ctl", code: 36, userInfo: [
+                NSLocalizedDescriptionKey: "canonical chooser predicate does not preserve the validated S-06 clauses"
+            ])
+        }
+
+        frozenPredicate = predicate
+        run.recordSHA(name: "loaded-canonical/\(predicateName)", sha: predicateSHA)
+        notes.append(
+            "Loaded canonical chooser predicate SHA-256 \(predicateSHA), checksum file \(matchingFiles[0].lastPathComponent)"
+        )
+    }
+
     func runAll() async -> Int32 {
         do {
+            try loadFrozenRuleBookIfNeeded()
+            try loadFrozenPredicateIfNeeded()
             _ = NSApplication.shared
             try startPeers()
             if wants(1) { try await item01CaptureMatrix() }
@@ -1151,23 +1439,51 @@ final class HarnessCalibrationDriver {
         _ = try await harnessCall("moveBy", params: ["dx": 80.0, "dy": 40.0])
         await waitForSettle(1.2)
         try await refreshHarnessState()
-        let contentAfter = try await freshContent()
-        let moveShiftError: Double
-        var movedFrame = startFrame
-        if let movedMain = harnessMainWindow(in: contentAfter) {
-            movedFrame = movedMain.frame
-            let movedSnapshots = harnessSnapshots(in: contentAfter).filter { $0.windowID == movedMain.windowID }
+        let contentAfterPositiveMove = try await freshContent()
+        var positiveMoveFrame = startFrame
+        var screenAfterPositiveMove: ScreenPoint?
+        var positiveMoveError = Double.infinity
+        if let movedMain = harnessMainWindow(in: contentAfterPositiveMove) {
+            positiveMoveFrame = movedMain.frame
+            let movedSnapshots = harnessSnapshots(in: contentAfterPositiveMove).filter { $0.windowID == movedMain.windowID }
             let movedRecord = try await service.capture(window: movedMain, configuration: cfg, includedWindows: movedSnapshots, state: state, identityTemplate: nil)
-            let movedGeometry = CaptureGeometry(windowFrame: movedMain.frame, captureBBox: movedRecord.actualBBoxPt, scale: movedRecord.scale)
-            let screenAfter = movedGeometry.screenPoint(fromWindowLocal: local)
-            moveShiftError = max(
-                abs(screenAfter.x - screenBefore.x - 80.0),
-                abs(screenAfter.y - screenBefore.y - 40.0)
-            )
-        } else {
-            moveShiftError = .infinity
+            if movedRecord.validity == .valid {
+                let movedGeometry = CaptureGeometry(windowFrame: movedMain.frame, captureBBox: movedRecord.actualBBoxPt, scale: movedRecord.scale)
+                screenAfterPositiveMove = movedGeometry.screenPoint(fromWindowLocal: local)
+                if let screenAfterPositiveMove {
+                    positiveMoveError = max(
+                        abs(screenAfterPositiveMove.x - screenBefore.x - 80.0),
+                        abs(screenAfterPositiveMove.y - screenBefore.y - 40.0)
+                    )
+                }
+            }
         }
 
+        _ = try await harnessCall("moveBy", params: ["dx": -80.0, "dy": -40.0])
+        await waitForSettle(1.2)
+        try await refreshHarnessState()
+        let contentAfterNegativeMove = try await freshContent()
+        var negativeMoveFrame = positiveMoveFrame
+        var negativeMoveError = Double.infinity
+        var returnToStartError = Double.infinity
+        if let movedMain = harnessMainWindow(in: contentAfterNegativeMove),
+           let screenAfterPositiveMove {
+            negativeMoveFrame = movedMain.frame
+            let movedSnapshots = harnessSnapshots(in: contentAfterNegativeMove).filter { $0.windowID == movedMain.windowID }
+            let movedRecord = try await service.capture(window: movedMain, configuration: cfg, includedWindows: movedSnapshots, state: state, identityTemplate: nil)
+            if movedRecord.validity == .valid {
+                let movedGeometry = CaptureGeometry(windowFrame: movedMain.frame, captureBBox: movedRecord.actualBBoxPt, scale: movedRecord.scale)
+                let screenAfterNegativeMove = movedGeometry.screenPoint(fromWindowLocal: local)
+                negativeMoveError = max(
+                    abs(screenAfterNegativeMove.x - screenAfterPositiveMove.x + 80.0),
+                    abs(screenAfterNegativeMove.y - screenAfterPositiveMove.y + 40.0)
+                )
+                returnToStartError = max(
+                    abs(screenAfterNegativeMove.x - screenBefore.x),
+                    abs(screenAfterNegativeMove.y - screenBefore.y)
+                )
+            }
+        }
         // Wrong-scale injection: independent backing-scale source + size check.
         let scaleViolation = CaptureGeometryRules.validateScale(pointPixelScale: 1.0, backingScaleFactor: Double(NSScreen.screens.first?.backingScaleFactor ?? 2.0))
         let wrongScaleEvaluation = CaptureGeometryRules.evaluate(
@@ -1202,29 +1518,40 @@ final class HarnessCalibrationDriver {
         let markerObserved = (try? await RawCapture.capture(window: main, configuration: cfg)).flatMap { PixelProbe.findRedSquareTopLeft(in: $0) }
         let recordedError = markerObserved.map { max(abs(recordedPixel.x - Double($0.x)), abs(recordedPixel.y - Double($0.y))) } ?? -1
         let expectedError = markerObserved.map { max(abs(expectedPixel.x - Double($0.x)), abs(expectedPixel.y - Double($0.y))) } ?? -1
+        let recordedBBoxDiffers = record.actualBBoxPt != record.expectedBBoxPt
+        let recordedBBoxDifferentialObserved = recordedBBoxDiffers
+            && recordedError >= 0 && expectedError >= 0 && recordedError < expectedError
+        let recordedBBoxObservationDetail = recordedBBoxDiffers
+            ? "actual and expected bbox differ; recorded/expected marker error=\(recordedError)/\(expectedError)"
+            : "not distinguishable in this capture because actual bbox equals expected bbox; differential unit coverage is CoordinateTransformTests.testCapturePixelConversionUsesRecordedBBox"
 
         let transformRecord = TransformRecord(
             startFrameTopLeft: arrayFromRect(startFrame),
-            movedFrameTopLeft: arrayFromRect(movedFrame),
+            positiveMoveFrameTopLeft: arrayFromRect(positiveMoveFrame),
+            negativeMoveFrameTopLeft: arrayFromRect(negativeMoveFrame),
             scaleObserved: record.scale,
             backingScaleFactor: record.backingScaleFactor,
             localToScreenMaxErrorPt: localToScreenMaxError,
             localToPixelToLocalMaxErrorPt: localToPixelToLocalMaxError,
             pixelToScreenToPixelMaxErrorPt: pixelToScreenToPixelMaxError,
-            screenShiftAfterMoveErrorPt: moveShiftError,
+            screenShiftAfterPositiveMoveErrorPt: positiveMoveError,
+            screenShiftAfterNegativeMoveErrorPt: negativeMoveError,
+            screenReturnToStartErrorPt: returnToStartError,
             wrongScaleDetected: wrongScaleDetected,
             wrongScaleDetail: wrongScaleDetail,
             safeInteriorRefusalDemonstrated: boundaryRefused && centerAllowed,
             safeInteriorDetail: "boundary+0.5pt refused=\(boundaryRefused); center allowed=\(centerAllowed)",
-            recordedBBoxDrivesTransform: geometry.captureBBox == record.actualBBoxPt && recordedError >= 0,
+            recordedBBoxDifferentialObserved: recordedBBoxDifferentialObserved,
+            recordedBBoxObservationDetail: recordedBBoxObservationDetail,
             recordedBBoxMarkerErrorPt: recordedError,
             expectedBBoxMarkerErrorPt: expectedError,
             atISO8601: EvidenceIO.iso8601()
         )
         let pass = localToScreenMaxError < 1e-6 && localToPixelToLocalMaxError < 1e-6
-            && pixelToScreenToPixelMaxError < 1e-6 && moveShiftError < 1.0
+            && pixelToScreenToPixelMaxError < 1e-6
+            && positiveMoveError < 1.0 && negativeMoveError < 1.0 && returnToStartError < 1.0
             && wrongScaleDetected && transformRecord.safeInteriorRefusalDemonstrated
-        let detail = "roundTripMaxError=\(localToScreenMaxError) moveShiftError=\(moveShiftError) wrongScale=\(wrongScaleDetected) safeInterior=\(transformRecord.safeInteriorRefusalDemonstrated) markerError(recorded/expected)=\(recordedError)/\(expectedError)"
+        let detail = "roundTripMaxError=\(localToScreenMaxError) move(+/-/return)=\(positiveMoveError)/\(negativeMoveError)/\(returnToStartError) wrongScale=\(wrongScaleDetected) safeInterior=\(transformRecord.safeInteriorRefusalDemonstrated) bboxDifferential=\(recordedBBoxDifferentialObserved)"
         try await recordItem(3, name: "coordinate-transforms", verdict: pass ? "PASS" : "PARTIAL", detail: detail, fileName: "03-coordinate-transforms.json", value: transformRecord)
     }
 
@@ -1284,13 +1611,41 @@ final class HarnessCalibrationDriver {
         let mainHitsAfterCoveredMainClick = (coveredMainReport["mainHits"] as? NSNumber)?.intValue ?? -1
         let lastCoverHitLocal = dictPoint(occluderHitReport["lastCoverHitLocal"])
 
-        // Popup (floating) must stay topmost over the separate-process occluder.
-        try QuartzActuator.postClick(at: ScreenPoint(popupPoint))
+        // Reorder and freshly bind the popup after the peer occluder becomes
+        // active. The previous popup coordinate/z-order is stale after that
+        // surface transition and cannot authorize this routing probe.
+        _ = try await harnessCall("showPopup", params: ["dx": 120.0, "dy": 80.0])
+        await waitForSettle(0.6)
+        try await refreshHarnessState()
+        guard let raisedPopupFrame = dictRect(harnessState["popupFrameTopLeft"]),
+              let raisedPopupRow = dictRect(harnessState["popupRowRectLocalTopLeft"]) else {
+            try await recordItem(4, name: "quartz-routing", verdict: "PARTIAL", detail: "popup could not be freshly rebound after occluder activation", fileName: "04-quartz-routing.json", value: ["popupRebound": false])
+            return
+        }
+        let raisedPopupPoint = CGPoint(x: raisedPopupFrame.minX + raisedPopupRow.midX, y: raisedPopupFrame.minY + raisedPopupRow.midY)
+        let raisedContent = try await freshContent()
+        let raisedPopupVisible = popupWindow(in: raisedContent)?.isOnScreen == true
+        let occluderBeforePopupClick = try await occluderCall("state")
+        let harnessActiveAtCoveredPopupClick = harnessActive()
+        let occluderActiveAtCoveredPopupClick = (occluderBeforePopupClick["active"] as? Bool) ?? false
+        let occluderCoverVisibleAtCoveredPopupClick = (occluderBeforePopupClick["coverVisible"] as? Bool) ?? false
+        // App activation flags are recorded as diagnostics only. The planned
+        // proof is about actual Quartz routing with both windows visible, so
+        // the event counters below decide whether the popup was topmost.
+        guard raisedPopupVisible, occluderCoverVisibleAtCoveredPopupClick else {
+            try await recordItem(4, name: "quartz-routing", verdict: "PARTIAL", detail: "raised popup or visible occluder cover precondition missing", fileName: "04-quartz-routing.json", value: ["popupVisible": raisedPopupVisible, "coverVisible": occluderCoverVisibleAtCoveredPopupClick])
+            return
+        }
+
+        // The popup must be topmost while the separate-process occluder remains
+        // active and visibly covers the main window.
+        try QuartzActuator.postClick(at: ScreenPoint(raisedPopupPoint))
         inputPostCount += 1
         await sleep(milliseconds: 500)
         let coveredPopupReport = try await harnessCall("hitReport")
         let occluderAfterPopup = try await occluderCall("state")
         let popupHitsAfterCoveredPopupClick = (coveredPopupReport["popupHits"] as? NSNumber)?.intValue ?? -1
+        let mainHitsAfterCoveredPopupClick = (coveredPopupReport["mainHits"] as? NSNumber)?.intValue ?? -1
         let coverHitsAfterCoveredPopupClick = (occluderAfterPopup["coverHits"] as? NSNumber)?.intValue ?? -1
 
         try await occluderCall("hide")
@@ -1300,11 +1655,15 @@ final class HarnessCalibrationDriver {
         let popupReceives = popupHitsAfterPopupClick >= 1 && mainHitsAfterPopupClick == 0
         let mainReceives = mainHitsAfterMainClick >= 1
         let occluderOccludes = coverHitsAfterCoveredMainClick >= 1 && mainHitsAfterCoveredMainClick == mainHitsAfterMainClick
-        let popupTopmost = popupHitsAfterCoveredPopupClick == popupHitsAfterMainClick + 1 && coverHitsAfterCoveredPopupClick == coverHitsAfterCoveredMainClick
+        let popupTopmost = popupHitsAfterCoveredPopupClick == popupHitsAfterMainClick + 1
+            && mainHitsAfterCoveredPopupClick == mainHitsAfterMainClick
+            && coverHitsAfterCoveredPopupClick == coverHitsAfterCoveredMainClick
 
         let record = RoutingRecord(
             popupFrameTopLeft: arrayFromRect(popupFrame),
             popupRowPointScreen: pointArray(popupPoint),
+            popupFrameRaisedAfterOccluderTopLeft: arrayFromRect(raisedPopupFrame),
+            popupRowPointAfterOccluderScreen: pointArray(raisedPopupPoint),
             popupHitsAfterPopupClick: popupHitsAfterPopupClick,
             mainHitsAfterPopupClick: mainHitsAfterPopupClick,
             lastPopupHitLocal: lastPopupHitLocal.map { pointArray($0) },
@@ -1317,7 +1676,11 @@ final class HarnessCalibrationDriver {
             mainHitsAfterCoveredMainClick: mainHitsAfterCoveredMainClick,
             lastCoverHitLocal: lastCoverHitLocal.map { pointArray($0) },
             popupHitsAfterCoveredPopupClick: popupHitsAfterCoveredPopupClick,
+            mainHitsAfterCoveredPopupClick: mainHitsAfterCoveredPopupClick,
             occluderCoverHitsAfterCoveredPopupClick: coverHitsAfterCoveredPopupClick,
+            harnessActiveAtCoveredPopupClick: harnessActiveAtCoveredPopupClick,
+            occluderActiveAtCoveredPopupClick: occluderActiveAtCoveredPopupClick,
+            occluderCoverVisibleAtCoveredPopupClick: occluderCoverVisibleAtCoveredPopupClick,
             popupTopmostOverOccluderProved: popupTopmost,
             popupReceivesEventProved: popupReceives,
             mainWindowNotReceivingPopupEventProved: mainHitsAfterPopupClick == 0,
@@ -1348,9 +1711,12 @@ final class HarnessCalibrationDriver {
         let preCensus = try await onScreenWindowOwnerPIDs()
         let preWindowIDs = Set(try await freshContent().windows.map { $0.windowID })
 
-        try await harnessCall("showPanel", params: ["delayMs": 0, "directory": startDirectory.path, "marker": markerName])
+        try await harnessCall("showPanel", params: ["delayMs": 0, "directory": startDirectory.path, "marker": markerName, "expectedDirectory": destination.path])
+        _ = await harness.waitForEvent("panelWillShow", timeoutSeconds: 8)
         let shownEvent = await harness.waitForEvent("panelShown", timeoutSeconds: 8)
         let panelShownAt = (shownEvent?["at"] as? NSNumber)?.doubleValue
+        let panelKeyAtShown = (shownEvent?["keyWindow"] as? NSNumber)?.boolValue ?? false
+        let appActiveAtShown = (shownEvent?["appActive"] as? NSNumber)?.boolValue ?? false
 
         let pid = harnessPID()
         guard let panelElement = panelWindowElement(pid: pid), panelShownAt != nil else {
@@ -1458,9 +1824,11 @@ final class HarnessCalibrationDriver {
             notNewCause: "",
             navigationReflected: false,
             navigationCandidatesAfter: [],
+            panelDirectoryAfterNavigation: nil,
             pressedButtonDescription: nil,
             confirmationAction: "none",
             panelClosedResponse: nil,
+            confirmedDirectory: nil,
             markerPath: nil,
             markerVerified: false,
             inputPostsDuringFixture: 0,
@@ -1488,7 +1856,8 @@ final class HarnessCalibrationDriver {
             let evaluated = ChooserAffirmationEvaluator.evaluate(candidate: candidate, predicate: predicate)
             let described = verdictDescription(evaluated)
             proof.realPanelVerdict = described.0
-            proof.realPanelDetail = described.2
+            proof.realPanelDetail = "keyWindowAtShown=\(panelKeyAtShown) appActiveAtShown=\(appActiveAtShown)"
+            if !described.2.isEmpty { proof.realPanelDetail += "; \(described.2)" }
 
             // Ownership-unbound and pid-reuse clause proofs on the real surface.
             let unbound = ChooserAffirmationEvaluator.evaluate(
@@ -1514,17 +1883,57 @@ final class HarnessCalibrationDriver {
             proof.notNewCause = notNewDescribed.1
         }
 
-        // Navigation: keyboard Go-to-folder path (preparation, not confirmation).
-        try QuartzActuator.postGoToFolderChord()
-        inputPostCount += 1
-        await sleep(milliseconds: 500)
-        try QuartzActuator.postUnicodeText(destination.path)
-        await sleep(milliseconds: 250)
-        try QuartzActuator.postReturnKey()
-        inputPostCount += 1
+        // Navigation: the keyboard shortcut opens the path field; the shared
+        // chooser driver replaces its value and verifies the requested path.
+        do {
+            let focus = try await harnessCall("focusPanel")
+            let panelIsActive = (focus["active"] as? NSNumber)?.boolValue ?? false
+            let panelIsKey = (focus["keyWindow"] as? NSNumber)?.boolValue ?? false
+            proof.realPanelDetail += "; navigationFocus active=\(panelIsActive) keyWindow=\(panelIsKey)"
+            guard panelIsActive && panelIsKey else {
+                throw NSError(domain: "rev28ctl", code: 6, userInfo: [NSLocalizedDescriptionKey: "harness chooser did not become the active key window"])
+            }
+            await sleep(milliseconds: 150)
+            proof.navigationCandidatesAfter = try FolderChooserDriver.navigateToDestination(pid: pid, destination: destination)
+            proof.navigationReflected = true
+        } catch {
+            proof.navigationCandidatesAfter = FolderChooserDriver.directoryCandidates(pid: pid)
+            proof.realPanelDetail += "; navigationDriverError=\(error)"
+        }
+        inputPostCount += 3
         await sleep(milliseconds: 900)
-        proof.navigationReflected = FolderChooserDriver.destinationIsReflected(pid: pid, destination: destination)
-        proof.navigationCandidatesAfter = FolderChooserDriver.directoryCandidates(pid: pid)
+        let panelStateAfterNavigation = try await harnessCall("state")
+        let panelDirectoryAfterNavigation = (panelStateAfterNavigation["panelDirectory"] as? String)
+            .map { URL(fileURLWithPath: $0).standardizedFileURL.path }
+        proof.panelDirectoryAfterNavigation = panelDirectoryAfterNavigation
+        proof.navigationReflected = proof.navigationReflected
+            || panelDirectoryAfterNavigation == destination.standardizedFileURL.path
+            || FolderChooserDriver.destinationIsReflected(pid: pid, destination: destination)
+
+        guard proof.navigationReflected else {
+            proof.confirmationAction = "notAttemptedDestinationNotReflected"
+            proof.markerPath = markerURL.path
+            proof.inputPostsDuringFixture = inputPostCount
+            proof.atISO8601 = EvidenceIO.iso8601()
+            _ = try await harnessCall("closePanel")
+            let cancelledEvent = await harness.waitForEvent("panelClosed", timeoutSeconds: 6)
+            proof.panelClosedResponse = (cancelledEvent?["response"] as? NSNumber)?.intValue
+            try await recordItem(6, name: "chooser-predicate-proof", verdict: "PARTIAL", detail: "destination was not reflected; confirmation was withheld", fileName: "06-chooser-predicate-proof.json", value: proof)
+            return
+        }
+
+        guard FolderChooserDriver.defaultButton(pid: pid, titles: ["開啟", "Open", "打開"]) != nil else {
+            proof.confirmationAction = "notAttemptedDefaultButtonMissing"
+            proof.panelClosedResponse = nil
+            proof.markerPath = markerURL.path
+            proof.inputPostsDuringFixture = inputPostCount
+            proof.atISO8601 = EvidenceIO.iso8601()
+            _ = try await harnessCall("closePanel")
+            let cancelledEvent = await harness.waitForEvent("panelClosed", timeoutSeconds: 6)
+            proof.panelClosedResponse = (cancelledEvent?["response"] as? NSNumber)?.intValue
+            try await recordItem(6, name: "chooser-predicate-proof", verdict: "PARTIAL", detail: "Go-to-folder navigation did not restore the panel's confirmation control; navigationReflected=\(proof.navigationReflected)", fileName: "06-chooser-predicate-proof.json", value: proof)
+            return
+        }
 
         // Confirmation: exactly one action chosen (AXPress on the default button).
         let pressedDescription = try FolderChooserDriver.pressDefaultButton(pid: pid, titles: ["開啟", "Open", "打開"])
@@ -1533,10 +1942,12 @@ final class HarnessCalibrationDriver {
         inputPostCount += 1
         let closedEvent = await harness.waitForEvent("panelClosed", timeoutSeconds: 10)
         proof.panelClosedResponse = (closedEvent?["response"] as? NSNumber)?.intValue
+        proof.confirmedDirectory = closedEvent?["chosenDirectory"] as? String
         proof.markerPath = markerURL.path
         let markerAttributes = try? FileManager.default.attributesOfItem(atPath: markerURL.path)
         let markerSize = (markerAttributes?[.size] as? NSNumber)?.intValue ?? 0
-        proof.markerVerified = FileManager.default.fileExists(atPath: markerURL.path) && markerSize > 0
+        proof.markerVerified = (closedEvent?["markerPath"] as? String) == markerURL.path
+            && FileManager.default.fileExists(atPath: markerURL.path) && markerSize > 0
         proof.inputPostsDuringFixture = inputPostCount
         proof.atISO8601 = EvidenceIO.iso8601()
 
@@ -1596,17 +2007,19 @@ final class HarnessCalibrationDriver {
             && proof.ownershipUnboundCause == "ownershipUnbound"
             && proof.pidReuseCause == "pidReuse"
             && proof.notNewCause == "notNewWindow"
-            && proof.navigationReflected && proof.markerVerified
+            && proof.navigationReflected
+            && proof.confirmedDirectory == destination.standardizedFileURL.path
+            && proof.markerVerified
         let detail = "realPanel=\(proof.realPanelVerdict) fakeSame=\(proof.fakeSameProcessVerdict)/\(proof.fakeSameProcessCause) emptyCensus=\(proof.emptyCensusFakeVerdict) occluderLookAlike=\(proof.occluderLookAlikeVerdict)/\(proof.occluderLookAlikeCause) nav=\(proof.navigationReflected) marker=\(proof.markerVerified)"
         try await recordItem(6, name: "chooser-predicate-proof", verdict: pass ? "PASS" : "PARTIAL", detail: detail, fileName: "06-chooser-predicate-proof.json", value: proof)
         // Only a validated predicate is frozen: a partial proof (e.g. the real
         // panel refused because the harness presented it as a sheet rather than
         // a standalone window) is evidence, never a canonical freeze.
         if pass {
-            try recordFrozen("chooser-affirmation-predicate-v1.json", value: predicate)
-            try recordFrozen("chooser-ax-calibration-v1.json", value: calibration)
+            try recordFrozen("chooser-affirmation-predicate-v2.json", value: predicate)
+            try recordFrozen("chooser-ax-calibration-v2.json", value: calibration)
         } else {
-            notes.append("NOT_FROZEN: chooser-affirmation-predicate-v1.json and chooser-ax-calibration-v1.json were NOT written to the canonical frozen/ dir (proof verdict PARTIAL: realPanel=\(proof.realPanelVerdict) nav=\(proof.navigationReflected))")
+            notes.append("NOT_FROZEN: chooser-affirmation-predicate-v2.json and chooser-ax-calibration-v2.json were NOT written to the canonical frozen/ dir (proof verdict PARTIAL: realPanel=\(proof.realPanelVerdict) nav=\(proof.navigationReflected))")
         }
     }
 
@@ -1713,6 +2126,7 @@ final class HarnessCalibrationDriver {
         try await harnessCall("hidePopup")
         try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
         await waitForSettle(0.8)
+        try await refreshHarnessState()
 
         var samples: [LatencySampleMs] = []
         for index in 1...20 {
@@ -1742,6 +2156,7 @@ final class HarnessCalibrationDriver {
         let delayedScheduledMs = 900
         let dispatchAt = Date().timeIntervalSince1970
         try await harnessCall("showPanel", params: ["delayMs": Double(delayedScheduledMs), "directory": delayedDestination.path, "marker": "latency-delayed.marker"])
+        _ = await harness.waitForEvent("panelWillShow", timeoutSeconds: 8)
         let delayedShown = await harness.waitForEvent("panelShown", timeoutSeconds: 8)
         let delayedShownMs = (((delayedShown?["at"] as? NSNumber)?.doubleValue ?? 0) - dispatchAt) * 1000.0
         try await harnessCall("closePanel")
@@ -1807,6 +2222,8 @@ final class HarnessCalibrationDriver {
             lateOutcome: "notRun",
             lateDetail: "",
             lateAffirmationNonNil: false,
+            lateDiagnosticAffirmed: false,
+            lateDiagnosticDetail: "notSampled",
             zeroFurtherInputDuringMonitors: true,
             monitorInputPosts: 0,
             atISO8601: EvidenceIO.iso8601()
@@ -1814,19 +2231,30 @@ final class HarnessCalibrationDriver {
         let postMonitorAt = inputPostCount
 
         // (a) within-window: real panel appears while the monitor observes.
-        let withinBounds = PostconditionBounds(fastCadenceMs: 150, fastPhaseSeconds: 3.0, slowCadenceMs: 250, hardCapSeconds: 4.0, lateForensicSampleDelaySeconds: 0.5)
-        let preCensus = try await onScreenWindowOwnerPIDs()
-        let preWindowIDs = Set(try await freshContent().windows.map { $0.windowID })
-        let withinTask = Task { @MainActor in
-            await PostconditionMonitor.run(bounds: withinBounds) { [weak self] in
-                guard let self else { return .notAffirmed }
-                return await self.sampleChooserAffirmation(predicate: predicate, preCensus: preCensus, preWindowIDs: preWindowIDs)
+        let withinBounds = PostconditionBounds(fastCadenceMs: 150, fastPhaseSeconds: 8.0, slowCadenceMs: 500, hardCapSeconds: 15.0, lateForensicSampleDelaySeconds: 0.5)
+        func makeSamplerContext() async throws -> ChooserSamplerContext {
+            let preCensus = try await onScreenWindowOwnerPIDs()
+            let preWindowIDs = Set(try await freshContent().windows.map { $0.windowID })
+            return ChooserSamplerContext(
+                harnessPID: harnessPID(),
+                mainWindowID: mainWindowNumber(),
+                popupWindowID: popupWindowNumber(),
+                predicate: predicate,
+                preCensus: preCensus,
+                preWindowIDs: preWindowIDs
+            )
+        }
+        let withinSamplerContext = try await makeSamplerContext()
+        let withinTask = Task.detached {
+            await PostconditionMonitor.run(bounds: withinBounds) {
+                await ChooserAffirmationSampler.sample(context: withinSamplerContext)
             }
         }
         await sleep(milliseconds: 250)
         let withinDestination = run.fixturesDir.appendingPathComponent("postcondition-within")
         try EvidenceIO.ensureDirectory(withinDestination)
         try await harnessCall("showPanel", params: ["delayMs": 0, "directory": withinDestination.path, "marker": "within.marker"])
+        _ = await harness.waitForEvent("panelShown", timeoutSeconds: 6)
         let withinOutcome = await withinTask.value
         switch withinOutcome {
         case let .chooserVerified(affirmation):
@@ -1845,10 +2273,13 @@ final class HarnessCalibrationDriver {
 
         // (b) timeout: no panel at all -> NO_CHOOSER_OBSERVED (plan §10).
         let timeoutBounds = PostconditionBounds(fastCadenceMs: 60, fastPhaseSeconds: 0.6, slowCadenceMs: 120, hardCapSeconds: 1.0, lateForensicSampleDelaySeconds: 0.4)
-        let timeoutOutcome = await PostconditionMonitor.run(bounds: timeoutBounds) { [weak self] in
-            guard let self else { return .notAffirmed }
-            return await self.sampleChooserAffirmation(predicate: predicate, preCensus: preCensus, preWindowIDs: preWindowIDs)
+        let timeoutSamplerContext = try await makeSamplerContext()
+        let timeoutTask = Task.detached {
+            await PostconditionMonitor.run(bounds: timeoutBounds) {
+                await ChooserAffirmationSampler.sample(context: timeoutSamplerContext)
+            }
         }
+        let timeoutOutcome = await timeoutTask.value
         switch timeoutOutcome {
         case let .noChooserObserved(count, seconds):
             proof.timeoutOutcome = "noChooserObserved"
@@ -1863,16 +2294,24 @@ final class HarnessCalibrationDriver {
 
         // (c) late-affirmative: panel appears after the hard cap -> CHOOSER_OBSERVED_AFTER_WINDOW.
         let lateBounds = PostconditionBounds(fastCadenceMs: 60, fastPhaseSeconds: 0.6, slowCadenceMs: 120, hardCapSeconds: 1.0, lateForensicSampleDelaySeconds: 0.9)
-        let lateTask = Task { @MainActor in
-            await PostconditionMonitor.run(bounds: lateBounds) { [weak self] in
-                guard let self else { return .notAffirmed }
-                return await self.sampleChooserAffirmation(predicate: predicate, preCensus: preCensus, preWindowIDs: preWindowIDs)
+        let lateSamplerContext = try await makeSamplerContext()
+        let lateTask = Task.detached {
+            await PostconditionMonitor.run(bounds: lateBounds) {
+                await ChooserAffirmationSampler.sample(context: lateSamplerContext)
             }
         }
         await sleep(milliseconds: 300)
         let lateDestination = run.fixturesDir.appendingPathComponent("postcondition-late")
         try EvidenceIO.ensureDirectory(lateDestination)
         try await harnessCall("showPanel", params: ["delayMs": 1400.0, "directory": lateDestination.path, "marker": "late.marker"])
+        let latePanelShown = await harness.waitForEvent("panelShown", timeoutSeconds: 4)
+        if latePanelShown != nil {
+            let diagnostic = await ChooserAffirmationSampler.sample(context: lateSamplerContext)
+            proof.lateDiagnosticAffirmed = diagnostic.affirmed != nil
+            proof.lateDiagnosticDetail = diagnostic.note ?? "affirmed windowID=\(diagnostic.affirmed?.windowID ?? 0)"
+        } else {
+            proof.lateDiagnosticDetail = "panelShown event was not observed"
+        }
         let lateOutcome = await lateTask.value
         switch lateOutcome {
         case let .chooserObservedAfterWindow(count, seconds, affirmation):
@@ -1902,56 +2341,17 @@ final class HarnessCalibrationDriver {
         let detail = "within=\(proof.withinWindowOutcome) timeout=\(proof.timeoutOutcome) late=\(proof.lateOutcome)/affirmed=\(proof.lateAffirmationNonNil) monitorPosts=\(proof.monitorInputPosts) maxLatencyMs=\(maxMs) "
         try await recordItem(5, name: "postcondition-bounds-freeze", verdict: pass ? "PASS" : "PARTIAL", detail: detail, fileName: "05-postcondition-bounds.json", value: boundsFreeze)
         try await recordItem(5, name: "postcondition-proofs", verdict: pass ? "PASS" : "PARTIAL", detail: detail, fileName: "05-postcondition-proofs.json", value: proof)
-        try recordFrozen("postcondition-bounds-v1.json", value: boundsFreeze)
-        try recordFrozen("postcondition-latency-observations-v1.json", value: latencyRecord)
-    }
-
-    private func sampleChooserAffirmation(
-        predicate: ChooserAffirmationPredicate,
-        preCensus: [Int32],
-        preWindowIDs: Set<UInt32>
-    ) async -> PostconditionSample {
-        let pid = harnessPID()
-        do {
-            let content = try await freshContent()
-            let cgInventory = CGWindowInventory.onScreenWindows()
-            let postCensus = Array(Set(content.windows.compactMap { $0.owningApplication?.processID })).sorted()
-            let candidates = content.windows.filter { window in
-                window.owningApplication?.processID == pid
-                    && window.isOnScreen
-                    && window.windowID != mainWindowNumber()
-                    && window.windowID != popupWindowNumber()
+        if pass {
+            var revision = 1
+            while FileManager.default.fileExists(atPath: run.canonicalFrozenDir.appendingPathComponent("postcondition-bounds-v\(revision).json").path)
+                || FileManager.default.fileExists(atPath: run.canonicalFrozenDir.appendingPathComponent("postcondition-latency-observations-v\(revision).json").path) {
+                revision += 1
             }
-            for window in candidates {
-                guard let axElement = axWindowElement(pid: pid, matchingFrame: window.frame) else { continue }
-                let dump = AXDriver.dump(element: axElement, pid: pid, maxDepth: 8, maxNodes: 500)
-                let candidate = ChooserCandidate(
-                    windowID: window.windowID,
-                    frame: window.frame,
-                    onScreen: true,
-                    presentInSCInventory: true,
-                    presentInCGInventory: cgInventory.contains { $0.windowNumber == window.windowID },
-                    isNewRelativeToPreDispatchInventory: !preWindowIDs.contains(window.windowID),
-                    owner: ProcessIdentity.reading(pid: pid),
-                    pidReuseDetected: false,
-                    axNodes: dump.nodes,
-                    preDispatchCensusPIDs: preCensus,
-                    postDispatchCensusPIDs: postCensus
-                )
-                if case .affirmed = ChooserAffirmationEvaluator.evaluate(candidate: candidate, predicate: predicate) {
-                    return PostconditionSample(affirmed: ChooserAffirmation(
-                        windowID: window.windowID,
-                        frame: window.frame,
-                        ownerPID: pid,
-                        predicateID: predicate.predicateID,
-                        affirmedAtISO8601: EvidenceIO.iso8601()
-                    ))
-                }
-            }
-        } catch {
-            return PostconditionSample(affirmed: nil, note: "samplerError:\(error)")
+            try recordFrozen("postcondition-bounds-v\(revision).json", value: boundsFreeze)
+            try recordFrozen("postcondition-latency-observations-v\(revision).json", value: latencyRecord)
+        } else {
+            notes.append("NOT_FROZEN: postcondition bounds and latency were not published because the within-window, timeout, or late-affirmative proof was partial")
         }
-        return .notAffirmed
     }
 
     // MARK: - Item 7: focus theft
