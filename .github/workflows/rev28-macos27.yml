@@ -3,10 +3,11 @@ name: Rev28 macOS 27 pre-live
 on:
   push:
     branches:
-      - rev28-ci-prelive-hardening
+      - rev28-prelive-finalization
     paths:
       - "rev28/**"
       - ".github/workflows/rev28-macos27.yml"
+  workflow_dispatch:
   pull_request:
     paths:
       - "rev28/**"
