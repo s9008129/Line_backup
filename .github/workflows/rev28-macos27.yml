@@ -3,6 +3,7 @@ name: Rev28 macOS 27 pre-live
 on:
   push:
     branches:
+      - master
       - rev28-prelive-finalization
     paths:
       - "rev28/**"
@@ -182,6 +183,31 @@ jobs:
               out.write(f"core_supported={'true' if core else 'false'}\n")
               out.write(f"vision_supported={'true' if vision else 'false'}\n")
               out.write(f"detail={detail}\n")
+          PY
+
+      - name: Enforce bounded hosted Vision limitation
+        if: steps.classify.outputs.vision_supported != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import glob, json, os, pathlib, sys
+
+          records = sorted(glob.glob(os.path.join(os.environ["RUNNER_TEMP"], "rev28-capability", "probe-record-*.json")))
+          if not records:
+              raise SystemExit("capability probe record missing while Vision is unsupported")
+          with open(records[-1], "r", encoding="utf-8") as f:
+              record = json.load(f)
+          vision = record.get("vision", {})
+          error = vision.get("error")
+          if vision.get("status") != "ERROR" or error != "unknownError":
+              raise SystemExit(f"unexpected hosted Vision failure: status={vision.get('status')} error={error!r}")
+
+          log_path = pathlib.Path(os.environ["RUNNER_TEMP"]) / "rev28-vision" / "ocr-tests.txt"
+          text = log_path.read_text(encoding="utf-8", errors="replace") if log_path.exists() else ""
+          if "unknownError" not in text:
+              raise SystemExit("Vision parity diagnostics did not reproduce the known unknownError")
+          print("Hosted Vision limitation matches the bounded known signature: unknownError.")
           PY
 
       - name: Prepare isolated W2 evidence
