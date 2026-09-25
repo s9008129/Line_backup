@@ -894,9 +894,9 @@ final class HarnessCalibrationDriver {
 
     private func item01CaptureMatrix() async throws {
         try await refreshHarnessState()
-        try await harnessCall("setShadows", params: ["on": true])
-        try await harnessCall("activate")
-        try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+        _ = try await harnessCall("setShadows", params: ["on": true])
+        _ = try await harnessCall("activate")
+        _ = try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
         await waitForSettle(1.2)
 
         var cells: [CaptureCell] = []
@@ -930,16 +930,16 @@ final class HarnessCalibrationDriver {
 
         for combo in combos {
             if combo.includeChild {
-                try await harnessCall("showPopup", params: ["dx": 700.0, "dy": 560.0])
+                _ = try await harnessCall("showPopup", params: ["dx": 700.0, "dy": 560.0])
             } else {
-                try await harnessCall("hidePopup")
+                _ = try await harnessCall("hidePopup")
             }
-            try await harnessCall("setShadows", params: ["on": combo.shadowsOn])
+            _ = try await harnessCall("setShadows", params: ["on": combo.shadowsOn])
             if combo.activated {
                 _ = try await harnessCall("activate")
                 if let cover = occluderCoveredFrameTopLeft {
                     _ = cover
-                    try await occluderCall("hide")
+                    _ = try await occluderCall("hide")
                     occluderCoveredFrameTopLeft = nil
                 }
             } else {
@@ -1120,11 +1120,11 @@ final class HarnessCalibrationDriver {
         var validations: [FrozenRuleValidation] = []
         for cell in (cells + barredCells) {
             if cell.includeChildWindows {
-                try await harnessCall("showPopup", params: ["dx": 700.0, "dy": 560.0])
+                _ = try await harnessCall("showPopup", params: ["dx": 700.0, "dy": 560.0])
             } else {
-                try await harnessCall("hidePopup")
+                _ = try await harnessCall("hidePopup")
             }
-            try await harnessCall("setShadows", params: ["on": cell.shadowsOn])
+            _ = try await harnessCall("setShadows", params: ["on": cell.shadowsOn])
             if cell.requestedActivated {
                 _ = try await harnessCall("activate")
             } else {
@@ -1173,8 +1173,8 @@ final class HarnessCalibrationDriver {
 
         // Capture must survive full occlusion by the separate-process occluder.
         var occludedRecord: OccludedCaptureRecord?
-        try await harnessCall("hidePopup")
-        try await harnessCall("setShadows", params: ["on": true])
+        _ = try await harnessCall("hidePopup")
+        _ = try await harnessCall("setShadows", params: ["on": true])
         _ = try await harnessCall("activate")
         await waitForSettle(0.8)
         try await refreshHarnessState()
@@ -1207,7 +1207,7 @@ final class HarnessCalibrationDriver {
                 )
             }
         }
-        try await occluderCall("hide")
+        _ = try await occluderCall("hide")
         _ = try await harnessCall("activate")
 
         let matrix = CaptureMatrixRecord(
@@ -1239,12 +1239,12 @@ final class HarnessCalibrationDriver {
     // MARK: - Item 2: Vision localization
 
     private func item02VisionLocalization() async throws {
-        try await harnessCall("hidePopup")
-        try await harnessCall("setShadows", params: ["on": true])
+        _ = try await harnessCall("hidePopup")
+        _ = try await harnessCall("setShadows", params: ["on": true])
         _ = try await harnessCall("activate")
-        try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
-        try await harnessCall("setTitle", params: ["title": "旻謙允禎成長日記"])
-        try await harnessCall("setCountText", params: ["text": "57張照片"])
+        _ = try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+        _ = try await harnessCall("setTitle", params: ["title": "旻謙允禎成長日記"])
+        _ = try await harnessCall("setCountText", params: ["text": "57張照片"])
         let defaultRows = ["選擇項目", "修改相簿名稱", "儲存全部", "刪除相簿", "分享相簿"]
         _ = try await harnessCall("setMenuRows", params: ["rows": defaultRows])
         await waitForSettle(1.2)
@@ -1314,7 +1314,7 @@ final class HarnessCalibrationDriver {
         }
 
         // 禎/楨 discriminator fixture on real captures.
-        try await harnessCall("setTitle", params: ["title": "旻謙允楨成長日記"])
+        _ = try await harnessCall("setTitle", params: ["title": "旻謙允楨成長日記"])
         await waitForSettle(0.8)
         var otherFound = false
         var expectedAbsent = true
@@ -1327,7 +1327,7 @@ final class HarnessCalibrationDriver {
                 expectedAbsent = OcrTextIdentity.exactMatches(in: items, expected: "旻謙允禎成長日記").isEmpty
             }
         }
-        try await harnessCall("setTitle", params: ["title": "旻謙允禎成長日記"])
+        _ = try await harnessCall("setTitle", params: ["title": "旻謙允禎成長日記"])
         await waitForSettle(0.8)
         var expectedRestored = false
         do {
@@ -1392,8 +1392,8 @@ final class HarnessCalibrationDriver {
             try await recordItem(3, name: "coordinate-transforms", verdict: "NOT_RUN", detail: "frozen rule book unavailable (item 1 must run first)", fileName: "03-coordinate-transforms.json", value: ["detail": "frozen rule book unavailable"])
             return
         }
-        try await harnessCall("hidePopup")
-        try await harnessCall("setShadows", params: ["on": true])
+        _ = try await harnessCall("hidePopup")
+        _ = try await harnessCall("setShadows", params: ["on": true])
         _ = try await harnessCall("activate")
         await waitForSettle(0.8)
         try await refreshHarnessState()
@@ -1558,11 +1558,11 @@ final class HarnessCalibrationDriver {
     // MARK: - Item 4: Quartz routing
 
     private func item04QuartzRouting() async throws {
-        try await occluderCall("hide")
-        try await harnessCall("hidePopup")
+        _ = try await occluderCall("hide")
+        _ = try await harnessCall("hidePopup")
         _ = try await harnessCall("activate")
-        try await harnessCall("setShadows", params: ["on": true])
-        try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+        _ = try await harnessCall("setShadows", params: ["on": true])
+        _ = try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
         await waitForSettle(1.0)
         _ = try await harnessCall("hitReport", params: ["reset": true])
         _ = try await occluderCall("hitReport", params: ["reset": true])
@@ -1648,9 +1648,9 @@ final class HarnessCalibrationDriver {
         let mainHitsAfterCoveredPopupClick = (coveredPopupReport["mainHits"] as? NSNumber)?.intValue ?? -1
         let coverHitsAfterCoveredPopupClick = (occluderAfterPopup["coverHits"] as? NSNumber)?.intValue ?? -1
 
-        try await occluderCall("hide")
+        _ = try await occluderCall("hide")
         _ = try await harnessCall("activate")
-        try await harnessCall("hidePopup")
+        _ = try await harnessCall("hidePopup")
 
         let popupReceives = popupHitsAfterPopupClick >= 1 && mainHitsAfterPopupClick == 0
         let mainReceives = mainHitsAfterMainClick >= 1
@@ -1695,10 +1695,10 @@ final class HarnessCalibrationDriver {
     // MARK: - Item 6: AX chooser observation + predicate freeze
 
     private func item06ChooserPredicate() async throws {
-        try await occluderCall("hide")
+        _ = try await occluderCall("hide")
         _ = try await harnessCall("activate")
-        try await harnessCall("hidePopup")
-        try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+        _ = try await harnessCall("hidePopup")
+        _ = try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
         await waitForSettle(1.0)
 
         let destination = run.fixturesDir.appendingPathComponent("panel-destination")
@@ -1711,7 +1711,7 @@ final class HarnessCalibrationDriver {
         let preCensus = try await onScreenWindowOwnerPIDs()
         let preWindowIDs = Set(try await freshContent().windows.map { $0.windowID })
 
-        try await harnessCall("showPanel", params: ["delayMs": 0, "directory": startDirectory.path, "marker": markerName, "expectedDirectory": destination.path])
+        _ = try await harnessCall("showPanel", params: ["delayMs": 0, "directory": startDirectory.path, "marker": markerName, "expectedDirectory": destination.path])
         _ = await harness.waitForEvent("panelWillShow", timeoutSeconds: 8)
         let shownEvent = await harness.waitForEvent("panelShown", timeoutSeconds: 8)
         let panelShownAt = (shownEvent?["at"] as? NSNumber)?.doubleValue
@@ -2121,10 +2121,10 @@ final class HarnessCalibrationDriver {
     // MARK: - Item 5: postcondition detection + bounds freeze
 
     private func item05Postcondition() async throws {
-        try await occluderCall("hide")
+        _ = try await occluderCall("hide")
         _ = try await harnessCall("activate")
-        try await harnessCall("hidePopup")
-        try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+        _ = try await harnessCall("hidePopup")
+        _ = try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
         await waitForSettle(0.8)
         try await refreshHarnessState()
 
@@ -2133,7 +2133,7 @@ final class HarnessCalibrationDriver {
             let destination = run.fixturesDir.appendingPathComponent("latency-destination-\(index)")
             try EvidenceIO.ensureDirectory(destination)
             let commandAt = Date().timeIntervalSince1970
-            try await harnessCall("showPanel", params: ["delayMs": 0, "directory": destination.path, "marker": "latency-\(index).marker"])
+            _ = try await harnessCall("showPanel", params: ["delayMs": 0, "directory": destination.path, "marker": "latency-\(index).marker"])
             let willShow = await harness.waitForEvent("panelWillShow", timeoutSeconds: 8)
             let shown = await harness.waitForEvent("panelShown", timeoutSeconds: 8)
             let willShowAt = (willShow?["at"] as? NSNumber)?.doubleValue ?? 0
@@ -2145,7 +2145,7 @@ final class HarnessCalibrationDriver {
                 shownEventAt: shownAt
             ))
             _ = commandAt
-            try await harnessCall("closePanel")
+            _ = try await harnessCall("closePanel")
             _ = await harness.waitForEvent("panelClosed", timeoutSeconds: 6)
             await sleep(milliseconds: 150)
         }
@@ -2155,11 +2155,11 @@ final class HarnessCalibrationDriver {
         try EvidenceIO.ensureDirectory(delayedDestination)
         let delayedScheduledMs = 900
         let dispatchAt = Date().timeIntervalSince1970
-        try await harnessCall("showPanel", params: ["delayMs": Double(delayedScheduledMs), "directory": delayedDestination.path, "marker": "latency-delayed.marker"])
+        _ = try await harnessCall("showPanel", params: ["delayMs": Double(delayedScheduledMs), "directory": delayedDestination.path, "marker": "latency-delayed.marker"])
         _ = await harness.waitForEvent("panelWillShow", timeoutSeconds: 8)
         let delayedShown = await harness.waitForEvent("panelShown", timeoutSeconds: 8)
         let delayedShownMs = (((delayedShown?["at"] as? NSNumber)?.doubleValue ?? 0) - dispatchAt) * 1000.0
-        try await harnessCall("closePanel")
+        _ = try await harnessCall("closePanel")
         _ = await harness.waitForEvent("panelClosed", timeoutSeconds: 6)
         await sleep(milliseconds: 200)
 
@@ -2253,7 +2253,7 @@ final class HarnessCalibrationDriver {
         await sleep(milliseconds: 250)
         let withinDestination = run.fixturesDir.appendingPathComponent("postcondition-within")
         try EvidenceIO.ensureDirectory(withinDestination)
-        try await harnessCall("showPanel", params: ["delayMs": 0, "directory": withinDestination.path, "marker": "within.marker"])
+        _ = try await harnessCall("showPanel", params: ["delayMs": 0, "directory": withinDestination.path, "marker": "within.marker"])
         _ = await harness.waitForEvent("panelShown", timeoutSeconds: 6)
         let withinOutcome = await withinTask.value
         switch withinOutcome {
@@ -2303,7 +2303,7 @@ final class HarnessCalibrationDriver {
         await sleep(milliseconds: 300)
         let lateDestination = run.fixturesDir.appendingPathComponent("postcondition-late")
         try EvidenceIO.ensureDirectory(lateDestination)
-        try await harnessCall("showPanel", params: ["delayMs": 1400.0, "directory": lateDestination.path, "marker": "late.marker"])
+        _ = try await harnessCall("showPanel", params: ["delayMs": 1400.0, "directory": lateDestination.path, "marker": "late.marker"])
         let latePanelShown = await harness.waitForEvent("panelShown", timeoutSeconds: 4)
         if latePanelShown != nil {
             let diagnostic = await ChooserAffirmationSampler.sample(context: lateSamplerContext)
@@ -2357,10 +2357,10 @@ final class HarnessCalibrationDriver {
     // MARK: - Item 7: focus theft
 
     private func item07FocusTheft() async throws {
-        try await occluderCall("hide")
+        _ = try await occluderCall("hide")
         _ = try await harnessCall("activate")
-        try await harnessCall("hidePopup")
-        try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
+        _ = try await harnessCall("hidePopup")
+        _ = try await harnessCall("setFrame", params: ["x": 160.0, "y": 140.0, "w": 800.0, "h": 600.0])
         await waitForSettle(1.0)
         try await refreshHarnessState()
 
@@ -2369,7 +2369,7 @@ final class HarnessCalibrationDriver {
             return
         }
         let identity = try await captureWindowIdentity(ruleBook: ruleBook)
-        var dispatches = 0
+        let dispatches = 0
 
         let baseline = try await dispatchPrecondition(identity: identity, epoch: identity.captureEpoch)
         let baselineOK = baseline == nil
