@@ -53,6 +53,14 @@ jobs:
           # else is a deterministic contract gate.
           xcrun swift test --package-path rev28 --skip OcrEngineTests
 
+      - name: Run adversarial matrix twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          xcrun swift test --package-path rev28 --filter AdversarialMatrixTests
+          xcrun swift test --package-path rev28 --filter AdversarialMatrixTests
+
       - name: Run SHA-bound historical replay twice
         shell: bash
         run: |
