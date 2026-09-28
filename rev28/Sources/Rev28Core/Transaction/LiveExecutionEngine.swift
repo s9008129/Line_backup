@@ -32,6 +32,8 @@ public enum LiveExecutionEngineError: Error, Equatable, CustomStringConvertible 
     case saveAllBoundaryDidNotConsumeExactlyOnce
     case destinationBoundaryDidNotConsumeExactlyOnce
     case invalidEvidenceDigest(String)
+    case typedStateEvidenceRejected(String)
+    case evidenceFileInvalid(String)
 
     public var description: String {
         switch self {
@@ -40,6 +42,8 @@ public enum LiveExecutionEngineError: Error, Equatable, CustomStringConvertible 
         case .saveAllBoundaryDidNotConsumeExactlyOnce: return "saveAllBoundaryDidNotConsumeExactlyOnce"
         case .destinationBoundaryDidNotConsumeExactlyOnce: return "destinationBoundaryDidNotConsumeExactlyOnce"
         case let .invalidEvidenceDigest(stage): return "invalidEvidenceDigest(\(stage))"
+        case let .typedStateEvidenceRejected(detail): return "typedStateEvidenceRejected(\(detail))"
+        case let .evidenceFileInvalid(detail): return "evidenceFileInvalid(\(detail))"
         }
     }
 }
@@ -50,8 +54,10 @@ public enum LiveExecutionEngineError: Error, Equatable, CustomStringConvertible 
 public protocol LiveExecutionAdapter: Sendable {
     /// Establish or re-establish one pre-Save-All state from fresh observation.
     /// For reversible states, the adapter may use guarded reversible actuation.
-    /// Returns the SHA-256 of evidence proving the state.
-    func establish(state: ExecutionState, owner: PersistentTransactionOwner) async throws -> String
+    /// Returns typed evidence: a projection of one observation bundle plus the
+    /// retained frame artifact it references. The engine — not the adapter —
+    /// decides whether that evidence proves the requested state.
+    func establish(state: ExecutionState, owner: PersistentTransactionOwner) async throws -> EstablishedStateEvidence
 
     /// Must dispatch Save All through GatedQuartzActuator with .saveAll(owner).
     /// Returns a SHA-256 evidence digest for the attempted dispatch.
@@ -117,13 +123,20 @@ public struct LiveExecutionEngine {
             .menuVerified,
             .saveAllLocated,
         ]
+        var previousEpoch: UInt64?
         for (index, state) in preSaveStates.enumerated() {
             let evidence = try await adapter.establish(state: state, owner: owner)
-            try validateDigest(evidence, stage: state.rawValue)
+            try Self.validateEstablishedEvidence(
+                evidence,
+                state: state,
+                owner: owner,
+                previousEpoch: previousEpoch
+            )
+            previousEpoch = evidence.artifact.epoch
             if index == 0 {
-                try owner.initializeState(evidenceSHA256: evidence)
+                try owner.initializeState(evidenceSHA256: evidence.evidenceSHA256)
             } else {
-                try owner.transition(to: state, evidenceSHA256: evidence)
+                try owner.transition(to: state, evidenceSHA256: evidence.evidenceSHA256)
             }
         }
 
@@ -182,5 +195,73 @@ public struct LiveExecutionEngine {
               Set(value).count > 1 else {
             throw LiveExecutionEngineError.invalidEvidenceDigest(stage)
         }
+    }
+
+    /// Typed, file-backed validation of one established state. The adapter's
+    /// in-memory artifact must match both the requested state policy and the
+    /// durable artifact bytes inside the run's evidence directory; the retained
+    /// frame referenced by the artifact must exist with the recorded SHA.
+    static func validateEstablishedEvidence(
+        _ evidence: EstablishedStateEvidence,
+        state: ExecutionState,
+        owner: PersistentTransactionOwner,
+        previousEpoch: UInt64?
+    ) throws {
+        do {
+            try ExecutionStateEvidencePolicy.validate(
+                artifact: evidence.artifact,
+                expectedState: state,
+                authorization: owner.authorization,
+                previousEpoch: previousEpoch
+            )
+        } catch let error as StateEvidenceError {
+            throw LiveExecutionEngineError.typedStateEvidenceRejected(error.description)
+        }
+        let runDirectory = URL(fileURLWithPath: owner.authorization.evidenceRunDirectory).standardizedFileURL
+        let artifactData = try loadEvidenceFile(
+            named: evidence.artifactName,
+            runDirectory: runDirectory,
+            expectedSHA256: evidence.evidenceSHA256,
+            stage: "state.\(state.rawValue).artifact"
+        )
+        let decoded: StateEvidenceArtifact
+        do {
+            decoded = try JSONDecoder().decode(StateEvidenceArtifact.self, from: artifactData)
+        } catch {
+            throw LiveExecutionEngineError.evidenceFileInvalid("state artifact \(evidence.artifactName) does not decode")
+        }
+        guard decoded == evidence.artifact else {
+            throw LiveExecutionEngineError.evidenceFileInvalid("state artifact \(evidence.artifactName) differs from the in-memory artifact")
+        }
+        _ = try loadEvidenceFile(
+            named: evidence.artifact.retainedFrameName,
+            runDirectory: runDirectory,
+            expectedSHA256: evidence.artifact.frameSHA256,
+            stage: "state.\(state.rawValue).retainedFrame"
+        )
+    }
+
+    private static func loadEvidenceFile(
+        named name: String,
+        runDirectory: URL,
+        expectedSHA256: String,
+        stage: String
+    ) throws -> Data {
+        guard !name.isEmpty, !name.hasPrefix("."), !name.contains("/"), !name.contains("\\") else {
+            throw LiveExecutionEngineError.evidenceFileInvalid("\(stage): unsafe evidence name \(name)")
+        }
+        let url = runDirectory.appendingPathComponent(name).standardizedFileURL
+        guard url.deletingLastPathComponent().path == runDirectory.path else {
+            throw LiveExecutionEngineError.evidenceFileInvalid("\(stage): evidence escapes the run directory")
+        }
+        let values = try? url.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
+        guard values?.isRegularFile == true, values?.isSymbolicLink != true else {
+            throw LiveExecutionEngineError.evidenceFileInvalid("\(stage): evidence file is missing, not regular, or a symlink")
+        }
+        let data = try Data(contentsOf: url)
+        guard EvidenceIO.sha256Hex(data) == expectedSHA256 else {
+            throw LiveExecutionEngineError.evidenceFileInvalid("\(stage): evidence bytes do not match the recorded SHA")
+        }
+        return data
     }
 }

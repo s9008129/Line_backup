@@ -9,10 +9,87 @@ final class LiveExecutionEngineTests: XCTestCase {
         private(set) var saveAllMouseEvents = 0
         private(set) var confirmationPosts = 0
         var failAtState: ExecutionState?
+        var omitCandidateForState: ExecutionState?
+        var skipRetainedFrameForState: ExecutionState?
+        var reuseEpochForState: ExecutionState?
+        private var epochCounter: UInt64 = 0
 
-        func establish(state: ExecutionState, owner: PersistentTransactionOwner) async throws -> String {
+        func establish(state: ExecutionState, owner: PersistentTransactionOwner) async throws -> EstablishedStateEvidence {
             if failAtState == state { throw NSError(domain: "FakeAdapter", code: 1) }
-            return digest("state:\(state.rawValue)")
+            return try writeEvidence(state: state, owner: owner)
+        }
+
+        private func writeEvidence(
+            state: ExecutionState,
+            owner: PersistentTransactionOwner
+        ) throws -> EstablishedStateEvidence {
+            if reuseEpochForState != state {
+                epochCounter += 1
+            }
+            let epoch = epochCounter
+            let runDirectory = URL(fileURLWithPath: owner.authorization.evidenceRunDirectory)
+            let frameName = "state-\(state.rawValue)-\(epoch).png"
+            let artifactName = "state-\(state.rawValue)-\(epoch).json"
+            let frameData = Self.makePNGData(seed: UInt8(truncatingIfNeeded: epoch) &+ 1)
+            if skipRetainedFrameForState != state {
+                try frameData.write(to: runDirectory.appendingPathComponent(frameName))
+            }
+            let requirement = ExecutionStateEvidencePolicy.requirement(for: state)
+            var candidateIdentity = requirement.exactCandidateIdentity
+            if let suffix = requirement.candidateIdentitySuffix, candidateIdentity == nil {
+                candidateIdentity = "date-card-0\(suffix)"
+            }
+            if omitCandidateForState == state { candidateIdentity = nil }
+            var ocrTexts = ["LINE"]
+            for text in requirement.requiredOcrTexts where !ocrTexts.contains(text) {
+                ocrTexts.append(text)
+            }
+            let artifact = StateEvidenceArtifact(
+                runID: owner.authorization.runID,
+                state: state.rawValue,
+                sessionID: "fake-session",
+                epoch: epoch,
+                bundleID: "jp.naver.line.mac",
+                pid: 4242,
+                processStartSeconds: 7,
+                processStartMicroseconds: 0,
+                windowID: 10,
+                windowFrame: CGRect(x: 0, y: 0, width: 200, height: 200),
+                axRole: "AXWindow",
+                frameSHA256: EvidenceIO.sha256Hex(frameData),
+                retainedFrameName: frameName,
+                capturedAtISO8601: "2026-09-28T00:00:00Z",
+                startedAtMonotonicNanos: epoch * 100,
+                endedAtMonotonicNanos: epoch * 100 + 1,
+                deadlineMonotonicNanos: epoch * 100 + 50,
+                ocrTexts: ocrTexts,
+                cardRegionCount: 2,
+                candidateIdentity: candidateIdentity,
+                candidateRefusal: nil,
+                localization: "fake"
+            )
+            let artifactData = try JSONEncoder().encode(artifact)
+            try artifactData.write(to: runDirectory.appendingPathComponent(artifactName))
+            return EstablishedStateEvidence(
+                artifactName: artifactName,
+                evidenceSHA256: EvidenceIO.sha256Hex(artifactData),
+                artifact: artifact
+            )
+        }
+
+        private static func makePNGData(seed: UInt8) -> Data {
+            let context = CGContext(
+                data: nil,
+                width: 4,
+                height: 4,
+                bitsPerComponent: 8,
+                bytesPerRow: 16,
+                space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            )!
+            context.setFillColor(CGColor(red: CGFloat(seed) / 255, green: 0.4, blue: 0.6, alpha: 1))
+            context.fill(CGRect(x: 0, y: 0, width: 4, height: 4))
+            return FrameCaptureSupport.pngData(of: context.makeImage()!)!
         }
 
         func dispatchSaveAll(owner: PersistentTransactionOwner) async throws -> String {
@@ -221,9 +298,9 @@ final class LiveExecutionEngineTests: XCTestCase {
         ].enumerated() {
             let evidence = try await firstAdapter.establish(state: state, owner: owner)
             if index == 0 {
-                try owner.initializeState(evidenceSHA256: evidence)
+                try owner.initializeState(evidenceSHA256: evidence.evidenceSHA256)
             } else {
-                try owner.transition(to: state, evidenceSHA256: evidence)
+                try owner.transition(to: state, evidenceSHA256: evidence.evidenceSHA256)
             }
         }
         try await firstAdapter.dispatchSaveAll(owner: owner)
@@ -283,6 +360,53 @@ final class LiveExecutionEngineTests: XCTestCase {
             _ = try await LiveExecutionEngine(owner: owner, adapter: adapter).run()
         }
         XCTAssertEqual(adapter.saveAllMouseEvents, 0)
+    }
+
+    func testTypedStateEvidenceForgeryIsRejectedBeforeTransition() async throws {
+        let (_, _, owner) = try setup()
+        let adapter = FakeAdapter()
+        adapter.omitCandidateForState = .targetAlbumLocated
+        do {
+            _ = try await LiveExecutionEngine(owner: owner, adapter: adapter).run()
+            XCTFail("a state without its required typed candidate must be rejected")
+        } catch let error as LiveExecutionEngineError {
+            guard case .typedStateEvidenceRejected = error else {
+                return XCTFail("unexpected error \(error)")
+            }
+        }
+        XCTAssertEqual(owner.currentState, .albumListReady)
+        XCTAssertEqual(owner.irreversibleOperationCounts.saveAll, 0)
+    }
+
+    func testMissingRetainedFrameEvidenceIsRejected() async throws {
+        let (_, _, owner) = try setup()
+        let adapter = FakeAdapter()
+        adapter.skipRetainedFrameForState = .menuVerified
+        do {
+            _ = try await LiveExecutionEngine(owner: owner, adapter: adapter).run()
+            XCTFail("evidence whose retained frame is absent must be rejected")
+        } catch let error as LiveExecutionEngineError {
+            guard case .evidenceFileInvalid = error else {
+                return XCTFail("unexpected error \(error)")
+            }
+        }
+        XCTAssertEqual(owner.currentState, .ellipsisLocated)
+    }
+
+    func testReusedCaptureEpochIsRejectedAsStaleEvidence() async throws {
+        let (_, _, owner) = try setup()
+        let adapter = FakeAdapter()
+        adapter.reuseEpochForState = .groupReady
+        do {
+            _ = try await LiveExecutionEngine(owner: owner, adapter: adapter).run()
+            XCTFail("reusing an earlier capture epoch must be rejected")
+        } catch let error as LiveExecutionEngineError {
+            guard case .typedStateEvidenceRejected(let detail) = error else {
+                return XCTFail("unexpected error \(error)")
+            }
+            XCTAssertTrue(detail.contains("StaleEpoch") || detail.contains("staleEpoch"))
+        }
+        XCTAssertEqual(owner.currentState, .appReady)
     }
 }
 
