@@ -146,7 +146,7 @@ jobs:
             echo "REVIEW_FOCUS=${REVIEW_FOCUS}"
             echo "GITHUB_SHA=${GITHUB_SHA}"
           } >> "$RUNNER_TEMP/v09-${REVIEW_TOPIC}/prompt.txt"
-          copilot -p "$(cat "$RUNNER_TEMP/v09-${REVIEW_TOPIC}/prompt.txt")" -s --model=gpt-5.4 --no-ask-user --max-ai-credits=30 \
+          copilot -p "$(cat "$RUNNER_TEMP/v09-${REVIEW_TOPIC}/prompt.txt")" -s --no-ask-user --max-ai-credits=30 \
             --allow-tool='shell(git:*)' --allow-tool='shell(cat:*)' --allow-tool='shell(sed:*)' --allow-tool='shell(grep:*)' \
             --allow-tool='shell(find:*)' --allow-tool='shell(shasum:*)' --allow-tool='shell(ls:*)' --allow-tool='shell(head:*)' \
             --allow-tool='shell(tail:*)' --allow-tool='shell(wc:*)' --allow-tool='shell(pwd)' \
