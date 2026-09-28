@@ -113,6 +113,7 @@ public final class PersistentTransactionOwner {
     private var confirmationIntentOwnedByThisProcess = false
     private let stateLock = NSRecursiveLock()
     private let checkpointURL: URL?
+    public let isObserveOnlyResume: Bool
 
     public init(
         authorization: ImmutableRunAuthorization,
@@ -124,6 +125,7 @@ public final class PersistentTransactionOwner {
         self.authorization = authorization
         self.ledger = ledger
         self.checkpointURL = checkpointURL?.standardizedFileURL
+        self.isObserveOnlyResume = !ledger.entries.isEmpty
 
         if !ledger.entries.isEmpty {
             guard let checkpointURL = self.checkpointURL else {
@@ -183,7 +185,9 @@ public final class PersistentTransactionOwner {
         stateLock.lock()
         defer { stateLock.unlock() }
         let counts = irreversibleOperationCounts
-        guard counts.saveAll == 0 else { throw PersistentTransactionError.irreversibleIntentAlreadyRecorded("saveAll") }
+        guard !isObserveOnlyResume, counts.saveAll == 0 else {
+            throw PersistentTransactionError.irreversibleIntentAlreadyRecorded("saveAll")
+        }
         try append(kind: "intent.saveAll", payload: binding(["risk": "IRREVERSIBLE_SIDE_EFFECT"]))
         saveAllIntentOwnedByThisProcess = true
     }
@@ -260,7 +264,8 @@ public final class PersistentTransactionOwner {
         stateLock.lock()
         defer { stateLock.unlock() }
         let counts = irreversibleOperationCounts
-        guard counts.saveAll >= 2, counts.destinationConfirmation == 0,
+        guard !isObserveOnlyResume,
+              counts.saveAll >= 2, counts.destinationConfirmation == 0,
               ["AXPressDefaultButton", "ReturnKey"].contains(action),
               ledger.entries.contains(where: { $0.kind == "postcondition.chooserVerified" && isBound($0) }) else {
             throw PersistentTransactionError.irreversibleIntentAlreadyRecorded("destinationConfirmation")
