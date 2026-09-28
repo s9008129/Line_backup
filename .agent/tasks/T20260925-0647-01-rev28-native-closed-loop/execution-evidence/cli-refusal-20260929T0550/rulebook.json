@@ -1,0 +1,11 @@
+{
+  "ruleID": "cli-refusal-fixture",
+  "frozenAtISO8601": "2026-09-29T00:00:00.000Z",
+  "rules": {
+    "SETTLED_ACTIVATED": {
+      "maxPerSideSizeDeltaPt": 2.0,
+      "originPaddingPt": 0.0,
+      "maxOriginPaddingPt": 4.0
+    }
+  }
+}
