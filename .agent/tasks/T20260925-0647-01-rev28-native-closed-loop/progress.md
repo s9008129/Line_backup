@@ -1,15 +1,15 @@
 # Implement Progress — T20260925-0647-01-rev28-native-closed-loop
 
 STATE: RUNNING
-UPDATED_AT: 2026-09-29T05:35+0800
+UPDATED_AT: 2026-09-29T05:50+0800
 PLAN_REVISION: 4
 MODE: AB_IMPLEMENTATION_EVALUATION (Phase B forbidden; PHASE_B_STATUS=FORBIDDEN_AB_EVALUATION)
 
 ## 給使用者看的白話摘要
 
 - **目前目標：** 依 R4 批准的 Execution Contract，完成 C1 的三個 deterministic 修復後，往 C2–C7 原生生產組合（native observation session、durable transaction authority、guarded actuation、actual chooser/destination、filesystem finalization）前進。Phase B 永久禁止。
-- **目前卡點：** deterministic foundation 三項已修復並通過 focused + 全套 deterministic 測試；下一個 blocker 是 primary architecture gap：`rev28ctl live-execute` 仍是 stub，沒有把 native observation/session、common engine、durable transaction、chooser、staging proof 串起來的原生組合。
-- **主要嘗試：** compile blocker 1/3（已解決）；segmentation blocker 1/3（已解決）；stability blocker 1/3（已解決）；native composition blocker 0/3。
+- **目前卡點：** deterministic foundation 三項已修復並通過 focused + 全套 deterministic 測試；C4 第一切片（persistent goal slot + owner state gate）已完成；下一個 blocker 仍是 primary architecture gap：`rev28ctl live-execute` 仍是 stub，沒有把 native observation/session、common engine、durable transaction、chooser、staging proof 串起來的原生組合。
+- **主要嘗試：** compile blocker 1/3（已解決）；segmentation blocker 1/3（已解決）；stability blocker 1/3（已解決）；C4 goal-slot blocker 1/3（已解決）；native composition blocker 0/3。
 - **上一輪在測試什麼：** (A1) helper 錯置是否為唯一編譯原因；(A2) 短結束日期是否為 segmentation 0-region 唯一原因；(A3) 穩定窗是否誤用總跨度。
 - **結果：** 三個嘗試全部達成 predeclared distinguishing result；full deterministic suite 127 tests / 0 failures（含實機 Vision 5 tests）。
 - **這輪多知道了什麼：** 編譯 blocker 與 segmentation/stability 兩 defect 都是單一機械原因，且修復後既有 refusal 測試（含 禎/楨 identity、L1/L2/L3、cross-card 等）全部保持通過。
@@ -65,6 +65,7 @@ A/B branch created for this run: v43-ab/codex-rev28 (rev28-prelive-finalization 
 |---|---|---|---|---|---|---|---|---|
 | A1 (compile) | 編譯失敗只因兩處 helper 呼叫錯（`binding()`/`ocr` vs computed `binding`/`item`） | 最小修改兩測試呼叫點後 `swift build` + focused `StructuralLocatorsTests` | test target compiles 且 focused tests 執行（vs 相同 compile failure） | build PASS；focused target 執行 12 tests，其中 2 個 segmentation 測試失敗（0 regions / unsafeGeometry） | CHECK=DETERMINISTIC_SWIFT_TEST_COMPILATION 不再失敗；REQUIRED_VERIFICATION_STATUS 由 FAIL 轉為可重評 | `execution-evidence/a1-focused-20260929T0517.log` | 排除「還有其他編譯錯誤」 | YES |
 | A2 (segmentation) | 0-region 只因 `isDateRangeTitle` 拒收 2-component 短結束日期 | 允許 canonical 短結束形式（同起始年、end>=start），加邊界 regression test，重跑 focused | 兩個 segmentation 測試通過（2 regions + candidate；cross-card 為 referenceStructureMismatch） | 12/12 focused tests PASS | segmentation defect resolved；card association refusal 保持 | `execution-evidence/a2-focused-20260929T0520.log` | 排除 segmentation 其他原因；明確化 unsupported 短形式仍拒絕 | YES |
+| A4 (C4 goal slot) | 一次性 entitlement 可被新 runID／新 ledger path 重置 | 新增 GoalSlot（goal/group/album/stagingRoot 為鍵、flock + fsync、consume-once）；owner init 開啟 slot 並拒絕「consumed + 空 ledger」；reserveSaveAll 加上 SAVE_ALL_LOCATED state gate 並先消費 slot | 新 runID 同 goal → goalSlotConflict；已消費 slot + 空/搬移 ledger → goalSlotEntitlementConsumed；正常 walk 後 reserve 成功且 slot 標記 consumed | GoalSlotTests 6 tests PASS；full suite 133 tests / 0 failures | `execution-evidence/a5-full-suite-goalslot-20260929T0545.log` | 排除「換 ledger path 可重置」與「未到 SAVE_ALL_LOCATED 也能 reserve」 | YES |
 | A3 (stability) | equal-tail 誤判只因 span 用了 sample[0] | span 改量 contiguous equal tail，加 old-different-sample / long-equal-tail tests，重跑 focused | R4 diagnostic 案例 (0.2s tail) 由 true 變 false；正常 4s+ tail 仍 true | 13+16 focused tests PASS；full suite 127 tests / 0 failures | stability defect resolved；V-06 前置 stable-window 語意符合 C7 | `execution-evidence/a3-focused-20260929T0525.log`, `a4-full-suite-20260929T0527.log` | 排除時間窗判斷的其他解釋 | YES |
 
 ## Commits (A/B branch v43-ab/codex-rev28)
