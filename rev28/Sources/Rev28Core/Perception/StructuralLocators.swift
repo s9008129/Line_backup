@@ -131,17 +131,28 @@ public enum StructuralLocators {
         let normalized = value.replacingOccurrences(of: "～", with: "~")
         let parts = normalized.split(separator: "~", omittingEmptySubsequences: false)
         guard parts.count == 2 else { return false }
-        func valid(_ part: Substring) -> Bool {
+        func numeric(_ component: Substring, count: Int) -> Bool {
+            component.count == count && !component.isEmpty && component.allSatisfy(\.isNumber)
+        }
+        func fullDate(_ part: Substring) -> (year: Substring, month: Substring, day: Substring)? {
             let components = part.split(separator: "/")
             guard components.count == 3,
-                  components[0].count == 4,
-                  components[1].count == 2,
-                  components[2].count == 2 else { return false }
-            return components.allSatisfy { component in
-                !component.isEmpty && component.allSatisfy(\.isNumber)
-            }
+                  numeric(components[0], count: 4),
+                  numeric(components[1], count: 2),
+                  numeric(components[2], count: 2) else { return nil }
+            return (components[0], components[1], components[2])
         }
-        return valid(parts[0]) && valid(parts[1])
+        guard let start = fullDate(parts[0]) else { return false }
+        if fullDate(parts[1]) != nil { return true }
+        // Canonical short end form (e.g. `2024/05/13~05/17`): the visible end
+        // month/day inherits the explicitly stated start year. An end that is
+        // earlier than the start, or any other shortened shape, is not an
+        // explicitly supported representation and stays refused.
+        let short = parts[1].split(separator: "/")
+        guard short.count == 2,
+              numeric(short[0], count: 2),
+              numeric(short[1], count: 2) else { return false }
+        return (short[0], short[1]) >= (start.month, start.day)
     }
 
     /// Exact album-card identity. The title and count must both be contained in

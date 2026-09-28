@@ -233,4 +233,16 @@ final class StructuralLocatorsTests: XCTestCase {
         XCTAssertEqual(reason, .referenceStructureMismatch)
     }
 
+    func testSegmentAlbumCardsRejectsUnsupportedShortEndShape() {
+        let items = [
+            item("2024/05/13~05/01", CGRect(x: 20, y: 40, width: 160, height: 20)),
+            item("57", CGRect(x: 20, y: 72, width: 24, height: 18)),
+        ]
+        let regions = StructuralLocators.segmentAlbumCards(
+            items: items,
+            imageBounds: CGRect(x: 0, y: 0, width: 300, height: 300)
+        )
+        XCTAssertTrue(regions.isEmpty, "an end date earlier than the start is not an explicitly supported representation")
+    }
+
 }
