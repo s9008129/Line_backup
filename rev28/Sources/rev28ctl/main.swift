@@ -64,6 +64,7 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
             let targetBundleID: String
             let targetPID: Int32
             let ledgerPath: String
+            let checkpointPath: String
             let planPath: String
             let repositoryRoot: String
         }
@@ -101,18 +102,29 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
             throw QuartzActuatorError.dispatchRefusedByPrecondition("live focus/window/AX preflight failed")
         }
         let ledger = try IntentLedger(fileURL: URL(fileURLWithPath: config.ledgerPath))
-        let owner = try PersistentTransactionOwner(authorization: auth, ledger: ledger)
+        let owner = try PersistentTransactionOwner(
+            authorization: auth,
+            ledger: ledger,
+            checkpointURL: URL(fileURLWithPath: config.checkpointPath),
+            requireCheckpointOnResume: true
+        )
         guard command == "live-preflight" else {
             throw QuartzActuatorError.dispatchRefusedByPrecondition(
                 "live observations are present but no reviewed native frame+structural-candidate session provider was configured; no events posted"
             )
         }
-        let consumedURL = authURL.appendingPathExtension("consumed")
-        guard !FileManager.default.fileExists(atPath: consumedURL.path) else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("one-shot authorization already consumed")
+        // Phase A preflight is observation-only: it never renames or consumes
+        // the one-shot authorization (R4 C4). Only the durable Save All
+        // reservation arms the entitlement, and an authorization consumed by
+        // an earlier production run keeps this process observe-only.
+        guard OneShotAuthorizationGate.inspect(authorizationURL: authURL) == .available else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition(
+                "one-shot authorization already consumed; live-preflight stays observe-only"
+            )
         }
-        try FileManager.default.moveItem(at: authURL, to: consumedURL)
-        FileHandle.standardOutput.write(Data("preflight=passed runID=\(owner.authorization.runID) windowID=\(window.windowID) dispatch=none\n".utf8))
+        FileHandle.standardOutput.write(Data(
+            "preflight=passed runID=\(owner.authorization.runID) windowID=\(window.windowID) entitlement=unconsumed dispatch=none\n".utf8
+        ))
         exit(0)
     } catch {
         FileHandle.standardError.write(Data("\(command) refused: \(error)\n".utf8))
