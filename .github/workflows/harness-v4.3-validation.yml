@@ -26,7 +26,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat .harness-validation/package.b64.part-* | base64 -d > "$RUNNER_TEMP/harness.zip"
+          cat .harness-validation/package.b64.part-00 .harness-validation/package.b64.part-01 .harness-validation/package.b64.part-02a .harness-validation/package.b64.part-02b .harness-validation/package.b64.part-03a .harness-validation/package.b64.part-03b0 .harness-validation/package.b64.part-03b1 .harness-validation/package.b64.part-04 | base64 -d > "$RUNNER_TEMP/harness.zip"
           unzip -q "$RUNNER_TEMP/harness.zip" -d "$RUNNER_TEMP/pkg"
           echo "HARNESS_ROOT=$RUNNER_TEMP/pkg/Coding_Agent_Harness_V4.3" >> "$GITHUB_ENV"
       - name: Verify package + V4.3 contracts
@@ -150,7 +150,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat .harness-validation/package.b64.part-* | base64 -d > "$RUNNER_TEMP/harness.zip"
+          cat .harness-validation/package.b64.part-00 .harness-validation/package.b64.part-01 .harness-validation/package.b64.part-02a .harness-validation/package.b64.part-02b .harness-validation/package.b64.part-03a .harness-validation/package.b64.part-03b0 .harness-validation/package.b64.part-03b1 .harness-validation/package.b64.part-04 | base64 -d > "$RUNNER_TEMP/harness.zip"
           unzip -q "$RUNNER_TEMP/harness.zip" -d "$RUNNER_TEMP/pkg"
           echo "HARNESS_ROOT=$RUNNER_TEMP/pkg/Coding_Agent_Harness_V4.3" >> "$GITHUB_ENV"
       - name: Execute bounded real-model Harness validation
