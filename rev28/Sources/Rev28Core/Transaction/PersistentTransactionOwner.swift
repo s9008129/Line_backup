@@ -1,6 +1,8 @@
 import Foundation
 
 public struct ImmutableRunAuthorization: Equatable, Codable, Sendable {
+    public static let acceptedBaselineTripwireSHA256 = "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd"
+
     public let runID: String
     public let goal: String
     public let group: String
@@ -9,9 +11,25 @@ public struct ImmutableRunAuthorization: Equatable, Codable, Sendable {
     public let reviewedImplementationSHA256: String
     public let stagingRoot: String
     public let stagingRunDirectory: String
+    public let expectedFileCount: Int
+    public let expectedTotalBytes: UInt64
+    public let expectedContentMultisetSHA256: String
+    public let baselineTripwireSHA256: String
 
-    public init(runID: String, goal: String, group: String, album: String, planSHA256: String,
-                reviewedImplementationSHA256: String, stagingRoot: URL, stagingRunDirectory: URL) {
+    public init(
+        runID: String,
+        goal: String,
+        group: String,
+        album: String,
+        planSHA256: String,
+        reviewedImplementationSHA256: String,
+        stagingRoot: URL,
+        stagingRunDirectory: URL,
+        expectedFileCount: Int = StagingPolicy.rev28Accepted.expectedFileCount,
+        expectedTotalBytes: UInt64 = StagingPolicy.rev28Accepted.expectedTotalBytes,
+        expectedContentMultisetSHA256: String = StagingPolicy.rev28Accepted.expectedContentMultisetSHA256,
+        baselineTripwireSHA256: String = ImmutableRunAuthorization.acceptedBaselineTripwireSHA256
+    ) {
         self.runID = runID
         self.goal = goal
         self.group = group
@@ -20,12 +38,27 @@ public struct ImmutableRunAuthorization: Equatable, Codable, Sendable {
         self.reviewedImplementationSHA256 = reviewedImplementationSHA256
         self.stagingRoot = stagingRoot.resolvingSymlinksInPath().standardizedFileURL.path
         self.stagingRunDirectory = stagingRunDirectory.resolvingSymlinksInPath().standardizedFileURL.path
+        self.expectedFileCount = expectedFileCount
+        self.expectedTotalBytes = expectedTotalBytes
+        self.expectedContentMultisetSHA256 = expectedContentMultisetSHA256
+        self.baselineTripwireSHA256 = baselineTripwireSHA256
     }
 
     fileprivate var fields: [String: String] {
-        ["runID": runID, "goal": goal, "group": group, "album": album,
-         "planSHA256": planSHA256, "reviewedImplementationSHA256": reviewedImplementationSHA256,
-         "stagingRoot": stagingRoot, "stagingRunDirectory": stagingRunDirectory]
+        [
+            "runID": runID,
+            "goal": goal,
+            "group": group,
+            "album": album,
+            "planSHA256": planSHA256,
+            "reviewedImplementationSHA256": reviewedImplementationSHA256,
+            "stagingRoot": stagingRoot,
+            "stagingRunDirectory": stagingRunDirectory,
+            "expectedFileCount": String(expectedFileCount),
+            "expectedTotalBytes": String(expectedTotalBytes),
+            "expectedContentMultisetSHA256": expectedContentMultisetSHA256,
+            "baselineTripwireSHA256": baselineTripwireSHA256,
+        ]
     }
 
     fileprivate var isValid: Bool {
@@ -35,6 +68,10 @@ public struct ImmutableRunAuthorization: Equatable, Codable, Sendable {
         let runType = (try? FileManager.default.attributesOfItem(atPath: runURL.path)[.type] as? FileAttributeType)
         return !runID.isEmpty && !goal.isEmpty && !group.isEmpty && !album.isEmpty
             && Self.isSHA256(planSHA256) && Self.isSHA256(reviewedImplementationSHA256)
+            && expectedFileCount == StagingPolicy.rev28Accepted.expectedFileCount
+            && expectedTotalBytes == StagingPolicy.rev28Accepted.expectedTotalBytes
+            && expectedContentMultisetSHA256 == StagingPolicy.rev28Accepted.expectedContentMultisetSHA256
+            && baselineTripwireSHA256 == Self.acceptedBaselineTripwireSHA256
             && rootType == .typeDirectory && runType == .typeDirectory
             && runURL.path != rootURL.path
             && runURL.path.hasPrefix(rootURL.path.hasSuffix("/") ? rootURL.path : rootURL.path + "/")
@@ -51,6 +88,8 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
     case authorizationMismatch
     case irreversibleIntentAlreadyRecorded(String)
     case irreversibleAttemptAlreadyRecorded(String)
+    case ledgerCheckpointRequired
+    case ledgerCheckpointInvalid
 
     public var description: String {
         switch self {
@@ -59,6 +98,8 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
         case .authorizationMismatch: return "authorizationMismatch"
         case let .irreversibleIntentAlreadyRecorded(kind): return "irreversibleIntentAlreadyRecorded(\(kind))"
         case let .irreversibleAttemptAlreadyRecorded(kind): return "irreversibleAttemptAlreadyRecorded(\(kind))"
+        case .ledgerCheckpointRequired: return "ledgerCheckpointRequired"
+        case .ledgerCheckpointInvalid: return "ledgerCheckpointInvalid"
         }
     }
 }
@@ -71,11 +112,44 @@ public final class PersistentTransactionOwner {
     private var saveAllIntentOwnedByThisProcess = false
     private var confirmationIntentOwnedByThisProcess = false
     private let stateLock = NSRecursiveLock()
+    private let checkpointURL: URL?
 
-    public init(authorization: ImmutableRunAuthorization, ledger: IntentLedger) throws {
+    public init(
+        authorization: ImmutableRunAuthorization,
+        ledger: IntentLedger,
+        checkpointURL: URL? = nil,
+        requireCheckpointOnResume: Bool = false
+    ) throws {
         guard authorization.isValid else { throw PersistentTransactionError.invalidAuthorization }
         self.authorization = authorization
         self.ledger = ledger
+        self.checkpointURL = checkpointURL?.standardizedFileURL
+
+        if !ledger.entries.isEmpty {
+            guard let checkpointURL = self.checkpointURL else {
+                if requireCheckpointOnResume { throw PersistentTransactionError.ledgerCheckpointRequired }
+                let bindings = ledger.entries.filter { $0.kind == "transaction.authorization" }
+                guard bindings.count == 1, bindings.first?.payload == authorization.fields else {
+                    throw PersistentTransactionError.authorizationMismatch
+                }
+                return
+            }
+            guard FileManager.default.fileExists(atPath: checkpointURL.path) else {
+                if requireCheckpointOnResume { throw PersistentTransactionError.ledgerCheckpointRequired }
+                let bindings = ledger.entries.filter { $0.kind == "transaction.authorization" }
+                guard bindings.count == 1, bindings.first?.payload == authorization.fields else {
+                    throw PersistentTransactionError.authorizationMismatch
+                }
+                try checkpoint()
+                return
+            }
+            do {
+                _ = try IntentLedger.verifyHeadAnchor(fileURL: ledger.fileURL, anchorURL: checkpointURL)
+            } catch {
+                throw PersistentTransactionError.ledgerCheckpointInvalid
+            }
+        }
+
         let bindings = ledger.entries.filter { $0.kind == "transaction.authorization" }
         if let first = bindings.first {
             guard bindings.count == 1, first.payload == authorization.fields else {
@@ -83,7 +157,7 @@ public final class PersistentTransactionOwner {
             }
         } else {
             guard ledger.entries.isEmpty else { throw PersistentTransactionError.authorizationAlreadyBound }
-            try ledger.append(kind: "transaction.authorization", payload: authorization.fields)
+            try append(kind: "transaction.authorization", payload: authorization.fields)
         }
     }
 
@@ -100,7 +174,7 @@ public final class PersistentTransactionOwner {
         stateLock.lock()
         defer { stateLock.unlock() }
         guard reversibleDispatchCount < 12 else { throw ExecutionPolicyError.reversibleBudgetExhausted }
-        try ledger.append(kind: "dispatch.reversible", payload: binding(["action": action]))
+        try append(kind: "dispatch.reversible", payload: binding(["action": action]))
     }
 
     /// Durable intent is written before the caller can post Save All. A restart
@@ -110,7 +184,7 @@ public final class PersistentTransactionOwner {
         defer { stateLock.unlock() }
         let counts = irreversibleOperationCounts
         guard counts.saveAll == 0 else { throw PersistentTransactionError.irreversibleIntentAlreadyRecorded("saveAll") }
-        try ledger.append(kind: "intent.saveAll", payload: binding(["risk": "IRREVERSIBLE_SIDE_EFFECT"]))
+        try append(kind: "intent.saveAll", payload: binding(["risk": "IRREVERSIBLE_SIDE_EFFECT"]))
         saveAllIntentOwnedByThisProcess = true
     }
 
@@ -123,7 +197,7 @@ public final class PersistentTransactionOwner {
               irreversibleOperationCounts.saveAll == 1 else {
             throw PersistentTransactionError.irreversibleAttemptAlreadyRecorded("saveAll")
         }
-        try ledger.append(kind: "attempt.saveAll", payload: binding([:]))
+        try append(kind: "attempt.saveAll", payload: binding([:]))
         saveAllIntentOwnedByThisProcess = false
     }
 
@@ -162,7 +236,7 @@ public final class PersistentTransactionOwner {
               Self.validSHA256(postconditionEvidence.sha256), Self.validSHA256(tripwireEvidence.sha256) else {
             throw PersistentTransactionError.authorizationMismatch
         }
-        try ledger.append(kind: "postcondition.chooserVerified", payload: binding([
+        try append(kind: "postcondition.chooserVerified", payload: binding([
             "postconditionEvidenceSHA256": postconditionEvidence.sha256,
             "tripwireEvidenceSHA256": tripwireEvidence.sha256,
         ]))
@@ -179,6 +253,7 @@ public final class PersistentTransactionOwner {
             throw PersistentTransactionError.authorizationMismatch
         }
         try record.append(to: ledger)
+        try checkpoint()
     }
 
     public func reserveDestinationConfirmation(action: String) throws {
@@ -190,7 +265,7 @@ public final class PersistentTransactionOwner {
               ledger.entries.contains(where: { $0.kind == "postcondition.chooserVerified" && isBound($0) }) else {
             throw PersistentTransactionError.irreversibleIntentAlreadyRecorded("destinationConfirmation")
         }
-        try ledger.append(kind: "intent.destinationConfirmation", payload: binding(["action": action]))
+        try append(kind: "intent.destinationConfirmation", payload: binding(["action": action]))
         confirmationIntentOwnedByThisProcess = true
     }
 
@@ -203,8 +278,18 @@ public final class PersistentTransactionOwner {
               !ledger.entries.contains(where: { $0.kind == "attempt.destinationConfirmation" && isBound($0) }) else {
             throw PersistentTransactionError.irreversibleAttemptAlreadyRecorded("destinationConfirmation")
         }
-        try ledger.append(kind: "attempt.destinationConfirmation", payload: binding([:]))
+        try append(kind: "attempt.destinationConfirmation", payload: binding([:]))
         confirmationIntentOwnedByThisProcess = false
+    }
+
+    private func append(kind: String, payload: [String: String]) throws {
+        try ledger.append(kind: kind, payload: payload)
+        try checkpoint()
+    }
+
+    private func checkpoint() throws {
+        guard let checkpointURL else { return }
+        try ledger.writeHeadAnchor(to: checkpointURL)
     }
 
     private func binding(_ extra: [String: String]) -> [String: String] {
