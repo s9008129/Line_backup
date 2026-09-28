@@ -1,0 +1,10 @@
+[0/1] Planning build
+Building for debugging...
+[0/12] Write sources
+[1/12] Write swift-version--58304C5D6DBC2206.txt
+[3/6] Emitting module rev28ctl
+[4/6] Compiling rev28ctl HarnessCalibration.swift
+[4/7] Write Objects.LinkFileList
+[5/7] Linking rev28ctl
+[6/7] Applying rev28ctl
+Build complete! (5.06s)

@@ -1,0 +1,80 @@
+{
+  "task_id": "T20260925-0647-01-rev28-native-closed-loop",
+  "round": "V-09 pre-Phase-A code/rules review, attempt-02",
+  "recorded_at": "2026-09-29T07:28+0800",
+  "branch": "v43-ab/codex-rev28",
+  "head": "42ae9a3fe026e1d3888001efeede88fde5dbb7cc",
+  "product_tree_unchanged_since": "42ae9a3 (later commits touch only .agent records)",
+  "supersedes": {
+    "attempt": "v09/attempt-01",
+    "implementation_digest": "eb4415f9af8c9c01bb8ffa406740dafb77d3c08a1e6d2a05b8aa4ff95f9df6b1",
+    "note": "attempt-01 reports are immutable and stay bound to the superseded digest; attempt-02 re-binds to the repaired tree and must not reuse attempt-01 evidence as proof"
+  },
+  "plan_sha256": "05413807f5d7c04d5fe57eb058da6da734ddef5e350a9b023bfa8f8d72f84c1b",
+  "handoff_sha256": "67fc16a638b115fef8b8e99e57ec0d6a2fc344cdd15c6eaf6a72bcdb1c227a33",
+  "implementation_digest": {
+    "sha256": "e80e4f0fb5483ec9a7e1c795e62662235dcfcdd884276d2fd25c9d22a5a254e9",
+    "files": 44,
+    "algorithm": "sha256 over sorted (relative-path + NUL + file-bytes + NUL) for every .swift under rev28/Sources/Rev28Core and rev28/Sources/rev28ctl",
+    "verified_at": "2026-09-29T07:26+0800",
+    "formula_cross_check": "the identical material over commit 00f8634 reproduces the prior digest eb4415f9…f6b1 / 43 files",
+    "delta_vs_attempt_01": "−rev28/Sources/Rev28Core/Transaction/OneShotAuthorization.swift, +rev28/Sources/Rev28Core/Identity/AXWindowIdentitySelector.swift, +rev28/Sources/Rev28Core/Transaction/ReviewedImplementationDigest.swift",
+    "first_repair_revision_rejected": "digest 03ac90b46b869eec952bc33733a8a81b1b2dad70406b4f0e70ea0d1f3a0fe17d was computed before the CI-freeze correction and is superseded; do not bind to it"
+  },
+  "ci_freeze_provenance": {
+    "guard": "rev28/Tools/verify_pre_live_provenance.py (fail-closed; drift in the bound source blob forbids review/live use until a new hosted freeze)",
+    "frozen_source_blob_sha": "c411011b1b44b1efb614e000f526b2118f45d120",
+    "result": "PASS",
+    "evidence": "execution-evidence/a32-provenance-v09-repairs-provenance-restore-20260929T0726.log (status=PASS, generation v3)",
+    "note": "the first repair revision had also changed rev28/Sources/rev28ctl/HarnessCalibration.swift and the guard refused (PRELIVE_PROVENANCE_FAIL: blob drift); the frozen blob was restored in commit 42ae9a3. The calibration driver's own AX read intentionally keeps the frozen bytes (windows(ofApp:).first); the C3 binding repair is scoped to the production observation path."
+  },
+  "frozen_rule_artifacts": {
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/capture-geometry-rulebook-v1.json": "09e1cf2ae181f519f9ed47979e0286212f0b051f197ced6909a9789f2f1a62ed",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/chooser-affirmation-predicate-v2.json": "0472aa0a364711fd357f872d93c5ad7e13b393cc267dbbc6244d47a20de6f3f2",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/chooser-ax-calibration-v2.json": "13aa01a2fa5d2b2d3e52d28e17a1b421ac25e6943fda1c44a572be610ef7e569",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/capture-matrix-v1.json": "e008478201770f0496d6a252680ae2a737473c32a70db888ebd2bf4aafb7ba7b",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/tripwire-attribution-ladder-v1.json": "d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/restart-observe-only-fixture-v1.json": "146b373a93c7a1ab02041e079c95eed645a7dd46d45ef518bc4a49bc8128a93f",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/postcondition-bounds-v3.json": "c10dcb43e9da14feedaed4f9e1ef5fdbf9b6afdd96d6ee8e79b84ac45a055e84",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/postcondition-latency-observations-v3.json": "ca4beabefc1f671162cec06345cf06755a62ad77a28458ac1b03a563f640b155",
+    "evidence/20260925-rev28-native-closed-loop/harness/ci-w2-item5-freeze-provenance-v3.json": "4f6f5fdcea491503b51e279b688de123ae4e38883b9d54edd02ad794baa0b152"
+  },
+  "repaired_tree_verification_evidence": {
+    "build": "execution-evidence/a29-build-v09-repairs-provenance-restore-20260929T0722.log — Build complete",
+    "focused_11_suites": "execution-evidence/a30-focused-v09-repairs-provenance-restore-20260929T0722.log — 80 tests / 0 failures",
+    "full_suite": "execution-evidence/a31-full-suite-v09-repairs-provenance-restore-20260929T0723.log — 23 suites, 222 tests / 0 failures / 0 skipped",
+    "provenance_guard": "execution-evidence/a32-provenance-v09-repairs-provenance-restore-20260929T0726.log — status=PASS, generation v3",
+    "superseded_first_revision": {
+      "focused": "execution-evidence/a27-focused-v09-repairs-20260929T0707.log — 80/0 (SHA-256 ecfcb8def948753e69e5d9a0a2f35e06ab123c4b86df2e3be7e885ce78f22a4e)",
+      "full_suite": "execution-evidence/a28-full-suite-v09-repairs-20260929T0708.log — 222/0 (SHA-256 e789e2b37b5794d81adcf877b4036971b5e9f8befb1d5353c30d52a9bbef15c9)"
+    }
+  },
+  "repair_claims_to_verify": [
+    "V09_AX_IDENTITY_WINDOW_UNBOUND — Rev28Core/Identity/AXWindowIdentitySelector.swift binds readAXIdentity to the target CGWindowID (AX window number, else unique frame match); AXIdentityRead.isBoundToWindow; ProductionObservationSource no longer uses windows[0]",
+    "V09_C5_INTRA_CLICK_REVALIDATION_MISSING — QuartzActuator.postClick revalidates readiness/process/postEvent between the hover and mouseDown",
+    "V09_C4_BUDGET_NOT_DURABLE — PersistentTransactionOwner.liveDispatchBudget recomputed from ledger; recordReversibleDispatch(per-action ≤3) and recordCandidateRevalidation(2 consecutive) durable",
+    "V09_C4_OWNER_RESERVATION_ENFORCEMENT_MISSING — reserveSaveAll requires durable eligibility.phaseB + .saveAllLocated; reserveDestinationConfirmation requires .destinationPrepared; preIntentContinuationAllowed gates resume",
+    "V09_C6_PER_PRIMITIVE_ACCOUNTING_MISSING — FolderChooserDriver DestinationPrimitiveGuard re-acquires the unique verified panel and records one reversible dispatch per primitive",
+    "V09_C7_POST_DISPATCH_GAP_UNCHECKED — FilesystemTripwireJournal.postDispatchRefusalDetail + PostSaveEnvironment.postDispatchTripwireGate + tripwireCollectionGapDisclosure",
+    "V09_CHOOSER_PREDICATE_V2_NOT_DERIVED — main.swift live-preflight hash-verifies frozen predicate+calibration bytes, derives v2 via ChooserProductionPredicate.derive, refuses non-process-stable; ChooserPredicateProductionDerivationTests affirms a calibration-shaped candidate",
+    "V09_ELIGIBILITY_LABEL_ONLY — PhaseBEligibilityArtifact.validateWithRecomputedEvidence re-reads plan/handoff/frozen/predicate bytes and compares the recomputed implementation digest; ReviewedImplementationDigest shared",
+    "V09_GOALSLOT_NON_ATOMIC_WRITE — GoalSlot.write installs via rename(2) then fsyncs the parent directory",
+    "V09_ONESHOT_MARKER_INERT — OneShotAuthorization.swift deleted; live-preflight observe-only refusal via durable goal slot entitlementConsumed",
+    "V09_ENGINE_RESUME_CONTINUATION_NARROW — LiveExecutionEngine.run() attempts verified pre-intent continuation, else observe-only",
+    "V09_MENU_BOUNDS_UNBOUND — .saveAllMenuRows requires bounds inside the retained frame; resolvedBackingScale requires exactly one display; frozen hash-binding documented as Phase A obligation (no frozen LINE menu bounds exist)",
+    "V09_CHOOSER_PROVENANCE_QUALIFIER — qualifier carried at Phase A evidence artifact level; frozen file unchanged (append-only)",
+    "calibration-harness AX read intentionally left as the v3-frozen bytes (windows(ofApp:).first); changing HarnessCalibration.swift requires a new hosted CI freeze, so the C3 binding repair is scoped to the production observation path"
+  ],
+  "prior_verification_bound_to_previous_digest": {
+    "adversarial": ["execution-evidence/a22-adversarial-run1-20260929T0640.log", "execution-evidence/a23-adversarial-run2-20260929T0640.log"],
+    "replay": ["execution-evidence/a24-replay-run1-20260929T0640.json", "execution-evidence/a25-replay-run2-20260929T0640.json"],
+    "provenance": "execution-evidence/a26-provenance-20260929T0631.log (status=PASS, generation v3)",
+    "note": "these runs predate the repaired tree; they are not accepted as repaired-tree evidence and are scheduled for re-run before closure if required"
+  },
+  "reviewer_contexts": [
+    "01-perception-geometry",
+    "02-timing-automation",
+    "03-transaction-history"
+  ],
+  "phase_b_status": "FORBIDDEN_AB_EVALUATION"
+}
