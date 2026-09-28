@@ -33,7 +33,7 @@ final class PersistentTransactionOwnerTests: XCTestCase {
         XCTAssertThrowsError(try resumed.markSaveAllAttempted())
         XCTAssertEqual(resumed.irreversibleOperationCounts.saveAll, 2)
 
-        let runDir = URL(fileURLWithPath: authorization.stagingRunDirectory)
+        let runDir = URL(fileURLWithPath: authorization.evidenceRunDirectory)
         let post = runDir.appendingPathComponent("resume-post.json")
         let tripwire = runDir.appendingPathComponent("resume-tripwire.json")
         let affirmation = ChooserAffirmation(
@@ -99,7 +99,7 @@ final class PersistentTransactionOwnerTests: XCTestCase {
         try owner.reserveSaveAll()
         try owner.markSaveAllAttempted()
         XCTAssertThrowsError(try owner.reserveDestinationConfirmation(action: "ReturnKey"))
-        let runDir = URL(fileURLWithPath: authorization.stagingRunDirectory)
+        let runDir = URL(fileURLWithPath: authorization.evidenceRunDirectory)
         let post = runDir.appendingPathComponent("post.json")
         let tripwire = runDir.appendingPathComponent("tripwire.json")
         let affirmation = ChooserAffirmation(
