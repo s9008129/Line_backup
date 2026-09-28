@@ -31,6 +31,12 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Verify frozen pre-live provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 rev28/Tools/verify_pre_live_provenance.py
+
       - name: Record runner and toolchain
         shell: bash
         run: |

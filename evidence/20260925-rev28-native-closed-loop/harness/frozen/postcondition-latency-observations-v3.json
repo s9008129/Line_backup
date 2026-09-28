@@ -1,0 +1,32 @@
+{
+  "atISO8601" : "2026-09-25T10:51:36.156Z",
+  "delayedPanelScheduledMs" : 900,
+  "delayedPanelShownMs" : 1158.5140228271484,
+  "maxMs" : 155.18903732299805,
+  "medianMs" : 57.60502815246582,
+  "p95Ms" : 155.18903732299805,
+  "runCount" : 20,
+  "samples" : [
+    {"delayMs":0,"run":1,"shownEventAt":1790333478.85344,"willShowToShownMs":155.18903732299805},
+    {"delayMs":0,"run":2,"shownEventAt":1790333480.406186,"willShowToShownMs":36.3922119140625},
+    {"delayMs":0,"run":3,"shownEventAt":1790333481.417427,"willShowToShownMs":72.00407981872559},
+    {"delayMs":0,"run":4,"shownEventAt":1790333482.19543,"willShowToShownMs":64.82505798339844},
+    {"delayMs":0,"run":5,"shownEventAt":1790333482.914421,"willShowToShownMs":46.92411422729492},
+    {"delayMs":0,"run":6,"shownEventAt":1790333483.7883449,"willShowToShownMs":57.07502365112305},
+    {"delayMs":0,"run":7,"shownEventAt":1790333484.505822,"willShowToShownMs":56.81896209716797},
+    {"delayMs":0,"run":8,"shownEventAt":1790333485.32566,"willShowToShownMs":57.60502815246582},
+    {"delayMs":0,"run":9,"shownEventAt":1790333486.068277,"willShowToShownMs":47.781944274902344},
+    {"delayMs":0,"run":10,"shownEventAt":1790333486.670446,"willShowToShownMs":71.35677337646484},
+    {"delayMs":0,"run":11,"shownEventAt":1790333487.289156,"willShowToShownMs":52.542924880981445},
+    {"delayMs":0,"run":12,"shownEventAt":1790333487.943008,"willShowToShownMs":63.76504898071289},
+    {"delayMs":0,"run":13,"shownEventAt":1790333488.783328,"willShowToShownMs":60.65797805786133},
+    {"delayMs":0,"run":14,"shownEventAt":1790333489.540681,"willShowToShownMs":69.28086280822754},
+    {"delayMs":0,"run":15,"shownEventAt":1790333490.362135,"willShowToShownMs":85.26802062988281},
+    {"delayMs":0,"run":16,"shownEventAt":1790333491.106019,"willShowToShownMs":70.38593292236328},
+    {"delayMs":0,"run":17,"shownEventAt":1790333491.820304,"willShowToShownMs":55.229902267456055},
+    {"delayMs":0,"run":18,"shownEventAt":1790333492.6639671,"willShowToShownMs":54.5201301574707},
+    {"delayMs":0,"run":19,"shownEventAt":1790333493.317239,"willShowToShownMs":54.69918251037598},
+    {"delayMs":0,"run":20,"shownEventAt":1790333493.98803,"willShowToShownMs":40.579795837402344}
+  ],
+  "scheduledDelayMs" : 0
+}
