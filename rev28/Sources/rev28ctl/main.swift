@@ -77,6 +77,12 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
             let geometryRuleBookPath: String
             let menuBoundsCapture: Bounds
             let addressableBoundsCapture: Bounds
+            let chooserPredicatePath: String
+            let baselineReferencePath: String
+            let approvedRoot: String
+            let tripwireRoots: [String]
+            let baselineSourcePath: String?
+            let phaseBEligibilityPath: String?
             let observationBudgetNanos: UInt64?
             let goalSlotDirectory: String?
             let sessionID: String?
@@ -121,6 +127,32 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
             from: Data(contentsOf: URL(fileURLWithPath: config.geometryRuleBookPath))
         )
         let target = ObservationTarget(bundleID: config.targetBundleID, pid: config.targetPID)
+        let evidenceRunDirectory = URL(fileURLWithPath: auth.evidenceRunDirectory)
+        let chooserPredicate = try JSONDecoder().decode(
+            ChooserAffirmationPredicate.self,
+            from: Data(contentsOf: URL(fileURLWithPath: config.chooserPredicatePath))
+        )
+        // Eligibility is armed only by an explicit artifact beneath this run's
+        // evidence directory; a configured-but-unreadable artifact refuses the
+        // command instead of silently degrading to "not armed".
+        let phaseBEligibility: PhaseBEligibilityArtifact?
+        if let path = config.phaseBEligibilityPath {
+            phaseBEligibility = try PhaseBEligibilityArtifact.load(
+                fileURL: URL(fileURLWithPath: path),
+                withinRunDirectory: evidenceRunDirectory
+            )
+        } else {
+            phaseBEligibility = nil
+        }
+        let postSave = try ProductionPostSaveEnvironment(
+            baselineReferenceFile: URL(fileURLWithPath: config.baselineReferencePath),
+            stagingRunDirectory: URL(fileURLWithPath: auth.stagingRunDirectory),
+            approvedRoot: URL(fileURLWithPath: config.approvedRoot),
+            monitoredRoots: config.tripwireRoots.map { URL(fileURLWithPath: $0) },
+            evidenceRunDirectory: evidenceRunDirectory,
+            baselineSourceDirectory: config.baselineSourcePath.map { URL(fileURLWithPath: $0) },
+            signingIdentity: { ProcessIdentity.signingIdentity(pid: $0) }
+        )
         let composition = try LiveCompositionFactory.make(
             authorization: auth,
             ledgerURL: URL(fileURLWithPath: config.ledgerPath),
@@ -137,21 +169,31 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
                 ),
                 geometryRuleBook: ruleBook,
                 menuBoundsCapture: config.menuBoundsCapture.rect,
-                addressableBoundsCapture: config.addressableBoundsCapture.rect
+                addressableBoundsCapture: config.addressableBoundsCapture.rect,
+                chooserPredicate: chooserPredicate,
+                baselineReferenceFile: URL(fileURLWithPath: config.baselineReferencePath)
             ),
             target: target,
             source: try ProductionObservationSource(
                 target: target,
-                evidenceRunDirectory: URL(fileURLWithPath: auth.evidenceRunDirectory),
+                evidenceRunDirectory: evidenceRunDirectory,
                 ruleBook: ruleBook,
                 signingIdentity: { ProcessIdentity.signingIdentity(pid: $0) }
             ),
             environment: ProductionActuationEnvironment(),
+            postSave: postSave,
+            phaseBEligibility: phaseBEligibility,
             sessionID: config.sessionID ?? "live-\(auth.runID)"
         )
         switch command {
         case "live-preflight":
             let outcome = try await composition.engine.runPreflight()
+            // Phase A: record ≥10 s of pre-dispatch environmental context at
+            // SAVE_ALL_LOCATED with the tripwire running and gap-free. Zero
+            // irreversible intent.
+            let preDispatchContextSHA256 = try await composition.adapter.observePreDispatchContext(
+                owner: composition.owner
+            )
             let captures = await composition.session.captureCount
             let record = LivePreflightRecord(
                 runID: auth.runID,
@@ -162,7 +204,8 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
                 saveAllIrreversibleRecords: outcome.saveAllIrreversibleRecords,
                 destinationIrreversibleRecords: outcome.destinationIrreversibleRecords,
                 entitlementConsumed: outcome.entitlementConsumed,
-                reversibleDispatches: composition.owner.reversibleDispatchCount
+                reversibleDispatches: composition.owner.reversibleDispatchCount,
+                preDispatchContextSHA256: preDispatchContextSHA256
             )
             let stamp = EvidenceIO.iso8601().replacingOccurrences(of: ":", with: "-")
             let outcomeURL = URL(fileURLWithPath: auth.evidenceRunDirectory)
@@ -201,6 +244,7 @@ private struct LivePreflightRecord: Codable {
     let destinationIrreversibleRecords: Int
     let entitlementConsumed: Bool
     let reversibleDispatches: Int
+    let preDispatchContextSHA256: String
 }
 
 private enum ReviewedImplementationDigest {

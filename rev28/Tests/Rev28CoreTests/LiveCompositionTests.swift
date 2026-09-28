@@ -42,7 +42,9 @@ final class LiveCompositionTests: XCTestCase {
             geometryState: geometryState,
             geometryRuleBook: ruleBook ?? self.ruleBook(for: geometryState),
             menuBoundsCapture: menuBounds ?? self.menuBounds,
-            addressableBoundsCapture: addressableBounds
+            addressableBoundsCapture: addressableBounds,
+            chooserPredicate: TestChooserFixtures.predicate(),
+            baselineReferenceFile: URL(fileURLWithPath: "/dev/null")
         )
     }
 
@@ -123,6 +125,7 @@ final class LiveCompositionTests: XCTestCase {
                 target: ObservationTarget(bundleID: "jp.naver.line.mac", pid: 4242),
                 source: source,
                 environment: FakeActuationEnvironment(),
+                postSave: FakePostSaveEnvironment(),
                 sessionID: "composition-1"
             )
         ) { error in
@@ -159,6 +162,7 @@ final class LiveCompositionTests: XCTestCase {
             target: ObservationTarget(bundleID: "jp.naver.line.mac", pid: 4242),
             source: source,
             environment: environment,
+            postSave: FakePostSaveEnvironment(),
             ocr: ScriptedOcr(scene: scene),
             sessionID: "composition-2"
         )
@@ -204,6 +208,7 @@ final class LiveCompositionTests: XCTestCase {
             target: ObservationTarget(bundleID: "jp.naver.line.mac", pid: 4242),
             source: source,
             environment: environment,
+            postSave: FakePostSaveEnvironment(),
             ocr: ScriptedOcr(scene: scene),
             sessionID: "composition-3"
         )
@@ -211,10 +216,11 @@ final class LiveCompositionTests: XCTestCase {
             _ = try await composition.engine.run()
             XCTFail("the composed engine must stop at the irreversible boundary")
         } catch let error as ComposedAdapterError {
-            guard case let .capabilityNotBuilt(stage) = error else {
+            guard case let .stateRefused(state, detail) = error else {
                 return XCTFail("unexpected error \(error)")
             }
-            XCTAssertEqual(stage, "dispatchSaveAll")
+            XCTAssertEqual(state, ExecutionState.saveAllLocated.rawValue)
+            XCTAssertTrue(detail.contains("eligibility"), detail)
         }
         XCTAssertEqual(composition.owner.currentState, .saveAllLocated)
         XCTAssertEqual(composition.owner.irreversibleOperationCounts.saveAll, 0)

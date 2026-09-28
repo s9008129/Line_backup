@@ -23,6 +23,13 @@ public struct ProductionActuationEnvironment: ActuationEnvironment {
         ProcessInfo.processInfo.systemUptime
     }
 
+    public func readinessObservation(
+        identity: WindowIdentity,
+        candidate: StructuralCandidate
+    ) async throws -> ReadinessObservation {
+        try await ReadinessObservation.captureLive(identity: identity, candidate: candidate)
+    }
+
     public func postReversibleClick(
         permit: ReadinessPermit,
         binding: SurfaceBinding,

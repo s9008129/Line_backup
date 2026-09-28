@@ -32,6 +32,9 @@ public protocol ActuationEnvironment: Sendable {
     func applicationActive(pid: Int32) -> Bool
     func targetFrontmost(pid: Int32) -> Bool
     func uptime() -> Double
+    /// Fresh live readiness facts for one candidate, captured by the OS seam:
+    /// production reads SCK/CG/process facts; tests substitute the observation.
+    func readinessObservation(identity: WindowIdentity, candidate: StructuralCandidate) async throws -> ReadinessObservation
     func postReversibleClick(
         permit: ReadinessPermit,
         binding: SurfaceBinding,
@@ -50,6 +53,10 @@ public struct ComposedAdapterConfiguration: Sendable {
     /// a caller-wide band from the row bands themselves.
     public let menuBoundsCapture: CGRect?
     public let addressableBoundsCapture: CGRect?
+    /// Frozen/derived production chooser predicate (plan C6). The composition
+    /// never edits frozen artifacts; it only evaluates with them.
+    public let chooserPredicate: ChooserAffirmationPredicate
+    public let baselineReferenceFile: URL
 
     public init(
         target: ObservationTarget,
@@ -57,7 +64,9 @@ public struct ComposedAdapterConfiguration: Sendable {
         geometryState: CaptureGeometryState,
         observationBudgetNanos: UInt64,
         menuBoundsCapture: CGRect? = nil,
-        addressableBoundsCapture: CGRect? = nil
+        addressableBoundsCapture: CGRect? = nil,
+        chooserPredicate: ChooserAffirmationPredicate,
+        baselineReferenceFile: URL
     ) {
         self.target = target
         self.captureConfiguration = captureConfiguration
@@ -65,6 +74,8 @@ public struct ComposedAdapterConfiguration: Sendable {
         self.observationBudgetNanos = observationBudgetNanos
         self.menuBoundsCapture = menuBoundsCapture
         self.addressableBoundsCapture = addressableBoundsCapture
+        self.chooserPredicate = chooserPredicate
+        self.baselineReferenceFile = baselineReferenceFile
     }
 }
 
@@ -73,18 +84,25 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
     public static let albumCount = "57"
     public static let albumDetailCountText = "57張照片"
 
-    private let session: NativeObservationSession
-    private let environment: any ActuationEnvironment
-    private let configuration: ComposedAdapterConfiguration
+    let session: NativeObservationSession
+    let environment: any ActuationEnvironment
+    let configuration: ComposedAdapterConfiguration
+    let postSave: any PostSaveEnvironment
+    let phaseBEligibility: PhaseBEligibilityArtifact?
+    let journalBox = PostSaveJournalBox()
 
     public init(
         session: NativeObservationSession,
         environment: any ActuationEnvironment,
-        configuration: ComposedAdapterConfiguration
+        configuration: ComposedAdapterConfiguration,
+        postSave: any PostSaveEnvironment,
+        phaseBEligibility: PhaseBEligibilityArtifact?
     ) {
         self.session = session
         self.environment = environment
         self.configuration = configuration
+        self.postSave = postSave
+        self.phaseBEligibility = phaseBEligibility
     }
 
     // MARK: - LiveExecutionAdapter
@@ -153,38 +171,6 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
         return try persist(bundle: reVerified, owner: owner)
     }
 
-    public func dispatchSaveAll(owner: PersistentTransactionOwner) async throws -> String {
-        throw ComposedAdapterError.capabilityNotBuilt("dispatchSaveAll")
-    }
-
-    public func observeChooser(owner: PersistentTransactionOwner) async throws -> LiveChooserEvidence {
-        throw ComposedAdapterError.capabilityNotBuilt("observeChooser")
-    }
-
-    public func prepareDestination(owner: PersistentTransactionOwner) async throws -> String {
-        throw ComposedAdapterError.capabilityNotBuilt("prepareDestination")
-    }
-
-    public func confirmDestination(owner: PersistentTransactionOwner) async throws -> String {
-        throw ComposedAdapterError.capabilityNotBuilt("confirmDestination")
-    }
-
-    public func observeDownloadStarted(owner: PersistentTransactionOwner) async throws -> String {
-        throw ComposedAdapterError.capabilityNotBuilt("observeDownloadStarted")
-    }
-
-    public func observeDownloadInProgress(owner: PersistentTransactionOwner) async throws -> String {
-        throw ComposedAdapterError.capabilityNotBuilt("observeDownloadInProgress")
-    }
-
-    public func observeFilesystemStable(owner: PersistentTransactionOwner) async throws -> String {
-        throw ComposedAdapterError.capabilityNotBuilt("observeFilesystemStable")
-    }
-
-    public func verifyContent(owner: PersistentTransactionOwner) async throws -> LiveContentEvidence {
-        throw ComposedAdapterError.capabilityNotBuilt("verifyContent")
-    }
-
     // MARK: - State plans
 
     func localization(for state: ExecutionState) -> ObservationLocalization {
@@ -206,7 +192,9 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
         }
     }
 
-    private func observe(
+    /// One fresh retained observation bundle for `state`. Internal so the
+    /// post-Save-All capabilities share the exact same session/freshness path.
+    func observe(
         state: ExecutionState,
         owner: PersistentTransactionOwner,
         localization: ObservationLocalization

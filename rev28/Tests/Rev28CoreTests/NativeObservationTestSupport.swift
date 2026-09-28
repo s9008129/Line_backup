@@ -274,6 +274,40 @@ final class FakeActuationEnvironment: @unchecked Sendable, ActuationEnvironment 
     func targetFrontmost(pid: Int32) -> Bool { frontmost }
     func uptime() -> Double { uptimeValue }
 
+    /// Substitution for the live SCK/CG freshness read: the scripted scene's
+    /// window and the candidate's own binding are the fresh facts, so the
+    /// production permit/geometry decisions in `mintPermit` still run.
+    func readinessObservation(
+        identity: WindowIdentity,
+        candidate: StructuralCandidate
+    ) async throws -> ReadinessObservation {
+        let point = candidate.pointCapturePx
+        let safe = candidate.safeRectCapturePx
+        let width = max(safe.maxX, point.x) + 100
+        let height = max(safe.maxY, point.y) + 100
+        return ReadinessObservation(
+            applicationActive: active,
+            targetFrontmost: frontmost,
+            freshWindow: FreshWindowObservation(
+                bundleID: identity.bundleID,
+                process: identity.process,
+                windowID: identity.windowID,
+                frame: identity.cgEntry.frame,
+                layer: identity.cgEntry.layer,
+                isOnScreen: true
+            ),
+            currentEpoch: identity.captureEpoch,
+            currentBinding: candidate.binding,
+            captureGeometry: CaptureGeometry(
+                windowFrame: identity.cgEntry.frame,
+                captureBBox: identity.cgEntry.frame,
+                scale: 1
+            ),
+            captureImageSize: CGSize(width: width, height: height),
+            observedAtUptime: uptimeValue
+        )
+    }
+
     func postReversibleClick(
         permit: ReadinessPermit,
         binding: SurfaceBinding,
@@ -299,6 +333,326 @@ enum NativeObservationTestWindows {
             ownerPID: 4242,
             ownerBundleID: "jp.naver.line.mac",
             ownerName: "LINE"
+        )
+    }
+}
+
+/// Frozen-shape v2 chooser predicate and scripted chooser facts shared by the
+/// composed post-Save-All tests. The predicate is never edited by the
+/// composition; only the machine facts around it are scripted.
+enum TestChooserFixtures {
+    static let chooserWindowID: UInt32 = 99
+    static let chooserPID: Int32 = 100
+    static let chooserBundleID = "com.apple.appkit.xpc.openAndSavePanelService"
+    static let chooserSigning = "Developer ID Application: Apple (FAKE)"
+
+    static func predicate() -> ChooserAffirmationPredicate {
+        let defaultButton = ButtonRequirement(
+            mode: .titleIn,
+            attributeName: nil,
+            attributeValue: nil,
+            titles: ["Open"],
+            buttonRoles: ["AXButton"]
+        )
+        let cancelButton = ButtonRequirement(
+            mode: .titleIn,
+            attributeName: nil,
+            attributeValue: nil,
+            titles: ["Cancel"],
+            buttonRoles: ["AXButton"]
+        )
+        let clauses = ChooserAXClauseSet(
+            windowRole: "AXWindow",
+            allowedSubroles: ["AXStandardWindow"],
+            requiresTextField: true,
+            textFieldRoles: ["AXTextField"],
+            requiresPopUpButton: false,
+            popUpButtonRoles: [],
+            defaultButton: defaultButton,
+            cancelButton: cancelButton,
+            requiresPathAffordance: false,
+            pathAffordanceRoles: [],
+            pathAffordanceTitles: []
+        )
+        return ChooserAffirmationPredicate(
+            predicateID: "unit-test-v2",
+            frozenAtISO8601: "2026-09-29T00:00:00.000Z",
+            calibratedAgainst: "unit-test",
+            ax: clauses,
+            ownership: ChooserOwnershipClauseSet(
+                requiresOwningPIDInCensusUnion: true,
+                requiresStableProcessInstance: true,
+                emptyPreCensusWidensRefusal: true
+            ),
+            predicateVersion: 2
+        )
+    }
+
+    static func processFacts(pid: Int32 = chooserPID, startTime: Double = 10) -> ChooserProcessFacts {
+        ChooserProcessFacts(
+            pid: pid,
+            bundleID: chooserBundleID,
+            signingIdentity: chooserSigning,
+            startTimeUnix: startTime
+        )
+    }
+
+    static func census(
+        windowIDs: [UInt32] = [7, 8],
+        pid: Int32 = chooserPID
+    ) -> ChooserCensus {
+        ChooserCensus(
+            windowIDs: windowIDs,
+            processes: [processFacts(pid: pid)],
+            recordedAtMonotonicNanos: 1
+        )
+    }
+
+    static func affirmingWindow(windowID: UInt32 = chooserWindowID, pid: Int32 = chooserPID) -> ChooserWindowFacts {
+        let owner = processFacts(pid: pid)
+        let nodes = [
+            AXNodeDump(
+                depth: 0, role: "AXWindow", subrole: "AXStandardWindow", title: "Open",
+                description: nil, identifier: nil, keyEquivalent: nil, value: nil,
+                enabled: true, frame: CGRect(x: 0, y: 0, width: 300, height: 200), attributes: [:]
+            ),
+            AXNodeDump(
+                depth: 1, role: "AXTextField", subrole: nil, title: nil,
+                description: nil, identifier: nil, keyEquivalent: nil, value: "/tmp/destination",
+                enabled: true, frame: nil, attributes: [:]
+            ),
+            AXNodeDump(
+                depth: 1, role: "AXButton", subrole: nil, title: "Open",
+                description: nil, identifier: nil, keyEquivalent: "\r", value: nil,
+                enabled: true, frame: nil, attributes: [:]
+            ),
+            AXNodeDump(
+                depth: 1, role: "AXButton", subrole: nil, title: "Cancel",
+                description: nil, identifier: nil, keyEquivalent: nil, value: nil,
+                enabled: true, frame: nil, attributes: [:]
+            ),
+        ]
+        return ChooserWindowFacts(
+            windowID: windowID,
+            frame: CGRect(x: 0, y: 0, width: 300, height: 200),
+            onScreen: true,
+            presentInSCInventory: true,
+            presentInCGInventory: true,
+            owner: owner,
+            pidReuseDetected: false,
+            axNodes: nodes,
+            preDispatchOwner: owner,
+            postDispatchOwner: owner
+        )
+    }
+
+    static func affirmingFacts(
+        windowID: UInt32 = chooserWindowID,
+        pid: Int32 = chooserPID,
+        tripwire: [TripwireClassification] = []
+    ) -> ChooserFacts {
+        ChooserFacts(
+            windows: [affirmingWindow(windowID: windowID, pid: pid)],
+            postDispatchCensusPIDs: [pid],
+            tripwire: tripwire
+        )
+    }
+
+    static func emptyFacts(tripwire: [TripwireClassification] = []) -> ChooserFacts {
+        ChooserFacts(windows: [], postDispatchCensusPIDs: [chooserPID], tripwire: tripwire)
+    }
+}
+
+/// Test substitution below the post-Save-All OS boundary. The composition's
+/// state/eligibility/predicate/intent/evidence decisions stay in production
+/// code; this only scripts the machine facts and the reviewed primitives.
+final class FakePostSaveEnvironment: @unchecked Sendable, PostSaveEnvironment {
+    private let lock = NSLock()
+    private var clock: Double = 1_000
+    private var chooserIndex = 0
+    private var chooserResults: [ChooserFactsResult] = []
+
+    var sleepSecondsAdvance: Double = 3
+    var baselineResult: BaselineVerificationResult?
+    var preDispatchContextFacts: PreDispatchContextFacts?
+    var census: ChooserCensus?
+    var preDispatchCensusError: Error?
+    var postConfirmationFactsResult: PostConfirmationFacts?
+    var stagingFiles: [StagingFileRecord] = []
+    var stagingSubdirectories: [String] = []
+    /// When true every sample rewrites mtimes to "now", so quiescence can never
+    /// be reached and the caller must observe the cap terminal instead.
+    var stagingModificationTimesFollowClock = false
+    var tripwire: [TripwireClassification] = []
+    var prepareDestinationResult = "prepared"
+    var prepareDestinationError: Error?
+    var confirmDefaultButtonResult = "role=AXButton title=Open"
+    /// Clock used to consume the readiness permit in the stub dispatch. The
+    /// permit is minted from `FakeActuationEnvironment.uptimeValue`, so this
+    /// must stay aligned with it or the stub would prove the expiry path.
+    var readinessNow: Double = 100
+
+    private(set) var saveAllClicks = 0
+    private(set) var dispatchBoundaryMarks = 0
+    private(set) var preparedDestinations: [String] = []
+    private(set) var preparedPIDs: [Int32] = []
+    private(set) var confirmations = 0
+
+    func setChooserResults(_ results: [ChooserFactsResult]) {
+        lock.lock(); chooserResults = results; chooserIndex = 0; lock.unlock()
+    }
+
+    func advanceClock(by seconds: Double) {
+        lock.lock(); clock += seconds; lock.unlock()
+    }
+
+    var currentClock: Double {
+        lock.lock(); defer { lock.unlock() }
+        return clock
+    }
+
+    func verifyBaseline() throws -> BaselineVerificationResult {
+        baselineResult ?? BaselineVerificationResult(
+            sourceDirectory: "/baseline",
+            fileCount: StagingPolicy.rev28Accepted.expectedFileCount,
+            totalBytes: StagingPolicy.rev28Accepted.expectedTotalBytes,
+            contentMultisetSHA256: StagingPolicy.rev28Accepted.expectedContentMultisetSHA256,
+            nameInclusiveTripwireSHA256: ImmutableRunAuthorization.acceptedBaselineTripwireSHA256,
+            verifiedAtISO8601: "2026-09-29T00:00:00.000Z"
+        )
+    }
+
+    func preDispatchContext(minimumSeconds: Double) async throws -> PreDispatchContextFacts {
+        if let facts = preDispatchContextFacts { return facts }
+        return PreDispatchContextFacts(
+            minimumSeconds: minimumSeconds,
+            observedSeconds: minimumSeconds,
+            journalRunning: true,
+            journalFailure: nil,
+            collectionGap: nil,
+            journalStartedAtMonotonicNanos: 1,
+            facts: []
+        )
+    }
+
+    func preDispatchCensus() async throws -> ChooserCensus {
+        if let error = preDispatchCensusError { throw error }
+        return census ?? TestChooserFixtures.census()
+    }
+
+    func sampleChooserFacts(preCensus: ChooserCensus) async -> ChooserFactsResult {
+        lock.lock()
+        defer { lock.unlock() }
+        guard !chooserResults.isEmpty else { return .facts(TestChooserFixtures.emptyFacts()) }
+        let result = chooserResults[min(chooserIndex, chooserResults.count - 1)]
+        chooserIndex += 1
+        return result
+    }
+
+    func dispatchSaveAllClick(
+        owner: PersistentTransactionOwner,
+        permit: ReadinessPermit,
+        binding: SurfaceBinding
+    ) throws {
+        lock.lock(); saveAllClicks += 1; lock.unlock()
+        // Keep the production ledger semantics (durable intent + attempt before
+        // dispatch) while proving the AB round posts no real event.
+        try GatedQuartzActuator.postClick(
+            permit: permit,
+            currentBinding: binding,
+            intent: .saveAll(owner),
+            sink: { _, _ in },
+            readinessCheck: { _, _ in true },
+            processIdentityCheck: { _, _ in true },
+            postEventAccessCheck: { true },
+            now: readinessNow
+        )
+    }
+
+    func prepareDestination(
+        owner: PersistentTransactionOwner,
+        pid: Int32,
+        expectedProcess: ProcessInstanceID,
+        destination: URL,
+        predicate: ChooserAffirmationPredicate,
+        candidate: ChooserCandidate
+    ) throws -> String {
+        if let error = prepareDestinationError { throw error }
+        lock.lock()
+        preparedDestinations.append(destination.standardizedFileURL.path)
+        preparedPIDs.append(pid)
+        lock.unlock()
+        try owner.recordReversibleDispatch(action: "chooser.prepareDestination")
+        return prepareDestinationResult
+    }
+
+    func confirmDefaultButton(
+        owner: PersistentTransactionOwner,
+        pid: Int32,
+        expectedProcess: ProcessInstanceID,
+        destination: URL,
+        predicate: ChooserAffirmationPredicate,
+        candidate: ChooserCandidate
+    ) throws -> String {
+        lock.lock(); confirmations += 1; lock.unlock()
+        var pressed = "?"
+        try GatedDestinationConfirmation.perform(
+            owner: owner,
+            action: "AXPressDefaultButton",
+            readinessCheck: { true },
+            dispatch: { pressed = self.confirmDefaultButtonResult }
+        )
+        return pressed
+    }
+
+    func postConfirmationFacts(chooserWindowIDs: [UInt32], stagingDirectory: URL) async -> PostConfirmationFacts? {
+        postConfirmationFactsResult ?? PostConfirmationFacts(
+            chooserWindowStillOnScreen: false,
+            stagingSnapshot: snapshot(directory: stagingDirectory),
+            tripwire: tripwire
+        )
+    }
+
+    func stagingSnapshot(directory: URL) throws -> StagingSnapshot {
+        snapshot(directory: directory)
+    }
+
+    func tripwireObservations() -> [TripwireClassification] {
+        tripwire
+    }
+
+    func markDispatchBoundary() {
+        lock.lock(); dispatchBoundaryMarks += 1; lock.unlock()
+    }
+
+    func monotonicNow() -> Double {
+        currentClock
+    }
+
+    func sleep(seconds: Double) async {
+        lock.lock()
+        clock += max(0, seconds) + sleepSecondsAdvance
+        lock.unlock()
+    }
+
+    private func snapshot(directory: URL) -> StagingSnapshot {
+        lock.lock()
+        defer { lock.unlock() }
+        let files = stagingModificationTimesFollowClock
+            ? stagingFiles.map { file in
+                StagingFileRecord(
+                    name: file.name,
+                    size: file.size,
+                    modificationTime: clock,
+                    sha256: file.sha256,
+                    decodable: file.decodable
+                )
+            }
+            : stagingFiles
+        return StagingSnapshot(
+            observedAt: clock,
+            files: files,
+            subdirectories: stagingSubdirectories
         )
     }
 }

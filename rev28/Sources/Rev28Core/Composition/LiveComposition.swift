@@ -42,6 +42,12 @@ public struct LiveCompositionConfiguration: Codable, Equatable, Sendable {
     /// configuration error, never a derived band.
     public let menuBoundsCapture: CGRect
     public let addressableBoundsCapture: CGRect
+    /// Frozen/derived production chooser predicate (plan C6): the composition
+    /// only evaluates with it, never edits it.
+    public let chooserPredicate: ChooserAffirmationPredicate
+    /// Accepted baseline reference file the run re-verifies before and after
+    /// the irreversible boundary.
+    public let baselineReferenceFile: URL
 
     public init(
         observationBudgetNanos: UInt64,
@@ -49,7 +55,9 @@ public struct LiveCompositionConfiguration: Codable, Equatable, Sendable {
         geometryState: CaptureGeometryState,
         geometryRuleBook: CaptureGeometryRuleBook,
         menuBoundsCapture: CGRect,
-        addressableBoundsCapture: CGRect
+        addressableBoundsCapture: CGRect,
+        chooserPredicate: ChooserAffirmationPredicate,
+        baselineReferenceFile: URL
     ) {
         self.observationBudgetNanos = observationBudgetNanos
         self.captureConfiguration = captureConfiguration
@@ -57,6 +65,8 @@ public struct LiveCompositionConfiguration: Codable, Equatable, Sendable {
         self.geometryRuleBook = geometryRuleBook
         self.menuBoundsCapture = menuBoundsCapture
         self.addressableBoundsCapture = addressableBoundsCapture
+        self.chooserPredicate = chooserPredicate
+        self.baselineReferenceFile = baselineReferenceFile
     }
 }
 
@@ -97,6 +107,8 @@ public enum LiveCompositionFactory {
         target: ObservationTarget,
         source: any ObservationSource,
         environment: any ActuationEnvironment,
+        postSave: any PostSaveEnvironment,
+        phaseBEligibility: PhaseBEligibilityArtifact? = nil,
         ocr: any OcrPerforming = VisionOcrEngine(),
         sessionID: String,
         requireCheckpointOnResume: Bool = true
@@ -119,8 +131,12 @@ public enum LiveCompositionFactory {
                 geometryState: configuration.geometryState,
                 observationBudgetNanos: configuration.observationBudgetNanos,
                 menuBoundsCapture: configuration.menuBoundsCapture,
-                addressableBoundsCapture: configuration.addressableBoundsCapture
-            )
+                addressableBoundsCapture: configuration.addressableBoundsCapture,
+                chooserPredicate: configuration.chooserPredicate,
+                baselineReferenceFile: configuration.baselineReferenceFile
+            ),
+            postSave: postSave,
+            phaseBEligibility: phaseBEligibility
         )
         return LiveComposition(
             owner: owner,
