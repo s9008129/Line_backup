@@ -14,7 +14,7 @@ permissions:
 
 concurrency:
   group: rev28-v09-autofix
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   fix:
