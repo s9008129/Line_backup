@@ -33,6 +33,46 @@ final class PersistentTransactionOwnerTests: XCTestCase {
         XCTAssertEqual(resumed.irreversibleOperationCounts.saveAll, 2)
     }
 
+    func testProductionCheckpointIsRequiredAndDetectsRollback() throws {
+        let (url, authorization) = try setup()
+        let checkpoint = url.deletingLastPathComponent().appendingPathComponent("ledger-head.anchor")
+        let owner = try PersistentTransactionOwner(
+            authorization: authorization,
+            ledger: IntentLedger(fileURL: url),
+            checkpointURL: checkpoint,
+            requireCheckpointOnResume: true
+        )
+        try owner.reserveSaveAll()
+        XCTAssertTrue(FileManager.default.fileExists(atPath: checkpoint.path))
+
+        let data = try Data(contentsOf: url)
+        let firstNewline = try XCTUnwrap(data.firstIndex(of: 10))
+        try Data(data[...firstNewline]).write(to: url)
+
+        XCTAssertThrowsError(try PersistentTransactionOwner(
+            authorization: authorization,
+            ledger: IntentLedger(fileURL: url),
+            checkpointURL: checkpoint,
+            requireCheckpointOnResume: true
+        )) { error in
+            XCTAssertEqual(error as? PersistentTransactionError, .ledgerCheckpointInvalid)
+        }
+    }
+
+    func testAuthorizationBindsAcceptedContentContract() throws {
+        let (_, authorization) = try setup()
+        XCTAssertEqual(authorization.expectedFileCount, 57)
+        XCTAssertEqual(authorization.expectedTotalBytes, 17_924_900)
+        XCTAssertEqual(
+            authorization.expectedContentMultisetSHA256,
+            "ee958e6467676506a1c7aaf237a4376ecc5e5083fd94aa6fd0d56d376cacdaaf"
+        )
+        XCTAssertEqual(
+            authorization.baselineTripwireSHA256,
+            ImmutableRunAuthorization.acceptedBaselineTripwireSHA256
+        )
+    }
+
     func testAuthorizationIsImmutableAndConfirmationRequiresVerifiedChooser() throws {
         let (url, authorization) = try setup()
         let owner = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))
