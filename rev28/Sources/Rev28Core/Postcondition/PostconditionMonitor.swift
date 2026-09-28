@@ -95,6 +95,11 @@ public enum PostconditionMonitorError: Error, CustomStringConvertible {
 public enum PostconditionMonitor {
     /// Runs the bounded observation window. Each sample is verdict-eligible;
     /// the sampler itself owns capture/AX/CG evidence collection.
+    ///
+    /// The deadline is evaluated *after* each sampler call. This is important:
+    /// a slow ScreenCaptureKit/AX sample can start before the hard cap and return
+    /// after it. Such an affirmation is late evidence and must never be promoted
+    /// to `chooserVerified`.
     public static func run(
         bounds: PostconditionBounds,
         sampler: @escaping @Sendable () async -> PostconditionSample,
@@ -107,36 +112,198 @@ public enum PostconditionMonitor {
     ) async -> PostconditionOutcome {
         let start = monotonicNow()
         var sampleCount = 0
+
         while true {
             let sample = await sampler()
             sampleCount += 1
+            let elapsed = max(0, monotonicNow() - start)
+
             if let affirmation = sample.affirmed {
-                return .chooserVerified(affirmation)
+                if elapsed <= bounds.hardCapSeconds {
+                    return .chooserVerified(affirmation)
+                }
+                return .chooserObservedAfterWindow(
+                    sampleCount: sampleCount,
+                    lateSampleSeconds: elapsed,
+                    affirmation: affirmation
+                )
             }
-            let elapsed = monotonicNow() - start
+
             if elapsed >= bounds.hardCapSeconds {
                 // Plan §10 outcome routing: affirmative first observed only after
                 // the hard cap (the single late forensic sample) ->
                 // CHOOSER_OBSERVED_AFTER_WINDOW; no affirmative by the hard cap ->
                 // NO_CHOOSER_OBSERVED (scoped indeterminate, no retry).
-                let lateDelay = bounds.lateForensicSampleDelaySeconds
-                await sleep(lateDelay)
+                await sleep(bounds.lateForensicSampleDelaySeconds)
                 let lateSample = await sampler()
                 sampleCount += 1
+                let lateElapsed = max(0, monotonicNow() - start)
                 if let affirmation = lateSample.affirmed {
                     return .chooserObservedAfterWindow(
                         sampleCount: sampleCount,
-                        lateSampleSeconds: monotonicNow() - start,
+                        lateSampleSeconds: lateElapsed,
                         affirmation: affirmation
                     )
                 }
                 return .noChooserObserved(
                     sampleCount: sampleCount,
-                    observedSeconds: monotonicNow() - start
+                    observedSeconds: lateElapsed
                 )
             }
+
             let cadence = Double(bounds.cadenceMilliseconds(atElapsedSeconds: elapsed)) / 1000.0
             await sleep(min(cadence, max(0.001, bounds.hardCapSeconds - elapsed)))
+        }
+    }
+}
+
+public struct StrictPostconditionSample: Sendable {
+    public let affirmation: ChooserAffirmation?
+    public let tripwireObservations: [TripwireClassification]
+
+    public init(affirmation: ChooserAffirmation?, tripwireObservations: [TripwireClassification]) {
+        self.affirmation = affirmation
+        self.tripwireObservations = tripwireObservations
+    }
+}
+
+public enum StrictPostconditionVerdict: Equatable, Sendable {
+    case chooserVerified(ChooserAffirmation, sampleCount: Int, tripwire: [TripwireClassification])
+    case noChooserObserved(sampleCount: Int, tripwire: [TripwireClassification])
+    case chooserObservedAfterWindow(ChooserAffirmation, sampleCount: Int, tripwire: [TripwireClassification])
+    case tripwireAborted(sampleCount: Int, tripwire: [TripwireClassification])
+    case observerFailed(String, sampleCount: Int, tripwire: [TripwireClassification])
+    case deadlineExceeded(sampleCount: Int, tripwire: [TripwireClassification])
+}
+
+public enum StrictPostconditionObservation: Sendable {
+    case observed(StrictPostconditionSample)
+    case failed(String, tripwireObservations: [TripwireClassification])
+}
+
+private final class AsyncRaceBox<Value>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var continuation: CheckedContinuation<Value?, Never>?
+    private var resolved = false
+    private var operationTask: Task<Void, Never>?
+    private var timerTask: Task<Void, Never>?
+
+    init(_ continuation: CheckedContinuation<Value?, Never>) { self.continuation = continuation }
+
+    func register(operationTask: Task<Void, Never>, timerTask: Task<Void, Never>) {
+        lock.lock()
+        if resolved {
+            operationTask.cancel()
+            timerTask.cancel()
+        } else {
+            self.operationTask = operationTask
+            self.timerTask = timerTask
+        }
+        lock.unlock()
+    }
+
+    func resolve(_ value: Value?, fromOperation: Bool) {
+        lock.lock()
+        guard !resolved else { lock.unlock(); return }
+        resolved = true
+        let continuation = self.continuation
+        self.continuation = nil
+        let taskToCancel = fromOperation ? timerTask : operationTask
+        operationTask = nil
+        timerTask = nil
+        lock.unlock()
+        taskToCancel?.cancel()
+        continuation?.resume(returning: value)
+    }
+}
+
+private func valueBeforeDeadline<T: Sendable>(
+    seconds: Double,
+    operation: @escaping @Sendable () async -> T
+) async -> T? {
+    await withCheckedContinuation { continuation in
+        let box = AsyncRaceBox<T>(continuation)
+        let operationTask = Task.detached { box.resolve(await operation(), fromOperation: true) }
+        let timerTask = Task.detached {
+            if seconds > 0 { try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000)) }
+            box.resolve(nil, fromOperation: false)
+        }
+        box.register(operationTask: operationTask, timerTask: timerTask)
+    }
+}
+
+public enum StrictPostconditionMonitor {
+    public static func run(
+        bounds: PostconditionBounds = .planTime,
+        sampler: @escaping @Sendable () async -> StrictPostconditionObservation,
+        monotonicNow: @escaping @Sendable () -> Double = {
+            Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000.0
+        },
+        sleep: @escaping @Sendable (Double) async -> Void = { seconds in
+            try? await Task.sleep(nanoseconds: UInt64(max(0, seconds) * 1_000_000_000))
+        }
+    ) async -> StrictPostconditionVerdict {
+        let start = monotonicNow()
+        let deadline = start + bounds.hardCapSeconds
+        var sampleCount = 0
+        var latestTripwire: [TripwireClassification] = []
+        var nextSampleStart = start
+        while monotonicNow() < deadline {
+            let wait = nextSampleStart - monotonicNow()
+            if wait > 0 { await sleep(min(wait, max(0, deadline - monotonicNow()))) }
+            let sampleStart = monotonicNow()
+            guard sampleStart < deadline else { break }
+            let remaining = deadline - sampleStart
+            guard let result = await valueBeforeDeadline(seconds: remaining, operation: sampler) else {
+                return .deadlineExceeded(sampleCount: sampleCount, tripwire: latestTripwire)
+            }
+            sampleCount += 1
+            switch result {
+            case let .failed(error, tripwire):
+                return .observerFailed(error, sampleCount: sampleCount, tripwire: tripwire)
+            case let .observed(sample):
+                latestTripwire = sample.tripwireObservations
+                if sample.tripwireObservations.contains(where: { $0.aborts }) {
+                    return .tripwireAborted(sampleCount: sampleCount, tripwire: latestTripwire)
+                }
+                let completed = monotonicNow()
+                if let affirmation = sample.affirmation {
+                    return completed <= deadline
+                        ? .chooserVerified(affirmation, sampleCount: sampleCount, tripwire: latestTripwire)
+                        : .chooserObservedAfterWindow(affirmation, sampleCount: sampleCount, tripwire: latestTripwire)
+                }
+                let cadence = Double(bounds.cadenceMilliseconds(atElapsedSeconds: sampleStart - start)) / 1000.0
+                nextSampleStart = sampleStart + cadence
+                if completed >= deadline {
+                    return .deadlineExceeded(sampleCount: sampleCount, tripwire: latestTripwire)
+                }
+            }
+        }
+        // The hard-cap window is over. Preserve exactly one forensic sample
+        // after the frozen delay. It is never success-authorizing: an affirmative
+        // result is named CHOOSER_OBSERVED_AFTER_WINDOW and causes zero retry/input.
+        await sleep(bounds.lateForensicSampleDelaySeconds)
+        let lateSampleTimeout = max(1.0, Double(bounds.slowCadenceMs) / 1000.0 * 4.0)
+        guard let lateResult = await valueBeforeDeadline(seconds: lateSampleTimeout, operation: sampler) else {
+            return .deadlineExceeded(sampleCount: sampleCount, tripwire: latestTripwire)
+        }
+        sampleCount += 1
+        switch lateResult {
+        case let .failed(error, tripwire):
+            return .observerFailed(error, sampleCount: sampleCount, tripwire: tripwire)
+        case let .observed(sample):
+            latestTripwire = sample.tripwireObservations
+            if latestTripwire.contains(where: { $0.aborts }) {
+                return .tripwireAborted(sampleCount: sampleCount, tripwire: latestTripwire)
+            }
+            if let affirmation = sample.affirmation {
+                return .chooserObservedAfterWindow(
+                    affirmation,
+                    sampleCount: sampleCount,
+                    tripwire: latestTripwire
+                )
+            }
+            return .noChooserObserved(sampleCount: sampleCount, tripwire: latestTripwire)
         }
     }
 }

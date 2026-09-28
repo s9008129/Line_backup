@@ -1,0 +1,9 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "rev28/Tools/verify_pre_live_provenance.py"
+  ],
+  "exitCode": 0,
+  "utc": "2026-09-28T14:36:04.902873+00:00"
+}

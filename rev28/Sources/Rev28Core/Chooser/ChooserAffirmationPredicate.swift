@@ -96,6 +96,7 @@ public struct ChooserOwnershipClauseSet: Equatable, Codable, Sendable {
 }
 
 public struct ChooserAffirmationPredicate: Equatable, Codable, Sendable {
+    public let predicateVersion: Int
     public let predicateID: String
     public let frozenAtISO8601: String
     public let calibratedAgainst: String
@@ -107,13 +108,123 @@ public struct ChooserAffirmationPredicate: Equatable, Codable, Sendable {
         frozenAtISO8601: String,
         calibratedAgainst: String,
         ax: ChooserAXClauseSet,
-        ownership: ChooserOwnershipClauseSet
+        ownership: ChooserOwnershipClauseSet,
+        predicateVersion: Int = 1
     ) {
+        self.predicateVersion = predicateVersion
         self.predicateID = predicateID
         self.frozenAtISO8601 = frozenAtISO8601
         self.calibratedAgainst = calibratedAgainst
         self.ax = ax
         self.ownership = ownership
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case predicateVersion, predicateID, frozenAtISO8601, calibratedAgainst, ax, ownership
+    }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        predicateVersion = try values.decodeIfPresent(Int.self, forKey: .predicateVersion) ?? 1
+        predicateID = try values.decode(String.self, forKey: .predicateID)
+        frozenAtISO8601 = try values.decode(String.self, forKey: .frozenAtISO8601)
+        calibratedAgainst = try values.decode(String.self, forKey: .calibratedAgainst)
+        ax = try values.decode(ChooserAXClauseSet.self, forKey: .ax)
+        ownership = try values.decode(ChooserOwnershipClauseSet.self, forKey: .ownership)
+    }
+}
+
+
+public struct ChooserAXCalibrationEvidence: Codable, Sendable {
+    public let panelWindowFound: Bool
+    public let panelWindowRole: String?
+    public let panelWindowSubrole: String?
+    public let buttonTitles: [String]
+    public let rolesObserved: [String]
+    public let subrolesObserved: [String]
+    public let textFieldRoles: [String]
+    public let popUpRoles: [String]
+
+    public init(
+        panelWindowFound: Bool,
+        panelWindowRole: String?,
+        panelWindowSubrole: String?,
+        buttonTitles: [String],
+        rolesObserved: [String],
+        subrolesObserved: [String],
+        textFieldRoles: [String],
+        popUpRoles: [String]
+    ) {
+        self.panelWindowFound = panelWindowFound
+        self.panelWindowRole = panelWindowRole
+        self.panelWindowSubrole = panelWindowSubrole
+        self.buttonTitles = buttonTitles
+        self.rolesObserved = rolesObserved
+        self.subrolesObserved = subrolesObserved
+        self.textFieldRoles = textFieldRoles
+        self.popUpRoles = popUpRoles
+    }
+}
+
+public enum ChooserPredicateDerivationError: Error, Equatable, Sendable {
+    case invalidFrozenCalibration
+    case defaultButtonNotObserved
+    case cancelButtonNotObserved
+}
+
+/// The append-only frozen predicate file predates the explicit predicateVersion
+/// field and button requirements. Production must never rewrite that evidence.
+/// Instead, derive the stricter v2 runtime predicate only when the companion
+/// frozen AX calibration proves the missing clauses exactly.
+public enum ChooserProductionPredicate {
+    public static func derive(
+        frozen base: ChooserAffirmationPredicate,
+        calibration: ChooserAXCalibrationEvidence,
+        defaultButtonTitles: [String] = ["開啟"],
+        cancelButtonTitles: [String] = ["Cancel"]
+    ) throws -> ChooserAffirmationPredicate {
+        guard calibration.panelWindowFound,
+              calibration.panelWindowRole == base.ax.windowRole,
+              let subrole = calibration.panelWindowSubrole,
+              base.ax.allowedSubroles.contains(subrole),
+              calibration.rolesObserved.contains("AXButton"),
+              !Set(calibration.textFieldRoles).isDisjoint(with: Set(base.ax.textFieldRoles)),
+              !Set(calibration.popUpRoles).isDisjoint(with: Set(base.ax.popUpButtonRoles)) else {
+            throw ChooserPredicateDerivationError.invalidFrozenCalibration
+        }
+        let observedButtons = Set(calibration.buttonTitles)
+        let defaultObserved = defaultButtonTitles.filter(observedButtons.contains)
+        let cancelObserved = cancelButtonTitles.filter(observedButtons.contains)
+        guard !defaultObserved.isEmpty else {
+            throw ChooserPredicateDerivationError.defaultButtonNotObserved
+        }
+        guard !cancelObserved.isEmpty else {
+            throw ChooserPredicateDerivationError.cancelButtonNotObserved
+        }
+
+        var clauses = base.ax
+        clauses.defaultButton = ButtonRequirement(
+            mode: .titleIn,
+            attributeName: nil,
+            attributeValue: nil,
+            titles: defaultObserved.sorted(),
+            buttonRoles: ["AXButton"]
+        )
+        clauses.cancelButton = ButtonRequirement(
+            mode: .titleIn,
+            attributeName: nil,
+            attributeValue: nil,
+            titles: cancelObserved.sorted(),
+            buttonRoles: ["AXButton"]
+        )
+        return ChooserAffirmationPredicate(
+            predicateID: base.predicateID + "-derived-v2",
+            frozenAtISO8601: base.frozenAtISO8601,
+            calibratedAgainst: base.calibratedAgainst + " + frozen chooser-ax-calibration-v2",
+            ax: clauses,
+            ownership: base.ownership,
+            predicateVersion: ChooserAffirmationEvaluator.processStableButtonSemanticsVersion
+        )
     }
 }
 
@@ -144,6 +255,8 @@ public struct ChooserCandidate: Sendable {
     public let axNodes: [AXNodeDump]
     public let preDispatchCensusPIDs: [Int32]
     public let postDispatchCensusPIDs: [Int32]
+    public let preDispatchOwner: ChooserProcessFacts?
+    public let postDispatchOwner: ChooserProcessFacts?
 
     public init(
         windowID: UInt32,
@@ -156,7 +269,9 @@ public struct ChooserCandidate: Sendable {
         pidReuseDetected: Bool,
         axNodes: [AXNodeDump],
         preDispatchCensusPIDs: [Int32],
-        postDispatchCensusPIDs: [Int32]
+        postDispatchCensusPIDs: [Int32],
+        preDispatchOwner: ChooserProcessFacts? = nil,
+        postDispatchOwner: ChooserProcessFacts? = nil
     ) {
         self.windowID = windowID
         self.frame = frame
@@ -169,6 +284,8 @@ public struct ChooserCandidate: Sendable {
         self.axNodes = axNodes
         self.preDispatchCensusPIDs = preDispatchCensusPIDs
         self.postDispatchCensusPIDs = postDispatchCensusPIDs
+        self.preDispatchOwner = preDispatchOwner
+        self.postDispatchOwner = postDispatchOwner
     }
 }
 
@@ -187,6 +304,8 @@ public enum ChooserPredicateVerdict: Equatable, Sendable {
 }
 
 public enum ChooserAffirmationEvaluator {
+    public static let processStableButtonSemanticsVersion = 2
+
     public static func evaluate(candidate: ChooserCandidate, predicate: ChooserAffirmationPredicate) -> ChooserPredicateVerdict {
         // Clause 1: new relative to the pre-dispatch inventory, on-screen, in both inventories.
         guard candidate.isNewRelativeToPreDispatchInventory else {
@@ -197,6 +316,17 @@ public enum ChooserAffirmationEvaluator {
         }
         guard candidate.presentInSCInventory, candidate.presentInCGInventory else {
             return .refused(cause: .notInInventories, detail: "candidate missing from fresh SC and/or CG inventories")
+        }
+        if predicate.predicateVersion >= processStableButtonSemanticsVersion {
+            guard predicate.ax.defaultButton != nil, predicate.ax.cancelButton != nil else {
+                return .refused(cause: .frozenPredicateMismatch, detail: "predicate v2 requires default and cancel button semantics")
+            }
+            guard let pre = candidate.preDispatchOwner, let post = candidate.postDispatchOwner,
+                  pre.pid == post.pid, pre.pid == candidate.owner.pid,
+                  pre.startTimeUnix != nil, pre.startTimeUnix == post.startTimeUnix,
+                  pre.bundleID == post.bundleID, pre.signingIdentity == post.signingIdentity else {
+                return .refused(cause: .pidReuse, detail: "pre/post process-instance observations are missing or differ")
+            }
         }
 
         // Clause 2: AX surface matches native open/save-panel semantics.
@@ -242,6 +372,21 @@ public enum ChooserAffirmationEvaluator {
             }
         }
         return .affirmed
+    }
+
+    /// Production refuses compatibility predicates; v1 remains solely for
+    /// historical synthetic evidence replay.
+    public static func evaluateProduction(
+        candidate: ChooserCandidate,
+        predicate: ChooserAffirmationPredicate
+    ) -> ChooserPredicateVerdict {
+        guard predicate.predicateVersion >= processStableButtonSemanticsVersion else {
+            return .refused(
+                cause: .frozenPredicateMismatch,
+                detail: "production chooser evaluation requires predicate version \(processStableButtonSemanticsVersion) or later"
+            )
+        }
+        return evaluate(candidate: candidate, predicate: predicate)
     }
 
     private static func axSurfaceMismatch(candidate: ChooserCandidate, clauses: ChooserAXClauseSet) -> String? {

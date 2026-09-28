@@ -1,0 +1,16 @@
+name: Cancel stale Rev28 autofix generation
+on:
+  push:
+    branches: [rev28-prelive-finalization]
+    paths:
+      - ".github/workflows/rev28-cancel-stale-autofix.yml"
+permissions:
+  contents: read
+concurrency:
+  group: rev28-v09-autofix
+  cancel-in-progress: true
+jobs:
+  cancel-stale:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Superseding stale Rev28 autofix generation; no repository mutation."

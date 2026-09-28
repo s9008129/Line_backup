@@ -1,0 +1,176 @@
+name: Rev28 V-09 autofix
+
+on:
+  push:
+    branches:
+      - rev28-prelive-finalization
+    paths:
+      - ".github/workflows/rev28-v09-autofix.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  copilot-requests: write
+
+concurrency:
+  group: rev28-v09-autofix-v2
+  cancel-in-progress: true
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: xcode-27
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Record protected baselines
+        shell: bash
+        run: |
+          set -euo pipefail
+          git hash-object rev28/Sources/rev28ctl/HarnessCalibration.swift > "$RUNNER_TEMP/harness.blob"
+          find evidence/20260925-rev28-native-closed-loop/harness/frozen -type f -print0 |
+            sort -z | xargs -0 shasum -a 256 > "$RUNNER_TEMP/frozen.sha256"
+          shasum -a 256 .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md > "$RUNNER_TEMP/plan.sha256"
+
+      - name: Install Copilot CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install -g @github/copilot
+          copilot --version
+
+      - name: Fix persistent transaction, guarded actuation, postcondition and chooser
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/phase1.txt" <<'PROMPT'
+          You are the implementation agent for a safety-critical macOS LINE album backup engine.
+          Work directly in this checkout. Do not commit or push. Do not modify:
+          - rev28/Sources/rev28ctl/HarnessCalibration.swift
+          - evidence/20260925-rev28-native-closed-loop/harness/frozen/**
+          - .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md
+          Preserve plan-time postcondition bounds and all accepted baseline values.
+
+          Fix the following V-09 blockers with production-quality, fail-closed architecture, tests, and minimal compatibility shims:
+          1. Add a real persistent transaction owner/executor binding one immutable authorization to runID, goal/group/album,
+             plan SHA, reviewed implementation SHA, staging root/run dir, and exactly one Save All + exactly one destination
+             confirmation. Irreversible budgets must be derived from persisted ledger entries, not resettable in-memory state.
+             A restart after unknown/posted Save All must be observe-only for that same operation and must never re-arm it.
+          2. Harden IntentLedger append with an OS-level exclusive lock, reload+verify under lock, stale-writer detection,
+             fsync, and an independent checkpoint/head anchor API. Add rollback/truncation and concurrent-writer tests.
+          3. Make the production Quartz actuation boundary impossible to call without a freshly minted readiness permit.
+             The permit must prove active/frontmost target, fresh WindowIdentity, fresh StructuralCandidate and safe geometry,
+             and must be single-use. Keep synthetic harness raw posting outside Rev28Core (a target-local shim is acceptable)
+             so normal production imports cannot bypass the gate. Add event-sink injection tests proving failed/stale/focus-theft
+             gates post zero events.
+          4. Add a strict production postcondition monitor that enforces a monotonic hard deadline even if an observation stalls,
+             distinguishes sampler failure from reliable absence, schedules cadence from sample start times, and includes filesystem
+             tripwire observations in each verdict. Aborting tripwire activity or observer failure must produce an explicit terminal
+             indeterminate/error result with no retry. Keep old synthetic API only if needed for byte-identical harness compatibility;
+             production code must use the strict path.
+          5. Harden SaveAll empirical classification: PRE_SIDE_EFFECT_OBSERVED is allowed only for a recognized affirmative chooser
+             outcome plus validated/bound postcondition and tripwire evidence digests and zero attributable pre-chooser write;
+             contradictory/placeholder inputs must remain irreversible/indeterminate.
+          6. Harden chooser production path: exact standardized path equality only (no suffix matching), process-instance/PID-reuse
+             detection across pre/post observations, required default+cancel button semantics in a new append-only predicate version,
+             and one durable pre-confirmation intent + one confirmation action enforced by the persistent transaction owner.
+          7. Add a rev28ctl production command surface for live execution/preflight that composes these real components and fails
+             closed unless real-Mac observations supply all required gates. It must not dispatch anything in CI or without an
+             explicit one-shot authorization/config. No mock-only "production" path.
+
+          Compatibility constraint: HarnessCalibration.swift must remain byte-identical. If its unqualified QuartzActuator calls
+          conflict with the hardened core API, provide a rev28ctl-local QuartzActuator shim that shadows the imported core symbol.
+
+          Run focused tests while working. Prefer clear types over booleans, make unsafe states unrepresentable where practical,
+          and document which residual facts genuinely require the real Mac/LINE session.
+          PROMPT
+          copilot -p "$(cat "$RUNNER_TEMP/phase1.txt")" -s --no-ask-user --max-ai-credits=30             --allow-tool='write' --allow-tool='shell'             --deny-tool='shell(git push)' --deny-tool='shell(git commit)' --deny-tool='url'
+
+      - name: Fix perception, replay, geometry and staging proof
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/phase2.txt" <<'PROMPT'
+          Continue from the current modified working tree. Do not commit or push. Do not modify HarnessCalibration.swift,
+          frozen harness evidence, or the approved plan.
+
+          Fix these remaining V-09 blockers, integrating with the phase-1 transaction architecture:
+          1. StructuralCandidate/SurfaceBinding production freshness must bind bundle ID + ProcessInstanceID (PID/start time),
+             window ID, capture epoch and frame SHA. A process restart/PID reuse must make an old candidate unusable.
+          2. Album-card location must prove the exact date title and exact count belong to the same verified card region rather
+             than merely lying somewhere in one broad caller rectangle. Introduce explicit card segmentation/region identity and
+             add multi-card/cross-pair adversarial tests. Production callers must use the strict API.
+          3. Capture geometry: validate absolute per-side size residuals so undersized captures fail closed, and correctly account
+             for nonzero sourceRect origin/extent in recorded capture bbox/transforms. Add undersized/sourceRect tests.
+          4. Staging snapshot must enumerate every directory entry, including hidden entries and symlinks. Hidden extras,
+             directories and symlinks must prevent DUPLICATE_CONTENT_CONFIRMED. Add real temporary-directory enumeration tests.
+          5. Historical replay must use full 64-hex SHA-256 bindings and must execute current Rev28 production locator logic over
+             the reviewed fixture observations/geometry (and current pixel detector where image fixtures permit), instead of only
+             trusting old verdict JSON. It is acceptable to replay recorded OCR observations because hosted Vision is unavailable,
+             but the current structural locator code must actually run and disagreement must fail. Add a small Swift replay
+             executable/fixture adapter if useful, and make replay_rev28.py invoke it deterministically.
+          6. Expand the canonical adversarial tests so focus theft/occlusion/stale candidate cases exercise the real guarded
+             actuation boundary with an injected counting sink and verify zero posted events.
+
+          Preserve accepted historical artifacts; add new append-only fixtures/expectations rather than rewriting historical evidence.
+          Run tests and keep the design fail-closed.
+          PROMPT
+          copilot -p "$(cat "$RUNNER_TEMP/phase2.txt")" -s --no-ask-user --max-ai-credits=30             --allow-tool='write' --allow-tool='shell'             --deny-tool='shell(git push)' --deny-tool='shell(git commit)' --deny-tool='url'
+
+      - name: Enforce protected files unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object rev28/Sources/rev28ctl/HarnessCalibration.swift)" = "$(cat "$RUNNER_TEMP/harness.blob")"
+          find evidence/20260925-rev28-native-closed-loop/harness/frozen -type f -print0 |
+            sort -z | xargs -0 shasum -a 256 > "$RUNNER_TEMP/frozen.after.sha256"
+          diff -u "$RUNNER_TEMP/frozen.sha256" "$RUNNER_TEMP/frozen.after.sha256"
+          shasum -a 256 .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md > "$RUNNER_TEMP/plan.after.sha256"
+          diff -u "$RUNNER_TEMP/plan.sha256" "$RUNNER_TEMP/plan.after.sha256"
+
+      - name: Validate implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          python3 rev28/Tools/verify_pre_live_provenance.py
+          xcrun swift build --package-path rev28
+          # Match the canonical deterministic contract: Apple's hosted Vision runtime is
+          # validated separately by rev28-macos27's headed capability job. Do not turn the
+          # already-bounded hosted unknownError into a false implementation regression here.
+          xcrun swift test --package-path rev28 --skip OcrEngineTests
+          python3 rev28/Tools/replay_rev28.py --root . --output "$RUNNER_TEMP/replay-a.json"
+          python3 rev28/Tools/replay_rev28.py --root . --output "$RUNNER_TEMP/replay-b.json"
+          cmp "$RUNNER_TEMP/replay-a.json" "$RUNNER_TEMP/replay-b.json"
+
+      - name: Show change summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          git status --short
+          git diff --stat
+          git diff --name-only
+
+      - name: Commit and push validated autofix
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No changes produced."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add rev28 evidence/20260925-rev28-native-closed-loop .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/handoff.md .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution.md
+          git status --short
+          git commit -m "fix(rev28): enforce persistent guarded live transaction"
+          git pull --rebase origin rev28-prelive-finalization
+          git push origin HEAD:rev28-prelive-finalization

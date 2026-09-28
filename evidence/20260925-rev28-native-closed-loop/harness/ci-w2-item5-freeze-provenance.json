@@ -1,0 +1,31 @@
+{
+  "schema": "rev28.w2-item5-ci-freeze-provenance.v1",
+  "task_id": "T20260925-0647-01-rev28-native-closed-loop",
+  "source": {
+    "github_actions_run_id": 36124211295,
+    "github_actions_run_attempt": 1,
+    "workflow": "Rev28 macOS 27 pre-live",
+    "head_sha": "e65905b6de6379d88ae30e2388dd1a999c4e4096",
+    "headed_artifact_id": 10859262043,
+    "headed_artifact_digest": "sha256:1fcd72a8f16f1e42d60aa190f81eebb4be10b7d098de4dc46bfad6814e29e3f2",
+    "runner_os": "macOS 27.0 (26A428)",
+    "sdk": "MacOSX27.0.sdk",
+    "swift": "Apple Swift 6.4"
+  },
+  "w2_item5": {
+    "run_id": "HARNESS-20260925-103224",
+    "verdict": "PASS",
+    "within": "chooserVerified",
+    "timeout": "noChooserObserved",
+    "late": "chooserObservedAfterWindow",
+    "late_affirmation_non_nil": true,
+    "monitor_input_posts": 0,
+    "measured_panel_runs": 20,
+    "max_latency_ms": 78.63497734069824,
+    "bounds_sha256": "14b45107ef9d9df2032575ff161fa08302ce81dd555d09cee9ef3df68ffbb7da",
+    "latency_sha256": "74085354d27abe22f4aee39d92287ff91a589c6ea50007034a9b9371b88dad35",
+    "proof_sha256": "7088ae0021b78f2d3c834ba19e25bf626a9d63e0b1e9b895f51af134821cfc53"
+  },
+  "authority": "Synthetic pre-live W2 evidence only. It does not substitute for real-Mac LINE Phase A/B, filesystem acceptance, or Stage-05 recomputation.",
+  "vision_hosted_limit": "Hosted Vision failed with the bounded known signature unknownError; the production Vision contract remains unchanged and requires real-Mac executable-context validation."
+}

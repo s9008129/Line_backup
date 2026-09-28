@@ -89,6 +89,7 @@ public struct SideDelta: Equatable, Codable, Sendable {
     public static let zero = SideDelta(top: 0, left: 0, bottom: 0, right: 0)
 
     public var maximum: Double { max(max(top, left), max(bottom, right)) }
+    public var maximumAbsolute: Double { max(max(abs(top), abs(left)), max(abs(bottom), abs(right))) }
 }
 
 // MARK: - Canonical transform
@@ -283,7 +284,7 @@ public enum CaptureGeometryRules {
             bottom: (actualHeightPt - Double(expectedBBox.height)) / 2.0,
             right: (actualWidthPt - Double(expectedBBox.width)) / 2.0
         )
-        if perSide.maximum > rule.maxPerSideSizeDeltaPt {
+        if perSide.maximumAbsolute > rule.maxPerSideSizeDeltaPt {
             return .failure(.sizeDeltaExceedsTolerance(
                 stateKey: key,
                 perSidePt: perSide,

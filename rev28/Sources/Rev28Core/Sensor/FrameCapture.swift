@@ -116,6 +116,18 @@ public enum FrameCaptureError: Error, CustomStringConvertible {
 }
 
 public enum FrameCaptureSupport {
+    public static func expectedCaptureBBox(windowBBox: CGRect, sourceRect: CGRect?) -> CGRect? {
+        guard let sourceRect else { return windowBBox }
+        guard sourceRect.width > 0, sourceRect.height > 0,
+              CGRect(origin: .zero, size: windowBBox.size).contains(sourceRect) else { return nil }
+        return CGRect(
+            x: windowBBox.minX + sourceRect.minX,
+            y: windowBBox.minY + sourceRect.minY,
+            width: sourceRect.width,
+            height: sourceRect.height
+        )
+    }
+
     /// The independent backing-scale source for the display containing the window.
     public static func backingScaleFactor(forWindowFrame frame: CGRect) -> Double? {
         let center = CGPoint(x: frame.midX, y: frame.midY)
@@ -205,7 +217,12 @@ public final class FrameCaptureService {
 
         let epoch = nextEpoch()
         let capturedAt = FrameCaptureSupport.iso8601Now()
-        let expectedBBox = FrameCaptureSupport.unionBBox(of: includedWindows, fallback: window.frame)
+        let windowBBox = FrameCaptureSupport.unionBBox(of: includedWindows, fallback: window.frame)
+        let expectedBBox = FrameCaptureSupport.expectedCaptureBBox(
+            windowBBox: windowBBox,
+            sourceRect: configuration.sourceRect
+        )
+        let recordedExpectedBBox = expectedBBox ?? CGRect(origin: windowBBox.origin, size: .zero)
         let pointPixelScale = Double(filter.pointPixelScale)
 
         guard let backingScaleFactor = FrameCaptureSupport.backingScaleFactor(forWindowFrame: window.frame) else {
@@ -220,14 +237,20 @@ public final class FrameCaptureService {
             violationStrings.append(scaleViolation.description)
         }
 
-        let evaluation = CaptureGeometryRules.evaluate(
-            expectedBBox: expectedBBox,
-            imageWidthPx: image.width,
-            imageHeightPx: image.height,
-            scale: pointPixelScale,
-            ruleBook: ruleBook,
-            state: state
-        )
+        let evaluation: Result<CaptureGeometryEvaluation, CaptureGeometryViolation>
+        if let expectedBBox {
+            evaluation = CaptureGeometryRules.evaluate(
+                expectedBBox: expectedBBox,
+                imageWidthPx: image.width,
+                imageHeightPx: image.height,
+                scale: pointPixelScale,
+                ruleBook: ruleBook,
+                state: state
+            )
+        } else {
+            violationStrings.append("sourceRect is empty or outside the expected capture bounds")
+            evaluation = .failure(.emptyExpectedBBox)
+        }
 
         let actualBBox: CGRect
         let perSide: SideDelta
@@ -239,7 +262,7 @@ public final class FrameCaptureService {
             stateKey = result.stateKey
         case let .failure(violation):
             violationStrings.append(violation.description)
-            actualBBox = CGRect(origin: expectedBBox.origin, size: .zero)
+            actualBBox = CGRect(origin: expectedBBox?.origin ?? windowBBox.origin, size: .zero)
             perSide = .zero
             stateKey = CaptureGeometryRules.stateKey(state)
         }
@@ -256,7 +279,7 @@ public final class FrameCaptureService {
             captureKind: configuration.kind,
             configuration: configuration,
             includedWindows: includedWindows,
-            expectedBBoxPt: expectedBBox,
+            expectedBBoxPt: recordedExpectedBBox,
             imageWidthPx: image.width,
             imageHeightPx: image.height,
             actualBBoxPt: actualBBox,

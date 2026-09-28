@@ -1,0 +1,7 @@
+import Foundation
+import Rev28Core
+let f = StagingFileRecord(name: "image.jpg", size: 1, modificationTime: 1, sha256: String(repeating: "a", count: 64), decodable: true)
+let samples = [StagingSnapshot(observedAt: 0, files: []), StagingSnapshot(observedAt: 10, files: [f]), StagingSnapshot(observedAt: 10.1, files: [f]), StagingSnapshot(observedAt: 10.2, files: [f])]
+print("equal_suffix_span_seconds=0.2 required_span_seconds=4.0")
+print("isStable=\(StagingVerifier.isStable(snapshots: samples))")
+print("enum_member=\(StructuralLocatorRefusal.referenceStructureMismatch)")

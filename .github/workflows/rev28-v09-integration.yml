@@ -1,0 +1,181 @@
+name: Rev28 V-09 integration hardening (legacy Copilot manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  copilot-requests: write
+
+concurrency:
+  group: rev28-v09-integration
+  cancel-in-progress: false
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: xcode-27
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Freeze protected inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git hash-object rev28/Sources/rev28ctl/HarnessCalibration.swift > "$RUNNER_TEMP/harness.blob"
+          find evidence/20260925-rev28-native-closed-loop/harness/frozen -type f -print0 |
+            sort -z | xargs -0 shasum -a 256 > "$RUNNER_TEMP/frozen.sha256"
+          shasum -a 256 .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md > "$RUNNER_TEMP/plan.sha256"
+          python3 rev28/Tools/verify_pre_live_provenance.py
+
+      - name: Install Copilot CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install -g @github/copilot
+          copilot --version
+
+      - name: Close production integration gaps
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/integrate.txt" <<'PROMPT'
+          You are the final implementation integrator for Rev28, a safety-critical macOS LINE album backup engine.
+          Work in this checkout; do not commit or push. Preserve byte-for-byte:
+          - rev28/Sources/rev28ctl/HarnessCalibration.swift
+          - evidence/20260925-rev28-native-closed-loop/harness/frozen/**
+          - .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md
+          Do not weaken the frozen chooser/postcondition semantics or accepted baseline values.
+
+          First inspect the current persistent transaction owner, guarded Quartz boundary, strict postcondition path,
+          chooser driver, process-bound structural candidates, replay adapter, staging verifier, and rev28ctl live commands
+          created by the preceding V-09 autofix. Then close every remaining integration gap.
+
+          The most important acceptance requirement:
+          - The production live execution path must NOT be an unconditional or placeholder refusal.
+          - Its pure orchestration engine must be executable in CI through injected deterministic adapters and must prove an
+            allowed path from a fully authorized/fresh synthetic observation set through durable intent, exactly one guarded
+            Save All dispatch, affirmative chooser postcondition, exact destination preparation, exactly one confirmation,
+            staging verification, and terminal content verification.
+          - The actual rev28ctl real-Mac path must use real macOS adapters (NSRunningApplication/process identity,
+            ScreenCaptureKit/CG inventory, FrameCaptureService, VisionOcrEngine, AX reads, production structural locators,
+            guarded Quartz events, chooser predicate/driver, filesystem tripwire/staging verifier). It must fail closed when
+            any required real observation is absent. CI must never post to LINE or claim a live success.
+          - If navigation from group list -> album list -> target album -> album detail -> ellipsis -> Save All is not already
+            represented, add the missing production orchestration/locator adapter boundaries. No historical coordinates may
+            become authority. Every actuation must be derived from a fresh frame and single-use permit.
+          - Authorization must bind run ID, exact group "旻謙允禎成長日記", album "2024/05/13～05/17", expected count 57,
+            reviewed plan SHA, reviewed implementation SHA, approved root and unique staging directory. A prior Rev27
+            indeterminate attempt is never reinterpreted; this is a new goal-scoped transaction.
+          - Exactly-once is durable: a restart after intent or dispatch must resume observe-only and must not repost the same
+            irreversible operation. Destination confirmation must also be durably one-shot.
+          - Strict postcondition must surface sampler errors/tripwire aborts/late chooser distinctly and must not retry.
+          - The successful terminal state must require exact filesystem proof: 57 complete stable decodable regular files,
+            17,924,900 bytes, no hidden/symlink/subdirectory extras, content multiset
+            ee958e6467676506a1c7aaf237a4376ecc5e5083fd94aa6fd0d56d376cacdaaf.
+
+          Add integration tests using injected fakes/counting event sinks that:
+          1. demonstrate one fully valid synthetic transaction reaches CONTENT_VERIFIED with exactly one Save All and one
+             confirmation;
+          2. crash/restart after intent and after dispatch never causes a second irreversible post;
+          3. focus theft, stale candidate/process restart, wrong album/card, ambiguous OCR, sampler error, tripwire abort,
+             wrong destination, hidden/symlink/extra content all post zero additional irreversible events and fail closed;
+          4. prove production CLI refuses under CI/no-real-LINE context without posting GUI input.
+
+          Run non-Vision tests and current-locator historical replay while working. Update architecture/capability/handoff
+          only with factual pre-live status. Do not claim real LINE success.
+          PROMPT
+
+          ok=0
+          for attempt in 1 2 3; do
+            if copilot -p "$(cat "$RUNNER_TEMP/integrate.txt")" -s --no-ask-user --max-ai-credits=30               --allow-tool='write' --allow-tool='shell'               --deny-tool='shell(git push)' --deny-tool='shell(git commit)' --deny-tool='url'; then
+              ok=1; break
+            fi
+            echo "Copilot integration attempt $attempt failed; preserving worktree and retrying." >&2
+            sleep 5
+          done
+          test "$ok" = 1
+
+      - name: Hostile read-only self-review and repair
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/audit.txt" <<'PROMPT'
+          Perform a hostile safety audit of the current uncommitted Rev28 integration and FIX any defect you find.
+          Do not commit/push and do not touch HarnessCalibration.swift, frozen harness evidence, or the approved plan.
+
+          Verify by tracing actual call sites, not comments:
+          - no public production GUI event-posting method bypasses a fresh single-use permit;
+          - the real-Mac CLI has a genuine path that composes real sensing/perception/actuation, not an unconditional refusal;
+          - the injected orchestration integration test traverses the same transaction state machine/guarded dispatch boundary
+            as the real path, not a mock-only alternate implementation;
+          - durable ledger/checkpoint prevents stale concurrent writers, rollback/truncation, repeated Save All and repeated
+            destination confirmation across restart;
+          - strict postcondition bounds stalled/erroring observations and integrates filesystem tripwire aborts;
+          - chooser uses exact standardized destination equality and process-instance continuity;
+          - candidate freshness includes process instance; album card rejects cross-card pairing;
+          - capture geometry refuses undersized/sourceRect inconsistency;
+          - exact staging enumerates hidden/symlink/directory extras;
+          - historical replay pins full SHA-256 and actually calls current production structural locators;
+          - no test achieves PASS by hard-coding a verdict that production never executes.
+
+          Run the relevant tests. Make only fixes necessary to satisfy these invariants. CI/synthetic work is pre-live only.
+          PROMPT
+
+          ok=0
+          for attempt in 1 2 3; do
+            if copilot -p "$(cat "$RUNNER_TEMP/audit.txt")" -s --no-ask-user --max-ai-credits=30               --allow-tool='write' --allow-tool='shell'               --deny-tool='shell(git push)' --deny-tool='shell(git commit)' --deny-tool='url'; then
+              ok=1; break
+            fi
+            echo "Copilot audit attempt $attempt failed; preserving worktree and retrying." >&2
+            sleep 5
+          done
+          test "$ok" = 1
+
+      - name: Protect frozen inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object rev28/Sources/rev28ctl/HarnessCalibration.swift)" = "$(cat "$RUNNER_TEMP/harness.blob")"
+          find evidence/20260925-rev28-native-closed-loop/harness/frozen -type f -print0 |
+            sort -z | xargs -0 shasum -a 256 > "$RUNNER_TEMP/frozen.after.sha256"
+          diff -u "$RUNNER_TEMP/frozen.sha256" "$RUNNER_TEMP/frozen.after.sha256"
+          shasum -a 256 .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md > "$RUNNER_TEMP/plan.after.sha256"
+          diff -u "$RUNNER_TEMP/plan.sha256" "$RUNNER_TEMP/plan.after.sha256"
+
+      - name: Canonical deterministic validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          python3 rev28/Tools/verify_pre_live_provenance.py
+          xcrun swift build --package-path rev28
+          xcrun swift test --package-path rev28 --skip OcrEngineTests
+          xcrun swift test --package-path rev28 --filter AdversarialMatrixTests
+          xcrun swift test --package-path rev28 --filter AdversarialMatrixTests
+          python3 rev28/Tools/replay_rev28.py --root . --output "$RUNNER_TEMP/replay-a.json"
+          python3 rev28/Tools/replay_rev28.py --root . --output "$RUNNER_TEMP/replay-b.json"
+          cmp "$RUNNER_TEMP/replay-a.json" "$RUNNER_TEMP/replay-b.json"
+
+      - name: Commit validated integration hardening
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No integration changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add rev28 .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/handoff.md .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution.md
+          git diff --cached --check
+          git commit -m "fix(rev28): close production transaction integration"
+          git push origin HEAD:rev28-prelive-finalization
