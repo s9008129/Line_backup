@@ -198,3 +198,21 @@ E2E_ROLE_ISOLATION: PASS
 NATIVE_INTERACTIVE_GOAL_EQUIVALENCE: NOT_FULLY_TESTED
 OVERALL: PASS_WITH_SCOPE_NOTE
 ```
+
+
+## Post-validation race check
+
+After the successful Harness run, `rev28-prelive-finalization` advanced while validation was in progress.
+
+Latest observed Rev28 head:
+```text
+7f7fcb61c6f7853ab7de3efcede096e38ebfa165
+```
+
+The additional changes were concentrated in CI/governance/provenance files plus a pre-live provenance verifier; no existing Rev28 production Swift source was modified in that delta.
+
+GitHub's native `Rev28 macOS 27 pre-live` workflow independently completed successfully on that latest head:
+- run: 36380671463
+- conclusion: SUCCESS
+
+Therefore the Harness live-agent result is tied to validation head `39570dfc...`, while the current Rev28 branch's own product/pre-live regression gate is separately green at `7f7fcb61...`. No stale-product PASS is being inferred across the race.
