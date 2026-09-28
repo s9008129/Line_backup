@@ -91,7 +91,7 @@ final class LiveExecutionEngineTests: XCTestCase {
         }
 
         func observeChooser(owner: PersistentTransactionOwner) async throws -> LiveChooserEvidence {
-            let runDir = URL(fileURLWithPath: owner.authorization.stagingRunDirectory)
+            let runDir = URL(fileURLWithPath: owner.authorization.evidenceRunDirectory)
             let post = runDir.appendingPathComponent("engine-postcondition.json")
             let tripwire = runDir.appendingPathComponent("engine-tripwire.json")
             let affirmation = ChooserAffirmation(
