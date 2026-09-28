@@ -157,6 +157,37 @@ final class PostconditionMonitorTests: XCTestCase {
         XCTAssertEqual(observed, expected)
     }
 
+
+    func testStrictMonitorNamesSingleLateForensicAffirmation() async {
+        let clock = LockedClock()
+        let counter = LockedCounter()
+        let expected = affirmation(123)
+        let bounds = PostconditionBounds(
+            fastCadenceMs: 100,
+            fastPhaseSeconds: 0.2,
+            slowCadenceMs: 100,
+            hardCapSeconds: 0.3,
+            lateForensicSampleDelaySeconds: 0.2
+        )
+        let verdict = await StrictPostconditionMonitor.run(
+            bounds: bounds,
+            sampler: {
+                let n = counter.next()
+                return .observed(StrictPostconditionSample(
+                    affirmation: n >= 4 ? expected : nil,
+                    tripwireObservations: []
+                ))
+            },
+            monotonicNow: { clock.now() },
+            sleep: { clock.advance($0) }
+        )
+        guard case let .chooserObservedAfterWindow(observed, _, tripwire) = verdict else {
+            return XCTFail("expected late forensic chooser, got \(verdict)")
+        }
+        XCTAssertEqual(observed, expected)
+        XCTAssertEqual(tripwire, [])
+    }
+
     func testStrictMonitorReturnsAtDeadlineWhenSamplerStalls() async {
         let bounds = PostconditionBounds(
             fastCadenceMs: 10, fastPhaseSeconds: 0.02, slowCadenceMs: 10,
