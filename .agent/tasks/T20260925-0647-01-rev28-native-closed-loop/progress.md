@@ -1,7 +1,7 @@
 # Implement Progress — T20260925-0647-01-rev28-native-closed-loop
 
 STATE: RUNNING
-UPDATED_AT: 2026-09-29T06:35+0800
+UPDATED_AT: 2026-09-29T06:38+0800
 PLAN_REVISION: 4
 MODE: AB_IMPLEMENTATION_EVALUATION (Phase B forbidden; PHASE_B_STATUS=FORBIDDEN_AB_EVALUATION)
 
@@ -101,6 +101,7 @@ c7eb3f9 feat(rev28): assemble the live composition and wire it into rev28ctl
 8528ce5 feat(rev28): arm Phase B only from an explicit machine-checkable eligibility artifact
 e407565 feat(rev28): compose the post-Save-All path and keep it fail closed
 0d1cdb5 feat(rev28): publish real Phase A evidence from the live preflight path
+51cd793 chore(harness): record the Phase A publisher evidence and the live-preflight environment prerequisite
 ```
 
 ## Evidence pointers
@@ -114,6 +115,7 @@ e407565 feat(rev28): compose the post-Save-All path and keep it fail closed
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0607/` — CLI refusal fixture（config／rulebook／one-shot／stale-digest config／frozen chooser predicate 的 byte copy）與 transcript；`reviewedImplementationSHA256` 綁定 e407565 的 `rev28/Sources` 樹（`f6ef94dc…a4f68`）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a16-focused-phasea-20260929T061700.log`, `a17-full-suite-phasea-20260929T061704.log` — Phase A publisher 首輪（前一 implementer turn）：21 focused／202 full，皆 0 failures
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a18-build-phasea-20260929T062509.log`, `a19-focused-phasea-20260929T062509.log`, `a20-full-suite-phasea-20260929T062509.log` — 本輪最終樹的 build／focused 21／full 202（0 failures）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a21-full-suite-final-head-20260929T0635.log` — final HEAD `51cd793` 的 202 tests / 0 failures（SHA-256 `876da172…e22b`）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0617/` — 現行 CLI refusal fixture（`reviewedImplementationSHA256=eb4415f9…f6b1`，43 swift files）與 transcript：live-execute／live-preflight／CI guard 皆 77、缺 config 64、stale digest 77；refusal 後無 evidence／ledger／staging 副作用
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/phase-a-env-20260929T0626/` — Phase A 環境偵察：capability probe record（ax/screenCapture/postEvent=true、SCK OK、Vision OK）、LINE 唯讀 window inventory、environment-observations.md（外部前置與兩個 Phase A 未定項）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a13-focused-postsave-FAILED-intermediate-20260929T060425.log` — 中間失敗的 focused run（test 內 fake clock 與 permit 不一致），修好後由 a13/a14 取代，保留為除錯紀錄
