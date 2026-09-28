@@ -154,7 +154,8 @@ e93e298 chore(harness): record the final-HEAD full-suite run for the Phase A pub
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a16-focused-phasea-20260929T061700.log`, `a17-full-suite-phasea-20260929T061704.log` — Phase A publisher 首輪（前一 implementer turn）：21 focused／202 full，皆 0 failures
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a18-build-phasea-20260929T062509.log`, `a19-focused-phasea-20260929T062509.log`, `a20-full-suite-phasea-20260929T062509.log` — 本輪最終樹的 build／focused 21／full 202（0 failures）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a21-full-suite-final-head-20260929T0635.log` — final HEAD `51cd793` 的 202 tests / 0 failures（SHA-256 `876da172…e22b`）
-- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0617/` — 現行 CLI refusal fixture（`reviewedImplementationSHA256=eb4415f9…f6b1`，43 swift files）與 transcript：live-execute／live-preflight／CI guard 皆 77、缺 config 64、stale digest 77；refusal 後無 evidence／ledger／staging 副作用
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0617/` — 前一版 CLI refusal fixture（digest `eb4415f9…f6b1`，43 swift files；因 `LiveConfig` 新增必填 chooser 欄位而成為歷史）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0713/` — 修正後樹的 CLI refusal fixture（`reviewedImplementationSHA256=e80e4f0f…54e9`、chooser predicate／calibration byte copies 及其 SHA-256 綁定）與 transcript：live-execute／live-preflight／CI guard 皆 77、缺 config 64、stale digest 77；refusal 後無 evidence／ledger／staging 副作用、授權未改名
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/phase-a-env-20260929T0626/` — Phase A 環境偵察：capability probe record（ax/screenCapture/postEvent=true、SCK OK、Vision OK）、LINE 唯讀 window inventory、environment-observations.md（外部前置與兩個 Phase A 未定項）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a13-focused-postsave-FAILED-intermediate-20260929T060425.log` — 中間失敗的 focused run（test 內 fake clock 與 permit 不一致），修好後由 a13/a14 取代，保留為除錯紀錄
 - `evidence/20260917-vision-reader/frames/route5r_frame_post.jpg` (SHA-256 `4cb8a6b4…c6560b3`) — reviewed v5 real frame used by the A10 regression test
@@ -229,6 +230,8 @@ All eight MAJOR fingerprints plus the actionable MINORs were repaired in-contrac
 - Digest recompute（同一 reviewed formula；先以 `00f8634` 樹重現舊 digest `eb4415f9…f6b1`／43 files 作為公式交叉驗證）：最終 `e80e4f0fb5483ec9a7e1c795e62662235dcfcdd884276d2fd25c9d22a5a254e9`，44 files（−`OneShotAuthorization.swift`，＋`AXWindowIdentitySelector.swift`，＋`ReviewedImplementationDigest.swift`）。
 - Focused 批次（11 suites）80/0 = `a27`（首版）／`a30`（還原後）；full suite 23 suites 222/0/0 skipped = `a28`（首版）／`a31`（還原後）；build = `a29`；provenance guard 還原後 `status=PASS` = `a32`。
 - V-08 閘門在修正後樹重跑（2026-09-29T07:32）：`AdversarialMatrixTests` 27/27 ×2 = `a33`／`a34`；`replay_rev28.py` 20 fixtures `verdict=PASS` ×2、輸出 byte-identical（`81f6da94…7261`）= `a35`／`a36`（與 `a24`／`a25` 相同輸出，證實 replay 語意未受修復影響）。
+- CLI refusal fixture 於修正後樹刷新（`cli-refusal-20260929T0713/`）：`live-execute`／`live-preflight`／CI guard = 77、缺 config = 64、stale digest = 77；good config 已含新的必填 chooser 欄位＋新 digest，refusal 後 evidence／staging 0 檔、無 ledger／anchor、授權未改名（零副作用）。
+- 註：`a29`–`a36` 檔名中的時戳為建立時的輪次標籤；實際 mtime 為 07:10–07:12+0800。
 
 ## Next up (dependency order)
 
