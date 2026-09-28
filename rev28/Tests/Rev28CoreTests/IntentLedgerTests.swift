@@ -29,12 +29,13 @@ final class IntentLedgerTests: XCTestCase {
         XCTAssertTrue(LedgerResume.wouldRefuseNewIrreversibleDispatch(entries: ledger.entries))
     }
 
-    func testFreshReviewedDecisionCanArmAtMostOneFutureIrreversibleDispatch() throws {
+    func testFreshReviewedDecisionCannotRearmSameRunIrreversibleDispatch() throws {
         let url = try temporaryLedger()
         let ledger = try IntentLedger(fileURL: url)
         try ledger.append(kind: "dispatch.saveAll")
         try ledger.append(kind: LedgerResume.freshReviewedDecisionKind, payload: ["armIrreversible": "1"])
-        XCTAssertEqual(LedgerResume.decide(entries: ledger.entries).allowedNewIrreversibleDispatches, 1)
+        XCTAssertEqual(LedgerResume.decide(entries: ledger.entries).allowedNewIrreversibleDispatches, 0)
+        XCTAssertTrue(LedgerResume.wouldRefuseNewIrreversibleDispatch(entries: ledger.entries))
     }
 
     func testTamperedLedgerFailsReload() throws {
