@@ -108,6 +108,7 @@ e407565 feat(rev28): compose the post-Save-All path and keep it fail closed
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0550/` — 前一輪 CLI refusal fixture（c7eb3f9 樹，`b0a71b95…ba0070`）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a13-focused-postsave-20260929T060456.log` — 27 focused tests / 0 failures（PhaseBEligibility 8／ComposedAdapters 12／LiveComposition 7）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a14-full-suite-phaseb-eligibility-postsave-20260929T060502.log` — 181 tests / 0 failures（含 post-Save-All composition 與 eligibility suites）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a15-full-suite-final-head-20260929T060833.log` — final HEAD `7cc2e99` 的 181 tests / 0 failures（與 a14 同一 source tree；implementation digest `f6ef94dc…a4f68`）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0607/` — CLI refusal fixture（config／rulebook／one-shot／stale-digest config／frozen chooser predicate 的 byte copy）與 transcript；`reviewedImplementationSHA256` 綁定 e407565 的 `rev28/Sources` 樹（`f6ef94dc…a4f68`）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a13-focused-postsave-FAILED-intermediate-20260929T060425.log` — 中間失敗的 focused run（test 內 fake clock 與 permit 不一致），修好後由 a13/a14 取代，保留為除錯紀錄
 - `evidence/20260917-vision-reader/frames/route5r_frame_post.jpg` (SHA-256 `4cb8a6b4…c6560b3`) — reviewed v5 real frame used by the A10 regression test
