@@ -147,7 +147,9 @@ public enum FrameCaptureSupport {
         return nil
     }
 
-    public static func pngSHA256(of image: CGImage) -> String? {
+    /// The single PNG encoding used for both retention and hashing, so the
+    /// recorded image SHA always describes the retained bytes.
+    public static func pngData(of image: CGImage) -> Data? {
         let data = NSMutableData()
         guard let destination = CGImageDestinationCreateWithData(
             data,
@@ -157,7 +159,12 @@ public enum FrameCaptureSupport {
         ) else { return nil }
         CGImageDestinationAddImage(destination, image, nil)
         guard CGImageDestinationFinalize(destination) else { return nil }
-        let digest = SHA256.hash(data: data as Data)
+        return data as Data
+    }
+
+    public static func pngSHA256(of image: CGImage) -> String? {
+        guard let data = pngData(of: image) else { return nil }
+        let digest = SHA256.hash(data: data)
         return digest.map { String(format: "%02x", $0) }.joined()
     }
 
@@ -200,6 +207,24 @@ public final class FrameCaptureService {
         state: CaptureGeometryState,
         identityTemplate: WindowIdentity?
     ) async throws -> CapturedFrameRecord {
+        try await captureRetained(
+            window: window,
+            configuration: configuration,
+            includedWindows: includedWindows,
+            state: state,
+            identityTemplate: identityTemplate
+        ).record
+    }
+
+    /// Capture that also hands back the retained image so one session can run
+    /// OCR and retention over the exact bytes whose SHA the record describes.
+    public func captureRetained(
+        window: SCWindow,
+        configuration: CaptureConfiguration,
+        includedWindows: [SCWindowSnapshot],
+        state: CaptureGeometryState,
+        identityTemplate: WindowIdentity?
+    ) async throws -> ObservationCapturedImage {
         let filter = SCContentFilter(desktopIndependentWindow: window)
         let config = SCScreenshotConfiguration()
         config.includeChildWindows = configuration.includeChildWindows
@@ -275,7 +300,7 @@ public final class FrameCaptureService {
         identity?.captureEpoch = epoch
         identity?.captureImageSHA256 = imageSHA
 
-        return CapturedFrameRecord(
+        let record = CapturedFrameRecord(
             captureKind: configuration.kind,
             configuration: configuration,
             includedWindows: includedWindows,
@@ -295,5 +320,6 @@ public final class FrameCaptureService {
             violations: violationStrings,
             identity: identity
         )
+        return ObservationCapturedImage(image: image, record: record)
     }
 }

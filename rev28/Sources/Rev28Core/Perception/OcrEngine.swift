@@ -10,7 +10,7 @@ import Vision
 // OCR boxes + surface structure, never from a raw character box.
 // `禎 U+798E` and `楨 U+6968` are never normalized or merged.
 
-public struct OcrItem: Equatable, Sendable {
+public struct OcrItem: Equatable, Codable, Sendable {
     public let text: String
     public let confidence: Double
     /// Number of top candidates (>= 2 means the recognizer hesitated; callers may refuse).
