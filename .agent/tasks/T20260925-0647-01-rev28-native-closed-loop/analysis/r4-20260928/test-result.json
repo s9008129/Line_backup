@@ -1,0 +1,14 @@
+{
+  "command": [
+    "xcrun",
+    "swift",
+    "test",
+    "--package-path",
+    "rev28",
+    "--filter",
+    "StructuralLocatorsTests"
+  ],
+  "startedAt": "2026-09-28T14:22:02.048054+00:00",
+  "exitCode": 1,
+  "endedAt": "2026-09-28T14:22:03.270571+00:00"
+}

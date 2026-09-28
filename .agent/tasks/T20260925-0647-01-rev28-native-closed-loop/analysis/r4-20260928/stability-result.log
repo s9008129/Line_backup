@@ -1,0 +1,3 @@
+equal_suffix_span_seconds=0.2 required_span_seconds=4.0
+isStable=true
+enum_member=referenceStructureMismatch

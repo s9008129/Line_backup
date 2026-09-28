@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "harness.v4.3.stage01.final-audit.v1",
+  "taskId": "T20260925-0647-01-rev28-native-closed-loop",
+  "planRevision": 4,
+  "auditedAtUTC": "2026-09-28T15:34:03.927899+00:00",
+  "analysisBoundHead": "67c4fad9f2dded272cc9720100b1a6958fe352da",
+  "localHead": "67c4fad9f2dded272cc9720100b1a6958fe352da",
+  "remoteHead": "67c4fad9f2dded272cc9720100b1a6958fe352da",
+  "headFresh": true,
+  "planSHA256": "05413807f5d7c04d5fe57eb058da6da734ddef5e350a9b023bfa8f8d72f84c1b",
+  "recordedPlanSHA256": "05413807f5d7c04d5fe57eb058da6da734ddef5e350a9b023bfa8f8d72f84c1b",
+  "planHashMatches": true,
+  "protectedProductTestWorkflowStatus": "UNCHANGED",
+  "protectedStatusRaw": [],
+  "artifactSHA256": {
+    "decision.md": "3240f843a22e03fd285d2ab0c59515e59e108f0f02028e288e93376fd5e7e461",
+    "source-analysis.md": "f1862b24b191623ab8d716019dcb8e94e298b0cc2ad4935844a3c7e74c7ac189",
+    "baseline-readonly.json": "98d2d57253dcdfa14b9349d30333b5e509684919db0485722ab5d343232f95be"
+  },
+  "readyForPlanReview": true
+}

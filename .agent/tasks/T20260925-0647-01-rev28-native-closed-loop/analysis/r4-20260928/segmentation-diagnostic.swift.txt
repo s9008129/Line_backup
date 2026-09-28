@@ -1,0 +1,13 @@
+import Rev28Core
+import Foundation
+import CoreGraphics
+func item(_ text: String, _ rect: CGRect) -> OcrItem {
+    OcrItem(text:text, confidence:1, candidateCount:1, quadCapturePx:[], boundingBoxCapturePx:rect)
+}
+let binding = SurfaceBinding(bundleID:"jp.naver.line.mac", process:ProcessInstanceID(pid:7,startTimeSeconds:11,startTimeMicroseconds:2),windowID:7,captureEpoch:11,frameSHA256:String(repeating:"a",count:64))
+for fullEndDate in [false,true] {
+    let titles = fullEndDate ? ["2024/05/06~2024/05/10","2024/05/13~2024/05/17"] : ["2024/05/06~05/10","2024/05/13~05/17"]
+    let items = [item(titles[0],CGRect(x:20,y:40,width:160,height:20)),item("182",CGRect(x:20,y:70,width:30,height:18)),item(titles[1],CGRect(x:20,y:180,width:160,height:20)),item("57",CGRect(x:20,y:212,width:24,height:18))]
+    let regions = StructuralLocators.segmentAlbumCards(items:items,imageBounds:CGRect(x:0,y:0,width:300,height:300))
+    print("fullEndDate=\(fullEndDate) regions=\(regions.count) result=\(StructuralLocators.locateAlbumCard(items:items,title:titles[1],regions:regions,binding:binding))")
+}
