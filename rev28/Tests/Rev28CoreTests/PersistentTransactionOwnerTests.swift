@@ -21,9 +21,26 @@ final class PersistentTransactionOwnerTests: XCTestCase {
         return (root.appendingPathComponent("ledger.jsonl"), authorization)
     }
 
+    private func evidence(_ label: String) -> String {
+        EvidenceIO.sha256Hex(Data(label.utf8))
+    }
+
+    /// Save All reservation is only legal at a freshly proved SAVE_ALL_LOCATED
+    /// state (R4 C4), so owner-level tests must walk the pre-dispatch states.
+    private func walkToSaveAllLocated(_ owner: PersistentTransactionOwner) throws {
+        try owner.initializeState(evidenceSHA256: evidence(ExecutionState.appReady.rawValue))
+        for state in [
+            ExecutionState.groupReady, .albumListReady, .targetAlbumLocated,
+            .albumDetailVerified, .ellipsisLocated, .menuVerified, .saveAllLocated,
+        ] {
+            try owner.transition(to: state, evidenceSHA256: evidence(state.rawValue))
+        }
+    }
+
     func testRestartAfterSaveAllIntentCannotRearmOrDispatch() throws {
         let (url, authorization) = try setup()
         let owner = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))
+        try walkToSaveAllLocated(owner)
         try owner.reserveSaveAll()
         try owner.markSaveAllAttempted()
 
@@ -62,6 +79,7 @@ final class PersistentTransactionOwnerTests: XCTestCase {
             checkpointURL: checkpoint,
             requireCheckpointOnResume: true
         )
+        try walkToSaveAllLocated(owner)
         try owner.reserveSaveAll()
         XCTAssertTrue(FileManager.default.fileExists(atPath: checkpoint.path))
 
@@ -96,6 +114,7 @@ final class PersistentTransactionOwnerTests: XCTestCase {
     func testAuthorizationIsImmutableAndConfirmationRequiresVerifiedChooser() throws {
         let (url, authorization) = try setup()
         let owner = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))
+        try walkToSaveAllLocated(owner)
         try owner.reserveSaveAll()
         try owner.markSaveAllAttempted()
         XCTAssertThrowsError(try owner.reserveDestinationConfirmation(action: "ReturnKey"))

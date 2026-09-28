@@ -215,7 +215,17 @@ final class LiveExecutionEngineTests: XCTestCase {
     func testRestartAfterIrreversibleAttemptIsObserveOnlyAndPostsNothing() async throws {
         let (ledgerURL, auth, owner) = try setup()
         let firstAdapter = FakeAdapter()
-        _ = try await firstAdapter.establish(state: .appReady, owner: owner)
+        for (index, state) in [
+            ExecutionState.appReady, .groupReady, .albumListReady, .targetAlbumLocated,
+            .albumDetailVerified, .ellipsisLocated, .menuVerified, .saveAllLocated,
+        ].enumerated() {
+            let evidence = try await firstAdapter.establish(state: state, owner: owner)
+            if index == 0 {
+                try owner.initializeState(evidenceSHA256: evidence)
+            } else {
+                try owner.transition(to: state, evidenceSHA256: evidence)
+            }
+        }
         try await firstAdapter.dispatchSaveAll(owner: owner)
         XCTAssertEqual(firstAdapter.saveAllMouseEvents, 3)
 

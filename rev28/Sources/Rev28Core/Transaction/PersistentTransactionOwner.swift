@@ -109,6 +109,8 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
     case stateAlreadyInitialized
     case stateNotInitialized
     case invalidStateEvidence
+    case saveAllRequiresLocatedState
+    case goalSlotEntitlementConsumed
 
     public var description: String {
         switch self {
@@ -122,6 +124,8 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
         case .stateAlreadyInitialized: return "stateAlreadyInitialized"
         case .stateNotInitialized: return "stateNotInitialized"
         case .invalidStateEvidence: return "invalidStateEvidence"
+        case .saveAllRequiresLocatedState: return "saveAllRequiresLocatedState"
+        case .goalSlotEntitlementConsumed: return "goalSlotEntitlementConsumed"
         }
     }
 }
@@ -135,20 +139,31 @@ public final class PersistentTransactionOwner {
     private var confirmationIntentOwnedByThisProcess = false
     private let stateLock = NSRecursiveLock()
     private let checkpointURL: URL?
+    public let goalSlotDirectory: URL
     public let isObserveOnlyResume: Bool
 
     public init(
         authorization: ImmutableRunAuthorization,
         ledger: IntentLedger,
         checkpointURL: URL? = nil,
+        goalSlotDirectory: URL? = nil,
         requireCheckpointOnResume: Bool = false
     ) throws {
         guard authorization.isValid else { throw PersistentTransactionError.invalidAuthorization }
         self.authorization = authorization
         self.ledger = ledger
         self.checkpointURL = checkpointURL?.standardizedFileURL
+        self.goalSlotDirectory = (goalSlotDirectory ?? GoalSlot.canonicalDirectory(for: authorization)).standardizedFileURL
         self.isObserveOnlyResume = !ledger.entries.isEmpty
         try EvidenceIO.ensureDirectory(URL(fileURLWithPath: authorization.evidenceRunDirectory))
+
+        // The persistent goal slot binds this run's one-shot entitlement. An
+        // empty ledger combined with an already-consumed entitlement is a
+        // truncation/reset attempt, never a fresh transaction.
+        let goalSlot = try GoalSlot.open(directory: self.goalSlotDirectory, authorization: authorization)
+        if goalSlot.entitlementConsumed, ledger.entries.isEmpty {
+            throw PersistentTransactionError.goalSlotEntitlementConsumed
+        }
 
         if !ledger.entries.isEmpty {
             guard let checkpointURL = self.checkpointURL else {
@@ -241,6 +256,14 @@ public final class PersistentTransactionOwner {
         defer { stateLock.unlock() }
         let counts = irreversibleOperationCounts
         guard !isObserveOnlyResume, counts.saveAll == 0 else {
+            throw PersistentTransactionError.irreversibleIntentAlreadyRecorded("saveAll")
+        }
+        guard currentState == .saveAllLocated else {
+            throw PersistentTransactionError.saveAllRequiresLocatedState
+        }
+        do {
+            try GoalSlot.consumeOneShotEntitlement(directory: goalSlotDirectory, authorization: authorization)
+        } catch GoalSlotError.entitlementAlreadyConsumed {
             throw PersistentTransactionError.irreversibleIntentAlreadyRecorded("saveAll")
         }
         try append(kind: "intent.saveAll", payload: binding(["risk": "IRREVERSIBLE_SIDE_EFFECT"]))
