@@ -174,9 +174,9 @@ public struct ReadinessObservation: Sendable {
     public let captureImageSize: CGSize
     public let observedAtUptime: Double
 
-    init(applicationActive: Bool, targetFrontmost: Bool, freshWindow: FreshWindowObservation,
-         currentEpoch: UInt64, currentBinding: SurfaceBinding, captureGeometry: CaptureGeometry,
-         captureImageSize: CGSize, observedAtUptime: Double) {
+    public init(applicationActive: Bool, targetFrontmost: Bool, freshWindow: FreshWindowObservation,
+                currentEpoch: UInt64, currentBinding: SurfaceBinding, captureGeometry: CaptureGeometry,
+                captureImageSize: CGSize, observedAtUptime: Double) {
         self.applicationActive = applicationActive
         self.targetFrontmost = targetFrontmost
         self.freshWindow = freshWindow
