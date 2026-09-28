@@ -69,6 +69,28 @@ public enum FolderChooserDriverError: Error, CustomStringConvertible {
     }
 }
 
+public enum GatedDestinationConfirmation {
+    /// Shared production/test boundary for the second irreversible operation.
+    /// Intent + attempt are fsynced before dispatch; a post-intent readiness loss
+    /// consumes the operation and fails closed instead of retrying.
+    public static func perform(
+        owner: PersistentTransactionOwner,
+        action: String,
+        readinessCheck: () -> Bool,
+        dispatch: () throws -> Void
+    ) throws {
+        guard readinessCheck() else {
+            throw FolderChooserDriverError.pressFailed("destination confirmation readiness failed before durable intent")
+        }
+        try owner.reserveDestinationConfirmation(action: action)
+        try owner.markDestinationConfirmationAttempted()
+        guard readinessCheck() else {
+            throw FolderChooserDriverError.pressFailed("destination confirmation readiness changed after durable intent; operation remains consumed")
+        }
+        try dispatch()
+    }
+}
+
 public enum FolderChooserDriver {
     /// The panel window: an AX window that contains both a text field and a
     /// default button — calibrated native panel shape.
@@ -243,20 +265,22 @@ public enum FolderChooserDriver {
                   freshVerifiedDefaultButton(pid: pid, predicate: predicate) != nil else { return false }
             return true
         }
-        guard targetIsForegroundAndStable() else {
-            throw FolderChooserDriverError.pressFailed("chooser process, focus, or exact destination is not freshly verified")
-        }
-        try owner.reserveDestinationConfirmation(action: "AXPressDefaultButton")
-        try owner.markDestinationConfirmationAttempted()
-        guard targetIsForegroundAndStable() else {
-            throw FolderChooserDriverError.pressFailed("chooser changed after durable confirmation intent; operation remains consumed")
-        }
-        guard let button = freshVerifiedDefaultButton(pid: pid, predicate: predicate) else {
-            throw FolderChooserDriverError.defaultButtonMissing
-        }
-        let title = AXDriver.title(of: button) ?? "?"
-        guard AXDriver.press(button) else { throw FolderChooserDriverError.pressFailed("AXPress on verified default button failed") }
-        return "role=AXButton title=\(title)"
+        var pressedTitle = "?"
+        try GatedDestinationConfirmation.perform(
+            owner: owner,
+            action: "AXPressDefaultButton",
+            readinessCheck: targetIsForegroundAndStable,
+            dispatch: {
+                guard let button = freshVerifiedDefaultButton(pid: pid, predicate: predicate) else {
+                    throw FolderChooserDriverError.defaultButtonMissing
+                }
+                pressedTitle = AXDriver.title(of: button) ?? "?"
+                guard AXDriver.press(button) else {
+                    throw FolderChooserDriverError.pressFailed("AXPress on verified default button failed")
+                }
+            }
+        )
+        return "role=AXButton title=\(pressedTitle)"
     }
 
     private static func freshVerifiedDefaultButton(
