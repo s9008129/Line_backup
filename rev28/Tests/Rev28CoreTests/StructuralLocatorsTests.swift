@@ -190,12 +190,12 @@ final class StructuralLocatorsTests: XCTestCase {
         XCTAssertEqual(reason, .staleBinding)
     }
     func testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand() {
-        let b = binding()
+        let b = binding
         let items = [
-            ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
-            ocr("182", CGRect(x: 20, y: 70, width: 30, height: 18)),
-            ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
-            ocr("57", CGRect(x: 20, y: 212, width: 24, height: 18)),
+            item("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+            item("182", CGRect(x: 20, y: 70, width: 30, height: 18)),
+            item("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+            item("57", CGRect(x: 20, y: 212, width: 24, height: 18)),
         ]
         let regions = StructuralLocators.segmentAlbumCards(
             items: items,
@@ -214,10 +214,10 @@ final class StructuralLocatorsTests: XCTestCase {
 
     func testSegmentAlbumCardsRejectsCrossCardCount() {
         let items = [
-            ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
-            ocr("57", CGRect(x: 20, y: 72, width: 24, height: 18)),
-            ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
-            ocr("58", CGRect(x: 20, y: 212, width: 24, height: 18)),
+            item("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+            item("57", CGRect(x: 20, y: 72, width: 24, height: 18)),
+            item("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+            item("58", CGRect(x: 20, y: 212, width: 24, height: 18)),
         ]
         let regions = StructuralLocators.segmentAlbumCards(
             items: items,
@@ -228,7 +228,7 @@ final class StructuralLocatorsTests: XCTestCase {
             title: "2024/05/13~05/17",
             count: "57",
             regions: regions,
-            binding: binding()
+            binding: binding
         ) else { return XCTFail("cross-card count must refuse") }
         XCTAssertEqual(reason, .referenceStructureMismatch)
     }
