@@ -1,0 +1,96 @@
+Building for debugging...
+[0/14] Write sources
+[2/14] Write swift-version--58304C5D6DBC2206.txt
+[4/16] Compiling Rev28Core StagingVerifier.swift
+[5/16] Emitting module Rev28Core
+[5/22] Write Objects.LinkFileList
+[11/25] Emitting module Rev28CoreTests
+[12/25] Compiling Rev28CoreTests StructuralLocatorsTests.swift
+[13/25] Compiling Rev28CoreTests StagingVerifierTests.swift
+[13/25] Linking rev28replay
+[14/25] Linking rev28probe
+[14/25] Linking rev28occluder
+[16/25] Linking rev28harness
+[17/25] Applying rev28probe
+[17/25] Applying rev28replay
+[19/25] Applying rev28occluder
+[20/25] Applying rev28harness
+[21/25] Linking rev28ctl
+[22/25] Write Objects.LinkFileList
+[23/25] Applying rev28ctl
+[24/25] Linking rev28PackageTests
+Build complete! (1.47s)
+Test Suite 'Selected tests' started at 2026-09-29 05:19:09.511.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 05:19:09.512.
+Test Suite 'StagingVerifierTests' started at 2026-09-29 05:19:09.512.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRecomputesReferenceAndNameInclusiveTripwire]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRecomputesReferenceAndNameInclusiveTripwire]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRejectsSymlinkExtra]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRejectsSymlinkExtra]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testContentMismatchHasDedicatedOutcome]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testContentMismatchHasDedicatedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testDuplicateHashHasDedicatedOutcome]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testDuplicateHashHasDedicatedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testEqualTailSpanIsMeasuredAfterLastChange]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testEqualTailSpanIsMeasuredAfterLastChange]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testExactContentPredicateConfirmsDuplicate]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testExactContentPredicateConfirmsDuplicate]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testFourthFileIsExtraFiles]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testFourthFileIsExtraFiles]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testLongEqualTailAfterOlderDifferentSampleIsStable]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testLongEqualTailAfterOlderDifferentSampleIsStable]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testRecentModificationIsNotQuiescent]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testRecentModificationIsNotQuiescent]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesDirectoriesAndSymlinksAndRefusesConfirmation]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesDirectoriesAndSymlinksAndRefusesConfirmation]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesHiddenFilesAndTheyCannotConfirmContent]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesHiddenFilesAndTheyCannotConfirmContent]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testStabilityRequiresThreeEqualSamplesSpanAndQuiescence]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testStabilityRequiresThreeEqualSamplesSpanAndQuiescence]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSubdirectoryIsExtraFiles]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSubdirectoryIsExtraFiles]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUndecodableIsIncomplete]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUndecodableIsIncomplete]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUnstableSamplesReturnNamedOutcome]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUnstableSamplesReturnNamedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testZeroByteAndPartialAreIncomplete]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testZeroByteAndPartialAreIncomplete]' passed (0.000 seconds).
+Test Suite 'StagingVerifierTests' passed at 2026-09-29 05:19:09.520.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.008 (0.008) seconds
+Test Suite 'StructuralLocatorsTests' started at 2026-09-29 05:19:09.520.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardDuplicateCountRefusesAmbiguity]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardDuplicateCountRefusesAmbiguity]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsCrossPairedTitleAndCountAcrossCards]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsCrossPairedTitleAndCountAcrossCards]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsTwoVerifiedCardsAsAmbiguous]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsTwoVerifiedCardsAsAmbiguous]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRequiresExactUniqueTitleAndCount]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRequiresExactUniqueTitleAndCount]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumDetailRejectsWrongZhenGlyph]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumDetailRejectsWrongZhenGlyph]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotBeReusedAcrossEpoch]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotBeReusedAcrossEpoch]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotSurviveProcessRestartOrPIDReuse]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotSurviveProcessRestartOrPIDReuse]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllDuplicateTargetFailsClosed]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllDuplicateTargetFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllRequiresFullReferenceStructure]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllRequiresFullReferenceStructure]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllWrongNeighborRowFailsClosed]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllWrongNeighborRowFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsCrossCardCount]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsCrossCardCount]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsUnsupportedShortEndShape]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsUnsupportedShortEndShape]' passed (0.000 seconds).
+Test Suite 'StructuralLocatorsTests' passed at 2026-09-29 05:19:09.522.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 05:19:09.522.
+	 Executed 29 tests, with 0 failures (0 unexpected) in 0.009 (0.010) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 05:19:09.522.
+	 Executed 29 tests, with 0 failures (0 unexpected) in 0.009 (0.011) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
