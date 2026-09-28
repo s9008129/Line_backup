@@ -7,6 +7,7 @@ on:
     paths:
       - "rev28/**"
       - ".agent/tasks/T20260925-0647-01-rev28-native-closed-loop/**"
+      # Owner-authored workflow checkpoints can rerun integration without changing production source.
       - ".github/workflows/rev28-v09-integration.yml"
   workflow_dispatch:
 
