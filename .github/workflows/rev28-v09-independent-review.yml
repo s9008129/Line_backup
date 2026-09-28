@@ -14,10 +14,10 @@ on:
 
 permissions:
   contents: read
-  copilot-requests: write
+  models: read
 
 concurrency:
-  group: rev28-v09-${{ github.ref }}
+  group: rev28-v09-models-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
           import hashlib, json, os, pathlib
           paths = [
               "rev28/Sources/Rev28Core",
-              "rev28/Sources/rev28ctl/HarnessCalibration.swift",
+              "rev28/Sources/rev28ctl",
               "rev28/Tests/Rev28CoreTests",
               "rev28/Tools/replay_rev28.py",
               "evidence/20260925-rev28-native-closed-loop/harness/ci-w2-item5-freeze-provenance-v3.json",
@@ -88,17 +88,17 @@ jobs:
           - slug: coordinate-transform
             focus: "Review R9: canonical coordinate spaces/transforms, scale cross-check, frozen capture geometry rules, safe-interior dispatch, movement/stale-frame behavior, and multi-display fail-closed handling."
           - slug: quartz-actuator
-            focus: "Review R8 and final dispatch gating: Quartz event construction/posting, activation/frontmost/fresh identity/candidate checks, exact-once behavior, and absence of historical-coordinate authority."
+            focus: "Review R8 and final dispatch gating: Quartz event construction/posting, activation/frontmost/fresh identity/candidate checks, exactly-once behavior, and absence of historical-coordinate authority."
           - slug: postcondition
-            focus: "Review R15: bounded chooser observation, monotonic deadline semantics, after-sample hard-cap check, frozen v3 cadence/bounds/latency evidence, late/timeout routing, zero-input monitor, and no blind retry."
+            focus: "Review R15: bounded chooser observation, monotonic deadline semantics, one late forensic sample, frozen cadence/bounds/latency evidence, sampler failure/tripwire routing, zero-input monitor, and no blind retry."
           - slug: action-risk
             focus: "Review R14 plus budgets: risk classes, Save All conservative empirical classification, irreversible exact-once counters, reversible ceilings, and fail-closed recovery."
           - slug: chooser
             focus: "Review R16: frozen chooser affirmation predicate, SCK/CG/AX ownership/process-instance checks, PID reuse handling, destination navigation verification, and exactly one confirmation method."
           - slug: transaction-recovery
-            focus: "Review R13/R18: state-machine transition discipline, hash-chained ledger, durable intent, concurrency/tamper handling, crash resume observe-only behavior, and unknown irreversible-result refusal."
+            focus: "Review R13/R18: state-machine transition discipline, hash-chained ledger, durable intent/checkpoint, concurrency/tamper handling, crash resume permanently observe-only, and exactly-once recovery."
           - slug: adversarial
-            focus: "Review R10/R12/V-08: G01-G22 + X01-X03 coverage, whether tests exercise the real production branches rather than fixture-only backdoors, historical replay SHA binding, and deterministic reruns."
+            focus: "Review R10/R12/V-08: G01-G22 + X01-X03 coverage, whether tests exercise production branches rather than fixture-only backdoors, historical replay SHA binding, and deterministic reruns."
           - slug: barrier-supersession
             focus: "Review R24: whether Rev28 legitimately supersedes the Rev27 reconciliation barrier without reinterpreting attempt-07, including fresh geometry, Quartz routing, direct chooser acknowledgement, new goal-scoped authorization, and filesystem proof."
 
@@ -113,44 +113,156 @@ jobs:
           set -euo pipefail
           python3 rev28/Tools/verify_pre_live_provenance.py
 
-      - name: Install GitHub Copilot CLI
+      - name: Build topic review context
+        env:
+          REVIEW_TOPIC: ${{ matrix.slug }}
         run: |
           set -euo pipefail
-          npm install -g @github/copilot
-          copilot --version
+          mkdir -p "$RUNNER_TEMP/v09-${REVIEW_TOPIC}"
+          python3 - <<'PY'
+          import os, pathlib
+          topic = os.environ["REVIEW_TOPIC"]
+          common = [
+              "rev28/ARCHITECTURE.md",
+              ".agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md",
+              ".agent/tasks/T20260925-0647-01-rev28-native-closed-loop/handoff.md",
+              "evidence/20260925-rev28-native-closed-loop/harness/ci-w2-item5-freeze-provenance-v3.json",
+          ]
+          by_topic = {
+              "sensor-perception": [
+                  "rev28/Sources/Rev28Core/Sensor/WindowSensor.swift",
+                  "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+                  "rev28/Sources/Rev28Core/Perception/OcrEngine.swift",
+                  "rev28/Sources/Rev28Core/Perception/StructuralLocators.swift",
+                  "rev28/Sources/Rev28Core/Perception/AlbumEllipsisLocator.swift",
+                  "rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift",
+                  "rev28/Tests/Rev28CoreTests/AlbumEllipsisLocatorTests.swift",
+                  "rev28/Tools/replay_rev28.py",
+              ],
+              "coordinate-transform": [
+                  "rev28/Sources/Rev28Core/Geometry/Coordinates.swift",
+                  "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+                  "rev28/Tests/Rev28CoreTests/CoordinateTransformTests.swift",
+              ],
+              "quartz-actuator": [
+                  "rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift",
+                  "rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift",
+                  "rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift",
+              ],
+              "postcondition": [
+                  "rev28/Sources/Rev28Core/Postcondition/PostconditionMonitor.swift",
+                  "rev28/Sources/Rev28Core/Chooser/ChooserAffirmationPredicate.swift",
+                  "rev28/Tests/Rev28CoreTests/PostconditionMonitorTests.swift",
+              ],
+              "action-risk": [
+                  "rev28/Sources/Rev28Core/Policy/ExecutionPolicy.swift",
+                  "rev28/Sources/Rev28Core/Transaction/IntentLedger.swift",
+                  "rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift",
+                  "rev28/Tests/Rev28CoreTests/ExecutionPolicyTests.swift",
+                  "rev28/Tests/Rev28CoreTests/IntentLedgerTests.swift",
+              ],
+              "chooser": [
+                  "rev28/Sources/Rev28Core/Chooser/ChooserAffirmationPredicate.swift",
+                  "rev28/Sources/Rev28Core/Chooser/FolderChooserDriver.swift",
+                  "rev28/Sources/Rev28Core/Postcondition/PostconditionMonitor.swift",
+              ],
+              "transaction-recovery": [
+                  "rev28/Sources/Rev28Core/Transaction/IntentLedger.swift",
+                  "rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift",
+                  "rev28/Sources/Rev28Core/Policy/ExecutionPolicy.swift",
+                  "rev28/Tests/Rev28CoreTests/IntentLedgerTests.swift",
+                  "rev28/Tests/Rev28CoreTests/PersistentTransactionOwnerTests.swift",
+              ],
+              "adversarial": [
+                  "rev28/Tests/Rev28CoreTests/AdversarialMatrixTests.swift",
+                  "rev28/Tools/replay_rev28.py",
+                  "rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift",
+                  "rev28/Sources/Rev28Core/Perception/StructuralLocators.swift",
+              ],
+              "barrier-supersession": [
+                  "ISSUE-2026-09-24-rev27e4-r2-ownership-provenance.md",
+                  "rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift",
+                  "rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift",
+                  "rev28/Sources/Rev28Core/Verification/StagingVerifier.swift",
+              ],
+          }
+          out = pathlib.Path(os.environ["RUNNER_TEMP"]) / f"v09-{topic}" / "context.txt"
+          seen = set()
+          with out.open("w", encoding="utf-8") as w:
+              for name in common + by_topic[topic]:
+                  if name in seen: continue
+                  seen.add(name)
+                  p = pathlib.Path(name)
+                  if not p.is_file(): continue
+                  data = p.read_text(encoding="utf-8", errors="replace")
+                  w.write(f"\n===== FILE: {name} =====\n")
+                  w.write(data)
+                  w.write("\n")
+          PY
 
-      - name: Run fresh independent review
+      - name: Run fresh independent review with GitHub Models
         env:
           GITHUB_TOKEN: ${{ github.token }}
           REVIEW_TOPIC: ${{ matrix.slug }}
           REVIEW_FOCUS: ${{ matrix.focus }}
         run: |
           set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/v09-${REVIEW_TOPIC}"
-          cat > "$RUNNER_TEMP/v09-${REVIEW_TOPIC}/prompt.txt" <<'PROMPT'
-          You are a fresh independent safety-critical code reviewer. Do not modify files.
-          Review the exact checked-out Git HEAD shown by GITHUB_SHA for one Rev28 V-09 topic.
-          Read the plan, handoff, architecture, capability matrix, v3 provenance, and all relevant source/tests/evidence.
+          python3 - <<'PY'
+          import json, os, pathlib, time, urllib.error, urllib.request
+          topic = os.environ["REVIEW_TOPIC"]
+          root = pathlib.Path(os.environ["RUNNER_TEMP"]) / f"v09-{topic}"
+          context = (root / "context.txt").read_text(encoding="utf-8", errors="replace")
+          prompt = f"""
+          You are a fresh independent safety-critical code reviewer. You did not implement this code.
+          Review exact GitHub head {os.environ['GITHUB_SHA']} for V-09 topic {topic}.
+          Focus: {os.environ['REVIEW_FOCUS']}
+
           Treat CI as pre-live only; never claim actual LINE success. Never weaken a safety invariant.
           Look for self-fulfilling tests, fixture-only branches, stale/fuzzy identity, historical coordinates,
-          blind retry, missing exactly-once persistence, source/evidence drift, or unsupported conclusions.
+          blind retry, missing durable exactly-once enforcement, source/evidence drift, or unsupported conclusions.
           If an issue can be fixed without real LINE or the user's filesystem, verdict MUST be REVISION_REQUIRED.
           Facts inherently requiring real Mac/LINE may remain only if implementation fails closed until observed.
-          This review is read-only and independent.
+          Review only the supplied exact-head context below.
+
           FINAL RESPONSE: exactly one JSON object:
-          {"schemaVersion":"rev28.v09.review.v1","topic":"<REVIEW_TOPIC>","reviewedHead":"<GITHUB_SHA>","verdict":"APPROVED or REVISION_REQUIRED","blockingFindings":[],"nonBlockingNotes":[],"realMacOnlyResiduals":[],"independenceStatement":"Fresh read-only review; no implementation edits made."}
-          PROMPT
-          {
-            echo
-            echo "REVIEW_TOPIC=${REVIEW_TOPIC}"
-            echo "REVIEW_FOCUS=${REVIEW_FOCUS}"
-            echo "GITHUB_SHA=${GITHUB_SHA}"
-          } >> "$RUNNER_TEMP/v09-${REVIEW_TOPIC}/prompt.txt"
-          copilot -p "$(cat "$RUNNER_TEMP/v09-${REVIEW_TOPIC}/prompt.txt")" -s --no-ask-user --max-ai-credits=30 \
-            --allow-tool='shell(git:*)' --allow-tool='shell(cat:*)' --allow-tool='shell(sed:*)' --allow-tool='shell(grep:*)' \
-            --allow-tool='shell(find:*)' --allow-tool='shell(shasum:*)' --allow-tool='shell(ls:*)' --allow-tool='shell(head:*)' \
-            --allow-tool='shell(tail:*)' --allow-tool='shell(wc:*)' --allow-tool='shell(pwd)' \
-            > "$RUNNER_TEMP/v09-${REVIEW_TOPIC}/raw.txt"
+          {{"schemaVersion":"rev28.v09.review.v1","topic":"{topic}","reviewedHead":"{os.environ['GITHUB_SHA']}","verdict":"APPROVED or REVISION_REQUIRED","blockingFindings":[],"nonBlockingNotes":[],"realMacOnlyResiduals":[],"independenceStatement":"Fresh read-only GitHub Models review; no implementation edits made."}}
+
+          CONTEXT:
+          {context}
+          """
+          payload = {
+              "model": "openai/gpt-4.1",
+              "messages": [
+                  {"role": "system", "content": "Return only the requested JSON object. Be conservative and evidence-based."},
+                  {"role": "user", "content": prompt},
+              ],
+              "temperature": 0,
+          }
+          body = json.dumps(payload).encode()
+          url = "https://models.github.ai/inference/chat/completions"
+          last = None
+          for attempt in range(4):
+              req = urllib.request.Request(url, data=body, method="POST", headers={
+                  "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                  "Content-Type": "application/json",
+                  "Accept": "application/vnd.github+json",
+              })
+              try:
+                  with urllib.request.urlopen(req, timeout=180) as resp:
+                      obj = json.loads(resp.read())
+                  raw = obj["choices"][0]["message"]["content"].strip()
+                  (root / "raw.txt").write_text(raw + "\n", encoding="utf-8")
+                  break
+              except urllib.error.HTTPError as e:
+                  last = f"HTTP {e.code}: {e.read().decode(errors='replace')}"
+                  if e.code not in {429, 500, 502, 503, 504}: raise
+                  time.sleep(5 * (attempt + 1))
+              except Exception as e:
+                  last = repr(e)
+                  time.sleep(5 * (attempt + 1))
+          else:
+              raise SystemExit(f"GitHub Models review failed after retries: {last}")
+          PY
 
       - name: Normalize and validate review result
         id: validate
@@ -174,7 +286,8 @@ jobs:
           if verdict == "APPROVED" and obj.get("blockingFindings"): raise SystemExit("APPROVED has blockers")
           out = root / f"review-{topic}.json"
           out.write_text(json.dumps(obj, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f: f.write(f"verdict={verdict}\n")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write(f"verdict={verdict}\n")
           PY
 
       - uses: actions/upload-artifact@v7
@@ -182,7 +295,7 @@ jobs:
         with:
           name: v09-${{ matrix.slug }}
           path: |
-            ${{ runner.temp }}/v09-${{ matrix.slug }}/prompt.txt
+            ${{ runner.temp }}/v09-${{ matrix.slug }}/context.txt
             ${{ runner.temp }}/v09-${{ matrix.slug }}/raw.txt
             ${{ runner.temp }}/v09-${{ matrix.slug }}/review-${{ matrix.slug }}.json
           if-no-files-found: warn
@@ -217,9 +330,16 @@ jobs:
           heads = {r["reviewedHead"] for r in reviews}
           if heads != {os.environ["GITHUB_SHA"]}: raise SystemExit(f"head mismatch {heads}")
           bad = [r for r in reviews if r["verdict"] != "APPROVED" or r.get("blockingFindings")]
-          summary = {"schemaVersion":"rev28.v09.summary.v1","reviewedHead":os.environ["GITHUB_SHA"],"topicCount":len(reviews),"allApproved":not bad,"topics":{r["topic"]:r["verdict"] for r in reviews},"realMacOnlyResiduals":{r["topic"]:r.get("realMacOnlyResiduals",[]) for r in reviews}}
+          summary = {
+              "schemaVersion": "rev28.v09.summary.v1",
+              "reviewedHead": os.environ["GITHUB_SHA"],
+              "topicCount": len(reviews),
+              "allApproved": not bad,
+              "topics": {r["topic"]: r["verdict"] for r in reviews},
+              "realMacOnlyResiduals": {r["topic"]: r.get("realMacOnlyResiduals", []) for r in reviews},
+          }
           out = pathlib.Path(os.environ["RUNNER_TEMP"]) / "v09-summary.json"
-          out.write_text(json.dumps(summary, ensure_ascii=False, sort_keys=True, indent=2)+"\n")
+          out.write_text(json.dumps(summary, ensure_ascii=False, sort_keys=True, indent=2) + "\n")
           if bad: raise SystemExit("one or more reviews require revision")
           PY
       - uses: actions/upload-artifact@v7
