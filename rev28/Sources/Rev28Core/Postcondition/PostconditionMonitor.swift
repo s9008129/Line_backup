@@ -279,6 +279,31 @@ public enum StrictPostconditionMonitor {
                 }
             }
         }
-        return .noChooserObserved(sampleCount: sampleCount, tripwire: latestTripwire)
+        // The hard-cap window is over. Preserve exactly one forensic sample
+        // after the frozen delay. It is never success-authorizing: an affirmative
+        // result is named CHOOSER_OBSERVED_AFTER_WINDOW and causes zero retry/input.
+        await sleep(bounds.lateForensicSampleDelaySeconds)
+        let lateSampleTimeout = max(1.0, Double(bounds.slowCadenceMs) / 1000.0 * 4.0)
+        guard let lateResult = await valueBeforeDeadline(seconds: lateSampleTimeout, operation: sampler) else {
+            return .deadlineExceeded(sampleCount: sampleCount, tripwire: latestTripwire)
+        }
+        sampleCount += 1
+        switch lateResult {
+        case let .failed(error, tripwire):
+            return .observerFailed(error, sampleCount: sampleCount, tripwire: tripwire)
+        case let .observed(sample):
+            latestTripwire = sample.tripwireObservations
+            if latestTripwire.contains(where: { $0.aborts }) {
+                return .tripwireAborted(sampleCount: sampleCount, tripwire: latestTripwire)
+            }
+            if let affirmation = sample.affirmation {
+                return .chooserObservedAfterWindow(
+                    affirmation,
+                    sampleCount: sampleCount,
+                    tripwire: latestTripwire
+                )
+            }
+            return .noChooserObserved(sampleCount: sampleCount, tripwire: latestTripwire)
+        }
     }
 }
