@@ -1,0 +1,16 @@
+== fixture digest ==
+reviewedImplementationSHA256=f6ef94dcc55f6ccd9a0778d08ad1a2f549bbff32fa35b200baa06acb537a4f68 (tree after the post-Save-All composition commit)
+chooser-predicate.json sha256=0472aa0a364711fd357f872d93c5ad7e13b393cc267dbbc6244d47a20de6f3f2 (byte copy of evidence/20260925-rev28-native-closed-loop/harness/frozen/chooser-affirmation-predicate-v2.json)
+
+== live-execute (same fixture) ==
+live-execute refused: dispatchRefusedByPrecondition(target process is not the reviewed LINE instance)
+EXIT=77
+== CI guard ==
+live-preflight: live execution is disabled in CI
+EXIT=77
+== missing --config ==
+live-preflight: requires --config and --one-shot-authorization; CI never dispatches
+EXIT=64
+== stale reviewed-implementation digest ==
+live-preflight refused: dispatchRefusedByPrecondition(one-shot authorization or plan digest mismatch)
+EXIT=77

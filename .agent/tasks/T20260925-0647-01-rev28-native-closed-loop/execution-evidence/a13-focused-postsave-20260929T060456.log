@@ -1,0 +1,76 @@
+Building for debugging...
+[0/12] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.10s)
+Test Suite 'Selected tests' started at 2026-09-29 06:04:56.591.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 06:04:56.592.
+Test Suite 'ComposedAdaptersTests' started at 2026-09-29 06:04:56.592.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testAppReadyRequiresFrontmostTargetAndPostsNothing]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testAppReadyRequiresFrontmostTargetAndPostsNothing]' passed (0.010 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testChooserAffirmationProducesBoundArtifactsAndNamedRefusals]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testChooserAffirmationProducesBoundArtifactsAndNamedRefusals]' passed (0.668 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testDestinationPreparationAndSingleConfirmationUseTheBoundChooser]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testDestinationPreparationAndSingleConfirmationUseTheBoundChooser]' passed (0.238 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testDownloadObservationStopsAtTheCapAndProvesStabilityOtherwise]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testDownloadObservationStopsAtTheCapAndProvesStabilityOtherwise]' passed (0.336 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testExecuteRefusesSaveAllDispatchWithoutPhaseBEligibility]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testExecuteRefusesSaveAllDispatchWithoutPhaseBEligibility]' passed (0.165 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesLedgerThatAlreadyRecordedIrreversibleIntent]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesLedgerThatAlreadyRecordedIrreversibleIntent]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesSaveAllLocatedWhenFrozenMenuGeometryIsAbsent]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesSaveAllLocatedWhenFrozenMenuGeometryIsAbsent]' passed (0.164 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightWalksEveryPreSaveStateWithGuardedRecoveriesAndZeroIrreversibleIntent]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightWalksEveryPreSaveStateWithGuardedRecoveriesAndZeroIrreversibleIntent]' passed (0.167 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreIntentContinuationResumesWithoutReusingEvidence]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreIntentContinuationResumesWithoutReusingEvidence]' passed (0.167 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testSaveAllDispatchConsumesExactlyOneGuardedClickAndRecordsEvidence]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testSaveAllDispatchConsumesExactlyOneGuardedClickAndRecordsEvidence]' passed (0.217 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testSaveAllDispatchRefusesWhenThePreDispatchContextGaps]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testSaveAllDispatchRefusesWhenThePreDispatchContextGaps]' passed (0.168 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testVerifyContentConfirmsExactMultisetAndRefusesBaselineChange]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testVerifyContentConfirmsExactMultisetAndRefusesBaselineChange]' passed (0.172 seconds).
+Test Suite 'ComposedAdaptersTests' passed at 2026-09-29 06:04:59.068.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 2.475 (2.476) seconds
+Test Suite 'LiveCompositionTests' started at 2026-09-29 06:04:59.068.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssembledExecuteStopsAtTheIrreversibleBoundary]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssembledExecuteStopsAtTheIrreversibleBoundary]' passed (0.167 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssemblesOneCompositionThatReachesTheSaveAllBoundary]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssemblesOneCompositionThatReachesTheSaveAllBoundary]' passed (0.164 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryRefusesUncalibratedConfigurationBeforeAnyObservation]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryRefusesUncalibratedConfigurationBeforeAnyObservation]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationAcceptsTheReviewedShape]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationAcceptsTheReviewedShape]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesBudgetOutsideReviewedBounds]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesBudgetOutsideReviewedBounds]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesDegenerateLocatorGeometry]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesDegenerateLocatorGeometry]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesMissingFrozenRuleForTheConfiguredState]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesMissingFrozenRuleForTheConfiguredState]' passed (0.000 seconds).
+Test Suite 'LiveCompositionTests' passed at 2026-09-29 06:04:59.401.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.332 (0.333) seconds
+Test Suite 'PhaseBEligibilityTests' started at 2026-09-29 06:04:59.401.
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testArtifactOutsideTheRunDirectoryNeverLoads]' started.
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testArtifactOutsideTheRunDirectoryNeverLoads]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testConsumedEntitlementRefuses]' started.
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testConsumedEntitlementRefuses]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testFullyBoundAllPassArtifactValidates]' started.
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testFullyBoundAllPassArtifactValidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testGoalIdentityMismatchRefuses]' started.
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testGoalIdentityMismatchRefuses]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testIneligibleVerdictRefusesEvenWithAllPredicatesPassing]' started.
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testIneligibleVerdictRefusesEvenWithAllPredicatesPassing]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testMissingPredicateRefuses]' started.
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testMissingPredicateRefuses]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testNonPassPredicateRefuses]' started.
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testNonPassPredicateRefuses]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testRunBindingMismatchRefuses]' started.
+Test Case '-[Rev28CoreTests.PhaseBEligibilityTests testRunBindingMismatchRefuses]' passed (0.000 seconds).
+Test Suite 'PhaseBEligibilityTests' passed at 2026-09-29 06:04:59.404.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.003 (0.003) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 06:04:59.404.
+	 Executed 27 tests, with 0 failures (0 unexpected) in 2.811 (2.812) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 06:04:59.404.
+	 Executed 27 tests, with 0 failures (0 unexpected) in 2.811 (2.813) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

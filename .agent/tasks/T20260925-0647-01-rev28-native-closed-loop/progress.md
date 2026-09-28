@@ -1,44 +1,44 @@
 # Implement Progress — T20260925-0647-01-rev28-native-closed-loop
 
 STATE: RUNNING
-UPDATED_AT: 2026-09-29T05:51+0800
+UPDATED_AT: 2026-09-29T06:25+0800
 PLAN_REVISION: 4
 MODE: AB_IMPLEMENTATION_EVALUATION (Phase B forbidden; PHASE_B_STATUS=FORBIDDEN_AB_EVALUATION)
 
 ## 給使用者看的白話摘要
 
 - **目前目標：** 依 R4 批准的 Execution Contract 完成 C2/C3/C5–C7 的原生生產組合，讓 `rev28ctl live-preflight`／`live-execute` 走同一條已審查的原生組合路徑，並在 Save All 之前 fail closed。Phase B 永久禁止。
-- **目前卡點：** C2/C3 與 pre-Save-All 的 composed adapter 已完成；這一輪 `rev28ctl` 已接上 production `ObservationSource`／`ActuationEnvironment`／幾何設定與 evidence-derived epoch authority，CLI 進入同一個 composition，`live-preflight` 走到 `SAVE_ALL_LOCATED`、`live-execute` 在 Save All 能力邊界 fail closed。下一個 blocker 是 C5–C7：`dispatchSaveAll` 之後的 chooser／destination／download／filesystem 能力仍是 `capabilityNotBuilt`。
-- **主要嘗試：** compile／segmentation／stability／C4 goal-slot／C4 preflight／C4 typed evidence enforcement／native observation session／typed state evidence／pre-Save-All composition／ellipsis rows 各 1/3（皆已解決）；rev28ctl production composition 1/3（已解決：CLI 進入 composition 並 fail closed）；post-Save-All composition 0/3（下一輪）。
-- **上一輪在測試什麼：** (A11) 把已在測試中驗證的 pre-Save-All composition 接上 CLI 的 production source／environment／幾何設定與不可重啟的 epoch seed，並確認沒有 Phase B 授權時 CLI 在 Save All 邊界 fail closed。
-- **結果：** 新增 `LiveCompositionFactory`／`ProductionObservationSource`／`ProductionActuationEnvironment`／`RunEpochAuthority`，改寫 `rev28ctl` live 區塊；7 個 composition tests＋4 個 epoch tests 全數通過，full suite 167 tests / 0 failures；CLI refusal transcript（target 非 LINE 77、CI 77、缺 config 64、stale digest 77）存入 evidence。
-- **這輪多知道了什麼：** CLI 與 common engine 之間只剩 C5–C7 的能力實作；觀測、授權、epoch、typed evidence 已由同一個 composition 綁定，且 CLI 端沒有繞道。
+- **目前卡點：** C2–C7 的原生組合已完成：`dispatchSaveAll`／chooser／destination／download／filesystem／content verification 全部由同一個 composed adapter 提供，唯一能 arm Save All 的來源是顯式的 Phase B eligibility artifact，缺席即 named refusal。下一個 blocker 是在這台 Mac 上（LINE 目標對話開著）跑真正的 Phase A `live-preflight`（零 irreversible、授權不消耗），取得真實的 pre-dispatch context digest。
+- **主要嘗試：** compile／segmentation／stability／C4 goal-slot／C4 preflight／C4 typed evidence enforcement／native observation session／typed state evidence／pre-Save-All composition／ellipsis rows／rev28ctl production composition 各 1/3（皆已解決）；post-Save-All composition 1/3（已解決：C5–C7 全路徑完成且 Phase B 前置條件 fail closed）；real Phase A preflight 0/3（下一輪）。
+- **上一輪在測試什麼：** (A12) 把 C5–C7 全部接進 composed adapter 與 CLI，並確認：沒有 Phase B eligibility artifact 時 `dispatchSaveAll` 以 named refusal 拒絕且 0 事件；有 artifact 時恰好一次 guarded click；pre-dispatch context 有 collection gap 時拒絕；download 無法定靜止時在 10 分鐘 cap 停止；baseline 變動時 content 成功宣告被拒。
+- **結果：** 新增 `PhaseBEligibilityArtifact`／`FilesystemTripwireJournal`／`PostSaveEnvironment`／`PostSaveComposition` 並改寫 `ComposedNativeAdapter` 與 `rev28ctl`；27 個 focused tests 全數通過，full suite 181 tests / 0 failures；CLI refusal transcript 維持 77／77／64／77；baseline 57 檔／17,924,900 bytes／multiset `ee958e…cadaaf`／tripwire `b7debe…28fbd` 未變。
+- **這輪多知道了什麼：** post-Save-All 的每個步驟都能在注入 OS boundary 下被證明（含 named refusal 與 cap 終止），且唯一能 arm Save All 的來源是顯式 eligibility artifact；production 路徑在缺 artifact 時仍 fail closed（0 dispatch、0 confirmation）。
 - **距離驗收有沒有更近：** YES（primary outcome 仍 NOT_ACHIEVED；Phase B 未執行且禁止；累計 irreversible intent／attempt／dispatch = 0）
-- **下一步：** 依 C5–C7 實作 composed adapter 的 `dispatchSaveAll`／`observeChooser`／`prepareDestination`／`confirmDestination`／download／filesystem／`verifyContent`，全部經注入的 OS boundary 測試，production 路徑保持 fail closed。
+- **下一步：** 在這台 Mac 上開著已審查的 LINE 目標對話，執行 `rev28ctl live-preflight`（Phase A；零 irreversible、授權不消耗），取得真實 `preDispatchContextSHA256`；之後才是 V-09 topic reviews 與 Stage 05 independent acceptance。
 - **停損點：** 任一 blocker 累積 3 次 material attempts 或 2 次連續無新資訊即寫 escalation packet 並停止 substantive implementation；需要改 load-bearing 架構/acceptance semantics 即 REPLAN_REQUIRED。Phase B 任何動作直接 fail closed。
 
-## Current blocker (next up: post-Save-All composition)
+## Current blocker (next up: real Phase A preflight on this Mac)
 
 ```text
 BLOCKER_FINGERPRINT:
 STAGE=04
-CHECK=POST_SAVE_ALL_COMPOSITION_MISSING
-SURFACE=rev28/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift
-EXPECTED=the composed adapter dispatches the one guarded Save All click and binds chooser/destination/download/filesystem evidence for every post-Save-All state, exercised through injected OS boundaries with zero production dispatch
-OBSERVED=dispatchSaveAll / observeChooser / prepareDestination / confirmDestination / observeDownloadStarted / observeDownloadInProgress / observeFilesystemStable / verifyContent still throw capabilityNotBuilt, so live-execute can only fail closed at the Save All boundary
+CHECK=REAL_PHASE_A_PREFLIGHT_EVIDENCE_MISSING
+SURFACE=rev28ctl live-preflight (Phase A, zero irreversible)
+EXPECTED=a real live-preflight on this Mac with the reviewed LINE instance open, reaching SAVE_ALL_LOCATED and recording a >=10 s gap-free pre-dispatch context digest, with production counters 0/0
+OBSERVED=no real live-preflight has been run; every CLI refusal this round is the PID-1 fixture (target process is not the reviewed LINE instance), so Phase A evidence exists only at unit level
 ```
 
-Resolved fingerprints: `DETERMINISTIC_SWIFT_TEST_COMPILATION` (A1), short-end-date segmentation (A2), equal-tail stability span (A3), C4 goal slot (A4), C4 preflight consumption (A5), C4 typed eligibility/evidence enforcement (A6), `NATIVE_OBSERVATION_SESSION_MISSING` (A7), `UNTYPED_STATE_EVIDENCE` (A8), `PRE_SAVE_ALL_COMPOSITION_MISSING` (A9), `ELLIPSIS_ROW_CONVENTION_MIRRORED` (A10), `NATIVE_PRODUCTION_COMPOSITION_REACHABLE` (A11).
+Resolved fingerprints: `DETERMINISTIC_SWIFT_TEST_COMPILATION` (A1), short-end-date segmentation (A2), equal-tail stability span (A3), C4 goal slot (A4), C4 preflight consumption (A5), C4 typed eligibility/evidence enforcement (A6), `NATIVE_OBSERVATION_SESSION_MISSING` (A7), `UNTYPED_STATE_EVIDENCE` (A8), `PRE_SAVE_ALL_COMPOSITION_MISSING` (A9), `ELLIPSIS_ROW_CONVENTION_MIRRORED` (A10), `NATIVE_PRODUCTION_COMPOSITION_REACHABLE` (A11), `POST_SAVE_ALL_COMPOSITION_MISSING` (A12).
 
 ## Convergence counters
 
 ```text
-MATERIAL_ATTEMPTS_USED: 1 (compile blocker, resolved) / 1 (segmentation blocker, resolved) / 1 (stability blocker, resolved) / 1 (C4 goal slot, resolved) / 1 (C4 preflight, resolved) / 1 (C4 typed evidence enforcement, resolved) / 1 (native observation session, resolved) / 1 (typed state evidence, resolved) / 1 (pre-Save-All composition, resolved) / 1 (ellipsis row convention, resolved) / 1 (native production composition reachable, resolved)
+MATERIAL_ATTEMPTS_USED: 1 (compile blocker, resolved) / 1 (segmentation blocker, resolved) / 1 (stability blocker, resolved) / 1 (C4 goal slot, resolved) / 1 (C4 preflight, resolved) / 1 (C4 typed evidence enforcement, resolved) / 1 (native observation session, resolved) / 1 (typed state evidence, resolved) / 1 (pre-Save-All composition, resolved) / 1 (ellipsis row convention, resolved) / 1 (native production composition reachable, resolved) / 1 (post-Save-All composition, resolved)
 MAX_MATERIAL_ATTEMPTS: 3
 CONSECUTIVE_NO_INFORMATION_GAIN: 0
 SAME_BLOCKER_GOAL_TURNS_AT_IMPASSE: 0
 OSCILLATION_DETECTED: NO
-NEXT_BLOCKER_ATTEMPTS_USED: 0/3 (POST_SAVE_ALL_COMPOSITION_MISSING)
+NEXT_BLOCKER_ATTEMPTS_USED: 0/3 (REAL_PHASE_A_PREFLIGHT_EVIDENCE_MISSING)
 ```
 
 ## Seed reconciliation (R3/R4)
@@ -77,6 +77,7 @@ A/B branch created for this run: v43-ab/codex-rev28 (rev28-prelive-finalization 
 | A9 (pre-Save-All composition) | 沒有具體 adapter 把 observation session 接到 common engine，所以 live-execute 連 Save All 邊界都到不了（先前只有 stub） | 新增 `ComposedNativeAdapter`（8 狀態、單次 guarded reversible recovery、artifact 只投影 fresh bundle）＋`preSaveStates`/`establishPreSaveStates`/`runPreflight`；6 個 composed tests 以假場景替換 OCR/pixels/焦點事實 | happy path：8 狀態、12 captures、2 reversible dispatches、0 irreversible、entitlement 未消耗；缺幾何在 `SAVE_ALL_LOCATED` refuse；`run()` 在 `dispatchSaveAll` 以 `capabilityNotBuilt` 停止且 0 irreversible | 6/6 composed tests PASS；full suite 156 tests / 0 failures | pre-Save-All composition 可用且證據/授權不變量有測試 | `execution-evidence/a11-focused-observation-ellipsis-composed-20260929T054308.log`, `a10-full-suite-ellipsis-rows-20260929T054157.log` | 排除「引擎與感測器之間缺少可測組合」；同時證明 Phase B 邊界 fail closed | YES |
 | A10 (ellipsis rows) | `ELLIPSIS_LOCATED` 在合成場景被拒，懷疑 `EllipsisPixelDetector` 回傳的 y 是 bottom-up（`translate/scale` 造成多餘的一次翻轉） | 以已知 raster rows 的合成圖 + reviewed v5 真實 frame 做前後對照，移除多餘翻轉，加 3 個 regression tests（含真實 frame digest/SHA 綁定） | 修前：raster rows 4.5/12.5/20.5 被回報成 38.5/46.5/54.5（60 高圖），locator refuse；修後：reviewed v5 frame 重現 dots 44/49.5/55 @ x 304.5 並 locate (304.5, 49.5) | 修前 4 個 composed tests 失敗於 `ELLIPSIS_LOCATED`；修後 focused 23 tests / 0 failures、full suite 156 tests / 0 failures | `ELLIPSIS_LOCATED` 可用；detector 與 reviewed v5 幾何一致 | `execution-evidence/a10-full-suite-ellipsis-rows-20260929T054157.log`, `a11-focused-observation-ellipsis-composed-20260929T054308.log`、`evidence/20260919-rev25-baseline/attempt-01/v5-offline-replay.json` | 排除「y 方向鏡射」；確認 rev28replay 只讀 component count 故不受影響 | YES |
 | A11 (rev28ctl production composition) | CLI 進不了已審查的 composition：`rev28ctl` 只有 stub 檢查，沒有 production `ObservationSource`／`ActuationEnvironment`／幾何設定，也沒有不可重啟的 epoch 來源 | 新增 `LiveCompositionFactory`（fail-closed 驗證 budget／frozen rule／locator geometry 後組裝 owner＋session＋adapter＋engine）與 `RunEpochAuthority`（floor 取自 run evidence 內的 `state-<STATE>-<epoch>` 檔名，衝突回 0 讓 bundle 驗證拒絕）；新增 `ProductionObservationSource`（SCK/CG/AX/process/signing）與 `ProductionActuationEnvironment`（GatedQuartzActuator reversible click）；改寫 `rev28ctl` live 區塊走同一 composition；加 7 個 composition＋4 個 epoch tests；刪除死碼 `XCTargetProcess` | 未校準幾何必須在第一次 capture 前被拒（captureCount 0）；組裝後 preflight 走到 `SAVE_ALL_LOCATED`（12 captures、2 reversible、0 irreversible、entitlement 未消耗）；`run()` 在 `dispatchSaveAll` 以 `capabilityNotBuilt` fail closed；CLI 四案例維持 77/77/64/77 | 7/7 composition tests＋4/4 epoch tests PASS；full suite 167 tests / 0 failures；CLI refusal transcript 重現 target-not-LINE 77／CI 77／missing config 64／stale digest 77 | CLI 與 common engine 進入同一 reviewed composition；pre-Save-All 路徑可由 production 程式碼抵達；epoch 不可跨重啟重用 | `execution-evidence/a12-full-suite-live-composition-20260929T054820.log`, `execution-evidence/cli-refusal-20260929T0550/cli-refusal-transcript-20260929T0551.log` | 排除「CLI 無法抵達 composition」與「新 session 可重置 epoch」；確認 Phase B 邊界在 capability 層 fail closed | YES |
+| A12 (post-Save-All composition) | `dispatchSaveAll` 之後的 chooser／destination／download／filesystem／content 能力全部是 `capabilityNotBuilt`，Phase B 之前的路徑無法用同一 composition 走完，也無法在注入 boundary 下被證明 | 新增 `PhaseBEligibilityArtifact`（17 predicates、goal-identity digest、run-dir 邊界載入；缺席即拒絕）與唯讀 `FilesystemTripwireJournal`（startedAt 單調時戳、collection-gap 偵測）；新增 `PostSaveEnvironment` protocol 與 `ProductionPostSaveEnvironment`（10 s bounded pre-dispatch context gate、journal failure／gap named refusal、production click 走 `GatedQuartzActuator`）；在 `ComposedNativeAdapter` 實作 dispatch／chooser／destination／download／filesystem／content 全路徑（≥10 s gap-free context → fresh re-locate → baseline re-verify → census → readiness → permit → dispatch boundary → durable records）；`rev28ctl` 新增 chooser predicate／baseline reference／approvedRoot／tripwireRoots／optional eligibility 設定，`live-preflight` 記錄 `preDispatchContextSHA256` | 無 eligibility artifact → `dispatchSaveAll` named refusal 且 0 事件；有 artifact → 恰好一次 guarded click；context gap → 拒絕；download 無法定靜止 → 10 分鐘 cap 終止；baseline 變動 → content 成功宣告被拒 | 27 個 focused tests（PhaseBEligibility 8／ComposedAdapters 12／LiveComposition 7）全 PASS；full suite 181 tests / 0 failures；CLI refusal transcript 重現 77／77／64／77；新 implementation digest `f6ef94dc…a4f68` | C5–C7 全部由同一 composition 提供且經注入 boundary 測試；Phase B 仍 fail closed（無 artifact 即拒絕）；production counters 0/0 | `execution-evidence/a13-focused-postsave-20260929T060456.log`, `execution-evidence/a14-full-suite-phaseb-eligibility-postsave-20260929T060502.log`, `execution-evidence/cli-refusal-20260929T0607/cli-refusal-transcript-20260929T0607.log` | 排除「capability 無法走完」與「eligibility 可隱式 arm」；確認 gap／cap／baseline 變動都在測試中真的拒絕 | YES |
 
 ## Commits (A/B branch v43-ab/codex-rev28)
 
@@ -96,13 +97,19 @@ f5e7a3e fix(rev28): report ellipsis dot rows in top-left capture coordinates
 947db18 feat(rev28): compose the native adapter for every pre-Save-All state
 0d8663d feat(rev28): derive capture epochs from evidence so reruns never reuse artifact names
 c7eb3f9 feat(rev28): assemble the live composition and wire it into rev28ctl
+8528ce5 feat(rev28): arm Phase B only from an explicit machine-checkable eligibility artifact
+e407565 feat(rev28): compose the post-Save-All path and keep it fail closed
 ```
 
 ## Evidence pointers
 
-- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/` — A1–A10 raw logs (build/focused/full suite)
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/` — A1–A14 raw logs (build/focused/full suite)
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a12-full-suite-live-composition-20260929T054820.log` — 167 tests / 0 failures（含 live composition 與 epoch authority suites）
-- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0550/` — CLI refusal fixture（config／rulebook／one-shot／stale-digest config）與 transcript；`reviewedImplementationSHA256` 綁定 c7eb3f9 的 `rev28/Sources` 樹（`b0a71b95…ba0070`）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0550/` — 前一輪 CLI refusal fixture（c7eb3f9 樹，`b0a71b95…ba0070`）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a13-focused-postsave-20260929T060456.log` — 27 focused tests / 0 failures（PhaseBEligibility 8／ComposedAdapters 12／LiveComposition 7）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a14-full-suite-phaseb-eligibility-postsave-20260929T060502.log` — 181 tests / 0 failures（含 post-Save-All composition 與 eligibility suites）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0607/` — CLI refusal fixture（config／rulebook／one-shot／stale-digest config／frozen chooser predicate 的 byte copy）與 transcript；`reviewedImplementationSHA256` 綁定 e407565 的 `rev28/Sources` 樹（`f6ef94dc…a4f68`）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a13-focused-postsave-FAILED-intermediate-20260929T060425.log` — 中間失敗的 focused run（test 內 fake clock 與 permit 不一致），修好後由 a13/a14 取代，保留為除錯紀錄
 - `evidence/20260917-vision-reader/frames/route5r_frame_post.jpg` (SHA-256 `4cb8a6b4…c6560b3`) — reviewed v5 real frame used by the A10 regression test
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/analysis/r4-20260928/` — R4 read-only diagnostics (segmentation/stability compile probes, test.log, build.log)
 - `evidence/20260925-rev28-native-closed-loop/baseline-content-multiset.json` (SHA 3c932d8ccb9f4d2a7945463861fb4ebae066eadb59b8ff2702767b3a9f851bc2)

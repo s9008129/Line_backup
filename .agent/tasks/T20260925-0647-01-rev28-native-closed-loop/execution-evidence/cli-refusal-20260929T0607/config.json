@@ -1,0 +1,44 @@
+{
+  "authorization": {
+    "runID": "run-cli-refusal",
+    "goal": "Rev28 target album backup",
+    "group": "旻謙允禎成長日記",
+    "album": "2024/05/13～05/17",
+    "planSHA256": "05413807f5d7c04d5fe57eb058da6da734ddef5e350a9b023bfa8f8d72f84c1b",
+    "reviewedImplementationSHA256": "f6ef94dcc55f6ccd9a0778d08ad1a2f549bbff32fa35b200baa06acb537a4f68",
+    "stagingRoot": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0607/staging",
+    "stagingRunDirectory": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0607/staging/run-cli-refusal",
+    "evidenceRunDirectory": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0607/evidence",
+    "expectedFileCount": 57,
+    "expectedTotalBytes": 17924900,
+    "expectedContentMultisetSHA256": "ee958e6467676506a1c7aaf237a4376ecc5e5083fd94aa6fd0d56d376cacdaaf",
+    "baselineTripwireSHA256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd"
+  },
+  "targetBundleID": "jp.naver.line.mac",
+  "targetPID": 1,
+  "ledgerPath": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0607/ledger.jsonl",
+  "checkpointPath": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0607/ledger-head.anchor",
+  "planPath": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md",
+  "repositoryRoot": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "geometryRuleBookPath": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0607/rulebook.json",
+  "menuBoundsCapture": {
+    "x": 200,
+    "y": 40,
+    "width": 170,
+    "height": 260
+  },
+  "addressableBoundsCapture": {
+    "x": 210,
+    "y": 0,
+    "width": 160,
+    "height": 600
+  },
+  "chooserPredicatePath": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0607/chooser-predicate.json",
+  "baselineReferencePath": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260925-rev28-native-closed-loop/baseline-content-multiset.json",
+  "approvedRoot": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC",
+  "tripwireRoots": [
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0607/staging",
+    "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC"
+  ],
+  "baselineSourcePath": "/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57"
+}
