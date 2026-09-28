@@ -134,6 +134,100 @@ public struct ChooserAffirmationPredicate: Equatable, Codable, Sendable {
     }
 }
 
+
+public struct ChooserAXCalibrationEvidence: Codable, Sendable {
+    public let panelWindowFound: Bool
+    public let panelWindowRole: String?
+    public let panelWindowSubrole: String?
+    public let buttonTitles: [String]
+    public let rolesObserved: [String]
+    public let subrolesObserved: [String]
+    public let textFieldRoles: [String]
+    public let popUpRoles: [String]
+
+    public init(
+        panelWindowFound: Bool,
+        panelWindowRole: String?,
+        panelWindowSubrole: String?,
+        buttonTitles: [String],
+        rolesObserved: [String],
+        subrolesObserved: [String],
+        textFieldRoles: [String],
+        popUpRoles: [String]
+    ) {
+        self.panelWindowFound = panelWindowFound
+        self.panelWindowRole = panelWindowRole
+        self.panelWindowSubrole = panelWindowSubrole
+        self.buttonTitles = buttonTitles
+        self.rolesObserved = rolesObserved
+        self.subrolesObserved = subrolesObserved
+        self.textFieldRoles = textFieldRoles
+        self.popUpRoles = popUpRoles
+    }
+}
+
+public enum ChooserPredicateDerivationError: Error, Equatable, Sendable {
+    case invalidFrozenCalibration
+    case defaultButtonNotObserved
+    case cancelButtonNotObserved
+}
+
+/// The append-only frozen predicate file predates the explicit predicateVersion
+/// field and button requirements. Production must never rewrite that evidence.
+/// Instead, derive the stricter v2 runtime predicate only when the companion
+/// frozen AX calibration proves the missing clauses exactly.
+public enum ChooserProductionPredicate {
+    public static func derive(
+        frozen base: ChooserAffirmationPredicate,
+        calibration: ChooserAXCalibrationEvidence,
+        defaultButtonTitles: [String] = ["開啟"],
+        cancelButtonTitles: [String] = ["Cancel"]
+    ) throws -> ChooserAffirmationPredicate {
+        guard calibration.panelWindowFound,
+              calibration.panelWindowRole == base.ax.windowRole,
+              let subrole = calibration.panelWindowSubrole,
+              base.ax.allowedSubroles.contains(subrole),
+              calibration.rolesObserved.contains("AXButton"),
+              !Set(calibration.textFieldRoles).isDisjoint(with: Set(base.ax.textFieldRoles)),
+              !Set(calibration.popUpRoles).isDisjoint(with: Set(base.ax.popUpButtonRoles)) else {
+            throw ChooserPredicateDerivationError.invalidFrozenCalibration
+        }
+        let observedButtons = Set(calibration.buttonTitles)
+        let defaultObserved = defaultButtonTitles.filter(observedButtons.contains)
+        let cancelObserved = cancelButtonTitles.filter(observedButtons.contains)
+        guard !defaultObserved.isEmpty else {
+            throw ChooserPredicateDerivationError.defaultButtonNotObserved
+        }
+        guard !cancelObserved.isEmpty else {
+            throw ChooserPredicateDerivationError.cancelButtonNotObserved
+        }
+
+        var clauses = base.ax
+        clauses.defaultButton = ButtonRequirement(
+            mode: .titleIn,
+            attributeName: nil,
+            attributeValue: nil,
+            titles: defaultObserved.sorted(),
+            buttonRoles: ["AXButton"]
+        )
+        clauses.cancelButton = ButtonRequirement(
+            mode: .titleIn,
+            attributeName: nil,
+            attributeValue: nil,
+            titles: cancelObserved.sorted(),
+            buttonRoles: ["AXButton"]
+        )
+        return ChooserAffirmationPredicate(
+            predicateID: base.predicateID + "-derived-v2",
+            frozenAtISO8601: base.frozenAtISO8601,
+            calibratedAgainst: base.calibratedAgainst + " + frozen chooser-ax-calibration-v2",
+            ax: clauses,
+            ownership: base.ownership,
+            predicateVersion: ChooserAffirmationEvaluator.processStableButtonSemanticsVersion
+        )
+    }
+}
+
 public struct ChooserProcessFacts: Equatable, Codable, Sendable {
     public let pid: Int32
     public let bundleID: String?
