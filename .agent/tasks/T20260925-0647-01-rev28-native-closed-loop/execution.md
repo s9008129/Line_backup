@@ -53,3 +53,19 @@ PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
 - Zero irreversible production action throughout this run: Save All dispatches 0, destination confirmations 0, irreversible intents 0.
 - All commits are atomic on `v43-ab/codex-rev28` only; `rev28-prelive-finalization` remains untouched at `9cbaa1141595acb538d4672066072d2b8ffb7065`.
 - Handoff TEST_ORDER item status is recorded in `progress.md` (`## Handoff TEST_ORDER status`); item 6 (V-09 reviews) is NOT_RUN and is the next pre-Phase-A work item, pending a fresh independent reviewer context.
+
+## Stage 04 status update (2026-09-29T07:10+0800, A/B branch v43-ab/codex-rev28) — V-09 attempt-01 repairs landed
+
+STATE: RUNNING (implementation as far as possible pre-Phase B; real Phase A evidence externally blocked; Phase B forbidden)
+IMPLEMENTATION_STATUS: IN_PROGRESS (V-09 attempt-01 MAJOR findings repaired in-contract; V-09 attempt-02 re-review pending)
+PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
+CORE_ACCEPTANCE_STATUS: NOT_RUN
+REQUIRED_VERIFICATION_STATUS: IN_PROGRESS (repaired tree: focused 11 suites 80/0 `a27`, full suite 23 suites 222/0/0 skipped `a28`; V-08 adversarial/replay/provenance evidence from `a22`–`a26` remains bound to the earlier digest and is scheduled for re-run if attempt-02 requires it)
+INDEPENDENT_ACCEPTANCE_STATUS: PENDING
+TASK_CLOSURE_STATUS: IN_PROGRESS
+PHASE_A_STATUS: EVIDENCE TOOLCHAIN COMPLETE; real preflight NOT FIRED — external prerequisite missing (LINE signed out, no target album surface); 0/3 attempts
+PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
+
+- Repairs (1/3 each, all resolved 2026-09-29T07:10): GoalSlot `rename(2)` atomic install; `AXWindowIdentitySelector` binding the production AX read to the target window; intra-click revalidation between hover and `mouseDown`; chooser predicate v2 derived from the hash-verified frozen bytes in `live-preflight`; durable per-blocker (≤3) and consecutive-revalidation (2) budgets recomputed from the ledger with owner-level eligibility/state enforcement; per-primitive chooser re-acquire + accounting via `DestinationPrimitiveGuard`; post-dispatch tripwire gap/collector-failure gate with evidence disclosure; eligibility validation recomputing plan/handoff/frozen/predicate/implementation evidence; `OneShotAuthorization` deleted (observe-only decided by the durable goal slot); verified pre-intent continuation in `run()`; fail-closed menu/addressable-bounds containment and single-display backing scale. `V09_MENU_BOUNDS_UNBOUND` freeze-binding and `V09_CHOOSER_PROVENANCE_QUALIFIER` are documented (no replan) — see `progress.md` `## V-09 attempt-01 repairs`.
+- Implementation digest recomputed with the reviewed formula (cross-validated by reproducing the previous digest `eb4415f9…f6b1` / 43 files from `00f8634`): `03ac90b46b869eec952bc33733a8a81b1b2dad70406b4f0e70ea0d1f3a0fe17d`, 44 swift files.
+- Next: V-09 attempt-02 re-review on the new digest (`v09/attempt-02/bindings.json`, fresh reviewer contexts); real Phase A remains externally blocked; zero irreversible throughout (Save All dispatches 0, destination confirmations 0, irreversible intents 0).
