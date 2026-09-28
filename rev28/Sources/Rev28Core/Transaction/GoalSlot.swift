@@ -173,7 +173,9 @@ public enum GoalSlot {
         return record
     }
 
-    private static func write(_ record: GoalSlotRecord, to url: URL) throws {
+    /// Internal (not public) so the crash-window/atomicity tests can drive a
+    /// repeated replace loop against a concurrent reader.
+    static func write(_ record: GoalSlotRecord, to url: URL) throws {
         let parent = url.deletingLastPathComponent()
         let temp = parent.appendingPathComponent(".tmp-\(UUID().uuidString)-\(url.lastPathComponent)")
         do {
@@ -190,14 +192,19 @@ public enum GoalSlot {
             throw GoalSlotError.ioFailure("goal slot fsync failed")
         }
         _ = close(tempFD)
-        do {
-            if FileManager.default.fileExists(atPath: url.path) {
-                try FileManager.default.removeItem(at: url)
+        // Atomic replace: rename(2) swaps the fsynced temp file over the
+        // destination in one step, so a crash can never observe a missing or
+        // partially written slot (the earlier remove+move sequence had a
+        // window in which the slot did not exist).
+        let installed = temp.path.withCString { source in
+            url.path.withCString { destination in
+                Darwin.rename(source, destination)
             }
-            try FileManager.default.moveItem(at: temp, to: url)
-        } catch {
+        }
+        guard installed == 0 else {
+            let reason = String(cString: strerror(errno))
             _ = try? FileManager.default.removeItem(at: temp)
-            throw GoalSlotError.ioFailure("cannot install goal slot: \(error)")
+            throw GoalSlotError.ioFailure("cannot install goal slot atomically: \(reason)")
         }
         let directoryFD = Darwin.open(parent.path, O_RDONLY)
         guard directoryFD >= 0 else { throw GoalSlotError.ioFailure("cannot open goal-slot directory for fsync") }

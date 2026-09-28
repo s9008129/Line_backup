@@ -168,6 +168,11 @@ public protocol PostSaveEnvironment: Sendable {
     func postConfirmationFacts(chooserWindowIDs: [UInt32], stagingDirectory: URL) async -> PostConfirmationFacts?
     func stagingSnapshot(directory: URL) throws -> StagingSnapshot
     func tripwireObservations() -> [TripwireClassification]
+    /// Refuses when a post-dispatch dropped-event window or collector failure
+    /// makes the tripwire non-clean (plan C7).
+    func postDispatchTripwireGate() throws
+    /// Disclosure string for the tripwire evidence artifact; nil when clean.
+    func tripwireCollectionGapDisclosure() -> String?
     func markDispatchBoundary()
     func monotonicNow() -> Double
     func sleep(seconds: Double) async
@@ -283,9 +288,21 @@ public struct ProductionPostSaveEnvironment: PostSaveEnvironment {
         )
     }
 
+    /// Plan C7: dropped events or a collector failure after the dispatch
+    /// boundary can never become an empty clean tripwire; every post-dispatch
+    /// gate refuses on them.
+    public func postDispatchTripwireGate() throws {
+        guard let detail = journal.postDispatchRefusalDetail() else { return }
+        if detail.hasPrefix("collector failure") {
+            throw PostSaveEnvironmentError.tripwireUnavailable(detail)
+        }
+        throw PostSaveEnvironmentError.tripwireCollectionGap(detail)
+    }
+
     public func sampleChooserFacts(preCensus: ChooserCensus) async -> ChooserFactsResult {
         let tripwire = tripwireObservations()
         do {
+            try postDispatchTripwireGate()
             let content = try await WindowSensor.shareableContent(onScreenWindowsOnly: false)
             let snapshots = WindowSensor.snapshots(from: content)
             let cgWindows = CGWindowInventory.onScreenWindows()
@@ -381,6 +398,7 @@ public struct ProductionPostSaveEnvironment: PostSaveEnvironment {
     public func postConfirmationFacts(chooserWindowIDs: [UInt32], stagingDirectory: URL) async -> PostConfirmationFacts? {
         let tripwire = tripwireObservations()
         do {
+            try postDispatchTripwireGate()
             let content = try await WindowSensor.shareableContent(onScreenWindowsOnly: false)
             let snapshots = WindowSensor.snapshots(from: content)
             let stillOnScreen = snapshots.contains { chooserWindowIDs.contains($0.windowID) && $0.isOnScreen }
@@ -393,6 +411,10 @@ public struct ProductionPostSaveEnvironment: PostSaveEnvironment {
 
     public func stagingSnapshot(directory: URL) throws -> StagingSnapshot {
         try StagingVerifier.snapshot(directory: directory)
+    }
+
+    public func tripwireCollectionGapDisclosure() -> String? {
+        journal.postDispatchRefusalDetail()
     }
 
     public func tripwireObservations() -> [TripwireClassification] {

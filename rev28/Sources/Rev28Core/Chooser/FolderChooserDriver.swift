@@ -92,6 +92,31 @@ public enum GatedDestinationConfirmation {
 }
 
 public enum FolderChooserDriver {
+    /// Per-primitive re-acquisition and accounting boundary for destination
+    /// navigation (plan C6). Production always binds the durable owner and the
+    /// fresh chooser re-check; a production caller cannot supply a no-op.
+    public struct DestinationPrimitiveGuard {
+        /// The single AX window that satisfies the predicate's default AND
+        /// cancel clauses. Missing or duplicate panels return nil, so the
+        /// driver never picks the first matching window.
+        public let verifiedPanel: () -> AXUIElement?
+        /// Re-acquire chooser identity, process continuity and active/topmost
+        /// surface without posting or recording anything.
+        public let reacquire: (String) throws -> Void
+        /// Re-acquire and durably account the primitive before it is posted.
+        public let willPostPrimitive: (String) throws -> Void
+
+        public init(
+            verifiedPanel: @escaping () -> AXUIElement?,
+            reacquire: @escaping (String) throws -> Void,
+            willPostPrimitive: @escaping (String) throws -> Void
+        ) {
+            self.verifiedPanel = verifiedPanel
+            self.reacquire = reacquire
+            self.willPostPrimitive = willPostPrimitive
+        }
+    }
+
     /// The panel window: an AX window that contains both a text field and a
     /// default button — calibrated native panel shape.
     public static func panelWindow(pid: pid_t, defaultButtonTitles: [String] = []) -> AXUIElement? {
@@ -129,56 +154,78 @@ public enum FolderChooserDriver {
         })
     }
 
-    /// Strings the panel currently exposes that look like filesystem paths.
-    static func directoryCandidates(pid: pid_t) -> [String] {
+    /// Strings one window currently exposes that look like filesystem paths.
+    static func directoryCandidates(inWindow window: AXUIElement) -> [String] {
+        let nodes = AXDriver.allDescendants(of: window, maxDepth: 7) { element in
+            let role = AXDriver.role(of: element)
+            return role == (kAXPopUpButtonRole as String)
+                || role == (kAXTextFieldRole as String)
+                || role == (kAXWindowRole as String)
+        }
         var candidates: [String] = []
-        for window in AXDriver.windows(ofApp: pid) {
-            let nodes = AXDriver.allDescendants(of: window, maxDepth: 7) { element in
-                let role = AXDriver.role(of: element)
-                return role == (kAXPopUpButtonRole as String)
-                    || role == (kAXTextFieldRole as String)
-                    || role == (kAXWindowRole as String)
+        for node in nodes {
+            if let value = AXDriver.valueAsString(node), value.contains("/") {
+                candidates.append(value)
             }
-            for node in nodes {
-                if let value = AXDriver.valueAsString(node), value.contains("/") {
-                    candidates.append(value)
-                }
-                if let title = AXDriver.title(of: node), title.contains("/") {
-                    candidates.append(title)
-                }
+            if let title = AXDriver.title(of: node), title.contains("/") {
+                candidates.append(title)
             }
         }
         var seen = Set<String>()
         return candidates.filter { seen.insert($0).inserted }
     }
 
+    /// Strings the app's windows currently expose that look like filesystem
+    /// paths (diagnostics/evidence only; decision paths read the unique
+    /// verified panel instead).
+    static func directoryCandidates(pid: pid_t) -> [String] {
+        var seen = Set<String>()
+        return AXDriver.windows(ofApp: pid)
+            .flatMap { directoryCandidates(inWindow: $0) }
+            .filter { seen.insert($0).inserted }
+    }
+
     /// Posts ⇧⌘G, updates the newly focused path field through AX when it is
     /// settable (otherwise replaces its text with Unicode keyboard events),
     /// verifies the field value, and confirms navigation with Return.
+    ///
+    /// Plan C6: every AX/key primitive is re-acquired and durably accounted
+    /// separately through `primitiveGuard`, so a compound navigation cannot
+    /// conceal a retry inside one budget record and Return is posted only while
+    /// a freshly proved Go-to-folder sheet owns the field of the unique
+    /// predicate-verified panel.
     @discardableResult
     static func navigateToDestination(
         pid: pid_t,
         destination: URL,
+        primitiveGuard: DestinationPrimitiveGuard,
         timeoutSeconds: Double = 8.0
     ) throws -> [String] {
         let target = destination.standardizedFileURL.path
+
+        // Primitive 1: ⇧⌘G opens the navigation sheet inside the verified panel.
+        try primitiveGuard.willPostPrimitive("chooser.navigate.goToFolderChord")
         try QuartzActuator.postGoToFolderChord()
-        // Wait for the entry sheet (a new focused text field appears).
+
+        // Wait for the entry sheet: the focused element must be a text field of
+        // the unique verified panel, never "any focused text field".
         let deadline = Date().addingTimeInterval(timeoutSeconds)
         var pathField: AXUIElement?
         while Date() < deadline {
-            if let raw = AXDriver.copyAttribute(AXDriver.appElement(pid: pid), kAXFocusedUIElementAttribute as String),
-               CFGetTypeID(raw) == AXUIElementGetTypeID() {
-                let focused = raw as! AXUIElement
-                if AXDriver.role(of: focused) == (kAXTextFieldRole as String) {
-                    pathField = focused
-                    break
-                }
+            if let field = focusedPathFieldInVerifiedPanel(pid: pid, primitiveGuard: primitiveGuard) {
+                pathField = field
+                break
             }
             usleep(120_000)
         }
         guard let pathField else { throw FolderChooserDriverError.goToFolderEntryMissing }
 
+        // The AX value write posts no events but is still an input primitive:
+        // re-acquire the chooser identity and field ownership first.
+        try primitiveGuard.reacquire("chooser.navigate.setPathFieldValue")
+        guard fieldIsOwned(pid: pid, field: pathField, primitiveGuard: primitiveGuard) else {
+            throw FolderChooserDriverError.pathEntryFailed("focused path field ownership lost before the AX value write")
+        }
         var settable = DarwinBoolean(false)
         if AXUIElementIsAttributeSettable(pathField, kAXValueAttribute as CFString, &settable) == .success,
            settable.boolValue {
@@ -189,14 +236,27 @@ public enum FolderChooserDriver {
             // Native panels can prefill this field with the previous folder.
             // Replace it explicitly so the next run's path cannot be appended
             // to stale history.
-            try QuartzActuator.postKeyChord(keyCode: 0, flags: [.maskCommand])
+            try postKeyPrimitive(
+                "chooser.navigate.clearField",
+                pid: pid,
+                field: pathField,
+                primitiveGuard: primitiveGuard,
+                post: { try QuartzActuator.postKeyChord(keyCode: 0, flags: [.maskCommand]) }
+            )
             usleep(80_000)
-            try QuartzActuator.postUnicodeText(target)
+            try postKeyPrimitive(
+                "chooser.navigate.enterPathText",
+                pid: pid,
+                field: pathField,
+                primitiveGuard: primitiveGuard,
+                post: { try QuartzActuator.postUnicodeText(target) }
+            )
         }
 
         var pathReflected = false
         while Date() < deadline {
-            if AXDriver.valueAsString(pathField) == target {
+            if fieldIsOwned(pid: pid, field: pathField, primitiveGuard: primitiveGuard),
+               AXDriver.valueAsString(pathField) == target {
                 pathReflected = true
                 break
             }
@@ -206,18 +266,81 @@ public enum FolderChooserDriver {
             throw FolderChooserDriverError.pathEntryFailed("focused AXTextField did not reflect the requested destination")
         }
 
-        try QuartzActuator.postReturnKey()
+        // Return is navigation only while the freshly proved sheet still owns
+        // the verified field and the exact target value is reflected.
+        guard AXDriver.valueAsString(pathField) == target else {
+            throw FolderChooserDriverError.pathEntryFailed("path field no longer reflects the destination; Return refused")
+        }
+        try postKeyPrimitive(
+            "chooser.navigate.returnKey",
+            pid: pid,
+            field: pathField,
+            primitiveGuard: primitiveGuard,
+            post: { try QuartzActuator.postReturnKey() }
+        )
 
-        // Wait until the panel reports the destination among its path candidates.
+        // Wait until the unique verified panel reports the destination among
+        // its own path candidates (never a union over all app windows).
         while Date() < deadline {
-            let candidates = directoryCandidates(pid: pid)
-            if candidates.contains(where: { URL(fileURLWithPath: $0).standardizedFileURL.path == target }) {
-                return candidates
+            if let panel = primitiveGuard.verifiedPanel() {
+                let candidates = directoryCandidates(inWindow: panel)
+                if candidates.contains(where: { URL(fileURLWithPath: $0).standardizedFileURL.path == target }) {
+                    return candidates
+                }
             }
             usleep(150_000)
         }
-        let observed = directoryCandidates(pid: pid)
+        let observed = primitiveGuard.verifiedPanel().map(directoryCandidates(inWindow:)) ?? []
         throw FolderChooserDriverError.destinationMismatch(requested: target, observed: observed)
+    }
+
+    /// One key primitive: re-acquire chooser identity/process/surface and
+    /// durably account it, then prove the focused field is still the verified
+    /// panel's field, then post exactly once (no concealed retry).
+    private static func postKeyPrimitive(
+        _ action: String,
+        pid: pid_t,
+        field: AXUIElement,
+        primitiveGuard: DestinationPrimitiveGuard,
+        post: () throws -> Void
+    ) throws {
+        try primitiveGuard.willPostPrimitive(action)
+        guard fieldIsOwned(pid: pid, field: field, primitiveGuard: primitiveGuard) else {
+            throw FolderChooserDriverError.pathEntryFailed("focused field ownership lost before \(action)")
+        }
+        try post()
+    }
+
+    /// The focused element must be a text field that belongs to (or is) the
+    /// unique predicate-verified panel window.
+    static func focusedPathFieldInVerifiedPanel(
+        pid: pid_t,
+        primitiveGuard: DestinationPrimitiveGuard
+    ) -> AXUIElement? {
+        guard let focused = focusedElement(pid: pid),
+              AXDriver.role(of: focused) == (kAXTextFieldRole as String) else { return nil }
+        guard fieldIsOwned(pid: pid, field: focused, primitiveGuard: primitiveGuard) else { return nil }
+        return focused
+    }
+
+    static func focusedElement(pid: pid_t) -> AXUIElement? {
+        guard let raw = AXDriver.copyAttribute(AXDriver.appElement(pid: pid), kAXFocusedUIElementAttribute as String),
+              CFGetTypeID(raw) == AXUIElementGetTypeID() else { return nil }
+        return (raw as! AXUIElement)
+    }
+
+    /// The focused field is the exact element handed out earlier and it still
+    /// belongs to the currently verified unique panel.
+    private static func fieldIsOwned(
+        pid: pid_t,
+        field: AXUIElement,
+        primitiveGuard: DestinationPrimitiveGuard
+    ) -> Bool {
+        guard let panel = primitiveGuard.verifiedPanel(),
+              let focused = focusedElement(pid: pid),
+              AXDriver.role(of: focused) == (kAXTextFieldRole as String),
+              CFEqual(focused, field) else { return false }
+        return CFEqual(focused, panel) || AXDriver.isDescendant(focused, of: panel)
     }
 
 
@@ -249,10 +372,32 @@ public enum FolderChooserDriver {
         guard chooserIsFresh() else {
             throw FolderChooserDriverError.pathEntryFailed("chooser is not freshly bound before destination preparation")
         }
-        try owner.recordReversibleDispatch(action: "chooser.prepareDestination")
-        let observed = try navigateToDestination(pid: pid, destination: destination)
+        // Plan C6: per-primitive re-acquisition + durable accounting. Every
+        // primitive is recorded separately under its reviewed semantic action
+        // name (⇧⌘G chord, ⌘A select-all, text entry, Return); a compound
+        // retry therefore consumes the per-blocker ceiling visibly instead of
+        // hiding inside one `chooser.prepareDestination` record.
+        let primitiveGuard = DestinationPrimitiveGuard(
+            verifiedPanel: { verifiedPanelWindow(pid: pid, predicate: predicate) },
+            reacquire: { action in
+                guard chooserIsFresh() else {
+                    throw FolderChooserDriverError.pathEntryFailed("chooser identity failed re-acquisition before \(action)")
+                }
+            },
+            willPostPrimitive: { action in
+                guard chooserIsFresh() else {
+                    throw FolderChooserDriverError.pathEntryFailed("chooser identity failed re-acquisition before \(action)")
+                }
+                try owner.recordReversibleDispatch(action: action)
+            }
+        )
+        let observed = try navigateToDestination(
+            pid: pid,
+            destination: destination,
+            primitiveGuard: primitiveGuard
+        )
         guard chooserIsFresh(),
-              destinationIsReflected(pid: pid, destination: destination) else {
+              destinationIsReflected(pid: pid, destination: destination, predicate: predicate) else {
             throw FolderChooserDriverError.destinationMismatch(
                 requested: destination.standardizedFileURL.path,
                 observed: observed
@@ -302,7 +447,7 @@ public enum FolderChooserDriver {
                   process == expectedProcess,
                   NSWorkspace.shared.frontmostApplication?.processIdentifier == pid,
                   runningApplication.isActive,
-                  destinationIsReflected(pid: pid, destination: destination),
+                  destinationIsReflected(pid: pid, destination: destination, predicate: predicate),
                   freshVerifiedDefaultButton(pid: pid, predicate: predicate) != nil else { return false }
             return true
         }
@@ -329,18 +474,28 @@ public enum FolderChooserDriver {
         predicate: ChooserAffirmationPredicate
     ) -> AXUIElement? {
         guard let defaultRequirement = predicate.ax.defaultButton,
+              let window = verifiedPanelWindow(pid: pid, predicate: predicate) else { return nil }
+        return AXDriver.firstDescendant(of: window, maxDepth: 12, matching: { element in
+            Self.matches(requirement: defaultRequirement, element: element)
+        })
+    }
+
+    /// The unique panel window for the bound predicate: exactly one AX window
+    /// whose dump satisfies both the default and cancel button clauses.
+    /// Duplicate or missing panels return nil (never the first match).
+    static func verifiedPanelWindow(
+        pid: pid_t,
+        predicate: ChooserAffirmationPredicate
+    ) -> AXUIElement? {
+        guard let defaultRequirement = predicate.ax.defaultButton,
               let cancelRequirement = predicate.ax.cancelButton else { return nil }
-        for window in AXDriver.windows(ofApp: pid) {
+        let panels = AXDriver.windows(ofApp: pid).filter { window in
             let dump = AXDriver.dump(element: window, pid: Int32(pid), maxDepth: 12)
-            guard ChooserAffirmationEvaluator.matches(requirement: defaultRequirement, nodes: dump.nodes),
-                  ChooserAffirmationEvaluator.matches(requirement: cancelRequirement, nodes: dump.nodes) else { continue }
-            if let button = AXDriver.firstDescendant(of: window, maxDepth: 12, matching: { element in
-                Self.matches(requirement: defaultRequirement, element: element)
-            }) {
-                return button
-            }
+            return ChooserAffirmationEvaluator.matches(requirement: defaultRequirement, nodes: dump.nodes)
+                && ChooserAffirmationEvaluator.matches(requirement: cancelRequirement, nodes: dump.nodes)
         }
-        return nil
+        guard panels.count == 1 else { return nil }
+        return panels[0]
     }
 
     private static func matches(requirement: ButtonRequirement, element: AXUIElement) -> Bool {
@@ -356,11 +511,19 @@ public enum FolderChooserDriver {
         }
     }
 
-    /// Post-confirmation verification: the panel's navigation state must reflect
-    /// the destination (checked via AX path candidates) and the caller verifies
-    /// the direct filesystem effect separately.
-    static func destinationIsReflected(pid: pid_t, destination: URL) -> Bool {
+    /// Post-confirmation verification: the unique verified panel's own
+    /// navigation state must reflect the destination (checked via that panel's
+    /// AX path candidates, never a union over all app windows); the caller
+    /// verifies the direct filesystem effect separately.
+    static func destinationIsReflected(
+        pid: pid_t,
+        destination: URL,
+        predicate: ChooserAffirmationPredicate
+    ) -> Bool {
+        guard let panel = verifiedPanelWindow(pid: pid, predicate: predicate) else { return false }
         let target = destination.standardizedFileURL.path
-        return directoryCandidates(pid: pid).contains { URL(fileURLWithPath: $0).standardizedFileURL.path == target }
+        return directoryCandidates(inWindow: panel).contains {
+            URL(fileURLWithPath: $0).standardizedFileURL.path == target
+        }
     }
 }

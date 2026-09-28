@@ -88,7 +88,8 @@ final class ComposedAdaptersTests: XCTestCase {
         menuBounds: CGRect? = ComposedAdaptersTests.menuBounds,
         addressableBounds: CGRect? = ComposedAdaptersTests.addressableBounds,
         postSave: FakePostSaveEnvironment = FakePostSaveEnvironment(),
-        phaseBEligibility: PhaseBEligibilityArtifact? = nil
+        phaseBEligibility: PhaseBEligibilityArtifact? = nil,
+        phaseBEligibilityRecomputation: PhaseBEligibilityRecomputation? = nil
     ) -> ComposedNativeAdapter {
         ComposedNativeAdapter(
             session: fixture.session,
@@ -108,22 +109,8 @@ final class ComposedAdaptersTests: XCTestCase {
                 baselineReferenceFile: URL(fileURLWithPath: "/dev/null")
             ),
             postSave: postSave,
-            phaseBEligibility: phaseBEligibility
-        )
-    }
-
-    private func eligibilityArtifact(_ fixture: Fixture) -> PhaseBEligibilityArtifact {
-        PhaseBEligibilityArtifact(
-            verdict: PhaseBEligibilityArtifact.eligibleVerdict,
-            runID: fixture.authorization.runID,
-            planSHA256: fixture.authorization.planSHA256,
-            reviewedImplementationSHA256: fixture.authorization.reviewedImplementationSHA256,
-            goalIdentitySHA256: PhaseBEligibilityArtifact.goalIdentityDigest(fixture.authorization),
-            stagingRunDirectory: fixture.authorization.stagingRunDirectory,
-            issuedAtISO8601: "2026-09-29T00:00:00.000Z",
-            predicates: PhaseBEligibilityArtifact.requiredPredicates.map {
-                PhaseBEligibilityPredicate(identifier: $0, verdict: "PASS")
-            }
+            phaseBEligibility: phaseBEligibility,
+            phaseBEligibilityRecomputation: phaseBEligibilityRecomputation
         )
     }
 
@@ -336,7 +323,13 @@ final class ComposedAdaptersTests: XCTestCase {
         let owner = try makeOwner(fixture)
         let postSave = FakePostSaveEnvironment()
         postSave.census = TestChooserFixtures.census()
-        let adapter = makeAdapter(fixture, postSave: postSave, phaseBEligibility: eligibilityArtifact(fixture))
+        let armed = try EligibilityTestSupport.armed(for: fixture.authorization)
+        let adapter = makeAdapter(
+            fixture,
+            postSave: postSave,
+            phaseBEligibility: armed.artifact,
+            phaseBEligibilityRecomputation: armed.recomputation
+        )
         _ = try await LiveExecutionEngine(owner: owner, adapter: adapter).runPreflight()
         return (adapter, owner, postSave)
     }
@@ -355,7 +348,13 @@ final class ComposedAdaptersTests: XCTestCase {
             journalStartedAtMonotonicNanos: 1,
             facts: []
         )
-        let adapter = makeAdapter(fixture, postSave: postSave, phaseBEligibility: eligibilityArtifact(fixture))
+        let armed = try EligibilityTestSupport.armed(for: fixture.authorization)
+        let adapter = makeAdapter(
+            fixture,
+            postSave: postSave,
+            phaseBEligibility: armed.artifact,
+            phaseBEligibilityRecomputation: armed.recomputation
+        )
         _ = try await LiveExecutionEngine(owner: owner, adapter: adapter).runPreflight()
 
         do {
@@ -519,6 +518,7 @@ final class ComposedAdaptersTests: XCTestCase {
         try owner.transition(to: .chooserVerified, evidenceSHA256: chooser.postcondition.sha256)
 
         let prepared = try await adapter.prepareDestination(owner: owner)
+        try owner.transition(to: .destinationPrepared, evidenceSHA256: prepared)
         let confirmed = try await adapter.confirmDestination(owner: owner)
 
         XCTAssertEqual(prepared.count, 64)

@@ -47,6 +47,64 @@ final class GoalSlotTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: GoalSlot.fileURL(in: directory, authorization: authorization).path))
     }
 
+    /// The slot install must be a single atomic replace: a concurrent reader
+    /// must never observe a missing or partially written slot. The earlier
+    /// remove-then-move sequence failed this test by construction (the
+    /// destination did not exist between the two calls).
+    func testSlotReplaceIsAtomicUnderConcurrentReads() throws {
+        let (root, authorization) = try setup()
+        let directory = root.appendingPathComponent("goal-slots")
+        let created = try GoalSlot.open(directory: directory, authorization: authorization)
+        let url = GoalSlot.fileURL(in: directory, authorization: authorization)
+
+        let reads = NSLock()
+        var readFailures: [String] = []
+        var reading = true
+        let reader = Thread {
+            while true {
+                reads.lock()
+                let keepGoing = reading
+                reads.unlock()
+                if !keepGoing { return }
+                do {
+                    let data = try Data(contentsOf: url)
+                    _ = try JSONDecoder().decode(GoalSlotRecord.self, from: data)
+                } catch {
+                    reads.lock()
+                    readFailures.append(String(describing: error))
+                    reads.unlock()
+                }
+            }
+        }
+        reader.start()
+        defer {
+            reads.lock()
+            reading = false
+            reads.unlock()
+        }
+        for index in 0..<300 {
+            let record = GoalSlotRecord(
+                goal: created.goal,
+                group: created.group,
+                album: created.album,
+                stagingRoot: created.stagingRoot,
+                stagingRunDirectory: created.stagingRunDirectory,
+                runID: "\(created.runID)-rewrite-\(index)",
+                boundAtISO8601: created.boundAtISO8601
+            )
+            try GoalSlot.write(record, to: url)
+        }
+        reads.lock()
+        let failures = readFailures.count
+        reads.unlock()
+        XCTAssertEqual(failures, 0, "concurrent reader observed a missing/partial slot \(failures) times")
+        let decoded = try JSONDecoder().decode(GoalSlotRecord.self, from: Data(contentsOf: url))
+        XCTAssertEqual(decoded.runID, "\(created.runID)-rewrite-299")
+        let residue = try FileManager.default.contentsOfDirectory(atPath: directory.path)
+            .filter { $0.hasPrefix(".tmp-") }
+        XCTAssertTrue(residue.isEmpty, "temp residue left behind: \(residue)")
+    }
+
     func testDifferentRunIdentityCannotClaimTheSameGoalSlot() throws {
         let (root, authorization) = try setup()
         let directory = root.appendingPathComponent("goal-slots")
@@ -106,6 +164,7 @@ final class GoalSlotTests: XCTestCase {
             ledger: IntentLedger(fileURL: root.appendingPathComponent("ledger.jsonl"))
         )
         try walkToSaveAllLocated(owner)
+        try EligibilityTestSupport.recordEligibility(on: owner)
         try owner.reserveSaveAll()
         XCTAssertEqual(try GoalSlot.load(directory: owner.goalSlotDirectory, authorization: authorization)?.entitlementConsumed, true)
     }
@@ -118,6 +177,7 @@ final class GoalSlotTests: XCTestCase {
             ledger: IntentLedger(fileURL: ledgerURL)
         )
         try walkToSaveAllLocated(owner)
+        try EligibilityTestSupport.recordEligibility(on: owner)
         try owner.reserveSaveAll()
         try owner.markSaveAllAttempted()
 

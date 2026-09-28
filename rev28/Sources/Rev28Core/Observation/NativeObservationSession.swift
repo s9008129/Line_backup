@@ -233,6 +233,14 @@ public struct ObservationBundle: Equatable, Sendable {
         guard axIdentity.role?.isEmpty == false else {
             throw ObservationRefusal.identityMismatch(["AX identity for the target window is unreadable"])
         }
+        // Plan C3: AX evidence must be affirmatively tied to the observed
+        // window. A read that cannot name its binding method is not evidence
+        // about this window and is refused instead of being accepted as proof.
+        guard axIdentity.isBoundToWindow else {
+            throw ObservationRefusal.identityMismatch([
+                "AX identity is not bound to the target window (matchMethod missing)",
+            ])
+        }
         switch localization {
         case .none:
             guard candidate == nil, candidateRefusal == nil else {
@@ -492,6 +500,13 @@ public actor NativeObservationSession {
                 return ([], nil, .unsafeGeometry)
             }
         case let .saveAllMenuRows(menuBounds, addressableBounds):
+            // Locator geometry is fail-closed against the retained frame: the
+            // configured menu and addressable regions must lie inside the
+            // image the OCR actually ran on, so geometry captured for another
+            // surface can never produce a candidate.
+            guard imageBounds.contains(menuBounds), imageBounds.contains(addressableBounds) else {
+                return ([], nil, .unsafeGeometry)
+            }
             let rows = ocrItems
                 .filter { StructuralLocators.lineAlbumMenuReference.contains($0.text) }
                 .map { MenuRowObservation(text: $0.text, bandCapturePx: $0.boundingBoxCapturePx) }

@@ -8,6 +8,7 @@ final class LiveExecutionEngineTests: XCTestCase {
         private let lock = NSLock()
         private(set) var saveAllMouseEvents = 0
         private(set) var confirmationPosts = 0
+        private(set) var establishCount = 0
         var failAtState: ExecutionState?
         var omitCandidateForState: ExecutionState?
         var skipRetainedFrameForState: ExecutionState?
@@ -16,6 +17,9 @@ final class LiveExecutionEngineTests: XCTestCase {
 
         func establish(state: ExecutionState, owner: PersistentTransactionOwner) async throws -> EstablishedStateEvidence {
             if failAtState == state { throw NSError(domain: "FakeAdapter", code: 1) }
+            lock.lock()
+            establishCount += 1
+            lock.unlock()
             return try writeEvidence(state: state, owner: owner)
         }
 
@@ -93,6 +97,9 @@ final class LiveExecutionEngineTests: XCTestCase {
         }
 
         func dispatchSaveAll(owner: PersistentTransactionOwner) async throws -> String {
+            // Mirrors the composed adapter: the machine-checked eligibility
+            // decision is persisted on the owner before any dispatch attempt.
+            try EligibilityTestSupport.recordEligibility(on: owner)
             let process = ProcessInstanceID(pid: 4242, startTimeSeconds: 1, startTimeMicroseconds: 0)
             let binding = SurfaceBinding(
                 bundleID: "jp.naver.line.mac",
@@ -319,6 +326,72 @@ final class LiveExecutionEngineTests: XCTestCase {
         }
         XCTAssertEqual(secondAdapter.saveAllMouseEvents, 0)
         XCTAssertEqual(secondAdapter.confirmationPosts, 0)
+    }
+
+    /// Plan C4: a restart with zero irreversible records, a verified
+    /// checkpoint and a pre-boundary state resumes as a pre-intent
+    /// continuation, re-establishing only the remaining states from fresh
+    /// live facts; already-recorded states are never re-established.
+    func testPreIntentResumeContinuesOnlyRemainingStatesWithFreshEvidence() async throws {
+        let (ledgerURL, auth, owner) = try setup()
+        let firstAdapter = FakeAdapter()
+        for (index, state) in [
+            ExecutionState.appReady, .groupReady, .albumListReady, .targetAlbumLocated,
+            .albumDetailVerified, .ellipsisLocated, .menuVerified,
+        ].enumerated() {
+            let evidence = try await firstAdapter.establish(state: state, owner: owner)
+            if index == 0 {
+                try owner.initializeState(evidenceSHA256: evidence.evidenceSHA256)
+            } else {
+                try owner.transition(to: state, evidenceSHA256: evidence.evidenceSHA256)
+            }
+        }
+        XCTAssertEqual(owner.irreversibleOperationCounts.saveAll, 0)
+
+        let resumed = try PersistentTransactionOwner(
+            authorization: auth,
+            ledger: IntentLedger(fileURL: ledgerURL),
+            checkpointURL: ledgerURL.deletingLastPathComponent().appendingPathComponent("ledger-head.anchor"),
+            requireCheckpointOnResume: true
+        )
+        XCTAssertTrue(resumed.preIntentContinuationAllowed)
+        let secondAdapter = FakeAdapter()
+        let outcome = try await LiveExecutionEngine(owner: resumed, adapter: secondAdapter).run()
+        guard case .contentVerified = outcome else {
+            return XCTFail("a pre-intent restart must continue, got \(outcome)")
+        }
+        XCTAssertEqual(secondAdapter.establishCount, 1, "only saveAllLocated remains to re-establish")
+        XCTAssertEqual(secondAdapter.saveAllMouseEvents, 3)
+        XCTAssertEqual(resumed.irreversibleOperationCounts.saveAll, 2)
+        XCTAssertEqual(resumed.currentState, .contentVerified)
+    }
+
+    /// The same pre-intent ledger without a verified anchor is observe-only.
+    func testPreIntentResumeWithoutVerifiedAnchorStaysObserveOnly() async throws {
+        let (ledgerURL, auth, owner) = try setup()
+        let firstAdapter = FakeAdapter()
+        for (index, state) in [ExecutionState.appReady, .groupReady].enumerated() {
+            let evidence = try await firstAdapter.establish(state: state, owner: owner)
+            if index == 0 {
+                try owner.initializeState(evidenceSHA256: evidence.evidenceSHA256)
+            } else {
+                try owner.transition(to: state, evidenceSHA256: evidence.evidenceSHA256)
+            }
+        }
+        try FileManager.default.removeItem(at: ledgerURL.deletingLastPathComponent().appendingPathComponent("ledger-head.anchor"))
+        let resumed = try PersistentTransactionOwner(
+            authorization: auth,
+            ledger: IntentLedger(fileURL: ledgerURL),
+            checkpointURL: ledgerURL.deletingLastPathComponent().appendingPathComponent("ledger-head.anchor")
+        )
+        XCTAssertFalse(resumed.preIntentContinuationAllowed)
+        let secondAdapter = FakeAdapter()
+        let outcome = try await LiveExecutionEngine(owner: resumed, adapter: secondAdapter).run()
+        guard case .observeOnlyResume = outcome else {
+            return XCTFail("a resume without a verified anchor must be observe-only")
+        }
+        XCTAssertEqual(secondAdapter.establishCount, 0)
+        XCTAssertEqual(secondAdapter.saveAllMouseEvents, 0)
     }
 
     func testFailureBeforeSaveAllPostsZeroIrreversibleEvents() async throws {

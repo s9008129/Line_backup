@@ -62,12 +62,23 @@ public struct AXIdentityRead: Equatable, Codable, Sendable {
     public let role: String?
     public let subrole: String?
     public let title: String?
+    /// How this read was affirmatively tied to the target window. Nil means
+    /// the read is *unbound* and cannot stand as window evidence (plan C3).
+    public let matchMethod: AXWindowMatchMethod?
 
-    public init(role: String?, subrole: String?, title: String?) {
+    public init(
+        role: String?,
+        subrole: String?,
+        title: String?,
+        matchMethod: AXWindowMatchMethod? = nil
+    ) {
         self.role = role
         self.subrole = subrole
         self.title = title
+        self.matchMethod = matchMethod
     }
+
+    public var isBoundToWindow: Bool { matchMethod != nil }
 }
 
 /// Full bound identity for one capture epoch of one window.

@@ -64,6 +64,7 @@ final class PersistentTransactionOwnerTests: XCTestCase {
         let (url, authorization) = try setup()
         let owner = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))
         try walkToSaveAllLocated(owner)
+        try EligibilityTestSupport.recordEligibility(on: owner)
         try owner.reserveSaveAll()
         try owner.markSaveAllAttempted()
 
@@ -103,6 +104,7 @@ final class PersistentTransactionOwnerTests: XCTestCase {
             requireCheckpointOnResume: true
         )
         try walkToSaveAllLocated(owner)
+        try EligibilityTestSupport.recordEligibility(on: owner)
         try owner.reserveSaveAll()
         XCTAssertTrue(FileManager.default.fileExists(atPath: checkpoint.path))
 
@@ -138,6 +140,7 @@ final class PersistentTransactionOwnerTests: XCTestCase {
         let (url, authorization) = try setup()
         let owner = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))
         try walkToSaveAllLocated(owner)
+        try EligibilityTestSupport.recordEligibility(on: owner)
         try owner.reserveSaveAll()
         try owner.markSaveAllAttempted()
         XCTAssertThrowsError(try owner.reserveDestinationConfirmation(action: "ReturnKey"))
@@ -158,6 +161,8 @@ final class PersistentTransactionOwnerTests: XCTestCase {
             postconditionEvidence: try BoundEvidenceDigest.load(fileURL: post, withinRunDirectory: runDir, runID: authorization.runID),
             tripwireEvidence: try BoundEvidenceDigest.load(fileURL: tripwire, withinRunDirectory: runDir, runID: authorization.runID)
         )
+        try owner.transition(to: .chooserVerified, evidenceSHA256: evidence("chooser-verified"))
+        try owner.transition(to: .destinationPrepared, evidenceSHA256: evidence("destination-prepared"))
         try owner.reserveDestinationConfirmation(action: "AXPressDefaultButton")
         try owner.markDestinationConfirmationAttempted()
         XCTAssertThrowsError(try owner.reserveDestinationConfirmation(action: "ReturnKey"))
@@ -190,6 +195,7 @@ final class PersistentTransactionOwnerTests: XCTestCase {
             XCTAssertEqual(error as? PersistentTransactionError, .authorizationMismatch)
         }
 
+        try EligibilityTestSupport.recordEligibility(on: owner)
         try owner.reserveSaveAll()
         try owner.markSaveAllAttempted()
         let recorded = try chooserEvidence(authorization: authorization, label: "recorded")
@@ -215,6 +221,7 @@ final class PersistentTransactionOwnerTests: XCTestCase {
             ledger: IntentLedger(fileURL: lateURL)
         )
         try walkToSaveAllLocated(lateOwner)
+        try EligibilityTestSupport.recordEligibility(on: lateOwner)
         try lateOwner.reserveSaveAll()
         try lateOwner.markSaveAllAttempted()
         try lateOwner.transition(to: .chooserVerified, evidenceSHA256: evidence("chooser-verified"))

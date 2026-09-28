@@ -100,17 +100,29 @@ public struct ProductionObservationSource: ObservationSource {
         )
     }
 
+    /// Binds the AX read to the exact target window (plan C3): the CGWindowID
+    /// when the accessibility element reports one, otherwise a unique frame
+    /// match against the same CG inventory entry. Never "the first AX window".
     public func readAXIdentity(pid: Int32, windowID: UInt32) throws -> AXIdentityRead {
-        let windows = AXDriver.windows(ofApp: pid)
-        guard !windows.isEmpty else {
+        let cgBounds = cgInventoryProvider().first(where: { $0.windowNumber == windowID })?.frame
+        let descriptors = AXDriver.windows(ofApp: pid).map { element in
+            AXWindowDescriptor(
+                windowNumber: AXDriver.windowNumber(of: element),
+                frame: AXDriver.frame(of: element),
+                role: AXDriver.role(of: element),
+                subrole: AXDriver.subrole(of: element),
+                title: AXDriver.title(of: element)
+            )
+        }
+        do {
+            return try AXWindowIdentitySelector.select(
+                targetWindowID: windowID,
+                cgBounds: cgBounds,
+                descriptors: descriptors
+            )
+        } catch {
             throw ProductionObservationSourceError.axIdentityUnavailable(pid, windowID)
         }
-        let element = windows[0]
-        return AXIdentityRead(
-            role: AXDriver.role(of: element),
-            subrole: AXDriver.subrole(of: element),
-            title: AXDriver.title(of: element)
-        )
     }
 
     public func processInstance(pid: Int32) throws -> ProcessInstanceID {

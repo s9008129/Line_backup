@@ -54,6 +54,22 @@ public struct LiveDispatchBudget: Equatable, Codable, Sendable {
 
     public init() {}
 
+    /// Derived-view construction: production never owns an in-memory budget,
+    /// it rebuilds this view from the owner's verified ledger (R4 C4).
+    public init(
+        reversibleDispatches: Int,
+        saveAllDispatches: Int,
+        destinationConfirmations: Int,
+        identicalBlockerRecoveries: [String: Int],
+        consecutiveCandidateRevalidationFailures: Int
+    ) {
+        self.reversibleDispatches = reversibleDispatches
+        self.saveAllDispatches = saveAllDispatches
+        self.destinationConfirmations = destinationConfirmations
+        self.identicalBlockerRecoveries = identicalBlockerRecoveries
+        self.consecutiveCandidateRevalidationFailures = consecutiveCandidateRevalidationFailures
+    }
+
     public mutating func consumeReversible(blockerKey: String? = nil) throws {
         guard reversibleDispatches < 12 else { throw ExecutionPolicyError.reversibleBudgetExhausted }
         if let blockerKey {

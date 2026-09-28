@@ -409,6 +409,16 @@ public enum GatedQuartzActuator {
             try owner.markSaveAllAttempted()
         }
         sink(move, .cghidEventTap)
+        // Plan C5: readiness is revalidated after the hover and immediately
+        // before mouseDown. Focus theft in that window must consume the
+        // permit without ever posting a click to whatever is frontmost now.
+        guard readinessCheck(permit.targetPID, permit.windowID),
+              processIdentityCheck(permit.targetPID, permit.binding),
+              postEventAccessCheck() else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition(
+                "live target lost foreground/window readiness after the hover; mouseDown was not posted"
+            )
+        }
         sink(down, .cghidEventTap)
         usleep(30_000)
         sink(up, .cghidEventTap)

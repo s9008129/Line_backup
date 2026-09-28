@@ -79,6 +79,9 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
             let menuBoundsCapture: Bounds
             let addressableBoundsCapture: Bounds
             let chooserPredicatePath: String
+            let chooserCalibrationPath: String
+            let chooserPredicateSHA256: String
+            let chooserCalibrationSHA256: String
             let baselineReferencePath: String
             let approvedRoot: String
             let tripwireRoots: [String]
@@ -98,11 +101,14 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
         let config = try JSONDecoder().decode(LiveConfig.self, from: Data(contentsOf: configURL))
         let oneShot = try JSONDecoder().decode(OneShot.self, from: Data(contentsOf: authURL))
         let auth = config.authorization
+        let recomputedImplementationSHA256 = try ReviewedImplementationDigest.compute(
+            repositoryRoot: URL(fileURLWithPath: config.repositoryRoot)
+        )
         guard oneShot.runID == auth.runID,
               oneShot.planSHA256 == auth.planSHA256,
               oneShot.reviewedImplementationSHA256 == auth.reviewedImplementationSHA256,
               EvidenceIO.sha256Hex(try Data(contentsOf: URL(fileURLWithPath: config.planPath))) == auth.planSHA256,
-              try ReviewedImplementationDigest.compute(repositoryRoot: URL(fileURLWithPath: config.repositoryRoot)) == auth.reviewedImplementationSHA256 else {
+              recomputedImplementationSHA256 == auth.reviewedImplementationSHA256 else {
             throw QuartzActuatorError.dispatchRefusedByPrecondition("one-shot authorization or plan digest mismatch")
         }
         guard ProcessIdentity.bundleID(pid: config.targetPID) == config.targetBundleID,
@@ -115,11 +121,16 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
         // Phase A preflight is observation-only: it never renames or consumes
         // the one-shot authorization (R4 C4). Only the durable Save All
         // reservation arms the entitlement, and an authorization consumed by
-        // an earlier production run keeps this process observe-only.
+        // an earlier production run keeps this process observe-only. The
+        // durable authority is the goal slot + ledger, never a convenience
+        // token marker: an already-consumed goal slot keeps preflight
+        // observe-only.
         if command == "live-preflight" {
-            guard OneShotAuthorizationGate.inspect(authorizationURL: authURL) == .available else {
+            let goalSlotDirectory = config.goalSlotDirectory.map { URL(fileURLWithPath: $0) }
+                ?? GoalSlot.canonicalDirectory(for: auth)
+            if try GoalSlot.load(directory: goalSlotDirectory, authorization: auth)?.entitlementConsumed == true {
                 throw QuartzActuatorError.dispatchRefusedByPrecondition(
-                    "one-shot authorization already consumed; live-preflight stays observe-only"
+                    "one-shot goal-slot entitlement already consumed; live-preflight stays observe-only"
                 )
             }
             // Phase A evidence is append-only per run directory: an existing
@@ -137,10 +148,38 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
         )
         let target = ObservationTarget(bundleID: config.targetBundleID, pid: config.targetPID)
         let evidenceRunDirectory = URL(fileURLWithPath: auth.evidenceRunDirectory)
-        let chooserPredicate = try JSONDecoder().decode(
+        // Plan C6: the frozen predicate file is append-only evidence and is
+        // never rewritten. Production re-reads the exact frozen predicate and
+        // AX-calibration bytes, verifies both against the hashes bound in this
+        // configuration, and derives the stricter process-stable v2 predicate
+        // from them. A mismatched or unreadable pair refuses before any live
+        // observation, so production can never silently run the v1 predicate
+        // that `evaluateProduction` rejects.
+        let frozenPredicateBytes = try Data(contentsOf: URL(fileURLWithPath: config.chooserPredicatePath))
+        let calibrationBytes = try Data(contentsOf: URL(fileURLWithPath: config.chooserCalibrationPath))
+        guard EvidenceIO.sha256Hex(frozenPredicateBytes) == config.chooserPredicateSHA256,
+              EvidenceIO.sha256Hex(calibrationBytes) == config.chooserCalibrationSHA256 else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition(
+                "chooser predicate/calibration bytes do not match the frozen hashes bound in the configuration"
+            )
+        }
+        let frozenChooserPredicate = try JSONDecoder().decode(
             ChooserAffirmationPredicate.self,
-            from: Data(contentsOf: URL(fileURLWithPath: config.chooserPredicatePath))
+            from: frozenPredicateBytes
         )
+        let chooserCalibration = try JSONDecoder().decode(
+            ChooserAXCalibrationEvidence.self,
+            from: calibrationBytes
+        )
+        let chooserPredicate = try ChooserProductionPredicate.derive(
+            frozen: frozenChooserPredicate,
+            calibration: chooserCalibration
+        )
+        guard chooserPredicate.predicateVersion >= ChooserAffirmationEvaluator.processStableButtonSemanticsVersion else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition(
+                "derived chooser predicate is not a process-stable production predicate"
+            )
+        }
         // Eligibility is armed only by an explicit artifact beneath this run's
         // evidence directory; a configured-but-unreadable artifact refuses the
         // command instead of silently degrading to "not armed".
@@ -153,6 +192,19 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
         } else {
             phaseBEligibility = nil
         }
+        // The eligibility artifact's file-checkable evidence is recomputed
+        // here, before the artifact can reach the owner: reviewed Plan bytes,
+        // the reviewed implementation source digest and (inside the owner)
+        // handoff/frozen/predicate evidence bytes. A label-only artifact
+        // refuses.
+        try phaseBEligibility?.validateWithRecomputedEvidence(
+            against: auth,
+            entitlementConsumed: false,
+            recomputation: PhaseBEligibilityRecomputation(
+                planURL: URL(fileURLWithPath: config.planPath),
+                recomputedImplementationSHA256: recomputedImplementationSHA256
+            )
+        )
         let postSave = try ProductionPostSaveEnvironment(
             baselineReferenceFile: URL(fileURLWithPath: config.baselineReferencePath),
             stagingRunDirectory: URL(fileURLWithPath: auth.stagingRunDirectory),
@@ -192,6 +244,12 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
             environment: ProductionActuationEnvironment(),
             postSave: postSave,
             phaseBEligibility: phaseBEligibility,
+            phaseBEligibilityRecomputation: phaseBEligibility.map { _ in
+                PhaseBEligibilityRecomputation(
+                    planURL: URL(fileURLWithPath: config.planPath),
+                    recomputedImplementationSHA256: recomputedImplementationSHA256
+                )
+            },
             sessionID: config.sessionID ?? "live-\(auth.runID)"
         )
         switch command {
@@ -391,34 +449,4 @@ private struct LivePreflightRecord: Codable {
     let entitlementConsumed: Bool
     let reversibleDispatches: Int
     let preDispatchContextSHA256: String
-}
-
-private enum ReviewedImplementationDigest {
-    static func compute(repositoryRoot: URL) throws -> String {
-        let sourceRoots = [
-            repositoryRoot.appendingPathComponent("rev28/Sources/Rev28Core"),
-            repositoryRoot.appendingPathComponent("rev28/Sources/rev28ctl"),
-        ]
-        var paths: [URL] = []
-        for root in sourceRoots {
-            guard FileManager.default.fileExists(atPath: root.path),
-                  let enumerator = FileManager.default.enumerator(at: root, includingPropertiesForKeys: [.isRegularFileKey]) else {
-                throw QuartzActuatorError.dispatchRefusedByPrecondition("implementation source tree unavailable")
-            }
-            while let url = enumerator.nextObject() as? URL {
-                guard url.pathExtension == "swift" else { continue }
-                paths.append(url)
-            }
-        }
-        paths.sort { $0.path < $1.path }
-        var material = Data()
-        for url in paths {
-            let relative = String(url.path.dropFirst(repositoryRoot.path.count + 1))
-            material.append(Data(relative.utf8))
-            material.append(0)
-            material.append(try Data(contentsOf: url))
-            material.append(0)
-        }
-        return EvidenceIO.sha256Hex(material)
-    }
 }

@@ -79,6 +79,28 @@ public final class FilesystemTripwireJournal: @unchecked Sendable {
         return collectionGap != nil
     }
 
+    /// Plan C7: the refusal detail for a post-dispatch window that is not a
+    /// clean tripwire (collector failure, stopped collector or a dropped-event
+    /// gap). Nil means the journal window is clean. Never returns "clean" just
+    /// because no facts were recorded.
+    public func postDispatchRefusalDetail() -> String? {
+        lock.lock()
+        defer { lock.unlock() }
+        if let failure = startupFailure { return "collector failure: \(failure)" }
+        guard running else { return "collector is not running after the dispatch boundary" }
+        if let collectionGap { return "collection gap: \(collectionGap)" }
+        return nil
+    }
+
+    /// Test seam: inject a discovered dropped-event/rescan gap so the
+    /// post-dispatch refusal gate can be proven without fabricating facts.
+    /// Production gaps arrive through the FSEvents callback flags.
+    func injectCollectionGapForTesting(_ detail: String) {
+        lock.lock()
+        if collectionGap == nil { collectionGap = detail }
+        lock.unlock()
+    }
+
     public var collectionGapDetail: String? {
         lock.lock()
         defer { lock.unlock() }

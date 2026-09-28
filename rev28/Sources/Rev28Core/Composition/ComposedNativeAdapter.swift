@@ -89,6 +89,7 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
     let configuration: ComposedAdapterConfiguration
     let postSave: any PostSaveEnvironment
     let phaseBEligibility: PhaseBEligibilityArtifact?
+    let phaseBEligibilityRecomputation: PhaseBEligibilityRecomputation?
     let journalBox = PostSaveJournalBox()
 
     public init(
@@ -96,13 +97,15 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
         environment: any ActuationEnvironment,
         configuration: ComposedAdapterConfiguration,
         postSave: any PostSaveEnvironment,
-        phaseBEligibility: PhaseBEligibilityArtifact?
+        phaseBEligibility: PhaseBEligibilityArtifact?,
+        phaseBEligibilityRecomputation: PhaseBEligibilityRecomputation? = nil
     ) {
         self.session = session
         self.environment = environment
         self.configuration = configuration
         self.postSave = postSave
         self.phaseBEligibility = phaseBEligibility
+        self.phaseBEligibilityRecomputation = phaseBEligibilityRecomputation
     }
 
     // MARK: - LiveExecutionAdapter

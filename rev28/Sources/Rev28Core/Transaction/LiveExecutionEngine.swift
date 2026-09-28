@@ -137,10 +137,19 @@ public struct LiveExecutionEngine {
         try Self.validateTargetAuthorization(owner.authorization)
 
         if owner.isObserveOnlyResume {
-            return .observeOnlyResume(owner.currentState)
-        }
-        guard owner.currentState == nil else {
-            throw LiveExecutionEngineError.stateAlreadyStarted
+            // Plan C4: a restart resumes only as a verified pre-intent
+            // continuation (goal slot + ledger + anchor verified, zero
+            // irreversible records, still before the irreversible boundary).
+            // Every remaining state is re-established from fresh live facts
+            // below; prior evidence is never reused. Anything else is
+            // permanently observe-only.
+            guard owner.preIntentContinuationAllowed else {
+                return .observeOnlyResume(owner.currentState)
+            }
+        } else {
+            guard owner.currentState == nil else {
+                throw LiveExecutionEngineError.stateAlreadyStarted
+            }
         }
 
         _ = try await establishPreSaveStates()

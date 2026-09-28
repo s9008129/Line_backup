@@ -148,6 +148,38 @@ final class ActuationReadinessTests: XCTestCase {
         XCTAssertEqual(posted, 0)
     }
 
+    /// Plan C5: readiness is revalidated between the hover and mouseDown. When
+    /// focus is stolen in exactly that window, only the move is posted and no
+    /// click event ever reaches the sink.
+    func testFocusTheftBetweenHoverAndMouseDownPostsZeroClickEvents() throws {
+        let (identity, candidate, _, observation) = fixture()
+        let permit = try DispatchReadinessGate.mintPermit(
+            identity: identity, candidate: candidate, observation: observation, now: 10
+        )
+        var posted: [CGEventType] = []
+        var readinessCalls = 0
+        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
+            permit: permit,
+            currentBinding: candidate.binding,
+            intent: .reversible(try transactionOwner(), action: "test"),
+            sink: { event, _ in posted.append(event.type) },
+            readinessCheck: { _, _ in
+                readinessCalls += 1
+                return readinessCalls == 1
+            },
+            processIdentityCheck: { _, _ in true },
+            postEventAccessCheck: { true },
+            now: 10
+        )) { error in
+            guard case QuartzActuatorError.dispatchRefusedByPrecondition(let reason) = error else {
+                return XCTFail("unexpected \(error)")
+            }
+            XCTAssertTrue(reason.contains("after the hover"), reason)
+        }
+        XCTAssertEqual(readinessCalls, 2, "readiness must be checked both before the hover and before mouseDown")
+        XCTAssertEqual(posted, [.mouseMoved], "only the hover may be posted; no down/up after readiness loss")
+    }
+
     func testStaleCandidateBindingAtGuardedBoundaryPostsZeroEvents() throws {
         let (identity, candidate, _, observation) = fixture()
         let permit = try DispatchReadinessGate.mintPermit(

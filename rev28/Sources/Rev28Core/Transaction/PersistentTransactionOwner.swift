@@ -113,6 +113,9 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
     case goalSlotEntitlementConsumed
     case chooserVerificationNotPermitted
     case chooserVerificationAlreadyRecorded
+    case phaseBEligibilityRequired
+    case phaseBEligibilityAlreadyRecorded
+    case destinationConfirmationRequiresPreparedState
 
     public var description: String {
         switch self {
@@ -130,6 +133,9 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
         case .goalSlotEntitlementConsumed: return "goalSlotEntitlementConsumed"
         case .chooserVerificationNotPermitted: return "chooserVerificationNotPermitted"
         case .chooserVerificationAlreadyRecorded: return "chooserVerificationAlreadyRecorded"
+        case .phaseBEligibilityRequired: return "phaseBEligibilityRequired"
+        case .phaseBEligibilityAlreadyRecorded: return "phaseBEligibilityAlreadyRecorded"
+        case .destinationConfirmationRequiresPreparedState: return "destinationConfirmationRequiresPreparedState"
         }
     }
 }
@@ -145,6 +151,14 @@ public final class PersistentTransactionOwner {
     private let checkpointURL: URL?
     public let goalSlotDirectory: URL
     public let isObserveOnlyResume: Bool
+    /// True once an on-disk head anchor was verified against this ledger (or
+    /// written by this process after a verified/initial append).
+    public private(set) var isCheckpointVerified = false
+    /// True when this process *started* with irreversible intent/attempt
+    /// records already in the ledger — i.e. the restart happened after the
+    /// irreversible boundary. Such a session is permanently observe-only for
+    /// the irreversible operations (plan C4).
+    public let isPostIrreversibleResume: Bool
 
     public init(
         authorization: ImmutableRunAuthorization,
@@ -159,6 +173,10 @@ public final class PersistentTransactionOwner {
         self.checkpointURL = checkpointURL?.standardizedFileURL
         self.goalSlotDirectory = (goalSlotDirectory ?? GoalSlot.canonicalDirectory(for: authorization)).standardizedFileURL
         self.isObserveOnlyResume = !ledger.entries.isEmpty
+        self.isPostIrreversibleResume = ledger.entries.contains {
+            $0.kind == "intent.saveAll" || $0.kind == "attempt.saveAll"
+                || $0.kind == "intent.destinationConfirmation" || $0.kind == "attempt.destinationConfirmation"
+        }
         try EvidenceIO.ensureDirectory(URL(fileURLWithPath: authorization.evidenceRunDirectory))
 
         // The persistent goal slot binds this run's one-shot entitlement. An
@@ -184,11 +202,16 @@ public final class PersistentTransactionOwner {
                 guard bindings.count == 1, bindings.first?.payload == authorization.fields else {
                     throw PersistentTransactionError.authorizationMismatch
                 }
-                try checkpoint()
+                // An anchor generated now is not an independent verification
+                // of the resumed history; it is written for compatibility but
+                // never marks the resume checkpoint-verified, so the strictly
+                // gated pre-intent continuation stays unavailable here.
+                try ledger.writeHeadAnchor(to: checkpointURL)
                 return
             }
             do {
                 _ = try IntentLedger.verifyHeadAnchor(fileURL: ledger.fileURL, anchorURL: checkpointURL)
+                isCheckpointVerified = true
             } catch {
                 throw PersistentTransactionError.ledgerCheckpointInvalid
             }
@@ -205,6 +228,32 @@ public final class PersistentTransactionOwner {
         }
     }
 
+
+    /// The one-shot Save All boundary may be entered by a fresh session or by
+    /// a strictly verified pre-intent continuation; never after any
+    /// irreversible record or an unverified resume.
+    private var mayEnterIrreversibleBoundary: Bool {
+        !isPostIrreversibleResume && (!isObserveOnlyResume || preIntentContinuationAllowed)
+    }
+
+    public var hasIrreversibleRecords: Bool {
+        irreversibleOperationCounts != (0, 0)
+    }
+
+    /// Plan C4 pre-intent continuation: a restart may resume (reacquiring every
+    /// live fact) only with a verified goal slot + ledger + head anchor, zero
+    /// irreversible intent/attempt records, and a durable state that is still
+    /// before the irreversible boundary. Anything else is observe-only.
+    public var preIntentContinuationAllowed: Bool {
+        guard isCheckpointVerified, !isPostIrreversibleResume, !hasIrreversibleRecords, currentState != nil else {
+            return false
+        }
+        let postIrreversibleStates: Set<ExecutionState> = [
+            .chooserVerified, .destinationPrepared, .downloadConfirmed,
+            .downloadInProgress, .filesystemStable, .contentVerified, .finalized,
+        ]
+        return !postIrreversibleStates.contains(currentState!)
+    }
 
     public var currentState: ExecutionState? {
         ledger.entries.reversed().first(where: { $0.kind == "state.transition" })
@@ -246,11 +295,95 @@ public final class PersistentTransactionOwner {
         ledger.entries.filter { $0.kind == "dispatch.reversible" }.count
     }
 
-    public func recordReversibleDispatch(action: String) throws {
+    /// Durable per-identical-blocker recovery counts, recomputed from the
+    /// verified ledger. LiveDispatchBudget is only ever this derived view.
+    public var identicalBlockerRecoveries: [String: Int] {
+        ledger.entries
+            .filter { $0.kind == "budget.blocker" }
+            .compactMap { $0.payload["blockerKey"] }
+            .reduce(into: [String: Int]()) { $0[$1, default: 0] += 1 }
+    }
+
+    /// Consecutive candidate-revalidation failures ending at the ledger head.
+    public var consecutiveCandidateRevalidationFailures: Int {
+        var failures = 0
+        for entry in ledger.entries.reversed() where entry.kind == "budget.revalidation" {
+            guard entry.payload["passed"] == "false" else { break }
+            failures += 1
+        }
+        return failures
+    }
+
+    public var liveDispatchBudget: LiveDispatchBudget {
+        LiveDispatchBudget(
+            reversibleDispatches: reversibleDispatchCount,
+            saveAllDispatches: irreversibleOperationCounts.saveAll,
+            destinationConfirmations: irreversibleOperationCounts.destinationConfirmation,
+            identicalBlockerRecoveries: identicalBlockerRecoveries,
+            consecutiveCandidateRevalidationFailures: consecutiveCandidateRevalidationFailures
+        )
+    }
+
+    /// Global ceiling plus a durable per-semantic-action recovery ceiling.
+    /// `blockerKey` defaults to the reviewed action grouping, so a caller
+    /// cannot rename a retry to escape the per-blocker ceiling.
+    public func recordReversibleDispatch(action: String, blockerKey: String? = nil) throws {
         stateLock.lock()
         defer { stateLock.unlock() }
         guard reversibleDispatchCount < 12 else { throw ExecutionPolicyError.reversibleBudgetExhausted }
+        let key = blockerKey ?? action
+        guard identicalBlockerRecoveries[key, default: 0] < 3 else {
+            throw ExecutionPolicyError.identicalBlockerBudgetExhausted
+        }
         try append(kind: "dispatch.reversible", payload: binding(["action": action]))
+        try append(kind: "budget.blocker", payload: binding(["blockerKey": key]))
+    }
+
+    /// Persists one candidate revalidation outcome. Two consecutive failures
+    /// abort: the second failure is durable before the error surfaces, so a
+    /// restart cannot re-derive a cleared revalidation history.
+    public func recordCandidateRevalidation(blockerKey: String, passed: Bool) throws {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        let consecutive = passed ? 0 : consecutiveCandidateRevalidationFailures + 1
+        try append(kind: "budget.revalidation", payload: binding([
+            "blockerKey": blockerKey,
+            "passed": passed ? "true" : "false",
+        ]))
+        if consecutive >= 2 {
+            throw ExecutionPolicyError.candidateRevalidationExhausted
+        }
+    }
+
+    /// Persists the machine-checked Phase B eligibility decision for this run.
+    /// `reserveSaveAll` refuses unless this record exists, so the one-shot
+    /// entitlement can never be consumed by a caller that skipped the gate.
+    /// The artifact's file-checkable evidence is recomputed here, at the owner
+    /// boundary, so a producer label alone cannot arm the entitlement.
+    public func recordPhaseBEligibility(
+        _ artifact: PhaseBEligibilityArtifact,
+        recomputation: PhaseBEligibilityRecomputation
+    ) throws {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        guard mayEnterIrreversibleBoundary else {
+            throw PersistentTransactionError.irreversibleIntentAlreadyRecorded("saveAll")
+        }
+        guard !ledger.entries.contains(where: { $0.kind == "eligibility.phaseB" && isBound($0) }) else {
+            throw PersistentTransactionError.phaseBEligibilityAlreadyRecorded
+        }
+        let slot = try GoalSlot.load(directory: goalSlotDirectory, authorization: authorization)
+        try artifact.validateWithRecomputedEvidence(
+            against: authorization,
+            entitlementConsumed: slot?.entitlementConsumed ?? false,
+            recomputation: recomputation
+        )
+        let digest = EvidenceIO.sha256Hex(try EvidenceIO.encodeJSON(artifact))
+        try append(kind: "eligibility.phaseB", payload: binding([
+            "artifactDigestSHA256": digest,
+            "goalIdentitySHA256": artifact.goalIdentitySHA256,
+            "verdict": artifact.verdict,
+        ]))
     }
 
     /// Durable intent is written before the caller can post Save All. A restart
@@ -259,11 +392,17 @@ public final class PersistentTransactionOwner {
         stateLock.lock()
         defer { stateLock.unlock() }
         let counts = irreversibleOperationCounts
-        guard !isObserveOnlyResume, counts.saveAll == 0 else {
+        guard mayEnterIrreversibleBoundary, counts.saveAll == 0 else {
             throw PersistentTransactionError.irreversibleIntentAlreadyRecorded("saveAll")
         }
         guard currentState == .saveAllLocated else {
             throw PersistentTransactionError.saveAllRequiresLocatedState
+        }
+        // Owner-level eligibility enforcement (R4 C4): the durable
+        // machine-checked eligibility record must exist before the one-shot
+        // entitlement is touched, so no adapter caller can reserve past it.
+        guard ledger.entries.contains(where: { $0.kind == "eligibility.phaseB" && isBound($0) }) else {
+            throw PersistentTransactionError.phaseBEligibilityRequired
         }
         do {
             try GoalSlot.consumeOneShotEntitlement(directory: goalSlotDirectory, authorization: authorization)
@@ -303,6 +442,7 @@ public final class PersistentTransactionOwner {
               !affirmation.predicateID.isEmpty,
               tripwireArtifact.runID == authorization.runID,
               !tripwireArtifact.preChooserAttributableWriteObserved,
+              tripwireArtifact.collectionGap == nil,
               !tripwireArtifact.observations.contains(where: { $0.aborts }),
               postconditionEvidence.runDirectory.path == URL(fileURLWithPath: authorization.evidenceRunDirectory).standardizedFileURL.path,
               tripwireEvidence.runDirectory == postconditionEvidence.runDirectory,
@@ -356,7 +496,10 @@ public final class PersistentTransactionOwner {
         stateLock.lock()
         defer { stateLock.unlock() }
         let counts = irreversibleOperationCounts
-        guard !isObserveOnlyResume,
+        guard currentState == .destinationPrepared else {
+            throw PersistentTransactionError.destinationConfirmationRequiresPreparedState
+        }
+        guard !isPostIrreversibleResume,
               counts.saveAll >= 2, counts.destinationConfirmation == 0,
               ["AXPressDefaultButton", "ReturnKey"].contains(action),
               ledger.entries.contains(where: { $0.kind == "postcondition.chooserVerified" && isBound($0) }) else {
@@ -387,6 +530,7 @@ public final class PersistentTransactionOwner {
     private func checkpoint() throws {
         guard let checkpointURL else { return }
         try ledger.writeHeadAnchor(to: checkpointURL)
+        isCheckpointVerified = true
     }
 
     private func binding(_ extra: [String: String]) -> [String: String] {

@@ -128,23 +128,39 @@ public enum FrameCaptureSupport {
         )
     }
 
-    /// The independent backing-scale source for the display containing the window.
+    /// The independent backing-scale source for the display containing the
+    /// window. Fail-closed: a window center resolving to more than one display
+    /// (spanning or mirrored geometry) has no independently known scale, so
+    /// this returns nil instead of guessing the first display (plan C3:
+    /// multiple displays stay fail-closed unless separately replanned).
     public static func backingScaleFactor(forWindowFrame frame: CGRect) -> Double? {
         let center = CGPoint(x: frame.midX, y: frame.midY)
         var displayCount: UInt32 = 0
         var displays = [CGDirectDisplayID](repeating: 0, count: 16)
-        guard CGGetDisplaysWithPoint(center, UInt32(displays.count), &displays, &displayCount) == .success,
-              displayCount > 0 else {
+        guard CGGetDisplaysWithPoint(center, UInt32(displays.count), &displays, &displayCount) == .success else {
             return nil
         }
-        let displayID = displays[0]
+        var screenScales: [UInt32: Double] = [:]
         for screen in NSScreen.screens {
-            if let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber,
-               number.uint32Value == displayID {
-                return Double(screen.backingScaleFactor)
+            if let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber {
+                screenScales[number.uint32Value] = Double(screen.backingScaleFactor)
             }
         }
-        return nil
+        return resolvedBackingScale(displayCount: displayCount, displayIDs: displays, screenScales: screenScales)
+    }
+
+    /// Pure fail-closed resolution: exactly one display must contain the
+    /// window center and its scale must be independently known.
+    public static func resolvedBackingScale(
+        displayCount: UInt32,
+        displayIDs: [CGDirectDisplayID],
+        screenScales: [UInt32: Double]
+    ) -> Double? {
+        guard displayCount == 1,
+              let displayID = displayIDs.first,
+              let scale = screenScales[displayID],
+              scale > 0 else { return nil }
+        return scale
     }
 
     /// The single PNG encoding used for both retention and hashing, so the

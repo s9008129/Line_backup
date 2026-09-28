@@ -216,7 +216,12 @@ final class FakeObservationSource: @unchecked Sendable, ObservationSource {
     }
 
     func readAXIdentity(pid: Int32, windowID: UInt32) throws -> AXIdentityRead {
-        AXIdentityRead(role: "AXWindow", subrole: "AXStandardWindow", title: "LINE")
+        AXIdentityRead(
+            role: "AXWindow",
+            subrole: "AXStandardWindow",
+            title: "LINE",
+            matchMethod: .windowNumber
+        )
     }
 
     func processInstance(pid: Int32) throws -> ProcessInstanceID {
@@ -615,6 +620,19 @@ final class FakePostSaveEnvironment: @unchecked Sendable, PostSaveEnvironment {
 
     func stagingSnapshot(directory: URL) throws -> StagingSnapshot {
         snapshot(directory: directory)
+    }
+
+    /// Scripted post-dispatch tripwire refusal (nil = clean window).
+    var postDispatchTripwireRefusal: String?
+
+    func postDispatchTripwireGate() throws {
+        if let refusal = postDispatchTripwireRefusal {
+            throw PostSaveEnvironmentError.tripwireCollectionGap(refusal)
+        }
+    }
+
+    func tripwireCollectionGapDisclosure() -> String? {
+        postDispatchTripwireRefusal
     }
 
     func tripwireObservations() -> [TripwireClassification] {

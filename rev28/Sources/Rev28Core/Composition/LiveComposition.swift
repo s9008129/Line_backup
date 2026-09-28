@@ -109,6 +109,7 @@ public enum LiveCompositionFactory {
         environment: any ActuationEnvironment,
         postSave: any PostSaveEnvironment,
         phaseBEligibility: PhaseBEligibilityArtifact? = nil,
+        phaseBEligibilityRecomputation: PhaseBEligibilityRecomputation? = nil,
         ocr: any OcrPerforming = VisionOcrEngine(),
         sessionID: String,
         requireCheckpointOnResume: Bool = true
@@ -136,7 +137,8 @@ public enum LiveCompositionFactory {
                 baselineReferenceFile: configuration.baselineReferenceFile
             ),
             postSave: postSave,
-            phaseBEligibility: phaseBEligibility
+            phaseBEligibility: phaseBEligibility,
+            phaseBEligibilityRecomputation: phaseBEligibilityRecomputation
         )
         return LiveComposition(
             owner: owner,

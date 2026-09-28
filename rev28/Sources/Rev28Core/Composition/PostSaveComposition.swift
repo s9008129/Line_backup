@@ -173,11 +173,22 @@ extension ComposedNativeAdapter {
                 detail: "Phase B eligibility artifact is not armed; no Save All dispatch is authorized in this round"
             )
         }
+        guard let recomputation = phaseBEligibilityRecomputation else {
+            throw ComposedAdapterError.stateRefused(
+                state: "SAVE_ALL_LOCATED",
+                detail: "Phase B eligibility recomputation context is missing; no Save All dispatch is authorized"
+            )
+        }
         let slot = try GoalSlot.load(directory: owner.goalSlotDirectory, authorization: owner.authorization)
-        try eligibility.validate(
+        try eligibility.validateWithRecomputedEvidence(
             against: owner.authorization,
-            entitlementConsumed: slot?.entitlementConsumed ?? false
+            entitlementConsumed: slot?.entitlementConsumed ?? false,
+            recomputation: recomputation
         )
+        // Persist the machine-checked decision on the owner itself, so the
+        // reservation (inside the gated actuator) refuses even if a caller
+        // reaches it without passing this gate (plan C4 owner enforcement).
+        try owner.recordPhaseBEligibility(eligibility, recomputation: recomputation)
 
         // The context gate runs immediately before the dispatch, so the
         // recorded window is the freshest possible one (plan C7: the journal
@@ -309,7 +320,8 @@ extension ComposedNativeAdapter {
             )
             let tripwireArtifact = TripwireEvidenceArtifact(
                 runID: owner.authorization.runID,
-                observations: Self.tripwireFacts(tripwire)
+                observations: Self.tripwireFacts(tripwire),
+                collectionGap: postSave.tripwireCollectionGapDisclosure()
             )
             let postconditionURL = runDirectory.appendingPathComponent("\(name)-postcondition.json")
             let tripwireURL = runDirectory.appendingPathComponent("\(name)-tripwire.json")

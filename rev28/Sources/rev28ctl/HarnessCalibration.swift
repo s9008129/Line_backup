@@ -2476,12 +2476,21 @@ final class HarnessCalibrationDriver {
         let service = FrameCaptureService(ruleBook: ruleBook)
         let record = try await service.capture(window: main, configuration: cfg, includedWindows: snapshots, state: state, identityTemplate: nil)
         let process = ProcessInstanceID.current(pid: harnessPID()) ?? ProcessInstanceID(pid: harnessPID(), startTimeSeconds: 0, startTimeMicroseconds: 0)
-        let axMain = AXDriver.windows(ofApp: harnessPID()).first
-        let axRead = AXIdentityRead(
-            role: axMain.flatMap { AXDriver.role(of: $0) },
-            subrole: axMain.flatMap { AXDriver.subrole(of: $0) },
-            title: axMain.flatMap { AXDriver.title(of: $0) }
-        )
+        // Bind the AX read to the exact harness main window instead of the
+        // first AX window of the process (plan C3 / V-09 attempt-01).
+        let axRead = (try? AXWindowIdentitySelector.select(
+            targetWindowID: main.windowID,
+            cgBounds: main.frame,
+            descriptors: AXDriver.windows(ofApp: harnessPID()).map { element in
+                AXWindowDescriptor(
+                    windowNumber: AXDriver.windowNumber(of: element),
+                    frame: AXDriver.frame(of: element),
+                    role: AXDriver.role(of: element),
+                    subrole: AXDriver.subrole(of: element),
+                    title: AXDriver.title(of: element)
+                )
+            }
+        )) ?? AXIdentityRead(role: nil, subrole: nil, title: nil)
         let cgEntry = CGWindowEntryRecord(
             windowID: main.windowID,
             frame: main.frame,

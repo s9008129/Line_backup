@@ -17,6 +17,7 @@ final class NativeObservationSessionTests: XCTestCase {
         var captureError: Error?
         var captureClockAdvance: UInt64 = 0
         var onCaptureStart: (@Sendable () async -> Void)?
+        var axIdentityOverride: AXIdentityRead?
 
         private let lock = NSLock()
         private var epochCounter: UInt64 = 0
@@ -87,7 +88,12 @@ final class NativeObservationSessionTests: XCTestCase {
         }
 
         func readAXIdentity(pid: Int32, windowID: UInt32) throws -> AXIdentityRead {
-            AXIdentityRead(role: "AXWindow", subrole: "AXStandardWindow", title: "LINE")
+            axIdentityOverride ?? AXIdentityRead(
+                role: "AXWindow",
+                subrole: "AXStandardWindow",
+                title: "LINE",
+                matchMethod: .windowNumber
+            )
         }
 
         func processInstance(pid: Int32) throws -> ProcessInstanceID {
@@ -226,6 +232,25 @@ final class NativeObservationSessionTests: XCTestCase {
         }
         let captureCount = await session.captureCount
         XCTAssertEqual(captureCount, 0)
+    }
+
+    /// Plan C3: an AX read that cannot name its window binding is not evidence
+    /// about the observed window and must refuse the whole observation.
+    func testUnboundAXIdentityIsRefused() async throws {
+        let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
+        source.axIdentityOverride = AXIdentityRead(role: "AXWindow", subrole: nil, title: nil)
+        let session = NativeObservationSession(sessionID: "session-unbound-ax", source: source, ocr: FakeOcr())
+
+        do {
+            let bundle = try await session.capture(makeRequest())
+            try bundle.validated()
+            XCTFail("an unbound AX read must refuse, not count as window evidence")
+        } catch let refusal as ObservationRefusal {
+            guard case .identityMismatch(let details) = refusal else {
+                return XCTFail("unexpected refusal \(refusal)")
+            }
+            XCTAssertTrue(details.contains { $0.contains("not bound to the target window") }, "\(details)")
+        }
     }
 
     func testRetainedImageHashMismatchIsRefused() async throws {

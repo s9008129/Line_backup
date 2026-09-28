@@ -348,10 +348,14 @@ public struct PostconditionEvidenceArtifact: Codable, Equatable, Sendable {
 public struct TripwireEvidenceArtifact: Codable, Equatable, Sendable {
     public let runID: String
     public let observations: [TripwireEvidenceFact]
+    /// A post-dispatch dropped-event/rescan gap or collector failure is
+    /// disclosed here; a gapped window is never a clean tripwire (plan C7).
+    public let collectionGap: String?
 
-    public init(runID: String, observations: [TripwireEvidenceFact]) {
+    public init(runID: String, observations: [TripwireEvidenceFact], collectionGap: String? = nil) {
         self.runID = runID
         self.observations = observations
+        self.collectionGap = collectionGap
     }
 
     public var preChooserAttributableWriteObserved: Bool {
