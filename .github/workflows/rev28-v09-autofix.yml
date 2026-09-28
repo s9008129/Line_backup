@@ -169,4 +169,5 @@ jobs:
           git add rev28 evidence/20260925-rev28-native-closed-loop .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/handoff.md .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution.md
           git status --short
           git commit -m "fix(rev28): enforce persistent guarded live transaction"
+          git pull --rebase origin rev28-prelive-finalization
           git push origin HEAD:rev28-prelive-finalization
