@@ -1,25 +1,17 @@
-name: Rev28 V-09 independent review
+name: Rev28 V-09 independent review (external reviewer gate)
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - rev28-prelive-finalization
-    paths:
-      - "rev28/**"
-      - "evidence/20260925-rev28-native-closed-loop/harness/**"
-      - ".agent/tasks/T20260925-0647-01-rev28-native-closed-loop/**"
-      - "ISSUE-2026-09-24-rev27e4-r2-ownership-provenance.md"
-      - ".github/workflows/rev28-v09-independent-review.yml"
 
 permissions:
   contents: read
-  models: read
 
 concurrency:
   group: rev28-v09-models-${{ github.ref }}
   cancel-in-progress: true
 
+# GitHub Models inference retired on 2026-07-30. This legacy workflow is
+# manual-only until an independent reviewer provider is explicitly configured.
 jobs:
   input-gate:
     name: Freeze + provenance gate
