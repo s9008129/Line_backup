@@ -105,7 +105,9 @@ public struct NativeObservationRequest: Sendable {
     public let configuration: CaptureConfiguration
     public let geometryState: CaptureGeometryState
     public let localization: ObservationLocalization
-    public let deadlineMonotonicNanos: UInt64
+    /// Budget in the session source's monotonic clock domain. The session turns
+    /// it into one absolute deadline and never extends it.
+    public let observationBudgetNanos: UInt64
 
     public init(
         runID: String,
@@ -114,7 +116,7 @@ public struct NativeObservationRequest: Sendable {
         configuration: CaptureConfiguration,
         geometryState: CaptureGeometryState,
         localization: ObservationLocalization,
-        deadlineMonotonicNanos: UInt64
+        observationBudgetNanos: UInt64
     ) {
         self.runID = runID
         self.state = state
@@ -122,7 +124,7 @@ public struct NativeObservationRequest: Sendable {
         self.configuration = configuration
         self.geometryState = geometryState
         self.localization = localization
-        self.deadlineMonotonicNanos = deadlineMonotonicNanos
+        self.observationBudgetNanos = observationBudgetNanos
     }
 }
 
@@ -279,7 +281,8 @@ public actor NativeObservationSession {
         defer { captureInProgress = false }
 
         let started = source.monotonicNanos()
-        try checkDeadline(request.deadlineMonotonicNanos, now: started, stage: "start")
+        let deadline = started &+ request.observationBudgetNanos
+        try checkDeadline(deadline, now: started, stage: "start")
 
         let preInventory: [SCWindowSnapshot]
         do {
@@ -325,7 +328,7 @@ public actor NativeObservationSession {
             throw ObservationRefusal.observerFailure(stage: "captureTarget", detail: String(describing: error))
         }
         let capturedAt = source.monotonicNanos()
-        try checkDeadline(request.deadlineMonotonicNanos, now: capturedAt, stage: "capture")
+        try checkDeadline(deadline, now: capturedAt, stage: "capture")
 
         guard let pngData = FrameCaptureSupport.pngData(of: captured.image) else {
             throw ObservationRefusal.observerFailure(stage: "retainImage", detail: "PNG encoding failed")
@@ -402,7 +405,7 @@ public actor NativeObservationSession {
         )
 
         let ended = source.monotonicNanos()
-        try checkDeadline(request.deadlineMonotonicNanos, now: ended, stage: "end")
+        try checkDeadline(deadline, now: ended, stage: "end")
 
         let bundle = ObservationBundle(
             runID: request.runID,
@@ -411,7 +414,7 @@ public actor NativeObservationSession {
             startedAtMonotonicNanos: started,
             capturedAtMonotonicNanos: capturedAt,
             endedAtMonotonicNanos: ended,
-            deadlineMonotonicNanos: request.deadlineMonotonicNanos,
+            deadlineMonotonicNanos: deadline,
             epoch: epoch,
             target: request.target,
             process: process,

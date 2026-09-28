@@ -15,6 +15,7 @@ final class NativeObservationSessionTests: XCTestCase {
         var cgInventoryOverride: [CGWindowSnapshot]?
         var recordImageSHAOverride: String?
         var captureError: Error?
+        var captureClockAdvance: UInt64 = 0
         var onCaptureStart: (@Sendable () async -> Void)?
 
         private let lock = NSLock()
@@ -56,6 +57,9 @@ final class NativeObservationSessionTests: XCTestCase {
             epoch: UInt64
         ) async throws -> ObservationCapturedImage {
             if let onCaptureStart { await onCaptureStart() }
+            lock.lock()
+            now += captureClockAdvance
+            lock.unlock()
             if let captureError { throw captureError }
             let image = Self.makeImage(width: 400, height: 600)
             let sha = recordImageSHAOverride ?? FrameCaptureSupport.pngSHA256(of: image)!
@@ -155,7 +159,7 @@ final class NativeObservationSessionTests: XCTestCase {
 
     private func makeRequest(
         localization: ObservationLocalization = .none,
-        deadline: UInt64 = 1_000_000
+        budget: UInt64 = 1_000_000
     ) -> NativeObservationRequest {
         NativeObservationRequest(
             runID: "run-1",
@@ -164,7 +168,7 @@ final class NativeObservationSessionTests: XCTestCase {
             configuration: .primaryWindow,
             geometryState: CaptureGeometryState(settled: true, activated: true, includeChildWindows: false, ignoreShadows: true),
             localization: localization,
-            deadlineMonotonicNanos: deadline
+            observationBudgetNanos: budget
         )
     }
 
@@ -269,11 +273,11 @@ final class NativeObservationSessionTests: XCTestCase {
 
     func testDeadlineBreachIsRefusedAfterCapture() async throws {
         let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
-        source.advanceClock(by: 2_000)
+        source.captureClockAdvance = 2_000
         let session = NativeObservationSession(sessionID: "session-6", source: source, ocr: FakeOcr())
 
         do {
-            _ = try await session.capture(makeRequest(deadline: 1_500))
+            _ = try await session.capture(makeRequest(budget: 1_500))
             XCTFail("a capture that overshoots its deadline must refuse")
         } catch let refusal as ObservationRefusal {
             guard case .deadlineExceeded = refusal else {

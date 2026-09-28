@@ -26,6 +26,28 @@ public enum LiveExecutionOutcome: Equatable, Sendable {
     case observeOnlyResume(ExecutionState?)
 }
 
+public struct LivePreflightOutcome: Equatable, Sendable {
+    public let finalState: ExecutionState
+    public let observationsThisRun: Int
+    public let saveAllIrreversibleRecords: Int
+    public let destinationIrreversibleRecords: Int
+    public let entitlementConsumed: Bool
+
+    public init(
+        finalState: ExecutionState,
+        observationsThisRun: Int,
+        saveAllIrreversibleRecords: Int,
+        destinationIrreversibleRecords: Int,
+        entitlementConsumed: Bool
+    ) {
+        self.finalState = finalState
+        self.observationsThisRun = observationsThisRun
+        self.saveAllIrreversibleRecords = saveAllIrreversibleRecords
+        self.destinationIrreversibleRecords = destinationIrreversibleRecords
+        self.entitlementConsumed = entitlementConsumed
+    }
+}
+
 public enum LiveExecutionEngineError: Error, Equatable, CustomStringConvertible {
     case invalidTargetAuthorization
     case stateAlreadyStarted
@@ -34,6 +56,7 @@ public enum LiveExecutionEngineError: Error, Equatable, CustomStringConvertible 
     case invalidEvidenceDigest(String)
     case typedStateEvidenceRejected(String)
     case evidenceFileInvalid(String)
+    case preflightRequiresZeroIrreversibleRecords
 
     public var description: String {
         switch self {
@@ -44,6 +67,7 @@ public enum LiveExecutionEngineError: Error, Equatable, CustomStringConvertible 
         case let .invalidEvidenceDigest(stage): return "invalidEvidenceDigest(\(stage))"
         case let .typedStateEvidenceRejected(detail): return "typedStateEvidenceRejected(\(detail))"
         case let .evidenceFileInvalid(detail): return "evidenceFileInvalid(\(detail))"
+        case .preflightRequiresZeroIrreversibleRecords: return "preflightRequiresZeroIrreversibleRecords"
         }
     }
 }
@@ -88,6 +112,19 @@ public struct LiveExecutionEngine {
     public static let targetGroup = "旻謙允禎成長日記"
     public static let targetAlbum = "2024/05/13～05/17"
 
+    /// The reviewed pre-Save-All state sequence. `live-preflight` walks exactly
+    /// these states; `live-execute` continues into the irreversible boundary.
+    public static let preSaveStates: [ExecutionState] = [
+        .appReady,
+        .groupReady,
+        .albumListReady,
+        .targetAlbumLocated,
+        .albumDetailVerified,
+        .ellipsisLocated,
+        .menuVerified,
+        .saveAllLocated,
+    ]
+
     public let owner: PersistentTransactionOwner
     public let adapter: any LiveExecutionAdapter
 
@@ -97,14 +134,7 @@ public struct LiveExecutionEngine {
     }
 
     public func run() async throws -> LiveExecutionOutcome {
-        guard owner.authorization.group == Self.targetGroup,
-              owner.authorization.album == Self.targetAlbum,
-              owner.authorization.expectedFileCount == StagingPolicy.rev28Accepted.expectedFileCount,
-              owner.authorization.expectedTotalBytes == StagingPolicy.rev28Accepted.expectedTotalBytes,
-              owner.authorization.expectedContentMultisetSHA256 == StagingPolicy.rev28Accepted.expectedContentMultisetSHA256,
-              owner.authorization.baselineTripwireSHA256 == ImmutableRunAuthorization.acceptedBaselineTripwireSHA256 else {
-            throw LiveExecutionEngineError.invalidTargetAuthorization
-        }
+        try Self.validateTargetAuthorization(owner.authorization)
 
         if owner.isObserveOnlyResume {
             return .observeOnlyResume(owner.currentState)
@@ -113,32 +143,7 @@ public struct LiveExecutionEngine {
             throw LiveExecutionEngineError.stateAlreadyStarted
         }
 
-        let preSaveStates: [ExecutionState] = [
-            .appReady,
-            .groupReady,
-            .albumListReady,
-            .targetAlbumLocated,
-            .albumDetailVerified,
-            .ellipsisLocated,
-            .menuVerified,
-            .saveAllLocated,
-        ]
-        var previousEpoch: UInt64?
-        for (index, state) in preSaveStates.enumerated() {
-            let evidence = try await adapter.establish(state: state, owner: owner)
-            try Self.validateEstablishedEvidence(
-                evidence,
-                state: state,
-                owner: owner,
-                previousEpoch: previousEpoch
-            )
-            previousEpoch = evidence.artifact.epoch
-            if index == 0 {
-                try owner.initializeState(evidenceSHA256: evidence.evidenceSHA256)
-            } else {
-                try owner.transition(to: state, evidenceSHA256: evidence.evidenceSHA256)
-            }
-        }
+        _ = try await establishPreSaveStates()
 
         let saveAllEvidence = try await adapter.dispatchSaveAll(owner: owner)
         try validateDigest(saveAllEvidence, stage: "SAVE_ALL_DISPATCH")
@@ -195,6 +200,76 @@ public struct LiveExecutionEngine {
               Set(value).count > 1 else {
             throw LiveExecutionEngineError.invalidEvidenceDigest(stage)
         }
+    }
+
+    public static func validateTargetAuthorization(_ authorization: ImmutableRunAuthorization) throws {
+        guard authorization.group == targetGroup,
+              authorization.album == targetAlbum,
+              authorization.expectedFileCount == StagingPolicy.rev28Accepted.expectedFileCount,
+              authorization.expectedTotalBytes == StagingPolicy.rev28Accepted.expectedTotalBytes,
+              authorization.expectedContentMultisetSHA256 == StagingPolicy.rev28Accepted.expectedContentMultisetSHA256,
+              authorization.baselineTripwireSHA256 == ImmutableRunAuthorization.acceptedBaselineTripwireSHA256 else {
+            throw LiveExecutionEngineError.invalidTargetAuthorization
+        }
+    }
+
+    /// Walks (or continues) the reviewed pre-Save-All sequence with typed,
+    /// run-bound evidence. A pre-intent continuation skips states the ledger
+    /// already records; it never reuses their evidence or resets a counter.
+    @discardableResult
+    public func establishPreSaveStates() async throws -> Int {
+        let startIndex: Int
+        if let current = owner.currentState {
+            guard let index = Self.preSaveStates.firstIndex(of: current) else {
+                throw LiveExecutionEngineError.stateAlreadyStarted
+            }
+            startIndex = index + 1
+        } else {
+            startIndex = 0
+        }
+        var previousEpoch: UInt64?
+        var observations = 0
+        for state in Self.preSaveStates.dropFirst(startIndex) {
+            let evidence = try await adapter.establish(state: state, owner: owner)
+            try Self.validateEstablishedEvidence(
+                evidence,
+                state: state,
+                owner: owner,
+                previousEpoch: previousEpoch
+            )
+            previousEpoch = evidence.artifact.epoch
+            if owner.currentState == nil {
+                try owner.initializeState(evidenceSHA256: evidence.evidenceSHA256)
+            } else {
+                try owner.transition(to: state, evidenceSHA256: evidence.evidenceSHA256)
+            }
+            observations += 1
+        }
+        return observations
+    }
+
+    /// Observation/preflight phase: the same composition and state sequence as
+    /// `run()`, but it stops at SAVE_ALL_LOCATED with zero irreversible intent.
+    /// It refuses to continue any ledger that already holds an irreversible
+    /// record and never consumes the one-shot entitlement.
+    public func runPreflight() async throws -> LivePreflightOutcome {
+        try Self.validateTargetAuthorization(owner.authorization)
+        let counts = owner.irreversibleOperationCounts
+        guard counts.saveAll == 0, counts.destinationConfirmation == 0 else {
+            throw LiveExecutionEngineError.preflightRequiresZeroIrreversibleRecords
+        }
+        let observations = try await establishPreSaveStates()
+        guard let finalState = owner.currentState, finalState == .saveAllLocated else {
+            throw LiveExecutionEngineError.typedStateEvidenceRejected("preflight did not reach SAVE_ALL_LOCATED")
+        }
+        let slot = try GoalSlot.load(directory: owner.goalSlotDirectory, authorization: owner.authorization)
+        return LivePreflightOutcome(
+            finalState: finalState,
+            observationsThisRun: observations,
+            saveAllIrreversibleRecords: owner.irreversibleOperationCounts.saveAll,
+            destinationIrreversibleRecords: owner.irreversibleOperationCounts.destinationConfirmation,
+            entitlementConsumed: slot?.entitlementConsumed ?? false
+        )
     }
 
     /// Typed, file-backed validation of one established state. The adapter's
