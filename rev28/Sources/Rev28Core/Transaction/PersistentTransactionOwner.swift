@@ -111,6 +111,8 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
     case invalidStateEvidence
     case saveAllRequiresLocatedState
     case goalSlotEntitlementConsumed
+    case chooserVerificationNotPermitted
+    case chooserVerificationAlreadyRecorded
 
     public var description: String {
         switch self {
@@ -126,6 +128,8 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
         case .invalidStateEvidence: return "invalidStateEvidence"
         case .saveAllRequiresLocatedState: return "saveAllRequiresLocatedState"
         case .goalSlotEntitlementConsumed: return "goalSlotEntitlementConsumed"
+        case .chooserVerificationNotPermitted: return "chooserVerificationNotPermitted"
+        case .chooserVerificationAlreadyRecorded: return "chooserVerificationAlreadyRecorded"
         }
     }
 }
@@ -317,6 +321,16 @@ public final class PersistentTransactionOwner {
         guard ledger.entries.contains(where: { $0.kind == "attempt.saveAll" && isBound($0) }),
               Self.validSHA256(postconditionEvidence.sha256), Self.validSHA256(tripwireEvidence.sha256) else {
             throw PersistentTransactionError.authorizationMismatch
+        }
+        // A chooser can only be validated after the one Save All intent/attempt
+        // was durably dispatched from the freshly located state, and the
+        // verification record itself is one-shot: a duplicate append would
+        // forge a second, separately bound chooser history for this run.
+        guard !ledger.entries.contains(where: { $0.kind == "postcondition.chooserVerified" && isBound($0) }) else {
+            throw PersistentTransactionError.chooserVerificationAlreadyRecorded
+        }
+        guard currentState == .saveAllLocated else {
+            throw PersistentTransactionError.chooserVerificationNotPermitted
         }
         try append(kind: "postcondition.chooserVerified", payload: binding([
             "postconditionEvidenceSHA256": postconditionEvidence.sha256,

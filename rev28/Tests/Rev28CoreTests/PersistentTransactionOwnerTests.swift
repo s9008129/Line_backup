@@ -25,6 +25,29 @@ final class PersistentTransactionOwnerTests: XCTestCase {
         EvidenceIO.sha256Hex(Data(label.utf8))
     }
 
+    private func chooserEvidence(
+        authorization: ImmutableRunAuthorization,
+        label: String
+    ) throws -> LiveChooserEvidence {
+        let runDir = URL(fileURLWithPath: authorization.evidenceRunDirectory)
+        let post = runDir.appendingPathComponent("\(label)-post.json")
+        let tripwire = runDir.appendingPathComponent("\(label)-tripwire.json")
+        let affirmation = ChooserAffirmation(
+            windowID: 3, frame: .zero, ownerPID: 42, predicateID: "predicate-v2",
+            affirmedAtISO8601: "2026-09-28T00:00:00Z"
+        )
+        try EvidenceIO.encodeJSON(PostconditionEvidenceArtifact(
+            runID: authorization.runID, outcome: "CHOOSER_VERIFIED", chooserAffirmation: affirmation
+        )).write(to: post)
+        try EvidenceIO.encodeJSON(TripwireEvidenceArtifact(
+            runID: authorization.runID, observations: []
+        )).write(to: tripwire)
+        return LiveChooserEvidence(
+            postcondition: try BoundEvidenceDigest.load(fileURL: post, withinRunDirectory: runDir, runID: authorization.runID),
+            tripwire: try BoundEvidenceDigest.load(fileURL: tripwire, withinRunDirectory: runDir, runID: authorization.runID)
+        )
+    }
+
     /// Save All reservation is only legal at a freshly proved SAVE_ALL_LOCATED
     /// state (R4 C4), so owner-level tests must walk the pre-dispatch states.
     private func walkToSaveAllLocated(_ owner: PersistentTransactionOwner) throws {
@@ -150,5 +173,57 @@ final class PersistentTransactionOwnerTests: XCTestCase {
         XCTAssertThrowsError(try PersistentTransactionOwner(
             authorization: mismatched, ledger: IntentLedger(fileURL: url)
         ))
+    }
+
+    func testChooserVerificationRequiresDispatchedSaveAllAndIsOneShot() throws {
+        let (url, authorization) = try setup()
+        let owner = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))
+        try walkToSaveAllLocated(owner)
+
+        // No Save All attempt exists yet: even well-formed chooser evidence cannot
+        // create a chooser history for an undispatched Save All.
+        let early = try chooserEvidence(authorization: authorization, label: "early")
+        XCTAssertThrowsError(try owner.recordChooserVerified(
+            postconditionEvidence: early.postcondition,
+            tripwireEvidence: early.tripwire
+        )) { error in
+            XCTAssertEqual(error as? PersistentTransactionError, .authorizationMismatch)
+        }
+
+        try owner.reserveSaveAll()
+        try owner.markSaveAllAttempted()
+        let recorded = try chooserEvidence(authorization: authorization, label: "recorded")
+        try owner.recordChooserVerified(
+            postconditionEvidence: recorded.postcondition,
+            tripwireEvidence: recorded.tripwire
+        )
+
+        // The verification record is one-shot: a duplicate would forge a second
+        // bound chooser history for the same run.
+        XCTAssertThrowsError(try owner.recordChooserVerified(
+            postconditionEvidence: recorded.postcondition,
+            tripwireEvidence: recorded.tripwire
+        )) { error in
+            XCTAssertEqual(error as? PersistentTransactionError, .chooserVerificationAlreadyRecorded)
+        }
+
+        // A ledger whose state advanced past SAVE_ALL_LOCATED without a recorded
+        // verification cannot retroactively accept chooser evidence either.
+        let (lateURL, lateAuthorization) = try setup()
+        let lateOwner = try PersistentTransactionOwner(
+            authorization: lateAuthorization,
+            ledger: IntentLedger(fileURL: lateURL)
+        )
+        try walkToSaveAllLocated(lateOwner)
+        try lateOwner.reserveSaveAll()
+        try lateOwner.markSaveAllAttempted()
+        try lateOwner.transition(to: .chooserVerified, evidenceSHA256: evidence("chooser-verified"))
+        let late = try chooserEvidence(authorization: lateAuthorization, label: "late")
+        XCTAssertThrowsError(try lateOwner.recordChooserVerified(
+            postconditionEvidence: late.postcondition,
+            tripwireEvidence: late.tripwire
+        )) { error in
+            XCTAssertEqual(error as? PersistentTransactionError, .chooserVerificationNotPermitted)
+        }
     }
 }

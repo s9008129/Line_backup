@@ -1,0 +1,27 @@
+# focused run 2026-09-28T21:25:57Z HEAD=bebc418 worktree=dirty(chooser gate)
+Building for debugging...
+[0/12] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.10s)
+Test Suite 'Selected tests' started at 2026-09-29 05:25:57.632.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 05:25:57.633.
+Test Suite 'PersistentTransactionOwnerTests' started at 2026-09-29 05:25:57.633.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationBindsAcceptedContentContract]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationBindsAcceptedContentContract]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationIsImmutableAndConfirmationRequiresVerifiedChooser]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationIsImmutableAndConfirmationRequiresVerifiedChooser]' passed (0.025 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testChooserVerificationRequiresDispatchedSaveAllAndIsOneShot]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testChooserVerificationRequiresDispatchedSaveAllAndIsOneShot]' passed (0.031 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testProductionCheckpointIsRequiredAndDetectsRollback]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testProductionCheckpointIsRequiredAndDetectsRollback]' passed (0.018 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testRestartAfterSaveAllIntentCannotRearmOrDispatch]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testRestartAfterSaveAllIntentCannotRearmOrDispatch]' passed (0.016 seconds).
+Test Suite 'PersistentTransactionOwnerTests' passed at 2026-09-29 05:25:57.724.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.091 (0.091) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 05:25:57.724.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.091 (0.091) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 05:25:57.724.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.091 (0.092) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
