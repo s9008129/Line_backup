@@ -117,6 +117,35 @@ final class StagingVerifierTests: XCTestCase {
         XCTAssertFalse(StagingVerifier.isStable(snapshots: snapshots))
     }
 
+    func testEqualTailSpanIsMeasuredAfterLastChange() {
+        let records = goodRecords
+        let snapshots = [
+            StagingSnapshot(observedAt: 0, files: []),
+            StagingSnapshot(observedAt: 10, files: records),
+            StagingSnapshot(observedAt: 10.1, files: records),
+            StagingSnapshot(observedAt: 10.2, files: records),
+        ]
+        XCTAssertFalse(
+            StagingVerifier.isStable(snapshots: snapshots),
+            "a recent change followed by rapid equal samples must not borrow the older sample's elapsed time"
+        )
+        XCTAssertEqual(
+            StagingVerifier.verifyStableSnapshots(snapshots, policy: policy()).outcome,
+            .stagingUnstable
+        )
+    }
+
+    func testLongEqualTailAfterOlderDifferentSampleIsStable() {
+        let records = goodRecords
+        let snapshots = [
+            StagingSnapshot(observedAt: 0, files: []),
+            StagingSnapshot(observedAt: 10, files: records),
+            StagingSnapshot(observedAt: 12, files: records),
+            StagingSnapshot(observedAt: 15, files: records),
+        ]
+        XCTAssertTrue(StagingVerifier.isStable(snapshots: snapshots))
+    }
+
     func testSnapshotIncludesHiddenFilesAndTheyCannotConfirmContent() throws {
         let directory = try temporaryDirectory()
         try Data("hidden extra".utf8).write(to: directory.appendingPathComponent(".hidden-extra"))

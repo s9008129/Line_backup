@@ -160,9 +160,7 @@ public enum StagingVerifier {
         quiescenceSeconds: Double = 5
     ) -> Bool {
         guard snapshots.count >= minimumSamples,
-              let first = snapshots.first,
-              let last = snapshots.last,
-              last.observedAt - first.observedAt >= minimumSpanSeconds else { return false }
+              let last = snapshots.last else { return false }
         struct FileStabilitySignature: Equatable {
             let name: String
             let size: UInt64
@@ -180,7 +178,18 @@ public enum StagingVerifier {
             }, subdirectories: $0.subdirectories.sorted(), symlinks: $0.symlinks.sorted(), otherEntries: $0.otherEntries.sorted())
         }
         let lastSig = signature(last)
-        guard snapshots.suffix(minimumSamples).allSatisfy({ signature($0) == lastSig }) else { return false }
+        // The span must be measured over the contiguous equal tail ending at the
+        // final snapshot. A change followed by rapid equal samples does not
+        // satisfy the stability window, and elapsed time from an earlier
+        // different sample cannot count toward it.
+        var runStartIndex = snapshots.count - 1
+        while runStartIndex > 0, signature(snapshots[runStartIndex - 1]) == lastSig {
+            runStartIndex -= 1
+        }
+        let equalRun = snapshots[runStartIndex...]
+        guard equalRun.count >= minimumSamples,
+              let runStart = equalRun.first,
+              last.observedAt - runStart.observedAt >= minimumSpanSeconds else { return false }
         let latestMtime = last.files.map(\.modificationTime).max() ?? 0
         return last.observedAt - latestMtime >= quiescenceSeconds
     }
