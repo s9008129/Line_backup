@@ -32,6 +32,7 @@ cp -R "$HARNESS_ROOT/dot-codex" "$CODEX_HOME"
 cat >> "$CODEX_HOME/config.toml" <<'EOF'
 model_provider = "ollama_cloud"
 approval_policy = "never"
+web_search = "disabled"
 
 [features]
 code_mode = false
