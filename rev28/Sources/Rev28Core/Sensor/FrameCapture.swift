@@ -223,7 +223,11 @@ public final class FrameCaptureService {
         configuration: CaptureConfiguration,
         includedWindows: [SCWindowSnapshot],
         state: CaptureGeometryState,
-        identityTemplate: WindowIdentity?
+        identityTemplate: WindowIdentity?,
+        // Explicit capture epoch: the observation session owns the run's epoch
+        // authority, so the record must carry the epoch it issued instead of
+        // this service's private counter.
+        epoch: UInt64? = nil
     ) async throws -> ObservationCapturedImage {
         let filter = SCContentFilter(desktopIndependentWindow: window)
         let config = SCScreenshotConfiguration()
@@ -240,7 +244,7 @@ public final class FrameCaptureService {
             throw FrameCaptureError.noImageOutput
         }
 
-        let epoch = nextEpoch()
+        let recordedEpoch = epoch ?? nextEpoch()
         let capturedAt = FrameCaptureSupport.iso8601Now()
         let windowBBox = FrameCaptureSupport.unionBBox(of: includedWindows, fallback: window.frame)
         let expectedBBox = FrameCaptureSupport.expectedCaptureBBox(
@@ -297,7 +301,7 @@ public final class FrameCaptureService {
         }
 
         var identity = identityTemplate
-        identity?.captureEpoch = epoch
+        identity?.captureEpoch = recordedEpoch
         identity?.captureImageSHA256 = imageSHA
 
         let record = CapturedFrameRecord(
@@ -312,7 +316,7 @@ public final class FrameCaptureService {
             scale: pointPixelScale,
             scaleSource: .pointPixelScale,
             backingScaleFactor: backingScaleFactor,
-            epoch: epoch,
+            epoch: recordedEpoch,
             capturedAtISO8601: capturedAt,
             imageSHA256: imageSHA,
             stateKey: stateKey,
