@@ -11,6 +11,7 @@ public struct ImmutableRunAuthorization: Equatable, Codable, Sendable {
     public let reviewedImplementationSHA256: String
     public let stagingRoot: String
     public let stagingRunDirectory: String
+    public let evidenceRunDirectory: String
     public let expectedFileCount: Int
     public let expectedTotalBytes: UInt64
     public let expectedContentMultisetSHA256: String
@@ -25,6 +26,7 @@ public struct ImmutableRunAuthorization: Equatable, Codable, Sendable {
         reviewedImplementationSHA256: String,
         stagingRoot: URL,
         stagingRunDirectory: URL,
+        evidenceRunDirectory: URL? = nil,
         expectedFileCount: Int = StagingPolicy.rev28Accepted.expectedFileCount,
         expectedTotalBytes: UInt64 = StagingPolicy.rev28Accepted.expectedTotalBytes,
         expectedContentMultisetSHA256: String = StagingPolicy.rev28Accepted.expectedContentMultisetSHA256,
@@ -36,8 +38,15 @@ public struct ImmutableRunAuthorization: Equatable, Codable, Sendable {
         self.album = album
         self.planSHA256 = planSHA256
         self.reviewedImplementationSHA256 = reviewedImplementationSHA256
-        self.stagingRoot = stagingRoot.resolvingSymlinksInPath().standardizedFileURL.path
-        self.stagingRunDirectory = stagingRunDirectory.resolvingSymlinksInPath().standardizedFileURL.path
+        let canonicalRoot = stagingRoot.resolvingSymlinksInPath().standardizedFileURL
+        let canonicalRun = stagingRunDirectory.resolvingSymlinksInPath().standardizedFileURL
+        let defaultEvidence = canonicalRoot.deletingLastPathComponent()
+            .appendingPathComponent("evidence", isDirectory: true)
+            .appendingPathComponent(runID, isDirectory: true)
+        self.stagingRoot = canonicalRoot.path
+        self.stagingRunDirectory = canonicalRun.path
+        self.evidenceRunDirectory = (evidenceRunDirectory ?? defaultEvidence)
+            .resolvingSymlinksInPath().standardizedFileURL.path
         self.expectedFileCount = expectedFileCount
         self.expectedTotalBytes = expectedTotalBytes
         self.expectedContentMultisetSHA256 = expectedContentMultisetSHA256
@@ -54,6 +63,7 @@ public struct ImmutableRunAuthorization: Equatable, Codable, Sendable {
             "reviewedImplementationSHA256": reviewedImplementationSHA256,
             "stagingRoot": stagingRoot,
             "stagingRunDirectory": stagingRunDirectory,
+            "evidenceRunDirectory": evidenceRunDirectory,
             "expectedFileCount": String(expectedFileCount),
             "expectedTotalBytes": String(expectedTotalBytes),
             "expectedContentMultisetSHA256": expectedContentMultisetSHA256,
@@ -64,8 +74,11 @@ public struct ImmutableRunAuthorization: Equatable, Codable, Sendable {
     fileprivate var isValid: Bool {
         let rootURL = URL(fileURLWithPath: stagingRoot).resolvingSymlinksInPath().standardizedFileURL
         let runURL = URL(fileURLWithPath: stagingRunDirectory).resolvingSymlinksInPath().standardizedFileURL
+        let evidenceURL = URL(fileURLWithPath: evidenceRunDirectory).resolvingSymlinksInPath().standardizedFileURL
         let rootType = (try? FileManager.default.attributesOfItem(atPath: rootURL.path)[.type] as? FileAttributeType)
         let runType = (try? FileManager.default.attributesOfItem(atPath: runURL.path)[.type] as? FileAttributeType)
+        let runPrefix = runURL.path.hasSuffix("/") ? runURL.path : runURL.path + "/"
+        let evidencePrefix = evidenceURL.path.hasSuffix("/") ? evidenceURL.path : evidenceURL.path + "/"
         return !runID.isEmpty && !goal.isEmpty && !group.isEmpty && !album.isEmpty
             && Self.isSHA256(planSHA256) && Self.isSHA256(reviewedImplementationSHA256)
             && expectedFileCount == StagingPolicy.rev28Accepted.expectedFileCount
@@ -75,6 +88,9 @@ public struct ImmutableRunAuthorization: Equatable, Codable, Sendable {
             && rootType == .typeDirectory && runType == .typeDirectory
             && runURL.path != rootURL.path
             && runURL.path.hasPrefix(rootURL.path.hasSuffix("/") ? rootURL.path : rootURL.path + "/")
+            && evidenceURL.path != runURL.path
+            && !evidenceURL.path.hasPrefix(runPrefix)
+            && !runURL.path.hasPrefix(evidencePrefix)
     }
 
     private static func isSHA256(_ value: String) -> Bool {
@@ -132,6 +148,7 @@ public final class PersistentTransactionOwner {
         self.ledger = ledger
         self.checkpointURL = checkpointURL?.standardizedFileURL
         self.isObserveOnlyResume = !ledger.entries.isEmpty
+        try EvidenceIO.ensureDirectory(URL(fileURLWithPath: authorization.evidenceRunDirectory))
 
         if !ledger.entries.isEmpty {
             guard let checkpointURL = self.checkpointURL else {
@@ -260,16 +277,16 @@ public final class PersistentTransactionOwner {
               tripwireArtifact.runID == authorization.runID,
               !tripwireArtifact.preChooserAttributableWriteObserved,
               !tripwireArtifact.observations.contains(where: { $0.aborts }),
-              postconditionEvidence.runDirectory.path == URL(fileURLWithPath: authorization.stagingRunDirectory).standardizedFileURL.path,
+              postconditionEvidence.runDirectory.path == URL(fileURLWithPath: authorization.evidenceRunDirectory).standardizedFileURL.path,
               tripwireEvidence.runDirectory == postconditionEvidence.runDirectory,
               try BoundEvidenceDigest.load(
                 fileURL: postconditionEvidence.fileURL,
-                withinRunDirectory: URL(fileURLWithPath: authorization.stagingRunDirectory),
+                withinRunDirectory: URL(fileURLWithPath: authorization.evidenceRunDirectory),
                 runID: authorization.runID
               ).sha256 == postconditionEvidence.sha256,
               try BoundEvidenceDigest.load(
                 fileURL: tripwireEvidence.fileURL,
-                withinRunDirectory: URL(fileURLWithPath: authorization.stagingRunDirectory),
+                withinRunDirectory: URL(fileURLWithPath: authorization.evidenceRunDirectory),
                 runID: authorization.runID
               ).sha256 == tripwireEvidence.sha256 else {
             throw PersistentTransactionError.authorizationMismatch
@@ -291,7 +308,7 @@ public final class PersistentTransactionOwner {
               ledger.entries.contains(where: { $0.kind == "attempt.saveAll" && isBound($0) }),
               ledger.count(kind: "saveAllEmpiricalClassRecord") == 0,
               record.evidenceRunID == authorization.runID,
-              record.evidenceRunDirectory == authorization.stagingRunDirectory else {
+              record.evidenceRunDirectory == authorization.evidenceRunDirectory else {
             throw PersistentTransactionError.authorizationMismatch
         }
         try record.append(to: ledger)
