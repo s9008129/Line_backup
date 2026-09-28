@@ -29,6 +29,73 @@ EOF
 
 export CODEX_HOME="$WORK/.codex-home"
 cp -R "$HARNESS_ROOT/dot-codex" "$CODEX_HOME"
+cat > "$CODEX_HOME/model_catalog.json" <<'EOF'
+{
+  "models": [
+    {
+      "slug": "deepseek-v4.1-flash",
+      "display_name": "DeepSeek V4.1 Flash",
+      "name": "deepseek-v4.1-flash",
+      "model": "deepseek-v4.1-flash",
+      "provider": "ollama_cloud",
+      "context_window": 1048576,
+      "truncation_policy": {"mode":"tokens","limit":1048576},
+      "shell_type": "shell_command",
+      "visibility": "list",
+      "supported_in_api": true,
+      "priority": 0,
+      "base_instructions": "You are a coding agent. Follow repository and Harness instructions, use tools when needed, and preserve evidence.",
+      "supports_tools": true,
+      "supports_parallel_tool_calls": false,
+      "experimental_supported_tools": [],
+      "supports_reasoning_summaries": false,
+      "support_verbosity": false,
+      "supported_reasoning_levels": []
+    },
+    {
+      "slug": "glm-5.3-flash",
+      "display_name": "GLM 5.3 Flash",
+      "name": "glm-5.3-flash",
+      "model": "glm-5.3-flash",
+      "provider": "ollama_cloud",
+      "context_window": 1048576,
+      "truncation_policy": {"mode":"tokens","limit":1048576},
+      "shell_type": "shell_command",
+      "visibility": "list",
+      "supported_in_api": true,
+      "priority": 0,
+      "base_instructions": "You are an independent coding acceptance agent. Follow repository and Harness instructions and use tools only within your role.",
+      "supports_tools": true,
+      "supports_parallel_tool_calls": false,
+      "experimental_supported_tools": [],
+      "supports_reasoning_summaries": false,
+      "support_verbosity": false,
+      "supported_reasoning_levels": []
+    },
+    {
+      "slug": "muse-spark-1.3-contributor",
+      "display_name": "Muse Spark 1.3 Contributor",
+      "name": "muse-spark-1.3-contributor",
+      "model": "muse-spark-1.3-contributor",
+      "provider": "meta_model_api",
+      "context_window": 1048576,
+      "truncation_policy": {"mode":"tokens","limit":1048576},
+      "shell_type": "shell_command",
+      "visibility": "list",
+      "supported_in_api": true,
+      "priority": 0,
+      "base_instructions": "You are a high-reasoning planning and review agent. Follow repository and Harness instructions and use tools when needed.",
+      "supports_tools": true,
+      "supports_parallel_tool_calls": false,
+      "experimental_supported_tools": [],
+      "supports_reasoning_summaries": false,
+      "support_verbosity": false,
+      "supported_reasoning_levels": []
+    }
+  ]
+}
+EOF
+printf 'model_catalog_json = "%s"\n' "$CODEX_HOME/model_catalog.json" > "$CODEX_HOME/config.toml"
 cat >> "$CODEX_HOME/config.toml" <<'EOF'
 model_provider = "ollama_cloud"
 approval_policy = "never"
@@ -68,6 +135,28 @@ if [[ $planner_rc -ne 0 ]] || ! grep -q 'PLANNER_SMOKE_PASS' "$WORK/planner_last
 fi
 echo "META_CODEX_PLANNER=PASS"
 
+# Preflight the exact capability V4.3 requires from the Implementer: shell/file tool use.
+rm -f "$WORK/deepseek-tool-probe.txt"
+set +e
+codex exec --ephemeral --json --skip-git-repo-check --sandbox workspace-write --cd "$WORK" \
+  --model deepseek-v4.1-flash -c 'model_provider="ollama_cloud"' \
+  --output-last-message "$WORK/deepseek-tool-probe-last.txt" \
+  "Use the shell tool to create deepseek-tool-probe.txt containing exactly TOOL_OK, then read it back and reply exactly DEEPSEEK_TOOL_OK." \
+  > "$WORK/deepseek-tool-probe.jsonl" 2> "$WORK/deepseek-tool-probe.err"
+tool_rc=$?
+set -e
+if [[ $tool_rc -ne 0 ]] || [[ "$(cat "$WORK/deepseek-tool-probe.txt" 2>/dev/null || true)" != "TOOL_OK" ]] || ! grep -q 'DEEPSEEK_TOOL_OK' "$WORK/deepseek-tool-probe-last.txt" 2>/dev/null; then
+  echo "DEEPSEEK_CODEX_TOOL_USE=FAIL"
+  echo '--- tool stderr ---'
+  sed -n '1,240p' "$WORK/deepseek-tool-probe.err" || true
+  echo '--- tool events ---'
+  sed -n '1,360p' "$WORK/deepseek-tool-probe.jsonl" || true
+  echo '--- tool last ---'
+  cat "$WORK/deepseek-tool-probe-last.txt" 2>/dev/null || true
+  exit 29
+fi
+echo "DEEPSEEK_CODEX_TOOL_USE=PASS"
+
 for turn in 1 2 3; do
   if find "$TASK/escalations" -name escalation.md -type f -print -quit 2>/dev/null | grep -q .; then
     break
@@ -88,6 +177,10 @@ EOF
     exit 30
   fi
   echo "DEEPSEEK_IMPLEMENT_TURN_${turn}=PASS_PROCESS"
+  echo "--- implement turn ${turn} last ---"
+  cat "$WORK/implement-${turn}-last.txt" 2>/dev/null || true
+  echo "--- implement turn ${turn} events (tail) ---"
+  tail -n 80 "$WORK/implement-${turn}.jsonl" 2>/dev/null || true
 done
 
 progress="$TASK/progress.md"
