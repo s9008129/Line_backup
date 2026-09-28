@@ -33,6 +33,11 @@ cat >> "$CODEX_HOME/config.toml" <<'EOF'
 model_provider = "ollama_cloud"
 approval_policy = "never"
 
+[features]
+code_mode = false
+code_mode_host = false
+shell_tool = true
+
 [model_providers.ollama_cloud]
 name = "Ollama Cloud Harness Validation"
 base_url = "https://ollama.com/v1"
@@ -67,7 +72,7 @@ for turn in 1 2 3; do
     break
   fi
   cat > "$WORK/implement_turn.txt" <<EOF
-Use the installed Stage 04 V4.3 Implementer contract. Work only on TASK_ID T-HARNESS-V43-LIVE. This is autonomous goal-like turn ${turn}/3. Perform AT MOST ONE material attempt for the current blocker in this invocation. Read the immutable acceptance evidence; it cannot be edited and product edits cannot alter it. Do not weaken the check. Maintain progress.md. If the convergence guard fires, create the required append-only escalation packet and stop substantive work. Never fabricate success. Finish with a concise status line.
+First read $CODEX_HOME/prompts/04_implement_prompt.md, $CODEX_HOME/policies/convergence-escalation.md, and $CODEX_HOME/policies/workflow-routing.md. Obey them as the Stage 04 V4.3 Implementer contract. Work only on TASK_ID T-HARNESS-V43-LIVE. This is autonomous goal-like turn ${turn}/3. Perform AT MOST ONE material attempt for the current blocker in this invocation. Read the immutable acceptance evidence; it cannot be edited and product edits cannot alter it. Do not weaken the check. Maintain progress.md. If the convergence guard fires, create the required append-only escalation packet and stop substantive work. Never fabricate success. Finish with a concise status line.
 EOF
   set +e
   codex exec --ephemeral --json --skip-git-repo-check --sandbox workspace-write --cd "$WORK"     --model deepseek-v4.1-flash -c 'model_provider="ollama_cloud"'     --output-last-message "$WORK/implement-${turn}-last.txt" "$(cat "$WORK/implement_turn.txt")"     > "$WORK/implement-${turn}.jsonl" 2> "$WORK/implement-${turn}.err"
@@ -75,7 +80,10 @@ EOF
   set -e
   if [[ $rc -ne 0 ]]; then
     echo "DEEPSEEK_IMPLEMENT_TURN_${turn}=FAIL_RC_${rc}"
-    sed -n '1,160p' "$WORK/implement-${turn}.err" || true
+    echo '--- stderr ---'
+    sed -n '1,240p' "$WORK/implement-${turn}.err" || true
+    echo '--- jsonl ---'
+    sed -n '1,320p' "$WORK/implement-${turn}.jsonl" || true
     exit 30
   fi
   echo "DEEPSEEK_IMPLEMENT_TURN_${turn}=PASS_PROCESS"
@@ -95,7 +103,7 @@ echo 'CONVERGENCE_ESCALATION=PASS'
 
 escdir="$(dirname "$esc")"
 cat > "$WORK/high_review.txt" <<EOF
-Use the installed Stage 06 High-Reasoning Review contract. Review this escalation packet: ${esc}. Do not modify product/immutable evidence. Write decision.md in the same escalation directory with exactly one allowed ESCALATION_DECISION. If you route back to Implementer on the same blocker, include bounded BUDGET_EXTENSION, EXTENSION_SCOPE, NEW_INFORMATION_SOURCE, STOP_AFTER. Do not reset prior budget. End your response with HIGH_REASONING_REVIEW_COMPLETE.
+First read $CODEX_HOME/prompts/06_high_reasoning_review_prompt.md, $CODEX_HOME/policies/convergence-escalation.md, and $CODEX_HOME/policies/workflow-routing.md. Obey them as the Stage 06 High-Reasoning Review contract. Review this escalation packet: ${esc}. Do not modify product/immutable evidence. Write decision.md in the same escalation directory with exactly one allowed ESCALATION_DECISION. If you route back to Implementer on the same blocker, include bounded BUDGET_EXTENSION, EXTENSION_SCOPE, NEW_INFORMATION_SOURCE, STOP_AFTER. Do not reset prior budget. End your response with HIGH_REASONING_REVIEW_COMPLETE.
 EOF
 set +e
 codex exec --ephemeral --json --skip-git-repo-check --sandbox workspace-write --cd "$WORK"   --model muse-spark-1.3-contributor -c 'model_provider="meta_model_api"'   --output-last-message "$WORK/high-last.txt" "$(cat "$WORK/high_review.txt")" > "$WORK/high.jsonl" 2> "$WORK/high.err"
@@ -103,7 +111,10 @@ high_rc=$?
 set -e
 if [[ $high_rc -ne 0 ]] || [[ ! -f "$escdir/decision.md" ]]; then
   echo 'HIGH_REASONING_REVIEW=FAIL'
-  sed -n '1,160p' "$WORK/high.err" || true
+  echo '--- stderr ---'
+  sed -n '1,240p' "$WORK/high.err" || true
+  echo '--- jsonl ---'
+  sed -n '1,320p' "$WORK/high.jsonl" || true
   exit 40
 fi
 grep -Eq 'ESCALATION_DECISION: (IMPLEMENTER_FIX|TARGETED_DIAGNOSTIC|PLANNER_REPLAN|EXTERNAL_BLOCKER)' "$escdir/decision.md" || { echo 'HIGH_REASONING_ROUTE=FAIL'; exit 41; }
@@ -133,7 +144,7 @@ EOF
 chmod +x "$E2E/run_acceptance.sh"
 sha_before="$(sha256sum "$E2E/product/app.txt" | awk '{print $1}')"
 cat > "$WORK/e2e_prompt.txt" <<EOF
-Use the installed Stage 05 Independent Acceptance/E2E contract. Work in ${E2E}. Run ./run_acceptance.sh. You may do at most one bounded targeted diagnostic replay. Product mutation is forbidden even though the sandbox technically permits writes. Write an e2e_report.md under the next e2e/attempt-N directory, classify the failure route, and stop. Do not repair product/app.txt. End with E2E_REVIEW_COMPLETE.
+First read $CODEX_HOME/prompts/05_e2e_test_prompt.md, $CODEX_HOME/policies/testing-verification.md, and $CODEX_HOME/policies/workflow-routing.md. Obey them as the Stage 05 Independent Acceptance/E2E contract. Work in ${E2E}. Run ./run_acceptance.sh. You may do at most one bounded targeted diagnostic replay. Product mutation is forbidden even though the sandbox technically permits writes. Write an e2e_report.md under the next e2e/attempt-N directory, classify the failure route, and stop. Do not repair product/app.txt. End with E2E_REVIEW_COMPLETE.
 EOF
 set +e
 codex exec --ephemeral --json --skip-git-repo-check --sandbox workspace-write --cd "$E2E"   --model glm-5.3-flash -c 'model_provider="ollama_cloud"'   --output-last-message "$WORK/e2e-last.txt" "$(cat "$WORK/e2e_prompt.txt")" > "$WORK/e2e.jsonl" 2> "$WORK/e2e.err"
@@ -141,7 +152,10 @@ e2e_rc=$?
 set -e
 if [[ $e2e_rc -ne 0 ]]; then
   echo 'GLM_E2E=FAIL_PROCESS'
-  sed -n '1,160p' "$WORK/e2e.err" || true
+  echo '--- stderr ---'
+  sed -n '1,240p' "$WORK/e2e.err" || true
+  echo '--- jsonl ---'
+  sed -n '1,320p' "$WORK/e2e.jsonl" || true
   exit 50
 fi
 sha_after="$(sha256sum "$E2E/product/app.txt" | awk '{print $1}')"
