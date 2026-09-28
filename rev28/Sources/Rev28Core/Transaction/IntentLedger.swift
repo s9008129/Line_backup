@@ -278,30 +278,16 @@ public enum LedgerResume {
         entries.filter { irreversibleKinds.contains($0.kind) }.count
     }
 
-    /// A resumed process is observe-only. Re-arming an irreversible dispatch is
-    /// allowed only by an explicit fresh reviewed decision recorded after the last
-    /// irreversible dispatch (`payload["armIrreversible"] == "1"`).
+    /// A resumed process is always observe-only for irreversible operations.
+    /// A review record may explain a future *new run*, but it can never re-arm
+    /// the already-authorized Save All or destination confirmation in this ledger.
     public static func decide(entries: [LedgerEntry]) -> ResumeDecision {
         let dispatchCount = irreversibleDispatchCount(in: entries)
-        let lastDispatchSeq = entries.last(where: { irreversibleKinds.contains($0.kind) })?.seq ?? 0
-        let freshReview = entries.last(where: {
-            $0.kind == freshReviewedDecisionKind
-                && $0.seq > lastDispatchSeq
-                && $0.payload["armIrreversible"] == "1"
-        })
-        if freshReview != nil {
-            return ResumeDecision(
-                mode: "observeOnly",
-                irreversibleDispatchCount: dispatchCount,
-                allowedNewIrreversibleDispatches: 1,
-                reason: "fresh reviewed decision recorded after the last irreversible dispatch"
-            )
-        }
         return ResumeDecision(
             mode: "observeOnly",
             irreversibleDispatchCount: dispatchCount,
             allowedNewIrreversibleDispatches: 0,
-            reason: "crash resume is observe-only; no fresh reviewed decision arms another irreversible dispatch"
+            reason: "crash resume is permanently observe-only for irreversible operations in the same run"
         )
     }
 
