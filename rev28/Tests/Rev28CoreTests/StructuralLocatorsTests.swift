@@ -3,7 +3,16 @@ import XCTest
 @testable import Rev28Core
 
 final class StructuralLocatorsTests: XCTestCase {
-    private let binding = SurfaceBinding(windowID: 7, captureEpoch: 11, frameSHA256: String(repeating: "a", count: 64))
+    private let process = ProcessInstanceID(pid: 7, startTimeSeconds: 11, startTimeMicroseconds: 2)
+    private var binding: SurfaceBinding {
+        SurfaceBinding(
+            bundleID: "jp.naver.line.mac",
+            process: process,
+            windowID: 7,
+            captureEpoch: 11,
+            frameSHA256: String(repeating: "a", count: 64)
+        )
+    }
 
     private func item(_ text: String, _ rect: CGRect) -> OcrItem {
         OcrItem(
@@ -26,11 +35,11 @@ final class StructuralLocatorsTests: XCTestCase {
                 item("2024/05/13~05/17", CGRect(x: 20, y: 40, width: 150, height: 20)),
                 item("57", CGRect(x: 20, y: 70, width: 20, height: 15)),
             ],
-            cardBounds: CGRect(x: 0, y: 20, width: 300, height: 100),
+            regions: [AlbumCardRegion(id: "card-1", boundsCapturePx: CGRect(x: 0, y: 20, width: 300, height: 100))],
             binding: binding
         )
         guard case let .candidate(candidate) = result else { return XCTFail("expected candidate") }
-        XCTAssertEqual(candidate.identity, "2024/05/13~05/17|57")
+        XCTAssertEqual(candidate.identity, "card-1:2024/05/13~05/17|57")
         XCTAssertTrue(candidate.safeRectCapturePx.contains(CGPoint(x: candidate.pointCapturePx.x, y: candidate.pointCapturePx.y)))
     }
 
@@ -41,10 +50,44 @@ final class StructuralLocatorsTests: XCTestCase {
                 item("57", CGRect(x: 20, y: 70, width: 20, height: 15)),
                 item("57", CGRect(x: 80, y: 70, width: 20, height: 15)),
             ],
-            cardBounds: CGRect(x: 0, y: 20, width: 300, height: 100),
+            regions: [AlbumCardRegion(id: "card-1", boundsCapturePx: CGRect(x: 0, y: 20, width: 300, height: 100))],
             binding: binding
         )
         guard case let .refused(reason, _) = result else { return XCTFail("expected refusal") }
+        XCTAssertEqual(reason, .ambiguousIdentity)
+    }
+
+    func testAlbumCardRejectsCrossPairedTitleAndCountAcrossCards() {
+        let result = StructuralLocators.locateAlbumCard(
+            items: [
+                item("2024/05/13~05/17", CGRect(x: 20, y: 40, width: 150, height: 20)),
+                item("57", CGRect(x: 20, y: 170, width: 20, height: 15)),
+            ],
+            regions: [
+                AlbumCardRegion(id: "card-a", boundsCapturePx: CGRect(x: 0, y: 20, width: 200, height: 80)),
+                AlbumCardRegion(id: "card-b", boundsCapturePx: CGRect(x: 0, y: 120, width: 200, height: 80)),
+            ],
+            binding: binding
+        )
+        guard case let .refused(reason, _) = result else { return XCTFail("cross-card evidence must refuse") }
+        XCTAssertEqual(reason, .referenceStructureMismatch)
+    }
+
+    func testAlbumCardRejectsTwoVerifiedCardsAsAmbiguous() {
+        let result = StructuralLocators.locateAlbumCard(
+            items: [
+                item("2024/05/13~05/17", CGRect(x: 20, y: 40, width: 150, height: 20)),
+                item("57", CGRect(x: 20, y: 70, width: 20, height: 15)),
+                item("2024/05/13~05/17", CGRect(x: 220, y: 40, width: 150, height: 20)),
+                item("57", CGRect(x: 220, y: 70, width: 20, height: 15)),
+            ],
+            regions: [
+                AlbumCardRegion(id: "card-a", boundsCapturePx: CGRect(x: 0, y: 20, width: 200, height: 100)),
+                AlbumCardRegion(id: "card-b", boundsCapturePx: CGRect(x: 200, y: 20, width: 200, height: 100)),
+            ],
+            binding: binding
+        )
+        guard case let .refused(reason, _) = result else { return XCTFail("multiple verified cards must refuse") }
         XCTAssertEqual(reason, .ambiguousIdentity)
     }
 
@@ -114,9 +157,35 @@ final class StructuralLocatorsTests: XCTestCase {
             binding: binding
         )
         guard case let .candidate(candidate) = located else { return XCTFail("expected candidate") }
-        let fresh = SurfaceBinding(windowID: 7, captureEpoch: 12, frameSHA256: String(repeating: "b", count: 64))
+        let fresh = SurfaceBinding(
+            bundleID: binding.bundleID,
+            process: binding.process,
+            windowID: 7,
+            captureEpoch: 12,
+            frameSHA256: String(repeating: "b", count: 64)
+        )
         guard case let .refused(reason, _) = StructuralLocators.revalidate(candidate: candidate, against: fresh) else {
             return XCTFail("stale candidate must refuse")
+        }
+        XCTAssertEqual(reason, .staleBinding)
+    }
+
+    func testCandidateCannotSurviveProcessRestartOrPIDReuse() {
+        let candidate = StructuralCandidate(
+            identity: "save",
+            safeRectCapturePx: CGRect(x: 0, y: 0, width: 20, height: 20),
+            pointCapturePx: CapturePixelPoint(x: 10, y: 10),
+            binding: binding
+        )
+        let restarted = SurfaceBinding(
+            bundleID: binding.bundleID,
+            process: ProcessInstanceID(pid: process.pid, startTimeSeconds: process.startTimeSeconds + 1, startTimeMicroseconds: 0),
+            windowID: binding.windowID,
+            captureEpoch: binding.captureEpoch,
+            frameSHA256: binding.frameSHA256
+        )
+        guard case let .refused(reason, _) = StructuralLocators.revalidate(candidate: candidate, against: restarted) else {
+            return XCTFail("PID reuse must invalidate the old candidate")
         }
         XCTAssertEqual(reason, .staleBinding)
     }

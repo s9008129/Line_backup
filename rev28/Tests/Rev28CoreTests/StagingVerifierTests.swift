@@ -116,4 +116,44 @@ final class StagingVerifierTests: XCTestCase {
         ]
         XCTAssertFalse(StagingVerifier.isStable(snapshots: snapshots))
     }
+
+    func testSnapshotIncludesHiddenFilesAndTheyCannotConfirmContent() throws {
+        let directory = try temporaryDirectory()
+        try Data("hidden extra".utf8).write(to: directory.appendingPathComponent(".hidden-extra"))
+        let snapshot = try StagingVerifier.snapshot(directory: directory, observedAt: 100)
+        XCTAssertEqual(snapshot.files.map(\.name), [".hidden-extra"])
+        let emptyPolicy = StagingPolicy(
+            expectedFileCount: 0,
+            expectedTotalBytes: 0,
+            expectedContentMultisetSHA256: StagingVerifier.contentMultisetDigest([])
+        )
+        XCTAssertEqual(StagingVerifier.verify(snapshot: snapshot, policy: emptyPolicy).outcome, .stagingExtraFiles)
+    }
+
+    func testSnapshotIncludesDirectoriesAndSymlinksAndRefusesConfirmation() throws {
+        let directory = try temporaryDirectory()
+        let nested = directory.appendingPathComponent("nested", isDirectory: true)
+        try FileManager.default.createDirectory(at: nested, withIntermediateDirectories: false)
+        try Data("target".utf8).write(to: nested.appendingPathComponent("target"))
+        let link = directory.appendingPathComponent("linked-target")
+        try FileManager.default.createSymbolicLink(at: link, withDestinationURL: nested.appendingPathComponent("target"))
+
+        let snapshot = try StagingVerifier.snapshot(directory: directory, observedAt: 100)
+        XCTAssertEqual(snapshot.subdirectories, ["nested"])
+        XCTAssertEqual(snapshot.symlinks, ["linked-target"])
+        XCTAssertEqual(snapshot.files.count, 0)
+        let emptyPolicy = StagingPolicy(
+            expectedFileCount: 0,
+            expectedTotalBytes: 0,
+            expectedContentMultisetSHA256: StagingVerifier.contentMultisetDigest([])
+        )
+        XCTAssertEqual(StagingVerifier.verify(snapshot: snapshot, policy: emptyPolicy).outcome, .stagingExtraFiles)
+    }
+
+    private func temporaryDirectory() throws -> URL {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: false)
+        addTeardownBlock { try? FileManager.default.removeItem(at: directory) }
+        return directory
+    }
 }

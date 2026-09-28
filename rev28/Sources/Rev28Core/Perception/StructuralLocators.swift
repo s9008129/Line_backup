@@ -7,11 +7,15 @@ import Foundation
 // structure around those observations and is always bound to one capture epoch.
 
 public struct SurfaceBinding: Equatable, Codable, Sendable {
+    public let bundleID: String
+    public let process: ProcessInstanceID
     public let windowID: UInt32
     public let captureEpoch: UInt64
     public let frameSHA256: String
 
-    public init(windowID: UInt32, captureEpoch: UInt64, frameSHA256: String) {
+    public init(bundleID: String, process: ProcessInstanceID, windowID: UInt32, captureEpoch: UInt64, frameSHA256: String) {
+        self.bundleID = bundleID
+        self.process = process
         self.windowID = windowID
         self.captureEpoch = captureEpoch
         self.frameSHA256 = frameSHA256
@@ -59,6 +63,16 @@ public struct MenuRowObservation: Equatable, Sendable {
     }
 }
 
+public struct AlbumCardRegion: Equatable, Sendable {
+    public let id: String
+    public let boundsCapturePx: CGRect
+
+    public init(id: String, boundsCapturePx: CGRect) {
+        self.id = id
+        self.boundsCapturePx = boundsCapturePx
+    }
+}
+
 public enum StructuralLocators {
     public static let lineAlbumMenuReference = [
         "選擇項目",
@@ -68,30 +82,45 @@ public enum StructuralLocators {
         "分享相簿",
     ]
 
-    /// Exact album-card identity. The count must be spatially associated with
-    /// the same card (below the date title and within the supplied card bounds).
+    /// Exact album-card identity. The title and count must both be contained in
+    /// one uniquely identified card region; a caller-wide search rectangle is
+    /// not sufficient to establish their association.
     public static func locateAlbumCard(
         items: [OcrItem],
         title: String = "2024/05/13~05/17",
         count: String = "57",
-        cardBounds: CGRect,
+        regions: [AlbumCardRegion],
         binding: SurfaceBinding
     ) -> StructuralLocatorResult {
-        let titles = items.filter {
-            OcrTextIdentity.isExactMatch($0.text, title) && cardBounds.intersects($0.boundingBoxCapturePx)
+        guard !regions.isEmpty,
+              regions.allSatisfy({ !$0.id.isEmpty && $0.boundsCapturePx.width > 0 && $0.boundsCapturePx.height > 0 }),
+              Set(regions.map(\.id)).count == regions.count else {
+            return .refused(.unsafeGeometry, "card regions are empty, invalid, or have duplicate identities")
         }
-        let counts = items.filter {
-            OcrTextIdentity.isExactMatch($0.text, count) && cardBounds.intersects($0.boundingBoxCapturePx)
+
+        let titleItems = OcrTextIdentity.exactMatches(in: items, expected: title)
+        let countItems = OcrTextIdentity.exactMatches(in: items, expected: count)
+        guard titleItems.count == 1 else {
+            return .refused(titleItems.count > 1 ? .ambiguousIdentity : .missingIdentity, "exact title matches=\(titleItems.count)")
         }
-        guard titles.count == 1, counts.count == 1 else {
-            let cause: StructuralLocatorRefusal = (titles.count > 1 || counts.count > 1) ? .ambiguousIdentity : .missingIdentity
-            return .refused(cause, "titleMatches=\(titles.count) countMatches=\(counts.count)")
+        guard countItems.count == 1 else {
+            return .refused(countItems.count > 1 ? .ambiguousIdentity : .missingIdentity, "exact count matches=\(countItems.count)")
         }
-        let titleBox = titles[0].boundingBoxCapturePx
-        let countBox = counts[0].boundingBoxCapturePx
-        guard countBox.midY > titleBox.midY else {
-            return .refused(.referenceStructureMismatch, "count is not below the album-date title")
+        let titleItem = titleItems[0]
+        let countItem = countItems[0]
+        let matches = regions.filter {
+            $0.boundsCapturePx.contains(titleItem.boundingBoxCapturePx)
+                && $0.boundsCapturePx.contains(countItem.boundingBoxCapturePx)
+                && countItem.boundingBoxCapturePx.midY > titleItem.boundingBoxCapturePx.midY
         }
+        guard matches.count == 1, let region = matches.first else {
+            if matches.count > 1 {
+                return .refused(.ambiguousIdentity, "verified card-region matches=\(matches.count)")
+            }
+            return .refused(.referenceStructureMismatch, "title and exact count are not paired within one verified card region")
+        }
+        let cardBounds = region.boundsCapturePx
+        let titleBox = titleItem.boundingBoxCapturePx
 
         // Geometry comes from the card region, not the OCR character box.
         let inset = max(4.0, min(cardBounds.width, cardBounds.height) * 0.02)
@@ -104,7 +133,7 @@ public enum StructuralLocators {
             return .refused(.unsafeGeometry, "derived album-card point is outside safe interior")
         }
         return .candidate(StructuralCandidate(
-            identity: "\(title)|\(count)",
+            identity: "\(region.id):\(title)|\(count)",
             safeRectCapturePx: safe,
             pointCapturePx: point,
             binding: binding
@@ -167,6 +196,10 @@ public enum StructuralLocators {
         guard !addressable.isNull, addressable.width >= 8 else {
             return .refused(.unsafeGeometry, "no addressable menu overlap")
         }
+        let targetOverlap = addressable.intersection(target)
+        guard !targetOverlap.isNull, targetOverlap.width >= 8 else {
+            return .refused(.unsafeGeometry, "target row has no addressable horizontal overlap")
+        }
 
         // Derive the row cell from neighboring structural bands. The OCR target
         // establishes identity; the cell boundaries establish click geometry.
@@ -174,9 +207,9 @@ public enum StructuralLocators {
         let rowBottom = (target.maxY + below.minY) / 2
         let edgeInset = max(2.0, min(6.0, (rowBottom - rowTop) * 0.15))
         let safe = CGRect(
-            x: addressable.minX + 2,
+            x: targetOverlap.minX + 2,
             y: rowTop + edgeInset,
-            width: addressable.width - 4,
+            width: targetOverlap.width - 4,
             height: rowBottom - rowTop - edgeInset * 2
         )
         guard safe.width > 2, safe.height > 2, menuBounds.contains(safe) else {

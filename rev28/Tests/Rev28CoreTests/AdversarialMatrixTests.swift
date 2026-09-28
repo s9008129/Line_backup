@@ -60,13 +60,59 @@ final class AdversarialMatrixTests: XCTestCase {
     }
 
     private var binding: SurfaceBinding {
-        SurfaceBinding(windowID: 10, captureEpoch: 1, frameSHA256: String(repeating: "a", count: 64))
+        SurfaceBinding(
+            bundleID: "jp.naver.line.mac",
+            process: process,
+            windowID: 10,
+            captureEpoch: 1,
+            frameSHA256: String(repeating: "a", count: 64)
+        )
     }
 
     private func rows() -> [MenuRowObservation] {
         StructuralLocators.lineAlbumMenuReference.enumerated().map {
             MenuRowObservation(text: $0.element, bandCapturePx: CGRect(x: 40, y: 20 + CGFloat($0.offset) * 50, width: 140, height: 24))
         }
+    }
+
+    private func transactionOwner() throws -> PersistentTransactionOwner {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let staging = root.appendingPathComponent("staging")
+        let run = staging.appendingPathComponent("run")
+        try FileManager.default.createDirectory(at: run, withIntermediateDirectories: true)
+        let authorization = ImmutableRunAuthorization(
+            runID: "adversarial", goal: "test", group: "group", album: "album",
+            planSHA256: EvidenceIO.sha256Hex(Data("plan".utf8)),
+            reviewedImplementationSHA256: EvidenceIO.sha256Hex(Data("implementation".utf8)),
+            stagingRoot: staging,
+            stagingRunDirectory: run
+        )
+        return try PersistentTransactionOwner(
+            authorization: authorization,
+            ledger: IntentLedger(fileURL: root.appendingPathComponent("ledger.jsonl"))
+        )
+    }
+
+    private func guardedFixture() -> (WindowIdentity, StructuralCandidate, ReadinessObservation) {
+        let target = identity()
+        let candidate = StructuralCandidate(
+            identity: "儲存全部",
+            safeRectCapturePx: CGRect(x: 10, y: 10, width: 100, height: 100),
+            pointCapturePx: CapturePixelPoint(x: 50, y: 50),
+            binding: binding
+        )
+        let frame = target.windowFrame
+        let observation = ReadinessObservation(
+            applicationActive: true,
+            targetFrontmost: true,
+            freshWindow: fresh(),
+            currentEpoch: 1,
+            currentBinding: binding,
+            captureGeometry: CaptureGeometry(windowFrame: frame, captureBBox: frame, scale: 1),
+            captureImageSize: CGSize(width: 327, height: 643),
+            observedAtUptime: 10
+        )
+        return (target, candidate, observation)
     }
 
     // G01 wrong window
@@ -93,11 +139,21 @@ final class AdversarialMatrixTests: XCTestCase {
     }
 
     // G05 another app occludes target
-    func testG05SeparateProcessOccluderBlocksDispatch() {
-        XCTAssertEqual(
-            DispatchReadinessEvaluator.refusal(for: DispatchReadiness(applicationActive: true, targetFrontmost: false, identityFresh: true, candidateFresh: true, geometrySafe: true)),
-            .targetNotFrontmost
-        )
+    func testG05SeparateProcessOccluderPostsZeroEventsAtGuardedBoundary() throws {
+        let (target, candidate, observation) = guardedFixture()
+        let permit = try DispatchReadinessGate.mintPermit(identity: target, candidate: candidate, observation: observation, now: 10)
+        var posted = 0
+        var checkedReadiness = false
+        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
+            permit: permit,
+            currentBinding: candidate.binding,
+            intent: .saveAll(try transactionOwner()),
+            sink: { _, _ in posted += 1 },
+            readinessCheck: { _, _ in checkedReadiness = true; return false },
+            now: 10
+        ))
+        XCTAssertTrue(checkedReadiness)
+        XCTAssertEqual(posted, 0)
     }
 
     // G06 window moves
@@ -108,11 +164,26 @@ final class AdversarialMatrixTests: XCTestCase {
     }
 
     // G07 popup moves after detection
-    func testG07PopupMovementInvalidatesCandidateBinding() {
+    func testG07PopupMovementInvalidatesCandidateAtGuardedBoundary() throws {
         let candidate = StructuralCandidate(identity: "儲存全部", safeRectCapturePx: CGRect(x: 0, y: 0, width: 10, height: 10), pointCapturePx: CapturePixelPoint(x: 5, y: 5), binding: binding)
-        let moved = SurfaceBinding(windowID: 10, captureEpoch: 2, frameSHA256: String(repeating: "b", count: 64))
-        guard case let .refused(reason, _) = StructuralLocators.revalidate(candidate: candidate, against: moved) else { return XCTFail("must refuse") }
-        XCTAssertEqual(reason, .staleBinding)
+        let moved = SurfaceBinding(
+            bundleID: binding.bundleID,
+            process: binding.process,
+            windowID: 10,
+            captureEpoch: 2,
+            frameSHA256: String(repeating: "b", count: 64)
+        )
+        let (target, _, observation) = guardedFixture()
+        let permit = try DispatchReadinessGate.mintPermit(identity: target, candidate: candidate, observation: observation, now: 10)
+        var posted = 0
+        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
+            permit: permit,
+            currentBinding: moved,
+            intent: .saveAll(try transactionOwner()),
+            sink: { _, _ in posted += 1 },
+            now: 10
+        ))
+        XCTAssertEqual(posted, 0)
     }
 
     // G08 wrong menu row
@@ -164,11 +235,21 @@ final class AdversarialMatrixTests: XCTestCase {
     }
 
     // G14 focus theft
-    func testG14FocusTheftBlocksDispatch() {
-        XCTAssertEqual(
-            DispatchReadinessEvaluator.refusal(for: DispatchReadiness(applicationActive: false, targetFrontmost: true, identityFresh: true, candidateFresh: true, geometrySafe: true)),
-            .applicationInactive
-        )
+    func testG14FocusTheftPostsZeroEventsAtGuardedBoundary() throws {
+        let (target, candidate, observation) = guardedFixture()
+        let permit = try DispatchReadinessGate.mintPermit(identity: target, candidate: candidate, observation: observation, now: 10)
+        var posted = 0
+        var checkedReadiness = false
+        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
+            permit: permit,
+            currentBinding: candidate.binding,
+            intent: .saveAll(try transactionOwner()),
+            sink: { _, _ in posted += 1 },
+            readinessCheck: { _, _ in checkedReadiness = true; return false },
+            now: 10
+        ))
+        XCTAssertTrue(checkedReadiness)
+        XCTAssertEqual(posted, 0)
     }
 
     // G15 postcondition timeout
@@ -204,6 +285,70 @@ final class AdversarialMatrixTests: XCTestCase {
             axNodes: [], preDispatchCensusPIDs: [100], postDispatchCensusPIDs: [100]
         )
         XCTAssertEqual(ChooserAffirmationEvaluator.evaluate(candidate: candidate, predicate: predicate), .refused(cause: .notNewWindow, detail: "candidate window is not new relative to the pre-dispatch inventory"))
+    }
+
+    func testChooserPredicateV2RequiresBothButtonsAndStableProcessInstances() {
+        let defaultButton = ButtonRequirement(
+            mode: .titleIn, attributeName: nil, attributeValue: nil,
+            titles: ["Open"], buttonRoles: ["AXButton"]
+        )
+        let cancelButton = ButtonRequirement(
+            mode: .titleIn, attributeName: nil, attributeValue: nil,
+            titles: ["Cancel"], buttonRoles: ["AXButton"]
+        )
+        let clauses = ChooserAXClauseSet(
+            windowRole: "AXWindow",
+            allowedSubroles: ["AXStandardWindow"],
+            requiresTextField: false,
+            textFieldRoles: [],
+            requiresPopUpButton: false,
+            popUpButtonRoles: [],
+            defaultButton: defaultButton,
+            cancelButton: cancelButton,
+            requiresPathAffordance: false,
+            pathAffordanceRoles: [],
+            pathAffordanceTitles: []
+        )
+        let predicate = ChooserAffirmationPredicate(
+            predicateID: "v2", frozenAtISO8601: "now", calibratedAgainst: "native",
+            ax: clauses,
+            ownership: ChooserOwnershipClauseSet(
+                requiresOwningPIDInCensusUnion: true,
+                requiresStableProcessInstance: true,
+                emptyPreCensusWidensRefusal: true
+            ),
+            predicateVersion: 2
+        )
+        let owner = ChooserProcessFacts(pid: 100, bundleID: "app", signingIdentity: "sign", startTimeUnix: 10)
+        let nodes = [
+            AXNodeDump(depth: 0, role: "AXWindow", subrole: "AXStandardWindow", title: nil,
+                       description: nil, identifier: nil, keyEquivalent: nil, value: nil, enabled: true,
+                       frame: .zero, attributes: [:]),
+            AXNodeDump(depth: 1, role: "AXButton", subrole: nil, title: "Open",
+                       description: nil, identifier: nil, keyEquivalent: nil, value: nil, enabled: true,
+                       frame: .zero, attributes: [:]),
+            AXNodeDump(depth: 1, role: "AXButton", subrole: nil, title: "Cancel",
+                       description: nil, identifier: nil, keyEquivalent: nil, value: nil, enabled: true,
+                       frame: .zero, attributes: [:]),
+        ]
+        let candidate = ChooserCandidate(
+            windowID: 20, frame: CGRect(x: 0, y: 0, width: 300, height: 200),
+            onScreen: true, presentInSCInventory: true, presentInCGInventory: true,
+            isNewRelativeToPreDispatchInventory: true, owner: owner, pidReuseDetected: false,
+            axNodes: nodes, preDispatchCensusPIDs: [100], postDispatchCensusPIDs: [100],
+            preDispatchOwner: owner, postDispatchOwner: owner
+        )
+        XCTAssertEqual(ChooserAffirmationEvaluator.evaluate(candidate: candidate, predicate: predicate), .affirmed)
+        let reused = ChooserCandidate(
+            windowID: 20, frame: candidate.frame, onScreen: true, presentInSCInventory: true,
+            presentInCGInventory: true, isNewRelativeToPreDispatchInventory: true, owner: owner,
+            pidReuseDetected: false, axNodes: nodes, preDispatchCensusPIDs: [100],
+            postDispatchCensusPIDs: [100], preDispatchOwner: owner,
+            postDispatchOwner: ChooserProcessFacts(pid: 100, bundleID: "app", signingIdentity: "sign", startTimeUnix: 11)
+        )
+        guard case .refused(.pidReuse, _) = ChooserAffirmationEvaluator.evaluate(candidate: reused, predicate: predicate) else {
+            return XCTFail("process instance reuse must be refused")
+        }
     }
 
     // G17 unexpected filesystem write

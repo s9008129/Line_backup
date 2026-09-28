@@ -3,7 +3,13 @@ import XCTest
 @testable import Rev28Core
 
 final class AlbumEllipsisLocatorTests: XCTestCase {
-    private let binding = SurfaceBinding(windowID: 10, captureEpoch: 9, frameSHA256: String(repeating: "e", count: 64))
+    private let binding = SurfaceBinding(
+        bundleID: "com.example.target",
+        process: ProcessInstanceID(pid: 10, startTimeSeconds: 1, startTimeMicroseconds: 0),
+        windowID: 10,
+        captureEpoch: 9,
+        frameSHA256: String(repeating: "e", count: 64)
+    )
     private let titleBox = CGRect(x: 15, y: 83, width: 189, height: 28)
 
     private func dot(_ x: Double, _ y: Double, area: Int = 4) -> EllipsisDotComponent {

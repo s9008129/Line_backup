@@ -156,3 +156,129 @@ public enum PostconditionMonitor {
         }
     }
 }
+
+public struct StrictPostconditionSample: Sendable {
+    public let affirmation: ChooserAffirmation?
+    public let tripwireObservations: [TripwireClassification]
+
+    public init(affirmation: ChooserAffirmation?, tripwireObservations: [TripwireClassification]) {
+        self.affirmation = affirmation
+        self.tripwireObservations = tripwireObservations
+    }
+}
+
+public enum StrictPostconditionVerdict: Equatable, Sendable {
+    case chooserVerified(ChooserAffirmation, sampleCount: Int, tripwire: [TripwireClassification])
+    case noChooserObserved(sampleCount: Int, tripwire: [TripwireClassification])
+    case chooserObservedAfterWindow(ChooserAffirmation, sampleCount: Int, tripwire: [TripwireClassification])
+    case tripwireAborted(sampleCount: Int, tripwire: [TripwireClassification])
+    case observerFailed(String, sampleCount: Int, tripwire: [TripwireClassification])
+    case deadlineExceeded(sampleCount: Int, tripwire: [TripwireClassification])
+}
+
+public enum StrictPostconditionObservation: Sendable {
+    case observed(StrictPostconditionSample)
+    case failed(String, tripwireObservations: [TripwireClassification])
+}
+
+private final class AsyncRaceBox<Value>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var continuation: CheckedContinuation<Value?, Never>?
+    private var resolved = false
+    private var operationTask: Task<Void, Never>?
+    private var timerTask: Task<Void, Never>?
+
+    init(_ continuation: CheckedContinuation<Value?, Never>) { self.continuation = continuation }
+
+    func register(operationTask: Task<Void, Never>, timerTask: Task<Void, Never>) {
+        lock.lock()
+        if resolved {
+            operationTask.cancel()
+            timerTask.cancel()
+        } else {
+            self.operationTask = operationTask
+            self.timerTask = timerTask
+        }
+        lock.unlock()
+    }
+
+    func resolve(_ value: Value?, fromOperation: Bool) {
+        lock.lock()
+        guard !resolved else { lock.unlock(); return }
+        resolved = true
+        let continuation = self.continuation
+        self.continuation = nil
+        let taskToCancel = fromOperation ? timerTask : operationTask
+        operationTask = nil
+        timerTask = nil
+        lock.unlock()
+        taskToCancel?.cancel()
+        continuation?.resume(returning: value)
+    }
+}
+
+private func valueBeforeDeadline<T: Sendable>(
+    seconds: Double,
+    operation: @escaping @Sendable () async -> T
+) async -> T? {
+    await withCheckedContinuation { continuation in
+        let box = AsyncRaceBox<T>(continuation)
+        let operationTask = Task.detached { box.resolve(await operation(), fromOperation: true) }
+        let timerTask = Task.detached {
+            if seconds > 0 { try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000)) }
+            box.resolve(nil, fromOperation: false)
+        }
+        box.register(operationTask: operationTask, timerTask: timerTask)
+    }
+}
+
+public enum StrictPostconditionMonitor {
+    public static func run(
+        bounds: PostconditionBounds = .planTime,
+        sampler: @escaping @Sendable () async -> StrictPostconditionObservation,
+        monotonicNow: @escaping @Sendable () -> Double = {
+            Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000.0
+        },
+        sleep: @escaping @Sendable (Double) async -> Void = { seconds in
+            try? await Task.sleep(nanoseconds: UInt64(max(0, seconds) * 1_000_000_000))
+        }
+    ) async -> StrictPostconditionVerdict {
+        let start = monotonicNow()
+        let deadline = start + bounds.hardCapSeconds
+        var sampleCount = 0
+        var latestTripwire: [TripwireClassification] = []
+        var nextSampleStart = start
+        while monotonicNow() < deadline {
+            let wait = nextSampleStart - monotonicNow()
+            if wait > 0 { await sleep(min(wait, max(0, deadline - monotonicNow()))) }
+            let sampleStart = monotonicNow()
+            guard sampleStart < deadline else { break }
+            let remaining = deadline - sampleStart
+            guard let result = await valueBeforeDeadline(seconds: remaining, operation: sampler) else {
+                return .deadlineExceeded(sampleCount: sampleCount, tripwire: latestTripwire)
+            }
+            sampleCount += 1
+            switch result {
+            case let .failed(error, tripwire):
+                return .observerFailed(error, sampleCount: sampleCount, tripwire: tripwire)
+            case let .observed(sample):
+                latestTripwire = sample.tripwireObservations
+                if sample.tripwireObservations.contains(where: { $0.aborts }) {
+                    return .tripwireAborted(sampleCount: sampleCount, tripwire: latestTripwire)
+                }
+                let completed = monotonicNow()
+                if let affirmation = sample.affirmation {
+                    return completed <= deadline
+                        ? .chooserVerified(affirmation, sampleCount: sampleCount, tripwire: latestTripwire)
+                        : .chooserObservedAfterWindow(affirmation, sampleCount: sampleCount, tripwire: latestTripwire)
+                }
+                let cadence = Double(bounds.cadenceMilliseconds(atElapsedSeconds: sampleStart - start)) / 1000.0
+                nextSampleStart = sampleStart + cadence
+                if completed >= deadline {
+                    return .deadlineExceeded(sampleCount: sampleCount, tripwire: latestTripwire)
+                }
+            }
+        }
+        return .noChooserObserved(sampleCount: sampleCount, tripwire: latestTripwire)
+    }
+}

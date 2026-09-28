@@ -1,3 +1,4 @@
+import AppKit
 import ApplicationServices
 import CoreGraphics
 import Foundation
@@ -92,7 +93,7 @@ public enum FolderChooserDriver {
         return nil
     }
 
-    private static func defaultButtonElement(in window: AXUIElement, titles: [String]) -> AXUIElement? {
+    static func defaultButtonElement(in window: AXUIElement, titles: [String]) -> AXUIElement? {
         // maxDepth 12: a native NSOpenPanel presented as a sheet nests the
         // prompt button ~8-10 levels below the host window element, so a
         // shallower search silently reports defaultButtonMissing (observed
@@ -107,7 +108,7 @@ public enum FolderChooserDriver {
     }
 
     /// Strings the panel currently exposes that look like filesystem paths.
-    public static func directoryCandidates(pid: pid_t) -> [String] {
+    static func directoryCandidates(pid: pid_t) -> [String] {
         var candidates: [String] = []
         for window in AXDriver.windows(ofApp: pid) {
             let nodes = AXDriver.allDescendants(of: window, maxDepth: 7) { element in
@@ -133,7 +134,7 @@ public enum FolderChooserDriver {
     /// settable (otherwise replaces its text with Unicode keyboard events),
     /// verifies the field value, and confirms navigation with Return.
     @discardableResult
-    public static func navigateToDestination(
+    static func navigateToDestination(
         pid: pid_t,
         destination: URL,
         timeoutSeconds: Double = 8.0
@@ -188,7 +189,7 @@ public enum FolderChooserDriver {
         // Wait until the panel reports the destination among its path candidates.
         while Date() < deadline {
             let candidates = directoryCandidates(pid: pid)
-            if candidates.contains(where: { $0 == target || $0.hasSuffix(target) || target.hasSuffix($0) }) {
+            if candidates.contains(where: { URL(fileURLWithPath: $0).standardizedFileURL.path == target }) {
                 return candidates
             }
             usleep(150_000)
@@ -200,7 +201,7 @@ public enum FolderChooserDriver {
     /// Performs the single chosen confirmation action: `AXPress` on the
     /// unambiguous default button. Returns a description of the pressed button.
     @discardableResult
-    public static func pressDefaultButton(pid: pid_t, titles: [String] = []) throws -> String {
+    static func pressDefaultButton(pid: pid_t, titles: [String] = []) throws -> String {
         guard let button = defaultButton(pid: pid, titles: titles) else { throw FolderChooserDriverError.defaultButtonMissing }
         let role = AXDriver.role(of: button) ?? "?"
         let title = AXDriver.title(of: button) ?? "?"
@@ -209,15 +210,92 @@ public enum FolderChooserDriver {
     }
 
     /// Alternative chosen confirmation action (never used together with AXPress).
-    public static func confirmWithReturnKey() throws {
+    static func confirmWithReturnKey() throws {
         try QuartzActuator.postReturnKey()
+    }
+
+    /// Durable, exactly-once production confirmation path. The intent and
+    /// attempted action are persisted before AXPress, so an unknown result on
+    /// restart cannot be repeated.
+    public static func confirmDefaultButton(
+        pid: pid_t,
+        expectedProcess: ProcessInstanceID,
+        destination: URL,
+        owner: PersistentTransactionOwner,
+        predicate: ChooserAffirmationPredicate,
+        candidate: ChooserCandidate
+    ) throws -> String {
+        guard candidate.owner.pid == expectedProcess.pid,
+              predicate.predicateVersion >= ChooserAffirmationEvaluator.processStableButtonSemanticsVersion,
+              predicate.ax.defaultButton != nil, predicate.ax.cancelButton != nil,
+              ChooserAffirmationEvaluator.evaluateProduction(candidate: candidate, predicate: predicate) == .affirmed else {
+            throw FolderChooserDriverError.pressFailed("chooser does not satisfy production predicate version and process binding")
+        }
+        func targetIsForegroundAndStable() -> Bool {
+            guard let process = ProcessInstanceID.current(pid: Int32(pid)),
+                  let runningApplication = NSRunningApplication(processIdentifier: pid),
+                  runningApplication.bundleIdentifier == candidate.owner.bundleID,
+                  candidate.owner.startTimeUnix == Double(process.startTimeSeconds) + Double(process.startTimeMicroseconds) / 1_000_000.0,
+                  process == expectedProcess,
+                  NSWorkspace.shared.frontmostApplication?.processIdentifier == pid,
+                  runningApplication.isActive,
+                  destinationIsReflected(pid: pid, destination: destination),
+                  freshVerifiedDefaultButton(pid: pid, predicate: predicate) != nil else { return false }
+            return true
+        }
+        guard targetIsForegroundAndStable() else {
+            throw FolderChooserDriverError.pressFailed("chooser process, focus, or exact destination is not freshly verified")
+        }
+        try owner.reserveDestinationConfirmation(action: "AXPressDefaultButton")
+        try owner.markDestinationConfirmationAttempted()
+        guard targetIsForegroundAndStable() else {
+            throw FolderChooserDriverError.pressFailed("chooser changed after durable confirmation intent; operation remains consumed")
+        }
+        guard let button = freshVerifiedDefaultButton(pid: pid, predicate: predicate) else {
+            throw FolderChooserDriverError.defaultButtonMissing
+        }
+        let title = AXDriver.title(of: button) ?? "?"
+        guard AXDriver.press(button) else { throw FolderChooserDriverError.pressFailed("AXPress on verified default button failed") }
+        return "role=AXButton title=\(title)"
+    }
+
+    private static func freshVerifiedDefaultButton(
+        pid: pid_t,
+        predicate: ChooserAffirmationPredicate
+    ) -> AXUIElement? {
+        guard let defaultRequirement = predicate.ax.defaultButton,
+              let cancelRequirement = predicate.ax.cancelButton else { return nil }
+        for window in AXDriver.windows(ofApp: pid) {
+            let dump = AXDriver.dump(element: window, pid: Int32(pid), maxDepth: 12)
+            guard ChooserAffirmationEvaluator.matches(requirement: defaultRequirement, nodes: dump.nodes),
+                  ChooserAffirmationEvaluator.matches(requirement: cancelRequirement, nodes: dump.nodes) else { continue }
+            if let button = AXDriver.firstDescendant(of: window, maxDepth: 12, matching: { element in
+                Self.matches(requirement: defaultRequirement, element: element)
+            }) {
+                return button
+            }
+        }
+        return nil
+    }
+
+    private static func matches(requirement: ButtonRequirement, element: AXUIElement) -> Bool {
+        guard let role = AXDriver.role(of: element), requirement.buttonRoles.contains(role) else { return false }
+        switch requirement.mode {
+        case .attributeEquals:
+            guard let name = requirement.attributeName, let expected = requirement.attributeValue else { return false }
+            return AXDriver.stringAttribute(element, name) == expected
+                || (name == "AXKeyEquivalent" && AXDriver.keyEquivalent(of: element) == expected)
+        case .titleIn:
+            let title = AXDriver.title(of: element) ?? AXDriver.descriptionOf(of: element) ?? ""
+            return requirement.titles.contains(title)
+        }
     }
 
     /// Post-confirmation verification: the panel's navigation state must reflect
     /// the destination (checked via AX path candidates) and the caller verifies
     /// the direct filesystem effect separately.
-    public static func destinationIsReflected(pid: pid_t, destination: URL) -> Bool {
+    static func destinationIsReflected(pid: pid_t, destination: URL) -> Bool {
         let target = destination.standardizedFileURL.path
-        return directoryCandidates(pid: pid).contains { $0 == target || $0.hasSuffix(target) || target.hasSuffix($0) }
+        return directoryCandidates(pid: pid).contains { URL(fileURLWithPath: $0).standardizedFileURL.path == target }
     }
 }

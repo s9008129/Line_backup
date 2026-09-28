@@ -58,6 +58,11 @@ Coordinates are typed as separate spaces. Transform code is centralized; callers
 
 Click candidates must be inside a validated safe interior. Scale is cross-checked independently. A missing validated capture rule fails closed.
 
+Per-side size residuals are checked by absolute magnitude, so undersized frames
+fail just like oversized frames. For a configured `sourceRect`, the capture
+bbox records both the crop's nonzero offset and extent; transforms use that
+recorded cropped bbox.
+
 No historical screen coordinate is accepted as production input.
 
 ## 3. OCR is identity, not click geometry
@@ -81,11 +86,11 @@ Distinct glyphs such as `禎` and `楨` are never fuzzy-merged.
 
 ## 4. Structural locators
 
-`StructuralCandidate` is bound to a `SurfaceBinding(windowID, captureEpoch, frameSHA256)`. Reuse after a new epoch/frame is rejected.
+`StructuralCandidate` is bound to a `SurfaceBinding(bundleID, ProcessInstanceID, windowID, captureEpoch, frameSHA256)`. Reuse after a process restart/PID reuse, window change, new epoch, or frame change is rejected.
 
 ### Album card/detail
 
-Album selection requires a unique exact date title and associated count in the same card. Album detail requires unique exact group title + `57張照片`.
+Album selection requires a unique exact date title and exact count contained in one explicitly segmented, uniquely identified card region; cross-card pairings and multiple matching regions are rejected. Album detail requires unique exact group title + `57張照片`.
 
 ### Album ellipsis
 
@@ -104,7 +109,7 @@ The historical proven shape `[[304.5,44.0],[304.5,49.5],[304.5,55.0]]` is a repl
 
 ### Save All
 
-The menu locator requires the complete five-row reference structure in order:
+The menu locator requires the complete five-row reference structure in order. Its safe click rectangle is the intersection of the target row and the current addressable menu region, additionally constrained by neighboring row geometry:
 
 1. 選擇項目
 2. 修改相簿名稱
@@ -169,6 +174,56 @@ The two are never both attempted for one confirmation.
 
 `SaveAllEmpiricalClassRecord` records whether evidence from this run could support a future `PRE_SIDE_EFFECT_ACTION` classification. This does not relax the current run: current Save All remains irreversible/exactly-once.
 
+### V-09 durable enforcement
+
+`PersistentTransactionOwner` binds one verified ledger to immutable run, goal,
+group, album, plan/source digests and staging paths. It derives action budgets
+from durable intent/attempt entries. An intent itself consumes the operation;
+a restarted owner cannot post after a saved-but-unresolved intent. Chooser
+confirmation requires a bound affirmative postcondition record and persists the
+selected action before it is attempted. `IntentLedger` serializes writers with
+an OS advisory lock, reloads and verifies the complete chain under that lock,
+rejects stale snapshots and fsyncs every append. Its separately stored
+`LedgerHeadAnchor` detects subsequent truncation/rollback when retained
+independently.
+
+Production event posting is exposed only by `GatedQuartzActuator`; its permit
+can be minted only from a fresh active/frontmost SC+CG window census and a
+candidate bound to the live screenshot digest. Permits are single-use,
+short-lived and recheck focus/window, bundle and process start instance
+immediately before posting; the live binding supplied to the boundary must
+still equal the permit's complete candidate binding. Synthetic raw
+Quartz and chooser compatibility is target-local to `rev28ctl` for the
+byte-frozen calibration harness; it is not exported by `Rev28Core`.
+
+`StrictPostconditionMonitor` is the production monitor. It bounds every sample
+by the unchanged plan-time deadline, schedules from sample start, treats sampler
+errors and aborting tripwire outcomes as terminal, and carries tripwire
+observations in every verdict. The old `PostconditionMonitor.run` remains for
+synthetic harness compatibility only. Empirical `PRE_SIDE_EFFECT_OBSERVED`
+requires an affirmative outcome and rehashed postcondition/tripwire artifacts
+beneath the same run-ID directory; the legacy unbound-boolean helper can only
+return indeterminate.
+
+`rev28ctl live-preflight` requires an immutable authorization and a separate
+one-shot authorization file, recomputes plan and implementation digests, checks
+the real LINE process, active/frontmost state, unique fresh SC+CG window and AX
+trust, then consumes the one-shot file. It never posts events.
+`live-execute` currently fails closed after those checks: this checkout does
+not provide a calibrated live frame/structural-candidate session provider that
+binds OCR, destination and tripwire samples into one real observation stream.
+No mock path is treated as production.
+
+### Real-session-only residual evidence
+
+CI cannot establish that the installed LINE build presents the reviewed
+album/menu structure, that native chooser AX semantics match the append-only
+predicate version, or that the real filesystem tripwire observes every
+relevant write. Those facts require a live authorized macOS session with LINE,
+Accessibility and Screen Recording permissions, calibrated capture rules, and
+preserved evidence. Until those facts and a real observation provider are
+reviewed, live execution remains deliberately unavailable.
+
 ## 9. Filesystem acceptance
 
 `StagingVerifier` names failure states rather than collapsing them:
@@ -183,12 +238,12 @@ The two are never both attempted for one confirmation.
 The production predicate is:
 
 - exactly 57 files,
-- no subdirectories,
+- no hidden or visible extra files, subdirectories, symlinks or other directory entries,
 - no partial suffixes,
 - no zero-byte files,
 - every file structurally decodable,
 - exactly 17,924,900 total bytes,
-- sizes/mtimes stable for >=3 samples spanning >=4 seconds,
+- directory-entry set and file sizes/mtimes stable for >=3 samples spanning >=4 seconds,
 - >=5 seconds quiescence after last modification,
 - sorted filename-excluded content SHA-256 multiset digest exactly
   `ee958e6467676506a1c7aaf237a4376ecc5e5083fd94aa6fd0d56d376cacdaaf`.
@@ -198,7 +253,7 @@ A second, name-inclusive baseline tripwire must remain
 
 ## 10. Offline replay and adversarial hardening
 
-`rev28/Tools/replay_rev28.py` binds the 20 plan-selected historical fixtures to reviewed SHA-256 prefixes and replays semantic invariants. CI runs it twice and requires byte-identical output.
+`rev28/Tools/replay_rev28.py` binds the 20 plan-selected historical fixtures to full reviewed SHA-256 values, then invokes `rev28replay` to run current Save All and strict album-card locator logic on recorded OCR observations and reviewed geometry. It also runs the current pixel detector on the historical image fixture. Any production-locator disagreement fails replay. CI runs it twice and requires byte-identical output.
 
 The named G01-G22 + X01-X03 suite covers stale identity, wrong app/window, scale mismatch, occlusion/focus theft, stale candidate, wrong/duplicate OCR, popup/menu ambiguity, timeout, fake chooser, filesystem anomalies, extra/partial/zero files, crash-resume and inactive dispatch. CI executes the full matrix twice.
 

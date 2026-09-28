@@ -156,4 +156,39 @@ final class PostconditionMonitorTests: XCTestCase {
         XCTAssertGreaterThan(seconds, 1.0)
         XCTAssertEqual(observed, expected)
     }
+
+    func testStrictMonitorReturnsAtDeadlineWhenSamplerStalls() async {
+        let bounds = PostconditionBounds(
+            fastCadenceMs: 10, fastPhaseSeconds: 0.02, slowCadenceMs: 10,
+            hardCapSeconds: 0.04, lateForensicSampleDelaySeconds: 30
+        )
+        let verdict = await StrictPostconditionMonitor.run(bounds: bounds, sampler: {
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            return .observed(StrictPostconditionSample(affirmation: nil, tripwireObservations: []))
+        })
+        guard case .deadlineExceeded(sampleCount: 0, tripwire: []) = verdict else {
+            return XCTFail("expected bounded deadline result, got \(verdict)")
+        }
+    }
+
+    func testStrictMonitorDistinguishesObserverFailureAndTripwireAbort() async {
+        let failure = await StrictPostconditionMonitor.run(sampler: { .failed("AX unavailable", tripwireObservations: []) })
+        guard case .observerFailed("AX unavailable", sampleCount: 1, tripwire: []) = failure else {
+            return XCTFail("expected explicit observer failure, got \(failure)")
+        }
+
+        let aborted = TripwireClassification(
+            level: .l2ApprovedRoot,
+            outcome: .abortedUnattributedFilesystemWrite,
+            aborts: true,
+            path: "/approved/unattributed",
+            rationale: "test"
+        )
+        let verdict = await StrictPostconditionMonitor.run(sampler: {
+            .observed(StrictPostconditionSample(affirmation: nil, tripwireObservations: [aborted]))
+        })
+        guard case .tripwireAborted(sampleCount: 1, tripwire: [aborted]) = verdict else {
+            return XCTFail("expected terminal tripwire abort, got \(verdict)")
+        }
+    }
 }

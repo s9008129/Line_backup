@@ -1,4 +1,5 @@
 import CryptoKit
+import Darwin
 import Foundation
 import ImageIO
 
@@ -56,11 +57,21 @@ public struct StagingSnapshot: Equatable, Codable, Sendable {
     public let observedAt: TimeInterval
     public let files: [StagingFileRecord]
     public let subdirectories: [String]
+    public let symlinks: [String]
+    public let otherEntries: [String]
 
-    public init(observedAt: TimeInterval, files: [StagingFileRecord], subdirectories: [String] = []) {
+    public init(
+        observedAt: TimeInterval,
+        files: [StagingFileRecord],
+        subdirectories: [String] = [],
+        symlinks: [String] = [],
+        otherEntries: [String] = []
+    ) {
         self.observedAt = observedAt
         self.files = files
         self.subdirectories = subdirectories
+        self.symlinks = symlinks
+        self.otherEntries = otherEntries
     }
 
     public var totalBytes: UInt64 { files.reduce(0) { $0 + $1.size } }
@@ -115,8 +126,14 @@ public enum StagingVerifier {
         let zero = snapshot.files.filter { $0.size == 0 }
         let undecodable = snapshot.files.filter { !$0.decodable }
 
-        if !snapshot.subdirectories.isEmpty || snapshot.files.count > policy.expectedFileCount {
-            return result(.stagingExtraFiles, snapshot, nil, "subdirs=\(snapshot.subdirectories.count) count=\(snapshot.files.count)")
+        if !snapshot.subdirectories.isEmpty || !snapshot.symlinks.isEmpty || !snapshot.otherEntries.isEmpty
+            || snapshot.files.count > policy.expectedFileCount {
+            return result(
+                .stagingExtraFiles,
+                snapshot,
+                nil,
+                "subdirs=\(snapshot.subdirectories.count) symlinks=\(snapshot.symlinks.count) other=\(snapshot.otherEntries.count) count=\(snapshot.files.count)"
+            )
         }
         if snapshot.files.count < policy.expectedFileCount || !partials.isEmpty || !zero.isEmpty || !undecodable.isEmpty {
             return result(.stagingIncomplete, snapshot, nil, "count=\(snapshot.files.count) partial=\(partials.count) zero=\(zero.count) undecodable=\(undecodable.count)")
@@ -151,10 +168,16 @@ public enum StagingVerifier {
             let size: UInt64
             let modificationTime: TimeInterval
         }
-        let signature: (StagingSnapshot) -> [FileStabilitySignature] = {
-            $0.files.sorted { $0.name < $1.name }.map {
+        struct DirectoryStabilitySignature: Equatable {
+            let files: [FileStabilitySignature]
+            let subdirectories: [String]
+            let symlinks: [String]
+            let otherEntries: [String]
+        }
+        let signature: (StagingSnapshot) -> DirectoryStabilitySignature = {
+            DirectoryStabilitySignature(files: $0.files.sorted { $0.name < $1.name }.map {
                 FileStabilitySignature(name: $0.name, size: $0.size, modificationTime: $0.modificationTime)
-            }
+            }, subdirectories: $0.subdirectories.sorted(), symlinks: $0.symlinks.sorted(), otherEntries: $0.otherEntries.sorted())
         }
         let lastSig = signature(last)
         guard snapshots.suffix(minimumSamples).allSatisfy({ signature($0) == lastSig }) else { return false }
@@ -166,17 +189,32 @@ public enum StagingVerifier {
         let fm = FileManager.default
         let urls = try fm.contentsOfDirectory(
             at: directory,
-            includingPropertiesForKeys: [.isDirectoryKey, .fileSizeKey, .contentModificationDateKey],
-            options: [.skipsHiddenFiles]
+            includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey],
+            options: []
         )
         var files: [StagingFileRecord] = []
         var subdirs: [String] = []
+        var symlinks: [String] = []
+        var otherEntries: [String] = []
         for url in urls {
-            let values = try url.resourceValues(forKeys: [.isDirectoryKey, .fileSizeKey, .contentModificationDateKey])
-            if values.isDirectory == true {
+            var info = stat()
+            guard url.path.withCString({ lstat($0, &info) }) == 0 else {
+                throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
+            }
+            let fileType = info.st_mode & S_IFMT
+            if fileType == S_IFLNK {
+                symlinks.append(url.lastPathComponent)
+                continue
+            }
+            if fileType == S_IFDIR {
                 subdirs.append(url.lastPathComponent)
                 continue
             }
+            guard fileType == S_IFREG else {
+                otherEntries.append(url.lastPathComponent)
+                continue
+            }
+            let values = try url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
             let data = try Data(contentsOf: url, options: [.mappedIfSafe])
             let digest = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
             let source = CGImageSourceCreateWithURL(url as CFURL, nil)
@@ -189,7 +227,13 @@ public enum StagingVerifier {
                 decodable: decodable
             ))
         }
-        return StagingSnapshot(observedAt: observedAt, files: files, subdirectories: subdirs.sorted())
+        return StagingSnapshot(
+            observedAt: observedAt,
+            files: files,
+            subdirectories: subdirs.sorted(),
+            symlinks: symlinks.sorted(),
+            otherEntries: otherEntries.sorted()
+        )
     }
 
     private static func result(_ outcome: StagingOutcome, _ snapshot: StagingSnapshot, _ digest: String?, _ detail: String) -> StagingVerification {

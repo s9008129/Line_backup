@@ -12,29 +12,30 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 from typing import Any
 
 FIXTURES = {
-    "evidence/20260921-rev27-save-all/attempt-07/s11e-preclick-frame.png": "d545043d",
-    "evidence/20260921-rev27-save-all/attempt-07/s11e-preclick-ax.json": "668bed55",
-    "evidence/20260921-rev27-save-all/attempt-07/s11e-menu-detect.json": "009c705f",
-    "evidence/20260921-rev27-save-all/attempt-07/s11e-menu-frame-geometry.json": "8f236eba",
-    "evidence/20260921-rev27-save-all/attempt-07/s11e-v8-locate-save-all.json": "5f5ba237",
-    "evidence/20260921-rev27-save-all/attempt-07/s11e-final-gate.json": "fd44018d",
-    "evidence/20260916-route/attempt-07/v5-offline-replay.json": "5ad6aa01",
-    "evidence/20260916-route/attempt-07/v4-baseline-replay.json": "126b3c92",
-    "evidence/20260916-route/attempt-07/album-card-locate.json": "94694c92",
-    "evidence/20260916-route/attempt-07/album-open-verify.json": "aa0a2161",
-    "evidence/20260916-route/attempt-07/screen-probe.json": "38130a6a",
-    "evidence/20260916-route/attempt-12/frame-pre.png": "b88f7e09",
-    "evidence/20260916-route/attempt-12/album-card-locate-v6.json": "05bcea90",
-    "evidence/20260916-route/attempt-12/live-window-geometry.json": "fdd68d75",
-    "evidence/20260916-route/attempt-12/s1-ax-pre.json": "fe5f3d68",
-    "evidence/20260916-route/attempt-13/frame-menu-pre.png": "0118b12f",
-    "evidence/20260916-route/attempt-13/geometry-binding-preclick.json": "288dba46",
-    "evidence/20260916-route/attempt-14/frame-pre.png": "7e16ddff",
-    "evidence/20260916-route/attempt-16/frame-s1.png": "d0581391",
-    "evidence/20260916-route/attempt-16/s1-window-ocr.json": "ddf202f0",
+    "evidence/20260921-rev27-save-all/attempt-07/s11e-preclick-frame.png": "d545043d3048e71231a502b413c1bc2a7d98db1a8a329d7d3a77916401bf64fc",
+    "evidence/20260921-rev27-save-all/attempt-07/s11e-preclick-ax.json": "668bed55234f1a275fba246eb7d5ec51e7d9cf7ab116872795166d8e5af60d56",
+    "evidence/20260921-rev27-save-all/attempt-07/s11e-menu-detect.json": "009c705f7767b0354064c3a3ec3e1261a6257b2a40f559b0338ab60d29158775",
+    "evidence/20260921-rev27-save-all/attempt-07/s11e-menu-frame-geometry.json": "8f236ebabf5a35ae573857dc0ce4f2476462285441ad954ad92f04b9c70453b1",
+    "evidence/20260921-rev27-save-all/attempt-07/s11e-v8-locate-save-all.json": "5f5ba237bb198d6f363a58cfa29141ca571429b78714c27b35a1a2b63c46a996",
+    "evidence/20260921-rev27-save-all/attempt-07/s11e-final-gate.json": "fd44018d5b179383d577e0ab8b2195e6bf72de0b3468eb0f857b6d52a45f57cc",
+    "evidence/20260916-route/attempt-07/v5-offline-replay.json": "5ad6aa01ca0eb5f52ab8812ebdcb03c3b27fd6a82904166f7d9cff115dd3b455",
+    "evidence/20260916-route/attempt-07/v4-baseline-replay.json": "126b3c92be34f09e78287d356b2fce7d27437a0f61678f8fc32e5c6cc6684b03",
+    "evidence/20260916-route/attempt-07/album-card-locate.json": "94694c921171f98c53b7fc79a350d0f7faf635c234ed17cf894b87f9fb0fd624",
+    "evidence/20260916-route/attempt-07/album-open-verify.json": "aa0a2161d844b5cf7583514d2269c4db61f210c3cc85b57afa0f9d8b471a83ff",
+    "evidence/20260916-route/attempt-07/screen-probe.json": "38130a6a540c099b3ca88e979a72684a467e158b4a78ce64bf4334ccdba6f77c",
+    "evidence/20260916-route/attempt-12/frame-pre.png": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58",
+    "evidence/20260916-route/attempt-12/album-card-locate-v6.json": "05bcea90f31587435a1c16b522938eeabc32b06788d4d85b002559eb5b036875",
+    "evidence/20260916-route/attempt-12/live-window-geometry.json": "fdd68d750b3bb2d2b2fbf9c4ae6724cdfd30c69b94d3d1e07adba9d681092296",
+    "evidence/20260916-route/attempt-12/s1-ax-pre.json": "fe5f3d685b7e2270c296b055923a8a3938925195453dae911e05368d42f0c0c3",
+    "evidence/20260916-route/attempt-13/frame-menu-pre.png": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6",
+    "evidence/20260916-route/attempt-13/geometry-binding-preclick.json": "288dba46bc5a4e14350e991070c22851d3679d95ce38ca9dfd597ddce88f076a",
+    "evidence/20260916-route/attempt-14/frame-pre.png": "7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d",
+    "evidence/20260916-route/attempt-16/frame-s1.png": "d058139168683cda6546b0d52adb0e23dea3fc5d3aa4bd5e082c0c084f0ee6ab",
+    "evidence/20260916-route/attempt-16/s1-window-ocr.json": "ddf202f0dbc6854159b6180d55c43bccc2299ac085689774ec46ec2a3739ae0a",
 }
 
 
@@ -71,8 +72,8 @@ def main() -> int:
             failures.append(f"missing:{rel}")
             continue
         digest = sha256(path)
-        require(digest.startswith(prefix), f"sha-mismatch:{rel}:{digest}", failures)
-        manifest.append({"path": rel, "sha256": digest, "reviewed_prefix": prefix})
+        require(digest == prefix, f"sha-mismatch:{rel}:{digest}", failures)
+        manifest.append({"path": rel, "sha256": digest})
 
     # Save-All menu replay: exact target, full five-row reference structure,
     # safe candidate and every historical HARD check passed.
@@ -116,8 +117,28 @@ def main() -> int:
         require(expected in words, f"attempt16:missing-identity:{expected}", failures)
     require("旻謙允楨成長日記" not in words, "attempt16:zhen-glyph-confusion", failures)
 
+    replay = subprocess.run(
+        [
+            "swift", "run", "--quiet", "--package-path", str(root / "rev28"),
+            "rev28replay", "--root", str(root),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    production_replay: dict[str, Any] = {}
+    if replay.returncode != 0:
+        failures.append(f"production-locator-replay-failed:{replay.stderr.strip()}")
+    else:
+        try:
+            production_replay = json.loads(replay.stdout)
+        except json.JSONDecodeError as error:
+            failures.append(f"production-locator-replay-invalid-json:{error}")
+    require(production_replay.get("save_all_locator") == "candidate", "production:save-all-locator-disagreement", failures)
+    require(production_replay.get("album_card_locator") == "candidate", "production:album-card-locator-disagreement", failures)
+
     report = {
-        "schema": "rev28-historical-replay-v1",
+        "schema": "rev28-historical-replay-v2",
         "fixture_count": len(manifest),
         "expected_fixture_count": len(FIXTURES),
         "manifest": sorted(manifest, key=lambda x: x["path"]),
@@ -131,6 +152,7 @@ def main() -> int:
             "attempt12_count": str(card12.get("count_digits_read")),
             "attempt13_geometry_verdict": geometry13.get("verdict"),
             "attempt16_required_identities": [w for w in ["旻謙允禎成長日記", "2024/05/13~05/17", "57"] if w in words],
+            "current_production_replay": production_replay,
         },
         "verdict": "PASS" if not failures and len(manifest) == len(FIXTURES) else "FAIL",
         "failures": sorted(failures),
