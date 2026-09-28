@@ -1,8 +1,8 @@
 # Implement Progress — T20260925-0647-01-rev28-native-closed-loop
 
 STATE: RUNNING
-STATE_NOTE: prior AB_IMPLEMENTATION_COMPLETE claim SUPERSEDED by V-09 attempt-01 review evidence. All eight MAJOR plan-conformance fingerprints (C3 AX-window binding, C5 intra-click revalidation, C4 durable budget + owner reservation enforcement, C6 per-primitive accounting + chooser predicate-v2 derivation, C7 post-dispatch tripwire-gap gate, eligibility recomputation) and the actionable MINORs are repaired in-contract; the repair set first drifted the CI-frozen `HarnessCalibration.swift` blob (v3 provenance guard FAIL), which was corrected by restoring the frozen blob — guard PASS again. Current tree: build PASS, focused 80/0 (11 suites), full suite 222/0 at implementation digest e80e4f0fb5483ec9a7e1c795e62662235dcfcdd884276d2fd25c9d22a5a254e9 (44 swift files). Next: V-09 attempt-02 re-review on that digest; real Phase A evidence still blocked by external prerequisite (LINE signed out on this Mac); Phase B forbidden; zero irreversible
-UPDATED_AT: 2026-09-29T07:26+0800
+STATE_NOTE: V-09 attempt-02 landed (3 fresh reviewers, all ISSUES_FOUND: 4 unique MAJOR plan-conformance findings + actionable MINORs) and every finding is repaired in-contract at commit a758317. Repairs: chooser postcondition window bound to the recorded Save All dispatch boundary (missing boundary refuses); post-hover revalidation re-derives the fresh frame-bound observation and the addressed/topmost surface before mouseDown; `LiveDispatchBudget.isExhausted` enforced at `reserveSaveAll` + `recordReversibleDispatch` with the `REVERSIBLE_AND_REVALIDATION_BUDGETS_NOT_EXHAUSTED` eligibility predicate; eligibility handoff/frozen/predicate bindings are canonical-reviewed with contained evidence roots and live-recomputed reviewed HEAD/diff/binary; digest manifest now includes Package.swift + rev28/Tools; AX value write recorded as a primitive; tripwire gate re-checked during download polling and both completion gates. Current tree: build PASS, focused 96/0, full suite 241/0, adversarial 27/27 ×2, replay 20 fixtures PASS ×2 byte-identical, provenance guard PASS, CLI refusal fixture 77/77/77/64/77 with zero side effects, at implementation digest e748568dbc7c23a642eeead559afc0df345c56e91ff694dc1b6012744615c0cf (48 files = 45 swift + Package.swift + 2 tools). Next: V-09 attempt-03 re-review. Real Phase A evidence still blocked by external prerequisite (LINE signed out on this Mac); Phase B forbidden; zero irreversible.
+UPDATED_AT: 2026-09-29T07:47+0800
 PLAN_REVISION: 4
 MODE: AB_IMPLEMENTATION_EVALUATION (Phase B forbidden; PHASE_B_STATUS=FORBIDDEN_AB_EVALUATION)
 
@@ -17,26 +17,34 @@ MODE: AB_IMPLEMENTATION_EVALUATION (Phase B forbidden; PHASE_B_STATUS=FORBIDDEN_
 - **這輪多知道了什麼：** (1) Phase A 報告無法被合成——缺任何一項真實 artifact 即 FAIL/UNKNOWN 並擋下 Phase B；(2) 本機執行環境本身可用（ax/screenCapture/postEvent=true、SCK 21 windows、Vision OK）；(3) 真正的下一步是外部前置（LINE 登入＋目標相簿畫面），並已把幾何與擷取面的兩個未定項寫成下一次 Phase A 必須當場驗證的問題。
 - **這輪最新（06:50）：** V-09 attempt-01 三個獨立審查報告全部落地，結果是 ISSUES_FOUND：共 8 個 MAJOR（AX 身分未綁視窗、click 過程未再驗證、per-primitive 記帳缺失、per-blocker 預算未持久化、owner reservation 未強制 state/eligibility、post-dispatch tripwire gap 未複查、chooser predicate v2 未從 frozen bytes 推導、eligibility 只做標籤檢查）＋5 個 MINOR。這些都是 plan 明文要求的行為，屬**合約內修復**（非 replan，除 eligibility 範圍問題待評估）。
 - **V-09 修復（07:32）：** 8 個 MAJOR 全數在合約內修復完成（詳見 `## V-09 attempt-01 repairs`）：GoalSlot 改 `rename(2)` 原子寫入；AX 身分改由 `AXWindowIdentitySelector` 綁定目標 windowID；`postClick` 在 hover 與 `mouseDown` 之間再驗證（zero-event test）；chooser predicate 由 frozen bytes 推導並接進 `live-preflight`（不匹配即 named refusal）；per-blocker（≤3）與連續 revalidation（2）預算改由 ledger 重算並在 owner reservation 強制 eligibility/state；destination 準備每個 primitive 都 reacquire＋逐筆記帳；post-dispatch gap/failure 進 gate 並在 evidence 揭露；eligibility 改為 recomputed evidence（plan/handoff/frozen artifacts/predicate evidence/implementation digest 全部重驗）；menu/addressable bounds 加「必須落在 retained frame 內」guard；`OneShotAuthorization` marker 直接刪除，observe-only 改由 durable goal slot 判定；MINOR 兩項（provenance qualifier、menu-bounds freeze）判定不需 replan、以 Phase A 層級記錄。首版修復另把 `HarnessCalibration.swift`（v3 CI freeze 綁 blob 的檔案）一起改了，導致 `verify_pre_live_provenance.py` fail-closed FAIL；已還原 frozen blob（guard PASS），生產路徑的 C3 修復不受影響。build PASS、focused 80/0（11 suites）、full suite 222/0；V-08 gates 也在修正後樹重跑：adversarial 27/27 ×2、replay PASS ×2（輸出 byte-identical，SHA `81f6da94…7261`）、provenance PASS；最終 implementation digest `e80e4f0f…54e9`（44 swift files）。
-- **距離驗收有沒有更近：** 中期 YES（V-09 attempt-01 的 8 MAJOR 已全數修復並在現行樹重驗：focused 80/0、full 222/0）；但 attempt-02 複審未跑、Phase A 真實證據仍缺（外部前置）、Phase B 未執行且禁止；primary outcome 仍 NOT_ACHIEVED；累計 irreversible intent／attempt／dispatch = 0
-- **下一步：** (1) V-09 attempt-02：3 個 fresh independent reviewer contexts 針對新 digest `03ac90b4…e17d` 複審（同一批 report 名稱、append-only）；(2) 請使用者登入 LINE（QR 或電子郵件）並開好群組 旻謙允禎成長日記 的 `2024/05/13～05/17` 相簿列表（保持單一 on-screen layer-0 視窗），再用 fresh runID／fresh evidence dir 跑 `rev28ctl live-preflight`（零 irreversible、授權不消耗）以發布真實 `phase-a.json`；(3) Stage 05 independent acceptance。
+- **V-09 attempt-02（07:50）：** 三個 fresh independent reviewer contexts（新 agent、read-only）針對 `v09/attempt-02/bindings.json`（head `42ae9a3`＋digest `e80e4f0f…54e9`）複審完畢，三份報告全部 **ISSUES_FOUND**（報告 SHA-256：`01` `cd56304a…d499`、`02` `e7a9ea39…5cb2`、`03` `ccaa05ba…82e6`）：4 個 unique MAJOR（chooser timer 未綁 Save All dispatch 邊界；post-hover 未重驗 candidate/geometry/topmost-surface；durable revalidation abort／budget 無生產消費者；eligibility 的 handoff/frozen/predicate 綁定可自宣告且路徑無 containment、reviewed HEAD/diff/binary 無表徵）＋3 個 actionable MINOR（AX value write 未逐筆記帳；download/completion 未複查 tripwire gate；兩個 trust-boundary 註記）。已於 commit `a758317` 全部合約內修復（詳見 `## V-09 attempt-02 reviews + repairs`）：postcondition window 改由 `PostSaveJournalBox` 記錄的 dispatch boundary 起算、缺 boundary 即拒絕；`DispatchReadinessGate.revalidateAfterHover` 以 fresh live observation 重驗 window/frame/scale／1 s 新鮮度／0.5 pt 位移，並以 `topmostSurfaceMatchesTarget` 重驗 addressed surface（`postClick` 改 async；hover 後失敗 = 零 down/up）；`liveDispatchBudget.isExhausted` 在 `reserveSaveAll` 與 `recordReversibleDispatch` 強制（2 連續 revalidation 失敗即 durable abort，且不再放行任何 reversible primitive），eligibility 新增 `REVERSIBLE_AND_REVALIDATION_BUDGETS_NOT_EXHAUSTED` predicate；eligibility 綁定改 canonical-reviewed（exact handoff／9 frozen／predicate set＋allowed-roots containment＋`ReviewedBuildState` 即時重算 reviewed HEAD/diff/binary）；digest manifest 納入 `Package.swift`＋`rev28/Tools`；AX value write 逐筆記帳；download polling／`observeFilesystemStable`／`verifyContent` 都複查 tripwire gate。現行樹：build PASS、focused 96/0、full suite 241/0、adversarial 27/27 ×2、replay 20 fixtures PASS ×2（輸出 byte-identical `81f6da94…7261`）、provenance `status=PASS`、CLI refusal 77/77/77/64/77 零副作用；新 implementation digest `e748568d…c0cf`（48 files = 45 swift＋`Package.swift`＋2 tools，由 production function 量測並以 Python replica 交叉驗證）。
+- **距離驗收有沒有更近：** 中期 YES（attempt-02 的 4 MAJOR 已全數修復並在現行樹重驗：focused 96/0、full 241/0、V-08 ×2＋provenance PASS、CLI refusal 零副作用）；但 attempt-03 複審未跑、Phase A 真實證據仍缺（外部前置）、Phase B 未執行且禁止；primary outcome 仍 NOT_ACHIEVED；累計 irreversible intent／attempt／dispatch = 0
+- **下一步：** (1) V-09 attempt-03：3 個 fresh independent reviewer contexts 針對 `v09/attempt-03/bindings.json`（head `a758317`＋digest `e748568d…c0cf`、48-file manifest）複審（同一批 report 名稱、append-only）；(2) 請使用者登入 LINE（QR 或電子郵件）並開好群組 旻謙允禎成長日記 的 `2024/05/13～05/17` 相簿列表（保持單一 on-screen layer-0 視窗），再用 fresh runID／fresh evidence dir 跑 `rev28ctl live-preflight`（零 irreversible、授權不消耗）以發布真實 `phase-a.json`；(3) Stage 05 independent acceptance。
 - **停損點：** 任一 blocker 累積 3 次 material attempts 或 2 次連續無新資訊即寫 escalation packet 並停止 substantive implementation；需要改 load-bearing 架構/acceptance semantics（例如擷取面）即 REPLAN_REQUIRED。Phase B 任何動作直接 fail closed。
 
 ## Current blocker (next up: real Phase A preflight on this Mac)
 
 ```text
-BLOCKER_FINGERPRINT (active, Stage 04 repairs):
+BLOCKER_FINGERPRINT (resolved, Stage 04 repairs — attempt-01 findings):
 STAGE=04
 CHECK=V09_REPAIR_SET (V09_AX_IDENTITY_WINDOW_UNBOUND, V09_C5_INTRA_CLICK_REVALIDATION_MISSING, V09_C6_PER_PRIMITIVE_ACCOUNTING_MISSING, V09_C4_BUDGET_NOT_DURABLE, V09_C4_OWNER_RESERVATION_ENFORCEMENT_MISSING, V09_C7_POST_DISPATCH_GAP_UNCHECKED, V09_CHOOSER_PREDICATE_V2_NOT_DERIVED; MINORs in the V-09 section)
 SURFACE=rev28/Sources/Rev28Core (in-contract repairs; Phase B still forbidden)
 EXPECTED=all V-09 attempt-01 MAJOR findings repaired within the approved plan contract, covered by focused tests, full suite green, then V-09 attempt-02 re-review on the new implementation digest
-OBSERVED=repairs landed 2026-09-29T07:10 (1/3 each; see `## V-09 attempt-01 repairs`); the first repair revision drifted the CI-frozen `HarnessCalibration.swift` blob and was corrected by restoring the frozen blob (`a32` provenance guard PASS; fingerprint V09_REPAIR_PROVENANCE_BLOB_DRIFT 1/3 resolved); build `a29`, focused 80/0 (11 suites, `a30`) and full suite 222/0 (`a31`) at the corrected tree; implementation digest recomputed = e80e4f0fb5483ec9a7e1c795e62662235dcfcdd884276d2fd25c9d22a5a254e9 (44 swift files); attempt-02 re-review NOT_RUN
+OBSERVED=RESOLVED; repairs landed 2026-09-29T07:10, the CI-freeze blob drift was corrected (`a32` provenance guard PASS), build `a29` / focused 80/0 (11 suites, `a30`) / full suite 222/0 (`a31`) at digest e80e4f0fb5483ec9a7e1c795e62662235dcfcdd884276d2fd25c9d22a5a254e9 (44 swift files); attempt-02 re-review LANDED 2026-09-29T07:21 with all three reports ISSUES_FOUND (see next fingerprint)
 
-BLOCKER_FINGERPRINT (active, next):
+BLOCKER_FINGERPRINT (active, Stage 04 repairs — attempt-02 findings):
 STAGE=04
-CHECK=V09_ATTEMPT_02_REVIEW_PENDING
-SURFACE=.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/v09/attempt-02 (fresh independent reviewers, read-only)
-EXPECTED=three fresh independent reviewer contexts re-run the V-09 topics against bindings bound to implementation digest 03ac90b4…e17d (plus plan/handoff/frozen artifacts) and report PASS or remaining plan-conformance issues
-OBSERVED=not yet started; attempt-01 binds to the superseded digest eb4415f9…f6b1
+CHECK=V09_ATTEMPT_02_REPAIR_SET (timer-not-bound-to-dispatch-boundary, post-hover-revalidation-incomplete, durable-revalidation-abort-unconsumed, eligibility-self-declared-bindings + reviewed HEAD/diff/binary unrepresented, AX-value-write-unrecorded, tripwire-gate-not-rechecked-at-completion; plus two documented trust-boundary MINORs)
+SURFACE=rev28/Sources/Rev28Core + rev28/Sources/rev28ctl (in-contract repairs; Phase B still forbidden)
+EXPECTED=all attempt-02 findings repaired within the approved plan contract, covered by focused tests, full suite green, V-08 gates + provenance + CLI refusal re-run on the repaired tree, then V-09 attempt-03 re-review on the new implementation digest
+OBSERVED=repairs landed 2026-09-29T07:40 (1/3 each; see `## V-09 attempt-02 reviews + repairs`), committed a758317; build `a37`, focused 96/0 (`a38`), full suite 241/0 (`a39`), adversarial 27/27 ×2 (`a40`/`a41`), replay 20 fixtures PASS ×2 byte-identical (`a42`/`a43`), provenance `status=PASS` (`a44`), CLI refusal 77/77/77/64/77 zero side effects (`cli-refusal-20260929T0742`); digest recomputed by the production function = e748568dbc7c23a642eeead559afc0df345c56e91ff694dc1b6012744615c0cf (48 files, `a45`); attempt-03 review NOT_RUN
+
+BLOCKER_FINGERPRINT (active, next after repairs):
+STAGE=04
+CHECK=V09_ATTEMPT_03_REVIEW_PENDING
+SURFACE=.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/v09/attempt-03 (fresh independent reviewers, read-only)
+EXPECTED=three fresh independent reviewer contexts re-run the V-09 topics against bindings bound to head a758317 and implementation digest e748568d…c0cf (plus plan/handoff/frozen artifacts) and report PASS or remaining plan-conformance issues
+OBSERVED=not yet started; attempt-02 binds to the superseded digest e80e4f0f…54e9
 
 BLOCKER_FINGERPRINT (next after repairs):
 STAGE=04
@@ -60,7 +68,9 @@ NEXT_BLOCKER_ATTEMPTS_USED: 0/3 (REAL_PHASE_A_PREFLIGHT_EVIDENCE_MISSING; no pre
 V09_REPAIR_ATTEMPTS: 1/3 each, all resolved 07:10 (V09_AX_IDENTITY_WINDOW_UNBOUND, V09_C5_INTRA_CLICK_REVALIDATION_MISSING, V09_C6_PER_PRIMITIVE_ACCOUNTING_MISSING, V09_C4_BUDGET_NOT_DURABLE, V09_C4_OWNER_RESERVATION_ENFORCEMENT_MISSING, V09_C7_POST_DISPATCH_GAP_UNCHECKED, V09_CHOOSER_PREDICATE_V2_NOT_DERIVED, V09_ELIGIBILITY_LABEL_ONLY; MINOR resolved/documented: V09_GOALSLOT_NON_ATOMIC_WRITE, V09_ONESHOT_MARKER_INERT, V09_ENGINE_RESUME_CONTINUATION_NARROW, V09_MENU_BOUNDS_UNBOUND (geometry guard; freeze-binding documented as Phase A item), V09_CHOOSER_PROVENANCE_QUALIFIER (no replan — qualifier already carried at Phase A artifact level per plan.md:248))
 V09_ATTEMPT_01: 3 reports landed 06:50; verdicts ISSUES_FOUND; AB_IMPLEMENTATION_COMPLETE superseded; no V-09 attempt consumed the REAL_PHASE_A_PREFLIGHT fingerprint
 V09_REPAIR_PROVENANCE_BLOB_DRIFT: 1/3, resolved 07:26 (first repair revision touched the v3-frozen `HarnessCalibration.swift` blob → provenance guard FAIL; frozen blob restored, guard PASS `a32`)
-V09_ATTEMPT_02: 0/3 (NOT_RUN; bound to digest e80e4f0f…54e9)
+V09_ATTEMPT_02: 3 fresh reviewer contexts landed 07:21 against `v09/attempt-02/bindings.json` (head 42ae9a3, digest e80e4f0f…54e9); all three verdicts ISSUES_FOUND (02: 3 MAJOR＋2 MINOR；03: 2 MAJOR＋2 MINOR；01: 無 MAJOR、1 個 contract-deferred MINOR，in-scope repair claims all VERIFIED)；reports stay bound to that tree
+V09_ATTEMPT_02_REPAIRS: 1/3 each, all resolved 07:40 — 4 unique MAJORs repaired at a758317（02-MAJOR-1 timer／dispatch boundary；02-MAJOR-2 ≡ 03-MAJOR-B post-hover revalidation 完整性；02-MAJOR-3 revalidation-abort budget enforcement；03-MAJOR-A canonical eligibility bindings＋reviewed HEAD／diff／binary）＋2 個 actionable MINORs（02-MINOR-1 AX value write 記帳；02-MINOR-2 tripwire 於 download polling／completion 重檢）；03-MINOR-C（consume-before-append crash window）與 03-MINOR-D（goal-slot key 含 staging root）記錄為 fail-closed trust-boundary notes；01-MINOR-1 維持 Phase A locator-bounds 義務
+V09_ATTEMPT_03: 0/3 (NOT_RUN; binds to head a758317 and digest e748568d…c0cf)
 ```
 
 ## Run terminal state (2026-09-29T06:35+0800)
@@ -130,6 +140,14 @@ e407565 feat(rev28): compose the post-Save-All path and keep it fail closed
 0d1cdb5 feat(rev28): publish real Phase A evidence from the live preflight path
 51cd793 chore(harness): record the Phase A publisher evidence and the live-preflight environment prerequisite
 e93e298 chore(harness): record the final-HEAD full-suite run for the Phase A publisher round
+00f8634 records: V-09 attempt-01 pre-Phase-A reviews landed (3 reports, ISSUES_FOUND; AB_IMPLEMENTATION_COMPLETE superseded)
+79004cf fix(rev28): repair the V-09 attempt-01 plan-conformance findings
+476de02 chore(harness): record the V-09 attempt-01 repair set, digest and verification evidence
+42ae9a3 fix(rev28): restore the frozen HarnessCalibration.swift blob for the v3 provenance guard
+0ce9e05 chore(harness): record the CI-freeze correction, corrected digest and V-09 attempt-02 bindings
+96ef88c chore(harness): record the corrected-tree V-08 gate re-runs (adversarial x2, replay x2, provenance PASS)
+7cd444e chore(harness): refresh the CLI refusal fixture on the corrected tree (77/77/77/64/77, zero side effects)
+a758317 fix(rev28): repair the V-09 attempt-02 plan-conformance findings
 ```
 
 ## Evidence pointers
@@ -143,6 +161,14 @@ e93e298 chore(harness): record the final-HEAD full-suite run for the Phase A pub
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a32-provenance-v09-repairs-provenance-restore-20260929T0726.log` — v3 provenance guard 還原後 `status=PASS`（blob `c411011b…`）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a33-adversarial-run1-v09repairs-20260929T0732.log`／`a34-adversarial-run2-…log` — 修正後樹 `AdversarialMatrixTests` 27/27 ×2
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a35-replay-run1-v09repairs-20260929T0732.json`（＋`.stdout`）／`a36-replay-run2-…json` — 修正後樹 `replay_rev28.py` `verdict=PASS` ×2、輸出 byte-identical（SHA `81f6da94…7261`）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a37-build-attempt02-final-20260929T074109.log` — attempt-02 修復後 build PASS（`a758317` 產品樹）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a38-focused-attempt02-final-20260929T074114.log` — attempt-02 修復後 focused：11 suites、96 tests / 0 failures
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a39-full-suite-attempt02-final-20260929T074124.log` — attempt-02 修復後 full suite：241 tests / 0 failures / 0 skipped
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a40-adversarial-attempt02-final-run1-20260929T074153.log`／`a41-adversarial-attempt02-final-run2-20260929T074153.log` — `AdversarialMatrixTests` 27/27 ×2
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a42-replay-attempt02-final-run1-20260929T074157.json`（＋`.stdout`）／`a43-replay-attempt02-final-run2-20260929T074157.json`（＋`.stdout`）— 20 pinned fixtures `verdict=PASS` ×2、輸出 byte-identical（SHA-256 `81f6da94…7261`，與 `a24`／`a25`、`a35`／`a36` 相同）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a44-provenance-attempt02-final-20260929T074210.log` — v3 provenance guard `status=PASS`（blob `c411011b…`、20 samples、max 155.19 ms）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a45-digest-attempt02-final-20260929T074221.log` — 以 production `ReviewedImplementationDigest.compute` 量測：`ZZDIGEST_SHA256=e748568d…c0cf`、`ZZDIGEST_PATHCOUNT=48`（45 swift＋`Package.swift`＋2 tools）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0742/` — 最終樹 CLI refusal fixture（config 綁定 digest `e748568d…c0cf` 與必填欄位）＋`cli-refusal-transcript-20260929T0742.log`：live-execute／live-preflight／CI guard 77、缺 config 64、stale digest 77；零 evidence／ledger／staging 副作用、授權未改名
 
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/` — A1–A14 raw logs (build/focused/full suite)
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a12-full-suite-live-composition-20260929T054820.log` — 167 tests / 0 failures（含 live composition 與 epoch authority suites）
@@ -172,7 +198,7 @@ e93e298 chore(harness): record the final-HEAD full-suite run for the Phase A pub
 | 3 | Adversarial 套件 ×2＋20 pinned replay fixtures ×2（含 hash 驗證） | PASS（修正後樹重跑） | 修正後樹：`a33`／`a34` 27/27 ×2；`a35`／`a36` `verdict=PASS` ×2 byte-identical（SHA `81f6da94…7261`）；前一版樹為 `a22`–`a25`（現行 suite 為 27 cases，為 handoff 所述 25-case 基線的超集） |
 | 4 | Common-composition failure matrix＋owner/restart matrix | PASS（suite-level、injected boundaries） | `a21` full suite 內執行 AdversarialMatrixTests（G01–G22／X01–X03）＋PersistentTransactionOwnerTests／GoalSlotTests／IntentLedgerTests／RunEpochAuthorityTests；本輪無獨立於 suites 之外的 matrix 執行 |
 | 5 | provenance py＋current-composer synthetic AppKit calibration | provenance PASS（修正後樹重跑）；calibration 以 frozen W2 證據＋provenance binding 覆蓋（本輪未重跑 headed CI） | `a32`（corrected tree，blob `c411011b…`）；`frozen/postcondition-latency-observations-v3.json`（20 timings、strict monitor、input-free）仍受 fail-closed guard 綁定 |
-| 6 | V-09 exact-binding code/rule reviews（before Phase A） | ATTEMPT-01 DONE / ISSUES_FOUND | 3 fresh reviewer contexts landed 06:50（`v09/attempt-01/`）；8 MAJOR＋5 MINOR；見下節；修復後需 attempt-02 複審 |
+| 6 | V-09 exact-binding code/rule reviews（before Phase A） | ATTEMPT-02 DONE / ISSUES_FOUND; repairs landed; attempt-03 pending | 06:50 attempt-01（8 MAJOR＋5 MINOR，`v09/attempt-01/`）→ 07:10 修復 → 07:21 attempt-02（4 unique MAJOR＋actionable MINORs，`v09/attempt-02/`）→ 07:40 attempt-02 修復（`a758317`）→ attempt-03 待跑（`v09/attempt-03/bindings.json`，digest `e748568d…c0cf`）；見下兩節 |
 | 7 | Phase A eligibility／evidence | BLOCKED（external prerequisite） | 工具鏈完成（A13）；真實 preflight 未開火：LINE 已登出、無目標相簿畫面（`phase-a-env-20260929T0626`）；0/3 attempts |
 | 8 | Conditional Phase B runtime gates／finalization | FORBIDDEN | 本輪為 A/B evaluation，Phase B 絕對禁止；零 irreversible |
 
@@ -233,9 +259,39 @@ All eight MAJOR fingerprints plus the actionable MINORs were repaired in-contrac
 - CLI refusal fixture 於修正後樹刷新（`cli-refusal-20260929T0713/`）：`live-execute`／`live-preflight`／CI guard = 77、缺 config = 64、stale digest = 77；good config 已含新的必填 chooser 欄位＋新 digest，refusal 後 evidence／staging 0 檔、無 ledger／anchor、授權未改名（零副作用）。
 - 註：`a29`–`a36` 檔名中的時戳為建立時的輪次標籤；實際 mtime 為 07:10–07:12+0800。
 
+## V-09 attempt-02 reviews — LANDED 2026-09-29T07:21+0800
+
+- Handoff TEST_ORDER item 6 continuation: `v09/attempt-02/bindings.json`（committed `0ce9e05`）bound head `42ae9a3` / implementation digest `e80e4f0f…54e9`（44 swift files）/ plan・handoff SHA-256 / 9 frozen artifacts；three fresh independent reviewer contexts（attempt-01 以外的 context；read-only，無 build／test／git write）在 review 當下重新計算全部 bindings，全部相符。attempt-01 節與其報告維持 immutable、bound 到已 superseded 的 digest `eb4415f9…f6b1`；attempt-01／02 的證據不得作為 attempt-03 的證明。
+- Reports（append-only；報告檔 immutable）:
+  - `v09/attempt-02/01-perception-geometry.md` SHA-256 `cd56304ab83236cf43f805d8e2e998cd60fa716ddd760e6c17d1b4fc3f14d499` — **ISSUES_FOUND**（無 MAJOR；MINOR-1 residual locator-bounds＝attempt-01 已記錄的 Phase A 義務；in-scope repair claims 全部 VERIFIED；6 INFO，含 HEAD 因 `.agent`-only commits 前移的 traceability note 與兩個 fail-closed 觀察）
+  - `v09/attempt-02/02-timing-automation.md` SHA-256 `e7a9ea39d428d94b233cfd99c52ad7bbdfe9e40d3d96a4fa501a74be09495cb2` — **ISSUES_FOUND**（MAJOR-1 chooser postcondition timer 未綁實際 dispatch boundary；MAJOR-2 post-hover revalidation 缺少 geometry／topmost／candidate 重導；MAJOR-3 durable revalidation-abort 無 production writer；MINOR-1 AX value write；MINOR-2 tripwire 重檢；4 INFO）
+  - `v09/attempt-02/03-transaction-history.md` SHA-256 `ccaa05bafc6a162f2bc45811f701c561c6d15f0000ad4aa9968e64ebe02f82e6` — **ISSUES_FOUND**（MAJOR A eligibility handoff／frozen／predicate bindings self-declared 且路徑未 containment、reviewed HEAD／diff／binary 無 representation；MAJOR B post-hover revalidation omissions（≡02-MAJOR-2）；MINOR C consume-before-append crash window；MINOR D goal-slot key 含 staging root；INFO E／F）
+- **Net:** 4 unique MAJORs＋2 actionable MINORs（02-MINOR-1／02-MINOR-2）＋2 documented MINORs（03-C／03-D）＋01-MINOR-1（Phase A 既有義務）。皆屬 plan 明定的行為 → in-contract repairs（非 replan）；reviews 未授權 Phase B；counters 0/0/0 不變。
+- 註（時戳更正）：`v09/attempt-02/bindings.json` 內文寫 `recorded_at: 2026-09-29T07:28+0800`，但該檔實際寫入時間為 07:10:56、commit `0ce9e05` 於 07:11:00；差異僅為內文手寫時戳錯誤（檔案 bytes 與所有綁定值不受影響），attempt-02 reports 引用的是該檔內文值，特此更正。
+
+## V-09 attempt-02 repairs — LANDED 2026-09-29T07:40+0800 (commit a758317)
+
+23 files, +1636/−179；所有修復僅落在已審查的 production 路徑（`rev28/Sources/Rev28Core`＋`rev28/Sources/rev28ctl`），未動 frozen artifacts 與 CI-frozen blob。
+
+| Finding | Repair | Tests |
+|---|---|---|
+| 02-MAJOR-1 timer 未綁 dispatch boundary | `PostSaveJournalBox.recordDispatchBoundary`／`recordedDispatchBoundary`；`StrictPostconditionMonitor.run(dispatchBoundaryMonotonic:)` 以 `min(boundary, now)` 起算；未記錄 boundary 時 `observeChooser` 直接 refuse；`SaveAllDispatchRecord` 記錄 `dispatchBoundaryMonotonicNanos` | `ComposedAdaptersTests`（dispatchBoundaryMarks 0／0／1 三情境）＋full suite（a38／a39） |
+| 02-MAJOR-2 ≡ 03-MAJOR-B post-hover revalidation 不完整 | `ReadinessPermit` 保留 frame／capturePoint／safeRect／imageSize；`DispatchReadinessGate.revalidateAfterHover` 重驗 active／frontmost／window identity／process／binding／scale／staleness(≤1 s)／frame(0.5 pt)／point movement；`GatedQuartzActuator.topmostSurfaceMatchesTarget` 以 `CGWindowListCopyWindowInfo` front-to-back、click point 首個 alpha>0 layer-0 window 必須為 target；`postClick` 改 async，接受 `postHoverRevalidation`＋`addressedSurfaceCheck`；失敗 → `recordRevalidationOutcome(passed:false)`＋零 down/up | `ActuationReadinessTests`／`AdversarialMatrixTests` G05／G07／G14（a38–a41） |
+| 02-MAJOR-3 revalidation-abort budget 無 production writer | `LiveDispatchBudget` static ceilings＋`isExhausted`（reversible 用盡／任一 blocker 達 3／連續 revalidation 失敗達 2）；新 `PersistentTransactionError.phaseBBudgetExhausted`；`reserveSaveAll` 於消耗 entitlement **之前**拒絕 exhausted；`recordReversibleDispatch`（每個 reversible primitive 的必經寫入點）在 2 次連續 revalidation 失敗後拒絕；`PhaseBEligibility.requiredPredicates` 加入 `REVERSIBLE_AND_REVALIDATION_BUDGETS_NOT_EXHAUSTED`（18 predicates） | `ExecutionPolicyTests`／`PersistentTransactionOwnerTests`／`PhaseBEligibilityTests`（a38） |
+| 03-MAJOR-A eligibility self-declared bindings | `CanonicalEvidenceBinding`；recomputation 帶 canonical handoff／frozen／predicate bindings＋`allowedEvidenceRoots`；artifact 宣告與 canonical 逐一比對、frozen name-set 與 predicate-set 精確相等、所有 declared＋canonical 路徑 containment；新 `ReviewedBuildState.swift`（`ReviewedBuildExpectations`／`Observations`；`observe()` 以 `/usr/bin/git` 取 HEAD、reviewed HEAD ancestor 檢查、reviewed-paths diff SHA、executable hash）；CLI `LiveConfig` 新增 `eligibilityCanonicalBindings`＋`reviewedHeadSHA`／`reviewedPathsDiffSHA256`／`reviewedBinarySHA256`（設定 `phaseBEligibilityPath` 時必填）；artifact 新增 required `PhaseBEligibilityReviewedBuild`；digest manifest 納入 `Package.swift`＋`rev28/Tools/*` 並修正 `/private/var` 相對路徑 | `PhaseBEligibilityTests`（15／0）＋新 `ReviewedBuildStateTests`（a38） |
+| 02-MINOR-1 AX value write 未記帳 | 可設定時以 `willPostPrimitive("chooser.navigate.setPathFieldValue")` 記錄該 primitive | `ComposedAdaptersTests`（a38） |
+| 02-MINOR-2 tripwire gate 未在 download polling／completion 重檢 | 每個 download poll 重檢並寫 `download-progress-terminal.json`（`terminal: "TRIPWIRE_ABORTED"`）；`observeFilesystemStable`＋`verifyContent` 入口各重檢一次 | `ComposedAdaptersTests`（a38） |
+| 03-MINOR-C consume-before-append crash window | 不需改碼（disposition）：所有已觀察 recovery 路徑 fail closed（retry → `irreversibleIntentAlreadyRecorded`；restart → `entitlementConsumed` 拒絕），無 dispatch-safety gap；僅 forensic 上需以 slot vs ledger 對照，記錄為 trust-boundary note | 無（disposition） |
+| 03-MINOR-D goal-slot key 含 staging root | 不需改碼（disposition）：`plan.md:134` 允許 approved new-path authorization 形成新 identity，approved root 本身是 reviewed authorization config 的一部分；缺少的是「re-approved new root vs operator replacement」的 in-product 區分，記錄為 trust-boundary note | 無（disposition） |
+| 01-MINOR-1 locator bounds 仍為 config 供給 | 依原判定維持 bounded fail-closed（ordered 5-row identity＋row/menu intersection＋≥8 px overlap＋safe-rect containment）；hash-binding 需新 append-only freeze（frozen 集無真實 LINE menu bounds）→ 維持 Phase A 當場義務 | 無變更 |
+
+- Digest 重算（same reviewed formula；本輪改以 production `ReviewedImplementationDigest.compute` 量測，`a45`）：`e748568dbc7c23a642eeead559afc0df345c56e91ff694dc1b6012744615c0cf`，48 files ＝45 swift（`Rev28Core` 36＋`rev28ctl` 9）＋`rev28/Package.swift`＋`rev28/Tools/replay_rev28.py`＋`rev28/Tools/verify_pre_live_provenance.py`。manifest 由單一 formula 產生（`manifestPaths`），`reviewedPaths` 同時用於 git HEAD／diff 檢查。
+- Final-tree verification（全部在 `a758317` 產品樹上）：build `a37`；focused 11 suites 96/0 `a38`；full suite 241/0/0 skipped `a39`；`AdversarialMatrixTests` 27/27 ×2 `a40`／`a41`；20 pinned replay fixtures `verdict=PASS` ×2 byte-identical（SHA `81f6da94…7261`）`a42`／`a43`；v3 provenance `status=PASS`（blob `c411011b…`、20 samples、max 155.19 ms）`a44`；CLI refusal fixture `cli-refusal-20260929T0742/`：77／77／77／64／77、零 evidence／ledger／staging 副作用、授權未改名。
+- Zero irreversible throughout: Save All dispatches 0、destination confirmations 0、irreversible intents 0；`PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION` 不變；`rev28-prelive-finalization` 仍停 `9cbaa1141595acb538d4672066072d2b8ffb7065`。
+
 ## Next up (dependency order)
 
-1. V-09 attempt-02：3 個 fresh independent reviewer contexts 針對 `v09/attempt-02/bindings.json`（新 digest `03ac90b4…e17d`＋plan/handoff/frozen artifacts）複審，報名沿用 `01-perception-geometry.md`／`02-timing-automation.md`／`03-transaction-history.md`，append-only；每 blocker 上限 3 次。
-2. 視需要更新 CLI refusal fixture（`LiveConfig` 新增 3 個必填 chooser 欄位、observe-only 改由 goal slot 判定，舊 transcript 描述已不對應）；僅在需要新一輪 refusal 證據時重跑。
+1. V-09 attempt-03：3 個 fresh independent reviewer contexts（非 attempt-01／02 的同一 contexts、read-only）針對 `v09/attempt-03/bindings.json`（head `a758317`、digest `e748568d…c0cf`＋plan／handoff／frozen artifacts＋本輪 repair claims）複審；報告沿用 `01-perception-geometry.md`／`02-timing-automation.md`／`03-transaction-history.md`，append-only；不得以 attempt-01／02 證據當作證明；每 blocker 上限 3 次。
+2. 記錄 attempt-03 結果於本檔與 `execution.md` 並 commit。
 3. Real Phase A preflight 仍受外部前置阻擋（需登入 LINE＋目標相簿畫面）；零 irreversible。
 4. Phase A 後進 Stage 05 independent acceptance。

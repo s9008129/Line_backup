@@ -72,3 +72,20 @@ PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
 - V-08 gates re-run on the corrected tree (2026-09-29T07:32): `AdversarialMatrixTests` 27/27 ×2 (`a33`/`a34`); `replay_rev28.py` 20 fixtures `verdict=PASS` ×2 with byte-identical output SHA-256 `81f6da94…7261` (`a35`/`a36`; identical to the pre-repair `a24`/`a25` output).
 - CLI refusal fixture refreshed on the corrected tree (`execution-evidence/cli-refusal-20260929T0713/`): live-execute/live-preflight/CI guard 77, missing config 64, stale digest 77; the good config now carries the three required chooser fields and the new digest; zero evidence/ledger/staging side effects and the authorization was not renamed.
 - Next: V-09 attempt-02 re-review on the corrected digest (`v09/attempt-02/bindings.json`, fresh reviewer contexts); real Phase A remains externally blocked; zero irreversible throughout (Save All dispatches 0, destination confirmations 0, irreversible intents 0).
+
+## Stage 04 status update (2026-09-29T07:50+0800, A/B branch v43-ab/codex-rev28) — V-09 attempt-02 findings repaired; attempt-03 re-review pending
+
+STATE: RUNNING (implementation as far as possible pre-Phase B; real Phase A evidence externally blocked; Phase B forbidden)
+IMPLEMENTATION_STATUS: IN_PROGRESS (V-09 attempt-02 4 unique MAJOR + 2 actionable MINOR findings repaired in-contract at a758317; V-09 attempt-03 re-review pending)
+PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
+CORE_ACCEPTANCE_STATUS: NOT_RUN
+REQUIRED_VERIFICATION_STATUS: IN_PROGRESS (final tree a758317: build `a37`; focused 11 suites 96/0 `a38`; full suite 241/0/0 skipped `a39`; adversarial 27/27 ×2 `a40`/`a41`; replay `verdict=PASS` ×2 byte-identical `a42`/`a43` (SHA-256 81f6da94…7261); provenance `status=PASS` `a44`; CLI refusal 77/77/77/64/77 zero side effects `cli-refusal-20260929T0742`; V-09 attempt-03 reviews running)
+INDEPENDENT_ACCEPTANCE_STATUS: PENDING
+TASK_CLOSURE_STATUS: IN_PROGRESS
+PHASE_A_STATUS: EVIDENCE TOOLCHAIN COMPLETE; real preflight NOT FIRED — external prerequisite missing (LINE signed out, no target album surface); 0/3 attempts
+PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
+
+- V-09 attempt-02 reviews landed by 2026-09-29T07:21 (3 fresh contexts vs `v09/attempt-02/bindings.json`, corrected digest `e80e4f0f…54e9`): all three verdicts ISSUES_FOUND — 4 unique MAJORs (02-MAJOR-1 dispatch-boundary timer; 02-MAJOR-2 ≡ 03-MAJOR-B post-hover revalidation completeness; 02-MAJOR-3 revalidation-budget enforcement; 03-MAJOR-A canonical eligibility bindings + reviewed HEAD/diff/binary) + 2 actionable MINORs (AX value write accounting; tripwire re-check at download polling/completion) + 2 documented MINORs (consume-before-append crash window; goal-slot key includes staging root) + 01-MINOR-1 (Phase A locator-bounds obligation). Report SHAs and finding→repair mapping: `progress.md` `## V-09 attempt-02 reviews` / `## V-09 attempt-02 repairs`.
+- Repairs landed at a758317 (23 files, +1636/−179, product tree closed): dispatch-boundary-bound postcondition window; full post-hover revalidation (frame/capture-point/safe-rect/scale/staleness + topmost addressed surface) before mouseDown; durable reversible/revalidation budget enforcement at `reserveSaveAll`/`recordReversibleDispatch` with the 18th eligibility predicate `REVERSIBLE_AND_REVALIDATION_BUDGETS_NOT_EXHAUSTED`; canonical eligibility bindings with contained evidence roots and live-recomputed reviewed HEAD/diff/binary (`ReviewedBuildState`); digest manifest widened to Package.swift + rev28/Tools.
+- Implementation digest re-measured with the production `ReviewedImplementationDigest.compute`: `e748568dbc7c23a642eeead559afc0df345c56e91ff694dc1b6012744615c0cf`, 48 files (45 swift + Package.swift + 2 tools) — `a45`.
+- Next: V-09 attempt-03 re-review against `v09/attempt-03/bindings.json`; real Phase A remains externally blocked; zero irreversible throughout (Save All dispatches 0, destination confirmations 0, irreversible intents 0); `rev28-prelive-finalization` remains at `9cbaa1141595acb538d4672066072d2b8ffb7065`.

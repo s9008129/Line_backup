@@ -1,0 +1,70 @@
+Building for debugging...
+[0/12] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.10s)
+Test Suite 'Selected tests' started at 2026-09-29 07:41:54.813.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 07:41:54.814.
+Test Suite 'AdversarialMatrixTests' started at 2026-09-29 07:41:54.814.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testChooserPredicateV2RequiresBothButtonsAndStableProcessInstances]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testChooserPredicateV2RequiresBothButtonsAndStableProcessInstances]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testFrozenLegacyChooserPredicateCanOnlyUpgradeWithObservedButtons]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testFrozenLegacyChooserPredicateCanOnlyUpgradeWithObservedButtons]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG01WrongWindowRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG01WrongWindowRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG02WrongBundleRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG02WrongBundleRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG03StaleEpochRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG03StaleEpochRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG04WrongRetinaScaleRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG04WrongRetinaScaleRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG05SeparateProcessOccluderPostsZeroEventsAtGuardedBoundary]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG05SeparateProcessOccluderPostsZeroEventsAtGuardedBoundary]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG06WindowMovementInvalidatesIdentity]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG06WindowMovementInvalidatesIdentity]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG07PopupMovementInvalidatesCandidateAtGuardedBoundary]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG07PopupMovementInvalidatesCandidateAtGuardedBoundary]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG08WrongRowRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG08WrongRowRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG09DuplicateOCRRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG09DuplicateOCRRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG10SingleGlyphCorruptionRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG10SingleGlyphCorruptionRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG11WholeScreenFalsePositiveOutsidePopupRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG11WholeScreenFalsePositiveOutsidePopupRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG12OutsideSafeRegionIsNotDispatchable]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG12OutsideSafeRegionIsNotDispatchable]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG13SaveAllCandidateStaysInsideTargetStructuralCell]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG13SaveAllCandidateStaysInsideTargetStructuralCell]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG14FocusTheftPostsZeroEventsAtGuardedBoundary]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG14FocusTheftPostsZeroEventsAtGuardedBoundary]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG15PostconditionTimeoutIsNamedAndDoesNotRetry]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG15PostconditionTimeoutIsNamedAndDoesNotRetry]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG16ExistingWindowCannotMasqueradeAsNewChooser]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG16ExistingWindowCannotMasqueradeAsNewChooser]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG17UnattributedL2WriteFailsClosed]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG17UnattributedL2WriteFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG18ZeroByteStagingIsIncomplete]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG18ZeroByteStagingIsIncomplete]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG19PartialSuffixIsIncomplete]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG19PartialSuffixIsIncomplete]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG20ExtraFileHasDedicatedOutcome]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG20ExtraFileHasDedicatedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG21RestartAfterSaveAllCannotRedispatch]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG21RestartAfterSaveAllCannotRedispatch]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG22IndependentScaleMismatchFailsClosed]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG22IndependentScaleMismatchFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX01RelayoutFrameDeltaInvalidatesRead]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX01RelayoutFrameDeltaInvalidatesRead]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX02MenuWithoutAddressablePopupOverlapRefuses]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX02MenuWithoutAddressablePopupOverlapRefuses]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX03InactiveTargetFailsFinalDispatchGate]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX03InactiveTargetFailsFinalDispatchGate]' passed (0.000 seconds).
+Test Suite 'AdversarialMatrixTests' passed at 2026-09-29 07:41:54.825.
+	 Executed 27 tests, with 0 failures (0 unexpected) in 0.010 (0.011) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 07:41:54.825.
+	 Executed 27 tests, with 0 failures (0 unexpected) in 0.010 (0.011) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 07:41:54.825.
+	 Executed 27 tests, with 0 failures (0 unexpected) in 0.010 (0.012) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

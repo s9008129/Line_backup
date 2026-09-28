@@ -1,0 +1,31 @@
+{
+  "ax" : {
+    "allowedSubroles" : [
+      "AXStandardWindow"
+    ],
+    "pathAffordanceRoles" : [
+      "AXTextField"
+    ],
+    "pathAffordanceTitles" : [
+
+    ],
+    "popUpButtonRoles" : [
+      "AXPopUpButton"
+    ],
+    "requiresPathAffordance" : true,
+    "requiresPopUpButton" : true,
+    "requiresTextField" : true,
+    "textFieldRoles" : [
+      "AXTextField"
+    ],
+    "windowRole" : "AXWindow"
+  },
+  "calibratedAgainst" : "real NSOpenPanel (directory mode) presented by rev28harness pid 45752 on Version 27.0 (Build 26A428)",
+  "frozenAtISO8601" : "2026-09-25T11:29:30.097+08:00",
+  "ownership" : {
+    "emptyPreCensusWidensRefusal" : true,
+    "requiresOwningPIDInCensusUnion" : true,
+    "requiresStableProcessInstance" : true
+  },
+  "predicateID" : "rev28-chooser-affirmation-v1"
+}
