@@ -1,0 +1,10 @@
+# read-only inventory at 2026-09-29T06:26:48+0800
+# source: CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements]) filtered to LINE
+owner=LINE pid=54034 window=6179 layer=0 name= bounds=17,516,242,169
+# AX windows of process LINE (System Events, read-only):
+LINE, 
+# frontmost application:
+LINE
+# LINE process:
+  PID STARTED                      COMM
+54034 Tue Sep 29 06:17:54 2026     /Applications/LINE.app/Contents/MacOS/LINE

@@ -21,3 +21,18 @@ Current blocker: the reviewed-head deterministic Swift test target does not comp
 Historical R3 execution record preserved byte-for-byte at `execution-history/execution-r3-before-r4-stage03-20260929T045938+0800.md` (SHA-256 `7c623f24a0baaf3d523571f55e61b2e03f45b434a115c1f29f997f6328c7cc02`). Its PRE_LIVE_READY and other R3 status statements are historical only.
 
 Stage 03 performed no tests, production LINE interaction, Save All dispatch or destination confirmation. Product code, test code, workflow, baseline and staging were not mutated. No commit or push was created.
+
+## Stage 04 status update (2026-09-29T06:35+0800, A/B branch v43-ab/codex-rev28)
+
+IMPLEMENTATION_STATUS: IN_PROGRESS
+PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
+CORE_ACCEPTANCE_STATUS: NOT_RUN
+REQUIRED_VERIFICATION_STATUS: IN_PROGRESS (deterministic build/focused/full gates PASS at the current tree; V-08 replay x2, V-09 reviews and V-10 acceptance are not yet complete)
+INDEPENDENT_ACCEPTANCE_STATUS: PENDING
+TASK_CLOSURE_STATUS: IN_PROGRESS
+PHASE_A_STATUS: EVIDENCE TOOLCHAIN COMPLETE; real run externally blocked (LINE signed out on this Mac)
+PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
+
+- Phase A evidence publisher implemented and wired into `rev28ctl live-preflight`; focused 21 / full suite 202 tests, 0 failures (`a18`–`a20` in `execution-evidence/`).
+- Real Phase A `live-preflight` deliberately not fired: no target LINE surface exists (login screen only); see `execution-evidence/phase-a-env-20260929T0626/`.
+- Counters and evidence pointers: `progress.md` (authoritative for this branch).

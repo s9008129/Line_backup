@@ -1,0 +1,58 @@
+Building for debugging...
+[0/12] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.10s)
+Test Suite 'Selected tests' started at 2026-09-29 06:17:00.752.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 06:17:00.753.
+Test Suite 'PhaseAEvidenceTests' started at 2026-09-29 06:17:00.753.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testArtifactProcessMismatchFailsIdentityCondition]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testArtifactProcessMismatchFailsIdentityCondition]' passed (0.008 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testBaselineErrorIsRecordedAsFail]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testBaselineErrorIsRecordedAsFail]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testBaselineMismatchFailsBaselineIntegrity]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testBaselineMismatchFailsBaselineIntegrity]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testCompleteRunPassesEveryConditionWithZeroIrreversible]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testCompleteRunPassesEveryConditionWithZeroIrreversible]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testDeniedTccFailsExecutableContext]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testDeniedTccFailsExecutableContext]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testInventoryDisagreementFails]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testInventoryDisagreementFails]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testIrreversibleLedgerRecordFailsAndIsReported]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testIrreversibleLedgerRecordFailsAndIsReported]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMalformedArtifactIsNamedNotSkipped]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMalformedArtifactIsNamedNotSkipped]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMissingCensusIsFailWithError]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMissingCensusIsFailWithError]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMissingSaveAllArtifactFailsPopupConditionAndPreventsPhaseB]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMissingSaveAllArtifactFailsPopupConditionAndPreventsPhaseB]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMixedDisplayScalesFail]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMixedDisplayScalesFail]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testNonEmptyStagingFailsSeparation]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testNonEmptyStagingFailsSeparation]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testNonMatchingMenuRowsFailLocalization]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testNonMatchingMenuRowsFailLocalization]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testPanelServiceInCensusFailsPrePanelCensus]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testPanelServiceInCensusFailsPrePanelCensus]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testProcessMismatchFailsIdentityCondition]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testProcessMismatchFailsIdentityCondition]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testPublicationWritesReportAndManifestCoveringEveryRawArtifact]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testPublicationWritesReportAndManifestCoveringEveryRawArtifact]' passed (0.008 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testRetainedFrameHashMismatchFailsSameFrameVision]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testRetainedFrameHashMismatchFailsSameFrameVision]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testSecondPublicationIsRefusedAppendOnly]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testSecondPublicationIsRefusedAppendOnly]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testShortOrGappedPreDispatchContextFails]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testShortOrGappedPreDispatchContextFails]' passed (0.009 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testTripwireGapFailsReadiness]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testTripwireGapFailsReadiness]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testUnboundPreDispatchContextDigestFails]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testUnboundPreDispatchContextDigestFails]' passed (0.004 seconds).
+Test Suite 'PhaseAEvidenceTests' passed at 2026-09-29 06:17:00.861.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 0.107 (0.108) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 06:17:00.861.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 0.107 (0.108) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 06:17:00.861.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 0.107 (0.109) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
