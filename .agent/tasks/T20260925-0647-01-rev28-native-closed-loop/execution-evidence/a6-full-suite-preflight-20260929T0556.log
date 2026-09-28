@@ -1,0 +1,389 @@
+[0/1] Planning build
+Building for debugging...
+[0/21] Write sources
+[3/21] Write swift-version--58304C5D6DBC2206.txt
+[5/23] Emitting module Rev28Core
+[6/23] Compiling Rev28Core OneShotAuthorization.swift
+[7/56] Emitting module rev28replay
+[8/56] Compiling rev28replay main.swift
+[8/56] Write Objects.LinkFileList
+[10/56] Compiling rev28ctl ProcessPeer.swift
+[11/56] Compiling Rev28CoreTests PostconditionMonitorTests.swift
+[12/57] Compiling Rev28CoreTests OneShotAuthorizationTests.swift
+[13/57] Compiling Rev28CoreTests OcrEngineTests.swift
+[14/57] Compiling Rev28CoreTests StructuralLocatorsTests.swift
+[15/57] Compiling Rev28CoreTests LiveExecutionEngineTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:229:32: warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+227 |             }
+228 |         }
+229 |         try await firstAdapter.dispatchSaveAll(owner: owner)
+    |                                `- warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+230 |         XCTAssertEqual(firstAdapter.saveAllMouseEvents, 3)
+231 | 
+[16/57] Compiling Rev28CoreTests PersistentTransactionOwnerTests.swift
+[17/57] Compiling Rev28CoreTests StagingVerifierTests.swift
+[18/57] Compiling Rev28CoreTests ExecutionPolicyTests.swift
+[19/57] Compiling Rev28CoreTests GoalSlotTests.swift
+[20/57] Compiling rev28ctl RestartFixture.swift
+[21/57] Compiling rev28ctl RawCapture.swift
+[22/57] Compiling rev28ctl QuartzActuator.swift
+[23/57] Compiling rev28ctl main.swift
+[24/57] Emitting module rev28occluder
+[25/57] Compiling rev28occluder main.swift
+[26/57] Compiling Rev28CoreTests IntentLedgerTests.swift
+[27/57] Compiling Rev28CoreTests AlbumEllipsisLocatorTests.swift
+[28/57] Compiling Rev28CoreTests CoordinateTransformTests.swift
+[29/57] Emitting module Rev28CoreTests
+[30/57] Compiling Rev28CoreTests ActuationReadinessTests.swift
+[31/57] Compiling Rev28CoreTests AdversarialMatrixTests.swift
+[31/57] Write Objects.LinkFileList
+[33/57] Compiling rev28probe CapabilityProbe.swift
+[34/57] Emitting module rev28probe
+[35/57] Compiling rev28harness HarnessApp.swift
+[36/57] Emitting module rev28harness
+[36/57] Write Objects.LinkFileList
+[39/57] Compiling Rev28CoreTests WindowIdentityTests.swift
+[39/57] Linking rev28replay
+[40/57] Write Objects.LinkFileList
+[41/57] Applying rev28replay
+[42/57] Linking rev28occluder
+[43/57] Applying rev28occluder
+[44/57] Linking rev28probe
+[45/57] Linking rev28harness
+[46/57] Applying rev28probe
+[47/57] Applying rev28harness
+[48/57] Linking rev28PackageTests
+[50/57] Compiling rev28ctl ProcessIdentity.swift
+[51/57] Compiling rev28ctl EvidenceRun.swift
+[52/57] Compiling rev28ctl FolderChooserDriver.swift
+[53/57] Compiling rev28ctl HarnessCalibration.swift
+[54/57] Emitting module rev28ctl
+[54/57] Write Objects.LinkFileList
+[55/57] Linking rev28ctl
+[56/57] Applying rev28ctl
+Build complete! (3.07s)
+Test Suite 'All tests' started at 2026-09-29 05:23:05.715.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 05:23:05.716.
+Test Suite 'ActuationReadinessTests' started at 2026-09-29 05:23:05.716.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testExpiredSingleUsePermitPostsZeroEvents]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testExpiredSingleUsePermitPostsZeroEvents]' passed (0.007 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFocusTheftAfterPermitMintPostsZeroEvents]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFocusTheftAfterPermitMintPostsZeroEvents]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFocusTheftRefusesPermitBeforeAnyEventCanBePosted]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFocusTheftRefusesPermitBeforeAnyEventCanBePosted]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testOcclusionAtGuardedBoundaryPostsZeroEvents]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testOcclusionAtGuardedBoundaryPostsZeroEvents]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testStaleCandidateBindingAtGuardedBoundaryPostsZeroEvents]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testStaleCandidateBindingAtGuardedBoundaryPostsZeroEvents]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testStaleIdentityRefusesPermit]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testStaleIdentityRefusesPermit]' passed (0.000 seconds).
+Test Suite 'ActuationReadinessTests' passed at 2026-09-29 05:23:05.728.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.012 (0.012) seconds
+Test Suite 'AdversarialMatrixTests' started at 2026-09-29 05:23:05.728.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testChooserPredicateV2RequiresBothButtonsAndStableProcessInstances]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testChooserPredicateV2RequiresBothButtonsAndStableProcessInstances]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testFrozenLegacyChooserPredicateCanOnlyUpgradeWithObservedButtons]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testFrozenLegacyChooserPredicateCanOnlyUpgradeWithObservedButtons]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG01WrongWindowRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG01WrongWindowRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG02WrongBundleRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG02WrongBundleRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG03StaleEpochRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG03StaleEpochRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG04WrongRetinaScaleRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG04WrongRetinaScaleRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG05SeparateProcessOccluderPostsZeroEventsAtGuardedBoundary]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG05SeparateProcessOccluderPostsZeroEventsAtGuardedBoundary]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG06WindowMovementInvalidatesIdentity]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG06WindowMovementInvalidatesIdentity]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG07PopupMovementInvalidatesCandidateAtGuardedBoundary]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG07PopupMovementInvalidatesCandidateAtGuardedBoundary]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG08WrongRowRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG08WrongRowRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG09DuplicateOCRRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG09DuplicateOCRRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG10SingleGlyphCorruptionRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG10SingleGlyphCorruptionRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG11WholeScreenFalsePositiveOutsidePopupRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG11WholeScreenFalsePositiveOutsidePopupRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG12OutsideSafeRegionIsNotDispatchable]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG12OutsideSafeRegionIsNotDispatchable]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG13SaveAllCandidateStaysInsideTargetStructuralCell]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG13SaveAllCandidateStaysInsideTargetStructuralCell]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG14FocusTheftPostsZeroEventsAtGuardedBoundary]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG14FocusTheftPostsZeroEventsAtGuardedBoundary]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG15PostconditionTimeoutIsNamedAndDoesNotRetry]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG15PostconditionTimeoutIsNamedAndDoesNotRetry]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG16ExistingWindowCannotMasqueradeAsNewChooser]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG16ExistingWindowCannotMasqueradeAsNewChooser]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG17UnattributedL2WriteFailsClosed]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG17UnattributedL2WriteFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG18ZeroByteStagingIsIncomplete]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG18ZeroByteStagingIsIncomplete]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG19PartialSuffixIsIncomplete]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG19PartialSuffixIsIncomplete]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG20ExtraFileHasDedicatedOutcome]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG20ExtraFileHasDedicatedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG21RestartAfterSaveAllCannotRedispatch]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG21RestartAfterSaveAllCannotRedispatch]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG22IndependentScaleMismatchFailsClosed]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG22IndependentScaleMismatchFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX01RelayoutFrameDeltaInvalidatesRead]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX01RelayoutFrameDeltaInvalidatesRead]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX02MenuWithoutAddressablePopupOverlapRefuses]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX02MenuWithoutAddressablePopupOverlapRefuses]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX03InactiveTargetFailsFinalDispatchGate]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX03InactiveTargetFailsFinalDispatchGate]' passed (0.000 seconds).
+Test Suite 'AdversarialMatrixTests' passed at 2026-09-29 05:23:05.736.
+	 Executed 27 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
+Test Suite 'AlbumEllipsisLocatorTests' started at 2026-09-29 05:23:05.736.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testPixelDetectorFindsSyntheticThreeDots]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testPixelDetectorFindsSyntheticThreeDots]' passed (0.014 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testReviewedV5GeometryLocatesAlbumEllipsis]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testReviewedV5GeometryLocatesAlbumEllipsis]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTextGlyphTripleIsBlocked]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTextGlyphTripleIsBlocked]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTitleStripTripleIsNotEligible]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTitleStripTripleIsNotEligible]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTwoEligibleTriplesAreAmbiguous]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTwoEligibleTriplesAreAmbiguous]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testWrongSpacingFailsClosed]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testWrongSpacingFailsClosed]' passed (0.000 seconds).
+Test Suite 'AlbumEllipsisLocatorTests' passed at 2026-09-29 05:23:05.751.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.014 (0.015) seconds
+Test Suite 'CoordinateTransformTests' started at 2026-09-29 05:23:05.751.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testCapturePixelConversionUsesRecordedBBox]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testCapturePixelConversionUsesRecordedBBox]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testDeltaBeyondToleranceFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testDeltaBeyondToleranceFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testExactGeometryPassesWithinRule]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testExactGeometryPassesWithinRule]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testFrozenOriginPaddingShiftsRecordedBBox]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testFrozenOriginPaddingShiftsRecordedBBox]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testNoFrozenRuleFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testNoFrozenRuleFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testPaddingBeyondMaximumFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testPaddingBeyondMaximumFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testRoundTripsPreservePoint]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testRoundTripsPreservePoint]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSafeInteriorMarginRefusesNearBoundary]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSafeInteriorMarginRefusesNearBoundary]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testScaleMismatchDetected]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testScaleMismatchDetected]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSmallDeltaWithinTolerancePasses]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSmallDeltaWithinTolerancePasses]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSourceRectOriginAndExtentAreRecordedInCaptureBBoxAndTransform]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSourceRectOriginAndExtentAreRecordedInCaptureBBoxAndTransform]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testStateWithoutRuleFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testStateWithoutRuleFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testUndersizedCaptureFailsClosedUsingAbsoluteResidual]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testUndersizedCaptureFailsClosedUsingAbsoluteResidual]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testWindowLocalToScreenUsesWindowOriginOnly]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testWindowLocalToScreenUsesWindowOriginOnly]' passed (0.000 seconds).
+Test Suite 'CoordinateTransformTests' passed at 2026-09-29 05:23:05.752.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'ExecutionPolicyTests' started at 2026-09-29 05:23:05.752.
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testGlobalReversibleBudgetStopsThirteenthDispatch]' started.
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testGlobalReversibleBudgetStopsThirteenthDispatch]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testIdenticalBlockerStopsFourthRecovery]' started.
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testIdenticalBlockerStopsFourthRecovery]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testSaveAllAndConfirmationAreExactlyOnce]' started.
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testSaveAllAndConfirmationAreExactlyOnce]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testStateMachineOnlyAllowsNextReviewedTransition]' started.
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testStateMachineOnlyAllowsNextReviewedTransition]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testSuccessfulRevalidationResetsFailureCount]' started.
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testSuccessfulRevalidationResetsFailureCount]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testTwoConsecutiveRevalidationFailuresAbort]' started.
+Test Case '-[Rev28CoreTests.ExecutionPolicyTests testTwoConsecutiveRevalidationFailuresAbort]' passed (0.000 seconds).
+Test Suite 'ExecutionPolicyTests' passed at 2026-09-29 05:23:05.753.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'GoalSlotTests' started at 2026-09-29 05:23:05.753.
+Test Case '-[Rev28CoreTests.GoalSlotTests testConsumedSlotWithEmptyOrMovedLedgerCannotResetEntitlement]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testConsumedSlotWithEmptyOrMovedLedgerCannotResetEntitlement]' passed (0.013 seconds).
+Test Case '-[Rev28CoreTests.GoalSlotTests testDifferentRunIdentityCannotClaimTheSameGoalSlot]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testDifferentRunIdentityCannotClaimTheSameGoalSlot]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.GoalSlotTests testEntitlementConsumptionIsOneWay]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testEntitlementConsumptionIsOneWay]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.GoalSlotTests testFreshSlotIsCreatedAndVerifiedOnReopen]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testFreshSlotIsCreatedAndVerifiedOnReopen]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.GoalSlotTests testReserveSaveAllConsumesGoalSlotEntitlement]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testReserveSaveAllConsumesGoalSlotEntitlement]' passed (0.011 seconds).
+Test Case '-[Rev28CoreTests.GoalSlotTests testReserveSaveAllRequiresSaveAllLocatedState]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testReserveSaveAllRequiresSaveAllLocatedState]' passed (0.002 seconds).
+Test Suite 'GoalSlotTests' passed at 2026-09-29 05:23:05.784.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.031 (0.032) seconds
+Test Suite 'IntentLedgerTests' started at 2026-09-29 05:23:05.784.
+Test Case '-[Rev28CoreTests.IntentLedgerTests testAnchorDetectsRollbackAndStaleWriterIsRejected]' started.
+Test Case '-[Rev28CoreTests.IntentLedgerTests testAnchorDetectsRollbackAndStaleWriterIsRejected]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.IntentLedgerTests testConcurrentLedgerWritersCannotBothAppendFromSameHead]' started.
+Test Case '-[Rev28CoreTests.IntentLedgerTests testConcurrentLedgerWritersCannotBothAppendFromSameHead]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.IntentLedgerTests testFreshReviewedDecisionCannotRearmSameRunIrreversibleDispatch]' started.
+Test Case '-[Rev28CoreTests.IntentLedgerTests testFreshReviewedDecisionCannotRearmSameRunIrreversibleDispatch]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.IntentLedgerTests testHashChainReloadsAndVerifies]' started.
+Test Case '-[Rev28CoreTests.IntentLedgerTests testHashChainReloadsAndVerifies]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.IntentLedgerTests testResumeAfterIrreversibleDispatchIsObserveOnlyAndUnarmed]' started.
+Test Case '-[Rev28CoreTests.IntentLedgerTests testResumeAfterIrreversibleDispatchIsObserveOnlyAndUnarmed]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.IntentLedgerTests testSaveAllEmpiricalClassificationIsConservativeAndPersisted]' started.
+Test Case '-[Rev28CoreTests.IntentLedgerTests testSaveAllEmpiricalClassificationIsConservativeAndPersisted]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.IntentLedgerTests testTamperedLedgerFailsReload]' started.
+Test Case '-[Rev28CoreTests.IntentLedgerTests testTamperedLedgerFailsReload]' passed (0.001 seconds).
+Test Suite 'IntentLedgerTests' passed at 2026-09-29 05:23:05.793.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
+Test Suite 'LiveExecutionEngineTests' started at 2026-09-29 05:23:05.793.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testFailureBeforeSaveAllPostsZeroIrreversibleEvents]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testFailureBeforeSaveAllPostsZeroIrreversibleEvents]' passed (0.007 seconds).
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testRestartAfterIrreversibleAttemptIsObserveOnlyAndPostsNothing]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testRestartAfterIrreversibleAttemptIsObserveOnlyAndPostsNothing]' passed (0.069 seconds).
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testValidSyntheticTransactionUsesSameGuardedBoundariesAndReachesContentVerified]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testValidSyntheticTransactionUsesSameGuardedBoundariesAndReachesContentVerified]' passed (0.093 seconds).
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testWrongTargetAuthorizationIsRejectedBeforeAnyAction]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testWrongTargetAuthorizationIsRejectedBeforeAnyAction]' passed (0.002 seconds).
+Test Suite 'LiveExecutionEngineTests' passed at 2026-09-29 05:23:05.965.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.171 (0.172) seconds
+Test Suite 'OcrEngineTests' started at 2026-09-29 05:23:05.965.
+Test Case '-[Rev28CoreTests.OcrEngineTests testDiscriminatesZhenGlyphsInAlbumTitleContext]' started.
+Test Case '-[Rev28CoreTests.OcrEngineTests testDiscriminatesZhenGlyphsInAlbumTitleContext]' passed (0.336 seconds).
+Test Case '-[Rev28CoreTests.OcrEngineTests testLegacyVisionParityBackendRecognizesMenuRow]' started.
+Test Case '-[Rev28CoreTests.OcrEngineTests testLegacyVisionParityBackendRecognizesMenuRow]' passed (0.129 seconds).
+Test Case '-[Rev28CoreTests.OcrEngineTests testQuadIsInCapturePixelSpace]' started.
+Test Case '-[Rev28CoreTests.OcrEngineTests testQuadIsInCapturePixelSpace]' passed (0.070 seconds).
+Test Case '-[Rev28CoreTests.OcrEngineTests testRecognizesCountIdentity]' started.
+Test Case '-[Rev28CoreTests.OcrEngineTests testRecognizesCountIdentity]' passed (0.105 seconds).
+Test Case '-[Rev28CoreTests.OcrEngineTests testRecognizesMenuRowIdentity]' started.
+Test Case '-[Rev28CoreTests.OcrEngineTests testRecognizesMenuRowIdentity]' passed (0.103 seconds).
+Test Suite 'OcrEngineTests' passed at 2026-09-29 05:23:06.709.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.744 (0.745) seconds
+Test Suite 'OneShotAuthorizationTests' started at 2026-09-29 05:23:06.709.
+Test Case '-[Rev28CoreTests.OneShotAuthorizationTests testConsumedMarkerKeepsPreflightObserveOnly]' started.
+Test Case '-[Rev28CoreTests.OneShotAuthorizationTests testConsumedMarkerKeepsPreflightObserveOnly]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.OneShotAuthorizationTests testInspectNeverCreatesOrConsumesTheAuthorization]' started.
+Test Case '-[Rev28CoreTests.OneShotAuthorizationTests testInspectNeverCreatesOrConsumesTheAuthorization]' passed (0.000 seconds).
+Test Suite 'OneShotAuthorizationTests' passed at 2026-09-29 05:23:06.711.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'PersistentTransactionOwnerTests' started at 2026-09-29 05:23:06.711.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationBindsAcceptedContentContract]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationBindsAcceptedContentContract]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationIsImmutableAndConfirmationRequiresVerifiedChooser]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationIsImmutableAndConfirmationRequiresVerifiedChooser]' passed (0.021 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testProductionCheckpointIsRequiredAndDetectsRollback]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testProductionCheckpointIsRequiredAndDetectsRollback]' passed (0.017 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testRestartAfterSaveAllIntentCannotRearmOrDispatch]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testRestartAfterSaveAllIntentCannotRearmOrDispatch]' passed (0.016 seconds).
+Test Suite 'PersistentTransactionOwnerTests' passed at 2026-09-29 05:23:06.766.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.055 (0.055) seconds
+Test Suite 'PostconditionMonitorTests' started at 2026-09-29 05:23:06.766.
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testAffirmationBeforeHardCapIsVerified]' started.
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testAffirmationBeforeHardCapIsVerified]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testLateForensicAffirmationIsNamedAfterWindow]' started.
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testLateForensicAffirmationIsNamedAfterWindow]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testNoChooserProducesTimeoutAfterSingleForensicSample]' started.
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testNoChooserProducesTimeoutAfterSingleForensicSample]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testSamplerThatReturnsAffirmationAfterHardCapIsClassifiedLate]' started.
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testSamplerThatReturnsAffirmationAfterHardCapIsClassifiedLate]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testStrictMonitorDistinguishesObserverFailureAndTripwireAbort]' started.
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testStrictMonitorDistinguishesObserverFailureAndTripwireAbort]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testStrictMonitorNamesSingleLateForensicAffirmation]' started.
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testStrictMonitorNamesSingleLateForensicAffirmation]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testStrictMonitorReturnsAtDeadlineWhenSamplerStalls]' started.
+Test Case '-[Rev28CoreTests.PostconditionMonitorTests testStrictMonitorReturnsAtDeadlineWhenSamplerStalls]' passed (0.043 seconds).
+Test Suite 'PostconditionMonitorTests' passed at 2026-09-29 05:23:06.810.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.044 (0.044) seconds
+Test Suite 'StagingVerifierTests' started at 2026-09-29 05:23:06.810.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRecomputesReferenceAndNameInclusiveTripwire]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRecomputesReferenceAndNameInclusiveTripwire]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRejectsSymlinkExtra]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRejectsSymlinkExtra]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testContentMismatchHasDedicatedOutcome]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testContentMismatchHasDedicatedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testDuplicateHashHasDedicatedOutcome]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testDuplicateHashHasDedicatedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testEqualTailSpanIsMeasuredAfterLastChange]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testEqualTailSpanIsMeasuredAfterLastChange]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testExactContentPredicateConfirmsDuplicate]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testExactContentPredicateConfirmsDuplicate]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testFourthFileIsExtraFiles]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testFourthFileIsExtraFiles]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testLongEqualTailAfterOlderDifferentSampleIsStable]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testLongEqualTailAfterOlderDifferentSampleIsStable]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testRecentModificationIsNotQuiescent]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testRecentModificationIsNotQuiescent]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesDirectoriesAndSymlinksAndRefusesConfirmation]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesDirectoriesAndSymlinksAndRefusesConfirmation]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesHiddenFilesAndTheyCannotConfirmContent]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesHiddenFilesAndTheyCannotConfirmContent]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testStabilityRequiresThreeEqualSamplesSpanAndQuiescence]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testStabilityRequiresThreeEqualSamplesSpanAndQuiescence]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSubdirectoryIsExtraFiles]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSubdirectoryIsExtraFiles]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUndecodableIsIncomplete]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUndecodableIsIncomplete]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUnstableSamplesReturnNamedOutcome]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUnstableSamplesReturnNamedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testZeroByteAndPartialAreIncomplete]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testZeroByteAndPartialAreIncomplete]' passed (0.000 seconds).
+Test Suite 'StagingVerifierTests' passed at 2026-09-29 05:23:06.817.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.007 (0.007) seconds
+Test Suite 'StructuralLocatorsTests' started at 2026-09-29 05:23:06.817.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardDuplicateCountRefusesAmbiguity]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardDuplicateCountRefusesAmbiguity]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsCrossPairedTitleAndCountAcrossCards]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsCrossPairedTitleAndCountAcrossCards]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsTwoVerifiedCardsAsAmbiguous]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsTwoVerifiedCardsAsAmbiguous]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRequiresExactUniqueTitleAndCount]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRequiresExactUniqueTitleAndCount]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumDetailRejectsWrongZhenGlyph]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumDetailRejectsWrongZhenGlyph]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotBeReusedAcrossEpoch]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotBeReusedAcrossEpoch]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotSurviveProcessRestartOrPIDReuse]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotSurviveProcessRestartOrPIDReuse]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllDuplicateTargetFailsClosed]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllDuplicateTargetFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllRequiresFullReferenceStructure]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllRequiresFullReferenceStructure]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllWrongNeighborRowFailsClosed]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllWrongNeighborRowFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsCrossCardCount]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsCrossCardCount]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsUnsupportedShortEndShape]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsUnsupportedShortEndShape]' passed (0.000 seconds).
+Test Suite 'StructuralLocatorsTests' passed at 2026-09-29 05:23:06.819.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'WindowIdentityTests' started at 2026-09-29 05:23:06.819.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testBundleMismatchInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testBundleMismatchInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testDefaultConfigurationsAreExplicit]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testDefaultConfigurationsAreExplicit]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFrameMovementBeyondToleranceInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFrameMovementBeyondToleranceInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFrameMovementWithinToleranceStaysValid]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFrameMovementWithinToleranceStaysValid]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFreshIdentityHasNoViolations]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testFreshIdentityHasNoViolations]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testIsFreshConvenienceMatchesViolations]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testIsFreshConvenienceMatchesViolations]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testNonZeroLayerInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testNonZeroLayerInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testOffscreenInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testOffscreenInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testPidReuseRejectedByStartTime]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testPidReuseRejectedByStartTime]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testStaleEpochInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testStaleEpochInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testStaleWindowIDInvalidates]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testStaleWindowIDInvalidates]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.WindowIdentityTests testUnionBBoxUsesAllIncludedWindows]' started.
+Test Case '-[Rev28CoreTests.WindowIdentityTests testUnionBBoxUsesAllIncludedWindows]' passed (0.000 seconds).
+Test Suite 'WindowIdentityTests' passed at 2026-09-29 05:23:06.820.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 05:23:06.820.
+	 Executed 135 tests, with 0 failures (0 unexpected) in 1.099 (1.104) seconds
+Test Suite 'All tests' passed at 2026-09-29 05:23:06.820.
+	 Executed 135 tests, with 0 failures (0 unexpected) in 1.099 (1.105) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
