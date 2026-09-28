@@ -13,7 +13,7 @@ permissions:
   copilot-requests: write
 
 concurrency:
-  group: rev28-v09-autofix
+  group: rev28-v09-autofix-v2
   cancel-in-progress: true
 
 jobs:
