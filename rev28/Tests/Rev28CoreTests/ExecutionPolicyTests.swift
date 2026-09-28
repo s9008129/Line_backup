@@ -46,4 +46,24 @@ final class ExecutionPolicyTests: XCTestCase {
         try budget.recordCandidateRevalidation(false)
         XCTAssertEqual(budget.consecutiveCandidateRevalidationFailures, 1)
     }
+
+    func testExhaustedBudgetsAreVisibleInTheDerivedView() throws {
+        var reversible = LiveDispatchBudget()
+        for _ in 0..<LiveDispatchBudget.reversibleCeiling { try reversible.consumeReversible() }
+        XCTAssertTrue(reversible.isExhausted)
+
+        var blocker = LiveDispatchBudget()
+        for _ in 0..<LiveDispatchBudget.perIdenticalBlockerCeiling {
+            try blocker.consumeReversible(blockerKey: "same")
+        }
+        XCTAssertTrue(blocker.isExhausted)
+
+        var revalidation = LiveDispatchBudget()
+        try revalidation.recordCandidateRevalidation(false)
+        XCTAssertFalse(revalidation.isExhausted)
+        XCTAssertThrowsError(try revalidation.recordCandidateRevalidation(false))
+        XCTAssertTrue(revalidation.isExhausted)
+        try revalidation.recordCandidateRevalidation(true)
+        XCTAssertFalse(revalidation.isExhausted)
+    }
 }

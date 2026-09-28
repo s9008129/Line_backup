@@ -115,6 +115,7 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
     case chooserVerificationAlreadyRecorded
     case phaseBEligibilityRequired
     case phaseBEligibilityAlreadyRecorded
+    case phaseBBudgetExhausted
     case destinationConfirmationRequiresPreparedState
 
     public var description: String {
@@ -135,6 +136,7 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
         case .chooserVerificationAlreadyRecorded: return "chooserVerificationAlreadyRecorded"
         case .phaseBEligibilityRequired: return "phaseBEligibilityRequired"
         case .phaseBEligibilityAlreadyRecorded: return "phaseBEligibilityAlreadyRecorded"
+        case .phaseBBudgetExhausted: return "phaseBBudgetExhausted"
         case .destinationConfirmationRequiresPreparedState: return "destinationConfirmationRequiresPreparedState"
         }
     }
@@ -330,10 +332,20 @@ public final class PersistentTransactionOwner {
     public func recordReversibleDispatch(action: String, blockerKey: String? = nil) throws {
         stateLock.lock()
         defer { stateLock.unlock() }
-        guard reversibleDispatchCount < 12 else { throw ExecutionPolicyError.reversibleBudgetExhausted }
+        guard reversibleDispatchCount < LiveDispatchBudget.reversibleCeiling else {
+            throw ExecutionPolicyError.reversibleBudgetExhausted
+        }
         let key = blockerKey ?? action
-        guard identicalBlockerRecoveries[key, default: 0] < 3 else {
+        guard identicalBlockerRecoveries[key, default: 0] < LiveDispatchBudget.perIdenticalBlockerCeiling else {
             throw ExecutionPolicyError.identicalBlockerBudgetExhausted
+        }
+        // Plan C4 abort rule: two consecutive failed candidate revalidations
+        // durably abort. The durable counter is consulted here, at the write
+        // path every reversible primitive must pass, so no further input can
+        // be posted from an aborted run even if a caller catches the earlier
+        // refusal; only a durably recorded success resets the counter.
+        guard consecutiveCandidateRevalidationFailures < LiveDispatchBudget.consecutiveRevalidationAbortThreshold else {
+            throw ExecutionPolicyError.candidateRevalidationExhausted
         }
         try append(kind: "dispatch.reversible", payload: binding(["action": action]))
         try append(kind: "budget.blocker", payload: binding(["blockerKey": key]))
@@ -403,6 +415,13 @@ public final class PersistentTransactionOwner {
         // entitlement is touched, so no adapter caller can reserve past it.
         guard ledger.entries.contains(where: { $0.kind == "eligibility.phaseB" && isBound($0) }) else {
             throw PersistentTransactionError.phaseBEligibilityRequired
+        }
+        // Plan PHASE_B_ELIGIBILITY: "reversible/revalidation budgets not
+        // exhausted" is part of the entry conjunction. The derived durable
+        // view is consulted before the one-shot entitlement is consumed, so
+        // an exhausted ledger can never arm the entitlement.
+        guard !liveDispatchBudget.isExhausted else {
+            throw PersistentTransactionError.phaseBBudgetExhausted
         }
         do {
             try GoalSlot.consumeOneShotEntitlement(directory: goalSlotDirectory, authorization: authorization)

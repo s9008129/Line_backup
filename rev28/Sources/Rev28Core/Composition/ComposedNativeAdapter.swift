@@ -39,8 +39,9 @@ public protocol ActuationEnvironment: Sendable {
         permit: ReadinessPermit,
         binding: SurfaceBinding,
         owner: PersistentTransactionOwner,
-        action: String
-    ) throws
+        action: String,
+        postHoverRevalidation: @escaping @Sendable () async throws -> Void
+    ) async throws
 }
 
 public struct ComposedAdapterConfiguration: Sendable {
@@ -163,7 +164,7 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
                 detail: "no reversible structural candidate is available to recover this state"
             )
         }
-        try postReversibleClick(candidate: candidate, bundle: probeBundle, owner: owner, action: recoveryAction)
+        try await postReversibleClick(candidate: candidate, bundle: probeBundle, owner: owner, action: recoveryAction)
         let reVerified = try await observe(state: state, owner: owner, localization: .none)
         guard try evaluate(state: state, bundle: reVerified) else {
             throw ComposedAdapterError.stateRefused(
@@ -263,7 +264,7 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
         bundle: ObservationBundle,
         owner: PersistentTransactionOwner,
         action: String
-    ) throws {
+    ) async throws {
         guard candidate.identity != "儲存全部" else {
             throw ComposedAdapterError.recoveryRefused(
                 state: bundle.state.rawValue,
@@ -307,11 +308,23 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
             observation: observation,
             now: environment.uptime()
         )
-        try environment.postReversibleClick(
+        // Plan C5: the post-hover revalidation re-runs the fresh live
+        // observation path and requires it to still match the permit's bound
+        // candidate/window/geometry before mouseDown.
+        let revalidation: @Sendable () async throws -> Void = { [environment] in
+            let fresh = try await environment.readinessObservation(identity: bundle.window, candidate: candidate)
+            try DispatchReadinessGate.revalidateAfterHover(
+                permit: permit,
+                freshObservation: fresh,
+                now: environment.uptime()
+            )
+        }
+        try await environment.postReversibleClick(
             permit: permit,
             binding: bundle.surfaceBinding,
             owner: owner,
-            action: action
+            action: action,
+            postHoverRevalidation: revalidation
         )
     }
 

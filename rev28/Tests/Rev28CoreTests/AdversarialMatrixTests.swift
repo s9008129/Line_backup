@@ -139,19 +139,24 @@ final class AdversarialMatrixTests: XCTestCase {
     }
 
     // G05 another app occludes target
-    func testG05SeparateProcessOccluderPostsZeroEventsAtGuardedBoundary() throws {
+    func testG05SeparateProcessOccluderPostsZeroEventsAtGuardedBoundary() async throws {
         let (target, candidate, observation) = guardedFixture()
         let permit = try DispatchReadinessGate.mintPermit(identity: target, candidate: candidate, observation: observation, now: 10)
+        let owner = try transactionOwner()
         var posted = 0
         var checkedReadiness = false
-        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
-            permit: permit,
-            currentBinding: candidate.binding,
-            intent: .saveAll(try transactionOwner()),
-            sink: { _, _ in posted += 1 },
-            readinessCheck: { _, _ in checkedReadiness = true; return false },
-            now: 10
-        ))
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: candidate.binding,
+                intent: .saveAll(owner),
+                postHoverRevalidation: {},
+                sink: { _, _ in posted += 1 },
+                readinessCheck: { _, _ in checkedReadiness = true; return false },
+                now: 10
+            )
+            XCTFail("a separate-process occluder must refuse before any event")
+        } catch {}
         XCTAssertTrue(checkedReadiness)
         XCTAssertEqual(posted, 0)
     }
@@ -164,7 +169,7 @@ final class AdversarialMatrixTests: XCTestCase {
     }
 
     // G07 popup moves after detection
-    func testG07PopupMovementInvalidatesCandidateAtGuardedBoundary() throws {
+    func testG07PopupMovementInvalidatesCandidateAtGuardedBoundary() async throws {
         let candidate = StructuralCandidate(identity: "儲存全部", safeRectCapturePx: CGRect(x: 0, y: 0, width: 10, height: 10), pointCapturePx: CapturePixelPoint(x: 5, y: 5), binding: binding)
         let moved = SurfaceBinding(
             bundleID: binding.bundleID,
@@ -175,14 +180,19 @@ final class AdversarialMatrixTests: XCTestCase {
         )
         let (target, _, observation) = guardedFixture()
         let permit = try DispatchReadinessGate.mintPermit(identity: target, candidate: candidate, observation: observation, now: 10)
+        let owner = try transactionOwner()
         var posted = 0
-        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
-            permit: permit,
-            currentBinding: moved,
-            intent: .saveAll(try transactionOwner()),
-            sink: { _, _ in posted += 1 },
-            now: 10
-        ))
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: moved,
+                intent: .saveAll(owner),
+                postHoverRevalidation: {},
+                sink: { _, _ in posted += 1 },
+                now: 10
+            )
+            XCTFail("a moved popup must invalidate the candidate before any event")
+        } catch {}
         XCTAssertEqual(posted, 0)
     }
 
@@ -235,19 +245,24 @@ final class AdversarialMatrixTests: XCTestCase {
     }
 
     // G14 focus theft
-    func testG14FocusTheftPostsZeroEventsAtGuardedBoundary() throws {
+    func testG14FocusTheftPostsZeroEventsAtGuardedBoundary() async throws {
         let (target, candidate, observation) = guardedFixture()
         let permit = try DispatchReadinessGate.mintPermit(identity: target, candidate: candidate, observation: observation, now: 10)
+        let owner = try transactionOwner()
         var posted = 0
         var checkedReadiness = false
-        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
-            permit: permit,
-            currentBinding: candidate.binding,
-            intent: .saveAll(try transactionOwner()),
-            sink: { _, _ in posted += 1 },
-            readinessCheck: { _, _ in checkedReadiness = true; return false },
-            now: 10
-        ))
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: candidate.binding,
+                intent: .saveAll(owner),
+                postHoverRevalidation: {},
+                sink: { _, _ in posted += 1 },
+                readinessCheck: { _, _ in checkedReadiness = true; return false },
+                now: 10
+            )
+            XCTFail("focus theft must refuse before any event")
+        } catch {}
         XCTAssertTrue(checkedReadiness)
         XCTAssertEqual(posted, 0)
     }

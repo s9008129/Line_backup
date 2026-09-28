@@ -157,10 +157,11 @@ final class LiveExecutionEngineTests: XCTestCase {
                 observation: observation,
                 now: 10
             )
-            try GatedQuartzActuator.postClick(
+            try await GatedQuartzActuator.postClick(
                 permit: permit,
                 currentBinding: binding,
                 intent: .saveAll(owner),
+                postHoverRevalidation: {},
                 sink: { [weak self] _, _ in
                     self?.lock.lock()
                     self?.saveAllMouseEvents += 1
@@ -169,6 +170,7 @@ final class LiveExecutionEngineTests: XCTestCase {
                 readinessCheck: { _, _ in true },
                 processIdentityCheck: { _, _ in true },
                 postEventAccessCheck: { true },
+                addressedSurfaceCheck: { _, _, _ in true },
                 now: 10
             )
             return digest("save-all-dispatch")

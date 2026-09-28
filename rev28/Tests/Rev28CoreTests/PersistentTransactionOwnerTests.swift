@@ -122,6 +122,46 @@ final class PersistentTransactionOwnerTests: XCTestCase {
         }
     }
 
+    func testReserveSaveAllRefusesWhenDurableBudgetsAreExhausted() throws {
+        let (url, authorization) = try setup()
+        let owner = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))
+        try walkToSaveAllLocated(owner)
+        try EligibilityTestSupport.recordEligibility(on: owner)
+        try owner.recordCandidateRevalidation(blockerKey: "saveAll", passed: false)
+        XCTAssertThrowsError(try owner.recordCandidateRevalidation(blockerKey: "saveAll", passed: false)) {
+            XCTAssertEqual($0 as? ExecutionPolicyError, .candidateRevalidationExhausted)
+        }
+        // The plan's "reversible/revalidation budgets not exhausted" entry
+        // condition is rechecked durably: the two consecutive failures abort
+        // the run, and the refusal must leave the one-shot entitlement
+        // untouched.
+        XCTAssertThrowsError(try owner.reserveSaveAll()) {
+            XCTAssertEqual($0 as? PersistentTransactionError, .phaseBBudgetExhausted)
+        }
+        XCTAssertEqual(owner.irreversibleOperationCounts.saveAll, 0)
+        let slot = try GoalSlot.load(directory: owner.goalSlotDirectory, authorization: authorization)
+        XCTAssertEqual(slot?.entitlementConsumed, false)
+    }
+
+    func testReversibleDispatchRefusesAfterTwoConsecutiveRevalidationFailures() throws {
+        let (url, authorization) = try setup()
+        let owner = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))
+        try owner.recordCandidateRevalidation(blockerKey: "chooser.click", passed: false)
+        try owner.recordReversibleDispatch(action: "chooser.click", blockerKey: "chooser.click")
+        XCTAssertThrowsError(try owner.recordCandidateRevalidation(blockerKey: "chooser.click", passed: false)) {
+            XCTAssertEqual($0 as? ExecutionPolicyError, .candidateRevalidationExhausted)
+        }
+        // A durable abort must gate every later reversible primitive, not
+        // just the caller that observed the second failure.
+        XCTAssertThrowsError(try owner.recordReversibleDispatch(action: "chooser.click", blockerKey: "chooser.click")) {
+            XCTAssertEqual($0 as? ExecutionPolicyError, .candidateRevalidationExhausted)
+        }
+        XCTAssertEqual(owner.reversibleDispatchCount, 1)
+        try owner.recordCandidateRevalidation(blockerKey: "chooser.click", passed: true)
+        try owner.recordReversibleDispatch(action: "chooser.click", blockerKey: "chooser.click")
+        XCTAssertEqual(owner.reversibleDispatchCount, 2)
+    }
+
     func testAuthorizationBindsAcceptedContentContract() throws {
         let (_, authorization) = try setup()
         XCTAssertEqual(authorization.expectedFileCount, 57)

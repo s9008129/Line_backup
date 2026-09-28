@@ -572,6 +572,73 @@ final class ComposedAdaptersTests: XCTestCase {
         XCTAssertTrue(names.contains("filesystem-stable.json"))
     }
 
+    /// Plan C7: a tripwire collection gap or collector failure arising inside
+    /// the download window is surfaced with a terminal record, never silently
+    /// becoming a clean completion.
+    func testTripwireGapDuringDownloadRefusesWithTerminalRecord() async throws {
+        let fixture = try makeFixture(runID: "run-download-tripwire")
+        let (adapter, owner, postSave) = try await dispatchFixture(fixture)
+        postSave.stagingFiles = [
+            StagingFileRecord(
+                name: "part.partial",
+                size: 1,
+                modificationTime: 0,
+                sha256: String(repeating: "c", count: 64),
+                decodable: true
+            )
+        ]
+        postSave.postDispatchTripwireRefusal = "collector failure after dispatch"
+        do {
+            _ = try await adapter.observeDownloadInProgress(owner: owner)
+            XCTFail("a post-dispatch tripwire gap must refuse the download gate")
+        } catch let error as ComposedAdapterError {
+            guard case let .stateRefused(state, detail) = error else {
+                return XCTFail("unexpected error \(error)")
+            }
+            XCTAssertEqual(state, ExecutionState.downloadInProgress.rawValue)
+            XCTAssertTrue(detail.contains("tripwire"), detail)
+        }
+        let terminalURL = URL(fileURLWithPath: owner.authorization.evidenceRunDirectory)
+            .appendingPathComponent("download-progress-terminal.json")
+        let record = try JSONDecoder().decode(DownloadProgressRecord.self, from: Data(contentsOf: terminalURL))
+        XCTAssertEqual(record.terminal, "TRIPWIRE_ABORTED")
+    }
+
+    /// Plan C7: the completion gates re-check the tripwire before claiming
+    /// stability or content, so a late gap cannot be reported clean.
+    func testTripwireGapAtCompletionGatesRefuses() async throws {
+        let fixture = try makeFixture(runID: "run-completion-tripwire")
+        let (adapter, owner, postSave) = try await dispatchFixture(fixture)
+        postSave.stagingFiles = [
+            StagingFileRecord(
+                name: "LINE_ALBUM_1.jpg",
+                size: 1,
+                modificationTime: 0,
+                sha256: String(repeating: "d", count: 64),
+                decodable: true
+            )
+        ]
+        _ = try await adapter.observeDownloadInProgress(owner: owner)
+
+        postSave.postDispatchTripwireRefusal = "FSEvents reported kernel-dropped events"
+        do {
+            _ = try await adapter.observeFilesystemStable(owner: owner)
+            XCTFail("a tripwire gap must refuse the stability gate")
+        } catch let error as PostSaveEnvironmentError {
+            guard case .tripwireCollectionGap = error else {
+                return XCTFail("unexpected error \(error)")
+            }
+        }
+        do {
+            _ = try await adapter.verifyContent(owner: owner)
+            XCTFail("a tripwire gap must refuse the content gate")
+        } catch let error as PostSaveEnvironmentError {
+            guard case .tripwireCollectionGap = error else {
+                return XCTFail("unexpected error \(error)")
+            }
+        }
+    }
+
     func testVerifyContentConfirmsExactMultisetAndRefusesBaselineChange() async throws {
         let fixture = try makeFixture(runID: "run-content")
         let (adapter, owner, postSave) = try await dispatchFixture(fixture)

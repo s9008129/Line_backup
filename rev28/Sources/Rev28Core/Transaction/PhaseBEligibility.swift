@@ -22,8 +22,11 @@ public enum PhaseBEligibilityError: Error, Equatable, CustomStringConvertible {
     case artifactOutsideRunDirectory
     case malformedBindingHash(String)
     case predicateEvidenceUnbound(String)
+    case predicateSetMismatch(String)
     case evidenceUnavailable(String)
     case evidenceDigestMismatch(String)
+    case canonicalEvidenceMismatch(String)
+    case evidenceOutsideAllowedRoots(String)
 
     public var description: String {
         switch self {
@@ -45,10 +48,16 @@ public enum PhaseBEligibilityError: Error, Equatable, CustomStringConvertible {
             return "phaseBBindingNotAHash(\(detail))"
         case let .predicateEvidenceUnbound(identifier):
             return "phaseBPredicateEvidenceUnbound(\(identifier))"
+        case let .predicateSetMismatch(detail):
+            return "phaseBPredicateSetMismatch(\(detail))"
         case let .evidenceUnavailable(path):
             return "phaseBEvidenceUnavailable(\(path))"
         case let .evidenceDigestMismatch(detail):
             return "phaseBEvidenceDigestMismatch(\(detail))"
+        case let .canonicalEvidenceMismatch(detail):
+            return "phaseBCanonicalEvidenceMismatch(\(detail))"
+        case let .evidenceOutsideAllowedRoots(path):
+            return "phaseBEvidenceOutsideAllowedRoots(\(path))"
         }
     }
 }
@@ -72,17 +81,73 @@ public struct PhaseBEligibilityPredicate: Codable, Equatable, Sendable {
     }
 }
 
-/// The two recomputation inputs that live outside the artifact itself: the
-/// reviewed Plan bytes (anchored by the one-shot authorization's planSHA256)
-/// and the reviewed implementation source digest, recomputed from the
-/// repository root with the same digest code the authorization binds.
+/// One canonical reviewed evidence binding (exact path + SHA-256) supplied by
+/// the operator-reviewed configuration, never by the eligibility artifact.
+public struct CanonicalEvidenceBinding: Equatable, Sendable {
+    public let path: String
+    public let sha256: String
+
+    public init(path: String, sha256: String) {
+        self.path = path
+        self.sha256 = sha256
+    }
+}
+
+/// The reviewed HEAD/diff/binary triple the artifact must declare. The
+/// artifact's declaration is compared against the reviewed configuration and
+/// against live recomputed observations, so a self-declared value never arms
+/// the entitlement.
+public struct PhaseBEligibilityReviewedBuild: Codable, Equatable, Sendable {
+    public let headSHA: String
+    public let pathsDiffSHA256: String
+    public let binarySHA256: String
+
+    public init(headSHA: String, pathsDiffSHA256: String, binarySHA256: String) {
+        self.headSHA = headSHA
+        self.pathsDiffSHA256 = pathsDiffSHA256
+        self.binarySHA256 = binarySHA256
+    }
+}
+
+/// The recomputation inputs that live outside the artifact itself: the
+/// reviewed Plan bytes (anchored by the one-shot authorization's planSHA256),
+/// the reviewed implementation source digest (recomputed from the repository
+/// root with the same digest code the authorization binds) and the canonical
+/// reviewed bindings for the Stage 03 handoff, the frozen rule/predicate/
+/// fixture/provenance artifacts and every required predicate's evidence.
+/// The canonical values come from the reviewed configuration; the artifact's
+/// own declarations are compared against them and never trusted by label.
 public struct PhaseBEligibilityRecomputation: Equatable, Sendable {
     public let planURL: URL
     public let recomputedImplementationSHA256: String
+    /// Canonical reviewed HEAD/diff/binary values from the reviewed
+    /// configuration and the live recomputed observations of the same facts.
+    public let canonicalReviewedBuild: ReviewedBuildExpectations
+    public let observedReviewedBuild: ReviewedBuildObservations
+    public let canonicalHandoff: CanonicalEvidenceBinding
+    public let canonicalFrozenArtifacts: [String: CanonicalEvidenceBinding]
+    public let canonicalPredicateEvidence: [String: CanonicalEvidenceBinding]
+    /// Every declared evidence path must resolve beneath one of these roots.
+    public let allowedEvidenceRoots: [URL]
 
-    public init(planURL: URL, recomputedImplementationSHA256: String) {
+    public init(
+        planURL: URL,
+        recomputedImplementationSHA256: String,
+        canonicalReviewedBuild: ReviewedBuildExpectations,
+        observedReviewedBuild: ReviewedBuildObservations,
+        canonicalHandoff: CanonicalEvidenceBinding,
+        canonicalFrozenArtifacts: [String: CanonicalEvidenceBinding],
+        canonicalPredicateEvidence: [String: CanonicalEvidenceBinding],
+        allowedEvidenceRoots: [URL]
+    ) {
         self.planURL = planURL
         self.recomputedImplementationSHA256 = recomputedImplementationSHA256
+        self.canonicalReviewedBuild = canonicalReviewedBuild
+        self.observedReviewedBuild = observedReviewedBuild
+        self.canonicalHandoff = canonicalHandoff
+        self.canonicalFrozenArtifacts = canonicalFrozenArtifacts
+        self.canonicalPredicateEvidence = canonicalPredicateEvidence
+        self.allowedEvidenceRoots = allowedEvidenceRoots
     }
 }
 
@@ -110,12 +175,17 @@ public struct PhaseBEligibilityArtifact: Codable, Equatable, Sendable {
         "TRIPWIRE_ARMED",
         "REFUSAL_BRANCHES_DEMONSTRATED",
         "EXPLICIT_ONE_SHOT_PHASE_B_AUTHORIZATION",
+        // plan.md:257 — "reversible/revalidation budgets not exhausted". The
+        // producer must bind evidence for the durable budget state; the owner
+        // enforces the same condition at `reserveSaveAll`.
+        "REVERSIBLE_AND_REVALIDATION_BUDGETS_NOT_EXHAUSTED",
     ]
 
     public let verdict: String
     public let runID: String
     public let planSHA256: String
     public let reviewedImplementationSHA256: String
+    public let reviewedBuild: PhaseBEligibilityReviewedBuild
     public let goalIdentitySHA256: String
     public let stagingRunDirectory: String
     public let issuedAtISO8601: String
@@ -133,6 +203,7 @@ public struct PhaseBEligibilityArtifact: Codable, Equatable, Sendable {
         runID: String,
         planSHA256: String,
         reviewedImplementationSHA256: String,
+        reviewedBuild: PhaseBEligibilityReviewedBuild,
         goalIdentitySHA256: String,
         stagingRunDirectory: String,
         issuedAtISO8601: String,
@@ -146,6 +217,7 @@ public struct PhaseBEligibilityArtifact: Codable, Equatable, Sendable {
         self.runID = runID
         self.planSHA256 = planSHA256
         self.reviewedImplementationSHA256 = reviewedImplementationSHA256
+        self.reviewedBuild = reviewedBuild
         self.goalIdentitySHA256 = goalIdentitySHA256
         self.stagingRunDirectory = stagingRunDirectory
         self.issuedAtISO8601 = issuedAtISO8601
@@ -180,6 +252,11 @@ public struct PhaseBEligibilityArtifact: Codable, Equatable, Sendable {
         guard goalIdentitySHA256 == Self.goalIdentityDigest(authorization) else {
             throw PhaseBEligibilityError.bindingMismatch("goal identity digest differs from the authorization")
         }
+        guard ReviewedBuildState.isCommitHex(reviewedBuild.headSHA),
+              Self.isSHA256Hex(reviewedBuild.pathsDiffSHA256),
+              Self.isSHA256Hex(reviewedBuild.binarySHA256) else {
+            throw PhaseBEligibilityError.malformedBindingHash("reviewed HEAD/diff/binary binding is not a well-formed hash triple")
+        }
         guard !entitlementConsumed else { throw PhaseBEligibilityError.entitlementConsumed }
         guard Self.isSHA256Hex(planSHA256),
               Self.isSHA256Hex(reviewedImplementationSHA256),
@@ -203,6 +280,16 @@ public struct PhaseBEligibilityArtifact: Codable, Equatable, Sendable {
                 throw PhaseBEligibilityError.predicateEvidenceUnbound(identifier)
             }
         }
+        // The exact required predicate set: an extra predicate would carry
+        // evidence that no canonical binding covers, so it is refused rather
+        // than silently ignored.
+        let identifiers = Set(predicates.map(\.identifier))
+        guard identifiers == Set(Self.requiredPredicates),
+              predicates.count == Self.requiredPredicates.count else {
+            throw PhaseBEligibilityError.predicateSetMismatch(
+                predicates.map(\.identifier).sorted().joined(separator: ",")
+            )
+        }
     }
 
     /// Production recomputation: structural validation plus re-reading and
@@ -216,6 +303,50 @@ public struct PhaseBEligibilityArtifact: Codable, Equatable, Sendable {
         recomputation: PhaseBEligibilityRecomputation
     ) throws {
         try validate(against: authorization, entitlementConsumed: entitlementConsumed)
+        // Canonical reviewed expectations must themselves be well-formed and
+        // complete before any artifact declaration is compared against them.
+        guard Self.isSHA256Hex(recomputation.canonicalHandoff.sha256),
+              !recomputation.canonicalHandoff.path.isEmpty,
+              !recomputation.canonicalFrozenArtifacts.isEmpty,
+              recomputation.canonicalFrozenArtifacts.values.allSatisfy({ Self.isSHA256Hex($0.sha256) && !$0.path.isEmpty }),
+              Set(recomputation.canonicalPredicateEvidence.keys) == Set(Self.requiredPredicates),
+              recomputation.canonicalPredicateEvidence.values.allSatisfy({ Self.isSHA256Hex($0.sha256) && !$0.path.isEmpty }),
+              !recomputation.allowedEvidenceRoots.isEmpty else {
+            throw PhaseBEligibilityError.canonicalEvidenceMismatch("canonical reviewed expectations are missing or malformed")
+        }
+        guard ReviewedBuildState.isCommitHex(recomputation.canonicalReviewedBuild.reviewedHeadSHA),
+              Self.isSHA256Hex(recomputation.canonicalReviewedBuild.reviewedPathsDiffSHA256),
+              Self.isSHA256Hex(recomputation.canonicalReviewedBuild.reviewedBinarySHA256),
+              ReviewedBuildState.isCommitHex(recomputation.observedReviewedBuild.headSHA),
+              Self.isSHA256Hex(recomputation.observedReviewedBuild.reviewedPathsDiffSHA256),
+              Self.isSHA256Hex(recomputation.observedReviewedBuild.binarySHA256) else {
+            throw PhaseBEligibilityError.canonicalEvidenceMismatch("reviewed HEAD/diff/binary expectations are missing or malformed")
+        }
+        guard reviewedBuild.headSHA == recomputation.canonicalReviewedBuild.reviewedHeadSHA,
+              reviewedBuild.pathsDiffSHA256 == recomputation.canonicalReviewedBuild.reviewedPathsDiffSHA256,
+              reviewedBuild.binarySHA256 == recomputation.canonicalReviewedBuild.reviewedBinarySHA256 else {
+            throw PhaseBEligibilityError.canonicalEvidenceMismatch("artifact HEAD/diff/binary binding differs from the reviewed configuration")
+        }
+        guard recomputation.observedReviewedBuild.reviewedHeadIsAncestor,
+              recomputation.observedReviewedBuild.reviewedPathsDiffSHA256 == recomputation.canonicalReviewedBuild.reviewedPathsDiffSHA256,
+              recomputation.observedReviewedBuild.binarySHA256 == recomputation.canonicalReviewedBuild.reviewedBinarySHA256 else {
+            throw PhaseBEligibilityError.canonicalEvidenceMismatch("observed HEAD/diff/binary state does not match the reviewed configuration")
+        }
+        // Containment: every declared and canonical evidence path must resolve
+        // beneath one of the reviewed allowed roots, so no binding can point
+        // the gate at an arbitrary readable file.
+        try Self.requireContained(
+            paths: [handoffPath] + frozenArtifactPaths.values + predicates.map(\.evidencePath),
+            within: recomputation.allowedEvidenceRoots,
+            label: "artifact"
+        )
+        try Self.requireContained(
+            paths: [recomputation.canonicalHandoff.path]
+                + recomputation.canonicalFrozenArtifacts.values.map(\.path)
+                + recomputation.canonicalPredicateEvidence.values.map(\.path),
+            within: recomputation.allowedEvidenceRoots,
+            label: "canonical"
+        )
         let planSHA = try Self.fileSHA256(recomputation.planURL.path)
         guard planSHA == authorization.planSHA256, planSHA == planSHA256 else {
             throw PhaseBEligibilityError.evidenceDigestMismatch("reviewed plan bytes")
@@ -224,14 +355,26 @@ public struct PhaseBEligibilityArtifact: Codable, Equatable, Sendable {
               recomputation.recomputedImplementationSHA256 == reviewedImplementationSHA256 else {
             throw PhaseBEligibilityError.evidenceDigestMismatch("reviewed implementation source digest")
         }
-        guard try Self.fileSHA256(handoffPath) == handoffSHA256 else {
+        guard handoffPath == recomputation.canonicalHandoff.path,
+              handoffSHA256 == recomputation.canonicalHandoff.sha256 else {
+            throw PhaseBEligibilityError.canonicalEvidenceMismatch("stage 03 handoff binding differs from the reviewed configuration")
+        }
+        guard try Self.fileSHA256(handoffPath) == recomputation.canonicalHandoff.sha256 else {
             throw PhaseBEligibilityError.evidenceDigestMismatch("stage 03 handoff bytes")
         }
-        for (name, expected) in frozenArtifactSHA256.sorted(by: { $0.key < $1.key }) {
-            guard let path = frozenArtifactPaths[name] else {
-                throw PhaseBEligibilityError.evidenceUnavailable("frozen artifact \(name) has no bound path")
+        guard Set(frozenArtifactSHA256.keys) == Set(recomputation.canonicalFrozenArtifacts.keys) else {
+            throw PhaseBEligibilityError.canonicalEvidenceMismatch(
+                "frozen artifact name set differs from the reviewed configuration"
+            )
+        }
+        for (name, canonical) in recomputation.canonicalFrozenArtifacts.sorted(by: { $0.key < $1.key }) {
+            guard let path = frozenArtifactPaths[name], let declaredSHA = frozenArtifactSHA256[name] else {
+                throw PhaseBEligibilityError.canonicalEvidenceMismatch("frozen artifact \(name) is not bound by the artifact")
             }
-            guard try Self.fileSHA256(path) == expected else {
+            guard path == canonical.path, declaredSHA == canonical.sha256 else {
+                throw PhaseBEligibilityError.canonicalEvidenceMismatch("frozen artifact \(name) binding differs from the reviewed configuration")
+            }
+            guard try Self.fileSHA256(path) == canonical.sha256 else {
                 throw PhaseBEligibilityError.evidenceDigestMismatch("frozen artifact \(name)")
             }
         }
@@ -239,7 +382,13 @@ public struct PhaseBEligibilityArtifact: Codable, Equatable, Sendable {
             guard let predicate = predicates.first(where: { $0.identifier == identifier }) else {
                 throw PhaseBEligibilityError.missingPredicate(identifier)
             }
-            guard try Self.fileSHA256(predicate.evidencePath) == predicate.evidenceSHA256 else {
+            guard let canonical = recomputation.canonicalPredicateEvidence[identifier] else {
+                throw PhaseBEligibilityError.canonicalEvidenceMismatch("predicate \(identifier) has no canonical evidence binding")
+            }
+            guard predicate.evidencePath == canonical.path, predicate.evidenceSHA256 == canonical.sha256 else {
+                throw PhaseBEligibilityError.canonicalEvidenceMismatch("predicate \(identifier) evidence binding differs from the reviewed configuration")
+            }
+            guard try Self.fileSHA256(canonical.path) == canonical.sha256 else {
                 throw PhaseBEligibilityError.evidenceDigestMismatch("predicate evidence \(identifier)")
             }
         }
@@ -258,6 +407,21 @@ public struct PhaseBEligibilityArtifact: Codable, Equatable, Sendable {
     public static func isSHA256Hex(_ value: String) -> Bool {
         value.count == 64 && value.allSatisfy { character in
             character.isNumber || ("a"..."f").contains(character)
+        }
+    }
+
+    /// Every evidence path must resolve (after symlink resolution) beneath one
+    /// of the reviewed roots. A path that escapes every root is refused.
+    private static func requireContained(paths: [String], within roots: [URL], label: String) throws {
+        let resolvedRoots = roots.map { root -> String in
+            let path = root.resolvingSymlinksInPath().standardizedFileURL.path
+            return path.hasSuffix("/") ? path : path + "/"
+        }
+        for path in paths {
+            let resolved = URL(fileURLWithPath: path).resolvingSymlinksInPath().standardizedFileURL.path
+            guard resolvedRoots.contains(where: { resolved.hasPrefix($0) }) else {
+                throw PhaseBEligibilityError.evidenceOutsideAllowedRoots("\(label) \(path)")
+            }
         }
     }
 

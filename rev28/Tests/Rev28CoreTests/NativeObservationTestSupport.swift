@@ -266,6 +266,10 @@ final class FakeActuationEnvironment: @unchecked Sendable, ActuationEnvironment 
     var frontmost = true
     var uptimeValue: Double = 100
     var onClick: (@Sendable (String) -> Void)?
+    /// Simulates a failed post-hover revalidation from the OS seam (a fresh
+    /// observation that no longer matches the permit) so the composed path's
+    /// zero-down/up refusal can be proven.
+    var postHoverRevalidationFailure: String?
     private let lock = NSLock()
     private var posted: [String] = []
 
@@ -317,9 +321,24 @@ final class FakeActuationEnvironment: @unchecked Sendable, ActuationEnvironment 
         permit: ReadinessPermit,
         binding: SurfaceBinding,
         owner: PersistentTransactionOwner,
-        action: String
-    ) throws {
-        try owner.recordReversibleDispatch(action: action)
+        action: String,
+        postHoverRevalidation: @escaping @Sendable () async throws -> Void
+    ) async throws {
+        if let failure = postHoverRevalidationFailure {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition(failure)
+        }
+        try await GatedQuartzActuator.postClick(
+            permit: permit,
+            currentBinding: binding,
+            intent: .reversible(owner, action: action),
+            postHoverRevalidation: postHoverRevalidation,
+            sink: { _, _ in },
+            readinessCheck: { _, _ in true },
+            processIdentityCheck: { _, _ in true },
+            postEventAccessCheck: { true },
+            addressedSurfaceCheck: { _, _, _ in true },
+            now: uptimeValue
+        )
         lock.lock()
         posted.append(action)
         lock.unlock()
@@ -496,6 +515,9 @@ final class FakePostSaveEnvironment: @unchecked Sendable, PostSaveEnvironment {
     /// permit is minted from `FakeActuationEnvironment.uptimeValue`, so this
     /// must stay aligned with it or the stub would prove the expiry path.
     var readinessNow: Double = 100
+    /// Simulates a failed post-hover revalidation on the Save All path so the
+    /// composed state machine's zero-down/up refusal can be proven.
+    var postHoverRevalidationFailure: String?
 
     private(set) var saveAllClicks = 0
     private(set) var dispatchBoundaryMarks = 0
@@ -557,19 +579,25 @@ final class FakePostSaveEnvironment: @unchecked Sendable, PostSaveEnvironment {
     func dispatchSaveAllClick(
         owner: PersistentTransactionOwner,
         permit: ReadinessPermit,
-        binding: SurfaceBinding
-    ) throws {
+        binding: SurfaceBinding,
+        postHoverRevalidation: @escaping @Sendable () async throws -> Void
+    ) async throws {
         lock.lock(); saveAllClicks += 1; lock.unlock()
+        if let failure = postHoverRevalidationFailure {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition(failure)
+        }
         // Keep the production ledger semantics (durable intent + attempt before
         // dispatch) while proving the AB round posts no real event.
-        try GatedQuartzActuator.postClick(
+        try await GatedQuartzActuator.postClick(
             permit: permit,
             currentBinding: binding,
             intent: .saveAll(owner),
+            postHoverRevalidation: postHoverRevalidation,
             sink: { _, _ in },
             readinessCheck: { _, _ in true },
             processIdentityCheck: { _, _ in true },
             postEventAccessCheck: { true },
+            addressedSurfaceCheck: { _, _, _ in true },
             now: readinessNow
         )
     }

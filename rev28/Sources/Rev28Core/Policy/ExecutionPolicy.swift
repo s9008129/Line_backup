@@ -46,6 +46,15 @@ public enum ExecutionStateMachine {
 }
 
 public struct LiveDispatchBudget: Equatable, Codable, Sendable {
+    /// Reviewed ceilings (plan.md:138): one global reversible ceiling, one
+    /// durable per-identical-blocker recovery ceiling, and the threshold at
+    /// which consecutive candidate-revalidation failures abort the run. The
+    /// in-memory recorder and the derived-view exhaustion test share these
+    /// constants so a ceiling can never drift between them.
+    public static let reversibleCeiling = 12
+    public static let perIdenticalBlockerCeiling = 3
+    public static let consecutiveRevalidationAbortThreshold = 2
+
     public private(set) var reversibleDispatches = 0
     public private(set) var saveAllDispatches = 0
     public private(set) var destinationConfirmations = 0
@@ -70,11 +79,23 @@ public struct LiveDispatchBudget: Equatable, Codable, Sendable {
         self.consecutiveCandidateRevalidationFailures = consecutiveCandidateRevalidationFailures
     }
 
+    /// True when any durable budget is already at its reviewed ceiling: the
+    /// global reversible budget is spent, some identical blocker used up its
+    /// recoveries, or two consecutive candidate revalidations failed. The
+    /// owner consults this at the durable write paths (`reserveSaveAll`,
+    /// `recordReversibleDispatch`) so the plan's "reversible/revalidation
+    /// budgets not exhausted" condition is enforced, not merely derived.
+    public var isExhausted: Bool {
+        reversibleDispatches >= Self.reversibleCeiling
+            || identicalBlockerRecoveries.values.contains { $0 >= Self.perIdenticalBlockerCeiling }
+            || consecutiveCandidateRevalidationFailures >= Self.consecutiveRevalidationAbortThreshold
+    }
+
     public mutating func consumeReversible(blockerKey: String? = nil) throws {
-        guard reversibleDispatches < 12 else { throw ExecutionPolicyError.reversibleBudgetExhausted }
+        guard reversibleDispatches < Self.reversibleCeiling else { throw ExecutionPolicyError.reversibleBudgetExhausted }
         if let blockerKey {
             let count = identicalBlockerRecoveries[blockerKey, default: 0]
-            guard count < 3 else { throw ExecutionPolicyError.identicalBlockerBudgetExhausted }
+            guard count < Self.perIdenticalBlockerCeiling else { throw ExecutionPolicyError.identicalBlockerBudgetExhausted }
             identicalBlockerRecoveries[blockerKey] = count + 1
         }
         reversibleDispatches += 1
@@ -86,7 +107,7 @@ public struct LiveDispatchBudget: Equatable, Codable, Sendable {
             return
         }
         consecutiveCandidateRevalidationFailures += 1
-        if consecutiveCandidateRevalidationFailures >= 2 {
+        if consecutiveCandidateRevalidationFailures >= Self.consecutiveRevalidationAbortThreshold {
             throw ExecutionPolicyError.candidateRevalidationExhausted
         }
     }

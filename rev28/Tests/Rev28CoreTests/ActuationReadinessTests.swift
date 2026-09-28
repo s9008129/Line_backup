@@ -86,101 +86,128 @@ final class ActuationReadinessTests: XCTestCase {
         ))
     }
 
-    func testExpiredSingleUsePermitPostsZeroEvents() throws {
+    func testExpiredSingleUsePermitPostsZeroEvents() async throws {
         let (identity, candidate, _, observation) = fixture()
         let permit = try DispatchReadinessGate.mintPermit(
             identity: identity, candidate: candidate, observation: observation, now: 10
         )
         var posted = 0
-        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
-            permit: permit,
-            currentBinding: candidate.binding,
-            intent: .reversible(try transactionOwner(), action: "test"),
-            sink: { _, _ in posted += 1 },
-            now: 12
-        ))
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: candidate.binding,
+                intent: .reversible(try transactionOwner(), action: "test"),
+                postHoverRevalidation: {},
+                sink: { _, _ in posted += 1 },
+                now: 12
+            )
+            XCTFail("expired permit must refuse")
+        } catch {}
         XCTAssertEqual(posted, 0)
-        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
-            permit: permit,
-            currentBinding: candidate.binding,
-            intent: .reversible(try transactionOwner(), action: "test"),
-            sink: { _, _ in posted += 1 },
-            now: 10
-        ))
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: candidate.binding,
+                intent: .reversible(try transactionOwner(), action: "test"),
+                postHoverRevalidation: {},
+                sink: { _, _ in posted += 1 },
+                now: 10
+            )
+            XCTFail("single-use permit must refuse a second consumption")
+        } catch {}
         XCTAssertEqual(posted, 0)
     }
 
-    func testFocusTheftAfterPermitMintPostsZeroEvents() throws {
+    func testFocusTheftAfterPermitMintPostsZeroEvents() async throws {
         let (identity, candidate, _, observation) = fixture()
         let permit = try DispatchReadinessGate.mintPermit(
             identity: identity, candidate: candidate, observation: observation, now: 10
         )
         var posted = 0
         var checkedReadiness = false
-        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
-            permit: permit,
-            currentBinding: candidate.binding,
-            intent: .reversible(try transactionOwner(), action: "test"),
-            sink: { _, _ in posted += 1 },
-            readinessCheck: { _, _ in checkedReadiness = true; return false },
-            now: 10
-        ))
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: candidate.binding,
+                intent: .reversible(try transactionOwner(), action: "test"),
+                postHoverRevalidation: {},
+                sink: { _, _ in posted += 1 },
+                readinessCheck: { _, _ in checkedReadiness = true; return false },
+                now: 10
+            )
+            XCTFail("readiness loss must refuse")
+        } catch {}
         XCTAssertTrue(checkedReadiness)
         XCTAssertEqual(posted, 0)
     }
 
-    func testOcclusionAtGuardedBoundaryPostsZeroEvents() throws {
+    func testOcclusionAtGuardedBoundaryPostsZeroEvents() async throws {
         let (identity, candidate, _, observation) = fixture()
         let permit = try DispatchReadinessGate.mintPermit(
             identity: identity, candidate: candidate, observation: observation, now: 10
         )
         var posted = 0
-        var checkedReadiness = false
-        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
-            permit: permit,
-            currentBinding: candidate.binding,
-            intent: .reversible(try transactionOwner(), action: "test"),
-            sink: { _, _ in posted += 1 },
-            readinessCheck: { _, _ in checkedReadiness = true; return false },
-            now: 10
-        ))
-        XCTAssertTrue(checkedReadiness)
+        var checkedSurface = false
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: candidate.binding,
+                intent: .reversible(try transactionOwner(), action: "test"),
+                postHoverRevalidation: {},
+                sink: { _, _ in posted += 1 },
+                readinessCheck: { _, _ in true },
+                processIdentityCheck: { _, _ in true },
+                postEventAccessCheck: { true },
+                addressedSurfaceCheck: { _, _, _ in checkedSurface = true; return false },
+                now: 10
+            )
+            XCTFail("occlusion at the addressed surface must refuse before the hover")
+        } catch {}
+        XCTAssertTrue(checkedSurface)
         XCTAssertEqual(posted, 0)
     }
 
     /// Plan C5: readiness is revalidated between the hover and mouseDown. When
     /// focus is stolen in exactly that window, only the move is posted and no
-    /// click event ever reaches the sink.
-    func testFocusTheftBetweenHoverAndMouseDownPostsZeroClickEvents() throws {
+    /// click event ever reaches the sink. The failed candidate revalidation is
+    /// durably recorded in the owner (plan C4).
+    func testFocusTheftBetweenHoverAndMouseDownPostsZeroClickEvents() async throws {
         let (identity, candidate, _, observation) = fixture()
         let permit = try DispatchReadinessGate.mintPermit(
             identity: identity, candidate: candidate, observation: observation, now: 10
         )
+        let owner = try transactionOwner()
         var posted: [CGEventType] = []
         var readinessCalls = 0
-        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
-            permit: permit,
-            currentBinding: candidate.binding,
-            intent: .reversible(try transactionOwner(), action: "test"),
-            sink: { event, _ in posted.append(event.type) },
-            readinessCheck: { _, _ in
-                readinessCalls += 1
-                return readinessCalls == 1
-            },
-            processIdentityCheck: { _, _ in true },
-            postEventAccessCheck: { true },
-            now: 10
-        )) { error in
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: candidate.binding,
+                intent: .reversible(owner, action: "test"),
+                postHoverRevalidation: {},
+                sink: { event, _ in posted.append(event.type) },
+                readinessCheck: { _, _ in
+                    readinessCalls += 1
+                    return readinessCalls == 1
+                },
+                processIdentityCheck: { _, _ in true },
+                postEventAccessCheck: { true },
+                addressedSurfaceCheck: { _, _, _ in true },
+                now: 10
+            )
+            XCTFail("readiness loss after the hover must refuse")
+        } catch {
             guard case QuartzActuatorError.dispatchRefusedByPrecondition(let reason) = error else {
                 return XCTFail("unexpected \(error)")
             }
-            XCTAssertTrue(reason.contains("after the hover"), reason)
+            XCTAssertTrue(reason.contains("post-hover revalidation failed"), reason)
         }
         XCTAssertEqual(readinessCalls, 2, "readiness must be checked both before the hover and before mouseDown")
         XCTAssertEqual(posted, [.mouseMoved], "only the hover may be posted; no down/up after readiness loss")
+        XCTAssertEqual(owner.consecutiveCandidateRevalidationFailures, 1)
     }
 
-    func testStaleCandidateBindingAtGuardedBoundaryPostsZeroEvents() throws {
+    func testStaleCandidateBindingAtGuardedBoundaryPostsZeroEvents() async throws {
         let (identity, candidate, _, observation) = fixture()
         let permit = try DispatchReadinessGate.mintPermit(
             identity: identity, candidate: candidate, observation: observation, now: 10
@@ -193,13 +220,124 @@ final class ActuationReadinessTests: XCTestCase {
             frameSHA256: candidate.binding.frameSHA256
         )
         var posted = 0
-        XCTAssertThrowsError(try GatedQuartzActuator.postClick(
-            permit: permit,
-            currentBinding: staleBinding,
-            intent: .reversible(try transactionOwner(), action: "test"),
-            sink: { _, _ in posted += 1 },
-            now: 10
-        ))
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: staleBinding,
+                intent: .reversible(try transactionOwner(), action: "test"),
+                postHoverRevalidation: {},
+                sink: { _, _ in posted += 1 },
+                now: 10
+            )
+            XCTFail("stale binding must refuse")
+        } catch {}
         XCTAssertEqual(posted, 0)
+    }
+
+    /// Plan C5: a failed post-hover revalidation — the fresh live observation
+    /// no longer matches the permit's candidate/window/geometry — posts the
+    /// hover only, zero down/up, and durably records the failure.
+    func testFailedPostHoverRevalidationPostsZeroClickEventsAndRecordsFailure() async throws {
+        let (identity, candidate, _, observation) = fixture()
+        let permit = try DispatchReadinessGate.mintPermit(
+            identity: identity, candidate: candidate, observation: observation, now: 10
+        )
+        let owner = try transactionOwner()
+        var posted: [CGEventType] = []
+        var revalidationCalls = 0
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: candidate.binding,
+                intent: .reversible(owner, action: "recover-state"),
+                postHoverRevalidation: {
+                    revalidationCalls += 1
+                    throw QuartzActuatorError.dispatchRefusedByPrecondition("window geometry changed")
+                },
+                sink: { event, _ in posted.append(event.type) },
+                readinessCheck: { _, _ in true },
+                processIdentityCheck: { _, _ in true },
+                postEventAccessCheck: { true },
+                addressedSurfaceCheck: { _, _, _ in true },
+                now: 10
+            )
+            XCTFail("failed post-hover revalidation must refuse")
+        } catch {
+            guard case QuartzActuatorError.dispatchRefusedByPrecondition(let reason) = error else {
+                return XCTFail("unexpected \(error)")
+            }
+            XCTAssertTrue(reason.contains("post-hover revalidation failed"), reason)
+        }
+        XCTAssertEqual(revalidationCalls, 1, "the fresh revalidation must run exactly once, after the hover")
+        XCTAssertEqual(posted, [.mouseMoved], "no down/up may follow a failed post-hover revalidation")
+        XCTAssertEqual(owner.consecutiveCandidateRevalidationFailures, 1)
+    }
+
+    /// Plan C5: the revalidation runs between the hover and mouseDown and a
+    /// passing outcome is durably recorded, so a subsequent success resets the
+    /// consecutive-failure counter.
+    func testSuccessfulPostHoverRevalidationRunsAfterHoverAndResetsFailures() async throws {
+        let (identity, candidate, _, observation) = fixture()
+        let permit = try DispatchReadinessGate.mintPermit(
+            identity: identity, candidate: candidate, observation: observation, now: 10
+        )
+        let owner = try transactionOwner()
+        try owner.recordCandidateRevalidation(blockerKey: "recover-state", passed: false)
+        var posted: [CGEventType] = []
+        var revalidationSawMove = false
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: candidate.binding,
+                intent: .reversible(owner, action: "recover-state"),
+                postHoverRevalidation: {
+                    revalidationSawMove = posted == [.mouseMoved]
+                },
+                sink: { event, _ in posted.append(event.type) },
+                readinessCheck: { _, _ in true },
+                processIdentityCheck: { _, _ in true },
+                postEventAccessCheck: { true },
+                addressedSurfaceCheck: { _, _, _ in true },
+                now: 10
+            )
+        } catch {
+            return XCTFail("unexpected \(error)")
+        }
+        XCTAssertTrue(revalidationSawMove, "the revalidation must run after the hover and before mouseDown")
+        XCTAssertEqual(posted, [.mouseMoved, .leftMouseDown, .leftMouseUp])
+        XCTAssertEqual(owner.consecutiveCandidateRevalidationFailures, 0)
+    }
+
+    /// Plan C5: the addressed/topmost surface is revalidated again after the
+    /// hover; occlusion arriving in that window posts zero down/up.
+    func testOcclusionBetweenHoverAndMouseDownPostsZeroClickEvents() async throws {
+        let (identity, candidate, _, observation) = fixture()
+        let permit = try DispatchReadinessGate.mintPermit(
+            identity: identity, candidate: candidate, observation: observation, now: 10
+        )
+        let owner = try transactionOwner()
+        var posted: [CGEventType] = []
+        var surfaceChecks = 0
+        do {
+            try await GatedQuartzActuator.postClick(
+                permit: permit,
+                currentBinding: candidate.binding,
+                intent: .reversible(owner, action: "recover-state"),
+                postHoverRevalidation: {},
+                sink: { event, _ in posted.append(event.type) },
+                readinessCheck: { _, _ in true },
+                processIdentityCheck: { _, _ in true },
+                postEventAccessCheck: { true },
+                addressedSurfaceCheck: { _, _, _ in
+                    surfaceChecks += 1
+                    return surfaceChecks == 1
+                },
+                now: 10
+            )
+            XCTFail("occlusion after the hover must refuse")
+        } catch {}
+        XCTAssertEqual(surfaceChecks, 2, "the addressed surface must be checked before the hover and again before mouseDown")
+        XCTAssertEqual(posted, [.mouseMoved])
+        XCTAssertEqual(owner.consecutiveCandidateRevalidationFailures, 1)
     }
 }

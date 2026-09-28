@@ -40,6 +40,7 @@ final class PhaseBEligibilityTests: XCTestCase {
         runID: String? = nil,
         planSHA256: String? = nil,
         reviewedImplementationSHA256: String? = nil,
+        reviewedBuild: PhaseBEligibilityReviewedBuild? = nil,
         goalIdentitySHA256: String? = nil,
         stagingRunDirectory: String? = nil,
         predicates: [PhaseBEligibilityPredicate]? = nil
@@ -49,6 +50,11 @@ final class PhaseBEligibilityTests: XCTestCase {
             runID: runID ?? authorization.runID,
             planSHA256: planSHA256 ?? authorization.planSHA256,
             reviewedImplementationSHA256: reviewedImplementationSHA256 ?? authorization.reviewedImplementationSHA256,
+            reviewedBuild: reviewedBuild ?? PhaseBEligibilityReviewedBuild(
+                headSHA: String(repeating: "a", count: 40),
+                pathsDiffSHA256: EvidenceIO.sha256Hex(Data()),
+                binarySHA256: EvidenceIO.sha256Hex(Data("binary".utf8))
+            ),
             goalIdentitySHA256: goalIdentitySHA256 ?? PhaseBEligibilityArtifact.goalIdentityDigest(authorization),
             stagingRunDirectory: stagingRunDirectory ?? authorization.stagingRunDirectory,
             issuedAtISO8601: "2026-09-29T00:00:00.000Z",
@@ -208,7 +214,13 @@ final class PhaseBEligibilityTests: XCTestCase {
         let armed = try EligibilityTestSupport.armed(for: authorization)
         let lying = PhaseBEligibilityRecomputation(
             planURL: armed.recomputation.planURL,
-            recomputedImplementationSHA256: EvidenceIO.sha256Hex(Data("other-implementation".utf8))
+            recomputedImplementationSHA256: EvidenceIO.sha256Hex(Data("other-implementation".utf8)),
+            canonicalReviewedBuild: armed.recomputation.canonicalReviewedBuild,
+            observedReviewedBuild: armed.recomputation.observedReviewedBuild,
+            canonicalHandoff: armed.recomputation.canonicalHandoff,
+            canonicalFrozenArtifacts: armed.recomputation.canonicalFrozenArtifacts,
+            canonicalPredicateEvidence: armed.recomputation.canonicalPredicateEvidence,
+            allowedEvidenceRoots: armed.recomputation.allowedEvidenceRoots
         )
         XCTAssertThrowsError(
             try armed.artifact.validateWithRecomputedEvidence(
@@ -231,7 +243,13 @@ final class PhaseBEligibilityTests: XCTestCase {
         try Data("other-plan".utf8).write(to: otherPlan)
         let recomputation = PhaseBEligibilityRecomputation(
             planURL: otherPlan,
-            recomputedImplementationSHA256: armed.recomputation.recomputedImplementationSHA256
+            recomputedImplementationSHA256: armed.recomputation.recomputedImplementationSHA256,
+            canonicalReviewedBuild: armed.recomputation.canonicalReviewedBuild,
+            observedReviewedBuild: armed.recomputation.observedReviewedBuild,
+            canonicalHandoff: armed.recomputation.canonicalHandoff,
+            canonicalFrozenArtifacts: armed.recomputation.canonicalFrozenArtifacts,
+            canonicalPredicateEvidence: armed.recomputation.canonicalPredicateEvidence,
+            allowedEvidenceRoots: armed.recomputation.allowedEvidenceRoots
         )
         XCTAssertThrowsError(
             try armed.artifact.validateWithRecomputedEvidence(
@@ -296,6 +314,220 @@ final class PhaseBEligibilityTests: XCTestCase {
                 return XCTFail("unexpected error \(error)")
             }
             XCTAssertEqual(identifier, PhaseBEligibilityArtifact.requiredPredicates[2])
+        }
+    }
+
+    // MARK: - Canonical reviewed bindings (self-declared evidence is refused)
+
+    private func rebuilt(
+        _ artifact: PhaseBEligibilityArtifact,
+        reviewedBuild: PhaseBEligibilityReviewedBuild? = nil,
+        handoffPath: String? = nil,
+        handoffSHA256: String? = nil,
+        frozenArtifactPaths: [String: String]? = nil,
+        frozenArtifactSHA256: [String: String]? = nil
+    ) -> PhaseBEligibilityArtifact {
+        PhaseBEligibilityArtifact(
+            verdict: artifact.verdict,
+            runID: artifact.runID,
+            planSHA256: artifact.planSHA256,
+            reviewedImplementationSHA256: artifact.reviewedImplementationSHA256,
+            reviewedBuild: reviewedBuild ?? artifact.reviewedBuild,
+            goalIdentitySHA256: artifact.goalIdentitySHA256,
+            stagingRunDirectory: artifact.stagingRunDirectory,
+            issuedAtISO8601: artifact.issuedAtISO8601,
+            handoffPath: handoffPath ?? artifact.handoffPath,
+            handoffSHA256: handoffSHA256 ?? artifact.handoffSHA256,
+            frozenArtifactPaths: frozenArtifactPaths ?? artifact.frozenArtifactPaths,
+            frozenArtifactSHA256: frozenArtifactSHA256 ?? artifact.frozenArtifactSHA256,
+            predicates: artifact.predicates
+        )
+    }
+
+    /// A handoff whose declared bytes hash-consistently to a *different* file
+    /// than the canonical reviewed handoff must refuse: the artifact cannot
+    /// substitute its own self-consistent evidence.
+    func testSelfConsistentButNonCanonicalHandoffRefuses() throws {
+        let authorization = try makeAuthorization()
+        let armed = try EligibilityTestSupport.armed(for: authorization)
+        let substitute = URL(fileURLWithPath: authorization.evidenceRunDirectory)
+            .appendingPathComponent("substituted-handoff.md")
+        let bytes = Data("substituted-but-self-consistent-handoff".utf8)
+        try bytes.write(to: substitute)
+        let forged = rebuilt(
+            armed.artifact,
+            handoffPath: substitute.path,
+            handoffSHA256: EvidenceIO.sha256Hex(bytes)
+        )
+        XCTAssertThrowsError(
+            try forged.validateWithRecomputedEvidence(
+                against: authorization,
+                entitlementConsumed: false,
+                recomputation: armed.recomputation
+            )
+        ) { error in
+            guard case let .canonicalEvidenceMismatch(detail) = error as? PhaseBEligibilityError else {
+                return XCTFail("unexpected error \(error)")
+            }
+            XCTAssertTrue(detail.contains("handoff"), detail)
+        }
+    }
+
+    /// Every declared and canonical evidence path must resolve beneath the
+    /// reviewed roots; a gate pointed at an arbitrary readable file refuses.
+    func testEvidenceOutsideAllowedRootsRefuses() throws {
+        let authorization = try makeAuthorization()
+        let armed = try EligibilityTestSupport.armed(for: authorization)
+        let elsewhere = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: elsewhere, withIntermediateDirectories: true)
+        let recomputation = PhaseBEligibilityRecomputation(
+            planURL: armed.recomputation.planURL,
+            recomputedImplementationSHA256: armed.recomputation.recomputedImplementationSHA256,
+            canonicalReviewedBuild: armed.recomputation.canonicalReviewedBuild,
+            observedReviewedBuild: armed.recomputation.observedReviewedBuild,
+            canonicalHandoff: armed.recomputation.canonicalHandoff,
+            canonicalFrozenArtifacts: armed.recomputation.canonicalFrozenArtifacts,
+            canonicalPredicateEvidence: armed.recomputation.canonicalPredicateEvidence,
+            allowedEvidenceRoots: [elsewhere]
+        )
+        XCTAssertThrowsError(
+            try armed.artifact.validateWithRecomputedEvidence(
+                against: authorization,
+                entitlementConsumed: false,
+                recomputation: recomputation
+            )
+        ) { error in
+            guard case .evidenceOutsideAllowedRoots = error as? PhaseBEligibilityError else {
+                return XCTFail("unexpected error \(error)")
+            }
+        }
+    }
+
+    /// The artifact's HEAD/diff/binary declaration is compared against the
+    /// canonical reviewed configuration; a substituted triple refuses.
+    func testArtifactReviewedBuildBindingMustMatchCanonicalConfiguration() throws {
+        let authorization = try makeAuthorization()
+        let armed = try EligibilityTestSupport.armed(for: authorization)
+        let forged = rebuilt(
+            armed.artifact,
+            reviewedBuild: PhaseBEligibilityReviewedBuild(
+                headSHA: String(repeating: "b", count: 40),
+                pathsDiffSHA256: armed.artifact.reviewedBuild.pathsDiffSHA256,
+                binarySHA256: armed.artifact.reviewedBuild.binarySHA256
+            )
+        )
+        XCTAssertThrowsError(
+            try forged.validateWithRecomputedEvidence(
+                against: authorization,
+                entitlementConsumed: false,
+                recomputation: armed.recomputation
+            )
+        ) { error in
+            guard case let .canonicalEvidenceMismatch(detail) = error as? PhaseBEligibilityError else {
+                return XCTFail("unexpected error \(error)")
+            }
+            XCTAssertTrue(detail.contains("HEAD/diff/binary"), detail)
+        }
+    }
+
+    /// Live observations that do not match the reviewed values (drifted binary,
+    /// non-empty reviewed-path diff or a rewritten history) refuse even when
+    /// the artifact itself declares the canonical values.
+    func testObservedReviewedBuildDriftRefuses() throws {
+        let authorization = try makeAuthorization()
+        let armed = try EligibilityTestSupport.armed(for: authorization)
+        let base = armed.recomputation
+        let driftedBinary = PhaseBEligibilityRecomputation(
+            planURL: base.planURL,
+            recomputedImplementationSHA256: base.recomputedImplementationSHA256,
+            canonicalReviewedBuild: base.canonicalReviewedBuild,
+            observedReviewedBuild: ReviewedBuildObservations(
+                headSHA: base.observedReviewedBuild.headSHA,
+                reviewedPathsDiffSHA256: base.observedReviewedBuild.reviewedPathsDiffSHA256,
+                reviewedHeadIsAncestor: true,
+                binarySHA256: EvidenceIO.sha256Hex(Data("other-binary".utf8))
+            ),
+            canonicalHandoff: base.canonicalHandoff,
+            canonicalFrozenArtifacts: base.canonicalFrozenArtifacts,
+            canonicalPredicateEvidence: base.canonicalPredicateEvidence,
+            allowedEvidenceRoots: base.allowedEvidenceRoots
+        )
+        XCTAssertThrowsError(
+            try armed.artifact.validateWithRecomputedEvidence(
+                against: authorization,
+                entitlementConsumed: false,
+                recomputation: driftedBinary
+            )
+        ) { error in
+            guard case let .canonicalEvidenceMismatch(detail) = error as? PhaseBEligibilityError else {
+                return XCTFail("unexpected error \(error)")
+            }
+            XCTAssertTrue(detail.contains("observed"), detail)
+        }
+
+        let rewrittenHistory = PhaseBEligibilityRecomputation(
+            planURL: base.planURL,
+            recomputedImplementationSHA256: base.recomputedImplementationSHA256,
+            canonicalReviewedBuild: base.canonicalReviewedBuild,
+            observedReviewedBuild: ReviewedBuildObservations(
+                headSHA: base.observedReviewedBuild.headSHA,
+                reviewedPathsDiffSHA256: base.observedReviewedBuild.reviewedPathsDiffSHA256,
+                reviewedHeadIsAncestor: false,
+                binarySHA256: base.observedReviewedBuild.binarySHA256
+            ),
+            canonicalHandoff: base.canonicalHandoff,
+            canonicalFrozenArtifacts: base.canonicalFrozenArtifacts,
+            canonicalPredicateEvidence: base.canonicalPredicateEvidence,
+            allowedEvidenceRoots: base.allowedEvidenceRoots
+        )
+        XCTAssertThrowsError(
+            try armed.artifact.validateWithRecomputedEvidence(
+                against: authorization,
+                entitlementConsumed: false,
+                recomputation: rewrittenHistory
+            )
+        ) { error in
+            guard case let .canonicalEvidenceMismatch(detail) = error as? PhaseBEligibilityError else {
+                return XCTFail("unexpected error \(error)")
+            }
+            XCTAssertTrue(detail.contains("observed"), detail)
+        }
+    }
+
+    func testFrozenArtifactNameSetMustEqualCanonical() throws {
+        let authorization = try makeAuthorization()
+        let armed = try EligibilityTestSupport.armed(for: authorization)
+        let dropped = armed.artifact.frozenArtifactSHA256.keys.sorted()[0]
+        var paths = armed.artifact.frozenArtifactPaths
+        var hashes = armed.artifact.frozenArtifactSHA256
+        paths.removeValue(forKey: dropped)
+        hashes.removeValue(forKey: dropped)
+        let incomplete = rebuilt(armed.artifact, frozenArtifactPaths: paths, frozenArtifactSHA256: hashes)
+        XCTAssertThrowsError(
+            try incomplete.validateWithRecomputedEvidence(
+                against: authorization,
+                entitlementConsumed: false,
+                recomputation: armed.recomputation
+            )
+        ) { error in
+            guard case let .canonicalEvidenceMismatch(detail) = error as? PhaseBEligibilityError else {
+                return XCTFail("unexpected error \(error)")
+            }
+            XCTAssertTrue(detail.contains("frozen artifact name set"), detail)
+        }
+    }
+
+    func testExtraPredicateRefuses() throws {
+        let authorization = try makeAuthorization()
+        let extra = artifact(
+            for: authorization,
+            predicates: PhaseBEligibilityArtifact.requiredPredicates.map { predicate($0) }
+                + [predicate("EXTRA_UNAUTHORIZED_PREDICATE")]
+        )
+        XCTAssertThrowsError(try extra.validate(against: authorization, entitlementConsumed: false)) { error in
+            guard case .predicateSetMismatch = error as? PhaseBEligibilityError else {
+                return XCTFail("unexpected error \(error)")
+            }
         }
     }
 }

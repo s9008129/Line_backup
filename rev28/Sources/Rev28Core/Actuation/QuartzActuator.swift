@@ -263,17 +263,29 @@ public final class ReadinessPermit: @unchecked Sendable {
     fileprivate let windowID: UInt32
     fileprivate let candidateIdentity: String
     fileprivate let binding: SurfaceBinding
+    /// Plan C5: the exact geometry/candidate facts the permit was minted from,
+    /// retained so the post-hover revalidation can prove the fresh live facts
+    /// still match this permit instead of re-trusting the caller.
+    fileprivate let windowFrame: CGRect
+    fileprivate let capturePoint: CapturePixelPoint
+    fileprivate let safeRectCapturePx: CGRect
+    fileprivate let captureImageSize: CGSize
     fileprivate let mintedAt: Double
     private let lock = NSLock()
     private var consumed = false
 
     fileprivate init(screenPoint: ScreenPoint, targetPID: Int32, windowID: UInt32, candidateIdentity: String,
-                     binding: SurfaceBinding, mintedAt: Double) {
+                     binding: SurfaceBinding, windowFrame: CGRect, capturePoint: CapturePixelPoint,
+                     safeRectCapturePx: CGRect, captureImageSize: CGSize, mintedAt: Double) {
         self.screenPoint = screenPoint
         self.targetPID = targetPID
         self.windowID = windowID
         self.candidateIdentity = candidateIdentity
         self.binding = binding
+        self.windowFrame = windowFrame
+        self.capturePoint = capturePoint
+        self.safeRectCapturePx = safeRectCapturePx
+        self.captureImageSize = captureImageSize
         self.mintedAt = mintedAt
     }
 
@@ -342,8 +354,70 @@ public enum DispatchReadinessGate {
             windowID: identity.windowID,
             candidateIdentity: candidate.identity,
             binding: candidate.binding,
+            windowFrame: observation.captureGeometry.windowFrame,
+            capturePoint: point,
+            safeRectCapturePx: safe,
+            captureImageSize: observation.captureImageSize,
             mintedAt: current
         )
+    }
+
+    /// Plan C5 post-hover revalidation: re-run every mint-time freshness fact
+    /// (live capture bytes bound to the candidate, window identity/geometry,
+    /// safe candidate) against a fresh live observation and require it to
+    /// still match the exact permit that is about to click. A geometry move,
+    /// occlusion, content change or candidate drift after the hover refuses
+    /// before `mouseDown`, so no stale point is ever clicked.
+    public static func revalidateAfterHover(
+        permit: ReadinessPermit,
+        freshObservation: ReadinessObservation,
+        maxFrameDeltaPt: Double = 0.5,
+        maxPointDeltaPt: Double = 0.5,
+        now: Double = ProcessInfo.processInfo.systemUptime
+    ) throws {
+        guard freshObservation.applicationActive else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("application inactive after the hover")
+        }
+        guard freshObservation.targetFrontmost else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("target not frontmost after the hover")
+        }
+        guard freshObservation.freshWindow.windowID == permit.windowID,
+              freshObservation.freshWindow.process.pid == permit.targetPID,
+              freshObservation.freshWindow.process == permit.binding.process,
+              freshObservation.freshWindow.bundleID == permit.binding.bundleID,
+              freshObservation.freshWindow.layer == 0,
+              freshObservation.freshWindow.isOnScreen else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("live window identity changed after the hover")
+        }
+        guard freshObservation.currentBinding == permit.binding else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("structural candidate binding changed after the hover")
+        }
+        guard freshObservation.captureGeometry.scale.isFinite, freshObservation.captureGeometry.scale > 0,
+              freshObservation.captureImageSize.width > 0, freshObservation.captureImageSize.height > 0 else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("fresh capture geometry is invalid after the hover")
+        }
+        guard now >= freshObservation.observedAtUptime,
+              now - freshObservation.observedAtUptime <= 1.0 else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("fresh observation is stale after the hover")
+        }
+        let frame = freshObservation.freshWindow.frame
+        guard abs(Double(frame.minX - permit.windowFrame.minX)) <= maxFrameDeltaPt,
+              abs(Double(frame.minY - permit.windowFrame.minY)) <= maxFrameDeltaPt,
+              abs(Double(frame.width - permit.windowFrame.width)) <= maxFrameDeltaPt,
+              abs(Double(frame.height - permit.windowFrame.height)) <= maxFrameDeltaPt else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("window geometry changed after the hover")
+        }
+        guard permit.safeRectCapturePx.width > 0, permit.safeRectCapturePx.height > 0,
+              permit.safeRectCapturePx.contains(CGPoint(x: permit.capturePoint.x, y: permit.capturePoint.y)),
+              permit.safeRectCapturePx.maxX <= freshObservation.captureImageSize.width,
+              permit.safeRectCapturePx.maxY <= freshObservation.captureImageSize.height else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("safe candidate geometry changed after the hover")
+        }
+        let freshScreenPoint = freshObservation.captureGeometry.screenPoint(fromCapturePixel: permit.capturePoint)
+        guard abs(freshScreenPoint.x - permit.screenPoint.x) <= maxPointDeltaPt,
+              abs(freshScreenPoint.y - permit.screenPoint.y) <= maxPointDeltaPt else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("addressed click point moved after the hover")
+        }
     }
 }
 
@@ -355,9 +429,34 @@ public enum GatedActuationIntent {
 /// Public production boundary: no event can be posted without an immediately
 /// consumed permit. Tests inject a sink so refusal can be proven event-free.
 public enum GatedQuartzActuator {
+    /// Plan C5 live topmost-surface check: in the front-to-back on-screen
+    /// window order, the first window whose bounds contain the click point
+    /// must be the bound target window itself. Any window above the target at
+    /// that point (occlusion, a child surface, another app) refuses.
+    public static func topmostSurfaceMatchesTarget(at point: ScreenPoint, windowID: UInt32, pid: Int32) -> Bool {
+        guard let raw = CGWindowListCopyWindowInfo(
+            [.optionOnScreenOnly, .excludeDesktopElements],
+            kCGNullWindowID
+        ) as? [[String: Any]] else {
+            return false
+        }
+        for entry in raw {
+            guard let alpha = entry[kCGWindowAlpha as String] as? Double, alpha > 0 else { continue }
+            guard let boundsDictionary = entry[kCGWindowBounds as String] as? [String: Any],
+                  let bounds = CGRect(dictionaryRepresentation: boundsDictionary as CFDictionary) else { continue }
+            guard bounds.contains(point.cgPoint) else { continue }
+            let number = (entry[kCGWindowNumber as String] as? NSNumber)?.uint32Value ?? 0
+            let owner = (entry[kCGWindowOwnerPID as String] as? NSNumber)?.int32Value ?? 0
+            let layer = (entry[kCGWindowLayer as String] as? NSNumber)?.intValue ?? -1
+            return number == windowID && owner == pid && layer == 0
+        }
+        return false
+    }
+
     public static func postClick(permit: ReadinessPermit,
                                  currentBinding: SurfaceBinding,
                                  intent: GatedActuationIntent,
+                                 postHoverRevalidation: @escaping @Sendable () async throws -> Void,
                                  sink: @escaping (CGEvent, CGEventTapLocation) -> Void = { $0.post(tap: $1) },
                                  readinessCheck: @escaping (Int32, UInt32) -> Bool = { pid, windowID in
                                      guard let app = NSRunningApplication(processIdentifier: pid),
@@ -374,7 +473,10 @@ public enum GatedQuartzActuator {
                                      return true
                                  },
                                  postEventAccessCheck: @escaping () -> Bool = { CGPreflightPostEventAccess() },
-                                 now: Double = ProcessInfo.processInfo.systemUptime) throws {
+                                 addressedSurfaceCheck: @escaping (Int32, UInt32, ScreenPoint) -> Bool = { pid, windowID, point in
+                                     GatedQuartzActuator.topmostSurfaceMatchesTarget(at: point, windowID: windowID, pid: pid)
+                                 },
+                                 now: Double = ProcessInfo.processInfo.systemUptime) async throws {
         let point = try permit.consume(now: now)
         guard permit.binding == currentBinding else {
             throw QuartzActuatorError.dispatchRefusedByPrecondition("structural candidate binding is no longer current")
@@ -389,13 +491,24 @@ public enum GatedQuartzActuator {
                 throw QuartzActuatorError.dispatchRefusedByPrecondition("Save All candidate requires irreversible owner intent")
             }
         }
-        guard readinessCheck(permit.targetPID, permit.windowID) else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("live target lost foreground/window readiness")
+        // Plan C5 pre-dispatch facts: active/frontmost target, process
+        // instance, permissions and the topmost addressed surface at the
+        // screen point. The same guards run again after the hover.
+        func liveGuards() throws {
+            guard readinessCheck(permit.targetPID, permit.windowID) else {
+                throw QuartzActuatorError.dispatchRefusedByPrecondition("live target lost foreground/window readiness")
+            }
+            guard processIdentityCheck(permit.targetPID, permit.binding) else {
+                throw QuartzActuatorError.dispatchRefusedByPrecondition("target bundle or process instance changed")
+            }
+            guard postEventAccessCheck() else { throw QuartzActuatorError.postEventAccessDenied }
+            guard addressedSurfaceCheck(permit.targetPID, permit.windowID, point) else {
+                throw QuartzActuatorError.dispatchRefusedByPrecondition(
+                    "the addressed surface at the click point is not the bound target window"
+                )
+            }
         }
-        guard processIdentityCheck(permit.targetPID, permit.binding) else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("target bundle or process instance changed")
-        }
-        guard postEventAccessCheck() else { throw QuartzActuatorError.postEventAccessDenied }
+        try liveGuards()
         guard let move = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: point.cgPoint, mouseButton: .left),
               let down = CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: point.cgPoint, mouseButton: .left),
               let up = CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: point.cgPoint, mouseButton: .left) else {
@@ -409,18 +522,35 @@ public enum GatedQuartzActuator {
             try owner.markSaveAllAttempted()
         }
         sink(move, .cghidEventTap)
-        // Plan C5: readiness is revalidated after the hover and immediately
-        // before mouseDown. Focus theft in that window must consume the
-        // permit without ever posting a click to whatever is frontmost now.
-        guard readinessCheck(permit.targetPID, permit.windowID),
-              processIdentityCheck(permit.targetPID, permit.binding),
-              postEventAccessCheck() else {
+        // Plan C5: after the hover, revalidate the full fact set and the
+        // candidate — the caller's fresh live observation (window
+        // identity/geometry, frame-bound candidate, staleness) plus the live
+        // guards — before mouseDown. Any failure consumes the permit, durably
+        // records the failed candidate revalidation and posts zero down/up.
+        do {
+            try await postHoverRevalidation()
+            try liveGuards()
+        } catch {
+            Self.recordRevalidationOutcome(intent: intent, passed: false)
             throw QuartzActuatorError.dispatchRefusedByPrecondition(
-                "live target lost foreground/window readiness after the hover; mouseDown was not posted"
+                "post-hover revalidation failed; mouseDown was not posted (\(error))"
             )
         }
+        Self.recordRevalidationOutcome(intent: intent, passed: true)
         sink(down, .cghidEventTap)
         usleep(30_000)
         sink(up, .cghidEventTap)
+    }
+
+    /// Plan C4: persist every candidate-revalidation outcome in the owner's
+    /// ledger so two consecutive failures durably abort instead of living in
+    /// memory. The durable record is written before the refusal surfaces.
+    static func recordRevalidationOutcome(intent: GatedActuationIntent, passed: Bool) {
+        switch intent {
+        case let .reversible(owner, action):
+            try? owner.recordCandidateRevalidation(blockerKey: action, passed: passed)
+        case let .saveAll(owner):
+            try? owner.recordCandidateRevalidation(blockerKey: "saveAll", passed: passed)
+        }
     }
 }

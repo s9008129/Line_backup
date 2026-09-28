@@ -68,6 +68,15 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
                 let height: Double
                 var rect: CGRect { CGRect(x: x, y: y, width: width, height: height) }
             }
+            struct EligibilityBinding: Decodable {
+                let path: String
+                let sha256: String
+            }
+            struct EligibilityCanonicalBindings: Decodable {
+                let handoff: EligibilityBinding
+                let frozenArtifacts: [String: EligibilityBinding]
+                let predicateEvidence: [String: EligibilityBinding]
+            }
             let authorization: ImmutableRunAuthorization
             let targetBundleID: String
             let targetPID: Int32
@@ -87,6 +96,10 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
             let tripwireRoots: [String]
             let baselineSourcePath: String?
             let phaseBEligibilityPath: String?
+            let eligibilityCanonicalBindings: EligibilityCanonicalBindings?
+            let reviewedHeadSHA: String?
+            let reviewedPathsDiffSHA256: String?
+            let reviewedBinarySHA256: String?
             let observationBudgetNanos: UInt64?
             let goalSlotDirectory: String?
             let sessionID: String?
@@ -183,28 +196,80 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
         // Eligibility is armed only by an explicit artifact beneath this run's
         // evidence directory; a configured-but-unreadable artifact refuses the
         // command instead of silently degrading to "not armed".
+        // The canonical reviewed bindings (Stage 03 handoff, frozen rule/
+        // predicate/fixture/provenance artifacts and every required
+        // predicate's evidence) are supplied by the reviewed configuration,
+        // never by the artifact. An artifact whose declarations differ from
+        // them, or whose declared evidence escapes the reviewed roots, can
+        // never arm the entitlement.
         let phaseBEligibility: PhaseBEligibilityArtifact?
+        let phaseBEligibilityRecomputation: PhaseBEligibilityRecomputation?
         if let path = config.phaseBEligibilityPath {
-            phaseBEligibility = try PhaseBEligibilityArtifact.load(
+            guard let canonical = config.eligibilityCanonicalBindings,
+                  let reviewedHeadSHA = config.reviewedHeadSHA,
+                  let reviewedPathsDiffSHA256 = config.reviewedPathsDiffSHA256,
+                  let reviewedBinarySHA256 = config.reviewedBinarySHA256 else {
+                throw QuartzActuatorError.dispatchRefusedByPrecondition(
+                    "eligibility canonical reviewed bindings (handoff/frozen/predicate and reviewed HEAD/diff/binary) are required whenever an eligibility artifact is configured"
+                )
+            }
+            let repositoryRoot = URL(fileURLWithPath: config.repositoryRoot)
+            // The reviewed HEAD/diff/binary facts are recomputed live: the
+            // reviewed commit must be HEAD or an ancestor of it, the reviewed
+            // paths must have no diff against that commit, and the running
+            // executable must hash to the reviewed binary.
+            let executableURL = URL(fileURLWithPath: CommandLine.arguments[0])
+                .resolvingSymlinksInPath()
+                .standardizedFileURL
+            let canonicalReviewedBuild = ReviewedBuildExpectations(
+                reviewedHeadSHA: reviewedHeadSHA,
+                reviewedPathsDiffSHA256: reviewedPathsDiffSHA256,
+                reviewedBinarySHA256: reviewedBinarySHA256
+            )
+            let observedReviewedBuild = try ReviewedBuildState.observe(
+                repositoryRoot: repositoryRoot,
+                reviewedHeadSHA: reviewedHeadSHA,
+                executableURL: executableURL
+            )
+            let recomputation = PhaseBEligibilityRecomputation(
+                planURL: URL(fileURLWithPath: config.planPath),
+                recomputedImplementationSHA256: recomputedImplementationSHA256,
+                canonicalReviewedBuild: canonicalReviewedBuild,
+                observedReviewedBuild: observedReviewedBuild,
+                canonicalHandoff: CanonicalEvidenceBinding(
+                    path: canonical.handoff.path,
+                    sha256: canonical.handoff.sha256
+                ),
+                canonicalFrozenArtifacts: canonical.frozenArtifacts.mapValues {
+                    CanonicalEvidenceBinding(path: $0.path, sha256: $0.sha256)
+                },
+                canonicalPredicateEvidence: canonical.predicateEvidence.mapValues {
+                    CanonicalEvidenceBinding(path: $0.path, sha256: $0.sha256)
+                },
+                allowedEvidenceRoots: [
+                    repositoryRoot,
+                    evidenceRunDirectory,
+                ]
+            )
+            // The eligibility artifact's file-checkable evidence is recomputed
+            // here, before the artifact can reach the owner, and compared
+            // against those canonical reviewed values. A label-only or
+            // self-declared artifact refuses.
+            let artifact = try PhaseBEligibilityArtifact.load(
                 fileURL: URL(fileURLWithPath: path),
                 withinRunDirectory: evidenceRunDirectory
             )
+            try artifact.validateWithRecomputedEvidence(
+                against: auth,
+                entitlementConsumed: false,
+                recomputation: recomputation
+            )
+            phaseBEligibility = artifact
+            phaseBEligibilityRecomputation = recomputation
         } else {
             phaseBEligibility = nil
+            phaseBEligibilityRecomputation = nil
         }
-        // The eligibility artifact's file-checkable evidence is recomputed
-        // here, before the artifact can reach the owner: reviewed Plan bytes,
-        // the reviewed implementation source digest and (inside the owner)
-        // handoff/frozen/predicate evidence bytes. A label-only artifact
-        // refuses.
-        try phaseBEligibility?.validateWithRecomputedEvidence(
-            against: auth,
-            entitlementConsumed: false,
-            recomputation: PhaseBEligibilityRecomputation(
-                planURL: URL(fileURLWithPath: config.planPath),
-                recomputedImplementationSHA256: recomputedImplementationSHA256
-            )
-        )
         let postSave = try ProductionPostSaveEnvironment(
             baselineReferenceFile: URL(fileURLWithPath: config.baselineReferencePath),
             stagingRunDirectory: URL(fileURLWithPath: auth.stagingRunDirectory),
@@ -244,12 +309,7 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
             environment: ProductionActuationEnvironment(),
             postSave: postSave,
             phaseBEligibility: phaseBEligibility,
-            phaseBEligibilityRecomputation: phaseBEligibility.map { _ in
-                PhaseBEligibilityRecomputation(
-                    planURL: URL(fileURLWithPath: config.planPath),
-                    recomputedImplementationSHA256: recomputedImplementationSHA256
-                )
-            },
+            phaseBEligibilityRecomputation: phaseBEligibilityRecomputation,
             sessionID: config.sessionID ?? "live-\(auth.runID)"
         )
         switch command {

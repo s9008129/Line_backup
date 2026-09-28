@@ -229,6 +229,11 @@ public enum FolderChooserDriver {
         var settable = DarwinBoolean(false)
         if AXUIElementIsAttributeSettable(pathField, kAXValueAttribute as CFString, &settable) == .success,
            settable.boolValue {
+            // Plan C6/C6-primitives: the AX value write posts no OS event but
+            // is still an input primitive, so it is re-acquired and durably
+            // accounted under its reviewed semantic action name before the
+            // write. A non-settable field writes nothing and is never recorded.
+            try primitiveGuard.willPostPrimitive("chooser.navigate.setPathFieldValue")
             _ = AXUIElementSetAttributeValue(pathField, kAXValueAttribute as CFString, target as CFString)
         }
 

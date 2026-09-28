@@ -20,6 +20,20 @@ final class PostSaveJournalBox: @unchecked Sendable {
     private var confirmationMonotonic: Double?
     private var preDispatchContext: BoundEvidenceDigest?
 
+    private var dispatchBoundaryMonotonic: Double?
+
+    /// Plan C6: the exact Save All dispatch instant (same monotonic clock the
+    /// postcondition monitor uses). The chooser window is measured from here,
+    /// never from a later adapter invocation.
+    func recordDispatchBoundary(_ monotonic: Double) {
+        lock.lock(); dispatchBoundaryMonotonic = monotonic; lock.unlock()
+    }
+
+    var recordedDispatchBoundary: Double? {
+        lock.lock(); defer { lock.unlock() }
+        return dispatchBoundaryMonotonic
+    }
+
     func recordPreCensus(_ census: ChooserCensus) {
         lock.lock(); preCensus = census; lock.unlock()
     }
@@ -246,11 +260,27 @@ extension ComposedNativeAdapter {
             preCensusRecord,
             to: runDirectory.appendingPathComponent("chooser-pre-census-\(bundle.epoch).json")
         )
+        // Plan C5: the post-hover revalidation re-runs the fresh live
+        // observation path and requires it to still match the permit's bound
+        // candidate/window/geometry before mouseDown.
+        let revalidation: @Sendable () async throws -> Void = { [environment] in
+            let fresh = try await environment.readinessObservation(identity: bundle.window, candidate: candidate)
+            try DispatchReadinessGate.revalidateAfterHover(
+                permit: permit,
+                freshObservation: fresh,
+                now: environment.uptime()
+            )
+        }
         postSave.markDispatchBoundary()
-        try postSave.dispatchSaveAllClick(
+        // Plan C6: bind the chooser postcondition timer to this dispatch
+        // boundary, not to a later adapter invocation.
+        let dispatchBoundary = postSave.monotonicNow()
+        journalBox.recordDispatchBoundary(dispatchBoundary)
+        try await postSave.dispatchSaveAllClick(
             owner: owner,
             permit: permit,
-            binding: bundle.surfaceBinding
+            binding: bundle.surfaceBinding,
+            postHoverRevalidation: revalidation
         )
         let counts = owner.irreversibleOperationCounts
         let record = SaveAllDispatchRecord(
@@ -262,6 +292,7 @@ extension ComposedNativeAdapter {
             saveAllRecords: counts.saveAll,
             destinationRecords: counts.destinationConfirmation,
             preDispatchContextSHA256: preDispatchContextSHA256,
+            dispatchBoundaryMonotonicNanos: UInt64((dispatchBoundary * 1_000_000_000).rounded()),
             dispatchedAtISO8601: EvidenceIO.iso8601()
         )
         let data = try JSONEncoder().encode(record)
@@ -276,6 +307,15 @@ extension ComposedNativeAdapter {
             throw ComposedAdapterError.stateRefused(
                 state: "CHOOSER_VERIFIED",
                 detail: "pre-dispatch census is missing; the chooser cannot be affirmed"
+            )
+        }
+        // Plan C6: without the recorded Save All dispatch boundary the chooser
+        // window cannot be deadline-bound, so refuse instead of measuring the
+        // 15-second cap from a later invocation.
+        guard let dispatchBoundary = journalBox.recordedDispatchBoundary else {
+            throw ComposedAdapterError.stateRefused(
+                state: "CHOOSER_VERIFIED",
+                detail: "Save All dispatch boundary is not recorded; the chooser window cannot be deadline-bound"
             )
         }
         let predicate = configuration.chooserPredicate
@@ -302,6 +342,7 @@ extension ComposedNativeAdapter {
                     ))
                 }
             },
+            dispatchBoundaryMonotonic: dispatchBoundary,
             monotonicNow: { adapter.postSave.monotonicNow() },
             sleep: { seconds in await adapter.postSave.sleep(seconds: seconds) }
         )
@@ -568,6 +609,32 @@ extension ComposedNativeAdapter {
                     detail: "automatic download observation stopped at the 10-minute cap with \(record.terminal ?? "UNKNOWN")"
                 )
             }
+            // Plan C7: monitoring is maintained across the whole download
+            // window, so a collection gap or collector failure arising after
+            // the download-start observation is surfaced (with a terminal
+            // record) instead of silently becoming a clean completion.
+            do {
+                try postSave.postDispatchTripwireGate()
+            } catch {
+                let record = DownloadProgressRecord(
+                    runID: owner.authorization.runID,
+                    polls: polls,
+                    elapsedSeconds: postSave.monotonicNow() - confirmationStart,
+                    stable: false,
+                    terminal: "TRIPWIRE_ABORTED",
+                    fileCount: journalBox.snapshotsSoFar.last?.files.count ?? 0,
+                    recordedAtISO8601: EvidenceIO.iso8601()
+                )
+                let data = try JSONEncoder().encode(record)
+                try data.write(
+                    to: URL(fileURLWithPath: owner.authorization.evidenceRunDirectory)
+                        .appendingPathComponent("download-progress-terminal.json")
+                )
+                throw ComposedAdapterError.stateRefused(
+                    state: "DOWNLOAD_IN_PROGRESS",
+                    detail: "tripwire collection gap or collector failure during download observation: \(error)"
+                )
+            }
             journalBox.recordSample(try postSave.stagingSnapshot(directory: stagingDirectory))
             polls += 1
             if StagingVerifier.isStable(snapshots: journalBox.snapshotsSoFar) { break }
@@ -592,6 +659,9 @@ extension ComposedNativeAdapter {
     }
 
     public func observeFilesystemStable(owner: PersistentTransactionOwner) async throws -> String {
+        // Plan C7: the completion gates re-check the post-dispatch tripwire
+        // before claiming stability, so a late gap cannot be reported clean.
+        try postSave.postDispatchTripwireGate()
         let snapshots = journalBox.snapshotsSoFar
         guard StagingVerifier.isStable(snapshots: snapshots), let last = snapshots.last else {
             throw ComposedAdapterError.stateRefused(
@@ -615,6 +685,9 @@ extension ComposedNativeAdapter {
     }
 
     public func verifyContent(owner: PersistentTransactionOwner) async throws -> LiveContentEvidence {
+        // Plan C7: content verification is the last completion gate; a
+        // post-dispatch tripwire gap must refuse here as well.
+        try postSave.postDispatchTripwireGate()
         let snapshots = journalBox.snapshotsSoFar
         let verification = StagingVerifier.verifyStableSnapshots(snapshots)
         let baseline = try postSave.verifyBaseline()
@@ -679,6 +752,7 @@ struct SaveAllDispatchRecord: Codable {
     let saveAllRecords: Int
     let destinationRecords: Int
     let preDispatchContextSHA256: String
+    let dispatchBoundaryMonotonicNanos: UInt64?
     let dispatchedAtISO8601: String
 }
 

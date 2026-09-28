@@ -40,18 +40,25 @@ enum EligibilityTestSupport {
         ]
         var frozenPaths: [String: String] = [:]
         var frozenHashes: [String: String] = [:]
+        var canonicalFrozen: [String: CanonicalEvidenceBinding] = [:]
         for name in frozenNames {
             let url = evidenceRoot.appendingPathComponent(name)
             let bytes = Data("frozen:\(name)".utf8)
             try bytes.write(to: url)
             frozenPaths[name] = url.path
             frozenHashes[name] = EvidenceIO.sha256Hex(bytes)
+            canonicalFrozen[name] = CanonicalEvidenceBinding(path: url.path, sha256: EvidenceIO.sha256Hex(bytes))
         }
 
+        var canonicalPredicates: [String: CanonicalEvidenceBinding] = [:]
         let predicates = try PhaseBEligibilityArtifact.requiredPredicates.map { identifier -> PhaseBEligibilityPredicate in
             let url = evidenceRoot.appendingPathComponent("\(identifier).evidence.json")
             let bytes = Data("evidence:\(identifier)".utf8)
             try bytes.write(to: url)
+            canonicalPredicates[identifier] = CanonicalEvidenceBinding(
+                path: url.path,
+                sha256: EvidenceIO.sha256Hex(bytes)
+            )
             return PhaseBEligibilityPredicate(
                 identifier: identifier,
                 verdict: "PASS",
@@ -65,6 +72,11 @@ enum EligibilityTestSupport {
             runID: authorization.runID,
             planSHA256: authorization.planSHA256,
             reviewedImplementationSHA256: authorization.reviewedImplementationSHA256,
+            reviewedBuild: PhaseBEligibilityReviewedBuild(
+                headSHA: String(repeating: "a", count: 40),
+                pathsDiffSHA256: EvidenceIO.sha256Hex(Data()),
+                binarySHA256: EvidenceIO.sha256Hex(Data("binary".utf8))
+            ),
             goalIdentitySHA256: PhaseBEligibilityArtifact.goalIdentityDigest(authorization),
             stagingRunDirectory: authorization.stagingRunDirectory,
             issuedAtISO8601: issuedAtISO8601,
@@ -78,7 +90,25 @@ enum EligibilityTestSupport {
             artifact: artifact,
             recomputation: PhaseBEligibilityRecomputation(
                 planURL: planURL,
-                recomputedImplementationSHA256: authorization.reviewedImplementationSHA256
+                recomputedImplementationSHA256: authorization.reviewedImplementationSHA256,
+                canonicalReviewedBuild: ReviewedBuildExpectations(
+                    reviewedHeadSHA: String(repeating: "a", count: 40),
+                    reviewedPathsDiffSHA256: EvidenceIO.sha256Hex(Data()),
+                    reviewedBinarySHA256: EvidenceIO.sha256Hex(Data("binary".utf8))
+                ),
+                observedReviewedBuild: ReviewedBuildObservations(
+                    headSHA: String(repeating: "a", count: 40),
+                    reviewedPathsDiffSHA256: EvidenceIO.sha256Hex(Data()),
+                    reviewedHeadIsAncestor: true,
+                    binarySHA256: EvidenceIO.sha256Hex(Data("binary".utf8))
+                ),
+                canonicalHandoff: CanonicalEvidenceBinding(
+                    path: handoffURL.path,
+                    sha256: EvidenceIO.sha256Hex(Data("handoff".utf8))
+                ),
+                canonicalFrozenArtifacts: canonicalFrozen,
+                canonicalPredicateEvidence: canonicalPredicates,
+                allowedEvidenceRoots: [URL(fileURLWithPath: authorization.evidenceRunDirectory)]
             )
         )
     }

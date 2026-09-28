@@ -236,6 +236,7 @@ public enum StrictPostconditionMonitor {
     public static func run(
         bounds: PostconditionBounds = .planTime,
         sampler: @escaping @Sendable () async -> StrictPostconditionObservation,
+        dispatchBoundaryMonotonic: Double? = nil,
         monotonicNow: @escaping @Sendable () -> Double = {
             Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000.0
         },
@@ -243,7 +244,12 @@ public enum StrictPostconditionMonitor {
             try? await Task.sleep(nanoseconds: UInt64(max(0, seconds) * 1_000_000_000))
         }
     ) async -> StrictPostconditionVerdict {
-        let start = monotonicNow()
+        // Plan C6: cadence, deadline and the hard success cap are measured from
+        // the actual Save All dispatch boundary when one is supplied — never
+        // from a later adapter invocation. A boundary in the future cannot
+        // extend the window: the start is clamped to the current instant.
+        let now = monotonicNow()
+        let start = min(dispatchBoundaryMonotonic ?? now, now)
         let deadline = start + bounds.hardCapSeconds
         var sampleCount = 0
         var latestTripwire: [TripwireClassification] = []

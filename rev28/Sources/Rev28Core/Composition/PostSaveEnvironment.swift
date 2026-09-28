@@ -147,8 +147,9 @@ public protocol PostSaveEnvironment: Sendable {
     func dispatchSaveAllClick(
         owner: PersistentTransactionOwner,
         permit: ReadinessPermit,
-        binding: SurfaceBinding
-    ) throws
+        binding: SurfaceBinding,
+        postHoverRevalidation: @escaping @Sendable () async throws -> Void
+    ) async throws
     func prepareDestination(
         owner: PersistentTransactionOwner,
         pid: Int32,
@@ -349,12 +350,14 @@ public struct ProductionPostSaveEnvironment: PostSaveEnvironment {
     public func dispatchSaveAllClick(
         owner: PersistentTransactionOwner,
         permit: ReadinessPermit,
-        binding: SurfaceBinding
-    ) throws {
-        try GatedQuartzActuator.postClick(
+        binding: SurfaceBinding,
+        postHoverRevalidation: @escaping @Sendable () async throws -> Void
+    ) async throws {
+        try await GatedQuartzActuator.postClick(
             permit: permit,
             currentBinding: binding,
-            intent: .saveAll(owner)
+            intent: .saveAll(owner),
+            postHoverRevalidation: postHoverRevalidation
         )
     }
 

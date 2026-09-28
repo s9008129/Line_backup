@@ -34,12 +34,14 @@ public struct ProductionActuationEnvironment: ActuationEnvironment {
         permit: ReadinessPermit,
         binding: SurfaceBinding,
         owner: PersistentTransactionOwner,
-        action: String
-    ) throws {
-        try GatedQuartzActuator.postClick(
+        action: String,
+        postHoverRevalidation: @escaping @Sendable () async throws -> Void
+    ) async throws {
+        try await GatedQuartzActuator.postClick(
             permit: permit,
             currentBinding: binding,
-            intent: .reversible(owner, action: action)
+            intent: .reversible(owner, action: action),
+            postHoverRevalidation: postHoverRevalidation
         )
     }
 }
