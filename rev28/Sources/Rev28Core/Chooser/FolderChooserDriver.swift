@@ -220,6 +220,47 @@ public enum FolderChooserDriver {
         throw FolderChooserDriverError.destinationMismatch(requested: target, observed: observed)
     }
 
+
+    /// Production reversible destination preparation. The caller must supply the
+    /// exact chooser candidate that was affirmatively observed; this method
+    /// revalidates process instance, production predicate and foreground state
+    /// before and after navigation. It never performs the final confirmation.
+    public static func prepareDestination(
+        pid: pid_t,
+        expectedProcess: ProcessInstanceID,
+        destination: URL,
+        owner: PersistentTransactionOwner,
+        predicate: ChooserAffirmationPredicate,
+        candidate: ChooserCandidate
+    ) throws -> [String] {
+        func chooserIsFresh() -> Bool {
+            guard candidate.owner.pid == expectedProcess.pid,
+                  predicate.predicateVersion >= ChooserAffirmationEvaluator.processStableButtonSemanticsVersion,
+                  ChooserAffirmationEvaluator.evaluateProduction(candidate: candidate, predicate: predicate) == .affirmed,
+                  let process = ProcessInstanceID.current(pid: Int32(pid)),
+                  process == expectedProcess,
+                  let app = NSRunningApplication(processIdentifier: pid),
+                  app.isActive,
+                  NSWorkspace.shared.frontmostApplication?.processIdentifier == pid else {
+                return false
+            }
+            return true
+        }
+        guard chooserIsFresh() else {
+            throw FolderChooserDriverError.pathEntryFailed("chooser is not freshly bound before destination preparation")
+        }
+        try owner.recordReversibleDispatch(action: "chooser.prepareDestination")
+        let observed = try navigateToDestination(pid: pid, destination: destination)
+        guard chooserIsFresh(),
+              destinationIsReflected(pid: pid, destination: destination) else {
+            throw FolderChooserDriverError.destinationMismatch(
+                requested: destination.standardizedFileURL.path,
+                observed: observed
+            )
+        }
+        return observed
+    }
+
     /// Performs the single chosen confirmation action: `AXPress` on the
     /// unambiguous default button. Returns a description of the pressed button.
     @discardableResult
