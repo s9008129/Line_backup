@@ -81,9 +81,9 @@ public enum EllipsisPixelDetector {
                       space: colorSpace,
                       bitmapInfo: CGImageAlphaInfo.none.rawValue
                   ) else { return false }
-            // Store rows in top-left capture coordinates.
-            context.translateBy(x: 0, y: CGFloat(height))
-            context.scaleBy(x: 1, y: -1)
+            // A bitmap context already stores row 0 as the image's topmost
+            // row, and `draw` maps the image top to that row; adding a flip
+            // here would mirror every y and break top-left capture rows.
             context.interpolationQuality = .none
             context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
             return true
