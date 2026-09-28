@@ -1,0 +1,40 @@
+{
+  "task_id": "T20260925-0647-01-rev28-native-closed-loop",
+  "round": "V-09 pre-Phase-A code/rules review, attempt-01",
+  "recorded_at": "2026-09-29T06:36+0800",
+  "branch": "v43-ab/codex-rev28",
+  "head": "8cdb8e53d4ca6d164dc27ad77a2d1e0f43f46820",
+  "product_tree_unchanged_since": "0d1cdb5 (later commits touch only .agent records)",
+  "plan_sha256": "05413807f5d7c04d5fe57eb058da6da734ddef5e350a9b023bfa8f8d72f84c1b",
+  "handoff_sha256": "67fc16a638b115fef8b8e99e57ec0d6a2fc344cdd15c6eaf6a72bcdb1c227a33",
+  "implementation_digest": {
+    "sha256": "eb4415f9af8c9c01bb8ffa406740dafb77d3c08a1e6d2a05b8aa4ff95f9df6b1",
+    "files": 43,
+    "algorithm": "sha256 over sorted (relative-path + NUL + file-bytes + NUL) for every .swift under rev28/Sources/Rev28Core and rev28/Sources/rev28ctl",
+    "verified_at": "2026-09-29T06:35+0800"
+  },
+  "frozen_rule_artifacts": {
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/capture-geometry-rulebook-v1.json": "09e1cf2ae181f519f9ed47979e0286212f0b051f197ced6909a9789f2f1a62ed",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/chooser-affirmation-predicate-v2.json": "0472aa0a364711fd357f872d93c5ad7e13b393cc267dbbc6244d47a20de6f3f2",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/chooser-ax-calibration-v2.json": "13aa01a2fa5d2b2d3e52d28e17a1b421ac25e6943fda1c44a572be610ef7e569",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/capture-matrix-v1.json": "e008478201770f0496d6a252680ae2a737473c32a70db888ebd2bf4aafb7ba7b",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/tripwire-attribution-ladder-v1.json": "d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/restart-observe-only-fixture-v1.json": "146b373a93c7a1ab02041e079c95eed645a7dd46d45ef518bc4a49bc8128a93f",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/postcondition-bounds-v3.json": "c10dcb43e9da14feedaed4f9e1ef5fdbf9b6afdd96d6ee8e79b84ac45a055e84",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/postcondition-latency-observations-v3.json": "ca4beabefc1f671162cec06345cf06755a62ad77a28458ac1b03a563f640b155",
+    "evidence/20260925-rev28-native-closed-loop/harness/ci-w2-item5-freeze-provenance-v3.json": "4f6f5fdcea491503b51e279b688de123ae4e38883b9d54edd02ad794baa0b152"
+  },
+  "existing_verification_evidence": {
+    "full_suite": ".agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a21-full-suite-final-head-20260929T0635.log (202 tests / 0 failures)",
+    "adversarial": ["execution-evidence/a22-adversarial-run1-20260929T0640.log", "execution-evidence/a23-adversarial-run2-20260929T0640.log"],
+    "replay": ["execution-evidence/a24-replay-run1-20260929T0640.json", "execution-evidence/a25-replay-run2-20260929T0640.json"],
+    "provenance": "execution-evidence/a26-provenance-20260929T0631.log (status=PASS, generation v3)",
+    "cli_refusal": "execution-evidence/cli-refusal-20260929T0617/ (77/77/77/64/77, no side effects)"
+  },
+  "reviewer_contexts": [
+    "01-perception-geometry",
+    "02-timing-automation",
+    "03-transaction-history"
+  ],
+  "phase_b_status": "FORBIDDEN_AB_EVALUATION"
+}

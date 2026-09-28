@@ -1,8 +1,8 @@
 # Implement Progress — T20260925-0647-01-rev28-native-closed-loop
 
-STATE: AB_IMPLEMENTATION_COMPLETE
-STATE_NOTE: implementation as far as possible pre-Phase B; real Phase A evidence blocked by external prerequisite (LINE signed out on this Mac); Phase B forbidden; zero irreversible
-UPDATED_AT: 2026-09-29T06:35+0800
+STATE: RUNNING
+STATE_NOTE: prior AB_IMPLEMENTATION_COMPLETE claim SUPERSEDED by V-09 attempt-01 review evidence: 3 fresh independent reviewers landed 2026-09-29T06:38-06:47 with plan-conformance MAJOR findings (C3 AX-window binding, C5 intra-click revalidation, C4/C6 per-primitive + per-blocker budget persistence/enforcement, C7 post-dispatch tripwire-gap re-check, chooser predicate-v2 derivation). Repairs in progress; real Phase A evidence still blocked by external prerequisite (LINE signed out on this Mac); Phase B forbidden; zero irreversible
+UPDATED_AT: 2026-09-29T06:50+0800
 PLAN_REVISION: 4
 MODE: AB_IMPLEMENTATION_EVALUATION (Phase B forbidden; PHASE_B_STATUS=FORBIDDEN_AB_EVALUATION)
 
@@ -15,14 +15,22 @@ MODE: AB_IMPLEMENTATION_EVALUATION (Phase B forbidden; PHASE_B_STATUS=FORBIDDEN_
 - **結果：** 新增 `PhaseAEvidence.swift`（1039 行）／21 個 tests／`tripwireReadiness()` 唯讀快照／`rev28ctl` 發布路徑；focused 21 tests / 0 failures、full suite 202 tests / 0 failures；CLI refusal fixture 更新（`cli-refusal-20260929T0617`）維持 77／77／77／64／77 且無 evidence/ledger/staging 副作用；新 implementation digest `eb4415f9…f6b1`（43 swift files）。唯讀環境偵察（`phase-a-env-20260929T0626`）：TCC/SCK/Vision 在這個 terminal 的 responsible-process context 全部 OK；LINE 已登出（外部前置）。
 - **本輪補驗（A14）：** adversarial 27/27 ×2、20 個 pinned replay fixtures ×2（JSON 輸出 byte-identical，SHA `81f6da94…7261`）、v3 provenance `status=PASS`（`HarnessCalibration.swift` blob 未漂移、20 samples／max 155.19 ms）、final-HEAD full suite 202/0——V-08 與 handoff item-5 在現行樹重驗通過。
 - **這輪多知道了什麼：** (1) Phase A 報告無法被合成——缺任何一項真實 artifact 即 FAIL/UNKNOWN 並擋下 Phase B；(2) 本機執行環境本身可用（ax/screenCapture/postEvent=true、SCK 21 windows、Vision OK）；(3) 真正的下一步是外部前置（LINE 登入＋目標相簿畫面），並已把幾何與擷取面的兩個未定項寫成下一次 Phase A 必須當場驗證的問題。
-- **距離驗收有沒有更近：** YES（Phase A 工具鏈完成；primary outcome 仍 NOT_ACHIEVED；Phase B 未執行且禁止；累計 irreversible intent／attempt／dispatch = 0）
-- **下一步（依 handoff 順序）：** (1) V-09 exact-binding code/rule reviews（七個 topic＋adversarial＋Rev27 barrier supersession；需 fresh independent reviewer context，目前 NOT_RUN）；(2) 請使用者登入 LINE（QR 或電子郵件）並開好群組 旻謙允禎成長日記 的 `2024/05/13～05/17` 相簿列表（保持單一 on-screen layer-0 視窗），再用 fresh runID／fresh evidence dir 跑 `rev28ctl live-preflight`（零 irreversible、授權不消耗）以發布真實 `phase-a.json`；(3) Stage 05 independent acceptance。
+- **這輪最新（06:50）：** V-09 attempt-01 三個獨立審查報告全部落地，結果是 ISSUES_FOUND：共 8 個 MAJOR（AX 身分未綁視窗、click 過程未再驗證、per-primitive 記帳缺失、per-blocker 預算未持久化、owner reservation 未強制 state/eligibility、post-dispatch tripwire gap 未複查、chooser predicate v2 未從 frozen bytes 推導、eligibility 只做標籤檢查）＋5 個 MINOR。這些都是 plan 明文要求的行為，屬**合約內修復**（非 replan，除 eligibility 範圍問題待評估）。
+- **距離驗收有沒有更近：** 短期 NO（先前 `AB_IMPLEMENTATION_COMPLETE` 已被 V-09 證據推翻，修復完成＋複審通過前不能算 complete）；primary outcome 仍 NOT_ACHIEVED；Phase B 未執行且禁止；累計 irreversible intent／attempt／dispatch = 0
+- **下一步：** (1) 依 V-09 發現做合約內修復（小→大：GoalSlot 原子寫入→AX 視窗綁定→C5 click 內再驗證＋zero-event test→chooser predicate v2 推導→owner reservation 強制＋預算持久化→C6 per-primitive 記帳→C7 post-dispatch gap gate→menu bounds 綁定），focused＋full suite 後跑 V-09 attempt-02 複審；(2) 請使用者登入 LINE（QR 或電子郵件）並開好群組 旻謙允禎成長日記 的 `2024/05/13～05/17` 相簿列表（保持單一 on-screen layer-0 視窗），再用 fresh runID／fresh evidence dir 跑 `rev28ctl live-preflight`（零 irreversible、授權不消耗）以發布真實 `phase-a.json`；(3) Stage 05 independent acceptance。
 - **停損點：** 任一 blocker 累積 3 次 material attempts 或 2 次連續無新資訊即寫 escalation packet 並停止 substantive implementation；需要改 load-bearing 架構/acceptance semantics（例如擷取面）即 REPLAN_REQUIRED。Phase B 任何動作直接 fail closed。
 
 ## Current blocker (next up: real Phase A preflight on this Mac)
 
 ```text
-BLOCKER_FINGERPRINT:
+BLOCKER_FINGERPRINT (active, Stage 04 repairs):
+STAGE=04
+CHECK=V09_REPAIR_SET (V09_AX_IDENTITY_WINDOW_UNBOUND, V09_C5_INTRA_CLICK_REVALIDATION_MISSING, V09_C6_PER_PRIMITIVE_ACCOUNTING_MISSING, V09_C4_BUDGET_NOT_DURABLE, V09_C4_OWNER_RESERVATION_ENFORCEMENT_MISSING, V09_C7_POST_DISPATCH_GAP_UNCHECKED, V09_CHOOSER_PREDICATE_V2_NOT_DERIVED; MINORs in the V-09 section)
+SURFACE=rev28/Sources/Rev28Core (in-contract repairs; Phase B still forbidden)
+EXPECTED=all V-09 attempt-01 MAJOR findings repaired within the approved plan contract, covered by focused tests, full suite green, then V-09 attempt-02 re-review on the new implementation digest
+OBSERVED=attempt-01 reports landed 2026-09-29T06:50; no repair attempt spent yet (0/3 each); prior AB_IMPLEMENTATION_COMPLETE claim superseded
+
+BLOCKER_FINGERPRINT (next after repairs):
 STAGE=04
 CHECK=REAL_PHASE_A_PREFLIGHT_EVIDENCE_MISSING
 SURFACE=rev28ctl live-preflight (Phase A, zero irreversible)
@@ -41,11 +49,13 @@ CONSECUTIVE_NO_INFORMATION_GAIN: 0
 SAME_BLOCKER_GOAL_TURNS_AT_IMPASSE: 0
 OSCILLATION_DETECTED: NO
 NEXT_BLOCKER_ATTEMPTS_USED: 0/3 (REAL_PHASE_A_PREFLIGHT_EVIDENCE_MISSING; no preflight fired — external prerequisite LINE sign-in + target album surface is absent)
+V09_REPAIR_ATTEMPTS: 0/3 each (V09_AX_IDENTITY_WINDOW_UNBOUND, V09_C5_INTRA_CLICK_REVALIDATION_MISSING, V09_C6_PER_PRIMITIVE_ACCOUNTING_MISSING, V09_C4_BUDGET_NOT_DURABLE, V09_C4_OWNER_RESERVATION_ENFORCEMENT_MISSING, V09_C7_POST_DISPATCH_GAP_UNCHECKED, V09_CHOOSER_PREDICATE_V2_NOT_DERIVED, V09_ELIGIBILITY_LABEL_ONLY; MINOR: V09_GOALSLOT_NON_ATOMIC_WRITE, V09_MENU_BOUNDS_UNBOUND, V09_ONESHOT_MARKER_INERT, V09_ENGINE_RESUME_CONTINUATION_NARROW)
+V09_ATTEMPT_01: 3 reports landed 06:50; verdicts ISSUES_FOUND; AB_IMPLEMENTATION_COMPLETE superseded; no V-09 attempt consumed the REAL_PHASE_A_PREFLIGHT fingerprint
 ```
 
 ## Run terminal state (2026-09-29T06:35+0800)
 
-STATE: AB_IMPLEMENTATION_COMPLETE — 本輪成功條件逐項：1 approved R4 implementation（pre-Phase-B）✅ 盡可能完成；2 deterministic/regression gates（V-08／V-12／provenance）✅ 達成 handoff 要求；3 Phase A 真實證據「若可安全執行」——不可安全執行（LINE 已登出、無目標相簿畫面；開火只會在 GROUP_READY named refusal 並可能擷取私人登入畫面），未取得；4 zero irreversible ✅（dispatch 0／confirmation 0／intent 0）；5 progress.md ✅；6 convergence guard ✅（未觸發，0/3）。仍未完成（皆屬獨立步驟）：V-09 independent reviews（NOT_RUN）、真實 Phase A preflight（需使用者先登入 LINE 並開好目標相簿）、Stage 05 independent acceptance。PHASE_B_STATUS 固定 FORBIDDEN_AB_EVALUATION。
+STATE: SUPERSEDED by the V-09 attempt-01 section below (2026-09-29T06:50+0800) — recorded 2026-09-29T06:35+0800 as: AB_IMPLEMENTATION_COMPLETE — 本輪成功條件逐項：1 approved R4 implementation（pre-Phase-B）✅ 盡可能完成；2 deterministic/regression gates（V-08／V-12／provenance）✅ 達成 handoff 要求；3 Phase A 真實證據「若可安全執行」——不可安全執行（LINE 已登出、無目標相簿畫面；開火只會在 GROUP_READY named refusal 並可能擷取私人登入畫面），未取得；4 zero irreversible ✅（dispatch 0／confirmation 0／intent 0）；5 progress.md ✅；6 convergence guard ✅（未觸發，0/3）。仍未完成（皆屬獨立步驟）：V-09 independent reviews（NOT_RUN）、真實 Phase A preflight（需使用者先登入 LINE 並開好目標相簿）、Stage 05 independent acceptance。PHASE_B_STATUS 固定 FORBIDDEN_AB_EVALUATION。
 
 ## Seed reconciliation (R3/R4)
 
@@ -145,6 +155,42 @@ e93e298 chore(harness): record the final-HEAD full-suite run for the Phase A pub
 | 3 | Adversarial 套件 ×2＋20 pinned replay fixtures ×2（含 hash 驗證） | PASS | `a22`／`a23` 27/27 ×2；`a24`／`a25` `verdict=PASS` ×2 byte-identical（現行 suite 為 27 cases，為 handoff 所述 25-case 基線的超集） |
 | 4 | Common-composition failure matrix＋owner/restart matrix | PASS（suite-level、injected boundaries） | `a21` full suite 內執行 AdversarialMatrixTests（G01–G22／X01–X03）＋PersistentTransactionOwnerTests／GoalSlotTests／IntentLedgerTests／RunEpochAuthorityTests；本輪無獨立於 suites 之外的 matrix 執行 |
 | 5 | provenance py＋current-composer synthetic AppKit calibration | provenance PASS；calibration 以 frozen W2 證據＋provenance binding 覆蓋（本輪未重跑） | `a26`；`frozen/postcondition-latency-observations-v3.json`（20 timings、strict monitor、input-free）仍受 fail-closed guard 綁定 |
-| 6 | V-09 exact-binding code/rule reviews（before Phase A） | NOT_RUN | 需 fresh independent reviewer context；Phase A 前的下一個工作項 |
+| 6 | V-09 exact-binding code/rule reviews（before Phase A） | ATTEMPT-01 DONE / ISSUES_FOUND | 3 fresh reviewer contexts landed 06:50（`v09/attempt-01/`）；8 MAJOR＋5 MINOR；見下節；修復後需 attempt-02 複審 |
 | 7 | Phase A eligibility／evidence | BLOCKED（external prerequisite） | 工具鏈完成（A13）；真實 preflight 未開火：LINE 已登出、無目標相簿畫面（`phase-a-env-20260929T0626`）；0/3 attempts |
 | 8 | Conditional Phase B runtime gates／finalization | FORBIDDEN | 本輪為 A/B evaluation，Phase B 絕對禁止；零 irreversible |
+
+## V-09 pre-Phase-A reviews (attempt-01) — LANDED 2026-09-29T06:50+0800
+
+- Handoff TEST_ORDER item 6 requires V-09 exact-binding code/rules reviews before Phase A. Three fresh independent reviewer contexts (read-only; no builds/tests/git writes) ran against the frozen bindings in `v09/attempt-01/bindings.json` (HEAD `8cdb8e53`, implementation digest `eb4415f9…f6b1` 43 swift files, plan/handoff SHA-256, all frozen rule/predicate/calibration/matrix/tripwire/restart/postcondition-v3 artifacts — every reviewer recomputed these read-only, all matched). All three reports landed; this section is the authoritative Stage 04 record of their verdicts.
+- Reports (append-only; this file is the orchestrator record, reports stay immutable):
+  - `v09/attempt-01/01-perception-geometry.md` SHA-256 `1b17be4e…fc829` — **ISSUES_FOUND** (3 MAJOR, 1 MINOR)
+  - `v09/attempt-01/02-timing-automation.md` SHA-256 `ed29d011…3aeca` — **ISSUES_FOUND** (postcondition APPROVE; risk classes 4 MAJOR/1 MINOR/1 INFO; chooser 1 MAJOR/1 MINOR)
+  - `v09/attempt-01/03-transaction-history.md` SHA-256 `59eeb8ea…eea08f` — **ISSUES_FOUND** (3 MINOR, no fail-open; adversarial 27/27×2 and Rev27 barrier supersession APPROVED)
+- **Net: the earlier `AB_IMPLEMENTATION_COMPLETE` terminal claim is superseded.** V-09 attempt-01 found plan-conformance MAJORs in C3/C4/C5/C6/C7 and the chooser predicate-v2 derivation. These are behaviors `plan.md` explicitly requires, so they route to **in-contract repairs** (not replan) unless a repair exposes a genuine load-bearing conflict. Phase B remains FORBIDDEN_AB_EVALUATION; nothing in the reviews authorizes Phase B; zero irreversible counters remain 0/0/0.
+- Confirmed first-hand by the implementer (cited code re-read 2026-09-29T06:48): `ProductionObservationSource.readAXIdentity` ignores `windowID` and returns `AXDriver.windows(ofApp: pid)[0]`; `QuartzActuator.postClick` validates once before posting `move→down→up` with no revalidation between `mouseMoved` and `mouseDown`; `FolderChooserDriver.navigateToDestination` posts ⇧⌘G/⌘A/text/Return through ungated primitives with one compound budget record; `LiveDispatchBudget` has no production call sites (tests only); `GoalSlot.write` fsyncs a temp then `removeItem`+`moveItem` (two-step, non-atomic).
+
+## V-09 attempt-01 findings → Stage 04 blocker fingerprints (each starts 0/3)
+
+| Fingerprint | Class | Plan basis | Summary |
+|---|---|---|---|
+| `V09_AX_IDENTITY_WINDOW_UNBOUND` | MAJOR | C3 (`plan.md:123-131`) | Production AX identity read is not tied to the target window; validation only requires non-empty AX role. |
+| `V09_C5_INTRA_CLICK_REVALIDATION_MISSING` | MAJOR | C5 (`plan.md:152`) | No post-`mouseMoved` revalidation before `mouseDown`; focus theft between check and down still posts. No zero-event test for that window. |
+| `V09_C6_PER_PRIMITIVE_ACCOUNTING_MISSING` | MAJOR | C6 (`plan.md:162-166`) | Destination preparation posts multiple primitives with a single reversible-budget record; per-primitive reacquisition/accounting absent. |
+| `V09_C4_BUDGET_NOT_DURABLE` | MAJOR | C4 (`plan.md:136-140`) | Per-identical-blocker (≤3) and 2-consecutive-revalidation budgets not persisted/enforced in production; `LiveDispatchBudget` tests-only. |
+| `V09_C4_OWNER_RESERVATION_ENFORCEMENT_MISSING` | MAJOR | C4 (`plan.md:144-146`) | Owner reservations do not enforce `PHASE_B_ELIGIBLE` / `DESTINATION_PREPARED` + approved tripwire; adapter-level gates only. |
+| `V09_C7_POST_DISPATCH_GAP_UNCHECKED` | MAJOR | C7 (`plan.md:172-176`) | Post-dispatch FSEvents collection gaps/failures never re-checked; a clean-looking tripwire artifact can accompany dropped events. |
+| `V09_CHOOSER_PREDICATE_V2_NOT_DERIVED` | MAJOR | C6 (`plan.md:162`) | Production decodes the frozen v1-shaped predicate directly (missing `predicateVersion` → 1) and refuses v1 → chooser path unreachable; `ChooserProductionPredicate.derive` has no production call site. |
+| `V09_ELIGIBILITY_LABEL_ONLY` | MAJOR (open scope question) | handoff `:148` | Eligibility artifact validation checks verdict/labels/bindings but never recomputes evidence; no in-tree producer/recomputer exists. Repair-vs-replan assessment pending. |
+| `V09_GOALSLOT_NON_ATOMIC_WRITE` | MINOR | C4 durability | `GoalSlot.write` temp-fsync then remove+move; crash window could lose the slot (contained by ledger+checkpoint today). |
+| `V09_MENU_BOUNDS_UNBOUND` | MINOR | C3 (`plan.md:214`) | `menuBoundsCapture`/`addressableBoundsCapture` are config-supplied, not hash-bound to frozen calibration. |
+| `V09_ONESHOT_MARKER_INERT` | MINOR | C4 | `OneShotAuthorizationGate` is inspect-only with no production writer; marker semantics unresolved. |
+| `V09_ENGINE_RESUME_CONTINUATION_NARROW` | MINOR | C4 | Only `runPreflight` has the pre-intent continuation; fresh-ledger `run()` skips resume-time ledger/anchor checks. |
+| `V09_CHOOSER_PROVENANCE_QUALIFIER` | MINOR (freeze boundary) | `plan.md:248` | Frozen chooser provenance lacks the "actual LINE chooser not yet observed" qualifier (exists only at Phase A report level). Adding it = append-only re-freeze (replan), not a local edit. |
+
+- INFO-only reviewer notes (not blockers): postcondition APPROVE with 4 INFOs (harness-only 30 s late-delay exercise; guard bound-vs-recomputed max; ceil-nearest-rank median label; max latency 155.19 ms vs 150 ms fast cadence ratified in the freeze); journal always `attributableToThisRun=false` (strictly more aborting); ungated `pressDefaultButton`/`confirmWithReturnKey` helpers have no production callers today.
+
+## Next up (dependency order)
+
+1. In-contract repairs, smallest→largest: GoalSlot atomic write → AX window binding → C5 intra-click revalidation + zero-event test → chooser predicate-v2 derivation → C4 owner reservation enforcement + durable budget counters → C6 per-primitive accounting → C7 post-dispatch gap gate → menu-bounds binding → engine resume continuation; assess `V09_ELIGIBILITY_LABEL_ONLY` repair-vs-replan.
+2. Focused tests → full suite → V-09 attempt-02 re-review on the new digest.
+3. Real Phase A preflight still externally blocked (LINE sign-in + target album surface required); zero irreversible.
