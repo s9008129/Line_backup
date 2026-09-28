@@ -156,4 +156,82 @@ final class StagingVerifierTests: XCTestCase {
         addTeardownBlock { try? FileManager.default.removeItem(at: directory) }
         return directory
     }
+    func testBaselineVerifierRecomputesReferenceAndNameInclusiveTripwire() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let baseline = root.appendingPathComponent("baseline")
+        try FileManager.default.createDirectory(at: baseline, withIntermediateDirectories: true)
+        try Data("alpha".utf8).write(to: baseline.appendingPathComponent("a.jpg"))
+        try Data("beta".utf8).write(to: baseline.appendingPathComponent("b.jpg"))
+
+        let hashes = [
+            EvidenceIO.sha256Hex(Data("alpha".utf8)),
+            EvidenceIO.sha256Hex(Data("beta".utf8)),
+        ]
+        let multiset = StagingVerifier.contentMultisetDigest(hashes)
+        let lines = [
+            "a.jpg\t5\t\(hashes[0])",
+            "b.jpg\t4\t\(hashes[1])",
+        ].sorted().joined(separator: "\n") + "\n"
+        let tripwire = EvidenceIO.sha256Hex(Data(lines.utf8))
+        let referenceURL = root.appendingPathComponent("reference.json")
+        let reference = BaselineContentReference(
+            source_dir: baseline.path,
+            file_count: 2,
+            total_bytes: 9,
+            name_excluded_multiset_sha256_of_sorted_list: multiset,
+            unique_content_hashes: 2,
+            content_multiset: hashes.sorted()
+        )
+        let referenceData = try EvidenceIO.encodeJSON(reference)
+        try referenceData.write(to: referenceURL)
+
+        let result = try BaselineVerifier.verify(
+            referenceFile: referenceURL,
+            expectedReferenceFileSHA256: EvidenceIO.sha256Hex(referenceData),
+            expectedContentMultisetSHA256: multiset,
+            expectedTripwireSHA256: tripwire,
+            expectedFileCount: 2,
+            expectedTotalBytes: 9
+        )
+        XCTAssertEqual(result.fileCount, 2)
+        XCTAssertEqual(result.totalBytes, 9)
+        XCTAssertEqual(result.contentMultisetSHA256, multiset)
+        XCTAssertEqual(result.nameInclusiveTripwireSHA256, tripwire)
+    }
+
+    func testBaselineVerifierRejectsSymlinkExtra() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let baseline = root.appendingPathComponent("baseline")
+        try FileManager.default.createDirectory(at: baseline, withIntermediateDirectories: true)
+        let file = baseline.appendingPathComponent("a.jpg")
+        try Data("alpha".utf8).write(to: file)
+        try FileManager.default.createSymbolicLink(
+            at: baseline.appendingPathComponent("link.jpg"),
+            withDestinationURL: file
+        )
+        let hash = EvidenceIO.sha256Hex(Data("alpha".utf8))
+        let multiset = StagingVerifier.contentMultisetDigest([hash])
+        let line = "a.jpg\t5\t\(hash)\n"
+        let reference = BaselineContentReference(
+            source_dir: baseline.path,
+            file_count: 1,
+            total_bytes: 5,
+            name_excluded_multiset_sha256_of_sorted_list: multiset,
+            unique_content_hashes: 1,
+            content_multiset: [hash]
+        )
+        let data = try EvidenceIO.encodeJSON(reference)
+        let referenceURL = root.appendingPathComponent("reference.json")
+        try data.write(to: referenceURL)
+        XCTAssertThrowsError(try BaselineVerifier.verify(
+            referenceFile: referenceURL,
+            expectedReferenceFileSHA256: EvidenceIO.sha256Hex(data),
+            expectedContentMultisetSHA256: multiset,
+            expectedTripwireSHA256: EvidenceIO.sha256Hex(Data(line.utf8)),
+            expectedFileCount: 1,
+            expectedTotalBytes: 5
+        ))
+    }
+
+
 }
