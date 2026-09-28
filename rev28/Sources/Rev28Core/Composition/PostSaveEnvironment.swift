@@ -221,6 +221,19 @@ public struct ProductionPostSaveEnvironment: PostSaveEnvironment {
         try BaselineVerifier.verify(referenceFile: baselineReferenceFile)
     }
 
+    /// Read-only readiness snapshot of the native tripwire journal for the
+    /// Phase A report. It never drains the journal, so the pre-dispatch context
+    /// record and any later dispatch evidence still receive every fact.
+    public func tripwireReadiness() -> PhaseATripwireFacts {
+        PhaseATripwireFacts(
+            running: journal.isRunning,
+            failure: journal.failure,
+            collectionGap: journal.collectionGapDetail,
+            startedAtMonotonicNanos: journal.startedAtMonotonicNanos,
+            factCount: journal.factsSnapshot().count
+        )
+    }
+
     public func preDispatchContext(minimumSeconds: Double) async throws -> PreDispatchContextFacts {
         let waitCap = minimumSeconds + 30
         let recordedStart = journal.startedAtMonotonicNanos

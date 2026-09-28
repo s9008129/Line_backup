@@ -2,6 +2,7 @@ import Foundation
 import Rev28Core
 import AppKit
 import ApplicationServices
+import CoreGraphics
 
 // rev28ctl — the W2 harness driver (plan §SYNTHETIC_HARNESS_CALIBRATION_PLAN).
 //
@@ -121,6 +122,14 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
                     "one-shot authorization already consumed; live-preflight stays observe-only"
                 )
             }
+            // Phase A evidence is append-only per run directory: an existing
+            // report means this directory already carries a published Phase A,
+            // so a fresh Phase A needs a fresh evidence/run directory.
+            guard !PhaseAEvidencePublisher.isPublished(runDirectory: URL(fileURLWithPath: auth.evidenceRunDirectory)) else {
+                throw QuartzActuatorError.dispatchRefusedByPrecondition(
+                    "phase-a.json already published in this run directory; a fresh Phase A needs a fresh evidence/run directory"
+                )
+            }
         }
         let ruleBook = try JSONDecoder().decode(
             CaptureGeometryRuleBook.self,
@@ -211,9 +220,146 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
             let outcomeURL = URL(fileURLWithPath: auth.evidenceRunDirectory)
                 .appendingPathComponent("preflight-outcome-\(stamp).json")
             try EvidenceIO.writeJSONAtomically(record, to: outcomeURL)
+
+            // Phase A publication: a per-condition PASS/FAIL/UNKNOWN report plus
+            // a raw evidence manifest, all from the run directory this preflight
+            // just wrote. Observation-only; the actual LINE chooser stays a
+            // Phase B runtime gate and is recorded as deferred, never as PASS.
+            let runDirectory = URL(fileURLWithPath: auth.evidenceRunDirectory)
+            let inspection = try PhaseAEvidenceBuilder.inspect(runDirectory: runDirectory)
+
+            var inventory: PhaseAInventoryFacts?
+            var inventoryError: String?
+            if let target = inspection.targetWindowArtifact {
+                do {
+                    let content = try await WindowSensor.shareableContent(onScreenWindowsOnly: true)
+                    let sck = WindowSensor.snapshots(from: content)
+                    let cg = CGWindowInventory.onScreenWindows()
+                    let axWindows = AXDriver.windows(ofApp: pid_t(config.targetPID))
+                    let axFrameMatches = axWindows.contains { element in
+                        guard let frame = AXDriver.frame(of: element) else { return false }
+                        return abs(frame.origin.x - target.windowFrame.origin.x) <= 4
+                            && abs(frame.origin.y - target.windowFrame.origin.y) <= 4
+                            && abs(frame.width - target.windowFrame.width) <= 4
+                            && abs(frame.height - target.windowFrame.height) <= 4
+                    }
+                    inventory = PhaseAInventoryFacts(
+                        sckWindowCount: sck.count,
+                        cgWindowCount: cg.count,
+                        axWindowCount: axWindows.count,
+                        targetWindowID: target.windowID,
+                        targetPresentInSCK: sck.contains { $0.windowID == target.windowID },
+                        targetPresentInCG: cg.contains { $0.windowNumber == target.windowID },
+                        axFrameMatchesTarget: axFrameMatches
+                    )
+                } catch {
+                    inventoryError = String(describing: error)
+                }
+            } else {
+                inventoryError = "no SAVE_ALL_LOCATED state artifact to bind the inventory to"
+            }
+
+            let frames = inspection.states.map(\.artifact.windowFrame)
+                + (inspection.targetWindowArtifact.map { [$0.windowFrame] } ?? [])
+            let displayScales = Set(frames.compactMap {
+                FrameCaptureSupport.backingScaleFactor(forWindowFrame: $0)
+            }).sorted()
+
+            let frozenGeometry = PhaseAFrozenGeometryFacts(
+                captureConfiguration: "primaryWindow",
+                ruleID: ruleBook.ruleID,
+                settled: true,
+                activated: true,
+                includeChildWindows: false,
+                ignoreShadows: true,
+                menuBoundsCapture: config.menuBoundsCapture.rect,
+                addressableBoundsCapture: config.addressableBoundsCapture.rect
+            )
+
+            var baselineResult: BaselineVerificationResult?
+            var baselineError: String?
+            do {
+                baselineResult = try postSave.verifyBaseline()
+            } catch {
+                baselineError = String(describing: error)
+            }
+
+            var stagingSnapshot: StagingSnapshot?
+            var stagingError: String?
+            do {
+                stagingSnapshot = try postSave.stagingSnapshot(
+                    directory: URL(fileURLWithPath: auth.stagingRunDirectory)
+                )
+            } catch {
+                stagingError = String(describing: error)
+            }
+
+            let tripwire = postSave.tripwireReadiness()
+
+            var prePanelCensus: ChooserCensus?
+            var prePanelCensusArtifactName: String?
+            var prePanelCensusError: String?
+            do {
+                let census = try await postSave.preDispatchCensus()
+                let censusName = "pre-panel-census-\(stamp).json"
+                try EvidenceIO.writeJSONAtomically(census, to: runDirectory.appendingPathComponent(censusName))
+                prePanelCensus = census
+                prePanelCensusArtifactName = censusName
+            } catch {
+                prePanelCensusError = String(describing: error)
+            }
+
+            let ledger = composition.owner.ledger
+            let ownerIrreversible = composition.owner.irreversibleOperationCounts
+            let phaseAInputs = PhaseAEvidenceInputs(
+                authorization: auth,
+                targetBundleID: config.targetBundleID,
+                targetPID: config.targetPID,
+                liveProcess: PhaseAProcessFacts(
+                    bundleID: ProcessIdentity.bundleID(pid: config.targetPID),
+                    signingIdentity: ProcessIdentity.signingIdentity(pid: config.targetPID),
+                    startTimeSeconds: ProcessInstanceID.current(pid: config.targetPID)?.startTimeSeconds,
+                    startTimeMicroseconds: ProcessInstanceID.current(pid: config.targetPID)?.startTimeMicroseconds
+                ),
+                axTrusted: AXIsProcessTrusted(),
+                screenCaptureTrusted: CGPreflightScreenCaptureAccess(),
+                inventory: inventory,
+                inventoryError: inventoryError,
+                displayScales: displayScales,
+                frozenGeometry: frozenGeometry,
+                baselineResult: baselineResult,
+                baselineError: baselineError,
+                stagingSnapshot: stagingSnapshot,
+                stagingError: stagingError,
+                tripwire: tripwire,
+                tripwireError: nil,
+                prePanelCensus: prePanelCensus,
+                prePanelCensusArtifactName: prePanelCensusArtifactName,
+                prePanelCensusError: prePanelCensusError,
+                preDispatchContextSHA256: preDispatchContextSHA256,
+                ledgerCounts: PhaseALedgerCounts(
+                    saveAllIntent: ledger.count(kind: "intent.saveAll"),
+                    saveAllAttempt: ledger.count(kind: "attempt.saveAll"),
+                    destinationIntent: ledger.count(kind: "intent.destinationConfirmation"),
+                    destinationAttempt: ledger.count(kind: "attempt.destinationConfirmation"),
+                    ownerSaveAllCount: ownerIrreversible.saveAll,
+                    ownerDestinationCount: ownerIrreversible.destinationConfirmation
+                ),
+                reversibleDispatches: composition.owner.reversibleDispatchCount,
+                preflightOutcomeArtifactName: outcomeURL.lastPathComponent
+            )
+            let phaseAReport = PhaseAEvidenceBuilder.build(
+                inputs: phaseAInputs,
+                inspection: inspection,
+                generatedAtISO8601: EvidenceIO.iso8601()
+            )
+            let published = try PhaseAEvidencePublisher.publish(report: phaseAReport, runDirectory: runDirectory)
             FileHandle.standardOutput.write(Data("""
             preflight=passed runID=\(auth.runID) finalState=\(outcome.finalState.rawValue) observations=\(outcome.observationsThisRun) \
-            sessionCaptures=\(captures) irreversible=0 entitlement=unconsumed outcome=\(outcomeURL.lastPathComponent)
+            sessionCaptures=\(captures) irreversible=0 entitlement=unconsumed outcome=\(outcomeURL.lastPathComponent) \
+            phaseA=\(published.reportName) sha256=\(published.reportSHA256) manifest=\(published.manifestName) \
+            entries=\(published.manifestEntryCount) conditions=\(published.passCount)P/\(published.failCount)F/\(published.unknownCount)U \
+            phaseBPreventedBy=\(published.phaseBPreventedBy.isEmpty ? "none" : published.phaseBPreventedBy.joined(separator: ","))
 
             """.utf8))
             exit(0)
