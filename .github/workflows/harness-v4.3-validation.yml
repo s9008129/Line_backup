@@ -1,0 +1,194 @@
+name: Harness V4.3 validation
+
+on:
+  push:
+    branches: [harness-v4.3-validation]
+    paths:
+      - '.harness-validation/**'
+      - '.github/workflows/harness-v4.3-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: harness-v4.3-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    name: Package + semantic contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Rebuild exact V4.3 package
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .harness-validation/package.b64.part-* | base64 -d > "$RUNNER_TEMP/harness.zip"
+          unzip -q "$RUNNER_TEMP/harness.zip" -d "$RUNNER_TEMP/pkg"
+          echo "HARNESS_ROOT=$RUNNER_TEMP/pkg/Coding_Agent_Harness_V4.3" >> "$GITHUB_ENV"
+      - name: Verify package + V4.3 contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$HARNESS_ROOT"
+          bash ./VERIFY_PACKAGE.sh
+          python3 "$GITHUB_WORKSPACE/.harness-validation/validate_v43.py" "$HARNESS_ROOT"
+      - name: Install / re-install / rollback in disposable HOME
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmp="$RUNNER_TEMP/fake-home"
+          mkdir -p "$tmp/.codex"
+          printf 'KEEP_ME\n' > "$tmp/.codex/user-sentinel.txt"
+          export HOME="$tmp"
+          bash "$HARNESS_ROOT/UPDATE_HARNESS_V4_3_SIMPLE.sh" | tee "$RUNNER_TEMP/install1.txt"
+          grep -q 'DEPLOYMENT_STATUS=SUCCESS' "$RUNNER_TEMP/install1.txt"
+          "$tmp/.codex/tools/harness-verify.sh" "$tmp/.codex"
+          bash "$HARNESS_ROOT/UPDATE_HARNESS_V4_3_SIMPLE.sh" | tee "$RUNNER_TEMP/install2.txt"
+          grep -q 'DEPLOYMENT_STATUS=SUCCESS' "$RUNNER_TEMP/install2.txt"
+          test "$(cat "$tmp/.codex/user-sentinel.txt")" = 'KEEP_ME'
+          bash "$HARNESS_ROOT/UPDATE_HARNESS_V4_3_SIMPLE.sh" --restore-latest | tee "$RUNNER_TEMP/rollback.txt"
+          grep -q 'ROLLBACK_STATUS=SUCCESS' "$RUNNER_TEMP/rollback.txt"
+          test "$(cat "$tmp/.codex/user-sentinel.txt")" = 'KEEP_ME'
+          echo 'INSTALL_IDEMPOTENCY_ROLLBACK=PASS'
+
+  line-backup-regression:
+    name: Line_backup Rev28 regression base
+    runs-on: xcode-27
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build and deterministic tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          xcrun swift build --package-path rev28
+          xcrun swift test --package-path rev28 --skip OcrEngineTests
+      - name: Adversarial matrix + replay stability
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+          xcrun swift test --package-path rev28 --filter AdversarialMatrixTests
+          export PYTHONDONTWRITEBYTECODE=1
+          mkdir -p "$RUNNER_TEMP/replay"
+          python3 rev28/Tools/replay_rev28.py --root . --output "$RUNNER_TEMP/replay/a.json"
+          python3 rev28/Tools/replay_rev28.py --root . --output "$RUNNER_TEMP/replay/b.json"
+          cmp "$RUNNER_TEMP/replay/a.json" "$RUNNER_TEMP/replay/b.json"
+          echo 'LINE_BACKUP_REGRESSION_BASE=PASS'
+
+  provider-smoke:
+    name: Provider + exact model smoke
+    needs: contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      HARNESS_META_MODEL_API_KEY: ${{ secrets.HARNESS_META_MODEL_API_KEY }}
+      HARNESS_OLLAMA_API_KEY: ${{ secrets.HARNESS_OLLAMA_API_KEY }}
+    steps:
+      - name: Require secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$HARNESS_META_MODEL_API_KEY"
+          test -n "$HARNESS_OLLAMA_API_KEY"
+      - name: Meta Muse exact model
+        shell: bash
+        run: |
+          set -euo pipefail
+          code=$(curl -sS -o "$RUNNER_TEMP/meta.json" -w '%{http_code}' \
+            https://api.meta.ai/v1/responses \
+            -H "Authorization: Bearer $HARNESS_META_MODEL_API_KEY" \
+            -H 'Content-Type: application/json' \
+            -d '{"model":"muse-spark-1.3-contributor","input":"Reply with exactly META_OK"}')
+          test "$code" = 200 || { echo "META_HTTP=$code"; python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(d.get("error",{}).get("message","request failed"))' "$RUNNER_TEMP/meta.json"; exit 1; }
+          grep -q 'META_OK' "$RUNNER_TEMP/meta.json"
+          echo 'META_MUSE_SMOKE=PASS'
+      - name: Ollama direct-cloud exact names (no :cloud)
+        shell: bash
+        run: |
+          set -euo pipefail
+          for model in deepseek-v4.1-flash glm-5.3-flash; do
+            code=$(curl -sS -o "$RUNNER_TEMP/${model}.json" -w '%{http_code}' \
+              https://ollama.com/api/chat \
+              -H "Authorization: Bearer $HARNESS_OLLAMA_API_KEY" \
+              -H 'Content-Type: application/json' \
+              -d "{\"model\":\"${model}\",\"messages\":[{\"role\":\"user\",\"content\":\"Reply with exactly OLLAMA_OK\"}],\"stream\":false}")
+            if [[ "$code" != 200 ]]; then
+              echo "OLLAMA_MODEL=${model} HTTP=${code}"
+              python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(d.get("error","request failed"))' "$RUNNER_TEMP/${model}.json" || true
+              exit 1
+            fi
+            grep -q 'OLLAMA_OK' "$RUNNER_TEMP/${model}.json"
+            echo "OLLAMA_MODEL_${model}=PASS"
+          done
+
+  live-agent-contract:
+    name: Muse → DeepSeek convergence → Muse review → GLM E2E
+    needs: [provider-smoke, line-backup-regression]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      HARNESS_META_MODEL_API_KEY: ${{ secrets.HARNESS_META_MODEL_API_KEY }}
+      HARNESS_OLLAMA_API_KEY: ${{ secrets.HARNESS_OLLAMA_API_KEY }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Install current Codex CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install -g @openai/codex@latest
+          codex --version | tee "$RUNNER_TEMP/codex-version.txt"
+      - name: Rebuild exact Harness package
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .harness-validation/package.b64.part-* | base64 -d > "$RUNNER_TEMP/harness.zip"
+          unzip -q "$RUNNER_TEMP/harness.zip" -d "$RUNNER_TEMP/pkg"
+          echo "HARNESS_ROOT=$RUNNER_TEMP/pkg/Coding_Agent_Harness_V4.3" >> "$GITHUB_ENV"
+      - name: Execute bounded real-model Harness validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/v43-live"
+          mkdir -p "$work"
+          bash .harness-validation/live_validation.sh "$HARNESS_ROOT" "$work" | tee "$RUNNER_TEMP/live-summary.txt"
+      - name: Publish summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo '## Harness V4.3 live-agent validation'
+            echo
+            echo '```text'
+            cat "$RUNNER_TEMP/live-summary.txt" 2>/dev/null || true
+            echo '```'
+            echo
+            if [[ -f "$RUNNER_TEMP/v43-live/validation-summary.json" ]]; then
+              echo '```json'
+              cat "$RUNNER_TEMP/v43-live/validation-summary.json"
+              echo '```'
+            fi
+            echo
+            echo 'Native interactive Codex /goal lifecycle is not claimed equivalent to codex exec; this job validates the Harness contracts with real provider-backed Codex workers.'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload sanitized validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: harness-v4.3-live-validation
+          path: |
+            ${{ runner.temp }}/live-summary.txt
+            ${{ runner.temp }}/codex-version.txt
+            ${{ runner.temp }}/v43-live/validation-summary.json
+            ${{ runner.temp }}/v43-live/.agent/tasks/T-HARNESS-V43-LIVE/progress.md
+            ${{ runner.temp }}/v43-live/.agent/tasks/T-HARNESS-V43-LIVE/escalations
+            ${{ runner.temp }}/v43-live/e2e-fixture/.agent/tasks/T-E2E/e2e
+          if-no-files-found: warn
