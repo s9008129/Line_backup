@@ -367,6 +367,13 @@ public enum GatedQuartzActuator {
                                          $0.windowNumber == windowID && $0.ownerPID == pid && $0.layer == 0
                                      }
                                  },
+                                 processIdentityCheck: @escaping (Int32, SurfaceBinding) -> Bool = { pid, binding in
+                                     guard let application = NSRunningApplication(processIdentifier: pid_t(pid)),
+                                           application.bundleIdentifier == binding.bundleID,
+                                           ProcessInstanceID.current(pid: pid) == binding.process else { return false }
+                                     return true
+                                 },
+                                 postEventAccessCheck: @escaping () -> Bool = { CGPreflightPostEventAccess() },
                                  now: Double = ProcessInfo.processInfo.systemUptime) throws {
         let point = try permit.consume(now: now)
         guard permit.binding == currentBinding else {
@@ -385,12 +392,10 @@ public enum GatedQuartzActuator {
         guard readinessCheck(permit.targetPID, permit.windowID) else {
             throw QuartzActuatorError.dispatchRefusedByPrecondition("live target lost foreground/window readiness")
         }
-        guard let application = NSRunningApplication(processIdentifier: pid_t(permit.targetPID)),
-              application.bundleIdentifier == permit.binding.bundleID,
-              ProcessInstanceID.current(pid: permit.targetPID) == permit.binding.process else {
+        guard processIdentityCheck(permit.targetPID, permit.binding) else {
             throw QuartzActuatorError.dispatchRefusedByPrecondition("target bundle or process instance changed")
         }
-        guard CGPreflightPostEventAccess() else { throw QuartzActuatorError.postEventAccessDenied }
+        guard postEventAccessCheck() else { throw QuartzActuatorError.postEventAccessDenied }
         guard let move = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: point.cgPoint, mouseButton: .left),
               let down = CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: point.cgPoint, mouseButton: .left),
               let up = CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: point.cgPoint, mouseButton: .left) else {
