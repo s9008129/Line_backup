@@ -351,6 +351,60 @@ final class AdversarialMatrixTests: XCTestCase {
         }
     }
 
+
+    func testFrozenLegacyChooserPredicateCanOnlyUpgradeWithObservedButtons() throws {
+        let clauses = ChooserAXClauseSet(
+            windowRole: "AXWindow",
+            allowedSubroles: ["AXStandardWindow"],
+            requiresTextField: true,
+            textFieldRoles: ["AXTextField"],
+            requiresPopUpButton: true,
+            popUpButtonRoles: ["AXPopUpButton"],
+            defaultButton: nil,
+            cancelButton: nil,
+            requiresPathAffordance: true,
+            pathAffordanceRoles: ["AXTextField"],
+            pathAffordanceTitles: []
+        )
+        let base = ChooserAffirmationPredicate(
+            predicateID: "frozen",
+            frozenAtISO8601: "2026-09-25T00:00:00Z",
+            calibratedAgainst: "NSOpenPanel",
+            ax: clauses,
+            ownership: ChooserOwnershipClauseSet(
+                requiresOwningPIDInCensusUnion: true,
+                requiresStableProcessInstance: true,
+                emptyPreCensusWidensRefusal: true
+            )
+        )
+        let good = ChooserAXCalibrationEvidence(
+            panelWindowFound: true,
+            panelWindowRole: "AXWindow",
+            panelWindowSubrole: "AXStandardWindow",
+            buttonTitles: ["Cancel", "開啟"],
+            rolesObserved: ["AXWindow", "AXButton", "AXTextField", "AXPopUpButton"],
+            subrolesObserved: ["AXStandardWindow"],
+            textFieldRoles: ["AXTextField"],
+            popUpRoles: ["AXPopUpButton"]
+        )
+        let derived = try ChooserProductionPredicate.derive(frozen: base, calibration: good)
+        XCTAssertEqual(derived.predicateVersion, 2)
+        XCTAssertEqual(derived.ax.defaultButton?.titles, ["開啟"])
+        XCTAssertEqual(derived.ax.cancelButton?.titles, ["Cancel"])
+
+        let missingDefault = ChooserAXCalibrationEvidence(
+            panelWindowFound: true,
+            panelWindowRole: "AXWindow",
+            panelWindowSubrole: "AXStandardWindow",
+            buttonTitles: ["Cancel"],
+            rolesObserved: good.rolesObserved,
+            subrolesObserved: good.subrolesObserved,
+            textFieldRoles: good.textFieldRoles,
+            popUpRoles: good.popUpRoles
+        )
+        XCTAssertThrowsError(try ChooserProductionPredicate.derive(frozen: base, calibration: missingDefault))
+    }
+
     // G17 unexpected filesystem write
     func testG17UnattributedL2WriteFailsClosed() {
         let root = URL(fileURLWithPath: "/tmp/root")
