@@ -82,6 +82,68 @@ public enum StructuralLocators {
         "分享相簿",
     ]
 
+
+    /// Deterministically segments visible album metadata rows into mutually
+    /// exclusive vertical card regions using date-range title anchors. The
+    /// caller still has to prove exact title+count association with
+    /// locateAlbumCard; segmentation alone never authorizes a click.
+    public static func segmentAlbumCards(
+        items: [OcrItem],
+        imageBounds: CGRect
+    ) -> [AlbumCardRegion] {
+        guard imageBounds.width > 0, imageBounds.height > 0 else { return [] }
+        let anchors = items.filter { isDateRangeTitle($0.text) }
+            .sorted { $0.boundingBoxCapturePx.midY < $1.boundingBoxCapturePx.midY }
+        guard !anchors.isEmpty else { return [] }
+
+        var regions: [AlbumCardRegion] = []
+        for (index, anchor) in anchors.enumerated() {
+            let box = anchor.boundingBoxCapturePx
+            let previousMid: CGFloat = {
+                guard index > 0 else {
+                    return max(imageBounds.minY, box.minY - max(24, box.height * 2))
+                }
+                return (anchors[index - 1].boundingBoxCapturePx.midY + box.midY) / 2
+            }()
+            let nextMid: CGFloat = {
+                guard index + 1 < anchors.count else {
+                    return min(imageBounds.maxY, box.maxY + max(72, box.height * 4))
+                }
+                return (box.midY + anchors[index + 1].boundingBoxCapturePx.midY) / 2
+            }()
+            let minY = max(imageBounds.minY, previousMid)
+            let maxY = min(imageBounds.maxY, nextMid)
+            guard maxY - minY >= max(40, box.height * 2) else { continue }
+            regions.append(AlbumCardRegion(
+                id: "date-card-\(index)-\(anchor.text)",
+                boundsCapturePx: CGRect(
+                    x: imageBounds.minX,
+                    y: minY,
+                    width: imageBounds.width,
+                    height: maxY - minY
+                )
+            ))
+        }
+        return regions
+    }
+
+    private static func isDateRangeTitle(_ value: String) -> Bool {
+        let normalized = value.replacingOccurrences(of: "～", with: "~")
+        let parts = normalized.split(separator: "~", omittingEmptySubsequences: false)
+        guard parts.count == 2 else { return false }
+        func valid(_ part: Substring) -> Bool {
+            let components = part.split(separator: "/")
+            guard components.count == 3,
+                  components[0].count == 4,
+                  components[1].count == 2,
+                  components[2].count == 2 else { return false }
+            return components.allSatisfy { component in
+                !component.isEmpty && component.allSatisfy(\.isNumber)
+            }
+        }
+        return valid(parts[0]) && valid(parts[1])
+    }
+
     /// Exact album-card identity. The title and count must both be contained in
     /// one uniquely identified card region; a caller-wide search rectangle is
     /// not sufficient to establish their association.
