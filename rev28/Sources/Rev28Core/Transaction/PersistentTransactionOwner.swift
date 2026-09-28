@@ -90,6 +90,9 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
     case irreversibleAttemptAlreadyRecorded(String)
     case ledgerCheckpointRequired
     case ledgerCheckpointInvalid
+    case stateAlreadyInitialized
+    case stateNotInitialized
+    case invalidStateEvidence
 
     public var description: String {
         switch self {
@@ -100,6 +103,9 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
         case let .irreversibleAttemptAlreadyRecorded(kind): return "irreversibleAttemptAlreadyRecorded(\(kind))"
         case .ledgerCheckpointRequired: return "ledgerCheckpointRequired"
         case .ledgerCheckpointInvalid: return "ledgerCheckpointInvalid"
+        case .stateAlreadyInitialized: return "stateAlreadyInitialized"
+        case .stateNotInitialized: return "stateNotInitialized"
+        case .invalidStateEvidence: return "invalidStateEvidence"
         }
     }
 }
@@ -161,6 +167,38 @@ public final class PersistentTransactionOwner {
             guard ledger.entries.isEmpty else { throw PersistentTransactionError.authorizationAlreadyBound }
             try append(kind: "transaction.authorization", payload: authorization.fields)
         }
+    }
+
+
+    public var currentState: ExecutionState? {
+        ledger.entries.reversed().first(where: { $0.kind == "state.transition" })
+            .flatMap { $0.payload["to"] }
+            .flatMap(ExecutionState.init(rawValue:))
+    }
+
+    public func initializeState(evidenceSHA256: String) throws {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        guard currentState == nil else { throw PersistentTransactionError.stateAlreadyInitialized }
+        guard Self.validSHA256(evidenceSHA256) else { throw PersistentTransactionError.invalidStateEvidence }
+        try append(kind: "state.transition", payload: binding([
+            "from": "NONE",
+            "to": ExecutionState.appReady.rawValue,
+            "evidenceSHA256": evidenceSHA256,
+        ]))
+    }
+
+    public func transition(to next: ExecutionState, evidenceSHA256: String) throws {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        guard let current = currentState else { throw PersistentTransactionError.stateNotInitialized }
+        guard Self.validSHA256(evidenceSHA256) else { throw PersistentTransactionError.invalidStateEvidence }
+        try ExecutionStateMachine.validateTransition(from: current, to: next)
+        try append(kind: "state.transition", payload: binding([
+            "from": current.rawValue,
+            "to": next.rawValue,
+            "evidenceSHA256": evidenceSHA256,
+        ]))
     }
 
     public var irreversibleOperationCounts: (saveAll: Int, destinationConfirmation: Int) {
