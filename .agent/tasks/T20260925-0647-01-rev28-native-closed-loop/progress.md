@@ -1,7 +1,8 @@
 # Implement Progress — T20260925-0647-01-rev28-native-closed-loop
 
-STATE: RUNNING
-UPDATED_AT: 2026-09-29T06:38+0800
+STATE: AB_IMPLEMENTATION_COMPLETE
+STATE_NOTE: implementation as far as possible pre-Phase B; real Phase A evidence blocked by external prerequisite (LINE signed out on this Mac); Phase B forbidden; zero irreversible
+UPDATED_AT: 2026-09-29T06:35+0800
 PLAN_REVISION: 4
 MODE: AB_IMPLEMENTATION_EVALUATION (Phase B forbidden; PHASE_B_STATUS=FORBIDDEN_AB_EVALUATION)
 
@@ -9,12 +10,13 @@ MODE: AB_IMPLEMENTATION_EVALUATION (Phase B forbidden; PHASE_B_STATUS=FORBIDDEN_
 
 - **目前目標：** 完成 R4 批准的 Phase A 證據工具鏈（`phase-a.json`＋raw manifest），讓 `rev28ctl live-preflight` 的既審查原生路徑能在真實 Mac／真實 LINE 上發布逐條件證據；Phase B 永久禁止。
 - **目前卡點：** Phase A 發布工具鏈已完成並全數通過（16 conditions、deferred chooser gate、append-only per run dir）。最後一哩「真實 Phase A preflight」目前在**外部前置**上受阻：這台 Mac 的 LINE（pid 54034）是**登出狀態**，只顯示登入／歡迎畫面（單一 242x169 pt 視窗），沒有任何目標對話或相簿畫面；現在跑只會（預期）在 GROUP_READY named refusal，無法產生 `phase-a.json`，故本輪未開火（fail closed、授權與 counters 未動）。此外兩個 Phase A 當場必須驗證的未定項已記錄：真實 menu-surface 幾何常數（rev27 候選 `[586,124,824,427]`，未驗證）與 popup 是否能在 frozen `primaryWindow` 擷取中被看見（W2 matrix 顯示 `includeChildWindows=false` 不含 popup child window）。
-- **主要嘗試：** compile／segmentation／stability／C4 goal-slot／C4 preflight／C4 typed evidence enforcement／native observation session／typed state evidence／pre-Save-All composition／ellipsis rows／rev28ctl production composition／post-Save-All composition 各 1/3（皆已解決）；Phase A evidence publisher 1/3（已解決，A13）；real Phase A preflight 0/3（外部前置未滿足，未開火）。
+- **主要嘗試：** compile／segmentation／stability／C4 goal-slot／C4 preflight／C4 typed evidence enforcement／native observation session／typed state evidence／pre-Save-All composition／ellipsis rows／rev28ctl production composition／post-Save-All composition 各 1/3（皆已解決）；Phase A evidence publisher 1/3（已解決，A13）；real Phase A preflight 0/3（外部前置未滿足，未開火）；V-08 閘門於現行樹補驗 1 輪（adversarial 27/27 ×2、replay PASS ×2、v3 provenance PASS）。
 - **上一輪在測試什麼：** (A13) Phase A 證據只能從真實 run artifacts 推導：`PhaseAEvidenceBuilder.inspect` 讀 state artifacts＋retained PNG hash＋pre-dispatch context（排除 `-refused-`、記錄 malformed 名稱），`build` 逐一評 16 條件（含 deferred `ACTUAL_LINE_CHOOSER_OBSERVED`=UNKNOWN、ledger-proven zero counters、`phaseBPreventedBy`），`publish` 寫 `phase-a.json`＋raw manifest 且同一 run dir 二次發布被拒；`live-preflight` 接線並在既有 run dir 有報告時 named refusal。
 - **結果：** 新增 `PhaseAEvidence.swift`（1039 行）／21 個 tests／`tripwireReadiness()` 唯讀快照／`rev28ctl` 發布路徑；focused 21 tests / 0 failures、full suite 202 tests / 0 failures；CLI refusal fixture 更新（`cli-refusal-20260929T0617`）維持 77／77／77／64／77 且無 evidence/ledger/staging 副作用；新 implementation digest `eb4415f9…f6b1`（43 swift files）。唯讀環境偵察（`phase-a-env-20260929T0626`）：TCC/SCK/Vision 在這個 terminal 的 responsible-process context 全部 OK；LINE 已登出（外部前置）。
+- **本輪補驗（A14）：** adversarial 27/27 ×2、20 個 pinned replay fixtures ×2（JSON 輸出 byte-identical，SHA `81f6da94…7261`）、v3 provenance `status=PASS`（`HarnessCalibration.swift` blob 未漂移、20 samples／max 155.19 ms）、final-HEAD full suite 202/0——V-08 與 handoff item-5 在現行樹重驗通過。
 - **這輪多知道了什麼：** (1) Phase A 報告無法被合成——缺任何一項真實 artifact 即 FAIL/UNKNOWN 並擋下 Phase B；(2) 本機執行環境本身可用（ax/screenCapture/postEvent=true、SCK 21 windows、Vision OK）；(3) 真正的下一步是外部前置（LINE 登入＋目標相簿畫面），並已把幾何與擷取面的兩個未定項寫成下一次 Phase A 必須當場驗證的問題。
 - **距離驗收有沒有更近：** YES（Phase A 工具鏈完成；primary outcome 仍 NOT_ACHIEVED；Phase B 未執行且禁止；累計 irreversible intent／attempt／dispatch = 0）
-- **下一步：** 使用者先登入 LINE（QR 或電子郵件）並開好群組 旻謙允禎成長日記 的 `2024/05/13～05/17` 相簿列表（保持單一 on-screen layer-0 視窗），再用 fresh runID／fresh evidence dir 跑 `rev28ctl live-preflight`（零 irreversible、授權不消耗）以發布真實 `phase-a.json`；之後才是 V-09 topic reviews 與 Stage 05 independent acceptance。
+- **下一步（依 handoff 順序）：** (1) V-09 exact-binding code/rule reviews（七個 topic＋adversarial＋Rev27 barrier supersession；需 fresh independent reviewer context，目前 NOT_RUN）；(2) 請使用者登入 LINE（QR 或電子郵件）並開好群組 旻謙允禎成長日記 的 `2024/05/13～05/17` 相簿列表（保持單一 on-screen layer-0 視窗），再用 fresh runID／fresh evidence dir 跑 `rev28ctl live-preflight`（零 irreversible、授權不消耗）以發布真實 `phase-a.json`；(3) Stage 05 independent acceptance。
 - **停損點：** 任一 blocker 累積 3 次 material attempts 或 2 次連續無新資訊即寫 escalation packet 並停止 substantive implementation；需要改 load-bearing 架構/acceptance semantics（例如擷取面）即 REPLAN_REQUIRED。Phase B 任何動作直接 fail closed。
 
 ## Current blocker (next up: real Phase A preflight on this Mac)
@@ -40,6 +42,10 @@ SAME_BLOCKER_GOAL_TURNS_AT_IMPASSE: 0
 OSCILLATION_DETECTED: NO
 NEXT_BLOCKER_ATTEMPTS_USED: 0/3 (REAL_PHASE_A_PREFLIGHT_EVIDENCE_MISSING; no preflight fired — external prerequisite LINE sign-in + target album surface is absent)
 ```
+
+## Run terminal state (2026-09-29T06:35+0800)
+
+STATE: AB_IMPLEMENTATION_COMPLETE — 本輪成功條件逐項：1 approved R4 implementation（pre-Phase-B）✅ 盡可能完成；2 deterministic/regression gates（V-08／V-12／provenance）✅ 達成 handoff 要求；3 Phase A 真實證據「若可安全執行」——不可安全執行（LINE 已登出、無目標相簿畫面；開火只會在 GROUP_READY named refusal 並可能擷取私人登入畫面），未取得；4 zero irreversible ✅（dispatch 0／confirmation 0／intent 0）；5 progress.md ✅；6 convergence guard ✅（未觸發，0/3）。仍未完成（皆屬獨立步驟）：V-09 independent reviews（NOT_RUN）、真實 Phase A preflight（需使用者先登入 LINE 並開好目標相簿）、Stage 05 independent acceptance。PHASE_B_STATUS 固定 FORBIDDEN_AB_EVALUATION。
 
 ## Seed reconciliation (R3/R4)
 
@@ -79,6 +85,7 @@ A/B branch created for this run: v43-ab/codex-rev28 (rev28-prelive-finalization 
 | A11 (rev28ctl production composition) | CLI 進不了已審查的 composition：`rev28ctl` 只有 stub 檢查，沒有 production `ObservationSource`／`ActuationEnvironment`／幾何設定，也沒有不可重啟的 epoch 來源 | 新增 `LiveCompositionFactory`（fail-closed 驗證 budget／frozen rule／locator geometry 後組裝 owner＋session＋adapter＋engine）與 `RunEpochAuthority`（floor 取自 run evidence 內的 `state-<STATE>-<epoch>` 檔名，衝突回 0 讓 bundle 驗證拒絕）；新增 `ProductionObservationSource`（SCK/CG/AX/process/signing）與 `ProductionActuationEnvironment`（GatedQuartzActuator reversible click）；改寫 `rev28ctl` live 區塊走同一 composition；加 7 個 composition＋4 個 epoch tests；刪除死碼 `XCTargetProcess` | 未校準幾何必須在第一次 capture 前被拒（captureCount 0）；組裝後 preflight 走到 `SAVE_ALL_LOCATED`（12 captures、2 reversible、0 irreversible、entitlement 未消耗）；`run()` 在 `dispatchSaveAll` 以 `capabilityNotBuilt` fail closed；CLI 四案例維持 77/77/64/77 | 7/7 composition tests＋4/4 epoch tests PASS；full suite 167 tests / 0 failures；CLI refusal transcript 重現 target-not-LINE 77／CI 77／missing config 64／stale digest 77 | CLI 與 common engine 進入同一 reviewed composition；pre-Save-All 路徑可由 production 程式碼抵達；epoch 不可跨重啟重用 | `execution-evidence/a12-full-suite-live-composition-20260929T054820.log`, `execution-evidence/cli-refusal-20260929T0550/cli-refusal-transcript-20260929T0551.log` | 排除「CLI 無法抵達 composition」與「新 session 可重置 epoch」；確認 Phase B 邊界在 capability 層 fail closed | YES |
 | A12 (post-Save-All composition) | `dispatchSaveAll` 之後的 chooser／destination／download／filesystem／content 能力全部是 `capabilityNotBuilt`，Phase B 之前的路徑無法用同一 composition 走完，也無法在注入 boundary 下被證明 | 新增 `PhaseBEligibilityArtifact`（17 predicates、goal-identity digest、run-dir 邊界載入；缺席即拒絕）與唯讀 `FilesystemTripwireJournal`（startedAt 單調時戳、collection-gap 偵測）；新增 `PostSaveEnvironment` protocol 與 `ProductionPostSaveEnvironment`（10 s bounded pre-dispatch context gate、journal failure／gap named refusal、production click 走 `GatedQuartzActuator`）；在 `ComposedNativeAdapter` 實作 dispatch／chooser／destination／download／filesystem／content 全路徑（≥10 s gap-free context → fresh re-locate → baseline re-verify → census → readiness → permit → dispatch boundary → durable records）；`rev28ctl` 新增 chooser predicate／baseline reference／approvedRoot／tripwireRoots／optional eligibility 設定，`live-preflight` 記錄 `preDispatchContextSHA256` | 無 eligibility artifact → `dispatchSaveAll` named refusal 且 0 事件；有 artifact → 恰好一次 guarded click；context gap → 拒絕；download 無法定靜止 → 10 分鐘 cap 終止；baseline 變動 → content 成功宣告被拒 | 27 個 focused tests（PhaseBEligibility 8／ComposedAdapters 12／LiveComposition 7）全 PASS；full suite 181 tests / 0 failures；CLI refusal transcript 重現 77／77／64／77；新 implementation digest `f6ef94dc…a4f68` | C5–C7 全部由同一 composition 提供且經注入 boundary 測試；Phase B 仍 fail closed（無 artifact 即拒絕）；production counters 0/0 | `execution-evidence/a13-focused-postsave-20260929T060456.log`, `execution-evidence/a14-full-suite-phaseb-eligibility-postsave-20260929T060502.log`, `execution-evidence/cli-refusal-20260929T0607/cli-refusal-transcript-20260929T0607.log` | 排除「capability 無法走完」與「eligibility 可隱式 arm」；確認 gap／cap／baseline 變動都在測試中真的拒絕 | YES |
 | A13 (Phase A publisher) | Phase A 的 16 條件、deferred chooser gate 與 raw manifest 只能從真實 run artifacts 推導；缺任何一項必須 FAIL/UNKNOWN 並擋下 Phase B，同一 run dir 不得重複發布 | 新增 `PhaseAEvidence`（`inspect`：state artifacts＋retained PNG hash＋pre-dispatch context；`build`：16 條件逐一評分＋`phaseBPreventedBy`＋ledger-proven zero counters＋explicit chooser-assumption statement；`publish`：`phase-a.json`＋raw manifest，append-only per run dir）；`ProductionPostSaveEnvironment.tripwireReadiness()`（唯讀、不 drain journal）；`rev28ctl live-preflight` 發布接線與既有報告 named refusal；21 個新 tests | 完整 run → 16 條件全 PASS＋deferred gate=UNKNOWN；缺檔／frame hash 不符／baseline 不符／staging 非空／tripwire 未就緒／短或斷裂的 pre-dispatch context／ledger 非零 → 對應 FAIL 或拒絕；同一 run dir 二次發布被拒 | focused 21 tests / 0 failures；full suite 202 tests / 0 failures；CLI refusal fixture 更新（`cli-refusal-20260929T0617`）維持 77／77／77／64／77 且無 evidence／ledger／staging 副作用；implementation digest `eb4415f9…f6b1`（43 swift files） | Phase A 證據工具鏈完成；真實 Phase A preflight 因 LINE 登出（外部前置）未開火 | `execution-evidence/a19-focused-phasea-20260929T062509.log`, `execution-evidence/a20-full-suite-phasea-20260929T062509.log`, `execution-evidence/cli-refusal-20260929T0617/`, `execution-evidence/phase-a-env-20260929T0626/` | 排除「Phase A 證據可合成／可重複發布」；確認 TCC／SCK／Vision 在真實 launch context 可用，並定位到外部前置與兩個擷取面未定項 | YES |
+| A14 (V-08 補驗＋provenance) | Phase A publisher 落地後，V-08（adversarial／replay）與 handoff item-5 的 provenance 綁定尚未在現行樹重驗 | 在最終樹重跑 `AdversarialMatrixTests` ×2、20 個 pinned replay fixtures ×2（`replay_rev28.py`）、`verify_pre_live_provenance.py`（v3 fail-closed guard）、final-HEAD full suite | adversarial 27/27 兩次；replay `verdict=PASS` 兩次且 JSON 輸出 byte-identical；provenance `status=PASS`（blob 未漂移）；full suite 202/0 | V-08 在現行樹重驗 PASS；provenance binding 維持 PASS；final-HEAD deterministic gates 與 handoff 要求一致 | `execution-evidence/a21-full-suite-final-head-20260929T0635.log`, `execution-evidence/a22-adversarial-run1-20260929T0640.log`, `execution-evidence/a23-adversarial-run2-20260929T0640.log`, `execution-evidence/a24-replay-run1-20260929T0640.json`, `execution-evidence/a25-replay-run2-20260929T0640.json`, `execution-evidence/a26-provenance-20260929T0631.log` | 排除「Phase A publisher 落地造成 V-08／provenance 漂移」；確認現行 sampler 就是 CI-frozen blob | YES |
 
 ## Commits (A/B branch v43-ab/codex-rev28)
 
@@ -102,9 +109,14 @@ c7eb3f9 feat(rev28): assemble the live composition and wire it into rev28ctl
 e407565 feat(rev28): compose the post-Save-All path and keep it fail closed
 0d1cdb5 feat(rev28): publish real Phase A evidence from the live preflight path
 51cd793 chore(harness): record the Phase A publisher evidence and the live-preflight environment prerequisite
+e93e298 chore(harness): record the final-HEAD full-suite run for the Phase A publisher round
 ```
 
 ## Evidence pointers
+
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a22-adversarial-run1-20260929T0640.log`, `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a23-adversarial-run2-20260929T0640.log` — `AdversarialMatrixTests` 27 tests / 0 failures ×2（exit 0；SHA-256 `de37dfbd…179f`／`d03ea5ab…07fb`）
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a24-replay-run1-20260929T0640.json`（＋`.stdout`）, `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a25-replay-run2-20260929T0640.json`（＋`.stdout`）— `replay_rev28.py`：20 fixtures、`verdict=PASS` ×2，JSON 輸出 byte-identical SHA-256 `81f6da94…7261`
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a26-provenance-20260929T0631.log` — `verify_pre_live_provenance.py` v3 fail-closed guard：`status=PASS`、`validatedImplementationCommit=2ecfeb9c…`、`implementationSourceGitBlobSHA=c411011b…`、20 samples／max 155.19 ms（SHA-256 `3bf448fa…eb1a`）
 
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/` — A1–A14 raw logs (build/focused/full suite)
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a12-full-suite-live-composition-20260929T054820.log` — 167 tests / 0 failures（含 live composition 與 epoch authority suites）
@@ -123,3 +135,16 @@ e407565 feat(rev28): compose the post-Save-All path and keep it fail closed
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/analysis/r4-20260928/` — R4 read-only diagnostics (segmentation/stability compile probes, test.log, build.log)
 - `evidence/20260925-rev28-native-closed-loop/baseline-content-multiset.json` (SHA 3c932d8ccb9f4d2a7945463861fb4ebae066eadb59b8ff2702767b3a9f851bc2)
 - `evidence/20260925-rev28-native-closed-loop/harness/build-test-log-20260925T1156+0800.txt` — historical 28/0 pass log (pre-regression)
+
+## Handoff TEST_ORDER status (2026-09-29T06:35+0800)
+
+| # | Item | Status | Evidence / note |
+|---|---|---|---|
+| 1 | Narrow diagnostics（build／StructuralLocatorsTests／StagingVerifierTests regressions） | PASS | A1–A3（`a1`–`a4` logs） |
+| 2 | Deterministic Swift tests＋executable-context full suite | PASS | `a21` final-HEAD full suite 202/0；Vision limitation tests 保持明示 |
+| 3 | Adversarial 套件 ×2＋20 pinned replay fixtures ×2（含 hash 驗證） | PASS | `a22`／`a23` 27/27 ×2；`a24`／`a25` `verdict=PASS` ×2 byte-identical（現行 suite 為 27 cases，為 handoff 所述 25-case 基線的超集） |
+| 4 | Common-composition failure matrix＋owner/restart matrix | PASS（suite-level、injected boundaries） | `a21` full suite 內執行 AdversarialMatrixTests（G01–G22／X01–X03）＋PersistentTransactionOwnerTests／GoalSlotTests／IntentLedgerTests／RunEpochAuthorityTests；本輪無獨立於 suites 之外的 matrix 執行 |
+| 5 | provenance py＋current-composer synthetic AppKit calibration | provenance PASS；calibration 以 frozen W2 證據＋provenance binding 覆蓋（本輪未重跑） | `a26`；`frozen/postcondition-latency-observations-v3.json`（20 timings、strict monitor、input-free）仍受 fail-closed guard 綁定 |
+| 6 | V-09 exact-binding code/rule reviews（before Phase A） | NOT_RUN | 需 fresh independent reviewer context；Phase A 前的下一個工作項 |
+| 7 | Phase A eligibility／evidence | BLOCKED（external prerequisite） | 工具鏈完成（A13）；真實 preflight 未開火：LINE 已登出、無目標相簿畫面（`phase-a-env-20260929T0626`）；0/3 attempts |
+| 8 | Conditional Phase B runtime gates／finalization | FORBIDDEN | 本輪為 A/B evaluation，Phase B 絕對禁止；零 irreversible |
