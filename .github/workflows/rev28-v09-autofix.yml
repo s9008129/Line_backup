@@ -125,34 +125,6 @@ jobs:
           PROMPT
           copilot -p "$(cat "$RUNNER_TEMP/phase2.txt")" -s --no-ask-user --max-ai-credits=30             --allow-tool='write' --allow-tool='shell'             --deny-tool='shell(git push)' --deny-tool='shell(git commit)' --deny-tool='url'
 
-      - name: Integration audit and repair
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          cat > "$RUNNER_TEMP/phase3.txt" <<'PROMPT'
-          Act as the final implementation integrator. Inspect all uncommitted changes and the original V-09 findings.
-          Do not commit/push and do not modify HarnessCalibration.swift, frozen harness evidence, or the approved plan.
-
-          Run the Rev28 Swift build/tests and replay tooling, fix compile/test failures, then perform a hostile self-audit:
-          - no public production event-posting API may bypass a fresh readiness/chooser permit;
-          - no irreversible budget may reset after process restart;
-          - no same-operation freshReviewed record may re-arm Save All;
-          - ledger append must serialize/reload/verify and checkpoint rollback must be detected;
-          - production postcondition must timeout a stalled sampler and surface sampler errors/tripwire aborts explicitly;
-          - chooser destination must require exact standardized path equality;
-          - PRE_SIDE_EFFECT_OBSERVED must reject contradictory or unvalidated evidence;
-          - hidden/symlink staging entries must fail exact verification;
-          - process restart must stale structural candidates;
-          - replay must invoke current production locator logic and full SHA-256 checks.
-
-          Add or strengthen tests for every invariant. Keep CI/synthetic evidence explicitly pre-live; do not claim LINE success.
-          Update ARCHITECTURE/CAPABILITY-MATRIX and task handoff/execution only to accurately describe the new implementation and
-          the residual real-Mac gates. Do not edit historical frozen files.
-          PROMPT
-          copilot -p "$(cat "$RUNNER_TEMP/phase3.txt")" -s --no-ask-user --max-ai-credits=30             --allow-tool='write' --allow-tool='shell'             --deny-tool='shell(git push)' --deny-tool='shell(git commit)' --deny-tool='url'
-
       - name: Enforce protected files unchanged
         shell: bash
         run: |
@@ -194,7 +166,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add rev28 .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/handoff.md .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution.md
+          git add rev28 evidence/20260925-rev28-native-closed-loop .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/handoff.md .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution.md
           git status --short
           git commit -m "fix(rev28): enforce persistent guarded live transaction"
           git push origin HEAD:rev28-prelive-finalization
