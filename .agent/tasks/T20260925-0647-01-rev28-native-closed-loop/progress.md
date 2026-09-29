@@ -23,45 +23,54 @@ Stop at AB_PHASE_A_READY; Phase B stays forbidden and LINE is never touched.
 
 ## CURRENT_BLOCKER
 
-None open. All registered implementation blockers (compile, SEG-1, STAB-1, ELL-1,
-MAT-1) are RESOLVED with evidence.
-The next required gate is TEST_ORDER step 5 (current-composer synthetic calibration),
-which is scheduled work, not a blocker.
+None open. All registered implementation blockers (compile, SEG-1, STAB-1, ELL-1, MAT-1)
+and the new CAL-1 monitor SIGABRT are RESOLVED with evidence.
 
-NEXT GATE (registered, not yet attempted):
+CAL-1 (resolved 2026-09-29): the current-composer driver aborted with SIGABRT
+`freed pointer was not the last allocation` inside the strict monitor. Root cause is an
+upstream Swift 6.3 -Onone defect with **default-argument async closures across module
+boundaries** (swiftlang/swift#92017): the library copy of the default `sleep` closure
+overflows its async context and corrupts the task allocator. Workaround: the driver now
+passes `monotonicNow`/`sleep` explicitly. Evidence:
+`analysis/ab-offline-20260929/composer-diagnostics/` (root-cause note, two crash reports,
+probes, crash-free diagnostic run).
+
+REMAINING GATE (registered, attempted under `--diagnose-only`; official run NOT_RUN):
 
     STAGE=04
     CHECK=CURRENT_COMPOSER_SYNTHETIC_APPKIT_CALIBRATION
     SURFACE=rev28/Tools + rev28harness bundle + SCK/Vision/AX/occluder/input sink (synthetic target only)
     EXPECTED=≥20 panel timings under the strict monitor with real NSOpenPanel, destination preparation + exactly one AXPress, refusal/crash branches, current-composer applicability reconfirmed (V-02); frozen HarnessCalibration blob untouched
-    OBSERVED=NOT_RUN
+    OBSERVED=DIAGNOSTIC_ONLY (driver path executes crash-free end-to-end; every item-03/04 refusal traced to the locked console session — CG/SCK see the panel, AX exposes only AXApplication placeholders while locked — so the official ≥20-timings run requires the Mac session to be UNLOCKED)
 
 ## PLAIN-LANGUAGE STATUS (required)
 
-- What are we trying to solve now? — Prove the rebuilt Rev28 closed loop is
-  mechanically sound, still entirely offline: first a native AppKit calibration of the
-  chooser/monitor rules against today's composer, then independent code/rule reviews
-  (V-09) of the exact bindings.
-- What is blocking us? — Nothing is blocked. The remaining work is unstarted scheduled
-  verification, not a defect.
-- How many meaningful attempts have we spent? — 4 charged material attempts total:
-  compile blocker 1/3, SEG-1 1/3, STAB-1 1/3, ellipsis orientation 1/3, matrix suite
-  2/3. All resolved; no fingerprint exhausted; no oscillation.
-- What did the last attempt teach us? — The native matrix suite (29 cases over the real
-  composition) ran red→green in two informative attempts and, on its first red run,
-  exposed a real production defect the unit tests had missed: the ellipsis pixel
-  detector drew the frame through a flipped CTM, so the three dots were reported at
-  mirrored rows (587/592.5/598) and every downstream state refused with
-  `missingIdentity`. Removing the flip makes the pinned v5 frame report exactly
-  44.0/49.5/55.0, and the replay fixtures are byte-identical to the pre-fix baseline.
-- Are we closer to success? — Yes, materially. Build + 168/168 full suite (twice),
-  29/29 matrix, 27 adversarial cases twice, 20 pinned replay fixtures twice
-  (byte-identical), provenance PASS. Step 5 and step 6 are the only offline gates left.
+- What are we trying to solve now? — Land the official ≥20-timings native calibration
+  of the current composer (needs the console session unlocked), then complete the
+  independent V-09 code/rule reviews; the rest of the offline half is done.
+- What is blocking us? — Nothing is blocked. The official calibration run needs the Mac
+  session unlocked (while locked, AX exposes only placeholder elements, so the harness
+  panel cannot be located); that is an environment precondition, not a defect.
+- How many meaningful attempts have we spent? — 8 charged material attempts total
+  across six fingerprints: compile blocker 1/3, SEG-1 1/3, STAB-1 1/3, ELL-1 1/3,
+  MAT-1 2/3, CAL-1 2/3. All resolved; no fingerprint exhausted; no oscillation.
+- What did the last attempt teach us? — The current-composer SIGABRT was an upstream
+  Swift 6.3 -Onone defect, not a driver race: a library module's default-argument
+  async closure is emitted in both the library and the client with disagreeing async
+  context sizes (swiftlang/swift#92017), so the monitor's `sleep` closure overflows
+  its context and corrupts the task allocator. Passing `monotonicNow`/`sleep`
+  explicitly in the driver removes the crash: diag6 (fix build) and diag7 (clean
+  build) complete end-to-end exit 0, 168/168 tests green, provenance PASS.
+- Are we closer to success? — Yes, materially. The strict monitor now runs crash-free
+  end-to-end against real synthetic AppKit panels; only the official ≥20-timings run
+  (after unlock) and the V-09 reviews remain before AB_PHASE_A_READY.
 - What happens if the next attempt fails? — Step 5 is calibration, not a repair loop:
-  if the strict-predicate/monitor calibration does not reproduce on the current
-  composer, that is a V-02 applicability finding; repair mechanically if the mismatch
-  is bounded and mechanical, otherwise stop and route REPLAN_REQUIRED. No Phase A
-  claim is made either way.
+  if the official run under an unlocked session still refuses to locate the panel, or
+  the strict-predicate/monitor calibration does not reproduce on the current composer,
+  that is a V-02 applicability finding; repair mechanically if the mismatch is bounded
+  and mechanical, otherwise stop and route REPLAN_REQUIRED. A run that fails only
+  because the session locked again is an environment artifact and is reported as such.
+  No Phase A claim is made either way.
 
 ## COUNTERS (budget is TASK_ID + BLOCKER_FINGERPRINT)
 
@@ -72,12 +81,22 @@ NEXT GATE (registered, not yet attempted):
 | STAGE=04 CHECK=EQUAL_TAIL_STABILITY_SPAN (STAB-1) | 1 | 3 | RESOLVED |
 | STAGE=04 CHECK=ELLIPSIS_PIXEL_ROW_ORIENTATION (ELL-1) | 1 | 3 | RESOLVED |
 | STAGE=04 CHECK=NATIVE_COMPOSITION_MATRIX_FAILURES (MAT-1) | 2 | 3 | RESOLVED |
+| STAGE=04 CHECK=CURRENT_COMPOSER_MONITOR_SIGABRT_TASK_DEALLOC (CAL-1) | 2 | 3 | RESOLVED |
 
 CONSECUTIVE_NO_INFORMATION_GAIN: 0 / MAX 2
 OSCILLATION: none (no A→B→A).
 Reconciliation: R3 fixture repairs (wrong expected union maxX, single-glyph fixture)
 have a different fingerprint and are not charged here. No budget was reset; every
 counter below is carried forward explicitly and no fingerprint has been re-opened.
+CAL-1 charging: two charged material attempts (instrumented diagnosis; root-cause fix +
+verification). Raw runs against the same failed acceptance condition: six diagnostic runs
+(diag1, diag2 pre-session; diag3 malloc-instrumented, diag4/diag5 traced, diag6 fix build,
+diag7 clean build) plus one non-crashing smoke run. The three pre-fix crash runs are
+charged as attempt 1 (same hypothesis family: reproducibility/heap corruption) because
+diag2 added no new cause hypothesis — only confirmation. Under the strictest reading
+(each crash run charged separately) the fingerprint would be 3 of 3 with monotone
+information gain, resolved by the immediately following fix attempt; nothing was silently
+reset or re-opened either way. Disclosed for Stage 05 / high-reasoning review.
 
 ## ATTEMPT LOG
 
@@ -300,6 +319,67 @@ runs belong to one change set (attempt 2), whose remaining fixture alignments we
 completed between them. Under the strictest reading the fingerprint would be 3 of 3 ≤ 3
 with monotone information gain and no oscillation; nothing was silently reset either way.
 
+### ATTEMPT_ID: A6 (CAL-1 current-composer monitor SIGABRT)
+
+BLOCKER_FINGERPRINT (CAL-1):
+
+    STAGE=04
+    CHECK=CURRENT_COMPOSER_MONITOR_SIGABRT_TASK_DEALLOC
+    SURFACE=rev28/Sources/rev28ctl/ComposerCalibration.swift + Rev28Core PostconditionMonitor (monitor task)
+    EXPECTED=the current-composer driver runs the strict-predicate monitor end-to-end (panelShown → panelClosed → fileGrew → deadline) with no crash and can produce the official ≥20-timings calibration
+    OBSERVED=in-process SIGABRT `freed pointer was not the last allocation` at swift_task_dealloc while the monitor task was suspended in `await sleep(...)` (PostconditionMonitor.swift:155), driven from rev28ctl
+
+ATTEMPT 1 (instrumented diagnosis; diag1–diag5): hypothesis family — the crash is a
+driver misuse or a data race around the monitor task. OBSERVED: the crash reproduces
+across runs and builds (diag3 with the malloc guard; diag4/diag5 traced builds); both
+`.ips` reports symbolicate to `PostconditionMonitor.swift:155` reached from the driver's
+monitor task, with allocator evidence at `swift_task_dealloc`; hypotheses about the
+sampler/windowID/telemetry were falsified. INFORMATION_GAIN: YES (reproducibility,
+exact crash site, allocator mechanism).
+
+ATTEMPT 2 (root cause + fix; diag6 fix build, diag7 clean build): hypothesis — the crash
+is upstream swiftlang/swift#92017: a library module's default-argument async closure is
+emitted in both the library and each client module, the two copies disagree on the async
+context size under `-Onone`, and the overflow corrupts the task allocator; passing the
+closures explicitly leaves only one copy and removes the crash. OBSERVED: diag6/diag7
+complete end-to-end, exit 0; verdict=DIAGNOSTIC_ONLY; blocker
+`ACTIVATION_REFUSED_DIAGNOSTIC_BYPASS frontmost=com.apple.loginwindow` (locked session);
+no SIGABRT in either run. INFORMATION_GAIN: YES.
+
+#### A6 OBSERVED RESULT
+
+OBSERVED_RESULT: new file-private `runCurrentComposerMonitor(bounds:sampler:)` in
+ComposerCalibration.swift calls `PostconditionMonitor.run` with `monotonicNow:` and
+`sleep:` passed explicitly; all seven driver call sites use it. Rev28Core (including the
+monitor's defaults) and its tests are untouched; `HarnessCalibration.swift` still matches
+the frozen v3 provenance blob `c411011b1b44b1efb614e000f526b2118f45d120`. Verification:
+`xcrun swift test --package-path rev28` → 168/168 pass;
+`python3 -B rev28/Tools/verify_pre_live_provenance.py` → PASS; diag7 preserved under
+`composer-diagnostics/CAL1-diag7-COMPOSER-20260929-101022/` with its own
+`sha256sums.txt`, verified with `shasum -a 256 -c`.
+ACCEPTANCE_DELTA: CAL-1 resolved; the driver path is crash-free end-to-end under the
+strict monitor. The toolchain landmine remains reachable only from the frozen
+HarnessCalibration path, which is bound by the W2 freeze and out of scope here.
+NEW_EVIDENCE: the failure was a toolchain defect with a bounded driver-side workaround,
+not a monitor-semantics or driver-race defect; locked-session probes show every
+remaining item-03/04 refusal comes from the locked console session (CG/SCK list the
+harness chooser window; AX exposes no window with a frame), so the official run requires
+an unlocked session.
+UNCERTAINTY_REDUCED: Yes — "driver misuse/race" and "monitor semantics broken" are both
+falsified.
+INFORMATION_GAIN: YES
+NEXT_DECISION: land the fix and evidence, then run the official ≥20-timings calibration
+into a new append-only run directory once the Mac session is unlocked.
+
+MATERIAL_ATTEMPTS_USED (CAL-1): 2 of 3 → RESOLVED. Charging disclosure: six diagnostic
+runs hit the same failed acceptance condition (diag1/diag2 before this session; diag3
+malloc-instrumented; diag4/diag5 traced; diag6 fix build; diag7 clean build) plus the
+crash reports preserved in `composer-diagnostics/`. The pre-fix crash runs are charged as
+one attempt (single hypothesis family with monotone information gain); under the
+strictest per-run reading this would be 3 of 3, resolved by the immediately following
+fix; nothing was silently reset or re-opened. Disclosed for Stage 05 / high-reasoning
+review.
+
 ## STEP EVIDENCE INDEX (append-only, analysis/ab-offline-20260929/)
 
 - A1-build.log, A1-structural-test.log — compile blocker fix + focused run.
@@ -320,6 +400,24 @@ with monotone information gain and no oscillation; nothing was silently reset ei
   to A8 (sha256 d8a59cd7d8d6f07c…).
 - `python3 -B rev28/Tools/verify_pre_live_provenance.py` → PASS (v3 manifest;
   `rev28/Sources/rev28ctl/HarnessCalibration.swift` git blob frozen at 4a3fe1c4…).
+- Correction (2026-09-29): the v3 provenance manifest binds `HarnessCalibration.swift`
+  to git blob `c411011b1b44b1efb614e000f526b2118f45d120` (printed by the verify script,
+  unchanged after the CAL-1 fix); `4a3fe1c4…` above was a stale draft value.
+- composer-diagnostics/CAL1-root-cause-note.md — CAL-1 root cause (upstream
+  swiftlang/swift#92017), the driver-side explicit-closure workaround, and the
+  verification list.
+- composer-diagnostics/CAL1-diag7-COMPOSER-20260929-101022/ — crash-free
+  `--diagnose-only --timings 1` run end-to-end (items + logs + sha256sums.txt, verified
+  with `shasum -a 256 -c`).
+- composer-diagnostics/CAL1-crash-report-095613.ips, CAL1-crash-report-095920.ips —
+  the two SIGABRT reports (`PostconditionMonitor.swift:155` ← driver monitor task).
+- composer-diagnostics/CAL1-full-suite-post-fix.log — full 168/168 suite re-run after
+  the CAL-1 fix (exit 0, 0 failures, 20.7 s).
+- composer-diagnostics/CAL1-probe3-cg-sck-under-lock.log,
+  CAL1-probe4-ax-under-lock.log — locked-session split: CG/SCK list the harness chooser
+  window; AX exposes only AXApplication placeholders (`kAXErrorAttributeUnsupported`
+  -25205) and no window with a frame.
+- composer-diagnostics/CAL1-upstream-issue-92017.json — upstream issue record.
 
 ## REVERIFY_ON_START (executed 2026-09-29, offline only)
 
@@ -348,7 +446,9 @@ with monotone information gain and no oscillation; nothing was silently reset ei
 - 391b3f1 feat(rev28ctl): production composition for the native live closed loop
 - c6a670e fix(rev28): correct ellipsis pixel row orientation (A4/ELL-1, pinned-frame test included)
 - 33b168c test(rev28): add native composition matrix fixture and failure matrix (A5/MAT-1)
-- <this commit> chore(rev28): record offline closed-loop evidence and Stage 04 progress
+- 306c08c chore(rev28): record offline closed-loop evidence and Stage 04 progress
+- 936536f feat(rev28ctl): add current-composer synthetic calibration
+- <this commit> chore(rev28): record composer-diagnostics evidence and CAL-1 resolution
 
 ## STOP_POINT
 

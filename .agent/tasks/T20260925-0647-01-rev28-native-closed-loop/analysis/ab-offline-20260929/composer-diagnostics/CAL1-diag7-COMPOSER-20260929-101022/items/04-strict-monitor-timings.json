@@ -1,0 +1,73 @@
+{
+  "allAffirmedInWindow" : false,
+  "atISO8601" : "2026-09-29T10:12:37.451+08:00",
+  "boundsUsed" : {
+    "fastCadenceMs" : 150,
+    "fastPhaseSeconds" : 8,
+    "hardCapSeconds" : 15,
+    "lateForensicSampleDelaySeconds" : 30,
+    "slowCadenceMs" : 500
+  },
+  "completedCount" : 1,
+  "delayedCase" : {
+    "affirmed" : false,
+    "frozenPredicateAffirmed" : false,
+    "index" : 0,
+    "monitorElapsedSeconds" : 46.933566457999405,
+    "outcome" : "noChooserObserved",
+    "sampleCount" : 57,
+    "samplerNote" : "panelWillShowObserved=true",
+    "shownAtUnix" : 1790647884.568531,
+    "willShowAtUnix" : 1790647884.549062
+  },
+  "frozenBoundsSHA256" : "c10dcb43e9da14feedaed4f9e1ef5fdbf9b6afdd96d6ee8e79b84ac45a055e84",
+  "frozenFastPhaseSeconds" : 8,
+  "frozenHardCapSeconds" : 15,
+  "frozenRecordedMaxMs" : 0,
+  "frozenRecordedMedianMs" : 0,
+  "inputPostsDuringMonitors" : 0,
+  "lateCase" : {
+    "affirmed" : false,
+    "frozenPredicateAffirmed" : false,
+    "index" : 0,
+    "monitorElapsedSeconds" : 1.9100396669964539,
+    "outcome" : "noChooserObserved",
+    "sampleCount" : 15,
+    "samplerNote" : "noNewCGChooserCandidate",
+    "shownAtUnix" : 1790647956.382894,
+    "willShowAtUnix" : 1790647954.9191442
+  },
+  "maxAffirmedBelowFastPhase" : false,
+  "plannedCount" : 1,
+  "samples" : [
+    {
+      "affirmed" : false,
+      "frozenPredicateAffirmed" : false,
+      "index" : 1,
+      "monitorElapsedSeconds" : 46.70060737500171,
+      "outcome" : "noChooserObserved",
+      "sampleCount" : 57,
+      "samplerHistogram" : {
+        "noNewCGChooserCandidate" : 2,
+        "windowID=7716 cause=axWindowNotYetMatched" : 55
+      },
+      "samplerNote" : "windowID=7716 cause=axWindowNotYetMatched",
+      "shownAtUnix" : 1790647834.6798549,
+      "willShowAtUnix" : 1790647834.6635861,
+      "willShowToShownMs" : 16.26873016357422
+    }
+  ],
+  "timeoutCase" : {
+    "affirmed" : false,
+    "frozenPredicateAffirmed" : false,
+    "index" : 0,
+    "monitorElapsedSeconds" : 1.960694749999675,
+    "outcome" : "noChooserObserved",
+    "sampleCount" : 15,
+    "samplerNote" : "noNewCGChooserCandidate"
+  },
+  "withinWindowMaxMs" : 0,
+  "withinWindowMedianMs" : 0,
+  "withinWindowP95Ms" : 0,
+  "withinWindowWillShowMaxMs" : 16.26873016357422
+}

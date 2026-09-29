@@ -1,0 +1,29 @@
+axIsProcessTrusted=true
+harness pid=85940
+-- AX kAXWindowsAttribute --
+  window count=2
+  attr AXSubrole err=-25205
+  attr AXPosition err=-25205
+  window[0]: role=AXApplication sub=? title=Rev28Harness
+  attr AXSubrole err=-25205
+  attr AXPosition err=-25205
+  window[1]: role=AXApplication sub=? title=Rev28Harness
+-- AX kAXChildrenAttribute (top level) --
+  child count=3
+  attr AXSubrole err=-25205
+  attr AXPosition err=-25205
+  child[0]: role=AXApplication sub=? title=Rev28Harness
+  attr AXSubrole err=-25205
+  attr AXPosition err=-25205
+  child[1]: role=AXApplication sub=? title=Rev28Harness
+  attr AXSubrole err=-25212
+  attr AXTitle err=-25212
+  child[2]: role=AXMenuBar sub=? title=? @(0,0 1147x26)
+-- AX focused window --
+  attr AXSubrole err=-25205
+  attr AXPosition err=-25205
+  focused: role=AXApplication sub=? title=Rev28Harness
+-- system-wide element windows for pid filter --
+  attr AXWindows err=-25205
+  systemwide none
+-- CG harness windows: ["7727/rev28 harness main", "7729/rev28 harness chooser"] --

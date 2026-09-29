@@ -1,0 +1,8 @@
+harness pid=85926
+pre SCK harness windowIDs=[] totalSCK=16
+t=0ms CG harness=["7722/L0/rev28 harness main", "7724/L0/rev28 harness chooser"] newCGNotInPre=[7722, 7724] SCKharness=["7722/200,26,800,632", "7724/133,94,880,448"]
+t=700ms CG harness=["7722/L0/rev28 harness main", "7724/L0/rev28 harness chooser"] newCGNotInPre=[7722, 7724] SCKharness=["7722/200,26,800,632", "7724/133,94,880,448"]
+t=1400ms CG harness=["7722/L0/rev28 harness main", "7724/L0/rev28 harness chooser"] newCGNotInPre=[7722, 7724] SCKharness=["7722/200,26,800,632", "7724/133,94,880,448"]
+t=2100ms CG harness=["7722/L0/rev28 harness main", "7724/L0/rev28 harness chooser"] newCGNotInPre=[7722, 7724] SCKharness=["7722/200,26,800,632", "7724/133,94,880,448"]
+t=2800ms CG harness=["7722/L0/rev28 harness main", "7724/L0/rev28 harness chooser"] newCGNotInPre=[7722, 7724] SCKharness=["7722/200,26,800,632", "7724/133,94,880,448"]
+t=3500ms CG harness=["7722/L0/rev28 harness main", "7724/L0/rev28 harness chooser"] newCGNotInPre=[7722, 7724] SCKharness=["7722/200,26,800,632", "7724/133,94,880,448"]

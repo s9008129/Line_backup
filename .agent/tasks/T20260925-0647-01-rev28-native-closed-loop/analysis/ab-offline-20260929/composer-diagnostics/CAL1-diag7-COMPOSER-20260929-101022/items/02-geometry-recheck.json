@@ -1,0 +1,189 @@
+{
+  "allCellsValid" : true,
+  "allMarkersWithinTolerance" : true,
+  "atISO8601" : "2026-09-29T10:10:28.833+08:00",
+  "cells" : [
+    {
+      "activated" : false,
+      "actualBBoxPt" : [
+        160,
+        140,
+        800,
+        600
+      ],
+      "capturedAtISO8601" : "2026-09-29T10:10:27.885+08:00",
+      "contentOriginLocalPt" : [
+        0,
+        32
+      ],
+      "contentOriginReportedPt" : [
+        160,
+        27
+      ],
+      "expectedBBoxPt" : [
+        160,
+        140,
+        800,
+        600
+      ],
+      "frozenRulePresent" : true,
+      "ignoreShadows" : true,
+      "imageHeightPx" : 1200,
+      "imageSHA256" : "c0d84dc2931d74dd73cb9a24c9c5e7b836abcc1c3afec05a2e669275942f83e7",
+      "imageWidthPx" : 1600,
+      "includeChildWindows" : false,
+      "markerFound" : true,
+      "markerPixel" : [
+        8,
+        72
+      ],
+      "markerPixelDeltaXPx" : 0,
+      "markerPixelDeltaYPx" : 0,
+      "measuredMarkerOffsetXPt" : 0,
+      "measuredMarkerOffsetYPt" : 0,
+      "perSideSizeDeltaPt" : {
+        "bottom" : 0,
+        "left" : 0,
+        "right" : 0,
+        "top" : 0
+      },
+      "predictedMarkerPixel" : [
+        8,
+        72
+      ],
+      "scale" : 2,
+      "screenHeightPt" : 745,
+      "settled" : true,
+      "stateKey" : "settled=true;activated=false;includeChildWindows=false;ignoreShadows=true",
+      "validity" : "valid",
+      "violations" : [
+
+      ],
+      "withinFrozenTolerance" : true
+    },
+    {
+      "activated" : false,
+      "actualBBoxPt" : [
+        160,
+        140,
+        800,
+        600
+      ],
+      "capturedAtISO8601" : "2026-09-29T10:10:28.035+08:00",
+      "contentOriginLocalPt" : [
+        0,
+        32
+      ],
+      "contentOriginReportedPt" : [
+        160,
+        27
+      ],
+      "expectedBBoxPt" : [
+        160,
+        140,
+        800,
+        600
+      ],
+      "frozenRulePresent" : true,
+      "ignoreShadows" : true,
+      "imageHeightPx" : 1200,
+      "imageSHA256" : "b0b7d2456b79c32c592f19339d51735b447eafb6e7e53cbeeb2de43e46b4a1c4",
+      "imageWidthPx" : 1600,
+      "includeChildWindows" : false,
+      "markerFound" : true,
+      "markerPixel" : [
+        8,
+        72
+      ],
+      "markerPixelDeltaXPx" : 0,
+      "markerPixelDeltaYPx" : 0,
+      "measuredMarkerOffsetXPt" : 0,
+      "measuredMarkerOffsetYPt" : 0,
+      "perSideSizeDeltaPt" : {
+        "bottom" : 0,
+        "left" : 0,
+        "right" : 0,
+        "top" : 0
+      },
+      "predictedMarkerPixel" : [
+        8,
+        72
+      ],
+      "scale" : 2,
+      "screenHeightPt" : 745,
+      "settled" : false,
+      "stateKey" : "settled=false;activated=false;includeChildWindows=false;ignoreShadows=true",
+      "validity" : "valid",
+      "violations" : [
+
+      ],
+      "withinFrozenTolerance" : true
+    },
+    {
+      "activated" : false,
+      "actualBBoxPt" : [
+        160,
+        140,
+        800,
+        600
+      ],
+      "capturedAtISO8601" : "2026-09-29T10:10:28.787+08:00",
+      "contentOriginLocalPt" : [
+        0,
+        32
+      ],
+      "contentOriginReportedPt" : [
+        160,
+        27
+      ],
+      "expectedBBoxPt" : [
+        160,
+        140,
+        800,
+        600
+      ],
+      "frozenRulePresent" : true,
+      "ignoreShadows" : true,
+      "imageHeightPx" : 1200,
+      "imageSHA256" : "b0b7d2456b79c32c592f19339d51735b447eafb6e7e53cbeeb2de43e46b4a1c4",
+      "imageWidthPx" : 1600,
+      "includeChildWindows" : true,
+      "markerFound" : true,
+      "markerPixel" : [
+        8,
+        72
+      ],
+      "markerPixelDeltaXPx" : 0,
+      "markerPixelDeltaYPx" : 0,
+      "measuredMarkerOffsetXPt" : 0,
+      "measuredMarkerOffsetYPt" : 0,
+      "perSideSizeDeltaPt" : {
+        "bottom" : 0,
+        "left" : 0,
+        "right" : 0,
+        "top" : 0
+      },
+      "predictedMarkerPixel" : [
+        8,
+        72
+      ],
+      "scale" : 2,
+      "screenHeightPt" : 745,
+      "settled" : true,
+      "stateKey" : "settled=true;activated=false;includeChildWindows=true;ignoreShadows=true",
+      "validity" : "valid",
+      "violations" : [
+
+      ],
+      "withinFrozenTolerance" : true
+    }
+  ],
+  "ruleBookID" : "rev28-capture-geometry-v1",
+  "ruleBookSHA256" : "09e1cf2ae181f519f9ed47979e0286212f0b051f197ced6909a9789f2f1a62ed",
+  "windowFrameTopLeftPt" : [
+    160,
+    140,
+    800,
+    600
+  ]
+}

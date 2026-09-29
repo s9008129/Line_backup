@@ -1,0 +1,20 @@
+{
+  "axPressTotal" : 0,
+  "blocker" : "ACTIVATION_REFUSED_DIAGNOSTIC_BYPASS frontmost=com.apple.loginwindow",
+  "chooserPass" : false,
+  "destinationPass" : false,
+  "durationSeconds" : 135.4041110277176,
+  "geometryPass" : true,
+  "inputPostsTotal" : 0,
+  "notes" : [
+    "SESSION_LOCKED_DIAGNOSTIC_BYPASS frontmost=com.apple.loginwindow",
+    "ACTIVATION_REFUSED_DIAGNOSTIC_BYPASS frontmost=com.apple.loginwindow"
+  ],
+  "overallVerdict" : "DIAGNOSTIC_ONLY",
+  "refusalsPass" : false,
+  "runRoot" : "\/tmp\/composer-cal-diag7.YUXHzZ\/COMPOSER-20260929-101022",
+  "startedAtISO8601" : "2026-09-29T02:10:22Z",
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop",
+  "timingCount" : 1,
+  "timingsPass" : false
+}

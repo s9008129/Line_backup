@@ -1,0 +1,46 @@
+{
+  "atISO8601" : "2026-09-29T10:12:37.455+08:00",
+  "blocker" : "ACTIVATION_REFUSED_DIAGNOSTIC_BYPASS frontmost=com.apple.loginwindow",
+  "chooserCalibrationPass" : false,
+  "destinationConfirmationPass" : false,
+  "frozenBindings" : [
+    {
+      "bytes" : 2657,
+      "name" : "capture-geometry-rulebook-v1.json",
+      "sha256" : "09e1cf2ae181f519f9ed47979e0286212f0b051f197ced6909a9789f2f1a62ed"
+    },
+    {
+      "bytes" : 799,
+      "name" : "chooser-affirmation-predicate-v2.json",
+      "sha256" : "0472aa0a364711fd357f872d93c5ad7e13b393cc267dbbc6244d47a20de6f3f2"
+    },
+    {
+      "bytes" : 1276,
+      "name" : "chooser-ax-calibration-v2.json",
+      "sha256" : "13aa01a2fa5d2b2d3e52d28e17a1b421ac25e6943fda1c44a572be610ef7e569"
+    },
+    {
+      "bytes" : 1082,
+      "name" : "postcondition-bounds-v3.json",
+      "sha256" : "c10dcb43e9da14feedaed4f9e1ef5fdbf9b6afdd96d6ee8e79b84ac45a055e84"
+    },
+    {
+      "bytes" : 3082,
+      "name" : "postcondition-latency-observations-v3.json",
+      "sha256" : "ca4beabefc1f671162cec06345cf06755a62ad77a28458ac1b03a563f640b155"
+    },
+    {
+      "bytes" : 3195,
+      "name" : "tripwire-attribution-ladder-v1.json",
+      "sha256" : "d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216"
+    }
+  ],
+  "geometryRecheckPass" : true,
+  "harnessBundleIDObserved" : "com.openai.rev28.harness",
+  "harnessPID" : 85651,
+  "overallVerdict" : "DIAGNOSTIC_ONLY",
+  "realLineInteraction" : "NONE",
+  "refusalMatrixPass" : false,
+  "strictMonitorTimingsPass" : false,
+  "taskID" : "T20260925-0647-01-rev28-native-closed-loop"
+}

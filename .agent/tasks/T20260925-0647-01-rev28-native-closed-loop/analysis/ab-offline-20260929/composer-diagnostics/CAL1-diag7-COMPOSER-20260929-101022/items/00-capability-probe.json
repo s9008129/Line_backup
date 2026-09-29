@@ -1,0 +1,15 @@
+{
+  "atISO8601" : "2026-09-29T10:10:22.636+08:00",
+  "axIsProcessTrusted" : true,
+  "cgPreflightPostEventAccess" : true,
+  "cgPreflightScreenCaptureAccess" : true,
+  "hostOSBuild" : "26A428",
+  "hostOSVersion" : "27.0.0",
+  "overallStatus" : "PASS",
+  "probeBinarySHA256" : "9cd5a21a41f1a1231518c6266130bb95b9d667ba9024936168185c40194792fd",
+  "probeRecordPath" : "\/private\/tmp\/composer-cal-diag7.YUXHzZ\/COMPOSER-20260929-101022\/capability-probe\/probe-record-20260929T101022+0800.json",
+  "probeRecordSHA256" : "bccc2b95c9b5cd558bd7b827abe3b10dd6a3ee52b2e9a680b24c6b7f017c6fbf",
+  "quartzKeyboardConstructionOK" : true,
+  "screenCaptureKitStatus" : "OK",
+  "visionStatus" : "OK"
+}

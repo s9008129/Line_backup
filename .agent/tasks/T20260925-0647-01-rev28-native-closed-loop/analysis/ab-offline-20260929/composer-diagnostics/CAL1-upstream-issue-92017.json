@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/swiftlang/swift/issues/92017",
+  "repository_url": "https://api.github.com/repos/swiftlang/swift",
+  "labels_url": "https://api.github.com/repos/swiftlang/swift/issues/92017/labels{/name}",
+  "comments_url": "https://api.github.com/repos/swiftlang/swift/issues/92017/comments",
+  "events_url": "https://api.github.com/repos/swiftlang/swift/issues/92017/events",
+  "html_url": "https://github.com/swiftlang/swift/issues/92017",
+  "id": 5370470302,
+  "node_id": "I_kwDOAqwwJc8AAAABQBrfng",
+  "number": 92017,
+  "title": "Default-argument async closure: copies disagree on context size, linker mixes body and `Tu`",
+  "user": {
+    "login": "nashysolutions-bot",
+    "id": 264955517,
+    "node_id": "U_kgDOD8rmfQ",
+    "avatar_url": "https://avatars.githubusercontent.com/u/264955517?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/nashysolutions-bot",
+    "html_url": "https://github.com/nashysolutions-bot",
+    "followers_url": "https://api.github.com/users/nashysolutions-bot/followers",
+    "following_url": "https://api.github.com/users/nashysolutions-bot/following{/other_user}",
+    "gists_url": "https://api.github.com/users/nashysolutions-bot/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/nashysolutions-bot/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/nashysolutions-bot/subscriptions",
+    "organizations_url": "https://api.github.com/users/nashysolutions-bot/orgs",
+    "repos_url": "https://api.github.com/users/nashysolutions-bot/repos",
+    "events_url": "https://api.github.com/users/nashysolutions-bot/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/nashysolutions-bot/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-09-07T05:32:51Z",
+  "updated_at": "2026-09-07T05:39:21Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "### Description\n\nA closure literal used as the default argument of a `public init` on a generic class is compiled into both the defining module and every client module, as weak (link-once) definitions of the closure function `…fU_` and its async function pointer `…fU_Tu`. In a `-Onone` build the two copies do not agree on the async context layout:\n\n* the **library** copy spills the error register to context offset `0x70` (`str x20, [x8, #0x38]` after `str x9, [x8, #0x38]!` in `…fU_TQ1_`) and reloads it with `ldr x20, [x8, #0x70]` in `…fU_TY2_`. Its `Tu` records a 128-byte context.\n* each **client** copy puts the same spill at `0x68` (`str x20, [x8, #0x30]`, reloaded with `ldr x20, [x8, #0x68]`); every other context field sits 8 bytes lower too. Its `Tu` records a 112-byte context.\n\nWhen the test bundle contains two client objects that reference the default initialiser, `ld` resolves the function *body* from the library object and the *`Tu`* from a client object. Every call then allocates 112 bytes for a body that writes at offset `0x70`, and `0x70` is exactly 112, so the spill lands one word past the end of the allocation. It overwrites the `previous` link of the following task allocation, and the next `swift_task_dealloc` in the caller aborts with:\n\n```\nfreed pointer was not the last allocation\n```\n\nPassing the same closure literal explicitly at the call site does not crash (only one copy exists). Release builds do not crash (both copies optimise to a 64-byte frame). With only one client object the linker takes both symbols from the library and the tests pass, even though the objects still disagree. Which copy wins is a property of the link input, not of the closure.\n\n### Reproduction\n\nA package with one library target and one test target of two files.\n\n`Package.swift`\n\n```swift\n// swift-tools-version: 6.0\nimport PackageDescription\nlet package = Package(\n    name: \"minimal\",\n    platforms: [.macOS(.v14)],\n    targets: [\n        .target(name: \"Lib\"),\n        .testTarget(name: \"LibTests\", dependencies: [\"Lib\"]),\n    ]\n)\n```\n\n`Sources/Lib/Lib.swift`\n\n```swift\nimport Foundation\n\n@MainActor\npublic final class Holder<T> {\n    private let sleep: @Sendable (TimeInterval) async throws -> Void\n    private var task: Task<Void, Never>?\n\n    // The closure literal in this default argument is the trigger.\n    public init(sleep: @escaping @Sendable (TimeInterval) async throws -> Void = { try await Task.sleep(for: .seconds($0)) }) {\n        self.sleep = sleep\n    }\n\n    @discardableResult\n    public func dispatch() -> Task<Void, Never> {\n        task?.cancel()\n        let t: Task<Void, Never> = Task { await self.run() }\n        task = t\n        return t\n    }\n\n    private func run() async {\n        do { try await pause(0.01) } catch {}\n    }\n\n    private func pause(_ seconds: TimeInterval) async throws {\n        try Task.checkCancellation()\n        try await sleep(seconds)\n        try Task.checkCancellation()\n    }\n}\n```\n\n`Tests/LibTests/LibTests.swift`\n\n```swift\nimport Testing\nimport Lib\n\n@MainActor @Suite struct LibTests {\n    @Test func defaultSleepCrashes() async {\n        let holder = Holder<Int>()\n        await holder.dispatch().value\n    }\n    @Test func explicitSleepPasses() async {\n        let holder = Holder<Int>(sleep: { try await Task.sleep(for: .seconds($0)) })\n        await holder.dispatch().value\n    }\n}\n```\n\n`Tests/LibTests/MoreTests.swift`\n\n```swift\nimport Testing\nimport Lib\n\n// A second test file that also uses the default initialiser, so this module\n// emits a second client copy of the default-argument closure. With only one\n// client file the linker's choice happens to be consistent and nothing crashes.\n@MainActor @Suite struct MoreTests {\n    @Test func defaultSleepAgain() async {\n        let holder = Holder<Int>()\n        await holder.dispatch().value\n    }\n}\n```\n\nRun:\n\n```\nswift test\n```\n\nActual:\n\n```\n􀟈  Test defaultSleepCrashes() started.\nfreed pointer was not the last allocation\nerror: Exited with unexpected signal code 6\n```\n\n`MoreTests/defaultSleepAgain` aborts the same way. `explicitSleepPasses` passes in 12 ms. `swift test -c release` passes all three. Deterministic across repeated runs and from-scratch builds.\n\n### Stack dump\n\n```text\nThread 3 Crashed::  Dispatch queue: com.apple.root.default-qos.cooperative\n0   libsystem_kernel.dylib          0x0001810925e8 __pthread_kill + 8\n1   libsystem_pthread.dylib         0x0001810cd8d8 pthread_kill + 296\n2   libsystem_c.dylib               0x000180fd4644 abort + 148\n3   libswift_Concurrency.dylib      0x000285b4ae1c swift::swift_Concurrency_fatalErrorv(unsigned int, char const*, char*) + 32\n4   libswift_Concurrency.dylib      0x000285b4ae3c swift::swift_Concurrency_fatalError(unsigned int, char const*, ...) + 32\n5   libswift_Concurrency.dylib      0x000285b4b034 <deduplicated_symbol> + 84\n6   libswift_Concurrency.dylib      0x000285ae2074 swift_task_dealloc + 124\n7   minimalPackageTests             0x0001023522c8 Holder.pause(_:) + 84 (Lib.swift:27)\n8   minimalPackageTests             0x0001023519a5 Holder.run() + 1 (Lib.swift:22)\n9   minimalPackageTests             0x000102351679 closure #1 in Holder.dispatch() + 1 (Lib.swift:16)\n10  minimalPackageTests             0x000102351891 partial apply for closure #1 in Holder.dispatch() + 1\n11  minimalPackageTests             0x000102352c51 thunk for @escaping @isolated(any) @callee_guaranteed @async () -> (@out A) + 1\n12  minimalPackageTests             0x000102352dad partial apply for thunk for @escaping @isolated(any) @callee_guaranteed @async () -> (@out A) + 1\n13  libswift_Concurrency.dylib      0x000285ae0ec5 completeTaskWithClosure(swift::AsyncContext*, swift::SwiftError*) + 1\n```\n\n### Expected behavior\n\nEvery copy of a link-once async function should agree on its async context size, or the linker should be constrained to take the function body and its async function pointer from the same object. Either way the tests should pass.\n\n### Environment\n\n```\n$ swift --version\nswift-driver version: 1.127.15 Apple Swift version 6.2.4 (swiftlang-6.2.4.1.4 clang-1700.6.4.2)\nTarget: arm64-apple-macosx26.0\n```\n\n* Xcode 26.3 (17C519), `ld-1230.1`\n* macOS 26.5.2 (25F84), arm64\n* Runtime: `/usr/lib/swift/libswift_Concurrency.dylib` (system)\n* Language mode 6 (swift-tools-version 6.0), `-Onone -g -enable-testing` (SwiftPM debug defaults)\n\n### Additional information\n\n**Measured sizes.** Context size is the second 32-bit word of the `…fU_Tu` symbol. Instruction counts are for the closure's entry symbol alone:\n\n```\nSYM='_$s3Lib6HolderC5sleepACyxGySdYaYbKc_tcfcfA_ySdYaYbKcfU_'\nxcrun llvm-objdump -d --disassemble-symbols=\"$SYM\" <object> | grep -cE '^[ \\t]*[0-9a-f]+:'\n```\n\n| object | entry-symbol instructions | error-register slot | `Tu` context size |\n|---|---|---|---|\n| `Lib.build/Lib.swift.o` | 39 | ctx+`0x70` | 128 |\n| `LibTests.build/LibTests.swift.o` | 30 | ctx+`0x68` | 112 |\n| `LibTests.build/MoreTests.swift.o` | 30 | ctx+`0x68` | 112 |\n| linked `minimalPackageTests` | **39** (library body) | ctx+`0x70` | **112** (client `Tu`) |\n\n`llvm-objdump -t` on the library object shows both symbols as weak hidden (`w F __TEXT,__text .hidden` and `w O __TEXT,__const .hidden`).\n\n**Proof by relink.** Reversing the order of the lines in `.build/.../minimalPackageTests.product/Objects.LinkFileList` and re-running the identical `swiftc` link command over the identical objects makes the linker take the client's 30-instruction body together with its 112-byte `Tu`. That binary runs all three tests green. Nothing but which copy wins changed.\n\n**Allocator trace.** A `DYLD_INSERT_LIBRARIES` interposer on `swift_task_alloc` / `swift_task_dealloc` that re-reads each allocation header at every event shows, in the crashing task:\n\n```\nalloc  112  -> pause context\nalloc  112  -> closure context      (caller allocated the Tu size, 112)\nalloc    0  -> generic clock buffer; its header sits at closure ctx + 0x70\nalloc   32  -> Task.sleep(for:tolerance:clock:) context\n...\ndealloc  32  ok\ndealloc   0  header.previous is now 0x0 (it was correct at alloc time)\ndealloc 112  -> abort: freed pointer was not the last allocation\n```\n\n**Related.** #86204 and #88794 report the same abort in different configurations, both involving two modules that each emit their own copy of an inlinable or link-once async function. The stack in #86204 is the same shape as the one above. This report is a different trigger, a default-argument closure rather than an inlined stdlib generic, for what looks like the same underlying problem: link-once async functions whose copies disagree on frame size, mixed by the linker.\n\n**Workaround.** Keep closure literals out of public default arguments on async seams. Dropping the default and adding a non-inlinable `public convenience init()` that supplies the closure inside the library leaves one copy, so nothing can mismatch:\n\n```swift\npublic init(sleep: @escaping @Sendable (TimeInterval) async throws -> Void) {\n    self.sleep = sleep\n}\npublic convenience init() {\n    self.init(sleep: { try await Task.sleep(for: .seconds($0)) })\n}\n```\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/swiftlang/swift/issues/92017/reactions",
+    "total_count": 1,
+    "+1": 1,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/swiftlang/swift/issues/92017/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

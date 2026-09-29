@@ -1,0 +1,64 @@
+{
+  "atISO8601" : "2026-09-29T10:10:33.371+08:00",
+  "axCandidateWindows" : [
+
+  ],
+  "cancelButtonTitlesObserved" : [
+
+  ],
+  "defaultButtonTitlesObserved" : [
+
+  ],
+  "frozenButtonTitles" : [
+    "?",
+    "?",
+    "?",
+    "?",
+    "Name",
+    "Date Modified",
+    "Size",
+    "Kind",
+    "?",
+    "?",
+    "?",
+    "?",
+    "back",
+    "forward",
+    "",
+    "New Folder",
+    "Cancel",
+    "開啟"
+  ],
+  "frozenCalibrationSHA256" : "13aa01a2fa5d2b2d3e52d28e17a1b421ac25e6943fda1c44a572be610ef7e569",
+  "frozenPredicateID" : "rev28-chooser-affirmation-v1",
+  "frozenWindowRole" : "AXWindow",
+  "matchesFrozenCalibration" : false,
+  "mismatches" : [
+    "panel window not located in AX tree"
+  ],
+  "observedButtonTitles" : [
+
+  ],
+  "observedPopUpRoles" : [
+
+  ],
+  "observedRoles" : [
+
+  ],
+  "observedSubroles" : [
+
+  ],
+  "observedTextFieldRoles" : [
+
+  ],
+  "observedWindowFramePt" : [
+
+  ],
+  "panelLocatedVia" : "notLocated",
+  "panelWindowFound" : false,
+  "predicateDerivationError" : "panel window not located",
+  "sckHarnessWindowIDs" : [
+    7713,
+    7709
+  ]
+}
