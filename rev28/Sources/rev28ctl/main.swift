@@ -6,6 +6,7 @@ import ApplicationServices
 // rev28ctl — the W2 harness driver (plan §SYNTHETIC_HARNESS_CALIBRATION_PLAN).
 //
 //   rev28ctl harness-calibrate --evidence <dir> [--items 1,2,5] [--binary-dir <dir>]
+//   rev28ctl composer-calibrate --evidence <dir> [--binary-dir <dir>] [--frozen <dir>] [--timings <n>]
 //   rev28ctl restart-child --ledger <path> --head-file <path> --point <name>
 
 let arguments = CommandLine.arguments
@@ -45,6 +46,45 @@ if arguments.count >= 2, arguments[1] == "harness-calibrate" {
 if arguments.count >= 2, arguments[1] == "restart-child" {
     let code = RestartFixture.runChild(arguments: Array(arguments.dropFirst(2)))
     exit(code)
+}
+
+if arguments.count >= 2, arguments[1] == "composer-calibrate" {
+    // Append-only recalibration of the frozen Rev28 rules against the current
+    // native composer (plan TEST_STRATEGY item 6 / TEST_ORDER step 5; V-02).
+    // Synthetic AppKit targets only: the harness bundle and the occluder
+    // sibling. No real LINE process is touched, and the frozen directory is
+    // read-only input.
+    guard let evidencePath = optionValue("--evidence") else {
+        FileHandle.standardError.write(Data("composer-calibrate: --evidence is required\n".utf8))
+        exit(64)
+    }
+    guard ProcessInfo.processInfo.environment["CI"] == nil else {
+        FileHandle.standardError.write(Data("composer-calibrate: synthetic GUI calibration is disabled in CI\n".utf8))
+        exit(77)
+    }
+    let binaryDirectory = optionValue("--binary-dir").map { URL(fileURLWithPath: $0) }
+        ?? Bundle.main.executableURL?.deletingLastPathComponent()
+        ?? URL(fileURLWithPath: ".")
+    let frozenDirectory = optionValue("--frozen").map { URL(fileURLWithPath: $0) }
+        ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+            .appendingPathComponent("evidence/20260925-rev28-native-closed-loop/harness/frozen")
+    let timingCount = optionValue("--timings").flatMap { Int($0) } ?? 20
+    let diagnoseOnly = arguments.contains("--diagnose-only")
+    do {
+        let options = ComposerCalibrationOptions(
+            evidenceBase: URL(fileURLWithPath: evidencePath),
+            binaryDirectory: binaryDirectory,
+            frozenDirectory: frozenDirectory,
+            timingCount: timingCount,
+            diagnoseOnly: diagnoseOnly
+        )
+        let driver = try ComposerCalibrationDriver(options: options)
+        let code = await driver.runAll()
+        exit(code)
+    } catch {
+        FileHandle.standardError.write(Data("composer-calibrate failed: \(error)\n".utf8))
+        exit(70)
+    }
 }
 
 if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1]) {
@@ -138,7 +178,7 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
     }
 }
 
-FileHandle.standardError.write(Data("usage: rev28ctl harness-calibrate --evidence <dir> [--items 1,2,5] [--binary-dir <dir>] | restart-child --ledger <path> --head-file <path> --point <name> | live-preflight|live-execute --config <json> --one-shot-authorization <json>\n".utf8))
+FileHandle.standardError.write(Data("usage: rev28ctl harness-calibrate --evidence <dir> [--items 1,2,5] [--binary-dir <dir>] | composer-calibrate --evidence <dir> [--binary-dir <dir>] [--frozen <dir>] [--timings <n>] | restart-child --ledger <path> --head-file <path> --point <name> | live-preflight|live-execute --config <json> --one-shot-authorization <json>\n".utf8))
 exit(64)
 
 private enum ReviewedImplementationDigest {
