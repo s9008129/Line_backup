@@ -1,0 +1,74 @@
+[0/1] Planning build
+Building for debugging...
+[0/14] Write sources
+[1/14] Write swift-version--58304C5D6DBC2206.txt
+[3/6] Compiling Rev28CoreTests ZZTempDigestPrintTests.swift
+[4/6] Emitting module Rev28CoreTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking rev28PackageTests
+Build complete! (0.93s)
+Test Suite 'Selected tests' started at 2026-09-29 08:05:45.399.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 08:05:45.399.
+Test Suite 'ZZTempDigestPrintTests' started at 2026-09-29 08:05:45.399.
+Test Case '-[Rev28CoreTests.ZZTempDigestPrintTests testPrintReviewedDigest]' started.
+Test Case '-[Rev28CoreTests.ZZTempDigestPrintTests testPrintReviewedDigest]' passed (0.004 seconds).
+Test Suite 'ZZTempDigestPrintTests' passed at 2026-09-29 08:05:45.403.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 08:05:45.403.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 08:05:45.403.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+ZZDIGEST_PATHCOUNT=48
+ZZDIGEST_PATH=rev28/Package.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Actuation/AXDriver.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Chooser/ChooserAffirmationPredicate.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Chooser/FolderChooserDriver.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Composition/LiveComposition.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Composition/PhaseAEvidence.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Composition/PostSaveEnvironment.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Composition/ProductionActuationEnvironment.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Diagnostics/DiagnosticHooks.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Geometry/Coordinates.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Identity/AXWindowIdentitySelector.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Identity/WindowIdentity.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Perception/AlbumEllipsisLocator.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Perception/OcrEngine.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Perception/StructuralLocators.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Policy/ExecutionPolicy.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Postcondition/PostconditionMonitor.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Sensor/FrameCapture.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Sensor/WindowSensor.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Transaction/FilesystemTripwireJournal.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Transaction/GoalSlot.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Transaction/IntentLedger.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Transaction/PhaseBEligibility.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Transaction/ReviewedBuildState.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Transaction/ReviewedImplementationDigest.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Transaction/StateEvidence.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Transaction/TripwireAttribution.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Verification/BaselineVerifier.swift
+ZZDIGEST_PATH=rev28/Sources/Rev28Core/Verification/StagingVerifier.swift
+ZZDIGEST_PATH=rev28/Sources/rev28ctl/EvidenceRun.swift
+ZZDIGEST_PATH=rev28/Sources/rev28ctl/FolderChooserDriver.swift
+ZZDIGEST_PATH=rev28/Sources/rev28ctl/HarnessCalibration.swift
+ZZDIGEST_PATH=rev28/Sources/rev28ctl/ProcessIdentity.swift
+ZZDIGEST_PATH=rev28/Sources/rev28ctl/ProcessPeer.swift
+ZZDIGEST_PATH=rev28/Sources/rev28ctl/QuartzActuator.swift
+ZZDIGEST_PATH=rev28/Sources/rev28ctl/RawCapture.swift
+ZZDIGEST_PATH=rev28/Sources/rev28ctl/RestartFixture.swift
+ZZDIGEST_PATH=rev28/Sources/rev28ctl/main.swift
+ZZDIGEST_PATH=rev28/Tools/replay_rev28.py
+ZZDIGEST_PATH=rev28/Tools/verify_pre_live_provenance.py
+ZZDIGEST_SHA256=6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

@@ -106,3 +106,20 @@ PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
 - Remaining findings: M-1 = production `DispatchReadinessGate.mintPermit` enforces a raw 1-capture-pixel interior margin instead of `plan.md:130`'s scale-converted 1-point refusal (`rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift` — see report 01 for line refs); bounded impact, in-contract repair. MINOR-1 = the `focused_11_suites` label misdescribes the a38 log's 8 suites (96/0 itself verifies; record-accuracy fix, no gating claim affected).
 - Report table, finding details, convergence counters and the repair plan: `progress.md` `## V-09 attempt-03 reviews` and `## Next up`.
 - Zero irreversible throughout: Save All dispatches 0, destination confirmations 0, irreversible intents 0; `rev28-prelive-finalization` remains at `9cbaa1141595acb538d4672066072d2b8ffb7065`.
+
+## Stage 04 status update (2026-09-29T08:12+0800, A/B branch v43-ab/codex-rev28) — V-09 attempt-03 findings repaired (product commit cf39fdcc)
+
+STATE: RUNNING (implementation as far as possible pre-Phase B; real Phase A evidence externally blocked; Phase B forbidden)
+IMPLEMENTATION_STATUS: IN_PROGRESS (M-1 repaired in-contract at cf39fdcc + MINOR-1 record fix at 3d74248b; attempt-04 fresh verification next)
+PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
+CORE_ACCEPTANCE_STATUS: NOT_RUN
+REQUIRED_VERIFICATION_STATUS: IN_PROGRESS (repaired tree cf39fdcc / digest 6734dda5…a686: build `a46`; focused 88/0 `a47`; full suite 242/0/0 skipped `a48`; adversarial 27/27 ×2 `a50`/`a51`; replay PASS ×2 byte-identical `a52`/`a53`; provenance PASS `a54`; CLI refusal 77/77/77/64/77 zero side effects `cli-refusal-20260929T0807`; attempt-04 pending)
+INDEPENDENT_ACCEPTANCE_STATUS: PENDING
+TASK_CLOSURE_STATUS: IN_PROGRESS
+PHASE_A_STATUS: EVIDENCE TOOLCHAIN COMPLETE; real preflight NOT FIRED — external prerequisite missing (LINE signed out, no target album surface); 0/3 attempts
+PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
+
+- M-1 (`V09_A3_RETINA_MARGIN_SCALE`) repair: `CaptureGeometryRules.dispatchMinimumMarginPt = 1.0` (single source; `isDispatchable` default now references it) + new `isDispatchableCapturePixels(point:safeRect:captureScale:)` (`margins.min() >= 1.0 pt × captureScale`, fail-closed on invalid scale); `DispatchReadinessGate.mintPermit` now calls it instead of the raw ±1-pixel comparisons (`plan.md:130`). `revalidateAfterHover` needs no second margin check (point/safeRect are immutable permit fields). Regression `testDispatchMarginConvertsOnePointAtCaptureScaleNotOnePixel` covers 2×/3×/1× and NaN scale.
+- MINOR-1 (`V09_A3_SUITE_COUNT_LABEL`): records corrected to “focused 8 suites 96/0” at 3d74248b; the reviewed attempt-03 `bindings.json` bytes were not modified.
+- Implementation digest re-measured with the production `ReviewedImplementationDigest.compute`: `6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686`, 48 files (`a49`); a Python replica of the same manifest formula reproduces the identical digest.
+- Next: attempt-04 fresh verification against `v09/attempt-04/bindings.json` (expected head cf39fdcc, digest 6734dda5…a686); real Phase A remains externally blocked; zero irreversible throughout (Save All dispatches 0, destination confirmations 0, irreversible intents 0); `rev28-prelive-finalization` remains at `9cbaa1141595acb538d4672066072d2b8ffb7065`.
