@@ -43,6 +43,18 @@ REMAINING GATE (registered, attempted under `--diagnose-only`; official run NOT_
     EXPECTED=≥20 panel timings under the strict monitor with real NSOpenPanel, destination preparation + exactly one AXPress, refusal/crash branches, current-composer applicability reconfirmed (V-02); frozen HarnessCalibration blob untouched
     OBSERVED=DIAGNOSTIC_ONLY (driver path executes crash-free end-to-end; every item-03/04 refusal traced to the locked console session — CG/SCK see the panel, AX exposes only AXApplication placeholders while locked — so the official ≥20-timings run requires the Mac session to be UNLOCKED)
 
+WAIT STATE (2026-09-29T10:45+08:00): the official run is ready to execute but the
+console session is still locked (`CGSSessionScreenIsLocked=true`, frontmost
+`loginwindow`) — verified by a live 25-minute poll (10:19–10:45). Pre-flight while
+locked: frozen binding hashes re-verified (rulebook/predicate/ax-calibration/bounds/
+latency/tripwire all match the v3 verdict record), `rev28ctl` + `rev28harness` +
+`rev28occluder` + `rev28probe` binaries present in `rev28/.build/debug`, and the host
+capability record shows axIsProcessTrusted / postEvent / screenCapture / SCK / Vision
+all PASS (diag7 capability probe; host macOS 27.0 build 26A428 = same build as the
+frozen calibration host). Official pass = verdict PASS with geometry + chooser +
+timings + destination + refusals all true; exit code alone is not the signal (PARTIAL
+also exits 0, blocked paths exit 75).
+
 ## PLAIN-LANGUAGE STATUS (required)
 
 - What are we trying to solve now? — Land the official ≥20-timings native calibration
