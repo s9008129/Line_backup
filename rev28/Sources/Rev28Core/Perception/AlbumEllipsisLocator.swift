@@ -81,9 +81,10 @@ public enum EllipsisPixelDetector {
                       space: colorSpace,
                       bitmapInfo: CGImageAlphaInfo.none.rawValue
                   ) else { return false }
-            // Store rows in top-left capture coordinates.
-            context.translateBy(x: 0, y: CGFloat(height))
-            context.scaleBy(x: 1, y: -1)
+            // Draw with the default (unflipped) CTM: the bitmap buffer then
+            // holds the image rows in their stored order, so row 0 is the
+            // capture's top row and component y is top-left capture pixels,
+            // matching OcrGeometry.item and the reviewed v5 detector.
             context.interpolationQuality = .none
             context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
             return true

@@ -1,8 +1,19 @@
 import CoreGraphics
+import CryptoKit
+import Foundation
+import ImageIO
 import XCTest
 @testable import Rev28Core
 
 final class AlbumEllipsisLocatorTests: XCTestCase {
+    private var repositoryRoot: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent() // Rev28CoreTests
+            .deletingLastPathComponent() // Tests
+            .deletingLastPathComponent() // rev28
+            .deletingLastPathComponent() // repository root
+    }
+
     private let binding = SurfaceBinding(
         bundleID: "com.example.target",
         process: ProcessInstanceID(pid: 10, startTimeSeconds: 1, startTimeMicroseconds: 0),
@@ -111,5 +122,31 @@ final class AlbumEllipsisLocatorTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(dots.count, 3)
         let near = dots.filter { abs($0.center.x - 304.5) < 2 }
         XCTAssertGreaterThanOrEqual(near.count, 3)
+        // The bottom-left draw at y = height - 46/-52/-58 stores the dots at
+        // top-left capture rows 44-57, so the detector must report the same.
+        XCTAssertEqual(near.map(\.center.y), [44.5, 50.5, 56.5])
+    }
+
+    /// Locks the pixel detector to the reviewed v5 orientation. On the exact
+    /// reviewed frame the detector must report the album-header dots at the
+    /// top-left rows the v5 pipeline recorded (cy 44 / 49.5 / 55), never the
+    /// vertical mirror of them.
+    func testPixelDetectorMatchesReviewedV5FrameOrientation() throws {
+        let frame = repositoryRoot
+            .appendingPathComponent("evidence/20260917-vision-reader/frames/route5r_frame_post.jpg")
+        let data = try Data(contentsOf: frame)
+        let digest = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+        XCTAssertEqual(
+            digest,
+            "4cb8a6b4cbc8f1add6577a0ae16f2fbe529ef09c7c3f7bba00b225705c6560b3",
+            "reviewed frame bytes must match the pinned manifest"
+        )
+        let source = try XCTUnwrap(CGImageSourceCreateWithURL(frame as CFURL, nil), "frame source")
+        let image = try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, nil), "frame image")
+        XCTAssertEqual(image.width, 327)
+        XCTAssertEqual(image.height, 643)
+        let dots = try EllipsisPixelDetector.detect(image: image)
+        let header = dots.filter { abs($0.center.x - 304.5) < 2 && $0.center.y < 100 }
+        XCTAssertEqual(header.map(\.center.y), [44.0, 49.5, 55.0])
     }
 }
