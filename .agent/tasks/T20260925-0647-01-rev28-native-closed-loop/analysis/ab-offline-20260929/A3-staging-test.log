@@ -1,0 +1,71 @@
+Building for debugging...
+[0/14] Write sources
+[2/14] Write swift-version--58304C5D6DBC2206.txt
+[4/16] Emitting module Rev28Core
+[5/16] Compiling Rev28Core StagingVerifier.swift
+[5/22] Write Objects.LinkFileList
+[11/25] Compiling Rev28CoreTests StructuralLocatorsTests.swift
+[12/25] Emitting module Rev28CoreTests
+[13/25] Compiling Rev28CoreTests StagingVerifierTests.swift
+[13/25] Linking rev28replay
+[14/25] Applying rev28replay
+[15/25] Linking rev28occluder
+[16/25] Applying rev28occluder
+[17/25] Linking rev28ctl
+[18/25] Linking rev28probe
+[19/25] Linking rev28harness
+[20/25] Applying rev28ctl
+[21/25] Applying rev28probe
+[22/25] Applying rev28harness
+[23/25] Write Objects.LinkFileList
+[24/25] Linking rev28PackageTests
+Build complete! (1.43s)
+Test Suite 'Selected tests' started at 2026-09-29 08:26:37.508.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 08:26:37.509.
+Test Suite 'StagingVerifierTests' started at 2026-09-29 08:26:37.509.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRecomputesReferenceAndNameInclusiveTripwire]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRecomputesReferenceAndNameInclusiveTripwire]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRejectsSymlinkExtra]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testBaselineVerifierRejectsSymlinkExtra]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testContentMismatchHasDedicatedOutcome]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testContentMismatchHasDedicatedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testDuplicateHashHasDedicatedOutcome]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testDuplicateHashHasDedicatedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testEqualSignaturesMustBeContiguousAtTheTail]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testEqualSignaturesMustBeContiguousAtTheTail]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testEqualTailSpanMeasuredFromFirstEqualSample]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testEqualTailSpanMeasuredFromFirstEqualSample]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testExactContentPredicateConfirmsDuplicate]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testExactContentPredicateConfirmsDuplicate]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testFourthFileIsExtraFiles]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testFourthFileIsExtraFiles]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testOldDifferentSampleCannotLendSpanToShortEqualTail]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testOldDifferentSampleCannotLendSpanToShortEqualTail]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testRecentModificationIsNotQuiescent]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testRecentModificationIsNotQuiescent]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testReorderedObservationTimesAreRejected]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testReorderedObservationTimesAreRejected]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesDirectoriesAndSymlinksAndRefusesConfirmation]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesDirectoriesAndSymlinksAndRefusesConfirmation]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesHiddenFilesAndTheyCannotConfirmContent]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSnapshotIncludesHiddenFilesAndTheyCannotConfirmContent]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testStabilityRequiresThreeEqualSamplesSpanAndQuiescence]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testStabilityRequiresThreeEqualSamplesSpanAndQuiescence]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSubdirectoryIsExtraFiles]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testSubdirectoryIsExtraFiles]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUndecodableIsIncomplete]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUndecodableIsIncomplete]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUnstableSamplesReturnNamedOutcome]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testUnstableSamplesReturnNamedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StagingVerifierTests testZeroByteAndPartialAreIncomplete]' started.
+Test Case '-[Rev28CoreTests.StagingVerifierTests testZeroByteAndPartialAreIncomplete]' passed (0.000 seconds).
+Test Suite 'StagingVerifierTests' passed at 2026-09-29 08:26:37.518.
+	 Executed 18 tests, with 0 failures (0 unexpected) in 0.009 (0.009) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 08:26:37.518.
+	 Executed 18 tests, with 0 failures (0 unexpected) in 0.009 (0.009) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 08:26:37.518.
+	 Executed 18 tests, with 0 failures (0 unexpected) in 0.009 (0.010) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

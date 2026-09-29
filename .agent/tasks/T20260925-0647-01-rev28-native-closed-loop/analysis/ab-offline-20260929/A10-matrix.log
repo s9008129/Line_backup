@@ -1,0 +1,74 @@
+Building for debugging...
+[0/12] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.10s)
+Test Suite 'Selected tests' started at 2026-09-29 09:22:32.855.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 09:22:32.856.
+Test Suite 'NativeCompositionMatrixTests' started at 2026-09-29 09:22:32.856.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testBaselineFailureAtContentDoesNotRedispatchOrReconfirm]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testBaselineFailureAtContentDoesNotRedispatchOrReconfirm]' passed (0.089 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testBaselineFailureAtDispatchRefusesWithZeroIrreversibleIntent]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testBaselineFailureAtDispatchRefusesWithZeroIrreversibleIntent]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testChooserRefusalsProduceNamedTerminalsWithZeroFurtherInput]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testChooserRefusalsProduceNamedTerminalsWithZeroFurtherInput]' passed (15.381 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testClosedLoopHappyPathVerifiesContentWithIndependentCounts]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testClosedLoopHappyPathVerifiesContentWithIndependentCounts]' passed (0.334 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testClosedLoopWithRealScanningFilesystemAndBaselineImages]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testClosedLoopWithRealScanningFilesystemAndBaselineImages]' passed (0.414 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationPreIntentReadinessLossLeavesZeroConfirmationIntent]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationPreIntentReadinessLossLeavesZeroConfirmationIntent]' passed (0.058 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationReadinessLossAfterIntentConsumesWithoutPress]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationReadinessLossAfterIntentConsumesWithoutPress]' passed (0.065 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationNotReflectedRefusesAfterReversibleNavigation]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationNotReflectedRefusesAfterReversibleNavigation]' passed (0.058 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPanelLossAfterPrimitivesKeepsReversibleNavigation]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPanelLossAfterPrimitivesKeepsReversibleNavigation]' passed (0.050 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPanelLossBeforeFirstPrimitiveIsFullyEventFree]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPanelLossBeforeFirstPrimitiveIsFullyEventFree]' passed (0.052 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPrimitiveRefusalStopsBeforeRemainingPrimitives]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPrimitiveRefusalStopsBeforeRemainingPrimitives]' passed (0.051 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDifferentAuthorizationIsRefusedAgainstBoundLedger]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDifferentAuthorizationIsRefusedAgainstBoundLedger]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testEveryPreSaveAllStateRefusalIsEventFreeAndRecordsNoState]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testEveryPreSaveAllStateRefusalIsEventFreeAndRecordsNoState]' passed (0.586 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testGoalSlotEntitlementIsNotRearmableByNewLedgerOrRunID]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testGoalSlotEntitlementIsNotRearmableByNewLedgerOrRunID]' passed (0.051 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testNeverStableStagingProducesNamedTerminalWithoutRedispatch]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testNeverStableStagingProducesNamedTerminalWithoutRedispatch]' passed (0.349 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testObservationFreshnessFailuresRefuseBeforeAnyStateEvidence]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testObservationFreshnessFailuresRefuseBeforeAnyStateEvidence]' passed (0.022 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPermitRefusalsPostZeroEventsAndConsumeNoIntent]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPermitRefusalsPostZeroEventsAndConsumeNoIntent]' passed (0.021 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostEventAccessDenialRefusesBeforeIntentAndEvents]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostEventAccessDenialRefusesBeforeIntentAndEvents]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostMoveFocusLossConsumesIntentWithZeroButtonEvents]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostMoveFocusLossConsumesIntentWithZeroButtonEvents]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostMoveProcessChangeConsumesIntentWithZeroButtonEvents]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostMoveProcessChangeConsumesIntentWithZeroButtonEvents]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPreDispatchTripwireGateFalseYieldsZeroIrreversibleIntent]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPreDispatchTripwireGateFalseYieldsZeroIrreversibleIntent]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPressFailureAfterIntentConsumesWithoutRetry]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPressFailureAfterIntentConsumesWithoutRetry]' passed (0.063 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterFullClosedLoopIsObserveOnly]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterFullClosedLoopIsObserveOnly]' passed (0.310 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterSaveAllIntentAndAttemptIsObserveOnly]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterSaveAllIntentAndAttemptIsObserveOnly]' passed (0.042 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterSaveAllIntentOnlyIsObserveOnly]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterSaveAllIntentOnlyIsObserveOnly]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRetainedImageTamperIsDetectedBeforeStateEvidenceIsWritten]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRetainedImageTamperIsDetectedBeforeStateEvidenceIsWritten]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testSecondOwnerContinuesPreIntentHistoryWithReverification]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testSecondOwnerContinuesPreIntentHistoryWithReverification]' passed (0.311 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testStagingOutcomeVariantsAreRejectedWithoutFurtherIrreversibleInput]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testStagingOutcomeVariantsAreRejectedWithoutFurtherIrreversibleInput]' passed (1.140 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testStateArtifactTamperIsDetectedOnReVerification]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testStateArtifactTamperIsDetectedOnReVerification]' passed (0.006 seconds).
+Test Suite 'NativeCompositionMatrixTests' passed at 2026-09-29 09:22:52.349.
+	 Executed 29 tests, with 0 failures (0 unexpected) in 19.491 (19.493) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 09:22:52.349.
+	 Executed 29 tests, with 0 failures (0 unexpected) in 19.491 (19.493) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 09:22:52.349.
+	 Executed 29 tests, with 0 failures (0 unexpected) in 19.491 (19.494) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

@@ -1,0 +1,69 @@
+Building for debugging...
+[0/27] Write sources
+[0/27] Write rev28replay-entitlement.plist
+[3/27] Write rev28ctl-entitlement.plist
+[3/27] Write sources
+[3/27] Write rev28probe-entitlement.plist
+[3/27] Write sources
+[4/27] Write rev28harness-entitlement.plist
+[7/27] Write sources
+[7/27] Write rev28occluder-entitlement.plist
+[10/27] Write sources
+[11/27] Write swift-version--58304C5D6DBC2206.txt
+[13/47] Compiling Rev28Core TripwireAttribution.swift
+[14/47] Compiling Rev28Core IntentLedger.swift
+[15/47] Compiling Rev28Core LiveExecutionEngine.swift
+[16/47] Compiling Rev28Core PersistentTransactionOwner.swift
+[17/47] Compiling Rev28Core BaselineVerifier.swift
+[18/48] Compiling Rev28Core StagingVerifier.swift
+[19/48] Compiling Rev28Core FrameCapture.swift
+[20/48] Compiling Rev28Core WindowSensor.swift
+[21/48] Compiling Rev28Core ExecutionPolicy.swift
+[22/48] Compiling Rev28Core PostconditionMonitor.swift
+[23/48] Compiling Rev28Core WindowIdentity.swift
+[24/48] Compiling Rev28Core AlbumEllipsisLocator.swift
+[25/48] Emitting module Rev28Core
+[26/48] Compiling Rev28Core DiagnosticHooks.swift
+[27/48] Compiling Rev28Core Coordinates.swift
+[28/48] Compiling Rev28Core ChooserAffirmationPredicate.swift
+[29/48] Compiling Rev28Core FolderChooserDriver.swift
+[30/48] Compiling Rev28Core AXDriver.swift
+[31/48] Compiling Rev28Core QuartzActuator.swift
+[32/48] Compiling Rev28Core OcrEngine.swift
+[33/48] Compiling Rev28Core StructuralLocators.swift
+[34/68] Emitting module rev28replay
+[35/68] Compiling rev28replay main.swift
+[35/68] Write Objects.LinkFileList
+[37/68] Compiling rev28ctl RawCapture.swift
+[38/68] Compiling rev28ctl QuartzActuator.swift
+[39/68] Compiling rev28ctl RestartFixture.swift
+[40/68] Compiling rev28ctl main.swift
+[41/68] Emitting module rev28occluder
+[42/68] Compiling rev28occluder main.swift
+[42/68] Write Objects.LinkFileList
+[44/68] Compiling rev28probe CapabilityProbe.swift
+[45/68] Emitting module rev28probe
+[46/68] Compiling rev28probe main.swift
+[46/68] Write Objects.LinkFileList
+[48/68] Emitting module rev28harness
+[49/68] Compiling rev28harness HarnessApp.swift
+[50/68] Compiling rev28harness main.swift
+[50/68] Write Objects.LinkFileList
+[51/68] Linking rev28replay
+[52/68] Applying rev28replay
+[53/68] Linking rev28occluder
+[54/68] Applying rev28occluder
+[55/68] Linking rev28probe
+[56/68] Applying rev28probe
+[57/68] Linking rev28harness
+[58/68] Applying rev28harness
+[60/68] Compiling rev28ctl FolderChooserDriver.swift
+[61/68] Compiling rev28ctl ProcessIdentity.swift
+[62/68] Compiling rev28ctl EvidenceRun.swift
+[63/68] Compiling rev28ctl ProcessPeer.swift
+[64/68] Emitting module rev28ctl
+[65/68] Compiling rev28ctl HarnessCalibration.swift
+[65/68] Write Objects.LinkFileList
+[66/68] Linking rev28ctl
+[67/68] Applying rev28ctl
+Build complete! (10.49s)

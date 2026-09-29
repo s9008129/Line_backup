@@ -1,0 +1,72 @@
+[0/1] Planning build
+Building for debugging...
+[0/8] Write sources
+[0/12] /Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/.build/arm64-apple-macosx/debug/rev28PackageTests.derived/runner.swift
+[2/16] Write sources
+[3/16] Write swift-version--58304C5D6DBC2206.txt
+[5/19] Compiling Rev28CoreTests StructuralLocatorsTests.swift
+[6/20] Compiling Rev28CoreTests StagingVerifierTests.swift
+[7/20] Compiling Rev28CoreTests PersistentTransactionOwnerTests.swift
+[8/20] Compiling Rev28CoreTests PostconditionMonitorTests.swift
+[9/20] Compiling Rev28CoreTests IntentLedgerTests.swift
+[10/20] Compiling Rev28CoreTests OcrEngineTests.swift
+[11/20] Compiling Rev28CoreTests ExecutionPolicyTests.swift
+[12/20] Compiling Rev28CoreTests CoordinateTransformTests.swift
+[13/20] Compiling Rev28CoreTests AlbumEllipsisLocatorTests.swift
+[14/20] Compiling Rev28CoreTests ActuationReadinessTests.swift
+[15/20] Compiling Rev28CoreTests AdversarialMatrixTests.swift
+[16/20] Emitting module Rev28CoreTests
+[17/20] Compiling Rev28CoreTests LiveExecutionEngineTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:219:32: warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+217 |         let firstAdapter = FakeAdapter()
+218 |         _ = try await firstAdapter.establish(state: .appReady, owner: owner)
+219 |         try await firstAdapter.dispatchSaveAll(owner: owner)
+    |                                `- warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+220 |         XCTAssertEqual(firstAdapter.saveAllMouseEvents, 3)
+221 | 
+[18/20] Compiling Rev28CoreTests WindowIdentityTests.swift
+[19/22] Compiling rev28PackageTests runner.swift
+[20/22] Emitting module rev28PackageTests
+[20/22] Write Objects.LinkFileList
+[21/22] Linking rev28PackageTests
+Build complete! (4.32s)
+Test Suite 'Selected tests' started at 2026-09-29 08:25:00.560.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 08:25:00.561.
+Test Suite 'StructuralLocatorsTests' started at 2026-09-29 08:25:00.561.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardDuplicateCountRefusesAmbiguity]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardDuplicateCountRefusesAmbiguity]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsCrossPairedTitleAndCountAcrossCards]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsCrossPairedTitleAndCountAcrossCards]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsTwoVerifiedCardsAsAmbiguous]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsTwoVerifiedCardsAsAmbiguous]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRequiresExactUniqueTitleAndCount]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRequiresExactUniqueTitleAndCount]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumDetailRejectsWrongZhenGlyph]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumDetailRejectsWrongZhenGlyph]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotBeReusedAcrossEpoch]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotBeReusedAcrossEpoch]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotSurviveProcessRestartOrPIDReuse]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotSurviveProcessRestartOrPIDReuse]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllDuplicateTargetFailsClosed]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllDuplicateTargetFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllRequiresFullReferenceStructure]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllRequiresFullReferenceStructure]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllWrongNeighborRowFailsClosed]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllWrongNeighborRowFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:204: error: -[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand] : XCTAssertEqual failed: ("0") is not equal to ("2")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:211: error: -[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand] : failed - target title/count should bind within one derived card
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand]' failed (0.036 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsCrossCardCount]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:233: error: -[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsCrossCardCount] : XCTAssertEqual failed: ("unsafeGeometry") is not equal to ("referenceStructureMismatch")
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsCrossCardCount]' failed (0.000 seconds).
+Test Suite 'StructuralLocatorsTests' failed at 2026-09-29 08:25:00.600.
+	 Executed 12 tests, with 3 failures (0 unexpected) in 0.038 (0.038) seconds
+Test Suite 'rev28PackageTests.xctest' failed at 2026-09-29 08:25:00.600.
+	 Executed 12 tests, with 3 failures (0 unexpected) in 0.038 (0.038) seconds
+Test Suite 'Selected tests' failed at 2026-09-29 08:25:00.600.
+	 Executed 12 tests, with 3 failures (0 unexpected) in 0.038 (0.039) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

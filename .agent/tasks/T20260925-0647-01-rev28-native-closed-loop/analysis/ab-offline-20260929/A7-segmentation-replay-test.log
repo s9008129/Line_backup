@@ -1,0 +1,26 @@
+[0/1] Planning build
+Building for debugging...
+[0/14] Write sources
+[1/14] Write swift-version--58304C5D6DBC2206.txt
+[3/6] Emitting module Rev28CoreTests
+[4/6] Compiling Rev28CoreTests HistoricalReplaySegmentationTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking rev28PackageTests
+Build complete! (1.07s)
+Test Suite 'Selected tests' started at 2026-09-29 08:29:37.756.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 08:29:37.757.
+Test Suite 'HistoricalReplaySegmentationTests' started at 2026-09-29 08:29:37.757.
+Test Case '-[Rev28CoreTests.HistoricalReplaySegmentationTests testAttempt12AlbumCardSegmentationReplay]' started.
+Test Case '-[Rev28CoreTests.HistoricalReplaySegmentationTests testAttempt12AlbumCardSegmentationReplay]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.HistoricalReplaySegmentationTests testAttempt16AlbumCardSegmentationReplay]' started.
+Test Case '-[Rev28CoreTests.HistoricalReplaySegmentationTests testAttempt16AlbumCardSegmentationReplay]' passed (0.001 seconds).
+Test Suite 'HistoricalReplaySegmentationTests' passed at 2026-09-29 08:29:37.758.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 08:29:37.758.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 08:29:37.758.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

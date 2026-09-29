@@ -1,0 +1,99 @@
+Building for debugging...
+[0/12] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.10s)
+Test Suite 'Selected tests' started at 2026-09-29 09:14:26.780.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 09:14:26.781.
+Test Suite 'NativeCompositionMatrixTests' started at 2026-09-29 09:14:26.781.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testBaselineFailureAtContentDoesNotRedispatchOrReconfirm]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testBaselineFailureAtContentDoesNotRedispatchOrReconfirm]' passed (0.085 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testBaselineFailureAtDispatchRefusesWithZeroIrreversibleIntent]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testBaselineFailureAtDispatchRefusesWithZeroIrreversibleIntent]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testChooserRefusalsProduceNamedTerminalsWithZeroFurtherInput]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testChooserRefusalsProduceNamedTerminalsWithZeroFurtherInput]' passed (15.294 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testClosedLoopHappyPathVerifiesContentWithIndependentCounts]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Sources/Rev28Core/Composition/NativeLiveExecutionAdapter.swift:643: error: -[Rev28CoreTests.NativeCompositionMatrixTests testClosedLoopHappyPathVerifiesContentWithIndependentCounts] : failed: caught error: "stateRefused(ELLIPSIS_LOCATED: ellipsis refused missingIdentity: no eligible album-level vertical ellipsis in reviewed header band)"
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testClosedLoopHappyPathVerifiesContentWithIndependentCounts]' failed (0.158 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testClosedLoopWithRealScanningFilesystemAndBaselineImages]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Sources/Rev28Core/Composition/NativeLiveExecutionAdapter.swift:643: error: -[Rev28CoreTests.NativeCompositionMatrixTests testClosedLoopWithRealScanningFilesystemAndBaselineImages] : failed: caught error: "stateRefused(ELLIPSIS_LOCATED: ellipsis refused missingIdentity: no eligible album-level vertical ellipsis in reviewed header band)"
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testClosedLoopWithRealScanningFilesystemAndBaselineImages]' failed (0.131 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationPreIntentReadinessLossLeavesZeroConfirmationIntent]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationPreIntentReadinessLossLeavesZeroConfirmationIntent]' passed (0.059 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationReadinessLossAfterIntentConsumesWithoutPress]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:613: error: -[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationReadinessLossAfterIntentConsumesWithoutPress] : XCTAssertEqual failed: ("0") is not equal to ("2")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:614: error: -[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationReadinessLossAfterIntentConsumesWithoutPress] : XCTAssertEqual failed: ("0") is not equal to ("1")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:615: error: -[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationReadinessLossAfterIntentConsumesWithoutPress] : XCTAssertEqual failed: ("0") is not equal to ("1")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:623: error: -[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationReadinessLossAfterIntentConsumesWithoutPress] : XCTAssertEqual failed: ("0") is not equal to ("2")
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testConfirmationReadinessLossAfterIntentConsumesWithoutPress]' failed (0.059 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationNotReflectedRefusesAfterReversibleNavigation]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationNotReflectedRefusesAfterReversibleNavigation]' passed (0.050 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPanelLossAfterPrimitivesKeepsReversibleNavigation]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPanelLossAfterPrimitivesKeepsReversibleNavigation]' passed (0.057 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPanelLossBeforeFirstPrimitiveIsFullyEventFree]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPanelLossBeforeFirstPrimitiveIsFullyEventFree]' passed (0.051 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPrimitiveRefusalStopsBeforeRemainingPrimitives]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:590: error: -[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPrimitiveRefusalStopsBeforeRemainingPrimitives] : XCTAssertEqual failed: ("2") is not equal to ("1")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:591: error: -[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPrimitiveRefusalStopsBeforeRemainingPrimitives] : XCTAssertEqual failed: ("2") is not equal to ("1")
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDestinationPrimitiveRefusalStopsBeforeRemainingPrimitives]' failed (0.056 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDifferentAuthorizationIsRefusedAgainstBoundLedger]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testDifferentAuthorizationIsRefusedAgainstBoundLedger]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testEveryPreSaveAllStateRefusalIsEventFreeAndRecordsNoState]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:396: error: -[Rev28CoreTests.NativeCompositionMatrixTests testEveryPreSaveAllStateRefusalIsEventFreeAndRecordsNoState] : XCTAssertEqual failed: ("6") is not equal to ("5") - captures for albumDetailVerified
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:396: error: -[Rev28CoreTests.NativeCompositionMatrixTests testEveryPreSaveAllStateRefusalIsEventFreeAndRecordsNoState] : XCTAssertEqual failed: ("7") is not equal to ("6") - captures for ellipsisLocated
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Sources/Rev28Core/Composition/NativeLiveExecutionAdapter.swift:643: error: -[Rev28CoreTests.NativeCompositionMatrixTests testEveryPreSaveAllStateRefusalIsEventFreeAndRecordsNoState] : failed: caught error: "stateRefused(ELLIPSIS_LOCATED: ellipsis refused missingIdentity: no eligible album-level vertical ellipsis in reviewed header band)"
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testEveryPreSaveAllStateRefusalIsEventFreeAndRecordsNoState]' failed (0.362 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testGoalSlotEntitlementIsNotRearmableByNewLedgerOrRunID]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testGoalSlotEntitlementIsNotRearmableByNewLedgerOrRunID]' passed (0.042 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testNeverStableStagingProducesNamedTerminalWithoutRedispatch]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:707: error: -[Rev28CoreTests.NativeCompositionMatrixTests testNeverStableStagingProducesNamedTerminalWithoutRedispatch] : failed - expected NativeAdapterError.stagingTerminal, got stateRefused(ELLIPSIS_LOCATED: ellipsis refused missingIdentity: no eligible album-level vertical ellipsis in reviewed header band)
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:708: error: -[Rev28CoreTests.NativeCompositionMatrixTests testNeverStableStagingProducesNamedTerminalWithoutRedispatch] : XCTAssertEqual failed: ("0") is not equal to ("2")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:709: error: -[Rev28CoreTests.NativeCompositionMatrixTests testNeverStableStagingProducesNamedTerminalWithoutRedispatch] : XCTAssertEqual failed: ("0") is not equal to ("2")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:710: error: -[Rev28CoreTests.NativeCompositionMatrixTests testNeverStableStagingProducesNamedTerminalWithoutRedispatch] : XCTAssertEqual failed: ("0") is not equal to ("1")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:711: error: -[Rev28CoreTests.NativeCompositionMatrixTests testNeverStableStagingProducesNamedTerminalWithoutRedispatch] : XCTAssertEqual failed: ("1") is not equal to ("3")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:712: error: -[Rev28CoreTests.NativeCompositionMatrixTests testNeverStableStagingProducesNamedTerminalWithoutRedispatch] : XCTAssertEqual failed: ("2") is not equal to ("6")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:713: error: -[Rev28CoreTests.NativeCompositionMatrixTests testNeverStableStagingProducesNamedTerminalWithoutRedispatch] : XCTAssertEqual failed: ("Optional(Rev28Core.ExecutionState.albumDetailVerified)") is not equal to ("Optional(Rev28Core.ExecutionState.downloadInProgress)")
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testNeverStableStagingProducesNamedTerminalWithoutRedispatch]' failed (0.121 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testObservationFreshnessFailuresRefuseBeforeAnyStateEvidence]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testObservationFreshnessFailuresRefuseBeforeAnyStateEvidence]' passed (0.023 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPermitRefusalsPostZeroEventsAndConsumeNoIntent]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPermitRefusalsPostZeroEventsAndConsumeNoIntent]' passed (0.021 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostEventAccessDenialRefusesBeforeIntentAndEvents]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostEventAccessDenialRefusesBeforeIntentAndEvents]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostMoveFocusLossConsumesIntentWithZeroButtonEvents]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostMoveFocusLossConsumesIntentWithZeroButtonEvents]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostMoveProcessChangeConsumesIntentWithZeroButtonEvents]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPostMoveProcessChangeConsumesIntentWithZeroButtonEvents]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPreDispatchTripwireGateFalseYieldsZeroIrreversibleIntent]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPreDispatchTripwireGateFalseYieldsZeroIrreversibleIntent]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPressFailureAfterIntentConsumesWithoutRetry]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:633: error: -[Rev28CoreTests.NativeCompositionMatrixTests testPressFailureAfterIntentConsumesWithoutRetry] : XCTAssertEqual failed: ("0") is not equal to ("2")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:634: error: -[Rev28CoreTests.NativeCompositionMatrixTests testPressFailureAfterIntentConsumesWithoutRetry] : XCTAssertEqual failed: ("0") is not equal to ("1")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Tests/Rev28CoreTests/NativeCompositionMatrixTests.swift:637: error: -[Rev28CoreTests.NativeCompositionMatrixTests testPressFailureAfterIntentConsumesWithoutRetry] : XCTAssertEqual failed: ("0") is not equal to ("1")
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testPressFailureAfterIntentConsumesWithoutRetry]' failed (0.057 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterFullClosedLoopIsObserveOnly]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Sources/Rev28Core/Composition/NativeLiveExecutionAdapter.swift:643: error: -[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterFullClosedLoopIsObserveOnly] : failed: caught error: "stateRefused(ELLIPSIS_LOCATED: ellipsis refused missingIdentity: no eligible album-level vertical ellipsis in reviewed header band)"
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterFullClosedLoopIsObserveOnly]' failed (0.123 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterSaveAllIntentAndAttemptIsObserveOnly]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterSaveAllIntentAndAttemptIsObserveOnly]' passed (0.048 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterSaveAllIntentOnlyIsObserveOnly]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRestartAfterSaveAllIntentOnlyIsObserveOnly]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRetainedImageTamperIsDetectedBeforeStateEvidenceIsWritten]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testRetainedImageTamperIsDetectedBeforeStateEvidenceIsWritten]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testSecondOwnerContinuesPreIntentHistoryWithReverification]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Sources/Rev28Core/Composition/NativeLiveExecutionAdapter.swift:643: error: -[Rev28CoreTests.NativeCompositionMatrixTests testSecondOwnerContinuesPreIntentHistoryWithReverification] : failed: caught error: "stateRefused(ELLIPSIS_LOCATED: ellipsis refused missingIdentity: no eligible album-level vertical ellipsis in reviewed header band)"
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testSecondOwnerContinuesPreIntentHistoryWithReverification]' failed (0.125 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testStagingOutcomeVariantsAreRejectedWithoutFurtherIrreversibleInput]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek/rev28/Sources/Rev28Core/Composition/NativeLiveExecutionAdapter.swift:643: error: -[Rev28CoreTests.NativeCompositionMatrixTests testStagingOutcomeVariantsAreRejectedWithoutFurtherIrreversibleInput] : failed: caught error: "stateRefused(ELLIPSIS_LOCATED: ellipsis refused missingIdentity: no eligible album-level vertical ellipsis in reviewed header band)"
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testStagingOutcomeVariantsAreRejectedWithoutFurtherIrreversibleInput]' failed (0.122 seconds).
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testStateArtifactTamperIsDetectedOnReVerification]' started.
+Test Case '-[Rev28CoreTests.NativeCompositionMatrixTests testStateArtifactTamperIsDetectedOnReVerification]' passed (0.009 seconds).
+Test Suite 'NativeCompositionMatrixTests' failed at 2026-09-29 09:14:43.874.
+	 Executed 29 tests, with 24 failures (6 unexpected) in 17.091 (17.093) seconds
+Test Suite 'rev28PackageTests.xctest' failed at 2026-09-29 09:14:43.874.
+	 Executed 29 tests, with 24 failures (6 unexpected) in 17.091 (17.093) seconds
+Test Suite 'Selected tests' failed at 2026-09-29 09:14:43.874.
+	 Executed 29 tests, with 24 failures (6 unexpected) in 17.091 (17.094) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+EXIT:1
