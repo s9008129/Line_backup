@@ -89,3 +89,20 @@ PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
 - Repairs landed at a758317 (23 files, +1636/−179, product tree closed): dispatch-boundary-bound postcondition window; full post-hover revalidation (frame/capture-point/safe-rect/scale/staleness + topmost addressed surface) before mouseDown; durable reversible/revalidation budget enforcement at `reserveSaveAll`/`recordReversibleDispatch` with the 18th eligibility predicate `REVERSIBLE_AND_REVALIDATION_BUDGETS_NOT_EXHAUSTED`; canonical eligibility bindings with contained evidence roots and live-recomputed reviewed HEAD/diff/binary (`ReviewedBuildState`); digest manifest widened to Package.swift + rev28/Tools.
 - Implementation digest re-measured with the production `ReviewedImplementationDigest.compute`: `e748568dbc7c23a642eeead559afc0df345c56e91ff694dc1b6012744615c0cf`, 48 files (45 swift + Package.swift + 2 tools) — `a45`.
 - Next: V-09 attempt-03 re-review against `v09/attempt-03/bindings.json`; real Phase A remains externally blocked; zero irreversible throughout (Save All dispatches 0, destination confirmations 0, irreversible intents 0); `rev28-prelive-finalization` remains at `9cbaa1141595acb538d4672066072d2b8ffb7065`.
+
+## Stage 04 status update (2026-09-29T08:02+0800, A/B branch v43-ab/codex-rev28) — V-09 attempt-03 reviews landed (0 MAJOR; two MINORs)
+
+STATE: RUNNING (implementation as far as possible pre-Phase B; real Phase A evidence externally blocked; Phase B forbidden)
+IMPLEMENTATION_STATUS: IN_PROGRESS (V-09 attempt-03 reviews landed: 0 MAJOR remaining; M-1 retina-margin repair + MINOR-1 record fix next)
+PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
+CORE_ACCEPTANCE_STATUS: NOT_RUN
+REQUIRED_VERIFICATION_STATUS: IN_PROGRESS (product tree still a758317 / digest e748568d…c0cf; attempt-03 reviews bound and verified PASS by all three contexts; M-1 repair will change the digest and require re-run gates + fresh verification)
+INDEPENDENT_ACCEPTANCE_STATUS: PENDING
+TASK_CLOSURE_STATUS: IN_PROGRESS
+PHASE_A_STATUS: EVIDENCE TOOLCHAIN COMPLETE; real preflight NOT FIRED — external prerequisite missing (LINE signed out, no target album surface); 0/3 attempts
+PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
+
+- V-09 attempt-03 landed 2026-09-29T08:02: three fresh read-only reviewer contexts vs `v09/attempt-03/bindings.json` (head `a758317`, digest `e748568d…c0cf`, `bindings.json` SHA-256 `737bdebb…beab`); all three reports `bindings_verified: PASS`; `02-timing-automation` verdict PASS (0 MAJOR/0 MINOR/5 INFO); `01-perception-geometry` ISSUES_FOUND (0 MAJOR/1 MINOR/4 INFO); `03-transaction-history` ISSUES_FOUND (0 MAJOR/1 MINOR/3 INFO). Report SHA-256: `01` `c15e7425…c285`, `02` `73b6095a…ccbc`, `03` `e0ff67ea…196a`.
+- Remaining findings: M-1 = production `DispatchReadinessGate.mintPermit` enforces a raw 1-capture-pixel interior margin instead of `plan.md:130`'s scale-converted 1-point refusal (`rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift` — see report 01 for line refs); bounded impact, in-contract repair. MINOR-1 = the `focused_11_suites` label misdescribes the a38 log's 8 suites (96/0 itself verifies; record-accuracy fix, no gating claim affected).
+- Report table, finding details, convergence counters and the repair plan: `progress.md` `## V-09 attempt-03 reviews` and `## Next up`.
+- Zero irreversible throughout: Save All dispatches 0, destination confirmations 0, irreversible intents 0; `rev28-prelive-finalization` remains at `9cbaa1141595acb538d4672066072d2b8ffb7065`.
