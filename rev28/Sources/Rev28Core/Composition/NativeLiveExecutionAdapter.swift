@@ -74,6 +74,11 @@ public final class NativeLiveExecutionAdapter: @unchecked Sendable, LiveExecutio
     }
 
     public func dispatchSaveAll(owner: PersistentTransactionOwner) async throws -> String {
+        guard chooser.preDispatchContextSatisfied(minimumSeconds: 10) else {
+            throw NativeAdapterError.dispatchRefused(
+                "pre-dispatch tripwire context is missing, shorter than 10 seconds or unhealthy; zero irreversible intent"
+            )
+        }
         let bundle = try await freshBundle(state: .saveAllLocated, includeChildWindows: true, owner: owner)
         let candidate = try requireSaveAllCandidate(bundle: bundle, state: .saveAllLocated)
         try requireBaselineUnchanged(state: "SAVE_ALL_DISPATCH")

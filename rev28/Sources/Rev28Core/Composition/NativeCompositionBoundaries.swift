@@ -58,6 +58,13 @@ public protocol ChooserBoundary: Sendable {
     func destinationReflected(pid: Int32, destination: URL) -> Bool
     func pressDefaultButton(pid: Int32, confirmation: ChooserAffirmation) throws -> String
     func chooserClosed(pid: Int32) -> Bool
+
+    /// Plan C7 pre-dispatch tripwire gate: the tripwire collector must have been
+    /// streaming environmental context for at least `minimumSeconds` with no
+    /// dropped events, root changes or collector errors. Called immediately
+    /// before the irreversible Save All boundary; a false answer yields zero
+    /// irreversible intent/attempt/events.
+    func preDispatchContextSatisfied(minimumSeconds: Double) -> Bool
 }
 
 public protocol FilesystemBoundary: Sendable {
