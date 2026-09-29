@@ -59,14 +59,6 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
         exit(64)
     }
     do {
-        struct LiveConfig: Decodable {
-            let authorization: ImmutableRunAuthorization
-            let targetBundleID: String
-            let targetPID: Int32
-            let ledgerPath: String
-            let planPath: String
-            let repositoryRoot: String
-        }
         struct OneShot: Decodable {
             let runID: String
             let planSHA256: String
@@ -74,7 +66,7 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
         }
         let configURL = URL(fileURLWithPath: configPath).standardizedFileURL
         let authURL = URL(fileURLWithPath: authorizationPath).standardizedFileURL
-        let config = try JSONDecoder().decode(LiveConfig.self, from: Data(contentsOf: configURL))
+        let config = try JSONDecoder().decode(LiveRunConfig.self, from: Data(contentsOf: configURL))
         let oneShot = try JSONDecoder().decode(OneShot.self, from: Data(contentsOf: authURL))
         let auth = config.authorization
         guard oneShot.runID == auth.runID,
@@ -88,31 +80,57 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
               config.targetBundleID == "jp.naver.line.mac" else {
             throw QuartzActuatorError.dispatchRefusedByPrecondition("target process is not the expected LINE application")
         }
-        let process = try XCTargetProcess(pid: config.targetPID, bundleID: config.targetBundleID)
-        let windows = WindowSensor.snapshots(from: try await WindowSensor.shareableContent(onScreenWindowsOnly: true))
-        let matches = WindowSensor.mainWindowCandidates(in: windows, bundleID: config.targetBundleID, pid: config.targetPID)
-        guard process.active, NSWorkspace.shared.frontmostApplication?.processIdentifier == pid_t(config.targetPID),
-              matches.count == 1,
-              let window = matches.first,
-              CGWindowInventory.onScreenWindows().contains(where: {
-                  $0.windowNumber == window.windowID && $0.ownerPID == config.targetPID && $0.layer == 0
-              }),
-              AXIsProcessTrusted() else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("live focus/window/AX preflight failed")
+        guard AXIsProcessTrusted() else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("this process does not hold accessibility trust")
         }
-        let ledger = try IntentLedger(fileURL: URL(fileURLWithPath: config.ledgerPath))
-        let owner = try PersistentTransactionOwner(authorization: auth, ledger: ledger)
-        guard command == "live-preflight" else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition(
-                "live observations are present but no reviewed native frame+structural-candidate session provider was configured; no events posted"
-            )
+        let inputs = try LiveCompositionBuilder.inputs(from: config)
+        let composition = try await LiveCompositionBuilder.build(inputs: inputs)
+        defer { composition.journal.stop() }
+
+        if command == "live-preflight" {
+            // Plan C4: preflight never consumes or renames the one-shot
+            // entitlement and must leave every irreversible counter at zero.
+            guard FileManager.default.fileExists(atPath: authURL.path) else {
+                throw QuartzActuatorError.dispatchRefusedByPrecondition("one-shot authorization file is missing; preflight must not consume it")
+            }
+            let counters = composition.owner.irreversibleOperationCounts
+            guard counters.saveAll == 0, counters.destinationConfirmation == 0 else {
+                throw QuartzActuatorError.dispatchRefusedByPrecondition(
+                    "preflight found irreversible records: saveAll=\(counters.saveAll) confirmation=\(counters.destinationConfirmation)"
+                )
+            }
+            guard composition.owner.goalSlot?.entitlementConsumed == false else {
+                throw QuartzActuatorError.dispatchRefusedByPrecondition("one-shot execution entitlement is already consumed")
+            }
+            guard composition.owner.isObserveOnlyResume == false else {
+                throw QuartzActuatorError.dispatchRefusedByPrecondition("ledger already contains irreversible history; this run is observe-only")
+            }
+            let app = NSRunningApplication(processIdentifier: pid_t(config.targetPID))
+            guard app?.isActive == true,
+                  NSWorkspace.shared.frontmostApplication?.processIdentifier == pid_t(config.targetPID) else {
+                throw QuartzActuatorError.dispatchRefusedByPrecondition("target application is not active/frontmost for a live preflight")
+            }
+            let baseline = try BaselineVerifier.verify(referenceFile: inputs.baselineReferenceFile)
+            let drain = composition.journal.drain()
+            guard drain.healthy else {
+                throw QuartzActuatorError.dispatchRefusedByPrecondition("tripwire journal is not healthy for a live preflight")
+            }
+            FileHandle.standardOutput.write(Data(
+                "preflight=passed runID=\(auth.runID) windowID=\(composition.windowID) baselineTripwire=\(baseline.nameInclusiveTripwireSHA256) tripwireHealthy=\(drain.healthy) intent.saveAll=0 attempt.saveAll=0 intent.destinationConfirmation=0 attempt.destinationConfirmation=0 entitlement=unconsumed dispatch=none\n".utf8
+            ))
+            exit(0)
         }
-        let consumedURL = authURL.appendingPathExtension("consumed")
-        guard !FileManager.default.fileExists(atPath: consumedURL.path) else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("one-shot authorization already consumed")
+
+        let outcome = try await LiveExecutionEngine(owner: composition.owner, adapter: composition.adapter).run()
+        switch outcome {
+        case let .contentVerified(verification):
+            FileHandle.standardOutput.write(Data("live-execute=contentVerified runID=\(auth.runID) files=\(verification.fileCount) bytes=\(verification.totalBytes) outcome=\(verification.outcome.rawValue)\n".utf8))
+        case let .observeOnlyResume(state):
+            FileHandle.standardOutput.write(Data("live-execute=observeOnlyResume runID=\(auth.runID) state=\(state.map(\.rawValue) ?? "NONE") dispatch=none\n".utf8))
+        case let .contentRejected(verification):
+            FileHandle.standardError.write(Data("live-execute=contentRejected runID=\(auth.runID) detail=\(verification.detail)\n".utf8))
+            exit(78)
         }
-        try FileManager.default.moveItem(at: authURL, to: consumedURL)
-        FileHandle.standardOutput.write(Data("preflight=passed runID=\(owner.authorization.runID) windowID=\(window.windowID) dispatch=none\n".utf8))
         exit(0)
     } catch {
         FileHandle.standardError.write(Data("\(command) refused: \(error)\n".utf8))
@@ -122,18 +140,6 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
 
 FileHandle.standardError.write(Data("usage: rev28ctl harness-calibrate --evidence <dir> [--items 1,2,5] [--binary-dir <dir>] | restart-child --ledger <path> --head-file <path> --point <name> | live-preflight|live-execute --config <json> --one-shot-authorization <json>\n".utf8))
 exit(64)
-
-private struct XCTargetProcess {
-    let active: Bool
-
-    init(pid: Int32, bundleID: String) throws {
-        guard let application = NSRunningApplication(processIdentifier: pid),
-              application.bundleIdentifier == bundleID else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("target PID/bundle mismatch")
-        }
-        active = application.isActive
-    }
-}
 
 private enum ReviewedImplementationDigest {
     static func compute(repositoryRoot: URL) throws -> String {
