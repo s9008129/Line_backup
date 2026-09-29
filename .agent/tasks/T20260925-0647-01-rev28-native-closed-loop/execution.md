@@ -79,7 +79,7 @@ STATE: RUNNING (implementation as far as possible pre-Phase B; real Phase A evid
 IMPLEMENTATION_STATUS: IN_PROGRESS (V-09 attempt-02 4 unique MAJOR + 2 actionable MINOR findings repaired in-contract at a758317; V-09 attempt-03 re-review pending)
 PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
 CORE_ACCEPTANCE_STATUS: NOT_RUN
-REQUIRED_VERIFICATION_STATUS: IN_PROGRESS (final tree a758317: build `a37`; focused 11 suites 96/0 `a38`; full suite 241/0/0 skipped `a39`; adversarial 27/27 ×2 `a40`/`a41`; replay `verdict=PASS` ×2 byte-identical `a42`/`a43` (SHA-256 81f6da94…7261); provenance `status=PASS` `a44`; CLI refusal 77/77/77/64/77 zero side effects `cli-refusal-20260929T0742`; V-09 attempt-03 reviews running)
+REQUIRED_VERIFICATION_STATUS: IN_PROGRESS (final tree a758317: build `a37`; focused 8 suites 96/0 `a38` — corrected 2026-09-29T08:10 per attempt-03 finding `V09_A3_SUITE_COUNT_LABEL` (the a38 log contains 8 suites, not 11); full suite 241/0/0 skipped `a39`; adversarial 27/27 ×2 `a40`/`a41`; replay `verdict=PASS` ×2 byte-identical `a42`/`a43` (SHA-256 81f6da94…7261); provenance `status=PASS` `a44`; CLI refusal 77/77/77/64/77 zero side effects `cli-refusal-20260929T0742`; V-09 attempt-03 reviews running)
 INDEPENDENT_ACCEPTANCE_STATUS: PENDING
 TASK_CLOSURE_STATUS: IN_PROGRESS
 PHASE_A_STATUS: EVIDENCE TOOLCHAIN COMPLETE; real preflight NOT FIRED — external prerequisite missing (LINE signed out, no target album surface); 0/3 attempts

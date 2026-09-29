@@ -171,7 +171,7 @@ a758317 fix(rev28): repair the V-09 attempt-02 plan-conformance findings
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a33-adversarial-run1-v09repairs-20260929T0732.log`／`a34-adversarial-run2-…log` — 修正後樹 `AdversarialMatrixTests` 27/27 ×2
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a35-replay-run1-v09repairs-20260929T0732.json`（＋`.stdout`）／`a36-replay-run2-…json` — 修正後樹 `replay_rev28.py` `verdict=PASS` ×2、輸出 byte-identical（SHA `81f6da94…7261`）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a37-build-attempt02-final-20260929T074109.log` — attempt-02 修復後 build PASS（`a758317` 產品樹）
-- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a38-focused-attempt02-final-20260929T074114.log` — attempt-02 修復後 focused：11 suites、96 tests / 0 failures
+- `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a38-focused-attempt02-final-20260929T074114.log` — attempt-02 修復後 focused：**8 suites**、96 tests / 0 failures（2026-09-29T08:10 紀錄修正，`V09_A3_SUITE_COUNT_LABEL`：原記「11 suites」係沿用前一輪 a27／a30 的標籤；a38 log 實含 ActuationReadiness 10＋AdversarialMatrix 27＋ComposedAdapters 14＋ExecutionPolicy 7＋PersistentTransactionOwner 7＋PhaseBEligibility 21＋PostconditionMonitor 7＋ReviewedBuildState 3 = 96/0，逐 suite 起訖行可驗。attempt-03 `bindings.json` 的 key `focused_11_suites` 是被審查綁定的 bytes，不改動）
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a39-full-suite-attempt02-final-20260929T074124.log` — attempt-02 修復後 full suite：241 tests / 0 failures / 0 skipped
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a40-adversarial-attempt02-final-run1-20260929T074153.log`／`a41-adversarial-attempt02-final-run2-20260929T074153.log` — `AdversarialMatrixTests` 27/27 ×2
 - `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/a42-replay-attempt02-final-run1-20260929T074157.json`（＋`.stdout`）／`a43-replay-attempt02-final-run2-20260929T074157.json`（＋`.stdout`）— 20 pinned fixtures `verdict=PASS` ×2、輸出 byte-identical（SHA-256 `81f6da94…7261`，與 `a24`／`a25`、`a35`／`a36` 相同）
@@ -295,7 +295,7 @@ All eight MAJOR fingerprints plus the actionable MINORs were repaired in-contrac
 | 01-MINOR-1 locator bounds 仍為 config 供給 | 依原判定維持 bounded fail-closed（ordered 5-row identity＋row/menu intersection＋≥8 px overlap＋safe-rect containment）；hash-binding 需新 append-only freeze（frozen 集無真實 LINE menu bounds）→ 維持 Phase A 當場義務 | 無變更 |
 
 - Digest 重算（same reviewed formula；本輪改以 production `ReviewedImplementationDigest.compute` 量測，`a45`）：`e748568dbc7c23a642eeead559afc0df345c56e91ff694dc1b6012744615c0cf`，48 files ＝45 swift（`Rev28Core` 36＋`rev28ctl` 9）＋`rev28/Package.swift`＋`rev28/Tools/replay_rev28.py`＋`rev28/Tools/verify_pre_live_provenance.py`。manifest 由單一 formula 產生（`manifestPaths`），`reviewedPaths` 同時用於 git HEAD／diff 檢查。
-- Final-tree verification（全部在 `a758317` 產品樹上）：build `a37`；focused 11 suites 96/0 `a38`；full suite 241/0/0 skipped `a39`；`AdversarialMatrixTests` 27/27 ×2 `a40`／`a41`；20 pinned replay fixtures `verdict=PASS` ×2 byte-identical（SHA `81f6da94…7261`）`a42`／`a43`；v3 provenance `status=PASS`（blob `c411011b…`、20 samples、max 155.19 ms）`a44`；CLI refusal fixture `cli-refusal-20260929T0742/`：77／77／77／64／77、零 evidence／ledger／staging 副作用、授權未改名。
+- Final-tree verification（全部在 `a758317` 產品樹上）：build `a37`；focused 8 suites 96/0 `a38`（紀錄修正見上，`V09_A3_SUITE_COUNT_LABEL`）；full suite 241/0/0 skipped `a39`；`AdversarialMatrixTests` 27/27 ×2 `a40`／`a41`；20 pinned replay fixtures `verdict=PASS` ×2 byte-identical（SHA `81f6da94…7261`）`a42`／`a43`；v3 provenance `status=PASS`（blob `c411011b…`、20 samples、max 155.19 ms）`a44`；CLI refusal fixture `cli-refusal-20260929T0742/`：77／77／77／64／77、零 evidence／ledger／staging 副作用、授權未改名。
 - Zero irreversible throughout: Save All dispatches 0、destination confirmations 0、irreversible intents 0；`PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION` 不變；`rev28-prelive-finalization` 仍停 `9cbaa1141595acb538d4672066072d2b8ffb7065`。
 
 ## V-09 attempt-03 reviews — LANDED 2026-09-29T08:02+0800
@@ -310,6 +310,7 @@ Three fresh independent reviewer contexts (read-only; none of them an attempt-01
 
 - Attempt-03 outcome: **0 MAJOR remaining**; exactly two MINORs — one in-contract code repair (`V09_A3_RETINA_MARGIN_SCALE`, M-1) and one record-accuracy correction (`V09_A3_SUITE_COUNT_LABEL`, MINOR-1, which must not edit the immutable attempt-03 `bindings.json`).
 - Review-round conduct: strictly read-only for all three contexts (no build, no tests, no rev28ctl/binary, no LINE interaction, no OS events, no git writes); reports hash-recomputed at landing. Zero irreversible throughout: Save All dispatches 0, destination confirmations 0, irreversible intents 0.
+- `V09_A3_SUITE_COUNT_LABEL` correction (2026-09-29T08:10+0800): the a38 descriptor in this file and `execution.md` now reads “focused **8 suites** 96/0”; the attempt-03 `bindings.json` key `focused_11_suites` and the reviewer reports stay byte-identical as reviewed.
 
 ## Next up (dependency order)
 
