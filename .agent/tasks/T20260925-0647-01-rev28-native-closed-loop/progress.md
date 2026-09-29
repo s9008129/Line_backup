@@ -10,7 +10,11 @@ HANDOFF_SHA256: 67fc16a638b115fef8b8e99e57ec0d6a2fc344cdd15c6eaf6a72bcdb1c227a33
 
 ## STATE
 
-STATE: IN_PROGRESS
+STATE: EXTERNAL_BLOCKER (persistent goal set to runtime `blocked` per blocked audit)
+
+IMPLEMENTATION_STATUS: BLOCKED
+TASK_CLOSURE_STATUS: IMPLEMENTATION_BLOCKED
+PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
 
 ## CURRENT_GOAL (what we are solving now)
 
@@ -55,14 +59,40 @@ frozen calibration host). Official pass = verdict PASS with geometry + chooser +
 timings + destination + refusals all true; exit code alone is not the signal (PARTIAL
 also exits 0, blocked paths exit 75).
 
+BLOCKED TRANSITION (2026-09-29T10:56+08:00): a further live poll (10:46–10:56) found the
+session still locked, so the same environment blocker has persisted across three
+consecutive goal turns. Per the Stage 04 routing this is an environment/authority
+dependency that cannot be solved by additional local reasoning: no remaining offline
+gate can run while the console session is locked (the official calibration refuses with
+`BLOCKED_SESSION_LOCKED`, and the V-09 reviews must bind the post-calibration code).
+No further local retries are attempted (none can add information while locked).
+
+```yaml
+BLOCKERS:
+  - id: BLK-ENV-1
+    scope: ENVIRONMENT
+    subject: official ≥20-timings current-composer calibration (TEST_ORDER step 5)
+    result: BLOCKED
+    class: ENVIRONMENT_FAILURE
+    task_regression_evidence: NONE
+    evidence: >
+      CGSSessionScreenIsLocked=true and frontmost loginwindow on live polls 10:19–10:45
+      and 10:46–10:56; driver non-diagnose path fails closed BLOCKED_SESSION_LOCKED and
+      AX exposes only AXApplication placeholders while locked.
+    next_action: user unlocks the Mac session, then run the prepared composer-calibrate command (see WAIT STATE)
+    owner: USER
+    waiver_allowed: NO
+```
+
 ## PLAIN-LANGUAGE STATUS (required)
 
 - What are we trying to solve now? — Land the official ≥20-timings native calibration
   of the current composer (needs the console session unlocked), then complete the
   independent V-09 code/rule reviews; the rest of the offline half is done.
-- What is blocking us? — Nothing is blocked. The official calibration run needs the Mac
-  session unlocked (while locked, AX exposes only placeholder elements, so the harness
-  panel cannot be located); that is an environment precondition, not a defect.
+- What is blocking us? — The Mac session is locked (verified again over 10:46–10:56).
+  The official calibration cannot run while locked, and the V-09 reviews must follow it
+  on the post-calibration code. This is recorded as EXTERNAL_BLOCKER (BLK-ENV-1); the
+  persistent goal is set to runtime `blocked` until the Mac is unlocked.
 - How many meaningful attempts have we spent? — 8 charged material attempts total
   across six fingerprints: compile blocker 1/3, SEG-1 1/3, STAB-1 1/3, ELL-1 1/3,
   MAT-1 2/3, CAL-1 2/3. All resolved; no fingerprint exhausted; no oscillation.
