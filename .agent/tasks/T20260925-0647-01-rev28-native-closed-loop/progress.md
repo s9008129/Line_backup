@@ -335,7 +335,43 @@ Three fresh independent reviewer contexts (read-only; none of them an attempt-01
 ## Next up (dependency order)
 
 1. ✅ 完成（08:08）：M-1 於 `cf39fdcc` 修復、MINOR-1 於 3d74248b 修正，重跑全數 gates 並重算 digest `6734dda5…a686`。
-2. attempt-04 fresh verification（進行中）：建立 `v09/attempt-04/bindings.json`（head `cf39fdcc`＋digest `6734dda5…a686`＋48-file manifest＋plan/handoff/frozen artifacts＋本輪 repair claim），3 個 fresh reviewer contexts 對新樹複驗——(a) M-1 修復與 `isDispatchableCapturePixels` 語意、(b) 兩個 production candidate 來源在 1× 幾何下的既有行為不變、(c) 既有 VERIFIED claims 在新 bytes 上仍成立（line refs 重新核對）；不得以 attempt-01/02/03 證據當作新樹證明。
-3. 記錄 attempt-04 結果於本檔與 `execution.md` 並 commit；若仍有 finding → 依 convergence policy 處置（M-1 已用 1/3）。
-4. Real Phase A preflight 仍受外部前置阻擋（需登入 LINE＋目標相簿畫面）；零 irreversible。
+2. ✅ 完成（21:55）：attempt-04 fresh verification 落檔——`v09/attempt-04/bindings.json`（head `cf39fdcc`＋digest `6734dda5…a686`＋48-file manifest＋plan/handoff/frozen artifacts）＋3 個 fresh reviewer contexts（`01`／`02`／`03`）對新樹複驗，全部 `bindings_verified: PASS`、verdict PASS、**0 MAJOR**；不得以 attempt-01/02/03 證據當作新樹證明（已遵守）。
+3. ✅ 完成（21:58）：attempt-04 結果已記錄於本檔與 `execution.md`，連同 `escalations/attempt-01/`（escalation 鏡像＋Stage 06 `decision.md`／`stage-result-06.json`）一併 commit；無殘留 finding（M-1 已用 1/3，複驗 PASS）。
+4. Real Phase A preflight 仍受外部前置阻擋（需登入 LINE＋目標相簿畫面）；零 irreversible。這是目前唯一剩下的 gate，屬 `EXTERNAL_BLOCKER`——不得自行 polling／retry／prepositioning。
 5. Phase A 後進 Stage 05 independent acceptance。
+
+## V-09 attempt-04 reviews — LANDED 2026-09-29T21:55+0800 (fresh verification of the cf39fdcc repair; 0 MAJOR)
+
+Three fresh read-only reviewer contexts re-ran the V-09 topics against `v09/attempt-04/bindings.json`（SHA-256 `81d9ea21f567d28cfd89aec773202a92c61a4974dd4f059db103bc7a705eb7a7`；head `cf39fdcc63e2b9c0d94ff8f34fd34b7aaaf58ff1`、digest `6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686`、48-file manifest）。每份報告自行重算全部 bindings；無任何 verdict 以 attempt-01/02/03 的驗證當證明；producer 指令未重跑（bound logs 僅作 artifact 讀取與 hash）。attempt-01/02/03 報告維持 immutable、綁定其已被取代的 digest。
+
+| Report | SHA-256 (bytes) | Bindings | Verdict | Counts | Key content |
+|---|---|---|---|---|---|
+| `01-perception-geometry.md` | `d49a8212ee53db766bc3cddfbb7bdbf262e53df375900a57ec7edbc680ac6e3e` (12,999) | PASS (all) | **PASS** | 0 MAJOR / 0 MINOR / 4 INFO | M-1 修復重導：`dispatchMinimumMarginPt = 1.0` 單一來源、`isDispatchableCapturePixels` scale 轉換、`mintPermit` 改走它；7 claims VERIFIED（M-1 語意／regression／無行為漂移、post-hover revalidation 的 perception 半、AX identity binding、menu bounds＋01-MINOR-1 disposition、digest manifest）。INFO：修復後行號 +3；`isDispatchable` 預設參數與 calibration harness 共用同一門檻；Phase A AX 4 pt pre-check 非 production 等效；`.saveAllMenuRows` out-of-frame 僅間接涵蓋。 |
+| `02-timing-automation.md` | `c8c52adede4ffeb0b5ea3a08649b2ddea3491548b4892c6e8dd69332c1ed5a6d` (12,913) | PASS (all) | **PASS** | 0 MAJOR / 0 MINOR / 4 INFO | 11 claims VERIFIED（dispatch-boundary timer、post-hover revalidation 的 actuation 半、durable budget enforcement、AX value primitive、tripwire re-check、C4／C5／C6／C7 in-force 修復、margin 修復的 timing 半）。INFO：`recordRevalidationOutcome` 的 `try?` durable append 無法 fail open（同一 owner 方法亦在 `reserveSaveAll` 前消費閘重驗且自 verified ledger 推導）；`--one-shot-authorization` 僅命名遺留；a47 log 以名稱綁 margin regression。 |
+| `03-transaction-history.md` | `063330fa39eeb168b3815f1009a5fada7d78012f90b33e15a67baeb74f4450ba` (26,887) | PASS (all) | **PASS** | 0 MAJOR / 0 MINOR / 6 INFO | C4 transaction authority 於 cf39fdcc 重新推導；digest manifest element-for-element 相符；frozen 9/9 相符；確認 M-1 的 `>=` 語意精確符合 `plan.md:130`（含 exact-1-pt 邊界說明）。 |
+
+- **Net:** attempt-04 以 **0 MAJOR** 收束；M-1 修復經 fresh 複驗成立，未發現新的 in-scope 缺陷。三份報告全部綁定 `cf39fdcc` / `6734dda5…a686`；`bindings.json` 無事後修改。
+- Zero irreversible throughout: Save All dispatches 0、destination confirmations 0、irreversible intents 0；`PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION` 不變；`rev28-prelive-finalization` 仍停 `9cbaa1141595acb538d4672066072d2b8ffb7065`。
+
+## Stage 06 escalation packet + decision — LANDED 2026-09-29T21:52+0800
+
+- `escalations/attempt-01/escalation.md`（`5bcbd72c718384d96fab9d69a4d272bf4c6bb210ba56a3e5ba7513063060a367`）與 `context.json`（`ae2081adb327c90fb421c1855cc65468c23f22848ad5bf979f03d2f40a69b8b1`）自分支 worktree `Line_backup-ab-luna`（`v43-ab/luna-rev28`，HEAD `9cbaa11`）byte-identical 鏡像；`PROVENANCE.md`（`9abf3ab90f7604b77fa792d085af3ddec4f3cf0295910bf44bbe33ce163806ec`）記錄來源／鏡像路徑、mtime 與 identity 檢查。
+- `escalations/attempt-01/decision.md`（`e2fc4a288aa6ef60848729f3a05f98ee624855808a0efdac1a66cf022fcf54d9`）＋`stage-result-06.json`（`e92e4c62d1ca3eaf9aba9b5c99c93b09d8ad66e4351b7dcd5a762c84376b3061`）：`ESCALATION_DECISION: IMPLEMENTER_FIX`；gates G1–G6 全 PASS；零 irreversible；`PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION`。
+- Budget 記帳：`PRIMARY_NATIVE_COMPOSITION` 維持 **3/3 exhausted**，以 `RESOLVED_BY_SUPERSEDING_LINEAGE` 關閉（不重置、不授權第四次 composition attempt）。`BUDGET_EXTENSION: +2` 僅限 distinct fingerprint `V09_A4_FRESH_VERIFICATION_INCOMPLETE`（surface＝attempt-04 review set vs `cf39fdcc`／`6734dda5…a686`；acceptance＝三份 fresh 報告＋記錄＋commit）。`STOP_AFTER` 已達成。
+- `task-orchestrator status` 回報 `STATE_RECONCILIATION_REQUIRED`（無 controller state）；未開新 TASK_ID、未做任何 Git surgery，本 TASK_ID 身分保留。Stage 06 以 `escalations/attempt-01/` 鏡像為本輪權威。
+
+## Stage 04 status update (2026-09-29T21:58+0800, A/B branch v43-ab/codex-rev28) — V-09 attempt-04 closed (0 MAJOR); next real gate is external Phase A
+
+STATE: IMPLEMENTATION_COMPLETE_AS_FAR_AS_ALLOWED_PRE_PHASE_A (V-09 attempt-04 round complete with 0 MAJOR; real Phase A evidence externally blocked; Phase B forbidden)
+IMPLEMENTATION_STATUS: IN_PROGRESS (V-09 attempt-04 landed; no further pre-Phase-A code work has a falsifiable target; nothing dispatched)
+PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
+CORE_ACCEPTANCE_STATUS: NOT_RUN
+REQUIRED_VERIFICATION_STATUS: IN_PROGRESS (V-09 attempt-04 complete: 3/3 fresh reports PASS at cf39fdcc / digest 6734dda5…a686; real Phase A preflight NOT FIRED — external prerequisite missing)
+INDEPENDENT_ACCEPTANCE_STATUS: PENDING
+TASK_CLOSURE_STATUS: IN_PROGRESS
+PHASE_A_STATUS: EVIDENCE TOOLCHAIN COMPLETE; real preflight NOT FIRED — external prerequisite missing (LINE signed out, no target album surface); 0/3 attempts
+PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
+
+- attempt-04 報告已落檔並記錄；`.agent` 記錄連同 escalation 鏡像與 Stage 06 決策一併 commit。
+- 剩餘唯一 blocker 是外部前置（非機械性）：需使用者登入 LINE 並開好「旻謙允禎成長日記」（禎 U+798E ≠ 楨 U+6968）之 2024/05/13～05/17 相簿列表，之後才能以 fresh runID／evidence dir 跑 `rev28ctl live-preflight`。此為 `EXTERNAL_BLOCKER`；不得自行 polling、retry 或 GUI prepositioning。
+- Zero irreversible throughout: Save All dispatches 0、destination confirmations 0、irreversible intents 0。

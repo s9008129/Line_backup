@@ -123,3 +123,21 @@ PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
 - MINOR-1 (`V09_A3_SUITE_COUNT_LABEL`): records corrected to “focused 8 suites 96/0” at 3d74248b; the reviewed attempt-03 `bindings.json` bytes were not modified.
 - Implementation digest re-measured with the production `ReviewedImplementationDigest.compute`: `6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686`, 48 files (`a49`); a Python replica of the same manifest formula reproduces the identical digest.
 - Next: attempt-04 fresh verification against `v09/attempt-04/bindings.json` (expected head cf39fdcc, digest 6734dda5…a686); real Phase A remains externally blocked; zero irreversible throughout (Save All dispatches 0, destination confirmations 0, irreversible intents 0); `rev28-prelive-finalization` remains at `9cbaa1141595acb538d4672066072d2b8ffb7065`.
+
+## Stage 04 status update (2026-09-29T21:58+0800, A/B branch v43-ab/codex-rev28) — V-09 attempt-04 reviews landed (0 MAJOR); Stage 06 escalation decision recorded
+
+STATE: IMPLEMENTATION_COMPLETE_AS_FAR_AS_ALLOWED_PRE_PHASE_A
+IMPLEMENTATION_STATUS: IN_PROGRESS (V-09 attempt-04 landed: 3/3 fresh reports PASS at cf39fdcc / digest 6734dda5…a686; no further pre-Phase-A code work has a falsifiable target)
+PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
+CORE_ACCEPTANCE_STATUS: NOT_RUN
+REQUIRED_VERIFICATION_STATUS: IN_PROGRESS (V-09 attempt-04 complete, 0 MAJOR; real Phase A preflight NOT FIRED — external prerequisite missing; 0/3 attempts)
+INDEPENDENT_ACCEPTANCE_STATUS: PENDING
+TASK_CLOSURE_STATUS: IN_PROGRESS
+PHASE_A_STATUS: EVIDENCE TOOLCHAIN COMPLETE; real preflight NOT FIRED — external prerequisite missing (LINE signed out, no target album surface); 0/3 attempts
+PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
+
+- attempt-04 reports: `01-perception-geometry.md` `d49a8212…6e3e` PASS (0 MAJOR/0 MINOR/4 INFO; 7 claims VERIFIED), `02-timing-automation.md` `c8c52ade…5a6d` PASS (0/0/4; 11 claims VERIFIED), `03-transaction-history.md` `063330fa…50ba` PASS (0/0/6); bindings `v09/attempt-04/bindings.json` `81d9ea21…b7a7`, head `cf39fdcc63e2b9c0d94ff8f34fd34b7aaaf58ff1`, digest `6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686`, 48 paths; all three `bindings_verified: PASS`; no attempt-01/02/03 evidence reused as proof.
+- Stage 06 escalation packet + decision (mirror in this directory): `escalation.md` `5bcbd72c…a367`, `context.json` `ae2081ad…b8b1`, `decision.md` `e2fc4a28…54d9` (`ESCALATION_DECISION: IMPLEMENTER_FIX`; G1–G6 PASS), `stage-result-06.json` `e92e4c62…3061`, `PROVENANCE.md` `9abf3ab9…06ec`.
+- Budget: `PRIMARY_NATIVE_COMPOSITION` 3/3 exhausted (`RESOLVED_BY_SUPERSEDING_LINEAGE`; no reset, no fourth composition attempt); the `+2` extension is scoped to the distinct `V09_A4_FRESH_VERIFICATION_INCOMPLETE`; `STOP_AFTER` met and recorded.
+- Next and only remaining gate: the external Phase A prerequisite (user signs into LINE and opens 旻謙允禎成長日記 — 禎 U+798E ≠ 楨 U+6968 — at 2024/05/13～05/17), then a fresh-runID `rev28ctl live-preflight`; `EXTERNAL_BLOCKER`; no polling / retry / GUI prepositioning.
+- Zero irreversible throughout: Save All dispatches 0, destination confirmations 0, irreversible intents 0; `rev28-prelive-finalization` remains at `9cbaa1141595acb538d4672066072d2b8ffb7065`.
