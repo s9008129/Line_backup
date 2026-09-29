@@ -117,6 +117,50 @@ final class StagingVerifierTests: XCTestCase {
         XCTAssertFalse(StagingVerifier.isStable(snapshots: snapshots))
     }
 
+    func testOldDifferentSampleCannotLendSpanToShortEqualTail() {
+        let records = goodRecords
+        let snapshots = [
+            StagingSnapshot(observedAt: 0, files: []),
+            StagingSnapshot(observedAt: 10, files: records),
+            StagingSnapshot(observedAt: 10.1, files: records),
+            StagingSnapshot(observedAt: 10.2, files: records),
+        ]
+        XCTAssertFalse(StagingVerifier.isStable(snapshots: snapshots))
+    }
+
+    func testEqualTailSpanMeasuredFromFirstEqualSample() {
+        let records = goodRecords.map { record($0.name, $0.size, $0.sha256, mtime: 5) }
+        let snapshots = [
+            StagingSnapshot(observedAt: 0, files: []),
+            StagingSnapshot(observedAt: 10, files: records),
+            StagingSnapshot(observedAt: 12, files: records),
+            StagingSnapshot(observedAt: 14, files: records),
+        ]
+        XCTAssertTrue(StagingVerifier.isStable(snapshots: snapshots))
+    }
+
+    func testEqualSignaturesMustBeContiguousAtTheTail() {
+        let records = goodRecords
+        let different = goodRecords.map { record($0.name, $0.size + 1, $0.sha256) }
+        let snapshots = [
+            StagingSnapshot(observedAt: 10, files: records),
+            StagingSnapshot(observedAt: 12, files: different),
+            StagingSnapshot(observedAt: 14, files: records),
+            StagingSnapshot(observedAt: 16, files: records),
+        ]
+        XCTAssertFalse(StagingVerifier.isStable(snapshots: snapshots))
+    }
+
+    func testReorderedObservationTimesAreRejected() {
+        let records = goodRecords
+        let snapshots = [
+            StagingSnapshot(observedAt: 25, files: records),
+            StagingSnapshot(observedAt: 20, files: records),
+            StagingSnapshot(observedAt: 22, files: records),
+        ]
+        XCTAssertFalse(StagingVerifier.isStable(snapshots: snapshots))
+    }
+
     func testSnapshotIncludesHiddenFilesAndTheyCannotConfirmContent() throws {
         let directory = try temporaryDirectory()
         try Data("hidden extra".utf8).write(to: directory.appendingPathComponent(".hidden-extra"))
