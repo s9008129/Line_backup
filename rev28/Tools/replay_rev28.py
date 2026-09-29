@@ -137,6 +137,24 @@ def main() -> int:
     require(production_replay.get("save_all_locator") == "candidate", "production:save-all-locator-disagreement", failures)
     require(production_replay.get("album_card_locator") == "candidate", "production:album-card-locator-disagreement", failures)
 
+    # Album-card replay must run actual segmentation over the pinned OCR
+    # anchors, not only consume pre-supplied card regions.
+    segmentation = subprocess.run(
+        [
+            "swift", "test", "--package-path", str(root / "rev28"),
+            "--filter", "HistoricalReplaySegmentationTests",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    segmentation_verdict = "PASS" if segmentation.returncode == 0 else "FAIL"
+    if segmentation.returncode != 0:
+        failures.append(
+            "segmentation-replay-failed:"
+            + (segmentation.stderr.strip() or segmentation.stdout.strip())[-400:]
+        )
+
     report = {
         "schema": "rev28-historical-replay-v2",
         "fixture_count": len(manifest),
@@ -153,6 +171,7 @@ def main() -> int:
             "attempt13_geometry_verdict": geometry13.get("verdict"),
             "attempt16_required_identities": [w for w in ["旻謙允禎成長日記", "2024/05/13~05/17", "57"] if w in words],
             "current_production_replay": production_replay,
+            "segmentation_replay_verdict": segmentation_verdict,
         },
         "verdict": "PASS" if not failures and len(manifest) == len(FIXTURES) else "FAIL",
         "failures": sorted(failures),
