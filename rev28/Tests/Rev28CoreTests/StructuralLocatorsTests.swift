@@ -212,6 +212,26 @@ final class StructuralLocatorsTests: XCTestCase {
         XCTAssertTrue(candidate.identity.contains("2024/05/13~05/17"))
     }
 
+    func testDateRangeAnchorAcceptsOnlyExactReviewedForms() {
+        func regions(_ title: String) -> Int {
+            StructuralLocators.segmentAlbumCards(
+                items: [item(title, CGRect(x: 20, y: 40, width: 160, height: 20))],
+                imageBounds: CGRect(x: 0, y: 0, width: 300, height: 300)
+            ).count
+        }
+        XCTAssertEqual(regions("2024/05/13~05/17"), 1, "short end date is the reviewed target form")
+        XCTAssertEqual(regions("2024/05/13～05/17"), 1, "full-width separator is mapped explicitly")
+        XCTAssertEqual(regions("2024/05/13~2024/05/17"), 1)
+        XCTAssertEqual(regions("2024/5/13~05/17"), 0)
+        XCTAssertEqual(regions("2024/05/13~5/17"), 0)
+        XCTAssertEqual(regions("13/05/2024~05/17"), 0)
+        XCTAssertEqual(regions("2024/05/13~05/17~05/18"), 0)
+        XCTAssertEqual(regions("2024/13/01~05/17"), 0, "calendar-invalid month must not anchor")
+        XCTAssertEqual(regions("2024/02/30~03/01"), 0, "calendar-invalid day must not anchor")
+        XCTAssertEqual(regions("2024/02/29~03/01"), 1, "leap day is a real date")
+        XCTAssertEqual(regions("2024/05/13"), 0)
+    }
+
     func testSegmentAlbumCardsRejectsCrossCardCount() {
         let items = [
             item("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),

@@ -130,18 +130,64 @@ public enum StructuralLocators {
     private static func isDateRangeTitle(_ value: String) -> Bool {
         let normalized = value.replacingOccurrences(of: "～", with: "~")
         let parts = normalized.split(separator: "~", omittingEmptySubsequences: false)
-        guard parts.count == 2 else { return false }
-        func valid(_ part: Substring) -> Bool {
-            let components = part.split(separator: "/")
-            guard components.count == 3,
-                  components[0].count == 4,
-                  components[1].count == 2,
-                  components[2].count == 2 else { return false }
-            return components.allSatisfy { component in
-                !component.isEmpty && component.allSatisfy(\.isNumber)
-            }
+        guard parts.count == 2, let start = fullDateComponents(parts[0]) else { return false }
+        let end: (year: Int, month: Int, day: Int)
+        if let explicitEnd = fullDateComponents(parts[1]) {
+            end = explicitEnd
+        } else if let shortEnd = shortDateComponents(parts[1]) {
+            // Reviewed target display form: the end date may omit the year,
+            // which is inherited from the range start; never guess it.
+            end = (start.year, shortEnd.month, shortEnd.day)
+        } else {
+            return false
         }
-        return valid(parts[0]) && valid(parts[1])
+        return isValidCalendarDate(year: start.year, month: start.month, day: start.day)
+            && isValidCalendarDate(year: end.year, month: end.month, day: end.day)
+    }
+
+    /// Exact `yyyy/mm/dd` (four/two/two digits); no other shape is accepted.
+    private static func fullDateComponents(_ part: Substring) -> (year: Int, month: Int, day: Int)? {
+        let components = part.split(separator: "/")
+        guard components.count == 3,
+              components[0].count == 4,
+              components[1].count == 2,
+              components[2].count == 2,
+              components.allSatisfy({ !$0.isEmpty && $0.allSatisfy(\.isNumber) }),
+              let year = Int(components[0]), let month = Int(components[1]), let day = Int(components[2]) else {
+            return nil
+        }
+        return (year, month, day)
+    }
+
+    /// Exact short end date `mm/dd`; the year is inherited from the range start.
+    private static func shortDateComponents(_ part: Substring) -> (month: Int, day: Int)? {
+        let components = part.split(separator: "/")
+        guard components.count == 2,
+              components[0].count == 2,
+              components[1].count == 2,
+              components.allSatisfy({ !$0.isEmpty && $0.allSatisfy(\.isNumber) }),
+              let month = Int(components[0]), let day = Int(components[1]) else {
+            return nil
+        }
+        return (month, day)
+    }
+
+    private static func isValidCalendarDate(year: Int, month: Int, day: Int) -> Bool {
+        guard year >= 1, let limit = daysInMonth(year: year, month: month) else { return false }
+        return day >= 1 && day <= limit
+    }
+
+    private static func daysInMonth(year: Int, month: Int) -> Int? {
+        switch month {
+        case 1, 3, 5, 7, 8, 10, 12: return 31
+        case 4, 6, 9, 11: return 30
+        case 2: return isLeapYear(year) ? 29 : 28
+        default: return nil
+        }
+    }
+
+    private static func isLeapYear(_ year: Int) -> Bool {
+        (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
     }
 
     /// Exact album-card identity. The title and count must both be contained in
