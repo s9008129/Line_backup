@@ -103,9 +103,6 @@ public struct LiveExecutionEngine {
         if owner.isObserveOnlyResume {
             return .observeOnlyResume(owner.currentState)
         }
-        guard owner.currentState == nil else {
-            throw LiveExecutionEngineError.stateAlreadyStarted
-        }
 
         let preSaveStates: [ExecutionState] = [
             .appReady,
@@ -117,7 +114,22 @@ public struct LiveExecutionEngine {
             .menuVerified,
             .saveAllLocated,
         ]
+        // Plan C4 verified pre-intent continuation: with zero irreversible
+        // records, a restart re-establishes the current state from fresh
+        // observation (recorded as `state.reverified`), then proceeds forward.
+        // Nothing is reset and no backward transition is invented.
+        var resumeIndex = 0
+        if let currentState = owner.currentState {
+            guard let index = preSaveStates.firstIndex(of: currentState) else {
+                throw LiveExecutionEngineError.stateAlreadyStarted
+            }
+            let reverified = try await adapter.establish(state: currentState, owner: owner)
+            try validateDigest(reverified, stage: "REVERIFY-\(currentState.rawValue)")
+            try owner.recordStateReverification(state: currentState, evidenceSHA256: reverified)
+            resumeIndex = index + 1
+        }
         for (index, state) in preSaveStates.enumerated() {
+            guard index >= resumeIndex else { continue }
             let evidence = try await adapter.establish(state: state, owner: owner)
             try validateDigest(evidence, stage: state.rawValue)
             if index == 0 {

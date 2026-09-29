@@ -104,6 +104,7 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
     case authorizationMismatch
     case irreversibleIntentAlreadyRecorded(String)
     case irreversibleAttemptAlreadyRecorded(String)
+    case goalSlotEntitlementConsumed(String)
     case ledgerCheckpointRequired
     case ledgerCheckpointInvalid
     case stateAlreadyInitialized
@@ -117,6 +118,7 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
         case .authorizationMismatch: return "authorizationMismatch"
         case let .irreversibleIntentAlreadyRecorded(kind): return "irreversibleIntentAlreadyRecorded(\(kind))"
         case let .irreversibleAttemptAlreadyRecorded(kind): return "irreversibleAttemptAlreadyRecorded(\(kind))"
+        case let .goalSlotEntitlementConsumed(detail): return "goalSlotEntitlementConsumed(\(detail))"
         case .ledgerCheckpointRequired: return "ledgerCheckpointRequired"
         case .ledgerCheckpointInvalid: return "ledgerCheckpointInvalid"
         case .stateAlreadyInitialized: return "stateAlreadyInitialized"
@@ -131,6 +133,9 @@ public enum PersistentTransactionError: Error, Equatable, CustomStringConvertibl
 public final class PersistentTransactionOwner {
     public let authorization: ImmutableRunAuthorization
     public let ledger: IntentLedger
+    /// Production compositions pass the persistent goal slot so the one-shot
+    /// irreversible entitlement cannot be reset by a new ledger/runID/session.
+    public let goalSlot: GoalSlot?
     private var saveAllIntentOwnedByThisProcess = false
     private var confirmationIntentOwnedByThisProcess = false
     private let stateLock = NSRecursiveLock()
@@ -141,13 +146,18 @@ public final class PersistentTransactionOwner {
         authorization: ImmutableRunAuthorization,
         ledger: IntentLedger,
         checkpointURL: URL? = nil,
-        requireCheckpointOnResume: Bool = false
+        requireCheckpointOnResume: Bool = false,
+        goalSlot: GoalSlot? = nil
     ) throws {
         guard authorization.isValid else { throw PersistentTransactionError.invalidAuthorization }
         self.authorization = authorization
         self.ledger = ledger
+        if let goalSlot, !goalSlot.identity.matches(authorization) {
+            throw PersistentTransactionError.authorizationMismatch
+        }
+        self.goalSlot = goalSlot
         self.checkpointURL = checkpointURL?.standardizedFileURL
-        self.isObserveOnlyResume = !ledger.entries.isEmpty
+        self.isObserveOnlyResume = ledger.entries.contains { Self.isIrreversibleRecord($0.kind) }
         try EvidenceIO.ensureDirectory(URL(fileURLWithPath: authorization.evidenceRunDirectory))
 
         if !ledger.entries.isEmpty {
@@ -205,6 +215,24 @@ public final class PersistentTransactionOwner {
         ]))
     }
 
+    /// Plan C4 pre-intent continuation: a restart may re-establish the current
+    /// pre-Save-All state from fresh observation. The re-observation is recorded
+    /// explicitly; it is neither a backward transition nor a counter reset.
+    public func recordStateReverification(state: ExecutionState, evidenceSHA256: String) throws {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        guard !isObserveOnlyResume, currentState == state else {
+            throw PersistentTransactionError.stateAlreadyInitialized
+        }
+        guard Self.validSHA256(evidenceSHA256) else {
+            throw PersistentTransactionError.invalidStateEvidence
+        }
+        try append(kind: "state.reverified", payload: binding([
+            "state": state.rawValue,
+            "evidenceSHA256": evidenceSHA256,
+        ]))
+    }
+
     public func transition(to next: ExecutionState, evidenceSHA256: String) throws {
         stateLock.lock()
         defer { stateLock.unlock() }
@@ -242,6 +270,16 @@ public final class PersistentTransactionOwner {
         let counts = irreversibleOperationCounts
         guard !isObserveOnlyResume, counts.saveAll == 0 else {
             throw PersistentTransactionError.irreversibleIntentAlreadyRecorded("saveAll")
+        }
+        if let goalSlot {
+            do {
+                try goalSlot.consumeEntitlement(ledgerFileURL: ledger.fileURL, runID: authorization.runID)
+            } catch let error as GoalSlotError {
+                if case let .entitlementAlreadyConsumed(detail) = error {
+                    throw PersistentTransactionError.goalSlotEntitlementConsumed(detail)
+                }
+                throw error
+            }
         }
         try append(kind: "intent.saveAll", payload: binding(["risk": "IRREVERSIBLE_SIDE_EFFECT"]))
         saveAllIntentOwnedByThisProcess = true
@@ -362,5 +400,18 @@ public final class PersistentTransactionOwner {
 
     private static func validSHA256(_ value: String) -> Bool {
         value.count == 64 && value.allSatisfy(\.isHexDigit) && Set(value).count > 1
+    }
+
+    /// Observe-only is a property of irreversible history, never of the mere
+    /// presence of pre-intent records: a verified pre-intent continuation must
+    /// remain able to re-observe and proceed (plan C4), while any irreversible
+    /// intent/attempt permanently forces observe-only.
+    private static func isIrreversibleRecord(_ kind: String) -> Bool {
+        switch kind {
+        case "intent.saveAll", "attempt.saveAll", "intent.destinationConfirmation", "attempt.destinationConfirmation":
+            return true
+        default:
+            return false
+        }
     }
 }

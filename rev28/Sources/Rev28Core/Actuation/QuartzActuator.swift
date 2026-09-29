@@ -409,6 +409,15 @@ public enum GatedQuartzActuator {
             try owner.markSaveAllAttempted()
         }
         sink(move, .cghidEventTap)
+        // Plan C5: after the move and before mouseDown, revalidate focus,
+        // geometry and process instance. A change here yields zero down/up;
+        // once down is posted only the paired up may follow.
+        guard readinessCheck(permit.targetPID, permit.windowID) else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("live target lost foreground/window readiness after mouseMoved; no button events posted")
+        }
+        guard processIdentityCheck(permit.targetPID, permit.binding) else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("target bundle or process instance changed after mouseMoved; no button events posted")
+        }
         sink(down, .cghidEventTap)
         usleep(30_000)
         sink(up, .cghidEventTap)

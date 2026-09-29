@@ -200,6 +200,25 @@ public final class FrameCaptureService {
         state: CaptureGeometryState,
         identityTemplate: WindowIdentity?
     ) async throws -> CapturedFrameRecord {
+        try await captureWithImage(
+            window: window,
+            configuration: configuration,
+            includedWindows: includedWindows,
+            state: state,
+            identityTemplate: identityTemplate
+        ).record
+    }
+
+    /// Same capture path, but the exact captured image is returned alongside the
+    /// record so one observation can retain the bytes it measured, OCR and hash
+    /// (no second capture of the same state may substitute for the first).
+    public func captureWithImage(
+        window: SCWindow,
+        configuration: CaptureConfiguration,
+        includedWindows: [SCWindowSnapshot],
+        state: CaptureGeometryState,
+        identityTemplate: WindowIdentity?
+    ) async throws -> (record: CapturedFrameRecord, image: CGImage) {
         let filter = SCContentFilter(desktopIndependentWindow: window)
         let config = SCScreenshotConfiguration()
         config.includeChildWindows = configuration.includeChildWindows
@@ -275,7 +294,7 @@ public final class FrameCaptureService {
         identity?.captureEpoch = epoch
         identity?.captureImageSHA256 = imageSHA
 
-        return CapturedFrameRecord(
+        let record = CapturedFrameRecord(
             captureKind: configuration.kind,
             configuration: configuration,
             includedWindows: includedWindows,
@@ -295,5 +314,6 @@ public final class FrameCaptureService {
             violations: violationStrings,
             identity: identity
         )
+        return (record: record, image: image)
     }
 }

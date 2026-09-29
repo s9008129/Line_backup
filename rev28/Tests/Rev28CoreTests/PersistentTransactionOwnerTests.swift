@@ -93,6 +93,32 @@ final class PersistentTransactionOwnerTests: XCTestCase {
         )
     }
 
+    func testPreIntentHistoryAllowsContinuationButIrreversibleHistoryDoesNot() throws {
+        let (url, authorization) = try setup()
+        let owner = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))
+        try owner.initializeState(evidenceSHA256: EvidenceIO.sha256Hex(Data("app-ready".utf8)))
+        try owner.transition(to: .groupReady, evidenceSHA256: EvidenceIO.sha256Hex(Data("group-ready".utf8)))
+        try owner.recordReversibleDispatch(action: "openAlbumCard")
+
+        let resumed = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))
+        XCTAssertFalse(resumed.isObserveOnlyResume, "pre-intent records are not irreversible history")
+        XCTAssertEqual(resumed.currentState, .groupReady)
+        XCTAssertEqual(resumed.reversibleDispatchCount, 1)
+        try resumed.recordStateReverification(
+            state: .groupReady,
+            evidenceSHA256: EvidenceIO.sha256Hex(Data("group-ready-fresh".utf8))
+        )
+        try resumed.reserveSaveAll()
+        try resumed.markSaveAllAttempted()
+
+        let afterIntent = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))
+        XCTAssertTrue(afterIntent.isObserveOnlyResume)
+        XCTAssertThrowsError(try afterIntent.recordStateReverification(
+            state: .groupReady,
+            evidenceSHA256: EvidenceIO.sha256Hex(Data("group-ready-fresh".utf8))
+        ))
+    }
+
     func testAuthorizationIsImmutableAndConfirmationRequiresVerifiedChooser() throws {
         let (url, authorization) = try setup()
         let owner = try PersistentTransactionOwner(authorization: authorization, ledger: IntentLedger(fileURL: url))

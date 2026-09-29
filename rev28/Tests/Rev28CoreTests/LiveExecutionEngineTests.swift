@@ -8,10 +8,14 @@ final class LiveExecutionEngineTests: XCTestCase {
         private let lock = NSLock()
         private(set) var saveAllMouseEvents = 0
         private(set) var confirmationPosts = 0
+        private(set) var establishedStates: [ExecutionState] = []
         var failAtState: ExecutionState?
 
         func establish(state: ExecutionState, owner: PersistentTransactionOwner) async throws -> String {
             if failAtState == state { throw NSError(domain: "FakeAdapter", code: 1) }
+            lock.lock()
+            establishedStates.append(state)
+            lock.unlock()
             return digest("state:\(state.rawValue)")
         }
 
@@ -210,6 +214,44 @@ final class LiveExecutionEngineTests: XCTestCase {
         XCTAssertEqual(owner.irreversibleOperationCounts.saveAll, 2)
         XCTAssertEqual(owner.irreversibleOperationCounts.destinationConfirmation, 2)
         XCTAssertEqual(owner.currentState, .contentVerified)
+    }
+
+    func testPreIntentContinuationReobservesCurrentStateAndPreservesCounters() async throws {
+        let (ledgerURL, auth, owner) = try setup()
+        let first = FakeAdapter()
+        first.failAtState = .targetAlbumLocated
+        do {
+            _ = try await LiveExecutionEngine(owner: owner, adapter: first).run()
+            XCTFail("expected the first run to stop at the injected failure")
+        } catch {
+            // expected
+        }
+        XCTAssertEqual(owner.currentState, .albumListReady)
+        XCTAssertEqual(owner.irreversibleOperationCounts.saveAll, 0)
+        XCTAssertEqual(owner.irreversibleOperationCounts.destinationConfirmation, 0)
+
+        let resumed = try PersistentTransactionOwner(
+            authorization: auth,
+            ledger: IntentLedger(fileURL: ledgerURL),
+            checkpointURL: ledgerURL.deletingLastPathComponent().appendingPathComponent("ledger-head.anchor"),
+            requireCheckpointOnResume: true
+        )
+        XCTAssertFalse(resumed.isObserveOnlyResume, "pre-intent history must stay continuable")
+        XCTAssertEqual(resumed.reversibleDispatchCount, owner.reversibleDispatchCount)
+
+        let second = FakeAdapter()
+        let outcome = try await LiveExecutionEngine(owner: resumed, adapter: second).run()
+        guard case .contentVerified = outcome else {
+            return XCTFail("expected contentVerified after continuation, got \(outcome)")
+        }
+        XCTAssertEqual(second.establishedStates.first, .albumListReady, "continuation re-observes the current state first")
+        XCTAssertEqual(second.establishedStates, [
+            .albumListReady, .targetAlbumLocated, .albumDetailVerified,
+            .ellipsisLocated, .menuVerified, .saveAllLocated,
+        ])
+        XCTAssertEqual(second.saveAllMouseEvents, 3)
+        XCTAssertTrue(resumed.ledger.entries.contains { $0.kind == "state.reverified" })
+        XCTAssertEqual(second.establishedStates.filter { $0 == .appReady }.count, 0, "completed states are not re-established")
     }
 
     func testRestartAfterIrreversibleAttemptIsObserveOnlyAndPostsNothing() async throws {
