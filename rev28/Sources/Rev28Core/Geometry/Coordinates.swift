@@ -320,11 +320,15 @@ public enum CaptureGeometryRules {
         return nil
     }
 
+    /// Plan C3 (`plan.md:130`): the frozen safe-boundary refusal margin is 1 point
+    /// — **not 1 pixel** — and must be converted with the observed capture scale.
+    public static let dispatchMinimumMarginPt: Double = 1.0
+
     /// Invariant 5: a point within 1 pt (default) of a safe-interior boundary is refused.
     public static func isDispatchable(
         point: WindowLocalPoint,
         safeRect: CGRect,
-        minimumMarginPt: Double = 1.0
+        minimumMarginPt: Double = CaptureGeometryRules.dispatchMinimumMarginPt
     ) -> Bool {
         guard safeRect.width > 0, safeRect.height > 0 else { return false }
         let x = point.x
@@ -336,5 +340,26 @@ public enum CaptureGeometryRules {
         guard x > minX, x < maxX, y > minY, y < maxY else { return false }
         let margins = [x - minX, maxX - x, y - minY, maxY - y]
         return margins.min()! >= minimumMarginPt
+    }
+
+    /// Invariant 5 evaluated in capture-pixel space: converts the 1-point margin
+    /// at the observed capture scale so the readiness gate and the frozen rule
+    /// (`isDispatchable`) refuse exactly the same boundary.
+    public static func isDispatchableCapturePixels(
+        point: CapturePixelPoint,
+        safeRect: CGRect,
+        captureScale: Double
+    ) -> Bool {
+        guard safeRect.width > 0, safeRect.height > 0,
+              captureScale.isFinite, captureScale > 0 else { return false }
+        let x = point.x
+        let y = point.y
+        let minX = Double(safeRect.minX)
+        let maxX = Double(safeRect.maxX)
+        let minY = Double(safeRect.minY)
+        let maxY = Double(safeRect.maxY)
+        guard x > minX, x < maxX, y > minY, y < maxY else { return false }
+        let margins = [x - minX, maxX - x, y - minY, maxY - y]
+        return margins.min()! >= dispatchMinimumMarginPt * captureScale
     }
 }

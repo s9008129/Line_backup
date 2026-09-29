@@ -324,10 +324,13 @@ public enum DispatchReadinessGate {
         }
         let point = candidate.pointCapturePx
         let safe = candidate.safeRectCapturePx
+        // Plan C3 (`plan.md:130`): the safe-boundary margin is 1 point converted at
+        // the observed capture scale (not 1 capture pixel); readiness must evaluate
+        // the same invariant as `CaptureGeometryRules.isDispatchable`.
         guard safe.width > 0, safe.height > 0,
               safe.contains(CGPoint(x: point.x, y: point.y)),
-              point.x > Double(safe.minX) + 1, point.x < Double(safe.maxX) - 1,
-              point.y > Double(safe.minY) + 1, point.y < Double(safe.maxY) - 1,
+              CaptureGeometryRules.isDispatchableCapturePixels(point: point, safeRect: safe,
+                                                               captureScale: observation.captureGeometry.scale),
               identity.cgEntry.frame.width > 0, identity.cgEntry.frame.height > 0,
               observation.captureGeometry.scale.isFinite, observation.captureGeometry.scale > 0,
               observation.captureGeometry.captureBBox.width > 0, observation.captureGeometry.captureBBox.height > 0,

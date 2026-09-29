@@ -86,6 +86,57 @@ final class ActuationReadinessTests: XCTestCase {
         ))
     }
 
+    func testDispatchMarginConvertsOnePointAtCaptureScaleNotOnePixel() throws {
+        let (identity, _, _, base) = fixture()
+        func scaledObservation(_ scale: Double) -> ReadinessObservation {
+            ReadinessObservation(
+                applicationActive: base.applicationActive,
+                targetFrontmost: base.targetFrontmost,
+                freshWindow: base.freshWindow,
+                currentEpoch: base.currentEpoch,
+                currentBinding: base.currentBinding,
+                captureGeometry: CaptureGeometry(windowFrame: base.captureGeometry.windowFrame,
+                                                 captureBBox: base.captureGeometry.captureBBox,
+                                                 scale: scale),
+                captureImageSize: base.captureImageSize,
+                observedAtUptime: base.observedAtUptime
+            )
+        }
+        let safe = CGRect(x: 0, y: 0, width: 100, height: 100)
+        func candidate(pointX: Double) -> StructuralCandidate {
+            StructuralCandidate(identity: "target", safeRectCapturePx: safe,
+                                pointCapturePx: CapturePixelPoint(x: pointX, y: 50),
+                                binding: base.currentBinding)
+        }
+        // At 2x a 1 px margin is 0.5 pt: the plan's 1-point refusal must reject it.
+        XCTAssertThrowsError(try DispatchReadinessGate.mintPermit(
+            identity: identity, candidate: candidate(pointX: 1), observation: scaledObservation(2), now: 10
+        ))
+        // Exactly 2 px is exactly 1 pt at 2x and is accepted (`>=` semantics, matching
+        // CaptureGeometryRules.isDispatchable).
+        XCTAssertNoThrow(try DispatchReadinessGate.mintPermit(
+            identity: identity, candidate: candidate(pointX: 2), observation: scaledObservation(2), now: 10
+        ))
+        // The same 2 px margin is only 2/3 pt at 3x and must be refused again.
+        XCTAssertThrowsError(try DispatchReadinessGate.mintPermit(
+            identity: identity, candidate: candidate(pointX: 2), observation: scaledObservation(3), now: 10
+        ))
+        // At 1x the conversion is identity: exactly 1 px is exactly 1 pt.
+        XCTAssertNoThrow(try DispatchReadinessGate.mintPermit(
+            identity: identity, candidate: candidate(pointX: 1), observation: scaledObservation(1), now: 10
+        ))
+        // Direct invariant check in capture-pixel space.
+        XCTAssertTrue(CaptureGeometryRules.isDispatchableCapturePixels(
+            point: CapturePixelPoint(x: 2, y: 50), safeRect: safe, captureScale: 2
+        ))
+        XCTAssertFalse(CaptureGeometryRules.isDispatchableCapturePixels(
+            point: CapturePixelPoint(x: 1, y: 50), safeRect: safe, captureScale: 2
+        ))
+        XCTAssertFalse(CaptureGeometryRules.isDispatchableCapturePixels(
+            point: CapturePixelPoint(x: 50, y: 50), safeRect: safe, captureScale: .nan
+        ))
+    }
+
     func testExpiredSingleUsePermitPostsZeroEvents() async throws {
         let (identity, candidate, _, observation) = fixture()
         let permit = try DispatchReadinessGate.mintPermit(
