@@ -1,21 +1,102 @@
-# HANDOFF — LINE Backup Rev28（2026-09-30，新對話／接手專用）
+# HANDOFF — LINE Backup Rev28（2026-09-30 rev2｜prompt-first）
 
-> 本文件是下一個新對話與後續 Agent 的唯一接手入口（navigation + status snapshot）。
-> 它**不是** canonical 契約，也不取代任何 Stage 03 文件；canonical 執行契約仍為
-> `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/handoff.md`（SHA-256 `67fc16a638b115fef8b8e99e57ec0d6a2fc344cdd15c6eaf6a72bcdb1c227a33`），
-> 設計契約仍為同目錄 `plan.md`（R4）。**不要覆寫它們。**
+> 給新對話的接手 Agent：**先讀 §0 的 Prompt，並依它執行**；本文件其餘章節是它引用的完整上下文。
+> 本文件是 navigation + status snapshot，**不是** canonical 契約，不取代
+> `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md` 與同目錄 `handoff.md`。**不要覆寫它們。**
 > 核心原則：**不要從頭探索；不要重跑已證明事項；不要重置 blocker budget；不要在應該停止的位置繼續燒 token。**
-> Updated: 2026-09-30（Asia/Taipei）。撰寫依據：repo 實測＋task durable artifacts＋commit `815e9f1`。
+> Updated: 2026-09-30 13:45（Asia/Taipei）rev2：
+> (a) 交辦 Prompt 置頂；(b) 併入 **Phase A attempt-01 已 fired 並 REFUSED** 的最新狀態；
+> (c) 更新本地 HEAD 至 `ce52103` 與交付時工作樹現況；(d) 交付時 append 本檔 rev2 與 `phase-a/` evidence（docs/records-only commits）。
 
 ---
 
-## 0. 一句話現況
+## 0. 交辦 Prompt（把下面整段貼給接手 Agent；或整份文件一起貼）
 
-產品樹已凍結於 `cf39fdcc63e2b9c0d94ff8f34fd34b7aaaf58ff1`（implementation digest `6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686`，48 paths）。V-09 attempt-04 三份 fresh 複審全部 **0 MAJOR**，並已入 commit `815e9f1`（已推送 origin）。`PRIMARY_NATIVE_COMPOSITION` 以 `RESOLVED_BY_SUPERSEDING_LINEAGE` 關閉（3/3 exhausted，永不重開）。離線可完成的實作與驗證已全部收束；**唯一剩下的真實世界 gate 是外部 Phase A 前置**：使用者登入 LINE 並把「旻謙允禎成長日記」的 `2024/05/13～05/17` 相簿 surface 準備到可觀察狀態，之後才以 fresh runID 跑 `rev28ctl live-preflight`（Phase A、read-only、零不可逆）。在該條件成立前：不操作 GUI、不跑 `live-preflight`／`live-execute`、不開任何新 implementation attempt——**正確的 STOP 就是成功**。
+```text
+你是 T20260925-0647-01-rev28-native-closed-loop（CRITICAL）的接手 Agent。這個任務已做完離線實作
+與全部複審，只剩「真實 Phase A（read-only 觀察）」的外部前置與 attempt-02。不要重新解這個專案。
+
+【第 0 步｜讀與核對（不符＝STATE_RECONCILIATION_REQUIRED，停止並回報）】
+1. 讀 /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/HANDOFF-2026-09-30-rev28-next.md 全文（本文件）。
+2. 機械核對（指令見 §16）：
+   - repo /Users/hsiaojohnny/Documents/ChatGPT/Line_backup；branch `v43-ab/codex-rev28`；
+     本地 HEAD 應為 `ce52103` 或之後的 docs/records-only commit（本 HANDOFF rev2 與 phase-a evidence
+     可能已 commit／push；origin 同步或落後皆屬正常，一律以實測為準）。
+   - 產品樹必須仍是 `cf39fdcc…`（digest `6734dda5…a686`；`git diff cf39fdcc HEAD -- rev28` 必須為空）。
+   - plan.md SHA-256 = `05413807…4c1b`；canonical handoff.md SHA-256 = `67fc16a6…7a33`。
+   - working tree 為 clean、或顯示本 HANDOFF 檔 modified／`phase-a/` untracked（未及入庫），皆屬正常
+     （見 §2.3／§11）；不要 reset。
+   - 若只有這些差異、其餘不符：停止，輸出 STATE_RECONCILIATION_REQUIRED，不得自行修 Git。
+
+【第 1 步｜已知事實（不要再論證）】
+- PRIMARY_NATIVE_COMPOSITION 3/3 → RESOLVED_BY_SUPERSEDING_LINEAGE：禁止第 4 次 attempt、
+  禁止重開 A/B competition、禁止任何新 implementation attempt；換 model/session/branch/prompt 不重置。
+- 離線實作與驗證已收束（V-09 attempt-04：0 MAJOR；產品樹凍結 cf39fdcc）。
+- Phase A attempt-01 已於 2026-09-30 10:30 fired 並被 fail-closed REFUSED（exit 77，
+  `targetWindowNotUnique(found=2)`）；未進入觀察、未產出 per-condition report、零不可逆（0/0/0）。
+  證據：`.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/phase-a/attempt-01/RUN-20260930-103002-01/`（§9）。
+- 目前 blocker fingerprint：`PHASE_A_TARGET_WINDOW_NOT_UNIQUE(found=2)`（環境前置，非 code defect）。
+- orchestrator 無 state.json（STATE_RECONCILIATION_REQUIRED）；只准 `status`，不准 `start`。
+
+【第 2 步｜先做環境確認，再決定走哪條路】
+向使用者確認：「LINE 是否已登入、目標相簿 surface 是否就緒、且只有一個 LINE 視窗？」
+然後自己做**唯讀** probe（§16 視窗盤點；不觸碰 GUI）：數 layer-0 on-screen 的 LINE 視窗數。
+- 若 probe ≠ 1（0 或 ≥2）：
+  - 不執行 live-preflight、不請求授權、不 polling、不 retry。
+  - 只告訴使用者需要的那一個動作：
+    * 0 個視窗：啟動／登入 LINE，進入群組「旻謙允禎成長日記」（禎 U+798E），把相簿
+      2024/05/13～05/17 的卡片帶到看得到的位置（捲到出現即可；不要點開、不要開 ellipsis 選單），
+      視窗擺前景、單一螢幕、不被遮住。
+    * ≥2 個視窗：關閉多餘的 LINE 視窗，只留一個主視窗（內容維持在上述 surface）。
+  - 然後停止；使用者回報完成後重新 probe，通過才進第 3 步。
+- 若 probe == 1 且使用者確認就緒：進第 3 步。
+
+【第 3 步｜Phase A attempt-02（只有 probe == 1 才允許）】
+1. 先請使用者對「本次 read-only Phase A run」給**新的**明確一次性授權（舊授權已用於 attempt-01；
+   不得沿用、不得推定）。提醒：開始後 1～2 分鐘不要動滑鼠／鍵盤、不要切換 App、Mac 不休眠／鎖屏。
+2. 準備新的 fresh runID 與 run 目錄（`phase-a/attempt-02/RUN-<timestamp>-01/`），重新產生 config
+   （可抄 attempt-01 的 config.json 結構，但 runID／路徑／targetPID 必須重新觀測；chooser binding
+   三欄與 frozen files 維持；不得重用 attempt-01 的 ledger／授權檔，也不得手動編輯它們）。
+3. 以凍結產品樹建置的 binary 執行一次：
+   `rev28ctl live-preflight --config <new config> --one-shot-authorization <new one-shot-authorization.json>`
+4. 零不可逆：Save All intent/attempt = 0、destination confirmation intent/attempt = 0；
+   不點 Save All、不開 chooser；timeout／ambiguous／stale／identity mismatch → observe-only 停止。
+5. 結果處置：
+   - PASS：依 canonical 契約進入後續合法 routing（真實 chooser 仍留 Phase B；不得自行推進 Phase B）。
+   - REFUSED／FAIL／UNKNOWN：不 retry、不猜測；寫下 outcome 與 counters；依收斂契約決定下一步
+     （同 fingerprint 的重複失敗會消耗 budget；不得換 model/session/branch/prompt 重置）。
+6. 把記錄 append 到 progress.md／execution.md；`phase-a/` 證據目錄 append-only，不改寫既有檔案。
+   attempt-01 截至 rev2 撰寫時尚未回填 progress.md／execution.md，請一併補記。
+
+【硬禁止】
+- git reset --hard／clean／stash／rebase／force push；動 `rev28-prelive-finalization`；覆寫任何
+  dirty/untracked（含 `phase-a/`）；merge 或 cherry-pick A/B branches。
+- 第 4 次 PRIMARY_NATIVE_COMPOSITION attempt；Phase B；Save All；destination confirmation；
+  未取得明示授權就執行 live-preflight；由 Agent 自行操作 GUI（授權的 Phase A run 內、契約允許的
+  reversible 步驟除外）；album-list prepositioning。
+- 使用 `~/Library/Application Support/LineNativeAXGUIBridge`（舊世代殘留 LaunchAgent）或任何
+  非 rev28 契約的 AX bridge／替代 authority；手動編輯 ledger／goal slot／授權檔。
+- luna／deepseek worktree 僅可唯讀作歷史 evidence。`exit 0 ≠ semantic PASS`。
+
+【回報格式】
+- 一句話：現況＋你做了什麼＋下一步；附：probe 數量、runID、run 目錄、counters（0/0/0 或實際值）、
+  下一步唯一動作（若 STOP）。不得宣稱未實際觀察到的 PASS。
+```
 
 ---
 
-## 1. 專案與 Task 身分（先核對，再行動）
+## 1. 一句話現況
+
+離線工作全部收束（產品樹凍結 `cf39fdcc` / digest `6734dda5…a686`；V-09 attempt-04 複審 0 MAJOR 已 commit）。
+**Phase A attempt-01 已 fired（2026-09-30 10:30）：fail-closed REFUSED（exit 77，`targetWindowNotUnique(found=2)`）**，
+原因是當時 LINE 同時存在 2 個 on-screen layer-0 視窗；未進入觀察、未產生任何 Phase A per-condition 證據，且**零不可逆（0/0/0）**。
+截至 2026-09-30 13:42 唯讀盤點：**LINE 目前已不在執行中（0 個視窗）**。
+下一步＝使用者把 LINE 帶回「已登入＋目標相簿 surface 可見＋恰好一個視窗」的狀態；Agent 以唯讀 probe 確認 =1 後，
+取得**新的一次性授權**並以 **fresh runID** 跑 attempt-02。在此之前不碰 GUI、不重跑、不重置任何 budget——**正確的 STOP 就是成功**。
+
+---
+
+## 2. 專案與 Task 身分（先核對，再行動）
 
 | 項目 | 值 |
 |---|---|
@@ -23,25 +104,26 @@
 | Task class | `CRITICAL` |
 | Harness | V4.3.1（STATUS_CONTRACT v2、CONVERGENCE_CONTRACT v1） |
 | 主要 repo | `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup` |
-| 目前 branch / HEAD | `v43-ab/codex-rev28` @ `815e9f1b02ac3f74539fae3814e52bf914547850`（clean、已推 origin） |
+| 本地 branch / HEAD | `v43-ab/codex-rev28` @ `ce5210389eb983c200f4360cae443d58e9233ab5` 或之後的 docs/records-only commit（本檔 rev2 與 `phase-a/` evidence 已於交付時 commit；是否 push 以實測為準） |
+| origin 對應 ref | `refs/heads/v43-ab/codex-rev28` = `815e9f1b02ac3f74539fae3814e52bf914547850`（本地領先 1） |
 | canonical Plan | `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md`｜SHA-256 `05413807f5d7c04d5fe57eb058da6da734ddef5e350a9b023bfa8f8d72f84c1b`（R4；review attempt-07 `PLAN_APPROVED`） |
 | canonical Stage 03 Handoff | 同目錄 `handoff.md`｜SHA-256 `67fc16a638b115fef8b8e99e57ec0d6a2fc344cdd15c6eaf6a72bcdb1c227a33` |
 | approved starting checkpoint | `9cbaa1141595acb538d4672066072d2b8ffb7065`（branch `rev28-prelive-finalization`；**禁止前移**） |
-| 產品凍結樹 | `cf39fdcc63e2b9c0d94ff8f34fd34b7aaaf58ff1`；`cf39fdcc..815e9f1` 的差異全部只在 `.agent/`（實測 `git diff cf39fdcc 815e9f1 -- rev28` 為空） |
-| implementation digest | `6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686`（48 paths = 45 Swift + `Package.swift` + 2 tools；由生產用 `ReviewedImplementationDigest` 計算，Python replica 一致） |
+| 產品凍結樹 | `cf39fdcc63e2b9c0d94ff8f34fd34b7aaaf58ff1`；`rev28/` 自該 commit 起未變（`git diff cf39fdcc HEAD -- rev28` 必須為空）；`cf39fdcc..HEAD` 另有 `.agent/` 記錄與根目錄 HANDOFF 文件（docs-only） |
+| implementation digest | `6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686`（48 paths = 45 Swift + `Package.swift` + 2 tools；`ReviewedImplementationDigest` 計算，Python replica 一致） |
 
-### 1.1 Worktree 現場（2026-09-30 實測）
+### 2.1 Worktree 現場（2026-09-30 實測）
 
 | 路徑 | branch | HEAD | 狀態 |
 |---|---|---|---|
-| `Documents/ChatGPT/Line_backup` | `v43-ab/codex-rev28` | `815e9f1`（已推） | clean＝authority tree |
+| `Documents/ChatGPT/Line_backup` | `v43-ab/codex-rev28` | `ce52103` 或之後 | authority tree；見 §2.3 工作樹現況 |
 | `Documents/ChatGPT/Line_backup-ab-deepseek` | `v43-ab/deepseek-rev28` | `472c283`（已推） | clean；`EXTERNAL_BLOCKER` 歷史（locked session） |
 | `Documents/ChatGPT/Line_backup-ab-luna` | `v43-ab/luna-rev28` | `9cbaa11` | **11 個 dirty/untracked（唯一副本，禁止破壞）** |
 
-- luna 現場 11 檔＝6 modified（`execution.md`、`StructuralLocators.swift`、`FrameCapture.swift`、`StagingVerifier.swift`、`StagingVerifierTests.swift`、`StructuralLocatorsTests.swift`）＋5 untracked（`escalations/`、`evidence/`、`progress.md`、`SameFramePerception.swift`、`SameFramePerceptionTests.swift`）。這些內容**不存在於任何 commit**；如需 snapshot 或清理，先取得使用者明確同意。
+- luna 現場 11 檔＝6 modified（`execution.md`、`StructuralLocators.swift`、`FrameCapture.swift`、`StagingVerifier.swift`、`StagingVerifierTests.swift`、`StructuralLocatorsTests.swift`）＋5 untracked（`escalations/`、`evidence/`、`progress.md`、`SameFramePerception.swift`、`SameFramePerceptionTests.swift`）。這些內容不存在於任何 commit；如需 snapshot 或清理，先取得使用者明確同意。
 - 身分不一致（worktree / branch / HEAD / Plan SHA / Handoff SHA 與本表不符）＝`STATE_RECONCILIATION_REQUIRED`：停止並回報，**不得自行修 Git**。
 
-### 1.2 origin refs（2026-09-30 實測）
+### 2.2 origin refs（2026-09-30 實測）
 
 | ref | SHA |
 |---|---|
@@ -52,9 +134,17 @@
 | `refs/heads/rev28-ci-prelive-hardening` | `a572ec58f506100ae895c21891db8595aaadd5d6` |
 | `refs/heads/harness-v4.3-validation` | `7f2a3104e03ade4f32c45647cbb58d291ab74576` |
 
+### 2.3 工作樹現況（rev2 撰寫時的預期狀態；皆為正常，不要 reset）
+
+| 路徑 | 狀態 | 說明 |
+|---|---|---|
+| `HANDOFF-2026-09-30-rev28-next.md` | clean 或 modified | 本檔 rev2（prompt-first）。clean＝已 commit；modified＝相對最後一次 commit 有差異（若內容仍是 rev2，屬正常，不要 reset） |
+| `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/phase-a/` | 已 commit 或 untracked | Phase A attempt-01 證據（§9）；**append-only，禁止改寫／刪除** |
+| 其餘（含 `rev28/`） | clean | 產品樹凍結；`git diff cf39fdcc HEAD -- rev28` 必須為空 |
+
 ---
 
-## 2. 使用者真正要解決的問題（產品目標）
+## 3. 使用者真正要解決的問題（產品目標）
 
 最終目標不是「讓測試變綠」，而是：從 macOS LINE App（`jp.naver.line.mac`）精確定位群組：
 
@@ -64,7 +154,7 @@
 
 目標相簿：`2024/05/13～05/17`。最終需建立一份新的 staging backup；真正成功只能由 filesystem 與獨立 Stage 05 evidence 證明。
 
-### 2.1 Primary Outcome＝唯一成功狀態 `DUPLICATE_CONTENT_CONFIRMED`
+### 3.1 Primary Outcome＝唯一成功狀態 `DUPLICATE_CONTENT_CONFIRMED`
 
 必須同時證明：
 
@@ -87,40 +177,43 @@ Authoritative existing source（baseline）目錄：
 
 ---
 
-## 3. Production 不可逆動作契約（ceiling）
+## 4. Production 不可逆動作契約（ceiling）
 
 - 真正成功的 production run 最多：`Save All dispatch = 1`、`destination confirmation = 1`。這是天花板，不是必須消耗的 quota。
 - 任何 irreversible intent 一旦建立即視為消耗，即使 effect 是 `UNKNOWN`。
 - 不得因為沒看到效果、session 重開、換模型、換 run、換 TASK wording、換 worktree 而取得第二次機會。
 - `UNKNOWN` irreversible effect：**永遠不能 blind retry**（只能 observe-only）。
 - Human authorization 不能把 mechanical `FAIL` 變成 `PASS`。
+- Phase A attempt-01 已在「進入觀察前」被拒絕，未建立任何 irreversible intent；0/0/0 仍成立。
 
 ---
 
-## 4. 目前狀態（2026-09-30；routing truth＝最新 valid Stage result）
+## 5. 目前狀態（2026-09-30 13:45；routing truth＝最新 valid Stage result／run artifact）
 
 ```text
-STATE: IMPLEMENTATION_COMPLETE_AS_FAR_AS_ALLOWED_PRE_PHASE_A
+STATE: PHASE_A_ATTEMPT_01_REFUSED_PRECONDITION（implementation frozen cf39fdcc；無 pending code work）
 PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
-IMPLEMENTATION_STATUS: IN_PROGRESS（離線已無 falsifiable target；V-09 attempt-04 已收束）
+IMPLEMENTATION_STATUS: COMPLETE_AS_FAR_AS_ALLOWED_PRE_PHASE_A（V-09 attempt-04 0 MAJOR；無新 implementation attempt）
 CORE_ACCEPTANCE_STATUS: NOT_RUN
-REQUIRED_VERIFICATION_STATUS: IN_PROGRESS（V-09 attempt-04 完成、0 MAJOR；真實 Phase A NOT FIRED）
+REQUIRED_VERIFICATION_STATUS: IN_PROGRESS（離線 0 MAJOR；Phase A attempt-01 REFUSED、無 per-condition report）
 INDEPENDENT_ACCEPTANCE_STATUS: PENDING
 TASK_CLOSURE_STATUS: IN_PROGRESS
-PHASE_A_STATUS: EVIDENCE TOOLCHAIN COMPLETE; real preflight NOT FIRED — external prerequisite missing; 0/3 attempts
+PHASE_A_STATUS: attempt-01 FIRED 2026-09-30 10:30 → REFUSED (targetWindowNotUnique(found=2)); attempts used = 1/3?; next = probe==1 → attempt-02（fresh runID + fresh one-shot authorization）
 PHASE_B_STATUS: FORBIDDEN_AB_EVALUATION
-irreversible counters: Save All dispatches 0 / destination confirmations 0 / irreversible intents 0
+irreversible counters: Save All 0 / destination confirmation 0 / irreversible intents 0
 ```
 
-為什麼不是 `DONE`：Primary Outcome 尚未達成（尚未有任何真實 backup run）；Phase A 從未 fired；Stage 05 從未執行。目前**不是** `READY_FOR_PHASE_B`；Phase A 工具鏈已 COMPLETE，只缺外部前置。
+（"attempts used = 1/3?" 的「?」＝Phase A 為真實世界執行，attempt 上限依 canonical 契約與收斂政策決定；無論上限為何，**先修前置再跑**，不得盲目重耗。）
+
+為什麼不是 `DONE`：Primary Outcome 尚未達成（尚未有任何真實 backup run）；Phase A 尚未有 per-condition 證據；Stage 05 從未執行。
 
 ---
 
-## 5. 架構與關鍵邏輯（接手必讀）
+## 6. 架構與關鍵邏輯（接手必讀）
 
 產品程式碼在 `Line_backup/rev28/`：`Sources/Rev28Core/`、`Sources/rev28ctl/`、`Tests/`。
 
-### 5.1 模組與職責（實際檔案）
+### 6.1 模組與職責（實際檔案）
 
 | 模組 | 代表檔案 | 職責 |
 |---|---|---|
@@ -130,24 +223,25 @@ irreversible counters: Save All dispatches 0 / destination confirmations 0 / irr
 | Policy | `Policy/ExecutionPolicy.swift`（`LiveDispatchBudget` 等） | budget 與 policy 規則 |
 | Actuation | `Actuation/QuartzActuator.swift`（含 `GatedQuartzActuator`）、`AXDriver.swift` | guarded dispatch、per-primitive accounting、click 前重新驗證 |
 | Perception | `Perception/StructuralLocators.swift`、`AlbumEllipsisLocator.swift`、`OcrEngine.swift` | 短日期 `yyyy/mm/dd～mm/dd` 分段、card-local count、cross-card refusal |
-| Identity | `Identity/AXWindowIdentitySelector.swift`、`WindowIdentity.swift` | AX 讀取綁定 CGWindowID（絕不用 `windows[0]`） |
+| Identity | `Identity/AXWindowIdentitySelector.swift`、`WindowIdentity.swift` | AX 讀取綁定 CGWindowID（絕不用 `windows[0]`）；**目標視窗必須唯一** |
 | Sensor | `Sensor/FrameCapture.swift`、`WindowSensor.swift`、`RunEpochAuthority.swift` | 擷取、視窗盤點、epoch authority |
 | Chooser | `Chooser/FolderChooserDriver.swift`、`ChooserAffirmationPredicate.swift` | Go to Folder 逐 primitive 記帳、panel 唯一性 |
 | Verification | `Verification/StagingVerifier.swift`、`BaselineVerifier.swift` | staging 完整性／穩定性；baseline 驗證 |
 | Postcondition | `Postcondition/PostconditionMonitor.swift` | postcondition 監測 |
 | CLI | `rev28ctl/main.swift`（factory `:282-317`；usage `:496`）、`HarnessCalibration.swift`、`FolderChooserDriver.swift`、`EvidenceRun.swift`、`QuartzActuator.swift`、`RestartFixture.swift` 等 | `live-preflight`／`live-execute`／`harness-calibrate`／`restart-child` |
 
-### 5.2 Phase A 執行路徑（現行 CLI 真實行為）
+### 6.2 Phase A 執行路徑（現行 CLI 真實行為）
 
 1. `rev28ctl live-preflight --config <json> --one-shot-authorization <json>`
 2. `LiveCompositionFactory.make(...)`（`main.swift:282`）組裝：`ProductionObservationSource` + `ComposedNativeAdapter` + `NativeObservationSession` + `PersistentTransactionOwner` + `GatedQuartzActuator`
-3. `composition.engine.runPreflight()`（`LiveExecutionEngine.swift:264`，零不可逆）→ `observePreDispatchContext`（≥10s 環境取樣、tripwire 無 gap）
-4. 寫 `preflight-outcome-<stamp>.json`；`PhaseAEvidenceBuilder.inspect` 產出 per-condition `PASS/FAIL/UNKNOWN` 報告＋raw evidence manifest
-5. 真實 LINE chooser 在 Phase A 一律標記 deferred，**永不記為 PASS**（Phase B runtime gate）
+3. 目標視窗 identity 必須唯一（否則 `targetWindowNotUnique(found=N)` → exit 77、fail-closed，attempt-01 即此情形）
+4. `composition.engine.runPreflight()`（`LiveExecutionEngine.swift:264`，零不可逆）→ `observePreDispatchContext`（≥10s 環境取樣、tripwire 無 gap）
+5. 寫 `preflight-outcome-<stamp>.json`；`PhaseAEvidenceBuilder.inspect` 產出 per-condition `PASS/FAIL/UNKNOWN` 報告＋raw evidence manifest
+6. 真實 LINE chooser 在 Phase A 一律標記 deferred，**永不記為 PASS**（Phase B runtime gate）
 
 `live-preflight` 的 config 需含 chooser calibration binding（`chooserCalibrationPath`／`chooserPredicateSHA256`／`chooserCalibrationSHA256`）；CLI 會重讀、hash 驗證 frozen bytes、decode、`ChooserProductionPredicate.derive`，非 process-stable v2 即 named refusal。
 
-### 5.3 關鍵語意（不得在 implementation 內私自變更）
+### 6.3 關鍵語意（不得在 implementation 內私自變更）
 
 - 單一 durable authority：owner + ledger（`PersistentTransactionOwner`＋`IntentLedger`）。`reserveSaveAll` 要求耐久 `eligibility.phaseB` 記錄＋`currentState == .saveAllLocated`；`reserveDestinationConfirmation` 要求 `.destinationPrepared`。
 - Phase separation：Phase A 零不可逆；Phase B eligibility 全 predicate PASS 才 arm。
@@ -157,7 +251,7 @@ irreversible counters: Save All dispatches 0 / destination confirmations 0 / irr
 - Stage 05 必須從 disk / raw evidence 獨立重算；不得引用 Stage 04 自寫的 PASS 字串。
 - `exit 0 ≠ semantic PASS`。`progress.md` 不得凌駕 Stage result；`result.md` 不得自己創造 PASS。
 
-### 5.4 C1–C7 核心工作契約（`plan.md`，行號為 plan 內位置）
+### 6.4 C1–C7 核心工作契約（`plan.md`，行號為 plan 內位置）
 
 - C1（`:105`）：恢復 diagnostic execution、保留 identity rules
 - C2（`:111`）：單一 safety-critical orchestration
@@ -169,30 +263,31 @@ irreversible counters: Save All dispatches 0 / destination confirmations 0 / irr
 
 ---
 
-## 6. 流程：Phase A／Phase B eligibility／Phase B／Stage 05
+## 7. 流程：Phase A／Phase B eligibility／Phase B／Stage 05
 
-### 6.1 Phase A（read-only；目前 NOT FIRED，0/3 attempts）
+### 7.1 Phase A（read-only；attempt-01 已 fired 並遭前置拒絕）
 
 - 可做：fresh read-only LINE identity observation、geometry、same-frame evidence、process/window inventory、baseline revalidation、pre-panel inventory、exact album/card association、LINE-specific V-09 證據。
 - 不可做：任何未經 canonical 契約與當前授權明確允許的 reversible GUI navigation；`Save All intent/attempt = 0`；`destination confirmation intent/attempt = 0`。
+- 前置（attempt-01 學到的教訓）：**目標 LINE 視窗必須恰好一個**（layer-0、on-screen）；執行前先做唯讀視窗盤點，≠1 就不要執行（避免浪費授權與 attempt）。
 
-### 6.2 Phase B eligibility（全部 predicate PASS 才 arm）
+### 7.2 Phase B eligibility（全部 predicate PASS 才 arm）
 
 須同時滿足：approved source/binary/rule binding、所有 pre-B gates PASS、valid persistent authority、clean one-shot entitlement、baseline unchanged、fresh LINE identity、current geometry、actual fresh target、chooser/tripwire 準備有效、**當前 run 的 explicit one-shot human authorization**。任一 `FAIL / UNKNOWN / NOT_RUN / STALE / MISSING` → `PHASE_B_INELIGIBLE`。
 
-### 6.3 Phase B（不可逆；`FORBIDDEN_AB_EVALUATION`）
+### 7.3 Phase B（不可逆；`FORBIDDEN_AB_EVALUATION`）
 
 `Save All` ≤1 persisted intent/attempt；`destination confirmation` ≤1；任何 timeout／ambiguous／crash → observe-only，不 retry。
 
-### 6.4 Stage 05（fresh independent acceptance）
+### 7.4 Stage 05（fresh independent acceptance）
 
 真正執行完成後，Stage 05 必須從 disk/raw evidence 自己重算：staging file count、bytes、decodability、content hashes、content multiset、stability、baseline names/hashes/mtimes、ledger、intent/attempt counts、emitted GUI actions、evidence chain/anchors、LINE observation 與 backup run 的 binding。Stage 04 不得自我宣稱成功。
 
 ---
 
-## 7. Blocker 史與根因分析（避免重複走冤枉路）
+## 8. Blocker 史與根因分析（避免重複走冤枉路）
 
-### 7.1 已 RESOLVED（有 mechanical evidence；勿重探）
+### 8.1 已 RESOLVED（有 mechanical evidence；勿重探）
 
 | Blocker | 收束方式 |
 |---|---|
@@ -205,18 +300,29 @@ irreversible counters: Save All dispatches 0 / destination confirmations 0 / irr
 | Native composition reachability（曾為 PRIMARY_NATIVE_COMPOSITION blocker） | codex lineage：`c441477`（typed `EstablishedStateEvidence`）→ `947db18`（`establishPreSaveStates()`／`runPreflight()`）→ `c7eb3f99`（`LiveCompositionFactory`＋`ProductionObservationSource` 接入 CLI）→ `8528ce5`（Phase B eligibility arming）→ `e407565`（post-Save-All composition）→ `0d1cdb5`（Phase A publisher）；全程 R4 C2–C7 契約未變 |
 | V-09 attempt-04（fresh 複審收束） | 3/3 reports PASS、0 MAJOR；已入 `815e9f1` |
 
-### 7.2 兩層根因（Stage 06 decision 的核心結論）
+### 8.2 現行 blocker（Phase A 前置；非 code defect）
 
-- **契約層（已封閉）**：舊 escalation 是 **stale slice**（luna worktree @ `9cbaa11`）。同一 `TASK_ID`、同一 plan/handoff 的 codex lineage 早已解掉其 cited root causes；`PLANNER_REPLAN` 被 FALSIFIED（無需改 C2–C7 語意）。
-- **流程層（真病根）**：同一 `TASK_ID` 散在 3 個 worktree、沒有單一 controller；已解問題被重複升級（identity discipline defect，非架構缺陷）。V4.3.1 的對策＝identity preflight、blocker fingerprint、單一 authority tree、convergence budget。
+```text
+BLOCKER_FINGERPRINT: PHASE_A_TARGET_WINDOW_NOT_UNIQUE(found=2)
+STAGE: Phase A（read-only preflight）
+SURFACE: rev28ctl live-preflight → AXWindowIdentitySelector / CGWindow inventory
+EXPECTED: 恰好一個 layer-0 on-screen 的目標 LINE 視窗（jp.naver.line.mac）
+OBSERVED: found=2（id=191 主視窗 + id=996 無標題第二視窗）→ refusal，exit 77
+```
 
-### 7.3 Budget 記帳（硬性；不得重置）
+### 8.3 兩層根因（Stage 06 decision 的核心結論，仍有效）
 
-- `PRIMARY_NATIVE_COMPOSITION`：**3/3 exhausted**，以 `RESOLVED_BY_SUPERSEDING_LINEAGE` 關閉。**不得重置、不得第 4 次 composition attempt**（換 model／session／branch／prompt 都不算重置）。
-- `BUDGET_EXTENSION +2` 僅限 **distinct** fingerprint `V09_A4_FRESH_VERIFICATION_INCOMPLETE`（different surface／different acceptance）；其 `STOP_AFTER` 已於 `815e9f1` 達成，extension 已收束。
-- 未來任何新 blocker 執行前必須先回答：falsifiable hypothesis？new information source？distinguishing result（A 結果怎麼走？B 結果怎麼走？）。答不出就不應執行。
+- **契約層（已封閉）**：舊 escalation 是 stale slice（luna worktree @ `9cbaa11`）。同一 `TASK_ID`、同一 plan/handoff 的 codex lineage 早已解掉其 cited root causes；`PLANNER_REPLAN` 被 FALSIFIED。
+- **流程層（真病根）**：同一 `TASK_ID` 散在 3 個 worktree、沒有單一 controller；已解問題被重複升級（identity discipline defect）。V4.3.1 的對策＝identity preflight、blocker fingerprint、單一 authority tree、convergence budget。
 
-### 7.4 Escalation packet（durable）
+### 8.4 Budget 記帳（硬性；不得重置）
+
+- `PRIMARY_NATIVE_COMPOSITION`：**3/3 exhausted**，以 `RESOLVED_BY_SUPERSEDING_LINEAGE` 關閉。**不得重置、不得第 4 次 composition attempt**。
+- `BUDGET_EXTENSION +2` 僅限 distinct fingerprint `V09_A4_FRESH_VERIFICATION_INCOMPLETE`；其 `STOP_AFTER` 已於 `815e9f1` 達成，收束。
+- Phase A：attempt-01 已使用 1 次；現行 fingerprint `PHASE_A_TARGET_WINDOW_NOT_UNIQUE(found=2)` 屬**環境前置**。先修環境（probe == 1）再執行 attempt-02，**不得盲目重跑**。
+- 未來任何新 blocker 執行前必須先回答：falsifiable hypothesis？new information source？distinguishing result？答不出就不應執行。
+
+### 8.5 Escalation packet（durable）
 
 `escalations/attempt-01/`：
 
@@ -230,9 +336,39 @@ irreversible counters: Save All dispatches 0 / destination confirmations 0 / irr
 
 ---
 
-## 8. V-09 驗證證據（現行有效）
+## 9. Phase A attempt-01 記錄（2026-09-30；append-only evidence）
 
-### 8.1 attempt-04（fresh 複審；bindings head `cf39fdcc…ff1`、digest `6734dda5…a686`；全部 `bindings_verified: PASS`）
+- **Run 目錄**：`.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/phase-a/attempt-01/RUN-20260930-103002-01/`（untracked，**禁止改寫**）
+- **授權**：使用者於對話中明示同意，範圍＝本次 read-only Phase A run 恰好一次（一次性，已用於本 run；下次需新的授權）
+- **凍結綁定**：產品樹 `cf39fdcc…`；digest `6734dda5…a686`（runtime 已重算比對）；binary `rev28/.build/debug/rev28ctl`（`swift build --product rev28ctl` no-op＝與凍結樹一致）
+- **指令（僅執行一次）**：`rev28ctl live-preflight --config config.json --one-shot-authorization one-shot-authorization.json`
+- **結果**：`REFUSED (PRECONDITION)`；`EXIT=77`；stderr 逐字：`live-preflight refused: targetWindowNotUnique(found=2)`
+- **未產生**：Phase A per-condition 報告（`phase-a.json`）與 raw evidence manifest（evidence dir 空）。**不得以任何形式記為 PASS。**
+- **Counters（ledger 實測）**：Save All intent/attempt = 0/0；destination confirmation intent/attempt = 0/0；irreversible = 0/0/0；ledger 唯一 entry＝`transaction.authorization`（seq 1）
+- **Goal slot**：`/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/goal-slots/5f7e18ba…f017a.goal-slot.json`（bound；`consumedAtISO8601` 不存在＝entitlement 未消耗）
+- **Baseline**：未被觸碰（run 未到達 baseline 驗證階段即拒絕）；attempt-01 的 staging run dir 為空
+- **Artifacts（SHA-256）**：
+
+| 檔案 | SHA-256 |
+|---|---|
+| `phase-a-outcome.md` | `a83383ab76f62b399d903116da46e24a6402f4c1d28ffcb175f949c7bee9496c` |
+| `config.json` | `ea93b9f5c5e897ba3c8f554d52f719da5b8dcd7a7f199c442cf182b596cebcca` |
+| `one-shot-authorization.json` | `e537d6efef545ac10fea7e036eb9662b194b5fcbfdf1cf784b22eda2804ac72c` |
+| `live-preflight-20260930T103016.log` | `656566da050eff76da4708ed47d3242df2e042fc16161f1301dee9cf2bab23fc` |
+| `ledger.jsonl` | `02c4097bc5705070b99e42aa3b56d15c268fd9c59b1b38db9fc7faca34fa1e45` |
+| `ledger-head.anchor` | `373a45d11c006c68782cba06c18a00e4415af0cdbb4d30534544f25f27d29102` |
+
+- **Post-refusal 唯讀視窗盤點（diagnostic only；非 Phase A evidence）**：當時（10:30 後）on-screen layer-0 LINE 視窗 = **2**：
+  - `id=191` layer=0 onscreen=true name=`LINE` frame=(-1,35,1147,699)（主視窗）
+  - `id=996` layer=0 onscreen=true name=（無） frame=(30,45,327,643)（第二個視窗；須由使用者處置）
+- **rev2 撰寫時再次唯讀盤點（13:42）**：LINE 未執行（0 個 on-screen layer-0 視窗；`ps` 未見 `jp.naver.line.mac`）。
+- **Next（依 phase-a-outcome.md 判讀）**：不 retry；先讓視窗唯一；再以 fresh runID＋新的一次性授權跑 attempt-02。
+
+---
+
+## 10. V-09 驗證證據（現行有效）
+
+### 10.1 attempt-04（fresh 複審；bindings head `cf39fdcc…ff1`、digest `6734dda5…a686`；全部 `bindings_verified: PASS`）
 
 | 報告 | SHA-256 | 結果 |
 |---|---|---|
@@ -243,7 +379,7 @@ irreversible counters: Save All dispatches 0 / destination confirmations 0 / irr
 
 attempt-01/02/03 的證據未作為 attempt-04 的 proof。
 
-### 8.2 離線／deterministic 證據（cf39fdcc / digest `6734dda5…a686`，已入 commit）
+### 10.2 離線／deterministic 證據（cf39fdcc / digest `6734dda5…a686`，已入 commit）
 
 - build `a46`；focused `a47` 88/0；full suite `a48` 242/0（0 skipped）
 - adversarial `a50`/`a51`：27 tests × 2 runs PASS
@@ -255,65 +391,73 @@ attempt-01/02/03 的證據未作為 attempt-04 的 proof。
 
 ---
 
-## 9. Git／遠端／PR／現場狀態
+## 11. Git／遠端／PR／環境狀態
 
-- 已落地：`815e9f1`（HEAD；「land the V-09 attempt-04 verification (0 MAJOR) and the Stage 06 decision (IMPLEMENTER_FIX)」；10 files +764/−3；訊息含 INTENT / WHAT WAS DONE / ROOT CAUSE / BUDGET / NEXT STEPS / NOT DONE）。前後關鍵 commit：`5ed7106`（bind attempt-04 to M-1 tree）、`c945f04`、`3d74248`、`cf39fdc`（M-1 repair）、`0d3149b`。
-- 事實核對：`git diff cf39fdcc 815e9f1 -- rev28` 為空 → 產品樹自 `cf39fdcc` 起 byte-identical。
+- 已落地 commits：`ce52103`（本 HANDOFF 初版）、`815e9f1`（V-09 attempt-04 收束＋Stage 06 decision；已推）、`5ed7106`、`c945f04`、`3d74248`、`cf39fdc`（M-1 repair）、`0d3149b`……；其後 append（docs/records-only）：本檔 rev2 與 `phase-a/` evidence。
+- 事實核對：`git diff cf39fdcc HEAD -- rev28` 為空 → 產品／測試碼自 `cf39fdcc` 起 byte-identical；其後變更只在 `.agent/` 與根目錄文件。
+- **本地 vs origin**：本地相對 origin 的落差（0～3）視交付時是否已 push 而定，以 `git status -sb`／`git ls-remote --heads origin` 實測為準；push 非執行前置條件。
 - PR #1（draft）head 固定於 `rev28-prelive-finalization @9cbaa11`，無法承載後續 commits。待決選項（**尚未執行，由使用者決定**）：
   - C：從 `v43-ab/codex-rev28` 開新 draft PR → `master`，標註 supersedes #1。
-  - D：關閉 PR #1（draft、head 固定，關閉不刪分支）。
-- luna worktree 11 檔唯一副本（見 §1.1）：禁止破壞；snapshot 需使用者同意。
-- Harness orchestrator：`~/.codex/tools/task-orchestrator.py` 對本 task 尚無 controller `state.json`，實測回應 `STATE_RECONCILIATION_REQUIRED`。在完成 reconciliation 前，不得自動 `start` 產生第二套 state；routing truth 以 task 目錄內最新 machine-readable Stage result 為準（現為 `v09/attempt-04`＋`escalations/attempt-01/stage-result-06.json`）。
+  - D：關閉 PR #1（關閉不刪分支）。
+- luna worktree 11 檔唯一副本（見 §2.1）：禁止破壞；snapshot 需使用者同意。
+- **舊世代殘留（非本 Task authority，禁止使用）**：`~/Library/Application Support/LineNativeAXGUIBridge/`（2026-09-14/15 建置；LaunchAgent label `com.openai.line-native-ax-gui-session-bridge`；daemon 目前執行中，heartbeat 正常；repo 內僅 2026-09-15/16 舊 evidence 引用）。rev28 契約的合法路徑只有凍結產品樹的 `rev28ctl`；**不得使用此 bridge 或任何外部 AX 工具做觀測／操作，也不得自行卸載**。
+- Harness orchestrator：`~/.codex/tools/task-orchestrator.py` 對本 task 尚無 controller `state.json`，實測回應 `STATE_RECONCILIATION_REQUIRED`。在完成 reconciliation 前，不得自動 `start` 產生第二套 state；routing truth 以 task 目錄內最新 machine-readable Stage result／run artifact 為準（現為 `phase-a/attempt-01`＋`v09/attempt-04`＋`escalations/attempt-01/stage-result-06.json`）。
 
 ---
 
-## 10. 尚待解決事項與下一步（依序）
+## 12. 尚待解決事項與下一步（依序）
 
-**P0（唯一真實外部 gate）：Phase A 前置**
+**P0（唯一真實外部 gate）：把環境帶到「Phase A 可執行」狀態**
 
-1. 使用者完成 §11 的唯一動作，並通知 Agent「準備好了」。
-2. Agent 先取得使用者對「本次 read-only Phase A run」的明示一次性授權（`HUMAN_AUTHORIZATION_REQUIRED` 為此用途），再以 fresh runID 執行 `rev28ctl live-preflight --config <json> --one-shot-authorization <json>`：零不可逆，產出 Phase A per-condition `PASS/FAIL/UNKNOWN`＋raw manifest。Phase A 期間 `Save All intent/attempt = 0`、`destination confirmation intent/attempt = 0`。
-3. Phase A PASS → 依 canonical 契約進入後續合法 routing。若 FAIL/UNKNOWN：不得 retry/猜測；回報並依契約裁決（必要時以**新 fingerprint**再走 Stage 06）。
-4. Phase B 需要**當前 run 的 one-shot human authorization**；Phase B 完成後由 fresh **Stage 05** 從 disk 獨立重算，才可能達成 `DUPLICATE_CONTENT_CONFIRMED` 並在 `result.md` closure。
+1. 使用者完成 §13 的唯一動作（LINE 重新回到可觀察狀態、恰好一個視窗）。
+2. Agent 以唯讀 probe 確認 layer-0 on-screen LINE 視窗 == 1；≠1 → 只回報「需要的那一個動作」並停止（不請求授權、不執行）。
+3. 使用者對 attempt-02 給**新的**明示一次性授權。
+4. Agent 以 fresh runID 產生新 run 目錄與 config → 執行 `live-preflight`（零不可逆）→ 記錄 outcome（PASS/FAIL/UNKNOWN）與 counters。
+5. 將 attempt-01（與 attempt-02）記錄 append 到 `progress.md`／`execution.md`；`phase-a/` 證據維持 append-only（如需入庫，僅以原樣 commit，由使用者決定）。
 
-**P1（可並行、需使用者決定）**：PR 方案 C/D；luna 11 檔 snapshot；orchestrator reconciliation。
+**P1（可並行、需使用者決定）**：PR 方案 C/D；luna 11 檔 snapshot；orchestrator reconciliation；本地 commits 與 origin 的落差（若尚未 push）。
 
----
-
-## 11. 人類唯一必要動作（現在）
-
-> 解鎖 Mac（如需要）→ 登入 LINE（`jp.naver.line.mac`）→ 進入群組「旻謙允禎成長日記」（禎 U+798E）→ 把相簿「2024/05/13～05/17」所在的相簿 surface 帶到可被觀察的狀態 → 告訴 Agent「準備好了」；當 Agent 請你確認進行本次 read-only preflight 時，給予一次性同意。
-
-不要點 `Save All`、不要打開存檔 chooser、不要預先開 ellipsis 選單；其餘 reversible 導航由 Agent 依契約與授權處理。LINE 已開著可保持，不需特地關，也不要在未授權時繼續操作。
-
-若後續 Agent 需要新的一次性 GUI 授權、Phase A 授權或 Phase B authorization：必須 STOP，輸出 `HUMAN_AUTHORIZATION_REQUIRED` 或 `EXTERNAL_BLOCKER`，且一次只要求一個動作；不得 polling、不得沿用舊授權、不得把 `/goal` 當 GUI authorization。
+**若 attempt-02 仍被拒**：同一 fingerprint（視窗不唯一）重複失敗會消耗收斂 budget；不得換 model/session/branch/prompt 重置；改以新資訊（例如更精確的視窗歸屬診斷）決定是否需要 Stage 06。
 
 ---
 
-## 12. 禁止事項（合併清單）
+## 13. 人類唯一必要動作（現在）
 
-- Git：`reset --hard`、`clean`、automatic stash、`rebase`、force push、覆寫任何 dirty/untracked、動 `rev28-prelive-finalization`、merge/cherry-pick A/B branches 拼版本。
-- Execution：第 4 次 `PRIMARY_NATIVE_COMPOSITION` attempt；重開 A/B competition；未經授權的 `live-preflight`／`live-execute`；任何 LINE GUI 操作或 album-list prepositioning（在 §11 完成前）；`Save All`；destination confirmation；polling／retry／舊授權。
-- Budget／流程：換 model／session／branch／prompt 不重置；`exit 0 ≠ semantic PASS`；worktree dirty 或 branch 不一致不得自動破壞現場（→ `STATE_RECONCILIATION_REQUIRED`）。
+> 1. 啟動／登入 LINE（`jp.naver.line.mac`）→ 進入群組「旻謙允禎成長日記」（禎 U+798E）。
+> 2. 把相簿 `2024/05/13～05/17` 的卡片帶到看得到的位置（捲到出現即可；**不要點開、不要開 ellipsis 選單、不要點任何按鈕**）。
+> 3. 讓 LINE **只留下一個視窗**（若出現第二個／多餘視窗，關掉它）；視窗擺到前景、完整落在同一螢幕、不被其他視窗蓋住。
+> 4. Mac 不要休眠／鎖屏；跟 Agent 說「準備好了」。
+> 5. 當 Agent 請求「本次 read-only Phase A 一次性授權」時，明確同意；Agent 說「開始跑」之後的 1～2 分鐘不要動滑鼠／鍵盤、不要切換 App。
+
+其他視窗不用關；只要不蓋住 LINE 即可。若後續 Agent 需要新的一次性 GUI 授權或 Phase B authorization：它必須 STOP 並輸出 `HUMAN_AUTHORIZATION_REQUIRED`／`EXTERNAL_BLOCKER`，一次只要求一個動作；不得 polling、不得沿用舊授權、不得把 `/goal` 當 GUI authorization。
 
 ---
 
-## 13. 檔案索引與閱讀順序（新 Agent 開場 10 分鐘）
+## 14. 禁止事項（合併清單）
 
-1. 本文件（navigation）
+- Git：`reset --hard`、`clean`、automatic stash、`rebase`、force push、覆寫任何 dirty/untracked（含 `phase-a/` 與 luna 11 檔）、動 `rev28-prelive-finalization`、merge/cherry-pick A/B branches。
+- Execution：第 4 次 `PRIMARY_NATIVE_COMPOSITION` attempt；重開 A/B competition；未經（當次、明示）授權的 `live-preflight`／`live-execute`；由 Agent 自行操作 GUI（授權 run 內契約允許者除外）；album-list prepositioning；`Save All`；destination confirmation；polling／retry／沿用舊授權。
+- 工具：使用 `LineNativeAXGUIBridge` 或任何非 rev28 契約的 AX bridge／替代 authority；手動編輯 ledger／goal slot／授權檔。
+- Budget／流程：換 model／session／branch／prompt 不重置；`exit 0 ≠ semantic PASS`；worktree 不一致不得自動破壞現場（→ `STATE_RECONCILIATION_REQUIRED`）。
+
+---
+
+## 15. 檔案索引與閱讀順序（新 Agent 開場 10 分鐘）
+
+1. 本文件 §0（Prompt）＋全文件
 2. `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md`（R4 契約；SHA-256 `05413807…4c1b`）
 3. 同目錄 `handoff.md`（canonical Stage 03 執行契約；SHA-256 `67fc16a6…7a33`）
-4. 同目錄 `progress.md`（讀最後三段：attempt-03 reviews／attempt-04＋Stage 06／最新 status）
-5. 同目錄 `execution.md`（讀末段 attempt-04 記錄）
-6. `escalations/attempt-01/`（§7.4 五檔＋hashes）
-7. `v09/attempt-04/`（§8.1 四檔＋hashes）
-8. `Line_backup/evidence/20260925-rev28-native-closed-loop/baseline-content-multiset.json`（SHA-256 `3c932d8c…1bc2`）
-9. `/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57`（baseline source）
+4. `phase-a/attempt-01/RUN-20260930-103002-01/phase-a-outcome.md`（嘗試結果；SHA-256 `a83383ab…9496c`）
+5. 同目錄 `progress.md`（最後三段：attempt-03 reviews／attempt-04＋Stage 06／最新 status；**attempt-01 尚待回填**）
+6. 同目錄 `execution.md`（末段 attempt-04 記錄；**attempt-01 尚待回填**）
+7. `escalations/attempt-01/`（§8.5 五檔＋hashes）
+8. `v09/attempt-04/`（§10.1 四檔＋hashes）
+9. `Line_backup/evidence/20260925-rev28-native-closed-loop/baseline-content-multiset.json`（SHA-256 `3c932d8c…1bc2`）
 10. Harness：`~/.codex/AGENTS.md`、`~/.codex/policies/convergence-escalation.md`、`~/.codex/schemas/stage-result.schema.json`
 
 ---
 
-## 14. 常用指令（read-only 驗身分用）
+## 16. 常用指令（read-only 驗身分／盤點用）
 
 ```bash
 # 身分
@@ -321,6 +465,7 @@ git -C /Users/hsiaojohnny/Documents/ChatGPT/Line_backup status --short --branch
 git -C /Users/hsiaojohnny/Documents/ChatGPT/Line_backup log --oneline -8
 git -C /Users/hsiaojohnny/Documents/ChatGPT/Line_backup worktree list
 git -C /Users/hsiaojohnny/Documents/ChatGPT/Line_backup ls-remote --heads origin
+git -C /Users/hsiaojohnny/Documents/ChatGPT/Line_backup diff --stat cf39fdcc HEAD -- rev28   # 必須為空
 
 # 契約 hash
 cd /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop
@@ -330,25 +475,42 @@ shasum -a 256 plan.md handoff.md
 find /Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57 -type f | wc -l          # 57
 find /Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57 -type f -print0 | xargs -0 stat -f %z | awk '{s+=$1} END {print s}'  # 17924900
 
+# LINE 視窗盤點（唯讀；不觸碰 GUI；layer-0 on-screen 數必須 == 1 才能跑 Phase A）
+ps aux | grep -i "jp.naver.line.mac" | grep -v grep
+swift -e '
+import CoreGraphics
+let opts: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
+let list = CGWindowListCopyWindowInfo(opts, kCGNullWindowID) as? [[String: Any]] ?? []
+var count = 0
+for w in list {
+  guard let owner = w[kCGWindowOwnerName as String] as? String, owner == "LINE" else { continue }
+  let layer = w[kCGWindowLayer as String] as? Int ?? -1
+  let num = w[kCGWindowNumber as String] ?? "?"
+  let b = w[kCGWindowBounds as String] as? [String: Any] ?? [:]
+  print("id=\(num) layer=\(layer) frame=\(b)")
+  if layer == 0 { count += 1 }
+}
+print("layer0_on_screen_LINE_windows=\(count)")
+'
+
 # orchestrator（只查，不 start）
 python3 ~/.codex/tools/task-orchestrator.py status --task T20260925-0647-01-rev28-native-closed-loop
 ```
 
 ---
 
-## 15. 與 2026-09-29 版 rev28 交接的差異（避免被舊指示誤導）
+## 17. 與舊版交接的差異（避免被舊指示誤導）
 
-| 舊版（2026-09-29 版） | 現況（2026-09-30） |
+| 舊版 | 現況（rev2，2026-09-30） |
 |---|---|
-| `STATE: ESCALATED`；下一步＝ Stage 06 | Stage 06 已完成（`IMPLEMENTER_FIX`）；`STOP_AFTER` 達成於 `815e9f1`；無 open escalation |
-| §16 核心問題（IMPLEMENTER_FIX vs PLANNER_REPLAN） | 已回答：`IMPLEMENTER_FIX`；C2–C7 無需 replan（H2 FALSIFIED） |
-| §7 budget：3/3、不得第 4 次 | 仍 3/3，以 `RESOLVED_BY_SUPERSEDING_LINEAGE` 關閉；禁止第 4 次不變 |
-| §18/§19「不要主動操作 LINE」 | 仍有效；直到 §11 唯一人類動作完成 |
-| §23 Stage 05 定義 | 仍有效 |
-| §25 開場順序 | 以本文件 §13 取代（原則相同） |
+| 2026-09-29 版：`STATE: ESCALATED`；下一步＝ Stage 06 | Stage 06 已完成（`IMPLEMENTER_FIX`）；`815e9f1` 收束；無 open escalation |
+| rev1（本檔初版）：Phase A「NOT FIRED；等使用者登入」 | **已 fired（attempt-01）→ REFUSED（視窗不唯一）**；下一步＝修視窗唯一性 → attempt-02 |
+| rev1：`0/3 attempts` | Phase A attempts used = 1；fingerprint `PHASE_A_TARGET_WINDOW_NOT_UNIQUE(found=2)` |
+| 舊版「不用關其他視窗」 | 仍成立；**但 LINE 自身必須恰好一個視窗**（本次 refusal 的原因） |
+| 舊版 §「不要操作 LINE」 | 仍成立；直到 §13 的人類動作完成、Agent 取得新授權為止 |
 
 ---
 
-## 16. 交接結論（一句話）
+## 18. 交接結論（一句話）
 
-> 不要重新解這個專案。產品樹凍結於 `cf39fdcc` / digest `6734dda5…a686`；V-09 attempt-04 0 MAJOR 已收束入 `815e9f1`（已推）；`PRIMARY_NATIVE_COMPOSITION` 3/3 以 `RESOLVED_BY_SUPERSEDING_LINEAGE` 關閉。離線工作已到極限；唯一剩下的是外部 Phase A 前置（使用者登入 LINE＋目標相簿 surface），之後以 fresh runID 跑 `live-preflight`。在該條件成立前：**正確的 STOP 就是成功。**
+> 不要重新解這個專案。離線全部收束（cf39fdcc / digest `6734dda5…a686`、V-09 0 MAJOR）；Phase A attempt-01 已 fired 並因 **LINE 視窗不唯一（found=2）** 被 fail-closed 拒絕（零不可逆）。下一步：把 LINE 帶回「已登入＋目標相簿可見＋恰好一個視窗」，唯讀 probe 確認 =1，取得新的一次性授權，再以 fresh runID 跑 attempt-02。在環境就緒前：**正確的 STOP 就是成功。**
