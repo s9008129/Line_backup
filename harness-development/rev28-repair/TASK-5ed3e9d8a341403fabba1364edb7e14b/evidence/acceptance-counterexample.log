@@ -1,0 +1,57 @@
+[0/1] Planning build
+Building for debugging...
+[0/13] Write sources
+[1/13] Write swift-version--58304C5D6DBC2206.txt
+[3/5] Emitting module Rev28CoreTests
+[4/5] Compiling Rev28CoreTests ActuationReadinessTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:306:21: warning: mutation of captured var 'revalidationCalls' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+304 |                 intent: .reversible(owner, action: "recover-state"),
+305 |                 postHoverRevalidation: {
+306 |                     revalidationCalls += 1
+    |                     `- warning: mutation of captured var 'revalidationCalls' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+307 |                     throw QuartzActuatorError.dispatchRefusedByPrecondition("window geometry changed")
+308 |                 },
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:346:21: warning: mutation of captured var 'revalidationSawMove' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+344 |                 intent: .reversible(owner, action: "recover-state"),
+345 |                 postHoverRevalidation: {
+346 |                     revalidationSawMove = posted == [.mouseMoved]
+    |                     `- warning: mutation of captured var 'revalidationSawMove' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+347 |                 },
+348 |                 sink: { event, _ in posted.append(event.type) },
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:346:43: warning: reference to captured var 'posted' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+344 |                 intent: .reversible(owner, action: "recover-state"),
+345 |                 postHoverRevalidation: {
+346 |                     revalidationSawMove = posted == [.mouseMoved]
+    |                                           `- warning: reference to captured var 'posted' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+347 |                 },
+348 |                 sink: { event, _ in posted.append(event.type) },
+
+[#SendableClosureCaptures]: <https://docs.swift.org/compiler/documentation/diagnostics/sendable-closure-captures>
+[4/6] Write Objects.LinkFileList
+[5/6] Linking rev28PackageTests
+Build complete! (1.04s)
+Test Suite 'Selected tests' started at 2026-10-04 17:39:05.456.
+Test Suite 'rev28PackageTests.xctest' started at 2026-10-04 17:39:05.457.
+Test Suite 'ActuationReadinessTests' started at 2026-10-04 17:39:05.457.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:599: error: -[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart] : XCTAssertEqual failed: ("1") is not equal to ("2") - late failure cannot erase the previous failure
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:600: error: -[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart] : XCTAssertThrowsError failed: did not throw an error
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:608: error: -[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart] : XCTAssertEqual failed: ("1") is not equal to ("2")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:609: error: -[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart] : XCTAssertThrowsError failed: did not throw an error
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:599: error: -[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart] : XCTAssertEqual failed: ("1") is not equal to ("2") - late failure cannot erase the previous failure
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:600: error: -[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart] : XCTAssertThrowsError failed: did not throw an error
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:608: error: -[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart] : XCTAssertEqual failed: ("1") is not equal to ("2")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:609: error: -[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart] : XCTAssertThrowsError failed: did not throw an error
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart]' failed (0.087 seconds).
+Test Suite 'ActuationReadinessTests' failed at 2026-10-04 17:39:05.544.
+	 Executed 1 test, with 8 failures (0 unexpected) in 0.087 (0.087) seconds
+Test Suite 'rev28PackageTests.xctest' failed at 2026-10-04 17:39:05.545.
+	 Executed 1 test, with 8 failures (0 unexpected) in 0.087 (0.087) seconds
+Test Suite 'Selected tests' failed at 2026-10-04 17:39:05.545.
+	 Executed 1 test, with 8 failures (0 unexpected) in 0.087 (0.088) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

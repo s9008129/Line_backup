@@ -1,0 +1,131 @@
+Building for debugging...
+[0/13] Write sources
+[1/13] Write swift-version--58304C5D6DBC2206.txt
+[3/5] Emitting module Rev28CoreTests
+[4/5] Compiling Rev28CoreTests NativeObservationSessionTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:57:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 55 | 
+ 56 |         func enumerateWindows() async throws -> [SCWindowSnapshot] {
+ 57 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 58 |             enumerateCalls += 1
+ 59 |             let call = enumerateCalls
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:60:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 58 |             enumerateCalls += 1
+ 59 |             let call = enumerateCalls
+ 60 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 61 |             return call == 1 ? (preInventoryOverride ?? [window]) : (postInventoryOverride ?? [window])
+ 62 |         }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:85:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 83 |         ) async throws -> ObservationCapturedImage {
+ 84 |             if let onCaptureStart { await onCaptureStart() }
+ 85 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 86 |             now += captureClockAdvance
+ 87 |             lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:87:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 85 |             lock.lock()
+ 86 |             now += captureClockAdvance
+ 87 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 88 |             if let captureError { throw captureError }
+ 89 |             let image = Self.makeImage(width: 400, height: 600)
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+[4/6] Write Objects.LinkFileList
+[5/6] Linking rev28PackageTests
+Build complete! (1.04s)
+Test Suite 'Selected tests' started at 2026-10-04 18:56:14.240.
+Test Suite 'rev28PackageTests.xctest' started at 2026-10-04 18:56:14.241.
+Test Suite 'NativeObservationSessionTests' started at 2026-10-04 18:56:14.241.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' passed (0.007 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:277: error: -[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused] : failed - ambiguous or inconsistent CG geometry was accepted: 0
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:282: error: -[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused] : XCTAssertEqual failed: ("1") is not equal to ("0")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:277: error: -[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused] : failed - ambiguous or inconsistent CG geometry was accepted: 1
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:282: error: -[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused] : XCTAssertEqual failed: ("1") is not equal to ("0")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:277: error: -[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused] : failed - ambiguous or inconsistent CG geometry was accepted: 2
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:282: error: -[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused] : XCTAssertEqual failed: ("1") is not equal to ("0")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:277: error: -[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused] : failed - ambiguous or inconsistent CG geometry was accepted: 3
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:282: error: -[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused] : XCTAssertEqual failed: ("1") is not equal to ("0")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:277: error: -[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused] : failed - ambiguous or inconsistent CG geometry was accepted: 4
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:282: error: -[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused] : XCTAssertEqual failed: ("1") is not equal to ("0")
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused]' failed (0.088 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGGeometryWithinExistingHalfPointTolerancePasses]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGGeometryWithinExistingHalfPointTolerancePasses]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testOneExplicitCGSnapshotIsSharedByIdentityAndBundle]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:255: error: -[Rev28CoreTests.NativeObservationSessionTests testOneExplicitCGSnapshotIsSharedByIdentityAndBundle] : XCTAssertEqual failed: ("2") is not equal to ("1") - counts explicit source.cgInventory calls, not AX adapter internals
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:256: error: -[Rev28CoreTests.NativeObservationSessionTests testOneExplicitCGSnapshotIsSharedByIdentityAndBundle] : XCTAssertEqual failed: ("[Rev28Core.CGWindowSnapshot(windowNumber: 10, frame: (500.0, 60.0, 400.0, 600.0), layer: 0, ownerPID: 4242, name: Optional("LINE"))]") is not equal to ("[Rev28Core.CGWindowSnapshot(windowNumber: 10, frame: (50.0, 60.0, 400.0, 600.0), layer: 0, ownerPID: 4242, name: Optional("LINE"))]")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:257: error: -[Rev28CoreTests.NativeObservationSessionTests testOneExplicitCGSnapshotIsSharedByIdentityAndBundle] : XCTAssertEqual failed: ("(50.0, 60.0, 400.0, 600.0)") is not equal to ("(500.0, 60.0, 400.0, 600.0)")
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testOneExplicitCGSnapshotIsSharedByIdentityAndBundle]' failed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:235: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused] : failed - a failed post identity read was accepted
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:242: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused] : XCTAssertEqual failed: ("1") is not equal to ("0")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:235: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused] : failed - a failed post identity read was accepted
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:242: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused] : XCTAssertEqual failed: ("1") is not equal to ("0")
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused]' failed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:216: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused] : failed - process changed across capture but was accepted
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:223: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused] : XCTAssertEqual failed: ("1") is not equal to ("0")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:216: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused] : failed - signing changed across capture but was accepted
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:223: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused] : XCTAssertEqual failed: ("1") is not equal to ("0")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:216: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused] : failed - signingUnavailable changed across capture but was accepted
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:223: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused] : XCTAssertEqual failed: ("1") is not equal to ("0")
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:216: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused] : failed - ax changed across capture but was accepted
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:223: error: -[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused] : XCTAssertEqual failed: ("1") is not equal to ("0")
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused]' failed (0.011 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' passed (0.003 seconds).
+Test Suite 'NativeObservationSessionTests' failed at 2026-10-04 18:56:14.381.
+	 Executed 15 tests, with 25 failures (0 unexpected) in 0.140 (0.141) seconds
+Test Suite 'rev28PackageTests.xctest' failed at 2026-10-04 18:56:14.381.
+	 Executed 15 tests, with 25 failures (0 unexpected) in 0.140 (0.141) seconds
+Test Suite 'Selected tests' failed at 2026-10-04 18:56:14.381.
+	 Executed 15 tests, with 25 failures (0 unexpected) in 0.140 (0.141) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

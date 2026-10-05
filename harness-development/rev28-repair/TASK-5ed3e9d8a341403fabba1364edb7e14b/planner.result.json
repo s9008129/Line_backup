@@ -1,0 +1,87 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-5ed3e9d8a341403fabba1364edb7e14b",
+  "run_id": "f314e1f6-de07-4516-b2e2-16741529eb75",
+  "role": "PLANNER",
+  "stage": "PLAN",
+  "candidate_fact": "PASS",
+  "validation_fact": "NOT_RUN",
+  "routing_fact": "PLAN_REVIEW",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [],
+  "evidence_ids": [
+    "plan-0",
+    "plan-1"
+  ],
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-5ed3e9d8a341403fabba1364edb7e14b",
+      "run_id": "f314e1f6-de07-4516-b2e2-16741529eb75",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686",
+      "evidence_id": "plan-0",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/plan.md",
+      "bytes": 8456,
+      "sha256": "488f1f5e3e4705862121fdd924d0e41061666801a294f22739f443b4b0a66139",
+      "contract_sha256": "d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+      "observation": "Actual source/role/tool evidence; see this artifact for scope and command outcomes."
+    },
+    {
+      "task_id": "TASK-5ed3e9d8a341403fabba1364edb7e14b",
+      "run_id": "f314e1f6-de07-4516-b2e2-16741529eb75",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686",
+      "evidence_id": "plan-1",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/plan-contract.json",
+      "bytes": 3446,
+      "sha256": "d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+      "contract_sha256": "d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+      "observation": "Actual source/role/tool evidence; see this artifact for scope and command outcomes."
+    }
+  ],
+  "plan_sha256": "488f1f5e3e4705862121fdd924d0e41061666801a294f22739f443b4b0a66139",
+  "handoff_sha256": null,
+  "source_sha256": "6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686",
+  "plan_contract_sha256": "d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+  "analysis": {
+    "facts": [
+      "A fresh v3 critical local plan freezes literal paths, five hard gates, zero writers/helpers and preservation invariants.",
+      "Native controller start succeeded through pinned runtime; root stage admission remains unavailable.",
+      "User explicitly approved executing the recommended repair plan."
+    ],
+    "inferences": [
+      "The observed local contracts support the bounded repair; they do not prove actual LINE backup success."
+    ],
+    "unknowns": [
+      "Actual production backup/calibration/authority recovery is outside this local scope and NOT_RUN.",
+      "Root transport identity and actual model unavailable; no controller stage admission was claimed.",
+      "OS isolation and network denial unproved; policy facts are not platform evidence."
+    ],
+    "evidence": [
+      "plan.md",
+      "plan-contract.json"
+    ],
+    "confidence": "High for observed local facts; actual production outcome remains NOT_ACHIEVED.",
+    "record_kind": "Root advisory role result, recorded retrospectively from actual work; correlation UUID is not controller-issued.",
+    "original_backup_primary_outcome_status": "NOT_ACHIEVED"
+  },
+  "handoff_summary": "Read-only audit and bounded critical local plan recorded. User authorized this repair. Historical evidence and 3/3 exhaustion are preserved; independent review and byte-identical Handoff are required before implementation.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 0,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Source-level counterexamples established a fresh bounded issue; historical attempts are not reset.",
+    "information_gain": true,
+    "stuck": false
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "verdict": "PASS",
+  "changed_tracked_paths": [
+    "HANDOFF-2026-09-30-rev28-next.md",
+    "rev28/ARCHITECTURE.md",
+    "rev28/CAPABILITY-MATRIX.md",
+    "rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift",
+    "rev28/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift",
+    "rev28/Sources/Rev28Core/Composition/PhaseAEvidence.swift",
+    "rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift",
+    "rev28/Sources/Rev28Core/Composition/ProductionActuationEnvironment.swift",
+    "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+    "rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift",
+    "rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift",
+    "rev28/Sources/Rev28Core/Transaction/StateEvidence.swift",
+    "rev28/Sources/rev28ctl/main.swift",
+    "rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift",
+    "rev28/Tests/Rev28CoreTests/ComposedAdaptersTests.swift",
+    "rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift",
+    "rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift",
+    "rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+    "rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift",
+    "rev28/Tests/Rev28CoreTests/PhaseAEvidenceTests.swift"
+  ],
+  "out_of_scope_paths": [],
+  "historical_files_unchanged": 24536,
+  "historical_file_set_unchanged": true,
+  "frozen_artifacts_unchanged": 9,
+  "canonical_plan_handoff_unchanged": true,
+  "harness_calibration_unchanged": true,
+  "branch_head_index_preserved": true,
+  "reviewed_contract_handoff_byte_identical": true,
+  "diff_check_exit_code": 0,
+  "source_sha256": "0c953e03328c2786665df2acb434cf3d261976a7ca3661bb8ceeaac9a2a03b7b",
+  "patch_sha256": "4f2af6b9290c64f4a76c57a5ed110ed1dcc230e17a7c549a0f1fab8b0c065b36",
+  "not_observed": [
+    "production baseline data",
+    "production GoalSlot or ledger",
+    "LINE GUI",
+    "OS sandbox/network denial"
+  ]
+}

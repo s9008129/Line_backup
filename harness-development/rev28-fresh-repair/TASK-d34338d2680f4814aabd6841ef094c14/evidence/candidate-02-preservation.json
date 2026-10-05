@@ -1,0 +1,14 @@
+{
+  "verdict": "PASS",
+  "phase": "candidate-02",
+  "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+  "source_files": 49,
+  "historical_files_unchanged": 24536,
+  "historical_file_set_unchanged": true,
+  "existing_out_of_scope_files_unchanged": true,
+  "branch_head_index_preserved": true,
+  "handoff_byte_identical": true,
+  "plan_contract_frozen": true,
+  "generated_cache_exception": "rev28/.build only; authorized local build/test outputs, not production source or authority",
+  "native_controller_admission": "NOT_CLAIMED"
+}

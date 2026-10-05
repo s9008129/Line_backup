@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "rev28/Tools/verify_pre_live_provenance.py"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "exit_code": 0,
+  "duration_seconds": 0.086,
+  "at_utc": "2026-10-04T11:02:15.763489+00:00",
+  "log": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/provenance.log",
+  "log_bytes": 561,
+  "log_sha256": "3bf448fa3ed389581b852d95d3c950f3e1bb4ad1c6dd23bd483ca7ea0bbaeb1a",
+  "tests_summary": null
+}

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "rev28/Tools/replay_rev28.py",
+    "--output",
+    "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/historical-replay-02.json"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "exit_code": 1,
+  "duration_seconds": 6.068,
+  "at_utc": "2026-10-04T11:03:05.474152+00:00",
+  "log": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/replay-02.log",
+  "log_bytes": 0,
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "tests_summary": null
+}

@@ -1,0 +1,96 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-5ed3e9d8a341403fabba1364edb7e14b",
+  "run_id": "c09ecd0d-321f-480b-b3c7-9a8b72857c5b",
+  "role": "PLAN_REVIEWER",
+  "candidate_fact": "PASS",
+  "validation_fact": "NOT_RUN",
+  "routing_fact": "HANDOFF",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "UNKNOWN",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [],
+  "evidence_ids": ["reviewed-plan", "reviewed-contract"],
+  "stage": "PLAN_REVIEW",
+  "plan_sha256": "488f1f5e3e4705862121fdd924d0e41061666801a294f22739f443b4b0a66139",
+  "handoff_sha256": null,
+  "source_sha256": "6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-5ed3e9d8a341403fabba1364edb7e14b",
+      "run_id": "c09ecd0d-321f-480b-b3c7-9a8b72857c5b",
+      "stage": "PLAN_REVIEW", "role": "PLAN_REVIEWER",
+      "source_sha256": "6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686",
+      "evidence_id": "reviewed-plan",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/plan.md",
+      "bytes": 8456,
+      "sha256": "488f1f5e3e4705862121fdd924d0e41061666801a294f22739f443b4b0a66139",
+      "contract_sha256": "d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+      "observation": "Read the exact plan against current source, canonical historical authority, and Harness 4.7 routing policy. Independent Plan Review verdict PASS."
+    },
+    {
+      "task_id": "TASK-5ed3e9d8a341403fabba1364edb7e14b",
+      "run_id": "c09ecd0d-321f-480b-b3c7-9a8b72857c5b",
+      "stage": "PLAN_REVIEW", "role": "PLAN_REVIEWER",
+      "source_sha256": "6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686",
+      "evidence_id": "reviewed-contract",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/plan-contract.json",
+      "bytes": 3446,
+      "sha256": "d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+      "contract_sha256": "d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+      "observation": "Validated successfully against task and referenced gate schemas from the immutable Harness 4.7.0 release using the installed pinned venv. Literal product scopes, zero writers/helpers, and five required gates agree with the plan."
+    }
+  ],
+  "plan_contract_sha256": "d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+  "analysis": {
+    "facts": [
+      "QuartzActuator.swift:533-556 ignores candidate-revalidation persistence errors and subsequently emits mouseDown. Plan.md:9 requires throwing persistence and real corruption regressions.",
+      "QuartzActuator.swift:190-255 captures independently, compares pixels with the old candidate, and copies its epoch/binding. ProductionActuationEnvironment.swift:26-30 and PostSaveComposition.swift:240,267 use this path.",
+      "Canonical plan.md:119-132 requires retained same-frame OCR, fresh provenance for every capture, frozen capture geometry, and re-localization after redraw. The reviewed readiness design preserves these requirements.",
+      "Canonical plan.md:134-154 requires durable authority, failure propagation, one-second permits, and post-hover revalidation before mouseDown. The reviewed plan retains the original addressed point, safety margin, geometry tolerance, budgets, and no-retry semantics.",
+      "ComposedNativeAdapter.swift:238-253 accepts incomplete album-detail identity and separate menu/candidate evidence. Plan.md:11 requires current-surface exact identity evidence.",
+      "PhaseAEvidence.swift:654-665 and 774-792 promote positive geometry/candidate facts to calibration or popup-occlusion PASS. main.swift:475-483 prints preflight=passed and exits zero independently of report blockers.",
+      "GoalSlot.swift:153-171 verifies bound runID and stagingRunDirectory. The plan corrects fresh-run guidance without authorizing slot, ledger, anchor, authorization, or historical-evidence migration.",
+      "Canonical Plan SHA256 remains 05413807f5d7c04d5fe57eb058da6da734ddef5e350a9b023bfa8f8d72f84c1b; canonical Handoff remains 67fc16a638b115fef8b8e99e57ec0d6a2fc344cdd15c6eaf6a72bcdb1c227a33.",
+      "Independently recomputed the reviewed implementation digest across 48 paths using sorted repository-relative path/NUL/bytes/NUL hashing; it matches the plan's source binding.",
+      "This review performed no writes, native events, service contact, implementation tests, or helper allocation."
+    ],
+    "inferences": [
+      "CRITICAL routing is justified by durable-dispatch and eligibility semantics, despite implementation being local and reversible.",
+      "The literal allowed files can implement the proposed common readiness/evidence changes while leaving GoalSlot and frozen authority untouched.",
+      "Fault regressions, composition tests, retained-frame checks, truthful CLI refusal, preservation audit, and independent final Acceptance provide meaningful local evidence.",
+      "Changed pixels may be admitted safely only with new validated provenance and re-localization while retaining the original click point and permit deadline."
+    ],
+    "unknowns": [
+      "Implementation and G2-G5 results have not been observed.",
+      "Actual current-composer calibration, actual LINE surfaces, and production Phase A/B remain unverified and outside this local repair authorization.",
+      "Root transport identity, actual root model, controller admission, and platform isolation are unavailable or unproved.",
+      "The review UUID is an advisory correlation identifier, not a controller-issued admitted run. This result has not undergone controller validation."
+    ],
+    "evidence": [
+      "plan.md:9-20 defines the repairs and preserved invariants; :24-30 defines required checks; :34-36 states runtime limitations and convergence.",
+      "plan-contract.json:6-22 freezes edit scopes; :30-85 freezes required gates; :105-110 requires independent reviews and prohibits helper/writer allocation.",
+      "Read-only pinned-runtime contract validation exited 0.",
+      "git status showed only untracked harness-development; git diff --stat was empty."
+    ],
+    "confidence": "High confidence in plan adequacy and preservation boundaries; no implementation or production-success conclusion.",
+    "acceptance_attention": [
+      "Derive readiness age from the retained capture timestamp; do not make an old bundle fresh by stamping projection time.",
+      "Verify expiration of the original one-second permit before mouseDown, including elapsed post-hover capture and durable-write time.",
+      "Exercise both reversible and Save All paths with injected event sinks; persistence failure after reservation must emit only mouseMoved.",
+      "Retained fresh identity must reject lost, ambiguous, or different candidates even when image bytes remain identical."
+    ]
+  },
+  "handoff_summary": "PASS for the exact reviewed plan and contract. Compile a byte-identical deterministic Handoff, then proceed with serial local implementation and declared checks. Preserve the historical 3/3 composition exhaustion and all old authority. Independent Acceptance remains required. This advisory review does not claim controller admission, gate closure, production eligibility, or LINE backup success.",
+  "needs_human": false, "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 0, "consecutive_no_progress": 0,
+    "last_attempt": "Independent read-only Plan Review completed; no implementation attempt used and no revision required.",
+    "information_gain": true, "stuck": false
+  }
+}

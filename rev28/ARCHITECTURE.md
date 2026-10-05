@@ -1,6 +1,6 @@
 # Rev28 Native Closed-Loop Architecture
 
-Status: pre-live implementation/hardening branch. This document describes the reviewed Rev28 architecture; it does **not** claim the LINE production backup has completed.
+Status (2026-10-04): fresh identity repair under `harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14`. This document describes the current implementation; new check and independent-review results are recorded in that task. Existing work and historical evidence are preserved. The LINE production backup has not completed.
 
 ## Goal
 
@@ -52,6 +52,26 @@ Every irreversible action is fail-closed. Unknown outcome means observe/reconcil
 
 A changed process instance, stale window ID, stale epoch, unexpected layer/offscreen state or unexplained frame delta invalidates the observation.
 
+The observation session reads the target process instance, signing identity and
+bound AX identity before capture and again after capture/OCR. A change or read
+error refuses the bundle; its post-read fields are checked again by
+`ObservationBundle.validated()`. Unavailable signing information remains unknown.
+The first process-instance read precedes initial SCK enumeration; the final
+read follows post-capture SCK, signing, AX and explicit CG acquisition. These
+actual process values bracket all retained native facts, including replacement
+inside an inventory or identity read.
+`ProcessCodeIdentity` reads the requested PID's code only and never substitutes
+the calling executable's signature for an unavailable target.
+
+The session explicitly reads one post-capture CG inventory and shares it between
+its `WindowIdentity` and retained bundle. SCK pre/post and CG target entries must
+be unique, ownership-consistent and have finite positive frames agreeing within
+the existing 0.5-point tolerance. Duplicate IDs and invalid or inconsistent
+geometry refuse capture without incrementing the completed-capture count.
+All post-identity reads and final validation remain inside the original deadline.
+This is temporal cross-checking, not atomic acquisition of OS facts: the native
+AX matching adapter also reads its own CG provider.
+
 ## 2. Coordinate model
 
 Coordinates are typed as separate spaces. Transform code is centralized; callers do not hand-convert ad hoc coordinates.
@@ -90,7 +110,7 @@ Distinct glyphs such as `禎` and `楨` are never fuzzy-merged.
 
 ### Album card/detail
 
-Album selection requires a unique exact date title and exact count contained in one explicitly segmented, uniquely identified card region; cross-card pairings and multiple matching regions are rejected. Album detail requires unique exact group title + `57張照片`.
+Album selection requires the current exact group plus a unique exact date title and exact count contained in one explicitly segmented, uniquely identified card region; cross-card pairings and multiple matching regions are rejected. Album detail and subsequent ellipsis/menu/Save All surfaces require unique exact group title, `2024/05/13~05/17` and `57張照片` on their own frames.
 
 ### Album ellipsis
 
@@ -121,7 +141,7 @@ The target must be unique. Click geometry comes from the structural target-row c
 
 ## 5. Final dispatch gate
 
-Immediately before an event can be posted, `DispatchReadinessEvaluator` requires all of:
+Immediately before an event can be posted, `DispatchReadinessGate` requires all of:
 
 - application active,
 - target frontmost,
@@ -130,6 +150,21 @@ Immediately before an event can be posted, `DispatchReadinessEvaluator` requires
 - geometry safe.
 
 Failure of any clause refuses dispatch.
+
+Production readiness projects the retained `NativeObservationSession` bundle,
+including its original capture timestamp and frozen geometry. After hover the
+same session captures and localizes again with a greater epoch; identical pixels
+do not authorize reuse of the old candidate. A redraw can pass only when the
+fresh target has the same identity and the original click point still meets the
+one-point safe margin, with mapping/frame changes within 0.5 point. Readiness
+frames are retained separately from state transitions. The original one-second
+permit expires even if capture, OCR, durable writes or final guards take time.
+Ledger or anchor write failure prevents mouseDown/mouseUp; its error propagates.
+Each dispatch binds its revalidation records to the exact durable reservation
+entry returned under the owner lock. Its final failure supersedes its own
+provisional success, so a late refusal cannot clear an earlier failed attempt.
+Distinct successful attempts still reset the consecutive-failure counter;
+legacy standalone records keep their existing meaning.
 
 Quartz actuation remains separated from sensing. A posted event never serves as its own success acknowledgement.
 
@@ -187,6 +222,13 @@ rejects stale snapshots and fsyncs every append. Its separately stored
 `LedgerHeadAnchor` detects subsequent truncation/rollback when retained
 independently.
 
+Verified pre-intent continuation re-observes the current state before advancing,
+including when it already reached `SAVE_ALL_LOCATED`. It appends a reobservation
+record without rewriting old transitions or resetting budgets. The stable goal
+slot also binds its run and authorization: changing runID is not a recovery
+mechanism. Source changes require new review and a separately reviewed authority
+decision; this repair never rebinds the historical slot or ledger.
+
 Production event posting is exposed only by `GatedQuartzActuator`; its permit
 can be minted only from a fresh active/frontmost SC+CG window census and a
 candidate bound to the live screenshot digest. Permits are single-use,
@@ -205,14 +247,21 @@ requires an affirmative outcome and rehashed postcondition/tripwire artifacts
 beneath the same run-ID directory; the legacy unbound-boolean helper can only
 return indeterminate.
 
-`rev28ctl live-preflight` requires an immutable authorization and a separate
-one-shot authorization file, recomputes plan and implementation digests, checks
-the real LINE process, active/frontmost state, unique fresh SC+CG window and AX
-trust, then consumes the one-shot file. It never posts events.
-`live-execute` currently fails closed after those checks: this checkout does
-not provide a calibrated live frame/structural-candidate session provider that
-binds OCR, destination and tripwire samples into one real observation stream.
-No mock path is treated as production.
+`LiveCompositionFactory` assembles the native session, common engine, adapter,
+actuation and post-save observers used by both CLI commands. `live-preflight`
+verifies immutable authorization/source bindings and fresh process/window/TCC
+facts. It may perform guarded reversible album/menu navigation, but never Save
+All or destination confirmation and never consumes the irreversible entitlement
+or one-shot execute authorization. It publishes Phase A evidence and exits 77
+with `preflight=blocked` if any required condition is FAIL or UNKNOWN.
+
+Phase A report v2 uses the common exact state-evidence policy. Configured bounds
+and retained pixels alone cannot prove current native calibration or popup
+ownership/absence of occlusion; these remain UNKNOWN until independently bound
+observations exist. The current builder deliberately cannot manufacture their
+PASS from caller flags. `live-execute` requires independently recomputed Phase B
+eligibility before irreversible authority can be consumed. Actual chooser
+observation remains a separate runtime gate.
 
 ### Real-session-only residual evidence
 
@@ -221,8 +270,8 @@ album/menu structure, that native chooser AX semantics match the append-only
 predicate version, or that the real filesystem tripwire observes every
 relevant write. Those facts require a live authorized macOS session with LINE,
 Accessibility and Screen Recording permissions, calibrated capture rules, and
-preserved evidence. Until those facts and a real observation provider are
-reviewed, live execution remains deliberately unavailable.
+preserved evidence. Historical calibration and offline provider tests do not
+prove these current-session obligations; production eligibility remains blocked.
 
 ## 9. Filesystem acceptance
 
@@ -271,7 +320,7 @@ It can verify:
 - state machine/ledger/verifier,
 - adversarial behavior.
 
-The hosted macOS 27 environment currently returns Vision `unknownError` for **both** Swift `RecognizeTextRequest` and legacy `VNRecognizeTextRequest`. Because both API generations fail while the real Mac's earlier executable-context Vision probe passed, hosted Vision is classified as an environment limitation; no production OCR rule is weakened.
+Historical hosted macOS 27 evidence returned Vision `unknownError` for **both** Swift `RecognizeTextRequest` and legacy `VNRecognizeTextRequest`. Both API generations failed while the real Mac's earlier executable-context Vision probe passed, so that recorded failure was classified as an environment limitation. This repair did not reprobe either live capability or weaken the production OCR rule.
 
 Only the user's real Mac can establish actual LINE app/session state, current LINE UI geometry/labels, real chooser hosting, real download side effects, baseline/staging disk state and final content equality.
 
@@ -282,7 +331,7 @@ Synthetic/CI evidence can advance implementation and pre-live verification, but 
 The remaining production sequence is:
 
 1. real-Mac preflight and baseline/staging/TCC re-verification,
-2. Phase A read-only LINE reconnaissance,
+2. Phase A observation plus guarded reversible navigation, with zero irreversible intent,
 3. required exact-SHA pre-live review gates,
 4. one bounded Phase B production transaction,
 5. filesystem/content proof,

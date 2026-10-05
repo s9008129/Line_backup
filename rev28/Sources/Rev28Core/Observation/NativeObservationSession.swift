@@ -140,6 +140,9 @@ public struct ObservationBundle: Equatable, Sendable {
     public let target: ObservationTarget
     public let process: ProcessInstanceID
     public let signingIdentity: String?
+    public let postProcess: ProcessInstanceID
+    public let postSigningIdentity: String?
+    public let postAXIdentity: AXIdentityRead
     public let window: WindowIdentity
     public let frame: CapturedFrameRecord
     public let framePNGData: Data
@@ -182,6 +185,12 @@ public struct ObservationBundle: Equatable, Sendable {
               process == window.process else {
             throw ObservationRefusal.identityMismatch(["bundle/pid identity mismatch inside the bundle"])
         }
+        guard postProcess == process,
+              postSigningIdentity == signingIdentity,
+              postAXIdentity == axIdentity,
+              window.ax == axIdentity else {
+            throw ObservationRefusal.identityMismatch(["process, signing or AX identity changed during capture"])
+        }
         guard frame.epoch == epoch,
               window.captureEpoch == epoch,
               window.captureImageSHA256 == frame.imageSHA256 else {
@@ -202,12 +211,23 @@ public struct ObservationBundle: Equatable, Sendable {
               decoded.height == frame.imageHeightPx else {
             throw ObservationRefusal.retainedImageMismatch("retained PNG does not decode to the recorded dimensions")
         }
+        let cg = try Self.targetCGEntry(
+            target: target, windowID: window.windowID,
+            preInventory: preInventory, postInventory: postInventory, cgInventory: cgInventory
+        )
         guard let post = postInventory.first(where: { $0.windowID == window.windowID }) else {
-            throw ObservationRefusal.inventoryChanged("target window missing from the post capture inventory")
+            throw ObservationRefusal.inventoryChanged("target missing from retained post inventory")
+        }
+        guard Self.framesAgree(window.windowFrame, post.frame),
+              window.cgEntry.windowID == cg.windowNumber,
+              window.cgEntry.ownerPID == cg.ownerPID,
+              window.cgEntry.layer == cg.layer,
+              window.cgEntry.frame == cg.frame else {
+            throw ObservationRefusal.inventoryChanged("stored identity does not match the retained inventories")
         }
         let fresh = FreshWindowObservation(
             bundleID: post.ownerBundleID ?? "",
-            process: process,
+            process: postProcess,
             windowID: post.windowID,
             frame: post.frame,
             layer: post.windowLayer,
@@ -224,11 +244,6 @@ public struct ObservationBundle: Equatable, Sendable {
         }
         guard post.ownerPID == target.pid else {
             throw ObservationRefusal.inventoryChanged("post inventory owner pid mismatch")
-        }
-        guard cgInventory.contains(where: {
-            $0.windowNumber == window.windowID && $0.layer == 0 && $0.ownerPID == target.pid
-        }) else {
-            throw ObservationRefusal.inventoryChanged("target window missing from the CG inventory")
         }
         guard axIdentity.role?.isEmpty == false else {
             throw ObservationRefusal.identityMismatch(["AX identity for the target window is unreadable"])
@@ -260,6 +275,46 @@ public struct ObservationBundle: Equatable, Sendable {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil) else { return nil }
         return CGImageSourceCreateImageAtIndex(source, 0, nil)
     }
+
+    private static func validFrame(_ frame: CGRect) -> Bool {
+        [frame.origin.x, frame.origin.y, frame.size.width, frame.size.height].allSatisfy(\.isFinite)
+            && frame.width > 0 && frame.height > 0
+    }
+
+    private static func framesAgree(_ lhs: CGRect, _ rhs: CGRect) -> Bool {
+        guard validFrame(lhs), validFrame(rhs) else { return false }
+        return abs(lhs.origin.x - rhs.origin.x) <= 0.5
+            && abs(lhs.origin.y - rhs.origin.y) <= 0.5
+            && abs(lhs.width - rhs.width) <= 0.5
+            && abs(lhs.height - rhs.height) <= 0.5
+    }
+
+    /// Checks the one explicitly retained session CG snapshot. AX's native
+    /// adapter may read CG separately; this is not atomic OS acquisition.
+    fileprivate static func targetCGEntry(
+        target: ObservationTarget,
+        windowID: UInt32,
+        preInventory: [SCWindowSnapshot],
+        postInventory: [SCWindowSnapshot],
+        cgInventory: [CGWindowSnapshot]
+    ) throws -> CGWindowSnapshot {
+        let pre = WindowSensor.mainWindowCandidates(in: preInventory, bundleID: target.bundleID, pid: target.pid)
+        let post = WindowSensor.mainWindowCandidates(in: postInventory, bundleID: target.bundleID, pid: target.pid)
+        let cg = cgInventory.filter { $0.windowNumber == windowID }
+        guard pre.count == 1, post.count == 1,
+              pre[0].windowID == windowID, post[0].windowID == windowID,
+              preInventory.filter({ $0.windowID == windowID }).count == 1,
+              postInventory.filter({ $0.windowID == windowID }).count == 1,
+              cg.count == 1, cg[0].layer == 0, cg[0].ownerPID == target.pid else {
+            throw ObservationRefusal.inventoryChanged("target identity is absent, ambiguous or inconsistent across inventories")
+        }
+        guard framesAgree(pre[0].frame, post[0].frame),
+              framesAgree(pre[0].frame, cg[0].frame),
+              framesAgree(post[0].frame, cg[0].frame) else {
+            throw ObservationRefusal.inventoryChanged("target geometry is invalid or differs across SCK/CG inventories")
+        }
+        return cg[0]
+    }
 }
 
 /// One serialized native observation session. Concurrent use is refused, not
@@ -284,13 +339,27 @@ public actor NativeObservationSession {
     public var captureCount: Int { completedCaptures }
 
     public func capture(_ request: NativeObservationRequest) async throws -> ObservationBundle {
+        try Task.checkCancellation()
         guard !captureInProgress else { throw ObservationRefusal.sessionBusy }
         captureInProgress = true
         defer { captureInProgress = false }
 
         let started = source.monotonicNanos()
-        let deadline = started &+ request.observationBudgetNanos
+        let (deadline, overflow) = started.addingReportingOverflow(request.observationBudgetNanos)
+        guard !overflow, request.observationBudgetNanos > 0 else {
+            throw ObservationRefusal.invalidBundle("observation deadline overflow or zero budget")
+        }
         try checkDeadline(deadline, now: started, stage: "start")
+
+        // Process lifetime brackets every native fact retained in the bundle.
+        let process: ProcessInstanceID
+        do {
+            process = try source.processInstance(pid: request.target.pid)
+        } catch let refusal as ObservationRefusal {
+            throw refusal
+        } catch {
+            throw ObservationRefusal.observerFailure(stage: "processIdentity", detail: String(describing: error))
+        }
 
         let preInventory: [SCWindowSnapshot]
         do {
@@ -309,11 +378,9 @@ public actor NativeObservationSession {
         let children = WindowSensor.childWindows(of: main, in: preInventory)
         let includedWindows = request.configuration.includeChildWindows ? [main] + children : [main]
 
-        let process: ProcessInstanceID
         let signingIdentity: String?
         let axIdentity: AXIdentityRead
         do {
-            process = try source.processInstance(pid: request.target.pid)
             signingIdentity = try source.signingIdentity(pid: request.target.pid)
             axIdentity = try source.readAXIdentity(pid: request.target.pid, windowID: main.windowID)
         } catch let refusal as ObservationRefusal {
@@ -336,6 +403,7 @@ public actor NativeObservationSession {
             throw ObservationRefusal.observerFailure(stage: "captureTarget", detail: String(describing: error))
         }
         let capturedAt = source.monotonicNanos()
+        try Task.checkCancellation()
         try checkDeadline(deadline, now: capturedAt, stage: "capture")
 
         guard let pngData = FrameCaptureSupport.pngData(of: captured.image) else {
@@ -355,6 +423,8 @@ public actor NativeObservationSession {
         } catch {
             throw ObservationRefusal.observerFailure(stage: "ocr", detail: String(describing: error))
         }
+        try Task.checkCancellation()
+        try checkDeadline(deadline, now: source.monotonicNanos(), stage: "ocr")
 
         let postInventory: [SCWindowSnapshot]
         do {
@@ -362,19 +432,32 @@ public actor NativeObservationSession {
         } catch {
             throw ObservationRefusal.observerFailure(stage: "postEnumerateWindows", detail: String(describing: error))
         }
-        let postMatches = WindowSensor.mainWindowCandidates(
-            in: postInventory,
-            bundleID: request.target.bundleID,
-            pid: request.target.pid
+        let postSigningIdentity: String?
+        let postAXIdentity: AXIdentityRead
+        do {
+            postSigningIdentity = try source.signingIdentity(pid: request.target.pid)
+            postAXIdentity = try source.readAXIdentity(pid: request.target.pid, windowID: main.windowID)
+        } catch let refusal as ObservationRefusal {
+            throw refusal
+        } catch {
+            throw ObservationRefusal.observerFailure(stage: "postProcessIdentity", detail: String(describing: error))
+        }
+        let cgInventory = source.cgInventory()
+        let postProcess: ProcessInstanceID
+        do {
+            postProcess = try source.processInstance(pid: request.target.pid)
+        } catch let refusal as ObservationRefusal {
+            throw refusal
+        } catch {
+            throw ObservationRefusal.observerFailure(stage: "postProcessIdentity", detail: String(describing: error))
+        }
+        guard postProcess == process, postSigningIdentity == signingIdentity, postAXIdentity == axIdentity else {
+            throw ObservationRefusal.identityMismatch(["process, signing or AX identity changed during capture"])
+        }
+        let cgEntry = try ObservationBundle.targetCGEntry(
+            target: request.target, windowID: main.windowID,
+            preInventory: preInventory, postInventory: postInventory, cgInventory: cgInventory
         )
-        guard postMatches.count == 1, let postMain = postMatches.first, postMain.windowID == main.windowID else {
-            throw ObservationRefusal.inventoryChanged("target window multiplicity or identity changed during capture")
-        }
-        guard let cgEntry = source.cgInventory().first(where: {
-            $0.windowNumber == main.windowID && $0.layer == 0 && $0.ownerPID == request.target.pid
-        }) else {
-            throw ObservationRefusal.inventoryChanged("target window is absent from the CG inventory")
-        }
 
         let window = WindowIdentity(
             bundleID: request.target.bundleID,
@@ -427,6 +510,9 @@ public actor NativeObservationSession {
             target: request.target,
             process: process,
             signingIdentity: signingIdentity,
+            postProcess: postProcess,
+            postSigningIdentity: postSigningIdentity,
+            postAXIdentity: postAXIdentity,
             window: window,
             frame: captured.record,
             framePNGData: pngData,
@@ -437,11 +523,12 @@ public actor NativeObservationSession {
             candidateRefusal: refusal,
             preInventory: preInventory,
             postInventory: postInventory,
-            cgInventory: source.cgInventory(),
+            cgInventory: cgInventory,
             axIdentity: axIdentity,
             localization: request.localization
         )
         try bundle.validated()
+        try checkDeadline(deadline, now: source.monotonicNanos(), stage: "validation")
         completedCaptures += 1
         return bundle
     }
@@ -482,6 +569,12 @@ public actor NativeObservationSession {
             let groupBox: CGRect? = groupTitle.flatMap { expected in
                 let matches = OcrTextIdentity.exactMatches(in: ocrItems, expected: expected)
                 return matches.count == 1 ? matches[0].boundingBoxCapturePx : nil
+            }
+            if let groupTitle {
+                let matches = OcrTextIdentity.exactMatches(in: ocrItems, expected: groupTitle)
+                guard matches.count == 1 else {
+                    return ([], nil, matches.isEmpty ? .missingIdentity : .ambiguousIdentity)
+                }
             }
             do {
                 switch try AlbumEllipsisLocator.locate(

@@ -1,5 +1,29 @@
 # HANDOFF — LINE Backup Rev28（2026-09-30 rev3｜prompt-first＋Harness V4.3.1 整合）
 
+> **2026-10-04 修復後的接手入口：本段優先於下方 2026-09-30 歷史快照。**
+> 使用者已授權本機修復，新的 v3 計畫、commit 根因分析、驗證與獨立驗收位於
+> `harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/`。
+> 下方「產品凍結、無 pending code work、只剩環境 blocker」及「換 fresh runID 跑 attempt-02」
+> 的操作指示已撤銷；舊紀錄是歷史證據，不能授權目前產品樹或 binary。
+>
+> 接手時先讀新任務 `plan.md`、`commit-review.md`、`progress.md` 與實際 role result／evidence。
+> 修復處理 durable write fail-open、hover 後 capture/epoch/localization、當前 exact identity、
+> 續跑重觀測、Phase A UNKNOWN 與非零 exit，以及文件與實作不符。
+> 不得改寫舊 canonical Plan/Handoff、Phase A attempt-01、GoalSlot 或 authorization；
+> `PRIMARY_NATIVE_COMPOSITION` 歷史 3/3 不重置，本機修復也不構成第 4 次 live attempt。
+>
+> **真實 LINE backup 仍未達成。** 本機修復沒有執行 LINE GUI、Save All、destination confirmation
+> 或 baseline/正式 ledger 的遷移。現有 GoalSlot 以 goal/group/album/stagingRoot 建穩定 key，
+> 同時檢查 runID、run directory 與 source/plan bindings；attempt-01 已建立授權紀錄，
+> 所以「換 runID」即使尚未消耗 entitlement 仍會衝突。不能刪除 slot、換 stagingRoot、
+> 重簽舊 ledger 或沿用舊 source digest 來繞過它。
+> 下一個 live 工作必須另做有獨立審查的 recovery/authorization 計畫，核對既有 slot/ledger/anchor
+> 與保留 counters，再取得目前 composition 的 native calibration、menu/popup/occlusion 綁定證據。
+> `targetWindowNotUnique(found=2)` 是正確拒絕，唯一視窗檢查保留；它並非唯一剩餘條件。
+> Phase A v2 有 FAIL/UNKNOWN 時會發布報告並 exit 77；不能把 exit、候選點或歷史 review label 當作 PASS。
+
+## 2026-09-30 歷史快照（下方指令不能直接執行）
+
 > 給新對話的接手 Agent：**先讀 §0 的 Prompt，並依它執行**；本文件其餘章節是它引用的完整上下文。
 > 本文件是 navigation + status snapshot，**不是** canonical 契約，不取代
 > `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md` 與同目錄 `handoff.md`。**不要覆寫它們。**

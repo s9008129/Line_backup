@@ -473,14 +473,14 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
             )
             let published = try PhaseAEvidencePublisher.publish(report: phaseAReport, runDirectory: runDirectory)
             FileHandle.standardOutput.write(Data("""
-            preflight=passed runID=\(auth.runID) finalState=\(outcome.finalState.rawValue) observations=\(outcome.observationsThisRun) \
+            preflight=\(phaseAReport.allConditionsPass ? "passed" : "blocked") runID=\(auth.runID) finalState=\(outcome.finalState.rawValue) observations=\(outcome.observationsThisRun) \
             sessionCaptures=\(captures) irreversible=0 entitlement=unconsumed outcome=\(outcomeURL.lastPathComponent) \
             phaseA=\(published.reportName) sha256=\(published.reportSHA256) manifest=\(published.manifestName) \
             entries=\(published.manifestEntryCount) conditions=\(published.passCount)P/\(published.failCount)F/\(published.unknownCount)U \
             phaseBPreventedBy=\(published.phaseBPreventedBy.isEmpty ? "none" : published.phaseBPreventedBy.joined(separator: ","))
 
             """.utf8))
-            exit(0)
+            exit(phaseAReport.exitCode)
         default:
             let outcome = try await composition.engine.run()
             FileHandle.standardError.write(Data(

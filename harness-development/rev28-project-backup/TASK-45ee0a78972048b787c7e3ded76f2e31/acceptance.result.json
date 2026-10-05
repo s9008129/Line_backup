@@ -1,0 +1,232 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-45ee0a78972048b787c7e3ded76f2e31",
+  "run_id": "53317ee5-fbf4-4410-a7b6-41262894093d",
+  "role": "ACCEPTANCE_REVIEWER",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "DONE",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "ACHIEVED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "CORE_ACCEPTANCE_STATUS": "PASS",
+    "REQUIRED_VERIFICATION_STATUS": "PASS",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PASS",
+    "TASK_CLOSURE_STATUS": "DONE"
+  },
+  "gate_results": [
+    {
+      "gate_id": "P1_PLAN_REVIEW",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "I1_AUTHORITY_STATE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "I2_TARGET_DISPATCH",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "I3_FILESYSTEM_FINALIZATION",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "I4_PRESERVATION",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "A1_INDEPENDENT_ACCEPTANCE",
+      "verdict": "PASS",
+      "evidence_manifest": "acceptance"
+    }
+  ],
+  "evidence_ids": [
+    "acceptance",
+    "audit",
+    "decode",
+    "visual",
+    "trace",
+    "card",
+    "product",
+    "source",
+    "terminal"
+  ],
+  "stage": "ACCEPTANCE",
+  "plan_sha256": "a0780b3bb048c8a139542d52c5a8b13003fe2888e795dcf3fa374d140f07723e",
+  "handoff_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+  "source_sha256": "0647382e21ae18f04abfe11f936d64065389c7504d39deefce079b03ababacc9",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-45ee0a78972048b787c7e3ded76f2e31",
+      "run_id": "53317ee5-fbf4-4410-a7b6-41262894093d",
+      "role": "ACCEPTANCE_REVIEWER",
+      "stage": "ACCEPTANCE",
+      "source_sha256": "0647382e21ae18f04abfe11f936d64065389c7504d39deefce079b03ababacc9",
+      "evidence_id": "acceptance",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/acceptance-final-assessment.json",
+      "bytes": 5433,
+      "sha256": "52e87bc6a7d31a270c338b42add9ef153c897634ce3a2222500f624b0749e8f9",
+      "contract_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+      "observation": "Fresh independent A1 assessment binds all actual reviewed evidence and narrow scope."
+    },
+    {
+      "task_id": "TASK-45ee0a78972048b787c7e3ded76f2e31",
+      "run_id": "53317ee5-fbf4-4410-a7b6-41262894093d",
+      "role": "ACCEPTANCE_REVIEWER",
+      "stage": "ACCEPTANCE",
+      "source_sha256": "0647382e21ae18f04abfe11f936d64065389c7504d39deefce079b03ababacc9",
+      "evidence_id": "audit",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/acceptance-audit.json",
+      "bytes": 104827,
+      "sha256": "46ac0907f4673e2f5565f30f72081128a7ff4c2e19e618b77115763c0837ce78",
+      "contract_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+      "observation": "664 independently checked actual schema/source/state/content/preservation assertions."
+    },
+    {
+      "task_id": "TASK-45ee0a78972048b787c7e3ded76f2e31",
+      "run_id": "53317ee5-fbf4-4410-a7b6-41262894093d",
+      "role": "ACCEPTANCE_REVIEWER",
+      "stage": "ACCEPTANCE",
+      "source_sha256": "0647382e21ae18f04abfe11f936d64065389c7504d39deefce079b03ababacc9",
+      "evidence_id": "decode",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/acceptance-decode.json",
+      "bytes": 10385,
+      "sha256": "4f2231a4730765a30e2b525db266a953bd04a3b07987c7fa4c27767305758077",
+      "contract_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+      "observation": "Independent read-only rerun fully decoded57 actual current JPEGs."
+    },
+    {
+      "task_id": "TASK-45ee0a78972048b787c7e3ded76f2e31",
+      "run_id": "53317ee5-fbf4-4410-a7b6-41262894093d",
+      "role": "ACCEPTANCE_REVIEWER",
+      "stage": "ACCEPTANCE",
+      "source_sha256": "0647382e21ae18f04abfe11f936d64065389c7504d39deefce079b03ababacc9",
+      "evidence_id": "visual",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/acceptance-visual-review.json",
+      "bytes": 2024,
+      "sha256": "d56edb88b2bca6816dbcfaa640a38b4491129431ca33449abf6b1415bc2951b3",
+      "contract_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+      "observation": "Actual retained menu/closure visual OBSERVED; independently reproduced exact OCR labels and SaveAll margin."
+    },
+    {
+      "task_id": "TASK-45ee0a78972048b787c7e3ded76f2e31",
+      "run_id": "53317ee5-fbf4-4410-a7b6-41262894093d",
+      "role": "ACCEPTANCE_REVIEWER",
+      "stage": "ACCEPTANCE",
+      "source_sha256": "0647382e21ae18f04abfe11f936d64065389c7504d39deefce079b03ababacc9",
+      "evidence_id": "trace",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/acceptance-trace-audit.json",
+      "bytes": 7857,
+      "sha256": "9d2fbc9361eae67cfb4553f549a30d0bf0ca5c27bb75259cecf55bd63c6b03ba",
+      "contract_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+      "observation": "Actual original host transcript prefix,36 exact records and10 exact original image bytes independently rehashed; dispatch/chooser reviewed."
+    },
+    {
+      "task_id": "TASK-45ee0a78972048b787c7e3ded76f2e31",
+      "run_id": "53317ee5-fbf4-4410-a7b6-41262894093d",
+      "role": "ACCEPTANCE_REVIEWER",
+      "stage": "ACCEPTANCE",
+      "source_sha256": "0647382e21ae18f04abfe11f936d64065389c7504d39deefce079b03ababacc9",
+      "evidence_id": "card",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/acceptance-original-card-manifest.json",
+      "bytes": 4581,
+      "sha256": "e908494da48d857262796fd60a95b79d1270eda5d0afe9949ef042241e45d108",
+      "contract_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+      "observation": "Independent exact9 original card records and3 image bytes extracted from original prefix; full target and post-click MATCH visually OBSERVED."
+    },
+    {
+      "task_id": "TASK-45ee0a78972048b787c7e3ded76f2e31",
+      "run_id": "53317ee5-fbf4-4410-a7b6-41262894093d",
+      "role": "ACCEPTANCE_REVIEWER",
+      "stage": "ACCEPTANCE",
+      "source_sha256": "0647382e21ae18f04abfe11f936d64065389c7504d39deefce079b03ababacc9",
+      "evidence_id": "product",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/product-verifier/manifest.json",
+      "bytes": 1389,
+      "sha256": "f398569ec764c969769a503927d92ab4b327ec717b2dcf366887bd8d90b232a7",
+      "contract_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+      "observation": "Actual product verification chain rehashed against current57 files and exact state."
+    },
+    {
+      "task_id": "TASK-45ee0a78972048b787c7e3ded76f2e31",
+      "run_id": "53317ee5-fbf4-4410-a7b6-41262894093d",
+      "role": "ACCEPTANCE_REVIEWER",
+      "stage": "ACCEPTANCE",
+      "source_sha256": "0647382e21ae18f04abfe11f936d64065389c7504d39deefce079b03ababacc9",
+      "evidence_id": "source",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/current-source-binding.json",
+      "bytes": 13500,
+      "sha256": "7ab37048ad95cfda5c50be4fafb506672dff65c0d25846ce680714d2cea3e138",
+      "contract_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+      "observation": "Exact candidate source plus accepted product source rehashed, immutable."
+    },
+    {
+      "task_id": "TASK-45ee0a78972048b787c7e3ded76f2e31",
+      "run_id": "53317ee5-fbf4-4410-a7b6-41262894093d",
+      "role": "ACCEPTANCE_REVIEWER",
+      "stage": "ACCEPTANCE",
+      "source_sha256": "0647382e21ae18f04abfe11f936d64065389c7504d39deefce079b03ababacc9",
+      "evidence_id": "terminal",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/terminal-validation.json",
+      "bytes": 1490,
+      "sha256": "60da1271cc45ec8c8c074bb00dda3980396dc69b15f67d055def554993f610d8",
+      "contract_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+      "observation": "Exact strict revision16 actual state rehashed, same-revision verified/outcome/release."
+    }
+  ],
+  "plan_contract_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+  "analysis": {
+    "facts": [
+      "Independent review verified frozen P1/Handoff and implementation role actual evidence, schemas and phase gates. Native controller state remains PLAN/advisory unchanged.",
+      "Actual original local host session prefix hash matches.36 selected dispatch/chooser records and10 exact retained images match original source lines;9 additional target-card records and3 original images independently extracted.",
+      "Original fresh full-card safe metadata click130,920 RETURNED and exact date/57 MATCH. Exact menu row/group offline OCR verified; calibrated safe point has26.667px neighbor margins. Original atomic pair requested1200ms wait with invocation boundary before SaveAll; logical count1 and actual expected chooser.",
+      "Paste timeout preserved; fresh unchanged original path observed before exact documented PathTextField setValue. One Return reached exact project leaf/OKButton62, one confirmation RETURNED with actual download0/57 original screenshot. No further GUI APIs in captured prefix.",
+      "Current57 JPEGs total17924900bytes, exact stable>=5second samples, zero anomalies; independent full RGB decode57 and unchanged hashes. Actual product verify-only chain PASS/CONFIRMED/EXACT rehashed.",
+      "Strict state revision16/readback SHA1093dd3065f7ce80ce4cfcb97081cabbb9b4334a53eeb77d1233985e5432acb9; one verified run/fingerprint, retry=false permanently, owner/context null in same final commit. All16 snapshots validate and match run-log receipts.",
+      "Independent preservation audit checked34623 prior files/modes and24536 exact historical file set; no scope drift and HEAD/branch/index unchanged. Actual accepted49-file product and current candidate source bindings exact."
+    ],
+    "inferences": [
+      "All required accumulated gates for this specific one-album CUA backup are satisfied; fresh A1 PASS permits scoped task DONE. No further GUI or repeat SaveAll is needed.",
+      "The explicit reviewed new-project authorization and recorded known native precondition refusal support this transaction without resetting or consuming unknown native production authority."
+    ],
+    "unknowns": [
+      "Original native GoalSlot consumption and current native composer/frozen capture/popup occlusion remain UNKNOWN and unchanged; full native product acceptance is NOT_ACHIEVED.",
+      "Signed provider receipts/OS delivery counts, global historical absence of dispatch, and crash-safety guarantees are not established.",
+      "Controller stage admission and OS-level sandbox/network denial are not proved by advisory role audits."
+    ],
+    "evidence": [
+      "acceptance",
+      "audit",
+      "decode",
+      "visual",
+      "trace",
+      "card",
+      "product",
+      "source",
+      "terminal"
+    ],
+    "confidence": "HIGH for scoped A1; human visuals remain OBSERVED and native claims remain unproved.",
+    "full_native_project_primary_outcome_status": "NOT_ACHIEVED",
+    "controller_admission": "NOT_CLAIMED",
+    "independence": "Fresh ACCEPTANCE_REVIEWER did not contribute to implementation or P1; no helpers/writers/delegation; only own review artifacts written.",
+    "bounded_action": null
+  },
+  "handoff_summary": "A1 PASS. The single authorized project-contained CUA album backup is independently accepted:57 current JPEGs/17924900bytes, all decoded, exact terminal VERIFIED state, one logical SaveAll/confirmation and actual original chooser/download trace, preservation intact. All applicable scoped task gates satisfied. Full native product outcome remains NOT_ACHIEVED with original slot/composer calibration UNKNOWN; no native/controller/provider/OS enforcement claim.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 1,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Fresh read-only independent review rehashed contracts/sources, all16 states, current57 files/decode and preserved history; then validated actual original retained CUA host records/images. Read-only parser refinements documented.",
+    "information_gain": true,
+    "stuck": false
+  },
+  "information_gain": true,
+  "blocker_fingerprint": null
+}

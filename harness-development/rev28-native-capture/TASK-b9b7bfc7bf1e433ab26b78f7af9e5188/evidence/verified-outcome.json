@@ -1,0 +1,18 @@
+{
+  "verdict": "PASS",
+  "diagnostic_goal": "ACHIEVED",
+  "source_sha256": "64242fa2df053dd82a7319977222ccad91efa5d6ef91bc70edaffe7249505b4a",
+  "core_source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+  "binary_sha256": "738fea41dab8b5c26bbb9048742f0944e7c3c1a40a13ad496ec15709b310be25",
+  "captured_image_sha256": "a512f68e545c1213efc1c4f875c20046e3280882d76656ddb2700e8ecc7bc9f1",
+  "retained_png_verified": true,
+  "ocr_same_frame_verified": true,
+  "process_signing_ax_inventory_coherence_verified": true,
+  "deadline_verified": true,
+  "exact_group_date_count_unique": true,
+  "structural_candidate_binding_verified": true,
+  "geometry_observation": "PASS for this primary frame under existing rules; no current-composer calibration certification",
+  "popup_occlusion": "NOT_OBSERVED",
+  "original_production_authority": "UNKNOWN",
+  "full_project_outcome": "NOT_ACHIEVED"
+}

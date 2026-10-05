@@ -1,0 +1,116 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-497487f77d8e438394e37742f0c374f5",
+  "goal": "Publish exact independently accepted Rev28 repair, tests, selected text evidence, and accurate handoff through explicitly authorized add/commit/normal push; preserve all private/live data and unfinished native acceptance.",
+  "task_class": "QUICK",
+  "allowed_paths": [
+    "HANDOFF-2026-09-30-rev28-next.md",
+    "handoff.md",
+    "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14",
+    "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188",
+    "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31",
+    "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5",
+    "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b",
+    "rev28/ARCHITECTURE.md",
+    "rev28/CAPABILITY-MATRIX.md",
+    "rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift",
+    "rev28/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift",
+    "rev28/Sources/Rev28Core/Composition/PhaseAEvidence.swift",
+    "rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift",
+    "rev28/Sources/Rev28Core/Composition/ProductionActuationEnvironment.swift",
+    "rev28/Sources/Rev28Core/Identity/ProcessCodeIdentity.swift",
+    "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+    "rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift",
+    "rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift",
+    "rev28/Sources/Rev28Core/Transaction/StateEvidence.swift",
+    "rev28/Sources/rev28ctl/ProcessIdentity.swift",
+    "rev28/Sources/rev28ctl/main.swift",
+    "rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift",
+    "rev28/Tests/Rev28CoreTests/ComposedAdaptersTests.swift",
+    "rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift",
+    "rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift",
+    "rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+    "rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift",
+    "rev28/Tests/Rev28CoreTests/PhaseAEvidenceTests.swift",
+    "rev28/Tests/Rev28CoreTests/ProcessCodeIdentityTests.swift"
+  ],
+  "required_evidence": [
+    "G1_ACCEPTED_SOURCE_EVIDENCE",
+    "G2_EXACT_PUBLICATION",
+    "G3_PRESERVATION",
+    "G4_GIT_DELIVERY"
+  ],
+  "gate_specs": [
+    {
+      "gate_id": "G1_ACCEPTED_SOURCE_EVIDENCE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G2_EXACT_PUBLICATION",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G3_PRESERVATION",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G4_GIT_DELIVERY",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    }
+  ],
+  "capability_policy": {
+    "network": "PROXY_ALLOWLIST",
+    "browser": false,
+    "destinations": [
+      "https://github.com/s9008129/Line_backup.git"
+    ]
+  },
+  "retry_policy": {
+    "transient_read_only_retries": 2,
+    "delays_seconds": [
+      10,
+      30
+    ]
+  },
+  "resource_policy": {
+    "prompt_bytes": 65536,
+    "state_bytes": 524288,
+    "inspect_bytes": 16384,
+    "log_bytes": 134217728
+  },
+  "workflow_policy": {
+    "plan_review_required": false,
+    "independent_acceptance_required": false,
+    "max_parallel_read_only_helpers": 0,
+    "max_parallel_writers": 0,
+    "handoff_review_required": false
+  }
+}

@@ -181,15 +181,19 @@ public enum ExecutionStateEvidencePolicy {
         case .groupReady:
             return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup])
         case .targetAlbumLocated:
-            return Requirement(candidateIdentitySuffix: ":2024/05/13~05/17|57")
+            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup],
+                               candidateIdentitySuffix: ":2024/05/13~05/17|57")
         case .albumDetailVerified:
-            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup, "57張照片"])
+            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"])
         case .ellipsisLocated:
-            return Requirement(exactCandidateIdentity: "album-ellipsis")
+            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"],
+                               exactCandidateIdentity: "album-ellipsis")
         case .menuVerified:
-            return Requirement(requiredOcrTexts: StructuralLocators.lineAlbumMenuReference)
+            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"]
+                               + StructuralLocators.lineAlbumMenuReference)
         case .saveAllLocated:
-            return Requirement(exactCandidateIdentity: "儲存全部")
+            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"],
+                               exactCandidateIdentity: "儲存全部")
         case .chooserVerified, .destinationPrepared, .downloadConfirmed,
              .downloadInProgress, .filesystemStable, .contentVerified, .finalized:
             return Requirement()
@@ -223,7 +227,7 @@ public enum ExecutionStateEvidencePolicy {
             throw StateEvidenceError.nonMonotonicTimes
         }
         let requirement = requirement(for: expectedState)
-        for text in requirement.requiredOcrTexts where !artifact.ocrTexts.contains(text) {
+        for text in requirement.requiredOcrTexts where artifact.ocrTexts.filter({ $0 == text }).count != 1 {
             throw StateEvidenceError.missingIdentityText(state: expectedState.rawValue, text: text)
         }
         if let exact = requirement.exactCandidateIdentity {

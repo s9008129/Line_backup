@@ -18,11 +18,38 @@ final class NativeObservationSessionTests: XCTestCase {
         var captureClockAdvance: UInt64 = 0
         var onCaptureStart: (@Sendable () async -> Void)?
         var axIdentityOverride: AXIdentityRead?
+        var postProcessOverride: ProcessInstanceID?
+        var postSigningOverride: String?
+        var postSigningUnavailable = false
+        var signingUnavailable = false
+        var postIdentityClockAdvance: UInt64 = 0
+        var postAXIdentityOverride: AXIdentityRead?
+        var postProcessError: Error?
+        var postAXError: Error?
+        var cgInventorySequence: [[CGWindowSnapshot]]?
+        var replaceProcessDuringRead: String?
 
         private let lock = NSLock()
         private var epochCounter: UInt64 = 0
         private var now: UInt64 = 1_000
         private var enumerateCalls = 0
+        private var processCalls = 0
+        private var signingCalls = 0
+        private var axCalls = 0
+        private var cgCalls = 0
+        private var currentProcessStart: Int64 = 7
+
+        private func replaceProcess(at point: String) {
+            lock.lock()
+            defer { lock.unlock() }
+            if replaceProcessDuringRead == point { currentProcessStart = 8 }
+        }
+
+        var cgReadCount: Int {
+            lock.lock()
+            defer { lock.unlock() }
+            return cgCalls
+        }
 
         init(window: SCWindowSnapshot, bundleID: String, pid: Int32) {
             self.window = window
@@ -41,11 +68,20 @@ final class NativeObservationSessionTests: XCTestCase {
             enumerateCalls += 1
             let call = enumerateCalls
             lock.unlock()
+            if call == 1 { replaceProcess(at: "preInventory") }
             return call == 1 ? (preInventoryOverride ?? [window]) : (postInventoryOverride ?? [window])
         }
 
         func cgInventory() -> [CGWindowSnapshot] {
-            cgInventoryOverride ?? [
+            lock.lock()
+            cgCalls += 1
+            let call = cgCalls
+            lock.unlock()
+            replaceProcess(at: "cgInventory")
+            if let sequence = cgInventorySequence, !sequence.isEmpty {
+                return sequence[min(call - 1, sequence.count - 1)]
+            }
+            return cgInventoryOverride ?? [
                 CGWindowSnapshot(windowNumber: window.windowID, frame: window.frame, layer: 0, ownerPID: pid, name: window.title)
             ]
         }
@@ -88,7 +124,16 @@ final class NativeObservationSessionTests: XCTestCase {
         }
 
         func readAXIdentity(pid: Int32, windowID: UInt32) throws -> AXIdentityRead {
-            axIdentityOverride ?? AXIdentityRead(
+            lock.lock()
+            axCalls += 1
+            let call = axCalls
+            lock.unlock()
+            if call > 1 {
+                replaceProcess(at: "postAX")
+                if let postAXError { throw postAXError }
+                if let postAXIdentityOverride { return postAXIdentityOverride }
+            }
+            return axIdentityOverride ?? AXIdentityRead(
                 role: "AXWindow",
                 subrole: "AXStandardWindow",
                 title: "LINE",
@@ -97,11 +142,31 @@ final class NativeObservationSessionTests: XCTestCase {
         }
 
         func processInstance(pid: Int32) throws -> ProcessInstanceID {
-            ProcessInstanceID(pid: pid, startTimeSeconds: 7, startTimeMicroseconds: 0)
+            lock.lock()
+            processCalls += 1
+            let call = processCalls
+            if call > 1 { now += postIdentityClockAdvance }
+            let start = currentProcessStart
+            lock.unlock()
+            if call > 1 {
+                if let postProcessError { throw postProcessError }
+                if let postProcessOverride { return postProcessOverride }
+            }
+            return ProcessInstanceID(pid: pid, startTimeSeconds: start, startTimeMicroseconds: 0)
         }
 
         func signingIdentity(pid: Int32) throws -> String? {
-            "Developer ID Application: Fake (ABCDE12345)"
+            lock.lock()
+            signingCalls += 1
+            let call = signingCalls
+            lock.unlock()
+            if signingUnavailable { return nil }
+            if call > 1 {
+                replaceProcess(at: "postSigning")
+                if postSigningUnavailable { return nil }
+                if let postSigningOverride { return postSigningOverride }
+            }
+            return "Developer ID Application: Fake (ABCDE12345)"
         }
 
         func nextEpoch() -> UInt64 {
@@ -136,6 +201,7 @@ final class NativeObservationSessionTests: XCTestCase {
     private final class FakeOcr: @unchecked Sendable, OcrPerforming {
         var items: [OcrItem]
         var error: Error?
+        var onRecognize: (@Sendable () -> Void)?
 
         init(items: [OcrItem] = [], error: Error? = nil) {
             self.items = items
@@ -143,12 +209,166 @@ final class NativeObservationSessionTests: XCTestCase {
         }
 
         func recognize(image: CGImage) async throws -> [OcrItem] {
+            onRecognize?()
             if let error { throw error }
             return items
         }
     }
 
     private struct OcrFailure: Error {}
+    private struct IdentityReadFailure: Error {}
+
+    func testProcessReplacementDuringBoundaryReadsIsRefused() async throws {
+        // Other native facts stay identical, including PID, signature and
+        // window ID. Only the process instance changes inside a source read.
+        for point in ["preInventory", "postSigning", "postAX", "cgInventory"] {
+            let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
+            source.replaceProcessDuringRead = point
+            let session = NativeObservationSession(sessionID: "replacement-\(point)", source: source, ocr: FakeOcr())
+            do {
+                _ = try await session.capture(makeRequest())
+                XCTFail("same-PID replacement during \(point) was accepted")
+            } catch {
+                guard case .identityMismatch = error as? ObservationRefusal else {
+                    return XCTFail("unexpected refusal \(error)")
+                }
+            }
+            let count = await session.captureCount
+            XCTAssertEqual(count, 0, point)
+        }
+    }
+
+    func testPostCaptureProcessSigningAndAXChangesAreRefused() async throws {
+        for mode in ["process", "signing", "signingUnavailable", "ax"] {
+            let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
+            switch mode {
+            case "process": source.postProcessOverride = ProcessInstanceID(pid: 4242, startTimeSeconds: 8, startTimeMicroseconds: 0)
+            case "signing": source.postSigningOverride = "different-target-signature"
+            case "signingUnavailable": source.postSigningUnavailable = true
+            default: source.postAXIdentityOverride = AXIdentityRead(role: "AXWindow", subrole: "AXStandardWindow", title: "another surface", matchMethod: .windowNumber)
+            }
+            let session = NativeObservationSession(sessionID: "post-identity-\(mode)", source: source, ocr: FakeOcr())
+            do {
+                _ = try await session.capture(makeRequest())
+                XCTFail("\(mode) changed across capture but was accepted")
+            } catch {
+                guard case .identityMismatch = error as? ObservationRefusal else {
+                    return XCTFail("unexpected refusal \(error)")
+                }
+            }
+            let count = await session.captureCount
+            XCTAssertEqual(count, 0)
+        }
+    }
+
+    func testPostCaptureIdentityReadErrorsAreRefused() async throws {
+        for mode in ["process", "ax"] {
+            let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
+            if mode == "process" { source.postProcessError = IdentityReadFailure() }
+            else { source.postAXError = IdentityReadFailure() }
+            let session = NativeObservationSession(sessionID: "post-read-error-\(mode)", source: source, ocr: FakeOcr())
+            do {
+                _ = try await session.capture(makeRequest())
+                XCTFail("a failed post identity read was accepted")
+            } catch {
+                guard case .observerFailure = error as? ObservationRefusal else {
+                    return XCTFail("unexpected refusal \(error)")
+                }
+            }
+            let count = await session.captureCount
+            XCTAssertEqual(count, 0)
+        }
+    }
+
+    func testOneExplicitCGSnapshotIsSharedByIdentityAndBundle() async throws {
+        let window = makeWindow()
+        let source = FakeObservationSource(window: window, bundleID: "jp.naver.line.mac", pid: 4242)
+        let first = CGWindowSnapshot(windowNumber: window.windowID, frame: window.frame, layer: 0, ownerPID: 4242, name: "LINE")
+        let later = CGWindowSnapshot(windowNumber: window.windowID, frame: CGRect(x: 500, y: 60, width: 400, height: 600), layer: 0, ownerPID: 4242, name: "LINE")
+        source.cgInventorySequence = [[first], [later]]
+        let session = NativeObservationSession(sessionID: "one-explicit-cg", source: source, ocr: FakeOcr())
+        let bundle = try await session.capture(makeRequest())
+        try bundle.validated()
+        XCTAssertEqual(source.cgReadCount, 1, "counts explicit source.cgInventory calls, not AX adapter internals")
+        XCTAssertEqual(bundle.cgInventory, [first])
+        XCTAssertEqual(bundle.window.cgEntry.frame, bundle.cgInventory[0].frame)
+    }
+
+    func testCGDuplicateAndInvalidOrDriftedGeometryAreRefused() async throws {
+        let window = makeWindow()
+        let valid = CGWindowSnapshot(windowNumber: window.windowID, frame: window.frame, layer: 0, ownerPID: 4242, name: "LINE")
+        let frames = [
+            CGRect(x: 51, y: 60, width: 400, height: 600),
+            CGRect(x: CGFloat.nan, y: 60, width: 400, height: 600),
+            CGRect(x: 50, y: 60, width: CGFloat.infinity, height: 600),
+            CGRect(x: 50, y: 60, width: 0, height: 600),
+        ]
+        var inventories = [[valid, valid]]
+        inventories += frames.map { [CGWindowSnapshot(windowNumber: window.windowID, frame: $0, layer: 0, ownerPID: 4242, name: "LINE")] }
+        for (index, inventory) in inventories.enumerated() {
+            let source = FakeObservationSource(window: window, bundleID: "jp.naver.line.mac", pid: 4242)
+            source.cgInventoryOverride = inventory
+            let session = NativeObservationSession(sessionID: "invalid-cg-\(index)", source: source, ocr: FakeOcr())
+            do {
+                _ = try await session.capture(makeRequest())
+                XCTFail("ambiguous or inconsistent CG geometry was accepted: \(index)")
+            } catch let refusal as ObservationRefusal {
+                guard case .inventoryChanged = refusal else { return XCTFail("unexpected \(refusal)") }
+            }
+            let count = await session.captureCount
+            XCTAssertEqual(count, 0)
+        }
+    }
+
+    func testCGGeometryWithinExistingHalfPointTolerancePasses() async throws {
+        let window = makeWindow()
+        let source = FakeObservationSource(window: window, bundleID: "jp.naver.line.mac", pid: 4242)
+        source.cgInventoryOverride = [CGWindowSnapshot(windowNumber: window.windowID, frame: CGRect(x: 50.5, y: 60, width: 400, height: 600), layer: 0, ownerPID: 4242, name: "LINE")]
+        let session = NativeObservationSession(sessionID: "cg-tolerance", source: source, ocr: FakeOcr())
+        let bundle = try await session.capture(makeRequest())
+        try bundle.validated()
+    }
+
+    func testStableUnavailableSigningRemainsUnknown() async throws {
+        let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
+        source.signingUnavailable = true
+        let session = NativeObservationSession(sessionID: "unknown-signing", source: source, ocr: FakeOcr())
+        let bundle = try await session.capture(makeRequest())
+        try bundle.validated()
+        XCTAssertNil(bundle.signingIdentity)
+        XCTAssertNil(bundle.postSigningIdentity)
+        XCTAssertEqual(bundle.process, bundle.postProcess)
+    }
+
+    func testPostIdentityReadDoesNotExtendAbsoluteDeadline() async throws {
+        let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
+        source.postIdentityClockAdvance = 2_000
+        let session = NativeObservationSession(sessionID: "post-identity-deadline", source: source, ocr: FakeOcr())
+        do {
+            _ = try await session.capture(makeRequest(budget: 1_500))
+            XCTFail("post identity read time cannot extend the original deadline")
+        } catch {
+            guard case .deadlineExceeded = error as? ObservationRefusal else { return XCTFail("unexpected \(error)") }
+        }
+        let count = await session.captureCount
+        XCTAssertEqual(count, 0)
+    }
+
+    func testConflictingDuplicateSCKWindowIDIsRefused() async throws {
+        let window = makeWindow()
+        let conflict = SCWindowSnapshot(windowID: window.windowID, frame: window.frame, windowLayer: 0, title: "another owner", isOnScreen: true, ownerPID: 9999, ownerBundleID: "another.application", ownerName: "another")
+        let source = FakeObservationSource(window: window, bundleID: "jp.naver.line.mac", pid: 4242)
+        source.postInventoryOverride = [window, conflict]
+        let session = NativeObservationSession(sessionID: "duplicate-sck-id", source: source, ocr: FakeOcr())
+        do {
+            _ = try await session.capture(makeRequest())
+            XCTFail("a duplicated ID with conflicting ownership is not a coherent inventory")
+        } catch {
+            guard case .inventoryChanged = error as? ObservationRefusal else { return XCTFail("unexpected \(error)") }
+        }
+        let count = await session.captureCount
+        XCTAssertEqual(count, 0)
+    }
 
     private func makeWindow() -> SCWindowSnapshot {
         SCWindowSnapshot(
@@ -309,6 +529,31 @@ final class NativeObservationSessionTests: XCTestCase {
                 return XCTFail("unexpected refusal \(refusal)")
             }
         }
+    }
+
+    func testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget() async throws {
+        let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
+        let ocr = FakeOcr()
+        ocr.onRecognize = { source.advanceClock(by: 2_000) }
+        let session = NativeObservationSession(sessionID: "ocr-deadline", source: source, ocr: ocr)
+        do {
+            _ = try await session.capture(makeRequest(budget: 1_500))
+            XCTFail("OCR cannot extend the capture deadline")
+        } catch {
+            XCTAssertEqual(error as? ObservationRefusal, .deadlineExceeded(stage: "ocr"))
+        }
+        for budget in [UInt64(0), UInt64.max] {
+            do {
+                _ = try await session.capture(makeRequest(budget: budget))
+                XCTFail("invalid budget \(budget) must refuse")
+            } catch {
+                guard case .invalidBundle = error as? ObservationRefusal else {
+                    return XCTFail("unexpected \(error)")
+                }
+            }
+        }
+        let completed = await session.captureCount
+        XCTAssertEqual(completed, 0)
     }
 
     func testConcurrentCaptureOnOneSessionIsRefused() async throws {

@@ -14,6 +14,18 @@ final class FakeLineScene: @unchecked Sendable {
 
     private let lock = NSLock()
     private var stage: Stage = .albumList
+    private var overriddenOCR: [OcrItem]?
+    private var overriddenImage: CGImage?
+
+    var ocrOverride: [OcrItem]? {
+        get { lock.withLock { overriddenOCR } }
+        set { lock.withLock { overriddenOCR = newValue } }
+    }
+
+    var imageOverride: CGImage? {
+        get { lock.withLock { overriddenImage } }
+        set { lock.withLock { overriddenImage = newValue } }
+    }
 
     var current: Stage {
         get {
@@ -29,6 +41,7 @@ final class FakeLineScene: @unchecked Sendable {
     }
 
     var ocrItems: [OcrItem] {
+        if let ocrOverride { return ocrOverride }
         switch current {
         case .albumList:
             return [
@@ -45,13 +58,18 @@ final class FakeLineScene: @unchecked Sendable {
             ]
         case .menuOpen:
             let rows = StructuralLocators.lineAlbumMenuReference
-            return (0..<rows.count).map { index in
+            return [
+                item(LiveExecutionEngine.targetGroup, CGRect(x: 20, y: 20, width: 160, height: 18)),
+                item("2024/05/13~05/17", CGRect(x: 20, y: 100, width: 140, height: 20)),
+                item("57張照片", CGRect(x: 20, y: 140, width: 100, height: 18)),
+            ] + (0..<rows.count).map { index in
                 item(rows[index], CGRect(x: 220, y: 60 + CGFloat(index) * 50, width: 120, height: 24))
             }
         }
     }
 
     var image: CGImage {
+        if let imageOverride { return imageOverride }
         switch current {
         case .albumList:
             return Self.plainImage()
@@ -75,18 +93,18 @@ final class FakeLineScene: @unchecked Sendable {
         )
     }
 
-    static func plainImage(width: Int = 400, height: Int = 600) -> CGImage {
+    static func plainImage(width: Int = 400, height: Int = 600, red: CGFloat = 0.92) -> CGImage {
         let context = makeContext(width: width, height: height)
-        context.setFillColor(CGColor(red: 0.92, green: 0.92, blue: 0.94, alpha: 1))
+        context.setFillColor(CGColor(red: red, green: 0.92, blue: 0.94, alpha: 1))
         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
         return context.makeImage()!
     }
 
     /// Three stacked compact dots in the reviewed album-header band above the
     /// title box, so the ellipsis pixel detector finds a unique triple.
-    static func imageWithAlbumEllipsis(width: Int = 400, height: Int = 600) -> CGImage {
+    static func imageWithAlbumEllipsis(width: Int = 400, height: Int = 600, red: CGFloat = 0.92) -> CGImage {
         let context = makeContext(width: width, height: height)
-        context.setFillColor(CGColor(red: 0.92, green: 0.92, blue: 0.94, alpha: 1))
+        context.setFillColor(CGColor(red: red, green: 0.92, blue: 0.94, alpha: 1))
         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
         context.setFillColor(CGColor(red: 0.05, green: 0.05, blue: 0.05, alpha: 1))
         for index in 0..<3 {
@@ -141,7 +159,7 @@ final class FakeObservationSource: @unchecked Sendable, ObservationSource {
 
     private let lock = NSLock()
     private var epochCounter: UInt64 = 0
-    private var now: UInt64 = 1_000
+    private var now: UInt64 = 100_000_000_000
     private var enumerateCalls = 0
     private var captureCountValue = 0
 
@@ -266,12 +284,16 @@ final class FakeActuationEnvironment: @unchecked Sendable, ActuationEnvironment 
     var frontmost = true
     var uptimeValue: Double = 100
     var onClick: (@Sendable (String) -> Void)?
+    var onHover: (@Sendable () -> Void)?
     /// Simulates a failed post-hover revalidation from the OS seam (a fresh
     /// observation that no longer matches the permit) so the composed path's
     /// zero-down/up refusal can be proven.
     var postHoverRevalidationFailure: String?
     private let lock = NSLock()
     private var posted: [String] = []
+    private var mouseEvents: [CGEventType] = []
+
+    var postedMouseEvents: [CGEventType] { lock.withLock { mouseEvents } }
 
     var postedActions: [String] {
         lock.lock()
@@ -282,40 +304,6 @@ final class FakeActuationEnvironment: @unchecked Sendable, ActuationEnvironment 
     func applicationActive(pid: Int32) -> Bool { active }
     func targetFrontmost(pid: Int32) -> Bool { frontmost }
     func uptime() -> Double { uptimeValue }
-
-    /// Substitution for the live SCK/CG freshness read: the scripted scene's
-    /// window and the candidate's own binding are the fresh facts, so the
-    /// production permit/geometry decisions in `mintPermit` still run.
-    func readinessObservation(
-        identity: WindowIdentity,
-        candidate: StructuralCandidate
-    ) async throws -> ReadinessObservation {
-        let point = candidate.pointCapturePx
-        let safe = candidate.safeRectCapturePx
-        let width = max(safe.maxX, point.x) + 100
-        let height = max(safe.maxY, point.y) + 100
-        return ReadinessObservation(
-            applicationActive: active,
-            targetFrontmost: frontmost,
-            freshWindow: FreshWindowObservation(
-                bundleID: identity.bundleID,
-                process: identity.process,
-                windowID: identity.windowID,
-                frame: identity.cgEntry.frame,
-                layer: identity.cgEntry.layer,
-                isOnScreen: true
-            ),
-            currentEpoch: identity.captureEpoch,
-            currentBinding: candidate.binding,
-            captureGeometry: CaptureGeometry(
-                windowFrame: identity.cgEntry.frame,
-                captureBBox: identity.cgEntry.frame,
-                scale: 1
-            ),
-            captureImageSize: CGSize(width: width, height: height),
-            observedAtUptime: uptimeValue
-        )
-    }
 
     func postReversibleClick(
         permit: ReadinessPermit,
@@ -332,12 +320,15 @@ final class FakeActuationEnvironment: @unchecked Sendable, ActuationEnvironment 
             currentBinding: binding,
             intent: .reversible(owner, action: action),
             postHoverRevalidation: postHoverRevalidation,
-            sink: { _, _ in },
+            sink: { event, _ in
+                self.lock.withLock { self.mouseEvents.append(event.type) }
+                if event.type == .mouseMoved { self.onHover?() }
+            },
             readinessCheck: { _, _ in true },
             processIdentityCheck: { _, _ in true },
             postEventAccessCheck: { true },
             addressedSurfaceCheck: { _, _, _ in true },
-            now: uptimeValue
+            clock: { self.uptimeValue }
         )
         lock.lock()
         posted.append(action)

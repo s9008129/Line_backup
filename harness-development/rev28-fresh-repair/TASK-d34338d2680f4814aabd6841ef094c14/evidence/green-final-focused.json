@@ -1,0 +1,21 @@
+{
+  "command": [
+    "swift",
+    "test",
+    "--package-path",
+    "rev28",
+    "--filter",
+    "NativeObservationSessionTests|ProcessCodeIdentityTests"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "exit_code": 0,
+  "duration_seconds": 2.256,
+  "at_utc": "2026-10-04T11:01:07.398606+00:00",
+  "log": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/green-final-focused.log",
+  "log_bytes": 10291,
+  "log_sha256": "d78d0af2926d66009b00f85101ceb1fe9dd7700d96fdaf29bfe4909e7d93503a",
+  "tests_summary": {
+    "tests": 21,
+    "failures": 0
+  }
+}

@@ -1,7 +1,6 @@
 import AppKit
 import CoreGraphics
 import Foundation
-import ScreenCaptureKit
 
 // MARK: - Quartz actuator (plan §ARCHITECTURE §5)
 //
@@ -173,6 +172,10 @@ public struct ReadinessObservation: Sendable {
     public let captureGeometry: CaptureGeometry
     public let captureImageSize: CGSize
     public let observedAtUptime: Double
+    fileprivate var observationRunID: String?
+    fileprivate var observationSessionID: String?
+    fileprivate var configuration: CaptureConfiguration?
+    fileprivate var geometryStateKey: String?
 
     public init(applicationActive: Bool, targetFrontmost: Bool, freshWindow: FreshWindowObservation,
                 currentEpoch: UInt64, currentBinding: SurfaceBinding, captureGeometry: CaptureGeometry,
@@ -187,72 +190,33 @@ public struct ReadinessObservation: Sendable {
         self.observedAtUptime = observedAtUptime
     }
 
-    public static func captureLive(identity: WindowIdentity, candidate: StructuralCandidate) async throws -> ReadinessObservation {
-        let pid = pid_t(identity.process.pid)
-        guard let application = NSRunningApplication(processIdentifier: pid) else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("target process is not running")
-        }
-        guard let applicationBundleID = application.bundleIdentifier,
-              applicationBundleID == identity.bundleID,
-              let liveProcess = ProcessInstanceID.current(pid: identity.process.pid),
-              liveProcess == identity.process else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("target bundle or process instance changed")
-        }
-        let active = application.isActive
-        let frontmost = NSWorkspace.shared.frontmostApplication?.processIdentifier == pid
-        let content = try await WindowSensor.shareableContent(onScreenWindowsOnly: true)
-        let snapshots = WindowSensor.snapshots(from: content)
-        let candidates = WindowSensor.mainWindowCandidates(in: snapshots, bundleID: identity.bundleID, pid: identity.process.pid)
-        guard candidates.count == 1, let window = candidates.first,
-              window.windowID == identity.windowID else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("fresh SC window census is ambiguous or changed")
-        }
-        let cgMatches = CGWindowInventory.onScreenWindows().filter {
-            $0.windowNumber == identity.windowID && $0.ownerPID == identity.process.pid && $0.layer == 0
-        }
-        guard cgMatches.count == 1 else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("fresh CG window census is ambiguous or missing")
-        }
-        guard let liveWindow = content.windows.first(where: { $0.windowID == window.windowID }) else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("fresh SC window handle unavailable")
-        }
-        let screenshotConfiguration = SCScreenshotConfiguration()
-        screenshotConfiguration.includeChildWindows = false
-        screenshotConfiguration.ignoreShadows = true
-        screenshotConfiguration.showsCursor = false
-        guard let image = try await SCScreenshotManager.captureScreenshot(
-            contentFilter: SCContentFilter(desktopIndependentWindow: liveWindow),
-            configuration: screenshotConfiguration
-        ).sdrImage,
-        FrameCaptureSupport.pngSHA256(of: image) == candidate.binding.frameSHA256,
-        candidate.binding.frameSHA256 == identity.captureImageSHA256 else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("candidate is not bound to the fresh live frame")
-        }
-        let pointPixelScale = Double(SCContentFilter(desktopIndependentWindow: liveWindow).pointPixelScale)
-        guard pointPixelScale.isFinite, pointPixelScale > 0 else {
-            throw QuartzActuatorError.dispatchRefusedByPrecondition("live capture scale is invalid")
-        }
-        let fresh = FreshWindowObservation(
-            bundleID: applicationBundleID,
-            process: liveProcess,
-            windowID: window.windowID,
-            frame: window.frame,
-            layer: window.windowLayer,
-            isOnScreen: window.isOnScreen
-        )
-        return ReadinessObservation(
-            applicationActive: active,
-            targetFrontmost: frontmost,
-            freshWindow: fresh,
-            currentEpoch: identity.captureEpoch,
-            currentBinding: candidate.binding,
-            captureGeometry: CaptureGeometry(
-                windowFrame: window.frame,
-                captureBBox: window.frame,
-                scale: pointPixelScale
+    /// Production readiness is a projection of the retained session image,
+    /// including its original capture time. Projection cannot renew its age.
+    public init(bundle: ObservationBundle, applicationActive: Bool, targetFrontmost: Bool) throws {
+        try bundle.validated()
+        self.init(
+            applicationActive: applicationActive, targetFrontmost: targetFrontmost,
+            freshWindow: FreshWindowObservation(
+                bundleID: bundle.window.bundleID, process: bundle.process,
+                windowID: bundle.window.windowID, frame: bundle.window.windowFrame,
+                layer: bundle.window.cgEntry.layer, isOnScreen: true
             ),
-            captureImageSize: CGSize(width: image.width, height: image.height),
-            observedAtUptime: ProcessInfo.processInfo.systemUptime
+            currentEpoch: bundle.epoch, currentBinding: bundle.surfaceBinding,
+            captureGeometry: CaptureGeometry(windowFrame: bundle.window.windowFrame,
+                                            captureBBox: bundle.frame.actualBBoxPt, scale: bundle.frame.scale),
+            captureImageSize: CGSize(width: bundle.frame.imageWidthPx, height: bundle.frame.imageHeightPx),
+            observedAtUptime: Double(bundle.capturedAtMonotonicNanos) / 1_000_000_000
+        )
+        observationRunID = bundle.runID
+        observationSessionID = bundle.sessionID
+        configuration = bundle.frame.configuration
+        geometryStateKey = bundle.frame.stateKey
+    }
+
+    @available(*, deprecated, message: "Use readiness projected from a fresh NativeObservationSession bundle")
+    public static func captureLive(identity: WindowIdentity, candidate: StructuralCandidate) async throws -> ReadinessObservation {
+        throw QuartzActuatorError.dispatchRefusedByPrecondition(
+            "readiness requires a retained session observation with fresh localization and frozen geometry"
         )
     }
 }
@@ -271,6 +235,10 @@ public final class ReadinessPermit: @unchecked Sendable {
     fileprivate let safeRectCapturePx: CGRect
     fileprivate let captureImageSize: CGSize
     fileprivate let mintedAt: Double
+    fileprivate var observationRunID: String?
+    fileprivate var observationSessionID: String?
+    fileprivate var configuration: CaptureConfiguration?
+    fileprivate var geometryStateKey: String?
     private let lock = NSLock()
     private var consumed = false
 
@@ -301,12 +269,18 @@ public final class ReadinessPermit: @unchecked Sendable {
         }
         return screenPoint
     }
+
+    fileprivate func requireUnexpired(now: Double) throws {
+        guard now >= mintedAt, now - mintedAt <= 1.0 else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("permit expired before mouseDown")
+        }
+    }
 }
 
 public enum DispatchReadinessGate {
     public static func mintPermit(identity: WindowIdentity, candidate: StructuralCandidate,
                                   observation: ReadinessObservation, maxFrameDeltaPt: Double = 0.5,
-                                  now: Double = ProcessInfo.processInfo.systemUptime) throws -> ReadinessPermit {
+                                  now: Double = Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000) throws -> ReadinessPermit {
         guard observation.applicationActive else { throw QuartzActuatorError.dispatchRefusedByPrecondition("application inactive") }
         guard observation.targetFrontmost else { throw QuartzActuatorError.dispatchRefusedByPrecondition("target not frontmost") }
         guard WindowIdentityValidator.isFresh(identity: identity, against: observation.freshWindow,
@@ -351,7 +325,7 @@ public enum DispatchReadinessGate {
             throw QuartzActuatorError.dispatchRefusedByPrecondition("readiness observation stale")
         }
         let screen = observation.captureGeometry.screenPoint(fromCapturePixel: point)
-        return ReadinessPermit(
+        let permit = ReadinessPermit(
             screenPoint: screen,
             targetPID: identity.process.pid,
             windowID: identity.windowID,
@@ -363,6 +337,53 @@ public enum DispatchReadinessGate {
             captureImageSize: observation.captureImageSize,
             mintedAt: current
         )
+        permit.observationRunID = observation.observationRunID
+        permit.observationSessionID = observation.observationSessionID
+        permit.configuration = observation.configuration
+        permit.geometryStateKey = observation.geometryStateKey
+        return permit
+    }
+
+    /// A redraw is acceptable only after a new retained capture has localized
+    /// the same target. The already-posted hover point remains the click point.
+    public static func revalidateAfterHover(
+        permit: ReadinessPermit, freshBundle: ObservationBundle,
+        applicationActive: Bool, targetFrontmost: Bool,
+        now: Double = Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000
+    ) throws {
+        try permit.requireUnexpired(now: now)
+        try freshBundle.validated()
+        guard let candidate = freshBundle.candidate,
+              candidate.identity == permit.candidateIdentity,
+              freshBundle.runID == permit.observationRunID,
+              freshBundle.sessionID == permit.observationSessionID,
+              freshBundle.epoch > permit.binding.captureEpoch,
+              freshBundle.process == permit.binding.process,
+              freshBundle.window.windowID == permit.windowID,
+              freshBundle.window.bundleID == permit.binding.bundleID,
+              freshBundle.frame.configuration == permit.configuration,
+              freshBundle.frame.stateKey == permit.geometryStateKey else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("fresh localization does not match the permitted action")
+        }
+        let observation = try ReadinessObservation(
+            bundle: freshBundle, applicationActive: applicationActive, targetFrontmost: targetFrontmost
+        )
+        let freshPermit = try mintPermit(
+            identity: freshBundle.window, candidate: candidate, observation: observation, now: now
+        )
+        let frame = freshBundle.window.windowFrame
+        guard abs(Double(frame.minX - permit.windowFrame.minX)) <= 0.5,
+              abs(Double(frame.minY - permit.windowFrame.minY)) <= 0.5,
+              abs(Double(frame.width - permit.windowFrame.width)) <= 0.5,
+              abs(Double(frame.height - permit.windowFrame.height)) <= 0.5,
+              abs(freshPermit.screenPoint.x - permit.screenPoint.x) <= 0.5,
+              abs(freshPermit.screenPoint.y - permit.screenPoint.y) <= 0.5,
+              CaptureGeometryRules.isDispatchableCapturePixels(
+                point: observation.captureGeometry.capturePixelPoint(fromScreen: permit.screenPoint),
+                safeRect: candidate.safeRectCapturePx, captureScale: observation.captureGeometry.scale
+              ) else {
+            throw QuartzActuatorError.dispatchRefusedByPrecondition("original click point is no longer inside the freshly localized safe target")
+        }
     }
 
     /// Plan C5 post-hover revalidation: re-run every mint-time freshness fact
@@ -376,7 +397,7 @@ public enum DispatchReadinessGate {
         freshObservation: ReadinessObservation,
         maxFrameDeltaPt: Double = 0.5,
         maxPointDeltaPt: Double = 0.5,
-        now: Double = ProcessInfo.processInfo.systemUptime
+        now: Double = Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000
     ) throws {
         guard freshObservation.applicationActive else {
             throw QuartzActuatorError.dispatchRefusedByPrecondition("application inactive after the hover")
@@ -479,8 +500,10 @@ public enum GatedQuartzActuator {
                                  addressedSurfaceCheck: @escaping (Int32, UInt32, ScreenPoint) -> Bool = { pid, windowID, point in
                                      GatedQuartzActuator.topmostSurfaceMatchesTarget(at: point, windowID: windowID, pid: pid)
                                  },
-                                 now: Double = ProcessInfo.processInfo.systemUptime) async throws {
-        let point = try permit.consume(now: now)
+                                 now: Double? = nil,
+                                 clock: @escaping () -> Double = { Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000 }) async throws {
+        func currentTime() -> Double { now ?? clock() }
+        let point = try permit.consume(now: currentTime())
         guard permit.binding == currentBinding else {
             throw QuartzActuatorError.dispatchRefusedByPrecondition("structural candidate binding is no longer current")
         }
@@ -517,12 +540,13 @@ public enum GatedQuartzActuator {
               let up = CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: point.cgPoint, mouseButton: .left) else {
             throw QuartzActuatorError.eventCreationFailed
         }
+        let revalidationAttemptID: String
         switch intent {
         case let .reversible(owner, action):
-            try owner.recordReversibleDispatch(action: action)
+            revalidationAttemptID = try owner.recordReversibleDispatchAttempt(action: action)
         case let .saveAll(owner):
             try owner.reserveSaveAll()
-            try owner.markSaveAllAttempted()
+            revalidationAttemptID = try owner.markSaveAllAttemptedWithRevalidationID()
         }
         sink(move, .cghidEventTap)
         // Plan C5: after the hover, revalidate the full fact set and the
@@ -531,15 +555,21 @@ public enum GatedQuartzActuator {
         // guards — before mouseDown. Any failure consumes the permit, durably
         // records the failed candidate revalidation and posts zero down/up.
         do {
+            try Task.checkCancellation()
             try await postHoverRevalidation()
             try liveGuards()
+            try permit.requireUnexpired(now: currentTime())
+            try Self.recordRevalidationOutcome(intent: intent, passed: true, attemptID: revalidationAttemptID)
+            try permit.requireUnexpired(now: currentTime())
+            try Task.checkCancellation()
+            try liveGuards()
+            try permit.requireUnexpired(now: currentTime())
         } catch {
-            Self.recordRevalidationOutcome(intent: intent, passed: false)
+            try Self.recordRevalidationOutcome(intent: intent, passed: false, attemptID: revalidationAttemptID)
             throw QuartzActuatorError.dispatchRefusedByPrecondition(
                 "post-hover revalidation failed; mouseDown was not posted (\(error))"
             )
         }
-        Self.recordRevalidationOutcome(intent: intent, passed: true)
         sink(down, .cghidEventTap)
         usleep(30_000)
         sink(up, .cghidEventTap)
@@ -548,12 +578,12 @@ public enum GatedQuartzActuator {
     /// Plan C4: persist every candidate-revalidation outcome in the owner's
     /// ledger so two consecutive failures durably abort instead of living in
     /// memory. The durable record is written before the refusal surfaces.
-    static func recordRevalidationOutcome(intent: GatedActuationIntent, passed: Bool) {
+    static func recordRevalidationOutcome(intent: GatedActuationIntent, passed: Bool, attemptID: String) throws {
         switch intent {
         case let .reversible(owner, action):
-            try? owner.recordCandidateRevalidation(blockerKey: action, passed: passed)
+            try owner.recordCandidateRevalidation(blockerKey: action, passed: passed, attemptID: attemptID)
         case let .saveAll(owner):
-            try? owner.recordCandidateRevalidation(blockerKey: "saveAll", passed: passed)
+            try owner.recordCandidateRevalidation(blockerKey: "saveAll", passed: passed, attemptID: attemptID)
         }
     }
 }

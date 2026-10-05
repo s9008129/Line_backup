@@ -1,0 +1,18 @@
+{
+  "verdict": "PASS",
+  "snapshot_entries_checked": 6439,
+  "all_preexisting_bytes_and_modes_preserved_except_authorized_root_handoff": true,
+  "authorized_change": [
+    {
+      "path": "handoff.md",
+      "before_sha256": "d3ce7cedb70dd0e55274e6e92369a84a6882ef2ed503275152c84a3740b90c08",
+      "after_sha256": "b5c7b92ce1bd694b1bdebef29ec61c71e0004b4e1ec602ee9211d912cd4b19e5",
+      "mode_unchanged": true
+    }
+  ],
+  "head_and_branch_unchanged": true,
+  "real_index_empty": true,
+  "config_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+  "state_sha256": "1093dd3065f7ce80ce4cfcb97081cabbb9b4334a53eeb77d1233985e5432acb9",
+  "scope": "All initial changed/untracked regular files and symlink payloads plus root handoff; Git metadata intentionally not compared."
+}

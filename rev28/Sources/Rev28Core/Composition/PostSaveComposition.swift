@@ -237,7 +237,7 @@ extension ComposedNativeAdapter {
                 detail: "pre-dispatch census is empty; chooser affirmation would widen to refusal"
             )
         }
-        let observation = try await environment.readinessObservation(identity: bundle.window, candidate: candidate)
+        let observation = try readiness(from: bundle)
         let permit = try DispatchReadinessGate.mintPermit(
             identity: bundle.window,
             candidate: candidate,
@@ -263,14 +263,7 @@ extension ComposedNativeAdapter {
         // Plan C5: the post-hover revalidation re-runs the fresh live
         // observation path and requires it to still match the permit's bound
         // candidate/window/geometry before mouseDown.
-        let revalidation: @Sendable () async throws -> Void = { [environment] in
-            let fresh = try await environment.readinessObservation(identity: bundle.window, candidate: candidate)
-            try DispatchReadinessGate.revalidateAfterHover(
-                permit: permit,
-                freshObservation: fresh,
-                now: environment.uptime()
-            )
-        }
+        let revalidation = postHoverRevalidation(permit: permit, original: bundle, owner: owner)
         postSave.markDispatchBoundary()
         // Plan C6: bind the chooser postcondition timer to this dispatch
         // boundary, not to a later adapter invocation.

@@ -1,0 +1,126 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+  "run_id": "2dd8c7f6-6d1e-48a7-96e9-4824fdca7824",
+  "role": "PLANNER",
+  "stage": "PLAN",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "PLAN_REVIEW",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G1_PLAN_REVIEW",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G2_REGRESSIONS",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G3_LOCAL_CHECKS",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G4_PRESERVATION",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G5_INDEPENDENT_ACCEPTANCE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    }
+  ],
+  "evidence_ids": [
+    "fresh-root-plan",
+    "fresh-root-contract",
+    "fresh-root-baseline"
+  ],
+  "plan_sha256": "a6ec005c49cdd524d12660a52e9dc2465837cacb52d044226fe50d99e89b091a",
+  "handoff_sha256": null,
+  "source_sha256": "0c953e03328c2786665df2acb434cf3d261976a7ca3661bb8ceeaac9a2a03b7b",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "2dd8c7f6-6d1e-48a7-96e9-4824fdca7824",
+      "role": "PLANNER",
+      "stage": "PLAN",
+      "source_sha256": "0c953e03328c2786665df2acb434cf3d261976a7ca3661bb8ceeaac9a2a03b7b",
+      "evidence_id": "fresh-root-plan",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/plan.md",
+      "bytes": 7396,
+      "sha256": "a6ec005c49cdd524d12660a52e9dc2465837cacb52d044226fe50d99e89b091a",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Actual frozen plan from current source evidence."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "2dd8c7f6-6d1e-48a7-96e9-4824fdca7824",
+      "role": "PLANNER",
+      "stage": "PLAN",
+      "source_sha256": "0c953e03328c2786665df2acb434cf3d261976a7ca3661bb8ceeaac9a2a03b7b",
+      "evidence_id": "fresh-root-contract",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/plan-contract.json",
+      "bytes": 2822,
+      "sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Literal reviewed scopes and required gates."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "2dd8c7f6-6d1e-48a7-96e9-4824fdca7824",
+      "role": "PLANNER",
+      "stage": "PLAN",
+      "source_sha256": "0c953e03328c2786665df2acb434cf3d261976a7ca3661bb8ceeaac9a2a03b7b",
+      "evidence_id": "fresh-root-baseline",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-source.json",
+      "bytes": 9242,
+      "sha256": "b11f448743be6d99eee7883027cae6a4cd61020e685153bf3963f641c2df3b70",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Current pre-edit source binding; historical PASS is not reused."
+    }
+  ],
+  "plan_contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+  "analysis": {
+    "facts": [
+      "Fresh source inspection found no post-capture process/signing/AX read, two explicit session CG inventory reads, and caller-signature fallback for unavailable target signing.",
+      "The plan and contract were frozen before independent review and product edits.",
+      "This record describes actual earlier planning retrospectively; it does not claim a controller-admitted planner run."
+    ],
+    "inferences": [
+      "These identity semantics require Critical routing and independent review.",
+      "A bounded local repair can precede real LINE calibration."
+    ],
+    "unknowns": [
+      "Full live LINE acceptance and production authority/location are unknown.",
+      "Root actual model and native transport/admission receipts are unavailable."
+    ],
+    "evidence": [
+      "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/plan.md",
+      "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/plan-contract.json",
+      "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-source.json"
+    ],
+    "confidence": "High for directly recorded local facts; live and native-controller claims remain unknown."
+  },
+  "handoff_summary": "Fresh local repair planned and frozen. This advisory record does not advance controller state or authorize downloads. Independent Plan Review already has its separately observed record.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 0,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Fresh source inspection and bounded planning; no product repair attempt.",
+    "information_gain": true,
+    "stuck": false
+  }
+}

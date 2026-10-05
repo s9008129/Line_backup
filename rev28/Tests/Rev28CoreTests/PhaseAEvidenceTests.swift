@@ -46,11 +46,11 @@ final class PhaseAEvidenceTests: XCTestCase {
             StateSpec(state: .appReady, ocrTexts: [], cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
             StateSpec(state: .groupReady, ocrTexts: [LiveExecutionEngine.targetGroup], cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
             StateSpec(state: .albumListReady, ocrTexts: [], cardRegionCount: 2, candidateIdentity: nil, candidateRefusal: nil),
-            StateSpec(state: .targetAlbumLocated, ocrTexts: ["2024/05/13~05/17"], cardRegionCount: 3, candidateIdentity: "album-card:2024/05/13~05/17|57", candidateRefusal: nil),
-            StateSpec(state: .albumDetailVerified, ocrTexts: [LiveExecutionEngine.targetGroup, "57張照片"], cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
-            StateSpec(state: .ellipsisLocated, ocrTexts: [], cardRegionCount: 0, candidateIdentity: "album-ellipsis", candidateRefusal: nil),
-            StateSpec(state: .menuVerified, ocrTexts: StructuralLocators.lineAlbumMenuReference, cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
-            StateSpec(state: .saveAllLocated, ocrTexts: ["儲存全部"], cardRegionCount: 0, candidateIdentity: "儲存全部", candidateRefusal: nil),
+            StateSpec(state: .targetAlbumLocated, ocrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17"], cardRegionCount: 3, candidateIdentity: "album-card:2024/05/13~05/17|57", candidateRefusal: nil),
+            StateSpec(state: .albumDetailVerified, ocrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"], cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
+            StateSpec(state: .ellipsisLocated, ocrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"], cardRegionCount: 0, candidateIdentity: "album-ellipsis", candidateRefusal: nil),
+            StateSpec(state: .menuVerified, ocrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"] + StructuralLocators.lineAlbumMenuReference, cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
+            StateSpec(state: .saveAllLocated, ocrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片", "儲存全部"], cardRegionCount: 0, candidateIdentity: "儲存全部", candidateRefusal: nil),
         ]
     }
 
@@ -231,7 +231,8 @@ final class PhaseAEvidenceTests: XCTestCase {
         )
     }
 
-    /// One complete, all-PASS synthetic run directory plus its inputs.
+    /// A complete synthetic observation chain. Real calibration and popup
+    /// ownership evidence remain missing even when every state is present.
     private func makeCompleteRun(specs: [StateSpec]? = nil) throws -> (
         root: URL,
         authorization: ImmutableRunAuthorization,
@@ -266,20 +267,23 @@ final class PhaseAEvidenceTests: XCTestCase {
 
     // MARK: - Complete run
 
-    func testCompleteRunPassesEveryConditionWithZeroIrreversible() throws {
+    func testCompleteRunKeepsUnobservedCalibrationAndOcclusionUnknown() throws {
         let run = try makeCompleteRun()
         XCTAssertEqual(run.report.conditions.map(\.identifier), PhaseAEvidenceBuilder.conditionIdentifiers)
-        XCTAssertEqual(run.report.phaseBPreventedBy, [])
-        XCTAssertTrue(run.report.allConditionsPass)
+        XCTAssertEqual(run.report.phaseBPreventedBy, ["FROZEN_CAPTURE_GEOMETRY", "POPUP_OCCLUSION_ASSUMPTIONS"])
+        XCTAssertFalse(run.report.allConditionsPass)
+        XCTAssertEqual(run.report.exitCode, 77)
         XCTAssertTrue(run.report.ledgerProvenZeroIrreversible)
         XCTAssertEqual(run.report.irreversible.reversibleDispatches, 3)
-        XCTAssertEqual(run.report.statusCounts.pass, PhaseAEvidenceBuilder.conditionIdentifiers.count)
+        XCTAssertEqual(run.report.statusCounts.pass, PhaseAEvidenceBuilder.conditionIdentifiers.count - 2)
+        XCTAssertEqual(run.report.statusCounts.unknown, 2)
+        XCTAssertEqual(run.report.statusCounts.fail, 0)
         XCTAssertEqual(run.report.deferredRuntimeGates.map(\.identifier), PhaseAEvidenceBuilder.deferredRuntimeGateIdentifiers)
         XCTAssertEqual(run.report.deferredRuntimeGates.first?.status, .unknown)
         XCTAssertEqual(run.report.deferredRuntimeGates.first?.runtimeGate, "PHASE_B")
         XCTAssertEqual(
             run.report.chooserAssumptionStatement,
-            "chooser assumptions calibrated on real NSOpenPanel, actual LINE chooser not yet observed"
+            "historical NSOpenPanel calibration does not prove the current composition; actual LINE chooser not yet observed"
         )
     }
 
@@ -288,7 +292,7 @@ final class PhaseAEvidenceTests: XCTestCase {
         let published = try PhaseAEvidencePublisher.publish(report: run.report, runDirectory: run.runDirectory)
         XCTAssertEqual(published.reportName, "phase-a.json")
         XCTAssertEqual(published.manifestName, "phase-a-manifest.json")
-        XCTAssertEqual(published.phaseBPreventedBy, [])
+        XCTAssertEqual(published.phaseBPreventedBy, ["FROZEN_CAPTURE_GEOMETRY", "POPUP_OCCLUSION_ASSUMPTIONS"])
         XCTAssertEqual(published.manifestEntryCount, run.inspection.states.count * 2 + 2)
 
         let manifestData = try Data(contentsOf: run.runDirectory.appendingPathComponent("phase-a-manifest.json"))
@@ -629,5 +633,52 @@ final class PhaseAEvidenceTests: XCTestCase {
         let condition = try XCTUnwrap(run.report.conditions.first { $0.identifier == "ELLIPSIS_AND_FIVE_ROW_MENU_LOCALIZATION" })
         XCTAssertEqual(condition.status, .fail)
         XCTAssertTrue(condition.detail.contains("rowsObserved=2/5"))
+    }
+
+    func testClearedBlockerListCannotTurnUnknownConditionsIntoSuccess() throws {
+        let run = try makeCompleteRun()
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(run.report)) as? [String: Any])
+        object["phaseBPreventedBy"] = []
+        let decoded = try JSONDecoder().decode(PhaseAEvidenceReport.self, from: JSONSerialization.data(withJSONObject: object))
+        XCTAssertFalse(decoded.allConditionsPass)
+        XCTAssertEqual(decoded.exitCode, 77)
+    }
+
+    func testMissingDuplicateAndLegacyConditionsCannotPassEvenWhenLabelsSayPass() throws {
+        let run = try makeCompleteRun()
+        let encoded = try JSONEncoder().encode(run.report)
+        for mutation in ["missing", "duplicate", "legacy", "nonzero-ledger"] {
+            var object = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+            var conditions = try XCTUnwrap(object["conditions"] as? [[String: Any]])
+            for index in conditions.indices { conditions[index]["status"] = "PASS" }
+            object["phaseBPreventedBy"] = []
+            switch mutation {
+            case "missing": conditions.removeLast()
+            case "duplicate": conditions[conditions.count - 1] = conditions[0]
+            case "legacy": object["reportVersion"] = 1
+            default: object["ledgerProvenZeroIrreversible"] = false
+            }
+            object["conditions"] = conditions
+            let decoded = try JSONDecoder().decode(PhaseAEvidenceReport.self, from: JSONSerialization.data(withJSONObject: object))
+            XCTAssertFalse(decoded.allConditionsPass, mutation)
+            XCTAssertEqual(decoded.exitCode, 77, mutation)
+        }
+    }
+
+    func testCurrentFrameIdentityAndMenuDuplicatesFailCommonEvidencePolicy() throws {
+        for state in [ExecutionState.targetAlbumLocated, .albumDetailVerified, .ellipsisLocated, .menuVerified, .saveAllLocated] {
+            var specs = defaultStateSpecs()
+            specs = specs.map { spec in
+                guard spec.state == state else { return spec }
+                return StateSpec(
+                    state: state, ocrTexts: spec.ocrTexts + [LiveExecutionEngine.targetGroup],
+                    cardRegionCount: spec.cardRegionCount, candidateIdentity: spec.candidateIdentity,
+                    candidateRefusal: spec.candidateRefusal
+                )
+            }
+            let run = try makeCompleteRun(specs: specs)
+            XCTAssertEqual(status(run.report, "SAME_FRAME_VISION"), .fail, state.rawValue)
+            XCTAssertEqual(run.report.exitCode, 77)
+        }
     }
 }

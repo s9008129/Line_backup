@@ -332,8 +332,8 @@ final class LiveExecutionEngineTests: XCTestCase {
 
     /// Plan C4: a restart with zero irreversible records, a verified
     /// checkpoint and a pre-boundary state resumes as a pre-intent
-    /// continuation, re-establishing only the remaining states from fresh
-    /// live facts; already-recorded states are never re-established.
+    /// continuation, re-observing its current state and establishing remaining
+    /// states from fresh live facts without rewriting prior transitions.
     func testPreIntentResumeContinuesOnlyRemainingStatesWithFreshEvidence() async throws {
         let (ledgerURL, auth, owner) = try setup()
         let firstAdapter = FakeAdapter()
@@ -362,7 +362,7 @@ final class LiveExecutionEngineTests: XCTestCase {
         guard case .contentVerified = outcome else {
             return XCTFail("a pre-intent restart must continue, got \(outcome)")
         }
-        XCTAssertEqual(secondAdapter.establishCount, 1, "only saveAllLocated remains to re-establish")
+        XCTAssertEqual(secondAdapter.establishCount, 2, "menuVerified is re-observed before saveAllLocated is established")
         XCTAssertEqual(secondAdapter.saveAllMouseEvents, 3)
         XCTAssertEqual(resumed.irreversibleOperationCounts.saveAll, 2)
         XCTAssertEqual(resumed.currentState, .contentVerified)

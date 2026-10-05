@@ -1,0 +1,680 @@
+--- before/rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift
++++ after/rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift
+@@ -140,6 +140,9 @@
+     public let target: ObservationTarget
+     public let process: ProcessInstanceID
+     public let signingIdentity: String?
++    public let postProcess: ProcessInstanceID
++    public let postSigningIdentity: String?
++    public let postAXIdentity: AXIdentityRead
+     public let window: WindowIdentity
+     public let frame: CapturedFrameRecord
+     public let framePNGData: Data
+@@ -182,6 +185,12 @@
+               process == window.process else {
+             throw ObservationRefusal.identityMismatch(["bundle/pid identity mismatch inside the bundle"])
+         }
++        guard postProcess == process,
++              postSigningIdentity == signingIdentity,
++              postAXIdentity == axIdentity,
++              window.ax == axIdentity else {
++            throw ObservationRefusal.identityMismatch(["process, signing or AX identity changed during capture"])
++        }
+         guard frame.epoch == epoch,
+               window.captureEpoch == epoch,
+               window.captureImageSHA256 == frame.imageSHA256 else {
+@@ -202,12 +211,23 @@
+               decoded.height == frame.imageHeightPx else {
+             throw ObservationRefusal.retainedImageMismatch("retained PNG does not decode to the recorded dimensions")
+         }
++        let cg = try Self.targetCGEntry(
++            target: target, windowID: window.windowID,
++            preInventory: preInventory, postInventory: postInventory, cgInventory: cgInventory
++        )
+         guard let post = postInventory.first(where: { $0.windowID == window.windowID }) else {
+-            throw ObservationRefusal.inventoryChanged("target window missing from the post capture inventory")
++            throw ObservationRefusal.inventoryChanged("target missing from retained post inventory")
++        }
++        guard Self.framesAgree(window.windowFrame, post.frame),
++              window.cgEntry.windowID == cg.windowNumber,
++              window.cgEntry.ownerPID == cg.ownerPID,
++              window.cgEntry.layer == cg.layer,
++              window.cgEntry.frame == cg.frame else {
++            throw ObservationRefusal.inventoryChanged("stored identity does not match the retained inventories")
+         }
+         let fresh = FreshWindowObservation(
+             bundleID: post.ownerBundleID ?? "",
+-            process: process,
++            process: postProcess,
+             windowID: post.windowID,
+             frame: post.frame,
+             layer: post.windowLayer,
+@@ -224,11 +244,6 @@
+         }
+         guard post.ownerPID == target.pid else {
+             throw ObservationRefusal.inventoryChanged("post inventory owner pid mismatch")
+-        }
+-        guard cgInventory.contains(where: {
+-            $0.windowNumber == window.windowID && $0.layer == 0 && $0.ownerPID == target.pid
+-        }) else {
+-            throw ObservationRefusal.inventoryChanged("target window missing from the CG inventory")
+         }
+         guard axIdentity.role?.isEmpty == false else {
+             throw ObservationRefusal.identityMismatch(["AX identity for the target window is unreadable"])
+@@ -259,6 +274,46 @@
+     public static func decodePNG(_ data: Data) -> CGImage? {
+         guard let source = CGImageSourceCreateWithData(data as CFData, nil) else { return nil }
+         return CGImageSourceCreateImageAtIndex(source, 0, nil)
++    }
++
++    private static func validFrame(_ frame: CGRect) -> Bool {
++        [frame.origin.x, frame.origin.y, frame.size.width, frame.size.height].allSatisfy(\.isFinite)
++            && frame.width > 0 && frame.height > 0
++    }
++
++    private static func framesAgree(_ lhs: CGRect, _ rhs: CGRect) -> Bool {
++        guard validFrame(lhs), validFrame(rhs) else { return false }
++        return abs(lhs.origin.x - rhs.origin.x) <= 0.5
++            && abs(lhs.origin.y - rhs.origin.y) <= 0.5
++            && abs(lhs.width - rhs.width) <= 0.5
++            && abs(lhs.height - rhs.height) <= 0.5
++    }
++
++    /// Checks the one explicitly retained session CG snapshot. AX's native
++    /// adapter may read CG separately; this is not atomic OS acquisition.
++    fileprivate static func targetCGEntry(
++        target: ObservationTarget,
++        windowID: UInt32,
++        preInventory: [SCWindowSnapshot],
++        postInventory: [SCWindowSnapshot],
++        cgInventory: [CGWindowSnapshot]
++    ) throws -> CGWindowSnapshot {
++        let pre = WindowSensor.mainWindowCandidates(in: preInventory, bundleID: target.bundleID, pid: target.pid)
++        let post = WindowSensor.mainWindowCandidates(in: postInventory, bundleID: target.bundleID, pid: target.pid)
++        let cg = cgInventory.filter { $0.windowNumber == windowID }
++        guard pre.count == 1, post.count == 1,
++              pre[0].windowID == windowID, post[0].windowID == windowID,
++              preInventory.filter({ $0.windowID == windowID }).count == 1,
++              postInventory.filter({ $0.windowID == windowID }).count == 1,
++              cg.count == 1, cg[0].layer == 0, cg[0].ownerPID == target.pid else {
++            throw ObservationRefusal.inventoryChanged("target identity is absent, ambiguous or inconsistent across inventories")
++        }
++        guard framesAgree(pre[0].frame, post[0].frame),
++              framesAgree(pre[0].frame, cg[0].frame),
++              framesAgree(post[0].frame, cg[0].frame) else {
++            throw ObservationRefusal.inventoryChanged("target geometry is invalid or differs across SCK/CG inventories")
++        }
++        return cg[0]
+     }
+ }
+ 
+@@ -296,6 +351,16 @@
+         }
+         try checkDeadline(deadline, now: started, stage: "start")
+ 
++        // Process lifetime brackets every native fact retained in the bundle.
++        let process: ProcessInstanceID
++        do {
++            process = try source.processInstance(pid: request.target.pid)
++        } catch let refusal as ObservationRefusal {
++            throw refusal
++        } catch {
++            throw ObservationRefusal.observerFailure(stage: "processIdentity", detail: String(describing: error))
++        }
++
+         let preInventory: [SCWindowSnapshot]
+         do {
+             preInventory = try await source.enumerateWindows()
+@@ -313,11 +378,9 @@
+         let children = WindowSensor.childWindows(of: main, in: preInventory)
+         let includedWindows = request.configuration.includeChildWindows ? [main] + children : [main]
+ 
+-        let process: ProcessInstanceID
+         let signingIdentity: String?
+         let axIdentity: AXIdentityRead
+         do {
+-            process = try source.processInstance(pid: request.target.pid)
+             signingIdentity = try source.signingIdentity(pid: request.target.pid)
+             axIdentity = try source.readAXIdentity(pid: request.target.pid, windowID: main.windowID)
+         } catch let refusal as ObservationRefusal {
+@@ -369,19 +432,32 @@
+         } catch {
+             throw ObservationRefusal.observerFailure(stage: "postEnumerateWindows", detail: String(describing: error))
+         }
+-        let postMatches = WindowSensor.mainWindowCandidates(
+-            in: postInventory,
+-            bundleID: request.target.bundleID,
+-            pid: request.target.pid
+-        )
+-        guard postMatches.count == 1, let postMain = postMatches.first, postMain.windowID == main.windowID else {
+-            throw ObservationRefusal.inventoryChanged("target window multiplicity or identity changed during capture")
+-        }
+-        guard let cgEntry = source.cgInventory().first(where: {
+-            $0.windowNumber == main.windowID && $0.layer == 0 && $0.ownerPID == request.target.pid
+-        }) else {
+-            throw ObservationRefusal.inventoryChanged("target window is absent from the CG inventory")
+-        }
++        let postSigningIdentity: String?
++        let postAXIdentity: AXIdentityRead
++        do {
++            postSigningIdentity = try source.signingIdentity(pid: request.target.pid)
++            postAXIdentity = try source.readAXIdentity(pid: request.target.pid, windowID: main.windowID)
++        } catch let refusal as ObservationRefusal {
++            throw refusal
++        } catch {
++            throw ObservationRefusal.observerFailure(stage: "postProcessIdentity", detail: String(describing: error))
++        }
++        let cgInventory = source.cgInventory()
++        let postProcess: ProcessInstanceID
++        do {
++            postProcess = try source.processInstance(pid: request.target.pid)
++        } catch let refusal as ObservationRefusal {
++            throw refusal
++        } catch {
++            throw ObservationRefusal.observerFailure(stage: "postProcessIdentity", detail: String(describing: error))
++        }
++        guard postProcess == process, postSigningIdentity == signingIdentity, postAXIdentity == axIdentity else {
++            throw ObservationRefusal.identityMismatch(["process, signing or AX identity changed during capture"])
++        }
++        let cgEntry = try ObservationBundle.targetCGEntry(
++            target: request.target, windowID: main.windowID,
++            preInventory: preInventory, postInventory: postInventory, cgInventory: cgInventory
++        )
+ 
+         let window = WindowIdentity(
+             bundleID: request.target.bundleID,
+@@ -434,6 +510,9 @@
+             target: request.target,
+             process: process,
+             signingIdentity: signingIdentity,
++            postProcess: postProcess,
++            postSigningIdentity: postSigningIdentity,
++            postAXIdentity: postAXIdentity,
+             window: window,
+             frame: captured.record,
+             framePNGData: pngData,
+@@ -444,11 +523,12 @@
+             candidateRefusal: refusal,
+             preInventory: preInventory,
+             postInventory: postInventory,
+-            cgInventory: source.cgInventory(),
++            cgInventory: cgInventory,
+             axIdentity: axIdentity,
+             localization: request.localization
+         )
+         try bundle.validated()
++        try checkDeadline(deadline, now: source.monotonicNanos(), stage: "validation")
+         completedCaptures += 1
+         return bundle
+     }
+--- before/rev28/Sources/Rev28Core/Identity/ProcessCodeIdentity.swift
++++ after/rev28/Sources/Rev28Core/Identity/ProcessCodeIdentity.swift
+@@ -0,0 +1,33 @@
++import Foundation
++import Security
++
++/// Code identity of the requested process only. Unavailable target information
++/// is unknown; the calling executable can never stand in for that target.
++public enum ProcessCodeIdentity {
++    public static func read(pid: Int32) -> String? {
++        guard pid > 0 else { return nil }
++        var code: SecCode?
++        let attributes: [CFString: Any] = [kSecGuestAttributePid: NSNumber(value: pid)]
++        guard SecCodeCopyGuestWithAttributes(nil, attributes as CFDictionary, [], &code) == errSecSuccess,
++              let guest = code else { return nil }
++        var staticCode: SecStaticCode?
++        guard SecCodeCopyStaticCode(guest, [], &staticCode) == errSecSuccess,
++              let targetCode = staticCode else { return nil }
++        var information: CFDictionary?
++        guard SecCodeCopySigningInformation(targetCode, SecCSFlags(rawValue: kSecCSSigningInformation), &information) == errSecSuccess,
++              let info = information as? [String: Any] else { return nil }
++        return identity(in: info)
++    }
++
++    static func identity(in information: [String: Any]) -> String? {
++        guard let identifier = information[kSecCodeInfoIdentifier as String] as? String,
++              meaningful(identifier) else { return nil }
++        guard let teamValue = information[kSecCodeInfoTeamIdentifier as String] else { return identifier }
++        guard let team = teamValue as? String, meaningful(team) else { return nil }
++        return "\(identifier)@\(team)"
++    }
++
++    private static func meaningful(_ value: String) -> Bool {
++        !value.isEmpty && value == value.trimmingCharacters(in: .whitespacesAndNewlines)
++    }
++}
+--- before/rev28/Sources/rev28ctl/ProcessIdentity.swift
++++ after/rev28/Sources/rev28ctl/ProcessIdentity.swift
+@@ -1,7 +1,6 @@
+ import AppKit
+ import Foundation
+ import Rev28Core
+-import Security
+ 
+ // Real process-identity facts for the chooser ownership clauses: bundle id (if
+ // the process has one), code-signing identifier (ad-hoc counts as an identity on
+@@ -13,52 +12,7 @@
+     }
+ 
+     static func signingIdentity(pid: Int32) -> String? {
+-        var code: SecCode?
+-        let attributes: [CFString: Any] = [kSecGuestAttributePid: NSNumber(value: pid)]
+-        guard SecCodeCopyGuestWithAttributes(nil, attributes as CFDictionary, [], &code) == errSecSuccess,
+-              let guest = code else {
+-            return staticSigningIdentity()
+-        }
+-        var staticCode: SecStaticCode?
+-        guard SecCodeCopyStaticCode(guest, [], &staticCode) == errSecSuccess,
+-              let guestStatic = staticCode else {
+-            return staticSigningIdentity()
+-        }
+-        var information: CFDictionary?
+-        guard SecCodeCopySigningInformation(guestStatic, SecCSFlags(rawValue: kSecCSSigningInformation), &information) == errSecSuccess,
+-              let info = information as? [String: Any] else {
+-            return staticSigningIdentity()
+-        }
+-        if let identifier = info[kSecCodeInfoIdentifier as String] as? String {
+-            if let team = info[kSecCodeInfoTeamIdentifier as String] as? String {
+-                return "\(identifier)@\(team)"
+-            }
+-            return identifier
+-        }
+-        return staticSigningIdentity()
+-    }
+-
+-    /// Fallback for processes whose guest code cannot be read: the driver's own
+-    /// static code identity (the harness binaries are its siblings).
+-    private static func staticSigningIdentity() -> String? {
+-        var staticCode: SecStaticCode?
+-        guard let executable = Bundle.main.executableURL ?? (CommandLine.arguments.first.map { URL(fileURLWithPath: $0) }),
+-              SecStaticCodeCreateWithPath(executable as CFURL, [], &staticCode) == errSecSuccess,
+-              let code = staticCode else {
+-            return nil
+-        }
+-        var information: CFDictionary?
+-        guard SecCodeCopySigningInformation(code, SecCSFlags(rawValue: kSecCSSigningInformation), &information) == errSecSuccess,
+-              let info = information as? [String: Any] else {
+-            return nil
+-        }
+-        if let identifier = info[kSecCodeInfoIdentifier as String] as? String {
+-            if let cdhash = info[kSecCodeInfoUnique as String] as? Data {
+-                return "\(identifier)@\(cdhash.map { String(format: "%02x", $0) }.joined())"
+-            }
+-            return identifier
+-        }
+-        return nil
++        ProcessCodeIdentity.read(pid: pid)
+     }
+ 
+     static func reading(pid: Int32) -> ChooserProcessFacts {
+--- before/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift
++++ after/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift
+@@ -18,11 +18,38 @@
+         var captureClockAdvance: UInt64 = 0
+         var onCaptureStart: (@Sendable () async -> Void)?
+         var axIdentityOverride: AXIdentityRead?
++        var postProcessOverride: ProcessInstanceID?
++        var postSigningOverride: String?
++        var postSigningUnavailable = false
++        var signingUnavailable = false
++        var postIdentityClockAdvance: UInt64 = 0
++        var postAXIdentityOverride: AXIdentityRead?
++        var postProcessError: Error?
++        var postAXError: Error?
++        var cgInventorySequence: [[CGWindowSnapshot]]?
++        var replaceProcessDuringRead: String?
+ 
+         private let lock = NSLock()
+         private var epochCounter: UInt64 = 0
+         private var now: UInt64 = 1_000
+         private var enumerateCalls = 0
++        private var processCalls = 0
++        private var signingCalls = 0
++        private var axCalls = 0
++        private var cgCalls = 0
++        private var currentProcessStart: Int64 = 7
++
++        private func replaceProcess(at point: String) {
++            lock.lock()
++            defer { lock.unlock() }
++            if replaceProcessDuringRead == point { currentProcessStart = 8 }
++        }
++
++        var cgReadCount: Int {
++            lock.lock()
++            defer { lock.unlock() }
++            return cgCalls
++        }
+ 
+         init(window: SCWindowSnapshot, bundleID: String, pid: Int32) {
+             self.window = window
+@@ -41,11 +68,20 @@
+             enumerateCalls += 1
+             let call = enumerateCalls
+             lock.unlock()
++            if call == 1 { replaceProcess(at: "preInventory") }
+             return call == 1 ? (preInventoryOverride ?? [window]) : (postInventoryOverride ?? [window])
+         }
+ 
+         func cgInventory() -> [CGWindowSnapshot] {
+-            cgInventoryOverride ?? [
++            lock.lock()
++            cgCalls += 1
++            let call = cgCalls
++            lock.unlock()
++            replaceProcess(at: "cgInventory")
++            if let sequence = cgInventorySequence, !sequence.isEmpty {
++                return sequence[min(call - 1, sequence.count - 1)]
++            }
++            return cgInventoryOverride ?? [
+                 CGWindowSnapshot(windowNumber: window.windowID, frame: window.frame, layer: 0, ownerPID: pid, name: window.title)
+             ]
+         }
+@@ -88,7 +124,16 @@
+         }
+ 
+         func readAXIdentity(pid: Int32, windowID: UInt32) throws -> AXIdentityRead {
+-            axIdentityOverride ?? AXIdentityRead(
++            lock.lock()
++            axCalls += 1
++            let call = axCalls
++            lock.unlock()
++            if call > 1 {
++                replaceProcess(at: "postAX")
++                if let postAXError { throw postAXError }
++                if let postAXIdentityOverride { return postAXIdentityOverride }
++            }
++            return axIdentityOverride ?? AXIdentityRead(
+                 role: "AXWindow",
+                 subrole: "AXStandardWindow",
+                 title: "LINE",
+@@ -97,11 +142,31 @@
+         }
+ 
+         func processInstance(pid: Int32) throws -> ProcessInstanceID {
+-            ProcessInstanceID(pid: pid, startTimeSeconds: 7, startTimeMicroseconds: 0)
++            lock.lock()
++            processCalls += 1
++            let call = processCalls
++            if call > 1 { now += postIdentityClockAdvance }
++            let start = currentProcessStart
++            lock.unlock()
++            if call > 1 {
++                if let postProcessError { throw postProcessError }
++                if let postProcessOverride { return postProcessOverride }
++            }
++            return ProcessInstanceID(pid: pid, startTimeSeconds: start, startTimeMicroseconds: 0)
+         }
+ 
+         func signingIdentity(pid: Int32) throws -> String? {
+-            "Developer ID Application: Fake (ABCDE12345)"
++            lock.lock()
++            signingCalls += 1
++            let call = signingCalls
++            lock.unlock()
++            if signingUnavailable { return nil }
++            if call > 1 {
++                replaceProcess(at: "postSigning")
++                if postSigningUnavailable { return nil }
++                if let postSigningOverride { return postSigningOverride }
++            }
++            return "Developer ID Application: Fake (ABCDE12345)"
+         }
+ 
+         func nextEpoch() -> UInt64 {
+@@ -151,6 +216,159 @@
+     }
+ 
+     private struct OcrFailure: Error {}
++    private struct IdentityReadFailure: Error {}
++
++    func testProcessReplacementDuringBoundaryReadsIsRefused() async throws {
++        // Other native facts stay identical, including PID, signature and
++        // window ID. Only the process instance changes inside a source read.
++        for point in ["preInventory", "postSigning", "postAX", "cgInventory"] {
++            let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
++            source.replaceProcessDuringRead = point
++            let session = NativeObservationSession(sessionID: "replacement-\(point)", source: source, ocr: FakeOcr())
++            do {
++                _ = try await session.capture(makeRequest())
++                XCTFail("same-PID replacement during \(point) was accepted")
++            } catch {
++                guard case .identityMismatch = error as? ObservationRefusal else {
++                    return XCTFail("unexpected refusal \(error)")
++                }
++            }
++            let count = await session.captureCount
++            XCTAssertEqual(count, 0, point)
++        }
++    }
++
++    func testPostCaptureProcessSigningAndAXChangesAreRefused() async throws {
++        for mode in ["process", "signing", "signingUnavailable", "ax"] {
++            let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
++            switch mode {
++            case "process": source.postProcessOverride = ProcessInstanceID(pid: 4242, startTimeSeconds: 8, startTimeMicroseconds: 0)
++            case "signing": source.postSigningOverride = "different-target-signature"
++            case "signingUnavailable": source.postSigningUnavailable = true
++            default: source.postAXIdentityOverride = AXIdentityRead(role: "AXWindow", subrole: "AXStandardWindow", title: "another surface", matchMethod: .windowNumber)
++            }
++            let session = NativeObservationSession(sessionID: "post-identity-\(mode)", source: source, ocr: FakeOcr())
++            do {
++                _ = try await session.capture(makeRequest())
++                XCTFail("\(mode) changed across capture but was accepted")
++            } catch {
++                guard case .identityMismatch = error as? ObservationRefusal else {
++                    return XCTFail("unexpected refusal \(error)")
++                }
++            }
++            let count = await session.captureCount
++            XCTAssertEqual(count, 0)
++        }
++    }
++
++    func testPostCaptureIdentityReadErrorsAreRefused() async throws {
++        for mode in ["process", "ax"] {
++            let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
++            if mode == "process" { source.postProcessError = IdentityReadFailure() }
++            else { source.postAXError = IdentityReadFailure() }
++            let session = NativeObservationSession(sessionID: "post-read-error-\(mode)", source: source, ocr: FakeOcr())
++            do {
++                _ = try await session.capture(makeRequest())
++                XCTFail("a failed post identity read was accepted")
++            } catch {
++                guard case .observerFailure = error as? ObservationRefusal else {
++                    return XCTFail("unexpected refusal \(error)")
++                }
++            }
++            let count = await session.captureCount
++            XCTAssertEqual(count, 0)
++        }
++    }
++
++    func testOneExplicitCGSnapshotIsSharedByIdentityAndBundle() async throws {
++        let window = makeWindow()
++        let source = FakeObservationSource(window: window, bundleID: "jp.naver.line.mac", pid: 4242)
++        let first = CGWindowSnapshot(windowNumber: window.windowID, frame: window.frame, layer: 0, ownerPID: 4242, name: "LINE")
++        let later = CGWindowSnapshot(windowNumber: window.windowID, frame: CGRect(x: 500, y: 60, width: 400, height: 600), layer: 0, ownerPID: 4242, name: "LINE")
++        source.cgInventorySequence = [[first], [later]]
++        let session = NativeObservationSession(sessionID: "one-explicit-cg", source: source, ocr: FakeOcr())
++        let bundle = try await session.capture(makeRequest())
++        try bundle.validated()
++        XCTAssertEqual(source.cgReadCount, 1, "counts explicit source.cgInventory calls, not AX adapter internals")
++        XCTAssertEqual(bundle.cgInventory, [first])
++        XCTAssertEqual(bundle.window.cgEntry.frame, bundle.cgInventory[0].frame)
++    }
++
++    func testCGDuplicateAndInvalidOrDriftedGeometryAreRefused() async throws {
++        let window = makeWindow()
++        let valid = CGWindowSnapshot(windowNumber: window.windowID, frame: window.frame, layer: 0, ownerPID: 4242, name: "LINE")
++        let frames = [
++            CGRect(x: 51, y: 60, width: 400, height: 600),
++            CGRect(x: CGFloat.nan, y: 60, width: 400, height: 600),
++            CGRect(x: 50, y: 60, width: CGFloat.infinity, height: 600),
++            CGRect(x: 50, y: 60, width: 0, height: 600),
++        ]
++        var inventories = [[valid, valid]]
++        inventories += frames.map { [CGWindowSnapshot(windowNumber: window.windowID, frame: $0, layer: 0, ownerPID: 4242, name: "LINE")] }
++        for (index, inventory) in inventories.enumerated() {
++            let source = FakeObservationSource(window: window, bundleID: "jp.naver.line.mac", pid: 4242)
++            source.cgInventoryOverride = inventory
++            let session = NativeObservationSession(sessionID: "invalid-cg-\(index)", source: source, ocr: FakeOcr())
++            do {
++                _ = try await session.capture(makeRequest())
++                XCTFail("ambiguous or inconsistent CG geometry was accepted: \(index)")
++            } catch let refusal as ObservationRefusal {
++                guard case .inventoryChanged = refusal else { return XCTFail("unexpected \(refusal)") }
++            }
++            let count = await session.captureCount
++            XCTAssertEqual(count, 0)
++        }
++    }
++
++    func testCGGeometryWithinExistingHalfPointTolerancePasses() async throws {
++        let window = makeWindow()
++        let source = FakeObservationSource(window: window, bundleID: "jp.naver.line.mac", pid: 4242)
++        source.cgInventoryOverride = [CGWindowSnapshot(windowNumber: window.windowID, frame: CGRect(x: 50.5, y: 60, width: 400, height: 600), layer: 0, ownerPID: 4242, name: "LINE")]
++        let session = NativeObservationSession(sessionID: "cg-tolerance", source: source, ocr: FakeOcr())
++        let bundle = try await session.capture(makeRequest())
++        try bundle.validated()
++    }
++
++    func testStableUnavailableSigningRemainsUnknown() async throws {
++        let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
++        source.signingUnavailable = true
++        let session = NativeObservationSession(sessionID: "unknown-signing", source: source, ocr: FakeOcr())
++        let bundle = try await session.capture(makeRequest())
++        try bundle.validated()
++        XCTAssertNil(bundle.signingIdentity)
++        XCTAssertNil(bundle.postSigningIdentity)
++        XCTAssertEqual(bundle.process, bundle.postProcess)
++    }
++
++    func testPostIdentityReadDoesNotExtendAbsoluteDeadline() async throws {
++        let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
++        source.postIdentityClockAdvance = 2_000
++        let session = NativeObservationSession(sessionID: "post-identity-deadline", source: source, ocr: FakeOcr())
++        do {
++            _ = try await session.capture(makeRequest(budget: 1_500))
++            XCTFail("post identity read time cannot extend the original deadline")
++        } catch {
++            guard case .deadlineExceeded = error as? ObservationRefusal else { return XCTFail("unexpected \(error)") }
++        }
++        let count = await session.captureCount
++        XCTAssertEqual(count, 0)
++    }
++
++    func testConflictingDuplicateSCKWindowIDIsRefused() async throws {
++        let window = makeWindow()
++        let conflict = SCWindowSnapshot(windowID: window.windowID, frame: window.frame, windowLayer: 0, title: "another owner", isOnScreen: true, ownerPID: 9999, ownerBundleID: "another.application", ownerName: "another")
++        let source = FakeObservationSource(window: window, bundleID: "jp.naver.line.mac", pid: 4242)
++        source.postInventoryOverride = [window, conflict]
++        let session = NativeObservationSession(sessionID: "duplicate-sck-id", source: source, ocr: FakeOcr())
++        do {
++            _ = try await session.capture(makeRequest())
++            XCTFail("a duplicated ID with conflicting ownership is not a coherent inventory")
++        } catch {
++            guard case .inventoryChanged = error as? ObservationRefusal else { return XCTFail("unexpected \(error)") }
++        }
++        let count = await session.captureCount
++        XCTAssertEqual(count, 0)
++    }
+ 
+     private func makeWindow() -> SCWindowSnapshot {
+         SCWindowSnapshot(
+--- before/rev28/Tests/Rev28CoreTests/ProcessCodeIdentityTests.swift
++++ after/rev28/Tests/Rev28CoreTests/ProcessCodeIdentityTests.swift
+@@ -0,0 +1,29 @@
++import Foundation
++import Security
++import XCTest
++@testable import Rev28Core
++
++final class ProcessCodeIdentityTests: XCTestCase {
++    func testUnavailableTargetRemainsUnknown() {
++        for pid in [Int32(-1), 0, Int32.max] {
++            XCTAssertNil(ProcessCodeIdentity.read(pid: pid), "no caller signature can authorize an unavailable target")
++        }
++    }
++
++    func testObservedIdentifierAndTeamArePreserved() {
++        let identifier = kSecCodeInfoIdentifier as String
++        let team = kSecCodeInfoTeamIdentifier as String
++        XCTAssertEqual(ProcessCodeIdentity.identity(in: [identifier: "jp.naver.line.mac", team: "TEAM123"]), "jp.naver.line.mac@TEAM123")
++        XCTAssertEqual(ProcessCodeIdentity.identity(in: [identifier: "ad.hoc.target"]), "ad.hoc.target")
++    }
++
++    func testMissingOrMalformedTargetIdentityIsUnknown() {
++        let identifier = kSecCodeInfoIdentifier as String
++        let team = kSecCodeInfoTeamIdentifier as String
++        let information: [[String: Any]] = [
++            [:], [identifier: ""], [identifier: "   "], [identifier: 42],
++            [identifier: "target", team: ""], [identifier: "target", team: 42],
++        ]
++        for info in information { XCTAssertNil(ProcessCodeIdentity.identity(in: info)) }
++    }
++}
+--- before/rev28/ARCHITECTURE.md
++++ after/rev28/ARCHITECTURE.md
+@@ -1,6 +1,6 @@
+ # Rev28 Native Closed-Loop Architecture
+ 
+-Status (2026-10-04): local repair under `harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b`. This document describes the current implementation; independent acceptance and observed check results are recorded in that task. The LINE production backup has not completed.
++Status (2026-10-04): fresh identity repair under `harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14`. This document describes the current implementation; new check and independent-review results are recorded in that task. Existing work and historical evidence are preserved. The LINE production backup has not completed.
+ 
+ ## Goal
+ 
+@@ -51,6 +51,26 @@
+ - capture image SHA-256.
+ 
+ A changed process instance, stale window ID, stale epoch, unexpected layer/offscreen state or unexplained frame delta invalidates the observation.
++
++The observation session reads the target process instance, signing identity and
++bound AX identity before capture and again after capture/OCR. A change or read
++error refuses the bundle; its post-read fields are checked again by
++`ObservationBundle.validated()`. Unavailable signing information remains unknown.
++The first process-instance read precedes initial SCK enumeration; the final
++read follows post-capture SCK, signing, AX and explicit CG acquisition. These
++actual process values bracket all retained native facts, including replacement
++inside an inventory or identity read.
++`ProcessCodeIdentity` reads the requested PID's code only and never substitutes
++the calling executable's signature for an unavailable target.
++
++The session explicitly reads one post-capture CG inventory and shares it between
++its `WindowIdentity` and retained bundle. SCK pre/post and CG target entries must
++be unique, ownership-consistent and have finite positive frames agreeing within
++the existing 0.5-point tolerance. Duplicate IDs and invalid or inconsistent
++geometry refuse capture without incrementing the completed-capture count.
++All post-identity reads and final validation remain inside the original deadline.
++This is temporal cross-checking, not atomic acquisition of OS facts: the native
++AX matching adapter also reads its own CG provider.
+ 
+ ## 2. Coordinate model
+ 
+--- before/rev28/CAPABILITY-MATRIX.md
++++ after/rev28/CAPABILITY-MATRIX.md
+@@ -5,7 +5,7 @@
+ Updated 2026-10-04: the table below describes historical observations, not a new
+ probe of current permissions, LINE, hosted runners or baseline data. The current
+ local repair's build/test/replay evidence lives in
+-`harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b`.
++`harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14`.
+ Native composition is implemented and reachable by both CLI commands. Missing
+ current calibration and popup/occlusion proof still block production eligibility.
+ 
+@@ -55,6 +55,15 @@
+ 
+ ## Current production conclusion
+ 
++The fresh local identity repair rechecks process/signing/AX facts after capture,
++retains one explicit session CG snapshot for both identity and bundle, and
++rejects conflicting or invalid SCK/CG target geometry. Target signing lookup
++failure is unknown; caller signing information is never a substitute. Local
++regressions exercise these boundaries without LINE interaction. Existing AX
++matching has its own CG reads, so this does not claim one total OS inventory read
++or atomic native acquisition. New logs and independent local Acceptance belong
++to the fresh task; historical capability observations are not re-certified.
++
+ The hosted environment is strong enough to carry the bulk of W2-W5 pre-live engineering. It is not a substitute for the real LINE app/session and filesystem acceptance path. No CI result alone may produce `DUPLICATE_CONTENT_CONFIRMED`.
+ 
+ `live-preflight` can navigate reversibly and retains fresh session evidence;

@@ -387,7 +387,7 @@ public struct PhaseARunArtifacts: Sendable {
 // MARK: - Report
 
 public struct PhaseAEvidenceReport: Codable, Equatable, Sendable {
-    public static let currentVersion = 1
+    public static let currentVersion = 2
 
     public let reportVersion: Int
     public let runID: String
@@ -402,7 +402,16 @@ public struct PhaseAEvidenceReport: Codable, Equatable, Sendable {
     public let preflightOutcomeArtifactName: String?
     public let rawEvidenceManifestName: String
 
-    public var allConditionsPass: Bool { phaseBPreventedBy.isEmpty }
+    public var allConditionsPass: Bool {
+        reportVersion == Self.currentVersion
+            && conditions.count == PhaseAEvidenceBuilder.conditionIdentifiers.count
+            && Set(conditions.map(\.identifier)) == Set(PhaseAEvidenceBuilder.conditionIdentifiers)
+            && conditions.allSatisfy { $0.status == .pass }
+            && phaseBPreventedBy.isEmpty
+            && ledgerProvenZeroIrreversible && irreversible.isZeroIrreversible
+    }
+
+    public var exitCode: Int32 { allConditionsPass ? 0 : 77 }
 
     public var statusCounts: (pass: Int, fail: Int, unknown: Int) {
         var pass = 0, fail = 0, unknown = 0
@@ -503,7 +512,7 @@ public enum PhaseAEvidenceBuilder {
     public static let deferredRuntimeGateIdentifiers: [String] = ["ACTUAL_LINE_CHOOSER_OBSERVED"]
 
     public static let chooserAssumptionStatement =
-        "chooser assumptions calibrated on real NSOpenPanel, actual LINE chooser not yet observed"
+        "historical NSOpenPanel calibration does not prove the current composition; actual LINE chooser not yet observed"
 
     /// Reads the raw run directory: state artifacts with their retained frames,
     /// and the pre-dispatch context records. Malformed artifacts are named, not
@@ -512,7 +521,7 @@ public enum PhaseAEvidenceBuilder {
         let names = try FileManager.default.contentsOfDirectory(atPath: runDirectory.path).sorted()
         var states: [PhaseACapturedState] = []
         var malformed: [String] = []
-        for name in names where name.hasPrefix("state-") && name.hasSuffix(".json") {
+        for name in names where name.hasPrefix("state-") && !name.hasPrefix("state-readiness-") && name.hasSuffix(".json") {
             let url = runDirectory.appendingPathComponent(name)
             guard let data = try? Data(contentsOf: url),
                   let artifact = try? JSONDecoder().decode(StateEvidenceArtifact.self, from: data) else {
@@ -662,8 +671,8 @@ public enum PhaseAEvidenceBuilder {
                 + "addressableBounds=\(geometry.addressableBoundsCapture) nonzeroStateFrames=\(framesOK)"
             conditions.append(PhaseACondition(
                 identifier: "FROZEN_CAPTURE_GEOMETRY",
-                status: ok ? .pass : .fail,
-                detail: detail
+                status: ok ? .unknown : .fail,
+                detail: detail + "; frame/configuration facts do not establish current-composer native calibration; no bound calibration observation was supplied"
             ))
         } else {
             conditions.append(PhaseACondition(
@@ -677,19 +686,19 @@ public enum PhaseAEvidenceBuilder {
         // the OCR-bearing states carry the texts the policy requires.
         do {
             let framesVerified = !inspection.states.isEmpty && inspection.states.allSatisfy(\.retainedFrameVerified)
-            let ocrRequirement: [(ExecutionState, [String])] = [
-                (.groupReady, [LiveExecutionEngine.targetGroup]),
-                (.albumDetailVerified, [LiveExecutionEngine.targetGroup, "57張照片"]),
-                (.menuVerified, StructuralLocators.lineAlbumMenuReference),
-            ]
             var missing: [String] = []
-            for (state, texts) in ocrRequirement {
+            for state in LiveExecutionEngine.preSaveStates {
                 guard let captured = latest[state.rawValue] else {
                     missing.append("\(state.rawValue):artifact-missing")
                     continue
                 }
-                for text in texts where !captured.artifact.ocrTexts.contains(text) {
-                    missing.append("\(state.rawValue):\(text)")
+                do {
+                    try ExecutionStateEvidencePolicy.validate(
+                        artifact: captured.artifact, expectedState: state,
+                        authorization: inputs.authorization, previousEpoch: nil
+                    )
+                } catch {
+                    missing.append("\(state.rawValue):\(error)")
                 }
             }
             let malformed = inspection.malformedArtifactNames
@@ -710,7 +719,8 @@ public enum PhaseAEvidenceBuilder {
             let suffix = ":2024/05/13~05/17|57"
             let group = latest[ExecutionState.groupReady.rawValue]
             let located = latest[ExecutionState.targetAlbumLocated.rawValue]
-            let groupOK = group?.artifact.ocrTexts.contains(LiveExecutionEngine.targetGroup) == true
+            let groupOK = group?.artifact.ocrTexts.filter { $0 == LiveExecutionEngine.targetGroup }.count == 1
+                && located?.artifact.ocrTexts.filter { $0 == LiveExecutionEngine.targetGroup }.count == 1
             let identityOK = located?.artifact.candidateRefusal == nil
                 && located?.artifact.candidateIdentity?.hasSuffix(suffix) == true
             let cardOK = located.map { $0.artifact.cardRegionCount >= 1 } == true
@@ -730,15 +740,16 @@ public enum PhaseAEvidenceBuilder {
         do {
             let verified = latest[ExecutionState.albumDetailVerified.rawValue]
             let located = latest[ExecutionState.targetAlbumLocated.rawValue]
-            let textsOK = verified.map {
-                $0.artifact.ocrTexts.contains(LiveExecutionEngine.targetGroup)
-                    && $0.artifact.ocrTexts.contains("57張照片")
+            let textsOK = verified.map { captured in
+                [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"].allSatisfy { text in
+                    captured.artifact.ocrTexts.filter { $0 == text }.count == 1
+                }
             } == true
             let freshCapture = verified.map { captured in
                 captured.artifact.epoch > (located?.artifact.epoch ?? 0) && captured.retainedFrameVerified
             } == true
             let ok = textsOK && freshCapture
-            let detail = "detailOcr=\(textsOK ? "group+57張照片" : "missing") "
+            let detail = "detailOcr=\(textsOK ? "unique group+date+57張照片" : "missing or ambiguous") "
                 + "epoch=\(verified?.artifact.epoch ?? 0) afterLocated=\(located?.artifact.epoch ?? 0) "
                 + "retainedFrame=\(verified?.retainedFrameDetail ?? "artifact-missing")"
             conditions.append(PhaseACondition(
@@ -756,7 +767,7 @@ public enum PhaseAEvidenceBuilder {
             let menu = latest[ExecutionState.menuVerified.rawValue]
             let ellipsisOK = ellipsis?.artifact.candidateRefusal == nil
                 && ellipsis?.artifact.candidateIdentity == "album-ellipsis"
-            let observedRows = reference.filter { menu?.artifact.ocrTexts.contains($0) == true }
+            let observedRows = reference.filter { text in menu?.artifact.ocrTexts.filter { $0 == text }.count == 1 }
             let menuOK = reference.count == 5 && observedRows.count == reference.count
                 && (menu?.artifact.epoch ?? 0) > (ellipsis?.artifact.epoch ?? 0)
             let ok = ellipsisOK && menuOK
@@ -789,8 +800,8 @@ public enum PhaseAEvidenceBuilder {
                 + "saveAllCandidate=\(saveAll?.artifact.candidateIdentity ?? "none") frozenBounds=\(boundsOK) retainedFrame=\(saveAll?.retainedFrameDetail ?? "artifact-missing")"
             conditions.append(PhaseACondition(
                 identifier: "POPUP_OCCLUSION_ASSUMPTIONS",
-                status: ok ? .pass : .fail,
-                detail: detail,
+                status: ok ? .unknown : .fail,
+                detail: detail + "; candidate/frame containment does not prove popup ownership or absence of occlusion; direct bound observations are missing",
                 artifacts: [saveAll?.artifactName].compactMap { $0 }
             ))
         }

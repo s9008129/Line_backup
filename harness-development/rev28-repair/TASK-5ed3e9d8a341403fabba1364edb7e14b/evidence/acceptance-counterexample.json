@@ -1,0 +1,11 @@
+{
+  "command": [
+    "swift",
+    "test",
+    "--filter",
+    "ActuationReadinessTests.testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart"
+  ],
+  "cwd": "rev28",
+  "exit_code": 1,
+  "purpose": "reproduce independent acceptance finding before bounded correction"
+}

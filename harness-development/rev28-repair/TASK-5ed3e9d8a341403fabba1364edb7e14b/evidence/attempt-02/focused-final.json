@@ -1,0 +1,11 @@
+{
+  "command": [
+    "swift",
+    "test",
+    "--filter",
+    "ActuationReadinessTests|ComposedAdaptersTests|LiveCompositionTests|LiveExecutionEngineTests|PhaseAEvidenceTests|NativeObservationSessionTests|GoalSlotTests|PersistentTransactionOwnerTests|CoordinateTransformTests|StructuralLocatorsTests"
+  ],
+  "cwd": "rev28",
+  "exit_code": 0,
+  "scope": "local/injected OS only; exact reservation identity"
+}

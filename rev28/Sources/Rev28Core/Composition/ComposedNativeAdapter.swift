@@ -32,9 +32,6 @@ public protocol ActuationEnvironment: Sendable {
     func applicationActive(pid: Int32) -> Bool
     func targetFrontmost(pid: Int32) -> Bool
     func uptime() -> Double
-    /// Fresh live readiness facts for one candidate, captured by the OS seam:
-    /// production reads SCK/CG/process facts; tests substitute the observation.
-    func readinessObservation(identity: WindowIdentity, candidate: StructuralCandidate) async throws -> ReadinessObservation
     func postReversibleClick(
         permit: ReadinessPermit,
         binding: SurfaceBinding,
@@ -216,6 +213,11 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
     }
 
     func evaluate(state: ExecutionState, bundle: ObservationBundle) throws -> Bool {
+        func unique(_ text: String) -> Bool {
+            bundle.ocrItems.filter { $0.text == text }.count == 1
+        }
+        let detailIdentity = unique(LiveExecutionEngine.targetGroup)
+            && unique(Self.albumTitle) && unique(Self.albumDetailCountText)
         switch state {
         case .appReady:
             guard environment.applicationActive(pid: configuration.target.pid),
@@ -227,22 +229,20 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
             }
             return true
         case .groupReady:
-            return bundle.ocrItems.contains { $0.text == LiveExecutionEngine.targetGroup }
+            return unique(LiveExecutionEngine.targetGroup)
         case .albumListReady:
-            return !StructuralLocators.segmentAlbumCards(
+            return unique(LiveExecutionEngine.targetGroup) && !StructuralLocators.segmentAlbumCards(
                 items: bundle.ocrItems,
                 imageBounds: Self.imageBounds(of: bundle)
             ).isEmpty
         case .targetAlbumLocated:
-            return bundle.candidate != nil
+            return unique(LiveExecutionEngine.targetGroup) && bundle.candidate != nil
         case .albumDetailVerified:
-            let texts = Set(bundle.ocrItems.map(\.text))
-            return texts.contains(LiveExecutionEngine.targetGroup) && texts.contains(Self.albumDetailCountText)
+            return detailIdentity
         case .ellipsisLocated:
-            return bundle.candidate != nil
+            return detailIdentity && bundle.candidate != nil
         case .menuVerified:
-            let texts = Set(bundle.ocrItems.map(\.text))
-            return StructuralLocators.lineAlbumMenuReference.allSatisfy { texts.contains($0) }
+            return detailIdentity && StructuralLocators.lineAlbumMenuReference.allSatisfy(unique)
         case .saveAllLocated:
             guard configuration.menuBoundsCapture != nil else {
                 throw ComposedAdapterError.stateRefused(
@@ -250,7 +250,7 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
                     detail: "frozen menu-surface geometry is not calibrated"
                 )
             }
-            return bundle.candidate?.identity == "儲存全部"
+            return detailIdentity && bundle.candidate?.identity == "儲存全部"
         default:
             throw ComposedAdapterError.stateRefused(
                 state: state.rawValue,
@@ -271,6 +271,12 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
                 detail: "Save All candidate cannot be clicked reversibly"
             )
         }
+        guard bundle.ocrItems.filter({ $0.text == LiveExecutionEngine.targetGroup }).count == 1 else {
+            throw ComposedAdapterError.recoveryRefused(
+                state: bundle.state.rawValue, detail: "recovery requires the unique exact target group on the current frame"
+            )
+        }
+        try requireRecoveryIdentity(bundle)
         // Freshness facts are projections of the same retained bundle: the
         // post-capture inventory the session already validated, never
         // caller-authored flags.
@@ -281,27 +287,7 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
                 detail: "post-capture inventory lost the target window"
             )
         }
-        let observation = ReadinessObservation(
-            applicationActive: environment.applicationActive(pid: configuration.target.pid),
-            targetFrontmost: environment.targetFrontmost(pid: configuration.target.pid),
-            freshWindow: FreshWindowObservation(
-                bundleID: post.ownerBundleID ?? "",
-                process: bundle.process,
-                windowID: post.windowID,
-                frame: post.frame,
-                layer: post.windowLayer,
-                isOnScreen: post.isOnScreen
-            ),
-            currentEpoch: bundle.epoch,
-            currentBinding: bundle.surfaceBinding,
-            captureGeometry: CaptureGeometry(
-                windowFrame: bundle.window.windowFrame,
-                captureBBox: bundle.frame.actualBBoxPt,
-                scale: bundle.frame.scale
-            ),
-            captureImageSize: CGSize(width: bundle.frame.imageWidthPx, height: bundle.frame.imageHeightPx),
-            observedAtUptime: environment.uptime()
-        )
+        let observation = try readiness(from: bundle)
         let permit = try DispatchReadinessGate.mintPermit(
             identity: bundle.window,
             candidate: candidate,
@@ -311,14 +297,7 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
         // Plan C5: the post-hover revalidation re-runs the fresh live
         // observation path and requires it to still match the permit's bound
         // candidate/window/geometry before mouseDown.
-        let revalidation: @Sendable () async throws -> Void = { [environment] in
-            let fresh = try await environment.readinessObservation(identity: bundle.window, candidate: candidate)
-            try DispatchReadinessGate.revalidateAfterHover(
-                permit: permit,
-                freshObservation: fresh,
-                now: environment.uptime()
-            )
-        }
+        let revalidation = postHoverRevalidation(permit: permit, original: bundle, owner: owner)
         try await environment.postReversibleClick(
             permit: permit,
             binding: bundle.surfaceBinding,
@@ -330,11 +309,12 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
 
     private func persist(
         bundle: ObservationBundle,
-        owner: PersistentTransactionOwner
+        owner: PersistentTransactionOwner,
+        prefix: String = "state"
     ) throws -> EstablishedStateEvidence {
         let runDirectory = URL(fileURLWithPath: owner.authorization.evidenceRunDirectory)
-        let frameName = "state-\(bundle.state.rawValue)-\(bundle.epoch).png"
-        let artifactName = "state-\(bundle.state.rawValue)-\(bundle.epoch).json"
+        let frameName = "\(prefix)-\(bundle.state.rawValue)-\(bundle.epoch).png"
+        let artifactName = "\(prefix)-\(bundle.state.rawValue)-\(bundle.epoch).json"
         try bundle.framePNGData.write(to: runDirectory.appendingPathComponent(frameName))
         let artifact = StateEvidenceArtifact(bundle: bundle, retainedFrameName: frameName)
         let artifactData = try JSONEncoder().encode(artifact)
@@ -344,6 +324,59 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
             evidenceSHA256: EvidenceIO.sha256Hex(artifactData),
             artifact: artifact
         )
+    }
+
+    func readiness(from bundle: ObservationBundle) throws -> ReadinessObservation {
+        try ReadinessObservation(
+            bundle: bundle,
+            applicationActive: environment.applicationActive(pid: configuration.target.pid),
+            targetFrontmost: environment.targetFrontmost(pid: configuration.target.pid)
+        )
+    }
+
+    func postHoverRevalidation(
+        permit: ReadinessPermit, original: ObservationBundle, owner: PersistentTransactionOwner
+    ) -> @Sendable () async throws -> Void {
+        { [self] in
+            let fresh = try await observe(
+                state: original.state, owner: owner, localization: original.localization
+            )
+            // Retain a completed capture even when its target later refuses.
+            // Readiness artifacts never become state-transition evidence.
+            // The state- prefix lets the existing durable epoch authority
+            // include this capture after a crash. Phase A excludes the
+            // readiness subtype from established-state evidence.
+            _ = try persist(bundle: fresh, owner: owner, prefix: "state-readiness")
+            guard fresh.ocrItems.filter({ $0.text == LiveExecutionEngine.targetGroup }).count == 1 else {
+                throw ComposedAdapterError.recoveryRefused(
+                    state: original.state.rawValue, detail: "target identity changed after the hover"
+                )
+            }
+            try requireRecoveryIdentity(fresh)
+            if original.state == .saveAllLocated, try !evaluate(state: .saveAllLocated, bundle: fresh) {
+                throw ComposedAdapterError.recoveryRefused(
+                    state: original.state.rawValue, detail: "Save All target identity changed after the hover"
+                )
+            }
+            try DispatchReadinessGate.revalidateAfterHover(
+                permit: permit, freshBundle: fresh,
+                applicationActive: environment.applicationActive(pid: configuration.target.pid),
+                targetFrontmost: environment.targetFrontmost(pid: configuration.target.pid),
+                now: environment.uptime()
+            )
+        }
+    }
+
+    private func requireRecoveryIdentity(_ bundle: ObservationBundle) throws {
+        if bundle.candidate?.identity == "album-ellipsis" {
+            guard [Self.albumTitle, Self.albumDetailCountText].allSatisfy({ text in
+                bundle.ocrItems.filter { $0.text == text }.count == 1
+            }) else {
+                throw ComposedAdapterError.recoveryRefused(
+                    state: bundle.state.rawValue, detail: "ellipsis recovery requires the unique exact album date and count"
+                )
+            }
+        }
     }
 
     static func imageBounds(of bundle: ObservationBundle) -> CGRect {

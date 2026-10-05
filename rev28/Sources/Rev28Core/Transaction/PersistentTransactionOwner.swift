@@ -288,6 +288,19 @@ public final class PersistentTransactionOwner {
         ]))
     }
 
+    /// Re-observation preserves the monotonic state and every existing budget.
+    public func recordReobservation(state: ExecutionState, evidenceSHA256: String) throws {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        guard currentState == state, !hasIrreversibleRecords,
+              Self.validSHA256(evidenceSHA256) else {
+            throw PersistentTransactionError.invalidStateEvidence
+        }
+        try append(kind: "state.reobservation", payload: binding([
+            "state": state.rawValue, "evidenceSHA256": evidenceSHA256,
+        ]))
+    }
+
     public var irreversibleOperationCounts: (saveAll: Int, destinationConfirmation: Int) {
         (ledger.entries.filter { $0.kind == "intent.saveAll" || $0.kind == "attempt.saveAll" }.count,
          ledger.entries.filter { $0.kind == "intent.destinationConfirmation" || $0.kind == "attempt.destinationConfirmation" }.count)
@@ -309,7 +322,13 @@ public final class PersistentTransactionOwner {
     /// Consecutive candidate-revalidation failures ending at the ledger head.
     public var consecutiveCandidateRevalidationFailures: Int {
         var failures = 0
+        var seenAttempts = Set<String>()
         for entry in ledger.entries.reversed() where entry.kind == "budget.revalidation" {
+            // Final refusal supersedes only this invocation's provisional
+            // success. Distinct successes and legacy records still reset.
+            if let attemptID = entry.payload["attemptID"], !seenAttempts.insert(attemptID).inserted {
+                continue
+            }
             guard entry.payload["passed"] == "false" else { break }
             failures += 1
         }
@@ -330,6 +349,12 @@ public final class PersistentTransactionOwner {
     /// `blockerKey` defaults to the reviewed action grouping, so a caller
     /// cannot rename a retry to escape the per-blocker ceiling.
     public func recordReversibleDispatch(action: String, blockerKey: String? = nil) throws {
+        _ = try recordReversibleDispatchAttempt(action: action, blockerKey: blockerKey)
+    }
+
+    /// Return the exact reservation entry while holding the owner lock. A
+    /// later append cannot change the identity of this dispatch invocation.
+    func recordReversibleDispatchAttempt(action: String, blockerKey: String? = nil) throws -> String {
         stateLock.lock()
         defer { stateLock.unlock() }
         guard reversibleDispatchCount < LiveDispatchBudget.reversibleCeiling else {
@@ -348,21 +373,28 @@ public final class PersistentTransactionOwner {
             throw ExecutionPolicyError.candidateRevalidationExhausted
         }
         try append(kind: "dispatch.reversible", payload: binding(["action": action]))
-        try append(kind: "budget.blocker", payload: binding(["blockerKey": key]))
+        return try append(kind: "budget.blocker", payload: binding(["blockerKey": key])).selfHash
     }
 
     /// Persists one candidate revalidation outcome. Two consecutive failures
     /// abort: the second failure is durable before the error surfaces, so a
     /// restart cannot re-derive a cleared revalidation history.
-    public func recordCandidateRevalidation(blockerKey: String, passed: Bool) throws {
+    public func recordCandidateRevalidation(blockerKey: String, passed: Bool, attemptID: String? = nil) throws {
         stateLock.lock()
         defer { stateLock.unlock() }
-        let consecutive = passed ? 0 : consecutiveCandidateRevalidationFailures + 1
-        try append(kind: "budget.revalidation", payload: binding([
+        var payload = [
             "blockerKey": blockerKey,
             "passed": passed ? "true" : "false",
-        ]))
-        if consecutive >= 2 {
+        ]
+        if let attemptID {
+            guard ledger.entries.contains(where: {
+                $0.selfHash == attemptID && isBound($0)
+                    && ($0.kind == "budget.blocker" || $0.kind == "attempt.saveAll")
+            }) else { throw PersistentTransactionError.invalidStateEvidence }
+            payload["attemptID"] = attemptID
+        }
+        try append(kind: "budget.revalidation", payload: binding(payload))
+        if consecutiveCandidateRevalidationFailures >= LiveDispatchBudget.consecutiveRevalidationAbortThreshold {
             throw ExecutionPolicyError.candidateRevalidationExhausted
         }
     }
@@ -434,6 +466,10 @@ public final class PersistentTransactionOwner {
 
     /// Must be persisted immediately before event dispatch; a crash afterwards is observe-only.
     public func markSaveAllAttempted() throws {
+        _ = try markSaveAllAttemptedWithRevalidationID()
+    }
+
+    func markSaveAllAttemptedWithRevalidationID() throws -> String {
         stateLock.lock()
         defer { stateLock.unlock() }
         guard saveAllIntentOwnedByThisProcess,
@@ -441,8 +477,9 @@ public final class PersistentTransactionOwner {
               irreversibleOperationCounts.saveAll == 1 else {
             throw PersistentTransactionError.irreversibleAttemptAlreadyRecorded("saveAll")
         }
-        try append(kind: "attempt.saveAll", payload: binding([:]))
+        let entry = try append(kind: "attempt.saveAll", payload: binding([:]))
         saveAllIntentOwnedByThisProcess = false
+        return entry.selfHash
     }
 
     public func recordChooserVerified(
@@ -541,9 +578,11 @@ public final class PersistentTransactionOwner {
         confirmationIntentOwnedByThisProcess = false
     }
 
-    private func append(kind: String, payload: [String: String]) throws {
-        try ledger.append(kind: kind, payload: payload)
+    @discardableResult
+    private func append(kind: String, payload: [String: String]) throws -> LedgerEntry {
+        let entry = try ledger.append(kind: kind, payload: payload)
         try checkpoint()
+        return entry
     }
 
     private func checkpoint() throws {

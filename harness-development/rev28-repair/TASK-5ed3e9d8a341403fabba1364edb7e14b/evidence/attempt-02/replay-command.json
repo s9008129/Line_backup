@@ -1,0 +1,11 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "rev28/Tools/replay_rev28.py",
+    "--output",
+    "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/replay.json"
+  ],
+  "cwd": ".",
+  "exit_code": 0
+}

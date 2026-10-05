@@ -1,0 +1,138 @@
+{
+  "checks": {
+    "attempt07_ellipsis_dots": [
+      [
+        304.5,
+        44.0
+      ],
+      [
+        304.5,
+        49.5
+      ],
+      [
+        304.5,
+        55.0
+      ]
+    ],
+    "attempt07_ellipsis_verdict": "ELIGIBLE",
+    "attempt07_final_gate_all_pass": true,
+    "attempt12_album_card_verdict": "ELIGIBLE",
+    "attempt12_count": "57",
+    "attempt13_geometry_verdict": "GEOMETRY_BINDING_PASS",
+    "attempt16_required_identities": [
+      "旻謙允禎成長日記",
+      "2024/05/13~05/17",
+      "57"
+    ],
+    "current_production_replay": {
+      "album_card_candidate_px": [
+        28,
+        926.5
+      ],
+      "album_card_locator": "candidate",
+      "album_card_region": "attempt12-verified-card",
+      "pixel_detector_component_count": 886,
+      "pixel_detector_fixture": "attempt-16/frame-s1.png",
+      "save_all_candidate_px": [
+        1061.5,
+        328.16675
+      ],
+      "save_all_locator": "candidate"
+    },
+    "save_all_v8_hard_check_count": 8,
+    "save_all_v8_reference_structure": [
+      "選擇項目",
+      "修改相簿名稱",
+      "儲存全部",
+      "刪除相簿",
+      "分享相簿"
+    ]
+  },
+  "expected_fixture_count": 20,
+  "failures": [],
+  "fixture_count": 20,
+  "manifest": [
+    {
+      "path": "evidence/20260916-route/attempt-07/album-card-locate.json",
+      "sha256": "94694c921171f98c53b7fc79a350d0f7faf635c234ed17cf894b87f9fb0fd624"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-07/album-open-verify.json",
+      "sha256": "aa0a2161d844b5cf7583514d2269c4db61f210c3cc85b57afa0f9d8b471a83ff"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-07/screen-probe.json",
+      "sha256": "38130a6a540c099b3ca88e979a72684a467e158b4a78ce64bf4334ccdba6f77c"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-07/v4-baseline-replay.json",
+      "sha256": "126b3c92be34f09e78287d356b2fce7d27437a0f61678f8fc32e5c6cc6684b03"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-07/v5-offline-replay.json",
+      "sha256": "5ad6aa01ca0eb5f52ab8812ebdcb03c3b27fd6a82904166f7d9cff115dd3b455"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-12/album-card-locate-v6.json",
+      "sha256": "05bcea90f31587435a1c16b522938eeabc32b06788d4d85b002559eb5b036875"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-12/frame-pre.png",
+      "sha256": "b88f7e097cc349853034494c6a7f970f1c524d3084dc4a4bed711dacab320c58"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-12/live-window-geometry.json",
+      "sha256": "fdd68d750b3bb2d2b2fbf9c4ae6724cdfd30c69b94d3d1e07adba9d681092296"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-12/s1-ax-pre.json",
+      "sha256": "fe5f3d685b7e2270c296b055923a8a3938925195453dae911e05368d42f0c0c3"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-13/frame-menu-pre.png",
+      "sha256": "0118b12fb758aa86fdd5b181c56005a94eef1be4b7cd60b005b547d9a47f0fb6"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-13/geometry-binding-preclick.json",
+      "sha256": "288dba46bc5a4e14350e991070c22851d3679d95ce38ca9dfd597ddce88f076a"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-14/frame-pre.png",
+      "sha256": "7e16ddfff3a3a3c59ed19eda5fc08b0e6e7f7ac4bedb5a546c9cd4257d3a976d"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-16/frame-s1.png",
+      "sha256": "d058139168683cda6546b0d52adb0e23dea3fc5d3aa4bd5e082c0c084f0ee6ab"
+    },
+    {
+      "path": "evidence/20260916-route/attempt-16/s1-window-ocr.json",
+      "sha256": "ddf202f0dbc6854159b6180d55c43bccc2299ac085689774ec46ec2a3739ae0a"
+    },
+    {
+      "path": "evidence/20260921-rev27-save-all/attempt-07/s11e-final-gate.json",
+      "sha256": "fd44018d5b179383d577e0ab8b2195e6bf72de0b3468eb0f857b6d52a45f57cc"
+    },
+    {
+      "path": "evidence/20260921-rev27-save-all/attempt-07/s11e-menu-detect.json",
+      "sha256": "009c705f7767b0354064c3a3ec3e1261a6257b2a40f559b0338ab60d29158775"
+    },
+    {
+      "path": "evidence/20260921-rev27-save-all/attempt-07/s11e-menu-frame-geometry.json",
+      "sha256": "8f236ebabf5a35ae573857dc0ce4f2476462285441ad954ad92f04b9c70453b1"
+    },
+    {
+      "path": "evidence/20260921-rev27-save-all/attempt-07/s11e-preclick-ax.json",
+      "sha256": "668bed55234f1a275fba246eb7d5ec51e7d9cf7ab116872795166d8e5af60d56"
+    },
+    {
+      "path": "evidence/20260921-rev27-save-all/attempt-07/s11e-preclick-frame.png",
+      "sha256": "d545043d3048e71231a502b413c1bc2a7d98db1a8a329d7d3a77916401bf64fc"
+    },
+    {
+      "path": "evidence/20260921-rev27-save-all/attempt-07/s11e-v8-locate-save-all.json",
+      "sha256": "5f5ba237bb198d6f363a58cfa29141ca571429b78714c27b35a1a2b63c46a996"
+    }
+  ],
+  "schema": "rev28-historical-replay-v2",
+  "verdict": "PASS"
+}

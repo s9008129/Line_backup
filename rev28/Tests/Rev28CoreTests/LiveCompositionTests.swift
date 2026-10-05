@@ -176,7 +176,7 @@ final class LiveCompositionTests: XCTestCase {
         XCTAssertEqual(outcome.entitlementConsumed, false)
         XCTAssertEqual(environment.postedActions, ["open-album-card", "open-album-menu"])
         let captures = await composition.session.captureCount
-        XCTAssertEqual(captures, 12)
+        XCTAssertEqual(captures, 14)
         XCTAssertEqual(composition.epochAuthority.floor, 0)
         XCTAssertEqual(composition.owner.irreversibleOperationCounts.saveAll, 0)
         XCTAssertEqual(composition.owner.irreversibleOperationCounts.destinationConfirmation, 0)

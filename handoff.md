@@ -10,7 +10,7 @@
 
 尚未完成：可重用的整套原生自動化流程。CUA 曾漏掉實際開啟的浮動選單，需要使用者截圖才能校準。當前 native Phase A 的 FROZEN_CAPTURE_GEOMETRY、POPUP_OCCLUSION_ASSUMPTIONS 仍缺直接綁定證據，原 native GoalSlot/entitlement 仍 UNKNOWN。單次 CUA 成功不證明這些條件通過，也不授權 native Phase B。
 
-先核對 Git dirty/untracked、當前 config/state、已驗收 source SHA 與本文件的證據索引。接手必須使用同一份本機 worktree；本交接 commit 只提交 handoff.md，已驗收修復、config/state、照片與 harness-development 證據仍是本機未提交資料。不要 reset/clean/stash、切分支、回退舊 HEAD 或把 checkout 的舊程式當成已驗收版本。缺檔或 hash 不符時保存差異，停止依賴該證據，不自行重建 registry 或恢復舊 authority。
+先核對 Git dirty/untracked、當前 config/state、已驗收 source SHA 與本文件的證據索引。c19fc90 是先前僅 handoff.md 的文件提交；本次修復發布提交補齊已驗收程式、測試與選定文字證據，精確範圍見 §9。config/state、照片、完整實機／桌面證據仍只在本機；實機續跑須使用同一台 Mac 的既有 worktree。新 clone 可取得修復來源，不能假稱已具備 live authority 或完整備份證據。不要 reset/clean/stash、切分支、回退舊 HEAD 或把舊 committed source 當成已驗收版本。缺檔或 hash 不符時保存差異，停止依賴該證據，不自行重建 registry 或恢復舊 authority。
 
 下一步先做不依賴 LINE 前景的本機唯讀診斷，明確區分 CUA screenshot 與原生 SCK/CG/AX 路徑。查明缺的是觀察能力、collector/evidence binding、產品缺陷，還是必要外部條件。使用者目前可正常使用電腦，不能假設 LINE 仍在前景、選單仍開著或舊 PID/window ID/座標仍有效。
 
@@ -41,7 +41,7 @@
 
 使用者曾把 LINE 相簿放到前景、提供開啟選單與關閉後完整截圖。備份開始後 Agent 已停止所有 LINE GUI 動作。完成下載與驗證後，已告知使用者可正常使用電腦、切換或關閉 LINE。**這些是歷史操作狀態，不是接手時的即時畫面證據。**
 
-本次另明示授權撰寫此交接文件及 add/commit/push。此文件交付的 Git 授權不等於下一輪可自行發布產品改動、擴大相簿範圍或恢復未知 native production permit。
+使用者先明示授權交接文件的 add/commit/push，之後再次要求梳理上下文並提交、推送。本次依此發布已獨立驗收的修復、測試及選定文字證據；沒有新增產品語意修復。此 Git 授權不等於擴大相簿範圍或恢復未知 native production permit；後續新產品發布依實際新 scope 處理。
 
 ## 2. 當前權威位置與精確身分
 
@@ -50,7 +50,7 @@
 | 專案 root | `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup` |
 | Git branch | `v43-ab/codex-rev28` |
 | origin | `https://github.com/s9008129/Line_backup.git` |
-| 交接更新前 HEAD | `07a7ec3f64f2a7a9837a78f9ae0e731b60252519`；此後本次為僅文件 commit，接手時實讀 HEAD |
+| Git 發布 lineage | 原修復基準 `07a7ec3f64f2a7a9837a78f9ae0e731b60252519` → 僅文件提交 `c19fc90b22791f417f31d31fd57a4191aa628c42` → 本次已驗收修復發布提交；接手時實讀 HEAD，不能以舊 HEAD 判定產品版本 |
 | 當前 config | `config/line_backup_config.json` |
 | 當前 backup state | `state/backup_state.json` |
 | 當前 run log | `state/run_log.md` |
@@ -116,7 +116,7 @@ Config 是 schema2；`max_albums_per_run=1`、`recovery_limit=1`、`poll_interva
 - state revision16 在同一 serialized atomic commit 登記 VERIFIED/fingerprint、清除 `active_writer_id` 與 `context_lock`，精確 read-back 成功。`current_run_id` 仍指向該 terminal run 是有效狀態，不要因此重開/清空它。
 - 產品 `verify-only` exit0：filesystem/registry **PASS**、source **CONFIRMED**、state **EXACT**、artifact read-back **PASS**。
 - 獨立 reviewer 檢查 664 項 schema/source/state/content/preservation assertions，以及 actual 原始 card/menu/chooser/download evidence；A1 PASS。
-- 保留 34,623 個先前檔案/mode、24,536 個歷史檔案及集合、原 HEAD/branch/index。這是當時觀察，後續此文件 commit 合法改變 HEAD/index，不必回退才能符合舊 preservation receipt。
+- 保留 34,623 個先前檔案/mode、24,536 個歷史檔案及集合、原 HEAD/branch/index。這是當時觀察，後續文件與已驗收修復發布 commit 合法改變 HEAD/index，不必回退才能符合舊 preservation receipt。
 
 單一相簿 task 的六項狀態是：
 
@@ -236,7 +236,7 @@ Native current-composer acceptance 必須使用當前 native source 的直接 re
 - budget 已耗盡、沒有新資訊、超出 reviewed paths 或必要檢查/獨立 Acceptance 未通過。
 - capability unavailable：如實交付 evidence packet，不換未授權工具、hidden AX、AppleScript、shell GUI automation 或猜座標。
 
-不要 commit/push 整個 dirty worktree。此文件 commit 已明示授權；下一輪產品發布要依使用者新的交付範圍及 reviewed結果處理。禁止 reset/clean/stash/rebase/force push、修改其他 worktree、重開 A/B competition 或手動修 ledger/slot。
+不要 commit/push 整個 dirty worktree。本次已明示授權的修復發布只收已接受來源及 §9 的精確文字證據清單；照片、live config/state、桌面截圖與編譯 cache 保留本機。下一輪新產品發布依新的交付 scope 與 reviewed 結果處理。禁止 reset/clean/stash/rebase/force push、修改其他 worktree、重開 A/B competition 或手動修 ledger/slot。
 
 ## 8. 精確證據索引與接手 baseline
 
@@ -271,8 +271,12 @@ BACKUP_TASK 內重要相對路徑：
 
 ## 9. Git 交付與工作樹保留
 
-本次文件提交只包含根目錄 `handoff.md`。詳細提交訊息保存於本機 `harness-development/rev28-handoff-delivery/TASK-fad90a2bf8e14a6dbb81dc5412cc7839/commit-message.txt`；實際 commit/push 結果見同 task 的 evidence/implementer result，提交後也可 `git log -1 --format=fuller -- handoff.md` 查看。
+先前 `c19fc90` 只提交根目錄 `handoff.md`；該次詳細訊息與驗證紀錄仍保留在本機 `harness-development/rev28-handoff-delivery/TASK-fad90a2bf8e14a6dbb81dc5412cc7839/`。本次發布子任務是 `harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/`：`commit-message.txt` 包含意圖、完成內容、驗證及下一步；`publication-paths.json` 是精確提交清單，`evidence/accepted-source-verification.json` 記錄原接受 bytes 的核對，`evidence/publication-index.json` 列出交付檔案 hash。實際提交訊息也可用 `git log -1 --format=fuller -- handoff.md` 查看。提交後的 commit/push、保留性與 advisory Implementer result 留在此本機 task，不為了寫入自己的 commit ID 再製造一輪提交。
 
-交接前 staged set 為空，branch/origin 為上述分支。21 個既有 tracked modified 檔案，以及未 tracked 的 `ProcessCodeIdentity.swift`、對應 test、`harness-development/`、`config/`、`state/`、`backups/` 均保留原樣、未包入這次文件 commit。已接受的產品狀態是本機 worktree bytes，不是目前 Git commit tree；**全新 clone 只有此文件與舊 committed source，無法直接重現本機已接受結果。** 若改用另一台機器/clone，先另行規劃明確的程式與證據移交，不能假稱 artifacts 存在。
+本次初始 staged set 為空。將 21 個既有 tracked modified 檔案，加上 `ProcessCodeIdentity.swift` 與對應 test 共 23 個原樣入庫；重新核對 49-file 來源 aggregate、第一輪接受 patch 的 16 個未被後續取代的 postimage，以及 fresh repair 接受後的 7 個檔案，全部吻合。產品與測試 bytes 沒有新修改；只更新此根目錄 navigation 文件的發布事實。
+
+另外原樣提交 88 個選定文字紀錄：兩輪 repair 的 Plan/contract/Handoff、獨立 Plan Review、原 FAIL 與最後 PASS、source manifest、反例與驗證命令／log，以及原生診斷／57 張相簿結案的少量結果 metadata。`historical-evidence-paths.json` 精確列出它們；原紀錄引用路徑不改寫。這是**可攜文字追溯集，並非完整實機證據依賴閉包**。來源可從新 clone 建置，但二進位快取、registry/config、照片、GUI 原圖與 raw trace 仍在原 Mac；歷史文字 PASS 不等於在新 clone 重新驗收通過。
+
+`config/`、`state/`、`backups/`、未選取的 `harness-development/` 歷史、桌面／照片／Computer Use 原始圖及 `rev28/.build/` 保留本機，不發布。未因 Git 交付重下載或操作 LINE，也沒有消耗或恢復舊 native entitlement。原 task 所有 bytes、失敗及 counters 均保留；先前 preservation 的 Git HEAD 是歷史觀察，不能用來要求回退現在已明示授權的發布。
 
 接手完成新的修復與驗收後，回報具體 root cause、最小修改、真正執行的檢查、保留的未知與六個 status，以及是否真的需要使用者做下一個動作。沒有必要的介入，就繼續在授權及 reviewed scope 內處理，不再反覆要求使用者把 LINE 開到前景。

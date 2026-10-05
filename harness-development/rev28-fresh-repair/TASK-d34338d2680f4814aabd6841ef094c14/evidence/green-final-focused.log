@@ -1,0 +1,134 @@
+Building for debugging...
+[0/14] Write sources
+[2/14] Write swift-version--58304C5D6DBC2206.txt
+[4/16] Compiling Rev28Core NativeObservationSession.swift
+[5/16] Emitting module Rev28Core
+[5/21] Write Objects.LinkFileList
+[11/23] Emitting module Rev28CoreTests
+[11/23] Linking rev28harness
+[12/23] Linking rev28probe
+[13/23] Linking rev28replay
+[13/23] Linking rev28occluder
+[15/23] Applying rev28harness
+[16/23] Applying rev28probe
+[17/23] Applying rev28replay
+[18/23] Applying rev28occluder
+[19/23] Linking rev28ctl
+[20/23] Applying rev28ctl
+[22/23] Compiling Rev28CoreTests NativeObservationSessionTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:59:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 57 | 
+ 58 |         func enumerateWindows() async throws -> [SCWindowSnapshot] {
+ 59 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 60 |             enumerateCalls += 1
+ 61 |             let call = enumerateCalls
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:62:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 60 |             enumerateCalls += 1
+ 61 |             let call = enumerateCalls
+ 62 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 63 |             return call == 1 ? (preInventoryOverride ?? [window]) : (postInventoryOverride ?? [window])
+ 64 |         }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:87:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 85 |         ) async throws -> ObservationCapturedImage {
+ 86 |             if let onCaptureStart { await onCaptureStart() }
+ 87 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 88 |             now += captureClockAdvance
+ 89 |             lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:89:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 87 |             lock.lock()
+ 88 |             now += captureClockAdvance
+ 89 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 90 |             if let captureError { throw captureError }
+ 91 |             let image = Self.makeImage(width: 400, height: 600)
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+[22/24] Write Objects.LinkFileList
+[23/24] Linking rev28PackageTests
+Build complete! (1.60s)
+Test Suite 'Selected tests' started at 2026-10-04 19:01:07.292.
+Test Suite 'rev28PackageTests.xctest' started at 2026-10-04 19:01:07.293.
+Test Suite 'NativeObservationSessionTests' started at 2026-10-04 19:01:07.293.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused]' passed (0.011 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGGeometryWithinExistingHalfPointTolerancePasses]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGGeometryWithinExistingHalfPointTolerancePasses]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConflictingDuplicateSCKWindowIDIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConflictingDuplicateSCKWindowIDIsRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testOneExplicitCGSnapshotIsSharedByIdentityAndBundle]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testOneExplicitCGSnapshotIsSharedByIdentityAndBundle]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused]' passed (0.009 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostIdentityReadDoesNotExtendAbsoluteDeadline]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostIdentityReadDoesNotExtendAbsoluteDeadline]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testStableUnavailableSigningRemainsUnknown]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testStableUnavailableSigningRemainsUnknown]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' passed (0.002 seconds).
+Test Suite 'NativeObservationSessionTests' passed at 2026-10-04 19:01:07.358.
+	 Executed 18 tests, with 0 failures (0 unexpected) in 0.064 (0.065) seconds
+Test Suite 'ProcessCodeIdentityTests' started at 2026-10-04 19:01:07.358.
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testMissingOrMalformedTargetIdentityIsUnknown]' started.
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testMissingOrMalformedTargetIdentityIsUnknown]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testObservedIdentifierAndTeamArePreserved]' started.
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testObservedIdentifierAndTeamArePreserved]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testUnavailableTargetRemainsUnknown]' started.
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testUnavailableTargetRemainsUnknown]' passed (0.001 seconds).
+Test Suite 'ProcessCodeIdentityTests' passed at 2026-10-04 19:01:07.359.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-10-04 19:01:07.359.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 0.066 (0.067) seconds
+Test Suite 'Selected tests' passed at 2026-10-04 19:01:07.359.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 0.066 (0.067) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

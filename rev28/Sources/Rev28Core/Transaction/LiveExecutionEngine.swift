@@ -228,16 +228,23 @@ public struct LiveExecutionEngine {
     @discardableResult
     public func establishPreSaveStates() async throws -> Int {
         let startIndex: Int
+        var previousEpoch: UInt64?
+        var observations = 0
         if let current = owner.currentState {
             guard let index = Self.preSaveStates.firstIndex(of: current) else {
                 throw LiveExecutionEngineError.stateAlreadyStarted
             }
+            // A durable state records history, not the current UI. Re-establish
+            // it before continuing, including when already SAVE_ALL_LOCATED.
+            let fresh = try await adapter.establish(state: current, owner: owner)
+            try Self.validateEstablishedEvidence(fresh, state: current, owner: owner, previousEpoch: nil)
+            try owner.recordReobservation(state: current, evidenceSHA256: fresh.evidenceSHA256)
+            previousEpoch = fresh.artifact.epoch
+            observations += 1
             startIndex = index + 1
         } else {
             startIndex = 0
         }
-        var previousEpoch: UInt64?
-        var observations = 0
         for state in Self.preSaveStates.dropFirst(startIndex) {
             let evidence = try await adapter.establish(state: state, owner: owner)
             try Self.validateEstablishedEvidence(

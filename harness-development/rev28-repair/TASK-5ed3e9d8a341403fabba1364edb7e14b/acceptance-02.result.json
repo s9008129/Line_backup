@@ -1,0 +1,114 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-5ed3e9d8a341403fabba1364edb7e14b",
+  "run_id": "b631e56d-34d2-47c9-99d9-0f18bb339d87",
+  "role": "ACCEPTANCE_REVIEWER",
+  "candidate_fact": "PASS",
+  "validation_fact": "NOT_RUN",
+  "routing_fact": "DONE",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "ACHIEVED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "CORE_ACCEPTANCE_STATUS": "PASS",
+    "REQUIRED_VERIFICATION_STATUS": "PASS",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PASS",
+    "TASK_CLOSURE_STATUS": "DONE"
+  },
+  "gate_results": [
+    {"gate_id":"G1_PLAN_REVIEW","verdict":"PASS","evidence_manifest":"harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/plan-review.result.json"},
+    {"gate_id":"G2_FOCUSED_REGRESSIONS","verdict":"PASS","evidence_manifest":"harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/verification-manifest.json"},
+    {"gate_id":"G3_FULL_SUITE_REPLAY","verdict":"PASS","evidence_manifest":"harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/verification-manifest.json"},
+    {"gate_id":"G4_PRESERVATION","verdict":"PASS","evidence_manifest":"harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/preservation.json"},
+    {"gate_id":"G5_INDEPENDENT_ACCEPTANCE","verdict":"PASS","evidence_manifest":"harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/verification-manifest.json"}
+  ],
+  "evidence_ids": ["accepted-source","accepted-patch","refreshed-verification"],
+  "stage": "ACCEPTANCE",
+  "plan_sha256": "488f1f5e3e4705862121fdd924d0e41061666801a294f22739f443b4b0a66139",
+  "handoff_sha256": "d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+  "source_sha256": "0c953e03328c2786665df2acb434cf3d261976a7ca3661bb8ceeaac9a2a03b7b",
+  "evidence_manifests": [
+    {
+      "task_id":"TASK-5ed3e9d8a341403fabba1364edb7e14b","run_id":"b631e56d-34d2-47c9-99d9-0f18bb339d87",
+      "stage":"ACCEPTANCE","role":"ACCEPTANCE_REVIEWER",
+      "source_sha256":"0c953e03328c2786665df2acb434cf3d261976a7ca3661bb8ceeaac9a2a03b7b",
+      "evidence_id":"accepted-source",
+      "path":"harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/source-manifest.json",
+      "bytes":9242,"sha256":"b11f448743be6d99eee7883027cae6a4cd61020e685153bf3963f641c2df3b70",
+      "contract_sha256":"d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+      "observation":"Independently recomputed all 48 production file hashes and aggregate digest in memory. Inventory, lengths and hashes match. Only QuartzActuator.swift and PersistentTransactionOwner.swift changed in production source since Acceptance-01."
+    },
+    {
+      "task_id":"TASK-5ed3e9d8a341403fabba1364edb7e14b","run_id":"b631e56d-34d2-47c9-99d9-0f18bb339d87",
+      "stage":"ACCEPTANCE","role":"ACCEPTANCE_REVIEWER",
+      "source_sha256":"0c953e03328c2786665df2acb434cf3d261976a7ca3661bb8ceeaac9a2a03b7b",
+      "evidence_id":"accepted-patch",
+      "path":"harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/patch.diff",
+      "bytes":116624,"sha256":"4f2af6b9290c64f4a76c57a5ed110ed1dcc230e17a7c549a0f1fab8b0c065b36",
+      "contract_sha256":"d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+      "observation":"Independently verified byte equality with current git diff --binary HEAD. Inspected exact reservation identity, terminal outcome derivation, restart regression and documentation. The bounded correction resolves the prior MAJOR finding without changing the reviewed safety invariants."
+    },
+    {
+      "task_id":"TASK-5ed3e9d8a341403fabba1364edb7e14b","run_id":"b631e56d-34d2-47c9-99d9-0f18bb339d87",
+      "stage":"ACCEPTANCE","role":"ACCEPTANCE_REVIEWER",
+      "source_sha256":"0c953e03328c2786665df2acb434cf3d261976a7ca3661bb8ceeaac9a2a03b7b",
+      "evidence_id":"refreshed-verification",
+      "path":"harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/verification-manifest.json",
+      "bytes":4954,"sha256":"dd5587efde25883d381da5dfe1d011ecf3633c974e3cfc5692bb0d1fdc645cc4",
+      "contract_sha256":"d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+      "observation":"Independently recomputed all 16 entry hashes and lengths. Inspected command records and logs: focused 126/0, full suite 256/0, build/replay/provenance exit 0. Counterexample first failed with inner exit 1 and eight assertions; corrected regression passes. Replay bytes equal the earlier expected output."
+    }
+  ],
+  "plan_contract_sha256":"d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+  "analysis": {
+    "facts": [
+      "The bounded correction obtains a unique durable reservation-entry hash under the owner lock for reversible and Save All dispatches.",
+      "Provisional success and terminal refusal share that attempt identity. Consecutive failure derivation considers only the latest outcome per identified attempt.",
+      "A late refusal no longer masks an earlier failed attempt. Distinct successful attempts and legacy records retain their reset behavior.",
+      "The new regression covers expiry after actual success persistence and final-guard refusal, asserting only mouseMoved, failure count 2, further-dispatch refusal and the same count/refusal after ledger-anchor reopen.",
+      "Recorded counterexample evidence preserves inner exit 1 and eight failed assertions before correction.",
+      "Current recorded focused tests passed 126/0 and full-suite tests passed 256/0. The final suite includes the new regression, normal success reset, durable ledger/anchor fault cases and retained readiness/resume regressions.",
+      "Current build, replay and frozen provenance command records have exit 0. Replay SHA256 is 81f6da94ad18d601a21bf0b521d5a96869f13b5a0a3e96db66239b2f90a47261 and its bytes match the prior expected output.",
+      "The original one-second deadline, cancellation checks, final live guards, durable error propagation, unchanged click point, one-point margin and 0.5-point tolerance remain enforced.",
+      "Fresh retained readiness bundles, epoch-floor accounting, separation from state transitions, exact current identity and fresh resumed-state observations remain unchanged from the previously inspected repair.",
+      "Phase A calibration and popup obligations remain UNKNOWN, malformed or legacy report conditions cannot pass, and incomplete preflight returns 77.",
+      "Independent rehash confirmed 24,536 historical files and their file set, nine frozen artifacts, unchanged plan/contract/handoff, unchanged Git index and preserved prior verification entries.",
+      "Branch remains v43-ab/codex-rev28 and HEAD remains 07a7ec3f64f2a7a9837a78f9ae0e731b60252519.",
+      "This reviewer changed no files, ran no tests, contacted no services and performed no native GUI interaction."
+    ],
+    "inferences": [
+      "The Acceptance-01 MAJOR finding is resolved within the existing reviewed plan.",
+      "All applicable local repair gates are satisfied; no remaining MAJOR defect was identified.",
+      "Local completion does not authorize or establish production backup completion."
+    ],
+    "unknowns": [
+      "Actual LINE backup remains NOT_ACHIEVED; current native calibration, live Phase A/B, actual chooser and filesystem acceptance remain separate production obligations.",
+      "Production GoalSlot, ledger and authorization migration were not performed and remain outside this repair.",
+      "Root native transport/model receipts and controller stage admissions remain unavailable. This UUID is advisory correlation, not an admitted controller run.",
+      "Actual OS sandboxing or network denial is not established.",
+      "This returned result has not been schema-validated by the reviewer."
+    ],
+    "evidence": [
+      "rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift",
+      "rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift",
+      "rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift",
+      "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/acceptance-counterexample.log",
+      "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/focused-final.log",
+      "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/full-suite-final.log",
+      "Independent in-memory source, patch, manifest, historical and frozen-artifact hash recomputation"
+    ],
+    "confidence":"High for the bounded local repair: the corrected control flow, durable accounting and counterexample regression agree, and final evidence binds to the independently verified source.",
+    "dependencies": {
+      "G1_PLAN_REVIEW":"PREREQUISITE_SATISFIED","G2_FOCUSED_REGRESSIONS":"PREREQUISITE_SATISFIED",
+      "G3_FULL_SUITE_REPLAY":"PREREQUISITE_SATISFIED","G4_PRESERVATION":"PREREQUISITE_SATISFIED",
+      "G5_INDEPENDENT_ACCEPTANCE":"PREREQUISITE_SATISFIED"
+    }
+  },
+  "handoff_summary":"PASS for renewed independent local acceptance. Exact reservation-bound terminal accounting resolves the prior failure-budget defect while preserving durable-before-click refusal and the original deadline. Recorded final focused 126/0, full suite 256/0, build/replay/provenance and preservation pass; final source and patch bindings were independently rehashed. All applicable local gates are satisfied. Actual LINE backup remains NOT_ACHIEVED, and live calibration, production authorization recovery and Phase A/B remain separate obligations. No controller admission or platform isolation claim is made.",
+  "needs_human":false,"human_decisions":[],
+  "convergence": {
+    "meaningful_attempts":2,"consecutive_no_progress":0,
+    "last_attempt":"Attempt02 reproduced the independent counterexample, corrected terminal outcome accounting and refreshed passing verification; renewed independent acceptance confirms the bounded defect is resolved.",
+    "information_gain":true,"stuck":false
+  },
+  "writer_receipts":[]
+}

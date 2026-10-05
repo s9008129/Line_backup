@@ -20,14 +20,7 @@ public struct ProductionActuationEnvironment: ActuationEnvironment {
     }
 
     public func uptime() -> Double {
-        ProcessInfo.processInfo.systemUptime
-    }
-
-    public func readinessObservation(
-        identity: WindowIdentity,
-        candidate: StructuralCandidate
-    ) async throws -> ReadinessObservation {
-        try await ReadinessObservation.captureLive(identity: identity, candidate: candidate)
+        Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000
     }
 
     public func postReversibleClick(

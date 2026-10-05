@@ -1,0 +1,192 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+  "run_id": "29e8c1c3-e70e-427a-a1b6-8aeb611da6a9",
+  "role": "ACCEPTANCE_REVIEWER",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "HANDOFF",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "CORE_ACCEPTANCE_STATUS": "PASS",
+    "REQUIRED_VERIFICATION_STATUS": "PASS",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PASS",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G1_PLAN_REVIEW",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G2_REGRESSIONS",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G3_LOCAL_CHECKS",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G4_PRESERVATION",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G5_INDEPENDENT_ACCEPTANCE",
+      "verdict": "PASS",
+      "evidence_manifest": "acceptance02-candidate-diff"
+    }
+  ],
+  "evidence_ids": [
+    "acceptance02-frozen-plan",
+    "acceptance02-source",
+    "acceptance02-candidate-diff",
+    "acceptance02-verification",
+    "acceptance02-preservation",
+    "acceptance02-red-timing",
+    "acceptance02-green-timing"
+  ],
+  "stage": "ACCEPTANCE",
+  "plan_sha256": "a6ec005c49cdd524d12660a52e9dc2465837cacb52d044226fe50d99e89b091a",
+  "handoff_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+  "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "29e8c1c3-e70e-427a-a1b6-8aeb611da6a9",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "acceptance02-frozen-plan",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/plan.md",
+      "bytes": 7396,
+      "sha256": "a6ec005c49cdd524d12660a52e9dc2465837cacb52d044226fe50d99e89b091a",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Read exact frozen plan; plan, contract and byte-identical Handoff hashes remain unchanged."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "29e8c1c3-e70e-427a-a1b6-8aeb611da6a9",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "acceptance02-source",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-02-source.json",
+      "bytes": 9434,
+      "sha256": "dd48d73dcc01c6fc216797cb6161123fc96cc97016dc89cb4b16731b538a5d8b",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Independently verified 49 current source files and their sorted path/NUL/bytes/NUL aggregate SHA256 against candidate two."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "29e8c1c3-e70e-427a-a1b6-8aeb611da6a9",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "acceptance02-candidate-diff",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-02-incremental.diff",
+      "bytes": 34079,
+      "sha256": "626b8e25dc143bb68b22e8d33b20bf7119937b1a04bd8654d9be90fb5eaa3426",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Compared exact cumulative diff with baseline preimages and current candidate; separately compared candidate-one preimages. Bounded correction changes only native read order, stateful regressions and explanatory architecture text."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "29e8c1c3-e70e-427a-a1b6-8aeb611da6a9",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "acceptance02-verification",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/verification-manifest-02.json",
+      "bytes": 6741,
+      "sha256": "8273caa781c307ccc94ea9b6d8ee963dade8bf9a7ad68c4807bb5790322cd7de",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Verified all manifest entries, current binary, raw logs and command metadata. Recorded fresh focused 22/0, full 268/0, local check exit zero and replay 20-fixture PASS."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "29e8c1c3-e70e-427a-a1b6-8aeb611da6a9",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "acceptance02-preservation",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-02-preservation.json",
+      "bytes": 567,
+      "sha256": "42c036ee25ec692ed19a57cde1b0bce115968b011dab7ea505e742e610e3bf5b",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Independently confirmed retained historical file set/bytes, out-of-scope bytes, HEAD/branch/index, allowed new paths and frozen contract/Handoff."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "29e8c1c3-e70e-427a-a1b6-8aeb611da6a9",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "acceptance02-red-timing",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/red-bracket-02.log",
+      "bytes": 7137,
+      "sha256": "9182250f2ab71f7846488e1391dbe7c05c85aa9fc75928c57913b03f921c8907",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Read executed candidate-one timing counterexample: all four replacement points were accepted and incremented capture count, yielding one test/eight assertion failures."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "29e8c1c3-e70e-427a-a1b6-8aeb611da6a9",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "acceptance02-green-timing",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/green-bracket-02.log",
+      "bytes": 7007,
+      "sha256": "6f3df9cc145b0498daf905312b09a2029a11a026cd51304f4cde05a404f38f07",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Read fresh candidate-two focused log: replacement regression, deadline, single explicit CG, stable unknown signing and all focused tests pass; 22 tests/zero failures."
+    }
+  ],
+  "plan_contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+  "analysis": {
+    "facts": [
+      "Fresh re-acceptance examined exact corrected candidate two, frozen plan/contract/Handoff, current source/tests/architecture, immutable candidate-one preimages, bounded correction, candidate-two manifests/diff and actual raw logs. No builds, tests, GUI, network, production constructors or helpers were run; writes were limited to this own result artifact.",
+      "Initial processInstance now precedes initial SCK enumeration. Final processInstance follows post SCK enumeration, signing, AX and the single explicit CG inventory read. Actual before/after values are retained and compared, including inside ObservationBundle.validated().",
+      "Candidate-one stateful regression actually reproduced all four same-PID replacements during preInventory, postSigning, postAX and cgInventory with unchanged other identity facts: one test/eight assertion failures. Candidate-two focused suite passes 22/0, including this regression and zero completed captures on refusal. Full suite passes 268/0.",
+      "Fresh build, provenance and diff-check command records/raw logs show exit zero; fresh pinned-Python replay04 reports 20 fixtures, PASS and no failures. This reviewer inspected these recorded executions without rerunning them.",
+      "Single explicit session CG snapshot, retained inventory uniqueness/frame checks, existing 0.5-point tolerance, typed errors, original absolute deadline, validation deadline check and increment-after-validation remain intact. Existing target-only signing reader and nil/unknown behavior are unchanged from the reviewed repair.",
+      "Independently verified verification-manifest-02.json SHA256 8273caa781c307ccc94ea9b6d8ee963dade8bf9a7ad68c4807bb5790322cd7de, all entry bytes/SHA, command/raw-log hashes, current binary SHA, 49-source aggregate, diff/preimage equality and bounded three-file change from candidate one.",
+      "Independently checked preservation against original snapshot: historical bytes/file set, out-of-scope bytes, HEAD/branch/index, allowed new paths, frozen plan/contract and byte-identical Handoff. Candidate-one source preimages and Acceptance remain preserved; generated binary cache is superseded by candidate two.",
+      "Both earlier replay failures and disclosure that the first detailed failure report was overwritten remain preserved. No historical PASS was substituted for candidate-two checks.",
+      "G1-G4 are NOT_RUN in this ACCEPTANCE-stage result; prior/local check observations are facts and separate statuses. This actual advisory UUID does not assert native controller admission, receipts or state advancement."
+    ],
+    "inferences": [
+      "The bounded process-order correction addresses the exact independently identified counterexamples. A process replacement inside any retained native source read now changes the ending process-instance value and refuses the bundle before capture-count increment.",
+      "The stateful red/green regression exercises the original missing safety behavior with unchanged metadata, rather than merely asserting implementation call order. Source review and fresh execution records support explicit G5 PASS for this bounded local repair.",
+      "Process bracketing is temporal validation, not an atomic OS snapshot. Existing AX adapter CG reads occur inside the bracket; the single explicit shared-session-CG claim remains appropriately bounded.",
+      "The observed local implementation/core/verification/independent outcomes can pass while the full project primary outcome remains NOT_ACHIEVED and task closure remains IN_PROGRESS pending live work."
+    ],
+    "unknowns": [
+      "Real LINE composition/calibration, popup/occlusion, chooser, canonical backup root, original production authority and filesystem backup acceptance; no live phase was exercised.",
+      "OS sandbox/network-denial enforcement, root actual model and native controller admission/completion receipts.",
+      "First failed replay detailed report remains lost; its exit-one command record is preserved."
+    ],
+    "evidence": [
+      "Frozen exact plan/contract/Handoff and prior independent Acceptance result.",
+      "Current NativeObservationSession.swift/NativeObservationSessionTests.swift/ARCHITECTURE.md and candidate-one immutable preimages.",
+      "Candidate-two source/preservation/change/diff artifacts and bounded-correction-02.md.",
+      "Fresh raw timing red/green, full tests, build, provenance, diff-check and historical-replay-04 records bound by verification-manifest-02.json."
+    ],
+    "confidence": "High for the bounded local correction and current evidence binding; no atomic-native or full live backup acceptance claim."
+  },
+  "handoff_summary": "G5 PASS for exact candidate two, source 097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19. Process reads now bracket all retained native source acquisitions; all four prior replacement counterexamples are refused. Fresh focused 22/0, full 268/0, build/provenance/diff exit zero, replay 20-fixture PASS and independently checked preservation support local acceptance. Preserve candidate-one FAIL, both replay failures and the lost-report disclosure. G1-G4 remain NOT_RUN here because their phases differ. No further local correction is required. Continue the separately planned live phase with canonical-root/original-authority facts retained as unknown until observed. Full project outcome remains NOT_ACHIEVED and closure IN_PROGRESS; this result is advisory, without native controller admission or receipts.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 2,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Candidate-two independent re-acceptance verified the bounded process bracket, executed four-case red/green evidence, all fresh required local checks and preservation; local acceptance passes.",
+    "information_gain": true,
+    "stuck": false
+  }
+}

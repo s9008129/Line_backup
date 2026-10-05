@@ -1,0 +1,37 @@
+[
+  {
+    "path": "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+    "before_sha256": "18fd60afb659d5cf1248543eb44e2a077905bc0440b5df98a97ff3e384b05bdf",
+    "after_sha256": "84e0c5a6a028591cad1f7b849a5fa7ed1e662314f3f481824e24eb991eeb94c4"
+  },
+  {
+    "path": "rev28/Sources/Rev28Core/Identity/ProcessCodeIdentity.swift",
+    "before_sha256": null,
+    "after_sha256": "14e3b0d5d660c19550700cb6bd67d191af4b4dea138c5757f2079bca8e55a30c"
+  },
+  {
+    "path": "rev28/Sources/rev28ctl/ProcessIdentity.swift",
+    "before_sha256": "c9a6dd8d8a3a6cbeef6472f1bdccbc24a177090a32973eaa3106a74986a18a21",
+    "after_sha256": "97116b4e399dc31b6528ce83425b23937b719dfb2a39c291e3f25020f9f52cb3"
+  },
+  {
+    "path": "rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+    "before_sha256": "0202c2787c8481edb6a16a50f25259182715bedef2888f8004cf35c89718c85d",
+    "after_sha256": "e344e0608d00ed66fe2b3cd45d64f0ef3e24e91e5eaf6b949d2660717a82b68c"
+  },
+  {
+    "path": "rev28/Tests/Rev28CoreTests/ProcessCodeIdentityTests.swift",
+    "before_sha256": null,
+    "after_sha256": "2766e2de9e265d9679097feb5517d3118a612f6f1ce7e1c05e214d261aeebcd0"
+  },
+  {
+    "path": "rev28/ARCHITECTURE.md",
+    "before_sha256": "fb3ce501a9c12a53751c01ce3c4a99e814dea27dffff18f1c25cdff0e8ea546e",
+    "after_sha256": "63eaba74e1ddcb22a0a0035b9b52d2a99ad41b1247b3a66545b32e476ba71f04"
+  },
+  {
+    "path": "rev28/CAPABILITY-MATRIX.md",
+    "before_sha256": "2433cdd043d161e1c8e48c598f398377325499b65d79f3fbebf3c3a6a8fdd614",
+    "after_sha256": "b07432f761633c76ba33a1b840b0c2e6048ffc17e77586affcfe019f0a1ba580"
+  }
+]
