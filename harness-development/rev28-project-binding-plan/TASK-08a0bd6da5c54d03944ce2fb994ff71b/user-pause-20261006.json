@@ -1,0 +1,23 @@
+{
+  "record_kind": "explicit_user_pause_decision",
+  "record_date": "2026-10-06",
+  "timezone": "Asia/Taipei",
+  "user_message_timestamp": "NOT_EXPOSED",
+  "exact_user_quote": "我們這個階段先暫時到這邊。等我把 coding agent harness 那個缺陷修補完畢之後，我們再繼續進行下一個任務。",
+  "execution_control": "PAUSED",
+  "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+  "existing_consent_receipt": "user-consent-20261006.json",
+  "existing_consent_retained": true,
+  "current_instruction": "Complete the separately authorized document Git publication, then stop LINE implementation until user explicitly resumes after Harness repair.",
+  "product_implementation_started": false,
+  "resume_preconditions": [
+    "User explicitly resumes; elapsed time or new window alone is not permission to resume",
+    "Verify actual current source/config/state/history and authorized later document/Git differences",
+    "Confirm legal immutable Harness release/controller lineage; no silent old-run repinning"
+  ],
+  "same_scope_consent_on_resume": "Retained; do not ask again for the reviewed seven-path local implementation. Out-of-scope protected changes still need a concrete reviewed decision.",
+  "original_machine_contract_unchanged": true,
+  "source_sha256_at_pause": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+  "native_budget_reset": false,
+  "controller_admission": "UNAVAILABLE/UNKNOWN; user decision transcription only"
+}

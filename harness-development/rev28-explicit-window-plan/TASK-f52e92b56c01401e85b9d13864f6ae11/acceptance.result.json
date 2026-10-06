@@ -1,0 +1,191 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-f52e92b56c01401e85b9d13864f6ae11",
+  "run_id": "8684849f-8b42-4bb0-8685-06ddc7727025",
+  "role": "ACCEPTANCE_REVIEWER",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "TARGETED_DIAGNOSTIC",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "CORE_ACCEPTANCE_STATUS": "PASS",
+    "REQUIRED_VERIFICATION_STATUS": "PASS",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PASS",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [
+    { "gate_id": "P1_PLAN_REVIEW", "verdict": "PASS", "evidence_manifest": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-review-04.result.json" },
+    { "gate_id": "I0_PUBLIC_PROFILE_DECISION", "verdict": "PASS", "evidence_manifest": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/explicit-public-profile-consent.json" },
+    { "gate_id": "I1_EXACT_SELECTION", "verdict": "PASS", "evidence_manifest": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-isolated.log" },
+    { "gate_id": "I2_RETAINED_BINDING", "verdict": "PASS", "evidence_manifest": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/offline-loader-verification.json" },
+    { "gate_id": "I3_PRODUCTION_REFUSAL", "verdict": "PASS", "evidence_manifest": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-isolated.log" },
+    { "gate_id": "I4_OFFLINE_CHECKS", "verdict": "PASS", "evidence_manifest": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite-isolated.log" },
+    { "gate_id": "I5_PRESERVATION", "verdict": "PASS", "evidence_manifest": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/final-preservation.json" },
+    { "gate_id": "A1_ACCEPTANCE", "verdict": "PASS", "evidence_manifest": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/candidate-03-product.diff" }
+  ],
+  "evidence_ids": [ "isolation-review-04.result.json", "explicit-public-profile-consent.json", "isolated-package-proof.json", "candidate-03-product.diff", "focused-isolated.log", "full-suite-isolated.log", "offline-loader-verification.json", "cli-refusals.json", "final-preservation.json", "test-isolation-blocker.json" ],
+  "stage": "ACCEPTANCE",
+  "plan_sha256": "6de4bd9ee4172df6ecfe4ededa795b3e2172013a0a8faf2014e0dbcc053a1a34",
+  "handoff_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+  "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-f52e92b56c01401e85b9d13864f6ae11",
+      "run_id": "8684849f-8b42-4bb0-8685-06ddc7727025",
+      "stage": "ACCEPTANCE", "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "isolation-review-04.result.json",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-review-04.result.json",
+      "bytes": 9161, "sha256": "e7f9e2a43d7d01c300a299ae1fc9d1ed218d2bd7765ef4cc04eb6f03f334890f",
+      "contract_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+      "observation": "Independent read-only inspection and hash verification of actual frozen local evidence; current recovery PASS does not erase historical isolation FAIL or establish native pixels."
+    },
+    {
+      "task_id": "TASK-f52e92b56c01401e85b9d13864f6ae11",
+      "run_id": "8684849f-8b42-4bb0-8685-06ddc7727025",
+      "stage": "ACCEPTANCE", "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "explicit-public-profile-consent.json",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/explicit-public-profile-consent.json",
+      "bytes": 996, "sha256": "3f6e25ea3a827c10fd5d250cf74c93a159e7777b0f311a08950077edffa86d39",
+      "contract_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+      "observation": "Independent read-only inspection and hash verification of actual frozen local evidence; current recovery PASS does not erase historical isolation FAIL or establish native pixels."
+    },
+    {
+      "task_id": "TASK-f52e92b56c01401e85b9d13864f6ae11",
+      "run_id": "8684849f-8b42-4bb0-8685-06ddc7727025",
+      "stage": "ACCEPTANCE", "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "isolated-package-proof.json",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolated-package-proof.json",
+      "bytes": 55219, "sha256": "5e4fdb70b64b2b62bd2be75cb93213a8be7ddfff96d6a1d2a67046518f7ad32f",
+      "contract_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+      "observation": "Independent read-only inspection and hash verification of actual frozen local evidence; current recovery PASS does not erase historical isolation FAIL or establish native pixels."
+    },
+    {
+      "task_id": "TASK-f52e92b56c01401e85b9d13864f6ae11",
+      "run_id": "8684849f-8b42-4bb0-8685-06ddc7727025",
+      "stage": "ACCEPTANCE", "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "candidate-03-product.diff",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/candidate-03-product.diff",
+      "bytes": 71652, "sha256": "8f28ce29e63bc0d2edddd367f18012cedacfa4da86704424be3afc51a682b3d5",
+      "contract_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+      "observation": "Independent read-only inspection and hash verification of actual frozen local evidence; current recovery PASS does not erase historical isolation FAIL or establish native pixels."
+    },
+    {
+      "task_id": "TASK-f52e92b56c01401e85b9d13864f6ae11",
+      "run_id": "8684849f-8b42-4bb0-8685-06ddc7727025",
+      "stage": "ACCEPTANCE", "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "focused-isolated.log",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-isolated.log",
+      "bytes": 84442, "sha256": "f1a27a7e189275e5b955ce4ce669ae5521a4c73f7ba26567c8796212c7edfbed",
+      "contract_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+      "observation": "Independent read-only inspection and hash verification of actual frozen local evidence; current recovery PASS does not erase historical isolation FAIL or establish native pixels."
+    },
+    {
+      "task_id": "TASK-f52e92b56c01401e85b9d13864f6ae11",
+      "run_id": "8684849f-8b42-4bb0-8685-06ddc7727025",
+      "stage": "ACCEPTANCE", "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "full-suite-isolated.log",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite-isolated.log",
+      "bytes": 79205, "sha256": "0bfcf63b816e7b0aa4e56fff623fd71162d954fc29bcf4ac86a1fc5759a88122",
+      "contract_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+      "observation": "Independent read-only inspection and hash verification of actual frozen local evidence; current recovery PASS does not erase historical isolation FAIL or establish native pixels."
+    },
+    {
+      "task_id": "TASK-f52e92b56c01401e85b9d13864f6ae11",
+      "run_id": "8684849f-8b42-4bb0-8685-06ddc7727025",
+      "stage": "ACCEPTANCE", "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "offline-loader-verification.json",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/offline-loader-verification.json",
+      "bytes": 17903, "sha256": "85b10d23a7c896ab8edb7856255ab00eaf52da47dec9e9795de874f7415f1d6d",
+      "contract_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+      "observation": "Independent read-only inspection and hash verification of actual frozen local evidence; current recovery PASS does not erase historical isolation FAIL or establish native pixels."
+    },
+    {
+      "task_id": "TASK-f52e92b56c01401e85b9d13864f6ae11",
+      "run_id": "8684849f-8b42-4bb0-8685-06ddc7727025",
+      "stage": "ACCEPTANCE", "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "cli-refusals.json",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-refusals.json",
+      "bytes": 7108, "sha256": "c00e335fed4ede67f7aec5afa139c56caf83316e1ecec66c3707d813222a209d",
+      "contract_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+      "observation": "Independent read-only inspection and hash verification of actual frozen local evidence; current recovery PASS does not erase historical isolation FAIL or establish native pixels."
+    },
+    {
+      "task_id": "TASK-f52e92b56c01401e85b9d13864f6ae11",
+      "run_id": "8684849f-8b42-4bb0-8685-06ddc7727025",
+      "stage": "ACCEPTANCE", "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "final-preservation.json",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/final-preservation.json",
+      "bytes": 928, "sha256": "e497988970778f229c540bcc5dd35e58bf015ca0c1ae55427bec8b4eaf4a6e65",
+      "contract_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+      "observation": "Independent read-only inspection and hash verification of actual frozen local evidence; current recovery PASS does not erase historical isolation FAIL or establish native pixels."
+    },
+    {
+      "task_id": "TASK-f52e92b56c01401e85b9d13864f6ae11",
+      "run_id": "8684849f-8b42-4bb0-8685-06ddc7727025",
+      "stage": "ACCEPTANCE", "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "test-isolation-blocker.json",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/test-isolation-blocker.json",
+      "bytes": 2027, "sha256": "7948bffe1b83124e7648b7f1f686ffa5d3c86fc61a99dfe38a0b24fd5818f301",
+      "contract_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+      "observation": "Independent read-only inspection and hash verification of actual frozen local evidence; current recovery PASS does not erase historical isolation FAIL or establish native pixels."
+    }
+  ],
+  "plan_contract_sha256": "0e3f4e3e1c48fed10deb171ab68b8c476cc7e8678639102b3c3adbdcabe4a737",
+  "analysis": {
+    "facts": [
+      "Independent read-only reviewer; no contribution to plans, product, tests or implementation evidence. No writes, Swift build/test/CLI/native/GUI/input/network/provider invocation, permission probe, helper, writer or nesting during A1.",
+      "Exact Plan04, original Plan02 approval and both exact Handoffs verified. Original and recovery contracts/results validate with pinned local schemas and Registry. All required gates preserve CORE/HARD_CLEAN/NEVER; narrower task-only recovery changes no public design or native authorization.",
+      "Independently recomputed 52-file ordered path+NUL+bytes+NUL source aggregate 02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0. All four product-test hashes match. Original baseline to frozen candidate differs only in 13 authorized product paths; exact diff rebuilt from retained preimages matches candidate03 diff.",
+      "Source selects exact logical LINE main plus affirmative child candidates despite SDK includeChildWindows=false; fresh enumeration binds every handle by ID and exact snapshot facts. One zero-origin containing display, full union crop, explicit including-window filter, scale/backing cross-check and one screenshot with no fallback are enforced.",
+      "Original request/configuration/settling/state/rulebook binding is retained independently of effective source output. The same validator recomputes request/pre/post/retained/witness/geometry binding before successful return and completion count and at actual retained load. Source downgrade refuses; final deadline includes validation.",
+      "Legacy v1/v2 optional fields/defaults/flags remain compatible and v3 extras refuse. Production factory refuses the new kind before owner/session/adapter construction. PhaseAEvidence, production transaction semantics, target 57, config and state are unchanged.",
+      "Independently verified 85 actual package/source/test copy entries and exactly 26 literal temporary-root substitutions only; all Package/Sources bytes and other test bytes are identical. Four active fixture copies are byte-identical and package file coverage has no additions/omissions or symlinks. New synthetic receipt names a task-local fixture.",
+      "Actual retained logs contain 60 and 302 individual passed test lines with zero failures/skips. Build/test log/source-manifest hashes match. Physical current CLI 7966080 bytes/d42582e45fd7e5877e0fdafad93bf4909b78a9d30e1ef3aa0550c30c148c68f0 and loader 5543440 bytes/51207a6de3d378af25ba2e36b225d062b0942ad9f750a00f6948c773cf2e3088 match evidence.",
+      "Four actual CLI routes have expected 64/64/77/77 exits; guard ordering rejects before native process/permission/source construction. Actual rebuilt loader accepted original externally anchored v1 and synthetic v3; 10 reanchored tamper manifests and file digests match, with semantic refusal stderr rather than anchor-only rejection.",
+      "Original v1 stdout anchor f92957b82df0ad3bf8ac3313dc6622fc151a196c8986521caa4366e87b0fbfc3, run/session/epoch 1 and PNG SHA e42fbbb4623d96b8a4c35fc867aa2579cf8d2ea79f0f178aa42b3ca5641c63d7 remain unchanged. Synthetic v3 is CPU-created PNG/fake OCR/process/window/provenance and carries UNKNOWN certifications.",
+      "Fresh independent full outside-task snapshot matches all 64817 baseline04 entries by bytes/hash/mode/type. Actual HEAD 9d52ca6081e38a63648a0515f572d85563d07cba, index 6c0091711bf88e5809341902f56d9d3f3c120179338c3d78736bb86f5e2c05f1 and empty staged diff match. State revision 16/writer/context null and verified album 57 regular files/17924900 bytes are preserved.",
+      "Historical original system-temp isolation FAIL remains retained and unwaived; original functional test results do not become historical scope PASS. Plan03 P1 REVISION_REQUIRED and all three product candidates remain; product 3/3 is exhausted, separate runner recovery 1 and original production 3/3/child 2 remain unchanged."
+    ],
+    "inferences": [
+      "Current frozen local component and reviewed task-isolated verification satisfy A1. No material local acceptance finding remains. Current verification PASS supersedes the pending recovery checks only; it does not erase the historical isolation failure.",
+      "Source and SDK declaration review supports exact intended filter/configuration construction and strict retained binding, without proving actual rendered pixels or popup presence.",
+      "Local component acceptance is complete. TARGETED_DIAGNOSTIC only describes possible later separately reviewed work; this result supplies no new grant or automatic native continuation."
+    ],
+    "unknowns": [
+      "Historical external filesystem effects remain incompletely audited. A repository preservation audit and literal fixture-root proof do not establish OS sandboxing or network denial.",
+      "Actual v3 native render/pixels, calibration, popup ownership, occlusion, current target/composer, PhaseB, entitlement and reusable backup end-to-end remain UNKNOWN or unmet; primary native outcome NOT_ACHIEVED.",
+      "Actual controller/provider/model admission and OS enforcement records remain unavailable or unknown; reviewer UUID is advisory."
+    ],
+    "evidence": [
+      "Read actual seven product source files, selection/session/passive/factory tests and exact product diff; read original/recovery plans, contracts, approvals, preimages and independent review records.",
+      "Read and independently hash-checked implementation manifests, actual build/test logs, current physical executables, CLI stdout/stderr, loader stdout/stderr, original external anchor, semantic tamper fixtures and isolation proof.",
+      "Independently audited all outside-task 64817 entries against frozen04 baseline, original baseline delta 13 paths, exact 85-copy transformation and four fixtures. Only read-only local Python and Git reads were used; no product checks were rerun.",
+      "Read pinned workflow-routing and schemas; local Registry schema validation and actual local ScreenCaptureKit declarations were used."
+    ],
+    "confidence": "High for frozen local implementation, binding, compatibility, current scope-valid verification and preservation; no native outcome certification."
+  },
+  "handoff_summary": "Independent A1 PASS for frozen candidate 3 local explicitLineWindows v3 component and reviewed task-isolated offline verification. Exact source, 13-path change, 85-copy/26-substitution/four-fixture proof, 60/0 and 302/0/0-skip logs, CLI/load/tamper evidence and 64817-entry preservation verified. Historical isolation FAIL and exhausted product 3/3 remain visible. Whole native primary NOT_ACHIEVED and task IN_PROGRESS; no fourth candidate, native grant, budget reset, download or commit/push authorization.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 3,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Independent A1 of frozen product candidate 3 and separate runner recovery 1 passed all current local gates; no product or runner attempt was executed by this reviewer. Original failures and exhausted budgets remain.",
+    "information_gain": true,
+    "stuck": false
+  },
+  "writer_receipts": [],
+  "blocker_fingerprint": null,
+  "information_gain": true
+}

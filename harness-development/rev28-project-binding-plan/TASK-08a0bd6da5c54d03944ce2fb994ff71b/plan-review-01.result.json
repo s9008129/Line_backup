@@ -1,0 +1,55 @@
+{
+  "result_format_version":"3","task_id":"TASK-08a0bd6da5c54d03944ce2fb994ff71b","run_id":"2411c72b-bf75-493d-b03d-c29eff242b23","role":"PLAN_REVIEWER",
+  "candidate_fact":"PASS","validation_fact":"VALID","routing_fact":"HANDOFF",
+  "statuses":{"PRIMARY_OUTCOME_STATUS":"NOT_ACHIEVED","IMPLEMENTATION_STATUS":"NOT_STARTED","CORE_ACCEPTANCE_STATUS":"NOT_RUN","REQUIRED_VERIFICATION_STATUS":"NOT_RUN","INDEPENDENT_ACCEPTANCE_STATUS":"PENDING","TASK_CLOSURE_STATUS":"IN_PROGRESS"},
+  "gate_results":[
+    {"gate_id":"P1_PLAN_REVIEW","verdict":"PASS","evidence_manifest":"plan.md"},
+    {"gate_id":"I0_PUBLIC_PROJECT_BINDING_DECISION","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I1_PROJECT_AUTHORITY_CONTRACT","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I2_DUPLICATE_BARRIERS","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I3_READ_ONLY_SCOPE","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I4_ISOLATED_OFFLINE_CHECKS","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I5_LEGACY_COMPATIBILITY","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I6_PRESERVATION","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"A1_ACCEPTANCE","verdict":"NOT_RUN","evidence_manifest":null}
+  ],
+  "evidence_ids":["plan.md","baseline.json","read-only-diagnostic.json"],"stage":"PLAN_REVIEW",
+  "plan_sha256":"f17c434a3a0bd530776b87da903f43d420a175b119e1caca7cf92f9b9f5fc058","handoff_sha256":null,
+  "source_sha256":"02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+  "plan_contract_sha256":"36a274b557f587ee0e0a9e4a42576495a2379d7ccdc0a0e68bb7996d3574ae89",
+  "evidence_manifests":[
+    {"task_id":"TASK-08a0bd6da5c54d03944ce2fb994ff71b","run_id":"2411c72b-bf75-493d-b03d-c29eff242b23","stage":"PLAN_REVIEW","role":"PLAN_REVIEWER","source_sha256":"02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0","evidence_id":"plan.md","path":"harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan.md","bytes":13454,"sha256":"f17c434a3a0bd530776b87da903f43d420a175b119e1caca7cf92f9b9f5fc058","contract_sha256":"36a274b557f587ee0e0a9e4a42576495a2379d7ccdc0a0e68bb7996d3574ae89","observation":"Independently read and hashed the concrete seven-path plan; assessed scope, strict report binding, duplicate barriers, isolation, preservation and independent acceptance requirements."},
+    {"task_id":"TASK-08a0bd6da5c54d03944ce2fb994ff71b","run_id":"2411c72b-bf75-493d-b03d-c29eff242b23","stage":"PLAN_REVIEW","role":"PLAN_REVIEWER","source_sha256":"02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0","evidence_id":"baseline.json","path":"harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/baseline.json","bytes":25647535,"sha256":"ed450dd353edad6f29f4ccca0da6934c10902f61094aa619a7361c8f67b2c00b","contract_sha256":"36a274b557f587ee0e0a9e4a42576495a2379d7ccdc0a0e68bb7996d3574ae89","observation":"Actual 52 source file hashes and ordered source aggregate matched; Python source, critical evidence and three existing literal preimages matched; four proposed new files remain absent. Full outside-path preservation is a future implementation gate."},
+    {"task_id":"TASK-08a0bd6da5c54d03944ce2fb994ff71b","run_id":"2411c72b-bf75-493d-b03d-c29eff242b23","stage":"PLAN_REVIEW","role":"PLAN_REVIEWER","source_sha256":"02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0","evidence_id":"read-only-diagnostic.json","path":"harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/read-only-diagnostic.json","bytes":2409,"sha256":"1d32a5dcda25db2f53c005beff5ddf36a4570f0660adddaac12ec1779bc62fbe","contract_sha256":"36a274b557f587ee0e0a9e4a42576495a2379d7ccdc0a0e68bb7996d3574ae89","observation":"Read diagnostic and generating prepare.py without execution. Source confirms terminal-pointer rejection and fingerprint-global release helper. Actual state revision16, null ownership/context, verified57 registry and 17924900 bytes observed."}
+  ],
+  "analysis":{
+    "facts":[
+      "Plan and contract hashes match the supplied review identities. Pinned local task and planner result schemas validated after using an explicit local resource registry.",
+      "The actual accepted Swift source52 aggregate matches. Existing CLI and documentation preimages, Python sources, configuration, state and baseline critical evidence match their recorded hashes.",
+      "Current state revision is16; current pointer resolves to VERIFIED run RUN-20261004-project-album57-45ee0a78 with17924900 verified bytes; active_writer_id and context_lock are null.",
+      "Existing pure precondition code rejects any nonnull current_run_id for prepare and uses a fingerprint-global release boolean. The proposed separate conservative inspection evaluator avoids adopting either behavior as dispatch authority.",
+      "Plan restricts implementation to seven literal product paths and task-local artifacts, always-false dispatch flags, strict input/report binding, explicit duplicate/history validation and actual isolated offline compatibility checks.",
+      "No edits, builds, tests, product CLI, native observation, GUI, input, TCC operations, helpers or writers were performed by this reviewer.",
+      "Review-process exception: the first standalone schema validation lacked a local reference registry and attempted HTTPS/DNS resolution of codex.local gate.schema.json. DNS failed; no remote schema response was obtained. The exception was reported to the root and validation was repeated with a local registry whose external retrieval raises immediately."
+    ],
+    "inferences":[
+      "The read-only producer and inspection-only typed consumer form an executable narrow integration dependency without changing the legacy authorization or native dispatch boundary.",
+      "Conservative blocking of every unverified historical same-fingerprint intent is coherent for this new inspection surface because the plan explicitly preserves original command and reconciliation semantics.",
+      "The required race, strict JSON/type/key, cross-record, reanchored-forgery, actual57/182 CLI and outside-path preservation checks are sufficient planning requirements for this unit; implementation evidence and independent acceptance remain necessary.",
+      "No material plan revision is required. Exact Handoff may proceed; protected I0 must remain unmet until the specified decision is actually received."
+    ],
+    "unknowns":[
+      "Implementation, exact report wire representation, actual offline checks and independent A1 are not yet observed.",
+      "The failed schema retrieval attempted network resolution despite the read-only no-network assignment; this review must not be described as having zero network attempts.",
+      "Native group proof, calibration, occlusion and other certification gaps remain unchanged. This unit cannot establish whole native readiness.",
+      "Controller/provider admission and OS enforcement are unavailable or unknown; advisory run identifiers prove neither."
+    ],
+    "evidence":["plan.md","plan-contract.json","planner.result.json","baseline.json","read-only-diagnostic.json","prepare.py","Actual current source/config/state reads and local pinned-schema validation tool outputs"],
+    "confidence":"High for concrete plan executability and scope assessment; no implementation or acceptance claim.",
+    "dependencies":{"exact_handoff":"UNKNOWN","protected_I0":"PREREQUISITE_BLOCKED","implementation":"PREREQUISITE_BLOCKED","independent_A1":"PREREQUISITE_BLOCKED"}
+  },
+  "handoff_summary":"P1 PASS for the fixed narrow project-preflight and Swift inspection-binding plan. Proceed to exact Handoff, then the single protected public/data-contract decision; do not implement before I0. Preserve all legacy/native budgets and unresolved certification facts. No whole-workflow completion is established. Reviewer disclosed and corrected one failed automatic remote schema-resolution attempt; no remote response or product mutation occurred.",
+  "needs_human":false,"human_decisions":[],
+  "convergence":{"meaningful_attempts":0,"consecutive_no_progress":0,"last_attempt":"Independent source/hash/schema and concrete plan review completed; no product candidate or native attempt consumed. Failed automatic schema reference resolution corrected using pinned local resources.","information_gain":true,"stuck":false},
+  "writer_receipts":[]
+}

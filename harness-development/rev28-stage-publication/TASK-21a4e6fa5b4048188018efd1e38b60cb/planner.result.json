@@ -1,0 +1,117 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-21a4e6fa5b4048188018efd1e38b60cb",
+  "run_id": "f9720d10-40e1-4820-9289-827d57a8d222",
+  "role": "PLANNER",
+  "stage": "PLAN",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "HANDOFF",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "NOT_REQUIRED",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [],
+  "evidence_ids": [
+    "plan.md",
+    "publication-paths.json",
+    "commit-message.txt",
+    "pause-handoff-preimage.md"
+  ],
+  "plan_sha256": "f5416d806a69c6bbdbbc295452ee98fb831e13b4944e2f5c3a37a8a8c08497a2",
+  "handoff_sha256": "037d5ad9225003474874fa316876180e18d9ef5b0a1edd363088cbe267a6930d",
+  "plan_contract_sha256": "037d5ad9225003474874fa316876180e18d9ef5b0a1edd363088cbe267a6930d",
+  "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-21a4e6fa5b4048188018efd1e38b60cb",
+      "run_id": "f9720d10-40e1-4820-9289-827d57a8d222",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "plan.md",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/plan.md",
+      "bytes": 2506,
+      "sha256": "f5416d806a69c6bbdbbc295452ee98fb831e13b4944e2f5c3a37a8a8c08497a2",
+      "contract_sha256": "037d5ad9225003474874fa316876180e18d9ef5b0a1edd363088cbe267a6930d",
+      "observation": "Actual bounded publication planning; advisory role identity, no platform enforcement claim."
+    },
+    {
+      "task_id": "TASK-21a4e6fa5b4048188018efd1e38b60cb",
+      "run_id": "f9720d10-40e1-4820-9289-827d57a8d222",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "publication-paths.json",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/publication-paths.json",
+      "bytes": 4563,
+      "sha256": "1ff4da3e104e234414c1f3b2f4340946a29d381ec23fcd7c367d9b6d86b79809",
+      "contract_sha256": "037d5ad9225003474874fa316876180e18d9ef5b0a1edd363088cbe267a6930d",
+      "observation": "Actual bounded publication planning; advisory role identity, no platform enforcement claim."
+    },
+    {
+      "task_id": "TASK-21a4e6fa5b4048188018efd1e38b60cb",
+      "run_id": "f9720d10-40e1-4820-9289-827d57a8d222",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "commit-message.txt",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/commit-message.txt",
+      "bytes": 3147,
+      "sha256": "a3bf2c4b7d54f3f0d3389751541cf1533e99d608b6fec16579e70dd7ebf7b896",
+      "contract_sha256": "037d5ad9225003474874fa316876180e18d9ef5b0a1edd363088cbe267a6930d",
+      "observation": "Actual bounded publication planning; advisory role identity, no platform enforcement claim."
+    },
+    {
+      "task_id": "TASK-21a4e6fa5b4048188018efd1e38b60cb",
+      "run_id": "f9720d10-40e1-4820-9289-827d57a8d222",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+      "evidence_id": "pause-handoff-preimage.md",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/pause-handoff-preimage.md",
+      "bytes": 27496,
+      "sha256": "c15b3c0e85c9c747c9ee936726fc4a98d9486088bca7c4ab8f872f88463979b7",
+      "contract_sha256": "037d5ad9225003474874fa316876180e18d9ef5b0a1edd363088cbe267a6930d",
+      "observation": "Actual bounded publication planning; advisory role identity, no platform enforcement claim."
+    }
+  ],
+  "analysis": {
+    "facts": [
+      "Current user expressly authorizes add/commit/push, then pauses LINE pending Harness repair.",
+      "Source52/tests/config/state remain equal to reviewed and document-delivered identities.",
+      "Remote observed at known15ec9b2; local9d52ca6 includes one prior unpushed doc commit.",
+      "Literal text publication selected; private photos/data/builds and dirty product files preserved.",
+      "No active default hooks or configured core.hooksPath observed."
+    ],
+    "inferences": [
+      "QUICK document publication sufficient; original LINE CRITICAL gates/consent/budgets not changed."
+    ],
+    "unknowns": [
+      "Actual commit/push and final remote identity pending.",
+      "OS/proxy/provider/controller enforcement unavailable or unknown; nominal PROXY_ALLOWLIST is destination policy only."
+    ],
+    "evidence": [
+      "plan.md",
+      "publication-paths.json",
+      "commit-message.txt",
+      "pause-handoff-preimage.md"
+    ],
+    "confidence": "High for bounded publication scope and observed identities."
+  },
+  "handoff_summary": "Prepare one literal document/text-evidence commit and normal push to current origin branch, then stop LINE work as requested. Existing local preflight consent remains valid but execution paused. Unrelated dirty product/data/source preserved; publication not native or Harness completion.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 0,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Read-only contextual reconstruction and identity/scope preservation checks; document writes pending.",
+    "information_gain": true,
+    "stuck": false
+  },
+  "writer_receipts": []
+}

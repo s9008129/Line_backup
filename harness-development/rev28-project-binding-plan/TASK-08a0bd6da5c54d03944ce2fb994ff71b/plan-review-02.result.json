@@ -1,0 +1,60 @@
+{
+  "result_format_version":"3","task_id":"TASK-08a0bd6da5c54d03944ce2fb994ff71b","run_id":"df3cecd8-7c94-4730-89af-431fe55b28e3","role":"PLAN_REVIEWER","candidate_fact":"PASS","validation_fact":"VALID","routing_fact":"HANDOFF",
+  "statuses":{"PRIMARY_OUTCOME_STATUS":"NOT_ACHIEVED","IMPLEMENTATION_STATUS":"NOT_STARTED","CORE_ACCEPTANCE_STATUS":"NOT_RUN","REQUIRED_VERIFICATION_STATUS":"NOT_RUN","INDEPENDENT_ACCEPTANCE_STATUS":"PENDING","TASK_CLOSURE_STATUS":"IN_PROGRESS"},
+  "gate_results":[
+    {"gate_id":"P1_PLAN_REVIEW","verdict":"PASS","evidence_manifest":"plan-03.md"},
+    {"gate_id":"I0_PUBLIC_PROJECT_BINDING_DECISION","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I1_PROJECT_AUTHORITY_CONTRACT","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I2_DUPLICATE_BARRIERS","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I3_READ_ONLY_SCOPE","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I4_ISOLATED_OFFLINE_CHECKS","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I5_LEGACY_COMPATIBILITY","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"I6_PRESERVATION","verdict":"NOT_RUN","evidence_manifest":null},
+    {"gate_id":"A1_ACCEPTANCE","verdict":"NOT_RUN","evidence_manifest":null}
+  ],
+  "evidence_ids":["plan-03.md","plan-contract-02.json","project-binding-report.schema.json","prepare_review_02.py","review-01-admission.json"],"stage":"PLAN_REVIEW",
+  "plan_sha256":"6ff4f4ec472be1b21104ed8143bb8cbcc3f9c9390e485d4e3491d82c3700c9e7","handoff_sha256":null,
+  "source_sha256":"02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0","plan_contract_sha256":"f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+  "evidence_manifests":[
+    {"task_id":"TASK-08a0bd6da5c54d03944ce2fb994ff71b","run_id":"df3cecd8-7c94-4730-89af-431fe55b28e3","stage":"PLAN_REVIEW","role":"PLAN_REVIEWER","source_sha256":"02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0","evidence_id":"plan-03.md","path":"harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-03.md","bytes":17800,"sha256":"6ff4f4ec472be1b21104ed8143bb8cbcc3f9c9390e485d4e3491d82c3700c9e7","contract_sha256":"f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d","observation":"Second bounded independent read-only review of explicit wire branches, semantic bindings, source raw-material input, duplicate precedence, non-dispatch guarantees and required offline checks."},
+    {"task_id":"TASK-08a0bd6da5c54d03944ce2fb994ff71b","run_id":"df3cecd8-7c94-4730-89af-431fe55b28e3","stage":"PLAN_REVIEW","role":"PLAN_REVIEWER","source_sha256":"02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0","evidence_id":"plan-contract-02.json","path":"harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-contract-02.json","bytes":4775,"sha256":"f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d","contract_sha256":"f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d","observation":"Pinned local Registry validation passed. Compared original contract: only required_evidence changed, adding the frozen wire schema; scope, gates, risk, I0, network policy and delegation limits remain identical."},
+    {"task_id":"TASK-08a0bd6da5c54d03944ce2fb994ff71b","run_id":"df3cecd8-7c94-4730-89af-431fe55b28e3","stage":"PLAN_REVIEW","role":"PLAN_REVIEWER","source_sha256":"02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0","evidence_id":"project-binding-report.schema.json","path":"harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/project-binding-report.schema.json","bytes":5525,"sha256":"6269d2721ff6a68ff855195d49376291f84ae56d1ae0f76805c3a94f7b25c18d","contract_sha256":"f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d","observation":"Read complete exact-key nested REPORT and REFUSAL branches. Shape constraints are supplemented by Plan03 strict parsing and cross-record/raw-material semantic requirements."},
+    {"task_id":"TASK-08a0bd6da5c54d03944ce2fb994ff71b","run_id":"df3cecd8-7c94-4730-89af-431fe55b28e3","stage":"PLAN_REVIEW","role":"PLAN_REVIEWER","source_sha256":"02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0","evidence_id":"prepare_review_02.py","path":"harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_review_02.py","bytes":8640,"sha256":"17379b711f596fee7168c1c4a7391689333bc1225c4efc6da1e0a436a4834be1","contract_sha256":"f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d","observation":"Inspected this helper and imported prepare/helper top-level code before guarded import. Called only offline_validators; pinned local resources preloaded and external retrieval callback raises. Task contract and planner03 result validation passed; no main blocks executed."},
+    {"task_id":"TASK-08a0bd6da5c54d03944ce2fb994ff71b","run_id":"df3cecd8-7c94-4730-89af-431fe55b28e3","stage":"PLAN_REVIEW","role":"PLAN_REVIEWER","source_sha256":"02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0","evidence_id":"review-01-admission.json","path":"harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/review-01-admission.json","bytes":1126,"sha256":"f40078f0e8673bf183d7ff715dfd829026bb1258e31496a3f1c175f5dd1ae800","contract_sha256":"f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d","observation":"Historical first-review automatic remote schema/DNS lookup remains recorded as admission BLOCKED and unwaived; second review does not erase or reinterpret it."}
+  ],
+  "analysis":{
+    "facts":[
+      "This second review read the complete Plan03, exact public wire schema, machine contract, planner03 result and offline validator source.",
+      "Observed plan, contract and wire schema hashes match the supplied fixed identities.",
+      "Task and planner03 result validated successfully using only prepare_review_02.offline_validators with an explicit local Registry and retrieval-refusal callback.",
+      "REPORT and REFUSAL shapes have exact nested key sets. Plan03 supplies additional strict JSON/type, Gregorian date, path, source-material, ownership, registry/history and decision-consistency checks rather than claiming schema shape proves semantics.",
+      "Consumer producerSourceMaterial explicitly contains ordered relative paths and raw source bytes. The consumer must recompute path-NUL-bytes-NUL aggregate and individual file digests, rejecting missing, foreign, incomplete or mismatched material.",
+      "Decision precedence explicitly separates invalid authority/history refusal, busy state, healthy verified skip, ambiguous count, unresolved historical intent, destination blocking and inspection eligibility.",
+      "All report dispatch/writer/native-observation/state-mutation flags remain false; content bytes and content multiset remain null; producer attestation remains UNKNOWN.",
+      "This second review made zero network attempts, zero edits, zero builds/tests/product CLI/native/GUI/input/TCC invocations and used zero helpers or writers.",
+      "The historical first review attempted https://codex.local/schemas/v3/gate.schema.json resolution because its initial Draft202012Validator lacked an explicit registry. DNS failed with socket.gaierror Errno8, wrapped URLError, Unretrievable, Unresolvable and final _WrappedReferencingError. Corrected local validation succeeded afterward, but root admission remains BLOCKED and unwaived.",
+      "No installed jsonschema or referencing package version was observed in the first attempt; its trace showed Python3.14.3 paths."
+    ],
+    "inferences":[
+      "The corrected precise Plan03 is executable within the original seven product paths and task directory.",
+      "Raw source material makes the specified aggregate recomputation technically possible while preserving the explicit limitation that provenance binding does not prove authentic code attestation.",
+      "Required producer/consumer negative cases and isolated actual CLI/compatibility/preservation checks adequately define acceptance for this narrow inspection foundation.",
+      "No material plan defect requires revision. Exact Handoff may proceed for Plan03; implementation remains dependent on actual I0 consent.",
+      "This second review's offline compliance does not waive, rewrite or satisfy the historical first-review network exception."
+    ],
+    "unknowns":[
+      "Implementation and actual required check results remain unobserved.",
+      "I0 protected public/data-contract decision has not been received.",
+      "Full native integration, shared writer ordering, native group proof and calibration/occlusion certifications remain incomplete or unknown.",
+      "Historical first-lookup external effects beyond the observed DNS failure were not instrumented.",
+      "Controller/provider admission and OS enforcement are unavailable or unknown."
+    ],
+    "evidence":["plan-03.md","plan-contract-02.json","project-binding-report.schema.json","planner-03.result.json","prepare_review_02.py","review-01-admission.json","Observed bounded local read/hash/Registry-validation tool outputs"],
+    "confidence":"High for the narrow Plan03 executability and semantic contract assessment; no implementation, native permission or whole-outcome claim.",
+    "dependencies":{"exact_handoff":"UNKNOWN","protected_I0":"PREREQUISITE_BLOCKED","implementation":"PREREQUISITE_BLOCKED","independent_A1":"PREREQUISITE_BLOCKED"}
+  },
+  "handoff_summary":"Second bounded independent P1 PASS for fixed Plan03 and its exact REPORT/REFUSAL contract. This review used only pinned local Registry validation and made zero network attempts. Historical first-review failed schema/DNS lookup remains admission BLOCKED and unwaived. Proceed to exact Handoff, then the single required protected I0 decision; no implementation or native action before its prerequisites. All future gates remain NOT_RUN and the whole native goal remains unmet.",
+  "needs_human":false,"human_decisions":[],
+  "convergence":{"meaningful_attempts":0,"consecutive_no_progress":0,"last_attempt":"Second bounded independent Plan03 review completed with guarded local Registry validation, exact wire inspection and explicit raw-source-material semantic assessment; no product candidate or native attempt consumed.","information_gain":true,"stuck":false},
+  "writer_receipts":[]
+}
