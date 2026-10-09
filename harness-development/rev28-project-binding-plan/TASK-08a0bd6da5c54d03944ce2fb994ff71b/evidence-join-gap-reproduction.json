@@ -1,0 +1,37 @@
+{
+  "reproduction": "OBSERVED_GAP",
+  "source": "Actual existing final fixture inspected read-only; no fixture or product modification",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project",
+  "reference_kind": "join",
+  "referenced_bytes_sha256": "de21e89d00ffc7c6b4356e56e5bb1ef09f8bf0844831a748131f365d8a3375b7",
+  "reference_sha256_matches": true,
+  "state_verified_run": {
+    "run_id": "RUN-20261004-project-album57-45ee0a78",
+    "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+    "fingerprint": {
+      "end_date": "2024-05-17",
+      "expected_images": 57,
+      "start_date": "2024-05-13"
+    },
+    "destination": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張"
+  },
+  "referenced_artifact": {
+    "run_id": "RUN-20261004-project-album57-45ee0a78",
+    "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+    "fingerprint": {
+      "start_date": "2024-05-13",
+      "end_date": "2024-05-17",
+      "expected_images": 57
+    },
+    "destination": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張"
+  },
+  "contradiction": "Evidence artifact destination differs from exact verified run and selected project root",
+  "actual_producer_kind": "REPORT",
+  "actual_producer_decision": "PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION",
+  "exit_code": 0,
+  "required_behavior": "INVALID_PROJECT_HISTORY REFUSAL under frozen Plan exact evidence/history linkage",
+  "dispatch_authorized": false,
+  "native_calls": 0,
+  "product_changes": 0,
+  "new_product_candidate": false
+}

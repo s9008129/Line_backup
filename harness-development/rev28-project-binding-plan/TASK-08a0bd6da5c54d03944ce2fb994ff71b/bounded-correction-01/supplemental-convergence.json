@@ -1,0 +1,15 @@
+{
+  "original_issue": {
+    "used": 3,
+    "limit": 3,
+    "reset": false
+  },
+  "explicit_grant": {
+    "used": 1,
+    "limit": 1
+  },
+  "cumulative_candidates": 4,
+  "remaining": 0,
+  "role_convergence_scope": "This explicitly user-granted segment only; original3/3 shown separately; not a reset",
+  "on_failure": "Preserve and stop; no fifth candidate"
+}

@@ -1,0 +1,18 @@
+{
+  "task_id": "TASK-1e327fe6882642d6bb1c085fdeff13bc",
+  "date": "2026-10-09",
+  "timezone": "Asia/Taipei",
+  "user_requested": "Detailed dated handoff with precise leading prompt, full project context, detailed commit message with intent/work/next steps, then git add commit push",
+  "latest_user_decisions": [
+    "以「旻謙允禎成長日記／2024-05-06～05-10／182 張」作為下一個實機目標",
+    "用 Best Practices 的建議繼續完成這一個任務。將這兩個決策放到交接文件中。"
+  ],
+  "publication_scope": "New dated handoff + exact selected text decision/evidence checkpoint only; existing local product/data/binaries stay unstaged",
+  "release": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source",
+  "runtime": "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python",
+  "lineage": "Fresh4.8 document-publication task; old4.7 product tasks read-only, not resumed",
+  "controller_admission": "UNAVAILABLE; advisory role artifacts, no actual controller receipt/session claimed",
+  "OS_enforcement": "UNKNOWN; host network enabled, Git contact explicit user authorization",
+  "helpers": 0,
+  "writers": 0
+}

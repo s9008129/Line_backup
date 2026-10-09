@@ -1,0 +1,84 @@
+{
+  "verdict": "PASS",
+  "document": "20261009_handoff.md",
+  "bytes": 45803,
+  "sha256": "3a6793c9fb6c7a716ff75df286f94693124559dc2b7dac035de339c100bfc816",
+  "local_links_verified": [
+    "20261006_handoff.md",
+    "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/user-next-task-decisions.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/continuation-completed-20261009.md",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/result.md",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/acceptance.result.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/root-final.result.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/full-swift-compatibility-join.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-source-manifest.json",
+    "20261006_issue_harness_offline_schema_resolution.md"
+  ],
+  "anchors_verified": [
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-03.md",
+      "sha256": "6ff4f4ec472be1b21104ed8143bb8cbcc3f9c9390e485d4e3491d82c3700c9e7"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-contract-02.json",
+      "sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/project-binding-report.schema.json",
+      "sha256": "6269d2721ff6a68ff855195d49376291f84ae56d1ae0f76805c3a94f7b25c18d"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-review-02.result.json",
+      "sha256": "f9d544026d13dd0f9b4d4d269b03709376eb270ed92469bc8ce1d6c9f0ea8a00"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/acceptance.result.json",
+      "sha256": "d35f5fb88a7c260e0de0b85d33da94620976634debe935f607daaced2c90a416"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/root-final.result.json",
+      "sha256": "9c63524ca7879e64bf0728b08a26e52d902796e6274fbd7dac9a7dc1e0176197"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-source-manifest.json",
+      "sha256": "1c15dbf4949231e9b7ac96c8721c4965e8ed610b4ee8276ee2859d312fdb8bbe"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-preservation-verification.json",
+      "sha256": "936e18a1dfacf8f989d8502880f175a110efa5ac29fe6b0ee885216b394ee12f"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/admission-order-deviation.json",
+      "sha256": "0ef11f53bf17d1bf74900ee407be121cc4d1d33f87c1178b0e8432da360cc17c"
+    },
+    {
+      "path": "config/line_backup_config.json",
+      "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362"
+    },
+    {
+      "path": "state/backup_state.json",
+      "sha256": "1093dd3065f7ce80ce4cfcb97081cabbb9b4334a53eeb77d1233985e5432acb9"
+    },
+    {
+      "path": "20261006_issue_harness_offline_schema_resolution.md",
+      "sha256": "b7282ead338b077952f7d2d800d95143d37e1d8e75b41717120c28f1fb00ea8e"
+    }
+  ],
+  "user_requirements_verified": [
+    "所有相簿",
+    "不需要人工介入",
+    "OCR",
+    "Computer Use",
+    "macOS",
+    "182 張",
+    "明確授權",
+    "Best Practices",
+    "canDispatch=false",
+    "NOT_ACHIEVED",
+    "77,918",
+    "318",
+    "沒有建立它",
+    "不宣稱已包含於同一個commit"
+  ],
+  "review": "Root documentation review; prior independent product A1 retained, no new independent review claimed."
+}

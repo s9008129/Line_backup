@@ -1,0 +1,27 @@
+{
+  "verdict": "PASS",
+  "actual_project_cases": [
+    {
+      "name": "actual-project57",
+      "decision": "SKIP_VERIFIED",
+      "stdout": {
+        "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project57.stdout",
+        "bytes": 3305,
+        "sha256": "274f046623c88f04c2161b6511e57322cf73837d2a141ead1a695ad6706bf629"
+      }
+    },
+    {
+      "name": "actual-project182",
+      "decision": "PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION",
+      "stdout": {
+        "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project182.stdout",
+        "bytes": 3303,
+        "sha256": "2be0f6ede35ef36af756850fa822009ea967b636bddc2521606b919c81611613"
+      }
+    }
+  ],
+  "retained_contradictions_refused": 2,
+  "usage_refusals": 1,
+  "new_native_calls": 0,
+  "state_mutations": 0
+}

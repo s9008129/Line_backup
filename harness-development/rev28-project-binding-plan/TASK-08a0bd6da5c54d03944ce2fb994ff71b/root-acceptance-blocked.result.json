@@ -1,0 +1,209 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+  "run_id": "f94269bc-b92e-4586-88c6-742a839f35af",
+  "role": "IMPLEMENTER",
+  "stage": "IMPLEMENT",
+  "candidate_fact": "PARTIAL",
+  "validation_fact": "VALID",
+  "routing_fact": "BLOCKED",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "CORE_ACCEPTANCE_STATUS": "FAIL",
+    "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "FAIL",
+    "TASK_CLOSURE_STATUS": "ACCEPTANCE_BLOCKED"
+  },
+  "gate_results": [
+    {
+      "gate_id": "P1_PLAN_REVIEW",
+      "verdict": "PASS",
+      "evidence_manifest": "plan-review-02.result.json"
+    },
+    {
+      "gate_id": "I0_PUBLIC_PROJECT_BINDING_DECISION",
+      "verdict": "PASS",
+      "evidence_manifest": "user-consent-20261006.json"
+    },
+    {
+      "gate_id": "I1_PROJECT_AUTHORITY_CONTRACT",
+      "verdict": "FAIL",
+      "evidence_manifest": "swift-fixtures/verified/state.json"
+    },
+    {
+      "gate_id": "I2_DUPLICATE_BARRIERS",
+      "verdict": "FAIL",
+      "evidence_manifest": "swift-fixtures/verified/stdout.json"
+    },
+    {
+      "gate_id": "I3_READ_ONLY_SCOPE",
+      "verdict": "PASS",
+      "evidence_manifest": "final-preservation-verification.json"
+    },
+    {
+      "gate_id": "I4_ISOLATED_OFFLINE_CHECKS",
+      "verdict": "PARTIAL",
+      "evidence_manifest": "final-isolation-verification.json"
+    },
+    {
+      "gate_id": "I5_LEGACY_COMPATIBILITY",
+      "verdict": "PASS",
+      "evidence_manifest": "retained-packet-compatibility.json"
+    },
+    {
+      "gate_id": "I6_PRESERVATION",
+      "verdict": "PASS",
+      "evidence_manifest": "final-preservation-verification.json"
+    },
+    {
+      "gate_id": "A1_ACCEPTANCE",
+      "verdict": "FAIL",
+      "evidence_manifest": "swift-fixtures/verified/stdout.json"
+    }
+  ],
+  "evidence_ids": [
+    "acceptance-01.result.json",
+    "acceptance-01-archive-validation.json",
+    "evidence-join-gap-reproduction.json",
+    "bounded-evidence-join-correction.md",
+    "final-source-manifest.json",
+    "final-preservation-verification.json"
+  ],
+  "plan_sha256": "6ff4f4ec472be1b21104ed8143bb8cbcc3f9c9390e485d4e3491d82c3700c9e7",
+  "handoff_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+  "plan_contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+  "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "f94269bc-b92e-4586-88c6-742a839f35af",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "acceptance-01.result.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/acceptance-01.result.json",
+      "bytes": 16681,
+      "sha256": "2e734b010330be84d477562b32ce1ebd5c7feab3d6423a67314833cc4ff86594",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Actual root archive/reproduction/admission; independent FAIL retained, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "f94269bc-b92e-4586-88c6-742a839f35af",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "acceptance-01-archive-validation.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/acceptance-01-archive-validation.json",
+      "bytes": 837,
+      "sha256": "ddc5308d02ba46fc82f751d0d85852be77e9415cc37e1844013b1e653cace813",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Actual root archive/reproduction/admission; independent FAIL retained, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "f94269bc-b92e-4586-88c6-742a839f35af",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "evidence-join-gap-reproduction.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence-join-gap-reproduction.json",
+      "bytes": 1872,
+      "sha256": "b38e9e5d77aa4f406dc0588b8d99c20c37905bc81d387c345df6b45e5817ebfe",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Actual root archive/reproduction/admission; independent FAIL retained, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "f94269bc-b92e-4586-88c6-742a839f35af",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "bounded-evidence-join-correction.md",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-evidence-join-correction.md",
+      "bytes": 2827,
+      "sha256": "f9dcc53e2d255e341e1cf16fcce29fbbe136b50720e35d7dfd4fb94fbb40a0b3",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Actual root archive/reproduction/admission; independent FAIL retained, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "f94269bc-b92e-4586-88c6-742a839f35af",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "final-source-manifest.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-source-manifest.json",
+      "bytes": 34327,
+      "sha256": "3c6ada0b8ca2bca02525f83b1b5ad6f091d096c68531ee3b33e361d56d896b13",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Actual root archive/reproduction/admission; independent FAIL retained, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "f94269bc-b92e-4586-88c6-742a839f35af",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "final-preservation-verification.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-preservation-verification.json",
+      "bytes": 3330,
+      "sha256": "ab65cbfb50d74247f9c90d0d402b3565beb90906bfcf9b1597fff07c9b97c9fc",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Actual root archive/reproduction/admission; independent FAIL retained, no self-acceptance or platform admission claim."
+    }
+  ],
+  "analysis": {
+    "facts": [
+      "Reviewer remained an independent non-contributor: zero edits, product executions, tests/builds, GUI/native actions, network attempts, helpers or writers. Only local read/hash/schema-validation operations were performed.",
+      "Frozen Plan03/Handoff/wire hashes, final source/test manifests and evidence file hashes match. Seven literal product paths and dirty preimages remain bound.",
+      "Actual checks passed: final Python22/0 and Swift focused16/0; related legacy54/0, fullSwift318/0/0skip, CLI build and retained-v1/real-v3 strict loaders. All Swift bytes in the full check equal final bytes. Final actualCLI57 SKIP and182 inspectioneligible retain all four false flags. These tool PASS facts remain valid.",
+      "Independently identified destination-parent drift was fixed in candidate03 and meaningful regressions passed. No remaining defect was found in that bounded fix.",
+      "Final producer validates registry/run group/fingerprint/destination and passing verification, then validates referenced evidence only by grammar, no-follow read, hash and stable snapshot. It never parses or compares the evidence artifact content anchors.",
+      "Existing verified fixture is an observed contradiction: registry/run destination is inside its task-local project, referenced join artifact destination is inside the original production project. The referenced SHA is correct; final producer still reports SKIP_VERIFIED, and the actual Swift test accepts that report.",
+      "common.binding_artifact_matches already distinguishes byte binding from content matching through join_authority/app/group/fingerprint checks; project_binding does not perform corresponding content validation.",
+      "Product budget is exhausted at3/3. Required evidence content-join negative cases are absent despite successful executed checks. No fourth candidate or budget reset is authorized by this result.",
+      "Root read-only minimal reproduction observed correct reference SHA but contradictory destination and eligible REPORT; saved evidence-join-gap-reproduction.json.",
+      "A single concrete bounded correction proposal has been prepared; user budget decision is pending. No fourth product candidate started."
+    ],
+    "inferences": [
+      "A matching SHA identifies arbitrary referenced bytes; it cannot establish that those bytes support the exact verified history row. Foreign or malformed artifact contents can therefore be accepted after correct reanchoring.",
+      "Plan03 requires exact verification/evidence relationships and foreigngroup/source mismatch rejection. The observed destination contradiction and missing artifact parsing are a material authority-contract gap; inspection-only flags do not waive that requirement.",
+      "A1 must fail. Implementation, successful checks, preservation and compatibility facts remain proven; required semantic coverage and local task closure remain unmet."
+    ],
+    "unknowns": [
+      "Whether user permits one additional bounded correction; no dependent product change until response."
+    ],
+    "evidence": [
+      "acceptance-01.result.json",
+      "acceptance-01-archive-validation.json",
+      "evidence-join-gap-reproduction.json",
+      "bounded-evidence-join-correction.md",
+      "final-source-manifest.json",
+      "final-preservation-verification.json"
+    ],
+    "confidence": "High for completed implementation/check/preservation facts and independently reproduced semantic blocker."
+  },
+  "handoff_summary": "Implemented read-only foundation and preserved all work; executed checks passed, but independent A1 FAIL found an accepted contradictory referenced evidence artifact. Original3/3 candidate budget exhausted. Concrete one-correction packet prepared; await explicit added-budget decision, do not begin candidate04 or native work. Whole LINE outcome remains unmet.",
+  "needs_human": true,
+  "human_decisions": [
+    {
+      "id": "ONE_BOUNDED_CORRECTION_AFTER_EXHAUSTED_BUDGET",
+      "question": "原Plan的三個候選已用完，是否允許追加一個僅修復evidence content join與必要回歸/驗收的受限候選？",
+      "options": [
+        "追加一次受限修復",
+        "保留成果並停止"
+      ],
+      "recommendation": "追加一次受限修復；原3/3與A1 FAIL保留，若再失敗就停止。"
+    }
+  ],
+  "convergence": {
+    "meaningful_attempts": 3,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Candidate03 fixed destination drift and passed checks; final independent review then observed missing registry-evidence content validation and an accepted contradictory fixture.",
+    "information_gain": true,
+    "stuck": true
+  },
+  "writer_receipts": []
+}

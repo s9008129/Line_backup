@@ -1,0 +1,33 @@
+{
+  "decision": "APPROVED",
+  "user_reply": "是",
+  "question": "是否允許追加一個受限修復候選，補足evidence content join並重新獨立驗收？",
+  "proposal": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-evidence-join-correction.md",
+    "mode": 420,
+    "kind": "file",
+    "bytes": 2827,
+    "sha256": "f9dcc53e2d255e341e1cf16fcce29fbbe136b50720e35d7dfd4fb94fbb40a0b3"
+  },
+  "original_issue_attempts": {
+    "used": 3,
+    "limit": 3,
+    "reset": false
+  },
+  "supplemental_grant": {
+    "limit": 1,
+    "used": 0
+  },
+  "cumulative_after_use": 4,
+  "meaningful_attempt_scope": "Any new role convergence counts this explicit supplemental grant only; original3/3 remains immutable and cumulative4 is recorded separately. Not a reset.",
+  "task_lineage": "Same pinned4.7 task; new evidence subdirectory only, no controller resume or release change",
+  "allowed_product_changes": [
+    "src/line_backup_acceptance/project_binding.py",
+    "tests/test_project_binding.py"
+  ],
+  "helpers": 0,
+  "writers": 0,
+  "independent_acceptance_required": true,
+  "no_native_or_data_write_grant": true,
+  "platform_controller_admission": "UNAVAILABLE; actual role/tool records only"
+}

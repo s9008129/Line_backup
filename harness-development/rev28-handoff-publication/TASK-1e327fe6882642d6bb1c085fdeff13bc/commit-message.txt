@@ -1,0 +1,40 @@
+docs: 完整交接 LINE 備份工具目標、182 實機授權與最終預檢驗收
+
+意圖
+讓新對話的接手 agent 能延續目前已驗收的本機工作，清楚區分完成的
+唯讀預檢單元與尚未完成的全自動 LINE 相簿備份產品，避免沿用 Oct6
+暫停狀態、重問已確認目標或實機授權、重下載已 VERIFIED 的57张相簿。
+
+本次做了什麼
+- 新增20261009_handoff.md；最前面提供可直接帶入下一對話的精準prompt。
+- 明訂產品核心：使用者指定群組與資料夾、開啟相簿列表後，所有相簿
+  自動點擊、下载、驗證及記錄，正常流程全程無需人工介入。
+- 記錄可用OCR、Computer Use及macOS原生視覺／輔助技術。
+- 記錄使用者確認的旻謙允禎成長日記／2024-05-06～05-10／182張、
+  Best Practices續作方向及明確授權點擊此相簿進行實際備份測試。
+- 發布精選文字checkpoint，包括最終獨立A1 PASS、root結果、source
+  manifest、實際CLI與測試證據、保存核對、歷史FAIL及程序偏差紀錄。
+- 解釋唯讀四旗標false/canDispatch=false、資料權威、57防重複、
+  capture歷史限制、舊額度、immutable4.7與新4.8/v3 lineage規則。
+- 分別呈現本機單元DONE與整套工具未完成，完整保留來源／驗收限制。
+
+驗證與範圍
+本提交為文件及文字證據checkpoint，非產品source release。核對117項
+本機source/tests、受保護config/state/照片與歷史證據；檢查Markdown
+連結與anchors、離線v3 schema、contract/Handoff byte equality及literal
+staged paths/content。Python31、Swift focused16、既有完整Swift318與
+legacy54均屬先前實際檢查；沒有因文件變更重跑或執行LINE GUI。
+完整318/legacy54沿用以Swift source/tests/binary逐bytes相同為依據。
+產品dirty/untracked、live config/state、照片、raw packets、fixtures、
+task builds及binaries留本機；遠端clone不具有完整已驗收工作區。
+本次不覆寫既有backup、不改產品、安全barrier或歷史FAIL，也不重設額度。
+
+下一步建議
+1. 新4.8/v3 Critical單元review並完成project shared writer/native intent
+   共同持久提交、fresh revalidation及crash-window離線測試。
+2. 完成182動態target/content policy與群組→卡片→detail continuity；
+   保留57 legacy驗收與explicitLineWindows production guard。
+3. 使用已授權182實機點擊和真實備份測試；不重問一般許可，對Save All
+   採at-most-once，unknown dispatch保留barrier，不盲重送。
+4. 一張端到端VERIFIED後完成全相簿探索、批次獨立交易及零人工介入
+   驗收，最後才把整體產品目標標為ACHIEVED。

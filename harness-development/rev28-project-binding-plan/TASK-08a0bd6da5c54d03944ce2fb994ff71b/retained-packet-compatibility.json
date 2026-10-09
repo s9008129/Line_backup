@@ -1,0 +1,68 @@
+{
+  "verdict": "PASS",
+  "binary": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/.offline-build/arm64-apple-macosx/debug/packet-validator",
+    "bytes": 5760272,
+    "sha256": "4ceea4fe848c83070d8a81baca6651e04ec7c8d6c6fa51479e0275162d3b452c"
+  },
+  "records": [
+    {
+      "name": "retained-legacy-v1",
+      "external_anchor": {
+        "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/native.stdout",
+        "bytes": 618,
+        "sha256": "d0ae27a5548fd6954826a63963d87dc913439c87b86c6fe4920a68ca9aa33e77"
+      },
+      "output": {
+        "bundleID": "jp.naver.line.mac",
+        "captureKind": "window",
+        "certifications": {
+          "calibration": "UNKNOWN",
+          "currentComposer": "UNKNOWN",
+          "occlusion": "UNKNOWN",
+          "phaseBPermit": "UNKNOWN"
+        },
+        "epoch": 1,
+        "explicitRequestPresent": false,
+        "externalManifestSHA256": "f92957b82df0ad3bf8ac3313dc6622fc151a196c8986521caa4366e87b0fbfc3",
+        "imageSHA256": "e42fbbb4623d96b8a4c35fc867aa2579cf8d2ea79f0f178aa42b3ca5641c63d7",
+        "pid": 1377,
+        "runID": "passive-diagnostic-5159D6F9-FFB0-4FC3-8177-3BBDC0E56306",
+        "sessionID": "passive-diagnostic-5159D6F9-FFB0-4FC3-8177-3BBDC0E56306-session",
+        "validator": "actual PassiveNativeDiagnostic.load/reconstruct/ObservationBundle.validated",
+        "verdict": "PASS",
+        "windowID": 107
+      }
+    },
+    {
+      "name": "retained-real-v3",
+      "external_anchor": {
+        "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/native.stdout",
+        "bytes": 618,
+        "sha256": "508c93d0bd111de474cd883622301e53c2ba23ca3ea20e18b8d3ba65f1dd8fa7"
+      },
+      "output": {
+        "bundleID": "jp.naver.line.mac",
+        "captureKind": "explicitLineWindows",
+        "certifications": {
+          "calibration": "UNKNOWN",
+          "currentComposer": "UNKNOWN",
+          "occlusion": "UNKNOWN",
+          "phaseBPermit": "UNKNOWN"
+        },
+        "epoch": 1,
+        "explicitRequestPresent": true,
+        "externalManifestSHA256": "101daa1ad0dbab3df5c9653874a44638a54a2b79bfafda86d6d43f12459badf7",
+        "imageSHA256": "42ce8784f128434fc8e2c51638beb7c293f1f3bd76377dce354992e7b45acb44",
+        "pid": 1322,
+        "runID": "passive-diagnostic-09084CB8-B880-4F95-82D7-8A956DDD7E75",
+        "sessionID": "passive-diagnostic-09084CB8-B880-4F95-82D7-8A956DDD7E75-session",
+        "validator": "actual PassiveNativeDiagnostic.load/reconstruct/ObservationBundle.validated",
+        "verdict": "PASS",
+        "windowID": 140
+      }
+    }
+  ],
+  "new_native_capture": 0,
+  "certifications": "UNKNOWN preserved"
+}

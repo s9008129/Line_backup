@@ -1,0 +1,354 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+  "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+  "role": "IMPLEMENTER",
+  "stage": "IMPLEMENT",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "DONE",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "ACHIEVED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "CORE_ACCEPTANCE_STATUS": "PASS",
+    "REQUIRED_VERIFICATION_STATUS": "PASS",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PASS",
+    "TASK_CLOSURE_STATUS": "DONE"
+  },
+  "gate_results": [
+    {
+      "gate_id": "I0_PUBLIC_PROJECT_BINDING_DECISION",
+      "verdict": "PASS",
+      "evidence_manifest": "implement-gates.json"
+    },
+    {
+      "gate_id": "I1_PROJECT_AUTHORITY_CONTRACT",
+      "verdict": "PASS",
+      "evidence_manifest": "implement-gates.json"
+    },
+    {
+      "gate_id": "I2_DUPLICATE_BARRIERS",
+      "verdict": "PASS",
+      "evidence_manifest": "implement-gates.json"
+    },
+    {
+      "gate_id": "I3_READ_ONLY_SCOPE",
+      "verdict": "PASS",
+      "evidence_manifest": "implement-gates.json"
+    },
+    {
+      "gate_id": "I4_ISOLATED_OFFLINE_CHECKS",
+      "verdict": "PASS",
+      "evidence_manifest": "implement-gates.json"
+    },
+    {
+      "gate_id": "I5_LEGACY_COMPATIBILITY",
+      "verdict": "PASS",
+      "evidence_manifest": "implement-gates.json"
+    },
+    {
+      "gate_id": "I6_PRESERVATION",
+      "verdict": "PASS",
+      "evidence_manifest": "implement-gates.json"
+    },
+    {
+      "gate_id": "A1_ACCEPTANCE",
+      "verdict": "PASS",
+      "evidence_manifest": "acceptance.result.json"
+    }
+  ],
+  "evidence_ids": [
+    "user-grant.json",
+    "supplemental-convergence.json",
+    "implementation-note.md",
+    "admission-order-deviation.json",
+    "literal-product-diffs.json",
+    "final-source-manifest.json",
+    "python-focused.json",
+    "swift-focused.json",
+    "actual-cli-summary.json",
+    "retained-contradiction-refusal.json",
+    "retained-other-target-contradiction-refusal.json",
+    "full-swift-compatibility-join.json",
+    "final-isolation-verification.json",
+    "final-preservation-verification.json",
+    "implement-gates.json",
+    "acceptance.result.json",
+    "acceptance-archive-validation.json"
+  ],
+  "plan_sha256": "6ff4f4ec472be1b21104ed8143bb8cbcc3f9c9390e485d4e3491d82c3700c9e7",
+  "handoff_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+  "plan_contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+  "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "user-grant.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/user-grant.json",
+      "bytes": 1258,
+      "sha256": "ed7300b407d518f9e04710a178e522110aad196ecca4a70926c2d6e4b4922db6",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "supplemental-convergence.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/supplemental-convergence.json",
+      "bytes": 358,
+      "sha256": "f4fdd302ba37e2bedc6f95f7c16237ce473db676dc029c3b03e0ac23e8613e52",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "implementation-note.md",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/implementation-note.md",
+      "bytes": 2042,
+      "sha256": "e697351e4433ed78aae786a6b372f029f91c6aad2a8af9ae5cba3980b0cd2778",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "admission-order-deviation.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/admission-order-deviation.json",
+      "bytes": 1492,
+      "sha256": "0ef11f53bf17d1bf74900ee407be121cc4d1d33f87c1178b0e8432da360cc17c",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "literal-product-diffs.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/literal-product-diffs.json",
+      "bytes": 1713,
+      "sha256": "9834cac1b1502bb0f8d7345123c5596f6c9276639f4d69316a2455d87b09fc2f",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "final-source-manifest.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-source-manifest.json",
+      "bytes": 34327,
+      "sha256": "1c15dbf4949231e9b7ac96c8721c4965e8ed610b4ee8276ee2859d312fdb8bbe",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "python-focused.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/python-focused.json",
+      "bytes": 22486,
+      "sha256": "0593d6f6d1099ce0c2e012105522318023fd89d26403589412fcbecd855dd16d",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "swift-focused.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/swift-focused.json",
+      "bytes": 22712,
+      "sha256": "bbf145195175839ed515bf0e6bfe305d2510351b71b5798b8ae9f7e8a7172930",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "actual-cli-summary.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-cli-summary.json",
+      "bytes": 927,
+      "sha256": "90a10223fb7f8000aaeefd0706aedbcb533208a4bb23b9779bd363a5d7d41a09",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "retained-contradiction-refusal.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-contradiction-refusal.json",
+      "bytes": 23025,
+      "sha256": "64772363b506414f9b9357b1067de74800210dfc161b03923f4dda1d61f42912",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "retained-other-target-contradiction-refusal.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-other-target-contradiction-refusal.json",
+      "bytes": 23052,
+      "sha256": "8d80fdce89adb9e03eb0368a46c6c008b1f7b3e6712d338e7181c813abf9bdae",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "full-swift-compatibility-join.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/full-swift-compatibility-join.json",
+      "bytes": 1957,
+      "sha256": "fe38be4f260b8325a8c66cb7bfd4829cdd6673b4da759566c5f90279c1d40089",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "final-isolation-verification.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-isolation-verification.json",
+      "bytes": 59582,
+      "sha256": "fd13dcbd86734042db39e71bb5ea8ac2fb0380d85e0e4f805e2f62e5320d2375",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "final-preservation-verification.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-preservation-verification.json",
+      "bytes": 64489,
+      "sha256": "936e18a1dfacf8f989d8502880f175a110efa5ac29fe6b0ee885216b394ee12f",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "implement-gates.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/implement-gates.json",
+      "bytes": 3765,
+      "sha256": "92ccbc0867c57c39b9ce798c7140e986789cfbfc91f6359627ac48fe67954fe0",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "acceptance.result.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/acceptance.result.json",
+      "bytes": 17169,
+      "sha256": "d35f5fb88a7c260e0de0b85d33da94620976634debe935f607daaced2c90a416",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "b14c276f-0a9c-4cc1-9e37-713f26821a22",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "acceptance-archive-validation.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/acceptance-archive-validation.json",
+      "bytes": 1079,
+      "sha256": "3d64a80f6bb66531b345d9b673268404133f72b855cf0ec1691d7e43e11b5f9d",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final delivery of actual role evidence; A1 belongs to independent reviewer, no self-acceptance or platform admission claim."
+    }
+  ],
+  "analysis": {
+    "facts": [
+      "Original issue3/3 and independent A1 FAIL preserved. User explicitly granted one corrective candidate; this segment1/1, cumulative4, no reset.",
+      "Only producer/tests changed. Strict referenced JSON now joins exact source/history and filesystem verification contents; user_fact/fixture branches are conservative.",
+      "Python31/0 and current-input Swift16/0 PASS. RealCLI57 SKIP and182 inspectioneligible with four false flags; old contradictory fixtures now REFUSAL2.",
+      "All final Swift bytes equal prior full318/0/0skip and legacy54/build/retained-packet evidence; CLI/loader binaries unchanged.",
+      "All outside material except two authorized paths preserved, old312 artifacts/failedfixtures unchanged or append-only progress; protected state/config/photos/Git unchanged.",
+      "Initial admission order deviation retained: planned patch was written before DS metadata drift was resolved; exact prior producer preimage reconstructed afterward from frozen retained bytes. No pre-edit admission PASS claim.",
+      "Actual independent final A1 PASS for this read-only unit; prior FAIL and admission-order deviation retained, not waived or rewritten."
+    ],
+    "inferences": [
+      "The observed reference content mismatch is addressed within frozen authority contract; no writer/native/dispatch permission created."
+    ],
+    "unknowns": [
+      "Whole LINE native group/readiness/writer/content closure remains unmet; no new native authorization or budget.",
+      "OS network/sandbox denial and controller/provider admission remain UNKNOWN/UNAVAILABLE."
+    ],
+    "evidence": [
+      "user-grant.json",
+      "supplemental-convergence.json",
+      "implementation-note.md",
+      "admission-order-deviation.json",
+      "literal-product-diffs.json",
+      "final-source-manifest.json",
+      "python-focused.json",
+      "swift-focused.json",
+      "actual-cli-summary.json",
+      "retained-contradiction-refusal.json",
+      "retained-other-target-contradiction-refusal.json",
+      "full-swift-compatibility-join.json",
+      "final-isolation-verification.json",
+      "final-preservation-verification.json",
+      "implement-gates.json"
+    ],
+    "confidence": "High for actual local checks and exact source/preservation joins; no whole native completion claim.",
+    "convergence_scope": "New explicit supplemental grant only. Original3/3 retained; supplemental1/1; cumulative4; no remaining candidate."
+  },
+  "handoff_summary": "Local read-only project-preflight and Swift inspection binding achieved with independent A1 PASS after one explicit correction grant. Original3/3, prior FAIL and ordering deviation retained; supplemental1/1 and cumulative4 visible. Python31/Swift16 plus exact prior full318 source join and preservation PASS. Whole LINE backup remains NOT_ACHIEVED; no native or dispatch permission.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 1,
+    "consecutive_no_progress": 0,
+    "last_attempt": "One explicitly user-granted correction: source-kind content joins and negative cases; original3/3 unchanged, supplemental1/1 and cumulative4 documented.",
+    "information_gain": true,
+    "stuck": false
+  },
+  "writer_receipts": []
+}

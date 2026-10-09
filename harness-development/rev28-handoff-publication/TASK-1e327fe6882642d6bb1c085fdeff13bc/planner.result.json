@@ -1,0 +1,56 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-1e327fe6882642d6bb1c085fdeff13bc",
+  "run_id": "6dfc2604-090b-45db-9000-fa9b30db5332",
+  "role": "PLANNER",
+  "stage": "PLAN",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "HANDOFF",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "NOT_REQUIRED",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [],
+  "evidence_ids": [],
+  "plan_sha256": "96b59e258268738aeef6a77fec35bf3d0cbbfd10e8c3b05349d89903f0e959f7",
+  "handoff_sha256": "e76a47a49cd6a033a164f8a51da846d151b7ae2f5b6a97f01a47ea7434516bd3",
+  "plan_contract_sha256": "e76a47a49cd6a033a164f8a51da846d151b7ae2f5b6a97f01a47ea7434516bd3",
+  "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+  "evidence_manifests": [],
+  "analysis": {
+    "facts": [
+      "User requested dated handoff and git add/commit/push.",
+      "Latest user explicitly authorized182 album click and actual testing; documentation records it.",
+      "Only documentation publication paths are editable; selected prior text evidence is immutable."
+    ],
+    "inferences": [
+      "QUICK serial documentation-only route is sufficient."
+    ],
+    "unknowns": [
+      "Controller admission and OS sandbox/network enforcement are unavailable/unknown.",
+      "Commit/push outcomes remain to be observed."
+    ],
+    "evidence": [
+      "plan.md",
+      "user-next-task-decisions.json",
+      "publication-files.json"
+    ],
+    "confidence": "High for documented scope; publication remains future gate."
+  },
+  "handoff_summary": "Write and check full handoff; literal stage, commit, normal push and verify remote identity. No product edits or LINE actions in this unit.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 0,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Plan and exact scope prepared; implementation publication pending.",
+    "information_gain": true,
+    "stuck": false
+  },
+  "writer_receipts": []
+}

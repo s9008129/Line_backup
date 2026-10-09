@@ -1,0 +1,15 @@
+{
+  "execution_control": "RESUMED",
+  "user_instruction": "用第一性原理深度梳理這份文件後，用BEST practice 繼續完成此任務",
+  "lineage": "Existing 4.7 task retained with immutable 4.7 resources; no 4.8 controller resume or implicit upgrade.",
+  "release": "/Users/hsiaojohnny/.codex/harness-releases/4.7.0/1bf92f52081df904cf30e1da488734643ee5ec3603464b4bf81b566263ec670d",
+  "runtime": "/Users/hsiaojohnny/.codex/harness-runtime/4.7.0/.venv/bin/python",
+  "controller_admission": "UNAVAILABLE; advisory artifacts, no controller stage invocation",
+  "network_policy": "OFF; host network enabled, OS denial UNKNOWN",
+  "helpers": 0,
+  "writers": 0,
+  "independent_acceptance": "Required separate non-contributor reviewer",
+  "candidates_used": 0,
+  "prior_budgets_preserved": true,
+  "I0": "APPROVED prior exact consent retained"
+}

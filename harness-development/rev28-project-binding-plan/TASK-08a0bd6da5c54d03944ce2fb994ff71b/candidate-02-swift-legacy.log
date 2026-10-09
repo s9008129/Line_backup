@@ -1,0 +1,130 @@
+Building for debugging...
+[0/12] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.09s)
+Test Suite 'Selected tests' started at 2026-10-09 05:36:18.228.
+Test Suite 'rev28PackageTests.xctest' started at 2026-10-09 05:36:18.229.
+Test Suite 'LiveCompositionTests' started at 2026-10-09 05:36:18.229.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testExplicitDiagnosticProfileRefusesBeforeOwnerOrObservationConstruction]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testExplicitDiagnosticProfileRefusesBeforeOwnerOrObservationConstruction]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssembledExecuteStopsAtTheIrreversibleBoundary]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssembledExecuteStopsAtTheIrreversibleBoundary]' passed (0.327 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssemblesOneCompositionThatReachesTheSaveAllBoundary]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssemblesOneCompositionThatReachesTheSaveAllBoundary]' passed (0.325 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryRefusesUncalibratedConfigurationBeforeAnyObservation]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryRefusesUncalibratedConfigurationBeforeAnyObservation]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationAcceptsTheReviewedShape]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationAcceptsTheReviewedShape]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesBudgetOutsideReviewedBounds]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesBudgetOutsideReviewedBounds]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesDegenerateLocatorGeometry]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesDegenerateLocatorGeometry]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesMissingFrozenRuleForTheConfiguredState]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesMissingFrozenRuleForTheConfiguredState]' passed (0.000 seconds).
+Test Suite 'LiveCompositionTests' passed at 2026-10-09 05:36:18.883.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.654 (0.655) seconds
+Test Suite 'NativeObservationSessionTests' started at 2026-10-09 05:36:18.883.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused]' passed (0.011 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGGeometryWithinExistingHalfPointTolerancePasses]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGGeometryWithinExistingHalfPointTolerancePasses]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConflictingDuplicateSCKWindowIDIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConflictingDuplicateSCKWindowIDIsRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testExplicitV3MalformedRetainedBindingsCannotReturnOrCountSuccess]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testExplicitV3MalformedRetainedBindingsCannotReturnOrCountSuccess]' passed (0.029 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testExplicitV3OriginalRequestAndTemporalDriftRefuseBeforeSuccess]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testExplicitV3OriginalRequestAndTemporalDriftRefuseBeforeSuccess]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testExplicitV3ValidationDeadlineStillPrecedesCompletionCount]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testExplicitV3ValidationDeadlineStillPrecedesCompletionCount]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testExplicitV3ValidSessionReturnsExactLogicalSetAndCountsOnce]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testExplicitV3ValidSessionReturnsExactLogicalSetAndCountsOnce]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInvalidFrameRefusalPreservesRecordedDimensionsWithoutCompletingCapture]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInvalidFrameRefusalPreservesRecordedDimensionsWithoutCompletingCapture]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testOneExplicitCGSnapshotIsSharedByIdentityAndBundle]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testOneExplicitCGSnapshotIsSharedByIdentityAndBundle]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused]' passed (0.009 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostIdentityReadDoesNotExtendAbsoluteDeadline]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostIdentityReadDoesNotExtendAbsoluteDeadline]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused]' passed (0.009 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testStableUnavailableSigningRemainsUnknown]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testStableUnavailableSigningRemainsUnknown]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' passed (0.002 seconds).
+Test Suite 'NativeObservationSessionTests' passed at 2026-10-09 05:36:18.994.
+	 Executed 24 tests, with 0 failures (0 unexpected) in 0.110 (0.111) seconds
+Test Suite 'PassiveNativeDiagnosticTests' started at 2026-10-09 05:36:18.994.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testActualChildUnionBundleVersionTwoPacketRoundTrip]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testActualChildUnionBundleVersionTwoPacketRoundTrip]' passed (0.010 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testChildProfileRequiresAffirmativeUniqueSnapshots]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testChildProfileRequiresAffirmativeUniqueSnapshots]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testConstructorGapAncestorSwapCannotRedirectCreation]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testConstructorGapAncestorSwapCannotRedirectCreation]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testConstructorGapDeletionDoesNotRecreateOutput]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testConstructorGapDeletionDoesNotRecreateOutput]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testConstructorGapSymlinkDoesNotCreateMissingTarget]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testConstructorGapSymlinkDoesNotCreateMissingTarget]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testDescriptorAuthorityOwnsDescriptorAndDerivesPersistentFloor]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testDescriptorAuthorityOwnsDescriptorAndDerivesPersistentFloor]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testDescriptorAuthorityRejectsClosedRegularAndUnlinkedDirectories]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testDescriptorAuthorityRejectsClosedRegularAndUnlinkedDirectories]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testDiagnosticSourceConstructorIsSingleUseAndReadsPinnedFloor]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testDiagnosticSourceConstructorIsSingleUseAndReadsPinnedFloor]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testExclusiveClaimAndPartialFailureCannotBeReused]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testExclusiveClaimAndPartialFailureCannotBeReused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testExplicitV3ReanchoredTamperCannotBypassSharedBindingValidator]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testExplicitV3ReanchoredTamperCannotBypassSharedBindingValidator]' passed (0.027 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testExplicitV3SyntheticPacketUsesActualStrictLoadAndRetainsOriginalRequest]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testExplicitV3SyntheticPacketUsesActualStrictLoadAndRetainsOriginalRequest]' passed (0.010 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testExternallyReanchoredManifestVersionCannotDisagreeWithRecord]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testExternallyReanchoredManifestVersionCannotDisagreeWithRecord]' passed (0.009 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testLegacyV1AndV2RejectForeignV3WitnessAndRequestBinding]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testLegacyV1AndV2RejectForeignV3WitnessAndRequestBinding]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testLineOnlyFreshPIDBinding]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testLineOnlyFreshPIDBinding]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testOutputRefusalsOccurBeforeObserver]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testOutputRefusalsOccurBeforeObserver]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testPacketFileSymlinkCannotBeReadEvenWhenBytesMatch]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testPacketFileSymlinkCannotBeReadEvenWhenBytesMatch]' passed (0.008 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testPacketTamperRefusalsAndIndependentBundleChecks]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testPacketTamperRefusalsAndIndependentBundleChecks]' passed (0.016 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testPublicationCollisionRetainsExistingBytesAndRefusesReadback]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testPublicationCollisionRetainsExistingBytesAndRefusesReadback]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testRetainedNativeBundleRoundTripWithExternalAnchor]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testRetainedNativeBundleRoundTripWithExternalAnchor]' passed (0.009 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testStableSamplesCannotAuthorizeChangedSessionChildren]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testStableSamplesCannotAuthorizeChangedSessionChildren]' passed (0.009 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testSwappedOutputDirectoryRefusesBeforeObserver]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testSwappedOutputDirectoryRefusesBeforeObserver]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testVersionTwoRejectsIncompleteForeignDriftingOrMisversionedChildren]' started.
+Test Case '-[Rev28CoreTests.PassiveNativeDiagnosticTests testVersionTwoRejectsIncompleteForeignDriftingOrMisversionedChildren]' passed (0.007 seconds).
+Test Suite 'PassiveNativeDiagnosticTests' passed at 2026-10-09 05:36:19.128.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.132 (0.133) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-10-09 05:36:19.128.
+	 Executed 54 tests, with 0 failures (0 unexpected) in 0.897 (0.899) seconds
+Test Suite 'Selected tests' passed at 2026-10-09 05:36:19.128.
+	 Executed 54 tests, with 0 failures (0 unexpected) in 0.897 (0.900) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

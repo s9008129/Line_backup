@@ -1,0 +1,121 @@
+{
+  "verdict": "PASS",
+  "frozen_gate_specs": [
+    {
+      "gate_id": "I0_PUBLIC_PROJECT_BINDING_DECISION",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I1_PROJECT_AUTHORITY_CONTRACT",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I2_DUPLICATE_BARRIERS",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I3_READ_ONLY_SCOPE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I4_ISOLATED_OFFLINE_CHECKS",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I5_LEGACY_COMPATIBILITY",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I6_PRESERVATION",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    }
+  ],
+  "evidence": {
+    "I0_PUBLIC_PROJECT_BINDING_DECISION": [
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-consent-20261006.json",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/user-grant.json"
+    ],
+    "I1_PROJECT_AUTHORITY_CONTRACT": [
+      "python-focused.json",
+      "swift-focused.json",
+      "actual-cli-summary.json",
+      "retained-contradiction-refusal.stdout"
+    ],
+    "I2_DUPLICATE_BARRIERS": [
+      "python-focused.json",
+      "actual-project57.stdout",
+      "actual-project182.stdout"
+    ],
+    "I3_READ_ONLY_SCOPE": [
+      "literal-product-diffs.json",
+      "final-preservation-verification.json"
+    ],
+    "I4_ISOLATED_OFFLINE_CHECKS": [
+      "final-isolation-verification.json",
+      "full-swift-compatibility-join.json"
+    ],
+    "I5_LEGACY_COMPATIBILITY": [
+      "full-swift-compatibility-join.json"
+    ],
+    "I6_PRESERVATION": [
+      "final-preservation-verification.json"
+    ]
+  },
+  "budget": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/supplemental-convergence.json",
+    "bytes": 358,
+    "sha256": "f4fdd302ba37e2bedc6f95f7c16237ce473db676dc029c3b03e0ac23e8613e52"
+  },
+  "no_requiredness_change": true,
+  "prior_independent_FAIL": "Preserved, not waived",
+  "whole_LINE": "NOT_ACHIEVED"
+}

@@ -1,0 +1,21 @@
+{
+  "verdict": "PASS",
+  "role_result": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/acceptance.result.json",
+    "bytes": 17169,
+    "sha256": "d35f5fb88a7c260e0de0b85d33da94620976634debe935f607daaced2c90a416"
+  },
+  "substantive_A1": "PASS",
+  "independent_actor": "/root/project_binding_acceptance",
+  "serialization": "Independent full final JSON semantic transcription with whitespace normalization; original platform wire bytes unavailable",
+  "pinned_schema": "4.7 local schemas/v3 complete Registry/retrieval refusal",
+  "prior_FAIL": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/acceptance-01.result.json",
+    "bytes": 16681,
+    "sha256": "2e734b010330be84d477562b32ce1ebd5c7feab3d6423a67314833cc4ff86594"
+  },
+  "original_budget": "3/3 preserved",
+  "supplemental_budget": "1/1 explicit grant used",
+  "cumulative_candidates": 4,
+  "controller_admission": "UNAVAILABLE; archive/schema validation is not controller or OS enforcement"
+}

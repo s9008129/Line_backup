@@ -1,0 +1,42 @@
+{
+  "first_admission": "Failed before writing baseline due to .DS_Store drift",
+  "deviation": "Root wrote planned producer patch before waiting for failed admission result",
+  "actual_differences": [
+    {
+      "path": ".DS_Store",
+      "before": {
+        "path": ".DS_Store",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 6148,
+        "sha256": "0bc42f5942c8bf4bdc0ec5150642ad1f96bca375a274c6dd9bbb40cff142fd75"
+      },
+      "after": {
+        "path": ".DS_Store",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 6148,
+        "sha256": "bafd9c447b729b61b7cf64b5f95d38527f220d1662203dd21d8564defba724ce"
+      }
+    },
+    {
+      "path": "src/line_backup_acceptance/project_binding.py",
+      "before": {
+        "path": "src/line_backup_acceptance/project_binding.py",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 20040,
+        "sha256": "51cc12a3dd47ac4e1eed83d1578e73d3076bbf630229e22fd132815c84808e79"
+      },
+      "after": {
+        "path": "src/line_backup_acceptance/project_binding.py",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 26500,
+        "sha256": "a057d0ad3afdc888fe7330e617908b92c8c114006f797080f840f61ffeaf8a43"
+      }
+    }
+  ],
+  "recovery": "No reset/overwrite of user work; inspected every difference, kept Finder metadata, recovered exact old producer bytes from retained source fixture; all protected source/config/state/photos/Git otherwise identical",
+  "new_product_candidate": false
+}
