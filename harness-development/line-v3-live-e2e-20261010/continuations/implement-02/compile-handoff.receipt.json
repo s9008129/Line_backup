@@ -1,0 +1,56 @@
+{
+  "kind": "local_deterministic_handoff_document_verification",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "original_contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+  "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+  "contract_handoff_byte_equality": true,
+  "direct_task_schema_validation": "PASS",
+  "direct_waiver_schema_validation": "PASS",
+  "schema_resource_root": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source/schemas/v3",
+  "native_stage_contract_validation": "NOT_RUN",
+  "native_stage_result_validation": "NOT_RUN",
+  "native_admission": "NOT_RUN",
+  "reason": "No actual stage packet/emitted commands; local checks do not substitute for controller validation.",
+  "files": [
+    {
+      "path": "plan.md",
+      "bytes": 12088,
+      "sha256": "b81ca57103bb71b60dacc7848a104e8cb0efcd28347fba862ad8736997756a49"
+    },
+    {
+      "path": "plan-contract.json",
+      "bytes": 6973,
+      "sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419"
+    },
+    {
+      "path": "handoff.json",
+      "bytes": 6973,
+      "sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419"
+    },
+    {
+      "path": "handoff-prompt.txt",
+      "bytes": 5518,
+      "sha256": "c4c5750f8eaf1851cd09af75c26ee7922b079ff8611cd31edaf4e4c06c78dde3"
+    },
+    {
+      "path": "handoff.md",
+      "bytes": 14345,
+      "sha256": "d68d4b4d0fdc4f1db5a829f0b30b639439f39d62f1f8554db49d87390f16ba30"
+    },
+    {
+      "path": "continuation-policy.json",
+      "bytes": 2342,
+      "sha256": "b6f8b8c3935e3b9cda0c804fb900a71bbaa1cf16f2732460417fb6d90f4ca9f8"
+    },
+    {
+      "path": "plan-review-waiver.json",
+      "bytes": 655,
+      "sha256": "f3c7e51c8a671d8d0e92c4a3ae7876ec7b8169509ea959083796a4f7bb13207d"
+    },
+    {
+      "path": "compile_handoff.py",
+      "bytes": 8143,
+      "sha256": "cf490ffbb1c06275766dc656d34c47d5f43c53bd25ae119d5a41a4b3827f8b91"
+    }
+  ]
+}
