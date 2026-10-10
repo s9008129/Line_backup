@@ -1,0 +1,101 @@
+{
+  "purpose": "Read-only research source inventory; no task gate receipt",
+  "records": [
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/diagnostic-spec.json",
+      "bytes": 6242,
+      "sha256": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/candidate/offline_vision.swift",
+      "bytes": 22065,
+      "sha256": "ff0e50f340b05e871d0291efe9505e8c766534929418975bad41b1ed2d8b8c0f"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/candidate/profiles.json",
+      "bytes": 1317,
+      "sha256": "18bc872d99940de8e010f34cd2a864cb3eebd3f99eb3b3cce018029b26001bb0"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/candidate/run_offline_once.py",
+      "bytes": 50118,
+      "sha256": "eeaa72f8f4d9ce1a5c86a21a31885202dedf3f0149fa9b1c13d878a76b7847d0"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/candidate/catalog_diagnostic.py",
+      "bytes": 54075,
+      "sha256": "babf3ec263099e3598be727cb02daa3aab44e0cf64330c4ac4cdce3c4c88819f"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/handoff.md",
+      "bytes": 34206,
+      "sha256": "e207b97d69fe8da22a4d54a2637cdf4e3b82b911a5fb72b941f2a1a6bbaf7831"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-contract.json",
+      "bytes": 3588,
+      "sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/handoff.json",
+      "bytes": 3588,
+      "sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/attempt-ledger.json",
+      "bytes": 4110,
+      "sha256": "3f175c7f5a414f5fdff37c2b9236de7cfef80d03d26d75303d6fc671a62eb9f6"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/high-reasoning-review-01.md",
+      "bytes": 5443,
+      "sha256": "a2582315b5f0a343460ce5633b598386cfba886c418da17c1442c879e466d477"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/pre-live-replan-01.md",
+      "bytes": 13823,
+      "sha256": "9fb5088c7609d4606a9396b30648c7405b901a5af1c4a23692061668fd89dbdc"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/research-macos27-vision-ocr-20261010.md",
+      "bytes": 8854,
+      "sha256": "e5f900d5e8fb784da8bfe53734a82054763d1fd83f39e359ac26b55769f00f75"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/implement-continuation-handoff/handoff.md",
+      "bytes": 9794,
+      "sha256": "48393702a260f7e2798db1117083d81948c7ae4003a18c62242626b6a92e5830"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Perception/OcrEngine.swift",
+      "bytes": 6521,
+      "sha256": "d763edc478499849f3d440a6dc1c019ac32e86e96ed63b363642af3b761c3726"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+      "bytes": 19634,
+      "sha256": "3a876cf4232622a5f3b5e495f91b25a478b16eba7af20a9dc054676e67e6901b"
+    },
+    {
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "bytes": 7463,
+      "sha256": "a46dd45a1d91dbf4667cd29c6286c501e192afdb2374d787bf5a40cbfc0479ef"
+    },
+    {
+      "path": "src/line_backup_batch/coordinator.py",
+      "bytes": 2552,
+      "sha256": "285d0411d62f21133075e7bf203eca2376170b36faaf25a74edff0bb59060b8f"
+    },
+    {
+      "path": "rev28/ARCHITECTURE.md",
+      "bytes": 25640,
+      "sha256": "333424392e8c0e62e2f17e45f711bcbd62e07b31e2b6df2f80088bdfbc9a5427"
+    },
+    {
+      "path": "rev28/CAPABILITY-MATRIX.md",
+      "bytes": 10429,
+      "sha256": "341a06c130d96520fe3182d97f211e4101e8dd32df56b4874757d49854263be8"
+    }
+  ],
+  "contract_handoff_bytes_equal": true
+}

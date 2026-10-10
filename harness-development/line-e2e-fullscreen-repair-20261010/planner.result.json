@@ -1,0 +1,124 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261010-line-e2e-fullscreen-repair",
+  "run_id": "7efa6688-4dd8-4e40-a579-0453a9a880ec",
+  "role": "PLANNER",
+  "stage": "PLAN",
+  "candidate_fact": "PASS",
+  "validation_fact": "NOT_RUN",
+  "routing_fact": "IMPLEMENT",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [],
+  "evidence_ids": [
+    "EXECUTION_PLAN",
+    "AUTHORIZATION",
+    "PLAN_REVIEW_USER_WAIVER",
+    "PLANNING_SOURCE_MANIFEST"
+  ],
+  "plan_sha256": "9ea60dc98f95efed57cb591481d01028e16053403b8f4270e857a7c8103784b5",
+  "handoff_sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe",
+  "source_sha256": "87250cdd60b5a64b25887dab45f141aba770f2cf37121ff881e5c76239643105",
+  "plan_contract_sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-20261010-line-e2e-fullscreen-repair",
+      "run_id": "7efa6688-4dd8-4e40-a579-0453a9a880ec",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "87250cdd60b5a64b25887dab45f141aba770f2cf37121ff881e5c76239643105",
+      "evidence_id": "EXECUTION_PLAN",
+      "path": "20261010_LINE全螢幕定位與相簿備份_E2E技術修復計畫.md",
+      "bytes": 39723,
+      "sha256": "9ea60dc98f95efed57cb591481d01028e16053403b8f4270e857a7c8103784b5",
+      "contract_sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe",
+      "observation": "Actual document/authorization archival facts only; no implementation gate, controller/native receipt or E2E PASS."
+    },
+    {
+      "task_id": "TASK-20261010-line-e2e-fullscreen-repair",
+      "run_id": "7efa6688-4dd8-4e40-a579-0453a9a880ec",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "87250cdd60b5a64b25887dab45f141aba770f2cf37121ff881e5c76239643105",
+      "evidence_id": "AUTHORIZATION",
+      "path": "harness-development/line-e2e-fullscreen-repair-20261010/authorization.json",
+      "bytes": 1180,
+      "sha256": "f2717505ed37d0fd2ad21dbdb04735f8afe3bab7993cd2b3a7f9c9006e0bfc8a",
+      "contract_sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe",
+      "observation": "Actual document/authorization archival facts only; no implementation gate, controller/native receipt or E2E PASS."
+    },
+    {
+      "task_id": "TASK-20261010-line-e2e-fullscreen-repair",
+      "run_id": "7efa6688-4dd8-4e40-a579-0453a9a880ec",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "87250cdd60b5a64b25887dab45f141aba770f2cf37121ff881e5c76239643105",
+      "evidence_id": "PLAN_REVIEW_USER_WAIVER",
+      "path": "harness-development/line-e2e-fullscreen-repair-20261010/user-plan-review-waiver.json",
+      "bytes": 798,
+      "sha256": "e7e44e4765ea60b3cedf8199444a5675370d2472e3331c0392f8be29436e6b3e",
+      "contract_sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe",
+      "observation": "Actual document/authorization archival facts only; no implementation gate, controller/native receipt or E2E PASS."
+    },
+    {
+      "task_id": "TASK-20261010-line-e2e-fullscreen-repair",
+      "run_id": "7efa6688-4dd8-4e40-a579-0453a9a880ec",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "87250cdd60b5a64b25887dab45f141aba770f2cf37121ff881e5c76239643105",
+      "evidence_id": "PLANNING_SOURCE_MANIFEST",
+      "path": "harness-development/line-e2e-fullscreen-repair-20261010/source-manifest.json",
+      "bytes": 3803,
+      "sha256": "87250cdd60b5a64b25887dab45f141aba770f2cf37121ff881e5c76239643105",
+      "contract_sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe",
+      "observation": "Actual document/authorization archival facts only; no implementation gate, controller/native receipt or E2E PASS."
+    }
+  ],
+  "analysis": {
+    "facts": [
+      "User explicitly requested a direct Implementer E2E plan with no independent plan review, and authorized necessary quantities/permissions.",
+      "A detailed execution plan, exact contract/handoff, separate explicit user review waiver and source inventory have been prepared.",
+      "Research-only configuration probe showed modern minimum-height0.03125/legacy0.0; macOS27 SDK OCRTool typecheck failed due Swift6.3.3/SDK6.4 mismatch; no OCR or UI in that probe.",
+      "Known catalog history remains3+1. This plan authorizes +5 material attempts without resetting other known/unknown native histories.",
+      "No new-plan OCR, LINE capture/input, download, live state mutation, tests or E2E has run."
+    ],
+    "inferences": [
+      "Replacing the manual desktop menu image in the accepted182 workflow with automatic display sensing is a high-information first repair.",
+      "Observed-menu dispatch explicitly changes the old atomic pair observation policy for the new authorized experiment."
+    ],
+    "unknowns": [
+      "Actual automatic popup capture/mapping and two eligible-album E2E results.",
+      "OS/runtime capabilities and fresh foreground/state at implementation start.",
+      "Formal native/controller stage, session identity, admission and waiver receipt."
+    ],
+    "evidence": [
+      "20261010_LINE全螢幕定位與相簿備份_E2E技術修復計畫.md",
+      "harness-development/line-e2e-fullscreen-repair-20261010/authorization.json",
+      "harness-development/line-e2e-fullscreen-repair-20261010/user-plan-review-waiver.json",
+      "harness-development/line-e2e-fullscreen-repair-20261010/source-manifest.json"
+    ],
+    "confidence": "High for read source/authorization and concrete plan; experimental success remains untested.",
+    "local_execution_authorized": true,
+    "formal_controller_admission": "NOT_RUN",
+    "run_id_note": "Locally generated archival UUID, not native/platform identity.",
+    "primary_outcome_note": "Six statuses track the backup repair objective; the requested planning artifact has been delivered.",
+    "plan_review": "WAIVED_BY_EXPLICIT_USER; historical policy requirement stays visible; NOT PASS",
+    "historical_convergence_note": "v3 meaningful_attempts remains3 for the known historical catalog subset, while full3+1 history and upcoming +5 are recorded separately. No execution attempt consumed by writing this plan."
+  },
+  "handoff_summary": "已交付可直接Implementer執行的完整桌面定位修復與兩筆真實E2E計畫。使用者免除PlanReview/pre-live審查前置，保留明確免審決策而非PASS。新流程允許menu開啟後原生capture/guard；一次SaveAll、duplicate、CAS及內容驗證維持。+5 material attempts不重設3+1與其他歷史。尚無本輪OCR/UI/download/E2E結果；正式產品Acceptance安排實測及報告後。",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 3,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Prepared authorized direct-implementation E2E plan; no new backup method executed. Known historical catalog3+1 retained separately.",
+    "information_gain": true,
+    "stuck": false
+  }
+}

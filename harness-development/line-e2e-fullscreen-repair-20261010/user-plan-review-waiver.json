@@ -1,0 +1,14 @@
+{
+  "format": "local-user-waiver-decision-1",
+  "source": "CURRENT_USER_MESSAGE",
+  "task_id": "TASK-20261010-line-e2e-fullscreen-repair",
+  "gate_id": "P_PLAN_REVIEW",
+  "contract_sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe",
+  "decision": "WAIVE_PLAN_REVIEW_PRECONDITION",
+  "authority": "USER",
+  "user_confirmation": "這份計劃不需要獨立審查，目的是交給implementer直接實作進行E2E的測試與撰寫測試報告",
+  "reason": "The user explicitly requests direct implementation and real E2E rather than another independent plan review. Preserve review requirement visibly as waived; never claim PASS.",
+  "formal_controller_waiver_receipt": "NOT_RUN",
+  "local_execution_authorized": true,
+  "created_at": "2026-10-10T03:40:34.514687+00:00"
+}
