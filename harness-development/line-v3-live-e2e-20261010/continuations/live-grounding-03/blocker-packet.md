@@ -27,3 +27,9 @@ Contract SHA-256: `d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd
 4. 即使 grounding 成功，後續每次 LINE UI input 仍需公告目標/精確動作並取得當次前景交接。兩本交易與獨立 Acceptance 仍未執行。
 
 前景交接只讓下一步唯讀 capture 成為可能，不是對 Save All、chooser confirmation、下載或 state mutation 的額外授權。
+
+## Addendum — 2026-10-10 前景交接後
+
+使用者已交還 LINE 前景；Implementer 已完成一次唯讀 CUA screenshot＋AX 觀察。畫面視覺上顯示 config canonical 群組「旻謙允禎成長日記」的相簿頁，頂端候選為 2024/06/02–06/07、65 張。沒有點擊、滾動、下載或 state write。AX 仍沒有具名標題或 card bounds，因此 `G_CATALOG` 仍 BLOCKED。
+
+新阻塞是 CUA/runner 之間缺少 retained screenshot file-reference 與 native PID/window/display geometry evidence bridge。文件化 CUA API 僅回傳記憶體 screenshot；無法供 frozen `live_runner`／`rev28ctl frame-support` 建立要求的 CUA/SCK pair。原始 screenshot 沒有保存到 workspace，所以沒有 bytes/hash，也不能作 gate evidence。需要 Planner 決定可取得正式 pair evidence 的 host integration；在此之前不可點候選或開始交易。原 14 個 scope-drift artifacts 未動。

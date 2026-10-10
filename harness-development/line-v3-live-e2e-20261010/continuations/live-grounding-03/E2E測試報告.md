@@ -1,6 +1,6 @@
 # E2E 測試報告 — live-grounding-03
 
-更新時間：2026-10-10T14:07:31.085Z（UTC）  
+更新時間：2026-10-10T15:08:50Z（UTC）
 Task：`TASK-20261010-line-v3-live-e2e`  
 Plan：`harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan.md`，SHA-256 `001b90861631fe27b0d21ec871be5fc19446bf3070e88bb116350a0f3690708c`  
 Handoff：`harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/handoff.md`，SHA-256 `d44fa1eb21fd15b50fcc2131c5a5499be69ce3b40bbf69b128f6f3cc8ee4df03`  
@@ -9,7 +9,7 @@ Project root：`/Users/hsiaojohnny/Documents/ChatGPT/Line_backup`
 
 ## 本輪結果
 
-離線實作與驗證已取得部分進展：Swift 全套 329/0、Python 與 Node 必要 suites 通過；新 runtime binding、兩份 v2 grants 及 producer binary 的雜湊／membership／quota 驗證也通過。完整兩本 LINE 相簿 E2E **未執行**。目前沒有使用者明確交還 LINE 前景的紀錄，且 native CUA frame／AX analyzer 尚未以當下真實畫面完成 grounding；因此沒有點擊、滾動、Save All、chooser confirmation、下載或 state mutation。`G_CATALOG`、`G_MENU`、`G_FIRST`、`G_SCROLL`、`G_SECOND` 均未通過；獨立 Acceptance 尚未執行。
+離線實作與驗證已取得部分進展：Swift 全套 329/0、Python 與 Node 必要 suites 通過；新 runtime binding、兩份 v2 grants 及 producer binary 的雜湊／membership／quota 驗證也通過。完整兩本 LINE 相簿 E2E **未執行**。原報告在 14:07Z 時尚無前景交接；使用者之後已交還前景，我完成一次唯讀 screenshot＋AX 觀察，但 CUA-to-runner retained-frame/native-geometry bridge 尚未建立，因此沒有點擊、滾動、Save All、chooser confirmation、下載或 state mutation。`G_CATALOG`、`G_MENU`、`G_FIRST`、`G_SCROLL`、`G_SECOND` 均未通過；獨立 Acceptance 尚未執行。
 
 本報告引用的機器證據均在 workspace 內，並列 relative path、absolute path、bytes 與 SHA-256。完整測試收據索引見 `harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/g-offline.json`；授權綁定見 `harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/g-auth.json`；state／preservation 觀察見 `harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/state-continuity.json`、`harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/preservation.json`。
 
@@ -99,10 +99,10 @@ def validate_runtime_binding(reader, grant):
 
 ## 阻塞與下一步
 
-1. 需要使用者把 LINE app 切到前景，開啟「旻謙允禎成長日記」相簿列表並明確回覆「前景已交還」。拿到交接後，第一個動作只會是一次新鮮唯讀截圖＋AX 擷取，用來驗證實際 capture shape；不會在該步點擊、滾動或下載。後續每個 GUI 動作仍會先公告精確動作並取得當次前景交接。
-2. 目前分類器仍需要用真實 CUA capture 確認 analyzer/frame references 的實際結構；沒有該觀察就不能接上真實 UI 或宣稱 live grounding。
-3. 14 個範圍外 untracked outputs 維持原位；下一輪 Planner 必須決定只調整測試輸出 root 至 `$CON`，以及如何處理已存在 outputs。不得由 Implementer自行刪除或移動。
-4. 真機資料補齊後，才可執行 first transaction → release → downward bounded scroll → second transaction。最後再交給獨立 Acceptance；其審查不是本輪額外獨立 Plan Review。
+1. 前景交接已完成；唯讀觀察顯示目前在 canonical 群組相簿頁，頂端候選為 2024/06/02–06/07、65 張。此為 OBSERVED，不是 G_CATALOG PASS。
+2. 要繼續，host 必須提供可把 CUA screenshot bytes/file reference 交給 `live_runner`，並取得與該畫面相符的 fresh native PID/window/display geometry evidence 的 bridge。現有文件化 CUA API 沒有提供這條留存與配對介面。沒有正式 pair evidence 前不可開候選相簿。
+3. 14 個範圍外 untracked outputs 維持原位；Planner 必須決定測試輸出 root 與既有 outputs 的處置。不得自行清除／搬移或重跑會產生同類輸出的 Python suites。
+4. bridge 與 scope 決策到位後，才可依 Plan 執行 first transaction → release → downward bounded scroll → second transaction；所有必要證據完成後再交給獨立 Acceptance。
 
 ### 證據索引
 
@@ -123,5 +123,13 @@ def validate_runtime_binding(reader, grant):
 | auth-suite-02.receipt.json | `harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/auth-suite-02.receipt.json` | `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/auth-suite-02.receipt.json` | 664 | `dfba63ae7cc38328525a3e65269a2fb50442b3a1a3c14c370843054296186993` |
 | grant-validation-03.receipt.json | `harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-03.receipt.json` | `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-03.receipt.json` | 681 | `2a5eecb54de879ab6c2e5dc0cbfb9e4eac2cfc718aba2f7950886ef547110f67` |
 | producer-cli-preflight-01.receipt.json | `harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/producer-cli-preflight-01.receipt.json` | `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/producer-cli-preflight-01.receipt.json` | 699 | `0b5824836a62a1be2bc2a590723c6f554aa99df5a902c512ab5520c9c779a570` |
+
+## 前景交接後的唯讀觀察（2026-10-10）
+
+使用者明確回覆「LINE 前景已交還」後，我使用 CUA 的 `getState()`、`getApp("LINE")` 與 `getAXStateAndScreenshot({disableDiffing:true})` 做了一次 fresh、唯讀觀察。截圖顯示 LINE 相簿頁，頂端候選顯示 `2024/06/02–06/07`、`65` 張；標題視覺上為 `旻謙允禎成長日記`，與本輪 config 的 canonical `group_name` 一致。畫面中沒有打開相簿、選單或檔案挑選器。AX 樹含匿名列表 row，沒有群組標題或卡片名稱；焦點欄位為文字欄位，但畫面未見正在編輯的文字。
+
+這些是該次工具輸出中的人眼觀察（`OBSERVED`），不是 classifier 結果，沒有使 `G_CATALOG` 通過。CUA 工具輸出沒有可用的 workspace screenshot path/hash，且未回傳可交給 native producer 的 retained frame reference 或 capture timestamp；工具文件化 API 也沒有 file-retention bridge。凍結的 `frame-support` 需要 CUA pair frame、fresh native PID/window/display geometry evidence、capture time 與 bounds；因此目前無法產生合規的 CUA/SCK frame-support manifest。沒有執行 `frame-support`、沒有送出任何 LINE input、沒有變更 state/config/GUI ledger 或備份目錄。原始截圖未落檔，故不列 bytes/hash，也不將這次觀察當作 E_LIVE_CATALOG 的證據檔。
+
+此觀察確認前景交接已完成、LINE 畫面位於相簿頁，並縮小了未知範圍；它同時揭露目前 host 的 CUA-to-runner retained-frame/native-geometry bridge 不可用。下一步需先由 Planner 決定如何在不降低凍結 evidence gates 的前提下取得正式 pair evidence。前景畫面維持未操作狀態；14 個範圍外 untracked files 也維持原位。
 | state source | `state/backup_state.json` | `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/state/backup_state.json` | 252115 | `455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6` |
 | config source | `config/line_backup_config.json` | `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/config/line_backup_config.json` | 384 | `5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362` |
