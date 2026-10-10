@@ -1,0 +1,21 @@
+test_project_binding (unittest.loader._FailedTest.test_project_binding) ... ERROR
+
+======================================================================
+ERROR: test_project_binding (unittest.loader._FailedTest.test_project_binding)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_project_binding
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 16, in <module>
+    from line_backup_acceptance import project_binding as pb
+ModuleNotFoundError: No module named 'line_backup_acceptance'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from line_backup_batch.cli import authorize; root="/Users/hsiaojohnny/Documents/ChatGPT/Line_backup"; paths=["harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-1.json","harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-2.json"]; [authorize(root,p,False,"begin") for p in paths]; print("both v2 grants pass live scope, contract, source, producer, runtime membership, authorization, and quota validation")
+                                                                                                                                                                                                                                                                                                                        ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/cli.py", line 158, in authorize
+    validate_runtime_binding(reader,grant)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/cli.py", line 76, in validate_runtime_binding
+    'swift_sources':_swift_source_members(reader,reader.root),
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/cli.py", line 49, in _swift_source_members
+    visit(directory)
+    ~~~~~^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/cli.py", line 47, in visit
+    else:visit(path)
+         ~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/cli.py", line 44, in visit
+    reader.directory_names(path)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 147, in directory_names
+    fd = self.open(relative, directory=True)
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 113, in open
+    return os.open(parts[-1], flags, dir_fd=parent)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+NotADirectoryError: [Errno 20] Not a directory: 'AXDriver.swift'

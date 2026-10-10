@@ -1,0 +1,18 @@
+{
+  "format_version": "1",
+  "check_id": "swift-full-suite-02",
+  "status": "FAIL",
+  "exit_code": 1,
+  "started_at": "2026-10-10T13:44:13.555Z",
+  "ended_at": "2026-10-10T13:44:29.308Z",
+  "stdout": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-02.stdout",
+    "bytes": 90657,
+    "sha256": "d2bfd15fe04a385717e6dfc474f4d23f7b12d69c5071168fe83794fbb9ff2cb6"
+  },
+  "stderr": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-02.stderr",
+    "bytes": 11614,
+    "sha256": "281ca32744e89aa6cb5f168cd4bac9813a70a40de9713f219963fd5634dad149"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "format_version": "1",
+  "check_id": "adapter-suite-01",
+  "status": "PASS",
+  "exit_code": 0,
+  "started_at": "2026-10-10T13:16:27.489Z",
+  "ended_at": "2026-10-10T13:16:27.583Z",
+  "stdout": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/adapter-suite-01.stdout",
+    "bytes": 1461,
+    "sha256": "dd7e8095c364e44898df25b7acc8e537dd4eb27b4b4c72883a8d122ff26f31ea"
+  },
+  "stderr": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/adapter-suite-01.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

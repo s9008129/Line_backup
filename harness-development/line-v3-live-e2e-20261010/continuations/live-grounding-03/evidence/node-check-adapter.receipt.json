@@ -1,0 +1,18 @@
+{
+  "format_version": "1",
+  "check_id": "node-check-adapter",
+  "status": "PASS",
+  "exit_code": 0,
+  "started_at": "2026-10-10T13:14:00.450Z",
+  "ended_at": "2026-10-10T13:14:00.485Z",
+  "stdout": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/node-check-adapter.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/node-check-adapter.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "check_id": "adapter-syntax-03",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "command": [
+    "/opt/homebrew/bin/node",
+    "--check",
+    "scripts/line_backup_cua_adapter.mjs"
+  ],
+  "started_at": "2026-10-10T13:28:56.197Z",
+  "ended_at": "2026-10-10T13:28:56.228Z",
+  "exit_code": 0
+}

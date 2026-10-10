@@ -1,0 +1,18 @@
+{
+  "format_version": "1",
+  "check_id": "classifier-suite-02",
+  "status": "PASS",
+  "exit_code": 0,
+  "started_at": "2026-10-10T13:28:56.193Z",
+  "ended_at": "2026-10-10T13:28:56.282Z",
+  "stdout": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/classifier-suite-02.stdout",
+    "bytes": 393,
+    "sha256": "e747af0280f607d444e2c2fdc81ff6ca8925c74d6425b718672693d91d3e9809"
+  },
+  "stderr": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/classifier-suite-02.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

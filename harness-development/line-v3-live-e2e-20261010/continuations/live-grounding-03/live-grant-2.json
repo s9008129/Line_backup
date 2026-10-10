@@ -1,0 +1,62 @@
+{
+  "grant_version": "line-batch-execution-grant-2",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "fixture": false,
+  "artifact_dir": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03",
+  "owner": "live-grounding-03-g2",
+  "operations": [
+    "begin",
+    "admit",
+    "prepare",
+    "calibrate",
+    "intent",
+    "dispatch",
+    "finalize",
+    "stop",
+    "finish",
+    "release",
+    "resume",
+    "gui_reserve",
+    "gui_consume",
+    "frame_support"
+  ],
+  "config_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+  "source_sha256": "6acdec34fbfd163e560bbe8ec93661a64a4bd8fcb24f0ced9e27971e99b69064",
+  "album_quota": 2,
+  "lifecycle_album_limit": 1,
+  "save_all_dispatch_limit": 2,
+  "chooser_confirmation_limit": 2,
+  "reversible_gui_invocation_limit": 1000,
+  "authorization_evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/authorization.json",
+    "bytes": 1738,
+    "sha256": "0e3adabe2907761785d32bb5dab93a5b0af78714e99c1921f7bfbccef1abc7b3"
+  },
+  "acceptance_evidence": null,
+  "contract_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+  "native_binary_sha256": "1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf",
+  "gui_ledger": "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+  "contract_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-contract.json",
+  "producer_binary": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/bin/rev28ctl",
+    "bytes": 9451696,
+    "sha256": "9f3aed5f26394de1108f064d566e253fcdb50cf76a9dc329f05185c1ae215022"
+  },
+  "runtime_binding": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/runtime-binding.json",
+    "bytes": 24270,
+    "sha256": "b8a46d64b20ada6fc67b309b1902816c52954325e0b30fe4cfffd55441b04a28"
+  },
+  "sensor_scope": {
+    "bundle_id": "jp.naver.line.mac",
+    "provider": "SCREEN_CAPTURE_KIT",
+    "capture_scope": "FULL_DISPLAY",
+    "surfaces": [
+      "ALBUMS",
+      "ALBUM_DETAIL",
+      "FOLDER_CHOOSER"
+    ],
+    "menu_capture_guard": true
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "format_version": "1",
+  "check_id": "runner-syntax-02",
+  "status": "PASS",
+  "exit_code": 0,
+  "started_at": "2026-10-10T13:16:19.540Z",
+  "ended_at": "2026-10-10T13:16:19.574Z",
+  "stdout": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/runner-syntax-02.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/runner-syntax-02.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

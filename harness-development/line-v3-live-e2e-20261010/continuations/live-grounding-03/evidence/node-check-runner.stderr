@@ -1,0 +1,8 @@
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_runner.mjs:94
+    const result=await runProcess(argv,{cwd:repoRoot,env:{PYTHONPATH:'src',PYTHONDONTWRITEBYTECODE:'1'});
+                                                                                                       ^
+
+SyntaxError: Unexpected token ')'
+    at checkSyntax (node:internal/main/check_syntax:72:5)
+
+Node.js v26.7.0

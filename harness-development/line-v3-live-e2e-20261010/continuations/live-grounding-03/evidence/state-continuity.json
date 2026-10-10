@@ -1,0 +1,37 @@
+{
+  "kind": "READ_ONLY_STATE_CONTINUITY",
+  "observed_at": "2026-10-10T14:07:30.139Z",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "verdict": "PASS",
+  "validation": "Store.snapshot completed, including schema-3 history validation; state/config/source hashes recorded below.",
+  "receipt": {
+    "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+    "revision": 35,
+    "state_sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+    "state_identity": [
+      16777229,
+      134297409,
+      33152,
+      252115,
+      1791626450616427819,
+      1791626450616705861
+    ],
+    "config_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+    "source_sha256": "6acdec34fbfd163e560bbe8ec93661a64a4bd8fcb24f0ced9e27971e99b69064"
+  },
+  "state_summary": {
+    "schema_version": 3,
+    "revision": 35,
+    "runs": 2,
+    "verified_albums": 2,
+    "active_batch": null,
+    "active_writer_id": null,
+    "context_lock": null
+  },
+  "config": {
+    "schema_version": 2,
+    "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+    "group_name": "旻謙允禎成長日記",
+    "max_albums_per_run": 1
+  }
+}

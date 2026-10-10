@@ -1,0 +1,12 @@
+{
+  "check_id": "adapter-suite-02",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "command": [
+    "/opt/homebrew/bin/node",
+    "--test",
+    "tests/test_cua_adapter.mjs"
+  ],
+  "started_at": "2026-10-10T13:28:56.164Z",
+  "ended_at": "2026-10-10T13:28:56.262Z",
+  "exit_code": 0
+}

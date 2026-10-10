@@ -1,0 +1,136 @@
+{
+  "gate_id": "G_AUTH",
+  "verdict": "PASS",
+  "observed_at": "2026-10-10T14:07:31.061Z",
+  "source_sha256": "6acdec34fbfd163e560bbe8ec93661a64a4bd8fcb24f0ced9e27971e99b69064",
+  "config_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+  "contract_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+  "runtime_binding": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/runtime-binding.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/runtime-binding.json",
+    "bytes": 24270,
+    "sha256": "b8a46d64b20ada6fc67b309b1902816c52954325e0b30fe4cfffd55441b04a28"
+  },
+  "authorization": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/authorization.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/authorization.json",
+    "bytes": 1738,
+    "sha256": "0e3adabe2907761785d32bb5dab93a5b0af78714e99c1921f7bfbccef1abc7b3"
+  },
+  "grants": [
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-1.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-1.json",
+      "bytes": 2295,
+      "sha256": "ff87076087221ca67a3fc7723cddd12a0d800cffab73ce973ef5f0b2a0114277"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-2.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-2.json",
+      "bytes": 2295,
+      "sha256": "78cad2a0262de68e10dbb01f9513149b5b46ab53e3ee635cce184b1172d35b1b"
+    }
+  ],
+  "producer_binary": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/bin/rev28ctl",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/bin/rev28ctl",
+    "bytes": 9451696,
+    "sha256": "9f3aed5f26394de1108f064d566e253fcdb50cf76a9dc329f05185c1ae215022"
+  },
+  "native_decoder": {
+    "path": "harness-development/line-v3-live-e2e-20261010/bin/image_decode",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/bin/image_decode",
+    "bytes": 102064,
+    "sha256": "1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf"
+  },
+  "authorization_validation": {
+    "check_id": "grant-validation-03",
+    "status": "PASS",
+    "exit_code": 0,
+    "started_at": "2026-10-10T13:51:53.052Z",
+    "ended_at": "2026-10-10T13:51:53.204Z",
+    "receipt": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-03.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-03.receipt.json",
+      "bytes": 681,
+      "sha256": "2a5eecb54de879ab6c2e5dc0cbfb9e4eac2cfc718aba2f7950886ef547110f67"
+    },
+    "stdout": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-03.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-03.stdout",
+      "bytes": 116,
+      "sha256": "d68adc625135c1fc547d9bbd9d08609439a4ae5d9b30e0b8f51babaad364679b"
+    },
+    "stderr": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-03.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-03.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "invocation": {
+      "check_id": "grant-validation-03",
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "command": [
+        "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python3",
+        "-B",
+        "-c",
+        "from line_backup_batch.cli import authorize; root=\"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup\"; paths=[\"harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-1.json\",\"harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-2.json\"]; [authorize(root,p,False,\"begin\") for p in paths]; print(\"both v2 grants pass live scope, contract, source, producer, runtime membership, authorization, and quota validation\")"
+      ],
+      "started_at": "2026-10-10T13:51:53.052Z",
+      "ended_at": "2026-10-10T13:51:53.204Z",
+      "exit_code": 0
+    }
+  },
+  "producer_cli_preflight": {
+    "check_id": "producer-cli-preflight-01",
+    "status": "PASS",
+    "exit_code": 0,
+    "started_at": "2026-10-10T13:57:01.959Z",
+    "ended_at": "2026-10-10T13:57:02.491Z",
+    "receipt": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/producer-cli-preflight-01.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/producer-cli-preflight-01.receipt.json",
+      "bytes": 699,
+      "sha256": "0b5824836a62a1be2bc2a590723c6f554aa99df5a902c512ab5520c9c779a570"
+    },
+    "stdout": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/producer-cli-preflight-01.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/producer-cli-preflight-01.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/producer-cli-preflight-01.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/producer-cli-preflight-01.stderr",
+      "bytes": 955,
+      "sha256": "7663b1a47cc0efab613a6b8ef5857db07e81619251aa367926bbb53dcb7ade07"
+    },
+    "invocation": {
+      "check_id": "producer-cli-preflight-01",
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "command": [
+        "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python3",
+        "-B",
+        "-c",
+        "import subprocess,sys; p=subprocess.run([\"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/bin/rev28ctl\"],stdout=subprocess.PIPE,stderr=subprocess.PIPE); sys.stdout.buffer.write(p.stdout); sys.stderr.buffer.write(p.stderr); sys.stderr.write(f\"\\nobserved_exit={p.returncode}\\n\"); sys.exit(0 if p.returncode==64 and b\"usage:\" in p.stderr else 1)"
+      ],
+      "started_at": "2026-10-10T13:57:01.959Z",
+      "ended_at": "2026-10-10T13:57:02.491Z",
+      "exit_code": 0
+    }
+  },
+  "scope": {
+    "owners": [
+      "live-grounding-03-g1",
+      "live-grounding-03-g2"
+    ],
+    "album_quota": 2,
+    "lifecycle_limit": 1,
+    "save_all_limit": 2,
+    "chooser_limit": 2,
+    "reversible_gui_limit": 1000,
+    "independent_acceptance_required": true,
+    "acceptance_evidence": null
+  },
+  "limits": "This proves local grant/runtime/hash/scope validation and executable startup only. It does not prove native stage admission, actual CUA process bridge, live capture, or album acceptance."
+}

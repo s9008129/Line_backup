@@ -1,11 +1,11 @@
-# 本輪文件進度：live-grounding-03
+# live-grounding-03 進度
 
-我們在解決兩本相簿實機備份目前缺少感測、辨識、chooser、授權綁定與session接線的問題。本輪交付給Implementer的是已落檔的plan.md與handoff.md；产品与LINE操作尚未执行。
+我們要完成兩本不同 LINE 相簿的真實備份與第二本 scroll 驗收。離線程式、固定來源綁定和 grants 已完成到可驗證的程度：Swift 329/0、Python batch 70/0、project binding 31/0、transaction 5/0、Node adapter/classifier/runner 18/3/4 全通過。grant 預檢也已通過；state revision 35 和 config 未變。
 
-Plan先落檔并经官方immutable schema API本地结构检查，随后保存plan-freeze.json，再编译Handoff。contract／handoff.json逐byte相等，两份Markdown嵌入相同contract；handoff首段为精确Implementer Prompt。Plan Review明确USER WAIVED/NOT_RUN，事后独立Acceptance保留，native admission/stage验证NOT_RUN。
+目前卡在真實 CUA capture grounding 與 LINE 前景交接。尚未做 LINE 截圖、點擊、滾動、Save All、chooser、下載或 state write，所以兩本 E2E 與獨立 Acceptance 都未完成。需要先取得 LINE 前景交接；第一步只做 fresh 唯讀截圖／AX。若 raw capture shape 與 runner 介面不同，保留 evidence 後回到 Planner，不猜格式。
 
-本轮文档authoring实际1次meaningful attempt，0次连续无进展；实际检查证成文件结构与字节绑定，尚不证成SCK/classifier/chooser真机能力。旧28+1 ledger、Swift旧四次与唯一例外证据保留，新producer≤3次额度未使用。实现仍以原六状态中的NOT_ACHIEVED／BLOCKED事实为输入。
+Swift full suite 三次 reservation 均已消耗：第一次編譯失敗；第二次 17 項失敗（16 項缺 fixture env，1 項錯誤 clipping fixture）；第三次修正環境和 fixture 後 329/0 PASS。grant 驗證又揭露 `artifact()` 匯入和 Swift file traversal 的兩個接線問題，已修正並由 24 項 authority suite 與雙 grant 驗證通過。最近一次明確增加資訊的嘗試讓我們更接近離線完成，但沒有縮短缺少的真機證據。
 
-下一步由GPT-6 luna梳理已落档文件与上下文，建议包含意图、实际改动、下一步的Git提交讯息；root只stage本轮新文件目录，按使用者已明确授权commit/push。此段为Git发布前的进度记录，发布事实由实际Git commit、远端readback与最后工具结果判定。
+本輪檢查後發現 14 個 baseline 之外的新 untracked files 落在核准路徑外，可能由 Python test artifacts 和未禁用 bytecode 的 snapshot 命令產生；完整路徑/hash 已列於 `evidence/preservation.json`。我沒有刪除或搬移它們，也不會再跑可能往 `$TP/evidence` 寫入的 suites。下一輪 Planner 需先把 test output root 鎖在 `$CON` 並決定現有檔案處置。若繼續前景工作未獲交接，或 capture shape 無法明確對應，停止在唯讀觀察，不送任何 LINE input。
 
-Implementer接手后先核对冻结输入与fresh工作区，完成代码／必要offline regression、新freeze/grants，再在明确前景交接后执行真机gates。若下一次同root issue连续无新信息或达到额度，或出现material blocker，保存精确事实与决策需求，停止依赖操作；不能重送Save All或放宽gate。
+報告：`E2E測試報告.md`。目前還沒有真實 Planner stage，故正式 Planner handoff 尚未完成。

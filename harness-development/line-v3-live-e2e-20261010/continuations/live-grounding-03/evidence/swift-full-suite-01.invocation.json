@@ -1,0 +1,21 @@
+{
+  "check_id": "swift-full-suite-01",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "command": [
+    "/usr/bin/env",
+    "SWIFT_MODULE_CACHE_PATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/swift-module-cache-26.5",
+    "CLANG_MODULE_CACHE_PATH=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/clang-module-cache-26.5",
+    "TMPDIR=/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/tmp-swift-26.5",
+    "/usr/bin/swift",
+    "test",
+    "--package-path",
+    "rev28",
+    "--sdk",
+    "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+    "--scratch-path",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/swift-build-26.5"
+  ],
+  "started_at": "2026-10-10T13:39:44.364Z",
+  "ended_at": "2026-10-10T13:39:58.524Z",
+  "exit_code": 1
+}

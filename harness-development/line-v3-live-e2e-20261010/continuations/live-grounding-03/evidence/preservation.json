@@ -1,0 +1,164 @@
+{
+  "kind": "IMPLEMENTER_PRESERVATION_OBSERVATION",
+  "observed_at": "2026-10-10T14:07:31.059Z",
+  "baseline": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/baseline-implementer.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/baseline-implementer.json",
+    "bytes": 8623,
+    "sha256": "10e49b71fa7d2214a5e933358504fa10cdaa3bff477cb10979b29d17cb8d422d"
+  },
+  "branch": {
+    "before": "v43-ab/codex-rev28",
+    "after": "v43-ab/codex-rev28",
+    "unchanged": true
+  },
+  "head": {
+    "before": "77b83c4eb8f9bafdf86fda625e6ecd3a85b32ddb",
+    "after": "77b83c4eb8f9bafdf86fda625e6ecd3a85b32ddb",
+    "unchanged": true
+  },
+  "index_entries_sha256": {
+    "before": "ea9eda76bebcec2c39f9d99ed08ef64ea7fcf466ba020660fd37a04f8a2bbdae",
+    "after": "ea9eda76bebcec2c39f9d99ed08ef64ea7fcf466ba020660fd37a04f8a2bbdae",
+    "unchanged": true
+  },
+  "config": {
+    "path": "config/line_backup_config.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/config/line_backup_config.json",
+    "bytes": 384,
+    "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+    "matches_plan_baseline": true
+  },
+  "state": {
+    "path": "state/backup_state.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/state/backup_state.json",
+    "bytes": 252115,
+    "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+    "matches_plan_baseline": true,
+    "revision": 35,
+    "active_batch": null,
+    "active_writer_id": null,
+    "context_lock": null
+  },
+  "lock_file": {
+    "path": "state/.line-backup-state.lock",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/state/.line-backup-state.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "gui_ledger": {
+    "path": "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+    "bytes": 123,
+    "sha256": "92bab0cf122871b42f3db62af956289b62fbf4e279219766a8850b61f20e135f",
+    "entries": 0,
+    "cap": 1000,
+    "baseline_reported_absent_as_zero": true
+  },
+  "backup_writes": {
+    "count": 0,
+    "basis": "No LINE/CUA action, Save All, download, or backup-path write command was executed in this continuation."
+  },
+  "outside_scope_untracked_additions": [
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/coordinator-positive-oracles-1e8da638744d43698163844388d83894.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/evidence/coordinator-positive-oracles-1e8da638744d43698163844388d83894.json",
+      "bytes": 730,
+      "sha256": "7b2ac96be97f76ad0fe027f4f8a32e89d907a65dcac362ce9306ccc94c529d26",
+      "mtime_ns": 1791639035711836258
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/coordinator-positive-oracles-44fa48e35c0c4bf1ac50ac82a238917b.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/evidence/coordinator-positive-oracles-44fa48e35c0c4bf1ac50ac82a238917b.json",
+      "bytes": 730,
+      "sha256": "9895b6b4b2b8e748728c873e9fbbe1be3b0ea11fc6140e713ab3d676387977b4",
+      "mtime_ns": 1791639503322478918
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/coordinator-positive-oracles-482d1b822bd644cc99ec3ea7f5ab7d8f.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/evidence/coordinator-positive-oracles-482d1b822bd644cc99ec3ea7f5ab7d8f.json",
+      "bytes": 730,
+      "sha256": "c126c31ed8d43c139421130cddc3119e71ad27d3c5e9831dc8860dec572e5189",
+      "mtime_ns": 1791639165671108533
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/coordinator-positive-oracles-df65865c55d54164abb45616b2f4b961.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/evidence/coordinator-positive-oracles-df65865c55d54164abb45616b2f4b961.json",
+      "bytes": 730,
+      "sha256": "cdac9a3ed688da021bf30a822658e5a0c17cf0d66cc1046ae3d7b3fd3c080428",
+      "mtime_ns": 1791639523114825326
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/two-cli-actor-receipts-01abf1b575564a8b994f341ba814347f.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/evidence/two-cli-actor-receipts-01abf1b575564a8b994f341ba814347f.json",
+      "bytes": 2161,
+      "sha256": "795b778d6620332ccc35fe1ad0c6f691f9ea2ff3ec442050fcb948bd5c2b1d0e",
+      "mtime_ns": 1791639526004193569
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/two-cli-actor-receipts-5932babbc65a42d59efd785847219727.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/evidence/two-cli-actor-receipts-5932babbc65a42d59efd785847219727.json",
+      "bytes": 2161,
+      "sha256": "96638621c2d43564467ffdb153eaa07e04f6821782d70fbda10562f62942664a",
+      "mtime_ns": 1791639506255273086
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/two-cli-actor-receipts-67476ddf349a46868fd8610123842da7.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/evidence/two-cli-actor-receipts-67476ddf349a46868fd8610123842da7.json",
+      "bytes": 2161,
+      "sha256": "1b10b117512c1f964ee86211173218e4fa29d207415ba3038e322e296e29cca9",
+      "mtime_ns": 1791639168544598508
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/two-cli-actor-receipts-b9998365889247f080e5b908aa116270.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/evidence/two-cli-actor-receipts-b9998365889247f080e5b908aa116270.json",
+      "bytes": 1364,
+      "sha256": "d14c79f4439bed00e3b0dd99888e973185100ee5c72e574a95144df50d05e75f",
+      "mtime_ns": 1791639038772293088
+    },
+    {
+      "path": "src/line_backup_acceptance/__pycache__/__main__.cpython-314.pyc",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/__pycache__/__main__.cpython-314.pyc",
+      "bytes": 267,
+      "sha256": "5c4ec4a2fe0e646a5e8776f9e4d64f80f5c0e5229d2d959c29453a9ac1440c3a",
+      "mtime_ns": 1791638984055964402
+    },
+    {
+      "path": "src/line_backup_acceptance/__pycache__/authority.cpython-314.pyc",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/__pycache__/authority.cpython-314.pyc",
+      "bytes": 12010,
+      "sha256": "c799946be42059555b868d84bf2636ad081f38da35c82897d70416ba2355dda4",
+      "mtime_ns": 1791638984062362371
+    },
+    {
+      "path": "src/line_backup_acceptance/__pycache__/cli.cpython-314.pyc",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/__pycache__/cli.cpython-314.pyc",
+      "bytes": 8435,
+      "sha256": "ee632aec3ab36bffae9cad7d411264326c2db6fed20efe34864af6185ad11550",
+      "mtime_ns": 1791638984056948112
+    },
+    {
+      "path": "src/line_backup_acceptance/__pycache__/status.cpython-314.pyc",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/__pycache__/status.cpython-314.pyc",
+      "bytes": 7694,
+      "sha256": "09d850a26c8201331721006107da9639087ea58c6f06708725b8989f54ad882d",
+      "mtime_ns": 1791638984073523599
+    },
+    {
+      "path": "src/line_backup_acceptance/__pycache__/transaction.cpython-314.pyc",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/__pycache__/transaction.cpython-314.pyc",
+      "bytes": 55577,
+      "sha256": "c44cd9af9c7f8a84396f7255833e94d7aa4e747e7ce3636e27ec795c1bf8ca39",
+      "mtime_ns": 1791638984077834856
+    },
+    {
+      "path": "src/line_backup_acceptance/__pycache__/verifier.cpython-314.pyc",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/__pycache__/verifier.cpython-314.pyc",
+      "bytes": 37923,
+      "sha256": "ad534a58fd19d97e86ef022a97f380b5e19296df9875ceae5d92517e976454ce",
+      "mtime_ns": 1791638984083652075
+    }
+  ],
+  "outside_scope_note": "These paths were absent from the frozen untracked baseline. Eight task-root evidence files appeared during/after Python test runs and six Python bytecode cache files appeared after a Store snapshot call; this attribution is an inference from their content/path and timestamps. They were left untouched. No cleanup or commit was performed.",
+  "verdict": "PARTIAL"
+}

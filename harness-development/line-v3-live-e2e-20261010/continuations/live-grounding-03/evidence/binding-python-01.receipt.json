@@ -1,0 +1,18 @@
+{
+  "format_version": "1",
+  "check_id": "binding-python-01",
+  "status": "FAIL",
+  "exit_code": 1,
+  "started_at": "2026-10-10T13:29:43.975Z",
+  "ended_at": "2026-10-10T13:29:44.067Z",
+  "stdout": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/binding-python-01.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/binding-python-01.stderr",
+    "bytes": 1157,
+    "sha256": "a4a21a12bf4c5bbe40de6c623b1175e3af1728ed2d320c515ebe5baf849d4bee"
+  }
+}

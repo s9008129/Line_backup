@@ -1,0 +1,113 @@
+test_batch_authority (unittest.loader._FailedTest.test_batch_authority) ... ERROR
+test_batch_content (unittest.loader._FailedTest.test_batch_content) ... ERROR
+test_batch_coordinator (unittest.loader._FailedTest.test_batch_coordinator) ... ERROR
+test_batch_lifecycle (unittest.loader._FailedTest.test_batch_lifecycle) ... ERROR
+test_batch_migration (unittest.loader._FailedTest.test_batch_migration) ... ERROR
+test_batch_observations (unittest.loader._FailedTest.test_batch_observations) ... ERROR
+
+======================================================================
+ERROR: test_batch_authority (unittest.loader._FailedTest.test_batch_authority)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_authority
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_authority.py", line 9, in <module>
+    sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 709, in __getitem__
+KeyError: 'LINE_BACKUP_BATCH_TASK'
+
+
+======================================================================
+ERROR: test_batch_content (unittest.loader._FailedTest.test_batch_content)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_content
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_content.py", line 5, in <module>
+    sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 709, in __getitem__
+KeyError: 'LINE_BACKUP_BATCH_TASK'
+
+
+======================================================================
+ERROR: test_batch_coordinator (unittest.loader._FailedTest.test_batch_coordinator)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_coordinator
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_coordinator.py", line 12, in <module>
+    sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 709, in __getitem__
+KeyError: 'LINE_BACKUP_BATCH_TASK'
+
+
+======================================================================
+ERROR: test_batch_lifecycle (unittest.loader._FailedTest.test_batch_lifecycle)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_lifecycle
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_lifecycle.py", line 4, in <module>
+    sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 709, in __getitem__
+KeyError: 'LINE_BACKUP_BATCH_TASK'
+
+
+======================================================================
+ERROR: test_batch_migration (unittest.loader._FailedTest.test_batch_migration)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_migration
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_migration.py", line 9, in <module>
+    sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 709, in __getitem__
+KeyError: 'LINE_BACKUP_BATCH_TASK'
+
+
+======================================================================
+ERROR: test_batch_observations (unittest.loader._FailedTest.test_batch_observations)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_observations
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_observations.py", line 8, in <module>
+    sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 709, in __getitem__
+KeyError: 'LINE_BACKUP_BATCH_TASK'
+
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.000s
+
+FAILED (errors=6)

@@ -1,0 +1,13 @@
+{
+  "check_id": "grant-validation-03",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "command": [
+    "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python3",
+    "-B",
+    "-c",
+    "from line_backup_batch.cli import authorize; root=\"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup\"; paths=[\"harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-1.json\",\"harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-2.json\"]; [authorize(root,p,False,\"begin\") for p in paths]; print(\"both v2 grants pass live scope, contract, source, producer, runtime membership, authorization, and quota validation\")"
+  ],
+  "started_at": "2026-10-10T13:51:53.052Z",
+  "ended_at": "2026-10-10T13:51:53.204Z",
+  "exit_code": 0
+}
