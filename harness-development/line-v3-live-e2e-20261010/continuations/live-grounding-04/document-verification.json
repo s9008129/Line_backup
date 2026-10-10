@@ -1,0 +1,32 @@
+{
+  "kind": "DOCUMENT_CONSISTENCY_ONLY_NOT_SCHEMA_OR_NATIVE_GATE",
+  "captured_at": "2026-10-10T15:54:28.227529+00:00",
+  "contract_handoff_byte_equality": true,
+  "handoff_first_paragraph_exact_prompt": true,
+  "plan_freeze_hashes_match": true,
+  "input_manifest_readback_pass": true,
+  "preexisting_tracked_dirty_hashes_unchanged": 11,
+  "outside_scope_git_status_unchanged": true,
+  "state_config_gui_ledger_unchanged": true,
+  "json_parsed_documents": [
+    "baseline.json",
+    "compile-handoff.receipt.json",
+    "document-run.json",
+    "document-verification.json",
+    "handoff.json",
+    "handoff.result.json",
+    "input-manifest.json",
+    "native-admission.json",
+    "plan-contract.json",
+    "plan-freeze.json",
+    "plan-review-waiver.json",
+    "planner.result.json",
+    "research-facts.json",
+    "user-decisions.json"
+  ],
+  "native_contract_validation": "NOT_RUN",
+  "native_result_validation": "NOT_RUN",
+  "schema_validity": "NOT_TOOL_VERIFIED",
+  "product_tests_this_document_phase": "NOT_RUN",
+  "live_e2e_this_document_phase": "NOT_RUN"
+}

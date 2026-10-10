@@ -1,0 +1,19 @@
+docs(line-v3): 凍結原生證據修復計畫與兩本 E2E 交接
+
+意圖
+CUA-to-runner retained-frame/native-geometry 尚未 production wired，導致相簿辨識和兩本交易停在人工觀察。本次把唯讀研究轉成有明確介面、路徑、驗證與停止條件的 live-grounding-04 計畫，交給下一位 Implementer。
+
+本次完成
+- 分析 GUI-session bridge 與 AX probe 的來源、binary hash／manifest 差異、readonly與AX navigation邊界，以及歷史TCC readiness限制。
+- 保存跨realm Buffer 的實際bytes/hash觀察；確認已有retention程式，定位boundary keys、intersection漏傳、chooser phase與production callbacks缺口。
+- 整理一名GPT-6 luna唯讀research helper的Apple／Node官方資料與來源索引。
+- 凍結strict v2視覺／AX witness、repo-owned passive native-context、source/runtime/grant closure及完整catalog／menu／兩本交易／實際scroll驗收方案。
+- 落檔format3契約、waiver、角色結果、研究與基線；Plan freeze後deterministic複製handoff.json，handoff.md首段附精準接手prompt。
+- 保存JSON解析、hash/readback、契約逐byte equality及既有工作保全檢查。本次新增commit只含新continuation文件。
+
+授權與實際限制
+使用者確認兩本E2E、v2證據及版面調整，豁免Plan Review，明確授權文件add/commit/push。獨立Acceptance保留。產品程式、LINE input、Save All、chooser confirmation、下載及state/config mutation在本次均未執行。
+Harness4.8固定Python3.14 runtime已失效，native admission/publication/CONTRACT/RESULT validators仍NOT_RUN；文件一致性不是native schema PASS。既有兩個相關本地commits由此次normal push一併發布。
+
+下一步
+Implementer先讀plan與handoff、核對dirty/state/config及原attempt ledger，完成必要production wiring與隔離回歸；再freeze最終source/binary/grants，取得有效前景並量測版面，依序第一本VERIFIED/readback/release、actual bounded scroll與不同第二本完整交易，更新報告並交獨立Acceptance。遇身份、native權限、freshness、writer或dispatch不明即停止，保留barrier及最小packet，不重送下載、不重置額度。

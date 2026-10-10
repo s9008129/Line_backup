@@ -1,0 +1,98 @@
+{
+  "kind": "DOCUMENT_AUTHORING_BASELINE",
+  "created_at": "2026-10-10T15:40:43.487484+00:00",
+  "local_run_id": "e07ebadf-aca8-498c-927c-8f8b11051251",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "head": "0838a45dab1860801b6f8d51309def9f1c5195aa",
+  "branch": "v43-ab/codex-rev28",
+  "index_sha256": "f5977d6a7c445a7d83f0e5297bb9803bc9d475738a987f5d33751d547b4656a3",
+  "status_bytes": 11942853,
+  "status_sha256": "b47393b13e382aff817d51bb43153e7b38378602ec21d8e3c9c76c4428be85c1",
+  "status_entries": 68432,
+  "tracked_dirty": [
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/progress.md",
+      "bytes": 4565,
+      "sha256": "f7e211da9ccb054c2150c94e056e35e1c2b253fb78fc25ac7440aa30b9503ce7",
+      "mode": "0o644"
+    },
+    {
+      "path": "rev28/ARCHITECTURE.md",
+      "bytes": 25640,
+      "sha256": "333424392e8c0e62e2f17e45f711bcbd62e07b31e2b6df2f80088bdfbc9a5427",
+      "mode": "0o644"
+    },
+    {
+      "path": "rev28/CAPABILITY-MATRIX.md",
+      "bytes": 10429,
+      "sha256": "341a06c130d96520fe3182d97f211e4101e8dd32df56b4874757d49854263be8",
+      "mode": "0o644"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/LiveComposition.swift",
+      "bytes": 8917,
+      "sha256": "a1a3d0811decb03e94833d2271981359931d625964e6cba0a397e0d537068866",
+      "mode": "0o644"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift",
+      "bytes": 8574,
+      "sha256": "3745e6de06bc2bee83097b69cb6a30a481d79d631c465564c218ebed008003e6",
+      "mode": "0o644"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+      "bytes": 29055,
+      "sha256": "9230ec99679badd7cad01d53c0c4d9811db6cd149f1aa42b0b98a3c34885e4c2",
+      "mode": "0o644"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift",
+      "bytes": 8716,
+      "sha256": "b738df79817441240804531c033ab87f8be5b0dec78fd6683a3aa4a7c7162e3c",
+      "mode": "0o644"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift",
+      "bytes": 12338,
+      "sha256": "9c7fa5be30b379685d5756cbc1f4b4c1101f8e37b14115833633fdfe5f5e45c5",
+      "mode": "0o644"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+      "bytes": 49225,
+      "sha256": "f8b56aa41490e28589819222504b2525b77d389fe88e4f61558e6d19a69476a3",
+      "mode": "0o644"
+    },
+    {
+      "path": "tests/test_batch_authority.py",
+      "bytes": 14930,
+      "sha256": "e7adfff030b5105cf342b8f0bc1af72014eb6ab449e1ed600600423450f358e5",
+      "mode": "0o644"
+    },
+    {
+      "path": "tests/test_cua_adapter.mjs",
+      "bytes": 14835,
+      "sha256": "abfd03a9de4a5740cab99c72f98ad2efa450806c904f50845a886eef7970dedf",
+      "mode": "0o644"
+    }
+  ],
+  "state": {
+    "path": "state/backup_state.json",
+    "bytes": 252115,
+    "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6"
+  },
+  "config": {
+    "path": "config/line_backup_config.json",
+    "bytes": 384,
+    "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362"
+  },
+  "gui_ledger": {
+    "path": "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+    "bytes": 123,
+    "sha256": "92bab0cf122871b42f3db62af956289b62fbf4e279219766a8850b61f20e135f"
+  },
+  "upstream_head": "77b83c4eb8f9bafdf86fda625e6ecd3a85b32ddb",
+  "staged_paths": [],
+  "native_admission": "NOT_RUN"
+}

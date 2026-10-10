@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "kind": "PLANNER_READ_ONLY_RESEARCH",
+  "record_created_at": "2026-10-10T15:51:15.770986+00:00",
+  "raw_file_manifest": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/input-manifest.json",
+    "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/input-manifest.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/input-manifest.json",
+    "bytes": 13081,
+    "sha256": "8c9cbd2e0a1372d13f8dc6fc1963028544e6c1794d4b69858cde149b196a0ddd"
+  },
+  "memory_capture": {
+    "request_started_at": "2026-10-10T15:23:02.304Z",
+    "request_returned_at": "2026-10-10T15:23:02.381Z",
+    "duration_ms_observed": 76.28191700000025,
+    "screenshot_bytes": 183645,
+    "screenshot_sha256": "2e93f01caf5ade784f7e409f91a376fe99badcd828dc9aa266439692d3b297d6",
+    "ax_bytes": 1299,
+    "ax_sha256": "511c6cf8ad8709ca1fc5b595e26ebcec9e02d0bd73dc9e42e32b92e2b0eb90f2",
+    "constructor_name": "Buffer",
+    "tag": "[object Uint8Array]",
+    "is_view": true,
+    "instanceof_uint8array": false,
+    "normalized_instanceof_uint8array": true,
+    "normalized_hash_identical": true,
+    "workspace_raw_frame": null,
+    "workspace_raw_ax": null,
+    "evidence_classification": "OBSERVED_NON_GATE_TOOL_MEMORY_RESULT",
+    "fresh_live_gate_pass": false
+  },
+  "helper": {
+    "task_name": "/root/native_evidence_research",
+    "requested_model": "gpt-6-luna",
+    "read_only": true,
+    "completed": true,
+    "controller_allocation": null
+  },
+  "product_attempts_this_document_turn": 0,
+  "line_inputs_this_document_turn": 0,
+  "source_digest_algorithm": "store.sources ordered path NUL bytes NUL",
+  "current_product_source_sha256": "6acdec34fbfd163e560bbe8ec93661a64a4bd8fcb24f0ced9e27971e99b69064",
+  "known_defects": [
+    "cross-realm Buffer strict instanceof refusal",
+    "ALBUMS boundary key ordering mismatch",
+    "frameSupport hook omits intersectionPx used by chooser",
+    "chooser requires phase-inapplicable PathTextField",
+    "production analyzer/navigation callbacks missing",
+    "frozen Python3.14 path absent",
+    "one-complete-card viewport cannot alone establish required scroll evidence"
+  ],
+  "unknowns": [
+    "installed probe build/source equivalence",
+    "current native AX/screen permissions",
+    "production visual geometry accuracy",
+    "capture/mapping/chooser/latency live gates"
+  ],
+  "prior_attempts": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+  "prior_attempt_counts_reset": false
+}

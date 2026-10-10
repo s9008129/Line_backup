@@ -1,0 +1,16 @@
+{
+  "record_created_at": "2026-10-10T15:51:15.770693+00:00",
+  "authority": "USER",
+  "source": "Actual conversation user messages and request_user_input responses",
+  "decisions": {
+    "acceptance_scope": "橋接修復＋兩本 E2E (Recommended)",
+    "evidence_contract": "加入 v2 證據 (Recommended)",
+    "layout_precondition": "允許調整版面 (Recommended)",
+    "plan_review": "本次修正計劃不需要獨立審查",
+    "document_delivery": "同意文件落檔與 add,commit,push"
+  },
+  "decision_timestamp": null,
+  "decision_timestamp_note": "Creation time is not an invented user decision time.",
+  "contract_sha256": "a83bec99428ad66ae32e1795dfb17545e8dbd7df4df802cfb54b9f4e8b345883",
+  "product_implementation_this_document_turn": false
+}

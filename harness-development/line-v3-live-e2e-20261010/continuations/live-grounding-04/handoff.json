@@ -1,0 +1,227 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "goal": "Repair cross-realm CUA byte retention, repo-owned passive native context, strict v2 visual/AX grounding, production callbacks, chooser phases and runtime bindings; preserve the canonical schema-3 writer and complete two different cap-one album lifecycles with actual post-first-release bounded scroll, content/state verification, reporting and independent Acceptance.",
+  "task_class": "CRITICAL",
+  "allowed_paths": [
+    "scripts/line_backup_cua_adapter.mjs",
+    "src/line_backup_batch/cli.py",
+    "src/line_backup_batch/observations.py",
+    "src/line_backup_batch/service.py",
+    "rev28/Sources/rev28ctl/main.swift",
+    "rev28/Sources/Rev28Core/Observation/PassiveContextObservation.swift",
+    "rev28/Tests/Rev28CoreTests/PassiveContextObservationTests.swift",
+    "rev28/Tests/Rev28CoreTests/FrameSupportTests.swift",
+    "tests/test_cua_adapter.mjs",
+    "tests/test_batch_authority.py",
+    "tests/test_batch_observations.py",
+    "tests/test_batch_lifecycle.py",
+    "state/backup_state.json",
+    "state/.line-backup-state.lock",
+    "state/.line-backup-v3.tmp",
+    "backups/旻謙允禎成長日記",
+    "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04"
+  ],
+  "required_evidence": [
+    "E_BASELINE",
+    "E_AUTH",
+    "E_OFFLINE",
+    "E_MIGRATION",
+    "E_LIVE_CATALOG",
+    "E_MENU",
+    "E_FIRST",
+    "E_SCROLL",
+    "E_SECOND",
+    "E_PRESERVATION",
+    "E_REPORT",
+    "E_ACCEPTANCE",
+    "E_DELIVERY",
+    "E_PLAN_REVIEW_WAIVER",
+    "E_NATIVE_CONTEXT",
+    "E_BYTE_RETENTION",
+    "E_FRAME_SUPPORT",
+    "E_V2_CLASSIFIER",
+    "E_CHOOSER",
+    "E_RUNTIME_BINDING",
+    "E_LATENCY",
+    "E_SESSION_LIFECYCLE",
+    "E_PRODUCTION_WIRING",
+    "E_LAYOUT_FEASIBILITY"
+  ],
+  "gate_specs": [
+    {
+      "gate_id": "G_PLAN_REVIEW_WAIVER",
+      "required": true,
+      "owner": "HUMAN",
+      "phase": "PLAN",
+      "evidence_source": "HUMAN_OBSERVATION",
+      "goal_criticality": "SUPPORTING",
+      "evidence_role": "DIAGNOSTIC",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_AUTH",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_OFFLINE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_MIGRATION",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_CATALOG",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_MENU",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_FIRST",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_SCROLL",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_SECOND",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_PRESERVE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "BASELINE_DELTA",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_REPORT",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_ACCEPTANCE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "ACCEPTANCE",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_DELIVERY",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "SUPPORTING",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    }
+  ],
+  "capability_policy": {
+    "network": "PROXY_ALLOWLIST",
+    "browser": false,
+    "destinations": [
+      "https://developer.apple.com",
+      "https://support.apple.com",
+      "https://nodejs.org",
+      "https://github.com/s9008129/Line_backup.git"
+    ]
+  },
+  "retry_policy": {
+    "transient_read_only_retries": 2,
+    "delays_seconds": [
+      10,
+      30
+    ]
+  },
+  "resource_policy": {
+    "prompt_bytes": 65536,
+    "state_bytes": 524288,
+    "inspect_bytes": 16384,
+    "log_bytes": 134217728
+  },
+  "workflow_policy": {
+    "plan_review_required": true,
+    "independent_acceptance_required": true,
+    "max_parallel_read_only_helpers": 1,
+    "max_parallel_writers": 0,
+    "handoff_review_required": false
+  }
+}
