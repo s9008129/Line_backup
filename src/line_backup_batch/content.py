@@ -74,7 +74,7 @@ def verify(root,destination,expected,cfg,decoder,decoder_sha,*,clock=time.monoto
     extensions=dict(Counter(Path(r['relative_path']).suffix.lower() for r in rows))
     verification=dict(observed_at=utc_now(),outcome='PASS',regular_files=expected,image_files=expected,subdirectories=[],
         total_bytes=sum(r['size'] for r in rows),extensions=extensions,metadata_files=[],zero_byte_files=[],
-        partial_temp_files=[],unrecognized_files=[],other_entries=0,stable_samples=consecutive,inventory=rows,
+        partial_temp_files=[],unrecognized_files=[],other_entries=[],stable_samples=consecutive,inventory=rows,
         evidence='actual full RGB decode; stable interval/count; exact post-decode inventory')
     return verification,dict(samples=samples,decoder=result,decoder_stdout_sha256=sha(command.stdout),
         decoder_stderr_sha256=sha(command.stderr),decoder_sha256=decoder_sha,elapsed_seconds=clock()-start)

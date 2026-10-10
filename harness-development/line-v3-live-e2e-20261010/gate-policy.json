@@ -1,0 +1,15 @@
+{
+  "G_AUTH": {"baseline_rule":"FRESH_EVIDENCE","failure_routing":"STOP_LIVE_INPUT_AND_REPLAN_IF_AUTHORITY_SEMANTICS_CHANGE","waiver_allowed":false},
+  "G_OFFLINE": {"baseline_rule":"FROZEN_SOURCE","failure_routing":"BOUNDED_FIX_OR_ESCALATE_AFTER_TWO_NO_PROGRESS_ATTEMPTS","waiver_allowed":false},
+  "G_MIGRATION": {"baseline_rule":"EXACT_REVISION34_SNAPSHOT","failure_routing":"READ_ONLY_RELOAD_AND_STOP_ON_UNCERTAINTY","waiver_allowed":false},
+  "G_CATALOG": {"baseline_rule":"FRESH_LIVE_CAPTURE","failure_routing":"STOP_ON_GAP_OR_DRIFT","waiver_allowed":false},
+  "G_MENU": {"baseline_rule":"FROZEN_BUILD_AND_FRESH_FRAME","failure_routing":"CLOSE_CAPABILITY_AND_STOP_ON_MAPPING_UNKNOWN","waiver_allowed":false},
+  "G_FIRST": {"baseline_rule":"FRESH_TRANSACTION_EVIDENCE","failure_routing":"RECONCILE_AND_RETAIN_AT_MOST_ONCE_BARRIER","waiver_allowed":false},
+  "G_SCROLL": {"baseline_rule":"FRESH_BEFORE_ACTION_AFTER_EVIDENCE","failure_routing":"SCROLL_TEST_NOT_RUN_OR_PARTIAL_IF_UNPROVEN","waiver_allowed":false},
+  "G_SECOND": {"baseline_rule":"FRESH_SECOND_LIFECYCLE_EVIDENCE","failure_routing":"STOP_BATCH_ON_ANY_UNRESOLVED_RESULT","waiver_allowed":false},
+  "G_PRESERVE": {"baseline_rule":"BASELINE_DELTA","failure_routing":"PRESERVE_AND_REPORT_UNEXPECTED_CHANGE","waiver_allowed":false},
+  "G_REPORT": {"baseline_rule":"CURRENT_TASK_EVIDENCE","failure_routing":"COMPLETE_REPORT_WITH_UNKNOWN_AND_BLOCKERS","waiver_allowed":false},
+  "G_ACCEPTANCE": {"baseline_rule":"MERGED_FINAL_RESULT","failure_routing":"RETURN_ONE_BOUNDED_ACTION_OR_FAIL","waiver_allowed":false},
+  "G_DELIVERY": {"baseline_rule":"STAGED_SNAPSHOT","failure_routing":"STOP_PUSH_ON_REMOTE_DRIFT","waiver_allowed":false},
+  "G_PLAN_REVIEW_WAIVER": {"baseline_rule":"USER_DECISION","failure_routing":"KEEP_WAIVED_STATUS_VISIBLE","waiver_allowed":true}
+}

@@ -3,6 +3,51 @@ import Foundation
 import XCTest
 @testable import Rev28Core
 
+extension NativeObservationSessionTests {
+    func testAutomaticOcrAnchorsValidateNativeSckToCuaTransform() throws {
+        let native = NativeCaptureBounds(cuaCaptureBoundsPoints: CGRect(x: 100, y: 100, width: 500, height: 400),
+            sckWindowBoundsPoints: CGRect(x: 100, y: 100, width: 500, height: 400),
+            displayBoundsPoints: CGRect(x: 0, y: 0, width: 1000, height: 800),
+            cuaSizePixels: CGSize(width: 1000, height: 800), sckSizePixels: CGSize(width: 2000, height: 1600))
+        let cua = [ocrItem("Group", CGRect(x: 90, y: 90, width: 20, height: 20)),
+                   ocrItem("Album", CGRect(x: 790, y: 90, width: 20, height: 20)),
+                   ocrItem("Save All", CGRect(x: 290, y: 690, width: 20, height: 20))]
+        let sck = [ocrItem("Group", CGRect(x: 290, y: 290, width: 20, height: 20)),
+                   ocrItem("Album", CGRect(x: 990, y: 290, width: 20, height: 20)),
+                   ocrItem("Save All", CGRect(x: 490, y: 890, width: 20, height: 20))]
+        let result = try AutomaticOcrAnchorMapper.derive(cua: cua, sck: sck, native: native)
+        XCTAssertEqual(result.anchors.count, 3)
+        XCTAssertEqual(result.scaleX, 1, accuracy: 0.0001)
+        XCTAssertEqual(result.scaleY, 1, accuracy: 0.0001)
+        XCTAssertEqual(result.offsetX, 200, accuracy: 0.0001)
+        XCTAssertEqual(result.offsetY, 200, accuracy: 0.0001)
+        XCTAssertLessThanOrEqual(result.maximumResidualSourcePixels, 2)
+        XCTAssertEqual(result.uncertaintyPixels, 2)
+    }
+
+    func testAutomaticOcrAnchorsRejectDuplicatesAndBadResidual() throws {
+        let native = NativeCaptureBounds(cuaCaptureBoundsPoints: CGRect(x: 100, y: 100, width: 500, height: 400),
+            sckWindowBoundsPoints: CGRect(x: 100, y: 100, width: 500, height: 400),
+            displayBoundsPoints: CGRect(x: 0, y: 0, width: 1000, height: 800),
+            cuaSizePixels: CGSize(width: 1000, height: 800), sckSizePixels: CGSize(width: 2000, height: 1600))
+        let cua = [ocrItem("Group", CGRect(x: 90, y: 90, width: 20, height: 20)),
+                   ocrItem("Album", CGRect(x: 790, y: 90, width: 20, height: 20)),
+                   ocrItem("Save All", CGRect(x: 290, y: 690, width: 20, height: 20))]
+        let sck = [ocrItem("Group", CGRect(x: 290, y: 290, width: 20, height: 20)),
+                   ocrItem("Album", CGRect(x: 990, y: 290, width: 20, height: 20)),
+                   ocrItem("Save All", CGRect(x: 490, y: 890, width: 20, height: 20)),
+                   ocrItem("Group", CGRect(x: 590, y: 590, width: 20, height: 20))]
+        XCTAssertThrowsError(try AutomaticOcrAnchorMapper.derive(cua: cua, sck: sck, native: native)) {
+            XCTAssertEqual($0 as? AutomaticAnchorMappingError, .insufficientUniqueAnchors)
+        }
+        let displaced = [sck[0], sck[1], ocrItem("Save All", CGRect(x: 510, y: 890, width: 20, height: 20))]
+        XCTAssertThrowsError(try AutomaticOcrAnchorMapper.derive(cua: cua, sck: displaced, native: native)) {
+            guard let mapped = $0 as? AutomaticAnchorMappingError else { return XCTFail("unexpected error: \($0)") }
+            if case .residualTooLarge = mapped { return }
+            XCTFail("unexpected error: \(mapped)")
+        }
+    }
+
 final class NativeObservationSessionTests: XCTestCase {
     // MARK: - Fakes (substitutions stay below perception/predicate/state decisions)
 

@@ -54,7 +54,7 @@ class Service:
                 created_at=utc_now(),authorized_new_download_limit=limit,configured_new_download_limit=cfg['max_albums_per_run'],
                 new_transactions_reserved=0,manifest_reference=None,next_index=0,current_album_run_id=None,stop_reason=None)
             return dict(batch_id=batch_id,status='BATCH_OWNED')
-        return self.store.update(expected,acquire)
+        return self.store._update(expected,acquire,operation='begin')
 
     def manifest(self,b,reader,cfg):
         require(b['manifest_reference'] is not None,'MANIFEST_REQUIRED')
@@ -64,7 +64,8 @@ class Service:
             and m['config_sha256']==b['config_sha256'] and m['source_sha256']==b['source_sha256'],'MANIFEST_AUTHORITY_DRIFT')
         # Coverage was classified before admission; retained images/proofs rehash every use.
         for observation in m['frames']:
-            artifact(reader,observation['frame']);artifact(reader,observation['mapping']['evidence']);artifact(reader,observation['boundary']['evidence'])
+            frame(reader,observation,cfg,session=m['session_id'],max_age=None)
+            artifact(reader,observation['boundary']['evidence'])
         require(isinstance(m['identities'],list) and m['identities'],'EMPTY_MANIFEST')
         return m
 
@@ -82,7 +83,7 @@ class Service:
             require(b['config_sha256']==expected['config_sha256'] and b['source_sha256']==expected['source_sha256'],'BATCH_AUTHORITY_DRIFT')
             b['manifest_reference']=ref;b['phase']='ADMITTED'
             return dict(status='ADMITTED',manifest_reference=ref,identities=identities)
-        return self.store.update(expected,admit)
+        return self.store._update(expected,admit,operation='admit')
 
     @staticmethod
     def eligible(s,target):
@@ -145,7 +146,7 @@ class Service:
             b['current_album_run_id']=run_id;b['phase']='RUNNING'
             return dict(status='ALBUM_OPEN_READY',run_id=run_id,fingerprint=target,destination=destination,click=click,
                 frame_id=observation['frame_id'],session_id=m['session_id'])
-        return self.store.update(expected,prepare)
+        return self.store._update(expected,prepare,operation='prepare')
 
     def run(self,s):
         b=self.batch(s);require(b['current_album_run_id'] is not None,'NO_ACTIVE_ALBUM')
@@ -181,7 +182,7 @@ class Service:
                 execution_id=self.owner,continuity_evidence=json.dumps(closure,ensure_ascii=False,sort_keys=True))
             self.event(r,'SAVE_ALL_CALIBRATION',dict(detail=detail,calibration=calibration,menu=menu,closure=closure))
             return dict(status='CALIBRATED',run_id=r['run_id'])
-        return self.store.update(expected,calibrate)
+        return self.store._update(expected,calibrate,operation='calibrate')
 
     def intent(self,expected,fresh):
         reader=ProjectReader(self.store.root)
@@ -206,8 +207,9 @@ class Service:
             self.event(r,'SAVE_ALL_INTENT_COMMITTED',dict(fresh=fresh,action_id=action))
             return dict(status='ORIGINAL_INTENT_COMMITTED',run_id=r['run_id'],action_id=action,owner=self.owner,
                 fingerprint=r['fingerprint'],destination=r['destination'],frame_id=fresh['frame_id'],session_id=m['session_id'],
-                ellipsis=cal['ellipsis'],save_all=cal['save_all_point'])
-        result=self.store.update(expected,intent);result['new_intent']=True
+                ellipsis=cal['ellipsis'],save_all=cal['save_all_point'],dispatch_authorized=not self.store.fixture,
+                fixture=self.store.fixture)
+        result=self.store._update(expected,intent,operation='intent');result['new_intent']=True
         return result
 
     def dispatch(self,expected,evidence,chooser,download_started):
@@ -229,7 +231,7 @@ class Service:
             r['reconciliation_reason']=None if confirmed else 'Dispatch uncertain; original intent never authorizes replay.'
             self.event(r,'DOWNLOAD_STARTED' if confirmed else 'TRIGGER_UNKNOWN',dict(dispatch=evidence,chooser=chooser))
             return dict(status='DOWNLOAD_STARTED' if confirmed else 'UNRESOLVED_STOP')
-        return self.store.update(expected,record)
+        return self.store._update(expected,record,operation='dispatch')
 
     def finalize(self,expected,decoder,decoder_sha,*,verify_options=None):
         if verify_options is not None:
@@ -268,7 +270,7 @@ class Service:
                 verified_run_id=current['run_id'],destinations=[current['destination']],source_kind='filesystem_verification',evidence=reference))
             s['active_writer_id']=None;s['context_lock']=None;b['current_album_run_id']=None;b['next_index']+=1
             return dict(status='VERIFIED',run_id=current['run_id'],fingerprint=current['fingerprint'],verification_reference=vref)
-        return self.store.update(expected,finish)
+        return self.store._update(expected,finish,operation='finalize')
 
     def stop(self,expected,reason):
         def stop(cfg,s):
@@ -281,7 +283,7 @@ class Service:
                 s['active_writer_id']=None;s['context_lock']=None;b['current_album_run_id']=None
             b['phase']='STOPPED';b['stop_reason']=reason
             return dict(status='STOPPED',reason=reason,replay_allowed=False)
-        return self.store.update(expected,stop)
+        return self.store._update(expected,stop,operation='stop')
 
     def finish(self,expected,final_records,session):
         reader=ProjectReader(self.store.root)
@@ -298,7 +300,7 @@ class Service:
             exhausted=b['new_transactions_reserved']>=min(b['authorized_new_download_limit'],b['configured_new_download_limit'])
             b['stop_reason']='ALL_COMPLETE' if all_done else ('LIMIT_REACHED' if exhausted else 'INCOMPLETE')
             return dict(status=b['stop_reason'],live_acceptance_required=True)
-        return self.store.update(expected,finish)
+        return self.store._update(expected,finish,operation='finish')
 
     def resume(self):
         snapshot=self.store.snapshot()
@@ -316,4 +318,4 @@ class Service:
             result=dict(status='BATCH_RELEASED',batch_id=b['batch_id'],prior_phase=b['phase'],stop_reason=b['stop_reason'])
             s['active_batch']=None
             return result
-        return self.store.update(expected,release)
+        return self.store._update(expected,release,operation='release')

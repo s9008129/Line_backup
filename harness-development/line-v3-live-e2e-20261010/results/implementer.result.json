@@ -1,0 +1,324 @@
+{
+  "analysis": {
+    "confidence": "High for receipt counts, recorded hashes, and state status; medium for static audit findings; no live UI or download claims.",
+    "dependencies": {
+      "G_AUTH": "PREREQUISITE_BLOCKED",
+      "G_CATALOG": "PREREQUISITE_BLOCKED",
+      "G_MENU": "PREREQUISITE_BLOCKED",
+      "G_MIGRATION": "PREREQUISITE_BLOCKED",
+      "G_OFFLINE": "PREREQUISITE_BLOCKED"
+    },
+    "evidence": [
+      "E2E測試報告.md",
+      "progress.md",
+      "evidence/offline-audit.md",
+      "evidence/planner-review.md",
+      "blocker-packet.md",
+      "evidence/observed-source-snapshot.partial.json",
+      "attempt-ledger.json",
+      "evidence/python-attempt-f3ee5d7423a24d8199ba2f33cc8781ca.json",
+      "evidence/node-adapter-4b0b62cd61364344a68f047a56d20276.json",
+      "evidence/swift-26.5-24fbfc8ff57743af97e60a9edc25ba23.json",
+      "evidence/swift-26.5-85355bab929e445c8719cd6056e3c591.json",
+      "baseline/state-facts.json"
+    ],
+    "facts": [
+      "Python offline suites passed: 41 batch, 31 project-binding, 5 transaction-core tests.",
+      "Node adapter suite passed 10 tests using fake I/O.",
+      "Swift 26.5 full suite ran 320 tests and failed 3 fixture authority tests.",
+      "Four actual Swift runs for the same root issue were found; this exceeds the three-attempt limit.",
+      "Canonical state remains schema 2 revision 34 with baseline hash; no state/config/destination mutation or LINE UI input occurred.",
+      "No production full-display SCK sidecar producer or live callback wiring exists.",
+      "The format-3 result JSON passed a direct jsonschema check against the immutable Harness 4.8 result schema; the stage-packet validation command was unavailable because native admission was NOT_RUN."
+    ],
+    "inferences": [
+      "G_OFFLINE and G_AUTH cannot pass from current evidence; migration and live E2E are blocked."
+    ],
+    "unknowns": [
+      "Historical attempts omitted before this run remain UNKNOWN.",
+      "No live catalog, album identity, screenshot, menu geometry, scroll effect, download, or final image inventory exists for this run.",
+      "The controller-emitted contract/result validation command and native stage admission receipt are unavailable in this environment."
+    ]
+  },
+  "blocker_fingerprint": "0bf31c6a2b462f0fc2832443c66c5b40ced30357e6a9d6d1d29854c41f0ea3ef",
+  "candidate_fact": "BLOCKED",
+  "convergence": {
+    "consecutive_no_progress": 0,
+    "information_gain": true,
+    "last_attempt": "Recovered receipt 85355 and latest 24fb both show 3 fixture authority failures; fourth actual run establishes an attempt-policy overrun.",
+    "meaningful_attempts": 3,
+    "stuck": true
+  },
+  "evidence_ids": [
+    "e2e_partial_report",
+    "progress",
+    "offline_audit",
+    "planner_review",
+    "blocker_packet",
+    "partial_source_snapshot",
+    "attempt_ledger",
+    "python_pass",
+    "node_pass",
+    "swift_latest_fail",
+    "swift_recovered_fail",
+    "baseline_state"
+  ],
+  "evidence_manifests": [
+    {
+      "bytes": 13629,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "e2e_partial_report",
+      "observation": "Partial E2E implementation and offline verification report.",
+      "path": "harness-development/line-v3-live-e2e-20261010/E2E測試報告.md",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "b1027cbb248cd8e524e522348656435367ddfa6fc3d4210da31a290d5648b751",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    },
+    {
+      "bytes": 2915,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "progress",
+      "observation": "Current implementation status and blocker record.",
+      "path": "harness-development/line-v3-live-e2e-20261010/progress.md",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "678c31a9263fa3d5aaad20fd1e73d3bd507da3be2a75012c5a95fcbe2ac7230f",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    },
+    {
+      "bytes": 3800,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "offline_audit",
+      "observation": "Independent read-only transaction, sensor, and package audits.",
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/offline-audit.md",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "d17f0f2d2179dc118df6084ce3f3b8ec42e743381960473e6908456860388716",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    },
+    {
+      "bytes": 2526,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "planner_review",
+      "observation": "Read-only Planner review and recommended routing.",
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/planner-review.md",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "4b102867f3d46cf626cd2aa86ed7f99931d876cd19b4c047bd4adebe2b98b6f1",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    },
+    {
+      "bytes": 3191,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "blocker_packet",
+      "observation": "Minimum reproduction and exact next decision.",
+      "path": "harness-development/line-v3-live-e2e-20261010/blocker-packet.md",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "78f5e5435c1c7789dee4b33d361e800998790fc1e9ee2bb798561425c465b3cc",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    },
+    {
+      "bytes": 7611,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "partial_source_snapshot",
+      "observation": "Observed source/test digest; explicitly not a migration freeze.",
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/observed-source-snapshot.partial.json",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "5f84e8d0d3d21fac0a4adf88b92ade04b5862cdb955510101c21419e89dee245",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    },
+    {
+      "bytes": 17332,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "attempt_ledger",
+      "observation": "Chronological attempt history including recovered Swift receipt and overrun.",
+      "path": "harness-development/line-v3-live-e2e-20261010/attempt-ledger.json",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "f12a5c493051804f43be24557c4956838250d66c690a3a64c7a3d3280181225f",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    },
+    {
+      "bytes": 5337,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "python_pass",
+      "observation": "Python batch, project-binding, and transaction-core test receipt.",
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-f3ee5d7423a24d8199ba2f33cc8781ca.json",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "fc10698afcf472bf5315da2fd863b303b8141603c070eb3569b9434b5c376d83",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    },
+    {
+      "bytes": 1085,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "node_pass",
+      "observation": "Node adapter test receipt using fake I/O.",
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-4b0b62cd61364344a68f047a56d20276.json",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "55abfd7a46c9215ff30b4dddc947ecedb51274c971231eb829f13e5af3f55fb6",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    },
+    {
+      "bytes": 1939,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "swift_latest_fail",
+      "observation": "Latest Swift 26.5 full-suite failure receipt.",
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-24fbfc8ff57743af97e60a9edc25ba23.json",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "21f9bcddb45baf27fe3c41bf2cc090d0d5b6ea860b854d106224e388d9a66087",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    },
+    {
+      "bytes": 1940,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "swift_recovered_fail",
+      "observation": "Earlier omitted Swift failure receipt recovered during audit.",
+      "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-85355bab929e445c8719cd6056e3c591.json",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "7df2c49cca55b3091dcd1056f204335225a16898dc7f8afc544da9b6614b0b1b",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    },
+    {
+      "bytes": 462,
+      "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+      "evidence_id": "baseline_state",
+      "observation": "Canonical state/config read-only baseline.",
+      "path": "harness-development/line-v3-live-e2e-20261010/baseline/state-facts.json",
+      "role": "IMPLEMENTER",
+      "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+      "sha256": "2908b8502efa8703f6fbc34cf121a98797e34419d9347923881454664ea33246",
+      "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+      "stage": "IMPLEMENT",
+      "task_id": "TASK-20261010-line-v3-live-e2e"
+    }
+  ],
+  "gate_results": [
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_AUTH",
+      "verdict": "BLOCKED"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_OFFLINE",
+      "verdict": "FAIL"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_MIGRATION",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_CATALOG",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_MENU",
+      "verdict": "BLOCKED"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_FIRST",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_SCROLL",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_SECOND",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_PRESERVE",
+      "verdict": "PARTIAL"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_REPORT",
+      "verdict": "PARTIAL"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_ACCEPTANCE",
+      "verdict": "BLOCKED"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_DELIVERY",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_PLAN_REVIEW_WAIVER",
+      "verdict": "PASS"
+    }
+  ],
+  "handoff_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+  "handoff_summary": "Python (77 tests) and Node (10 tests) passed. Swift 26.5 ran 320 tests with 3 fixture authority failures; four runs of the same root issue were discovered, exceeding the three-attempt limit. State remains schema 2/revision 34; no LINE input or download occurred. G_AUTH/G_OFFLINE block migration and live work. A new Critical Planner decision is needed before any further work on the exhausted Swift verification path.",
+  "human_decisions": [
+    {
+      "id": "critical_replan_after_swift_attempt_overrun",
+      "options": [
+        "啟動新 Planner 計畫；不跑 Swift、不遷移、不操作 LINE，先提出合法驗收路徑（建議）",
+        "停止在本輪 blocker；保留報告與收據"
+      ],
+      "question": "是否啟動新的 Critical Planner 計畫，先判定在不重跑已超額的 Swift root issue 下，是否存在符合原政策的 G_OFFLINE 完成路徑？若需變更 gate 或 attempt policy，計畫會先列出選項並等待明確授權。",
+      "recommendation": "啟動新 Planner 計畫，要求明確處理四次既有執行及 G_OFFLINE，不可默認放寬或重置。"
+    }
+  ],
+  "information_gain": true,
+  "needs_human": true,
+  "plan_contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+  "plan_sha256": "5eb2b1475322af66516600ccda5c9ab5a09e1c8868676bf4d11141c55f5fb01e",
+  "result_format_version": "3",
+  "role": "IMPLEMENTER",
+  "routing_fact": "PLANNER_REPLAN",
+  "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+  "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284",
+  "stage": "IMPLEMENT",
+  "statuses": {
+    "CORE_ACCEPTANCE_STATUS": "BLOCKED",
+    "IMPLEMENTATION_STATUS": "BLOCKED",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "BLOCKED",
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+    "TASK_CLOSURE_STATUS": "REPLAN_REQUIRED"
+  },
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "validation_fact": "NOT_RUN"
+}

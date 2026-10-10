@@ -1,0 +1,112 @@
+{
+  "attempt_id": "d5713b03cdef4386a3922c166fb5ff6b",
+  "groups": [
+    {
+      "argv": [
+        "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests",
+        "-p",
+        "test_batch_*.py",
+        "-v"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "ended_at": "2026-10-10T07:03:48.937130+00:00",
+      "environment_overrides": {
+        "GIT_OPTIONAL_LOCKS": "0",
+        "LINE_BACKUP_BATCH_TASK": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010",
+        "LINE_BACKUP_INSPECTION_TEST_ROOT": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src",
+        "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures"
+      },
+      "exit_code": 0,
+      "name": "batch",
+      "started_at": "2026-10-10T07:03:47.249357+00:00",
+      "stderr_bytes": 5105,
+      "stderr_path": "harness-development/line-v3-live-e2e-20261010/evidence/python-batch-d5713b03cdef4386a3922c166fb5ff6b.stderr",
+      "stderr_sha256": "599862fad618452ce3d8e22c9339f2138651a03776b1959a48757218b5123c1b",
+      "stdout_bytes": 0,
+      "stdout_path": "harness-development/line-v3-live-e2e-20261010/evidence/python-batch-d5713b03cdef4386a3922c166fb5ff6b.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests",
+        "-p",
+        "test_project_binding.py",
+        "-v"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "ended_at": "2026-10-10T07:03:49.345436+00:00",
+      "environment_overrides": {
+        "GIT_OPTIONAL_LOCKS": "0",
+        "LINE_BACKUP_BATCH_TASK": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010",
+        "LINE_BACKUP_INSPECTION_TEST_ROOT": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src",
+        "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures"
+      },
+      "exit_code": 1,
+      "name": "project_binding",
+      "started_at": "2026-10-10T07:03:48.937532+00:00",
+      "stderr_bytes": 5599,
+      "stderr_path": "harness-development/line-v3-live-e2e-20261010/evidence/python-project_binding-d5713b03cdef4386a3922c166fb5ff6b.stderr",
+      "stderr_sha256": "a8acd1b4ed8f4ca8a58aede76c17e9331eaf1660fca65cce4d6bf913055457a2",
+      "stdout_bytes": 0,
+      "stdout_path": "harness-development/line-v3-live-e2e-20261010/evidence/python-project_binding-d5713b03cdef4386a3922c166fb5ff6b.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests",
+        "-p",
+        "test_transaction_core.py",
+        "-v"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "ended_at": "2026-10-10T07:03:49.513262+00:00",
+      "environment_overrides": {
+        "GIT_OPTIONAL_LOCKS": "0",
+        "LINE_BACKUP_BATCH_TASK": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010",
+        "LINE_BACKUP_INSPECTION_TEST_ROOT": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src",
+        "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures"
+      },
+      "exit_code": 0,
+      "name": "transaction_core",
+      "started_at": "2026-10-10T07:03:49.345808+00:00",
+      "stderr_bytes": 940,
+      "stderr_path": "harness-development/line-v3-live-e2e-20261010/evidence/python-transaction_core-d5713b03cdef4386a3922c166fb5ff6b.stderr",
+      "stderr_sha256": "c52204f727626f4311517b79404225991fd12aeac695379b9deba38f9fc6ca00",
+      "stdout_bytes": 0,
+      "stdout_path": "harness-development/line-v3-live-e2e-20261010/evidence/python-transaction_core-d5713b03cdef4386a3922c166fb5ff6b.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  ],
+  "overall_exit_code": 1,
+  "python": "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python"
+}

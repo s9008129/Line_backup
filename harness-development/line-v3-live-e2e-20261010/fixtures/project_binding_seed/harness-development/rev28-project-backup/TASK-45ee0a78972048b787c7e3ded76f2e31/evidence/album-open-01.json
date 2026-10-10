@@ -1,0 +1,19 @@
+{
+  "phase": "SAVE_ALL_CALIBRATION",
+  "evidence": {
+    "source": "Actual CUA click [130,920] returned, then immediate fresh combined AX/screenshot",
+    "bound_prior_observation": "CUA-project-album-card-01",
+    "invocation_entered": true,
+    "call_result": "RETURNED",
+    "postcondition": "MATCH",
+    "date": "2024/05/13~05/17",
+    "count_text": "57張照片",
+    "group_continuity": "Same selected group album window transitioned directly from the canonical Albums card; no other action",
+    "surface": "album detail; title/date/57 count visible, thumbnails initially loading",
+    "visual_status": "OBSERVED",
+    "new_ellipsis_center_screenshot": [610,99],
+    "save_all_invocations": 0,
+    "chooser": "NOT_RUN",
+    "next_action": "Freshly observe current ellipsis before one nondestructive menu open."
+  }
+}

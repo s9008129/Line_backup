@@ -17,6 +17,19 @@ PACKAGE_NAMES=['__init__.py','__main__.py','cli.py','content.py','coordinator.py
 SOURCE_PATHS=[f'src/line_backup_acceptance/{n}' for n in
     ['__init__.py','__main__.py','authority.py','cli.py','common.py','project_binding.py','status.py','transaction.py','verifier.py']]
 SOURCE_PATHS += [f'src/line_backup_batch/{n}' for n in PACKAGE_NAMES]+['scripts/line_backup_cua_adapter.mjs']
+TRANSITION_FIELDS={
+    'migrate': {'schema_version','active_batch'},
+    'begin': {'active_batch'},
+    'admit': {'active_batch'},
+    'prepare': {'active_batch','runs','current_run_id','active_writer_id'},
+    'calibrate': {'runs','context_lock'},
+    'intent': {'runs','active_batch'},
+    'dispatch': {'runs'},
+    'finalize': {'runs','active_batch','verified_albums','active_writer_id','context_lock'},
+    'stop': {'runs','active_batch','active_writer_id','context_lock'},
+    'finish': {'active_batch'},
+    'release': {'active_batch'},
+}
 
 def sources(reader):
     require([n for n in reader.directory_names('src/line_backup_batch') if n!='__pycache__']==PACKAGE_NAMES,'SOURCE_MEMBERSHIP_DRIFT')
@@ -27,11 +40,26 @@ def sources(reader):
         digest.update(path.encode()+b'\0'+raw+b'\0')
     return digest.hexdigest(),records
 
+def enforce_grant_quota(grant,operation,state):
+    """Conservatively count persisted original intents across separate lifecycle batches."""
+    used=sum(1 for item in state['runs'] if item.get('batch_id') is not None and item.get('intent') is not None)
+    allowance=min(grant['album_quota'],grant['save_all_dispatch_limit'],grant['chooser_confirmation_limit'])
+    if operation=='begin':
+        batch=state['active_batch']
+        require(batch is not None and batch.get('owner_execution_id')==grant['owner']
+            and batch.get('authorized_new_download_limit',0)<=grant['lifecycle_album_limit']
+            and batch.get('authorized_new_download_limit',0)<=max(0,allowance-used),'GRANT_ALBUM_QUOTA')
+    if operation=='intent':
+        require(used<=allowance,'GRANT_DISPATCH_QUOTA')
+    return used
+
 class Store:
     def __init__(self,project_root,authorization_path=None):
         # No cwd, search, initialization, or alternative-root fallback.
         self.root=str(project_root)
         self.authorization_path=authorization_path
+        installed=Path(__file__).resolve().parents[2]
+        self.fixture=Path(self.root).is_relative_to(installed/'harness-development') and '/fixtures/' in self.root
         r=ProjectReader(self.root)
         try:
             cfg,_=r.read(CONFIG);validate_config(strict_json(cfg,'INVALID_CONFIG'),self.root)
@@ -86,19 +114,37 @@ class Store:
             if parent is not None:os.close(parent)
             r.close()
 
-    def update(self,expected,transform,*,migration=False,snapshot_path=None,fault=None):
-        installed=Path(__file__).resolve().parents[2]
-        fixture=Path(self.root).is_relative_to(installed/'harness-development') and '/fixtures/' in self.root
-        if not fixture:
+    def _update(self,expected,transform,*,operation=None,migration=False,snapshot_path=None,fault=None):
+        """Internal operation-scoped commit primitive; public callers use Service transitions."""
+        grant=None
+        require(operation in TRANSITION_FIELDS,'OPERATION_REQUIRED')
+        if not self.fixture:
             require(self.authorization_path is not None,'LIVE_AUTHORITY_REQUIRED')
             from .cli import authorize
-            authorize(self.root,self.authorization_path,False,'migrate' if migration else 'mutate')
+            require(migration==(operation=='migrate'),'OPERATION_MISMATCH')
+            grant=authorize(self.root,self.authorization_path,False,operation)
         with self.guard() as (r,parent,check_lock,lock_identity):
             cfg,before,actual,raw,_=self.load(r)
             require(actual==expected,'STALE_CAS')
             require(before['schema_version']==(2 if migration else 3),'STATE_VERSION_READ_ONLY')
+            if grant is not None:
+                grant_raw,_=r.read(self.authorization_path,'GRANT_DRIFT')
+                require(strict_json(grant_raw,'INVALID_GRANT')==grant,'GRANT_DRIFT')
+                for field in ('authorization_evidence','acceptance_evidence'):
+                    ref=grant[field]
+                    if ref is None:continue
+                    evidence_raw,_=r.read(ref['path'],'GRANT_EVIDENCE_DRIFT')
+                    require(len(evidence_raw)==ref['bytes'] and sha(evidence_raw)==ref['sha256'],'GRANT_EVIDENCE_DRIFT')
             candidate=copy.deepcopy(before)
             result=transform(cfg,candidate)
+            changed={key for key in set(before)|set(candidate)
+                if key not in before or key not in candidate or before[key]!=candidate[key]}
+            require(changed<=TRANSITION_FIELDS[operation],'TRANSITION_SCOPE')
+            if operation=='migrate':
+                require(changed=={'schema_version','active_batch'} and candidate['schema_version']==3
+                    and candidate['active_batch'] is None,'MIGRATION_DELTA')
+            if grant is not None:
+                enforce_grant_quota(grant,operation,candidate)
             candidate['revision']=before['revision']+1
             from line_backup_acceptance.common import validate_state_strict
             validate_state_strict(candidate)
@@ -170,4 +216,4 @@ class Store:
             require('active_batch' not in s,'MIGRATION_EXTRA_AUTHORITY')
             s.update(schema_version=3,active_batch=None)
             return dict(status='MIGRATED',old_raw_sha256=expected['state_sha256'],snapshot_path=snapshot_path)
-        return self.update(expected,migrate,migration=True,snapshot_path=snapshot_path,fault=fault)
+        return self._update(expected,migrate,operation='migrate',migration=True,snapshot_path=snapshot_path,fault=fault)

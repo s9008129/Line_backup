@@ -1,0 +1,208 @@
+{
+  "captured_at": "2026-10-10T15:36:11+08:00",
+  "files": [
+    {
+      "bytes": 12529,
+      "path": "harness-development/line-v3-live-e2e-20261010/fixture_support.py",
+      "sha256": "20247a69a5051433c2283432ab03523f07f770283c63cf359c3d5ec373dc6ead"
+    },
+    {
+      "bytes": 8765,
+      "path": "rev28/Sources/Rev28Core/Composition/LiveComposition.swift",
+      "sha256": "2440a1e56dc97c989835cc3a98c896fa644936296a11c7f9fdf24d0f12713dfd"
+    },
+    {
+      "bytes": 8574,
+      "path": "rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift",
+      "sha256": "3745e6de06bc2bee83097b69cb6a30a481d79d631c465564c218ebed008003e6"
+    },
+    {
+      "bytes": 33979,
+      "path": "rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift",
+      "sha256": "e80a554e9ba8f52c447b6fcae2b107166deac79846a9801b626300241ac59258"
+    },
+    {
+      "bytes": 29055,
+      "path": "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+      "sha256": "9230ec99679badd7cad01d53c0c4d9811db6cd149f1aa42b0b98a3c34885e4c2"
+    },
+    {
+      "bytes": 12017,
+      "path": "rev28/Sources/Rev28Core/Perception/OcrEngine.swift",
+      "sha256": "212dddc99848d110eb9cc058fb3eb7528df63c27a1d2fc72f6df9fd9f543250c"
+    },
+    {
+      "bytes": 10414,
+      "path": "rev28/Sources/Rev28Core/Sensor/ExplicitLineCaptureSelection.swift",
+      "sha256": "5662baca0285f45859ac918d064ed404c6f14d528c4382a7598c4b2d86933e6c"
+    },
+    {
+      "bytes": 19634,
+      "path": "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+      "sha256": "3a876cf4232622a5f3b5e495f91b25a478b16eba7af20a9dc054676e67e6901b"
+    },
+    {
+      "bytes": 8716,
+      "path": "rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift",
+      "sha256": "b738df79817441240804531c033ab87f8be5b0dec78fd6683a3aa4a7c7162e3c"
+    },
+    {
+      "bytes": 28232,
+      "path": "rev28/Sources/rev28ctl/main.swift",
+      "sha256": "b1f61a0bfc7063dbdf7c0eccd148c48166e7ea40d8c3a27f45150b0bdbeef550"
+    },
+    {
+      "bytes": 11587,
+      "path": "rev28/Tests/Rev28CoreTests/ExplicitLineCaptureSelectionTests.swift",
+      "sha256": "28f3946f970e3d94a35fbaa9d49336a7fa37b2e372bad90c944e84907d5e5e5a"
+    },
+    {
+      "bytes": 12338,
+      "path": "rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift",
+      "sha256": "9c7fa5be30b379685d5756cbc1f4b4c1101f8e37b14115833633fdfe5f5e45c5"
+    },
+    {
+      "bytes": 42562,
+      "path": "rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+      "sha256": "2b6c628a8fba446224fc1467d3aaec7549b674141d168fb5ed682775ae6debc8"
+    },
+    {
+      "bytes": 8396,
+      "path": "rev28/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift",
+      "sha256": "3b39e940abc0fe1f224845f4fd173385d9bfb5542602ba0ba4ae6f32189dc1ab"
+    },
+    {
+      "bytes": 2533,
+      "path": "rev28/Tests/Rev28CoreTests/RunEpochAuthorityTests.swift",
+      "sha256": "094091fa9af19418a9579acd29fca5deb9bf6d822a23329736e82e72460fca79"
+    },
+    {
+      "bytes": 10185,
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "sha256": "d3066730521a5e232dd5afc98120535f50919020c385805dec7a9a11160a7a7a"
+    },
+    {
+      "bytes": 9441,
+      "path": "src/line_backup_acceptance/authority.py",
+      "sha256": "7805ec0c53bca8991c3cc727339df4242d1e45a114b407913a2b0780614b6e7e"
+    },
+    {
+      "bytes": 5587,
+      "path": "src/line_backup_acceptance/cli.py",
+      "sha256": "832896eda31583199b192a0df51b921257fb7875835b1b502e476f9f1383d82f"
+    },
+    {
+      "bytes": 35808,
+      "path": "src/line_backup_acceptance/common.py",
+      "sha256": "2737d5c2febeeaf248b2d81e2e112ce0e99d48640e946bfa6dd8e71b5a2cf127"
+    },
+    {
+      "bytes": 27866,
+      "path": "src/line_backup_acceptance/project_binding.py",
+      "sha256": "f8894652fc9070416df5544b9573c26cee440300ca8a14f201f654f3886874f8"
+    },
+    {
+      "bytes": 42494,
+      "path": "src/line_backup_acceptance/transaction.py",
+      "sha256": "0dd44fec005c70d6bb19436ed899e6c95d7b4d232dd83baa056732f4213a9da9"
+    },
+    {
+      "bytes": 77,
+      "path": "src/line_backup_batch/__init__.py",
+      "sha256": "ae2e6f7132820073b853877b5fbae4cbef55f9dcada8a6ceba0608d5e043fb83"
+    },
+    {
+      "bytes": 47,
+      "path": "src/line_backup_batch/__main__.py",
+      "sha256": "79ee6f134c5c5193377cf9b189cbdcc3e2095e49ba9cec310114441c15a917c4"
+    },
+    {
+      "bytes": 10077,
+      "path": "src/line_backup_batch/cli.py",
+      "sha256": "2771192eb3c4e88c0db700a1e786d51212cfad4f639f6446cee1f1744984d53c"
+    },
+    {
+      "bytes": 4943,
+      "path": "src/line_backup_batch/content.py",
+      "sha256": "45837c8a84c22564efb668001fa0c7e9d443bec0b6fd3d9340e87bb6b7921205"
+    },
+    {
+      "bytes": 2552,
+      "path": "src/line_backup_batch/coordinator.py",
+      "sha256": "285d0411d62f21133075e7bf203eca2376170b36faaf25a74edff0bb59060b8f"
+    },
+    {
+      "bytes": 4120,
+      "path": "src/line_backup_batch/image_decode.swift",
+      "sha256": "238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b"
+    },
+    {
+      "bytes": 13671,
+      "path": "src/line_backup_batch/observations.py",
+      "sha256": "cadf3a47c1a386b96955e2632689fa79c8b5038e32e63a6290c4c8f0fb15dea6"
+    },
+    {
+      "bytes": 2623,
+      "path": "src/line_backup_batch/schema.py",
+      "sha256": "d400cb0e5cdee4a0f0ce555e3222a590093c2dcaae9f10f464e205b9d1da3302"
+    },
+    {
+      "bytes": 22396,
+      "path": "src/line_backup_batch/service.py",
+      "sha256": "fb91ef579bb0d7b9a8be69615b9276338b139ef1c2ecb28d31047ad175f67d68"
+    },
+    {
+      "bytes": 33379,
+      "path": "src/line_backup_batch/state_v3.schema.json",
+      "sha256": "d30ff068623f7dc6c9988387935beabbd5347e4b3a5e2c3a784daf8197db2a37"
+    },
+    {
+      "bytes": 12506,
+      "path": "src/line_backup_batch/store.py",
+      "sha256": "e5e3922722e9eaa9cc6d4f071ccb024bba93907b4b06f729b47e8d2ac07592e8"
+    },
+    {
+      "bytes": 8266,
+      "path": "tests/test_batch_authority.py",
+      "sha256": "bcb5ac8ab0e7b5f55953ada83468fdb7f793230796a8cd410abe706f7e3ffdd8"
+    },
+    {
+      "bytes": 3231,
+      "path": "tests/test_batch_content.py",
+      "sha256": "f90f171d16f5a2faf04133d0f14c1a37f27c9d0918e755b16b8fe44c4a87105d"
+    },
+    {
+      "bytes": 3776,
+      "path": "tests/test_batch_coordinator.py",
+      "sha256": "52d32ddee36830675dd573157f64d684bfd2a53b0b131af8dc710db78dddadfd"
+    },
+    {
+      "bytes": 2256,
+      "path": "tests/test_batch_lifecycle.py",
+      "sha256": "aeeedbf61bf29a80ee6529628223dce4c1c01783f6da6c64b01e81242f11011b"
+    },
+    {
+      "bytes": 4071,
+      "path": "tests/test_batch_migration.py",
+      "sha256": "c0a69676eee0ad80a3ac2f96129d371fa07942859c39852cc49501114718a117"
+    },
+    {
+      "bytes": 5352,
+      "path": "tests/test_batch_observations.py",
+      "sha256": "6523caa922bf06edcd0fe5c378fbe952f14b2977e697bdd9569df0f74700961f"
+    },
+    {
+      "bytes": 7995,
+      "path": "tests/test_cua_adapter.mjs",
+      "sha256": "926e6da508e148d7da8b78a918fea404142a7667c1d6d7c1b4ecb187e31cd809"
+    },
+    {
+      "bytes": 27229,
+      "path": "tests/test_project_binding.py",
+      "sha256": "a9b92ed3f71dcaa16f4d1ed6cd5d172019db1672b3faaf5c8b7fc27c74ba7c50"
+    }
+  ],
+  "kind": "observed_implementation_source_snapshot_not_freeze",
+  "scope": "Existing plan-contract product source, schema, and test files plus task-local fixture_support.py; excludes state/config, unrelated task evidence, generated caches, and build files. This digest is for the partial report only and is not a pre-migration source freeze.",
+  "source_sha256": "bdeab5da447fcfad71a1afb1aa9a8c3138f279f865e68ab75017a128d907a284"
+}

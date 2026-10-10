@@ -1,0 +1,193 @@
+Building for debugging...
+[0/32] /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/swift-build-26.5/arm64-apple-macosx/debug/rev28PackageTests.derived/runner.swift
+[1/32] Write sources
+[1/32] Write rev28harness-entitlement.plist
+[1/32] Write sources
+[1/32] Write rev28ctl-entitlement.plist
+[7/32] Write sources
+[7/32] Write rev28replay-entitlement.plist
+[7/32] Write sources
+[7/32] Write rev28probe-entitlement.plist
+[7/32] Write sources
+[8/32] Write rev28occluder-entitlement.plist
+[13/32] Write sources
+[14/32] Write swift-version--58304C5D6DBC2206.txt
+[16/70] Compiling Rev28Core ExecutionPolicy.swift
+[17/70] Compiling Rev28Core PostconditionMonitor.swift
+[18/70] Compiling Rev28Core ExplicitLineCaptureSelection.swift
+[19/73] Compiling Rev28Core ProcessCodeIdentity.swift
+[20/73] Compiling Rev28Core WindowIdentity.swift
+[21/73] Compiling Rev28Core NativeObservationSession.swift
+[22/73] Compiling Rev28Core ReviewedBuildState.swift
+[23/73] Compiling Rev28Core ReviewedImplementationDigest.swift
+[24/73] Compiling Rev28Core StateEvidence.swift
+[25/73] Compiling Rev28Core LiveExecutionEngine.swift
+[26/73] Compiling Rev28Core PersistentTransactionOwner.swift
+[27/73] Compiling Rev28Core PhaseBEligibility.swift
+[28/73] Compiling Rev28Core FilesystemTripwireJournal.swift
+[29/73] Compiling Rev28Core GoalSlot.swift
+[30/73] Compiling Rev28Core IntentLedger.swift
+[31/73] Compiling Rev28Core ComposedNativeAdapter.swift
+[32/73] Compiling Rev28Core LiveComposition.swift
+[33/73] Compiling Rev28Core PassiveNativeDiagnostic.swift
+[34/73] Compiling Rev28Core PhaseAEvidence.swift
+[35/73] Compiling Rev28Core AXDriver.swift
+[36/73] Compiling Rev28Core QuartzActuator.swift
+[37/73] Compiling Rev28Core ChooserAffirmationPredicate.swift
+[38/73] Compiling Rev28Core FolderChooserDriver.swift
+[39/73] Compiling Rev28Core TripwireAttribution.swift
+[40/73] Compiling Rev28Core BaselineVerifier.swift
+[41/73] Compiling Rev28Core StagingVerifier.swift
+[42/73] Compiling Rev28Core ProjectBackupBinding.swift
+[43/73] Compiling Rev28Core DiagnosticHooks.swift
+[44/73] Compiling Rev28Core Coordinates.swift
+[45/73] Compiling Rev28Core AXWindowIdentitySelector.swift
+[46/73] Compiling Rev28Core FrameCapture.swift
+[47/73] Compiling Rev28Core RunEpochAuthority.swift
+[48/73] Compiling Rev28Core WindowSensor.swift
+[49/73] Compiling Rev28Core PostSaveComposition.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:127:13: warning: result of 'try?' is unused [#no-usage]
+125 |                 recordedAtISO8601: EvidenceIO.iso8601()
+126 |             )
+127 |             try? EvidenceIO.writeJSONAtomically(
+    |             `- warning: result of 'try?' is unused [#no-usage]
+128 |                 record,
+129 |                 to: runDirectory.appendingPathComponent("pre-dispatch-context-refused-\(stamp).json")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:142:13: warning: result of 'try?' is unused [#no-usage]
+140 |                 recordedAtISO8601: EvidenceIO.iso8601()
+141 |             )
+142 |             try? EvidenceIO.writeJSONAtomically(
+    |             `- warning: result of 'try?' is unused [#no-usage]
+143 |                 record,
+144 |                 to: runDirectory.appendingPathComponent("pre-dispatch-context-refused-\(stamp).json")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:329:66: warning: immutable value 'affirmation' was never used; consider replacing with '_' or removing it [#no-usage]
+327 |                     )
+328 |                     adapter.journalBox.recordDetail(evaluation.detail)
+329 |                     if let candidate = evaluation.candidate, let affirmation = evaluation.affirmation {
+    |                                                                  `- warning: immutable value 'affirmation' was never used; consider replacing with '_' or removing it [#no-usage]
+330 |                         adapter.journalBox.recordChooser(candidate: candidate, windowIDs: [candidate.windowID])
+331 |                     }
+[50/73] Compiling Rev28Core PostSaveEnvironment.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:127:13: warning: result of 'try?' is unused [#no-usage]
+125 |                 recordedAtISO8601: EvidenceIO.iso8601()
+126 |             )
+127 |             try? EvidenceIO.writeJSONAtomically(
+    |             `- warning: result of 'try?' is unused [#no-usage]
+128 |                 record,
+129 |                 to: runDirectory.appendingPathComponent("pre-dispatch-context-refused-\(stamp).json")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:142:13: warning: result of 'try?' is unused [#no-usage]
+140 |                 recordedAtISO8601: EvidenceIO.iso8601()
+141 |             )
+142 |             try? EvidenceIO.writeJSONAtomically(
+    |             `- warning: result of 'try?' is unused [#no-usage]
+143 |                 record,
+144 |                 to: runDirectory.appendingPathComponent("pre-dispatch-context-refused-\(stamp).json")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:329:66: warning: immutable value 'affirmation' was never used; consider replacing with '_' or removing it [#no-usage]
+327 |                     )
+328 |                     adapter.journalBox.recordDetail(evaluation.detail)
+329 |                     if let candidate = evaluation.candidate, let affirmation = evaluation.affirmation {
+    |                                                                  `- warning: immutable value 'affirmation' was never used; consider replacing with '_' or removing it [#no-usage]
+330 |                         adapter.journalBox.recordChooser(candidate: candidate, windowIDs: [candidate.windowID])
+331 |                     }
+[51/73] Compiling Rev28Core ProductionActuationEnvironment.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:127:13: warning: result of 'try?' is unused [#no-usage]
+125 |                 recordedAtISO8601: EvidenceIO.iso8601()
+126 |             )
+127 |             try? EvidenceIO.writeJSONAtomically(
+    |             `- warning: result of 'try?' is unused [#no-usage]
+128 |                 record,
+129 |                 to: runDirectory.appendingPathComponent("pre-dispatch-context-refused-\(stamp).json")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:142:13: warning: result of 'try?' is unused [#no-usage]
+140 |                 recordedAtISO8601: EvidenceIO.iso8601()
+141 |             )
+142 |             try? EvidenceIO.writeJSONAtomically(
+    |             `- warning: result of 'try?' is unused [#no-usage]
+143 |                 record,
+144 |                 to: runDirectory.appendingPathComponent("pre-dispatch-context-refused-\(stamp).json")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:329:66: warning: immutable value 'affirmation' was never used; consider replacing with '_' or removing it [#no-usage]
+327 |                     )
+328 |                     adapter.journalBox.recordDetail(evaluation.detail)
+329 |                     if let candidate = evaluation.candidate, let affirmation = evaluation.affirmation {
+    |                                                                  `- warning: immutable value 'affirmation' was never used; consider replacing with '_' or removing it [#no-usage]
+330 |                         adapter.journalBox.recordChooser(candidate: candidate, windowIDs: [candidate.windowID])
+331 |                     }
+[52/73] Compiling Rev28Core ProductionObservationSource.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:127:13: warning: result of 'try?' is unused [#no-usage]
+125 |                 recordedAtISO8601: EvidenceIO.iso8601()
+126 |             )
+127 |             try? EvidenceIO.writeJSONAtomically(
+    |             `- warning: result of 'try?' is unused [#no-usage]
+128 |                 record,
+129 |                 to: runDirectory.appendingPathComponent("pre-dispatch-context-refused-\(stamp).json")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:142:13: warning: result of 'try?' is unused [#no-usage]
+140 |                 recordedAtISO8601: EvidenceIO.iso8601()
+141 |             )
+142 |             try? EvidenceIO.writeJSONAtomically(
+    |             `- warning: result of 'try?' is unused [#no-usage]
+143 |                 record,
+144 |                 to: runDirectory.appendingPathComponent("pre-dispatch-context-refused-\(stamp).json")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:329:66: warning: immutable value 'affirmation' was never used; consider replacing with '_' or removing it [#no-usage]
+327 |                     )
+328 |                     adapter.journalBox.recordDetail(evaluation.detail)
+329 |                     if let candidate = evaluation.candidate, let affirmation = evaluation.affirmation {
+    |                                                                  `- warning: immutable value 'affirmation' was never used; consider replacing with '_' or removing it [#no-usage]
+330 |                         adapter.journalBox.recordChooser(candidate: candidate, windowIDs: [candidate.windowID])
+331 |                     }
+[53/73] Emitting module Rev28Core
+[54/73] Compiling Rev28Core AlbumEllipsisLocator.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Perception/OcrEngine.swift:243:45: error: missing argument labels 'x:y:' in call
+241 |             guard let lhs = left[text], lhs.count == 1, let rhs = right[text], rhs.count == 1,
+242 |                   let a = lhs.first, let b = rhs.first else { continue }
+243 |             let cuaPoint = CapturePixelPoint(Double(a.boundingBoxCapturePx.midX), Double(a.boundingBoxCapturePx.midY))
+    |                                             `- error: missing argument labels 'x:y:' in call
+244 |             let sckPoint = CapturePixelPoint(Double(b.boundingBoxCapturePx.midX), Double(b.boundingBoxCapturePx.midY))
+245 |             let predictedX = scaleX*cuaPoint.x + offsetX
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Perception/OcrEngine.swift:244:45: error: missing argument labels 'x:y:' in call
+242 |                   let a = lhs.first, let b = rhs.first else { continue }
+243 |             let cuaPoint = CapturePixelPoint(Double(a.boundingBoxCapturePx.midX), Double(a.boundingBoxCapturePx.midY))
+244 |             let sckPoint = CapturePixelPoint(Double(b.boundingBoxCapturePx.midX), Double(b.boundingBoxCapturePx.midY))
+    |                                             `- error: missing argument labels 'x:y:' in call
+245 |             let predictedX = scaleX*cuaPoint.x + offsetX
+246 |             let predictedY = scaleY*cuaPoint.y + offsetY
+[55/73] Compiling Rev28Core OcrEngine.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Perception/OcrEngine.swift:243:45: error: missing argument labels 'x:y:' in call
+241 |             guard let lhs = left[text], lhs.count == 1, let rhs = right[text], rhs.count == 1,
+242 |                   let a = lhs.first, let b = rhs.first else { continue }
+243 |             let cuaPoint = CapturePixelPoint(Double(a.boundingBoxCapturePx.midX), Double(a.boundingBoxCapturePx.midY))
+    |                                             `- error: missing argument labels 'x:y:' in call
+244 |             let sckPoint = CapturePixelPoint(Double(b.boundingBoxCapturePx.midX), Double(b.boundingBoxCapturePx.midY))
+245 |             let predictedX = scaleX*cuaPoint.x + offsetX
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Perception/OcrEngine.swift:244:45: error: missing argument labels 'x:y:' in call
+242 |                   let a = lhs.first, let b = rhs.first else { continue }
+243 |             let cuaPoint = CapturePixelPoint(Double(a.boundingBoxCapturePx.midX), Double(a.boundingBoxCapturePx.midY))
+244 |             let sckPoint = CapturePixelPoint(Double(b.boundingBoxCapturePx.midX), Double(b.boundingBoxCapturePx.midY))
+    |                                             `- error: missing argument labels 'x:y:' in call
+245 |             let predictedX = scaleX*cuaPoint.x + offsetX
+246 |             let predictedY = scaleY*cuaPoint.y + offsetY
+[56/73] Compiling Rev28Core StructuralLocators.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Perception/OcrEngine.swift:243:45: error: missing argument labels 'x:y:' in call
+241 |             guard let lhs = left[text], lhs.count == 1, let rhs = right[text], rhs.count == 1,
+242 |                   let a = lhs.first, let b = rhs.first else { continue }
+243 |             let cuaPoint = CapturePixelPoint(Double(a.boundingBoxCapturePx.midX), Double(a.boundingBoxCapturePx.midY))
+    |                                             `- error: missing argument labels 'x:y:' in call
+244 |             let sckPoint = CapturePixelPoint(Double(b.boundingBoxCapturePx.midX), Double(b.boundingBoxCapturePx.midY))
+245 |             let predictedX = scaleX*cuaPoint.x + offsetX
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Perception/OcrEngine.swift:244:45: error: missing argument labels 'x:y:' in call
+242 |                   let a = lhs.first, let b = rhs.first else { continue }
+243 |             let cuaPoint = CapturePixelPoint(Double(a.boundingBoxCapturePx.midX), Double(a.boundingBoxCapturePx.midY))
+244 |             let sckPoint = CapturePixelPoint(Double(b.boundingBoxCapturePx.midX), Double(b.boundingBoxCapturePx.midY))
+    |                                             `- error: missing argument labels 'x:y:' in call
+245 |             let predictedX = scaleX*cuaPoint.x + offsetX
+246 |             let predictedY = scaleY*cuaPoint.y + offsetY
+error: fatalError

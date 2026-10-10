@@ -14,7 +14,7 @@ export function createHostedSession({app, bridge, retain, classify, sessionId = 
   const permits = new WeakMap(), choosers = new WeakMap(), trace = [];
   const record = (event, extra={}) => trace.push(Object.freeze({event, at:clock(), ...extra}));
   function fresh(frameId) {
-    requireFact(!stopped && latest && latest.frameId === frameId && clock() >= latest.at && clock()-latest.at <= 2000,'FRESH_CAPTURE_REQUIRED');
+    requireFact(!stopped && latest && latest.frameId === frameId && clock() >= latest.at && clock()-latest.at <= 5000,'FRESH_CAPTURE_REQUIRED');
   }
   async function observe() {
     requireFact(!stopped,'SESSION_STOPPED');
@@ -40,19 +40,22 @@ export function createHostedSession({app, bridge, retain, classify, sessionId = 
   async function originalIntent({receiptToken,freshObservation}) {
     fresh(freshObservation.frame_id);
     const committed = await bridge('intent',{expected_token:receiptToken,data:{fresh:freshObservation}});
-    requireFact(committed.new_intent === true && committed.result?.status === 'ORIGINAL_INTENT_COMMITTED','NEW_INTENT_REQUIRED');
+    requireFact(committed.new_intent === true && committed.result?.status === 'ORIGINAL_INTENT_COMMITTED'
+      && committed.result?.dispatch_authorized === true && committed.result?.fixture === false,
+      'LIVE_DISPATCH_AUTHORITY_REQUIRED');
     fresh(freshObservation.frame_id);
     requireFact(committed.result.frame_id === latest.frameId && committed.result.session_id === sessionId,
       'INTENT_FRAME_MISMATCH');
     const token = Object.freeze({});
     permits.set(token,Object.freeze({result:committed.result,receiptToken:committed.receipt_token,
-      frameId:latest.frameId,issuedAt:clock(),deadline:latest.at+2000}));
+      frameId:latest.frameId,issuedAt:clock(),deadline:latest.at+5000}));
     return token;
   }
-  async function originalAtomicDispatch(token) {
+  async function originalAtomicDispatch(token,{captureMenuSupport,guardMenu}={}) {
     const permit=permits.get(token);requireFact(permit,'NO_ORIGINAL_PERMISSION');
     // Consume before the first call. Throw/timeout/crash never leaves a reusable token.
     permits.delete(token);
+    requireFact(typeof captureMenuSupport==='function' && typeof guardMenu==='function','MENU_GUARD_REQUIRED');
     fresh(permit.frameId);
     const action=permit.result;
     requireFact(point(action.ellipsis) && point(action.save_all),'INVALID_MENU_POINTS');
@@ -63,7 +66,20 @@ export function createHostedSession({app, bridge, retain, classify, sessionId = 
       await app.click(action.ellipsis);
       record('ELLIPSIS_RETURNED');
       await wait(menuWaitMs);
+      requireFact(clock()>=permit.issuedAt && clock()<=permit.deadline,'PERMIT_EXPIRED_BEFORE_MENU_CAPTURE');
+      const support=await captureMenuSupport(Object.freeze({action,frameId:permit.frameId,sessionId,requestedAt:clock()}));
+      requireFact(support?.provider==='SCREEN_CAPTURE_KIT' && support?.frameId===permit.frameId
+        && support?.sessionId===sessionId && typeof support?.reference?.path==='string'
+        && Number.isInteger(support.reference.bytes) && support.reference.bytes>0
+        && /^[0-9a-f]{64}$/.test(support.reference.sha256),'SCK_SUPPORT_REQUIRED');
+      const guard=await guardMenu(Object.freeze({action,support,frameId:permit.frameId,sessionId}));
+      requireFact(guard?.verdict==='PASS' && guard?.provider==='SCREEN_CAPTURE_KIT'
+        && guard?.frameId===permit.frameId && guard?.sessionId===sessionId
+        && Array.isArray(guard?.actionPoint) && guard.actionPoint.length===2
+        && guard.actionPoint[0]===action.save_all[0] && guard.actionPoint[1]===action.save_all[1],
+        'SCK_MENU_GUARD_REFUSED');
       requireFact(clock()>=permit.issuedAt && clock()<=permit.deadline,'PERMIT_EXPIRED_BEFORE_SAVE_ALL');
+      record('SCK_MENU_GUARD_PASS',{support:support.reference,guard});
       record('SAVE_ALL_INVOCATION',{actionId:action.action_id});
       await app.click(action.save_all);
       record('SAVE_ALL_RETURNED');
@@ -74,7 +90,7 @@ export function createHostedSession({app, bridge, retain, classify, sessionId = 
     await app.getAXState({emit:false});
     const chooser=await observe();
     requireFact(chooser.surface==='FOLDER_CHOOSER','CHOOSER_NOT_CONFIRMED');
-    const dispatch=Object.freeze({action,receiptToken:permit.receiptToken,chooser,trace:[...trace]});
+    const dispatch=Object.freeze({action,receiptToken:permit.receiptToken,chooser,menuSupport:trace.findLast(t=>t.event==='SCK_MENU_GUARD_PASS'),trace:[...trace]});
     choosers.set(dispatch,true);
     return dispatch;
   }
@@ -98,11 +114,25 @@ export function createHostedSession({app, bridge, retain, classify, sessionId = 
     choosers.delete(dispatch);
     try {await app.click(confirmation.point);await app.getAXState({emit:false});}
     catch(e) {stopped=true;record('CONFIRM_UNCERTAIN');throw e;}
-    return observe();
+    const afterConfirm=await observe();
+    if (afterConfirm.download_started!==true) {stopped=true;record('DOWNLOAD_START_UNKNOWN');throw new Error('DOWNLOAD_START_UNKNOWN');}
+    const evidence={run_id:action.run_id,action_id:action.action_id,execution_id:action.owner,observed_at:new Date().toISOString(),
+      save_all_click_count:1,save_all_invocation_attempted:true,failure_boundary:'NONE',folder_chooser_appeared:true,
+      download_started:true,provenance:'HOSTED_CUA_AND_SCREEN_CAPTURE_KIT',trace:[...trace]};
+    const chooserEvidence={action_id:action.action_id,session_id:sessionId,destination:action.destination,
+      full_path:action.destination,leaf:action.destination.split('/').at(-1),confirmation_attempts:1,frame_id:chooser.frame_id,
+      confirmation_frame_id:afterConfirm.frame_id,confirmation_attempted:true};
+    try {
+      const recorded=await bridge('dispatch',{expected_token:dispatch.receiptToken,
+        data:{evidence,chooser:chooserEvidence,download_started:true}});
+      requireFact(recorded?.result?.status==='DOWNLOAD_STARTED','DISPATCH_READBACK_REQUIRED');
+    } catch(e) {stopped=true;record('DISPATCH_RECORD_UNCERTAIN',{message:String(e)});throw e;}
+    stopped=true;latest=null;record('CEASE_INPUT_AFTER_DOWNLOAD_START');
+    return afterConfirm;
   }
   async function boundedScroll(observation,target,direction,distance) {
     fresh(observation.frame_id);requireFact(observation.surface==='ALBUMS','SCROLL_SURFACE_UNKNOWN');
-    requireFact(point(target) && ['up','down'].includes(direction) && Number.isFinite(distance) && distance>0 && distance<=1,'SCROLL_POLICY');
+    requireFact(point(target) && ['up','down'].includes(direction) && Number.isFinite(distance) && distance>0 && distance<=0.25,'SCROLL_POLICY');
     latest=null;record('ONE_SCROLL');
     try {await app.scroll(target,direction,distance);await app.getAXState({emit:false});}
     catch(e) {stopped=true;throw e;}

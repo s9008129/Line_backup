@@ -1,0 +1,34 @@
+✔ original pair contains only two clicks and timer; one-shot cannot replay (1.24525ms)
+✔ loaded JSON cannot mint a dispatch or chooser capability (0.178584ms)
+✔ fixture authority cannot mint a live app dispatch token (0.074167ms)
+✔ ellipse error never invokes SaveAll; all tokens stay consumed (0.198875ms)
+✔ SaveAll error is attempted once and prohibits replay (0.154ms)
+✖ expired capture and expired second-click boundary both stop (0.324875ms)
+✔ correct chooser path and fresh control confirmed exactly once (0.981084ms)
+✔ wrong full path refuses navigation/confirmation (0.202042ms)
+✔ a stale field index is refused before typing (0.149333ms)
+✔ native scroll is limited to one quarter viewport per invocation (0.143792ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 9
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 48.563625
+
+✖ failing tests:
+
+test at tests/test_cua_adapter.mjs:65:1
+✖ expired capture and expired second-click boundary both stop (0.324875ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_cua_adapter.mjs:67:3)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /FRESH_CAPTURE_REQUIRED/,
+    operator: 'rejects',
+    diff: 'simple'
+  }

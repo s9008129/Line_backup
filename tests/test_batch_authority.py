@@ -8,7 +8,7 @@ import sys
 import unittest
 sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
 from fixture_support import Fixture,ROOT,TASK,identity,sha,json_bytes,token
-from line_backup_batch.store import Store
+from line_backup_batch.store import Store,enforce_grant_quota
 from line_backup_batch.service import Service
 from line_backup_acceptance.common import AcceptanceError,atomic_write_json
 
@@ -20,10 +20,18 @@ class AuthorityTests(unittest.TestCase):
         self.assertEqual(p.returncode,0,p.stderr)
         result=json.loads(p.stdout);self.assertNotIn('receipt',result);self.assertIn('receipt_token',result)
         self.assertEqual(self.f.state()['active_batch']['new_transactions_reserved'],0)
+    def test_fixture_grant_is_operation_exact_and_cannot_dispatch(self):
+        before=(self.f.root/'state/backup_state.json').read_bytes()
+        p,_=self.f.cli('begin',dict(mode='backup_batch',limit=1),grant_operations=['admit'])
+        self.assertEqual(p.returncode,4);self.assertIn(b'GRANT_SCOPE',p.stderr)
+        p,_=self.f.cli('dispatch',grant_operations=['dispatch'])
+        self.assertEqual(p.returncode,4);self.assertIn(b'FIXTURE_LIVE_OPERATION_REFUSED',p.stderr)
+        self.assertEqual((self.f.root/'state/backup_state.json').read_bytes(),before)
     def test_missing_lock_refuses_before_creation(self):
         expected=self.f.receipt();raw=(self.f.root/'state/backup_state.json').read_bytes()
         (self.f.root/'state/.line-backup-state.lock').unlink()
-        with self.assertRaisesRegex(AcceptanceError,'SHARED_LOCK_UNAVAILABLE'):self.f.svc.begin(expected,'backup_batch',1)
+        with self.assertRaises(AcceptanceError) as caught:self.f.svc.begin(expected,'backup_batch',1)
+        self.assertEqual(caught.exception.code,'SHARED_LOCK_UNAVAILABLE')
         self.assertEqual((self.f.root/'state/backup_state.json').read_bytes(),raw)
         self.assertFalse((self.f.root/'state/.line-backup-state.lock').exists())
     def test_missing_state_never_initializes(self):
@@ -67,8 +75,44 @@ class AuthorityTests(unittest.TestCase):
     def test_production_api_without_grant_refuses(self):
         store=Store(str(ROOT));before=(ROOT/'state/backup_state.json').read_bytes()
         with self.assertRaisesRegex(AcceptanceError,'LIVE_AUTHORITY_REQUIRED'):
-            store.update(store.snapshot()['receipt'],lambda cfg,s:None)
+            store._update(store.snapshot()['receipt'],lambda cfg,s:None,operation='begin')
         self.assertEqual((ROOT/'state/backup_state.json').read_bytes(),before)
+    def test_generic_mutation_has_no_production_authorization_fallback(self):
+        store=Store(str(ROOT))
+        before=(ROOT/'state/backup_state.json').read_bytes()
+        self.assertFalse(hasattr(store,'update'))
+        with self.assertRaises(AcceptanceError) as caught:
+            store._update(store.snapshot()['receipt'],lambda cfg,s:None,operation='mutate')
+        self.assertEqual(caught.exception.code,'OPERATION_REQUIRED')
+        self.assertEqual((ROOT/'state/backup_state.json').read_bytes(),before)
+    def test_operation_label_cannot_mutate_an_unrelated_state_section(self):
+        expected=self.f.receipt();before=(self.f.root/'state/backup_state.json').read_bytes()
+        def wrong_transition(cfg,state):
+            state['verified_albums'].append({'fabricated':True})
+        with self.assertRaises(AcceptanceError) as caught:
+            self.f.svc.store._update(expected,wrong_transition,operation='begin')
+        self.assertEqual(caught.exception.code,'TRANSITION_SCOPE')
+        self.assertEqual((self.f.root/'state/backup_state.json').read_bytes(),before)
+    def test_fixture_service_intent_is_not_live_dispatch_capability(self):
+        target=identity();self.f.start([target],1);self.f.prepare(target)
+        committed=self.f.intent(target)
+        self.assertTrue(committed['new_intent'])
+        self.assertFalse(committed['result']['dispatch_authorized'])
+        self.assertTrue(committed['result']['fixture'])
+    def test_persisted_intents_bound_two_separate_lifecycles(self):
+        grant=dict(owner='execution',album_quota=2,lifecycle_album_limit=1,
+            save_all_dispatch_limit=2,chooser_confirmation_limit=2)
+        state=dict(active_batch=dict(owner_execution_id='execution',authorized_new_download_limit=1),
+            runs=[dict(batch_id=f'b{i}',intent={'action_id':f'a{i}'}) for i in range(2)])
+        with self.assertRaisesRegex(AcceptanceError,'GRANT_ALBUM_QUOTA'):
+            enforce_grant_quota(grant,'begin',state)
+        state['runs'].pop()
+        self.assertEqual(enforce_grant_quota(grant,'begin',state),1)
+        state['runs'].append(dict(batch_id='b1',intent={'action_id':'a1'}))
+        self.assertEqual(enforce_grant_quota(grant,'intent',state),2)
+        state['runs'].append(dict(batch_id='b2',intent={'action_id':'a2'}))
+        with self.assertRaisesRegex(AcceptanceError,'GRANT_DISPATCH_QUOTA'):
+            enforce_grant_quota(grant,'intent',state)
     def test_legacy_canonical_replacement_refused(self):
         before=(ROOT/'state/backup_state.json').read_bytes()
         with self.assertRaisesRegex(AcceptanceError,'Canonical state requires'):

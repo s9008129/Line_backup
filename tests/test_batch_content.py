@@ -23,6 +23,7 @@ class ContentTests(unittest.TestCase):
                 for p in self.path.iterdir():p.unlink()
                 self.images(n);v,proof=self.verify(n)
                 self.assertEqual(v['image_files'],n);self.assertEqual(v['stable_samples'],3)
+                self.assertEqual(v['other_entries'],[])
                 self.assertEqual(v['total_bytes'],sum(p.stat().st_size for p in self.path.iterdir()))
                 self.assertTrue(all(r['decoded'] for r in proof['decoder']['entries']))
                 self.assertEqual([s['monotonic'] for s in proof['samples']],list(range(int(self.now)-2,int(self.now)+1)))

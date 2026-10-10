@@ -5,6 +5,7 @@ from pathlib import Path
 import subprocess
 import sys
 import unittest
+import uuid
 sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
 from fixture_support import Fixture,TASK,ROOT,identity,token,json_bytes,sha
 from line_backup_acceptance.common import AcceptanceError
@@ -39,17 +40,16 @@ class MigrationTests(unittest.TestCase):
         self.assertEqual((self.f.root/'state/backup_state.json').read_bytes(),raw)
     def test_two_cli_processes_one_stable_lock_cas_winner(self):
         # Real public actors, same existing inode and same initial expected token.
-        self.f=Fixture(version=3,cap=1)
+        self.f.close();self.f=Fixture(version=3,cap=1)
         receipt=self.f.receipt();p,argv=self.f.cli('inspect')
-        grant=dict(project_root=str(self.f.root),fixture=True,artifact_dir=self.f.artifacts,owner=self.f.owner,operations=['begin','mutate'],
-            config_sha256=receipt['config_sha256'],source_sha256=receipt['source_sha256'],approval=None,acceptance=None)
+        grant=self.f.grant(['begin'])
         g=self.f.ref('actors-grant.json',json_bytes(grant));inp=self.f.ref('actors-input.json',json_bytes(dict(expected_token=token(receipt),data=dict(mode='backup_batch',limit=1))))
         argv=[sys.executable,'-B','-m','line_backup_batch','begin','--project-root',str(self.f.root),'--authorization',g['path'],'--input',inp['path'],'--fixture']
         actors=[subprocess.Popen(argv,stdout=subprocess.PIPE,stderr=subprocess.PIPE,env={**os.environ,'PYTHONPATH':str(ROOT/'src')}) for _ in range(2)]
         rows=[]
         for actor in actors:
             out,err=actor.communicate(timeout=30);rows.append(dict(pid=actor.pid,exit_code=actor.returncode,stdout=out.decode(),stderr=err.decode(),argv=argv))
-        with (TASK/'evidence/two-cli-actor-receipts-01.json').open('x') as f:json.dump(rows,f,indent=2)
+        with (TASK/f"evidence/two-cli-actor-receipts-{uuid.uuid4().hex}.json").open('x') as f:json.dump(rows,f,indent=2)
         self.assertEqual(sorted(r['exit_code'] for r in rows),[0,4],rows)
         self.assertEqual(sum('STALE_CAS' in r['stderr'] for r in rows),1,rows)
         winner=json.loads(next(r['stdout'] for r in rows if r['exit_code']==0))

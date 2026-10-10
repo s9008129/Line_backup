@@ -7,6 +7,7 @@ import subprocess
 import sys
 import time
 import unittest
+import uuid
 sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
 from fixture_support import Fixture,Provider,TASK,ROOT,identity,json_bytes
 from line_backup_batch.coordinator import Coordinator
@@ -28,7 +29,7 @@ class CoordinatorTests(unittest.TestCase):
         s=self.f.state();self.assertEqual(s['runs'][:2],before);self.assertEqual(len(s['verified_albums']),4)
         self.assertIsNone(s['active_writer_id']);self.assertEqual(s['active_batch']['phase'],'COMPLETED')
         self.assertEqual(s['active_batch']['new_transactions_reserved'],2)
-        with (TASK/'evidence/coordinator-positive-oracles-01.json').open('x') as f:
+        with (TASK/f"evidence/coordinator-positive-oracles-{uuid.uuid4().hex}.json").open('x') as f:
             json.dump(dict(status=result['status'],opens=p.opens,dispatches=p.dispatches,confirms=p.confirms,
                 verified_runs=[r['run_id'] for r in s['runs']],prior_runs_preserved=s['runs'][:2]==before),f,indent=2)
     def test_cap_one_does_not_loop_around_limit(self):

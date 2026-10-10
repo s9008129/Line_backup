@@ -1,0 +1,13 @@
+{
+  "phase": "DOWNLOAD_STARTED",
+  "evidence": {
+    "destination": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張",
+    "folder_confirmation": {"fresh_OKButton":62,"coordinate_or_element_invocation_entered":true,"confirmation_count":1,"result":"RETURNED"},
+    "post_confirmation": "Actual fresh CUA AX floating window and screenshot: 正在下載…0/57; Cancel button. This affirmatively proves start, not completion.",
+    "correct_destination_confirmed": true,
+    "download_started": true,
+    "save_all_click_count": 1,
+    "save_all_retry_allowed": false,
+    "next": "No more LINE GUI inputs or observations. Read-only exact-destination inventory, >=5-second intervals,3stable samples, content/MIME/hash and full ImageIO decode."
+  }
+}

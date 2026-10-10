@@ -1,0 +1,37 @@
+{
+  "format": "local-explicit-user-authorization-1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "source": "current conversation user-authored plan and steering",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "quotes": [
+    "本輪目標：正式採用唯一 v3 writer，完成兩個不同未 VERIFIED 相簿的下載、內容驗證與狀態提交，並實證第一本完成後的實際滾輪與第二本定位流程。",
+    "本次提交納入必要 v3 基礎、writer guards、測試與本輪差異。",
+    "Plan Review 依使用者明確要求免除，另存 waiver；事後獨立 Acceptance 保留。",
+    "本次數量授權凍結為最多兩次 Save All、兩次 chooser confirmation，以及最多 1,000 次額外可逆 GUI invocation。",
+    "MUST use more subagents 平行處理"
+  ],
+  "locked_decisions": {
+    "canonical_writer_and_migration": "唯一 v3 writer；保留歷史的 schema 2→3 migration；完整 catalog admission",
+    "acceptance_and_lifecycle": "execution grant 與事後 independent Acceptance 分離；config cap 維持 1；兩本採兩個獨立 lifecycle"
+  },
+  "decision_answers": [
+    {
+      "decision": "Canonical writer, migration, and catalog",
+      "answer": "Use the unique v3 writer, preserve schema 2 history during schema 2 to 3 migration, and require complete catalog admission."
+    },
+    {
+      "decision": "Review route and lifecycle scope",
+      "answer": "Use the explicit Plan Review waiver while retaining independent post-implementation Acceptance; run two separate cap-one lifecycles."
+    }
+  ],
+  "execution_scope": "Approved offline integration, exact schema migration, documented CUA live E2E for two distinct albums including bounded scroll, evidence report, independent post-implementation Acceptance, and the exact Git commit/push workflow specified in the frozen plan.",
+  "plan_review_decision": "Explicit user waiver; NOT a reviewer PASS",
+  "independent_acceptance_required": true,
+  "save_all_dispatch_cap": 2,
+  "chooser_confirmation_cap": 2,
+  "additional_reversible_gui_invocation_cap": 1000,
+  "config_albums_per_lifecycle": 1,
+  "controller_admission": "NOT_RUN per frozen plan because v4.8.0 CRITICAL routing cannot directly express the explicit Plan Review waiver",
+  "native_identity": "UNKNOWN",
+  "created_at": "2026-10-10T06:55:59Z"
+}

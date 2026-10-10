@@ -1,0 +1,51 @@
+{
+  "format": 1,
+  "compression": "gzip with mtime=0",
+  "artifacts": [
+    {
+      "original_path": "harness-development/line-v3-live-e2e-20261010/baseline/preexisting-tracked.diff",
+      "original_bytes": 65001,
+      "original_sha256": "48c72645db2adf1c4250384803d753dda471c779df757a031fa3c88f2a8994d1",
+      "compressed_path": "harness-development/line-v3-live-e2e-20261010/delivery/raw-text/preexisting-tracked.diff.gz",
+      "compressed_bytes": 20193,
+      "compressed_sha256": "a226bf0ec504bdf84407400f2d667868057c89d9408746252f8b4885d65bc99f",
+      "lossless_roundtrip": "PASS"
+    },
+    {
+      "original_path": "harness-development/line-v3-live-e2e-20261010/baseline/focused-existing-product.diff",
+      "original_bytes": 63494,
+      "original_sha256": "27837a169486f726ce66958deda804041e04ff817e1c9991368d43d381751881",
+      "compressed_path": "harness-development/line-v3-live-e2e-20261010/delivery/raw-text/focused-existing-product.diff.gz",
+      "compressed_bytes": 17754,
+      "compressed_sha256": "ab7431a05a24e6bbbe605b5bccab6e18d1f7eccc39b3b3c787513b450f2ff1aa",
+      "lossless_roundtrip": "PASS"
+    },
+    {
+      "original_path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-5b37804c7b314bdeb80238d415d2fc1f.stderr",
+      "original_bytes": 63546,
+      "original_sha256": "ef97441871c98c193e8fd75debeb35b73d89529224c9b6c99ca9004c8f5435b0",
+      "compressed_path": "harness-development/line-v3-live-e2e-20261010/delivery/raw-text/swift-26.5-5b37804c7b314bdeb80238d415d2fc1f.stderr.gz",
+      "compressed_bytes": 4258,
+      "compressed_sha256": "af53321f32604adead1e7f994767a9517c9eaa31a6436911898be7b881a19720",
+      "lossless_roundtrip": "PASS"
+    },
+    {
+      "original_path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-3d2909d749ad4110a3dc6ba8f99f0d41.stdout",
+      "original_bytes": 2305,
+      "original_sha256": "15c41f566b7be2d7db739e21dd9cedc771ee4c7908539866ae6a5ab9bbddda36",
+      "compressed_path": "harness-development/line-v3-live-e2e-20261010/delivery/raw-text/node-adapter-3d2909d749ad4110a3dc6ba8f99f0d41.stdout.gz",
+      "compressed_bytes": 985,
+      "compressed_sha256": "17cd8b5b1a088ae3af0121e9afb79c823bb529111e8b68110961e78936f5bd53",
+      "lossless_roundtrip": "PASS"
+    },
+    {
+      "original_path": "harness-development/line-v3-live-e2e-20261010/evidence/python-project_binding-89c94bb5b33c4082ba7ed454ff847409.stderr",
+      "original_bytes": 17833,
+      "original_sha256": "095557de58f7c91cc3185af037dd3fb001af8331f98ca2a43b294fc4616e5249",
+      "compressed_path": "harness-development/line-v3-live-e2e-20261010/delivery/raw-text/python-project_binding-89c94bb5b33c4082ba7ed454ff847409.stderr.gz",
+      "compressed_bytes": 1975,
+      "compressed_sha256": "9a9220cb59c01b89d0b1bdac8e8f4ca623c9f6d132cccb51e3bff44cbaf59317",
+      "lossless_roundtrip": "PASS"
+    }
+  ]
+}

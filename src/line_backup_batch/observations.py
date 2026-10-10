@@ -1,10 +1,12 @@
 """Typed perception boundaries. Artifact validity alone never certifies live pixels."""
 import datetime as dt
+import itertools
 import math
+from pathlib import Path
 import re
 import struct
 import time
-from line_backup_acceptance.project_binding import ProjectReader,dates,integer,sha
+from line_backup_acceptance.project_binding import ProjectReader,dates,integer,sha,strict_json
 from .schema import require
 
 def artifact(reader,ref):
@@ -48,6 +50,77 @@ def point(value,bounds,uncertainty):
     require(inside([*value,0,0],bounds,uncertainty),'UNSAFE_POINT')
     return value
 
+def _support(reader,ref,record,cfg,*,now,max_age):
+    raw=artifact(reader,ref);sidecar=strict_json(raw,'INVALID_SCK_SUPPORT')
+    required={'version','provider','fixture','frame_id','session_id','pid','window_id','layout_key','captured_at',
+        'sck_frame','ocr','native_binding','uncertainty_px','safe_margin_px','interactive_intersection_px'}
+    require(isinstance(sidecar,dict) and set(sidecar)==required and sidecar['version']==1,'INVALID_SCK_SUPPORT')
+    is_fixture=sidecar['fixture'] is True and sidecar['provider']=='FIXTURE_ONLY'
+    fixture_root=Path(reader.root).is_relative_to(Path(__file__).resolve().parents[2]/'harness-development') and '/fixtures/' in reader.root
+    require(is_fixture if fixture_root else sidecar['fixture'] is False and sidecar['provider']=='SCREEN_CAPTURE_KIT','SCK_PROVIDER_MISMATCH')
+    for key in ('frame_id','session_id','pid','window_id','layout_key'):
+        require(sidecar[key]==record[key],'SCK_BINDING_MISMATCH')
+    support_time=dt.datetime.fromisoformat(sidecar['captured_at'].replace('Z','+00:00'))
+    cua_time=dt.datetime.fromisoformat(record['captured_at'].replace('Z','+00:00'))
+    require(support_time.tzinfo is not None and cua_time.tzinfo is not None
+        and abs((support_time-cua_time).total_seconds())<=5,'SCK_CAPTURE_TIME_MISMATCH')
+    age=(dt.datetime.now(dt.timezone.utc) if now is None else now)-support_time
+    require(age.total_seconds()>=0 and (max_age is None or age.total_seconds()<=max_age),'STALE_SCK_SUPPORT')
+    sck_raw=artifact(reader,sidecar['sck_frame']);sck_size=image_size(sck_raw)
+    ocr=strict_json(artifact(reader,sidecar['ocr']),'INVALID_SCK_OCR')
+    require(isinstance(ocr,dict) and set(ocr)=={'version','cua_frame_id','sck_frame_sha256','cua','sck'}
+        and ocr['version']==1 and ocr['cua_frame_id']==record['frame_id']
+        and ocr['sck_frame_sha256']==sha(sck_raw),'SCK_OCR_BINDING_MISMATCH')
+    binding=sidecar['native_binding']
+    bind_keys={'bundle_id','pid','window_id','display_id','cua_capture_bounds_points','sck_window_bounds_points',
+        'display_bounds_points','cua_size_px','sck_size_px'}
+    require(isinstance(binding,dict) and set(binding)==bind_keys and binding['bundle_id']==cfg['app_identifier']
+        and binding['pid']==record['pid'] and binding['window_id']==record['window_id']
+        and integer(binding['display_id'],1) and binding['cua_size_px']==[record['width'],record['height']]
+        and binding['sck_size_px']==list(sck_size),'SCK_NATIVE_BINDING_MISMATCH')
+    cua_bounds=binding['cua_capture_bounds_points'];window_bounds=binding['sck_window_bounds_points'];display=binding['display_bounds_points']
+    for bounds in (cua_bounds,window_bounds,display):
+        require(isinstance(bounds,list) and len(bounds)==4 and all(type(v) in (int,float) and math.isfinite(v) for v in bounds)
+            and bounds[2]>0 and bounds[3]>0,'SCK_NATIVE_BOUNDS')
+    require(max(abs(cua_bounds[i]-window_bounds[i]) for i in range(4))<=1,'SCK_WINDOW_BOUNDS_DRIFT')
+    dw,dh=display[2],display[3];sw,sh=sck_size
+    scale_x=(cua_bounds[2]/record['width'])*(sw/dw);scale_y=(cua_bounds[3]/record['height'])*(sh/dh)
+    offset_x=(cua_bounds[0]-display[0])*(sw/dw);offset_y=(cua_bounds[1]-display[1])*(sh/dh)
+    cua_items=ocr['cua'];sck_items=ocr['sck']
+    require(isinstance(cua_items,list) and isinstance(sck_items,list),'SCK_OCR_BINDING_MISMATCH')
+    def index_items(items,width,height):
+        indexed={}
+        for item in items:
+            require(isinstance(item,dict) and set(item)=={'text','confidence','candidate_count','bounds'}
+                and isinstance(item['text'],str) and item['text'].strip()
+                and type(item['confidence']) in (int,float) and 0<=item['confidence']<=1
+                and integer(item['candidate_count'],1),'SCK_OCR_ITEM')
+            box=rect(item['bounds'],width,height)
+            indexed.setdefault(item['text'],[]).append((box[0]+box[2]/2,box[1]+box[3]/2))
+        return indexed
+    left=index_items(cua_items,record['width'],record['height']);right=index_items(sck_items,*sck_size)
+    anchors=[]
+    for text in sorted(set(left)&set(right)):
+        if len(left[text])==len(right[text])==1:
+            x,y=left[text][0];u,v=right[text][0]
+            predicted=(scale_x*x+offset_x,scale_y*y+offset_y)
+            residual=math.hypot(predicted[0]-u,predicted[1]-v)
+            anchors.append((text,x,y,residual))
+    require(len(anchors)>=3,'SCK_ANCHOR_COVERAGE')
+    largest_area=0.0
+    for a,b,c in itertools.combinations(anchors,3):
+        area=abs((b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1]))/2
+        largest_area=max(largest_area,area)
+    require(largest_area/(record['width']*record['height'])>=0.02,'SCK_ANCHOR_DISTRIBUTION')
+    require(max(a[3] for a in anchors)<=2,'SCK_TRANSFORM_RESIDUAL')
+    uncertainty=sidecar['uncertainty_px'];margin=sidecar['safe_margin_px'];intersection=sidecar['interactive_intersection_px']
+    require(type(uncertainty) in (int,float) and uncertainty>=2 and type(margin) in (int,float)
+        and margin>=uncertainty+4,'SCK_SAFE_MARGIN')
+    require(isinstance(intersection,list) and len(intersection)==4 and all(type(v) in (int,float) and math.isfinite(v) for v in intersection)
+        and intersection[2]>=16 and intersection[3]>=16,'SCK_INTERACTIVE_INTERSECTION')
+    return dict(sidecar=sidecar,anchors=anchors,transform=[scale_x,0,0,scale_y,offset_x,offset_y],
+        max_residual=max(a[3] for a in anchors),sck_size=sck_size)
+
 def frame(reader,record,cfg,*,session,now=None,max_age=5):
     required={'frame','frame_id','session_id','group_key','surface','captured_at','provider','layout_key',
         'window_id','pid','width','height','mapping','cards','boundary','editable_focus','occlusion'}
@@ -59,14 +132,15 @@ def frame(reader,record,cfg,*,session,now=None,max_age=5):
     instant=dt.datetime.fromisoformat(record['captured_at'].replace('Z','+00:00'))
     require(instant.tzinfo is not None,'INVALID_CAPTURE_TIME')
     age=(dt.datetime.now(dt.timezone.utc) if now is None else now)-instant
-    require(0<=age.total_seconds()<=max_age,'STALE_OBSERVATION')
+    require(age.total_seconds()>=0 and (max_age is None or age.total_seconds()<=max_age),'STALE_OBSERVATION')
     raw=artifact(reader,record['frame']);require(record['frame_id']==sha(raw),'FRAME_ID_MISMATCH')
     size=image_size(raw);require(size==(record['width'],record['height']),'FRAME_DIMENSIONS_MISMATCH')
     mapping=record['mapping']
-    require(isinstance(mapping,dict) and set(mapping)=={'space','uncertainty','evidence','frame_id','layout_key'},'MAPPING_UNKNOWN')
+    require(isinstance(mapping,dict) and set(mapping)=={'space','uncertainty','evidence','frame_id','layout_key','sck_support'},'MAPPING_UNKNOWN')
     require(mapping['space']=='CUA_CAPTURE_PIXELS' and mapping['frame_id']==record['frame_id'] and mapping['layout_key']==record['layout_key'],'MAPPING_MISMATCH')
-    require(type(mapping['uncertainty']) in (int,float) and math.isfinite(mapping['uncertainty']) and mapping['uncertainty']>=0,'MAPPING_UNKNOWN')
+    require(type(mapping['uncertainty']) in (int,float) and math.isfinite(mapping['uncertainty']) and mapping['uncertainty']>=2,'MAPPING_UNKNOWN')
     artifact(reader,mapping['evidence'])
+    _support(reader,mapping['sck_support'],record,cfg,now=(dt.datetime.now(dt.timezone.utc) if now is None else now),max_age=max_age)
     seen=set();by_dates=set()
     require(isinstance(record['cards'],list),'INVALID_CARDS')
     for card in record['cards']:

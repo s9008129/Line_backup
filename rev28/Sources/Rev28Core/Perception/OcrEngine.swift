@@ -168,3 +168,103 @@ public enum OcrTextIdentity {
         items.filter { isExactMatch($0.text, expected) }
     }
 }
+
+/// Native window/display geometry supplies the initial CUA-pixel to full-display-pixel
+/// transform. OCR matches validate that transform; they never invent it.
+public struct NativeCaptureBounds: Equatable, Sendable {
+    public let cuaCaptureBoundsPoints: CGRect
+    public let sckWindowBoundsPoints: CGRect
+    public let displayBoundsPoints: CGRect
+    public let cuaSizePixels: CGSize
+    public let sckSizePixels: CGSize
+
+    public init(cuaCaptureBoundsPoints: CGRect, sckWindowBoundsPoints: CGRect, displayBoundsPoints: CGRect,
+                cuaSizePixels: CGSize, sckSizePixels: CGSize) {
+        self.cuaCaptureBoundsPoints = cuaCaptureBoundsPoints
+        self.sckWindowBoundsPoints = sckWindowBoundsPoints
+        self.displayBoundsPoints = displayBoundsPoints
+        self.cuaSizePixels = cuaSizePixels
+        self.sckSizePixels = sckSizePixels
+    }
+}
+
+public struct AutomaticOcrAnchor: Equatable, Sendable {
+    public let text: String
+    public let cuaPoint: CapturePixelPoint
+    public let sckPoint: CapturePixelPoint
+    public let residualSourcePixels: Double
+}
+
+public struct AutomaticAnchorMapping: Equatable, Sendable {
+    public let scaleX: Double
+    public let scaleY: Double
+    public let offsetX: Double
+    public let offsetY: Double
+    public let anchors: [AutomaticOcrAnchor]
+    public let maximumResidualSourcePixels: Double
+    public let uncertaintyPixels: Double
+}
+
+public enum AutomaticAnchorMappingError: Error, Equatable {
+    case invalidNativeBounds
+    case insufficientUniqueAnchors
+    case anchorsNotDispersed
+    case residualTooLarge(Double)
+}
+
+public enum AutomaticOcrAnchorMapper {
+    public static func derive(cua: [OcrItem], sck: [OcrItem], native: NativeCaptureBounds,
+                              maximumResidualPixels: Double = 2, minimumTriangleAreaFraction: Double = 0.02)
+        throws -> AutomaticAnchorMapping {
+        let c = native.cuaCaptureBoundsPoints, w = native.sckWindowBoundsPoints, d = native.displayBoundsPoints
+        let cw = Double(native.cuaSizePixels.width), ch = Double(native.cuaSizePixels.height)
+        let sw = Double(native.sckSizePixels.width), sh = Double(native.sckSizePixels.height)
+        guard [cw,ch,sw,sh,Double(c.width),Double(c.height),Double(w.width),Double(w.height),Double(d.width),Double(d.height)]
+            .allSatisfy({ $0.isFinite && $0 > 0 }),
+            [Double(c.minX),Double(c.minY),Double(w.minX),Double(w.minY),Double(d.minX),Double(d.minY)]
+                .allSatisfy({ $0.isFinite }),
+            abs(c.minX-w.minX) <= 1, abs(c.minY-w.minY) <= 1,
+            abs(c.width-w.width) <= 1, abs(c.height-w.height) <= 1,
+            maximumResidualPixels.isFinite, maximumResidualPixels >= 0,
+            minimumTriangleAreaFraction.isFinite, minimumTriangleAreaFraction > 0 else {
+            throw AutomaticAnchorMappingError.invalidNativeBounds
+        }
+        let displayScaleX = sw / Double(d.width), displayScaleY = sh / Double(d.height)
+        let scaleX = (Double(c.width) / cw) * displayScaleX
+        let scaleY = (Double(c.height) / ch) * displayScaleY
+        let offsetX = (Double(c.minX-d.minX)) * displayScaleX
+        let offsetY = (Double(c.minY-d.minY)) * displayScaleY
+        let left = Dictionary(grouping: cua.filter { !$0.text.isEmpty && $0.confidence >= 0.5 && $0.candidateCount == 1 }, by: \.text)
+        let right = Dictionary(grouping: sck.filter { !$0.text.isEmpty && $0.confidence >= 0.5 && $0.candidateCount == 1 }, by: \.text)
+        var anchors: [AutomaticOcrAnchor] = []
+        for text in Set(left.keys).intersection(right.keys).sorted() {
+            guard let lhs = left[text], lhs.count == 1, let rhs = right[text], rhs.count == 1,
+                  let a = lhs.first, let b = rhs.first else { continue }
+            let cuaPoint = CapturePixelPoint(x: Double(a.boundingBoxCapturePx.midX), y: Double(a.boundingBoxCapturePx.midY))
+            let sckPoint = CapturePixelPoint(x: Double(b.boundingBoxCapturePx.midX), y: Double(b.boundingBoxCapturePx.midY))
+            let predictedX = scaleX*cuaPoint.x + offsetX
+            let predictedY = scaleY*cuaPoint.y + offsetY
+            let residual = hypot(predictedX-sckPoint.x, predictedY-sckPoint.y)
+            anchors.append(AutomaticOcrAnchor(text: text, cuaPoint: cuaPoint, sckPoint: sckPoint,
+                residualSourcePixels: residual))
+        }
+        guard anchors.count >= 3 else { throw AutomaticAnchorMappingError.insufficientUniqueAnchors }
+        var maxTriangleArea = 0.0
+        for i in 0..<(anchors.count-2) {
+            for j in (i+1)..<(anchors.count-1) {
+                for k in (j+1)..<anchors.count {
+                    let a = anchors[i].cuaPoint, b = anchors[j].cuaPoint, c = anchors[k].cuaPoint
+                    let area = abs((b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x))/2
+                    maxTriangleArea = max(maxTriangleArea, area)
+                }
+            }
+        }
+        guard maxTriangleArea/(cw*ch) >= minimumTriangleAreaFraction else {
+            throw AutomaticAnchorMappingError.anchorsNotDispersed
+        }
+        let residual = anchors.map(\.residualSourcePixels).max() ?? .infinity
+        guard residual <= maximumResidualPixels else { throw AutomaticAnchorMappingError.residualTooLarge(residual) }
+        return AutomaticAnchorMapping(scaleX: scaleX, scaleY: scaleY, offsetX: offsetX, offsetY: offsetY,
+            anchors: anchors, maximumResidualSourcePixels: residual, uncertaintyPixels: max(2, residual))
+    }
+}

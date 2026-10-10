@@ -1,0 +1,25 @@
+{
+  "dispatch_outcome": "RETURNED",
+  "trigger_outcome": "TRIGGER_CONFIRMED",
+  "dispatch_evidence": {
+    "run_id": "RUN-20261004-project-album57-45ee0a78",
+    "action_id": "ACTION-RUN-20261004-project-album57-45ee0a78",
+    "execution_id": "OWNER-45ee0a78972048b787c7e3ded76f2e31",
+    "observed_at": "2026-10-05T01:25:20.277Z",
+    "save_all_click_count": 1,
+    "save_all_invocation_attempted": true,
+    "failure_boundary": "NONE",
+    "folder_chooser_appeared": true,
+    "download_started": false,
+    "provenance": "Actual CUA single uninterrupted call, started2026-10-05T01:25:18.608Z, action calls finished2026-10-05T01:25:20.277Z: ellipsis[610,100]RETURNED, bounded1200mswait, SaveAll[635,273]invocation marked before coordinate call, count1,RETURNED. No observation/persistence/keyboard/appswitch between clicks. Immediate post-action AX+visual shows macOS open-panel folder chooser, 打開/取消 and Downloads current location. This is actual trigger proof; destination has not yet been confirmed. No native production calibration or raw-provider receipt claimed."
+  },
+  "actual_boundary_trace": {
+    "ellipsis_invocation_entered": true,
+    "ellipsis_result": "RETURNED",
+    "save_all_invocation_entered": true,
+    "save_all_click_count": 1,
+    "save_all_result": "RETURNED",
+    "requested_wait_ms": 1200,
+    "error": null
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": 2,
+  "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+  "group_name": "旻謙允禎成長日記",
+  "backup_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/backups",
+  "app_identifier": "jp.naver.line.mac",
+  "max_albums_per_run": 1,
+  "recovery_limit": 1,
+  "poll_interval_seconds": 5,
+  "stable_samples": 3,
+  "max_wait_seconds": 600
+}

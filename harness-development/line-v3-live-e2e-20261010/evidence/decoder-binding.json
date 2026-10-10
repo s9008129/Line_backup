@@ -1,0 +1,9 @@
+{
+  "binary_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/bin/image_decode",
+  "binary_sha256": "1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf",
+  "compiler_sha256": "2ed38571e92c0283091838c1649e27650ad9c99950288e883c7b2dc6c4ce89fb",
+  "sdk_path": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+  "sdk_resolved_path": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk",
+  "source_sha256": "238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b",
+  "target": "arm64-apple-macosx26.5"
+}

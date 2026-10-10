@@ -1,0 +1,30 @@
+{
+  "status": "ALL_COMPLETE",
+  "opens": [
+    {
+      "end_date": "2024-06-01",
+      "expected_images": 2,
+      "start_date": "2024-06-01"
+    },
+    {
+      "end_date": "2024-06-02",
+      "expected_images": 3,
+      "start_date": "2024-06-02"
+    }
+  ],
+  "dispatches": [
+    "ACTION-25cec1c8efba4c4ebc17db9843f22a8a",
+    "ACTION-233ecd166cb34d418c550c557d13c880"
+  ],
+  "confirms": [
+    "ACTION-25cec1c8efba4c4ebc17db9843f22a8a",
+    "ACTION-233ecd166cb34d418c550c557d13c880"
+  ],
+  "verified_runs": [
+    "seed-dc2eb5997a7e4f9b9fecf2ed261d4b07",
+    "seed-d5467ce9b44540de8ed19be246f93bd7",
+    "RUN-v3-a0784cae6c764bfe95b342d1f1ba42cd",
+    "RUN-v3-6d96d4427f3b42b9ac5a19a03f375be8"
+  ],
+  "prior_runs_preserved": true
+}

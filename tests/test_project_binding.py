@@ -17,23 +17,24 @@ from line_backup_acceptance import project_binding as pb
 from line_backup_acceptance.cli import main, parser
 
 REPO = Path(__file__).resolve().parents[1]
-TASK = REPO / 'harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b'
+TASK = Path(os.environ.get('LINE_BACKUP_BATCH_TASK', REPO / 'harness-development/line-v3-live-e2e-20261010'))
+SEED = Path(os.environ.get('LINE_BACKUP_INSPECTION_TEST_ROOT', TASK / 'fixtures')) / 'project_binding_seed'
 
 
 def fixture(root):
     (root / 'config').mkdir(); (root / 'state').mkdir()
     shutil.copytree(REPO / 'src/line_backup_acceptance', root / 'src/line_backup_acceptance')
-    cfg = json.loads((REPO / pb.CONFIG_PATH).read_bytes())
+    cfg = json.loads((SEED / pb.CONFIG_PATH).read_bytes())
     cfg['backup_root'] = str(root / 'backups')
-    state = json.loads((REPO / pb.STATE_PATH).read_text().replace(str(REPO), str(root)))
+    state = json.loads((SEED / pb.STATE_PATH).read_text().replace(str(REPO), str(root)))
     for entry in state['verified_albums']:
         _, relative, _ = pb.parse_binding_reference(entry['evidence'])
         dest = root / relative; dest.parent.mkdir(parents=True, exist_ok=True)
-        record = json.loads((REPO / relative).read_text().replace(str(REPO), str(root)))
+        record = json.loads((SEED / relative).read_text().replace(str(REPO), str(root)))
         record['fixture_provenance'] = 'Synthetic root rebasing of retained identity join; no actual new native observation'
         for proof in record['evidence']:
             if proof['path'].endswith('/filesystem-verification.json'):
-                original = REPO / Path(proof['path']).relative_to(root)
+                original = SEED / Path(proof['path']).relative_to(root)
                 target = Path(proof['path']); target.parent.mkdir(parents=True, exist_ok=True)
                 proof_bytes = original.read_bytes(); target.write_bytes(proof_bytes)
                 proof.update(bytes=len(proof_bytes), sha256=pb.sha(proof_bytes))
@@ -440,7 +441,7 @@ class ProjectBindingTests(unittest.TestCase):
     def test_wire_schema_offline(self):
         from jsonschema import Draft202012Validator, FormatChecker
         from referencing import Registry
-        schema = json.loads((TASK / 'project-binding-report.schema.json').read_bytes())
+        schema = json.loads((TASK / 'contracts/project-binding-report.schema.json').read_bytes())
         def refuse(uri): raise AssertionError('external schema lookup ' + uri)
         v = Draft202012Validator(schema, registry=Registry(retrieve=refuse), format_checker=FormatChecker())
         v.validate(self.inspect()[0]); v.validate(self.inspect('2024-05-13', '2024-05-17', 57)[0])
