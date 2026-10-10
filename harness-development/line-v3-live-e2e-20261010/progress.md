@@ -1,13 +1,28 @@
-# 進度
+# 進度（implement-02 / live-bridge 這輪）
 
-本輪目標是採用唯一 v3 writer，完成兩本不同、尚未 VERIFIED 相簿的完整下載與狀態提交，並實際驗證第一本完成後的 bounded scroll 和第二本重新定位。
+## 我們在解決什麼
 
-目前仍在離線整合階段。使用者已表示 LINE 群組相簿列表目前在前景並允許實作後測試；但因離線硬 gate 未通過，這次前景交接尚未用於擷取或輸入。canonical state 尚未遷移、照片目的地尚未準備或變更，亦無本輪 live catalog 或下載證據。若新計畫解除前置阻塞，我會在輸入前重新確認目標畫面與前景新鮮度。
+目標是用唯一 v3 writer 完成兩本不同、尚未 VERIFIED 相簿的完整下載與狀態提交，並實際驗證第一本完成後的 bounded scroll 與第二本重新定位。這一輪把「離線與授權前置」全部做完，並把 live 分支還缺什麼用可重跑的方式證明出來；LINE 前景沒有被操作，任何點擊、Save All、chooser、下載次數都是 0。
 
-已確認 Python 回歸收據 `f3ee5d7423a24d8199ba2f33cc8781ca` 通過 41 項 batch、31 項 hermetic project-binding、5 項 transaction-core 測試；Node adapter 收據 `4b0b62cd61364344a68f047a56d20276` 通過 10 項測試。這些結果只適用於收據綁定的 source snapshot，尚不是整份合併來源的最終 source-freeze 驗證。
+## 目前狀態（白話）
 
-Swift 26.5 最新收據 `24fbfc8ff57743af97e60a9edc25ba23` 建置成功並執行 320 項測試，其中 317 項通過，3 項 `ProjectBackupBinding` 測試因 nested fixture `state.json` 仍保留舊 task root 的 destination／intent 路徑而以 `inconsistentAuthority` 失敗。之後發現較早的收據 `85355bab929e445c8719cd6056e3c591` 曾在同一 mapper root issue 執行同樣的 320 項套件，亦有 3 項相同失敗，當時未進 ledger。補回此收據後，該 root issue 實際共有四次執行，超出三次上限；本輪不再重跑，並將此記為 attempt-policy overrun 交由 Planner 重新決定。兩次失敗收據與完整實際序號均保留。
+- **已完成且有收據**：source freeze（21 個產品檔、`7e7f124a…`）、兩份 live grants、G_AUTH 全 operation PASS、G_OFFLINE 四組收據（Python 67/31/5、Node adapter、Node --check、Swift 26.5 325 項 0 失敗，用的是使用者核准的唯一一次例外額度）、schema 2 rev34 → schema 3 rev35 遷移（快照 `ed8075e7…` 保存、讀回 `45505011…`，只有 schema_version/revision/active_batch 改變，歷史 runs 與兩本 VERIFIED 完全相同）。
+- **live runner 已建好**：`live_runner.mjs`（`d3936b1f…`）通過 `node --check`，adapter 形狀的假 I/O 測試 11/11，capture/guard 兩種模式的 routing 測試也 PASS。它是把既有 CLI、adapter、rev28ctl producer 接起來的橋，不改產品行為。
+- **新發現的兩個結構性阻塞（D1/D2）**：任何 observation frame 都必須附一張 SCREEN_CAPTURE_KIT sidecar 影格；但我們唯一的 producer `rev28ctl album-support` 只能在「相簿選單打開、且 OCR 看得到『儲存全部』」時工作。catalog、detail、chooser 這些畫面沒有開選單，因此拿不到 sidecar。另外，把 LINE 的 AX 畫面轉成 17-key observation 的 classifier 目前只有測試假件，沒有可上線的實作。證據可重跑：`checks/live_support_requirement_proof.py`（`22c0c1ee…`）與 `evidence/live-branch-proof.stdout`（`0888a211…`）。
+- **狀態沒有被破壞**：遷移前快照、舊 runs、兩本 VERIFIED、目的地 239 個既有檔案、802 條 dirty/untracked 工作全部保全；index 仍是空的、HEAD 仍是 `7172604d…`（G_PRESERVE 檢查：baseline 648 條 untracked 與 11 條 dirty 全數還在）。
 
-目前的具體阻塞還包括：正式 SCK capture／Vision OCR sidecar producer 與 hosted CUA menu guard 尚未接線；transaction audit 中的 nested mutation authority、GUI invocation 記帳、directory preparation receipt、commit 前後內容穩定性也在唯讀複核中。尚未完成 structured execution grant、source freeze、revision 34→35 遷移、live preflight、兩本 lifecycle、實際 scroll、完整 E2E 報告或獨立 Acceptance。本輪離線部分報告已建立於 task package；使用者之後明確要求建立本機部分 checkpoint，故只完成局部 staging 與 local commit，沒有 push。G_DELIVERY 仍為 PARTIAL，整體任務仍 BLOCKED。
+## 嘗試與學到什麼
 
-最近一次 Swift 嘗試提供了新資訊：fixture authority 校驗會檢查巢狀 state destinations，不接受只改 report request root；而漏登的執行揭露了同一 root issue 的嘗試次數超限。唯讀 Planner 已建議保留四次收據、停止該 issue，先請新 Planner 計畫提出既有 policy 下的合法 G_OFFLINE 路徑。部分報告、format 3 role result 與 blocker packet 已保存；因 native stage validator 沒有提供，本輪只能記錄自行使用官方 schema 的檢查結果，不能聲稱 controller admission 或 result receipt。G_OFFLINE 未通過，不進入 state migration 或 LINE live 操作；下一步需使用者決定是否啟動新的 Critical Planner 計畫。
+本輪 ledger（`attempt-ledger.json`，現為 28 筆，最新 sha `d67fdaf7…`）新增兩筆：第 27 筆是 live runner 建置＋三個唯讀 helper 的平行複核（介面稽核確認最後一個 routing 缺陷已修、沒有新缺陷；smoke 11/11）；第 28 筆是 D1/D2 的可執行結構證明。兩筆都有新資訊，沒有連續無進展。第 28 筆教會我們：現在缺的不是「再接一條線」，而是一個新的 producer 能力與 classifier，必須由新計畫決定，不能由實作端臨時補。
+
+## 卡在哪裡、需要什麼決定
+
+需要一個明確決定（D1/D2，詳見 `blocker-packet.md` 與 `E2E測試報告.md`）：
+
+- **A（建議）**：開一個新的 Critical Planner 計畫，新增非選單畫面的 full-display SCK sidecar producer、真實 menu geometry provider、可上線的 AX classifier 與 chooser locator。Swift 預算視為新的 root issue（舊 issue 的四次收據不刪不改）。
+- **B**：由新計畫改寫 observation 證據政策，允許非選單畫面用 CUA 影格而不再強制每格 SCK sidecar——這是證據政策變更，需要使用者明確同意。
+- **C**：暫停／縮小 live E2E 範圍，只保留已完成且有證據的離線、授權與遷移成果。
+
+## 如果下一步失敗會怎樣
+
+若 A 案的新計畫仍拿不到可用的 non-menu sidecar，或 classifier 無法用真機畫面接地，live 分支會再次停在同一個 material blocker；我們會保留新的事實與收據，回到使用者面前重新選 B 或 C，不會私下放寬 gate、不會重送 Save All、也不會用測試假件冒充實機證據。

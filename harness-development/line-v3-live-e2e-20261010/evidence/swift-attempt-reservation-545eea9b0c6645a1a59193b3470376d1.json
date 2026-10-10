@@ -1,0 +1,17 @@
+{
+  "attempt_index": "5th Swift package attempt overall; 1st and only extra attempt",
+  "consumed_before_subprocess": true,
+  "continuation": "implement-02",
+  "granted_by": "user request_user_input reply: swift_attempt_exception = 核准單次例外",
+  "kind": "swift-extra-attempt-reservation",
+  "not_retryable": true,
+  "plan_ref": "harness-development/line-v3-live-e2e-20261010/continuations/implement-02/plan.md (Swift 例外)",
+  "preconditions": [
+    "static audit completed; compile blocker fixed: FrameCapture.swift:200 uses ExplicitLineCaptureSelection.validRect",
+    "runtime assertion fixed: NativeObservationSessionTests.swift:897 compares y",
+    "fixture chain rebuilt from canonical builder; inventory 97 entries"
+  ],
+  "reservation_id": "545eea9b0c6645a1a59193b3470376d1",
+  "started_at": "2026-10-10T09:58:58.088727+00:00",
+  "task_id": "TASK-20261010-line-v3-live-e2e"
+}

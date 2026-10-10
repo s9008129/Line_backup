@@ -173,11 +173,124 @@ def validate_config(cfg, root):
     for key in CONFIG_KEYS - {'schema_version', 'group_key', 'group_name', 'backup_root', 'app_identifier'}:
         if not integer(cfg[key], 1):
             fail('INVALID_CONFIG', 'Invalid config numeric setting')
-    if cfg['max_albums_per_run'] != 1 or cfg['recovery_limit'] != 1:
+    if cfg['recovery_limit'] != 1:
         fail('INVALID_CONFIG', 'Unsupported album or recovery limit')
 
 
-def validate_history(state, cfg, reader):
+def _same_json(left, right):
+    """JSON equality that does not conflate booleans, integers and floats."""
+    if type(left) is not type(right):
+        return False
+    if isinstance(left, dict):
+        return left.keys() == right.keys() and all(_same_json(left[k], right[k]) for k in left)
+    if isinstance(left, list):
+        return len(left) == len(right) and all(_same_json(a, b) for a, b in zip(left, right))
+    return left == right
+
+
+def _read_evidence_entry(reader, entry):
+    if not isinstance(entry, dict) or set(entry) != {'path', 'bytes', 'sha256'}:
+        fail('INVALID_PROJECT_HISTORY', 'Evidence artifact entry shape is invalid')
+    path = entry['path']
+    if (not canonical_path(path) or not path.startswith(reader.root + '/')
+            or not integer(entry['bytes']) or not isinstance(entry['sha256'], str)
+            or not re.fullmatch(r'[0-9a-f]{64}', entry['sha256'])):
+        fail('INVALID_PROJECT_HISTORY', 'Evidence artifact entry is outside the selected project or malformed')
+    raw, _ = reader.read(path[len(reader.root) + 1:], 'INVALID_PROJECT_HISTORY')
+    if len(raw) != entry['bytes'] or sha(raw) != entry['sha256']:
+        fail('INVALID_PROJECT_HISTORY', 'Evidence artifact entry digest/size changed')
+    return raw
+
+
+def _validate_evidence_content(data, kind, entry, run, cfg, reader):
+    """Join source identity and verification to their history; hashing alone is insufficient."""
+    def bad(message):
+        fail('INVALID_PROJECT_HISTORY', message)
+    record = strict_json(data, 'INVALID_PROJECT_HISTORY')
+    if not isinstance(record, dict) or record.get('app_identifier') != cfg['app_identifier']:
+        bad('Evidence content has an invalid application identity')
+    fp = record.get('fingerprint')
+    if not isinstance(fp, dict) or not _same_json(fp, entry['fingerprint']):
+        bad('Evidence content fingerprint disagrees with registry')
+    if kind == 'user_fact':
+        if entry['source_kind'] != 'user_attestation' or run is not None:
+            bad('User fact cannot claim a verified machine run')
+        if (record.get('record_version') != '1.0' or record.get('kind') != 'source_identity_user_fact'
+                or record.get('status') != 'CONFIRMED' or record.get('source_correspondence_result') != 'CONFIRMED'
+                or record.get('merge_prohibited') is not True
+                or record.get('raw_requested_group') != cfg['group_name']):
+            bad('User fact lacks exact confirmed source identity')
+        if 'group_key' in record and record['group_key'] != entry['group_key']:
+            bad('User fact group identity is contradictory')
+        if record.get('run_id') is not None:
+            bad('User attestation must not claim a machine run')
+        if 'destination' in record and record['destination'] not in entry['destinations']:
+            bad('User fact destination disagrees with registry')
+        question, answer = record.get('question'), record.get('answer')
+        if (not isinstance(question, dict) or not isinstance(question.get('text'), str) or not question['text'].strip()
+                or not isinstance(answer, dict) or not isinstance(answer.get('raw'), str) or not answer['raw'].strip()):
+            bad('User fact question/answer is missing')
+        part = answer.get('part_2')
+        label = fp['start_date'].replace('-', '/') + '～' + fp['end_date'][5:].replace('-', '/')
+        if (not isinstance(part, dict) or part.get('confirms_same_source') is not True
+                or part.get('confirmed_group_string') != cfg['group_name'] or part.get('confirmed_album') != label
+                or not integer(part.get('confirmed_expected_images'), 1)
+                or part['confirmed_expected_images'] != fp['expected_images']):
+            bad('User fact answer does not confirm this exact group/album/count')
+        proof = record.get('evidence')
+        if not isinstance(proof, list) or not proof:
+            bad('User fact evidence is missing')
+        for item in proof:
+            _read_evidence_entry(reader, item)
+        return
+    if entry['source_kind'] != 'filesystem_verification' or run is None:
+        bad('Filesystem source evidence must link to an exact verified run')
+    if (record.get('group_key') != entry['group_key'] or record.get('run_id') != run['run_id']
+            or record.get('destination') != run['destination']):
+        bad('Evidence content group/run/destination disagrees with verified history')
+    if not any(event['phase'] == 'VERIFIED' and event['evidence'] == entry['evidence'] for event in run['events']):
+        bad('Registry evidence reference is not bound by the verified run event')
+    if kind == 'fixture':
+        # A fixture is still synthetic: exact content joins never grant native readiness.
+        installed = Path(__file__).resolve().parents[2]
+        if not (Path(reader.root).is_relative_to(installed / 'harness-development') and '/fixtures/' in reader.root):
+            bad('Fixture history cannot authorize the live project')
+        if not _same_json(record.get('verification'), run['verification']):
+            bad('Fixture evidence verification disagrees with verified history')
+        return
+    if (kind != 'join' or record.get('record_version') != '1.0'
+            or record.get('kind') != 'actual_cua_source_identity_join'
+            or record.get('join_authority') != 'authoritative_exact_join'):
+        bad('Unsupported or non-authoritative join evidence')
+    if record.get('test_mode') is True:
+        installed = Path(__file__).resolve().parents[2]
+        if not (Path(reader.root).is_relative_to(installed / 'harness-development') and '/fixtures/' in reader.root):
+            bad('Synthetic joins cannot authorize the live project')
+    proof = record.get('evidence')
+    if not isinstance(proof, list) or not proof:
+        bad('Join verification evidence is missing')
+    paths = []
+    for item in proof:
+        if (not isinstance(item, dict) or set(item) != {'path', 'bytes', 'sha256'}
+                or not canonical_path(item['path']) or not item['path'].startswith(reader.root + '/')
+                or not integer(item['bytes']) or not isinstance(item['sha256'], str)
+                or not re.fullmatch(r'[0-9a-f]{64}', item['sha256'])):
+            bad('Join evidence entries are malformed or outside the selected project')
+        paths.append(item['path'])
+    if len(set(paths)) != len(paths):
+        bad('Join evidence entries are duplicated')
+    verification = [item for item in proof if item['path'].endswith('/filesystem-verification.json')]
+    if len(verification) != 1:
+        bad('Join lacks one exact filesystem verification artifact')
+    raw = _read_evidence_entry(reader, verification[0])
+    if not _same_json(strict_json(raw, 'INVALID_PROJECT_HISTORY'), run['verification']):
+        bad('Join verification content disagrees with verified history')
+
+
+def validate_history(state, cfg, reader, *, allow_v3=False):
+    # Frozen historical Operator.load calls this before lock creation/mkdir.
+    if isinstance(state, dict) and state.get('schema_version') == 3 and not allow_v3:
+        fail('LEGACY_WRITER_DISABLED', 'V3 history is read-only to legacy callers')
     try:
         validate_state_strict(state)
     except (AcceptanceError, KeyError, TypeError):
@@ -235,6 +348,7 @@ def validate_history(state, cfg, reader):
         for d in e['destinations']:
             destination(d)
         rid = e['verified_run_id']
+        r = None
         if e['source_kind'] == 'filesystem_verification':
             r = by_id.get(rid)
             if r is None or r['workflow_outcome'] != 'VERIFIED' or r['group_key'] != e['group_key'] or r['fingerprint'] != e['fingerprint'] or r['destination'] not in e['destinations']:
@@ -247,6 +361,7 @@ def validate_history(state, cfg, reader):
         data, _ = reader.read(ref[1], 'INVALID_PROJECT_HISTORY')
         if sha(data) != ref[2]:
             bad('Registry evidence reference digest changed')
+        _validate_evidence_content(data, ref[0], e, r, cfg, reader)
     return by_id
 
 
@@ -273,7 +388,7 @@ def history_decision(state, target, by_id):
                  verified_match_run_ids=verified, verified_match_registry_count=registries,
                  unresolved_run_ids=unresolved_ids, purported_release_run_ids=releases,
                  destination_status='NOT_INSPECTED_BLOCKED')
-    if state['active_writer_id'] is not None or state['context_lock'] is not None or any(
+    if state.get('active_batch') is not None or state['active_writer_id'] is not None or state['context_lock'] is not None or any(
             r['fingerprint'] != fp and unresolved(r) for r in runs):
         decision = 'PROJECT_BUSY'
     elif verified or registries:
@@ -340,7 +455,7 @@ def inspect(project_root, start_date, end_date, expected_images):
         cfg = strict_json(raw_config, 'INVALID_CONFIG')
         state = strict_json(raw_state, 'INVALID_STATE')
         validate_config(cfg, project_root)
-        by_id = validate_history(state, cfg, reader)
+        by_id = validate_history(state, cfg, reader, allow_v3=True)
         fp = dict(start_date=start_date, end_date=end_date, expected_images=expected_images)
         relative = f"backups/{cfg['group_name']}/{start_date}_{end_date}_{expected_images}張"
         target = dict(group_key=cfg['group_key'], fingerprint=fp, proposed_destination=project_root + '/' + relative)
@@ -359,6 +474,16 @@ def inspect(project_root, start_date, end_date, expected_images):
             files.append(dict(path=path, bytes=len(data), sha256=sha(data)))
             aggregate.update(path.encode() + b'\0' + data + b'\0')
             materials.append((path, data, identity))
+        if state['schema_version'] == 3:
+            from line_backup_batch.store import SOURCE_PATHS, sources
+            sources(reader)  # Includes membership checks for the new producer.
+            for path in SOURCE_PATHS:
+                if path in paths:
+                    continue
+                data, identity = reader.read(path)
+                files.append(dict(path=path, bytes=len(data), sha256=sha(data)))
+                aggregate.update(path.encode() + b'\0' + data + b'\0')
+                materials.append((path, data, identity))
         # Second round binds actual bytes and file identities, without claiming a writer lease.
         for path, (data, identity) in list(reader.observations.items()):
             if reader.read(path) != (data, identity):

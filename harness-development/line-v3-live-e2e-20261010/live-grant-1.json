@@ -1,0 +1,38 @@
+{
+  "grant_version": "line-batch-execution-grant-1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "fixture": false,
+  "artifact_dir": "harness-development/line-v3-live-e2e-20261010",
+  "owner": "execution-live-g1",
+  "operations": [
+    "migrate",
+    "begin",
+    "admit",
+    "prepare",
+    "calibrate",
+    "intent",
+    "dispatch",
+    "finalize",
+    "finish",
+    "release",
+    "gui_reserve",
+    "gui_consume"
+  ],
+  "config_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+  "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+  "album_quota": 2,
+  "lifecycle_album_limit": 1,
+  "save_all_dispatch_limit": 2,
+  "chooser_confirmation_limit": 2,
+  "reversible_gui_invocation_limit": 1000,
+  "authorization_evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/authorization.json",
+    "bytes": 2355,
+    "sha256": "f76537de691105232e252cf27b74a30f471be1f7dc8e0ad378ea991410c3bf8f"
+  },
+  "acceptance_evidence": null,
+  "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+  "native_binary_sha256": "1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf",
+  "gui_ledger": "harness-development/line-v3-live-e2e-20261010/gui-ledger.json"
+}

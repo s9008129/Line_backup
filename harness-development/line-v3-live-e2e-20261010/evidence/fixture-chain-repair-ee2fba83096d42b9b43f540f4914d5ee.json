@@ -1,0 +1,140 @@
+{
+  "branch": "v43-ab/codex-rev28",
+  "builder": {
+    "bytes": 5316,
+    "path": "harness-development/line-v3-live-e2e-20261010/regenerate_swift_inspection.py",
+    "sha256": "bca86b0e3fb714bdf1f6aff959523804a26ff7ea704de2cb95378ca1e0c92372"
+  },
+  "cases": {
+    "ambiguous": {
+      "decision": "AMBIGUOUS_FINGERPRINT",
+      "expected": "AMBIGUOUS_FINGERPRINT",
+      "outer_config": {
+        "bytes": 433,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/ambiguous/config.json",
+        "sha256": "2bb2c799606ce4f9eac1f4ddb3d396472b5cc884b09dc1183f3dc41cc36339f2"
+      },
+      "outer_state": {
+        "bytes": 62250,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/ambiguous/state.json",
+        "sha256": "1e79b0e235ae4b945fb8577c1745d9fcc8cb8a13c1e0ccedc06a34e0d9df5d8d"
+      },
+      "stdout": {
+        "bytes": 3491,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/ambiguous/stdout.json",
+        "sha256": "0a1d6d08a6f4320c311d21f6d3058a081520bfc3c4bf747ab14bb4dc7cb4b2de"
+      }
+    },
+    "busy": {
+      "decision": "PROJECT_BUSY",
+      "expected": "PROJECT_BUSY",
+      "outer_config": {
+        "bytes": 428,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/busy/config.json",
+        "sha256": "c88b5e64450f75b686d89757df06b68289860d2f4292c5a9c3fb824b7e448ee4"
+      },
+      "outer_state": {
+        "bytes": 62224,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/busy/state.json",
+        "sha256": "5c4b66a0a575a9bd110e3cf12058e69fbe7ed1c3e5b893b831fe6a26a6f01508"
+      },
+      "stdout": {
+        "bytes": 3460,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/busy/stdout.json",
+        "sha256": "d11806ce36de2e6cf976d200f23e57ea1665964c3385ac9a54d5a3bc0590cd23"
+      }
+    },
+    "destination": {
+      "decision": "BLOCKED_DESTINATION",
+      "expected": "BLOCKED_DESTINATION",
+      "outer_config": {
+        "bytes": 435,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/destination/config.json",
+        "sha256": "158b816f8c4c5e79dd84970c9d2b73d7f55651b8d9e9335e3d97ac162a5a1929"
+      },
+      "outer_state": {
+        "bytes": 62262,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/destination/state.json",
+        "sha256": "14f617b68d3337debf12608c8fbffcc7c76c316a1652fd451c51b9b3941b8461"
+      },
+      "stdout": {
+        "bytes": 3485,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/destination/stdout.json",
+        "sha256": "c8c73859ded3e9ead72290f1da7dbc04244dd31b06dc2c2e82c76a8d0f3c65f4"
+      }
+    },
+    "eligible": {
+      "decision": "PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION",
+      "expected": "PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION",
+      "outer_config": {
+        "bytes": 432,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/eligible/config.json",
+        "sha256": "b80c358659823aece8f02522cf806aa2695bef4483bbf52de9ade8cbda3c2aff"
+      },
+      "outer_state": {
+        "bytes": 62244,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/eligible/state.json",
+        "sha256": "300d37455510925af36617c59ee35f0d8ec7e4786f2627edc57c9cdbbeda302b"
+      },
+      "stdout": {
+        "bytes": 3509,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/eligible/stdout.json",
+        "sha256": "6767a1972aae8725591cb199cd47476a02bda039b8b57efcad65861a1cde1566"
+      }
+    },
+    "unresolved": {
+      "decision": "BLOCKED_UNRESOLVED",
+      "expected": "BLOCKED_UNRESOLVED",
+      "outer_config": {
+        "bytes": 434,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/unresolved/config.json",
+        "sha256": "0fae4dc90752d995310605f44ff7438379cfae479f80628473a655f944efb249"
+      },
+      "outer_state": {
+        "bytes": 108720,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/unresolved/state.json",
+        "sha256": "7e40e027ee5df0ff6bcf45f7bac475dbc0a7a2f6984c18ebdda8888b548f7809"
+      },
+      "stdout": {
+        "bytes": 3505,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/unresolved/stdout.json",
+        "sha256": "602491392503d68b846cadc6c91c4f2ec37130b2d25e1b626442b0d78d45e8c1"
+      }
+    },
+    "verified": {
+      "decision": "SKIP_VERIFIED",
+      "expected": "SKIP_VERIFIED",
+      "outer_config": {
+        "bytes": 432,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/verified/config.json",
+        "sha256": "c6d3b5a6f27f92cb2729e09cc2143f36393b5164e41e7fb2814362f709281649"
+      },
+      "outer_state": {
+        "bytes": 62244,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/verified/state.json",
+        "sha256": "21e750133b3b7e875d072ed33f61d2fdc4328fb7965adc3c6b649471bea65e93"
+      },
+      "stdout": {
+        "bytes": 3511,
+        "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection/verified/stdout.json",
+        "sha256": "3f5bba2c7cb15cc67e6129153369c25b8d7be08cb2cb44211ac98013822486e5"
+      }
+    }
+  },
+  "generated_at": "2026-10-10T09:57:26.849630+00:00",
+  "head": "7172604db0ed6b7f51456fb38ba6b1baa0adbf49",
+  "inventory": {
+    "bytes": 25754,
+    "path": "harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection-inventory.json",
+    "sha256": "086c3b387440c6f8f137fd9a0415ee22cbb27a828154fe64d82e19c0bfdf438f"
+  },
+  "inventory_entries": 97,
+  "kind": "fixture-chain-repair-receipt",
+  "notes": [
+    "outer config/state bytes are copies of the inner project config/state bytes",
+    "six decisions were re-verified after the rebuild; Swift package test run still pending"
+  ],
+  "pre_regen_backup": "/tmp/swift-inspection-pre-regen-1791624789",
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "verified_against": "tests/test_project_binding.py::fixture() canonical builder; each stdout.json compared byte-identical to a fresh pb.inspect of the same fixture root"
+}

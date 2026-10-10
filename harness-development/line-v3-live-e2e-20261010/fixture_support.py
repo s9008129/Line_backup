@@ -63,7 +63,8 @@ class Fixture:
             project_root=str(self.root),fixture=True,artifact_dir=self.artifacts,owner=self.owner,operations=list(operations),
             config_sha256=receipt['config_sha256'],source_sha256=receipt['source_sha256'],album_quota=0,lifecycle_album_limit=0,
             save_all_dispatch_limit=0,chooser_confirmation_limit=0,reversible_gui_invocation_limit=0,
-            authorization_evidence=None,acceptance_evidence=None)
+            authorization_evidence=None,acceptance_evidence=None,
+            contract_sha256=None,native_binary_sha256=None,gui_ledger=None)
     def observation(self,identities,surface='ALBUMS',top=False,bottom=False):
         self.serial+=1
         raw=png(marker=self.serial);image=self.ref('frame-'+uuid.uuid4().hex+'.png',raw)

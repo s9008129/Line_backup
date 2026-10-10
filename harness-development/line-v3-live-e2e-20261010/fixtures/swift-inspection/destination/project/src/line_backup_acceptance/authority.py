@@ -142,6 +142,7 @@ def validate_transaction(ns) -> dict[str, Any]:
         raw_state = read_json(expected_state)
     except AcceptanceError as exc:
         raise AcceptanceError("INVALID_AUTHORITY", f"canonical state cannot be preflighted: {exc.message}", 2) from exc
+    raise AcceptanceError('LEGACY_WRITER_DISABLED', 'Production transactions use the canonical v3 service', 4)
     backup_root = Path(cfg["backup_root"])
     if not exact_real_path(backup_root) or not backup_root.is_dir():
         raise AcceptanceError("INVALID_AUTHORITY", "configured backup root is not a canonical directory", 2)

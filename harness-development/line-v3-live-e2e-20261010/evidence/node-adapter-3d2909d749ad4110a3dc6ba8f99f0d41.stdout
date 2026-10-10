@@ -1,0 +1,44 @@
+✔ original pair contains only two clicks and timer; one-shot cannot replay (1.210083ms)
+✔ loaded JSON cannot mint a dispatch or chooser capability (0.178458ms)
+✔ fixture authority cannot mint a live app dispatch token (0.339792ms)
+✔ ellipse error never invokes SaveAll; all tokens stay consumed (0.183042ms)
+✔ SaveAll error is attempted once and prohibits replay (0.15025ms)
+✖ expired capture and expired second-click boundary both stop (0.390375ms)
+✔ correct chooser path and fresh control confirmed exactly once (0.943042ms)
+✔ wrong full path refuses navigation/confirmation (0.166375ms)
+✔ a stale field index is refused before typing (0.115125ms)
+✔ native scroll is limited to one quarter viewport per invocation (0.12675ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 9
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 52.411833
+
+✖ failing tests:
+
+test at tests/test_cua_adapter.mjs:65:1
+✖ expired capture and expired second-click boundary both stop (0.390375ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /PERMIT_EXPIRED_BEFORE_SAVE_ALL/. Input:
+  
+  'Error: PERMIT_EXPIRED_BEFORE_MENU_CAPTURE'
+  
+      at async TestContext.<anonymous> (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_cua_adapter.mjs:70:3)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: PERMIT_EXPIRED_BEFORE_MENU_CAPTURE
+        at requireFact (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/scripts/line_backup_cua_adapter.mjs:5:51)
+        at Object.originalAtomicDispatch (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/scripts/line_backup_cua_adapter.mjs:69:7)
+        at async waitForActual (node:assert:615:5)
+        at async strict.rejects (node:assert:738:25)
+        at async TestContext.<anonymous> (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_cua_adapter.mjs:70:3)
+        at async Test.run (node:internal/test_runner/test:1404:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:969:7),
+    expected: /PERMIT_EXPIRED_BEFORE_SAVE_ALL/,
+    operator: 'rejects',
+    diff: 'simple'
+  }

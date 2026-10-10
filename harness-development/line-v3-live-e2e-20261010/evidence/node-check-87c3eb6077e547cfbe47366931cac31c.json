@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/opt/homebrew/bin/node",
+    "--check",
+    "scripts/line_backup_cua_adapter.mjs"
+  ],
+  "attempt_id": "87c3eb6077e547cfbe47366931cac31c",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "exit_code": 0,
+  "kind": "node-syntax-check",
+  "stderr_bytes": 0,
+  "stderr_path": "harness-development/line-v3-live-e2e-20261010/evidence/node-check-87c3eb6077e547cfbe47366931cac31c.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stdout_path": "harness-development/line-v3-live-e2e-20261010/evidence/node-check-87c3eb6077e547cfbe47366931cac31c.stdout",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

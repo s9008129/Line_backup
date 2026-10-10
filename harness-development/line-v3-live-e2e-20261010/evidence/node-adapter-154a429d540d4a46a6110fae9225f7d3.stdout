@@ -1,0 +1,26 @@
+✔ original pair contains only two clicks and timer; one-shot cannot replay (1.649ms)
+✔ loaded JSON cannot mint a dispatch or chooser capability (0.212959ms)
+✔ fixture authority cannot mint a live app dispatch token (0.089959ms)
+✔ ellipse error never invokes SaveAll; all tokens stay consumed (0.130959ms)
+✔ SaveAll error is attempted once and prohibits replay (0.129375ms)
+✔ expired capture and expired second-click boundary both stop (0.173542ms)
+✔ correct chooser path and fresh control confirmed exactly once (1.159625ms)
+✔ wrong full path refuses navigation/confirmation (0.167333ms)
+✔ a stale field index is refused before typing (0.145084ms)
+✔ native scroll is limited to one quarter viewport per invocation (0.158875ms)
+✔ SCK pair and popup frames stay distinct and guard binds both ids (0.154584ms)
+✔ SCK capture refuses a popup frame equal to the pair frame (0.084708ms)
+✔ popup frame equal to the pair frame refuses before SaveAll (0.0865ms)
+✔ guard popup frame mismatch refuses before SaveAll (0.077209ms)
+✔ guard action point change refuses before SaveAll (0.069708ms)
+✔ menu callbacks are required before the ellipsis click (0.07875ms)
+✔ GUI ledger reserve precedes the ellipsis and consume follows SaveAll (0.147959ms)
+✔ exhausted GUI ledger refuses the dispatch with zero clicks (0.070083ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49.569041

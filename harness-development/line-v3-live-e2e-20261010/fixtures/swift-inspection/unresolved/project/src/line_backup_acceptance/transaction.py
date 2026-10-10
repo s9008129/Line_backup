@@ -293,7 +293,7 @@ def prepare(ns):
     loaded = _load_source_evidence(ns, fp)
     if ns.pause_at == "ACQUIRE_BEFORE_LOCK":
         wait_barrier(ns.pause_at, ns.barrier_file)
-    with locked_state(path):
+    with locked_state(path, test_mode=ns.test_mode):
         state = read_json(path)
         try:
             validate_state_strict(state)
@@ -388,7 +388,7 @@ def resume(ns):
             or (getattr(ns, "dispatcher_outcome", "RETURNED") not in (None, "RETURNED"))):
         return _result(evidence, "INVALID_INPUT", "resume never dispatches; adapter options are not accepted", 2), 2
     path = Path(auth["state"])
-    with locked_state(path):
+    with locked_state(path, test_mode=ns.test_mode):
         state = read_json(path)
         try:
             validate_state_strict(state)
@@ -531,7 +531,7 @@ def _dispatch_complete(run: dict) -> bool:
 def commit(ns):
     auth = validate_transaction(ns)
     path, evidence = Path(auth["state"]), Path(auth["evidence_dir"])
-    with locked_state(path):
+    with locked_state(path, test_mode=ns.test_mode):
         state = read_json(path)
         try:
             validate_state_strict(state)
@@ -586,7 +586,7 @@ def finalize(ns):
                 raise ValueError("not a JSON object")
         except Exception as exc:
             return _result(evidence, "INVALID_INPUT", f"SAFE_ABORT verification JSON must be a readable object: {exc}", 2), 2
-    with locked_state(path):
+    with locked_state(path, test_mode=ns.test_mode):
         state = read_json(path)
         try:
             validate_state_strict(state)
@@ -660,7 +660,7 @@ def finalize(ns):
 def duplicate_check(ns):
     auth = validate_transaction(ns)
     path, evidence = Path(auth["state"]), Path(auth["evidence_dir"])
-    with locked_state(path):
+    with locked_state(path, test_mode=ns.test_mode):
         state = read_json(path)
         fp = fingerprint(ns.start_date, ns.end_date, ns.expected_images)
         refusal = _evaluate_preconditions(state, ns.group_key, fp, ns.destination, duplicate_check=True)

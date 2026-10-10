@@ -1,310 +1,550 @@
 {
-  "task_id": "TASK-20261010-line-v3-live-e2e",
-  "attempt_limit_per_root_issue": 3,
-  "escalate_after_consecutive_no_progress": 2,
-  "inherited_attempts": [
+ "task_id": "TASK-20261010-line-v3-live-e2e",
+ "attempt_limit_per_root_issue": 3,
+ "escalate_after_consecutive_no_progress": 2,
+ "inherited_attempts": [
+  {
+   "attempt": 1,
+   "origin": "inherited prior v3 implementation attempt; no rerun performed here",
+   "started_at": "2026-10-09T12:41:46.368329+00:00",
+   "ended_at": "2026-10-09T12:41:48.327895+00:00",
+   "argv": [
+    "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests",
+    "-p",
+    "test_batch_*.py",
+    "-v"
+   ],
+   "exit_code": 1,
+   "result": "33 tests; 2 errors and 2 failures",
+   "new_information": [
+    "content verification and retained fixture both emit scalar other_entries=0 against schema array requirement",
+    "missing-lock behavior refuses safely but assertion matched display text rather than AcceptanceError.code"
+   ],
+   "changed_closeness": "partial; the persisted receipt establishes exact offline defects but no live evidence",
+   "evidence": [
     {
-      "attempt": 1,
-      "origin": "inherited prior v3 implementation attempt; no rerun performed here",
-      "started_at": "2026-10-09T12:41:46.368329+00:00",
-      "ended_at": "2026-10-09T12:41:48.327895+00:00",
-      "argv": [
-        "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python",
-        "-B",
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests",
-        "-p",
-        "test_batch_*.py",
-        "-v"
-      ],
-      "exit_code": 1,
-      "result": "33 tests; 2 errors and 2 failures",
-      "new_information": [
-        "content verification and retained fixture both emit scalar other_entries=0 against schema array requirement",
-        "missing-lock behavior refuses safely but assertion matched display text rather than AcceptanceError.code"
-      ],
-      "changed_closeness": "partial; the persisted receipt establishes exact offline defects but no live evidence",
-      "evidence": [
-        {
-          "path": "harness-development/automatic-album-batch/TASK-20261009-v3-implementation/evidence/python-offline-01.receipt.json",
-          "bytes": 1176,
-          "sha256": "bc1991b9b6cb07d10c0a9a65cdf38decbe6d62e737e13191014c403b62d7c5fa"
-        },
-        {
-          "path": "harness-development/automatic-album-batch/TASK-20261009-v3-implementation/evidence/python-offline-01.stdout",
-          "bytes": 0,
-          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        },
-        {
-          "path": "harness-development/automatic-album-batch/TASK-20261009-v3-implementation/evidence/python-offline-01.stderr",
-          "bytes": 23320,
-          "sha256": "d180800181362e83128d701ed07c96fdc39922be0dea97b67bf9604893a700ac"
-        }
-      ]
+     "path": "harness-development/automatic-album-batch/TASK-20261009-v3-implementation/evidence/python-offline-01.receipt.json",
+     "bytes": 1176,
+     "sha256": "bc1991b9b6cb07d10c0a9a65cdf38decbe6d62e737e13191014c403b62d7c5fa"
+    },
+    {
+     "path": "harness-development/automatic-album-batch/TASK-20261009-v3-implementation/evidence/python-offline-01.stdout",
+     "bytes": 0,
+     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+     "path": "harness-development/automatic-album-batch/TASK-20261009-v3-implementation/evidence/python-offline-01.stderr",
+     "bytes": 23320,
+     "sha256": "d180800181362e83128d701ed07c96fdc39922be0dea97b67bf9604893a700ac"
     }
-  ],
-  "current_attempts": [
+   ]
+  }
+ ],
+ "current_attempts": [
+  {
+   "attempt": 1,
+   "root_issue": "offline regression integration",
+   "attempt_id": "cd520839910a48a480d2706943f029a0",
+   "result": "PARTIAL_FAIL: batch 33/33 PASS; transaction core PASS; project_binding 31 setup errors because required LINE_BACKUP_INSPECTION_TEST_ROOT was omitted by runner",
+   "new_information": [
+    "product batch regressions now pass after other_entries and lock-code fixes",
+    "task-local project binding suite requires an explicit isolated test-root environment binding"
+   ],
+   "next_action": "bind LINE_BACKUP_INSPECTION_TEST_ROOT to this task package fixtures and rerun the offline regression groups",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-cd520839910a48a480d2706943f029a0.json",
+    "bytes": 4885,
+    "sha256": "704997d934faf635a8e76824e7d534f2f14997d662349981d938456e357a2f0a"
+   }
+  },
+  {
+   "attempt": 2,
+   "root_issue": "hermetic project-binding regression fixture",
+   "attempt_id": "89c94bb5b33c4082ba7ed454ff847409",
+   "result": "FAIL: batch and transaction groups PASS; project_binding ran 31 tests with 7 failures and 4 errors because it read live canonical 182-image VERIFIED state and invalidly sliced a current-run pointer",
+   "new_information": [
+    "project-binding regressions require a task-local v2 seed from before the second VERIFIED record",
+    "test state must preserve pointer/run/registry relationships"
+   ],
+   "next_action": "use a packaged single-history fixture seed and rerun once",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-89c94bb5b33c4082ba7ed454ff847409.json",
+    "bytes": 5338,
+    "sha256": "d0d5b95d152c8286867ef13cf3bcb61851fb45f17cc564da286266478d2b3479"
+   }
+  },
+  {
+   "attempt": 3,
+   "root_issue": "hermetic project-binding regression fixture packaging",
+   "attempt_id": "d5713b03cdef4386a3922c166fb5ff6b",
+   "result": "PARTIAL_FAIL: batch 33/33 and transaction core PASS; project_binding 30/31 PASS, with its schema test using a package-root path while copied schema resides in contracts/",
+   "new_information": [
+    "task-local seed produced consistent v2 history and all behavioral project-binding assertions passed",
+    "only the local schema resource path remains to correct"
+   ],
+   "next_action": "correct the test schema path to the task-local contracts directory and rerun once",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-d5713b03cdef4386a3922c166fb5ff6b.json",
+    "bytes": 5337,
+    "sha256": "b33b162893b8d10195d613fd9595ffc9adb2f3164781fca53b6b803fc5724d3e"
+   }
+  },
+  {
+   "attempt": 4,
+   "root_issue": "hermetic Python regression suite",
+   "attempt_id": "492376a2afd64376b4aba26348ec86ef",
+   "result": "PASS: batch, 31 project-binding, and transaction-core suites all exited 0",
+   "new_information": [
+    "legacy project-binding now reads only task-local seed, schema and outputs",
+    "batch content/lock regressions remain green"
+   ],
+   "next_action": "validate operation-specific production mutation grants and fixture fencing",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-492376a2afd64376b4aba26348ec86ef.json",
+    "bytes": 5337,
+    "sha256": "0dd7034ba1118aab786a8156f729edad4bcb644a31a73d44e0282899e818245e"
+   }
+  },
+  {
+   "attempt": 5,
+   "root_issue": "offline v3 writer and lifecycle regressions",
+   "attempt_id": "3ab4ff3de4ec4934afa475921f329bbb",
+   "result": "PASS, with later lifecycle extension still being added",
+   "new_information": [
+    "Earlier Python baseline with operation-specific grant and new tests applied"
+   ],
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-3ab4ff3de4ec4934afa475921f329bbb.json",
+    "bytes": 5337,
+    "sha256": "f6afab1c99a4e9694a262e682e90fc39136464b92d79af802a793cfc3427e2f5"
+   }
+  },
+  {
+   "attempt": 6,
+   "root_issue": "offline v3 writer and lifecycle regressions",
+   "attempt_id": "e6c49edd7268478b86d2127ad01071d4",
+   "result": "PASS",
+   "new_information": [
+    "Python groups passed with operation-specific grant work in place; this previously saved receipt had been omitted from the ledger and is restored without changing its bytes"
+   ],
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-e6c49edd7268478b86d2127ad01071d4.json",
+    "bytes": 5337,
+    "sha256": "750622fc233bc11978804f4a1a97c1149e8da40e230f10071afeb96ed8d0c5d7"
+   }
+  },
+  {
+   "attempt": 7,
+   "root_issue": "offline v3 writer and lifecycle regressions",
+   "attempt_id": "52e05fba2d5f4030ad4b50e609d96f41",
+   "result": "PASS",
+   "new_information": [
+    "36 batch tests, 31 hermetic project-binding tests, and transaction-core tests passed; the ResourceWarning exposed a fixture cleanup omission"
+   ],
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-52e05fba2d5f4030ad4b50e609d96f41.json",
+    "bytes": 5337,
+    "sha256": "205ccaba569b56e50a648c9b9398d6f388472660c635c526b97a1929991e7f67"
+   }
+  },
+  {
+   "attempt": 8,
+   "root_issue": "transition scope and fixture dispatch isolation",
+   "attempt_id": "32a77fb8f0f84bc58ef69e32f97bc1c6",
+   "result": "PARTIAL_FAIL: project-binding and transaction-core groups passed; batch suite had two stale public-update test callers and migration field-presence comparison failures",
+   "new_information": [
+    "Removing the public Store.update API requires all negative authority tests to use the private boundary explicitly",
+    "Top-level migration diff must detect a newly added null field by membership, not dict.get equality"
+   ],
+   "next_action": "rerun the same regression groups after those two bounded corrections",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-32a77fb8f0f84bc58ef69e32f97bc1c6.json",
+    "bytes": 5337,
+    "sha256": "34d7c2df3d060bffbc4783c4c75a63e677ab5788a77ab9965a1b2b1cbdc6d6a5"
+   }
+  },
+  {
+   "attempt": 9,
+   "root_issue": "transition scope and fixture dispatch isolation",
+   "attempt_id": "c8ba63f991fe4e2da4f76bfe0f34e675",
+   "result": "PASS: 39 batch, 31 hermetic project-binding, and 5 transaction-core tests all exited 0",
+   "new_information": [
+    "Production has no public generic Store.update API; operation scope rejects unrelated top-level mutations",
+    "Fixture intent results carry fixture=true and dispatch_authorized=false; transition fields and schema-2 null-field migration checks pass"
+   ],
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-c8ba63f991fe4e2da4f76bfe0f34e675.json",
+    "bytes": 5337,
+    "sha256": "e0dee91ceedd464051010e5a599e24e34140ff64edbafd0144b9b8273a1084ec"
+   }
+  },
+  {
+   "attempt": 10,
+   "root_issue": "adapter five-second freshness and menu guard sequencing",
+   "attempt_id": "f6f61bff884048f69548db8745586939",
+   "result": "PARTIAL_FAIL: 9/10 Node adapter tests passed; one test still expected the former two-second freshness limit",
+   "new_information": [
+    "The frozen live-input freshness window is five seconds; the stale-frame test boundary needed to move past 5,000 ms"
+   ],
+   "next_action": "update the stale-frame boundary and verify the expired menu-guard boundary",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-f6f61bff884048f69548db8745586939.json",
+    "bytes": 1086,
+    "sha256": "be146643715e4cc98319410e4cbd77ef6293177ea041a8cfbe0c5e22110ad98d"
+   }
+  },
+  {
+   "attempt": 11,
+   "root_issue": "adapter five-second freshness and menu guard sequencing",
+   "attempt_id": "3d2909d749ad4110a3dc6ba8f99f0d41",
+   "result": "PARTIAL_FAIL: 9/10 Node adapter tests passed; expiry now stops before SCK menu capture as designed, while assertion expected the later boundary",
+   "new_information": [
+    "The permit is consumed and input stops before capturing or dispatching Save All when the 5-second deadline has elapsed"
+   ],
+   "next_action": "assert either fail-closed expiry boundary and run the final adapter regression attempt",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-3d2909d749ad4110a3dc6ba8f99f0d41.json",
+    "bytes": 1086,
+    "sha256": "500b69d61152292c5283dc16795b0c7aa891bbf01f45a2609f7ca923139dce0a"
+   }
+  },
+  {
+   "attempt": 12,
+   "root_issue": "adapter five-second freshness and menu guard sequencing",
+   "attempt_id": "4b0b62cd61364344a68f047a56d20276",
+   "result": "PASS: all 10 Node adapter tests passed",
+   "new_information": [
+    "The one-shot Save All sequence now requires a fresh SCK guard, stops at the frozen 5-second boundary, and refuses fixtures before live input"
+   ],
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-4b0b62cd61364344a68f047a56d20276.json",
+    "bytes": 1085,
+    "sha256": "55abfd7a46c9215ff30b4dddc947ecedb51274c971231eb829f13e5af3f55fb6"
+   }
+  },
+  {
+   "attempt": 13,
+   "root_issue": "typed SCK support validation and automatic anchor admission",
+   "attempt_id": "881f15c4bf594eac9688923e6a0a58f2",
+   "result": "PARTIAL_FAIL: 40/41 batch tests and the project-binding/transaction-core groups passed; tamper assertion expected ARTIFACT_DRIFT while ProjectReader correctly reported earlier PROJECT_SNAPSHOT_CHANGED",
+   "new_information": [
+    "The same reader rejects support-sidecar mutation between reads before the hash check can run"
+   ],
+   "next_action": "assert the specific read-snapshot drift result and rerun the complete Python set",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-881f15c4bf594eac9688923e6a0a58f2.json",
+    "bytes": 5337,
+    "sha256": "2b27567388754b372bdbbe08a53a81652c92dd1bca8ccd92152c233c00c76a71"
+   }
+  },
+  {
+   "attempt": 14,
+   "root_issue": "typed SCK support validation and automatic anchor admission",
+   "attempt_id": "f3ee5d7423a24d8199ba2f33cc8781ca",
+   "result": "PASS: 41 batch, 31 hermetic project-binding, and 5 transaction-core tests all exited 0",
+   "new_information": [
+    "The Python validator now binds a typed SCK-only sidecar to the CUA frame, verifies native-window metadata and automatically matched unique OCR anchors, enforces residual ≤2 px, uncertainty ≥2 px and safe margins"
+   ],
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-f3ee5d7423a24d8199ba2f33cc8781ca.json",
+    "bytes": 5337,
+    "sha256": "fc10698afcf472bf5315da2fd863b303b8141603c070eb3569b9434b5c376d83"
+   }
+  },
+  {
+   "attempt": 15,
+   "root_issue": "Swift automatic OCR anchor mapper API and tests",
+   "attempt_id": "668ea46f205c42f1b5d5ba5aa3f966e4",
+   "result": "FAIL: Swift 26.5 build found missing x:y: labels at two CapturePixelPoint construction sites; tests did not execute",
+   "new_information": [
+    "Swift's public point initializer requires labeled arguments"
+   ],
+   "next_action": "add the required initializer labels and rerun Swift 26.5 package tests",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-668ea46f205c42f1b5d5ba5aa3f966e4.json",
+    "bytes": 1775,
+    "sha256": "eb076a6689a6691c9413e5c7278c0d51a86e891c7315dda2b36b2f46891919d7"
+   }
+  },
+  {
+   "attempt": 16,
+   "root_issue": "Swift automatic OCR anchor mapper API and tests",
+   "attempt_id": "5b37804c7b314bdeb80238d415d2fc1f",
+   "result": "PARTIAL_FAIL: package compiled and 304/320 Swift tests passed; 16 ProjectBackupBinding tests failed during setup because LINE_BACKUP_INSPECTION_FIXTURES was omitted",
+   "new_information": [
+    "The C2 Swift tests require the isolated producer packet fixture root; failures were setup-time, unrelated to mapper assertions"
+   ],
+   "next_action": "package those test fixtures in the current task and bind the required environment variable before one final Swift run",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-5b37804c7b314bdeb80238d415d2fc1f.json",
+    "bytes": 1779,
+    "sha256": "b586783ae9fc66be06722b45e3adff5ef19dadd1483476de423454a13f587c73"
+   }
+  },
+  {
+   "attempt": 17,
+   "root_issue": "Swift automatic OCR anchor mapper API and tests",
+   "attempt_id": "85355bab929e445c8719cd6056e3c591",
+   "result": "FAIL: Swift 26.5 built and ran 320 tests; 317 passed and 3 ProjectBackupBinding tests failed with inconsistentAuthority because fixture state destinations still referenced the old absolute task root",
+   "new_information": [
+    "The nested fixture state destinations and intent destinations still carried the prior task root",
+    "A later fourth run for this same root issue was also executed before this omitted receipt was found; the root issue therefore exceeded its three-attempt limit"
+   ],
+   "next_action": "No further Swift run for this root issue; preserve the overrun and route the incomplete Swift gate through the next Planner decision",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-85355bab929e445c8719cd6056e3c591.json",
+    "bytes": 1940,
+    "sha256": "7df2c49cca55b3091dcd1056f204335225a16898dc7f8afc544da9b6614b0b1b"
+   }
+  },
+  {
+   "attempt": 18,
+   "root_issue": "Swift automatic OCR anchor mapper API and tests",
+   "attempt_id": "24fbfc8ff57743af97e60a9edc25ba23",
+   "result": "FAIL: Swift 26.5 built and ran 320 tests; 317 passed and 3 ProjectBackupBinding tests failed with inconsistentAuthority because fixture state destinations still referenced the old absolute task root",
+   "new_information": [
+    "The copied inspection fixtures include the old task root inside nested state.json destination and intent.destination values; rewriting report request roots alone did not rebase state authority",
+    "This was the fourth actual Swift run for the same root issue; the earlier omitted receipt means the three-attempt policy was exceeded before ledger correction"
+   ],
+   "next_action": "Preserve the exact failure and carry the Swift verification gap and attempt-policy overrun into the next Planner decision; do not rerun this root issue within this task",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-24fbfc8ff57743af97e60a9edc25ba23.json",
+    "bytes": 1939,
+    "sha256": "21f9bcddb45baf27fe3c41bf2cc090d0d5b6ea860b854d106224e388d9a66087"
+   }
+  },
+  {
+   "attempt": 19,
+   "root_issue": "hermetic swift inspection fixture chain",
+   "kind": "offline python",
+   "exit_code": 0,
+   "result": "PASS: batch 67, project-binding 31, transaction-core 5",
+   "attempt_id": "7840030259b242b292d01861a66559dd",
+   "new_information": [
+    "six hermetic swift-inspection fixtures rebuilt from the canonical packet builder; outer and inner config/state bytes identical",
+    "all six project-binding decisions observed as expected; inventory now 97 files"
+   ],
+   "next_action": "run node adapter regression, then the single authorized Swift package attempt after static audit",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-7840030259b242b292d01861a66559dd.json",
+    "bytes": 5337,
+    "sha256": "49178bbb6306b6d23e85ac1988dbefd30deae17a8cddab4aec5fe6bae31452af"
+   }
+  },
+  {
+   "attempt": 20,
+   "root_issue": "cua adapter offline regression",
+   "kind": "offline node",
+   "exit_code": 0,
+   "result": "PASS: node --test tests/test_cua_adapter.mjs exit 0",
+   "attempt_id": "154a429d540d4a46a6110fae9225f7d3",
+   "new_information": [
+    "adapter suite green before the dispatch evidence shape fix; superseded by attempt 22"
+   ],
+   "next_action": "re-run after the retained dispatch evidence shape fix",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-154a429d540d4a46a6110fae9225f7d3.json",
+    "bytes": 1086,
+    "sha256": "875401a3bed75288d60257665b74a215b44b2b56a71d00648a0dd3df3ab63be8"
+   }
+  },
+  {
+   "attempt": 21,
+   "root_issue": "offline v3 writer and lifecycle regressions",
+   "kind": "offline python",
+   "exit_code": 0,
+   "result": "PASS: batch 67, project-binding 31, transaction-core 5 (final product revision)",
+   "attempt_id": "2e3c6fa0b809407381f7d55e11946d8b",
+   "new_information": [
+    "dispatch evidence now matches the strict 10-key DISPATCH_EVIDENCE_KEYS contract at commit time",
+    "finish now reports CAP_REACHED for exactly one completed album with no unresolved run; cap-one test asserts CAP_REACHED plus successful release"
+   ],
+   "next_action": "record node regression and execute the single authorized Swift package attempt",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-2e3c6fa0b809407381f7d55e11946d8b.json",
+    "bytes": 5337,
+    "sha256": "30f8ec348ed5378e0bf90f0c9e8494cd80cedc1983c1857d574fe8219b8d6c92"
+   }
+  },
+  {
+   "attempt": 22,
+   "root_issue": "cua adapter offline regression",
+   "kind": "offline node",
+   "exit_code": 0,
+   "result": "PASS: node --check and node --test tests/test_cua_adapter.mjs exit 0 (final adapter revision)",
+   "attempt_id": "d5f8646258ec42f0a21e8db53190e4e4",
+   "new_information": [
+    "adapter no longer sends the trace key in dispatch evidence; receipt events retain the full ordered trace"
+   ],
+   "next_action": "static Swift audit, then the single authorized Swift package attempt",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-d5f8646258ec42f0a21e8db53190e4e4.json",
+    "bytes": 1086,
+    "sha256": "17cba6737f3e3fb8e72a8e9c7f622e3e80980cfa52e2908d3928bccb589987a6"
+   }
+  },
+  {
+   "attempt": 23,
+   "root_issue": "Swift automatic OCR anchor mapper API and tests",
+   "kind": "swift extra-attempt reservation",
+   "exit_code": null,
+   "result": "RESERVED: single authorized extra Swift attempt consumed before subprocess start",
+   "attempt_id": "545eea9b0c6645a1a59193b3470376d1",
+   "new_information": [
+    "static audit found one compile blocker (FrameCapture.swift:200) and one wrong runtime assertion (NativeObservationSessionTests.swift:897); both fixed before the run"
+   ],
+   "next_action": "execute swift test once; record the receipt or the exact failure",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-attempt-reservation-545eea9b0c6645a1a59193b3470376d1.json",
+    "bytes": 895,
+    "sha256": "d658ec37770111a2125014bb275aba31d8a449e3f46b828bed4fcdc1e3897e61"
+   }
+  },
+  {
+   "attempt": 24,
+   "root_issue": "Swift automatic OCR anchor mapper API and tests",
+   "kind": "swift package test (single authorized extra attempt)",
+   "exit_code": 0,
+   "result": "PASS: /usr/bin/swift test with macOS 26.5 SDK executed 325 tests, 0 failures (build complete 7.52s)",
+   "attempt_id": "b5d112cd07e64c86a089e83d97631793",
+   "new_information": [
+    "compile blocker fixed (ExplicitLineCaptureSelection.validRect) and wrong assertion fixed before the run",
+    "ProjectBackupBinding fixture suite passed, closing the fixture-chain rebase gap"
+   ],
+   "next_action": "freeze source/config/native/authorization, write live grants, then migrate schema2 rev34 to schema3 rev35",
+   "evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-b5d112cd07e64c86a089e83d97631793.json",
+    "bytes": 1942,
+    "sha256": "fa2b1496e75cd03b748c559f392d6ed27a4a166b25a0e81605f6435c6e1f0cd9"
+   }
+  },
+  {
+   "attempt": 25,
+   "root_issue": "live execution grants and offline gate freeze",
+   "kind": "freeze/grant/auth",
+   "exit_code": 0,
+   "result": "PASS: source freeze, two live grants, every listed operation passes cli.authorize, G_OFFLINE receipts gathered",
+   "attempt_id": "336ccec02db84df1a25538fc61481290",
+   "new_information": [
+    "source_sha256=7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+    "grant1/grant2 differ only by owner and migrate operation"
+   ],
+   "next_action": "migrate schema2 rev34 to schema3 rev35 under grant1 with snapshot and readback",
+   "evidence": [
     {
-      "attempt": 1,
-      "root_issue": "offline regression integration",
-      "attempt_id": "cd520839910a48a480d2706943f029a0",
-      "result": "PARTIAL_FAIL: batch 33/33 PASS; transaction core PASS; project_binding 31 setup errors because required LINE_BACKUP_INSPECTION_TEST_ROOT was omitted by runner",
-      "new_information": [
-        "product batch regressions now pass after other_entries and lock-code fixes",
-        "task-local project binding suite requires an explicit isolated test-root environment binding"
-      ],
-      "next_action": "bind LINE_BACKUP_INSPECTION_TEST_ROOT to this task package fixtures and rerun the offline regression groups",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-cd520839910a48a480d2706943f029a0.json",
-        "bytes": 4885,
-        "sha256": "704997d934faf635a8e76824e7d534f2f14997d662349981d938456e357a2f0a"
-      }
+     "path": "harness-development/line-v3-live-e2e-20261010/evidence/freeze-336ccec02db84df1a25538fc61481290.json",
+     "bytes": 4940,
+     "sha256": "07c4607d795f51c5483ce6ac77a18fdacac39f7accd82508c43a03c5d58a648d"
     },
     {
-      "attempt": 2,
-      "root_issue": "hermetic project-binding regression fixture",
-      "attempt_id": "89c94bb5b33c4082ba7ed454ff847409",
-      "result": "FAIL: batch and transaction groups PASS; project_binding ran 31 tests with 7 failures and 4 errors because it read live canonical 182-image VERIFIED state and invalidly sliced a current-run pointer",
-      "new_information": [
-        "project-binding regressions require a task-local v2 seed from before the second VERIFIED record",
-        "test state must preserve pointer/run/registry relationships"
-      ],
-      "next_action": "use a packaged single-history fixture seed and rerun once",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-89c94bb5b33c4082ba7ed454ff847409.json",
-        "bytes": 5338,
-        "sha256": "d0d5b95d152c8286867ef13cf3bcb61851fb45f17cc564da286266478d2b3479"
-      }
+     "path": "harness-development/line-v3-live-e2e-20261010/evidence/g-auth-002b06e139ab4f6a846dd87dfc3324cd.json",
+     "bytes": 1511,
+     "sha256": "675165b3c614a63a7c4d9d7af582e7294121694043b83e8dd8a4dd9c3532c67d"
     },
     {
-      "attempt": 3,
-      "root_issue": "hermetic project-binding regression fixture packaging",
-      "attempt_id": "d5713b03cdef4386a3922c166fb5ff6b",
-      "result": "PARTIAL_FAIL: batch 33/33 and transaction core PASS; project_binding 30/31 PASS, with its schema test using a package-root path while copied schema resides in contracts/",
-      "new_information": [
-        "task-local seed produced consistent v2 history and all behavioral project-binding assertions passed",
-        "only the local schema resource path remains to correct"
-      ],
-      "next_action": "correct the test schema path to the task-local contracts directory and rerun once",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-d5713b03cdef4386a3922c166fb5ff6b.json",
-        "bytes": 5337,
-        "sha256": "b33b162893b8d10195d613fd9595ffc9adb2f3164781fca53b6b803fc5724d3e"
-      }
-    },
-    {
-      "attempt": 4,
-      "root_issue": "hermetic Python regression suite",
-      "attempt_id": "492376a2afd64376b4aba26348ec86ef",
-      "result": "PASS: batch, 31 project-binding, and transaction-core suites all exited 0",
-      "new_information": [
-        "legacy project-binding now reads only task-local seed, schema and outputs",
-        "batch content/lock regressions remain green"
-      ],
-      "next_action": "validate operation-specific production mutation grants and fixture fencing",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-492376a2afd64376b4aba26348ec86ef.json",
-        "bytes": 5337,
-        "sha256": "0dd7034ba1118aab786a8156f729edad4bcb644a31a73d44e0282899e818245e"
-      }
-    },
-    {
-      "attempt": 5,
-      "root_issue": "offline v3 writer and lifecycle regressions",
-      "attempt_id": "3ab4ff3de4ec4934afa475921f329bbb",
-      "result": "PASS, with later lifecycle extension still being added",
-      "new_information": [
-        "Earlier Python baseline with operation-specific grant and new tests applied"
-      ],
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-3ab4ff3de4ec4934afa475921f329bbb.json",
-        "bytes": 5337,
-        "sha256": "f6afab1c99a4e9694a262e682e90fc39136464b92d79af802a793cfc3427e2f5"
-      }
-    },
-    {
-      "attempt": 6,
-      "root_issue": "offline v3 writer and lifecycle regressions",
-      "attempt_id": "e6c49edd7268478b86d2127ad01071d4",
-      "result": "PASS",
-      "new_information": [
-        "Python groups passed with operation-specific grant work in place; this previously saved receipt had been omitted from the ledger and is restored without changing its bytes"
-      ],
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-e6c49edd7268478b86d2127ad01071d4.json",
-        "bytes": 5337,
-        "sha256": "750622fc233bc11978804f4a1a97c1149e8da40e230f10071afeb96ed8d0c5d7"
-      }
-    },
-    {
-      "attempt": 7,
-      "root_issue": "offline v3 writer and lifecycle regressions",
-      "attempt_id": "52e05fba2d5f4030ad4b50e609d96f41",
-      "result": "PASS",
-      "new_information": [
-        "36 batch tests, 31 hermetic project-binding tests, and transaction-core tests passed; the ResourceWarning exposed a fixture cleanup omission"
-      ],
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-52e05fba2d5f4030ad4b50e609d96f41.json",
-        "bytes": 5337,
-        "sha256": "205ccaba569b56e50a648c9b9398d6f388472660c635c526b97a1929991e7f67"
-      }
-    },
-    {
-      "attempt": 8,
-      "root_issue": "transition scope and fixture dispatch isolation",
-      "attempt_id": "32a77fb8f0f84bc58ef69e32f97bc1c6",
-      "result": "PARTIAL_FAIL: project-binding and transaction-core groups passed; batch suite had two stale public-update test callers and migration field-presence comparison failures",
-      "new_information": [
-        "Removing the public Store.update API requires all negative authority tests to use the private boundary explicitly",
-        "Top-level migration diff must detect a newly added null field by membership, not dict.get equality"
-      ],
-      "next_action": "rerun the same regression groups after those two bounded corrections",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-32a77fb8f0f84bc58ef69e32f97bc1c6.json",
-        "bytes": 5337,
-        "sha256": "34d7c2df3d060bffbc4783c4c75a63e677ab5788a77ab9965a1b2b1cbdc6d6a5"
-      }
-    },
-    {
-      "attempt": 9,
-      "root_issue": "transition scope and fixture dispatch isolation",
-      "attempt_id": "c8ba63f991fe4e2da4f76bfe0f34e675",
-      "result": "PASS: 39 batch, 31 hermetic project-binding, and 5 transaction-core tests all exited 0",
-      "new_information": [
-        "Production has no public generic Store.update API; operation scope rejects unrelated top-level mutations",
-        "Fixture intent results carry fixture=true and dispatch_authorized=false; transition fields and schema-2 null-field migration checks pass"
-      ],
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-c8ba63f991fe4e2da4f76bfe0f34e675.json",
-        "bytes": 5337,
-        "sha256": "e0dee91ceedd464051010e5a599e24e34140ff64edbafd0144b9b8273a1084ec"
-      }
-    },
-    {
-      "attempt": 10,
-      "root_issue": "adapter five-second freshness and menu guard sequencing",
-      "attempt_id": "f6f61bff884048f69548db8745586939",
-      "result": "PARTIAL_FAIL: 9/10 Node adapter tests passed; one test still expected the former two-second freshness limit",
-      "new_information": ["The frozen live-input freshness window is five seconds; the stale-frame test boundary needed to move past 5,000 ms"],
-      "next_action": "update the stale-frame boundary and verify the expired menu-guard boundary",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-f6f61bff884048f69548db8745586939.json",
-        "bytes": 1086,
-        "sha256": "be146643715e4cc98319410e4cbd77ef6293177ea041a8cfbe0c5e22110ad98d"
-      }
-    },
-    {
-      "attempt": 11,
-      "root_issue": "adapter five-second freshness and menu guard sequencing",
-      "attempt_id": "3d2909d749ad4110a3dc6ba8f99f0d41",
-      "result": "PARTIAL_FAIL: 9/10 Node adapter tests passed; expiry now stops before SCK menu capture as designed, while assertion expected the later boundary",
-      "new_information": ["The permit is consumed and input stops before capturing or dispatching Save All when the 5-second deadline has elapsed"],
-      "next_action": "assert either fail-closed expiry boundary and run the final adapter regression attempt",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-3d2909d749ad4110a3dc6ba8f99f0d41.json",
-        "bytes": 1086,
-        "sha256": "500b69d61152292c5283dc16795b0c7aa891bbf01f45a2609f7ca923139dce0a"
-      }
-    },
-    {
-      "attempt": 12,
-      "root_issue": "adapter five-second freshness and menu guard sequencing",
-      "attempt_id": "4b0b62cd61364344a68f047a56d20276",
-      "result": "PASS: all 10 Node adapter tests passed",
-      "new_information": ["The one-shot Save All sequence now requires a fresh SCK guard, stops at the frozen 5-second boundary, and refuses fixtures before live input"],
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-4b0b62cd61364344a68f047a56d20276.json",
-        "bytes": 1085,
-        "sha256": "55abfd7a46c9215ff30b4dddc947ecedb51274c971231eb829f13e5af3f55fb6"
-      }
-    },
-    {
-      "attempt": 13,
-      "root_issue": "typed SCK support validation and automatic anchor admission",
-      "attempt_id": "881f15c4bf594eac9688923e6a0a58f2",
-      "result": "PARTIAL_FAIL: 40/41 batch tests and the project-binding/transaction-core groups passed; tamper assertion expected ARTIFACT_DRIFT while ProjectReader correctly reported earlier PROJECT_SNAPSHOT_CHANGED",
-      "new_information": ["The same reader rejects support-sidecar mutation between reads before the hash check can run"],
-      "next_action": "assert the specific read-snapshot drift result and rerun the complete Python set",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-881f15c4bf594eac9688923e6a0a58f2.json",
-        "bytes": 5337,
-        "sha256": "2b27567388754b372bdbbe08a53a81652c92dd1bca8ccd92152c233c00c76a71"
-      }
-    },
-    {
-      "attempt": 14,
-      "root_issue": "typed SCK support validation and automatic anchor admission",
-      "attempt_id": "f3ee5d7423a24d8199ba2f33cc8781ca",
-      "result": "PASS: 41 batch, 31 hermetic project-binding, and 5 transaction-core tests all exited 0",
-      "new_information": ["The Python validator now binds a typed SCK-only sidecar to the CUA frame, verifies native-window metadata and automatically matched unique OCR anchors, enforces residual ≤2 px, uncertainty ≥2 px and safe margins"],
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-f3ee5d7423a24d8199ba2f33cc8781ca.json",
-        "bytes": 5337,
-        "sha256": "fc10698afcf472bf5315da2fd863b303b8141603c070eb3569b9434b5c376d83"
-      }
-    },
-    {
-      "attempt": 15,
-      "root_issue": "Swift automatic OCR anchor mapper API and tests",
-      "attempt_id": "668ea46f205c42f1b5d5ba5aa3f966e4",
-      "result": "FAIL: Swift 26.5 build found missing x:y: labels at two CapturePixelPoint construction sites; tests did not execute",
-      "new_information": ["Swift's public point initializer requires labeled arguments"],
-      "next_action": "add the required initializer labels and rerun Swift 26.5 package tests",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-668ea46f205c42f1b5d5ba5aa3f966e4.json",
-        "bytes": 1775,
-        "sha256": "eb076a6689a6691c9413e5c7278c0d51a86e891c7315dda2b36b2f46891919d7"
-      }
-    },
-    {
-      "attempt": 16,
-      "root_issue": "Swift automatic OCR anchor mapper API and tests",
-      "attempt_id": "5b37804c7b314bdeb80238d415d2fc1f",
-      "result": "PARTIAL_FAIL: package compiled and 304/320 Swift tests passed; 16 ProjectBackupBinding tests failed during setup because LINE_BACKUP_INSPECTION_FIXTURES was omitted",
-      "new_information": ["The C2 Swift tests require the isolated producer packet fixture root; failures were setup-time, unrelated to mapper assertions"],
-      "next_action": "package those test fixtures in the current task and bind the required environment variable before one final Swift run",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-5b37804c7b314bdeb80238d415d2fc1f.json",
-        "bytes": 1779,
-        "sha256": "b586783ae9fc66be06722b45e3adff5ef19dadd1483476de423454a13f587c73"
-      }
-    },
-    {
-      "attempt": 17,
-      "root_issue": "Swift automatic OCR anchor mapper API and tests",
-      "attempt_id": "85355bab929e445c8719cd6056e3c591",
-      "result": "FAIL: Swift 26.5 built and ran 320 tests; 317 passed and 3 ProjectBackupBinding tests failed with inconsistentAuthority because fixture state destinations still referenced the old absolute task root",
-      "new_information": [
-        "The nested fixture state destinations and intent destinations still carried the prior task root",
-        "A later fourth run for this same root issue was also executed before this omitted receipt was found; the root issue therefore exceeded its three-attempt limit"
-      ],
-      "next_action": "No further Swift run for this root issue; preserve the overrun and route the incomplete Swift gate through the next Planner decision",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-85355bab929e445c8719cd6056e3c591.json",
-        "bytes": 1940,
-        "sha256": "7df2c49cca55b3091dcd1056f204335225a16898dc7f8afc544da9b6614b0b1b"
-      }
-    },
-    {
-      "attempt": 18,
-      "root_issue": "Swift automatic OCR anchor mapper API and tests",
-      "attempt_id": "24fbfc8ff57743af97e60a9edc25ba23",
-      "result": "FAIL: Swift 26.5 built and ran 320 tests; 317 passed and 3 ProjectBackupBinding tests failed with inconsistentAuthority because fixture state destinations still referenced the old absolute task root",
-      "new_information": [
-        "The copied inspection fixtures include the old task root inside nested state.json destination and intent.destination values; rewriting report request roots alone did not rebase state authority",
-        "This was the fourth actual Swift run for the same root issue; the earlier omitted receipt means the three-attempt policy was exceeded before ledger correction"
-      ],
-      "next_action": "Preserve the exact failure and carry the Swift verification gap and attempt-policy overrun into the next Planner decision; do not rerun this root issue within this task",
-      "evidence": {
-        "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-24fbfc8ff57743af97e60a9edc25ba23.json",
-        "bytes": 1939,
-        "sha256": "21f9bcddb45baf27fe3c41bf2cc090d0d5b6ea860b854d106224e388d9a66087"
-      }
+     "path": "harness-development/line-v3-live-e2e-20261010/evidence/g-offline-74e2029936ba4b2197262ec60bcda35e.json",
+     "bytes": 1799,
+     "sha256": "d5304dd34ab5cf513672488383dadccc7aba092731babb4abec298a658881ea7"
     }
-  ],
-  "unknown_historical_attempts": "UNKNOWN; not counted as zero"
+   ]
+  },
+  {
+   "attempt": 26,
+   "root_issue": "schema 2 to 3 migration",
+   "kind": "live migration",
+   "exit_code": 0,
+   "result": "PASS: MIGRATED; snapshot preserved at ed8075e7…; state now schema 3 revision 35, sha 45505011…; only schema_version/active_batch/revision changed",
+   "attempt_id": "migrate-1",
+   "new_information": [
+    "migration readback matches the computed prediction byte-for-byte",
+    "historical runs and verified albums are byte-identical"
+   ],
+   "next_action": "build the live runner, then request a fresh LINE foreground handoff for catalog/menu/first transaction",
+   "evidence": [
+    {
+     "path": "harness-development/line-v3-live-e2e-20261010/evidence/g-migration-1eac0a640dbc4fe1b0320e666d1ec200.json",
+     "bytes": 1813,
+     "sha256": "46098af973723840de009cda215ff455df30006a06106d1b2e2553b7c65f999c"
+    },
+    {
+     "path": "harness-development/line-v3-live-e2e-20261010/evidence/state-schema2-snapshot-01.json",
+     "bytes": 252091,
+     "sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9"
+    },
+    {
+     "path": "state/backup_state.json",
+     "bytes": 252115,
+     "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6"
+    }
+   ]
+  },
+  {
+   "attempt": 27,
+   "root_issue": "live bridge scaffold (adapter invokeProducer capture/guard wiring)",
+   "kind": "root-serial build + three read-only helper verifications",
+   "exit_code": 0,
+   "result": "PARTIAL PASS: live_runner.mjs built and node --check clean at d3936b1f...; adapter-shaped v2 smoke 11/11, case 11 and new case 12 (capture+guard routing) PASS; interface re-audit confirms the last defect (#5) is resolved and finds no remaining interface defect. Live execution still blocked by attempts 28's D1/D2 findings.",
+   "attempt_id": "d3936b1f8898b3f29f00d8c2c24c87ffbce69c94f5aeb1c9f669bb8be702c831",
+   "new_information": [
+    "adapter routes both modes through one invokeProducer({mode:'capture'|'guard'}); root fix at live_runner.mjs:390",
+    "rev28ctl album-support receipt already emits uncertaintyPx/safeMarginPx/intersectionPx, so the adapter wrapper shape is satisfiable at runtime",
+    "v1 flat-fake smoke failures are stale pre-fix expectations, not regressions; v2 nested suite is the contract-shaped one",
+    "three read-only helpers ran in parallel within the frozen max_parallel_read_only_helpers=3; max_parallel_writers=0 so root wrote every file serially"
+   ],
+   "next_action": "user decision D1/D2, then a new Critical plan for the non-menu SCK producer and grounded classifier (Swift budget must be a new root issue); live LINE input remains paused",
+   "evidence": [
+    {
+     "path": "harness-development/line-v3-live-e2e-20261010/live_runner.mjs",
+     "bytes": 25510,
+     "sha256": "d3936b1f8898b3f29f00d8c2c24c87ffbce69c94f5aeb1c9f669bb8be702c831"
+    },
+    {
+     "path": "harness-development/line-v3-live-e2e-20261010/evidence/subagent-verification-round2.json",
+     "bytes": 3484,
+     "sha256": "2f836770b49b9fd692de9f1fec4f5ed29ec3d3da4197d3b9ee6846f30be374c2"
+    }
+   ]
+  },
+  {
+   "attempt": 28,
+   "root_issue": "live observation branch requirements (SCK sidecar for every frame + grounded AX classifier)",
+   "kind": "deterministic executable proof",
+   "exit_code": 0,
+   "result": "PROVEN STRUCTURALLY BLOCKED: observations.frame() requires a SCREEN_CAPTURE_KIT sidecar for EVERY frame (V1 fixture-only sidecar refused with SCK_PROVIDER_MISMATCH; V2 SCREEN_CAPTURE_KIT sidecar accepted); the only producer rev28ctl album-support is menu-only (menu ∩ addressable >= 16x16 and exactly one OCR row 儲存全部), and catalog/detail/chooser frames have no open menu; no grounded AX->17-key classifier exists outside test fakes. -> LIVE_FRAME_SUPPORT_UNAVAILABLE + LIVE_CLASSIFIER_NOT_GROUNDED",
+   "attempt_id": "live-branch-proof-1",
+   "new_information": [
+    "frame() sidecar requirement enforced in observations.py:53,60,124,143; producer is menu-gated in OcrEngine.swift:500-501,546,551 and main.swift:752-806",
+    "non-menu frames are circularly dependent on a menu-only producer; no menu sidecar exists anywhere in old task packages (read-only inventory by helper)",
+    "old catalog OCR prototype and menu-geometry correspondence cannot fill the boundary/layout_key/card-bounds gap",
+    "v2 sidecar is accepted shape-only; no live capture exists"
+   ],
+   "next_action": "present decision D2 (new Critical plan for a non-menu full-display SCK sidecar producer, or re-scope the evidence policy, or defer live E2E); do not improvise",
+   "evidence": [
+    {
+     "path": "harness-development/line-v3-live-e2e-20261010/checks/live_support_requirement_proof.py",
+     "bytes": 4680,
+     "sha256": "22c0c1ee686860d43f807c24f2c595e966858e7c6c5d9ec953a009cfaf299c7d"
+    },
+    {
+     "path": "harness-development/line-v3-live-e2e-20261010/evidence/live-branch-proof.stdout",
+     "bytes": 567,
+     "sha256": "0888a21113843f21a5328ebf5e5601c8f9047e8508e2469e7883c5a2889bdb2f"
+    },
+    {
+     "path": "harness-development/line-v3-live-e2e-20261010/evidence/live-branch-proof.stderr",
+     "bytes": 0,
+     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+   ]
+  }
+ ],
+ "unknown_historical_attempts": "UNKNOWN; not counted as zero",
+ "updated_at": "2026-10-10T18:32:07.227276+08:00",
+ "updated_note": "attempts 27-28 appended by IMPLEMENTER (implement-02 live-bridge round); no existing entry changed"
 }

@@ -1,0 +1,34 @@
+{
+  "argv": [
+    "/usr/bin/swift",
+    "test",
+    "--package-path",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28",
+    "--sdk",
+    "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+    "--scratch-path",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/swift-build-26.5"
+  ],
+  "attempt_id": "b5d112cd07e64c86a089e83d97631793",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "ended_at": "2026-10-10T09:59:18.372275+00:00",
+  "environment": {
+    "CLANG_MODULE_CACHE_PATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/module-cache-26.5/clang",
+    "LC_ALL": "C",
+    "LINE_BACKUP_INSPECTION_FIXTURES": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection",
+    "PATH": "/usr/bin:/bin:/opt/homebrew/bin",
+    "SWIFTPM_MODULECACHE_OVERRIDE": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/module-cache-26.5",
+    "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures"
+  },
+  "exit_code": 0,
+  "sdk": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+  "sdk_version": "26.5",
+  "started_at": "2026-10-10T09:58:58.119860+00:00",
+  "stderr_bytes": 66845,
+  "stderr_path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-b5d112cd07e64c86a089e83d97631793.stderr",
+  "stderr_sha256": "fb2aa2950300e5785de41e2573f2ce8c8bfc8e910219f943ecf0a56559e75289",
+  "stdout_bytes": 84740,
+  "stdout_path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-b5d112cd07e64c86a089e83d97631793.stdout",
+  "stdout_sha256": "27c2ac19005a1daba0d9e1dc23c85344b23d8f60ba9d086f05449424f711df5f",
+  "timed_out": false
+}

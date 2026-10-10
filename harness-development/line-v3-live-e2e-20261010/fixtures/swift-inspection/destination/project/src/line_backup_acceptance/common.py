@@ -37,6 +37,12 @@ def json_bytes(value: Any) -> bytes:
 
 
 def atomic_write_json(path: Path, value: Any, *, fault: str | None = None) -> dict:
+    # Historical writers must never replace the selected project's authority.
+    # The new Store uses held directory descriptors and the existing shared lock.
+    canonical = Path(__file__).resolve().parents[2] / 'state/backup_state.json'
+    if Path(os.path.abspath(path)) == canonical or (
+            Path(path).name == 'backup_state.json' and isinstance(value, dict) and value.get('schema_version') == 3):
+        raise AcceptanceError('LEGACY_WRITER_DISABLED', 'Canonical state requires the v3 service', 4)
     data = json_bytes(value)
     if fault == "WRITE_BEFORE_REPLACE":
         raise AcceptanceError("WRITE_BEFORE_REPLACE", "injected storage fault before replacement", 1)
@@ -72,13 +78,19 @@ def read_json(path: Path) -> Any:
 
 
 @contextlib.contextmanager
-def locked_state(state_path: Path) -> Iterator[None]:
+def locked_state(state_path: Path, *, test_mode: bool = False) -> Iterator[None]:
     import fcntl
+    # Side-effect-free preflight, then recheck under lock before every old operation.
+    state = read_json(state_path)
+    if state.get('schema_version') != 2 or not test_mode:
+        raise AcceptanceError('LEGACY_WRITER_DISABLED', 'Legacy production mutations are disabled', 4)
     lock = state_path.parent / ".line-backup-state.lock"
     lock.parent.mkdir(parents=True, exist_ok=True)
     with lock.open("a+") as f:
         fcntl.flock(f.fileno(), fcntl.LOCK_EX)
         try:
+            if read_json(state_path).get('schema_version') != 2:
+                raise AcceptanceError('LEGACY_WRITER_DISABLED', 'State changed to v3 while waiting', 4)
             yield
         finally:
             fcntl.flock(f.fileno(), fcntl.LOCK_UN)
@@ -360,6 +372,11 @@ def _check_run(run) -> None:
 
 def validate_state_strict(state) -> None:
     """Validate a payload about to be replaced against $defs/state + $defs/run."""
+    if isinstance(state, dict) and type(state.get('schema_version')) is int and state['schema_version'] == 3:
+        from line_backup_batch.schema import validate, legacy_view
+        validate(state)
+        validate_state_strict(legacy_view(state))
+        return
     if not isinstance(state, dict) or set(state) != STATE_KEYS:
         _strict_fail("state keys")
     if state["schema_version"] != 2 or not _int(state["revision"]) or state["revision"] < 0:
