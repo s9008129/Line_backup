@@ -1,0 +1,199 @@
+# PLAN_REVIEW-01 reviewer pixel-stability probe (read-only, session evidence)
+
+Role: PLAN_REVIEWER (independent). Method: decode each saved frame with ImageIO through a Swift
+script fed on stdin (`swift -`), rasterize to RGBA8 sRGB top-left origin in a CGBitmapContext,
+then compare raw RGBA bytes per horizontal band between adjacent frames. The probe wrote no files
+and performed no LINE/UI operation; only saved material in catalog-diagnostic-20261010/ was read.
+
+Source frames (all 654x1286): scan-000.png, scan-001.png, scan-002.png, scan-003.png.
+Note: buffer rows are vertically flipped relative to display top-down rows;
+display_y = height - 1 - buffer_y. Probe A below ran in buffer coordinates; Probe B ran in
+display (top-down) coordinates. An earlier exploratory run with mislabeled ROI bands was
+superseded by Probe A/B; no claim relies on it.
+
+## Probe A: 16-row buffer-coordinate bands, pairs 0-1 and 1-2
+
+Exact stdout:
+band(y0..y1) diffPixels_0v1 maxDiff_0v1 | diffPixels_1v2 maxDiff_1v2
+   0..  16    9471 255 |   9470 255
+  16..  32    9471 255 |   9470 255
+  32..  48    9468 255 |   9469 255
+  48..  64    9471 255 |   9466 255
+  64..  80    9471 255 |   9472 255
+  80..  96    9472 255 |   9471 255
+  96.. 112    9472 255 |   9472 254
+ 112.. 128    9471 255 |   9472 232
+ 128.. 144    9470 255 |   9472 210
+ 144.. 160    9470 252 |   9466 210
+ 160.. 176    9471 238 |   9471 210
+ 176.. 192    9462 244 |   9461 210
+ 192.. 208    9471 235 |   9462 210
+ 208.. 224    9470 233 |   9462 230
+ 224.. 240    9469 231 |   9462 231
+ 240.. 256    9472 237 |   9458 206
+ 256.. 272    9472 247 |   9465 234
+ 272.. 288    9471 248 |   9472 255
+ 288.. 304    9472 255 |   9472 255
+ 304.. 320    9472 240 |   9471 255
+ 320.. 336    9472 210 |   9472 255
+ 336.. 352    9469 210 |   9472 255
+ 352.. 368    9472 210 |   9471 255
+ 368.. 384    9472 210 |   9470 225
+ 384.. 400    9472 221 |   9472 243
+ 400.. 416    9469 228 |   9470 239
+ 416.. 432    9472 217 |   9471 240
+ 432.. 448    9472 204 |   9469 238
+ 448.. 464    9472 209 |   9471 232
+ 464.. 480    9471 228 |   9466 230
+ 480.. 496    9471 237 |   9466 228
+ 496.. 512    9471 240 |   9472 208
+ 512.. 528    9471 233 |   9472 240
+ 528.. 544    9471 248 |   9471 247
+ 544.. 560    9468 234 |   9472 238
+ 560.. 576    9470 247 |   9472 237
+ 576.. 592    9469 243 |   9472 234
+ 592.. 608    9470 210 |   9471 210
+ 608.. 624    9472 210 |   9465 210
+ 624.. 640    9472 210 |   9469 210
+ 640.. 656    9472 210 |   9470 210
+ 656.. 672    9471 226 |   9471 216
+ 672.. 688    9467 227 |   9472 228
+ 688.. 704    9465 228 |   9472 218
+ 704.. 720    9470 210 |   9472 205
+ 720.. 736    9469 210 |   9470 210
+ 736.. 752    9468 223 |   9467 226
+ 752.. 768    9466 189 |   9465 238
+ 768.. 784    9470 204 |   9470 240
+ 784.. 800    9467 223 |   9470 238
+ 800.. 816    9470 244 |   9469 250
+ 816.. 832    9463 245 |   9472 246
+ 832.. 848    9467 245 |   9472 243
+ 848.. 864    9471 240 |   9464 241
+ 864.. 880    9470 240 |   9469 210
+ 880.. 896    9470 255 |   9472 210
+ 896.. 912    9468 255 |   9461 210
+ 912.. 928    9471 245 |   9467 222
+ 928.. 944    9470 226 |   9466 225
+ 944.. 960    9460 217 |   9462 231
+ 960.. 976    9469 236 |   9496 227
+ 976.. 992    9610 240 |   9675 211
+ 992..1008    9706 233 |   9490 212
+1008..1024    9717 242 |   9468 221
+1024..1040    9720 241 |   9468 191
+1040..1056    9723 219 |   9533 203
+1056..1072    9686 199 |   9673 231
+1072..1088    8983 190 |   9161 223
+1088..1104    2639   7 |   3075   9
+1104..1120       0   0 |      0   0
+1120..1136       0   0 |      0   0
+1136..1152       0   0 |      0   0
+1152..1168       0   0 |      0   0
+1168..1184       0   0 |      0   0
+1184..1200       0   0 |      0   0
+1200..1216       0   0 |      0   0
+1216..1232       0   0 |      0   0
+1232..1248       0   0 |      0   0
+1248..1264       0   0 |      0   0
+1264..1280       0   0 |      0   0
+
+## Probe B: 8-row display (top-down) bands over y 0..260, all three adjacent pairs
+
+Probe script (fed on stdin; no files written):
+
+import Foundation
+import ImageIO
+import CoreGraphics
+
+func decode(_ path: String) -> (Int, Int, [UInt8])? {
+    guard let src = CGImageSourceCreateWithURL(URL(fileURLWithPath: path) as CFURL, nil),
+          let img = CGImageSourceCreateImageAtIndex(src, 0, nil) else { return nil }
+    let w = img.width, h = img.height
+    guard let cs = CGColorSpace(name: CGColorSpace.sRGB),
+          let ctx = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w*4,
+                              space: cs, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue) else { return nil }
+    ctx.translateBy(x: 0, y: CGFloat(h)); ctx.scaleBy(x: 1, y: -1)
+    ctx.draw(img, in: CGRect(x: 0, y: 0, width: w, height: h))
+    guard let p = ctx.data else { return nil }
+    return (w, h, [UInt8](UnsafeRawBufferPointer(start: p, count: w*h*4)))
+}
+
+// buffer rows are vertically flipped vs display; display_y = h-1-buffer_y.
+func pairStats(_ a: (Int,Int,[UInt8]), _ b: (Int,Int,[UInt8]), displayY0: Int, displayY1: Int) -> (Int, Int) {
+    let (w, h, pa) = a; let (_, _, pb) = b
+    var diff = 0; var maxD = 0
+    for dy in displayY0..<displayY1 {
+        let y = h - 1 - dy
+        let row = w*4*y
+        for x in 0..<w {
+            let o = row + x*4
+            let d = max(abs(Int(pa[o])-Int(pb[o])), abs(Int(pa[o+1])-Int(pb[o+1])), abs(Int(pa[o+2])-Int(pb[o+2])))
+            if d > 0 { diff += 1; maxD = max(maxD, d) }
+        }
+    }
+    return (diff, maxD)
+}
+
+let names = ["scan-000.png","scan-001.png","scan-002.png","scan-003.png"]
+var imgs = [String:(Int,Int,[UInt8])]()
+for n in names { imgs[n] = decode(n) }
+let pairs: [(String,String)] = [("scan-000.png","scan-001.png"),("scan-001.png","scan-002.png"),("scan-002.png","scan-003.png")]
+let h = imgs["scan-000.png"]!.1
+print("display rows (top-down), width=654. diffPixels / maxDiff per pair")
+var dy = 0
+while dy + 8 <= 260 {
+    var line = String(format: "y %3d..%3d ", dy, dy+8)
+    for (n1, n2) in pairs {
+        let (d, m) = pairStats(imgs[n1]!, imgs[n2]!, displayY0: dy, displayY1: dy+8)
+        line += String(format: "| %5d/%3d ", d, m)
+    }
+    print(line)
+    dy += 8
+}
+
+Exact stdout:
+display rows (top-down), width=654. diffPixels / maxDiff per pair
+y   0..  8 |     0/  0 |     0/  0 |     0/  0 
+y   8.. 16 |     0/  0 |     0/  0 |     0/  0 
+y  16.. 24 |     0/  0 |     0/  0 |     0/  0 
+y  24.. 32 |     0/  0 |     0/  0 |     0/  0 
+y  32.. 40 |     0/  0 |     0/  0 |     0/  0 
+y  40.. 48 |     0/  0 |     0/  0 |     0/  0 
+y  48.. 56 |     0/  0 |     0/  0 |     0/  0 
+y  56.. 64 |     0/  0 |     0/  0 |     0/  0 
+y  64.. 72 |     0/  0 |     0/  0 |     0/  0 
+y  72.. 80 |     0/  0 |     0/  0 |     0/  0 
+y  80.. 88 |     0/  0 |     0/  0 |     0/  0 
+y  88.. 96 |     0/  0 |     0/  0 |     0/  0 
+y  96..104 |     0/  0 |     0/  0 |     0/  0 
+y 104..112 |     0/  0 |     0/  0 |     0/  0 
+y 112..120 |     0/  0 |     0/  0 |     0/  0 
+y 120..128 |     0/  0 |     0/  0 |     0/  0 
+y 128..136 |     0/  0 |     0/  0 |     0/  0 
+y 136..144 |     0/  0 |     0/  0 |     0/  0 
+y 144..152 |     0/  0 |     0/  0 |     0/  0 
+y 152..160 |     0/  0 |     0/  0 |     0/  0 
+y 160..168 |     0/  0 |     0/  0 |     0/  0 
+y 168..176 |     0/  0 |     0/  0 |     0/  0 
+y 176..184 |     0/  0 |     0/  0 |     0/  0 
+y 184..192 |     0/  0 |     0/  0 |     0/  0 
+y 192..200 |  3518/ 10 |  4041/ 14 |  3622/ 13 
+y 200..208 |  4552/183 |  4644/221 |  4559/236 
+y 208..216 |  4736/196 |  4735/231 |  4736/249 
+y 216..224 |  4854/198 |  4851/230 |  4735/243 
+y 224..232 |  4864/199 |  4852/194 |  4860/236 
+y 232..240 |  4862/203 |  4767/178 |  4779/232 
+y 240..248 |  4859/219 |  4735/203 |  4736/238 
+y 248..256 |  4860/241 |  4735/191 |  4736/240 
+
+## Reviewer reading used in PLAN_REVIEW-01
+
+- Display y 0..192 (window controls, group title, 相簿/記事本 tab text band) is bit-exact across all
+  three adjacent historical transitions, including the scan-003 frame that carries the 相溥 OCR
+  misread. The selected-indicator/underline rows sit at the y 192..200 boundary and were not claimed
+  as bit-exact by this probe.
+- First small diffs (max channel delta <=14) appear at y 192..200; large content diffs follow below,
+  consistent with scrolling content and its JPEG block coupling at the content-adjacent boundary.
+- initial.png == frame-000.png == scan-000.png byte-identical (sha256 da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42):
+  unchanged screens re-capture byte-identically on this binding, so exact-equality continuity is
+  operationally plausible when the frozen guard region is defined inside the stable band and the
+  initialization freezes the shadow/separator exclusion zone per the plan.
