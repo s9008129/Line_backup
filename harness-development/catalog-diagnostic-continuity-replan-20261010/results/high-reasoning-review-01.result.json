@@ -1,0 +1,222 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+  "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+  "role": "HIGH_REASONING_REVIEWER",
+  "stage": "HIGH_REASONING_REVIEW",
+  "candidate_fact": "FAIL",
+  "validation_fact": "NOT_RUN",
+  "routing_fact": "PLANNER_REPLAN",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "IN_PROGRESS",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "REPLAN_REQUIRED"
+  },
+  "gate_results": [],
+  "evidence_ids": [
+    "REVIEW_PACKET",
+    "EVALUATOR_SOURCE",
+    "RUNNER_SOURCE",
+    "OFFLINE_RESULTS"
+  ],
+  "plan_sha256": "d8e0031fa8ef1d7a0a0f260de3682db26421d5779dffc1d1fd1a124969bc5387",
+  "handoff_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+  "source_sha256": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8",
+  "plan_contract_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+  "analysis": {
+    "verdict": "FAIL",
+    "candidate_hash": "646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6",
+    "packet_sha256": "cd6edf3edbf44d68ac318d0f508914f83ab771aab989d4b0f1e4fe20a5d315c4",
+    "review_kind": "使用者轉交封包的獨立本地審查；不是 controller receipt。",
+    "independence": "本 session 未貢獻受審候選或證據，僅讀取材料及執行不落盤的記憶體測例；未派出 helpers。",
+    "run_id_note": "沿用受審本地結果的 run_id 綁定材料，不代表新的 controller invocation 或平台 session identity。",
+    "answers": [
+      {
+        "question": 1,
+        "verdict": "PASS",
+        "answer": "封包 21 筆綁定全部相符；source manifest 的 REQUIRED_CURRENT_HASH 無差異；43 筆 replay 來源與副本逐 bytes 相符。contract 與 handoff 綁定相符。Git index 的 PROVENANCE_ONLY 記錄因後續提交而不同，不視為 required input 漂移。"
+      },
+      {
+        "question": 2,
+        "verdict": "FAIL",
+        "answer": "內容解碼、四角方向與 nearest 2x 像素結果可核對，Swift 也實作 crop origin + derivative/2。但實際 16 份新 OCR 全部使用全圖 ROI [0,0,654,1286]；未執行規格要求的局部 ROI。R17 使用零 crop origin，不能證明非零局部裁切轉換已被驗證。",
+        "locations": [
+          "candidate/run_offline_once.py:238",
+          "candidate/test_catalog_diagnostic.py:395",
+          "handoff.md:139"
+        ]
+      },
+      {
+        "question": 3,
+        "verdict": "FAIL",
+        "answer": "完整槽 exact RGBA、獨立 indicator、D 計算、ordered overlap 及 replay 禁止輸入均有實作，但 fail-closed 規則有實際缺口。記憶體測例重現：legacy 第二候選為另一個有效張數時仍允許 scroll；legacy 日期框位於 viewport 外仍被當成一致身份；另有 ambiguous count row 時仍允許 scroll；candidate/profile/decoder/binding hashes 改為全零仍回 binding VALID。indicator UNKNOWN 時仍延伸 chain。這些都是 fixture，沒有 UI 輸入。",
+        "locations": [
+          "candidate/catalog_diagnostic.py:669",
+          "candidate/catalog_diagnostic.py:840",
+          "candidate/catalog_diagnostic.py:937",
+          "candidate/catalog_diagnostic.py:998",
+          "candidate/catalog_diagnostic.py:1017"
+        ]
+      },
+      {
+        "question": 4,
+        "verdict": "PASS",
+        "answer": "限定於已保存四幀的正向回放：RGBA guard 相同、indicator 紀錄 PASS、三段 D 和 ordered overlap 可獨立重算，原始「相溥」保留，replay scroll_eligible 全為 false。這些事實不證明負向情境或實機安全。",
+        "joint_D": [
+          [-292.0291666666666, -243.80416666666667],
+          [-292.0291666063855, -243.80416660638537],
+          [-292.02916669792364, -246.4833333645903]
+        ]
+      },
+      {
+        "question": 5,
+        "verdict": "FAIL",
+        "answer": "R20 正確維持 NOT_RUN；R01–R19 的整體通過宣稱缺乏充分行為證據。R06 同時缺 capture age，未隔離 safety 條件；R08 未驗證 persist/readback 或刷新計數；R12 只辨識兩筆不同 count，未證明終止及 non-adjacent reappearance；R18 直接以同一政策物件作 expected/actual 並寫 PASS；R19 只比較 hash 不同，未呼叫拒絕重用的流程。",
+        "locations": [
+          "candidate/run_offline_once.py:571",
+          "candidate/run_offline_once.py:626",
+          "candidate/run_offline_once.py:723",
+          "candidate/run_offline_once.py:821",
+          "candidate/run_offline_once.py:835"
+        ]
+      },
+      {
+        "question": 6,
+        "verdict": "FAIL",
+        "answer": "存在未驗證行為被記為 PASS 的問題，不能認證證據宣稱完整。stage_evaluate 先 exclusive-create frame manifest，之後以 write mode 覆寫，違反 append-only 規則。問題單的 CORE_ACCEPTANCE_STATUS 仍為 PENDING，與定稿結果 NOT_RUN 不一致。未發現原始 replay 被改寫或新增自適應門檻；無法據此判定有蓄意造假。",
+        "locations": [
+          "candidate/run_offline_once.py:405",
+          "candidate/run_offline_once.py:831",
+          "問題單.md:16"
+        ]
+      },
+      {
+        "question": 7,
+        "verdict": "PASS",
+        "answer": "依原 runner 的五個方法檔案重算 candidate hash，完全符合受審值。capture_preservation.py 是後加的非方法工具，manifest 已另行註明；不把包含它的另一個 aggregate hash 當成本次候選。審查結束時候選檔案 hash 仍相符。"
+      }
+    ],
+    "facts": [
+      "封包 21 筆、gate manifest 14 筆及 implementer result 10 筆 evidence hash/bytes 全部相符。",
+      "四幀解碼 RGBA 與 manifest hash 相符；16 份 derivative 是原圖全圖的 exact nearest 2x。",
+      "四角 fixture 的 RGB 與預期相符，alpha 全為 255。",
+      "原 preservation.before 與 after-02 的受保護集合及 Git 欄位相同，其歷史 delta PASS 可保留。",
+      "目前 HEAD 為 5fb43999b3705fbffa59dbd244a432ad84ebf257，其 parent 為原 HEAD 4a7a36f5bf0af197a18d1f7ed3add4b7f77e51c3；原 preservation 不是提交後快照。",
+      "目前記錄中的 backups 239 筆、canonical state 3 筆、舊 task 93 筆、產品來源 92 筆及凍結文件 10 筆 hash 均無差異；tracked diff hash 也與原基線相同。",
+      "ledger 保留歷史 3 次及已消耗追加 1 次；live 目錄只有 README，未見實機證據。",
+      "本輪未寫檔、未執行 runner、未重跑 OCR、未操作 LINE、未 commit 或 push。"
+    ],
+    "inferences": [
+      "現有候選與證據不能满足全部 required pre-live 條件，審查 FAIL；不得據此進入 LINE 前景或實機輸入。",
+      "問題涉及候選語意與驗證方式，不能靠修改問題單或 PASS 標籤修復。",
+      "修改凍結候選會使舊驗證不可重用；追加方法額度已消耗，應交回 Planner 明列修復範圍及額度處理，不能自動開始第五種方法。"
+    ],
+    "unknowns": [
+      "沒有 controller issue claim、emitted analysis_path 或固定驗證／return 指令，正式 admission 與 validation 未完成。",
+      "現有紀錄無法證明完整局部 ROI 方法及 live refresh/retry/input-budget 行為。",
+      "未找到 29 項 unittest 的保存執行紀錄；僅確認 source 有 29 個 test 方法。",
+      "native dispatch 的平台錯誤僅見保存紀錄，本輪未重試或獨立重現。"
+    ],
+    "evidence": [
+      "handoff.md:139、246、290、299–312 的凍結要求。",
+      "candidate/catalog_diagnostic.py:669–719、840–850、937–1052。",
+      "candidate/run_offline_once.py:238–280、405、571–650、723–748、821–861。",
+      "offline-validation/results.json、decoded/*、ocr/*、evaluate/* 與 fixture/*。",
+      "本輪唯讀工具輸出：hash 重驗、D/overlap 獨立重算及七個記憶體測例；未落盤，不是 controller receipt。"
+    ],
+    "confidence": "HIGH：阻擋裁決有固定來源與可重現 fixture 支持；不推論未執行的實機結果或造假意圖。",
+    "recorded_gate_results_unchanged": {
+      "G_OFFLINE": "PASS",
+      "G_PRESERVE": "PASS",
+      "G_LIVE": "NOT_RUN",
+      "G_ACCEPTANCE": "NOT_RUN"
+    },
+    "gate_note": "上述為既有記錄，未被改寫。本審查指出 G_OFFLINE 的完整 required 證據宣稱不足；正向回放及歷史保存事實仍保留。未簽發任何新 gate receipt。",
+    "controller_admission": "BLOCKED",
+    "route": "PLANNER_REPLAN",
+    "allowed_paths": [
+      "harness-development/catalog-diagnostic-continuity-replan-20261010/"
+    ],
+    "bounded_action": {
+      "action": "由 Planner 準備一份針對候選與 required 證據缺口的 bounded replan；此步只產出計畫，不修改候選、不重跑驗證、不操作 LINE。",
+      "write_paths": [
+        "harness-development/catalog-diagnostic-continuity-replan-20261010/results/pre-live-replan-01.md"
+      ],
+      "requirements": [
+        "列明局部 ROI、身份候選衝突、ambiguity、binding 驗證、chain 停止與 R06/R08/R12/R17/R18/R19 的修復及實際驗證方式。",
+        "保留舊候選、原結果、既有門檻、required gates、歷史 3+1 與 live 0/6。",
+        "明列更換候選後證據失效及方法額度的處理；不得假設已有新方法授权。"
+      ],
+      "success_criterion": "得到範圍、驗證證據、額度及停止規則均明確的新計畫，沒有開始相依實作。",
+      "stop_condition": "若需要新增方法、改凍結政策或任何 live input，先呈交具體決策，不自行執行。"
+    },
+    "plain_language_summary": "獨立 pre-live 審查 FAIL。檔案綁定與四幀正向回放可信，但程式會漏掉必要衝突，部分 PASS 沒有行為證據。下一步是 bounded replan；本輪不需重複授權，也不能進實機。"
+  },
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+      "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8",
+      "evidence_id": "REVIEW_PACKET",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/pre-live-review.packet.json",
+      "bytes": 3608,
+      "sha256": "cd6edf3edbf44d68ac318d0f508914f83ab771aab989d4b0f1e4fe20a5d315c4",
+      "contract_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+      "observation": "21 筆凍結輸入、候選及 artifacts 綁定相符。"
+    },
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+      "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8",
+      "evidence_id": "EVALUATOR_SOURCE",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/candidate/catalog_diagnostic.py",
+      "bytes": 54075,
+      "sha256": "babf3ec263099e3598be727cb02daa3aab44e0cf64330c4ac4cdce3c4c88819f",
+      "contract_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+      "observation": "唯讀 fixture 重現候選衝突、ambiguity、hash 驗證及 chain 停止缺口。"
+    },
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+      "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8",
+      "evidence_id": "RUNNER_SOURCE",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/candidate/run_offline_once.py",
+      "bytes": 50118,
+      "sha256": "eeaa72f8f4d9ce1a5c86a21a31885202dedf3f0149fa9b1c13d878a76b7847d0",
+      "contract_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+      "observation": "全部 OCR 使用全圖 ROI；R18/R19 未驗證宣稱行為；frame manifest 被覆寫。"
+    },
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+      "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8",
+      "evidence_id": "OFFLINE_RESULTS",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/results.json",
+      "bytes": 17723,
+      "sha256": "9d6da4b653ed25b9db0f69960f545d96b24f99598cfd8f909a545dceae78e971",
+      "contract_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+      "observation": "四幀正向 D/overlap 可重算、相溥保留；19 PASS 記錄不足以證明全部 required 行為。"
+    }
+  ],
+  "handoff_summary": "PRE_LIVE_REVIEW FAIL，綁定 candidate 646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6。hash 與正向回放相符，但身份／ambiguity／binding／chain 停止有缺口，局部 ROI 未實際驗證，R18/R19 PASS 不支持宣稱。唯一建議為 PLANNER_REPLAN；保留原材料與 3+1 歷史，不進實機、不自行修改或重跑。正式 validation NOT_RUN，controller admission BLOCKED。",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 3,
+    "consecutive_no_progress": 0,
+    "last_attempt": "完成獨立唯讀審查，取得候選與證據缺口的新事實；未新增實作方法。此欄沿用歷史三次，完整 3+1 累計仍以原 ledger 為準。",
+    "information_gain": true,
+    "stuck": true
+  }
+}
