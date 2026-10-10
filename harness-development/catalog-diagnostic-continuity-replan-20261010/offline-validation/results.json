@@ -1,0 +1,647 @@
+{
+ "binding_hash": "100296f041b984324afb1fe49fa9667acf7506d7ae2bacdd496f42c71862f638",
+ "build": {
+  "binary": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/offline_vision",
+  "returncode": 0,
+  "sha256": "ed9598257833541e105a8bf00d0cd642c9469bc7e38144ab7ff7c7556b34c166",
+  "swift_version": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)"
+ },
+ "candidate_hash": "646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6",
+ "checks": [
+  {
+   "actual": {
+    "continuity": [
+     "BOOTSTRAP",
+     "PASS",
+     "PASS",
+     "PASS"
+    ],
+    "keeps_相溥": true,
+    "movement": [
+     "YES",
+     "YES",
+     "YES"
+    ],
+    "no_相溥_to_相簿_replacement": true,
+    "overlap": [
+     "PASS",
+     "PASS",
+     "PASS"
+    ],
+    "scan003_modern_texts": [
+     "旻謙允禎成長日記",
+     "相溥",
+     "記事本",
+     "2024/05/27～05/31",
+     "56"
+    ],
+    "scroll_eligible": [
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "description": "四幀離線回放：文字連續性、選中指示、三段位移、順序重疊；live 權限 false；保留原始相溥",
+   "evidence": {
+    "decision_dirs": {
+     "scan-000": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-000/evaluation",
+     "scan-001": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-001/evaluation",
+     "scan-002": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-002/evaluation",
+     "scan-003": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-003/evaluation"
+    },
+    "expected_joint_D": {
+     "000-001": [
+      -292.029,
+      -243.804
+     ],
+     "001-002": [
+      -292.029,
+      -243.804
+     ],
+     "002-003": [
+      -292.029,
+      -246.483
+     ]
+    },
+    "observed_joint_D": {
+     "000-001": [
+      -292.0291666666666,
+      -243.80416666666667
+     ],
+     "001-002": [
+      -292.0291666063855,
+      -243.80416660638537
+     ],
+     "002-003": [
+      -292.02916669792364,
+      -246.4833333645903
+     ]
+    }
+   },
+   "expected": {
+    "continuity": [
+     "BOOTSTRAP",
+     "PASS",
+     "PASS",
+     "PASS"
+    ],
+    "keeps_相溥": true,
+    "movement": [
+     "YES",
+     "YES",
+     "YES"
+    ],
+    "overlap": [
+     "PASS",
+     "PASS",
+     "PASS"
+    ],
+    "scroll_eligible": false
+   },
+   "id": "R01",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "joint": [
+     -303.0,
+     -255.0
+    ],
+    "movement": "YES"
+   },
+   "description": "相同集合但全部 bbox 大幅向上 -> movement YES",
+   "evidence": {
+    "joint": [
+     -303.0,
+     -255.0
+    ],
+    "reason": "all fields every identity moved up; joint D non-empty; x overlap positive"
+   },
+   "expected": {
+    "all_upper_negative": true,
+    "movement": "YES"
+   },
+   "id": "R02",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "complete_rows": 1,
+    "date_confidence": 0.3
+   },
+   "description": "raw confidence 0.3/0.5 但身份／幾何完整一致 -> 不因 0.95 門檻失敗，raw scores 保留",
+   "evidence": {
+    "rows": [
+     {
+      "count": 65,
+      "count_box": [
+       29.0,
+       885.0,
+       61.0,
+       909.0
+      ],
+      "count_candidates": [
+       {
+        "confidence": 0.5,
+        "text": "65"
+       }
+      ],
+      "count_confidence": 0.5,
+      "count_text": "65",
+      "date_box": [
+       29.0,
+       850.0,
+       265.0,
+       877.0
+      ],
+      "date_candidates": [
+       {
+        "confidence": 0.3,
+        "text": "2024/06/02~06/07"
+       }
+      ],
+      "date_confidence": 0.3,
+      "date_text": "2024/06/02~06/07",
+      "identity_dates": [
+       "2024-06-02",
+       "2024-06-07"
+      ]
+     }
+    ]
+   },
+   "expected": {
+    "complete_rows": 1,
+    "date_confidence": 0.3
+   },
+   "id": "R03",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "first_diff": [
+     500,
+     150
+    ],
+    "pixel_diff_count": 1,
+    "status": "CONFLICT"
+   },
+   "description": "baseline glyph 不變，但 title 槽外新增低對比像素 -> full-slot guard 拒絕",
+   "evidence": {
+    "reason": "text slot pixels differ from previous frame"
+   },
+   "expected": {
+    "pixel_diff_count": 1,
+    "status": "CONFLICT"
+   },
+   "id": "R04",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "indicator_double": "CONFLICT",
+    "indicator_notes": "CONFLICT",
+    "text_guard": "CONFLICT"
+   },
+   "description": "改 group/tab 字或指示移到記事本／雙指示 -> 停止",
+   "evidence": {
+    "double_reason": "bright structure present under 記事本 tab",
+    "notes_reason": "bright structure present under 記事本 tab"
+   },
+   "expected": {
+    "indicator_double": "CONFLICT",
+    "indicator_notes": "CONFLICT",
+    "text_guard": "CONFLICT"
+   },
+   "id": "R05",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "safety_observation": "UNKNOWN",
+    "scroll_eligible": false
+   },
+   "description": "viewer/dialog/menu/editing/occluded 且文字 ROI 相同 -> input 禁止（safety UNKNOWN）",
+   "evidence": {
+    "stop_reason": "capture age unknown or over 5s"
+   },
+   "expected": {
+    "scroll_eligible": false
+   },
+   "id": "R06",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "binding_validity": "INVALID",
+    "scroll_eligible": false
+   },
+   "description": "old run/frame 混入、source/geometry 改變 -> binding invalid；無 scroll 權限",
+   "evidence": {
+    "checks": {
+     "height_match": true,
+     "mode_match": true,
+     "observation_match": true,
+     "rgba_source_sha_match": false,
+     "run_id_match": false,
+     "width_match": true
+    }
+   },
+   "expected": {
+    "binding_validity": "INVALID",
+    "scroll_eligible": false
+   },
+   "id": "R07",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "age_unknown": false,
+    "fresh_3s": true,
+    "stale_6s": false
+   },
+   "description": "capture 過期 >5 秒或 age 未知不得 dispatch；唯讀 refresh 上限 2（live runner 契約）",
+   "evidence": {
+    "stale_stop_reason": "capture age unknown or over 5s",
+    "unknown_stop_reason": "capture age unknown or over 5s"
+   },
+   "expected": {
+    "age_unknown": false,
+    "fresh_3s": true,
+    "stale_6s": false
+   },
+   "id": "R08",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "bad_date": {
+     "ambiguous": 0,
+     "complete": 0,
+     "conflicts": 0,
+     "ok": true,
+     "partial": 1
+    },
+    "count_letter": {
+     "ambiguous": 1,
+     "complete": 0,
+     "conflicts": 0,
+     "ok": true,
+     "partial": 0
+    },
+    "count_zero": {
+     "ambiguous": 1,
+     "complete": 0,
+     "conflicts": 0,
+     "ok": true,
+     "partial": 0
+    },
+    "missing_count": {
+     "ambiguous": 0,
+     "complete": 0,
+     "conflicts": 0,
+     "ok": true,
+     "partial": 1
+    },
+    "start_after_end": {
+     "ambiguous": 0,
+     "complete": 0,
+     "conflicts": 0,
+     "ok": true,
+     "partial": 1
+    },
+    "two_counts": {
+     "ambiguous": 0,
+     "complete": 0,
+     "conflicts": 0,
+     "ok": true,
+     "partial": 1
+    }
+   },
+   "description": "日期無效、start>end、count 非正整數、跨卡／兩 count -> 拒絕完整 identity 或 ambiguity 停止",
+   "evidence": {},
+   "expected": {
+    "all_rejected": true
+   },
+   "id": "R09",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "conflicts": [
+     "legacy_modern_count_disagreement"
+    ],
+    "qualified": 0
+   },
+   "description": "同 block 兩 API 不同有效 identity -> 停止；不套 tab 容錯",
+   "evidence": {
+    "conflicts": [
+     {
+      "detail": "legacy reads a different valid count inside the same metadata block",
+      "kind": "legacy_modern_count_disagreement",
+      "legacy": [
+       {
+        "parsed": 66,
+        "text": "66"
+       }
+      ],
+      "modern": {
+       "parsed": 65,
+       "text": "65"
+      }
+     }
+    ]
+   },
+   "expected": {
+    "conflict": "legacy_modern_count_disagreement",
+    "qualified": 0
+   },
+   "id": "R10",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "conflicts": 0,
+    "legacy_completeness": "UNKNOWN",
+    "qualified": 0
+   },
+   "description": "缺讀 legacy 或只有 partial -> 不寫 agreement；不能用該行延伸 coverage",
+   "evidence": {},
+   "expected": {
+    "legacy_completeness": "UNKNOWN",
+    "qualified": 0
+   },
+   "id": "R11",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "counts": [
+     65,
+     64
+    ],
+    "drift": true,
+    "same_date_rows": 2
+   },
+   "description": "duplicate、同日期 count 變動、non-adjacent reappearance -> ambiguity 停止",
+   "evidence": {},
+   "expected": {
+    "same_date_drift_detected": true
+   },
+   "id": "R12",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "adjacent": "PASS",
+    "gap": "FAIL",
+    "reversed": "FAIL"
+   },
+   "description": "ordered-overlap 缺口／反序（無相鄰 suffix-prefix）-> 不延伸 chain；正常相鄰仍 PASS",
+   "evidence": {
+    "gap_matches": [],
+    "reversed_matches": []
+   },
+   "expected": {
+    "adjacent": "PASS",
+    "gap": "FAIL",
+    "reversed": "FAIL"
+   },
+   "id": "R13",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "date_up_count_down": "NO",
+    "no_x_overlap": "NO"
+   },
+   "description": "date 向上但 count 不向上、D 無共同交集或 x 無重疊 -> 不得 YES",
+   "evidence": {
+    "reason_a": "some D.high >= 0; joint D empty",
+    "reason_b": "missing positive horizontal projection overlap"
+   },
+   "expected": {
+    "date_up_count_down": "NO",
+    "no_x_overlap": "NO"
+   },
+   "id": "R14",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "movement": "NO",
+    "transport_evidence": "RETURNED"
+   },
+   "description": "未變 metadata/layout，transport RETURNED 或 AX 改變 -> 不以 transport/AX 推出 YES",
+   "evidence": {
+    "reason": "some D.high >= 0"
+   },
+   "expected": {
+    "movement": "NO"
+   },
+   "id": "R15",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "indicator": "UNKNOWN"
+   },
+   "description": "tab OCR 錯且文字像素／選中／來源證據不足 -> UNKNOWN、input 禁止",
+   "evidence": {
+    "reason": "no selected indicator found under 相簿 tab"
+   },
+   "expected": {
+    "indicator": "UNKNOWN"
+   },
+   "id": "R16",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "fixture": "PASS",
+    "formats": {
+     "scan-000": "public.jpeg",
+     "scan-001": "public.jpeg",
+     "scan-002": "public.jpeg",
+     "scan-003": "public.jpeg"
+    },
+    "legacy_scan000_date_y": 855.9999997161353,
+    "new_transform_check": [
+     857.3333329984375,
+     857.3333329984375
+    ]
+   },
+   "description": "JPEG 命名 .png、history 全圖 2x、新局部 ROI 2x、方向四角 fixture",
+   "evidence": {
+    "fixture_stdout": "{\n  \"bottom_left\" : [\n    30,\n    30,\n    220\n  ],\n  \"bottom_right\" : [\n    230,\n    210,\n    30\n  ],\n  \"height\" : 60,\n  \"screen_capture\" : false,\n  \"source_sha256\" : \"63b9b79cbca1dd84332b75829a430f735981ea0002f2322cc9349e3b23cb9343\",\n  \"source_type_identifier\" : \"public.png\",\n  \"top_left\" : [\n    220,\n    30,\n    30\n  ],\n  \"top_right\" : [\n    30,\n    200,\n    30\n  ],\n  \"ui_inputs_sent\" : 0,\n  \"verdict\" : \"PASS\",\n  \"width\" : 80\n}\n\n"
+   },
+   "expected": {
+    "fixture": "PASS",
+    "formats": "public.jpeg",
+    "legacy_scan000_date_y": 855.9999997161353
+   },
+   "id": "R17",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "error_resend": false,
+    "max_total_scroll_calls": 6,
+    "max_unknown_effect_read_only_observations": 2,
+    "restart_or_resume_live_slot": false,
+    "unknown_effect_delays_seconds": [
+     10,
+     30
+    ],
+    "unknown_effect_resend": false
+   },
+   "description": "UNKNOWN/error/crash/late 或第 7 次 input 請求 -> 不 resend、不 resume、不超 6",
+   "evidence": {
+    "enforced_by": "candidate never dispatches input; live runner contract"
+   },
+   "expected": {
+    "error_resend": false,
+    "max_total_scroll_calls": 6,
+    "max_unknown_effect_read_only_observations": 2,
+    "restart_or_resume_live_slot": false,
+    "unknown_effect_delays_seconds": [
+     10,
+     30
+    ],
+    "unknown_effect_resend": false
+   },
+   "id": "R18",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "candidate_hash_original": "646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6",
+    "candidate_hash_tampered": "a66e9ab94d4d4fd0b5979ee9e51b9ca4644cf619e58f5c011a174aaf5ca392ce",
+    "original_modern_sha": "98867ec42c94bba34b8b70d7aab9a847c7c5026aca909d5331985a206b49e72e",
+    "reuse_rejected": true,
+    "tampered_modern_sha": "e2c874b8dbd33a21bbd1530f00b64b31357b79bf4546ecb032f0db0f7528fbdf"
+   },
+   "description": "修改原回放、immutable 文件、profile 或 candidate hash -> 拒絕舊結果重用",
+   "evidence": {},
+   "expected": {
+    "reuse_rejected": true
+   },
+   "id": "R19",
+   "verdict": "PASS"
+  },
+  {
+   "actual": {
+    "reason": "offline environment; documented CUA live surface not exercised in this run",
+    "status": "NOT_RUN"
+   },
+   "description": "六個真正 live steps：每步 fresh/action/effect/overlap；0 click/key/open/download/statewrite",
+   "evidence": {
+    "live_evidence": "live/ (empty until coordinated foreground readiness)"
+   },
+   "expected": {
+    "status": "NOT_RUN"
+   },
+   "id": "R20",
+   "verdict": "NOT_RUN"
+  }
+ ],
+ "checks_summary": {
+  "FAIL": 0,
+  "NOT_RUN": 1,
+  "PASS": 19
+ },
+ "controller_validation": "NOT_RUN (no applicable stage packet)",
+ "fixture": {
+  "dims": {
+   "height": 60,
+   "width": 80
+  },
+  "fixture_png": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/fixture/corners.png",
+  "fixture_png_sha256": "63b9b79cbca1dd84332b75829a430f735981ea0002f2322cc9349e3b23cb9343",
+  "stderr": "",
+  "stdout": "{\n  \"bottom_left\" : [\n    30,\n    30,\n    220\n  ],\n  \"bottom_right\" : [\n    230,\n    210,\n    30\n  ],\n  \"height\" : 60,\n  \"screen_capture\" : false,\n  \"source_sha256\" : \"63b9b79cbca1dd84332b75829a430f735981ea0002f2322cc9349e3b23cb9343\",\n  \"source_type_identifier\" : \"public.png\",\n  \"top_left\" : [\n    220,\n    30,\n    30\n  ],\n  \"top_right\" : [\n    30,\n    200,\n    30\n  ],\n  \"ui_inputs_sent\" : 0,\n  \"verdict\" : \"PASS\",\n  \"width\" : 80\n}\n\n",
+  "verdict": "PASS"
+ },
+ "format": "local-offline-validation-1",
+ "frames": {
+  "scan-000": {
+   "continuity": "BOOTSTRAP",
+   "decision_dir": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-000/evaluation",
+   "decoded_rgba_sha256": "dc83ceb79c18638dd7e9a31417a60f6b7abd7953d1e11fbdbcca4cd144481e7d",
+   "identity_status": "COMPLETE",
+   "indicator": "PASS",
+   "joint_D": [
+    -24.11249999999984,
+    24.11249999999984
+   ],
+   "movement": "NO",
+   "ordered_overlap": "PASS",
+   "ordered_qualified_ids": [
+    "2024-06-02_2024-06-07_65"
+   ],
+   "scroll_eligible": false,
+   "source_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+   "source_type_identifier": "public.jpeg"
+  },
+  "scan-001": {
+   "continuity": "PASS",
+   "decision_dir": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-001/evaluation",
+   "decoded_rgba_sha256": "a961d41e253bdc7f08b3115f824871b4f3c0f8c744fc1dc54e78a671b55652ba",
+   "identity_status": "COMPLETE",
+   "indicator": "PASS",
+   "joint_D": [
+    -292.0291666666666,
+    -243.80416666666667
+   ],
+   "movement": "YES",
+   "ordered_overlap": "PASS",
+   "ordered_qualified_ids": [
+    "2024-06-02_2024-06-07_65"
+   ],
+   "scroll_eligible": false,
+   "source_sha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57",
+   "source_type_identifier": "public.jpeg"
+  },
+  "scan-002": {
+   "continuity": "PASS",
+   "decision_dir": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-002/evaluation",
+   "decoded_rgba_sha256": "a25f1c23bf9e16432825305db61ad5859da21bf1cf09af0bd43bc38f6a96322e",
+   "identity_status": "COMPLETE",
+   "indicator": "PASS",
+   "joint_D": [
+    -292.0291666063855,
+    -243.80416660638537
+   ],
+   "movement": "YES",
+   "ordered_overlap": "PASS",
+   "ordered_qualified_ids": [
+    "2024-06-02_2024-06-07_65",
+    "2024-05-27_2024-05-31_56"
+   ],
+   "scroll_eligible": false,
+   "source_sha256": "65af93e64fa0ae38d2214a2e9d973cafcdd4db99ae47124e2ccb5e6aeb9b3adb",
+   "source_type_identifier": "public.jpeg"
+  },
+  "scan-003": {
+   "continuity": "PASS",
+   "decision_dir": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-003/evaluation",
+   "decoded_rgba_sha256": "fe379177e7c415a5a40d2cc174cbb7a757e5db10f0fba7aa575c9d9b90735425",
+   "identity_status": "COMPLETE",
+   "indicator": "PASS",
+   "joint_D": [
+    -292.02916669792364,
+    -246.4833333645903
+   ],
+   "movement": "YES",
+   "ordered_overlap": "PASS",
+   "ordered_qualified_ids": [
+    "2024-05-27_2024-05-31_56"
+   ],
+   "scroll_eligible": false,
+   "source_sha256": "934cc2cac6be8fdb37a9bd014d90321be271d8517134070d9a9adcf62d091cdf",
+   "source_type_identifier": "public.jpeg"
+  }
+ },
+ "full_collection_coverage": "NOT_ESTABLISHED",
+ "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+}

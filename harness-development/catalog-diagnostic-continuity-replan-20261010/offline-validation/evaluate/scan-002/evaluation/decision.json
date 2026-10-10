@@ -1,0 +1,423 @@
+{
+ "ambiguous": [],
+ "auxiliary_ocr_uncertainty": [],
+ "binding_hash": "100296f041b984324afb1fe49fa9667acf7506d7ae2bacdd496f42c71862f638",
+ "binding_validity": {
+  "binding_run_id": "replay-catalog-diagnostic-20261010",
+  "checks": {
+   "height_match": true,
+   "mode_match": true,
+   "observation_match": true,
+   "rgba_source_sha_match": true,
+   "run_id_match": true,
+   "width_match": true
+  },
+  "frame_run_id": "replay-catalog-diagnostic-20261010",
+  "note": "replay-only diagnostic binding; never reusable as live binding",
+  "status": "VALID"
+ },
+ "can_open_album": false,
+ "can_save_all": false,
+ "candidate_hash": "646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6",
+ "chain_edge": null,
+ "chain_extended": false,
+ "complete_rows": [
+  {
+   "count": 65,
+   "count_box": [
+    29.48360655737705,
+    356.32916642554164,
+    61.647540983606554,
+    380.4416664255417
+   ],
+   "count_candidates": [
+    {
+     "confidence": 1,
+     "text": "65"
+    }
+   ],
+   "count_confidence": 1,
+   "count_text": "65",
+   "date_box": [
+    29.4836055745902,
+    321.4999997767361,
+    265.3524580336066,
+    348.2916664434028
+   ],
+   "date_candidates": [
+    {
+     "confidence": 0.5,
+     "text": "2024/06/02～06/07"
+    }
+   ],
+   "date_confidence": 0.5,
+   "date_text": "2024/06/02～06/07",
+   "identity_dates": [
+    "2024-06-02",
+    "2024-06-07"
+   ]
+  },
+  {
+   "count": 56,
+   "count_box": [
+    29.483606423360666,
+    1090.4208332440278,
+    61.64754084959017,
+    1111.8541665773612
+   ],
+   "count_candidates": [
+    {
+     "confidence": 1,
+     "text": "56"
+    }
+   ],
+   "count_confidence": 1,
+   "count_text": "56",
+   "date_box": [
+    29.483606453142066,
+    1052.912499975193,
+    259.99180317445354,
+    1079.7041666418597
+   ],
+   "date_candidates": [
+    {
+     "confidence": 0.5,
+     "text": "2024/05/27～05/31"
+    }
+   ],
+   "date_confidence": 0.5,
+   "date_text": "2024/05/27～05/31",
+   "identity_dates": [
+    "2024-05-27",
+    "2024-05-31"
+   ]
+  }
+ ],
+ "conflicts": [],
+ "continuity": {
+  "guard": {
+   "current_region_sha256": "003cbef1902186e1ecf7ddf0074f47923406d704f6c88030afce9a7b18ee8a63",
+   "exclusions": [],
+   "first_diff": null,
+   "guard_rect": [
+    0,
+    0,
+    654,
+    192
+   ],
+   "pixel_diff_count": 0,
+   "previous_region_sha256": "003cbef1902186e1ecf7ddf0074f47923406d704f6c88030afce9a7b18ee8a63",
+   "reason": "full-slot RGBA identical",
+   "status": "PASS"
+  },
+  "previous_checks": {
+   "previous_frame_id_match": true,
+   "previous_height_match": true,
+   "previous_observation_match": true,
+   "previous_run_id_match": true,
+   "previous_width_match": true
+  },
+  "previous_frame_id": "scan-001",
+  "reason": "all identity checks and full-slot guard pass",
+  "status": "PASS"
+ },
+ "decoded_rgba_sha256": "a25f1c23bf9e16432825305db61ad5859da21bf1cf09af0bd43bc38f6a96322e",
+ "decoder_hash": "ff0e50f340b05e871d0291efe9505e8c766534929418975bad41b1ed2d8b8c0f",
+ "facts_not_obtained": [
+  "live runtime provenance, capture timestamps and safety observation are not available in replay",
+  "legacy candidate completeness UNKNOWN (single stored candidate; not fabricated)"
+ ],
+ "format": "local-catalog-diagnostic-1",
+ "frame_id": "scan-002",
+ "full_collection_coverage": "NOT_ESTABLISHED",
+ "identity_status": "COMPLETE",
+ "live_state_write_allowed": false,
+ "mode": "replay",
+ "movement": "YES",
+ "movement_evidence": {
+  "center_deltas": [
+   {
+    "center_delta": [
+     0.0,
+     -267.916667
+    ],
+    "current_center": [
+     147.418032,
+     334.895833
+    ],
+    "field": "date",
+    "identity": "2024-06-02_2024-06-07_65",
+    "previous_center": [
+     147.418031,
+     602.8125
+    ]
+   },
+   {
+    "center_delta": [
+     -0.0,
+     -267.916667
+    ],
+    "current_center": [
+     45.565574,
+     368.385416
+    ],
+    "field": "count",
+    "identity": "2024-06-02_2024-06-07_65",
+    "previous_center": [
+     45.565574,
+     636.302083
+    ]
+   }
+  ],
+  "fields": {
+   "count": [
+    {
+     "D": [
+      -292.0291666063855,
+      -243.80416660638537
+     ],
+     "center_delta": [
+      -0.0,
+      -267.916667
+     ],
+     "current_box": [
+      29.48360655737705,
+      356.32916642554164,
+      61.647540983606554,
+      380.4416664255417
+     ],
+     "horizontal_projection_overlap": 32.163934359221315,
+     "identity": "2024-06-02_2024-06-07_65",
+     "previous_box": [
+      29.483606624385242,
+      624.2458330319271,
+      61.64754105061475,
+      648.3583330319271
+     ]
+    }
+   ],
+   "date": [
+    {
+     "D": [
+      -294.7083332217014,
+      -241.1249998883681
+     ],
+     "center_delta": [
+      0.0,
+      -267.916667
+     ],
+     "current_box": [
+      29.4836055745902,
+      321.4999997767361,
+      265.3524580336066,
+      348.2916664434028
+     ],
+     "horizontal_projection_overlap": 235.86885203463115,
+     "identity": "2024-06-02_2024-06-07_65",
+     "previous_box": [
+      29.483605150204944,
+      589.4166663317709,
+      265.35245760922135,
+      616.2083329984375
+     ]
+    }
+   ]
+  },
+  "horizontal_overlap": "PASS",
+  "joint": [
+   -292.0291666063855,
+   -243.80416660638537
+  ],
+  "movement": "YES",
+  "reason": "all fields every identity moved up; joint D non-empty; x overlap positive",
+  "shared_identities": [
+   "2024-06-02_2024-06-07_65"
+  ]
+ },
+ "movement_reference": "previous frame",
+ "ordered_complete_ids": [
+  "2024-06-02_2024-06-07_65",
+  "2024-05-27_2024-05-31_56"
+ ],
+ "ordered_overlap": {
+  "current_ordered_ids": [
+   "2024-06-02_2024-06-07_65",
+   "2024-05-27_2024-05-31_56"
+  ],
+  "matches": [
+   1
+  ],
+  "max_overlap": 1,
+  "overlap": "PASS",
+  "previous_ordered_ids": [
+   "2024-06-02_2024-06-07_65"
+  ]
+ },
+ "ordered_qualified_ids": [
+  "2024-06-02_2024-06-07_65",
+  "2024-05-27_2024-05-31_56"
+ ],
+ "partial_rows": [],
+ "profile_hashes": {
+  "profiles.json": "18bc872d99940de8e010f34cd2a864cb3eebd3f99eb3b3cce018029b26001bb0"
+ },
+ "qualified_overlap_rows": [
+  {
+   "count": 65,
+   "count_box": [
+    29.48360655737705,
+    356.32916642554164,
+    61.647540983606554,
+    380.4416664255417
+   ],
+   "count_candidates": [
+    {
+     "confidence": 1,
+     "text": "65"
+    }
+   ],
+   "count_confidence": 1,
+   "count_text": "65",
+   "date_box": [
+    29.4836055745902,
+    321.4999997767361,
+    265.3524580336066,
+    348.2916664434028
+   ],
+   "date_candidates": [
+    {
+     "confidence": 0.5,
+     "text": "2024/06/02～06/07"
+    }
+   ],
+   "date_confidence": 0.5,
+   "date_text": "2024/06/02～06/07",
+   "identity_dates": [
+    "2024-06-02",
+    "2024-06-07"
+   ],
+   "legacy_count_box": [
+    31.765714005776516,
+    356.99999963157194,
+    63.53142865116226,
+    379.499999631572
+   ],
+   "legacy_count_text": "65",
+   "legacy_date_box": [
+    31.765715299186212,
+    321.4999995850087,
+    265.3371416907878,
+    345.99999958500877
+   ],
+   "legacy_date_text": "2024/06/02~06/07"
+  },
+  {
+   "count": 56,
+   "count_box": [
+    29.483606423360666,
+    1090.4208332440278,
+    61.64754084959017,
+    1111.8541665773612
+   ],
+   "count_candidates": [
+    {
+     "confidence": 1,
+     "text": "56"
+    }
+   ],
+   "count_confidence": 1,
+   "count_text": "56",
+   "date_box": [
+    29.483606453142066,
+    1052.912499975193,
+    259.99180317445354,
+    1079.7041666418597
+   ],
+   "date_candidates": [
+    {
+     "confidence": 0.5,
+     "text": "2024/05/27～05/31"
+    }
+   ],
+   "date_confidence": 0.5,
+   "date_text": "2024/05/27～05/31",
+   "identity_dates": [
+    "2024-05-27",
+    "2024-05-31"
+   ],
+   "legacy_count_box": [
+    31.76571442290479,
+    1087.8662787617127,
+    61.66285683318311,
+    1110.5000001133362
+   ],
+   "legacy_count_text": "56",
+   "legacy_date_box": [
+    31.765714477384734,
+    1052.3517445146201,
+    259.7314279783613,
+    1078.5203484117148
+   ],
+   "legacy_date_text": "2024/05/27~05/31"
+  }
+ ],
+ "raw_ocr_artifacts": {
+  "apis_independent": false,
+  "confidenceCalibration": "UNKNOWN",
+  "confidence_threshold_applied": null,
+  "legacy_completeness": "UNKNOWN",
+  "legacy_item_count": 7,
+  "legacy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-002/legacy-source-converted.json",
+  "legacy_sha256": "588e0c436b19f6c58349ff4079cebfd6949bb1403d0686267c350db3a0279c00",
+  "modern_completeness": "COMPLETE",
+  "modern_item_count": 8,
+  "modern_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/ocr/scan-002.metadata_modern/recognize.json",
+  "modern_sha256": "d06763031b323d86d1da628192d0598411537b004b4db4ee1079e4ab12a48b89",
+  "text_replacements_applied": 0
+ },
+ "safety_observation": "UNKNOWN",
+ "scroll_eligible": false,
+ "selected_indicator": {
+  "album_bright_pixels": 192,
+  "album_region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "baseline_bbox": [
+   138,
+   202,
+   186,
+   206
+  ],
+  "baseline_mask_sha256": "9831a05738d4c8eef662f6b98b0880c8912ff54c9649c0888db82c3bee9a0d9d",
+  "component_count": 1,
+  "notes_bright_pixels": 0,
+  "notes_region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "observed_bbox": [
+   138,
+   202,
+   186,
+   206
+  ],
+  "observed_mask_sha256": "9831a05738d4c8eef662f6b98b0880c8912ff54c9649c0888db82c3bee9a0d9d",
+  "raw_rgba_retained": true,
+  "reason": "single horizontal bright component under 相簿; 記事本 clear; matches baseline",
+  "region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "status": "PASS",
+  "threshold": 128
+ },
+ "source_artifact_sha256": "65af93e64fa0ae38d2214a2e9d973cafcdd4db99ae47124e2ccb5e6aeb9b3adb",
+ "stop_reason": null
+}

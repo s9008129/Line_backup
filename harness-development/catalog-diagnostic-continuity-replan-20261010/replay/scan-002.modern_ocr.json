@@ -1,0 +1,123 @@
+{
+  "confidenceCalibration" : "UNKNOWN",
+  "imageHeight" : 2572,
+  "imageWidth" : 1308,
+  "items" : [
+    {
+      "boxTopLeftPixels" : [
+        455.65573743688526,
+        182.18333329334578,
+        391.32786885245912,
+        53.583333333333428
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.5,
+          "text" : "旻謙允禎成長日記"
+        }
+      ],
+      "confidence" : 0.5,
+      "text" : "旻謙允禎成長日記"
+    },
+    {
+      "boxTopLeftPixels" : [
+        273.39344283737705,
+        321.49999946416665,
+        96.491803278688565,
+        53.583333333333428
+      ],
+      "candidates" : [
+        {
+          "confidence" : 1,
+          "text" : "相簿"
+        }
+      ],
+      "confidence" : 1,
+      "text" : "相簿"
+    },
+    {
+      "boxTopLeftPixels" : [
+        900.59016365473985,
+        321.49999988351442,
+        150.09836065573768,
+        53.583333333333428
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.5,
+          "text" : "記事本"
+        }
+      ],
+      "confidence" : 0.5,
+      "text" : "記事本"
+    },
+    {
+      "boxTopLeftPixels" : [
+        58.9672111491804,
+        642.99999955347221,
+        471.73770491803276,
+        53.583333333333371
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.5,
+          "text" : "2024\/06\/02～06\/07"
+        }
+      ],
+      "confidence" : 0.5,
+      "text" : "2024\/06\/02～06\/07"
+    },
+    {
+      "boxTopLeftPixels" : [
+        58.967213114754102,
+        712.65833285108329,
+        64.327868852459005,
+        48.225000000000136
+      ],
+      "candidates" : [
+        {
+          "confidence" : 1,
+          "text" : "65"
+        }
+      ],
+      "confidence" : 1,
+      "text" : "65"
+    },
+    {
+      "boxTopLeftPixels" : [
+        58.967212906284132,
+        2105.824999950386,
+        461.01639344262293,
+        53.583333333333485
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.5,
+          "text" : "2024\/05\/27～05\/31"
+        }
+      ],
+      "confidence" : 0.5,
+      "text" : "2024\/05\/27～05\/31"
+    },
+    {
+      "boxTopLeftPixels" : [
+        58.967212846721331,
+        2180.8416664880556,
+        64.327868852459005,
+        42.866666666666788
+      ],
+      "candidates" : [
+        {
+          "confidence" : 1,
+          "text" : "56"
+        }
+      ],
+      "confidence" : 1,
+      "text" : "56"
+    }
+  ],
+  "method" : "Vision RecognizeTextRequest",
+  "screenCapture" : false,
+  "source" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/catalog-diagnostic-20261010\/scan-002.scale2.png",
+  "uiInputsSent" : 0
+}

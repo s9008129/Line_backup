@@ -1,0 +1,22 @@
+{
+ "bounded_action_if_reviewer_finds_defect": "Reviewer returns one exact action inside the reviewed plan; the implementer may apply it without a new user authorization gate only if it stays inside the reviewed plan, then reruns the focused check and this review.",
+ "candidate_hash": "646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6",
+ "format": "local-pre-live-review.result-1",
+ "native_dispatch": {
+  "analysis_received": false,
+  "attempted": true,
+  "attempts": 2,
+  "result": "platform error on both attempts (same message); no analysis received; see results/pre-live-review.dispatch.json"
+ },
+ "no_live_before_pass": true,
+ "packet": {
+  "note": "sha256 of the final packet after correcting the stale candidate-manifest.json entry; recorded here and in results/gate-evidence-manifest.json",
+  "path": "results/pre-live-review.packet.json",
+  "sha256": "cd6edf3edbf44d68ac318d0f508914f83ab771aab989d4b0f1e4fe20a5d315c4"
+ },
+ "required_by": "handoff.md sections 2.5 and 10; plan-contract.json G_LIVE precondition",
+ "root_self_signature": false,
+ "status": "PENDING_INDEPENDENT_REVIEW",
+ "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+ "why_pending": "Native delegation exists on this host but both dispatch attempts failed at the platform layer with the same rejection; no reviewer artifact exists, and a root self-review would violate the independence requirement. The ready-to-forward packet (sha256 cd6edf3e...) is presented for an external non-contributor review relayed by the user."
+}

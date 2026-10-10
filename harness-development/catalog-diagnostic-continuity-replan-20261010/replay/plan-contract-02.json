@@ -1,0 +1,35 @@
+{
+  "format": "3",
+  "task_id": "TASK-20261010-catalog-diagnostic",
+  "run_id": "9970ce46-d4d0-4cd1-b646-ce4b69eaa2a6",
+  "risk": "STANDARD",
+  "plan_review_required": true,
+  "independent_acceptance_required": false,
+  "allowed_paths": [
+    "harness-development/catalog-diagnostic-20261010/"
+  ],
+  "max_parallel_read_only_helpers": 0,
+  "max_parallel_writers": 0,
+  "ui_operations": [
+    "getApp",
+    "getAXStateAndScreenshot",
+    "scroll"
+  ],
+  "max_scroll_calls": 12,
+  "dispatch_allowed": false,
+  "live_state_write_allowed": false,
+  "gates": [
+    "G1",
+    "G2",
+    "G3"
+  ],
+  "controller_admission": "NOT_RUN",
+  "gate_verification": {
+    "G1": "root/control/proof hashes plus actual PNG Vision OCR header and Albums label",
+    "G2": "durable task-local traces, budget, raw captures/OCR, exact complete metadata overlap and coordinate movement",
+    "G3": "config/state/runlog/Git unchanged"
+  },
+  "visual_classification": "OBSERVED only",
+  "full_collection_coverage_required": false,
+  "offline_ocr": "task-local copied menu_ocr.swift new build, saved PNG only"
+}

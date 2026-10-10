@@ -1,0 +1,4 @@
+The following is a diff from the previous accessibility tree for Window: "" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 4
+~	105 捲軸 (settable) 402
+The focused UI element is 1 文字欄位 (settable) Secondary Actions: Raise

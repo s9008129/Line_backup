@@ -1,0 +1,66 @@
+{
+ "conversion": "historical full-frame 2x: source = derivative/2",
+ "format": "local-legacy-ocr-source-converted-1",
+ "imageHeight": 2572,
+ "imageWidth": 1308,
+ "items": [
+  {
+   "boxTopLeftSourcePixels": [
+    231.70285787872604,
+    91.50000014176032,
+    190.59428405761713,
+    26.500000000000018
+   ],
+   "candidates": null,
+   "confidence": 0.5,
+   "text": "旻謙允禎成長日記"
+  },
+  {
+   "boxTopLeftSourcePixels": [
+    138.27428633706674,
+    160.75000011534794,
+    48.582855224609375,
+    26.250000000000075
+   ],
+   "candidates": null,
+   "confidence": 1,
+   "text": "相簿"
+  },
+  {
+   "boxTopLeftSourcePixels": [
+    450.3257156338912,
+    160.75000033614558,
+    72.87428283691398,
+    26.250000000000075
+   ],
+   "candidates": null,
+   "confidence": 1,
+   "text": "記事本"
+  },
+  {
+   "boxTopLeftSourcePixels": [
+    31.765715095342074,
+    855.9999997161353,
+    233.5714263916016,
+    26.500000000000018
+   ],
+   "candidates": null,
+   "confidence": 0.5,
+   "text": "2024/06/02~06/07"
+  },
+  {
+   "boxTopLeftSourcePixels": [
+    33.63428579057966,
+    896.9999995936694,
+    26.15999984741211,
+    17.031976699829197
+   ],
+   "candidates": null,
+   "confidence": 0.30000001192092896,
+   "text": "65"
+  }
+ ],
+ "legacy_completeness": "UNKNOWN",
+ "note": "Historical artifacts store a single candidate per item; candidates are not fabricated.",
+ "source": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-000.scale2.png"
+}

@@ -1,0 +1,46 @@
+{
+  "frame": "scan-001",
+  "agreement": "PASS",
+  "rows": [
+    {
+      "identity": "2024-06-02_2024-06-07_65",
+      "start_date": "2024-06-02",
+      "end_date": "2024-06-07",
+      "expected_images": 65,
+      "date_box_source": [
+        31.765715301612943,
+        588.7936050112044,
+        233.57142639160156,
+        26.20639514923091
+      ],
+      "count_box_source": [
+        31.76571412144999,
+        624.3081391261803,
+        31.76571464538574,
+        22.430233001708956
+      ],
+      "raw_confidence": [
+        0.5,
+        0.5,
+        0.5,
+        1
+      ]
+    }
+  ],
+  "partial_dates": [
+    [],
+    []
+  ],
+  "confidence_calibration": "UNKNOWN",
+  "apis_independent": false,
+  "visual_safety": "OBSERVED separately",
+  "source_sha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57",
+  "legacy_competing_candidates": "UNKNOWN",
+  "overlap": [
+    {
+      "identity": "2024-06-02_2024-06-07_65",
+      "delta_y": -267.206394704931
+    }
+  ],
+  "effect": "YES by OCR metadata upward displacement"
+}

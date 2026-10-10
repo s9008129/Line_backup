@@ -1,0 +1,254 @@
+{
+ "analysis": {
+  "confidence": "High for the recorded offline artefacts and preservation facts; no claim about live behaviour, full collection coverage or controller-native acceptance.",
+  "convergence_note": "convergence.meaningful_attempts=3 is the historic root-issue count only; it excludes the single additional user-authorized fixed method recorded in results/attempt-ledger.json (true total 3+1=4).",
+  "dependencies": {
+   "final_acceptance": "PREREQUISITE_BLOCKED",
+   "live_session": "PREREQUISITE_BLOCKED",
+   "pre_live_independent_review": "PREREQUISITE_BLOCKED"
+  },
+  "evidence": [
+   "REPLAY_COPY_HASHES",
+   "PACKET_BINDING",
+   "CANDIDATE_BUILD_PROFILE_HASHES",
+   "OFFLINE_R01_R19_RESULTS",
+   "PRE_LIVE_INDEPENDENT_REVIEW",
+   "LIVE_R20_ACTION_CONTINUITY_EFFECT_OVERLAP",
+   "PRESERVATION_BASELINE_DELTA",
+   "HISTORIC3_AUTHORIZED_EXTENSION_LEDGER",
+   "FINAL_INDEPENDENT_ACCEPTANCE",
+   "GATE_EVIDENCE_MANIFEST"
+  ],
+  "facts": [
+   "Replay copies: 43/43 byte-exact, source==copy hash, no drift; packet binding 63/63 PASS; plan-contract equals handoff bytes.",
+   "Offline fixed method: all four frames pass full-slot exact-RGBA continuity (scan-000 bootstrap), indicator structure PASS, identity COMPLETE, movement YES x3 with joint D ranges [-292.029,-243.804], [-292.029,-243.804], [-292.029,-246.483] (all within the expected values), ordered overlap PASS x3.",
+   "scan-003 modern OCR keeps raw 相溥 (confidence 0.30); no replacement, no 0.95 threshold; legacy comparison only.",
+   "OCR outputs byte-stable across development runs (16 artifacts identical sha256), so no parameter search happened.",
+   "R01-R19 all PASS with recorded expected/actual/verdict; R20 NOT_RUN (no live session started).",
+   "Preservation delta (final re-capture) PASS: no tracked/index/HEAD change; canonical state, old task, backups, product sources and frozen documents unchanged.",
+   "Review packet corrected: stale candidate-manifest.json entry replaced by the current hash; packet re-hashed to cd6edf3e...; all packet entries re-verified byte-identical to current files.",
+   "Native delegation dispatch for the configured HIGH_REASONING_REVIEWER was attempted twice and failed at the platform layer with the same rejection ('unknown input item type: additional_tools'); no analysis was received (results/pre-live-review.dispatch.json).",
+   "Read-only inventory confirms the documented CUA surface exists on this host (getApp/getAXStateAndScreenshot/App.scroll) and LINE (jp.naver.line.mac) is running; zero inputs were sent.",
+   "A fixed-tool local schema check of an earlier draft of this result caught an enum error (statuses/CORE_ACCEPTANCE_STATUS); corrected to NOT_RUN before submission; validation_fact remains NOT_RUN because no applicable stage packet exists."
+  ],
+  "inferences": [
+   "The frozen full-slot exact-RGBA continuity rule removes the historic per-frame tab-OCR-agreement failure mode for these four frames.",
+   "Live effect still cannot be claimed from these frames: transport/AX and replay evidence do not prove live scroll effect."
+  ],
+  "unknowns": [
+   "External independent pre-live review (non-contributor) has not happened: native channel failed at the platform layer and the ready-to-forward packet awaits the user's relay.",
+   "The live CUA session is unexercised; fresh user-coordinated LINE foreground readiness is not established.",
+   "Legacy candidate completeness stays UNKNOWN (single stored candidate; not fabricated).",
+   "Controller-native admission stays BLOCKED; no applicable stage packet exists, so CONTRACT/RESULT validation is NOT_RUN."
+  ]
+ },
+ "blocker_fingerprint": "native-delegation-platform-failure; independent-pre-live-review-pending; live-cua-available-not-run; controller-admission-blocked",
+ "candidate_fact": "PASS",
+ "convergence": {
+  "consecutive_no_progress": 0,
+  "information_gain": true,
+  "last_attempt": "Offline artifacts finalized with fresh hashes; stale packet entry corrected and packet re-hashed (cd6edf3e...); native reviewer dispatch attempted twice, both rejected at the platform layer, no artifact; ready-to-forward packet presented for external non-contributor review.",
+  "meaningful_attempts": 3,
+  "stuck": true
+ },
+ "evidence_ids": [
+  "REPLAY_COPY_HASHES",
+  "PACKET_BINDING",
+  "CANDIDATE_BUILD_PROFILE_HASHES",
+  "OFFLINE_R01_R19_RESULTS",
+  "PRE_LIVE_INDEPENDENT_REVIEW",
+  "LIVE_R20_ACTION_CONTINUITY_EFFECT_OVERLAP",
+  "PRESERVATION_BASELINE_DELTA",
+  "HISTORIC3_AUTHORIZED_EXTENSION_LEDGER",
+  "FINAL_INDEPENDENT_ACCEPTANCE",
+  "GATE_EVIDENCE_MANIFEST"
+ ],
+ "evidence_manifests": [
+  {
+   "bytes": 23099,
+   "contract_sha256": null,
+   "evidence_id": "REPLAY_COPY_HASHES",
+   "observation": "43 byte-exact replay copies; every source_sha256 == copy_sha256; no source drift; content formats recorded",
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/replay/manifest.json",
+   "role": "IMPLEMENTER",
+   "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+   "sha256": "204eb15b85679e2f084633f4bccc7a961adf33197c7aa80f77017e28a7b4ba2b",
+   "source_sha256": "204eb15b85679e2f084633f4bccc7a961adf33197c7aa80f77017e28a7b4ba2b",
+   "stage": "IMPLEMENT",
+   "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+  },
+  {
+   "bytes": 25598,
+   "contract_sha256": null,
+   "evidence_id": "PACKET_BINDING",
+   "observation": "63 source records PASS; plan-contract.json == handoff.json bytes; handoff/spec/plan/review hash bindings PASS; byte binding only, not schema VALID",
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/verify-packet-01/verify-packet.json",
+   "role": "IMPLEMENTER",
+   "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+   "sha256": "92d9d3ddec3be3c0725263c61ef6d33c387a596da0faed2c7ee928fa4f9b7c9f",
+   "source_sha256": "92d9d3ddec3be3c0725263c61ef6d33c387a596da0faed2c7ee928fa4f9b7c9f",
+   "stage": "IMPLEMENT",
+   "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+  },
+  {
+   "bytes": 1341,
+   "contract_sha256": null,
+   "evidence_id": "CANDIDATE_BUILD_PROFILE_HASHES",
+   "observation": "Frozen candidate hash across the five method files; profiles.json hash recorded; capture_preservation.py noted as non-method tool",
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/candidate-manifest.json",
+   "role": "IMPLEMENTER",
+   "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+   "sha256": "675c55e384268f18f029f279b4c1f858691c8f462d3fa7a30be8314b788c9c1e",
+   "source_sha256": "675c55e384268f18f029f279b4c1f858691c8f462d3fa7a30be8314b788c9c1e",
+   "stage": "IMPLEMENT",
+   "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+  },
+  {
+   "bytes": 17723,
+   "contract_sha256": null,
+   "evidence_id": "OFFLINE_R01_R19_RESULTS",
+   "observation": "R01-R19: 19 PASS / 0 FAIL with recorded expected/actual/verdict; R20 NOT_RUN; four-frame continuity/indicator/identity/movement/overlap evidence",
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/results.json",
+   "role": "IMPLEMENTER",
+   "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+   "sha256": "9d6da4b653ed25b9db0f69960f545d96b24f99598cfd8f909a545dceae78e971",
+   "source_sha256": "9d6da4b653ed25b9db0f69960f545d96b24f99598cfd8f909a545dceae78e971",
+   "stage": "IMPLEMENT",
+   "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+  },
+  {
+   "bytes": 1533,
+   "contract_sha256": null,
+   "evidence_id": "PRE_LIVE_INDEPENDENT_REVIEW",
+   "observation": "PENDING_INDEPENDENT_REVIEW; root_self_signature=false; native delegation dispatch attempted twice, both rejected at the platform layer (same error), no reviewer artifact; ready-to-forward packet sha256 cd6edf3e...; dispatch record results/pre-live-review.dispatch.json",
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/pre-live-review.result.json",
+   "role": "IMPLEMENTER",
+   "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+   "sha256": "a0e24b87d12c30c67ce1d5bb5a7c3fd3b2f825c651ceaa5ebe1ce061484cc904",
+   "source_sha256": "a0e24b87d12c30c67ce1d5bb5a7c3fd3b2f825c651ceaa5ebe1ce061484cc904",
+   "stage": "IMPLEMENT",
+   "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+  },
+  {
+   "bytes": 1904,
+   "contract_sha256": null,
+   "evidence_id": "LIVE_R20_ACTION_CONTINUITY_EFFECT_OVERLAP",
+   "observation": "NOT_RUN: no live session started; pre-live review pending and no fresh user-coordinated LINE foreground; documented CUA surface availability verified read-only; budget 0/6; zero inputs",
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/live/README.md",
+   "role": "IMPLEMENTER",
+   "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+   "sha256": "d90717a977ebba96dc31b31f0d76caa19c662681baac378b1c7d99deadc3bd48",
+   "source_sha256": "d90717a977ebba96dc31b31f0d76caa19c662681baac378b1c7d99deadc3bd48",
+   "stage": "IMPLEMENT",
+   "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+  },
+  {
+   "bytes": 4106,
+   "contract_sha256": null,
+   "evidence_id": "PRESERVATION_BASELINE_DELTA",
+   "observation": "PASS; final-state re-capture: no HEAD/branch/index/diff change; canonical state, old task, backups, product sources and frozen documents unchanged; only task-scope additions",
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/preservation.delta-02.json",
+   "role": "IMPLEMENTER",
+   "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+   "sha256": "a645abf4c29e7f7fbfa3fb3a9e2d3635c2b2fe478654243e388f469f83b655f7",
+   "source_sha256": "a645abf4c29e7f7fbfa3fb3a9e2d3635c2b2fe478654243e388f469f83b655f7",
+   "stage": "IMPLEMENT",
+   "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+  },
+  {
+   "bytes": 4110,
+   "contract_sha256": null,
+   "evidence_id": "HISTORIC3_AUTHORIZED_EXTENSION_LEDGER",
+   "observation": "Historic 3 attempts preserved; authorized extension consumed once with candidate/profile hashes; live slot unused (0/6)",
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/attempt-ledger.json",
+   "role": "IMPLEMENTER",
+   "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+   "sha256": "3f175c7f5a414f5fdff37c2b9236de7cfef80d03d26d75303d6fc671a62eb9f6",
+   "source_sha256": "3f175c7f5a414f5fdff37c2b9236de7cfef80d03d26d75303d6fc671a62eb9f6",
+   "stage": "IMPLEMENT",
+   "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+  },
+  {
+   "bytes": 5615,
+   "contract_sha256": null,
+   "evidence_id": "FINAL_INDEPENDENT_ACCEPTANCE",
+   "observation": "PENDING; requires a non-contributor after the live session; ready-to-forward issue packet updated 2026-10-10",
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/問題單.md",
+   "role": "IMPLEMENTER",
+   "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+   "sha256": "3cde78119f513f0da82e11fa957aa601f42430dc80333efc25d83529786862e7",
+   "source_sha256": "3cde78119f513f0da82e11fa957aa601f42430dc80333efc25d83529786862e7",
+   "stage": "IMPLEMENT",
+   "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+  },
+  {
+   "bytes": 6382,
+   "contract_sha256": null,
+   "evidence_id": "GATE_EVIDENCE_MANIFEST",
+   "observation": "Four-gate evidence manifest with fresh hashes; validation_fact=NOT_RUN; controller admission BLOCKED",
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/gate-evidence-manifest.json",
+   "role": "IMPLEMENTER",
+   "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+   "sha256": "c304a17f4a868d86ea9a0c1beaa822b39d05194aa47e220baf19949e072d60c6",
+   "source_sha256": "c304a17f4a868d86ea9a0c1beaa822b39d05194aa47e220baf19949e072d60c6",
+   "stage": "IMPLEMENT",
+   "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+  }
+ ],
+ "gate_results": [
+  {
+   "evidence_manifest": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/gate-evidence-manifest.json",
+   "gate_id": "G_OFFLINE",
+   "verdict": "PASS"
+  },
+  {
+   "evidence_manifest": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/gate-evidence-manifest.json",
+   "gate_id": "G_LIVE",
+   "verdict": "NOT_RUN"
+  },
+  {
+   "evidence_manifest": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/gate-evidence-manifest.json",
+   "gate_id": "G_PRESERVE",
+   "verdict": "PASS"
+  },
+  {
+   "evidence_manifest": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/gate-evidence-manifest.json",
+   "gate_id": "G_ACCEPTANCE",
+   "verdict": "NOT_RUN"
+  }
+ ],
+ "handoff_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+ "handoff_summary": "離線固定方法與反向測試完成並 PASS（19 PASS/0 FAIL、R20 NOT_RUN）：四幀 continuity／indicator／identity／movement／overlap 全數通過，scan-003 原始「相溥」保留；封包內一筆暫存舊 hash 已更正（封包現值 sha256 cd6edf3edbf44d68ac318d0f508914f83ab771aab989d4b0f1e4fe20a5d315c4）並全數重驗相符；preservation 最終重拍 delta=PASS；歷史 3 次、追加 1 次已消耗、實機 0/6。卡點：同 candidate 的 pre-live 獨立審查——native delegation 兩次皆於平台層失敗（同一錯誤），root 不能自簽；已備妥可轉交封包與問題單，請轉交非 contributor 高階模型；PASS 後即可在你確認 LINE 前景就緒時執行唯一一次 ≤6 次 scroll 實機（CUA 已確認可用）。validation_fact=NOT_RUN、controller admission BLOCKED。",
+ "human_decisions": [
+  {
+   "id": "forward-pre-live-review",
+   "options": [
+    "轉交封包做獨立審查（建議），PASS 後我再協調實機",
+    "先自行檢視封包與離線證據再決定",
+    "暫停本診斷，不進實機"
+   ],
+   "question": "native 派送失敗；請把 results/pre-live-review.packet.json（＋問題單.md）轉交給 non-contributor 的高階模型做獨立 pre-live 審查。審查 PASS 後，請確認 LINE 已切到已確認群組的相簿列表前景，我再執行唯一一次 ≤6 次 scroll 實機。",
+   "recommendation": "轉交封包：這是 G_LIVE 與最終 Acceptance 的硬前置；目前實機 0/6、零輸入，尚無任何不可逆動作。"
+  }
+ ],
+ "information_gain": true,
+ "needs_human": true,
+ "plan_contract_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+ "plan_sha256": "d8e0031fa8ef1d7a0a0f260de3682db26421d5779dffc1d1fd1a124969bc5387",
+ "result_format_version": "3",
+ "role": "IMPLEMENTER",
+ "routing_fact": "BLOCKED",
+ "run_id": "2d52b72c-e184-5204-9a42-ff032631d6f6",
+ "source_sha256": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8",
+ "stage": "IMPLEMENT",
+ "statuses": {
+  "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+  "IMPLEMENTATION_STATUS": "IN_PROGRESS",
+  "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+  "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+  "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+  "TASK_CLOSURE_STATUS": "PENDING_REQUIRED_VERIFICATION"
+ },
+ "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+ "validation_fact": "NOT_RUN"
+}

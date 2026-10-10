@@ -1,0 +1,111 @@
+{
+ "format": "local-frame-manifest-1",
+ "frame_id": "scan-001",
+ "height": 1286,
+ "metadata": {
+  "complete_rows": [
+   {
+    "count": 65,
+    "count_box": [
+     29.483606624385242,
+     624.2458330319271,
+     61.64754105061475,
+     648.3583330319271
+    ],
+    "count_candidates": [
+     {
+      "confidence": 1,
+      "text": "65"
+     }
+    ],
+    "count_confidence": 1,
+    "count_text": "65",
+    "date_box": [
+     29.483605150204944,
+     589.4166663317709,
+     265.35245760922135,
+     616.2083329984375
+    ],
+    "date_candidates": [
+     {
+      "confidence": 0.5,
+      "text": "2024/06/02～06/07"
+     }
+    ],
+    "date_confidence": 0.5,
+    "date_text": "2024/06/02～06/07",
+    "identity_dates": [
+     "2024-06-02",
+     "2024-06-07"
+    ]
+   }
+  ],
+  "ordered_qualified_ids": [
+   "2024-06-02_2024-06-07_65"
+  ],
+  "qualified": [
+   {
+    "count": 65,
+    "count_box": [
+     29.483606624385242,
+     624.2458330319271,
+     61.64754105061475,
+     648.3583330319271
+    ],
+    "count_candidates": [
+     {
+      "confidence": 1,
+      "text": "65"
+     }
+    ],
+    "count_confidence": 1,
+    "count_text": "65",
+    "date_box": [
+     29.483605150204944,
+     589.4166663317709,
+     265.35245760922135,
+     616.2083329984375
+    ],
+    "date_candidates": [
+     {
+      "confidence": 0.5,
+      "text": "2024/06/02～06/07"
+     }
+    ],
+    "date_confidence": 0.5,
+    "date_text": "2024/06/02～06/07",
+    "identity_dates": [
+     "2024-06-02",
+     "2024-06-07"
+    ],
+    "legacy_count_box": [
+     31.76571412144999,
+     624.3081391261803,
+     63.53142876683573,
+     646.7383721278893
+    ],
+    "legacy_count_text": "65",
+    "legacy_date_box": [
+     31.765715301612943,
+     588.7936050112044,
+     265.3371416932145,
+     615.0000001604353
+    ],
+    "legacy_date_text": "2024/06/02~06/07"
+   }
+  ]
+ },
+ "mode": "replay",
+ "note": "replay frame; timestamps/provenance are not live values",
+ "observation_id": "replay-bootstrap-scan-000",
+ "previous_frame_id": "scan-000",
+ "rgba": {
+  "decoded_rgba_sha256": "a961d41e253bdc7f08b3115f824871b4f3c0f8c744fc1dc54e78a671b55652ba",
+  "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/decoded/scan-001/decoded.rgba",
+  "source_sha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57"
+ },
+ "run_id": "replay-catalog-diagnostic-20261010",
+ "safety_observation": null,
+ "source_artifact_sha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57",
+ "width": 654
+}

@@ -1,0 +1,28 @@
+feat: 建立 LINE 相簿替代證據離線候選與 R01–R19 驗證證據
+
+意圖
+- 承接上一輪 4a7a36f 的交接文件，本輪以固定單一 candidate 實作並離線驗證「替代證據規則」，為 G_LIVE 與最終獨立 Acceptance 準備可核對的前置證據；全程不改產品碼、canonical state、舊 task 或凍結輸入。
+- 離線回放與反向測試只產生證據，不授權實機；實機仍須獨立 pre-live 審查 PASS 及使用者前景就緒協調後才可開始。
+
+做了什麼
+- 新增 candidate/（offline_vision.swift、catalog_diagnostic.py、run_offline_once.py、test_catalog_diagnostic.py、profiles.json 等）與 offline-validation/、replay/、live/、results/、tmp/ 等證據目錄；更新 progress.md 並新增問題單.md。
+- candidate 凍結 hash 646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6（offline-validation/candidate-manifest.json）；offline-validation/results.json 記錄 R01–R19 共 19 PASS、0 FAIL，R20 保留 NOT_RUN。
+- 四幀證據（scan-000 bootstrap）：continuity／indicator／identity／movement／overlap 全數通過；movement YES×3，joint D 觀測值 [-292.029,-243.804]、[-292.029,-243.804]、[-292.029,-246.483]；scan-003 原文「相溥」（confidence 0.30）逐字保留、未替換、未套 0.95 門檻；OCR 輸出跨開發重跑 byte 穩定（16 件 sha256 相同）。
+- replay/manifest.json：43 筆逐 bytes 回放副本，source==copy hash 全數相等、來源無漂移；tmp/verify-packet-01/verify-packet.json：63 筆來源記錄 PASS、plan-contract 與 handoff 逐 bytes 相同（僅 byte binding）。
+- 更正 results/pre-live-review.packet.json 內一筆殘留舊 hash（candidate-manifest 項目）為現值，封包重新雜湊為 cd6edf3edbf44d68ac318d0f508914f83ab771aab989d4b0f1e4fe20a5d315c4，並重新逐一核對相符。
+- results/implementer.result.json（sha256 34516a08c2177b583766e2526f9e30a6b165509531778cb0f1a320bc7d16da2c）定稿；本地固定工具 schema 檢查 VALID（results/implementer.result.schema-validation.json，僅本地記錄、非 controller receipt）；results/gate-evidence-manifest.json 記錄四道 gate：G_OFFLINE=PASS、G_LIVE=NOT_RUN、G_PRESERVE=PASS、G_ACCEPTANCE=NOT_RUN。
+- 保存最終重拍 results/preservation.after-02.json → preservation.delta-02.json verdict=PASS（HEAD 4a7a36f5、branch、index、diff 未變；變動僅在本任務可寫目錄內；09:42 的 after／delta 為中途快照，以 after-02／delta-02 為準）。
+- 提交範圍僅限本任務目錄；建置快取 module-cache/ 與 __pycache__ 排除；rev28/、src/、config/、state/、backups/ 等無關既有修改不納入。
+
+驗證與限制
+- 本輪完成且可核對的驗證僅離線部分：19 PASS／0 FAIL、R20 NOT_RUN、preservation 最終重拍 PASS、本地 schema VALID（僅本地記錄，非 controller receipt）；未延伸至實機、獨立審查或最終 Acceptance。
+- 卡點：同 candidate 的獨立 pre-live 審查未完成——native 派送兩次皆於平台層失敗（同一錯誤 input[0]: unknown input item type: "additional_tools"，無任何審查產物，見 results/pre-live-review.dispatch.json）；root 不自簽，results/pre-live-review.result.json 維持 PENDING_INDEPENDENT_REVIEW。
+- 實機 0／6、零輸入（results/attempt-ledger.json、live/README.md）；方法額度歷史根因 3 次＋授權追加 1 次均已消耗（公開 convergence 值維持 3，實際合計記於 ledger）；G_LIVE=NOT_RUN。
+- validation_fact=NOT_RUN、controller admission=BLOCKED；六狀態維持 PRIMARY_OUTCOME=NOT_ACHIEVED、IMPLEMENTATION=IN_PROGRESS、CORE_ACCEPTANCE=NOT_RUN、REQUIRED_VERIFICATION=INCOMPLETE、INDEPENDENT_ACCEPTANCE=PENDING、TASK_CLOSURE=PENDING_REQUIRED_VERIFICATION；未宣稱任何未經工具驗證的 PASS。
+
+下一步建議
+- 請將 results/pre-live-review.packet.json（sha256 cd6edf3e…）與問題單.md 轉交非 contributor 的高階模型，依封包題目作答並以單一 JSON 回傳判定；PASS 前不得進實機。
+- 審查 PASS 且確認 LINE 已切到已確認群組的相簿列表前景後，執行唯一一次 ≤6 次 scroll 實機（零輸入以外動作、可隨時停止）；完成 G_LIVE 後再進行最終獨立 Acceptance。
+- 若審查 FAIL 或出現新事實差異：保留已證明的離線事實與最小重現，更新問題單.md 後停止，不自行調參、不追加新方法、不進實機。
+
+本訊息由唯讀 subagent 起草、root 定稿

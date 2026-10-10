@@ -1,0 +1,30 @@
+{
+  "bottom_left" : [
+    30,
+    30,
+    220
+  ],
+  "bottom_right" : [
+    230,
+    210,
+    30
+  ],
+  "height" : 60,
+  "screen_capture" : false,
+  "source_sha256" : "63b9b79cbca1dd84332b75829a430f735981ea0002f2322cc9349e3b23cb9343",
+  "source_type_identifier" : "public.png",
+  "top_left" : [
+    220,
+    30,
+    30
+  ],
+  "top_right" : [
+    30,
+    200,
+    30
+  ],
+  "ui_inputs_sent" : 0,
+  "verdict" : "PASS",
+  "width" : 80
+}
+

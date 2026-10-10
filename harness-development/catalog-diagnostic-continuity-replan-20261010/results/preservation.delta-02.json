@@ -1,0 +1,90 @@
+{
+ "after_head": "4a7a36f5bf0af197a18d1f7ed3add4b7f77e51c3",
+ "backups": {
+  "added": [],
+  "changed": [],
+  "count_after": 239,
+  "count_before": 239,
+  "removed": []
+ },
+ "before_head": "4a7a36f5bf0af197a18d1f7ed3add4b7f77e51c3",
+ "canonical_state": {
+  "added": [],
+  "changed": [],
+  "count_after": 3,
+  "count_before": 3,
+  "removed": []
+ },
+ "format": "local-preservation-delta-1",
+ "git": {
+  "branch_changed": false,
+  "cached_diff_changed": false,
+  "head_changed": false,
+  "index_changed": false,
+  "tracked_diff_changed": false,
+  "untracked_added": [
+   "?? \"harness-development/catalog-diagnostic-continuity-replan-20261010/\\345\\225\\217\\351\\241\\214\\345\\226\\256.md",
+   "?? harness-development/catalog-diagnostic-continuity-replan-20261010/live/",
+   "?? harness-development/catalog-diagnostic-continuity-replan-20261010/results/"
+  ],
+  "untracked_paths_changed": true,
+  "untracked_removed": []
+ },
+ "implementation_scope": {
+  "added": [
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/candidate/README.md",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/candidate/verify_hashes.py",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/live/README.md",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/results/attempt-ledger.json",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/results/implementer.result.json",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/results/pre-live-review.dispatch.json",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/results/pre-live-review.packet.json",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/results/pre-live-review.result.json",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/results/preservation.after.json",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/results/preservation.before.json",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/results/preservation.delta.json",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/__pycache__/finalize_result.cpython-314.pyc",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/__pycache__/make_gate_manifest.cpython-314.pyc",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/__pycache__/make_preservation_delta.cpython-314.pyc",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/evidence-hash-lines.txt",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/finalize_result.py",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/implementer.result.pre-finalize.json",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/make_gate_manifest.py",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/make_preservation_delta.py",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/問題單.md"
+  ],
+  "changed": [
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/candidate-manifest.json"
+  ],
+  "count_after": 350,
+  "count_before": 333,
+  "removed": [
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/candidate/__pycache__/catalog_diagnostic.cpython-314.pyc",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/candidate/__pycache__/run_offline_once.cpython-314.pyc",
+   "harness-development/catalog-diagnostic-continuity-replan-20261010/candidate/__pycache__/test_catalog_diagnostic.cpython-314.pyc"
+  ]
+ },
+ "old_diagnostic_task": {
+  "added": [],
+  "changed": [],
+  "count_after": 93,
+  "count_before": 93,
+  "removed": []
+ },
+ "preservation_verdict": "PASS",
+ "product_sources": {
+  "added": [],
+  "changed": [],
+  "count_after": 92,
+  "count_before": 92,
+  "removed": []
+ },
+ "task_frozen_documents": {
+  "added": [],
+  "changed": [],
+  "count_after": 10,
+  "count_before": 10,
+  "removed": []
+ },
+ "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+}

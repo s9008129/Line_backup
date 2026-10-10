@@ -1,0 +1,59 @@
+{
+  "imageHeight" : 2572,
+  "imageWidth" : 1308,
+  "items" : [
+    {
+      "boxTopLeftPixels" : [
+        463.40571575552576,
+        183.00000028379591,
+        381.18856811523426,
+        53.000000000000036
+      ],
+      "confidence" : 0.5,
+      "text" : "旻謙允禎成長日記"
+    },
+    {
+      "boxTopLeftPixels" : [
+        276.54857315996207,
+        325.00000028876042,
+        97.16571044921875,
+        49.000000000000085
+      ],
+      "confidence" : 0.30000001192092896,
+      "text" : "相簿"
+    },
+    {
+      "boxTopLeftPixels" : [
+        900.65143126778241,
+        321.50000067229115,
+        145.74856567382795,
+        52.500000000000149
+      ],
+      "confidence" : 1,
+      "text" : "記事本"
+    },
+    {
+      "boxTopLeftPixels" : [
+        63.531430603225886,
+        1177.5872100224087,
+        467.14285278320312,
+        52.412790298461822
+      ],
+      "confidence" : 0.5,
+      "text" : "2024\/06\/02~06\/07"
+    },
+    {
+      "boxTopLeftPixels" : [
+        63.531428242899977,
+        1248.6162782523606,
+        63.531429290771477,
+        44.860466003417912
+      ],
+      "confidence" : 0.5,
+      "text" : "65"
+    }
+  ],
+  "screenCapture" : false,
+  "source" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/catalog-diagnostic-20261010\/scan-001.scale2.png",
+  "uiInputsSent" : 0
+}

@@ -1,0 +1,344 @@
+{
+ "ambiguous": [],
+ "auxiliary_ocr_uncertainty": [
+  {
+   "confidence": 0.30000001192092896,
+   "kind": "tab_ocr_auxiliary_uncertainty",
+   "observed": "相溥",
+   "scope": "tab label OCR only; never date/count; raw text preserved"
+  }
+ ],
+ "binding_hash": "100296f041b984324afb1fe49fa9667acf7506d7ae2bacdd496f42c71862f638",
+ "binding_validity": {
+  "binding_run_id": "replay-catalog-diagnostic-20261010",
+  "checks": {
+   "height_match": true,
+   "mode_match": true,
+   "observation_match": true,
+   "rgba_source_sha_match": true,
+   "run_id_match": true,
+   "width_match": true
+  },
+  "frame_run_id": "replay-catalog-diagnostic-20261010",
+  "note": "replay-only diagnostic binding; never reusable as live binding",
+  "status": "VALID"
+ },
+ "can_open_album": false,
+ "can_save_all": false,
+ "candidate_hash": "646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6",
+ "chain_edge": null,
+ "chain_extended": false,
+ "complete_rows": [
+  {
+   "count": 56,
+   "count_box": [
+    29.483606423360655,
+    819.8249998794375,
+    61.647540849590165,
+    843.9374998794375
+   ],
+   "count_candidates": [
+    {
+     "confidence": 1,
+     "text": "56"
+    }
+   ],
+   "count_confidence": 1,
+   "count_text": "56",
+   "date_box": [
+    26.803278583748142,
+    784.9958333089774,
+    259.9918031739121,
+    811.7874999756439
+   ],
+   "date_candidates": [
+    {
+     "confidence": 0.5,
+     "text": "2024/05/27～05/31"
+    }
+   ],
+   "date_confidence": 0.5,
+   "date_text": "2024/05/27～05/31",
+   "identity_dates": [
+    "2024-05-27",
+    "2024-05-31"
+   ]
+  }
+ ],
+ "conflicts": [],
+ "continuity": {
+  "guard": {
+   "current_region_sha256": "003cbef1902186e1ecf7ddf0074f47923406d704f6c88030afce9a7b18ee8a63",
+   "exclusions": [],
+   "first_diff": null,
+   "guard_rect": [
+    0,
+    0,
+    654,
+    192
+   ],
+   "pixel_diff_count": 0,
+   "previous_region_sha256": "003cbef1902186e1ecf7ddf0074f47923406d704f6c88030afce9a7b18ee8a63",
+   "reason": "full-slot RGBA identical",
+   "status": "PASS"
+  },
+  "previous_checks": {
+   "previous_frame_id_match": true,
+   "previous_height_match": true,
+   "previous_observation_match": true,
+   "previous_run_id_match": true,
+   "previous_width_match": true
+  },
+  "previous_frame_id": "scan-002",
+  "reason": "all identity checks and full-slot guard pass",
+  "status": "PASS"
+ },
+ "decoded_rgba_sha256": "fe379177e7c415a5a40d2cc174cbb7a757e5db10f0fba7aa575c9d9b90735425",
+ "decoder_hash": "ff0e50f340b05e871d0291efe9505e8c766534929418975bad41b1ed2d8b8c0f",
+ "facts_not_obtained": [
+  "live runtime provenance, capture timestamps and safety observation are not available in replay",
+  "legacy candidate completeness UNKNOWN (single stored candidate; not fabricated)"
+ ],
+ "format": "local-catalog-diagnostic-1",
+ "frame_id": "scan-003",
+ "full_collection_coverage": "NOT_ESTABLISHED",
+ "identity_status": "COMPLETE",
+ "live_state_write_allowed": false,
+ "mode": "replay",
+ "movement": "YES",
+ "movement_evidence": {
+  "center_deltas": [
+   {
+    "center_delta": [
+     -1.340164,
+     -267.916667
+    ],
+    "current_center": [
+     143.397541,
+     798.391667
+    ],
+    "field": "date",
+    "identity": "2024-05-27_2024-05-31_56",
+    "previous_center": [
+     144.737705,
+     1066.308333
+    ]
+   },
+   {
+    "center_delta": [
+     -0.0,
+     -269.25625
+    ],
+    "current_center": [
+     45.565574,
+     831.88125
+    ],
+    "field": "count",
+    "identity": "2024-05-27_2024-05-31_56",
+    "previous_center": [
+     45.565574,
+     1101.1375
+    ]
+   }
+  ],
+  "fields": {
+   "count": [
+    {
+     "D": [
+      -292.02916669792364,
+      -246.4833333645903
+     ],
+     "center_delta": [
+      -0.0,
+      -269.25625
+     ],
+     "current_box": [
+      29.483606423360655,
+      819.8249998794375,
+      61.647540849590165,
+      843.9374998794375
+     ],
+     "horizontal_projection_overlap": 32.1639344262295,
+     "identity": "2024-05-27_2024-05-31_56",
+     "previous_box": [
+      29.483606423360666,
+      1090.4208332440278,
+      61.64754084959017,
+      1111.8541665773612
+     ]
+    }
+   ],
+   "date": [
+    {
+     "D": [
+      -294.7083333328824,
+      -241.12499999954912
+     ],
+     "center_delta": [
+      -1.340164,
+      -267.916667
+     ],
+     "current_box": [
+      26.803278583748142,
+      784.9958333089774,
+      259.9918031739121,
+      811.7874999756439
+     ],
+     "horizontal_projection_overlap": 230.50819672077003,
+     "identity": "2024-05-27_2024-05-31_56",
+     "previous_box": [
+      29.483606453142066,
+      1052.912499975193,
+      259.99180317445354,
+      1079.7041666418597
+     ]
+    }
+   ]
+  },
+  "horizontal_overlap": "PASS",
+  "joint": [
+   -292.02916669792364,
+   -246.4833333645903
+  ],
+  "movement": "YES",
+  "reason": "all fields every identity moved up; joint D non-empty; x overlap positive",
+  "shared_identities": [
+   "2024-05-27_2024-05-31_56"
+  ]
+ },
+ "movement_reference": "previous frame",
+ "ordered_complete_ids": [
+  "2024-05-27_2024-05-31_56"
+ ],
+ "ordered_overlap": {
+  "current_ordered_ids": [
+   "2024-05-27_2024-05-31_56"
+  ],
+  "matches": [
+   1
+  ],
+  "max_overlap": 1,
+  "overlap": "PASS",
+  "previous_ordered_ids": [
+   "2024-06-02_2024-06-07_65",
+   "2024-05-27_2024-05-31_56"
+  ]
+ },
+ "ordered_qualified_ids": [
+  "2024-05-27_2024-05-31_56"
+ ],
+ "partial_rows": [],
+ "profile_hashes": {
+  "profiles.json": "18bc872d99940de8e010f34cd2a864cb3eebd3f99eb3b3cce018029b26001bb0"
+ },
+ "qualified_overlap_rows": [
+  {
+   "count": 56,
+   "count_box": [
+    29.483606423360655,
+    819.8249998794375,
+    61.647540849590165,
+    843.9374998794375
+   ],
+   "count_candidates": [
+    {
+     "confidence": 1,
+     "text": "56"
+    }
+   ],
+   "count_confidence": 1,
+   "count_text": "56",
+   "date_box": [
+    26.803278583748142,
+    784.9958333089774,
+    259.9918031739121,
+    811.7874999756439
+   ],
+   "date_candidates": [
+    {
+     "confidence": 0.5,
+     "text": "2024/05/27～05/31"
+    }
+   ],
+   "date_confidence": 0.5,
+   "date_text": "2024/05/27～05/31",
+   "identity_dates": [
+    "2024-05-27",
+    "2024-05-31"
+   ],
+   "legacy_count_box": [
+    31.765714012449983,
+    820.5000003129423,
+    63.531428657835725,
+    843.0029071122588
+   ],
+   "legacy_count_text": "56",
+   "legacy_date_box": [
+    31.765714477384734,
+    785.0000002433213,
+    259.7314279783613,
+    809.5000002433212
+   ],
+   "legacy_date_text": "2024/05/27～05/31"
+  }
+ ],
+ "raw_ocr_artifacts": {
+  "apis_independent": false,
+  "confidenceCalibration": "UNKNOWN",
+  "confidence_threshold_applied": null,
+  "legacy_completeness": "UNKNOWN",
+  "legacy_item_count": 5,
+  "legacy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-003/legacy-source-converted.json",
+  "legacy_sha256": "9cf247fe5658a9df4ae5f0068a6e5d9876e50106c5fdc9930b8b9f5dd49eb830",
+  "modern_completeness": "COMPLETE",
+  "modern_item_count": 5,
+  "modern_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/ocr/scan-003.metadata_modern/recognize.json",
+  "modern_sha256": "e0d8cc884a148b7e805fef4ec93817ad47a896de316171a2310e8fe3cdf1618f",
+  "text_replacements_applied": 0
+ },
+ "safety_observation": "UNKNOWN",
+ "scroll_eligible": false,
+ "selected_indicator": {
+  "album_bright_pixels": 192,
+  "album_region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "baseline_bbox": [
+   138,
+   202,
+   186,
+   206
+  ],
+  "baseline_mask_sha256": "9831a05738d4c8eef662f6b98b0880c8912ff54c9649c0888db82c3bee9a0d9d",
+  "component_count": 1,
+  "notes_bright_pixels": 0,
+  "notes_region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "observed_bbox": [
+   138,
+   202,
+   186,
+   206
+  ],
+  "observed_mask_sha256": "9831a05738d4c8eef662f6b98b0880c8912ff54c9649c0888db82c3bee9a0d9d",
+  "raw_rgba_retained": true,
+  "reason": "single horizontal bright component under 相簿; 記事本 clear; matches baseline",
+  "region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "status": "PASS",
+  "threshold": 128
+ },
+ "source_artifact_sha256": "934cc2cac6be8fdb37a9bd014d90321be271d8517134070d9a9adcf62d091cdf",
+ "stop_reason": null
+}

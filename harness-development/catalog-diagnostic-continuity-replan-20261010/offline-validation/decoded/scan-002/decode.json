@@ -1,0 +1,21 @@
+{
+  "canonical" : "RGBA8 sRGB opaque alpha=255 top-left origin",
+  "decoded_rgba_bytes" : 3364176,
+  "decoded_rgba_sha256" : "a25f1c23bf9e16432825305db61ad5859da21bf1cf09af0bd43bc38f6a96322e",
+  "decoder" : "ImageIO CGImageSourceCreateImageAtIndex + CGContext(premultipliedLast, sRGB)",
+  "exif_orientation" : 1,
+  "height" : 1286,
+  "method" : "offline decode",
+  "screen_capture" : false,
+  "source_bits_per_component" : 8,
+  "source_bits_per_pixel" : 32,
+  "source_bytes" : 173800,
+  "source_colorspace" : "UNKNOWN",
+  "source_has_alpha" : false,
+  "source_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/catalog-diagnostic-continuity-replan-20261010\/replay\/scan-002.png",
+  "source_sha256" : "65af93e64fa0ae38d2214a2e9d973cafcdd4db99ae47124e2ccb5e6aeb9b3adb",
+  "source_type_identifier" : "public.jpeg",
+  "stride_bytes" : 2616,
+  "ui_inputs_sent" : 0,
+  "width" : 654
+}

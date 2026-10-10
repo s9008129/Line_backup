@@ -1,0 +1,62 @@
+candidate/offline_vision.swift:422:1: error: 'main' attribute cannot be used in a module that contains top-level code
+  1 | // offline_vision.swift — task-local offline image helper for the LINE album catalog
+    | |- note: top-level code defined in this source file
+    | `- note: pass '-parse-as-library' to compiler invocation if this is intentional
+  2 | // diagnostic (TASK-20261010-catalog-diagnostic-continuity-replan).
+  3 | // Read-only with respect to system state: decodes saved images, builds task-local
+    :
+420 | }
+421 | 
+422 | @main struct OfflineVision {
+    | `- error: 'main' attribute cannot be used in a module that contains top-level code
+423 |     static func main() async {
+424 |         do {
+
+candidate/offline_vision.swift:28:19: error: cannot find 'CC_SHA256_CTX' in scope
+ 26 |     var hash = [UInt8](repeating: 0, count: 32)
+ 27 |     data.withUnsafeBytes { (raw: UnsafeRawBufferPointer) in
+ 28 |         var ctx = CC_SHA256_CTX()
+    |                   `- error: cannot find 'CC_SHA256_CTX' in scope
+ 29 |         CC_SHA256_Init(&ctx)
+ 30 |         CC_SHA256_Update(&ctx, raw.baseAddress, CC_LONG(raw.count))
+
+candidate/offline_vision.swift:29:9: error: cannot find 'CC_SHA256_Init' in scope
+ 27 |     data.withUnsafeBytes { (raw: UnsafeRawBufferPointer) in
+ 28 |         var ctx = CC_SHA256_CTX()
+ 29 |         CC_SHA256_Init(&ctx)
+    |         `- error: cannot find 'CC_SHA256_Init' in scope
+ 30 |         CC_SHA256_Update(&ctx, raw.baseAddress, CC_LONG(raw.count))
+ 31 |         CC_SHA256_Final(&hash, &ctx)
+
+candidate/offline_vision.swift:30:9: error: cannot find 'CC_SHA256_Update' in scope
+ 28 |         var ctx = CC_SHA256_CTX()
+ 29 |         CC_SHA256_Init(&ctx)
+ 30 |         CC_SHA256_Update(&ctx, raw.baseAddress, CC_LONG(raw.count))
+    |         `- error: cannot find 'CC_SHA256_Update' in scope
+ 31 |         CC_SHA256_Final(&hash, &ctx)
+ 32 |     }
+
+candidate/offline_vision.swift:30:49: error: cannot find 'CC_LONG' in scope
+ 28 |         var ctx = CC_SHA256_CTX()
+ 29 |         CC_SHA256_Init(&ctx)
+ 30 |         CC_SHA256_Update(&ctx, raw.baseAddress, CC_LONG(raw.count))
+    |                                                 `- error: cannot find 'CC_LONG' in scope
+ 31 |         CC_SHA256_Final(&hash, &ctx)
+ 32 |     }
+
+candidate/offline_vision.swift:31:9: error: cannot find 'CC_SHA256_Final' in scope
+ 29 |         CC_SHA256_Init(&ctx)
+ 30 |         CC_SHA256_Update(&ctx, raw.baseAddress, CC_LONG(raw.count))
+ 31 |         CC_SHA256_Final(&hash, &ctx)
+    |         `- error: cannot find 'CC_SHA256_Final' in scope
+ 32 |     }
+ 33 |     return hash.map { String(format: "%02x", $0) }.joined()
+
+candidate/offline_vision.swift:333:37: error: 'RecognizeTextRequest.Revision' is not convertible to 'UInt?'
+331 |                                  candidates: candidates.map { ["text": $0.string, "confidence": Double($0.confidence)] }))
+332 |         }
+333 |         if let r = request.revision as UInt? { revision = Int(r) }
+    |                                     |- error: 'RecognizeTextRequest.Revision' is not convertible to 'UInt?'
+    |                                     `- note: did you mean to use 'as!' to force downcast?
+334 |     } else if profile.api == "legacy" {
+335 |         let request = VNRecognizeTextRequest()

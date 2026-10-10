@@ -1,15 +1,37 @@
-# 精準交接文件的交付進度
+# 進度：LINE 相簿盤點診斷（catalog-diagnostic-continuity-replan）收尾
 
-正在完成「LINE 相簿盤點診斷：替代證據規則」的文件交接與已授權 Git 提交，讓下一個 Implementer 可以依固定規格實作。這一輪只做文件，未編譯候選、未重跑 OCR、未操作 LINE、未下載或修改 canonical state。
+## 我們在解決什麼
 
-handoff.md 已先交給使用者。文件最前面是可直接貼給接手 Agent 的 prompt；正文列出固定介面、解碼與座標、完整文字槽及選中指示、身份、位移、順序重疊、20 組必要測試、四道 gate、六次輸入上限及停止條件。規格、授權、contract、逐 bytes 複製的 handoff.json、來源 manifest 與本地角色結果都已保存。
+以固定像素方法（單一 candidate）產出「相簿盤點：替代證據規則」的離線診斷證據，並在取得同 candidate 的獨立 pre-live 審查 PASS 後，於使用者協調的 LINE 前景執行唯一一次 ≤6 次 scroll 的實機觀察（R20）。全程不得改動產品碼、canonical state、舊 task 或凍結輸入。
 
-已實際通過的文件核對為 JSON 解析、63 筆來源 bytes/hash、spec 與正文 hash binding、contract/handoff bytes 等值、四道 gate／六次上限／零 writers，以及接手 prompt 位於最前面。這些只證明文件一致性；沒有適用 stage packet，正式 CONTRACT/RESULT 驗證仍 NOT_RUN，controller admission 保持 BLOCKED。
+## 目前已完成（可核對）
 
-其他模型提交的計畫與獨立審查已位於 a812782；本次不改寫其四份原始材料。14 個現有 tracked 產品修改是使用者其他工作，已保存逐檔 hash 與 diff hash供提交後核對，不納入本次文件提交。
+- 離線固定方法：R01–R19 共 19 PASS／0 FAIL，R20 保留 NOT_RUN；四幀的 continuity／indicator／identity／movement／overlap 全數通過，scan-003 原始「相溥」保留於證據。
+- 反向測試：43 筆 replay 逐 bytes 複製、來源與副本 hash 相等；封包 63 筆來源記錄 PASS；candidate 凍結 hash `646145c6…`（`offline-validation/candidate-manifest.json`）。
+- 封包缺陷已修正：`pre-live-review.packet.json` 內一筆殘留舊 hash（candidate-manifest）已更新為現值，封包重新雜湊為 `cd6edf3e…`；frozen inputs／candidate files／artifacts 全部重新逐一核對相符。
+- 保存核對：最終重拍 `preservation.after-02.json` → `preservation.delta-02.json` verdict=PASS（HEAD／branch／index／diff 未變；canonical state、舊 task、backups、產品源碼、凍結文件全數未動；變動只在本任務可寫目錄內）。
+- 交付結果：`results/implementer.result.json`（sha256 `34516a08…`）已定稿；本地固定工具 schema 檢查為 VALID，輸出存於 `results/implementer.result.schema-validation.json`（僅本地記錄，非 controller receipt）。
+- 四道 gate：G_OFFLINE=PASS、G_LIVE=NOT_RUN、G_PRESERVE=PASS、G_ACCEPTANCE=NOT_RUN；彙整於 `results/gate-evidence-manifest.json`。
 
-歷史根因方法嘗試為 3 次；使用者另授權 1 次固定新方法，本文件工作沒有消耗追加方法或實機額度。上一輪的學習是：同一文字像素的 OCR 可變，而可見集合相同仍有移動。新交接已把這些判定分開，讓下一輪可以取得決策相關證據。
+## 卡點與嘗試
 
-下一步是由使用者指定的 GPT-6-luna/xhigh subagent 只讀梳理上下文與提交訊息，再由 root 只 stage/commit 本交接檔案。此版 progress 記錄提交前事實，不預先宣稱 commit 已完成。若文件／提交保存核對失敗，就停止提交並報告具體差異，不還原使用者工作。
+- 卡點：同 candidate 的獨立 pre-live 審查必須由非 contributor（高階模型）完成；root 不能自簽。這是 G_LIVE 與最終 Acceptance 的硬前置。
+- 嘗試：歷史根因方法 3 次＋使用者授權的固定新方法 1 次（已用於本輪離線候選與反向測試）；實機輸入 0／6。
+- native 派送：本 session 兩次以 `multi_agent_v1.spawn_agent` 派送 high-reasoning reviewer，皆在平台層被拒、同一錯誤 `unknown input item type: "additional_tools"`，未產生任何審查 artifact；依規則不再重試。已誠實記錄於 `results/pre-live-review.dispatch.json`（無偽造完成）。
+- 備援：已備妥可轉交封包 `results/pre-live-review.packet.json`（sha256 `cd6edf3e…`）與 `問題單.md`，供轉交非 contributor 的高階模型。
 
-接手 Implementer 的下一步：核對封包、建立自己的 baseline與不可覆寫 replay 副本、實作固定 candidate及離線測試；取得同 candidate 的獨立程式／證據審查 PASS 後才協調新的 LINE 前景。若追加固定方法失敗，保留已證明事實與最小重現並停止，不調參開始第五種方法。
+## 最後一次嘗試學到什麼
+
+- 平台層的 native 派送在此 host 不可用（同一錯誤兩次），但這不等於審查不可行：封包已可人工轉交。
+- 本 host 具備 documented CUA 能力（getApp／getAXStateAndScreenshot／App.scroll），LINE（`jp.naver.line.mac`）正在執行；先前「host 無 CUA」的敘述已更正。實機未開始不是能力不足，而是 pre-live 審查未 PASS、且尚無使用者協調的新鮮前景。
+- 結果草稿曾出現 schema enum 違規（CORE_ACCEPTANCE_STATUS），已修正為 NOT_RUN；顯示交付前本地固定工具檢查有效。
+
+## 下一步（唯一需要使用者決定的）
+
+請把 `results/pre-live-review.packet.json`（＋`問題單.md`）轉交給非 contributor 的高階模型做獨立 pre-live 審查。審查 PASS 後，請確認 LINE 已切到已確認群組的相簿列表前景，我再執行唯一一次 ≤6 次 scroll 實機（零輸入以外的動作、可隨時停止）。
+
+若轉交後審查 FAIL 或出現新的事實差異：保留已證明的離線事實與最小重現，依規則蒐集資料更新 `問題單.md` 後停止，不自行調參、不開第五種方法、不進實機。
+
+## 狀態（不誇大）
+
+PRIMARY_OUTCOME_STATUS=NOT_ACHIEVED；IMPLEMENTATION_STATUS=IN_PROGRESS；CORE_ACCEPTANCE_STATUS=NOT_RUN；REQUIRED_VERIFICATION_STATUS=INCOMPLETE；INDEPENDENT_ACCEPTANCE_STATUS=PENDING；TASK_CLOSURE_STATUS=PENDING_REQUIRED_VERIFICATION。validation_fact=NOT_RUN；controller admission=BLOCKED。本檔不含任何未經工具驗證的 PASS 宣稱。

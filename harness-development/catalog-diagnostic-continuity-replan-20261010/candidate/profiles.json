@@ -1,0 +1,38 @@
+{
+  "format": "local-ocr-profiles-1",
+  "frozen_note": "Fixed OCR profiles for TASK-20261010-catalog-diagnostic-continuity-replan. Frozen before validation; no parameter search after failures.",
+  "profiles": {
+    "fixed-label-live": {
+      "api": "modern",
+      "recognition_level": "accurate",
+      "recognition_languages": ["zh-Hant", "en-US"],
+      "uses_language_correction": true,
+      "custom_words": ["相簿", "記事本"],
+      "automatically_detects_language": false
+    },
+    "fixed-label-offline-comparison": {
+      "api": "modern",
+      "recognition_level": "accurate",
+      "recognition_languages": ["zh-Hant", "en-US"],
+      "uses_language_correction": false,
+      "custom_words": [],
+      "automatically_detects_language": false
+    },
+    "identity-header-metadata": {
+      "api": "modern",
+      "recognition_level": "accurate",
+      "recognition_languages": ["zh-Hant", "en-US"],
+      "uses_language_correction": false,
+      "custom_words": [],
+      "automatically_detects_language": false
+    },
+    "identity-header-metadata-legacy": {
+      "api": "legacy",
+      "recognition_level": "accurate",
+      "recognition_languages": ["zh-Hant", "en-US"],
+      "uses_language_correction": false,
+      "custom_words": [],
+      "automatically_detects_language": false
+    }
+  }
+}

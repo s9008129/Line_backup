@@ -1,0 +1,16 @@
+{
+  "step": 1,
+  "goal": "bounded catalog diagnostic",
+  "primitive": "App.scroll",
+  "direction": "down",
+  "pages": 0.25,
+  "target": [
+    180,
+    869
+  ],
+  "sourceFrame": "scan-000",
+  "sourceSha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+  "preconditions": "fresh Albums visually OBSERVED; sameframe twoAPI metadata/header agreement PASS; no visible editing/menu/dialog; LOW unlocatable AX focus; no keyboard",
+  "plannedPostcondition": "fresh samegroup Albums with metadata overlap and upward displacement",
+  "startedAt": "2026-10-09T22:07:33.074Z"
+}

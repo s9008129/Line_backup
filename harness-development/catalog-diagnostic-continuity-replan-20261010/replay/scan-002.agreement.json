@@ -1,0 +1,70 @@
+{
+  "frame": "scan-002",
+  "agreement": "PASS",
+  "rows": [
+    {
+      "identity": "2024-06-02_2024-06-07_65",
+      "start_date": "2024-06-02",
+      "end_date": "2024-06-07",
+      "expected_images": 65,
+      "date_box_source": [
+        31.765715299186212,
+        321.4999995850087,
+        233.5714263916016,
+        24.500000000000043
+      ],
+      "count_box_source": [
+        31.765714005776516,
+        356.99999963157194,
+        31.76571464538574,
+        22.500000000000064
+      ],
+      "raw_confidence": [
+        0.5,
+        0.5,
+        0.5,
+        1
+      ]
+    },
+    {
+      "identity": "2024-05-27_2024-05-31_56",
+      "start_date": "2024-05-27",
+      "end_date": "2024-05-31",
+      "expected_images": 56,
+      "date_box_source": [
+        31.765714477384734,
+        1052.3517445146201,
+        227.96571350097656,
+        26.16860389709465
+      ],
+      "count_box_source": [
+        31.76571442290479,
+        1087.8662787617127,
+        29.897142410278327,
+        22.633721351623574
+      ],
+      "raw_confidence": [
+        0.5,
+        1,
+        0.5,
+        1
+      ]
+    }
+  ],
+  "partial_dates": [
+    [],
+    []
+  ],
+  "confidence_calibration": "UNKNOWN",
+  "apis_independent": false,
+  "visual_safety": "OBSERVED separately",
+  "source_sha256": "65af93e64fa0ae38d2214a2e9d973cafcdd4db99ae47124e2ccb5e6aeb9b3adb",
+  "legacy_competing_candidates": "UNKNOWN",
+  "overlap": [
+    {
+      "identity": "2024-06-02_2024-06-07_65",
+      "delta_y": -267.29360542619565
+    }
+  ],
+  "effect": "YES by OCR metadata upward displacement"
+}

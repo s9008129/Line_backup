@@ -1,0 +1,179 @@
+{
+  "api" : "legacy",
+  "api_revision" : 3,
+  "apis_independent" : false,
+  "automatically_detects_language" : false,
+  "confidenceCalibration" : "UNKNOWN",
+  "custom_words" : [
+
+  ],
+  "derivative_height" : 2572,
+  "derivative_sha256" : "e583ed1c0602514f86b3f033c0e37a0fe0c52b118f3a14dfcc98f8fab08d4b85",
+  "derivative_width" : 1308,
+  "imageHeight" : 1286,
+  "imageWidth" : 654,
+  "items" : [
+    {
+      "boxTopLeftDerivativePixels" : [
+        463.40571575745207,
+        183.00000028352065,
+        381.18856811523426,
+        53.000000000000036
+      ],
+      "boxTopLeftPixels" : [
+        463.40571575745207,
+        183.00000028352065,
+        381.18856811523426,
+        53.000000000000036
+      ],
+      "boxTopLeftSourcePixels" : [
+        231.70285787872604,
+        91.500000141760324,
+        190.59428405761713,
+        26.500000000000018
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.5,
+          "text" : "旻謙允禎成長日記"
+        }
+      ],
+      "confidence" : 0.5,
+      "text" : "旻謙允禎成長日記"
+    },
+    {
+      "boxTopLeftDerivativePixels" : [
+        276.54857315996207,
+        325.00000028876042,
+        97.16571044921875,
+        49.000000000000085
+      ],
+      "boxTopLeftPixels" : [
+        276.54857315996207,
+        325.00000028876042,
+        97.16571044921875,
+        49.000000000000085
+      ],
+      "boxTopLeftSourcePixels" : [
+        138.27428657998104,
+        162.50000014438021,
+        48.582855224609375,
+        24.500000000000043
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.30000001192092896,
+          "text" : "相簿"
+        }
+      ],
+      "confidence" : 0.30000001192092896,
+      "text" : "相簿"
+    },
+    {
+      "boxTopLeftDerivativePixels" : [
+        900.65143126778241,
+        321.50000067229115,
+        145.74856567382795,
+        52.500000000000149
+      ],
+      "boxTopLeftPixels" : [
+        900.65143126778241,
+        321.50000067229115,
+        145.74856567382795,
+        52.500000000000149
+      ],
+      "boxTopLeftSourcePixels" : [
+        450.32571563389121,
+        160.75000033614558,
+        72.874282836913977,
+        26.250000000000075
+      ],
+      "candidates" : [
+        {
+          "confidence" : 1,
+          "text" : "記事本"
+        }
+      ],
+      "confidence" : 1,
+      "text" : "記事本"
+    },
+    {
+      "boxTopLeftDerivativePixels" : [
+        63.531428954769467,
+        1570.0000004866426,
+        455.93142700195312,
+        48.999999999999794
+      ],
+      "boxTopLeftPixels" : [
+        63.531428954769467,
+        1570.0000004866426,
+        455.93142700195312,
+        48.999999999999794
+      ],
+      "boxTopLeftSourcePixels" : [
+        31.765714477384734,
+        785.00000024332132,
+        227.96571350097656,
+        24.499999999999897
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.5,
+          "text" : "2024\/05\/27～05\/31"
+        }
+      ],
+      "confidence" : 0.5,
+      "text" : "2024\/05\/27～05\/31"
+    },
+    {
+      "boxTopLeftDerivativePixels" : [
+        63.531428024899967,
+        1641.0000006258847,
+        63.531429290771484,
+        45.005813598632741
+      ],
+      "boxTopLeftPixels" : [
+        63.531428024899967,
+        1641.0000006258847,
+        63.531429290771484,
+        45.005813598632741
+      ],
+      "boxTopLeftSourcePixels" : [
+        31.765714012449983,
+        820.50000031294235,
+        31.765714645385742,
+        22.502906799316371
+      ],
+      "candidates" : [
+        {
+          "confidence" : 1,
+          "text" : "56"
+        }
+      ],
+      "confidence" : 1,
+      "text" : "56"
+    }
+  ],
+  "os_version" : "Version 27.0.1 (Build 26A434)",
+  "profile_name" : "identity-header-metadata-legacy",
+  "recognition_languages" : [
+    "zh-Hant",
+    "en-US"
+  ],
+  "recognition_level" : "accurate",
+  "requested_automatically_detects_language" : false,
+  "roi_source_pixels" : {
+    "x0" : 0,
+    "x1" : 654,
+    "y0" : 0,
+    "y1" : 1286
+  },
+  "scale" : 2,
+  "screen_capture" : false,
+  "source_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/catalog-diagnostic-continuity-replan-20261010\/replay\/scan-003.png",
+  "source_sha256" : "934cc2cac6be8fdb37a9bd014d90321be271d8517134070d9a9adcf62d091cdf",
+  "top_candidates_requested" : 3,
+  "transform" : "crop first (source px), then nearest-neighbour 2x; source = roi_origin + derivative\/2",
+  "ui_inputs_sent" : 0,
+  "uses_language_correction" : false
+}
