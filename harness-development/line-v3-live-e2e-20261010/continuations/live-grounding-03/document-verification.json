@@ -1,0 +1,21 @@
+{
+  "kind": "LOCAL_DOCUMENT_AND_PRESERVATION_VERIFICATION",
+  "created_at": "2026-10-10T12:06:25.694478+00:00",
+  "plan_sha256": "001b90861631fe27b0d21ec871be5fc19446bf3070e88bb116350a0f3690708c",
+  "handoff_md_sha256": "d44fa1eb21fd15b50fcc2131c5a5499be69ce3b40bbf69b128f6f3cc8ee4df03",
+  "contract_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+  "plan_frozen_before_handoff": true,
+  "embedded_contracts_equal": true,
+  "contract_handoff_json_equal": true,
+  "implementer_prompt_first": true,
+  "input_manifest_records_rehashed": 28,
+  "dirty_files_unchanged": 20,
+  "original_untracked_paths_still_present": 64885,
+  "original_untracked_contents_not_all_rehashed": true,
+  "head_unchanged": true,
+  "staged_empty": true,
+  "product_tests": "NOT_RUN",
+  "live_e2e": "NOT_RUN",
+  "native_validation": "NOT_RUN",
+  "errors": []
+}

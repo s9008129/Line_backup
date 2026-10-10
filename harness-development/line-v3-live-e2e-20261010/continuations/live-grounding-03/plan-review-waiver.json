@@ -1,0 +1,13 @@
+{
+  "waiver_format_version": "1",
+  "source": "TRUSTED_OPERATOR",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "gate_id": "G_PLAN_REVIEW_WAIVER",
+  "contract_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+  "decision": "WAIVE_GATE",
+  "authority": "USER",
+  "reason": "User explicitly waived independent Plan Review for this round. The schema-required review flag remains true; local deterministic handoff records WAIVED/NOT_RUN and preserves independent post-implementation Acceptance.",
+  "user_confirmation": "本次計劃不需要獨立審查",
+  "observation_sha256": null,
+  "created_at": "2026-10-10T12:00:46.370334+00:00"
+}

@@ -1,0 +1,111 @@
+{
+  "kind": "LOCAL_DOCUMENT_PACKAGE_MANIFEST",
+  "created_at": "2026-10-10T12:11:33.165663+00:00",
+  "records": [
+    {
+      "path": "baseline-untracked.txt.gz",
+      "bytes": 1104203,
+      "sha256": "afea018a0406625270bc7502f581c3fc0b43fe6ef7bbd26e1c7ee23d670e424d"
+    },
+    {
+      "path": "baseline.json",
+      "bytes": 4541,
+      "sha256": "e8b5926c6d25454c133273bc69ec816e29f31ae0597947f4344a0359ab830cf4"
+    },
+    {
+      "path": "commit-message.txt",
+      "bytes": 3393,
+      "sha256": "19a1a3778c6ba2f2389b9e12577fa3d03e4f011254e96a8f48ed8061204bfccb"
+    },
+    {
+      "path": "compile-handoff.receipt.json",
+      "bytes": 1415,
+      "sha256": "e56683fdf30836441aeac79304cf0859d4e821372a0d56da62a8edfe4e9e5ebb"
+    },
+    {
+      "path": "document-run.json",
+      "bytes": 593,
+      "sha256": "bc516e1b8adb7865429ec1d4771e3d33de6939d324bda8f7ff6d94580a6d0c47"
+    },
+    {
+      "path": "document-verification.json",
+      "bytes": 861,
+      "sha256": "eff7cbae2ec6f42d08e3162248ebb5e0858012c591c1b3f5a3a150075e5908c1"
+    },
+    {
+      "path": "handoff.json",
+      "bytes": 6318,
+      "sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219"
+    },
+    {
+      "path": "handoff.md",
+      "bytes": 18640,
+      "sha256": "d44fa1eb21fd15b50fcc2131c5a5499be69ce3b40bbf69b128f6f3cc8ee4df03"
+    },
+    {
+      "path": "input-manifest.json",
+      "bytes": 10088,
+      "sha256": "c9c507f6426a160852ddb293a26e00e1766aaed41828e66eb7aa66be480b7bca"
+    },
+    {
+      "path": "native-admission.json",
+      "bytes": 769,
+      "sha256": "1a9b15c7a8f160fbee0fd6923090b4c18dfd6dd33b35e1f7a2cb1b2674021ade"
+    },
+    {
+      "path": "plan-contract.json",
+      "bytes": 6318,
+      "sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219"
+    },
+    {
+      "path": "plan-freeze.json",
+      "bytes": 518,
+      "sha256": "96f733780c73eb0dd099b39837940cfa6946c4d5ba83cbc141c75720caeb0471"
+    },
+    {
+      "path": "plan-local-validation.json",
+      "bytes": 1964,
+      "sha256": "48432bdc4325dd36d3cd1939d247f8a8995bc9adb55b7fd897f261dd886a7080"
+    },
+    {
+      "path": "plan-review-waiver.json",
+      "bytes": 666,
+      "sha256": "1e4524ab74f54b98237e4a629f6e0c868be65ac6180aca192eca814b144aa163"
+    },
+    {
+      "path": "plan.md",
+      "bytes": 30678,
+      "sha256": "001b90861631fe27b0d21ec871be5fc19446bf3070e88bb116350a0f3690708c"
+    },
+    {
+      "path": "planner.result.json",
+      "bytes": 7894,
+      "sha256": "9eee04e99b26cab4888be41d445c10fb7b461bf9c79ae82f1a65233e3e41ee8f"
+    },
+    {
+      "path": "progress.md",
+      "bytes": 1621,
+      "sha256": "88393b067168ea1a448f137d76c3364e03a9d4692a12fc270a1103920ae75d5a"
+    },
+    {
+      "path": "result-local-validation.json",
+      "bytes": 673,
+      "sha256": "71616205dddcd92d3e9ae71112d797c67b8d07df6a85866514726e5630696f78"
+    }
+  ],
+  "file_count_excluding_self": 18,
+  "scope": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03",
+  "publication_authorization": "Explicit user add, commit, push instruction",
+  "verification": {
+    "input_records_rehashed": 28,
+    "dirty_files_unchanged": 20,
+    "original_untracked_paths_present": 64885,
+    "untracked_contents_not_all_rehashed": true,
+    "head_and_branch_unchanged": true,
+    "index_empty_before_staging": true,
+    "plan_freeze_and_handoff_bytes_verified": true,
+    "product_tests": "NOT_RUN",
+    "live_e2e": "NOT_RUN",
+    "native_stage_validation": "NOT_RUN"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "controller_release": "4.8.0",
+  "controller_path": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source/tools/task-orchestrator.py",
+  "native_admission": "NOT_RUN",
+  "native_stage_publication": "NOT_RUN",
+  "native_contract_validation": "NOT_RUN",
+  "native_result_validation": "NOT_RUN",
+  "local_route": "USER_WAIVED_PLAN_REVIEW_DETERMINISTIC_LOCAL_HANDOFF",
+  "reason": "The immutable CRITICAL route requires Plan Review, while its waive_gate supports only post-implementation closure. Respect the explicit user waiver using local document compilation without fabricating native admission or invitations.",
+  "os_sandbox_enforcement": "UNKNOWN",
+  "network_denial_enforcement": "UNKNOWN"
+}

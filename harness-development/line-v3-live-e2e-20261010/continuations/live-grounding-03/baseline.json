@@ -1,0 +1,124 @@
+{
+  "kind": "local_document_authoring_baseline",
+  "captured_at": "2026-10-10T11:52:59.434236+00:00",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "head": "a26a8e99141d9d4141c08e85f22491d35847f81c",
+  "branch": "v43-ab/codex-rev28",
+  "index_tree": "590345843a2ef3c80720d608fc4ca81675bd8ff8",
+  "dirty_records": [
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/progress.md",
+      "bytes": 4565,
+      "sha256": "f7e211da9ccb054c2150c94e056e35e1c2b253fb78fc25ac7440aa30b9503ce7"
+    },
+    {
+      "path": "rev28/ARCHITECTURE.md",
+      "bytes": 25640,
+      "sha256": "333424392e8c0e62e2f17e45f711bcbd62e07b31e2b6df2f80088bdfbc9a5427"
+    },
+    {
+      "path": "rev28/CAPABILITY-MATRIX.md",
+      "bytes": 10429,
+      "sha256": "341a06c130d96520fe3182d97f211e4101e8dd32df56b4874757d49854263be8"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/LiveComposition.swift",
+      "bytes": 8917,
+      "sha256": "a1a3d0811decb03e94833d2271981359931d625964e6cba0a397e0d537068866"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift",
+      "bytes": 8574,
+      "sha256": "3745e6de06bc2bee83097b69cb6a30a481d79d631c465564c218ebed008003e6"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+      "bytes": 29055,
+      "sha256": "9230ec99679badd7cad01d53c0c4d9811db6cd149f1aa42b0b98a3c34885e4c2"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Perception/OcrEngine.swift",
+      "bytes": 26613,
+      "sha256": "216610422cfafb346cb2a8a3629c2be3a179d0b507817768665f9ba3ee75d248"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+      "bytes": 29404,
+      "sha256": "b715041ba941315c3c1a94caff3e91b09cfb4d89429a41f40d4d0e52aa157030"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift",
+      "bytes": 8716,
+      "sha256": "b738df79817441240804531c033ab87f8be5b0dec78fd6683a3aa4a7c7162e3c"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/main.swift",
+      "bytes": 51729,
+      "sha256": "2412bb5b49b00ab2f0c8b4ef2d5d7ab5628f939e2f1be1fd38df83c30fb59625"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift",
+      "bytes": 12338,
+      "sha256": "9c7fa5be30b379685d5756cbc1f4b4c1101f8e37b14115833633fdfe5f5e45c5"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+      "bytes": 49225,
+      "sha256": "f8b56aa41490e28589819222504b2525b77d389fe88e4f61558e6d19a69476a3"
+    },
+    {
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "bytes": 16672,
+      "sha256": "dfc57cc6a6d7e49ff17f432d3639eb78cb769d58f54a21f4674f78dbca576294"
+    },
+    {
+      "path": "src/line_backup_batch/cli.py",
+      "bytes": 11588,
+      "sha256": "2d16ad6a3d137d6f4aea33c9d874500da37edaf89f8106b26d5b85002a5530d8"
+    },
+    {
+      "path": "src/line_backup_batch/service.py",
+      "bytes": 32287,
+      "sha256": "9cd1903700a0ad3f0ef8a72d57e20317d71bd27cddc4e3a8bfd164241df1e419"
+    },
+    {
+      "path": "src/line_backup_batch/store.py",
+      "bytes": 23549,
+      "sha256": "664d53fe65a34c5756d8988c16e5c4a251aea1c7cf4c84beac7180d93df3a70a"
+    },
+    {
+      "path": "tests/test_batch_authority.py",
+      "bytes": 14930,
+      "sha256": "e7adfff030b5105cf342b8f0bc1af72014eb6ab449e1ed600600423450f358e5"
+    },
+    {
+      "path": "tests/test_batch_coordinator.py",
+      "bytes": 20927,
+      "sha256": "b57b9ab918652cc3ddd72b11f2516c1595adc1585326027bd4a94dde72ab393f"
+    },
+    {
+      "path": "tests/test_batch_observations.py",
+      "bytes": 9718,
+      "sha256": "a8cb9fe2e4da70400d18109c9cc82c7a8692b9dbdce2b7a1781d68f18405242b"
+    },
+    {
+      "path": "tests/test_cua_adapter.mjs",
+      "bytes": 14835,
+      "sha256": "abfd03a9de4a5740cab99c72f98ad2efa450806c904f50845a886eef7970dedf"
+    }
+  ],
+  "status_sha256": "2f4faa515661db799d385a153592a4a8722d9c547276d9cc7394f0375e159f8c",
+  "status_counts": {
+    " M": 20,
+    "??": 657
+  },
+  "untracked_inventory": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/baseline-untracked.txt.gz",
+    "bytes": 1104203,
+    "sha256": "afea018a0406625270bc7502f581c3fc0b43fe6ef7bbd26e1c7ee23d670e424d",
+    "encoding": "gzip UTF-8 newline-separated Git untracked paths",
+    "entry_count": 64885,
+    "uncompressed_bytes": 11118902,
+    "uncompressed_sha256": "816c8d3158250315828b1854a95e86e6c52882822075851ec277f7426b6d53b7"
+  }
+}

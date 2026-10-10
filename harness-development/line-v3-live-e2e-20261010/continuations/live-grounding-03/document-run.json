@@ -1,0 +1,13 @@
+{
+  "local_run_id": "14c85f1b-0f0a-4ec7-8743-cadb727aefda",
+  "kind": "LOCAL_DOCUMENT_AUTHORING_NOT_CONTROLLER",
+  "created_at": "2026-10-10T11:52:59.434236+00:00",
+  "controller_run_id": null,
+  "controller_invitation": null,
+  "native_admission": "NOT_RUN",
+  "authority": [
+    "本次計劃不需要獨立審查",
+    "實際落檔、handoff，你要給我兩個檔案交給implementer",
+    "完成後，使用subagent(GPT6-luna)深度梳理上下文後，撰寫一個詳細的git 提交訊息，必須包含意圖、你做了什麼、下一步建議，接著執行add,commit,push"
+  ]
+}

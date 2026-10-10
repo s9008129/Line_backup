@@ -1,0 +1,40 @@
+{
+  "captured_at": "2026-10-10T12:00:46.370334+00:00",
+  "validation_kind": "LOCAL_STRUCTURAL_ONLY",
+  "official_api": "harness.schema_validation.validate_document",
+  "resource_root": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source",
+  "python_executable": "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python3",
+  "checks": [
+    {
+      "artifact": "plan-contract.json",
+      "kind": "LOCAL_IMMUTABLE_SCHEMA_API_NOT_NATIVE_STAGE",
+      "receipt": {
+        "verdict": "VALID",
+        "schema_selector": "schemas/v3/task.schema.json",
+        "input_bytes": 6318,
+        "input_raw_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+        "resource_inventory_sha256": "e12d2e8393f50b736ad9c6e142f60a8c15013639578e8c50fa7c440d6bb6f78a",
+        "schema_graph_sha256": "f3577a95bd3044da93021903b30343f086843ff42c20954d8bf983d9b61981c1",
+        "package_content_sha256": "2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f",
+        "retrieval_policy": "LOCAL_ONLY_DENY_UNKNOWN",
+        "os_enforcement": "UNKNOWN"
+      }
+    },
+    {
+      "artifact": "plan-review-waiver.json",
+      "kind": "LOCAL_IMMUTABLE_SCHEMA_API_NOT_NATIVE_STAGE",
+      "receipt": {
+        "verdict": "VALID",
+        "schema_selector": "schemas/v3/waiver.schema.json",
+        "input_bytes": 666,
+        "input_raw_sha256": "1e4524ab74f54b98237e4a629f6e0c868be65ac6180aca192eca814b144aa163",
+        "resource_inventory_sha256": "e12d2e8393f50b736ad9c6e142f60a8c15013639578e8c50fa7c440d6bb6f78a",
+        "schema_graph_sha256": "f3577a95bd3044da93021903b30343f086843ff42c20954d8bf983d9b61981c1",
+        "package_content_sha256": "2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f",
+        "retrieval_policy": "LOCAL_ONLY_DENY_UNKNOWN",
+        "os_enforcement": "UNKNOWN"
+      }
+    }
+  ],
+  "native_stage_validation": "NOT_RUN"
+}
