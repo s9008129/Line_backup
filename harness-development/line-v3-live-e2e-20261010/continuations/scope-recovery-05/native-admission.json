@@ -1,0 +1,17 @@
+{
+  "controller_release": "4.8.0",
+  "controller_path": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source/tools/task-orchestrator.py",
+  "fixed_runtime": "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python3",
+  "fixed_runtime_exists": false,
+  "native_admission": "NOT_RUN",
+  "native_stage_publication": "NOT_RUN",
+  "native_contract_validation": "NOT_RUN",
+  "native_result_validation": "NOT_RUN",
+  "controller_run_id": null,
+  "invitation": null,
+  "fixed_validation_command": null,
+  "local_route": "USER_AUTHORIZED_LOCAL_DOCUMENT_FREEZE_AND_DETERMINISTIC_HANDOFF",
+  "reason": "Fixed Python3.14 target is missing; no admitted stage packet or emitted validator exists. No substitute validator or global runtime repair was used.",
+  "os_sandbox_enforcement": "UNKNOWN",
+  "network_denial_enforcement": "UNKNOWN"
+}

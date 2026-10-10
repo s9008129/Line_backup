@@ -1,0 +1,176 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261011-line-receipt-recovery",
+  "run_id": "6f0a3c14-12e3-4c54-9981-95593c26f789",
+  "role": "HANDOFF_COMPILER",
+  "candidate_fact": "PARTIAL",
+  "validation_fact": "NOT_RUN",
+  "routing_fact": "EXTERNAL_BLOCKER",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "NOT_REQUIRED",
+    "TASK_CLOSURE_STATUS": "PENDING_REQUIRED_VERIFICATION"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G_BASELINE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_RUNNER",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_ADAPTER_OFFLINE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_PRESERVE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_REPORT",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    }
+  ],
+  "evidence_ids": [
+    "E_DOCUMENT_BASELINE_JSON",
+    "E_DOCUMENT_INCIDENT-RECONCILIATION_JSON",
+    "E_DOCUMENT_INPUT-MANIFEST_JSON",
+    "E_DOCUMENT_NATIVE-ADMISSION_JSON",
+    "E_DOCUMENT_COMPILE-HANDOFF_RECEIPT_JSON"
+  ],
+  "stage": "HANDOFF",
+  "plan_sha256": "e3bdc89bfd4e627d82cc5d22fce3b66bcc83311fb928aac4652c7695e8aa4020",
+  "handoff_sha256": "9f08c1b5bcd43ceecbe2dc01a0b364aacdaef4b83384619c84ec287a1a6f3e30",
+  "source_sha256": "a4037174dd82caa79615d15120b4759292a993e5b59f4c2237a1b776dc80b44a",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-20261011-line-receipt-recovery",
+      "run_id": "6f0a3c14-12e3-4c54-9981-95593c26f789",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "a4037174dd82caa79615d15120b4759292a993e5b59f4c2237a1b776dc80b44a",
+      "evidence_id": "E_DOCUMENT_BASELINE_JSON",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/baseline.json",
+      "bytes": 2038,
+      "sha256": "616e31f3f76254235ad664c55763bdc78f6503de8242aa041873949eab3d4dde",
+      "contract_sha256": "6b2076527f343e895f0a9798ffe4c8b85f4e855b2afcdd19d2de168ba1f0f7a0",
+      "observation": "Retained local document input/copy evidence; no product gate, native schema validation or native role admission claimed."
+    },
+    {
+      "task_id": "TASK-20261011-line-receipt-recovery",
+      "run_id": "6f0a3c14-12e3-4c54-9981-95593c26f789",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "a4037174dd82caa79615d15120b4759292a993e5b59f4c2237a1b776dc80b44a",
+      "evidence_id": "E_DOCUMENT_INCIDENT-RECONCILIATION_JSON",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/incident-reconciliation.json",
+      "bytes": 5045,
+      "sha256": "f7ed1782ccb48f83ea3be58d8e3e2143e95069d38a54f4a3cd6c1e531406ab63",
+      "contract_sha256": "6b2076527f343e895f0a9798ffe4c8b85f4e855b2afcdd19d2de168ba1f0f7a0",
+      "observation": "Retained local document input/copy evidence; no product gate, native schema validation or native role admission claimed."
+    },
+    {
+      "task_id": "TASK-20261011-line-receipt-recovery",
+      "run_id": "6f0a3c14-12e3-4c54-9981-95593c26f789",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "a4037174dd82caa79615d15120b4759292a993e5b59f4c2237a1b776dc80b44a",
+      "evidence_id": "E_DOCUMENT_INPUT-MANIFEST_JSON",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/input-manifest.json",
+      "bytes": 6041,
+      "sha256": "a4037174dd82caa79615d15120b4759292a993e5b59f4c2237a1b776dc80b44a",
+      "contract_sha256": "6b2076527f343e895f0a9798ffe4c8b85f4e855b2afcdd19d2de168ba1f0f7a0",
+      "observation": "Retained local document input/copy evidence; no product gate, native schema validation or native role admission claimed."
+    },
+    {
+      "task_id": "TASK-20261011-line-receipt-recovery",
+      "run_id": "6f0a3c14-12e3-4c54-9981-95593c26f789",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "a4037174dd82caa79615d15120b4759292a993e5b59f4c2237a1b776dc80b44a",
+      "evidence_id": "E_DOCUMENT_NATIVE-ADMISSION_JSON",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/native-admission.json",
+      "bytes": 904,
+      "sha256": "5592b23c20ea46fa8896899ac3c4b6e4f122abce482c25ffd3ccef0e50c9aec5",
+      "contract_sha256": "6b2076527f343e895f0a9798ffe4c8b85f4e855b2afcdd19d2de168ba1f0f7a0",
+      "observation": "Retained local document input/copy evidence; no product gate, native schema validation or native role admission claimed."
+    },
+    {
+      "task_id": "TASK-20261011-line-receipt-recovery",
+      "run_id": "6f0a3c14-12e3-4c54-9981-95593c26f789",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "a4037174dd82caa79615d15120b4759292a993e5b59f4c2237a1b776dc80b44a",
+      "evidence_id": "E_DOCUMENT_COMPILE-HANDOFF_RECEIPT_JSON",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/compile-handoff.receipt.json",
+      "bytes": 2042,
+      "sha256": "e5d734f4bcfa1e28e8db630a6323de09afeddeacde76c37f343cf47f671e7c2b",
+      "contract_sha256": "6b2076527f343e895f0a9798ffe4c8b85f4e855b2afcdd19d2de168ba1f0f7a0",
+      "observation": "Retained local document input/copy evidence; no product gate, native schema validation or native role admission claimed."
+    }
+  ],
+  "plan_contract_sha256": "6b2076527f343e895f0a9798ffe4c8b85f4e855b2afcdd19d2de168ba1f0f7a0",
+  "analysis": {
+    "facts": [
+      "User chose runner recovery plus adapter offline verification and explicitly excluded independent review.",
+      "User authorized actual document writes, one GPT-6 luna read-only context/commit-message helper and root add/commit/normal push.",
+      "Four original out-of-scope receipts remain in place and their hashes match the incident.",
+      "Frozen local contract copied byte-identically into handoff.json; first handoff paragraph is the precise Implementer prompt.",
+      "No product tests, LINE input, downloads or state/config/ledger writes in document phase."
+    ],
+    "inferences": [
+      "Fixed explicit roots and pre-write guards address the observed receipt path/cwd cause."
+    ],
+    "unknowns": [
+      "Native stage admission/publication/schema validation unavailable.",
+      "Candidate adapter syntax/suites and local IMPLEMENT gates NOT_RUN.",
+      "Parent two-album/scroll/Acceptance unrun."
+    ],
+    "evidence": [
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/baseline.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/incident-reconciliation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/input-manifest.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/native-admission.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/compile-handoff.receipt.json"
+    ],
+    "confidence": "HIGH_FOR_DOCUMENT_FACTS_PRODUCT_VALIDATION_UNKNOWN",
+    "local_document_status": "WRITTEN_LOCAL_FREEZE_NOT_NATIVE_PUBLICATION",
+    "local_next_route": "USER_AUTHORIZED_BOUND_LOCAL_IMPLEMENTATION_AFTER_DOCUMENT_DELIVERY",
+    "parent_statuses": {
+      "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+      "IMPLEMENTATION_STATUS": "BLOCKED",
+      "CORE_ACCEPTANCE_STATUS": "BLOCKED",
+      "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+      "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+      "TASK_CLOSURE_STATUS": "REPLAN_REQUIRED"
+    },
+    "independent_review": "NOT_REQUIRED_PER_USER",
+    "native_stage_run_id": null,
+    "document_phase_product_attempts": 0,
+    "known_live_classifier_chooser_attempts": 2,
+    "remaining_candidate_attempts": 1
+  },
+  "handoff_summary": "本地續行Plan與精準Handoff已落檔，唯一可寫CON、四份原件原位保留，adapter與既有tests唯讀；Implementer先fresh baseline／runner自測，再一次候選syntax與suite驗證，失敗即回Planner。本計畫不獨立審查。文件發布另授權一名GPT-6 luna唯讀上下文／提交訊息及root Git發布；固定Harness runtime失效，native驗證NOT_RUN，產品／E2E尚未執行。",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 2,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Inherited LIVE_CLASSIFIER_CHOOSER attempt 2 stopped on receipt scope/cwd incident; current document phase product attempts=0; four original hashes now reconciled read-only.",
+    "information_gain": true,
+    "stuck": true
+  },
+  "blocker_fingerprint": "FIXED_HARNESS_RUNTIME_MISSING_PRODUCT_GATES_NOT_RUN",
+  "information_gain": true,
+  "writer_receipts": []
+}

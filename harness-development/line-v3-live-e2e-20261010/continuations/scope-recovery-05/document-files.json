@@ -1,0 +1,27 @@
+{
+  "kind": "EXACT_DOCUMENT_COMMIT_ALLOWLIST",
+  "files": [
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/E2E測試報告.md",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/baseline.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/check-specs.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/compile-handoff.receipt.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/document-delivery-policy.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/document-files.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/document-manifest.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.md",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.result.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/incident-reconciliation.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/input-manifest.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/lineage.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/native-admission.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-contract.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-freeze.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan.md",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/planner.result.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/progress.md",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/user-decisions.json"
+  ],
+  "excluded_directory": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local",
+  "excludes_existing_product_and_incident_artifacts": true
+}

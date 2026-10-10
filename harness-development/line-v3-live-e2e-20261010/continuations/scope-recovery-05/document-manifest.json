@@ -1,0 +1,126 @@
+{
+  "kind": "DOCUMENT_BYTES_MANIFEST_NOT_NATIVE_SCHEMA_RECEIPT",
+  "created_at": "2026-10-10T22:44:01.695986+00:00",
+  "files": [
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/E2E測試報告.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/E2E測試報告.md",
+      "bytes": 4066,
+      "sha256": "c8837261c62504a3acb72e703afbd3a4059dfced1b177df967dc4e929a8cbe5f"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/baseline.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/baseline.json",
+      "bytes": 2038,
+      "sha256": "616e31f3f76254235ad664c55763bdc78f6503de8242aa041873949eab3d4dde"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/check-specs.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/check-specs.json",
+      "bytes": 6581,
+      "sha256": "8df2ff44200e37bff4b21fe9b994bb98a4a1a8914edbb48d33e6e255b35beaf5"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/compile-handoff.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/compile-handoff.receipt.json",
+      "bytes": 2042,
+      "sha256": "e5d734f4bcfa1e28e8db630a6323de09afeddeacde76c37f343cf47f671e7c2b"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/document-delivery-policy.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/document-delivery-policy.json",
+      "bytes": 1474,
+      "sha256": "d1548571e586574d73368989fda536d188d4c27687c7b64fbb8ad0c6501d3239"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/document-files.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/document-files.json",
+      "bytes": 2313,
+      "sha256": "ad377789f4119395c59c1f32174ce179cbfaf206e78a51f85fd6f8949c5b67e5"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.json",
+      "bytes": 2758,
+      "sha256": "6b2076527f343e895f0a9798ffe4c8b85f4e855b2afcdd19d2de168ba1f0f7a0"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.md",
+      "bytes": 7358,
+      "sha256": "9f08c1b5bcd43ceecbe2dc01a0b364aacdaef4b83384619c84ec287a1a6f3e30"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.result.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.result.json",
+      "bytes": 9001,
+      "sha256": "c2022574fa7ca3f6084a4273beb7d2ef35e507d296c04675faa6855953112526"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/incident-reconciliation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/incident-reconciliation.json",
+      "bytes": 5045,
+      "sha256": "f7ed1782ccb48f83ea3be58d8e3e2143e95069d38a54f4a3cd6c1e531406ab63"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/input-manifest.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/input-manifest.json",
+      "bytes": 6041,
+      "sha256": "a4037174dd82caa79615d15120b4759292a993e5b59f4c2237a1b776dc80b44a"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/lineage.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/lineage.json",
+      "bytes": 2765,
+      "sha256": "a5df41e2b5d9d1d755ecf662f3b3f9ed79476e66a7d44c5ff6e249ea4aa89394"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/native-admission.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/native-admission.json",
+      "bytes": 904,
+      "sha256": "5592b23c20ea46fa8896899ac3c4b6e4f122abce482c25ffd3ccef0e50c9aec5"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-contract.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-contract.json",
+      "bytes": 2758,
+      "sha256": "6b2076527f343e895f0a9798ffe4c8b85f4e855b2afcdd19d2de168ba1f0f7a0"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-freeze.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-freeze.json",
+      "bytes": 1035,
+      "sha256": "66e3c82576905f3f250fa55980bd57772f2e377486f8b25931e027dc5bf01dfe"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan.md",
+      "bytes": 12002,
+      "sha256": "e3bdc89bfd4e627d82cc5d22fce3b66bcc83311fb928aac4652c7695e8aa4020"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/planner.result.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/planner.result.json",
+      "bytes": 8929,
+      "sha256": "5c322263ea020e7e43bceda3b0c3616ca18d63b53fb9eea683f027d9731dd90c"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/progress.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/progress.md",
+      "bytes": 1733,
+      "sha256": "02591e18b5673c171d2745b4e582afd23a257faffb8e353cdd35b3ab6a4884f7"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/user-decisions.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/user-decisions.json",
+      "bytes": 1001,
+      "sha256": "a9dc1d973b2d0019b5aeea0b27c6c498c4ed67082147b61197d08968a836d9e4"
+    }
+  ],
+  "excludes_self_to_avoid_recursive_hash": true,
+  "local_only_evidence": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/preexisting-files.json",
+    "bytes": 27949525,
+    "sha256": "b115df6ea55e3a985e98651018e742769b02e6f7854989e68f8d7214680832f2"
+  }
+}
