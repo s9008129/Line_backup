@@ -1,0 +1,55 @@
+{
+  "format_version": 1,
+  "observation_id": "e02-cua-closed-surface-and-ellipsis-01",
+  "visual_status": "OBSERVED",
+  "target": {
+    "group": "旻謙允禎成長日記",
+    "date_text": "2024/06/02~06/07",
+    "count_text": "65張照片",
+    "detail_window_id": 6743
+  },
+  "cua_closed_surface_observation": {
+    "status": "OBSERVED",
+    "source": "Fresh documented CUA getAXStateAndScreenshot after safe menu closure",
+    "screenshot_pixels": [654, 1286],
+    "menu_visible_in_bound_window": false,
+    "ellipsis_center_pixels": [610, 100],
+    "ellipsis_dot_centers_y_pixels": [89, 100, 111],
+    "dot_spacing_pixels": 11
+  },
+  "post_close_identity": {
+    "group_ocr": {
+      "path": "evidence/e02-menu-retest-03-group-ocr.json",
+      "sha256": "58a36c7b013a62fe44856ff77e990225e6fcc6057d13d57bdb09dba8d288e2c6"
+    },
+    "detail_ocr": {
+      "path": "evidence/e02-menu-retest-03-detail-ocr.json",
+      "sha256": "99b83e62503122e4956a69b15cc92e22c5763b10cbd7adbd209d7a7dc77412d5"
+    },
+    "same_capture_sha256": "b4bbb0d007d0b21fa105a3cab4f4569045ce1c5750508bb70be4bed436612d5a",
+    "group": "旻謙允禎成長日記",
+    "date_text": "2024/06/02~06/07",
+    "count_text": "65張照片"
+  },
+  "safe_close": {
+    "status": "OBSERVED",
+    "method": "One documented CUA click on the visually identified blank title-bar area outside the popup",
+    "point_pixels": [500, 50],
+    "activation": "NONE",
+    "postcondition_manifest": "evidence/e02-menu-retest-03.json",
+    "postcondition_image": "evidence/e02-menu-retest-03.png",
+    "popup_absent": true,
+    "same_detail_window_still_on_screen": true
+  },
+  "side_effects": {
+    "save_all_invocations": 0,
+    "confirmation_actions": 0,
+    "download_started": false,
+    "destination_created": false,
+    "backup_state_mutated": false
+  },
+  "limitations": [
+    "CUA screenshot bytes are shown by the live Computer Use tool but were not independently persisted as a PNG.",
+    "The same-screen SCK manifest and image for the safe-close postcondition are separately hash-bound in the calibration evidence bundle."
+  ]
+}

@@ -1,0 +1,407 @@
+{
+  "format_version" : 1,
+  "input_dimensions_pixels" : {
+    "height" : 1490,
+    "width" : 2294
+  },
+  "input_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/line-e2e-fullscreen-repair-20261010\/evidence\/e00-display-05.png",
+  "input_sha256" : "9fce00c59dcc471848b49dc9c81af2aa9ef51ab416cce248c7e81915375e654b",
+  "os_version" : "Version 27.0.1 (Build 26A434)",
+  "profile" : {
+    "automatically_detects_language" : false,
+    "custom_words" : [
+
+    ],
+    "minimum_text_height_fraction" : 0,
+    "processing_scale" : 2,
+    "recognition_languages" : [
+      "zh-Hant",
+      "en-US"
+    ],
+    "recognition_level" : "accurate",
+    "revision" : "revision3",
+    "top_candidates" : 3,
+    "uses_language_correction" : false
+  },
+  "provider" : "Vision.RecognizeTextRequest",
+  "results" : [
+    {
+      "crop_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/line-e2e-fullscreen-repair-20261010\/evidence\/e00-display-05-ocr\/album-card-menu-1x.png",
+      "crop_sha256" : "6d2bc5fd34921c343313289fc4c662d2639ce45e9fc7e8a0814e227cc8ed71e2",
+      "derivative_dimensions" : {
+        "height" : 760,
+        "width" : 1000
+      },
+      "derivative_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/line-e2e-fullscreen-repair-20261010\/evidence\/e00-display-05-ocr\/album-card-menu-2x.png",
+      "derivative_scale" : 2,
+      "derivative_sha256" : "a3158c75217a8d81447dc5b2eda9132ee8731f8a93450780fc0147179ace138a",
+      "elapsed_ms" : 227.61570833245059,
+      "interpolation" : "nearest (.none)",
+      "name" : "album-card-menu",
+      "observations" : [
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 13.5737705230713,
+            "width" : 140.625,
+            "x" : 728.33333242187496,
+            "y" : 881.99999983801513
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 728.33333242187496,
+              "y" : 881.99999983801513
+            },
+            {
+              "x" : 868.95833242187496,
+              "y" : 881.99999983801513
+            },
+            {
+              "x" : 868.95833242187496,
+              "y" : 895.57377036108642
+            },
+            {
+              "x" : 728.33333242187496,
+              "y" : 895.57377036108642
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 0.30000001192092896,
+              "text" : "> Esk Codex to do an"
+            }
+          ],
+          "uuid" : "95F9A53A-D897-46C2-A1F5-07C5619CBA22",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.071440897489848942,
+            "width" : 0.5625,
+            "x" : 0.43333332968750005,
+            "y" : 0.91803278757322959
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 4.0000000000000124,
+            "width" : 19.000000000000004,
+            "x" : 743.49999987857143,
+            "y" : 911.49999997142857
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 743.49999987857143,
+              "y" : 911.49999997142857
+            },
+            {
+              "x" : 762.49999987857143,
+              "y" : 911.49999997142857
+            },
+            {
+              "x" : 762.49999987857143,
+              "y" : 915.49999997142857
+            },
+            {
+              "x" : 743.49999987857143,
+              "y" : 915.49999997142857
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 0.30000001192092896,
+              "text" : "AAT"
+            }
+          ],
+          "uuid" : "A6697A06-E732-4B1A-818E-5A96A597AAA1",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.021052631578947434,
+            "width" : 0.076000000000000012,
+            "x" : 0.49399999951428569,
+            "y" : 0.81315789488721801
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 11.546279907226578,
+            "width" : 64.149917602539048,
+            "x" : 791.3942427438958,
+            "y" : 910.4008334140633
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 791.3942427438958,
+              "y" : 910.60347060965046
+            },
+            {
+              "x" : 855.50830982153252,
+              "y" : 910.4008334140633
+            },
+            {
+              "x" : 855.54416034643486,
+              "y" : 921.7444761257027
+            },
+            {
+              "x" : 791.43009326879815,
+              "y" : 921.94711332128986
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 0.30000001192092896,
+              "text" : "“na xhigh"
+            }
+          ],
+          "uuid" : "C46B1422-C75B-448C-B4CA-932DD6F0E4A7",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.060769894248560941,
+            "width" : 0.25659967041015619,
+            "x" : 0.68557697097558334,
+            "y" : 0.7792257193616321
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 8.499999999999984,
+            "width" : 55.000000000000021,
+            "x" : 800.50000026875,
+            "y" : 925.99999994687505
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 800.50000026875,
+              "y" : 925.99999994687505
+            },
+            {
+              "x" : 855.50000026875,
+              "y" : 925.99999994687505
+            },
+            {
+              "x" : 855.50000026875,
+              "y" : 934.49999994687494
+            },
+            {
+              "x" : 800.50000026875,
+              "y" : 934.49999994687494
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 0.30000001192092896,
+              "text" : "ents， ？"
+            }
+          ],
+          "uuid" : "A123FE51-1A41-4663-9ACD-124B6AC562DF",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.044736842105263075,
+            "width" : 0.22000000000000008,
+            "x" : 0.72200000107499995,
+            "y" : 0.71315789501644744
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 8.5000000000000053,
+            "width" : 12.000000000000011,
+            "x" : 857.00000002499996,
+            "y" : 925.49999992916662
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 857.00000002499996,
+              "y" : 925.49999992916662
+            },
+            {
+              "x" : 869.00000002499996,
+              "y" : 925.49999992916662
+            },
+            {
+              "x" : 869.00000002499996,
+              "y" : 933.99999992916662
+            },
+            {
+              "x" : 857.00000002499996,
+              "y" : 933.99999992916662
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 0.30000001192092896,
+              "text" : "f"
+            }
+          ],
+          "uuid" : "17ECFED5-0CEA-4E98-8993-A3DC18E1E713",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.044736842105263186,
+            "width" : 0.048000000000000043,
+            "x" : 0.94800000009999996,
+            "y" : 0.71578947405701754
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 13.393577575683592,
+            "width" : 50.100929260253892,
+            "x" : 703.45074858871806,
+            "y" : 928.21112213862966
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 703.45074858871806,
+              "y" : 928.21112213862966
+            },
+            {
+              "x" : 753.55167784897185,
+              "y" : 928.21112213862966
+            },
+            {
+              "x" : 753.55167784897185,
+              "y" : 941.60469971431326
+            },
+            {
+              "x" : 703.45074858871806,
+              "y" : 941.60469971431326
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 1,
+              "text" : "上傳項目"
+            }
+          ],
+          "uuid" : "BDA50FA7-159C-4364-B850-EFB5692E1E03",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.07049251355622943,
+            "width" : 0.20040371704101556,
+            "x" : 0.33380299435487204,
+            "y" : 0.6757647383457196
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 13.499999999999979,
+            "width" : 77.999999999999972,
+            "x" : 702.99999997482269,
+            "y" : 954.99999999521276
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 702.99999997482269,
+              "y" : 954.99999999521276
+            },
+            {
+              "x" : 780.99999997482269,
+              "y" : 954.99999999521276
+            },
+            {
+              "x" : 780.99999997482269,
+              "y" : 968.49999999521276
+            },
+            {
+              "x" : 702.99999997482269,
+              "y" : 968.49999999521276
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 0.5,
+              "text" : "修改相簿名稱"
+            }
+          ],
+          "uuid" : "00700E87-CDF7-4D11-8C3F-6FE2F6F08AB3",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.071052631578947256,
+            "width" : 0.31199999999999989,
+            "x" : 0.3319999998992908,
+            "y" : 0.53421052634098554
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 13.750103473663344,
+            "width" : 52.064369201660149,
+            "x" : 702.96781538450477,
+            "y" : 981.87494801443563
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 702.96781538450477,
+              "y" : 982.12520693701254
+            },
+            {
+              "x" : 754.96721266233681,
+              "y" : 981.87494801443563
+            },
+            {
+              "x" : 755.03218458616493,
+              "y" : 995.37479256552206
+            },
+            {
+              "x" : 703.0327873083329,
+              "y" : 995.62505148809896
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 1,
+              "text" : "分享相簿"
+            }
+          ],
+          "uuid" : "01B1832F-A902-4385-AAA6-BA62BFA08F28",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.072368965650859707,
+            "width" : 0.20825747680664058,
+            "x" : 0.33187126153801888,
+            "y" : 0.39144709743105821
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 13.320888519287106,
+            "width" : 52.079292297363274,
+            "x" : 702.96035383789024,
+            "y" : 1008.8395557299559
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 703.04063795654258,
+              "y" : 1008.8395557299559
+            },
+            {
+              "x" : 755.03964613525352,
+              "y" : 1009.1606922045653
+            },
+            {
+              "x" : 754.95936201660118,
+              "y" : 1022.160444249243
+            },
+            {
+              "x" : 702.96035383789024,
+              "y" : 1021.8393077746337
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 0.5,
+              "text" : "刪除相簿"
+            }
+          ],
+          "uuid" : "9B88E2E0-4A80-464E-9072-236C5922DA67",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.07010993957519529,
+            "width" : 0.20831716918945309,
+            "x" : 0.33184141535156109,
+            "y" : 0.25178713553030019
+          }
+        }
+      ],
+      "source_crop_dimensions" : {
+        "height" : 380,
+        "width" : 500
+      },
+      "source_roi_pixels_top_left" : {
+        "height" : 380,
+        "width" : 500,
+        "x" : 620,
+        "y" : 880
+      }
+    }
+  ],
+  "swift_compiler" : "recorded separately in build receipt"
+}

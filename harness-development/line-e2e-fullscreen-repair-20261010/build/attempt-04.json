@@ -1,0 +1,66 @@
+{
+  "attempt": 4,
+  "sdk_path": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+  "sdk_exists": true,
+  "xcodebuild_exit_code": 0,
+  "xcodebuild_stdout": "Xcode 26.6\nBuild version 17F113\n",
+  "xcodebuild_stderr": "",
+  "swiftc_exit_code": 0,
+  "swiftc_stdout": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)\nTarget: arm64-apple-macosx28.0\n",
+  "swiftc_stderr": "swift-driver version: 1.148.6 ",
+  "checks": [
+    {
+      "name": "fullscreen-capture",
+      "command": [
+        "/usr/bin/xcrun",
+        "--sdk",
+        "macosx26.5",
+        "swiftc",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-target",
+        "arm64-apple-macosx26.0",
+        "-swift-version",
+        "6",
+        "-parse-as-library",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/FullscreenCapture.swift",
+        "-o",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/bin/fullscreen-capture"
+      ],
+      "source": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/FullscreenCapture.swift",
+      "source_sha256": "866f17dd9bb671839812446ae49902077381c8fb5c00d9538c4a2d8faddbd5ad",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/FullscreenCapture.swift:160:52: error: expected ',' separator\n158 |                 \"destination_rect\": \"unset; full output surface\",\n159 |                 \"requested_width_pixels\": NSNull(),\n160 |                 \"requested_height_pixels\": NSNull()\n    |                                                    `- error: expected ',' separator\n161 |             \"request_start_wall_utc\": requestWall,\n162 |             \"request_start_monotonic_seconds\": requestStart,\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/FullscreenCapture.swift:31:24: error: cannot assign through subscript: 'failure' is a 'let' constant\n 22 |             FileHandle.standardOutput.write(Data(\"\\n\".utf8))\n 23 |         } catch {\n 24 |             let failure: [String: Any] = [\n    |             `- note: change 'let' to 'var' to make it mutable\n 25 |                 \"verdict\": \"FAIL\",\n 26 |                 \"error\": String(describing: error),\n    :\n 29 |             ]\n 30 |             if let parsed {\n 31 |                 failure[\"nonce\"] = parsed.nonce\n    |                        `- error: cannot assign through subscript: 'failure' is a 'let' constant\n 32 |                 failure[\"image_path\"] = parsed.image.path\n 33 |                 failure[\"manifest_path\"] = parsed.manifest.path\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/FullscreenCapture.swift:32:24: error: cannot assign through subscript: 'failure' is a 'let' constant\n 22 |             FileHandle.standardOutput.write(Data(\"\\n\".utf8))\n 23 |         } catch {\n 24 |             let failure: [String: Any] = [\n    |             `- note: change 'let' to 'var' to make it mutable\n 25 |                 \"verdict\": \"FAIL\",\n 26 |                 \"error\": String(describing: error),\n    :\n 30 |             if let parsed {\n 31 |                 failure[\"nonce\"] = parsed.nonce\n 32 |                 failure[\"image_path\"] = parsed.image.path\n    |                        `- error: cannot assign through subscript: 'failure' is a 'let' constant\n 33 |                 failure[\"manifest_path\"] = parsed.manifest.path\n 34 |                 failure[\"bundle_id\"] = parsed.bundleID\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/FullscreenCapture.swift:33:24: error: cannot assign through subscript: 'failure' is a 'let' constant\n 22 |             FileHandle.standardOutput.write(Data(\"\\n\".utf8))\n 23 |         } catch {\n 24 |             let failure: [String: Any] = [\n    |             `- note: change 'let' to 'var' to make it mutable\n 25 |                 \"verdict\": \"FAIL\",\n 26 |                 \"error\": String(describing: error),\n    :\n 31 |                 failure[\"nonce\"] = parsed.nonce\n 32 |                 failure[\"image_path\"] = parsed.image.path\n 33 |                 failure[\"manifest_path\"] = parsed.manifest.path\n    |                        `- error: cannot assign through subscript: 'failure' is a 'let' constant\n 34 |                 failure[\"bundle_id\"] = parsed.bundleID\n 35 |                 failure[\"allow_single_display_without_window\"] = parsed.allowSingleDisplayWithoutWindow\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/FullscreenCapture.swift:34:24: error: cannot assign through subscript: 'failure' is a 'let' constant\n 22 |             FileHandle.standardOutput.write(Data(\"\\n\".utf8))\n 23 |         } catch {\n 24 |             let failure: [String: Any] = [\n    |             `- note: change 'let' to 'var' to make it mutable\n 25 |                 \"verdict\": \"FAIL\",\n 26 |                 \"error\": String(describing: error),\n    :\n 32 |                 failure[\"image_path\"] = parsed.image.path\n 33 |                 failure[\"manifest_path\"] = parsed.manifest.path\n 34 |                 failure[\"bundle_id\"] = parsed.bundleID\n    |                        `- error: cannot assign through subscript: 'failure' is a 'let' constant\n 35 |                 failure[\"allow_single_display_without_window\"] = parsed.allowSingleDisplayWithoutWindow\n 36 |                 try? writeJSON(failure, to: parsed.manifest)\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/FullscreenCapture.swift:35:24: error: cannot assign through subscript: 'failure' is a 'let' constant\n 22 |             FileHandle.standardOutput.write(Data(\"\\n\".utf8))\n 23 |         } catch {\n 24 |             let failure: [String: Any] = [\n    |             `- note: change 'let' to 'var' to make it mutable\n 25 |                 \"verdict\": \"FAIL\",\n 26 |                 \"error\": String(describing: error),\n    :\n 33 |                 failure[\"manifest_path\"] = parsed.manifest.path\n 34 |                 failure[\"bundle_id\"] = parsed.bundleID\n 35 |                 failure[\"allow_single_display_without_window\"] = parsed.allowSingleDisplayWithoutWindow\n    |                        `- error: cannot assign through subscript: 'failure' is a 'let' constant\n 36 |                 try? writeJSON(failure, to: parsed.manifest)\n 37 |             }\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/FullscreenCapture.swift:125:13: warning: immutable value 'result' was never used; consider replacing with '_' or removing it [#no-usage]\n123 |         let scale = Double(filter.pointPixelScale)\n124 |         let displayRect = display.frame\n125 |         let result: [String: Any] = [\n    |             `- warning: immutable value 'result' was never used; consider replacing with '_' or removing it [#no-usage]\n126 |             \"format_version\": 1,\n127 |             \"verdict\": \"CAPTURED\",\n",
+      "binary": null,
+      "binary_sha256": null
+    },
+    {
+      "name": "vision-regions",
+      "command": [
+        "/usr/bin/xcrun",
+        "--sdk",
+        "macosx26.5",
+        "swiftc",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-target",
+        "arm64-apple-macosx26.0",
+        "-swift-version",
+        "6",
+        "-parse-as-library",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/VisionRegions.swift",
+        "-o",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/bin/vision-regions"
+      ],
+      "source": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/VisionRegions.swift",
+      "source_sha256": "7445b34d1cbc4b5520b437d729985c2fa6ef96617a9b134e415495ac7cb0425a",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "binary": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/bin/vision-regions",
+      "binary_sha256": "cc23495dd157cf29ccd5b0ec8d3b87ec663ec93b4a1d2d10ecc8fbe1cc546832"
+    }
+  ],
+  "verdict": "FAIL"
+}

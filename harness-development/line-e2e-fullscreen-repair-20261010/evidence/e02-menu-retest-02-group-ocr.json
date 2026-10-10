@@ -1,0 +1,95 @@
+{
+  "format_version" : 1,
+  "input_dimensions_pixels" : {
+    "height" : 1490,
+    "width" : 2294
+  },
+  "input_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/line-e2e-fullscreen-repair-20261010\/evidence\/e02-menu-retest-02.png",
+  "input_sha256" : "254934128ade2f8c4ede672461d3d127d6bedbdf8c5158e1b70092d865b0a8df",
+  "os_version" : "Version 27.0.1 (Build 26A434)",
+  "profile" : {
+    "automatically_detects_language" : false,
+    "custom_words" : [
+
+    ],
+    "minimum_text_height_fraction" : 0,
+    "processing_scale" : 2,
+    "recognition_languages" : [
+      "zh-Hant",
+      "en-US"
+    ],
+    "recognition_level" : "accurate",
+    "revision" : "revision3",
+    "top_candidates" : 3,
+    "uses_language_correction" : false
+  },
+  "provider" : "Vision.RecognizeTextRequest",
+  "results" : [
+    {
+      "crop_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/line-e2e-fullscreen-repair-20261010\/evidence\/e02-menu-retest-02-group-ocr\/groupheader-1x.png",
+      "crop_sha256" : "475b0bb6697fddfc24e3ab4ff1a2e50e3998af8a32dc153b341edacf0e524ab6",
+      "derivative_dimensions" : {
+        "height" : 200,
+        "width" : 1000
+      },
+      "derivative_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/line-e2e-fullscreen-repair-20261010\/evidence\/e02-menu-retest-02-group-ocr\/groupheader-2x.png",
+      "derivative_scale" : 2,
+      "derivative_sha256" : "d93e14dacc012f8dc6a914371290e8834afda84c3aee5c17bbdecd9cc45f73fd",
+      "elapsed_ms" : 178.51499999960652,
+      "interpolation" : "nearest (.none)",
+      "name" : "groupheader",
+      "observations" : [
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 23,
+            "width" : 189.99999999999997,
+            "x" : 272.99999995055555,
+            "y" : 201.99999999361111
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 272.99999995055555,
+              "y" : 201.99999999361111
+            },
+            {
+              "x" : 462.99999995055555,
+              "y" : 201.99999999361111
+            },
+            {
+              "x" : 462.99999995055555,
+              "y" : 224.99999999361111
+            },
+            {
+              "x" : 272.99999995055555,
+              "y" : 224.99999999361111
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 1,
+              "text" : "旻謙允禎成長日記"
+            }
+          ],
+          "uuid" : "817CC210-ABF9-40A7-A251-EB1BD8FCC199",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.22999999999999998,
+            "width" : 0.37999999999999995,
+            "x" : 0.1859999999011111,
+            "y" : 0.25000000006388889
+          }
+        }
+      ],
+      "source_crop_dimensions" : {
+        "height" : 100,
+        "width" : 500
+      },
+      "source_roi_pixels_top_left" : {
+        "height" : 100,
+        "width" : 500,
+        "x" : 180,
+        "y" : 150
+      }
+    }
+  ],
+  "swift_compiler" : "recorded separately in build receipt"
+}

@@ -1,0 +1,16 @@
+{
+  "format_version": 1,
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "plan_contract_sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe",
+  "authorization_sha256": "f2717505ed37d0fd2ad21dbdb04735f8afe3bab7993cd2b3a7f9c9006e0bfc8a",
+  "config_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+  "target_evidence": "evidence/e02-target-match.json",
+  "target_evidence_sha256": "5da0ba83005c84c7441b52d5cce28767fccd9230a780993303439b8ebad2bd00",
+  "run_id": "RUN-20261010-e02-65-c6aba32e1f104d91b01aa0ffd372bf71",
+  "owner_id": "OWNER-20261010-e02-65-07b6dc22a23e4963aa918fcefad761e5",
+  "fingerprint": {
+    "start_date": "2024-06-02",
+    "end_date": "2024-06-07",
+    "expected_images": 65
+  }
+}

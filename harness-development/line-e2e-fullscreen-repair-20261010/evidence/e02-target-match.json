@@ -1,0 +1,34 @@
+{
+  "format_version": 1,
+  "target_fingerprint": {
+    "start_date": "2024-06-02",
+    "end_date": "2024-06-07",
+    "expected_images": 65
+  },
+  "group": "旻謙允禎成長日記",
+  "postcondition": {
+    "surface": "album_detail",
+    "date_text": "2024/06/02~06/07",
+    "count_text": "65張照片",
+    "created_text": "2024.06.09",
+    "source_capture_nonce": "e02-20261010-menu-retest-02",
+    "group_ocr_path": "evidence/e02-menu-retest-02-group-ocr.json",
+    "group_ocr_sha256": "3f83828e663f5a5d135d22ee288546d180ce787deb11cb0de18580f5c0c9f267",
+    "detail_ocr_path": "evidence/e02-menu-retest-02-detail-ocr.json",
+    "detail_ocr_sha256": "04ebdf69a53e2866f5980740cff0dcf2700cd8504ce78bb74e3cf5da456261d7",
+    "group_and_detail_ocr_share_capture_sha256": "254934128ade2f8c4ede672461d3d127d6bedbdf8c5158e1b70092d865b0a8df"
+  },
+  "native_full_display_evidence": {
+    "manifest_path": "evidence/e02-menu-retest-02.json",
+    "image_path": "evidence/e02-menu-retest-02.png",
+    "image_sha256": "254934128ade2f8c4ede672461d3d127d6bedbdf8c5158e1b70092d865b0a8df",
+    "dimensions_pixels": [2294, 1490],
+    "provider": "ScreenCaptureKit.display",
+    "capture_nonce": "e02-20261010-menu-retest-02"
+  },
+  "visual_status": "OBSERVED",
+  "limitations": [
+    "The canonical group heading and selected detail identity are visible in the same full-display frame but in separate LINE windows.",
+    "This establishes target identity for pre-intent checks; it is not Save All dispatch evidence."
+  ]
+}

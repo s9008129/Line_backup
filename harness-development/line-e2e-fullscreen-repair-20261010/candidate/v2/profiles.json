@@ -1,0 +1,27 @@
+{
+  "profile_id": "line-fullscreen-vision-r3-zh-hant-en-us-minheight0-nearest2x-v2-coordinate-fix",
+  "api": "Vision.RecognizeTextRequest",
+  "revision": "revision3",
+  "recognition_level": "accurate",
+  "recognition_languages": ["zh-Hant", "en-US"],
+  "automatically_detects_language": false,
+  "uses_language_correction": false,
+  "custom_words": [],
+  "minimum_text_height_fraction": 0,
+  "top_candidates": 3,
+  "processing_scale": 2,
+  "interpolation": "nearest",
+  "roi_policy": "same-source display crops only for current group header, selected card/detail identity, menu, adjacent rows, and verified calibration anchors",
+  "identity_policy": "unique same-block date-range and positive count; candidate conflict blocks",
+  "geometry_policy": {
+    "minimum_distributed_anchors": 3,
+    "maximum_anchor_residual_source_pixels": 2,
+    "minimum_mapping_uncertainty_source_pixels": 2,
+    "minimum_target_edge_clearance": "uncertainty + 4 source pixels",
+    "minimum_actionable_intersection_width_pixels": 16,
+    "minimum_actionable_intersection_height_pixels": 16,
+    "menu_row_targeting": "observed Save All row interior bounded by adjacent row structure; never ordinal-only"
+  },
+  "main_flow_no_oracle_candidate_selection": true,
+  "ocrtool_dependency": false
+}

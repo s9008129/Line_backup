@@ -1,0 +1,197 @@
+{
+  "application_launch_date" : "2026-10-09T21:53:38.897Z",
+  "application_name" : "LINE",
+  "application_path" : "\/Applications\/LINE.app",
+  "bundle_id" : "jp.naver.line.mac",
+  "capture_did_not_activate_or_input" : true,
+  "capture_end_monotonic_seconds" : 47812.223737333334,
+  "capture_end_wall_utc" : "2026-10-10T04:02:12.999Z",
+  "capture_latency_ms" : 33.450999995693564,
+  "capture_start_monotonic_seconds" : 47812.190286333338,
+  "capture_start_wall_utc" : "2026-10-10T04:02:12.965Z",
+  "configuration" : {
+    "api" : "SCScreenshotConfiguration",
+    "content_type" : "public.png",
+    "destination_rect" : "unset; full output surface",
+    "display_intent" : "local",
+    "dynamic_range" : "SDR",
+    "include_child_windows" : true,
+    "requested_height_pixels" : null,
+    "requested_width_pixels" : null,
+    "shows_cursor" : false,
+    "source_rect" : "unset; complete display filter"
+  },
+  "derived_pixels_per_point" : {
+    "reported_filter_scale" : 2,
+    "x" : 2,
+    "y" : 2
+  },
+  "display_frame_points" : {
+    "height" : 745,
+    "width" : 1147,
+    "x" : 0,
+    "y" : 0
+  },
+  "display_id" : 1,
+  "display_size_points" : {
+    "height" : 745,
+    "width" : 1147
+  },
+  "display_window_coverage_ratio" : 1,
+  "filter_content_rect_points" : {
+    "height" : 745,
+    "width" : 1147,
+    "x" : 0,
+    "y" : 0
+  },
+  "filter_included_display_ids" : [
+    1
+  ],
+  "filter_point_pixel_scale" : 2,
+  "filter_style" : "SCShareableContentStyle(rawValue: 2)",
+  "format_version" : 1,
+  "image_bytes" : 3932052,
+  "image_height_pixels" : 1490,
+  "image_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/line-e2e-fullscreen-repair-20261010\/evidence\/e00-display-04.png",
+  "image_sha256" : "cff72b134c0f53d54256dbe0322da2fb95341c7ad6dca41b0a45e72a64d65064",
+  "image_width_pixels" : 2294,
+  "nonce" : "e00-20261010-0402Z-7c2e",
+  "pid" : 34387,
+  "process_instance_binding" : "bundle_id+pid+launch_date",
+  "provider" : "ScreenCaptureKit.display",
+  "request_start_monotonic_seconds" : 47812.141768833339,
+  "request_start_wall_utc" : "2026-10-10T04:02:12.917Z",
+  "sck_window_inventory" : [
+    {
+      "frame_points" : {
+        "height" : 699,
+        "width" : 1147,
+        "x" : -1,
+        "y" : 45
+      },
+      "on_screen" : false,
+      "owning_bundle_id" : "jp.naver.line.mac",
+      "owning_pid" : 34387,
+      "title" : "LINE",
+      "window_id" : 3342
+    },
+    {
+      "frame_points" : {
+        "height" : 26,
+        "width" : 1147,
+        "x" : 0,
+        "y" : 0
+      },
+      "on_screen" : false,
+      "owning_bundle_id" : "jp.naver.line.mac",
+      "owning_pid" : 34387,
+      "title" : "",
+      "window_id" : 3334
+    },
+    {
+      "frame_points" : {
+        "height" : 26,
+        "width" : 1147,
+        "x" : 0,
+        "y" : 0
+      },
+      "on_screen" : false,
+      "owning_bundle_id" : "jp.naver.line.mac",
+      "owning_pid" : 34387,
+      "title" : "",
+      "window_id" : 3331
+    },
+    {
+      "frame_points" : {
+        "height" : 64,
+        "width" : 64,
+        "x" : 0,
+        "y" : 245
+      },
+      "on_screen" : false,
+      "owning_bundle_id" : "jp.naver.line.mac",
+      "owning_pid" : 34387,
+      "title" : "",
+      "window_id" : 3325
+    },
+    {
+      "frame_points" : {
+        "height" : 421,
+        "width" : 604,
+        "x" : 0,
+        "y" : 45
+      },
+      "on_screen" : false,
+      "owning_bundle_id" : "jp.naver.line.mac",
+      "owning_pid" : 34387,
+      "title" : "",
+      "window_id" : 3324
+    },
+    {
+      "frame_points" : {
+        "height" : 0,
+        "width" : 0,
+        "x" : 0,
+        "y" : 745
+      },
+      "on_screen" : false,
+      "owning_bundle_id" : "jp.naver.line.mac",
+      "owning_pid" : 34387,
+      "title" : "",
+      "window_id" : 3322
+    },
+    {
+      "frame_points" : {
+        "height" : 26,
+        "width" : 1147,
+        "x" : 0,
+        "y" : 0
+      },
+      "on_screen" : false,
+      "owning_bundle_id" : "jp.naver.line.mac",
+      "owning_pid" : 34387,
+      "title" : "",
+      "window_id" : 3333
+    },
+    {
+      "frame_points" : {
+        "height" : 26,
+        "width" : 1147,
+        "x" : 0,
+        "y" : 0
+      },
+      "on_screen" : false,
+      "owning_bundle_id" : "jp.naver.line.mac",
+      "owning_pid" : 34387,
+      "title" : "",
+      "window_id" : 3332
+    },
+    {
+      "frame_points" : {
+        "height" : 643,
+        "width" : 327,
+        "x" : 67,
+        "y" : 31
+      },
+      "on_screen" : true,
+      "owning_bundle_id" : "jp.naver.line.mac",
+      "owning_pid" : 34387,
+      "title" : "",
+      "window_id" : 3365
+    }
+  ],
+  "screen_recording_preflight_after_request" : true,
+  "screen_recording_preflight_before_request" : true,
+  "screen_recording_request_result" : null,
+  "selected_window_frame_points" : {
+    "height" : 643,
+    "width" : 327,
+    "x" : 67,
+    "y" : 31
+  },
+  "selected_window_id" : 3365,
+  "target_application_on_screen_window_count" : 1,
+  "verdict" : "CAPTURED",
+  "window_binding_status" : "SCK_TARGET_WINDOW_BOUND",
+  "window_fallback_cua_observation_id" : null
+}

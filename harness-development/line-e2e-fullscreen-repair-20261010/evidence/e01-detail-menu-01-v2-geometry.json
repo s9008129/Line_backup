@@ -1,0 +1,75 @@
+{
+  "format_version": 1,
+  "candidate": "observed-menu-coordinate-fix-v2",
+  "capture_nonce": "e01-20261010-detail-menu-01",
+  "capture_sha256": "685a142c7cf0868a4215097651ca099b7741762c11f833ecbfa66dfcf6adf86c",
+  "ocr_input_sha256": "685a142c7cf0868a4215097651ca099b7741762c11f833ecbfa66dfcf6adf86c",
+  "profile_id": "line-fullscreen-vision-r3-zh-hant-en-us-minheight0-nearest2x-v2-coordinate-fix",
+  "detail_window_id": 6743,
+  "popup_window_id": 6778,
+  "display_pixels_per_point": 2.0,
+  "detail_frame_points": {
+    "height": 643,
+    "width": 327,
+    "x": 357,
+    "y": 55
+  },
+  "popup_frame_points": {
+    "height": 167,
+    "width": 137,
+    "x": 640,
+    "y": 107
+  },
+  "cua_screenshot_pixels": {
+    "width": 654,
+    "height": 1286
+  },
+  "anchors": [
+    {
+      "name": "album-date-heading",
+      "residual_source_pixels": 0.8222927430150858
+    },
+    {
+      "name": "photo-grid-center-divider",
+      "residual_source_pixels": 0.0
+    },
+    {
+      "name": "album-filter-control",
+      "residual_source_pixels": 0.0
+    }
+  ],
+  "maximum_anchor_residual_source_pixels": 0.8222927430150858,
+  "mapping_uncertainty_source_pixels": 2.0,
+  "save_all_bracketing_rows": {
+    "above": "修改相簿名稱",
+    "target": "儲存全部",
+    "below": "刪除相簿",
+    "observed_centers_display_pixels": {
+      "above": 327.0659887074464,
+      "target": 380.99999990806185,
+      "below": 435.33333332387707
+    },
+    "safe_vertical_interior_display_pixels": [
+      354.03299430775417,
+      408.16666661596946
+    ],
+    "target_clearance_display_pixels": 26.967005600307687,
+    "required_clearance_display_pixels": 6.0
+  },
+  "actionable_intersection_pixels": {
+    "width": 88.0,
+    "height": 334.0
+  },
+  "derived_save_all_cua_screenshot_pixel": {
+    "x": 610.0,
+    "y": 270.99999990806185
+  },
+  "derived_save_all_display_pixel": {
+    "x": 1324.0,
+    "y": 380.99999990806185
+  },
+  "pre_dispatch_ready": true,
+  "limitations": [
+    "This geometry result does not create an intent or authorize a Save All dispatch."
+  ]
+}

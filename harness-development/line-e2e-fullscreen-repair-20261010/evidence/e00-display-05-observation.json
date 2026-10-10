@@ -1,0 +1,33 @@
+{
+  "evidence_id": "E01-SCK-USER-OPENED-CARD-MENU-01",
+  "capture_verdict": "CAPTURED",
+  "menu_opening_actor": "USER_REPORTED_AND_VISIBLY_CORROBORATED",
+  "image_path": "evidence/e00-display-05.png",
+  "manifest_path": "evidence/e00-display-05.json",
+  "image_sha256": "9fce00c59dcc471848b49dc9c81af2aa9ef51ab416cce248c7e81915375e654b",
+  "nonce": "e00-20261010-0410Z-91d4",
+  "image_dimensions_pixels": [2294, 1490],
+  "target_bundle_id": "jp.naver.line.mac",
+  "target_pid": 34387,
+  "main_line_window": {"window_id": 3365, "frame_points": {"x": 67, "y": 31, "width": 327, "height": 643}, "on_screen": true},
+  "additional_line_window": {"window_id": 6684, "frame_points": {"x": 364, "y": 465, "width": 137, "height": 140}, "on_screen": true},
+  "visible_card_identity": {"group": "旻謙允禎成長日記", "date": "2024/06/02~06/07", "count": 65},
+  "observed_menu_kind": "ALBUM_CARD_ACTION_MENU",
+  "observed_menu_items": ["上傳項目", "修改相簿名稱", "分享相簿", "刪除相簿"],
+  "observed_menu_item_text_boxes_source_pixels": [
+    {"text": "上傳項目", "x": 703.450748588718, "y": 928.2111221386297, "width": 50.10092926025389, "height": 13.393577575683592},
+    {"text": "修改相簿名稱", "x": 702.9999999748227, "y": 954.9999999952128, "width": 77.99999999999997, "height": 13.499999999999979},
+    {"text": "分享相簿", "x": 702.9678153845048, "y": 981.8749480144356, "width": 52.06436920166015, "height": 13.750103473663344},
+    {"text": "刪除相簿", "x": 702.9603538378902, "y": 1008.8395557299559, "width": 52.079292297363274, "height": 13.320888519287106}
+  ],
+  "same_source_vision_result": "evidence/e00-display-05-ocr.json",
+  "expected_detail_menu_save_all_visible": false,
+  "save_all_invocations": 0,
+  "confirmation_actions": 0,
+  "download_started": false,
+  "state_mutation": false,
+  "destination_created": false,
+  "cua_app_bound_menu_visibility": "NOT_VISIBLE_IN_FRESH_CUA_SCREENSHOT_WHILE_NATIVE_FULL_DISPLAY_SHOWED_MENU",
+  "interpretation": "The user opened the first visible album card's overflow menu, not the album-detail Save All menu. No menu item was activated. The full-display provider reveals a native LINE popup that the app-bound CUA screenshot omitted at this observation. This is diagnostic evidence only; the intended Save All menu and automated menu mapping remain untested.",
+  "verdict": "OBSERVED_CARD_MENU_CUA_POPUP_OMISSION_SAVE_ALL_NOT_PRESENT"
+}

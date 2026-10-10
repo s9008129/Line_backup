@@ -1,0 +1,17 @@
+{
+  "actualEntries" : 1,
+  "decoder" : "macOS ImageIO plus full RGB bitmap draw",
+  "destination" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/line-e2e-fullscreen-repair-20261010\/candidate\/v2\/tests\/fixtures\/decode-one",
+  "entries" : [
+    {
+      "contentType" : "public.png",
+      "decoded" : true,
+      "height" : 370,
+      "name" : "menu.png",
+      "width" : 340
+    }
+  ],
+  "expected" : 2,
+  "readOnly" : true,
+  "verdict" : "FAIL"
+}

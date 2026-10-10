@@ -1,0 +1,61 @@
+{
+  "evidence_id": "E01-OPEN-ALBUM-DETAIL-01",
+  "pre_surface": "configured_group_album_list",
+  "group": "旻謙允禎成長日記",
+  "target_fingerprint": {"start_date": "2024-06-02", "end_date": "2024-06-07", "expected_images": 65},
+  "duplicate_precheck": {
+    "state_path": "state/backup_state.json",
+    "state_revision": 34,
+    "active_writer_id": null,
+    "context_lock": null,
+    "verified_fingerprints": [
+      {"start_date": "2024-05-13", "end_date": "2024-05-17", "expected_images": 57},
+      {"start_date": "2024-05-06", "end_date": "2024-05-10", "expected_images": 182}
+    ],
+    "existing_album_destination_directories": [
+      "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張",
+      "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張"
+    ],
+    "candidate_fingerprint_previously_verified": false
+  },
+  "target_action": {
+    "provider": "documented unified-computer-use CUA",
+    "action": "click album metadata date label",
+    "coordinate_screenshot_pixels": [164, 869],
+    "screenshot_dimensions_pixels": [654, 1286],
+    "coordinate_provenance": "Freshly rebound LINE album-list screenshot immediately before click; point lies inside visible 2024/06/02~06/07 date metadata, away from the card ellipsis and photo tiles.",
+    "call_result": "RETURNED"
+  },
+  "postcondition": {
+    "surface": "album_detail",
+    "date_text": "2024/06/02~06/07",
+    "count_text": "65張照片",
+    "created_date_text": "2024.06.09",
+    "visual_status": "OBSERVED",
+    "same_group_continuity": "The selected card remained visible in its parent Albums window behind the opened detail window in the immediate full-display capture."
+  },
+  "native_full_display_evidence": {
+    "image_path": "evidence/e01-album-detail-01.png",
+    "manifest_path": "evidence/e01-album-detail-01.json",
+    "nonce": "e01-20261010-0417Z-d5c3",
+    "image_sha256": "0f62ddd272b399b4a29a62a1a2244eda985de9655e063e8e58e37209f3090ebf",
+    "dimensions_pixels": [2294, 1490],
+    "visible_line_windows": [
+      {"window_id": 6723, "frame_points": {"x": 20, "y": 55, "width": 327, "height": 643}, "on_screen": true},
+      {"window_id": 6743, "frame_points": {"x": 357, "y": 55, "width": 327, "height": 643}, "on_screen": true}
+    ]
+  },
+  "vision_result": {
+    "path": "evidence/e01-album-detail-01-ocr.json",
+    "input_sha256": "0f62ddd272b399b4a29a62a1a2244eda985de9655e063e8e58e37209f3090ebf",
+    "recognized_date": "2024/06/02~06/07",
+    "recognized_count": "65張照片",
+    "recognized_created_date": "2024.06.09"
+  },
+  "save_all_invocations": 0,
+  "confirmation_actions": 0,
+  "download_started": false,
+  "state_mutation": false,
+  "destination_created": false,
+  "verdict": "TARGET_DETAIL_MATCH_READ_ONLY"
+}

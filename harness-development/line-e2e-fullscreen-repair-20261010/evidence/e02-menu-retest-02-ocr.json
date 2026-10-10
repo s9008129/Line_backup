@@ -1,0 +1,290 @@
+{
+  "format_version" : 1,
+  "input_dimensions_pixels" : {
+    "height" : 1490,
+    "width" : 2294
+  },
+  "input_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/line-e2e-fullscreen-repair-20261010\/evidence\/e02-menu-retest-02.png",
+  "input_sha256" : "254934128ade2f8c4ede672461d3d127d6bedbdf8c5158e1b70092d865b0a8df",
+  "os_version" : "Version 27.0.1 (Build 26A434)",
+  "profile" : {
+    "automatically_detects_language" : false,
+    "custom_words" : [
+
+    ],
+    "minimum_text_height_fraction" : 0,
+    "processing_scale" : 2,
+    "recognition_languages" : [
+      "zh-Hant",
+      "en-US"
+    ],
+    "recognition_level" : "accurate",
+    "revision" : "revision3",
+    "top_candidates" : 3,
+    "uses_language_correction" : false
+  },
+  "provider" : "Vision.RecognizeTextRequest",
+  "results" : [
+    {
+      "crop_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/line-e2e-fullscreen-repair-20261010\/evidence\/e02-menu-retest-02-ocr\/detailmenu-1x.png",
+      "crop_sha256" : "1651672bca333762a61fb0dfa7fa73a2655997e65a36a73fb2a5dd6f859baf30",
+      "derivative_dimensions" : {
+        "height" : 740,
+        "width" : 680
+      },
+      "derivative_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/line-e2e-fullscreen-repair-20261010\/evidence\/e02-menu-retest-02-ocr\/detailmenu-2x.png",
+      "derivative_scale" : 2,
+      "derivative_sha256" : "dac96b70b7ac5cc72b17371252dcbab54763697bf82e4972abe99e5d8ec3cd97",
+      "elapsed_ms" : 197.84295833233045,
+      "interpolation" : "nearest (.none)",
+      "name" : "detailmenu",
+      "observations" : [
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 29.357248306274407,
+            "width" : 102.12056732177733,
+            "x" : 1337.4890931302887,
+            "y" : 258.79071087905879
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 1338.2531502897125,
+              "y" : 258.79071087905879
+            },
+            {
+              "x" : 1439.609660452066,
+              "y" : 261.72114129135133
+            },
+            {
+              "x" : 1438.8456032926422,
+              "y" : 288.14795918533321
+            },
+            {
+              "x" : 1337.4890931302887,
+              "y" : 285.21752877304073
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 0.5,
+              "text" : "選擇項目"
+            }
+          ],
+          "uuid" : "1FAAEF61-05F4-43C9-8233-B8BEBD2C583C",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.079343914341282185,
+            "width" : 0.30035460976993333,
+            "x" : 0.25732086214790784,
+            "y" : 0.73473524544504532
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 27.419474601745641,
+            "width" : 156.07205200195312,
+            "x" : 1337.963973937316,
+            "y" : 313.79026316405918
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 1338.0365905144645,
+              "y" : 313.79026316405918
+            },
+            {
+              "x" : 1494.0360259392692,
+              "y" : 314.20983504058506
+            },
+            {
+              "x" : 1493.9634093621207,
+              "y" : 341.20973776580485
+            },
+            {
+              "x" : 1337.963973937316,
+              "y" : 340.79016588927891
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 1,
+              "text" : "修改相簿名稱"
+            }
+          ],
+          "uuid" : "2144D308-7756-4995-A449-EC4C102D6FF1",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.074106688112826058,
+            "width" : 0.459035447064568,
+            "x" : 0.25871757040387089,
+            "y" : 0.5913250330653923
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 27.25923156738283,
+            "width" : 104.06700134277345,
+            "x" : 1337.9664992786509,
+            "y" : 367.87038420118392
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 1338.0338210559946,
+              "y" : 367.87038420118392
+            },
+            {
+              "x" : 1442.0335006214243,
+              "y" : 368.12969969190664
+            },
+            {
+              "x" : 1441.9661788440806,
+              "y" : 395.12961576856679
+            },
+            {
+              "x" : 1337.9664992786509,
+              "y" : 394.87030027784414
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 1,
+              "text" : "儲存全部"
+            }
+          ],
+          "uuid" : "ABE2C4E2-2992-471B-B4BB-AA732F493CD9",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.073673598830764409,
+            "width" : 0.30607941571403957,
+            "x" : 0.25872499787838482,
+            "y" : 0.4455956330579276
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 27.28387355804448,
+            "width" : 105.07263946533206,
+            "x" : 1336.9636802399332,
+            "y" : 421.8580627231209
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 1336.9636802399332,
+              "y" : 422.14203450961998
+            },
+            {
+              "x" : 1441.9632987702066,
+              "y" : 421.8580627231209
+            },
+            {
+              "x" : 1442.0363197052654,
+              "y" : 448.85796449466636
+            },
+            {
+              "x" : 1337.0367011749918,
+              "y" : 449.14193628116539
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 0.5,
+              "text" : "刪除相簿"
+            }
+          ],
+          "uuid" : "86DA9B4F-FB79-4E9F-A395-F5ECE9CE170F",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.073740198805525625,
+            "width" : 0.30903717489803545,
+            "x" : 0.25577553011745086,
+            "y" : 0.29961638842928273
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 26.999999999999972,
+            "width" : 104.00000000000001,
+            "x" : 1337.9999999707693,
+            "y" : 475.99999997923078
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 1337.9999999707693,
+              "y" : 475.99999997923078
+            },
+            {
+              "x" : 1441.9999999707693,
+              "y" : 475.99999997923078
+            },
+            {
+              "x" : 1441.9999999707693,
+              "y" : 502.99999997923078
+            },
+            {
+              "x" : 1337.9999999707693,
+              "y" : 502.99999997923078
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 1,
+              "text" : "分享相簿"
+            }
+          ],
+          "uuid" : "800A0007-8BCD-433F-AFEB-B8980C31D388",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.072972972972972894,
+            "width" : 0.30588235294117649,
+            "x" : 0.25882352932579178,
+            "y" : 0.15405405411018713
+          }
+        },
+        {
+          "source_bbox_pixels_top_left" : {
+            "height" : 21.293796539306637,
+            "width" : 50.448390960693381,
+            "x" : 1538.9936246939681,
+            "y" : 437.03132065885291
+          },
+          "source_quad_pixels_top_left" : [
+            {
+              "x" : 1538.9936246939681,
+              "y" : 437.03132065885291
+            },
+            {
+              "x" : 1589.4420156546614,
+              "y" : 437.03132065885291
+            },
+            {
+              "x" : 1589.4420156546614,
+              "y" : 458.32511719815955
+            },
+            {
+              "x" : 1538.9936246939681,
+              "y" : 458.32511719815955
+            }
+          ],
+          "top_candidates" : [
+            {
+              "confidence" : 0.30000001192092896,
+              "text" : "_bac"
+            }
+          ],
+          "uuid" : "AC2E7304-BC62-4015-A8F7-76688AE31028",
+          "vision_bbox_normalized_lower_left" : {
+            "height" : 0.05755080145758551,
+            "width" : 0.14837762047262759,
+            "x" : 0.84998124909990602,
+            "y" : 0.27479698054551471
+          }
+        }
+      ],
+      "source_crop_dimensions" : {
+        "height" : 370,
+        "width" : 340
+      },
+      "source_roi_pixels_top_left" : {
+        "height" : 370,
+        "width" : 340,
+        "x" : 1250,
+        "y" : 190
+      }
+    }
+  ],
+  "swift_compiler" : "recorded separately in build receipt"
+}

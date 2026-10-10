@@ -1,0 +1,13 @@
+{
+  "format_version": 1,
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "plan_contract_sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe",
+  "authorization_sha256": "f2717505ed37d0fd2ad21dbdb04735f8afe3bab7993cd2b3a7f9c9006e0bfc8a",
+  "config_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+  "run_id": "RUN-20261010-operator-readonly-smoke",
+  "owner_id": "OWNER-20261010-readonly-smoke",
+  "fingerprint": {"start_date": "2024-06-02", "end_date": "2024-06-07", "expected_images": 65},
+  "target_evidence": "evidence/e01-open-album-01.json",
+  "target_evidence_sha256": "8e1efc388111bd485cfbc7f7b716793228960f9ed2f0838388a4182b2f451f8a",
+  "purpose": "Read-only candidate operator smoke test; this run id is never acquired or dispatched."
+}

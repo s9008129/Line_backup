@@ -1,0 +1,63 @@
+{
+  "format_version": 1,
+  "observation_id": "e02-state-writer-gate-20261010",
+  "checked_at_utc": "2026-10-10T05:16:40Z",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "run_id": "RUN-20261010-e02-65-c6aba32e1f104d91b01aa0ffd372bf71",
+  "owner_id": "OWNER-20261010-e02-65-07b6dc22a23e4963aa918fcefad761e5",
+  "target_fingerprint": {
+    "start_date": "2024-06-02",
+    "end_date": "2024-06-07",
+    "expected_images": 65
+  },
+  "pre_acquire_snapshot": {
+    "path": "evidence/snapshot-e02-65-pre-acquire-r34.json",
+    "revision": 34,
+    "state_sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9"
+  },
+  "acquire_attempt": {
+    "operation": "acquire",
+    "verdict": "REFUSAL",
+    "error": "Canonical state requires the v3 service",
+    "no_dispatcher": true,
+    "state_write_committed": false,
+    "transaction_owner_acquired": false,
+    "intent_committed": false
+  },
+  "post_attempt_snapshot": {
+    "path": "evidence/snapshot-e02-65-after-acquire-refusal-r34.json",
+    "revision": 34,
+    "state_sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9"
+  },
+  "read_only_v3_inspect": {
+    "status": "PASS",
+    "dispatch_authorized": false,
+    "schema_version": 2,
+    "revision": 34,
+    "active_batch": null,
+    "active_writer_id": null,
+    "verified_count": 2
+  },
+  "destination": {
+    "path": "backups/旻謙允禎成長日記/2024-06-02_2024-06-07_65張",
+    "created_by_refused_acquire_attempt": true,
+    "exists": true,
+    "is_empty": true,
+    "files_downloaded": 0
+  },
+  "side_effects": {
+    "save_all_invocations": 0,
+    "chooser_confirmations": 0,
+    "download_started": false,
+    "backup_state_mutated": false
+  },
+  "source_bindings": {
+    "plan_contract_sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe",
+    "task_operator_sha256": "410626fa52552db95990341e57afe3bf88161ab47c84f2ca2b06fd9b625dfa03",
+    "legacy_writer_guard_sha256": "2737d5c2febeeaf248b2d81e2e112ce0e99d48640e946bfa6dd8e71b5a2cf127",
+    "v3_store_sha256": "0016abce737fd8afe46197c9ab48540e5fed1dc0bc59d55b349c73c03ebf3e10",
+    "v3_service_sha256": "6a7517ba3e4e80e449cb92e1ef44bc1f3fb5a4338ca9585ff54c8b017b7f39a3",
+    "v3_cli_sha256": "f520924423e2029846b66cf917baf2e7b5a1171d83d8030fc9232b8c28496457"
+  },
+  "scope_note": "The approved task contract specifies schema-2 RC2 live transactions and explicitly says the schema-3 Store is not this task's live schema-2 authority. This artifact records the boundary; it does not authorize migration or a schema/service redesign."
+}
