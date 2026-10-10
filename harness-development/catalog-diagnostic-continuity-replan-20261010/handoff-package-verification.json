@@ -1,0 +1,41 @@
+{
+  "format": "local-handoff-consistency-1",
+  "observed_at": "2026-10-10T01:26:39.908989+00:00",
+  "checks": {
+    "JSON_PARSE": {
+      "verdict": "PASS",
+      "files": [
+        "authorization.json",
+        "diagnostic-spec.json",
+        "handoff-local.result.json",
+        "handoff.json",
+        "plan-contract.json",
+        "plan-review-01.result.json",
+        "plan-review-01.schema-validation.json",
+        "source-manifest.json"
+      ]
+    },
+    "EXACT_CONTRACT_COPY": {
+      "verdict": "PASS",
+      "sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d"
+    },
+    "SOURCE_RECORD_BYTES": {
+      "verdict": "PASS",
+      "records": 63
+    },
+    "SPEC_DOCUMENT_BINDING": {
+      "verdict": "PASS",
+      "handoff_md_sha256": "e207b97d69fe8da22a4d54a2637cdf4e3b82b911a5fb72b941f2a1a6bbaf7831"
+    },
+    "FOUR_GATES_SIX_INPUTS_ZERO_WRITERS": {
+      "verdict": "PASS"
+    },
+    "PROMPT_FIRST": {
+      "verdict": "PASS"
+    }
+  },
+  "schema_validation": "NOT_RUN; no emitted applicable stage-packet validator commands",
+  "controller_admission": "BLOCKED",
+  "implementation_OCR_UI_tests": "NOT_RUN",
+  "limits": "These checks establish local document consistency only; no implementation or acceptance claim."
+}

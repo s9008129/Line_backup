@@ -1,0 +1,115 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+  "run_id": "019b42a5-247c-43cd-8a30-440069e056ba",
+  "role": "HANDOFF_COMPILER",
+  "stage": "HANDOFF",
+  "candidate_fact": "PASS",
+  "validation_fact": "NOT_RUN",
+  "routing_fact": "IMPLEMENT",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [],
+  "evidence_ids": [
+    "HANDOFF_DOCUMENT",
+    "EXACT_CONTRACT_COPY",
+    "LOCAL_SPEC",
+    "SOURCE_MANIFEST"
+  ],
+  "plan_sha256": "d8e0031fa8ef1d7a0a0f260de3682db26421d5779dffc1d1fd1a124969bc5387",
+  "handoff_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+  "source_sha256": "0e451f6f929e6e265bbbc1de8697ae5e45bd50aee3aa6acc3dcdc2e2d45e927f",
+  "plan_contract_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+      "run_id": "019b42a5-247c-43cd-8a30-440069e056ba",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "0e451f6f929e6e265bbbc1de8697ae5e45bd50aee3aa6acc3dcdc2e2d45e927f",
+      "evidence_id": "HANDOFF_DOCUMENT",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/handoff.md",
+      "bytes": 34206,
+      "sha256": "e207b97d69fe8da22a4d54a2637cdf4e3b82b911a5fb72b941f2a1a6bbaf7831",
+      "contract_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+      "observation": "Actual local documentation bytes; no controller registration or implementation PASS implied."
+    },
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+      "run_id": "019b42a5-247c-43cd-8a30-440069e056ba",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "0e451f6f929e6e265bbbc1de8697ae5e45bd50aee3aa6acc3dcdc2e2d45e927f",
+      "evidence_id": "EXACT_CONTRACT_COPY",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/handoff.json",
+      "bytes": 3588,
+      "sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+      "contract_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+      "observation": "Actual local documentation bytes; no controller registration or implementation PASS implied."
+    },
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+      "run_id": "019b42a5-247c-43cd-8a30-440069e056ba",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "0e451f6f929e6e265bbbc1de8697ae5e45bd50aee3aa6acc3dcdc2e2d45e927f",
+      "evidence_id": "LOCAL_SPEC",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/diagnostic-spec.json",
+      "bytes": 6242,
+      "sha256": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8",
+      "contract_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+      "observation": "Actual local documentation bytes; no controller registration or implementation PASS implied."
+    },
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+      "run_id": "019b42a5-247c-43cd-8a30-440069e056ba",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "0e451f6f929e6e265bbbc1de8697ae5e45bd50aee3aa6acc3dcdc2e2d45e927f",
+      "evidence_id": "SOURCE_MANIFEST",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/source-manifest.json",
+      "bytes": 17093,
+      "sha256": "0e451f6f929e6e265bbbc1de8697ae5e45bd50aee3aa6acc3dcdc2e2d45e927f",
+      "contract_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+      "observation": "Actual local documentation bytes; no controller registration or implementation PASS implied."
+    }
+  ],
+  "analysis": {
+    "facts": [
+      "Compiled local handoff.md with a complete Implementer prompt first; wrote normative spec, authorization and the four-gate v3-shaped contract.",
+      "handoff.json is an exact byte copy of plan-contract.json.",
+      "Existing local Plan Review PASS and its supplied VALID receipt preserved; no new independent Handoff review performed.",
+      "No implementation, OCR, CUA, album opening, download or canonical state mutation performed by this handoff preparation."
+    ],
+    "inferences": [
+      "The packet makes the reviewed finite diagnostic concrete for the next Implementer; routing_fact IMPLEMENT means local next work only."
+    ],
+    "unknowns": [
+      "No applicable controller stage packet, invitation or emitted CONTRACT/RESULT validation commands; validation NOT_RUN and native admission BLOCKED.",
+      "Live geometry/source/freshness, fixed method execution and final acceptance remain unverified."
+    ],
+    "evidence": [
+      "HANDOFF_DOCUMENT",
+      "EXACT_CONTRACT_COPY",
+      "LOCAL_SPEC",
+      "SOURCE_MANIFEST"
+    ],
+    "confidence": "High for actual file creation, hash binding and byte equality; no claim of formal schema validation or execution acceptance."
+  },
+  "handoff_summary": "已完成精準本地交接：文件最前為接手prompt；規格、四道gate、固定測試與六次scroll邊界均已明列，contract原bytes複製為handoff.json。既有Plan Review保留；實作、實機與Acceptance尚未執行。沒有stage packet，正式驗證NOT_RUN、controller admission BLOCKED。",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 0,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Documentation-only handoff compilation; no new root-issue OCR method attempt. Historic3 and one user-authorized extension remain in authorization; none consumed by this preparation.",
+    "information_gain": true,
+    "stuck": false
+  }
+}
