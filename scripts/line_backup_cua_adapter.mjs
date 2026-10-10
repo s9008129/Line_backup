@@ -6,6 +6,41 @@ const requireFact = (ok, code) => {if (!ok) throw new Error(code);};
 const point = p => Array.isArray(p) && p.length === 2 && p.every(Number.isFinite);
 const hex64 = v => typeof v === 'string' && /^[0-9a-f]{64}$/.test(v);
 const typeFinite = v => typeof v === 'number' && Number.isFinite(v);
+const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype);
+const typedArrayTag = Object.getOwnPropertyDescriptor(typedArrayPrototype, Symbol.toStringTag)?.get;
+const typedArrayBuffer = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'buffer')?.get;
+const typedArrayByteOffset = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteOffset')?.get;
+const typedArrayByteLength = Object.getOwnPropertyDescriptor(typedArrayPrototype, 'byteLength')?.get;
+const arrayBufferByteLength = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength')?.get;
+
+export function normalizeScreenshotBytes(value) {
+  requireFact(ArrayBuffer.isView(value), 'CAPTURE_BYTES_INVALID');
+  let tag, buffer, byteOffset, byteLength, backingLength;
+  try {
+    tag = Reflect.apply(typedArrayTag, value, []);
+    buffer = Reflect.apply(typedArrayBuffer, value, []);
+    byteOffset = Reflect.apply(typedArrayByteOffset, value, []);
+    byteLength = Reflect.apply(typedArrayByteLength, value, []);
+    backingLength = Reflect.apply(arrayBufferByteLength, buffer, []);
+  } catch {
+    throw new Error('CAPTURE_BYTES_INVALID');
+  }
+  requireFact(tag === 'Uint8Array' && Number.isSafeInteger(byteOffset) && byteOffset >= 0
+    && Number.isSafeInteger(byteLength) && byteLength > 0 && byteLength <= 16 * 1024 * 1024
+    && Number.isSafeInteger(backingLength) && byteOffset + byteLength <= backingLength,
+  'CAPTURE_BYTES_INVALID');
+  const copy = new Uint8Array(byteLength);
+  copy.set(new Uint8Array(buffer, byteOffset, byteLength));
+  return copy;
+}
+
+function verifyFrameReference(saved, frameId, byteLength) {
+  requireFact(saved && typeof saved.path === 'string' && saved.path.startsWith('harness-development/')
+    && Number.isInteger(saved.bytes) && saved.bytes === byteLength && saved.sha256 === frameId
+    && saved.ax && typeof saved.ax.path === 'string' && saved.ax.path.startsWith('harness-development/')
+    && Number.isInteger(saved.ax.bytes) && saved.ax.bytes > 0 && hex64(saved.ax.sha256),
+  'CUA_FRAME_REFERENCE_REQUIRED');
+}
 
 export function createAlbumSupportCallbacks({invokeProducer}) {
   requireFact(typeof invokeProducer === 'function','PRODUCER_BRIDGE_REQUIRED');
@@ -72,16 +107,28 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
   }
   async function observe() {
     requireFact(!stopped,'SESSION_STOPPED');
-    const start = clock();
-    const capturedAt = new Date().toISOString();
-    const capture = await app.getAXStateAndScreenshot({emit:false,disableDiffing:true});
-    requireFact(capture.screenshot instanceof Uint8Array && typeof capture.state === 'string','CAPTURE_INCOMPLETE');
-    const frameId = sha(capture.screenshot);
-    const saved = await retain({screenshot:capture.screenshot,ax:capture.state,frameId,sessionId,capturedAt});
-    const observation = await classify({capture,saved,frameId,sessionId,capturedAt});
+    const requestStartedAtMonotonic = clock();
+    const requestStartedAtUtc = new Date().toISOString();
+    const rawCapture = await app.getAXStateAndScreenshot({emit:false,disableDiffing:true});
+    const requestEndedAtMonotonic = clock();
+    const requestEndedAtUtc = new Date().toISOString();
+    requireFact(Number.isFinite(requestStartedAtMonotonic) && Number.isFinite(requestEndedAtMonotonic)
+      && requestEndedAtMonotonic >= requestStartedAtMonotonic && typeof rawCapture?.state === 'string',
+    'CAPTURE_INCOMPLETE');
+    const screenshot = normalizeScreenshotBytes(rawCapture.screenshot);
+    const capture = Object.freeze({...rawCapture,screenshot});
+    const frameId = sha(screenshot);
+    const monotonicInterval = Object.freeze({start_ms:requestStartedAtMonotonic,end_ms:requestEndedAtMonotonic,
+      duration_ms:requestEndedAtMonotonic-requestStartedAtMonotonic});
+    const saved = await retain({screenshot,ax:capture.state,frameId,sessionId,capturedAt:requestStartedAtUtc,
+      requestStartedAtUtc,requestEndedAtUtc,monotonicInterval});
+    verifyFrameReference(saved,frameId,screenshot.byteLength);
+    const observation = await classify({capture,saved,frameId,sessionId,capturedAt:requestStartedAtUtc,
+      requestStartedAtUtc,requestEndedAtUtc,monotonicInterval});
     requireFact(observation.frame_id === frameId && observation.session_id === sessionId,'CLASSIFIER_FRAME_MISMATCH');
-    // Timestamp starts before capture, never renewed by slow classification/persistence.
-    latest = Object.freeze({frameId,at:start,capturedAt,observation,saved,capture});
+    // The capture interval starts before CUA and never renews during persistence/OCR.
+    latest = Object.freeze({frameId,at:requestStartedAtMonotonic,capturedAt:requestStartedAtUtc,
+      requestStartedAtUtc,requestEndedAtUtc,monotonicInterval,observation,saved,capture});
     return observation;
   }
   async function makeChooserPhase(phase, dispatchInfo, previous=null) {
@@ -454,14 +501,23 @@ export function createNavigationObserver({app,bridge,retain,classify,sessionId=r
   }
   async function observe() {
     requireFact(!closed,'NAVIGATION_OBSERVER_CLOSED');
-    const started=clock(),capturedAt=new Date().toISOString();
-    const capture=await app.getAXStateAndScreenshot({emit:false,disableDiffing:true});
-    requireFact(capture?.screenshot instanceof Uint8Array&&typeof capture.state==='string','CAPTURE_INCOMPLETE');
-    const frameId=sha(capture.screenshot);const saved=await retain({screenshot:capture.screenshot,ax:capture.state,
-      frameId,sessionId,capturedAt});
-    const observation=await classify({capture,saved,frameId,sessionId,capturedAt});
+    const started=clock(),requestStartedAtUtc=new Date().toISOString();
+    const rawCapture=await app.getAXStateAndScreenshot({emit:false,disableDiffing:true});
+    const ended=clock(),requestEndedAtUtc=new Date().toISOString();
+    requireFact(Number.isFinite(started)&&Number.isFinite(ended)&&ended>=started&&typeof rawCapture?.state==='string',
+      'CAPTURE_INCOMPLETE');
+    const screenshot=normalizeScreenshotBytes(rawCapture.screenshot);
+    const capture=Object.freeze({...rawCapture,screenshot});
+    const frameId=sha(screenshot);
+    const monotonicInterval=Object.freeze({start_ms:started,end_ms:ended,duration_ms:ended-started});
+    const saved=await retain({screenshot,ax:capture.state,frameId,sessionId,capturedAt:requestStartedAtUtc,
+      requestStartedAtUtc,requestEndedAtUtc,monotonicInterval});
+    verifyFrameReference(saved,frameId,screenshot.byteLength);
+    const observation=await classify({capture,saved,frameId,sessionId,capturedAt:requestStartedAtUtc,
+      requestStartedAtUtc,requestEndedAtUtc,monotonicInterval});
     requireFact(observation.frame_id===frameId&&observation.session_id===sessionId,'CLASSIFIER_FRAME_MISMATCH');
-    latest=Object.freeze({started,capturedAt,frameId,capture,saved,observation});return observation;
+    latest=Object.freeze({started,capturedAt:requestStartedAtUtc,requestStartedAtUtc,requestEndedAtUtc,
+      monotonicInterval,frameId,capture,saved,observation});return observation;
   }
   function fresh(frameId) {
     requireFact(latest&&latest.frameId===frameId&&clock()>=latest.started&&clock()-latest.started<=5000,
