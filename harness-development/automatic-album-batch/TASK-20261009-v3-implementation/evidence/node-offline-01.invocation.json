@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "/opt/homebrew/bin/node",
+    "--test",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_cua_adapter.mjs"
+  ],
+  "one_invocation": true
+}

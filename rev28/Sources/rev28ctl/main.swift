@@ -50,6 +50,12 @@ if arguments.count >= 2, arguments[1] == "restart-child" {
 
 if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1]) {
     let command = arguments[1]
+    // This legacy entry only targets the historical canonical album. Keep the
+    // engine/Quartz fixture lane, but never create a second live authority.
+    if command == "live-execute" {
+        FileHandle.standardError.write(Data("legacy live-execute is disabled; use the canonical hosted batch service\n".utf8))
+        exit(77)
+    }
     guard ProcessInfo.processInfo.environment["CI"] == nil else {
         FileHandle.standardError.write(Data("\(command): live execution is disabled in CI\n".utf8))
         exit(77)

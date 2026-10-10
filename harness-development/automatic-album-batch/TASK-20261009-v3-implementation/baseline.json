@@ -1,0 +1,2619 @@
+{
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "source": [
+    {
+      "path": "20261009_handoff.md",
+      "bytes": 45803,
+      "sha256": "3a6793c9fb6c7a716ff75df286f94693124559dc2b7dac035de339c100bfc816"
+    },
+    {
+      "path": "20261009_line_batch_backup_plan.md",
+      "bytes": 54097,
+      "sha256": "4c2a95d131a80482daf20ff109d2bc6278d3ad117987445645689acd3de6268d"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2337,
+      "sha256": "2c2c535cc0fa8b42e5298d7a395db12e6f9640d142ec519a98f8eb259e36a131"
+    },
+    {
+      "path": "rev28/ARCHITECTURE.md",
+      "bytes": 25640,
+      "sha256": "333424392e8c0e62e2f17e45f711bcbd62e07b31e2b6df2f80088bdfbc9a5427"
+    },
+    {
+      "path": "rev28/CAPABILITY-MATRIX.md",
+      "bytes": 10429,
+      "sha256": "341a06c130d96520fe3182d97f211e4101e8dd32df56b4874757d49854263be8"
+    },
+    {
+      "path": "rev28/Package.swift",
+      "bytes": 1972,
+      "sha256": "f9cefa31739ce6667e850461deefe7336b82df09de6bf204f784c666be26cc57"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Actuation/AXDriver.swift",
+      "bytes": 11360,
+      "sha256": "94590f9a7c2ca5766e68c82ff9731cfbf9d8eeb4debc4e548372a47b80450e26"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift",
+      "bytes": 31626,
+      "sha256": "bf7bfb4d9dc3db108e962649a110dd40c999286c1398745480d1a6ff44e3b9f8"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Chooser/ChooserAffirmationPredicate.swift",
+      "bytes": 20392,
+      "sha256": "ecbdd6bb5ee806ed9a061c4b317747af980ac5ce0428065935bb34f461af8248"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Chooser/FolderChooserDriver.swift",
+      "bytes": 25392,
+      "sha256": "4602d0ad941cf276ecf9b6601bb0f422aee7a20894b6aaf59c0f4d880ac15bbc"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift",
+      "bytes": 17645,
+      "sha256": "e0c2282998d445adb438384835ea92c41779ae8ec73faf895fb10649c60cc688"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/LiveComposition.swift",
+      "bytes": 8765,
+      "sha256": "2440a1e56dc97c989835cc3a98c896fa644936296a11c7f9fdf24d0f12713dfd"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/PassiveNativeDiagnostic.swift",
+      "bytes": 32855,
+      "sha256": "e7b1a2546de758d87c349b0800e8626f84115bedd412a69c45aaaa71cecb7ee4"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/PhaseAEvidence.swift",
+      "bytes": 46672,
+      "sha256": "e56df8319aa49255b5a9f6bb4f942db0e6a887f1e331044c6899bd1f9e96a016"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift",
+      "bytes": 36531,
+      "sha256": "165f184467f2e92bad7848303dbb56ab48e482f902b2a3e472e787fabe5d9c3f"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/PostSaveEnvironment.swift",
+      "bytes": 18972,
+      "sha256": "6d1f85ea488647de2116b29d08d7c4c3e5e6b1197e2dbd617d872de0dbe5ff2b"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/ProductionActuationEnvironment.swift",
+      "bytes": 1358,
+      "sha256": "3e9932d1a50e2fc19f60fbd10e6bdb73c3f0544c3cb8078b98f5f81ee00e2b0c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift",
+      "bytes": 8574,
+      "sha256": "3745e6de06bc2bee83097b69cb6a30a481d79d631c465564c218ebed008003e6"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift",
+      "bytes": 30970,
+      "sha256": "f11303e3170013ee4354400620b236383ecfe1896a5333253156414bc0afc9f1"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Diagnostics/DiagnosticHooks.swift",
+      "bytes": 6609,
+      "sha256": "93db7d0968cf99a94526de498d680d614e9a63822aba739591a65fa7d360d107"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Geometry/Coordinates.swift",
+      "bytes": 14431,
+      "sha256": "f9b77879cfc7abf596de4f0ab562ba8e7506bde2673844a94d37d96b4b0d564c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Identity/AXWindowIdentitySelector.swift",
+      "bytes": 3637,
+      "sha256": "c1ae64a0cb942b5fe636e95c0407cba02387a8c44ef67d5cd05dc6afe49a7896"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Identity/ProcessCodeIdentity.swift",
+      "bytes": 1673,
+      "sha256": "14e3b0d5d660c19550700cb6bd67d191af4b4dea138c5757f2079bca8e55a30c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Identity/WindowIdentity.swift",
+      "bytes": 8939,
+      "sha256": "e9a6a82672dc0d1d2eb2b5dbff47b878bd7eb625a7d6c6fee915e23f985b7edf"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+      "bytes": 29055,
+      "sha256": "9230ec99679badd7cad01d53c0c4d9811db6cd149f1aa42b0b98a3c34885e4c2"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Perception/AlbumEllipsisLocator.swift",
+      "bytes": 11963,
+      "sha256": "260ad5634dd86783a9d74a063eb598f17c1ffb361328347cf106499a4cb5e240"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Perception/OcrEngine.swift",
+      "bytes": 6521,
+      "sha256": "d763edc478499849f3d440a6dc1c019ac32e86e96ed63b363642af3b761c3726"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Perception/StructuralLocators.swift",
+      "bytes": 13525,
+      "sha256": "f2e1b53a32ae2319f2d007855fab935a8e2992e8760e4228dffc9b75b9455127"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Policy/ExecutionPolicy.swift",
+      "bytes": 7016,
+      "sha256": "154a8c4a470bd76f6d401f9b85c51b51c9efe0851133f20e005b28a3025a3f14"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Postcondition/PostconditionMonitor.swift",
+      "bytes": 13521,
+      "sha256": "9a62c41d80c77fc1ccae05933c39c52218a86f80c51118864e5075ed75fe34a1"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/ExplicitLineCaptureSelection.swift",
+      "bytes": 10414,
+      "sha256": "5662baca0285f45859ac918d064ed404c6f14d528c4382a7598c4b2d86933e6c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+      "bytes": 19634,
+      "sha256": "3a876cf4232622a5f3b5e495f91b25a478b16eba7af20a9dc054676e67e6901b"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift",
+      "bytes": 8716,
+      "sha256": "b738df79817441240804531c033ab87f8be5b0dec78fd6683a3aa4a7c7162e3c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/WindowSensor.swift",
+      "bytes": 5433,
+      "sha256": "46e657fa73a6c70f0bc6cd0b7fec3de01f28ae73bec5d9e2321cff5d4bc7454c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/FilesystemTripwireJournal.swift",
+      "bytes": 10279,
+      "sha256": "b721640fbc07c43dc283b1d34824fa69768c66423fcd3fa0e4783296a9c556f9"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/GoalSlot.swift",
+      "bytes": 9822,
+      "sha256": "ade90b545e73322af583ba7fc7669c2be51fad2b6e512863c1a470414eae1a1f"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/IntentLedger.swift",
+      "bytes": 24858,
+      "sha256": "3f50ec9d1b2b81866f185c493a880fa0480f2d8badac8f3be6eb790ea5883260"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift",
+      "bytes": 17470,
+      "sha256": "22963b60bbd54a8df890b2d7558564e9980bd8d267095af78332ba8fea1c16cf"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift",
+      "bytes": 31013,
+      "sha256": "ee539a585410cb7f4c2ed0cc9bb5b3c5b047088ae97c36c1038ed4e82d93333a"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/PhaseBEligibility.swift",
+      "bytes": 22990,
+      "sha256": "444038f10f8d9b341b6bd3c51156854b2fb130e5636091a7def94f19930b1fd6"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/ReviewedBuildState.swift",
+      "bytes": 7664,
+      "sha256": "95a28802e92abc1bb62b8d2ecadaf6d4deb0cab14f2e7b0fdb7b3b01ec049c78"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/ReviewedImplementationDigest.swift",
+      "bytes": 4643,
+      "sha256": "fd9dd5a21fe011eb75690355db2ebeddbcc5c3937e9d3ea4c8b0950fd59b1802"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/StateEvidence.swift",
+      "bytes": 11758,
+      "sha256": "2ea1815031892930a5a43bac5f0f7f41b39821f934583a1bcf0cfc0c6e4fedbb"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/TripwireAttribution.swift",
+      "bytes": 6732,
+      "sha256": "8bd8fea6ec2eb153181cc936bc9fb35a4ebcfdf666d33d585433ba0d8d8c7917"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Verification/BaselineVerifier.swift",
+      "bytes": 5810,
+      "sha256": "171f88a2eabfbb74d7192b36ff8b00cdce4ba68af370f05de249c06074990058"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Verification/StagingVerifier.swift",
+      "bytes": 10691,
+      "sha256": "d93f068d0747524ad654ab79a4b9c497628ac1daa89b45b90c49e62be5cdd208"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/EvidenceRun.swift",
+      "bytes": 3652,
+      "sha256": "11ad1889ff3d82911e87b94d7e653e4678e39be62fe2830fa73f5c3973bae81c"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/FolderChooserDriver.swift",
+      "bytes": 4526,
+      "sha256": "4bf99db5ce820e185b101179223a64120da65128119f8a0411ab69d858decec0"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/HarnessCalibration.swift",
+      "bytes": 143034,
+      "sha256": "4a3fe1c4944904a2f1a174b274fc937914dee64a5e163a0cf5a4c17e78c6d860"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/PassiveCaptureDiagnostic.swift",
+      "bytes": 8128,
+      "sha256": "b32029b10c9d9611656b4a1fe1debb504233b5cf8f98f8453f886edaa7f88ecc"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/ProcessIdentity.swift",
+      "bytes": 975,
+      "sha256": "97116b4e399dc31b6528ce83425b23937b719dfb2a39c291e3f25020f9f52cb3"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/ProcessPeer.swift",
+      "bytes": 4719,
+      "sha256": "3167f8b33af5f4370d95b53cc9e4d77d9bb07a745fed844ee423fc158864b5c0"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/QuartzActuator.swift",
+      "bytes": 2617,
+      "sha256": "e956d4e0073cd9d5b9f0a068753be8ead2122e525b5eb349e13e0dc222c34c4c"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/RawCapture.swift",
+      "bytes": 2554,
+      "sha256": "3228444e510eb45f88e3c6128b50d102832af939144469e3c789847e4ab8f38f"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/RestartFixture.swift",
+      "bytes": 3688,
+      "sha256": "e00acabe3b1a85576fb1cc4f5bfe350a7cdfeb080ffd32125aca171d81d5d9cd"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/main.swift",
+      "bytes": 27891,
+      "sha256": "dc247e24f4fc8c53f873d4764158071b51feba9ffde66da5c36156a44ac65dcd"
+    },
+    {
+      "path": "rev28/Sources/rev28harness/HarnessApp.swift",
+      "bytes": 24943,
+      "sha256": "49cdd5c6ac3da82b4085e2483badc219a11cb128c9d53e1f3817291edd895628"
+    },
+    {
+      "path": "rev28/Sources/rev28harness/main.swift",
+      "bytes": 172,
+      "sha256": "d4604a32c10e1db995eb5f106637c1346319dc5fb35183c1dbcf7101b6e4c819"
+    },
+    {
+      "path": "rev28/Sources/rev28occluder/main.swift",
+      "bytes": 10289,
+      "sha256": "e4e9376ea5814d66be6d0f46092abcb9905942fb57107908189e783648dce5c5"
+    },
+    {
+      "path": "rev28/Sources/rev28probe/CapabilityProbe.swift",
+      "bytes": 12745,
+      "sha256": "beb5fbec0fe32f911623df1e9611ce3c4c8e2bde377a5dceafbb9790e9c819a8"
+    },
+    {
+      "path": "rev28/Sources/rev28probe/main.swift",
+      "bytes": 582,
+      "sha256": "9f837a00affe1a8f0b475ca10ea488e161f7ffc796d78d1fc3e0ca2f9439931b"
+    },
+    {
+      "path": "rev28/Sources/rev28replay/main.swift",
+      "bytes": 7097,
+      "sha256": "cf44f4985826620f1ca7e9cc70d616b5c75755fec57b5ea282f19440be6120d3"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/AXWindowIdentitySelectorTests.swift",
+      "bytes": 3784,
+      "sha256": "a12de00ebd4c7c41f946ce8ee98942fa5ae126f13446d92cbe2b1c2e0f65f6be"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift",
+      "bytes": 32079,
+      "sha256": "d3825b625fc8444e980df1f77c839a5c5a2224932927529c587ebbf628b35187"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/AdversarialMatrixTests.swift",
+      "bytes": 24466,
+      "sha256": "dee7a2a134e5a20d08c3e8e9dff0b897704fead81fac70e2760ed0cdd5302fea"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/AlbumEllipsisLocatorTests.swift",
+      "bytes": 11158,
+      "sha256": "acdb3e39570d4ee025fc82e3b0b22b443025d0a131506aa7a5201a490ca43f48"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/ChooserPredicateProductionDerivationTests.swift",
+      "bytes": 6021,
+      "sha256": "3a54327ec86f746fe3f66a059a10f18ad890a633a0435456d535c5d4ba8300a5"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/ComposedAdaptersTests.swift",
+      "bytes": 44104,
+      "sha256": "dc18fe266c83a9c7884894456a87f51bc5fd6847ccef11dff40b1ec26f91bae8"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/CoordinateTransformTests.swift",
+      "bytes": 13242,
+      "sha256": "8ce4ad926019d5e5d314d544eb6cf9414ecd570e8803087b2bb680dc56e21a31"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/EligibilityTestSupport.swift",
+      "bytes": 6251,
+      "sha256": "a712a78dd66206f4ce92e26eb2eaff9731c3411cf0c1836ddb310b20f11c0f8f"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/ExecutionPolicyTests.swift",
+      "bytes": 3245,
+      "sha256": "c924059b0f4b43c48a132b7ec736eeed8efba19805173de0043d789922591160"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/ExplicitLineCaptureSelectionTests.swift",
+      "bytes": 11587,
+      "sha256": "28f3946f970e3d94a35fbaa9d49336a7fa37b2e372bad90c944e84907d5e5e5a"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/GoalSlotTests.swift",
+      "bytes": 9252,
+      "sha256": "8f636662c285dec42da5627372d3a014b82d6684ac17bc22928935bfc0421ca1"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/IntentLedgerTests.swift",
+      "bytes": 7029,
+      "sha256": "32785f06c7458342a9ff7f9c0d5c14abeb960cbbef42f858a91db935f3313913"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift",
+      "bytes": 12338,
+      "sha256": "9c7fa5be30b379685d5756cbc1f4b4c1101f8e37b14115833633fdfe5f5e45c5"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift",
+      "bytes": 22832,
+      "sha256": "f10d2bb1fc77877d0cfe8419784bf57f14a22ee03a14a49414a84f3941b52d35"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+      "bytes": 39358,
+      "sha256": "98f0a2df0d2801f4732a446ecc9ff5207a70caccf311fe62860b6e8f2fb122fd"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift",
+      "bytes": 24933,
+      "sha256": "713f387ea52577cc05d733cd07d2d0b59546d67df5df4b0b612e4543bae80b9e"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/OcrEngineTests.swift",
+      "bytes": 6027,
+      "sha256": "a43b88bd76f850ced2a0a6bf4ac3a89386c87240c0b564b6bddf6b4a14c164b3"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/PassiveNativeDiagnosticTests.swift",
+      "bytes": 36558,
+      "sha256": "1159d83d1ae1893e9737d09d910de2504d900ba6f1577b28bed1b968b16a688d"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/PersistentTransactionOwnerTests.swift",
+      "bytes": 14673,
+      "sha256": "50353604d054502a65d11375a1ea73b6380d922687f6e697ae14399e865b4790"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/PhaseAEvidenceTests.swift",
+      "bytes": 33170,
+      "sha256": "1c2c8e5188e7ad080efd636aa65d259cf69637c7a4e72381c92775999e1c88d5"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/PhaseBEligibilityTests.swift",
+      "bytes": 26152,
+      "sha256": "df9aabf5281fccc8694441f3fe6aacbfe159504d0c473a047b42df1a119cdd26"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/PostconditionMonitorTests.swift",
+      "bytes": 7854,
+      "sha256": "9cd79315e82da5ae6c376dce3d570d2b7e6697c9941d189ad9463d9b03eefe3e"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/ProcessCodeIdentityTests.swift",
+      "bytes": 1258,
+      "sha256": "2766e2de9e265d9679097feb5517d3118a612f6f1ce7e1c05e214d261aeebcd0"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift",
+      "bytes": 8396,
+      "sha256": "3b39e940abc0fe1f224845f4fd173385d9bfb5542602ba0ba4ae6f32189dc1ab"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/ReviewedBuildStateTests.swift",
+      "bytes": 7399,
+      "sha256": "e78b97f6f79be479338aec3eb39a40be695861406a6f94c28f60fa0ac054b719"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/RunEpochAuthorityTests.swift",
+      "bytes": 2533,
+      "sha256": "094091fa9af19418a9579acd29fca5deb9bf6d822a23329736e82e72460fca79"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/StagingVerifierTests.swift",
+      "bytes": 11896,
+      "sha256": "4017da7b5ce0e04af745bb047bf943aab7645a522907f1e09460d128973d8b5c"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift",
+      "bytes": 11241,
+      "sha256": "5c977d4835b7f6d70254c6a76570f81f392e5442e3c7d53fda508f983b1adc34"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/TripwirePostDispatchGateTests.swift",
+      "bytes": 4819,
+      "sha256": "cb67b72997eecedb71edc1b4b5e1b06acc086154c03ba9a0e47a946c65dae194"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/WindowIdentityTests.swift",
+      "bytes": 7433,
+      "sha256": "2911a962ca2ebcdfd3f5bef8eaccb41a8f6536d5e64f0e73b4144ea5d73da6a7"
+    },
+    {
+      "path": "src/line_backup_acceptance/__init__.py",
+      "bytes": 85,
+      "sha256": "5ae55afa11a74a856393b707db26b37202ad66d2142d1b56e02720f1a235a53b"
+    },
+    {
+      "path": "src/line_backup_acceptance/__main__.py",
+      "bytes": 48,
+      "sha256": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d"
+    },
+    {
+      "path": "src/line_backup_acceptance/authority.py",
+      "bytes": 9330,
+      "sha256": "e0d32d27d5a06a50a60d413c7d17a997490da087583c3ce070e49d951ca8cd27"
+    },
+    {
+      "path": "src/line_backup_acceptance/cli.py",
+      "bytes": 5587,
+      "sha256": "832896eda31583199b192a0df51b921257fb7875835b1b502e476f9f1383d82f"
+    },
+    {
+      "path": "src/line_backup_acceptance/common.py",
+      "bytes": 34551,
+      "sha256": "7b0956f9bfb84d7dfb77e095f1626a1d1a1a1aabc543be4bdeff42cbcbf929aa"
+    },
+    {
+      "path": "src/line_backup_acceptance/project_binding.py",
+      "bytes": 26500,
+      "sha256": "a057d0ad3afdc888fe7330e617908b92c8c114006f797080f840f61ffeaf8a43"
+    },
+    {
+      "path": "src/line_backup_acceptance/status.py",
+      "bytes": 7937,
+      "sha256": "1c8c27edf204d9243e8773cd830e16566269fb3814faa332dd8237c71587180e"
+    },
+    {
+      "path": "src/line_backup_acceptance/transaction.py",
+      "bytes": 42374,
+      "sha256": "95ae935162ffc49636bc461dfe64c86f5e915080f45022e667dbb1d4ba9bcc8d"
+    },
+    {
+      "path": "src/line_backup_acceptance/verifier.py",
+      "bytes": 25377,
+      "sha256": "a07ffe450284ade34fce27f646bd4a0c37baccb65de5660e77aea3faf48b23b6"
+    },
+    {
+      "path": "tests/acceptance_case_driver.py",
+      "bytes": 92913,
+      "sha256": "996fa5648442ad83f2b0b8362d713197fa79d89c501fe4c2155bbcce2dda0f2d"
+    },
+    {
+      "path": "tests/authority_baseline.py",
+      "bytes": 2101,
+      "sha256": "4e446624f8c54df9156e0dac0fd712a8631f0916de5c00a876fc83b182c7db06"
+    },
+    {
+      "path": "tests/authority_negative_driver.py",
+      "bytes": 17616,
+      "sha256": "f5643d016bea13c1c18a7209ccfcd6d62b87fde0dbc5ec2f492ca62a92c3bb66"
+    },
+    {
+      "path": "tests/automation_verification/fixtures.py",
+      "bytes": 14982,
+      "sha256": "41b7884fd2395ec69834211ff2fe9362c7dc212c70895c4e05cead51a229c0e5"
+    },
+    {
+      "path": "tests/automation_verification/harness.py",
+      "bytes": 13419,
+      "sha256": "4559ed024c7271307068a55778d9114a33ad7b3d16e999f4a01a808f8597c008"
+    },
+    {
+      "path": "tests/automation_verification/run_all.py",
+      "bytes": 12733,
+      "sha256": "432a880f5bb5bdb0af3dd098913e9bc90a811ea5afebff010c3b381bcda79646"
+    },
+    {
+      "path": "tests/automation_verification/run_phase2_r1_crash_window.py",
+      "bytes": 14058,
+      "sha256": "70101ead17c3a1397bc3ecf7ffda7e6a9be0e845fab43dd12e8adbb7a48dd3d7"
+    },
+    {
+      "path": "tests/automation_verification/run_phase2_r2_loaded_intent.py",
+      "bytes": 11655,
+      "sha256": "31eab411e606be4d5f9255c7b05aae28ff8f2992bf0a06a18114889f3d9dd0ac"
+    },
+    {
+      "path": "tests/automation_verification/run_phase2_r3_preconditions.py",
+      "bytes": 20875,
+      "sha256": "0f969808f48e133f78dec25f254aed99dbced3df411b5c0a20c6dcef170353f8"
+    },
+    {
+      "path": "tests/automation_verification/run_phase2_r4_finalize_trust.py",
+      "bytes": 18342,
+      "sha256": "eebe8cbdfac3bedc86bb831fd314268a214f499e6ec862ead656680aa0b92a87"
+    },
+    {
+      "path": "tests/automation_verification/run_phase2_r5_verifier_gaps.py",
+      "bytes": 30194,
+      "sha256": "c27c19d8890040d56712e82cb9d59b70ec6764ec794e4ff9bee6ab40ab64cff7"
+    },
+    {
+      "path": "tests/automation_verification/run_phase2_r6_harness_ownership.py",
+      "bytes": 10719,
+      "sha256": "dd4b2295e1bfc46e44ae6c846d88a194637a88cb54b52f6a2b546fa451ac4ed2"
+    },
+    {
+      "path": "tests/automation_verification/run_phase2_r6_status_selfcert.py",
+      "bytes": 20052,
+      "sha256": "eb47f1a563c9078f5c9b9cc7f7329ceafd523c2d1489cc7359bfce15f71c6208"
+    },
+    {
+      "path": "tests/automation_verification/run_phase2_r7_integration.py",
+      "bytes": 17072,
+      "sha256": "04c267c1a6f87c5a38f461c2055131affc9dbf07bf3fddbe9c8c3913837f2845"
+    },
+    {
+      "path": "tests/automation_verification/verify_evidence.py",
+      "bytes": 4547,
+      "sha256": "3f954f342cc49990643eda79ecbba90a721163ef5b0037dd2b9838f46ec3bbed"
+    },
+    {
+      "path": "tests/formal_reconciliation_driver.py",
+      "bytes": 5864,
+      "sha256": "49978c96d98f02c5483b2afd4afceb783a274e741771013ad11ec3c993356a1a"
+    },
+    {
+      "path": "tests/legacy_false_positive_repro.py",
+      "bytes": 5405,
+      "sha256": "33825549ad0154630a9339ecb0481d212504376c4f8cbba6720d93ca0c317610"
+    },
+    {
+      "path": "tests/run_acceptance_wave.py",
+      "bytes": 12704,
+      "sha256": "1f22683f85c56fd5328746a3fc38bf4e0a458b957ebe5b864287836abffc276e"
+    },
+    {
+      "path": "tests/status_fixture_driver.py",
+      "bytes": 20288,
+      "sha256": "582be388ac1f4c9bb665ecb2ff68c850e183d2c23a81933d8cb188658f59bb8b"
+    },
+    {
+      "path": "tests/test_project_binding.py",
+      "bytes": 27102,
+      "sha256": "572de89393411561bb1d1c50fba6fc15cfac0af695dc7f722d0641de8027b79d"
+    },
+    {
+      "path": "tests/test_transaction_core.py",
+      "bytes": 5280,
+      "sha256": "cd517fd8e847ec14f51c549df4ae3b5144f1c3b3ca2c9efa7a57d90a8611e55d"
+    },
+    {
+      "path": "tests/verifier_fixture_driver.py",
+      "bytes": 44483,
+      "sha256": "57d3add518dd7c6bdc011c125cd1fb2184397958dae620848c0617b8f1bc20b1"
+    }
+  ],
+  "source_sha256": "60a4a2c5db2faecfe9b64fb747e73515b3889b3cad8b3565ffdb71abc0bff590",
+  "controls": {
+    "config/line_backup_config.json": {
+      "bytes": 384,
+      "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362"
+    },
+    "state/backup_state.json": {
+      "bytes": 252091,
+      "sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9"
+    },
+    "state/run_log.md": {
+      "bytes": 14736,
+      "sha256": "d96739e255261a6f1e1eae02df928a55d64192b3d1146983e6f2c40ad6528333"
+    }
+  },
+  "photos_lstat": {
+    "backups": {
+      "st_dev": 16777229,
+      "st_ino": 131735744,
+      "st_mode": 16877,
+      "st_size": 96,
+      "st_mtime_ns": 1791118899113555799,
+      "st_ctime_ns": 1791118899113555799
+    },
+    "backups/旻謙允禎成長日記": {
+      "st_dev": 16777229,
+      "st_ino": 131735745,
+      "st_mode": 16877,
+      "st_size": 128,
+      "st_mtime_ns": 1791523154366809327,
+      "st_ctime_ns": 1791523154366809327
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張": {
+      "st_dev": 16777229,
+      "st_ino": 133679305,
+      "st_mode": 16877,
+      "st_size": 5888,
+      "st_mtime_ns": 1791526096244552035,
+      "st_ctime_ns": 1791526096244552035
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_1.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690714,
+      "st_mode": 33188,
+      "st_size": 200040,
+      "st_mtime_ns": 1791526029671847848,
+      "st_ctime_ns": 1791526029671926015
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_10.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690736,
+      "st_mode": 33188,
+      "st_size": 261988,
+      "st_mtime_ns": 1791526032808782779,
+      "st_ctime_ns": 1791526032808833362
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_100.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690993,
+      "st_mode": 33188,
+      "st_size": 177139,
+      "st_mtime_ns": 1791526066581169472,
+      "st_ctime_ns": 1791526066581219931
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_101.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690995,
+      "st_mode": 33188,
+      "st_size": 163644,
+      "st_mtime_ns": 1791526066884060833,
+      "st_ctime_ns": 1791526066884107874
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_102.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690997,
+      "st_mode": 33188,
+      "st_size": 158719,
+      "st_mtime_ns": 1791526067162300480,
+      "st_ctime_ns": 1791526067162336980
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_103.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691002,
+      "st_mode": 33188,
+      "st_size": 177449,
+      "st_mtime_ns": 1791526067646309680,
+      "st_ctime_ns": 1791526067646350764
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_104.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691004,
+      "st_mode": 33188,
+      "st_size": 163738,
+      "st_mtime_ns": 1791526067966075405,
+      "st_ctime_ns": 1791526067966132114
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_105.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691006,
+      "st_mode": 33188,
+      "st_size": 167358,
+      "st_mtime_ns": 1791526068286542549,
+      "st_ctime_ns": 1791526068286565466
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_106.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691009,
+      "st_mode": 33188,
+      "st_size": 198088,
+      "st_mtime_ns": 1791526068592351748,
+      "st_ctime_ns": 1791526068592378873
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_107.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691011,
+      "st_mode": 33188,
+      "st_size": 167553,
+      "st_mtime_ns": 1791526068883435378,
+      "st_ctime_ns": 1791526068883477086
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_108.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691013,
+      "st_mode": 33188,
+      "st_size": 182774,
+      "st_mtime_ns": 1791526069233006742,
+      "st_ctime_ns": 1791526069233035659
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_109.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691016,
+      "st_mode": 33188,
+      "st_size": 172760,
+      "st_mtime_ns": 1791526069569528082,
+      "st_ctime_ns": 1791526069569550582
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_11.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690739,
+      "st_mode": 33188,
+      "st_size": 272416,
+      "st_mtime_ns": 1791526033151932923,
+      "st_ctime_ns": 1791526033151977298
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_110.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691019,
+      "st_mode": 33188,
+      "st_size": 174812,
+      "st_mtime_ns": 1791526069967047870,
+      "st_ctime_ns": 1791526069967081745
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_111.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691023,
+      "st_mode": 33188,
+      "st_size": 138295,
+      "st_mtime_ns": 1791526070397873096,
+      "st_ctime_ns": 1791526070397923846
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_112.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691026,
+      "st_mode": 33188,
+      "st_size": 154441,
+      "st_mtime_ns": 1791526070697952659,
+      "st_ctime_ns": 1791526070697982618
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_113.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691028,
+      "st_mode": 33188,
+      "st_size": 132078,
+      "st_mtime_ns": 1791526071053606660,
+      "st_ctime_ns": 1791526071053655785
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_114.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691033,
+      "st_mode": 33188,
+      "st_size": 168230,
+      "st_mtime_ns": 1791526071372579676,
+      "st_ctime_ns": 1791526071372611842
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_115.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691035,
+      "st_mode": 33188,
+      "st_size": 157751,
+      "st_mtime_ns": 1791526071697243994,
+      "st_ctime_ns": 1791526071697275535
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_116.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691037,
+      "st_mode": 33188,
+      "st_size": 157638,
+      "st_mtime_ns": 1791526072112101439,
+      "st_ctime_ns": 1791526072112150189
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_117.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691039,
+      "st_mode": 33188,
+      "st_size": 121436,
+      "st_mtime_ns": 1791526072438846427,
+      "st_ctime_ns": 1791526072438876803
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_118.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691042,
+      "st_mode": 33188,
+      "st_size": 133641,
+      "st_mtime_ns": 1791526072780557819,
+      "st_ctime_ns": 1791526072780606861
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_119.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691044,
+      "st_mode": 33188,
+      "st_size": 122271,
+      "st_mtime_ns": 1791526073128601972,
+      "st_ctime_ns": 1791526073128646056
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_12.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690742,
+      "st_mode": 33188,
+      "st_size": 262439,
+      "st_mtime_ns": 1791526033536264936,
+      "st_ctime_ns": 1791526033536281186
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_120.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691047,
+      "st_mode": 33188,
+      "st_size": 122194,
+      "st_mtime_ns": 1791526073475106331,
+      "st_ctime_ns": 1791526073475147206
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_121.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691050,
+      "st_mode": 33188,
+      "st_size": 133629,
+      "st_mtime_ns": 1791526073968596466,
+      "st_ctime_ns": 1791526073968627049
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_122.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691052,
+      "st_mode": 33188,
+      "st_size": 132056,
+      "st_mtime_ns": 1791526074341341332,
+      "st_ctime_ns": 1791526074341371957
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_123.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691054,
+      "st_mode": 33188,
+      "st_size": 160087,
+      "st_mtime_ns": 1791526074639566226,
+      "st_ctime_ns": 1791526074639607476
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_124.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691056,
+      "st_mode": 33188,
+      "st_size": 132098,
+      "st_mtime_ns": 1791526074934691280,
+      "st_ctime_ns": 1791526074934721363
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_125.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691060,
+      "st_mode": 33188,
+      "st_size": 120974,
+      "st_mtime_ns": 1791526075275053210,
+      "st_ctime_ns": 1791526075275111044
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_126.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691062,
+      "st_mode": 33188,
+      "st_size": 126202,
+      "st_mtime_ns": 1791526075586544212,
+      "st_ctime_ns": 1791526075586633878
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_127.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691064,
+      "st_mode": 33188,
+      "st_size": 144516,
+      "st_mtime_ns": 1791526075921031381,
+      "st_ctime_ns": 1791526075921064965
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_128.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691066,
+      "st_mode": 33188,
+      "st_size": 144181,
+      "st_mtime_ns": 1791526076252844879,
+      "st_ctime_ns": 1791526076252887171
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_129.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691069,
+      "st_mode": 33188,
+      "st_size": 146932,
+      "st_mtime_ns": 1791526076608021088,
+      "st_ctime_ns": 1791526076608044129
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_13.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690744,
+      "st_mode": 33188,
+      "st_size": 501056,
+      "st_mtime_ns": 1791526033927282379,
+      "st_ctime_ns": 1791526033927337545
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_130.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691071,
+      "st_mode": 33188,
+      "st_size": 156766,
+      "st_mtime_ns": 1791526076908251901,
+      "st_ctime_ns": 1791526076908276818
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_131.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691077,
+      "st_mode": 33188,
+      "st_size": 135948,
+      "st_mtime_ns": 1791526077846048412,
+      "st_ctime_ns": 1791526077846099412
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_132.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691079,
+      "st_mode": 33188,
+      "st_size": 126691,
+      "st_mtime_ns": 1791526078796482363,
+      "st_ctime_ns": 1791526078796514321
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_133.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691082,
+      "st_mode": 33188,
+      "st_size": 156547,
+      "st_mtime_ns": 1791526079141933511,
+      "st_ctime_ns": 1791526079141975345
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_134.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691085,
+      "st_mode": 33188,
+      "st_size": 151432,
+      "st_mtime_ns": 1791526079484382071,
+      "st_ctime_ns": 1791526079484416529
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_135.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691088,
+      "st_mode": 33188,
+      "st_size": 214683,
+      "st_mtime_ns": 1791526079875302180,
+      "st_ctime_ns": 1791526079875326388
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_136.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691091,
+      "st_mode": 33188,
+      "st_size": 188469,
+      "st_mtime_ns": 1791526080208090596,
+      "st_ctime_ns": 1791526080208131930
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_137.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691094,
+      "st_mode": 33188,
+      "st_size": 147099,
+      "st_mtime_ns": 1791526080524927649,
+      "st_ctime_ns": 1791526080524951316
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_138.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691096,
+      "st_mode": 33188,
+      "st_size": 141801,
+      "st_mtime_ns": 1791526080854717227,
+      "st_ctime_ns": 1791526080854748352
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_139.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691100,
+      "st_mode": 33188,
+      "st_size": 186976,
+      "st_mtime_ns": 1791526081373171158,
+      "st_ctime_ns": 1791526081373204450
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_14.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690748,
+      "st_mode": 33188,
+      "st_size": 446663,
+      "st_mtime_ns": 1791526034494208568,
+      "st_ctime_ns": 1791526034494270776
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_140.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691102,
+      "st_mode": 33188,
+      "st_size": 236279,
+      "st_mtime_ns": 1791526081692407633,
+      "st_ctime_ns": 1791526081692435299
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_141.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691104,
+      "st_mode": 33188,
+      "st_size": 229700,
+      "st_mtime_ns": 1791526082021177750,
+      "st_ctime_ns": 1791526082021205042
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_142.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691108,
+      "st_mode": 33188,
+      "st_size": 249503,
+      "st_mtime_ns": 1791526082352003746,
+      "st_ctime_ns": 1791526082352032121
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_143.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691111,
+      "st_mode": 33188,
+      "st_size": 191602,
+      "st_mtime_ns": 1791526082639578869,
+      "st_ctime_ns": 1791526082639622328
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_144.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691113,
+      "st_mode": 33188,
+      "st_size": 198548,
+      "st_mtime_ns": 1791526082995089453,
+      "st_ctime_ns": 1791526082995112953
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_145.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691116,
+      "st_mode": 33188,
+      "st_size": 180709,
+      "st_mtime_ns": 1791526083314252261,
+      "st_ctime_ns": 1791526083314293719
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_146.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691119,
+      "st_mode": 33188,
+      "st_size": 182139,
+      "st_mtime_ns": 1791526083618125623,
+      "st_ctime_ns": 1791526083618162248
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_147.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691121,
+      "st_mode": 33188,
+      "st_size": 154196,
+      "st_mtime_ns": 1791526083955877507,
+      "st_ctime_ns": 1791526083955906757
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_148.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691123,
+      "st_mode": 33188,
+      "st_size": 154397,
+      "st_mtime_ns": 1791526084269338887,
+      "st_ctime_ns": 1791526084269380679
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_149.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691125,
+      "st_mode": 33188,
+      "st_size": 170799,
+      "st_mtime_ns": 1791526084600917051,
+      "st_ctime_ns": 1791526084600946593
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_15.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690751,
+      "st_mode": 33188,
+      "st_size": 228018,
+      "st_mtime_ns": 1791526034982349942,
+      "st_ctime_ns": 1791526034982419234
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_150.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691128,
+      "st_mode": 33188,
+      "st_size": 140453,
+      "st_mtime_ns": 1791526084950091124,
+      "st_ctime_ns": 1791526084950129374
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_151.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691130,
+      "st_mode": 33188,
+      "st_size": 175116,
+      "st_mtime_ns": 1791526085274452566,
+      "st_ctime_ns": 1791526085274505983
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_152.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691133,
+      "st_mode": 33188,
+      "st_size": 137204,
+      "st_mtime_ns": 1791526085595180710,
+      "st_ctime_ns": 1791526085595210251
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_153.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691135,
+      "st_mode": 33188,
+      "st_size": 156031,
+      "st_mtime_ns": 1791526085903549205,
+      "st_ctime_ns": 1791526085903580413
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_154.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691138,
+      "st_mode": 33188,
+      "st_size": 171746,
+      "st_mtime_ns": 1791526086221831178,
+      "st_ctime_ns": 1791526086221881428
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_155.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691140,
+      "st_mode": 33188,
+      "st_size": 191303,
+      "st_mtime_ns": 1791526086534292014,
+      "st_ctime_ns": 1791526086534315348
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_156.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691142,
+      "st_mode": 33188,
+      "st_size": 163529,
+      "st_mtime_ns": 1791526086891574893,
+      "st_ctime_ns": 1791526086891603893
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_157.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691145,
+      "st_mode": 33188,
+      "st_size": 158963,
+      "st_mtime_ns": 1791526087259345459,
+      "st_ctime_ns": 1791526087259388042
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_158.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691149,
+      "st_mode": 33188,
+      "st_size": 152738,
+      "st_mtime_ns": 1791526087600500307,
+      "st_ctime_ns": 1791526087600527391
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_159.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691151,
+      "st_mode": 33188,
+      "st_size": 146132,
+      "st_mtime_ns": 1791526087957572811,
+      "st_ctime_ns": 1791526087957604978
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_16.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690754,
+      "st_mode": 33188,
+      "st_size": 182972,
+      "st_mtime_ns": 1791526035617064884,
+      "st_ctime_ns": 1791526035617084801
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_160.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691154,
+      "st_mode": 33188,
+      "st_size": 202632,
+      "st_mtime_ns": 1791526088300951539,
+      "st_ctime_ns": 1791526088300997664
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_161.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691157,
+      "st_mode": 33188,
+      "st_size": 175353,
+      "st_mtime_ns": 1791526088729090385,
+      "st_ctime_ns": 1791526088729138218
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_162.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691159,
+      "st_mode": 33188,
+      "st_size": 200934,
+      "st_mtime_ns": 1791526089144352372,
+      "st_ctime_ns": 1791526089144411623
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_163.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691162,
+      "st_mode": 33188,
+      "st_size": 181964,
+      "st_mtime_ns": 1791526089457661544,
+      "st_ctime_ns": 1791526089457699669
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_164.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691165,
+      "st_mode": 33188,
+      "st_size": 181918,
+      "st_mtime_ns": 1791526089794423926,
+      "st_ctime_ns": 1791526089794466218
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_165.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691167,
+      "st_mode": 33188,
+      "st_size": 201904,
+      "st_mtime_ns": 1791526090113808193,
+      "st_ctime_ns": 1791526090113899568
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_166.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691169,
+      "st_mode": 33188,
+      "st_size": 201401,
+      "st_mtime_ns": 1791526090450327866,
+      "st_ctime_ns": 1791526090450358033
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_167.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691171,
+      "st_mode": 33188,
+      "st_size": 213265,
+      "st_mtime_ns": 1791526090741236370,
+      "st_ctime_ns": 1791526090741290620
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_168.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691174,
+      "st_mode": 33188,
+      "st_size": 211572,
+      "st_mtime_ns": 1791526091083335096,
+      "st_ctime_ns": 1791526091083369513
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_169.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691177,
+      "st_mode": 33188,
+      "st_size": 193656,
+      "st_mtime_ns": 1791526091413416049,
+      "st_ctime_ns": 1791526091413441299
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_17.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690757,
+      "st_mode": 33188,
+      "st_size": 167098,
+      "st_mtime_ns": 1791526035909402766,
+      "st_ctime_ns": 1791526035909431100
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_170.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691179,
+      "st_mode": 33188,
+      "st_size": 196915,
+      "st_mtime_ns": 1791526091736142196,
+      "st_ctime_ns": 1791526091736170613
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_171.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691181,
+      "st_mode": 33188,
+      "st_size": 173411,
+      "st_mtime_ns": 1791526092071139909,
+      "st_ctime_ns": 1791526092071166326
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_172.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691184,
+      "st_mode": 33188,
+      "st_size": 176272,
+      "st_mtime_ns": 1791526092402547948,
+      "st_ctime_ns": 1791526092402582031
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_173.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691186,
+      "st_mode": 33188,
+      "st_size": 223425,
+      "st_mtime_ns": 1791526092709663732,
+      "st_ctime_ns": 1791526092709702816
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_174.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691188,
+      "st_mode": 33188,
+      "st_size": 399927,
+      "st_mtime_ns": 1791526093253672962,
+      "st_ctime_ns": 1791526093253726046
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_175.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691192,
+      "st_mode": 33188,
+      "st_size": 339007,
+      "st_mtime_ns": 1791526093630327003,
+      "st_ctime_ns": 1791526093630367252
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_176.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691195,
+      "st_mode": 33188,
+      "st_size": 439959,
+      "st_mtime_ns": 1791526094039750771,
+      "st_ctime_ns": 1791526094039782729
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_177.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691197,
+      "st_mode": 33188,
+      "st_size": 337735,
+      "st_mtime_ns": 1791526094416928771,
+      "st_ctime_ns": 1791526094416988354
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_178.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691201,
+      "st_mode": 33188,
+      "st_size": 421485,
+      "st_mtime_ns": 1791526094852606797,
+      "st_ctime_ns": 1791526094852673256
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_179.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691203,
+      "st_mode": 33188,
+      "st_size": 358894,
+      "st_mtime_ns": 1791526095253164757,
+      "st_ctime_ns": 1791526095253253299
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_18.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690759,
+      "st_mode": 33188,
+      "st_size": 146145,
+      "st_mtime_ns": 1791526036269816651,
+      "st_ctime_ns": 1791526036269845068
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_180.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691206,
+      "st_mode": 33188,
+      "st_size": 254655,
+      "st_mtime_ns": 1791526095567098139,
+      "st_ctime_ns": 1791526095567130097
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_181.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691209,
+      "st_mode": 33188,
+      "st_size": 288022,
+      "st_mtime_ns": 1791526095947346727,
+      "st_ctime_ns": 1791526095947455019
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_182.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133691211,
+      "st_mode": 33188,
+      "st_size": 266476,
+      "st_mtime_ns": 1791526096245349912,
+      "st_ctime_ns": 1791526096245445495
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_19.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690761,
+      "st_mode": 33188,
+      "st_size": 206535,
+      "st_mtime_ns": 1791526036667178147,
+      "st_ctime_ns": 1791526036667215272
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_2.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690716,
+      "st_mode": 33188,
+      "st_size": 252271,
+      "st_mtime_ns": 1791526030085742083,
+      "st_ctime_ns": 1791526030085791875
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_20.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690764,
+      "st_mode": 33188,
+      "st_size": 210098,
+      "st_mtime_ns": 1791526036988792876,
+      "st_ctime_ns": 1791526036988823626
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_21.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690768,
+      "st_mode": 33188,
+      "st_size": 206183,
+      "st_mtime_ns": 1791526037337867156,
+      "st_ctime_ns": 1791526037337912990
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_22.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690770,
+      "st_mode": 33188,
+      "st_size": 225331,
+      "st_mtime_ns": 1791526037703570343,
+      "st_ctime_ns": 1791526037703624635
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_23.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690773,
+      "st_mode": 33188,
+      "st_size": 202256,
+      "st_mtime_ns": 1791526038052612498,
+      "st_ctime_ns": 1791526038052679873
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_24.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690775,
+      "st_mode": 33188,
+      "st_size": 218109,
+      "st_mtime_ns": 1791526038385536331,
+      "st_ctime_ns": 1791526038385568498
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_25.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690777,
+      "st_mode": 33188,
+      "st_size": 228348,
+      "st_mtime_ns": 1791526038901889967,
+      "st_ctime_ns": 1791526038901918759
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_26.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690781,
+      "st_mode": 33188,
+      "st_size": 346906,
+      "st_mtime_ns": 1791526039277427797,
+      "st_ctime_ns": 1791526039277473339
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_27.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690786,
+      "st_mode": 33188,
+      "st_size": 274198,
+      "st_mtime_ns": 1791526039615825891,
+      "st_ctime_ns": 1791526039615861099
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_28.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690788,
+      "st_mode": 33188,
+      "st_size": 511180,
+      "st_mtime_ns": 1791526040032445298,
+      "st_ctime_ns": 1791526040032491632
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_29.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690791,
+      "st_mode": 33188,
+      "st_size": 331249,
+      "st_mtime_ns": 1791526040396007356,
+      "st_ctime_ns": 1791526040396056398
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_3.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690718,
+      "st_mode": 33188,
+      "st_size": 239241,
+      "st_mtime_ns": 1791526030404666057,
+      "st_ctime_ns": 1791526030404698557
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_30.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690794,
+      "st_mode": 33188,
+      "st_size": 176474,
+      "st_mtime_ns": 1791526040753003234,
+      "st_ctime_ns": 1791526040753055776
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_31.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690796,
+      "st_mode": 33188,
+      "st_size": 433997,
+      "st_mtime_ns": 1791526041165364383,
+      "st_ctime_ns": 1791526041165421175
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_32.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690800,
+      "st_mode": 33188,
+      "st_size": 364476,
+      "st_mtime_ns": 1791526041584437503,
+      "st_ctime_ns": 1791526041584484128
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_33.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690802,
+      "st_mode": 33188,
+      "st_size": 376844,
+      "st_mtime_ns": 1791526041959278707,
+      "st_ctime_ns": 1791526041959339832
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_34.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690804,
+      "st_mode": 33188,
+      "st_size": 354665,
+      "st_mtime_ns": 1791526042378114868,
+      "st_ctime_ns": 1791526042378158952
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_35.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690807,
+      "st_mode": 33188,
+      "st_size": 209204,
+      "st_mtime_ns": 1791526042889006369,
+      "st_ctime_ns": 1791526042889058828
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_36.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690810,
+      "st_mode": 33188,
+      "st_size": 209434,
+      "st_mtime_ns": 1791526043235523228,
+      "st_ctime_ns": 1791526043235572895
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_37.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690813,
+      "st_mode": 33188,
+      "st_size": 211995,
+      "st_mtime_ns": 1791526043570368065,
+      "st_ctime_ns": 1791526043570433523
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_38.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690816,
+      "st_mode": 33188,
+      "st_size": 203666,
+      "st_mtime_ns": 1791526043902101313,
+      "st_ctime_ns": 1791526043902165855
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_39.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690822,
+      "st_mode": 33188,
+      "st_size": 209705,
+      "st_mtime_ns": 1791526044229878928,
+      "st_ctime_ns": 1791526044229905470
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_4.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690722,
+      "st_mode": 33188,
+      "st_size": 265992,
+      "st_mtime_ns": 1791526030734880177,
+      "st_ctime_ns": 1791526030734912260
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_40.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690825,
+      "st_mode": 33188,
+      "st_size": 209580,
+      "st_mtime_ns": 1791526044588722893,
+      "st_ctime_ns": 1791526044588760644
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_41.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690827,
+      "st_mode": 33188,
+      "st_size": 211825,
+      "st_mtime_ns": 1791526044905383738,
+      "st_ctime_ns": 1791526044905417905
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_42.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690831,
+      "st_mode": 33188,
+      "st_size": 279043,
+      "st_mtime_ns": 1791526045315943217,
+      "st_ctime_ns": 1791526045315975842
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_43.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690833,
+      "st_mode": 33188,
+      "st_size": 220908,
+      "st_mtime_ns": 1791526045653809060,
+      "st_ctime_ns": 1791526045653853976
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_44.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690836,
+      "st_mode": 33188,
+      "st_size": 312495,
+      "st_mtime_ns": 1791526046018052119,
+      "st_ctime_ns": 1791526046018089244
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_45.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690840,
+      "st_mode": 33188,
+      "st_size": 398241,
+      "st_mtime_ns": 1791526046437003363,
+      "st_ctime_ns": 1791526046437061738
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_46.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690842,
+      "st_mode": 33188,
+      "st_size": 194097,
+      "st_mtime_ns": 1791526046751215245,
+      "st_ctime_ns": 1791526046751246787
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_47.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690844,
+      "st_mode": 33188,
+      "st_size": 289305,
+      "st_mtime_ns": 1791526047134382131,
+      "st_ctime_ns": 1791526047134440923
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_48.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690849,
+      "st_mode": 33188,
+      "st_size": 306766,
+      "st_mtime_ns": 1791526047583329932,
+      "st_ctime_ns": 1791526047583363516
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_49.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690851,
+      "st_mode": 33188,
+      "st_size": 445236,
+      "st_mtime_ns": 1791526047977402338,
+      "st_ctime_ns": 1791526047977473339
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_5.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690725,
+      "st_mode": 33188,
+      "st_size": 273905,
+      "st_mtime_ns": 1791526031161794770,
+      "st_ctime_ns": 1791526031161814979
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_50.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690853,
+      "st_mode": 33188,
+      "st_size": 329678,
+      "st_mtime_ns": 1791526048356213758,
+      "st_ctime_ns": 1791526048356312717
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_51.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690856,
+      "st_mode": 33188,
+      "st_size": 296445,
+      "st_mtime_ns": 1791526048727430997,
+      "st_ctime_ns": 1791526048727498330
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_52.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690859,
+      "st_mode": 33188,
+      "st_size": 344825,
+      "st_mtime_ns": 1791526049140822064,
+      "st_ctime_ns": 1791526049140851064
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_53.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690862,
+      "st_mode": 33188,
+      "st_size": 403977,
+      "st_mtime_ns": 1791526049566408155,
+      "st_ctime_ns": 1791526049566439405
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_54.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690868,
+      "st_mode": 33188,
+      "st_size": 191132,
+      "st_mtime_ns": 1791526049870017558,
+      "st_ctime_ns": 1791526049870040267
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_55.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690871,
+      "st_mode": 33188,
+      "st_size": 193105,
+      "st_mtime_ns": 1791526050211527324,
+      "st_ctime_ns": 1791526050211616866
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_56.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690874,
+      "st_mode": 33188,
+      "st_size": 191611,
+      "st_mtime_ns": 1791526050519091360,
+      "st_ctime_ns": 1791526050519150277
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_57.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690877,
+      "st_mode": 33188,
+      "st_size": 189686,
+      "st_mtime_ns": 1791526051129408381,
+      "st_ctime_ns": 1791526051129488839
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_58.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690880,
+      "st_mode": 33188,
+      "st_size": 225012,
+      "st_mtime_ns": 1791526051551682257,
+      "st_ctime_ns": 1791526051551713965
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_59.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690882,
+      "st_mode": 33188,
+      "st_size": 208453,
+      "st_mtime_ns": 1791526051879728914,
+      "st_ctime_ns": 1791526051879769456
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_6.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690727,
+      "st_mode": 33188,
+      "st_size": 269006,
+      "st_mtime_ns": 1791526031496759107,
+      "st_ctime_ns": 1791526031496936524
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_60.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690885,
+      "st_mode": 33188,
+      "st_size": 224495,
+      "st_mtime_ns": 1791526052276595243,
+      "st_ctime_ns": 1791526052276621035
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_61.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690887,
+      "st_mode": 33188,
+      "st_size": 228779,
+      "st_mtime_ns": 1791526052588812912,
+      "st_ctime_ns": 1791526052588850871
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_62.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690889,
+      "st_mode": 33188,
+      "st_size": 240843,
+      "st_mtime_ns": 1791526052942848035,
+      "st_ctime_ns": 1791526052942896535
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_63.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690892,
+      "st_mode": 33188,
+      "st_size": 194749,
+      "st_mtime_ns": 1791526053252165741,
+      "st_ctime_ns": 1791526053252189449
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_64.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690896,
+      "st_mode": 33188,
+      "st_size": 165801,
+      "st_mtime_ns": 1791526053570742131,
+      "st_ctime_ns": 1791526053570773673
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_65.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690898,
+      "st_mode": 33188,
+      "st_size": 164584,
+      "st_mtime_ns": 1791526053968234252,
+      "st_ctime_ns": 1791526053968274502
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_66.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690900,
+      "st_mode": 33188,
+      "st_size": 138143,
+      "st_mtime_ns": 1791526054294045239,
+      "st_ctime_ns": 1791526054294092697
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_67.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690903,
+      "st_mode": 33188,
+      "st_size": 125476,
+      "st_mtime_ns": 1791526054679800129,
+      "st_ctime_ns": 1791526054679848880
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_68.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690906,
+      "st_mode": 33188,
+      "st_size": 128972,
+      "st_mtime_ns": 1791526055055202584,
+      "st_ctime_ns": 1791526055055246126
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_69.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690909,
+      "st_mode": 33188,
+      "st_size": 142784,
+      "st_mtime_ns": 1791526055450589576,
+      "st_ctime_ns": 1791526055450613952
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_7.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690729,
+      "st_mode": 33188,
+      "st_size": 263097,
+      "st_mtime_ns": 1791526031814707496,
+      "st_ctime_ns": 1791526031814766037
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_70.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690912,
+      "st_mode": 33188,
+      "st_size": 167542,
+      "st_mtime_ns": 1791526055768717340,
+      "st_ctime_ns": 1791526055768779924
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_71.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690915,
+      "st_mode": 33188,
+      "st_size": 190292,
+      "st_mtime_ns": 1791526056158667156,
+      "st_ctime_ns": 1791526056158739114
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_72.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690917,
+      "st_mode": 33188,
+      "st_size": 196184,
+      "st_mtime_ns": 1791526056469725698,
+      "st_ctime_ns": 1791526056469807657
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_73.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690919,
+      "st_mode": 33188,
+      "st_size": 144167,
+      "st_mtime_ns": 1791526056893863994,
+      "st_ctime_ns": 1791526056893908828
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_74.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690923,
+      "st_mode": 33188,
+      "st_size": 136712,
+      "st_mtime_ns": 1791526057235635636,
+      "st_ctime_ns": 1791526057235682886
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_75.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690926,
+      "st_mode": 33188,
+      "st_size": 143883,
+      "st_mtime_ns": 1791526057581134701,
+      "st_ctime_ns": 1791526057581169493
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_76.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690928,
+      "st_mode": 33188,
+      "st_size": 132615,
+      "st_mtime_ns": 1791526057907269814,
+      "st_ctime_ns": 1791526057907340064
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_77.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690931,
+      "st_mode": 33188,
+      "st_size": 108786,
+      "st_mtime_ns": 1791526058255729759,
+      "st_ctime_ns": 1791526058255769385
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_78.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690933,
+      "st_mode": 33188,
+      "st_size": 133016,
+      "st_mtime_ns": 1791526058536149827,
+      "st_ctime_ns": 1791526058536178494
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_79.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690935,
+      "st_mode": 33188,
+      "st_size": 164655,
+      "st_mtime_ns": 1791526058899759385,
+      "st_ctime_ns": 1791526058899816385
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_8.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690732,
+      "st_mode": 33188,
+      "st_size": 239018,
+      "st_mtime_ns": 1791526032137568227,
+      "st_ctime_ns": 1791526032137594685
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_80.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690939,
+      "st_mode": 33188,
+      "st_size": 133204,
+      "st_mtime_ns": 1791526059232456510,
+      "st_ctime_ns": 1791526059232494176
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_81.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690941,
+      "st_mode": 33188,
+      "st_size": 127368,
+      "st_mtime_ns": 1791526059633246054,
+      "st_ctime_ns": 1791526059633299429
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_82.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690944,
+      "st_mode": 33188,
+      "st_size": 143805,
+      "st_mtime_ns": 1791526060117539505,
+      "st_ctime_ns": 1791526060117561671
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_83.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690949,
+      "st_mode": 33188,
+      "st_size": 154941,
+      "st_mtime_ns": 1791526060563041216,
+      "st_ctime_ns": 1791526060563078383
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_84.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690951,
+      "st_mode": 33188,
+      "st_size": 141655,
+      "st_mtime_ns": 1791526061059007105,
+      "st_ctime_ns": 1791526061059033439
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_85.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690954,
+      "st_mode": 33188,
+      "st_size": 144359,
+      "st_mtime_ns": 1791526061450823508,
+      "st_ctime_ns": 1791526061450845049
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_86.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690957,
+      "st_mode": 33188,
+      "st_size": 151300,
+      "st_mtime_ns": 1791526061875372805,
+      "st_ctime_ns": 1791526061875414221
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_87.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690959,
+      "st_mode": 33188,
+      "st_size": 176323,
+      "st_mtime_ns": 1791526062347261982,
+      "st_ctime_ns": 1791526062347312441
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_88.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690961,
+      "st_mode": 33188,
+      "st_size": 192974,
+      "st_mtime_ns": 1791526062692290505,
+      "st_ctime_ns": 1791526062692312547
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_89.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690964,
+      "st_mode": 33188,
+      "st_size": 200160,
+      "st_mtime_ns": 1791526063027256967,
+      "st_ctime_ns": 1791526063027296551
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_9.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690734,
+      "st_mode": 33188,
+      "st_size": 233430,
+      "st_mtime_ns": 1791526032477040447,
+      "st_ctime_ns": 1791526032477067572
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_90.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690967,
+      "st_mode": 33188,
+      "st_size": 197436,
+      "st_mtime_ns": 1791526063331817997,
+      "st_ctime_ns": 1791526063331882539
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_91.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690969,
+      "st_mode": 33188,
+      "st_size": 176780,
+      "st_mtime_ns": 1791526063721288937,
+      "st_ctime_ns": 1791526063721315687
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_92.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690972,
+      "st_mode": 33188,
+      "st_size": 166532,
+      "st_mtime_ns": 1791526064015550364,
+      "st_ctime_ns": 1791526064015586989
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_93.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690974,
+      "st_mode": 33188,
+      "st_size": 179092,
+      "st_mtime_ns": 1791526064309686500,
+      "st_ctime_ns": 1791526064309706166
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_94.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690977,
+      "st_mode": 33188,
+      "st_size": 235775,
+      "st_mtime_ns": 1791526064608041435,
+      "st_ctime_ns": 1791526064608078393
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_95.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690979,
+      "st_mode": 33188,
+      "st_size": 247130,
+      "st_mtime_ns": 1791526064950781912,
+      "st_ctime_ns": 1791526064950810578
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_96.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690983,
+      "st_mode": 33188,
+      "st_size": 155922,
+      "st_mtime_ns": 1791526065306582996,
+      "st_ctime_ns": 1791526065306632955
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_97.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690985,
+      "st_mode": 33188,
+      "st_size": 127083,
+      "st_mtime_ns": 1791526065608613813,
+      "st_ctime_ns": 1791526065608637855
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_98.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690988,
+      "st_mode": 33188,
+      "st_size": 133588,
+      "st_mtime_ns": 1791526065963377688,
+      "st_ctime_ns": 1791526065963407563
+    },
+    "backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/LINE_ALBUM_20240506～0510_261009_99.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 133690991,
+      "st_mode": 33188,
+      "st_size": 189909,
+      "st_mtime_ns": 1791526066286570794,
+      "st_ctime_ns": 1791526066286605503
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張": {
+      "st_dev": 16777229,
+      "st_ino": 131735746,
+      "st_mode": 16877,
+      "st_size": 1888,
+      "st_mtime_ns": 1791163843694626709,
+      "st_ctime_ns": 1791163843694626709
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_1.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766648,
+      "st_mode": 33188,
+      "st_size": 171644,
+      "st_mtime_ns": 1791163811431791546,
+      "st_ctime_ns": 1791163811431824129
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_10.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766684,
+      "st_mode": 33188,
+      "st_size": 246171,
+      "st_mtime_ns": 1791163819690062595,
+      "st_ctime_ns": 1791163819690129054
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_11.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766687,
+      "st_mode": 33188,
+      "st_size": 262276,
+      "st_mtime_ns": 1791163820294868354,
+      "st_ctime_ns": 1791163820294908271
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_12.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766689,
+      "st_mode": 33188,
+      "st_size": 328802,
+      "st_mtime_ns": 1791163820770762056,
+      "st_ctime_ns": 1791163820770874223
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_13.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766693,
+      "st_mode": 33188,
+      "st_size": 345602,
+      "st_mtime_ns": 1791163821450533831,
+      "st_ctime_ns": 1791163821450665622
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_14.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766695,
+      "st_mode": 33188,
+      "st_size": 465359,
+      "st_mtime_ns": 1791163822012050221,
+      "st_ctime_ns": 1791163822012157888
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_15.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766697,
+      "st_mode": 33188,
+      "st_size": 255447,
+      "st_mtime_ns": 1791163822505223750,
+      "st_ctime_ns": 1791163822505264458
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_16.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766700,
+      "st_mode": 33188,
+      "st_size": 248698,
+      "st_mtime_ns": 1791163822993789545,
+      "st_ctime_ns": 1791163822993895795
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_17.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766703,
+      "st_mode": 33188,
+      "st_size": 322768,
+      "st_mtime_ns": 1791163823413787100,
+      "st_ctime_ns": 1791163823413816726
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_18.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766706,
+      "st_mode": 33188,
+      "st_size": 328846,
+      "st_mtime_ns": 1791163823854288914,
+      "st_ctime_ns": 1791163823854417414
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_19.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766712,
+      "st_mode": 33188,
+      "st_size": 199046,
+      "st_mtime_ns": 1791163824335920512,
+      "st_ctime_ns": 1791163824336025512
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_2.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766653,
+      "st_mode": 33188,
+      "st_size": 228239,
+      "st_mtime_ns": 1791163812429642993,
+      "st_ctime_ns": 1791163812429672494
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_20.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766714,
+      "st_mode": 33188,
+      "st_size": 286945,
+      "st_mtime_ns": 1791163824858887458,
+      "st_ctime_ns": 1791163824859460460
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_21.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766717,
+      "st_mode": 33188,
+      "st_size": 273545,
+      "st_mtime_ns": 1791163825323335395,
+      "st_ctime_ns": 1791163825323379687
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_22.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766720,
+      "st_mode": 33188,
+      "st_size": 262155,
+      "st_mtime_ns": 1791163825763892630,
+      "st_ctime_ns": 1791163825763967880
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_23.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766722,
+      "st_mode": 33188,
+      "st_size": 219692,
+      "st_mtime_ns": 1791163826172362634,
+      "st_ctime_ns": 1791163826172389176
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_24.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766725,
+      "st_mode": 33188,
+      "st_size": 207839,
+      "st_mtime_ns": 1791163826566363442,
+      "st_ctime_ns": 1791163826566390733
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_25.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766727,
+      "st_mode": 33188,
+      "st_size": 227747,
+      "st_mtime_ns": 1791163826974837586,
+      "st_ctime_ns": 1791163826974879752
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_26.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766731,
+      "st_mode": 33188,
+      "st_size": 226735,
+      "st_mtime_ns": 1791163827497041831,
+      "st_ctime_ns": 1791163827497061581
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_27.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766733,
+      "st_mode": 33188,
+      "st_size": 230826,
+      "st_mtime_ns": 1791163828018522084,
+      "st_ctime_ns": 1791163828018640876
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_28.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766735,
+      "st_mode": 33188,
+      "st_size": 211881,
+      "st_mtime_ns": 1791163828437186595,
+      "st_ctime_ns": 1791163828437277637
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_29.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766738,
+      "st_mode": 33188,
+      "st_size": 241006,
+      "st_mtime_ns": 1791163828906652725,
+      "st_ctime_ns": 1791163828906757350
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_3.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766657,
+      "st_mode": 33188,
+      "st_size": 460400,
+      "st_mtime_ns": 1791163813768126336,
+      "st_ctime_ns": 1791163813768221586
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_30.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766740,
+      "st_mode": 33188,
+      "st_size": 284427,
+      "st_mtime_ns": 1791163829370552676,
+      "st_ctime_ns": 1791163829370657051
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_31.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766743,
+      "st_mode": 33188,
+      "st_size": 191617,
+      "st_mtime_ns": 1791163829873635687,
+      "st_ctime_ns": 1791163829873712062
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_32.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766746,
+      "st_mode": 33188,
+      "st_size": 324337,
+      "st_mtime_ns": 1791163830326668207,
+      "st_ctime_ns": 1791163830326760748
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_33.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766748,
+      "st_mode": 33188,
+      "st_size": 458640,
+      "st_mtime_ns": 1791163830935162122,
+      "st_ctime_ns": 1791163830935293747
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_34.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766752,
+      "st_mode": 33188,
+      "st_size": 323134,
+      "st_mtime_ns": 1791163831430883025,
+      "st_ctime_ns": 1791163831430914692
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_35.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766759,
+      "st_mode": 33188,
+      "st_size": 269934,
+      "st_mtime_ns": 1791163831903579783,
+      "st_ctime_ns": 1791163831903701117
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_36.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766763,
+      "st_mode": 33188,
+      "st_size": 307450,
+      "st_mtime_ns": 1791163832409882033,
+      "st_ctime_ns": 1791163832409993991
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_37.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766765,
+      "st_mode": 33188,
+      "st_size": 301995,
+      "st_mtime_ns": 1791163832821305091,
+      "st_ctime_ns": 1791163832821369591
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_38.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766767,
+      "st_mode": 33188,
+      "st_size": 168437,
+      "st_mtime_ns": 1791163833231983484,
+      "st_ctime_ns": 1791163833232014358
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_39.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766771,
+      "st_mode": 33188,
+      "st_size": 398380,
+      "st_mtime_ns": 1791163833704474125,
+      "st_ctime_ns": 1791163833704557417
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_4.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766660,
+      "st_mode": 33188,
+      "st_size": 244575,
+      "st_mtime_ns": 1791163814735282275,
+      "st_ctime_ns": 1791163814735331609
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_40.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766773,
+      "st_mode": 33188,
+      "st_size": 384643,
+      "st_mtime_ns": 1791163834190864048,
+      "st_ctime_ns": 1791163834190908340
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_41.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766776,
+      "st_mode": 33188,
+      "st_size": 240992,
+      "st_mtime_ns": 1791163834546317849,
+      "st_ctime_ns": 1791163834546338391
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_42.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766778,
+      "st_mode": 33188,
+      "st_size": 291197,
+      "st_mtime_ns": 1791163835002202500,
+      "st_ctime_ns": 1791163835002262542
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_43.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766782,
+      "st_mode": 33188,
+      "st_size": 234870,
+      "st_mtime_ns": 1791163835527805002,
+      "st_ctime_ns": 1791163835527844460
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_44.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766785,
+      "st_mode": 33188,
+      "st_size": 533384,
+      "st_mtime_ns": 1791163836112002060,
+      "st_ctime_ns": 1791163836112117602
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_45.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766787,
+      "st_mode": 33188,
+      "st_size": 524758,
+      "st_mtime_ns": 1791163836679072258,
+      "st_ctime_ns": 1791163836679147592
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_46.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766791,
+      "st_mode": 33188,
+      "st_size": 406447,
+      "st_mtime_ns": 1791163838207753479,
+      "st_ctime_ns": 1791163838207779604
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_47.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766794,
+      "st_mode": 33188,
+      "st_size": 378744,
+      "st_mtime_ns": 1791163838740736374,
+      "st_ctime_ns": 1791163838740765415
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_48.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766796,
+      "st_mode": 33188,
+      "st_size": 301237,
+      "st_mtime_ns": 1791163839180892093,
+      "st_ctime_ns": 1791163839180944927
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_49.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766800,
+      "st_mode": 33188,
+      "st_size": 213087,
+      "st_mtime_ns": 1791163839578729895,
+      "st_ctime_ns": 1791163839578824978
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_5.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766663,
+      "st_mode": 33188,
+      "st_size": 228108,
+      "st_mtime_ns": 1791163815386685678,
+      "st_ctime_ns": 1791163815386721928
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_50.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766802,
+      "st_mode": 33188,
+      "st_size": 378427,
+      "st_mtime_ns": 1791163840057534078,
+      "st_ctime_ns": 1791163840057623245
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_51.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766814,
+      "st_mode": 33188,
+      "st_size": 320985,
+      "st_mtime_ns": 1791163840630299371,
+      "st_ctime_ns": 1791163840630373954
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_52.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766822,
+      "st_mode": 33188,
+      "st_size": 217720,
+      "st_mtime_ns": 1791163841065645887,
+      "st_ctime_ns": 1791163841065683596
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_53.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766825,
+      "st_mode": 33188,
+      "st_size": 555922,
+      "st_mtime_ns": 1791163841763609017,
+      "st_ctime_ns": 1791163841763726100
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_54.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766828,
+      "st_mode": 33188,
+      "st_size": 526352,
+      "st_mtime_ns": 1791163842344107499,
+      "st_ctime_ns": 1791163842344187832
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_55.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766830,
+      "st_mode": 33188,
+      "st_size": 514745,
+      "st_mtime_ns": 1791163842916930005,
+      "st_ctime_ns": 1791163842917008089
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_56.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766832,
+      "st_mode": 33188,
+      "st_size": 251953,
+      "st_mtime_ns": 1791163843317367250,
+      "st_ctime_ns": 1791163843317631292
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_57.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766836,
+      "st_mode": 33188,
+      "st_size": 275365,
+      "st_mtime_ns": 1791163843695407292,
+      "st_ctime_ns": 1791163843695450875
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_6.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766666,
+      "st_mode": 33188,
+      "st_size": 419919,
+      "st_mtime_ns": 1791163816309369970,
+      "st_ctime_ns": 1791163816309483179
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_7.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766672,
+      "st_mode": 33188,
+      "st_size": 368322,
+      "st_mtime_ns": 1791163817105413154,
+      "st_ctime_ns": 1791163817105550030
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_8.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766676,
+      "st_mode": 33188,
+      "st_size": 401912,
+      "st_mtime_ns": 1791163818035009189,
+      "st_ctime_ns": 1791163818035213107
+    },
+    "backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張/LINE_ALBUM_20240513～0517_261005_9.jpg": {
+      "st_dev": 16777229,
+      "st_ino": 131766680,
+      "st_mode": 33188,
+      "st_size": 431216,
+      "st_mtime_ns": 1791163818922514217,
+      "st_ctime_ns": 1791163818922571467
+    }
+  },
+  "git_head": "7eb350a62bb092c7597a01955281f579c128a545",
+  "git_branch": "v43-ab/codex-rev28",
+  "git_index_sha256": "4b381d5411ccd91802fd88e23a8170f5edf061dab89eaf7ab2c04b0abaf74ede",
+  "git_cached_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "dirty_status": " M rev28/ARCHITECTURE.md\n M rev28/CAPABILITY-MATRIX.md\n M rev28/Sources/Rev28Core/Composition/LiveComposition.swift\n M rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift\n M rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift\n M rev28/Sources/Rev28Core/Sensor/FrameCapture.swift\n M rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift\n M rev28/Sources/rev28ctl/main.swift\n M rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift\n M rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift\n M src/line_backup_acceptance/cli.py\n?? 20261009_line_batch_backup_plan.md\n?? backups/\n?? config/\n?? harness-development/automatic-album-batch/\n?? harness-development/native-diagnostics/\n?? harness-development/rev28-child-observation/\n?? harness-development/rev28-context-handoff/\n?? harness-development/rev28-context-publication/\n?? harness-development/rev28-continuation/\n?? harness-development/rev28-count-observation/\n?? harness-development/rev28-download182/\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/acceptance-archive-validation.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/archive_result.py\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/baseline.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/capture-rulebook.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/common.py\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/context-assessment.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/continuation.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/explicit-consent.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/finalize_observation.py\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/fresh-process.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/handoff-validation.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/handoff.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/implementer.result.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/invocation-result.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/invocation-start.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/invoke_once.py\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/loader-result.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/loader.stderr\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/loader.stdout\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/native.stderr\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/native.stdout\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/packet-validation.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/plan-contract.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/plan-review.result.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/plan.md\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/planner.result.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/post-observation-continuation.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/post_invocation.py\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/prepare.py\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/prepare_handoff.py\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/preservation.json\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/progress.md\n?? harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/user-preparation.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/.build/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/.isolated-build/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/.offline-build/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/acceptance-archive-validation.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-legacy-v1-load.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-legacy-v1-load.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-legacy-v1-load.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-synthetic-v3-load.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-synthetic-v3-load.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-synthetic-v3-load.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/archive_acceptance.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/baseline-02-input.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/baseline.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/candidate-03-changes.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/candidate-03-product.diff\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-build-source.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-build.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-build.log\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-ci-refusal.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-ci-refusal.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-ci-refusal.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-foreign-bundle.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-foreign-bundle.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-foreign-bundle.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-refusal-fixture/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-refusals.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-unknown-profile.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-unknown-profile.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-unknown-profile.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-usage.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-usage.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-usage.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/compile_handoff_02.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/context-note.md\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/evidence/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/explicit-public-profile-consent.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/final-preservation.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/finalize_implementation.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-01.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-01.log\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-02-source.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-02.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-02.log\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-final.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-final.log\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-isolated-source.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-isolated.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-isolated.log\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/freeze_plan_02.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite-isolated-source.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite-isolated.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite-isolated.log\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite-source.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite.log\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/handoff-compiler.result.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/handoff-validation.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/handoff.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/handoff.md\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/history/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/implementation-preimages/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/implementation-start.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/implementer-pre-isolation.result.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/implementer.result.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolated-artifacts/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolated-package-proof.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolated-package/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolated-test-root-only.diff\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolated-test-root/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-baseline-03.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-baseline-04.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-contract-03.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-contract-04.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-handoff-04.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-handoff-validation.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-plan-03.md\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-plan-04.diff\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-plan-04.md\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-planner-03.result.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-planner-04.result.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-review-03.result.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-review-04.result.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-crop-drift.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-crop-drift.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-crop-drift.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-epoch-drift.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-epoch-drift.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-epoch-drift.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-fixtures/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-foreign-id.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-foreign-id.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-foreign-id.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-implicit-child.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-implicit-child.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-implicit-child.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-request.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-request.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-request.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-witness.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-witness.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-witness.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-request-effective-confusion.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-request-effective-confusion.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-request-effective-confusion.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-scale-drift.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-scale-drift.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-scale-drift.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-state-drift.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-state-drift.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-state-drift.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-version-mix.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-version-mix.stderr\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-version-mix.stdout\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/offline-loader-verification.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/offline-validation/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan-01-archive.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan-02-review-request.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan-02.diff\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan-contract.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan-review.result.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan.md\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/planner.result.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/prepare.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/prepare_isolated_package.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/prepare_isolation_plan.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/progress.md\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/record_isolation_blocker.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/resume-audit.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/resume_audit.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/review-interruption.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/revise_isolation_plan_04.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/run_check.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/start_implementation.py\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/swift-module-cache/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/swiftpm-cache/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/synthetic-v3-packet/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/synthetic-v3-receipt.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/test-isolation-blocker.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/tmp/\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/validator-build-source.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/validator-build.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/validator-build.log\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/verification-summary.json\n?? harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/verify_offline_routes.py\n?? harness-development/rev28-fresh-repair/.locks/\n?? harness-development/rev28-fresh-repair/TASK-72f1aa0a445a4c27af10491fefe014f2/\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/acceptance-01.received.result.json\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/audit.py\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/check.py\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/events.jsonl\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/after-acceptance-incremental.diff\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-files/\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-preservation.json\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-product.diff\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-source.json\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-01-files/\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/diff-check.log\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/green-identity.json\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/green-identity.log\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/local-closure-validation.json\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/replay-02.log\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/replay-03.log\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/replay.log\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/review-freeze.json\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/state-root-baseline.json\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/finalize_local.py\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/finish_candidate_02.py\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/implementer-01.result.json\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/implementer-02.result.json\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/next-live-observation.md\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/progress.md\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/record_results.py\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/start-snapshot.json\n?? harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/state.json\n?? harness-development/rev28-geometry-refusal/\n?? harness-development/rev28-handoff-delivery/\n?? harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/baseline.json\n?? harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/handoff.json\n?? harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/plan-contract.json\n?? harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/plan.md\n?? harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/planner.result.json\n?? harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/preparation.json\n?? harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/prepare.py\n?? harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/progress.md\n?? harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/verify.py\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/commit-receipt.json\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/commit-verification.json\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/final-schema-check.json\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/implementer.result.json\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/post-publication-preservation.json\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/preservation-baseline.json\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/progress-completed.md\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/publication-receipt.json\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/push-receipt.json\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/remote-readback.json\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/stage-check-attempt-01.json\n?? harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/stage-receipt.json\n?? harness-development/rev28-live-diagnostic/\n?? harness-development/rev28-native-capture/.locks/\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/.build/\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/Package.swift\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/Sources/\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/bind.py\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/check.py\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/events.jsonl\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/build-01.command.json\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/build-01.log\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/capture-01-launch-error.json\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/capture-02.command.json\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/capture-02.log\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/final-preservation.json\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/observation-run/\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/review-freeze.json\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/source-binary-binding.json\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/finalize.py\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/handoff.json\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/handoff.md\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/implementer.result.json\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/plan-contract.json\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/plan.md\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/planner.result.json\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/progress.md\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/start-snapshot.json\n?? harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/state.json\n?? harness-development/rev28-native-inventory/\n?? harness-development/rev28-passive-child-profile/\n?? harness-development/rev28-passive-collector/\n?? harness-development/rev28-project-backup/.locks/\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/backup-result.md\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/config-proposal.json\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/events.jsonl\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/handoff.json\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/handoff.md\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/image_decode\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/image_decode.swift\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/implementer.result.json\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/initialization-decision.md\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/menu_ocr\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/menu_ocr.swift\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/operator.py\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/plan-contract.json\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/plan-review.result.json\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/plan.md\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/planner.result.json\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/prepare_finalization.py\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/prepare_intent.py\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/preservation.py\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/progress.md\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/read_metadata.py\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/record_results.py\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/start-snapshot.json\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/state-proposal.json\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/state.json\n?? harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/verify_download.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/.build/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/.offline-build/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/acceptance-01-archive-validation.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-cli-summary.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project182.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project182.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project182.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project57.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project57.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project57.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/archive_independent_acceptance.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/baseline.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/blocked-checkpoint-delivery.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project182.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project182.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project57.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project57.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/admit.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/admit_continuation.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/archive_role.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/baseline.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/candidate-source-manifest.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/cli_checks.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/content_helpers.literal.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/content_tests.literal.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/deliver.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/diff-project_binding.py.patch\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/diff-test_project_binding.py.patch\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/driver.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/finalize.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/fixture-invalid-date.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/fixture-invalid-date.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/fixture-invalid-date.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/fixture_builder.literal.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/implementer.result.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/literal-product-diffs.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/preimages/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/prepared-fixtures.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-contradiction-refusal.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-contradiction-refusal.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-other-target-contradiction-refusal.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-other-target-contradiction-refusal.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/supplemental-handoff.md\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/swift-fixtures/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/tmp/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/verify_delivery.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-evidence-join-correction.md\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-python.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-python.log\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-swift-focused.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-swift-focused.log\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-loader-build.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-loader-build.log\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-python.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-python.log\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-source-manifest.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-focused.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-focused.log\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-cli-summary.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project182.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project182.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project182.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project57.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project57.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project57.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-count.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-count.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-count.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-date.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-date.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-date.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-usage.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-usage.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-usage.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-python.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-python.log\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-source-manifest.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-swift-focused.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-swift-focused.log\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/check_driver.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/decision.md\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-ARCHITECTURE.md.patch\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-CAPABILITY-MATRIX.md.patch\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-ProjectBackupBinding.swift.patch\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-ProjectBackupBindingTests.swift.patch\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-cli.py.patch\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-project_binding.py.patch\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-test_project_binding.py.patch\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence-finalization-mechanical-note.md\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/execution-baseline-20261009.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/execution-preimages/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-full-swift-source-join.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-isolation-verification.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-preservation-verification.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-source-manifest.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final_evidence.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final_evidence_continuation.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/first-principles-assessment-20261009.md\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-count.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-count.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-count.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-date.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-date.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-date.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-usage.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-usage.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-usage.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/implement-gates-final.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/implementer-final.result.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-test-root/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolation-20261009.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/legacy-fixture-copy-20261009.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/literal-product-diffs.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/offline-loader-source-binding.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/offline-validation/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-02.md\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-contract.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan.md\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/planner-02.result.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/planner-03.result.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/planner.result.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/post-final-root-evidence-concern.md\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_candidate02.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_candidate03.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_handoff.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_review_02.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_review_03.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/read-only-diagnostic.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/reproduce_evidence_join_gap.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/result-20261009.md\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/resume-unrelated-metadata-drift.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/resume_baseline.py\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-legacy-v1.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-legacy-v1.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-legacy-v1.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-real-v3.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-real-v3.stderr\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-real-v3.stdout\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/review-02-preparation.json\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-cache/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/tmp/\n?? harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/verify_cli_and_loader.py\n?? harness-development/rev28-refusal-count/\n?? harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/closure-validation.json\n?? harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/commit-verification.json\n?? harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/git-delivery.json\n?? harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/metadata-validation-learning.json\n?? harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/post-push-preservation.json\n?? harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/previous-root-handoff.md\n?? harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/staged-publication.json\n?? harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/implementer.result.json\n?? harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/progress.md\n?? harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/start-snapshot.json\n?? harness-development/rev28-repair/.locks/\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/audit.py\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/events.jsonl\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/build.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/build.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/focused.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/focused.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/full-suite.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/full-suite.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/preservation.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/replay.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/baseline-durable-fault.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/baseline-durable-fault.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/build.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/build.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/final-record-verification.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/final-verification-summary.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-01.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-01.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-02.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-02.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-03.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-03.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-04.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-04.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/full-suite.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/full-suite.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/patch.diff\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/preservation.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/provenance-command.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/provenance.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/replay-command.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/replay.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/replay.log\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/source-manifest.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/verification-manifest.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/execution.md\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/high-reasoning-review.result.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/implementer-02.result.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/implementer.result.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/progress.md\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/record_advisory_results.py\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/start-snapshot.json\n?? harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/state.json\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/baseline.json\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/commit-receipt.json\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/delivery-receipt.json\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/editing-note.md\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/implementer.result.json\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/post-push-preservation.json\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/pre-push-preservation.json\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/pre-stage-check.json\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/prepare.py\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/progress.md\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/push-receipt.json\n?? harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/stage-receipt.json\n?? harness-development/rev28-system-continuation/\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/.validator-build/\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/acceptance.result.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/assessment.md\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/baseline.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/check_preservation.py\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/fresh-context.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/fresh-process.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/handoff.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/handoff.md\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/history/\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/implementer.result.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/invocation-result.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/invocation-start.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/invoke_once.py\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/native.stderr\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/native.stdout\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/offline-validation/\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/offline-validator.stderr\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/offline-validator.stdout\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/packet-validation.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/plan-contract.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/plan-review-01.result.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/plan-review-02.result.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/plan.md\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/preparation-observations.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/preservation.json\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/progress.md\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/user-correct-target-menu.png\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/user-menu-on-upper-card.png\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/user-selected-album.png\n?? harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/validator-build.log\n?? harness-development/rev28-window-preparation/\n?? rev28/Sources/Rev28Core/Composition/PassiveNativeDiagnostic.swift\n?? rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift\n?? rev28/Sources/Rev28Core/Sensor/ExplicitLineCaptureSelection.swift\n?? rev28/Sources/rev28ctl/PassiveCaptureDiagnostic.swift\n?? rev28/Tests/Rev28CoreTests/ExplicitLineCaptureSelectionTests.swift\n?? rev28/Tests/Rev28CoreTests/PassiveNativeDiagnosticTests.swift\n?? rev28/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift\n?? src/line_backup_acceptance/__pycache__/\n?? src/line_backup_acceptance/project_binding.py\n?? state/\n?? tests/test_project_binding.py\n",
+  "state_revision": 34,
+  "active_writer": null,
+  "context_lock": null,
+  "verified_albums": [
+    {
+      "destinations": [
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張"
+      ],
+      "evidence": "join:harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json:de21e89d00ffc7c6b4356e56e5bb1ef09f8bf0844831a748131f365d8a3375b7",
+      "fingerprint": {
+        "end_date": "2024-05-17",
+        "expected_images": 57,
+        "start_date": "2024-05-13"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "source_kind": "filesystem_verification",
+      "verified_run_id": "RUN-20261004-project-album57-45ee0a78"
+    },
+    {
+      "destinations": [
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張"
+      ],
+      "evidence": "join:harness-development/rev28-download182/TASK-20261009-download182/source-identity-join.json:8724634536886b9181051a87a53a79945430d05274d56c34cd5a61a6f2336937",
+      "fingerprint": {
+        "end_date": "2024-05-10",
+        "expected_images": 182,
+        "start_date": "2024-05-06"
+      },
+      "group_key": "line:jp.naver.line.mac:旻謙允禎成長日記",
+      "source_kind": "filesystem_verification",
+      "verified_run_id": "RUN-20261009-project-album182"
+    }
+  ]
+}

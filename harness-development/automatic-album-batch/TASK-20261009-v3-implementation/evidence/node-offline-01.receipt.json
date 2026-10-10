@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/opt/homebrew/bin/node",
+    "--test",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_cua_adapter.mjs"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "started_at": "2026-10-09T12:41:46.368330+00:00",
+  "ended_at": "2026-10-09T12:41:46.462655+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "env_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src",
+    "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/automatic-album-batch/TASK-20261009-v3-implementation/fixtures",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "explicit_env": {},
+  "stdout_bytes": 705,
+  "stdout_sha256": "4512b5a5e8b537810015b5405a3c4c9b3cdf00023236890baa9a3687dc95fb25",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
