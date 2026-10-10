@@ -1,0 +1,64 @@
+{
+ "append_only": true,
+ "events": [
+  {
+   "binding_hash": "b153c223b9a1b156348efd54824b211b36f316097206d8624184f1bba02bc328",
+   "candidate_hash": "7bd720d313e25c7f1cf38d04eb720e8fa2f151435b7fb49f11971b83f69e666c",
+   "checks_summary": {
+    "FAIL": 1,
+    "NOT_RUN": 1,
+    "PASS": 18
+   },
+   "console_log": "repair-01/results/run-01.console.log",
+   "console_log_sha256": "7c12687ff6a697fd7b85353aaee52be3d55f0f260db92f313729058f484e6891",
+   "count": 1,
+   "event": "repair_candidate_attempt_result",
+   "exit_code": 2,
+   "failing_check": "R17",
+   "failure_detail": "_check_r17 in repair-01/offline_checks.py reads the raw frozen replay/scan-000.ocr.json via the key boxTopLeftSourcePixels; the frozen historical full-frame artifact stores boxTopLeftPixels and requires the documented 2x->source conversion (source = derivative/2). Observed legacy_full_frame_y=None and legacy_ok=false, expected 855.9999997161353. All other R17 sub-assertions passed on the fresh run (crop/derivative byte-exact, transform fields, JPEG content, local transform 4/4, corner fixture returncode 0).",
+   "failure_kind": "check-builder defect (legacy evidence key lookup); product/evaluator core behaviors were not falsified",
+   "information_gain": true,
+   "live_scrolls_used": 0,
+   "minimal_reproduction": "python3 - <<'EOF'\nimport json\nit=[i for i in json.load(open('replay/scan-000.ocr.json'))['items'] if i['text'].startswith('2024/06/02')][0]\nprint(it['boxTopLeftPixels'][1]/2.0)  # 855.99999971613535\nEOF",
+   "not_run_check": "R20",
+   "passing_checks": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R18",
+    "R19"
+   ],
+   "rerun_performed": false,
+   "result": "FAIL",
+   "results_json": "repair-01/run-01/results.json",
+   "results_json_sha256": "7d8b03426098b08668ef2510037c447ac259be1f4368f8fd1bf1d4e963038b05",
+   "run_root": "harness-development/catalog-diagnostic-continuity-replan-20261010/repair-01/run-01",
+   "stop_reason": "Single authorized offline verification consumed (one fixed repair candidate, one offline run). The R17 check-builder defect was found by that run; no parameter/ROI/profile/threshold change, no rerun, and no live input were performed. A conforming 19-PASS evidence set would require a bounded builder fix plus one fresh offline run, which is beyond the consumed authorization."
+  }
+ ],
+ "format": "local-attempt-ledger-1",
+ "note": "Outcome event for the repair attempt whose start is recorded in repair-ledger.json (sha256 a4dedc61b03af3fce805ca9933c6819905b24803df4343f2da3ff1deb5ebc58a, not modified).",
+ "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+ "totals": {
+  "additional_method_slots_used": 2,
+  "authorized_additional_method_slots": 2,
+  "historic_method_attempts": 3,
+  "historic_plus_actual_extension": 5,
+  "live_remaining_budget": 6,
+  "live_scrolls_used": 0,
+  "public_v3_note": "schemas/v3 convergence.meaningful_attempts stays <= 3; the true 3+2 total lives in the ledgers."
+ }
+}

@@ -1,0 +1,9 @@
+{
+  "format": "local-document-schema-check-1",
+  "file": "implementer.result.json",
+  "schema": "/Users/hsiaojohnny/.codex/schemas/v3/result.schema.json",
+  "verdict": "VALID",
+  "errors": [],
+  "sha256": "ac8be0ee9ab9a4cd03e50a718b9cb078f8f8b8d1e532d7cca85a1f5a30b48a11",
+  "interpretation": "Schema shape only; archive evidence is separately captured. No formal controller or LINE E2E acceptance."
+}

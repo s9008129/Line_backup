@@ -1,0 +1,13 @@
+{
+  "format": "local-cleanup-receipt-1",
+  "status": "ARCHIVED",
+  "archive_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup_local_archives/catalog-continuation-20261010T035451Z",
+  "files": 1021,
+  "bytes": 555287414,
+  "archive_files_hashes_and_modes_match": true,
+  "original_implementation_paths_absent": true,
+  "protected_file_count": 266,
+  "protected_content_unchanged": true,
+  "ocr_or_ui_or_e2e_performed": false,
+  "historical_budget_reset": false
+}

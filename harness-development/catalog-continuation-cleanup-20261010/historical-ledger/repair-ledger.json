@@ -1,0 +1,53 @@
+{
+ "append_only": true,
+ "events": [
+  {
+   "authorization_source": "user 2026-10-10 '我授權修復所需的額度' = results/pre-live-replan-01.md section 4: one fixed repair candidate, one offline verification plus one independent pre-live review, then stop; no live input",
+   "candidate_dir": "harness-development/catalog-diagnostic-continuity-replan-20261010/repair-01/",
+   "candidate_files_sha256": {
+    "catalog_diagnostic.py": "650f5ef67d016449205e12ce09ef9b9b3c5fcc50b6610f251dd1385778e41a1c",
+    "input_guard.py": "d22cda202678ea089041659056d01ee58e9b3cff416831b853613e961fb02c0e",
+    "offline_checks.py": "8e03b2a1604c1a58407f61bc910ed4f550132d7cb4dc0cd141955f7b14869d35",
+    "offline_vision.swift": "0575425920939bd6baed4a4e14d84c1a9f5cd481718a29d3c969c5d7e64d909f",
+    "profiles.json": "18bc872d99940de8e010f34cd2a864cb3eebd3f99eb3b3cce018029b26001bb0",
+    "run_offline_once.py": "e8d72860d3cdf6cead08c139c027d05f2ca931fd427494c7620473504bc14e72",
+    "test_catalog_diagnostic.py": "93afd876ef9e4a38fb8f3d5faea5b18c5b6c072633a42588ee77c9de56349cee",
+    "test_input_guard.py": "b50fee16a27e45649f456fb639309413100eb93363b3d2fcdf37694958313459"
+   },
+   "consumed_at": "2026-10-10 before the single repair offline verification run",
+   "contract_sha256": "20121793d6e20731f9d4342ad1c4dd17c454d806cee00d7250aa2c6dd56aa750",
+   "count": 1,
+   "cumulative_method_attempts_with_this_repair": 5,
+   "event": "repair_candidate_attempt_started",
+   "falsifiable_expected_result": "One fresh out-root run emits exactly 24 OCR runs with byte-stable artifacts; offline_checks returns R01-R19 PASS plus R20 NOT_RUN, 0 FAIL; replay PNGs, candidate/ and offline-validation/ hashes stay unchanged; any FAIL is surfaced with exact evidence and stops the attempt without tuning.",
+   "hypothesis": "The repaired local-ROI candidate (6 Vision runs per frame; full-slot RGBA continuity guard; independent selected-indicator structure; separate date/count identity; ordered overlap; fail-closed InputGuard; check-reuse) can reproduce the catalog-diagnostic continuity evidence on the four frozen replay frames without any live input, while preserving scan-003 '相溥' verbatim and never overwriting replay inputs.",
+   "live_remaining_budget": 6,
+   "live_scrolls_used": 0,
+   "preservation_before_sha256": "979640a68de011fe454c090aca47b0a11ad1dceb9556b8e6b120b4a922a0af37",
+   "prior_method_attempts": {
+    "authorized_extension": 1,
+    "extensions_used": 1,
+    "historic": 3
+   },
+   "status": "in_progress"
+  },
+  {
+   "event": "live_slot",
+   "live_session_slot_used": false,
+   "live_session_slots": 1,
+   "reason": "G_LIVE preconditions not met: no independent same-candidate pre-live review receipt; live input is outside this repair authorization.",
+   "remaining_budget": 6,
+   "scroll_calls_used": 0
+  }
+ ],
+ "format": "local-attempt-ledger-1",
+ "note": "Repair-attempt ledger for the frozen repair candidate under repair-01/. The historic results/attempt-ledger.json (3f175c7f...) is NOT modified; this file records the user-authorized repair slot (one fixed candidate, one offline verification, one independent pre-live review; no live input).",
+ "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+ "totals": {
+  "additional_method_slots_used": 2,
+  "authorized_additional_method_slots": 2,
+  "historic_method_attempts": 3,
+  "historic_plus_actual_extension": 5,
+  "public_v3_note": "schemas/v3 convergence.meaningful_attempts stays <= 3; the true 3+2 total lives in the ledgers."
+ }
+}
