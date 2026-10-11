@@ -1,0 +1,190 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261011-line-receipt-recovery",
+  "run_id": "f2099eec-bf4a-4d3e-b0cb-1f66e58a4c12",
+  "role": "IMPLEMENTER",
+  "candidate_fact": "BLOCKED",
+  "validation_fact": "NOT_RUN",
+  "routing_fact": "PLANNER_REPLAN",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "BLOCKED",
+    "CORE_ACCEPTANCE_STATUS": "BLOCKED",
+    "REQUIRED_VERIFICATION_STATUS": "BLOCKED",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "NOT_REQUIRED",
+    "TASK_CLOSURE_STATUS": "REPLAN_REQUIRED"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G_BASELINE",
+      "verdict": "FAIL",
+      "evidence_manifest": "evidence/g-baseline.json"
+    },
+    {
+      "gate_id": "G_RUNNER",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_ADAPTER_OFFLINE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_PRESERVE",
+      "verdict": "BLOCKED",
+      "evidence_manifest": "evidence/g-baseline.json"
+    },
+    {
+      "gate_id": "G_REPORT",
+      "verdict": "PASS",
+      "evidence_manifest": "evidence/report-manifest.json"
+    }
+  ],
+  "evidence_ids": [
+    "E_BASELINE_FAILURE",
+    "E_BASELINE_FAILURE_DETAIL",
+    "E_BASELINE_ATTEMPT_01",
+    "E_REPORT"
+  ],
+  "blocker_fingerprint": "scope-recovery-05:g-baseline:fifo-unmodeled:2026-10-11",
+  "information_gain": true,
+  "stage": "IMPLEMENT",
+  "plan_sha256": "43ebe2d8b940703ff5aa67ccc6f430de5789d976ef6e6776259fe2d85041bea4",
+  "handoff_sha256": "5cbd6be4b27688b5d20efe49e793cc5d264cf6011a43733ec0413d52e53924e6",
+  "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-20261011-line-receipt-recovery",
+      "run_id": "f2099eec-bf4a-4d3e-b0cb-1f66e58a4c12",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_BASELINE_FAILURE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline.json",
+      "bytes": 142531,
+      "sha256": "b8837c5dc8aadccf46e24c25d768ed57fa4dde7e7644e5938448b90e67ef464d",
+      "contract_sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7",
+      "observation": "G_BASELINE FAIL; inventory_complete=false and inventory_count=0 after the scan stopped at a FIFO."
+    },
+    {
+      "task_id": "TASK-20261011-line-receipt-recovery",
+      "run_id": "f2099eec-bf4a-4d3e-b0cb-1f66e58a4c12",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_BASELINE_FAILURE_DETAIL",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline-failure-detail.json",
+      "bytes": 1680,
+      "sha256": "c0ce0019b68df53f72e2b0e6ab2c0e0ac151df2c3dd8e6619c7289ed38a6a005",
+      "contract_sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7",
+      "observation": "Read-only lstat identified the external path as FIFO; its content was not opened or read."
+    },
+    {
+      "task_id": "TASK-20261011-line-receipt-recovery",
+      "run_id": "f2099eec-bf4a-4d3e-b0cb-1f66e58a4c12",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_BASELINE_ATTEMPT_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/implementer-baseline-attempt-01.stderr",
+      "bytes": 1049,
+      "sha256": "327d40c8511455adcbb6dcd376cfd8e0d08404f96916c7e76c24f5846db1a8ec",
+      "contract_sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7",
+      "observation": "First baseline-helper attempt stopped on an undefined local variable before writing its manifest or starting any product command."
+    },
+    {
+      "task_id": "TASK-20261011-line-receipt-recovery",
+      "run_id": "f2099eec-bf4a-4d3e-b0cb-1f66e58a4c12",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_REPORT",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/E2E測試報告.md",
+      "bytes": 21815,
+      "sha256": "168dc950512ab10872447840ca7fbe3ab267f34965e52bd5a6f2639794d0bb5d",
+      "contract_sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7",
+      "observation": "Full local execution record with actual command order, failure evidence, untouched gates, and next decision."
+    },
+    {
+      "task_id": "TASK-20261011-line-receipt-recovery",
+      "run_id": "f2099eec-bf4a-4d3e-b0cb-1f66e58a4c12",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_REPORT_MANIFEST",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/report-manifest.json",
+      "bytes": 17444,
+      "sha256": "34d8dd7011f01dbbd613eea238c7ef699115bba0e9bbbea8bbaf4457cde2cacb",
+      "contract_sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7",
+      "observation": "Local report artifact index; content and file references were read back. This is not native Harness evidence."
+    },
+    {
+      "task_id": "TASK-20261011-line-receipt-recovery",
+      "run_id": "f2099eec-bf4a-4d3e-b0cb-1f66e58a4c12",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_PROGRESS",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/progress.md",
+      "bytes": 5604,
+      "sha256": "508eb5a96812d8f5a818eb8e71d9761f0b00e4e4776cb494abeb9875fc8a4ca3",
+      "contract_sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7",
+      "observation": "Progress record distinguishes local baseline-helper attempts from the unused product-validation attempt."
+    }
+  ],
+  "plan_contract_sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7",
+  "analysis": {
+    "facts": [
+      "The fresh baseline gate failed because the full workspace scan encountered a filesystem FIFO outside the allowed CON; the scanner recorded zero complete inventory entries.",
+      "The FIFO was identified by lstat as mode 0o10644, with stat.S_ISFIFO true. Its content was not opened or read.",
+      "The existing historical manifest has no entry for this path, and root Git queries reported no tracked or porcelain entry for it.",
+      "The fixed Python and Node executables, source/test hashes, state/config/GUI-ledger hashes, and four incident-receipt hashes matched the values recorded in the failed baseline receipt.",
+      "No runner preflight, runner self-test, Node syntax check, Node test suite, LINE interaction, download, or state/config/ledger write occurred.",
+      "The parent LIVE_CLASSIFIER_CHOOSER remains at two prior attempts; this turn used zero candidate product attempts."
+    ],
+    "inferences": [
+      "The prior Git-derived manifest does not cover every filesystem object in this workspace; a new reviewed Plan must define preservation semantics for known special files and assign a new immutable baseline receipt path.",
+      "The 98,513 historical-path-missing messages in the failed receipt follow from the inventory function returning no records after its first special-file exception; they do not establish that those paths were deleted."
+    ],
+    "unknowns": [
+      "A complete hash/type/directory-entry inventory and post-run filesystem preservation comparison were not established.",
+      "The reason Git emitted no path-scoped entry for the untracked FIFO is not established.",
+      "Adapter syntax and tests remain unverified; native Harness admission and result-schema validation remain NOT_RUN."
+    ],
+    "evidence": [
+      "evidence/g-baseline.json (142531 bytes; SHA-256 b8837c5dc8aadccf46e24c25d768ed57fa4dde7e7644e5938448b90e67ef464d)",
+      "evidence/g-baseline-failure-detail.json (1680 bytes; SHA-256 c0ce0019b68df53f72e2b0e6ab2c0e0ac151df2c3dd8e6619c7289ed38a6a005)",
+      "E2E測試報告.md (21815 bytes; SHA-256 168dc950512ab10872447840ca7fbe3ab267f34965e52bd5a6f2639794d0bb5d)",
+      "evidence/report-manifest.json (17444 bytes; SHA-256 34d8dd7011f01dbbd613eea238c7ef699115bba0e9bbbea8bbaf4457cde2cacb)"
+    ],
+    "confidence": "High for the recorded FIFO and local gate failure; no conclusion is made about full workspace preservation or adapter behavior.",
+    "dependencies": {
+      "G_BASELINE": "PREREQUISITE_BLOCKED",
+      "G_RUNNER": "PREREQUISITE_BLOCKED",
+      "G_ADAPTER_OFFLINE": "PREREQUISITE_BLOCKED",
+      "G_PRESERVE": "PREREQUISITE_BLOCKED",
+      "G_REPORT": "PREREQUISITE_SATISFIED"
+    }
+  },
+  "handoff_summary": "G_BASELINE failed before runner implementation: the full workspace scan reached an external FIFO that the current baseline helper cannot represent. The FIFO is preserved and was not read. The failed receipt and report are durable; runner and adapter checks remain NOT_RUN, and G_PRESERVE is blocked. A reviewed Planner replan must define safe FIFO metadata capture/comparison and a new baseline evidence ID while preserving the current FAIL receipt. No LINE foreground is needed for this local blocker.",
+  "needs_human": true,
+  "human_decisions": [
+    {
+      "id": "PLAN_FIFO_BASELINE_RECOVERY",
+      "question": "Should I prepare a new reviewed Plan that defines how to capture and compare this FIFO by metadata and uses a new baseline evidence ID?",
+      "options": [
+        "Prepare the new reviewed Plan",
+        "Keep this continuation blocked"
+      ],
+      "recommendation": "Prepare a new reviewed Plan that preserves the FIFO without opening it and keeps the existing failed receipt immutable."
+    }
+  ],
+  "convergence": {
+    "meaningful_attempts": 2,
+    "consecutive_no_progress": 0,
+    "last_attempt": "The corrected second baseline scan identified an external FIFO absent from the historical manifest and stopped before any runner or product check.",
+    "information_gain": true,
+    "stuck": false
+  }
+}

@@ -1,6 +1,6 @@
 {
   "kind": "FROZEN_FUTURE_IMPLEMENTATION_CHECKS_NOT_EXECUTED",
-  "contract_sha256": "6b2076527f343e895f0a9798ffe4c8b85f4e855b2afcdd19d2de168ba1f0f7a0",
+  "contract_sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7",
   "executables": [
     {
       "path": "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",

@@ -90,9 +90,9 @@
     "log_bytes": 134217728
   },
   "workflow_policy": {
-    "plan_review_required": false,
+    "plan_review_required": true,
     "independent_acceptance_required": false,
-    "max_parallel_read_only_helpers": 0,
+    "max_parallel_read_only_helpers": 3,
     "max_parallel_writers": 0,
     "handoff_review_required": false
   }

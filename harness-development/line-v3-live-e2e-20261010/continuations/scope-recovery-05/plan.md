@@ -4,15 +4,21 @@ Task：TASK-20261011-line-receipt-recovery；parent task：TASK-20261010-line-v3
 Project root 固定為 `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup`。
 CON 固定為 `harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05`。所有相對路徑從 project root 解析。
 
+## Plan Amendment 01 — 2026-10-11（使用者指示）
+
+本修訂將 workflow policy 的唯讀平行 helper 上限由 0 改為最多 3，並要求先獨立檢視本 amendment，再交接 IMPLEMENT；writer 維持 0。使用者在看到原 Plan/Handoff 的凍結值後明確同意此修訂。四個總 session slots 中保留 root 一席，因此本環境最多同時使用三個 helper。Helper 只回報唯讀事實／分析，不得寫檔、執行產品檢查、操作 LINE、審核 gates、改變範圍／契約、commit/push 或啟動巢狀代理；root 是唯一計畫、契約、實作、證據及結果作者。這次修訂不擴大 allowed_paths、不改任何 gate、產品行為、驗收或能力政策。
+
+原文件交付階段的 Plan、Handoff、user-decisions、document-delivery-policy、freeze、結果及 manifest 均保留為當時的歷史證據；其中 helper=0 的記錄不代表本次使用者修訂後的上限。原始發布 HEAD `3d8539a...` 是文件階段快照。這輪最初唯讀核對的 HEAD 是 `f969c817975396bea28e7315dec1a2aec5c6a312`、branch `v43-ab/codex-rev28`、index 空；工作區包含 11 個 tracked 修改、68,483 個 untracked 路徑及 3,753 個 ignored 路徑。這些盤點不是 G_BASELINE PASS；IMPLEMENTER 仍須在工具實作前重新完成自身 fresh baseline。Amendment 審查只作本地 role evidence；沒有 Harness controller stage packet 或 native validator，不能聲稱 native admission/schema PASS。
+
 ## 1. 目標、現況與授權
 
 使用者選定本輪止於「工具修復與 adapter 驗證」：保留四份範圍外收據原件，修復本地檢查工具，完成目前候選 adapter 的離線驗證，產生報告交回 Planner。本輪分類 QUICK，因產品維持唯讀，修改限於可逆的本地檢查工具與證據包；不繼承 parent 真實下載流程的 CRITICAL 執行範圍。
 
-本計画不需要獨立 Plan Review 或 Handoff Review。parent 的兩本 E2E 與獨立 Acceptance 要求完整保留，本輪局部恢復不要求獨立 Acceptance。Implementation workflow 的 helper/writer 上限均為 0，root 串行。
+本地局部恢復需要對本次使用者要求的 Plan Amendment 01 做一次獨立唯讀契約檢視；無需 Handoff Review。parent 的兩本 E2E 與獨立 Acceptance 要求完整保留，本輪局部恢復不要求獨立 Acceptance。IMPLEMENT 最多 3 名唯讀 helpers、0 writers；root 持有全部寫入和決策權。原 QUICK 分類及五項 IMPLEMENT gates 不變。
 
-使用者另已明確授權本次「計畫與交接文件落檔 → 一名 GPT-6 luna 唯讀梳理上下文並撰寫詳細提交訊息 → add、commit、正常 push」。這是文件交付階段的獨立授權：helper 不審查、不改 Plan、不寫檔、不執行產品、GUI 或 Git mutation。此文件階段的一名 helper 不改變後續 IMPLEMENT 的 0-helper/0-writer 契約。
+使用者另已明確授權本次「計畫與交接文件落檔 → 一名 GPT-6 luna 唯讀梳理上下文並撰寫詳細提交訊息 → add、commit、正常 push」。這是已完成的文件交付階段；該 helper 不審查、不改 Plan、不寫檔、不執行產品、GUI 或 Git mutation。其當時的 0-helper implementation 決策已被 Plan Amendment 01 明確更新；本輪不沿用原文件階段的 helper 上限。
 
-現況 HEAD 為 `3d8539a8447a3bfee08f493c4d2322772422c5d3`，branch 為 `v43-ab/codex-rev28`，index 空。該 HEAD 已提交候選 adapter 與事故文件；`tests/test_cua_adapter.mjs` 仍含既有未提交修改。四份事故原件、adapter、tests、state/config 與事故記錄的 hash 已唯讀核對一致；這不代表產品 syntax/test PASS。State revision 35、2 VERIFIED，state hash `455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6`，config hash `5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362`。Backup 目前列出 239 個 regular files；本文件階段的內容 hash 保全不是照片解碼／完整下載 E2E 驗收。
+文件階段基線曾觀察 HEAD `3d8539a8447a3bfee08f493c4d2322772422c5d3`、branch `v43-ab/codex-rev28`、index 空，並核對 adapter、tests、state/config 與事故原件 hash；這段歷史觀察不代表目前 G_BASELINE 或產品 syntax/test PASS。當時 state revision 35、2 VERIFIED，state hash `455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6`，config hash `5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362`。當時 backup inventory 列出 239 個 regular files；內容 hash 保全不是照片解碼／完整下載 E2E 驗收。
 
 本次發布前遠端 `origin/v43-ab/codex-rev28` 為 `b06b47b717da1aa9ae63e70d6d86c24d34282bba`，正常 push 將一併送出既有事故 checkpoint `3d8539a` 和新的文件提交。新 commit 只包含本 CON 的明列文件；不得 stage 既有 dirty/untracked 工作、產品測試或四份範圍外原件。
 
