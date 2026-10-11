@@ -1,0 +1,248 @@
+{
+  "format": "ML07_ATTEMPT_LEDGER_DRAFT_V1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "continuation": "minimal-live-07",
+  "historical_root_issue": {
+    "id": "LIVE_CLASSIFIER_CHOOSER",
+    "previous_consumed": 3,
+    "authorized_extension_collections": 1,
+    "extension_started": false,
+    "cumulative_consumed": 3
+  },
+  "local_evidence_tool_iteration": {
+    "formal_ids_consumed": [
+      {
+        "epoch": "e01",
+        "check_id": "E01-evidence-policy",
+        "attempt": 1,
+        "verdict": "PASS",
+        "receipt": "epochs/e01/evidence/checks/E01-evidence-policy.receipt.json",
+        "exit_code": 0,
+        "tests": 8
+      },
+      {
+        "epoch": "e01",
+        "check_id": "E02-runner-selftest",
+        "attempt": 1,
+        "verdict": "PASS",
+        "receipt": "epochs/e01/evidence/checks/E02-runner-selftest.receipt.json",
+        "exit_code": 0,
+        "tests": 3
+      },
+      {
+        "epoch": "e01",
+        "check_id": "B01-baseline-pair",
+        "attempt": 1,
+        "verdict": "FAIL",
+        "receipt": "epochs/e01/evidence/checks/B01-baseline-pair.receipt.json",
+        "exit_code": 1,
+        "root_issue_attempt": 1
+      }
+    ],
+    "formal_ids_consumed_correction": {
+      "recorded_at": "2026-10-11",
+      "reason": "The earlier draft ledger was stale; immutable e01 receipts show all three formal IDs were launched and consumed. The original draft entries below remain unchanged as historical attempts.",
+      "e01_receipts_sha256": {
+        "E01-evidence-policy": "b5bfc7544cb818971ed256eb9a4dfb8d68acb9fd7b94ab660dc003db668ddaf6",
+        "E02-runner-selftest": "4532103ebd9c78846ed008535960fb9b8de8dc524f29dbefcf1d95f2a6802c6a",
+        "B01-baseline-pair": "36fda55f067f45f17d18b7d8c25ee41d3d58f536f4159c6740df483d9eea95ac"
+      }
+    },
+    "draft_runs": [
+      {
+        "id": "draft-e01-01",
+        "argv": ["python3", "-B", "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/checks/test_evidence_policy.py"],
+        "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+        "exit_code": 1,
+        "tests": 3,
+        "errors": 1,
+        "error": "OSError: AF_UNIX path too long",
+        "source_sha256_at_run": null,
+        "new_information": "Fixture socket absolute pathname exceeds the macOS Unix socket path limit; scanner was not implicated."
+      },
+      {
+        "id": "draft-e01-02",
+        "argv": ["python3", "-B", "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/checks/test_evidence_policy.py"],
+        "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+        "exit_code": 0,
+        "tests": 3,
+        "errors": 0,
+        "new_information": "Relative fixture socket path permits actual scanner special-object test; all three current draft tests pass."
+      },
+      {
+        "id": "draft-e01-03",
+        "argv": ["python3", "-B", "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/checks/test_evidence_policy.py"],
+        "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+        "exit_code": 0,
+        "tests": 3,
+        "errors": 0,
+        "source_sha256_at_run": "9bf23fd339c4e4d101fb1ea1a873da608b841c87350abbb40d403e6d00a3e6b2",
+        "evidence": "evidence/draft-e01-second-pass.json"
+      },
+      {
+        "id": "draft-e02-01",
+        "argv": ["python3", "-B", "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/checks/test_run_command.py"],
+        "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+        "exit_code": 1,
+        "tests": 3,
+        "errors": 1,
+        "skipped": 1,
+        "error": "Expected FileExistsError, observed RuntimeError: OUTPUT_POLICY:CREATE_ONCE_CONFLICT:checks/fixture-one.claim.json",
+        "new_information": "Runner refuses replay at policy prewrite before O_EXCL, leaving the consumed claim intact; test expectation was wrong."
+      },
+      {
+        "id": "draft-e02-02",
+        "argv": ["python3", "-B", "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/checks/test_run_command.py"],
+        "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+        "exit_code": 0,
+        "tests": 3,
+        "errors": 0,
+        "skipped": 1,
+        "new_information": "Launch failure leaves a consumed claim and runner outputs; real child timeout, cap and nonzero exit are reaped. Fixed-spec preflight case remains skipped until materialization."
+      },
+      {
+        "id": "draft-e01-04",
+        "argv": ["python3", "-B", "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/checks/test_evidence_policy.py"],
+        "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+        "exit_code": 0,
+        "tests": 7,
+        "errors": 0,
+        "source_sha256_at_run": null,
+        "evidence": "tool-observed only; independent raw output not persisted",
+        "new_information": "Real scanner, publisher, dynamic registration, canonical receipt, ledger chain and partial scan fixtures passed before dependency format test was added."
+      },
+      {
+        "id": "dependency-preparation-01",
+        "argv": ["/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13", "-B", "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/prepare_dependencies.py"],
+        "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+        "exit_code": 0,
+        "evidence": "epochs/e01/runtime/dependency-install-observation.json",
+        "new_information": "Seven exact wheels were verified and installed into e01 runtime only; 197 installed namespace entries frozen in observation. Formal source and output-policy freeze still pending."
+      },
+      {
+        "id": "draft-e01-05",
+        "argv": ["/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13", "-B", "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/checks/test_evidence_policy.py"],
+        "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+        "exit_code": 0,
+        "tests": 8,
+        "errors": 0,
+        "source_sha256_at_run": "b45927851a40b0e9f704f20e4b388ec44b57cdbb264fa5b2608457b2b743e6da",
+        "evidence": "evidence/draft-e01-current-pass.json",
+        "new_information": "The fixed dependency root loads true Draft202012Validator and Registry; date/date-time formats are registered and actual state plus negative schema cases behave as required."
+      },
+      {
+        "id": "draft-e02-family-01",
+        "argv": ["/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13", "-B", "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/run_draft_checks.py"],
+        "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+        "exit_code": 0,
+        "tests": 13,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "formal_id": null,
+        "formal_claim_created": false,
+        "evidence": "evidence/draft-family-source-01.json",
+        "evidence_sha256": "1c8c80f6d8d8caa4cb775ac5d91b30199a77ee2b33203534a6bae3cf5ab64d8b",
+        "new_information": "Known FIFO path/full identity normalization and exact e02 baseline reference fixtures pass; fixed runner rejects missing/drifted family and unknown ID."
+      },
+      {
+        "id": "draft-e02-family-02",
+        "argv": ["/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13", "-B", "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/run_draft_checks.py"],
+        "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+        "exit_code": 0,
+        "tests": 13,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "formal_id": null,
+        "formal_claim_created": false,
+        "evidence": "evidence/draft-family-source-02.json",
+        "evidence_sha256": "ec2db867b2e715d594976a00f3dd1c8bfc6fba642bc8e8e0f4c18ea75a99f415",
+        "new_information": "Latest draft suite passes after production-family output and freeze-claim path declarations; still no formal ID."
+      },
+      {
+        "id": "dependency-preparation-e02-01",
+        "argv": ["/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13", "-B", "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/prepare_dependencies.py", "e02"],
+        "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+        "exit_code": 0,
+        "installed_entries": 197,
+        "manifest": "epochs/e02/runtime/dependency-input-manifest.json",
+        "manifest_sha256": "4590d9837ec6289f84bc933f2c7037e79213e7722a47e1676b5a63e7c2e34692",
+        "observation": "epochs/e02/runtime/dependency-install-observation.json",
+        "observation_sha256": "df2c7c3ad95ba68c1fa0c6e94c7d0223107e550925bcde815c050779a73d6354",
+        "new_information": "The exact local pinned wheels install successfully under isolated no-index pip; receipt awaits frozen e02 output policy."
+      }
+    ],
+    "root_issue_meaningful_attempts_this_result": 1,
+    "consecutive_no_progress": 0,
+    "closer": true,
+    "next_failure_boundary": "Historical snapshot only: before e02 materializer/source freeze, the explicit user-named root codex-session input was found absent from the original namespace anchor. This was superseded by later reviewed recovery and must not be read as current status."
+  },
+  "native_controller": "READINESS_EXIT_1_RUNTIME_MISSING; NATIVE_VALIDATION_NOT_RUN",
+  "planner_handoff": "NOT_SUBMITTED_YET",
+  "final_implementation_stop": {
+    "status": "BLOCKED_DIAGNOSTIC_TRUNCATED",
+    "epoch": "e03",
+    "e03_formal_ids_consumed": 0,
+    "materialization_performed": false,
+    "dependency_finalization_receipt_published": false,
+    "formal_gate_pass": false,
+    "meaningful_root_issue_attempt_count": "UNKNOWN beyond explicitly verified e01 B01 attempt 1",
+    "historical_collection_extension": {
+      "previous_consumed": 3,
+      "authorized_extension": 1,
+      "extension_started": false,
+      "cumulative_consumed": 3
+    },
+    "supported_preflight": {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "-B",
+        "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/prepare_epoch.py",
+        "e03",
+        "preflight"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "exit_code": 0,
+      "PYTHONNOUSERSITE": "not set",
+      "PYTHONDONTWRITEBYTECODE": "not set",
+      "overall_verdict": "BLOCKED",
+      "stdout_tokens_reported": 53189,
+      "tool_return_limit_tokens": 6000,
+      "complete_output_persisted": false,
+      "problem_distribution": "UNKNOWN",
+      "scan_1_and_2": {
+        "complete": true,
+        "records_each": 129613,
+        "errors_or_timeouts": 0,
+        "matching_records_sha256": "e7abe757b4c4d4876037402f799f480bf53d7ae68c56c6d6f93ab9416134e995"
+      },
+      "dependency_pending_artifacts": 172
+    },
+    "earlier_wrong_cwd_preflight": {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "-B",
+        "tools/prepare_epoch.py",
+        "e03",
+        "preflight"
+      ],
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07",
+      "exit_code": 1,
+      "error": "RuntimeError: WRONG_LOCATION_OR_EPOCH",
+      "formal_ids_consumed": 0
+    },
+    "known_prior_read_only_invocation_mistakes": 4,
+    "draft_test_final": {
+      "path": "evidence/draft-e03-readiness-03.json",
+      "tests_run": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "formal_claim_created": false
+    },
+    "product_implementation": "NOT_DONE",
+    "live_LINE_or_CUA": "NOT_RUN",
+    "next_action": "Do not retry the preflight or create e04. A Planner must propose and review a bounded resolution for the incomplete diagnostic/reconciliation, then continue only within the reviewed stop rules."
+  }
+}

@@ -1,0 +1,201 @@
+{
+  "backup_tree_metadata": {
+    "counts": {
+      "dirs": 3,
+      "files": 239,
+      "other": 0,
+      "symlinks": 0
+    },
+    "metadata_sha256": "b2d2734cf3075c487f489ab6c4f8a6c2f3757a0657c069cd29ad98da1cfeab6d",
+    "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/backups/旻謙允禎成長日記"
+  },
+  "branch": "v43-ab/codex-rev28",
+  "cached_diff": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "captured_at_utc": "2026-10-11T06:08:36.874000+00:00",
+  "format": "ML07_PREWRITE_ANCHOR_V1",
+  "head": "0362d3e246d7a06b961f77ed345231992b4be595",
+  "index": {
+    "bytes": 5105015,
+    "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.git/index",
+    "sha256": "c8f4b91cdd1206f257272742775f123585072a5cccc00726778e1772073d24f5"
+  },
+  "protected": [
+    {
+      "bytes": 384,
+      "ctime_ns": 1791118732117385376,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 131735394,
+      "mode": 33188,
+      "mtime_ns": 1791118732117385376,
+      "path": "config/line_backup_config.json",
+      "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+      "size": 384
+    },
+    {
+      "bytes": 252115,
+      "ctime_ns": 1791626450616705861,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 134297409,
+      "mode": 33152,
+      "mtime_ns": 1791626450616427819,
+      "path": "state/backup_state.json",
+      "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+      "size": 252115
+    },
+    {
+      "bytes": 0,
+      "ctime_ns": 1791118732117831127,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 131735395,
+      "mode": 33188,
+      "mtime_ns": 1791118732117812793,
+      "path": "state/.line-backup-state.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "exists": false,
+      "path": "state/.line-backup-v3.tmp"
+    },
+    {
+      "bytes": 123,
+      "ctime_ns": 1791640412806550185,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 134431321,
+      "mode": 33188,
+      "mtime_ns": 1791640412806550185,
+      "path": "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+      "sha256": "92bab0cf122871b42f3db62af956289b62fbf4e279219766a8850b61f20e135f",
+      "size": 123
+    },
+    {
+      "exists": false,
+      "path": "harness-development/line-v3-live-e2e-20261010/.gui-ledger-v3.tmp"
+    },
+    {
+      "bytes": 57670,
+      "ctime_ns": 1791692838363955796,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 134598353,
+      "mode": 33188,
+      "mtime_ns": 1791692838363955796,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/plan.md",
+      "sha256": "57090d3af4ea0075b23d40c6733e7e094a757ed3b8f0969e91b48a0f8da94cb8",
+      "size": 57670
+    },
+    {
+      "bytes": 33962,
+      "ctime_ns": 1791692838364408172,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 134599496,
+      "mode": 33188,
+      "mtime_ns": 1791692838364408172,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/handoff.md",
+      "sha256": "22803c91fcbcbfd6943bd46bcfab8e8364a08e6e492fa71e2cbb88fd274ed3eb",
+      "size": 33962
+    },
+    {
+      "bytes": 6044,
+      "ctime_ns": 1791610895411737259,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 134164529,
+      "mode": 33188,
+      "mtime_ns": 1791610895411737259,
+      "path": "AGENTS.md",
+      "sha256": "96f0576057855764462ac605a5fe8414a5a77097b644c77bbbaaf4976277414b",
+      "size": 6044
+    },
+    {
+      "bytes": 42257,
+      "ctime_ns": 1791698654912104224,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 134623145,
+      "mode": 33188,
+      "mtime_ns": 1791698654912104224,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/plan.md",
+      "sha256": "0d027dff633344fa3e05b0667b2d21e087eeec10006927f6bbe2a93ffe5df429",
+      "size": 42257
+    },
+    {
+      "bytes": 33280,
+      "ctime_ns": 1791698654912378433,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 134623146,
+      "mode": 33188,
+      "mtime_ns": 1791698654912378433,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/handoff.md",
+      "sha256": "fd5c059759a8eae9d4c8847d1516ab8a24e737b67cc27c9c7ff18bbc629410b3",
+      "size": 33280
+    }
+  ],
+  "run_namespace_before_anchor": [
+    {
+      "bytes": 2878,
+      "ctime_ns": 1791698779992828409,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 134623486,
+      "mode": 33188,
+      "mtime_ns": 1791698779992828409,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/commit-message.txt",
+      "sha256": "22771cfcb6d7dabb6ad5bdfd5766c17a208c54e602adc83489669c28a5a711b1",
+      "size": 2878
+    },
+    {
+      "ctime_ns": 1791698915992845341,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 134623809,
+      "mode": 16832,
+      "mtime_ns": 1791698915992845341,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/evidence",
+      "size": 64
+    },
+    {
+      "bytes": 33280,
+      "ctime_ns": 1791698654912378433,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 134623146,
+      "mode": 33188,
+      "mtime_ns": 1791698654912378433,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/handoff.md",
+      "sha256": "fd5c059759a8eae9d4c8847d1516ab8a24e737b67cc27c9c7ff18bbc629410b3",
+      "size": 33280
+    },
+    {
+      "bytes": 42257,
+      "ctime_ns": 1791698654912104224,
+      "dev": 16777229,
+      "exists": true,
+      "ino": 134623145,
+      "mode": 33188,
+      "mtime_ns": 1791698654912104224,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/plan.md",
+      "sha256": "0d027dff633344fa3e05b0667b2d21e087eeec10006927f6bbe2a93ffe5df429",
+      "size": 42257
+    }
+  ],
+  "scope": "Git/index/dirty diff/protected content and backup metadata; not full workspace content baseline",
+  "status_z": {
+    "bytes": 11966300,
+    "entry_count": 68622,
+    "sha256": "3fe6b95c698e82ac73d8d6f6eac4a91b337e838740ab6c4f4d3e528645d017e9"
+  },
+  "tracked_diff": {
+    "bytes": 84931,
+    "sha256": "b03fed01d169ee86796ccc3d669198f09a1fcacce9161c0c2ed2a8cd6b9527c9"
+  }
+}

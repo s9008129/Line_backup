@@ -1,0 +1,176 @@
+{
+  "format": "ML07_FINAL_PARTIAL_IMPLEMENTATION_EVIDENCE_MANIFEST_V1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "status": "PARTIAL_IMPLEMENTATION_BLOCKED",
+  "manifest_scope": "References preserved evidence; does not claim a complete source freeze, complete raw preflight output, formal E03 gate, product completion, or independent Acceptance.",
+  "task_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07",
+  "entries": [
+    {
+      "path": "E2E測試報告.md",
+      "bytes": 21210,
+      "sha256": "cd2ae6302f9deaa7856be36c32e599b730d13a2c2f8d27ba6e7255250827ffe6",
+      "role": "current status and preserved chronology"
+    },
+    {
+      "path": "progress.md",
+      "bytes": 3895,
+      "sha256": "3925bdc74bf794cc368d2279b74942aec9e6bb6886d2c4bd06ad5c9e03cc47c5",
+      "role": "plain-language stop and next-step record"
+    },
+    {
+      "path": "implementation-only-handoff/implementer.result.json",
+      "bytes": 7524,
+      "sha256": "3c7824eb9cb1b8074560ca7e1e80b5301ef02c4f7d2dafdbca743af891fa35a4",
+      "role": "task-local format-3-shaped result; run_id null and native validation NOT_RUN"
+    },
+    {
+      "path": "evidence/final-stop-tail.json",
+      "bytes": 2666,
+      "sha256": "2206a8885ebe8e5560a7c989e69413f5b4b8fc76e4195d231142f8f2b447566e",
+      "role": "explicit stop-tail record; not a formal tail audit"
+    },
+    {
+      "path": "evidence/attempt-ledger-draft.json",
+      "bytes": 12267,
+      "sha256": "08805093783bcc5ecd09a6b9c28e14d27ed8c6b2372e352d01d54ae9dd38c1af",
+      "role": "formal-ID history, attempt unknowns, and final stop facts"
+    },
+    {
+      "path": "evidence/draft-e03-readiness-03.json",
+      "bytes": 7444,
+      "sha256": "5131aec5e5df1fe179082328fd88dcd708285739e4e950366c00ebfed9c91ff9",
+      "role": "bounded summary of E03 preflight with truncated-output limitation"
+    },
+    {
+      "path": "implementation-only-handoff/handoff.md",
+      "bytes": 13663,
+      "sha256": "9165435354bb982d6fd906f4dc9075d5b6222ef08dc0658698115f9001a78a85",
+      "role": "next-agent prompt and detailed handoff"
+    },
+    {
+      "path": "implementation-only-handoff/implementation-plan.md",
+      "bytes": 13098,
+      "sha256": "29d0a9844c7964f612df24086efc82b66a4037b20760d24f1ae8e4474c1c6ff1",
+      "role": "reviewed implementation-only plan; preserved unchanged"
+    },
+    {
+      "path": "implementation-only-handoff/plan-contract.json",
+      "bytes": 11063,
+      "sha256": "71dcb33bfa1ec7c4f06ac3182403a4687fc08b4dcf6d2f1da43868be5a63822b",
+      "role": "reviewed implementation-only machine contract"
+    },
+    {
+      "path": "implementation-only-handoff/compiled-handoff.json",
+      "bytes": 11063,
+      "sha256": "71dcb33bfa1ec7c4f06ac3182403a4687fc08b4dcf6d2f1da43868be5a63822b",
+      "role": "exact byte copy of reviewed overlay contract"
+    },
+    {
+      "path": "evidence/overlay-plan-review-06.json",
+      "bytes": 1786,
+      "sha256": "a4dab38cd971b1d1a1e764ae8974cfc76ed7aa581d89eee1aa4314c354f1e8de",
+      "role": "C task-local read-only review; not Acceptance"
+    },
+    {
+      "path": "replan-amendment-06.md",
+      "bytes": 4314,
+      "sha256": "d2db592f85973e2e25ecdcb08e58158d385811c1efc8f4453ad4fbe2e9e3d3a4",
+      "role": "approved implementation-only scope amendment"
+    },
+    {
+      "path": "evidence/draft-e03-readiness-01.json",
+      "bytes": 7346,
+      "sha256": "becbacb18c23864b0a20a3c82c9165fb899c78c6899f6f3bdb3978fc13bf6046",
+      "role": "retained 16-case draft result"
+    },
+    {
+      "path": "evidence/draft-e03-family-binding-01.json",
+      "bytes": 4467,
+      "sha256": "44d75c927e5cee12c71b648b67d414c04ff116f56f22f66fcb10a006a187bb57",
+      "role": "retained failing 17-case draft fixture result"
+    },
+    {
+      "path": "evidence/draft-e03-family-binding-02.json",
+      "bytes": 3757,
+      "sha256": "d826db4df650388361e593f69c072640ab21552625a54e9849ca961270169d02",
+      "role": "retained passing 17-case draft fixture result"
+    },
+    {
+      "path": "evidence/draft-e03-rootlog-01.json",
+      "bytes": 1929,
+      "sha256": "2bfb1b01f7284a71c0d2586c73b23aa2df7cb29cb90b053a28526239fac7566d",
+      "role": "root-log exact path create/modify positive and unknown sibling negative fixtures"
+    },
+    {
+      "path": "epochs/e01/evidence/checks/E01-evidence-policy.receipt.json",
+      "sha256": "b5bfc7544cb818971ed256eb9a4dfb8d68acb9fd7b94ab660dc003db668ddaf6",
+      "role": "immutable formal e01 PASS; 8 tests"
+    },
+    {
+      "path": "epochs/e01/evidence/checks/E02-runner-selftest.receipt.json",
+      "sha256": "4532103ebd9c78846ed008535960fb9b8de8dc524f29dbefcf1d95f2a6802c6a",
+      "role": "immutable formal e01 PASS; 3 tests"
+    },
+    {
+      "path": "epochs/e01/evidence/checks/B01-baseline-pair.receipt.json",
+      "sha256": "36fda55f067f45f17d18b7d8c25ee41d3d58f536f4159c6740df483d9eea95ac",
+      "role": "immutable formal e01 FAIL; FIFO identity representation mismatch"
+    },
+    {
+      "path": "epochs/e02/runtime/dependency-install-observation.json",
+      "sha256": "df2c7c3ad95ba68c1fa0c6e94c7d0223107e550925bcde815c050779a73d6354",
+      "role": "pinned local e02 dependency install observation; 197 installed-tree entries"
+    },
+    {
+      "path": "epochs/e03/runtime/dependency-install-observation.json",
+      "sha256": "f66d40cad4b819d0b64bb2c114ae22a9eebd73f96ac6b04766e2529bed1d83ad",
+      "role": "E03 pinned dependency observation; receipt not finalized"
+    },
+    {
+      "path": "tools/prepare_epoch.py",
+      "sha256": "157975938acae1fd1a9ce847444ec0a40788cf2d03222afd05b544da5af7308a",
+      "role": "current E03 preflight producer source as reported by the actual run"
+    },
+    {
+      "path": "tools/inventory_pair.py",
+      "sha256": "dec81b99ef618a8ae3992e874cd65daec35f84ee97100670f36f98d471a783cb",
+      "role": "current inventory comparison source as reported by the actual run"
+    },
+    {
+      "path": "checks/test_evidence_policy.py",
+      "sha256": "bf32b080e319038170b7b8384a586d69e888931b7e45259f0114bd1bc4133a90",
+      "role": "focused draft test source after the final 15/15 run"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/代理協作開發紀錄.md",
+      "bytes": 40722,
+      "sha256": "4e1e28f93a0db876a2eb4a2138d022389fbace43b9df9a0613414fe3f6ccb31c",
+      "role": "recorder-authored exact user-authorized root output; directly read and hash-verified in this final documentation window"
+    },
+    {
+      "path": "implementation-only-handoff/commit-message.txt",
+      "bytes": 2844,
+      "sha256": "a3389602f73041df11526448fbad2d00152b4a47eca6b1de7f7d86ae6729078b",
+      "role": "D-authored partial-checkpoint Git message; not published by this implementer"
+    },
+    {
+      "path": "implementation-only-handoff/git-stage-paths.txt",
+      "bytes": 12411,
+      "sha256": "8d8dea35c3e7fb4dfb239ceb76cf0a56165853efab424b4f053be865c38484e6",
+      "role": "D-authored literal staging candidate list; not a claim that paths were staged"
+    },
+    {
+      "path": "implementation-only-handoff/publication-manifest.md",
+      "bytes": 2207,
+      "sha256": "091767556d318d6971e088c2f2e109540675df8803fdb2cbf32e17c68819d2e3",
+      "role": "D-authored partial-checkpoint publication note"
+    }
+  ],
+  "not_available": [
+    "complete raw stdout/stderr and SHA-256 for the last supported preflight",
+    "full preflight namespace problem distribution",
+    "formal e03 source freeze, materialization receipt, dependency finalization receipt, formal check receipts, or tail audit",
+    "product implementation/build/offline acceptance results",
+    "fresh current state/GUI-ledger readback"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "argv": [
+    "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+    "-B",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/run_draft_checks.py"
+  ],
+  "captured_at_utc": "UNKNOWN (exact start time not recorded)",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "env_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src:/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/epochs/e01/runtime/site-packages"
+  },
+  "error": null,
+  "errors": 0,
+  "exit_code": 0,
+  "failures": 0,
+  "formal_claim_created": false,
+  "formal_id": null,
+  "format": "ML07_DRAFT_SOURCE_TEST_RESULT_V1",
+  "python": {
+    "path": "/opt/homebrew/opt/python@3.13/bin/python3.13",
+    "sha256": "34af8eed630f46919dcb77457077ae3564f7cd25f5d83c56530e64d00de78804"
+  },
+  "skipped": 0,
+  "sources": {
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/checks/run_command.py": "29fd8ecbf4c797510a4104457ae0126d7c3de3d3baedad5a4f856d97c3d5d0b6",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/checks/test_evidence_policy.py": "7f3c7d1ba36d6f7abf5ffe3dc1ea46eb14d93f470a62a7e18e532c1f5c89f2af",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/checks/test_run_command.py": "c847259dfcf802046b41abf73b540fe95e29e78d4dfe0af545c9275056f60243",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/evidence_io.py": "1f15bd6d366b5463b45131d54d9f7463c1035332b6c5ed70554b39d11b3a786d",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/inventory_pair.py": "8a9168b1910ee6f16ea636591dd0d5ff9d559e7f0deddb32291210509f7a765c",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/output_policy.py": "6c3ac28ed8ea8a6d34691d8776d20fac11441708992e96f4d9d522288afdbbd0",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/run_draft_checks.py": "6bc908af05e4d8b2221eed6484988d86cd0d93a1ea9197f807e8964185049c27",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/transaction_chain.py": "025baa81d22c1230b51bf0b109d384089224d5747517cf73885aa55e83018511"
+  },
+  "stdout": "test_anchor_identity_separates_stable_identity_from_lifecycle_metadata ... ok\ntest_canonical_transaction_requires_bound_receipt ... ok\ntest_exact_ledger_chain_and_missing_state_chain ... ok\ntest_exact_phase_producer_cap_and_unregistered_dynamic ... ok\ntest_exclusive_readback_collision_symlink_parent ... ok\ntest_known_fifo_anchor_normalization_checks_full_identity ... ok\ntest_partial_timeout_and_changed_pair_block ... ok\ntest_pinned_real_schema_dependency_and_format_rejections ... ok\ntest_preservation_requires_exact_e03_baseline_runner_and_tail_refs ... ok\ntest_real_scan_pair_delayed_stream_and_special_lstat_only ... ok\ntest_registration_claim_receipt_and_real_tail_readback ... ok\ntest_user_input_scan_mode_normalizes_only_type_bits ... ok\ntest_claim_precedes_launch_and_failing_launch_consumes_id ... ok\ntest_directory_receipts_bind_to_their_own_family_freeze ... ok\ntest_fixed_preflight_rejects_identity_source_spec_index_and_collision ... ok\ntest_parent_refusal_before_claim_and_complete_directory_receipt_run ... ok\ntest_real_child_timeout_cap_nonzero_and_reap ... ok\nRan 17 tests in 1.545s; exit_code=0; formal_id=null; formal_claim_created=false.\n",
+  "tests_run": 17,
+  "verdict": "PASS_DRAFT_ONLY"
+}

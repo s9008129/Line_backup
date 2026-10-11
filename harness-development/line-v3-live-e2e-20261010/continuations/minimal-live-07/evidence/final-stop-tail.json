@@ -1,0 +1,53 @@
+{
+  "format": "ML07_FINAL_IMPLEMENTATION_STOP_TAIL_V1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "status": "STOPPED_BLOCKED",
+  "tail_audit_status": "NOT_RUN",
+  "last_supported_action": {
+    "action": "E03 non-consuming namespace preflight",
+    "argv": [
+      "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "-B",
+      "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/prepare_epoch.py",
+      "e03",
+      "preflight"
+    ],
+    "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+    "exit_code": 0,
+    "env_deviations": [
+      "PYTHONNOUSERSITE=1 was required by the coordinator but was not set for this observed invocation.",
+      "PYTHONDONTWRITEBYTECODE=1 was required by the coordinator but was not set for this observed invocation."
+    ],
+    "observed_stdout_condition": "53,189 tokens reported; only 6,000 tokens returned by tool; complete raw output and full problem distribution unavailable."
+  },
+  "last_observed_facts": {
+    "overall_preflight_verdict": "BLOCKED",
+    "dependency_verdict": "PREFLIGHT_READY_PENDING_PUBLICATION",
+    "pending_artifact_count": 172,
+    "formal_gate_pass": false,
+    "formal_claim_created": false,
+    "e03_formal_ids_consumed": 0,
+    "materialization_performed": false,
+    "dependency_receipt_finalized": false,
+    "scan_pair_complete": true,
+    "records_per_scan": 129613,
+    "errors_or_timeouts_per_scan": 0,
+    "matching_records_sha256": "e7abe757b4c4d4876037402f799f480bf53d7ae68c56c6d6f93ab9416134e995",
+    "full_problem_distribution": "UNKNOWN"
+  },
+  "previous_invocation_failure": {
+    "argv": [
+      "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "-B",
+      "tools/prepare_epoch.py",
+      "e03",
+      "preflight"
+    ],
+    "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07",
+    "exit_code": 1,
+    "error": "RuntimeError: WRONG_LOCATION_OR_EPOCH",
+    "effect": "Stopped before scan; no claims or writes."
+  },
+  "terminal_decision": "No further scan, test, code edit, freeze, materialization, dependency finalization, formal check, GUI action, or LINE/CUA action is authorized in this stopped continuation. A fresh bounded plan/review is required to address the incomplete preflight evidence and finish implementation.",
+  "tail_provenance": "This file records the last known results from tool output and prior immutable receipts. It is not produced by tools/tail_audit.py and does not assert a filesystem or transaction tail pass."
+}
