@@ -1,0 +1,110 @@
+{
+  "format": "MINIMAL_LIVE_06_BOOTSTRAP_AUDIT_V1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "run_rel": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06",
+  "observation_kind": "READ_ONLY_STATIC_AUDIT",
+  "formal_check": false,
+  "expected": "Bootstrap policy, paired inventory, fixed-root runner, and E01 self-test satisfy the frozen plan before any product edit or live capture.",
+  "actual": "Static inspection found material evidence-policy and runner gaps. E01, E02, B01, and all product checks remain NOT_RUN. No product source, canonical state, GUI ledger, backup file, or LINE UI was changed or accessed.",
+  "commands_and_methods": [
+    "Read plan.md, handoff.md, plan-contract.json, output-policy-bootstrap.json, output-policy-frozen.json, inventory_pair.py, run_command.py, and test_evidence_policy.py.",
+    "Inspected narrow source ranges with sed, rg, and nl -ba; inspected JSON fields with Python json.loads.",
+    "Computed SHA-256 and byte counts for the audited files.",
+    "Called Python compile(source, path, 'exec') in memory for the three present Python tools; this is syntax parsing only, not a formal check or test suite.",
+    "Checked that check-specs.json, check-specs-freeze.json, checks/test_run_command.py, formal reports, and evidence/checks outputs were absent at audit time."
+  ],
+  "findings": [
+    {
+      "id": "BOOTSTRAP_POLICY_NOT_EXACT_PER_OUTPUT",
+      "status": "KNOWN",
+      "evidence": [
+        "output-policy-frozen.json contains a flat fixed_files list and global output rules, but lacks per-file phase, producer, type, byte cap, and readback/lifecycle fields required by plan.md §5.2.",
+        "The inventory comparator accepts any path in fixed_files as an addition without validating the approved producer or stage; it ignores fixed_directories and templates."
+      ],
+      "source_refs": [
+        "output-policy-frozen.json:11-93",
+        "tools/inventory_pair.py:133-147"
+      ],
+      "plan_refs": ["plan.md:162-174"]
+    },
+    {
+      "id": "PRESERVATION_COMPARATOR_CANNOT_SUPPORT_FROZEN_POLICY",
+      "status": "KNOWN",
+      "evidence": [
+        "compare_baseline_to_pair reads only fixed_files and a nonexistent top-level dynamic_registered_paths field.",
+        "It does not expand check_output_rule, inventory_output_rule, gate_output_path_template, dynamic registration receipts, or transaction_path_policy.",
+        "It blocks every changed existing path, including receipt-supported canonical state/ledger changes, while B01's own post-scan publications are not part of the baseline pair."
+      ],
+      "source_refs": [
+        "tools/inventory_pair.py:133-147",
+        "tools/inventory_pair.py:155-171",
+        "tools/inventory_pair.py:190-202",
+        "output-policy-frozen.json:39-93"
+      ],
+      "plan_refs": ["plan.md:164-174"]
+    },
+    {
+      "id": "BASELINE_DOES_NOT_RECONCILE_PREWRITE_ANCHORS",
+      "status": "KNOWN",
+      "evidence": [
+        "baseline mode compares only scan 1 and scan 2; it does not reconcile bootstrap additions to prewrite anchors, validate protected preimages, or bind/check Git identity.",
+        "A successful baseline pair would therefore not establish all G_BASELINE_06 requirements."
+      ],
+      "source_refs": ["tools/inventory_pair.py:190-195"],
+      "plan_refs": ["plan.md:158-160", "plan.md:170-174", "plan.md:289-291"]
+    },
+    {
+      "id": "RUNNER_BOUND_TO_RECOVERY_02",
+      "status": "KNOWN",
+      "evidence": [
+        "The copied runner hardcodes the recovery-02 run root and task ID, so its own location validation and evidence/spec paths do not target minimal-live-06.",
+        "The runner checks output collisions but does not take a persistent exclusive check-ID claim before launching; it lacks the required HEAD/branch/empty-index rejection and effective environment-diff recording."
+      ],
+      "source_refs": [
+        "checks/run_command.py:43-57",
+        "checks/run_command.py:344-367",
+        "checks/run_command.py:404-406",
+        "checks/run_command.py:433-463"
+      ],
+      "plan_refs": ["plan.md:176-178", "plan.md:252-272"]
+    },
+    {
+      "id": "E01_REQUIRED_ASSERTIONS_MISSING",
+      "status": "KNOWN",
+      "evidence": [
+        "E01 uses a synchronous in-memory scan stub; it does not exercise delayed stream completion or actual no-write behavior during scans.",
+        "It does not test tail publication ordering, wrong-cwd/source-drift refusal, unknown-special non-open behavior, or enforcement of pre-write dynamic registration."
+      ],
+      "source_refs": [
+        "checks/test_evidence_policy.py:58-73",
+        "checks/test_evidence_policy.py:100-129",
+        "checks/test_evidence_policy.py:131-166"
+      ],
+      "plan_refs": ["plan.md:168-172", "plan.md:274-285"]
+    }
+  ],
+  "verified_absent_at_audit": [
+    "check-specs.json",
+    "check-specs-freeze.json",
+    "checks/test_run_command.py",
+    "evidence/checks/E01-evidence-policy.claim.json",
+    "evidence/checks/E01-evidence-policy.receipt.json",
+    "evidence/inventory/baseline-receipt.json",
+    "E2E測試報告.md",
+    "progress.md",
+    "問題提報單.md"
+  ],
+  "execution_status": {
+    "E01-evidence-policy": "NOT_RUN",
+    "E02-runner-selftest": "NOT_RUN",
+    "B01-baseline-pair": "NOT_RUN",
+    "D01-raw-cua": "NOT_RUN",
+    "product_source_edits": "NOT_STARTED",
+    "LINE_foreground_or_input": "NOT_USED",
+    "attempt_extension": "AUTHORIZED_NOT_STARTED"
+  },
+  "historical_context": "The three historical LIVE_CLASSIFIER_CHOOSER attempts remain consumed. The plan authorizes one additional bounded collection, but its required D01 attempt-start has not been written and that collection is unconsumed.",
+  "stop_reason": "The evidence policy/comparator and runner cannot provide trustworthy one-shot checks or preservation gates as written. Revising frozen output/evidence policy or gate semantics requires a higher-level plan decision; no product edit or live operation was started.",
+  "requested_decision": "Decide whether to close minimal-live-06 as blocked and issue a fresh reviewed continuation with corrected exact output lifecycle and runner/gate contracts, or authorize a bounded revised policy in this continuation before any formal ID is launched. Recommended: fresh reviewed continuation, because output-policy-frozen.json has already been materialized and the current preservation comparator cannot support the planned transaction deltas.",
+  "native_harness_validation": "NOT_RUN"
+}

@@ -1,0 +1,37 @@
+{
+  "format_version": "1",
+  "kind": "OUTPUT_POLICY_BOOTSTRAP",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "continuation": "minimal-live-06",
+  "purpose": "Declare the exact files allowed for bootstrap before any check invocation or product edit. This is not a filesystem baseline or a gate receipt.",
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "run_root": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06",
+  "write_rule": "Every listed file is absent at materialization and must be created exclusively, read back, and hashed. No directory-wide allowance exists. Product paths remain governed by the frozen plan.",
+  "directories": [
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/tools",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/checks",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/evidence",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/tmp"
+  ],
+  "fixed_files": [
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/output-policy-bootstrap.json","phase":"bootstrap-declaration","producer":"Implementer","type":"regular","max_bytes":20000,"publication":"literal patch; this declaration is the first task artifact"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/plan-contract.json","phase":"bootstrap","producer":"exact appendix A byte extraction from plan.md","type":"regular","max_bytes":100000,"publication":"exclusive create; exact bytes including final LF; readback hash"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/handoff.json","phase":"bootstrap","producer":"exact appendix A byte extraction from handoff.md","type":"regular","max_bytes":100000,"publication":"exclusive create; exact bytes including final LF; readback hash"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/prewrite-anchors.json","phase":"bootstrap","producer":"two in-memory identical host metadata snapshots","type":"regular","max_bytes":20000000,"publication":"exclusive create after equality check; readback hash"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/bootstrap.json","phase":"bootstrap","producer":"Implementer host observations","type":"regular","max_bytes":1000000,"publication":"exclusive create after observations; readback hash"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/input-manifest.json","phase":"bootstrap","producer":"Implementer read-only reconciliation","type":"regular","max_bytes":2000000,"publication":"exclusive create; every declared input records relative and absolute paths, actual bytes, SHA-256, and read result"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/input-reconciliation.json","phase":"bootstrap","producer":"Implementer read-only comparison","type":"regular","max_bytes":1000000,"publication":"exclusive create; preserve PASS, FAIL, and UNKNOWN separately"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/user-amendments.json","phase":"authorization","producer":"verbatim user instruction references plus actual delegation records","type":"regular","max_bytes":200000,"publication":"exclusive create; do not rewrite frozen plan or contract"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/authorization.json","phase":"authorization","producer":"Implementer reconciliation to the frozen contract and explicit user instruction","type":"regular","max_bytes":1000000,"publication":"exclusive create; bind plan, handoff, contract, parent decision, quota, and scope"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/plan-review-waiver.json","phase":"authorization","producer":"recorded user waiver in plan/handoff","type":"regular","max_bytes":100000,"publication":"exclusive create; USER_WAIVED_NOT_RUN, never reviewer PASS"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/attempt-extension.json","phase":"authorization","producer":"recorded one-collection extension in plan/handoff","type":"regular","max_bytes":200000,"publication":"exclusive create before first product evidence action"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/tools/inventory_pair.py","phase":"bootstrap-tools","producer":"Implementer, adapting only the read-only scan core from recovery-02","type":"regular","max_bytes":1000000,"publication":"exclusive create; source hash recorded; paired scan outputs remain in memory until comparison"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/checks/run_command.py","phase":"bootstrap-tools","producer":"Implementer, fixed-root command runner","type":"regular","max_bytes":1000000,"publication":"exclusive create; argv only, shell false, one-shot ID claims"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/checks/test_evidence_policy.py","phase":"bootstrap-tools","producer":"Implementer, self-test fixtures only","type":"regular","max_bytes":1000000,"publication":"exclusive create; E01 is a one-shot required check"},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/checks/test_run_command.py","phase":"bootstrap-tools","producer":"Implementer, self-test fixtures only","type":"regular","max_bytes":1000000,"publication":"exclusive create; E02 is a one-shot required check"}
+  ],
+  "dynamic_files": [],
+  "limits": {"formal_check_ids_are_one_shot": true, "partial_scan_is_blocked": true, "fifo_policy":"lstat-only", "ignored_or_untracked_work_is_preserved": true, "no_product_file_edits_before_E01_E02_B01_PASS": true},
+  "created_by": "IMPLEMENTER",
+  "created_at": "2026-10-11"
+}

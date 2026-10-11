@@ -1,0 +1,15 @@
+{
+  "format": "MINIMAL_LIVE_06_ARTIFACT_REGISTRATION_V1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "run_rel": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06",
+  "kind": "command",
+  "sequence": 1,
+  "artifact_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/evidence/artifacts/command-0001.json",
+  "extension": "json",
+  "max_bytes": 16777216,
+  "producer": "IMPLEMENTER read-only static bootstrap audit",
+  "registered_before_artifact_write": true,
+  "policy_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/output-policy-frozen.json",
+  "policy_sha256": "a9df197a9cef3183b76a8deb168faa02b616d60f83710a287613f469d1e2822f",
+  "publication": "exclusive create; no-follow; fsync; readback; identity recorded"
+}

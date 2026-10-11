@@ -1,0 +1,238 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "goal": "In one user-authorized additional bounded collection, repair task evidence publication and the real CUA/native observation pipeline, prove the shared production probe, then complete two distinct eligible LINE album transactions in separate cap-one lifecycles with an actual post-release 0.25-view-height scroll, complete content/state verification, preservation, reporting and independent Acceptance; preserve historical failures and unrelated work.",
+  "task_class": "CRITICAL",
+  "allowed_paths": [
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06",
+    "scripts/line_backup_cua_adapter.mjs",
+    "src/line_backup_batch/cli.py",
+    "src/line_backup_batch/observations.py",
+    "src/line_backup_batch/store.py",
+    "rev28/Sources/rev28ctl/main.swift",
+    "rev28/Sources/Rev28Core/Observation/PassiveContextObservation.swift",
+    "rev28/Sources/Rev28Core/Perception/AlbumVisualWitness.swift",
+    "rev28/Tests/Rev28CoreTests/PassiveContextObservationTests.swift",
+    "rev28/Tests/Rev28CoreTests/AlbumVisualWitnessTests.swift",
+    "state/backup_state.json",
+    "state/.line-backup-state.lock",
+    "state/.line-backup-v3.tmp",
+    "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+    "harness-development/line-v3-live-e2e-20261010/.gui-ledger-v3.tmp",
+    "backups/旻謙允禎成長日記"
+  ],
+  "required_evidence": [
+    "E_BOOTSTRAP_06",
+    "E_INPUT_RECONCILIATION_06",
+    "E_ATTEMPT_EXTENSION_06",
+    "E_PLAN_REVIEW_WAIVER_06",
+    "E_EVIDENCE_POLICY_06",
+    "E_BASELINE_06",
+    "E_AUTH_RUNTIME_06",
+    "E_RAW_CUA_06",
+    "E_REAL_LINK_06",
+    "E_OFFLINE_06",
+    "E_CATALOG_1_06",
+    "E_MENU_1_06",
+    "E_FIRST_06",
+    "E_POST_RELEASE_SCROLL_06",
+    "E_CATALOG_2_06",
+    "E_MENU_2_06",
+    "E_SECOND_06",
+    "E_PRESERVATION_06",
+    "E_REPORT_06",
+    "E_INDEPENDENT_ACCEPTANCE_06"
+  ],
+  "gate_specs": [
+    {
+      "gate_id": "G_BASELINE_06",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "BASELINE_DELTA",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_EVIDENCE_POLICY",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_AUTH_RUNTIME",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_REAL_LINK",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_OFFLINE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_CATALOG_1",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_CATALOG_2",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_MENU_1",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_MENU_2",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_FIRST",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_SCROLL",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_SECOND",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_PRESERVE_06",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "BASELINE_DELTA",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_REPORT",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "SUPPORTING",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_ACCEPTANCE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "ACCEPTANCE",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    }
+  ],
+  "capability_policy": {
+    "network": "OFF",
+    "browser": false,
+    "destinations": []
+  },
+  "retry_policy": {
+    "transient_read_only_retries": 2,
+    "delays_seconds": [
+      10,
+      30
+    ]
+  },
+  "resource_policy": {
+    "prompt_bytes": 65536,
+    "state_bytes": 524288,
+    "inspect_bytes": 16384,
+    "log_bytes": 134217728
+  },
+  "workflow_policy": {
+    "plan_review_required": true,
+    "independent_acceptance_required": true,
+    "max_parallel_read_only_helpers": 0,
+    "max_parallel_writers": 0,
+    "handoff_review_required": false
+  }
+}

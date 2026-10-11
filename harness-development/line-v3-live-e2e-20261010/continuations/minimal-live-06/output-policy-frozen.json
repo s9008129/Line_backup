@@ -1,0 +1,97 @@
+{
+  "format_version": "1",
+  "kind": "OUTPUT_POLICY_FROZEN",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "continuation": "minimal-live-06",
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "frozen_at": "2026-10-11",
+  "rule": "No tool may write outside an exact fixed path or a dynamically registered artifact path. Inventory scans and child streams remain in memory until paired comparison is complete. All file publications are exclusive, no-follow, fsynced, and read back. Existing files are preserved.",
+  "bootstrap_policy_ref": "output-policy-bootstrap.json",
+  "bootstrap_policy_status": "EXACT_BOOTSTRAP_OUTPUTS_READ_BACK; future outputs below are frozen before E01/E02/B01",
+  "fixed_directories": [
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/evidence/checks",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/evidence/inventory",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/evidence/gates",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/evidence/artifacts",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/evidence/registrations",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/tmp/evidence-policy-selftest",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/tmp/runner-selftest",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/swift-build",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/module-cache/swift",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/module-cache/clang",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/bin"
+  ],
+  "fixed_files": [
+    "check-specs.json", "check-specs-freeze.json", "product-preimage.json",
+    "host_io.mjs", "live_analyzer.mjs", "live_classifier.mjs", "live_runner.mjs", "live_entry.mjs", "chooser_locators.mjs", "checks/validate_real_frame.py",
+    "checks/test_evidence_policy.py", "checks/test_run_command.py", "checks/test_host_io.mjs", "checks/test_live_classifier.mjs", "checks/test_live_runner.mjs", "checks/test_chooser_v2.mjs",
+    "checks/run_command.py", "tools/inventory_pair.py", "bin/rev28ctl",
+    "authorization.json", "attempt-extension.json", "plan-review-waiver.json", "live-grant-1.json", "live-grant-2.json", "runtime-binding.json",
+    "E2E測試報告.md", "progress.md", "問題提報單.md", "commit-message.txt",
+    "evidence/attempt-ledger-06.json", "evidence/implementation-result.json", "evidence/report-manifest.json",
+    "evidence/acceptance.result.json", "evidence/native-validation.json", "evidence/git-publication.json"
+  ],
+  "check_ids": [
+    "E01-evidence-policy", "E02-runner-selftest", "B01-baseline-pair", "D01-raw-cua", "S01-build", "R01-real-link",
+    "N01-syntax-01", "N01-syntax-02", "N01-syntax-03", "N01-syntax-04", "N01-syntax-05", "N01-syntax-06", "N01-syntax-07",
+    "N02-tests", "P01-batch", "P02-binding", "P03-transaction", "P04-v2", "S02-tests", "B02-preservation-pair"
+  ],
+  "check_output_rule": {
+    "per_check_exact_suffixes": ["claim.json", "invocation.json", "stdout", "stderr", "receipt.json"],
+    "path_template": "evidence/checks/{check_id}.{suffix}",
+    "max_bytes": {"claim.json": 1000000, "invocation.json": 1000000, "stdout": 16777216, "stderr": 16777216, "receipt.json": 1000000},
+    "producer": "checks/run_command.py",
+    "each_check_id_once": true,
+    "streams_captured_in_memory": true,
+    "publish_after_child_reaped": true
+  },
+  "inventory_output_rule": {
+    "baseline_exact_paths": [
+      "evidence/inventory/baseline-scan-01.json", "evidence/inventory/baseline-scan-02.json", "evidence/inventory/baseline-compare.json", "evidence/inventory/baseline-receipt.json"
+    ],
+    "preservation_exact_paths": [
+      "evidence/inventory/preservation-scan-01.json", "evidence/inventory/preservation-scan-02.json", "evidence/inventory/preservation-compare.json", "evidence/inventory/preservation-receipt.json"
+    ],
+    "max_bytes_each": 134217728,
+    "producer": "tools/inventory_pair.py",
+    "scan_and_compare_in_memory_before_publication": true,
+    "partial_scan_verdict": "BLOCKED"
+  },
+  "gate_ids": ["G_BASELINE_06", "G_EVIDENCE_POLICY", "G_AUTH_RUNTIME", "G_REAL_LINK", "G_OFFLINE", "G_CATALOG_1", "G_MENU_1", "G_FIRST", "G_SCROLL", "G_CATALOG_2", "G_MENU_2", "G_SECOND", "G_PRESERVE_06", "G_REPORT", "G_ACCEPTANCE"],
+  "gate_output_path_template": "evidence/gates/{gate_id}.json",
+  "dynamic_artifacts": {
+    "registration_path_template": "evidence/registrations/{kind}-{sequence:04d}.json",
+    "artifact_path_template": "evidence/artifacts/{kind}-{sequence:04d}.{extension}",
+    "allowed_kinds": ["screenshot-png", "raw-ax", "native-context", "sck-capture", "ocr", "grounding", "classifier", "chooser", "action", "catalog", "download", "verification", "state-readback", "command", "gate"],
+    "sequence_min": 1,
+    "sequence_max": 5000,
+    "registration_before_write": true,
+    "extensions": {"screenshot-png":"png", "raw-ax":"json", "native-context":"json", "sck-capture":"png", "ocr":"json", "grounding":"json", "classifier":"json", "chooser":"json", "action":"json", "catalog":"json", "download":"json", "verification":"json", "state-readback":"json", "command":"json", "gate":"json"},
+    "max_bytes": {"screenshot-png":33554432, "raw-ax":16777216, "native-context":16777216, "sck-capture":33554432, "default":16777216}
+  },
+  "fixture_policy": {
+    "root_evidence_policy": "tmp/evidence-policy-selftest",
+    "root_runner_selftest": "tmp/runner-selftest",
+    "exclusive_creation": true,
+    "cleanup_only_current_run_created_identity_matches": true,
+    "preserve_failure_fixtures": true
+  },
+  "product_preimage_required_before_edit": [
+    "scripts/line_backup_cua_adapter.mjs", "src/line_backup_batch/cli.py", "src/line_backup_batch/observations.py", "src/line_backup_batch/store.py",
+    "rev28/Sources/rev28ctl/main.swift", "rev28/Sources/Rev28Core/Observation/PassiveContextObservation.swift", "rev28/Sources/Rev28Core/Perception/AlbumVisualWitness.swift",
+    "rev28/Tests/Rev28CoreTests/PassiveContextObservationTests.swift", "rev28/Tests/Rev28CoreTests/AlbumVisualWitnessTests.swift"
+  ],
+  "transaction_path_policy": {
+    "state": "state/backup_state.json",
+    "state_lock": "state/.line-backup-state.lock",
+    "state_temp": "state/.line-backup-v3.tmp",
+    "gui_ledger": "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+    "gui_ledger_temp": "harness-development/line-v3-live-e2e-20261010/.gui-ledger-v3.tmp",
+    "backup_root_scope": "backups/旻謙允禎成長日記",
+    "existing_files_immutable": true,
+    "destination_must_be_exactly_registered_empty_before_creation": true,
+    "unknown_native_download_names": "register exact observed names after creation; never overwrite existing files"
+  },
+  "lineage_and_scope": {"plan_sha256":"57090d3af4ea0075b23d40c6733e7e094a757ed3b8f0969e91b48a0f8da94cb8", "handoff_sha256":"22803c91fcbcbfd6943bd46bcfab8e8364a08e6e492fa71e2cbb88fd274ed3eb", "contract_sha256":"e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1", "no_unrelated_paths":true},
+  "native_validation": "NOT_RUN_UNTIL_CONTROLLER_EMITS_FIXED_COMMANDS"
+}

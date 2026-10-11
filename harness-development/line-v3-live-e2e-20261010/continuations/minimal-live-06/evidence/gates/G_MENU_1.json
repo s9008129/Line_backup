@@ -1,0 +1,1 @@
+{"gate_id":"G_MENU_1","required":true,"owner":"ROLE","phase":"IMPLEMENT","evidence_source":"ROLE_OBSERVATION","goal_criticality":"CORE","evidence_role":"MUST_NOT_BREAK","closure_gate":"HARD_CLEAN","reuse":"NEVER","verdict":"NOT_RUN","evidence_manifest":null,"reason":"No real Save All menu identity, geometry, calibration, or dispatch preconditions were observed."}

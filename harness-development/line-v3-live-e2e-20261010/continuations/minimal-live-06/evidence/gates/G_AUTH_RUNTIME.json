@@ -1,0 +1,1 @@
+{"gate_id":"G_AUTH_RUNTIME","required":true,"owner":"ROLE","phase":"IMPLEMENT","evidence_source":"ROLE_OBSERVATION","goal_criticality":"CORE","evidence_role":"MUST_NOT_BREAK","closure_gate":"HARD_CLEAN","reuse":"NEVER","verdict":"NOT_RUN","evidence_manifest":null,"reason":"No current source closure, grants, producer, runtime, or decoder gate was executed."}

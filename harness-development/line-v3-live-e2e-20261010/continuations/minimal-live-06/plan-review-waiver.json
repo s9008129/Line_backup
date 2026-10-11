@@ -1,0 +1,13 @@
+{
+  "format_version": "1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "run_id": "",
+  "gate": "PLAN_REVIEW",
+  "plan_review_required": true,
+  "decision": "USER_WAIVED_NOT_RUN",
+  "basis": "Plan and handoff record the user waiver; no reviewer PASS is claimed.",
+  "status": "WAIVED_REQUIREMENT_REMAINS_VISIBLE",
+  "plan_sha256": "57090d3af4ea0075b23d40c6733e7e094a757ed3b8f0969e91b48a0f8da94cb8",
+  "handoff_sha256": "22803c91fcbcbfd6943bd46bcfab8e8364a08e6e492fa71e2cbb88fd274ed3eb",
+  "plan_contract_sha256": "e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1"
+}

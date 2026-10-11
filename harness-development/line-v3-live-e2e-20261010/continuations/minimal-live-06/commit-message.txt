@@ -1,0 +1,17 @@
+Record minimal-live-06 bootstrap blocker for high-level replan
+
+意圖：
+保存 minimal-live-06 在正式檢查前發現的 evidence-policy、baseline comparator 與 runner 問題，讓高階模型可依具體程式碼、Plan 行號、hash 和狀態資料重新規劃。這是阻塞診斷與交接提交，不代表 LINE 相簿備份實作或任何 E2E gate 已完成。
+
+做了什麼：
+- 新增問題提報單、E2E 前置檢查報告、progress、attempt ledger、format-3 Implementer result、gate receipts 與 report manifest。
+- 保存兩份唯讀 audit/readback evidence：目前 comparator/runner/E01 的缺口，以及保護設定、state、lock、ledger、固定 temp 和 9 個產品路徑的狀態。
+- 將本輪未執行的正式 checks、未操作 LINE、未改產品檔和未消耗額外 attempt 明確記為 NOT_RUN/未開始；保留既有歷史嘗試數。
+- 納入本輪 bootstrap policy、runner、inventory wrapper、E01 原始碼及核准 contract/input summary，提供高階模型可重現的程式依據；不納入 `.local` 出版現場或含完整使用者 dirty diff 的 prewrite anchor。
+- 未改產品檔、canonical state、GUI ledger 或既有備份資料；未執行破壞性清理、測試下載或 LINE UI 輸入。
+
+下一步建議：
+1. 由高階 Planner 裁定是否另開經審查 continuation，重新定義逐檔輸出生命週期、runner 的 one-shot claim/preflight、anchor-aware B01 和 transaction-aware B02。
+2. 在任何正式 ID 啟動前，先完成修訂政策和 runner 的獨立 review；E01/E02 通過後只執行一次 B01，並以明確 receipts 驗證 G_BASELINE_06。
+3. 只有必要前置 gates PASS 後，才進行 D01；若需要 LINE 前景，先告知使用者 exact app/screen/action 並等待交接，再用 fresh capture grounding。
+4. 本提交不代表產品完成；兩本交易、實際 post-release scroll、內容/state 驗收、B02 和獨立 Acceptance 仍未執行。

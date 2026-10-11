@@ -1,0 +1,145 @@
+{
+  "format_version": "1",
+  "kind": "BOOTSTRAP_RECEIPT",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "continuation": "minimal-live-06",
+  "created_at_utc": "2026-10-11T04:52:36.112309+00:00",
+  "role": "IMPLEMENTER",
+  "actual_model": "UNKNOWN_NO_NATIVE_SESSION_RECORD",
+  "actual_session": "CURRENT_CONVERSATION_NO_PLATFORM_SESSION_ID",
+  "head": "7c191d1e8cccdf13f3043f0da9a367da87b9382b",
+  "branch": "v43-ab/codex-rev28",
+  "index_sha256": "162e8224254a0d178270681f98cc2f5e9c70e9bca83e0a8f88b8ba6c66a91f05",
+  "index_bytes": 5097560,
+  "staged_changes": false,
+  "dirty_status_entries_at_anchor": 68622,
+  "dirty_status_sha256": "224bc20c4f7adc2ac0e920c1aca4309d7bda0ea3ad400832e4a9ce863e9cc6f1",
+  "tracked_diff_sha256": "b03fed01d169ee86796ccc3d669198f09a1fcacce9161c0c2ed2a8cd6b9527c9",
+  "prewrite_anchors_equal": true,
+  "prior_83_manifest_verified": 83,
+  "prior_83_manifest_mismatches": 0,
+  "contract_byte_identical": true,
+  "contract_bytes": 6968,
+  "contract_sha256": "e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1",
+  "native_controller_stage_packet": "NOT_RUN_PER_FROZEN_PLAN",
+  "native_contract_result_validation": "NOT_RUN",
+  "line_gui": "NOT_USED",
+  "formal_checks_started": false,
+  "product_evidence_started": false,
+  "helper_use": {
+    "count": 3,
+    "names": [
+      "plan_gate_review",
+      "prompt_contract_review",
+      "repo_prereq_review"
+    ],
+    "scope": "read-only inspection only",
+    "writes": 0,
+    "checks": 0,
+    "LINE_calls": 0,
+    "controller_records": "not available"
+  },
+  "writers": {
+    "count": 0,
+    "reason": "frozen max_parallel_writers=0 and no controller allocation packet"
+  },
+  "outputs": [
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/plan-contract.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/plan-contract.json",
+      "bytes": 6968,
+      "sha256": "e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1",
+      "dev": 16777229,
+      "ino": 134607820,
+      "exclusive": true,
+      "readback_match": true
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/handoff.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/handoff.json",
+      "bytes": 6968,
+      "sha256": "e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1",
+      "dev": 16777229,
+      "ino": 134607821,
+      "exclusive": true,
+      "readback_match": true
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/prewrite-anchors.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/prewrite-anchors.json",
+      "bytes": 1605066,
+      "sha256": "a3c4160b6eeb8f653f45313bf470fd8db72ffd4a323e9d477395c154a7930e69",
+      "dev": 16777229,
+      "ino": 134607822,
+      "exclusive": true,
+      "readback_match": true
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/input-manifest.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/input-manifest.json",
+      "bytes": 106234,
+      "sha256": "4f287f4055ad6891c801eecc5d49551c925ccd3073c1449e16eb6be60ed7fde5",
+      "dev": 16777229,
+      "ino": 134607823,
+      "exclusive": true,
+      "readback_match": true
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/input-reconciliation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/input-reconciliation.json",
+      "bytes": 2980,
+      "sha256": "f9c1dc4299dfc382276a39a7a5ab99101a1a2b34ee54b40645520c14491ba605",
+      "dev": 16777229,
+      "ino": 134607824,
+      "exclusive": true,
+      "readback_match": true
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/user-amendments.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/user-amendments.json",
+      "bytes": 1530,
+      "sha256": "f7a608ba8a66be8ee5d365ce65f14ae03b7ee5459db268685be12adbcc02bd3b",
+      "dev": 16777229,
+      "ino": 134607825,
+      "exclusive": true,
+      "readback_match": true
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/authorization.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/authorization.json",
+      "bytes": 2903,
+      "sha256": "fff0b9ef1efd7faf7ce8c68434dfb486af70a2c66c7d6fa94eead65327aced0b",
+      "dev": 16777229,
+      "ino": 134607826,
+      "exclusive": true,
+      "readback_match": true
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/plan-review-waiver.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/plan-review-waiver.json",
+      "bytes": 586,
+      "sha256": "2008c694988f4a2d598ed451a1d7782f57d94e58f68bb45b63444d2dc4af376e",
+      "dev": 16777229,
+      "ino": 134607827,
+      "exclusive": true,
+      "readback_match": true
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/attempt-extension.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/attempt-extension.json",
+      "bytes": 471,
+      "sha256": "0afc70d9f5198bf085951b2686540d0aa343fdba8dece5de7181eab1f682deb1",
+      "dev": 16777229,
+      "ino": 134607828,
+      "exclusive": true,
+      "readback_match": true
+    }
+  ],
+  "bootstrap_policy": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/output-policy-bootstrap.json",
+    "bytes": 6076,
+    "sha256": "18ec0a13fa111183c00ce2663d2ae2c156c853ddc9e3d121e4fe3cdd746ef1bd",
+    "readback": true
+  },
+  "status": "BOOTSTRAP_FACTS_ONLY_NOT_A_GATE_PASS"
+}

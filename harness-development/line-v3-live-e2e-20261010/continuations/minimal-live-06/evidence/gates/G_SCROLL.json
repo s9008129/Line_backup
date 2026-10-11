@@ -1,0 +1,1 @@
+{"gate_id":"G_SCROLL","required":true,"owner":"ROLE","phase":"IMPLEMENT","evidence_source":"ROLE_OBSERVATION","goal_criticality":"CORE","evidence_role":"OUTCOME","closure_gate":"HARD_CLEAN","reuse":"NEVER","verdict":"NOT_RUN","evidence_manifest":null,"reason":"No first transaction was verified and released; no scroll input or scroll capture occurred."}

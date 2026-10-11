@@ -1,0 +1,79 @@
+{
+  "format_version": "1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "continuation": "minimal-live-06",
+  "created_at": "2026-10-11T04:52:36.013015+00:00",
+  "prior_run": {
+    "continuation": "scope-recovery-05/recovery-02",
+    "manifest_entries": 83,
+    "manifest_actual_hashes_verified": 83,
+    "mismatches": 0,
+    "historical_gates": [
+      {
+        "id": "G_BASELINE",
+        "verdict": "PASS",
+        "evidence": "previous/evidence/g-baseline-recovery-02.json",
+        "scope": "historical only"
+      },
+      {
+        "id": "G_RUNNER",
+        "verdict": "PASS",
+        "evidence": "previous/evidence/g-runner.json",
+        "scope": "historical only"
+      },
+      {
+        "id": "G_ADAPTER_OFFLINE",
+        "verdict": "PASS",
+        "evidence": "previous/evidence/g-adapter-offline.json",
+        "scope": "historical only"
+      },
+      {
+        "id": "G_PRESERVE",
+        "verdict": "FAIL",
+        "evidence": "previous/evidence/preservation-recovery-02.json",
+        "scope": "historical failure retained"
+      },
+      {
+        "id": "G_REPORT",
+        "verdict": "PASS",
+        "evidence": "previous/evidence/report-manifest.json",
+        "scope": "historical only"
+      }
+    ],
+    "status_axes": {
+      "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+      "IMPLEMENTATION_STATUS": "COMPLETE",
+      "CORE_ACCEPTANCE_STATUS": "FAIL",
+      "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+      "INDEPENDENT_ACCEPTANCE_STATUS": "NOT_REQUIRED_IN_OLD_QUICK_TASK",
+      "TASK_CLOSURE_STATUS": "REPLAN_REQUIRED"
+    },
+    "learning": [
+      "G_PRESERVE failure was caused by unlisted host capture stdout/stderr output lifecycle; the paired-scan result itself had zero removed/changed and 35 expected additions.",
+      "Prior product issue LIVE_CLASSIFIER_CHOOSER consumed 3/3 by node-adapter-syntax-02; this continuation has one separately authorized collection, not a reset.",
+      "Prior state was schema 3 revision 35 with two historical VERIFIED albums; current fresh baseline is separately required.",
+      "Prior run had no LINE foreground UI action or real download; old PASS receipts do not transfer."
+    ],
+    "unknowns_retained": [
+      "Earlier unrecorded attempts remain UNKNOWN, not zero.",
+      "Two failed-smoke fixture trees lack independent deletion receipts.",
+      "Planned additions inferred after the fact did not prove all writes were pre-authorized.",
+      "No native Harness validation receipt existed; native validation remained NOT_RUN."
+    ]
+  },
+  "current_run": {
+    "fresh_prewrite_anchors_equal": true,
+    "source_manifest_verified": true,
+    "prior_gate_reuse": "NEVER",
+    "product_evidence_started": false,
+    "formal_checks_started": false,
+    "line_gui_used": false
+  },
+  "sources": [
+    "previous/E2E測試報告.md",
+    "previous/implementation-result.json",
+    "previous/attempt-ledger-recovery-02.json",
+    "previous/report-manifest.json",
+    "previous/檢討報告.md"
+  ]
+}
