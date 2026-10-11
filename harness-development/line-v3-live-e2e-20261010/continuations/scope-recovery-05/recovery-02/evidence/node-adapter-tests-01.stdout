@@ -1,0 +1,39 @@
+✔ normalizeScreenshotBytes rejects invalid byte sources and accepts exactly 16 MiB (2.272334ms)
+✔ normalizeScreenshotBytes copies Buffer subarrays, whole Buffers, and cross-realm views independently (1.1635ms)
+✔ capture records the request interval, hashes the copied bytes, and returns the classifier result (1.045542ms)
+✔ retain or classify time passing never refreshes the capture freshness window (0.256833ms)
+✔ a capture aged exactly 5000 ms still passes freshness to the bridge (0.189ms)
+✔ an invalid retained frame reference is refused before classify (0.170833ms)
+✔ a classifier frame or session mismatch rejects the observation (0.132459ms)
+✔ a non-string AX state is rejected before retain and classify (0.097333ms)
+✔ a retain failure propagates and classify is never called (0.091833ms)
+✔ byte normalizer accepts foreign Uint8Array and honors byteOffset for Buffer views (1.676292ms)
+✔ byte normalizer rejects non-byte views, DataView, empty and oversized inputs (0.210875ms)
+✔ session capture hashes and retains the copied cross-realm bytes with the request interval (1.634125ms)
+✔ navigation observer uses the same copied-byte and request-time boundary (0.504166ms)
+✔ original pair contains only two clicks and timer; one-shot cannot replay (0.61575ms)
+✔ loaded JSON cannot mint a dispatch or chooser capability (0.263125ms)
+✔ fixture authority cannot mint a live app dispatch token (0.095375ms)
+✔ ellipse error never invokes SaveAll; all tokens stay consumed (0.16975ms)
+✔ SaveAll error is attempted once and prohibits replay (0.154417ms)
+✔ expired capture and expired second-click boundary both stop (0.2425ms)
+✔ correct chooser path and fresh control confirmed exactly once (0.372ms)
+✔ wrong full path refuses navigation/confirmation (0.209625ms)
+✔ a stale field index is refused before typing (0.161916ms)
+✔ native scroll is limited to one quarter viewport per invocation (0.166625ms)
+✔ SCK pair and popup frames stay distinct and guard binds both ids (0.146291ms)
+✔ SCK capture refuses a popup frame equal to the pair frame (0.069458ms)
+✔ popup frame equal to the pair frame refuses before SaveAll (0.084208ms)
+✔ guard popup frame mismatch refuses before SaveAll (0.088666ms)
+✔ guard action point change refuses before SaveAll (0.092291ms)
+✔ menu callbacks are required before the ellipsis click (0.077542ms)
+✔ GUI ledger reserve precedes the ellipsis and consume follows SaveAll (0.16475ms)
+✔ exhausted GUI ledger refuses the dispatch with zero clicks (0.073208ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 54.3765

@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+    "-B",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_run_command.py"
+  ],
+  "check_id": "runner-selftest-01",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "elapsed_ms": 2263,
+  "ended_at_utc": "2026-10-11T03:13:41.744093+00:00",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TEMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+    "TMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+    "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp"
+  },
+  "format": "RECOVERY_02_HOST_INVOCATION_V1",
+  "host_command_line": "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13 -B /Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_run_command.py",
+  "receipt_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.receipt.json",
+  "started_at_utc": "2026-10-11T03:13:22Z",
+  "stderr_path": {
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stderr",
+    "bytes": 0,
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout_path": {
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stdout",
+    "bytes": 3285,
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stdout",
+    "sha256": "8fc299ba1a62c8a4e21fae43f314cfbd2ac067792f4547678e4c4d08036ce449"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "blocked_reasons": [],
+  "changed": [],
+  "changed_count": 0,
+  "coverage_gap_counts": {
+    "DIRECTORY": 29960,
+    "FIFO": 1,
+    "REGULAR": 94
+  },
+  "coverage_gaps": {
+    "DIRECTORY": {
+      "count": 29960,
+      "sample": [
+        ".agent",
+        ".agent/tasks",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-02",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-03",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-04",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-04/evidence",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-05",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-06",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-06/evidence",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-06/evidence/rederive",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-07",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-07/evidence",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-07/independent-recheck",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-08",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/e2e/attempt-08/evidence",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/handoff-history",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review",
+        ".agent/tasks/T20260916-0102-01-line-backup-acceptance/review/attempt-01"
+      ]
+    },
+    "FIFO": {
+      "count": 1,
+      "sample": [
+        "evidence/20260916-auto-verification/attempt-01/archive-phase1/private-tmp/line-backup-acceptance-verifier/special/backup/destination/special.fifo"
+      ]
+    },
+    "REGULAR": {
+      "count": 94,
+      "sample": [
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/__pycache__/implementer_baseline.cpython-313.pyc",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/commit-message-helper.json",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/commit-message-implementer-01.txt",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/commit-message.txt",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/delivery-summary.json",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/document-verification-attempts.json",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/document-verification.json",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-add-documents-01.invocation.json",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-add-documents-01.stderr",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-add-documents-01.stdout",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-branch-before-01.invocation.json",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-branch-before-01.stderr",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-branch-before-01.stdout",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-commit-documents-01.invocation.json",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-commit-documents-01.stderr",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-commit-documents-01.stdout",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-commit-paths-01.invocation.json",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-commit-paths-01.stderr",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-commit-paths-01.stdout",
+        "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/git-final-index-01.invocation.json"
+      ]
+    }
+  },
+  "created_at_utc": "2026-10-11T03:12:05.912443+00:00",
+  "current_external_record_count": 128568,
+  "directory_entry_extensions_count": 0,
+  "directory_entry_extensions_sample": [],
+  "failures": [],
+  "format": "RECOVERY_02_COMPARE_V1",
+  "historic_record_count": 98513,
+  "inputs": {
+    "historic": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/preexisting-files.json",
+      "bytes": 27949525,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/preexisting-files.json",
+      "sha256": "b115df6ea55e3a985e98651018e742769b02e6f7854989e68f8d7214680832f2"
+    },
+    "inventory-01": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-01.json",
+      "bytes": 75024668,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-01.json",
+      "sha256": "36e825ee70ea24892a96be5ed0e44e8724db8171c4bd788cc22309783946e69e"
+    }
+  },
+  "missing_count": 0,
+  "mode": "historical",
+  "note": "uncovered paths are HISTORICAL_COVERAGE_GAP, never attestations; covered fields (regular sha256/bytes/mode, symlink target/sha256/mode, directory entries/mode subset rule) must match",
+  "runroot_coverage_gap_present": false,
+  "status": "PASS"
+}

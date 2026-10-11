@@ -1,0 +1,214 @@
+{
+  "kind": "RECOVERY_02_FROZEN_CHECKS_V1",
+  "task_id": "TASK-20261011-line-baseline-recovery-02",
+  "run_rel": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02",
+  "root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "runroot": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02",
+  "contract": {
+    "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/plan-contract.json",
+    "bytes": 2811,
+    "sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a"
+  },
+  "executables": [
+    {
+      "name": "python",
+      "path": "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "absolute_path": "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "bytes": 52640,
+      "sha256": "34af8eed630f46919dcb77457077ae3564f7cd25f5d83c56530e64d00de78804"
+    },
+    {
+      "name": "node",
+      "path": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+      "absolute_path": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+      "bytes": 50320,
+      "sha256": "1ef99ea25fe70c9b67e7efe768ef8ee22148d3cabc703db6131b57aeb617d040"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "baseline-selftest-02",
+      "launcher": "HOST_ABSOLUTE_CAPTURE",
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "-B",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_inventory.py"
+      ],
+      "requires": [],
+      "product_attempt": false,
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+        "TMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+        "TEMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp"
+      },
+      "timeout_seconds": 60,
+      "stdout_limit_bytes": 1048576,
+      "stderr_limit_bytes": 1048576,
+      "evidence_stem": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02",
+      "source_hashes": {
+        "tools/inventory.py": null,
+        "checks/test_inventory.py": null,
+        "checks/compare_inventories.py": null
+      },
+      "status": "NOT_RUN",
+      "automatic_retry": false
+    },
+    {
+      "check_id": "runner-preflight-01",
+      "launcher": "HOST_ABSOLUTE_CAPTURE",
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "-B",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/run_command.py",
+        "--preflight"
+      ],
+      "requires": [],
+      "product_attempt": false,
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+        "TMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+        "TEMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp"
+      },
+      "timeout_seconds": 60,
+      "stdout_limit_bytes": 1048576,
+      "stderr_limit_bytes": 1048576,
+      "evidence_stem": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01",
+      "source_hashes": {
+        "checks/run_command.py": null,
+        "check-specs.json": null,
+        "check-specs-freeze.json": null
+      },
+      "status": "NOT_RUN",
+      "automatic_retry": false
+    },
+    {
+      "check_id": "runner-selftest-01",
+      "launcher": "HOST_ABSOLUTE_CAPTURE",
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "-B",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_run_command.py"
+      ],
+      "requires": [
+        "runner-preflight-01"
+      ],
+      "product_attempt": false,
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+        "TMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+        "TEMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp"
+      },
+      "timeout_seconds": 60,
+      "stdout_limit_bytes": 1048576,
+      "stderr_limit_bytes": 1048576,
+      "evidence_stem": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01",
+      "source_hashes": {
+        "checks/run_command.py": null,
+        "checks/test_run_command.py": null,
+        "check-specs.json": null,
+        "check-specs-freeze.json": null
+      },
+      "status": "NOT_RUN",
+      "automatic_retry": false
+    },
+    {
+      "check_id": "node-adapter-syntax-02",
+      "launcher": "VERIFIED_RUNROOT_RUNNER",
+      "argv": [
+        "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+        "--check",
+        "scripts/line_backup_cua_adapter.mjs"
+      ],
+      "requires": [
+        "runner-selftest-01"
+      ],
+      "product_attempt": true,
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+        "TMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+        "TEMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp"
+      },
+      "timeout_seconds": 60,
+      "stdout_limit_bytes": 1048576,
+      "stderr_limit_bytes": 1048576,
+      "evidence_stem": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02",
+      "source_hashes": {
+        "scripts/line_backup_cua_adapter.mjs": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2"
+      },
+      "status": "NOT_RUN",
+      "automatic_retry": false
+    },
+    {
+      "check_id": "node-adapter-tests-01",
+      "launcher": "VERIFIED_RUNROOT_RUNNER",
+      "argv": [
+        "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+        "--test",
+        "tests/test_cua_adapter.mjs",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_capture_regression.mjs"
+      ],
+      "requires": [
+        "node-adapter-syntax-02"
+      ],
+      "product_attempt": true,
+      "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+        "TMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+        "TEMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp"
+      },
+      "timeout_seconds": 60,
+      "stdout_limit_bytes": 1048576,
+      "stderr_limit_bytes": 1048576,
+      "evidence_stem": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01",
+      "source_hashes": {
+        "scripts/line_backup_cua_adapter.mjs": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+        "tests/test_cua_adapter.mjs": "0bb0d99636f35150272fc952b6efa84261e1e9c68375225787221b8b389662bd",
+        "checks/test_capture_regression.mjs": null
+      },
+      "status": "NOT_RUN",
+      "automatic_retry": false
+    }
+  ],
+  "temporary_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+  "child_cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "shell": false,
+  "automatic_retry": false,
+  "runner_allowed_check_ids": [
+    "node-adapter-syntax-02",
+    "node-adapter-tests-01"
+  ],
+  "first_failure": "STOP_DEPENDENT_CHECKS_AND_REPORT_NO_PRODUCT_FIX",
+  "source_binding": {
+    "file": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs-freeze.json",
+    "written_when": "AFTER_G_BASELINE_PASS_BEFORE_HOST_PREFLIGHT",
+    "rule": "Every source_hashes value of null must be resolved from check-specs-freeze.json at launch; a missing or mismatching binding refuses before any side effect."
+  },
+  "baseline_inventory": {
+    "tool": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tools/inventory.py",
+    "cli": "inventory.py baseline|preservation 01|02",
+    "deadline_seconds": 1200,
+    "outputs": [
+      "evidence/inventory-baseline-01.json",
+      "evidence/inventory-baseline-02.json",
+      "evidence/inventory-preservation-01.json",
+      "evidence/inventory-preservation-02.json"
+    ],
+    "fifo_allowlist": [
+      "evidence/20260916-auto-verification/attempt-01/archive-phase1/private-tmp/line-backup-acceptance-verifier/special/backup/destination/special.fifo"
+    ],
+    "automatic_retry": false,
+    "timeout_action": "KEEP_PARTIAL_STOP_NO_RERUN"
+  },
+  "status": "NOT_RUN",
+  "native_harness_validation": "NOT_RUN"
+}

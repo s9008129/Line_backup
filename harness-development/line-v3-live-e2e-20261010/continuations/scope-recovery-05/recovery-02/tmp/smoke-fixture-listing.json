@@ -1,0 +1,1163 @@
+{
+  "entries": [
+    {
+      "dev": 16777229,
+      "ino": 134557764,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/read_mismatch/a.bin",
+      "sha256": "84d89877f0d4041efb6bf91a16f0248f2fd573e6af05c19f96bedb9f882f7882",
+      "size": 10
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557763,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/read_mismatch"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557762,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/unreadable/ok.bin",
+      "sha256": "d14a58bae804a2b80b5b76a010239c88ffca1fc7951a90f8e9131beda1e23c1b",
+      "size": 4
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557761,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/unreadable/secret.bin",
+      "sha256": "2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b",
+      "size": 6
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557760,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/unreadable"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557803,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f35.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557789,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f21.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557777,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f09.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557776,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f08.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557788,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f20.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557802,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f34.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557790,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f22.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557804,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f36.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557805,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f37.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557791,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f23.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557795,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f27.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557801,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f33.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557800,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f32.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557794,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f26.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557786,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f18.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557798,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f30.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557792,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f24.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557793,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f25.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557799,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f31.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557787,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f19.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557782,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f14.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557768,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f00.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557796,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f28.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557797,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f29.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557769,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f01.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557783,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f15.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557771,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f03.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557785,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f17.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557784,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f16.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557770,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f02.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557774,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f06.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557780,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f12.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557781,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f13.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557775,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f07.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557807,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f39.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557779,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f11.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557773,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f05.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557772,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f04.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557778,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f10.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557806,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout/f38.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557767,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/timeout"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557747,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/d1/empty"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557746,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/d1/d2/deep.bin",
+      "sha256": "74611c1d6455b534323a21f8133a6f43dc3a8188e7b946f96dcc28dde932fcb2",
+      "size": 4
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557745,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/d1/d2"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557744,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/d1/.hidden",
+      "sha256": "aaa9402664f1a41f40ebbc52c9993eb66aeb366602958fdfaa283b71e64db123",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557743,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/d1/f1.txt",
+      "sha256": "8c4ca8519b6f0eb430022da791d8338ae7d817513367c1a0d05931c84568b1af",
+      "size": 384
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557742,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/d1"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557751,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/repo/.git/config",
+      "sha256": "74d92d2fc80fb8afce7245419a61659ed64df231439f1d37fe2c3449dd2c4625",
+      "size": 7
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557750,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/repo/.git"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557752,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/repo/README",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557749,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/repo"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557753,
+      "kind": "SYMLINK",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/link_rel",
+      "size": 9,
+      "target": "d1/f1.txt"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557754,
+      "kind": "SYMLINK",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/link_dangling",
+      "size": 14,
+      "target": "no/such/target"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557748,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic/top.bin",
+      "sha256": "40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880",
+      "size": 256
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557741,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/basic"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557766,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/sig_drift/b.bin",
+      "sha256": "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7",
+      "size": 4
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557765,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/sig_drift"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557758,
+      "kind": "FIFO",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T024918Z-98375/fifo/fifo/f",
+      "size": 0
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557759,
+      "kind": "SYMLINK",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/fifo/fifo/link_to_fifo",
+      "size": 1,
+      "target": "f"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557757,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/fifo/fifo"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557756,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375/fifo"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134557740,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T024918Z-98375"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558286,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/read_mismatch/a.bin",
+      "sha256": "84d89877f0d4041efb6bf91a16f0248f2fd573e6af05c19f96bedb9f882f7882",
+      "size": 10
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558285,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/read_mismatch"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558284,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/unreadable/ok.bin",
+      "sha256": "d14a58bae804a2b80b5b76a010239c88ffca1fc7951a90f8e9131beda1e23c1b",
+      "size": 4
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558283,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/unreadable/secret.bin",
+      "sha256": "2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b",
+      "size": 6
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558282,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/unreadable"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558325,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f35.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558311,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f21.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558299,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f09.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558298,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f08.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558310,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f20.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558324,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f34.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558312,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f22.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558326,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f36.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558327,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f37.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558313,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f23.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558317,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f27.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558323,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f33.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558322,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f32.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558316,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f26.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558308,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f18.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558320,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f30.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558314,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f24.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558315,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f25.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558321,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f31.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558309,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f19.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558304,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f14.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558290,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f00.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558318,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f28.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558319,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f29.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558291,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f01.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558305,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f15.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558293,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f03.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558307,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f17.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558306,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f16.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558292,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f02.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558296,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f06.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558302,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f12.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558303,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f13.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558297,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f07.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558329,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f39.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558301,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f11.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558295,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f05.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558294,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f04.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558300,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f10.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558328,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout/f38.bin",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558289,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/timeout"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558269,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/d1/empty"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558268,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/d1/d2/deep.bin",
+      "sha256": "74611c1d6455b534323a21f8133a6f43dc3a8188e7b946f96dcc28dde932fcb2",
+      "size": 4
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558267,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/d1/d2"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558266,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/d1/.hidden",
+      "sha256": "aaa9402664f1a41f40ebbc52c9993eb66aeb366602958fdfaa283b71e64db123",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558265,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/d1/f1.txt",
+      "sha256": "8c4ca8519b6f0eb430022da791d8338ae7d817513367c1a0d05931c84568b1af",
+      "size": 384
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558264,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/d1"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558273,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/repo/.git/config",
+      "sha256": "74d92d2fc80fb8afce7245419a61659ed64df231439f1d37fe2c3449dd2c4625",
+      "size": 7
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558272,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/repo/.git"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558274,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/repo/README",
+      "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+      "size": 1
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558271,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/repo"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558275,
+      "kind": "SYMLINK",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/link_rel",
+      "size": 9,
+      "target": "d1/f1.txt"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558276,
+      "kind": "SYMLINK",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/link_dangling",
+      "size": 14,
+      "target": "no/such/target"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558270,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic/top.bin",
+      "sha256": "40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880",
+      "size": 256
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558263,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/basic"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558288,
+      "kind": "REGULAR",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/sig_drift/b.bin",
+      "sha256": "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7",
+      "size": 4
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558287,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/sig_drift"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558280,
+      "kind": "FIFO",
+      "mode": "0o644",
+      "path": "fixtures/selftest-20261011T025117Z-99017/fifo/fifo/f",
+      "size": 0
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558281,
+      "kind": "SYMLINK",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/fifo/fifo/link_to_fifo",
+      "size": 1,
+      "target": "f"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558279,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/fifo/fifo"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558278,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017/fifo"
+    },
+    {
+      "dev": 16777229,
+      "ino": 134558262,
+      "kind": "DIRECTORY",
+      "mode": "0o755",
+      "path": "fixtures/selftest-20261011T025117Z-99017"
+    }
+  ],
+  "kind": "RECOVERY_02_SMOKE_FIXTURE_LEFTOVER_LISTING",
+  "note": "listing captured before deletion of failed-smoke fixture trees; FIFO content never opened (lstat only)",
+  "task_id": "TASK-20261011-line-baseline-recovery-02",
+  "trees": [
+    "fixtures/selftest-20261011T024918Z-98375",
+    "fixtures/selftest-20261011T025117Z-99017"
+  ]
+}

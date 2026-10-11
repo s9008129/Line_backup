@@ -1,0 +1,701 @@
+{
+  "kind": "IMPLEMENTER_REPORT_MANIFEST",
+  "task_id": "TASK-20261011-line-baseline-recovery-02",
+  "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+  "stage": "IMPLEMENT",
+  "role": "IMPLEMENTER",
+  "manifest_status": "PASS",
+  "gate_results": {
+    "G_BASELINE": "PASS",
+    "G_RUNNER": "PASS",
+    "G_ADAPTER_OFFLINE": "PASS",
+    "G_PRESERVE": "FAIL",
+    "G_REPORT": "PASS_AFTER_MANIFEST_READBACK"
+  },
+  "files": [
+    {
+      "evidence_id": "E_PLAN",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/plan.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/plan.md",
+      "bytes": 21887,
+      "sha256": "6604529c8e9bf06aa59eeb4a0c92358a0b0e7218335d6cd568e8cd4d96bb71bc",
+      "observation": "Reviewed frozen recovery-02 Plan; embeds the Format 3 contract block and the document-publication authorization. Read-only."
+    },
+    {
+      "evidence_id": "E_PLAN_CONTRACT",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/plan-contract.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/plan-contract.json",
+      "bytes": 2811,
+      "sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+      "observation": "Format 3 local machine contract materialized byte-identically from the Handoff block."
+    },
+    {
+      "evidence_id": "E_HANDOFF_JSON",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/handoff.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/handoff.json",
+      "bytes": 2811,
+      "sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+      "observation": "Byte-identical contract handoff copy."
+    },
+    {
+      "evidence_id": "E_HANDOFF",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/handoff.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/handoff.md",
+      "bytes": 18692,
+      "sha256": "fa076f677c547abe690f6b0be5d1d996c85110bc89cd5634c4f023022a72c3c5",
+      "observation": "Deterministic Implementer handoff for recovery-02."
+    },
+    {
+      "evidence_id": "E_CHECK_SPECS",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs.json",
+      "bytes": 11288,
+      "sha256": "5bd52c11c232fecee06b6edb83b009ea49fcb1378459a5653f31310bb8b59d4c",
+      "observation": "Frozen check commands; every official check/gate ran once under this freeze."
+    },
+    {
+      "evidence_id": "E_CHECK_SPECS_FREEZE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs-freeze.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs-freeze.json",
+      "bytes": 2278,
+      "sha256": "1010261ee03bf1d327410d125488b00fc8ae5678d1fe0516e12dcd95ba5a6a70",
+      "observation": "Freeze receipt of resolved source hashes; native_harness_validation=NOT_RUN."
+    },
+    {
+      "evidence_id": "E_BOOTSTRAP",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/bootstrap-prewrite-runroot-v2.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/bootstrap-prewrite-runroot-v2.json",
+      "bytes": 26694,
+      "sha256": "4e067bac795173164d11361029c09d4f4a17890d07f3c90cbfbc2428c45f96ce",
+      "observation": "Pre-write bootstrap anchor (v2, corrected) hashed before contract/tool writes; self-declared NOT_A_GATE."
+    },
+    {
+      "evidence_id": "E_BOOTSTRAP_V1",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/bootstrap-prewrite-runroot.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/bootstrap-prewrite-runroot.json",
+      "bytes": 41083592,
+      "sha256": "bc3be825bde02a2032e5baefcfed907f9e94810e2f39cc77f12eed10c1a4ba5f",
+      "observation": "Superseded pre-correction capture retained read-only; v2 'supersedes' records why v1's removed list must not be used."
+    },
+    {
+      "evidence_id": "E_BASELINE_RECOVERY_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-baseline-recovery-02.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-baseline-recovery-02.json",
+      "bytes": 24360,
+      "sha256": "879e4aec93999278f32b175b7850ac1ff87527eafe86829a46c0c708fc772279",
+      "observation": "G_BASELINE PASS: 37/37 checks; two fresh identical inventories; historical/bootstrap reconciliation; FIFO lstat-only."
+    },
+    {
+      "evidence_id": "E_INCIDENT_RECONCILIATION",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/incident-reconciliation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/incident-reconciliation.json",
+      "bytes": 5045,
+      "sha256": "f7ed1782ccb48f83ea3be58d8e3e2143e95069d38a54f4a3cd6c1e531406ab63",
+      "observation": "Read-only parent-round incident reconciliation (FIFO disposition) retained unchanged."
+    },
+    {
+      "evidence_id": "E_RUNNER",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-runner.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-runner.json",
+      "bytes": 7361,
+      "sha256": "072bf7c508a2631315b2e23f7c47f47c82c8ed408340e45cf86b43acfeaf202b",
+      "observation": "G_RUNNER PASS: 11/11 checks; fixed-root preflight PREFLIGHT_OK and 12/12 runner self-test with raw receipts and guards."
+    },
+    {
+      "evidence_id": "E_ADAPTER_OFFLINE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-adapter-offline.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-adapter-offline.json",
+      "bytes": 8948,
+      "sha256": "ad59db8d590adf580f48c34b103f0989b0abe0a3cc8266bba5a95f2f699257b1",
+      "observation": "G_ADAPTER_OFFLINE PASS: 15/15 checks (internal gate_id 'g-adapter'); unchanged hashes, Node syntax and full suite pass."
+    },
+    {
+      "evidence_id": "E_PRESERVATION_RECOVERY_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/preservation-recovery-02.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/preservation-recovery-02.json",
+      "bytes": 18870,
+      "sha256": "c8d9d2ba15250bc595944c2abbcae4261ddb723a7d616020720e506e7f6ae9d7",
+      "observation": "G_PRESERVE FAIL: 23 checks / 22 ok; compare_preservation reports 7 failures (host-capture files vs declared self-output policy); verdict preserved, never rerun."
+    },
+    {
+      "evidence_id": "E_COMPARE_PRESERVATION",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-preservation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-preservation.json",
+      "bytes": 21100,
+      "sha256": "3ee56302567089d4a0739e301a52c70e18e243a477cb159904a5f8f263d675bd",
+      "observation": "b1->p2 delta clean (added 35 declared, removed 0, changed 0); p1->p2 flags 7 host-capture file failures."
+    },
+    {
+      "evidence_id": "E_PLANNED_ADDITIONS",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/planned-additions.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/planned-additions.json",
+      "bytes": 13550,
+      "sha256": "98b62f049ed1c9bdff64039b43cdfac6e688edfc4d7e7147e8a421201ed22d92",
+      "observation": "Declared 35 post-baseline additions; equals measured delta exactly; all inside RUNROOT."
+    },
+    {
+      "evidence_id": "E_COMPARE_BASELINE_CONSISTENCY",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-baseline-consistency.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-baseline-consistency.json",
+      "bytes": 1884,
+      "sha256": "088aa45f3667d63066577276ecb51389c99ab80cf356c8a3c9a0f1118bdf7827",
+      "observation": "Two fresh full snapshots compare equal."
+    },
+    {
+      "evidence_id": "E_COMPARE_BOOTSTRAP_DELTA",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-bootstrap-delta.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-bootstrap-delta.json",
+      "bytes": 9311,
+      "sha256": "f38a3ff58c9b083216dbe2602340649ad5a511b36dc1a46753b6a834ef300d33",
+      "observation": "Bootstrap vs post-run delta reconciliation (domain-corrected)."
+    },
+    {
+      "evidence_id": "E_COMPARE_HISTORICAL",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-historical.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-historical.json",
+      "bytes": 6132,
+      "sha256": "89aa047f6083ba5b7b9d730e25deb42639911e49b0e0c8568af418ffbb497954",
+      "observation": "Historical baseline vs fresh inventory: missing 0 / changed 0 outside RUNROOT."
+    },
+    {
+      "evidence_id": "E_INVENTORY_BASELINE_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-01.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-01.json",
+      "bytes": 75024668,
+      "sha256": "36e825ee70ea24892a96be5ed0e44e8724db8171c4bd788cc22309783946e69e",
+      "observation": "Fresh inventory #1: 128671 records (REGULAR 98496, FIFO 1 lstat-only); 239 backups read_verified."
+    },
+    {
+      "evidence_id": "E_INVENTORY_BASELINE_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-02.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-02.json",
+      "bytes": 75025245,
+      "sha256": "3cfa66cab97c1afa14b967d67cfd9000ce90d13b4b426c661e1ee6f8eb94c7d2",
+      "observation": "Fresh inventory #2: 128672 records; equal to #1 under the comparator."
+    },
+    {
+      "evidence_id": "E_INVENTORY_PRESERVATION_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-01.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-01.json",
+      "bytes": 75043000,
+      "sha256": "c4b1a330cccca80d1dfc5312dd3be4f96b79c77edcf42602f97fca5a1c4df905",
+      "observation": "Post-gate inventory #1: 128703 records (REGULAR 98528); FIFO observation identical."
+    },
+    {
+      "evidence_id": "E_INVENTORY_PRESERVATION_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-02.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-02.json",
+      "bytes": 75044728,
+      "sha256": "f4b864e0be855f237360f9553380f6a508c45bbd655ff4c865bbb83922a5af54",
+      "observation": "Post-gate inventory #2: 128706 records (REGULAR 98531); source of the 7 compare failures."
+    },
+    {
+      "evidence_id": "E_RECEIPT_BASELINE_SELFTEST_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.receipt.json",
+      "bytes": 2797,
+      "sha256": "bd4e5c0cb84449d63dc4ec424058b7cf1518616112a372a086599a6298c87e09",
+      "observation": "Official baseline self-test receipt PASS (9/9); raw RUN_COMMAND receipt."
+    },
+    {
+      "evidence_id": "E_INVOCATION_BASELINE_SELFTEST_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.invocation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.invocation.json",
+      "bytes": 2523,
+      "sha256": "16eb47ec61ccf7242740d53e84480cea9f35b722c1d5248424068fccf1e2ff62",
+      "observation": "Raw invocation record."
+    },
+    {
+      "evidence_id": "E_STDOUT_BASELINE_SELFTEST_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stdout",
+      "bytes": 11702,
+      "sha256": "a1ad63ff46b507df6abdc5c389f2d220ca8a6f4e25025baa29a44773ed673cd2",
+      "observation": "Raw stdout (removed.paths=68)."
+    },
+    {
+      "evidence_id": "E_STDERR_BASELINE_SELFTEST_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observation": "Empty stderr, bytes=0 as observed."
+    },
+    {
+      "evidence_id": "E_RECEIPT_RUNNER_PREFLIGHT_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.receipt.json",
+      "bytes": 2799,
+      "sha256": "02a5f555ad44643e423572447fe271dc5561bd7f14fc1207d7396cc059104639",
+      "observation": "Runner preflight receipt PREFLIGHT_OK; raw RUN_COMMAND receipt."
+    },
+    {
+      "evidence_id": "E_INVOCATION_RUNNER_PREFLIGHT_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.invocation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.invocation.json",
+      "bytes": 2544,
+      "sha256": "29479fc5f73fb2309bc18e4775e864b4e27981f4f58b3dd8aa658c6b444301e0",
+      "observation": "Raw invocation record."
+    },
+    {
+      "evidence_id": "E_STDOUT_RUNNER_PREFLIGHT_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stdout",
+      "bytes": 3703,
+      "sha256": "22f4bb2263df6f874a6072765a5836edc64132a142a7f5ba6e3a75d3c0c73b8e",
+      "observation": "Raw stdout."
+    },
+    {
+      "evidence_id": "E_STDERR_RUNNER_PREFLIGHT_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observation": "Empty stderr, bytes=0 as observed."
+    },
+    {
+      "evidence_id": "E_RECEIPT_RUNNER_SELFTEST_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.receipt.json",
+      "bytes": 2882,
+      "sha256": "fbb9245c1ebb03d96f7fe88c96effa722fd240edcb16b39184710cabe7f277be",
+      "observation": "Runner self-test receipt PASS 12/12."
+    },
+    {
+      "evidence_id": "E_INVOCATION_RUNNER_SELFTEST_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.invocation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.invocation.json",
+      "bytes": 2517,
+      "sha256": "db2d5ccb0460e9c388252f031b59a13f133971811225c1d20d2e4fb87d41cc05",
+      "observation": "Raw invocation record."
+    },
+    {
+      "evidence_id": "E_STDOUT_RUNNER_SELFTEST_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stdout",
+      "bytes": 3285,
+      "sha256": "8fc299ba1a62c8a4e21fae43f314cfbd2ac067792f4547678e4c4d08036ce449",
+      "observation": "Raw stdout."
+    },
+    {
+      "evidence_id": "E_STDERR_RUNNER_SELFTEST_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observation": "Empty stderr, bytes=0 as observed."
+    },
+    {
+      "evidence_id": "E_RECEIPT_NODE_ADAPTER_SYNTAX_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.receipt.json",
+      "bytes": 3362,
+      "sha256": "f483031a49a67ec0757d63d0dac1633f037ec3b43753e5540dfdf8e6b68336e6",
+      "observation": "Node syntax receipt PASS (RUN_COMMAND schema; no invocation.json by design)."
+    },
+    {
+      "evidence_id": "E_STDOUT_NODE_ADAPTER_SYNTAX_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observation": "Empty stdout, bytes=0 as observed."
+    },
+    {
+      "evidence_id": "E_STDERR_NODE_ADAPTER_SYNTAX_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observation": "Empty stderr, bytes=0 as observed."
+    },
+    {
+      "evidence_id": "E_RECEIPT_NODE_ADAPTER_TESTS_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.receipt.json",
+      "bytes": 3743,
+      "sha256": "f5d51efaede49cff45d9760ace29a00aed3feb7da599b4c1ed6be3e3c4a193c6",
+      "observation": "Full adapter suite receipt PASS (existing + supplemental)."
+    },
+    {
+      "evidence_id": "E_STDOUT_NODE_ADAPTER_TESTS_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stdout",
+      "bytes": 2660,
+      "sha256": "541d58cb4af4a8168279119a02ce476e6f9591f086188356813a24ebf4b2b23b",
+      "observation": "Raw stdout (2660 bytes)."
+    },
+    {
+      "evidence_id": "E_STDERR_NODE_ADAPTER_TESTS_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observation": "Empty stderr, bytes=0 as observed."
+    },
+    {
+      "evidence_id": "E_TOOL_INVENTORY_PY",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tools/inventory.py",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tools/inventory.py",
+      "bytes": 22374,
+      "sha256": "7c4a749c2eeed6b67c9b5c4deda3b4710ddf57cd421bae645b03891a2b7b8e5e",
+      "observation": "Fixed inventory tool (type-aware; FIFO lstat only)."
+    },
+    {
+      "evidence_id": "E_TOOL_RUN_COMMAND_PY",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/run_command.py",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/run_command.py",
+      "bytes": 19829,
+      "sha256": "7a99176f828aeb098f0f68a16f470e6685782677386d2a9237b6908a10521cf3",
+      "observation": "Fixed-root guarded runner."
+    },
+    {
+      "evidence_id": "E_TOOL_TEST_RUN_COMMAND",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_run_command.py",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_run_command.py",
+      "bytes": 14764,
+      "sha256": "157a37c1f3415b50af0e42fa8ada8175c69fb23c967c880fa60835a0620e1d98",
+      "observation": "Runner unit tests."
+    },
+    {
+      "evidence_id": "E_TOOL_COMPARE_INVENTORIES",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/compare_inventories.py",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/compare_inventories.py",
+      "bytes": 19215,
+      "sha256": "cbee9e07d7467ef66eeda55266f0162ad437b145bb91038fd8a7916990707f9e",
+      "observation": "Comparator (SELF_OUTPUTS constant L55-60; declared self outputs are the four evidence/ inventory JSONs only)."
+    },
+    {
+      "evidence_id": "E_TOOL_TEST_INVENTORY",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_inventory.py",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_inventory.py",
+      "bytes": 17168,
+      "sha256": "9518e419d08cd41170731e4852c4dde5948140ef7f48e5cd88b441e125a087a0",
+      "observation": "Inventory unit tests (fixture)."
+    },
+    {
+      "evidence_id": "E_TOOL_TEST_CAPTURE_REGRESSION",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_capture_regression.mjs",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_capture_regression.mjs",
+      "bytes": 10808,
+      "sha256": "dc45d7e79a96e86fee4f942981304e1e0748872d705afeda3a1f54c020d4d639",
+      "observation": "Supplemental capture regression suite."
+    },
+    {
+      "evidence_id": "E_HELPER_USAGE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-usage-readonly-01.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-usage-readonly-01.json",
+      "bytes": 11093,
+      "sha256": "dc5949303d451cda2e93f2bc3a3999e4f51db79bc2c86c8a71b10a7359803cc4",
+      "observation": "Helper usage record (read-only helpers; reservations)."
+    },
+    {
+      "evidence_id": "E_CON_G_BASELINE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline.json",
+      "bytes": 142531,
+      "sha256": "b8837c5dc8aadccf46e24c25d768ed57fa4dde7e7644e5938448b90e67ef464d",
+      "observation": "Read-only parent-round G_BASELINE FAIL receipt (FIFO incident); preserved unchanged."
+    },
+    {
+      "evidence_id": "E_CON_G_BASELINE_FAILURE_DETAIL",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline-failure-detail.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline-failure-detail.json",
+      "bytes": 1680,
+      "sha256": "c0ce0019b68df53f72e2b0e6ab2c0e0ac151df2c3dd8e6619c7289ed38a6a005",
+      "observation": "FIFO lstat disposition; content never read."
+    },
+    {
+      "evidence_id": "E_CON_ATTEMPT_01_STDERR",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/implementer-baseline-attempt-01.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/implementer-baseline-attempt-01.stderr",
+      "bytes": 1049,
+      "sha256": "327d40c8511455adcbb6dcd376cfd8e0d08404f96916c7e76c24f5846db1a8ec",
+      "observation": "Inherited first baseline-helper attempt stderr (NameError); read-only."
+    },
+    {
+      "evidence_id": "E_INCIDENT_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.invocation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.invocation.json",
+      "bytes": 303,
+      "sha256": "e6af579520a315edb79877c4fb7fb6ecab8066cd9f1c4c9fccd396d296bc9e3e",
+      "observation": "Original incident receipt; unchanged."
+    },
+    {
+      "evidence_id": "E_INCIDENT_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.receipt.json",
+      "bytes": 678,
+      "sha256": "e1d16b370f6f7c9d7d6275e8afd21fe77946dececef290ebc64a740914637719",
+      "observation": "Original incident receipt; unchanged."
+    },
+    {
+      "evidence_id": "E_INCIDENT_03",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observation": "Original incident receipt; unchanged, empty stream."
+    },
+    {
+      "evidence_id": "E_INCIDENT_04",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stderr",
+      "bytes": 318,
+      "sha256": "8948d951d254f345d8f1ce65686618a314622897641a6a037058ed782bff1fa4",
+      "observation": "Original incident receipt; unchanged."
+    },
+    {
+      "evidence_id": "E_SOURCE_ADAPTER",
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/scripts/line_backup_cua_adapter.mjs",
+      "bytes": 39953,
+      "sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "observation": "Unchanged CUA adapter source (hash verified before/after); source_sha256 of this round."
+    },
+    {
+      "evidence_id": "E_TEST_ADAPTER",
+      "path": "tests/test_cua_adapter.mjs",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_cua_adapter.mjs",
+      "bytes": 18529,
+      "sha256": "0bb0d99636f35150272fc952b6efa84261e1e9c68375225787221b8b389662bd",
+      "observation": "Unchanged adapter test suite."
+    },
+    {
+      "evidence_id": "E_STATE",
+      "path": "state/backup_state.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/state/backup_state.json",
+      "bytes": 252115,
+      "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+      "observation": "Read-only product state; unchanged."
+    },
+    {
+      "evidence_id": "E_CONFIG",
+      "path": "config/line_backup_config.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/config/line_backup_config.json",
+      "bytes": 384,
+      "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+      "observation": "Read-only backup configuration."
+    },
+    {
+      "evidence_id": "E_GUI_LEDGER",
+      "path": "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+      "bytes": 123,
+      "sha256": "92bab0cf122871b42f3db62af956289b62fbf4e279219766a8850b61f20e135f",
+      "observation": "Read-only GUI ledger."
+    },
+    {
+      "evidence_id": "E_PARENT_ATTEMPT_LEDGER",
+      "path": "harness-development/line-v3-live-e2e-20261010/attempt-ledger.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/attempt-ledger.json",
+      "bytes": 28144,
+      "sha256": "d67fdaf77056ae3426cc1db76436f7cf32c932cec5de6fad8fafbc04297a64a7",
+      "observation": "Read-only parent-run attempt ledger."
+    },
+    {
+      "evidence_id": "E_PARENT_ATTEMPT_LEDGER_LG03",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+      "bytes": 10014,
+      "sha256": "205461d838d4d1b4d596c5637e03ea087373d229837c3b4aec57fe5a4cdeba1a",
+      "observation": "Read-only live-grounding-03 attempt ledger."
+    },
+    {
+      "evidence_id": "E_PYTHON_RUNTIME",
+      "path": "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "absolute_path": "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "bytes": 52640,
+      "sha256": "34af8eed630f46919dcb77457077ae3564f7cd25f5d83c56530e64d00de78804",
+      "observation": "Pinned host Python runtime; read-only hash check."
+    },
+    {
+      "evidence_id": "E_NODE_RUNTIME",
+      "path": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+      "absolute_path": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+      "bytes": 50320,
+      "sha256": "1ef99ea25fe70c9b67e7efe768ef8ee22148d3cabc703db6131b57aeb617d040",
+      "observation": "Pinned Node runtime; read-only hash check."
+    },
+    {
+      "evidence_id": "E_REPORT",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/E2E測試報告.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/E2E測試報告.md",
+      "bytes": 43533,
+      "sha256": "0336b8990edae40bc6ea561d161a9059e97e58fab5398964bdc331f26b71feca",
+      "observation": "Full implementation-stage report; commands/order/failures/untouched gates; Planner handoff pending (no channel)."
+    },
+    {
+      "evidence_id": "E_PROGRESS",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/progress.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/progress.md",
+      "bytes": 4267,
+      "sha256": "3f626c55ba07a4fe8a542651d118dc20b8e3ceaf9e641e08bf9b1c37a49b592a",
+      "observation": "Plain-language status and next decision."
+    },
+    {
+      "evidence_id": "E_ATTEMPT_LEDGER",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/attempt-ledger-recovery-02.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/attempt-ledger-recovery-02.json",
+      "bytes": 35079,
+      "sha256": "827c52410a8f52ba88041dc5d0efb860262737dc1b071c5f2e3b415a37676485",
+      "observation": "Round ledger: attempts, reservations, side effects, user-authorized parallel authoring agent IDs."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128be-96b8-7520-b8aa-7a7c8ae36477.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128be-96b8-7520-b8aa-7a7c8ae36477.json",
+      "bytes": 28812,
+      "sha256": "022a827935b17ad8633cb7f30f1afaac52f82cb621a1aa7add0f7f8e2a915f8f",
+      "observation": "Read-only helper/auditor agent report (James) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e6ab-72f2-b8a8-6da489d256a1.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e6ab-72f2-b8a8-6da489d256a1.json",
+      "bytes": 21371,
+      "sha256": "f205928bae69b5e2c51c74a5082b993c081ba40e9e917607b8f672826556c46b",
+      "observation": "Read-only helper/auditor agent report (Lorentz) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_03",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e6ef-7250-b9de-a0be056889ed.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e6ef-7250-b9de-a0be056889ed.json",
+      "bytes": 20954,
+      "sha256": "52e548e20cd9321427207db372e2421027e886a2c81b2875b932ab7bd100c6f9",
+      "observation": "Read-only helper/auditor agent report (Planck) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_04",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e73b-7911-8623-ce522bdbe28e.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e73b-7911-8623-ce522bdbe28e.json",
+      "bytes": 13696,
+      "sha256": "07bcc4bf69350b055c58e93905a5182bded2de9a50569dfc05ee0af827c8c878",
+      "observation": "Read-only helper/auditor agent report (Maxwell) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_05",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e771-71b0-b2ae-44b5602844de.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e771-71b0-b2ae-44b5602844de.json",
+      "bytes": 7461,
+      "sha256": "c76ba1ce4911b2d2600d9f7ec01ca9dc42dafba67b21214e80e37115fb267997",
+      "observation": "Read-only helper/auditor agent report (Bernoulli) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_06",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-8541-7af1-b258-3264a9c869b2.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-8541-7af1-b258-3264a9c869b2.json",
+      "bytes": 11278,
+      "sha256": "b8b0d09003054eacb16d1d13d9726ef00c31c394e954b8749fadb976bb93b9e7",
+      "observation": "Read-only helper/auditor agent report (Hilbert) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_07",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-8589-7752-9713-09ffc7a03bb3.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-8589-7752-9713-09ffc7a03bb3.json",
+      "bytes": 12074,
+      "sha256": "2c5b2359a4784d70c52d1a64b00ae1e252e7730b0e5e0c2ac381fc373aed037e",
+      "observation": "Read-only helper/auditor agent report (Pasteur) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_08",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-85db-7db1-a5d2-8488859cb14c.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-85db-7db1-a5d2-8488859cb14c.json",
+      "bytes": 4875,
+      "sha256": "bd8b883398143e771aca9dc2f9ede00ce43a02b5fdadd4c208b5311ee99f9ccb",
+      "observation": "Read-only helper/auditor agent report (Ramanujan) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_09",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-8614-7c81-a9d0-3a0cb166ccd1.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-8614-7c81-a9d0-3a0cb166ccd1.json",
+      "bytes": 17964,
+      "sha256": "84914a20cf57f6da081d63ed27f47c3864410237e53be5ab76ddc31f5b7ee848",
+      "observation": "Read-only helper/auditor agent report (Plato) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_10",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128d6-68c7-7973-90bf-d101c881f191.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128d6-68c7-7973-90bf-d101c881f191.json",
+      "bytes": 3679,
+      "sha256": "816f45699e984ee20c6688bfa3e366e6a36dd357477040506029ca106534af94",
+      "observation": "Read-only helper/auditor agent report (Bohr) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_11",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128d6-690d-7d02-bd23-44628a71f9c0.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128d6-690d-7d02-bd23-44628a71f9c0.json",
+      "bytes": 7244,
+      "sha256": "3dc355e2b22ec362edf46860ee04c2234b2a5335b535f723772dcd2bc8676162",
+      "observation": "Read-only helper/auditor agent report (Leibniz) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_12",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128df-e926-7710-91aa-bd58f0bcbc0b.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128df-e926-7710-91aa-bd58f0bcbc0b.json",
+      "bytes": 4949,
+      "sha256": "ca069759d6c6e09665d5656c089c8b4c205e876dc085ea45e277ecfda0f56b85",
+      "observation": "Read-only helper/auditor agent report (Lovelace) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_13",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128df-e95e-7c33-a293-c3847916eb69.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128df-e95e-7c33-a293-c3847916eb69.json",
+      "bytes": 12415,
+      "sha256": "329dfd36cc214dbd60a240cade48ef7252b98d0240c49003ad6b09e6b8ea4dde",
+      "observation": "Read-only helper/auditor agent report (Huygens) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_14",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128df-e999-7361-9997-c78163f2f96a.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128df-e999-7361-9997-c78163f2f96a.json",
+      "bytes": 10500,
+      "sha256": "72d4d3cbc5c4472be155147bdf6c8ad3f5feb2955e711572f643ed861f8bd8ec",
+      "observation": "Read-only helper/auditor agent report (Kepler) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_15",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128e7-5938-7a01-8f94-7265b0432633.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128e7-5938-7a01-8f94-7265b0432633.json",
+      "bytes": 12539,
+      "sha256": "e6fd649d5bbdf5cd153792d96463d3657134688ea16757339ff05c80e64b9b60",
+      "observation": "Read-only helper/auditor agent report (Pascal) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_16",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128e7-5991-7950-a5f4-a1de3dac0390.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128e7-5991-7950-a5f4-a1de3dac0390.json",
+      "bytes": 14665,
+      "sha256": "907304d1542b996bbb750a0d3c4638780ff0afdaa66841f0ec7324848f66301a",
+      "observation": "Read-only helper/auditor agent report (Euclid) retained; summarized in E_REPORT appendix."
+    },
+    {
+      "evidence_id": "E_HELPER_REPORT_17",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128e7-59d8-7362-9f31-7ad7de131244.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128e7-59d8-7362-9f31-7ad7de131244.json",
+      "bytes": 12209,
+      "sha256": "4d140b4b75da65044d2fe9ca8aa2b8030539ff680daa5216c2cf8e3360c38b03",
+      "observation": "Read-only helper/auditor agent report (Franklin) retained; summarized in E_REPORT appendix."
+    }
+  ],
+  "special_object": {
+    "path": "evidence/20260916-auto-verification/attempt-01/archive-phase1/private-tmp/line-backup-acceptance-verifier/special/backup/destination/special.fifo",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/archive-phase1/private-tmp/line-backup-acceptance-verifier/special/backup/destination/special.fifo",
+    "kind": "FIFO",
+    "content_read": false,
+    "content_hash": null,
+    "evidence_id": "E_PRESERVATION_RECOVERY_02"
+  },
+  "observed_extra_files": [
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/檢討報告.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/檢討報告.md",
+      "bytes": 39827,
+      "sha256": "54bb7bca54ee386f32cff65fc466261a6433d0c9d9be796c16d153d2b5d15f89",
+      "observation": "Appeared in RUNROOT on 2026-10-11 around 11:35-11:36 but was not authored by this round's chain (its own text records that another session's agent is the designated Replanner). Preserved read-only; never modified or deleted; hash recorded at manifest write time (2026-10-11T03:40:51Z)."
+    }
+  ],
+  "self_reference": "Excluded; the manifest is verified by the role result and readback.",
+  "result_path": "evidence/implementation-result.json",
+  "native_harness_schema_validation": "NOT_RUN"
+}

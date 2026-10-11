@@ -1,0 +1,99 @@
+{
+  "added": [
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/compare_inventories.py",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/run_command.py",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_capture_regression.mjs",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_inventory.py",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_run_command.py",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.invocation.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.receipt.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stdout",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/bootstrap-prewrite-runroot-v2.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/bootstrap-prewrite-runroot.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128be-96b8-7520-b8aa-7a7c8ae36477.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e6ab-72f2-b8a8-6da489d256a1.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e6ef-7250-b9de-a0be056889ed.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e73b-7911-8623-ce522bdbe28e.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128c3-e771-71b0-b2ae-44b5602844de.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-8541-7af1-b258-3264a9c869b2.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-8589-7752-9713-09ffc7a03bb3.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-85db-7db1-a5d2-8488859cb14c.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128ca-8614-7c81-a9d0-3a0cb166ccd1.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128d6-68c7-7973-90bf-d101c881f191.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128d6-690d-7d02-bd23-44628a71f9c0.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128df-e926-7710-91aa-bd58f0bcbc0b.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128df-e95e-7c33-a293-c3847916eb69.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128df-e999-7361-9997-c78163f2f96a.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128e7-5938-7a01-8f94-7265b0432633.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128e7-5991-7950-a5f4-a1de3dac0390.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/agent-01a128e7-59d8-7362-9f31-7ad7de131244.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-usage-readonly-01.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/fixtures",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/handoff.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/plan-contract.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/extract_helper_report_franklin.py",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/make_host_receipt.py",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/smoke-baseline-selftest-02.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/smoke-baseline-selftest-02.stdout",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/smoke-baseline-selftest-03.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/smoke-baseline-selftest-03.stdout",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/smoke-baseline-selftest-04.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/smoke-baseline-selftest-04.stdout",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/smoke-fixture-listing.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/smoke-runner-selftest-02.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/smoke-runner-selftest-02.stdout",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tools",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tools/gate_receipts.py",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tools/inventory.py"
+  ],
+  "blocked_reasons": [],
+  "changed": [],
+  "created_at_utc": "2026-10-11T03:12:05.451548+00:00",
+  "directory_explained": [
+    {
+      "entries_delta": [
+        "check-specs.json",
+        "checks",
+        "evidence",
+        "fixtures",
+        "handoff.json",
+        "plan-contract.json",
+        "tmp",
+        "tools"
+      ],
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02"
+    }
+  ],
+  "domain_prefix": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02",
+  "failures": [],
+  "format": "RECOVERY_02_COMPARE_V1",
+  "inputs": {
+    "inventory-01": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-01.json",
+      "bytes": 75024668,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-01.json",
+      "sha256": "36e825ee70ea24892a96be5ed0e44e8724db8171c4bd788cc22309783946e69e"
+    },
+    "planned-additions": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/planned-additions.json",
+      "bytes": 8861,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/planned-additions.json",
+      "sha256": "8bbbe82012b89e4bb340cfb9b7df326c07fa0b6dea3e803ae18b3becfce71068"
+    },
+    "prewrite": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/bootstrap-prewrite-runroot-v2.json",
+      "bytes": 26694,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/bootstrap-prewrite-runroot-v2.json",
+      "sha256": "4e067bac795173164d11361029c09d4f4a17890d07f3c90cbfbc2428c45f96ce"
+    }
+  },
+  "mode": "bootstrap-delta",
+  "removed": [],
+  "status": "PASS"
+}

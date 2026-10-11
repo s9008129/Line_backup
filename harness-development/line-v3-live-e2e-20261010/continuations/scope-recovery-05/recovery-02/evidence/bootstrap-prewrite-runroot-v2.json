@@ -1,0 +1,515 @@
+{
+  "kind": "RECOVERY_02_BOOTSTRAP_PREWRITE_RUNROOT_V2_CORRECTED_NOT_A_GATE",
+  "task_id": "TASK-20261011-line-baseline-recovery-02",
+  "run_rel": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02",
+  "created_at_utc": "2026-10-11T02:18:54.016738+00:00",
+  "supersedes": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/bootstrap-prewrite-runroot.json",
+    "bytes": 41083592,
+    "sha256": "bc3be825bde02a2032e5baefcfed907f9e94810e2f39cc77f12eed10c1a4ba5f",
+    "reason": "v1 publication_delta compared RUNROOT-only current records against the whole-ROOT publication baseline; its removed list (128,569) is a domain-mismatch artifact. v1 prewrite_records and its new=52 list are correct and are reused here. v1 preserved in place; do not use its removed field."
+  },
+  "prewrite_runroot_records": [
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02",
+      "kind": "DIRECTORY",
+      "mode": 448,
+      "entries": [
+        ".local",
+        "handoff.md",
+        "plan.md"
+      ]
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/handoff.md",
+      "mode": 420,
+      "kind": "REGULAR",
+      "bytes": 18692,
+      "sha256": "fa076f677c547abe690f6b0be5d1d996c85110bc89cd5634c4f023022a72c3c5"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/plan.md",
+      "mode": 420,
+      "kind": "REGULAR",
+      "bytes": 21887,
+      "sha256": "6604529c8e9bf06aa59eeb4a0c92358a0b0e7218335d6cd568e8cd4d96bb71bc"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local",
+      "kind": "DIRECTORY",
+      "mode": 448,
+      "entries": [
+        "commit-message-helper.json",
+        "commit-message.txt",
+        "document-consistency.json",
+        "document-publication-baseline.json",
+        "document-publication-status.z",
+        "document-publication-tracked.diff",
+        "git-add-documents-02.invocation.json",
+        "git-add-documents-02.stderr",
+        "git-add-documents-02.stdout",
+        "git-commit-documents-02.invocation.json",
+        "git-commit-documents-02.stderr",
+        "git-commit-documents-02.stdout",
+        "git-commit-head-02.invocation.json",
+        "git-commit-head-02.stderr",
+        "git-commit-head-02.stdout",
+        "git-commit-message-02.invocation.json",
+        "git-commit-message-02.stderr",
+        "git-commit-message-02.stdout",
+        "git-commit-parent-02.invocation.json",
+        "git-commit-parent-02.stderr",
+        "git-commit-parent-02.stdout",
+        "git-commit-paths-02.invocation.json",
+        "git-commit-paths-02.stderr",
+        "git-commit-paths-02.stdout",
+        "git-final-index-02.invocation.json",
+        "git-final-index-02.stderr",
+        "git-final-index-02.stdout",
+        "git-publication.receipt.json",
+        "git-push-documents-02.invocation.json",
+        "git-push-documents-02.stderr",
+        "git-push-documents-02.stdout",
+        "git-remote-after-push-02.invocation.json",
+        "git-remote-after-push-02.stderr",
+        "git-remote-after-push-02.stdout",
+        "git-remote-before-push-02.invocation.json",
+        "git-remote-before-push-02.stderr",
+        "git-remote-before-push-02.stdout",
+        "git-staged-blobs-02.invocation.json",
+        "git-staged-blobs-02.stderr",
+        "git-staged-blobs-02.stdout",
+        "git-staged-paths-02.invocation.json",
+        "git-staged-paths-02.stderr",
+        "git-staged-paths-02.stdout",
+        "preservation-after-publication.json",
+        "preservation-before-publication.json",
+        "progress.md",
+        "publish_documents.py",
+        "verify_document_publication.py"
+      ]
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/commit-message-helper.json",
+      "mode": 420,
+      "kind": "REGULAR",
+      "bytes": 1462,
+      "sha256": "a27db4c40b69dbe944ade7abd6da48f06aca793d3574e241de5ce04a296a63fa"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/commit-message.txt",
+      "mode": 420,
+      "kind": "REGULAR",
+      "bytes": 2633,
+      "sha256": "f657e9e298f0054def492b3f8e31bb20e52e57e8745285e0c40b4c39a98dd2dd"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/document-consistency.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 1385,
+      "sha256": "a29126d0c4b3ec3004d6fb55e09b2dab91f96b35c4cc6a18dfbc0c42e61d1773"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/document-publication-baseline.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 36647744,
+      "sha256": "ea87f7929593038b94f1763b3d9bda88824282a68400d5f6d0d0929d10eaf393"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/document-publication-status.z",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 11951096,
+      "sha256": "4e437cccd8e527f78be3cb519706bd9577ae66ba3cc24adf24c6721c7db890f0"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/document-publication-tracked.diff",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 84931,
+      "sha256": "b03fed01d169ee86796ccc3d669198f09a1fcacce9161c0c2ed2a8cd6b9527c9"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-add-documents-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 553,
+      "sha256": "43dc8c10ca67c14e6e70f528f56b27b40748eef877112dc63d9223a04c8d5ae7"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-add-documents-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-add-documents-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-documents-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 755,
+      "sha256": "95c6ece0c9697174748d0609929a1a81e70169243b5e85779e7ec9e2715cb9a8"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-documents-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-documents-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 373,
+      "sha256": "351be571210205b1ca671a1af1faa5206ee8fff5834482c5a3b98dedfe6a47dd"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-head-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 346,
+      "sha256": "323c448a37f8216927c84b84faedb2a3796aa3c02b8330bc2ebf20cead03742a"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-head-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-head-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 41,
+      "sha256": "e1ba7257e671aab31d8dddfe84d4257577bca1f3040f66318a5a1961a5a7aefa"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-message-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 409,
+      "sha256": "810cf2cfb46d503b6bad04ce5d19e860c4e77265535d93cc86d18c38e5a6f556"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-message-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-message-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 2634,
+      "sha256": "e1ed5b5fa44ae1d841b6b9da25de79c5e5a92b763e52ad642e9d5ff2e315d03f"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-parent-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 349,
+      "sha256": "715e48a098ca78dae58bcbf5949ed46c064d69250e4f30bc96f34de9048e57e4"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-parent-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-parent-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 41,
+      "sha256": "6a2c0a05653326e0ec8f70db7dc5e7a569b12bd228b32a1a210863b39c14bdb7"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-paths-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 444,
+      "sha256": "972e87a614c2671d1108fb59e9fb1423f592cda62e1bdb806db45690d50b3e5e"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-paths-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-paths-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 199,
+      "sha256": "c2b5527bc19ec19b62bba011a518fdc9e7787cf88ae12bc90526a7c61497a3a6"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-final-index-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 366,
+      "sha256": "68c05b501ad3a829c14d9263d75b2497d1237f0a8a6582065079e41a4cc34f2a"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-final-index-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-final-index-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-publication.receipt.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 21311,
+      "sha256": "99c47e43c76b940816fad7343211d8cb15fbf745868a811292401cd846b708c0"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-push-documents-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 388,
+      "sha256": "b7fcdaf5c44d9f623aa658532caa961147f3bc49d669c4966d6001da1e924d54"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-push-documents-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 95,
+      "sha256": "b246481fe7050d334f23ce6697d033aba1aacd2b32c462c1d51c8603c02a0938"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-push-documents-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-after-push-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 391,
+      "sha256": "968f999a29c0a2f346674248ae5b8d7e4635cfb891b4b72c353a88c9135ddd9e"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-after-push-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-after-push-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 71,
+      "sha256": "698bfe562774032196ac5ffa057f862304764ea0ea9e7ffb7ca6d21c2b99b062"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-before-push-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 392,
+      "sha256": "7fdbc489be7aa5fe552078e933889467ad8f207e809c06b1a4f0ef23708e6a6d"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-before-push-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-before-push-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 71,
+      "sha256": "2c01ead95ccec0aa45c7d8830549e29b8e4c565ac3fe0fc36f59042864421e65"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-blobs-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 572,
+      "sha256": "fbb82472ee91374f6a0ff6f0d7ee99d48dc1dd20179ba92c36c6caf4627d3be9"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-blobs-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-blobs-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 299,
+      "sha256": "b5f87ca4c803d3bfedaa23b711fea792fbd1fe8f0dadf4b06a087f64282d6336"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-paths-02.invocation.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 375,
+      "sha256": "8704c51191cf90d53b505fc8445c49c833da928633624e437bf0db8bb0890b4a"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-paths-02.stderr",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-paths-02.stdout",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 199,
+      "sha256": "c2b5527bc19ec19b62bba011a518fdc9e7787cf88ae12bc90526a7c61497a3a6"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/preservation-after-publication.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 697,
+      "sha256": "ce253e76b2f880b3d50b8f39a405129eb4a51f83b8dbbf0e05e257c6a7f9a270"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/preservation-before-publication.json",
+      "mode": 384,
+      "kind": "REGULAR",
+      "bytes": 698,
+      "sha256": "0da874c5efa79263013f2276a6a6fc0484b6a181ee8703c938f85b42e58c4ca1"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/progress.md",
+      "mode": 420,
+      "kind": "REGULAR",
+      "bytes": 3345,
+      "sha256": "912c07f60938f82bd47ff9be623323531b776dda905162052cbd02a0f2b309cb"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/publish_documents.py",
+      "mode": 420,
+      "kind": "REGULAR",
+      "bytes": 9025,
+      "sha256": "498f57aae2b85e80524b93a5adb50cce49ee1b2c463beb2cd87a495579703b11"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/verify_document_publication.py",
+      "mode": 420,
+      "kind": "REGULAR",
+      "bytes": 8963,
+      "sha256": "100c8d87290b3586c4efd1b1e08f69ef574a522d7dfd0eba245ffda89697aabd"
+    }
+  ],
+  "prewrite_file_count": 50,
+  "publication_to_prewrite_delta": {
+    "method": "pre-write full-tree walk (128,621 records, ROOT minus .git) compared in memory against document-publication-baseline.json before any bootstrap write",
+    "old_count": 128569,
+    "cur_count": 128621,
+    "new": [
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/commit-message-helper.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/commit-message.txt",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/document-consistency.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/document-publication-baseline.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/document-publication-status.z",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/document-publication-tracked.diff",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-add-documents-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-add-documents-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-add-documents-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-documents-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-documents-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-documents-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-head-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-head-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-head-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-message-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-message-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-message-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-parent-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-parent-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-parent-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-paths-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-paths-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-commit-paths-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-final-index-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-final-index-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-final-index-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-publication.receipt.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-push-documents-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-push-documents-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-push-documents-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-after-push-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-after-push-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-after-push-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-before-push-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-before-push-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-remote-before-push-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-blobs-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-blobs-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-blobs-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-paths-02.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-paths-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/git-staged-paths-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/preservation-after-publication.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/preservation-before-publication.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/progress.md",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/publish_documents.py",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/.local/verify_document_publication.py",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/handoff.md",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/plan.md"
+    ],
+    "removed": [],
+    "changed": [
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05"
+    ],
+    "outside_runrel_delta": []
+  },
+  "anchor": {
+    "kind": "RECOVERY_02_PREWRITE_ANCHOR",
+    "observations": 2,
+    "equal": true,
+    "namespace_digest_sha256": "645193d08bda57501969b007af152ca6295b2388c9a0642b7c10371091e0c3e1",
+    "namespace_counts": {
+      "D": 30133,
+      "F": 98451,
+      "L": 36,
+      "P": 1
+    },
+    "namespace_total": 128621,
+    "git": {
+      "head": "6dbd45679ebf54a2c27faf1c8212b475c4b87f7a",
+      "branch": "v43-ab/codex-rev28",
+      "staged": "",
+      "index_sha256": "13fe8bd0c329367fbbc6a24439a0cf27635c4e30c6193c17b1b940980351cb83"
+    }
+  },
+  "note": "Supporting bootstrap-boundary evidence only; not a gate receipt. Native harness validation NOT_RUN.",
+  "native_harness_validation": "NOT_RUN"
+}

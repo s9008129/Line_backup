@@ -1,0 +1,25 @@
+{
+  "created_at_utc": "2026-10-11T03:12:27Z",
+  "format": "RECOVERY_02_CHECK_SPECS_FREEZE_V1",
+  "generator": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/write_freeze.py",
+    "sha256": "9916110e99c3876a25c90a0348e3bf16c473d80ff285adf46c25864be611f915"
+  },
+  "native_harness_validation": "NOT_RUN",
+  "resolved_source_hashes": {
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs.json": "5bd52c11c232fecee06b6edb83b009ea49fcb1378459a5653f31310bb8b59d4c",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/compare_inventories.py": "cbee9e07d7467ef66eeda55266f0162ad437b145bb91038fd8a7916990707f9e",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/run_command.py": "7a99176f828aeb098f0f68a16f470e6685782677386d2a9237b6908a10521cf3",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_capture_regression.mjs": "dc45d7e79a96e86fee4f942981304e1e0748872d705afeda3a1f54c020d4d639",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_inventory.py": "9518e419d08cd41170731e4852c4dde5948140ef7f48e5cd88b441e125a087a0",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_run_command.py": "157a37c1f3415b50af0e42fa8ada8175c69fb23c967c880fa60835a0620e1d98",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tools/inventory.py": "7c4a749c2eeed6b67c9b5c4deda3b4710ddf57cd421bae645b03891a2b7b8e5e",
+    "scripts/line_backup_cua_adapter.mjs": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+    "tests/test_cua_adapter.mjs": "0bb0d99636f35150272fc952b6efa84261e1e9c68375225787221b8b389662bd"
+  },
+  "run_rel": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02",
+  "self_reference": {
+    "excluded_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs-freeze.json"
+  },
+  "task_id": "TASK-20261011-line-baseline-recovery-02"
+}

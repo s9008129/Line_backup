@@ -1,0 +1,189 @@
+{
+  "checks": [
+    {
+      "name": "g-baseline-recovery-02.json_pass",
+      "ok": true
+    },
+    {
+      "name": "g-runner.json_pass",
+      "ok": true
+    },
+    {
+      "exit_code": 0,
+      "name": "node-adapter-syntax-02_exit",
+      "ok": true,
+      "status": "PASS",
+      "timeout": false
+    },
+    {
+      "name": "node-adapter-syntax-02_stderr_empty",
+      "ok": true
+    },
+    {
+      "name": "node-adapter-syntax-02_adapter_hash",
+      "ok": true,
+      "product_hashes": {
+        "adapter_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+        "supplemental_test_sha256": "dc45d7e79a96e86fee4f942981304e1e0748872d705afeda3a1f54c020d4d639",
+        "test_sha256": "0bb0d99636f35150272fc952b6efa84261e1e9c68375225787221b8b389662bd"
+      }
+    },
+    {
+      "name": "syntax_stdout_empty",
+      "ok": true
+    },
+    {
+      "exit_code": 0,
+      "name": "node-adapter-tests-01_exit",
+      "ok": true,
+      "status": "PASS",
+      "timeout": false
+    },
+    {
+      "name": "node-adapter-tests-01_stderr_empty",
+      "ok": true
+    },
+    {
+      "name": "node-adapter-tests-01_adapter_hash",
+      "ok": true,
+      "product_hashes": {
+        "adapter_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+        "supplemental_test_sha256": "dc45d7e79a96e86fee4f942981304e1e0748872d705afeda3a1f54c020d4d639",
+        "test_sha256": "0bb0d99636f35150272fc952b6efa84261e1e9c68375225787221b8b389662bd"
+      }
+    },
+    {
+      "name": "tests_reported_pass",
+      "ok": true,
+      "stdout_bytes": 2660
+    },
+    {
+      "actual_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "bytes": 39953,
+      "expected_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "name": "adapter_now_hash",
+      "ok": true
+    },
+    {
+      "actual_sha256": "0bb0d99636f35150272fc952b6efa84261e1e9c68375225787221b8b389662bd",
+      "bytes": 18529,
+      "expected_sha256": "0bb0d99636f35150272fc952b6efa84261e1e9c68375225787221b8b389662bd",
+      "name": "test_now_hash",
+      "ok": true
+    },
+    {
+      "actual_sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+      "bytes": 252115,
+      "expected_sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+      "name": "state_now_hash",
+      "ok": true
+    },
+    {
+      "actual_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+      "bytes": 384,
+      "expected_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+      "name": "config_now_hash",
+      "ok": true
+    },
+    {
+      "actual_sha256": "92bab0cf122871b42f3db62af956289b62fbf4e279219766a8850b61f20e135f",
+      "bytes": 123,
+      "expected_sha256": "92bab0cf122871b42f3db62af956289b62fbf4e279219766a8850b61f20e135f",
+      "name": "ledger_now_hash",
+      "ok": true
+    }
+  ],
+  "created_at_utc": "2026-10-11T03:14:32.265728+00:00",
+  "created_monotonic_ns": 131351482499083,
+  "failures": [],
+  "format": "RECOVERY_02_GATE_RECEIPT_V1",
+  "gate_id": "g-adapter",
+  "kind": "RECOVERY_02_GATE_RECEIPT",
+  "native_harness_validation": "NOT_RUN",
+  "refs": {
+    "adapter_now": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/scripts/line_backup_cua_adapter.mjs",
+      "bytes": 39953,
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2"
+    },
+    "config_now": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/config/line_backup_config.json",
+      "bytes": 384,
+      "path": "config/line_backup_config.json",
+      "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362"
+    },
+    "g-baseline-recovery-02.json": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-baseline-recovery-02.json",
+      "bytes": 24360,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-baseline-recovery-02.json",
+      "sha256": "879e4aec93999278f32b175b7850ac1ff87527eafe86829a46c0c708fc772279"
+    },
+    "g-runner.json": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-runner.json",
+      "bytes": 7361,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-runner.json",
+      "sha256": "072bf7c508a2631315b2e23f7c47f47c82c8ed408340e45cf86b43acfeaf202b"
+    },
+    "ledger_now": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+      "bytes": 123,
+      "path": "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+      "sha256": "92bab0cf122871b42f3db62af956289b62fbf4e279219766a8850b61f20e135f"
+    },
+    "node-adapter-syntax-02.receipt": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.receipt.json",
+      "bytes": 3362,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.receipt.json",
+      "sha256": "f483031a49a67ec0757d63d0dac1633f037ec3b43753e5540dfdf8e6b68336e6"
+    },
+    "node-adapter-syntax-02.stderr": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stderr",
+      "bytes": 0,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node-adapter-syntax-02.stdout": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stdout",
+      "bytes": 0,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node-adapter-tests-01.receipt": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.receipt.json",
+      "bytes": 3743,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.receipt.json",
+      "sha256": "f5d51efaede49cff45d9760ace29a00aed3feb7da599b4c1ed6be3e3c4a193c6"
+    },
+    "node-adapter-tests-01.stderr": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stderr",
+      "bytes": 0,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node-adapter-tests-01.stdout": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stdout",
+      "bytes": 2660,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stdout",
+      "sha256": "541d58cb4af4a8168279119a02ce476e6f9591f086188356813a24ebf4b2b23b"
+    },
+    "state_now": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/state/backup_state.json",
+      "bytes": 252115,
+      "path": "state/backup_state.json",
+      "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6"
+    },
+    "test_now": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_cua_adapter.mjs",
+      "bytes": 18529,
+      "path": "tests/test_cua_adapter.mjs",
+      "sha256": "0bb0d99636f35150272fc952b6efa84261e1e9c68375225787221b8b389662bd"
+    }
+  },
+  "status": "PASS",
+  "task_id": "TASK-20261011-line-baseline-recovery-02",
+  "tool": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tools/gate_receipts.py",
+    "sha256": "18fafe68fcfff2b34b694e3e9020256111c33c0b22cf1517ddf16223c88154fd"
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-20261011-line-baseline-recovery-02",
+  "goal": "Repair the task-local complete filesystem baseline and fixed-root check runner, preserve all historical evidence and unrelated work, verify the unchanged CUA adapter once offline, and report to Planner without LINE input, downloads, product/state/config/ledger edits or parent E2E closure.",
+  "task_class": "QUICK",
+  "allowed_paths": [
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02"
+  ],
+  "required_evidence": [
+    "E_BOOTSTRAP",
+    "E_BASELINE_RECOVERY_02",
+    "E_INCIDENT_RECONCILIATION",
+    "E_RUNNER",
+    "E_ADAPTER_OFFLINE",
+    "E_PRESERVATION_RECOVERY_02",
+    "E_REPORT"
+  ],
+  "gate_specs": [
+    {
+      "gate_id": "G_BASELINE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_RUNNER",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_ADAPTER_OFFLINE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_PRESERVE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "BASELINE_DELTA",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_REPORT",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "SUPPORTING",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    }
+  ],
+  "capability_policy": {
+    "network": "OFF",
+    "browser": false,
+    "destinations": []
+  },
+  "retry_policy": {
+    "transient_read_only_retries": 2,
+    "delays_seconds": [
+      10,
+      30
+    ]
+  },
+  "resource_policy": {
+    "prompt_bytes": 65536,
+    "state_bytes": 524288,
+    "inspect_bytes": 16384,
+    "log_bytes": 134217728
+  },
+  "workflow_policy": {
+    "plan_review_required": false,
+    "independent_acceptance_required": false,
+    "max_parallel_read_only_helpers": 0,
+    "max_parallel_writers": 0,
+    "handoff_review_required": false
+  }
+}
