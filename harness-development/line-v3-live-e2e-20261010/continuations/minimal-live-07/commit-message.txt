@@ -1,0 +1,15 @@
+docs(line-v3): plan minimal-live-07 evidence-chain recovery
+
+意圖：
+為 LINE 相簿備份父任務建立 minimal-live-07 新 continuation，回應 minimal-live-06 在正式檢查前發現的證據工具阻塞。問題包括 publisher/comparator 未共用完整輸出政策、基線未對帳 anchors 與受保護檔案、輸出政策缺少逐項生命週期、runner 綁錯 continuation 且沒有一次性 launch claim、E01 覆蓋不足、E02/spec/freeze 缺失，以及複製工具未證明 exclusive-create。這些是證據與 gate readiness 問題，並非已觀察到資料遺失。
+
+已完成：
+新增 minimal-live-07/plan.md 與 handoff.md，訂明修復範圍、證據要求、停止條件與完整驗收順序。先完成共用 output-policy evaluator、安全 publication、正確綁定的 one-shot runner、E01/E02 與 anchor-aware B01；這些 gate 通過後才取得 genuine LINE CUA raw sample，再修復共用 production observation chain、完成必要離線檢查及兩本不同 eligible 相簿的 cap-one 交易。第一本須 VERIFIED、完成 readback 並 release owner，之後實際向下 scroll 0.25 個視窗高度，確認畫面連續性、有序 overlap 與新完整候選，才開始第二本。最後完成 preservation evidence、報告與獨立 Acceptance。
+
+文件保留既有 state schema、canonical writer、交易及 at-most-once 安全條件，並要求保留歷史失敗、既有 dirty/untracked 工作和累計嘗試。Plan Review 記為 USER_WAIVED_NOT_RUN，不作為 PASS；獨立 Acceptance 仍是必要 gate。此提交範圍為兩份規劃文件及 commit-message.txt。
+
+下一步建議：
+Implementer 先依 handoff 重新讀取 publication 後的 HEAD、index 與檔案基線，保全既有工作，完成一次有界 runtime readiness 檢查，再依序執行 E01、E02、B01。完成其前置 gate 前不要啟動 D01 或 LINE 前景操作。之後每輪實測更新 E2E 測試報告並交 Planner；若需要 LINE 前景，先完成使用者交接。保留 FAIL、使用新 epoch 做核准範圍內的有界修正，遇到架構、安全、state 或 gate 意義變更則回 Planner。
+
+驗證與限制：
+minimal-live-07 兩份文件內嵌的 machine contract 為 7,192 bytes，內容相同，SHA-256 為 84bcc6511585fe446f85c75adb6bc213222cb971a9b79ab0055c78bb3be59469；本地 parse/equality 通過不代表 Harness native validation 通過。minimal-live-06 的正式 E01/E02/B01、CUA、產品檢查、LINE 操作與下載均未執行；本提交建立的是計畫與交接，不代表實作或 E2E 完成。minimal-live-06 的 commit 6b63e9df72f27eadc73a3cd631faca923d09a532 是阻塞證據包，不是產品完成。現有 native controller runtime symlink 不可用；四個 writer 是上限，沒有實際 controller allocation/receipts 時採 root 串行方式，不得宣稱 writer 或 native validation PASS。
