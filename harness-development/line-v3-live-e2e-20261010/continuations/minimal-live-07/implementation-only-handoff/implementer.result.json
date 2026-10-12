@@ -43,7 +43,7 @@
   "information_gain": true,
   "stage": "IMPLEMENT",
   "plan_sha256": "29d0a9844c7964f612df24086efc82b66a4037b20760d24f1ae8e4474c1c6ff1",
-  "handoff_sha256": "9165435354bb982d6fd906f4dc9075d5b6222ef08dc0658698115f9001a78a85",
+  "handoff_sha256": "1254db8c5825d5d7c30992803a6f36c29b7f8d3e04cf2aa930bccb54763652d4",
   "source_sha256": "157975938acae1fd1a9ce847444ec0a40788cf2d03222afd05b544da5af7308a",
   "evidence_manifests": [],
   "plan_contract_sha256": "71dcb33bfa1ec7c4f06ac3182403a4687fc08b4dcf6d2f1da43868be5a63822b",

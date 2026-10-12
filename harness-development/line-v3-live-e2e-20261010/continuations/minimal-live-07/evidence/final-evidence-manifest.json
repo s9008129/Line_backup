@@ -7,9 +7,9 @@
   "entries": [
     {
       "path": "E2E測試報告.md",
-      "bytes": 21210,
-      "sha256": "cd2ae6302f9deaa7856be36c32e599b730d13a2c2f8d27ba6e7255250827ffe6",
-      "role": "current status and preserved chronology"
+      "bytes": 22255,
+      "sha256": "4fcf6efa35a6fa524aff13592301e1c420ffedf46c7e7f0ae9ae562ad4407257",
+      "role": "current status, preserved chronology, and 2026-10-12 documentation-only handoff audit"
     },
     {
       "path": "progress.md",
@@ -20,7 +20,7 @@
     {
       "path": "implementation-only-handoff/implementer.result.json",
       "bytes": 7524,
-      "sha256": "3c7824eb9cb1b8074560ca7e1e80b5301ef02c4f7d2dafdbca743af891fa35a4",
+      "sha256": "16faf685bf311c0ea8439ec9eee45277c4ee4698a23c7d91bf3188bb177d2405",
       "role": "task-local format-3-shaped result; run_id null and native validation NOT_RUN"
     },
     {
@@ -43,9 +43,9 @@
     },
     {
       "path": "implementation-only-handoff/handoff.md",
-      "bytes": 13663,
-      "sha256": "9165435354bb982d6fd906f4dc9075d5b6222ef08dc0658698115f9001a78a85",
-      "role": "next-agent prompt and detailed handoff"
+      "bytes": 30839,
+      "sha256": "1254db8c5825d5d7c30992803a6f36c29b7f8d3e04cf2aa930bccb54763652d4",
+      "role": "high-level Planner prompt, gate matrix, and detailed handoff"
     },
     {
       "path": "implementation-only-handoff/implementation-plan.md",
@@ -143,9 +143,9 @@
     },
     {
       "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/代理協作開發紀錄.md",
-      "bytes": 40722,
-      "sha256": "4e1e28f93a0db876a2eb4a2138d022389fbace43b9df9a0613414fe3f6ccb31c",
-      "role": "recorder-authored exact user-authorized root output; directly read and hash-verified in this final documentation window"
+      "bytes": 43447,
+      "sha256": "5608f1be555a5e40dab07754adac2f11daa416946890189363413eb43cbce94e",
+      "role": "latest recorder-authored exact user-authorized root output; local current version, distinct from 40,722-byte version included in published parent checkpoint"
     },
     {
       "path": "implementation-only-handoff/commit-message.txt",
