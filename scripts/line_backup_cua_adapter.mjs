@@ -42,6 +42,40 @@ function verifyFrameReference(saved, frameId, byteLength) {
   'CUA_FRAME_REFERENCE_REQUIRED');
 }
 
+
+// This check runs on two *actual retained LINE observations* after one reserved
+// native scroll. It does not dispatch GUI events and accepts no fixture-only PASS.
+export function verifyAlbumScroll(before, after) {
+  requireFact(before?.surface==='ALBUMS' && after?.surface==='ALBUMS'
+    && before.session_id===after.session_id && before.group_key===after.group_key
+    && before.pid===after.pid && before.window_id===after.window_id
+    && before.layout_key===after.layout_key, 'SCROLL_CONTEXT_DRIFT');
+  requireFact(hex64(before.frame_id) && hex64(after.frame_id)
+    && before.frame_id!==after.frame_id, 'SCROLL_NO_VISUAL_CHANGE');
+  requireFact(Array.isArray(before.cards) && Array.isArray(after.cards),
+    'SCROLL_CARD_EVIDENCE_REQUIRED');
+  const complete = observation => observation.cards.filter(card=>
+    card?.fully_visible===true && typeof card?.fingerprint?.start_date==='string'
+    && typeof card?.fingerprint?.end_date==='string'
+    && Number.isInteger(card?.fingerprint?.expected_images)
+    && card.fingerprint.expected_images>0
+  ).map(card => JSON.stringify([card.fingerprint.start_date,
+    card.fingerprint.end_date, card.fingerprint.expected_images]));
+  const previous=complete(before), current=complete(after);
+  requireFact(previous.length>0 && current.length>0
+    && new Set(previous).size===previous.length
+    && new Set(current).size===current.length, 'SCROLL_CARD_EVIDENCE_REQUIRED');
+  const previousSet=new Set(previous);
+  const shared=current.filter(id=>previousSet.has(id));
+  const fresh=current.filter(id=>!previousSet.has(id));
+  requireFact(shared.length>0, 'SCROLL_NO_CARD_OVERLAP');
+  const indices=shared.map(id=>previous.indexOf(id));
+  requireFact(indices.every((value,i)=>i===0||value>indices[i-1]),
+    'SCROLL_CARD_ORDER_DRIFT');
+  requireFact(fresh.length>0, 'SCROLL_NO_NEW_FULL_CARD');
+  return Object.freeze({overlap_count:shared.length,new_full_card_count:fresh.length});
+}
+
 export function createAlbumSupportCallbacks({invokeProducer}) {
   requireFact(typeof invokeProducer === 'function','PRODUCER_BRIDGE_REQUIRED');
   async function captureMenuSupport({action, pairFrameId, sessionId, requestedAt, cuaFrame, cuaCapturedAt}) {
@@ -146,13 +180,26 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
   }
   async function openAlbum(prepared) {
     fresh(prepared.frame_id);requireFact(point(prepared.click),'INVALID_CARD_POINT');
+    const before=latest.observation;
+    requireFact(before?.surface==='ALBUMS','ALBUM_OPEN_SURFACE_UNKNOWN');
     const reservation = await reserveGui('album_open',1,prepared.run_id);
     record('ALBUM_OPEN_INVOCATION',{runId:prepared.run_id});
     latest = null;
     try {await app.click(prepared.click); await app.getAXState({emit:false});}
     catch(e) {stopped=true;throw e;}
     await consumeGui(reservation,'RETURNED');
-    return observe();
+    try {
+      const after=await observe();
+      requireFact(after.surface==='ALBUM_DETAIL' && after.frame_id!==before.frame_id
+        && after.session_id===before.session_id && after.group_key===before.group_key
+        && after.pid===before.pid && after.window_id===before.window_id,
+        'ALBUM_OPEN_NOT_VERIFIED');
+      record('ALBUM_DETAIL_OBSERVED',{frameId:after.frame_id});
+      return after;
+    } catch(error) {
+      stopped=true;latest=null;record('ALBUM_OPEN_UNVERIFIED',{message:String(error)});
+      throw error;
+    }
   }
   async function calibrateMenu({detail,runId,locateMenu,captureMenuSupport,guardMenu}) {
     fresh(detail.frame_id);
@@ -472,7 +519,15 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
     try {await app.scroll(target,direction,distance);await app.getAXState({emit:false});}
     catch(e) {stopped=true;throw e;}
     await consumeGui(reservation,'RETURNED');
-    return observe();
+    try {
+      const after=await observe();
+      const progress=verifyAlbumScroll(observation,after);
+      record('SCROLL_VERIFIED_NEW_CARD',progress);
+      return after;
+    } catch(error) {
+      stopped=true;latest=null;record('SCROLL_UNVERIFIED',{message:String(error)});
+      throw error;
+    }
   }
   function ceaseInput() {stopped=true;latest=null;record('CEASE_INPUT');}
   return Object.freeze({sessionId,observe,openAlbum,originalIntent,originalAtomicDispatch,exactChooser,boundedScroll,
@@ -541,11 +596,15 @@ export function createNavigationObserver({app,bridge,retain,classify,sessionId=r
     try {await app.scroll(target,direction,distance);await app.getAXState({emit:false});}
     catch(error) {closed=true;record('SCROLL_UNCERTAIN');throw error;}
     await consume(reservation);record('SCROLL_RETURNED');
-    const after=await observe();
-    requireFact(after.surface==='ALBUMS'&&after.session_id===before.session_id&&after.group_key===before.group_key
-      &&after.pid===before.pid&&after.window_id===before.window_id&&after.layout_key===before.layout_key,
-      'SCROLL_CONTEXT_DRIFT');
-    return after;
+    try {
+      const after=await observe();
+      const progress=verifyAlbumScroll(before,after);
+      record('SCROLL_VERIFIED_NEW_CARD',progress);
+      return after;
+    } catch(error) {
+      closed=true;latest=null;record('SCROLL_UNVERIFIED',{message:String(error)});
+      throw error;
+    }
   }
   function close() {closed=true;latest=null;record('NAVIGATION_OBSERVER_CLOSED');}
   return Object.freeze({sessionId,observe,returnToAlbums,boundedScroll,close,trace:()=>[...trace]});
