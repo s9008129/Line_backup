@@ -1,0 +1,519 @@
+{
+  "accepted_implementation_run_id": null,
+  "admission_sha256": "676a8bb8ce0db71f5ac03a9105968e06a1209588929c44de2a0ab697c5b2d78f",
+  "before_state_sha256": "932753c4c643bc9e91ac36b2d692c87ceafe7b2b23eabd6077045764a8649eb4",
+  "evidence_alias_snapshots": [],
+  "post_snapshot_sha256": "78768dad956ab1043f79e69c60931da8d59f2dffd63af64c9bb78d1366a2f47d",
+  "route": "WAIT_HUMAN",
+  "schema_validation_receipts": [
+    {
+      "event_id": "1b01f4e2-eb5a-4849-b69f-41e52d15868e",
+      "path": "runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/schema-validations/68fbd9d1f1b1820749b45b2abb41f647002ea7b3512d1ec949d26ec3ecca5fd5.json",
+      "purpose": "CONTRACT",
+      "sha256": "68fbd9d1f1b1820749b45b2abb41f647002ea7b3512d1ec949d26ec3ecca5fd5"
+    },
+    {
+      "event_id": "6e83c415-7327-44e4-ba36-836efb790be7",
+      "path": "runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/schema-validations/03ec4870bd4d1a1ee76cafda4b0c993139040db10ede859617aecc9dd666f6a9.json",
+      "purpose": "RESULT",
+      "sha256": "03ec4870bd4d1a1ee76cafda4b0c993139040db10ede859617aecc9dd666f6a9"
+    }
+  ],
+  "state": {
+    "accepted_gates": {},
+    "active_run_id": null,
+    "allowed_paths": [
+      "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08",
+      "scripts/line_backup_cua_adapter.mjs",
+      "src/line_backup_batch/cli.py",
+      "src/line_backup_batch/observations.py",
+      "src/line_backup_batch/store.py",
+      "rev28/Sources/rev28ctl/main.swift",
+      "rev28/Sources/Rev28Core/Observation/PassiveContextObservation.swift",
+      "rev28/Sources/Rev28Core/Perception/AlbumVisualWitness.swift",
+      "rev28/Tests/Rev28CoreTests/PassiveContextObservationTests.swift",
+      "rev28/Tests/Rev28CoreTests/AlbumVisualWitnessTests.swift",
+      "state/backup_state.json",
+      "state/.line-backup-state.lock",
+      "state/.line-backup-v3.tmp",
+      "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+      "harness-development/line-v3-live-e2e-20261010/.gui-ledger-v3.tmp",
+      "backups/旻謙允禎成長日記",
+      "harness-development/.writer-coordination"
+    ],
+    "candidate_fact": "BLOCKED",
+    "contract_sha256": "a043df49903b41b5102d671ca5afb252d73de0d8f796c8bc3749a7b41873dffc",
+    "convergence": {
+      "consecutive_no_progress": 0,
+      "information_gain": true,
+      "last_attempt": "One authorized targeted preservation readback completed; it added verified file/index matches while confirming the frozen B02-family prerequisite is missing and the consumed issue cannot satisfy full IMPLEMENT admission.",
+      "meaningful_attempts": 1,
+      "stuck": false
+    },
+    "goal": "Implement the approved ML08 evidence and production chain and prove two distinct cap-one LINE album backups with actual post-release bounded scroll, full content/state verification, preservation and independent Acceptance; preserve historical failures and at-most-once barriers.",
+    "handoff_compiler": "DETERMINISTIC_FROM_REVIEWED_PLAN",
+    "handoff_sha256": "a043df49903b41b5102d671ca5afb252d73de0d8f796c8bc3749a7b41873dffc",
+    "human_observations": {},
+    "implementer_actor_ids": [
+      "/root/ml08_swift",
+      "/root/ml08_python",
+      "/root/ml08_adapter",
+      "/root/ml08_luna_implementer"
+    ],
+    "last_handoff_summary": "c6 ends BLOCKED with no gate PASS. The actual turn was Luna/high with backend UNKNOWN. A targeted preservation readback matched the saved 15/239/9 inputs and c6 Git snapshot, but B02 is unavailable in the frozen spec and was not run. The commander-owned planning mismatch leaves the consumed single-use issue without a legal full-IMPLEMENT completion route in immutable v4.8. Route to Planner before any new allocation; preserve all history and keep all live, build, offline, and acceptance gates open.",
+    "last_valid_run_id": "c6c6b55d-865f-467b-94ba-3fd669df97ec",
+    "next_stage": null,
+    "phase": "BLOCKED",
+    "plan_contract_sha256": "a043df49903b41b5102d671ca5afb252d73de0d8f796c8bc3749a7b41873dffc",
+    "plan_revisions": 0,
+    "plan_sha256": "210641620db94ee5de8ee271b979015442d3f2934d9281890a02c19f8719c279",
+    "planner_actor_id": "/root",
+    "planner_actor_ids": [
+      "/root"
+    ],
+    "release_version": "4.8.0",
+    "repository": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+    "required_evidence": [
+      "G_BASELINE_08",
+      "G_EVIDENCE_POLICY",
+      "G_AUTH_RUNTIME",
+      "G_REAL_LINK",
+      "G_OFFLINE",
+      "G_CATALOG_1",
+      "G_CATALOG_2",
+      "G_MENU_1",
+      "G_MENU_2",
+      "G_FIRST",
+      "G_SCROLL",
+      "G_SECOND",
+      "G_PRESERVE_08",
+      "G_REPORT",
+      "G_ACCEPTANCE",
+      "G_EVIDENCE_READINESS_08",
+      "G_EARLY_CHECKS_08",
+      "G_PRODUCTION_FAMILY_OFFLINE_08",
+      "G_B02_PRESERVATION_08",
+      "G_OFFLINE_IMPLEMENTATION_08",
+      "G_FINAL_HANDOFF_08",
+      "G_PARENT_TRACE_08",
+      "G_PLAN_ADMISSION_08",
+      "G_D01_LIVE_08",
+      "G_ALBUM_ONE_LIVE_08",
+      "G_POST_RELEASE_SCROLL_LIVE_08",
+      "G_ALBUM_TWO_LIVE_08",
+      "G_INDEPENDENT_ACCEPTANCE_08"
+    ],
+    "required_gates": [
+      {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_BASELINE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_EVIDENCE_POLICY",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_AUTH_RUNTIME",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_REAL_LINK",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_OFFLINE",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_CATALOG_1",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_CATALOG_2",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_MENU_1",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_MENU_2",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_FIRST",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_SCROLL",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_SECOND",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_PRESERVE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_REPORT",
+        "goal_criticality": "SUPPORTING",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_ACCEPTANCE",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_EVIDENCE_READINESS_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_EARLY_CHECKS_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_PRODUCTION_FAMILY_OFFLINE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_B02_PRESERVATION_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_OFFLINE_IMPLEMENTATION_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_FINAL_HANDOFF_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "REPOSITORY_HEALTH",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_PARENT_TRACE_08",
+        "goal_criticality": "SUPPORTING",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_PLAN_ADMISSION_08",
+        "goal_criticality": "SUPPORTING",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_D01_LIVE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_ALBUM_ONE_LIVE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_POST_RELEASE_SCROLL_LIVE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_ALBUM_TWO_LIVE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_INDEPENDENT_ACCEPTANCE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      }
+    ],
+    "reviewed_plan_sha256": "210641620db94ee5de8ee271b979015442d3f2934d9281890a02c19f8719c279",
+    "run_ids": [
+      "4c1643ed-8bf4-4e1a-92a6-4d55f293ec63",
+      "960b348b-2afe-4f88-ade7-e33ca8cee681",
+      "d895b8ed-a814-4785-85ee-9e39b9e52559",
+      "c6c6b55d-865f-467b-94ba-3fd669df97ec"
+    ],
+    "run_sha256": {
+      "4c1643ed-8bf4-4e1a-92a6-4d55f293ec63": "d975e9c81c160ffdbe215e2a90a45dc8864a7957275b89ef14e872df58c42dde",
+      "960b348b-2afe-4f88-ade7-e33ca8cee681": "8560dbdc2e0dbbbf906ff3ac40b7351e328f4778800293c91453f22501dacaf6",
+      "c6c6b55d-865f-467b-94ba-3fd669df97ec": "b5bd3bad46947f6b34b211ace1b5313ab2526b6feb3572feca64d4f2cecf06b3",
+      "d895b8ed-a814-4785-85ee-9e39b9e52559": "33dbbaf091aa5420031a6c8d15e480d06dc3de6aab07120da2e268c35bc40239"
+    },
+    "runtime_fact": {
+      "outcome": "COMPLETED",
+      "process_exit": null
+    },
+    "schema_version": "3",
+    "start_snapshot_sha256": "5fbb8313ba397b3d3a88533d246316991a0cc34786ba19277f51ee1e5ebc2e8b",
+    "statuses": {
+      "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+      "IMPLEMENTATION_STATUS": "ESCALATED",
+      "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+      "PRIMARY_OUTCOME_STATUS": "UNKNOWN",
+      "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+      "TASK_CLOSURE_STATUS": "HIGH_REASONING_REVIEW_REQUIRED"
+    },
+    "task_class": "CRITICAL",
+    "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+    "validation_fact": "VALID",
+    "waived_gates": {},
+    "workflow_policy": {
+      "handoff_review_required": false,
+      "independent_acceptance_required": true,
+      "max_parallel_read_only_helpers": 4,
+      "max_parallel_writers": 3,
+      "plan_review_required": true
+    },
+    "writer_allocations": {
+      "d895b8ed-a814-4785-85ee-9e39b9e52559": {
+        "adapter": {
+          "path": "workers/adapter/allocation.json",
+          "sha256": "8ef8531b22765079b11563459370990a83683ec49e3bad57dbf7ff20efa6387c"
+        },
+        "python": {
+          "path": "workers/python/allocation.json",
+          "sha256": "059bfcdf1e469068955cab4b505647cc768100322c246e828cc11f0642419aa8"
+        },
+        "swift": {
+          "path": "workers/swift/allocation.json",
+          "sha256": "f581ff517b3ea3e02f098ef19026f0f9106e9716ee92dd996e1f1580720cd200"
+        }
+      }
+    },
+    "writer_finishes": {
+      "d895b8ed-a814-4785-85ee-9e39b9e52559": {
+        "adapter": {
+          "path": "workers/adapter/finish.json",
+          "sha256": "21bdb312b8aa39fd6de0f3304c8891ea2d2839c96ed1d064cfa267897816eb56"
+        },
+        "python": {
+          "path": "workers/python/finish.json",
+          "sha256": "4425331f9cda57974930bb33a9e76d39ecb06e06b7aa4fb8af7b45e80c196f69"
+        },
+        "swift": {
+          "path": "workers/swift/finish.json",
+          "sha256": "e184e761132a4af63cba4b9a61ebbd41719e0fdf092096bde376d9cbde7724a3"
+        }
+      }
+    },
+    "writer_merges": {
+      "d895b8ed-a814-4785-85ee-9e39b9e52559": {
+        "adapter": {
+          "path": "workers/adapter/receipt.json",
+          "sha256": "3f70228b0202e4f6b8d154a1db264858c56ec8abe34f0e78d604a8c73787fe47"
+        },
+        "python": {
+          "path": "workers/python/receipt.json",
+          "sha256": "eeffacf1beee81e48eabdbc249fb92ad40fa85da6ce19a3258fcad090f1a0b7f"
+        },
+        "swift": {
+          "path": "workers/swift/receipt.json",
+          "sha256": "b12a768c0950bb5b6326a0559471ec5dd80799b580c18a150af535e6a86e53fe"
+        }
+      }
+    },
+    "writer_receipts": {
+      "d895b8ed-a814-4785-85ee-9e39b9e52559": {
+        "adapter": {
+          "path": "workers/adapter/receipt.json",
+          "sha256": "3f70228b0202e4f6b8d154a1db264858c56ec8abe34f0e78d604a8c73787fe47"
+        },
+        "python": {
+          "path": "workers/python/receipt.json",
+          "sha256": "eeffacf1beee81e48eabdbc249fb92ad40fa85da6ce19a3258fcad090f1a0b7f"
+        },
+        "swift": {
+          "path": "workers/swift/receipt.json",
+          "sha256": "b12a768c0950bb5b6326a0559471ec5dd80799b580c18a150af535e6a86e53fe"
+        }
+      }
+    }
+  }
+}

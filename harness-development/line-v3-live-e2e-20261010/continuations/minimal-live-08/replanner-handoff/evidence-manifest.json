@@ -1,0 +1,599 @@
+{
+  "format": "HUMAN_REPLANNER_HANDOFF_EVIDENCE_MANIFEST_V1",
+  "workspace_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "canonical_bundle_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff",
+  "scope": "Curated read-only evidence copies, authored human Replanner handoff, Luna/high research report, and explicitly marked superseded historical snapshots; not a full task inventory, clean clone, gate acceptance, or runtime binding.",
+  "files": [
+    {
+      "bundle_relative_path": "authoring-note.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/authoring-note.md",
+      "bytes": 5884,
+      "sha256": "d9f1751d17ada09814480d6f6db7d0868ecd9a727acebdae9ba79b4019520f13",
+      "source_relative_path": null,
+      "source_absolute_path": null,
+      "kind": "authored",
+      "evidentiary_role": "Authoring scope, correction incident, and publication limits"
+    },
+    {
+      "bundle_relative_path": "evidence/E2E測試報告.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/E2E測試報告.md",
+      "bytes": 19779,
+      "sha256": "8ba0ee840cf6ff26eea870d49f5104b4a6620746d9f75af782e3829bff181f4b",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/E2E測試報告.md",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/E2E測試報告.md",
+      "kind": "copy",
+      "evidentiary_role": "Current and historical formal task report"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/candidate-result.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/candidate-result.json",
+      "bytes": 8109,
+      "sha256": "0e9a4f7439209703bcf4b45742fde3344905c2feaf913d45d7704f9ba2787c07",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/candidate-result.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/candidate-result.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/consumption.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/consumption.json",
+      "bytes": 18173,
+      "sha256": "2af57177374f393e4e965d6e96f386853362ef8595f2b990abee2fefc05f4ffe",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/consumption.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/consumption.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/controller-protocol-blocker.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/controller-protocol-blocker.md",
+      "bytes": 4417,
+      "sha256": "d6d8a513ba6ef24722d76eb85f9ed2e6792dffbd053e14c5f93f574a1d235216",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller-protocol-blocker-c6.md",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller-protocol-blocker-c6.md",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/finalization-supplement.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/finalization-supplement.md",
+      "bytes": 2257,
+      "sha256": "4f1baf1b6bc11806e99391314ce5d54fab0f4eab155082f0ec0716069f8b4db7",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/c6-finalization-supplement.md",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/c6-finalization-supplement.md",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/issue-WAIT_HUMAN-event.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/issue-WAIT_HUMAN-event.json",
+      "bytes": 14654,
+      "sha256": "b79292c76783259cc41f2f6b81907e312a8b5791137978ef92f0a1c68380b7dc",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/issues/a2a1e4c39580d6a2fc1f4b6be628f63ee1e6ca53ed7d1fb19c7777bbfba9afc5/000007-WAIT_HUMAN.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/issues/a2a1e4c39580d6a2fc1f4b6be628f63ee1e6ca53ed7d1fb19c7777bbfba9afc5/000007-WAIT_HUMAN.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/issue-state.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/issue-state.json",
+      "bytes": 13789,
+      "sha256": "fcd32c55924e52824184e25b6ebb70d7d346f3fe0d17fd96ec6c787654658dd6",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/issues/a2a1e4c39580d6a2fc1f4b6be628f63ee1e6ca53ed7d1fb19c7777bbfba9afc5/state.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/issues/a2a1e4c39580d6a2fc1f4b6be628f63ee1e6ca53ed7d1fb19c7777bbfba9afc5/state.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/native-admission-paths.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/native-admission-paths.json",
+      "bytes": 9696,
+      "sha256": "1f96f2522660952ee5c1eb4ebb9727139b302f599e5d9ea1a69624c324cf2305",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/c6-native-admission-paths-01.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/c6-native-admission-paths-01.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/native-admission-receipt.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/native-admission-receipt.json",
+      "bytes": 6559,
+      "sha256": "9889e84de2ceaa0fa0154a0f172dafdc5260d8dbd2fb9da6af4bbfd4288f3144",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/c6-native-admission-receipt-01.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/c6-native-admission-receipt-01.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/native-admission-receipt.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/native-admission-receipt.md",
+      "bytes": 1896,
+      "sha256": "5d5dea5b25dd8a9331776f4dd4ecb9662467c702f45591f92586a303ea470eb8",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/c6-native-admission-receipt-01.md",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/c6-native-admission-receipt-01.md",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/planner-handoff-erratum.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/planner-handoff-erratum.md",
+      "bytes": 2672,
+      "sha256": "c358ee2b10690e7e7a31d220bfcf3531241d74292431954420405d95d21b69e3",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/planner-handoff-c6-erratum.md",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/planner-handoff-c6-erratum.md",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/planner-handoff-native-admitted.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/planner-handoff-native-admitted.md",
+      "bytes": 5357,
+      "sha256": "1cbac4136c6a6574e49f8c9e4dc08560b8bf483766b63b075160a490a9da0abf",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/planner-handoff-c6-native-admitted.md",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/planner-handoff-c6-native-admitted.md",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/submission-validation.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/submission-validation.json",
+      "bytes": 76,
+      "sha256": "691c2fee9d886c2fc42c21a47d164028981d85a6a099008c1122edcd556e3f23",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/submissions/676a8bb8ce0db71f5ac03a9105968e06a1209588929c44de2a0ab697c5b2d78f/validation.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/submissions/676a8bb8ce0db71f5ac03a9105968e06a1209588929c44de2a0ab697c5b2d78f/validation.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/targeted-preservation-readback.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/targeted-preservation-readback.json",
+      "bytes": 304189,
+      "sha256": "7936a0946fa5bc35d1c4f963123766cd4d9806cf1bd0cc186ab9c2a1526616de",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/c6-preservation-readback-01/preservation-readback.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/c6-preservation-readback-01/preservation-readback.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/c6/task-state.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/task-state.json",
+      "bytes": 12721,
+      "sha256": "17e74f0b9f00fafa770273dd5a481e3aa8c98fb1ae9d508ff21bb248956ec822",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/state.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/state.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable c6 result, admission, issue, state, readback, or corrected planning evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/frozen-plan/frozen-check-specs-freeze.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/frozen-plan/frozen-check-specs-freeze.json",
+      "bytes": 38700,
+      "sha256": "f13f019adeb9afe5eb019f9abe579b9795834f5959e15bf404c7a51ce8c63fe0",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/check-specs-freeze.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/check-specs-freeze.json",
+      "kind": "copy",
+      "evidentiary_role": "Frozen plan, contract, gates, checks, or superseded draft input"
+    },
+    {
+      "bundle_relative_path": "evidence/frozen-plan/frozen-check-specs.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/frozen-plan/frozen-check-specs.json",
+      "bytes": 1633,
+      "sha256": "2e41874e81ecdfe2170f1bd0564ce2093ab091bed2ef33b9a489e7cc3baccf92",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/check-specs.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/check-specs.json",
+      "kind": "copy",
+      "evidentiary_role": "Frozen plan, contract, gates, checks, or superseded draft input"
+    },
+    {
+      "bundle_relative_path": "evidence/frozen-plan/gate-mapping.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/frozen-plan/gate-mapping.json",
+      "bytes": 23512,
+      "sha256": "cdcc2c7e52813295b5eae6a69a9e9aaf74e6ac78f9f8b763784e8244cb9b0c10",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/gate-mapping.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/gate-mapping.json",
+      "kind": "copy",
+      "evidentiary_role": "Frozen plan, contract, gates, checks, or superseded draft input"
+    },
+    {
+      "bundle_relative_path": "evidence/frozen-plan/plan-contract.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/frozen-plan/plan-contract.json",
+      "bytes": 11038,
+      "sha256": "a043df49903b41b5102d671ca5afb252d73de0d8f796c8bc3749a7b41873dffc",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/plan-contract.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/plan-contract.json",
+      "kind": "copy",
+      "evidentiary_role": "Frozen plan, contract, gates, checks, or superseded draft input"
+    },
+    {
+      "bundle_relative_path": "evidence/frozen-plan/plan.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/frozen-plan/plan.md",
+      "bytes": 3087,
+      "sha256": "10b772a284d7a8a439fc3a0bb7151ca4e63981f7555eb44bb940a62459e0bfe1",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/plan.md",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/plan.md",
+      "kind": "copy",
+      "evidentiary_role": "Frozen plan, contract, gates, checks, or superseded draft input"
+    },
+    {
+      "bundle_relative_path": "evidence/frozen-plan/superseded-unexecuted-lineage-draft.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/frozen-plan/superseded-unexecuted-lineage-draft.md",
+      "bytes": 6773,
+      "sha256": "8dd9e28811e72a79d2b187de16df5a1c4ef8b555d2e4301b37ebdace376c23b5",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/fresh-lineage-orchestration-draft.md",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/fresh-lineage-orchestration-draft.md",
+      "kind": "copy",
+      "evidentiary_role": "Frozen plan, contract, gates, checks, or superseded draft input"
+    },
+    {
+      "bundle_relative_path": "evidence/plan-review/consumption.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/plan-review/consumption.json",
+      "bytes": 15125,
+      "sha256": "675e98252a0500603cb61ca1891257f2c50f8072c95da87f29acaae035809719",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/960b348b-2afe-4f88-ade7-e33ca8cee681/consumption.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/960b348b-2afe-4f88-ade7-e33ca8cee681/consumption.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable native PlanReview role result, controller consumption/admission, and submission validation"
+    },
+    {
+      "bundle_relative_path": "evidence/plan-review/role-result-v2.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/plan-review/role-result-v2.json",
+      "bytes": 10268,
+      "sha256": "15c2512c404c3c267d92464f352ab494977dd0f2446bef9a98ef8c84a5ba0904",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/960b348b-2afe-4f88-ade7-e33ca8cee681/role-result-v2.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/960b348b-2afe-4f88-ade7-e33ca8cee681/role-result-v2.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable native PlanReview role result, controller consumption/admission, and submission validation"
+    },
+    {
+      "bundle_relative_path": "evidence/plan-review/submission-validation.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/plan-review/submission-validation.json",
+      "bytes": 75,
+      "sha256": "fe01e333c058fcb5a16d23eee12677651b6b142657665a92b2ef91c47dd6e710",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/960b348b-2afe-4f88-ade7-e33ca8cee681/submissions/a13112cfdd8dd377777e748011f9a26831a0618947da0b98b4a586d6314bfb71/validation.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/960b348b-2afe-4f88-ade7-e33ca8cee681/submissions/a13112cfdd8dd377777e748011f9a26831a0618947da0b98b4a586d6314bfb71/validation.json",
+      "kind": "copy",
+      "evidentiary_role": "Immutable native PlanReview role result, controller consumption/admission, and submission validation"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/B01-baseline-pair.claim.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/B01-baseline-pair.claim.json",
+      "bytes": 834,
+      "sha256": "21cbdc7679912fae1e79c65835b537a0784be77949f9bd08cfdaebe26f74ff14",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/B01-baseline-pair.claim.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/B01-baseline-pair.claim.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical check/diagnostic receipt; not a current gate pass"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/B01-baseline-pair.receipt.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/B01-baseline-pair.receipt.json",
+      "bytes": 4130,
+      "sha256": "a7c4b271bdc82a6bc6f38de37a4d833047ad2e569a8092b27a3f4c6577883251",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/B01-baseline-pair.receipt.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/B01-baseline-pair.receipt.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical check/diagnostic receipt; not a current gate pass"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/E01-evidence-policy.claim.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/E01-evidence-policy.claim.json",
+      "bytes": 831,
+      "sha256": "ae70c109cea2dd1ff36854a437319e914de299478b089957a0726aa3407ed5e9",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/E01-evidence-policy.claim.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/E01-evidence-policy.claim.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical check/diagnostic receipt; not a current gate pass"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/E01-evidence-policy.receipt.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/E01-evidence-policy.receipt.json",
+      "bytes": 4155,
+      "sha256": "06b7d1f9ba6e8b07ace05608c0af7f7ddca8d3470f183507f833fe9a8fa54874",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/E01-evidence-policy.receipt.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/E01-evidence-policy.receipt.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical check/diagnostic receipt; not a current gate pass"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/E02-runner-selftest.claim.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/E02-runner-selftest.claim.json",
+      "bytes": 840,
+      "sha256": "05042562c7a05e8e3b6b9e6f3d9818571e5025207bb79179a78026256be6ebd7",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/E02-runner-selftest.claim.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/E02-runner-selftest.claim.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical check/diagnostic receipt; not a current gate pass"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/E02-runner-selftest.receipt.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/E02-runner-selftest.receipt.json",
+      "bytes": 4155,
+      "sha256": "0cf3bc2745670c2a19d1a3c40fff4652fa507a06cb6115bf40de7ad618b48d58",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/E02-runner-selftest.receipt.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/evidence/checks/E02-runner-selftest.receipt.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical check/diagnostic receipt; not a current gate pass"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/draft-e01-01.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/draft-e01-01.json",
+      "bytes": 2094,
+      "sha256": "3c7363faa4e87a48cd1492867029c1bb0559eec4ea0a4a6dbc7aff97d6c05b21",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/draft-e01-01.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/draft-e01-01.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical check/diagnostic receipt; not a current gate pass"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/draft-e02-01.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/draft-e02-01.json",
+      "bytes": 2102,
+      "sha256": "203721df9cc1c9156f773b8780201d650bd6d01c95c7f36f8f6bafc488316957",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/draft-e02-01.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/draft-e02-01.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical check/diagnostic receipt; not a current gate pass"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/namespace-diagnostic-01-receipt.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/namespace-diagnostic-01-receipt.json",
+      "bytes": 2885,
+      "sha256": "323406255b6a4c9058f931a013d7d676ec53a07d380429ba7a54142be64975b1",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/namespace-diagnostic-01/receipt.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/namespace-diagnostic-01/receipt.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical check/diagnostic receipt; not a current gate pass"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/adapter/allocation.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/adapter/allocation.json",
+      "bytes": 1762,
+      "sha256": "8ef8531b22765079b11563459370990a83683ec49e3bad57dbf7ff20efa6387c",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/allocation.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/allocation.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/adapter/completion.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/adapter/completion.json",
+      "bytes": 586,
+      "sha256": "6e9037344ef590e0f1cef498bc44ed93a3d9acad7b6713be8bbc3f9a0612764a",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/completion.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/completion.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/adapter/finish.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/adapter/finish.json",
+      "bytes": 1544,
+      "sha256": "21bdb312b8aa39fd6de0f3304c8891ea2d2839c96ed1d064cfa267897816eb56",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/finish.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/finish.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/adapter/invitation.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/adapter/invitation.json",
+      "bytes": 532,
+      "sha256": "397f5aad7f944121790e3affb49069e6023a965818632b8ec7d8e7995c3170bd",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/invitation.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/invitation.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/adapter/patch.diff",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/adapter/patch.diff",
+      "bytes": 7890,
+      "sha256": "15a6bff6d408b6dcacc1f068334e3d926d011938dd538e208a455a585bee643b",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/patch.diff",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/patch.diff",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/adapter/receipt.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/adapter/receipt.json",
+      "bytes": 1602,
+      "sha256": "3f70228b0202e4f6b8d154a1db264858c56ec8abe34f0e78d604a8c73787fe47",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/receipt.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/adapter/receipt.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/python/allocation.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/python/allocation.json",
+      "bytes": 1760,
+      "sha256": "059bfcdf1e469068955cab4b505647cc768100322c246e828cc11f0642419aa8",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/allocation.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/allocation.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/python/completion.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/python/completion.json",
+      "bytes": 583,
+      "sha256": "ad2cd7c48562eb63a62635076d069647a25e899e8f5b9c2ebab17d18c929e751",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/completion.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/completion.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/python/finish.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/python/finish.json",
+      "bytes": 1689,
+      "sha256": "4425331f9cda57974930bb33a9e76d39ecb06e06b7aa4fb8af7b45e80c196f69",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/finish.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/finish.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/python/invitation.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/python/invitation.json",
+      "bytes": 529,
+      "sha256": "5448d29de3e217042f263771b6cdf6a442262db1e991512db6135f0252d0c083",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/invitation.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/invitation.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/python/patch.diff",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/python/patch.diff",
+      "bytes": 8892,
+      "sha256": "e0fb6710100d24e1814c2ef4c70987c015ce55892b8f240caf0b76dea8265bfa",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/patch.diff",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/patch.diff",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/python/receipt.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/python/receipt.json",
+      "bytes": 1747,
+      "sha256": "eeffacf1beee81e48eabdbc249fb92ad40fa85da6ce19a3258fcad090f1a0b7f",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/receipt.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/python/receipt.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/swift/allocation.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/swift/allocation.json",
+      "bytes": 1882,
+      "sha256": "f581ff517b3ea3e02f098ef19026f0f9106e9716ee92dd996e1f1580720cd200",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/allocation.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/allocation.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/swift/completion.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/swift/completion.json",
+      "bytes": 580,
+      "sha256": "cb3b191b094c52e1cab99220f8d2fae6f9716d01807fb51a32db5b9f9c420ba2",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/completion.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/completion.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/swift/finish.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/swift/finish.json",
+      "bytes": 2081,
+      "sha256": "e184e761132a4af63cba4b9a61ebbd41719e0fdf092096bde376d9cbde7724a3",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/finish.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/finish.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/swift/invitation.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/swift/invitation.json",
+      "bytes": 526,
+      "sha256": "47b36ee57ac845759eed463f24fb2a2bce0a25123aa47286dcee862d7203b291",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/invitation.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/invitation.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/swift/patch.diff",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/swift/patch.diff",
+      "bytes": 51885,
+      "sha256": "81fd1f55890210047759bc25510e2884e672756fd71c4d72ff758d3b288934aa",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/patch.diff",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/patch.diff",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/previous-run/writers/swift/receipt.json",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/previous-run/writers/swift/receipt.json",
+      "bytes": 2139,
+      "sha256": "b12a768c0950bb5b6326a0559471ec5dd80799b580c18a150af535e6a86e53fe",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/receipt.json",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/workers/swift/receipt.json",
+      "kind": "copy",
+      "evidentiary_role": "Historical Luna/high writer allocation, execution, merge receipt, and patch evidence"
+    },
+    {
+      "bundle_relative_path": "evidence/progress.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/progress.md",
+      "bytes": 13122,
+      "sha256": "a60222b0f5dcaeddf832eefa5342daee774ce52576202b52d45aeea51e64a93a",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/progress.md",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/progress.md",
+      "kind": "copy",
+      "evidentiary_role": "Current and historical progress record"
+    },
+    {
+      "bundle_relative_path": "evidence/source/controller.py",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/source/controller.py",
+      "bytes": 163692,
+      "sha256": "385bbd2abd57ed305c01c7437f449833ed09cfc7e9f07add87d6352d405a8af5",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/controller.py",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/controller.py",
+      "kind": "copy",
+      "evidentiary_role": "Exact selected controller source snapshot used to explain the continuation protocol"
+    },
+    {
+      "bundle_relative_path": "evidence/source/escalation.py",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/source/escalation.py",
+      "bytes": 22642,
+      "sha256": "7044aa55c6cc7721205fbd95ed2643ac0debcc67701c303c563a23dbc4768451",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/escalation.py",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/escalation.py",
+      "kind": "copy",
+      "evidentiary_role": "Exact selected controller source snapshot used to explain the continuation protocol"
+    },
+    {
+      "bundle_relative_path": "handoff.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/handoff.md",
+      "bytes": 37403,
+      "sha256": "624de5c5e2758ec7f113ca1541fcc7abbb5eefda28590de393f74a9445c62f59",
+      "source_relative_path": null,
+      "source_absolute_path": null,
+      "kind": "authored",
+      "evidentiary_role": "Human Replanner prompt and planning context"
+    },
+    {
+      "bundle_relative_path": "historical-inputs/ml07-implementation-only-handoff.md",
+      "kind": "copy",
+      "evidentiary_role": "Exact 30,839-byte historical ML07 implementation-only handoff; source records the five prior Swift dependency names and hashes",
+      "source_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/implementation-only-handoff/handoff.md",
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/historical-inputs/ml07-implementation-only-handoff.md",
+      "bytes": 30839,
+      "sha256": "1254db8c5825d5d7c30992803a6f36c29b7f8d3e04cf2aa930bccb54763652d4",
+      "source_relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/implementation-only-handoff/handoff.md"
+    },
+    {
+      "bundle_relative_path": "history/deep-research-before-duplicate-cleanup.md",
+      "kind": "superseded_historical_snapshot",
+      "evidentiary_role": "Exact superseded pre-cleanup bytes of the research report; retained only to document removal of the duplicate older Experiment 1 paragraph",
+      "source_absolute_path": null,
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/history/deep-research-before-duplicate-cleanup.md",
+      "bytes": 42502,
+      "sha256": "829de548c8722f803f9dbc277c9fc8b6b9eaca1245022ce2d34265f1ab4ccad5",
+      "source_relative_path": null
+    },
+    {
+      "bundle_relative_path": "research/deep-research.md",
+      "kind": "authored_research",
+      "evidentiary_role": "Final Luna/high first-principles research input; one bounded read-only ALBUMS feasibility experiment; not a plan, authorization, or test result",
+      "source_absolute_path": null,
+      "bundle_absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/research/deep-research.md",
+      "bytes": 41054,
+      "sha256": "e5ae53d12c774827d1395ded8b375a4f1d5c3f235f7e07314358f4b12481d1c3",
+      "source_relative_path": null
+    }
+  ],
+  "source_relative_path_base": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup"
+}

@@ -1,0 +1,154 @@
+diff --git a/src/line_backup_batch/cli.py b/src/line_backup_batch/cli.py
+index aab5cce21d2b1b265073c480aee874c70f85e4a1..295cdc610ba659ef4f9220e8e4f564810de3c5d3 100644
+--- a/src/line_backup_batch/cli.py
++++ b/src/line_backup_batch/cli.py
+@@ -21,12 +21,12 @@ GRANT_V1_KEYS={
+ GRANT_V2_KEYS=GRANT_V1_KEYS|{'contract_path','producer_binary','runtime_binding','sensor_scope'}
+ OPERATIONS={'migrate','begin','admit','prepare','calibrate','intent','dispatch','finalize','stop','finish','release','resume',
+     'gui_reserve','gui_consume','frame_support'}
+-CONTRACT_PATH='harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-contract.json'
+-CONTRACT_SHA256='d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219'
++CONTRACT_PATH='harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/plan-contract.json'
++CONTRACT_SHA256='a043df49903b41b5102d671ca5afb252d73de0d8f796c8bc3749a7b41873dffc'
+ NATIVE_BINARY_PATH='harness-development/line-v3-live-e2e-20261010/bin/image_decode'
+ NATIVE_BINARY_SHA256='1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf'
+ GUI_LEDGER_PATH='harness-development/line-v3-live-e2e-20261010/gui-ledger.json'
+-CONTINUATION='harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03'
++CONTINUATION='harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08'
+ 
+ def load_input(root,path):
+     require(isinstance(path,str) and path.startswith('harness-development/'),'UNSAFE_INPUT_PATH')
+@@ -71,8 +71,11 @@ def validate_runtime_binding(reader,grant):
+     python_path=Path(sys.executable).resolve(strict=True)
+     memberships={
+         'product_sources_21':sorted(SOURCE_PATHS),
+-        'task_modules':sorted([*SOURCE_PATHS[-1:],CONTINUATION+'/live_runner.mjs',
+-            CONTINUATION+'/live_classifier.mjs',CONTINUATION+'/chooser_locators.mjs']),
++        'task_modules':sorted([*SOURCE_PATHS[-1:],CONTINUATION+'/host_io.mjs',
++            CONTINUATION+'/live_analyzer.mjs',CONTINUATION+'/live_classifier.mjs',
++            CONTINUATION+'/live_runner.mjs',CONTINUATION+'/live_entry.mjs',
++            CONTINUATION+'/chooser_locators.mjs',CONTINUATION+'/tools/retain_payload.py',
++            CONTINUATION+'/tools/host_process.py',CONTINUATION+'/checks/validate_real_frame.py']),
+         'swift_sources':_swift_source_members(reader,reader.root),
+         'package_manifest':['rev28/Package.swift'],
+         'python_runtime':[str(python_path)],
+diff --git a/src/line_backup_batch/observations.py b/src/line_backup_batch/observations.py
+index 97804e15e32fe0ca4831adc8f10ea563df7f905e..1eee0d9227fe7fb100db0dad7374841e2102790e 100644
+--- a/src/line_backup_batch/observations.py
++++ b/src/line_backup_batch/observations.py
+@@ -38,6 +38,16 @@ def fp(value):
+     require(integer(value['expected_images'],1),'ALBUM_COUNT')
+     return value
+ 
++def _date_title_ocr_matches(text,identity):
++    """Accept only the complete canonical album date range with a known separator variant."""
++    match=re.fullmatch(r'([0-9]{4})/([0-9]{2})/([0-9]{2})\s*([~～〜])\s*([0-9]{2})/([0-9]{2})',text)
++    if match is None:return False
++    start=identity['start_date'].split('-')
++    end=identity['end_date'].split('-')
++    observed=(match.group(1),match.group(2),match.group(3),match.group(5),match.group(6))
++    expected=(start[0],start[1],start[2],end[1],end[2])
++    return observed==expected
++
+ def rect(value,width,height):
+     require(isinstance(value,list) and len(value)==4 and all(type(v) in (int,float) and math.isfinite(v) for v in value),'INVALID_BOUNDS')
+     x,y,w,h=value;require(w>0 and h>0 and x>=0 and y>=0 and x+w<=width and y+h<=height,'BOUNDS_OUTSIDE_FRAME')
+@@ -332,7 +342,7 @@ def _grounding_evidence(reader,ref,record,support):
+                 and isinstance(item['bounds'],list),'CLASSIFIER_OCR_WITNESS')
+             if key=='count_ocr':
+                 matched=re.search(r'(?<![0-9])'+re.escape(needle)+r'(?![0-9])',item['text']) is not None
+-            else:matched=item['text']==needle
++            else:matched=_date_title_ocr_matches(item['text'],ident)
+             require(matched,'CLASSIFIER_OCR_WITNESS')
+             found=[candidate for candidate in ocr_items if candidate.get('text')==item['text']
+                 and candidate.get('bounds')==item['bounds'] and candidate.get('candidate_count')==1
+diff --git a/src/line_backup_batch/store.py b/src/line_backup_batch/store.py
+index fde21c60b44d1fc21c4f41eb363903ad276396c0..d77279bb3ccb40c1e753af342a092047ee207ff9 100644
+--- a/src/line_backup_batch/store.py
++++ b/src/line_backup_batch/store.py
+@@ -255,14 +255,15 @@ class Store:
+                 finally:os.close(p)
+             temporary='.line-backup-migration-v3.tmp' if migration else '.line-backup-v3.tmp'
+             fd=os.open(temporary,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600,dir_fd=parent)
+-            replaced=False
++            owner=None;replaced=False
+             try:
+-                try:self._write(fd,body);os.fsync(fd)
+-                finally:os.close(fd)
++                owner=self._temp_owner(fd)
++                self._write(fd,body);os.fsync(fd)
+                 if fault=='BEFORE_REPLACE':raise AcceptanceError('WRITE_BEFORE_REPLACE','fixture fault',4)
+                 check_lock()
+                 require(ProjectReader.ident(os.stat('backup_state.json',dir_fd=parent,follow_symlinks=False))==tuple(actual['state_identity']),
+                     'STATE_INODE_DRIFT')
++                self._require_temp_owner(parent,temporary,owner)
+                 os.replace(temporary,'backup_state.json',src_dir_fd=parent,dst_dir_fd=parent);replaced=True
+                 os.fsync(parent)
+                 if fault=='AFTER_REPLACE':raise AcceptanceError('READBACK_UNCERTAIN','fixture fault',4)
+@@ -278,8 +279,9 @@ class Store:
+                 if replaced:raise AcceptanceError('READBACK_UNCERTAIN',str(exc),4) from exc
+                 raise
+             finally:
+-                if not replaced:
+-                    with contextlib.suppress(FileNotFoundError):os.unlink(temporary,dir_fd=parent)
++                try:
++                    if not replaced:self._cleanup_temp(parent,temporary,owner)
++                finally:os.close(fd)
+ 
+     @staticmethod
+     def _write(fd,body):
+@@ -287,6 +289,29 @@ class Store:
+         while offset<len(body):
+             size=os.write(fd,body[offset:]);require(size>0,'SHORT_WRITE');offset+=size
+ 
++    @staticmethod
++    def _temp_owner(fd):
++        opened=os.fstat(fd)
++        require(stat.S_ISREG(opened.st_mode),'TEMP_NOT_REGULAR')
++        return opened.st_dev,opened.st_ino
++
++    @staticmethod
++    def _require_temp_owner(parent,temporary,owner):
++        try:current=os.stat(temporary,dir_fd=parent,follow_symlinks=False)
++        except FileNotFoundError:require(False,'TEMP_OWNERSHIP_LOST')
++        require(stat.S_ISREG(current.st_mode) and (current.st_dev,current.st_ino)==owner,
++            'TEMP_OWNERSHIP_LOST')
++
++    @staticmethod
++    def _cleanup_temp(parent,temporary,owner):
++        if owner is None:return
++        try:current=os.stat(temporary,dir_fd=parent,follow_symlinks=False)
++        except FileNotFoundError:return
++        require(stat.S_ISREG(current.st_mode) and (current.st_dev,current.st_ino)==owner,
++            'TEMP_OWNERSHIP_LOST')
++        os.unlink(temporary,dir_fd=parent)
++        os.fsync(parent)
++
+     def ledger_path(self,grant):
+         """Task-local cooperative GUI ledger path; CLI pins the live location."""
+         path=grant.get('gui_ledger')
+@@ -306,14 +331,19 @@ class Store:
+     def _ledger_write(r,path,ledger):
+         parts=path.split('/');parent=r.open('/'.join(parts[:-1]),directory=True)
+         temporary='.'+parts[-1]+'-'+uuid.uuid4().hex+'.tmp'
++        fd=None;owner=None;replaced=False
+         try:
+             fd=os.open(temporary,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600,dir_fd=parent)
+-            try:Store._write(fd,json_bytes(ledger));os.fsync(fd)
+-            finally:os.close(fd)
+-            os.replace(temporary,parts[-1],src_dir_fd=parent,dst_dir_fd=parent);os.fsync(parent)
++            owner=Store._temp_owner(fd)
++            Store._write(fd,json_bytes(ledger));os.fsync(fd)
++            Store._require_temp_owner(parent,temporary,owner)
++            os.replace(temporary,parts[-1],src_dir_fd=parent,dst_dir_fd=parent);replaced=True;os.fsync(parent)
+         finally:
+-            with contextlib.suppress(FileNotFoundError):os.unlink(temporary,dir_fd=parent)
+-            os.close(parent)
++            try:
++                if not replaced:Store._cleanup_temp(parent,temporary,owner)
++            finally:
++                if fd is not None:os.close(fd)
++                os.close(parent)
+         back=ProjectReader(r.root)
+         try:
+             raw,_=back.read(path,'GUI_LEDGER_READBACK')

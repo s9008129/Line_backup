@@ -1,0 +1,104 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+  "run_id": "c6c6b55d-865f-467b-94ba-3fd669df97ec",
+  "role": "IMPLEMENTER",
+  "candidate_fact": "BLOCKED",
+  "validation_fact": "VALID",
+  "routing_fact": "PLANNER_REPLAN",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "BLOCKED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "BLOCKED",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "REPLAN_REQUIRED"
+  },
+  "gate_results": [
+    {"gate_id": "G_BASELINE_08", "verdict": "PARTIAL", "evidence_manifest": "C6_CLOSEOUT_EVIDENCE"},
+    {"gate_id": "G_EVIDENCE_POLICY", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_AUTH_RUNTIME", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_REAL_LINK", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_OFFLINE", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_CATALOG_1", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_CATALOG_2", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_MENU_1", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_MENU_2", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_FIRST", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_SCROLL", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_SECOND", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_PRESERVE_08", "verdict": "PARTIAL", "evidence_manifest": "C6_CLOSEOUT_EVIDENCE"},
+    {"gate_id": "G_REPORT", "verdict": "PARTIAL", "evidence_manifest": "C6_CLOSEOUT_EVIDENCE"},
+    {"gate_id": "G_ACCEPTANCE", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_EVIDENCE_READINESS_08", "verdict": "PARTIAL", "evidence_manifest": "C6_CLOSEOUT_EVIDENCE"},
+    {"gate_id": "G_EARLY_CHECKS_08", "verdict": "PARTIAL", "evidence_manifest": "C6_CLOSEOUT_EVIDENCE"},
+    {"gate_id": "G_PRODUCTION_FAMILY_OFFLINE_08", "verdict": "BLOCKED", "evidence_manifest": "C6_CLOSEOUT_EVIDENCE"},
+    {"gate_id": "G_B02_PRESERVATION_08", "verdict": "BLOCKED", "evidence_manifest": "C6_CLOSEOUT_EVIDENCE"},
+    {"gate_id": "G_OFFLINE_IMPLEMENTATION_08", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_FINAL_HANDOFF_08", "verdict": "PARTIAL", "evidence_manifest": "C6_CLOSEOUT_EVIDENCE"},
+    {"gate_id": "G_PARENT_TRACE_08", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_PLAN_ADMISSION_08", "verdict": "BLOCKED", "evidence_manifest": "C6_CLOSEOUT_EVIDENCE"},
+    {"gate_id": "G_D01_LIVE_08", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_ALBUM_ONE_LIVE_08", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_POST_RELEASE_SCROLL_LIVE_08", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_ALBUM_TWO_LIVE_08", "verdict": "NOT_RUN", "evidence_manifest": null},
+    {"gate_id": "G_INDEPENDENT_ACCEPTANCE_08", "verdict": "NOT_RUN", "evidence_manifest": null}
+  ],
+  "evidence_ids": ["C6_CLOSEOUT_EVIDENCE"],
+  "stage": "IMPLEMENT",
+  "plan_sha256": "210641620db94ee5de8ee271b979015442d3f2934d9281890a02c19f8719c279",
+  "handoff_sha256": "a043df49903b41b5102d671ca5afb252d73de0d8f796c8bc3749a7b41873dffc",
+  "source_sha256": "4cccb4eb2afae4f543e7802d150f75e8c90196485a646d7ab19c0399fc13bd86",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+      "run_id": "c6c6b55d-865f-467b-94ba-3fd669df97ec",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "4cccb4eb2afae4f543e7802d150f75e8c90196485a646d7ab19c0399fc13bd86",
+      "evidence_id": "C6_CLOSEOUT_EVIDENCE",
+      "path": "runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/c6-closeout-evidence.json",
+      "bytes": 5445,
+      "sha256": "c501ed7e215ade5221779bd0bcd57531be0dc5f96bd0be9fea0d6ef5ca81772b",
+      "contract_sha256": "a043df49903b41b5102d671ca5afb252d73de0d8f796c8bc3749a7b41873dffc",
+      "observation": "The selected Luna/high turn produced a blocked protocol handoff; the referenced readback is targeted only and proves no c6 acceptance gate."
+    }
+  ],
+  "plan_contract_sha256": "a043df49903b41b5102d671ca5afb252d73de0d8f796c8bc3749a7b41873dffc",
+  "analysis": {
+    "facts": [
+      "The current actual turn-context selects gpt-6-luna/high and binds the c6 session, actor, invitation nonce, and run. Provider backend attestation is UNKNOWN.",
+      "The latest context descriptor has a null optional contextual-model field; an earlier retained session metadata artifact records gpt-6.1-sol. The cause is UNKNOWN and neither value proves provider backend.",
+      "The c6 issue continuation is single-use and is now CONTINUATION_CONSUMED. The unchanged controller cannot consume the bounded correction and satisfy the original full IMPLEMENT gate set.",
+      "The one authorized targeted readback matches 15/15 protected-file hashes, 239/239 saved-baseline photo hashes, 9/9 merged writer paths, and current HEAD/index to the c6 pre-snapshot; formal_gate_pass is false.",
+      "B02 is NOT_RUN because the frozen check spec lacks B02-preservation-pair. Both namespace diagnostic attempts are already spent.",
+      "No c6 product edit, build, S01/N01/R01, new offline suite, LINE input, download, state mutation, or GUI-ledger mutation occurred."
+    ],
+    "inferences": [
+      "The current continuation should end as a blocked Planner handoff, not as completed implementation.",
+      "A future Planner should choose either a full-scope implementation route satisfying the original gates or a separately represented bounded-issue completion operation before allocation."
+    ],
+    "unknowns": [
+      "Cause of the latest optional contextual metadata being null while an earlier retained session metadata record says gpt-6.1-sol.",
+      "Full namespace preservation after the commander created and removed an unused placeholder outside Q; parent-directory metadata may have changed.",
+      "Production build, offline implementation suite, genuine R01, live catalog/menu/chooser behavior, two album transactions, content/state acceptance, post-release scroll, final B02, and independent Acceptance remain unverified."
+    ],
+    "evidence": [
+      "Run-local closeout evidence index: runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/c6-closeout-evidence.json (SHA256 c501ed7e215ade5221779bd0bcd57531be0dc5f96bd0be9fea0d6ef5ca81772b).",
+      "Targeted preservation readback: evidence/c6-preservation-readback-01/preservation-readback.json (304189 bytes, SHA256 7936a0946fa5bc35d1c4f963123766cd4d9806cf1bd0cc186ab9c2a1526616de).",
+      "Protocol blocker: controller-protocol-blocker-c6.md; current Planner handoff: planner-handoff-c6.md; current progress and E2E report preserve earlier chronology and link exact evidence."
+    ],
+    "confidence": "High confidence in the cited controller, selected-turn, and targeted-readback facts. No confidence claim is made for unavailable live/production acceptance evidence."
+  },
+  "handoff_summary": "c6 ends BLOCKED with no gate PASS. The actual turn was Luna/high with backend UNKNOWN. A targeted preservation readback matched the saved 15/239/9 inputs and c6 Git snapshot, but B02 is unavailable in the frozen spec and was not run. The commander-owned planning mismatch leaves the consumed single-use issue without a legal full-IMPLEMENT completion route in immutable v4.8. Route to Planner before any new allocation; preserve all history and keep all live, build, offline, and acceptance gates open.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 1,
+    "consecutive_no_progress": 0,
+    "last_attempt": "One authorized targeted preservation readback completed; it added verified file/index matches while confirming the frozen B02-family prerequisite is missing and the consumed issue cannot satisfy full IMPLEMENT admission.",
+    "information_gain": true,
+    "stuck": false
+  },
+  "writer_receipts": []
+}

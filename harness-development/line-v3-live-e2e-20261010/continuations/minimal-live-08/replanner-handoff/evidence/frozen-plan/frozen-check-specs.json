@@ -1,0 +1,40 @@
+{
+  "checks": [
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "-B",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/checks/run_e01.py"
+      ],
+      "check_id": "E01-evidence-policy",
+      "family": "evidence",
+      "stream_cap_bytes": 8388608,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "-B",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/checks/test_run_command.py"
+      ],
+      "check_id": "E02-runner-selftest",
+      "family": "evidence",
+      "stream_cap_bytes": 8388608,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "-B",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/tools/baseline_pair.py"
+      ],
+      "check_id": "B01-baseline-pair",
+      "family": "evidence",
+      "stream_cap_bytes": 8388608,
+      "timeout_seconds": 2500
+    }
+  ],
+  "epoch": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01",
+  "family": "evidence",
+  "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751"
+}

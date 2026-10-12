@@ -1,0 +1,14 @@
+{
+  "actor_id": "/root/ml08_python",
+  "platform_session_id": "01a12e01-30fb-7122-8c94-01ec0fb811d1",
+  "raw_path": "operator-records/python-invitation.raw.json",
+  "raw_sha256": "ba1b011bb752eda0fcae2746df57a88a96b76cbcb851a04f0bd0e6058e62dd98",
+  "reported_effort": null,
+  "reported_model": null,
+  "requested_effort": "high",
+  "requested_model": "gpt-6-luna",
+  "run_id": "d895b8ed-a814-4785-85ee-9e39b9e52559",
+  "source": "TRUSTED_OPERATOR",
+  "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+  "worker_id": "python"
+}

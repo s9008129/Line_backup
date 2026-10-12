@@ -1,0 +1,67 @@
+{
+  "diagnostic_attempts_consumed": 1,
+  "formal_claim_created": false,
+  "formal_gate_pass": false,
+  "format": "ML08_NONFORMAL_DIAGNOSTIC_RECEIPT_V1",
+  "invocation": {
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/namespace-diagnostic-01/invocation.json",
+    "bytes": 3345,
+    "created_at_ns": 1791769002998748734,
+    "dev": 16777234,
+    "exclusive_create": true,
+    "file_fsync": true,
+    "ino": 134799751,
+    "parent_fsync": true,
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/namespace-diagnostic-01/invocation.json",
+    "readback_verified": true,
+    "sha256": "078a4beda80c2082a92067050cde1afe04652cd4bd18ee175c9684b15f49dac4"
+  },
+  "namespace_validation_attempts_remaining": 1,
+  "outcome": {
+    "argv": [
+      "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "-B",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/tools/diagnose_namespace.py",
+      "--child"
+    ],
+    "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+    "elapsed_seconds": 25.35538062500018,
+    "ended_at": "2026-10-12T01:37:08.354517+00:00",
+    "exit_code": 0,
+    "failure_boundary": null,
+    "reaped": true,
+    "started_at": "2026-10-12T01:36:42.999159+00:00",
+    "truncated": {
+      "stderr": false,
+      "stdout": false
+    }
+  },
+  "streams": {
+    "stderr": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/namespace-diagnostic-01/stderr",
+      "bytes": 0,
+      "created_at_ns": 1791769028355372462,
+      "dev": 16777234,
+      "exclusive_create": true,
+      "file_fsync": true,
+      "ino": 134799828,
+      "parent_fsync": true,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/namespace-diagnostic-01/stderr",
+      "readback_verified": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/namespace-diagnostic-01/stdout",
+      "bytes": 2733,
+      "created_at_ns": 1791769028354842629,
+      "dev": 16777234,
+      "exclusive_create": true,
+      "file_fsync": true,
+      "ino": 134799827,
+      "parent_fsync": true,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/namespace-diagnostic-01/stdout",
+      "readback_verified": true,
+      "sha256": "9f04066a82f4e0ee66e27335c992cfa9290e948363352249ea8d2aafcb6a9916"
+    }
+  }
+}

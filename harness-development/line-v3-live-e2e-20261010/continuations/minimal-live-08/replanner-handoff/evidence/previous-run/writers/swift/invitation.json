@@ -1,0 +1,14 @@
+{
+  "actor_id": "/root/ml08_swift",
+  "platform_session_id": "01a12e01-59e2-7f00-8dc9-33a2a3230d53",
+  "raw_path": "operator-records/swift-invitation.raw.json",
+  "raw_sha256": "fe99ed4f1e80ab27419cab5454cd2cc6202d098c4f646c34fcaa83f544aae560",
+  "reported_effort": null,
+  "reported_model": null,
+  "requested_effort": "high",
+  "requested_model": "gpt-6-luna",
+  "run_id": "d895b8ed-a814-4785-85ee-9e39b9e52559",
+  "source": "TRUSTED_OPERATOR",
+  "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+  "worker_id": "swift"
+}

@@ -1,0 +1,49 @@
+{
+  "actor_id": "/root/ml08_adapter",
+  "allocation_version": "1",
+  "attempt_index": 1,
+  "baseline": {
+    "path": "workers/adapter/baseline.json",
+    "sha256": "9b6d2b2357ace79003c824cb6a4c2ac37496bb77813e5134a035c8a2b92d4d01"
+  },
+  "git_identity": {
+    "common_dir": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.git",
+    "git_dir": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.git/worktrees/Line_backup_ml08_adapter",
+    "git_dir_identity": [
+      16777234,
+      134872450
+    ],
+    "registered": [
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-luna",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup_ml08_adapter",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup_ml08_python",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup_ml08_swift"
+    ],
+    "worktree_identity": [
+      16777234,
+      134872452
+    ]
+  },
+  "invitation": {
+    "path": "workers/adapter/invitation.json",
+    "sha256": "397f5aad7f944121790e3affb49069e6023a965818632b8ec7d8e7995c3170bd"
+  },
+  "invitation_nonce": "c1fec8240eff29b6307bdf789c475235",
+  "isolation": {
+    "base_sha": "153eefe86fb61feb7fc4322c9c259895437a3428",
+    "mode": "WORKTREE",
+    "worktree": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup_ml08_adapter"
+  },
+  "issue_id": "ML08_ADAPTER",
+  "platform_session_id": "01a12e01-11c6-7421-82e5-4b65f190d671",
+  "run_id": "d895b8ed-a814-4785-85ee-9e39b9e52559",
+  "scope": [
+    "scripts/line_backup_cua_adapter.mjs"
+  ],
+  "stage": "IMPLEMENT",
+  "started_at": "2026-10-12T02:51:13.569249+00:00",
+  "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+  "writer_id": "adapter"
+}

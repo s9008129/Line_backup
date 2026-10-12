@@ -1,0 +1,132 @@
+{
+  "format": "ML08_C6_NATIVE_ADMISSION_RECEIPT_V1",
+  "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+  "grant_parent_task_id": "TASK-20261010-line-v3-live-e2e",
+  "run_id": "c6c6b55d-865f-467b-94ba-3fd669df97ec",
+  "issue_id": "a2a1e4c39580d6a2fc1f4b6be628f63ee1e6ca53ed7d1fb19c7777bbfba9afc5",
+  "admission": {
+    "candidate_result_sha256": "0e9a4f7439209703bcf4b45742fde3344905c2feaf913d45d7704f9ba2787c07",
+    "candidate_result_bytes": 8109,
+    "candidate_fact": "BLOCKED",
+    "validation_fact": "VALID",
+    "controller_route": "WAIT_HUMAN",
+    "root_observation": {
+      "importer_executed_once": true,
+      "process_exit": 0,
+      "observed_route": "WAIT_HUMAN",
+      "stdout_retained": false,
+      "attribution": "Commander tool observation; no stdout bytes or hash are asserted."
+    },
+    "model": {
+      "selected_model": "gpt-6-luna",
+      "selected_effort": "high",
+      "provider_backend_attestation": "UNKNOWN"
+    },
+    "completion": {
+      "outcome": "COMPLETED",
+      "meaning": "The role result was completed and admitted; this does not mean the project goal or any live gate passed.",
+      "process_exit": null,
+      "raw_completion_sha256": "7683e8d5938e2511deb5d3e08d56df779b74445fd83e14aaa5e1d3290ce7b709"
+    },
+    "final_message_binding": {
+      "session_log_line": 1970,
+      "raw_line_bytes": 9418,
+      "raw_line_sha256": "0a10c3e1545dc2588c29087f59a9ac700044ee3de7f009d7c25a03f9e5fb4869",
+      "text_bytes": 8108,
+      "text_sha256": "8ece99bcc9a4c88fadf20f1829030900601071017a826686666f06c9c26bf8d4",
+      "candidate_bytes": 8109,
+      "candidate_sha256": "0e9a4f7439209703bcf4b45742fde3344905c2feaf913d45d7704f9ba2787c07",
+      "difference": "The candidate serialization adds exactly one terminal LF to the actual final text."
+    }
+  },
+  "schema_validations": [
+    {
+      "purpose": "CONTRACT",
+      "verdict": "VALID",
+      "event_id": "1b01f4e2-eb5a-4849-b69f-41e52d15868e",
+      "path": "runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/schema-validations/68fbd9d1f1b1820749b45b2abb41f647002ea7b3512d1ec949d26ec3ecca5fd5.json",
+      "sha256": "68fbd9d1f1b1820749b45b2abb41f647002ea7b3512d1ec949d26ec3ecca5fd5"
+    },
+    {
+      "purpose": "RESULT",
+      "verdict": "VALID",
+      "event_id": "6e83c415-7327-44e4-ba36-836efb790be7",
+      "path": "runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/schema-validations/03ec4870bd4d1a1ee76cafda4b0c993139040db10ede859617aecc9dd666f6a9.json",
+      "sha256": "03ec4870bd4d1a1ee76cafda4b0c993139040db10ede859617aecc9dd666f6a9"
+    }
+  ],
+  "submission": {
+    "admission_sha256": "676a8bb8ce0db71f5ac03a9105968e06a1209588929c44de2a0ab697c5b2d78f",
+    "directory": "runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/submissions/676a8bb8ce0db71f5ac03a9105968e06a1209588929c44de2a0ab697c5b2d78f",
+    "files": [
+      {"path": "candidate-result.json", "bytes": 8109, "sha256": "0e9a4f7439209703bcf4b45742fde3344905c2feaf913d45d7704f9ba2787c07"},
+      {"path": "invitation.json", "bytes": 646, "sha256": "f0d0008a3a4c589ac09c54544d6d9901774de1082684264926a4f2711fa364e3"},
+      {"path": "completion.json", "bytes": 783, "sha256": "996f53ea5581d842a629eac1324b0caa5dc552f28c200c7ee4d877fb9f40dac6"},
+      {"path": "post-snapshot.json", "bytes": 42541708, "sha256": "78768dad956ab1043f79e69c60931da8d59f2dffd63af64c9bb78d1366a2f47d"},
+      {"path": "validation.json", "bytes": 76, "sha256": "691c2fee9d886c2fc42c21a47d164028981d85a6a099008c1122edcd556e3f23", "verdict": "VALID", "runtime": "COMPLETED", "route": "WAIT_HUMAN"}
+    ]
+  },
+  "consumption": {
+    "path": "runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/consumption.json",
+    "bytes": 18173,
+    "sha256": "2af57177374f393e4e965d6e96f386853362ef8595f2b990abee2fefc05f4ffe",
+    "route": "WAIT_HUMAN",
+    "before_state_sha256": "932753c4c643bc9e91ac36b2d692c87ceafe7b2b23eabd6077045764a8649eb4",
+    "post_snapshot_sha256": "78768dad956ab1043f79e69c60931da8d59f2dffd63af64c9bb78d1366a2f47d",
+    "accepted_implementation_run_id": null,
+    "accepted_gates": {},
+    "consumed_state": {
+      "phase": "BLOCKED",
+      "active_run_id": null,
+      "last_valid_run_id": "c6c6b55d-865f-467b-94ba-3fd669df97ec",
+      "candidate_fact": "BLOCKED",
+      "validation_fact": "VALID",
+      "next_stage": null
+    }
+  },
+  "issue": {
+    "state_path": "issues/a2a1e4c39580d6a2fc1f4b6be628f63ee1e6ca53ed7d1fb19c7777bbfba9afc5/state.json",
+    "state_bytes": 13789,
+    "state_sha256": "fcd32c55924e52824184e25b6ebb70d7d346f3fe0d17fd96ec6c787654658dd6",
+    "issue_state": "WAIT_HUMAN",
+    "sequence": 7,
+    "continuations": 1,
+    "continuation_task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+    "continuation_run_id": "c6c6b55d-865f-467b-94ba-3fd669df97ec",
+    "event_sha256": "b79292c76783259cc41f2f6b81907e312a8b5791137978ef92f0a1c68380b7dc",
+    "final_event_path": "issues/a2a1e4c39580d6a2fc1f4b6be628f63ee1e6ca53ed7d1fb19c7777bbfba9afc5/000007-WAIT_HUMAN.json",
+    "final_event_bytes": 14654,
+    "final_event_sha256": "b79292c76783259cc41f2f6b81907e312a8b5791137978ef92f0a1c68380b7dc"
+  },
+  "controller_task_state": {
+    "path": "state.json",
+    "bytes": 12721,
+    "sha256": "17e74f0b9f00fafa770273dd5a481e3aa8c98fb1ae9d508ff21bb248956ec822",
+    "phase": "BLOCKED",
+    "candidate_fact": "BLOCKED",
+    "validation_fact": "VALID",
+    "active_run_id": null,
+    "last_valid_run_id": "c6c6b55d-865f-467b-94ba-3fd669df97ec",
+    "accepted_gates": {},
+    "statuses": {
+      "PRIMARY_OUTCOME_STATUS": "UNKNOWN",
+      "IMPLEMENTATION_STATUS": "ESCALATED",
+      "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+      "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+      "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+      "TASK_CLOSURE_STATUS": "HIGH_REASONING_REVIEW_REQUIRED"
+    },
+    "status_semantics": "These are the unchanged controller's post-admission state projection, not the candidate result's six statuses. No state repair or relabeling was performed."
+  },
+  "task_event_log": {
+    "path": "events.jsonl",
+    "bytes": 19061,
+    "sha256": "027d88605eaa30bb94681e687a7daed503b466622e55833883062055847d10bc"
+  },
+  "nonclaims": [
+    "No c6 gate passed; no S01/N01/R01, product offline suite, live action, LINE input, download, or independent Acceptance passed.",
+    "Prior E01/E02/B01 and three merged Luna/high writer receipts remain prior-run facts, not c6 gate passes.",
+    "The readback remains targeted and is not B02 or a full namespace preservation inventory.",
+    "Controller state statuses are recorded exactly as emitted and are not overwritten with candidate result statuses."
+  ]
+}
