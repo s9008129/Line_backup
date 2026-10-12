@@ -29,3 +29,35 @@
 `E2E測試報告.md` 是迭代循環中的正式證據交接物，不是僅供摘要的備忘錄。每輪報告完成後，將它交給本輪指定的高階 Planner；若執行環境沒有可用的 Planner 通道，保留報告與進度記錄，明確回報尚未完成 Planner 交接，不得聲稱已提交。Planner 輸出須精確指出本輪事實、未知、阻塞、下一個決策及其驗收方式。
 
 遇到 writer guard、狀態不一致、身份歧義、前景中斷、目的地副作用或任何未預期結果時，保留現場證據與既有資料，停止依賴該前置條件的後續操作，並將可重現資訊、錯誤原文、前後狀態和精確所需決策寫入報告。不可為了讓 E2E 看似完整而另換 writer、遷移狀態、刪除資料、降低 gate 或派送未核准的 UI 動作。
+
+## 目標對齊補充：避免一直造工具、卻沒有進入真實相簿
+
+本節補充、不得取代前述專案憲法與全域 Harness V4.8.0；不變更已審核的一次性派送、writer、資料驗收與授權規則。先核對本機真正的 branch、HEAD、dirty/untracked、當前核准 Plan/Handoff、已完成證據及權限；其他 worktree、舊歷史與 GitHub master 不自動代表現行執行權威。
+
+### A. 使用者最終成果與本輪成果分帳
+
+USER_END_GOAL：在真實 macOS LINE.app 列舉目標群組相簿，向下捲到原本未顯示的相簿，精準開啟每一本尚未 VERIFIED 的相簿，經安全交易及獨立授權儲存全部，逐本驗證檔案及狀態，再進入下一本並保留未完成清單。單本成功、57 張基線、已成功的 182 張下載、工具完成、CI PASS 均不等於總目標 DONE；已 VERIFIED 的相簿不再下載以充當成果，也不把 57 張專用 SHA/張數用於其他相簿。
+
+CURRENT_SLICE 由目前有效的 Plan 與授權決定；只允許 read-only、navigation-only、A/B offline 或特定單本交易時須照實標示，不得自行擴大到 Save All／chooser／state 寫入。每輪明列仍缺少的總目標 gates。
+
+### B. 導覽真機成果優先於工具成果
+
+對已核准的「列表 → 捲動 → 第二本 → 詳情」導覽任務，優先取得：
+
+- G0：重新量測現在 Mac 是否解鎖、LINE 是否登入，以及 TCC、視窗、前景身分；舊的 signed-out/locked 紀錄不是今天的事實。
+- G1：真實列表原始畫面、AX/Vision 證據、確定的列表容器與可見卡片。
+- G2：一個已授權的 bounded scroll；留存前後截圖、事件、列表連續性、新卡／位置改變，並遵守本檔前述 0.25-view-height、卡片 overlap/new-card 要求；posted event 不能冒充 LINE 已捲動。不滿足即記 PARTIAL/BLOCKED。
+- G3：用新鮮影像唯一綁定新相簿的群組、日期／標題、張數、卡片，再依核准方法精準點擊；從新的詳細頁驗證身分。不符立即停止相依輸入。
+- G4+：僅在另行核准的下載交易前置與授權滿足時，逐本走既有 Save All、chooser、檔案及狀態證據鏈；個別 fingerprint/manifest/ledger 獨立對帳，UNKNOWN 不盲目重送。
+
+先查 AX 列表與可用 scroll；有真實 AX 不支援證據，才在已核准方案內使用 Quartz wheel。每捲後重新觀察；不以固定座標、未確認的 scrollbar、模糊文字或過期幀猜點。未取得真機導航權限就只執行獲准的唯讀步驟，本段文字本身不構成新的 LINE GUI 授權。
+
+### C. 工具開發剎車與偏航偵測
+
+G2/G3 尚未有真實 PASS 前，除非具名的真實故障證據證明既有元件無法達成下一個必要 gate，不得重建 Computer Use、大型 fixture matrix、通用校準平台或另一套並行觀察／交易引擎。優先局部修復已核准的現有實作。每次重大嘗試先記 BLOCKER_FINGERPRINT、可反駁假設、新資訊來源、結果 A/B 的不同後續；換模型、換 worktree、改 prompt 或同義重跑不能重置 root issue。每 root issue 最多三次有證據的嘗試，連續兩次無資訊增益就升級，必要時更早 STOP。
+
+### D. E2E 報告與決策交接
+
+現有 E2E測試報告.md 必須包含 USER_END_GOAL、CURRENT_SLICE、GOAL_GATE_DELTA、FIRST_UNMET_REAL_GATE、INFORMATION_GAIN、BLOCKER_FINGERPRINT、ATTEMPTS_USED、NEXT_DISTINGUISHING_STEP、NEXT_AUTHORIZATION_NEEDED、PARENT_GOAL_STATUS。附 source/contract/runtime 身分、命令、原始 frame/hash、實際結果及副作用；區分 NOT_RUN、OBSERVED、PARTIAL、BLOCKED、PASS。任何只證明工具可運作的結果皆標 ENABLER，不得記作 LINE 真實 E2E PASS。
+
+若當前 Plan 將最終多本自動備份縮為單本／模擬工具卻沒有追蹤剩餘門檻，標 GOAL_COVERAGE_GAP，交 Planner 與適用的獨立審查；Implementer 無權改凍結合約，也不能把 replan 變成無限研究。下一步應是最小、有授權、可取得真實證據的里程碑。
