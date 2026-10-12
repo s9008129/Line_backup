@@ -1,0 +1,8 @@
+test_claim_precedes_launch_and_failing_launch_consumes_id (__main__.RunnerTests.test_claim_precedes_launch_and_failing_launch_consumes_id) ... ok
+test_fixed_preflight_rejects_identity_source_spec_index_and_collision (__main__.RunnerTests.test_fixed_preflight_rejects_identity_source_spec_index_and_collision) ... ok
+test_real_child_timeout_cap_nonzero_and_reap (__main__.RunnerTests.test_real_child_timeout_cap_nonzero_and_reap) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.086s
+
+OK

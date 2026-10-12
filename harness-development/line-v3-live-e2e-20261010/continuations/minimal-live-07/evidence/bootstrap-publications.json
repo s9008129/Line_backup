@@ -1,0 +1,81 @@
+{
+  "continuation": "minimal-live-07",
+  "created_at_utc": "2026-10-11T06:12:51.784019+00:00",
+  "entries": [
+    {
+      "bytes": 42257,
+      "lifecycle": "PREEXISTING_COMMITTED",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/plan.md",
+      "producer": "document-publication",
+      "readback_now": true,
+      "sha256": "0d027dff633344fa3e05b0667b2d21e087eeec10006927f6bbe2a93ffe5df429"
+    },
+    {
+      "bytes": 33280,
+      "lifecycle": "PREEXISTING_COMMITTED",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/handoff.md",
+      "producer": "document-publication",
+      "readback_now": true,
+      "sha256": "fd5c059759a8eae9d4c8847d1516ab8a24e737b67cc27c9c7ff18bbc629410b3"
+    },
+    {
+      "bytes": 2878,
+      "lifecycle": "PREEXISTING_COMMITTED",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/commit-message.txt",
+      "producer": "document-publication",
+      "readback_now": true,
+      "sha256": "22771cfcb6d7dabb6ad5bdfd5766c17a208c54e602adc83489669c28a5a711b1"
+    },
+    {
+      "bytes": 6399,
+      "lifecycle": "CREATE_ONCE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/evidence/bootstrap-anchors.json",
+      "producer": "bootstrap-anchor-capture",
+      "readback_now": true,
+      "sha256": "c64ce61253e16641f4d4fc183de14d0754dc21d3bf8f53d34a08abdeea0a3cd5"
+    },
+    {
+      "bytes": 1413,
+      "lifecycle": "CREATE_ONCE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/evidence/controller-readiness.json",
+      "producer": "bounded-controller-readiness",
+      "readback_now": true,
+      "sha256": "6174c6762d0f6be52236ad0e3aa458b88365e4d7f9fb6549a77ad0ae98deaaf1"
+    },
+    {
+      "bytes": 7192,
+      "lifecycle": "CREATE_ONCE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/plan-contract.json",
+      "producer": "exact-contract-extraction",
+      "readback_now": true,
+      "sha256": "84bcc6511585fe446f85c75adb6bc213222cb971a9b79ab0055c78bb3be59469"
+    },
+    {
+      "bytes": 7192,
+      "lifecycle": "CREATE_ONCE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/handoff.json",
+      "producer": "exact-contract-extraction",
+      "readback_now": true,
+      "sha256": "84bcc6511585fe446f85c75adb6bc213222cb971a9b79ab0055c78bb3be59469"
+    },
+    {
+      "bytes": 4654,
+      "lifecycle": "DRAFT_BEFORE_FREEZE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/tools/evidence_io.py",
+      "producer": "direct-draft-edit",
+      "readback_now": true,
+      "sha256": "3bcd780d00ccccba0e3f890c050f6ba57072fd151efc755077d347238519582e"
+    },
+    {
+      "bytes": 5126535,
+      "lifecycle": "CREATE_ONCE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/evidence/namespace-pair-prewrite.json",
+      "producer": "full-namespace-pair",
+      "readback_now": true,
+      "sha256": "d48c68413ae3ba1fa30c01c7a50e5c48a96c5f7440c5d84f5dc9ac8a2f882492"
+    }
+  ],
+  "format": "ML07_BOOTSTRAP_PUBLICATION_REGISTER_V1",
+  "scope_note": "Retrospective exact inventory and readback of observed bootstrap outputs. Prior O_EXCL calls are separately in execution transcript; this register is not a native controller receipt or proof of other workspace content. Draft source hashes may change before freeze.",
+  "task_id": "TASK-20261010-line-v3-live-e2e"
+}
