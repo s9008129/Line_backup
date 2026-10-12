@@ -1,0 +1,95 @@
+{
+  "artifact_kind": "REDACTED_DERIVATIVE_NOT_NATIVE_RECEIPT",
+  "lineage": {
+    "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+    "issue_id": "a2a1e4c39580d6a2fc1f4b6be628f63ee1e6ca53ed7d1fb19c7777bbfba9afc5",
+    "run_id": "c6c6b55d-865f-467b-94ba-3fd669df97ec"
+  },
+  "source_refs": {
+    "receipt": {
+      "source_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/g0-route-review-20261012/raw/c6-native-admission-receipt.json",
+      "original_sha256": "9889e84de2ceaa0fa0154a0f172dafdc5260d8dbd2fb9da6af4bbfd4288f3144"
+    },
+    "task_state": {
+      "source_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/g0-route-review-20261012/raw/controller-task-state.json",
+      "original_sha256": "17e74f0b9f00fafa770273dd5a481e3aa8c98fb1ae9d508ff21bb248956ec822"
+    },
+    "issue_state": {
+      "source_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/g0-route-review-20261012/raw/controller-issue-state.json",
+      "original_sha256": "fcd32c55924e52824184e25b6ebb70d7d346f3fe0d17fd96ec6c787654658dd6"
+    },
+    "consumption": {
+      "source_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/g0-route-review-20261012/raw/c6-consumption.json",
+      "original_sha256": "2af57177374f393e4e965d6e96f386853362ef8595f2b990abee2fefc05f4ffe"
+    },
+    "candidate_result": {
+      "source_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/candidate-result.json",
+      "original_sha256": "0e9a4f7439209703bcf4b45742fde3344905c2feaf913d45d7704f9ba2787c07"
+    },
+    "attempt_ledger": {
+      "source_path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/g0-route-review-20261012/raw/c6-continuation-attempt-ledger.json",
+      "original_sha256": "101cee88f40e7c0ed0bf2d4e0eefc702813b7cb0073308b36b2e5135777f43df"
+    }
+  },
+  "admission_projection": {
+    "candidate_fact": "BLOCKED",
+    "validation_fact": "VALID",
+    "controller_route": "WAIT_HUMAN",
+    "selected_model": "gpt-6-luna",
+    "selected_effort": "high",
+    "provider_backend_attestation": "UNKNOWN",
+    "role_result_completion": "COMPLETED",
+    "role_result_completion_meaning": "Role reply was completed and admitted; this does not assert task completion or gate PASS.",
+    "schema_validations": [
+      {
+        "purpose": "CONTRACT",
+        "verdict": "VALID"
+      },
+      {
+        "purpose": "RESULT",
+        "verdict": "VALID"
+      }
+    ]
+  },
+  "task_projection": {
+    "phase": "BLOCKED",
+    "candidate_fact": "BLOCKED",
+    "validation_fact": "VALID",
+    "active_run_id": null,
+    "next_stage": null,
+    "accepted_gates": {},
+    "status_projection": {
+      "PRIMARY_OUTCOME_STATUS": "UNKNOWN",
+      "IMPLEMENTATION_STATUS": "ESCALATED",
+      "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+      "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+      "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+      "TASK_CLOSURE_STATUS": "HIGH_REASONING_REVIEW_REQUIRED"
+    }
+  },
+  "candidate_projection": {
+    "six_status_subjects": {
+      "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+      "IMPLEMENTATION_STATUS": "BLOCKED",
+      "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+      "REQUIRED_VERIFICATION_STATUS": "BLOCKED",
+      "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+      "TASK_CLOSURE_STATUS": "REPLAN_REQUIRED"
+    }
+  },
+  "issue_projection": {
+    "state": "WAIT_HUMAN",
+    "continuations": 1,
+    "final_event_sequence": 7,
+    "attempt_budget": {
+      "continuation_authorization_consumed": true,
+      "retries_remaining": 0,
+      "reset": false
+    }
+  },
+  "limits": [
+    "Whitelist projection of source fields only.",
+    "Not a raw Controller receipt, signature, or chain-validation proof.",
+    "Personal actor/runtime context, user paths, credential values, and raw source payloads are omitted."
+  ]
+}
