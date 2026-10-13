@@ -5,12 +5,12 @@
 | Status | Result |
 |---|---|
 | `CODE_PATCHED` | YES, isolated PR7 candidate; two original CLI/Core source files added and three exact dependency API deltas integrated |
-| `SOURCE_VALIDATED` | PARTIAL: source identities and bounded dependency closure checked against the original workspace and prior manifest; not compiled on this host |
-| `OFFLINE_BUILD_PASS` | NO; the one authorized local invocation stopped before package-source compilation (see `SWIFT_BUILD_VERIFICATION.md`) |
+| `SOURCE_VALIDATED` | PARTIAL: current production targets compiled in automatic CI; no focused tests completed |
+| `OFFLINE_BUILD_PASS` | YES for the production package build in automatic CI at code head `9d37c8f8c2a30655f7be095f466dd261b7df2caf`; the one local invocation still stopped before package-source compilation |
 | `RUNTIME_BOUND` | NOT_VERIFIED |
 | `LIVE_PRODUCER_PASS` | NO |
 | `GUI_AUTHORIZED` | NO |
-| `SOURCE_CLOSURE_UNRESOLVED` | YES pending automatic CI for the current source head; the known 515a CLI/API gap is addressed, but no new-head build has yet been observed |
+| `SOURCE_CLOSURE_UNRESOLVED` | YES for complete test closure; automatic CI built the production targets but could not compile the test target |
 
 ## Change and bounded source closure
 
@@ -29,7 +29,13 @@ The exact six-path closure is:
 
 The added CLI source performs no work merely by being present in the build. If invoked, it requires explicit arguments, fixed LINE bundle identity and positive PID, claims the existing output directory, refuses when `CI` is set, checks process identity and existing AX/screen-capture preflight without requesting permissions, samples windows twice, binds the source, then uses the existing observation/session and retained-packet path. This task did **not** invoke it. No formal grant or live authorization was created, read, or inferred.
 
-The source closure includes the selector/witness checks, `NativeObservationSession` binding and witness validation, `ProductionObservationSource` explicit-window capture, and descriptor-only `RunEpochAuthority` mode because the existing diagnostic CLI calls those exact APIs. The original pathname-based epoch initializer remains; diagnostic mode uses the descriptor constructor and does not fall back to a path. The diff retains existing refusal guards and legacy capture path. No `AlbumVisualWitness.swift`, `PassiveContextObservation.swift`, `LiveComposition` changes, passive diagnostic tests, tests, native-context command, or other dirty Mac source was copied. The separate local `native-context` branch and its old scratch diagnostics remain outside PR7's `main.swift` source closure.
+The source closure includes the selector/witness checks, `NativeObservationSession` binding and witness validation, `ProductionObservationSource` explicit-window capture, and descriptor-only `RunEpochAuthority` mode because the existing diagnostic CLI calls those exact APIs. The original pathname-based epoch initializer remains; diagnostic mode uses the descriptor constructor and does not fall back to a path. The diff retains existing refusal guards and legacy capture path. No `AlbumVisualWitness.swift`, `PassiveContextObservation.swift`, `LiveComposition` changes, passive diagnostic tests, other tests, native-context command, or other dirty Mac source was copied. The separate local `native-context` branch and its old scratch diagnostics remain outside PR7's `main.swift` source closure.
+
+## Earlier witness dependency and excluded local branch
+
+The earlier automatic CI run [38355636802](https://github.com/s9008129/Line_backup/actions/runs/38355636802) for code head `a72b2bb70e938991eff58afb6fd99822e4ef8c54` first failed at `FrameCapture.swift:113` because `ExplicitLineSelectionWitness` was missing, followed by synthesized Codable/Equatable diagnostics. B/C contained the genuine 148-line `ExplicitLineCaptureSelection.swift`, then untracked; the candidate includes the real type and validator, not a placeholder. It retains the selection fields and validation of fixed LINE identity, fresh inventory, display/source geometry, the frozen rulebook, request binding, retained geometry, and witness consistency. Original B/C SHA-256 was `5662baca0285f45859ac918d064ed404c6f14d528c4382a7598c4b2d86933e6c`; candidate SHA-256 is `2ca55edd625d6656ddeb41e66690ce3069ff07ab945d6211b654931002d55025`.
+
+`PassiveContextObservation.swift` is absent from PR7 A, and PR7 `main.swift` has no `native-context` caller. B/C contain the separate dirty source at SHA-256 `7803cd6b88987465c42430891906e166c14a204b3f41bbac24801f1540fc49d3`. Its applicability to the original product/runtime outside PR7's selected source closure is `NOT_VERIFIED`; it was neither copied nor repaired. **Full Mac-workspace parity remains NO.**
 
 This is a package-source integration only. It does not grant GUI use, run the CLI, activate runtime binding, or prove screenshot/AX output. The PNG screenshot subset repair, fixed grant profile allowlist, profile authorization guard, and focused profile test source are unchanged.
 
@@ -49,11 +55,19 @@ A is the PR7 committed source at `515a4d743a01810b105d357dc757e7f53a8f9604`; B i
 
 ### Prior source/build provenance
 
-The local bounded review also located `harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-cli-build.json`. It records `swift build --product rev28ctl` exit code 0 and a 117-entry manifest. The manifest contains exact hashes and lengths for the six source paths above (including the selector) matching B/C. This is prior build provenance for those bytes in that earlier package snapshot; it is not a build of the current PR7 source manifest, not the failed current local invocation, not CI for this head, and not live/runtime acceptance.
+The local bounded review also located `harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-cli-build.json`. It records `swift build --product rev28ctl` exit code 0 and a 117-entry manifest. The manifest contains exact hashes and lengths for the six source paths above (including the selector) matching B/C. This is prior build provenance for those bytes in that earlier package snapshot; it is not a build of the current PR7 source manifest or live/runtime acceptance.
+
+## Automatic CI for the current code head
+
+Run [38362205501](https://github.com/s9008129/Line_backup/actions/runs/38362205501), job [115178809672](https://github.com/s9008129/Line_backup/actions/runs/38362205501/job/115178809672), tested code head `9d37c8f8c2a30655f7be095f466dd261b7df2caf` (workflow merge commit `db4893b71a8b646ce9338095bd9a5a185aad06f4`). `Build Rev28` completed successfully. The next step, `xcrun swift test --package-path rev28 --skip OcrEngineTests`, failed while compiling the test target: `rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:700:1: expected '}' at end of extension`. No XCTest ran; `FrameSupportGrantProfileTests` did not execute. The adversarial matrix and historical replay were skipped. The run concluded **failure**.
+
+Root verified that the failing test file is 32,738 bytes / 699 lines, SHA-256 `628c0981a943e55d5f77b2a031e42caa1f04074b1d66ae04a39f778fd72cf696`, byte-identical to the PR3 base and the state at task start (`d760e2c930a22f3951aa7e4b44233a3668b24851`). The parser failure is therefore pre-existing in the reviewed base, not introduced by this source-closure patch. No repair was made under this directive. The automatic run establishes production-target compilation for this source head, but does not establish test-target or focused-profile-test closure.
+
+The decoded job-log response was 57,061 UTF-8 bytes, SHA-256 `651b9be98732d5e8bd45eaaf95e48f1d85eba8f1e1645d9070ec33ee9e70204c`. The redacted and trailing-whitespace-normalized copy is [SWIFT_CI_RUN_38362205501_REDACTED.log](SWIFT_CI_RUN_38362205501_REDACTED.log), 55,463 bytes, SHA-256 `9e1bf038759ddb99cf43305f45d27e9b34472f12968374b04c03a6c8c433221f`. Diagnostic content and line ordering are retained.
 
 ## Current candidate source-input manifest
 
-The **current isolated candidate** source manifest is a post-patch inventory, not a test/build input that was executed locally. It covers `Package.swift` and every regular file under `Sources/` and `Tests/` in `rev28`, with records `{path relative to rev28, bytes, SHA-256}`, sorted by path and encoded as compact JSON with sorted keys. It contains **88 entries**, **1,375,274 source bytes**, **13,193 manifest JSON bytes**, SHA-256 `030ca74b6aa0426aec3a7676963928c858c0a35506b9cdc122a66989e7ae845c`.
+The **current isolated candidate** source manifest covers `Package.swift` and every regular file under `Sources/` and `Tests/` in `rev28`, with records `{path relative to rev28, bytes, SHA-256}`, sorted by path and encoded as compact JSON with sorted keys. It contains **88 entries**, **1,375,274 source bytes**, **13,193 manifest JSON bytes**, SHA-256 `030ca74b6aa0426aec3a7676963928c858c0a35506b9cdc122a66989e7ae845c`. This is the exact source inventory built by CI; the focused tests did not run.
 
 The one local Swift command used the earlier **86-entry** pre-CLI-closure manifest: 1,324,693 source bytes, 12,884 manifest bytes, SHA-256 `0c340e17e49fd388c24b0bd270b74b50330035b4bbc99a6154865ff165993c33`. That command failed during package-manifest import, before source compilation. Do not attribute it to the current 88-entry source.
 
@@ -147,3 +161,7 @@ e78b97f6f79be479338aec3eb39a40be695861406a6f94c28f60fa0ac054b719 7399 Tests/Rev2
 cb67b72997eecedb71edc1b4b5e1b06acc086154c03ba9a0e47a946c65dae194 4819 Tests/Rev28CoreTests/TripwirePostDispatchGateTests.swift
 2911a962ca2ebcdfd3f5bef8eaccb41a8f6536d5e64f0e73b4144ea5d73da6a7 7433 Tests/Rev28CoreTests/WindowIdentityTests.swift
 ```
+
+## Original-workspace preservation scope
+
+Root independently verified that the original branch/HEAD/index/tracked diff, 92 Swift package files, installed binary, `live_runner`, GUI ledger, backup state, full Controller tree, and selected runtime tree match their initial hashes. The untracked-inclusive status text does not have a confirmed match: current `git status --porcelain=v1 -uall` has SHA-256 `b8035ff70fbfc5d4400b1cb989f5a21c1435d43b8be888c886edf3b5462392d5` (70,089 lines), while the recorded initial status digest is `fc860490446c3578b0fb085e4fbc7407761915431cac7a288b73ab8011a914c7`. The initial raw status inventory and exact command were not retained, so the cause of this untracked-inclusive status difference is **NOT_VERIFIED**. This agent wrote only within the isolated PR7 worktree and did not edit, clean, or restore the original workspace; do not claim global status-text parity.

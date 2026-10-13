@@ -3,12 +3,13 @@
 | Status | Result |
 |---|---|
 | `CODE_PATCHED` | YES, isolated source-closure integration only |
-| `SOURCE_VALIDATED` | PARTIAL: exact source hashes, required APIs, preserved refusal paths, and bounded dependency set checked; not compiled on this host |
-| `OFFLINE_BUILD_PASS` | NO |
+| `SOURCE_VALIDATED` | PARTIAL: production package targets compiled in automatic CI; test target did not compile |
+| `OFFLINE_BUILD_PASS` | YES for the automatic CI package build at code head `9d37c8f8c2a30655f7be095f466dd261b7df2caf`; the sole local invocation failed before source compilation |
+| `FOCUSED_TEST_PASS` | NO; `FrameSupportGrantProfileTests` did not execute |
 | `RUNTIME_BOUND` | NOT_VERIFIED |
 | `LIVE_PRODUCER_PASS` | NO |
 | `GUI_AUTHORIZED` | NO |
-| `SOURCE_CLOSURE_UNRESOLVED` | YES pending automatic CI on the current source head |
+| `SOURCE_CLOSURE_UNRESOLVED` | YES for test closure; automatic CI compiled production targets but failed compiling the test target |
 
 ## One authorized local invocation
 
@@ -24,14 +25,16 @@ Raw stdout was 0 bytes, SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934
 
 `FrameSupportGrantProfileTests` did **not** run. The failed command used the earlier **86-file** source-input manifest: 1,324,693 source bytes, 12,884 manifest JSON bytes, SHA-256 `0c340e17e49fd388c24b0bd270b74b50330035b4bbc99a6154865ff165993c33`. The current candidate is a separate **88-file** manifest documented in `SOURCE_CLOSURE_PARITY.md`, SHA-256 `030ca74b6aa0426aec3a7676963928c858c0a35506b9cdc122a66989e7ae845c`; it has not been compiled locally. Do not describe the failed command as testing the current source.
 
-## Prior-head CI failure and source correction
+## Automatic CI results
 
-Automatic CI run [38359876614](https://github.com/s9008129/Line_backup/actions/runs/38359876614) completed with failure for prior code head `515a4d743a01810b105d357dc757e7f53a8f9604`. It advanced past the earlier missing selector-witness error, then failed because `rev28/Sources/rev28ctl/main.swift` referenced `PassiveCaptureDiagnostic` at line 22, with the same missing CLI type at lines 26, 27, and 560. The deterministic tests, adversarial matrix, historical replay, and headed capability job were skipped.
+Prior-head run [38359876614](https://github.com/s9008129/Line_backup/actions/runs/38359876614) failed for code head `515a4d743a01810b105d357dc757e7f53a8f9604` because `rev28ctl/main.swift` referenced missing `PassiveCaptureDiagnostic` at lines 22, 26, 27, and 560. The current source integration addressed that existing CLI dependency and the exact Core APIs it calls.
 
-The current source patch adds that existing CLI source and its exact Core diagnostic dependency. It also restores the exact source APIs the CLI invokes: explicit request/bundle binding and witness validation in `NativeObservationSession`, descriptor-bound existing-output construction and explicit-window capture in `ProductionObservationSource`, and descriptor-backed epoch-floor checks in `RunEpochAuthority`. The previously reviewed selector, fixed LINE identity, profile allowlist, authority refusal guard, and PNG-retention changes remain in place. The original B/C hashes and prior candidate-02 build record are documented in `SOURCE_CLOSURE_PARITY.md`.
+The automatically created current-head run [38362205501](https://github.com/s9008129/Line_backup/actions/runs/38362205501), job [115178809672](https://github.com/s9008129/Line_backup/actions/runs/38362205501/job/115178809672), tested code head `9d37c8f8c2a30655f7be095f466dd261b7df2caf` via workflow merge commit `db4893b71a8b646ce9338095bd9a5a185aad06f4`. `xcrun swift build --package-path rev28` succeeded. `xcrun swift test --package-path rev28 --skip OcrEngineTests` failed while compiling tests with `rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:700:1: expected '}' at end of extension`. No XCTest ran; `FrameSupportGrantProfileTests` did not execute, and the adversarial matrix and historical replay were skipped. Overall run conclusion: **failure**.
 
-No automatic CI result for the current source candidate has yet been observed. The preceding CI run verifies only the missing CLI edge on the earlier head; it does not prove this dependency closure compiles or that tests run. Once the reviewed source commit is pushed, inspect only the automatically created CI result for that exact new head. Do not manually trigger workflows. If CI reports another missing source/API or any independent failure, stop without another source-fix loop.
+Root verified the failing test file is 32,738 bytes / 699 lines, SHA-256 `628c0981a943e55d5f77b2a031e42caa1f04074b1d66ae04a39f778fd72cf696`, byte-identical to both the PR3 base and the task-start state. This parser failure predates both source-closure patches. No repair was made; implementation stops at this first further CI failure. The workflow recorded Xcode 27 / Swift 6.4 / SDK 27 metadata; its build step sets `DEVELOPER_DIR` to the Xcode application. The metadata record alone does not identify the compiler executable/version used by that build command.
+
+The decoded job-log response was 57,061 UTF-8 bytes, SHA-256 `651b9be98732d5e8bd45eaaf95e48f1d85eba8f1e1645d9070ec33ee9e70204c`. The path-redacted and trailing-whitespace-normalized copy is [SWIFT_CI_RUN_38362205501_REDACTED.log](SWIFT_CI_RUN_38362205501_REDACTED.log), 55,463 bytes, SHA-256 `9e1bf038759ddb99cf43305f45d27e9b34472f12968374b04c03a6c8c433221f`. Diagnostic content and line ordering are retained.
 
 ## Limits and next review
 
-This is source integration only. No formal grant was read or created, no CLI product binary was run, and no runtime binding, LINE, producer, screenshot, AX, or GUI action occurred. `SOURCE_VALIDATED=PARTIAL`, `OFFLINE_BUILD_PASS=NO`, `RUNTIME_BOUND=NOT_VERIFIED`, `LIVE_PRODUCER_PASS=NO`, and `GUI_AUTHORIZED=NO`. The local compiler/SDK mismatch is distinct from the prior-head CI missing CLI dependency. The separate local `native-context` branch and its old scratch diagnostics remain outside PR7's selected `main.swift` source closure. Neither prior compilation provenance nor future deterministic CI would establish the original runtime criterion or authorize activation.
+This is source integration only. No formal grant was read or created, no CLI product binary was run, and no runtime binding, LINE, producer, screenshot, AX, or GUI action occurred. `SOURCE_CLOSURE_UNRESOLVED=YES` for test closure, `RUNTIME_BOUND=NOT_VERIFIED`, `LIVE_PRODUCER_PASS=NO`, and `GUI_AUTHORIZED=NO`. The local compiler/SDK mismatch and current-head test parser failure are separate. The old scratch diagnostics in the separate local `native-context` branch remain outside PR7's selected `main.swift` source closure. Neither the CI production build nor the test-compile failure establishes the original runtime criterion or grants activation authority.
