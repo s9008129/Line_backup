@@ -47,6 +47,7 @@ public enum ObservationRefusal: Error, Equatable, CustomStringConvertible {
 }
 
 public struct ObservationTarget: Equatable, Codable, Sendable {
+    static let lineBundleID = "jp.naver.line.mac"
     public let bundleID: String
     public let pid: Int32
 

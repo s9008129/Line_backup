@@ -589,7 +589,7 @@ private func fullDisplayCaptureUTCNow(_ date: Date = Date()) -> String {
             throw ObservationRefusal.invalidBundle("explicit LINE main missing")
         }
         try ExplicitLineCaptureSelection.validateFreshSelection(requested: includedWindows, inventory: snapshots,
-            target: ObservationTarget(bundleID: PassiveNativeDiagnostic.lineBundleID, pid: pid), main: main)
+            target: ObservationTarget(bundleID: ObservationTarget.lineBundleID, pid: pid), main: main)
         let bounds = try ExplicitLineCaptureSelection.union(of: includedWindows)
         let displaySnapshot = ExplicitLineDisplaySnapshot(displayID: display.displayID, frame: display.frame,
             widthPt: display.width, heightPt: display.height)
