@@ -952,21 +952,25 @@ private func frameSupportVerifyGrant(_ grantPath: String, grantSHA: String, root
         "config_sha256", "source_sha256", "album_quota", "lifecycle_album_limit", "save_all_dispatch_limit",
         "chooser_confirmation_limit", "reversible_gui_invocation_limit", "authorization_evidence", "acceptance_evidence",
         "contract_sha256", "native_binary_sha256", "gui_ledger", "contract_path", "producer_binary", "runtime_binding", "sensor_scope"]
-    let expectedContractPath = "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-contract.json"
-    let expectedContractSHA = "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219"
     guard Set(grant.keys) == grantKeys,
+          let taskID = grant["task_id"] as? String,
+          let contractPath = grant["contract_path"] as? String,
+          let contractSHA = grant["contract_sha256"] as? String,
+          let artifactDirectory = grant["artifact_dir"] as? String,
+          let profile = FrameSupportGrantProfile.select(taskID: taskID, contractPath: contractPath,
+              contractSHA256: contractSHA, artifactDirectory: artifactDirectory),
+          profile.acceptsGrantPath(grantPath),
           grant["grant_version"] as? String == "line-batch-execution-grant-2",
-          grant["task_id"] as? String == "TASK-20261010-line-v3-live-e2e",
           grant["project_root"] as? String == root.path, grant["fixture"] as? Bool == false,
-          grant["contract_path"] as? String == expectedContractPath,
-          grant["contract_sha256"] as? String == expectedContractSHA,
-          grant["artifact_dir"] as? String == "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03",
           (grant["operations"] as? [String])?.contains("frame_support") == true else {
         throw FrameSupportCommandError.refused("execution grant is not the frozen v2 authority for frame-support")
     }
-    let contractURL = try frameSupportFileURL(root: root, relativePath: expectedContractPath)
+    guard !profile.isMinimalLive08 else {
+        throw FrameSupportCommandError.refused("minimal-live-08 authority is unbound; verified CRITICAL Plan Review and canonical authorization evidence are required")
+    }
+    let contractURL = try frameSupportFileURL(root: root, relativePath: profile.contractPath)
     let contractData = try frameSupportReadBoundedFile(contractURL, name: "frozen plan contract")
-    guard EvidenceIO.sha256Hex(contractData) == expectedContractSHA else {
+    guard EvidenceIO.sha256Hex(contractData) == profile.contractSHA256 else {
         throw FrameSupportCommandError.refused("frozen plan contract drifted")
     }
     guard let scope = grant["sensor_scope"] as? [String: Any],
@@ -984,8 +988,8 @@ private func frameSupportVerifyGrant(_ grantPath: String, grantSHA: String, root
     guard let runtime = try JSONSerialization.jsonObject(with: runtimeData) as? [String: Any],
           runtime["task_id"] as? String == (grant["task_id"] as? String),
           runtime["project_root"] as? String == root.path,
-          runtime["contract_path"] as? String == expectedContractPath,
-          runtime["contract_sha256"] as? String == expectedContractSHA,
+          runtime["contract_path"] as? String == profile.contractPath,
+          runtime["contract_sha256"] as? String == profile.contractSHA256,
           runtime["source_sha256"] as? String == (grant["source_sha256"] as? String) else {
         throw FrameSupportCommandError.refused("runtime binding is not for the frozen task contract")
     }
@@ -1022,8 +1026,8 @@ private func frameSupportVerifyGrant(_ grantPath: String, grantSHA: String, root
     }
 
     let binary = try frameSupportRef(grant["producer_binary"], name: "producer_binary")
-    guard binary.path == "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/bin/rev28ctl",
-          let runtimeFiles = runtime["files"] as? [[String: Any]],
+    let expectedBinaryPath = "\(profile.artifactDirectory)/bin/rev28ctl"
+    guard binary.path == expectedBinaryPath,
           runtimeFiles.contains(where: { $0["path"] as? String == binary.path
               && $0["bytes"] as? Int == binary.bytes && $0["sha256"] as? String == binary.sha256
               && ($0["member_of"] as? [String])?.contains("producer_binary") == true }) else {
@@ -1045,10 +1049,10 @@ private func frameSupportVerifyGrant(_ grantPath: String, grantSHA: String, root
     guard let authorization = try JSONSerialization.jsonObject(with: authorizationData) as? [String: Any],
           authorization["task_id"] as? String == (grant["task_id"] as? String),
           authorization["project_root"] as? String == root.path,
-          authorization["artifact_dir"] as? String == "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03",
-          authorization["contract_path"] as? String == expectedContractPath,
+          authorization["artifact_dir"] as? String == profile.artifactDirectory,
+          authorization["contract_path"] as? String == profile.contractPath,
           authorization["source_sha256"] as? String == (grant["source_sha256"] as? String),
-          authorization["contract_sha256"] as? String == expectedContractSHA,
+          authorization["contract_sha256"] as? String == profile.contractSHA256,
           authorization["decision_code"] as? String == "A",
           authorization["plan_review_decision"] as? String == "USER_WAIVED_NOT_RUN",
           authorization["independent_acceptance_required"] as? Bool == true,
