@@ -2,7 +2,7 @@
 
 本修訂回應 [Chief Reviewer 的 CHANGES_REQUIRED](https://github.com/s9008129/Line_backup/pull/8#issuecomment-6159433025)，原受審 HEAD=`ba1f1a1f23063a859680c333dc9debdbf8db4bc1`。請一併閱讀 [plan.md](plan.md)、[plan-contract.json](plan-contract.json)、[.gitignore](.gitignore) 與 [focused validation](validation.json)。這些是待重新審查的 PR 候選文件，不是新原生 publication、Independent Review PASS 或 Controller admission。
 
-Sol／xhigh 僅 Planner／Orchestrator，ChatGPT 是唯一 External Independent Chief Reviewer，Luna／high 僅 Implementer。沒有調用任何 Reviewer／Implementer Agent 或存取 LINE。B01／B02 已修正；B03／B04／B05 的下述能力／政策阻塞仍未解決，禁止 formal live admission。以下政策核對與分類理由不是 Sol 的獨立審查判決。
+Sol／xhigh 僅 Planner／Orchestrator，ChatGPT 是唯一 External Independent Chief Reviewer，Luna／high 僅 Implementer。沒有調用任何 Reviewer／Implementer Agent 或存取 LINE。B01／B02 已修正且本轮未修改；B04 按 Owner 新決定條件接受，B03／B05 仍阻塞，禁止 formal live admission。最新 [admission-proposal.md](admission-proposal.md) 與 [admission-validation.json](admission-validation.json) 是一份待 Chief Reviewer 審查的版本化接入／執行提案；下述 validation.json 保留 c5862be 候選的歷史驗證，不可當成新版 bytes 的收據。以下政策核對與分類理由不是 Sol 的獨立審查判決。
 
 ## B01：詳細頁視窗 lineage
 
@@ -29,7 +29,7 @@ R/`schemas/v3/task.schema.json` L90–109 固定：
 
 ## B04：non-PASS accounting
 
-`NON_PASS_GOVERNANCE_BLOCKER=UNRESOLVED`。R/`tools/harness/controller.py::record_result` L1643–1650：
+`B04=CONDITIONAL_ROUTE_ACCEPTED`。Owner 已取代先前絕對禁止新 Issue 的指示，條件限本診斷 Task 最多一個自動原生 Issue，見 [最新授權](https://github.com/s9008129/Line_backup/pull/8#issuecomment-6160186860)。R/`tools/harness/controller.py::record_result` L1643–1650：
 
 ```python
 if run["stage"] == "IMPLEMENT" and not passed and result["candidate_fact"] in {"PARTIAL", "FAIL", "BLOCKED"} and not self._pending(task_id):
@@ -40,7 +40,7 @@ if run["stage"] == "IMPLEMENT" and not passed and result["candidate_fact"] in {"
 
 `reconcile` L1878–1894 拒絕 pending Issue，且需 BLOCKED、無 active run、已接受的 failed run／consumption；ABANDON 不是未匯入 failure 時跳過 mandatory accounting 的入口。record_result L1509–1510 亦拒絕 caller 額外 flags。沒有發現符合「誠實記錄 FAIL／PARTIAL／BLOCKED 且不新增 Issue」的既有 route；不以 PASS、NOT_RUN、換 stage 或不實 closure 規避。
 
-撤回舊稿「不匯入 non-PASS 即 lawful closure」假設。需 competent authority 指出既有合法 failure accounting／disposition 及授權；在禁止新 Issue／修改 V4.8.0 的條件下無法自行解決，故在 formal live admission 前 STOP，不先執行再壓住 accounting。未呼叫 result import／reconciliation。舊 [c6 blocker](../../../line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/controller-protocol-blocker.md) 與 [native admission](../../../line-v3-live-e2e-20261010/continuations/minimal-live-08/replanner-handoff/evidence/c6/native-admission-receipt.md) 的 accounting 不授權新 Task 建立 Issue。
+撤回舊稿「不匯入 non-PASS 即 lawful closure」假設；現在使用既有 truthful accounting，不規避 Issue。條件為新 Task 隔離 state_root、single run／single submission、uncertain import 即 STOP、保留所有 journal／Issue；不授權 continuation。record_result L1518–1530 的 completed-consumption 去重、_issue_packet L2160–2192 的 task binding、IssueLedger.open L154–191 的穩定 ID／own-root lock，以及 authorize L287–318／guard_task L320–358 的獨立授權共同支持此有界路線，詳見提案。未呼叫 result import／reconciliation／Issue 操作；原 c6 accounting 與歷史不變。
 
 ## B05：上層分類與外部 Reviewer
 

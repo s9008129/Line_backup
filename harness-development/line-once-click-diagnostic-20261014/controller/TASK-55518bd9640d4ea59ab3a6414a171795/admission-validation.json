@@ -1,0 +1,165 @@
+{
+  "artifact_kind": "LOCAL_FOCUSED_NON_GUI_VALIDATION_NOT_NATIVE_RECEIPT",
+  "checked_at_utc": "2026-10-14T03:41:26.149682+00:00",
+  "base_review_head": "c5862be7574afa80a54684a9872a9e3f938ff876",
+  "owner_authorization": "https://github.com/s9008129/Line_backup/pull/8#issuecomment-6160186860",
+  "artifact_sha256": {
+    "plan.md": "9f73eeac3505ee460ab7bfb8aaab43454a845f396b85425dcf4d60a23d59f704",
+    "plan-contract.json": "127d4ac65a4dc19604c476ad162e6f50bc4ea397fedf25020bd376caaf4267ad",
+    "REVIEW.md": "50a1fea92e45073c036bd9793727474cc339c5b348c07803c1089b3ac30c91c1",
+    ".gitignore": "c0844c7670c89257f8f01e2f81a011a8cf7cfd6582860b465b05682b895bb0a3",
+    "admission-proposal.md": "ca42f6b51adb7e9736acd309597e42b8de5fda39f253c211f9afe80082f5d887",
+    "validation.json": "fb805185c116f227fcdc26e082d2ce839ad1d460dd5105d94637d271be5a09be"
+  },
+  "native_original_plan_sha256": "469b093b33e8e89bd69506ab2fe7a91109800df034dba2924dd43192ac7f1dcf",
+  "schema_validation": {
+    "existing_contract": "VALID_USING_PINNED_SCHEMA_BUNDLE",
+    "zero_retry_variant": {
+      "status": "REJECTED_BY_FIXED_SCHEMA",
+      "category": "INSTANCE",
+      "location": "retry_policy/transient_read_only_retries",
+      "reason": "does not satisfy const"
+    },
+    "formal_schema_receipt_created": false
+  },
+  "b03": {
+    "implementer_retry_delays": [],
+    "hosted_cua_transport_retry": "UNKNOWN",
+    "hosted_cua_native_dispatch": "UNKNOWN",
+    "runtime_initialized": false,
+    "native_one_shot_component": "PROPOSED_NOT_IMPLEMENTED",
+    "native_source_inspection_only": true
+  },
+  "b04": {
+    "status": "CONDITIONAL_ROUTE_ACCEPTED",
+    "scope": "TASK-55518bd9640d4ea59ab3a6414a171795",
+    "new_state_root_issues": 0,
+    "single_run_single_submission_required": true,
+    "interrupted_submission": "STOP_NO_AUTOMATIC_RESUBMISSION",
+    "record_result_invoked": false
+  },
+  "b05": {
+    "status": "VERSIONED_ROUTE_PROPOSED",
+    "authentic_external_records_available": false,
+    "source_policy_adoption": "REQUIRED_NOT_RECORDED",
+    "role_profile_changed": false,
+    "native_goal_provider_amendment_route": "NOT_PROVEN",
+    "formal_admission": "NOT_GRANTED"
+  },
+  "current_native_state": {
+    "phase": "IN_PROGRESS",
+    "next_stage": "PLAN",
+    "active_run_id": "bc55399b-995b-46bf-a052-bd6b51bf7ef5",
+    "active_stage": "PLAN",
+    "handoff_exists": false
+  },
+  "preservation": {
+    "protected_hash_matches": {
+      "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/state.json": true,
+      "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/run.json": true,
+      "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/consumption.json": true,
+      "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/issues/a2a1e4c39580d6a2fc1f4b6be628f63ee1e6ca53ed7d1fb19c7777bbfba9afc5/state.json": true,
+      "config/line_backup_config.json": true,
+      "state/backup_state.json": true,
+      "state/run_log.md": true,
+      "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/controller.py": true,
+      "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/escalation.py": true,
+      "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/templates/v4.8.0/runtime-defaults.json": true,
+      "harness-development/line-once-click-diagnostic-20261014/controller/TASK-55518bd9640d4ea59ab3a6414a171795/state.json": true,
+      "harness-development/line-once-click-diagnostic-20261014/controller/TASK-55518bd9640d4ea59ab3a6414a171795/plan.md": true,
+      "harness-development/line-once-click-diagnostic-20261014/controller/TASK-55518bd9640d4ea59ab3a6414a171795/plan-contract.json": true,
+      "harness-development/line-once-click-diagnostic-20261014/controller/TASK-55518bd9640d4ea59ab3a6414a171795/plan-publication.json": true,
+      "harness-development/line-once-click-diagnostic-20261014/controller/TASK-55518bd9640d4ea59ab3a6414a171795/events.jsonl": true,
+      "harness-development/line-once-click-diagnostic-20261014/controller/TASK-55518bd9640d4ea59ab3a6414a171795/runs/bc55399b-995b-46bf-a052-bd6b51bf7ef5/candidate-result.json": true
+    },
+    "pinned_hash_matches": {
+      "/Users/hsiaojohnny/.codex/AGENTS.md": true,
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/policies/v4.8.0/workflow-routing.md": true,
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/schemas/v3/task.schema.json": true,
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/controller.py": true,
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/lifecycle.py": true,
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/templates/v4.8.0/runtime-defaults.json": true,
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/schema_validation.py": true,
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-14/99-scope-status.json": true,
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-route/attempt-14/composite-decision.json": true
+    },
+    "main_branch_head_index_tracked_status_unchanged": true,
+    "original_task_phase": "BLOCKED",
+    "original_issue_phase": "WAIT_HUMAN",
+    "original_required_gates": 28,
+    "original_c6_consumption_bytes_unchanged": true,
+    "original_issue_continuations": 1,
+    "original_required_gates_bytes_unchanged": true,
+    "new_task_goal_bytes_unchanged": true
+  },
+  "diagnostic_contract_gates": [
+    "P01",
+    "D01",
+    "D02",
+    "D03"
+  ],
+  "sources": [
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/controller.py",
+      "sha256": "385bbd2abd57ed305c01c7437f449833ed09cfc7e9f07add87d6352d405a8af5",
+      "section": "_role_policy L300-312; _run L260-275; allocate_run L360-440; publish_plan L456-457; _compile_handoff L514; _provenance L586-634; record_result L1507-1664; _issue_packet L2160-2192",
+      "kind": "MAC_CURRENT_SOURCE_READ_ONLY"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/escalation.py",
+      "sha256": "7044aa55c6cc7721205fbd95ed2643ac0debcc67701c303c563a23dbc4768451",
+      "section": "IssueLedger.open L154-191; authorize L287-318; guard_task L320-358",
+      "kind": "MAC_CURRENT_SOURCE_READ_ONLY"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/lifecycle.py",
+      "sha256": "6e96c0d71ab98fbacb031592de85d58c1ba44444df5cac30eba24dea9cbbcaa2",
+      "section": "retry_delays L351-356",
+      "kind": "MAC_CURRENT_SOURCE_READ_ONLY"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/schemas/v3/task.schema.json",
+      "sha256": "5a8e7b7227985c123e1a70bcd005d28129b46dd4068d4ee78ed48c71740c8d72",
+      "section": "retry_policy L90-109",
+      "kind": "MAC_CURRENT_SOURCE_READ_ONLY"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/schemas/v3/run.schema.json",
+      "sha256": "334ed5a933000fdc10da0a684c0cfc37b7be59723d68a2f56b002259dbb04a56",
+      "section": "$defs invitation and completion",
+      "kind": "MAC_CURRENT_SOURCE_READ_ONLY"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/templates/v4.8.0/runtime-defaults.json",
+      "sha256": "e7bf6f4f368b76254776e7667f98ff4c2830efb17a4956ddc976ea7133d72361",
+      "section": "plan_reviewer model/effort",
+      "kind": "MAC_CURRENT_SOURCE_READ_ONLY"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/AGENTS.md",
+      "sha256": "a42397c48ba276576c754b7018e30a729d228f99a78f5e8100e4513a49d673a8",
+      "section": "sections 2,3,4,6",
+      "kind": "MAC_CURRENT_SOURCE_READ_ONLY"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+      "sha256": "10b6596871d7bfc05d203ac7041a2b917d851fd7345355f1c4c9a142d568cc7e",
+      "section": "captureRetained L381-410",
+      "kind": "MAC_CURRENT_SOURCE_READ_ONLY"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift",
+      "sha256": "bf7bfb4d9dc3db108e962649a110dd40c999286c1398745480d1a6ff44e3b9f8",
+      "section": "GatedQuartzActuator.postClick L480-575",
+      "kind": "MAC_CURRENT_SOURCE_READ_ONLY"
+    }
+  ],
+  "actions": {
+    "line": 0,
+    "reviewer_agent": 0,
+    "implementer_agent": 0,
+    "issues_created": 0,
+    "native_state_mutations": 0,
+    "harness_code_mutations": 0
+  }
+}
