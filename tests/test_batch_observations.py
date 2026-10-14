@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 import unittest
 import uuid
+from unittest.mock import patch
 sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
 from fixture_support import Fixture,identity,json_bytes,sha,png
 from line_backup_acceptance.project_binding import ProjectReader
@@ -76,6 +77,26 @@ class ObservationTests(unittest.TestCase):
             with self.subTest(field=field),self.assertRaises(AcceptanceError):catalog(self.reader,altered,self.f.cfg,self.f.session)
         gap=[self.f.observation([a],top=True),self.f.observation([c],bottom=True)]
         with self.assertRaisesRegex(AcceptanceError,'COLLECTION_COVERAGE_GAP'):catalog(self.reader,gap,self.f.cfg,self.f.session)
+
+    def test_bounded_admission_accepts_one_grounded_card_without_catalog_boundaries(self):
+        first,second=identity(),identity(day=2)
+        record=self.f.observation([first,second],top=False,bottom=False)
+        begun=self.f.svc.begin(self.f.receipt(),'backup_batch',1)
+        with patch.object(self.f.svc,'project_profile',return_value=True):
+            admitted=self.f.svc.admit_bounded(begun['receipt'],record,first,self.f.session)
+            self.assertEqual(admitted['result']['status'],'ADMITTED_BOUNDED_CANDIDATE')
+            self.assertEqual(admitted['result']['coverage'],'BOUNDED_CANDIDATE_ONLY')
+            self.assertFalse(admitted['result']['complete_catalog'])
+            manifest=json.loads((self.f.root/admitted['result']['manifest_reference']['path']).read_bytes())
+            self.assertEqual(manifest['identities'],[first])
+            self.assertEqual(manifest['frames'][0]['boundary'],record['boundary'])
+            self.assertEqual(len(manifest['frames'][0]['cards']),2)
+            self.assertFalse(manifest['frames'][0]['boundary']['top'])
+            self.assertFalse(manifest['frames'][0]['boundary']['bottom'])
+            before=(self.f.root/'state/backup_state.json').read_bytes()
+            with self.assertRaisesRegex(AcceptanceError,'BOUNDED_LIFECYCLE_ALREADY_ADMITTED'):
+                self.f.svc.admit_bounded(admitted['receipt'],record,second,self.f.session)
+            self.assertEqual((self.f.root/'state/backup_state.json').read_bytes(),before)
     def test_duplicate_identity_count_drift_and_non_date_refuse(self):
         obs=self.f.observation([identity(),identity()])
         with self.assertRaisesRegex(AcceptanceError,'AMBIGUOUS'):frame(self.reader,obs,self.f.cfg,session=self.f.session)

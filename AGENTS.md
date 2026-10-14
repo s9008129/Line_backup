@@ -29,3 +29,7 @@
 `E2E測試報告.md` 是迭代循環中的正式證據交接物，不是僅供摘要的備忘錄。每輪報告完成後，將它交給本輪指定的高階 Planner；若執行環境沒有可用的 Planner 通道，保留報告與進度記錄，明確回報尚未完成 Planner 交接，不得聲稱已提交。Planner 輸出須精確指出本輪事實、未知、阻塞、下一個決策及其驗收方式。
 
 遇到 writer guard、狀態不一致、身份歧義、前景中斷、目的地副作用或任何未預期結果時，保留現場證據與既有資料，停止依賴該前置條件的後續操作，並將可重現資訊、錯誤原文、前後狀態和精確所需決策寫入報告。不可為了讓 E2E 看似完整而另換 writer、遷移狀態、刪除資料、降低 gate 或派送未核准的 UI 動作。
+
+## LINE_TWO_ALBUM_PILOT/1 — 有界的 Owner project route
+
+Owner 已明確自述其對使用者維護的 execution/release policy 具有權限，並授權 [LINE_TWO_ALBUM_PILOT/1](policies/line-two-album-pilot-v1.json) 的新 scope 非 GUI 實作。僅此 scope 使用人工移轉的外部獨立 PR Review；Sol 規劃協調，Luna 實作。這是清楚標示的 project workflow，不聲稱舊 Controller admission 或簽署原生收據，不修改舊 Harness/Task/Issue/ML08/c6/額度。未經實作獨立審查、readiness 與實際 Owner 前景交接，禁止 LINE capture/input/download/state mutation。平台較高優先限制繼續適用；實體 delivery 保證 UNKNOWN。

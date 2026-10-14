@@ -1,0 +1,21 @@
+{
+  "profile": "LINE_TWO_ALBUM_PILOT/1",
+  "route": "SEPARATE_OWNER_MANAGED_PROJECT_SCOPE_NOT_NATIVE_CONTROLLER_ADMISSION",
+  "authority": {"kind": "OWNER_ATTESTED_EXPLICIT_USER_DIRECTIVE", "decision": "AUTHORIZE_SCOPED_NON_GUI_IMPLEMENTATION", "scope": "one new bounded two-album product pilot", "native_signed_attestation": false},
+  "design": {"pr": 9, "head": "cd9acdaa8e90b05e5430300106b560200fac263d", "review": "https://github.com/s9008129/Line_backup/pull/9#issuecomment-6169285475", "verdict": "APPROVE_DESIGN_ONLY", "transaction_model": "CAP1_SEQUENTIAL", "configured_album_cap": 1},
+  "roles": {"planner_orchestrator": "Sol/xhigh", "implementer": "Luna/high", "independent_chief_reviewer": "ChatGPT", "review_transfer": "Owner manually transfers genuine decisions"},
+  "review_method": "MANUAL_EXTERNAL_INDEPENDENT_PR_REVIEW_ACCEPTED_FOR_THIS_NEW_PROJECT_SCOPE",
+  "native_controller_receipt": "NOT_CLAIMED",
+  "non_gui_implementation_authorized": true,
+  "gui_authorized_by_this_profile": false,
+  "physical_delivery_guarantee": "UNKNOWN",
+  "dispatch_policy": "LOGICAL_AT_MOST_ONCE_DURABLE_PRE_INPUT_RESERVATION_NO_REPLAY_ON_UNKNOWN",
+  "residual_risk": "Owner accepts evaluation of bounded logical invocation controls; host retry/native duplicate delivery are unproved. No physical exactly-once claim or override of higher-priority platform restrictions.",
+  "scope": {"source_files": ["src/line_backup_batch/cli.py", "src/line_backup_batch/service.py", "src/line_backup_batch/store.py", "scripts/line_backup_cua_adapter.mjs"], "orchestration_entry": "harness-development/line-two-album-pilot-20261014/two_album_entry.mjs", "existing_tests": ["tests/test_batch_authority.py", "tests/test_batch_lifecycle.py", "tests/test_batch_observations.py", "tests/test_batch_coordinator.py", "tests/test_cua_adapter.mjs"]},
+  "new_scope_budget": {"album_lifecycles": 2, "new_original_intents": 2, "lifecycle_cap": 1, "global_gui_inputs": 23, "scrolls": 4, "post_a_scroll_min": 1, "input_retries": 0, "helpers": 0, "implementers": 1, "engineering_root_issue_evidence_attempt_max": 3, "stop_after_no_information_gain": 2},
+  "historical_authority": "NO_REUSE_OR_RETROACTIVE_CHANGE_TO_ML08_C6_TASK_ISSUE_RECEIPTS_QUOTAS_OR_CONSUMED_BUDGETS",
+  "immutable": ["Harness V4.8.0 resources", "PR8", "PR9 approved design bytes", "ML08/c6 history", "historical VERIFIED 57/182 files and intents", "production config cap and backup state"],
+  "non_pass_accounting": "Retain each failed/unknown command, test and side-effect boundary in private append-only scope evidence; stop on unresolved safety failure. No fabricated native Issue/import; no silent failure discard.",
+  "before_gui": ["independent review of exact implementation HEAD/source/evidence", "actual private root/config/source/build/grant bindings verified", "durable budget/intent/duplicate/CAS/readback controls ready", "supported capture/retention/AX/OCR bridge and actual permissions", "independent Acceptance original evidence access", "Owner specific screenshot/AX/scroll/Save All/chooser/state consent and actual foreground handoff"],
+  "higher_priority_platform_restrictions": "CONTINUE_TO_APPLY"
+}

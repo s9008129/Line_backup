@@ -16,11 +16,14 @@ DISPATCH_RECEIPT_V1_KEYS={'version','run_id','action_id','execution_id','session
     'support','guard','reservations','events','chooser','download_started','save_all_click_count','cease_input'}
 DISPATCH_RECEIPT_V2_KEYS=(DISPATCH_RECEIPT_V1_KEYS-{'download_started'})|{'chooser_phases','confirmation_frame',
     'confirmation_point','download_evidence'}
+DISPATCH_RECEIPT_V3_KEYS=(DISPATCH_RECEIPT_V2_KEYS-{'popup_frame_id','support','guard'})|{
+    'dispatch_policy','calibration_reference','calibration_closure_reference','applicability_reference'}
 DISPATCH_EVENT_ORDER_V1=['ELLIPSIS_INVOCATION','ELLIPSIS_RETURNED','SCK_MENU_GUARD_PASS','SAVE_ALL_INVOCATION',
     'SAVE_ALL_RETURNED','CONFIRM_INVOCATION','CEASE_INPUT_AFTER_DOWNLOAD_START']
 DISPATCH_EVENT_ORDER_V2=['ELLIPSIS_INVOCATION','ELLIPSIS_RETURNED','SCK_MENU_GUARD_PASS','SAVE_ALL_INVOCATION',
     'SAVE_ALL_RETURNED','CHOOSER_APPEARED','GO_TO_FOLDER','PATH_FILLED','DESTINATION_SELECTED',
     'CONFIRM_INVOCATION','CONFIRM_ATTEMPTED','DOWNLOAD_EVIDENCE_OBSERVED','CEASE_INPUT_AFTER_DOWNLOAD_START']
+DISPATCH_EVENT_ORDER_V3=[name for name in DISPATCH_EVENT_ORDER_V2 if name!='SCK_MENU_GUARD_PASS']
 
 def run_barrier_ok(run):
     return (run['workflow_outcome']=='VERIFIED' or (run['workflow_outcome']=='SAFE_ABORT'
@@ -57,6 +60,7 @@ class Service:
         return b
 
     def begin(self,expected,mode,limit):
+        if self.project_profile():require(mode=='backup_batch' and limit==1,'PROJECT_BEGIN_SCOPE')
         require(mode in ('catalog_only','backup_batch') and integer(limit),'INVALID_BATCH_SCOPE')
         require(limit==0 if mode=='catalog_only' else limit>0,'INVALID_BATCH_SCOPE')
         batch_id='BATCH-'+uuid.uuid4().hex
@@ -69,14 +73,31 @@ class Service:
                 created_at=utc_now(),authorized_new_download_limit=limit,configured_new_download_limit=cfg['max_albums_per_run'],
                 new_transactions_reserved=0,manifest_reference=None,next_index=0,current_album_run_id=None,stop_reason=None)
             return dict(batch_id=batch_id,status='BATCH_OWNED')
-        return self.store._update(expected,acquire,operation='begin')
+        result=self.store._update(expected,acquire,operation='begin')
+        if self.project_profile():
+            self.store.start_project_lifecycle(self._project_grant(),result['result']['batch_id'])
+        return result
+
+    def _project_grant(self):
+        require(self.store.authorization_path is not None,'PROJECT_GRANT_REQUIRED')
+        from .cli import authorize
+        return authorize(self.store.root,self.store.authorization_path,False,'begin')
 
     def manifest(self,b,reader,cfg):
         require(b['manifest_reference'] is not None,'MANIFEST_REQUIRED')
         m=strict_json(artifact(reader,b['manifest_reference']),'INVALID_MANIFEST')
-        require(set(m)=={'version','project_root','group_key','config_sha256','source_sha256','session_id','identities','frames','policy'},'INVALID_MANIFEST')
-        require(m['version']==1 and m['policy']==POLICY and m['project_root']==self.store.root and m['group_key']==cfg['group_key']
+        bounded=(isinstance(m,dict) and m.get('version')==2)
+        expected_keys=({'version','project_root','group_key','config_sha256','source_sha256','session_id','identities',
+            'frames','policy','coverage','complete_catalog','workflow_link'} if bounded else
+            {'version','project_root','group_key','config_sha256','source_sha256','session_id','identities','frames','policy'})
+        require(set(m)==expected_keys,'INVALID_MANIFEST')
+        require(m['version']==(2 if bounded else 1) and m['policy']==POLICY and m['project_root']==self.store.root and m['group_key']==cfg['group_key']
             and m['config_sha256']==b['config_sha256'] and m['source_sha256']==b['source_sha256'],'MANIFEST_AUTHORITY_DRIFT')
+        if bounded:
+            require(m['coverage']=='BOUNDED_CANDIDATE_ONLY' and m['complete_catalog'] is False
+                and isinstance(m['identities'],list) and len(m['identities'])==1
+                and isinstance(m['frames'],list) and len(m['frames'])==1,'BOUNDED_MANIFEST_INVALID')
+            require(m['workflow_link'] is None or isinstance(m['workflow_link'],dict),'BOUNDED_WORKFLOW_LINK_REQUIRED')
         # Coverage was classified before admission; retained images/proofs rehash every use.
         for observation in m['frames']:
             frame(reader,observation,cfg,session=m['session_id'],max_age=None)
@@ -85,6 +106,7 @@ class Service:
         return m
 
     def admit(self,expected,records,session):
+        require(not self.project_profile(),'BOUNDED_ADMISSION_REQUIRED')
         reader=ProjectReader(self.store.root)
         try:
             snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')
@@ -99,6 +121,90 @@ class Service:
             b['manifest_reference']=ref;b['phase']='ADMITTED'
             return dict(status='ADMITTED',manifest_reference=ref,identities=identities)
         return self.store._update(expected,admit,operation='admit')
+
+    def admit_bounded(self,expected,record,target,session,workflow_link=None):
+        """Admit one freshly observed eligible card under the isolated project profile."""
+        require(self.project_profile(),'PROJECT_SCOPE_REQUIRED')
+        reader=ProjectReader(self.store.root)
+        try:
+            snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')
+            state=snap['state'];b=state.get('active_batch')
+            require(isinstance(b,dict) and b.get('mode')=='backup_batch','BOUNDED_BATCH_REQUIRED')
+            require(b.get('phase')=='CATALOG' and b.get('manifest_reference') is None
+                and b.get('new_transactions_reserved')==0 and b.get('authorized_new_download_limit')==1,
+                'BOUNDED_LIFECYCLE_ALREADY_ADMITTED')
+            prior_intents=[run for run in state['runs'] if run.get('batch_id') is not None and run.get('intent') is not None]
+            if not prior_intents:
+                require(workflow_link is None,'FIRST_LIFECYCLE_LINK_FORBIDDEN')
+            else:
+                self._validate_workflow_link(reader,state,target,workflow_link)
+            require(self.eligible(state,target)=='PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION','BOUNDED_TARGET_INELIGIBLE')
+            # A bounded admission proves one selected candidate; it deliberately does not
+            # claim that this frame reaches either catalog boundary or enumerates the group.
+            require(isinstance(target,dict) and set(target)=={'start_date','end_date','expected_images'}
+                and type(target.get('expected_images')) is int and target['expected_images']>0,
+                'BOUNDED_TARGET_MISMATCH')
+            click=card_target(reader,record,snap['config'],target,session)
+            require(click is not None,'BOUNDED_CARD_UNGROUNDED')
+        finally:reader.close()
+        manifest=dict(version=2,project_root=self.store.root,group_key=snap['config']['group_key'],
+            config_sha256=expected['config_sha256'],source_sha256=expected['source_sha256'],session_id=session,
+            identities=[target],frames=[record],policy=POLICY,coverage='BOUNDED_CANDIDATE_ONLY',
+            complete_catalog=False,workflow_link=workflow_link)
+        ref=self.publish('bounded-candidate-'+uuid.uuid4().hex+'.json',manifest)
+        def admit(cfg,s):
+            current=self.batch(s)
+            require(current['phase']=='CATALOG' and current['manifest_reference'] is None,'ALREADY_ADMITTED')
+            require(current['new_transactions_reserved']==0,'PROJECT_LIFECYCLE_CAP')
+            prior_intents=[run for run in s['runs'] if run.get('batch_id') is not None and run.get('intent') is not None]
+            if prior_intents:self._validate_workflow_link(None,s,target,workflow_link)
+            else:require(workflow_link is None,'FIRST_LIFECYCLE_LINK_FORBIDDEN')
+            current['manifest_reference']=ref;current['phase']='ADMITTED'
+            return dict(status='ADMITTED_BOUNDED_CANDIDATE',coverage='BOUNDED_CANDIDATE_ONLY',
+                complete_catalog=False,manifest_reference=ref,identity=target,click=click)
+        return self.store._update(expected,admit,operation='admit')
+
+    def project_profile(self):
+        path=self.store.authorization_path
+        if not path:return False
+        reader=ProjectReader(self.store.root)
+        try:
+            raw,_=reader.read(path,'GRANT_UNAVAILABLE')
+            grant=strict_json(raw,'INVALID_GRANT')
+            return grant.get('grant_version')=='line-two-album-project-grant-1'
+        except Exception:return False
+        finally:reader.close()
+
+    def _validate_workflow_link(self,reader,state,target,link):
+        require(isinstance(link,dict) and set(link)=={'a_run_id','a_fingerprint','lease_close','c1_evidence',
+            'released_batch_id','workflow_owner','scroll_count','b_target'},'BOUNDED_WORKFLOW_LINK_INVALID')
+        require(link['workflow_owner']==self.owner and type(link['scroll_count']) is int
+            and 1<=link['scroll_count']<=4 and link['b_target']==target,'BOUNDED_WORKFLOW_LINK_INVALID')
+        grant=self._project_grant()
+        batch_ids=self.store.project_batch_ids(grant)
+        require(len(batch_ids)==2 and link['released_batch_id']==batch_ids[0],
+            'BOUNDED_A_BATCH_RELEASE_REQUIRED')
+        a=next((run for run in state['runs'] if run.get('run_id')==link['a_run_id']),None)
+        require(isinstance(a,dict) and a.get('workflow_outcome')=='VERIFIED' and a.get('intent') is not None
+            and a.get('fingerprint')==link['a_fingerprint'] and a.get('fingerprint')!=target,
+            'BOUNDED_A_NOT_VERIFIED')
+        require(any(item.get('verified_run_id')==a['run_id'] and item.get('fingerprint')==a['fingerprint']
+            for item in state['verified_albums']),'BOUNDED_A_READBACK_REQUIRED')
+        if reader is None:reader=ProjectReader(self.store.root);owned=True
+        else:owned=False
+        try:
+            close=strict_json(artifact(reader,link['lease_close']),'BOUNDED_A_LEASE_CLOSE')
+            require(close.get('version')=='line-backup-lease-close-1' and close.get('run_id')==a['run_id']
+                and close.get('state')=='CLOSED','BOUNDED_A_LEASE_OPEN')
+            c1=strict_json(artifact(reader,link['c1_evidence']),'BOUNDED_C1_EVIDENCE')
+            require(isinstance(c1,dict) and c1.get('kind')=='LINE_TWO_ALBUM_C1'
+                and c1.get('status')=='PASS' and c1.get('a_run_id')==a['run_id']
+                and c1.get('group_key')==a['group_key'] and target in c1.get('new_candidates',[])
+                and type(c1.get('verified_scroll_count')) is int and c1['verified_scroll_count']>=1
+                and isinstance(c1.get('scrolls'),list) and len(c1['scrolls'])==c1['verified_scroll_count'],
+                'BOUNDED_C1_REQUIRED')
+        finally:
+            if owned:reader.close()
 
     @staticmethod
     def eligible(s,target):
@@ -174,7 +280,8 @@ class Service:
             s['runs'].append(r);s['current_run_id']=run_id;s['active_writer_id']=self.owner
             b['current_album_run_id']=run_id;b['phase']='RUNNING'
             return dict(status='ALBUM_OPEN_READY',run_id=run_id,fingerprint=target,destination=destination,click=click,
-                frame_id=observation['frame_id'],session_id=m['session_id'])
+                frame_id=observation['frame_id'],session_id=m['session_id'],
+                **({'project_album_slot':self.store.project_album_slot(self._project_grant())} if self.project_profile() else {}))
         try:
             return self.store._update(expected,prepare,operation='prepare')
         except Exception as exc:
@@ -214,7 +321,65 @@ class Service:
             point(calibration['ellipsis'],menu['ellipsis_bounds'],detail['mapping']['uncertainty'])
             require(menu['closure_trace']==['OPEN_MENU','OBSERVE_SAVE_ALL','CLOSE_WITHOUT_COMMAND','DETAIL_MATCH'],
                 'MENU_CLOSURE_UNPROVEN')
-            if not self.store.fixture:
+            if self.project_profile():
+                claim=strict_json(artifact(reader,menu['evidence']),'INVALID_PROJECT_MENU_CALIBRATION')
+                required={'version','kind','run_id','session_id','detail','menu_frame','trigger','label','support',
+                    'guard','calibration','closure_reference','applicability_reference','reservation_id','reservation_ids',
+                    'reservation_state','opened_at','closed_at'}
+                require(isinstance(claim,dict) and set(claim)==required and claim.get('version')==2
+                    and claim.get('kind')=='menu-calibration-no-io-pair' and claim.get('run_id')==r['run_id']
+                    and claim.get('session_id')==m['session_id'] and claim.get('detail')==detail
+                    and claim.get('label') in ('儲存全部','Save All') and claim.get('calibration')==calibration
+                    and claim.get('reservation_state')=='CONSUMED','PROJECT_CALIBRATION_BINDING')
+                require(claim['reservation_ids']==[claim['reservation_id']] and isinstance(claim['guard'],dict)
+                    and claim['guard'].keys()=={'verdict','provider','pairFrameId','popupFrameId','supportSha256','actionPoint'}
+                    and claim['guard'].get('verdict')=='PASS' and claim['guard'].get('provider')=='SCREEN_CAPTURE_KIT'
+                    and claim['guard'].get('pairFrameId')==claim['menu_frame'].get('frame_id')
+                    and claim['guard'].get('supportSha256')==claim['support'].get('sha256')
+                    and claim['guard'].get('actionPoint')==calibration['save_all_point']
+                    and calibration.get('evidence')==claim.get('support',{}).get('sha256'),
+                    'PROJECT_CALIBRATION_GUARD')
+                trigger=claim['trigger']
+                require(isinstance(trigger,dict) and trigger.get('frameId')==detail['frame_id']
+                    and trigger.get('role')=='button' and trigger.get('point')==calibration['ellipsis']
+                    and trigger.get('bounds_px')==menu['ellipsis_bounds']
+                    and type(trigger.get('dot_spacing')) in (int,float) and trigger['dot_spacing']>0
+                    and calibration.get('dot_spacing')==trigger['dot_spacing'],'PROJECT_CALIBRATION_TRIGGER')
+                try:
+                    opened=dt.datetime.fromisoformat(claim['opened_at'].replace('Z','+00:00'))
+                    closed=dt.datetime.fromisoformat(claim['closed_at'].replace('Z','+00:00'))
+                except (AttributeError,TypeError,ValueError):
+                    raise AcceptanceError('PROJECT_CALIBRATION_TIME','project calibration time is invalid',4)
+                require(opened.tzinfo is not None and closed.tzinfo is not None and closed>=opened
+                    and (closed-opened).total_seconds()<=6,'PROJECT_CALIBRATION_TIME')
+                frame(reader,claim['detail'],snap['config'],session=m['session_id'])
+                frame(reader,claim['menu_frame'],snap['config'],session=m['session_id'])
+                menu_support=_support(reader,claim['support'],claim['menu_frame'],snap['config'],
+                    now=closed.astimezone(dt.timezone.utc),max_age=5)
+                popup_raw=artifact(reader,menu_support['sidecar']['sck_frame'])
+                require(claim['guard'].get('popupFrameId')==sha(popup_raw)
+                    and claim['guard'].get('popupFrameId')!=claim['menu_frame']['frame_id'],
+                    'PROJECT_CALIBRATION_POPUP_BINDING')
+                applicability=strict_json(artifact(reader,claim['applicability_reference']),'PROJECT_CALIBRATION_APPLICABILITY')
+                closure_proof=strict_json(artifact(reader,claim['closure_reference']),'PROJECT_CALIBRATION_CLOSURE')
+                require(applicability.get('kind')=='LINE_MENU_APPLICABILITY' and applicability.get('provider')=='SCREEN_CAPTURE_KIT'
+                    and applicability.get('line_version') and applicability.get('language') and applicability.get('window_class')
+                    and applicability.get('layout_key')==detail['layout_key'] and applicability.get('dimensions')==[detail['width'],detail['height']]
+                    and type(applicability.get('native_scale')) in (int,float) and applicability['native_scale']>0
+                    and isinstance(applicability.get('menu_order'),list)
+                    and ('Save All' in applicability['menu_order'] or '儲存全部' in applicability['menu_order']),
+                    'PROJECT_CALIBRATION_APPLICABILITY')
+                require(closure_proof.get('kind')=='LINE_MENU_CLOSURE' and closure_proof.get('frame_id')==closure['frame_id']
+                    and closure_proof.get('menu_closed') is True and closure_proof.get('no_activation') is True
+                    and closure_proof.get('detail_fingerprint')==r['fingerprint'],'PROJECT_CALIBRATION_CLOSURE')
+                require(self.store.authorization_path is not None,'PROJECT_GRANT_REQUIRED')
+                grant=self._project_grant()
+                reservation=self.store.gui_reservation_fact(grant['gui_ledger'],claim['reservation_id'])
+                require(reservation['kind']=='menu_calibration' and reservation['count']==2 and reservation['owner']==self.owner
+                    and reservation['run_id']==r['run_id'] and reservation['slots']==[f"{self.store.project_album_slot(grant)}.CAL_OPEN",
+                        f"{self.store.project_album_slot(grant)}.CAL_DISMISS"] and reservation.get('outcome')=='RETURNED',
+                    'PROJECT_CALIBRATION_RESERVATION')
+            elif not self.store.fixture:
                 claim=strict_json(artifact(reader,menu['evidence']),'INVALID_MENU_CALIBRATION_EVIDENCE')
                 ckeys={'version','kind','run_id','session_id','detail','menu_frame','trigger','label','support','guard',
                     'save_all','safe_bounds','opened_at','closed_at','latency_ms','reservation_id','reservation_state'}
@@ -285,7 +450,10 @@ class Service:
             return dict(status='ORIGINAL_INTENT_COMMITTED',run_id=r['run_id'],action_id=action,owner=self.owner,
                 fingerprint=r['fingerprint'],destination=r['destination'],frame_id=fresh['frame_id'],session_id=m['session_id'],
                 ellipsis=cal['ellipsis'],save_all=cal['save_all_point'],dispatch_authorized=not self.store.fixture,
-                fixture=self.store.fixture)
+                fixture=self.store.fixture,**(dict(project_album_slot=self.store.project_album_slot(self._project_grant()),
+                    calibration_reference=previous['menu']['evidence'],
+                    calibration_closure_reference=previous['menu']['closure_reference'],
+                    applicability_reference=previous['menu']['applicability_reference']) if self.project_profile() else {}))
         result=self.store._update(expected,intent,operation='intent');result['new_intent']=True
         return result
 
@@ -303,15 +471,34 @@ class Service:
                         and receipt_data['save_all_click_count']==1,'RECEIPT_TRIGGER_UNPROVEN')
                     event_order=DISPATCH_EVENT_ORDER_V1;download_proven=True
                 else:
-                    require(version=='cua-dispatch-receipt-2' and set(receipt_data)==DISPATCH_RECEIPT_V2_KEYS,
+                    require((version=='cua-dispatch-receipt-2' and set(receipt_data)==DISPATCH_RECEIPT_V2_KEYS)
+                        or (version=='cua-dispatch-receipt-3' and set(receipt_data)==DISPATCH_RECEIPT_V3_KEYS
+                            and self.project_profile()),
                         'INVALID_DISPATCH_RECEIPT')
                     require(receipt_data['cease_input'] is True and receipt_data['save_all_click_count']==1,
                         'RECEIPT_TRIGGER_UNPROVEN')
-                    event_order=DISPATCH_EVENT_ORDER_V2
+                    event_order=DISPATCH_EVENT_ORDER_V3 if version=='cua-dispatch-receipt-3' else DISPATCH_EVENT_ORDER_V2
                     require(self.store.authorization_path is not None,'LIVE_AUTHORITY_REQUIRED')
                     from .cli import authorize
                     grant=authorize(self.store.root,self.store.authorization_path,False,'dispatch')
-                    require(grant['grant_version']=='line-batch-execution-grant-2','LIVE_RECEIPT_V2_REQUIRED')
+                    require(grant['grant_version']==('line-two-album-project-grant-1' if version=='cua-dispatch-receipt-3'
+                        else 'line-batch-execution-grant-2'),'LIVE_RECEIPT_PROFILE_REQUIRED')
+                    if version=='cua-dispatch-receipt-3':
+                        require(receipt_data['dispatch_policy']=='LOGICAL_AT_MOST_ONCE_DURABLE_PRE_INPUT_RESERVATION_NO_REPLAY',
+                            'RECEIPT3_POLICY')
+                        calibration=strict_json(artifact(reader,receipt_data['calibration_reference']),'RECEIPT3_CALIBRATION')
+                        require(calibration.get('version')==2 and calibration.get('kind')=='menu-calibration-no-io-pair'
+                            and calibration.get('run_id')==receipt_data['run_id']
+                            and calibration.get('session_id')==receipt_data['session_id'],'RECEIPT3_CALIBRATION_BINDING')
+                        closure=strict_json(artifact(reader,receipt_data['calibration_closure_reference']),
+                            'RECEIPT3_CALIBRATION_CLOSURE')
+                        applicability=strict_json(artifact(reader,receipt_data['applicability_reference']),
+                            'RECEIPT3_CALIBRATION_APPLICABILITY')
+                        require(calibration.get('closure_reference')==receipt_data['calibration_closure_reference']
+                            and calibration.get('applicability_reference')==receipt_data['applicability_reference']
+                            and closure.get('kind')=='LINE_MENU_CLOSURE' and closure.get('menu_closed') is True
+                            and closure.get('no_activation') is True and applicability.get('kind')=='LINE_MENU_APPLICABILITY',
+                            'RECEIPT3_CALIBRATION_REFERENCES')
                     events=receipt_data['events']
                     require(isinstance(events,list) and all(isinstance(e,dict) and set(e)=={'event','at'}
                         and isinstance(e.get('event'),str) and isinstance(e.get('at'),str) for e in events),
@@ -324,6 +511,27 @@ class Service:
                     require(all(value.tzinfo is not None and value<=actual_now for value in parsed_event_times)
                         and all(a<=b for a,b in zip(parsed_event_times,parsed_event_times[1:])),
                         'RECEIPT_EVENT_TIME_ORDER')
+                    if version=='cua-dispatch-receipt-3':
+                        names=[item.get('event') for item in events if isinstance(item,dict)]
+                        require(names==event_order,'RECEIPT_EVENT_ORDER')
+                        reservations=receipt_data['reservations']
+                        require(isinstance(reservations,list) and len(reservations)==2
+                            and all(isinstance(item,dict) for item in reservations),'RECEIPT_RESERVATIONS')
+                        by_kind={item.get('kind'):item for item in reservations}
+                        require(set(by_kind)=={'dispatch_inputs','chooser_inputs'}
+                            and by_kind['dispatch_inputs'].get('count')==2 and by_kind['chooser_inputs'].get('count')==4
+                            and all(item.get('state')=='CONSUMED' and isinstance(item.get('reservation_id'),str)
+                                and item['reservation_id'] for item in reservations),'RECEIPT_RESERVATIONS')
+                        for item in reservations:
+                            fact=self.store.gui_reservation_fact(grant['gui_ledger'],item['reservation_id'])
+                            require(fact['kind']==item['kind'] and fact['count']==item['count']
+                                and fact['owner']==self.owner and fact['run_id']==receipt_data['run_id'],
+                                'RECEIPT_RESERVATION_DRIFT')
+                            require(fact.get('outcome')=='RETURNED','RECEIPT3_RESERVATION_OUTCOME')
+                            slot=self.store.project_album_slot(grant)
+                            expected_slots=([f'{slot}.ATOMIC_ELLIPSIS',f'{slot}.SAVE_ALL'] if item['kind']=='dispatch_inputs'
+                                else [f'{slot}.GO_TO_FOLDER',f'{slot}.SET_PATH',f'{slot}.PATH_RETURN',f'{slot}.CHOOSER_CONFIRM'])
+                            require(fact['slots']==expected_slots,'RECEIPT3_LEDGER_SLOT_BINDING')
                     phase_event_names=['CHOOSER_APPEARED','GO_TO_FOLDER','PATH_FILLED','DESTINATION_SELECTED','CONFIRM_ATTEMPTED']
                     phase_events={event['event']:parsed_event_times[index] for index,event in enumerate(events)
                         if event['event'] in phase_event_names}
@@ -343,11 +551,12 @@ class Service:
                             raise AcceptanceError('CHOOSER_PHASE_TIME','chooser frame time is invalid',4)
                         require(captured_time.tzinfo is not None and event_time.tzinfo is not None
                             and captured_time<=event_time<=actual_now and (event_time-captured_time).total_seconds()<=5
-                            and (actual_now-captured_time).total_seconds()<=5,
+                            and (version=='cua-dispatch-receipt-3' or (actual_now-captured_time).total_seconds()<=5),
                             'CHOOSER_PHASE_STALE')
                         chooser_observation(reader,envelope,self.store.snapshot()['config'],session=receipt_data['session_id'],
                             owner=self.owner,run_id=receipt_data['run_id'],action_id=receipt_data['action_id'],
-                            destination=receipt_data['chooser']['destination'],previous=previous,now=actual_now)
+                            destination=receipt_data['chooser']['destination'],previous=previous,
+                            now=event_time if version=='cua-dispatch-receipt-3' else actual_now)
                         require(envelope['dispatch']['original_frame_id']==receipt_data['pair_frame_id'],
                             'CHOOSER_ORIGINAL_FRAME_BINDING')
                         envelopes.append(envelope);previous=envelope
@@ -377,17 +586,18 @@ class Service:
                     download_proven=True
                 require(receipt_data['run_id'] and receipt_data['action_id'] and receipt_data['execution_id']==self.owner
                     and receipt_data['session_id'],'RECEIPT_IDENTITY')
-                support=strict_json(artifact(reader,receipt_data['support']),'INVALID_SCK_SUPPORT')
-                require(support.get('frame_id')==receipt_data['pair_frame_id']
-                    and support.get('session_id')==receipt_data['session_id'],'RECEIPT_SUPPORT_BINDING')
-                popup_raw=artifact(reader,support.get('sck_frame'))
-                require(sha(popup_raw)==receipt_data['popup_frame_id']
-                    and receipt_data['popup_frame_id']!=receipt_data['pair_frame_id'],'RECEIPT_POPUP_BINDING')
-                guard=receipt_data['guard']
-                require(isinstance(guard,dict) and guard.get('verdict')=='PASS' and guard.get('provider')=='SCREEN_CAPTURE_KIT'
-                    and guard.get('pairFrameId')==receipt_data['pair_frame_id']
-                    and guard.get('popupFrameId')==receipt_data['popup_frame_id']
-                    and guard.get('supportSha256')==receipt_data['support']['sha256'],'RECEIPT_GUARD_UNPROVEN')
+                if version!='cua-dispatch-receipt-3':
+                    support=strict_json(artifact(reader,receipt_data['support']),'INVALID_SCK_SUPPORT')
+                    require(support.get('frame_id')==receipt_data['pair_frame_id']
+                        and support.get('session_id')==receipt_data['session_id'],'RECEIPT_SUPPORT_BINDING')
+                    popup_raw=artifact(reader,support.get('sck_frame'))
+                    require(sha(popup_raw)==receipt_data['popup_frame_id']
+                        and receipt_data['popup_frame_id']!=receipt_data['pair_frame_id'],'RECEIPT_POPUP_BINDING')
+                    guard=receipt_data['guard']
+                    require(isinstance(guard,dict) and guard.get('verdict')=='PASS' and guard.get('provider')=='SCREEN_CAPTURE_KIT'
+                        and guard.get('pairFrameId')==receipt_data['pair_frame_id']
+                        and guard.get('popupFrameId')==receipt_data['popup_frame_id']
+                        and guard.get('supportSha256')==receipt_data['support']['sha256'],'RECEIPT_GUARD_UNPROVEN')
                 events=receipt_data['events']
                 allowed_event_shapes=({'event'},{'event','at'}) if version=='cua-dispatch-receipt-1' else ({'event','at'},)
                 require(isinstance(events,list) and all(isinstance(item,dict) and set(item) in allowed_event_shapes
@@ -398,7 +608,7 @@ class Service:
                     require(set(names)<=set(event_order)|{'ALBUM_OPEN_INVOCATION'},'RECEIPT_EVENTS')
                     names=[name for name in names if name!='ALBUM_OPEN_INVOCATION']
                 require(names==expected_names,'RECEIPT_EVENT_ORDER')
-                if version=='cua-dispatch-receipt-2':
+                if version in ('cua-dispatch-receipt-2','cua-dispatch-receipt-3'):
                     try:event_times=[dt.datetime.fromisoformat(item['at'].replace('Z','+00:00')) for item in events]
                     except (TypeError,ValueError):raise AcceptanceError('RECEIPT_EVENT_TIME','receipt event time is invalid',4)
                     require(all(value.tzinfo is not None for value in event_times)
@@ -416,6 +626,12 @@ class Service:
                         fact=self.store.gui_reservation_fact(grant['gui_ledger'],item['reservation_id'])
                         require(fact['kind']==item['kind'] and fact['count']==item['count']
                             and fact['owner']==self.owner and fact['run_id']==receipt_data['run_id'],'RECEIPT_RESERVATION_DRIFT')
+                        if version=='cua-dispatch-receipt-3':
+                            require(fact.get('outcome')=='RETURNED','RECEIPT3_RESERVATION_OUTCOME')
+                            slot=self.store.project_album_slot(grant)
+                            expected_slots=([f'{slot}.ATOMIC_ELLIPSIS',f'{slot}.SAVE_ALL'] if item['kind']=='dispatch_inputs'
+                                else [f'{slot}.GO_TO_FOLDER',f'{slot}.SET_PATH',f'{slot}.PATH_RETURN',f'{slot}.CHOOSER_CONFIRM'])
+                            require(fact['slots']==expected_slots,'RECEIPT3_LEDGER_SLOT_BINDING')
             finally:reader.close()
         elif not self.store.fixture:
             raise AcceptanceError('RETAINED_RECEIPT_REQUIRED','live dispatch requires a retained adapter receipt',4)
@@ -427,10 +643,12 @@ class Service:
                 require(receipt_data['run_id']==r['run_id'] and receipt_data['action_id']==r['intent']['action_id']
                     and receipt_data['execution_id']==self.owner and receipt_data['session_id']==b['owner_execution_id'],'RECEIPT_IDENTITY')
                 require(json_bytes(receipt_data['chooser'])==json_bytes(chooser),'RECEIPT_CHOOSER_MISMATCH')
-                point=receipt_data['guard']['actionPoint']
+                if receipt_data['version']=='cua-dispatch-receipt-3':
+                    point=calibration['guard']['actionPoint']
+                else:point=receipt_data['guard']['actionPoint']
                 require(json_bytes(point)==json_bytes(r['intent']['calibration']['save_all_point']),'RECEIPT_GUARD_POINT')
                 require(d['save_all_click_count']==receipt_data['save_all_click_count'],'RECEIPT_CLICK_COUNT')
-            if receipt_data is not None and receipt_data['version']=='cua-dispatch-receipt-2':
+            if receipt_data is not None and receipt_data['version'] in ('cua-dispatch-receipt-2','cua-dispatch-receipt-3'):
                 intent_events=[event for event in r['events'] if event.get('phase')=='SAVE_ALL_INTENT_COMMITTED']
                 require(len(intent_events)==1,'INTENT_CONTEXT_EVIDENCE')
                 intent_evidence=strict_json(intent_events[0]['evidence'].encode(),'INTENT_CONTEXT_EVIDENCE')
@@ -561,6 +779,7 @@ class Service:
         return self.store._update(expected,stop,operation='stop')
 
     def finish(self,expected,final_records,session):
+        require(not self.project_profile(),'BOUNDED_NO_CATALOG_FINISH')
         reader=ProjectReader(self.store.root)
         try:
             snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')

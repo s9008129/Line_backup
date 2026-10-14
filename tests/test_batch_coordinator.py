@@ -7,6 +7,7 @@ import subprocess
 import sys
 import time
 import unittest
+import jsonschema,referencing,attrs,rpds
 from unittest import mock
 import uuid
 sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
@@ -15,6 +16,9 @@ from line_backup_batch.coordinator import Coordinator
 from line_backup_batch import content as content_module
 from line_backup_batch.service import DISPATCH_EVENT_ORDER_V1
 from line_backup_acceptance.common import AcceptanceError
+
+SCHEMA_PATHS=sorted({str(Path(module.__file__).resolve().parent.parent)
+    for module in (jsonschema,referencing,attrs,rpds)})
 
 class CoordinatorTests(unittest.TestCase):
     def setUp(self):self.f=Fixture()
@@ -49,7 +53,12 @@ class CoordinatorTests(unittest.TestCase):
         self.assertTrue(committed['new_intent']);self.assertEqual(self.f.state()['active_batch']['new_transactions_reserved'],1)
         with self.assertRaisesRegex(AcceptanceError,'LOADED_INTENT_NO_PERMISSION'):
             self.f.svc.intent(self.f.receipt(),self.f.observation([target],'ALBUM_DETAIL'))
-        p,_=self.f.cli('resume');self.assertEqual(p.returncode,0,p.stderr)
+        run=subprocess.run
+        def with_schema_env(argv,**kwargs):
+            env=dict(kwargs.get('env',{}));env['PYTHONPATH']=os.pathsep.join([str(ROOT/'src'),*SCHEMA_PATHS])
+            kwargs['env']=env;return run(argv,**kwargs)
+        with mock.patch('subprocess.run',side_effect=with_schema_env):p,_=self.f.cli('resume')
+        self.assertEqual(p.returncode,0,p.stderr)
         self.assertEqual(json.loads(p.stdout)['additional_save_all_calls'],0)
         self.f.svc.stop(self.f.receipt(),'CRASH_AFTER_INTENT')
         with self.assertRaises(AcceptanceError):self.f.svc.release(self.f.receipt())
