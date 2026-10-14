@@ -1,0 +1,346 @@
+{
+  "artifact_kind": "EXTERNAL_REVIEW_CANDIDATE_CONTRACT",
+  "contract_revision": "line-two-album-review-candidate-1",
+  "native_task_format_version": null,
+  "native_task_id": null,
+  "native_run_id": null,
+  "native_schema_validation": "NOT_APPLICABLE_TO_UNALLOCATED_CANDIDATE",
+  "publication_status": "LOCAL_CANDIDATE_ONLY_NOT_CONTROLLER_PUBLISHED",
+  "goal": "One continuous authorized macOS LINE CUA workflow backs up two distinct NEW eligible albums, with NEW_ALBUM_A VERIFIED then automatic return to the same list, real bounded scroll/ordered overlap/new complete card, NEW_ALBUM_B detail MATCH, second Save All and NEW_ALBUM_B VERIFIED, followed by independent Acceptance.",
+  "project_root": "<PRIVATE_PROJECT_ROOT>",
+  "group_key": "GROUP_PRIVATE_01",
+  "group_name": "GROUP_PRIVATE_01",
+  "task_class": "CRITICAL",
+  "workflow_policy": {
+    "plan_review_required": true,
+    "independent_acceptance_required": true,
+    "handoff_review_required": false,
+    "deterministic_handoff_exact_contract_copy": true
+  },
+  "role_policy": {
+    "planner": "SOL_XHIGH_PLANNER_ONLY",
+    "implementer": "LUNA_HIGH_IMPLEMENTER_ONLY",
+    "plan_reviewer": "OWNER_MANUALLY_TRANSFERRED_EXTERNAL_INDEPENDENT_HIGH_REASONING_REVIEWER",
+    "acceptance_reviewer": "EXTERNAL_INDEPENDENT_HIGH_REASONING_REVIEWER",
+    "sol_self_review": false,
+    "luna_review": false,
+    "max_parallel_read_only_helpers": 0,
+    "max_parallel_writers": 0
+  },
+  "current_turn_authority": {
+    "planning_files_only": true,
+    "production_edits": false,
+    "native_allocations_or_imports": false,
+    "gui_capture": false,
+    "gui_input": false
+  },
+  "reference_pr": {
+    "number": 8,
+    "url": "https://github.com/s9008129/Line_backup/pull/8",
+    "head": "8141a12925f58ee675d446033ed5b804ba66efd6",
+    "frozen_scope_reused": false
+  },
+  "baseline": {
+    "root": "<PRIVATE_PROJECT_ROOT>",
+    "state_schema": 3,
+    "state_revision": 35,
+    "verified_album_protection": [
+      {
+        "alias": "VERIFIED_ALBUM_01",
+        "opaque_fingerprint_reference": "OPAQUE_FP_6b27490d9210bc6a0c7a9bf9049a5c0a2d901061d77a24e8697ec29a28ac11a0",
+        "group_reference": "GROUP_PRIVATE_01",
+        "expected_images": 57,
+        "status": "VERIFIED",
+        "exact_binding": "PRIVATE_BINDING_NOT_EXTERNALLY_VERIFIED"
+      },
+      {
+        "alias": "VERIFIED_ALBUM_02",
+        "opaque_fingerprint_reference": "OPAQUE_FP_0a26366c9663e2bb14ee8d4a4a55d4404a8b30fc3d7c4af4838a2e5a2354e2a8",
+        "group_reference": "GROUP_PRIVATE_01",
+        "expected_images": 182,
+        "status": "VERIFIED",
+        "exact_binding": "PRIVATE_BINDING_NOT_EXTERNALLY_VERIFIED"
+      }
+    ],
+    "active_batch": null,
+    "active_writer_id": null,
+    "context_lock": null,
+    "source_build_and_git_identity": "PRIVATE_BINDING_NOT_EXTERNALLY_VERIFIED",
+    "original_source_binding_records_retained_privately": 52,
+    "historical_preservation_binding_records_retained_privately": 25,
+    "local_read_only_preparation_status": "VALIDATED_LOCALLY_NOT_INDEPENDENT_PUBLIC_BINDING_VERIFICATION",
+    "dispatch_authorized": false
+  },
+  "transaction_model": {
+    "current_configured_cap": 1,
+    "current_state_schema": 3,
+    "proposed_mode": "backup_batch",
+    "proposed_authorized_new_download_limit": 2,
+    "proposed_configured_cap": 2,
+    "batch_count": 1,
+    "sequential_album_transactions": 2,
+    "separate_run_action_intent_destination": true,
+    "prior_album_verified_exact_readback_and_owner_context_release_before_next": true,
+    "existing_v3_writer_only_after_legitimate_scope_adoption": true,
+    "current_live_entry_status": "BLOCKED_SCOPE_BINDING_CAP_AND_CATALOG_COMPATIBILITY",
+    "permitted_config_delta": {
+      "path": "config/line_backup_config.json",
+      "field": "max_albums_per_run",
+      "before": 1,
+      "proposed_after": 2,
+      "applied": false
+    }
+  },
+  "scope": {
+    "planning_write_paths": [
+      "<PRIVATE_EXECUTION_SCOPE>/plan.md",
+      "<PRIVATE_EXECUTION_SCOPE>/plan-contract.json",
+      "<PRIVATE_EXECUTION_SCOPE>/review-packet.md",
+      "<PRIVATE_EXECUTION_SCOPE>/.gitignore"
+    ],
+    "proposed_adoption_write_paths": [
+      "config/line_backup_config.json",
+      "src/line_backup_batch/cli.py",
+      "src/line_backup_batch/service.py",
+      "src/line_backup_batch/observations.py",
+      "scripts/line_backup_cua_adapter.mjs",
+      "<PRIVATE_EXECUTION_SCOPE>"
+    ],
+    "proposed_runtime_write_paths": [
+      "state/backup_state.json",
+      "state/run_log.md",
+      "state/.line-backup-state.lock",
+      "state/.line-backup-v3.tmp",
+      "<PRIVATE_EXECUTION_SCOPE>/private"
+    ],
+    "destinations": {
+      "root": "<PRIVATE_BACKUP_ROOT>",
+      "template": "<PRIVATE_BACKUP_ROOT>/<PRIVATE_CANONICAL_GROUP_DIRECTORY>/<CANONICAL_START_END_COUNT_DERIVED_NEW_EMPTY_LEAF>",
+      "max_new_empty_leaf_directories": 2,
+      "existing_leaf_reuse": false,
+      "overwrite": false,
+      "symlinks": false
+    },
+    "forbidden": [
+      "pinned Harness V4.8.0 edits",
+      "original ML08 Task/Issue/c6/28 gates edits",
+      "PR8 native state/Plan/contract edits",
+      "old photo or terminal intent edits",
+      "test-mode production writes",
+      "unsupported native receipt import",
+      "new generic executor/reviewer/migration framework",
+      "third album",
+      "input redispatch",
+      "Save All replay",
+      "mid-run Owner assistance for unattended PASS"
+    ]
+  },
+  "privacy": {
+    "private_path": "<PRIVATE_EXECUTION_SCOPE>/private",
+    "directory_mode": "0700",
+    "file_mode": "0600",
+    "ignore_rule": "/private/",
+    "git_check_ignore_before_capture": true,
+    "index_content_check_before_any_commit_push": true,
+    "force_add": false,
+    "raw_evidence_to_public_git": false,
+    "raw_evidence_transfer_to_external_reviewer_authorized": false,
+    "full_display_capture_requires_fresh_explicit_consent": true,
+    "controller_path_check_at_actual_admission": true
+  },
+  "cua": {
+    "documented_entry": "cua.getApp(\"jp.naver.line.mac\")",
+    "observation": "app.getAXStateAndScreenshot({emit:false,disableDiffing:true})",
+    "scroll": "app.scroll(freshViewportTarget,\"down\",0.25)",
+    "scroll_units": "MACOS_PAGES_REQUEST_NOT_PHYSICAL_DISTANCE_PROOF",
+    "click": "app.click(freshPoint,{mouseButton:\"left\",clickCount:1})",
+    "go_to_folder": "app.pressKey(\"super+shift+g\")",
+    "path_input": "app.setValue(freshPathFieldIndex,exactDestination)",
+    "key_return": "app.pressKey(\"Return\")",
+    "atomic_pair": "one sequential call: ellipsis click -> bounded wait -> Save All click; no capture or I/O between",
+    "menu_wait_ms_proposed": 1200,
+    "mac_permissions": "UNTESTED_FOR_THIS_SCOPE",
+    "hosted_local_process_or_retention_bridge": "NOT_DEMONSTRATED_BY_CUA_DOCUMENTATION",
+    "host_transport_automatic_retry": "UNKNOWN",
+    "native_duplicate_delivery": "UNKNOWN",
+    "native_effect": "REQUIRES_REAL_POST_ACTION_EVIDENCE"
+  },
+  "proposed_budgets": {
+    "app_acquisitions": 3,
+    "paired_observation_attempts_total": 80,
+    "attempts_per_observation_checkpoint": 2,
+    "extra_ax_only_refreshes": 23,
+    "full_display_popup_observations": 4,
+    "full_display_observations_per_album": 2,
+    "album_card_clicks_per_album": 1,
+    "album_card_clicks_total": 2,
+    "calibration_menu_opens_per_album": 1,
+    "calibration_safe_dismissals_per_album": 1,
+    "atomic_pairs_per_album": 1,
+    "save_all_logical_invocations_per_album": 1,
+    "save_all_total": 2,
+    "chooser_go_to_folder_per_album": 1,
+    "chooser_set_value_per_album": 1,
+    "chooser_return_per_album": 1,
+    "chooser_confirmation_per_album": 1,
+    "return_to_list": 1,
+    "scroll_total": 4,
+    "scroll_before_album_a_max": 3,
+    "scroll_after_album_a_min": 1,
+    "scroll_page_request": 0.25,
+    "total_input_method_invocations": 23,
+    "input_retries": 0,
+    "input_transport_fallbacks": 0,
+    "unknown_effect_redispatch": false,
+    "filesystem_poll_min_interval_seconds": 5,
+    "stable_identical_inventories_required": 3,
+    "download_deadline_per_album_seconds": 600
+  },
+  "retry_policy": {
+    "candidate_read_only_recaptures_per_checkpoint": 1,
+    "task_input_retries": 0,
+    "save_all_retry_allowed": false,
+    "native_v4_8_schema_eligibility": "UNCHANGED; must remain separate from task-level and host-level behavior",
+    "no_claim_of_native_or_transport_at_most_once": true,
+    "loaded_intent_original_dispatch_authorized": false
+  },
+  "required_entry_dispositions": [
+    "Authentic independent review of final exact bytes, legitimate workflow acceptance and deterministic Handoff",
+    "Competent authority confirms authentic manual-review acceptance; no forged native model/session/effort/nonce/invitation/completion",
+    "Genuinely independent new product scope and root-issue budget eligibility; no ML08 retry reset",
+    "Owner-reviewed config cap 1 -> 2 and exact new config hash; no renamed-run cap bypass",
+    "Lawfully reviewed existing v3 grant/limited-discovery/atomic-receipt adoption; no old ML08 grant reuse",
+    "Binding execution policy accepts stated logical-at-most-once controls or supplies supported native guarantee; UNKNOWN remains explicit",
+    "Current hosted capture/retention/geometry and permission readiness without unauthorized LINE preflight",
+    "Supported truthful non-PASS accounting for this new scope; old Task555 one-Issue permission does not transfer",
+    "Fresh foreground handoff and scoped GUI/private-display/download/state consent immediately before live execution"
+  ],
+  "protected_history": {
+    "original_task": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+    "task_state": "BLOCKED",
+    "issue_state": "WAIT_HUMAN",
+    "c6_run": "c6c6b55d-865f-467b-94ba-3fd669df97ec",
+    "c6_consumed": 1,
+    "c6_retries_remaining": 0,
+    "original_gate_count": 28,
+    "harness_version": "4.8.0_IMMUTABLE"
+  },
+  "gate_order": [
+    {
+      "gate_id": "P0",
+      "purpose": "AUTHORITY_AND_REVIEW",
+      "owner": "INDEPENDENT_REVIEWER_AND_AUTHORITY",
+      "required": true,
+      "goal_criticality": "GOAL_CRITICAL",
+      "evidence_role": "INDEPENDENT_REVIEWER_AND_AUTHORITY",
+      "closure_gate": true,
+      "initial_verdict": "NOT_RUN"
+    },
+    {
+      "gate_id": "T0",
+      "purpose": "PREFLIGHT",
+      "owner": "IMPLEMENTER",
+      "required": true,
+      "goal_criticality": "GOAL_CRITICAL",
+      "evidence_role": "IMPLEMENTER",
+      "closure_gate": true,
+      "initial_verdict": "NOT_RUN"
+    },
+    {
+      "gate_id": "A1",
+      "purpose": "ALBUM_A_CARD_DETAIL",
+      "owner": "IMPLEMENTER",
+      "required": true,
+      "goal_criticality": "GOAL_CRITICAL",
+      "evidence_role": "IMPLEMENTER",
+      "closure_gate": true,
+      "initial_verdict": "NOT_RUN"
+    },
+    {
+      "gate_id": "A2",
+      "purpose": "ALBUM_A_SAVE_ALL_CHOOSER",
+      "owner": "IMPLEMENTER",
+      "required": true,
+      "goal_criticality": "GOAL_CRITICAL",
+      "evidence_role": "IMPLEMENTER",
+      "closure_gate": true,
+      "initial_verdict": "NOT_RUN"
+    },
+    {
+      "gate_id": "A3",
+      "purpose": "ALBUM_A_FILES_COMMIT",
+      "owner": "IMPLEMENTER",
+      "required": true,
+      "goal_criticality": "GOAL_CRITICAL",
+      "evidence_role": "IMPLEMENTER",
+      "closure_gate": true,
+      "initial_verdict": "NOT_RUN"
+    },
+    {
+      "gate_id": "C1",
+      "purpose": "RETURN_SCROLL_NEW_CARD",
+      "owner": "IMPLEMENTER",
+      "required": true,
+      "goal_criticality": "GOAL_CRITICAL",
+      "evidence_role": "IMPLEMENTER",
+      "closure_gate": true,
+      "initial_verdict": "NOT_RUN"
+    },
+    {
+      "gate_id": "B1",
+      "purpose": "ALBUM_B_CARD_DETAIL_DISPATCH",
+      "owner": "IMPLEMENTER",
+      "required": true,
+      "goal_criticality": "GOAL_CRITICAL",
+      "evidence_role": "IMPLEMENTER",
+      "closure_gate": true,
+      "initial_verdict": "NOT_RUN"
+    },
+    {
+      "gate_id": "B2",
+      "purpose": "ALBUM_B_FILES_COMMIT",
+      "owner": "IMPLEMENTER",
+      "required": true,
+      "goal_criticality": "GOAL_CRITICAL",
+      "evidence_role": "IMPLEMENTER",
+      "closure_gate": true,
+      "initial_verdict": "NOT_RUN"
+    },
+    {
+      "gate_id": "X1",
+      "purpose": "TWO_ALBUM_INDEPENDENT_ACCEPTANCE",
+      "owner": "INDEPENDENT_ACCEPTANCE_REVIEWER",
+      "required": true,
+      "goal_criticality": "GOAL_CRITICAL",
+      "evidence_role": "INDEPENDENT_ACCEPTANCE_REVIEWER",
+      "closure_gate": true,
+      "initial_verdict": "NOT_RUN"
+    }
+  ],
+  "acceptance": {
+    "requires_two_new_distinct_fingerprints": true,
+    "requires_real_post_a_scroll_and_new_complete_card": true,
+    "requires_both_files_decode_hash_and_atomic_verified_readback": true,
+    "requires_one_uninterrupted_workflow": true,
+    "owner_intervention_means": "ASSISTED_PARTIAL",
+    "tool_return_is_semantic_pass": false,
+    "human_visual_is": "OBSERVED",
+    "independent_acceptance_required": true,
+    "scope_completion_label": "UNATTENDED_TWO_ALBUM_PASS_ONLY_WITH_ALL_GATE_EVIDENCE"
+  },
+  "review_status": "AWAITING_OWNER_MANUAL_TRANSFER",
+  "b03_status": "BLOCKED_HOST_NATIVE_GUARANTEE_UNPROVEN_POLICY_DISPOSITION_REQUIRED",
+  "b05_status": "BLOCKED_MANUAL_EXTERNAL_REVIEW_NATIVE_ACCEPTANCE_UNPROVEN",
+  "native_admission": "NOT_GRANTED",
+  "gui_consent": "NOT_GRANTED",
+  "public_review_copy": {
+    "label": "PUBLIC_REVIEW_COPY — REDACTED — NOT_EXECUTABLE — NOT_NATIVE_ADMISSION",
+    "executable": false,
+    "native_admission": false,
+    "production_schema_validity": "NOT_ASSERTED_PLACEHOLDERS_AND_REDACTED_PROJECTION",
+    "exact_private_binding_validation": "PRIVATE_BINDING_NOT_EXTERNALLY_VERIFIED",
+    "private_original_execution_source": "UNCHANGED_LOCAL_PLAN_AND_CONTRACT",
+    "review_delivery": "GITHUB_PR_EXTERNAL_INDEPENDENT_REVIEW",
+    "publication_preparation_approval": "ONLY_PUBLICATION_PREPARATION_NOT_PLAN_APPROVAL"
+  }
+}
