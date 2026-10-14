@@ -1,0 +1,66 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-55518bd9640d4ea59ab3a6414a171795",
+  "goal": "獨立一次性 LINE 相簿點擊診斷：正式准入及另行明確前景／擷取／點擊授權後，以現有 cua_repl 取得新鮮列表 screenshot／AX，辨識一本目標群組相簿，最多點擊一次，擷取詳細頁並核對身分後立即停止；不重試、不捲動、不 Save All、不下載、不改備份狀態；不作為 ML08 驗收或 continuation。",
+  "task_class": "STANDARD",
+  "allowed_paths": [
+    "harness-development/line-once-click-diagnostic-20261014/controller/TASK-55518bd9640d4ea59ab3a6414a171795"
+  ],
+  "required_evidence": ["P01", "D01", "D02", "D03"],
+  "gate_specs": [
+    {
+      "gate_id": "P01",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "PLAN",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "SUPPORTING",
+      "evidence_role": "DIAGNOSTIC",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "D01",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "DIAGNOSTIC",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "D02",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "D03",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "SUPPORTING",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "BASELINE_DELTA",
+      "reuse": "NEVER"
+    }
+  ],
+  "capability_policy": {"network": "OFF", "browser": false, "destinations": []},
+  "retry_policy": {"transient_read_only_retries": 2, "delays_seconds": [10, 30]},
+  "resource_policy": {"prompt_bytes": 65536, "state_bytes": 524288, "inspect_bytes": 16384, "log_bytes": 134217728},
+  "workflow_policy": {
+    "plan_review_required": true,
+    "independent_acceptance_required": false,
+    "max_parallel_read_only_helpers": 0,
+    "max_parallel_writers": 0,
+    "handoff_review_required": false
+  }
+}
