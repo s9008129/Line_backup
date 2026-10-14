@@ -1,20 +1,24 @@
 import copy
+from contextlib import nullcontext
 import datetime as dt
 import importlib.util
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import unittest
+import uuid
 import jsonschema,referencing,attrs,rpds
 from unittest.mock import patch
 sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
-from fixture_support import Fixture,ROOT,TASK,identity,sha,json_bytes,token
+from fixture_support import Fixture,ROOT,TASK,identity,sha,json_bytes,token,png
 from line_backup_batch.store import Store,enforce_grant_quota
 from line_backup_batch.service import Service,DISPATCH_RECEIPT_V3_KEYS,DISPATCH_EVENT_ORDER_V3
 import line_backup_batch.cli as batch_cli
 from line_backup_acceptance.common import AcceptanceError,atomic_write_json
+from line_backup_acceptance.project_binding import ProjectReader
 
 SCHEMA_PATHS=sorted({str(Path(module.__file__).resolve().parent.parent)
     for module in (jsonschema,referencing,attrs,rpds)})
@@ -73,6 +77,105 @@ def project_authority_fixture(f):
         decoder_binding=decoder,entry_binding=entry)
     grant_ref=put(project+'/private/grant.json',json_bytes(grant))
     return grant,grant_ref,runtime_ref
+
+def project_native_shaped_observation(f,identities,surface='ALBUMS',top=False,bottom=False,focus='NONE',extra_elements=(),
+    focused_index=None,window_identifier='LINE-window',window_label='LINE'):
+    """Synthetic retained native-shaped records for copied production validators; never LINE evidence."""
+    record=f.observation(identities,surface,top,bottom);record['editable_focus']=focus
+    structure=[dict(role='window',surface=surface,layout='fixture-native-shaped')]
+    structure_sha=sha(json_bytes(structure))
+    layout=dict(line_version='fixture LINE build',language='en',window_class='LINE_MAIN',frame_width_px=128,
+        frame_height_px=128,native_scale=1,structure_sha256=structure_sha)
+    record['layout_key']=sha(json_bytes(layout));record['mapping']['layout_key']=record['layout_key']
+    frame_raw=(f.root/record['frame']['path']).read_bytes()
+    side_ref=record['mapping']['sck_support'];side=json.loads((f.root/side_ref['path']).read_bytes())
+    side.update(provider='SCREEN_CAPTURE_KIT',fixture=False,layout_key=record['layout_key'])
+    side['interactive_intersection_px']=[0,0,128,128]
+    ocr=json.loads((f.root/side['ocr']['path']).read_bytes())
+    card_witnesses=[];elements=[]
+    for index,card in enumerate(record['cards']):
+        x,y,w,h=card['card_bounds'];title_box=[card['metadata_bounds'][0]+2,card['metadata_bounds'][1]+1,30,4]
+        count_box=[card['metadata_bounds'][0]+34,card['metadata_bounds'][1]+1,12,4]
+        title_text=card['title'];count_text=str(card['fingerprint']['expected_images'])
+        for items in (ocr['cua'],ocr['sck']):
+            items.extend([dict(text=title_text,confidence=0.99,candidate_count=1,bounds=title_box),
+                dict(text=count_text,confidence=0.99,candidate_count=1,bounds=count_box)])
+        card_index=10+index*2;image_index=card_index+1;thumbnail=[x+2,y+2,8,8]
+        elements.extend([dict(index=card_index,role='row',subrole='AXRow',identifier=f'album-{index}',label=title_text,
+            value=None,bounds_px=card['card_bounds'],parent_index=0,enabled=True),
+            dict(index=image_index,role='image',subrole='AXImage',identifier=f'thumbnail-{index}',label='',value=None,
+                bounds_px=thumbnail,parent_index=card_index,enabled=True)])
+        card_witnesses.append(dict(fingerprint=card['fingerprint'],title=title_text,card_bounds=card['card_bounds'],
+            metadata_bounds=card['metadata_bounds'],safe_metadata_bounds=card['safe_metadata_bounds'],
+            neighbor_bounds=card['neighbor_bounds'],thumbnail_bounds=thumbnail,
+            title_ocr=dict(text=title_text,bounds=title_box),count_ocr=dict(text=count_text,bounds=count_box),
+            card_ax_index=card_index,thumbnail_ax_index=image_index))
+    elements.extend(extra_elements)
+    if surface=='ALBUMS':
+        scroll_value=0.5
+        elements.append(dict(index=90,role='scroll bar',subrole='AXScrollBar',identifier='albums-scroll',label='',
+            value=scroll_value,bounds_px=[120,0,8,128],parent_index=0,enabled=True))
+        boundary_proof=dict(version=1,frame_id=record['frame_id'],session_id=record['session_id'],source='AX_SCROLLBAR',
+            indicator_index=90,minimum=0.0,maximum=1.0,value=scroll_value)
+    else:
+        boundary_proof=dict(version=1,frame_id=record['frame_id'],session_id=record['session_id'],source='NOT_APPLICABLE')
+    boundary_ref=f.ref('native-shaped-boundary-'+uuid.uuid4().hex+'.json',json_bytes(boundary_proof))
+    record['boundary']['evidence']=boundary_ref
+    ax=dict(version=1,frame_id=record['frame_id'],session_id=f.session,pid=record['pid'],window_id=record['window_id'],
+        surface=surface,focused_index=focused_index,elements=[dict(index=0,role='window',subrole='AXWindow',
+            identifier=window_identifier,label=window_label,value=None,bounds_px=[0,0,128,128],parent_index=None,enabled=True),*elements])
+    ax_ref=f.ref('native-shaped-ax-'+uuid.uuid4().hex+'.json',json_bytes(ax))
+    focus_value=(dict(version=1,frame_id=record['frame_id'],session_id=f.session,kind='NONE',focused_index=focused_index)
+        if focus=='NONE' else dict(version=1,frame_id=record['frame_id'],session_id=f.session,kind='HIGH_EDITABLE',
+            focused_index=focused_index,element_identifier='path-text'))
+    focus_ref=f.ref('native-shaped-focus-'+uuid.uuid4().hex+'.json',json_bytes(focus_value))
+    classifier=dict(version=1,frame_id=record['frame_id'],session_id=f.session,ax_state_sha256=sha(json_bytes(ax)),
+        screenshot_sha256=record['frame_id'],cards=card_witnesses,boundary=record['boundary'],structure_sha256=structure_sha,
+        surface_structure=structure,focus_evidence=focus_ref)
+    classifier_ref=f.ref('native-shaped-classifier-'+uuid.uuid4().hex+'.json',json_bytes(classifier))
+    side['ocr']=f.ref('native-shaped-ocr-'+uuid.uuid4().hex+'.json',json_bytes(ocr))
+    timing_start=dt.datetime.now(dt.timezone.utc).isoformat(timespec='microseconds').replace('+00:00','Z')
+    timing_finish=(dt.datetime.fromisoformat(timing_start.replace('Z','+00:00'))+dt.timedelta(milliseconds=1)).isoformat(timespec='microseconds').replace('+00:00','Z')
+    side['captured_at']=timing_start
+    side_ref=f.ref('native-shaped-support-'+uuid.uuid4().hex+'.json',json_bytes(side));record['mapping']['sck_support']=side_ref
+    timing=dict(requestStartedAtISO8601=timing_start,requestFinishedAtISO8601=timing_finish,
+        requestStartMonotonicNanoseconds=1_000_000,requestEndMonotonicNanoseconds=2_000_000)
+    record['mapping']['evidence']=None
+    geometry=dict(version=1,frame_id=record['frame_id'],session_id=f.session,surface=surface,pid=record['pid'],
+        window_id=record['window_id'],layout_key=record['layout_key'],captured_at=record['captured_at'],
+        cua_capture_bounds_points=[0,0,128,128],surface_bounds_px=side['interactive_intersection_px'],ax_state=ax_ref,
+        layout_signature=layout,structure_sha256=structure_sha)
+    geometry_ref=f.ref('native-shaped-geometry-'+uuid.uuid4().hex+'.json',json_bytes(geometry))
+    capture_record=dict(capturedAtISO8601=timing_start,fullDisplayCaptureTiming=timing,imageWidthPx=128,imageHeightPx=128,
+        imageSHA256=side['sck_frame']['sha256'],scale=1,backingScaleFactor=1,
+        fullDisplayWitness=dict(displayID=1,displayBoundsPoints=[0,0,128,128],contentRectPoints=[0,0,128,128],
+            imageWidthPx=128,imageHeightPx=128,pointPixelScale=1,backingScaleFactor=1,includeMenuBar=True,sourceRectAbsent=True))
+    manifest=dict(version=1,producer='rev28ctl frame-support',projectRoot=str(f.root),output=record['frame'],surface=surface,
+        pairFrameId=record['frame_id'],sckFrameId=side['sck_frame']['sha256'],sessionId=f.session,pid=record['pid'],
+        windowId=record['window_id'],displayId=1,layoutKey=record['layout_key'],captureKind='fullDisplayFrame',includeMenuBar=True,
+        sourceRectAbsent=True,imageWidthPx=128,imageHeightPx=128,pointPixelScale=1,backingScaleFactor=1,
+        contentRect=[0,0,128,128],displayBounds=[0,0,128,128],surfaceBoundsPx=side['interactive_intersection_px'],
+        anchorTexts=['anchor-left','anchor-right','anchor-low'],maximumAnchorResidualPx=0,uncertaintyPx=side['uncertainty_px'],
+        safeMarginPx=side['safe_margin_px'],interactiveIntersectionPx=side['interactive_intersection_px'],
+        geometryEvidence=geometry_ref,sckFrame=side['sck_frame'],ocr=side['ocr'],support=side_ref,captureRecord=capture_record,
+        captureTiming=timing)
+    manifest_ref=f.ref('native-shaped-manifest-'+uuid.uuid4().hex+'.json',json_bytes(manifest))
+    record['mapping']['evidence']=f.ref('native-shaped-grounding-'+uuid.uuid4().hex+'.json',json_bytes(dict(version=1,
+        geometry=geometry_ref,manifest=manifest_ref,classifier=classifier_ref)))
+    return record,ax_ref
+
+def rebind_project_native_support(f,record):
+    envelope=json.loads((f.root/record['mapping']['evidence']['path']).read_bytes())
+    geometry=json.loads((f.root/envelope['geometry']['path']).read_bytes())
+    manifest=json.loads((f.root/envelope['manifest']['path']).read_bytes())
+    support_ref=record['mapping']['sck_support'];support=json.loads((f.root/support_ref['path']).read_bytes())
+    geometry['surface_bounds_px']=support['interactive_intersection_px']
+    geometry_ref=f.ref('native-shaped-geometry-rebound-'+uuid.uuid4().hex+'.json',json_bytes(geometry))
+    manifest['geometryEvidence']=geometry_ref;manifest['support']=support_ref;manifest['ocr']=support['ocr']
+    manifest['surfaceBoundsPx']=support['interactive_intersection_px']
+    manifest_ref=f.ref('native-shaped-manifest-rebound-'+uuid.uuid4().hex+'.json',json_bytes(manifest))
+    envelope['geometry']=geometry_ref;envelope['manifest']=manifest_ref
+    record['mapping']['evidence']=f.ref('native-shaped-grounding-rebound-'+uuid.uuid4().hex+'.json',json_bytes(envelope))
 
 class AuthorityTests(unittest.TestCase):
     def setUp(self):self.f=Fixture()
@@ -195,9 +298,46 @@ class ProjectRuntimeBindingTests(unittest.TestCase):
     def setUp(self):self.f=Fixture()
     def tearDown(self):self.f.close()
     def root_boundary(self):
-        from types import SimpleNamespace
-        return patch.object(batch_cli,'Path',side_effect=lambda _:
-            SimpleNamespace(resolve=lambda:SimpleNamespace(parents=[None,None,Path(self.f.root)])))
+        return patch.object(batch_cli,'__file__',str(self.f.root/'src/line_backup_batch/cli.py'))
+    def run_project_cli(self,operation,grant_path,expected,data,expected_code=None):
+        payload=self.f.ref('cli-input-'+operation+'-'+uuid.uuid4().hex+'.json',json_bytes(
+            dict(expected_token=token(expected),data=data)))
+        env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',LINE_BACKUP_BATCH_TASK=str(TASK),
+            PYTHONPATH=os.pathsep.join([str(self.f.root/'src'),str(ROOT/'src'),*SCHEMA_PATHS]))
+        argv=[sys.executable,'-B','-m','line_backup_batch',operation,'--project-root',str(self.f.root),
+            '--authorization',grant_path,'--input',payload['path']]
+        completed=subprocess.run(argv,capture_output=True,text=True,env=env,timeout=30)
+        if expected_code is not None:
+            self.assertEqual(completed.returncode,4,completed.stdout)
+            error=json.loads(completed.stderr);self.assertEqual(error['code'],expected_code)
+            return error,argv
+        self.assertEqual(completed.returncode,0,completed.stderr)
+        result=json.loads(completed.stdout)
+        if 'receipt_token' in result:
+            result['receipt']=json.loads(__import__('base64').b64decode(result.pop('receipt_token'),validate=True))
+        return result,argv
+    def bind_pinned_decoder(self,grant,grant_ref,runtime_ref):
+        source=Path(self.f.binding['binary_path'])
+        raw=source.read_bytes();self.assertEqual(sha(raw),self.f.binding['binary_sha256'])
+        executable=self.f.root/grant['artifact_dir']/'image_decode'
+        shutil.copyfile(source,executable);executable.chmod(0o700)
+        decoder=dict(path=str(executable.relative_to(self.f.root)),bytes=len(raw),sha256=sha(raw))
+        runtime_path=self.f.root/runtime_ref['path'];runtime=json.loads(runtime_path.read_bytes())
+        runtime['runtime_files']=[dict(role=item['role'],**(decoder if item['role']=='decoder_binding' else
+            {key:item[key] for key in ('path','bytes','sha256')})) for item in runtime['runtime_files']]
+        runtime_raw=json_bytes(runtime);runtime_path.write_bytes(runtime_raw)
+        runtime_ref=dict(path=runtime_ref['path'],bytes=len(runtime_raw),sha256=sha(runtime_raw))
+        review_path=self.f.root/grant['external_review']['path'];review=json.loads(review_path.read_bytes())
+        review['runtime_binding_sha256']=runtime_ref['sha256'];review_raw=json_bytes(review);review_path.write_bytes(review_raw)
+        review_ref=dict(path=grant['external_review']['path'],bytes=len(review_raw),sha256=sha(review_raw))
+        readiness_path=self.f.root/grant['live_readiness']['path'];readiness=json.loads(readiness_path.read_bytes())
+        readiness['runtime_binding_sha256']=runtime_ref['sha256'];readiness_raw=json_bytes(readiness);readiness_path.write_bytes(readiness_raw)
+        readiness_ref=dict(path=grant['live_readiness']['path'],bytes=len(readiness_raw),sha256=sha(readiness_raw))
+        grant['decoder_binding']=decoder;grant['native_binary_sha256']=decoder['sha256']
+        grant['runtime_binding']=runtime_ref;grant['external_review']=review_ref;grant['live_readiness']=readiness_ref
+        grant_path=self.f.root/grant_ref['path'];grant_raw=json_bytes(grant);grant_path.write_bytes(grant_raw)
+        grant_ref=dict(path=grant_ref['path'],bytes=len(grant_raw),sha256=sha(grant_raw))
+        return grant_ref,runtime_ref,executable
     def project_service(self):
         grant,grant_ref,_=project_authority_fixture(self.f)
         store=Store(str(self.f.root),grant_ref['path']);store.fixture=False
@@ -335,6 +475,239 @@ class ProjectRuntimeBindingTests(unittest.TestCase):
             self.assertEqual(caught.exception.code,'PROJECT_WORKFLOW_HALTED')
         run=next(run for run in self.f.state()['runs'] if run['run_id']==action['run_id'])
         self.assertIsNone(run['dispatch_evidence'])
+    def test_project_receipt3_download_and_pinned_decode_finalize_positive(self):
+        self.f.cfg['max_albums_per_run']=1;self.f.save(self.f.state())
+        grant,grant_ref,runtime_ref=project_authority_fixture(self.f)
+        grant_ref,runtime_ref,decoder=self.bind_pinned_decoder(grant,grant_ref,runtime_ref)
+        grant_path=grant_ref['path'];store=Store(str(self.f.root),grant_path);store.fixture=False
+        service=Service(str(self.f.root),self.f.owner,grant['artifact_dir'],grant_path);service.store=store
+        target=identity(1,day=7);neighbor=identity(1,day=8)
+        self.assertEqual((grant['lifecycle_album_limit'],self.f.cfg['max_albums_per_run']),(1,1))
+        with nullcontext():
+            self.run_project_cli('gui_initialize',grant_path,store.snapshot()['receipt'],{'confirm_initialization':True})
+            checkpoint='PAIR-A-LIST_GROUNDING'
+            self.run_project_cli('gui_observe',grant_path,store.snapshot()['receipt'],dict(kind='paired',checkpoint=checkpoint,album='A'))
+            begun,_=self.run_project_cli('begin',grant_path,store.snapshot()['receipt'],{'mode':'backup_batch','limit':1})
+            self.assertEqual((store.snapshot()['state']['active_batch']['authorized_new_download_limit'],
+                store.snapshot()['state']['active_batch']['configured_new_download_limit']),(1,1))
+            self.run_project_cli('gui_observe',grant_path,store.snapshot()['receipt'],dict(kind='paired',checkpoint=checkpoint,album='A'))
+            third_observe,_=self.run_project_cli('gui_observe',grant_path,store.snapshot()['receipt'],
+                dict(kind='paired',checkpoint=checkpoint,album='A'),expected_code='PROJECT_CHECKPOINT_RECAPTURE_QUOTA')
+            self.assertEqual(third_observe['code'],'PROJECT_CHECKPOINT_RECAPTURE_QUOTA')
+            logical_counts=json.loads((self.f.root/grant['gui_ledger']).read_bytes())
+            self.assertEqual(logical_counts['paired_checkpoints'][checkpoint],2)
+            self.assertEqual(logical_counts['observation_counts']['paired'],2)
+            albums,_=project_native_shaped_observation(self.f,[target,neighbor],top=False,bottom=False)
+            admitted,_=self.run_project_cli('admit',grant_path,begun['receipt'],dict(record=albums,target=target,session=self.f.session))
+            fresh_list,_=project_native_shaped_observation(self.f,[target,neighbor],top=False,bottom=False)
+            prepared,_=self.run_project_cli('prepare',grant_path,admitted['receipt'],dict(observation=fresh_list))
+            run_id=prepared['result']['run_id']
+            card_result,_=self.run_project_cli('gui_reserve',grant_path,store.snapshot()['receipt'],
+                dict(kind='album_open',count=1,run_id=run_id,owner=self.f.owner,slots=['A.CARD']))
+            card=card_result['reservation']
+            self.run_project_cli('gui_consume',grant_path,store.snapshot()['receipt'],dict(reservation_id=card['id'],outcome='RETURNED'))
+            cal_result,_=self.run_project_cli('gui_reserve',grant_path,store.snapshot()['receipt'],dict(kind='menu_calibration',count=2,
+                run_id=run_id,owner=self.f.owner,slots=['A.CAL_OPEN','A.CAL_DISMISS']))
+            cal_res=cal_result['reservation']
+            self.run_project_cli('gui_consume',grant_path,store.snapshot()['receipt'],dict(reservation_id=cal_res['id'],outcome='RETURNED'))
+            detail,_=project_native_shaped_observation(self.f,[target],'ALBUM_DETAIL')
+            closure,_=project_native_shaped_observation(self.f,[target],'ALBUM_DETAIL')
+            support=detail['mapping']['sck_support'];support_data=json.loads((self.f.root/support['path']).read_bytes())
+            cal=dict(observed_at=detail['captured_at'],screenshot_width=128,screenshot_height=128,ellipsis=[115,15],
+                dot_spacing=5,save_all_point=[100,50],confidence='HIGH',evidence=support['sha256'])
+            applicability=service.publish('positive-applicability.json',dict(kind='LINE_MENU_APPLICABILITY',provider='SCREEN_CAPTURE_KIT',
+                line_version='LINE fixture',language='en',window_class='LINE_MAIN',layout_key=detail['layout_key'],
+                dimensions=[128,128],native_scale=2,menu_order=['Save All']))
+            closure_ref=service.publish('positive-closure.json',dict(kind='LINE_MENU_CLOSURE',frame_id=closure['frame_id'],
+                menu_closed=True,no_activation=True,detail_fingerprint=target))
+            claim=dict(version=2,kind='menu-calibration-no-io-pair',run_id=run_id,session_id=self.f.session,
+                detail=detail,menu_frame=detail,trigger=dict(frameId=detail['frame_id'],point=cal['ellipsis'],role='button',
+                    dot_spacing=cal['dot_spacing'],bounds_px=[112,12,6,6]),label='Save All',support=support,
+                guard=dict(verdict='PASS',provider='SCREEN_CAPTURE_KIT',pairFrameId=detail['frame_id'],
+                    popupFrameId=support_data['sck_frame']['sha256'],supportSha256=support['sha256'],actionPoint=cal['save_all_point']),
+                calibration=cal,closure_reference=closure_ref,applicability_reference=applicability,
+                reservation_id=cal_res['id'],reservation_ids=[cal_res['id']],reservation_state='CONSUMED',
+                opened_at=detail['captured_at'],closed_at=closure['captured_at'])
+            claim_ref=service.publish('positive-calibration2.json',claim)
+            menu=dict(label='Save All',frame_id=detail['frame_id'],layout_key=detail['layout_key'],evidence=claim_ref,
+                safe_bounds=[90,40,20,20],ellipsis_bounds=[112,12,6,6],
+                closure_trace=['OPEN_MENU','OBSERVE_SAVE_ALL','CLOSE_WITHOUT_COMMAND','DETAIL_MATCH'],
+                closure_reference=closure_ref,applicability_reference=applicability)
+            calibrated,_=self.run_project_cli('calibrate',grant_path,prepared['receipt'],dict(detail=detail,calibration=cal,menu=menu,closure=closure))
+            fresh_intent,_=project_native_shaped_observation(self.f,[target],'ALBUM_DETAIL')
+            intent,_=self.run_project_cli('intent',grant_path,calibrated['receipt'],dict(fresh=fresh_intent));action=intent['result']
+            self.assertEqual(action['status'],'ORIGINAL_INTENT_COMMITTED')
+            dispatch_result,_=self.run_project_cli('gui_reserve',grant_path,store.snapshot()['receipt'],dict(kind='dispatch_inputs',count=2,
+                run_id=run_id,owner=self.f.owner,slots=['A.ATOMIC_ELLIPSIS','A.SAVE_ALL']))
+            dispatch_res=dispatch_result['reservation']
+            self.run_project_cli('gui_consume',grant_path,store.snapshot()['receipt'],dict(reservation_id=dispatch_res['id'],outcome='RETURNED'))
+            chooser_result,_=self.run_project_cli('gui_reserve',grant_path,store.snapshot()['receipt'],dict(kind='chooser_inputs',count=4,
+                run_id=run_id,owner=self.f.owner,slots=['A.GO_TO_FOLDER','A.SET_PATH','A.PATH_RETURN','A.CHOOSER_CONFIRM']))
+            chooser_res=chooser_result['reservation']
+            destination=action['destination'];phases=('APPEARED','GO_TO_FOLDER','PATH_FILLED','DESTINATION_SELECTED','CONFIRM_ATTEMPTED')
+            original_context=dict(frame_id=fresh_intent['frame_id'],pid=fresh_intent['pid'],window_id=fresh_intent['window_id'],
+                layout_key=fresh_intent['layout_key'])
+            dispatch_claim=dict(run_id=run_id,action_id=action['action_id'],session_id=self.f.session,owner=self.f.owner,
+                destination=destination,original_frame_id=fresh_intent['frame_id'],original_context=original_context)
+            envelopes=[];previous=None
+            for phase in phases:
+                surface='ALBUM_DETAIL' if phase=='CONFIRM_ATTEMPTED' else 'FOLDER_CHOOSER'
+                focused=1 if phase in ('GO_TO_FOLDER','PATH_FILLED') else None
+                field=dict(index=1,role='text field',subrole='PathTextField',identifier='path-text',label='Go to Folder',
+                    value=destination if phase in ('PATH_FILLED','DESTINATION_SELECTED') else '',bounds_px=[10,20,100,15],parent_index=0,enabled=True)
+                button=dict(index=2,role='button',subrole='AXButton',identifier='confirm',label='Open',value=None,
+                    bounds_px=[90,45,20,10],parent_index=0,enabled=True)
+                leaf=dict(index=3,role='static text',subrole='AXStaticText',identifier='selected-folder',label=Path(destination).name,
+                    value=None,bounds_px=[10,30,100,20],parent_index=0,enabled=True)
+                obs,ax_ref=project_native_shaped_observation(self.f,[target],surface,
+                    focus='HIGH_EDITABLE' if phase in ('GO_TO_FOLDER','PATH_FILLED') else 'NONE',
+                    extra_elements=[field,button,leaf],focused_index=focused,
+                    window_identifier='folder-window',window_label='Go to Folder')
+                if phase=='DESTINATION_SELECTED':
+                    support_ref=obs['mapping']['sck_support'];support_value=json.loads((self.f.root/support_ref['path']).read_bytes())
+                    ocr_ref=support_value['ocr'];ocr_value=json.loads((self.f.root/ocr_ref['path']).read_bytes())
+                    ocr_value['cua'].append(dict(text=Path(destination).name,bounds=[12,32,24,10],confidence=0.95,candidate_count=1))
+                    ocr_value['sck'].append(dict(text=Path(destination).name,bounds=[12,32,24,10],confidence=0.95,candidate_count=1))
+                    support_value['ocr']=self.f.ref('positive-leaf-ocr-'+uuid.uuid4().hex+'.json',json_bytes(ocr_value))
+                    obs['mapping']['sck_support']=self.f.ref('positive-leaf-support-'+uuid.uuid4().hex+'.json',json_bytes(support_value))
+                    rebind_project_native_support(self.f,obs)
+                if phase=='APPEARED':control={'chooser_index':0,'chooser_identifier':'folder-window'}
+                elif phase=='GO_TO_FOLDER':control={'path_field_index':1,'path_field_role':'text field','path_field_subrole':'PathTextField',
+                    'path_field_identifier':'path-text','path_field_bounds_px':[10,20,100,15],'path_field_enabled':True,'focused':True}
+                elif phase=='PATH_FILLED':control={'path_field_index':1,'path_field_role':'text field','path_field_subrole':'PathTextField',
+                    'path_field_identifier':'path-text','path_field_bounds_px':[10,20,100,15],'path_field_enabled':True,
+                    'value':destination,'focused':True}
+                elif phase=='DESTINATION_SELECTED':control={'path_field_index':1,'path_field_identifier':'path-text',
+                    'path_field_role':'text field','path_field_subrole':'PathTextField','value':destination,'selected_leaf':Path(destination).name,
+                    'selected_leaf_index':3,'selected_leaf_identifier':'selected-folder','selected_leaf_bounds_px':[10,30,100,20],
+                    'selected_leaf_ocr':{'text':Path(destination).name,'bounds':[12,32,24,10]},'confirm_index':2,
+                    'confirm_role':'button','confirm_identifier':'confirm','confirm_bounds_px':[90,45,20,10],
+                    'confirm_enabled':True,'confirm_point':[100,50]}
+                else:control={'confirmation_frame_id':previous['frame']['frame_id'],'attempted':True,'invocation_count':1}
+                envelope=dict(version=1,phase=phase,frame=obs,ax_state=ax_ref,sck_support=obs['mapping']['sck_support'],
+                    dispatch=dispatch_claim,control=control)
+                envelopes.append(envelope);previous=envelope
+            event_start=dt.datetime.now(dt.timezone.utc)
+            times=[event_start for _ in range(12)]
+            # All chooser frames were captured before this fixed event checkpoint.
+            for envelope in envelopes:
+                captured=dt.datetime.fromisoformat(envelope['frame']['captured_at'].replace('Z','+00:00'))
+                self.assertLessEqual(captured,event_start)
+            destination_path=Path(destination);baseline_time=(times[9]-dt.timedelta(milliseconds=1)).isoformat().replace('+00:00','Z')
+            destination_stat=os.lstat(destination_path)
+            dest_identity=dict(device=destination_stat.st_dev,inode=destination_stat.st_ino,mode=destination_stat.st_mode,realpath=str(destination_path))
+            baseline=service.publish('positive-download-baseline.json',dict(version=1,run_id=run_id,execution_id=self.f.owner,
+                destination=destination,captured_at=baseline_time,destination_identity=dest_identity,inventory=[]))
+            image_path=destination_path/'fixture.png';image_raw=png(8,8,19);image_path.write_bytes(image_raw)
+            image_stat=os.lstat(image_path);observed_at=dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00','Z')
+            confirmation_at=times[9].isoformat().replace('+00:00','Z')
+            download=service.publish('positive-download-start.json',dict(version=1,source_kind='FILESYSTEM_DELTA',run_id=run_id,
+                action_id=action['action_id'],execution_id=self.f.owner,session_id=self.f.session,destination=destination,baseline=baseline,
+                confirmation_frame_id=envelopes[3]['frame']['frame_id'],confirmation_invoked_at=confirmation_at,observed_at=observed_at,
+                destination_identity=dest_identity,before_inventory=[],after_inventory=[dict(name=image_path.name,bytes=len(image_raw),
+                    mtime_ns=image_stat.st_mtime_ns,inode=image_stat.st_ino,sha256=sha(image_raw),recognized_image=True)],
+                sampling=dict(sample_count=2,interval_ms=1000,elapsed_ms=1000)))
+            observed_time=dt.datetime.fromisoformat(observed_at.replace('Z','+00:00'))
+            times[10]=observed_time;times[11]=observed_time
+            events=[dict(event=name,at=at.isoformat().replace('+00:00','Z')) for name,at in zip(DISPATCH_EVENT_ORDER_V3,times)]
+            phase_refs=[service.publish(f'positive-chooser-{i}.json',envelope) for i,envelope in enumerate(envelopes)]
+            chooser=dict(action_id=action['action_id'],session_id=self.f.session,destination=destination,full_path=destination,
+                leaf=Path(destination).name,confirmation_attempts=1,frame_id=envelopes[0]['frame']['frame_id'],
+                confirmation_frame_id=envelopes[3]['frame']['frame_id'],confirmation_attempted=True)
+            receipt_data=dict(version='cua-dispatch-receipt-3',run_id=run_id,action_id=action['action_id'],execution_id=self.f.owner,
+                session_id=self.f.session,pair_frame_id=fresh_intent['frame_id'],dispatch_policy='LOGICAL_AT_MOST_ONCE_DURABLE_PRE_INPUT_RESERVATION_NO_REPLAY',
+                calibration_reference=claim_ref,calibration_closure_reference=closure_ref,applicability_reference=applicability,
+                reservations=[dict(kind='dispatch_inputs',count=2,state='CONSUMED',reservation_id=dispatch_res['id']),
+                    dict(kind='chooser_inputs',count=4,state='CONSUMED',reservation_id=chooser_res['id'])],events=events,chooser=chooser,
+                chooser_phases=phase_refs,confirmation_frame=envelopes[3]['frame']['frame'],confirmation_point=[100,50],
+                download_evidence=download,save_all_click_count=1,cease_input=True)
+            receipt_ref=service.publish('positive-receipt3.json',receipt_data)
+            self.assertEqual(receipt_data['pair_frame_id'],fresh_intent['frame_id'])
+            self.assertEqual(events[4]['at'],events[5]['at'])
+            evidence=dict(run_id=run_id,action_id=action['action_id'],execution_id=self.f.owner,observed_at=observed_at,
+                save_all_click_count=1,save_all_invocation_attempted=True,failure_boundary='NONE',folder_chooser_appeared=True,
+                download_started=True,provenance='Synthetic isolated fixture only; no LINE input or native receipt')
+            missing,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=None),expected_code='RETAINED_RECEIPT_REQUIRED')
+            self.assertEqual(missing['code'],'RETAINED_RECEIPT_REQUIRED')
+            unconsumed,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=receipt_ref),expected_code='GUI_LEDGER_STATE')
+            self.assertEqual(unconsumed['code'],'GUI_LEDGER_STATE')
+            self.run_project_cli('gui_consume',grant_path,store.snapshot()['receipt'],
+                dict(reservation_id=chooser_res['id'],outcome='RETURNED'))
+            altered=copy.deepcopy(receipt_data);altered['support']=dict(path='fixture/forbidden.json',bytes=1,sha256='0'*64)
+            altered_ref=service.publish('negative-receipt3-altered-schema.json',altered)
+            altered_result,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=altered_ref),expected_code='INVALID_DISPATCH_RECEIPT')
+            self.assertEqual(altered_result['code'],'INVALID_DISPATCH_RECEIPT')
+            bad_reservation=copy.deepcopy(receipt_data);bad_reservation['reservations'][0]['reservation_id']='missing-reservation'
+            bad_reservation_ref=service.publish('negative-receipt3-missing-reservation.json',bad_reservation)
+            reservation_result,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=bad_reservation_ref),expected_code='GUI_LEDGER_STATE')
+            self.assertEqual(reservation_result['code'],'GUI_LEDGER_STATE')
+            bad_download_ref=copy.deepcopy(receipt_data);bad_download_ref['download_evidence']=baseline
+            bad_download_ref_path=service.publish('negative-receipt3-download-reference.json',bad_download_ref)
+            download_reference_result,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=bad_download_ref_path),expected_code='INVALID_DOWNLOAD_EVIDENCE')
+            self.assertEqual(download_reference_result['code'],'INVALID_DOWNLOAD_EVIDENCE')
+            bad_order=copy.deepcopy(receipt_data);bad_order['chooser_phases'][1],bad_order['chooser_phases'][2]=(
+                bad_order['chooser_phases'][2],bad_order['chooser_phases'][1])
+            bad_order_ref=service.publish('negative-receipt3-phase-order.json',bad_order)
+            phase_order,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=bad_order_ref),expected_code='CHOOSER_PHASE_ORDER')
+            self.assertEqual(phase_order['code'],'CHOOSER_PHASE_ORDER')
+            bad_event_order=copy.deepcopy(receipt_data)
+            bad_event_order['events'][4]['event'],bad_event_order['events'][5]['event']=(
+                bad_event_order['events'][5]['event'],bad_event_order['events'][4]['event'])
+            bad_event_ref=service.publish('negative-receipt3-event-order.json',bad_event_order)
+            event_order,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=bad_event_ref),expected_code='RECEIPT_EVENT_ORDER')
+            self.assertEqual(event_order['code'],'RECEIPT_EVENT_ORDER')
+            bad_future=copy.deepcopy(receipt_data);bad_future['events'][-1]['at']='2099-10-14T00:00:00Z'
+            bad_future_ref=service.publish('negative-receipt3-future-event.json',bad_future)
+            future,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=bad_future_ref),expected_code='RECEIPT_EVENT_TIME_ORDER')
+            self.assertEqual(future['code'],'RECEIPT_EVENT_TIME_ORDER')
+            bad_time=copy.deepcopy(receipt_data);bad_time['events'][0]['at']='not-a-time'
+            bad_time_ref=service.publish('negative-receipt3-invalid-event-time.json',bad_time)
+            invalid_time,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=bad_time_ref),expected_code='RECEIPT_EVENT_TIME')
+            self.assertEqual(invalid_time['code'],'RECEIPT_EVENT_TIME')
+            bad_stale=copy.deepcopy(receipt_data)
+            stale_envelope=copy.deepcopy(envelopes[0])
+            stale_envelope['frame']['captured_at']=(dt.datetime.fromisoformat(
+                stale_envelope['frame']['captured_at'].replace('Z','+00:00'))-dt.timedelta(seconds=10)).isoformat().replace('+00:00','Z')
+            bad_stale['chooser_phases'][0]=service.publish('negative-receipt3-stale-phase.json',stale_envelope)
+            bad_stale_ref=service.publish('negative-receipt3-stale-boundary.json',bad_stale)
+            stale,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=bad_stale_ref),expected_code='CHOOSER_PHASE_STALE')
+            self.assertEqual(stale['code'],'CHOOSER_PHASE_STALE')
+            bad_destination=copy.deepcopy(receipt_data);bad_destination['chooser']['destination']=destination+'/other'
+            bad_destination_ref=service.publish('negative-receipt3-destination.json',bad_destination)
+            destination_mismatch,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=bad_destination_ref),expected_code='CHOOSER_DISPATCH_BINDING')
+            self.assertEqual(destination_mismatch['code'],'CHOOSER_DISPATCH_BINDING')
+            original_path=destination_path.parent/'held-original.png'
+            os.replace(image_path,original_path);image_path.write_bytes(png(8,8,20))
+            replaced,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=receipt_ref),expected_code='DOWNLOAD_FILE_CHANGED')
+            self.assertEqual(replaced['code'],'DOWNLOAD_FILE_CHANGED')
+            image_path.unlink();os.replace(original_path,image_path)
+            committed,_=self.run_project_cli('dispatch',grant_path,intent['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=receipt_ref))
+            self.assertEqual(committed['result']['status'],'DOWNLOAD_STARTED')
+            replay,_=self.run_project_cli('dispatch',grant_path,committed['receipt'],dict(evidence=evidence,chooser=chooser,
+                download_started=True,receipt=receipt_ref),expected_code='DISPATCH_ALREADY_RECORDED')
+            self.assertEqual(replay['code'],'DISPATCH_ALREADY_RECORDED')
+            expected=committed['receipt']
+            finished,_=self.run_project_cli('finalize',grant_path,expected,dict(decoder=str(decoder),decoder_sha256=sha(decoder.read_bytes())))
+        self.assertEqual(finished['result']['status'],'VERIFIED')
+        final_snapshot=store.snapshot()
+        self.assertEqual(final_snapshot['receipt'],finished['receipt'])
+        self.assertEqual(final_snapshot['state']['runs'][-1]['phase'],'VERIFIED')
+        self.assertEqual(final_snapshot['state']['runs'][-1]['intent_state'],'TRIGGER_CONFIRMED')
+        self.assertEqual(final_snapshot['state']['runs'][-1]['verification']['inventory'][0]['sha256'],sha(image_raw))
+        self.assertEqual(len(final_snapshot['state']['verified_albums']),1)
 
 class GuiLedgerTests(unittest.TestCase):
     def setUp(self):self.f=Fixture()
@@ -425,12 +798,45 @@ class ProjectGuiLedgerTests(unittest.TestCase):
         second=Store(str(self.f.root));second._authorize_project_mutation=lambda *args:None
         cal=second.reserve_gui(self.grant,dict(kind='menu_calibration',count=2,run_id='RUN-A',owner=self.f.owner,
             slots=['A.CAL_OPEN','A.CAL_DISMISS']))['reservation']
-        ledger=json.loads((self.f.root/'harness-development/evidence/gui-ledger.json').read_bytes())
-        self.assertEqual([slot for item in ledger['entries'] for slot in item['slots']],['A.CARD','A.CAL_OPEN','A.CAL_DISMISS'])
         with self.assertRaisesRegex(AcceptanceError,'PROJECT_UNKNOWN_RESERVATION'):
             self.store.reserve_gui(self.grant,dict(kind='dispatch_inputs',count=2,run_id='RUN-A',owner=self.f.owner,
                 slots=['A.ATOMIC_ELLIPSIS','A.SAVE_ALL']))
+        second.consume_gui(self.grant,dict(reservation_id=cal['id'],outcome='UNKNOWN'))
+        reopened=Store(str(self.f.root));reopened._authorize_project_mutation=lambda *args:None
+        ledger=json.loads((self.f.root/'harness-development/evidence/gui-ledger.json').read_bytes())
+        self.assertEqual([slot for item in ledger['entries'] for slot in item['slots']],['A.CARD','A.CAL_OPEN','A.CAL_DISMISS'])
+        with self.assertRaisesRegex(AcceptanceError,'PROJECT_WORKFLOW_HALTED'):
+            reopened.reserve_gui(self.grant,dict(kind='dispatch_inputs',count=2,run_id='RUN-A',owner=self.f.owner,
+                slots=['A.ATOMIC_ELLIPSIS','A.SAVE_ALL']))
         self.assertEqual(len(ledger['entries']),2)
+    def test_paired_observation_checkpoint_cap_is_durable_and_stage_scoped(self):
+        checkpoint='PAIR-A-LIST_GROUNDING'
+        self.store.reserve_observation(self.grant,'paired',checkpoint=checkpoint,album='A')
+        ledger_path=self.f.root/'harness-development/evidence/gui-ledger.json'
+        ledger=json.loads(ledger_path.read_bytes())
+        # A new cap-1 run identity cannot reset this scope-wide logical-stage counter.
+        ledger.update(workflow_phase='A',lifecycle_count=1,
+            lifecycle_batch_ids=['BATCH-A-RESTARTED'],last_batch_id='BATCH-A-RESTARTED')
+        ledger_path.write_bytes(json_bytes(ledger))
+        reopened=Store(str(self.f.root));reopened._authorize_project_mutation=lambda *args:None
+        reopened.reserve_observation(self.grant,'paired',checkpoint=checkpoint,album='A')
+        third=Store(str(self.f.root));third._authorize_project_mutation=lambda *args:None
+        with self.assertRaisesRegex(AcceptanceError,'PROJECT_CHECKPOINT_RECAPTURE_QUOTA'):
+            third.reserve_observation(self.grant,'paired',checkpoint=checkpoint,album='A')
+        reopened.reserve_observation(self.grant,'paired',checkpoint='PAIR-A-PREPARED_LIST',album='A')
+        with self.assertRaisesRegex(AcceptanceError,'PROJECT_CHECKPOINT_REQUIRED'):
+            reopened.reserve_observation(self.grant,'paired',checkpoint='PAIR-A-LIST_GROUNDING-3',album='A')
+        with self.assertRaisesRegex(AcceptanceError,'PROJECT_CHECKPOINT_SCOPE'):
+            reopened.reserve_observation(self.grant,'paired',checkpoint=checkpoint,album='B')
+        counts=json.loads((self.f.root/'harness-development/evidence/gui-ledger.json').read_bytes())['observation_counts']
+        self.assertEqual(counts['paired'],3)
+        self.assertEqual(counts['paired'],sum(json.loads((self.f.root/'harness-development/evidence/gui-ledger.json')
+            .read_bytes())['paired_checkpoints'].values()))
+        ledger=json.loads((self.f.root/'harness-development/evidence/gui-ledger.json').read_bytes())
+        ledger['paired_checkpoints']={'PAIR-A-1':1,'PAIR-A-2':2}
+        ledger_path.write_bytes(json_bytes(ledger))
+        with self.assertRaisesRegex(AcceptanceError,'PROJECT_PAIRED_CHECKPOINT_QUOTA'):
+            reopened.reserve_observation(self.grant,'paired',checkpoint=checkpoint,album='A')
     def test_initialization_tombstone_prevents_reinitialize_and_missing_ledger_stops(self):
         ledger_path=self.f.root/'harness-development/evidence/gui-ledger.json'
         ledger_path.unlink()

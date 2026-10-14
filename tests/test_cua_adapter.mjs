@@ -57,7 +57,7 @@ function fixture(options={}) {
       window_lineage:surface==='ALBUM_DETAIL'?options.windowLineage?.(o):null,layout_key:'fixture-layout',captured_at:o.capturedAt};},
     bridge:async (operation,payload)=>{
       calls.push(['bridge',operation]);
-      if(operation==='gui_observe')return {status:'PROJECT_OBSERVATION_RESERVED'};
+      if(operation==='gui_observe'){calls.push(['observation-checkpoint',payload.data.checkpoint]);return {status:'PROJECT_OBSERVATION_RESERVED'};}
       if(operation==='gui_reserve'){
         if(options.ledgerExhausted)return {reservation:null};
         ledger.push({op:operation,data:payload.data});
@@ -137,6 +137,16 @@ test('navigation observer uses the same copied-byte and request-time boundary',a
   assert.deepEqual([...classified.capture.screenshot],[2,4,6]);
   assert.equal(classified.monotonicInterval.start_ms,1);
   assert.equal(classified.monotonicInterval.end_ms,1);
+});
+
+test('project observation retry keeps the same explicit logical checkpoint',async()=>{
+  const f=fixture({requireV3:true});
+  await f.session.observe('PAIR-A-LIST_GROUNDING');
+  await f.session.observe('PAIR-A-LIST_GROUNDING');
+  await f.session.observe('PAIR-A-PREPARED_LIST');
+  const checkpoints=f.calls.filter(entry=>Array.isArray(entry)&&entry[0]==='observation-checkpoint')
+    .map(entry=>entry[1]);
+  assert.deepEqual(checkpoints,['PAIR-A-LIST_GROUNDING','PAIR-A-LIST_GROUNDING','PAIR-A-PREPARED_LIST']);
 });
 
 test('original pair contains only two clicks and timer; one-shot cannot replay',async()=>{
@@ -242,7 +252,7 @@ test('project album open accepts recorded related detail-window lineage',async()
     detailCards:[{fingerprint:fp}],
     onClassify:(value,currentSurface)=>{if(currentSurface==='ALBUMS')listFrameId=value.frameId;},
     windowLineage:()=>({from_window_id:1,to_window_id:2,relationship:'ALBUM_CARD_OPEN_DETAIL',list_frame_id:listFrameId})});
-  const list=await f.session.observe();listFrameId=list.frame_id;
+  const list=await f.session.observe('PAIR-A-LIST_GROUNDING');listFrameId=list.frame_id;
   const detail=await f.session.openAlbum({run_id:'run-a',fingerprint:fp,frame_id:list.frame_id,click:[20,30],project_album_slot:'A'});
   assert.equal(detail.surface,'ALBUM_DETAIL');assert.equal(detail.window_id,2);
   assert.equal(detail.window_lineage.list_frame_id,list.frame_id);
@@ -251,7 +261,7 @@ test('project album open accepts recorded related detail-window lineage',async()
 test('wrong fresh detail identity stops after the reserved card click before calibration',async()=>{
   const f=fixture({initialSurface:'ALBUMS',requireV3:true,
     detailCards:[{fingerprint:{start_date:'2024-02-01',end_date:'2024-02-01',expected_images:3}}]});
-  const list=await f.session.observe();
+  const list=await f.session.observe('PAIR-A-LIST_GROUNDING');
   await assert.rejects(f.session.openAlbum({run_id:'run-a',fingerprint:{start_date:'2024-01-01',end_date:'2024-01-01',expected_images:2},
     frame_id:list.frame_id,click:[20,30],project_album_slot:'A'}),/PROJECT_DETAIL_IDENTITY_MISMATCH/);
   assert.equal(f.ledger.filter(entry=>entry.op==='gui_reserve').length,1);
@@ -262,7 +272,7 @@ test('wrong fresh detail identity stops after the reserved card click before cal
 test('slow menu locator burns calibration slots without clicking a stale detail frame',async()=>{
   const fp={start_date:'2024-01-01',end_date:'2024-01-01',expected_images:2};
   const f=fixture({initialSurface:'ALBUMS',requireV3:true,detailCards:[{fingerprint:fp}]});
-  const list=await f.session.observe();
+  const list=await f.session.observe('PAIR-A-LIST_GROUNDING');
   const detail=await f.session.openAlbum({run_id:'run-a',fingerprint:fp,frame_id:list.frame_id,click:[20,30],project_album_slot:'A'});
   const clicksBefore=f.calls.filter(entry=>Array.isArray(entry)&&entry[0]==='click').length;
   await assert.rejects(f.session.calibrateMenu({detail,runId:'run-a',locateMenu:async observation=>{
@@ -278,7 +288,7 @@ async function twoAlbumEntryProbe(preDiscoveryBudget){
   const calls=[],targets=Array.from({length:8},(_,index)=>({start_date:`2024-${String(index+1).padStart(2,'0')}-01`,
     end_date:`2024-${String(index+1).padStart(2,'0')}-01`,expected_images:index+2}));
   let appSurface='ALBUMS',selected=targets[0],lifecycle=0,scrollCount=0,captureNo=0,downloadStarted=false;
-  const retainedArtifacts=[],scrollSlots=[],inspectionCandidates=[];
+  const retainedArtifacts=[],scrollSlots=[],inspectionCandidates=[],observationCheckpoints=[];
   const token=()=>`token-${calls.length}`;
   const ref=(kind,value)=>{const raw=Buffer.from(JSON.stringify(value));return {path:`harness-development/private/${kind}-${calls.length}.json`,
     bytes:raw.length,sha256:digest(raw)};};
@@ -341,11 +351,13 @@ async function twoAlbumEntryProbe(preDiscoveryBudget){
     if(operation==='release')return {receipt_token:token(),result:{status:'BATCH_RELEASED'}};
     if(operation==='stop')return {receipt_token:token(),result:{status:'STOPPED'}};
     if(operation==='gui_phase')return {status:'PROJECT_WORKFLOW_PHASE'};
-    if(operation==='gui_observe')return {status:'PROJECT_OBSERVATION_RESERVED'};
+    if(operation==='gui_observe'){if(data.kind==='paired')observationCheckpoints.push(data.checkpoint);
+      return {status:'PROJECT_OBSERVATION_RESERVED'};}
     return {receipt_token:token(),status:'MOCKED'};
   };
   cli.bridge=async(operation,request={})=>{
     calls.push(operation);
+    if(operation==='gui_observe')observationCheckpoints.push(request.data.checkpoint);
     if(operation==='gui_reserve'){
       if(request.data.kind==='scroll')scrollSlots.push(...request.data.slots);
       return {reservation:{id:`r-${calls.length}`,kind:request.data.kind,count:request.data.count}};}
@@ -411,6 +423,11 @@ async function twoAlbumEntryProbe(preDiscoveryBudget){
   assert.equal(selected.start_date,targets[preDiscoveryBudget===0?3:preDiscoveryBudget+4].start_date);
   assert.equal(calls.filter(call=>typeof call==='string'&&call.startsWith('wait:1200')).length,4);
   assert.deepEqual(scrollSlots,targets.slice(0,preDiscoveryBudget+1).map((_,i)=>`SCROLL_${i+1}`));
+  assert.ok(observationCheckpoints.includes('PAIR-A-LIST_GROUNDING'));
+  assert.ok(observationCheckpoints.includes('PAIR-A-PRE_INTENT_DETAIL'));
+  assert.ok(observationCheckpoints.includes('PAIR-C1-RETURN_LIST'));
+  assert.ok(observationCheckpoints.includes('PAIR-B-CHOOSER_CONFIRM_ATTEMPTED'));
+  assert.ok(observationCheckpoints.every(checkpoint=>checkpoint.startsWith('PAIR-')));
   if(preDiscoveryBudget===0)assert.equal(inspectionCandidates.at(-1)[0].start_date,targets[2].start_date);
   return result;
 }

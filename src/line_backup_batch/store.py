@@ -26,6 +26,14 @@ PROJECT_SLOTS={
     'RETURN_A_TO_LIST':'RETURN_A_TO_LIST','SCROLL_1':'SCROLL','SCROLL_2':'SCROLL','SCROLL_3':'SCROLL','SCROLL_4':'SCROLL'}
 PROJECT_SLOT_COUNTS={'CARD':1,'CAL_OPEN':1,'CAL_DISMISS':1,'ATOMIC_ELLIPSIS':1,'SAVE_ALL':1,
     'GO_TO_FOLDER':1,'SET_PATH':1,'PATH_RETURN':1,'CHOOSER_CONFIRM':1,'RETURN_A_TO_LIST':1,'SCROLL':1}
+_PROJECT_OBSERVATION_STAGES=('LIST_GROUNDING','PREPARED_LIST','DETAIL_OPEN','MENU_OPEN','MENU_CLOSURE',
+    'PRE_INTENT_DETAIL','CHOOSER_APPEARED','CHOOSER_GO_TO_FOLDER','CHOOSER_PATH_FILLED',
+    'CHOOSER_DESTINATION_SELECTED','CHOOSER_CONFIRM_ATTEMPTED')
+PROJECT_PAIRED_CHECKPOINTS={f'PAIR-{album}-{stage}' for album in ('A','B') for stage in _PROJECT_OBSERVATION_STAGES}
+PROJECT_PAIRED_CHECKPOINTS.update({'PAIR-C1-DETAIL','PAIR-C1-RETURN_LIST'})
+PROJECT_PAIRED_CHECKPOINTS.update(f'PAIR-A-DISCOVERY_SCROLL_{slot}_{edge}'
+    for slot in (1,2,3) for edge in ('BEFORE','AFTER'))
+PROJECT_PAIRED_CHECKPOINTS.update(f'PAIR-C1-SCROLL_{slot}_AFTER' for slot in (1,2,3,4))
 PACKAGE_NAMES=['__init__.py','__main__.py','cli.py','content.py','coordinator.py','image_decode.swift',
                'observations.py','schema.py','service.py','state_v3.schema.json','store.py']
 SOURCE_PATHS=[f'src/line_backup_acceptance/{n}' for n in
@@ -524,7 +532,8 @@ class Store:
             'PROJECT_OBSERVATION_QUOTA')
         checkpoints=ledger['paired_checkpoints']
         require(isinstance(checkpoints,dict) and all(isinstance(k,str) and k and type(v) is int and 0<=v<=2
-            for k,v in checkpoints.items()) and sum(checkpoints.values())==counters['paired'],
+            for k,v in checkpoints.items()) and all(k in PROJECT_PAIRED_CHECKPOINTS for k in checkpoints)
+            and sum(checkpoints.values())==counters['paired'],
             'PROJECT_PAIRED_CHECKPOINT_QUOTA')
         require(ledger['workflow_phase'] in ('A','C1','B','DONE','FAILED') and type(ledger['failure_latched']) is bool
             and type(ledger['c1_verified']) is bool and type(ledger['lifecycle_count']) is int
@@ -784,7 +793,12 @@ class Store:
             check_lock();path,ledger,cap=self._ledger_open(r,grant);counts=ledger['observation_counts']
             if kind=='app':require(counts['app']<3,'PROJECT_APP_ACQUISITION_QUOTA');counts['app']+=1
             elif kind=='paired':
-                require(isinstance(checkpoint,str) and checkpoint and len(checkpoint)<=120,'PROJECT_CHECKPOINT_REQUIRED')
+                require(isinstance(checkpoint,str) and checkpoint in PROJECT_PAIRED_CHECKPOINTS,
+                    'PROJECT_CHECKPOINT_REQUIRED')
+                expected_album='B' if checkpoint.startswith('PAIR-B-') else 'A'
+                require(album==expected_album,'PROJECT_CHECKPOINT_SCOPE')
+                phase='B' if checkpoint.startswith('PAIR-B-') else 'C1' if checkpoint.startswith('PAIR-C1-') else 'A'
+                require(ledger['workflow_phase']==phase,'PROJECT_CHECKPOINT_PHASE')
                 require(counts['paired']<80,'PROJECT_PAIRED_OBSERVATION_QUOTA')
                 current=ledger['paired_checkpoints'].get(checkpoint,0)
                 require(current<2,'PROJECT_CHECKPOINT_RECAPTURE_QUOTA')

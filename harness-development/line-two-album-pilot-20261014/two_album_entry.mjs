@@ -93,7 +93,8 @@ export async function runTwoAlbumPilot(runtime) {
     activeLifecycle.begun=true;
     const session=makeSession(ordinal===1?'A':'B');
     activeSession=session;
-    let list=await session.observe();
+    const albumSlot=ordinal===1?'A':'B';
+    let list=await session.observe(`PAIR-${albumSlot}-LIST_GROUNDING`);
     requireFact(list.surface==='ALBUMS'&&list.group_key&&hasRecord(list),'ALBUM_LIST_UNGROUNDED');
     let record=stripAdapterEvidence(list.batch_record??list.record);
     let full=list.cards.filter(card=>card?.fully_visible===true).map(card=>card.fingerprint);
@@ -123,7 +124,7 @@ export async function runTwoAlbumPilot(runtime) {
       if(admitted||totalScrolls>=maxDiscovery||totalScrolls>=3)break;
       const nav=discovery;requireFact(nav,'A_DISCOVERY_OBSERVER_REQUIRED');
       try {
-        const freshList=await nav.observe();
+        const freshList=await nav.observe(`PAIR-A-DISCOVERY_SCROLL_${totalScrolls+1}_BEFORE`);
         requireFact(freshList.surface==='ALBUMS'&&freshList.session_id===list.session_id
           &&freshList.group_key===list.group_key&&freshList.pid===list.pid&&freshList.window_id===list.window_id
           &&freshList.layout_key===list.layout_key,'A_DISCOVERY_LIST_IDENTITY');
@@ -141,7 +142,7 @@ export async function runTwoAlbumPilot(runtime) {
     requireFact(admitted,'NO_ELIGIBLE_TARGET');
     if(discovered.length)await runtime.privateEvidence.retainDiscovery({kind:'A_PRE_DISCOVERY',owner,
       scrolls:discovered,selected:admitted.result?.fingerprint??null});
-    const freshList=await session.observe();
+    const freshList=await session.observe(`PAIR-${albumSlot}-PREPARED_LIST`);
     requireFact(freshList.surface==='ALBUMS'&&freshList.session_id===list.session_id
       &&freshList.group_key===list.group_key&&freshList.pid===list.pid&&freshList.window_id===list.window_id
       &&freshList.layout_key===list.layout_key&&freshList.cards.filter(card=>card?.fully_visible===true)
@@ -159,7 +160,7 @@ export async function runTwoAlbumPilot(runtime) {
     const calibrationResponse=await cli('calibrate',{detail:stripAdapterEvidence(calibrated.detail),calibration:calibrated.calibration,
       menu:calibrated.menu,closure:stripAdapterEvidence(calibrated.closure)});
     requireFact(calibrationResponse?.result?.status==='CALIBRATED','MENU_CALIBRATION_REFUSED');
-    const fresh=await session.observe();
+    const fresh=await session.observe(`PAIR-${albumSlot}-PRE_INTENT_DETAIL`);
     requireFact(fresh.surface==='ALBUM_DETAIL'&&fresh.session_id===detail.session_id
       &&fresh.group_key===detail.group_key&&fresh.pid===detail.pid,'FRESH_DETAIL_REQUIRED');
     activeLifecycle.intentStarted=true;
@@ -189,7 +190,7 @@ export async function runTwoAlbumPilot(runtime) {
   activeNavigation=navigation;
   let afterScroll;
   try {
-    const detail=await navigation.observe();
+    const detail=await navigation.observe('PAIR-C1-DETAIL');
     requireFact(detail.surface==='ALBUM_DETAIL','C1_DETAIL_REQUIRED');
     const albums=await navigation.returnToAlbums(detail,runtime.navigation.locateBack,a.list);
     const scrollTarget=await runtime.navigation.scrollTarget(albums);

@@ -212,12 +212,13 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
     && ['locatePathField','validatePath','validateLeaf','locateConfirm','refreshBaseline','observeDownload']
       .every(k=>typeof chooser[k]==='function'),
     'V2_CHOOSER_DEPENDENCIES_REQUIRED');
-  let latest = null, stopped = false, confirming = new Set(), activeProjectSlot=projectAlbumSlot, pairedCaptureOrdinal=0;
+  let latest = null, stopped = false, confirming = new Set(), activeProjectSlot=projectAlbumSlot;
   const permits = new WeakMap(), choosers = new WeakMap(), trace = [];
   const record = (event, extra={}) => trace.push(Object.freeze({event, at:clock(), wallAt:new Date().toISOString(), ...extra}));
   async function countObservation(kind,extra={}) {
     if(!requireV3)return;
-    const checkpoint=kind==='paired'?`PAIR-${activeProjectSlot??'A'}-${++pairedCaptureOrdinal}`:trace.at(-1)?.event??'INITIAL_CAPTURE';
+    const checkpoint=kind==='paired'?extra.checkpoint:trace.at(-1)?.event??'INITIAL_CAPTURE';
+    if(kind==='paired')requireFact(typeof checkpoint==='string'&&checkpoint.length>0,'PROJECT_CHECKPOINT_REQUIRED');
     const response=await bridge('gui_observe',{data:{kind,album:activeProjectSlot??'A',checkpoint,...extra}});
     requireFact(response?.status==='PROJECT_OBSERVATION_RESERVED','PROJECT_OBSERVATION_RESERVATION');
   }
@@ -242,9 +243,9 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
     requireFact(response?.reservation?.id === reservation.id && response.reservation.state === 'CONSUMED',
       'GUI_LEDGER_CONSUME_REFUSED');
   }
-  async function observe() {
+  async function observe(checkpoint) {
     requireFact(!stopped,'SESSION_STOPPED');
-    await countObservation('paired');
+    await countObservation('paired',{checkpoint});
     // Native context sampling happens outside the GUI capture call. The callback
     // receives no app handle, so it cannot interleave input into a GUI action.
     const beforeContext = hasCaptureContextHooks ? await beforeCapture({sessionId}) : null;
@@ -307,7 +308,7 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
     catch(e) {stopped=true;throw e;}
     await consumeGui(reservation,'RETURNED');
     try {
-      const observedAfter=await observe();
+      const observedAfter=await observe(`PAIR-${activeProjectSlot}-DETAIL_OPEN`);
       const lineage=observedAfter.window_id===before.window_id?null:await resolveWindowLineage({kind:'ALBUM_CARD_OPEN_DETAIL',
         before,after:observedAfter,prepared});
       const after=lineage?{...observedAfter,window_lineage:lineage}:observedAfter;
@@ -352,7 +353,7 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
         &&Number.isFinite(trigger.dot_spacing)&&trigger.dot_spacing>0,'MENU_TRIGGER_UNKNOWN');
       latest=null;record('MENU_OPEN_INVOCATION',{runId});await app.click(trigger.point);await extraAX();
       record('MENU_OPEN_RETURNED');await wait(menuWaitMs);
-      const openFrame=await observe();
+      const openFrame=await observe(`PAIR-${activeProjectSlot}-MENU_OPEN`);
       requireFact(openFrame.surface==='ALBUM_DETAIL'&&openFrame.session_id===sessionId,'MENU_OPEN_CONTEXT_DRIFT');
       const row=await locateMenu(openFrame,{phase:'ROW'});
       requireFact(point(row?.save_all)&&row.save_all.every(Number.isInteger)
@@ -371,7 +372,7 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
       requireFact(clock()>=detailStarted&&clock()-detailStarted<=5000,'FRESH_CAPTURE_EXPIRED_BEFORE_CLOSE');
       fresh(openFrame.frame_id);
       latest=null;record('MENU_CLOSE_INVOCATION');await app.pressKey('Escape');await extraAX();
-      record('MENU_CLOSE_RETURNED');const closure=await observe();
+      record('MENU_CLOSE_RETURNED');const closure=await observe(`PAIR-${activeProjectSlot}-MENU_CLOSURE`);
       requireFact(closure.surface==='ALBUM_DETAIL'&&closure.session_id===sessionId&&closure.group_key===detail.group_key
         &&closure.pid===detail.pid&&closure.window_id===detail.window_id&&closure.layout_key===detail.layout_key
         &&closure.cards.length===1&&detail.cards.length===1
@@ -495,7 +496,7 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
     }
     // No observe, persistence, bridge call, keyboard or app switch between the two clicks.
     await extraAX();
-    const chooserObservation=await observe();
+    const chooserObservation=await observe(`PAIR-${activeProjectSlot}-CHOOSER_APPEARED`);
     requireFact(chooserObservation.surface==='FOLDER_CHOOSER','CHOOSER_NOT_CONFIRMED');
     const dispatchInfo=Object.freeze({run_id:action.run_id,action_id:action.action_id,session_id:sessionId,
       owner:action.owner,destination:action.destination,original_frame_id:permit.frameId,
@@ -527,12 +528,12 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
     // One Go-to-Folder navigation, then a newly observed actual text field.
     const reservation = await reserveGui('chooser_inputs',4,action.run_id);
     latest=null;await app.pressKey('super+shift+g');await extraAX();
-    const dialog=await observe();const field=await locatePathField(dialog);
+    const dialog=await observe(`PAIR-${activeProjectSlot}-CHOOSER_GO_TO_FOLDER`);const field=await locatePathField(dialog);
     requireFact(Number.isInteger(field?.index) && field.index>=0 && field.frameId===dialog.frame_id && field.role==='text field','PATH_FIELD_UNKNOWN');
     fresh(dialog.frame_id);latest=null;await app.setValue(field.index,action.destination);await extraAX();
-    const filled=await observe();requireFact(await validatePath(filled,action.destination),'FULL_PATH_NOT_CONFIRMED');
+    const filled=await observe(`PAIR-${activeProjectSlot}-CHOOSER_PATH_FILLED`);requireFact(await validatePath(filled,action.destination),'FULL_PATH_NOT_CONFIRMED');
     fresh(filled.frame_id);latest=null;await app.pressKey('Return');await extraAX();
-    const leaf=await observe();requireFact(await validateLeaf(leaf,action.destination),'DESTINATION_LEAF_MISMATCH');
+    const leaf=await observe(`PAIR-${activeProjectSlot}-CHOOSER_DESTINATION_SELECTED`);requireFact(await validateLeaf(leaf,action.destination),'DESTINATION_LEAF_MISMATCH');
     const confirmation=await locateConfirm(leaf);
     requireFact(point(confirmation?.point) && confirmation.frameId===leaf.frame_id && confirmation.role==='button','CONFIRM_CONTROL_UNKNOWN');fresh(leaf.frame_id);
     confirming.add(action.action_id);latest=null;record('CONFIRM_INVOCATION',{actionId:action.action_id});
@@ -540,7 +541,7 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
     try {await app.click(confirmation.point);await extraAX();}
     catch(e) {stopped=true;record('CONFIRM_UNCERTAIN');throw e;}
     await consumeGui(reservation,'RETURNED');
-    const afterConfirm=await observe();
+    const afterConfirm=await observe(`PAIR-${activeProjectSlot}-CHOOSER_CONFIRM_ATTEMPTED`);
     if (afterConfirm.download_started!==true) {stopped=true;record('DOWNLOAD_START_UNKNOWN');throw new Error('DOWNLOAD_START_UNKNOWN');}
     // Stop LINE input before the receipt is sealed: the retained receipt must
     // carry the full dispatch event order and nothing may touch LINE after it.
@@ -589,7 +590,7 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
     const phases=[dispatch.appeared];let prior=dispatch.appeared;
     try {
       latest=null;await app.pressKey('super+shift+g');await extraAX();
-      const goObservation=await observe();
+      const goObservation=await observe(`PAIR-${activeProjectSlot}-CHOOSER_GO_TO_FOLDER`);
       const go=await makeChooserPhase('GO_TO_FOLDER',dispatchInfo,prior);phases.push(go);prior=go;
       record('GO_TO_FOLDER',{frameId:goObservation.frame_id});
       const field=await locatePathField(go.envelope);
@@ -597,13 +598,13 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
         && field.role==='text field' && field.subrole==='PathTextField','PATH_FIELD_UNKNOWN');
 
       fresh(goObservation.frame_id);latest=null;await app.setValue(field.index,action.destination);await extraAX();
-      const filledObservation=await observe();
+      const filledObservation=await observe(`PAIR-${activeProjectSlot}-CHOOSER_PATH_FILLED`);
       const filled=await makeChooserPhase('PATH_FILLED',dispatchInfo,prior);phases.push(filled);prior=filled;
       record('PATH_FILLED',{frameId:filledObservation.frame_id});
       requireFact(await validatePath(filled.envelope,action.destination),'FULL_PATH_NOT_CONFIRMED');
 
       fresh(filledObservation.frame_id);latest=null;await app.pressKey('Return');await extraAX();
-      const selectedObservation=await observe();
+      const selectedObservation=await observe(`PAIR-${activeProjectSlot}-CHOOSER_DESTINATION_SELECTED`);
       const selected=await makeChooserPhase('DESTINATION_SELECTED',dispatchInfo,prior);phases.push(selected);prior=selected;
       record('DESTINATION_SELECTED',{frameId:selectedObservation.frame_id});
       requireFact(await validateLeaf(selected.envelope,action.destination),'DESTINATION_LEAF_MISMATCH');
@@ -621,7 +622,7 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
       try {await app.click(confirmation.point);await extraAX();}
       catch(error) {stopped=true;record('CONFIRM_UNCERTAIN');throw error;}
       await consumeGui(reservation,'RETURNED');
-      const afterConfirm=await observe();
+      const afterConfirm=await observe(`PAIR-${activeProjectSlot}-CHOOSER_CONFIRM_ATTEMPTED`);
       const attempted=await makeChooserPhase('CONFIRM_ATTEMPTED',dispatchInfo,prior);phases.push(attempted);
       record('CONFIRM_ATTEMPTED',{frameId:afterConfirm.frame_id});
       stopped=true;latest=null;
@@ -692,7 +693,8 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
   async function boundedScroll(observation,target,direction,distance,slot) {
     fresh(observation.frame_id);requireFact(observation.surface==='ALBUMS','SCROLL_SURFACE_UNKNOWN');
     requireFact(point(target) && ['up','down'].includes(direction) && Number.isFinite(distance) && distance>0 && distance<=0.25,'SCROLL_POLICY');
-    if(requireV3)requireFact(['SCROLL_1','SCROLL_2','SCROLL_3','SCROLL_4'].includes(slot),'PROJECT_SCROLL_SLOT');
+    if(requireV3)requireFact(activeProjectSlot==='A'&&['SCROLL_1','SCROLL_2','SCROLL_3'].includes(slot),
+      'PROJECT_SESSION_SCROLL_UNSUPPORTED');
     const originAt=latest.at;
     const reservation = await reserveGui('scroll',1,null,requireV3?[slot]:null);
     requireFact(clock()>=originAt&&clock()-originAt<=5000,'FRESH_CAPTURE_EXPIRED_AFTER_RESERVATION');
@@ -701,7 +703,7 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
     catch(e) {stopped=true;throw e;}
     await consumeGui(reservation,'RETURNED');
     try {
-      const after=await observe();
+      const after=await observe(`PAIR-A-DISCOVERY_${slot}_AFTER`);
       const progress=verifyAlbumScroll(observation,after);
       record('SCROLL_VERIFIED_NEW_CARD',progress);
       return after;
@@ -728,11 +730,12 @@ export function createNavigationObserver({app,bridge,retain,classify,requireV3=f
   requireFact(!hasCaptureContextHooks||(typeof beforeCapture==='function'&&typeof afterCapture==='function'),
     'CAPTURE_CONTEXT_HOOKS_REQUIRED');
   if(requireV3)requireFact(typeof resolveWindowLineage==='function','PROJECT_WINDOW_LINEAGE_REQUIRED');
-  let latest=null,closed=false,pairedCaptureOrdinal=0;const trace=[],scrollProofs=[];
+  let latest=null,closed=false;const trace=[],scrollProofs=[];
   const record=(event,extra={})=>trace.push(Object.freeze({event,at:clock(),wallAt:new Date().toISOString(),...extra}));
   async function countObservation(kind,extra={}) {
     if(!requireV3)return;
-    const checkpoint=kind==='paired'?`PAIR-${checkpointPrefix}-${++pairedCaptureOrdinal}`:trace.at(-1)?.event??'NAVIGATION_CAPTURE';
+    const checkpoint=kind==='paired'?extra.checkpoint:trace.at(-1)?.event??'NAVIGATION_CAPTURE';
+    if(kind==='paired')requireFact(typeof checkpoint==='string'&&checkpoint.length>0,'PROJECT_CHECKPOINT_REQUIRED');
     const response=await bridge('gui_observe',{data:{kind,album:'A',checkpoint,...extra}});
     requireFact(response?.status==='PROJECT_OBSERVATION_RESERVED','PROJECT_OBSERVATION_RESERVATION');
   }
@@ -749,9 +752,9 @@ export function createNavigationObserver({app,bridge,retain,classify,requireV3=f
     const response=await bridge('gui_consume',{data:{reservation_id:reservation.id,outcome:'RETURNED'}});
     requireFact(response?.reservation?.state==='CONSUMED','GUI_LEDGER_CONSUME_REFUSED');
   }
-  async function observe() {
+  async function observe(checkpoint) {
     requireFact(!closed,'NAVIGATION_OBSERVER_CLOSED');
-    await countObservation('paired');
+    await countObservation('paired',{checkpoint});
     const beforeContext=hasCaptureContextHooks?await beforeCapture({sessionId}):null;
     const started=clock(),requestStartedAtUtc=new Date().toISOString();
     const rawCapture=await app.getAXStateAndScreenshot({emit:false,disableDiffing:true});
@@ -792,7 +795,7 @@ export function createNavigationObserver({app,bridge,retain,classify,requireV3=f
     try {await app.click(control.point);await extraAX();}
     catch(error) {closed=true;record('RETURN_NAVIGATION_UNCERTAIN');throw error;}
     await consume(reservation);record('RETURN_NAVIGATION_RETURNED');
-    const observedAlbums=await observe();requireFact(observedAlbums.surface==='ALBUMS','RETURN_TO_ALBUMS_FAILED');
+    const observedAlbums=await observe('PAIR-C1-RETURN_LIST');requireFact(observedAlbums.surface==='ALBUMS','RETURN_TO_ALBUMS_FAILED');
     const lineage=observedAlbums.window_id===expectedList?.window_id?null:await resolveWindowLineage({
       kind:'DETAIL_RETURN_TO_LIST',from:fromObservation,to:observedAlbums,expectedList});
     const albums=lineage?{...observedAlbums,window_lineage:lineage}:observedAlbums;
@@ -819,7 +822,8 @@ export function createNavigationObserver({app,bridge,retain,classify,requireV3=f
     catch(error) {closed=true;record('SCROLL_UNCERTAIN');throw error;}
     await consume(reservation);record('SCROLL_RETURNED');
     try {
-      const after=await observe();
+      const after=await observe(checkpointPrefix==='A_DISCOVERY'
+        ?`PAIR-A-DISCOVERY_${slot}_AFTER`:`PAIR-C1-${slot}_AFTER`);
       const progress=verifyAlbumScroll(before,after);
       const pre=retainedObservationProofs.get(before),post=retainedObservationProofs.get(after);
       const complete=observation=>observation.cards.filter(card=>card?.fully_visible===true);
