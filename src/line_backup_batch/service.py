@@ -133,11 +133,7 @@ class Service:
             require(b.get('phase')=='CATALOG' and b.get('manifest_reference') is None
                 and b.get('new_transactions_reserved')==0 and b.get('authorized_new_download_limit')==1,
                 'BOUNDED_LIFECYCLE_ALREADY_ADMITTED')
-            prior_intents=[run for run in state['runs'] if run.get('batch_id') is not None and run.get('intent') is not None]
-            if not prior_intents:
-                require(workflow_link is None,'FIRST_LIFECYCLE_LINK_FORBIDDEN')
-            else:
-                self._validate_workflow_link(reader,state,target,workflow_link)
+            self._validate_bounded_lifecycle(reader,state,b,target,workflow_link)
             require(self.eligible(state,target)=='PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION','BOUNDED_TARGET_INELIGIBLE')
             # A bounded admission proves one selected candidate; it deliberately does not
             # claim that this frame reaches either catalog boundary or enumerates the group.
@@ -156,13 +152,36 @@ class Service:
             current=self.batch(s)
             require(current['phase']=='CATALOG' and current['manifest_reference'] is None,'ALREADY_ADMITTED')
             require(current['new_transactions_reserved']==0,'PROJECT_LIFECYCLE_CAP')
-            prior_intents=[run for run in s['runs'] if run.get('batch_id') is not None and run.get('intent') is not None]
-            if prior_intents:self._validate_workflow_link(None,s,target,workflow_link)
-            else:require(workflow_link is None,'FIRST_LIFECYCLE_LINK_FORBIDDEN')
+            self._validate_bounded_lifecycle(None,s,current,target,workflow_link)
             current['manifest_reference']=ref;current['phase']='ADMITTED'
             return dict(status='ADMITTED_BOUNDED_CANDIDATE',coverage='BOUNDED_CANDIDATE_ONLY',
                 complete_catalog=False,manifest_reference=ref,identity=target,click=click)
         return self.store._update(expected,admit,operation='admit')
+
+    def _validate_bounded_lifecycle(self,reader,state,batch,target,link):
+        grant=self._project_grant()
+        require(grant.get('owner')==self.owner and batch.get('owner_execution_id')==self.owner,
+            'BOUNDED_LIFECYCLE_OWNER')
+        owned=False
+        if reader is None:
+            reader=ProjectReader(self.store.root);owned=True
+        try:
+            # Re-read the validated, task-bound pilot ledger at both the cheap
+            # prevalidation and the state CAS mutation boundary. Historical state
+            # intents do not identify the lifecycle currently being admitted.
+            _,ledger,_=self.store._ledger_open(reader,grant)
+            batch_ids=ledger['lifecycle_batch_ids']
+            if ledger['lifecycle_count']==1:
+                require(ledger['workflow_phase']=='A' and ledger['c1_verified'] is False
+                    and batch.get('batch_id')==batch_ids[0],'BOUNDED_A_LIFECYCLE_BINDING')
+                require(link is None,'FIRST_LIFECYCLE_LINK_FORBIDDEN')
+                return
+            require(ledger['lifecycle_count']==2 and ledger['workflow_phase']=='B'
+                and ledger['c1_verified'] is True and batch.get('batch_id')==batch_ids[1],
+                'BOUNDED_B_LIFECYCLE_BINDING')
+            self._validate_workflow_link(reader,state,target,link,grant,ledger)
+        finally:
+            if owned:reader.close()
 
     def project_profile(self):
         path=self.store.authorization_path
@@ -175,17 +194,20 @@ class Service:
         except Exception:return False
         finally:reader.close()
 
-    def _validate_workflow_link(self,reader,state,target,link):
+    def _validate_workflow_link(self,reader,state,target,link,grant,ledger):
         require(isinstance(link,dict) and set(link)=={'a_run_id','a_fingerprint','lease_close','c1_evidence',
             'released_batch_id','workflow_owner','scroll_count','b_target'},'BOUNDED_WORKFLOW_LINK_INVALID')
         require(link['workflow_owner']==self.owner and type(link['scroll_count']) is int
             and 1<=link['scroll_count']<=4 and link['b_target']==target,'BOUNDED_WORKFLOW_LINK_INVALID')
-        grant=self._project_grant()
-        batch_ids=self.store.project_batch_ids(grant)
-        require(len(batch_ids)==2 and link['released_batch_id']==batch_ids[0],
+        batch_ids=ledger['lifecycle_batch_ids']
+        require(ledger.get('workflow_phase')=='B' and ledger.get('lifecycle_count')==2
+            and ledger.get('c1_verified') is True and link['released_batch_id']==batch_ids[0],
             'BOUNDED_A_BATCH_RELEASE_REQUIRED')
+        require(link['a_run_id']==ledger.get('a_run_id'),'BOUNDED_C1_LEDGER_BINDING')
         a=next((run for run in state['runs'] if run.get('run_id')==link['a_run_id']),None)
         require(isinstance(a,dict) and a.get('workflow_outcome')=='VERIFIED' and a.get('intent') is not None
+            and a.get('batch_id')==batch_ids[0]
+            and a['intent'].get('owner_execution_id')==grant.get('owner')
             and a.get('fingerprint')==link['a_fingerprint'] and a.get('fingerprint')!=target,
             'BOUNDED_A_NOT_VERIFIED')
         require(any(item.get('verified_run_id')==a['run_id'] and item.get('fingerprint')==a['fingerprint']
@@ -197,10 +219,15 @@ class Service:
             require(close.get('version')=='line-backup-lease-close-1' and close.get('run_id')==a['run_id']
                 and close.get('state')=='CLOSED','BOUNDED_A_LEASE_OPEN')
             c1=strict_json(artifact(reader,link['c1_evidence']),'BOUNDED_C1_EVIDENCE')
+            c1_reference=ledger.get('c1_reference')
+            require(isinstance(c1_reference,dict) and link['c1_evidence'].get('path')==c1_reference.get('path')
+                and link['c1_evidence'].get('sha256')==c1_reference.get('sha256'),
+                'BOUNDED_C1_LEDGER_BINDING')
             require(isinstance(c1,dict) and c1.get('kind')=='LINE_TWO_ALBUM_C1'
                 and c1.get('status')=='PASS' and c1.get('a_run_id')==a['run_id']
                 and c1.get('group_key')==a['group_key'] and target in c1.get('new_candidates',[])
                 and type(c1.get('verified_scroll_count')) is int and c1['verified_scroll_count']>=1
+                and c1['verified_scroll_count']==link['scroll_count']
                 and isinstance(c1.get('scrolls'),list) and len(c1['scrolls'])==c1['verified_scroll_count'],
                 'BOUNDED_C1_REQUIRED')
         finally:

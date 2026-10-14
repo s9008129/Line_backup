@@ -13,9 +13,10 @@ import uuid
 import jsonschema,referencing,attrs,rpds
 from unittest.mock import patch
 sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
-from fixture_support import Fixture,ROOT,TASK,identity,sha,json_bytes,token,png
+from fixture_support import Fixture,Provider,ROOT,TASK,identity,sha,json_bytes,token,png
 from line_backup_batch.store import Store,enforce_grant_quota
 from line_backup_batch.service import Service,DISPATCH_RECEIPT_V3_KEYS,DISPATCH_EVENT_ORDER_V3
+from line_backup_batch.coordinator import Coordinator
 import line_backup_batch.cli as batch_cli
 from line_backup_acceptance.common import AcceptanceError,atomic_write_json
 from line_backup_acceptance.project_binding import ProjectReader
@@ -343,6 +344,65 @@ class ProjectRuntimeBindingTests(unittest.TestCase):
         store=Store(str(self.f.root),grant_ref['path']);store.fixture=False
         service=Service(str(self.f.root),self.f.owner,grant['artifact_dir'],grant_ref['path']);service.store=store
         return grant,store,service,grant_ref['path']
+    def test_bounded_a_admission_uses_current_lifecycle_after_verified_history(self):
+        self.f.cfg['max_albums_per_run']=1;self.f.save(self.f.state())
+        historical=identity(1,7);new_target=identity(2,8)
+        coordinator=Coordinator(self.f.svc,Provider(self.f,[historical]),self.f.binding['binary_path'],
+            self.f.binding['binary_sha256'])
+        self.assertEqual(coordinator.run(1)['status'],'ALL_COMPLETE')
+        self.f.svc.release(self.f.receipt())
+        grant,store,service,grant_path=self.project_service()
+        with self.root_boundary():
+            store.initialize_project_ledger(batch_cli.authorize(str(self.f.root),grant_path,False,'gui_initialize'),
+                {'confirm_initialization':True})
+            begun=service.begin(store.snapshot()['receipt'],'backup_batch',1)
+            record=self.f.observation([historical,new_target],top=False,bottom=False)
+            with self.assertRaises(AcceptanceError) as duplicate:
+                service.admit_bounded(begun['receipt'],record,historical,self.f.session)
+            self.assertEqual(duplicate.exception.code,'BOUNDED_TARGET_INELIGIBLE')
+            admitted=service.admit_bounded(begun['receipt'],record,new_target,self.f.session)
+            manifest=json.loads((self.f.root/admitted['result']['manifest_reference']['path']).read_bytes())
+            self.assertEqual(manifest['identities'],[new_target])
+            self.assertEqual(manifest['coverage'],'BOUNDED_CANDIDATE_ONLY')
+            self.assertFalse(manifest['complete_catalog'])
+            self.assertEqual(manifest['frames'][0]['boundary'],record['boundary'])
+            self.assertEqual(len(manifest['frames'][0]['cards']),2)
+            self.assertFalse(manifest['frames'][0]['boundary']['top'])
+            self.assertFalse(manifest['frames'][0]['boundary']['bottom'])
+            state_after_admit=(self.f.root/'state/backup_state.json').read_bytes()
+            with self.assertRaisesRegex(AcceptanceError,'BOUNDED_LIFECYCLE_ALREADY_ADMITTED'):
+                service.admit_bounded(admitted['receipt'],record,new_target,self.f.session)
+            self.assertEqual((self.f.root/'state/backup_state.json').read_bytes(),state_after_admit)
+        self.assertEqual(admitted['result']['status'],'ADMITTED_BOUNDED_CANDIDATE')
+        self.assertEqual(admitted['result']['coverage'],'BOUNDED_CANDIDATE_ONLY')
+        state=store.snapshot()['state']
+        self.assertEqual(sum(run.get('intent') is not None for run in state['runs']),1)
+        self.assertIsNone(json.loads((self.f.root/'harness-development/line-two-album-pilot-20261014/private/gui-ledger.json')
+            .read_bytes())['c1_reference'])
+
+    def test_bounded_a_ledger_binding_is_rechecked_inside_state_cas(self):
+        grant,store,service,grant_path=self.project_service()
+        with self.root_boundary():
+            store.initialize_project_ledger(batch_cli.authorize(str(self.f.root),grant_path,False,'gui_initialize'),
+                {'confirm_initialization':True})
+            begun=service.begin(store.snapshot()['receipt'],'backup_batch',1)
+            batch_id=begun['result']['batch_id'];target=identity(1,day=14)
+            before=store.snapshot();publish=service.publish
+            def replace_current_lifecycle(name,value):
+                ref=publish(name,value)
+                path=self.f.root/grant['gui_ledger'];ledger=json.loads(path.read_bytes())
+                ledger['lifecycle_batch_ids'][0]='BATCH-foreign-current-lifecycle'
+                ledger['last_batch_id']='BATCH-foreign-current-lifecycle'
+                path.write_bytes(json_bytes(ledger))
+                return ref
+            with patch.object(service,'publish',side_effect=replace_current_lifecycle),self.assertRaises(AcceptanceError) as caught:
+                service.admit_bounded(begun['receipt'],self.f.observation([target]),target,self.f.session)
+            self.assertEqual(caught.exception.code,'BOUNDED_A_LIFECYCLE_BINDING')
+        after=store.snapshot()
+        self.assertEqual(after['receipt'],before['receipt'])
+        self.assertEqual(after['state']['active_batch']['batch_id'],batch_id)
+        self.assertIsNone(after['state']['active_batch']['manifest_reference'])
+
     def test_authorize_and_store_update_rehash_project_callback_closure(self):
         grant,grant_ref,runtime_ref=project_authority_fixture(self.f)
         grant_path=grant_ref['path']
@@ -708,6 +768,83 @@ class ProjectRuntimeBindingTests(unittest.TestCase):
         self.assertEqual(final_snapshot['state']['runs'][-1]['intent_state'],'TRIGGER_CONFIRMED')
         self.assertEqual(final_snapshot['state']['runs'][-1]['verification']['inventory'][0]['sha256'],sha(image_raw))
         self.assertEqual(len(final_snapshot['state']['verified_albums']),1)
+        a_run=final_snapshot['state']['runs'][-1];a_batch=a_run['batch_id'];a_run_id=a_run['run_id']
+        with self.root_boundary():
+            stopped=service.stop(final_snapshot['receipt'],'fixture A release before C1')
+            released=service.release(stopped['receipt'])
+            a_phase=store.advance_project_phase(batch_cli.authorize(str(self.f.root),grant_path,False,'gui_phase'),
+                'C1',a_run_id=a_run_id)
+            self.assertEqual(a_phase['phase'],'C1')
+            project_grant=batch_cli.authorize(str(self.f.root),grant_path,False,'gui_reserve')
+            returned=store.reserve_gui(project_grant,dict(kind='return_navigation',count=1,owner=self.f.owner,
+                slots=['RETURN_A_TO_LIST']))['reservation']
+            store.consume_gui(project_grant,dict(reservation_id=returned['id'],outcome='RETURNED'))
+            scrolled=store.reserve_gui(project_grant,dict(kind='scroll',count=1,owner=self.f.owner,
+                slots=['SCROLL_1']))['reservation']
+            store.consume_gui(project_grant,dict(reservation_id=scrolled['id'],outcome='RETURNED'))
+            next_target=identity(2,day=9)
+            before_scroll,before_ax=project_native_shaped_observation(self.f,[target,neighbor],top=False,bottom=False)
+            after_scroll,after_ax=project_native_shaped_observation(self.f,[neighbor,next_target],top=False,bottom=False)
+            # Synthetic C1 fixture binds the service transition; it is not live scroll evidence.
+            scroll_proof=dict(slot='SCROLL_1',before_frame=before_scroll['frame'],after_frame=after_scroll['frame'],
+                before_ax=before_ax,after_ax=after_ax,
+                overlap='ORDERED_SUFFIX_PREFIX',overlap_count=1,new_candidate=next_target,new_candidates=[next_target],
+                identity_continuity=True,context=dict(session_id=self.f.owner,group_key=self.f.cfg['group_key'],
+                    provider='HOSTED_CUA',pid=2,list_window_id='fixture-list',layout_key='fixture-layout',
+                    width=128,height=128,native_scale=1),movement='UPWARD_BEYOND_UNCERTAINTY')
+            c1=dict(kind='LINE_TWO_ALBUM_C1',status='PASS',a_run_id=a_run_id,group_key=self.f.cfg['group_key'],
+                new_candidates=[next_target],verified_scroll_count=1,scrolls=[scroll_proof])
+            c1_ref=service.publish('history-admission-c1-fixture.json',c1)
+            advanced=store.advance_project_phase(batch_cli.authorize(str(self.f.root),grant_path,False,'gui_phase'),
+                'C1',c1_evidence=c1_ref,a_run_id=a_run_id)
+            self.assertEqual(advanced['phase'],'B')
+            ledger_path=self.f.root/grant['gui_ledger'];ledger=json.loads(ledger_path.read_bytes())
+            self.assertEqual((ledger['lifecycle_count'],ledger['workflow_phase']),(1,'B'))
+            b_begin=service.begin(released['receipt'],'backup_batch',1)
+            b_active=store.snapshot()['state']['active_batch']
+            self.assertEqual((b_active['owner_execution_id'],b_active['authorized_new_download_limit'],
+                b_active['configured_new_download_limit']),(self.f.owner,1,1))
+            ledger=json.loads(ledger_path.read_bytes());batch_ids=ledger['lifecycle_batch_ids']
+            self.assertEqual((ledger['lifecycle_count'],ledger['workflow_phase']),(2,'B'))
+            self.assertEqual(batch_ids,[a_batch,b_begin['result']['batch_id']])
+            self.assertEqual(len(set(batch_ids)),2)
+            self.assertEqual(ledger['owner'],grant['owner'])
+            self.assertEqual(ledger['cap'],23)
+            used=sum(entry['count'] for entry in ledger['entries'])
+            self.assertEqual(used,11)
+            link=dict(a_run_id=a_run_id,a_fingerprint=a_run['fingerprint'],
+                lease_close=dict(path=f"{grant['artifact_dir']}/lease-close-{a_run_id}.json",
+                    bytes=len((self.f.root/grant['artifact_dir']/f'lease-close-{a_run_id}.json').read_bytes()),
+                    sha256=sha((self.f.root/grant['artifact_dir']/f'lease-close-{a_run_id}.json').read_bytes())),
+                c1_evidence=c1_ref,released_batch_id=a_batch,workflow_owner=self.f.owner,scroll_count=1,b_target=next_target)
+            b_observation=self.f.observation([next_target])
+            with self.assertRaises(AcceptanceError) as missing:
+                service.admit_bounded(b_begin['receipt'],b_observation,next_target,self.f.session)
+            self.assertEqual(missing.exception.code,'BOUNDED_WORKFLOW_LINK_INVALID')
+            foreign=dict(link,workflow_owner='different-owner')
+            with self.assertRaises(AcceptanceError) as wrong_owner:
+                service.admit_bounded(b_begin['receipt'],b_observation,next_target,self.f.session,foreign)
+            self.assertEqual(wrong_owner.exception.code,'BOUNDED_WORKFLOW_LINK_INVALID')
+            stale=dict(link,released_batch_id='BATCH-stale')
+            with self.assertRaises(AcceptanceError) as stale_link:
+                service.admit_bounded(b_begin['receipt'],b_observation,next_target,self.f.session,stale)
+            self.assertEqual(stale_link.exception.code,'BOUNDED_A_BATCH_RELEASE_REQUIRED')
+            forged_run=dict(link,a_run_id='another-a-run')
+            with self.assertRaises(AcceptanceError) as forged_run_link:
+                service.admit_bounded(b_begin['receipt'],b_observation,next_target,self.f.session,forged_run)
+            self.assertEqual(forged_run_link.exception.code,'BOUNDED_C1_LEDGER_BINDING')
+            forged_c1=dict(link,c1_evidence=service.publish('history-admission-forged-c1.json',dict(
+                kind='LINE_TWO_ALBUM_C1',status='PASS',a_run_id=a_run_id,group_key=self.f.cfg['group_key'],
+                new_candidates=[next_target],verified_scroll_count=1,scrolls=[scroll_proof])))
+            with self.assertRaises(AcceptanceError) as forged_c1_link:
+                service.admit_bounded(b_begin['receipt'],b_observation,next_target,self.f.session,forged_c1)
+            self.assertEqual(forged_c1_link.exception.code,'BOUNDED_C1_LEDGER_BINDING')
+            admitted_b=service.admit_bounded(b_begin['receipt'],b_observation,next_target,self.f.session,link)
+            self.assertEqual(admitted_b['result']['status'],'ADMITTED_BOUNDED_CANDIDATE')
+            self.assertEqual(admitted_b['result']['identity'],next_target)
+            after=json.loads(ledger_path.read_bytes())
+            self.assertEqual(sum(entry['count'] for entry in after['entries']),used)
+            self.assertEqual(after['lifecycle_batch_ids'],batch_ids)
 
 class GuiLedgerTests(unittest.TestCase):
     def setUp(self):self.f=Fixture()

@@ -45,5 +45,18 @@ class BatchLifecycleTests(unittest.TestCase):
         self.assertEqual(final['runs'][1]['batch_id'],final['active_batch']['batch_id'])
         self.assertEqual(final['active_batch']['next_index'],2)
 
+    def test_unresolved_intent_history_refuses_a_new_cap_one_begin(self):
+        target=identity()
+        admitted=self.f.svc.begin(self.f.receipt(),'backup_batch',1)['receipt']
+        admitted=self.f.svc.admit(admitted,self.f.frames([target]),self.f.session)['receipt']
+        self.f.svc.prepare(admitted,self.f.observation([target]))
+        self.f.intent(target)
+        self.f.svc.stop(self.f.receipt(),'fixture unresolved intent')
+        # Isolate the begin history barrier after the terminal lease has been
+        # represented as released; the SAFE_ABORT intent remains unresolved.
+        state=self.f.state();state['active_batch']=None;self.f.save(state)
+        with self.assertRaisesRegex(AcceptanceError,'UNRESOLVED_HISTORY'):
+            self.f.svc.begin(self.f.receipt(),'backup_batch',1)
+
 
 if __name__=='__main__':unittest.main()
