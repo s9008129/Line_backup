@@ -1,0 +1,169 @@
+{
+  "artifact_kind": "LOCAL_FOCUSED_VALIDATION_NOT_NATIVE_RECEIPT",
+  "observed_at_utc": "2026-10-14T02:37:01.735158+00:00",
+  "base_review_head": "ba1f1a1f23063a859680c333dc9debdbf8db4bc1",
+  "review_comment": "https://github.com/s9008129/Line_backup/pull/8#issuecomment-6159433025",
+  "candidate_sha256": {
+    "plan.md": "f29527cf6fe2b38e99bd52c93f9af607b432de732247a40c0364552329f8027c",
+    "plan-contract.json": "127d4ac65a4dc19604c476ad162e6f50bc4ea397fedf25020bd376caaf4267ad",
+    "REVIEW.md": "aaf637c7d3f21b199457e028a6c30e4c33802c2ba52ea5eb580badcdbe5765dc",
+    ".gitignore": "c0844c7670c89257f8f01e2f81a011a8cf7cfd6582860b465b05682b895bb0a3"
+  },
+  "original_native_publication_sha256": {
+    "plan.md": "469b093b33e8e89bd69506ab2fe7a91109800df034dba2924dd43192ac7f1dcf",
+    "plan-contract.json": "127d4ac65a4dc19604c476ad162e6f50bc4ea397fedf25020bd376caaf4267ad"
+  },
+  "contract_schema_validation": {
+    "verdict": "VALID",
+    "api": "SchemaBundle.load(pinned_R).validate(schemas/v3/task.schema.json, candidate_bytes)",
+    "formal_registered_receipt": false
+  },
+  "zero_retry_contract_variant": {
+    "verdict": "INVALID",
+    "category": "INSTANCE",
+    "location": "retry_policy/transient_read_only_retries",
+    "reason": "does not satisfy const"
+  },
+  "retry_enforcement": {
+    "IMPLEMENTER_transient_service_retry_delays": [],
+    "selected_native_tool_call_sites": "definition only; no invocation found",
+    "cua_repl_binding": "UNPROVEN",
+    "status": "BLOCKED"
+  },
+  "privacy_validation": {
+    "check_ignore": "MATCH",
+    "rule": "/private/",
+    "directory_mode": "0700",
+    "file_mode": "0600",
+    "native_allowed_path_containment": true,
+    "native_regular_file_reader": true,
+    "index_private_paths": [],
+    "probe": "empty non-LINE mode-probe; removed before staging"
+  },
+  "unchanged_contract_gates": [
+    "P01",
+    "D01",
+    "D02",
+    "D03"
+  ],
+  "native_status": {
+    "original_publication_unchanged": true,
+    "new_publication": false,
+    "new_task_phase": "IN_PROGRESS",
+    "new_task_next_stage": "PLAN",
+    "formal_schema_receipts": 0,
+    "handoff_sha256": null,
+    "reviewer_mapping": {
+      "model": "gpt-6-luna",
+      "reasoning_effort": "high"
+    },
+    "external_reviewer_native_route": "BLOCKED",
+    "non_pass_native_route": "UNRESOLVED: IMPLEMENT non-PASS auto-opens Issue; reconcile requires accepted failure and no pending Issue"
+  },
+  "preservation": {
+    "protected_files_checked": 16,
+    "all_hashes_match": true,
+    "original_task_phase": "BLOCKED",
+    "original_issue_state": "WAIT_HUMAN",
+    "original_required_gates": 28,
+    "original_accepted_gates": {},
+    "c6_consumed": 1,
+    "c6_remaining_continuations": 0
+  },
+  "sources": {
+    "upper_mac_AGENTS": {
+      "path": "/Users/hsiaojohnny/.codex/AGENTS.md",
+      "sha256": "a42397c48ba276576c754b7018e30a729d228f99a78f5e8100e4513a49d673a8",
+      "section_2_excerpt": "## 2. Risk-adaptive routing\n\nUse `policies/v4.8.0/workflow-routing.md` to classify the task and route it:\n\n- QUICK: Planner → deterministic Handoff → Implementer. Skip separate reviews by default.\n- STANDARD: Planner → independent Plan Review when the Plan requires it → deterministic Handoff → Implementer. Add Acceptance only when risk or a required gate calls for it.\n- CRITICAL: Planner → independent Plan Review → deterministic Handoff → Implementer → independent Acceptance.\n\nCritical means real security/privacy, data loss or migration, public compatibility, production, or consequential semantic risk. Do not classify routine reversible work as Critical by default. The user may pass a role's reviewed artifact to the next role; that handoff is not a new authorization gate. `HANDOFF_COMPILER` remains optional. Controller-generated Handoff copies the reviewed machine contract exactly.\n\n"
+    },
+    "pinned_routing": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/policies/v4.8.0/workflow-routing.md",
+      "sha256": "7c2251913507a8cc09b4a697576963aaf6694ffd7fd7af55a6eb2e813a690912"
+    },
+    "pinned_task_schema": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/schemas/v3/task.schema.json",
+      "sha256": "5a8e7b7227985c123e1a70bcd005d28129b46dd4068d4ee78ed48c71740c8d72",
+      "retry_policy_constraint": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "transient_read_only_retries",
+          "delays_seconds"
+        ],
+        "properties": {
+          "transient_read_only_retries": {
+            "const": 2
+          },
+          "delays_seconds": {
+            "const": [
+              10,
+              30
+            ]
+          }
+        }
+      }
+    },
+    "pinned_controller": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/controller.py",
+      "sha256": "385bbd2abd57ed305c01c7437f449833ed09cfc7e9f07add87d6352d405a8af5",
+      "relevant_sections": {
+        "path_reader": "55-81",
+        "task_snapshot_filter": "203-211",
+        "role_mapping": "300-313",
+        "allocate_run": "360-440",
+        "native_publication": "443-512",
+        "native_provenance": "586-633",
+        "role_failure_import": "1643-1650",
+        "reconcile_prerequisites": "1878-1894"
+      }
+    },
+    "pinned_lifecycle": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/lifecycle.py",
+      "sha256": "6e96c0d71ab98fbacb031592de85d58c1ba44444df5cac30eba24dea9cbbcaa2",
+      "retry_delays_definition": [
+        "def retry_delays(outcome: dict[str, Any], *, role: str, dispatch_certain: bool) -> tuple[int, ...]:",
+        "    if role not in {\"PLANNER\", \"PLAN_REVIEWER\", \"HANDOFF_COMPILER\", \"ACCEPTANCE_REVIEWER\", \"HIGH_REASONING_REVIEWER\"}:",
+        "        return ()",
+        "    if not dispatch_certain or outcome.get(\"category\") not in {\"TRANSIENT_SERVICE\"}:",
+        "        return ()",
+        "    return (10, 30)"
+      ]
+    },
+    "pinned_runtime_defaults": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/templates/v4.8.0/runtime-defaults.json",
+      "sha256": "e7bf6f4f368b76254776e7667f98ff4c2830efb17a4956ddc976ea7133d72361"
+    },
+    "pinned_schema_validator": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/runtime/resources-luna/tools/harness/schema_validation.py",
+      "sha256": "b571d1565d77c349fe746b3fdd61fd1e8b454d9c8de24ac9149fa4036328d605"
+    },
+    "historical_attempt14_scope": {
+      "path": "evidence/20260916-route/attempt-14/99-scope-status.json",
+      "sha256": "856733761b575da073cf8e506e26c0648042506de7814ffb047f117c519820ab"
+    },
+    "historical_attempt14_composite": {
+      "path": "evidence/20260916-route/attempt-14/composite-decision.json",
+      "sha256": "7b85b6613328a92bee17ae30d3884974b8d8750f816dbfe535f2d0831bc7194d"
+    }
+  },
+  "constraints": {
+    "Agents_invoked": 0,
+    "LINE_captures": 0,
+    "LINE_clicks": 0,
+    "native_controller_mutations": 0,
+    "new_Task_Issue_continuation_PR": 0,
+    "raw_LINE_data_uploaded": false,
+    "independent_review_verdict_generated": false
+  },
+  "whitespace_check": "CLEAN",
+  "staged_scope_check": {
+    "exact_changed_files": [
+      "harness-development/line-once-click-diagnostic-20261014/controller/TASK-55518bd9640d4ea59ab3a6414a171795/.gitignore",
+      "harness-development/line-once-click-diagnostic-20261014/controller/TASK-55518bd9640d4ea59ab3a6414a171795/REVIEW.md",
+      "harness-development/line-once-click-diagnostic-20261014/controller/TASK-55518bd9640d4ea59ab3a6414a171795/plan.md",
+      "harness-development/line-once-click-diagnostic-20261014/controller/TASK-55518bd9640d4ea59ab3a6414a171795/validation.json"
+    ],
+    "private_files_in_index": [],
+    "contract_changed": false
+  }
+}
