@@ -133,7 +133,8 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     binary:{absolutePath:producerPath},geometryProvider:async({pairFrameId})=>{
       const g=menuGeometry.get(pairFrameId);need(g,'MENU_GEOMETRY_NOT_OBSERVED');return g;
     }});
-  classifier=createLiveClassifier({retain,analyzeCapture:nativeAnalyzer.analyzeCapture,groupKey:config.group_key,
+  classifier=createLiveClassifier({retain,analyzeCapture:nativeAnalyzer.analyzeCapture,
+    analyzeVisualCardDiagnostic:nativeAnalyzer.analyzeVisualCardDiagnostic,groupKey:config.group_key,
     frameSupport:producer.frameSupport});
   const cached=frame=>{const c=classifier.cache.get(frame.frame_id);need(c?.observation,'FRESH_CLASSIFIER_FRAME_REQUIRED');return c;};
   function ellipsis(frame){
@@ -213,6 +214,7 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     const apps=await cua.listApps({emit:false});need(apps.filter(a=>a.id==='jp.naver.line.mac'&&a.isRunning===true).length===1,'OWNER_MUST_START_LINE');
   }
   const supportCallbacks=createAlbumSupportCallbacks({invokeProducer:producer.invokeProducer});
+  let visualCardDiagnosticUsed=false;
   const runtime={profile:'LINE_TWO_ALBUM_PILOT/1',owner,authorization,decoder:{path:decoderPath,sha256:DECODER_SHA},
     cli,retain,classifier,producer:{...producer,...supportCallbacks},menuLocator,chooser,navigation,windowLineage,privateEvidence,clock:()=>performance.now(),
     beforeCapture:nativeAnalyzer.beforeCapture,afterCapture:nativeAnalyzer.afterCapture,assertLineAlreadyRunning,
@@ -231,6 +233,28 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
       const observer=createNavigationObserver({app,bridge:cli.bridge,retain,classify:classifier.classify,
         beforeCapture:runtime.beforeCapture,afterCapture:runtime.afterCapture,sessionId:owner});
       try{return await observer.observe('G1_READ_ONLY');}finally{observer.close();}
+    },
+    observeVisualCardDiagnostic:async()=>{
+      need(!visualCardDiagnosticUsed,'VISUAL_DIAGNOSTIC_ALREADY_USED');visualCardDiagnosticUsed=true;
+      let observer=null;
+      try {
+        const grant=await bindLiveAuthority();
+        need(Array.isArray(grant.operations)&&grant.operations.length===1
+          &&grant.operations[0]==='gui_observe','VISUAL_DIAGNOSTIC_GRANT_SCOPE');
+        await assertLineAlreadyRunning();
+        const app=await cua.getApp('jp.naver.line.mac');
+        observer=createNavigationObserver({app,bridge:cli.bridge,retain,
+          classify:classifier.collectVisualCardDiagnostic,beforeCapture:runtime.beforeCapture,
+          afterCapture:runtime.afterCapture,sessionId:owner});
+        return await observer.observe('VISUAL_CARD_DIAGNOSTIC');
+      } catch(error) {
+        const evidence={kind:'VISUAL_CARD_DIAGNOSTIC_FAILURE',session_id:owner,
+          error:{code:error.code??null,message:String(error.message??error)}};
+        try{await retain({artifact:evidence,kind:'visual-card-diagnostic-failure',
+          frameId:hash(Buffer.from(evidenceJSON(evidence)))});}
+        catch(retentionError){error.diagnosticRetentionError=String(retentionError.message??retentionError);}
+        throw error;
+      } finally {observer?.close();}
     },
     runPilot:async()=>{await bindLiveAuthority();return runTwoAlbumPilot(runtime);}});
 }

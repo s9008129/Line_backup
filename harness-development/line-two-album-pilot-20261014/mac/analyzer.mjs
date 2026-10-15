@@ -56,7 +56,8 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
   }
   const beforeCapture=()=>native();
   const afterCapture=({saved})=>native(saved);
-  async function analyzeCapture({frameId,sessionId,capturedAt,width,height,sourceAXSha256,sourceBinding}) {
+  async function analyzeCapture({frameId,sessionId,capturedAt,width,height,sourceAXSha256,sourceBinding},
+      {visualCardDiagnostic=false}={}) {
     const before=sourceBinding?.before,after=sourceBinding?.after;
     const value=after?.value;verifyNativePair(before?.value,value);
     const visual=value.visual;
@@ -141,6 +142,22 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
         &&prior.sourceBinding.after.value.target.startTimeMicroseconds===value.target.startTimeMicroseconds,
         'CHOOSER_ORIGINAL_GROUP_LINEAGE_REQUIRED');
     }
+    // Evidence collection only: this shape is deliberately inadmissible to classify().
+    if(visualCardDiagnostic) {
+      need(surface==='ALBUMS','VISUAL_DIAGNOSTIC_ALBUM_LIST_REQUIRED');
+      const focused=visible.filter(n=>n.focused===true);
+      const diagnostic={kind:'VISUAL_CARD_DIAGNOSTIC',evidence_only:true,actionable:false,version:1,
+        frame_id:frameId,session_id:sessionId,source_sha256:frameId,source_ax_sha256:sourceAXSha256,
+        surface,group_key:groupKey,native:{bundle_id:value.target.bundleID,pid:value.target.pid,
+          window_id:win.windowNumber,display_id:display[0].displayID,cua_capture_bounds_points:bounds},
+        layout:{line_version:value.target.appVersion,language:'zh-Hant',window_class:win.subrole??win.role,native_scale:sx},
+        surface_structure:elements.map(({role,subrole,identifier})=>({role,subrole,identifier})),
+        surface_bounds_px:[0,0,width,height],occlusion:'CLEAR',
+        ax:{version:1,focused_index:focused.length===1?nativeIDs.get(focused[0].id):null,elements},raw_ocr:ocr};
+      const reference=await retain({artifact:{sourceBinding,analysis:diagnostic},
+        kind:'visual-card-diagnostic-analysis',frameId});
+      return {...diagnostic,reference};
+    }
     const cards=[];
     for(const node of visible.filter(n=>surface!=='FOLDER_CHOOSER'&&['AXRow','AXGroup','AXCell'].includes(n.role))) {
       const cardBounds=px(node.framePt);const titles=ocr.filter(o=>completeDateTitle(o.text)&&inside(o.bounds,cardBounds));
@@ -212,5 +229,6 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
       kind:'native-cua-correlation',frameId});
     contexts.set(frameId,{analysis,reference:ref,sourceBinding});return analysis;
   }
-  return Object.freeze({beforeCapture,afterCapture,analyzeCapture,contexts,native});
+  const analyzeVisualCardDiagnostic=args=>analyzeCapture(args,{visualCardDiagnostic:true});
+  return Object.freeze({beforeCapture,afterCapture,analyzeCapture,analyzeVisualCardDiagnostic,contexts,native});
 }

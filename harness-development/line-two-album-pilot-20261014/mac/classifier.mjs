@@ -45,7 +45,7 @@ const inside=(a,b,margin=0)=>a[0]>=b[0]+margin&&a[1]>=b[1]+margin
 const observationKeys=['frame','frame_id','session_id','group_key','surface','captured_at','provider','layout_key',
   'window_id','pid','width','height','mapping','cards','boundary','editable_focus','occlusion'];
 
-export function createLiveClassifier({retain,frameSupport,analyzeCapture,groupKey,clock=()=>Date.now()}) {
+export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyzeVisualCardDiagnostic,groupKey,clock=()=>Date.now()}) {
   need(typeof retain==='function'&&typeof frameSupport==='function'&&typeof analyzeCapture==='function','CLASSIFIER_DEPENDENCY_REQUIRED');
   need(typeof groupKey==='string'&&groupKey,'CLASSIFIER_GROUP_REQUIRED');
   const cache=new Map();
@@ -302,5 +302,97 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,groupKe
       dispatch,control};
   }
 
-  return Object.freeze({classify,classifyChooser,cache});
+  // A separate collector, never a normal observation and never inserted into cache.
+  async function collectVisualCardDiagnostic({capture,saved,frameId,sessionId,capturedAt,sourceBinding,capturedContext}) {
+    const diagnosticId=hex64(frameId)?frameId:sha256Hex(encoder.encode(JSON.stringify({sessionId,capturedAt})));
+    try {
+      need(typeof analyzeVisualCardDiagnostic==='function','VISUAL_DIAGNOSTIC_ANALYZER_REQUIRED');
+      need(capture?.screenshot instanceof Uint8Array&&typeof capture.state==='string','CLASSIFIER_CAPTURE_REQUIRED');
+      need(hex64(frameId)&&sha256Hex(capture.screenshot)===frameId&&saved?.sha256===frameId
+        &&saved.bytes===capture.screenshot.byteLength,'CLASSIFIER_FRAME_HASH');
+      const frameRef=ref(saved,'VISUAL_DIAGNOSTIC_FRAME_REFERENCE');
+      need(typeof capturedAt==='string'&&Number.isFinite(Date.parse(capturedAt)),'CLASSIFIER_CAPTURE_TIME');
+      const [width,height]=imageSize(capture.screenshot);
+      const sourceAX=encoder.encode(capture.state),sourceAXSha=sha256Hex(sourceAX);
+      const sourceAXRef=ref(saved.ax,'CLASSIFIER_AX_RETENTION');
+      need(sourceAXRef.bytes===sourceAX.byteLength&&sourceAXRef.sha256===sourceAXSha,'CLASSIFIER_AX_RETENTION');
+      const analysis=await analyzeVisualCardDiagnostic({screenshot:capture.screenshot,axText:capture.state,
+        frameId,sessionId,capturedAt,width,height,sourceAXSha256:sourceAXSha,sourceBinding,capturedContext,saved});
+      const keys=['kind','evidence_only','actionable','version','frame_id','session_id','source_sha256',
+        'source_ax_sha256','surface','group_key','native','layout','surface_structure','surface_bounds_px',
+        'occlusion','ax','raw_ocr','reference'];
+      need(analysis&&Object.keys(analysis).sort().join(',')===keys.sort().join(',')
+        &&analysis.kind==='VISUAL_CARD_DIAGNOSTIC'&&analysis.evidence_only===true&&analysis.actionable===false
+        &&analysis.version===1&&analysis.frame_id===frameId&&analysis.session_id===sessionId
+        &&analysis.source_sha256===frameId&&analysis.source_ax_sha256===sourceAXSha&&analysis.group_key===groupKey
+        &&analysis.surface==='ALBUMS'&&analysis.occlusion==='CLEAR','VISUAL_DIAGNOSTIC_SCHEMA');
+      const analysisRef=ref(analysis.reference,'VISUAL_DIAGNOSTIC_ANALYSIS_REFERENCE');
+      const native=analysis.native,layout=analysis.layout;
+      need(native?.bundle_id==='jp.naver.line.mac'&&Number.isInteger(native.pid)&&native.pid>0
+        &&Number.isInteger(native.window_id)&&native.window_id>0&&Number.isInteger(native.display_id)&&native.display_id>0
+        &&Array.isArray(native.cua_capture_bounds_points)&&native.cua_capture_bounds_points.length===4
+        &&native.cua_capture_bounds_points.every(Number.isFinite),'CLASSIFIER_NATIVE_IDENTITY');
+      need(layout&&['line_version','language','window_class'].every(k=>typeof layout[k]==='string'&&layout[k])
+        &&Number.isFinite(layout.native_scale)&&layout.native_scale>0,'CLASSIFIER_LAYOUT');
+      need(analysis.ax?.version===1&&Array.isArray(analysis.ax.elements)
+        &&Array.isArray(analysis.surface_structure)&&Array.isArray(analysis.raw_ocr),'VISUAL_DIAGNOSTIC_EVIDENCE');
+      const structureSHA=shaJson(analysis.surface_structure);
+      const signature={line_version:layout.line_version,language:layout.language,window_class:layout.window_class,
+        frame_width_px:width,frame_height_px:height,native_scale:layout.native_scale,structure_sha256:structureSHA};
+      const layoutKey=shaJson(signature);
+      const axSnapshot={version:1,frame_id:frameId,session_id:sessionId,pid:native.pid,
+        window_id:native.window_id,surface:analysis.surface,...analysis.ax};
+      const axRef=ref(await retain({artifact:axSnapshot,kind:'visual-card-diagnostic-ax',frameId,sessionId}),
+        'VISUAL_DIAGNOSTIC_AX_RETAIN_REQUIRED');
+      const geometry={version:1,frame_id:frameId,session_id:sessionId,surface:analysis.surface,pid:native.pid,
+        window_id:native.window_id,layout_key:layoutKey,captured_at:capturedAt,
+        cua_capture_bounds_points:native.cua_capture_bounds_points,
+        surface_bounds_px:rect(analysis.surface_bounds_px,width,height,'CLASSIFIER_SURFACE_BOUNDS'),
+        ax_state:axRef,layout_signature:signature,structure_sha256:structureSHA};
+      const geometryRef=ref(await retain({artifact:geometry,kind:'visual-card-diagnostic-geometry',frameId,sessionId}),
+        'VISUAL_DIAGNOSTIC_GEOMETRY_RETAIN_REQUIRED');
+      const support=await frameSupport({frame:capture.screenshot,frameRef,frameId,sessionId,capturedAt,
+        surface:analysis.surface,layoutKey,native,geometryRef,width,height});
+      need(support?.provider==='SCREEN_CAPTURE_KIT'&&support.surface===analysis.surface
+        &&support.pairFrameId===frameId&&support.sessionId===sessionId
+        &&Number.isFinite(support.uncertaintyPx)&&support.uncertaintyPx>=2
+        &&Number.isFinite(support.safeMarginPx)&&support.safeMarginPx>=support.uncertaintyPx+4
+        &&typeof support.readRef==='function','NON_MENU_SCK_SUPPORT_REQUIRED');
+      const readVerified=async reference=>{
+        ref(reference,'VISUAL_DIAGNOSTIC_SUPPORT_REFERENCE');
+        const raw=await support.readRef(reference);
+        need(raw.byteLength===reference.bytes&&sha256Hex(raw)===reference.sha256,'SCK_ARTIFACT_DRIFT');return raw;
+      };
+      await readVerified(support.reference);
+      const manifest=JSON.parse(new TextDecoder().decode(await readVerified(support.manifestReference)));
+      need(manifest.pairFrameId===frameId&&manifest.surface===analysis.surface&&manifest.layoutKey===layoutKey
+        &&manifest.geometryEvidence?.path===geometryRef.path&&manifest.geometryEvidence.sha256===geometryRef.sha256
+        &&manifest.support?.path===support.reference.path&&manifest.support.sha256===support.reference.sha256
+        &&manifest.sckFrame?.sha256===manifest.sckFrameId,'FRAME_SUPPORT_MANIFEST_CROSS_PAIR');
+      const sckRaw=await readVerified(manifest.sckFrame),ocrRaw=await readVerified(manifest.ocr);
+      need([137,80,78,71,13,10,26,10].every((n,i)=>sckRaw[i]===n),'VISUAL_DIAGNOSTIC_SCK_PNG_REQUIRED');
+      const sckOcr=JSON.parse(new TextDecoder().decode(ocrRaw));
+      need(sckOcr.cua_frame_id===frameId&&sckOcr.sck_frame_sha256===manifest.sckFrameId
+        &&Array.isArray(sckOcr.cua)&&Array.isArray(sckOcr.sck),'FRAME_SUPPORT_OCR_BINDING');
+      const packet={kind:'VISUAL_CARD_DIAGNOSTIC',evidence_only:true,actionable:false,version:1,
+        frame_id:frameId,session_id:sessionId,captured_at:capturedAt,group_key:groupKey,surface:analysis.surface,
+        layout_key:layoutKey,cua_frame:frameRef,cua_ax:sourceAXRef,
+        native_before:ref(sourceBinding?.before?.reference,'VISUAL_DIAGNOSTIC_NATIVE_REFERENCE'),
+        native_after:ref(sourceBinding?.after?.reference,'VISUAL_DIAGNOSTIC_NATIVE_REFERENCE'),
+        analysis:analysisRef,geometry:geometryRef,sck_frame:manifest.sckFrame,sck_ocr:manifest.ocr,
+        support:support.reference,manifest:support.manifestReference};
+      const packetRef=ref(await retain({artifact:packet,kind:'visual-card-diagnostic',frameId,sessionId}),
+        'VISUAL_DIAGNOSTIC_RETAIN_REQUIRED');
+      return {kind:packet.kind,evidence_only:true,actionable:false,frame_id:frameId,session_id:sessionId,reference:packetRef};
+    } catch(error) {
+      const failure={kind:'VISUAL_CARD_DIAGNOSTIC_FAILURE',frame_id:diagnosticId,session_id:sessionId,
+        frame:saved??null,source_before:sourceBinding?.before?.reference??null,
+        source_after:sourceBinding?.after?.reference??null,error:{code:error.code??null,message:String(error.message??error)}};
+      try{await retain({artifact:failure,kind:'visual-card-diagnostic-failure',frameId:diagnosticId,sessionId});}
+      catch(retentionError){error.diagnosticRetentionError=String(retentionError.message??retentionError);}
+      throw error;
+    }
+  }
+
+  return Object.freeze({classify,classifyChooser,collectVisualCardDiagnostic,cache});
 }
