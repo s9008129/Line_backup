@@ -292,7 +292,14 @@ def authorize_project(root,path,grant,fixture,operation):
         runtime=validate_project_runtime_binding(reader,grant)
         require(decision.get('profile')==PROJECT_SCOPE and decision.get('decision')=='AUTHORIZE_SCOPED_NON_GUI_IMPLEMENTATION'
             and decision.get('non_gui_authorized') is True,'PROJECT_OWNER_DECISION_MISMATCH')
-        require(review.get('profile')==PROJECT_SCOPE and review.get('verdict')=='APPROVE_IMPLEMENTATION'
+        # The source-only bootstrap review may support a future G1 observation
+        # after the unchanged live-readiness/Owner-consent checks below. It must
+        # never authorize an action-capable grant or be relabelled as approval
+        # of the full pilot.
+        review_approved=(review.get('verdict')=='APPROVE_IMPLEMENTATION'
+            or (review.get('verdict')=='APPROVE_FOR_PRIVATE_AUTHORITY_BOOTSTRAP_ONLY'
+                and operation=='gui_observe' and grant['operations']==['gui_observe']))
+        require(review.get('profile')==PROJECT_SCOPE and review_approved
             and review.get('head_source_sha256')==grant['source_sha256']
             and review.get('entry_sha256')==grant['entry_binding']['sha256']
             and review.get('runtime_binding_sha256')==grant['runtime_binding']['sha256']
