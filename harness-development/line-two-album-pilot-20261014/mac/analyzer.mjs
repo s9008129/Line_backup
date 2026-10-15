@@ -104,7 +104,36 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
     const surface=chooserRoot.length===1?'FOLDER_CHOOSER':back.length===1?'ALBUM_DETAIL':'ALBUMS';
     if(surface!=='FOLDER_CHOOSER'){
       need(group.length===1,'CANONICAL_GROUP_NOT_GROUNDED');
-      if(surface==='ALBUMS')need(ocr.some(o=>o.text==='相簿'&&o.confidence>=.5),'ALBUM_SURFACE_NOT_GROUNDED');
+      if(surface==='ALBUMS'){
+        let grounded=ocr.some(o=>o.text==='相簿'&&o.confidence>=.5);
+        if(!grounded){
+          const exact=text=>ocr.filter(o=>o.text===text&&o.confidence>=.3&&o.candidate_count===1);
+          const albums=exact('相簿'),siblings=exact('記事本');
+          const lists=elements.filter(e=>e.role==='list');
+          if(albums.length===1&&siblings.length===1&&lists.length===1){
+            const album=albums[0],sibling=siblings[0],list=lists[0],groupBounds=group[0].bounds;
+            const sameTabRow=Math.min(album.bounds[1]+album.bounds[3],sibling.bounds[1]+sibling.bounds[3])
+              >Math.max(album.bounds[1],sibling.bounds[1]);
+            const separated=album.bounds[0]+album.bounds[2]<=sibling.bounds[0]
+              ||sibling.bounds[0]+sibling.bounds[2]<=album.bounds[0];
+            const ordered=[album,sibling].every(o=>inside(o.bounds,[0,0,width,height])
+              &&groupBounds[1]+groupBounds[3]<=o.bounds[1]
+              &&o.bounds[1]+o.bounds[3]<=list.bounds_px[1]);
+            const rows=elements.filter(e=>e.role==='row'&&e.parent_index===list.index
+              &&inside(e.bounds_px,list.bounds_px));
+            const corroborated=rows.filter(row=>{
+              const titles=ocr.filter(o=>completeDateTitle(o.text)&&o.confidence>=.5&&o.candidate_count===1
+                &&inside(o.bounds,row.bounds_px));
+              const counts=ocr.filter(o=>/^\d+$/.test(o.text)&&o.confidence>=.5&&o.candidate_count===1
+                &&inside(o.bounds,row.bounds_px));
+              return titles.length===1&&counts.length===1&&Number(counts[0].text)>0
+                &&counts[0].bounds[1]>=titles[0].bounds[1]+titles[0].bounds[3];
+            });
+            grounded=sameTabRow&&separated&&ordered&&corroborated.length===1;
+          }
+        }
+        need(grounded,'ALBUM_SURFACE_NOT_GROUNDED');
+      }
     }else{
       const prior=[...contexts.values()].findLast(c=>c.analysis.native.pid===value.target.pid
         &&c.analysis.group_key===groupKey&&c.analysis.surface==='ALBUM_DETAIL');
