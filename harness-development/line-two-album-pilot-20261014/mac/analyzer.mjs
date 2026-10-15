@@ -37,7 +37,19 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
       '--grant',authorization,'--grant-sha256',typeof grantSha256==='function'?grantSha256():grantSha256,'--session-id',owner];
     if(image)argv.push('--image',path.join(repoRoot,image.path),'--image-sha256',image.sha256);
     const result=await runProcess(argv,{timeoutMs:30000,cap:2*1024*1024});
-    need(result.status===0&&!result.stop_reason&&result.reaped===true,'NATIVE_CONTEXT_FAILED');
+    if(!(result.status===0&&!result.stop_reason&&result.reaped===true)) {
+      const diagnostic={command:argv,phase:image?'AFTER_CUA_CAPTURE':'BEFORE_CUA_CAPTURE',process_result:result};
+      let evidence;
+      try {
+        evidence=await retain({artifact:diagnostic,kind:'native-context-failure',
+          frameId:hash(Buffer.from(JSON.stringify(diagnostic)))});
+      } catch(error) {
+        throw Object.assign(new Error('NATIVE_CONTEXT_FAILED; diagnostic retention failed: '+(error.code??error.message)),
+          {code:'NATIVE_CONTEXT_FAILED',cause:error});
+      }
+      throw Object.assign(new Error('NATIVE_CONTEXT_FAILED; evidence='+evidence.path),
+        {code:'NATIVE_CONTEXT_FAILED',evidence});
+    }
     const value=JSON.parse(result.stdout);const frameId=image?.sha256??hash(Buffer.from(result.stdout));
     const ref=await retain({artifact:{value,process_receipt:result.receipt},kind:'native-context',frameId});
     return {value,reference:ref};
