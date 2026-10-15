@@ -176,5 +176,312 @@
     "evidence_only": true,
     "actionable": false,
     "actual_new_packet_collected": false
+  },
+  "latest_offline_measurement": {
+    "sample_kind": "ONE_EXISTING_RETAINED_ORIGINAL_JPEG_OFFLINE_PROCESS",
+    "operator_observed": true,
+    "independently_reproduced": false,
+    "publication_benchmark_reruns": 0,
+    "source_head": "2bd94af4e5f0d0d070983b270f49691968c18788",
+    "input": {
+      "sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+      "bytes": 184297,
+      "same_CGImage_passed_to_both_wrappers": true,
+      "retained_original_sha_recalculated_locally_and_matched": true,
+      "image_transformations": "NONE",
+      "original_image_published": false
+    },
+    "sample_count": {
+      "process_invocations": 1,
+      "legacy_calls": 1,
+      "swift_calls": 1,
+      "repeated_samples": false,
+      "order_counterbalanced": false
+    },
+    "execution_order": [
+      "read_and_hash_original",
+      "imageio_decode",
+      "existing_legacy_vision_parity",
+      "existing_ellipsis_detector",
+      "existing_swift_vision",
+      "offline_total"
+    ],
+    "stages": [
+      {
+        "stage": "read_and_hash_original",
+        "operator_observed": true,
+        "duration_ms": 1.759875,
+        "display_duration_ms": "1.759875",
+        "bytes": 184297,
+        "sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42"
+      },
+      {
+        "stage": "imageio_decode",
+        "operator_observed": true,
+        "duration_ms": 3.342,
+        "display_duration_ms": "3.342000"
+      },
+      {
+        "stage": "existing_legacy_vision_parity",
+        "operator_observed": true,
+        "duration_ms": 12944.114333,
+        "display_duration_ms": "12944.114333",
+        "item_count": 5
+      },
+      {
+        "stage": "existing_ellipsis_detector",
+        "operator_observed": true,
+        "duration_ms": 364.4475,
+        "display_duration_ms": "364.447500",
+        "component_count": 9
+      },
+      {
+        "stage": "existing_swift_vision",
+        "operator_observed": true,
+        "duration_ms": 113.389041,
+        "display_duration_ms": "113.389041",
+        "item_count": 6
+      },
+      {
+        "stage": "offline_total",
+        "operator_observed": true,
+        "duration_ms": 13439.753292,
+        "display_duration_ms": "13439.753292",
+        "invocations": 1,
+        "line_acquired": false,
+        "sck_captured": false,
+        "gui_inputs": 0,
+        "ocr_text_retained": false
+      }
+    ],
+    "rounded_summary_ms": {
+      "LEGACY_VISION_PARITY_MS": 12944,
+      "SWIFT_VISION_OBSERVED_MS": 113
+    },
+    "timing_mechanism": "DispatchTime monotonic uptime durations; not historical filesystem/wall-clock subtraction",
+    "measurement_boundary": {
+      "start": "DispatchTime.now().uptimeNanoseconds immediately before constructing/invoking the engine wrapper",
+      "end": "DispatchTime.now().uptimeNanoseconds inside emit after the awaited wrapper returns, reading array.count, copying details and assigning stage label; before this stage JSON encode/stdout write",
+      "calculation": "Double(end-start)/1_000_000 milliseconds",
+      "raw_start_tick": "UNKNOWN_NOT_RETAINED",
+      "raw_end_tick": "UNKNOWN_NOT_RETAINED",
+      "includes": [
+        "wrapper initialization",
+        "request construction and recognition configuration",
+        "request execution and await/scheduling",
+        "topCandidates and OcrItem geometry conversion",
+        "returned array and array.count",
+        "small emit pre-sample bookkeeping"
+      ],
+      "excludes": [
+        "process startup and teardown",
+        "earlier measured read/SHA call",
+        "earlier measured ImageIO source/image creation calls",
+        "separately timed ellipsis detector",
+        "this stage JSON encoding and stdout write",
+        "LINE/AX acquisition",
+        "SCK capture",
+        "support/manifest persistence"
+      ],
+      "not_isolated": [
+        "framework/service/model initialization within the call",
+        "possible deferred pixel realization",
+        "pure OCR-model time"
+      ],
+      "per_item_instrumentation": false
+    },
+    "legacy_implementation": {
+      "path": "rev28/Sources/Rev28Core/Perception/OcrEngine.swift",
+      "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+      "sha256": "d0dcab179db7311853857eeaf065339eb4f74c64976dd2b5104ef9fa280cec00",
+      "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/rev28/Sources/Rev28Core/Perception/OcrEngine.swift#L126-L153",
+      "symbol": "LegacyVisionOcrParityEngine.recognize(image:)",
+      "api": "VNRecognizeTextRequest + VNImageRequestHandler orientation .up",
+      "ocr_items_returned": 5,
+      "native_after_full_procedure_measured": false
+    },
+    "swift_implementation": {
+      "path": "rev28/Sources/Rev28Core/Perception/OcrEngine.swift",
+      "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+      "sha256": "d0dcab179db7311853857eeaf065339eb4f74c64976dd2b5104ef9fa280cec00",
+      "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/rev28/Sources/Rev28Core/Perception/OcrEngine.swift#L90-L118",
+      "symbol": "VisionOcrEngine.recognize(image:)",
+      "api": "Swift RecognizeTextRequest.perform(on:)",
+      "ocr_items_returned": 6,
+      "ran_after_legacy_and_dots_in_same_process": true
+    },
+    "shared_configuration": {
+      "recognition_level": "accurate",
+      "languages": [
+        "zh-Hant",
+        "en-US"
+      ],
+      "uses_language_correction": false,
+      "top_candidates_requested": 2,
+      "full_original_image": true,
+      "shared_geometry_conversion": {
+        "path": "rev28/Sources/Rev28Core/Perception/OcrEngine.swift",
+        "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+        "sha256": "d0dcab179db7311853857eeaf065339eb4f74c64976dd2b5104ef9fa280cec00",
+        "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/rev28/Sources/Rev28Core/Perception/OcrEngine.swift#L41-L88"
+      }
+    },
+    "cold_start_and_caches": {
+      "legacy_first_OCR_in_process": true,
+      "controlled_cold_start": false,
+      "cache_reset_performed": false,
+      "service_or_model_warm_state": "UNKNOWN",
+      "background_load_controlled": false,
+      "swift_warmup_influence": "POSSIBLE_NOT_ISOLATED"
+    },
+    "output_equivalence": {
+      "same_configuration_does_not_prove_equivalence": true,
+      "item_totals_differ": true,
+      "text_comparison": "NOT_RUN",
+      "confidence_comparison": "NOT_RUN",
+      "candidateCount_field_comparison": "NOT_RUN",
+      "quad_and_bounding_box_comparison": "NOT_RUN",
+      "canonical_identity_and_anchor_equivalence": "NOT_RUN",
+      "raw_OCR_output_retained_by_probe": false,
+      "raw_OCR_output_published": false
+    },
+    "native_after_relation": {
+      "source": {
+        "path": "rev28/Sources/Rev28Core/Observation/PassiveContextObservation.swift",
+        "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+        "sha256": "deff7d9e9faaa019ef76880ddb6fa37b64052aecac6214b8008ef221ce0aa3ed",
+        "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/rev28/Sources/Rev28Core/Observation/PassiveContextObservation.swift#L552-L572"
+      },
+      "same_legacy_API_and_recognition_settings": true,
+      "actually_calls_parity_wrapper": false,
+      "result_mapping_is_identical": "NOT_PROVEN_NATIVE_USES_OBSERVATION_BOUNDINGBOX_PARITY_USES_QUAD_MAPPING",
+      "historical_13_second_interval_decomposed": false
+    },
+    "compile_summary": {
+      "new_probe_compiled": true,
+      "product_core_recompiled": false,
+      "existing_Rev28Core_objects_linked": 42,
+      "swift_version_flag": "5",
+      "sdk_name": "MacOSX26.5.sdk",
+      "probe_optimization_O_flag_present": false,
+      "compile_exit_code": 0,
+      "probe_exit_code": 0,
+      "private_paths_and_raw_argv_published": false
+    },
+    "source_and_receipt_digest_references": [
+      {
+        "label": "timing_probe.swift",
+        "sha256": "86ab5c2525dd2f5296e720e2d0fd5e41016114d9467c59351e68f7c5541ced26",
+        "original_published": false
+      },
+      {
+        "label": "probe-invocation.json",
+        "sha256": "90d00fa127af017fe7861f001d39db9fd9372671797f4262cfd2b31eb925ab21",
+        "original_published": false
+      },
+      {
+        "label": "probe-binding.json",
+        "sha256": "c3bed25dcb774ce1b590b62092a4be4e96055ea93e36dd54839b3c7baac1b111",
+        "original_published": false
+      },
+      {
+        "label": "compile.json",
+        "sha256": "ecda3815581588ad9a57d70a3cb6cefb66af057f699d5ca7ac3076ba47f9a751",
+        "original_published": false
+      },
+      {
+        "label": "evidence-manifest.json",
+        "sha256": "b3d60508c27d926b5125abf91a0368f76f74ceb973cab0a09edb56483413ba8b",
+        "original_published": false
+      }
+    ],
+    "freshness_gates": [
+      {
+        "kind": "PRE_SCK",
+        "source": {
+          "path": "rev28/Sources/rev28ctl/main.swift",
+          "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+          "sha256": "c5cf07c34809faf4d84986a6132d32a97e438fe764bce6bda9e0ae754d629bad",
+          "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/rev28/Sources/rev28ctl/main.swift#L1189-L1194"
+        },
+        "origin": "original CUA request-start --cua-captured-at / cuaDate",
+        "condition": "abs(now-cuaDate)<=5 seconds"
+      },
+      {
+        "kind": "SCK_CAPTURE_COMPLETION",
+        "source": {
+          "path": "rev28/Sources/rev28ctl/main.swift",
+          "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+          "sha256": "c5cf07c34809faf4d84986a6132d32a97e438fe764bce6bda9e0ae754d629bad",
+          "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/rev28/Sources/rev28ctl/main.swift#L1255-L1264"
+        },
+        "origin": "same original cuaDate",
+        "condition": "sckStart>=cuaDate && sckEnd>=sckStart && sckEnd-cuaDate<=5 seconds"
+      },
+      {
+        "kind": "FINAL_OCR_SUPPORT_COMPLETION",
+        "source": {
+          "path": "rev28/Sources/rev28ctl/main.swift",
+          "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+          "sha256": "c5cf07c34809faf4d84986a6132d32a97e438fe764bce6bda9e0ae754d629bad",
+          "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/rev28/Sources/rev28ctl/main.swift#L1274-L1333"
+        },
+        "origin": "same original cuaDate",
+        "condition": "now-cuaDate<=5 seconds after SCK OCR, anchors, mapping, measurement and synced evidence writes"
+      }
+    ],
+    "provenance_source_chain": [
+      {
+        "path": "scripts/line_backup_cua_adapter.mjs",
+        "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+        "sha256": "238eae053f4dc61a89484783b2203ddb3afae1c3227406d47aa005a74590f00b",
+        "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/scripts/line_backup_cua_adapter.mjs#L759-L776"
+      },
+      {
+        "path": "harness-development/line-two-album-pilot-20261014/mac/classifier.mjs",
+        "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+        "sha256": "90e282d3ce946552d774b24861bc7f265e58e3ab844363d09492e52f11be358a",
+        "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/harness-development/line-two-album-pilot-20261014/mac/classifier.mjs#L304-L359"
+      },
+      {
+        "path": "harness-development/line-two-album-pilot-20261014/mac/producer.mjs",
+        "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+        "sha256": "414d9f1467f56ae84f31bf4965daf8377c3ec58fc42c259c4c2be05dc649d682",
+        "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/harness-development/line-two-album-pilot-20261014/mac/producer.mjs#L30-L43"
+      }
+    ],
+    "binding_sources": [
+      {
+        "path": "rev28/Sources/rev28ctl/main.swift",
+        "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+        "sha256": "c5cf07c34809faf4d84986a6132d32a97e438fe764bce6bda9e0ae754d629bad",
+        "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/rev28/Sources/rev28ctl/main.swift#L1196-L1248"
+      },
+      {
+        "path": "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+        "commit": "2bd94af4e5f0d0d070983b270f49691968c18788",
+        "sha256": "10b6596871d7bfc05d203ac7041a2b917d851fd7345355f1c4c9a142d568cc7e",
+        "permalink": "https://github.com/s9008129/Line_backup/blob/2bd94af4e5f0d0d070983b270f49691968c18788/rev28/Sources/Rev28Core/Sensor/FrameCapture.swift#L501-L566"
+      }
+    ],
+    "root_cause_boundaries": {
+      "OBSERVED_TIMING": "One operator-observed Legacy wrapper call 12944.114333 ms, followed by Swift wrapper call 113.389041 ms; not independently reproduced",
+      "SOURCE_CONFIRMED_EXECUTION_ORDER": "Pinned code has native AFTER before diagnostic/SCK and all three gates using original CUA request-start",
+      "INFERRED_FUTURE_FAILURE": "A comparable latency would risk the original deadline; universal future failure NOT_PROVEN and no new live refusal observed",
+      "UNPROVEN_REPLACEMENT_PERFORMANCE": "Cold/initial-service and full-pipeline replacement performance NOT_PROVEN",
+      "UNPROVEN_OCR_EQUIVALENCE": "Per-item text/confidence/candidateCount/quad/bounds/identity/anchor equivalence NOT_PROVEN"
+    },
+    "next_engineering_recommendation": "Chief source-level decision: determine whether tightly bounded offline cold-state/output-equivalence verification is necessary first, or a separately reviewed diagnostic-only capture/completion contract proposal is warranted; no replacement or contract change authorized here",
+    "reported_conclusions": {
+      "COLD_START_EQUIVALENCE": "NOT_PROVEN",
+      "OCR_OUTPUT_EQUIVALENCE": "NOT_PROVEN",
+      "FULL_FIVE_SECOND_PIPELINE": "NOT_PROVEN",
+      "REAL_SCK": "NOT_RUN",
+      "G1_ACTIONABLE_IDENTITY": "BLOCKED",
+      "OWNER_CONSENT": "CLOSED",
+      "PRODUCT_SOURCE_CHANGED": false,
+      "NEW_LIVE_FRESHNESS_REFUSAL_OBSERVED": false,
+      "NEXT_ACTION": "WAIT_FOR_INDEPENDENT_CHIEF_REVIEW"
+    }
   }
 }
