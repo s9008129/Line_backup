@@ -76,7 +76,9 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
     const bounds=shape(win.framePt);const sx=width/bounds[2],sy=height/bounds[3];
     need(Math.abs(sx-sy)<=.01&&sx>0,'CUA_WINDOW_SCALE_MISMATCH');
     const display=value.displays.filter(d=>win.displayIDs.includes(d.displayID)&&inside(bounds,shape(d.boundsPt)));
-    need(display.length===1&&Math.abs(display[0].backingScale-sx)<=.01,'DISPLAY_GEOMETRY_AMBIGUOUS');
+    // CG mode ratio is not hosted image scale; downstream SCK validation remains authoritative.
+    need(display.length===1&&Number.isFinite(display[0].backingScale)&&display[0].backingScale>0,
+      'DISPLAY_GEOMETRY_AMBIGUOUS');
     const ordered=value.onScreenWindows;
     need(Array.isArray(ordered),'OCCLUSION_EVIDENCE_MISSING');
     const at=ordered.findIndex(w=>w.windowNumber===win.windowNumber&&w.ownerPID===value.target.pid);
