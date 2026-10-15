@@ -381,6 +381,14 @@ def validate_project_runtime_binding(reader,grant):
     return manifest
 
 def execute(ns):
+    if ns.operation=='native_authorize':
+        # Read-only reuse of the complete live project authority check. This
+        # never initializes the GUI ledger, acquires an owner or observes LINE.
+        grant=authorize(ns.project_root,ns.authorization,ns.fixture,'gui_observe')
+        require(grant.get('grant_version')=='line-two-album-project-grant-1','PROJECT_GRANT_REQUIRED')
+        return dict(status='PROJECT_NATIVE_AUTHORIZED',project_root=grant['project_root'],
+            owner=grant['owner'],task_id=grant['task_id'],source_sha256=grant['source_sha256'],
+            dispatch_authorized=False,native_controller_admission=False)
     store=Store(ns.project_root)
     if ns.operation=='inspect':
         snapshot=store.snapshot();s=snapshot['state']
@@ -432,7 +440,7 @@ def execute(ns):
 
 def main(argv=None):
     p=argparse.ArgumentParser(prog='line_backup_batch')
-    p.add_argument('operation',choices=['inspect','migrate','begin','admit','prepare','calibrate','intent','dispatch','finalize','stop','finish','release','resume','gui_reserve','gui_consume','gui_initialize','gui_phase','gui_observe'])
+    p.add_argument('operation',choices=['inspect','migrate','begin','admit','prepare','calibrate','intent','dispatch','finalize','stop','finish','release','resume','gui_reserve','gui_consume','gui_initialize','gui_phase','gui_observe','native_authorize'])
     p.add_argument('--project-root',required=True);p.add_argument('--authorization');p.add_argument('--input')
     p.add_argument('--fixture',action='store_true');ns=p.parse_args(argv)
     try:

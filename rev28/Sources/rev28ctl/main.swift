@@ -17,6 +17,16 @@ func optionValue(_ name: String) -> String? {
     return arguments[index + 1]
 }
 
+if arguments.count >= 2, arguments[1] == "runtime-preflight" {
+    do {
+        let result = try PilotNativeAuthority.preflight()
+        FileHandle.standardOutput.write(try JSONSerialization.data(withJSONObject: result, options: [.sortedKeys]))
+        FileHandle.standardOutput.write(Data("\n".utf8)); exit(0)
+    } catch {
+        FileHandle.standardError.write(Data("runtime-preflight refused: \(error)\n".utf8)); exit(77)
+    }
+}
+
 if arguments.count >= 2, arguments[1] == "capture-diagnostic" {
     do {
         let receipt = try await PassiveCaptureDiagnostic.run(arguments: arguments)
@@ -28,6 +38,53 @@ if arguments.count >= 2, arguments[1] == "capture-diagnostic" {
         exit(64)
     } catch {
         FileHandle.standardError.write(Data("capture-diagnostic refused: \(error)\n".utf8))
+        exit(77)
+    }
+}
+
+// Read-only context/OCR producer consumed by the hosted LINE analyzer. This
+// command does not grant foreground or GUI authority; callers must obtain it
+// before observing LINE, just as for the other native capture commands.
+if arguments.count >= 2, arguments[1] == "native-context" {
+    struct Refusal: Encodable {
+        let schemaVersion = 1
+        let complete = false
+        let truncated = false
+        let errors: [String]
+    }
+    do {
+        guard let bundleID = optionValue("--bundle-id") else {
+            throw PassiveContextObservation.CaptureError.unsupportedBundle("--bundle-id is required")
+        }
+        let imagePath = optionValue("--image")
+        let imageSHA = optionValue("--image-sha256")
+        guard (imagePath == nil) == (imageSHA == nil) else {
+            throw PassiveContextObservation.CaptureError.invalidImageBinding
+        }
+        if let imagePath, !imagePath.hasPrefix("/") {
+            throw PassiveContextObservation.CaptureError.invalidImageBinding
+        }
+        guard let grant = optionValue("--grant"), let root = optionValue("--project-root"),
+              let hash = optionValue("--grant-sha256"), let sessionID = optionValue("--session-id") else {
+            throw PassiveDiagnosticError.refused("pilot context authority arguments required")
+        }
+        _ = try PilotNativeAuthority.verify(root: URL(fileURLWithPath: root), grantPath: grant, grantSHA: hash,
+            sessionID: sessionID)
+        let observation = try PassiveContextObservation.capture(
+            bundleID: bundleID,
+            imageURL: imagePath.map { URL(fileURLWithPath: $0) },
+            imageSHA256: imageSHA
+        )
+        FileHandle.standardOutput.write(try EvidenceIO.encodeJSON(observation))
+        FileHandle.standardOutput.write(Data("\n".utf8))
+        exit(observation.complete ? 0 : 77)
+    } catch {
+        let refusal = Refusal(errors: ["native-context refused: \(error)"])
+        if let data = try? EvidenceIO.encodeJSON(refusal) {
+            FileHandle.standardOutput.write(data)
+            FileHandle.standardOutput.write(Data("\n".utf8))
+        }
+        FileHandle.standardError.write(Data("native-context refused: \(error)\n".utf8))
         exit(77)
     }
 }
@@ -948,6 +1005,13 @@ private func frameSupportVerifyGrant(_ grantPath: String, grantSHA: String, root
           let grant = try JSONSerialization.jsonObject(with: grantData) as? [String: Any] else {
         throw FrameSupportCommandError.refused("execution grant bytes or SHA-256 are invalid")
     }
+    if grant["grant_version"] as? String == "line-two-album-project-grant-1" {
+        guard bundleID == "jp.naver.line.mac" else {
+            throw FrameSupportCommandError.refused("pilot producer is restricted to LINE")
+        }
+        return try PilotNativeAuthority.verify(root: root, grantPath: grantPath, grantSHA: grantSHA,
+            surface: expectedSurface, sessionID: optionValue("--session-id"))
+    }
     let grantKeys: Set<String> = ["grant_version", "task_id", "project_root", "fixture", "artifact_dir", "owner", "operations",
         "config_sha256", "source_sha256", "album_quota", "lifecycle_album_limit", "save_all_dispatch_limit",
         "chooser_confirmation_limit", "reversible_gui_invocation_limit", "authorization_evidence", "acceptance_evidence",
@@ -1101,7 +1165,10 @@ private func runFrameSupportCapture(arguments: [String]) async throws -> FrameSu
         throw FrameSupportCommandError.refused("execution grant owner is missing")
     }
     let output = projectRoot.appendingPathComponent(outputPath).standardizedFileURL
-    guard outputPath.hasPrefix("harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/"),
+    let evidencePrefix = grant["grant_version"] as? String == "line-two-album-project-grant-1"
+        ? PilotNativeAuthority.directory + "/evidence/"
+        : "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/"
+    guard outputPath.hasPrefix(evidencePrefix),
           output.path.hasPrefix(projectRoot.path + "/"),
           !outputPath.split(separator: "/").contains("..") else {
         throw FrameSupportCommandError.refused("--output must stay under the selected project's harness-development directory")
@@ -1271,12 +1338,14 @@ private func runFrameSupportCapture(arguments: [String]) async throws -> FrameSu
         captureRequestMilliseconds: captureTiming.durationMilliseconds)
 }
 
-private let albumSupportISO8601: ISO8601DateFormatter = {
+// A computed formatter also works before the command dispatch's terminal exit;
+// a top-level stored let below that exit is never initialized by Swift.
+private var albumSupportISO8601: ISO8601DateFormatter {
     let formatter = ISO8601DateFormatter()
     formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
     formatter.timeZone = TimeZone.current
     return formatter
-}()
+}
 
 private func runAlbumSupportCapture(arguments: [String]) async throws -> AlbumSupportCaptureReceipt {
     let projectRootPath = try albumSupportOption("--project-root", arguments)
@@ -1309,6 +1378,15 @@ private func runAlbumSupportCapture(arguments: [String]) async throws -> AlbumSu
         throw AlbumSupportCommandError.refused("--output must live inside the project root")
     }
     let relativeOutput = String(output.path.dropFirst(projectRoot.path.count + 1))
+    if relativeOutput.hasPrefix(PilotNativeAuthority.directory + "/") || optionValue("--grant") != nil {
+        guard bundleID == "jp.naver.line.mac",
+              relativeOutput.hasPrefix(PilotNativeAuthority.directory + "/evidence/"),
+              let grant = optionValue("--grant"), let hash = optionValue("--grant-sha256") else {
+            throw AlbumSupportCommandError.refused("pilot menu capture authority required")
+        }
+        _ = try PilotNativeAuthority.verify(root: projectRoot, grantPath: grant, grantSHA: hash,
+            surface: "ALBUM_DETAIL", sessionID: sessionID)
+    }
     guard relativeOutput.hasPrefix("harness-development/") else {
         throw AlbumSupportCommandError.refused("--output must live under harness-development/")
     }
@@ -1462,6 +1540,14 @@ private func runAlbumSupportGuard(arguments: [String]) async throws -> AlbumSupp
     }
     let projectRoot = URL(fileURLWithPath: projectRootPath).standardizedFileURL.resolvingSymlinksInPath()
     let supportData = try Data(contentsOf: projectRoot.appendingPathComponent(supportPath))
+    if supportPath.hasPrefix(PilotNativeAuthority.directory + "/") || optionValue("--grant") != nil {
+        guard supportPath.hasPrefix(PilotNativeAuthority.directory + "/evidence/"),
+              let grant = optionValue("--grant"), let hash = optionValue("--grant-sha256") else {
+            throw AlbumSupportCommandError.refused("pilot menu guard authority required")
+        }
+        _ = try PilotNativeAuthority.verify(root: projectRoot, grantPath: grant, grantSHA: hash,
+            surface: "ALBUM_DETAIL", sessionID: sessionID)
+    }
     guard EvidenceIO.sha256Hex(supportData) == supportSHA else {
         throw AlbumSupportCommandError.refused("--support-sha256 does not match the retained sidecar bytes")
     }
