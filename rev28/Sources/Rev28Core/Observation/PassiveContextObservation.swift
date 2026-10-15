@@ -259,7 +259,7 @@ public struct PassiveContextObservation: Codable, Equatable, Sendable {
             var result: [Window] = []
             if case .value(let value) = focused, CFGetTypeID(value) == AXUIElementGetTypeID() {
                 let element = unsafeBitCast(value, to: AXUIElement.self)
-                focusedWindowID = uint32(element, "AXWindowNumber")
+                focusedWindowID = uint32(element, "AXWindowNumber") ?? AXDriver.windowNumber(of: element)
             }
             switch read(app, "AXWindows") {
             case .value(let value):
@@ -272,7 +272,7 @@ public struct PassiveContextObservation: Codable, Equatable, Sendable {
                 if values.count > 128 { truncationReasons.append("windowLimit") }
                 for element in values.prefix(128) {
                     let frame = rect(element)
-                    let axWindowID = uint32(element, "AXWindowNumber")
+                    let axWindowID = uint32(element, "AXWindowNumber") ?? AXDriver.windowNumber(of: element)
                     let cgEntry = axWindowID.flatMap { windowNumber in cgEntries.first(where: { $0.number == windowNumber }) }
                     let nodeMatches = axWindowID.map { number in nodes.filter { $0.role == "AXWindow" && $0.windowNumber == number } } ?? []
                     let nodeID = nodeMatches.count == 1 ? nodeMatches[0].id : nil
@@ -347,7 +347,10 @@ public struct PassiveContextObservation: Codable, Equatable, Sendable {
                 framePt: frame.map { Rect(x: $0.minX, y: $0.minY, width: $0.width, height: $0.height) },
                 enabled: boolValue(values["AXEnabled"]), focused: boolValue(values["AXFocused"]),
                 selected: boolValue(values["AXSelected"]), offscreen: offscreen,
-                windowNumber: (values["AXWindowNumber"] as? NSNumber)?.uint32Value, children: [],
+                // LINE can omit AXWindowNumber. Use the existing exact-ID
+                // reader for window nodes while retaining the raw missing attribute.
+                windowNumber: (values["AXWindowNumber"] as? NSNumber)?.uint32Value
+                    ?? (stringValue(values["AXRole"]) == "AXWindow" ? AXDriver.windowNumber(of: element) : nil), children: [],
                 missingAttributes: missing.sorted(), nullAttributes: nulls.sorted(),
                 unsupportedAttributes: unsupported.sorted(), attributeErrors: attrErrors
             ))
