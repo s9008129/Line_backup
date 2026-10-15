@@ -1,0 +1,180 @@
+{
+  "format": "redacted-review-evidence/1",
+  "scope": "Operator-reported private evidence summary for independent source and reasoning review; no live authority",
+  "approved_head": "2bd94af4e5f0d0d070983b270f49691968c18788",
+  "prior_invocation": {
+    "id": "G1-04",
+    "source_head": "218a025e8006bacf21e7c7f6023a07627b0f7667",
+    "actual_first_error": "DISPLAY_GEOMETRY_AMBIGUOUS",
+    "new_diagnostic_invocations": 0,
+    "new_diagnostic_freshness_error_observed": false
+  },
+  "timing": {
+    "retention_mtime_unix_nanoseconds": 1792049027823102310,
+    "retention_birthtime_unix_seconds": "1792049027.8229597",
+    "native_after_observed_at_unix_milliseconds": 1792049040965,
+    "native_after_complete": true,
+    "native_after_truncated": false,
+    "native_after_visual_source_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+    "difference_nanoseconds": 13141897690,
+    "difference_milliseconds_exact": "13141.89769",
+    "original_freshness_limit_milliseconds": 5000,
+    "original_hosted_request_started_at": "UNKNOWN_NOT_SEPARATELY_RETAINED",
+    "isolated_native_after_process_duration": "UNKNOWN",
+    "clock_continuity_independently_proved": false,
+    "metadata_immutability_independently_proved": false,
+    "universal_future_performance_lower_bound_proved": false
+  },
+  "private_artifact_digest_references": [
+    {
+      "label": "original_hosted_jpeg",
+      "bytes": 184297,
+      "sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+      "original_published": false
+    },
+    {
+      "label": "original_hosted_ax",
+      "bytes": 1299,
+      "sha256": "511c6cf8ad8709ca1fc5b595e26ebcec9e02d0bd73dc9e42e32b92e2b0eb90f2",
+      "original_published": false
+    },
+    {
+      "label": "native_before_packet",
+      "bytes": 265152,
+      "sha256": "eca20dfd793c5426c4463a4853140d092602146712abb7c3b91fa8456fa1cd14",
+      "original_published": false
+    },
+    {
+      "label": "native_after_packet",
+      "bytes": 268867,
+      "sha256": "d0308c3aa15d3aca06c8cd795b9928d28ab15b429596a7517b766ae2dfa5db53",
+      "original_published": false
+    },
+    {
+      "label": "prior_actual_outcome",
+      "bytes": 1285,
+      "sha256": "8cb51e1a64d3e284f7c042112836cd8bec017cdb4ac3dcbd12efcfbe1b7b13e9",
+      "original_published": false
+    }
+  ],
+  "binding_check_summary": {
+    "native_source_files_matching_approved_head": 60,
+    "native_source_files_checked": 60,
+    "producer_binary_sha256": "a1249caa4ce8ab6c31169e15e0c3a800200596d802113f2bd6ce8ba113e7fb4f",
+    "decoder_sha256": "1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf",
+    "native_build_run_this_round": false,
+    "existing_runtime_closure_verified": true,
+    "dependency_bindings_verified": 162,
+    "current_operations": [
+      "gui_observe"
+    ],
+    "consent_status": "CLOSED_NO_REPLAY_NOT_MODIFIED",
+    "source_delta": {
+      "harness-development/line-two-album-pilot-20261014/mac/analyzer.mjs": {
+        "installed_sha256": "b41157c3f5fae78142c139b9a0b72f390e1b4c383d5f0335a7f7137528bb7fcf",
+        "approved_sha256": "b56d1a0227f0da6fa30067b8556116bf89461c7ace526f9d8994992d8bb556da"
+      },
+      "harness-development/line-two-album-pilot-20261014/mac/classifier.mjs": {
+        "installed_sha256": "88d39407e1b4e65206cf2e50ce50ef80a4acdd1d05f0513b2e43f10dba460a7b",
+        "approved_sha256": "90e282d3ce946552d774b24861bc7f265e58e3ab844363d09492e52f11be358a"
+      },
+      "harness-development/line-two-album-pilot-20261014/mac_runtime.mjs": {
+        "installed_sha256": "32349ed24e2974ef5710a758978f4c195d554a830f86acc39d9b6ec4f520ee38",
+        "approved_sha256": "972ebb24725f21f7f28a469a14fa228f9907203f3f9bdba56f666485e045afc3"
+      }
+    }
+  },
+  "no_line_checks": {
+    "native_permission_probe": {
+      "invocations": 1,
+      "exit_code": 0,
+      "accessibility_authorized": true,
+      "screen_capture_authorized": true,
+      "vision_zh_hant_supported": true,
+      "line_observation_performed": false,
+      "gui_inputs": 0
+    },
+    "closed_native_admission_probe": {
+      "invocations": 1,
+      "exit_code": 4,
+      "expected_refusal": "PROJECT_LIVE_READINESS_REQUIRED",
+      "dispatch_authorized": false
+    }
+  },
+  "preservation_summary": {
+    "protected_files_verified": 383,
+    "historical_photo_hashes_verified": 239,
+    "state_revision": 35,
+    "cap": 1,
+    "verified_albums": 2,
+    "entire_state_unchanged": true,
+    "durable_intents_and_existing_receipt_history_unchanged": true,
+    "prior_consents_and_all_private_receipts_unchanged": true,
+    "git_head_and_logical_index_unchanged": true,
+    "existing_dirty_files_unchanged": true,
+    "live_gui_ledger_exists": false
+  },
+  "private_preflight_receipt_digest_references": [
+    {
+      "label": "sck-freshness.json",
+      "sha256": "57b8749a6c4d348801a0f2eeae51c61c0316ca63036013a9ffe5eb90f36d8b4f",
+      "original_published": false
+    },
+    {
+      "label": "existing-bindings.json",
+      "sha256": "28ced4c5a499941ad9d49090d26dcee0b91003826469fb7de4b71cc379dbc960",
+      "original_published": false
+    },
+    {
+      "label": "native-no-line-preflight.json",
+      "sha256": "c56996e4881dfbb1168eb48aa7ea8e44872dc3fedc9f51e25781a611c837b403",
+      "original_published": false
+    },
+    {
+      "label": "closed-native-admission.json",
+      "sha256": "f87d0ce175e1430f045a82a7ca15f72d0b987c64447b0a18a674287632bb2c5e",
+      "original_published": false
+    },
+    {
+      "label": "preservation-after.json",
+      "sha256": "f9bba016364d743d61b21edba528d3a91cee1eaa61db72b0008a41c922e92f8f",
+      "original_published": false
+    },
+    {
+      "label": "assessment.json",
+      "sha256": "a1f08c91f7c60d48346e48f1c5b6bff85e237b67b1dc307fc56f5ace8f5a3895",
+      "original_published": false
+    }
+  ],
+  "reported_statuses": {
+    "SOURCE_HEAD": "2bd94af4e5f0d0d070983b270f49691968c18788",
+    "INSTALLED_SOURCE_HEAD": "218a025e8006bacf21e7c7f6023a07627b0f7667",
+    "INSTALLATION": "BLOCKED",
+    "SOURCE_BINARY_BINDINGS": "BLOCKED",
+    "NO_LINE_PREFLIGHT": "FAIL",
+    "SCK_FRESHNESS_READINESS": "KNOWN_BLOCKER",
+    "NEW_OWNER_CONSENT": "NOT_GRANTED",
+    "REAL_DIAGNOSTIC": "NOT_RUN",
+    "SCK_REAL_CAPTURE": "NOT_RUN",
+    "VISUAL_CARD_WITNESS": "BLOCKED",
+    "G1_ACTIONABLE_IDENTITY": "BLOCKED",
+    "HISTORICAL_239_PHOTOS": "PROTECTED",
+    "PRODUCTION_STATE_MODIFIED": "NO",
+    "LINE_INPUT_ACTIONS": 0,
+    "LINE_ACQUISITIONS": 0,
+    "LIVE_GUI_LEDGER_INITIALIZED": false,
+    "NEXT_ACTION": "REPORT_ACTUAL_BLOCKER"
+  },
+  "disclosure_limits": {
+    "raw_jpeg_ax_ocr_or_native_packet_published": false,
+    "owner_identity_or_absolute_local_paths_published": false,
+    "independent_original_evidence_verification_claimed": false,
+    "owner_managed_private_evidence_transfer_required_for_original_verification": true
+  },
+  "read_only_evidence_contract": {
+    "kind": "VISUAL_CARD_DIAGNOSTIC",
+    "evidence_only": true,
+    "actionable": false,
+    "actual_new_packet_collected": false
+  }
+}
