@@ -8,6 +8,9 @@ const need=(ok,code)=>{if(!ok)throw Object.assign(Error(code),{code});};
 const fail=code=>{throw Object.assign(Error(code),{code});};
 const decoder=new TextDecoder();
 const nowISO=()=>new Date().toISOString();
+const canonical=value=>Array.isArray(value)?`[${value.map(canonical).join(',')}]`
+  :value&&typeof value==='object'?`{${Object.keys(value).sort().map(k=>`${JSON.stringify(k)}:${canonical(value[k])}`).join(',')}}`
+  :JSON.stringify(value);
 const refShape=v=>v&&Object.keys(v).sort().join(',')==='bytes,path,sha256'
   &&v.path.startsWith(CON+'/')&&!v.path.split('/').some(p=>p==='.'||p==='..')
   &&Number.isInteger(v.bytes)&&v.bytes>0&&isHash(v.sha256);
@@ -15,7 +18,7 @@ async function readVerified(io,root,ref,code='ARTIFACT_DRIFT'){
   need(refShape(ref),code);const raw=await io.readFile(path.join(root,ref.path));
   need(raw.byteLength===ref.bytes&&raw.byteLength<=16*1024*1024&&sha256(raw)===ref.sha256,code);return raw;
 }
-export function createProducerHook({io,runProcess,repoRoot,authorization,authority,binary,geometryProvider}) {
+export function createProducerHook({io,runProcess,repoRoot,authorization,authority,binary,geometryProvider,retain}) {
   need(typeof geometryProvider==='function','LIVE_GEOMETRY_PROVIDER_REQUIRED');
   const run=async (args,code) => {
     const env={};
@@ -26,6 +29,90 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
   async function readRef(ref) {
     const raw=await readVerified(io,repoRoot,ref,'SCK_ARTIFACT_DRIFT');
     return raw;
+  }
+  async function captureVisualDiagnostic({capture,saved,frameId,sessionId,requestStartedAtUtc,
+      requestEndedAtUtc,requestStartMonotonicNanoseconds,requestEndMonotonicNanoseconds,before}) {
+    need(typeof retain==='function','VISUAL_DIAGNOSTIC_RETENTION_REQUIRED');
+    const decimalNs=value=>typeof value==='string'&&/^(0|[1-9][0-9]*)$/.test(value);
+    const startMono=decimalNs(requestStartMonotonicNanoseconds)?BigInt(requestStartMonotonicNanoseconds):-1n;
+    const endMono=decimalNs(requestEndMonotonicNanoseconds)?BigInt(requestEndMonotonicNanoseconds):-1n;
+    need(capture?.screenshot instanceof Uint8Array&&saved?.sha256===frameId
+      &&sha256(capture.screenshot)===frameId&&startMono>=0n&&endMono>=startMono
+      &&endMono-startMono<=30_000_000_000n&&Number.isFinite(Date.parse(requestStartedAtUtc))
+      &&Number.isFinite(Date.parse(requestEndedAtUtc))&&Date.parse(requestEndedAtUtc)>=Date.parse(requestStartedAtUtc),
+      'VISUAL_DIAGNOSTIC_CUA_BINDING');
+    need(before?.value?.target?.bundleID==='jp.naver.line.mac'&&before.value.complete===true
+      &&before.value.truncated===false&&Number.isInteger(before.value.target.pid)
+      &&Number.isInteger(before.value.target.startTimeSeconds)
+      &&Number.isInteger(before.value.target.startTimeMicroseconds),
+      'VISUAL_DIAGNOSTIC_NATIVE_BEFORE');
+    const pid=before.value.target.pid;
+    const focusedID=before.value.focusedWindowID;
+    const windows=before.value.windows.filter(w=>w.windowNumber===focusedID&&w.nodeID!==null);
+    need(windows.length===1&&Array.isArray(windows[0].displayIDs)&&windows[0].displayIDs.length===1
+      &&windows[0].framePt,'VISUAL_DIAGNOSTIC_WINDOW_IDENTITY');
+    const w=windows[0],bounds=[w.framePt.x,w.framePt.y,w.framePt.width,w.framePt.height];
+    const preDispatchMono=process.hrtime.bigint();
+    need(preDispatchMono>=startMono&&preDispatchMono-startMono<=5_000_000_000n
+      &&Date.now()-Date.parse(requestStartedAtUtc)<=5000,'VISUAL_DIAGNOSTIC_CAPTURE_DEADLINE');
+    const output=`${CON}/evidence/visual-diagnostic/${sessionId}/${frameId.slice(0,16)}-${randomUUID()}`;
+    await io.mkdirp(path.join(repoRoot,output));
+    const result=await run(['visual-diagnostic-capture','--project-root',repoRoot,
+      '--grant',authorization,'--grant-sha256',authority.grantSha256,'--output',output,
+      '--session-id',sessionId,'--cua-frame',saved.path,'--cua-frame-id',frameId,
+      '--cua-request-started-at',requestStartedAtUtc,'--cua-request-ended-at',requestEndedAtUtc,
+      '--cua-request-start-monotonic-ns',String(requestStartMonotonicNanoseconds),
+      '--cua-request-end-monotonic-ns',String(requestEndMonotonicNanoseconds),
+      '--pid',String(pid),'--process-start-seconds',String(before.value.target.startTimeSeconds),
+      '--process-start-microseconds',String(before.value.target.startTimeMicroseconds),
+      '--window-id',String(focusedID),'--display-id',String(w.displayIDs[0]),'--cua-bounds',bounds.join(',')],
+      'VISUAL_DIAGNOSTIC_CAPTURE_REFUSED');
+    const receipt=result;
+    need(receipt.version===1&&receipt.kind==='VISUAL_CARD_DIAGNOSTIC'&&receipt.evidenceOnly===true
+      &&receipt.actionable===false&&receipt.pair?.sessionID===sessionId&&receipt.pair.cuaFrameID===frameId,
+      'VISUAL_DIAGNOSTIC_CAPTURE_RECEIPT');
+    const pair=receipt.pair;
+    need(refShape(pair.cuaFrame)&&pair.cuaFrame.sha256===frameId&&refShape(pair.sckFrame)
+      &&pair.sckFrame.sha256===pair.sckFrameID&&pair.sckFrameID!==frameId
+      &&pair.cuaRequestStartedAt===requestStartedAtUtc&&pair.cuaRequestEndedAt===requestEndedAtUtc
+      &&pair.cuaRequestStartMonotonicNanoseconds===requestStartMonotonicNanoseconds
+      &&pair.cuaRequestEndMonotonicNanoseconds===requestEndMonotonicNanoseconds
+      &&BigInt(pair.sckRequestEndMonotonicNanoseconds)>=startMono
+      &&BigInt(pair.sckRequestEndMonotonicNanoseconds)-startMono<=5_000_000_000n
+      &&Date.parse(pair.sckRequestEndedAt)>=Date.parse(requestStartedAtUtc)
+      &&Date.parse(pair.sckRequestEndedAt)-Date.parse(pair.cuaRequestStartedAt)<=5000,
+      'VISUAL_DIAGNOSTIC_CAPTURE_PAIR');
+    await readRef(pair.cuaFrame);await readRef(pair.sckFrame);
+    const reference=await retain({artifact:receipt,kind:'visual-diagnostic-capture-receipt',frameId,sessionId});
+    return {pair,reference,readRef};
+  }
+  async function analyzeVisualDiagnostic({pairEvidence,frameId,sessionId}) {
+    const pair=pairEvidence?.pair;
+    need(pair&&pair.kind==='VISUAL_CARD_DIAGNOSTIC'&&pair.sessionID===sessionId
+      &&pair.cuaFrameID===frameId&&pair.cuaFrame?.sha256===frameId&&pair.sckFrame?.sha256===pair.sckFrameID,
+      'VISUAL_DIAGNOSTIC_ANALYSIS_PAIR');
+    const cuaRaw=await readRef(pair.cuaFrame),sckRaw=await readRef(pair.sckFrame);
+    need(sha256(cuaRaw)===frameId&&sha256(sckRaw)===pair.sckFrameID&&pair.sckFrameID!==frameId,
+      'VISUAL_DIAGNOSTIC_ANALYSIS_SOURCE_HASH');
+    const captureReceipt=pairEvidence.reference;
+    need(refShape(captureReceipt),'VISUAL_DIAGNOSTIC_TYPED_RECEIPT_REQUIRED');
+    const receiptBytes=await readRef(captureReceipt);
+    let decodedReceipt;try{decodedReceipt=JSON.parse(decoder.decode(receiptBytes));}catch{fail('VISUAL_DIAGNOSTIC_TYPED_RECEIPT_INVALID');}
+    need(decodedReceipt.version===1&&decodedReceipt.kind==='VISUAL_CARD_DIAGNOSTIC'
+      &&decodedReceipt.evidenceOnly===true&&decodedReceipt.actionable===false
+      &&canonical(decodedReceipt.pair)===canonical(pair),'VISUAL_DIAGNOSTIC_RECEIPT_PAIR_MISMATCH');
+    const pairSHA=captureReceipt.sha256;
+    const result=await run(['visual-diagnostic-analyze','--project-root',repoRoot,
+      '--capture-receipt',captureReceipt.path,'--capture-receipt-sha256',captureReceipt.sha256],
+      'VISUAL_DIAGNOSTIC_PIXEL_ANALYSIS_REFUSED');
+    need(result.version===1&&result.kind==='VISUAL_CARD_DIAGNOSTIC'&&result.evidenceOnly===true
+      &&result.actionable===false&&result.capturePairSHA256===pairSHA
+      &&['COMPLETE','INSUFFICIENT'].includes(result.status)&&Array.isArray(result.anchors)
+      &&Array.isArray(result.cuaOCR)&&Array.isArray(result.sckOCR),'VISUAL_DIAGNOSTIC_PIXEL_ANALYSIS_SHAPE');
+    if(result.status==='COMPLETE')need(result.anchors.length>=3&&Number.isFinite(result.uncertaintyPixels)
+      &&Number.isFinite(result.maximumResidualPixels),'VISUAL_DIAGNOSTIC_PIXEL_ANCHORS');
+    const reference=await retain({artifact:result,kind:'visual-diagnostic-pixel-analysis',frameId,sessionId});
+    return {analysis:result,reference};
   }
   async function frameSupport({frame,frameRef,frameId,sessionId,capturedAt,surface,layoutKey,native,geometryRef}) {
     need(['ALBUMS','ALBUM_DETAIL','FOLDER_CHOOSER'].includes(surface)&&frame instanceof Uint8Array
@@ -92,7 +179,8 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
   }
   const invokeProducer=request=>request.mode==='capture'?captureMenuSupport(request)
     :request.mode==='guard'?guardMenu(request):Promise.reject(Object.assign(new Error('PRODUCER_MODE_UNKNOWN'),{code:'PRODUCER_MODE_UNKNOWN'}));
-  return Object.freeze({frameSupport,captureMenuSupport,guardMenu,invokeProducer,readRef});
+  return Object.freeze({frameSupport,captureMenuSupport,guardMenu,captureVisualDiagnostic,
+    analyzeVisualDiagnostic,invokeProducer,readRef});
 }
 
 

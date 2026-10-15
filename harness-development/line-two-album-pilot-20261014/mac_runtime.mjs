@@ -10,6 +10,7 @@ import {createLiveAnalyzer,verifyNativePair} from './mac/analyzer.mjs';
 import {createLiveClassifier} from './mac/classifier.mjs';
 import {createChooserLocators} from './mac/chooser.mjs';
 import {createProducerHook,createDownloadObserver} from './mac/producer.mjs';
+import {createVisualDiagnosticObserver} from './mac/visual_diagnostic.mjs';
 
 const BASE='harness-development/line-two-album-pilot-20261014';
 const PRIVATE=BASE+'/private';
@@ -129,7 +130,7 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
   // The producer and analyzer obtain the digest at use time, after genuine admission.
   const nativeAnalyzer=analyzer;
   const menuGeometry=new Map();let classifier;
-  const producer=createProducerHook({io,runProcess,repoRoot:projectRoot,authorization,authority,
+  const producer=createProducerHook({io,runProcess,repoRoot:projectRoot,authorization,authority,retain,
     binary:{absolutePath:producerPath},geometryProvider:async({pairFrameId})=>{
       const g=menuGeometry.get(pairFrameId);need(g,'MENU_GEOMETRY_NOT_OBSERVED');return g;
     }});
@@ -236,17 +237,17 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     },
     observeVisualCardDiagnostic:async()=>{
       need(!visualCardDiagnosticUsed,'VISUAL_DIAGNOSTIC_ALREADY_USED');visualCardDiagnosticUsed=true;
-      let observer=null;
       try {
         const grant=await bindLiveAuthority();
         need(Array.isArray(grant.operations)&&grant.operations.length===1
           &&grant.operations[0]==='gui_observe','VISUAL_DIAGNOSTIC_GRANT_SCOPE');
         await assertLineAlreadyRunning();
         const app=await cua.getApp('jp.naver.line.mac');
-        observer=createNavigationObserver({app,bridge:cli.bridge,retain,
-          classify:classifier.collectVisualCardDiagnostic,beforeCapture:runtime.beforeCapture,
-          afterCapture:runtime.afterCapture,sessionId:owner});
-        return await observer.observe('VISUAL_CARD_DIAGNOSTIC');
+        const observer=createVisualDiagnosticObserver({app,retain,beforeCapture:runtime.beforeCapture,
+          capturePair:producer.captureVisualDiagnostic,afterCapture:runtime.afterCapture,
+          analyze:args=>classifier.completeVisualCardDiagnostic({...args,
+            analyzePixels:producer.analyzeVisualDiagnostic}),sessionId:owner});
+        return await observer.observe();
       } catch(error) {
         const evidence={kind:'VISUAL_CARD_DIAGNOSTIC_FAILURE',session_id:owner,
           error:{code:error.code??null,message:String(error.message??error)}};
@@ -254,7 +255,7 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
           frameId:hash(Buffer.from(evidenceJSON(evidence)))});}
         catch(retentionError){error.diagnosticRetentionError=String(retentionError.message??retentionError);}
         throw error;
-      } finally {observer?.close();}
+      }
     },
     runPilot:async()=>{await bindLiveAuthority();return runTwoAlbumPilot(runtime);}});
 }

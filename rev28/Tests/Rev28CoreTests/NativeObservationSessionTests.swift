@@ -47,6 +47,7 @@ extension NativeObservationSessionTests {
             XCTFail("unexpected error: \(mapped)")
         }
     }
+}
 
 final class NativeObservationSessionTests: XCTestCase {
     // MARK: - Fakes (substitutions stay below perception/predicate/state decisions)

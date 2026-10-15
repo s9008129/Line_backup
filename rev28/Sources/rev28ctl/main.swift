@@ -590,6 +590,32 @@ if arguments.count >= 2, arguments[1] == "frame-support" {
         exit(77)
     }
 }
+if arguments.count >= 2, arguments[1] == "visual-diagnostic-capture" {
+    guard ProcessInfo.processInfo.environment["CI"] == nil else {
+        FileHandle.standardError.write(Data("visual-diagnostic-capture: live capture is disabled in CI\n".utf8))
+        exit(77)
+    }
+    do {
+        let receipt = try await VisualDiagnosticCommand.run(arguments: arguments)
+        FileHandle.standardOutput.write(try EvidenceIO.encodeJSON(receipt))
+        FileHandle.standardOutput.write(Data("\n".utf8))
+        exit(0)
+    } catch {
+        FileHandle.standardError.write(Data("visual-diagnostic-capture refused: \(error)\n".utf8))
+        exit(77)
+    }
+}
+if arguments.count >= 2, arguments[1] == "visual-diagnostic-analyze" {
+    do {
+        let analysis = try await VisualDiagnosticCommand.analyze(arguments: arguments)
+        FileHandle.standardOutput.write(try EvidenceIO.encodeJSON(analysis))
+        FileHandle.standardOutput.write(Data("\n".utf8))
+        exit(0)
+    } catch {
+        FileHandle.standardError.write(Data("visual-diagnostic-analyze refused: \(error)\n".utf8))
+        exit(77)
+    }
+}
 if arguments.count >= 2, ["album-support", "album-support-guard"].contains(arguments[1]) {
     let command = arguments[1]
     guard ProcessInfo.processInfo.environment["CI"] == nil else {

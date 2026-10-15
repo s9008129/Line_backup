@@ -394,5 +394,89 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
     }
   }
 
-  return Object.freeze({classify,classifyChooser,collectVisualCardDiagnostic,cache});
+  async function completeVisualCardDiagnostic({capture,saved,frameId,sessionId,capturedAt,sourceBinding,pairEvidence,analyzePixels,
+      requestStartMonotonicNanoseconds}) {
+    const pair=pairEvidence?.pair;
+    need(pair&&pair.kind==='VISUAL_CARD_DIAGNOSTIC'&&pair.sessionID===sessionId
+      &&pair.cuaFrameID===frameId&&pair.cuaFrame?.sha256===frameId&&pair.sckFrame?.sha256===pair.sckFrameID,
+      'VISUAL_DIAGNOSTIC_PAIR_REQUIRED');
+    const before=sourceBinding?.before?.value,after=sourceBinding?.after?.value;
+    need(before?.schemaVersion===1&&before.complete===true&&before.truncated===false
+      &&after?.schemaVersion===1&&after.complete===true&&after.truncated===false,
+      'VISUAL_DIAGNOSTIC_NATIVE_CONTEXT_REQUIRED');
+    const processKey=v=>JSON.stringify([v.target?.bundleID,v.target?.pid,v.target?.startTimeSeconds,
+      v.target?.startTimeMicroseconds]);
+    need(processKey(before)===processKey(after)&&pair.bundleID===after.target.bundleID
+      &&pair.pid===after.target.pid&&pair.processStartTimeSeconds===after.target.startTimeSeconds
+      &&pair.processStartTimeMicroseconds===after.target.startTimeMicroseconds,
+      'VISUAL_DIAGNOSTIC_PROCESS_INSTANCE_DRIFT');
+    const beforeWindows=(before.windows??[]).filter(w=>w.windowNumber===pair.windowID);
+    const afterWindows=(after.windows??[]).filter(w=>w.windowNumber===pair.windowID);
+    const afterDisplays=(after.displays??[]).filter(d=>d.displayID===pair.displayID);
+    const rectValues=r=>r&&[r.x,r.y,r.width,r.height];
+    const sameRect=(a,b,tolerance=1)=>Array.isArray(a)&&Array.isArray(b)&&a.length===4&&b.length===4
+      &&a.every((v,i)=>Number.isFinite(v)&&Number.isFinite(b[i])&&Math.abs(v-b[i])<=tolerance);
+    need(before.focusedWindowID===pair.windowID&&after.focusedWindowID===pair.windowID
+      &&beforeWindows.length===1&&afterWindows.length===1&&afterDisplays.length===1
+      &&sameRect(rectValues(beforeWindows[0].framePt),pair.sckWindowBoundsPoints)
+      &&sameRect(rectValues(afterWindows[0].framePt),pair.sckWindowBoundsPoints)
+      &&sameRect(rectValues(afterDisplays[0].boundsPt),pair.displayBoundsPoints)
+      &&Array.isArray(afterWindows[0].displayIDs)&&afterWindows[0].displayIDs.includes(pair.displayID),
+      'VISUAL_DIAGNOSTIC_NATIVE_GEOMETRY_DRIFT');
+    const [width,height]=imageSize(capture.screenshot);
+    const sourceAX=encoder.encode(capture.state),sourceAXSha=sha256Hex(sourceAX);
+    need(saved?.sha256===frameId&&sha256Hex(capture.screenshot)===frameId
+      &&saved.ax?.sha256===sourceAXSha&&saved.ax.bytes===sourceAX.byteLength,
+      'VISUAL_DIAGNOSTIC_RETAINED_CUA_INVALID');
+    const nativeAnalysis=await analyzeVisualCardDiagnostic({screenshot:capture.screenshot,axText:capture.state,
+      frameId,sessionId,capturedAt,width,height,sourceAXSha256:sourceAXSha,sourceBinding,capturedContext:sourceBinding,saved});
+    need(nativeAnalysis?.kind==='VISUAL_CARD_DIAGNOSTIC'&&nativeAnalysis.evidence_only===true
+      &&nativeAnalysis.actionable===false&&nativeAnalysis.frame_id===frameId&&nativeAnalysis.session_id===sessionId
+      &&nativeAnalysis.native?.pid===pair.pid&&nativeAnalysis.native?.window_id===pair.windowID
+      &&nativeAnalysis.native?.display_id===pair.displayID
+      &&sameRect(nativeAnalysis.native?.cua_capture_bounds_points,pair.cuaBoundsPoints),
+      'VISUAL_DIAGNOSTIC_NATIVE_ANALYSIS_BINDING');
+    need(typeof analyzePixels==='function','VISUAL_DIAGNOSTIC_PIXEL_ANALYZER_REQUIRED');
+    const pixel=await analyzePixels({pairEvidence,frameId,sessionId});
+    need(typeof pairEvidence.readRef==='function','VISUAL_DIAGNOSTIC_READER_REQUIRED');
+    for(const reference of [pairEvidence.reference,pair.cuaFrame,pair.sckFrame,saved.ax,sourceBinding.before.reference,
+      sourceBinding.after.reference,nativeAnalysis.reference,pixel.reference]) {
+      const bytes=await pairEvidence.readRef(reference);
+      need(bytes?.byteLength===reference.bytes,'VISUAL_DIAGNOSTIC_PROVENANCE_REFERENCE');
+    }
+    const analysisStatus='INSUFFICIENT';
+    const completedAt=new Date().toISOString();
+    const completedMono=process.hrtime.bigint();
+    const processingDuration=completedMono-BigInt(requestStartMonotonicNanoseconds);
+    need(processingDuration>=0n,'VISUAL_DIAGNOSTIC_PROCESSING_CLOCK');
+    const packet={version:1,kind:'VISUAL_CARD_DIAGNOSTIC',evidence_only:true,actionable:false,
+      CAPTURE_STATUS:'CAPTURED',ANALYSIS_STATUS:analysisStatus,ACTION_ELIGIBILITY:'INELIGIBLE',
+      ACQUISITION_RELATIONSHIP:'INSUFFICIENT',
+      session_id:sessionId,frame_id:frameId,captured_at:capturedAt,
+      cua_request_started_at:pair.cuaRequestStartedAt,cua_request_ended_at:pair.cuaRequestEndedAt,
+      cua_request_start_monotonic_nanoseconds:pair.cuaRequestStartMonotonicNanoseconds,
+      cua_request_end_monotonic_nanoseconds:pair.cuaRequestEndMonotonicNanoseconds,
+      sck_request_started_at:pair.sckRequestStartedAt,sck_request_ended_at:pair.sckRequestEndedAt,
+      sck_request_start_monotonic_nanoseconds:pair.sckRequestStartMonotonicNanoseconds,
+      sck_request_end_monotonic_nanoseconds:pair.sckRequestEndMonotonicNanoseconds,
+      processing_completed_at:completedAt,processing_duration_nanoseconds:processingDuration.toString(),
+      cua_frame:pair.cuaFrame,sck_frame:pair.sckFrame,capture_pair_receipt:pairEvidence.reference,
+      native_before:ref(sourceBinding.before.reference,'VISUAL_DIAGNOSTIC_NATIVE_BEFORE_REF'),
+      native_after:ref(sourceBinding.after.reference,'VISUAL_DIAGNOSTIC_NATIVE_AFTER_REF'),
+      native_analysis:ref(nativeAnalysis.reference,'VISUAL_DIAGNOSTIC_NATIVE_ANALYSIS_REF'),
+      pixel_analysis:ref(pixel.reference,'VISUAL_DIAGNOSTIC_PIXEL_ANALYSIS_REF'),
+      analysis_reason:pixel.analysis.reason??null,
+      pixel_alignment_status:pixel.analysis.status,
+      visual_card_status:'INSUFFICIENT_NO_COMPLETE_CARD_WITNESS',
+      acquisition_relationship_reason:'Pixel anchor alignment and matching Native AFTER geometry do not establish full screen continuity or a complete card/thumbnail/control witness.',
+      geometry_time_semantics:'SCK capture record is capture-time provenance; Native AFTER AX is later context and is only a consistency check.'};
+    const reference=ref(await retain({artifact:packet,kind:'visual-card-diagnostic-completion',frameId,sessionId}),
+      'VISUAL_DIAGNOSTIC_COMPLETION_RETAIN_REQUIRED');
+    return {kind:packet.kind,evidence_only:true,actionable:false,CAPTURE_STATUS:packet.CAPTURE_STATUS,
+      ANALYSIS_STATUS:packet.ANALYSIS_STATUS,ACTION_ELIGIBILITY:packet.ACTION_ELIGIBILITY,
+      ACQUISITION_RELATIONSHIP:packet.ACQUISITION_RELATIONSHIP,
+      frame_id:frameId,session_id:sessionId,reference};
+  }
+
+  return Object.freeze({classify,classifyChooser,collectVisualCardDiagnostic,completeVisualCardDiagnostic,cache});
 }
