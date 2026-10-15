@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 import ImageIO
 import Rev28Core
+import Darwin
 
 struct VisualDiagnosticCaptureReceipt: Codable {
     let version: Int
@@ -9,6 +10,15 @@ struct VisualDiagnosticCaptureReceipt: Codable {
     let evidenceOnly: Bool
     let actionable: Bool
     let pair: VisualDiagnosticCapturePair
+}
+
+struct VisualDiagnosticClockReceipt: Codable {
+    let witness: VisualDiagnosticClockWitness
+}
+
+struct VisualDiagnosticClockCheckReceipt: Codable {
+    let status: String
+    let elapsedNanoseconds: UInt64
 }
 
 struct VisualDiagnosticAnchor: Codable {
@@ -40,6 +50,67 @@ struct VisualDiagnosticPixelAnalysis: Codable {
 }
 
 enum VisualDiagnosticCommand {
+    static func clock(arguments: [String]) throws -> VisualDiagnosticClockReceipt {
+        func value(_ name: String) throws -> String {
+            guard let i = arguments.firstIndex(of: name), i + 1 < arguments.count,
+                  !arguments[i + 1].isEmpty else { throw Failure.invalidArguments(name) }
+            return arguments[i + 1]
+        }
+        let sessionID = try value("--session-id")
+        let witnessID = try value("--witness-id")
+        guard UUID(uuidString: witnessID) != nil else { throw Failure.invalidArguments("--witness-id") }
+        return VisualDiagnosticClockReceipt(witness: try clockWitness(sessionID: sessionID, witnessID: witnessID))
+    }
+
+    static func checkClockBracket(arguments: [String]) throws -> VisualDiagnosticClockCheckReceipt {
+        func value(_ name: String) throws -> String {
+            guard let i = arguments.firstIndex(of: name), i + 1 < arguments.count,
+                  !arguments[i + 1].isEmpty else { throw Failure.invalidArguments(name) }
+            return arguments[i + 1]
+        }
+        let sessionID = try value("--session-id")
+        let witnessID = try value("--witness-id")
+        func witness(_ name: String) throws -> VisualDiagnosticClockWitness {
+            guard let i = arguments.firstIndex(of: name), i + 1 < arguments.count,
+                  let data = arguments[i + 1].data(using: .utf8) else { throw Failure.invalidArguments(name) }
+            return try JSONDecoder().decode(VisualDiagnosticClockWitness.self, from: data)
+        }
+        let elapsed = try VisualDiagnosticClockWitness.validatedBracket(
+            before: witness("--before-json"), after: witness("--after-json"),
+            sessionID: sessionID, witnessID: witnessID)
+        return VisualDiagnosticClockCheckReceipt(status: "PASS", elapsedNanoseconds: elapsed)
+    }
+
+    private static func clockWitness(sessionID: String, witnessID: String) throws -> VisualDiagnosticClockWitness {
+        var timebase = mach_timebase_info_data_t()
+        guard mach_timebase_info(&timebase) == KERN_SUCCESS,
+              timebase.numer > 0, timebase.denom > 0 else { throw Failure.clockUnavailable }
+        let ticks = mach_continuous_time()
+        let (scaled, overflow) = ticks.multipliedReportingOverflow(by: UInt64(timebase.numer))
+        guard !overflow else { throw Failure.clockUnavailable }
+        let continuousNanoseconds = scaled / UInt64(timebase.denom)
+        let bootSessionUUID = try bootUUID()
+        return VisualDiagnosticClockWitness(sessionID: sessionID, witnessID: witnessID,
+            bootSessionUUID: bootSessionUUID, timebaseNumerator: timebase.numer,
+            timebaseDenominator: timebase.denom, continuousNanoseconds: String(continuousNanoseconds),
+            sampledAtUTC: timestamp(Date()))
+    }
+
+    private static func bootUUID() throws -> String {
+        var size = 0
+        guard sysctlbyname("kern.bootsessionuuid", nil, &size, nil, 0) == 0, size > 1 else {
+            throw Failure.clockUnavailable
+        }
+        var bytes = [CChar](repeating: 0, count: size)
+        let result = bytes.withUnsafeMutableBytes { raw in
+            sysctlbyname("kern.bootsessionuuid", raw.baseAddress, &size, nil, 0)
+        }
+        guard result == 0 else { throw Failure.clockUnavailable }
+        let value = String(cString: bytes)
+        guard UUID(uuidString: value) != nil else { throw Failure.clockUnavailable }
+        return value.lowercased()
+    }
+
     static func run(arguments: [String]) async throws -> VisualDiagnosticCaptureReceipt {
         func value(_ name: String) throws -> String {
             guard let i = arguments.firstIndex(of: name), i + 1 < arguments.count,
@@ -70,6 +141,15 @@ enum VisualDiagnosticCommand {
         let grant = try value("--grant")
         let grantSHA = try value("--grant-sha256")
         let sessionID = try value("--session-id")
+        let clockWitnessID = try value("--clock-witness-id")
+        guard UUID(uuidString: clockWitnessID) != nil,
+              let witnessIndex = arguments.firstIndex(of: "--continuous-clock-before-cua-json"),
+              witnessIndex + 1 < arguments.count,
+              let witnessData = arguments[witnessIndex + 1].data(using: .utf8),
+              let clockBeforeCUA = try? JSONDecoder().decode(VisualDiagnosticClockWitness.self, from: witnessData) else {
+            throw Failure.invalidArguments("continuous clock witness")
+        }
+        try clockBeforeCUA.validated(sessionID: sessionID, witnessID: clockWitnessID)
         let outputPath = try value("--output")
         let cuaPath = try value("--cua-frame")
         let cuaFrameID = try value("--cua-frame-id")
@@ -123,19 +203,29 @@ enum VisualDiagnosticCommand {
         // Recheck the original CUA start after inventory and immediately before
         // dispatching SCK. The bound is never restarted after slow work.
         let service = await FrameCaptureService(ruleBook: nil)
+        let clockBeforeSCK = try clockWitness(sessionID: sessionID, witnessID: clockWitnessID)
+        _ = try VisualDiagnosticClockWitness.validatedBracket(before: clockBeforeCUA,
+            after: clockBeforeSCK, sessionID: sessionID, witnessID: clockWitnessID)
         guard Date() >= cuaStarted, Date().timeIntervalSince(cuaStarted) < 5,
-              DispatchTime.now().uptimeNanoseconds >= cuaStartMono,
-              DispatchTime.now().uptimeNanoseconds - cuaStartMono <= 5_000_000_000 else {
+              clockBeforeSCK.bootSessionUUID == clockBeforeCUA.bootSessionUUID,
+              clockBeforeSCK.timebaseNumerator == clockBeforeCUA.timebaseNumerator,
+              clockBeforeSCK.timebaseDenominator == clockBeforeCUA.timebaseDenominator else {
             throw Failure.capturePairExpired
         }
         let captured = try await service.captureFullDisplayRetained(display: display, configuration: .fullDisplayPopup)
+        // This independent mach_continuous_time sample is taken only after the
+        // existing retained SCK service has returned.
+        let clockAfterSCK = try clockWitness(sessionID: sessionID, witnessID: clockWitnessID)
         guard let timing = captured.record.fullDisplayCaptureTiming,
-              timing.requestStartMonotonicNanoseconds >= cuaEndMono,
               timing.requestEndMonotonicNanoseconds >= timing.requestStartMonotonicNanoseconds,
-              timing.requestEndMonotonicNanoseconds >= cuaStartMono,
-              timing.requestEndMonotonicNanoseconds - cuaStartMono <= 5_000_000_000,
+              clockAfterSCK.bootSessionUUID == clockBeforeCUA.bootSessionUUID,
+              clockAfterSCK.timebaseNumerator == clockBeforeCUA.timebaseNumerator,
+              clockAfterSCK.timebaseDenominator == clockBeforeCUA.timebaseDenominator,
+              (try? VisualDiagnosticClockWitness.validatedBracket(before: clockBeforeCUA,
+                after: clockAfterSCK, sessionID: sessionID, witnessID: clockWitnessID)) != nil,
               let sckStarted = date(timing.requestStartedAtISO8601),
               let sckEnded = date(timing.requestFinishedAtISO8601),
+              sckStarted >= inventoryEnded,
               sckEnded.timeIntervalSince(cuaStarted) <= 5,
               captured.record.fullDisplayWitness?.includeMenuBar == true,
               captured.record.fullDisplayWitness?.sourceRectAbsent == true,
@@ -165,7 +255,7 @@ enum VisualDiagnosticCommand {
             throw Failure.geometryChanged
         }
         let frameRef = VisualDiagnosticArtifactReference(path: outputPath + "/sck-frame.png", bytes: png.count, sha256: sckID)
-        let pair = VisualDiagnosticCapturePair(sessionID: sessionID, cuaFrameID: cuaFrameID, cuaFrame: cuaFrameRef,
+        let pair = VisualDiagnosticCapturePair(version: 2, sessionID: sessionID, cuaFrameID: cuaFrameID, cuaFrame: cuaFrameRef,
             cuaRequestStartedAt: cuaStartedAt, cuaRequestEndedAt: cuaEndedAt,
             cuaRequestStartMonotonicNanoseconds: String(cuaStartMono), cuaRequestEndMonotonicNanoseconds: String(cuaEndMono),
             sckFrameID: sckID, sckFrame: frameRef, sckRequestStartedAt: timing.requestStartedAtISO8601,
@@ -175,6 +265,8 @@ enum VisualDiagnosticCommand {
             nativeInventoryStartedAt: Self.timestamp(inventoryStarted), nativeInventoryEndedAt: Self.timestamp(inventoryEnded),
             nativeInventoryStartMonotonicNanoseconds: String(inventoryStartMono),
             nativeInventoryEndMonotonicNanoseconds: String(inventoryEndMono),
+            continuousClockBeforeCUA: clockBeforeCUA, continuousClockAfterSCK: clockAfterSCK,
+            continuousClockWitnessID: clockWitnessID,
             windowScreenAssociationStatus: .provisional,
             bundleID: "jp.naver.line.mac", pid: pid, processStartTimeSeconds: processStart,
             processStartTimeMicroseconds: Int(processStartMicros), windowID: windowID, displayID: displayID,
@@ -184,7 +276,7 @@ enum VisualDiagnosticCommand {
             displayBoundsPoints: [Double(display.frame.minX), Double(display.frame.minY),
                 Double(display.frame.width), Double(display.frame.height)], captureRecord: captured.record)
         try pair.validated()
-        return VisualDiagnosticCaptureReceipt(version: 1, kind: "VISUAL_CARD_DIAGNOSTIC",
+        return VisualDiagnosticCaptureReceipt(version: 2, kind: "VISUAL_CARD_DIAGNOSTIC",
             evidenceOnly: true, actionable: false, pair: pair)
     }
 
@@ -202,7 +294,7 @@ enum VisualDiagnosticCommand {
         let receipt = try JSONDecoder().decode(VisualDiagnosticCaptureReceipt.self, from: receiptData)
         let pair = receipt.pair
         try pair.validated()
-        guard receipt.version == 1, receipt.kind == "VISUAL_CARD_DIAGNOSTIC", receipt.evidenceOnly,
+        guard receipt.version == 2, receipt.kind == "VISUAL_CARD_DIAGNOSTIC", receipt.evidenceOnly,
               !receipt.actionable, pair.cuaFrame.sha256 != pair.sckFrame.sha256 else {
             throw Failure.invalidArguments("typed capture receipt is invalid")
         }
@@ -248,7 +340,7 @@ enum VisualDiagnosticCommand {
         }
     }
 
-    private enum Failure: Error { case invalidArguments(String), identityChanged, geometryChanged, capturePairExpired, ambiguousFrames }
+    private enum Failure: Error { case invalidArguments(String), identityChanged, geometryChanged, capturePairExpired, ambiguousFrames, clockUnavailable }
 
     private static func date(_ value: String) -> Date? {
         let formatter = ISO8601DateFormatter()

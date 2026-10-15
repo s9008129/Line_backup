@@ -243,7 +243,8 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
           &&grant.operations[0]==='gui_observe','VISUAL_DIAGNOSTIC_GRANT_SCOPE');
         await assertLineAlreadyRunning();
         const app=await cua.getApp('jp.naver.line.mac');
-        const observer=createVisualDiagnosticObserver({app,retain,beforeCapture:runtime.beforeCapture,
+        const observer=createVisualDiagnosticObserver({app,retain,readClock:producer.readVisualDiagnosticClock,
+          beforeCapture:runtime.beforeCapture,
           capturePair:producer.captureVisualDiagnostic,afterCapture:runtime.afterCapture,
           analyze:args=>classifier.completeVisualCardDiagnostic({...args,
             analyzePixels:producer.analyzeVisualDiagnostic}),sessionId:owner});

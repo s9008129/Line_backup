@@ -605,6 +605,28 @@ if arguments.count >= 2, arguments[1] == "visual-diagnostic-capture" {
         exit(77)
     }
 }
+if arguments.count >= 2, arguments[1] == "visual-diagnostic-clock" {
+    do {
+        let receipt = try VisualDiagnosticCommand.clock(arguments: arguments)
+        FileHandle.standardOutput.write(try EvidenceIO.encodeJSON(receipt))
+        FileHandle.standardOutput.write(Data("\n".utf8))
+        exit(0)
+    } catch {
+        FileHandle.standardError.write(Data("visual-diagnostic-clock refused: \(error)\n".utf8))
+        exit(77)
+    }
+}
+if arguments.count >= 2, arguments[1] == "visual-diagnostic-clock-check" {
+    do {
+        let result = try VisualDiagnosticCommand.checkClockBracket(arguments: arguments)
+        FileHandle.standardOutput.write(try EvidenceIO.encodeJSON(result))
+        FileHandle.standardOutput.write(Data("\n".utf8))
+        exit(0)
+    } catch {
+        FileHandle.standardError.write(Data("visual-diagnostic-clock-check refused: \(error)\n".utf8))
+        exit(77)
+    }
+}
 if arguments.count >= 2, arguments[1] == "visual-diagnostic-analyze" {
     do {
         let analysis = try await VisualDiagnosticCommand.analyze(arguments: arguments)

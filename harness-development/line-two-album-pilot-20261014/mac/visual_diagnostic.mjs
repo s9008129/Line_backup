@@ -6,9 +6,9 @@ const need=(ok,code)=>{if(!ok)throw Object.assign(Error(code),{code});};
 
 /** Observe one authentic hosted CUA frame and return evidence only. The app is
  * held in a closure; this module exposes no action, navigation, or cache API. */
-export function createVisualDiagnosticObserver({app,retain,beforeCapture,capturePair,afterCapture,analyze,sessionId}) {
+export function createVisualDiagnosticObserver({app,retain,readClock,beforeCapture,capturePair,afterCapture,analyze,sessionId}) {
   need(app&&typeof app.getAXStateAndScreenshot==='function','VISUAL_DIAGNOSTIC_CUA_REQUIRED');
-  for(const [fn,name] of [[retain,'retain'],[beforeCapture,'beforeCapture'],[capturePair,'capturePair'],
+  for(const [fn,name] of [[retain,'retain'],[readClock,'readClock'],[beforeCapture,'beforeCapture'],[capturePair,'capturePair'],
       [afterCapture,'afterCapture'],[analyze,'analyze']])need(typeof fn==='function',`VISUAL_DIAGNOSTIC_${name.toUpperCase()}_REQUIRED`);
   need(typeof sessionId==='string'&&sessionId,'VISUAL_DIAGNOSTIC_SESSION_REQUIRED');
   let used=false;
@@ -17,6 +17,8 @@ export function createVisualDiagnosticObserver({app,retain,beforeCapture,capture
     const startedAt=new Date().toISOString();
     let before=null,capture=null,saved=null,frameId=null,pairEvidence=null;
     try {
+      const clockWitnessId=randomUUID();
+      const clockBeforeCUA=await readClock({sessionId,witnessId:clockWitnessId});
       before=await beforeCapture({sessionId});
       const requestStartedAtUtc=new Date().toISOString();
       const requestStart=process.hrtime.bigint();
@@ -38,7 +40,7 @@ export function createVisualDiagnosticObserver({app,retain,beforeCapture,capture
       // bound to this original CUA request start.
       pairEvidence=await capturePair({capture,saved,frameId,sessionId,before,
         requestStartedAtUtc,requestEndedAtUtc,requestStartMonotonicNanoseconds:startNs,
-        requestEndMonotonicNanoseconds:endNs});
+        requestEndMonotonicNanoseconds:endNs,clockBeforeCUA,clockWitnessId});
       const after=await afterCapture({capture,saved,frameId,sessionId,before,
         capturedAt:requestStartedAtUtc,requestStartedAtUtc,requestEndedAtUtc,monotonicInterval});
       return await analyze({capture,saved,frameId,sessionId,capturedAt:requestStartedAtUtc,

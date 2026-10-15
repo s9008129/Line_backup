@@ -12,9 +12,11 @@ function png(width=40,height=30){
   value.writeUInt32BE(width,16);value.writeUInt32BE(height,20);return new Uint8Array(value);
 }
 function ref(path,bytes){return {path,bytes:bytes.byteLength,sha256:hash(bytes)};}
+const bootSessionUUID='aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee';
 
-function harness({analysisDelayMs=0,mutatePair=value=>value,artifactFault=null}={}){
-  const files=new Map(),retained=[];let captureCalls=0,analysisCalls=0;
+function harness({analysisDelayMs=0,mutatePair=value=>value,artifactFault=null,
+    clockBracketNs=2_500_000_000n,crossDomainLooksFresh=false}={}){
+  const files=new Map(),retained=[];let captureCalls=0,analysisCalls=0,lastPair=null;
   const store=(path,bytes)=>{const value=new Uint8Array(bytes);files.set(path,value);return ref(path,value);};
   const io={readFile:async absolute=>{const value=files.get(absolute.slice(root.length+1));assert(value);return value;},
     mkdirp:async()=>{}};
@@ -37,27 +39,41 @@ function harness({analysisDelayMs=0,mutatePair=value=>value,artifactFault=null}=
     if(artifactFault==='missing')files.delete(sck.path);
     const start=arg('--cua-request-started-at'),end=arg('--cua-request-ended-at');
     const startMono=arg('--cua-request-start-monotonic-ns'),endMono=arg('--cua-request-end-monotonic-ns');
+    const dispatchBase=crossDomainLooksFresh?BigInt(startMono):2_600_000_000n;
+    const clockBefore=JSON.parse(arg('--continuous-clock-before-cua-json'));
+    const clockAfter={...clockBefore,continuousNanoseconds:(BigInt(clockBefore.continuousNanoseconds)+clockBracketNs).toString(),
+      sampledAtUTC:new Date().toISOString()};
     const sckStart=new Date(Date.parse(end)+100).toISOString(),sckEnd=new Date(Date.parse(start)+3000).toISOString();
-    const pair={version:1,kind:'VISUAL_CARD_DIAGNOSTIC',sessionID:arg('--session-id'),cuaFrameID:frameId,
+    const pair={version:2,kind:'VISUAL_CARD_DIAGNOSTIC',sessionID:arg('--session-id'),cuaFrameID:frameId,
       cuaFrame:{path:framePath,bytes:files.get(framePath)?.byteLength,sha256:frameId},
       cuaRequestStartedAt:start,cuaRequestEndedAt:end,
       cuaRequestStartMonotonicNanoseconds:startMono,cuaRequestEndMonotonicNanoseconds:endMono,
       sckFrameID:sck.sha256,sckFrame:sck,sckRequestStartedAt:sckStart,sckRequestEndedAt:sckEnd,
-      sckRequestStartMonotonicNanoseconds:(BigInt(endMono)+100_000_000n).toString(),
-      sckRequestEndMonotonicNanoseconds:(BigInt(startMono)+3_000_000_000n).toString(),
+      sckRequestStartMonotonicNanoseconds:(dispatchBase+100_000_000n).toString(),
+      sckRequestEndMonotonicNanoseconds:(dispatchBase+3_000_000_000n).toString(),
       nativeInventoryStartedAt:new Date(Date.parse(end)+10).toISOString(),
       nativeInventoryEndedAt:new Date(Date.parse(end)+20).toISOString(),
-      nativeInventoryStartMonotonicNanoseconds:(BigInt(endMono)+10_000_000n).toString(),
-      nativeInventoryEndMonotonicNanoseconds:(BigInt(endMono)+20_000_000n).toString(),
+      nativeInventoryStartMonotonicNanoseconds:(dispatchBase-90_000_000n).toString(),
+      nativeInventoryEndMonotonicNanoseconds:(dispatchBase-80_000_000n).toString(),
+      continuousClockBeforeCUA:clockBefore,continuousClockAfterSCK:clockAfter,
+      continuousClockWitnessID:arg('--clock-witness-id'),
       windowScreenAssociationStatus:'PROVISIONAL',
       bundleID:'jp.naver.line.mac',pid:41,processStartTimeSeconds:100,processStartTimeMicroseconds:0,
       windowID:7,displayID:1,widthPixels:2000,heightPixels:1600,nativeScale:2,pointPixelScale:2,
       cuaBoundsPoints:[0,0,1000,800],sckWindowBoundsPoints:[0,0,1000,800],displayBoundsPoints:[0,0,1000,800],
       captureRecord:{}};
-    return mutatePair({version:1,kind:'VISUAL_CARD_DIAGNOSTIC',evidenceOnly:true,actionable:false,pair});
+    lastPair=pair;
+    return mutatePair({version:2,kind:'VISUAL_CARD_DIAGNOSTIC',evidenceOnly:true,actionable:false,pair});
   };
   const runProcess=async argv=>{
     const command=argv[1];
+    if(command==='visual-diagnostic-clock'){
+      const arg=name=>argv[argv.indexOf(name)+1];
+      const witness={version:1,sessionID:arg('--session-id'),witnessID:arg('--witness-id'),
+        domain:'mach_continuous_time',bootSessionUUID,timebaseNumerator:125,timebaseDenominator:3,
+        continuousNanoseconds:'1000000000',sampledAtUTC:new Date().toISOString()};
+      return {status:0,stdout:JSON.stringify({witness}),stderr:''};
+    }
     if(command==='visual-diagnostic-capture'){captureCalls++;return {status:0,stdout:JSON.stringify(pairFor(argv)),stderr:''};}
     if(command==='visual-diagnostic-analyze'){
       analysisCalls++;if(analysisDelayMs)await new Promise(resolve=>setTimeout(resolve,analysisDelayMs));
@@ -70,7 +86,8 @@ function harness({analysisDelayMs=0,mutatePair=value=>value,artifactFault=null}=
   };
   const producer=createProducerHook({io,runProcess,repoRoot:root,authorization:'grant.json',authority:{grantSha256:'a'.repeat(64)},
     binary:{absolutePath:'/rev28ctl'},geometryProvider:async()=>{throw Error('production frame-support must not run');},retain});
-  return {producer,retain,files,retained,get captureCalls(){return captureCalls;},get analysisCalls(){return analysisCalls;}};
+  return {producer,retain,files,retained,get captureCalls(){return captureCalls;},get analysisCalls(){return analysisCalls;},
+    get lastPair(){return lastPair;}};
 }
 
 function nativeContext(){
@@ -95,6 +112,7 @@ test('capture-first path retains the original CUA interval, then SCK, Native AFT
     },groupKey:'group'});
   const observer=createVisualDiagnosticObserver({app:{getAXStateAndScreenshot:async()=>{
       events.push('cua');return {state:ax,screenshot:frame};}},retain:h.retain,sessionId:'session',
+    readClock:args=>{events.push('clock');return h.producer.readVisualDiagnosticClock(args);},
     beforeCapture:async()=>{events.push('before');before=nativeContext();return {value:before,
       reference:await h.retain({artifact:before,kind:'native-before'})};},
     capturePair:async args=>{events.push('sck');originalRequestStart=args.requestStartedAtUtc;flow={...flow,...args,beforeBinding:args.before};
@@ -103,7 +121,7 @@ test('capture-first path retains the original CUA interval, then SCK, Native AFT
       reference:await h.retain({artifact:flow.after,kind:'native-after'})};},
     analyze:args=>classifier.completeVisualCardDiagnostic({...args,analyzePixels:h.producer.analyzeVisualDiagnostic})});
   const output=await observer.observe();
-  assert.deepEqual(events,['before','cua','sck','after']);
+  assert.deepEqual(events,['clock','before','cua','sck','after']);
   assert.equal(h.captureCalls,1);assert.equal(h.analysisCalls,1);
   assert.equal(output.CAPTURE_STATUS,'CAPTURED');assert.equal(output.ANALYSIS_STATUS,'INSUFFICIENT');
   assert.equal(output.ACQUISITION_RELATIONSHIP,'INSUFFICIENT');assert.equal(output.ACTION_ELIGIBILITY,'INELIGIBLE');
@@ -111,6 +129,9 @@ test('capture-first path retains the original CUA interval, then SCK, Native AFT
   const completed=h.retained.find(item=>item.kind==='VISUAL_CARD_DIAGNOSTIC'&&item.cua_request_started_at);
   assert.equal(completed.evidence_only,true);assert.equal(completed.actionable,false);
   assert.equal(completed.cua_request_started_at,originalRequestStart);
+  assert.equal(flow.pairEvidence.pair.cuaRequestStartMonotonicNanoseconds,flow.requestStartMonotonicNanoseconds);
+  assert.equal(flow.pairEvidence.pair.cuaRequestEndMonotonicNanoseconds,flow.requestEndMonotonicNanoseconds);
+  assert.equal(flow.pairEvidence.pair.continuousClockBeforeCUA.witnessID,flow.pairEvidence.pair.continuousClockWitnessID);
   assert.ok(Date.parse(completed.processing_completed_at)-Date.parse(completed.cua_request_started_at)>5000);
   assert.ok(BigInt(completed.processing_duration_nanoseconds)>0n);
   assert.ok(completed.capture_pair_receipt.sha256);
@@ -162,15 +183,36 @@ test('producer refuses a mismatched native-context process schema before SCK dis
   await assert.rejects(h.producer.captureVisualDiagnostic({capture:{screenshot:bytes,state},saved,frameId,
     sessionId:'session',requestStartedAtUtc:new Date().toISOString(),requestEndedAtUtc:new Date().toISOString(),
     requestStartMonotonicNanoseconds:'100',requestEndMonotonicNanoseconds:'200',
+    clockWitnessId:'11111111-2222-4333-8444-555555555555',
+    clockBeforeCUA:{version:1,sessionID:'session',witnessID:'11111111-2222-4333-8444-555555555555',
+      domain:'mach_continuous_time',bootSessionUUID,timebaseNumerator:125,timebaseDenominator:3,
+      continuousNanoseconds:'1000000000',sampledAtUTC:new Date().toISOString()},
     before:{value:{target:{bundleID:'jp.naver.line.mac',pid:41,startTimeSeconds:100,startTimeMicroseconds:0},
       complete:true,truncated:false,focusedWindowID:7,windows:[]}}}),/VISUAL_DIAGNOSTIC_WINDOW_IDENTITY/);
   assert.equal(h.captureCalls,0);
 });
 
+test('a mixed Node/Dispatch value that looks fresh cannot override an expired native continuous bracket',async()=>{
+  const h=harness({clockBracketNs:5_100_000_001n,crossDomainLooksFresh:true}),frame=png();
+  const observer=createVisualDiagnosticObserver({app:{getAXStateAndScreenshot:async()=>({state:'AX',screenshot:frame})},
+    retain:h.retain,sessionId:'session',readClock:args=>h.producer.readVisualDiagnosticClock(args),
+    beforeCapture:async()=>({value:nativeContext(),reference:ref('harness-development/native-before.json',new Uint8Array([1]))}),
+    capturePair:args=>h.producer.captureVisualDiagnostic(args),afterCapture:async()=>({value:nativeContext()}),
+    analyze:async()=>{throw Error('must not analyze an expired pair');}});
+  await assert.rejects(observer.observe(),/VISUAL_DIAGNOSTIC_CAPTURE_PAIR/);
+  const pair=h.lastPair;
+  assert.ok(BigInt(pair.sckRequestEndMonotonicNanoseconds)
+    -BigInt(pair.cuaRequestStartMonotonicNanoseconds)<=5_000_000_000n,
+  'the old mixed-source subtraction would misleadingly look fresh');
+  assert.ok(BigInt(pair.continuousClockAfterSCK.continuousNanoseconds)
+    -BigInt(pair.continuousClockBeforeCUA.continuousNanoseconds)>5_000_000_000n,
+  'the genuine continuous-clock bracket is expired');
+});
+
 test('observer rejects non-byte screenshot input and never starts the SCK capture',async()=>{
   let sck=0;
   const observer=createVisualDiagnosticObserver({app:{getAXStateAndScreenshot:async()=>({state:'x',screenshot:[1,2,3]})},
-    retain:async()=>{throw Error('must not retain invalid capture');},beforeCapture:async()=>({}),
+    retain:async()=>{throw Error('must not retain invalid capture');},readClock:async()=>({}),beforeCapture:async()=>({}),
     capturePair:async()=>{sck++;},afterCapture:async()=>({}),analyze:async()=>({}),sessionId:'session'});
   await assert.rejects(observer.observe());assert.equal(sck,0);
 });
@@ -178,7 +220,8 @@ test('observer rejects non-byte screenshot input and never starts the SCK captur
 test('post-capture failure retains the original pair receipt and Native BEFORE reference',async()=>{
   const h=harness(),beforeRef={path:'harness-development/native-before.json',bytes:1,sha256:'a'.repeat(64)};
   const observer=createVisualDiagnosticObserver({app:{getAXStateAndScreenshot:async()=>({state:'AX',screenshot:png()})},
-    retain:h.retain,sessionId:'session',beforeCapture:async()=>({value:nativeContext(),reference:beforeRef}),
+    retain:h.retain,sessionId:'session',readClock:args=>h.producer.readVisualDiagnosticClock(args),
+    beforeCapture:async()=>({value:nativeContext(),reference:beforeRef}),
     capturePair:async args=>h.producer.captureVisualDiagnostic(args),
     afterCapture:async()=>{throw Object.assign(Error('synthetic later-phase failure'),{code:'TEST_AFTER'});},
     analyze:async()=>{throw Error('analysis must not run');}});

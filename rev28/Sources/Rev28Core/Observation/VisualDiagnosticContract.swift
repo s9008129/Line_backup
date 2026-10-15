@@ -42,6 +42,71 @@ public enum VisualDiagnosticAssociationStatus: String, Codable, Sendable {
     case provisional = "PROVISIONAL"
 }
 
+/// A clock sample from the same Darwin mach_continuous_time domain. The CUA
+/// and Dispatch readings remain preserved separately and are never compared
+/// with one another.
+public struct VisualDiagnosticClockWitness: Codable, Equatable, Sendable {
+    public let version: Int
+    public let sessionID: String
+    public let witnessID: String
+    public let domain: String
+    public let bootSessionUUID: String
+    public let timebaseNumerator: UInt32
+    public let timebaseDenominator: UInt32
+    public let continuousNanoseconds: String
+    public let sampledAtUTC: String
+
+    public init(version: Int = 1, sessionID: String, witnessID: String,
+                domain: String = "mach_continuous_time",
+                bootSessionUUID: String, timebaseNumerator: UInt32, timebaseDenominator: UInt32,
+                continuousNanoseconds: String, sampledAtUTC: String) {
+        self.version = version
+        self.sessionID = sessionID
+        self.witnessID = witnessID
+        self.domain = domain
+        self.bootSessionUUID = bootSessionUUID
+        self.timebaseNumerator = timebaseNumerator
+        self.timebaseDenominator = timebaseDenominator
+        self.continuousNanoseconds = continuousNanoseconds
+        self.sampledAtUTC = sampledAtUTC
+    }
+
+    public func validated(sessionID expectedSessionID: String, witnessID expectedWitnessID: String) throws {
+        guard version == 1, sessionID == expectedSessionID, !sessionID.isEmpty,
+              witnessID == expectedWitnessID, UUID(uuidString: witnessID) != nil,
+              domain == "mach_continuous_time",
+              UUID(uuidString: bootSessionUUID) != nil,
+              timebaseNumerator > 0, timebaseDenominator > 0,
+              UInt64(continuousNanoseconds) != nil,
+              let sampleDate = Self.date(sampledAtUTC), sampleDate.timeIntervalSince1970 > 0 else {
+            throw VisualDiagnosticContractError.invalidClockWitness
+        }
+    }
+
+    public static func validatedBracket(before: VisualDiagnosticClockWitness,
+                                        after: VisualDiagnosticClockWitness,
+                                        sessionID: String, witnessID: String,
+                                        maximumNanoseconds: UInt64 = 5_000_000_000) throws -> UInt64 {
+        try before.validated(sessionID: sessionID, witnessID: witnessID)
+        try after.validated(sessionID: sessionID, witnessID: witnessID)
+        guard before.bootSessionUUID == after.bootSessionUUID,
+              before.timebaseNumerator == after.timebaseNumerator,
+              before.timebaseDenominator == after.timebaseDenominator,
+              let start = UInt64(before.continuousNanoseconds),
+              let end = UInt64(after.continuousNanoseconds), end >= start,
+              end - start <= maximumNanoseconds else {
+            throw VisualDiagnosticContractError.invalidClockWitness
+        }
+        return end - start
+    }
+
+    private static func date(_ value: String) -> Date? {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter.date(from: value)
+    }
+}
+
 public struct VisualDiagnosticCapturePair: Codable, Equatable, Sendable {
     public let version: Int
     public let kind: String
@@ -62,6 +127,12 @@ public struct VisualDiagnosticCapturePair: Codable, Equatable, Sendable {
     public let nativeInventoryEndedAt: String
     public let nativeInventoryStartMonotonicNanoseconds: String
     public let nativeInventoryEndMonotonicNanoseconds: String
+    /// Sampled before the hosted CUA request. This earlier point is a
+    /// conservative upper bound for acquisition age, never a substitute CUA timestamp.
+    public let continuousClockBeforeCUA: VisualDiagnosticClockWitness
+    /// Sampled after the existing retained SCK service returns.
+    public let continuousClockAfterSCK: VisualDiagnosticClockWitness
+    public let continuousClockWitnessID: String
     public let windowScreenAssociationStatus: VisualDiagnosticAssociationStatus
     public let bundleID: String
     public let pid: Int32
@@ -78,7 +149,7 @@ public struct VisualDiagnosticCapturePair: Codable, Equatable, Sendable {
     public let displayBoundsPoints: [Double]
     public let captureRecord: CapturedFrameRecord
 
-    public init(version: Int = 1, kind: String = "VISUAL_CARD_DIAGNOSTIC", sessionID: String,
+    public init(version: Int = 2, kind: String = "VISUAL_CARD_DIAGNOSTIC", sessionID: String,
                 cuaFrameID: String, cuaFrame: VisualDiagnosticArtifactReference,
                 cuaRequestStartedAt: String, cuaRequestEndedAt: String,
                 cuaRequestStartMonotonicNanoseconds: String, cuaRequestEndMonotonicNanoseconds: String,
@@ -87,6 +158,9 @@ public struct VisualDiagnosticCapturePair: Codable, Equatable, Sendable {
                 sckRequestStartMonotonicNanoseconds: String, sckRequestEndMonotonicNanoseconds: String,
                 nativeInventoryStartedAt: String, nativeInventoryEndedAt: String,
                 nativeInventoryStartMonotonicNanoseconds: String, nativeInventoryEndMonotonicNanoseconds: String,
+                continuousClockBeforeCUA: VisualDiagnosticClockWitness,
+                continuousClockAfterSCK: VisualDiagnosticClockWitness,
+                continuousClockWitnessID: String,
                 windowScreenAssociationStatus: VisualDiagnosticAssociationStatus = .provisional,
                 bundleID: String, pid: Int32, processStartTimeSeconds: Int,
                 processStartTimeMicroseconds: Int, windowID: UInt32, displayID: UInt32,
@@ -112,6 +186,9 @@ public struct VisualDiagnosticCapturePair: Codable, Equatable, Sendable {
         self.nativeInventoryEndedAt = nativeInventoryEndedAt
         self.nativeInventoryStartMonotonicNanoseconds = nativeInventoryStartMonotonicNanoseconds
         self.nativeInventoryEndMonotonicNanoseconds = nativeInventoryEndMonotonicNanoseconds
+        self.continuousClockBeforeCUA = continuousClockBeforeCUA
+        self.continuousClockAfterSCK = continuousClockAfterSCK
+        self.continuousClockWitnessID = continuousClockWitnessID
         self.windowScreenAssociationStatus = windowScreenAssociationStatus
         self.bundleID = bundleID
         self.pid = pid
@@ -144,12 +221,11 @@ public struct VisualDiagnosticCapturePair: Codable, Equatable, Sendable {
               let inventoryMonoEnd = UInt64(nativeInventoryEndMonotonicNanoseconds) else {
             throw VisualDiagnosticContractError.invalidCapturePair
         }
-        guard version == 1, kind == "VISUAL_CARD_DIAGNOSTIC", !sessionID.isEmpty,
+        guard version == 2, kind == "VISUAL_CARD_DIAGNOSTIC", !sessionID.isEmpty,
               Self.isHash(cuaFrameID), Self.isHash(sckFrameID), cuaFrame.sha256 == cuaFrameID,
               sckFrame.sha256 == sckFrameID, cuaFrameID != sckFrameID,
-              cuaMonoStart <= cuaMonoEnd, cuaMonoEnd <= inventoryMonoStart,
+              cuaMonoStart <= cuaMonoEnd,
               inventoryMonoStart <= inventoryMonoEnd, inventoryMonoEnd <= sckMonoStart, sckMonoStart <= sckMonoEnd,
-              sckMonoEnd >= cuaMonoStart, sckMonoEnd - cuaMonoStart <= 5_000_000_000,
               cuaMonoEnd - cuaMonoStart <= 30_000_000_000,
               sckMonoEnd - sckMonoStart <= 30_000_000_000,
               cuaStarted <= cuaEnded, inventoryStarted <= inventoryEnded,
@@ -189,6 +265,11 @@ public struct VisualDiagnosticCapturePair: Codable, Equatable, Sendable {
               captureRecord.fullDisplayCaptureTiming?.requestEndMonotonicNanoseconds == sckMonoEnd else {
             throw VisualDiagnosticContractError.invalidCapturePair
         }
+        guard UUID(uuidString: continuousClockWitnessID) != nil else {
+            throw VisualDiagnosticContractError.invalidClockWitness
+        }
+        _ = try VisualDiagnosticClockWitness.validatedBracket(before: continuousClockBeforeCUA,
+            after: continuousClockAfterSCK, sessionID: sessionID, witnessID: continuousClockWitnessID)
         try cuaFrame.validated()
         try sckFrame.validated()
     }
@@ -248,5 +329,6 @@ public enum VisualDiagnosticContractError: Error, Equatable {
     case invalidReference
     case invalidTimestamp
     case invalidCapturePair
+    case invalidClockWitness
     case actionEligibilityViolation
 }

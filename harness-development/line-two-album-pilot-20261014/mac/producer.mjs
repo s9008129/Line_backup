@@ -26,12 +26,28 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
     if(result?.status!==0)throw Object.assign(new Error(String(result?.stderr??'').trim()),{code});
     try{return JSON.parse(result.stdout);}catch{fail('PRODUCER_RECEIPT_UNPARSEABLE');}
   };
+  async function readVisualDiagnosticClock({sessionId,witnessId}) {
+    need(typeof sessionId==='string'&&sessionId&&typeof witnessId==='string'
+      &&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(witnessId),
+      'VISUAL_DIAGNOSTIC_CLOCK_BINDING');
+    const result=await run(['visual-diagnostic-clock','--session-id',sessionId,'--witness-id',witnessId],
+      'VISUAL_DIAGNOSTIC_CLOCK_UNAVAILABLE');
+    const witness=result?.witness;
+    need(witness?.version===1&&witness.sessionID===sessionId&&witness.witnessID===witnessId
+      &&witness.domain==='mach_continuous_time'&&/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(witness.bootSessionUUID)
+      &&Number.isInteger(witness.timebaseNumerator)&&witness.timebaseNumerator>0
+      &&Number.isInteger(witness.timebaseDenominator)&&witness.timebaseDenominator>0
+      &&typeof witness.continuousNanoseconds==='string'&&/^(0|[1-9][0-9]*)$/.test(witness.continuousNanoseconds)
+      &&Number.isFinite(Date.parse(witness.sampledAtUTC)), 'VISUAL_DIAGNOSTIC_CLOCK_WITNESS');
+    return witness;
+  }
   async function readRef(ref) {
     const raw=await readVerified(io,repoRoot,ref,'SCK_ARTIFACT_DRIFT');
     return raw;
   }
   async function captureVisualDiagnostic({capture,saved,frameId,sessionId,requestStartedAtUtc,
-      requestEndedAtUtc,requestStartMonotonicNanoseconds,requestEndMonotonicNanoseconds,before}) {
+      requestEndedAtUtc,requestStartMonotonicNanoseconds,requestEndMonotonicNanoseconds,before,
+      clockBeforeCUA,clockWitnessId}) {
     need(typeof retain==='function','VISUAL_DIAGNOSTIC_RETENTION_REQUIRED');
     const decimalNs=value=>typeof value==='string'&&/^(0|[1-9][0-9]*)$/.test(value);
     const startMono=decimalNs(requestStartMonotonicNanoseconds)?BigInt(requestStartMonotonicNanoseconds):-1n;
@@ -46,6 +62,12 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
       &&Number.isInteger(before.value.target.startTimeSeconds)
       &&Number.isInteger(before.value.target.startTimeMicroseconds),
       'VISUAL_DIAGNOSTIC_NATIVE_BEFORE');
+    need(clockBeforeCUA?.sessionID===sessionId&&clockBeforeCUA?.witnessID===clockWitnessId
+      &&clockBeforeCUA?.domain==='mach_continuous_time'
+      &&/^(0|[1-9][0-9]*)$/.test(clockBeforeCUA.continuousNanoseconds)
+      &&Number.isInteger(clockBeforeCUA.timebaseNumerator)&&clockBeforeCUA.timebaseNumerator>0
+      &&Number.isInteger(clockBeforeCUA.timebaseDenominator)&&clockBeforeCUA.timebaseDenominator>0,
+      'VISUAL_DIAGNOSTIC_CLOCK_BINDING');
     const pid=before.value.target.pid;
     const focusedID=before.value.focusedWindowID;
     const windows=before.value.windows.filter(w=>w.windowNumber===focusedID&&w.nodeID!==null);
@@ -54,6 +76,7 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
     const w=windows[0],bounds=[w.framePt.x,w.framePt.y,w.framePt.width,w.framePt.height];
     const preDispatchMono=process.hrtime.bigint();
     need(preDispatchMono>=startMono&&preDispatchMono-startMono<=5_000_000_000n
+      &&Date.now()>=Date.parse(requestStartedAtUtc)
       &&Date.now()-Date.parse(requestStartedAtUtc)<=5000,'VISUAL_DIAGNOSTIC_CAPTURE_DEADLINE');
     const output=`${CON}/evidence/visual-diagnostic/${sessionId}/${frameId.slice(0,16)}-${randomUUID()}`;
     await io.mkdirp(path.join(repoRoot,output));
@@ -63,12 +86,13 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
       '--cua-request-started-at',requestStartedAtUtc,'--cua-request-ended-at',requestEndedAtUtc,
       '--cua-request-start-monotonic-ns',String(requestStartMonotonicNanoseconds),
       '--cua-request-end-monotonic-ns',String(requestEndMonotonicNanoseconds),
+      '--clock-witness-id',clockWitnessId,'--continuous-clock-before-cua-json',JSON.stringify(clockBeforeCUA),
       '--pid',String(pid),'--process-start-seconds',String(before.value.target.startTimeSeconds),
       '--process-start-microseconds',String(before.value.target.startTimeMicroseconds),
       '--window-id',String(focusedID),'--display-id',String(w.displayIDs[0]),'--cua-bounds',bounds.join(',')],
       'VISUAL_DIAGNOSTIC_CAPTURE_REFUSED');
     const receipt=result;
-    need(receipt.version===1&&receipt.kind==='VISUAL_CARD_DIAGNOSTIC'&&receipt.evidenceOnly===true
+    need(receipt.version===2&&receipt.kind==='VISUAL_CARD_DIAGNOSTIC'&&receipt.evidenceOnly===true
       &&receipt.actionable===false&&receipt.pair?.sessionID===sessionId&&receipt.pair.cuaFrameID===frameId,
       'VISUAL_DIAGNOSTIC_CAPTURE_RECEIPT');
     const pair=receipt.pair;
@@ -77,8 +101,17 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
       &&pair.cuaRequestStartedAt===requestStartedAtUtc&&pair.cuaRequestEndedAt===requestEndedAtUtc
       &&pair.cuaRequestStartMonotonicNanoseconds===requestStartMonotonicNanoseconds
       &&pair.cuaRequestEndMonotonicNanoseconds===requestEndMonotonicNanoseconds
-      &&BigInt(pair.sckRequestEndMonotonicNanoseconds)>=startMono
-      &&BigInt(pair.sckRequestEndMonotonicNanoseconds)-startMono<=5_000_000_000n
+      &&pair.continuousClockWitnessID===clockWitnessId
+      &&canonical(pair.continuousClockBeforeCUA)===canonical(clockBeforeCUA)
+      &&pair.continuousClockAfterSCK?.sessionID===sessionId
+      &&pair.continuousClockAfterSCK?.witnessID===clockWitnessId
+      &&pair.continuousClockAfterSCK?.domain==='mach_continuous_time'
+      &&pair.continuousClockAfterSCK?.bootSessionUUID===clockBeforeCUA.bootSessionUUID
+      &&pair.continuousClockAfterSCK?.timebaseNumerator===clockBeforeCUA.timebaseNumerator
+      &&pair.continuousClockAfterSCK?.timebaseDenominator===clockBeforeCUA.timebaseDenominator
+      &&/^(0|[1-9][0-9]*)$/.test(pair.continuousClockAfterSCK?.continuousNanoseconds)
+      &&BigInt(pair.continuousClockAfterSCK.continuousNanoseconds)>=BigInt(clockBeforeCUA.continuousNanoseconds)
+      &&BigInt(pair.continuousClockAfterSCK.continuousNanoseconds)-BigInt(clockBeforeCUA.continuousNanoseconds)<=5_000_000_000n
       &&Date.parse(pair.sckRequestEndedAt)>=Date.parse(requestStartedAtUtc)
       &&Date.parse(pair.sckRequestEndedAt)-Date.parse(pair.cuaRequestStartedAt)<=5000,
       'VISUAL_DIAGNOSTIC_CAPTURE_PAIR');
@@ -98,7 +131,7 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
     need(refShape(captureReceipt),'VISUAL_DIAGNOSTIC_TYPED_RECEIPT_REQUIRED');
     const receiptBytes=await readRef(captureReceipt);
     let decodedReceipt;try{decodedReceipt=JSON.parse(decoder.decode(receiptBytes));}catch{fail('VISUAL_DIAGNOSTIC_TYPED_RECEIPT_INVALID');}
-    need(decodedReceipt.version===1&&decodedReceipt.kind==='VISUAL_CARD_DIAGNOSTIC'
+    need(decodedReceipt.version===2&&decodedReceipt.kind==='VISUAL_CARD_DIAGNOSTIC'
       &&decodedReceipt.evidenceOnly===true&&decodedReceipt.actionable===false
       &&canonical(decodedReceipt.pair)===canonical(pair),'VISUAL_DIAGNOSTIC_RECEIPT_PAIR_MISMATCH');
     const pairSHA=captureReceipt.sha256;
@@ -179,7 +212,7 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
   }
   const invokeProducer=request=>request.mode==='capture'?captureMenuSupport(request)
     :request.mode==='guard'?guardMenu(request):Promise.reject(Object.assign(new Error('PRODUCER_MODE_UNKNOWN'),{code:'PRODUCER_MODE_UNKNOWN'}));
-  return Object.freeze({frameSupport,captureMenuSupport,guardMenu,captureVisualDiagnostic,
+  return Object.freeze({frameSupport,captureMenuSupport,guardMenu,readVisualDiagnosticClock,captureVisualDiagnostic,
     analyzeVisualDiagnostic,invokeProducer,readRef});
 }
 

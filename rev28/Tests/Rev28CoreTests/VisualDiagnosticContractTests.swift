@@ -2,6 +2,15 @@ import XCTest
 @testable import Rev28Core
 
 final class VisualDiagnosticContractTests: XCTestCase {
+    private let clockWitnessID = "11111111-2222-4333-8444-555555555555"
+    private let bootSessionUUID = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee"
+
+    private func clockWitness(_ nanos: String) -> VisualDiagnosticClockWitness {
+        VisualDiagnosticClockWitness(sessionID: "session", witnessID: clockWitnessID,
+            bootSessionUUID: bootSessionUUID, timebaseNumerator: 125, timebaseDenominator: 3,
+            continuousNanoseconds: nanos, sampledAtUTC: "2026-01-01T00:00:00.000Z")
+    }
+
     private func pair(sckEnd: UInt64 = 4_800_000_000) -> VisualDiagnosticCapturePair {
         let started = "2026-01-01T00:00:00.000Z"
         let cuaEnded = "2026-01-01T00:00:02.500Z"
@@ -24,7 +33,7 @@ final class VisualDiagnosticContractTests: XCTestCase {
             stateKey: "visual-diagnostic", validity: .valid, violations: [], identity: nil)
         record.fullDisplayWitness = witness
         record.fullDisplayCaptureTiming = timing
-        return VisualDiagnosticCapturePair(sessionID: "session", cuaFrameID: String(repeating: "a", count: 64),
+        return VisualDiagnosticCapturePair(version: 2, sessionID: "session", cuaFrameID: String(repeating: "a", count: 64),
             cuaFrame: .init(path: "harness-development/test/cua.png", bytes: 5, sha256: String(repeating: "a", count: 64)),
             cuaRequestStartedAt: started, cuaRequestEndedAt: cuaEnded,
             cuaRequestStartMonotonicNanoseconds: "1000000000",
@@ -37,6 +46,9 @@ final class VisualDiagnosticContractTests: XCTestCase {
             nativeInventoryEndedAt: "2026-01-01T00:00:02.550Z",
             nativeInventoryStartMonotonicNanoseconds: "2510000000",
             nativeInventoryEndMonotonicNanoseconds: "2550000000",
+            continuousClockBeforeCUA: clockWitness("1000000000"),
+            continuousClockAfterSCK: clockWitness("4800000000"),
+            continuousClockWitnessID: clockWitnessID,
             bundleID: "jp.naver.line.mac", pid: 42, processStartTimeSeconds: 10,
             processStartTimeMicroseconds: 0, windowID: 7, displayID: 1,
             widthPixels: 2000, heightPixels: 1600, nativeScale: 2, pointPixelScale: 2,
@@ -60,7 +72,7 @@ final class VisualDiagnosticContractTests: XCTestCase {
 
     func testCrossPairHashAndMissingWitnessAreRejected() throws {
         var value = pair()
-        value = VisualDiagnosticCapturePair(sessionID: value.sessionID, cuaFrameID: value.cuaFrameID,
+        value = VisualDiagnosticCapturePair(version: value.version, sessionID: value.sessionID, cuaFrameID: value.cuaFrameID,
             cuaFrame: value.cuaFrame, cuaRequestStartedAt: value.cuaRequestStartedAt,
             cuaRequestEndedAt: value.cuaRequestEndedAt,
             cuaRequestStartMonotonicNanoseconds: value.cuaRequestStartMonotonicNanoseconds,
@@ -73,6 +85,9 @@ final class VisualDiagnosticContractTests: XCTestCase {
             nativeInventoryEndedAt: value.nativeInventoryEndedAt,
             nativeInventoryStartMonotonicNanoseconds: value.nativeInventoryStartMonotonicNanoseconds,
             nativeInventoryEndMonotonicNanoseconds: value.nativeInventoryEndMonotonicNanoseconds,
+            continuousClockBeforeCUA: value.continuousClockBeforeCUA,
+            continuousClockAfterSCK: value.continuousClockAfterSCK,
+            continuousClockWitnessID: value.continuousClockWitnessID,
             windowScreenAssociationStatus: value.windowScreenAssociationStatus,
             bundleID: value.bundleID, pid: value.pid, processStartTimeSeconds: value.processStartTimeSeconds,
             processStartTimeMicroseconds: value.processStartTimeMicroseconds, windowID: value.windowID,
@@ -81,5 +96,62 @@ final class VisualDiagnosticContractTests: XCTestCase {
             cuaBoundsPoints: value.cuaBoundsPoints, sckWindowBoundsPoints: value.sckWindowBoundsPoints,
             displayBoundsPoints: value.displayBoundsPoints, captureRecord: value.captureRecord)
         XCTAssertThrowsError(try value.validated())
+    }
+
+    func testContinuousClockRejectsDifferentDomainAndExpiredBracket() throws {
+        let valid = pair()
+        XCTAssertNoThrow(try valid.validated())
+        let wrongDomain = VisualDiagnosticClockWitness(sessionID: "session", witnessID: clockWitnessID,
+            domain: "mach_absolute_time", bootSessionUUID: bootSessionUUID,
+            timebaseNumerator: 125, timebaseDenominator: 3, continuousNanoseconds: "4800000000",
+            sampledAtUTC: "2026-01-01T00:00:00.000Z")
+        let mismatched = VisualDiagnosticCapturePair(version: valid.version, sessionID: valid.sessionID,
+            cuaFrameID: valid.cuaFrameID, cuaFrame: valid.cuaFrame,
+            cuaRequestStartedAt: valid.cuaRequestStartedAt, cuaRequestEndedAt: valid.cuaRequestEndedAt,
+            cuaRequestStartMonotonicNanoseconds: valid.cuaRequestStartMonotonicNanoseconds,
+            cuaRequestEndMonotonicNanoseconds: valid.cuaRequestEndMonotonicNanoseconds,
+            sckFrameID: valid.sckFrameID, sckFrame: valid.sckFrame,
+            sckRequestStartedAt: valid.sckRequestStartedAt, sckRequestEndedAt: valid.sckRequestEndedAt,
+            sckRequestStartMonotonicNanoseconds: valid.sckRequestStartMonotonicNanoseconds,
+            sckRequestEndMonotonicNanoseconds: valid.sckRequestEndMonotonicNanoseconds,
+            nativeInventoryStartedAt: valid.nativeInventoryStartedAt,
+            nativeInventoryEndedAt: valid.nativeInventoryEndedAt,
+            nativeInventoryStartMonotonicNanoseconds: valid.nativeInventoryStartMonotonicNanoseconds,
+            nativeInventoryEndMonotonicNanoseconds: valid.nativeInventoryEndMonotonicNanoseconds,
+            continuousClockBeforeCUA: valid.continuousClockBeforeCUA,
+            continuousClockAfterSCK: wrongDomain, continuousClockWitnessID: valid.continuousClockWitnessID,
+            windowScreenAssociationStatus: valid.windowScreenAssociationStatus, bundleID: valid.bundleID,
+            pid: valid.pid, processStartTimeSeconds: valid.processStartTimeSeconds,
+            processStartTimeMicroseconds: valid.processStartTimeMicroseconds, windowID: valid.windowID,
+            displayID: valid.displayID, widthPixels: valid.widthPixels, heightPixels: valid.heightPixels,
+            nativeScale: valid.nativeScale, pointPixelScale: valid.pointPixelScale,
+            cuaBoundsPoints: valid.cuaBoundsPoints, sckWindowBoundsPoints: valid.sckWindowBoundsPoints,
+            displayBoundsPoints: valid.displayBoundsPoints, captureRecord: valid.captureRecord)
+        XCTAssertThrowsError(try mismatched.validated())
+
+        let expired = VisualDiagnosticCapturePair(version: valid.version, sessionID: valid.sessionID,
+            cuaFrameID: valid.cuaFrameID, cuaFrame: valid.cuaFrame,
+            cuaRequestStartedAt: valid.cuaRequestStartedAt, cuaRequestEndedAt: valid.cuaRequestEndedAt,
+            cuaRequestStartMonotonicNanoseconds: valid.cuaRequestStartMonotonicNanoseconds,
+            cuaRequestEndMonotonicNanoseconds: valid.cuaRequestEndMonotonicNanoseconds,
+            sckFrameID: valid.sckFrameID, sckFrame: valid.sckFrame,
+            sckRequestStartedAt: valid.sckRequestStartedAt, sckRequestEndedAt: valid.sckRequestEndedAt,
+            sckRequestStartMonotonicNanoseconds: valid.sckRequestStartMonotonicNanoseconds,
+            sckRequestEndMonotonicNanoseconds: valid.sckRequestEndMonotonicNanoseconds,
+            nativeInventoryStartedAt: valid.nativeInventoryStartedAt,
+            nativeInventoryEndedAt: valid.nativeInventoryEndedAt,
+            nativeInventoryStartMonotonicNanoseconds: valid.nativeInventoryStartMonotonicNanoseconds,
+            nativeInventoryEndMonotonicNanoseconds: valid.nativeInventoryEndMonotonicNanoseconds,
+            continuousClockBeforeCUA: clockWitness("1000000000"),
+            continuousClockAfterSCK: clockWitness("6100000000"),
+            continuousClockWitnessID: valid.continuousClockWitnessID,
+            windowScreenAssociationStatus: valid.windowScreenAssociationStatus, bundleID: valid.bundleID,
+            pid: valid.pid, processStartTimeSeconds: valid.processStartTimeSeconds,
+            processStartTimeMicroseconds: valid.processStartTimeMicroseconds, windowID: valid.windowID,
+            displayID: valid.displayID, widthPixels: valid.widthPixels, heightPixels: valid.heightPixels,
+            nativeScale: valid.nativeScale, pointPixelScale: valid.pointPixelScale,
+            cuaBoundsPoints: valid.cuaBoundsPoints, sckWindowBoundsPoints: valid.sckWindowBoundsPoints,
+            displayBoundsPoints: valid.displayBoundsPoints, captureRecord: valid.captureRecord)
+        XCTAssertThrowsError(try expired.validated())
     }
 }
