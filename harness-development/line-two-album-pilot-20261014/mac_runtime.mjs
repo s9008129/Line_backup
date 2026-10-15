@@ -67,9 +67,9 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
       const h=await fs.open(absolute,'wx',0o600);try{await h.writeFile(raw);await h.sync();}finally{await h.close();}
       need(hash(await fs.readFile(absolute))===hash(raw),'PRIVATE_READBACK');
     }};
-  async function publish(raw,kind,frameId){
+  async function publish(raw,kind,frameId,suffix='bin'){
     need(raw.byteLength>0&&raw.byteLength<=16*1024*1024&&/^[0-9a-f]{64}$/.test(frameId),'RETAIN_BYTES_REQUIRED');
-    const rel=PRIVATE+'/evidence/'+kind.replace(/[^a-z0-9-]/gi,'-')+'/'+frameId.slice(0,16)+'-'+randomUUID()+'.bin';
+    const rel=PRIVATE+'/evidence/'+kind.replace(/[^a-z0-9-]/gi,'-')+'/'+frameId.slice(0,16)+'-'+randomUUID()+'.'+suffix;
     await io.mkdirp(path.dirname(path.join(projectRoot,rel)));await io.writeFile(path.join(projectRoot,rel),raw);
     return {path:rel,bytes:raw.byteLength,sha256:hash(raw)};
   }
@@ -77,7 +77,13 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     if(p.receipt)return publish(Buffer.from(evidenceJSON(p.receipt)),'dispatch-receipt',p.frameId);
     if(p.artifact!==undefined)return publish(Buffer.from(evidenceJSON(p.artifact)),p.kind,p.frameId);
     need(p.screenshot instanceof Uint8Array&&typeof p.ax==='string'&&hash(p.screenshot)===p.frameId,'GENUINE_RETAINED_CAPTURE_REQUIRED');
-    const frame=await publish(p.screenshot,'cua-frames',p.frameId),ax=await publish(Buffer.from(p.ax),'cua-ax',p.frameId);
+    const pngSignature=[0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a];
+    const isPng=p.screenshot.byteLength>=pngSignature.length
+      &&pngSignature.every((byte,index)=>p.screenshot[index]===byte);
+    const isJpeg=p.screenshot.byteLength>=3&&p.screenshot[0]===0xff
+      &&p.screenshot[1]===0xd8&&p.screenshot[2]===0xff;
+    need(isPng||isJpeg,'RETAIN_SCREENSHOT_FORMAT_UNSUPPORTED');
+    const frame=await publish(p.screenshot,'cua-frames',p.frameId,isPng?'png':'jpg'),ax=await publish(Buffer.from(p.ax),'cua-ax',p.frameId);
     rawCaptures.set(p.frameId,{ax:p.ax,frame,axReference:ax});return {...frame,ax};
   }
   async function runProcess(argv,{timeoutMs=30000,cap=8*1024*1024}={}){
