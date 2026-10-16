@@ -42,29 +42,33 @@ function rect(value,width,height,code) {
 }
 const inside=(a,b,margin=0)=>a[0]>=b[0]+margin&&a[1]>=b[1]+margin
   &&a[0]+a[2]<=b[0]+b[2]-margin&&a[1]+a[3]<=b[1]+b[3]-margin;
+const intersects=(a,b)=>a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1]+a[3];
 
 const observationKeys=['frame','frame_id','session_id','group_key','surface','captured_at','provider','layout_key',
   'window_id','pid','width','height','mapping','cards','boundary','editable_focus','occlusion'];
 
-export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyzeVisualCardDiagnostic,groupKey,clock=()=>Date.now()}) {
+export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyzeScrollWitness,analyzeVisualCardDiagnostic,groupKey,clock=()=>Date.now()}) {
   need(typeof retain==='function'&&typeof frameSupport==='function'&&typeof analyzeCapture==='function','CLASSIFIER_DEPENDENCY_REQUIRED');
   need(typeof groupKey==='string'&&groupKey,'CLASSIFIER_GROUP_REQUIRED');
-  const cache=new Map();
+  const cache=new Map(),scrollCache=new Map();
 
-  async function classify({capture,saved,frameId,sessionId,capturedAt,sourceBinding,capturedContext}) {
+  async function classify({capture,saved,frameId,sessionId,capturedAt,sourceBinding,capturedContext},{scrollWitness=false}={}) {
     need(capture?.screenshot instanceof Uint8Array&&typeof capture.state==='string','CLASSIFIER_CAPTURE_REQUIRED');
     need(hex64(frameId)&&sha256Hex(capture.screenshot)===frameId&&saved?.sha256===frameId,'CLASSIFIER_FRAME_HASH');
     need(typeof capturedAt==='string'&&Number.isFinite(Date.parse(capturedAt)),'CLASSIFIER_CAPTURE_TIME');
     const [width,height]=imageSize(capture.screenshot);
     const sourceAX=encoder.encode(capture.state);const sourceAXSha=sha256Hex(sourceAX);
     need(saved.ax&&saved.ax.bytes===sourceAX.byteLength&&saved.ax.sha256===sourceAXSha,'CLASSIFIER_AX_RETENTION');
-    const analysis=await analyzeCapture({screenshot:capture.screenshot,axText:capture.state,frameId,sessionId,capturedAt,
+    const analyzer=scrollWitness?analyzeScrollWitness:analyzeCapture;
+    need(typeof analyzer==='function','SCROLL_WITNESS_ANALYZER_REQUIRED');
+    const analysis=await analyzer({screenshot:capture.screenshot,axText:capture.state,frameId,sessionId,capturedAt,
       width,height,sourceAXSha256:sourceAXSha,sourceBinding,capturedContext,saved});
     need(analysis?.version===1&&analysis.frame_id===frameId&&analysis.session_id===sessionId
       &&analysis.source_sha256===frameId&&analysis.source_ax_sha256===sourceAXSha,'CLASSIFIER_SOURCE_BINDING');
     const keys=['version','frame_id','session_id','source_sha256','source_ax_sha256','surface','group_key','native',
       'layout','surface_structure','surface_bounds_px','occlusion','editable_focus','focus_evidence','ax','cards',
       'boundary','boundary_evidence','chooser_controls'];
+    if(scrollWitness)keys.push('scroll_witness');
     need(Object.keys(analysis).sort().join(',')===keys.sort().join(','),'CLASSIFIER_ANALYSIS_SCHEMA');
     need(['ALBUMS','ALBUM_DETAIL','FOLDER_CHOOSER'].includes(analysis.surface)&&analysis.group_key===groupKey,
       'CLASSIFIER_CONTEXT');
@@ -128,7 +132,11 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
       'CLASSIFIER_BOUNDARY_RETAIN_REQUIRED');
     if(analysis.surface==='ALBUMS') {
       const proof=analysis.boundary_evidence;
-      need(Object.keys(proof).sort().join(',')==='version,frame_id,session_id,source,indicator_index,minimum,maximum,value'
+      const actualKeys=Object.keys(proof).sort().join(',');
+      const expectedKeys=scrollWitness
+        ?['version','frame_id','session_id','source','indicator_index','minimum','maximum','value'].sort().join(',')
+        :'version,frame_id,session_id,source,indicator_index,minimum,maximum,value';
+      need(actualKeys===expectedKeys
         &&proof.source==='AX_SCROLLBAR'&&Number.isInteger(proof.indicator_index)
         &&Number.isFinite(proof.minimum)&&Number.isFinite(proof.maximum)&&Number.isFinite(proof.value)
         &&proof.maximum>proof.minimum,'CLASSIFIER_BOUNDARY_EVIDENCE');
@@ -177,9 +185,88 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
     need(ocr.cua_frame_id===frameId&&ocr.sck_frame_sha256===manifest.sckFrameId
       &&Array.isArray(ocr.cua),'FRAME_SUPPORT_OCR_BINDING');
     const uncertainty=support.uncertaintyPx;
+    const byIndex=new Map(axElements.map(e=>[e.index,e]));
+    if(scrollWitness){
+      need(analysis.surface==='ALBUMS'&&analysis.cards.length===0,'SCROLL_WITNESS_SURFACE');
+      const sw=analysis.scroll_witness;
+      need(sw&&Object.keys(sw).sort().join(',')==='native_identity,process_instance,rows,scroll_offset,viewport_ax_index,viewport_bounds'
+        &&Array.isArray(sw.process_instance)&&JSON.stringify(sw.process_instance)===JSON.stringify([
+          native.bundle_id,native.pid,
+          sourceBinding?.after?.value?.target?.startTimeSeconds,
+          sourceBinding?.after?.value?.target?.startTimeMicroseconds])
+        &&Number.isFinite(sw.process_instance[2])&&Number.isFinite(sw.process_instance[3])
+        &&sw.native_identity&&Object.keys(sw.native_identity).sort().join(',')==='cua_capture_bounds_points,display_id'
+        &&sw.native_identity.display_id===native.display_id
+        &&canonicalJSON(sw.native_identity.cua_capture_bounds_points)===canonicalJSON(native.cua_capture_bounds_points),
+        'SCROLL_WITNESS_PROCESS_BINDING');
+      const viewport=rect(sw.viewport_bounds,width,height,'SCROLL_VIEWPORT_BOUNDS');
+      const lists=axElements.filter(e=>e.role==='list');
+      need(lists.length===1&&lists[0].index===sw.viewport_ax_index
+        &&lists[0].bounds_px.join(',')===viewport.join(','),'SCROLL_VIEWPORT_AX_BINDING');
+      const offset=sw.scroll_offset;
+      need(offset&&Object.keys(offset).sort().join(',')==='frame_id,session_id,value'
+        &&offset.frame_id===frameId&&offset.session_id===sessionId
+        &&offset.value===analysis.boundary_evidence.value,'SCROLL_OFFSET_BINDING');
+      need(Array.isArray(sw.rows)&&sw.rows.length>0,'SCROLL_LIST_WITNESS_REQUIRED');
+      const scrollRows=[],rowSeen=new Set();
+      for(const row of sw.rows){
+        need(row&&Object.keys(row).sort().join(',')==='fingerprint,fully_visible,identity_visible,metadata_bounds,row_ax_index,row_bounds'
+          &&row.identity_visible===true&&typeof row.fully_visible==='boolean','SCROLL_ROW_SCHEMA');
+        const id=row.fingerprint;
+        need(id&&Object.keys(id).sort().join(',')==='end_date,expected_images,start_date'
+          &&/^\d{4}-\d{2}-\d{2}$/.test(id.start_date)&&/^\d{4}-\d{2}-\d{2}$/.test(id.end_date)
+          &&Number.isInteger(id.expected_images)&&id.expected_images>0,'SCROLL_ROW_IDENTITY');
+        const identity=JSON.stringify([id.start_date,id.end_date,id.expected_images]);
+        need(!rowSeen.has(identity),'SCROLL_ROW_DUPLICATE');rowSeen.add(identity);
+        rect(row.row_bounds,width,height,'SCROLL_ROW_BOUNDS');
+        need(intersects(row.row_bounds,viewport)&&row.fully_visible===inside(row.row_bounds,viewport),
+          'SCROLL_ROW_VIEWPORT_BINDING');
+        const node=byIndex.get(row.row_ax_index);
+        need(node?.role==='row'&&node.parent_index===lists[0].index
+          &&node.bounds_px.join(',')===row.row_bounds.join(','),'SCROLL_ROW_AX_BINDING');
+        need(Array.isArray(row.metadata_bounds)&&row.metadata_bounds.length===2,
+          'SCROLL_ROW_METADATA_BOUNDS');
+        for(const b of row.metadata_bounds){rect(b,width,height,'SCROLL_ROW_METADATA_BOUNDS');
+          need(inside(b,row.row_bounds)&&inside(b,viewport),'SCROLL_ROW_METADATA_CLIPPED');}
+        const title=`${id.start_date.replaceAll('-','/')}～${id.end_date.slice(5).replaceAll('-','/')}`;
+        const channelMatches=(items)=>items.filter(item=>item.text===title&&item.confidence>=.5
+          &&item.candidate_count===1&&inside(item.bounds,row.row_bounds)&&inside(item.bounds,viewport));
+        const countMatches=(items)=>items.filter(item=>item.text===String(id.expected_images)&&item.confidence>=.5
+          &&item.candidate_count===1&&inside(item.bounds,row.row_bounds)&&inside(item.bounds,viewport));
+        const uniqueSckText=(items,text)=>items.filter(item=>item.text===text&&item.confidence>=.5
+          &&item.candidate_count===1);
+        need(channelMatches(ocr.cua).length===1&&countMatches(ocr.cua).length===1
+          &&uniqueSckText(ocr.sck,title).length===1&&uniqueSckText(ocr.sck,String(id.expected_images)).length===1,
+          'SCROLL_ROW_OCR_CROSS_SOURCE');
+        scrollRows.push({fingerprint:id,row_bounds:row.row_bounds,fully_visible:row.fully_visible,
+          identity_visible:true,metadata_bounds:row.metadata_bounds,row_ax_index:row.row_ax_index});
+      }
+      need(scrollRows.length>0,'SCROLL_LIST_WITNESS_REQUIRED');
+      const scrollClassifierEvidence={version:1,frame_id:frameId,session_id:sessionId,ax_state_sha256:axRef.sha256,
+        screenshot_sha256:frameId,cards:[],boundary:{top:boundary.top,bottom:boundary.bottom,evidence:boundaryRef},
+        structure_sha256:structureSHA,surface_structure:analysis.surface_structure,focus_evidence:focusRef};
+      const scrollClassifierRef=ref(await retain({artifact:scrollClassifierEvidence,kind:'classifier-evidence',frameId,sessionId}),
+        'CLASSIFIER_EVIDENCE_RETAIN_REQUIRED');
+      const groundingRef=ref(await retain({artifact:{version:1,geometry:geometryRef,manifest:support.manifestReference,
+        classifier:scrollClassifierRef},kind:'grounding-evidence',frameId,sessionId}),
+        'GROUNDING_EVIDENCE_RETAIN_REQUIRED');
+      const processInstance=JSON.stringify(sw.process_instance);
+      const observation={frame:saved,frame_id:frameId,session_id:sessionId,group_key:groupKey,surface:'ALBUMS',
+        captured_at:capturedAt,provider:'HOSTED_CUA',layout_key:layoutKey,window_id:native.window_id,pid:native.pid,
+        process_instance:processInstance,width,height,native_scale:layout.native_scale,
+        mapping:{space:'CUA_CAPTURE_PIXELS',uncertainty,evidence:groundingRef,frame_id:frameId,
+          layout_key:layoutKey,sck_support:ref(support.reference,'SCK_SUPPORT_REFERENCE')},cards:[],
+        viewport_bounds:viewport,scroll_witness:{evidence_only:true,actionable:false,rows:scrollRows,
+          native_identity:sw.native_identity},
+        parsed_ax:{raw_sha256:sourceAXSha,cards:scrollRows.map(row=>({ ...row.fingerprint,bounds:row.row_bounds})),
+          scroll_offset:{frame_id:frameId,session_id:sessionId,value:offset.value}},
+        boundary:{top:boundary.top,bottom:boundary.bottom,evidence:boundaryRef},editable_focus:'NONE',occlusion:'CLEAR'};
+      scrollCache.set(frameId,{observation,analysis,axSnapshot,axRef,support,geometryRef,groundingRef,manifest,ocr});
+      return observation;
+    }
     const witnessCards=[];const cards=[];
     need(Array.isArray(analysis.cards),'CLASSIFIER_CARDS');
-    const byIndex=new Map(axElements.map(e=>[e.index,e]));const seen=new Set();
+    const seen=new Set();
     for(const candidate of analysis.cards) {
       const cardKeys=['fingerprint','title','metadata_bounds','card_bounds','fully_visible','safe_metadata_bounds',
         'neighbor_bounds','thumbnail_bounds','card_ax_index','thumbnail_ax_index'];
@@ -490,5 +577,6 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
       frame_id:frameId,session_id:sessionId,reference};
   }
 
-  return Object.freeze({classify,classifyChooser,collectVisualCardDiagnostic,completeVisualCardDiagnostic,cache});
+  return Object.freeze({classify,classifyScrollWitness:args=>classify(args,{scrollWitness:true}),classifyChooser,
+    collectVisualCardDiagnostic,completeVisualCardDiagnostic,cache,scrollCache});
 }

@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {deflateSync} from 'node:zlib';
 import {runInNewContext} from 'node:vm';
-import {createHostedSession,createAlbumSupportCallbacks,createNavigationObserver,normalizeScreenshotBytes,verifyAlbumScroll}
+import {createHostedSession,createAlbumSupportCallbacks,createNavigationObserver,normalizeScreenshotBytes,verifyAlbumScroll,verifyScrollMovement}
   from '../scripts/line_backup_cua_adapter.mjs';
-import {runTwoAlbumPilot} from '../harness-development/line-two-album-pilot-20261014/two_album_entry.mjs';
+import {runTwoAlbumPilot,runOneScrollProbe} from '../harness-development/line-two-album-pilot-20261014/two_album_entry.mjs';
+import {createLiveClassifier} from '../harness-development/line-two-album-pilot-20261014/mac/classifier.mjs';
 
 const digest=value=>createHash('sha256').update(value).digest('hex');
 function png(width,height,shade,nonce=0){
@@ -32,6 +33,62 @@ function scrollObservation(bytes,cards,rawAx,offset){
 function retainedProof(observation){
   const saved={sha256:observation.frame_id,ax:{sha256:observation.proof.axHash}};
   return {frameId:observation.frame_id,saved,screenshot:observation.proof.bytes,axRaw:observation.proof.rawAx};
+}
+
+function scrollClassifierFixture({mutateAnalysis=()=>{}}={}){
+  const screenshot=png(100,100,12),frameId=digest(screenshot),sessionId='classifier-scroll';
+  const axText='offline source AX';const axBytes=Buffer.from(axText);
+  const reference=(name,body)=>({path:`harness-development/offline-${name}.json`,bytes:Buffer.byteLength(body),sha256:digest(Buffer.from(body))});
+  const artifacts=[];const retain=async({artifact,kind})=>{
+    const body=JSON.stringify(artifact);artifacts.push({kind,artifact});return reference(kind,body);
+  };
+  const sourceBinding={after:{value:{target:{bundleID:'jp.naver.line.mac',pid:42,startTimeSeconds:1,startTimeMicroseconds:2}}}};
+  const analyzeScrollWitness=async args=>{
+    const title={text:'2026/01/01～01/02',confidence:.9,candidate_count:1,bounds:[10,30,40,10]};
+    const count={text:'4',confidence:.9,candidate_count:1,bounds:[10,44,12,10]};
+    const elements=[
+      {index:0,role:'list',subrole:'',identifier:'albums',label:'',value:null,bounds_px:[0,0,100,100],parent_index:null,enabled:false},
+      {index:1,role:'row',subrole:'',identifier:'album-row',label:'',value:null,bounds_px:[0,20,100,40],parent_index:0,enabled:false},
+      {index:2,role:'scroll bar',subrole:'',identifier:'albums-scroll',label:'',value:0,bounds_px:[95,0,5,100],parent_index:0,enabled:false}];
+    const analysis={version:1,frame_id:args.frameId,session_id:args.sessionId,source_sha256:args.frameId,
+      source_ax_sha256:args.sourceAXSha256,surface:'ALBUMS',group_key:'group',
+      native:{bundle_id:'jp.naver.line.mac',pid:42,window_id:7,display_id:1,cua_capture_bounds_points:[0,0,100,100]},
+      layout:{line_version:'1',language:'zh-Hant',window_class:'window',native_scale:1},
+      surface_structure:[{role:'list',subrole:'',identifier:'albums'}],surface_bounds_px:[0,0,100,100],
+      occlusion:'CLEAR',editable_focus:'NONE',focus_evidence:{version:1,frame_id:args.frameId,session_id:args.sessionId,
+        kind:'NONE',focused_index:null},ax:{version:1,focused_index:null,elements},cards:[],
+      boundary:{top:true,bottom:false},boundary_evidence:{version:1,frame_id:args.frameId,session_id:args.sessionId,
+        source:'AX_SCROLLBAR',indicator_index:2,minimum:0,maximum:1,value:0},
+      chooser_controls:{root_index:null,path_field_index:null,confirm_button_index:null,selected_leaf_index:null},
+      scroll_witness:{viewport_bounds:[0,0,100,100],viewport_ax_index:0,
+        native_identity:{display_id:1,cua_capture_bounds_points:[0,0,100,100]},
+        process_instance:['jp.naver.line.mac',42,1,2],scroll_offset:{frame_id:args.frameId,session_id:args.sessionId,value:0},
+        rows:[{fingerprint:{start_date:'2026-01-01',end_date:'2026-01-02',expected_images:4},
+          row_bounds:[0,20,100,40],fully_visible:true,identity_visible:true,
+          metadata_bounds:[[10,30,40,10],[10,44,12,10]],row_ax_index:1}]}};
+    mutateAnalysis(analysis);return analysis;
+  };
+  const supportRef=reference('sck-support','offline-support');
+  const ocrBody=JSON.stringify({cua_frame_id:frameId,sck_frame_sha256:'a'.repeat(64),cua:[
+    {text:'2026/01/01～01/02',confidence:.9,candidate_count:1,bounds:[10,30,40,10]},
+    {text:'4',confidence:.9,candidate_count:1,bounds:[10,44,12,10]}],sck:[
+    {text:'2026/01/01～01/02',confidence:.9,candidate_count:1,bounds:[300,200,40,10]},
+    {text:'4',confidence:.9,candidate_count:1,bounds:[300,220,10,10]}]});
+  const ocrRef=reference('sck-ocr',ocrBody);
+  const sckFrameRef=reference('sck-frame','offline-sck-frame');
+  const manifestRef=reference('sck-manifest','placeholder');
+  const manifest={pairFrameId:frameId,surface:'ALBUMS',layoutKey:null,geometryEvidence:null,
+    support:{path:supportRef.path,sha256:supportRef.sha256},sckFrameId:'a'.repeat(64),sckFrame:sckFrameRef,ocr:ocrRef};
+  const frameSupport=async({layoutKey,geometryRef})=>{
+    manifest.layoutKey=layoutKey;manifest.geometryEvidence={path:geometryRef.path,sha256:geometryRef.sha256};
+    const body=JSON.stringify(manifest),actualManifestRef={...manifestRef,bytes:Buffer.byteLength(body),sha256:digest(Buffer.from(body))};
+    return {provider:'SCREEN_CAPTURE_KIT',surface:'ALBUMS',pairFrameId:frameId,sessionId,
+      uncertaintyPx:2,safeMarginPx:6,reference:supportRef,manifestReference:actualManifestRef,
+      readRef:async ref=>new Uint8Array(Buffer.from(ref.path===actualManifestRef.path?body:ocrBody))};
+  };
+  const classifier=createLiveClassifier({retain,frameSupport,analyzeCapture:async()=>{throw new Error('normal classifier not selected');},
+    analyzeScrollWitness,groupKey:'group'});
+  return {classifier,artifacts,screenshot,frameId,sessionId,axText,axBytes,sourceBinding};
 }
 
 function fixture(options={}) {
@@ -243,6 +300,190 @@ test('scroll proof compares retained viewport pixels, raw AX cards, movement and
   const reversed=scrollObservation(png(100,100,20),[[b,60],[c,80]],afterAx,15);
   assert.throws(()=>verifyAlbumScroll(before,reversed,{before:retainedProof(before),after:retainedProof(reversed)}),
     /SCROLL_SHARED_CARD_NOT_MOVED_UP/);
+});
+
+test('one-scroll movement proof requires retained pixel change, stable source identity, AX displacement and offset',async()=>{
+  const rawBefore='before scroll AX',rawAfter='after scroll AX';
+  const beforeBytes=png(100,100,10),afterBytes=png(100,100,20);
+  const beforeId=digest(beforeBytes),afterId=digest(afterBytes);
+  const make=(bytes,frameId,rawAx,capturedAt,y,offset)=>({surface:'ALBUMS',session_id:'s',group_key:'g',
+    provider:'HOSTED_CUA',pid:9,process_instance:JSON.stringify(['jp.naver.line.mac',9,1,2]),window_id:3,
+    layout_key:'l',width:100,height:100,native_scale:2,frame_id:frameId,captured_at:capturedAt,
+    viewport_bounds:[0,0,100,100],native_identity:{display_id:1,cua_capture_bounds_points:[10,20,100,100]},
+    mapping:{uncertainty:2},scroll_witness:{actionable:false,evidence_only:true,
+      native_identity:{display_id:1,cua_capture_bounds_points:[10,20,100,100]},rows:[{fingerprint:{start_date:'2026-01-01',
+        end_date:'2026-01-02',expected_images:4},identity_visible:true,row_bounds:[0,y,80,40],
+        metadata_bounds:[[2,y+2,20,10],[2,y+15,10,10]]}]},
+    parsed_ax:{raw_sha256:digest(Buffer.from(rawAx)),scroll_offset:{frame_id:frameId,session_id:'s',value:offset}}});
+  const before=make(beforeBytes,beforeId,rawBefore,'2026-10-16T00:00:00.000Z',30,0);
+  const after=make(afterBytes,afterId,rawAfter,'2026-10-16T00:00:01.000Z',10,0.2);
+  const saved=(id,raw)=>({sha256:id,ax:{sha256:digest(Buffer.from(raw))}});
+  const proof={before:{frameId:beforeId,saved:saved(beforeId,rawBefore),screenshot:beforeBytes,axRaw:rawBefore},
+    after:{frameId:afterId,saved:saved(afterId,rawAfter),screenshot:afterBytes,axRaw:rawAfter}};
+  const result=await verifyScrollMovement(before,after,proof);
+  assert.equal(result.kind,'SCROLL_MOVEMENT_ONLY');assert.equal(result.actionable,false);
+  assert.equal(result.changed_viewport_pixels,9999);assert.deepEqual(result.displacement_px,[-20]);
+  assert.deepEqual(result.scroll_offset,[0,0.2]);
+  const unanchored={...after,scroll_witness:{...after.scroll_witness,rows:after.scroll_witness.rows.map(row=>({...row,
+    metadata_bounds:before.scroll_witness.rows[0].metadata_bounds.map(bounds=>[...bounds])}))}};
+  await assert.rejects(()=>verifyScrollMovement(before,unanchored,proof),/SCROLL_OCR_MOVEMENT_INCONSISTENT/);
+  for(const [mutateBefore,mutateAfter,code] of [
+    [null,o=>{o.scroll_witness.native_identity.display_id=2;},/SCROLL_DISPLAY_ORIGIN_DRIFT/],
+    [o=>{o.process_instance='["jp.naver.line.mac",9,null,null]';},
+      o=>{o.process_instance='["jp.naver.line.mac",9,null,null]';},/SCROLL_PROCESS_IDENTITY/],
+    [null,o=>{o.captured_at=before.captured_at;},/SCROLL_CAPTURE_TIME_ORDER/],
+    [null,o=>{o.window_id=4;},/SCROLL_CONTEXT_DRIFT/],
+    [null,o=>{o.process_instance=JSON.stringify(['jp.naver.line.mac',10,1,2]);},/SCROLL_CONTEXT_DRIFT/]]) {
+    const prior={...before,scroll_witness:{...before.scroll_witness,
+      native_identity:{...before.scroll_witness.native_identity}}};
+    const changed={...after,scroll_witness:{...after.scroll_witness,
+      native_identity:{...after.scroll_witness.native_identity}}};
+    mutateBefore?.(prior);mutateAfter(changed);
+    await assert.rejects(()=>verifyScrollMovement(prior,changed,proof),code);
+  }
+});
+
+test('one-scroll probe rejects undecodable retained JPEG before ledger reservation or native input',async()=>{
+  const calls=[];let scrolls=0,clicks=0;
+  const bytes=new Uint8Array([255,216,255,0]);
+  const observer=createNavigationObserver({app:{
+    async getAXStateAndScreenshot(){return {state:'retained AX',screenshot:bytes};},
+    async getAXState(){return 'retained AX';},async click(){clicks++;},async pressKey(){},async scroll(){scrolls++;}},
+    bridge:async(operation)=>{calls.push(operation);if(operation==='gui_observe')return {status:'PROJECT_OBSERVATION_RESERVED'};
+      throw new Error('Unexpected authorization operation: '+operation);},
+    retain:async({screenshot,ax})=>({path:'harness-development/offline-frame',bytes:screenshot.byteLength,
+      sha256:digest(screenshot),ax:{path:'harness-development/offline-ax',bytes:Buffer.byteLength(ax),sha256:digest(Buffer.from(ax))}}),
+    classify:async({frameId,sessionId})=>({frame_id:frameId,session_id:sessionId,surface:'ALBUMS',
+      viewport_bounds:[0,0,100,100],mapping:{uncertainty:2},
+      scroll_witness:{evidence_only:true,actionable:false,rows:[{identity_visible:true}]}}),
+    requireV3:true,resolveWindowLineage:async()=>null,checkpointPrefix:'A_DISCOVERY',sessionId:'offline',clock:()=>1,
+    decodeRetainedImage:async()=>{throw new Error('SCROLL_JPEG_DECODE_INVALID');}});
+  try {
+    const before=await observer.observe('ONE_SCROLL_BEFORE');
+    await assert.rejects(()=>observer.boundedScroll(before,[50,50],'down',0.25,'SCROLL_1',{mode:'ONE_SCROLL_PROBE'}),
+      /SCROLL_JPEG_DECODE_INVALID/);
+    assert.deepEqual(calls,['gui_observe']);assert.equal(scrolls,0);assert.equal(clicks,0);
+    assert.equal(observer.movementEvidence().length,0);
+  } finally {observer.close();}
+});
+
+test('one-scroll probe rejects a point outside the mapped safe viewport before decoder, reservation, or input',async()=>{
+  const calls=[];let scrolls=0,decodes=0;
+  const bytes=png(100,100,12);
+  const observer=createNavigationObserver({app:{
+    async getAXStateAndScreenshot(){return {state:'retained AX',screenshot:bytes};},
+    async getAXState(){return 'retained AX';},async click(){},async pressKey(){},async scroll(){scrolls++;}},
+    bridge:async(operation)=>{calls.push(operation);if(operation==='gui_observe')return {status:'PROJECT_OBSERVATION_RESERVED'};
+      throw new Error('Unexpected authorization operation: '+operation);},
+    retain:async({screenshot,ax})=>({path:'harness-development/offline-frame',bytes:screenshot.byteLength,
+      sha256:digest(screenshot),ax:{path:'harness-development/offline-ax',bytes:Buffer.byteLength(ax),sha256:digest(Buffer.from(ax))}}),
+    classify:async({frameId,sessionId})=>({frame_id:frameId,session_id:sessionId,surface:'ALBUMS',
+      viewport_bounds:[0,0,100,100],mapping:{uncertainty:2},
+      scroll_witness:{evidence_only:true,actionable:false,rows:[{identity_visible:true}]}}),
+    requireV3:true,resolveWindowLineage:async()=>null,checkpointPrefix:'A_DISCOVERY',sessionId:'offline',clock:()=>1,
+    decodeRetainedImage:async({bytes,sourceSha256})=>{decodes++;return {sourceSha256,png:bytes,pngSha256:sourceSha256};}});
+  try {
+    const before=await observer.observe('PAIR-A-DISCOVERY_SCROLL_1_BEFORE');
+    await assert.rejects(()=>observer.boundedScroll(before,[1,1],'down',0.25,'SCROLL_1',{mode:'ONE_SCROLL_PROBE'}),
+      /ONE_SCROLL_TARGET_OUTSIDE_SAFE_VIEWPORT/);
+    assert.deepEqual(calls,['gui_observe']);assert.equal(decodes,0);assert.equal(scrolls,0);
+  } finally {observer.close();}
+});
+
+test('shared live classifier returns a source-bound list viewport witness with native geometry',async()=>{
+  const f=scrollClassifierFixture();
+  const saved={path:'harness-development/offline-frame',bytes:f.screenshot.byteLength,sha256:f.frameId,
+    ax:{path:'harness-development/offline-ax',bytes:f.axBytes.byteLength,sha256:digest(f.axBytes)}};
+  const observation=await f.classifier.classifyScrollWitness({capture:{screenshot:f.screenshot,state:f.axText},saved,
+    frameId:f.frameId,sessionId:f.sessionId,capturedAt:'2026-10-16T00:00:00.000Z',sourceBinding:f.sourceBinding});
+  assert.equal(observation.surface,'ALBUMS');assert.equal(observation.cards.length,0);
+  assert.equal(observation.scroll_witness.actionable,false);assert.equal(observation.scroll_witness.rows.length,1);
+  const geometry=f.artifacts.find(item=>item.kind==='frame-geometry')?.artifact;
+  assert.deepEqual(Object.keys(geometry).sort(),['ax_state','captured_at','cua_capture_bounds_points','frame_id','layout_key',
+    'layout_signature','pid','session_id','structure_sha256','surface','surface_bounds_px','version','window_id'].sort());
+  assert.deepEqual(Object.keys(geometry.layout_signature).sort(),['frame_width_px','frame_height_px','language',
+    'line_version','native_scale','structure_sha256','window_class'].sort());
+  assert.ok(f.artifacts.some(item=>item.kind==='grounding-evidence'));
+});
+
+test('shared live classifier rejects wrong group, duplicate row identity, and ungrounded viewport',async()=>{
+  for(const [mutate,code] of [
+    [analysis=>{analysis.group_key='other';},/CLASSIFIER_CONTEXT/],
+    [analysis=>{analysis.scroll_witness.rows.push({...analysis.scroll_witness.rows[0]});},/SCROLL_ROW_DUPLICATE/],
+    [analysis=>{analysis.scroll_witness.viewport_bounds=[5,0,95,100];},/SCROLL_VIEWPORT_AX_BINDING/],
+    [analysis=>{analysis.native.pid=43;},/SCROLL_WITNESS_PROCESS_BINDING/]]) {
+    const f=scrollClassifierFixture({mutateAnalysis:mutate});
+    const saved={path:'harness-development/offline-frame',bytes:f.screenshot.byteLength,sha256:f.frameId,
+      ax:{path:'harness-development/offline-ax',bytes:f.axBytes.byteLength,sha256:digest(f.axBytes)}};
+    await assert.rejects(()=>f.classifier.classifyScrollWitness({capture:{screenshot:f.screenshot,state:f.axText},saved,
+      frameId:f.frameId,sessionId:f.sessionId,capturedAt:'2026-10-16T00:00:00.000Z',sourceBinding:f.sourceBinding}),code);
+  }
+});
+
+function oneScrollRuntimeFixture({denyReservation=false,mappingUncertainty=2,targetPoint=[50,50]}={}){
+  const calls=[],reservations=[];let scrolls=0,captures=0;
+  const app={async getAXStateAndScreenshot(){captures++;return {state:`AX ${captures}`,
+    screenshot:png(100,100,captures===1?10:20,captures)};},async getAXState(){return 'AX'},
+    async click(){calls.push('click');},async pressKey(){calls.push('pressKey');},async scroll(target,direction,distance){
+      calls.push(['scroll',target,direction,distance]);scrolls++;}};
+  const cli=async(operation,request={})=>{
+    calls.push([operation,request.payload?.data?.checkpoint??null]);
+    if(operation==='inspect')return {receipt_token:'offline-token'};
+    if(operation==='gui_observe')return {status:'PROJECT_OBSERVATION_RESERVED'};
+    if(operation==='gui_initialize')return {status:'GUI_INITIALIZED'};
+    throw new Error(`Unexpected direct CLI operation: ${operation}`);
+  };
+  cli.bridge=async(operation,{data}={})=>{
+    calls.push([operation,data]);
+    if(operation==='gui_reserve'){
+      if(denyReservation)throw new Error('GUI_LEDGER_RESERVE_REFUSED');
+      reservations.push(data);return {reservation:{id:'offline-scroll-reservation',kind:data.kind,count:data.count}};
+    }
+    if(operation==='gui_consume')return {reservation:{id:data.reservation_id,state:'CONSUMED'}};
+    throw new Error(`Unexpected bridge operation: ${operation}`);
+  };
+  const runtime={profile:'LINE_TWO_ALBUM_PILOT/1',owner:'offline-owner',authorization:'private/project-grant.json',cli,
+    assertLineAlreadyRunning:async()=>{calls.push('line-preflight');},getApp:async()=>app,
+    retain:async({screenshot,ax})=>({path:'harness-development/offline-frame',bytes:screenshot.byteLength,
+      sha256:digest(screenshot),ax:{path:'harness-development/offline-ax',bytes:Buffer.byteLength(ax),sha256:digest(Buffer.from(ax))}}),
+    classifyScrollWitness:async({capture,saved,frameId,sessionId,capturedAt})=>{
+      const moved=scrolls>0,y=moved?10:30,offset=moved?.2:0;
+      return {frame:saved,frame_id:frameId,session_id:sessionId,group_key:'group',surface:'ALBUMS',captured_at:capturedAt,
+        provider:'HOSTED_CUA',layout_key:'layout',window_id:7,pid:42,process_instance:JSON.stringify(['jp.naver.line.mac',42,1,2]),
+        width:100,height:100,native_scale:1,viewport_bounds:[0,0,100,100],mapping:{uncertainty:mappingUncertainty},cards:[],
+        boundary:{top:offset===0,bottom:false},editable_focus:'NONE',occlusion:'CLEAR',
+        scroll_witness:{evidence_only:true,actionable:false,native_identity:{display_id:1,cua_capture_bounds_points:[0,0,100,100]},
+          rows:[{fingerprint:{start_date:'2026-01-01',end_date:'2026-01-02',expected_images:4},identity_visible:true,
+            fully_visible:true,row_bounds:[0,y,90,50],metadata_bounds:[[10,y+5,30,10],[10,y+20,10,10]]}]},
+        parsed_ax:{scroll_offset:{frame_id:frameId,session_id:sessionId,value:offset}}};},
+    decodeRetainedImage:async()=>{throw new Error('PNG should decode locally');},navigation:{scrollTarget:async()=>targetPoint},
+    beforeCapture:async()=>null,afterCapture:async()=>null,windowLineage:async()=>null,clock:()=>10,
+    privateEvidence:{retainDiscovery:async value=>{calls.push(['retainDiscovery',value]);return {path:'retained'};}}};
+  return {runtime,calls,reservations,get scrolls(){return scrolls;}};
+}
+
+test('one-scroll entry executes only one reserved SCROLL_1 input and records movement-only evidence',async()=>{
+  const f=oneScrollRuntimeFixture();
+  const result=await runOneScrollProbe(f.runtime);
+  assert.equal(result.status,'SCROLL_MOVEMENT_ONLY');assert.equal(result.actionable,false);
+  assert.equal(f.scrolls,1);assert.equal(f.reservations.length,1);
+  assert.deepEqual(f.reservations[0].slots,['SCROLL_1']);assert.equal(f.reservations[0].kind,'scroll');
+  assert.equal(f.calls.filter(item=>item==='click'||item==='pressKey').length,0);
+  assert.equal(f.calls.filter(item=>Array.isArray(item)&&item[0]==='retainDiscovery').length,1);
+  assert.equal(f.calls.some(item=>Array.isArray(item)&&['dispatch','album_begin','album_admit','intent','finalize'].includes(item[0])),false);
+});
+
+test('one-scroll entry stops on missing durable reservation with zero native input',async()=>{
+  const f=oneScrollRuntimeFixture({denyReservation:true});
+  await assert.rejects(()=>runOneScrollProbe(f.runtime),/GUI_LEDGER_RESERVE_REFUSED/);
+  assert.equal(f.scrolls,0);assert.equal(f.reservations.length,0);
+  assert.equal(f.calls.filter(item=>item==='click'||item==='pressKey').length,0);
+});
+
+test('one-scroll entry rejects source mapping above the existing two-pixel limit before reservation',async()=>{
+  const f=oneScrollRuntimeFixture({mappingUncertainty:2.01});
+  await assert.rejects(()=>runOneScrollProbe(f.runtime),/ONE_SCROLL_VIEWPORT_GEOMETRY/);
+  assert.equal(f.scrolls,0);assert.equal(f.reservations.length,0);
 });
 
 test('project album open accepts recorded related detail-window lineage',async()=>{

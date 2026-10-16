@@ -5,6 +5,8 @@ import {inflateSync} from 'node:zlib';
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const requireFact = (ok, code) => {if (!ok) throw new Error(code);};
 const point = p => Array.isArray(p) && p.length === 2 && p.every(Number.isFinite);
+const inside = (a,b) => Array.isArray(a)&&Array.isArray(b)&&a.length===4&&b.length===4
+  &&a[0]>=b[0]&&a[1]>=b[1]&&a[0]+a[2]<=b[0]+b[2]&&a[1]+a[3]<=b[1]+b[3];
 const hex64 = v => typeof v === 'string' && /^[0-9a-f]{64}$/.test(v);
 const typeFinite = v => typeof v === 'number' && Number.isFinite(v);
 const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype);
@@ -50,6 +52,17 @@ function decodePngRgb(value) {
   return {width,height,channels,pixels:raw};
 }
 
+async function retainedRgb(bytes,reference,decodeRetainedImage) {
+  const signature=[137,80,78,71,13,10,26,10];
+  if(signature.every((n,i)=>bytes[i]===n))return decodePngRgb(bytes);
+  requireFact(bytes[0]===0xff&&bytes[1]===0xd8&&bytes[2]===0xff,'SCROLL_IMAGE_FORMAT_UNSUPPORTED');
+  requireFact(typeof decodeRetainedImage==='function','SCROLL_JPEG_DECODER_REQUIRED');
+  const decoded=await decodeRetainedImage({bytes:new Uint8Array(bytes),sourceSha256:sha(bytes),reference});
+  requireFact(decoded?.sourceSha256===sha(bytes)&&decoded.png instanceof Uint8Array
+    &&decoded.pngSha256===sha(decoded.png),'SCROLL_JPEG_DECODE_BINDING');
+  return decodePngRgb(decoded.png);
+}
+
 function compareRetainedViewport(before,after,proof) {
   requireFact(proof&&proof.before&&proof.after,'SCROLL_RETAINED_IMAGE_PROOF_REQUIRED');
   requireFact(proof.before.frameId===before.frame_id&&proof.after.frameId===after.frame_id
@@ -71,6 +84,105 @@ function compareRetainedViewport(before,after,proof) {
   }
   requireFact(changed>0,'SCROLL_NO_VIEWPORT_PIXEL_CHANGE');
   return changed;
+}
+
+async function compareRetainedViewportProbe(before,after,proof,decodeRetainedImage) {
+  requireFact(proof&&proof.before&&proof.after,'SCROLL_RETAINED_IMAGE_PROOF_REQUIRED');
+  requireFact(proof.before.frameId===before.frame_id&&proof.after.frameId===after.frame_id
+    &&proof.before.saved?.sha256===before.frame_id&&proof.after.saved?.sha256===after.frame_id
+    &&proof.before.saved?.ax?.sha256===sha(new TextEncoder().encode(proof.before.axRaw))
+    &&proof.after.saved?.ax?.sha256===sha(new TextEncoder().encode(proof.after.axRaw)),
+    'SCROLL_RETAINED_FRAME_BINDING');
+  const a=await retainedRgb(proof.before.screenshot,proof.before.saved,decodeRetainedImage);
+  const b=await retainedRgb(proof.after.screenshot,proof.after.saved,decodeRetainedImage);
+  requireFact(a.width===b.width&&a.height===b.height&&a.width===before.width&&a.height===before.height,
+    'SCROLL_IMAGE_DIMENSIONS');
+  const rect=before.viewport_bounds;requireFact(Array.isArray(rect)&&rect.length===4
+    &&rect.every(Number.isInteger)&&rect[0]>=0&&rect[1]>=0&&rect[2]>0&&rect[3]>0
+    &&rect[0]+rect[2]<=a.width&&rect[1]+rect[3]<=a.height
+    &&JSON.stringify(rect)===JSON.stringify(after.viewport_bounds),'SCROLL_VIEWPORT_GROUNDING');
+  let changed=0;
+  for(let y=rect[1];y<rect[1]+rect[3];y++)for(let x=rect[0];x<rect[0]+rect[2];x++){
+    const i=(y*a.width+x)*a.channels,j=(y*b.width+x)*b.channels;
+    if(a.pixels[i]!==b.pixels[j]||a.pixels[i+1]!==b.pixels[j+1]||a.pixels[i+2]!==b.pixels[j+2])changed++;
+  }
+  requireFact(changed>0,'SCROLL_NO_VIEWPORT_PIXEL_CHANGE');return changed;
+}
+
+export async function verifyScrollMovement(before,after,proof=null,{decodeRetainedImage=null}={}) {
+  requireFact(before?.surface==='ALBUMS'&&after?.surface==='ALBUMS'
+    &&before.session_id===after.session_id&&before.group_key===after.group_key
+    &&before.provider==='HOSTED_CUA'&&after.provider==='HOSTED_CUA'
+    &&before.pid===after.pid&&before.process_instance===after.process_instance
+    &&before.window_id===after.window_id&&before.layout_key===after.layout_key
+    &&before.width===after.width&&before.height===after.height
+    &&Number.isFinite(before.native_scale)&&before.native_scale>0&&before.native_scale===after.native_scale,
+    'SCROLL_CONTEXT_DRIFT');
+  const processInstance=(()=>{try{return JSON.parse(before.process_instance);}catch{return null;}})();
+  requireFact(Array.isArray(processInstance)&&processInstance.length===4
+    &&processInstance[0]==='jp.naver.line.mac'&&processInstance[1]===before.pid
+    &&Number.isFinite(processInstance[2])&&Number.isFinite(processInstance[3]),'SCROLL_PROCESS_IDENTITY');
+  requireFact(before.scroll_witness?.native_identity?.display_id>0
+    &&before.scroll_witness.native_identity.display_id===after.scroll_witness?.native_identity?.display_id
+    &&Array.isArray(before.scroll_witness.native_identity.cua_capture_bounds_points)
+    &&JSON.stringify(before.scroll_witness.native_identity.cua_capture_bounds_points)
+      ===JSON.stringify(after.scroll_witness?.native_identity?.cua_capture_bounds_points),
+    'SCROLL_DISPLAY_ORIGIN_DRIFT');
+  const beforeTime=Date.parse(before.captured_at),afterTime=Date.parse(after.captured_at);
+  requireFact(Number.isFinite(beforeTime)&&Number.isFinite(afterTime)&&afterTime>beforeTime,
+    'SCROLL_CAPTURE_TIME_ORDER');
+  requireFact(before.frame_id!==after.frame_id&&hex64(before.frame_id)&&hex64(after.frame_id),
+    'SCROLL_NO_VISUAL_CHANGE');
+  const retained=proof??{before:retainedObservationProofs.get(before),after:retainedObservationProofs.get(after)};
+  const changedPixels=await compareRetainedViewportProbe(before,after,retained,decodeRetainedImage);
+  const rows=observation=>observation.scroll_witness?.rows;
+  const pre=rows(before),post=rows(after);
+  requireFact(Array.isArray(pre)&&Array.isArray(post)&&pre.length>0&&post.length>0,
+    'SCROLL_LIST_WITNESS_REQUIRED');
+  const key=row=>JSON.stringify([row.fingerprint?.start_date,row.fingerprint?.end_date,row.fingerprint?.expected_images]);
+  const preIds=pre.map(key),postIds=post.map(key);
+  requireFact(preIds.every((id,i)=>id!==JSON.stringify([null,null,null])&&preIds.indexOf(id)===i)
+    &&postIds.every((id,i)=>id!==JSON.stringify([null,null,null])&&postIds.indexOf(id)===i),
+    'SCROLL_LIST_IDENTITY_AMBIGUOUS');
+  const viewport=before.viewport_bounds;
+  const shared=pre.filter(row=>postIds.includes(key(row))&&row.identity_visible===true
+    &&Array.isArray(row.row_bounds)&&row.row_bounds.length===4);
+  requireFact(shared.length>0,'SCROLL_NO_SHARED_VISIBLE_ROW');
+  const uncertainty=(before.mapping?.uncertainty??Infinity)+(after.mapping?.uncertainty??Infinity);
+  requireFact(Number.isFinite(uncertainty)&&uncertainty>=0,'SCROLL_MAPPING_UNCERTAINTY');
+  const displacement=[];
+  for(const prior of shared){
+    const current=post.find(row=>key(row)===key(prior));
+    requireFact(current?.identity_visible===true&&Array.isArray(current.row_bounds)
+      &&Array.isArray(current.metadata_bounds)&&current.metadata_bounds.length===2,
+      'SCROLL_SHARED_ROW_NOT_VISIBLE');
+    for(const bound of current.metadata_bounds)requireFact(inside(bound,viewport),'SCROLL_SHARED_IDENTITY_CLIPPED');
+    const dy=current.row_bounds[1]-prior.row_bounds[1];
+    requireFact(dy < -uncertainty,'SCROLL_SHARED_ROW_NOT_MOVED_UP');displacement.push(dy);
+    const metadataDy=[];
+    for(let i=0;i<2;i++){
+      const a=prior.metadata_bounds?.[i],b=current.metadata_bounds[i];
+      requireFact(Array.isArray(a)&&a.length===4&&Array.isArray(b)&&b.length===4
+        &&a.every(Number.isFinite)&&b.every(Number.isFinite),'SCROLL_OCR_MOVEMENT_ANCHOR_REQUIRED');
+      const textDy=b[1]-a[1];
+      requireFact(textDy < -uncertainty&&Math.abs(textDy-dy)<=uncertainty
+        &&Math.abs(b[0]-a[0])<=uncertainty&&Math.abs(b[2]-a[2])<=uncertainty
+        &&Math.abs(b[3]-a[3])<=uncertainty,'SCROLL_OCR_MOVEMENT_INCONSISTENT');
+      metadataDy.push(textDy);
+    }
+    requireFact(Math.abs((current.metadata_bounds[1][1]-current.metadata_bounds[0][1])
+      -(prior.metadata_bounds[1][1]-prior.metadata_bounds[0][1]))<=uncertainty,
+      'SCROLL_OCR_RELATIVE_GEOMETRY_DRIFT');
+  }
+  const a=before.parsed_ax,b=after.parsed_ax;
+  requireFact(a?.raw_sha256===sha(new TextEncoder().encode(retained.before.axRaw))
+    &&b?.raw_sha256===sha(new TextEncoder().encode(retained.after.axRaw))
+    &&a.scroll_offset?.frame_id===before.frame_id&&b.scroll_offset?.frame_id===after.frame_id,
+    'SCROLL_AX_RAW_BINDING');
+  requireFact(Number.isFinite(a.scroll_offset.value)&&Number.isFinite(b.scroll_offset.value)
+    &&b.scroll_offset.value>a.scroll_offset.value,'SCROLL_AX_OFFSET_NOT_ADVANCED');
+  return Object.freeze({kind:'SCROLL_MOVEMENT_ONLY',evidence_only:true,actionable:false,changed_viewport_pixels:changedPixels,
+    shared_row_count:shared.length,displacement_px:displacement,scroll_offset:[a.scroll_offset.value,b.scroll_offset.value]});
 }
 
 export function normalizeScreenshotBytes(value) {
@@ -721,7 +833,7 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
 // or dispatch capability and cannot revive a stopped transaction session.
 export function createNavigationObserver({app,bridge,retain,classify,requireV3=false,beforeCapture=null,afterCapture=null,
     resolveWindowLineage=null,checkpointPrefix='C1',sessionId=randomUUID(),
-    clock=()=>performance.now()}) {
+    clock=()=>performance.now(),decodeRetainedImage=null}) {
   requireFact(app&&['getAXStateAndScreenshot','getAXState','click','pressKey','scroll'].every(k=>typeof app[k]==='function'),
     'DOCUMENTED_APP_REQUIRED');
   requireFact(typeof bridge==='function'&&typeof retain==='function'&&typeof classify==='function',
@@ -730,7 +842,7 @@ export function createNavigationObserver({app,bridge,retain,classify,requireV3=f
   requireFact(!hasCaptureContextHooks||(typeof beforeCapture==='function'&&typeof afterCapture==='function'),
     'CAPTURE_CONTEXT_HOOKS_REQUIRED');
   if(requireV3)requireFact(typeof resolveWindowLineage==='function','PROJECT_WINDOW_LINEAGE_REQUIRED');
-  let latest=null,closed=false;const trace=[],scrollProofs=[];
+  let latest=null,closed=false;const trace=[],scrollProofs=[],movementProofs=[];
   const record=(event,extra={})=>trace.push(Object.freeze({event,at:clock(),wallAt:new Date().toISOString(),...extra}));
   async function countObservation(kind,extra={}) {
     if(!requireV3)return;
@@ -810,12 +922,31 @@ export function createNavigationObserver({app,bridge,retain,classify,requireV3=f
       'RETURN_LIST_IDENTITY_DRIFT');
     return albums;
   }
-  async function boundedScroll(before,target,direction,distance,slot) {
+  async function boundedScroll(before,target,direction,distance,slot,{mode='PILOT'}={}) {
     fresh(before.frame_id);requireFact(before.surface==='ALBUMS'&&['up','down'].includes(direction)
       &&point(target)&&Number.isFinite(distance)&&distance>0&&distance<=0.25,'SCROLL_POLICY');
     if(requireV3)requireFact(direction==='down'&&distance===0.25
       &&['SCROLL_1','SCROLL_2','SCROLL_3','SCROLL_4'].includes(slot),'PROJECT_SCROLL_SLOT');
+    if(mode==='ONE_SCROLL_PROBE')requireFact(requireV3&&checkpointPrefix==='A_DISCOVERY'
+      &&slot==='SCROLL_1'&&direction==='down'&&distance===0.25,'ONE_SCROLL_PROBE_SCOPE');
+    else requireFact(mode==='PILOT','SCROLL_MODE');
     const originAt=latest.started;
+    if(mode==='ONE_SCROLL_PROBE'){
+      requireFact(before===latest.observation&&before.scroll_witness?.evidence_only===true
+        &&before.scroll_witness?.actionable===false&&before.scroll_witness?.rows?.length>0,
+        'ONE_SCROLL_SOURCE_FRAME_REQUIRED');
+      const viewport=before.viewport_bounds,uncertainty=before.mapping?.uncertainty;
+      requireFact(Array.isArray(viewport)&&viewport.length===4&&viewport.every(Number.isFinite)
+        &&Number.isFinite(uncertainty)&&uncertainty>=0&&uncertainty<=2&&target.every(Number.isInteger),
+        'ONE_SCROLL_VIEWPORT_GEOMETRY');
+      const margin=uncertainty+4;
+      requireFact(target[0]>=viewport[0]+margin&&target[1]>=viewport[1]+margin
+        &&target[0]<=viewport[0]+viewport[2]-margin&&target[1]<=viewport[1]+viewport[3]-margin,
+        'ONE_SCROLL_TARGET_OUTSIDE_SAFE_VIEWPORT');
+      requireFact(typeof decodeRetainedImage==='function','SCROLL_JPEG_DECODER_REQUIRED');
+      await retainedRgb(latest.capture.screenshot,latest.saved,decodeRetainedImage);
+      requireFact(clock()>=originAt&&clock()-originAt<=5000,'FRESH_CAPTURE_EXPIRED_DURING_IMAGE_PREFLIGHT');
+    }
     const reservation=await reserve('scroll',1,requireV3?[slot]:null);
     requireFact(clock()>=originAt&&clock()-originAt<=5000,'FRESH_CAPTURE_EXPIRED_AFTER_RESERVATION');record('SCROLL_INVOCATION',{direction,distance,slot});
     try {await app.scroll(target,direction,distance);await extraAX();}
@@ -824,8 +955,19 @@ export function createNavigationObserver({app,bridge,retain,classify,requireV3=f
     try {
       const after=await observe(checkpointPrefix==='A_DISCOVERY'
         ?`PAIR-A-DISCOVERY_${slot}_AFTER`:`PAIR-C1-${slot}_AFTER`);
-      const progress=verifyAlbumScroll(before,after);
+      const progress=mode==='ONE_SCROLL_PROBE'
+        ?await verifyScrollMovement(before,after,null,{decodeRetainedImage})
+        :verifyAlbumScroll(before,after);
       const pre=retainedObservationProofs.get(before),post=retainedObservationProofs.get(after);
+      if(mode==='ONE_SCROLL_PROBE'){
+        movementProofs.push({kind:'SCROLL_MOVEMENT_ONLY',evidence_only:true,actionable:false,slot,
+          before_frame:pre.saved,after_frame:post.saved,before_ax:pre.saved.ax,after_ax:post.saved.ax,
+          context:{session_id:before.session_id,group_key:before.group_key,provider:before.provider,
+            pid:before.pid,process_instance:before.process_instance,list_window_id:before.window_id,
+            layout_key:before.layout_key,width:before.width,height:before.height,native_scale:before.native_scale},
+          movement:progress});
+        record('SCROLL_MOVEMENT_ONLY',progress);return after;
+      }
       const complete=observation=>observation.cards.filter(card=>card?.fully_visible===true);
       const beforeCards=complete(before),afterCards=complete(after),overlap=progress.overlap_count;
       const newCard=afterCards[overlap];
@@ -846,5 +988,6 @@ export function createNavigationObserver({app,bridge,retain,classify,requireV3=f
   }
   function close() {closed=true;latest=null;record('NAVIGATION_OBSERVER_CLOSED');}
   return Object.freeze({sessionId,observe,returnToAlbums,boundedScroll,close,trace:()=>[...trace],
-    scrollEvidence:()=>scrollProofs.map(item=>({...item}))});
+    scrollEvidence:()=>scrollProofs.map(item=>({...item})),
+    movementEvidence:()=>movementProofs.map(item=>({...item}))});
 }

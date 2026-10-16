@@ -57,7 +57,7 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
   const beforeCapture=()=>native();
   const afterCapture=({saved})=>native(saved);
   async function analyzeCapture({frameId,sessionId,capturedAt,width,height,sourceAXSha256,sourceBinding},
-      {visualCardDiagnostic=false}={}) {
+      {visualCardDiagnostic=false,scrollWitness=false}={}) {
     const before=sourceBinding?.before,after=sourceBinding?.after;
     const value=after?.value;verifyNativePair(before?.value,value);
     const visual=value.visual;
@@ -158,8 +158,12 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
         kind:'visual-card-diagnostic-analysis',frameId});
       return {...diagnostic,reference};
     }
+    for(const e of elements)if(e.role==='scroll bar'&&typeof e.value==='string'&&/^(?:0(?:\.\d+)?|1(?:\.0+)?)$/.test(e.value))e.value=Number(e.value);
+    const scroll=elements.filter(e=>e.role==='scroll bar'&&typeof e.value==='number');
+    if(surface==='ALBUMS')need(scroll.length===1&&scroll[0].value>=0&&scroll[0].value<=1,'SCROLL_BOUNDARY_UNKNOWN');
     const cards=[];
-    for(const node of visible.filter(n=>surface!=='FOLDER_CHOOSER'&&['AXRow','AXGroup','AXCell'].includes(n.role))) {
+    for(const node of (scrollWitness?[]:visible.filter(n=>surface!=='FOLDER_CHOOSER'
+      &&['AXRow','AXGroup','AXCell'].includes(n.role)))) {
       const cardBounds=px(node.framePt);const titles=ocr.filter(o=>completeDateTitle(o.text)&&inside(o.bounds,cardBounds));
       if(titles.length!==1)continue;
       const descendants=new Set();function descend(id){for(const c of all.get(id)?.children??[]){descendants.add(c);descend(c);}}
@@ -193,17 +197,66 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
         metadata_bounds:metadata,card_bounds:cardBounds,fully_visible:true,safe_metadata_bounds:safe,
         neighbor_bounds:[],thumbnail_bounds:thumbBounds,card_ax_index:nativeIDs.get(node.id),thumbnail_ax_index:nativeIDs.get(thumbnails[0].id)});
     }
-    need(surface==='FOLDER_CHOOSER'||cards.length>0,'FULL_CARD_WITNESS_MISSING');
-    if(surface==='ALBUM_DETAIL')need(cards.length===1,'DETAIL_IDENTITY_AMBIGUOUS');
+    if(!scrollWitness){
+      need(surface==='FOLDER_CHOOSER'||cards.length>0,'FULL_CARD_WITNESS_MISSING');
+      if(surface==='ALBUM_DETAIL')need(cards.length===1,'DETAIL_IDENTITY_AMBIGUOUS');
+    }
     cards.sort((a,b)=>a.card_bounds[1]-b.card_bounds[1]);
     for(const c of cards)c.neighbor_bounds=cards.filter(x=>x!==c).map(x=>x.card_bounds);
-    need(new Set(cards.map(c=>JSON.stringify(c.fingerprint))).size===cards.length,'FULL_CARD_WITNESS_AMBIGUOUS');
-    for(const e of elements)if(e.role==='scroll bar'&&typeof e.value==='string'&&/^(?:0(?:\.\d+)?|1(?:\.0+)?)$/.test(e.value))e.value=Number(e.value);
-    const scroll=elements.filter(e=>e.role==='scroll bar'&&typeof e.value==='number');
-    if(surface==='ALBUMS')need(scroll.length===1&&scroll[0].value>=0&&scroll[0].value<=1,'SCROLL_BOUNDARY_UNKNOWN');
+    if(!scrollWitness)need(new Set(cards.map(c=>JSON.stringify(c.fingerprint))).size===cards.length,
+      'FULL_CARD_WITNESS_AMBIGUOUS');
     const focused=visible.filter(n=>n.focused===true);
     need(surface==='FOLDER_CHOOSER'||!focused.some(n=>n.role==='AXTextField'),'EDITABLE_FOCUS_CONFLICT');
     const focusedIndex=focused.length===1?nativeIDs.get(focused[0].id):null;
+    if(scrollWitness){
+      need(surface==='ALBUMS'&&focused.length===0,'SCROLL_FOCUS_NOT_CLEAR');
+      const lists=visible.filter(n=>role(n.role)==='list');
+      need(lists.length===1,'SCROLL_VIEWPORT_AMBIGUOUS');
+      const viewport=px(lists[0].framePt);
+      const indicators=elements.filter(e=>e.role==='scroll bar'&&typeof e.value==='number'&&e.value>=0&&e.value<=1);
+      need(indicators.length===1,'SCROLL_BOUNDARY_UNKNOWN');
+      const rows=[];
+      for(const node of visible.filter(n=>role(n.role)==='row'&&n.parentID===lists[0].id)){
+        const rowBounds=px(node.framePt);
+        if(!intersects(rowBounds,viewport))continue;
+        const titles=ocr.filter(o=>completeDateTitle(o.text)&&o.confidence>=.5&&o.candidate_count===1
+          &&inside(o.bounds,rowBounds));
+        if(titles.length!==1)continue;
+        const title=titles[0];
+        const counts=ocr.filter(o=>/^\d+$/.test(o.text)&&o.confidence>=.5&&o.candidate_count===1
+          &&inside(o.bounds,rowBounds)&&o.bounds[1]>=title.bounds[1]+title.bounds[3]);
+        if(counts.length!==1||Number(counts[0].text)<=0
+          ||!inside(titles[0].bounds,viewport)||!inside(counts[0].bounds,viewport))continue;
+        const dates=completeDateTitle(title.text);
+        rows.push({fingerprint:{...dates,expected_images:Number(counts[0].text)},row_bounds:rowBounds,
+          fully_visible:inside(rowBounds,viewport),identity_visible:true,
+          metadata_bounds:[titles[0].bounds,counts[0].bounds],row_ax_index:nativeIDs.get(node.id)});
+      }
+      need(rows.length>0&&new Set(rows.map(row=>JSON.stringify(row.fingerprint))).size===rows.length,
+        'SCROLL_LIST_WITNESS_AMBIGUOUS');
+      const structure=elements.filter(e=>!['row','static text','text','scroll bar'].includes(e.role))
+        .map(({role,subrole,identifier})=>({role,subrole,identifier}));
+      const offset={version:1,frame_id:frameId,session_id:sessionId,source:'AX_SCROLLBAR',
+        indicator_index:indicators[0].index,minimum:0,maximum:1,value:indicators[0].value};
+      const analysis={version:1,frame_id:frameId,session_id:sessionId,source_sha256:frameId,
+        source_ax_sha256:sourceAXSha256,surface,group_key:groupKey,
+        native:{bundle_id:value.target.bundleID,pid:value.target.pid,window_id:win.windowNumber,
+          display_id:display[0].displayID,cua_capture_bounds_points:bounds},
+        layout:{line_version:value.target.appVersion,language:'zh-Hant',window_class:win.subrole??win.role,native_scale:sx},
+        surface_structure:structure,surface_bounds_px:[0,0,width,height],occlusion:'CLEAR',editable_focus:'NONE',
+        focus_evidence:{version:1,frame_id:frameId,session_id:sessionId,kind:'NONE',focused_index:focusedIndex},
+        ax:{version:1,focused_index:focusedIndex,elements},cards:[],
+        boundary:{top:indicators[0].value===0,bottom:indicators[0].value===1},boundary_evidence:offset,
+        chooser_controls:{root_index:null,path_field_index:null,confirm_button_index:null,selected_leaf_index:null},
+        scroll_witness:{viewport_bounds:viewport,viewport_ax_index:nativeIDs.get(lists[0].id),rows,
+          native_identity:{display_id:display[0].displayID,cua_capture_bounds_points:bounds},
+          process_instance:[value.target.bundleID,value.target.pid,value.target.startTimeSeconds,
+            value.target.startTimeMicroseconds],
+          scroll_offset:{frame_id:frameId,session_id:sessionId,value:indicators[0].value}}};
+      const reference=await retain({artifact:{sourceBinding,analysis,raw_ocr:ocr},
+        kind:'scroll-list-witness',frameId});
+      contexts.set(frameId,{analysis,reference,sourceBinding});return analysis;
+    }
     const pathFields=elements.filter(e=>e.role==='text field'&&e.subrole==='PathTextField'&&e.enabled);
     const confirms=elements.filter(e=>e.role==='button'&&e.enabled&&['選擇','選擇檔案夾','選擇資料夾','Choose','Open','開啟'].includes(e.label));
     need(surface!=='FOLDER_CHOOSER'||pathFields.length<=1&&confirms.length<=1,'CHOOSER_CONTROLS_AMBIGUOUS');
@@ -230,5 +283,6 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
     contexts.set(frameId,{analysis,reference:ref,sourceBinding});return analysis;
   }
   const analyzeVisualCardDiagnostic=args=>analyzeCapture(args,{visualCardDiagnostic:true});
-  return Object.freeze({beforeCapture,afterCapture,analyzeCapture,analyzeVisualCardDiagnostic,contexts,native});
+  const analyzeScrollWitness=args=>analyzeCapture(args,{scrollWitness:true});
+  return Object.freeze({beforeCapture,afterCapture,analyzeCapture,analyzeVisualCardDiagnostic,analyzeScrollWitness,contexts,native});
 }

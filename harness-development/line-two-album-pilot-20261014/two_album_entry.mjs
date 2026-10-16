@@ -8,6 +8,57 @@ const PROJECT_PROFILE='LINE_TWO_ALBUM_PILOT/1';
 const hasRecord=o=>o&&typeof o==='object'&&(o.batch_record??o.record);
 const fingerprintKey=value=>JSON.stringify([value?.start_date,value?.end_date,value?.expected_images]);
 
+export async function runOneScrollProbe(runtime) {
+  requireFact(runtime&&runtime.profile===PROJECT_PROFILE&&typeof runtime.cli==='function'
+    &&typeof runtime.assertLineAlreadyRunning==='function'&&typeof runtime.getApp==='function'
+    &&typeof runtime.retain==='function'&&typeof runtime.classifyScrollWitness==='function'
+    &&typeof runtime.decodeRetainedImage==='function'&&runtime.navigation
+    &&typeof runtime.beforeCapture==='function'&&typeof runtime.afterCapture==='function'
+    &&typeof runtime.windowLineage==='function'&&typeof runtime.clock==='function'
+    &&typeof runtime.privateEvidence?.retainDiscovery==='function','ONE_SCROLL_RUNTIME_REQUIRED');
+  const owner=runtime.owner;
+  requireFact(typeof owner==='string'&&owner,'ONE_SCROLL_OWNER_REQUIRED');
+  let token=null;
+  const cli=async(operation,data=null,publicRead=false)=>{
+    const payload=data===null?null:(publicRead?{data}:{expected_token:token,data});
+    const response=await runtime.cli(operation,{authorization:publicRead?null:runtime.authorization,payload});
+    if(typeof response?.receipt_token==='string')token=response.receipt_token;
+    return response;
+  };
+  const inspected=await cli('inspect',null,true);
+  requireFact(typeof inspected?.receipt_token==='string','ONE_SCROLL_INSPECTION_REQUIRED');
+  token=inspected.receipt_token;
+  await cli('gui_initialize',{confirm_initialization:true});
+  const bridge=async(operation,request={})=>{
+    if(operation==='gui_observe')return runtime.cli(operation,{authorization:runtime.authorization,
+      payload:{data:request.data}});
+    return runtime.cli.bridge(operation,request);
+  };
+  await bridge('gui_observe',{data:{kind:'app',album:'A',checkpoint:'ONE_SCROLL_APP_ACQUISITION'}});
+  await runtime.assertLineAlreadyRunning();
+  const app=await runtime.getApp('jp.naver.line.mac');
+  requireFact(app&&typeof app.scroll==='function','ONE_SCROLL_LINE_APP_REQUIRED');
+  const observer=createNavigationObserver({app,bridge,retain:runtime.retain,classify:runtime.classifyScrollWitness,
+    requireV3:true,beforeCapture:runtime.beforeCapture,afterCapture:runtime.afterCapture,
+    resolveWindowLineage:runtime.windowLineage,checkpointPrefix:'A_DISCOVERY',sessionId:owner,
+    clock:runtime.clock,decodeRetainedImage:runtime.decodeRetainedImage});
+  try {
+    const before=await observer.observe('PAIR-A-DISCOVERY_SCROLL_1_BEFORE');
+    requireFact(before.surface==='ALBUMS'&&before.group_key&&before.scroll_witness?.actionable===false
+      &&before.scroll_witness?.evidence_only===true&&before.scroll_witness?.rows?.length>0,
+      'ONE_SCROLL_BEFORE_WITNESS_REQUIRED');
+    const target=await runtime.navigation.scrollTarget(before);
+    const after=await observer.boundedScroll(before,target,'down',0.25,'SCROLL_1',{mode:'ONE_SCROLL_PROBE'});
+    requireFact(after?.surface==='ALBUMS'&&observer.movementEvidence().length===1,
+      'ONE_SCROLL_MOVEMENT_NOT_VERIFIED');
+    await runtime.privateEvidence.retainDiscovery({kind:'ONE_SCROLL_PROBE',evidence_only:true,actionable:false,
+      owner,slot:'SCROLL_1',before_frame:before.frame,after_frame:after.frame,
+      movement:observer.movementEvidence()[0]});
+    return {status:'SCROLL_MOVEMENT_ONLY',evidence_only:true,actionable:false,slot:'SCROLL_1',
+      before_frame:before.frame,after_frame:after.frame,movement:observer.movementEvidence()[0].movement};
+  } finally {observer.close();}
+}
+
 export async function runTwoAlbumPilot(runtime) {
   requireFact(runtime&&runtime.profile===PROJECT_PROFILE,'PROJECT_PROFILE_REQUIRED');
   requireFact(typeof runtime.cli==='function'&&typeof runtime.assertLineAlreadyRunning==='function'

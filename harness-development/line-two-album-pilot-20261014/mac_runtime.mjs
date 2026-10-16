@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {execFile} from 'node:child_process';
 import {createHash,randomUUID} from 'node:crypto';
 import {createNavigationObserver,createAlbumSupportCallbacks} from '../../scripts/line_backup_cua_adapter.mjs';
-import {runTwoAlbumPilot} from './two_album_entry.mjs';
+import {runTwoAlbumPilot,runOneScrollProbe} from './two_album_entry.mjs';
 import {createLiveAnalyzer,verifyNativePair} from './mac/analyzer.mjs';
 import {createLiveClassifier} from './mac/classifier.mjs';
 import {createChooserLocators} from './mac/chooser.mjs';
@@ -20,6 +20,7 @@ const hash=raw=>createHash('sha256').update(raw).digest('hex');
 const need=(ok,code)=>{if(!ok)throw Object.assign(Error(code),{code});};
 const center=b=>[Math.trunc(b[0]+b[2]/2),Math.trunc(b[1]+b[3]/2)];
 const inside=(a,b,m=0)=>a[0]>=b[0]+m&&a[1]>=b[1]+m&&a[0]+a[2]<=b[0]+b[2]-m&&a[1]+a[3]<=b[1]+b[3]-m;
+const intersects=(a,b)=>a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1]+a[3];
 
 function evidenceJSON(value){
   const marker='__PILOT_INT_'+randomUUID().replaceAll('-','')+'_';
@@ -135,8 +136,30 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
       const g=menuGeometry.get(pairFrameId);need(g,'MENU_GEOMETRY_NOT_OBSERVED');return g;
     }});
   classifier=createLiveClassifier({retain,analyzeCapture:nativeAnalyzer.analyzeCapture,
+    analyzeScrollWitness:nativeAnalyzer.analyzeScrollWitness,
     analyzeVisualCardDiagnostic:nativeAnalyzer.analyzeVisualCardDiagnostic,groupKey:config.group_key,
     frameSupport:producer.frameSupport});
+  async function decodeRetainedImage({bytes,sourceSha256}){
+    need(bytes instanceof Uint8Array&&hash(bytes)===sourceSha256,'SCROLL_IMAGE_SOURCE_HASH');
+    if(bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71)
+      return {sourceSha256,png:new Uint8Array(bytes),pngSha256:hash(bytes)};
+    need(bytes[0]===255&&bytes[1]===216&&bytes[2]===255,'SCROLL_IMAGE_FORMAT_UNSUPPORTED');
+    const relativeDirectory=PRIVATE+'/tmp/scroll-decode-'+randomUUID();
+    const directory=path.join(projectRoot,relativeDirectory);
+    await io.mkdirp(directory);
+    const input=path.join(directory,'retained.jpg'),output=path.join(directory,'decoded.png');
+    try{
+      await fs.writeFile(input,bytes,{flag:'wx',mode:0o600});
+      await new Promise((resolve,reject)=>execFile('/usr/bin/sips',['-s','format','png',input,'--out',output],
+        {timeout:30000,maxBuffer:1024*1024,env:{PATH:'/usr/bin:/bin:/usr/sbin:/sbin'}},error=>error?reject(error):resolve()));
+      const outputStat=await fs.stat(output);
+      need(outputStat.size>0&&outputStat.size<=16*1024*1024,'SCROLL_IMAGE_DECODE_SIZE');
+      const original=await fs.readFile(input),png=await fs.readFile(output);
+      need(hash(original)===sourceSha256&&png.byteLength===outputStat.size
+        &&png[0]===137&&png[1]===80&&png[2]===78&&png[3]===71,'SCROLL_IMAGE_DECODE_INVALID');
+      return {sourceSha256,png:new Uint8Array(png),pngSha256:hash(png)};
+    }finally{await fs.rm(directory,{recursive:true,force:true});}
+  }
   const cached=frame=>{const c=classifier.cache.get(frame.frame_id);need(c?.observation,'FRESH_CLASSIFIER_FRAME_REQUIRED');return c;};
   function ellipsis(frame){
     const c=cached(frame),ctx=nativeAnalyzer.contexts.get(frame.frame_id)?.sourceBinding.after.value;
@@ -184,6 +207,27 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
       need(buttons.length===1,'BACK_CONTROL_AMBIGUOUS');return {frameId:frame.frame_id,role:'button',point:center(buttons[0].bounds_px)};
     },
     scrollTarget:async frame=>{
+      const scroll=classifier.scrollCache.get(frame.frame_id);
+      if(scroll){
+        const w=scroll.analysis.scroll_witness,viewport=w.viewport_bounds,elements=scroll.axSnapshot.elements;
+        need(frame.surface==='ALBUMS'&&frame.occlusion==='CLEAR'&&frame.editable_focus==='NONE'
+          &&frame.window_id===scroll.analysis.native.window_id&&frame.pid===scroll.analysis.native.pid
+          &&frame.group_key===scroll.analysis.group_key,
+          'SCROLL_VIEWPORT_CONTEXT');
+        const lists=elements.filter(e=>e.role==='list'&&e.index===w.viewport_ax_index
+          &&JSON.stringify(e.bounds_px)===JSON.stringify(viewport));
+        need(lists.length===1&&viewport[2]>=64&&viewport[3]>=64
+          &&w.rows.length>0&&w.rows.every(row=>row.identity_visible===true)
+          &&Number.isFinite(frame.mapping?.uncertainty)&&frame.mapping.uncertainty<=2,
+          'SCROLL_VIEWPORT_UNSAFE');
+        const margin=frame.mapping.uncertainty+4;
+        const safe=[viewport[0]+margin,viewport[1]+margin,viewport[2]-2*margin,viewport[3]-2*margin];
+        need(safe[2]>=32&&safe[3]>=32,'SCROLL_VIEWPORT_SAFE_AREA');
+        const target=center(safe),targetRect=[target[0]-2,target[1]-2,4,4];
+        const controls=elements.filter(e=>['button','text field'].includes(e.role)&&e.enabled);
+        need(!controls.some(e=>intersects(targetRect,e.bounds_px)),'SCROLL_TARGET_CONTROL_OVERLAP');
+        return target;
+      }
       const c=cached(frame);need(frame.surface==='ALBUMS'&&frame.occlusion==='CLEAR'&&frame.editable_focus==='NONE','SCROLL_SURFACE_UNSAFE');
       const areas=c.axSnapshot.elements.filter(e=>e.role==='scroll area'&&frame.cards.every(card=>inside(card.metadata_bounds,e.bounds_px)));
       need(areas.length===1,'ACTUAL_SCROLL_VIEWPORT_REQUIRED');return center(areas[0].bounds_px);
@@ -217,7 +261,8 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
   const supportCallbacks=createAlbumSupportCallbacks({invokeProducer:producer.invokeProducer});
   let visualCardDiagnosticUsed=false;
   const runtime={profile:'LINE_TWO_ALBUM_PILOT/1',owner,authorization,decoder:{path:decoderPath,sha256:DECODER_SHA},
-    cli,retain,classifier,producer:{...producer,...supportCallbacks},menuLocator,chooser,navigation,windowLineage,privateEvidence,clock:()=>performance.now(),
+    cli,retain,classifier,classifyScrollWitness:classifier.classifyScrollWitness,decodeRetainedImage,
+    producer:{...producer,...supportCallbacks},menuLocator,chooser,navigation,windowLineage,privateEvidence,clock:()=>performance.now(),
     beforeCapture:nativeAnalyzer.beforeCapture,afterCapture:nativeAnalyzer.afterCapture,assertLineAlreadyRunning,
     getApp:async id=>{await bindLiveAuthority();await assertLineAlreadyRunning();need(id==='jp.naver.line.mac','LINE_SCOPE');return cua.getApp(id);}};
   return Object.freeze({runtime,
@@ -258,5 +303,6 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
         throw error;
       }
     },
+    runOneScrollProbe:async()=>{await bindLiveAuthority();return runOneScrollProbe(runtime);},
     runPilot:async()=>{await bindLiveAuthority();return runTwoAlbumPilot(runtime);}});
 }
