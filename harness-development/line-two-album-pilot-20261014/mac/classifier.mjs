@@ -40,6 +40,11 @@ function rect(value,width,height,code) {
   need(Array.isArray(value)&&value.length===4&&value.every(Number.isFinite),code);
   const [x,y,w,h]=value;need(w>0&&h>0&&x>=0&&y>=0&&x+w<=width&&y+h<=height,code);return value;
 }
+function nativeRowRect(value,code) {
+  need(Array.isArray(value)&&value.length===4&&value.every(Number.isFinite)
+    &&value[2]>0&&value[3]>0,code);
+  return value;
+}
 const inside=(a,b,margin=0)=>a[0]>=b[0]+margin&&a[1]>=b[1]+margin
   &&a[0]+a[2]<=b[0]+b[2]-margin&&a[1]+a[3]<=b[1]+b[3]-margin;
 const intersects=(a,b)=>a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1]+a[3];
@@ -92,7 +97,8 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
         .sort().join(',')&&Number.isInteger(el.index)&&el.index>=0&&typeof el.role==='string'
         &&typeof el.subrole==='string'&&typeof el.identifier==='string'&&typeof el.enabled==='boolean'
         &&(el.parent_index===null||Number.isInteger(el.parent_index)),'CLASSIFIER_AX_ELEMENT');
-      rect(el.bounds_px,width,height,'CLASSIFIER_AX_ELEMENT_BOUNDS');
+      if(scrollWitness&&el.role==='row')nativeRowRect(el.bounds_px,'CLASSIFIER_AX_ELEMENT_BOUNDS');
+      else rect(el.bounds_px,width,height,'CLASSIFIER_AX_ELEMENT_BOUNDS');
     }
     need(new Set(axElements.map(e=>e.index)).size===axElements.length,'CLASSIFIER_AX_DUPLICATE_INDEX');
     const chooser=analysis.chooser_controls;
@@ -218,7 +224,8 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
           &&Number.isInteger(id.expected_images)&&id.expected_images>0,'SCROLL_ROW_IDENTITY');
         const identity=JSON.stringify([id.start_date,id.end_date,id.expected_images]);
         need(!rowSeen.has(identity),'SCROLL_ROW_DUPLICATE');rowSeen.add(identity);
-        rect(row.row_bounds,width,height,'SCROLL_ROW_BOUNDS');
+        nativeRowRect(row.row_bounds,'SCROLL_ROW_BOUNDS');
+        need(intersects(row.row_bounds,[0,0,width,height]),'SCROLL_ROW_BOUNDS');
         need(intersects(row.row_bounds,viewport)&&row.fully_visible===inside(row.row_bounds,viewport),
           'SCROLL_ROW_VIEWPORT_BINDING');
         const node=byIndex.get(row.row_ax_index);

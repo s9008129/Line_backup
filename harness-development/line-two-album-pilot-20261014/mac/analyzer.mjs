@@ -91,8 +91,10 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
       selected.push(n);for(const child of n.children)visit(child);}
     visit(win.nodeID);
     const px=b=>[(b.x-bounds[0])*sx,(b.y-bounds[1])*sy,b.width*sx,b.height*sy];
-    const visible=selected.filter(n=>n.framePt&&n.offscreen!==true&&inside(px(n.framePt),[0,0,width,height])
-      &&n.framePt.width>0&&n.framePt.height>0);
+    const listIDs=new Set(selected.filter(n=>role(n.role)==='list').map(n=>n.id));
+    const visible=selected.filter(n=>n.framePt&&n.offscreen!==true&&n.framePt.width>0&&n.framePt.height>0
+      &&(inside(px(n.framePt),[0,0,width,height])||(scrollWitness&&role(n.role)==='row'
+        &&listIDs.has(n.parentID)&&intersects(px(n.framePt),[0,0,width,height]))));
     const nativeIDs=new Map(visible.map((n,index)=>[n.id,index]));
     const elements=visible.map((n,index)=>({index,role:role(n.role),subrole:n.subrole??'',identifier:n.identifier??'',
       label:n.title??n.description??'',value:n.value??null,bounds_px:px(n.framePt),
@@ -121,12 +123,12 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
               &&groupBounds[1]+groupBounds[3]<=o.bounds[1]
               &&o.bounds[1]+o.bounds[3]<=list.bounds_px[1]);
             const rows=elements.filter(e=>e.role==='row'&&e.parent_index===list.index
-              &&inside(e.bounds_px,list.bounds_px));
+              &&(scrollWitness?intersects(e.bounds_px,list.bounds_px):inside(e.bounds_px,list.bounds_px)));
             const corroborated=rows.filter(row=>{
               const titles=ocr.filter(o=>completeDateTitle(o.text)&&o.confidence>=.5&&o.candidate_count===1
-                &&inside(o.bounds,row.bounds_px));
+                &&inside(o.bounds,row.bounds_px)&&(!scrollWitness||inside(o.bounds,list.bounds_px)));
               const counts=ocr.filter(o=>/^\d+$/.test(o.text)&&o.confidence>=.5&&o.candidate_count===1
-                &&inside(o.bounds,row.bounds_px));
+                &&inside(o.bounds,row.bounds_px)&&(!scrollWitness||inside(o.bounds,list.bounds_px)));
               return titles.length===1&&counts.length===1&&Number(counts[0].text)>0
                 &&counts[0].bounds[1]>=titles[0].bounds[1]+titles[0].bounds[3];
             });
@@ -216,7 +218,8 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
       const indicators=elements.filter(e=>e.role==='scroll bar'&&typeof e.value==='number'&&e.value>=0&&e.value<=1);
       need(indicators.length===1,'SCROLL_BOUNDARY_UNKNOWN');
       const rows=[];
-      for(const node of visible.filter(n=>role(n.role)==='row'&&n.parentID===lists[0].id)){
+      for(const node of visible.filter(n=>role(n.role)==='row'&&n.parentID===lists[0].id
+        &&lists[0].children.includes(n.id))){
         const rowBounds=px(node.framePt);
         if(!intersects(rowBounds,viewport))continue;
         const titles=ocr.filter(o=>completeDateTitle(o.text)&&o.confidence>=.5&&o.candidate_count===1

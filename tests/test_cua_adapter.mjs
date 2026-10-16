@@ -7,6 +7,7 @@ import {createHostedSession,createAlbumSupportCallbacks,createNavigationObserver
   from '../scripts/line_backup_cua_adapter.mjs';
 import {runTwoAlbumPilot,runOneScrollProbe} from '../harness-development/line-two-album-pilot-20261014/two_album_entry.mjs';
 import {createLiveClassifier} from '../harness-development/line-two-album-pilot-20261014/mac/classifier.mjs';
+import {createLiveAnalyzer} from '../harness-development/line-two-album-pilot-20261014/mac/analyzer.mjs';
 
 const digest=value=>createHash('sha256').update(value).digest('hex');
 function png(width,height,shade,nonce=0){
@@ -90,6 +91,162 @@ function scrollClassifierFixture({mutateAnalysis=()=>{}}={}){
     analyzeScrollWitness,groupKey:'group'});
   return {classifier,artifacts,screenshot,frameId,sessionId,axText,axBytes,sourceBinding};
 }
+
+function syntheticPartialRowSource({rowParent='list',rowY=-32,rowWidth=327,rowHeight=366,titleY=115,countY=140,
+  includeRowInList=true,extraList=false,sourceHashMismatch=false}={}){
+  const width=654,height=1286,sessionId='synthetic-partial-row',screenshot=png(width,height,17),frameId=digest(screenshot);
+  const capturedAt='2026-10-16T00:00:00.000Z';
+  const target={bundleID:'jp.naver.line.mac',pid:42,startTimeSeconds:1,startTimeMicroseconds:2,appVersion:'synthetic'};
+  const mkValue=observedAtUnixMilliseconds=>({schemaVersion:1,complete:true,truncated:false,target,
+    observedAtUnixMilliseconds,focusedWindowID:7,windows:[{windowNumber:7,cgWindowNumber:7,cgOwnerPID:42,
+      nodeID:'window',framePt:{x:0,y:0,width:327,height:643},cgFramePt:{x:0,y:0,width:327,height:643},
+      displayIDs:[1],role:'AXWindow',subrole:'AXStandardWindow'}],
+    displays:[{displayID:1,backingScale:2,boundsPt:{x:0,y:0,width:327,height:643}}],
+    onScreenWindows:[{windowNumber:7,ownerPID:42,alpha:1,isOnScreen:true,boundsPt:{x:0,y:0,width:327,height:643}}],
+    nodes:[
+      {id:'window',parentID:null,role:'AXWindow',subrole:'AXStandardWindow',framePt:{x:0,y:0,width:327,height:643},
+        offscreen:false,focused:false,children:['group','albums','list','scroll',...(extraList?['list2']:[])]},
+      {id:'group',parentID:'window',role:'AXStaticText',title:'Synthetic group',framePt:{x:10,y:20,width:120,height:20},
+        offscreen:false,focused:false,children:[]},
+      {id:'albums',parentID:'window',role:'AXButton',title:'相簿',framePt:{x:10,y:80,width:50,height:15},
+        offscreen:false,focused:false,children:[]},
+      {id:'list',parentID:'window',role:'AXList',framePt:{x:0,y:103,width:327,height:540},
+        offscreen:false,focused:false,children:includeRowInList?['row']:[]},
+      {id:'row',parentID:rowParent,role:'AXRow',framePt:{x:0,y:rowY,width:rowWidth,height:rowHeight},
+        offscreen:false,focused:false,children:[]},
+      {id:'scroll',parentID:'window',role:'AXScrollBar',value:'0',framePt:{x:313,y:103,width:14,height:540},
+        offscreen:false,focused:false,children:[]},
+      ...(extraList?[{id:'list2',parentID:'window',role:'AXList',framePt:{x:0,y:103,width:327,height:540},
+        offscreen:false,focused:false,children:[]}]:[])
+    ],visual:{sourceSHA256:sourceHashMismatch?'f'.repeat(64):frameId,width,height,ocr:[
+      {text:'Synthetic group',confidence:.9,candidateCount:1,bounds:{x:20,y:40,width:120,height:20}},
+      {text:'相簿',confidence:.4,candidateCount:1,bounds:{x:20,y:160,width:40,height:20}},
+      {text:'記事本',confidence:.4,candidateCount:1,bounds:{x:120,y:160,width:50,height:20}},
+      {text:'2026/01/01～01/02',confidence:.9,candidateCount:1,bounds:{x:20,y:titleY*2,width:240,height:24}},
+      {text:'4',confidence:.9,candidateCount:1,bounds:{x:20,y:countY*2,width:20,height:24}}
+    ]}});
+  const after=mkValue(Date.parse(capturedAt)+1000),before=mkValue(Date.parse(capturedAt)-1000);
+  const sourceBinding={before:{value:before},after:{value:after}};
+  const analyzer=createLiveAnalyzer({runProcess:async()=>{throw new Error('native process forbidden in unit test');},
+    binary:'synthetic',repoRoot:'/synthetic',retain:async()=>({path:'harness-development/synthetic.json',bytes:1,sha256:'b'.repeat(64)}),
+    groupKey:'synthetic-group',groupTitle:'Synthetic group',authorization:'synthetic',grantSha256:'c'.repeat(64),owner:'synthetic'});
+  return {analyzer,sourceBinding,frameId,sessionId,capturedAt,width,height,after,screenshot,
+    state:'synthetic AX snapshot',visualOCR:after.visual.ocr.map(o=>({text:o.text,confidence:o.confidence,
+      candidate_count:o.candidateCount,bounds:[o.bounds.x,o.bounds.y,o.bounds.width,o.bounds.height]}))};
+}
+
+function translateSyntheticRowAndVisibleOCR(source,points=135){
+  const after=source.sourceBinding.after.value,list=after.nodes.find(node=>node.role==='AXList');
+  const nodes=new Map(after.nodes.map(node=>[node.id,node]));
+  const visit=id=>{const node=nodes.get(id);if(!node)return;node.framePt.y-=points;
+    for(const child of node.children??[])visit(child);};
+  for(const id of list.children)if(nodes.get(id)?.role==='AXRow')visit(id);
+  for(const item of after.visual.ocr)if(item.bounds.y>=206)item.bounds.y-=points*2;
+  source.visualOCR=after.visual.ocr.map(o=>({text:o.text,confidence:o.confidence,candidate_count:o.candidateCount,
+    bounds:[o.bounds.x,o.bounds.y,o.bounds.width,o.bounds.height]}));
+  return source;
+}
+
+function syntheticAnalyzerClassifier(source,{mutateAnalysis=()=>{}}={}){
+  const artifacts=[];
+  const ref=(name,body)=>({path:`harness-development/synthetic-${name}.json`,bytes:Buffer.byteLength(body),sha256:digest(Buffer.from(body))});
+  const retain=async({artifact,kind})=>{const body=JSON.stringify(artifact);artifacts.push({kind,artifact});return ref(kind,body);};
+  const ocrBody=JSON.stringify({cua_frame_id:source.frameId,sck_frame_sha256:'e'.repeat(64),cua:source.visualOCR,
+    sck:source.visualOCR.map(item=>({...item,bounds:[400,300,Math.max(1,item.bounds[2]),Math.max(1,item.bounds[3])]}))});
+  const ocrRef=ref('sck-ocr',ocrBody),supportRef=ref('sck-support','synthetic support');
+  let manifestBody='',manifestRef;
+  const frameSupport=async({frameId,sessionId,surface,layoutKey,geometryRef,width,height})=>{
+    const manifest={pairFrameId:frameId,surface,layoutKey,geometryEvidence:{path:geometryRef.path,sha256:geometryRef.sha256},
+      support:{path:supportRef.path,sha256:supportRef.sha256},sckFrameId:'e'.repeat(64),
+      sckFrame:ref('sck-frame','synthetic pixels'),ocr:ocrRef};
+    manifestBody=JSON.stringify(manifest);manifestRef=ref('manifest',manifestBody);
+    return {provider:'SCREEN_CAPTURE_KIT',surface,pairFrameId:frameId,sessionId,uncertaintyPx:2,safeMarginPx:6,
+      reference:supportRef,manifestReference:manifestRef,
+      readRef:async target=>new Uint8Array(Buffer.from(target.path===manifestRef.path?manifestBody:ocrBody))};
+  };
+  const analyzeScrollWitness=async args=>{const analysis=await source.analyzer.analyzeScrollWitness(args);
+    mutateAnalysis(analysis);return analysis;};
+  const classifier=createLiveClassifier({retain,frameSupport,analyzeCapture:source.analyzer.analyzeCapture,
+    analyzeScrollWitness,groupKey:'synthetic-group'});
+  return {classifier,artifacts,retain};
+}
+
+test('actual analyzer and shared classifier preserve partial AXRow only for scroll evidence',async()=>{
+  const focused=syntheticPartialRowSource();
+  focused.after.nodes.find(node=>node.id==='window').children.push('edit');
+  focused.after.nodes.push({id:'edit',parentID:'window',role:'AXTextField',subrole:'AXTextField',focused:true,
+    enabled:true,framePt:{x:10,y:20,width:80,height:20},offscreen:false,children:[]});
+  await assert.rejects(()=>focused.analyzer.analyzeScrollWitness({frameId:focused.frameId,sessionId:focused.sessionId,
+    capturedAt:focused.capturedAt,width:focused.width,height:focused.height,
+    sourceAXSha256:digest(Buffer.from(focused.state)),sourceBinding:focused.sourceBinding}),/EDITABLE_FOCUS_CONFLICT/);
+
+  const source=syntheticPartialRowSource({rowY:103,titleY:428,countY:446});
+  const args={frameId:source.frameId,sessionId:source.sessionId,capturedAt:source.capturedAt,width:source.width,
+    height:source.height,sourceAXSha256:digest(Buffer.from(source.state)),sourceBinding:source.sourceBinding};
+  const baseline=await source.analyzer.analyzeScrollWitness(args);
+  assert.equal(baseline.scroll_witness.rows.length,1);
+  assert.equal(baseline.scroll_witness.rows[0].fully_visible,true);
+  const rowOnly=syntheticPartialRowSource({rowY:103,titleY:428,countY:446});
+  rowOnly.sourceBinding.after.value.nodes.find(node=>node.role==='AXRow').framePt.y-=135;
+  await assert.rejects(()=>rowOnly.analyzer.analyzeScrollWitness({frameId:rowOnly.frameId,
+    sessionId:rowOnly.sessionId,capturedAt:rowOnly.capturedAt,width:rowOnly.width,height:rowOnly.height,
+    sourceAXSha256:digest(Buffer.from(rowOnly.state)),sourceBinding:rowOnly.sourceBinding}),/ALBUM_SURFACE_NOT_GROUNDED/);
+  translateSyntheticRowAndVisibleOCR(source);
+  const analysis=await source.analyzer.analyzeScrollWitness(args);
+  assert.equal(analysis.scroll_witness.rows.length,1);
+  assert.equal(analysis.scroll_witness.rows[0].fully_visible,false);
+  assert.deepEqual(analysis.scroll_witness.rows[0].row_bounds,[0,-64,654,732]);
+  assert.deepEqual(analysis.scroll_witness.rows[0].metadata_bounds,[[20,586,240,24],[20,622,20,24]]);
+
+  const harness=syntheticAnalyzerClassifier(source),saved={path:'harness-development/synthetic-frame.png',
+    bytes:source.screenshot.byteLength,sha256:source.frameId,ax:{path:'harness-development/synthetic-ax.txt',
+      bytes:Buffer.byteLength(source.state),sha256:digest(Buffer.from(source.state))}};
+  const classified=await harness.classifier.classifyScrollWitness({capture:{screenshot:source.screenshot,state:source.state},
+    saved,frameId:source.frameId,sessionId:source.sessionId,capturedAt:source.capturedAt,sourceBinding:source.sourceBinding});
+  assert.equal(classified.scroll_witness.rows.length,1);
+  assert.equal(classified.scroll_witness.rows[0].fully_visible,false);
+  assert.equal(classified.cards.length,0);
+
+  const mismatch=syntheticAnalyzerClassifier(source,{mutateAnalysis:analysis=>{
+    analysis.scroll_witness.rows[0].row_bounds[0]+=1;
+  }});
+  await assert.rejects(()=>mismatch.classifier.classifyScrollWitness({capture:{screenshot:source.screenshot,state:source.state},
+    saved,frameId:source.frameId,sessionId:source.sessionId,capturedAt:source.capturedAt,sourceBinding:source.sourceBinding}),
+  /SCROLL_ROW_AX_BINDING/);
+
+  await assert.rejects(()=>harness.classifier.classify({capture:{screenshot:source.screenshot,state:source.state},
+    saved,frameId:source.frameId,sessionId:source.sessionId,capturedAt:source.capturedAt,
+    sourceBinding:source.sourceBinding}),/ALBUM_SURFACE_NOT_GROUNDED/);
+  await assert.rejects(()=>source.analyzer.analyzeCapture({...args,sourceBinding:source.sourceBinding}),
+    /ALBUM_SURFACE_NOT_GROUNDED/);
+
+  for(const [options,code] of [
+    [{rowY:-400},/ALBUM_SURFACE_NOT_GROUNDED/],
+    [{rowY:-270},/ALBUM_SURFACE_NOT_GROUNDED/],
+    [{rowParent:'window'},/ALBUM_SURFACE_NOT_GROUNDED/],
+    [{includeRowInList:false},/ALBUM_SURFACE_NOT_GROUNDED/],
+    [{extraList:true},/ALBUM_SURFACE_NOT_GROUNDED/],
+    [{rowWidth:0},/ALBUM_SURFACE_NOT_GROUNDED/],
+    [{rowHeight:0},/ALBUM_SURFACE_NOT_GROUNDED/],
+    [{titleY:5},/ALBUM_SURFACE_NOT_GROUNDED/],
+    [{countY:650},/ALBUM_SURFACE_NOT_GROUNDED/]
+  ]) {
+    const bad=syntheticPartialRowSource(options);
+    await assert.rejects(()=>bad.analyzer.analyzeScrollWitness({frameId:bad.frameId,sessionId:bad.sessionId,
+      capturedAt:bad.capturedAt,width:bad.width,height:bad.height,sourceAXSha256:digest(Buffer.from(bad.state)),
+      sourceBinding:bad.sourceBinding}),code);
+  }
+  const wrongSource=syntheticPartialRowSource({sourceHashMismatch:true});
+  await assert.rejects(()=>wrongSource.analyzer.analyzeScrollWitness({frameId:wrongSource.frameId,
+    sessionId:wrongSource.sessionId,capturedAt:wrongSource.capturedAt,width:wrongSource.width,height:wrongSource.height,
+    sourceAXSha256:digest(Buffer.from(wrongSource.state)),sourceBinding:wrongSource.sourceBinding}),
+  /NATIVE_VISUAL_SOURCE_MISMATCH/);
+  const completeRowNoImage=syntheticPartialRowSource({rowY:103});
+  await assert.rejects(()=>completeRowNoImage.analyzer.analyzeCapture({frameId:completeRowNoImage.frameId,
+    sessionId:completeRowNoImage.sessionId,capturedAt:completeRowNoImage.capturedAt,width:completeRowNoImage.width,
+    height:completeRowNoImage.height,sourceAXSha256:digest(Buffer.from(completeRowNoImage.state)),
+    sourceBinding:completeRowNoImage.sourceBinding}),/FULL_CARD_WITNESS_MISSING/);
+});
 
 function fixture(options={}) {
   const calls=[],ledger=[];let now=0,clicks=0,intents=0,captures=0,surface=options.initialSurface??'ALBUM_DETAIL',downloadStarted=false,reservationSeq=0;
