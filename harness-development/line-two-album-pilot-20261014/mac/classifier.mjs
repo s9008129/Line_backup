@@ -1,4 +1,5 @@
 import {createHash} from 'node:crypto';
+import {performance} from 'node:perf_hooks';
 import {completeDateTitle} from './analyzer.mjs';
 
 const fail = code => { throw Object.assign(new Error(code), {code}); };
@@ -446,9 +447,20 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
     }
     const analysisStatus='INSUFFICIENT';
     const completedAt=new Date().toISOString();
-    const completedMono=process.hrtime.bigint();
-    const processingDuration=completedMono-BigInt(requestStartMonotonicNanoseconds);
-    need(processingDuration>=0n,'VISUAL_DIAGNOSTIC_PROCESSING_CLOCK');
+    const completedMonoMs=performance.now();
+    const completedScaledNs=completedMonoMs*1_000_000;
+    need(Number.isFinite(completedMonoMs)&&completedMonoMs>=0&&Number.isFinite(completedScaledNs)
+      &&completedScaledNs<=Number.MAX_SAFE_INTEGER-2,'VISUAL_DIAGNOSTIC_CLOCK_RANGE');
+    const completedLower=BigInt(Math.max(0,Math.floor(completedScaledNs)-2));
+    const completedUpper=BigInt(Math.ceil(completedScaledNs)+2);
+    const processingStart=BigInt(requestStartMonotonicNanoseconds);
+    need(typeof pair.cuaRequestEndMonotonicNanoseconds==='string'
+      &&/^(0|[1-9][0-9]*)$/.test(pair.cuaRequestEndMonotonicNanoseconds),
+    'VISUAL_DIAGNOSTIC_PROCESSING_CLOCK');
+    const processingEnd=BigInt(pair.cuaRequestEndMonotonicNanoseconds);
+    const processingDuration=completedUpper-processingStart;
+    need(completedLower>=processingStart&&completedLower>=processingEnd&&processingDuration>=0n,
+      'VISUAL_DIAGNOSTIC_PROCESSING_CLOCK');
     const packet={version:1,kind:'VISUAL_CARD_DIAGNOSTIC',evidence_only:true,actionable:false,
       CAPTURE_STATUS:'CAPTURED',ANALYSIS_STATUS:analysisStatus,ACTION_ELIGIBILITY:'INELIGIBLE',
       ACQUISITION_RELATIONSHIP:'INSUFFICIENT',

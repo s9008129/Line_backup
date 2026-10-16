@@ -1,6 +1,7 @@
 // Existing native producer and filesystem observer algorithms, scoped to this pilot.
 import path from 'node:path';
 import {createHash,randomUUID} from 'node:crypto';
+import {performance} from 'node:perf_hooks';
 const CON='harness-development/line-two-album-pilot-20261014/private';
 const sha256=bytes=>createHash('sha256').update(bytes).digest('hex');
 const isHash=value=>typeof value==='string'&&/^[0-9a-f]{64}$/.test(value);
@@ -74,8 +75,14 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
     need(windows.length===1&&Array.isArray(windows[0].displayIDs)&&windows[0].displayIDs.length===1
       &&windows[0].framePt,'VISUAL_DIAGNOSTIC_WINDOW_IDENTITY');
     const w=windows[0],bounds=[w.framePt.x,w.framePt.y,w.framePt.width,w.framePt.height];
-    const preDispatchMono=process.hrtime.bigint();
-    need(preDispatchMono>=startMono&&preDispatchMono-startMono<=5_000_000_000n
+    const preDispatchMs=performance.now();
+    const preDispatchScaledNs=preDispatchMs*1_000_000;
+    need(Number.isFinite(preDispatchMs)&&preDispatchMs>=0&&Number.isFinite(preDispatchScaledNs)
+      &&preDispatchScaledNs<=Number.MAX_SAFE_INTEGER-2,'VISUAL_DIAGNOSTIC_CLOCK_RANGE');
+    const preDispatchLower=BigInt(Math.max(0,Math.floor(preDispatchScaledNs)-2));
+    const preDispatchUpper=BigInt(Math.ceil(preDispatchScaledNs)+2);
+    need(preDispatchLower>=endMono&&preDispatchUpper>=preDispatchLower
+      &&preDispatchUpper-startMono<=5_000_000_000n
       &&Date.now()>=Date.parse(requestStartedAtUtc)
       &&Date.now()-Date.parse(requestStartedAtUtc)<=5000,'VISUAL_DIAGNOSTIC_CAPTURE_DEADLINE');
     const output=`${CON}/evidence/visual-diagnostic/${sessionId}/${frameId.slice(0,16)}-${randomUUID()}`;

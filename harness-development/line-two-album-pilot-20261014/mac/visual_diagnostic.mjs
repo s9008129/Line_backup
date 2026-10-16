@@ -1,4 +1,5 @@
 import {createHash, randomUUID} from 'node:crypto';
+import {performance} from 'node:perf_hooks';
 import {normalizeScreenshotBytes} from '../../../scripts/line_backup_cua_adapter.mjs';
 
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -21,9 +22,19 @@ export function createVisualDiagnosticObserver({app,retain,readClock,beforeCaptu
       const clockBeforeCUA=await readClock({sessionId,witnessId:clockWitnessId});
       before=await beforeCapture({sessionId});
       const requestStartedAtUtc=new Date().toISOString();
-      const requestStart=process.hrtime.bigint();
+      const requestStartMs=performance.now();
+      const requestStartScaledNs=requestStartMs*1_000_000;
+      need(Number.isFinite(requestStartMs)&&requestStartMs>=0&&Number.isFinite(requestStartScaledNs)
+        &&requestStartScaledNs<=Number.MAX_SAFE_INTEGER-2,'VISUAL_DIAGNOSTIC_CLOCK_RANGE');
+      // At the safe-integer ceiling, binary64 input and multiplication error total <2ns.
+      const requestStart=BigInt(Math.max(0,Math.floor(requestStartScaledNs)-2));
       const raw=await app.getAXStateAndScreenshot({emit:false,disableDiffing:true});
-      const requestEnd=process.hrtime.bigint();
+      const requestEndMs=performance.now();
+      const requestEndScaledNs=requestEndMs*1_000_000;
+      need(Number.isFinite(requestEndMs)&&requestEndMs>=0&&Number.isFinite(requestEndScaledNs)
+        &&requestEndScaledNs<=Number.MAX_SAFE_INTEGER-2&&requestEndMs>=requestStartMs,
+      'VISUAL_DIAGNOSTIC_CLOCK_RANGE');
+      const requestEnd=BigInt(Math.ceil(requestEndScaledNs)+2);
       const requestEndedAtUtc=new Date().toISOString();
       need(requestEnd>=requestStart&&typeof raw?.state==='string','VISUAL_DIAGNOSTIC_CUA_CAPTURE');
       const screenshot=normalizeScreenshotBytes(raw.screenshot);

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
+import {performance} from 'node:perf_hooks';
 import {createProducerHook} from '../harness-development/line-two-album-pilot-20261014/mac/producer.mjs';
 import {createLiveClassifier} from '../harness-development/line-two-album-pilot-20261014/mac/classifier.mjs';
 import {createVisualDiagnosticObserver} from '../harness-development/line-two-album-pilot-20261014/mac/visual_diagnostic.mjs';
@@ -13,6 +14,16 @@ function png(width=40,height=30){
 }
 function ref(path,bytes){return {path,bytes:bytes.byteLength,sha256:hash(bytes)};}
 const bootSessionUUID='aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee';
+
+async function withPerformanceNow(values,run){
+  const ownDescriptor=Object.getOwnPropertyDescriptor(performance,'now');let index=0;
+  Object.defineProperty(performance,'now',{configurable:true,value:()=>values[Math.min(index++,values.length-1)]});
+  try{return await run();}
+  finally{
+    if(ownDescriptor)Object.defineProperty(performance,'now',ownDescriptor);
+    else delete performance.now;
+  }
+}
 
 function harness({analysisDelayMs=0,mutatePair=value=>value,artifactFault=null,
     clockBracketNs=2_500_000_000n,crossDomainLooksFresh=false}={}){
@@ -133,7 +144,7 @@ test('capture-first path retains the original CUA interval, then SCK, Native AFT
   assert.equal(flow.pairEvidence.pair.cuaRequestEndMonotonicNanoseconds,flow.requestEndMonotonicNanoseconds);
   assert.equal(flow.pairEvidence.pair.continuousClockBeforeCUA.witnessID,flow.pairEvidence.pair.continuousClockWitnessID);
   assert.ok(Date.parse(completed.processing_completed_at)-Date.parse(completed.cua_request_started_at)>5000);
-  assert.ok(BigInt(completed.processing_duration_nanoseconds)>0n);
+  assert.ok(BigInt(completed.processing_duration_nanoseconds)>5_000_000_000n);
   assert.ok(completed.capture_pair_receipt.sha256);
   assert.equal(completed.geometry_time_semantics,
     'SCK capture record is capture-time provenance; Native AFTER AX is later context and is only a consistency check.');
@@ -173,6 +184,41 @@ test('capture-first path retains the original CUA interval, then SCK, Native AFT
   await assert.rejects(()=>h.producer.readRef(sckRef),/SCK_ARTIFACT_DRIFT/);
   h.files.set(sckRef.path,originalSck);h.files.delete(sckRef.path);
   await assert.rejects(()=>h.producer.readRef(sckRef));
+});
+
+test('hosted timer conversion rounds outward and rejects invalid or reversed readings before capture',async()=>{
+  const frame=png();let interval=null,appCalls=0;
+  const boundaryObserver=createVisualDiagnosticObserver({app:{getAXStateAndScreenshot:async()=>{
+      appCalls++;return {state:'AX',screenshot:frame};}},retain:harness().retain,sessionId:'boundary',
+    readClock:async()=>({}),beforeCapture:async()=>({}),capturePair:async args=>{
+      interval=args;throw Error('stop after boundary conversion');},afterCapture:async()=>({}),analyze:async()=>({})});
+  await withPerformanceNow([0.0000001,0.0000001],()=>assert.rejects(boundaryObserver.observe(),/stop after boundary conversion/));
+  assert.equal(interval.requestStartMonotonicNanoseconds,'0');
+  assert.equal(interval.requestEndMonotonicNanoseconds,'3');
+  assert.equal(appCalls,1);
+
+  const invalidReadings=[NaN,Infinity,-1,Number.MAX_SAFE_INTEGER/1_000_000+1];
+  for(const bad of invalidReadings){
+    for(const invalidAt of ['start','end']){
+      let calls=0;
+      const values=invalidAt==='start'?[bad,1]:[1,bad];
+      const observer=createVisualDiagnosticObserver({app:{getAXStateAndScreenshot:async()=>{
+          calls++;return {state:'AX',screenshot:frame};}},retain:async()=>{},sessionId:'invalid',
+        readClock:async()=>({}),beforeCapture:async()=>({}),capturePair:async()=>({}),
+        afterCapture:async()=>({}),analyze:async()=>({})});
+      await withPerformanceNow(values,()=>assert.rejects(observer.observe(),/VISUAL_DIAGNOSTIC_CLOCK_RANGE/));
+      assert.equal(calls,invalidAt==='start'?0:1);
+    }
+  }
+
+  const h=harness(),orderedObserver=createVisualDiagnosticObserver({
+    app:{getAXStateAndScreenshot:async()=>({state:'AX',screenshot:frame})},retain:h.retain,sessionId:'reversed',
+    readClock:args=>h.producer.readVisualDiagnosticClock(args),beforeCapture:async()=>({value:nativeContext(),
+      reference:ref('harness-development/native-before.json',new Uint8Array([1]))}),
+    capturePair:args=>h.producer.captureVisualDiagnostic(args),afterCapture:async()=>({value:nativeContext()}),
+    analyze:async()=>{throw Error('must not analyze a reversed clock interval');}});
+  await withPerformanceNow([10,11,10.5],()=>assert.rejects(orderedObserver.observe(),/VISUAL_DIAGNOSTIC_CAPTURE_DEADLINE/));
+  assert.equal(h.captureCalls,0);
 });
 
 test('producer refuses a mismatched native-context process schema before SCK dispatch',async()=>{
