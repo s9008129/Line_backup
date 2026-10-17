@@ -69,12 +69,38 @@
 
 Owner 在後續對話已明確將本專案短期目標擴展為真實 LINE 連續兩本 Save All，並授權所需的可逆導覽實測及符合資格的下載測試。該授權是 Owner 的方向／操作意向，不會自動啟用既有 [LINE_TWO_ALBUM_PILOT/1](policies/line-two-album-pilot-v1.json) 私有 grant，亦不表示可重用 `CLOSED_NO_REPLAY` 或抹除 `2/2` 已用額度。Planner 應優先依 Owner 決策提出有界的專案級授權／測試模式修訂，並保留 source、原 ledger、state 與審查綁定，讓真實導覽能執行、正式 Save All 能獨立驗收。保留上層 Harness／平台限制；不聲稱原生 Controller admission、簽署收據或實體 exactly-once 保證。
 
+## 階段結束前強制 Commit 與可回溯訊息
+
+**強制觸發：**每當 Agent 準備結束本次 Session、交接至下一個 Session、完成一份 Plan（即使尚待外部審查）、完成一個 Implementation 修復切片、完成一次有實質新結果的驗證／E2E 階段，或因 `FAIL`／`BLOCKED` 暫停時，Sol 必須在回報或主動結束前執行一次 **Checkpoint Commit 檢查**。這是有意義的階段邊界，不是每個工具呼叫或每次測試都製造 Commit。即使整體兩本 Save All 尚未完成，也要保存當前已產生的可交付成果與未解問題，不能等整個 Issue 結束才留下 Git 歷史。
+
+1. **先保存實際成果：**確認 repo／branch／HEAD 與 `git status`，整理本階段真正變更的 Plan、程式、測試、可公開的驗證報告或交接紀錄。必要時更新現有 `E2E測試報告.md` 或 Plan／PR handoff，寫明 PASS、FAIL、BLOCKED、NOT_RUN，及可重現證據。僅逐檔 stage 本輪受權變更；不夾帶不相關 dirty／untracked 檔、私有照片、憑證、原始授權或未遮蔽證據。Plan 待審也可提交，**Commit 不代表 Plan／Code Review／E2E 已獲核准**。
+2. **Git Commit 本體必須有三段完整內容：**不得只在 PR 描述或聊天室寫詳情，不能只留下 `fix issue`、`update files` 一類摘要。使用精準的 `<type>(<scope>): <本階段變更重點>` 作為 Subject；**Commit message body 必須明確包含且填妥「意圖」、「做了什麼」、「下一步的建議」**三個標題。建議同時填入「驗證與結果」，清楚列出實際執行命令、測試／實機狀態、失敗原因、未執行項目與證據參照；不捏造 PASS、不把預期寫成實際執行：
+
+   ```text
+   <type>(<scope>): <具體且可辨識的階段成果>
+
+   意圖：
+   - <為何要做；對應 Owner 目標、AC 或已觀察根因>
+
+   做了什麼：
+   - <確實修改／新增哪些重要檔案或行為；範圍與保留條件>
+
+   驗證與結果：
+   - <真實執行的命令／LINE 操作、PASS／FAIL／BLOCKED／NOT_RUN、證據連結或 hash>
+
+   下一步的建議：
+   - <下一個可執行動作、待解阻塞、所需外部雲端審查或 Owner 決策>
+   ```
+
+3. **每個階段獨立留痕並核對：**有本輪可交付變更就 `git commit`、依既有持續授權 `git push` 並建立／更新同範圍 Draft PR；推送後用 `git show -s --format=%B <commit-sha>` 與 GitHub 遠端讀回確認**真正 Git Commit 的 body**包含三要素，而非只有 PR 留言。向 Owner 回報 Commit SHA／連結、PR、真實測試結果與下一步。不得 `--amend` 或 force-push 改寫既有審查歷史來補訊息。
+4. **沒有可提交差異時不得製造虛假歷史：**若本階段只有真實測試或決策產生新資訊，優先更新既有的去識別化報告／handoff 再提交該報告；若確實無任何必要變更，**不建立 empty commit**，明確回報 `NO_CHANGES_TO_COMMIT`、本階段事實與下一步。若 Git／權限／遠端失敗，保留變更與原始錯誤，回報 `COMMIT_OR_PUSH_BLOCKED`，不得聲稱已提交成功。突發斷線無法保證收尾；下一個 Session 啟動時先對帳未提交與未推送成果，再接續任務。
+
 ## 修正完成後的自動 GitHub PR 與雲端審查交接
 
 Owner 對本專案各輪已授權範圍內的修正，持續授權以下交付流程；不必每次重新詢問是否 commit、push 或建立 PR。
 
 1. **每輪修正完成即主動交付：**整理本輪差異、完成適用且可執行的驗證，逐檔加入本輪修改，執行 `git add`、`git commit`、`git push`，並在本專案 GitHub 建立 PR；已有涵蓋同一範圍的 PR 時更新該 PR，避免重複建立。保留無關的 dirty／untracked 工作，不得使用整目錄加入而夾帶私人證據或其他修改。即使整體 E2E 尚有阻塞，也應交付可審查的修正，清楚標記失敗、未執行及未完成項目。
-2. **提交訊息與 PR 必須足以獨立理解：**詳細說明修正意圖、實際做了什麼、驗證方法與結果、已知限制，以及下一步建議。PR 標題與說明須反映最後提交的實際內容，不沿用已過期的工作描述。
+2. **Commit 訊息三要素及 PR 不得省略：**依上節「階段結束前強制 Commit」規則，**每一筆由 Agent 建立的階段性 Commit body** 都必須實際寫出「意圖／做了什麼／下一步的建議」，並附適用的真實驗證結果；PR 標題與說明應概述最後提交的實際內容，但**不能取代 Git Commit 本身的訊息**，也不得沿用過期描述。
 3. **完整報告須能在 GitHub 閱讀：**將本輪 `E2E測試報告.md` 或適用的完整驗證／交接報告，上傳為 PR 中的受版本控制檔案或完整留言；不能只提供使用者本機路徑或摘要。保留成功、失敗、未執行、真機與合成測試的區別及可追溯證據識別；私人照片、群組／人名、檔案清單、敏感授權資料及本機個人路徑先做必要遮蔽，並清楚標示遮蔽範圍，保留本機原始證據。
 4. **把審查入口交給使用者：**完成推送後核對 GitHub 最新 HEAD、PR 與報告內容，向使用者提供 PR 連結、完整報告連結、精確提交版本與尚待審查的事項。**本次 Owner 已指定 ChatGPT 在本對話擔任獨立 Plan Reviewer 與 Post-Implementation Code Reviewer**；Sol 提供精確 Plan／PR、報告、來源及證據連結供 Owner 轉交，不得自行宣稱雲端審查完成。Owner 日後可明確改指定其他雲端模型或供應商，專案不得硬編碼唯一審查供應商。未經 Owner 另行要求，本機 Agent 不代替 Owner 呼叫或冒充外部審查模型。只有真實派送收據或實際審查結果，才能分別聲稱已送審、已完成或通過；貼出 PR 審查請求或通過本地檢查，都不能冒充外部模型已經審查。
 5. **交付不等於核准執行：**沒有另行指示時，PR 維持 Draft，不自動 merge。此持續授權只涵蓋上述 Git／PR 交付，不擴張 GUI、Save All、下載或 protected state 的執行範圍，也不取代適用的獨立審查與精確來源綁定。若推送或建立 PR 實際失敗，保留本輪提交、報告與錯誤，回報真實阻塞及下一步，不冒稱已發布。
