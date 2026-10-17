@@ -484,7 +484,7 @@ export function createHostedSession({app, bridge, retain, classify, collectMenuE
       const row=await locateMenu(openFrame,{phase:'ROW',detail});
       requireFact(point(row?.save_all)&&row.save_all.every(Number.isInteger)
         &&point(row?.dismiss_point)&&row.dismiss_point.every(Number.isInteger)
-        &&row.frameId===openFrame.frame_id&&row.layoutKey===openFrame.layout_key
+        &&row.frameId===openFrame.frame_id&&row.layoutKey===detail.layout_key
         &&Array.isArray(row.menuBounds)&&Array.isArray(row.addressableBounds)&&Array.isArray(row.safeBounds)
         &&Array.isArray(row.dismiss_bounds_px)&&row.evidence_kind==='FRESH_SCK_OCR_TRANSFORM'
         &&(row.label==='儲存全部'||row.label==='Save All'),'MENU_ROW_UNKNOWN');

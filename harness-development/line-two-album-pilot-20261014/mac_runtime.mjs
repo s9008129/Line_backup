@@ -6,7 +6,7 @@ import {execFile} from 'node:child_process';
 import {createHash,randomUUID} from 'node:crypto';
 import {createNavigationObserver,createAlbumSupportCallbacks} from '../../scripts/line_backup_cua_adapter.mjs';
 import {runTwoAlbumPilot,runSingleAlbumPilot,runOneScrollProbe} from './two_album_entry.mjs';
-import {createLiveAnalyzer,verifyNativePair} from './mac/analyzer.mjs';
+import {completeDateTitle,createLiveAnalyzer,verifyNativePair} from './mac/analyzer.mjs';
 import {createLiveClassifier} from './mac/classifier.mjs';
 import {createChooserLocators} from './mac/chooser.mjs';
 import {createProducerHook,createDownloadObserver} from './mac/producer.mjs';
@@ -24,6 +24,8 @@ const center=b=>[Math.trunc(b[0]+b[2]/2),Math.trunc(b[1]+b[3]/2)];
 const ELLIPSIS={maxArea:16,maxSide:5,stackX:1,stackGap:1.5,pad:4,minSafe:3,minInterior:16};
 const intersectsRect=(a,b)=>a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1]+a[3];
 const insideRect=(a,b)=>a[0]>=b[0]&&a[1]>=b[1]&&a[0]+a[2]<=b[0]+b[2]&&a[1]+a[3]<=b[1]+b[3];
+const intersectionRect=(a,b)=>[Math.max(a[0],b[0]),Math.max(a[1],b[1]),
+  Math.min(a[0]+a[2],b[0]+b[2])-Math.max(a[0],b[0]),Math.min(a[1]+a[3],b[1]+b[3])-Math.max(a[1],b[1])];
 const containsPoint=(p,b,m=0)=>p[0]>=b[0]-m&&p[1]>=b[1]-m&&p[0]<=b[0]+b[2]+m&&p[1]<=b[1]+b[3]+m;
 const erodeRect=(r,margin)=>[r[0]+margin,r[1]+margin,r[2]-2*margin,r[3]-2*margin];
 const centerOf=r=>[Math.trunc(r[0]+r[2]/2),Math.trunc(r[1]+r[3]/2)];
@@ -121,14 +123,40 @@ export function locateSaveAllRow({envelope,width,height}){
   const eroded=erodeRect(safe,margin);
   need(eroded[2]>=ELLIPSIS.minInterior&&eroded[3]>=ELLIPSIS.minInterior&&insideRect(eroded,crop),
     'MENU_ROW_SAFE_UNKNOWN');
-  const closeInterior=erodeRect(rowCua,margin);
-  need(closeInterior[2]>=ELLIPSIS.minInterior&&closeInterior[3]>=ELLIPSIS.minInterior
-    &&insideRect(closeInterior,crop)&&intersectsRect(closeInterior,eroded),'MENU_CLOSE_INTERIOR_UNPROVEN');
+  // Dismissal is always a separate, reversible title-surface click: clicking the Save All row itself
+  // to close the menu would dispatch the command.
+  const dismiss=locateDismissRow({envelope,width,height,margin,popupIntersection:inCrop});
   return {frameId:envelope.frame_id,layoutKey:null,label:saveAll.text,save_all:centerOf(eroded),
     menuBounds:popupCua,addressableBounds:crop,safeBounds:safe,saveAllBounds:rowCua,
-    dismiss_point:centerOf(closeInterior),dismiss_bounds_px:closeInterior,
+    dismiss_point:dismiss.point,dismiss_bounds_px:dismiss.bounds_px,dismiss_row_bounds_px:dismiss.row_bounds_px,
+    dismiss_evidence_kind:dismiss.evidence_kind,
     popup_window_id:popup.window_number,popup_layer:popup.layer,uncertaintyPx:envelope.uncertainty_px,
     evidence_kind:'FRESH_SCK_OCR_TRANSFORM',menu_order:[saveAll.text],item_spacing:rowCua[3]};
+}
+
+/** Reversible dismissal target: the unique fresh album-title OCR row of the same detail surface,
+ *  held back from every edge by the same uncertainty margin and disjoint from the popup's
+ *  addressable intersection. Never the Save All row, never a coordinate outside the capture. */
+export function locateDismissRow({envelope,width,height,margin,popupIntersection}){
+  const crop=[0,0,width,height],fingerprint=envelope?.detail_fingerprint;
+  need(fingerprint&&typeof fingerprint.start_date==='string'&&typeof fingerprint.end_date==='string',
+    'MENU_DISMISS_TITLE_FINGERPRINT');
+  const rows=(envelope.ocr??[]).filter(o=>o&&o.candidate_count===1&&Number.isFinite(o.confidence)
+    &&o.confidence>=.5&&typeof o.text==='string'&&completeDateTitle(o.text));
+  const matching=rows.filter(o=>{const title=completeDateTitle(o.text);
+    return title.start_date===fingerprint.start_date&&title.end_date===fingerprint.end_date;});
+  need(matching.length===1,'MENU_DISMISS_TITLE_ROW_AMBIGUOUS');
+  const row=matching[0].bounds;
+  need(Array.isArray(row)&&row.length===4&&row.every(Number.isFinite)&&row[2]>0&&row[3]>0,
+    'MENU_DISMISS_TITLE_ROW');
+  need(insideRect(row,crop),'MENU_DISMISS_TITLE_ROW_INSIDE_CROP');
+  const interior=erodeRect(row,margin);
+  need(interior[2]>0&&interior[3]>0&&insideRect(interior,crop),'MENU_DISMISS_TITLE_INTERIOR_UNPROVEN');
+  const point=centerOf(interior);
+  need(point[0]-row[0]>=margin&&row[0]+row[2]-point[0]>=margin
+    &&point[1]-row[1]>=margin&&row[1]+row[3]-point[1]>=margin,'MENU_DISMISS_TITLE_CLEARANCE');
+  need(!intersectsRect(row,popupIntersection),'MENU_DISMISS_TITLE_OVERLAPS_POPUP');
+  return {point,bounds_px:interior,row_bounds_px:row,evidence_kind:'FRESH_TITLE_OCR_ROW'};
 }
 
 const inside=(a,b,m=0)=>a[0]>=b[0]+m&&a[1]>=b[1]+m&&a[0]+a[2]<=b[0]+b[2]-m&&a[1]+a[3]<=b[1]+b[3]-m;
@@ -255,7 +283,8 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
   classifier=createLiveClassifier({retain,readRetained,analyzeCapture:nativeAnalyzer.analyzeCapture,
     analyzeScrollWitness:nativeAnalyzer.analyzeScrollWitness,
     analyzeVisualCardDiagnostic:nativeAnalyzer.analyzeVisualCardDiagnostic,
-    analyzeMenuEnvelope:nativeAnalyzer.analyzeMenuEnvelope,groupKey:config.group_key,
+    analyzeMenuFrame:nativeAnalyzer.analyzeMenuFrame,buildMenuEnvelope:nativeAnalyzer.buildMenuEnvelope,
+    groupKey:config.group_key,
     frameSupport:producer.frameSupport});
   async function decodeRetainedImage({bytes,sourceSha256}){
     need(bytes instanceof Uint8Array&&hash(bytes)===sourceSha256,'SCROLL_IMAGE_SOURCE_HASH');
@@ -319,16 +348,22 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
       return menuClosure({frame,detail,envelope:bound.envelope});
     }
     need(phase==='ROW','MENU_PHASE_UNKNOWN');
+    // The menu overlay is evidence-only and never enters the ordinary classifier cache, so the row
+    // locator binds the detail observation directly instead of reading a cached ordinary frame.
+    need(detail?.surface==='ALBUM_DETAIL'&&Number.isInteger(detail.window_id)
+      &&typeof detail.layout_key==='string'&&detail.layout_key,'MENU_ROW_DETAIL_REQUIRED');
     const record=classifier.menuEnvelopes.get(frame.frame_id);
     need(record?.envelope,'FRESH_MENU_ENVELOPE_REQUIRED');
-    const envelope=record.envelope,c=cached(frame);
-    need(envelope.session_id===frame.session_id&&envelope.native.window_id===frame.window_id
-      &&envelope.detail_window_id===frame.window_id,'MENU_ENVELOPE_FRAME_BINDING');
-    const row=locateSaveAllRow({envelope,width:c.observation.width,height:c.observation.height});
-    row.layoutKey=frame.layout_key;
+    const envelope=record.envelope;
+    need(envelope.session_id===frame.session_id&&envelope.native.window_id===envelope.detail_window_id
+      &&envelope.detail_window_id===detail.window_id,'MENU_ENVELOPE_FRAME_BINDING');
+    const crop=envelope.mapping?.crop_px;
+    need(Array.isArray(crop)&&crop.length===4&&crop[2]>0&&crop[3]>0,'MENU_ROW_TRANSFORM');
+    const row=locateSaveAllRow({envelope,width:crop[2],height:crop[3]});
+    row.layoutKey=detail.layout_key;
     need(row.frameId===frame.frame_id,'MENU_ROW_FRAME_BINDING');
     menuGeometry.set(frame.frame_id,{pid:envelope.native.pid,windowId:envelope.native.window_id,
-      displayId:envelope.native.display_id,layoutKey:frame.layout_key,uncertaintyPx:row.uncertaintyPx,
+      displayId:envelope.native.display_id,layoutKey:detail.layout_key,uncertaintyPx:row.uncertaintyPx,
       cuaBounds:envelope.native.cua_capture_bounds_points,menuBounds:row.menuBounds,
       addressableBounds:row.addressableBounds});
     // The closure check reads the fresh post-close frame against the detail frame that opened

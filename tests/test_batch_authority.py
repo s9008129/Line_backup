@@ -15,7 +15,7 @@ from unittest.mock import patch
 sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
 from fixture_support import Fixture,Provider,ROOT,TASK,identity,sha,json_bytes,token,png
 from line_backup_batch.store import Store,enforce_grant_quota
-from line_backup_batch.service import Service,DISPATCH_RECEIPT_V3_KEYS,DISPATCH_EVENT_ORDER_V3
+from line_backup_batch.service import Service,DISPATCH_RECEIPT_V3_KEYS,DISPATCH_EVENT_ORDER_V3,menu_envelope
 from line_backup_batch.coordinator import Coordinator
 import line_backup_batch.cli as batch_cli
 from line_backup_acceptance.common import AcceptanceError,atomic_write_json
@@ -186,7 +186,7 @@ def project_menu_envelope(service,f,detail,fingerprint,*,popup_window_id=9,layer
     captured_at=detail['captured_at'] if captured_at is None else captured_at
     safe=list(safe_bounds_px);margin=uncertainty+4
     eroded=[safe[0]+margin,safe[1]+margin,safe[2]-2*margin,safe[3]-2*margin]
-    popup_sck=[20,10,90,90];label_sck=[30,20,60,60]
+    popup_sck=[20,10,90,90];label_sck=list(safe)
     inner=dict(evidence_only=True,admissible_to_ordinary_classifier=False,frame_id=frame_id,
         session_id=detail['session_id'],source_sha256=frame_id,source_ax_sha256='b'*64,
         native=dict(bundle_id='jp.naver.line.mac',pid=detail['pid'],window_id=detail['window_id'],display_id=1,
@@ -220,6 +220,35 @@ def project_menu_closure_proof(closure,envelope,target,layer=101):
         layout_key=closure['layout_key'],popup_window_id=envelope['popup_window_id'],popup_layer=layer,
         native_popup_absent=True,row_absent=True,closure_evidence_kind='NATIVE_WINDOW_ABSENCE_AND_FRESH_OCR',
         detail_fingerprint=target)
+
+def real_shaped_menu_envelope_record(f,safe,eroded,*,popup_cua=None,label_cua=None):
+    """Synthetic record shaped by real hosted-CUA evidence on a 654x1286 detail crop: the raised layer-101
+    popup and its 儲存全部 row extend beyond the crop, so only their intersection with the crop is addressable."""
+    frame_id='a'*64
+    popup=[566,104,274,334];label=[617.685927,257.871193,110.101982,30.257612]
+    inner=dict(evidence_only=True,admissible_to_ordinary_classifier=False,frame_id=frame_id,session_id=f.session,
+        source_sha256=frame_id,source_ax_sha256='b'*64,
+        native=dict(bundle_id='jp.naver.line.mac',pid=2,window_id=7,display_id=1,
+            cua_capture_bounds_points=[0,0,654,1286]),
+        process_start=[1,0],
+        layer_identity=dict(owner_pid=2,window_id=9,layer=101,above_window_id=7),
+        popup=dict(window_number=9,layer=101,bounds_pt=[641,98,137,167],bounds_px=list(popup),
+            cua_bounds_px=list(popup if popup_cua is None else popup_cua),above_window_id=7),
+        save_all=dict(text='儲存全部',label_bounds_px=list(label),
+            cua_label_bounds_px=list(label if label_cua is None else label_cua)),
+        mapping=dict(kind='SCK_TO_CUA_LOCAL',crop_px=[0,0,654,1286],display_pt=[0,0,1147,745],
+            backing_scale=1,cua_offset_px=[0,0],cua_scale=[1,1],
+            inverse='cua_px = sck_px * cua_scale / backing_scale + cua_offset_px'),
+        safe_bounds_px=list(safe),eroded_bounds_px=list(eroded),uncertainty_px=2,
+        ocr=[dict(text='2024/05/27~05/31',confidence=0.5,candidate_count=1,bounds=[30,178,380,44])],
+        detail_fingerprint='fp',detail_window_id=7,list_window_id=107)
+    reference=f.ref('real-shaped-menu-envelope-'+uuid.uuid4().hex+'.json',json_bytes(
+        dict(sourceBinding=dict(before=dict(value=None),after=dict(value=None)),menuEnvelope=inner)))
+    record=dict(kind='MENU_CALIBRATION_ENVELOPE',evidence_only=True,admissible_to_ordinary_classifier=False,
+        frame_id=frame_id,session_id=f.session,captured_at='2026-10-18T00:00:00Z',popup_window_id=9,layer=101,
+        save_all='儲存全部',safe_bounds_px=list(safe),eroded_bounds_px=list(eroded),uncertainty_px=2,reference=reference)
+    detail=dict(session_id=f.session,window_id=7,pid=2,width=654,height=1286,layout_key='layout')
+    return record,detail
 
 class AuthorityTests(unittest.TestCase):
     def setUp(self):self.f=Fixture()
@@ -666,6 +695,37 @@ class ProjectRuntimeBindingTests(unittest.TestCase):
             self.assertEqual(caught.exception.code,'PROJECT_WORKFLOW_HALTED')
         run=next(run for run in self.f.state()['runs'] if run['run_id']==action['run_id'])
         self.assertIsNone(run['dispatch_evidence'])
+    def menu_envelope_code(self,record,detail):
+        reader=ProjectReader(str(self.f.root))
+        try:
+            with self.assertRaises(AcceptanceError) as caught:
+                menu_envelope(reader,record,detail,dict(app_identifier='jp.naver.line.mac'),dict(fingerprint='fp'))
+            return caught.exception.code
+        finally:reader.close()
+    def test_menu_envelope_intersection_accepts_popup_outside_crop(self):
+        safe=[617.685927,257.871193,36.314073,30.257612]
+        eroded=[623.685927,263.871193,24.314073,18.257612]
+        record,detail=real_shaped_menu_envelope_record(self.f,safe,eroded)
+        reader=ProjectReader(str(self.f.root))
+        try:
+            out=menu_envelope(reader,record,detail,dict(app_identifier='jp.naver.line.mac'),dict(fingerprint='fp'))
+        finally:reader.close()
+        self.assertEqual(out['safe'],safe)
+        self.assertEqual(out['eroded'],eroded)
+        self.assertEqual(out['popup']['cua_bounds_px'],[566,104,274,334])
+    def test_menu_envelope_rejects_safe_not_intersection(self):
+        safe=[617.685927,258.871193,35.314073,29.257612]
+        eroded=[623.685927,264.871193,23.314073,17.257612]
+        record,detail=real_shaped_menu_envelope_record(self.f,safe,eroded)
+        self.assertEqual(self.menu_envelope_code(record,detail),'MENU_ENVELOPE_SAFE_UNPROVEN')
+    def test_menu_envelope_rejects_malformed_raw_rects(self):
+        safe=[617.685927,257.871193,36.314073,30.257612]
+        eroded=[623.685927,263.871193,24.314073,18.257612]
+        popup_record,popup_detail=real_shaped_menu_envelope_record(self.f,safe,eroded,popup_cua=[566,104,0,334])
+        self.assertEqual(self.menu_envelope_code(popup_record,popup_detail),'MENU_ENVELOPE_POPUP_BOUNDS')
+        label_record,label_detail=real_shaped_menu_envelope_record(self.f,safe,eroded,
+            label_cua=[617.685927,257.871193,0,30.257612])
+        self.assertEqual(self.menu_envelope_code(label_record,label_detail),'MENU_ENVELOPE_ROW_BOUNDS')
     def test_project_receipt3_download_and_pinned_decode_finalize_positive(self):
         self.f.cfg['max_albums_per_run']=1;self.f.save(self.f.state())
         grant,grant_ref,runtime_ref=project_authority_fixture(self.f)

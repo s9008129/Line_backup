@@ -10,7 +10,7 @@ from line_backup_acceptance.common import AcceptanceError,json_bytes,utc_now,_ch
 from line_backup_acceptance.project_binding import ProjectReader,strict_json,history_decision,integer,sha
 from .schema import require,POLICY
 from .store import Store
-from .observations import artifact,catalog,card_target,chooser_observation,validate_download_start,frame,inside,point,rect,_support
+from .observations import artifact,catalog,card_target,chooser_observation,validate_download_start,frame,inside,intersection,point,rect,_support
 from . import content
 
 ONE56_GRANT_VERSION='line-two-album-project-grant-1'
@@ -88,7 +88,7 @@ def menu_envelope(reader,record,detail,cfg,run):
         and popup['above_window_id']==detail['window_id'] and popup['window_number']!=detail['window_id'],
         'MENU_ENVELOPE_POPUP')
     _finite_box(popup['bounds_px'],'MENU_ENVELOPE_POPUP_BOUNDS')
-    popup_cua=rect(popup['cua_bounds_px'],width,height)
+    popup_cua=_finite_box(popup['cua_bounds_px'],'MENU_ENVELOPE_POPUP_BOUNDS')
     _finite_box(popup['bounds_pt'],'MENU_ENVELOPE_POPUP_BOUNDS')
     layer=inner['layer_identity']
     require(isinstance(layer,dict) and set(layer)==MENU_ENVELOPE_LAYER_KEYS
@@ -102,7 +102,7 @@ def menu_envelope(reader,record,detail,cfg,run):
     require(isinstance(row,dict) and set(row)==MENU_ENVELOPE_ROW_KEYS and row['text']==record['save_all']
         and row['text'] in ('儲存全部','Save All'),'MENU_ENVELOPE_ROW')
     _finite_box(row['label_bounds_px'],'MENU_ENVELOPE_ROW_BOUNDS')
-    label=rect(row['cua_label_bounds_px'],width,height)
+    label=_finite_box(row['cua_label_bounds_px'],'MENU_ENVELOPE_ROW_BOUNDS')
     mapping=inner['mapping']
     require(isinstance(mapping,dict) and set(mapping)==MENU_ENVELOPE_MAPPING_KEYS
         and mapping['kind']=='SCK_TO_CUA_LOCAL' and mapping['crop_px']==[0,0,width,height]
@@ -122,7 +122,8 @@ def menu_envelope(reader,record,detail,cfg,run):
     require(drift(to_cua_local(popup['bounds_px']),popup['cua_bounds_px'])<=1
         and drift(to_cua_local(row['label_bounds_px']),row['cua_label_bounds_px'])<=1,
         'MENU_ENVELOPE_TRANSFORM_DRIFT')
-    require(inside(safe,popup_cua) and inside(safe,label),'MENU_ENVELOPE_SAFE_UNPROVEN')
+    expected=intersection(intersection([0,0,width,height],popup_cua),label)
+    require(drift(safe,expected)<=1e-6,'MENU_ENVELOPE_SAFE_UNPROVEN')
     ocr=inner['ocr']
     require(isinstance(ocr,list),'MENU_ENVELOPE_OCR')
     for item in ocr:
@@ -536,6 +537,9 @@ class Service:
                     and (closed-opened).total_seconds()<=6,'PROJECT_CALIBRATION_TIME')
                 frame(reader,claim['detail'],snap['config'],session=m['session_id'])
                 envelope=menu_envelope(reader,claim['menu_frame'],claim['detail'],snap['config'],r)
+                click=[envelope['eroded'][0]+envelope['eroded'][2]/2,envelope['eroded'][1]+envelope['eroded'][3]/2]
+                require(all(abs(a-b)<=1 for a,b in zip(calibration['save_all_point'],click)),
+                    'PROJECT_CALIBRATION_CLICK_POINT')
                 bound_support=menu_envelope_support(reader,claim['support'],envelope,claim['detail'],snap['config'],
                     now=closed.astimezone(dt.timezone.utc),max_age=5)
                 popup_raw=artifact(reader,bound_support['sidecar']['sck_frame'])

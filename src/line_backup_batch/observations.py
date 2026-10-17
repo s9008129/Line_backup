@@ -59,6 +59,10 @@ def inside(inner,outer,margin=0):
 def intersects(a,b):
     return a[0]<b[0]+b[2] and b[0]<a[0]+a[2] and a[1]<b[1]+b[3] and b[1]<a[1]+a[3]
 
+def intersection(a,b):
+    x=max(a[0],b[0]);y=max(a[1],b[1])
+    return [x,y,max(0.0,min(a[0]+a[2],b[0]+b[2])-x),max(0.0,min(a[1]+a[3],b[1]+b[3])-y)]
+
 def point(value,bounds,uncertainty):
     require(isinstance(value,list) and len(value)==2 and all(type(v) in (int,float) and math.isfinite(v) for v in value),'INVALID_POINT')
     require(inside([*value,0,0],bounds,uncertainty),'UNSAFE_POINT')

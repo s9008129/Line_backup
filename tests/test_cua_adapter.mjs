@@ -871,13 +871,13 @@ async function twoAlbumEntryProbe(preDiscoveryBudget){
     if(operation==='dispatch')return {receipt_token:token(),result:{status:'DOWNLOAD_STARTED'}};
     throw new Error(`unexpected bridge ${operation}`);
   };
-  const menuLocator=async(observation,{phase})=>phase==='TRIGGER'
+  const menuLocator=async(observation,{phase,detail})=>phase==='TRIGGER'
     ?{point:[10,10],frameId:observation.frame_id,evidence_kind:'PIXEL_STRUCTURE',component_count:3,
       bounds_px:[5,5,15,15],interior_bounds_px:[1,1,23,23],dot_spacing:5}
     :phase==='CLOSURE'
     ?{native_popup_absent:true,row_absent:true,process_instance:[7,1],detail_window_id:observation.window_id,
       popup_window_id:7359,popup_layer:101,evidence_kind:'NATIVE_WINDOW_ABSENCE_AND_FRESH_OCR'}
-    :{save_all:[50,40],frameId:observation.frame_id,layoutKey:observation.layout_key,
+    :{save_all:[50,40],frameId:observation.frame_id,layoutKey:detail.layout_key,
       menuBounds:[0,0,100,100],addressableBounds:[0,0,100,100],safeBounds:[0,0,100,100],
       dismiss_point:[60,60],dismiss_bounds_px:[40,40,40,40],evidence_kind:'FRESH_SCK_OCR_TRANSFORM',
       label:'Save All',menu_order:['Save All'],item_spacing:20,saveAllBounds:[40,30,30,20],
@@ -894,7 +894,10 @@ async function twoAlbumEntryProbe(preDiscoveryBudget){
     destinationBaseline:{reference:ref('baseline',{}),artifact:{inventory:[]},identity:{dev:1,ino:1}}};
   const collectMenuEnvelope=async({saved,frameId,sessionId})=>({kind:'MENU_CALIBRATION_ENVELOPE',
     evidence_only:true,admissible_to_ordinary_classifier:false,frame_id:frameId,session_id:sessionId,
-    window_id:7,popup_window_id:7359,layer:101,save_all:'Save All',reference:ref('envelope',{})});
+    captured_at:'2026-10-16T00:00:00.000Z',window_id:7,popup_window_id:7359,layer:101,save_all:'Save All',layout_key:'fixture-layout',
+    safe_bounds_px:[40,30,30,20],eroded_bounds_px:[44,34,22,12],uncertainty_px:2,
+    mapping:{kind:'SCK_TO_CUA_LOCAL',crop_px:[0,0,100,100],backing_scale:1,cua_scale:[1,1],cua_offset_px:[0,0]},
+    reference:ref('envelope',{})});
   const classifier={classify,classifyChooser,collectMenuEnvelope,cache:classifierCache};
   const runtime={profile:'LINE_TWO_ALBUM_PILOT/1',owner:'mock-owner',authorization:'private/grant.json',cli,
     assertLineAlreadyRunning:async()=>calls.push('preflight-app'),getApp:async()=>app,retain,classifier,
