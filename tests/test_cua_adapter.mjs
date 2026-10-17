@@ -800,7 +800,11 @@ async function twoAlbumEntryProbe(preDiscoveryBudget){
   const card=(fp,y)=>({fingerprint:fp,fully_visible:true,card_bounds:[10,y,70,20],
     safe_metadata_bounds:[15,y+4,40,10],metadata_bounds:[15,y+4,40,10],neighbor_bounds:[]});
   const classifierCache=new Map();
-  const classify=async ({capture,saved,frameId,sessionId,capturedAt})=>{
+  const classify=async ({capture,saved,frameId,sessionId,capturedAt,menuEnvelope=false})=>{
+    if(menuEnvelope)return {kind:'MENU_CALIBRATION_ENVELOPE',evidence_only:true,
+      admissible_to_ordinary_classifier:false,frame_id:frameId,session_id:sessionId,window_id:1,
+      popup_window_id:7359,layer:101,save_all:'Save All',safe_bounds_px:[40,30,30,20],
+      eroded_bounds_px:[44,34,22,12],uncertainty_px:2,reference:ref('envelope',{})};
     if(appSurface==='ALBUMS')lastListFrameId=frameId;
     const listCards=scrollCount===0?[card(targets[0],10),card(targets[1],60)]:
       [card(targets[scrollCount],10),card(targets[scrollCount+1],30),card(targets[scrollCount+2],50),card(targets[scrollCount+3],70)];
@@ -868,10 +872,16 @@ async function twoAlbumEntryProbe(preDiscoveryBudget){
     throw new Error(`unexpected bridge ${operation}`);
   };
   const menuLocator=async(observation,{phase})=>phase==='TRIGGER'
-    ?{point:[10,10],frameId:observation.frame_id,role:'button',bounds_px:[5,5,15,15],dot_spacing:5}
+    ?{point:[10,10],frameId:observation.frame_id,evidence_kind:'PIXEL_STRUCTURE',component_count:3,
+      bounds_px:[5,5,15,15],interior_bounds_px:[1,1,23,23],dot_spacing:5}
+    :phase==='CLOSURE'
+    ?{native_popup_absent:true,row_absent:true,process_instance:[7,1],detail_window_id:observation.window_id,
+      popup_window_id:7359,popup_layer:101,evidence_kind:'NATIVE_WINDOW_ABSENCE_AND_FRESH_OCR'}
     :{save_all:[50,40],frameId:observation.frame_id,layoutKey:observation.layout_key,
       menuBounds:[0,0,100,100],addressableBounds:[0,0,100,100],safeBounds:[0,0,100,100],
-      ellipsisBounds:[5,5,15,15],label:'Save All',menu_order:['Save All'],item_spacing:20,saveAllBounds:[40,30,30,20]};
+      dismiss_point:[60,60],dismiss_bounds_px:[40,40,40,40],evidence_kind:'FRESH_SCK_OCR_TRANSFORM',
+      label:'Save All',menu_order:['Save All'],item_spacing:20,saveAllBounds:[40,30,30,20],
+      popup_window_id:7359,popup_layer:101};
   const chooser={locatePathField:async o=>({index:1,frameId:o.frame.frame_id,role:'text field',subrole:'PathTextField'}),
     validatePath:async()=>true,validateLeaf:async()=>true,
     locateConfirm:async o=>({point:[70,70],frameId:o.frame.frame_id,role:'button',enabled:true}),
@@ -882,7 +892,10 @@ async function twoAlbumEntryProbe(preDiscoveryBudget){
         baseline:destinationBaseline.reference,confirmation_frame_id:confirmation.frame_id,
         confirmation_invoked_at:confirmationInvokedAt,observed_at:new Date().toISOString()}}),
     destinationBaseline:{reference:ref('baseline',{}),artifact:{inventory:[]},identity:{dev:1,ino:1}}};
-  const classifier={classify,classifyChooser,cache:classifierCache};
+  const collectMenuEnvelope=async({saved,frameId,sessionId})=>({kind:'MENU_CALIBRATION_ENVELOPE',
+    evidence_only:true,admissible_to_ordinary_classifier:false,frame_id:frameId,session_id:sessionId,
+    window_id:7,popup_window_id:7359,layer:101,save_all:'Save All',reference:ref('envelope',{})});
+  const classifier={classify,classifyChooser,collectMenuEnvelope,cache:classifierCache};
   const runtime={profile:'LINE_TWO_ALBUM_PILOT/1',owner:'mock-owner',authorization:'private/grant.json',cli,
     assertLineAlreadyRunning:async()=>calls.push('preflight-app'),getApp:async()=>app,retain,classifier,
     producer:{captureMenuSupport:async()=>({reference:ref('support',{}),provider:'SCREEN_CAPTURE_KIT',pairFrameId:'x'}),
@@ -901,9 +914,12 @@ async function twoAlbumEntryProbe(preDiscoveryBudget){
   assert.equal(Object.hasOwn(calibration2?.detail??{},'viewport_bounds'),false);
   assert.equal(Object.hasOwn(calibration2?.detail??{},'batch_record'),false);
   assert.equal(Object.hasOwn(calibration2?.menu_frame??{},'viewport_bounds'),false);
-  assert.equal(calibration2?.trigger?.role,'button');
+  assert.equal(calibration2?.trigger?.evidence_kind,'PIXEL_STRUCTURE');
+  assert.equal(calibration2?.trigger?.component_count,3);
+  assert.equal(Object.hasOwn(calibration2?.trigger??{},'role'),false);
   assert.deepEqual(calibration2?.trigger?.point,[10,10]);
   assert.deepEqual(calibration2?.trigger?.bounds_px,[5,5,15,15]);
+  assert.deepEqual(calibration2?.trigger?.interior_bounds_px,[1,1,23,23]);
   assert.equal(calibration2?.trigger?.dot_spacing,5);
   assert.equal(receipt3?.version,'cua-dispatch-receipt-3');
   assert.deepEqual(receipt3.events.map(event=>event.event),['ELLIPSIS_INVOCATION','ELLIPSIS_RETURNED','SAVE_ALL_INVOCATION',

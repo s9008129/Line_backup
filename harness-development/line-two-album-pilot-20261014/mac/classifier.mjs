@@ -48,15 +48,17 @@ function nativeRowRect(value,code) {
 const inside=(a,b,margin=0)=>a[0]>=b[0]+margin&&a[1]>=b[1]+margin
   &&a[0]+a[2]<=b[0]+b[2]-margin&&a[1]+a[3]<=b[1]+b[3]-margin;
 const intersects=(a,b)=>a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1]+a[3];
+const erode=(r,margin)=>[r[0]+margin,r[1]+margin,r[2]-2*margin,r[3]-2*margin];
 
 const observationKeys=['frame','frame_id','session_id','group_key','surface','captured_at','provider','layout_key',
   'window_id','pid','width','height','mapping','cards','boundary','editable_focus','occlusion'];
 const ONE56={start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56};
 
-export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyzeScrollWitness,analyzeVisualCardDiagnostic,groupKey,clock=()=>Date.now()}) {
+export function createLiveClassifier({retain,readRetained,frameSupport,analyzeCapture,analyzeScrollWitness,analyzeVisualCardDiagnostic,analyzeMenuEnvelope,groupKey,clock=()=>Date.now()}) {
   need(typeof retain==='function'&&typeof frameSupport==='function'&&typeof analyzeCapture==='function','CLASSIFIER_DEPENDENCY_REQUIRED');
+  const readBack=reference=>{need(typeof readRetained==='function','CLASSIFIER_READ_RETAINED_REQUIRED');return readRetained(reference);};
   need(typeof groupKey==='string'&&groupKey,'CLASSIFIER_GROUP_REQUIRED');
-  const cache=new Map(),scrollCache=new Map();
+  const cache=new Map(),scrollCache=new Map(),menuEnvelopes=new Map();
 
   async function classify({capture,saved,frameId,sessionId,capturedAt,sourceBinding,capturedContext},{scrollWitness=false}={}) {
     need(capture?.screenshot instanceof Uint8Array&&typeof capture.state==='string','CLASSIFIER_CAPTURE_REQUIRED');
@@ -654,6 +656,77 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
       frame_id:frameId,session_id:sessionId,reference};
   }
 
+  // Purpose-selected menu envelope: evidence-only, never an ordinary observation and never cache.
+  async function collectMenuEnvelope({capture,saved,frameId,sessionId,capturedAt,sourceBinding,capturedContext}) {
+    need(typeof analyzeMenuEnvelope==='function','MENU_ENVELOPE_ANALYZER_REQUIRED');
+    need(capture?.screenshot instanceof Uint8Array&&typeof capture.state==='string','CLASSIFIER_CAPTURE_REQUIRED');
+    need(hex64(frameId)&&sha256Hex(capture.screenshot)===frameId&&saved?.sha256===frameId
+      &&saved.bytes===capture.screenshot.byteLength,'CLASSIFIER_FRAME_HASH');
+    need(typeof capturedAt==='string'&&Number.isFinite(Date.parse(capturedAt)),'CLASSIFIER_CAPTURE_TIME');
+    const [width,height]=imageSize(capture.screenshot);
+    const sourceAX=encoder.encode(capture.state),sourceAXSha=sha256Hex(sourceAX);
+    need(saved.ax&&saved.ax.bytes===sourceAX.byteLength&&saved.ax.sha256===sourceAXSha,'CLASSIFIER_AX_RETAINED');
+    const frameRef=ref(saved,'MENU_ENVELOPE_FRAME_REFERENCE');
+    const envelope=await analyzeMenuEnvelope({screenshot:capture.screenshot,axText:capture.state,frameId,sessionId,
+      capturedAt,width,height,sourceAXSha256:sourceAXSha,sourceBinding,capturedContext,saved});
+    const keys=['evidence_only','admissible_to_ordinary_classifier','frame_id','session_id','source_sha256',
+      'source_ax_sha256','native','process_start','layer_identity','popup','save_all','mapping','safe_bounds_px',
+      'eroded_bounds_px','uncertainty_px','ocr','detail_fingerprint','detail_window_id','list_window_id','reference'];
+    need(envelope&&Object.keys(envelope).sort().join(',')===keys.slice().sort().join(',')
+      &&envelope.evidence_only===true&&envelope.admissible_to_ordinary_classifier===false
+      &&envelope.frame_id===frameId&&envelope.session_id===sessionId
+      &&envelope.source_sha256===frameId&&envelope.source_ax_sha256===sourceAXSha,
+      'MENU_ENVELOPE_SCHEMA');
+    const native=envelope.native;
+    need(native?.bundle_id==='jp.naver.line.mac'&&Number.isInteger(native.pid)&&native.pid>0
+      &&Number.isInteger(native.window_id)&&native.window_id>0
+      &&Number.isInteger(native.display_id)&&native.display_id>0
+      &&Array.isArray(native.cua_capture_bounds_points)&&native.cua_capture_bounds_points.length===4
+      &&native.cua_capture_bounds_points.every(Number.isFinite),'MENU_ENVELOPE_NATIVE_IDENTITY');
+    const popup=envelope.popup;
+    need(popup&&Number.isInteger(popup.window_number)&&popup.window_number>0&&popup.window_number!==native.window_id
+      &&Number.isInteger(popup.layer)&&popup.layer>0&&popup.above_window_id===native.window_id
+      &&Array.isArray(popup.bounds_px)&&popup.bounds_px.length===4&&popup.bounds_px.every(Number.isFinite)
+      &&popup.bounds_px[2]>0&&popup.bounds_px[3]>0
+      &&rect(popup.cua_bounds_px,width,height,'MENU_ENVELOPE_POPUP_BOUNDS')
+      &&Array.isArray(popup.bounds_pt)&&popup.bounds_pt.length===4&&popup.bounds_pt.every(Number.isFinite),
+      'MENU_ENVELOPE_POPUP');
+    const saveAll=envelope.save_all;
+    need(saveAll&&['儲存全部','Save All'].includes(saveAll.text)
+      &&Array.isArray(saveAll.label_bounds_px)&&saveAll.label_bounds_px.length===4
+      &&saveAll.label_bounds_px.every(Number.isFinite)&&saveAll.label_bounds_px[2]>0&&saveAll.label_bounds_px[3]>0
+      &&rect(saveAll.cua_label_bounds_px,width,height,'MENU_ENVELOPE_ROW_BOUNDS'),'MENU_ENVELOPE_ROW');
+    const mapping=envelope.mapping;
+    need(mapping&&mapping.kind==='SCK_TO_CUA_LOCAL'&&Number.isFinite(mapping.backing_scale)&&mapping.backing_scale>0
+      &&Array.isArray(mapping.cua_scale)&&mapping.cua_scale.length===2&&mapping.cua_scale.every(v=>Number.isFinite(v)&&v>0)
+      &&Array.isArray(mapping.cua_offset_px)&&mapping.cua_offset_px.length===2&&mapping.cua_offset_px.every(Number.isFinite)
+      &&Array.isArray(mapping.crop_px)&&JSON.stringify(mapping.crop_px)===JSON.stringify([0,0,width,height]),
+      'MENU_ENVELOPE_MAPPING');
+    const toCuaLocal=b=>[b[0]*mapping.cua_scale[0]/mapping.backing_scale+mapping.cua_offset_px[0],
+      b[1]*mapping.cua_scale[1]/mapping.backing_scale+mapping.cua_offset_px[1],
+      b[2]*mapping.cua_scale[0]/mapping.backing_scale,b[3]*mapping.cua_scale[1]/mapping.backing_scale];
+    const drift=(a,b)=>Math.max(...a.map((v,i)=>Math.abs(v-b[i])));
+    need(drift(toCuaLocal(popup.bounds_px),popup.cua_bounds_px)<=1
+      &&drift(toCuaLocal(saveAll.label_bounds_px),saveAll.cua_label_bounds_px)<=1,'MENU_ENVELOPE_TRANSFORM_DRIFT');
+    need(Number.isFinite(envelope.uncertainty_px)&&envelope.uncertainty_px>=2,'MENU_ENVELOPE_UNCERTAINTY');
+    const u=envelope.uncertainty_px+4;
+    const safe=rect(envelope.safe_bounds_px,width,height,'MENU_ENVELOPE_SAFE_BOUNDS');
+    const eroded=rect(envelope.eroded_bounds_px,width,height,'MENU_ENVELOPE_ERODED_BOUNDS');
+    need(safe[2]>=16&&safe[3]>=16&&inside(safe,popup.cua_bounds_px)&&inside(safe,saveAll.cua_label_bounds_px)
+      &&inside(safe,mapping.crop_px),'MENU_ENVELOPE_SAFE_UNPROVEN');
+    need(eroded[2]>=16&&eroded[3]>=16&&inside(eroded,safe)&&inside(eroded,mapping.crop_px)
+      &&JSON.stringify(eroded)===JSON.stringify(erode(safe,u)),'MENU_ENVELOPE_ERODED_UNPROVEN');
+    const reference=ref(envelope.reference,'MENU_ENVELOPE_REFERENCE');
+    const retainedBytes=await readBack(reference);
+    need(retainedBytes instanceof Uint8Array&&retainedBytes.byteLength===reference.bytes
+      &&sha256Hex(retainedBytes)===reference.sha256,'MENU_ENVELOPE_ARTIFACT_DRIFT');
+    menuEnvelopes.set(frameId,{envelope,reference,frameRef,layoutKey:null});
+    return {kind:'MENU_CALIBRATION_ENVELOPE',evidence_only:true,admissible_to_ordinary_classifier:false,
+      frame_id:frameId,session_id:sessionId,captured_at:capturedAt,popup_window_id:popup.window_number,
+      layer:popup.layer,save_all:saveAll.text,safe_bounds_px:safe,eroded_bounds_px:eroded,
+      uncertainty_px:envelope.uncertainty_px,reference};
+  }
+
   return Object.freeze({classify,classifyScrollWitness:args=>classify(args,{scrollWitness:true}),classifyChooser,
-    collectVisualCardDiagnostic,completeVisualCardDiagnostic,cache,scrollCache});
+    collectVisualCardDiagnostic,completeVisualCardDiagnostic,cache,scrollCache,menuEnvelopes});
 }

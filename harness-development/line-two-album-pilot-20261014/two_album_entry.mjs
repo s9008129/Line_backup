@@ -149,6 +149,7 @@ async function runAlbumWorkflow(runtime,{singleAlbum=false}={}) {
       adapter_evidence:{geometry:cached.geometryRef,ax:cached.axRef,boundary:analysis.boundary_evidence}};
   };
   const makeSession=projectAlbumSlot=>createHostedSession({app,bridge,retain:runtime.retain,classify,
+    collectMenuEnvelope:classifier.collectMenuEnvelope,
     classifyChooser:classifier.classifyChooser,requireV2:true,requireV3:true,chooser:runtime.chooser,
     beforeCapture:runtime.beforeCapture,afterCapture:runtime.afterCapture,resolveWindowLineage:runtime.windowLineage,
     projectAlbumSlot,sessionId,clock:runtime.clock,

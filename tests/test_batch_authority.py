@@ -178,6 +178,49 @@ def rebind_project_native_support(f,record):
     envelope['geometry']=geometry_ref;envelope['manifest']=manifest_ref
     record['mapping']['evidence']=f.ref('native-shaped-grounding-rebound-'+uuid.uuid4().hex+'.json',json_bytes(envelope))
 
+def project_menu_envelope(service,f,detail,fingerprint,*,popup_window_id=9,layer=101,frame_id=None,
+    captured_at=None,uncertainty=2,safe_bounds_px=(40,26,28,28)):
+    """Synthetic adapter-equivalent menu envelope record for copied production validators; never LINE evidence."""
+    width,height=detail['width'],detail['height']
+    frame_id=detail['frame_id'] if frame_id is None else frame_id
+    captured_at=detail['captured_at'] if captured_at is None else captured_at
+    safe=list(safe_bounds_px);margin=uncertainty+4
+    eroded=[safe[0]+margin,safe[1]+margin,safe[2]-2*margin,safe[3]-2*margin]
+    popup_sck=[20,10,90,90];label_sck=[30,20,60,60]
+    inner=dict(evidence_only=True,admissible_to_ordinary_classifier=False,frame_id=frame_id,
+        session_id=detail['session_id'],source_sha256=frame_id,source_ax_sha256='b'*64,
+        native=dict(bundle_id='jp.naver.line.mac',pid=detail['pid'],window_id=detail['window_id'],display_id=1,
+            cua_capture_bounds_points=[0,0,width,height]),
+        process_start=[1,0],
+        layer_identity=dict(owner_pid=detail['pid'],window_id=popup_window_id,layer=layer,
+            above_window_id=detail['window_id']),
+        popup=dict(window_number=popup_window_id,layer=layer,bounds_pt=[20,10,90,90],bounds_px=popup_sck,
+            cua_bounds_px=list(popup_sck),above_window_id=detail['window_id']),
+        save_all=dict(text='Save All',label_bounds_px=label_sck,cua_label_bounds_px=list(label_sck)),
+        mapping=dict(kind='SCK_TO_CUA_LOCAL',crop_px=[0,0,width,height],display_pt=[0,0,width,height],
+            backing_scale=1,cua_offset_px=[0,0],cua_scale=[1,1],
+            inverse='cua_px = sck_px * cua_scale / backing_scale + cua_offset_px'),
+        safe_bounds_px=safe,eroded_bounds_px=eroded,uncertainty_px=uncertainty,
+        ocr=[dict(text='Save All',confidence=0.99,bounds=label_sck,candidate_count=1)],
+        detail_fingerprint=fingerprint,detail_window_id=detail['window_id'],list_window_id=detail['window_id']+100)
+    reference=service.publish('menu-envelope-'+uuid.uuid4().hex+'.json',
+        dict(sourceBinding=dict(before=dict(value=None),after=dict(value=None)),menuEnvelope=inner))
+    return dict(kind='MENU_CALIBRATION_ENVELOPE',evidence_only=True,admissible_to_ordinary_classifier=False,
+        frame_id=frame_id,session_id=detail['session_id'],captured_at=captured_at,popup_window_id=popup_window_id,
+        layer=layer,save_all='Save All',safe_bounds_px=safe,eroded_bounds_px=eroded,uncertainty_px=uncertainty,
+        reference=reference)
+
+def project_menu_trigger(detail,cal):
+    return dict(frameId=detail['frame_id'],layoutKey=detail['layout_key'],point=cal['ellipsis'],
+        bounds_px=[112,12,6,6],interior_bounds_px=[108,8,20,20],dot_spacing=cal['dot_spacing'],
+        evidence_kind='PIXEL_STRUCTURE',component_count=3,uncertaintyPx=2)
+
+def project_menu_closure_proof(closure,envelope,target,layer=101):
+    return dict(kind='LINE_MENU_CLOSURE',frame_id=closure['frame_id'],menu_closed=True,no_activation=True,
+        layout_key=closure['layout_key'],popup_window_id=envelope['popup_window_id'],popup_layer=layer,
+        native_popup_absent=True,row_absent=True,closure_evidence_kind='NATIVE_WINDOW_ABSENCE_AND_FRESH_OCR',
+        detail_fingerprint=target)
+
 class AuthorityTests(unittest.TestCase):
     def setUp(self):self.f=Fixture()
     def tearDown(self):self.f.close()
@@ -542,18 +585,17 @@ class ProjectRuntimeBindingTests(unittest.TestCase):
             detail=self.f.observation([target],'ALBUM_DETAIL')
             closure=self.f.observation([target],'ALBUM_DETAIL')
             cal=dict(observed_at='2026-10-14T00:00:00+00:00',screenshot_width=128,screenshot_height=128,
-                ellipsis=[115,15],dot_spacing=5,save_all_point=[100,50],confidence='HIGH',evidence='')
+                ellipsis=[115,15],dot_spacing=5,save_all_point=[54,40],confidence='HIGH',evidence='')
             applicability=service.publish('adapter-applicability.json',dict(kind='LINE_MENU_APPLICABILITY',
                 provider='SCREEN_CAPTURE_KIT',line_version='LINE 9',language='en',window_class='LINE_MAIN',
                 layout_key=detail['layout_key'],dimensions=[128,128],native_scale=2,menu_order=['Save All']))
-            closure_ref=service.publish('adapter-closure.json',dict(kind='LINE_MENU_CLOSURE',frame_id=closure['frame_id'],
-                menu_closed=True,no_activation=True,detail_fingerprint=target))
+            envelope=project_menu_envelope(service,self.f,detail,target)
+            closure_ref=service.publish('adapter-closure.json',project_menu_closure_proof(closure,envelope,target))
             support=detail['mapping']['sck_support'];cal['evidence']=support['sha256']
             support_data=json.loads((self.f.root/support['path']).read_bytes())
             now=dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00','Z')
             claim=dict(version=2,kind='menu-calibration-no-io-pair',run_id=run_id,session_id=self.f.session,
-                detail=detail,menu_frame=detail,trigger=dict(frameId=detail['frame_id'],point=cal['ellipsis'],
-                    role='button',dot_spacing=cal['dot_spacing']),label='Save All',support=support,
+                detail=detail,menu_frame=envelope,trigger=project_menu_trigger(detail,cal),label='Save All',support=support,
                 guard=dict(verdict='PASS',provider='SCREEN_CAPTURE_KIT',pairFrameId=detail['frame_id'],
                     popupFrameId=support_data['sck_frame']['sha256'],supportSha256=support['sha256'],
                     actionPoint=cal['save_all_point']),calibration=cal,
@@ -563,7 +605,7 @@ class ProjectRuntimeBindingTests(unittest.TestCase):
                 opened_at=detail['captured_at'],closed_at=now)
             claim_ref=service.publish('adapter-calibration2.json',claim)
             menu=dict(label='Save All',frame_id=detail['frame_id'],layout_key=detail['layout_key'],evidence=claim_ref,
-                safe_bounds=[90,40,20,20],ellipsis_bounds=[112,12,6,6],
+                safe_bounds=[40,26,28,28],ellipsis_bounds=[112,12,6,6],
                 closure_trace=['OPEN_MENU','OBSERVE_SAVE_ALL','CLOSE_WITHOUT_COMMAND','DETAIL_MATCH'],
                 closure_reference=closure_ref,applicability_reference=applicability)
             claim['trigger']['bounds_px']=menu['ellipsis_bounds']
@@ -663,15 +705,14 @@ class ProjectRuntimeBindingTests(unittest.TestCase):
             closure,_=project_native_shaped_observation(self.f,[target],'ALBUM_DETAIL')
             support=detail['mapping']['sck_support'];support_data=json.loads((self.f.root/support['path']).read_bytes())
             cal=dict(observed_at=detail['captured_at'],screenshot_width=128,screenshot_height=128,ellipsis=[115,15],
-                dot_spacing=5,save_all_point=[100,50],confidence='HIGH',evidence=support['sha256'])
+                dot_spacing=5,save_all_point=[54,40],confidence='HIGH',evidence=support['sha256'])
             applicability=service.publish('positive-applicability.json',dict(kind='LINE_MENU_APPLICABILITY',provider='SCREEN_CAPTURE_KIT',
                 line_version='LINE fixture',language='en',window_class='LINE_MAIN',layout_key=detail['layout_key'],
                 dimensions=[128,128],native_scale=2,menu_order=['Save All']))
-            closure_ref=service.publish('positive-closure.json',dict(kind='LINE_MENU_CLOSURE',frame_id=closure['frame_id'],
-                menu_closed=True,no_activation=True,detail_fingerprint=target))
+            envelope=project_menu_envelope(service,self.f,detail,target)
+            closure_ref=service.publish('positive-closure.json',project_menu_closure_proof(closure,envelope,target))
             claim=dict(version=2,kind='menu-calibration-no-io-pair',run_id=run_id,session_id=self.f.session,
-                detail=detail,menu_frame=detail,trigger=dict(frameId=detail['frame_id'],point=cal['ellipsis'],role='button',
-                    dot_spacing=cal['dot_spacing'],bounds_px=[112,12,6,6]),label='Save All',support=support,
+                detail=detail,menu_frame=envelope,trigger=project_menu_trigger(detail,cal),label='Save All',support=support,
                 guard=dict(verdict='PASS',provider='SCREEN_CAPTURE_KIT',pairFrameId=detail['frame_id'],
                     popupFrameId=support_data['sck_frame']['sha256'],supportSha256=support['sha256'],actionPoint=cal['save_all_point']),
                 calibration=cal,closure_reference=closure_ref,applicability_reference=applicability,
@@ -679,7 +720,7 @@ class ProjectRuntimeBindingTests(unittest.TestCase):
                 opened_at=detail['captured_at'],closed_at=closure['captured_at'])
             claim_ref=service.publish('positive-calibration2.json',claim)
             menu=dict(label='Save All',frame_id=detail['frame_id'],layout_key=detail['layout_key'],evidence=claim_ref,
-                safe_bounds=[90,40,20,20],ellipsis_bounds=[112,12,6,6],
+                safe_bounds=[40,26,28,28],ellipsis_bounds=[112,12,6,6],
                 closure_trace=['OPEN_MENU','OBSERVE_SAVE_ALL','CLOSE_WITHOUT_COMMAND','DETAIL_MATCH'],
                 closure_reference=closure_ref,applicability_reference=applicability)
             calibrated,_=self.run_project_cli('calibrate',grant_path,prepared['receipt'],dict(detail=detail,calibration=cal,menu=menu,closure=closure))

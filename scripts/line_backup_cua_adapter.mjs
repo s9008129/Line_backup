@@ -309,7 +309,7 @@ export function createAlbumSupportCallbacks({invokeProducer}) {
   return Object.freeze({captureMenuSupport,guardMenu});
 }
 
-export function createHostedSession({app, bridge, retain, classify, classifyChooser = null, requireV2 = false,
+export function createHostedSession({app, bridge, retain, classify, collectMenuEnvelope = null, classifyChooser = null, requireV2 = false,
     requireV3 = false, chooser = null, beforeCapture = null, afterCapture = null,
     resolveWindowLineage = null, projectAlbumSlot=null, sessionId = randomUUID(),
     clock = () => performance.now(), wait = ms => new Promise(r => setTimeout(r,ms)), menuWaitMs = 1200}) {
@@ -355,7 +355,9 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
     requireFact(response?.reservation?.id === reservation.id && response.reservation.state === 'CONSUMED',
       'GUI_LEDGER_CONSUME_REFUSED');
   }
-  async function observe(checkpoint) {
+  // Menu envelopes come only from the purpose-selected collector. They are never routed
+  // through the ordinary classification wrapper, which binds to the ordinary frame cache.
+  async function observe(checkpoint,{menuEnvelope=false}={}) {
     requireFact(!stopped,'SESSION_STOPPED');
     await countObservation('paired',{checkpoint});
     // Native context sampling happens outside the GUI capture call. The callback
@@ -384,8 +386,12 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
       sourceBinding:beforeContext,capturedAt:requestStartedAtUtc,requestStartedAtUtc,requestEndedAtUtc,monotonicInterval}) : null;
     const sourceBinding = hasCaptureContextHooks ? Object.freeze({before:beforeContext,after:afterContext}) : null;
     const capturedContext = sourceBinding;
-    const observation = await classify({capture,saved,frameId,sessionId,sourceBinding,capturedContext,capturedAt:requestStartedAtUtc,
-      requestStartedAtUtc,requestEndedAtUtc,monotonicInterval});
+    requireFact(!menuEnvelope||typeof collectMenuEnvelope==='function','MENU_ENVELOPE_COLLECTOR_REQUIRED');
+    const observation = menuEnvelope
+      ? await collectMenuEnvelope({capture,saved,frameId,sessionId,sourceBinding,capturedContext,
+        capturedAt:requestStartedAtUtc,requestStartedAtUtc,requestEndedAtUtc,monotonicInterval})
+      : await classify({capture,saved,frameId,sessionId,sourceBinding,capturedContext,
+        capturedAt:requestStartedAtUtc,requestStartedAtUtc,requestEndedAtUtc,monotonicInterval});
     requireFact(observation.frame_id === frameId && observation.session_id === sessionId,'CLASSIFIER_FRAME_MISMATCH');
     if(observation.parsed_ax)observation.parsed_ax={...observation.parsed_ax,raw_sha256:sha(new TextEncoder().encode(capture.state))};
     retainedObservationProofs.set(observation,{frameId,saved,screenshot:new Uint8Array(screenshot),axRaw:capture.state});
@@ -464,18 +470,24 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
     try {
       const trigger=await locateMenu(detail,{phase:'TRIGGER'});
       requireFact(clock()>=detailStarted&&clock()-detailStarted<=5000,'FRESH_CAPTURE_EXPIRED_AFTER_LOCATOR');
-      requireFact(point(trigger?.point)&&trigger.frameId===detail.frame_id&&trigger.role==='button'
+      requireFact(point(trigger?.point)&&trigger.frameId===detail.frame_id
+        &&trigger.evidence_kind==='PIXEL_STRUCTURE'&&trigger.component_count>=3
         &&trigger.point.every(Number.isInteger)&&Array.isArray(trigger.bounds_px)
-        &&Number.isFinite(trigger.dot_spacing)&&trigger.dot_spacing>0,'MENU_TRIGGER_UNKNOWN');
+        &&Array.isArray(trigger.interior_bounds_px)&&trigger.interior_bounds_px[2]>=16
+        &&trigger.interior_bounds_px[3]>=16&&Number.isFinite(trigger.dot_spacing)&&trigger.dot_spacing>0,
+        'MENU_TRIGGER_UNKNOWN');
       latest=null;record('MENU_OPEN_INVOCATION',{runId});await app.click(trigger.point);await extraAX();
       record('MENU_OPEN_RETURNED');await wait(menuWaitMs);
-      const openFrame=await observe(`PAIR-${activeProjectSlot}-MENU_OPEN`);
-      requireFact(openFrame.surface==='ALBUM_DETAIL'&&openFrame.session_id===sessionId,'MENU_OPEN_CONTEXT_DRIFT');
-      const row=await locateMenu(openFrame,{phase:'ROW'});
+      const openFrame=await observe(`PAIR-${activeProjectSlot}-MENU_OPEN`,{menuEnvelope:true});
+      requireFact(openFrame.kind==='MENU_CALIBRATION_ENVELOPE'&&openFrame.evidence_only===true
+        &&openFrame.admissible_to_ordinary_classifier===false&&openFrame.session_id===sessionId,'MENU_OPEN_CONTEXT_DRIFT');
+      const row=await locateMenu(openFrame,{phase:'ROW',detail});
       requireFact(point(row?.save_all)&&row.save_all.every(Number.isInteger)
+        &&point(row?.dismiss_point)&&row.dismiss_point.every(Number.isInteger)
         &&row.frameId===openFrame.frame_id&&row.layoutKey===openFrame.layout_key
         &&Array.isArray(row.menuBounds)&&Array.isArray(row.addressableBounds)&&Array.isArray(row.safeBounds)
-        &&Array.isArray(row.ellipsisBounds)&&(row.label==='儲存全部'||row.label==='Save All'),'MENU_ROW_UNKNOWN');
+        &&Array.isArray(row.dismiss_bounds_px)&&row.evidence_kind==='FRESH_SCK_OCR_TRANSFORM'
+        &&(row.label==='儲存全部'||row.label==='Save All'),'MENU_ROW_UNKNOWN');
       const action={run_id:runId,action_id:`CAL-${sessionId}-${openFrame.frame_id.slice(0,12)}`,
         owner:sessionId,save_all:row.save_all};
       await countObservation('popup');
@@ -487,8 +499,13 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
       record('MENU_SUPPORT_GUARD_PASS',{support:support.reference,guard});
       requireFact(clock()>=detailStarted&&clock()-detailStarted<=5000,'FRESH_CAPTURE_EXPIRED_BEFORE_CLOSE');
       fresh(openFrame.frame_id);
-      latest=null;record('MENU_CLOSE_INVOCATION');await app.pressKey('Escape');await extraAX();
+      latest=null;record('MENU_CLOSE_INVOCATION',{target:'TITLE_LABEL',point:row.dismiss_point});
+      await app.click(row.dismiss_point);await extraAX();
       record('MENU_CLOSE_RETURNED');const closure=await observe(`PAIR-${activeProjectSlot}-MENU_CLOSURE`);
+      const closureFacts=await locateMenu(closure,{phase:'CLOSURE',detail});
+      requireFact(closureFacts?.native_popup_absent===true&&closureFacts.row_absent===true
+        &&closureFacts.popup_window_id===row.popup_window_id&&closureFacts.detail_window_id===detail.window_id,
+        'MENU_CLOSURE_POPUP_PRESENT');
       const closureFingerprint=closure.detail_identity?.fingerprint??closure.cards?.[0]?.fingerprint;
       const detailFingerprint=detail.detail_identity?.fingerprint??detail.cards?.[0]?.fingerprint;
       requireFact(closure.surface==='ALBUM_DETAIL'&&closure.session_id===sessionId&&closure.group_key===detail.group_key
@@ -523,6 +540,9 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
         const applicabilityReference=await retain({artifact:applicability,kind:'menu-applicability',frameId:detail.frame_id,sessionId});
         const closureProof={kind:'LINE_MENU_CLOSURE',run_id:runId,frame_id:closure.frame_id,
           frame:latest.saved,ax:latest.saved.ax,menu_closed:true,no_activation:true,
+          layout_key:closure.layout_key,popup_window_id:row.popup_window_id,popup_layer:row.popup_layer,
+          native_popup_absent:closureFacts.native_popup_absent,row_absent:closureFacts.row_absent,
+          closure_evidence_kind:closureFacts.evidence_kind,
           detail_fingerprint:detail.detail_identity?.fingerprint??detail.cards?.[0]?.fingerprint,
           closure_trace:menu.closure_trace};
         const closureReference=await retain({artifact:closureProof,kind:'menu-closure',frameId:closure.frame_id,sessionId});

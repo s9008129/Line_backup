@@ -6,6 +6,10 @@ const need=(ok,code)=>{if(!ok)throw Object.assign(Error(code),{code});};
 const shape=b=>[b.x,b.y,b.width,b.height];
 const inside=(a,b)=>a[0]>=b[0]&&a[1]>=b[1]&&a[0]+a[2]<=b[0]+b[2]&&a[1]+a[3]<=b[1]+b[3];
 const intersects=(a,b)=>a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1]+a[3];
+const intersection=(a,b)=>{const x=Math.max(a[0],b[0]),y=Math.max(a[1],b[1]);
+  const r=Math.min(a[0]+a[2],b[0]+b[2]),bottom=Math.min(a[1]+a[3],b[1]+b[3]);
+  return [x,y,r-x,bottom-y];};
+const erode=(r,m)=>[r[0]+m,r[1]+m,r[2]-2*m,r[3]-2*m];
 const role=v=>({'AXWindow':'window','AXSheet':'sheet','AXDialog':'dialog','AXRow':'row','AXGroup':'group',
   'AXCell':'cell','AXImage':'image','AXStaticText':'static text','AXTextField':'text field','AXButton':'button',
   'AXScrollBar':'scroll bar','AXScrollArea':'scroll area','AXMenu':'menu','AXMenuItem':'menu item'}[v]??String(v??'').replace(/^AX/,'').toLowerCase());
@@ -58,7 +62,7 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
   const beforeCapture=()=>native();
   const afterCapture=({saved})=>native(saved);
   async function analyzeCapture({frameId,sessionId,capturedAt,width,height,sourceAXSha256,sourceBinding},
-      {visualCardDiagnostic=false,scrollWitness=false}={}) {
+      {visualCardDiagnostic=false,scrollWitness=false,menuCalibration=false}={}) {
     const before=sourceBinding?.before,after=sourceBinding?.after;
     const value=after?.value;verifyNativePair(before?.value,value);
     const visual=value.visual;
@@ -85,8 +89,31 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
     need(Array.isArray(ordered),'OCCLUSION_EVIDENCE_MISSING');
     const at=ordered.findIndex(w=>w.windowNumber===win.windowNumber&&w.ownerPID===value.target.pid);
     need(at>=0,'WINDOW_NOT_ON_SCREEN');
-    for(const w of ordered.slice(0,at))need(w.alpha===0||(typeof w.alpha==='number'&&w.alpha>0
-      &&w.isOnScreen===true&&w.boundsPt&&!intersects(shape(w.boundsPt),bounds)),'WINDOW_OCCLUDED');
+    let menuOverlay=null;
+    if(menuCalibration){
+      // The authorized menu popup is the one LINE-owned raised-layer window above the fresh
+      // authenticated detail grid; it is expected to overlap that grid. Every other window above
+      // the grid stays subject to the ordinary occlusion rule (transparent, or disjoint).
+      const overlays=[];
+      for(const w of ordered.slice(0,at)){
+        const raised=w.ownerPID===value.target.pid&&Number.isInteger(w.cgLayer)&&w.cgLayer>0;
+        if(raised){
+          need(typeof w.alpha==='number'&&w.alpha>0&&w.isOnScreen===true&&w.boundsPt
+            &&Number.isInteger(w.windowNumber)&&w.windowNumber>0&&w.windowNumber!==win.windowNumber,
+            'MENU_OVERLAY_WINDOW_IDENTITY');
+          overlays.push({window:shape(w.boundsPt),layer:w.cgLayer,windowNumber:w.windowNumber,
+            owner_pid:w.ownerPID,below_window_id:value.focusedWindowID});
+          continue;
+        }
+        need(w.alpha===0||(typeof w.alpha==='number'&&w.alpha>0&&w.isOnScreen===true&&w.boundsPt
+          &&!intersects(shape(w.boundsPt),bounds)),'WINDOW_OCCLUDED');
+      }
+      need(overlays.length===1,'MENU_OVERLAY_NOT_OBSERVED');
+      menuOverlay=overlays[0];
+    }else{
+      for(const w of ordered.slice(0,at))need(w.alpha===0||(typeof w.alpha==='number'&&w.alpha>0
+        &&w.isOnScreen===true&&w.boundsPt&&!intersects(shape(w.boundsPt),bounds)),'WINDOW_OCCLUDED');
+    }
     const all=new Map(value.nodes.map(n=>[n.id,n]));const selected=[];const visited=new Set();
     function visit(id){need(!visited.has(id),'AX_CYCLE');visited.add(id);const n=all.get(id);need(n,'AX_NODE_MISSING');
       selected.push(n);for(const child of n.children)visit(child);}
@@ -184,6 +211,61 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
       const reference=await retain({artifact:{sourceBinding,analysis:diagnostic},
         kind:'visual-card-diagnostic-analysis',frameId});
       return {...diagnostic,reference};
+    }
+    // Menu calibration: one authorized LINE popup over the fresh authenticated detail grid.
+    if(menuCalibration){
+      need(surface==='ALBUM_DETAIL'&&menuOverlay,'MENU_ENVELOPE_DETAIL_REQUIRED');
+      // The menu envelope belongs to the same LINE process and the detail window itself: the
+      // focused window must be the fresh detail grid, never the originating list window.
+      need(detailSeed&&Number.isInteger(win.windowNumber)
+        &&win.windowNumber!==detailSeed.prior.analysis.native.window_id,'MENU_ENVELOPE_WINDOW_MISMATCH');
+      const menuPt=menuOverlay.window;
+      need(inside(menuPt,shape(display[0].boundsPt)),'MENU_REGION_OUTSIDE_DISPLAY');
+      const backing=display[0].backingScale;
+      need(Number.isFinite(backing)&&backing>0,'MENU_DISPLAY_SCALE');
+      const crop=[0,0,width,height];
+      const displayPt=shape(display[0].boundsPt);
+      const menuPx=[(menuPt[0]-displayPt[0])*backing,(menuPt[1]-displayPt[1])*backing,
+        menuPt[2]*backing,menuPt[3]*backing];
+      need(inside(menuPx,[0,0,displayPt[2]*backing,displayPt[3]*backing]),'MENU_REGION_OUTSIDE_FULL_DISPLAY');
+      const rows=ocr.filter(o=>['儲存全部','Save All'].includes(o.text)&&o.confidence>=.5&&o.candidate_count===1)
+        .sort((a,b)=>a.bounds[1]-b.bounds[1]);
+      need(rows.length===1,'MENU_SAVE_ALL_ROW_NOT_UNIQUE');
+      const label=rows[0].bounds;
+      // Measured SCK -> hosted CUA transform. Raw OCR/popup evidence stays in SCK display pixels;
+      // every crop/intersection bound below is the hosted CUA-local geometry the click uses.
+      const cua_scale=[width/bounds[2],height/bounds[3]];
+      const cua_offset_px=[-bounds[0]*cua_scale[0],-bounds[1]*cua_scale[1]];
+      const toCuaLocal=b=>[b[0]*cua_scale[0]/backing+cua_offset_px[0],b[1]*cua_scale[1]/backing+cua_offset_px[1],
+        b[2]*cua_scale[0]/backing,b[3]*cua_scale[1]/backing];
+      const menuCua=toCuaLocal(menuPx),labelCua=toCuaLocal(label);
+      const popupIntersect=intersection(crop,menuCua);
+      const bothIntersect=intersection(popupIntersect,labelCua);
+      need(bothIntersect[2]>=16&&bothIntersect[3]>=16,'MENU_SAFE_INTERSECTION');
+      const safe=bothIntersect;
+      need(inside(safe,crop),'MENU_SAFE_INSIDE_CROP');
+      const u=Number.isFinite(display[0].uncertaintyPixels)?display[0].uncertaintyPixels:2;
+      const eroded=erode(safe,u+4);
+      need(eroded[2]>=16&&eroded[3]>=16&&inside(eroded,crop),'MENU_SAFE_UNKNOWN');
+      const menuEnvelope={evidence_only:true,admissible_to_ordinary_classifier:false,
+        frame_id:frameId,session_id:sessionId,source_sha256:frameId,source_ax_sha256:sourceAXSha256,
+        native:{bundle_id:value.target.bundleID,pid:value.target.pid,window_id:win.windowNumber,
+          display_id:display[0].displayID,cua_capture_bounds_points:bounds},
+        process_start:[value.target.startTimeSeconds,value.target.startTimeMicroseconds],
+        layer_identity:{owner_pid:menuOverlay.owner_pid,window_id:menuOverlay.windowNumber,
+          layer:menuOverlay.layer,above_window_id:menuOverlay.below_window_id},
+        popup:{window_number:menuOverlay.windowNumber,layer:menuOverlay.layer,bounds_pt:menuPt,
+          bounds_px:menuPx,cua_bounds_px:menuCua,above_window_id:win.windowNumber},
+        save_all:{text:rows[0].text,label_bounds_px:label,cua_label_bounds_px:labelCua},
+        mapping:{kind:'SCK_TO_CUA_LOCAL',crop_px:crop,display_pt:displayPt,backing_scale:backing,
+          cua_offset_px,cua_scale,inverse:'cua_px = sck_px * cua_scale / backing_scale + cua_offset_px'},
+        safe_bounds_px:safe,eroded_bounds_px:eroded,uncertainty_px:u,
+        ocr:ocr.map(o=>({text:o.text,confidence:o.confidence,bounds:o.bounds,candidate_count:o.candidate_count})),
+        detail_fingerprint:detailSeed.fingerprint,
+        detail_window_id:win.windowNumber,list_window_id:detailSeed.prior.analysis.native.window_id};
+      const reference=await retain({artifact:{sourceBinding,menuEnvelope},
+        kind:'menu-calibration-envelope',frameId});
+      return {...menuEnvelope,reference};
     }
     const scroll=elements.filter(e=>e.role==='scroll bar');
     if(surface==='ALBUMS'){
@@ -363,6 +445,8 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
     contexts.set(frameId,{analysis,reference:ref,sourceBinding});return analysis;
   }
   const analyzeVisualCardDiagnostic=args=>analyzeCapture(args,{visualCardDiagnostic:true});
+  const analyzeMenuEnvelope=args=>analyzeCapture(args,{menuCalibration:true});
   const analyzeScrollWitness=args=>analyzeCapture(args,{scrollWitness:true});
-  return Object.freeze({beforeCapture,afterCapture,analyzeCapture,analyzeVisualCardDiagnostic,analyzeScrollWitness,contexts,native});
+  return Object.freeze({beforeCapture,afterCapture,analyzeCapture,analyzeVisualCardDiagnostic,analyzeScrollWitness,
+    analyzeMenuEnvelope,contexts,native});
 }

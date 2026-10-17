@@ -2,6 +2,7 @@
 import copy
 import datetime as dt
 import json
+import math
 import os
 from pathlib import Path
 import uuid
@@ -9,7 +10,7 @@ from line_backup_acceptance.common import AcceptanceError,json_bytes,utc_now,_ch
 from line_backup_acceptance.project_binding import ProjectReader,strict_json,history_decision,integer,sha
 from .schema import require,POLICY
 from .store import Store
-from .observations import artifact,catalog,card_target,chooser_observation,validate_download_start,frame,point,rect,_support
+from .observations import artifact,catalog,card_target,chooser_observation,validate_download_start,frame,inside,point,rect,_support
 from . import content
 
 ONE56_GRANT_VERSION='line-two-album-project-grant-1'
@@ -27,6 +28,120 @@ DISPATCH_EVENT_ORDER_V2=['ELLIPSIS_INVOCATION','ELLIPSIS_RETURNED','SCK_MENU_GUA
     'SAVE_ALL_RETURNED','CHOOSER_APPEARED','GO_TO_FOLDER','PATH_FILLED','DESTINATION_SELECTED',
     'CONFIRM_INVOCATION','CONFIRM_ATTEMPTED','DOWNLOAD_EVIDENCE_OBSERVED','CEASE_INPUT_AFTER_DOWNLOAD_START']
 DISPATCH_EVENT_ORDER_V3=[name for name in DISPATCH_EVENT_ORDER_V2 if name!='SCK_MENU_GUARD_PASS']
+
+MENU_ENVELOPE_RECORD_KEYS={'kind','evidence_only','admissible_to_ordinary_classifier','frame_id','session_id',
+    'captured_at','popup_window_id','layer','save_all','safe_bounds_px','eroded_bounds_px','uncertainty_px','reference'}
+MENU_ENVELOPE_ARTIFACT_KEYS={'sourceBinding','menuEnvelope'}
+MENU_ENVELOPE_INNER_KEYS={'evidence_only','admissible_to_ordinary_classifier','frame_id','session_id','source_sha256',
+    'source_ax_sha256','native','process_start','layer_identity','popup','save_all','mapping','safe_bounds_px',
+    'eroded_bounds_px','uncertainty_px','ocr','detail_fingerprint','detail_window_id','list_window_id'}
+MENU_ENVELOPE_NATIVE_KEYS={'bundle_id','pid','window_id','display_id','cua_capture_bounds_points'}
+MENU_ENVELOPE_LAYER_KEYS={'owner_pid','window_id','layer','above_window_id'}
+MENU_ENVELOPE_POPUP_KEYS={'window_number','layer','bounds_pt','bounds_px','cua_bounds_px','above_window_id'}
+MENU_ENVELOPE_ROW_KEYS={'text','label_bounds_px','cua_label_bounds_px'}
+MENU_ENVELOPE_MAPPING_KEYS={'kind','crop_px','display_pt','backing_scale','cua_offset_px','cua_scale','inverse'}
+MENU_ENVELOPE_OCR_KEYS={'text','confidence','bounds','candidate_count'}
+
+def _finite_box(value,code):
+    require(isinstance(value,list) and len(value)==4
+        and all(type(v) in (int,float) and math.isfinite(v) for v in value)
+        and value[2]>0 and value[3]>0,code)
+    return value
+
+def menu_envelope(reader,record,detail,cfg,run):
+    """Typed project menu overlay for calibration only: evidence-only, never an ordinary CLEAR frame.
+
+    The overlay owns its own native popup identity, SCK/OCR row and SCK->CUA transform; ordinary frame
+    validation and the ordinary classifier cache stay untouched by design.
+    """
+    require(isinstance(record,dict) and set(record)==MENU_ENVELOPE_RECORD_KEYS,'MENU_ENVELOPE_SCHEMA')
+    require(record['kind']=='MENU_CALIBRATION_ENVELOPE' and record['evidence_only'] is True
+        and record['admissible_to_ordinary_classifier'] is False,'MENU_ENVELOPE_SCHEMA')
+    require(record['session_id']==detail['session_id'] and integer(record['layer'],1)
+        and integer(record['popup_window_id'],1) and record['popup_window_id']!=detail['window_id']
+        and record['save_all'] in ('儲存全部','Save All'),'MENU_ENVELOPE_IDENTITY')
+    width,height=detail['width'],detail['height']
+    uncertainty=record['uncertainty_px']
+    require(type(uncertainty) in (int,float) and math.isfinite(uncertainty) and uncertainty>=2,
+        'MENU_ENVELOPE_UNCERTAINTY')
+    safe=rect(record['safe_bounds_px'],width,height);eroded=rect(record['eroded_bounds_px'],width,height)
+    require(eroded==[safe[0]+uncertainty+4,safe[1]+uncertainty+4,safe[2]-2*(uncertainty+4),
+        safe[3]-2*(uncertainty+4)],'MENU_ENVELOPE_ERODED_UNPROVEN')
+    require(safe[2]>=16 and safe[3]>=16 and eroded[2]>=16 and eroded[3]>=16,'MENU_ENVELOPE_SAFE_UNPROVEN')
+    envelope=strict_json(artifact(reader,record['reference']),'INVALID_MENU_ENVELOPE_EVIDENCE')
+    require(isinstance(envelope,dict) and set(envelope)==MENU_ENVELOPE_ARTIFACT_KEYS,'INVALID_MENU_ENVELOPE_EVIDENCE')
+    inner=envelope['menuEnvelope']
+    require(isinstance(inner,dict) and set(inner)==MENU_ENVELOPE_INNER_KEYS,'MENU_ENVELOPE_SCHEMA')
+    require(inner['evidence_only'] is True and inner['admissible_to_ordinary_classifier'] is False
+        and inner['frame_id']==record['frame_id'] and inner['session_id']==record['session_id']
+        and inner['source_sha256']==record['frame_id'] and isinstance(inner['source_ax_sha256'],str)
+        and len(inner['source_ax_sha256'])==64,'MENU_ENVELOPE_SCHEMA')
+    native=inner['native']
+    require(isinstance(native,dict) and set(native)==MENU_ENVELOPE_NATIVE_KEYS
+        and native['bundle_id']==cfg['app_identifier'] and native['pid']==detail['pid']
+        and native['window_id']==detail['window_id'] and integer(native['display_id'],1),
+        'MENU_ENVELOPE_NATIVE_IDENTITY')
+    capture=_finite_box(native['cua_capture_bounds_points'],'MENU_ENVELOPE_NATIVE_BOUNDS')
+    popup=inner['popup']
+    require(isinstance(popup,dict) and set(popup)==MENU_ENVELOPE_POPUP_KEYS
+        and popup['window_number']==record['popup_window_id'] and popup['layer']==record['layer']
+        and popup['above_window_id']==detail['window_id'] and popup['window_number']!=detail['window_id'],
+        'MENU_ENVELOPE_POPUP')
+    _finite_box(popup['bounds_px'],'MENU_ENVELOPE_POPUP_BOUNDS')
+    popup_cua=rect(popup['cua_bounds_px'],width,height)
+    _finite_box(popup['bounds_pt'],'MENU_ENVELOPE_POPUP_BOUNDS')
+    layer=inner['layer_identity']
+    require(isinstance(layer,dict) and set(layer)==MENU_ENVELOPE_LAYER_KEYS
+        and layer['owner_pid']==detail['pid'] and layer['window_id']==popup['window_number']
+        and layer['layer']==popup['layer'] and layer['above_window_id']==detail['window_id'],
+        'MENU_ENVELOPE_LAYER_IDENTITY')
+    process=inner['process_start']
+    require(isinstance(process,list) and len(process)==2 and all(integer(v,0) for v in process),
+        'MENU_ENVELOPE_PROCESS')
+    row=inner['save_all']
+    require(isinstance(row,dict) and set(row)==MENU_ENVELOPE_ROW_KEYS and row['text']==record['save_all']
+        and row['text'] in ('儲存全部','Save All'),'MENU_ENVELOPE_ROW')
+    _finite_box(row['label_bounds_px'],'MENU_ENVELOPE_ROW_BOUNDS')
+    label=rect(row['cua_label_bounds_px'],width,height)
+    mapping=inner['mapping']
+    require(isinstance(mapping,dict) and set(mapping)==MENU_ENVELOPE_MAPPING_KEYS
+        and mapping['kind']=='SCK_TO_CUA_LOCAL' and mapping['crop_px']==[0,0,width,height]
+        and type(mapping['backing_scale']) in (int,float) and mapping['backing_scale']>0
+        and isinstance(mapping['cua_scale'],list) and len(mapping['cua_scale'])==2
+        and all(type(v) in (int,float) and v>0 for v in mapping['cua_scale'])
+        and isinstance(mapping['cua_offset_px'],list) and len(mapping['cua_offset_px'])==2
+        and all(type(v) in (int,float) and math.isfinite(v) for v in mapping['cua_offset_px'])
+        and isinstance(mapping['inverse'],str) and mapping['inverse'],'MENU_ENVELOPE_MAPPING')
+    _finite_box(mapping['display_pt'],'MENU_ENVELOPE_MAPPING')
+    scale_0,scale_1=mapping['cua_scale'];offset_0,offset_1=mapping['cua_offset_px'];backing=mapping['backing_scale']
+    def to_cua_local(box):
+        return [box[0]*scale_0/backing+offset_0,box[1]*scale_1/backing+offset_1,
+            box[2]*scale_0/backing,box[3]*scale_1/backing]
+    def drift(a,b):
+        return max(abs(v-b[i]) for i,v in enumerate(a))
+    require(drift(to_cua_local(popup['bounds_px']),popup['cua_bounds_px'])<=1
+        and drift(to_cua_local(row['label_bounds_px']),row['cua_label_bounds_px'])<=1,
+        'MENU_ENVELOPE_TRANSFORM_DRIFT')
+    require(inside(safe,popup_cua) and inside(safe,label),'MENU_ENVELOPE_SAFE_UNPROVEN')
+    ocr=inner['ocr']
+    require(isinstance(ocr,list),'MENU_ENVELOPE_OCR')
+    for item in ocr:
+        require(isinstance(item,dict) and set(item)==MENU_ENVELOPE_OCR_KEYS
+            and isinstance(item['text'],str) and type(item['confidence']) in (int,float)
+            and 0<=item['confidence']<=1 and integer(item['candidate_count'],1),'MENU_ENVELOPE_OCR')
+        rect(item['bounds'],width,height)
+    require(inner['detail_fingerprint']==run['fingerprint'] and inner['detail_window_id']==detail['window_id']
+        and inner['list_window_id']!=inner['detail_window_id'],'MENU_ENVELOPE_DETAIL_BINDING')
+    require(inside(eroded,capture),'MENU_ENVELOPE_NATIVE_BOUNDS')
+    return dict(inner=inner,native=native,popup=popup,capture=capture,safe=safe,eroded=eroded,
+        captured_at=record['captured_at'])
+
+def menu_envelope_support(reader,ref,envelope,detail,cfg,*,now,max_age):
+    """Bind the SCK support/OCR sidecar to the menu-open frame identity carried by the envelope."""
+    proxy=dict(frame_id=envelope['inner']['frame_id'],session_id=envelope['inner']['session_id'],
+        pid=envelope['native']['pid'],window_id=envelope['native']['window_id'],layout_key=detail['layout_key'],
+        captured_at=envelope['captured_at'],width=detail['width'],height=detail['height'])
+    return _support(reader,ref,proxy,cfg,now=now,max_age=max_age)
 
 def run_barrier_ok(run):
     return (run['workflow_outcome']=='VERIFIED' or (run['workflow_outcome']=='SAFE_ABORT'
@@ -399,11 +514,19 @@ class Service:
                     and calibration.get('evidence')==claim.get('support',{}).get('sha256'),
                     'PROJECT_CALIBRATION_GUARD')
                 trigger=claim['trigger']
-                require(isinstance(trigger,dict) and trigger.get('frameId')==detail['frame_id']
-                    and trigger.get('role')=='button' and trigger.get('point')==calibration['ellipsis']
-                    and trigger.get('bounds_px')==menu['ellipsis_bounds']
-                    and type(trigger.get('dot_spacing')) in (int,float) and trigger['dot_spacing']>0
-                    and calibration.get('dot_spacing')==trigger['dot_spacing'],'PROJECT_CALIBRATION_TRIGGER')
+                require(isinstance(trigger,dict) and set(trigger)=={'frameId','layoutKey','point','bounds_px',
+                    'interior_bounds_px','dot_spacing','evidence_kind','component_count','uncertaintyPx'}
+                    and trigger['frameId']==detail['frame_id'] and trigger['layoutKey']==detail['layout_key']
+                    and trigger['point']==calibration['ellipsis'] and trigger['bounds_px']==menu['ellipsis_bounds']
+                    and trigger['evidence_kind']=='PIXEL_STRUCTURE' and integer(trigger['component_count'],3)
+                    and type(trigger['dot_spacing']) in (int,float) and trigger['dot_spacing']>0
+                    and type(trigger['uncertaintyPx']) in (int,float)
+                    and calibration.get('dot_spacing')==trigger['dot_spacing'],
+                    'PROJECT_CALIBRATION_TRIGGER')
+                rect(trigger['bounds_px'],detail['width'],detail['height'])
+                interior=rect(trigger['interior_bounds_px'],detail['width'],detail['height'])
+                require(interior[2]>=16 and interior[3]>=16,'PROJECT_CALIBRATION_TRIGGER')
+                point(trigger['point'],interior,0)
                 try:
                     opened=dt.datetime.fromisoformat(claim['opened_at'].replace('Z','+00:00'))
                     closed=dt.datetime.fromisoformat(claim['closed_at'].replace('Z','+00:00'))
@@ -412,12 +535,12 @@ class Service:
                 require(opened.tzinfo is not None and closed.tzinfo is not None and closed>=opened
                     and (closed-opened).total_seconds()<=6,'PROJECT_CALIBRATION_TIME')
                 frame(reader,claim['detail'],snap['config'],session=m['session_id'])
-                frame(reader,claim['menu_frame'],snap['config'],session=m['session_id'])
-                menu_support=_support(reader,claim['support'],claim['menu_frame'],snap['config'],
+                envelope=menu_envelope(reader,claim['menu_frame'],claim['detail'],snap['config'],r)
+                bound_support=menu_envelope_support(reader,claim['support'],envelope,claim['detail'],snap['config'],
                     now=closed.astimezone(dt.timezone.utc),max_age=5)
-                popup_raw=artifact(reader,menu_support['sidecar']['sck_frame'])
+                popup_raw=artifact(reader,bound_support['sidecar']['sck_frame'])
                 require(claim['guard'].get('popupFrameId')==sha(popup_raw)
-                    and claim['guard'].get('popupFrameId')!=claim['menu_frame']['frame_id'],
+                    and claim['guard'].get('popupFrameId')!=envelope['inner']['frame_id'],
                     'PROJECT_CALIBRATION_POPUP_BINDING')
                 applicability=strict_json(artifact(reader,claim['applicability_reference']),'PROJECT_CALIBRATION_APPLICABILITY')
                 closure_proof=strict_json(artifact(reader,claim['closure_reference']),'PROJECT_CALIBRATION_CLOSURE')
@@ -430,6 +553,11 @@ class Service:
                     'PROJECT_CALIBRATION_APPLICABILITY')
                 require(closure_proof.get('kind')=='LINE_MENU_CLOSURE' and closure_proof.get('frame_id')==closure['frame_id']
                     and closure_proof.get('menu_closed') is True and closure_proof.get('no_activation') is True
+                    and closure_proof.get('native_popup_absent') is True and closure_proof.get('row_absent') is True
+                    and closure_proof.get('popup_window_id')==envelope['popup']['window_number']
+                    and closure_proof.get('popup_layer')==envelope['popup']['layer']
+                    and closure_proof.get('layout_key')==closure['layout_key']
+                    and closure_proof.get('closure_evidence_kind')=='NATIVE_WINDOW_ABSENCE_AND_FRESH_OCR'
                     and closure_proof.get('detail_fingerprint')==r['fingerprint'],'PROJECT_CALIBRATION_CLOSURE')
                 require(self.store.authorization_path is not None,'PROJECT_GRANT_REQUIRED')
                 grant=self._project_grant()

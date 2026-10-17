@@ -19,6 +19,118 @@ const DECODER_SHA='1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99
 const hash=raw=>createHash('sha256').update(raw).digest('hex');
 const need=(ok,code)=>{if(!ok)throw Object.assign(Error(code),{code});};
 const center=b=>[Math.trunc(b[0]+b[2]/2),Math.trunc(b[1]+b[3]/2)];
+
+// MENU56 pure locator helpers: fresh-frame structural checks only, no fabricated AX roles.
+const ELLIPSIS={maxArea:16,maxSide:5,stackX:1,stackGap:1.5,pad:4,minSafe:3,minInterior:16};
+const intersectsRect=(a,b)=>a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1]+a[3];
+const insideRect=(a,b)=>a[0]>=b[0]&&a[1]>=b[1]&&a[0]+a[2]<=b[0]+b[2]&&a[1]+a[3]<=b[1]+b[3];
+const containsPoint=(p,b,m=0)=>p[0]>=b[0]-m&&p[1]>=b[1]-m&&p[0]<=b[0]+b[2]+m&&p[1]<=b[1]+b[3]+m;
+const erodeRect=(r,margin)=>[r[0]+margin,r[1]+margin,r[2]-2*margin,r[3]-2*margin];
+const centerOf=r=>[Math.trunc(r[0]+r[2]/2),Math.trunc(r[1]+r[3]/2)];
+
+/** Pixel-structural album ellipsis locator. Dots come only from fresh detected components. */
+export function locateAlbumEllipsis({visual,width,height,uncertaintyPx}){
+  need(visual?.sourceSHA256&&visual.width===width&&visual.height===height,'ELLIPSIS_VISUAL_SOURCE_REQUIRED');
+  const dots=visual.ellipsisComponents;
+  need(Array.isArray(dots)&&dots.length>=3,'ACTUAL_PIXEL_DOTS_REQUIRED');
+  for(const d of dots)need(Number.isFinite(d?.x)&&Number.isFinite(d?.y)&&Number.isInteger(d.area)
+    &&Number.isInteger(d.width)&&Number.isInteger(d.height)&&d.area>0&&d.area<=ELLIPSIS.maxArea
+    &&d.width<=ELLIPSIS.maxSide&&d.height<=ELLIPSIS.maxSide,'ELLIPSIS_COMPONENT_UNSUPPORTED');
+  const sorted=[...dots].sort((a,b)=>a.y===b.y?a.x-b.x:a.y-b.y);
+  const triples=[];
+  for(let i=0;i+2<sorted.length;i+=1)triples.push([sorted[i],sorted[i+1],sorted[i+2]]);
+  const eligible=[];
+  for(const triple of triples){
+    const [a,b,c]=triple;
+    const maxX=Math.max(a.x,b.x,c.x),minX=Math.min(a.x,b.x,c.x);
+    const g0=b.y-a.y,g1=c.y-b.y;
+    if(!(g0>0&&Math.abs(g0-g1)<=ELLIPSIS.stackGap))continue;
+    if(maxX-minX>ELLIPSIS.stackX)continue;
+    const point=[Math.round(b.x),Math.round(b.y)];
+    if(!insideRect([0,0,width,height],[0,0,width,height]))continue;
+    if(!(point[0]>=0&&point[1]>=0&&point[0]<width&&point[1]<height))continue;
+    if(!(point[1]<=0.09*height&&point[0]>=0.75*width))continue;
+    eligible.push({triple,point,gap:(g0+g1)/2});
+  }
+  need(eligible.length===1,'ELLIPSIS_PIXEL_STRUCTURE_AMBIGUOUS');
+  const chosen=eligible[0];
+  const xs=chosen.triple.map(d=>d.x),ys=chosen.triple.map(d=>d.y);
+  const raw=[Math.min(...xs)-ELLIPSIS.pad,Math.min(...ys)-ELLIPSIS.pad,
+    Math.max(...xs)-Math.min(...xs)+2*ELLIPSIS.pad,Math.max(...ys)-Math.min(...ys)+2*ELLIPSIS.pad];
+  const safe=[Math.max(0,raw[0]),Math.max(0,raw[1]),
+    Math.min(width,raw[0]+raw[2])-Math.max(0,raw[0]),Math.min(height,raw[1]+raw[3])-Math.max(0,raw[1])];
+  need(safe[2]>ELLIPSIS.minSafe&&safe[3]>ELLIPSIS.minSafe
+    &&containsPoint(chosen.point,safe,0.5),'ELLIPSIS_SAFE_INTERIOR');
+  const u=Number.isFinite(uncertaintyPx)?uncertaintyPx:2;
+  const interior=erodeRect(safe,u+4);
+  need(interior[2]>=ELLIPSIS.minInterior&&interior[3]>=ELLIPSIS.minInterior
+    &&insideRect(interior,[0,0,width,height]),'ELLIPSIS_INTERIOR_UNPROVEN');
+  return {point:chosen.point,bounds_px:safe,interior_bounds_px:interior,dot_spacing:chosen.gap,
+    component_count:dots.length,evidence_kind:'PIXEL_STRUCTURE',uncertainty_px:u};
+}
+
+/** Fresh SCK/OCR Save All row with the measured SCK->CUA transform, eroded interior and a verified title close. */
+export function locateSaveAllRow({envelope,width,height}){
+  const native=envelope?.native,popup=envelope?.popup,saveAll=envelope?.save_all,mapping=envelope?.mapping;
+  need(native?.bundle_id==='jp.naver.line.mac'&&Number.isInteger(native.pid)&&Number.isInteger(native.window_id)
+    &&Number.isInteger(native.display_id)&&Array.isArray(native.cua_capture_bounds_points)
+    &&native.cua_capture_bounds_points.length===4,'MENU_ROW_NATIVE_IDENTITY');
+  need(Array.isArray(native.cua_capture_bounds_points)&&native.cua_capture_bounds_points[2]>0
+    &&native.cua_capture_bounds_points[3]>0,'MENU_ROW_WINDOW_BOUNDS');
+  need(mapping?.kind==='SCK_TO_CUA_LOCAL'&&Number.isFinite(mapping.backing_scale)&&mapping.backing_scale>0
+    &&Array.isArray(mapping.cua_scale)&&mapping.cua_scale.length===2&&mapping.cua_scale.every(v=>Number.isFinite(v)&&v>0)
+    &&Array.isArray(mapping.cua_offset_px)&&mapping.cua_offset_px.length===2&&mapping.cua_offset_px.every(Number.isFinite)
+    &&Number.isFinite(envelope.uncertainty_px)&&envelope.uncertainty_px>=2,'MENU_ROW_TRANSFORM');
+  need(popup&&Number.isInteger(popup.window_number)&&popup.window_number!==native.window_id
+    &&Number.isInteger(popup.layer)&&popup.layer>0&&Array.isArray(popup.bounds_px)&&popup.bounds_px.length===4
+    &&popup.bounds_px.every(Number.isFinite)&&popup.bounds_px[2]>0&&popup.bounds_px[3]>0
+    &&Array.isArray(popup.cua_bounds_px)&&popup.cua_bounds_px.length===4&&popup.cua_bounds_px[2]>0
+    &&popup.cua_bounds_px[3]>0,'MENU_ROW_POPUP_IDENTITY');
+  need(['儲存全部','Save All'].includes(saveAll?.text)&&Array.isArray(saveAll.label_bounds_px)
+    &&saveAll.label_bounds_px.length===4&&saveAll.label_bounds_px.every(Number.isFinite)
+    &&saveAll.label_bounds_px[2]>0&&saveAll.label_bounds_px[3]>0
+    &&Array.isArray(saveAll.cua_label_bounds_px)&&saveAll.cua_label_bounds_px.length===4
+    &&saveAll.cua_label_bounds_px[2]>0&&saveAll.cua_label_bounds_px[3]>0,
+    'MENU_ROW_SAVE_ALL_OCR');
+  const toCuaLocal=(x,y)=>[x*mapping.cua_scale[0]/mapping.backing_scale+mapping.cua_offset_px[0],
+    y*mapping.cua_scale[1]/mapping.backing_scale+mapping.cua_offset_px[1]];
+  const popupCua=[...toCuaLocal(popup.bounds_px[0],popup.bounds_px[1]),
+    popup.bounds_px[2]*mapping.cua_scale[0]/mapping.backing_scale,
+    popup.bounds_px[3]*mapping.cua_scale[1]/mapping.backing_scale];
+  const rowCua=[...toCuaLocal(saveAll.label_bounds_px[0],saveAll.label_bounds_px[1]),
+    saveAll.label_bounds_px[2]*mapping.cua_scale[0]/mapping.backing_scale,
+    saveAll.label_bounds_px[3]*mapping.cua_scale[1]/mapping.backing_scale];
+  const drift=(a,b)=>Math.max(...a.map((v,i)=>Math.abs(v-b[i])));
+  need(drift(popupCua,popup.cua_bounds_px)<=1&&drift(rowCua,saveAll.cua_label_bounds_px)<=1,
+    'MENU_ROW_TRANSFORM_DRIFT');
+  popupCua.splice(0,4,...popup.cua_bounds_px);
+  rowCua.splice(0,4,...saveAll.cua_label_bounds_px);
+  const crop=[0,0,width,height];
+  const inCrop=[Math.max(crop[0],popupCua[0]),Math.max(crop[1],popupCua[1]),
+    Math.min(crop[0]+crop[2],popupCua[0]+popupCua[2])-Math.max(crop[0],popupCua[0]),
+    Math.min(crop[1]+crop[3],popupCua[1]+popupCua[3])-Math.max(crop[1],popupCua[1])];
+  need(inCrop[2]>0&&inCrop[3]>0,'MENU_ROW_POPUP_NOT_VISIBLE');
+  const band=[Math.max(inCrop[0],rowCua[0]),Math.max(inCrop[1],rowCua[1]),
+    Math.min(inCrop[0]+inCrop[2],rowCua[0]+rowCua[2])-Math.max(inCrop[0],rowCua[0]),
+    Math.min(inCrop[1]+inCrop[3],rowCua[1]+rowCua[3])-Math.max(inCrop[1],rowCua[1])];
+  need(band[2]>=ELLIPSIS.minInterior&&band[3]>=ELLIPSIS.minInterior,'MENU_ROW_LABEL_INTERSECTION');
+  const safe=[band[0],band[1],Math.min(rowCua[0]+rowCua[2],inCrop[0]+inCrop[2])-band[0],
+    Math.min(rowCua[1]+rowCua[3],inCrop[1]+inCrop[3])-band[1]];
+  need(insideRect(safe,crop)&&insideRect(safe,popupCua)&&insideRect(safe,rowCua),'MENU_ROW_SAFE_INSIDE_CROP');
+  const margin=envelope.uncertainty_px+4;
+  const eroded=erodeRect(safe,margin);
+  need(eroded[2]>=ELLIPSIS.minInterior&&eroded[3]>=ELLIPSIS.minInterior&&insideRect(eroded,crop),
+    'MENU_ROW_SAFE_UNKNOWN');
+  const closeInterior=erodeRect(rowCua,margin);
+  need(closeInterior[2]>=ELLIPSIS.minInterior&&closeInterior[3]>=ELLIPSIS.minInterior
+    &&insideRect(closeInterior,crop)&&intersectsRect(closeInterior,eroded),'MENU_CLOSE_INTERIOR_UNPROVEN');
+  return {frameId:envelope.frame_id,layoutKey:null,label:saveAll.text,save_all:centerOf(eroded),
+    menuBounds:popupCua,addressableBounds:crop,safeBounds:safe,saveAllBounds:rowCua,
+    dismiss_point:centerOf(closeInterior),dismiss_bounds_px:closeInterior,
+    popup_window_id:popup.window_number,popup_layer:popup.layer,uncertaintyPx:envelope.uncertainty_px,
+    evidence_kind:'FRESH_SCK_OCR_TRANSFORM',menu_order:[saveAll.text],item_spacing:rowCua[3]};
+}
+
 const inside=(a,b,m=0)=>a[0]>=b[0]+m&&a[1]>=b[1]+m&&a[0]+a[2]<=b[0]+b[2]-m&&a[1]+a[3]<=b[1]+b[3]-m;
 const intersects=(a,b)=>a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1]+a[3];
 
@@ -135,14 +247,15 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     grantSha256:()=>authority.grantSha256,owner});
   // The producer and analyzer obtain the digest at use time, after genuine admission.
   const nativeAnalyzer=analyzer;
-  const menuGeometry=new Map();let classifier;
+  const menuGeometry=new Map(),closureContext=new Map();let classifier;
   const producer=createProducerHook({io,runProcess,repoRoot:projectRoot,authorization,authority,retain,
     binary:{absolutePath:producerPath},geometryProvider:async({pairFrameId})=>{
       const g=menuGeometry.get(pairFrameId);need(g,'MENU_GEOMETRY_NOT_OBSERVED');return g;
     }});
-  classifier=createLiveClassifier({retain,analyzeCapture:nativeAnalyzer.analyzeCapture,
+  classifier=createLiveClassifier({retain,readRetained,analyzeCapture:nativeAnalyzer.analyzeCapture,
     analyzeScrollWitness:nativeAnalyzer.analyzeScrollWitness,
-    analyzeVisualCardDiagnostic:nativeAnalyzer.analyzeVisualCardDiagnostic,groupKey:config.group_key,
+    analyzeVisualCardDiagnostic:nativeAnalyzer.analyzeVisualCardDiagnostic,
+    analyzeMenuEnvelope:nativeAnalyzer.analyzeMenuEnvelope,groupKey:config.group_key,
     frameSupport:producer.frameSupport});
   async function decodeRetainedImage({bytes,sourceSha256}){
     need(bytes instanceof Uint8Array&&hash(bytes)===sourceSha256,'SCROLL_IMAGE_SOURCE_HASH');
@@ -166,34 +279,62 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     }finally{await fs.rm(directory,{recursive:true,force:true});}
   }
   const cached=frame=>{const c=classifier.cache.get(frame.frame_id);need(c?.observation,'FRESH_CLASSIFIER_FRAME_REQUIRED');return c;};
-  function ellipsis(frame){
+  const readRetained=async reference=>{
+    const absolute=path.resolve(projectRoot,reference.path);
+    need(path.relative(projectRoot,absolute).startsWith('harness-development/'),'RETAINED_READ_SCOPE');
+    return new Uint8Array(await fs.readFile(absolute));
+  };
+  function menuTrigger(frame){
     const c=cached(frame),ctx=nativeAnalyzer.contexts.get(frame.frame_id)?.sourceBinding.after.value;
-    const dots=ctx?.visual?.ellipsisComponents;need(Array.isArray(dots),'ACTUAL_PIXEL_DOTS_REQUIRED');
-    const matches=[];
-    for(const button of c.axSnapshot.elements.filter(e=>e.role==='button'&&e.enabled)){
-      const ds=dots.filter(d=>inside([d.x,d.y,1,1],button.bounds_px)).sort((a,b)=>a.y-b.y);
-      if(ds.length!==3)continue;const d0=ds[1].y-ds[0].y,d1=ds[2].y-ds[1].y;
-      if(d0>0&&Math.abs(d0-d1)<=1&&Math.max(...ds.map(d=>d.x))-Math.min(...ds.map(d=>d.x))<=1)
-        matches.push({point:[Math.round(ds[1].x),Math.round(ds[1].y)],frameId:frame.frame_id,role:'button',
-          bounds_px:button.bounds_px,dot_spacing:(d0+d1)/2});
-    }
-    need(matches.length===1,'ELLIPSIS_PIXEL_AX_AMBIGUOUS');return matches[0];
+    need(ctx?.visual&&ctx.visual.sourceSHA256===frame.frame_id,'FRESH_VISUAL_SOURCE_REQUIRED');
+    const geometry=locateAlbumEllipsis({visual:ctx.visual,width:c.observation.width,height:c.observation.height,
+      uncertaintyPx:c.observation.mapping.uncertainty});
+    return {frameId:frame.frame_id,layoutKey:frame.layout_key,point:geometry.point,bounds_px:geometry.bounds_px,
+      interior_bounds_px:geometry.interior_bounds_px,dot_spacing:geometry.dot_spacing,
+      evidence_kind:geometry.evidence_kind,component_count:geometry.component_count,uncertaintyPx:geometry.uncertainty_px};
   }
-  async function menuLocator(frame,{phase}){
-    const c=cached(frame);if(phase==='TRIGGER')return ellipsis(frame);
+  function menuClosure({frame,detail,envelope}){
+    need(frame?.frame_id&&detail?.window_id===frame.window_id&&frame.surface==='ALBUM_DETAIL','MENU_CLOSURE_FRAME');
+    const ctx=nativeAnalyzer.contexts.get(frame.frame_id)?.sourceBinding.after.value;
+    need(ctx?.visual?.sourceSHA256===frame.frame_id,'MENU_CLOSURE_VISUAL_SOURCE');
+    const target=ctx.target;
+    need(target?.pid===frame.pid&&target.startTimeSeconds===envelope.process_start[0]
+      &&target.startTimeMicroseconds===envelope.process_start[1],'MENU_CLOSURE_PROCESS_INSTANCE_DRIFT');
+    const popupOpen=[...ctx.onScreenWindows].some(w=>w.windowNumber===envelope.popup.window_number
+      &&w.ownerPID===target.pid&&(w.cgLayer??0)===(envelope.popup.layer??null));
+    need(popupOpen===false,'MENU_CLOSURE_POPUP_STILL_PRESENT');
+    const rows=[...ctx.visual.ocr].filter(o=>['儲存全部','Save All'].includes(o.text)
+      &&o.confidence>=.5&&o.candidateCount===1);
+    need(rows.length===0,'MENU_CLOSURE_ROW_STILL_PRESENT');
+    return {native_popup_absent:true,row_absent:true,process_instance:[target.startTimeSeconds,target.startTimeMicroseconds],
+      detail_window_id:frame.window_id,popup_window_id:envelope.popup.window_number,
+      popup_layer:envelope.popup.layer,evidence_kind:'NATIVE_WINDOW_ABSENCE_AND_FRESH_OCR'};
+  }
+  async function menuLocator(frame,{phase,detail}={}){
+    if(phase==='TRIGGER')return menuTrigger(frame);
+    if(phase==='CLOSURE'){
+      need(detail?.window_id,'MENU_CLOSURE_DETAIL_REQUIRED');
+      const bound=closureContext.get(detail.frame_id);
+      need(bound?.envelope,'MENU_CLOSURE_ENVELOPE_REQUIRED');
+      return menuClosure({frame,detail,envelope:bound.envelope});
+    }
     need(phase==='ROW','MENU_PHASE_UNKNOWN');
-    const rows=c.axSnapshot.elements.filter(e=>e.role==='menu item'&&e.enabled).sort((a,b)=>a.bounds_px[1]-b.bounds_px[1]);
-    const selected=rows.filter(e=>['儲存全部','Save All'].includes(e.label));need(selected.length===1&&rows.length>1,'OBSERVED_SAVE_ALL_REQUIRED');
-    const row=selected[0],u=c.observation.mapping.uncertainty,m=u+4,b=row.bounds_px;
-    const safe=[b[0]+m,b[1]+m,b[2]-2*m,b[3]-2*m];need(safe[2]>=16&&safe[3]>=16,'MENU_ROW_SAFE_MARGIN');
-    const x=Math.min(...rows.map(e=>e.bounds_px[0])),y=Math.min(...rows.map(e=>e.bounds_px[1]));
-    const bounds=[x,y,Math.max(...rows.map(e=>e.bounds_px[0]+e.bounds_px[2]))-x,Math.max(...rows.map(e=>e.bounds_px[1]+e.bounds_px[3]))-y];
-    const trigger=ellipsis(frame),a=c.analysis,n=a.native;
-    const result={frameId:frame.frame_id,layoutKey:frame.layout_key,label:row.label,save_all:center(safe),
-      menuBounds:bounds,addressableBounds:a.surface_bounds_px,safeBounds:safe,ellipsisBounds:trigger.bounds_px,
-      saveAllBounds:b,menu_order:rows.map(e=>e.label),item_spacing:rows[1].bounds_px[1]-rows[0].bounds_px[1]};
-    menuGeometry.set(frame.frame_id,{pid:n.pid,windowId:n.window_id,displayId:n.display_id,layoutKey:frame.layout_key,
-      uncertaintyPx:u,cuaBounds:n.cua_capture_bounds_points,menuBounds:bounds,addressableBounds:a.surface_bounds_px});return result;
+    const record=classifier.menuEnvelopes.get(frame.frame_id);
+    need(record?.envelope,'FRESH_MENU_ENVELOPE_REQUIRED');
+    const envelope=record.envelope,c=cached(frame);
+    need(envelope.session_id===frame.session_id&&envelope.native.window_id===frame.window_id
+      &&envelope.detail_window_id===frame.window_id,'MENU_ENVELOPE_FRAME_BINDING');
+    const row=locateSaveAllRow({envelope,width:c.observation.width,height:c.observation.height});
+    row.layoutKey=frame.layout_key;
+    need(row.frameId===frame.frame_id,'MENU_ROW_FRAME_BINDING');
+    menuGeometry.set(frame.frame_id,{pid:envelope.native.pid,windowId:envelope.native.window_id,
+      displayId:envelope.native.display_id,layoutKey:frame.layout_key,uncertaintyPx:row.uncertaintyPx,
+      cuaBounds:envelope.native.cua_capture_bounds_points,menuBounds:row.menuBounds,
+      addressableBounds:row.addressableBounds});
+    // The closure check reads the fresh post-close frame against the detail frame that opened
+    // this menu, so the calibration context is keyed by that fresh detail frame id.
+    closureContext.set(detail.frame_id,{envelope,detail,menu_frame_id:frame.frame_id});
+    return row;
   }
   const baseChooser=createChooserLocators(),download=createDownloadObserver({io,repoRoot:projectRoot,retain});
   const chooser={...baseChooser,
