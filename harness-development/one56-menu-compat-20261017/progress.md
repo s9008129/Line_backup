@@ -28,7 +28,7 @@
 
 真機狀態不變：`MENU_ENVELOPE_DEVICE_VERIFIED=NOT_RUN`、`REAL_SAVE_ALL_DISPATCH_COUNT=0`、`CHOOSER=NOT_RUN`、`FORMAL_MENU_CALIBRATION=NOT_RUN`；canonical ledger／state／239 歷史／65 人工相簿未動。
 
-下一步：推送新 HEAD 至 Draft PR #10，交外部精確來源審查（須同時裁決 anchor-dispersion blocker，見上節）；通過 ＋ 有效 ONE56 grant ＋ Owner 再次交還 LINE 前景後，執行一次連續正式 Save All（fresh 56 名稱 → detail → envelope＋ROW＋calibration＋title close → intent → at-most-once dispatch → chooser → 56 檔驗收 → VERIFIED 讀回釋放）。結果不明不得重送。
+下一步：推送新 HEAD 至 Draft PR #10，待 Owner 交外部精確來源審查（須同時裁決 anchor-dispersion blocker，見上節）；通過 ＋ 有效 ONE56 grant ＋ Owner 再次交還 LINE 前景後，執行一次連續正式 Save All（fresh 56 名稱 → detail → envelope＋ROW＋calibration＋title close → intent → at-most-once dispatch → chooser → 56 檔驗收 → VERIFIED 讀回釋放）。結果不明不得重送。
 
 We are correcting the remaining genuine menu trigger/popup/closure incompatibilities from Chief review5557707124. Baseline d27c80b includes accepted B1/B2 source8beb; this is not a repeat of scroll/focus/name-entry research. Save All still has zero agent dispatches and no positive live admission.
 

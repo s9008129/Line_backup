@@ -2,7 +2,7 @@
 
 ## Scope amendment 2026-10-18 — Chief M5／M6 correction (review 5558490383, HEAD 4bbec71)
 
-STATUS: IMPLEMENTED AND COMMITTED IN THE EXISTING ISOLATED WORKTREE; the 9-file source/test commit `7debc2ef4593f4ae4430cd3a4a8c0cb24cec0875` is pushed to Draft PR #10, followed by a doc-only commit updating this plan and the round report. Submitted for exact-new-HEAD external review. This amendment restarts no earlier research.
+STATUS: IMPLEMENTED AND COMMITTED IN THE EXISTING ISOLATED WORKTREE; the 9-file source/test commit `7debc2ef4593f4ae4430cd3a4a8c0cb24cec0875` is pushed to Draft PR #10, followed by a doc-only commit updating this plan and the round report. Prepared and pushed for exact-new-HEAD external review; the actual hand-off to the Owner-chosen cloud reviewer has not happened yet. This amendment restarts no earlier research.
 
 The external review of `4bbec71fee690f9b88fb91837924b7f75db5301f` accepted the previous slice and required exactly two corrections: (M5) the ROW locator must stop reading the ordinary classifier cache and bind the retained menu envelope's own geometry plus the fresh detail context; (M6) the menu geometry must not demand full containment of the popup/label inside the hosted CUA crop and must prove a live intersecting addressable area with fail-closed negatives.
 
