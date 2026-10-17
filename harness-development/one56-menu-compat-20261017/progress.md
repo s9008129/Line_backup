@@ -1,5 +1,13 @@
 # MENU56 current slice
 
+## 2026-10-18 續測：先對帳，零輸入確認現況，查明背景 OCR 錯配
+
+Owner 再次要求繼續／重測。對帳後確認隔離 worktree 已是91c8561，產品修正7debc2已推送；沒有重做已完成的 scroll／menu／title-close。19:12:48Z native＋19:14:28.821Z hosted唯讀觀察確認LINE在前景，但目前在列表頂端65張人工備份排除卡片，56名稱未可見、detail已不存在。Luna/xhigh依範圍STOP_INPUT；零scroll/click/按鍵，fresh detail mapping未執行，沒有為此消耗正式lifecycle。原生截短AX的21列估計已由full hosted AX更正為101 items；原紀錄與addendum皆保存。
+
+Luna/high只讀真幀replay新增資訊：全display exact-text配對在71/73把detail日期配到背景list同日期，residual1215.032px；限定detail ROI能排除該錯配，但其餘OCR框中心仍有2.944px誤差。ROI加日期分隔符診斷正規化後，正確header也有2.676px，三角形比例0.012727仍不足0.02。故不能只放寬面積、只加ROI或丟棄失敗點來宣稱通過；沒有修改guard。公開driver與去識別化輸出在review/anchor-roi-*，完整raw留private。
+
+本輪保護核對245檔全部相同，state35無owner/batch/context；239歷史與canonical ledger/init/grant未動。候選21檔closure be0c248ab231fd76e1e8fc7a42800391bc3134d19e12a29a6da676c894856b1d；canonical安裝仍ff717d72…，新runtime binding未建立。source M5/M6／新mapping策略皆無新版外部正面核准，Luna本機分析不替代雲端Plan/CodeReview。下一步交付具體mapping根因與有界計畫供Owner轉交外部ChatGPT；若新策略變更幾何驗收契約，先外部PlanReview，再Luna最小實作/build，固定新HEAD後外部CodeReview及正式單本連續試跑。不能再把舊menuprobe重開當進度。結果、六種狀態與全部NOT_RUN已更新完整E2E報告；本階段須checkpoint commit/push並讀回實際commit body。
+
 ## 2026-10-18 後段：新阻塞 anchor-dispersion（offline CONFIRMED；未修）
 
 - 發現：production `frame-support` 的 `AutomaticOcrAnchorMapper.derive`（`rev28/Sources/Rev28Core/Perception/OcrEngine.swift`，threshold `0.02 × crop寬 × crop高`）對 654×1286 detail crop 全數拒絕：以已編譯 Rev28Core 產物＋真機保留幀重播，menu-open 對 SCK shared anchors 4、最大三角形 10,704.245 px² < 16,820.88 px² → `anchorsNotDispersed`。menu（`collectMenuEnvelope`）與一般 `classify()` 共用 `frameSupport`；live 將以 `NON_MENU_SCK_SUPPORT_REFUSED` 擋住 Save All 前置。offline 已證實、live 未驗；修復需動 rev28 Swift，超出本輪凍結路徑，須另行 bounded plan／獨立審查。

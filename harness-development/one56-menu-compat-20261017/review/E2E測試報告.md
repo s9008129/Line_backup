@@ -133,3 +133,45 @@ M5／M6 修正完成後、獨立稽核期間新增一項與 M5／M6 diff 無關�
 真機選單結果與安全關閉已填入上節。前一輪最小來源差異（六路徑，含 1 個 scope amendment）、針對性離線回歸與本報告已隨來源提交 `4bbec71fee690f9b88fb91837924b7f75db5301f` 推送至 Draft PR #10；本輪（M5／M6）差異見末段更新。待由使用者選定的雲端模型做獨立精確來源審查。待完成：真機 envelope 擷取（`MENU_ENVELOPE_DEVICE_VERIFIED=NOT_RUN`）、既有紅燈 fixture 修復（與本輪無關）、獨立 bounded-plan 接受、新 HEAD／closure／native／runtime SHA、唯讀 authorizer smoke、保護資料比對及獨立驗收。Draft PR #10 保持不合併。未取得實際外部審查結果前，不宣稱正式 Save All 已解除阻塞。 前述 anchor-dispersion 發現（offline CONFIRMED、未修）同列未完成事項，處理順序待外部審查與 Owner 決策。
 
 2026-10-18 更新：M5／M6 最小修正、針對性離線回歸與本報告更新已提交；來源修正提交為 `7debc2ef4593f4ae4430cd3a4a8c0cb24cec0875`（9 檔，已推送至 Draft PR #10），其後之 doc-only 提交更新本報告與 `progress.md`；精確審查 HEAD 即 PR #10 之最新 HEAD。舊審查 `5558490383` 僅綁 `4bbec71`，不構成新 HEAD 的核准；待由使用者選定的雲端模型對新 HEAD 做精確來源審查。本輪另發現 frame-support 錨點離散門檻對 654×1286 detail crop 全數拒絕（見上節，offline CONFIRMED、未修），同列未完成事項與下一個決策點。真機狀態不變：`MENU_ENVELOPE_DEVICE_VERIFIED=NOT_RUN`、`REAL_SAVE_ALL_DISPATCH_COUNT=0`、`CHOOSER=NOT_RUN`、`FORMAL_MENU_CALIBRATION=NOT_RUN`。Draft PR #10 保持不合併；未取得新 HEAD 正式核准與有效 ONE56 grant、且 Owner 未再次交還 LINE 前景前，不派送任何 GUI 輸入或 Save All。
+
+## 2026-10-18 續測：新鮮唯讀現況與錨點根因細分
+
+本節為 Owner「繼續或重新進行測試」後的新結果。對帳基線為 `91c85617c2e943037caa41188c26f1474a3e56d6`；既有產品來源修正為 `7debc2ef4593f4ae4430cd3a4a8c0cb24cec0875`，本節沒有再修改產品源碼或測試。時間以 UTC 標示（本地日期為 2026-10-18，Asia/Taipei）。本輪實際執行的 Luna/high 只做唯讀根因分析；Luna/xhigh 獨立取得新鮮真機唯讀證據，不把既有提交的作者／模型來源歸到本輪代理身上。
+
+### 新鮮 Mac 現況（有工具執行；零輸入）
+
+- 2026-10-17T19:12:48Z 原生快照：LINE `jp.naver.line.mac` 在前景，PID 25266；唯一 on-screen 視窗 3766 `[21,46,327,643]pt`。沒有前輪的 56 張獨立 detail 視窗。
+- 19:14:28.821Z hosted CUA `getAXStateAndScreenshot`：目前是同群組的相簿列表頂端；可見 2024/06/02–06/07、65 張人工備份排除相簿，下張卡片部分可見，56 張的名稱／數量未出現在視窗內。原始 JPEG 654×1286，SHA-256 `da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42`。與早先頂端畫面同 hash，不等於同一次 capture；本輪時間與原始 AX 另行保留。
+- 全量 hosted AX 為 `showing 0-100 of 101 items`，SHA-256 `7aacccb12001d6676e37597e7c2495b058e3aee44fce8ef2a7fbd1cdd0be0028`。獨立驗收者初看截短 native 輸出曾估為 21 列，已在 append-only addendum 更正，未覆寫原始紀錄。
+- `STOP_INPUT`：沒有 activate、scroll、click、按鍵、menu、Save All 或 mapper 派送。本輪未取得 fresh 56 detail，故 `FRESH_DETAIL_MAPPING_RETEST=NOT_RUN`。兩個被動讀取不是 ≤5 秒的正式 SCK/CUA pair，沒有把它們標為正式 calibration 或 E2E PASS。
+- 原始相對路徑：`private/independent-live-01/26-current-20261018-readonly/`。完整本機路徑與逐檔 SHA 保留於私有收據；公開 [runtime／證據清單](resume-runtime-evidence-20261018.json) 只保留去識別化的相對路徑及 hash。
+
+### 真正 production OCR／mapper 對保留真幀的唯讀重播
+
+本輪沒有重跑完整 synthetic matrix。新增的 [唯讀重播 driver](anchor-roi-replay-driver.swift) 使用既有 `VisionOcrEngine` 與 `AutomaticOcrAnchorMapper.derive`；固定 native bounds 是該組歷史幀的實測資料，僅供離線重播，絕不可當作新的 GUI 點位或有效 runtime grant。[71/73 輸出](anchor-roi-71-vs-73.txt)與 [66/68 輸出](anchor-roi-66-vs-68.txt)均與私有原檔逐位元一致；輸出只列文字類別與幾何，不含人名／群組／照片。
+
+| 實際策略（診斷比較，非 policy 變更） | 71/73 結果 |
+| --- | --- |
+| 原 production 全螢幕、exact-text 配對 | 4 anchors；相簿日期誤配背景列表，residual **1215.032 px**；derive 先以 `anchorsNotDispersed` 拒絕 |
+| 只保留已知 detail 的 SCK ROI | 排除背景錯配；3 anchors；最大 residual **2.944 px**；三角形比例 0.00007364 |
+| detail ROI ＋日期分隔符診斷正規化 | 4 anchors；正確標題 residual **2.676 px**；最大 residual **2.944 px**；比例仍 0.012727 < 0.02 |
+
+66/68 重播得到同樣的限制。這修正了「只是 2% 面積門檻太嚴」的單一根因說法：全畫面字串配對可能選錯背景實體，OCR 框中心本身也未滿足現行 2px 約束。單純降低面積門檻、只加 ROI 或只把 `〜` 換成 `~` 都不能解鎖既有 gate。本輪沒有修改 2px、0.02、sidecar、grant 或任何正式 validator，也沒有將上述替代策略標為 PASS。
+
+### 來源、runtime、資料完整性及下一步
+
+- 21 檔候選來源 closure：`be0c248ab231fd76e1e8fc7a42800391bc3134d19e12a29a6da676c894856b1d`。canonical 已安裝 closure 仍為 `ff717d721c9132abc2b22c738649e3cc4da34637a86fb794f549695e5cd3ca54`；兩者明確區分，未偷換成同一套 runtime。
+- 實際已安裝 producer SHA-256 仍為 `9ef75efe4b217edd1049a623f26739bc0ea4d5950115e208f704976bb1efdf20`，decoder 為 `1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf`。本輪沒有 native production build、runtime 重綁、新 grant 或 authorizer smoke；不將舊 SHA 當作新實作的執行核准。
+- 19:07:43Z 逐檔核對 245 個保護檔，差異 0；revision 35，active batch／writer／context lock 皆 null。canonical ledger、初始化收據、原 grant、設定、歷史 239 張 VERIFIED 圖檔及原有 dirty 工作均未由本輪改動。
+- 舊外部 review 5558490383 是 `CHANGES_REQUIRED`，僅綁 4bbec71；7debc2 及後續 docs HEAD 沒有正面外部實作核准。Luna 的本機安全／分析檢查也不等於外部 `APPROVE_PLAN`。新的影像對位證據策略若改變驗收契約，依最新 AGENTS.md 須先由 Owner 轉交外部 ChatGPT 做 Plan Review，實作後再做 exact-source Code Review。
+- 本輪只提交新證據、根因分析與可審查的下一步；保持 Draft、不 merge。正式試跑仍應在有效審查／runtime 授權／當次前景交接後，直接完成 A 的連續交易，再另建 B 的獨立交易，不新增無資訊增益的 menu 研究。
+
+本輪的 [bounded Plan proposal／完整根因分析](../anchor-fix-analysis.md) revision 為 `ANCHOR-DETAIL-R1-20261018`，SHA-256 為 `f0518fc3fd0bc8103401168476d1e23b505d1e8d539751bf62cfdfa30a2f7094`。程式查核未找到可直接重用的跨影像像素配準能力；現有 VisualDiagnostic 也呼叫相同的 OCR mapper。因此提案明列「演算法未經實證」與停止條件，請外部 Reviewer 判定是否接受僅限 ALBUM_DETAIL 的 hash／native-lineage 綁定像素對位證據契約。這不是本機已核准的實作 Plan，也沒有新 production build 或新 guard 行為。真實重播使用既有本機 debug/core 產物，與已安裝 producer9ef75efe 的身份分開記錄；不冒稱已安裝 producer 執行過該重播。
+
+`PRIMARY_OUTCOME_STATUS=NOT_ACHIEVED`
+`IMPLEMENTATION_STATUS=M5_M6_PREVIOUSLY_PUSHED; ANCHOR_FIX_NOT_IMPLEMENTED`
+`CORE_ACCEPTANCE_STATUS=PRIOR_REAL_MENU_AND_TITLE_CLOSE_OBSERVED; CURRENT_READONLY_SCREEN_CAPTURED`
+`REQUIRED_VERIFICATION_STATUS=FORMAL_CALIBRATION_DOWNLOAD_DECODE_VERIFIED_NOT_RUN`
+`INDEPENDENT_ACCEPTANCE_STATUS=READONLY_DIAGNOSTIC_ONLY`
+`TASK_CLOSURE_STATUS=OPEN_PENDING_EXTERNAL_REVIEW_AND_MAPPING_FIX`
+`REAL_SAVE_ALL_DISPATCH_COUNT=0`
