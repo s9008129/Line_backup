@@ -175,3 +175,98 @@ M5／M6 修正完成後、獨立稽核期間新增一項與 M5／M6 diff 無關�
 `INDEPENDENT_ACCEPTANCE_STATUS=READONLY_DIAGNOSTIC_ONLY`
 `TASK_CLOSURE_STATUS=OPEN_PENDING_EXTERNAL_REVIEW_AND_MAPPING_FIX`
 `REAL_SAVE_ALL_DISPATCH_COUNT=0`
+
+## 2026-10-18：外部 Plan 核准後的 P1 真幀像素配準實驗
+
+本節追加新結果，不改寫前面的失敗、未知或原始計畫。工作基線為 `a846df01fb056b34511dad1e2ad3abb7ac152e26`（既有隔離 worktree，detached HEAD）；產品來源仍為 `7debc2ef4593f4ae4430cd3a4a8c0cb24cec0875`。本輪沒有正式 GUI 輸入、產品源碼／測試變更、download 或 state mutation。實際角色：原有 GPT-6-luna/high Implementer、原有 GPT-6-luna/xhigh 獨立保留影像驗收者，均向 Sol 回報；沒有新增本機審查代理，也沒有代替外部雲端審查。此驗收不是固定新實作後的正式交易 E2E。
+
+### 授權與審查綁定
+
+Sol 已透過 GitHub API 完整讀取 [正式 Plan Review 5560487952](https://github.com/s9008129/Line_backup/pull/10#pullrequestreview-5560487952)，實際 review commit 為 `a846df01fb056b34511dad1e2ad3abb7ac152e26`，submitted_at `2026-10-17T22:51:52Z`。GitHub state 是 `COMMENTED`；Owner 提供之外部審查正文明確為 `APPROVE_PLAN`，不升格成 GitHub APPROVED 或 Code Review。
+
+- Plan revision：`ANCHOR-DETAIL-R1-20261018`；原檔 SHA-256：`f0518fc3fd0bc8103401168476d1e23b505d1e8d539751bf62cfdfa30a2f7094`，維持不變。
+- 完整 review API raw SHA-256：`9f3cc3318041dbf9686f9857899b040046e7613e059aa5524b9278c0cbb2204a`；本機相對路徑 `private/anchor-implementation-20261018-01/external-plan-review.github.json`，綁定收據 SHA-256 `b96043868fe1fef88052d02ff0086b498ad03221affe6b7647557edf6aacfea8`。
+- 核准要求 P1 真實 image-content 正例及負例先行，P2 分開 Python 語義 OCR 與幾何驗證，P3 typed/provenance 與跨語言驗證，P4 literal path 最小變更，P5 新 exact-HEAD Code Review、runtime grant 與當次前景後才進入正式 A。
+- Plan approval 未核准 M5/M6 產品來源，也沒有建立 grant、豁免 2px、或讓本輪取得 live Save All 權限。上節舊的「等待 Plan Review」狀態已由這份實際審查更新；原 Plan bytes 保留，不回填歷史。
+
+### 實驗資料、程式與執行順序
+
+讀取的是真正保留 CUA/JPEG 與 SCK/PNG，沒有重畫或合成截圖。以下路徑均相對 task root `harness-development/one56-menu-compat-20261017/`；本機完整路徑在私有報告／路徑索引，公開報告遮蔽個人根目錄、群組／人名、照片、原始授權與逐張歷史檔案清單。
+
+| 原始資料（`private/independent-live-01/22-probe3/` 下） | 尺寸／bytes | SHA-256 |
+| --- | --- | --- |
+| `66-dots-pre.jpg` | 654×1286／200746 | `3677b3cc976f1b0f0cc36e1138b172927a8d8c32e0dbd86b99f785d3b08f26b3` |
+| `68-dots-sck-pre/sck-frame.png` | 2294×1490／3694207 | `4ea25b3d268879a6860b2b8b6e37c10bd37e487f50ee115890933974fb5978c9` |
+| `71-dots-post.jpg` | 654×1286／201359 | `8d27e6b4222d71fe17916a023078cf5c7fbb6e48cebec68aabfe494923ca5ec7` |
+| `73-dots-sck-post/sck-frame.png` | 2294×1490／3661221 | `2f6f359c82dc55ec401f4704e66c0d734b26d76ad533d28b6011998fe40ffde1` |
+
+1. 先固定 Plan／review／HEAD，對帳 canonical 與隔離 worktree、保留既有 untracked 工作；讀前置 245 個保護檔。
+2. Luna/high 在獨立 task evidence 內寫入與實跑有限 NCC 診斷，讀取 ImageIO 解碼後的實際像素，沒有呼叫 native 輸入 API。native ROI 是待驗證預測，不是比對結果。
+3. 初版把 row corner `[617.6859,257.8712]` 當作測試點，並以 bbox containment 冒名 hull、以整數峰值加 0.7071 作未成立的誤差界限。Sol 查核後不接受該正例；原輸出 `out-66-vs-68-pre.json` SHA-256 `525d96621916e6603da9ece2b53b293fd940286fd85bbd0346a50c3322e623f5` 保留。初版 driver 曾原地編輯，故不聲稱保留了初版 output 對應的精確 source/build hash；目前 source hash 不回填給舊輸出。原型結果不是 gate PASS。
+4. 同一有界方法修正版 v2/v3 改查真實 probe3 幾何所算出的歷史候選 `[635,272]`，修正凸包／徑向絕對位移與狀態報告，加入整個 ROI 的選定 patch 重複性檢查。這是從未派送的 Save All 候選點，不是曾點過 Save All 的證據。
+5. 最終固定 v3 用 pre、post、錯 ROI x+8、錯視窗四組資料執行；正向兩組由 Implementer 再播 `cmp` 一致。這是同一作者的重現性檢查，獨立重播另列，不混報。
+
+固定 [診斷 driver](anchor-pixel-feasibility-driver.swift) 與私有 `feasibility/anchor-feasibility-v3.swift` 逐位元一致（15541 bytes；SHA-256 `f8a09bdba3f1b6043b447b3e9d0e45a2669426088e8f712503b5438506d5f671`）。實際 diagnostic binary SHA-256 `a2acc1a04ddc93f1e4b69c65b96f8010d215670ab96e05fee3524ae884619398`；它是單獨編譯的證據工具，並非正式 native producer。
+
+實際 build 命令為 `swiftc -O <feasibility/anchor-feasibility-v3.swift> -o <feasibility/anchor-feasibility-v3>`。CLI 依序接受 `CUA SCK ROI_X ROI_Y ROI_W ROI_H TARGET_X TARGET_Y MASK_MODE`；pre 使用 `66/68 716 92 654 1286 635 272 pre`，post 使用 `71/73` 與相同 ROI/point、`post`，錯 ROI 把 x 改724，錯視窗換成 `01-sck-before-open/sck-frame.png`。完整執行資料、每組原始 output ref/hash、候選分類數與 runtime 清單見 [公開數值證據](anchor-pixel-feasibility-evidence.json)。原始 JSON 留在 `private/anchor-implementation-20261018-01/feasibility/final-*.json`。
+
+方法為 17×17 grayscale NCC、candidate stride16、local search±8、variance≥90、peak≥0.92、非相鄰 peak gap≥0.025、徑向位移超2拒絕；另於4×4空間格選至多16個 strongest patches，在整個 ROI 做2px格的稀疏取樣比對。門檻僅是診斷候選篩選，不是經外部接受的 localization/noise model，也不是獨立連續點位誤差證明。不是每個局部 match 都有完整 ROI 唯一性證明；不把診斷程式當成 typed production proof。
+
+### 實際結果與停止原因
+
+| 真實資料／負例 | 局部觀察 | 最終判定 |
+| --- | --- | --- |
+| 66/68 pre，相同 detail ROI | 1335 個局部候選通過；median shift `[0,0]`，consensus residual0；選定16個 global checks 中15個唯一、1個重複歧義 | `REFUSE_TARGET_OUTSIDE_MATCH_HULL`；候選點 x635 超出局部 match max-x625，signed hull margin約−15.9253；該點 patch variance0，未證明 ≤2px |
+| 71/73 post，排除 popup／cursor 區域 | 1326 個局部候選通過；median `[0,0]`、consensus residual0；選定15個 global checks 中14個唯一、1個歧義 | `REFUSE_TARGET_OUTSIDE_MATCH_HULL`；signed margin約−120.2395；目標位置在 SCK popup 遮擋區，未證明 ≤2px |
+| pre 的 ROI x716 改724（8px位移） | accepted0；1367個 candidate 被 `DISPLACEMENT_OVER_2PX` 拒絕 | `REFUSE_INSUFFICIENT_UNIQUE_MATCHES` |
+| detail CUA 對較早 list-only SCK01 的相同位置 | accepted0；1719個 low-correlation candidate | `REFUSE_INSUFFICIENT_UNIQUE_MATCHES`；這是缺少目標 detail 的真實錯畫面負例，並非完整 native lineage contract 測試 |
+
+**P1=BLOCKED。** 零整數位移是區域內容對應的觀察；沒有成立的 subpixel/noise／target uncertainty upper bound。不是「已證明 LINE 無法配準」或所有可能方法都不成立，只是本輪有界方法無法達到核准 AC。診斷 process 正常回傳 JSON 不等於 P1 PASS。未以 native 座標、OCR 中心、丟棄失敗 anchor、降低2px／0.02或更改點位製造成功。依外部審查 P1 停止，沒有再換演算法、沒有正式 observation budget／Save All lifecycle 消耗。
+
+### 獨立驗收與資料來源限制
+
+Luna/xhigh 已直接讀原始影像、native／SCK／AX 與 observer source/build 收據：LINE PID25266、process launch `2026-10-16T17:43:32Z`，detail window7349 `[358,46,327,643]pt`、display1 `[0,0,1147,745]pt`／2x；native 指示的 SCK ROI 為 `[716,92,654,1286]`。post 另有 LINE popup7359 layer101 `[641,98,137,167]pt`。這些是歷史來源證據，不是 pixel proof 本身。
+
+CUA/JPEG 沒有保留逐次 acquisition timestamp／PID／window receipt。檔案 mtime 不替代 capture time；pre SCK request14:13:48.788–49.293Z、post14:14:15.543–16.059Z，不能由約7秒差的寫檔時間宣稱 ≤5秒同步。CUA app-window crop 會漏掉獨立 floating popup，即使 popup 已開；CUA 無 popup、SCK 有 popup 是跨 provider 遮擋差異，本身不證明兩幀間曾改變選單狀態。歷史實驗可以量測像素性質，仍無法通過現在的 freshness／authority gate。
+
+獨立固定 v3 重播已完成，[完整遮蔽後獨立報告／run manifest](anchor-pixel-independent-report.md) 可在 GitHub 閱讀。Luna/xhigh 檢查固定 f8a09b… source 後，以 `swiftc -O -module-cache-path <independent-p1/module-cache> <fixed-source> -o <independent-binary>` 自行編譯並執行五組。其 binary SHA-256 是 `337df866b583cea271a314b049771c5da3abadeddb85f88940b8a14235f9423d`，不同於 Implementer a2acc1…；不假定兩個binary相同。
+
+- 真實 pre／post：與 Implementer 重現同樣的1335／1326個局部 matches、zero integer shift與目標凸包外／低紋理／popup遮擋拒絕；沒有validated target bound。獨立判定 required positive **FAIL for tested method**、bound **BLOCKED/NOT_ESTABLISHED**，不是宣稱實際誤差已量到超2。
+- +8px ROI及wrong-window拒絕；新增同一方法的對角ROI(+2,+2)負例，1335個候選量得(-2,-2)，徑向√8≈2.828px，accepted0，拒絕。此負例驗證不再以各軸≤2誤判徑向≤2。五個driver正常exit0仍不是P1 PASS。
+- Sol以JSON值交叉核對四組共同矩陣（只移除input路徑拼寫欄位），所有其他值完全一致；只做輸出核對，沒有代跑獨立演算法或覆蓋其結論。
+- 獨立原始report SHA-256 `6bf26a73053f8eca812bdd73f66f7d466ff47d63d036f03a404b19b76f781c76`；manifest `f56ed9522ca865d3fcacc2bed8b694090f5500ed67f2012fa0be2232cdca3176`。私有路徑在 `private/anchor-implementation-20261018-01/independent-p1/`。五組完整stdout／stderr／exit與時間記錄保留；其中+8 wrapper寫end timestamp時拼錯目錄，driver已一次exit0且未重跑，end timestamp維持unknown並保留runner-note。
+- 獨立報告有一處引用legacy `chief-review.github.json`；整合附註明列正確當次審查是 phase內 `external-plan-review.github.json`／review5560487952，未把legacy檔案當新核准。來源註解half-pixel實為2px格，公開附註以實作為準，沒有subpixel量測。以上不修改原始報告或門檻。
+
+獨立結論同為 **BLOCKED**，不是新實作後formal E2E或外部Code Review。獨立negative的PASS只代表該負例拒絕，不會升格成整體PASS。
+
+### 產品、runtime、canonical 完整性與尚未執行項目
+
+- 本輪正式產品與 focused tests diff 為空，Python `_support` 與 downstream `DETAIL_OCR_BINDING` 尚未修正。P2/P3 production contract、focused Swift/Python tests、native producer rebuild／install、新 runtime binding／grant 與 authorizer smoke 均 `NOT_RUN_P1_BLOCKED`。不以離線實驗宣稱這些 AC 完成，也沒有修 unrelated CI／fixture。
+- 當次重新讀取 candidate21檔 closure仍為 `be0c248ab231fd76e1e8fc7a42800391bc3134d19e12a29a6da676c894856b1d`；canonical安裝closure仍 `ff717d721c9132abc2b22c738649e3cc4da34637a86fb794f549695e5cd3ca54`。Swift source hashes與前輪相同，詳公開證據。
+- 已安裝 production producer仍 `9ef75efe4b217edd1049a623f26739bc0ea4d5950115e208f704976bb1efdf20`；decoder仍 `1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf`；installed entry仍 `726db9a876619aee66df57f0600f3ef07e40910c3f8285b266397800e12895f1`。
+- 舊8beb pending runtime-binding重新讀取SHA為 `cd41ee25387fb784f2aef5158d7dd6bbde27bd44a42d2d42c5a905767b1b6076`，不覆蓋candidate來源、未獲新版CodeReview，不能用於live。不是本輪新授權包，沒有重開舊grant。
+- 前後245個保護檔皆相同，canonical Git HEAD、tracked status/diff相同。前收據SHA `760115995fec3fe075ffba90345ae0f4703d68b8aade16089b3b33ef2f0abd55`；後收據SHA `f94deb094bce4bf2548dca8e38883cf8e0669e60d611e47e62e1b2125ce13897`。Canonical ledger SHA仍 `08aa18e42bfee7a8e4d0529bac5b793d830efc1127794dac4baa8f4bdb9864e2`，state仍revision35／SHA `455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6`，batch／writer／context皆null。保留原ledger、歷史239、manual65排除、舊2/2計數與其他dirty/untracked。
+- `REAL_SAVE_ALL_DISPATCH_COUNT=0`；menu calibration、chooser、下載56檔、逐檔SHA／完整ImageIOdecode、A/B VERIFIED、release全 `NOT_RUN`。沒有把GUI成功訊息當成檔案驗證，沒有不明派送或重送。
+- 本輪是同一有界方法的初版缺陷更正與固定重播，保留原型錯誤及全部輸出，不重置歷史修復次數。Implementer保留13份量測JSON（初版1、v2四組及兩份重播、v3四組及兩份重播）；獨立重播5組。沒有每次重播都另開計畫、代理或交易。起始22:55Z，獨立執行23:12:25–23:14:26Z；+8那組end timestamp未知。模型使用額度未知；沒有要求Owner人工GUI操作，本輪沒有觀察或推論其他操作者期間的Mac活動。
+
+`PRIMARY_OUTCOME_STATUS=NOT_ACHIEVED`
+`IMPLEMENTATION_STATUS=P1_DIAGNOSTIC_ONLY; PRODUCTION_ANCHOR_AND_DETAIL_OCR_FIX_NOT_IMPLEMENTED`
+`CORE_ACCEPTANCE_STATUS=REAL_RETAINED_PIXEL_DISPLACEMENTS_MEASURED; TARGET_BOUND_BLOCKED`
+`REQUIRED_VERIFICATION_STATUS=PRODUCTION_TESTS_BUILD_RUNTIME_AND_LIVE_TRANSACTION_NOT_RUN`
+`INDEPENDENT_ACCEPTANCE_STATUS=BLOCKED_TARGET_BOUND; FORMAL_BACKUP_E2E_NOT_RUN`
+`TASK_CLOSURE_STATUS=BLOCKED_NO_PROVEN_2PX_TARGET_BOUND`
+
+下一步交付本輪完整報告、固定driver、數值輸出與runtime hashes到原Draft PR10，供Owner轉交外部Chief查核本輪方法限制。此checkpoint不是完成的production修正或新的exact-source Code Review請求。P1未成立前不整合P2/P3、不進行Save All；若後續有可證明的有界解法，仍須維持核准scope、真正2px與所有既有交易保護，再走精確HEAD外部CodeReview及A正式交易。A取得VERIFIED後才可另建B的獨立交易。不merge PR、不修改Harness／歷史紀錄。
+
+交付前最終完整性核對於 `2026-10-17T23:23:34.939010Z`：245個保護檔差異0，canonical HEAD／tracked status／diff與phase開始相同，state revision35且batch／writer／context皆null。最終私有收據 `private/anchor-implementation-20261018-01/preservation-final.json` SHA-256 `d009c1c4a42b6b36a27c9c77f45c9f7866b399d8552cd8bdc477a01ab85aae47`；公開數值證據收錄其摘要與ref。這不是新的VERIFIED state receipt，只是讀取既有檔案的完整性檢查。Git checkpoint／push／Draft PR 的精確 HEAD 與實際成功狀態由後續遠端讀回及PR body提供，不在此檔內預填未發生的Git結果。
+
+`CHIEF_REVIEW_STATUS=APPROVE_PLAN_ONLY; IMPLEMENTATION_NOT_APPROVED`
+`FORMAL_MENU_CALIBRATION=NOT_RUN`
+`INDEPENDENT_E2E=P1_REPLAY_BLOCKED; LIVE_TRANSACTION_NOT_RUN`
+`REAL_SAVE_ALL_DISPATCH_COUNT=0`
+`ALBUM_A_VERIFIED=NOT_RUN`
+`ALBUM_B_VERIFIED=NOT_RUN`
+`CANONICAL_LEDGER_INTEGRITY=UNCHANGED`
+`HISTORICAL_239_PRESERVED=YES`
+`FIRST_REMAINING_BLOCKER=P1_NO_INDEPENDENT_CONSERVATIVE_2PX_TARGET_BOUND`
+`NEXT_ACTION=DELIVER_BLOCKED_EVIDENCE_TO_OWNER_FOR_EXTERNAL_CHIEF; NO_PRODUCTION_INTEGRATION_OR_SAVE_ALL`

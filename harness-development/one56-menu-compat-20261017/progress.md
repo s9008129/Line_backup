@@ -1,5 +1,15 @@
 # MENU56 current slice
 
+## 2026-10-18 核准 Plan 的 P1 真幀像素實驗：BLOCKED，未整合產品
+
+已完整讀取外部 [Plan Review 5560487952](https://github.com/s9008129/Line_backup/pull/10#pullrequestreview-5560487952)：ANCHOR-DETAIL-R1-20261018 / f0518fc3… 為 APPROVE_PLAN，並非 Code Review 或 runtime grant。Plan 原檔與舊證據不改寫。實際 Luna/high 在固定 a846df0 隔離 worktree 先執行核准的 feasibility-first 實驗，沒有修改正式 Swift/Python、測試或 canonical 狀態。
+
+同一有界 NCC 方法的初版使用錯誤測試點及未成立的量化誤差假設，已明確撤回其正例標籤、保留原輸出；修正版 v3 改查歷史計算候選點 [635,272]（從未派送的 Save All 點）。66/68 與 71/73 的局部整數對位觀察均為零，但沒有可獨立成立的點位誤差上限。候選點位於匹配凸包外；pre 點位 patch 是無紋理，post 又被 SCK popup 遮擋。錯 ROI x+8、錯視窗 SCK 均拒絕。故不能以零位移或大量局部 match 宣稱 <=2px；依核准審查停止產品整合，不新增替代演算法循環。
+
+可公開的固定 [driver](review/anchor-pixel-feasibility-driver.swift) 與 [量測及 runtime 證據](review/anchor-pixel-feasibility-evidence.json) 已整理；完整結果追加於 [E2E 報告](review/E2E測試報告.md)。獨立 Luna/xhigh 核對原圖／lineage 並自行重新編譯、重播五組，判定 target-bound BLOCKED；完整遮蔽後 [獨立報告／manifest](review/anchor-pixel-independent-report.md) 已附。四組共同矩陣與 Implementer 的輸出逐值相同；另加對角(+2,+2)位移，確實以徑向2.828px拒絕。CUA acquisition 收據缺漏，舊幀不能滿足 fresh <=5s gate。不是 formal backup E2E PASS。
+
+本輪前後 245 個保護檔 hash 全相同，canonical tracked status/diff/HEAD 相同，state revision35 無 batch/writer/context。候選 closure 仍 be0c248a…，已安裝 closure 仍 ff717d72…，producer 仍 9ef75efe…；沒有 production build、新 runtime binding、grant 或 authorizer smoke。正式 menu calibration、Save All、chooser、下載、A/B VERIFIED 全未執行；Save All 總派送數仍0。Python DETAIL_OCR_BINDING 的語義／幾何修正列為尚未實作，不以報告代替修正。下一步交付本輪阻塞與完整重播證據給外部 Chief；未證明 P1 前不進入交易。
+
 ## 2026-10-18 續測：先對帳，零輸入確認現況，查明背景 OCR 錯配
 
 Owner 再次要求繼續／重測。對帳後確認隔離 worktree 已是91c8561，產品修正7debc2已推送；沒有重做已完成的 scroll／menu／title-close。19:12:48Z native＋19:14:28.821Z hosted唯讀觀察確認LINE在前景，但目前在列表頂端65張人工備份排除卡片，56名稱未可見、detail已不存在。Luna/xhigh依範圍STOP_INPUT；零scroll/click/按鍵，fresh detail mapping未執行，沒有為此消耗正式lifecycle。原生截短AX的21列估計已由full hosted AX更正為101 items；原紀錄與addendum皆保存。
