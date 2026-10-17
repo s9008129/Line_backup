@@ -12,6 +12,9 @@ from .store import Store
 from .observations import artifact,catalog,card_target,chooser_observation,validate_download_start,frame,point,rect,_support
 from . import content
 
+ONE56_GRANT_VERSION='line-two-album-project-grant-1'
+ONE56_FINGERPRINT={'start_date':'2024-05-27','end_date':'2024-05-31','expected_images':56}
+
 DISPATCH_RECEIPT_V1_KEYS={'version','run_id','action_id','execution_id','session_id','pair_frame_id','popup_frame_id',
     'support','guard','reservations','events','chooser','download_started','save_all_click_count','cease_input'}
 DISPATCH_RECEIPT_V2_KEYS=(DISPATCH_RECEIPT_V1_KEYS-{'download_started'})|{'chooser_phases','confirmation_frame',
@@ -61,6 +64,18 @@ class Service:
 
     def begin(self,expected,mode,limit):
         if self.project_profile():require(mode=='backup_batch' and limit==1,'PROJECT_BEGIN_SCOPE')
+        grant=self._project_grant() if self.project_profile() else None
+        if grant and grant.get('single_album_route') is True:
+            # Fail closed before Store.begin writes active_batch. A one56 route has
+            # exactly one lifecycle and can only start from the untouched A phase.
+            from line_backup_acceptance.project_binding import ProjectReader
+            reader=ProjectReader(self.store.root)
+            try:
+                path,ledger,_=self.store._ledger_open(reader,grant)
+                require(ledger['workflow_phase']=='A' and ledger['lifecycle_count']==0
+                    and not ledger['failure_latched'] and not any(x['state']=='RESERVED' for x in ledger['entries']),
+                    'ONE56_LIFECYCLE_ALREADY_USED')
+            finally:reader.close()
         require(mode in ('catalog_only','backup_batch') and integer(limit),'INVALID_BATCH_SCOPE')
         require(limit==0 if mode=='catalog_only' else limit>0,'INVALID_BATCH_SCOPE')
         batch_id='BATCH-'+uuid.uuid4().hex
@@ -160,6 +175,9 @@ class Service:
 
     def _validate_bounded_lifecycle(self,reader,state,batch,target,link):
         grant=self._project_grant()
+        if grant.get('single_album_route') is True:
+            require(target!=dict(start_date='2024-06-02',end_date='2024-06-07',expected_images=65)
+                and target==ONE56_FINGERPRINT,'ONE56_TARGET_MISMATCH')
         require(grant.get('owner')==self.owner and batch.get('owner_execution_id')==self.owner,
             'BOUNDED_LIFECYCLE_OWNER')
         owned=False
@@ -191,6 +209,16 @@ class Service:
             raw,_=reader.read(path,'GRANT_UNAVAILABLE')
             grant=strict_json(raw,'INVALID_GRANT')
             return grant.get('grant_version')=='line-two-album-project-grant-1'
+        except Exception:return False
+        finally:reader.close()
+
+    def _one56(self):
+        path=self.store.authorization_path
+        if not path:return False
+        reader=ProjectReader(self.store.root)
+        try:
+            grant=strict_json(reader.read(path,'GRANT_UNAVAILABLE')[0],'INVALID_GRANT')
+            return grant.get('single_album_route') is True
         except Exception:return False
         finally:reader.close()
 
@@ -254,6 +282,7 @@ class Service:
             require(b['current_album_run_id'] is None,'ALBUM_BUSY')
             index=b['next_index'];require(index<len(m['identities']),'MANIFEST_END')
             target=m['identities'][index];decision=self.eligible(snap['state'],target)
+            if self._one56():require(target==ONE56_FINGERPRINT,'ONE56_TARGET_MISMATCH')
             click=None
             if decision=='PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION':
                 require(b['new_transactions_reserved']<min(b['authorized_new_download_limit'],b['configured_new_download_limit']),'LIMIT_REACHED')
@@ -265,6 +294,7 @@ class Service:
         effects=dict(intent=False,lease=False,destination=False)
         def prepare(cfg,s):
             b=self.batch(s)
+            if self._one56():require(target==ONE56_FINGERPRINT,'ONE56_TARGET_MISMATCH')
             require(b['next_index']==index and b['current_album_run_id'] is None,'ALBUM_BUSY')
             require(self.eligible(s,target)==decision,'HISTORY_DRIFT')
             if decision=='SKIP_VERIFIED':
@@ -332,6 +362,7 @@ class Service:
         try:
             snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')
             b,r=self.run(snap['state']);m=self.manifest(b,reader,snap['config'])
+            if self._one56():require(r['fingerprint']==ONE56_FINGERPRINT,'ONE56_TARGET_MISMATCH')
             require(r['intent'] is None,'LOADED_INTENT_NO_PERMISSION')
             for record in (detail,closure):
                 frame(reader,record,snap['config'],session=m['session_id'])
@@ -463,6 +494,7 @@ class Service:
         finally:reader.close()
         def intent(cfg,s):
             b,r=self.run(s);require(r['phase']=='SAVE_ALL_CALIBRATION' and r['intent'] is None,'LOADED_INTENT_NO_PERMISSION')
+            if self._one56():require(r['fingerprint']==ONE56_FINGERPRINT,'ONE56_TARGET_MISMATCH')
             require(b['new_transactions_reserved']<min(b['authorized_new_download_limit'],b['configured_new_download_limit']),'LIMIT_REACHED')
             require(content.inventory(self.store.root,r['destination'])==[],'DESTINATION_NONEMPTY')
             previous=strict_json(r['checkpoint']['evidence'].encode(),'INVALID_CALIBRATION_RECORD')
@@ -508,8 +540,9 @@ class Service:
                     require(self.store.authorization_path is not None,'LIVE_AUTHORITY_REQUIRED')
                     from .cli import authorize
                     grant=authorize(self.store.root,self.store.authorization_path,False,'dispatch')
-                    require(grant['grant_version']==('line-two-album-project-grant-1' if version=='cua-dispatch-receipt-3'
-                        else 'line-batch-execution-grant-2'),'LIVE_RECEIPT_PROFILE_REQUIRED')
+                    require((grant['grant_version']=='line-two-album-project-grant-1'
+                        if version=='cua-dispatch-receipt-3' else grant['grant_version']=='line-batch-execution-grant-2'),
+                        'LIVE_RECEIPT_PROFILE_REQUIRED')
                     if version=='cua-dispatch-receipt-3':
                         require(receipt_data['dispatch_policy']=='LOGICAL_AT_MOST_ONCE_DURABLE_PRE_INPUT_RESERVATION_NO_REPLAY',
                             'RECEIPT3_POLICY')

@@ -5,6 +5,7 @@ import binascii
 import json
 import os
 from pathlib import Path
+import re
 import stat
 import sys
 from line_backup_acceptance.common import AcceptanceError
@@ -28,8 +29,27 @@ PROJECT_GRANT_KEYS={
     'native_binary_sha256','gui_ledger','producer_binary','runtime_binding','sensor_scope',
     'project_profile','owner_decision','external_review','live_readiness','decoder_binding','entry_binding'
 }
+ONE56_GRANT_KEYS=PROJECT_GRANT_KEYS|{'single_album_route'}
 PROJECT_SCOPE='LINE_TWO_ALBUM_PILOT/1'
 PROJECT_DIR='harness-development/line-two-album-pilot-20261014'
+ONE56_GRANT_VERSION='line-two-album-project-grant-1'
+ONE56_DECISION='AUTHORIZE_ONE_REAL_56_PHOTO_TRANSACTION'
+ONE56_ENTRY='runSingleAlbumPilot'
+ONE56_FINGERPRINT={'start_date':'2024-05-27','end_date':'2024-05-31','expected_images':56}
+ONE56_PROVIDER_ACTOR='s9008129'
+ONE56_PROVIDER_REPOSITORY='https://api.github.com/repos/s9008129/Line_backup'
+ONE56_PULL_REQUEST_API=ONE56_PROVIDER_REPOSITORY+'/pulls/10'
+ONE56_PULL_REQUEST_HTML='https://github.com/s9008129/Line_backup/pull/10'
+ONE56_REQUIRED_OPERATIONS={'begin','admit','prepare','calibrate','intent','dispatch','finalize','stop','release',
+    'gui_reserve','gui_consume','gui_phase','gui_observe'}
+ONE56_CALLBACK_ROLES={
+    PROJECT_DIR+'/mac_runtime.mjs':{'cli_bridge','menu_lineage','retainer'},
+    PROJECT_DIR+'/mac/analyzer.mjs':{'capture_analyzer'},
+    PROJECT_DIR+'/mac/classifier.mjs':{'classifier_chooser'},
+    PROJECT_DIR+'/mac/chooser.mjs':{'classifier_chooser'},
+    PROJECT_DIR+'/mac/producer.mjs':{'capture_analyzer','menu_lineage'},
+    PROJECT_DIR+'/mac/visual_diagnostic.mjs':{'capture_analyzer'},
+}
 PROJECT_OPERATIONS={'begin','admit','prepare','calibrate','intent','dispatch','finalize','stop','release','resume',
     'gui_reserve','gui_consume','gui_initialize','gui_phase','gui_observe'}
 PROJECT_MUTATING={'begin','admit','prepare','calibrate','intent','dispatch','finalize','stop','release','gui_reserve','gui_consume','gui_initialize','gui_phase','gui_observe'}
@@ -250,8 +270,128 @@ def authorize(root,path,fixture,operation):
         'GRANT_AUTHORITY_DRIFT')
     return grant
 
+def one56_bundle(path):
+    """Return the exact ONE56 bundle directory, rejecting aliases and path tricks."""
+    require(isinstance(path,str) and not path.startswith('/') and '\\' not in path
+        and all(part not in ('','.','..') for part in path.split('/')),'ONE56_BUNDLE_PATH')
+    match=re.fullmatch(re.escape(PROJECT_DIR)+r'/private/authority-bundles/ONE56-[A-Za-z0-9][A-Za-z0-9_-]{0,63}/project-grant\.json',path)
+    require(match is not None,'ONE56_BUNDLE_PATH')
+    return path.rsplit('/',1)[0]
+
+def _one56_ref(ref,bundle,name):
+    require(isinstance(ref,dict) and set(ref)=={'path','bytes','sha256'}
+        and ref.get('path')==bundle+'/'+name and type(ref.get('bytes')) is int and ref['bytes']>0
+        and isinstance(ref.get('sha256'),str) and re.fullmatch(r'[0-9a-f]{64}',ref['sha256']) is not None,
+        'ONE56_BUNDLE_MIXED')
+
+def validate_one56_contract(contract,grant,root):
+    operations=contract.get('operations') if isinstance(contract,dict) else None
+    require(isinstance(operations,list) and all(isinstance(op,str) for op in operations)
+        and len(operations)==len(set(operations)),'PROJECT_CONTRACT_SCOPE')
+    require(contract.get('status')=='ACTIVE' and contract.get('closed') is False
+        and contract.get('task_id')==grant['task_id'] and contract.get('owner')==grant['owner']
+        and contract.get('project_root')==root and contract.get('source_sha256')==grant['source_sha256']
+        and contract.get('config_sha256')==grant['config_sha256']
+        and contract.get('entry_method')==ONE56_ENTRY and set(operations)==ONE56_REQUIRED_OPERATIONS
+        and contract.get('entry_sha256')==grant['entry_binding']['sha256']
+        and contract.get('runtime_binding_sha256')==grant['runtime_binding']['sha256']
+        and contract.get('producer_binary_sha256')==grant['producer_binary']['sha256'],
+        'PROJECT_CONTRACT_SCOPE')
+
+def validate_one56_review(review,original,grant):
+    require(isinstance(review,dict) and review.get('profile')==PROJECT_SCOPE
+        and review.get('verdict')=='APPROVE_IMPLEMENTATION'
+        and review.get('review_method')=='OWNER_TRANSFERRED_EXTERNAL_PR_REVIEW'
+        and isinstance(review.get('reviewer'),str) and review['reviewer'].strip()
+        and review['reviewer'].strip().lower() not in ('owner','implementer','local agent','local reviewer',
+            'luna','gpt-6-luna','sol','codex')
+        and review.get('task_id')==grant['task_id'] and review.get('owner')==grant['owner']
+        and review.get('project_root')==grant['project_root'] and review.get('source_sha256')==grant['source_sha256']
+        and review.get('implementation_head') is not None
+        and review.get('entry_method')==ONE56_ENTRY
+        and review.get('approved_operations')==sorted(ONE56_REQUIRED_OPERATIONS)
+        and review.get('fingerprint')==ONE56_FINGERPRINT
+        and review.get('runtime_binding_sha256')==grant['runtime_binding']['sha256']
+        and review.get('producer_binary_sha256')==grant['producer_binary']['sha256']
+        and isinstance(review.get('disposition_ref'),str) and review['disposition_ref'].strip(),
+        'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+    require(isinstance(original,dict) and original.get('verdict')=='APPROVE_IMPLEMENTATION'
+        and original.get('reviewer')==review['reviewer']
+        and original.get('disposition_ref')==review['disposition_ref']
+        and original.get('task_id')==grant['task_id'] and original.get('owner')==grant['owner']
+        and original.get('project_root')==grant['project_root']
+        and original.get('config_sha256')==grant['config_sha256']
+        and original.get('implementation_head')==review.get('implementation_head')
+        and original.get('source_sha256')==grant['source_sha256']
+        and original.get('runtime_binding_sha256')==grant['runtime_binding']['sha256']
+        and original.get('producer_binary_sha256')==grant['producer_binary']['sha256']
+        and original.get('entry_method')==ONE56_ENTRY
+        and original.get('approved_operations')==sorted(ONE56_REQUIRED_OPERATIONS)
+        and original.get('fingerprint')==ONE56_FINGERPRINT,
+        'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+
+def _one56_scope_from_body(body):
+    start='<!-- ONE56_REVIEW_SCOPE_V1\n'
+    end='\nONE56_REVIEW_SCOPE_END -->'
+    require(isinstance(body,str) and body.count(start)==1 and body.count(end)==1
+        and body.index(start)<body.index(end),'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+    payload=body.split(start,1)[1].split(end,1)[0]
+    return strict_json(payload.encode(),'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+
+def validate_one56_provider_review(raw,review,contract,grant):
+    require(isinstance(raw,dict) and type(raw.get('id')) is int and raw['id']>0
+        and type(review.get('provider_review_id')) is int and review['provider_review_id']==raw['id']
+        and review.get('provider_review_url')==ONE56_PROVIDER_REPOSITORY+f"/pulls/10/reviews/{raw['id']}"
+        and raw.get('pull_request_url')==ONE56_PULL_REQUEST_API
+        and review.get('pull_request_url')==ONE56_PULL_REQUEST_API
+        and raw.get('html_url')==ONE56_PULL_REQUEST_HTML+f"#pullrequestreview-{raw['id']}"
+        and review.get('disposition_ref')==raw.get('html_url')
+        and review.get('pull_request_html_url')==ONE56_PULL_REQUEST_HTML
+        and raw.get('state') in ('APPROVED','COMMENTED')
+        and review.get('provider_state')==raw.get('state')
+        and isinstance(raw.get('user'),dict) and raw['user'].get('login')==ONE56_PROVIDER_ACTOR
+        and type(raw['user'].get('id')) is int and raw['user']['id']==129814822
+        and review.get('provider_actor')==ONE56_PROVIDER_ACTOR
+        and isinstance(review.get('implementation_head'),str)
+        and re.fullmatch(r'[0-9a-f]{40}',review['implementation_head']) is not None
+        and raw.get('commit_id')==review['implementation_head']
+        and contract.get('implementation_head')==review['implementation_head'],
+        'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+    scope=_one56_scope_from_body(raw.get('body'))
+    expected={'decision':'APPROVE_IMPLEMENTATION','external_reviewer':'ChatGPT Chief',
+        'task_id':grant['task_id'],'owner':grant['owner'],'project_root':grant['project_root'],
+        'implementation_head':contract['implementation_head'],'source_sha256':grant['source_sha256'],
+        'config_sha256':grant['config_sha256'],'runtime_binding_sha256':grant['runtime_binding']['sha256'],
+        'producer_binary_sha256':grant['producer_binary']['sha256'],'entry_sha256':grant['entry_binding']['sha256'],
+        'entry_method':ONE56_ENTRY,'approved_operations':sorted(ONE56_REQUIRED_OPERATIONS),
+        'fingerprint':ONE56_FINGERPRINT}
+    require(scope==expected and review.get('reviewer')==scope['external_reviewer']
+        and review.get('task_id')==grant['task_id'] and review.get('owner')==grant['owner']
+        and review.get('project_root')==grant['project_root']
+        and review.get('source_sha256')==grant['source_sha256']
+        and review.get('config_sha256')==grant['config_sha256']
+        and review.get('runtime_binding_sha256')==grant['runtime_binding']['sha256']
+        and review.get('producer_binary_sha256')==grant['producer_binary']['sha256']
+        and review.get('entry_sha256')==grant['entry_binding']['sha256'],
+        'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+    return scope
+
+def validate_one56_callback_membership(callback_sources):
+    require(isinstance(callback_sources,list),'PROJECT_CALLBACK_SOURCE_BINDING')
+    indexed={}
+    for item in callback_sources:
+        require(isinstance(item,dict) and set(item)=={'roles','path','bytes','sha256'}
+            and isinstance(item.get('path'),str) and item['path'] not in indexed,
+            'PROJECT_CALLBACK_SOURCE_BINDING')
+        indexed[item['path']]=item
+    require(set(indexed)==set(ONE56_CALLBACK_ROLES)
+        and all(indexed[path].get('roles')==sorted(roles) for path,roles in ONE56_CALLBACK_ROLES.items()),
+        'PROJECT_CALLBACK_SOURCE_COVERAGE')
+
 def authorize_project(root,path,grant,fixture,operation):
     """Separate owner-managed project route. Design approval alone never enables live work."""
+    if isinstance(grant,dict) and grant.get('single_album_route') is True:
+        return authorize_one56_project(root,path,grant,fixture,operation)
     require(not fixture and isinstance(grant,dict) and set(grant)==PROJECT_GRANT_KEYS
         and grant.get('grant_version')=='line-two-album-project-grant-1','INVALID_PROJECT_GRANT')
     require(grant['project_root']==root and grant['fixture'] is False and root==str(Path(__file__).resolve().parents[2])
@@ -329,12 +469,117 @@ def authorize_project(root,path,grant,fixture,operation):
     finally:reader.close()
     return grant
 
-def validate_project_runtime_binding(reader,grant):
+def authorize_one56_project(root,path,grant,fixture,operation):
+    """Immutable, single-transaction authority. Legacy project grants keep their original route."""
+    require(not fixture and isinstance(grant,dict) and set(grant)==ONE56_GRANT_KEYS
+        and grant.get('grant_version')==ONE56_GRANT_VERSION and grant.get('single_album_route') is True,
+        'INVALID_PROJECT_GRANT')
+    bundle=one56_bundle(path)
+    require(grant['project_root']==root and grant['fixture'] is False
+        and root==str(Path(__file__).resolve().parents[2])
+        and grant['artifact_dir']==PROJECT_DIR+'/private' and grant['project_profile']==PROJECT_SCOPE
+        and isinstance(grant['task_id'],str) and grant['task_id'].startswith('PILOT-')
+        and isinstance(grant['owner'],str) and grant['owner'],'PROJECT_GRANT_SCOPE')
+    require(isinstance(grant['operations'],list) and operation in grant['operations']
+        and len(grant['operations'])==len(set(grant['operations']))
+        and set(grant['operations'])==ONE56_REQUIRED_OPERATIONS,'PROJECT_GRANT_OPERATIONS')
+    require((grant['album_quota'],grant['lifecycle_album_limit'],grant['save_all_dispatch_limit'],
+        grant['chooser_confirmation_limit'])==(1,1,1,1)
+        and grant['reversible_gui_invocation_limit']==23,'PROJECT_GRANT_QUOTA')
+    require(grant['contract_path']==bundle+'/project-contract.json'
+        and grant['gui_ledger']==PROJECT_DIR+'/private/gui-ledger.json'
+        and grant['sensor_scope']=={'bundle_id':'jp.naver.line.mac','provider':'SCREEN_CAPTURE_KIT',
+            'capture_scope':'FULL_DISPLAY','surfaces':['ALBUMS','ALBUM_DETAIL','FOLDER_CHOOSER']},
+        'PROJECT_GRANT_BINDING')
+    for field in ('config_sha256','source_sha256','contract_sha256','native_binary_sha256'):
+        require(isinstance(grant[field],str) and re.fullmatch(r'[0-9a-f]{64}',grant[field]) is not None,
+            'PROJECT_GRANT_BINDING')
+    require(isinstance(grant['producer_binary'],dict) and set(grant['producer_binary'])=={'path','bytes','sha256'}
+        and isinstance(grant['decoder_binding'],dict) and set(grant['decoder_binding'])=={'path','bytes','sha256'}
+        and isinstance(grant['runtime_binding'],dict) and set(grant['runtime_binding'])=={'path','bytes','sha256'}
+        and isinstance(grant['entry_binding'],dict) and set(grant['entry_binding'])=={'path','bytes','sha256'}
+        and grant['entry_binding']['path']==PROJECT_DIR+'/two_album_entry.mjs','PROJECT_RUNTIME_BINDING')
+    require(grant['native_binary_sha256']==grant['decoder_binding']['sha256'],'PROJECT_DECODER_BINDING')
+    for field,name in (('owner_decision','owner-decision.json'),('external_review','implementation-review.json'),
+        ('live_readiness','live-readiness.json'),('runtime_binding','runtime-binding.json')):
+        _one56_ref(grant[field],bundle,name)
+    _one56_ref({'path':grant['contract_path'],'bytes':1,'sha256':grant['contract_sha256']},bundle,'project-contract.json')
+    reader=ProjectReader(root)
+    try:
+        from .observations import artifact
+        refs=('owner_decision','external_review','live_readiness','runtime_binding')
+        raw_refs={field:artifact(reader,grant[field]) for field in refs}
+        contract_raw,_=reader.read(grant['contract_path'],'PROJECT_CONTRACT_UNAVAILABLE')
+        require(sha(contract_raw)==grant['contract_sha256'],'PROJECT_CONTRACT_DRIFT')
+        contract=strict_json(contract_raw,'PROJECT_CONTRACT_INVALID')
+        decision=strict_json(raw_refs['owner_decision'],'PROJECT_OWNER_DECISION_REQUIRED')
+        review=strict_json(raw_refs['external_review'],'PROJECT_REVIEW_REQUIRED')
+        readiness=strict_json(raw_refs['live_readiness'],'PROJECT_READINESS_REQUIRED')
+        runtime=validate_project_runtime_binding(reader,grant,one56_bundle=bundle)
+        validate_one56_contract(contract,grant,root)
+        require(isinstance(contract.get('implementation_head'),str)
+            and re.fullmatch(r'[0-9a-f]{40}',contract['implementation_head']) is not None,
+            'PROJECT_CONTRACT_SCOPE')
+        require(decision.get('decision')==ONE56_DECISION and decision.get('task_id')==grant['task_id']
+            and decision.get('owner')==grant['owner'] and decision.get('project_root')==root
+            and decision.get('source_sha256')==grant['source_sha256']
+            and decision.get('config_sha256')==grant['config_sha256']
+            and decision.get('entry_method')==ONE56_ENTRY
+            and decision.get('fingerprint')==ONE56_FINGERPRINT,
+            'PROJECT_OWNER_DECISION_MISMATCH')
+        original_ref=review.get('original_review_ref')
+        _one56_ref(original_ref,bundle,'external-review-original.json')
+        original_raw=artifact(reader,original_ref)
+        original=strict_json(original_raw,'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+        validate_one56_review(review,original,grant)
+        provider_ref=review.get('provider_response_ref')
+        _one56_ref(provider_ref,bundle,'github-review-response.json')
+        provider_raw=artifact(reader,provider_ref)
+        provider_response=strict_json(provider_raw,'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+        validate_one56_provider_review(provider_response,review,contract,grant)
+        require(readiness.get('profile')==PROJECT_SCOPE and readiness.get('gui_ready') is True
+            and readiness.get('owner_foreground_handoff') is True
+            and readiness.get('independent_acceptance_access') is True
+            and readiness.get('physical_delivery') in ('SUPPORTED','POLICY_ACCEPTED_LOGICAL_ONLY')
+            and readiness.get('source_sha256')==grant['source_sha256']
+            and readiness.get('config_sha256')==grant['config_sha256']
+            and readiness.get('entry_sha256')==grant['entry_binding']['sha256']
+            and readiness.get('runtime_binding_sha256')==grant['runtime_binding']['sha256'],
+            'PROJECT_LIVE_READINESS_REQUIRED')
+        consent_ref=readiness.get('owner_consent_ref')
+        require(isinstance(consent_ref,dict) and consent_ref.get('path')==bundle+'/owner-consent.json',
+            'PROJECT_OWNER_CONSENT_REQUIRED')
+        consent_raw=artifact(reader,consent_ref)
+        consent=strict_json(consent_raw,'PROJECT_OWNER_CONSENT_REQUIRED')
+        if operation in PROJECT_MUTATING:
+            require(decision.get('live_gui_authorized') is True and consent.get('profile')==PROJECT_SCOPE
+                and consent.get('gui_authorized') is True and consent.get('task_id')==grant['task_id']
+                and consent.get('owner')==grant['owner'] and consent.get('source_sha256')==grant['source_sha256']
+                and consent.get('config_sha256')==grant['config_sha256']
+                and consent.get('fingerprint')==ONE56_FINGERPRINT,'PROJECT_OWNER_CONSENT_MISMATCH')
+        require(grant['config_sha256']==sha(reader.read('config/line_backup_config.json')[0]),'PROJECT_CONFIG_DRIFT')
+        snapshot=Store(root).snapshot()
+        require(snapshot['receipt']['source_sha256']==grant['source_sha256'],'PROJECT_SOURCE_DRIFT')
+        # Re-read all signed material and grant from the same no-follow reader; its
+        # observations reject replacement or byte changes during validation.
+        grant_raw,_=reader.read(path,'PROJECT_GRANT_DRIFT')
+        require(strict_json(grant_raw,'INVALID_PROJECT_GRANT')==grant,'PROJECT_GRANT_DRIFT')
+        for field in refs:
+            require(reader.read(grant[field]['path'])[0]==raw_refs[field],'PROJECT_GRANT_EVIDENCE_DRIFT')
+        require(reader.read(original_ref['path'])[0]==original_raw,'PROJECT_GRANT_EVIDENCE_DRIFT')
+        require(reader.read(provider_ref['path'])[0]==provider_raw,'PROJECT_GRANT_EVIDENCE_DRIFT')
+        require(reader.read(consent_ref['path'])[0]==consent_raw,'PROJECT_GRANT_EVIDENCE_DRIFT')
+        require(reader.read(grant['contract_path'])[0]==contract_raw,'PROJECT_CONTRACT_DRIFT')
+    finally:reader.close()
+    return grant
+
+def validate_project_runtime_binding(reader,grant,one56_bundle=None):
     """Bind the full product source closure and exact private producer/decoder/entry bytes."""
     from .store import SOURCE_PATHS
     from .observations import artifact
     runtime_ref=grant['runtime_binding']
-    require(runtime_ref['path']==PROJECT_DIR+'/private/runtime-binding.json','PROJECT_RUNTIME_BINDING')
+    runtime_path=(one56_bundle+'/runtime-binding.json') if one56_bundle else PROJECT_DIR+'/private/runtime-binding.json'
+    require(runtime_ref['path']==runtime_path,'PROJECT_RUNTIME_BINDING')
     raw=artifact(reader,runtime_ref);manifest=strict_json(raw,'PROJECT_RUNTIME_BINDING_INVALID')
     keys={'version','profile','project_root','source_sha256','config_sha256','source_files','runtime_files','callback_sources'}
     require(isinstance(manifest,dict) and set(manifest)==keys and manifest.get('version')==1
@@ -386,6 +631,8 @@ def validate_project_runtime_binding(reader,grant):
         require(len(data)==item['bytes'] and sha(data)==item['sha256'],'PROJECT_CALLBACK_SOURCE_DRIFT')
         covered.update(item['roles'])
     require(covered==required_callbacks,'PROJECT_CALLBACK_SOURCE_COVERAGE')
+    if one56_bundle:
+        validate_one56_callback_membership(callback_sources)
     return manifest
 
 def execute(ns):
@@ -393,7 +640,7 @@ def execute(ns):
         # Read-only reuse of the complete live project authority check. This
         # never initializes the GUI ledger, acquires an owner or observes LINE.
         grant=authorize(ns.project_root,ns.authorization,ns.fixture,'gui_observe')
-        require(grant.get('grant_version')=='line-two-album-project-grant-1','PROJECT_GRANT_REQUIRED')
+        require(grant.get('grant_version') in ('line-two-album-project-grant-1',ONE56_GRANT_VERSION),'PROJECT_GRANT_REQUIRED')
         return dict(status='PROJECT_NATIVE_AUTHORIZED',project_root=grant['project_root'],
             owner=grant['owner'],task_id=grant['task_id'],source_sha256=grant['source_sha256'],
             dispatch_authorized=False,native_controller_admission=False)
@@ -443,11 +690,11 @@ def execute(ns):
     data=payload.get('data',{})
     if ns.operation=='migrate':return store.migrate(expected,data['snapshot_path'],fixture=ns.fixture)
     if ns.operation=='begin':
-        if grant.get('grant_version')=='line-two-album-project-grant-1':
+        if grant.get('grant_version') in ('line-two-album-project-grant-1',ONE56_GRANT_VERSION):
             require(data.get('mode')=='backup_batch' and data.get('limit')==1,'PROJECT_BEGIN_SCOPE')
         return service.begin(expected,data['mode'],data['limit'])
     if ns.operation=='admit':
-        if grant.get('grant_version')=='line-two-album-project-grant-1':
+        if grant.get('grant_version') in ('line-two-album-project-grant-1',ONE56_GRANT_VERSION):
             return service.admit_bounded(expected,data['record'],data['target'],data['session'],data.get('workflow_link'))
         return service.admit(expected,data['records'],data['session'])
     if ns.operation=='prepare':return service.prepare(expected,data.get('observation'))

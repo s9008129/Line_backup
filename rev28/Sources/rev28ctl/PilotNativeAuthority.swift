@@ -39,6 +39,23 @@ enum PilotNativeAuthority {
         return raw
     }
 
+    static func one56Bundle(_ grantPath: String) -> String? {
+        let parts = grantPath.split(separator: "/", omittingEmptySubsequences: false).map(String.init)
+        let base = directory.split(separator: "/").map(String.init)
+        guard parts.count == base.count + 3,
+              Array(parts.prefix(base.count)) == base,
+              parts[base.count] == "authority-bundles",
+              parts[base.count + 2] == "project-grant.json",
+              parts.joined(separator: "/") == grantPath else { return nil }
+        let name = parts[base.count + 1]
+        guard name.hasPrefix("ONE56-"), name.count <= 70,
+              let first = name.dropFirst(6).first,
+              first.isASCII && (first.isLetter || first.isNumber),
+              name.dropFirst(6).allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "_" || $0 == "-") })
+        else { return nil }
+        return parts.dropLast().joined(separator: "/")
+    }
+
     static func verify(root: URL, grantPath: String, grantSHA: String,
                        surface: String? = nil, sessionID: String? = nil) throws -> [String: Any] {
         guard grantPath.hasPrefix(directory + "/"),
@@ -50,12 +67,16 @@ enum PilotNativeAuthority {
             throw PassiveDiagnosticError.refused("pilot grant digest mismatch")
         }
         let grant = try json(raw)
-        guard grant["grant_version"] as? String == "line-two-album-project-grant-1",
+        let one56 = grant["single_album_route"] as? Bool == true
+        let bundle = one56 ? one56Bundle(grantPath) : nil
+        let expectedContract = one56 ? bundle.map { $0 + "/project-contract.json" } : directory + "/project-contract.json"
+        guard (!one56 || bundle != nil),
+              grant["grant_version"] as? String == "line-two-album-project-grant-1",
               grant["project_profile"] as? String == profile,
               grant["project_root"] as? String == root.path,
               let owner = grant["owner"] as? String, !owner.isEmpty,
               sessionID == nil || sessionID == owner,
-              grant["contract_path"] as? String == directory + "/project-contract.json",
+              grant["contract_path"] as? String == expectedContract,
               let contractSHA = grant["contract_sha256"] as? String,
               let producer = grant["producer_binary"] as? [String: Any],
               let scope = grant["sensor_scope"] as? [String: Any],
@@ -66,11 +87,43 @@ enum PilotNativeAuthority {
               surface == nil || surfaces.contains(surface!) else {
             throw PassiveDiagnosticError.refused("pilot native authority scope mismatch")
         }
-        let contractRaw = try read(directory + "/project-contract.json", root: root)
-        guard EvidenceIO.sha256Hex(contractRaw) == contractSHA else {
+        let actualContractRaw = try read(expectedContract!, root: root)
+        guard EvidenceIO.sha256Hex(actualContractRaw) == contractSHA else {
             throw PassiveDiagnosticError.refused("pilot contract digest mismatch")
         }
-        let contract = try json(contractRaw)
+        let contract = try json(actualContractRaw)
+        if one56 {
+            guard let bundle,
+                  let decision = grant["owner_decision"] as? [String: Any],
+                  let review = grant["external_review"] as? [String: Any],
+                  let readiness = grant["live_readiness"] as? [String: Any],
+                  let runtime = grant["runtime_binding"] as? [String: Any],
+                  decision["path"] as? String == bundle + "/owner-decision.json",
+                  review["path"] as? String == bundle + "/implementation-review.json",
+                  readiness["path"] as? String == bundle + "/live-readiness.json",
+                  runtime["path"] as? String == bundle + "/runtime-binding.json" else {
+                throw PassiveDiagnosticError.refused("one56 authority bundle references are mixed")
+            }
+            _ = try bound(decision, root: root)
+            let reviewRaw = try bound(review, root: root)
+            let reviewObject = try json(reviewRaw)
+            guard let originalReview = reviewObject["original_review_ref"] as? [String: Any],
+                  originalReview["path"] as? String == bundle + "/external-review-original.json",
+                  let providerResponse = reviewObject["provider_response_ref"] as? [String: Any],
+                  providerResponse["path"] as? String == bundle + "/github-review-response.json" else {
+                throw PassiveDiagnosticError.refused("one56 original external review reference is mixed")
+            }
+            _ = try bound(originalReview, root: root)
+            _ = try bound(providerResponse, root: root)
+            _ = try bound(runtime, root: root)
+            let readinessRaw = try bound(readiness, root: root)
+            let readinessObject = try json(readinessRaw)
+            guard let consent = readinessObject["owner_consent_ref"] as? [String: Any],
+                  consent["path"] as? String == bundle + "/owner-consent.json" else {
+                throw PassiveDiagnosticError.refused("one56 owner consent bundle reference is mixed")
+            }
+            _ = try bound(consent, root: root)
+        }
         guard let authorizer = contract["native_authorizer"] as? [String: Any],
               let python = authorizer["python"] as? [String: Any],
               let pythonPath = python["path"] as? String,

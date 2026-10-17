@@ -17,6 +17,8 @@ CONFIG='config/line_backup_config.json'
 GUI_LEDGER_VERSION='line-backup-gui-ledger-1'
 GUI_LEDGER_KINDS={'album_open','dispatch_inputs','chooser_inputs','scroll','menu_calibration','return_navigation'}
 PROJECT_LEDGER_VERSION='line-two-album-gui-ledger-1'
+def is_project_grant(grant):
+    return isinstance(grant,dict) and grant.get('grant_version')=='line-two-album-project-grant-1'
 PROJECT_SLOTS={
     'A.CARD':'CARD','A.CAL_OPEN':'CAL_OPEN','A.CAL_DISMISS':'CAL_DISMISS','A.ATOMIC_ELLIPSIS':'ATOMIC_ELLIPSIS',
     'A.SAVE_ALL':'SAVE_ALL','A.GO_TO_FOLDER':'GO_TO_FOLDER','A.SET_PATH':'SET_PATH','A.PATH_RETURN':'PATH_RETURN',
@@ -234,7 +236,7 @@ class Store:
             if grant is not None:
                 grant_raw,_=r.read(self.authorization_path,'GRANT_DRIFT')
                 require(strict_json(grant_raw,'INVALID_GRANT')==grant,'GRANT_DRIFT')
-                if grant.get('grant_version')=='line-two-album-project-grant-1':
+                if is_project_grant(grant):
                     for field in ('owner_decision','external_review','live_readiness','runtime_binding',
                         'producer_binary','decoder_binding','entry_binding'):
                         ref=grant[field]
@@ -249,6 +251,12 @@ class Store:
                         if ref is None:continue
                         evidence_raw,_=r.read(ref['path'],'GRANT_EVIDENCE_DRIFT')
                         require(len(evidence_raw)==ref['bytes'] and sha(evidence_raw)==ref['sha256'],'GRANT_EVIDENCE_DRIFT')
+                if grant.get('single_album_route') is True and operation=='begin':
+                    _,ledger,_=self._ledger_open(r,grant)
+                    require(ledger['workflow_phase']=='A' and ledger['lifecycle_count']==0
+                        and not ledger['failure_latched']
+                        and not any(item.get('state')=='RESERVED' for item in ledger['entries']),
+                        'ONE56_LIFECYCLE_ALREADY_USED')
             candidate=copy.deepcopy(before)
             result=transform(cfg,candidate)
             changed=changed_keys(before,candidate)
@@ -348,7 +356,7 @@ class Store:
         return path
 
     def _authorize_project_mutation(self,grant,operation):
-        require(grant.get('grant_version')=='line-two-album-project-grant-1','PROJECT_SCOPE_REQUIRED')
+        require(is_project_grant(grant),'PROJECT_SCOPE_REQUIRED')
         require(self.authorization_path is not None,'PROJECT_GRANT_REQUIRED')
         from .cli import authorize
         require(authorize(self.root,self.authorization_path,False,operation)==grant,'GRANT_DRIFT')
@@ -404,7 +412,7 @@ class Store:
     def _ledger_open(self,r,grant):
         path=self.ledger_path(grant);cap=grant['reversible_gui_invocation_limit']
         ledger=self._ledger_read(r,path)
-        if grant.get('grant_version')=='line-two-album-project-grant-1':
+        if is_project_grant(grant):
             receipt_path=path[:-len('gui-ledger.json')]+'gui-ledger-initialization.json'
             try:
                 receipt_fd=r.open(receipt_path)
@@ -462,7 +470,7 @@ class Store:
         return dict(status='INITIALIZED',task_id=ledger['task_id'],owner=ledger['owner'],
             source_sha256=grant['source_sha256'],workflow_phase=ledger['workflow_phase'],
             failure_latched=ledger['failure_latched'],scroll_1_used=scroll_used,
-            reserved_entry_count=len(reserved))
+            reserved_entry_count=len(reserved),lifecycle_count=ledger['lifecycle_count'])
 
     def initialize_project_ledger(self,grant,data):
         self._authorize_project_mutation(grant,'gui_initialize')
@@ -586,7 +594,7 @@ class Store:
         require(isinstance(owner,str) and owner==grant['owner'],'GUI_LEDGER_OWNER')
         require(run_id is None or isinstance(run_id,str),'GUI_LEDGER_RUN')
         slot=data.get('slot')
-        project=grant.get('grant_version')=='line-two-album-project-grant-1'
+        project=is_project_grant(grant)
         if project:
             self._authorize_project_mutation(grant,'gui_reserve')
             slots=data.get('slots',[slot])
@@ -666,7 +674,7 @@ class Store:
         """Mark one reservation consumed; a consumed or unknown reservation never refunds."""
         reservation_id=data.get('reservation_id');outcome=data.get('outcome')
         require(isinstance(reservation_id,str) and reservation_id,'GUI_LEDGER_RESERVATION')
-        project=grant.get('grant_version')=='line-two-album-project-grant-1'
+        project=is_project_grant(grant)
         if project:self._authorize_project_mutation(grant,'gui_consume')
         if not project and not self.fixture:
             require(self.authorization_path is not None,'LIVE_AUTHORITY_REQUIRED')
@@ -689,6 +697,8 @@ class Store:
     def advance_project_phase(self,grant,phase,*,c1_evidence=None,a_run_id=None):
         self._authorize_project_mutation(grant,'gui_phase')
         require(phase in ('C1','B','DONE','FAILED'),'PROJECT_WORKFLOW_PHASE')
+        if grant.get('single_album_route') is True:
+            require(phase=='FAILED','ONE56_PHASE_SCOPE')
         with self.guard() as (r,parent,check_lock,lock_identity):
             check_lock();path,ledger,cap=self._ledger_open(r,grant)
             if phase=='FAILED':
@@ -785,7 +795,8 @@ class Store:
         self._authorize_project_mutation(grant,'begin')
         with self.guard() as (r,parent,check_lock,lock_identity):
             check_lock();path,ledger,cap=self._ledger_open(r,grant)
-            require(not ledger['failure_latched'] and ledger['lifecycle_count']<2,'PROJECT_LIFECYCLE_CAP')
+            limit=1 if grant.get('single_album_route') is True else 2
+            require(not ledger['failure_latched'] and ledger['lifecycle_count']<limit,'PROJECT_LIFECYCLE_CAP')
             expected_phase='A' if ledger['lifecycle_count']==0 else 'B'
             require(ledger['workflow_phase']==expected_phase,'PROJECT_WORKFLOW_PHASE')
             require(batch_id not in ledger['lifecycle_batch_ids'],'PROJECT_BATCH_REUSED')
@@ -800,7 +811,7 @@ class Store:
             return dict(status='PROJECT_LIFECYCLE_STARTED',ordinal=ledger['lifecycle_count'])
 
     def project_album_slot(self,grant):
-        require(grant.get('grant_version')=='line-two-album-project-grant-1','PROJECT_SCOPE_REQUIRED')
+        require(is_project_grant(grant),'PROJECT_SCOPE_REQUIRED')
         reader=ProjectReader(self.root)
         try:
             path=self.ledger_path(grant);ledger=self._ledger_read(reader,path)

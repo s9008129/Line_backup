@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {execFile} from 'node:child_process';
 import {createHash,randomUUID} from 'node:crypto';
 import {createNavigationObserver,createAlbumSupportCallbacks} from '../../scripts/line_backup_cua_adapter.mjs';
-import {runTwoAlbumPilot,runOneScrollProbe} from './two_album_entry.mjs';
+import {runTwoAlbumPilot,runSingleAlbumPilot,runOneScrollProbe} from './two_album_entry.mjs';
 import {createLiveAnalyzer,verifyNativePair} from './mac/analyzer.mjs';
 import {createLiveClassifier} from './mac/classifier.mjs';
 import {createChooserLocators} from './mac/chooser.mjs';
@@ -261,6 +261,7 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
   const supportCallbacks=createAlbumSupportCallbacks({invokeProducer:producer.invokeProducer});
   let visualCardDiagnosticUsed=false;
   const runtime={profile:'LINE_TWO_ALBUM_PILOT/1',owner,authorization,decoder:{path:decoderPath,sha256:DECODER_SHA},
+    one56Fingerprint:{start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56},
     cli,retain,classifier,classifyScrollWitness:classifier.classifyScrollWitness,decodeRetainedImage,
     producer:{...producer,...supportCallbacks},menuLocator,chooser,navigation,windowLineage,privateEvidence,clock:()=>performance.now(),
     beforeCapture:nativeAnalyzer.beforeCapture,afterCapture:nativeAnalyzer.afterCapture,assertLineAlreadyRunning,
@@ -304,5 +305,6 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
       }
     },
     runOneScrollProbe:async()=>{await bindLiveAuthority();return runOneScrollProbe(runtime);},
-    runPilot:async()=>{await bindLiveAuthority();return runTwoAlbumPilot(runtime);}});
+    runPilot:async()=>{await bindLiveAuthority();return runTwoAlbumPilot(runtime);},
+    runSingleAlbumPilot:async()=>{await bindLiveAuthority();return runSingleAlbumPilot(runtime);}});
 }

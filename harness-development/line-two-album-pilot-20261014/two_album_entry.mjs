@@ -74,7 +74,7 @@ export async function runOneScrollProbe(runtime) {
   } finally {observer.close();}
 }
 
-export async function runTwoAlbumPilot(runtime) {
+async function runAlbumWorkflow(runtime,{singleAlbum=false}={}) {
   requireFact(runtime&&runtime.profile===PROJECT_PROFILE,'PROJECT_PROFILE_REQUIRED');
   requireFact(typeof runtime.cli==='function'&&typeof runtime.assertLineAlreadyRunning==='function'
     &&typeof runtime.getApp==='function'&&typeof runtime.retain==='function'
@@ -115,7 +115,13 @@ export async function runTwoAlbumPilot(runtime) {
   const inspected=await cli('inspect',null,true);
   requireFact(inspected?.receipt_token,'PROJECT_INSPECTION_REQUIRED');
   tokenState.value=inspected.receipt_token;
-  await cli('gui_initialize',{confirm_initialization:true});
+  if(singleAlbum){
+    const ledgerResponse=await cli('inspect',{include_gui_ledger_status:true});
+    const ledger=ledgerResponse?.gui_ledger_status;
+    requireFact(ledger?.status==='INITIALIZED'&&ledger.workflow_phase==='A'
+      &&ledger.lifecycle_count===0&&ledger.failure_latched===false
+      &&ledger.reserved_entry_count===0,'ONE56_LEDGER_NOT_FRESH');
+  } else await cli('gui_initialize',{confirm_initialization:true});
   await bridge('gui_observe',{data:{kind:'app',album:'A',checkpoint:'APP_ACQUISITION'}});
   await runtime.assertLineAlreadyRunning();
   const app=await runtime.getApp('jp.naver.line.mac');
@@ -167,7 +173,7 @@ export async function runTwoAlbumPilot(runtime) {
     let candidates=(allowedCandidates??full).filter(fp=>full.some(item=>fingerprintKey(item)===fingerprintKey(fp)));
     let admitted=null;
     const discovered=[];
-    const maxDiscovery=ordinal===1?3:0;
+    const maxDiscovery=singleAlbum?0:(ordinal===1?3:0);
     let discovery=null;
     if(maxDiscovery){
       discovery=createNavigationObserver({app,bridge,retain:runtime.retain,classify,
@@ -248,7 +254,10 @@ export async function runTwoAlbumPilot(runtime) {
   };
 
   try {
-  const a=await runAlbum({ordinal:1,workflowLink:null});
+  const a=await runAlbum({ordinal:1,workflowLink:null,
+    allowedCandidates:singleAlbum?[{...runtime.one56Fingerprint}]:null});
+  if(singleAlbum)return {status:'ONE_ALBUM_VERIFIED',profile:PROJECT_PROFILE,albumA:a.runId,
+    fingerprint:a.fingerprint,live_e2e:'NOT_CLAIMED'};
   await cli('gui_phase',{phase:'C1',a_run_id:a.runId});
   const navigation=createNavigationObserver({app,bridge,retain:runtime.retain,classify,
     beforeCapture:runtime.beforeCapture,afterCapture:runtime.afterCapture,resolveWindowLineage:runtime.windowLineage,
@@ -306,11 +315,24 @@ export async function runTwoAlbumPilot(runtime) {
         catch(error){cleanup.actions.push({action:'RELEASE_SAFE_LIFECYCLE',status:'UNKNOWN',error:String(error)});}
       } else cleanup.actions.push({action:'RELEASE_ACTIVE_INTENT',status:'NOT_ATTEMPTED_UNRESOLVED_INTENT'});
     }
-    try {await cli('gui_phase',{phase:'FAILED'});cleanup.actions.push({action:'LATCH_FAILURE',status:'PASS'});}
-    catch(error){cleanup.actions.push({action:'LATCH_FAILURE',status:'UNKNOWN',error:String(error)});}
+    if(!singleAlbum||activeLifecycle?.begun){
+      try {await cli('gui_phase',{phase:'FAILED'});cleanup.actions.push({action:'LATCH_FAILURE',status:'PASS'});}
+      catch(error){cleanup.actions.push({action:'LATCH_FAILURE',status:'UNKNOWN',error:String(error)});}
+    }
     try {await runtime.privateEvidence.retainFailure(cleanup);}
     catch(error){cleanup.actions.push({action:'RETAIN_FAILURE',status:'UNKNOWN',error:String(error)});}
     originalError.cleanup=cleanup;
     throw originalError;
   }
+}
+
+export async function runTwoAlbumPilot(runtime) {
+  return runAlbumWorkflow(runtime,{singleAlbum:false});
+}
+
+export async function runSingleAlbumPilot(runtime) {
+  requireFact(runtime&&runtime.one56Fingerprint
+    &&fingerprintKey(runtime.one56Fingerprint)===fingerprintKey({start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56}),
+    'ONE56_FINGERPRINT_REQUIRED');
+  return runAlbumWorkflow(runtime,{singleAlbum:true});
 }
