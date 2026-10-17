@@ -1,8 +1,28 @@
 # MENU56 minimum production correction — proposed, not yet admitted
 
-STATUS: WAITING_FOR_REAL_MENU_AND_INDEPENDENT_PATH_REVIEW. This proposal does not authorize production writes until root records the current real popup/closure evidence and an independent reviewer explicitly accepts the bounded plan.
+## Scope amendment 2026-10-18 — Chief M5／M6 correction (review 5558490383, HEAD 4bbec71)
 
-Baseline: exact d27c80b7d9ebecc9c170353110263971adc83f99; accepted B1/B2 product8bebd23. Risk: CRITICAL because these locators feed the existing real download transaction. END_GOAL: genuine verified album A, then separately authorized eligible B. CURRENT_SLICE: resolve Chief M1–M4 with actual reversible LINE menu proof and minimum production integration. Existing observation/lifecycle/intent/at-most-once/owner/duplicate/destination/verification rules remain effective. The separate Owner diagnostic is not a formal transaction grant.
+STATUS: IMPLEMENTED AND COMMITTED IN THE EXISTING ISOLATED WORKTREE; the 9-file source/test commit `7debc2ef4593f4ae4430cd3a4a8c0cb24cec0875` is pushed to Draft PR #10, followed by a doc-only commit updating this plan and the round report. Submitted for exact-new-HEAD external review. This amendment restarts no earlier research.
+
+The external review of `4bbec71fee690f9b88fb91837924b7f75db5301f` accepted the previous slice and required exactly two corrections: (M5) the ROW locator must stop reading the ordinary classifier cache and bind the retained menu envelope's own geometry plus the fresh detail context; (M6) the menu geometry must not demand full containment of the popup/label inside the hosted CUA crop and must prove a live intersecting addressable area with fail-closed negatives.
+
+Delta against the frozen five-path scope: the same five production paths, plus (a) `src/line_backup_batch/observations.py` (shared `intersection` helper needed by the Python validator port; the previous round had already ported the same contract into `service.py`) and (b) one new focused test file `tests/test_menu_envelope_intersection.mjs`. Everything else is unchanged: no scroll, name-entry, harness, config, canonical state/ledger/authority or unrelated CI work.
+
+Implementation (zero GUI input after probe3):
+
+- analyzer: `analyzeMenuFrame` produces evidence-only `MENU_FRAME_FACTS`; `buildMenuEnvelope` computes `safe = crop ∩ popup_cua ∩ label_cua`, erodes by `uncertainty+4`, requires every intersection ≥16×16, cross-checks SCK vs CUA label space when both are present, and fails closed on duplicate/offscreen/conflict.
+- classifier: `collectMenuEnvelope` keeps the menu frame out of the ordinary cache (`menuEnvelopes` only, `evidence_only`, `admissible_to_ordinary_classifier=false`), builds the menu-frame geometry/support sidecar through the existing `frameSupport`, and returns the 13-key record.
+- mac_runtime: the ROW branch reads `classifier.menuEnvelopes` + fresh `detail` (surface/window_id/layout_key), takes width/height from the envelope's own `mapping.crop_px`, sets `row.layoutKey=detail.layout_key`, and adds the reversible `locateDismissRow` title close.
+- adapter: ROW validation compares `detail.layout_key`.
+- service.py/observations.py: intersection semantics with a 1e-6 drift tolerance and the new `PROJECT_CALIBRATION_CLICK_POINT` binding (≤1 px to the validated eroded center).
+
+Acceptance evidence for this amendment: JS per-file 42/5/2/6/6 pass + 1 skipped clock case; combined run 62/61/0/1 exit 0 on the 2026-10-18 fresh rerun (standalone `test_cua_adapter.mjs` first run hit the known pre-existing `SCROLL_CAPTURE_TIME_ORDER` flake and passed 42/42 immediately on rerun); Python `test_batch_authority.py` discover `Ran 40` with the single pre-existing `GROUNDING_AX_SCROLL_RANGE` failure and 1 skip, all 3 new menu tests ok; independent read-only parity audit executed the real Python validator against the real JS envelope and passed; no off-crop click is reachable by construction. Residual gaps are listed in the round report (real collector→ROW chain still stub-replaced; identical/different-hash scenarios moot by design; Python record/inner uncertainty parity not cross-checked).
+
+Not in scope and unchanged: real-device envelope verification (`MENU_ENVELOPE_DEVICE_VERIFIED=NOT_RUN`), formal calibration, Save All, chooser, downloads, canonical data.
+
+STATUS: M5/M6 CORRECTION COMPLETE (OFFLINE). Real popup/closure probe evidence is recorded (probe3, round report); the M5/M6 source fix and this plan await the exact-new-HEAD external review, together with a decision on the newly found anchor-dispersion blocker. This document does not by itself authorize production writes.
+
+Baseline: exact d27c80b7d9ebecc9c170353110263971adc83f99; accepted B1/B2 product8bebd23. Risk: CRITICAL because these locators feed the existing real download transaction. END_GOAL: genuine verified album A, then separately authorized eligible B. CURRENT_SLICE: Chief M5–M6 correction (implemented offline; see the 2026-10-18 scope amendment) and an external decision on the anchor-dispersion blocker before any live Save All. Existing observation/lifecycle/intent/at-most-once/owner/duplicate/destination/verification rules remain effective. The separate Owner diagnostic is not a formal transaction grant.
 
 ## Literal proposed source scope
 
@@ -12,7 +32,7 @@ Baseline: exact d27c80b7d9ebecc9c170353110263971adc83f99; accepted B1/B2 product
 - `scripts/line_backup_cua_adapter.mjs`: menu-purpose capture remains local to calibration; preserve ordinary latest and capture freshness. Use a currently proven non-activating close and fresh same-album grid postcondition. If only Escape/list/reopen succeeds in the diagnostic, record that exact bounded recovery and each action's own fresh origin; do not globally extend the timer. Unknown delivery stops without retry. No Save All, writer, intent or chooser code weakening.
 - `src/line_backup_batch/service.py`: narrow project calibration envelope validation against the genuine retained refs, current native lineage, SCK/OCR, support and guard. Do not call ordinary frame validation on a menu overlay or reinterpret that overlay as CLEAR. Preserve strict ordinary frame/intent validation and one-album grant/ledger paths. Change the closure trace only if the actual diagnostic proves recovery is necessary.
 
-Literal focused test scope: `tests/test_cua_adapter.mjs`, `tests/test_detail_grid_name_target.mjs`, `tests/test_batch_authority.py`. New focused cases for changed branches are allowed, but synthetic results remain ENABLER. No `observations.py`, Swift, global Harness, config, canonical state/ledger/authority, source-closure membership or production entry changes are currently proposed. A demonstrated need outside these paths requires an explicit bounded plan amendment, not silent scope expansion.
+Literal focused test scope: `tests/test_cua_adapter.mjs`, `tests/test_detail_grid_name_target.mjs`, `tests/test_batch_authority.py`. New focused cases for changed branches are allowed, but synthetic results remain ENABLER. No Swift, global Harness, config, canonical state/ledger/authority, source-closure membership or production entry changes are proposed (`observations.py` is the declared amendment of this slice). A demonstrated need outside these paths requires an explicit bounded plan amendment, not silent scope expansion.
 
 ## Implementation and verification
 
@@ -27,3 +47,7 @@ Then independently compare canonical ledger/init/grant/state/config, historical2
 ## Convergence and stop conditions
 
 This is the same menu root issue; old attempts are not reset. At most3 evidence-bearing attempts, stop after2 without information gain or any material identity/foreground/uncertain-input blocker. New observed constraints may amend this narrow plan after independent review; unrelated CI/framework work is excluded. Success for this slice means real menu geometry/closure evidence, a reviewable tested minimal source correction, intact canonical data and exact-source review delivery. It does not mean downloaded files or full backup E2E PASS.
+
+## 2026-10-18 新增已知阻塞（未修；須另行決策）
+
+`frame-support` 的 `AutomaticOcrAnchorMapper.derive`（`OcrEngine.swift`；threshold `0.02×cw×ch`）對 654×1286 detail crop 以 `anchorsNotDispersed` 拒絕（真碼真幀實測 10,704.245 px² < 16,820.88 px²；live 呈現為 `NON_MENU_SCK_SUPPORT_REFUSED`）。影響 `collectMenuEnvelope` 與一般 `classify()` 共用的支援路徑，屬一般 ALBUM_DETAIL crop 風險。修復超出本輪凍結路徑，須另行 bounded plan 與獨立審查；在裁決前不派送 Save All。證據（未納入版控）：`harness-development/one56-menu-compat-20261017/private/anchor-dispersion-20261018/`（四個檔案 SHA-256 見 `review/E2E測試報告.md`）。
