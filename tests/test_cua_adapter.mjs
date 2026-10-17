@@ -171,6 +171,51 @@ function syntheticAnalyzerClassifier(source,{mutateAnalysis=()=>{}}={}){
   return {classifier,artifacts,retain};
 }
 
+test('actual analyzer accepts only the exact focused album-list viewport for scroll evidence',async()=>{
+  const focusedList=syntheticPartialRowSource({rowY:103,titleY:428,countY:446});
+  focusedList.sourceBinding.after.value.nodes.find(node=>node.id==='list').focused=true;
+  const focusedArgs={frameId:focusedList.frameId,sessionId:focusedList.sessionId,capturedAt:focusedList.capturedAt,
+    width:focusedList.width,height:focusedList.height,sourceAXSha256:digest(Buffer.from(focusedList.state)),
+    sourceBinding:focusedList.sourceBinding};
+  const focusedAnalysis=await focusedList.analyzer.analyzeScrollWitness(focusedArgs);
+  const listIndex=focusedAnalysis.scroll_witness.viewport_ax_index;
+  assert.equal(focusedAnalysis.ax.focused_index,listIndex);
+  assert.equal(focusedAnalysis.focus_evidence.focused_index,listIndex);
+  assert.equal(focusedAnalysis.editable_focus,'NONE');
+  const focusedHarness=syntheticAnalyzerClassifier(focusedList),focusedSaved={path:'harness-development/synthetic-focused-frame.png',
+    bytes:focusedList.screenshot.byteLength,sha256:focusedList.frameId,ax:{path:'harness-development/synthetic-focused-ax.txt',
+      bytes:Buffer.byteLength(focusedList.state),sha256:digest(Buffer.from(focusedList.state))}};
+  const focusedClassified=await focusedHarness.classifier.classifyScrollWitness({capture:{screenshot:focusedList.screenshot,
+    state:focusedList.state},saved:focusedSaved,frameId:focusedList.frameId,sessionId:focusedList.sessionId,
+    capturedAt:focusedList.capturedAt,sourceBinding:focusedList.sourceBinding});
+  assert.ok(focusedClassified);
+  const retainedFocus=focusedHarness.artifacts.find(item=>item.kind==='focus-evidence').artifact;
+  assert.equal(retainedFocus.focused_index,listIndex);
+  assert.equal(retainedFocus.kind,'NONE');
+
+  for(const [mutate,code] of [
+    [source=>{source.sourceBinding.after.value.nodes.find(node=>node.id==='list').focused=false;
+      source.sourceBinding.after.value.nodes.find(node=>node.id==='window').children.push('other');
+      source.sourceBinding.after.value.nodes.push({id:'other',parentID:'window',role:'AXButton',focused:true,
+        framePt:{x:1,y:1,width:10,height:10},offscreen:false,children:[]});},/SCROLL_FOCUS_NOT_CLEAR/],
+    [source=>{source.sourceBinding.after.value.nodes.find(node=>node.id==='list').focused=true;
+      source.sourceBinding.after.value.nodes.find(node=>node.id==='window').children.push('other');
+      source.sourceBinding.after.value.nodes.push({id:'other',parentID:'window',role:'AXButton',focused:true,
+        framePt:{x:1,y:1,width:10,height:10},offscreen:false,children:[]});},/SCROLL_FOCUS_NOT_CLEAR/],
+    [source=>{source.sourceBinding.after.value.nodes.find(node=>node.id==='list').focused=true;
+      source.sourceBinding.after.value.nodes.find(node=>node.id==='window').children.push('list2');
+      source.sourceBinding.after.value.nodes.push({id:'list2',parentID:'window',role:'AXList',focused:false,
+        framePt:{x:0,y:103,width:327,height:540},offscreen:false,children:[]});},/ALBUM_SURFACE_NOT_GROUNDED|SCROLL_VIEWPORT_AMBIGUOUS/],
+    [source=>{source.sourceBinding.after.value.nodes=source.sourceBinding.after.value.nodes.filter(node=>node.id!=='list');},
+      /AX_NODE_MISSING/]
+  ]) {
+    const bad=syntheticPartialRowSource({rowY:103,titleY:428,countY:446});mutate(bad);
+    await assert.rejects(()=>bad.analyzer.analyzeScrollWitness({frameId:bad.frameId,sessionId:bad.sessionId,
+      capturedAt:bad.capturedAt,width:bad.width,height:bad.height,sourceAXSha256:digest(Buffer.from(bad.state)),
+      sourceBinding:bad.sourceBinding}),code);
+  }
+});
+
 test('actual analyzer and shared classifier preserve partial AXRow only for scroll evidence',async()=>{
   const focused=syntheticPartialRowSource();
   focused.after.nodes.find(node=>node.id==='window').children.push('edit');
@@ -577,17 +622,20 @@ test('shared live classifier rejects wrong group, duplicate row identity, and un
   }
 });
 
-function oneScrollRuntimeFixture({denyReservation=false,mappingUncertainty=2,targetPoint=[50,50]}={}){
-  const calls=[],reservations=[];let scrolls=0,captures=0;
+function oneScrollRuntimeFixture({denyReservation=false,mappingUncertainty=2,targetPoint=[50,50],ledgerStatus='INITIALIZED'}={}){
+  const calls=[],reservations=[];let scrolls=0,captures=0,currentLedgerStatus=ledgerStatus;
   const app={async getAXStateAndScreenshot(){captures++;return {state:`AX ${captures}`,
     screenshot:png(100,100,captures===1?10:20,captures)};},async getAXState(){return 'AX'},
     async click(){calls.push('click');},async pressKey(){calls.push('pressKey');},async scroll(target,direction,distance){
       calls.push(['scroll',target,direction,distance]);scrolls++;}};
   const cli=async(operation,request={})=>{
     calls.push([operation,request.payload?.data?.checkpoint??null]);
-    if(operation==='inspect')return {receipt_token:'offline-token'};
+    if(operation==='inspect'&&!request.payload?.data?.include_gui_ledger_status)
+      return {receipt_token:'offline-token'};
+    if(operation==='inspect')return {gui_ledger_status:{status:currentLedgerStatus,task_id:'offline-owner',owner:'offline-owner',
+      source_sha256:'a'.repeat(64),workflow_phase:'A',failure_latched:false,scroll_1_used:false,reserved_entry_count:0}};
     if(operation==='gui_observe')return {status:'PROJECT_OBSERVATION_RESERVED'};
-    if(operation==='gui_initialize')return {status:'GUI_INITIALIZED'};
+    if(operation==='gui_initialize'){currentLedgerStatus='INITIALIZED';return {status:'PROJECT_LEDGER_INITIALIZED'};}
     throw new Error(`Unexpected direct CLI operation: ${operation}`);
   };
   cli.bridge=async(operation,{data}={})=>{
@@ -600,7 +648,7 @@ function oneScrollRuntimeFixture({denyReservation=false,mappingUncertainty=2,tar
     throw new Error(`Unexpected bridge operation: ${operation}`);
   };
   const runtime={profile:'LINE_TWO_ALBUM_PILOT/1',owner:'offline-owner',authorization:'private/project-grant.json',cli,
-    assertLineAlreadyRunning:async()=>{calls.push('line-preflight');},getApp:async()=>app,
+    assertLineAlreadyRunning:async()=>{calls.push('line-preflight');},getApp:async()=>{calls.push('get-app');return app;},
     retain:async({screenshot,ax})=>({path:'harness-development/offline-frame',bytes:screenshot.byteLength,
       sha256:digest(screenshot),ax:{path:'harness-development/offline-ax',bytes:Buffer.byteLength(ax),sha256:digest(Buffer.from(ax))}}),
     classifyScrollWitness:async({capture,saved,frameId,sessionId,capturedAt})=>{
@@ -626,8 +674,44 @@ test('one-scroll entry executes only one reserved SCROLL_1 input and records mov
   assert.equal(f.scrolls,1);assert.equal(f.reservations.length,1);
   assert.deepEqual(f.reservations[0].slots,['SCROLL_1']);assert.equal(f.reservations[0].kind,'scroll');
   assert.equal(f.calls.filter(item=>item==='click'||item==='pressKey').length,0);
+  assert.equal(f.calls.some(item=>Array.isArray(item)&&item[0]==='gui_initialize'),false);
   assert.equal(f.calls.filter(item=>Array.isArray(item)&&item[0]==='retainDiscovery').length,1);
   assert.equal(f.calls.some(item=>Array.isArray(item)&&['dispatch','album_begin','album_admit','intent','finalize'].includes(item[0])),false);
+});
+
+test('one-scroll entry initializes only an authenticated absent ledger',async()=>{
+  const f=oneScrollRuntimeFixture({ledgerStatus:'NOT_INITIALIZED'});
+  const result=await runOneScrollProbe(f.runtime);
+  assert.equal(result.status,'SCROLL_MOVEMENT_ONLY');
+  assert.equal(f.calls.filter(item=>Array.isArray(item)&&item[0]==='gui_initialize').length,1);
+  assert.equal(f.calls.filter(item=>Array.isArray(item)&&item[0]==='inspect'
+    &&item[1]===null).length>=3,true);
+});
+
+test('one-scroll entry rejects incompatible initialized ledger before app acquisition',async()=>{
+  for(const status of ['CLOSED_NO_REPLAY','SCROLL_USED','OTHER_RESERVED','FAILURE_LATCHED','WRONG_PHASE']){
+    const f=oneScrollRuntimeFixture();
+    const original=f.runtime.cli;
+    f.runtime.cli=async(operation,request={})=>{
+      if(operation==='inspect'&&request.payload?.data?.include_gui_ledger_status){
+        const response=await original(operation,request),ledger=response.gui_ledger_status;
+        if(status==='CLOSED_NO_REPLAY')ledger.status='CLOSED_NO_REPLAY';
+        if(status==='SCROLL_USED')ledger.scroll_1_used=true;
+        if(status==='OTHER_RESERVED')ledger.reserved_entry_count=1;
+        if(status==='FAILURE_LATCHED')ledger.failure_latched=true;
+        if(status==='WRONG_PHASE')ledger.workflow_phase='B';
+        return response;
+      }
+      return original(operation,request);
+    };
+    f.runtime.cli.bridge=original.bridge;
+    await assert.rejects(()=>runOneScrollProbe(f.runtime),/ONE_SCROLL_LEDGER_(AUTHORITY_MISMATCH|NOT_CONTINUABLE)/);
+    assert.equal(f.calls.some(item=>item==='line-preflight'),false);
+    assert.equal(f.calls.some(item=>Array.isArray(item)&&item[0]==='gui_initialize'),false);
+    assert.equal(f.calls.some(item=>Array.isArray(item)&&item[0]==='gui_observe'),false);
+    assert.equal(f.calls.includes('get-app'),false);
+    assert.equal(f.scrolls,0);
+  }
 });
 
 test('one-scroll entry stops on missing durable reservation with zero native input',async()=>{

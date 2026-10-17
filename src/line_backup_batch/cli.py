@@ -1,6 +1,7 @@
 """Public canonical entry. Fixture authority never admits the live project."""
 import argparse
 import base64
+import binascii
 import json
 import os
 from pathlib import Path
@@ -399,15 +400,29 @@ def execute(ns):
     store=Store(ns.project_root)
     if ns.operation=='inspect':
         snapshot=store.snapshot();s=snapshot['state']
-        candidate_data=load_input(ns.project_root,ns.input).get('data',{}) if ns.input else {}
+        request=load_input(ns.project_root,ns.input) if ns.input else {}
+        candidate_data=request.get('data',{})
+        ledger_status=None
+        if candidate_data.get('include_gui_ledger_status') is True:
+            grant=authorize(ns.project_root,ns.authorization,False,'gui_observe')
+            try:expected_raw=base64.b64decode(request.get('expected_token',''),validate=True)
+            except (binascii.Error,ValueError,TypeError):require(False,'INVALID_RECEIPT_TOKEN')
+            expected=strict_json(expected_raw,'INVALID_RECEIPT_TOKEN')
+            require(isinstance(expected,dict) and expected.get('project_root')==ns.project_root
+                and expected.get('config_sha256')==grant['config_sha256']
+                and expected.get('source_sha256')==grant['source_sha256'],'REQUEST_AUTHORITY_MISMATCH')
+            store.authorization_path=ns.authorization
+            ledger_status=store.project_gui_ledger_status(grant)
         candidates=candidate_data.get('candidates',[])
         require(isinstance(candidates,list),'INSPECT_CANDIDATES_INVALID')
         eligible=[target for target in candidates if Service.eligible(s,target)]
         # JS may consume this safe summary; never roundtrip raw canonical history.
-        return dict(receipt=snapshot['receipt'],config=snapshot['config'],dispatch_authorized=False,
+        result=dict(receipt=snapshot['receipt'],config=snapshot['config'],dispatch_authorized=False,
             state_facts=dict(schema_version=s['schema_version'],revision=s['revision'],active_batch=s.get('active_batch'),
                 active_writer_id=s['active_writer_id'],verified_count=len(s['verified_albums'])),
             eligible_candidates=eligible)
+        if ledger_status is not None:result['gui_ledger_status']=ledger_status
+        return result
     grant=authorize(ns.project_root,ns.authorization,ns.fixture,ns.operation)
     store.authorization_path=ns.authorization
     service=Service(ns.project_root,grant['owner'],grant['artifact_dir'],ns.authorization)

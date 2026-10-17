@@ -211,9 +211,11 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
     need(surface==='FOLDER_CHOOSER'||!focused.some(n=>n.role==='AXTextField'),'EDITABLE_FOCUS_CONFLICT');
     const focusedIndex=focused.length===1?nativeIDs.get(focused[0].id):null;
     if(scrollWitness){
-      need(surface==='ALBUMS'&&focused.length===0,'SCROLL_FOCUS_NOT_CLEAR');
       const lists=visible.filter(n=>role(n.role)==='list');
       need(lists.length===1,'SCROLL_VIEWPORT_AMBIGUOUS');
+      need(surface==='ALBUMS'&&(focused.length===0
+        ||focused.length===1&&role(focused[0].role)==='list'&&focused[0].id===lists[0].id),
+        'SCROLL_FOCUS_NOT_CLEAR');
       const viewport=px(lists[0].framePt);
       const indicators=elements.filter(e=>e.role==='scroll bar'&&typeof e.value==='number'&&e.value>=0&&e.value<=1);
       need(indicators.length===1,'SCROLL_BOUNDARY_UNKNOWN');

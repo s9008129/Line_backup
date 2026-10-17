@@ -28,7 +28,22 @@ export async function runOneScrollProbe(runtime) {
   const inspected=await cli('inspect',null,true);
   requireFact(typeof inspected?.receipt_token==='string','ONE_SCROLL_INSPECTION_REQUIRED');
   token=inspected.receipt_token;
-  await cli('gui_initialize',{confirm_initialization:true});
+  const readLedgerStatus=async()=>{
+    const authority=await cli('inspect',{include_gui_ledger_status:true});
+    const status=authority?.gui_ledger_status;
+    requireFact(status&&typeof status.task_id==='string'&&status.task_id
+      &&typeof status.source_sha256==='string'&&/^[0-9a-f]{64}$/.test(status.source_sha256)&&status.owner===owner,
+      'ONE_SCROLL_LEDGER_AUTHORITY_MISMATCH');
+    return status;
+  };
+  let ledger=await readLedgerStatus();
+  if(ledger.status==='NOT_INITIALIZED'){
+    const initialized=await cli('gui_initialize',{confirm_initialization:true});
+    requireFact(initialized?.status==='PROJECT_LEDGER_INITIALIZED','ONE_SCROLL_LEDGER_INITIALIZATION_FAILED');
+    ledger=await readLedgerStatus();
+  }
+  requireFact(ledger.status==='INITIALIZED'&&ledger.workflow_phase==='A'&&!ledger.failure_latched
+    &&ledger.scroll_1_used===false&&ledger.reserved_entry_count===0,'ONE_SCROLL_LEDGER_NOT_CONTINUABLE');
   const bridge=async(operation,request={})=>{
     if(operation==='gui_observe')return runtime.cli(operation,{authorization:runtime.authorization,
       payload:{data:request.data}});

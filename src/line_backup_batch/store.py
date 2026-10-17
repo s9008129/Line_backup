@@ -434,6 +434,36 @@ class Store:
             and ledger['task_id']==grant['task_id'] and ledger['cap']==cap,'GUI_LEDGER_DRIFT')
         return path,ledger,cap
 
+    def project_gui_ledger_status(self,grant):
+        """Authenticate and validate the project ledger without changing it."""
+        self._authorize_project_mutation(grant,'gui_observe')
+        path=self.ledger_path(grant)
+        reader=ProjectReader(self.root)
+        try:
+            ledger=self._ledger_read(reader,path)
+            receipt_path=path[:-len('gui-ledger.json')]+'gui-ledger-initialization.json'
+            try:
+                fd=reader.open(receipt_path)
+            except FileNotFoundError:
+                require(ledger is None,'PROJECT_LEDGER_INITIALIZATION_REQUIRED')
+                return dict(status='NOT_INITIALIZED',task_id=grant['task_id'],owner=grant['owner'],
+                    source_sha256=grant['source_sha256'])
+            except OSError as exc:
+                raise AcceptanceError('PROJECT_LEDGER_INITIALIZATION_UNSAFE','receipt unavailable or unsafe',4) from exc
+            else:os.close(fd)
+            # Existing receipt plus a missing ledger is a tombstone; initialization
+            # must never recreate or replace it.
+            require(ledger is not None,'PROJECT_LEDGER_MISSING')
+            _,ledger,_=self._ledger_open(reader,grant)
+        finally:reader.close()
+        entries=ledger['entries']
+        scroll_used=any('SCROLL_1' in entry['slots'] for entry in entries)
+        reserved=[entry for entry in entries if entry['state']=='RESERVED']
+        return dict(status='INITIALIZED',task_id=ledger['task_id'],owner=ledger['owner'],
+            source_sha256=grant['source_sha256'],workflow_phase=ledger['workflow_phase'],
+            failure_latched=ledger['failure_latched'],scroll_1_used=scroll_used,
+            reserved_entry_count=len(reserved))
+
     def initialize_project_ledger(self,grant,data):
         self._authorize_project_mutation(grant,'gui_initialize')
         require(data=={'confirm_initialization':True},'PROJECT_LEDGER_INITIALIZATION_REFUSED')

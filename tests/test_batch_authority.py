@@ -422,6 +422,95 @@ class ProjectRuntimeBindingTests(unittest.TestCase):
         with self.root_boundary(),self.assertRaises(AcceptanceError) as caught:
             store._update(store.snapshot()['receipt'],lambda cfg,state:None,operation='begin')
         self.assertEqual(caught.exception.code,'PROJECT_CALLBACK_SOURCE_DRIFT')
+
+    def test_authenticated_inspect_reads_validated_initialized_ledger_without_writing(self):
+        grant,grant_ref,_=project_authority_fixture(self.f);grant_path=grant_ref['path']
+        store=Store(str(self.f.root),grant_path);store.fixture=False
+        with self.root_boundary():
+            current=batch_cli.authorize(str(self.f.root),grant_path,False,'gui_observe')
+            absent=store.project_gui_ledger_status(current)
+            self.assertEqual(absent['status'],'NOT_INITIALIZED')
+            authorized=batch_cli.authorize(str(self.f.root),grant_path,False,'gui_initialize')
+            store.initialize_project_ledger(authorized,{'confirm_initialization':True})
+            before=(self.f.root/grant['gui_ledger']).read_bytes()
+            current=batch_cli.authorize(str(self.f.root),grant_path,False,'gui_observe')
+            status=store.project_gui_ledger_status(current)
+        self.assertEqual(status['status'],'INITIALIZED')
+        self.assertEqual(status['task_id'],grant['task_id']);self.assertEqual(status['owner'],grant['owner'])
+        self.assertEqual(status['source_sha256'],grant['source_sha256'])
+        self.assertEqual(status['workflow_phase'],'A');self.assertFalse(status['failure_latched'])
+        self.assertFalse(status['scroll_1_used']);self.assertEqual(status['reserved_entry_count'],0)
+        self.assertEqual((self.f.root/grant['gui_ledger']).read_bytes(),before)
+
+        snapshot=store.snapshot()
+        inspected,_=self.run_project_cli('inspect',grant_path,snapshot['receipt'],{'include_gui_ledger_status':True})
+        self.assertEqual(inspected['gui_ledger_status'],status)
+        public,_=self.run_project_cli('inspect',grant_path,snapshot['receipt'],{})
+        self.assertNotIn('gui_ledger_status',public)
+
+        with self.root_boundary():
+            reserve_grant=batch_cli.authorize(str(self.f.root),grant_path,False,'gui_reserve')
+            first=store.reserve_gui(reserve_grant,dict(kind='scroll',count=1,run_id=None,owner=grant['owner'],
+                slots=['SCROLL_1']))['reservation']
+            store.consume_gui(reserve_grant,dict(reservation_id=first['id'],outcome='RETURNED'))
+            current=batch_cli.authorize(str(self.f.root),grant_path,False,'gui_observe')
+            consumed=store.project_gui_ledger_status(current)
+            with self.assertRaises(AcceptanceError) as replay:
+                store.reserve_gui(reserve_grant,dict(kind='scroll',count=1,run_id=None,owner=grant['owner'],
+                    slots=['SCROLL_1']))
+        self.assertTrue(consumed['scroll_1_used']);self.assertEqual(consumed['reserved_entry_count'],0)
+        self.assertEqual(replay.exception.code,'PROJECT_SLOT_ALREADY_RESERVED')
+
+    def test_authenticated_ledger_status_fails_closed_for_authority_drift_and_tombstone(self):
+        grant,grant_ref,_=project_authority_fixture(self.f);grant_path=grant_ref['path']
+        store=Store(str(self.f.root),grant_path);store.fixture=False
+        with self.root_boundary():
+            authorized=batch_cli.authorize(str(self.f.root),grant_path,False,'gui_initialize')
+            store.initialize_project_ledger(authorized,{'confirm_initialization':True})
+            current=batch_cli.authorize(str(self.f.root),grant_path,False,'gui_observe')
+            ledger_path=self.f.root/grant['gui_ledger']
+            valid_raw=ledger_path.read_bytes();valid_ledger=json.loads(valid_raw)
+            ledger_path.unlink()
+            with self.assertRaises(AcceptanceError) as tombstone:
+                store.project_gui_ledger_status(current)
+            self.assertEqual(tombstone.exception.code,'PROJECT_LEDGER_MISSING')
+
+            for field,value,code in (('task_id','foreign-task','PROJECT_LEDGER_DRIFT'),
+                ('owner','foreign-owner','PROJECT_LEDGER_DRIFT'),
+                ('initial_ledger_sha256','0'*64,'PROJECT_LEDGER_INITIALIZATION_BINDING')):
+                invalid=copy.deepcopy(valid_ledger);invalid[field]=value;ledger_path.write_bytes(json_bytes(invalid))
+                with self.assertRaises(AcceptanceError) as caught:store.project_gui_ledger_status(current)
+                self.assertEqual(caught.exception.code,code)
+            ledger_path.write_bytes(valid_raw)
+
+            grant_file=self.f.root/grant_path;grant_raw=grant_file.read_bytes()
+            decision_path=self.f.root/grant['owner_decision']['path'];decision_raw=decision_path.read_bytes()
+            decision=json.loads(decision_raw);decision['live_gui_authorized']=False
+            closed_raw=json_bytes(decision);decision_path.write_bytes(closed_raw)
+            changed=copy.deepcopy(grant);changed['owner_decision']['bytes']=len(closed_raw)
+            changed['owner_decision']['sha256']=sha(closed_raw);grant_file.write_bytes(json_bytes(changed))
+            with self.assertRaises(AcceptanceError) as closed:
+                batch_cli.authorize(str(self.f.root),grant_path,False,'gui_observe')
+            self.assertEqual(closed.exception.code,'PROJECT_LIVE_CONSENT_REQUIRED')
+            decision['live_gui_authorized']=True;decision_path.write_bytes(json_bytes(decision))
+            changed['owner_decision']['bytes']=len(json_bytes(decision))
+            changed['owner_decision']['sha256']=sha(json_bytes(decision));grant_file.write_bytes(json_bytes(changed))
+
+            readiness_path=self.f.root/grant['live_readiness']['path'];readiness_raw=readiness_path.read_bytes()
+            readiness=json.loads(readiness_raw);readiness['gui_ready']=False
+            not_ready_raw=json_bytes(readiness);readiness_path.write_bytes(not_ready_raw)
+            changed['live_readiness']['bytes']=len(not_ready_raw);changed['live_readiness']['sha256']=sha(not_ready_raw)
+            grant_file.write_bytes(json_bytes(changed))
+            with self.assertRaises(AcceptanceError) as readiness_error:
+                batch_cli.authorize(str(self.f.root),grant_path,False,'gui_observe')
+            self.assertEqual(readiness_error.exception.code,'PROJECT_LIVE_READINESS_REQUIRED')
+            readiness_path.write_bytes(readiness_raw);grant_file.write_bytes(grant_raw)
+
+            changed=copy.deepcopy(grant);changed['source_sha256']='0'*64
+            grant_file.write_bytes(json_bytes(changed))
+            with self.assertRaises(AcceptanceError) as source:
+                batch_cli.authorize(str(self.f.root),grant_path,False,'gui_observe')
+            self.assertEqual(source.exception.code,'PROJECT_RUNTIME_BINDING_MISMATCH')
     def test_runtime_binding_refuses_missing_callback_source_refs(self):
         grant,_,runtime_ref=project_authority_fixture(self.f)
         runtime_path=self.f.root/runtime_ref['path'];manifest=json.loads(runtime_path.read_bytes())
