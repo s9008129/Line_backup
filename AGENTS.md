@@ -29,6 +29,28 @@
 - **正式下載**（Save All、檔案寫入、state mutation）：仍須明確符合資格、排除歷史重複、檢查目的地與派送結果，遵守有效的交易與不重送保護；239 張歷史 VERIFIED 紀錄以及已人工備份的 65 張相簿不可以重複 Save All。
 - **政策與執行分界：**AGENTS.md 是工作規範，不是執行時授權。專案目前硬編碼於 `mac/analyzer.mjs` 的焦點條件、`src/line_backup_batch/store.py` 的 `2/2` 觀察配額、`two_album_entry.mjs` 的 ledger 初始化及正式 C1／點擊限制，必須透過明確的源碼／政策修訂與適用授權才能改變行為；不得更改已使用計數、改名 checkpoint 偷渡配額、重置 ledger 或重開已關閉 grant。可由 Owner 授權建立有界的獨立可逆診斷入口，保留 append-only 原始證據，不將其結果冒充正式 Save All gate PASS。
 
+## 多代理協作、獨立審查與完成證據
+
+本節針對本專案修正「過度管理、實作提前交差、共同錯誤假設、假驗收」的風險；優先執行真正能推進兩本 LINE 相簿 Save All 的工作，不為每個小修補新增代理或審查循環。它是角色／工作流契約，不表示 Codex CLI 自動具備硬體／權限隔離，也不改寫上層 Harness、執行時 grant 或交易 ledger。
+
+### 角色與不能互相取代的四道關卡
+
+1. **Plan / GPT6.1-sol（xhigh）主控：**由原始 Owner 目標推導可驗證的 Acceptance Criteria（AC）、不做事項、實機先後順序、候選環境與風險；先查最新真實失敗及程式入口，拆成最小的有界工作包。Sol 決定架構、跨模組整合、修復優先順序與派工，但不代替獨立驗收或以進度敘述裁定 PASS。若指定模型／推理模式不可用，記錄實際模型及替代決策，不能冒稱已使用指定模型。
+2. **Independent Plan Reviewer（不同於規劃者的新上下文）：**對新增或重大變更的 Plan，先獨立閱讀 Owner 原始需求、保護資料、真實 LINE 證據及候選 AC，再核對 Planner 的假設、正反案例、依賴、權限與驗收可測性。明確輸出 `APPROVE_PLAN`／`CHANGES_REQUIRED`／`BLOCKED` 及具體理由；通過後記錄 Plan revision／SHA。**已有核准 Plan 內的有界缺陷修正**不必每一輪重新 Plan Review；只有需求、架構、資料／授權邊界或 AC 實質改變時，才對差異重審，避免規劃循環。
+3. **Implementation / GPT6-luna（high）：**只接收 Sol 派發的工作包：任務目標與 AC、repo／worktree／base HEAD、授權操作、可修改檔案／排除檔案、接口、真實失敗證據、最低必要測試及交付格式。連續完成工作包，不擅自重定義 AC、不動範圍外程式、不開自己管理的 Reviewer／E2E 代理樹。完成後向 Sol 回報實際 diff／commit、測試命令與結果、未完成 AC、假設及阻塞；`IMPLEMENTATION_DONE` 只能表示工作包完整或逐項明確 BLOCKED，**不代表 E2E PASS**。
+4. **Implementation Code Reviewer（非同一 Implementer）：**由 Sol 指派不同上下文的 Reviewer，讀實際 diff 及原始 AC，檢查正確性、接口、可維護性、錯誤處理、負面測試、受影響檔案及未預期副作用；逐項回報 `PASS`／`CHANGES_REQUIRED`／`BLOCKED` 及具體檔案／行號。Sol 的整合檢查不應冒充獨立 Reviewer；對須由 Owner 選擇雲端模型的外部 PR 審查，依本文件後段規則交付真實連結與證據，不虛構審查結果或偽造批准。
+5. **Independent E2E / GPT6-luna（xhigh）：**在實作完成並固定待驗收 Commit 後，以**新的 Session／獨立上下文**接收 Owner 原始業務目標、已核准 AC／Plan SHA、精確 Commit 與執行環境，而不是照 Implementer 的推理過程、合成 fixture 或「預期會 PASS」結論驗收。獨立操作真實 LINE（在有效授權及前景條件下）、核對原始畫面／AX／SCK、檔案實物、逐檔 hash 與完整解碼、正式狀態讀回及副作用；允許唯讀查原始碼、寫隔離的 E2E 證據／缺陷報告，**不得改產品程式、測試標準、驗收 fixture 或已固定的 AC**。必須輸出每項 `PASS`／`FAIL`／`BLOCKED`／`NOT_RUN` 與可查原始證據。E2E 可否決交付；Sol 不得用自己或 Implementer 的「看起來成功」覆蓋 FAIL／BLOCKED。對 E2E 的異議只能保留原判定、提出新證據並安排獨立重驗。
+6. **Owner／外部 Reviewer：**Owner 擁有目標、正式授權與驗收契約變更的決策權；外部 Reviewer 由 Owner 選擇雲端模型，與內部 Code Reviewer、獨立 E2E 是不同角色。需要對 Save All、protected state、執行授權與精確版本進行外部審查時，必須取得真正符合規格的審查結果；不能以本文件、Sol 自評或本地 E2E 自動替代。
+
+### 子代理調度、執行環境與修復閉環
+
+- **少量、有限、可衡量的派工：**預設只啟動確有獨立產物的子代理，通常同時 1–3 個；互有依賴的 Plan Review → Implement → Code Review → Independent E2E 依序執行，不能為了平行而提前讓 E2E 讀取未完成的程式。只有真能拆開的不相交工作才平行；禁止重複相同 Reviewer、無界巢狀 spawn、同一檔案的平行寫入與各代理重跑同一組完整測試。超出預設並行或巢狀派工須 Sol 說明必要性、責任、預算及合併點，並遵守實際 Harness 上限。
+- **環境先對帳：**每個工作包先確認 Git remote／root／worktree／branch／base SHA、可修改範圍、工具版本、Python／Swift 或 Container、實際 macOS LINE 實例／window、TCC／GUI 授權及測試目的地。實作可用獨立 worktree；E2E 優先使用固定 Commit 的唯讀／隔離 worktree 與獨立證據輸出，禁止與 Implementer 共寫測試、程式或驗收基準。不同 Session 不等於隔離檔案系統／憑證／macOS 前景：若共享資源，須明確限制寫入者，真實 LINE GUI 同時只能有一個操作 owner。
+- **不中斷正常 Worker：**Sol 在事先約定的里程碑檢查進度，先查工具是否仍執行、是否有新證據；不可只因暫時沒有輸出、輪詢逾時便中止正在有效工作的 Luna，也不可高頻輪詢或每輪重建子代理。明確小修由原 Implementer 完成；跨模組／證據矛盾由 Sol 分析後再派工；需修改架構／AC 才回 Plan Review。相同根因若連續兩次修復沒有新證據或同樣失敗，停止相同派工，先做第一性原理診斷及必要升級；不能用換模型或新 Session 假裝已修復。
+- **禁止提前結案：**Implementer 每項 AC 必須標明完成／未完成／阻塞；Sol 應檢查是否真的整合到指定版本並完成必要測試，不能因 Worker 表示「本輪完成」就宣布整個任務完成。Code Review 的 CHANGES_REQUIRED 先退修；E2E 的 FAIL／BLOCKED 保留完整缺陷與可重現步驟，由 Sol 指派 Implementer 修復，再固定新 Commit、由獨立 E2E 重測受影響與必要回歸項目。結果不明的 Save All 不得盲重送。
+- **版本綁定與驗收裁決：**每次 Plan／實作／Code Review／E2E 交接至少綁定 `task_id`、`plan_revision/sha`、`implementation_commit_sha`、worktree／實際執行環境、AC 清單及每項狀態、實際操作／測試方法、證據引用／SHA、未解缺陷與 `next_action`。獨立 E2E 應提供自己的 Session／執行者資訊與原始證據；舊 Commit 的 PASS 不能自動轉移至新 Commit，來源變更後須做影響分析與必要重驗。未完成項一律留在報告，不得用縮減 AC 或另造成功報告抹除。
+- **用結果衡量，不用代理數量衡量：**每輪在現有 `E2E測試報告.md` 簡記首輪／最終 E2E 通過情形、修復迴圈、人工介入、實際耗時／使用額度（可得時）與驗收後缺陷；優先追蹤真正的 GUI 派送、Save All 次數、逐檔驗證與兩本不同相簿的完整度。不要為了指標再建立大量 Markdown 或反覆執行沒有資訊增益的合成測試。
+
 ## LINE 相簿 E2E 的必要證據與順序
 
 - 真正的相簿候選與可點擊區域須來自當下畫面、群組／視窗、日期／照片數及 AX／OCR／影像交叉證據；不重用過期點位。當次 LINE 前景交接必須真實確認，測試期間可連續執行 Owner 已同意的可逆導覽，前景中斷或目標改變時重新確認。正常列表瀏覽可記錄失敗後返回；不得把探索性點擊當作 Save All 身分核對。
