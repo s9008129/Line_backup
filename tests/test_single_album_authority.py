@@ -54,6 +54,29 @@ class One56AuthorityTests(unittest.TestCase):
             with self.subTest(ref=ref), self.assertRaises(AcceptanceError):
                 cli._one56_ref(ref,bundle,'implementation-review.json')
 
+    def test_owner_confirmed_display_title_alias_is_exact_and_same_bundle(self):
+        bundle='harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-test'
+        ref={'path':bundle+'/display-title-alias-confirmation.json','bytes':72,'sha256':'a'*64}
+        decision={'display_title_alias':'OCR variant','display_title_alias_confirmation_ref':ref}
+        consent={'display_title_alias':'OCR variant','display_title_alias_confirmation_ref':ref}
+        confirmation={'version':1,'task_id':'PILOT-1','owner':'owner-1','project_root':'/project',
+            'canonical_group_name':'Canonical group','display_title_alias':'OCR variant',
+            'owner_statement':'- 是，同一群組；保留原備份名稱\n這是視覺辨識的中文字差異'}
+        self.assertEqual(cli.validate_one56_display_title_alias(decision,consent,confirmation,task_id='PILOT-1',
+            owner='owner-1',root='/project',canonical_group='Canonical group',alias_ref=ref),
+            'OCR variant')
+        bad_cases=[
+            ({**decision,'display_title_alias':'OCR variant '},consent,confirmation,ref),
+            (decision,{**consent,'display_title_alias_confirmation_ref':{**ref,'path':bundle+'/other.json'}},confirmation,ref),
+            (decision,consent,{**confirmation,'owner_statement':'同一群組'},ref),
+            (decision,consent,{**confirmation,'project_root':'/other'},ref),
+            (decision,consent,{**confirmation,'canonical_group_name':'other'},ref),
+        ]
+        for dec,con,doc,alias_ref in bad_cases:
+            with self.subTest(doc=doc),self.assertRaises(AcceptanceError):
+                cli.validate_one56_display_title_alias(dec,con,doc,task_id='PILOT-1',owner='owner-1',
+                    root='/project',canonical_group='Canonical group',alias_ref=alias_ref)
+
     def test_bundle_artifact_requires_exact_hash_and_bytes(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp).resolve()

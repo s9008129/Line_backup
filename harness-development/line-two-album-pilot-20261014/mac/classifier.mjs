@@ -51,6 +51,7 @@ const intersects=(a,b)=>a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1
 
 const observationKeys=['frame','frame_id','session_id','group_key','surface','captured_at','provider','layout_key',
   'window_id','pid','width','height','mapping','cards','boundary','editable_focus','occlusion'];
+const ONE56={start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56};
 
 export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyzeScrollWitness,analyzeVisualCardDiagnostic,groupKey,clock=()=>Date.now()}) {
   need(typeof retain==='function'&&typeof frameSupport==='function'&&typeof analyzeCapture==='function','CLASSIFIER_DEPENDENCY_REQUIRED');
@@ -72,7 +73,7 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
       &&analysis.source_sha256===frameId&&analysis.source_ax_sha256===sourceAXSha,'CLASSIFIER_SOURCE_BINDING');
     const keys=['version','frame_id','session_id','source_sha256','source_ax_sha256','surface','group_key','native',
       'layout','surface_structure','surface_bounds_px','occlusion','editable_focus','focus_evidence','ax','cards',
-      'boundary','boundary_evidence','chooser_controls'];
+      'boundary','boundary_evidence','chooser_controls','detail_identity'];
     if(scrollWitness)keys.push('scroll_witness');
     need(Object.keys(analysis).sort().join(',')===keys.sort().join(','),'CLASSIFIER_ANALYSIS_SCHEMA');
     need(['ALBUMS','ALBUM_DETAIL','FOLDER_CHOOSER'].includes(analysis.surface)&&analysis.group_key===groupKey,
@@ -93,10 +94,14 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
       'CLASSIFIER_AX_SCHEMA');
     const axElements=ax.elements;
     for(const el of axElements) {
-      need(el&&Object.keys(el).sort().join(',')===['index','role','subrole','identifier','label','value','bounds_px','parent_index','enabled']
-        .sort().join(',')&&Number.isInteger(el.index)&&el.index>=0&&typeof el.role==='string'
+      const baseKeys=['index','role','subrole','identifier','label','value','bounds_px','parent_index','enabled'];
+      const rangeKeys=el?.role==='scroll bar'?['minimum_value','maximum_value','native_node_id']:[];
+      need(el&&Object.keys(el).sort().join(',')===[...baseKeys,...rangeKeys].sort().join(',')&&Number.isInteger(el.index)&&el.index>=0&&typeof el.role==='string'
         &&typeof el.subrole==='string'&&typeof el.identifier==='string'&&typeof el.enabled==='boolean'
         &&(el.parent_index===null||Number.isInteger(el.parent_index)),'CLASSIFIER_AX_ELEMENT');
+      if(el.role==='scroll bar')need((el.minimum_value===null&&el.maximum_value===null
+        ||Number.isFinite(el.minimum_value)&&Number.isFinite(el.maximum_value)&&el.maximum_value>el.minimum_value)
+        &&typeof el.native_node_id==='string','CLASSIFIER_AX_SCROLL_RANGE');
       if(scrollWitness&&el.role==='row')nativeRowRect(el.bounds_px,'CLASSIFIER_AX_ELEMENT_BOUNDS');
       else rect(el.bounds_px,width,height,'CLASSIFIER_AX_ELEMENT_BOUNDS');
     }
@@ -139,16 +144,29 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
     if(analysis.surface==='ALBUMS') {
       const proof=analysis.boundary_evidence;
       const actualKeys=Object.keys(proof).sort().join(',');
-      const expectedKeys=scrollWitness
-        ?['version','frame_id','session_id','source','indicator_index','minimum','maximum','value'].sort().join(',')
-        :'version,frame_id,session_id,source,indicator_index,minimum,maximum,value';
+      const expectedKeys=['version','frame_id','session_id','source','indicator_index','minimum','maximum','value',
+        'raw_value','ax_minimum','ax_maximum','indicator_native_id','native_context_ref'].sort().join(',');
       need(actualKeys===expectedKeys
         &&proof.source==='AX_SCROLLBAR'&&Number.isInteger(proof.indicator_index)
         &&Number.isFinite(proof.minimum)&&Number.isFinite(proof.maximum)&&Number.isFinite(proof.value)
-        &&proof.maximum>proof.minimum,'CLASSIFIER_BOUNDARY_EVIDENCE');
+        &&proof.maximum>proof.minimum&&Number.isFinite(proof.ax_minimum)&&Number.isFinite(proof.ax_maximum)
+        &&proof.ax_maximum>proof.ax_minimum&&typeof proof.raw_value==='string'
+        &&/^-?(?:\d+\.?\d*|\.\d+)$/.test(proof.raw_value)&&Number.isFinite(Number(proof.raw_value))
+        &&Number(proof.raw_value)>=proof.ax_minimum&&Number(proof.raw_value)<=proof.ax_maximum
+        &&typeof proof.indicator_native_id==='string'&&proof.native_context_ref?.sha256,'CLASSIFIER_BOUNDARY_EVIDENCE');
       const indicator=axElements.find(e=>e.index===proof.indicator_index);
-      need(indicator?.role==='scroll bar'&&indicator.value===proof.value
-        &&boundary.top===(proof.value===proof.minimum)&&boundary.bottom===(proof.value===proof.maximum),
+      const nativeContext=sourceBinding?.after?.value;
+      const nativeNode=nativeContext?.nodes?.filter(n=>n.id===proof.indicator_native_id)??[];
+      const normalized=(Number(proof.raw_value)-proof.ax_minimum)/(proof.ax_maximum-proof.ax_minimum);
+      need(indicator?.role==='scroll bar'&&indicator.value===proof.raw_value
+        &&indicator.minimum_value===proof.ax_minimum&&indicator.maximum_value===proof.ax_maximum
+        &&indicator.native_node_id===proof.indicator_native_id&&proof.value===normalized
+        &&proof.native_context_ref?.path===sourceBinding?.after?.reference?.path
+        &&proof.native_context_ref?.sha256===sourceBinding?.after?.reference?.sha256
+        &&nativeNode.length===1&&nativeNode[0].value===proof.raw_value
+        &&nativeNode[0].minimumValue===proof.ax_minimum&&nativeNode[0].maximumValue===proof.ax_maximum
+        &&boundary.top===(Number(proof.raw_value)===proof.ax_minimum)
+        &&boundary.bottom===(Number(proof.raw_value)===proof.ax_maximum),
         'CLASSIFIER_BOUNDARY_EVIDENCE');
     } else need(canonicalJSON(analysis.boundary_evidence)===canonicalJSON({version:1,frame_id:frameId,
       session_id:sessionId,source:'NOT_APPLICABLE'}),'CLASSIFIER_BOUNDARY_EVIDENCE');
@@ -167,6 +185,7 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
     } else fail('CLASSIFIER_FOCUS_UNKNOWN');
     const focusRef=ref(await retain({artifact:focus,kind:'focus-evidence',frameId,sessionId}),
       'CLASSIFIER_FOCUS_RETAIN_REQUIRED');
+    let detailIdentity=null;
     const geometry={version:1,frame_id:frameId,session_id:sessionId,surface:analysis.surface,pid:native.pid,
       window_id:native.window_id,layout_key:layoutKey,captured_at:capturedAt,
       cua_capture_bounds_points:native.cua_capture_bounds_points,
@@ -190,6 +209,51 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
     const ocrRaw=await support.readRef(manifest.ocr);const ocr=JSON.parse(new TextDecoder().decode(ocrRaw));
     need(ocr.cua_frame_id===frameId&&ocr.sck_frame_sha256===manifest.sckFrameId
       &&Array.isArray(ocr.cua),'FRAME_SUPPORT_OCR_BINDING');
+    if(analysis.surface==='ALBUM_DETAIL'&&analysis.detail_identity){
+      const d=analysis.detail_identity;
+      need(d&&Object.keys(d).sort().join(',')===['detail_window_id','fingerprint','group_key','kind','list_frame_id',
+        'list_window_id','native_lineage_ref','photo_count','pid','process_start','title'].sort().join(',')
+        &&d.kind==='ALBUM_DETAIL_GRID'&&d.group_key===groupKey&&d.detail_window_id===native.window_id
+        &&d.pid===native.pid&&Array.isArray(d.process_start)&&d.process_start.length===2
+        &&d.fingerprint?.expected_images>0&&typeof d.title?.text==='string'
+        &&typeof d.photo_count?.text==='string'&&d.native_lineage_ref?.sha256,'CLASSIFIER_DETAIL_IDENTITY');
+      rect(d.title.bounds,width,height,'CLASSIFIER_DETAIL_TITLE_BOUNDS');
+      rect(d.photo_count.bounds,width,height,'CLASSIFIER_DETAIL_COUNT_BOUNDS');
+      const parsedTitle=completeDateTitle(d.title.text);
+      need(parsedTitle?.start_date===d.fingerprint.start_date&&parsedTitle?.end_date===d.fingerprint.end_date
+        &&d.photo_count.text===`${d.fingerprint.expected_images}張照片`,'CLASSIFIER_DETAIL_TEXT_IDENTITY');
+      const unique=(items,predicate)=>items.filter(o=>predicate(o)&&o.candidate_count===1&&o.confidence>=.5);
+      const sameTitle=o=>completeDateTitle(o.text)?.start_date===d.fingerprint.start_date
+        &&completeDateTitle(o.text)?.end_date===d.fingerprint.end_date;
+      const exactCua=(items,text,bounds)=>unique(items,o=>o.text===text&&o.bounds.join(',')===bounds.join(','));
+      const cuaTitle=exactCua(ocr.cua,d.title.text,d.title.bounds);
+      const cuaCount=exactCua(ocr.cua,d.photo_count.text,d.photo_count.bounds);
+      const supportRaw=await support.readRef(manifest.support);
+      const sidecar=JSON.parse(new TextDecoder().decode(supportRaw));
+      const binding=sidecar.native_binding,display=manifest.displayBounds,sckWidth=manifest.imageWidthPx,sckHeight=manifest.imageHeightPx;
+      need(Array.isArray(ocr.sck)&&binding&&Array.isArray(binding.cua_capture_bounds_points)
+        &&Array.isArray(binding.display_bounds_points)&&Array.isArray(binding.cua_size_px)
+        &&Array.isArray(binding.sck_size_px)&&binding.cua_size_px[0]===width&&binding.cua_size_px[1]===height
+        &&canonicalJSON(binding.cua_capture_bounds_points)===canonicalJSON(native.cua_capture_bounds_points)
+        &&Array.isArray(display)&&display.length===4&&binding.display_bounds_points.join(',')===display.join(',')
+        &&binding.sck_size_px[0]===sckWidth&&binding.sck_size_px[1]===sckHeight
+        &&Number.isFinite(display[2])&&display[2]>0&&Number.isFinite(display[3])&&display[3]>0
+        &&Number.isInteger(sckWidth)&&sckWidth>0&&Number.isInteger(sckHeight)&&sckHeight>0
+        &&cuaTitle.length===1&&cuaCount.length===1
+        &&!ocr.cua.some(o=>/\(\s*\d+\s*\/\s*\d+\s*\)/.test(o.text)),
+        'CLASSIFIER_DETAIL_OCR_BINDING');
+      const cb=binding.cua_capture_bounds_points,db=binding.display_bounds_points;
+      const scaleX=(cb[2]/width)*(sckWidth/db[2]),scaleY=(cb[3]/height)*(sckHeight/db[3]);
+      const offsetX=(cb[0]-db[0])*(sckWidth/db[2]),offsetY=(cb[1]-db[1])*(sckHeight/db[3]);
+      const mappedUnique=(items,predicate,cuaItem)=>unique(items,o=>predicate(o)&&Array.isArray(o.bounds)
+        &&o.bounds.length===4&&o.bounds.every(Number.isFinite)
+        &&Math.hypot(scaleX*(cuaItem.bounds[0]+cuaItem.bounds[2]/2)+offsetX-(o.bounds[0]+o.bounds[2]/2),
+          scaleY*(cuaItem.bounds[1]+cuaItem.bounds[3]/2)+offsetY-(o.bounds[1]+o.bounds[3]/2))<=2);
+      need(mappedUnique(ocr.sck,sameTitle,cuaTitle[0]).length===1
+        &&mappedUnique(ocr.sck,o=>o.text===d.photo_count.text,cuaCount[0]).length===1,
+        'CLASSIFIER_DETAIL_OCR_BINDING');
+      detailIdentity=d;
+    } else need(analysis.detail_identity===null,'CLASSIFIER_DETAIL_IDENTITY_UNEXPECTED');
     const uncertainty=support.uncertaintyPx;
     const byIndex=new Map(axElements.map(e=>[e.index,e]));
     if(scrollWitness){
@@ -250,7 +314,7 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
       }
       need(scrollRows.length>0,'SCROLL_LIST_WITNESS_REQUIRED');
       const scrollClassifierEvidence={version:1,frame_id:frameId,session_id:sessionId,ax_state_sha256:axRef.sha256,
-        screenshot_sha256:frameId,cards:[],boundary:{top:boundary.top,bottom:boundary.bottom,evidence:boundaryRef},
+        screenshot_sha256:frameId,cards:[],detail_identity:null,boundary:{top:boundary.top,bottom:boundary.bottom,evidence:boundaryRef},
         structure_sha256:structureSHA,surface_structure:analysis.surface_structure,focus_evidence:focusRef};
       const scrollClassifierRef=ref(await retain({artifact:scrollClassifierEvidence,kind:'classifier-evidence',frameId,sessionId}),
         'CLASSIFIER_EVIDENCE_RETAIN_REQUIRED');
@@ -289,15 +353,19 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
       rect(candidate.card_bounds,width,height,'CLASSIFIER_CARD_BOUNDS');
       rect(candidate.metadata_bounds,width,height,'CLASSIFIER_METADATA_BOUNDS');
       rect(candidate.safe_metadata_bounds,width,height,'CLASSIFIER_SAFE_METADATA_BOUNDS');
-      rect(candidate.thumbnail_bounds,width,height,'CLASSIFIER_THUMBNAIL_BOUNDS');
+      const nameOnly= candidate.thumbnail_bounds===null&&candidate.thumbnail_ax_index===null
+        &&JSON.stringify(id)===JSON.stringify(ONE56);
+      if(!nameOnly)rect(candidate.thumbnail_bounds,width,height,'CLASSIFIER_THUMBNAIL_BOUNDS');
       need(Array.isArray(candidate.neighbor_bounds),'CLASSIFIER_NEIGHBORS');
       for(const b of candidate.neighbor_bounds)rect(b,width,height,'CLASSIFIER_NEIGHBOR_BOUNDS');
-      need(inside(candidate.metadata_bounds,candidate.card_bounds)&&inside(candidate.thumbnail_bounds,candidate.card_bounds)
+      need(inside(candidate.metadata_bounds,candidate.card_bounds)
+        &&(nameOnly||inside(candidate.thumbnail_bounds,candidate.card_bounds))
         &&inside(candidate.safe_metadata_bounds,candidate.metadata_bounds,uncertainty),'CLASSIFIER_CARD_CROSS_PAIR');
       const cardNode=byIndex.get(candidate.card_ax_index),thumbNode=byIndex.get(candidate.thumbnail_ax_index);
-      need(cardNode&&['row','group','cell'].includes(cardNode.role)&&cardNode.bounds_px.join(',')===candidate.card_bounds.join(',')
-        &&thumbNode?.role==='image'&&thumbNode.bounds_px.join(',')===candidate.thumbnail_bounds.join(','),
-        'CLASSIFIER_AX_CARD_BINDING');
+      need(cardNode&&(nameOnly?cardNode.role==='row':['row','group','cell'].includes(cardNode.role))
+        &&cardNode.bounds_px.join(',')===candidate.card_bounds.join(',')
+        &&(nameOnly?thumbNode===undefined:thumbNode?.role==='image'
+          &&thumbNode.bounds_px.join(',')===candidate.thumbnail_bounds.join(',')),'CLASSIFIER_AX_CARD_BINDING');
       const titleMatches=ocr.cua.filter(o=>completeDateTitle(o.text)?.start_date===id.start_date
         &&completeDateTitle(o.text)?.end_date===id.end_date&&o.candidate_count===1&&o.confidence>=0.5
         &&inside(o.bounds,candidate.metadata_bounds));
@@ -318,7 +386,7 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
         thumbnail_ax_index:candidate.thumbnail_ax_index});
     }
     const classifierEvidence={version:1,frame_id:frameId,session_id:sessionId,ax_state_sha256:axRef.sha256,
-      screenshot_sha256:frameId,cards:witnessCards,boundary:{top:boundary.top,bottom:boundary.bottom,evidence:boundaryRef},
+      screenshot_sha256:frameId,cards:witnessCards,detail_identity:detailIdentity,boundary:{top:boundary.top,bottom:boundary.bottom,evidence:boundaryRef},
       structure_sha256:structureSHA,surface_structure:analysis.surface_structure,focus_evidence:focusRef};
     const classifierRef=ref(await retain({artifact:classifierEvidence,kind:'classifier-evidence',frameId,sessionId}),
       'CLASSIFIER_EVIDENCE_RETAIN_REQUIRED');
@@ -331,7 +399,9 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,analyze
         layout_key:layoutKey,sck_support:ref(support.reference,'SCK_SUPPORT_REFERENCE')},cards,
       boundary:{top:boundary.top,bottom:boundary.bottom,evidence:boundaryRef},
       editable_focus:analysis.editable_focus,occlusion:analysis.occlusion};
-    need(Object.keys(observation).sort().join(',')===observationKeys.slice().sort().join(','),
+    if(detailIdentity)observation.detail_identity=detailIdentity;
+    const strictKeys=detailIdentity?[...observationKeys,'detail_identity']:observationKeys;
+    need(Object.keys(observation).sort().join(',')===strictKeys.slice().sort().join(','),
       'STRICT_FRAME_SHAPE');
     cache.set(frameId,{observation,analysis,axSnapshot,axRef,support,geometryRef,groundingRef,manifest,ocr});
     return observation;

@@ -10,7 +10,7 @@ sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
 from fixture_support import Fixture,identity,json_bytes,sha,png
 from line_backup_acceptance.project_binding import ProjectReader
 from line_backup_acceptance.common import AcceptanceError
-from line_backup_batch.observations import frame,card_target,catalog,chooser_observation,validate_download_start
+from line_backup_batch.observations import frame,card_target,catalog,chooser_observation,validate_download_start,name_target_point,ocr_date_identity
 
 class ObservationTests(unittest.TestCase):
     def setUp(self):self.f=Fixture();self.reader=ProjectReader(str(self.f.root))
@@ -19,6 +19,21 @@ class ObservationTests(unittest.TestCase):
         observation=self.f.observation([identity()])
         p=card_target(self.reader,observation,self.f.cfg,identity(),self.f.session)
         self.assertEqual(p,[40,36])
+    def test_name_target_uses_exact_ocr_text_center_and_preserves_two_pixel_margin(self):
+        bounds=[31,1136,258,30]
+        self.assertEqual(name_target_point(bounds,2),[160,1151])
+        with self.assertRaisesRegex(AcceptanceError,'CARD_NAME_TARGET_CONTROL_OVERLAP'):
+            name_target_point(bounds,2,[[120,1140,40,20]])
+        with self.assertRaisesRegex(AcceptanceError,'CARD_NAME_TARGET_UNSAFE'):
+            name_target_point(bounds,2.01)
+        with self.assertRaisesRegex(AcceptanceError,'CARD_NAME_TARGET_UNSAFE'):
+            name_target_point([31,1136,258,4],2)
+    def test_detail_ocr_date_identity_preserves_raw_separator_and_normalizes_fingerprint(self):
+        self.assertEqual(ocr_date_identity('2024/05/27~05/31'),
+            {'start_date':'2024-05-27','end_date':'2024-05-31'})
+        self.assertEqual(ocr_date_identity('2024/05/27～05/31'),
+            {'start_date':'2024-05-27','end_date':'2024-05-31'})
+        self.assertIsNone(ocr_date_identity('2024/05/27~02/31'))
     def test_partial_card_prohibits_click(self):
         observation=self.f.observation([identity()]);observation['cards'][0]['fully_visible']=False
         with self.assertRaisesRegex(AcceptanceError,'CARD_NOT_FULLY_VISIBLE'):

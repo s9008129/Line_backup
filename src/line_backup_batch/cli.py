@@ -284,6 +284,18 @@ def _one56_ref(ref,bundle,name):
         and isinstance(ref.get('sha256'),str) and re.fullmatch(r'[0-9a-f]{64}',ref['sha256']) is not None,
         'ONE56_BUNDLE_MIXED')
 
+def validate_one56_display_title_alias(decision,consent,confirmation,*,task_id,owner,root,canonical_group,alias_ref):
+    alias=decision.get('display_title_alias') if isinstance(decision,dict) else None
+    require(isinstance(alias,str) and alias and alias!=canonical_group
+        and decision.get('display_title_alias_confirmation_ref')==alias_ref
+        and isinstance(consent,dict) and consent.get('display_title_alias')==alias
+        and consent.get('display_title_alias_confirmation_ref')==alias_ref
+        and confirmation=={'version':1,'task_id':task_id,'owner':owner,'project_root':root,
+            'canonical_group_name':canonical_group,'display_title_alias':alias,
+            'owner_statement':'- 是，同一群組；保留原備份名稱\n這是視覺辨識的中文字差異'},
+        'PROJECT_DISPLAY_TITLE_ALIAS_REQUIRED')
+    return alias
+
 def validate_one56_contract(contract,grant,root):
     operations=contract.get('operations') if isinstance(contract,dict) else None
     require(isinstance(operations,list) and all(isinstance(op,str) for op in operations)
@@ -537,6 +549,13 @@ def authorize_one56_project(root,path,grant,fixture,operation):
         provider_raw=artifact(reader,provider_ref)
         provider_response=strict_json(provider_raw,'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
         validate_one56_provider_review(provider_response,review,contract,grant)
+        alias_ref=decision.get('display_title_alias_confirmation_ref')
+        _one56_ref(alias_ref,bundle,'display-title-alias-confirmation.json')
+        alias_raw=artifact(reader,alias_ref)
+        alias_confirmation=strict_json(alias_raw,'PROJECT_DISPLAY_TITLE_ALIAS_REQUIRED')
+        canonical_group=reader.read('config/line_backup_config.json')[0]
+        canonical_group=strict_json(canonical_group,'PROJECT_CONFIG_INVALID').get('group_name')
+        alias=decision.get('display_title_alias')
         require(readiness.get('profile')==PROJECT_SCOPE and readiness.get('gui_ready') is True
             and readiness.get('owner_foreground_handoff') is True
             and readiness.get('independent_acceptance_access') is True
@@ -551,6 +570,9 @@ def authorize_one56_project(root,path,grant,fixture,operation):
             'PROJECT_OWNER_CONSENT_REQUIRED')
         consent_raw=artifact(reader,consent_ref)
         consent=strict_json(consent_raw,'PROJECT_OWNER_CONSENT_REQUIRED')
+        validate_one56_display_title_alias(decision,consent,alias_confirmation,task_id=grant['task_id'],
+            owner=grant['owner'],root=root,canonical_group=canonical_group,alias_ref=alias_ref)
+        require(reader.read(alias_ref['path'])[0]==alias_raw,'PROJECT_DISPLAY_TITLE_ALIAS_DRIFT')
         if operation in PROJECT_MUTATING:
             require(decision.get('live_gui_authorized') is True and consent.get('profile')==PROJECT_SCOPE
                 and consent.get('gui_authorized') is True and consent.get('task_id')==grant['task_id']
@@ -568,6 +590,7 @@ def authorize_one56_project(root,path,grant,fixture,operation):
             require(reader.read(grant[field]['path'])[0]==raw_refs[field],'PROJECT_GRANT_EVIDENCE_DRIFT')
         require(reader.read(original_ref['path'])[0]==original_raw,'PROJECT_GRANT_EVIDENCE_DRIFT')
         require(reader.read(provider_ref['path'])[0]==provider_raw,'PROJECT_GRANT_EVIDENCE_DRIFT')
+        require(reader.read(alias_ref['path'])[0]==alias_raw,'PROJECT_GRANT_EVIDENCE_DRIFT')
         require(reader.read(consent_ref['path'])[0]==consent_raw,'PROJECT_GRANT_EVIDENCE_DRIFT')
         require(reader.read(grant['contract_path'])[0]==contract_raw,'PROJECT_CONTRACT_DRIFT')
     finally:reader.close()
@@ -641,9 +664,19 @@ def execute(ns):
         # never initializes the GUI ledger, acquires an owner or observes LINE.
         grant=authorize(ns.project_root,ns.authorization,ns.fixture,'gui_observe')
         require(grant.get('grant_version') in ('line-two-album-project-grant-1',ONE56_GRANT_VERSION),'PROJECT_GRANT_REQUIRED')
+        display_title_alias=None
+        if grant.get('single_album_route') is True:
+            from .observations import artifact
+            bundle=one56_bundle(ns.authorization);reader=ProjectReader(ns.project_root)
+            try:
+                decision=strict_json(artifact(reader,grant['owner_decision']),'PROJECT_OWNER_DECISION_REQUIRED')
+                alias_ref=decision['display_title_alias_confirmation_ref']
+                alias_doc=strict_json(artifact(reader,alias_ref),'PROJECT_DISPLAY_TITLE_ALIAS_REQUIRED')
+                display_title_alias=alias_doc['display_title_alias']
+            finally:reader.close()
         return dict(status='PROJECT_NATIVE_AUTHORIZED',project_root=grant['project_root'],
             owner=grant['owner'],task_id=grant['task_id'],source_sha256=grant['source_sha256'],
-            dispatch_authorized=False,native_controller_admission=False)
+            display_title_alias=display_title_alias,dispatch_authorized=False,native_controller_admission=False)
     store=Store(ns.project_root)
     if ns.operation=='inspect':
         snapshot=store.snapshot();s=snapshot['state']

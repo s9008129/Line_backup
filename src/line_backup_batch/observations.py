@@ -38,6 +38,15 @@ def fp(value):
     require(integer(value['expected_images'],1),'ALBUM_COUNT')
     return value
 
+def ocr_date_identity(text):
+    match=re.fullmatch(r'(\d{4})/(\d{2})/(\d{2})\s*[~～〜]\s*(\d{2})/(\d{2})',text) if isinstance(text,str) else None
+    if match is None:return None
+    year,month,day,end_month,end_day=map(int,match.groups())
+    end_year=year+((end_month,end_day)<(month,day))
+    try:start=dt.date(year,month,day);end=dt.date(end_year,end_month,end_day)
+    except ValueError:return None
+    return {'start_date':start.isoformat(),'end_date':end.isoformat()}
+
 def rect(value,width,height):
     require(isinstance(value,list) and len(value)==4 and all(type(v) in (int,float) and math.isfinite(v) for v in value),'INVALID_BOUNDS')
     x,y,w,h=value;require(w>0 and h>0 and x>=0 and y>=0 and x+w<=width and y+h<=height,'BOUNDS_OUTSIDE_FRAME')
@@ -46,6 +55,9 @@ def rect(value,width,height):
 def inside(inner,outer,margin=0):
     x,y,w,h=inner;a,b,c,d=outer
     return x>=a+margin and y>=b+margin and x+w<=a+c-margin and y+h<=b+d-margin
+
+def intersects(a,b):
+    return a[0]<b[0]+b[2] and b[0]<a[0]+a[2] and a[1]<b[1]+b[3] and b[1]<a[1]+a[3]
 
 def point(value,bounds,uncertainty):
     require(isinstance(value,list) and len(value)==2 and all(type(v) in (int,float) and math.isfinite(v) for v in value),'INVALID_POINT')
@@ -164,7 +176,18 @@ def _grounding_evidence(reader,ref,record,support):
         and ax.get('pid')==record['pid'] and ax.get('window_id')==record['window_id']
         and ax.get('surface')==record['surface'] and isinstance(ax.get('elements'),list),'GROUNDING_AX_BINDING')
     for element in ax['elements']:
-        require(isinstance(element,dict) and set(element)=={'index','role','subrole','identifier','label','value','bounds_px','parent_index','enabled'}
+        expected_ax_keys={'index','role','subrole','identifier','label','value','bounds_px','parent_index','enabled'}
+        if isinstance(element,dict) and element.get('role')=='scroll bar':
+            expected_ax_keys|={'minimum_value','maximum_value','native_node_id'}
+            native_range=(element.get('minimum_value') is None and element.get('maximum_value') is None
+                or type(element.get('minimum_value')) in (int,float) and math.isfinite(element['minimum_value'])
+                and type(element.get('maximum_value')) in (int,float) and math.isfinite(element['maximum_value'])
+                and element['maximum_value']>element['minimum_value'])
+            require(native_range and isinstance(element.get('native_node_id'),str), 'GROUNDING_AX_SCROLL_RANGE')
+            if record['surface']=='ALBUMS':
+                require(type(element.get('minimum_value')) in (int,float) and type(element.get('maximum_value')) in (int,float),
+                    'GROUNDING_AX_SCROLL_RANGE')
+        require(isinstance(element,dict) and set(element)==expected_ax_keys
             and type(element.get('index')) is int and element['index']>=0 and isinstance(element.get('role'),str)
             and isinstance(element.get('subrole'),str) and isinstance(element.get('identifier'),str)
             and isinstance(element.get('enabled'),bool)
@@ -270,14 +293,15 @@ def _grounding_evidence(reader,ref,record,support):
         and ocr.get('version')==1 and ocr.get('cua_frame_id')==record['frame_id']
         and ocr.get('sck_frame_sha256')==manifest.get('sckFrameId'),'FRAME_SUPPORT_OCR_BINDING')
     classifier=strict_json(artifact(reader,classifier_ref),'INVALID_CLASSIFIER_EVIDENCE')
-    ckeys={'version','frame_id','session_id','ax_state_sha256','screenshot_sha256','cards','boundary',
+    ckeys={'version','frame_id','session_id','ax_state_sha256','screenshot_sha256','cards','detail_identity','boundary',
         'structure_sha256','surface_structure','focus_evidence'}
     require(isinstance(classifier,dict) and set(classifier)==ckeys and classifier.get('version')==1
         and classifier.get('frame_id')==record['frame_id'] and classifier.get('session_id')==record['session_id']
         and classifier.get('ax_state_sha256')==sha(ax_raw) and classifier.get('screenshot_sha256')==record['frame_id']
         and classifier.get('structure_sha256')==evidence['structure_sha256']
         and isinstance(classifier.get('surface_structure'),list)
-        and isinstance(classifier.get('cards'),list) and len(classifier['cards'])==len(record['cards']),
+        and isinstance(classifier.get('cards'),list) and len(classifier['cards'])==len(record['cards'])
+        and classifier.get('detail_identity')==record.get('detail_identity'),
         'CLASSIFIER_EVIDENCE_BINDING')
     require(sha(json_bytes(classifier['surface_structure']))==classifier['structure_sha256'],'CLASSIFIER_LAYOUT_STRUCTURE')
     focus=strict_json(artifact(reader,classifier['focus_evidence']),'INVALID_CLASSIFIER_FOCUS_EVIDENCE')
@@ -298,19 +322,35 @@ def _grounding_evidence(reader,ref,record,support):
     boundary_proof=strict_json(artifact(reader,boundary['evidence']),'INVALID_CLASSIFIER_BOUNDARY')
     if record['surface']=='ALBUMS':
         require(isinstance(boundary_proof,dict) and set(boundary_proof)=={'version','frame_id','session_id','source',
-            'indicator_index','minimum','maximum','value'} and boundary_proof.get('version')==1
+            'indicator_index','minimum','maximum','value','raw_value','ax_minimum','ax_maximum','indicator_native_id','native_context_ref'} and boundary_proof.get('version')==1
             and boundary_proof.get('frame_id')==record['frame_id'] and boundary_proof.get('session_id')==record['session_id']
             and boundary_proof.get('source')=='AX_SCROLLBAR' and type(boundary_proof.get('indicator_index')) is int
             and all(type(boundary_proof.get(key)) in (int,float) and math.isfinite(boundary_proof[key])
                 for key in ('minimum','maximum','value'))
             and boundary_proof['maximum']>boundary_proof['minimum']
-            and boundary_proof['minimum']<=boundary_proof['value']<=boundary_proof['maximum'],
+            and 0<=boundary_proof['value']<=1 and isinstance(boundary_proof['raw_value'],str)
+            and type(boundary_proof['ax_minimum']) in (int,float) and type(boundary_proof['ax_maximum']) in (int,float)
+            and math.isfinite(boundary_proof['ax_minimum']) and math.isfinite(boundary_proof['ax_maximum'])
+            and boundary_proof['ax_maximum']>boundary_proof['ax_minimum']
+            and re.fullmatch(r'-?(?:\d+\.?\d*|\.\d+)',boundary_proof['raw_value']) is not None
+            and math.isfinite(float(boundary_proof['raw_value']))
+            and boundary_proof['ax_minimum']<=float(boundary_proof['raw_value'])<=boundary_proof['ax_maximum']
+            and isinstance(boundary_proof['native_context_ref'],dict),
             'CLASSIFIER_BOUNDARY_EVIDENCE')
         indicator=[e for e in ax['elements'] if e['index']==boundary_proof['indicator_index']]
+        raw_value=boundary_proof['raw_value'];ax_min=boundary_proof['ax_minimum'];ax_max=boundary_proof['ax_maximum']
+        native_context=strict_json(artifact(reader,boundary_proof['native_context_ref']),'INVALID_NATIVE_RANGE_EVIDENCE')
+        native_value=native_context.get('value',{}) if isinstance(native_context,dict) else {}
+        native_nodes=[n for n in native_value.get('nodes',[]) if n.get('id')==boundary_proof['indicator_native_id']]
         require(len(indicator)==1 and indicator[0]['role']=='scroll bar'
-            and indicator[0]['value']==boundary_proof['value']
-            and boundary['top']==(boundary_proof['value']==boundary_proof['minimum'])
-            and boundary['bottom']==(boundary_proof['value']==boundary_proof['maximum']),
+            and indicator[0]['value']==raw_value and indicator[0].get('minimum_value')==ax_min
+            and indicator[0].get('maximum_value')==ax_max and indicator[0].get('native_node_id')==boundary_proof['indicator_native_id']
+            and len(native_nodes)==1 and native_value.get('target',{}).get('pid')==record['pid']
+            and native_nodes[0].get('value')==raw_value and native_nodes[0].get('minimumValue')==ax_min
+            and native_nodes[0].get('maximumValue')==ax_max
+            and abs(boundary_proof['value']-(float(raw_value)-ax_min)/(ax_max-ax_min))<1e-12
+            and boundary['top']==(float(raw_value)==ax_min)
+            and boundary['bottom']==(float(raw_value)==ax_max),
             'CLASSIFIER_BOUNDARY_EVIDENCE')
     else:
         require(isinstance(boundary_proof,dict) and set(boundary_proof)=={'version','frame_id','session_id','source'}
@@ -320,10 +360,13 @@ def _grounding_evidence(reader,ref,record,support):
     for card,witness in zip(record['cards'],classifier['cards']):
         wkeys={'fingerprint','title','card_bounds','metadata_bounds','safe_metadata_bounds','neighbor_bounds',
             'thumbnail_bounds','title_ocr','count_ocr','card_ax_index','thumbnail_ax_index'}
+        target_name_only=(witness.get('fingerprint')=={'start_date':'2024-05-27','end_date':'2024-05-31','expected_images':56}
+            and witness.get('thumbnail_bounds') is None and witness.get('thumbnail_ax_index') is None) if isinstance(witness,dict) else False
         require(isinstance(witness,dict) and set(witness)==wkeys and witness['fingerprint']==card['fingerprint']
             and witness['title']==card['title'] and witness['card_bounds']==card['card_bounds']
             and witness['metadata_bounds']==card['metadata_bounds'] and witness['safe_metadata_bounds']==card['safe_metadata_bounds']
-            and witness['neighbor_bounds']==card['neighbor_bounds'] and witness['thumbnail_bounds'] is not None,
+            and witness['neighbor_bounds']==card['neighbor_bounds']
+            and (target_name_only or witness['thumbnail_bounds'] is not None),
             'CLASSIFIER_CARD_WITNESS')
         ident=fp(card['fingerprint'])
         for key,needle in (('title_ocr',card['title']),('count_ocr',str(ident['expected_images']))):
@@ -339,15 +382,81 @@ def _grounding_evidence(reader,ref,record,support):
                 and candidate.get('confidence',0)>=0.5]
             require(len(found)==1 and inside(item['bounds'],card['metadata_bounds']),'CLASSIFIER_OCR_WITNESS')
         card_node=elements.get(witness['card_ax_index']);thumbnail_node=elements.get(witness['thumbnail_ax_index'])
-        require(card_node is not None and card_node['role'] in ('row','group','cell')
-            and card_node['bounds_px']==card['card_bounds'] and thumbnail_node is not None
-            and thumbnail_node['role']=='image' and thumbnail_node['bounds_px']==witness['thumbnail_bounds']
-            and inside(witness['thumbnail_bounds'],card['card_bounds']),'CLASSIFIER_AX_CARD_WITNESS')
+        require(card_node is not None and card_node['role']==('row' if target_name_only else card_node['role'])
+            and (target_name_only or card_node['role'] in ('row','group','cell'))
+            and card_node['bounds_px']==card['card_bounds']
+            and (target_name_only or thumbnail_node is not None and thumbnail_node['role']=='image'
+                and thumbnail_node['bounds_px']==witness['thumbnail_bounds']
+                and inside(witness['thumbnail_bounds'],card['card_bounds'])),'CLASSIFIER_AX_CARD_WITNESS')
+    if record['surface']=='ALBUM_DETAIL' and record.get('detail_identity') is not None:
+        detail=record.get('detail_identity')
+        require(isinstance(detail,dict) and set(detail)=={'kind','fingerprint','title','photo_count','group_key',
+            'list_frame_id','list_window_id','detail_window_id','pid','process_start','native_lineage_ref'}
+            and detail.get('kind')=='ALBUM_DETAIL_GRID' and detail.get('group_key')==record['group_key']
+            and detail.get('detail_window_id')==record['window_id'] and detail.get('pid')==record['pid']
+            and detail.get('list_frame_id')!=record['frame_id'] and integer(detail.get('list_window_id'),1)
+            and detail.get('list_window_id')!=record['window_id'] and isinstance(detail.get('process_start'),list)
+            and len(detail['process_start'])==2 and all(integer(x,0) for x in detail['process_start']),
+            'DETAIL_IDENTITY_REQUIRED')
+        ident=fp(detail['fingerprint']);title=detail.get('title');count=detail.get('photo_count')
+        require(isinstance(title,dict) and set(title)=={'text','bounds'}
+            and ocr_date_identity(title.get('text'))=={'start_date':ident['start_date'],'end_date':ident['end_date']}
+            and isinstance(count,dict) and set(count)=={'text','bounds'}
+            and count['text']==f"{ident['expected_images']}張照片",'DETAIL_TEXT_IDENTITY')
+        rect(title['bounds'],record['width'],record['height']);rect(count['bounds'],record['width'],record['height'])
+        lineage_ref=detail['native_lineage_ref'];lineage=strict_json(artifact(reader,lineage_ref),'DETAIL_NATIVE_LINEAGE_REQUIRED')
+        required_lineage={'version','kind','frame_id','session_id','fingerprint','list_frame_id','list_window_id',
+            'detail_window_id','pid','process_start','list_native_ref','detail_source_ref'}
+        require(isinstance(lineage,dict) and set(lineage)==required_lineage and lineage.get('version')==1
+            and lineage.get('kind')=='ALBUM_DETAIL_GRID' and lineage.get('frame_id')==record['frame_id']
+            and lineage.get('session_id')==record['session_id'] and lineage.get('fingerprint')==ident
+            and lineage.get('list_frame_id')==detail['list_frame_id']
+            and lineage.get('list_window_id')==detail['list_window_id']
+            and lineage.get('detail_window_id')==detail['detail_window_id'] and lineage.get('pid')==record['pid']
+            and lineage.get('process_start')==detail['process_start'],'DETAIL_NATIVE_LINEAGE_BINDING')
+        prior=strict_json(artifact(reader,lineage['list_native_ref']),'DETAIL_LIST_NATIVE_REQUIRED')
+        current=strict_json(artifact(reader,lineage['detail_source_ref']),'DETAIL_CURRENT_NATIVE_REQUIRED')
+        prior_value=prior.get('value',{}) if isinstance(prior,dict) else {}
+        current_value=current.get('value',{}) if isinstance(current,dict) else {}
+        require(prior_value.get('target',{}).get('pid')==record['pid']
+            and current_value.get('target',{}).get('pid')==record['pid']
+            and [current_value.get('target',{}).get('startTimeSeconds'),current_value.get('target',{}).get('startTimeMicroseconds')]
+                ==detail['process_start']
+            and prior_value.get('focusedWindowID')==detail['list_window_id']
+            and current_value.get('focusedWindowID')==detail['detail_window_id']
+            and any(w.get('windowNumber')==detail['list_window_id'] for w in current_value.get('windows',[])),
+            'DETAIL_NATIVE_LINEAGE_WINDOWS')
+        title_hits=[item for item in ocr['cua'] if item.get('text')==title['text'] and item.get('bounds')==title['bounds']
+            and item.get('candidate_count')==1 and item.get('confidence',0)>=.5]
+        count_hits=[item for item in ocr['cua'] if item.get('text')==count['text'] and item.get('bounds')==count['bounds']
+            and item.get('candidate_count')==1 and item.get('confidence',0)>=.5]
+        scale_x,_,_,scale_y,offset_x,offset_y=support['transform']
+        def mapped_sck(cua_item,predicate):
+            x,y,w,h=cua_item['bounds'];expected=(scale_x*(x+w/2)+offset_x,scale_y*(y+h/2)+offset_y)
+            return [item for item in ocr['sck'] if predicate(item) and item.get('candidate_count')==1
+                and item.get('confidence',0)>=.5 and isinstance(item.get('bounds'),list) and len(item['bounds'])==4
+                and math.hypot(expected[0]-(item['bounds'][0]+item['bounds'][2]/2),
+                    expected[1]-(item['bounds'][1]+item['bounds'][3]/2))<=2]
+        title_sck=mapped_sck(title_hits[0],lambda item:ocr_date_identity(item.get('text'))
+            =={'start_date':ident['start_date'],'end_date':ident['end_date']}) if len(title_hits)==1 else []
+        count_sck=mapped_sck(count_hits[0],lambda item:item.get('text')==count['text']) if len(count_hits)==1 else []
+        require(len(title_hits)==1 and len(count_hits)==1 and not any(
+            re.search(r'\(\s*\d+\s*/\s*\d+\s*\)',item.get('text',''))
+            for item in ocr['cua']+ocr['sck']) and len(title_sck)==1 and len(count_sck)==1,
+            'DETAIL_OCR_BINDING')
+        require(prior_value.get('target',{}).get('bundleID')=='jp.naver.line.mac'
+            and current_value.get('target',{}).get('bundleID')=='jp.naver.line.mac'
+            and [prior_value.get('target',{}).get('startTimeSeconds'),prior_value.get('target',{}).get('startTimeMicroseconds')]
+                ==detail['process_start'], 'DETAIL_NATIVE_LINEAGE_PROCESS')
+    elif record['surface']=='ALBUM_DETAIL':
+        require(len(record['cards'])==1,'DETAIL_IDENTITY_REQUIRED')
+    else:require(record.get('detail_identity') is None,'DETAIL_IDENTITY_UNEXPECTED')
     return dict(geometry=evidence,manifest=manifest,classifier=classifier,ax=ax,ocr=ocr)
 
 def _validate_frame(reader,record,cfg,*,session,now=None,max_age=5,allow_high_editable=False):
     required={'frame','frame_id','session_id','group_key','surface','captured_at','provider','layout_key',
         'window_id','pid','width','height','mapping','cards','boundary','editable_focus','occlusion'}
+    if isinstance(record,dict) and record.get('surface')=='ALBUM_DETAIL' and 'detail_identity' in record:required.add('detail_identity')
     require(isinstance(record,dict) and set(record)==required,'INVALID_OBSERVATION')
     require(record['session_id']==session and record['group_key']==cfg['group_key'],'CONTEXT_MISMATCH')
     require(record['provider']=='HOSTED_CUA' and record['surface'] in ('ALBUMS','ALBUM_DETAIL','FOLDER_CHOOSER'),'SURFACE_MISMATCH')
@@ -368,9 +477,12 @@ def _validate_frame(reader,record,cfg,*,session,now=None,max_age=5,allow_high_ed
     support=_support(reader,mapping['sck_support'],record,cfg,now=(dt.datetime.now(dt.timezone.utc) if now is None else now),max_age=max_age)
     require(mapping['uncertainty']>=support['sidecar']['uncertainty_px'],'MAPPING_UNCERTAINTY_UNDERSTATED')
     fixture_root=Path(reader.root).is_relative_to(Path(__file__).resolve().parents[2]/'harness-development') and '/fixtures/' in reader.root
-    if not fixture_root:_grounding_evidence(reader,mapping['evidence'],record,support)
+    grounded=None
+    if not fixture_root:grounded=_grounding_evidence(reader,mapping['evidence'],record,support)
     seen=set();by_dates=set()
     require(isinstance(record['cards'],list),'INVALID_CARDS')
+    if record['surface']=='ALBUM_DETAIL' and 'detail_identity' in record:
+        require(record['cards']==[],'DETAIL_CARD_SYNTHESIS_FORBIDDEN')
     for card in record['cards']:
         require(set(card)=={'fingerprint','title','metadata_bounds','card_bounds','fully_visible','safe_metadata_bounds','neighbor_bounds'},'INVALID_CARD')
         ident=fp(card['fingerprint']);key=tuple(ident.values());datekey=(ident['start_date'],ident['end_date'])
@@ -593,8 +705,35 @@ def card_target(reader,record,cfg,target,session,*,now=None):
     require(record['surface']=='ALBUMS','SURFACE_MISMATCH')
     cards=[c for c in record['cards'] if c['fingerprint']==target]
     require(len(cards)==1 and cards[0]['fully_visible'] is True,'CARD_NOT_FULLY_VISIBLE')
+    witness_bounds=None
+    buttons=[]
+    if not (Path(reader.root).is_relative_to(Path(__file__).resolve().parents[2]/'harness-development')
+            and '/fixtures/' in reader.root):
+        grounded=_grounding_evidence(reader,record['mapping']['evidence'],record,
+            _support(reader,record['mapping']['sck_support'],record,cfg,
+                now=(dt.datetime.now(dt.timezone.utc) if now is None else now),max_age=5))
+        matches=[w for w in grounded['classifier']['cards'] if w.get('fingerprint')==target]
+        require(len(matches)==1,'CARD_NAME_TARGET_UNPROVEN')
+        witness_bounds=matches[0].get('title_ocr',{}).get('bounds')
+        require(isinstance(witness_bounds,list),'CARD_NAME_TARGET_UNPROVEN')
+        buttons=[e['bounds_px'] for e in grounded['ax']['elements'] if e.get('role')=='button' and e.get('enabled') is True]
+    if witness_bounds is not None:
+        require(record['mapping']['uncertainty']<=2,'CARD_NAME_TARGET_UNSAFE')
+        return name_target_point(witness_bounds,record['mapping']['uncertainty'],buttons)
     b=cards[0]['safe_metadata_bounds'];p=[b[0]+b[2]/2,b[1]+b[3]/2]
     return point(p,b,record['mapping']['uncertainty'])
+
+def name_target_point(title_bounds,uncertainty,button_bounds=()):
+    """Choose only the center of the verified album-name OCR rectangle."""
+    require(type(uncertainty) in (int,float) and math.isfinite(uncertainty) and uncertainty>=2
+        and uncertainty<=2 and isinstance(title_bounds,list) and len(title_bounds)==4
+        and all(type(v) in (int,float) and math.isfinite(v) for v in title_bounds)
+        and title_bounds[2]>=16 and title_bounds[3]>=2*uncertainty+1,
+        'CARD_NAME_TARGET_UNSAFE')
+    for bounds in button_bounds:
+        require(not intersects(title_bounds,bounds),'CARD_NAME_TARGET_CONTROL_OVERLAP')
+    b=title_bounds;p=[b[0]+b[2]/2,b[1]+b[3]/2]
+    return point(p,b,uncertainty)
 
 def catalog(reader,records,cfg,session,*,now=None):
     require(isinstance(records,list) and records,'EMPTY_CATALOG')

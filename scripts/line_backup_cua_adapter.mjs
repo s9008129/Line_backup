@@ -423,7 +423,7 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
       const observedAfter=await observe(`PAIR-${activeProjectSlot}-DETAIL_OPEN`);
       const lineage=observedAfter.window_id===before.window_id?null:await resolveWindowLineage({kind:'ALBUM_CARD_OPEN_DETAIL',
         before,after:observedAfter,prepared});
-      const after=lineage?{...observedAfter,window_lineage:lineage}:observedAfter;
+      const {window_lineage:_lineageOnly,...after}=observedAfter;
       const related=after.window_id===before.window_id||(requireV3&&lineage?.from_window_id===before.window_id
         &&lineage?.to_window_id===after.window_id&&lineage?.relationship==='ALBUM_CARD_OPEN_DETAIL'
         &&lineage?.list_frame_id===before.frame_id);
@@ -433,8 +433,12 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
         'ALBUM_OPEN_NOT_VERIFIED');
       if(requireV3){
         const key=value=>JSON.stringify([value?.start_date,value?.end_date,value?.expected_images]);
-        requireFact(Array.isArray(after.cards)&&after.cards.length===1
-          &&key(after.cards[0]?.fingerprint)===key(prepared.fingerprint),
+        requireFact(after.detail_identity?.kind==='ALBUM_DETAIL_GRID'
+          &&after.detail_identity.list_frame_id===before.frame_id
+          &&after.detail_identity.list_window_id===before.window_id
+          &&after.detail_identity.detail_window_id===after.window_id
+          &&after.detail_identity.pid===after.pid
+          &&key(after.detail_identity.fingerprint)===key(prepared.fingerprint),
           'PROJECT_DETAIL_IDENTITY_MISMATCH');
       }
       record('ALBUM_DETAIL_OBSERVED',{frameId:after.frame_id});
@@ -485,10 +489,12 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
       fresh(openFrame.frame_id);
       latest=null;record('MENU_CLOSE_INVOCATION');await app.pressKey('Escape');await extraAX();
       record('MENU_CLOSE_RETURNED');const closure=await observe(`PAIR-${activeProjectSlot}-MENU_CLOSURE`);
+      const closureFingerprint=closure.detail_identity?.fingerprint??closure.cards?.[0]?.fingerprint;
+      const detailFingerprint=detail.detail_identity?.fingerprint??detail.cards?.[0]?.fingerprint;
       requireFact(closure.surface==='ALBUM_DETAIL'&&closure.session_id===sessionId&&closure.group_key===detail.group_key
         &&closure.pid===detail.pid&&closure.window_id===detail.window_id&&closure.layout_key===detail.layout_key
-        &&closure.cards.length===1&&detail.cards.length===1
-        &&JSON.stringify(closure.cards[0].fingerprint)===JSON.stringify(detail.cards[0].fingerprint),
+        &&JSON.stringify([closureFingerprint?.start_date,closureFingerprint?.end_date,closureFingerprint?.expected_images])
+          ===JSON.stringify([detailFingerprint?.start_date,detailFingerprint?.end_date,detailFingerprint?.expected_images]),
         'MENU_CLOSURE_CONTEXT_DRIFT');
       await consumeGui(reservation,'RETURNED');
       const closedAt=new Date().toISOString();
@@ -517,7 +523,8 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
         const applicabilityReference=await retain({artifact:applicability,kind:'menu-applicability',frameId:detail.frame_id,sessionId});
         const closureProof={kind:'LINE_MENU_CLOSURE',run_id:runId,frame_id:closure.frame_id,
           frame:latest.saved,ax:latest.saved.ax,menu_closed:true,no_activation:true,
-          detail_fingerprint:detail.cards[0].fingerprint,closure_trace:menu.closure_trace};
+          detail_fingerprint:detail.detail_identity?.fingerprint??detail.cards?.[0]?.fingerprint,
+          closure_trace:menu.closure_trace};
         const closureReference=await retain({artifact:closureProof,kind:'menu-closure',frameId:closure.frame_id,sessionId});
         const claim={version:2,kind:'menu-calibration-no-io-pair',run_id:runId,session_id:sessionId,
           detail:detail.batch_record??detail,menu_frame:openFrame.batch_record??openFrame,trigger,label:row.label,support:support.reference,guard,

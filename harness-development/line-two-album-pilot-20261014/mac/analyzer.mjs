@@ -9,6 +9,7 @@ const intersects=(a,b)=>a[0]<b[0]+b[2]&&b[0]<a[0]+a[2]&&a[1]<b[1]+b[3]&&b[1]<a[1
 const role=v=>({'AXWindow':'window','AXSheet':'sheet','AXDialog':'dialog','AXRow':'row','AXGroup':'group',
   'AXCell':'cell','AXImage':'image','AXStaticText':'static text','AXTextField':'text field','AXButton':'button',
   'AXScrollBar':'scroll bar','AXScrollArea':'scroll area','AXMenu':'menu','AXMenuItem':'menu item'}[v]??String(v??'').replace(/^AX/,'').toLowerCase());
+const ONE56={start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56};
 
 export function verifyNativePair(before,after) {
   for(const value of [before,after])need(value?.schemaVersion===1&&value.complete===true&&value.truncated===false,
@@ -30,7 +31,7 @@ export function completeDateTitle(text) {
   return {start_date:start,end_date:end};
 }
 
-export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,groupTitle,authorization,grantSha256,owner}) {
+export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,groupTitle,groupTitleAliases=[],authorization,grantSha256,owner}) {
   const contexts=new Map();
   async function native(image=null) {
     const argv=[binary,'native-context','--bundle-id','jp.naver.line.mac','--project-root',repoRoot,
@@ -98,15 +99,39 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
     const nativeIDs=new Map(visible.map((n,index)=>[n.id,index]));
     const elements=visible.map((n,index)=>({index,role:role(n.role),subrole:n.subrole??'',identifier:n.identifier??'',
       label:n.title??n.description??'',value:n.value??null,bounds_px:px(n.framePt),
-      parent_index:nativeIDs.get(n.parentID)??null,enabled:n.enabled===true}));
+      parent_index:nativeIDs.get(n.parentID)??null,enabled:n.enabled===true,
+      ...(role(n.role)==='scroll bar'?{minimum_value:n.minimumValue??null,maximum_value:n.maximumValue??null,
+        native_node_id:n.id}: {})}));
     const byID=new Map(elements.map(n=>[n.index,n]));
     const chooserRoot=elements.filter(e=>e.role==='sheet'||e.role==='dialog'||e.subrole==='AXDialog');
     need(chooserRoot.length<=1,'CHOOSER_ROOT_AMBIGUOUS');
-    const group=ocr.filter(o=>o.text===groupTitle&&o.confidence>=.5&&o.candidate_count===1);
+    const allowedGroupTitles=[groupTitle,...groupTitleAliases];
+    const group=ocr.filter(o=>allowedGroupTitles.includes(o.text)&&o.confidence>=.5&&o.candidate_count===1);
     const back=elements.filter(e=>e.role==='button'&&['返回','上一頁','Back'].includes(e.label));
-    const surface=chooserRoot.length===1?'FOLDER_CHOOSER':back.length===1?'ALBUM_DETAIL':'ALBUMS';
+    let detailSeed=null;
+    if(chooserRoot.length===0&&back.length===0){
+      const dates=ocr.filter(o=>completeDateTitle(o.text)&&o.confidence>=.5&&o.candidate_count===1);
+      const counts=ocr.filter(o=>/^\d+張照片$/.test(o.text)&&o.confidence>=.5&&o.candidate_count===1);
+      const viewer=ocr.some(o=>/\(\s*\d+\s*\/\s*\d+\s*\)/.test(o.text));
+      const prior=[...contexts.values()].findLast(c=>c.analysis.native.pid===value.target.pid
+        &&c.analysis.group_key===groupKey&&c.analysis.surface==='ALBUMS');
+      if(!viewer&&dates.length===1&&counts.length===1){
+        const id={...completeDateTitle(dates[0].text),expected_images:Number(counts[0].text.match(/^\d+/)[0])};
+        const listed=prior?.analysis.cards.filter(c=>JSON.stringify(c.fingerprint)===JSON.stringify(id))??[];
+        const old=prior?.sourceBinding.after.value;
+        const oldWindow=prior?.analysis.native.window_id;
+        const newWindow=value.windows.some(w=>w.windowNumber===oldWindow)
+          &&value.focusedWindowID===win.windowNumber&&oldWindow!==win.windowNumber;
+        if(listed.length===1&&old&&newWindow&&old.target.pid===value.target.pid
+          &&old.target.startTimeSeconds===value.target.startTimeSeconds
+          &&old.target.startTimeMicroseconds===value.target.startTimeMicroseconds)
+          detailSeed={fingerprint:id,title:dates[0],count:counts[0],prior};
+      }
+    }
+    const surface=chooserRoot.length===1?'FOLDER_CHOOSER':back.length===1||detailSeed?'ALBUM_DETAIL':'ALBUMS';
     if(surface!=='FOLDER_CHOOSER'){
-      need(group.length===1,'CANONICAL_GROUP_NOT_GROUNDED');
+      if(surface==='ALBUMS'||!detailSeed)need(group.length===1,'CANONICAL_GROUP_NOT_GROUNDED');
+      else if(group.length>0)need(group.length===1,'DETAIL_GROUP_TITLE_AMBIGUOUS');
       if(surface==='ALBUMS'){
         let grounded=ocr.some(o=>o.text==='相簿'&&o.confidence>=.5);
         if(!grounded){
@@ -160,27 +185,64 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
         kind:'visual-card-diagnostic-analysis',frameId});
       return {...diagnostic,reference};
     }
-    for(const e of elements)if(e.role==='scroll bar'&&typeof e.value==='string'&&/^(?:0(?:\.\d+)?|1(?:\.0+)?)$/.test(e.value))e.value=Number(e.value);
-    const scroll=elements.filter(e=>e.role==='scroll bar'&&typeof e.value==='number');
-    if(surface==='ALBUMS')need(scroll.length===1&&scroll[0].value>=0&&scroll[0].value<=1,'SCROLL_BOUNDARY_UNKNOWN');
-    const cards=[];
-    for(const node of (scrollWitness?[]:visible.filter(n=>surface!=='FOLDER_CHOOSER'
+    const scroll=elements.filter(e=>e.role==='scroll bar');
+    if(surface==='ALBUMS'){
+      need(scroll.length===1&&typeof scroll[0].value==='string'&&/^-?(?:\d+\.?\d*|\.\d+)$/.test(scroll[0].value)
+        &&Number.isFinite(scroll[0].minimum_value)&&Number.isFinite(scroll[0].maximum_value)
+        &&scroll[0].maximum_value>scroll[0].minimum_value,'SCROLL_BOUNDARY_UNKNOWN');
+      const raw=Number(scroll[0].value);
+      need(raw>=scroll[0].minimum_value&&raw<=scroll[0].maximum_value,'SCROLL_RANGE_INVALID');
+    }
+    const cards=[];let detailIdentity=null;
+    if(surface==='ALBUM_DETAIL'&&detailSeed){
+      const fingerprint=detailSeed.fingerprint;
+      const lineage={version:1,kind:'ALBUM_DETAIL_GRID',frame_id:frameId,session_id:sessionId,
+        fingerprint,list_frame_id:detailSeed.prior.analysis.frame_id,
+        list_window_id:detailSeed.prior.analysis.native.window_id,detail_window_id:win.windowNumber,
+        pid:value.target.pid,process_start:[value.target.startTimeSeconds,value.target.startTimeMicroseconds],
+        list_native_ref:detailSeed.prior.reference,detail_source_ref:after.reference};
+      const nativeLineageRef=await retain({artifact:lineage,kind:'detail-native-lineage',frameId,sessionId});
+      detailIdentity={kind:'ALBUM_DETAIL_GRID',fingerprint,title:{text:detailSeed.title.text,bounds:detailSeed.title.bounds},
+        photo_count:{text:detailSeed.count.text,bounds:detailSeed.count.bounds},group_key:groupKey,
+        list_frame_id:lineage.list_frame_id,list_window_id:lineage.list_window_id,detail_window_id:lineage.detail_window_id,
+        pid:lineage.pid,process_start:lineage.process_start,native_lineage_ref:nativeLineageRef};
+    }
+    for(const node of (scrollWitness||surface==='ALBUM_DETAIL'&&detailSeed?[]:visible.filter(n=>surface!=='FOLDER_CHOOSER'
       &&['AXRow','AXGroup','AXCell'].includes(n.role)))) {
       const cardBounds=px(node.framePt);const titles=ocr.filter(o=>completeDateTitle(o.text)&&inside(o.bounds,cardBounds));
       if(titles.length!==1)continue;
       const descendants=new Set();function descend(id){for(const c of all.get(id)?.children??[]){descendants.add(c);descend(c);}}
       descend(node.id);
       const thumbnails=visible.filter(n=>descendants.has(n.id)&&n.role==='AXImage'&&n.framePt.width>0&&n.framePt.height>0);
-      if(thumbnails.length!==1)continue; // A grid without a complete container is not one witnessed thumbnail.
-      const thumbBounds=px(thumbnails[0].framePt);
       const title=titles[0];const counts=ocr.filter(o=>/^\d+$/.test(o.text)&&inside(o.bounds,cardBounds)
-        &&o.bounds[1]>title.bounds[1]&&!inside(o.bounds,thumbBounds));
+        &&o.bounds[1]>title.bounds[1]);
       if(counts.length!==1)continue;
       const id={...completeDateTitle(title.text),expected_images:Number(counts[0].text)};
       need(id.expected_images>0,'CARD_COUNT_INVALID');
+      if(thumbnails.length===0){
+        const exact=JSON.stringify(id)===JSON.stringify(ONE56);
+        const unsafe=visible.some(n=>n.role==='button'&&n.enabled&&intersects(title.bounds,px(n.framePt)));
+        if(!exact||node.role!=='AXRow'||title.confidence<.5||title.candidate_count!==1
+          ||counts[0].confidence<.5||counts[0].candidate_count!==1||unsafe)continue;
+        const x=Math.min(title.bounds[0],counts[0].bounds[0]),y=title.bounds[1];
+        const right=Math.max(title.bounds[0]+title.bounds[2],counts[0].bounds[0]+counts[0].bounds[2]);
+        const bottom=counts[0].bounds[1]+counts[0].bounds[3];
+        const metadata=[x,y,right-x,bottom-y],margin=6;
+        const safe=[title.bounds[0]+margin,title.bounds[1]+margin,title.bounds[2]-2*margin,title.bounds[3]-2*margin];
+        if(safe[2]<8||safe[3]<8||!inside(title.bounds,cardBounds)||!inside(counts[0].bounds,cardBounds))continue;
+        cards.push({fingerprint:id,title:`${id.start_date.replaceAll('-','/')}～${id.end_date.slice(5).replaceAll('-','/')}`,
+          metadata_bounds:metadata,card_bounds:cardBounds,fully_visible:inside(cardBounds,[0,0,width,height]),
+          safe_metadata_bounds:safe,neighbor_bounds:[],thumbnail_bounds:null,card_ax_index:nativeIDs.get(node.id),
+          thumbnail_ax_index:null});
+        continue;
+      }
+      if(thumbnails.length!==1)continue; // A non-target card needs its existing full thumbnail witness.
+      const thumbBounds=px(thumbnails[0].framePt);
+      const thumbCounts=counts.filter(o=>!inside(o.bounds,thumbBounds));
+      if(thumbCounts.length!==1)continue;
       const metadata=[cardBounds[0],thumbBounds[1]+thumbBounds[3],cardBounds[2],
         cardBounds[1]+cardBounds[3]-thumbBounds[1]-thumbBounds[3]];
-      need(metadata[3]>16&&inside(title.bounds,metadata)&&inside(counts[0].bounds,metadata),'FULL_CARD_METADATA_UNPROVEN');
+      need(metadata[3]>16&&inside(title.bounds,metadata)&&inside(thumbCounts[0].bounds,metadata),'FULL_CARD_METADATA_UNPROVEN');
       // Conservative seed erosion; measured SCK uncertainty is checked later.
       const margin=2+4;let safe=[metadata[0]+margin,metadata[1]+margin,metadata[2]-2*margin,metadata[3]-2*margin];
       const controls=visible.filter(n=>descendants.has(n.id)&&n.role==='AXButton'&&intersects(px(n.framePt),metadata));
@@ -200,8 +262,9 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
         neighbor_bounds:[],thumbnail_bounds:thumbBounds,card_ax_index:nativeIDs.get(node.id),thumbnail_ax_index:nativeIDs.get(thumbnails[0].id)});
     }
     if(!scrollWitness){
-      need(surface==='FOLDER_CHOOSER'||cards.length>0,'FULL_CARD_WITNESS_MISSING');
-      if(surface==='ALBUM_DETAIL')need(cards.length===1,'DETAIL_IDENTITY_AMBIGUOUS');
+      need(surface==='FOLDER_CHOOSER'||(surface==='ALBUM_DETAIL'&&detailSeed&&detailIdentity)||cards.length>0,
+        'FULL_CARD_WITNESS_MISSING');
+      if(surface==='ALBUM_DETAIL'&&detailSeed)need(detailIdentity&&cards.length===0,'DETAIL_IDENTITY_AMBIGUOUS');
     }
     cards.sort((a,b)=>a.card_bounds[1]-b.card_bounds[1]);
     for(const c of cards)c.neighbor_bounds=cards.filter(x=>x!==c).map(x=>x.card_bounds);
@@ -217,7 +280,9 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
         ||focused.length===1&&role(focused[0].role)==='list'&&focused[0].id===lists[0].id),
         'SCROLL_FOCUS_NOT_CLEAR');
       const viewport=px(lists[0].framePt);
-      const indicators=elements.filter(e=>e.role==='scroll bar'&&typeof e.value==='number'&&e.value>=0&&e.value<=1);
+      const indicators=scroll.filter(e=>typeof e.value==='string'&&/^-?(?:\d+\.?\d*|\.\d+)$/.test(e.value)
+        &&Number.isFinite(Number(e.value))&&Number.isFinite(e.minimum_value)&&Number.isFinite(e.maximum_value)
+        &&e.maximum_value>e.minimum_value&&Number(e.value)>=e.minimum_value&&Number(e.value)<=e.maximum_value);
       need(indicators.length===1,'SCROLL_BOUNDARY_UNKNOWN');
       const rows=[];
       for(const node of visible.filter(n=>role(n.role)==='row'&&n.parentID===lists[0].id
@@ -242,7 +307,10 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
       const structure=elements.filter(e=>!['row','static text','text','scroll bar'].includes(e.role))
         .map(({role,subrole,identifier})=>({role,subrole,identifier}));
       const offset={version:1,frame_id:frameId,session_id:sessionId,source:'AX_SCROLLBAR',
-        indicator_index:indicators[0].index,minimum:0,maximum:1,value:indicators[0].value};
+        indicator_index:indicators[0].index,minimum:0,maximum:1,
+        value:(Number(indicators[0].value)-indicators[0].minimum_value)/(indicators[0].maximum_value-indicators[0].minimum_value),
+        raw_value:indicators[0].value,ax_minimum:indicators[0].minimum_value,ax_maximum:indicators[0].maximum_value,
+        indicator_native_id:indicators[0].native_node_id,native_context_ref:after.reference};
       const analysis={version:1,frame_id:frameId,session_id:sessionId,source_sha256:frameId,
         source_ax_sha256:sourceAXSha256,surface,group_key:groupKey,
         native:{bundle_id:value.target.bundleID,pid:value.target.pid,window_id:win.windowNumber,
@@ -250,14 +318,16 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
         layout:{line_version:value.target.appVersion,language:'zh-Hant',window_class:win.subrole??win.role,native_scale:sx},
         surface_structure:structure,surface_bounds_px:[0,0,width,height],occlusion:'CLEAR',editable_focus:'NONE',
         focus_evidence:{version:1,frame_id:frameId,session_id:sessionId,kind:'NONE',focused_index:focusedIndex},
-        ax:{version:1,focused_index:focusedIndex,elements},cards:[],
-        boundary:{top:indicators[0].value===0,bottom:indicators[0].value===1},boundary_evidence:offset,
+        ax:{version:1,focused_index:focusedIndex,elements},cards:[],detail_identity:null,
+        boundary:{top:Number(indicators[0].value)===indicators[0].minimum_value,
+          bottom:Number(indicators[0].value)===indicators[0].maximum_value},boundary_evidence:offset,
         chooser_controls:{root_index:null,path_field_index:null,confirm_button_index:null,selected_leaf_index:null},
         scroll_witness:{viewport_bounds:viewport,viewport_ax_index:nativeIDs.get(lists[0].id),rows,
           native_identity:{display_id:display[0].displayID,cua_capture_bounds_points:bounds},
           process_instance:[value.target.bundleID,value.target.pid,value.target.startTimeSeconds,
             value.target.startTimeMicroseconds],
-          scroll_offset:{frame_id:frameId,session_id:sessionId,value:indicators[0].value}}};
+          scroll_offset:{frame_id:frameId,session_id:sessionId,
+            value:(Number(indicators[0].value)-indicators[0].minimum_value)/(indicators[0].maximum_value-indicators[0].minimum_value)}}};
       const reference=await retain({artifact:{sourceBinding,analysis,raw_ocr:ocr},
         kind:'scroll-list-witness',frameId});
       contexts.set(frameId,{analysis,reference,sourceBinding});return analysis;
@@ -276,10 +346,15 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
       surface_structure:structure,surface_bounds_px:[0,0,width,height],occlusion:'CLEAR',editable_focus:editable?'HIGH_EDITABLE':'NONE',
       focus_evidence:editable?{version:1,frame_id:frameId,session_id:sessionId,kind:'HIGH_EDITABLE',focused_index:focusedIndex,
         element_identifier:pathFields[0].identifier}:{version:1,frame_id:frameId,session_id:sessionId,kind:'NONE',focused_index:focusedIndex},
-      ax:{version:1,focused_index:focusedIndex,elements},cards,
-      boundary:{top:surface==='ALBUMS'&&scroll[0].value===0,bottom:surface==='ALBUMS'&&scroll[0].value===1},
+      ax:{version:1,focused_index:focusedIndex,elements},cards,detail_identity:detailIdentity,
+      boundary:{top:surface==='ALBUMS'&&Number(scroll[0].value)===scroll[0].minimum_value,
+        bottom:surface==='ALBUMS'&&Number(scroll[0].value)===scroll[0].maximum_value},
       boundary_evidence:surface==='ALBUMS'?{version:1,frame_id:frameId,session_id:sessionId,source:'AX_SCROLLBAR',indicator_index:scroll[0].index,
-        minimum:0,maximum:1,value:scroll[0].value}:{version:1,frame_id:frameId,session_id:sessionId,source:'NOT_APPLICABLE'},
+        minimum:0,maximum:1,value:(Number(scroll[0].value)-scroll[0].minimum_value)/(scroll[0].maximum_value-scroll[0].minimum_value),
+        raw_value:scroll[0].value,
+        ax_minimum:scroll[0].minimum_value,ax_maximum:scroll[0].maximum_value,
+        indicator_native_id:scroll[0].native_node_id,native_context_ref:after.reference}
+        :{version:1,frame_id:frameId,session_id:sessionId,source:'NOT_APPLICABLE'},
       chooser_controls:{root_index:chooserRoot[0]?.index??null,path_field_index:surface==='FOLDER_CHOOSER'?pathFields[0]?.index??null:null,
         confirm_button_index:surface==='FOLDER_CHOOSER'?confirms[0]?.index??null:null,
         selected_leaf_index:surface==='FOLDER_CHOOSER'&&leaves.length===1?leaves[0].index:null}};

@@ -119,14 +119,19 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
   // Read the real grant lazily: preparation must never invent live authority.
   const authority={get grantSha256(){need(grantDigest,'LIVE_GRANT_NOT_BOUND');return grantDigest;}};
   let grantDigest=null;
+  const groupTitleAliases=[];
   async function bindLiveAuthority(){
     need(SOURCE_ROOT===projectRoot,'REVIEWED_SOURCE_INSTALLATION_REQUIRED');
     const raw=await fs.readFile(path.join(projectRoot,authorization));
     const grant=JSON.parse(raw);need(grant.owner===owner,'PROJECT_OWNER_MISMATCH');grantDigest=hash(raw);
-    await cli('native_authorize');return grant;
+    const authorized=await cli('native_authorize');
+    if(grant.single_album_route===true){need(typeof authorized.display_title_alias==='string'
+      &&authorized.display_title_alias&&authorized.display_title_alias!==config.group_name,'PROJECT_DISPLAY_TITLE_ALIAS_REQUIRED');
+      groupTitleAliases.splice(0,groupTitleAliases.length,authorized.display_title_alias);}
+    return grant;
   }
   const analyzer=createLiveAnalyzer({runProcess,binary:producerPath,repoRoot:projectRoot,retain,
-    groupKey:config.group_key,groupTitle:config.group_name,authorization,
+    groupKey:config.group_key,groupTitle:config.group_name,groupTitleAliases,authorization,
     grantSha256:()=>authority.grantSha256,owner});
   // The producer and analyzer obtain the digest at use time, after genuine admission.
   const nativeAnalyzer=analyzer;
@@ -238,7 +243,11 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     }
     need(kind==='ALBUM_CARD_OPEN_DETAIL','WINDOW_LINEAGE_KIND');
     const a=nativeAnalyzer.contexts.get(before.frame_id),b=nativeAnalyzer.contexts.get(after.frame_id);
-    need(a&&b&&after.cards.length===1&&JSON.stringify(after.cards[0].fingerprint)===JSON.stringify(prepared.fingerprint),'DETAIL_LINEAGE_IDENTITY');
+    need(a&&b&&after.detail_identity?.kind==='ALBUM_DETAIL_GRID'
+      &&JSON.stringify(after.detail_identity.fingerprint)===JSON.stringify(prepared.fingerprint)
+      &&after.detail_identity.list_frame_id===before.frame_id&&after.detail_identity.list_window_id===before.window_id
+      &&after.detail_identity.detail_window_id===after.window_id&&after.detail_identity.pid===after.pid,
+      'DETAIL_LINEAGE_IDENTITY');
     verifyNativePair(a.sourceBinding.after.value,b.sourceBinding.after.value);
     const old=a.sourceBinding.after.value,newer=b.sourceBinding.after.value;
     need(!old.windows.some(w=>w.windowNumber===after.window_id)&&newer.windows.some(w=>w.windowNumber===before.window_id)

@@ -366,8 +366,9 @@ class Service:
             require(r['intent'] is None,'LOADED_INTENT_NO_PERMISSION')
             for record in (detail,closure):
                 frame(reader,record,snap['config'],session=m['session_id'])
-                require(record['surface']=='ALBUM_DETAIL' and len(record['cards'])==1
-                    and record['cards'][0]['fingerprint']==r['fingerprint'],'TARGET_MISMATCH')
+                observed_identity=record.get('detail_identity',{}).get('fingerprint')
+                if observed_identity is None and len(record['cards'])==1:observed_identity=record['cards'][0]['fingerprint']
+                require(record['surface']=='ALBUM_DETAIL' and observed_identity==r['fingerprint'],'TARGET_MISMATCH')
             _check_calibration(calibration)
             require(menu['label'] in ('儲存全部','Save All') and menu['frame_id']==detail['frame_id']
                 and menu['layout_key']==detail['layout_key'],'SAVE_ALL_ROW_MISMATCH')
@@ -490,7 +491,9 @@ class Service:
             snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')
             b,r=self.run(snap['state']);m=self.manifest(b,reader,snap['config'])
             frame(reader,fresh,snap['config'],session=m['session_id'])
-            require(fresh['surface']=='ALBUM_DETAIL' and len(fresh['cards'])==1 and fresh['cards'][0]['fingerprint']==r['fingerprint'],'TARGET_MISMATCH')
+            observed_identity=fresh.get('detail_identity',{}).get('fingerprint')
+            if observed_identity is None and len(fresh['cards'])==1:observed_identity=fresh['cards'][0]['fingerprint']
+            require(fresh['surface']=='ALBUM_DETAIL' and observed_identity==r['fingerprint'],'TARGET_MISMATCH')
         finally:reader.close()
         def intent(cfg,s):
             b,r=self.run(s);require(r['phase']=='SAVE_ALL_CALIBRATION' and r['intent'] is None,'LOADED_INTENT_NO_PERMISSION')

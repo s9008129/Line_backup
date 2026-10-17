@@ -83,6 +83,8 @@ public struct PassiveContextObservation: Codable, Equatable, Sendable {
         public let title: String?
         public let description: String?
         public let value: String?
+        public let minimumValue: Double?
+        public let maximumValue: Double?
         public let help: String?
         public let identifier: String?
         public let framePt: Rect?
@@ -314,7 +316,7 @@ public struct PassiveContextObservation: Codable, Equatable, Sendable {
             if namesResult == .success, let names = raw as? [String] { available = Set(names) }
             else { errors.append("\(id): AX attribute-name read failed (\(namesResult.rawValue))") }
 
-            let attrs = ["AXRole", "AXSubrole", "AXTitle", "AXDescription", "AXValue", "AXHelp", "AXIdentifier",
+            let attrs = ["AXRole", "AXSubrole", "AXTitle", "AXDescription", "AXValue", "AXMinValue", "AXMaxValue", "AXHelp", "AXIdentifier",
                          "AXEnabled", "AXFocused", "AXSelected", "AXPosition", "AXSize", "AXWindowNumber", "AXChildren"]
             var missing: [String] = []
             var nulls: [String] = []
@@ -342,7 +344,8 @@ public struct PassiveContextObservation: Codable, Equatable, Sendable {
                 id: id, parentID: parentID,
                 role: stringValue(values["AXRole"]), subrole: stringValue(values["AXSubrole"]),
                 title: stringValue(values["AXTitle"]), description: stringValue(values["AXDescription"]),
-                value: stringValue(values["AXValue"]), help: stringValue(values["AXHelp"]),
+                value: stringValue(values["AXValue"]), minimumValue: numberValue(values["AXMinValue"]),
+                maximumValue: numberValue(values["AXMaxValue"]), help: stringValue(values["AXHelp"]),
                 identifier: stringValue(values["AXIdentifier"]),
                 framePt: frame.map { Rect(x: $0.minX, y: $0.minY, width: $0.width, height: $0.height) },
                 enabled: boolValue(values["AXEnabled"]), focused: boolValue(values["AXFocused"]),
@@ -377,7 +380,8 @@ public struct PassiveContextObservation: Codable, Equatable, Sendable {
             }
             let old = nodes[nodeIndex]
             nodes[nodeIndex] = Node(id: old.id, parentID: old.parentID, role: old.role, subrole: old.subrole,
-                                    title: old.title, description: old.description, value: old.value, help: old.help,
+                                    title: old.title, description: old.description, value: old.value,
+                                    minimumValue: old.minimumValue, maximumValue: old.maximumValue, help: old.help,
                                     identifier: old.identifier, framePt: old.framePt, enabled: old.enabled,
                                     focused: old.focused, selected: old.selected, offscreen: old.offscreen,
                                     windowNumber: old.windowNumber,
@@ -458,6 +462,13 @@ public struct PassiveContextObservation: Codable, Equatable, Sendable {
             guard bytes.count > limits.maxStringBytes else { return raw }
             truncationReasons.append("stringLimit")
             return String(decoding: bytes.prefix(limits.maxStringBytes), as: UTF8.self)
+        }
+
+        func numberValue(_ value: CFTypeRef?) -> Double? {
+            guard let number=value as? NSNumber else { return nil }
+            guard CFGetTypeID(number) != CFBooleanGetTypeID() else { return nil }
+            let result=number.doubleValue
+            return result.isFinite ? result : nil
         }
 
         func boolValue(_ value: CFTypeRef?) -> Bool? {

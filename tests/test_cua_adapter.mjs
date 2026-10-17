@@ -43,14 +43,18 @@ function scrollClassifierFixture({mutateAnalysis=()=>{}}={}){
   const artifacts=[];const retain=async({artifact,kind})=>{
     const body=JSON.stringify(artifact);artifacts.push({kind,artifact});return reference(kind,body);
   };
-  const sourceBinding={after:{value:{target:{bundleID:'jp.naver.line.mac',pid:42,startTimeSeconds:1,startTimeMicroseconds:2}}}};
+  const nativeRef=reference('native',JSON.stringify({value:{target:{bundleID:'jp.naver.line.mac',pid:42,startTimeSeconds:1,
+    startTimeMicroseconds:2},nodes:[{id:'scroll',value:'0',minimumValue:0,maximumValue:1}]}}));
+  const sourceBinding={after:{reference:nativeRef,value:{target:{bundleID:'jp.naver.line.mac',pid:42,startTimeSeconds:1,
+    startTimeMicroseconds:2},nodes:[{id:'scroll',value:'0',minimumValue:0,maximumValue:1}]}}};
   const analyzeScrollWitness=async args=>{
     const title={text:'2026/01/01～01/02',confidence:.9,candidate_count:1,bounds:[10,30,40,10]};
     const count={text:'4',confidence:.9,candidate_count:1,bounds:[10,44,12,10]};
     const elements=[
       {index:0,role:'list',subrole:'',identifier:'albums',label:'',value:null,bounds_px:[0,0,100,100],parent_index:null,enabled:false},
       {index:1,role:'row',subrole:'',identifier:'album-row',label:'',value:null,bounds_px:[0,20,100,40],parent_index:0,enabled:false},
-      {index:2,role:'scroll bar',subrole:'',identifier:'albums-scroll',label:'',value:0,bounds_px:[95,0,5,100],parent_index:0,enabled:false}];
+      {index:2,role:'scroll bar',subrole:'',identifier:'albums-scroll',label:'',value:'0',bounds_px:[95,0,5,100],
+        parent_index:0,enabled:false,minimum_value:0,maximum_value:1,native_node_id:'scroll'}];
     const analysis={version:1,frame_id:args.frameId,session_id:args.sessionId,source_sha256:args.frameId,
       source_ax_sha256:args.sourceAXSha256,surface:'ALBUMS',group_key:'group',
       native:{bundle_id:'jp.naver.line.mac',pid:42,window_id:7,display_id:1,cua_capture_bounds_points:[0,0,100,100]},
@@ -59,7 +63,8 @@ function scrollClassifierFixture({mutateAnalysis=()=>{}}={}){
       occlusion:'CLEAR',editable_focus:'NONE',focus_evidence:{version:1,frame_id:args.frameId,session_id:args.sessionId,
         kind:'NONE',focused_index:null},ax:{version:1,focused_index:null,elements},cards:[],
       boundary:{top:true,bottom:false},boundary_evidence:{version:1,frame_id:args.frameId,session_id:args.sessionId,
-        source:'AX_SCROLLBAR',indicator_index:2,minimum:0,maximum:1,value:0},
+        source:'AX_SCROLLBAR',indicator_index:2,minimum:0,maximum:1,value:0,raw_value:'0',ax_minimum:0,ax_maximum:1,
+        indicator_native_id:'scroll',native_context_ref:nativeRef},detail_identity:null,
       chooser_controls:{root_index:null,path_field_index:null,confirm_button_index:null,selected_leaf_index:null},
       scroll_witness:{viewport_bounds:[0,0,100,100],viewport_ax_index:0,
         native_identity:{display_id:1,cua_capture_bounds_points:[0,0,100,100]},
@@ -114,7 +119,8 @@ function syntheticPartialRowSource({rowParent='list',rowY=-32,rowWidth=327,rowHe
         offscreen:false,focused:false,children:includeRowInList?['row']:[]},
       {id:'row',parentID:rowParent,role:'AXRow',framePt:{x:0,y:rowY,width:rowWidth,height:rowHeight},
         offscreen:false,focused:false,children:[]},
-      {id:'scroll',parentID:'window',role:'AXScrollBar',value:'0',framePt:{x:313,y:103,width:14,height:540},
+      {id:'scroll',parentID:'window',role:'AXScrollBar',value:'0',minimumValue:0,maximumValue:1,
+        framePt:{x:313,y:103,width:14,height:540},
         offscreen:false,focused:false,children:[]},
       ...(extraList?[{id:'list2',parentID:'window',role:'AXList',framePt:{x:0,y:103,width:327,height:540},
         offscreen:false,focused:false,children:[]}]:[])
@@ -126,7 +132,8 @@ function syntheticPartialRowSource({rowParent='list',rowY=-32,rowWidth=327,rowHe
       {text:'4',confidence:.9,candidateCount:1,bounds:{x:20,y:countY*2,width:20,height:24}}
     ]}});
   const after=mkValue(Date.parse(capturedAt)+1000),before=mkValue(Date.parse(capturedAt)-1000);
-  const sourceBinding={before:{value:before},after:{value:after}};
+  const nativeRef={path:'harness-development/synthetic-native.json',bytes:1,sha256:'b'.repeat(64)};
+  const sourceBinding={before:{value:before},after:{value:after,reference:nativeRef}};
   const analyzer=createLiveAnalyzer({runProcess:async()=>{throw new Error('native process forbidden in unit test');},
     binary:'synthetic',repoRoot:'/synthetic',retain:async()=>({path:'harness-development/synthetic.json',bytes:1,sha256:'b'.repeat(64)}),
     groupKey:'synthetic-group',groupTitle:'Synthetic group',authorization:'synthetic',grantSha256:'c'.repeat(64),owner:'synthetic'});
@@ -294,7 +301,7 @@ test('actual analyzer and shared classifier preserve partial AXRow only for scro
 });
 
 function fixture(options={}) {
-  const calls=[],ledger=[];let now=0,clicks=0,intents=0,captures=0,surface=options.initialSurface??'ALBUM_DETAIL',downloadStarted=false,reservationSeq=0;
+  const calls=[],ledger=[];let now=0,clicks=0,intents=0,captures=0,surface=options.initialSurface??'ALBUM_DETAIL',downloadStarted=false,reservationSeq=0,lastListFrameId=null;
   const app={
     async getAXStateAndScreenshot(){calls.push('capture');captures++;return {state:'fixture AX',
       screenshot:options.screenshot??new Uint8Array([1,2,3,captures])};},
@@ -310,9 +317,14 @@ function fixture(options={}) {
       if(o.screenshot){const ax=Buffer.from(o.ax);ref.ax={path:`harness-development/ax-${o.frameId.slice(0,12)}.txt`,
         bytes:ax.byteLength,sha256:createHash('sha256').update(ax).digest('hex')};}
       return ref;},
-    classify:async o=>{calls.push('classify');options.onClassify?.(o,surface);return {frame_id:o.frameId,session_id:o.sessionId,surface,download_started:downloadStarted,
+    classify:async o=>{calls.push('classify');options.onClassify?.(o,surface);
+      if(surface==='ALBUMS')lastListFrameId=o.frameId;
+      const cards=surface==='ALBUM_DETAIL'?options.detailCards??[]:options.listCards??[];
+      const detail_identity=surface==='ALBUM_DETAIL'&&cards.length===1?{kind:'ALBUM_DETAIL_GRID',fingerprint:cards[0].fingerprint,
+        list_frame_id:lastListFrameId,list_window_id:1,detail_window_id:options.relatedWindow?2:1,pid:7}:null;
+      return {frame_id:o.frameId,session_id:o.sessionId,surface,download_started:downloadStarted,
       group_key:'fixture-group',pid:7,window_id:surface==='ALBUM_DETAIL'&&options.relatedWindow?2:1,
-      cards:surface==='ALBUM_DETAIL'?options.detailCards??[]:options.listCards??[],
+      cards,detail_identity,
       window_lineage:surface==='ALBUM_DETAIL'?options.windowLineage?.(o):null,layout_key:'fixture-layout',captured_at:o.capturedAt};},
     bridge:async (operation,payload)=>{
       calls.push(['bridge',operation]);
@@ -737,7 +749,7 @@ test('project album open accepts recorded related detail-window lineage',async()
   const list=await f.session.observe('PAIR-A-LIST_GROUNDING');listFrameId=list.frame_id;
   const detail=await f.session.openAlbum({run_id:'run-a',fingerprint:fp,frame_id:list.frame_id,click:[20,30],project_album_slot:'A'});
   assert.equal(detail.surface,'ALBUM_DETAIL');assert.equal(detail.window_id,2);
-  assert.equal(detail.window_lineage.list_frame_id,list.frame_id);
+  assert.equal(detail.detail_identity.list_frame_id,list.frame_id);
 });
 
 test('wrong fresh detail identity stops after the reserved card click before calibration',async()=>{
@@ -769,7 +781,7 @@ test('slow menu locator burns calibration slots without clicking a stale detail 
 async function twoAlbumEntryProbe(preDiscoveryBudget){
   const calls=[],targets=Array.from({length:8},(_,index)=>({start_date:`2024-${String(index+1).padStart(2,'0')}-01`,
     end_date:`2024-${String(index+1).padStart(2,'0')}-01`,expected_images:index+2}));
-  let appSurface='ALBUMS',selected=targets[0],lifecycle=0,scrollCount=0,captureNo=0,downloadStarted=false;
+  let appSurface='ALBUMS',selected=targets[0],lifecycle=0,scrollCount=0,captureNo=0,downloadStarted=false,lastListFrameId=null;
   const retainedArtifacts=[],scrollSlots=[],inspectionCandidates=[],observationCheckpoints=[];
   const token=()=>`token-${calls.length}`;
   const ref=(kind,value)=>{const raw=Buffer.from(JSON.stringify(value));return {path:`harness-development/private/${kind}-${calls.length}.json`,
@@ -789,6 +801,7 @@ async function twoAlbumEntryProbe(preDiscoveryBudget){
     safe_metadata_bounds:[15,y+4,40,10],metadata_bounds:[15,y+4,40,10],neighbor_bounds:[]});
   const classifierCache=new Map();
   const classify=async ({capture,saved,frameId,sessionId,capturedAt})=>{
+    if(appSurface==='ALBUMS')lastListFrameId=frameId;
     const listCards=scrollCount===0?[card(targets[0],10),card(targets[1],60)]:
       [card(targets[scrollCount],10),card(targets[scrollCount+1],30),card(targets[scrollCount+2],50),card(targets[scrollCount+3],70)];
     const cards=appSurface==='ALBUMS'?listCards:[card(selected,35)];
@@ -799,6 +812,8 @@ async function twoAlbumEntryProbe(preDiscoveryBudget){
       mapping:{space:'CUA_CAPTURE_PIXELS',uncertainty:2,evidence:ref('grounding',{}),frame_id:frameId,
         layout_key:'fixture-layout',sck_support:ref('support',{})},cards,
       boundary:{top:false,bottom:false,evidence:ref('boundary',{})},editable_focus:'NONE',occlusion:'CLEAR'};
+    if(appSurface==='ALBUM_DETAIL')base.detail_identity={kind:'ALBUM_DETAIL_GRID',fingerprint:selected,
+      list_frame_id:lastListFrameId,list_window_id:1,detail_window_id:1,pid:7};
     classifierCache.set(frameId,{observation:base,analysis:{surface_bounds_px:[10,10,80,80],
       layout:{native_scale:2,line_version:'LINE 9',language:'en',window_class:'LINE_MAIN'},
       cards:cards.map((c,i)=>({...c,card_ax_index:i})),boundary_evidence:{value:scrollCount*20}},
