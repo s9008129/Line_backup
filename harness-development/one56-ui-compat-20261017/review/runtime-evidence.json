@@ -1,0 +1,615 @@
+{
+  "actual_readonly_smoke": {
+    "gui_inputs": 0,
+    "intent_authority_check": {
+      "code": "PROJECT_IMPLEMENTATION_REVIEW_REQUIRED",
+      "ended_at": "2026-10-17T11:38:40.984088+00:00",
+      "exception_type": "AcceptanceError",
+      "message": "PROJECT_IMPLEMENTATION_REVIEW_REQUIRED",
+      "result": "REFUSED",
+      "started_at": "2026-10-17T11:38:40.963061+00:00"
+    },
+    "ledger_initialized": false,
+    "live_authority": false,
+    "native_authority_refusal_stdout": {
+      "complete": false,
+      "errors": [
+        "native-context refused: passiveDiagnosticRefused(canonical pilot authorizer refused; no native observation)"
+      ],
+      "schemaVersion": 1,
+      "truncated": false
+    },
+    "native_calls": [
+      {
+        "argv": [
+          "<CANONICAL_ROOT>/harness-development/line-two-album-pilot-20261014/private/bin/rev28ctl-one56-8bebd23-9ef75efe4b21",
+          "runtime-preflight"
+        ],
+        "cwd": "<CANONICAL_ROOT>",
+        "ended_at": "2026-10-17T11:38:41.837144+00:00",
+        "exit_code": 0,
+        "name": "native-runtime-preflight",
+        "started_at": "2026-10-17T11:38:40.984233+00:00",
+        "streams": {
+          "stderr": {
+            "bytes": 0,
+            "path": "private/actual-readonly-smoke-01/native-runtime-preflight.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "bytes": 624,
+            "path": "private/actual-readonly-smoke-01/native-runtime-preflight.stdout",
+            "sha256": "375a3a220e5c3a93e90bff9707e762b1516cb945458f790698ca9ba32c5687d3"
+          }
+        }
+      },
+      {
+        "argv": [
+          "<CANONICAL_ROOT>/harness-development/line-two-album-pilot-20261014/private/bin/rev28ctl-one56-8bebd23-9ef75efe4b21",
+          "native-context",
+          "--bundle-id",
+          "jp.naver.line.mac",
+          "--project-root",
+          "<CANONICAL_ROOT>",
+          "--grant",
+          "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/project-grant.json",
+          "--grant-sha256",
+          "93dc5640e85512e49e50fe0d6613c3a15bd9c9a192315a1715dea5325b0149c7",
+          "--session-id",
+          "PILOT-ONE-SCROLL-D5436E1-20261017-01"
+        ],
+        "cwd": "<CANONICAL_ROOT>",
+        "ended_at": "2026-10-17T11:38:42.021108+00:00",
+        "exit_code": 77,
+        "name": "native-authority-refusal",
+        "started_at": "2026-10-17T11:38:41.837716+00:00",
+        "streams": {
+          "stderr": {
+            "bytes": 108,
+            "path": "private/actual-readonly-smoke-01/native-authority-refusal.stderr",
+            "sha256": "6afce835222a7f9d6982d988fcdecb3476218ffc0e20d251ae4b8b50c13e7bee"
+          },
+          "stdout": {
+            "bytes": 205,
+            "path": "private/actual-readonly-smoke-01/native-authority-refusal.stdout",
+            "sha256": "31fe4e683f143bd2dc7ce9a5809db30938f0071edbe5f27a3930765fcd440412"
+          }
+        }
+      }
+    ],
+    "native_runtime_preflight_stdout": {
+      "accessibility_authorized": true,
+      "binary_sha256": "9ef75efe4b217edd1049a623f26739bc0ea4d5950115e208f704976bb1efdf20",
+      "gui_inputs": 0,
+      "line_observation_performed": false,
+      "native_controller_admission": false,
+      "project_authorization_route": "LINE_TWO_ALBUM_PILOT/1",
+      "screen_capture_authorized": true,
+      "status": "NATIVE_RUNTIME_PREFLIGHT",
+      "vision_languages": [
+        "en-US",
+        "fr-FR",
+        "it-IT",
+        "de-DE",
+        "es-ES",
+        "pt-BR",
+        "zh-Hans",
+        "zh-Hant",
+        "yue-Hans",
+        "yue-Hant",
+        "ko-KR",
+        "ja-JP",
+        "ru-RU",
+        "uk-UA",
+        "th-TH",
+        "vi-VT",
+        "ar-SA",
+        "ars-SA",
+        "tr-TR",
+        "id-ID",
+        "cs-CZ",
+        "da-DK",
+        "nl-NL",
+        "no-NO",
+        "nn-NO",
+        "nb-NO",
+        "ms-MY",
+        "pl-PL",
+        "ro-RO",
+        "sv-SE",
+        "fi-FI",
+        "hi-IN",
+        "mr-IN"
+      ]
+    },
+    "state_revision": 35,
+    "state_sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+    "state_unchanged": true,
+    "writer_acquired": false
+  },
+  "alias_proof_redacted": "Owner-confirmed exact same-group OCR spelling only. Decision and consent contain the same alias and same hashed display-title-alias-confirmation.json ref. Existing group_key/config/destination names remain unchanged; no fuzzy matching. Personal strings withheld.",
+  "bundle_artifact_refs": [
+    {
+      "bytes": 6309,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/runtime-binding.json",
+      "sha256": "cd41ee25387fb784f2aef5158d7dd6bbde27bd44a42d2d42c5a905767b1b6076"
+    },
+    {
+      "bytes": 2644,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/owner-authorization-excerpts.md",
+      "sha256": "2ca96cb60372170efa08615b7ce7ffceb3b535fde2d1c62fbc4170eca77d27a9"
+    },
+    {
+      "bytes": 407,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/display-title-alias-confirmation.json",
+      "sha256": "286b3785126d8c1affe86fa94ee8de1784412346068e9083defd34cbebbd37aa"
+    },
+    {
+      "bytes": 780,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/external-review-original.json",
+      "sha256": "ec3dd09b289f39abe33b1215682b5b6772d31b000974722c1bf6474e76bf3d9a"
+    },
+    {
+      "bytes": 260,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/github-review-response.json",
+      "sha256": "e2340a075b89e41299f8f6535a29b94f19359278e0bf2942bdfd8b1391bd1fb0"
+    },
+    {
+      "bytes": 1625,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/implementation-review.json",
+      "sha256": "14ba9df3cb509fddfd62bba0c82a1ad7bd879fccff2558c02624e46d2df0618e"
+    },
+    {
+      "bytes": 1496,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/owner-decision.json",
+      "sha256": "794c4f3e33a68aa11bdd16b2f03c5c1b5977866c85a35046a32a2a40fe5c89f3"
+    },
+    {
+      "bytes": 1491,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/owner-consent.json",
+      "sha256": "0fd3d6d24358e1e1eb84a1282048a8592b359e24e96c1fe909bdee56367a36a6"
+    },
+    {
+      "bytes": 1293,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/live-readiness.json",
+      "sha256": "80b63ca209b1c6e2980c9baa42b0fd921db02df7d8329eccaab4c6220f2aa31f"
+    },
+    {
+      "bytes": 47278,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/project-contract.json",
+      "sha256": "cc7d5a785b7aa09ff6d532331be602148729ccb436f27e8f0cf7620629c08b28"
+    },
+    {
+      "bytes": 3411,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/project-grant.json",
+      "sha256": "93dc5640e85512e49e50fe0d6613c3a15bd9c9a192315a1715dea5325b0149c7"
+    },
+    {
+      "bytes": 10245,
+      "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/native-build.json",
+      "sha256": "60ea5e44ed6d2df290cf46e6c66fadef16e64bc98036b68d2c4f08a4acc84174"
+    }
+  ],
+  "contract_redacted": {
+    "authority_status": "REVIEW_PENDING_NO_LIVE_AUTHORITY",
+    "chooser_confirmation_limit": 1,
+    "closed": false,
+    "entry_method": "runSingleAlbumPilot",
+    "fingerprint": {
+      "end_date": "2024-05-31",
+      "expected_images": 56,
+      "start_date": "2024-05-27"
+    },
+    "gui_ledger": "harness-development/line-two-album-pilot-20261014/private/gui-ledger.json",
+    "lifecycle_limit": 1,
+    "no_ledger_initialization": true,
+    "no_second_album": true,
+    "operations": [
+      "admit",
+      "begin",
+      "calibrate",
+      "dispatch",
+      "finalize",
+      "gui_consume",
+      "gui_observe",
+      "gui_phase",
+      "gui_reserve",
+      "intent",
+      "prepare",
+      "release",
+      "stop"
+    ],
+    "save_all_dispatch_limit": 1,
+    "status": "ACTIVE"
+  },
+  "focused_tests": [
+    {
+      "argv": [
+        "node",
+        "--test",
+        "tests/test_detail_grid_name_target.mjs"
+      ],
+      "completed_at": "2026-10-17T11:37:23.225732+00:00",
+      "exit_code": 0,
+      "name": "detail-final6",
+      "passed": 5,
+      "started_at": "2026-10-17T11:37:23.144553+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e18c5725b4d3bf3d786d094d6185cb4abd10b0ae4c70e2d417b1478ecd574f62",
+      "suite": "detail-final6"
+    },
+    {
+      "argv": [
+        "node",
+        "--test",
+        "tests/test_cua_adapter.mjs"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-10-17T11:30:52.121375+00:00",
+      "label": "adapter-final5",
+      "passed": 42,
+      "started_at": "2026-10-17T11:30:51.323680+00:00",
+      "streams": {
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 3880,
+          "sha256": "b646de5e82c192097f1992d708e1789416484814de74a8c2638599b7ac066db7"
+        }
+      },
+      "suite": "adapter-final5"
+    },
+    {
+      "command": "/opt/homebrew/bin/python3.13 -m unittest discover -s tests -p test_batch_observations.py -v",
+      "completed_at": "2026-10-17T11:27:20Z",
+      "environment": "PYTHONDONTWRITEBYTECODE=1; PYTHONPATH=src:<PINNED_INSTALLED_DEPENDENCIES>; LINE_BACKUP_BATCH_TASK=<IMPLEMENTATION_ROOT>/harness-development/line-v3-live-e2e-20261010",
+      "exit_code": 0,
+      "passed": 20,
+      "stderr_sha256": "57cdc549ff438416353e585eec8fa75c1e24b3ddcd14735ec283f3625d67bc8b",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "suite": "observations-final5"
+    },
+    {
+      "command": "/opt/homebrew/bin/python3.13 -m unittest discover -s tests -p test_single_album_authority.py -v",
+      "completed_at": "2026-10-17T11:27:10Z",
+      "environment": "PYTHONDONTWRITEBYTECODE=1; PYTHONPATH=src:<PINNED_INSTALLED_DEPENDENCIES>; LINE_BACKUP_BATCH_TASK=<IMPLEMENTATION_ROOT>/harness-development/line-v3-live-e2e-20261010",
+      "exit_code": 0,
+      "passed": 11,
+      "stderr_sha256": "5579a131a943549ad0d93656078f5efb07cd3c70c7580353eba7c2e6a205bf43",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "suite": "authority-final3"
+    }
+  ],
+  "generated_at": "2026-10-17T11:40:48.029925+00:00",
+  "grant_limits": {
+    "album_quota": 1,
+    "chooser_confirmation_limit": 1,
+    "lifecycle_album_limit": 1,
+    "save_all_dispatch_limit": 1
+  },
+  "grant_ref": {
+    "bytes": 3411,
+    "path": "harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/project-grant.json",
+    "sha256": "93dc5640e85512e49e50fe0d6613c3a15bd9c9a192315a1715dea5325b0149c7"
+  },
+  "implementation_head": "8bebd236d57bb80e39bfca163c67b9cecba1d36f",
+  "known_live_limitations": [
+    "No current-build hosted prepared.click or detail classifier execution on live LINE has run. Retained actual screenshots/native evidence grounded the source correction; synthetic tests are enablers only.",
+    "Retained real detail AX has only window/traffic-light controls. Existing ellipsis locator still requires an AXButton covering the dots; existing popup row locator requires AX menu items not present in retained native popup evidence. This remains unresolved in the bounded B1/B2 source slice.",
+    "Hosted app screenshot did not fully include the popup in retained evidence. Existing occlusion checks may also refuse the popup. Historical Escape closed both menu and detail, while calibration currently expects the same detail window. Do not assume current menu calibration works.",
+    "Do not consume the only lifecycle/intent merely to discover the already-known menu issue. Resolve a real supported menu observation/control path under the necessary reviewed scope before a transaction admission.",
+    "External exact-source review is absent. The new bundle explicitly remains PENDING, readiness false, live authority false. No positive smoke or live approval is claimed.",
+    "Full CI was not repaired or claimed passing; the previous ProjectBackupBindingTests.swift XCTUnwrap failure was outside this bounded change.",
+    "No native Harness controller admission was recorded. Local independent inspection is not formal Harness acceptance."
+  ],
+  "local_independent_source_review": {
+    "artifact_sha256": "cc95e61582f1783e231fc1c1270d51a66dbd4f90e03060df344787b5533f020c",
+    "bounded_verdict": "PASS",
+    "model_used": "gpt-6-luna",
+    "reasoning_effort": "xhigh",
+    "scope": "source/tests only; no external Chief or live E2E approval"
+  },
+  "native_build": {
+    "argv": [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift",
+      "build",
+      "--package-path",
+      "rev28",
+      "--scratch-path",
+      "<IMPLEMENTATION_ROOT>/harness-development/one56-ui-compat-20261017/private/native-build-01",
+      "--sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+      "--product",
+      "rev28ctl"
+    ],
+    "binary_bytes": 10869296,
+    "binary_path": "<IMPLEMENTATION_ROOT>/harness-development/one56-ui-compat-20261017/private/native-build-01/arm64-apple-macosx/debug/rev28ctl",
+    "binary_sha256": "9ef75efe4b217edd1049a623f26739bc0ea4d5950115e208f704976bb1efdf20",
+    "build_receipt_kind": "FINAL_NATIVE_REBUILD_WITH_SAME_SNAPSHOT_AX_RANGE_FIELDS",
+    "compiler_path": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift",
+    "compiler_realpath": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+    "compiler_sha256": "2ed38571e92c0283091838c1649e27650ad9c99950288e883c7b2dc6c4ce89fb",
+    "compiler_version": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)\nTarget: arm64-apple-macosx28.0\n",
+    "cwd": "<IMPLEMENTATION_ROOT>",
+    "exit_code": 0,
+    "finished_at": "2026-10-17T11:08:07.952933+00:00",
+    "parent_head": "e35d67c33a82fa1690bc7b13dc17bee9b1fea437",
+    "sdk_path": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+    "sdk_realpath": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk",
+    "sdk_settings_sha256": "f8d005f09381389167f9e0aeaa169bc9e7dff162ef22ca2fd8e98df7ff1acafe",
+    "sources": {
+      "rev28/Package.swift": "f9cefa31739ce6667e850461deefe7336b82df09de6bf204f784c666be26cc57",
+      "rev28/Sources/Rev28Core/Actuation/AXDriver.swift": "94590f9a7c2ca5766e68c82ff9731cfbf9d8eeb4debc4e548372a47b80450e26",
+      "rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift": "bf7bfb4d9dc3db108e962649a110dd40c999286c1398745480d1a6ff44e3b9f8",
+      "rev28/Sources/Rev28Core/Chooser/ChooserAffirmationPredicate.swift": "ecbdd6bb5ee806ed9a061c4b317747af980ac5ce0428065935bb34f461af8248",
+      "rev28/Sources/Rev28Core/Chooser/FolderChooserDriver.swift": "4602d0ad941cf276ecf9b6601bb0f422aee7a20894b6aaf59c0f4d880ac15bbc",
+      "rev28/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift": "e0c2282998d445adb438384835ea92c41779ae8ec73faf895fb10649c60cc688",
+      "rev28/Sources/Rev28Core/Composition/LiveComposition.swift": "f0b8feb4a214812187febfaa7c2d4b770319a4823a2a5f81f1a4678699564956",
+      "rev28/Sources/Rev28Core/Composition/PassiveNativeDiagnostic.swift": "e7b1a2546de758d87c349b0800e8626f84115bedd412a69c45aaaa71cecb7ee4",
+      "rev28/Sources/Rev28Core/Composition/PhaseAEvidence.swift": "e56df8319aa49255b5a9f6bb4f942db0e6a887f1e331044c6899bd1f9e96a016",
+      "rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift": "165f184467f2e92bad7848303dbb56ab48e482f902b2a3e472e787fabe5d9c3f",
+      "rev28/Sources/Rev28Core/Composition/PostSaveEnvironment.swift": "6d1f85ea488647de2116b29d08d7c4c3e5e6b1197e2dbd617d872de0dbe5ff2b",
+      "rev28/Sources/Rev28Core/Composition/ProductionActuationEnvironment.swift": "3e9932d1a50e2fc19f60fbd10e6bdb73c3f0544c3cb8078b98f5f81ee00e2b0c",
+      "rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift": "3745e6de06bc2bee83097b69cb6a30a481d79d631c465564c218ebed008003e6",
+      "rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift": "e80a554e9ba8f52c447b6fcae2b107166deac79846a9801b626300241ac59258",
+      "rev28/Sources/Rev28Core/Diagnostics/DiagnosticHooks.swift": "93db7d0968cf99a94526de498d680d614e9a63822aba739591a65fa7d360d107",
+      "rev28/Sources/Rev28Core/Geometry/Coordinates.swift": "f9b77879cfc7abf596de4f0ab562ba8e7506bde2673844a94d37d96b4b0d564c",
+      "rev28/Sources/Rev28Core/Identity/AXWindowIdentitySelector.swift": "c1ae64a0cb942b5fe636e95c0407cba02387a8c44ef67d5cd05dc6afe49a7896",
+      "rev28/Sources/Rev28Core/Identity/ProcessCodeIdentity.swift": "14e3b0d5d660c19550700cb6bd67d191af4b4dea138c5757f2079bca8e55a30c",
+      "rev28/Sources/Rev28Core/Identity/WindowIdentity.swift": "e9a6a82672dc0d1d2eb2b5dbff47b878bd7eb625a7d6c6fee915e23f985b7edf",
+      "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift": "9230ec99679badd7cad01d53c0c4d9811db6cd149f1aa42b0b98a3c34885e4c2",
+      "rev28/Sources/Rev28Core/Observation/PassiveContextObservation.swift": "f2549e95e12c059649e52f3248aeaacd1d9a2e4bc3e182b39b28efe97526fac0",
+      "rev28/Sources/Rev28Core/Observation/VisualDiagnosticContract.swift": "245d9b82c46e80b866a8cd086d76749de7e841e181bd35a327b1c2e3f8178d66",
+      "rev28/Sources/Rev28Core/Perception/AlbumEllipsisLocator.swift": "260ad5634dd86783a9d74a063eb598f17c1ffb361328347cf106499a4cb5e240",
+      "rev28/Sources/Rev28Core/Perception/AlbumVisualWitness.swift": "0ffc5d42f1dadda48cb1c239ec591c0d2e332c04c334a6c485def77d7c044213",
+      "rev28/Sources/Rev28Core/Perception/OcrEngine.swift": "d0dcab179db7311853857eeaf065339eb4f74c64976dd2b5104ef9fa280cec00",
+      "rev28/Sources/Rev28Core/Perception/StructuralLocators.swift": "f2e1b53a32ae2319f2d007855fab935a8e2992e8760e4228dffc9b75b9455127",
+      "rev28/Sources/Rev28Core/Policy/ExecutionPolicy.swift": "154a8c4a470bd76f6d401f9b85c51b51c9efe0851133f20e005b28a3025a3f14",
+      "rev28/Sources/Rev28Core/Postcondition/PostconditionMonitor.swift": "9a62c41d80c77fc1ccae05933c39c52218a86f80c51118864e5075ed75fe34a1",
+      "rev28/Sources/Rev28Core/Sensor/ExplicitLineCaptureSelection.swift": "5662baca0285f45859ac918d064ed404c6f14d528c4382a7598c4b2d86933e6c",
+      "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift": "10b6596871d7bfc05d203ac7041a2b917d851fd7345355f1c4c9a142d568cc7e",
+      "rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift": "b738df79817441240804531c033ab87f8be5b0dec78fd6683a3aa4a7c7162e3c",
+      "rev28/Sources/Rev28Core/Sensor/WindowSensor.swift": "46e657fa73a6c70f0bc6cd0b7fec3de01f28ae73bec5d9e2321cff5d4bc7454c",
+      "rev28/Sources/Rev28Core/Transaction/FilesystemTripwireJournal.swift": "b721640fbc07c43dc283b1d34824fa69768c66423fcd3fa0e4783296a9c556f9",
+      "rev28/Sources/Rev28Core/Transaction/GoalSlot.swift": "ade90b545e73322af583ba7fc7669c2be51fad2b6e512863c1a470414eae1a1f",
+      "rev28/Sources/Rev28Core/Transaction/IntentLedger.swift": "3f50ec9d1b2b81866f185c493a880fa0480f2d8badac8f3be6eb790ea5883260",
+      "rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift": "22963b60bbd54a8df890b2d7558564e9980bd8d267095af78332ba8fea1c16cf",
+      "rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift": "ee539a585410cb7f4c2ed0cc9bb5b3c5b047088ae97c36c1038ed4e82d93333a",
+      "rev28/Sources/Rev28Core/Transaction/PhaseBEligibility.swift": "444038f10f8d9b341b6bd3c51156854b2fb130e5636091a7def94f19930b1fd6",
+      "rev28/Sources/Rev28Core/Transaction/ReviewedBuildState.swift": "95a28802e92abc1bb62b8d2ecadaf6d4deb0cab14f2e7b0fdb7b3b01ec049c78",
+      "rev28/Sources/Rev28Core/Transaction/ReviewedImplementationDigest.swift": "fd9dd5a21fe011eb75690355db2ebeddbcc5c3937e9d3ea4c8b0950fd59b1802",
+      "rev28/Sources/Rev28Core/Transaction/StateEvidence.swift": "2ea1815031892930a5a43bac5f0f7f41b39821f934583a1bcf0cfc0c6e4fedbb",
+      "rev28/Sources/Rev28Core/Transaction/TripwireAttribution.swift": "8bd8fea6ec2eb153181cc936bc9fb35a4ebcfdf666d33d585433ba0d8d8c7917",
+      "rev28/Sources/Rev28Core/Verification/BaselineVerifier.swift": "171f88a2eabfbb74d7192b36ff8b00cdce4ba68af370f05de249c06074990058",
+      "rev28/Sources/Rev28Core/Verification/StagingVerifier.swift": "d93f068d0747524ad654ab79a4b9c497628ac1daa89b45b90c49e62be5cdd208",
+      "rev28/Sources/rev28ctl/EvidenceRun.swift": "11ad1889ff3d82911e87b94d7e653e4678e39be62fe2830fa73f5c3973bae81c",
+      "rev28/Sources/rev28ctl/FolderChooserDriver.swift": "4bf99db5ce820e185b101179223a64120da65128119f8a0411ab69d858decec0",
+      "rev28/Sources/rev28ctl/HarnessCalibration.swift": "4a3fe1c4944904a2f1a174b274fc937914dee64a5e163a0cf5a4c17e78c6d860",
+      "rev28/Sources/rev28ctl/PassiveCaptureDiagnostic.swift": "b32029b10c9d9611656b4a1fe1debb504233b5cf8f98f8453f886edaa7f88ecc",
+      "rev28/Sources/rev28ctl/PilotNativeAuthority.swift": "e466183b7ac09d61a57548cbc66f31c609edec1d6c965399c71fb3505643b921",
+      "rev28/Sources/rev28ctl/ProcessIdentity.swift": "97116b4e399dc31b6528ce83425b23937b719dfb2a39c291e3f25020f9f52cb3",
+      "rev28/Sources/rev28ctl/ProcessPeer.swift": "3167f8b33af5f4370d95b53cc9e4d77d9bb07a745fed844ee423fc158864b5c0",
+      "rev28/Sources/rev28ctl/QuartzActuator.swift": "e956d4e0073cd9d5b9f0a068753be8ead2122e525b5eb349e13e0dc222c34c4c",
+      "rev28/Sources/rev28ctl/RawCapture.swift": "3228444e510eb45f88e3c6128b50d102832af939144469e3c789847e4ab8f38f",
+      "rev28/Sources/rev28ctl/RestartFixture.swift": "e00acabe3b1a85576fb1cc4f5bfe350a7cdfeb080ffd32125aca171d81d5d9cd",
+      "rev28/Sources/rev28ctl/VisualDiagnostic.swift": "4d3c656a2d3c7c5331b0606eb118a71988feda592bea19408dcf5408709c23c8",
+      "rev28/Sources/rev28ctl/main.swift": "1f6724e6f1a1149074177251253517d72d3719550c9dd5725289cf4f930baddc",
+      "rev28/Sources/rev28harness/HarnessApp.swift": "49cdd5c6ac3da82b4085e2483badc219a11cb128c9d53e1f3817291edd895628",
+      "rev28/Sources/rev28harness/main.swift": "d4604a32c10e1db995eb5f106637c1346319dc5fb35183c1dbcf7101b6e4c819",
+      "rev28/Sources/rev28occluder/main.swift": "e4e9376ea5814d66be6d0f46092abcb9905942fb57107908189e783648dce5c5",
+      "rev28/Sources/rev28probe/CapabilityProbe.swift": "beb5fbec0fe32f911623df1e9611ce3c4c8e2bde377a5dceafbb9790e9c819a8",
+      "rev28/Sources/rev28probe/main.swift": "9f837a00affe1a8f0b475ca10ea488e161f7ffc796d78d1fc3e0ca2f9439931b",
+      "rev28/Sources/rev28replay/main.swift": "cf44f4985826620f1ca7e9cc70d616b5c75755fec57b5ea282f19440be6120d3"
+    },
+    "started_at": "2026-10-17T11:08:05.202685+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e724603506d7f4aff1adaa7feb230d672882d514f624bcf4409553a0eefba4a8",
+    "supersedes": "native-build-final2.json (compile error retained)"
+  },
+  "preservation": {
+    "at": "2026-10-17T11:38:55.758171+00:00",
+    "canonical_head": "b7bb666fa78b8e9dfffed8247c4f2a7f869a481b",
+    "canonical_index_empty": true,
+    "canonical_ledger_unchanged": true,
+    "gui_inputs": 0,
+    "historical_verified_images_preserved": 239,
+    "old_authority_files_equal": 8,
+    "protected_files_equal": 245,
+    "scope": "Recorded245 protectedfiles, old8authoritybytes and unrelatedtrackedpreexistingdiff; no fulluntrackedtree claim",
+    "unrelated_tracked_diff_sections_equal": 14
+  },
+  "previous_review": "5557438694: CHANGES_REQUIRED_FOR_LIVE_SAVE_ALL on e35d67c33a82fa1690bc7b13dc17bee9b1fea437",
+  "runtime_binding_note": "Original artifact digest; the displayed project_root below is redacted. Do not hash the redacted JSON as if it were the original artifact.",
+  "runtime_binding_redacted": {
+    "callback_sources": [
+      {
+        "bytes": 22866,
+        "path": "harness-development/line-two-album-pilot-20261014/mac_runtime.mjs",
+        "roles": [
+          "cli_bridge",
+          "menu_lineage",
+          "retainer"
+        ],
+        "sha256": "ac4433976a89dcd0d9cbd55c97a637698d3aa5ae07932297661c2d9b2609b8c5"
+      },
+      {
+        "bytes": 27852,
+        "path": "harness-development/line-two-album-pilot-20261014/mac/analyzer.mjs",
+        "roles": [
+          "capture_analyzer"
+        ],
+        "sha256": "225a0a82b02575cd040751e5ba3a9b8480d0f9c3e0c35333805084b7c6c3a407"
+      },
+      {
+        "bytes": 52060,
+        "path": "harness-development/line-two-album-pilot-20261014/mac/classifier.mjs",
+        "roles": [
+          "classifier_chooser"
+        ],
+        "sha256": "b8b40b4b3dac78f11ac8aa4c4d56176a41d29d9f1889ab1844ef8b9322fa7391"
+      },
+      {
+        "bytes": 2999,
+        "path": "harness-development/line-two-album-pilot-20261014/mac/chooser.mjs",
+        "roles": [
+          "classifier_chooser"
+        ],
+        "sha256": "5b67cf30d6accb7566f6fcf2052b6e6b32efddbcc47d34c2b5b8f97eddcf27d8"
+      },
+      {
+        "bytes": 22290,
+        "path": "harness-development/line-two-album-pilot-20261014/mac/producer.mjs",
+        "roles": [
+          "capture_analyzer",
+          "menu_lineage"
+        ],
+        "sha256": "3f3e6532f07a622fd9e4c57a8bd802fc05945595e616c59c328d3dfbd0d8cd48"
+      },
+      {
+        "bytes": 5016,
+        "path": "harness-development/line-two-album-pilot-20261014/mac/visual_diagnostic.mjs",
+        "roles": [
+          "capture_analyzer"
+        ],
+        "sha256": "bfc363571c31e11a84c0302f28bf16488d0c67338445da755b07067e0033cab6"
+      }
+    ],
+    "config_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+    "profile": "LINE_TWO_ALBUM_PILOT/1",
+    "project_root": "<CANONICAL_ROOT>",
+    "runtime_files": [
+      {
+        "bytes": 10869296,
+        "path": "harness-development/line-two-album-pilot-20261014/private/bin/rev28ctl-one56-8bebd23-9ef75efe4b21",
+        "role": "producer_binary",
+        "sha256": "9ef75efe4b217edd1049a623f26739bc0ea4d5950115e208f704976bb1efdf20"
+      },
+      {
+        "bytes": 102064,
+        "path": "harness-development/line-v3-live-e2e-20261010/bin/image_decode",
+        "role": "decoder_binding",
+        "sha256": "1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf"
+      },
+      {
+        "bytes": 21811,
+        "path": "harness-development/line-two-album-pilot-20261014/two_album_entry.mjs",
+        "role": "entry_binding",
+        "sha256": "726db9a876619aee66df57f0600f3ef07e40910c3f8285b266397800e12895f1"
+      }
+    ],
+    "source_files": [
+      {
+        "bytes": 85,
+        "path": "src/line_backup_acceptance/__init__.py",
+        "sha256": "5ae55afa11a74a856393b707db26b37202ad66d2142d1b56e02720f1a235a53b"
+      },
+      {
+        "bytes": 48,
+        "path": "src/line_backup_acceptance/__main__.py",
+        "sha256": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d"
+      },
+      {
+        "bytes": 9441,
+        "path": "src/line_backup_acceptance/authority.py",
+        "sha256": "7805ec0c53bca8991c3cc727339df4242d1e45a114b407913a2b0780614b6e7e"
+      },
+      {
+        "bytes": 5587,
+        "path": "src/line_backup_acceptance/cli.py",
+        "sha256": "832896eda31583199b192a0df51b921257fb7875835b1b502e476f9f1383d82f"
+      },
+      {
+        "bytes": 35808,
+        "path": "src/line_backup_acceptance/common.py",
+        "sha256": "2737d5c2febeeaf248b2d81e2e112ce0e99d48640e946bfa6dd8e71b5a2cf127"
+      },
+      {
+        "bytes": 27866,
+        "path": "src/line_backup_acceptance/project_binding.py",
+        "sha256": "f8894652fc9070416df5544b9573c26cee440300ca8a14f201f654f3886874f8"
+      },
+      {
+        "bytes": 7937,
+        "path": "src/line_backup_acceptance/status.py",
+        "sha256": "1c8c27edf204d9243e8773cd830e16566269fb3814faa332dd8237c71587180e"
+      },
+      {
+        "bytes": 42494,
+        "path": "src/line_backup_acceptance/transaction.py",
+        "sha256": "0dd44fec005c70d6bb19436ed899e6c95d7b4d232dd83baa056732f4213a9da9"
+      },
+      {
+        "bytes": 25377,
+        "path": "src/line_backup_acceptance/verifier.py",
+        "sha256": "a07ffe450284ade34fce27f646bd4a0c37baccb65de5660e77aea3faf48b23b6"
+      },
+      {
+        "bytes": 77,
+        "path": "src/line_backup_batch/__init__.py",
+        "sha256": "ae2e6f7132820073b853877b5fbae4cbef55f9dcada8a6ceba0608d5e043fb83"
+      },
+      {
+        "bytes": 47,
+        "path": "src/line_backup_batch/__main__.py",
+        "sha256": "79ee6f134c5c5193377cf9b189cbdcc3e2095e49ba9cec310114441c15a917c4"
+      },
+      {
+        "bytes": 54144,
+        "path": "src/line_backup_batch/cli.py",
+        "sha256": "d3639978f9e44871b128242111808c5363f48eb4c82f339aeedbf3f9609a8cd6"
+      },
+      {
+        "bytes": 4943,
+        "path": "src/line_backup_batch/content.py",
+        "sha256": "45837c8a84c22564efb668001fa0c7e9d443bec0b6fd3d9340e87bb6b7921205"
+      },
+      {
+        "bytes": 2552,
+        "path": "src/line_backup_batch/coordinator.py",
+        "sha256": "285d0411d62f21133075e7bf203eca2376170b36faaf25a74edff0bb59060b8f"
+      },
+      {
+        "bytes": 4120,
+        "path": "src/line_backup_batch/image_decode.swift",
+        "sha256": "238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b"
+      },
+      {
+        "bytes": 59642,
+        "path": "src/line_backup_batch/observations.py",
+        "sha256": "3ba7c42c61fc2a4f8f0e4935415eba427e682e16b34d89e8badbf6d95b78b4df"
+      },
+      {
+        "bytes": 2623,
+        "path": "src/line_backup_batch/schema.py",
+        "sha256": "d400cb0e5cdee4a0f0ce555e3222a590093c2dcaae9f10f464e205b9d1da3302"
+      },
+      {
+        "bytes": 67531,
+        "path": "src/line_backup_batch/service.py",
+        "sha256": "c2c30831c638c0e64fa6a80f5d803e774175e749282694f40093554d17ab9a56"
+      },
+      {
+        "bytes": 33379,
+        "path": "src/line_backup_batch/state_v3.schema.json",
+        "sha256": "d30ff068623f7dc6c9988387935beabbd5347e4b3a5e2c3a784daf8197db2a37"
+      },
+      {
+        "bytes": 58199,
+        "path": "src/line_backup_batch/store.py",
+        "sha256": "e123efda51ff9130f3e4001532e2741620e0547b7ed9dca4de8eb5709bf4ed26"
+      },
+      {
+        "bytes": 72764,
+        "path": "scripts/line_backup_cua_adapter.mjs",
+        "sha256": "b6bb2091f8a339705ad1acf57b653dcbc6a2eb23d2b5fb8efcd4a6171e8dea54"
+      }
+    ],
+    "source_sha256": "ff717d721c9132abc2b22c738649e3cc4da34637a86fb794f549695e5cd3ca54",
+    "version": 1
+  },
+  "runtime_binding_sha256": "cd41ee25387fb784f2aef5158d7dd6bbde27bd44a42d2d42c5a905767b1b6076",
+  "same_bundle_validation": "Decision/review/readiness/contract/runtime/consent/alias confirmation resolve under this unique immutable pending bundle. gui_ledger retains its original canonical path.",
+  "source_closure_sha256": "ff717d721c9132abc2b22c738649e3cc4da34637a86fb794f549695e5cd3ca54"
+}
