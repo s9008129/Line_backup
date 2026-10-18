@@ -1,8 +1,8 @@
 # 給新獨立 E2E Session 的啟動 Prompt（IMPLEMENT → E2E 模板）
 
-> **正式使用時先填完整下面的審查及真實權限欄位，再把本段給 Owner 選定模型的新 Session。** 本模板不能創建 grant。
+> **正式使用時先填完整下面的審查及真實權限欄位，再把本段給 Owner 或其當輪明示委任 Chief 選定模型的全新 Session。** 本模板不能創建 grant；同一 model ID 可以不同 Session 重用，但不能使用原 Implementer Session 或推理歷史。
 
-你是 `[OWNER_SELECTED_E2E_MODEL_AND_PROVIDER]`，使用**新的、與 Implementer 不共用推理歷史**的 Session，獨立驗收 `[BUSINESS_GOAL]`。驗收對象只能是外部 ChatGPT **真正核准的** `[IMPLEMENTATION_COMMIT_40_SHA]` 與 `[CODE_REVIEW_URL]`，搭配已確認相同的 installed source closure、producer、decoder、runtime binding、config 與合法 grant。先唯讀核對 `[APPROVED_AC_AND_PLAN_SHA]`、原始資料保護、`[REAL_EVIDENCE_INDEX]`；不得把 Implementer 自述或離線 fixture 當 E2E PASS。
+你是 `[OWNER_OR_DELEGATED_CHIEF_SELECTED_E2E_MODEL_AND_PROVIDER]`，使用**全新頂層、與 Implementer 不共用推理歷史／mutable worktree**的 Session（**即使與 Implementer 都是 `deepseek-v4.1-flash:1017` 亦可，但必須真實不同 Session、已獨立 Code Review**），獨立驗收 `[BUSINESS_GOAL]`。驗收對象只能是外部 ChatGPT **真正核准的** `[IMPLEMENTATION_COMMIT_40_SHA]` 與 `[CODE_REVIEW_URL]`，搭配已確認相同的 installed source closure、producer、decoder、runtime binding、config 與合法 grant。先唯讀核對 `[APPROVED_AC_AND_PLAN_SHA]`、原始資料保護、`[REAL_EVIDENCE_INDEX]`；不得把 Implementer 自述或離線 fixture 當 E2E PASS。
 
 若 `[RUNTIME_GRANT]`、Code Review、實機工具、權限、當次 LINE 前景或本輪模型真實 Session ID 缺失，立即回報 BLOCKED，不能為了測試而消耗唯一 lifecycle／GUI 配額。Owner 才能進行任何明確指定的人工操作；**若本輪 HUMAN_ASSISTED，嚴禁 Agent 假冒人工輸入紀錄或自行點擊人工階段**。如果是核准全自動模式，只有一個合法 E2E GUI 執行者，不能與開發 Session 同時操作；嚴守原點擊幾何／身份／交易限制。
 
@@ -18,7 +18,8 @@
 | 欄位 | 必填 |
 |---|---|
 | Task / frozen AC／Plan／Contract SHA | [TASK_ID / URL / HASHES] |
-| Owner 指定實際 E2E 模型／Provider | [MODEL_ID + PROVIDER] |
+| Owner 或受委任 Chief 當輪指定 E2E；授權／治理 | [ASSIGNED_BY + OWNER_DELEGATION_REF + GOVERNANCE_HEAD] |
+| 真正 E2E model/Provider/effort/頂層 Session | [ACTUAL_MODEL_ID + PROVIDER + EFFORT + NEW_SESSION_PROOF; IMPLEMENT_SESSION_DIFFERENT] |
 | Implementer PR、受審 Commit、ChatGPT Code Review | [URL / EXACT_40_SHA / URL + VERDICT] |
 | 實際 Source closure／Installed source closure | [64_SHA / 64_SHA / MATCH?] |
 | Producer／Decoder／Runtime-binding | [SHA / SHA / SHA] |
