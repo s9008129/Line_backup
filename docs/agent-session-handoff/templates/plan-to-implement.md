@@ -1,10 +1,10 @@
 # 給新 Implementer Session 的啟動 Prompt（PLAN → IMPLEMENT 模板）
 
-> **此區是第一段，正式交接實例填完後可直接貼給當輪 Owner 選定的模型。** 模板中的 `[待填]` 一律不能直接當已核准的事實。
+> **此區是第一段，正式交接實例填完後可直接貼給當輪 Owner 或其當輪明示授權的 External Chief 選定的模型。** Implementer 不永久綁定 Luna/high；可使用 `deepseek-v4.1-flash:1017` BYOK。模板中的 `[待填]` 一律不能直接當已核准的事實。
 
 你是 `[IMPLEMENTER_ROLE / ACTUAL_MODEL_AND_PROVIDER]`，在**全新、不含 Planner 推理歷史**的 Session 中接手 `[TASK_ID]`。你的唯一任務是依照**外部 ChatGPT 已核准**的 `[PLAN_URL + PLAN_SHA256]`、`[CONTRACT_URL + SHA256]`、`[REVIEW_URL + EXACT_REVIEWED_HEAD]`，在 `[REPO / FROZEN_BASE_COMMIT]` 上完成 `[ONE_SENTENCE_BUSINESS_GOAL]` 的**最小必要程式修正和 focused tests**，並依本文件交付實際 diff、測試與下一階段 Handoff。
 
-請先獨立核對這些 URL 與本機 Git、工作樹 dirty／untracked、專案 `AGENTS.md` 和有效 Harness v4.8.0 stage packet；任何沒有驗證成功的審查收據、runtime grant、來源閉包一律為 NOT_VERIFIED，不能推論已 PASS。**先確認外部 Plan Review 是核准而非 COMMENT／片段接受；沒有有效核准即停在唯讀與精確缺失報告，不能改產品。**
+先核對生效的模型選擇授權（`assigned_by`／Owner delegation／治理 HEAD）與**目前頂層 Session 實際** model ID、Provider、reasoning effort；config 只是設定，不等於執行者身分。若舊 worktree AGENTS/上層 Controller 仍限制模型，回報 `ROLE_POLICY_CONFLICT`，不得冒名。請再獨立核對這些 URL 與本機 Git、工作樹 dirty／untracked、專案 `AGENTS.md` 和有效 Harness v4.8.0 stage packet；任何沒有驗證成功的審查收據、runtime grant、來源閉包一律為 NOT_VERIFIED，不能推論已 PASS。**先確認外部 Plan Review 是核准而非 COMMENT／片段接受；沒有有效核准即停在唯讀與精確缺失報告，不能改產品。**
 
 僅讀必要原始碼與本檔「必讀」索引；**不要載入 Planner 的全對話 export、不要重複研究已有可靠證據的結論、不要啟動管理子代理樹。** 嚴格遵守 `[ALLOWED_PATHS]`、保護條件和 `[EVIDENCE_GATES]`，預設 serial（parallel helpers/writers=0）；只有核准計畫明示且平台可證明時才分工。先做第一個可交付的修改，依序完成 focused tests、負例、失敗記錄和精確 Commit／Push。對同一根因最多 3 次有資訊嘗試、連續 2 次無新資訊停止。**不可修改授權、幾何門檻、ledger、歷史資料、原 AC 或未核准路徑來取得綠燈。**
 
@@ -18,7 +18,8 @@
 | 欄位 | 實際值 |
 |---|---|
 | Task / Stage / 原 PR | [TASK_ID] / PLAN_TO_IMPLEMENT / [PLAN_PR_URL] |
-| Owner 本次指定 Implementer | [MODEL_PROVIDER, MODEL_ID, REASONING, SESSION_EXPECTATION] |
+| Owner／受委任 Chief 本次角色決策、授權 ref | [ASSIGNED_BY / OWNER_AUTHORIZATION_REF / GOVERNANCE_HEAD] |
+| 真正 Implementer Provider／model／effort／Session | [PROVIDER / ACTUAL_MODEL_ID / ACTUAL_REASONING / TOP_LEVEL_SESSION_PROOF] |
 | Repo／target branch／frozen base HEAD | [REPO], [BRANCH], [40_SHA] |
 | 已核准 Plan URL／SHA256 | [PLAN_URL] / [64_SHA] |
 | schema v3 contract URL／SHA256 | [CONTRACT_URL] / [64_SHA] |
