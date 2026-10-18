@@ -19,13 +19,19 @@
 
 **交接實例推薦位置：**`harness-development/session-handoffs/<TASK_ID>/<STAGE>/handoff.md`，同層依階段保留 `plan.md`、契約、`result`、簡明去識別化證據 Manifest。已有 task/continuation 特定位置的專案，**優先沿用現有位置**，不可為了 SOP 遷移歷史。
 
+## Role Assignment：Owner／受委任 Chief 逐階段選模型（不綁死）
+- **決策者：**Owner 可每輪選擇或改派 Planner、Implementer、E2E 模型／Provider；只有 Owner 明示委任且可追溯的 External Chief 才可為該輪指派，Owner 指示優先。此次 A56 Owner 指定以 Ollama Cloud BYOK `deepseek-v4.1-flash:1017` 優先完成 Implement，獨立 E2E 也可使用同模型的新 Session，不能要求 Plus 的 Sol/Luna 常駐監督。
+- **入場紀錄：**`stage`、`assigned_by`、`owner_authorization_ref`、`provider`、`actual_model_id`、`actual_reasoning_effort`、`top_level_session_id_or_verifiable_provenance`、`repo/head`、`plan_sha`、`governance_head`、`handoff_review_ref`、`independence_from_prior_session` 與 `controller_admission_status`。先核對實際 Session model；config/想像中的 model 不足以證明真實身份。
+- **隔離與順序：**同款 DeepSeek 可擔任 Implementation 與 E2E，但分別為不同獨立頂層 Session，中間必須經外部 Code Review 固定新 HEAD，E2E 不共用 Implementer 推理歷史、不寫產品、不共享 mutable worktree；HUMAN_ASSISTED 的 Save All/Chooser 由 Owner 點擊。兩個 stage 不等於 Controller 原生唯讀 `ACCEPTANCE_REVIEWER`，亦不代表 runtime/grant/source 已准入。
+- **舊規則衝突：**PR 內的新治理文字未真正合併／合法套用至當前 worktree 時，或全域 Harness/Controller 阻擋實際角色時，維持 `ROLE_POLICY_CONFLICT`；先更新生效治理、確認真實可執行 stage 和證據，不能靠 Prompt 扮演 Luna、竄改 receipts 或假定未合併 PR 生效。原凍結 Plan/AC、安全限制、`<=2px` AUTO、原 grant／ledger／239 VERIFIED／65 排除／at-most-once 都不得因模型配置改動。
+
 ## 工作流：由外部 Controller 放行下一個角色
 1. **Owner → ChatGPT：**提交原始需求、repo、當前 PR/HEAD、保護條件，指定本輪 Planner 模型（ChatGPT 可以建議）；ChatGPT 給 Planner **一次性** Boot Prompt。
 2. **PLAN（新 Session）：**最小讀檔 → 業務 AC／風險分類（依 v4.8.0）→ `plan.md`＋v3 `plan-contract.json` → 對應模板形成新 `handoff.md`（開頭必須有接手 Prompt）→ 必要的真實 schema/stage receipts → Git commit/push、Draft Plan PR，報精確 HEAD／Plan SHA／證據。**不用等待／監控 Implementer。**
 3. **PLAN REVIEW（本對話 ChatGPT）：**Owner 送 PR URL+HEAD → Reviewer 核對實際 Plan、Contract、Handoff 與 scope／安全／證據，輸出 `APPROVE_PLAN`、`CHANGES_REQUIRED` 或 `BLOCKED`。退回時輸出「問題、影響、最小改動、驗收」；Planner 修正同 Plan PR → 新 HEAD 重審。**只有通過**，Reviewer 才給下一階段實際 Boot Prompt 與需讀的精確 URL。
-4. **IMPLEMENT（Owner 指定低成本模型，新 Session）：**先核對 PR/plan SHA、已核准 AC、未提交 dirty、真正權限與受審 source，按 `handoff.md` 接手；只修改 frozen paths，focused tests、保存 hash／真實 FAIL、Commit Push→Implementation Draft PR，形成 `implement-to-e2e` 實例。不擅自新增門檻、重設 ledgers、自己核准自己。嚴重阻塞只交**一項**可執行的決策，停止盲目修復。
+4. **IMPLEMENT（Owner 或本輪受委任 Chief 選定模型，新獨立頂層 Session）：**先核對 PR/plan SHA、已核准 AC、未提交 dirty、真正權限與受審 source，按 `handoff.md` 接手；只修改 frozen paths，focused tests、保存 hash／真實 FAIL、Commit Push→Implementation Draft PR，形成 `implement-to-e2e` 實例。不擅自新增門檻、重設 ledgers、自己核准自己。嚴重阻塞只交**一項**可執行的決策，停止盲目修復。
 5. **CODE REVIEW（ChatGPT）：**Owner 送精確 Implementation PR URL／HEAD／diff／結果／Handoff → Reviewer 檢查程式碼、保護條件、source/runtime、錯誤及測試證據。未通過則原 Implementer 修必要項並提交新 SHA；通過才交新 E2E Boot Prompt。
-6. **E2E（Owner 指定模型，另一個新 Session）：**固定 reviewed source、真實 installed runtime/grant/owner foreground 與隔離的驗收路徑；唯一 GUI 操作者（若 HUMAN mode，Owner 是實際人工輸入者）。不得修改產品／AC；獨立驗證 UI、檔案、checksum、ImageIO、VERIFIED／ledger，產出 E2E Handoff／evidence，提交階段 PR／報告。
+6. **E2E（Owner 或本輪受委任 Chief 選定模型；可與 Implementer 同 model ID，但必須是另一個全新頂層 Session）：**固定 reviewed source、真實 installed runtime/grant/owner foreground 與隔離的驗收路徑；唯一 GUI 操作者（若 HUMAN mode，Owner 是實際人工輸入者）。不得修改產品／AC；獨立驗證 UI、檔案、checksum、ImageIO、VERIFIED／ledger，產出 E2E Handoff／evidence，提交階段 PR／報告。
 7. **E2E REVIEW / CLOSE（ChatGPT）：**只基於實際證據裁決 PASS／FIX_REQUIRED／BLOCKED；FAIL 回 Implementer 的**精確修復包**，新 source 經必要 Code Review 後另開 E2E Session。重大業務／安全契約改變才回 Planner 重審；不能只為同一機械修正新開 Plan。
 
 ## Git / PR 階段規則
@@ -44,8 +50,8 @@
 
 ## 本案立即適用狀態（閱 GitHub 最新事實為準）
 - LINE 相簿目標是兩本不同且合格的原圖 Save All、逐檔 SHA256／完整解碼、正式 VERIFIED；A56 2024/05/27–05/31 共 56 張，人工備份 65 張與歷史 239 VERIFIED 均排除。
-- 目前已有 Owner 選擇 HUMAN_ASSISTED 的模式提案（`human-assisted-one56-contract-delta.md`），**仍是 PENDING_EXTERNAL_PLAN_REVIEW**，尚未實作、未執行 Save All、尚無有效 runtime/grant。下一件事是外部 ChatGPT 審核**已存在**的提案，而不是浪費 Sol 額度重新起草。
-- 該 Plan 獲核准後，Owner 選擇當輪 Implementer 模型，新 Session 讀**經核准的實例 Handoff**；執行時保持人工／自動輸入分界、原始 ledger 與未知不可重送。B 需 A 成功後單獨 grant。
+- HUMAN_ASSISTED A56 frozen Plan（SHA256 `1c00d80ff3dc50b167f5fe9e40b25736a13677b7011c40d6f8e1ba7c6ff00c66`）已獲真正外部 Plan Review：PR #10 review `5561377799`；handoff HEAD `66c852cba37031d90b3e169d8089e5ae0f2612e4` 已獲 PR #13 review `5561579212`。**仍未 Implementation，沒有可啟用之 installed runtime/grant，真實 Save All 歷史派送 0（截至最後已報紀錄）。**下一動作是以生效的模型彈性治理啟動獨立 DeepSeek Implementer，不再重寫已核准 Plan。
+- Swift 最小條件式 scope delta 已於 PR #13 comment `6246289850` 由 External Chief 作有限裁決，僅新增 `rev28/Sources/Rev28Core/Observation/HumanVisualDiagnosticSurface.swift` 並由已核准 `VisualDiagnostic.swift` 連接，其他原 Plan 限制不變。Implementation 後送真正外部 Code Review；A 完成 VERIFIED 後，B 仍必須是不同相簿且有新的獨立 grant。
 
 ## v4.8.0 原始來源（只讀，無須另造框架）
 - `s9008129/coding-agent-harness/prompts/v4.8.0/01_plan_prompt.md`
