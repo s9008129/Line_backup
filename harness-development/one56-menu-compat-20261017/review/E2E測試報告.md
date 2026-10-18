@@ -386,3 +386,17 @@ NEXT_ACTION=OWNER_TRANSFER_EXACT_PR_SOURCE_AND_THIS_SINGLE_CONTRACT_DECISION_TO_
 交接不提供 Sol 完整推理、自評或預設PASS。原始必要環境索引僅留本機 `private/deepseek-e2e-role-20261018-01/environment.json`，記錄 canonical root／config派生backup root／獨立證據目錄／精確待綁定欄位，不含BYOK key。所有正式來源／grant／ledger／state保護不因換模型而放寬；前節實際authorizer拒絕保留，本輪不為同一已知拒絕重跑preflight。
 
 本輪 `DEEPSEEK_SESSION=NOT_STARTED`、`ACTUAL_DEEPSEEK_MODEL=NOT_OBSERVED`、`INDEPENDENT_E2E=NOT_RUN`；GUI輸入、Save All派送及正式lifecycle新增均0。未改產品源碼或測試，未執行產品測試、build或GUI。只做文件一致性、無舊現行角色、交接未含預設PASS／私人內容、closure／控制檔完整性與Git差異檢查；不能把這些當E2E PASS。下一步仍是外部精確來源審查及正式runtime/authority準備，完成後由Owner啟動獨立DeepSeek Session，Sol/Luna讓出正式GUI。
+
+## 2026-10-18 接受 Chief 限定來源裁決；自動路徑有界判定完成
+
+完整審查為 [Chief5561111099](https://github.com/s9008129/Line_backup/pull/10#pullrequestreview-5561111099)，精確reviewed HEAD `13b547aecf9204762b53c984ca3c6c09064cb569`。其 M5/M6 source slice=`ACCEPT_SCOPED_SOURCE`；whole transaction=`CHANGES_REQUIRED`、`APPROVE_IMPLEMENTATION=NOT_GRANTED`。來源接受不改寫成整筆批准；現行candidate產品closure與受審來源相同，後續55396e8僅文件／角色變更，M5/M6不重寫。既有實際第一拒絕仍為 `PROJECT_IMPLEMENTATION_REVIEW_REQUIRED`，本輪不重跑已知的authorizer拒絕、不動pending grant。
+
+本次Sol僅一次有界查核：讀既有真實證據、保留的frame-support／AX結果，以及目前hosted CUA `cua.rewriteDocumentation()`返回的支援介面。`App.click(number|Vec2)`仍回`Promise<void>`，未提供已成立的實際派送點位誤差證據；SCK／OCR／native window lineage可識別畫面、相簿與候選交集，但不能單獨證明實際輸入≤2px。既有popup沒有可用SaveAll AX action；不猜secondary action、不另試鍵盤或原生輸入。歷史成功開選單或局部零位移不能補足該證明。**AUTO_CLICK_2PX_PROOF=AUTOMATIC_CLICK_PROOF_UNSUPPORTED**，限定於本次已支援API與既有證據，不是宣稱誤差必定>2px或未來工具均不可行。
+
+**SELECTED_PATH=OWNER_DECISION_REQUIRED。** 唯一待決方案為有界HUMAN_ASSISTED：Owner人工執行無法安全自動派送的選單操作，AI保留身份／duplicate／獨立目的地／writer／durable intent／不可重送等交易控制與後續檔案驗證，由獨立DeepSeek Session驗收。這會改變actor provenance、正式menu calibration／intent／dispatch receipt／chooser／ledger／驗收模式，**尚無Owner單獨核准、沒有可執行契約，不先實作或使用舊grant**。Owner若接受，下一步只提出上述直接相關的最小安全差異交外部ChatGPT審查，核准後才實作與固定精確版本；人工部分如實標HUMAN_ASSISTED，不標FULL_AUTOMATIC_PASS。若Owner不接受，保留全自動模式及目前BLOCKED，不再開R3/R4或新研究。
+
+AGENTS.md已於55396e8改為Owner啟動`deepseek-v4.1-flash:1017`全新獨立Codex CLI Session，無須再次改寫；[handoff](deepseek1017-e2e-handoff.md)僅補本次限定來源審查身份。DeepSeek未啟動、正式E2E仍NOT_RUN。沒有product diff、focused tests、native build、GUI觀察／輸入、新intent或SaveAll；唯一CUA呼叫是文件讀取。沒有把本文當成實機PASS。
+
+本輪直接讀檔核對：candidate source SHA=`be0c248ab231fd76e1e8fc7a42800391bc3134d19e12a29a6da676c894856b1d`；installed=`ff717d721c9132abc2b22c738649e3cc4da34637a86fb794f549695e5cd3ca54`，不一致。舊pending runtime-binding仍`cd41ee25387fb784f2aef5158d7dd6bbde27bd44a42d2d42c5a905767b1b6076`，非candidate有效authority。245保護hash相同，canonical state35，無active batch/writer/context；原ledger lifecycle0/entries0，A/B VERIFIED均NOT_RUN，SaveAll總派送0。
+
+原始review與本輪hash／決策紀錄留本機 `private/chief-source-disposition-20261018-01/`：`chief-review.github.json` SHA-256 `532157f65307623716da715d263b747383fc0b45fdb942be3a5e13b55b15e4dc`；本機絕對根路徑由同任務private environment.json提供，公開版本遮蔽個人路徑，不上傳照片、群組名或原始grant。保留原始來源證據引用，不新增影像實驗、Plan或測試框架。本次checkpoint僅固定裁決與唯一待答決策，不代表正式Backup完成。

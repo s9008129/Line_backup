@@ -23,6 +23,7 @@ Owner 要求兩本不同、尚未備份且 eligible 的 LINE 相簿，實際 Sav
 | 項目 | 當前已記錄身份／狀態 |
 | --- | --- |
 | repository／PR | `s9008129/Line_backup`／Draft [#10](https://github.com/s9008129/Line_backup/pull/10) |
+| 已完成的限定來源審查 | [Chief5561111099](https://github.com/s9008129/Line_backup/pull/10#pullrequestreview-5561111099)，reviewed HEAD `13b547aecf9204762b53c984ca3c6c09064cb569`：M5/M6=`ACCEPT_SCOPED_SOURCE`，transaction=`CHANGES_REQUIRED`；不是完整 `APPROVE_IMPLEMENTATION` |
 | 本次變更前候選快照 | `13b547aecf9204762b53c984ca3c6c09064cb569`；正式 execution Commit 尚未發放 |
 | candidate source closure | `be0c248ab231fd76e1e8fc7a42800391bc3134d19e12a29a6da676c894856b1d` |
 | installed source closure | `ff717d721c9132abc2b22c738649e3cc4da34637a86fb794f549695e5cd3ca54`；與 candidate 不同 |

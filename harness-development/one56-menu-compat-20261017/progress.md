@@ -92,3 +92,11 @@ The first menu observation provided actual geometry and confirmed the Escape pro
 依 Owner 最新指示，正式 E2E 改為 Ollama Cloud BYOK `deepseek-v4.1-flash:1017`，由 Owner 在全新、獨立 Codex CLI Session 啟動，不是 Sol 子代理。Sol 維持唯一 Planner／Orchestrator，Luna/high 維持必要實作、最小修復與 Unit／Integration Tests；外部 ChatGPT 維持 Plan／Code Review。已對 candidate 與 canonical 相同基底的 AGENTS.md 作角色定點修正，保留其餘 dirty 工作與歷史 Luna 實際紀錄。
 
 已準備[精簡 E2E Handoff](review/deepseek1017-e2e-handoff.md)，僅包含 Owner 目標、固定AC、候選／待核准 Commit 與實際 runtime/grant 身份、A56／B限制、真實入口、config 派生目的地、隔離證據、停止條件及中立回報格式；不傳 Sol 推理歷史或預設PASS。未啟動 DeepSeek，未驗證其 Session 工具能力，不冒稱正式 E2E 已發生。更換角色不會解除前階段的 PROJECT_IMPLEMENTATION_REVIEW_REQUIRED、來源／runtime不一致與未成立的正式校準；不改產品、grant、ledger、239歷史、2px契約或全域Harness。本輪沒有 GUI、正式交易或產品測試，接續主線仍為取得必要外部審查與有效交易準備，再由 Owner 啟動 DeepSeek 接手唯一正式 GUI 操作。
+
+## 2026-10-18 Chief5561111099：限定來源接受，唯一 Owner 模式決策待答
+
+已完整讀取 [Chief5561111099](https://github.com/s9008129/Line_backup/pull/10#pullrequestreview-5561111099)，reviewed HEAD13b547a：M5/M6=`ACCEPT_SCOPED_SOURCE`，整筆交易=`CHANGES_REQUIRED`，沒有完整APPROVE_IMPLEMENTATION。保留限定接受，不重寫M5/M6；source closure仍be0c248a…，installed仍ff717d72…。
+
+Sol一次有界判定只核對現有真實證據及目前支援API文件（cua.rewriteDocumentation，零觀察／輸入）：click仍回void，現有SCK/AX提供畫面／身份與交集定位，不提供已成立的actual dispatch≤2px證明；先前target-bound失敗、popup無可用SaveAll AX action的原始事實不變。結論`AUTOMATIC_CLICK_PROOF_UNSUPPORTED`（限目前支援路徑及既有證據），不是宣稱實際誤差必定>2px或所有未來方法物理不可行。不再展開演算法研究。唯一下一步為Owner是否接受HUMAN_ASSISTED：人工執行無法安全自動派送的選單操作，AI保留交易與後續驗證，DeepSeek獨立驗收；尚未批准或實作，接受後只提actor/intent/receipt/chooser/ledger/驗收模式最小契約差異供外部審查，再實作。
+
+既有AGENTS已在55396e8完成DeepSeek獨立Session角色，無須重複改檔；Handoff只補本次限定來源審查，沒有偽填正式批准或新grant。本輪產品／測試／runtime／grant未改，沒有重跑formal authorizer、GUI、lifecycle或SaveAll，245保護hash不變，state35、ledger lifecycle0/entries0。待Owner唯一模式決策，不能以本次checkpoint冒充備份成果。
