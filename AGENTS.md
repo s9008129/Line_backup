@@ -21,9 +21,9 @@
 ## 實機診斷與權責分工
 
 - **Owner（使用者）：**目標、範圍、例外政策及真實操作授權的唯一決策者。Owner 本次已概括同意在受控前景下進行真實導覽及針對兩本不同、未備份、符合資格相簿的 Save All 測試；此意向不能冒充已啟用的程式 grant 或當次 Mac 前景狀態。
-- **GPT6.1-sol／xhigh：** Planner／主 Agent，負責問題分析、調度所有 subagents、方案取捨、合併證據與向 Owner 報告。
-- **GPT6-luna／high：** Implementer，僅在明確分工下負責必要實作、最小修復、Unit Tests 與 Integration Tests，向 Sol 報告實作差異及結果；不擔任正式 Independent E2E。
-- **DeepSeek 1017 BYOK Independent E2E：**Ollama Cloud BYOK 的 DeepSeek V4.1 Flash 1017，實際模型 ID 為 `deepseek-v4.1-flash:1017`。由 Owner 啟動全新、獨立的 Codex CLI Session，不作為 Sol 的本機 Subagent；正式 E2E 階段只有 DeepSeek 可操作 LINE GUI，Sol 不得代執行或代寫其判定。
+- **Planner（模型由 Owner 逐階段指定）：**只負責方向、風險、精確 Plan／Contract／交接草案，不負責持續監督 Implementation；需要時才選高階推理模型。
+- **Implementer（模型由 Owner 逐階段指定）：**取得已核准 Plan、固定來源與 Handoff 後，在全新 Session 獨立完成最小必要實作、focused tests、Git/PR 交付；不得兼任自己成果的獨立 Code Reviewer 或 E2E。
+- **Independent E2E（模型由 Owner 逐階段指定）：**在與 Implementer 不共享對話的全新 Session 中執行獨立驗收；若由真實交易 E2E 唯一控制 LINE GUI，須先具備精確版本審查、有效 runtime/grant 與當次前景交接。
 - **外部雲端 Chief Reviewer（Owner 本次指定 ChatGPT／本對話）：**同時擔任獨立 Plan Reviewer 與實作後的 Independent Code Reviewer；不是 Sol 指派的本機子代理，不在本機 Codex Harness 代理樹內運作，不能被本機 Sol 代審或偽造審查結果。Owner 可日後明確改指定其他雲端模型。由 Owner 將 Plan、PR、完整報告及必要證據交給雲端 Reviewer；只有實際完成的雲端審查才可寫入審查狀態。
 - **可逆導覽**（被動觀察、在已辨識的相簿列表內捲動、點開相簿及返回）：優先在 Mac 真實執行並保留前後證據；不把 LINE 回傳的多個 `AXFocused=true` 當作已證明有多個真正鍵盤焦點。以正確 app／群組／視窗、唯一列表與安全目標區域、可觀察的結果判定。不得點擊無法排除為發訊息、刪除或 Save All 的目標。
 - **正式下載**（Save All、檔案寫入、state mutation）：仍須明確符合資格、排除歷史重複、檢查目的地與派送結果，遵守有效的交易與不重送保護；239 張歷史 VERIFIED 紀錄以及已人工備份的 65 張相簿不可以重複 Save All。
@@ -31,21 +31,21 @@
 
 ## 多代理協作、獨立審查與完成證據
 
-本節針對本專案修正「過度管理、實作提前交差、共同錯誤假設、假驗收」的風險。**兩道外部雲端審查（Plan Review、Implementation Code Review）由 Owner 本次指定的 ChatGPT 擔任；本機代理樹只保留 Sol 主控與 Luna/high Implementer。正式 Independent E2E 由 Owner 另行啟動獨立 Codex CLI Session，使用 Ollama Cloud BYOK `deepseek-v4.1-flash:1017`，不屬 Sol 的子代理。**優先執行真正能推進兩本 LINE 相簿 Save All 的工作，不為每個小修補新增代理或審查循環。本節是角色／工作流契約，不表示 Codex CLI 自動具備硬體／權限隔離，也不改寫上層 Harness、執行時 grant 或交易 ledger。
+本節針對本專案修正「過度管理、實作提前交差、共同錯誤假設、假驗收」的風險。**角色是 Planner／外部 Plan Reviewer／Implementer／外部 Code Reviewer／Independent E2E；實際模型與 Provider 每輪由 Owner 決定。ChatGPT 目前為 Owner 指派的外部流程管控者及兩道 Reviewer，不是本機常駐監督 Agent。**依本檔「外部審查與 GitHub Handoff 接力 SOP」進行，保留上層 Harness、執行時 grant、交易 ledger 與真實來源契約。
 
 ### 角色與不得混淆的兩道外部審查、實作及獨立 E2E
 
-1. **Plan / GPT6.1-sol（xhigh）主控：**由原始 Owner 目標推導可驗證的 Acceptance Criteria（AC）、不做事項、實機先後順序、候選環境與風險；先查最新真實失敗及程式入口，拆成最小的有界工作包。Sol 決定架構、跨模組整合、修復優先順序與派工，但不代替獨立驗收或以進度敘述裁定 PASS。若指定模型／推理模式不可用，記錄實際模型及替代決策，不能冒稱已使用指定模型。
+1. **Plan / Planner（本輪 Owner 指定模型）：**只讀取最小現況、釐清風險／業務 AC、凍結 literal 可修改路徑／證據／Plan 與 Contract、產出交給 Implementer 的 Handoff 草案並提交 Draft PR；完成便停止，不監督實作、不長時間管理子代理。模型不可用就記錄實際模型，不偽稱指定型號。
 2. **Independent Plan Reviewer＝Owner 指定的外部雲端 ChatGPT（本機 Harness 外）：**Sol 完成新 Plan 或重大修訂後，先固定 Plan revision／SHA，連同 **Owner 原始需求、真實 LINE 證據、AC 與保護條件**提交 GitHub／提供 Owner 轉交本對話 ChatGPT。ChatGPT 獨立檢視是否偏離「兩本真實 Save All」、架構假設、正反案例、權限與 AC 可驗性，輸出 `APPROVE_PLAN`／`CHANGES_REQUIRED`／`BLOCKED` 與審查連結；**未取得真實雲端 Plan approval，不得把重大新 Plan 宣稱已核准或進入其正式 Implementation**。Sol／Luna 不能透過本機子代理替代、預填審查意見或覆蓋結論。已核准 Plan 內的有界缺陷修正不必每輪重新 Plan Review；只有目標、架構、授權／資料邊界或 AC 實質變更，才提出精確差異重審。
-3. **Implementation / GPT6-luna（high）：**只接收 Sol 派發的工作包：任務目標與 AC、repo／worktree／base HEAD、授權操作、可修改檔案／排除檔案、接口、真實失敗證據、最低必要測試及交付格式。連續完成工作包，不擅自重定義 AC、不動範圍外程式、不開自己管理的 Reviewer／E2E 代理樹。完成後向 Sol 回報實際 diff／commit、測試命令與結果、未完成 AC、假設及阻塞；`IMPLEMENTATION_DONE` 只能表示工作包完整或逐項明確 BLOCKED，**不代表 E2E PASS**。
-4. **Post-Implementation Independent Code Reviewer＝Owner 指定的外部雲端 ChatGPT（本機 Harness 外）：**Sol 先整合實作、檢查最小 diff 與本地測試，依持續 GitHub 交付規則固定 Commit／push／更新 Draft PR，將**精確 HEAD、核准 Plan SHA、AC、產品來源 diff、實機／測試原始證據、source/runtime hashes、已知 FAIL／NOT_RUN**交由 Owner 轉交雲端 ChatGPT。雲端 Reviewer 獨立查核實際程式、接口、權限邊界、可維護性、錯誤處理、負面案例與實際業務成效，輸出 `APPROVE_IMPLEMENTATION`／`CHANGES_REQUIRED`／`BLOCKED` 及真實可追溯審查連結。**外部 Code Review 與獨立 DeepSeek 1017 E2E 不是同一關卡**；Sol／Luna 不得在本機生成外部批准、由另一個本機 Reviewer 代理自評冒充，或以 Sol 的整合 PASS 取代外部審查。重大實機交易的 Code Review 不得只憑文字報告代替可審查來源；有條件審查／COMMENT／設計接受不能自行升格成正式上線批准。
-5. **Independent E2E / DeepSeek V4.1 Flash 1017（Ollama Cloud BYOK）：**實際模型 ID 為 `deepseek-v4.1-flash:1017`；由 Owner 在**全新、獨立 Codex CLI Session** 啟動，不作為 Sol 的本機 Subagent。僅接收 Owner 原始目標、固定 AC、精確待驗收 Commit／受審來源、必要 runtime／grant／目的地資料及真實證據；不輸入 Sol 完整推理歷史，不以 Implementer 自評或過往 PASS 作為驗收事實。取得真實外部 Code Review 核准、已安裝且與 grant 綁定的精確 source/runtime 及有效前景交接後，DeepSeek 是正式 E2E 唯一 LINE GUI 操作者，獨立核對畫面／AX／SCK、逐檔 SHA-256 與完整 ImageIO 解碼、VERIFIED 讀回及 release。允許唯讀查受審源碼及寫隔離的 E2E 證據／缺陷報告；**不得修改產品程式、原始測試標準、grant、ledger、歷史資料或固定 AC**，既定正式交易寫入僅由核准入口處理。逐項回報 `PASS`／`FAIL`／`BLOCKED`／`NOT_RUN`，附真實 Session／模型、操作與證據 hash。Sol 不得代執行、代寫或覆蓋其判定；FAIL／BLOCKED 具有否決權。修復由 Sol 分析後交 Luna/high，固定新 Commit、完成必要外部 Code Review 後，由新的獨立 DeepSeek Session 重驗受影響項目。A56 Save All 最多一次，未知不得重送；A 的56原圖完整驗證、VERIFIED 讀回及 release 後，才依新的獨立有效 B 交易授權驗收第二本不同 eligible 相簿，不挪用 ONE56 grant。
+3. **Implementation / Implementer（本輪 Owner 指定模型）：**以新的獨立 Session 取得固定的 approved Plan／Contract／GitHub Handoff／Code base，執行限定範圍的最小改動、focused tests 與階段 Git/PR 交付；不擅自更改 AC、安全或授權、不嵌套管理代理。IMPLEMENT 完成不等於 E2E PASS，阻塞須附原始證據與下輪 Handoff。
+4. **Post-Implementation Independent Code Reviewer＝Owner 指定的外部 ChatGPT（目前本對話）：**由 Owner 轉交 Implementer 的精確 PR/HEAD、diff、驗證與接續 E2E Handoff；Reviewer 僅依真實證據判斷 APPROVE_IMPLEMENTATION／CHANGES_REQUIRED／BLOCKED。退回時只交精確缺陷、允許範圍與驗證方式；未獲實際版本核准，不得放行 E2E。外部 Code Review 不等於 runtime grant、正式 GUI 授權或 E2E PASS。
+5. **Independent E2E / Owner 當輪指定模型與 Provider：**全新獨立 Session，不讀 Implementer 推理歷史，不同時控制 LINE。唯讀檢查待驗收程式／AC，不自行修產品或修改標準；對經授權且唯一的真實 GUI／交易流程可執行操作並保留事實、檔案及 state readback。模型與工具能力須由 Session 真實紀錄證明，PASS／FAIL／BLOCKED／NOT_RUN 由它獨立判定。對於 HUMAN_ASSISTED 模式，Owner 才是人工點擊者，不能把人工輸入偽裝成模型 Computer Use PASS。
 6. **Owner／外部雲端 Reviewer 的主權邊界：**Owner 擁有目標、實機／交易授權、驗收標準及雲端審查模型選擇權；目前由本對話 ChatGPT 擔任兩道外部審查。**Sol 只能向 Owner 交付 Plan／PR 審查包，不能指派、取消、干預或取代這兩項雲端審查。**雲端 Reviewer 不受本機 Codex 子代理數量、角色指令、子代理上下文及排程規則支配，但仍依 Owner 原始目標、可讀證據與專案安全／交易契約進行獨立判斷；外部審查不會自動建立可執行 grant、改寫 ledger 或授權 GUI。Owner 後續可明確選用其他雲端模型，須記錄真實模型與審查來源。
 
 ### 子代理調度、執行環境與修復閉環
 
-- **正式 E2E 的獨立交接與 GUI 獨占：**DeepSeek 1017 Session 由 Owner 在 Code Review 與正式交易準備完成後啟動，不由 Sol spawn、沿用本機子代理或代替撰寫判定。交接只提供原始目標、固定 AC、精確來源／runtime／grant、核准入口與目的地、隔離證據寫入位置及停止／回報格式；不傳 Sol 完整推理歷史或預設結果。正式 E2E 期間 Sol／Luna 停止 LINE GUI 輸入。換模型不會建立 runtime grant、改變交易契約、補齊工具能力或證明 OS 隔離，也不能取代尚缺的 Code Review；來源修復後固定新 Commit、完成必要外部 Code Review，再由新的獨立 DeepSeek Session 重驗。歷史 Luna 驗收紀錄保留原執行者與結論，不改寫為 DeepSeek 的成果。
-- **少量、有限、可衡量的派工：**預設只啟動確有獨立產物的**本機**子代理，通常同時 1–3 個；外部雲端 Plan Review → Luna Implementation → 外部雲端 Code Review → Owner 啟動的獨立 DeepSeek 1017 Codex CLI Session 依關卡進行（已授權的可逆真實診斷可先取得事實、但不得冒充交易 E2E PASS），不能為了平行而讓正式 E2E 讀取未完成的程式。只有真能拆開的不相交工作才平行；禁止重複相同 Reviewer、無界巢狀 spawn、同一檔案的平行寫入與各代理重跑同一組完整測試。超出預設並行或巢狀派工須 Sol 說明必要性、責任、預算及合併點，並遵守實際 Harness 上限。
+- **正式 E2E 的獨立交接與 GUI 獨占：**Owner 只在外部 Code Review、正式 runtime/grant／前景條件符合後啟動當輪指定的 E2E Session。只傳固定 AC、精確 Commit、runtime/grant、核准入口、隔離證據位置與階段 Handoff，不傳實作推理歷史或預設 PASS。同一時間只有一位合法 GUI 操作者；HUMAN_ASSISTED 模式由 Owner 輸入、E2E Agent 觀察驗證。換模型不會授權交易或補齊工具能力。
+- **少量、有限、可衡量的派工：**預設每個階段只有一個主 Session、零個額外子代理；真正可平行且有不相交寫入範圍才按核准 Plan 與 Harness 限制分工。外部 ChatGPT 審查後由 Owner 發出下一階段 Prompt；禁止長時間高階主代理監控、巢狀代理樹、重複審查同一內容或無新資訊的修復循環。
 - **環境先對帳：**每個工作包先確認 Git remote／root／worktree／branch／base SHA、可修改範圍、工具版本、Python／Swift 或 Container、實際 macOS LINE 實例／window、TCC／GUI 授權及測試目的地。實作可用獨立 worktree；E2E 優先使用固定 Commit 的唯讀／隔離 worktree 與獨立證據輸出，禁止與 Implementer 共寫測試、程式或驗收基準。不同 Session 不等於隔離檔案系統／憑證／macOS 前景：若共享資源，須明確限制寫入者，真實 LINE GUI 同時只能有一個操作 owner。
 - **不中斷正常 Worker：**Sol 在事先約定的里程碑檢查進度，先查工具是否仍執行、是否有新證據；不可只因暫時沒有輸出、輪詢逾時便中止正在有效工作的 Luna，也不可高頻輪詢或每輪重建子代理。明確小修由原 Implementer 完成；跨模組／證據矛盾由 Sol 分析後再派工；需修改架構／AC 才回 Plan Review。相同根因若連續兩次修復沒有新證據或同樣失敗，停止相同派工，先做第一性原理診斷及必要升級；不能用換模型或新 Session 假裝已修復。
 - **禁止提前結案：**Implementer 每項 AC 必須標明完成／未完成／阻塞；Sol 應檢查是否真的整合到指定版本並完成必要測試，不能因 Worker 表示「本輪完成」就宣布整個任務完成。**雲端** Code Review 的 CHANGES_REQUIRED 先退修、固定新 HEAD 後再次送雲端審查；E2E 的 FAIL／BLOCKED 保留完整缺陷與可重現步驟，由 Sol 指派 Implementer 修復，再固定新 Commit、由獨立 E2E 重測受影響與必要回歸項目。結果不明的 Save All 不得盲重送。
@@ -105,3 +105,17 @@ Owner 對本專案各輪已授權範圍內的修正，持續授權以下交付�
 3. **完整報告須能在 GitHub 閱讀：**將本輪 `E2E測試報告.md` 或適用的完整驗證／交接報告，上傳為 PR 中的受版本控制檔案或完整留言；不能只提供使用者本機路徑或摘要。保留成功、失敗、未執行、真機與合成測試的區別及可追溯證據識別；私人照片、群組／人名、檔案清單、敏感授權資料及本機個人路徑先做必要遮蔽，並清楚標示遮蔽範圍，保留本機原始證據。
 4. **把審查入口交給使用者：**完成推送後核對 GitHub 最新 HEAD、PR 與報告內容，向使用者提供 PR 連結、完整報告連結、精確提交版本與尚待審查的事項。**本次 Owner 已指定 ChatGPT 在本對話擔任獨立 Plan Reviewer 與 Post-Implementation Code Reviewer**；Sol 提供精確 Plan／PR、報告、來源及證據連結供 Owner 轉交，不得自行宣稱雲端審查完成。Owner 日後可明確改指定其他雲端模型或供應商，專案不得硬編碼唯一審查供應商。未經 Owner 另行要求，本機 Agent 不代替 Owner 呼叫或冒充外部審查模型。只有真實派送收據或實際審查結果，才能分別聲稱已送審、已完成或通過；貼出 PR 審查請求或通過本地檢查，都不能冒充外部模型已經審查。
 5. **交付不等於核准執行：**沒有另行指示時，PR 維持 Draft，不自動 merge。此持續授權只涵蓋上述 Git／PR 交付，不擴張 GUI、Save All、下載或 protected state 的執行範圍，也不取代適用的獨立審查與精確來源綁定。若推送或建立 PR 實際失敗，保留本輪提交、報告與錯誤，回報真實阻塞及下一步，不冒稱已發布。
+
+
+## 外部審查與 GitHub Handoff 接力 SOP（Owner 核准試行）
+
+完整規則：[`docs/agent-session-handoff/SOP.md`](docs/agent-session-handoff/SOP.md)；範本：[`templates/plan-to-implement.md`](docs/agent-session-handoff/templates/plan-to-implement.md)、[`implement-to-e2e.md`](docs/agent-session-handoff/templates/implement-to-e2e.md)、[`e2e-to-close.md`](docs/agent-session-handoff/templates/e2e-to-close.md)。此節為本專案執行約束；不修改已安裝 Universal Harness 4.8.0 或全域 `~/.codex/AGENTS.md`。
+
+1. **外部管控者／Review Gate：**目前由 Owner 指定本對話 ChatGPT 擔任；負責發階段 Prompt、獨立 Plan Review、Code Review、E2E 證據審查、退回精確修正及通過後發放下一個 Session 的啟動 Prompt。**ChatGPT 不是常駐背景 Agent**，無法自行讀取本機變動或持續監控；必須由 Owner 在此對話提交 PR URL、精確 SHA 或要求檢查，才實際審查。Agent 不可偽造外部裁決、私自放行或填寫機器批准收據。
+2. **模型配置可變、角色獨立：**Planner、Implementer、E2E 的具體模型／訂閱／Provider 由 Owner 在每個階段開始前指定；外部 Reviewer 可建議但不可自動替換。預設高階模型只作一次性 Planner／必要疑難審議；Implementation 和 E2E 可用低成本 BYOK，但驗收須獨立新 Session。即使相同模型，僅能稱 Session 獨立，不能冒稱跨模型獨立。
+3. **PLAN → ChatGPT Review：**Planner 依 Harness v4.8.0 `01_plan_prompt.md` 凍結 `plan.md`、schema v3 契約（及可用的 controller 產物）、本輪 `handoff.md` 初稿，Commit／Push 並建立或更新一個該階段的 Draft PR。須提供 exact HEAD、Plan/contract SHA、範圍、AC、風險、最小證據和下一階段接手 Prompt。Owner 將 GitHub PR 交 ChatGPT；`CHANGES_REQUIRED` 僅修被退回的具體問題，再推新 SHA 重審。通過後由外部 Reviewer 提供最終「模型可更換」的新 Session Boot Prompt。
+4. **Handoff 是不可省略的交接產物：**每個交接都使用對應 Markdown 範本，**首段為可直接貼給接手者的 Boot Prompt**。每份明確記錄原目標、已接受 AC／Plan、精確來源與 SHA、角色／允許動作／禁區、證據／驗證、真正剩餘阻塞、可重現下一步、停止條件、狀態與收據。先固定 GitHub Commit 才給下一個 Session。模板屬規格，不直接當已核准的具體任務 Handoff。Harness 控制器如可真正編譯 `handoff.json`、`handoff.md`，必須保留其與已審機器契約的原始 bytes／receipt；人工導覽 Handoff 不能取代或偽造它。
+5. **IMPLEMENT → ChatGPT Code Review：**Implementer 在獨立 Session 只按核准 Plan 及 Handoff 改動，執行 focused tests，產出實際 diff、結果、精確 source／runtime 身份及下一份 `implement-to-e2e` Handoff，Commit／Push／發佈對應 Draft PR。Owner 將 PR 與 SHA 轉給 ChatGPT；退回只修必要問題。通過後仍須核對已安裝 runtime、有效交易 grant 和當次 Mac 前景，才能進入真實 E2E。
+6. **E2E → ChatGPT 結案／修復判定：**由 Owner 指定另一個全新 Session、固定 reviewed Commit、獨立驗收真實結果及證據；產出 `e2e-to-close` Handoff、證據 Manifest、PASS／FAIL／BLOCKED／NOT_RUN，Commit／Push／提交階段 PR 或更新同範圍報告 PR。ChatGPT 審核後才建議結案、精確返工或重大重新規劃。E2E 不得一邊測試一邊改產品、不得在 Save All 不明時重送。
+7. **PR／合併與成本紀律：**階段有新可交付差異才開／更新 Draft PR，避免空 PR 或為同一變更重複開 PR；應依 Git 依賴使用明確的 base/head，避免將未核准產品分支誤合併主線。未經 Owner 決定不自動 Merge。每次 Git Commit body 保留「意圖／做了什麼／驗證與結果／下一步的建議」，保護 dirty／private 工作。每個 root issue 遵守 Harness 3 次有資訊嘗試／連續 2 次無新資訊停止；不得因新 Session 重置嘗試或歷史交易計數。無關的大型 log／整段聊天 export 不放進新 Session。
+8. **風險／批准契約：**Harness 4.8.0 QUICK／STANDARD／CRITICAL 風險路線及要求仍有效。正式 LINE 原圖下載與 canonical ledger 是 CRITICAL。外部 Review 留言不能憑空成為 Harness controller receipt 或 `PROJECT_IMPLEMENTATION_REVIEW_REQUIRED` 所需的精確機器批准；Review、Deployment、Runtime grant、Owner 操作授權和 E2E 是不同關卡。既有 HUMAN_ASSISTED／AUTO 模式不得混用證據，239 張歷史 VERIFIED、65 張人工排除相簿及未知派送不重送的保護不得變更。
