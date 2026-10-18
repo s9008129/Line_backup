@@ -24,7 +24,7 @@
 - **Planner（模型由 Owner 逐階段指定）：**只負責方向、風險、精確 Plan／Contract／交接草案，不負責持續監督 Implementation；需要時才選高階推理模型。
 - **Implementer（模型由 Owner 逐階段指定）：**取得已核准 Plan、固定來源與 Handoff 後，在全新 Session 獨立完成最小必要實作、focused tests、Git/PR 交付；不得兼任自己成果的獨立 Code Reviewer 或 E2E。
 - **Independent E2E（模型由 Owner 逐階段指定）：**在與 Implementer 不共享對話的全新 Session 中執行獨立驗收；若由真實交易 E2E 唯一控制 LINE GUI，須先具備精確版本審查、有效 runtime/grant 與當次前景交接。
-- **外部雲端 Chief Reviewer（Owner 本次指定 ChatGPT／本對話）：**同時擔任獨立 Plan Reviewer 與實作後的 Independent Code Reviewer；不是 Sol 指派的本機子代理，不在本機 Codex Harness 代理樹內運作，不能被本機 Sol 代審或偽造審查結果。Owner 可日後明確改指定其他雲端模型。由 Owner 將 Plan、PR、完整報告及必要證據交給雲端 Reviewer；只有實際完成的雲端審查才可寫入審查狀態。
+- **外部雲端 Chief Reviewer（Owner 本次指定 ChatGPT／本對話）：**同時擔任獨立 Plan Reviewer 與實作後的 Independent Code Reviewer；不是 Planner／Implementer 指派的本機子代理，不在本機 Codex Harness 代理樹內運作，不能被任何本機 Agent 代審或偽造審查結果。Owner 可日後明確改指定其他雲端模型。由 Owner 將 Plan、PR、完整報告及必要證據交給雲端 Reviewer；只有實際完成的雲端審查才可寫入審查狀態。
 - **可逆導覽**（被動觀察、在已辨識的相簿列表內捲動、點開相簿及返回）：優先在 Mac 真實執行並保留前後證據；不把 LINE 回傳的多個 `AXFocused=true` 當作已證明有多個真正鍵盤焦點。以正確 app／群組／視窗、唯一列表與安全目標區域、可觀察的結果判定。不得點擊無法排除為發訊息、刪除或 Save All 的目標。
 - **正式下載**（Save All、檔案寫入、state mutation）：仍須明確符合資格、排除歷史重複、檢查目的地與派送結果，遵守有效的交易與不重送保護；239 張歷史 VERIFIED 紀錄以及已人工備份的 65 張相簿不可以重複 Save All。
 - **政策與執行分界：**AGENTS.md 是工作規範，不是執行時授權。專案目前硬編碼於 `mac/analyzer.mjs` 的焦點條件、`src/line_backup_batch/store.py` 的 `2/2` 觀察配額、`two_album_entry.mjs` 的 ledger 初始化及正式 C1／點擊限制，必須透過明確的源碼／政策修訂與適用授權才能改變行為；不得更改已使用計數、改名 checkpoint 偷渡配額、重置 ledger 或重開已關閉 grant。可由 Owner 授權建立有界的獨立可逆診斷入口，保留 append-only 原始證據，不將其結果冒充正式 Save All gate PASS。
@@ -36,19 +36,19 @@
 ### 角色與不得混淆的兩道外部審查、實作及獨立 E2E
 
 1. **Plan / Planner（本輪 Owner 指定模型）：**只讀取最小現況、釐清風險／業務 AC、凍結 literal 可修改路徑／證據／Plan 與 Contract、產出交給 Implementer 的 Handoff 草案並提交 Draft PR；完成便停止，不監督實作、不長時間管理子代理。模型不可用就記錄實際模型，不偽稱指定型號。
-2. **Independent Plan Reviewer＝Owner 指定的外部雲端 ChatGPT（本機 Harness 外）：**Sol 完成新 Plan 或重大修訂後，先固定 Plan revision／SHA，連同 **Owner 原始需求、真實 LINE 證據、AC 與保護條件**提交 GitHub／提供 Owner 轉交本對話 ChatGPT。ChatGPT 獨立檢視是否偏離「兩本真實 Save All」、架構假設、正反案例、權限與 AC 可驗性，輸出 `APPROVE_PLAN`／`CHANGES_REQUIRED`／`BLOCKED` 與審查連結；**未取得真實雲端 Plan approval，不得把重大新 Plan 宣稱已核准或進入其正式 Implementation**。Sol／Luna 不能透過本機子代理替代、預填審查意見或覆蓋結論。已核准 Plan 內的有界缺陷修正不必每輪重新 Plan Review；只有目標、架構、授權／資料邊界或 AC 實質變更，才提出精確差異重審。
+2. **Independent Plan Reviewer＝Owner 指定的外部雲端 ChatGPT（本機 Harness 外）：**Planner 完成新 Plan 或重大修訂後，先固定 Plan revision／SHA，連同 **Owner 原始需求、真實 LINE 證據、AC 與保護條件**提交 GitHub／提供 Owner 轉交本對話 ChatGPT。ChatGPT 獨立檢視是否偏離「兩本真實 Save All」、架構假設、正反案例、權限與 AC 可驗性，輸出 `APPROVE_PLAN`／`CHANGES_REQUIRED`／`BLOCKED` 與審查連結；**未取得真實雲端 Plan approval，不得把重大新 Plan 宣稱已核准或進入其正式 Implementation**。Planner／Implementer 不能透過本機子代理替代、預填審查意見或覆蓋結論。已核准 Plan 內的有界缺陷修正不必每輪重新 Plan Review；只有目標、架構、授權／資料邊界或 AC 實質變更，才提出精確差異重審。
 3. **Implementation / Implementer（本輪 Owner 指定模型）：**以新的獨立 Session 取得固定的 approved Plan／Contract／GitHub Handoff／Code base，執行限定範圍的最小改動、focused tests 與階段 Git/PR 交付；不擅自更改 AC、安全或授權、不嵌套管理代理。IMPLEMENT 完成不等於 E2E PASS，阻塞須附原始證據與下輪 Handoff。
 4. **Post-Implementation Independent Code Reviewer＝Owner 指定的外部 ChatGPT（目前本對話）：**由 Owner 轉交 Implementer 的精確 PR/HEAD、diff、驗證與接續 E2E Handoff；Reviewer 僅依真實證據判斷 APPROVE_IMPLEMENTATION／CHANGES_REQUIRED／BLOCKED。退回時只交精確缺陷、允許範圍與驗證方式；未獲實際版本核准，不得放行 E2E。外部 Code Review 不等於 runtime grant、正式 GUI 授權或 E2E PASS。
 5. **Independent E2E / Owner 當輪指定模型與 Provider：**全新獨立 Session，不讀 Implementer 推理歷史，不同時控制 LINE。唯讀檢查待驗收程式／AC，不自行修產品或修改標準；對經授權且唯一的真實 GUI／交易流程可執行操作並保留事實、檔案及 state readback。模型與工具能力須由 Session 真實紀錄證明，PASS／FAIL／BLOCKED／NOT_RUN 由它獨立判定。對於 HUMAN_ASSISTED 模式，Owner 才是人工點擊者，不能把人工輸入偽裝成模型 Computer Use PASS。
-6. **Owner／外部雲端 Reviewer 的主權邊界：**Owner 擁有目標、實機／交易授權、驗收標準及雲端審查模型選擇權；目前由本對話 ChatGPT 擔任兩道外部審查。**Sol 只能向 Owner 交付 Plan／PR 審查包，不能指派、取消、干預或取代這兩項雲端審查。**雲端 Reviewer 不受本機 Codex 子代理數量、角色指令、子代理上下文及排程規則支配，但仍依 Owner 原始目標、可讀證據與專案安全／交易契約進行獨立判斷；外部審查不會自動建立可執行 grant、改寫 ledger 或授權 GUI。Owner 後續可明確選用其他雲端模型，須記錄真實模型與審查來源。
+6. **Owner／外部雲端 Reviewer 的主權邊界：**Owner 擁有目標、實機／交易授權、驗收標準及雲端審查模型選擇權；目前由本對話 ChatGPT 擔任兩道外部審查。**當階段 Agent 只能向 Owner 交付 Plan／PR 審查包，不能指派、取消、干預或取代這兩項雲端審查。**雲端 Reviewer 不受本機 Codex 子代理數量、角色指令、子代理上下文及排程規則支配，但仍依 Owner 原始目標、可讀證據與專案安全／交易契約進行獨立判斷；外部審查不會自動建立可執行 grant、改寫 ledger 或授權 GUI。Owner 後續可明確選用其他雲端模型，須記錄真實模型與審查來源。
 
 ### 子代理調度、執行環境與修復閉環
 
 - **正式 E2E 的獨立交接與 GUI 獨占：**Owner 只在外部 Code Review、正式 runtime/grant／前景條件符合後啟動當輪指定的 E2E Session。只傳固定 AC、精確 Commit、runtime/grant、核准入口、隔離證據位置與階段 Handoff，不傳實作推理歷史或預設 PASS。同一時間只有一位合法 GUI 操作者；HUMAN_ASSISTED 模式由 Owner 輸入、E2E Agent 觀察驗證。換模型不會授權交易或補齊工具能力。
 - **少量、有限、可衡量的派工：**預設每個階段只有一個主 Session、零個額外子代理；真正可平行且有不相交寫入範圍才按核准 Plan 與 Harness 限制分工。外部 ChatGPT 審查後由 Owner 發出下一階段 Prompt；禁止長時間高階主代理監控、巢狀代理樹、重複審查同一內容或無新資訊的修復循環。
 - **環境先對帳：**每個工作包先確認 Git remote／root／worktree／branch／base SHA、可修改範圍、工具版本、Python／Swift 或 Container、實際 macOS LINE 實例／window、TCC／GUI 授權及測試目的地。實作可用獨立 worktree；E2E 優先使用固定 Commit 的唯讀／隔離 worktree 與獨立證據輸出，禁止與 Implementer 共寫測試、程式或驗收基準。不同 Session 不等於隔離檔案系統／憑證／macOS 前景：若共享資源，須明確限制寫入者，真實 LINE GUI 同時只能有一個操作 owner。
-- **不中斷正常 Worker：**Sol 在事先約定的里程碑檢查進度，先查工具是否仍執行、是否有新證據；不可只因暫時沒有輸出、輪詢逾時便中止正在有效工作的 Luna，也不可高頻輪詢或每輪重建子代理。明確小修由原 Implementer 完成；跨模組／證據矛盾由 Sol 分析後再派工；需修改架構／AC 才回 Plan Review。相同根因若連續兩次修復沒有新證據或同樣失敗，停止相同派工，先做第一性原理診斷及必要升級；不能用換模型或新 Session 假裝已修復。
-- **禁止提前結案：**Implementer 每項 AC 必須標明完成／未完成／阻塞；Sol 應檢查是否真的整合到指定版本並完成必要測試，不能因 Worker 表示「本輪完成」就宣布整個任務完成。**雲端** Code Review 的 CHANGES_REQUIRED 先退修、固定新 HEAD 後再次送雲端審查；E2E 的 FAIL／BLOCKED 保留完整缺陷與可重現步驟，由 Sol 指派 Implementer 修復，再固定新 Commit、由獨立 E2E 重測受影響與必要回歸項目。結果不明的 Save All 不得盲重送。
+- **不中斷正常 Worker：**本次流程不設高階常駐監督者；各階段由當輪 Agent 在約定里程碑自主回報。不可只因暫時沒有輸出或輪詢逾時便中止有效工作，也不可高頻輪詢或重建子代理。明確小修由原 Implementer 完成；跨模組／證據矛盾由當輪 Agent 寫入最小問題包，交 Owner 轉外部 ChatGPT 審議；需修改架構／AC 才回 Plan Review。相同根因若連續兩次修復沒有新證據或同樣失敗，停止相同派工，先做第一性原理診斷及必要升級；不能用換模型或新 Session 假裝已修復。
+- **禁止提前結案：**Implementer 每項 AC 必須標明完成／未完成／阻塞；Sol 應檢查是否真的整合到指定版本並完成必要測試，不能因 Worker 表示「本輪完成」就宣布整個任務完成。**雲端** Code Review 的 CHANGES_REQUIRED 先退修、固定新 HEAD 後再次送雲端審查；E2E 的 FAIL／BLOCKED 保留完整缺陷與可重現步驟，由 Owner 依外部 ChatGPT 精確修復包指定 Implementer 修復，再固定新 Commit、由獨立 E2E 重測受影響與必要回歸項目。結果不明的 Save All 不得盲重送。
 - **版本綁定與驗收裁決：**每次 Plan／實作／Code Review／E2E 交接至少綁定 `task_id`、`plan_revision/sha`、`implementation_commit_sha`、worktree／實際執行環境、AC 清單及每項狀態、實際操作／測試方法、證據引用／SHA、未解缺陷與 `next_action`。獨立 E2E 應提供自己的 Session／執行者資訊與原始證據；舊 Commit 的 PASS 不能自動轉移至新 Commit，來源變更後須做影響分析與必要重驗。未完成項一律留在報告，不得用縮減 AC 或另造成功報告抹除。
 - **用結果衡量，不用代理數量衡量：**每輪在現有 `E2E測試報告.md` 簡記首輪／最終 E2E 通過情形、修復迴圈、人工介入、實際耗時／使用額度（可得時）與驗收後缺陷；優先追蹤真正的 GUI 派送、Save All 次數、逐檔驗證與兩本不同相簿的完整度。不要為了指標再建立大量 Markdown 或反覆執行沒有資訊增益的合成測試。
 
@@ -72,7 +72,7 @@ Owner 在後續對話已明確將本專案短期目標擴展為真實 LINE 連�
 
 ## 階段結束前強制 Commit 與可回溯訊息
 
-**強制觸發：**每當 Agent 準備結束本次 Session、交接至下一個 Session、完成一份 Plan（即使尚待外部審查）、完成一個 Implementation 修復切片、完成一次有實質新結果的驗證／E2E 階段，或因 `FAIL`／`BLOCKED` 暫停時，Sol 必須在回報或主動結束前執行一次 **Checkpoint Commit 檢查**。這是有意義的階段邊界，不是每個工具呼叫或每次測試都製造 Commit。即使整體兩本 Save All 尚未完成，也要保存當前已產生的可交付成果與未解問題，不能等整個 Issue 結束才留下 Git 歷史。
+**強制觸發：**每當 Agent 準備結束本次 Session、交接至下一個 Session、完成一份 Plan（即使尚待外部審查）、完成一個 Implementation 修復切片、完成一次有實質新結果的驗證／E2E 階段，或因 `FAIL`／`BLOCKED` 暫停時，當階段 Agent 必須在回報或主動結束前執行一次 **Checkpoint Commit 檢查**。這是有意義的階段邊界，不是每個工具呼叫或每次測試都製造 Commit。即使整體兩本 Save All 尚未完成，也要保存當前已產生的可交付成果與未解問題，不能等整個 Issue 結束才留下 Git 歷史。
 
 1. **先保存實際成果：**確認 repo／branch／HEAD 與 `git status`，整理本階段真正變更的 Plan、程式、測試、可公開的驗證報告或交接紀錄。必要時更新現有 `E2E測試報告.md` 或 Plan／PR handoff，寫明 PASS、FAIL、BLOCKED、NOT_RUN，及可重現證據。僅逐檔 stage 本輪受權變更；不夾帶不相關 dirty／untracked 檔、私有照片、憑證、原始授權或未遮蔽證據。Plan 待審也可提交，**Commit 不代表 Plan／Code Review／E2E 已獲核准**。
 2. **Git Commit 本體必須有三段完整內容：**不得只在 PR 描述或聊天室寫詳情，不能只留下 `fix issue`、`update files` 一類摘要。使用精準的 `<type>(<scope>): <本階段變更重點>` 作為 Subject；**Commit message body 必須明確包含且填妥「意圖」、「做了什麼」、「下一步的建議」**三個標題。建議同時填入「驗證與結果」，清楚列出實際執行命令、測試／實機狀態、失敗原因、未執行項目與證據參照；不捏造 PASS、不把預期寫成實際執行：
@@ -103,7 +103,7 @@ Owner 對本專案各輪已授權範圍內的修正，持續授權以下交付�
 1. **每輪修正完成即主動交付：**整理本輪差異、完成適用且可執行的驗證，逐檔加入本輪修改，執行 `git add`、`git commit`、`git push`，並在本專案 GitHub 建立 PR；已有涵蓋同一範圍的 PR 時更新該 PR，避免重複建立。保留無關的 dirty／untracked 工作，不得使用整目錄加入而夾帶私人證據或其他修改。即使整體 E2E 尚有阻塞，也應交付可審查的修正，清楚標記失敗、未執行及未完成項目。
 2. **Commit 訊息三要素及 PR 不得省略：**依上節「階段結束前強制 Commit」規則，**每一筆由 Agent 建立的階段性 Commit body** 都必須實際寫出「意圖／做了什麼／下一步的建議」，並附適用的真實驗證結果；PR 標題與說明應概述最後提交的實際內容，但**不能取代 Git Commit 本身的訊息**，也不得沿用過期描述。
 3. **完整報告須能在 GitHub 閱讀：**將本輪 `E2E測試報告.md` 或適用的完整驗證／交接報告，上傳為 PR 中的受版本控制檔案或完整留言；不能只提供使用者本機路徑或摘要。保留成功、失敗、未執行、真機與合成測試的區別及可追溯證據識別；私人照片、群組／人名、檔案清單、敏感授權資料及本機個人路徑先做必要遮蔽，並清楚標示遮蔽範圍，保留本機原始證據。
-4. **把審查入口交給使用者：**完成推送後核對 GitHub 最新 HEAD、PR 與報告內容，向使用者提供 PR 連結、完整報告連結、精確提交版本與尚待審查的事項。**本次 Owner 已指定 ChatGPT 在本對話擔任獨立 Plan Reviewer 與 Post-Implementation Code Reviewer**；Sol 提供精確 Plan／PR、報告、來源及證據連結供 Owner 轉交，不得自行宣稱雲端審查完成。Owner 日後可明確改指定其他雲端模型或供應商，專案不得硬編碼唯一審查供應商。未經 Owner 另行要求，本機 Agent 不代替 Owner 呼叫或冒充外部審查模型。只有真實派送收據或實際審查結果，才能分別聲稱已送審、已完成或通過；貼出 PR 審查請求或通過本地檢查，都不能冒充外部模型已經審查。
+4. **把審查入口交給使用者：**完成推送後核對 GitHub 最新 HEAD、PR 與報告內容，向使用者提供 PR 連結、完整報告連結、精確提交版本與尚待審查的事項。**本次 Owner 已指定 ChatGPT 在本對話擔任獨立 Plan Reviewer 與 Post-Implementation Code Reviewer**；當階段 Agent 提供精確 Plan／PR、報告、來源及證據連結供 Owner 轉交，不得自行宣稱雲端審查完成。Owner 日後可明確改指定其他雲端模型或供應商，專案不得硬編碼唯一審查供應商。未經 Owner 另行要求，本機 Agent 不代替 Owner 呼叫或冒充外部審查模型。只有真實派送收據或實際審查結果，才能分別聲稱已送審、已完成或通過；貼出 PR 審查請求或通過本地檢查，都不能冒充外部模型已經審查。
 5. **交付不等於核准執行：**沒有另行指示時，PR 維持 Draft，不自動 merge。此持續授權只涵蓋上述 Git／PR 交付，不擴張 GUI、Save All、下載或 protected state 的執行範圍，也不取代適用的獨立審查與精確來源綁定。若推送或建立 PR 實際失敗，保留本輪提交、報告與錯誤，回報真實阻塞及下一步，不冒稱已發布。
 
 
