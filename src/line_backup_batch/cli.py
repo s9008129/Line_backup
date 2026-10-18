@@ -5,10 +5,12 @@ import binascii
 import json
 import os
 from pathlib import Path
+import posixpath
 import re
 import stat
 import sys
-from line_backup_acceptance.common import AcceptanceError
+import unicodedata
+from line_backup_acceptance.common import AcceptanceError,HUMAN_EXECUTION_MODE,HUMAN_INPUT_ACTOR
 from line_backup_acceptance.project_binding import ProjectReader,strict_json,sha
 from .schema import require
 from .store import Store
@@ -30,18 +32,51 @@ PROJECT_GRANT_KEYS={
     'project_profile','owner_decision','external_review','live_readiness','decoder_binding','entry_binding'
 }
 ONE56_GRANT_KEYS=PROJECT_GRANT_KEYS|{'single_album_route'}
+HUMAN_GRANT_FIELDS={'execution_mode','input_actor','observer_session_id'}
+ONE56_HUMAN_GRANT_KEYS=ONE56_GRANT_KEYS|HUMAN_GRANT_FIELDS
 PROJECT_SCOPE='LINE_TWO_ALBUM_PILOT/1'
 PROJECT_DIR='harness-development/line-two-album-pilot-20261014'
 ONE56_GRANT_VERSION='line-two-album-project-grant-1'
 ONE56_DECISION='AUTHORIZE_ONE_REAL_56_PHOTO_TRANSACTION'
 ONE56_ENTRY='runSingleAlbumPilot'
+ONE56_HUMAN_ENTRY='runHumanAssistedSingleAlbumPilot'
 ONE56_FINGERPRINT={'start_date':'2024-05-27','end_date':'2024-05-31','expected_images':56}
+ONE56_HUMAN_FINGERPRINT={'start_date':'2024-05-27','end_date':'2024-05-31','expected_images':56}
 ONE56_PROVIDER_ACTOR='s9008129'
 ONE56_PROVIDER_REPOSITORY='https://api.github.com/repos/s9008129/Line_backup'
 ONE56_PULL_REQUEST_API=ONE56_PROVIDER_REPOSITORY+'/pulls/10'
 ONE56_PULL_REQUEST_HTML='https://github.com/s9008129/Line_backup/pull/10'
 ONE56_REQUIRED_OPERATIONS={'begin','admit','prepare','calibrate','intent','dispatch','finalize','stop','release',
     'gui_reserve','gui_consume','gui_phase','gui_observe'}
+ONE56_HUMAN_REQUIRED_OPERATIONS=ONE56_REQUIRED_OPERATIONS-{'gui_phase'}
+ONE56_HUMAN_INPUT_STAGES=('CARD','CALIBRATION','SAVE_ALL','CHOOSER_PATH','CHOOSER_CONFIRM')
+ONE56_HUMAN_STAGE_RESERVATIONS={
+    'CARD':('album_open',1,['A.CARD']),
+    'CALIBRATION':('menu_calibration',2,['A.CAL_OPEN','A.CAL_DISMISS']),
+    'SAVE_ALL':('dispatch_inputs',2,['A.ATOMIC_ELLIPSIS','A.SAVE_ALL']),
+    'CHOOSER_PATH':('chooser_inputs',4,['A.GO_TO_FOLDER','A.SET_PATH','A.PATH_RETURN','A.CHOOSER_CONFIRM']),
+    'CHOOSER_CONFIRM':('chooser_inputs',4,['A.GO_TO_FOLDER','A.SET_PATH','A.PATH_RETURN','A.CHOOSER_CONFIRM'])}
+ONE56_HUMAN_RESERVATION_KEYS={'stage','kind','count','run_id','owner','slots'}
+ONE56_HUMAN_CONSUME_KEYS={'reservation_id','outcome','request_ref','result_ref','request_id','result_id',
+    'evidence_refs','execution_mode','input_actor','observer_session_id'}
+ONE56_HUMAN_REQUEST_KEYS={'version','kind','task_id','grant_sha256','execution_mode','input_actor',
+    'observer_session_id','source_sha256','run_id','action_id','request_stage','fingerprint',
+    'destination','reservation_ids','request_id','issued_at','instruction','raw_evidence_refs'}
+ONE56_HUMAN_RESULT_KEYS={'version','kind','task_id','grant_sha256','execution_mode','input_actor',
+    'observer_session_id','source_sha256','run_id','action_id','request_stage','fingerprint',
+    'destination','reservation_ids','request_id','result_id','recorded_at','operator_reported',
+    'observed','outcome','raw_evidence_refs'}
+ONE56_HUMAN_STAGE_INSTRUCTIONS={
+    'CARD':'Open only the bound A56 album card; do not use Save All in this step.',
+    'CALIBRATION':'Open the album menu, verify the Save All row is present, then close the menu without choosing Save All.',
+    'SAVE_ALL':'Use Save All exactly once. If the result is uncertain, stop; never repeat it.',
+    'CHOOSER_PATH':"Enter the exact bound destination in LINE's folder chooser and return to the chooser; do not confirm yet.",
+    'CHOOSER_CONFIRM':'Confirm the exact empty destination once. If confirmation is uncertain, stop; never repeat it.'}
+ONE56_HUMAN_ACTION_SLOTS={slot for _,_,slots in ONE56_HUMAN_STAGE_RESERVATIONS.values() for slot in slots}
+ONE56_HUMAN_MENU_ATTESTATION_KEYS={'kind','execution_mode','input_actor','observer_session_id','observed_at',
+    'detail_ref','menu_ref','closure_ref','attestation_ref'}
+ONE56_HUMAN_FAKE_TOKENS=('cuareturned','classifierpass','precision','exactlyonce','fullautomaticpass',
+    'scksupportpass','framesupportpass')
 ONE56_CALLBACK_ROLES={
     PROJECT_DIR+'/mac_runtime.mjs':{'cli_bridge','menu_lineage','retainer'},
     PROJECT_DIR+'/mac/analyzer.mjs':{'capture_analyzer'},
@@ -284,6 +319,177 @@ def _one56_ref(ref,bundle,name):
         and isinstance(ref.get('sha256'),str) and re.fullmatch(r'[0-9a-f]{64}',ref['sha256']) is not None,
         'ONE56_BUNDLE_MIXED')
 
+def _one56_normalized(value):
+    return ''.join(char for char in value.lower() if char.isalnum())
+
+def _one56_has_fabricated_token(value):
+    normalized=_one56_normalized(value)
+    return any(token in normalized for token in ONE56_HUMAN_FAKE_TOKENS)
+
+def one56_execution_mode(grant):
+    """Classify the explicit A56 mode. Partial or contradictory bindings fail closed."""
+    present=HUMAN_GRANT_FIELDS.intersection(grant) if isinstance(grant,dict) else set()
+    if not present:return 'AUTO'
+    require(present==HUMAN_GRANT_FIELDS and grant.get('grant_version')==ONE56_GRANT_VERSION
+        and grant.get('single_album_route') is True
+        and grant.get('execution_mode')==HUMAN_EXECUTION_MODE
+        and grant.get('input_actor')==HUMAN_INPUT_ACTOR
+        and isinstance(grant.get('observer_session_id'),str) and grant['observer_session_id']
+        and grant['observer_session_id']==grant['observer_session_id'].strip()
+        and not any(ord(char)<32 for char in grant['observer_session_id']),'HUMAN_GRANT_BINDING')
+    return HUMAN_EXECUTION_MODE
+
+def _one56_expected_operations(mode):
+    return ONE56_HUMAN_REQUIRED_OPERATIONS if mode==HUMAN_EXECUTION_MODE else ONE56_REQUIRED_OPERATIONS
+
+def _one56_expected_entry(mode):
+    return ONE56_HUMAN_ENTRY if mode==HUMAN_EXECUTION_MODE else ONE56_ENTRY
+
+def _one56_expected_fingerprint(mode):
+    return ONE56_HUMAN_FINGERPRINT if mode==HUMAN_EXECUTION_MODE else ONE56_FINGERPRINT
+
+def _one56_reject_fabricated_claims(value,path='human-document'):
+    if isinstance(value,dict):
+        for key,child in value.items():
+            require(isinstance(key,str) and not _one56_has_fabricated_token(key),
+                'HUMAN_INPUT_FABRICATED_CLAIM')
+            if isinstance(child,str):
+                require(not _one56_has_fabricated_token(child),
+                    'HUMAN_INPUT_FABRICATED_CLAIM')
+            _one56_reject_fabricated_claims(child,f'{path}.{key}')
+    elif isinstance(value,list):
+        for index,child in enumerate(value):
+            if isinstance(child,str):
+                require(not _one56_has_fabricated_token(child),
+                    'HUMAN_INPUT_FABRICATED_CLAIM')
+            _one56_reject_fabricated_claims(child,f'{path}[{index}]')
+    elif isinstance(value,str):
+        require(not _one56_has_fabricated_token(value),'HUMAN_INPUT_FABRICATED_CLAIM')
+
+def _one56_reject_human_markers(value):
+    """AUTO authority must not carry any human-mode marker in a reused artifact."""
+    if isinstance(value,dict):
+        for key,child in value.items():
+            normalized=_one56_normalized(key) if isinstance(key,str) else ''
+            require(normalized not in ('observersessionid','inputactor'),'ONE56_MODE_MIXED')
+            if normalized=='executionmode':
+                require(isinstance(child,str) and _one56_normalized(child)=='auto','ONE56_MODE_MIXED')
+            if normalized=='operations' and isinstance(child,list):
+                require(not (all(isinstance(item,str) for item in child)
+                    and set(child)==ONE56_HUMAN_REQUIRED_OPERATIONS),'ONE56_MODE_MIXED')
+            if normalized=='kind' and isinstance(child,str):
+                require(_one56_normalized(child) not in ('humaninputrequest1','humaninputresult1',
+                    'humaninputunknownlatch1','humanmenuattestation1'),'ONE56_MODE_MIXED')
+            if normalized=='requeststage' and isinstance(child,str):
+                require(child.upper() not in ONE56_HUMAN_INPUT_STAGES,'ONE56_MODE_MIXED')
+            if normalized=='entrymethod' and isinstance(child,str):
+                require(_one56_normalized(child)!=_one56_normalized(ONE56_HUMAN_ENTRY),
+                    'ONE56_MODE_MIXED')
+        for child in value.values():_one56_reject_human_markers(child)
+    elif isinstance(value,list):
+        for child in value:_one56_reject_human_markers(child)
+
+def _one56_human_evidence_ref(ref,*,json_required=False):
+    return (isinstance(ref,dict) and set(ref)=={'path','bytes','sha256'}
+        and isinstance(ref.get('path'),str) and ref['path'].startswith('harness-development/')
+        and '/private/' in ref['path'] and (not json_required or ref['path'].endswith('.json'))
+        and all(part not in ('','.','..') for part in ref['path'].split('/'))
+        and type(ref.get('bytes')) is int and ref['bytes']>0
+        and isinstance(ref.get('sha256'),str) and re.fullmatch(r'[0-9a-f]{64}',ref['sha256']) is not None)
+
+def _one56_human_hash(value):
+    return isinstance(value,str) and re.fullmatch(r'[0-9a-f]{64}',value) is not None
+
+def _one56_human_refs(value,*,json_required=False):
+    return (isinstance(value,list) and value
+        and all(_one56_human_evidence_ref(ref,json_required=json_required) for ref in value)
+        and len({(ref['path'],ref['bytes'],ref['sha256']) for ref in value})==len(value))
+
+def _one56_human_action_matches(stage,action_id):
+    if stage in ('CARD','CALIBRATION'):return action_id is None
+    return stage in ONE56_HUMAN_INPUT_STAGES and isinstance(action_id,str) and bool(action_id)
+
+def _one56_validate_human_input_document(value,grant):
+    kind=value.get('kind')
+    keys=ONE56_HUMAN_REQUEST_KEYS if kind=='human-input-request-1' else ONE56_HUMAN_RESULT_KEYS
+    require(set(value)==keys and value.get('version')==1 and kind in
+        ('human-input-request-1','human-input-result-1'),'ONE56_MODE_MIXED')
+    require(value.get('execution_mode')==HUMAN_EXECUTION_MODE
+        and value.get('input_actor')==HUMAN_INPUT_ACTOR
+        and value.get('observer_session_id')==grant['observer_session_id']
+        and value.get('task_id')==grant['task_id']
+        and _one56_human_hash(value.get('grant_sha256'))
+        and value.get('source_sha256')==grant['source_sha256'],
+        'HUMAN_INPUT_BINDING')
+    for key in ('run_id','request_id','request_stage','destination'):
+        require(isinstance(value.get(key),str) and value[key],'HUMAN_INPUT_BINDING')
+    require(value['request_stage'] in ONE56_HUMAN_INPUT_STAGES
+        and _one56_human_action_matches(value['request_stage'],value.get('action_id'))
+        and value.get('fingerprint')==ONE56_HUMAN_FINGERPRINT
+        and _one56_human_destination(value['destination'])
+        and isinstance(value.get('reservation_ids'),list) and len(value['reservation_ids'])==1
+        and isinstance(value['reservation_ids'][0],str) and value['reservation_ids'][0]
+        and _one56_human_refs(value.get('raw_evidence_refs')),'HUMAN_INPUT_BINDING')
+    _one56_reject_fabricated_claims(value,'human-input')
+    if kind=='human-input-request-1':
+        require(isinstance(value.get('issued_at'),str) and value['issued_at']
+            and value.get('instruction')==ONE56_HUMAN_STAGE_INSTRUCTIONS[value['request_stage']],
+            'HUMAN_INPUT_BINDING')
+        return
+    require(isinstance(value.get('result_id'),str) and value['result_id']
+        and value['result_id']!=value['request_id']
+        and isinstance(value.get('recorded_at'),str) and value['recorded_at']
+        and value.get('outcome') in ('HUMAN_REPORTED_RETURNED','UNKNOWN','REFUSED'),
+        'HUMAN_INPUT_OUTCOME')
+    operator=value.get('operator_reported');observed=value.get('observed')
+    require(isinstance(operator,dict)
+        and set(operator)=={'status','outcome','reported_at','statement','raw_response_ref'}
+        and operator.get('status')=='OPERATOR_REPORTED'
+        and operator.get('outcome') in ('HUMAN_REPORTED_RETURNED','UNKNOWN','REFUSED')
+        and isinstance(operator.get('reported_at'),str) and operator['reported_at']
+        and isinstance(operator.get('statement'),str) and operator['statement']
+        and _one56_human_evidence_ref(operator.get('raw_response_ref')),
+        'HUMAN_INPUT_OPERATOR_REPORT')
+    require(isinstance(observed,dict)
+        and set(observed)=={'status','facts','observed_at','raw_evidence_refs'}
+        and observed.get('status') in ('OBSERVED','UNKNOWN')
+        and isinstance(observed.get('facts'),dict)
+        and (observed.get('observed_at') is None if observed.get('status')=='UNKNOWN'
+            else isinstance(observed.get('observed_at'),str) and observed['observed_at'])
+        and _one56_human_refs(observed.get('raw_evidence_refs')),'HUMAN_INPUT_OBSERVED')
+    combined=('REFUSED' if operator['outcome']=='REFUSED' else 'UNKNOWN'
+        if operator['outcome']=='UNKNOWN' else 'HUMAN_REPORTED_RETURNED'
+        if observed['status']=='OBSERVED' else 'UNKNOWN')
+    require(value['outcome']==combined,'HUMAN_INPUT_OUTCOME')
+    expected=[];seen=set()
+    for ref in [operator['raw_response_ref'],*observed['raw_evidence_refs']]:
+        key=(ref['path'],ref['bytes'],ref['sha256'])
+        if key not in seen:seen.add(key);expected.append(ref)
+    require(value['raw_evidence_refs']==expected,'HUMAN_INPUT_EVIDENCE_BINDING')
+
+def _one56_human_artifact_binding(document,grant,grant_sha256,code):
+    require(isinstance(grant_sha256,str) and re.fullmatch(r'[0-9a-f]{64}',grant_sha256) is not None
+        and isinstance(document,dict),code)
+    require(document.get('execution_mode')==HUMAN_EXECUTION_MODE
+        and document.get('input_actor')==HUMAN_INPUT_ACTOR
+        and document.get('observer_session_id')==grant['observer_session_id']
+        and document.get('grant_sha256')==grant_sha256
+        and document.get('task_id')==grant['task_id'] and document.get('owner')==grant['owner']
+        and document.get('project_root')==grant['project_root']
+        and document.get('source_sha256')==grant['source_sha256']
+        and document.get('config_sha256')==grant['config_sha256']
+        and document.get('entry_method')==ONE56_HUMAN_ENTRY
+        and document.get('entry_sha256')==grant['entry_binding']['sha256']
+        and document.get('runtime_binding_sha256')==grant['runtime_binding']['sha256']
+        and document.get('producer_binary_sha256')==grant['producer_binary']['sha256']
+        and document.get('decoder_sha256')==grant['decoder_binding']['sha256']
+        and document.get('fingerprint')==ONE56_HUMAN_FINGERPRINT,code)
+    _one56_reject_fabricated_claims(document)
+
+def _one56_require_auto_artifact(document):
+    require(isinstance(document,dict),'PROJECT_MODE_REQUIRED')
+    _one56_reject_human_markers(document)
+
 def validate_one56_display_title_alias(decision,consent,confirmation,*,task_id,owner,root,canonical_group,alias_ref):
     alias=decision.get('display_title_alias') if isinstance(decision,dict) else None
     require(isinstance(alias,str) and alias and alias!=canonical_group
@@ -296,22 +502,54 @@ def validate_one56_display_title_alias(decision,consent,confirmation,*,task_id,o
         'PROJECT_DISPLAY_TITLE_ALIAS_REQUIRED')
     return alias
 
-def validate_one56_contract(contract,grant,root):
+def validate_one56_human_decision(decision,grant,grant_sha256):
+    _one56_human_artifact_binding(decision,grant,grant_sha256,'PROJECT_OWNER_DECISION_MISMATCH')
+    require(decision.get('decision')==ONE56_DECISION,'PROJECT_OWNER_DECISION_MISMATCH')
+
+def validate_one56_human_readiness(readiness,grant,grant_sha256):
+    _one56_human_artifact_binding(readiness,grant,grant_sha256,'PROJECT_LIVE_READINESS_REQUIRED')
+    require(readiness.get('profile')==PROJECT_SCOPE and readiness.get('gui_ready') is True
+        and readiness.get('owner_foreground_handoff') is True
+        and readiness.get('independent_acceptance_access') is True
+        and readiness.get('physical_delivery') in ('SUPPORTED','POLICY_ACCEPTED_LOGICAL_ONLY'),
+        'PROJECT_LIVE_READINESS_REQUIRED')
+
+def validate_one56_human_consent(consent,grant,grant_sha256):
+    _one56_human_artifact_binding(consent,grant,grant_sha256,'PROJECT_OWNER_CONSENT_MISMATCH')
+    require(consent.get('profile')==PROJECT_SCOPE and consent.get('gui_authorized') is True,
+        'PROJECT_OWNER_CONSENT_MISMATCH')
+
+def validate_one56_contract(contract,grant,root,*,grant_sha256=None):
+    mode=one56_execution_mode(grant)
     operations=contract.get('operations') if isinstance(contract,dict) else None
     require(isinstance(operations,list) and all(isinstance(op,str) for op in operations)
         and len(operations)==len(set(operations)),'PROJECT_CONTRACT_SCOPE')
+    if mode==HUMAN_EXECUTION_MODE:
+        _one56_human_artifact_binding(contract,grant,grant_sha256,'PROJECT_CONTRACT_SCOPE')
+    else:_one56_require_auto_artifact(contract)
     require(contract.get('status')=='ACTIVE' and contract.get('closed') is False
         and contract.get('task_id')==grant['task_id'] and contract.get('owner')==grant['owner']
         and contract.get('project_root')==root and contract.get('source_sha256')==grant['source_sha256']
         and contract.get('config_sha256')==grant['config_sha256']
-        and contract.get('entry_method')==ONE56_ENTRY and set(operations)==ONE56_REQUIRED_OPERATIONS
+        and contract.get('entry_method')==_one56_expected_entry(mode)
+        and set(operations)==_one56_expected_operations(mode)
         and contract.get('entry_sha256')==grant['entry_binding']['sha256']
         and contract.get('runtime_binding_sha256')==grant['runtime_binding']['sha256']
         and contract.get('producer_binary_sha256')==grant['producer_binary']['sha256'],
         'PROJECT_CONTRACT_SCOPE')
 
-def validate_one56_review(review,original,grant):
-    require(isinstance(review,dict) and review.get('profile')==PROJECT_SCOPE
+def validate_one56_review(review,original,grant,*,grant_sha256=None):
+    mode=one56_execution_mode(grant)
+    expected_operations=sorted(_one56_expected_operations(mode))
+    expected_entry=_one56_expected_entry(mode)
+    expected_fingerprint=_one56_expected_fingerprint(mode)
+    require(isinstance(review,dict) and isinstance(original,dict),'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+    if mode==HUMAN_EXECUTION_MODE:
+        _one56_human_artifact_binding(review,grant,grant_sha256,'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+        _one56_human_artifact_binding(original,grant,grant_sha256,'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+    else:
+        _one56_require_auto_artifact(review);_one56_require_auto_artifact(original)
+    require(review.get('profile')==PROJECT_SCOPE
         and review.get('verdict')=='APPROVE_IMPLEMENTATION'
         and review.get('review_method')=='OWNER_TRANSFERRED_EXTERNAL_PR_REVIEW'
         and isinstance(review.get('reviewer'),str) and review['reviewer'].strip()
@@ -320,14 +558,14 @@ def validate_one56_review(review,original,grant):
         and review.get('task_id')==grant['task_id'] and review.get('owner')==grant['owner']
         and review.get('project_root')==grant['project_root'] and review.get('source_sha256')==grant['source_sha256']
         and review.get('implementation_head') is not None
-        and review.get('entry_method')==ONE56_ENTRY
-        and review.get('approved_operations')==sorted(ONE56_REQUIRED_OPERATIONS)
-        and review.get('fingerprint')==ONE56_FINGERPRINT
+        and review.get('entry_method')==expected_entry
+        and review.get('approved_operations')==expected_operations
+        and review.get('fingerprint')==expected_fingerprint
         and review.get('runtime_binding_sha256')==grant['runtime_binding']['sha256']
         and review.get('producer_binary_sha256')==grant['producer_binary']['sha256']
         and isinstance(review.get('disposition_ref'),str) and review['disposition_ref'].strip(),
         'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
-    require(isinstance(original,dict) and original.get('verdict')=='APPROVE_IMPLEMENTATION'
+    require(original.get('verdict')=='APPROVE_IMPLEMENTATION'
         and original.get('reviewer')==review['reviewer']
         and original.get('disposition_ref')==review['disposition_ref']
         and original.get('task_id')==grant['task_id'] and original.get('owner')==grant['owner']
@@ -337,9 +575,9 @@ def validate_one56_review(review,original,grant):
         and original.get('source_sha256')==grant['source_sha256']
         and original.get('runtime_binding_sha256')==grant['runtime_binding']['sha256']
         and original.get('producer_binary_sha256')==grant['producer_binary']['sha256']
-        and original.get('entry_method')==ONE56_ENTRY
-        and original.get('approved_operations')==sorted(ONE56_REQUIRED_OPERATIONS)
-        and original.get('fingerprint')==ONE56_FINGERPRINT,
+        and original.get('entry_method')==expected_entry
+        and original.get('approved_operations')==expected_operations
+        and original.get('fingerprint')==expected_fingerprint,
         'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
 
 def _one56_scope_from_body(body):
@@ -350,7 +588,14 @@ def _one56_scope_from_body(body):
     payload=body.split(start,1)[1].split(end,1)[0]
     return strict_json(payload.encode(),'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
 
-def validate_one56_provider_review(raw,review,contract,grant):
+def validate_one56_provider_review(raw,review,contract,grant,*,grant_sha256=None):
+    mode=one56_execution_mode(grant)
+    if mode==HUMAN_EXECUTION_MODE:
+        _one56_human_artifact_binding(review,grant,grant_sha256,'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+        _one56_human_artifact_binding(contract,grant,grant_sha256,'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+    else:
+        _one56_require_auto_artifact(raw);_one56_require_auto_artifact(review)
+        _one56_require_auto_artifact(contract)
     require(isinstance(raw,dict) and type(raw.get('id')) is int and raw['id']>0
         and type(review.get('provider_review_id')) is int and review['provider_review_id']==raw['id']
         and review.get('provider_review_url')==ONE56_PROVIDER_REPOSITORY+f"/pulls/10/reviews/{raw['id']}"
@@ -375,8 +620,12 @@ def validate_one56_provider_review(raw,review,contract,grant):
         'implementation_head':contract['implementation_head'],'source_sha256':grant['source_sha256'],
         'config_sha256':grant['config_sha256'],'runtime_binding_sha256':grant['runtime_binding']['sha256'],
         'producer_binary_sha256':grant['producer_binary']['sha256'],'entry_sha256':grant['entry_binding']['sha256'],
-        'entry_method':ONE56_ENTRY,'approved_operations':sorted(ONE56_REQUIRED_OPERATIONS),
-        'fingerprint':ONE56_FINGERPRINT}
+        'entry_method':_one56_expected_entry(mode),'approved_operations':sorted(_one56_expected_operations(mode)),
+        'fingerprint':_one56_expected_fingerprint(mode)}
+    if mode==HUMAN_EXECUTION_MODE:
+        expected.update(execution_mode=HUMAN_EXECUTION_MODE,input_actor=HUMAN_INPUT_ACTOR,
+            observer_session_id=grant['observer_session_id'],grant_sha256=grant_sha256,
+            decoder_sha256=grant['decoder_binding']['sha256'])
     require(scope==expected and review.get('reviewer')==scope['external_reviewer']
         and review.get('task_id')==grant['task_id'] and review.get('owner')==grant['owner']
         and review.get('project_root')==grant['project_root']
@@ -386,6 +635,9 @@ def validate_one56_provider_review(raw,review,contract,grant):
         and review.get('producer_binary_sha256')==grant['producer_binary']['sha256']
         and review.get('entry_sha256')==grant['entry_binding']['sha256'],
         'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
+    if mode==HUMAN_EXECUTION_MODE:
+        _one56_reject_fabricated_claims(raw,'provider-review')
+        _one56_reject_fabricated_claims(scope,'provider-scope')
     return scope
 
 def validate_one56_callback_membership(callback_sources):
@@ -399,6 +651,193 @@ def validate_one56_callback_membership(callback_sources):
     require(set(indexed)==set(ONE56_CALLBACK_ROLES)
         and all(indexed[path].get('roles')==sorted(roles) for path,roles in ONE56_CALLBACK_ROLES.items()),
         'PROJECT_CALLBACK_SOURCE_COVERAGE')
+
+def _one56_human_destination(value):
+    return (isinstance(value,str) and value.startswith('/') and value!='/'
+        and not value.endswith('/') and '\\' not in value and '\0' not in value
+        and not any(ord(char)<32 for char in value)
+        and unicodedata.normalize('NFC',value)==value and posixpath.normpath(value)==value)
+
+def _one56_validate_human_tree(value,grant):
+    if isinstance(value,dict):
+        for key,child in value.items():
+            require(isinstance(key,str),'ONE56_MODE_MIXED')
+            normalized=_one56_normalized(key)
+            require('workflowlink' not in normalized,'ONE56_MODE_MIXED')
+            require('guiphase' not in normalized,'ONE56_HUMAN_PHASE_FORBIDDEN')
+            require(not any(marker in normalized for marker in
+                ('cuadispatchreceipt','cuareceipt','framesupport','scksupport')),'ONE56_MODE_MIXED')
+            require(not normalized.startswith('classifier'),'HUMAN_INPUT_FABRICATED_CLAIM')
+            require(normalized not in ('ellipsis','dotspacing','saveallpoint','confidence'),
+                'ONE56_MODE_MIXED')
+            if normalized=='executionmode':require(child==HUMAN_EXECUTION_MODE,'ONE56_MODE_MIXED')
+            if normalized=='inputactor':require(child==HUMAN_INPUT_ACTOR,'ONE56_MODE_MIXED')
+            if normalized=='observersessionid':require(child==grant['observer_session_id'],'ONE56_MODE_MIXED')
+            if normalized=='entrymethod':require(child==ONE56_HUMAN_ENTRY,'ONE56_MODE_MIXED')
+            if normalized=='taskid':require(child==grant['task_id'],'HUMAN_INPUT_BINDING')
+            if normalized=='sourcesha256':require(child==grant['source_sha256'],'HUMAN_INPUT_BINDING')
+            if normalized=='configsha256':require(child==grant['config_sha256'],'HUMAN_INPUT_BINDING')
+            if normalized=='grantsha256':require(_one56_human_hash(child),'HUMAN_INPUT_BINDING')
+            if normalized=='owner':require(child==grant['owner'],'HUMAN_INPUT_BINDING')
+            if normalized=='operation':require(isinstance(child,str)
+                and child in ONE56_HUMAN_REQUIRED_OPERATIONS,'ONE56_HUMAN_PHASE_FORBIDDEN')
+            if normalized=='operations':
+                require(isinstance(child,list) and all(isinstance(item,str) for item in child)
+                    and len(child)==len(set(child))
+                    and set(child)==ONE56_HUMAN_REQUIRED_OPERATIONS,'ONE56_HUMAN_PHASE_FORBIDDEN')
+            if normalized=='kind' and isinstance(child,str):
+                kind=_one56_normalized(child)
+                require(not kind.startswith(('cuadispatchreceipt','framesupport')),'ONE56_MODE_MIXED')
+                if kind in ('humaninputrequest1','humaninputresult1'):
+                    _one56_validate_human_input_document(value,grant)
+                elif kind=='humanmenuattestation1':
+                    require(set(value)==ONE56_HUMAN_MENU_ATTESTATION_KEYS
+                        and value.get('execution_mode')==HUMAN_EXECUTION_MODE
+                        and value.get('input_actor')==HUMAN_INPUT_ACTOR
+                        and value.get('observer_session_id')==grant['observer_session_id']
+                        and isinstance(value.get('observed_at'),str) and value['observed_at']
+                        and _one56_human_refs([value.get(key) for key in
+                            ('detail_ref','menu_ref','closure_ref','attestation_ref')],json_required=True),
+                        'HUMAN_CALIBRATION_REQUIRED')
+                elif kind=='humaninputunknownlatch1':
+                    require(set(value)=={'version','kind','task_id','grant_sha256','observer_session_id',
+                        'source_sha256','run_id','action_id','request_stage','request_id','issuance_key',
+                        'reason','recorded_at'} and value.get('version')==1
+                        and value.get('task_id')==grant['task_id']
+                        and _one56_human_hash(value.get('grant_sha256'))
+                        and value.get('observer_session_id')==grant['observer_session_id']
+                        and value.get('source_sha256')==grant['source_sha256']
+                        and isinstance(value.get('run_id'),str) and value['run_id']
+                        and _one56_human_action_matches(value.get('request_stage'),value.get('action_id'))
+                        and all(isinstance(value.get(key),str) and value[key] for key in
+                            ('request_id','issuance_key','reason','recorded_at')),'HUMAN_INPUT_BINDING')
+                elif kind.startswith('humaninput'):
+                    require(False,'ONE56_MODE_MIXED')
+            if normalized=='requeststage':require(isinstance(child,str)
+                and child in ONE56_HUMAN_INPUT_STAGES,'HUMAN_INPUT_STAGE_REQUIRED')
+            if normalized=='fingerprint':require(child==ONE56_HUMAN_FINGERPRINT,'HUMAN_INPUT_FINGERPRINT')
+            if normalized=='destination':require(_one56_human_destination(child),'HUMAN_INPUT_BINDING')
+            if normalized=='reservationids':
+                require(isinstance(child,list) and child and all(isinstance(item,str) and item for item in child)
+                    and len(child)==len(set(child)),'HUMAN_INPUT_RESERVATIONS')
+            if normalized in ('reservationid','requestid','resultid','runid'):
+                require(isinstance(child,str) and child,'HUMAN_INPUT_BINDING')
+            if normalized=='actionid':
+                stage=value.get('request_stage')
+                if stage in ('CARD','CALIBRATION'):require(child is None,'HUMAN_INPUT_ACTION_BINDING')
+                elif stage in ONE56_HUMAN_INPUT_STAGES:require(isinstance(child,str) and child,'HUMAN_INPUT_ACTION_BINDING')
+                else:require(child is None or isinstance(child,str) and child,'HUMAN_INPUT_ACTION_BINDING')
+            if normalized=='slots':
+                require(isinstance(child,list) and child and all(item in ONE56_HUMAN_ACTION_SLOTS for item in child),
+                    'ONE56_MODE_MIXED')
+                require(len(child)==len(set(child)),'ONE56_MODE_MIXED')
+            if normalized in ('album','projectalbumslot','runalbumslot'):
+                require(child in (None,'A'),'ONE56_MODE_MIXED')
+            if normalized in ('phase','workflowphase'):
+                require(not (isinstance(child,str) and _one56_normalized(child) in
+                    ('b','c1','done','pairb','pairc1')),'ONE56_MODE_MIXED')
+            if normalized=='checkpoint' and isinstance(child,str):
+                marker=_one56_normalized(child)
+                require(not any(token in marker for token in ('pairb','pairc1','scroll','returnatolist')),
+                    'ONE56_MODE_MIXED')
+            if normalized=='rawevidencerefs':require(_one56_human_refs(child),'HUMAN_INPUT_EVIDENCE_BINDING')
+            _one56_validate_human_tree(child,grant)
+    elif isinstance(value,list):
+        for child in value:_one56_validate_human_tree(child,grant)
+
+def _one56_validate_human_payload(grant,operation,payload):
+    require(operation in ONE56_HUMAN_REQUIRED_OPERATIONS,'ONE56_MODE_MIXED')
+    require(operation not in ('gui_phase','gui_initialize'),'ONE56_HUMAN_PHASE_FORBIDDEN')
+    require(isinstance(payload,dict),'INVALID_INPUT')
+    _one56_reject_fabricated_claims(payload,'payload')
+    _one56_validate_human_tree(payload,grant)
+    require(isinstance(payload.get('data',{}),dict),'INVALID_INPUT')
+    data=payload.get('data') if isinstance(payload.get('data'),dict) else {}
+    if operation=='gui_reserve':
+        stage=data.get('stage');require(stage in ONE56_HUMAN_INPUT_STAGES,'HUMAN_INPUT_STAGE_REQUIRED')
+        require(stage!='CHOOSER_CONFIRM','HUMAN_CHOOSER_CONFIRM_REQUIRED')
+        kind,count,slots=ONE56_HUMAN_STAGE_RESERVATIONS[stage]
+        require(set(data)==ONE56_HUMAN_RESERVATION_KEYS and data.get('kind')==kind
+            and type(data.get('count')) is int and data.get('count')==count
+            and data.get('slots')==slots and isinstance(data.get('run_id'),str) and data.get('run_id')
+            and data.get('owner')==grant['owner'],'HUMAN_RESERVATION_BINDING')
+    elif operation=='gui_observe':
+        require(data.get('album') in (None,'A'),'ONE56_MODE_MIXED')
+        checkpoint=data.get('checkpoint')
+        require(checkpoint is None or (isinstance(checkpoint,str)
+            and not any(token in _one56_normalized(checkpoint)
+                for token in ('pairb','pairc1','scroll','returnatolist'))),'ONE56_MODE_MIXED')
+    elif operation=='begin':
+        require(data.get('mode')=='backup_batch' and type(data.get('limit')) is int
+            and data.get('limit')==1,'ONE56_HUMAN_CAP_ONE')
+    elif operation=='admit':
+        require('workflow_link' not in data and data.get('target')==ONE56_HUMAN_FINGERPRINT
+            and data.get('session')==grant['observer_session_id'],
+            'ONE56_MODE_MIXED')
+    elif operation=='calibrate':
+        calibration=data.get('calibration')
+        require(isinstance(calibration,dict) and set(calibration)==ONE56_HUMAN_MENU_ATTESTATION_KEYS
+            and calibration.get('kind')=='human-menu-attestation-1'
+            and calibration.get('execution_mode')==HUMAN_EXECUTION_MODE
+            and calibration.get('input_actor')==HUMAN_INPUT_ACTOR
+            and calibration.get('observer_session_id')==grant['observer_session_id']
+            and isinstance(calibration.get('observed_at'),str) and calibration['observed_at']
+            and _one56_human_refs([calibration.get(key) for key in
+                ('detail_ref','menu_ref','closure_ref','attestation_ref')],json_required=True),
+            'HUMAN_CALIBRATION_REQUIRED')
+    elif operation=='dispatch':
+        require('receipt' not in data or data.get('receipt') is None,'ONE56_MODE_MIXED')
+    elif operation=='finalize':
+        decoder_path=grant['decoder_binding']['path']
+        decoder_absolute=str(Path(grant['project_root'],decoder_path).resolve())
+        require(data.get('decoder') in (decoder_path,decoder_absolute)
+            and data.get('decoder_sha256')==grant['decoder_binding']['sha256'],
+            'HUMAN_DECODER_BINDING')
+    elif operation=='gui_consume':
+        require(set(data)<=ONE56_HUMAN_CONSUME_KEYS
+            and isinstance(data.get('reservation_id'),str) and data['reservation_id']
+            and data.get('execution_mode')==HUMAN_EXECUTION_MODE
+            and data.get('input_actor')==HUMAN_INPUT_ACTOR
+            and data.get('observer_session_id')==grant['observer_session_id'],'ONE56_MODE_MIXED')
+        require(data.get('outcome') in (None,'HUMAN_REPORTED_RETURNED','UNKNOWN','REFUSED'),
+            'HUMAN_INPUT_OUTCOME')
+        request_ref=data.get('request_ref');result_ref=data.get('result_ref')
+        require(request_ref is None or _one56_human_evidence_ref(request_ref,json_required=True),
+            'HUMAN_INPUT_REQUEST_ARTIFACT')
+        require(result_ref is None or _one56_human_evidence_ref(result_ref,json_required=True),
+            'HUMAN_INPUT_RESULT_ARTIFACT')
+        if request_ref is None:
+            require(result_ref is None and data.get('request_id') is None and data.get('result_id') is None
+                and data.get('evidence_refs') is None
+                and data.get('outcome') in (None,'UNKNOWN','REFUSED'),'HUMAN_INPUT_REQUEST_REF_REQUIRED')
+        if data.get('outcome')=='HUMAN_REPORTED_RETURNED':
+            require(request_ref is not None and result_ref is not None,'HUMAN_INPUT_RESULT_REF_REQUIRED')
+        if result_ref is not None:
+            require(data.get('outcome') in ('HUMAN_REPORTED_RETURNED','UNKNOWN','REFUSED')
+                and request_ref is not None and request_ref['path']!=result_ref['path'],
+                'HUMAN_INPUT_RESULT_REF_REQUIRED')
+        elif request_ref is not None:
+            require(data.get('outcome') in ('UNKNOWN','REFUSED') and data.get('result_id') is None
+                and data.get('evidence_refs') is None,'HUMAN_INPUT_RESULT_REF_REQUIRED')
+        if request_ref is not None:
+            require(isinstance(data.get('request_id'),str) and data['request_id'],
+                'HUMAN_INPUT_REQUEST_BINDING')
+        if result_ref is not None:
+            require(isinstance(data.get('request_id'),str) and data['request_id']
+                and isinstance(data.get('result_id'),str) and data['result_id']
+                and data['result_id']!=data['request_id'],
+                'HUMAN_INPUT_RESULT_BINDING')
+        evidence_refs=data.get('evidence_refs')
+        if evidence_refs is not None:
+            require(result_ref is not None and _one56_human_refs(evidence_refs),
+                'HUMAN_INPUT_EVIDENCE_BINDING')
+
+def validate_one56_payload(grant,operation,payload):
+    """Per-mode admission before any A56 service or canonical-state mutation."""
+    require(isinstance(grant,dict) and grant.get('single_album_route') is True,'PROJECT_GRANT_REQUIRED')
+    mode=one56_execution_mode(grant)
+    if mode==HUMAN_EXECUTION_MODE:_one56_validate_human_payload(grant,operation,payload)
+    else:_one56_reject_human_markers(payload)
 
 def authorize_project(root,path,grant,fixture,operation):
     """Separate owner-managed project route. Design approval alone never enables live work."""
@@ -483,7 +922,10 @@ def authorize_project(root,path,grant,fixture,operation):
 
 def authorize_one56_project(root,path,grant,fixture,operation):
     """Immutable, single-transaction authority. Legacy project grants keep their original route."""
-    require(not fixture and isinstance(grant,dict) and set(grant)==ONE56_GRANT_KEYS
+    mode=one56_execution_mode(grant)
+    expected_keys=ONE56_HUMAN_GRANT_KEYS if mode==HUMAN_EXECUTION_MODE else ONE56_GRANT_KEYS
+    expected_operations=_one56_expected_operations(mode)
+    require(not fixture and isinstance(grant,dict) and set(grant)==expected_keys
         and grant.get('grant_version')==ONE56_GRANT_VERSION and grant.get('single_album_route') is True,
         'INVALID_PROJECT_GRANT')
     bundle=one56_bundle(path)
@@ -494,7 +936,7 @@ def authorize_one56_project(root,path,grant,fixture,operation):
         and isinstance(grant['owner'],str) and grant['owner'],'PROJECT_GRANT_SCOPE')
     require(isinstance(grant['operations'],list) and operation in grant['operations']
         and len(grant['operations'])==len(set(grant['operations']))
-        and set(grant['operations'])==ONE56_REQUIRED_OPERATIONS,'PROJECT_GRANT_OPERATIONS')
+        and set(grant['operations'])==expected_operations,'PROJECT_GRANT_OPERATIONS')
     require((grant['album_quota'],grant['lifecycle_album_limit'],grant['save_all_dispatch_limit'],
         grant['chooser_confirmation_limit'])==(1,1,1,1)
         and grant['reversible_gui_invocation_limit']==23,'PROJECT_GRANT_QUOTA')
@@ -519,6 +961,9 @@ def authorize_one56_project(root,path,grant,fixture,operation):
     reader=ProjectReader(root)
     try:
         from .observations import artifact
+        grant_raw,_=reader.read(path,'PROJECT_GRANT_DRIFT')
+        require(strict_json(grant_raw,'INVALID_PROJECT_GRANT')==grant,'PROJECT_GRANT_DRIFT')
+        grant_sha256=sha(grant_raw)
         refs=('owner_decision','external_review','live_readiness','runtime_binding')
         raw_refs={field:artifact(reader,grant[field]) for field in refs}
         contract_raw,_=reader.read(grant['contract_path'],'PROJECT_CONTRACT_UNAVAILABLE')
@@ -528,27 +973,31 @@ def authorize_one56_project(root,path,grant,fixture,operation):
         review=strict_json(raw_refs['external_review'],'PROJECT_REVIEW_REQUIRED')
         readiness=strict_json(raw_refs['live_readiness'],'PROJECT_READINESS_REQUIRED')
         runtime=validate_project_runtime_binding(reader,grant,one56_bundle=bundle)
-        validate_one56_contract(contract,grant,root)
+        validate_one56_contract(contract,grant,root,grant_sha256=grant_sha256)
         require(isinstance(contract.get('implementation_head'),str)
             and re.fullmatch(r'[0-9a-f]{40}',contract['implementation_head']) is not None,
             'PROJECT_CONTRACT_SCOPE')
-        require(decision.get('decision')==ONE56_DECISION and decision.get('task_id')==grant['task_id']
-            and decision.get('owner')==grant['owner'] and decision.get('project_root')==root
-            and decision.get('source_sha256')==grant['source_sha256']
-            and decision.get('config_sha256')==grant['config_sha256']
-            and decision.get('entry_method')==ONE56_ENTRY
-            and decision.get('fingerprint')==ONE56_FINGERPRINT,
-            'PROJECT_OWNER_DECISION_MISMATCH')
+        if mode==HUMAN_EXECUTION_MODE:
+            validate_one56_human_decision(decision,grant,grant_sha256)
+        else:
+            _one56_require_auto_artifact(decision)
+            require(decision.get('decision')==ONE56_DECISION and decision.get('task_id')==grant['task_id']
+                and decision.get('owner')==grant['owner'] and decision.get('project_root')==root
+                and decision.get('source_sha256')==grant['source_sha256']
+                and decision.get('config_sha256')==grant['config_sha256']
+                and decision.get('entry_method')==ONE56_ENTRY
+                and decision.get('fingerprint')==ONE56_FINGERPRINT,
+                'PROJECT_OWNER_DECISION_MISMATCH')
         original_ref=review.get('original_review_ref')
         _one56_ref(original_ref,bundle,'external-review-original.json')
         original_raw=artifact(reader,original_ref)
         original=strict_json(original_raw,'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
-        validate_one56_review(review,original,grant)
+        validate_one56_review(review,original,grant,grant_sha256=grant_sha256)
         provider_ref=review.get('provider_response_ref')
         _one56_ref(provider_ref,bundle,'github-review-response.json')
         provider_raw=artifact(reader,provider_ref)
         provider_response=strict_json(provider_raw,'PROJECT_IMPLEMENTATION_REVIEW_REQUIRED')
-        validate_one56_provider_review(provider_response,review,contract,grant)
+        validate_one56_provider_review(provider_response,review,contract,grant,grant_sha256=grant_sha256)
         alias_ref=decision.get('display_title_alias_confirmation_ref')
         _one56_ref(alias_ref,bundle,'display-title-alias-confirmation.json')
         alias_raw=artifact(reader,alias_ref)
@@ -556,36 +1005,44 @@ def authorize_one56_project(root,path,grant,fixture,operation):
         canonical_group=reader.read('config/line_backup_config.json')[0]
         canonical_group=strict_json(canonical_group,'PROJECT_CONFIG_INVALID').get('group_name')
         alias=decision.get('display_title_alias')
-        require(readiness.get('profile')==PROJECT_SCOPE and readiness.get('gui_ready') is True
-            and readiness.get('owner_foreground_handoff') is True
-            and readiness.get('independent_acceptance_access') is True
-            and readiness.get('physical_delivery') in ('SUPPORTED','POLICY_ACCEPTED_LOGICAL_ONLY')
-            and readiness.get('source_sha256')==grant['source_sha256']
-            and readiness.get('config_sha256')==grant['config_sha256']
-            and readiness.get('entry_sha256')==grant['entry_binding']['sha256']
-            and readiness.get('runtime_binding_sha256')==grant['runtime_binding']['sha256'],
-            'PROJECT_LIVE_READINESS_REQUIRED')
+        if mode==HUMAN_EXECUTION_MODE:
+            validate_one56_human_readiness(readiness,grant,grant_sha256)
+        else:
+            _one56_require_auto_artifact(readiness)
+            require(readiness.get('profile')==PROJECT_SCOPE and readiness.get('gui_ready') is True
+                and readiness.get('owner_foreground_handoff') is True
+                and readiness.get('independent_acceptance_access') is True
+                and readiness.get('physical_delivery') in ('SUPPORTED','POLICY_ACCEPTED_LOGICAL_ONLY')
+                and readiness.get('source_sha256')==grant['source_sha256']
+                and readiness.get('config_sha256')==grant['config_sha256']
+                and readiness.get('entry_sha256')==grant['entry_binding']['sha256']
+                and readiness.get('runtime_binding_sha256')==grant['runtime_binding']['sha256'],
+                'PROJECT_LIVE_READINESS_REQUIRED')
         consent_ref=readiness.get('owner_consent_ref')
         require(isinstance(consent_ref,dict) and consent_ref.get('path')==bundle+'/owner-consent.json',
             'PROJECT_OWNER_CONSENT_REQUIRED')
         consent_raw=artifact(reader,consent_ref)
         consent=strict_json(consent_raw,'PROJECT_OWNER_CONSENT_REQUIRED')
+        if mode==HUMAN_EXECUTION_MODE:
+            validate_one56_human_consent(consent,grant,grant_sha256)
+        else:_one56_require_auto_artifact(consent)
         validate_one56_display_title_alias(decision,consent,alias_confirmation,task_id=grant['task_id'],
             owner=grant['owner'],root=root,canonical_group=canonical_group,alias_ref=alias_ref)
         require(reader.read(alias_ref['path'])[0]==alias_raw,'PROJECT_DISPLAY_TITLE_ALIAS_DRIFT')
         if operation in PROJECT_MUTATING:
-            require(decision.get('live_gui_authorized') is True and consent.get('profile')==PROJECT_SCOPE
-                and consent.get('gui_authorized') is True and consent.get('task_id')==grant['task_id']
-                and consent.get('owner')==grant['owner'] and consent.get('source_sha256')==grant['source_sha256']
-                and consent.get('config_sha256')==grant['config_sha256']
-                and consent.get('fingerprint')==ONE56_FINGERPRINT,'PROJECT_OWNER_CONSENT_MISMATCH')
+            require(decision.get('live_gui_authorized') is True,'PROJECT_LIVE_CONSENT_REQUIRED')
+            if mode!=HUMAN_EXECUTION_MODE:
+                require(consent.get('profile')==PROJECT_SCOPE and consent.get('gui_authorized') is True
+                    and consent.get('task_id')==grant['task_id'] and consent.get('owner')==grant['owner']
+                    and consent.get('source_sha256')==grant['source_sha256']
+                    and consent.get('config_sha256')==grant['config_sha256']
+                    and consent.get('fingerprint')==ONE56_FINGERPRINT,'PROJECT_OWNER_CONSENT_MISMATCH')
         require(grant['config_sha256']==sha(reader.read('config/line_backup_config.json')[0]),'PROJECT_CONFIG_DRIFT')
         snapshot=Store(root).snapshot()
         require(snapshot['receipt']['source_sha256']==grant['source_sha256'],'PROJECT_SOURCE_DRIFT')
         # Re-read all signed material and grant from the same no-follow reader; its
         # observations reject replacement or byte changes during validation.
-        grant_raw,_=reader.read(path,'PROJECT_GRANT_DRIFT')
-        require(strict_json(grant_raw,'INVALID_PROJECT_GRANT')==grant,'PROJECT_GRANT_DRIFT')
+        require(reader.read(path,'PROJECT_GRANT_DRIFT')[0]==grant_raw,'PROJECT_GRANT_DRIFT')
         for field in refs:
             require(reader.read(grant[field]['path'])[0]==raw_refs[field],'PROJECT_GRANT_EVIDENCE_DRIFT')
         require(reader.read(original_ref['path'])[0]==original_raw,'PROJECT_GRANT_EVIDENCE_DRIFT')
@@ -708,6 +1165,7 @@ def execute(ns):
     service=Service(ns.project_root,grant['owner'],grant['artifact_dir'],ns.authorization)
     if ns.operation=='resume':return service.resume()
     payload=load_input(ns.project_root,ns.input)
+    if grant.get('single_album_route') is True:validate_one56_payload(grant,ns.operation,payload)
     if ns.operation=='gui_initialize':return store.initialize_project_ledger(grant,payload.get('data',{}))
     if ns.operation=='gui_phase':
         data=payload.get('data',{})

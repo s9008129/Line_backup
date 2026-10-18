@@ -8,17 +8,19 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+from types import SimpleNamespace
 import unittest
 import uuid
 import jsonschema,referencing,attrs,rpds
 from unittest.mock import patch
 sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
 from fixture_support import Fixture,Provider,ROOT,TASK,identity,sha,json_bytes,token,png
+from line_backup_batch import schema as batch_schema
 from line_backup_batch.store import Store,enforce_grant_quota
 from line_backup_batch.service import Service,DISPATCH_RECEIPT_V3_KEYS,DISPATCH_EVENT_ORDER_V3,menu_envelope
 from line_backup_batch.coordinator import Coordinator
 import line_backup_batch.cli as batch_cli
-from line_backup_acceptance.common import AcceptanceError,atomic_write_json
+from line_backup_acceptance.common import AcceptanceError,atomic_write_json,classify_legacy_run,validate_state_strict
 from line_backup_acceptance.project_binding import ProjectReader
 
 SCHEMA_PATHS=sorted({str(Path(module.__file__).resolve().parent.parent)
@@ -1247,3 +1249,340 @@ class LiveRootAuthorityTests(unittest.TestCase):
             svc.finalize(receipt,'/usr/bin/false','0'*64,fault='DRIFT_AFTER_COMMIT')
         self.assertEqual(caught.exception.code,'INVALID_FINALIZE_FAULT')
         self.assertEqual(self.state_bytes(),before)
+
+
+class HumanOne56StoreTests(unittest.TestCase):
+    TARGET={'start_date':'2024-05-27','end_date':'2024-05-31','expected_images':56}
+    STAGES={'CARD':('album_open',['A.CARD']),'CALIBRATION':('menu_calibration',['A.CAL_OPEN','A.CAL_DISMISS']),
+        'SAVE_ALL':('dispatch_inputs',['A.ATOMIC_ELLIPSIS','A.SAVE_ALL']),
+        'CHOOSER_PATH':('chooser_inputs',['A.GO_TO_FOLDER','A.SET_PATH','A.PATH_RETURN','A.CHOOSER_CONFIRM']),
+        'CHOOSER_CONFIRM':('chooser_inputs',['A.GO_TO_FOLDER','A.SET_PATH','A.PATH_RETURN','A.CHOOSER_CONFIRM'])}
+
+    def setUp(self):
+        self.fixtures=[];self.authorized_grants={}
+        self.authorize_patch=patch.object(batch_cli,'authorize',side_effect=self.authorize)
+        self.authorize_patch.start()
+    def tearDown(self):
+        self.authorize_patch.stop()
+        for fixture in reversed(self.fixtures):fixture.close()
+    def authorize(self,root,path,fixture,operation):
+        return self.authorized_grants.get((os.path.realpath(os.fspath(root)),path))
+
+    def context(self):
+        fixture=Fixture(version=3,cap=1);self.fixtures.append(fixture)
+        fixture.cfg['max_albums_per_run']=1;fixture.save(fixture.state())
+        fixture.start([dict(self.TARGET)],1);fixture.prepare(self.TARGET)
+        grant,grant_ref,_=project_authority_fixture(fixture)
+        grant.update(task_id='PILOT-human-one56-'+uuid.uuid4().hex,single_album_route=True,
+            execution_mode='HUMAN_ASSISTED',input_actor='OWNER_HUMAN',
+            observer_session_id='deepseek-session-'+uuid.uuid4().hex,album_quota=1,lifecycle_album_limit=1,
+            save_all_dispatch_limit=1,chooser_confirmation_limit=1)
+        raw=json_bytes(grant);(fixture.root/grant_ref['path']).write_bytes(raw)
+        self.authorized_grants[(os.path.realpath(str(fixture.root)),grant_ref['path'])]=grant
+        store=Store(str(fixture.root),grant_ref['path']);store.fixture=False
+        store.initialize_project_ledger(grant,{'confirm_initialization':True})
+        state=fixture.state();batch=state['active_batch'];run=state['runs'][0]
+        store.start_project_lifecycle(grant,batch['batch_id'])
+        return SimpleNamespace(fixture=fixture,grant=grant,grant_ref=grant_ref,grant_path=grant_ref['path'],
+            grant_sha256=sha(raw),store=store,batch_id=batch['batch_id'],run_id=run['run_id'],
+            destination=run['destination'],action_id=None,calibration=None,counter=0)
+
+    def put(self,ctx,name,raw):
+        relative=ctx.grant['artifact_dir']+'/human-evidence/'+name
+        target=ctx.fixture.root/relative;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(raw)
+        return dict(path=relative,bytes=len(raw),sha256=sha(raw))
+    def put_json(self,ctx,name,value):return self.put(ctx,name,json_bytes(value))
+    def calibration(self,ctx):
+        if ctx.calibration is None:
+            refs=[self.put_json(ctx,f'calibration/{name}.json',dict(kind=name,human=True))
+                for name in ('detail','menu','closure','attestation')]
+            ctx.calibration=dict(kind='human-menu-attestation-1',execution_mode='HUMAN_ASSISTED',
+                input_actor='OWNER_HUMAN',observer_session_id=ctx.grant['observer_session_id'],
+                observed_at='2026-10-18T00:59:59+00:00',detail_ref=refs[0],menu_ref=refs[1],
+                closure_ref=refs[2],attestation_ref=refs[3])
+        return copy.deepcopy(ctx.calibration)
+    def set_intent(self,ctx,calibration=None):
+        state=ctx.fixture.state();run=state['runs'][0]
+        ctx.action_id='ACTION-A56-'+uuid.uuid4().hex
+        calibration=self.calibration(ctx) if calibration is None else calibration
+        run['intent']=dict(action_id=ctx.action_id,committed_at='2026-10-18T01:00:00+00:00',
+            owner_execution_id=ctx.grant['owner'],group_key=run['group_key'],fingerprint=dict(self.TARGET),
+            destination=run['destination'],calibration=calibration,save_all_retry_allowed=False,
+            dispatch_outcome='NOT_ATTEMPTED',trigger_outcome='NOT_APPLICABLE')
+        run['intent_state']='INTENT_COMMITTED';run['phase']='SAVE_ALL_INTENT_COMMITTED'
+        ctx.fixture.save(state)
+        return run['intent']
+    def reserve(self,ctx,stage,reservation=None,**changes):
+        kind,slots=self.STAGES[stage];reservation=reservation or {}
+        data=dict(stage=stage,kind=kind,count=len(slots),run_id=ctx.run_id,owner=ctx.grant['owner'],slots=list(slots))
+        data.update(reservation);data.update(changes)
+        return ctx.store.reserve_gui(ctx.grant,data)['reservation']
+    def artifacts(self,ctx,stage,reservation,*,action_id=None,outcome='HUMAN_REPORTED_RETURNED',
+            request_updates=None,result_updates=None):
+        ctx.counter+=1;token=f'{ctx.counter:02d}-{uuid.uuid4().hex}';folder=stage.lower()+'/'+token
+        before=self.put(ctx,folder+'/before.png',b'before-'+token.encode())
+        operator_ref=self.put(ctx,folder+'/operator-response.txt',b'owner-response-'+token.encode())
+        after=self.put(ctx,folder+'/after.png',b'after-'+token.encode())
+        request_id='REQ-'+token;result_id='RES-'+token
+        request=dict(version=1,kind='human-input-request-1',task_id=ctx.grant['task_id'],
+            grant_sha256=ctx.grant_sha256,execution_mode='HUMAN_ASSISTED',input_actor='OWNER_HUMAN',
+            observer_session_id=ctx.grant['observer_session_id'],source_sha256=ctx.grant['source_sha256'],
+            run_id=ctx.run_id,action_id=action_id,request_stage=stage,fingerprint=copy.deepcopy(self.TARGET),
+            destination=ctx.destination,reservation_ids=[reservation['id']],request_id=request_id,
+            issued_at='2026-10-18T01:00:00+00:00',instruction={
+                'CARD':'Open only the bound A56 album card; do not use Save All in this step.',
+                'CALIBRATION':'Open the album menu, verify the Save All row is present, then close the menu without choosing Save All.',
+                'SAVE_ALL':'Use Save All exactly once. If the result is uncertain, stop; never repeat it.',
+                'CHOOSER_PATH':"Enter the exact bound destination in LINE's folder chooser and return to the chooser; do not confirm yet.",
+                'CHOOSER_CONFIRM':'Confirm the exact empty destination once. If confirmation is uncertain, stop; never repeat it.'}[stage],
+            raw_evidence_refs=[before])
+        request.update(request_updates or {})
+        request_ref=self.put_json(ctx,folder+'/human-input-request-1.json',request)
+        observed_status='UNKNOWN' if outcome=='UNKNOWN' else 'OBSERVED'
+        result=dict(version=1,kind='human-input-result-1',task_id=ctx.grant['task_id'],
+            grant_sha256=ctx.grant_sha256,execution_mode='HUMAN_ASSISTED',input_actor='OWNER_HUMAN',
+            observer_session_id=ctx.grant['observer_session_id'],source_sha256=ctx.grant['source_sha256'],
+            run_id=ctx.run_id,action_id=action_id,request_stage=stage,fingerprint=copy.deepcopy(self.TARGET),
+            destination=ctx.destination,reservation_ids=[reservation['id']],request_id=request_id,
+            result_id=result_id,recorded_at='2026-10-18T01:00:10+00:00',
+            operator_reported=dict(status='OPERATOR_REPORTED',outcome=outcome,
+                reported_at='2026-10-18T01:00:08+00:00',statement='Owner reported the bound action.',
+                raw_response_ref=operator_ref),
+            observed=dict(status=observed_status,facts={'stage':stage,'reported_outcome':outcome},
+                observed_at=None if observed_status=='UNKNOWN' else '2026-10-18T01:00:05+00:00',
+                raw_evidence_refs=[after]),outcome=outcome,raw_evidence_refs=[operator_ref,after])
+        result.update(result_updates or {})
+        result_ref=self.put_json(ctx,folder+'/human-input-result-1.json',result)
+        data=dict(reservation_id=reservation['id'],outcome=result['outcome'],request_ref=request_ref,
+            result_ref=result_ref,request_id=request['request_id'],result_id=result['result_id'],
+            evidence_refs=result['raw_evidence_refs'],execution_mode='HUMAN_ASSISTED',input_actor='OWNER_HUMAN',
+            observer_session_id=ctx.grant['observer_session_id'])
+        return SimpleNamespace(request=request,request_ref=request_ref,result=result,result_ref=result_ref,data=data)
+    def consume(self,ctx,artifacts,**changes):
+        data=copy.deepcopy(artifacts.data);data.update(changes)
+        return ctx.store.consume_gui(ctx.grant,data)
+    def bytes(self,ctx):
+        return ((ctx.fixture.root/'state/backup_state.json').read_bytes(),
+            (ctx.fixture.root/ctx.grant['gui_ledger']).read_bytes())
+
+    def test_human_calibration_schema_is_v3_only_strict_and_preserves_auto_v2(self):
+        ctx=self.context();self.set_intent(ctx);state=ctx.fixture.state()
+        self.assertEqual(sha((Path(batch_schema.__file__).with_name('state_v3.schema.json')).read_bytes()),
+            batch_schema.SCHEMA_SHA)
+        batch_schema.validate(state);validate_state_strict(state)
+        run=copy.deepcopy(state['runs'][0])
+        self.assertEqual(classify_legacy_run(run)[0],'UNREADABLE_LEGACY')
+
+        v2=copy.deepcopy(state);v2.update(schema_version=2,current_run_id=None,active_writer_id=None,context_lock=None)
+        v2.pop('active_batch')
+        with self.assertRaises(AcceptanceError) as caught:validate_state_strict(v2)
+        self.assertEqual(caught.exception.code,'INVALID_STATE_LEGACY')
+
+        auto=dict(observed_at='2026-10-18T01:00:00+00:00',screenshot_width=128,screenshot_height=128,
+            ellipsis=[1,1],dot_spacing=3,save_all_point=[2,2],confidence='HIGH',evidence='fixture auto evidence')
+        auto_v3=copy.deepcopy(state);auto_v3['runs'][0]['intent']['calibration']=auto
+        batch_schema.validate(auto_v3);validate_state_strict(auto_v3)
+        auto_v2=copy.deepcopy(v2);auto_v2['runs'][0]['intent']['calibration']=auto
+        validate_state_strict(auto_v2)
+
+        for name,mutate in (
+            ('mixed-auto-human',lambda value:value.update(confidence='HIGH',ellipsis=[1,1])),
+            ('missing-attestation',lambda value:value.pop('attestation_ref')),
+            ('non-json-calibration-ref',lambda value:value['detail_ref'].__setitem__('path',value['detail_ref']['path'][:-5]+'.png'))):
+            with self.subTest(name=name):
+                bad=copy.deepcopy(state);mutate(bad['runs'][0]['intent']['calibration'])
+                with self.assertRaises(AcceptanceError) as caught:batch_schema.validate(bad)
+                self.assertEqual(caught.exception.code,'INVALID_STATE_V3')
+
+    def test_human_card_success_is_actor_bound_and_replay_never_refunds(self):
+        ctx=self.context()
+        with self.assertRaises(AcceptanceError) as caught:
+            ctx.store.reserve_gui(ctx.grant,dict(kind='album_open',count=1,run_id=ctx.run_id,
+                owner=ctx.grant['owner'],slots=['A.CARD']))
+        self.assertEqual(caught.exception.code,'HUMAN_RESERVATION_BINDING')
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(ctx,'CHOOSER_CONFIRM')
+        self.assertEqual(caught.exception.code,'HUMAN_CHOOSER_CONFIRM_REQUIRED')
+        card=self.reserve(ctx,'CARD');artifacts=self.artifacts(ctx,'CARD',card)
+        consumed=self.consume(ctx,artifacts)
+        self.assertEqual(consumed['reservation']['state'],'CONSUMED')
+        ledger=json.loads((ctx.fixture.root/ctx.grant['gui_ledger']).read_bytes());entry=ledger['entries'][0]
+        self.assertFalse(ledger['failure_latched']);self.assertEqual(entry['outcome']['outcome'],'HUMAN_REPORTED_RETURNED')
+        self.assertEqual(entry['outcome']['task_id'],ctx.grant['task_id'])
+        self.assertEqual(entry['outcome']['observer_session_id'],ctx.grant['observer_session_id'])
+        self.assertEqual(entry['outcome']['source_sha256'],ctx.grant['source_sha256'])
+        self.assertEqual(entry['outcome']['run_id'],ctx.run_id);self.assertIsNone(entry['outcome']['action_id'])
+        self.assertEqual(entry['outcome']['request_stage'],'CARD')
+        self.assertEqual(entry['outcome']['fingerprint'],self.TARGET)
+        self.assertEqual(entry['outcome']['destination'],ctx.destination)
+        self.assertEqual(entry['outcome']['reservation_ids'],[card['id']])
+        fact=ctx.store.gui_reservation_fact(ctx.grant['gui_ledger'],card['id'])
+        self.assertEqual(fact['outcome'],entry['outcome'])
+        before=self.bytes(ctx)
+        with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,artifacts)
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_STATE');self.assertEqual(self.bytes(ctx),before)
+        with self.assertRaises(AcceptanceError) as caught:
+            ctx.store.start_project_lifecycle(ctx.grant,ctx.batch_id)
+        self.assertEqual(caught.exception.code,'PROJECT_LIFECYCLE_CAP')
+
+    def test_human_stage_order_a_only_slots_and_open_reservation_latch(self):
+        ctx=self.context()
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(ctx,'CALIBRATION')
+        self.assertEqual(caught.exception.code,'HUMAN_STAGE_ORDER')
+        for name,changes,code in (
+            ('b-slot',{'slots':['B.CARD']},'HUMAN_RESERVATION_BINDING'),
+            ('run',{'run_id':'RUN-foreign'},'HUMAN_RUN_BINDING'),
+            ('count',{'count':2},'HUMAN_RESERVATION_BINDING'),
+            ('owner',{'owner':'foreign-owner'},'HUMAN_RESERVATION_BINDING')):
+            with self.subTest(name=name):
+                with self.assertRaises(AcceptanceError) as caught:self.reserve(ctx,'CARD',**changes)
+                self.assertEqual(caught.exception.code,code)
+        card=self.reserve(ctx,'CARD');before=self.bytes(ctx)
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(ctx,'CARD')
+        self.assertEqual(caught.exception.code,'PROJECT_UNKNOWN_RESERVATION')
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(ctx,'CALIBRATION')
+        self.assertEqual(caught.exception.code,'PROJECT_UNKNOWN_RESERVATION')
+        self.assertEqual(self.bytes(ctx),before)
+        ledger=json.loads((ctx.fixture.root/ctx.grant['gui_ledger']).read_bytes())
+        self.assertEqual(sum(entry['count'] for entry in ledger['entries']),1)
+        self.assertEqual(ledger['entries'][0]['id'],card['id'])
+
+    def test_human_request_and_result_binding_matrix_fails_without_mutation(self):
+        ctx=self.context();card=self.reserve(ctx,'CARD');before=self.bytes(ctx)
+        request_cases=[('task_id','foreign-task','HUMAN_INPUT_REQUEST_BINDING'),
+            ('grant_sha256','0'*64,'HUMAN_INPUT_REQUEST_BINDING'),
+            ('observer_session_id','foreign-session','HUMAN_INPUT_REQUEST_BINDING'),
+            ('source_sha256','0'*64,'HUMAN_INPUT_REQUEST_BINDING'),
+            ('run_id','RUN-foreign','HUMAN_RUN_BINDING'),
+            ('action_id','ACTION-foreign','HUMAN_INPUT_ACTION_BINDING'),
+            ('request_stage','CALIBRATION','HUMAN_RESERVATION_BINDING'),
+            ('fingerprint',dict(self.TARGET,expected_images=55),'HUMAN_INPUT_REQUEST_BINDING'),
+            ('destination','/tmp/foreign-A56','HUMAN_INPUT_REQUEST_BINDING'),
+            ('reservation_ids',['foreign-reservation'],'HUMAN_INPUT_REQUEST_BINDING'),
+            ('instruction','foreign instruction','HUMAN_INPUT_INSTRUCTION')]
+        for field,value,code in request_cases:
+            with self.subTest(request=field):
+                artifacts=self.artifacts(ctx,'CARD',card,request_updates={field:value})
+                with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,artifacts)
+                self.assertEqual(caught.exception.code,code);self.assertEqual(self.bytes(ctx),before)
+        artifacts=self.artifacts(ctx,'CARD',card)
+        with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,artifacts,request_id='REQ-foreign')
+        self.assertEqual(caught.exception.code,'HUMAN_INPUT_REQUEST_BINDING');self.assertEqual(self.bytes(ctx),before)
+        bad_ref=dict(artifacts.request['raw_evidence_refs'][0]);bad_ref['sha256']='0'*64
+        artifacts=self.artifacts(ctx,'CARD',card,request_updates={'raw_evidence_refs':[bad_ref]})
+        with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,artifacts)
+        self.assertEqual(caught.exception.code,'HUMAN_INPUT_EVIDENCE');self.assertEqual(self.bytes(ctx),before)
+        result_cases=[('task_id','foreign-task'),('grant_sha256','0'*64),('observer_session_id','foreign-session'),
+            ('source_sha256','0'*64),('run_id','RUN-foreign'),('action_id','ACTION-foreign'),
+            ('request_id','REQ-foreign'),('request_stage','CALIBRATION'),
+            ('fingerprint',dict(self.TARGET,expected_images=55)),('destination','/tmp/foreign-A56'),
+            ('reservation_ids',['foreign-reservation'])]
+        for field,value in result_cases:
+            with self.subTest(result=field):
+                artifacts=self.artifacts(ctx,'CARD',card,result_updates={field:value})
+                with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,artifacts)
+                self.assertEqual(caught.exception.code,'HUMAN_INPUT_RESULT_BINDING');self.assertEqual(self.bytes(ctx),before)
+        artifacts=self.artifacts(ctx,'CARD',card,result_updates={'outcome':'UNKNOWN'})
+        with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,artifacts)
+        self.assertEqual(caught.exception.code,'HUMAN_INPUT_OUTCOME');self.assertEqual(self.bytes(ctx),before)
+        artifacts=self.artifacts(ctx,'CARD',card)
+        with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,artifacts,result_id='RES-foreign')
+        self.assertEqual(caught.exception.code,'HUMAN_INPUT_RESULT_BINDING');self.assertEqual(self.bytes(ctx),before)
+        good=self.artifacts(ctx,'CARD',card)
+        with self.assertRaises(AcceptanceError) as caught:
+            self.consume(ctx,good,request_ref=dict(good.request_ref,path=good.request_ref['path'][:-5]+'.png'))
+        self.assertEqual(caught.exception.code,'HUMAN_INPUT_REQUEST_ARTIFACT');self.assertEqual(self.bytes(ctx),before)
+        with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,good,result_ref=good.request_ref)
+        self.assertEqual(caught.exception.code,'HUMAN_INPUT_RESULT_ARTIFACT');self.assertEqual(self.bytes(ctx),before)
+        with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,good,result_ref=None)
+        self.assertEqual(caught.exception.code,'HUMAN_INPUT_RESULT_REF_REQUIRED');self.assertEqual(self.bytes(ctx),before)
+        self.consume(ctx,good)
+        self.assertFalse(json.loads((ctx.fixture.root/ctx.grant['gui_ledger']).read_bytes())['failure_latched'])
+
+    def test_human_save_all_uses_persisted_intent_and_chooser_path_needs_confirm(self):
+        ctx=self.context();card=self.reserve(ctx,'CARD');self.consume(ctx,self.artifacts(ctx,'CARD',card))
+        calibration=self.reserve(ctx,'CALIBRATION');self.consume(ctx,self.artifacts(ctx,'CALIBRATION',calibration))
+        self.set_intent(ctx)
+        dispatch=self.reserve(ctx,'SAVE_ALL');before=self.bytes(ctx)
+        bad=self.artifacts(ctx,'SAVE_ALL',dispatch,action_id='ACTION-foreign')
+        with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,bad)
+        self.assertEqual(caught.exception.code,'HUMAN_INPUT_ACTION_BINDING');self.assertEqual(self.bytes(ctx),before)
+        bad_result=self.artifacts(ctx,'SAVE_ALL',dispatch,action_id=ctx.action_id,result_updates={'action_id':'ACTION-foreign'})
+        with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,bad_result)
+        self.assertEqual(caught.exception.code,'HUMAN_INPUT_RESULT_BINDING');self.assertEqual(self.bytes(ctx),before)
+        self.consume(ctx,self.artifacts(ctx,'SAVE_ALL',dispatch,action_id=ctx.action_id))
+        chooser=self.reserve(ctx,'CHOOSER_PATH');before=self.bytes(ctx)
+        direct=self.artifacts(ctx,'CHOOSER_PATH',chooser,action_id=ctx.action_id)
+        with self.assertRaises(AcceptanceError) as caught:self.consume(ctx,direct)
+        self.assertEqual(caught.exception.code,'HUMAN_CHOOSER_CONFIRM_REQUIRED');self.assertEqual(self.bytes(ctx),before)
+        self.consume(ctx,self.artifacts(ctx,'CHOOSER_CONFIRM',chooser,action_id=ctx.action_id))
+        ledger=json.loads((ctx.fixture.root/ctx.grant['gui_ledger']).read_bytes())
+        self.assertFalse(ledger['failure_latched'])
+        self.assertEqual(sum(entry['count'] for entry in ledger['entries']),9)
+        self.assertEqual([entry['slots'] for entry in ledger['entries']],
+            [['A.CARD'],['A.CAL_OPEN','A.CAL_DISMISS'],['A.ATOMIC_ELLIPSIS','A.SAVE_ALL'],
+             ['A.GO_TO_FOLDER','A.SET_PATH','A.PATH_RETURN','A.CHOOSER_CONFIRM']])
+
+    def test_human_unknown_refused_crash_and_result_unknown_latch_no_refund_or_replay(self):
+        for scenario in ('crash-open','request-unknown','request-refused','result-unknown'):
+            with self.subTest(scenario=scenario):
+                ctx=self.context();card=self.reserve(ctx,'CARD')
+                if scenario=='crash-open':data=dict(reservation_id=card['id'],outcome=None)
+                else:
+                    outcome='UNKNOWN' if scenario in ('request-unknown','result-unknown') else 'REFUSED'
+                    artifacts=self.artifacts(ctx,'CARD',card,outcome=outcome)
+                    if scenario.startswith('request-'):
+                        data=dict(reservation_id=card['id'],outcome=outcome,request_ref=artifacts.request_ref,
+                            request_id=artifacts.request['request_id'])
+                    else:data=artifacts.data
+                ctx.store.consume_gui(ctx.grant,data)
+                ledger=json.loads((ctx.fixture.root/ctx.grant['gui_ledger']).read_bytes());entry=ledger['entries'][0]
+                self.assertTrue(ledger['failure_latched']);self.assertEqual(entry['state'],'CONSUMED')
+                expected={'crash-open':{'outcome','execution_mode','input_actor','observer_session_id'},
+                    'request-unknown':{'outcome','execution_mode','input_actor','observer_session_id','task_id',
+                        'grant_sha256','source_sha256','run_id','action_id','request_stage','fingerprint','destination',
+                        'reservation_ids','request_id','request_ref'},
+                    'request-refused':{'outcome','execution_mode','input_actor','observer_session_id','task_id',
+                        'grant_sha256','source_sha256','run_id','action_id','request_stage','fingerprint','destination',
+                        'reservation_ids','request_id','request_ref'},
+                    'result-unknown':{'outcome','execution_mode','input_actor','observer_session_id','task_id',
+                        'grant_sha256','source_sha256','run_id','action_id','request_stage','fingerprint','destination',
+                        'reservation_ids','request_id','request_ref','result_id','result_ref'}}[scenario]
+                self.assertEqual(set(entry['outcome']),expected)
+                before=self.bytes(ctx)
+                with self.assertRaises(AcceptanceError) as caught:ctx.store.consume_gui(ctx.grant,data)
+                self.assertEqual(caught.exception.code,'GUI_LEDGER_STATE');self.assertEqual(self.bytes(ctx),before)
+                with self.assertRaises(AcceptanceError) as caught:self.reserve(ctx,'CALIBRATION')
+                self.assertEqual(caught.exception.code,'PROJECT_WORKFLOW_HALTED');self.assertEqual(self.bytes(ctx),before)
+                ledger_after=json.loads((ctx.fixture.root/ctx.grant['gui_ledger']).read_bytes())
+                self.assertEqual(sum(item['count'] for item in ledger_after['entries']),1)
+                self.assertEqual(len(ledger_after['entries']),1)
+
+    def test_human_mode_mixing_and_tampered_ledger_fail_closed(self):
+        ctx=self.context();card=self.reserve(ctx,'CARD');before=self.bytes(ctx)
+        with self.assertRaises(AcceptanceError) as caught:
+            ctx.store.consume_gui(ctx.grant,dict(reservation_id=card['id'],outcome='RETURNED'))
+        self.assertEqual(caught.exception.code,'HUMAN_INPUT_OUTCOME');self.assertEqual(self.bytes(ctx),before)
+        with self.assertRaises(AcceptanceError) as caught:
+            ctx.store.consume_gui(ctx.grant,dict(reservation_id=card['id'],outcome=None,execution_mode='AUTO'))
+        self.assertEqual(caught.exception.code,'HUMAN_INPUT_MODE_BINDING');self.assertEqual(self.bytes(ctx),before)
+        auto_ctx=self.context();auto_cal=dict(observed_at='2026-10-18T01:00:00+00:00',screenshot_width=128,
+            screenshot_height=128,ellipsis=[1,1],dot_spacing=3,save_all_point=[2,2],confidence='HIGH',evidence='auto')
+        self.set_intent(auto_ctx,auto_cal)
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(auto_ctx,'CARD')
+        self.assertEqual(caught.exception.code,'HUMAN_CALIBRATION_REQUIRED')
+        with self.assertRaises(AcceptanceError) as caught:
+            Store._human_grant(dict(ctx.grant,observer_session_id=None))
+        self.assertEqual(caught.exception.code,'HUMAN_GRANT_BINDING')
+
+        self.consume(ctx,self.artifacts(ctx,'CARD',card))
+        ledger_path=ctx.fixture.root/ctx.grant['gui_ledger'];original=ledger_path.read_bytes()
+        ledger=json.loads(original)
+        for field,value,code in (('task_id','foreign-task','HUMAN_LEDGER_OUTCOME_BINDING'),
+            ('observer_session_id','foreign-session','HUMAN_LEDGER_OUTCOME_BINDING'),
+            ('execution_mode','AUTO','HUMAN_LEDGER_OUTCOME_BINDING')):
+            with self.subTest(ledger=field):
+                tampered=copy.deepcopy(ledger);tampered['entries'][0]['outcome'][field]=value
+                ledger_path.write_bytes(json_bytes(tampered));tampered_raw=ledger_path.read_bytes()
+                with self.assertRaises(AcceptanceError) as caught:self.reserve(ctx,'CALIBRATION')
+                self.assertEqual(caught.exception.code,code);self.assertEqual(ledger_path.read_bytes(),tampered_raw)
+                ledger_path.write_bytes(original)

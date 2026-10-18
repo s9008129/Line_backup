@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {performance} from 'node:perf_hooks';
-import {createProducerHook} from '../harness-development/line-two-album-pilot-20261014/mac/producer.mjs';
+import {createHumanVisualDiagnosticSurfaceRequest,createProducerHook} from '../harness-development/line-two-album-pilot-20261014/mac/producer.mjs';
 import {createLiveClassifier} from '../harness-development/line-two-album-pilot-20261014/mac/classifier.mjs';
 import {createVisualDiagnosticObserver} from '../harness-development/line-two-album-pilot-20261014/mac/visual_diagnostic.mjs';
 
@@ -26,8 +26,9 @@ async function withPerformanceNow(values,run){
 }
 
 function harness({analysisDelayMs=0,mutatePair=value=>value,artifactFault=null,
-    clockBracketNs=2_500_000_000n,crossDomainLooksFresh=false}={}){
+    clockBracketNs=2_500_000_000n,crossDomainLooksFresh=false,mutateHumanSurface=value=>value}={}){
   const files=new Map(),retained=[];let captureCalls=0,analysisCalls=0,lastPair=null;
+  let humanSurfaceFlagCount=0,lastHumanSurfaceRequest=null;
   const store=(path,bytes)=>{const value=new Uint8Array(bytes);files.set(path,value);return ref(path,value);};
   const io={readFile:async absolute=>{const value=files.get(absolute.slice(root.length+1));assert(value);return value;},
     mkdirp:async()=>{}};
@@ -44,6 +45,9 @@ function harness({analysisDelayMs=0,mutatePair=value=>value,artifactFault=null,
   const pairFor=argv=>{
     const arg=name=>argv[argv.indexOf(name)+1];
     const framePath=arg('--cua-frame'),frameId=arg('--cua-frame-id');
+    const humanSurfaceArg=argv.indexOf('--human-visual-diagnostic-surface-json');
+    const requestedHumanSurface=humanSurfaceArg<0?null:JSON.parse(argv[humanSurfaceArg+1]);
+    if(humanSurfaceArg>=0){humanSurfaceFlagCount++;lastHumanSurfaceRequest=requestedHumanSurface;}
     const sckBytes=new Uint8Array([1,2,3,4,5,6]);
     const sck=store(`harness-development/line-two-album-pilot-20261014/private/evidence/visual-diagnostic/test/sck.png`,sckBytes);
     if(artifactFault==='corrupt')files.set(sck.path,new Uint8Array([9,8,7]));
@@ -74,7 +78,9 @@ function harness({analysisDelayMs=0,mutatePair=value=>value,artifactFault=null,
       cuaBoundsPoints:[0,0,1000,800],sckWindowBoundsPoints:[0,0,1000,800],displayBoundsPoints:[0,0,1000,800],
       captureRecord:{}};
     lastPair=pair;
-    return mutatePair({version:2,kind:'VISUAL_CARD_DIAGNOSTIC',evidenceOnly:true,actionable:false,pair});
+    const receipt={version:2,kind:'VISUAL_CARD_DIAGNOSTIC',evidenceOnly:true,actionable:false,pair};
+    if(requestedHumanSurface!==null)receipt.humanSurfaceRequest=mutateHumanSurface(requestedHumanSurface);
+    return mutatePair(receipt);
   };
   const runProcess=async argv=>{
     const command=argv[1];
@@ -98,7 +104,8 @@ function harness({analysisDelayMs=0,mutatePair=value=>value,artifactFault=null,
   const producer=createProducerHook({io,runProcess,repoRoot:root,authorization:'grant.json',authority:{grantSha256:'a'.repeat(64)},
     binary:{absolutePath:'/rev28ctl'},geometryProvider:async()=>{throw Error('production frame-support must not run');},retain});
   return {producer,retain,files,retained,get captureCalls(){return captureCalls;},get analysisCalls(){return analysisCalls;},
-    get lastPair(){return lastPair;}};
+    get lastPair(){return lastPair;},get humanSurfaceFlagCount(){return humanSurfaceFlagCount;},
+    get lastHumanSurfaceRequest(){return lastHumanSurfaceRequest;}};
 }
 
 function nativeContext(){
@@ -275,4 +282,51 @@ test('post-capture failure retains the original pair receipt and Native BEFORE r
   const failure=h.retained.find(item=>item.kind==='VISUAL_CARD_DIAGNOSTIC_FAILURE');
   assert.ok(failure.capture_pair_receipt?.sha256);assert.equal(failure.native_before,beforeRef);
   assert.equal(failure.capture_status,'CAPTURED');assert.equal(failure.analysis_status,'NOT_RUN');
+});
+
+function humanCaptureInput(h,{requestedSurface}={}){
+  const frame=png(),frameId=hash(frame),state='AX',axBytes=new TextEncoder().encode(state);
+  const framePath=`harness-development/line-two-album-pilot-20261014/private/evidence/cua-frames/${frameId}.png`;
+  const axPath=`harness-development/line-two-album-pilot-20261014/private/evidence/cua-ax/${frameId}.bin`;
+  const savedFrame=ref(framePath,frame),savedAx=ref(axPath,axBytes);h.files.set(framePath,frame);h.files.set(axPath,axBytes);
+  const now=Date.now(),start=new Date(now-100).toISOString(),end=new Date(now).toISOString();
+  const clockWitnessId='11111111-2222-4333-8444-555555555555';
+  return {capture:{screenshot:frame,state},saved:{...savedFrame,ax:savedAx},frameId,sessionId:'human-session',
+    requestStartedAtUtc:start,requestEndedAtUtc:end,requestStartMonotonicNanoseconds:'0',
+    requestEndMonotonicNanoseconds:'0',before:{value:nativeContext()},
+    clockBeforeCUA:{version:1,sessionID:'human-session',witnessID:clockWitnessId,domain:'mach_continuous_time',
+      bootSessionUUID,timebaseNumerator:125,timebaseDenominator:3,continuousNanoseconds:'1000000000',
+      sampledAtUTC:new Date(now-200).toISOString()},clockWitnessId,...(requestedSurface===undefined?{requestedSurface:undefined}:{requestedSurface})};
+}
+
+test('human visual surface capture adds one exact non-actionable request and never analyzes pixels',async()=>{
+  const h=harness(),input=humanCaptureInput(h,{requestedSurface:'ALBUMS'});
+  const output=await withPerformanceNow([1,1],()=>h.producer.captureVisualDiagnostic(input));
+  const expected=createHumanVisualDiagnosticSurfaceRequest('ALBUMS');
+  assert.deepEqual(h.lastHumanSurfaceRequest,expected);assert.deepEqual(output.humanSurfaceRequest,expected);
+  assert.equal(h.humanSurfaceFlagCount,1);assert.equal(h.captureCalls,1);assert.equal(h.analysisCalls,0);
+  const retained=h.retained.find(item=>item.kind==='VISUAL_CARD_DIAGNOSTIC');
+  assert.deepEqual(retained.humanSurfaceRequest,expected);
+  assert.equal(retained.actionable,false);assert.equal(retained.evidenceOnly,true);
+});
+
+test('AUTO capture omits the human surface flag and preserves the legacy receipt',async()=>{
+  const h=harness(),input=humanCaptureInput(h);
+  const output=await withPerformanceNow([1,1],()=>h.producer.captureVisualDiagnostic(input));
+  assert.equal(h.humanSurfaceFlagCount,0);assert.equal(output.humanSurfaceRequest,undefined);
+  assert.equal(h.analysisCalls,0);
+  assert.equal(h.retained.find(item=>item.kind==='VISUAL_CARD_DIAGNOSTIC').humanSurfaceRequest,undefined);
+});
+
+test('human capture rejects a mismatched echoed surface or an invalid requested surface before analysis',async()=>{
+  const mismatch=harness({mutateHumanSurface:value=>({...value,requested_surface:'ALBUM_DETAIL'})});
+  await assert.rejects(()=>withPerformanceNow([1,1],()=>mismatch.producer.captureVisualDiagnostic(
+    humanCaptureInput(mismatch,{requestedSurface:'ALBUMS'}))),
+    /VISUAL_DIAGNOSTIC_HUMAN_SURFACE_RECEIPT/);
+  assert.equal(mismatch.captureCalls,1);assert.equal(mismatch.analysisCalls,0);
+
+  const invalid=harness();
+  await assert.rejects(()=>invalid.producer.captureVisualDiagnostic(humanCaptureInput(invalid,{requestedSurface:'NOT_A_SURFACE'})),
+    /VISUAL_DIAGNOSTIC_HUMAN_SURFACE/);
+  assert.equal(invalid.captureCalls,0);assert.equal(invalid.analysisCalls,0);
 });

@@ -15,6 +15,15 @@ const canonical=value=>Array.isArray(value)?`[${value.map(canonical).join(',')}]
 const refShape=v=>v&&Object.keys(v).sort().join(',')==='bytes,path,sha256'
   &&v.path.startsWith(CON+'/')&&!v.path.split('/').some(p=>p==='.'||p==='..')
   &&Number.isInteger(v.bytes)&&v.bytes>0&&isHash(v.sha256);
+const HUMAN_SURFACES=Object.freeze(['ALBUMS','ALBUM_DETAIL','FOLDER_CHOOSER']);
+const HUMAN_SURFACE_REQUEST_KEYS=Object.freeze(['version','kind','execution_mode','evidence_tag','requested_surface','actionable']);
+const humanSurfaceRequest=surface=>({version:1,kind:'human-visual-diagnostic-surface-1',
+  execution_mode:'HUMAN_ASSISTED',evidence_tag:'HUMAN_OBSERVATION',requested_surface:surface,actionable:false});
+const sameJSON=(a,b)=>canonical(a)===canonical(b);
+export function createHumanVisualDiagnosticSurfaceRequest(surface){
+  need(HUMAN_SURFACES.includes(surface),'VISUAL_DIAGNOSTIC_HUMAN_SURFACE');
+  return Object.freeze(humanSurfaceRequest(surface));
+}
 async function readVerified(io,root,ref,code='ARTIFACT_DRIFT'){
   need(refShape(ref),code);const raw=await io.readFile(path.join(root,ref.path));
   need(raw.byteLength===ref.bytes&&raw.byteLength<=16*1024*1024&&sha256(raw)===ref.sha256,code);return raw;
@@ -48,8 +57,9 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
   }
   async function captureVisualDiagnostic({capture,saved,frameId,sessionId,requestStartedAtUtc,
       requestEndedAtUtc,requestStartMonotonicNanoseconds,requestEndMonotonicNanoseconds,before,
-      clockBeforeCUA,clockWitnessId}) {
+      clockBeforeCUA,clockWitnessId,requestedSurface=null}) {
     need(typeof retain==='function','VISUAL_DIAGNOSTIC_RETENTION_REQUIRED');
+    const humanRequest=requestedSurface===null?null:createHumanVisualDiagnosticSurfaceRequest(requestedSurface);
     const decimalNs=value=>typeof value==='string'&&/^(0|[1-9][0-9]*)$/.test(value);
     const startMono=decimalNs(requestStartMonotonicNanoseconds)?BigInt(requestStartMonotonicNanoseconds):-1n;
     const endMono=decimalNs(requestEndMonotonicNanoseconds)?BigInt(requestEndMonotonicNanoseconds):-1n;
@@ -87,7 +97,7 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
       &&Date.now()-Date.parse(requestStartedAtUtc)<=5000,'VISUAL_DIAGNOSTIC_CAPTURE_DEADLINE');
     const output=`${CON}/evidence/visual-diagnostic/${sessionId}/${frameId.slice(0,16)}-${randomUUID()}`;
     await io.mkdirp(path.join(repoRoot,output));
-    const result=await run(['visual-diagnostic-capture','--project-root',repoRoot,
+    const captureArgs=['visual-diagnostic-capture','--project-root',repoRoot,
       '--grant',authorization,'--grant-sha256',authority.grantSha256,'--output',output,
       '--session-id',sessionId,'--cua-frame',saved.path,'--cua-frame-id',frameId,
       '--cua-request-started-at',requestStartedAtUtc,'--cua-request-ended-at',requestEndedAtUtc,
@@ -96,12 +106,18 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
       '--clock-witness-id',clockWitnessId,'--continuous-clock-before-cua-json',JSON.stringify(clockBeforeCUA),
       '--pid',String(pid),'--process-start-seconds',String(before.value.target.startTimeSeconds),
       '--process-start-microseconds',String(before.value.target.startTimeMicroseconds),
-      '--window-id',String(focusedID),'--display-id',String(w.displayIDs[0]),'--cua-bounds',bounds.join(',')],
-      'VISUAL_DIAGNOSTIC_CAPTURE_REFUSED');
+      '--window-id',String(focusedID),'--display-id',String(w.displayIDs[0]),'--cua-bounds',bounds.join(',')];
+    if(humanRequest)captureArgs.push('--human-visual-diagnostic-surface-json',JSON.stringify(humanRequest));
+    const result=await run(captureArgs,'VISUAL_DIAGNOSTIC_CAPTURE_REFUSED');
     const receipt=result;
     need(receipt.version===2&&receipt.kind==='VISUAL_CARD_DIAGNOSTIC'&&receipt.evidenceOnly===true
       &&receipt.actionable===false&&receipt.pair?.sessionID===sessionId&&receipt.pair.cuaFrameID===frameId,
       'VISUAL_DIAGNOSTIC_CAPTURE_RECEIPT');
+    need(humanRequest
+      ?Object.keys(receipt.humanSurfaceRequest??{}).sort().join(',')===HUMAN_SURFACE_REQUEST_KEYS.slice().sort().join(',')
+        &&sameJSON(receipt.humanSurfaceRequest,humanRequest)
+      :receipt.humanSurfaceRequest===undefined,
+      'VISUAL_DIAGNOSTIC_HUMAN_SURFACE_RECEIPT');
     const pair=receipt.pair;
     need(refShape(pair.cuaFrame)&&pair.cuaFrame.sha256===frameId&&refShape(pair.sckFrame)
       &&pair.sckFrame.sha256===pair.sckFrameID&&pair.sckFrameID!==frameId
@@ -124,7 +140,7 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
       'VISUAL_DIAGNOSTIC_CAPTURE_PAIR');
     await readRef(pair.cuaFrame);await readRef(pair.sckFrame);
     const reference=await retain({artifact:receipt,kind:'visual-diagnostic-capture-receipt',frameId,sessionId});
-    return {pair,reference,readRef};
+    return {pair,reference,readRef,humanSurfaceRequest:humanRequest??undefined};
   }
   async function analyzeVisualDiagnostic({pairEvidence,frameId,sessionId}) {
     const pair=pairEvidence?.pair;
@@ -141,6 +157,8 @@ export function createProducerHook({io,runProcess,repoRoot,authorization,authori
     need(decodedReceipt.version===2&&decodedReceipt.kind==='VISUAL_CARD_DIAGNOSTIC'
       &&decodedReceipt.evidenceOnly===true&&decodedReceipt.actionable===false
       &&canonical(decodedReceipt.pair)===canonical(pair),'VISUAL_DIAGNOSTIC_RECEIPT_PAIR_MISMATCH');
+    need(pairEvidence.humanSurfaceRequest===undefined&&decodedReceipt.humanSurfaceRequest===undefined,
+      'VISUAL_DIAGNOSTIC_HUMAN_RECEIPT_NOT_AUTO_ANALYZABLE');
     const pairSHA=captureReceipt.sha256;
     const result=await run(['visual-diagnostic-analyze','--project-root',repoRoot,
       '--capture-receipt',captureReceipt.path,'--capture-receipt-sha256',captureReceipt.sha256],

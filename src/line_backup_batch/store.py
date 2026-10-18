@@ -1,14 +1,17 @@
 """Single existing-lock CAS authority, retaining raw bytes and nanosecond ints."""
 import contextlib
 import copy
+from datetime import datetime
 import fcntl
 import hashlib
 import json
 import os
 from pathlib import Path
+import posixpath
 import stat
+import unicodedata
 import uuid
-from line_backup_acceptance.common import AcceptanceError,json_bytes,utc_now
+from line_backup_acceptance.common import AcceptanceError,HUMAN_EXECUTION_MODE,HUMAN_INPUT_ACTOR,json_bytes,utc_now
 from line_backup_acceptance.project_binding import ProjectReader,strict_json,validate_config,validate_history,sha
 from .schema import require
 
@@ -28,6 +31,39 @@ PROJECT_SLOTS={
     'RETURN_A_TO_LIST':'RETURN_A_TO_LIST','SCROLL_1':'SCROLL','SCROLL_2':'SCROLL','SCROLL_3':'SCROLL','SCROLL_4':'SCROLL'}
 PROJECT_SLOT_COUNTS={'CARD':1,'CAL_OPEN':1,'CAL_DISMISS':1,'ATOMIC_ELLIPSIS':1,'SAVE_ALL':1,
     'GO_TO_FOLDER':1,'SET_PATH':1,'PATH_RETURN':1,'CHOOSER_CONFIRM':1,'RETURN_A_TO_LIST':1,'SCROLL':1}
+HUMAN_INPUT_STAGES=('CARD','CALIBRATION','SAVE_ALL','CHOOSER_PATH','CHOOSER_CONFIRM')
+HUMAN_GRANT_FIELDS={'execution_mode','input_actor','observer_session_id'}
+HUMAN_STAGE_INSTRUCTIONS={
+    'CARD':'Open only the bound A56 album card; do not use Save All in this step.',
+    'CALIBRATION':'Open the album menu, verify the Save All row is present, then close the menu without choosing Save All.',
+    'SAVE_ALL':'Use Save All exactly once. If the result is uncertain, stop; never repeat it.',
+    'CHOOSER_PATH':"Enter the exact bound destination in LINE's folder chooser and return to the chooser; do not confirm yet.",
+    'CHOOSER_CONFIRM':'Confirm the exact empty destination once. If confirmation is uncertain, stop; never repeat it.'}
+HUMAN_STAGE_RESERVATIONS={
+    'CARD':('album_open',['A.CARD']),
+    'CALIBRATION':('menu_calibration',['A.CAL_OPEN','A.CAL_DISMISS']),
+    'SAVE_ALL':('dispatch_inputs',['A.ATOMIC_ELLIPSIS','A.SAVE_ALL']),
+    'CHOOSER_PATH':('chooser_inputs',['A.GO_TO_FOLDER','A.SET_PATH','A.PATH_RETURN','A.CHOOSER_CONFIRM']),
+    'CHOOSER_CONFIRM':('chooser_inputs',['A.GO_TO_FOLDER','A.SET_PATH','A.PATH_RETURN','A.CHOOSER_CONFIRM'])}
+HUMAN_A56_FINGERPRINT={'start_date':'2024-05-27','end_date':'2024-05-31','expected_images':56}
+HUMAN_REQUEST_KEYS={'version','kind','task_id','grant_sha256','execution_mode','input_actor',
+    'observer_session_id','source_sha256','run_id','action_id','request_stage','fingerprint',
+    'destination','reservation_ids','request_id','issued_at','instruction','raw_evidence_refs'}
+HUMAN_RESULT_KEYS={'version','kind','task_id','grant_sha256','execution_mode','input_actor',
+    'observer_session_id','source_sha256','run_id','action_id','request_stage','fingerprint',
+    'destination','reservation_ids','request_id','result_id','recorded_at','operator_reported',
+    'observed','outcome','raw_evidence_refs'}
+HUMAN_CONSUME_KEYS={'reservation_id','outcome','request_ref','result_ref','request_id','result_id',
+    'evidence_refs','execution_mode','input_actor','observer_session_id'}
+HUMAN_OPERATOR_REPORT_KEYS={'status','outcome','reported_at','statement','raw_response_ref'}
+HUMAN_OBSERVED_KEYS={'status','facts','observed_at','raw_evidence_refs'}
+HUMAN_CALIBRATION_KEYS={'kind','execution_mode','input_actor','observer_session_id','observed_at',
+    'detail_ref','menu_ref','closure_ref','attestation_ref'}
+HUMAN_OUTCOME_BASE_KEYS={'outcome','execution_mode','input_actor','observer_session_id','task_id',
+    'grant_sha256','source_sha256','run_id','action_id','request_stage','fingerprint','destination',
+    'reservation_ids','request_id','request_ref'}
+HUMAN_OUTCOME_RESULT_KEYS=HUMAN_OUTCOME_BASE_KEYS|{'result_id','result_ref'}
+HUMAN_OUTCOME_CRASH_KEYS={'outcome','execution_mode','input_actor','observer_session_id'}
 _PROJECT_OBSERVATION_STAGES=('LIST_GROUNDING','PREPARED_LIST','DETAIL_OPEN','MENU_OPEN','MENU_CLOSURE',
     'PRE_INTENT_DETAIL','CHOOSER_APPEARED','CHOOSER_GO_TO_FOLDER','CHOOSER_PATH_FILLED',
     'CHOOSER_DESTINATION_SELECTED','CHOOSER_CONFIRM_ATTEMPTED')
@@ -361,6 +397,13 @@ class Store:
         from .cli import authorize
         require(authorize(self.root,self.authorization_path,False,operation)==grant,'GRANT_DRIFT')
 
+    def _project_authorization_sha256(self,reader,grant):
+        require(isinstance(self.authorization_path,str) and self.authorization_path.startswith('harness-development/'),
+            'PROJECT_GRANT_REQUIRED')
+        raw,_=reader.read(self.authorization_path,'GRANT_DRIFT')
+        require(strict_json(raw,'INVALID_GRANT')==grant,'GRANT_DRIFT')
+        return sha(raw)
+
     @staticmethod
     def _ledger_read(r,path):
         parts=path.split('/');parent=r.open('/'.join(parts[:-1]),directory=True)
@@ -520,11 +563,63 @@ class Store:
         finally:check.close()
 
     @staticmethod
+    def _validate_human_ledger_outcome(item,grant):
+        value=item.get('outcome')
+        require(isinstance(value,dict),'PROJECT_LEDGER_MODE_MIXING')
+        allowed=(HUMAN_OUTCOME_CRASH_KEYS,HUMAN_OUTCOME_BASE_KEYS,HUMAN_OUTCOME_RESULT_KEYS)
+        require(any(set(value)==keys for keys in allowed),'HUMAN_LEDGER_OUTCOME_SHAPE')
+        require(value.get('execution_mode')==HUMAN_EXECUTION_MODE
+            and value.get('input_actor')==HUMAN_INPUT_ACTOR
+            and value.get('observer_session_id')==grant['observer_session_id']
+            and value.get('outcome') in (None,'HUMAN_REPORTED_RETURNED','UNKNOWN','REFUSED'),
+            'HUMAN_LEDGER_OUTCOME_BINDING')
+        if set(value)==HUMAN_OUTCOME_CRASH_KEYS:return
+        require(value.get('task_id')==grant['task_id'] and value.get('source_sha256')==grant['source_sha256']
+            and isinstance(value.get('grant_sha256'),str) and len(value['grant_sha256'])==64
+            and all(char in '0123456789abcdef' for char in value['grant_sha256'])
+            and value.get('run_id')==item.get('run_id') and isinstance(value.get('request_id'),str)
+            and value['request_id'] and value.get('request_stage') in HUMAN_INPUT_STAGES
+            and value['request_stage']!='CHOOSER_PATH'
+            and value.get('fingerprint')==HUMAN_A56_FINGERPRINT
+            and Store._human_destination(value.get('destination'))
+            and value.get('reservation_ids')==[item.get('id')]
+            and Store._human_ref_shape(value.get('request_ref')),'HUMAN_LEDGER_OUTCOME_BINDING')
+        stage=value['request_stage'];kind,slots=HUMAN_STAGE_RESERVATIONS[stage]
+        require(item.get('kind')==kind and item.get('count')==len(slots) and item.get('slots')==slots
+            and item.get('workflow_phase')=='A','HUMAN_LEDGER_OUTCOME_BINDING')
+        if stage in ('CARD','CALIBRATION'):
+            require(value.get('action_id') is None,'HUMAN_LEDGER_ACTION_BINDING')
+        else:require(isinstance(value.get('action_id'),str) and value['action_id'],'HUMAN_LEDGER_ACTION_BINDING')
+        if set(value)==HUMAN_OUTCOME_RESULT_KEYS:
+            require(isinstance(value.get('result_id'),str) and value['result_id']
+                and value['result_id']!=value['request_id']
+                and Store._human_ref_shape(value.get('result_ref'))
+                and value['result_ref']['path']!=value['request_ref']['path'],
+                'HUMAN_LEDGER_RESULT_BINDING')
+        else:require(value['outcome']!='HUMAN_REPORTED_RETURNED','HUMAN_LEDGER_RESULT_BINDING')
+
+    @staticmethod
+    def _validate_project_outcome(item,grant,human):
+        outcome=item.get('outcome')
+        if isinstance(outcome,dict):
+            require(human,'PROJECT_LEDGER_MODE_MIXING')
+            Store._validate_human_ledger_outcome(item,grant)
+            return
+        require(isinstance(outcome,str) and outcome!='HUMAN_REPORTED_RETURNED','PROJECT_LEDGER_CONSUMED')
+        # Older project ledgers JSON-encoded a scalar outcome.  Read that history
+        # without permitting the encoding to hide a HUMAN actor-bound object.
+        if outcome.startswith('"'):
+            try:decoded=json.loads(outcome)
+            except (TypeError,ValueError) as exc:raise AcceptanceError('PROJECT_LEDGER_CONSUMED','invalid encoded outcome',4) from exc
+            require(isinstance(decoded,str) and decoded!='HUMAN_REPORTED_RETURNED','PROJECT_LEDGER_CONSUMED')
+
+    @staticmethod
     def _validate_project_ledger(ledger,grant,receipt):
         baseline=dict(ledger);initial=baseline.pop('initial_ledger_sha256',None)
         require(initial==receipt.get('ledger_sha256') and isinstance(initial,str) and len(initial)==64
             and all(char in '0123456789abcdef' for char in initial),
             'PROJECT_LEDGER_INITIALIZATION_BINDING')
+        human=Store._human_grant(grant)
         entries=ledger['entries'];require(isinstance(entries,list),'PROJECT_LEDGER_ENTRIES')
         seen=set();ids=set();used=0
         for index,item in enumerate(entries,1):
@@ -559,7 +654,10 @@ class Store:
                     'PROJECT_LEDGER_BUNDLE')
             else:require(item['run_id'] is None,'PROJECT_LEDGER_RUN_BINDING')
             if item['state']=='RESERVED':require(item['outcome'] is None and item['consumed_at'] is None,'PROJECT_LEDGER_RESERVED')
-            else:require(isinstance(item['consumed_at'],str),'PROJECT_LEDGER_CONSUMED')
+            else:
+                require(isinstance(item['consumed_at'],str)
+                    and Store._human_timestamp(item['consumed_at']) is not None,'PROJECT_LEDGER_CONSUMED')
+                Store._validate_project_outcome(item,grant,human)
         require(used==len(seen) and used<=23 and len(entries)<=23,'PROJECT_LEDGER_COUNT')
         counters=ledger['observation_counts'];require(isinstance(counters,dict) and set(counters)=={'app','paired','extra_ax','popup'}
             and type(counters['app']) is int and 0<=counters['app']<=3
@@ -588,13 +686,43 @@ class Store:
 
     def reserve_gui(self,grant,data):
         """Reserve GUI inputs before they happen; reservations are never refunded."""
+        require(isinstance(data,dict),'GUI_LEDGER_DATA')
+        project=is_project_grant(grant);human=Store._human_grant(grant) if project else False
+        if human:
+            self._authorize_project_mutation(grant,'gui_reserve')
+            require(set(data)=={'stage','kind','count','run_id','owner','slots'},'HUMAN_RESERVATION_BINDING')
+            stage=data.get('stage')
+            require(isinstance(stage,str) and stage in HUMAN_INPUT_STAGES,'HUMAN_INPUT_STAGE_REQUIRED')
+            require(stage!='CHOOSER_CONFIRM','HUMAN_CHOOSER_CONFIRM_REQUIRED')
+            kind,slots=HUMAN_STAGE_RESERVATIONS[stage]
+            count=len(slots)
+            require(data.get('kind')==kind and type(data.get('count')) is int and data.get('count')==count
+                and data.get('slots')==slots and isinstance(data.get('run_id'),str) and data.get('run_id')
+                and data.get('owner')==grant['owner'],'HUMAN_RESERVATION_BINDING')
+            with self.guard() as (r,parent,check_lock,lock_identity):
+                check_lock()
+                self._project_authorization_sha256(r,grant)
+                state=strict_json(r.read(STATE,'INVALID_STATE')[0],'INVALID_STATE')
+                path,ledger,cap=self._ledger_open(r,grant)
+                used=sum(entry['count'] for entry in ledger['entries'])
+                require(used+count<=cap,'GUI_LEDGER_EXHAUSTED')
+                require(not ledger['failure_latched'],'PROJECT_WORKFLOW_HALTED')
+                require(not any(item.get('state')=='RESERVED' for item in ledger['entries']),
+                    'PROJECT_UNKNOWN_RESERVATION')
+                Store._human_state_run(state,grant,data['run_id'])
+                Store._human_new_stage_binding(ledger,stage,data['run_id'],grant)
+                entry=dict(seq=len(ledger['entries'])+1,id=uuid.uuid4().hex,kind=kind,count=count,
+                    run_id=data['run_id'],owner=grant['owner'],at=utc_now(),state='RESERVED',outcome=None,
+                    consumed_at=None,slots=slots,workflow_phase='A')
+                ledger['entries'].append(entry)
+                self._ledger_write(r,path,ledger)
+                return dict(reservation=dict(id=entry['id'],kind=kind,count=count),used=used+count,cap=cap)
         kind=data.get('kind');count=data.get('count');run_id=data.get('run_id');owner=data.get('owner')
         require(isinstance(kind,str) and kind in GUI_LEDGER_KINDS,'GUI_LEDGER_KIND')
         require(type(count) is int and count>=1,'GUI_LEDGER_COUNT')
         require(isinstance(owner,str) and owner==grant['owner'],'GUI_LEDGER_OWNER')
         require(run_id is None or isinstance(run_id,str),'GUI_LEDGER_RUN')
         slot=data.get('slot')
-        project=is_project_grant(grant)
         if project:
             self._authorize_project_mutation(grant,'gui_reserve')
             slots=data.get('slots',[slot])
@@ -670,11 +798,331 @@ class Store:
             else:require(slots==[slot],'PROJECT_ACTION_SLOT_REQUIRED')
             used_set.add(slot)
 
+    @staticmethod
+    def _human_grant(grant):
+        present=HUMAN_GRANT_FIELDS.intersection(grant) if isinstance(grant,dict) else set()
+        if not present:return False
+        require(present==HUMAN_GRANT_FIELDS,'HUMAN_GRANT_BINDING')
+        require(grant.get('grant_version')=='line-two-album-project-grant-1'
+            and grant.get('single_album_route') is True
+            and grant.get('fixture') is False
+            and grant.get('execution_mode')==HUMAN_EXECUTION_MODE
+            and grant.get('input_actor')==HUMAN_INPUT_ACTOR
+            and isinstance(grant.get('observer_session_id'),str) and grant['observer_session_id'],
+            'HUMAN_GRANT_BINDING')
+        return True
+
+    @staticmethod
+    def _human_ref_shape(value, *, json_required=True):
+        return (isinstance(value,dict) and set(value)=={'path','bytes','sha256'}
+            and isinstance(value.get('path'),str) and value['path'].startswith('harness-development/')
+            and '/private/' in value['path'] and (not json_required or value['path'].endswith('.json'))
+            and all(part not in ('','.','..') for part in value['path'].split('/'))
+            and type(value.get('bytes')) is int and value['bytes']>0
+            and isinstance(value.get('sha256'),str) and len(value['sha256'])==64
+            and all(char in '0123456789abcdef' for char in value['sha256']))
+
+    @staticmethod
+    def _human_read_ref(reader,ref,code,*,json_required=True):
+        require(Store._human_ref_shape(ref,json_required=json_required),code)
+        raw,_=reader.read(ref['path'],code)
+        require(len(raw)==ref['bytes'] and sha(raw)==ref['sha256'],code)
+        return raw
+
+    @staticmethod
+    def _human_read_json_ref(reader,ref,code):
+        return strict_json(Store._human_read_ref(reader,ref,code),code)
+
+    @staticmethod
+    def _human_destination(value):
+        return (isinstance(value,str) and value.startswith('/') and value!='/'
+            and not value.endswith('/') and '\\' not in value and '\0' not in value
+            and not any(ord(char)<32 for char in value)
+            and unicodedata.normalize('NFC',value)==value and posixpath.normpath(value)==value)
+
+    @staticmethod
+    def _human_timestamp(value):
+        if not isinstance(value,str) or not value:return None
+        try:parsed=datetime.fromisoformat(value.replace('Z','+00:00'))
+        except ValueError:return None
+        return parsed if parsed.tzinfo is not None else None
+
+    @staticmethod
+    def _human_reject_fabricated_claims(value,path='human-input'):
+        if isinstance(value,dict):
+            for key,child in value.items():
+                normalized=''.join(char for char in key.lower() if char.isalpha())
+                normalized_value=((''.join(char for char in child.lower() if char.isalpha()))
+                    if isinstance(child,str) else '')
+                require(not any(token in normalized for token in
+                    ('cuareturned','classifierpass','precision','exactlyonce'))
+                    and normalized_value not in
+                    ('cuareturned','classifierpass','precision','exactlyonce'),
+                    'HUMAN_INPUT_FABRICATED_CLAIM')
+                Store._human_reject_fabricated_claims(child,f'{path}.{key}')
+        elif isinstance(value,list):
+            for index,child in enumerate(value):
+                Store._human_reject_fabricated_claims(child,f'{path}[{index}]')
+
+    @staticmethod
+    def _human_evidence_refs(reader,refs,code):
+        require(isinstance(refs,list) and refs,'HUMAN_INPUT_EVIDENCE_REQUIRED')
+        keys=[]
+        for ref in refs:
+            require(Store._human_ref_shape(ref,json_required=False),code)
+            Store._human_read_ref(reader,ref,code,json_required=False)
+            keys.append((ref['path'],ref['bytes'],ref['sha256']))
+        require(len(keys)==len(set(keys)),code)
+        return refs
+
+    @staticmethod
+    def _human_calibration_refs(reader,calibration,grant,code='HUMAN_CALIBRATION_REQUIRED'):
+        require(isinstance(calibration,dict) and set(calibration)==HUMAN_CALIBRATION_KEYS
+            and calibration.get('kind')=='human-menu-attestation-1'
+            and calibration.get('execution_mode')==HUMAN_EXECUTION_MODE
+            and calibration.get('input_actor')==HUMAN_INPUT_ACTOR
+            and calibration.get('observer_session_id')==grant['observer_session_id']
+            and Store._human_timestamp(calibration.get('observed_at')) is not None,code)
+        refs=[calibration[key] for key in ('detail_ref','menu_ref','closure_ref','attestation_ref')]
+        keys=[]
+        for ref in refs:
+            require(Store._human_ref_shape(ref),code)
+            Store._human_read_ref(reader,ref,code)
+            keys.append((ref['path'],ref['bytes'],ref['sha256']))
+        require(len(keys)==len(set(keys)),code)
+
+    @staticmethod
+    def _human_intent_calibration(intent,grant):
+        require(isinstance(intent,dict) and isinstance(intent.get('calibration'),dict)
+            and intent['calibration'].get('kind')=='human-menu-attestation-1'
+            and intent['calibration'].get('execution_mode')==HUMAN_EXECUTION_MODE
+            and intent['calibration'].get('input_actor')==HUMAN_INPUT_ACTOR
+            and intent['calibration'].get('observer_session_id')==grant['observer_session_id'],
+            'HUMAN_CALIBRATION_REQUIRED')
+
+    @staticmethod
+    def _human_state_run(state,grant,run_id):
+        batch=state.get('active_batch')
+        require(isinstance(batch,dict) and batch.get('mode')=='backup_batch'
+            and batch.get('owner_execution_id')==grant['owner']
+            and batch.get('current_album_run_id')==run_id
+            and batch.get('authorized_new_download_limit')==1
+            and batch.get('phase')=='RUNNING' and batch.get('source_sha256')==grant['source_sha256'],
+            'HUMAN_RUN_BINDING')
+        require(state.get('current_run_id')==run_id and state.get('active_writer_id')==grant['owner'],
+            'HUMAN_RUN_BINDING')
+        runs=[run for run in state.get('runs',[]) if isinstance(run,dict) and run.get('run_id')==run_id]
+        require(len(runs)==1,'HUMAN_RUN_BINDING')
+        run=runs[0]
+        require(run.get('workflow_outcome')=='IN_PROGRESS' and run.get('batch_id')==batch.get('batch_id')
+            and run.get('group_key')==batch.get('group_key') and run.get('fingerprint')==HUMAN_A56_FINGERPRINT
+            and Store._human_destination(run.get('destination')),'HUMAN_RUN_BINDING')
+        if run.get('intent') is not None:
+            Store._human_intent_calibration(run['intent'],grant)
+        return run
+
+    @staticmethod
+    def _human_new_stage_binding(ledger,stage,run_id,grant):
+        require(stage in HUMAN_INPUT_STAGES and stage!='CHOOSER_CONFIRM','HUMAN_INPUT_STAGE_REQUIRED')
+        require(ledger.get('workflow_phase')=='A' and ledger.get('lifecycle_count')==1,
+            'HUMAN_LEDGER_BINDING')
+        kind,slots=HUMAN_STAGE_RESERVATIONS[stage]
+        used={slot for item in ledger['entries'] for slot in item.get('slots',[])}
+        consumed={slot for item in ledger['entries'] if item.get('state')=='CONSUMED'
+            for slot in item.get('slots',[])}
+        require(not used.intersection(slots),'PROJECT_SLOT_ALREADY_RESERVED')
+        prior={'CARD':set(),'CALIBRATION':{'A.CARD'},
+            'SAVE_ALL':{'A.CARD','A.CAL_OPEN','A.CAL_DISMISS'},
+            'CHOOSER_PATH':{'A.CARD','A.CAL_OPEN','A.CAL_DISMISS','A.ATOMIC_ELLIPSIS','A.SAVE_ALL'}}[stage]
+        require(prior<=consumed and used<=prior,'HUMAN_STAGE_ORDER')
+        require(all(item.get('workflow_phase')=='A' for item in ledger['entries']),
+            'HUMAN_LEDGER_BINDING')
+        return kind,slots
+
+    @staticmethod
+    def _human_reservation_binding(ledger,entry,grant,run_id,stage):
+        require(ledger.get('workflow_phase')=='A' and ledger.get('lifecycle_count')==1,
+            'HUMAN_LEDGER_BINDING')
+        kind,slots=HUMAN_STAGE_RESERVATIONS[stage]
+        require(entry.get('kind')==kind and entry.get('count')==len(slots) and entry.get('slots')==slots
+            and entry.get('run_id')==run_id and entry.get('owner')==grant['owner']
+            and entry.get('workflow_phase')=='A','HUMAN_RESERVATION_BINDING')
+        reserved=[item for item in ledger['entries'] if item.get('state')=='RESERVED']
+        require(reserved==[entry],'PROJECT_UNKNOWN_RESERVATION')
+        consumed={slot for item in ledger['entries'] if item.get('state')=='CONSUMED'
+            for slot in item.get('slots',[])}
+        prior={'CARD':set(),'CALIBRATION':{'A.CARD'},
+            'SAVE_ALL':{'A.CARD','A.CAL_OPEN','A.CAL_DISMISS'},
+            'CHOOSER_PATH':{'A.CARD','A.CAL_OPEN','A.CAL_DISMISS','A.ATOMIC_ELLIPSIS','A.SAVE_ALL'},
+            'CHOOSER_CONFIRM':{'A.CARD','A.CAL_OPEN','A.CAL_DISMISS','A.ATOMIC_ELLIPSIS','A.SAVE_ALL'}}[stage]
+        require(prior<=consumed,'HUMAN_STAGE_ORDER')
+
+    @staticmethod
+    def _human_request_binding(reader,request,grant,grant_sha256,run,entry,stage):
+        require(set(request)==HUMAN_REQUEST_KEYS and request.get('version')==1
+            and request.get('kind')=='human-input-request-1'
+            and request.get('execution_mode')==HUMAN_EXECUTION_MODE
+            and request.get('input_actor')==HUMAN_INPUT_ACTOR,'HUMAN_INPUT_REQUEST_SHAPE')
+        for key in ('task_id','grant_sha256','observer_session_id','source_sha256','run_id','request_id','issued_at'):
+            require(isinstance(request.get(key),str) and request[key],'HUMAN_INPUT_REQUEST_BINDING')
+        require(request['task_id']==grant['task_id'] and request['grant_sha256']==grant_sha256
+            and request['observer_session_id']==grant['observer_session_id']
+            and request['source_sha256']==grant['source_sha256'] and request['run_id']==run['run_id'],
+            'HUMAN_INPUT_REQUEST_BINDING')
+        require(request['request_stage']==stage and request['fingerprint']==HUMAN_A56_FINGERPRINT
+            and request['fingerprint']==run['fingerprint']
+            and request['destination']==run['destination'] and Store._human_destination(request['destination'])
+            and request['reservation_ids']==[entry['id']],'HUMAN_INPUT_REQUEST_BINDING')
+        require(request.get('instruction')==HUMAN_STAGE_INSTRUCTIONS[stage],'HUMAN_INPUT_INSTRUCTION')
+        if stage in ('CARD','CALIBRATION'):
+            require(request.get('action_id') is None,'HUMAN_INPUT_ACTION_BINDING')
+        else:
+            intent=run.get('intent')
+            require(isinstance(intent,dict) and isinstance(intent.get('action_id'),str) and intent['action_id']
+                and request.get('action_id')==intent.get('action_id')
+                and intent.get('owner_execution_id')==grant['owner']
+                and intent.get('group_key')==run.get('group_key')
+                and intent.get('fingerprint')==run['fingerprint']
+                and intent.get('destination')==run['destination']
+                and Store._human_destination(intent.get('destination')),'HUMAN_INPUT_ACTION_BINDING')
+            Store._human_calibration_refs(reader,intent.get('calibration'),grant)
+        require(Store._human_timestamp(request['issued_at']) is not None,'HUMAN_INPUT_REQUEST_IDENTITY')
+        Store._human_evidence_refs(reader,request.get('raw_evidence_refs'),'HUMAN_INPUT_EVIDENCE')
+        Store._human_reject_fabricated_claims(request,'request')
+        return request
+
+    @staticmethod
+    def _human_result_binding(reader,result,request,grant,run,entry,stage,data_outcome):
+        require(set(result)==HUMAN_RESULT_KEYS and result.get('version')==1
+            and result.get('kind')=='human-input-result-1'
+            and result.get('execution_mode')==HUMAN_EXECUTION_MODE
+            and result.get('input_actor')==HUMAN_INPUT_ACTOR,'HUMAN_INPUT_RESULT_SHAPE')
+        for key in ('task_id','grant_sha256','observer_session_id','source_sha256','run_id','request_id',
+            'result_id','recorded_at','request_stage','destination'):
+            require(isinstance(result.get(key),str) and result[key],'HUMAN_INPUT_RESULT_BINDING')
+        for key in ('task_id','grant_sha256','observer_session_id','source_sha256','run_id','request_id',
+            'action_id','request_stage','fingerprint','destination','reservation_ids'):
+            require(result.get(key)==request.get(key),'HUMAN_INPUT_RESULT_BINDING')
+        require(result['result_id']!=result['request_id'] and result['request_stage']==stage
+            and result['reservation_ids']==[entry['id']],'HUMAN_INPUT_RESULT_BINDING')
+        issued=Store._human_timestamp(request['issued_at']);recorded=Store._human_timestamp(result['recorded_at'])
+        require(issued is not None and recorded is not None and recorded>=issued,
+            'HUMAN_INPUT_RESULT_TIME')
+        require(result.get('outcome') in ('HUMAN_REPORTED_RETURNED','UNKNOWN','REFUSED')
+            and result.get('outcome')==data_outcome,'HUMAN_INPUT_OUTCOME')
+        operator=result.get('operator_reported');observed=result.get('observed')
+        require(isinstance(operator,dict) and set(operator)==HUMAN_OPERATOR_REPORT_KEYS
+            and operator.get('status')=='OPERATOR_REPORTED'
+            and operator.get('outcome') in ('HUMAN_REPORTED_RETURNED','UNKNOWN','REFUSED')
+            and isinstance(operator.get('statement'),str) and operator['statement'],
+            'HUMAN_INPUT_OPERATOR_REPORT')
+        reported=Store._human_timestamp(operator.get('reported_at'))
+        require(reported is not None and issued<=reported<=recorded,'HUMAN_INPUT_OPERATOR_REPORT')
+        Store._human_read_ref(reader,operator.get('raw_response_ref'),'HUMAN_INPUT_OPERATOR_REPORT',json_required=False)
+        require(isinstance(observed,dict) and set(observed)==HUMAN_OBSERVED_KEYS
+            and observed.get('status') in ('OBSERVED','UNKNOWN')
+            and isinstance(observed.get('facts'),dict),'HUMAN_INPUT_OBSERVED')
+        observed_at=Store._human_timestamp(observed.get('observed_at'))
+        if result['outcome']=='HUMAN_REPORTED_RETURNED':
+            require(observed.get('status')=='OBSERVED' and observed_at is not None and issued<=observed_at<=recorded,
+                'HUMAN_INPUT_OBSERVED')
+        elif observed.get('status')=='UNKNOWN':
+            require(observed.get('observed_at') is None,'HUMAN_INPUT_OBSERVED')
+        else:
+            require(observed_at is not None and issued<=observed_at<=recorded,'HUMAN_INPUT_OBSERVED')
+        combined=('REFUSED' if operator['outcome']=='REFUSED' else 'UNKNOWN'
+            if operator['outcome']=='UNKNOWN' else 'HUMAN_REPORTED_RETURNED'
+            if observed.get('status')=='OBSERVED' else 'UNKNOWN')
+        require(result['outcome']==combined,'HUMAN_INPUT_OUTCOME')
+        observed_refs=Store._human_evidence_refs(reader,observed.get('raw_evidence_refs'),'HUMAN_INPUT_EVIDENCE')
+        result_refs=Store._human_evidence_refs(reader,result.get('raw_evidence_refs'),'HUMAN_INPUT_EVIDENCE')
+        expected=[];seen=set()
+        for ref in [operator['raw_response_ref'],*observed_refs]:
+            key=(ref['path'],ref['bytes'],ref['sha256'])
+            if key not in seen:
+                seen.add(key);expected.append(ref)
+        require(result_refs==expected,'HUMAN_INPUT_EVIDENCE_BINDING')
+        Store._human_reject_fabricated_claims(result,'result')
+        return result
+
+    @staticmethod
+    def _human_validate_consume(reader,state,ledger,entry,grant,grant_sha256,data):
+        require(set(data)<=HUMAN_CONSUME_KEYS,'HUMAN_INPUT_CONSUME_SHAPE')
+        for key in ('execution_mode','input_actor','observer_session_id'):
+            if key in data:
+                expected={'execution_mode':HUMAN_EXECUTION_MODE,'input_actor':HUMAN_INPUT_ACTOR,
+                    'observer_session_id':grant['observer_session_id']}[key]
+                require(data[key]==expected,'HUMAN_INPUT_MODE_BINDING')
+        outcome=data.get('outcome')
+        require(outcome in (None,'HUMAN_REPORTED_RETURNED','UNKNOWN','REFUSED'),'HUMAN_INPUT_OUTCOME')
+        request_ref=data.get('request_ref');result_ref=data.get('result_ref')
+        if request_ref is None:
+            require(result_ref is None,'HUMAN_INPUT_REQUEST_REF_REQUIRED')
+            require(data.get('request_id') is None and data.get('result_id') is None
+                and data.get('evidence_refs') is None,'HUMAN_INPUT_REQUEST_REF_REQUIRED')
+            require(outcome in (None,'UNKNOWN','REFUSED'),'HUMAN_INPUT_REQUEST_REF_REQUIRED')
+            return dict(outcome=outcome,execution_mode=HUMAN_EXECUTION_MODE,input_actor=HUMAN_INPUT_ACTOR,
+                observer_session_id=grant['observer_session_id'])
+        require(Store._human_ref_shape(request_ref),'HUMAN_INPUT_REQUEST_ARTIFACT')
+        request=Store._human_read_json_ref(reader,request_ref,'HUMAN_INPUT_REQUEST_ARTIFACT')
+        run_id=request.get('run_id') if isinstance(request,dict) else None
+        require(isinstance(run_id,str) and run_id,'HUMAN_INPUT_REQUEST_BINDING')
+        stage=request.get('request_stage')
+        require(stage in HUMAN_INPUT_STAGES,'HUMAN_INPUT_STAGE_REQUIRED')
+        require(stage!='CHOOSER_PATH','HUMAN_CHOOSER_CONFIRM_REQUIRED')
+        run=Store._human_state_run(state,grant,run_id)
+        Store._human_reservation_binding(ledger,entry,grant,run_id,stage)
+        Store._human_request_binding(reader,request,grant,grant_sha256,run,entry,stage)
+        require(data.get('request_id')==request['request_id'],'HUMAN_INPUT_REQUEST_BINDING')
+        if result_ref is None:
+            require(outcome in ('UNKNOWN','REFUSED'),'HUMAN_INPUT_RESULT_REF_REQUIRED')
+            require(data.get('result_id') is None and data.get('evidence_refs') is None,
+                'HUMAN_INPUT_RESULT_REF_REQUIRED')
+            return dict(outcome=outcome,execution_mode=HUMAN_EXECUTION_MODE,input_actor=HUMAN_INPUT_ACTOR,
+                observer_session_id=grant['observer_session_id'],task_id=grant['task_id'],
+                grant_sha256=grant_sha256,source_sha256=grant['source_sha256'],run_id=run_id,
+                action_id=request['action_id'],request_stage=stage,fingerprint=request['fingerprint'],
+                destination=request['destination'],reservation_ids=request['reservation_ids'],
+                request_id=request['request_id'],request_ref=request_ref)
+        require(Store._human_ref_shape(result_ref) and result_ref['path']!=request_ref['path'],
+            'HUMAN_INPUT_RESULT_ARTIFACT')
+        result=Store._human_read_json_ref(reader,result_ref,'HUMAN_INPUT_RESULT_ARTIFACT')
+        Store._human_result_binding(reader,result,request,grant,run,entry,stage,outcome)
+        require(data.get('result_id')==result['result_id'],'HUMAN_INPUT_RESULT_BINDING')
+        if 'evidence_refs' in data:
+            require(data['evidence_refs']==result['raw_evidence_refs'],'HUMAN_INPUT_EVIDENCE_BINDING')
+        return dict(outcome=result['outcome'],execution_mode=HUMAN_EXECUTION_MODE,input_actor=HUMAN_INPUT_ACTOR,
+            observer_session_id=grant['observer_session_id'],task_id=grant['task_id'],
+            grant_sha256=grant_sha256,source_sha256=grant['source_sha256'],run_id=run_id,
+            action_id=request['action_id'],request_stage=stage,fingerprint=request['fingerprint'],
+            destination=request['destination'],reservation_ids=request['reservation_ids'],
+            request_id=request['request_id'],result_id=result['result_id'],
+            request_ref=request_ref,result_ref=result_ref)
+
     def consume_gui(self,grant,data):
         """Mark one reservation consumed; a consumed or unknown reservation never refunds."""
+        require(isinstance(data,dict),'GUI_LEDGER_DATA')
         reservation_id=data.get('reservation_id');outcome=data.get('outcome')
         require(isinstance(reservation_id,str) and reservation_id,'GUI_LEDGER_RESERVATION')
-        project=is_project_grant(grant)
+        project=is_project_grant(grant);human=Store._human_grant(grant) if project else False
+        if human:
+            self._authorize_project_mutation(grant,'gui_consume')
+            with self.guard() as (r,parent,check_lock,lock_identity):
+                check_lock()
+                grant_sha256=self._project_authorization_sha256(r,grant)
+                state=strict_json(r.read(STATE,'INVALID_STATE')[0],'INVALID_STATE')
+                path,ledger,cap=self._ledger_open(r,grant)
+                entry=next((item for item in ledger['entries'] if item['id']==reservation_id),None)
+                require(entry is not None and entry['owner']==grant['owner'],'GUI_LEDGER_UNKNOWN_RESERVATION')
+                require(entry['state']=='RESERVED','GUI_LEDGER_STATE')
+                binding=Store._human_validate_consume(r,state,ledger,entry,grant,grant_sha256,data)
+                entry['state']='CONSUMED';entry['consumed_at']=utc_now();entry['outcome']=binding
+                if binding['outcome']!='HUMAN_REPORTED_RETURNED':ledger['failure_latched']=True
+                self._ledger_write(r,path,ledger)
+                return dict(reservation=dict(id=entry['id'],kind=entry['kind'],count=entry['count'],state='CONSUMED'))
+        human_keys={'request_ref','result_ref','request_id','result_id','evidence_refs','execution_mode',
+            'input_actor','observer_session_id'}
+        require(not human_keys.intersection(data) and outcome!='HUMAN_REPORTED_RETURNED','GUI_LEDGER_MODE_MIXING')
         if project:self._authorize_project_mutation(grant,'gui_consume')
         if not project and not self.fixture:
             require(self.authorization_path is not None,'LIVE_AUTHORITY_REQUIRED')
@@ -688,9 +1136,11 @@ class Store:
             require(entry is not None and entry['owner']==grant['owner'],'GUI_LEDGER_UNKNOWN_RESERVATION')
             require(entry['state']=='RESERVED','GUI_LEDGER_STATE')
             entry['state']='CONSUMED';entry['consumed_at']=utc_now()
-            entry['outcome']=json.dumps(outcome,ensure_ascii=False,sort_keys=True) if outcome is not None else None
             if project:
+                require(outcome is None or isinstance(outcome,str),'GUI_LEDGER_OUTCOME')
+                entry['outcome']=json.dumps(outcome,ensure_ascii=False,sort_keys=True) if outcome is not None else None
                 if outcome!='RETURNED':ledger['failure_latched']=True
+            else:entry['outcome']=json.dumps(outcome,ensure_ascii=False,sort_keys=True) if outcome is not None else None
             self._ledger_write(r,path,ledger)
             return dict(reservation=dict(id=entry['id'],kind=entry['kind'],count=entry['count'],state='CONSUMED'))
 
@@ -861,8 +1311,10 @@ class Store:
             require(entry is not None and entry.get('state')=='CONSUMED','GUI_LEDGER_STATE')
             outcome=None
             if entry.get('outcome') is not None:
-                try:outcome=json.loads(entry['outcome'])
-                except (TypeError,ValueError):raise AcceptanceError('GUI_LEDGER_OUTCOME','reservation outcome is malformed',4)
+                if isinstance(entry['outcome'],dict):outcome=copy.deepcopy(entry['outcome'])
+                else:
+                    try:outcome=json.loads(entry['outcome'])
+                    except (TypeError,ValueError):raise AcceptanceError('GUI_LEDGER_OUTCOME','reservation outcome is malformed',4)
             fact=dict(kind=entry.get('kind'),count=entry.get('count'),owner=entry.get('owner'),run_id=entry.get('run_id'),
                 state=entry['state'],slots=entry.get('slots'))
             if ledger.get('profile')=='LINE_TWO_ALBUM_PILOT/1':fact['outcome']=outcome

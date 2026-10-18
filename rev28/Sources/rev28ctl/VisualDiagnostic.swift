@@ -10,6 +10,52 @@ struct VisualDiagnosticCaptureReceipt: Codable {
     let evidenceOnly: Bool
     let actionable: Bool
     let pair: VisualDiagnosticCapturePair
+    let humanSurfaceRequest: HumanVisualDiagnosticSurfaceRequest?
+
+    init(version: Int, kind: String, evidenceOnly: Bool, actionable: Bool,
+         pair: VisualDiagnosticCapturePair,
+         humanSurfaceRequest: HumanVisualDiagnosticSurfaceRequest? = nil) {
+        self.version = version
+        self.kind = kind
+        self.evidenceOnly = evidenceOnly
+        self.actionable = actionable
+        self.pair = pair
+        self.humanSurfaceRequest = humanSurfaceRequest
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case version, kind, evidenceOnly, actionable, pair, humanSurfaceRequest
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        version = try container.decode(Int.self, forKey: .version)
+        kind = try container.decode(String.self, forKey: .kind)
+        evidenceOnly = try container.decode(Bool.self, forKey: .evidenceOnly)
+        actionable = try container.decode(Bool.self, forKey: .actionable)
+        pair = try container.decode(VisualDiagnosticCapturePair.self, forKey: .pair)
+        if container.contains(.humanSurfaceRequest) {
+            guard try !container.decodeNil(forKey: .humanSurfaceRequest) else {
+                throw DecodingError.dataCorruptedError(
+                    forKey: .humanSurfaceRequest, in: container,
+                    debugDescription: "humanSurfaceRequest must be an object when present")
+            }
+            humanSurfaceRequest = try container.decode(
+                HumanVisualDiagnosticSurfaceRequest.self, forKey: .humanSurfaceRequest)
+        } else {
+            humanSurfaceRequest = nil
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(version, forKey: .version)
+        try container.encode(kind, forKey: .kind)
+        try container.encode(evidenceOnly, forKey: .evidenceOnly)
+        try container.encode(actionable, forKey: .actionable)
+        try container.encode(pair, forKey: .pair)
+        try container.encodeIfPresent(humanSurfaceRequest, forKey: .humanSurfaceRequest)
+    }
 }
 
 struct VisualDiagnosticClockReceipt: Codable {
@@ -112,6 +158,8 @@ enum VisualDiagnosticCommand {
     }
 
     static func run(arguments: [String]) async throws -> VisualDiagnosticCaptureReceipt {
+        let humanSurfaceRequest = try HumanVisualDiagnosticSurfaceParser.parse(arguments: arguments)
+        let requestedSurface = humanSurfaceRequest?.requestedSurface.rawValue ?? "ALBUMS"
         func value(_ name: String) throws -> String {
             guard let i = arguments.firstIndex(of: name), i + 1 < arguments.count,
                   !arguments[i + 1].isEmpty else { throw Failure.invalidArguments(name) }
@@ -170,7 +218,7 @@ enum VisualDiagnosticCommand {
             throw Failure.invalidArguments("capture binding")
         }
         _ = try PilotNativeAuthority.verify(root: root, grantPath: grant, grantSHA: grantSHA,
-            surface: "ALBUMS", sessionID: sessionID)
+            surface: requestedSurface, sessionID: sessionID)
         guard NSRunningApplication(processIdentifier: pid)?.bundleIdentifier == "jp.naver.line.mac",
               let process = ProcessInstanceID.current(pid: pid),
               process.startTimeSeconds == processStart, process.startTimeMicroseconds == processStartMicros else {
@@ -277,10 +325,15 @@ enum VisualDiagnosticCommand {
                 Double(display.frame.width), Double(display.frame.height)], captureRecord: captured.record)
         try pair.validated()
         return VisualDiagnosticCaptureReceipt(version: 2, kind: "VISUAL_CARD_DIAGNOSTIC",
-            evidenceOnly: true, actionable: false, pair: pair)
+            evidenceOnly: true, actionable: false, pair: pair,
+            humanSurfaceRequest: humanSurfaceRequest)
     }
 
     static func analyze(arguments: [String]) async throws -> VisualDiagnosticPixelAnalysis {
+        guard try HumanVisualDiagnosticSurfaceParser.parse(arguments: arguments) == nil else {
+            throw Failure.invalidArguments(
+                "HUMAN visual diagnostic is observation-only; automatic analysis is not authorized")
+        }
         func value(_ name: String) throws -> String {
             guard let i = arguments.firstIndex(of: name), i + 1 < arguments.count,
                   !arguments[i + 1].isEmpty else { throw Failure.invalidArguments(name) }
@@ -291,7 +344,23 @@ enum VisualDiagnosticCommand {
         let receiptSHA = try value("--capture-receipt-sha256")
         guard root.path == FileManager.default.currentDirectoryPath else { throw Failure.invalidArguments("project root") }
         let (receiptRef, receiptData) = try artifactWithData(path: receiptPath, root: root, expectedSHA: receiptSHA)
-        let receipt = try JSONDecoder().decode(VisualDiagnosticCaptureReceipt.self, from: receiptData)
+        guard let decodedReceipt = try? JSONSerialization.jsonObject(with: receiptData),
+              let receiptObject = decodedReceipt as? [String: Any] else {
+            throw Failure.invalidArguments("typed capture receipt is invalid")
+        }
+        guard receiptObject["humanSurfaceRequest"] == nil else {
+            throw Failure.invalidArguments(
+                "HUMAN visual diagnostic is observation-only; automatic analysis is not authorized")
+        }
+        let receipt: VisualDiagnosticCaptureReceipt
+        do {
+            receipt = try JSONDecoder().decode(VisualDiagnosticCaptureReceipt.self, from: receiptData)
+        } catch {
+            throw Failure.invalidArguments("typed capture receipt is invalid")
+        }
+        guard receipt.humanSurfaceRequest == nil else {
+            throw Failure.invalidArguments("HUMAN visual diagnostic is observation-only; automatic analysis is not authorized")
+        }
         let pair = receipt.pair
         try pair.validated()
         guard receipt.version == 2, receipt.kind == "VISUAL_CARD_DIAGNOSTIC", receipt.evidenceOnly,

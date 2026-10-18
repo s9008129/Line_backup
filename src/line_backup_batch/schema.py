@@ -4,7 +4,7 @@ from pathlib import Path
 from line_backup_acceptance.common import AcceptanceError
 from line_backup_acceptance.project_binding import strict_json,sha,integer
 
-SCHEMA_SHA='d30ff068623f7dc6c9988387935beabbd5347e4b3a5e2c3a784daf8197db2a37'
+SCHEMA_SHA='8246f9cc64e3cd934b934b229f4c7aa3aaef516898fabb287006d13111f45849'
 POLICY='batch-policy-1'
 
 def require(ok,code):

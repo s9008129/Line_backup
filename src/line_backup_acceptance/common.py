@@ -173,6 +173,11 @@ INTENT_TRIGGER_OUTCOMES = {"NOT_OBSERVED", "CHOOSER_CONFIRMED", "UNKNOWN", "UNEX
 INTENT_DISPATCH_OUTCOMES = {"NOT_ATTEMPTED", "RETURNED", "ERROR", "UNKNOWN"}
 CALIBRATION_KEYS = {"observed_at", "screenshot_width", "screenshot_height", "ellipsis", "dot_spacing",
                     "save_all_point", "confidence", "evidence"}
+HUMAN_MENU_ATTESTATION_KEYS = {"kind", "execution_mode", "input_actor", "observer_session_id",
+                               "observed_at", "detail_ref", "menu_ref", "closure_ref", "attestation_ref"}
+HUMAN_EVIDENCE_REF_KEYS = {"path", "bytes", "sha256"}
+HUMAN_EXECUTION_MODE = "HUMAN_ASSISTED"
+HUMAN_INPUT_ACTOR = "OWNER_HUMAN"
 DISPATCH_EVIDENCE_KEYS = {"run_id", "action_id", "execution_id", "observed_at", "save_all_click_count",
                           "save_all_invocation_attempted", "failure_boundary", "folder_chooser_appeared",
                           "download_started", "provenance"}
@@ -201,7 +206,43 @@ def _check_fingerprint(fp) -> None:
         _strict_fail("fingerprint count")
 
 
-def _check_calibration(cal) -> None:
+def _is_human_calibration(value) -> bool:
+    return isinstance(value, dict) and ("kind" in value or value.get("execution_mode") == HUMAN_EXECUTION_MODE
+                                        or value.get("input_actor") == HUMAN_INPUT_ACTOR)
+
+
+def _check_human_evidence_ref(value) -> None:
+    if not isinstance(value, dict) or set(value) != HUMAN_EVIDENCE_REF_KEYS:
+        _strict_fail("human evidence ref shape")
+    path = value["path"]
+    if (not isinstance(path, str) or path.endswith("/") or not path.startswith("harness-development/")
+            or "/private/" not in path or not path.endswith(".json")
+            or any(part in {"", ".", ".."} for part in path.split("/"))):
+        _strict_fail("human evidence ref path")
+    if not _int(value["bytes"]) or value["bytes"] < 1:
+        _strict_fail("human evidence ref bytes")
+    if (not isinstance(value["sha256"], str) or len(value["sha256"]) != 64
+            or any(char not in "0123456789abcdef" for char in value["sha256"])):
+        _strict_fail("human evidence ref sha256")
+
+
+def _check_calibration(cal, *, allow_human: bool = False) -> None:
+    if _is_human_calibration(cal):
+        if not allow_human:
+            _strict_fail("calibration shape")
+        if set(cal) != HUMAN_MENU_ATTESTATION_KEYS:
+            _strict_fail("human calibration shape")
+        if cal["kind"] != "human-menu-attestation-1":
+            _strict_fail("human calibration kind")
+        if cal["execution_mode"] != HUMAN_EXECUTION_MODE or cal["input_actor"] != HUMAN_INPUT_ACTOR:
+            _strict_fail("human calibration mode/actor")
+        if not isinstance(cal["observer_session_id"], str) or not cal["observer_session_id"]:
+            _strict_fail("human calibration observer")
+        if not isinstance(cal["observed_at"], str) or not cal["observed_at"]:
+            _strict_fail("human calibration observed_at")
+        for key in ("detail_ref", "menu_ref", "closure_ref", "attestation_ref"):
+            _check_human_evidence_ref(cal[key])
+        return
     if not isinstance(cal, dict) or set(cal) != CALIBRATION_KEYS:
         _strict_fail("calibration shape")
     for key in ("screenshot_width", "screenshot_height"):
@@ -213,7 +254,7 @@ def _check_calibration(cal) -> None:
         _strict_fail("calibration evidence")
 
 
-def _check_intent(intent) -> None:
+def _check_intent(intent, *, allow_human: bool = False) -> None:
     if not isinstance(intent, dict):
         _strict_fail("intent is not an object")
     expected = {"action_id", "committed_at", "owner_execution_id", "group_key", "fingerprint",
@@ -227,7 +268,7 @@ def _check_intent(intent) -> None:
     if not intent["destination"].startswith("/"):
         _strict_fail("intent.destination")
     _check_fingerprint(intent["fingerprint"])
-    _check_calibration(intent["calibration"])
+    _check_calibration(intent["calibration"], allow_human=allow_human)
     if intent["save_all_retry_allowed"] is not False:
         _strict_fail("intent.save_all_retry_allowed")
     if intent["dispatch_outcome"] not in INTENT_DISPATCH_OUTCOMES:
@@ -291,7 +332,7 @@ def _check_reconciliation(value) -> None:
             _strict_fail("aborted reconciliation routing")
 
 
-def _check_run(run) -> None:
+def _check_run(run, *, allow_human: bool = False) -> None:
     if not isinstance(run, dict):
         _strict_fail("run is not an object")
     keys = set(run)
@@ -338,7 +379,7 @@ def _check_run(run) -> None:
     if run["fingerprint"] is not None:
         _check_fingerprint(run["fingerprint"])
     if run["intent"] is not None:
-        _check_intent(run["intent"])
+        _check_intent(run["intent"], allow_human=allow_human)
     _check_checkpoint(run["checkpoint"])
     if not isinstance(run["events"], list):
         _strict_fail("run.events")
@@ -375,8 +416,12 @@ def validate_state_strict(state) -> None:
     if isinstance(state, dict) and type(state.get('schema_version')) is int and state['schema_version'] == 3:
         from line_backup_batch.schema import validate, legacy_view
         validate(state)
-        validate_state_strict(legacy_view(state))
+        _validate_state_payload(legacy_view(state), allow_human=True)
         return
+    _validate_state_payload(state, allow_human=False)
+
+
+def _validate_state_payload(state, *, allow_human: bool) -> None:
     if not isinstance(state, dict) or set(state) != STATE_KEYS:
         _strict_fail("state keys")
     if state["schema_version"] != 2 or not _int(state["revision"]) or state["revision"] < 0:
@@ -394,7 +439,7 @@ def validate_state_strict(state) -> None:
     if not isinstance(state["runs"], list) or not isinstance(state["verified_albums"], list):
         _strict_fail("state lists")
     for run in state["runs"]:
-        _check_run(run)
+        _check_run(run, allow_human=allow_human)
     for entry in state["verified_albums"]:
         if not isinstance(entry, dict) or set(entry) != ENTRY_KEYS:
             _strict_fail("verified_albums shape")
@@ -422,7 +467,9 @@ def classify_legacy_run(run) -> tuple[str | None, str]:
         return "UNREADABLE_LEGACY", "run record is not an object"
     if "contract_revision" in run:
         try:
-            _check_run(dict(run))
+            # HUMAN calibration is a v3-only authority object.  A legacy run
+            # classification must never become a back door for accepting it.
+            _check_run(dict(run), allow_human=False)
         except AcceptanceError as exc:
             return "UNREADABLE_LEGACY", exc.message
         return None, ""
@@ -430,6 +477,8 @@ def classify_legacy_run(run) -> tuple[str | None, str]:
     if isinstance(intent, dict) and "calibration" in intent:
         calibration = intent.get("calibration")
         if isinstance(calibration, dict):
+            if _is_human_calibration(calibration):
+                return "UNREADABLE_LEGACY", "HUMAN calibration is not valid in a legacy run"
             extra = set(calibration) - CALIBRATION_KEYS
             if extra:
                 return "calibration.extra_keys", f"intent.calibration carries extra keys {sorted(extra)}"

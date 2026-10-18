@@ -13,6 +13,169 @@ from line_backup_batch.observations import artifact
 
 
 class One56AuthorityTests(unittest.TestCase):
+    HUMAN_GRANT_SHA='9'*64
+    HUMAN_OBSERVER='deepseek-v4.1-flash:1017-session-01'
+
+    def _human_grant(self):
+        bundle=cli.PROJECT_DIR+'/private/authority-bundles/ONE56-human-test'
+        return {
+            'grant_version':cli.ONE56_GRANT_VERSION,'single_album_route':True,
+            'execution_mode':cli.HUMAN_EXECUTION_MODE,'input_actor':cli.HUMAN_INPUT_ACTOR,
+            'observer_session_id':self.HUMAN_OBSERVER,
+            'task_id':'PILOT-human-1','owner':'owner-1','project_root':'/project',
+            'source_sha256':'a'*64,'config_sha256':'b'*64,
+            'entry_binding':{'path':cli.PROJECT_DIR+'/two_album_entry.mjs','bytes':1,'sha256':'c'*64},
+            'runtime_binding':{'path':bundle+'/runtime-binding.json','bytes':1,'sha256':'d'*64},
+            'producer_binary':{'path':bundle+'/producer','bytes':1,'sha256':'e'*64},
+            'decoder_binding':{'path':'rev28/.build/release/rev28ctl','bytes':1,'sha256':'f'*64},
+        }
+
+    def _human_artifact(self,grant,**extra):
+        document={
+            'execution_mode':cli.HUMAN_EXECUTION_MODE,'input_actor':cli.HUMAN_INPUT_ACTOR,
+            'observer_session_id':grant['observer_session_id'],'grant_sha256':self.HUMAN_GRANT_SHA,
+            'task_id':grant['task_id'],'owner':grant['owner'],'project_root':grant['project_root'],
+            'source_sha256':grant['source_sha256'],'config_sha256':grant['config_sha256'],
+            'entry_method':cli.ONE56_HUMAN_ENTRY,'entry_sha256':grant['entry_binding']['sha256'],
+            'runtime_binding_sha256':grant['runtime_binding']['sha256'],
+            'producer_binary_sha256':grant['producer_binary']['sha256'],
+            'decoder_sha256':grant['decoder_binding']['sha256'],
+            'fingerprint':dict(cli.ONE56_HUMAN_FINGERPRINT),
+        }
+        document.update(extra)
+        return document
+
+    def _human_contract(self,grant,grant_sha=None):
+        return self._human_artifact(grant,status='ACTIVE',closed=False,
+            implementation_head='1'*40,operations=sorted(cli.ONE56_HUMAN_REQUIRED_OPERATIONS),
+            grant_sha256=grant_sha or self.HUMAN_GRANT_SHA)
+
+    def _human_review(self,grant,reviewer='ChatGPT Chief',disposition='review:123'):
+        return self._human_artifact(grant,profile=cli.PROJECT_SCOPE,
+            verdict='APPROVE_IMPLEMENTATION',review_method='OWNER_TRANSFERRED_EXTERNAL_PR_REVIEW',
+            reviewer=reviewer,implementation_head='1'*40,
+            approved_operations=sorted(cli.ONE56_HUMAN_REQUIRED_OPERATIONS),
+            disposition_ref=disposition)
+
+    def _human_original(self,grant,reviewer='ChatGPT Chief',disposition='review:123'):
+        return self._human_artifact(grant,verdict='APPROVE_IMPLEMENTATION',reviewer=reviewer,
+            disposition_ref=disposition,implementation_head='1'*40,
+            approved_operations=sorted(cli.ONE56_HUMAN_REQUIRED_OPERATIONS))
+
+    def _human_provider_review(self,grant):
+        review_id=987654322
+        scope={
+            'decision':'APPROVE_IMPLEMENTATION','external_reviewer':'ChatGPT Chief',
+            'task_id':grant['task_id'],'owner':grant['owner'],'project_root':grant['project_root'],
+            'implementation_head':'1'*40,'source_sha256':grant['source_sha256'],
+            'config_sha256':grant['config_sha256'],
+            'runtime_binding_sha256':grant['runtime_binding']['sha256'],
+            'producer_binary_sha256':grant['producer_binary']['sha256'],
+            'entry_sha256':grant['entry_binding']['sha256'],'entry_method':cli.ONE56_HUMAN_ENTRY,
+            'approved_operations':sorted(cli.ONE56_HUMAN_REQUIRED_OPERATIONS),
+            'fingerprint':dict(cli.ONE56_HUMAN_FINGERPRINT),
+            'execution_mode':cli.HUMAN_EXECUTION_MODE,'input_actor':cli.HUMAN_INPUT_ACTOR,
+            'observer_session_id':grant['observer_session_id'],'grant_sha256':self.HUMAN_GRANT_SHA,
+            'decoder_sha256':grant['decoder_binding']['sha256'],
+        }
+        raw={'id':review_id,'pull_request_url':cli.ONE56_PULL_REQUEST_API,
+            'html_url':cli.ONE56_PULL_REQUEST_HTML+f'#pullrequestreview-{review_id}',
+            'state':'APPROVED','user':{'login':'s9008129','id':129814822},'commit_id':'1'*40,
+            'body':'External Chief exact-source approval.\n<!-- ONE56_REVIEW_SCOPE_V1\n'
+                +json.dumps(scope)+'\nONE56_REVIEW_SCOPE_END -->'}
+        review=self._human_artifact(grant,provider_review_id=review_id,
+            provider_review_url=cli.ONE56_PROVIDER_REPOSITORY+f'/pulls/10/reviews/{review_id}',
+            pull_request_url=cli.ONE56_PULL_REQUEST_API,pull_request_html_url=cli.ONE56_PULL_REQUEST_HTML,
+            provider_state='APPROVED',provider_actor='s9008129',implementation_head='1'*40,
+            reviewer='ChatGPT Chief',disposition_ref=raw['html_url'])
+        return raw,review,self._human_contract(grant)
+
+    def test_human_execution_mode_is_explicit_and_partial_human_fields_fail_closed(self):
+        auto={'grant_version':cli.ONE56_GRANT_VERSION,'single_album_route':True}
+        self.assertEqual(cli.one56_execution_mode(auto),'AUTO')
+        human={'grant_version':cli.ONE56_GRANT_VERSION,'single_album_route':True,
+            'execution_mode':cli.HUMAN_EXECUTION_MODE,'input_actor':cli.HUMAN_INPUT_ACTOR,
+            'observer_session_id':self.HUMAN_OBSERVER}
+        self.assertEqual(cli.one56_execution_mode(human),cli.HUMAN_EXECUTION_MODE)
+        for field in sorted(cli.HUMAN_GRANT_FIELDS):
+            candidate=dict(human);candidate.pop(field)
+            with self.subTest(missing=field),self.assertRaises(AcceptanceError):
+                cli.one56_execution_mode(candidate)
+        for key,value in (('execution_mode','AUTO'),('execution_mode',cli.HUMAN_EXECUTION_MODE+' '),
+            ('input_actor','AGENT'),('observer_session_id',''),('observer_session_id',' '+self.HUMAN_OBSERVER),
+            ('observer_session_id',self.HUMAN_OBSERVER+'\n'),('observer_session_id',7)):
+            with self.subTest(key=key,value=value),self.assertRaises(AcceptanceError):
+                cli.one56_execution_mode({**human,key:value})
+        with self.assertRaises(AcceptanceError):
+            cli.one56_execution_mode({**auto,'execution_mode':cli.HUMAN_EXECUTION_MODE})
+
+    def test_human_contract_review_and_provider_scope_bind_exact_grant_and_entry(self):
+        grant=self._human_grant()
+        contract=self._human_contract(grant)
+        review=self._human_review(grant)
+        original=self._human_original(grant)
+        raw,provider_review,provider_contract=self._human_provider_review(grant)
+        cli.validate_one56_contract(contract,grant,'/project',grant_sha256=self.HUMAN_GRANT_SHA)
+        cli.validate_one56_review(review,original,grant,grant_sha256=self.HUMAN_GRANT_SHA)
+        cli.validate_one56_provider_review(raw,provider_review,provider_contract,grant,
+            grant_sha256=self.HUMAN_GRANT_SHA)
+        contract_cases=[
+            {**contract,'execution_mode':'AUTO'},{**contract,'input_actor':'AGENT'},
+            {**contract,'observer_session_id':'other'},{**contract,'grant_sha256':'0'*64},
+            {**contract,'task_id':'PILOT-other'},{**contract,'source_sha256':'0'*64},
+            {**contract,'entry_method':cli.ONE56_ENTRY},
+            {**contract,'operations':sorted(cli.ONE56_REQUIRED_OPERATIONS)},
+            {**contract,'fingerprint':{'start_date':'2024-05-27','end_date':'2024-05-31','expected_images':65}},
+        ]
+        for changed in contract_cases:
+            with self.subTest(contract=changed),self.assertRaises(AcceptanceError):
+                cli.validate_one56_contract(changed,grant,'/project',grant_sha256=self.HUMAN_GRANT_SHA)
+        review_cases=[
+            {**review,'execution_mode':'AUTO'},{**review,'input_actor':'AGENT'},
+            {**review,'observer_session_id':'other'},{**review,'grant_sha256':'0'*64},
+            {**review,'entry_method':cli.ONE56_ENTRY},
+            {**review,'approved_operations':sorted(cli.ONE56_REQUIRED_OPERATIONS)},
+            {**review,'fingerprint':{'start_date':'2024-05-27','end_date':'2024-05-31','expected_images':65}},
+        ]
+        for changed in review_cases:
+            with self.subTest(review=changed),self.assertRaises(AcceptanceError):
+                cli.validate_one56_review(changed,original,grant,grant_sha256=self.HUMAN_GRANT_SHA)
+        scope=cli._one56_scope_from_body(raw['body'])
+        scope_cases=[('execution_mode','AUTO'),('input_actor','AGENT'),('observer_session_id','other'),
+            ('grant_sha256','0'*64),('entry_method',cli.ONE56_ENTRY),
+            ('approved_operations',sorted(cli.ONE56_REQUIRED_OPERATIONS)),
+            ('fingerprint',{'start_date':'2024-05-27','end_date':'2024-05-31','expected_images':65}),
+            ('decoder_sha256','0'*64)]
+        for key,value in scope_cases:
+            bad_scope={**scope,key:value}
+            bad_raw={**raw,'body':'External Chief exact-source approval.\n<!-- ONE56_REVIEW_SCOPE_V1\n'
+                +json.dumps(bad_scope)+'\nONE56_REVIEW_SCOPE_END -->'}
+            with self.subTest(scope=key),self.assertRaises(AcceptanceError):
+                cli.validate_one56_provider_review(bad_raw,provider_review,provider_contract,grant,
+                    grant_sha256=self.HUMAN_GRANT_SHA)
+
+    def test_auto_provider_review_and_payload_reject_human_mode_markers(self):
+        raw,wrapper,contract,grant=self._synthetic_github_review()
+        auto_cases=[
+            ({**raw,'execution_mode':cli.HUMAN_EXECUTION_MODE},wrapper,contract),
+            (raw,{**wrapper,'input_actor':cli.HUMAN_INPUT_ACTOR},contract),
+            (raw,wrapper,{**contract,'execution_mode':cli.HUMAN_EXECUTION_MODE}),
+            (raw,wrapper,{**contract,'operations':sorted(cli.ONE56_HUMAN_REQUIRED_OPERATIONS)}),
+        ]
+        for raw_case,wrapper_case,contract_case in auto_cases:
+            with self.subTest(case=(raw_case is not raw,wrapper_case is not wrapper,contract_case is not contract)), \
+                    self.assertRaises(AcceptanceError):
+                cli.validate_one56_provider_review(raw_case,wrapper_case,contract_case,grant)
+        auto_grant={'grant_version':cli.ONE56_GRANT_VERSION,'single_album_route':True}
+        cli.validate_one56_payload(auto_grant,'prepare',{'data':{'workflow_link':{'phase':'B'},'gui_phase':'C1'}})
+        for data in ({'execution_mode':cli.HUMAN_EXECUTION_MODE},{'input_actor':cli.HUMAN_INPUT_ACTOR},
+            {'request_stage':'SAVE_ALL'},{'entry_method':cli.ONE56_HUMAN_ENTRY},
+            {'kind':'human-input-request-1'},
+            {'operations':sorted(cli.ONE56_HUMAN_REQUIRED_OPERATIONS)}):
+            with self.subTest(data=data),self.assertRaises(AcceptanceError):
+                cli.validate_one56_payload(auto_grant,'prepare',{'data':data})
+        cli.validate_one56_payload(auto_grant,'prepare',{'data':{'execution_mode':'AUTO'}})
+
     def test_bundle_path_has_one_normalized_unique_layout(self):
         expected='harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-run_17'
         self.assertEqual(cli.one56_bundle(expected+'/project-grant.json'),expected)

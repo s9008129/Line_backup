@@ -348,6 +348,75 @@
       ],
       "type": "object"
     },
+    "human_evidence_ref": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "path": {
+          "pattern": "^harness-development/(?:[A-Za-z0-9_-][A-Za-z0-9._-]*/)*private/(?:[A-Za-z0-9_-][A-Za-z0-9._-]*/)*[A-Za-z0-9_-][A-Za-z0-9._-]*\\.json$",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "bytes",
+        "sha256"
+      ],
+      "type": "object"
+    },
+    "human_menu_attestation": {
+      "additionalProperties": false,
+      "properties": {
+        "attestation_ref": {
+          "$ref": "#/$defs/human_evidence_ref"
+        },
+        "closure_ref": {
+          "$ref": "#/$defs/human_evidence_ref"
+        },
+        "detail_ref": {
+          "$ref": "#/$defs/human_evidence_ref"
+        },
+        "execution_mode": {
+          "const": "HUMAN_ASSISTED"
+        },
+        "input_actor": {
+          "const": "OWNER_HUMAN"
+        },
+        "kind": {
+          "const": "human-menu-attestation-1"
+        },
+        "menu_ref": {
+          "$ref": "#/$defs/human_evidence_ref"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "observer_session_id": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "execution_mode",
+        "input_actor",
+        "observer_session_id",
+        "observed_at",
+        "detail_ref",
+        "menu_ref",
+        "closure_ref",
+        "attestation_ref"
+      ],
+      "type": "object"
+    },
     "intent": {
       "additionalProperties": false,
       "properties": {
@@ -356,7 +425,14 @@
           "type": "string"
         },
         "calibration": {
-          "$ref": "#/$defs/calibration"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/calibration"
+            },
+            {
+              "$ref": "#/$defs/human_menu_attestation"
+            }
+          ]
         },
         "committed_at": {
           "format": "date-time",

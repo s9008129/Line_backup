@@ -5,7 +5,8 @@ import {fileURLToPath} from 'node:url';
 import {execFile} from 'node:child_process';
 import {createHash,randomUUID} from 'node:crypto';
 import {createNavigationObserver,createAlbumSupportCallbacks} from '../../scripts/line_backup_cua_adapter.mjs';
-import {runTwoAlbumPilot,runSingleAlbumPilot,runOneScrollProbe} from './two_album_entry.mjs';
+import {runTwoAlbumPilot,runSingleAlbumPilot,runOneScrollProbe,
+  runHumanAssistedSingleAlbumPilot} from './two_album_entry.mjs';
 import {completeDateTitle,createLiveAnalyzer,verifyNativePair} from './mac/analyzer.mjs';
 import {createLiveClassifier} from './mac/classifier.mjs';
 import {createChooserLocators} from './mac/chooser.mjs';
@@ -491,5 +492,9 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     },
     runOneScrollProbe:async()=>{await bindLiveAuthority();return runOneScrollProbe(runtime);},
     runPilot:async()=>{await bindLiveAuthority();return runTwoAlbumPilot(runtime);},
-    runSingleAlbumPilot:async()=>{await bindLiveAuthority();return runSingleAlbumPilot(runtime);}});
+    runSingleAlbumPilot:async()=>{await bindLiveAuthority();return runSingleAlbumPilot(runtime);},
+    runHumanAssistedSingleAlbumPilot:async options=>{
+      await bindLiveAuthority();
+      return runHumanAssistedSingleAlbumPilot(runtime,options);
+    }});
 }
