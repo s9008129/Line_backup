@@ -294,3 +294,83 @@ R2明列保守上界、逐項誤差來源、預期原始證據、offline拒絕�
 `NEXT_ACTION=OWNER_TRANSFER_FIXED_R2_PLAN_SHA_AND_EXACT_PR_HEAD_TO_EXTERNAL_CHATGPT_PLAN_REVIEW`
 
 這次交付不是R2核准或Implementation完成。待真實外部Plan Review之後才依核准範圍推進；A必須真正完成56檔SHA／完整ImageIOdecode／VERIFIED讀回及release，才進入不同eligible B的獨立交易。
+
+## 2026-10-18 Owner execution directive：真實正式入口唯讀 preflight（未執行交易）
+
+本輪直接服務於 A56 Save All。完整讀取外部 [Chief Review 5561025091](https://github.com/s9008129/Line_backup/pull/10#pullrequestreview-5561025091)；其裁決為 `CHANGES_REQUIRED_GOAL_ALIGNMENT`，不是 R2 Plan 或 Implementation 核准。R2 shadow-click／EventTap 提案停止，未建立或執行探針、未重跑 NCC、OCR 調參、捲動或選單探索。
+
+### 實際順序、第一拒絕與環境
+
+1. 核對 candidate `5b9608355ccb247b251423833632fc21fd1b1178`、GitHub Draft PR #10 同一 HEAD、canonical 主目錄 `b7bb666fa78b8e9dfffed8247c4f2a7f869a481b`。保留主目錄 18 項既有 tracked dirty 與其他 untracked 工作；不安裝或混用候選來源。AGENTS.md 內容先前已核對相同。
+2. 一次邏輯唯讀 preflight 中，證據初始化先因舊 manifest 鍵名 `files`（實際為 `protected`）停止，未呼叫 authorizer；保留錯誤後修正讀取。第一個 Python process 使用系統預設 Python，因缺少既有專案 dependency 路徑回 `INVALID_REQUEST: No module named 'jsonschema'`。改回已安裝的專案 Python 3.13 與既有 site-packages，沒有安裝套件或改源碼。兩個 process 均只有 `native_authorize`，零 GUI／交易呼叫。
+3. 正確環境下實際執行：`<EXISTING_PYTHON_3_13> -B -m line_backup_batch.cli native_authorize --project-root <CANONICAL_ROOT> --authorization harness-development/line-two-album-pilot-20261014/private/authority-bundles/ONE56-20261017-8bebd23-PENDING-c6147d8f/project-grant.json`。`PYTHONPATH` 僅為 canonical `src` 加既有專案 dependencies，停用 bytecode 與 user site。開始 `2026-10-18T02:17:11.300104Z`，結束 `02:17:11.512480Z`，exit **4**：
+
+   ```json
+   {"status":"REFUSED","code":"PROJECT_IMPLEMENTATION_REVIEW_REQUIRED","message":"PROJECT_IMPLEMENTATION_REVIEW_REQUIRED","dispatch_authorized":false}
+   ```
+
+   **FIRST_FORMAL_REFUSAL=PROJECT_IMPLEMENTATION_REVIEW_REQUIRED**。literal guard 在 [cli.py](../../../src/line_backup_batch/cli.py) 的 `validate_one56_review()`（313–343）及 `validate_one56_provider_review()`（353–388）：要求真實外部 `APPROVE_IMPLEMENTATION` 與相同 source、HEAD、runtime、operations、fingerprint。pending bundle 中 review 仍是 `PENDING_EXTERNAL_REVIEW`。這個拒絕不是 GUI／2px 幾何證明，不代表後續 gate 已通過。
+4. hosted CUA 僅 `getApp`、`getAXStateAndScreenshot`。當前真實截圖為相簿列表頂端，完整可見的是 **2024/06/02～06/07、65 張排除相簿**；A56 的日期／張數尚未可見。未點擊、未捲動、未開選單。101 AX list rows、scrollbar 0 僅是目前唯讀畫面資訊；沒有以 focus flags 推導身份。當次前景交接尚未重新建立，沒有宣稱可立即執行。
+5. root 只啟動一個實際 `gpt-6-luna`／`high` 子代理，獨立上下文、有界唯讀檢查正式入口；沒有假稱使用其他模型或獨立 E2E。root 模型名稱未由 runtime 提供，記為 `NOT_EXPOSED_BY_RUNTIME`。Luna 沒有改檔、測試或 GUI 輸入。
+
+### 來源／原生執行檔／runtime 的真實對帳
+
+| 項目 | SHA-256／結果 |
+| --- | --- |
+| candidate 21-file source closure（含尚待外部 Code Review 的 M5/M6；產品提交 `7debc2ef4593f4ae4430cd3a4a8c0cb24cec0875`） | `be0c248ab231fd76e1e8fc7a42800391bc3134d19e12a29a6da676c894856b1d` |
+| canonical installed source closure | `ff717d721c9132abc2b22c738649e3cc4da34637a86fb794f549695e5cd3ca54` |
+| 實際 installed native producer | `9ef75efe4b217edd1049a623f26739bc0ea4d5950115e208f704976bb1efdf20` |
+| 原 pending ONE56 runtime-binding | `cd41ee25387fb784f2aef5158d7dd6bbde27bd44a42d2d42c5a905767b1b6076` |
+| 原 ImageIO decoder | `1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf` |
+| 實際 Python 3.13 executable | `34af8eed630f46919dcb77457077ae3564f7cd25f5d83c56530e64d00de78804` |
+| native build record 的來源對 candidate | 全部相符；本輪沒有 Swift 變更或重建 |
+
+原 runtime-binding 綁定 installed 8beb 來源，**不是 candidate M5/M6 的有效 runtime authority**。七個 callback／產品檔的 candidate 與 installed bytes 不同，完整逐檔 hash 見 [唯讀證據 JSON](formal-route-preflight-20261018.json)。`mac_runtime.mjs:264` 的 `REVIEWED_SOURCE_INSTALLATION_REQUIRED` 也拒絕 source root 與 projectRoot 混用。不覆寫原本 dirty state、不以舊 native binary/hash 冒充新執行核准。沒有新 runtime grant、bundle、review 或 readiness receipt。
+
+### Luna/high 的有界結論與唯一替代決策
+
+**沒有不改安全／授權契約就能解除第一拒絕的機械源碼修正；不應改碼偽造 review 或 geometry。** 不為取得綠燈而產生無關 patch 或測試。
+
+- `two_album_entry.mjs:164` 的 `begin` 確實早於 229–235 的 open/calibrate。`service.py:390–459` 的 prepare 建立 transaction、lease、目的地；476–487 的 calibrate 要求 active run／manifest／身份，612–618 寫校準 checkpoint，620–643 的 intent 要求該 checkpoint。因此不能只移動 `begin` 便宣稱前置校準安全；另設 pre-transaction GUI 校準會改變 grant／ledger／證據契約，未實作。
+- Python `observations.py:433–450` 的 `DETAIL_OCR_BINDING` 混用 OCR 語義和 transform 中心距離 ≤2px。即使修改此處，較早的 `_support`／native `frame-support` 仍是必要前置；只改 OCR 不足以建立可執行的正式路徑。本輪沒有重測或放寬它。
+- hosted Mac `App.click(number|Vec2)` 回傳 void；已取得的支援文件沒有建立 macOS 原生輸入誤差界限。歷史真實選單存在與成功開啟證據仍保留，但不是已證明的 ≤2px actual click bound。沒有宣稱實際誤差必然大於2px，也沒有把 NCC 局部零位移重解釋為 PASS。
+
+**唯一提交供 Owner／外部 Chief 決策的替代路徑：另立明確標示來源的人機協作交易模式。這不是現有可執行入口，也不是已核准源碼。** 精確契約差異限於：
+
+1. 新 mode 的 Owner consent／獨立審查明確允許人工 GUI 身份確認與選單校準證據；automatic mode 的2px、u+4、16×16、原 grant 與歷史資料全部保留。人工 `OBSERVED` 不可寫成 automatic calibration PASS。
+2. Owner 負責無法證明輸入精度的完整選單 trigger → 核對唯一「儲存全部」→ 一次 Save All 輸入。僅由 Owner 手點最後一列，不能解決前面的 CUA trigger／正式 geometry 依賴；不能偽造 CUA receipt。
+3. 新模式仍在派送前固定群組／相簿日期／張數／process／window 與 duplicate 排除、獨立空目的地、writer lease、持久 original intent 和不可重送預留。派送前寫入「即將嘗試」，結果不明即保留鎖定與未知，不重送、不補造確定收據。原 `SAVE_ALL_CALIBRATION` 前置不能偷偷略過，必須以新 mode 的明示證據契約處理。
+4. 需審查的接口為入口／runtime 的輸入者分流、`observations.py` 的明示人工來源、`service.py` intent/dispatch receipt 與 phase admission、`cli.py` 的新 mode grant／operations／review scope，以及必要的 ledger actor accounting。原 ledger 不重建、原 entries／counts 不改寫。現有 `resume`／`dispatch` 無法直接表達此流程；此處是待決的語義差異，不是假裝已有最小 code diff 或已完成實作。
+5. 新模式下 chooser 的安全輸入方式也須經同一審查；僅已證明符合既有契約的機器輸入才可使用，否則人工操作也須明示來源。原有目的地核對、檔案穩定性、實際張數、逐檔 SHA-256／完整 ImageIO 解碼、durable VERIFIED readback 和 release 保留。A VERIFIED 後才獨立授權 B；ONE56 不挪用給 B。
+
+這項替代會改變人工／自動證據與正式交易契約，必須先由 Owner 決定並交外部 Chief 審查其精確差異，才可實作、建立新 scope/grant 或操作；本機不自行把它當作 Plan approval／Code Review。若必須保持全自動輸入，現有已驗工具與證據尚不能證明符合既有2px契約，本輪保持 BLOCKED，沒有再開研究循環。
+
+### 驗證、副作用、證據與交接
+
+本輪 **產品 source diff=0、focused tests=NOT_RUN（無產品變更）、native build=NOT_RUN（無 Swift 變更）、獨立實機 E2E=NOT_RUN**。不以唯讀 audit 冒充任何正式成功。原239張歷史照片及6個保護控制檔，245個 hash 對前階段 baseline、對本輪前後均零差異。canonical revision35，active_batch／active_writer_id／context_lock 皆 null；ledger lifecycle0、entries0、failure_latched=false。65張排除相簿只有畫面核對及零輸入，未另外 inventory 人工65檔，不能宣稱本輪逐檔驗證該65張。
+
+完整去識別化 runtime／來源／原始證據 hash 在 [formal-route-preflight-20261018.json](formal-route-preflight-20261018.json)（本次產出時 SHA-256 `65cd1d51c4308c6090f2143bd3fe3d228c71d76f61b43e519d840268eb10af56`）。原始截圖、AX、review、process stdout/stderr 與 before/after manifest 留在 `private/formal-route-preflight-20261018-01/`；本機絕對路徑為 `<CANDIDATE_ROOT>/harness-development/one56-menu-compat-20261017/private/formal-route-preflight-20261018-01/`，私有完整版列出實際絕對路徑。GitHub 不上傳照片、人名／群組名、原始授權、完整檔案清單或個人絕對路徑。JSON 中私有 refs 是本機取證索引，**不是可在 GitHub 開啟的原圖附件**；不宣稱雲端已看到私有原圖。
+
+```text
+PRIMARY_OUTCOME_STATUS=BLOCKED_NO_REAL_BACKUP
+IMPLEMENTATION_STATUS=NO_PRODUCT_CHANGE_REQUIRED_FOR_REVIEW_REFUSAL
+CORE_ACCEPTANCE_STATUS=NOT_RUN
+REQUIRED_VERIFICATION_STATUS=READONLY_PREFLIGHT_RECORDED
+INDEPENDENT_ACCEPTANCE_STATUS=NOT_RUN
+TASK_CLOSURE_STATUS=NOT_DONE
+FIRST_FORMAL_REFUSAL=PROJECT_IMPLEMENTATION_REVIEW_REQUIRED
+RUNTIME_AUTHORITY=PENDING_NOT_VALID_FOR_CANDIDATE
+LINE_FOREGROUND_HANDOFF=NOT_RENEWED_THIS_SESSION
+FORMAL_MENU_CALIBRATION=NOT_RUN
+REAL_SAVE_ALL_DISPATCH_COUNT=0
+CHOOSER_RESULT=NOT_RUN
+ALBUM_A_DOWNLOADED_FILES=NOT_RUN
+ALBUM_A_VERIFIED=NOT_RUN
+ALBUM_B_VERIFIED=NOT_RUN
+CANONICAL_LEDGER_INTEGRITY=UNCHANGED
+HISTORICAL_239_PRESERVED=HASHES_UNCHANGED
+MANUAL_65_EXCLUDED=YES_NO_INPUT
+NEXT_ACTION=OWNER_TRANSFER_EXACT_PR_SOURCE_AND_THIS_SINGLE_CONTRACT_DECISION_TO_EXTERNAL_CHIEF
+```
+
+本階段依持續授權 checkpoint commit/push 到既有 Draft PR #10；Commit 不等於審查或實機核准。請外部 Reviewer 查核精確 HEAD 的既有 M5/M6 實作與本節第一正式拒絕，並裁決上述唯一契約差異；在沒有真實核准、對齊 runtime 與有效前景前，不啟動 A 的唯一 lifecycle。

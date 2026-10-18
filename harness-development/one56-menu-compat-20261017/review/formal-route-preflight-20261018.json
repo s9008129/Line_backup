@@ -1,0 +1,177 @@
+{
+  "kind": "FORMAL_ROUTE_READONLY_PREFLIGHT_NOT_LIVE_ACCEPTANCE",
+  "at": "2026-10-18T02:19:54.348721+00:00",
+  "base_head": "5b9608355ccb247b251423833632fc21fd1b1178",
+  "production_source_head": "7debc2ef4593f4ae4430cd3a4a8c0cb24cec0875",
+  "external_chief": {
+    "url": "https://github.com/s9008129/Line_backup/pull/10#pullrequestreview-5561025091",
+    "github_state": "COMMENTED",
+    "verdict": "CHANGES_REQUIRED_GOAL_ALIGNMENT",
+    "r2_shadow_probe_approved": false
+  },
+  "execution_models": {
+    "root_model": "NOT_EXPOSED_BY_RUNTIME",
+    "helper_model": "gpt-6-luna",
+    "helper_reasoning_effort": "high",
+    "helper_role": "READONLY_IMPLEMENTER_FEASIBILITY_AUDIT",
+    "independent_e2e": "NOT_RUN"
+  },
+  "actual_authorizer": {
+    "operation": "native_authorize",
+    "exit_code": 4,
+    "stderr": {
+      "status": "REFUSED",
+      "code": "PROJECT_IMPLEMENTATION_REVIEW_REQUIRED",
+      "message": "PROJECT_IMPLEMENTATION_REVIEW_REQUIRED",
+      "dispatch_authorized": false
+    },
+    "python_sha256": "34af8eed630f46919dcb77457077ae3564f7cd25f5d83c56530e64d00de78804",
+    "initial_invocation_environment_error": {
+      "code": "INVALID_REQUEST",
+      "message": "No module named 'jsonschema'",
+      "resolved_by": "Existing project Python3.13 and dependency path; no package installation"
+    },
+    "canonical_state_revision": 35
+  },
+  "source_closures": {
+    "candidate": "be0c248ab231fd76e1e8fc7a42800391bc3134d19e12a29a6da676c894856b1d",
+    "installed": "ff717d721c9132abc2b22c738649e3cc4da34637a86fb794f549695e5cd3ca54"
+  },
+  "runtime_sha256": {
+    "producer_binary": "9ef75efe4b217edd1049a623f26739bc0ea4d5950115e208f704976bb1efdf20",
+    "decoder_binding": "1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf",
+    "runtime_binding": "cd41ee25387fb784f2aef5158d7dd6bbde27bd44a42d2d42c5a905767b1b6076",
+    "entry_binding": "726db9a876619aee66df57f0600f3ef07e40910c3f8285b266397800e12895f1"
+  },
+  "runtime_binding_applies_to": "INSTALLED_8beb_SOURCE_NOT_CANDIDATE_M5_M6",
+  "native_build_source_differences_from_candidate": [],
+  "candidate_installed_callback_hashes": [
+    {
+      "path": "harness-development/line-two-album-pilot-20261014/two_album_entry.mjs",
+      "candidate_sha256": "f5981c071709203adc2c1cbbc8d5779a77eb1bc37cf0eb8e0444aa5ee21ab277",
+      "installed_sha256": "726db9a876619aee66df57f0600f3ef07e40910c3f8285b266397800e12895f1"
+    },
+    {
+      "path": "harness-development/line-two-album-pilot-20261014/mac_runtime.mjs",
+      "candidate_sha256": "a1d2c16528b5584a02780045384afb535715287925cabccdaab2111d03ffe27d",
+      "installed_sha256": "ac4433976a89dcd0d9cbd55c97a637698d3aa5ae07932297661c2d9b2609b8c5"
+    },
+    {
+      "path": "harness-development/line-two-album-pilot-20261014/mac/analyzer.mjs",
+      "candidate_sha256": "2c22180971843ed1e379bc69f23ad4990bf8d162de355277c4e6f624a4ef1ba7",
+      "installed_sha256": "225a0a82b02575cd040751e5ba3a9b8480d0f9c3e0c35333805084b7c6c3a407"
+    },
+    {
+      "path": "harness-development/line-two-album-pilot-20261014/mac/classifier.mjs",
+      "candidate_sha256": "ab4f6ed1bff0cd75f14de594703d7083d5ce571243dd3c5043e0d818725423d6",
+      "installed_sha256": "b8b40b4b3dac78f11ac8aa4c4d56176a41d29d9f1889ab1844ef8b9322fa7391"
+    },
+    {
+      "path": "harness-development/line-two-album-pilot-20261014/mac/producer.mjs",
+      "candidate_sha256": "3f3e6532f07a622fd9e4c57a8bd802fc05945595e616c59c328d3dfbd0d8cd48",
+      "installed_sha256": "3f3e6532f07a622fd9e4c57a8bd802fc05945595e616c59c328d3dfbd0d8cd48"
+    },
+    {
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "candidate_sha256": "1b41f7c87b65692a69c229bce7e4db3f5c0a82f0f1349d776cf8bcb3254bde5d",
+      "installed_sha256": "b6bb2091f8a339705ad1acf57b653dcbc6a2eb23d2b5fb8efcd4a6171e8dea54"
+    },
+    {
+      "path": "src/line_backup_batch/observations.py",
+      "candidate_sha256": "c519b3f962556e1655157e6df0c089fd1f496c06dfa19addfb593d13a42792a6",
+      "installed_sha256": "3ba7c42c61fc2a4f8f0e4935415eba427e682e16b34d89e8badbf6d95b78b4df"
+    },
+    {
+      "path": "src/line_backup_batch/service.py",
+      "candidate_sha256": "9b3978052717a9a06a072cc367c224233c5f90f49625058a5938c736a42c98f0",
+      "installed_sha256": "c2c30831c638c0e64fa6a80f5d803e774175e749282694f40093554d17ab9a56"
+    }
+  ],
+  "current_hosted_observation": {
+    "started_at": "2026-10-18T02:18:04.297Z",
+    "ended_at": "2026-10-18T02:18:04.408Z",
+    "screenshot_sha256": "75e2c256700b37b1b8938190fd23b5e2d00688e4ede13fda81a83df497b5c24e",
+    "ax_sha256": "b023630cc28164ea9b2363efd7172d83205c3959c8eea152101a8e211455c907",
+    "surface_observed": "ALBUM_LIST",
+    "visible_excluded_album": {
+      "start_date": "2024-06-02",
+      "end_date": "2024-06-07",
+      "expected_images": 65
+    },
+    "a56_fingerprint_not_visible": true,
+    "fresh_foreground_handoff": "NOT_RENEWED_THIS_SESSION",
+    "gui_input_count": 0
+  },
+  "formal_ledger": {
+    "lifecycle_count": 0,
+    "entries_count": 0,
+    "failure_latched": false,
+    "workflow_phase": "A",
+    "sha256": "08aa18e42bfee7a8e4d0529bac5b793d830efc1127794dac4baa8f4bdb9864e2"
+  },
+  "protected_checked": 245,
+  "protected_changes": [],
+  "historical_photo_hashes_checked": 239,
+  "manual65_physical_files_verified_this_session": false,
+  "save_all_dispatch_count": 0,
+  "formal_menu_calibration": "NOT_RUN",
+  "chooser": "NOT_RUN",
+  "downloaded_files": "NOT_RUN",
+  "album_a_verified": "NOT_RUN",
+  "album_b_verified": "NOT_RUN",
+  "product_source_changes_this_phase": false,
+  "tests": "NOT_RUN_NO_PRODUCT_CHANGE",
+  "raw_evidence_refs": [
+    {
+      "path": "harness-development/one56-menu-compat-20261017/private/formal-route-preflight-20261018-01/chief-review.github.json",
+      "bytes": 8761,
+      "sha256": "85c327467c41fe308cdce17d50d10dabd643c01da9e0bf9fcd087cc190279e20"
+    },
+    {
+      "path": "harness-development/one56-menu-compat-20261017/private/formal-route-preflight-20261018-01/preflight.json",
+      "bytes": 1889,
+      "sha256": "c12439534d2c873ebea6c2ba62398fbc19d1a787de61aa5d38bf73784cae42a4"
+    },
+    {
+      "path": "harness-development/one56-menu-compat-20261017/private/formal-route-preflight-20261018-01/source-runtime-audit.json",
+      "bytes": 5074,
+      "sha256": "605f8eadda17fb43c214ec7c9d2e9544840a499837b7c3f88839d2c94184f7ce"
+    },
+    {
+      "path": "harness-development/one56-menu-compat-20261017/private/formal-route-preflight-20261018-01/hosted-observation.json",
+      "bytes": 378,
+      "sha256": "68b37f0cb9d74f0e9251d0acaa3fbf822276775b3a461915c28344b3b3237896"
+    },
+    {
+      "path": "harness-development/one56-menu-compat-20261017/private/formal-route-preflight-20261018-01/line-current-ax.txt",
+      "bytes": 101,
+      "sha256": "b023630cc28164ea9b2363efd7172d83205c3959c8eea152101a8e211455c907"
+    },
+    {
+      "path": "harness-development/one56-menu-compat-20261017/private/formal-route-preflight-20261018-01/line-current-frame.bin",
+      "bytes": 183650,
+      "sha256": "75e2c256700b37b1b8938190fd23b5e2d00688e4ede13fda81a83df497b5c24e"
+    },
+    {
+      "path": "harness-development/one56-menu-compat-20261017/private/formal-route-preflight-20261018-01/preservation-before.json",
+      "bytes": 42825,
+      "sha256": "0c866ef19b41e6cd412176d85a84959b77667d501e593e4b922b0b0603e919a5"
+    },
+    {
+      "path": "harness-development/one56-menu-compat-20261017/private/formal-route-preflight-20261018-01/preservation-after.json",
+      "bytes": 42825,
+      "sha256": "0c866ef19b41e6cd412176d85a84959b77667d501e593e4b922b0b0603e919a5"
+    },
+    {
+      "path": "harness-development/one56-menu-compat-20261017/private/formal-route-preflight-20261018-01/invocation-environment-error.json",
+      "bytes": 1598,
+      "sha256": "a27c9bc9fb464a130a6d31df8c738f27751039cc1347de202c50bd59eaa36a6b"
+    },
+    {
+      "path": "harness-development/one56-menu-compat-20261017/private/formal-route-preflight-20261018-01/evidence-setup-error.txt",
+      "bytes": 128,
+      "sha256": "c23666a4c7ac2ce5191943f4b5a5f237bfe8f4b08341e7724ac2f6d99274dd34"
+    }
+  ],
+  "redactions": "No private photos, group/person names, full file inventories, raw grants or absolute personal paths published. Original hashes identify private bytes. Raw evidence refs are local only, not GitHub-accessible artifacts."
+}
