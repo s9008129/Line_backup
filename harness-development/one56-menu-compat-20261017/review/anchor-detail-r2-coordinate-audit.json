@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "at": "2026-10-18T01:12:43.665904+00:00",
+  "base_head": "7b16c60aa325f36c17a7da24d255c57dce73ce89",
+  "phase": "R2_PLAN_ONLY",
+  "chief_evidence_review": {
+    "id": 5560750050,
+    "url": "https://github.com/s9008129/Line_backup/pull/10#pullrequestreview-5560750050",
+    "commit": "7b16c60aa325f36c17a7da24d255c57dce73ce89",
+    "github_state": "COMMENTED",
+    "reported_verdict": "ACCEPT_P1_BLOCKED_AS_CORRECT_FAIL_CLOSED",
+    "ref": {
+      "path": "harness-development/one56-menu-compat-20261017/private/anchor-detail-r2-20261018-01/chief-evidence-review.github.json",
+      "bytes": 8485,
+      "sha256": "e2a491e97e6f39c378043bc787407ab957d4d8dee2494dd8dae6ad5ebe6852b9"
+    }
+  },
+  "current_hosted_api_audit": {
+    "method_used": "cua.getApp(\"LINE\")",
+    "observations": "Returned API documentation and app AX tree; no screenshot or input requested",
+    "click_signature": "click(target: number | Vec2, options?: ClickOptions): Promise<void>",
+    "mac_coordinate_units_origin_documented_in_returned_text": false,
+    "native_event_location_or_event_id_receipt_exposed": false,
+    "mac_full_display_observation_and_input_target_exposed": false,
+    "event_listener_preflight_performed": false,
+    "event_tap_created": false,
+    "provider_source_or_version_inspected_via_hidden_api": false,
+    "finding": "ACTION_POINT_CORRESPONDENCE_NOT_ESTABLISHED"
+  },
+  "source_refs": [
+    {
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "bytes": 74417,
+      "sha256": "1b41f7c87b65692a69c229bce7e4db3f5c0a82f0f1349d776cf8bcb3254bde5d"
+    },
+    {
+      "path": "harness-development/line-two-album-pilot-20261014/mac_runtime.mjs",
+      "bytes": 34994,
+      "sha256": "a1d2c16528b5584a02780045384afb535715287925cabccdaab2111d03ffe27d"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Geometry/Coordinates.swift",
+      "bytes": 14431,
+      "sha256": "f9b77879cfc7abf596de4f0ab562ba8e7506bde2673844a94d37d96b4b0d564c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+      "bytes": 31826,
+      "sha256": "10b6596871d7bfc05d203ac7041a2b917d851fd7345355f1c4c9a142d568cc7e"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Perception/OcrEngine.swift",
+      "bytes": 28952,
+      "sha256": "d0dcab179db7311853857eeaf065339eb4f74c64976dd2b5104ef9fa280cec00"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/main.swift",
+      "bytes": 92193,
+      "sha256": "1f6724e6f1a1149074177251253517d72d3719550c9dd5725289cf4f930baddc"
+    },
+    {
+      "path": "src/line_backup_batch/observations.py",
+      "bytes": 59793,
+      "sha256": "c519b3f962556e1655157e6df0c089fd1f496c06dfa19addfb593d13a42792a6"
+    }
+  ],
+  "sdk_header_refs": [
+    {
+      "sdk_relative_path": "System/Library/Frameworks/CoreGraphics.framework/Headers/CGEvent.h",
+      "bytes": 16961,
+      "sha256": "82c0ad9eb7c2f1ccfe8483fe96f5d71493ee1f5b4a6a68458ba9c07dd728f8bb"
+    },
+    {
+      "sdk_relative_path": "System/Library/Frameworks/CoreGraphics.framework/Headers/CGEventTypes.h",
+      "bytes": 19140,
+      "sha256": "0eb5b0aca9a77730d7c1b0449113b18419765771ae02a596708281f56f6c45b4"
+    },
+    {
+      "sdk_relative_path": "System/Library/Frameworks/CoreGraphics.framework/Headers/CGDirectDisplay.h",
+      "bytes": 19446,
+      "sha256": "5dd06c1ff9a699356c9ff484f7b990fc6cd910de36edbd64caff4f34dad74f89"
+    },
+    {
+      "sdk_relative_path": "System/Library/Frameworks/ScreenCaptureKit.framework/Headers/SCShareableContent.h",
+      "bytes": 8223,
+      "sha256": "01ecd6997892d404773d724a3936feffb2ca6f03cdbb8df31950d004e1992a33"
+    },
+    {
+      "sdk_relative_path": "System/Library/Frameworks/ApplicationServices.framework/Frameworks/HIServices.framework/Headers/AXUIElement.h",
+      "bytes": 40684,
+      "sha256": "e4c7b5521a48ace58127ef8e696370b265a26fe935f0bf63b8fa6876d072fddd"
+    }
+  ],
+  "protection_before": {
+    "ref": {
+      "path": "harness-development/one56-menu-compat-20261017/private/anchor-detail-r2-20261018-01/preservation-before.json",
+      "bytes": 44586,
+      "sha256": "63821bca593d580075afddbb3adae4aee1c828a4356411bebbdc31fb422a4adc"
+    },
+    "checked": 245,
+    "changes": []
+  },
+  "gui_input_count": 0,
+  "sck_capture_count": 0,
+  "ncc_replay_count": 0,
+  "save_all_dispatch_count": 0,
+  "r2_experiment_executed": false,
+  "production_source_modified": false,
+  "r2_plan_approved": false,
+  "protection_after": {
+    "ref": {
+      "path": "harness-development/one56-menu-compat-20261017/private/anchor-detail-r2-20261018-01/preservation-after.json",
+      "bytes": 44707,
+      "sha256": "82456ccf5c48d7bf825dc2769b9ac33114f5b1b66e236a2269ef29c9f0182997"
+    },
+    "at": "2026-10-18T01:16:29.156554+00:00",
+    "checked": 245,
+    "changes": [],
+    "canonical_tracked_state_equal_before_after": true,
+    "state": {
+      "revision": 35,
+      "active_batch": null,
+      "active_writer_id": null,
+      "context_lock": null
+    }
+  },
+  "proposed_plan": {
+    "path": "harness-development/one56-menu-compat-20261017/anchor-detail-r2-plan.md",
+    "bytes": 20194,
+    "sha256": "be4de7516177fecff2f15dcd2c32c2eafdb817e6ac9552514c8930314cecb669",
+    "status": "PROPOSED_PENDING_EXTERNAL_PLAN_REVIEW"
+  }
+}

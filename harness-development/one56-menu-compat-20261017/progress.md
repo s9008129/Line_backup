@@ -1,5 +1,13 @@
 # MENU56 current slice
 
+## 2026-10-18 R2 Plan amendment：只送審，不執行實驗
+
+已完整讀取 [Chief evidence review5560750050](https://github.com/s9008129/Line_backup/pull/10#pullrequestreview-5560750050)：接受 P1 BLOCKED 為正確fail-closed；R1實驗關閉，未重跑NCC。這不是R2／implementation核准。新增唯一 [ANCHOR-DETAIL-R2 Plan](anchor-detail-r2-plan.md)，SHA-256 `be4de7516177fecff2f15dcd2c32c2eafdb817e6ac9552514c8930314cecb669`，狀態PROPOSED。
+
+唯讀查核實際hosted CUA文件與SDK／既有來源：click只有void回傳，本次可讀文件未定義Mac座標契約或提供native event receipt；SCK全display是觀察，不是CUA全display輸入endpoint。Apple提供PID-scoped被動event tap與位置／AX hit-test，但本機權限、實際收件事件與保守2px界限仍未證明。R2僅提一項conditional exact-row shadow-point實驗：先安全關閉popup，確認同點位下是無功能header，再以最多一次測試click對照原生事件；整體最多2次CUAclick、0 Save All。不支援座標契約、事件見證、安全或future-transfer bound任一項就STOP，不猜、不重試、不加新實驗。
+
+本輪只寫Plan／audit／交接報告。沒有Luna Implementation／E2E派工，沒有click/scroll/key、SCK capture、event tap、TCC prompt、production build或正式交易；CUA只getApp取得API說明與自動AX。245保護檔前置相同，canonical權限／ledger／歷史未變。R2須由Owner將固定SHA與PR精確HEAD交外部ChatGPT Plan Review；不自行視為核准。最終A56→VERIFIED→獨立B目標不變。
+
 ## 2026-10-18 核准 Plan 的 P1 真幀像素實驗：BLOCKED，未整合產品
 
 已完整讀取外部 [Plan Review 5560487952](https://github.com/s9008129/Line_backup/pull/10#pullrequestreview-5560487952)：ANCHOR-DETAIL-R1-20261018 / f0518fc3… 為 APPROVE_PLAN，並非 Code Review 或 runtime grant。Plan 原檔與舊證據不改寫。實際 Luna/high 在固定 a846df0 隔離 worktree 先執行核准的 feasibility-first 實驗，沒有修改正式 Swift/Python、測試或 canonical 狀態。

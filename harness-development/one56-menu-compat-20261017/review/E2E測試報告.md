@@ -270,3 +270,27 @@ CUA/JPEG 沒有保留逐次 acquisition timestamp／PID／window receipt。檔�
 `HISTORICAL_239_PRESERVED=YES`
 `FIRST_REMAINING_BLOCKER=P1_NO_INDEPENDENT_CONSERVATIVE_2PX_TARGET_BOUND`
 `NEXT_ACTION=DELIVER_BLOCKED_EVIDENCE_TO_OWNER_FOR_EXTERNAL_CHIEF; NO_PRODUCTION_INTEGRATION_OR_SAVE_ALL`
+
+## 2026-10-18：P1 證據裁決接受，提交唯一 R2 Plan（沒有新的 E2E）
+
+Sol完整讀取外部 [review5560750050](https://github.com/s9008129/Line_backup/pull/10#pullrequestreview-5560750050)，綁定HEAD `7b16c60aa325f36c17a7da24d255c57dce73ce89`，正文裁決 `ACCEPT_P1_BLOCKED_AS_CORRECT_FAIL_CLOSED`，GitHub狀態COMMENTED。原始API回覆保留 `private/anchor-detail-r2-20261018-01/chief-evidence-review.github.json`，SHA-256 `e2a491e97e6f39c378043bc787407ab957d4d8dee2494dd8dae6ad5ebe6852b9`。接受R1停止，不重啟NCC、不把局部zero shift當2px證明；原證據／Plan不回寫。此裁決不是R2 Plan approval、CodeReview、runtime grant或E2E PASS。
+
+本輪只形成 [ANCHOR-DETAIL-R2-20261018 Plan amendment](../anchor-detail-r2-plan.md)，SHA-256 `be4de7516177fecff2f15dcd2c32c2eafdb817e6ac9552514c8930314cecb669`，20194 bytes。一次read-only `cua.getApp("LINE")`取得本機實際受支援API文件與自動AX：文件有座標click且回傳void，但未提供Mac座標原點／單位／crop／binding契約或原生派送位置收據。沒有要求截圖或輸入，不藉AX多重focus重開研究，也未聲稱目前56detail或Owner當次前景成立。查核既有adapter直接傳point給click、SCK full-display capture、geometry types與Apple SDK的native mouse/event listener/hit-test介面；來源／SDK hashes與查核限制完整列於 [R2 audit](anchor-detail-r2-coordinate-audit.json)。Apple官方文件只支持API能力，不支持本機已獲permission或已有2px精度保證。
+
+唯一提出、尚未執行的實驗是exact-row shadow-point witness：從真正可見儲存全部列選點，先以安全title-label click關閉popup；確認同一點位在同視窗的無功能header，才以一次CUA click與PID-scoped listenOnly native事件比較。最多一項實驗、最多2次click、0 Save All。任何座標契約缺漏、listener不可用、位置可能碰不可逆控制、popup未關閉、事件歧義、未知誤差項或不能證明對後續實際派送的適用性，均STOP/UNSUPPORTED。原生helper只被動觀察，不post／改寫輸入，不要求新TCC權限。不把一次測試的小residual升格成future Save All保証。
+
+R2明列保守上界、逐項誤差來源、預期原始證據、offline拒絕案例、停止條件及literal source scope。當前差異只有Plan／audit／現有報告與進度；診斷檔與條件式production影響只作提案，未實作。R2沒有改正式grant、ledger、2px／u+4／16×16、Save All保護或歷史資料。沒有另派agent或製作新Harness。本輪NCC重播0、GUI輸入0、SCK capture0、event tap0、permission prompt0、正式lifecycle0、Save All0；沒有新的實機／合成測試PASS。R2實驗及focused code tests、build、authorizer smoke全NOT_RUN。
+
+本輪before receipt查核245個保護檔相同，SHA-256 `63821bca593d580075afddbb3adae4aee1c828a4356411bebbdc31fb422a4adc`；原始本機路徑在 `private/anchor-detail-r2-20261018-01/`，公開檔遮蔽個人根目錄、照片、AX原文及原始授權。後置保全與Git遠端讀回由本輪獨立收據保留；不預填未發生的Git結果。與前輪相同，canonical原有dirty/untracked工作不得夾帶或覆蓋。
+
+`CHIEF_EVIDENCE_VERDICT=ACCEPT_P1_BLOCKED_AS_CORRECT_FAIL_CLOSED`
+`P1_EXPERIMENT=CLOSED_BLOCKED`
+`R2_PLAN_STATUS=PROPOSED_PENDING_EXTERNAL_PLAN_REVIEW`
+`R2_COORDINATE_CORRESPONDENCE=NOT_ESTABLISHED`
+`R2_EXPERIMENT=NOT_RUN`
+`PRODUCTION_IMPLEMENTATION=NOT_RUN_THIS_PHASE`
+`REAL_SAVE_ALL_DISPATCH_COUNT=0`
+`ALBUM_A_VERIFIED=NOT_RUN; ALBUM_B_VERIFIED=NOT_RUN`
+`NEXT_ACTION=OWNER_TRANSFER_FIXED_R2_PLAN_SHA_AND_EXACT_PR_HEAD_TO_EXTERNAL_CHATGPT_PLAN_REVIEW`
+
+這次交付不是R2核准或Implementation完成。待真實外部Plan Review之後才依核准範圍推進；A必須真正完成56檔SHA／完整ImageIOdecode／VERIFIED讀回及release，才進入不同eligible B的獨立交易。
