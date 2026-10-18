@@ -7,6 +7,15 @@
 Session 中接手 `HUMAN_ASSISTED_ONE56/1`。實際模型／provider／reasoning／Session ID
 必須以 runtime 可驗證事實記錄；不可冒稱 Owner 尚未指定的模型。
 
+治理版本邊界：PR #10 base 的 `AGENTS.md` 仍保留過去固定 Sol／Luna／DeepSeek 的角色
+描述；PR #12 是尚未合併的 Owner 指定試行治理方案，不可描述成已寫入該 base 的正式
+憲法。Owner 現行決策是每個階段自行指定實際 Provider／Model／Session；本 Handoff 只
+如實記錄，不得為符合舊模型名稱而冒充身分或造假 Controller 收據。若真正執行中的
+Harness Controller／權限政策仍強制舊角色，而本 Session 無法合法符合，立即停止並回報
+`ROLE_POLICY_CONFLICT`，交 Owner／外部 ChatGPT 處理，不得繞過。不得修改 PR #10 的
+`AGENTS.md`、合併 PR #12、修改全域 Harness 4.8.0，也不得改動已核准 Plan 的任何
+bytes／SHA。
+
 目前狀態是 `PLAN_APPROVED / HANDOFF_PENDING_EXTERNAL_REVIEW`。Plan 已在 exact HEAD
 `95e90abd587009d7c2246f2bccd2b60e948fcdc4` 取得真實外部
 `APPROVE_PLAN`；本 Handoff 本身尚未取得外部 Handoff approval，也不是 Code Review、
@@ -33,8 +42,31 @@ runtime grant、foreground handoff、E2E PASS 或執行命令。
    安全停止條件，再讀專案 `AGENTS.md`、上述 Plan artifact 與必要的既有證據。
    不要載入其他 Session 的完整對話、私人照片、原始 grant 或舊推理歷史。
 
-只有 external Plan approval 的綁定一致，且本 Handoff 取得綁定其 exact HEAD 的
-`APPROVE_HANDOFF` 後，才可在 Owner 提供的新隔離 worktree／branch 中做最小實作。
+實作准入分兩層，不得混用：
+
+A. **Implementation Admission（只能開始離線寫程式、focused tests 與 build）：**
+   - 必須有真正匹配的 external Plan `APPROVE_PLAN`、綁定本 Handoff 新 exact HEAD 的
+     external `APPROVE_HANDOFF`、相同 Plan SHA 與 approved frozen scope。
+   - 必須確認正確工作樹／版本，沒有不可安全處理的 dirty 或 source identity 衝突；
+     不得擴張下列 11 條產品 source paths、7 個 focused test paths、AC、交易保護或
+     原有授權檔案。
+   - 若 Plan／Handoff 核准不符、必須變更安全契約，或環境／編譯阻塞無法解決，停止
+     並保留證據。
+   - 在此階段，尚無未來的新 Grant、已安裝對齊 Runtime、LINE 當次前景或空下載目的地，
+     屬預期的 `NOT_READY_FOR_LIVE_E2E`；不是拒絕離線 Implementation／Focused Tests／
+     Build 的理由。
+
+B. **Live Transaction Admission（才能操作真實 LINE、Save All、Chooser 或消耗 A56）：**
+   - 必須另有精確來源的 `APPROVE_IMPLEMENTATION`、真實 installed source／producer／
+     decoder／runtime alignment、綁定實際 E2E actor 的新 immutable HUMAN grant，以及
+     Owner 當次 foreground handoff。
+   - 必須完成 A56 新鮮身份／eligible、原 canonical ledger／未解 intent／writer／
+     reservation、唯一人工作業 request、正確空目的地與完整 chooser path 等檢核。
+   - 任一缺失、來源不一致或副作用未知，立即停止所有真實 GUI／Save All／Chooser／
+     交易操作；絕不重送或改寫原保護狀態，也不得把 Implementation Admission 當成
+     Live Transaction Admission。
+
+只有上述 A 的綁定一致後，才可在 Owner 提供的新隔離 worktree／branch 中做最小實作。
 允許修改的產品 source 只能是：
 - src/line_backup_batch/cli.py
 - src/line_backup_batch/service.py
@@ -52,21 +84,29 @@ focused tests 只能加到 Plan 明列的 7 個既有測試檔。不得擴寫 sc
 改 2px／u+4／16×16、改 M5/M6、重做 OCR／NCC／shadow-click、修改 canonical
 task／Owner／ledger／初始化收據／既有 counters 或舊 grant。
 
-實作時依 Plan 的 A56 單本順序推進：唯讀 readiness → cap1 begin／admit／prepare →
-Owner 人工 CARD → 人工視覺校準／closure → 原 intent 與 durable readback → 唯一
-SAVE_ALL request → Owner 一次人工 Save All → 精確 chooser path／空目的地 → 真實
-下載證據 → 56 檔穩定 inventory／逐檔 SHA-256／完整 ImageIO 解碼 → finalize／
-VERIFIED readback／stop／release。Plan 核准且本 Handoff 取得 `APPROVE_HANDOFF` 後
-才是實作階段，仍不得執行 LINE GUI、
-Save All 或正式交易；正式 E2E 必須另經 Code Review、精確 source/runtime/grant、
-Owner 當次前景交接，並由 Owner 在 E2E 階段指定新的獨立 Session 執行。Implementer
-與 E2E 的 provider／model／reasoning／Session ID 均不得硬編碼；新 immutable grant
-必須綁定當輪實際選定並由 runtime 證實的 E2E 身分及 Owner human-input actor。
+實作必須讓程式支援並以 focused tests 驗證 Plan 的 A56 單本流程：唯讀 readiness →
+cap1 begin／admit／prepare → Owner 人工 CARD → 人工視覺校準／closure → 原 intent 與
+durable readback → 唯一 SAVE_ALL request → Owner 一次人工 Save All → 精確 chooser
+path／空目的地 → 真實下載證據 → 56 檔穩定 inventory／逐檔 SHA-256／完整 ImageIO
+解碼 → finalize／VERIFIED readback／stop／release。A admission 只允許離線 code／
+tests／build；上述 live 步驟與任何 LINE GUI、Save All、Chooser、正式交易只能在 B
+admission 後，由 Owner 當次前景交接與獨立 E2E Session 執行。正式 E2E 必須另經 Code
+Review、精確 source/runtime/grant，並由 Owner 在 E2E 階段指定新的獨立 Session 執行。
+Implementer 與 E2E 的 provider／model／reasoning／Session ID 均不得硬編碼；新
+immutable grant 必須綁定當輪實際選定並由 runtime 證實的 E2E 身分及 Owner human-input
+actor。
 
-遇到下列任一情況立即停止並保留證據：Plan／review／HEAD／SHA 不匹配；來源或
-runtime 無法閉合；沒有有效新 grant；有未解 intent／writer／reservation；A56 身份
-不唯一；目的地不精確或非空；Owner 未提供當次前景交接；人工 request 重複；
-chooser 結果不明；Save All 結果未知；任何 protected state 需要改寫。
+遇到下列任一情況立即停止並保留證據；A 與 B 必須分開判定：
+- **A／Implementation Admission：** Plan／Handoff review／HEAD／SHA／actor／scope
+  不匹配；正確 worktree／source identity 有不可安全處理的衝突；需要擴張 frozen
+  paths、AC 或交易保護；環境／編譯阻塞無法解決。
+- **B／Live Transaction Admission：** 沒有新的 `APPROVE_IMPLEMENTATION` 或有效
+  grant；source-runtime closure／producer／decoder binding／installed runtime
+  alignment 缺失；有未解 intent／writer／reservation；A56 身份不唯一；目的地不精確
+  或非空；Owner 未提供當次前景交接；人工 request 重複；chooser 結果不明；Save All
+  結果未知；任何 protected state 需要改寫。
+- 缺少未來 grant、runtime、LINE 前景或空目的地本身只阻止 B，不得因此阻止 A 的離線
+  Implementation／Focused Tests／Build。
 未知 Save All 不重送，ledger／quota／slot 不重置或退還，A 未 VERIFIED／release
 前不得使用 ONE56 操作 B。
 
@@ -93,11 +133,18 @@ NOT_RUN，依規定 Commit／Push／更新同範圍 Draft PR。Commit body 必�
 | Handoff review status | `PENDING_EXTERNAL_HANDOFF_REVIEW`；必須綁定本 Handoff PR 的最終 exact HEAD |
 | Machine-readable v3 plan contract | `NOT_AVAILABLE`；目前只有 Plan／contract-delta 文件，不得冒充 schema v3 contract |
 | Harness Controller admission / receipt | `NOT_VERIFIED` |
-| Governance template reference | PR [#12](https://github.com/s9008129/Line_backup/pull/12)，Commit `2189631c9c3073d32c8da94db3f77732090d5380`，`docs/agent-session-handoff/templates/plan-to-implement.md` |
+| Governance template reference | PR [#12](https://github.com/s9008129/Line_backup/pull/12)，Commit `2189631c9c3073d32c8da94db3f77732090d5380`，`docs/agent-session-handoff/templates/plan-to-implement.md`；尚未合併，只作試行治理範本，不是 PR #10 base 的正式憲法 |
 | 本 Handoff 的隔離工作分支／PR base | `handoff/one56-trial-20261018` / `implement/line-two-album-pilot-v1-20261014` |
 
 本文件只依 GitHub 可確認的事實整理交接。原 Sol Session 因額度中斷；任何只存在於其
 本機、未提交或未同步的工作，皆列為 `UNKNOWN`，不得當成核准來源或已完成成果。
+
+治理版本邊界：PR #10 base 的 `AGENTS.md` 仍保留歷史固定 Sol／Luna／DeepSeek 角色；
+PR #12 是尚未合併的 Owner 指定試行治理方案，不能描述成已寫入 base 的正式憲法。
+Owner 現行決策是每個階段自行指定實際 Provider／Model／Session，本 Handoff 只如實
+記錄。若執行中的 Harness Controller／權限政策仍強制舊角色而無法合法符合，停止並
+回報 `ROLE_POLICY_CONFLICT`，交 Owner／外部 ChatGPT 處理；不得修改 base `AGENTS.md`、
+合併 PR #12、修改全域 Harness 4.8.0，或改動已核准 Plan 的 bytes／SHA。
 
 ## 真正的業務目標與 AC
 
@@ -270,13 +317,18 @@ adapter、content／decoder、AGENTS.md、全域 Harness、policy、grant、ledg
 
 ### 立即停止的代碼與條件
 
-- Plan／Handoff review SHA／HEAD／actor／scope 不一致；或找不到綁定本 Handoff exact
-  HEAD 的 external `APPROVE_HANDOFF`，而只有 COMMENT 中的局部接受。
-- 缺少有效 grant、source-runtime closure、producer／decoder binding，或需要改寫舊 grant。
-- A56 身份、日期／張數、群組、process／window、popup、目標相簿或目的地有歧義。
-- 人工 request 已存在、重複、跨 Session 重放、slot 已使用或 readback 失敗。
-- Owner 未交還前景、GUI 目標可能誤觸其他控制、畫面改變或出現未預期副作用。
-- Save All、chooser 或下載結果不明；此時保留 intent／quota，不重送、不 finalize。
+- **A／Implementation Admission：** Plan／Handoff review SHA／HEAD／actor／scope
+  不一致；或找不到綁定本 Handoff exact HEAD 的 external `APPROVE_HANDOFF`，而只有
+  COMMENT 中的局部接受；正確 worktree／source identity 有不可安全處理的衝突；需要
+  擴張 frozen 11 source paths、7 focused test paths、AC 或交易保護。
+- **B／Live Transaction Admission：** 缺少精確來源的 `APPROVE_IMPLEMENTATION`、有效
+  新 grant、source-runtime closure、producer／decoder binding、installed runtime
+  alignment 或 Owner 當次前景交接；需要改寫舊 grant；A56 身份、日期／張數、群組、
+  process／window、popup、目標相簿或目的地有歧義；人工 request 已存在、重複、跨
+  Session 重放、slot 已使用或 readback 失敗；GUI 可能誤觸其他控制、畫面改變或出現
+  未預期副作用；Save All／chooser／下載結果不明。
+- 上述 B 類未就緒本身只阻止真實 GUI／Save All／Chooser／交易操作，不得被當成離線
+  Implementation／Focused Tests／Build 的停止原因。
 - 需要改 canonical ledger、239 歷史、65 排除、原 counters、2px／u+4／16×16、
   Plan AC、證據政策或 public contract 才能前進。
 
