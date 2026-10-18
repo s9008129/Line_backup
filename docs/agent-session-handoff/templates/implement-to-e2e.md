@@ -8,6 +8,8 @@
 
 在合法前置條件成立後，用真正來源／裝置／檔案驗證逐項 AC，記錄畫面、AX／SCK、實際操作、持久 intent、at-most-once 記錄、Chooser、下載檔案、逐檔 hash、完整 ImageIO 解碼、VERIFIED/readback／release。Save All **最多一次**，結果不明不得重送，也不得補造成功。先完成 A 並 VERIFIED，B 需要新的身分核對與自己的 grant。
 
+**角色邊界：你執行有副作用的正式 GUI／交易期間是經授權的 E2E Executor；Harness v4.8.0 原生 `ACCEPTANCE_REVIEWER` 是唯讀角色，不能把 Executor 操作憑空寫成該角色的 admission 或 receipt。真正原生 Acceptance 若被 workflow 要求，仍需由符合條件的獨立唯讀 Session／控制器完成。**
+
 你只能讀受審產品與正式狀態、執行核准的業務流程及在隔離 evidence 目錄寫驗收資料；不能修改產品程式／原始 AC／測試 fixture／授權或原 ledger。任何 FAIL/BLOCKED 保留原證據並回報。完成後以 `docs/agent-session-handoff/templates/e2e-to-close.md` 產出**實例交接**、E2E Evidence Manifest 和獨立裁決，Commit／Push 到 E2E 階段 Draft PR（若無新差異則不製造 empty commit）；由 Owner 把 PR、HEAD 轉交外部 ChatGPT 審核；**本 Session 不自行宣布整體交付完成。**
 
 ---

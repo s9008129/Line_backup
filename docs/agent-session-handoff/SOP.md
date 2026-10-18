@@ -33,6 +33,7 @@
 - 每次審查需固定 40 碼 HEAD、URL、涉及 source 的閉包 SHA 或具體檔案，以及真正的 evidence ref。文件修改後若 HEAD 變更，Reviewer 須聲明有效範圍；更動受審產品內容則重審。
 - Commit body 必須有「意圖」「做了什麼」「驗證與結果」「下一步的建議」。私人截圖、照片、群組名、秘密、原始 grant、機器私人路徑不能推公開 Repo。
 - ChatGPT 的 COMMENT/文字審查是外部人工可核對的裁決，不自動創建 v4.8.0 Controller/native role receipts，也不自行將 `PROJECT_IMPLEMENTATION_REVIEW_REQUIRED` 改為 PASS。若規格要求 provider-verified approval，要等合法精確機器綁定。
+- **Acceptance 身分不得混用：**Harness v4.8.0 的原生 `ACCEPTANCE_REVIEWER` **唯讀**；若 E2E Session 透過核准入口操作 LINE、產生真實交易副作用，它在那一段是「獲授權的 E2E 執行者」，**不能冒充原生唯讀 Acceptance role 或自行製造 receipt**。外部 ChatGPT 可獨立審查其真實結果；若要登錄 v4.8 Controller Acceptance，必須由真正符合 role 的唯讀 Session 及有效 stage packet/receipts 完成。這不是另建一套 Harness，不能因成本而省略 CRITICAL 必要驗收。
 - **沒有背景承諾：**外部 ChatGPT 只在 Owner 送出新 PR／要求審查時工作；下一階段的 Prompt 由 ChatGPT 在審查當下提供，Owner 自行轉交新 Session。模型在任何階段均由 Owner 按額度選擇，不寫死。
 
 ## 工作量控制及收斂
