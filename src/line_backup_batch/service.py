@@ -9,7 +9,8 @@ import uuid
 from line_backup_acceptance.common import AcceptanceError,json_bytes,utc_now,_check_calibration
 from line_backup_acceptance.project_binding import ProjectReader,strict_json,history_decision,integer,sha
 from .schema import require,POLICY
-from .store import Store
+from .store import (Store,HUMAN_A56_FINGERPRINT,HUMAN_OBSERVED_KEYS,HUMAN_STAGE_RESERVATIONS,
+    HUMAN_CALIBRATION_KEYS)
 from .observations import artifact,catalog,card_target,chooser_observation,validate_download_start,frame,inside,intersection,point,rect,_support
 from . import content
 
@@ -1015,3 +1016,809 @@ class Service:
             s['active_batch']=None
             return result
         return self.store._update(expected,release,operation='release')
+
+    _HUMAN_BINDING_KEYS={'task_id','grant_sha256','observer_session_id','source_sha256','destination'}
+
+    def _human_grant_for(self,expected,binding,operation='begin'):
+        """Authenticate the exact HUMAN grant and its fixed A56 destination binding."""
+        require(isinstance(binding,dict) and set(binding)==self._HUMAN_BINDING_KEYS,'HUMAN_BINDING_SHAPE')
+        for key in self._HUMAN_BINDING_KEYS:
+            require(isinstance(binding.get(key),str) and binding[key],'HUMAN_BINDING_SHAPE')
+        require(self.store.authorization_path is not None,'PROJECT_GRANT_REQUIRED')
+        from .cli import authorize
+        grant=authorize(self.store.root,self.store.authorization_path,False,operation)
+        require(Store._human_grant(grant),'HUMAN_GRANT_BINDING')
+        require(grant.get('task_id')==binding['task_id']
+            and grant.get('source_sha256')==binding['source_sha256']
+            and grant.get('observer_session_id')==binding['observer_session_id']
+            and grant.get('artifact_dir')==self.artifact_dir
+            and grant.get('owner')==self.owner
+            and grant.get('project_root')==self.store.root,'HUMAN_GRANT_BINDING')
+        reader=ProjectReader(self.store.root)
+        try:
+            grant_sha256=self.store._project_authorization_sha256(reader,grant)
+        finally:reader.close()
+        require(binding['grant_sha256']==grant_sha256,'HUMAN_GRANT_SHA256')
+        snap=self.store.snapshot()
+        require(snap['receipt']==expected,'STALE_CAS')
+        require(Store._human_destination(binding['destination']),'HUMAN_DESTINATION_BINDING')
+        destination=f"{self.store.root}/backups/{snap['config']['group_name']}/2024-05-27_2024-05-31_56張"
+        require(binding['destination']==destination,'HUMAN_DESTINATION_BINDING')
+        return grant
+
+    def _human_readiness(self,readiness,grant):
+        require(isinstance(readiness,dict) and set(readiness)==HUMAN_OBSERVED_KEYS
+            and readiness.get('status')=='OBSERVED'
+            and isinstance(readiness.get('facts'),dict)
+            and Store._human_timestamp(readiness.get('observed_at')) is not None,
+            'HUMAN_READINESS_REQUIRED')
+        reader=ProjectReader(self.store.root)
+        try:Store._human_evidence_refs(reader,readiness.get('raw_evidence_refs'),'HUMAN_READINESS_REQUIRED',
+            artifact_dir=grant['artifact_dir'])
+        finally:reader.close()
+        return readiness
+
+    def human_begin(self,expected,binding,readiness):
+        grant=self._human_grant_for(expected,binding,'begin')
+        self._human_readiness(readiness,grant)
+        snap=self.store.snapshot()
+        require(self.eligible(snap['state'],HUMAN_A56_FINGERPRINT)=='PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION',
+            'HUMAN_TARGET_INELIGIBLE')
+        reader=ProjectReader(self.store.root)
+        try:
+            _,ledger,_=self.store._ledger_open(reader,grant)
+            require(ledger.get('workflow_phase')=='A' and ledger.get('lifecycle_count')==0
+                and ledger.get('failure_latched') is not True
+                and not any(isinstance(entry,dict) and entry.get('state')=='RESERVED'
+                    for entry in ledger.get('entries',[])),'HUMAN_LEDGER_NOT_FRESH')
+        finally:reader.close()
+        result=self.begin(expected,'backup_batch',1)
+        require(isinstance(result,dict) and isinstance(result.get('result'),dict)
+            and result['result'].get('status')=='BATCH_OWNED','HUMAN_BEGIN_BINDING')
+        return result
+
+    def human_admit(self,expected,binding,readiness,begin):
+        grant=self._human_grant_for(expected,binding,'begin')
+        self._human_readiness(readiness,grant)
+        require(isinstance(begin,dict) and begin.get('status')=='BATCH_OWNED'
+            and isinstance(begin.get('batch_id'),str) and begin['batch_id'],'HUMAN_BEGIN_BINDING')
+        snap=self.store.snapshot()
+        require(snap['receipt']==expected,'STALE_CAS')
+        require(self.eligible(snap['state'],HUMAN_A56_FINGERPRINT)=='PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION',
+            'HUMAN_TARGET_INELIGIBLE')
+        batch=snap['state'].get('active_batch')
+        require(isinstance(batch,dict) and batch.get('batch_id')==begin['batch_id']
+            and batch.get('owner_execution_id')==self.owner and batch.get('mode')=='backup_batch'
+            and batch.get('phase')=='CATALOG' and batch.get('manifest_reference') is None,
+            'HUMAN_ADMIT_BATCH_BINDING')
+        reader=ProjectReader(self.store.root)
+        try:grant_sha256=self.store._project_authorization_sha256(reader,grant)
+        finally:reader.close()
+        manifest=dict(version=1,kind='human-assisted-bounded-candidate-manifest-1',
+            execution_mode='HUMAN_ASSISTED',input_actor='OWNER_HUMAN',
+            task_id=grant['task_id'],grant_sha256=grant_sha256,project_root=self.store.root,
+            group_key=snap['config']['group_key'],config_sha256=expected['config_sha256'],
+            source_sha256=expected['source_sha256'],observer_session_id=grant['observer_session_id'],
+            identities=[copy.deepcopy(HUMAN_A56_FINGERPRINT)],fingerprint=copy.deepcopy(HUMAN_A56_FINGERPRINT),
+            readiness_observed_at=readiness['observed_at'],
+            readiness_refs=copy.deepcopy(readiness['raw_evidence_refs']),
+            coverage='HUMAN_ASSISTED_BOUNDED_CANDIDATE_ONLY',complete_catalog=False,
+            observed_at=utc_now())
+        reference=self.publish('human-candidate-'+uuid.uuid4().hex+'.json',manifest)
+        def admit(cfg,s):
+            current=self.batch(s)
+            require(current['batch_id']==begin['batch_id'] and current['phase']=='CATALOG'
+                and current['manifest_reference'] is None,'ALREADY_ADMITTED')
+            self._human_readiness(readiness,grant)
+            current['manifest_reference']=reference;current['phase']='ADMITTED'
+            return dict(status='ADMITTED_BOUNDED_CANDIDATE',coverage=manifest['coverage'],
+                complete_catalog=False,manifest_reference=reference,
+                identity=copy.deepcopy(HUMAN_A56_FINGERPRINT))
+        return self.store._update(expected,admit,operation='admit')
+
+    def _human_observed(self,reader,grant,value,required,code='HUMAN_INPUT_OBSERVED'):
+        require(isinstance(value,dict) and set(value)==HUMAN_OBSERVED_KEYS
+            and value.get('status')=='OBSERVED' and isinstance(value.get('facts'),dict)
+            and Store._human_timestamp(value.get('observed_at')) is not None,
+            code)
+        require(all(value['facts'].get(key) is True for key in required),code)
+        Store._human_evidence_refs(reader,value.get('raw_evidence_refs'),code,
+            artifact_dir=grant['artifact_dir'])
+        return value
+
+    def _human_ledger_entry(self,reader,grant,run_id,reservation_id,stage,allowed_states):
+        require(isinstance(reservation_id,str) and reservation_id,'HUMAN_RESERVATION_BINDING')
+        require(stage in HUMAN_STAGE_RESERVATIONS,'HUMAN_INPUT_STAGE_REQUIRED')
+        _,ledger,_=self.store._ledger_open(reader,grant)
+        entries=[item for item in ledger.get('entries',[])
+            if isinstance(item,dict) and item.get('id')==reservation_id]
+        require(len(entries)==1,'HUMAN_RESERVATION_BINDING')
+        entry=entries[0];kind,slots=HUMAN_STAGE_RESERVATIONS[stage]
+        require(entry.get('kind')==kind and entry.get('count')==len(slots)
+            and entry.get('slots')==slots and entry.get('run_id')==run_id
+            and entry.get('owner')==grant['owner'] and entry.get('workflow_phase')=='A'
+            and entry.get('state') in allowed_states,'HUMAN_RESERVATION_BINDING')
+        return ledger,entry
+
+    @staticmethod
+    def _human_entry_refs(entry):
+        outcome=entry.get('outcome') if isinstance(entry,dict) else None
+        return outcome if isinstance(outcome,dict) else {}
+
+    def _human_bound_stage(self,reader,grant,grant_sha256,state,run,stage,request,result,
+            request_ref=None,result_ref=None,reservation_id=None,allowed_states=('CONSUMED',)):
+        require(isinstance(request,dict) and isinstance(result,dict),'HUMAN_INPUT_REQUEST_BINDING')
+        ids=request.get('reservation_ids')
+        require(isinstance(ids,list) and len(ids)==1,'HUMAN_INPUT_REQUEST_BINDING')
+        if reservation_id is not None:require(ids[0]==reservation_id,'HUMAN_RESERVATION_BINDING')
+        ledger,entry=self._human_ledger_entry(reader,grant,run['run_id'],ids[0],stage,allowed_states)
+        outcome=self._human_entry_refs(entry)
+        if request_ref is None:request_ref=outcome.get('request_ref')
+        if result_ref is None:result_ref=outcome.get('result_ref')
+        require(Store._human_ref_shape(request_ref,artifact_dir=grant['artifact_dir'])
+            and Store._human_ref_shape(result_ref,artifact_dir=grant['artifact_dir'])
+            and request_ref['path']!=result_ref['path'],
+            'HUMAN_INPUT_ARTIFACT_REQUIRED')
+        if outcome.get('request_stage')==stage:
+            require(request_ref==outcome.get('request_ref')
+                and result_ref==outcome.get('result_ref'),'HUMAN_INPUT_ARTIFACT_BINDING')
+        require(Store._human_read_json_ref(reader,request_ref,'HUMAN_INPUT_REQUEST_ARTIFACT',
+            artifact_dir=grant['artifact_dir'])==request,
+            'HUMAN_INPUT_REQUEST_ARTIFACT')
+        require(Store._human_read_json_ref(reader,result_ref,'HUMAN_INPUT_RESULT_ARTIFACT',
+            artifact_dir=grant['artifact_dir'])==result,
+            'HUMAN_INPUT_RESULT_ARTIFACT')
+        Store._human_request_binding(reader,request,grant,grant_sha256,run,entry,stage)
+        Store._human_result_binding(reader,result,request,grant,run,entry,stage,result.get('outcome'))
+        require(result.get('outcome')=='HUMAN_REPORTED_RETURNED','HUMAN_INPUT_OUTCOME')
+        require(result.get('request_stage')==stage and request.get('request_stage')==stage,
+            'HUMAN_INPUT_STAGE_REQUIRED')
+        return dict(ledger=ledger,entry=entry,request=request,result=result,
+            request_ref=copy.deepcopy(request_ref),result_ref=copy.deepcopy(result_ref),
+            observed=copy.deepcopy(result['observed']))
+
+    def _human_chooser_readback(self,reader,grant,run_id,stage,value):
+        require(isinstance(value,dict) and set(value)=={'reference'},
+            'HUMAN_CHOOSER_RESERVATION_READBACK')
+        reference=value.get('reference')
+        require(Store._human_ref_shape(reference,artifact_dir=grant['artifact_dir']),
+            'HUMAN_CHOOSER_RESERVATION_READBACK')
+        record=Store._human_read_json_ref(reader,reference,'HUMAN_CHOOSER_RESERVATION_READBACK',
+            artifact_dir=grant['artifact_dir'])
+        require(isinstance(record,dict) and set(record)=={'kind','stage','read_at','readback'}
+            and record.get('kind')=='HUMAN_CHOOSER_RESERVATION_READBACK'
+            and record.get('stage')==stage
+            and Store._human_timestamp(record.get('read_at')) is not None
+            and isinstance(record.get('readback'),dict),
+            'HUMAN_CHOOSER_RESERVATION_READBACK')
+        snapshot=record['readback']
+        require(set(snapshot)=={'id','kind','count','run_id','owner','state','slots','outcome'}
+            and snapshot.get('state')=='RESERVED' and snapshot.get('outcome') is None
+            and snapshot.get('run_id')==run_id and snapshot.get('owner')==grant['owner']
+            and isinstance(snapshot.get('id'),str) and snapshot['id']
+            and isinstance(snapshot.get('kind'),str) and snapshot['kind']
+            and type(snapshot.get('count')) is int and snapshot['count']>0
+            and isinstance(snapshot.get('slots'),list) and snapshot['slots'],
+            'HUMAN_CHOOSER_RESERVATION_READBACK')
+        return reference,record
+
+    def _human_calibration(self,reader,grant,calibration,evidence):
+        value=calibration
+        if isinstance(calibration,dict) and isinstance(calibration.get('calibration'),dict):
+            value=calibration['calibration']
+        if value is None:
+            refs=evidence.get('raw_evidence_refs') if isinstance(evidence,dict) else None
+            require(isinstance(refs,list) and len(refs)==4,'HUMAN_CALIBRATION_REQUIRED')
+            value=dict(kind='human-menu-attestation-1',execution_mode='HUMAN_ASSISTED',
+                input_actor='OWNER_HUMAN',observer_session_id=grant['observer_session_id'],
+                observed_at=evidence['observed_at'],detail_ref=refs[0],menu_ref=refs[1],
+                closure_ref=refs[2],attestation_ref=refs[3])
+        require(isinstance(value,dict) and set(value)==HUMAN_CALIBRATION_KEYS,
+            'HUMAN_CALIBRATION_REQUIRED')
+        Store._human_calibration_refs(reader,value,grant)
+        require(value.get('observed_at')==evidence.get('observed_at'),'HUMAN_CALIBRATION_REQUIRED')
+        return copy.deepcopy(value)
+
+    @staticmethod
+    def _human_calibration_from_run(run):
+        for event in reversed(run.get('events',[])):
+            if not isinstance(event,dict) or event.get('phase')!='SAVE_ALL_CALIBRATION':continue
+            try:value=json.loads(event.get('evidence','{}'))
+            except (TypeError,ValueError):continue
+            calibration=value.get('calibration') if isinstance(value,dict) else None
+            if isinstance(calibration,dict):return copy.deepcopy(calibration)
+        return None
+
+    def human_prepare(self,expected,binding,readiness,begin,admitted):
+        grant=self._human_grant_for(expected,binding,'prepare')
+        self._human_readiness(readiness,grant)
+        require(isinstance(begin,dict) and begin.get('status')=='BATCH_OWNED'
+            and isinstance(begin.get('batch_id'),str) and begin['batch_id'],'HUMAN_BEGIN_BINDING')
+        require(isinstance(admitted,dict) and admitted.get('status')=='ADMITTED_BOUNDED_CANDIDATE',
+            'HUMAN_ADMIT_BINDING')
+        target=copy.deepcopy(HUMAN_A56_FINGERPRINT)
+        destination=binding['destination']
+        run_id='RUN-v3-'+uuid.uuid4().hex
+        reader=ProjectReader(self.store.root)
+        try:
+            snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')
+            state=snap['state'];b=state.get('active_batch')
+            require(isinstance(b,dict) and b.get('batch_id')==begin['batch_id']
+                and b.get('owner_execution_id')==self.owner and b.get('mode')=='backup_batch'
+                and b.get('phase')=='ADMITTED' and b.get('current_album_run_id') is None
+                and b.get('manifest_reference') is not None,'HUMAN_PREPARE_BATCH_BINDING')
+            manifest=strict_json(artifact(reader,b['manifest_reference']),'HUMAN_MANIFEST_INVALID')
+            grant_sha256=self.store._project_authorization_sha256(reader,grant)
+            require(isinstance(manifest,dict) and set(manifest)=={
+                'version','kind','execution_mode','input_actor','task_id','grant_sha256','project_root',
+                'group_key','config_sha256','source_sha256','observer_session_id','identities','fingerprint',
+                'readiness_observed_at','readiness_refs','coverage','complete_catalog','observed_at'}
+                and manifest.get('version')==1
+                and manifest.get('kind')=='human-assisted-bounded-candidate-manifest-1'
+                and manifest.get('execution_mode')=='HUMAN_ASSISTED'
+                and manifest.get('input_actor')=='OWNER_HUMAN'
+                and manifest.get('task_id')==grant['task_id']
+                and manifest.get('grant_sha256')==grant_sha256
+                and manifest.get('project_root')==self.store.root
+                and manifest.get('group_key')==snap['config']['group_key']
+                and manifest.get('config_sha256')==snap['receipt']['config_sha256']
+                and manifest.get('source_sha256')==snap['receipt']['source_sha256']
+                and manifest.get('coverage')=='HUMAN_ASSISTED_BOUNDED_CANDIDATE_ONLY'
+                and manifest.get('complete_catalog') is False
+                and manifest.get('identities')==[target]
+                and manifest.get('fingerprint')==target
+                and manifest.get('observer_session_id')==grant['observer_session_id']
+                and Store._human_timestamp(manifest.get('observed_at')) is not None,
+                'HUMAN_MANIFEST_INVALID')
+            require(manifest.get('readiness_refs')==readiness['raw_evidence_refs']
+                and manifest.get('readiness_observed_at')==readiness['observed_at'],
+                'HUMAN_MANIFEST_INVALID')
+            require(self.eligible(state,target)=='PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION',
+                'HUMAN_TARGET_INELIGIBLE')
+            require(destination==f"{self.store.root}/backups/{snap['config']['group_name']}/2024-05-27_2024-05-31_56張",
+                'HUMAN_DESTINATION_BINDING')
+            if os.path.lexists(destination):
+                require(Path(destination).is_dir(),'HUMAN_DESTINATION_BINDING')
+                require(content.inventory(self.store.root,destination)==[],'DESTINATION_NONEMPTY')
+        finally:reader.close()
+        relative=destination[len(self.store.root)+1:]
+        effects=dict(intent=False,lease=False,destination=False)
+        def prepare(cfg,s):
+            b=self.batch(s);require(b['batch_id']==begin['batch_id'] and b['phase']=='ADMITTED'
+                and b['current_album_run_id'] is None,'ALBUM_BUSY')
+            self._human_readiness(readiness,grant)
+            require(self.eligible(s,target)=='PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION','HISTORY_DRIFT')
+            require(cfg['group_name']==snap['config']['group_name'],'CONFIG_GROUP_DRIFT')
+            self.publish('filesystem-intent-'+run_id+'.json',dict(version='line-backup-filesystem-intent-1',
+                run_id=run_id,batch_id=b['batch_id'],owner=self.owner,destination=destination,
+                expected_images=56,created_at=utc_now(),state='PUBLISHED',execution_mode='HUMAN_ASSISTED'))
+            effects['intent']=True
+            self.publish('lease-'+run_id+'.json',dict(version='line-backup-transaction-lease-1',run_id=run_id,
+                batch_id=b['batch_id'],owner=self.owner,destination=destination,acquired_at=utc_now(),
+                state='OPEN',execution_mode='HUMAN_ASSISTED'))
+            effects['lease']=True
+            p=ProjectReader(self.store.root)
+            try:
+                parent=p.open('backups',directory=True)
+                try:
+                    try:os.mkdir(cfg['group_name'],0o700,dir_fd=parent)
+                    except FileExistsError:pass
+                finally:os.close(parent)
+                parent=p.open('backups/'+cfg['group_name'],directory=True)
+                try:
+                    try:os.mkdir(relative.split('/')[-1],0o700,dir_fd=parent)
+                    except FileExistsError:pass
+                finally:os.close(parent)
+                fd=p.open(relative,directory=True)
+                try:require(not os.listdir(fd),'DESTINATION_NONEMPTY')
+                finally:os.close(fd)
+            finally:p.close()
+            effects['destination']=True
+            evidence=dict(readiness=copy.deepcopy(readiness),batch_id=b['batch_id'],
+                admitted_status='ADMITTED_BOUNDED_CANDIDATE')
+            event=dict(phase='OPEN_ALBUM',at=utc_now(),evidence=json.dumps(evidence,ensure_ascii=False,sort_keys=True))
+            r=dict(run_id=run_id,mode='backup_batch',group_key=cfg['group_key'],album_id=None,
+                fingerprint=copy.deepcopy(target),observed_title=cfg['group_name'],title_confidence='HIGH',
+                destination=destination,destination_initially_empty=True,phase='OPEN_ALBUM',checkpoint=event,
+                events=[event],intent=None,recovery_used={},runtime_errors=[],verification=None,
+                workflow_outcome='IN_PROGRESS',stop_reason=None,batch_id=b['batch_id'],
+                intent_state='INTENT_NONE',manual_reconciliation_required=False,
+                reconciliation_reason=None,contract_revision='1.0-rc2',dispatch_state='NOT_ATTEMPTED',
+                dispatch_evidence=None,reconciliations=[])
+            s['runs'].append(r);s['current_run_id']=run_id;s['active_writer_id']=self.owner
+            b['current_album_run_id']=run_id;b['phase']='RUNNING'
+            return dict(status='ALBUM_OPEN_READY',run_id=run_id,project_album_slot='A',
+                destination=destination,fingerprint=copy.deepcopy(target))
+        try:return self.store._update(expected,prepare,operation='prepare')
+        except Exception as exc:
+            if any(effects.values()):
+                try:self.publish('side-effect-'+run_id+'-'+uuid.uuid4().hex+'.json',
+                    dict(version='line-backup-side-effect-1',run_id=run_id,
+                        intent_published=effects['intent'],lease_published=effects['lease'],
+                        destination_created=effects['destination'],destination=destination,at=utc_now(),
+                        failure=f'{type(exc).__name__}:{exc}',code=getattr(exc,'code',None)))
+                except Exception:pass
+            raise
+
+    def human_commit_calibration(self,expected,binding,run_id,request,result,evidence,
+            calibration=None,request_ref=None,result_ref=None):
+        grant=self._human_grant_for(expected,binding,'calibrate')
+        reader=ProjectReader(self.store.root)
+        try:
+            snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')
+            run=Store._human_state_run(snap['state'],grant,run_id)
+            require(run.get('phase')=='OPEN_ALBUM' and run.get('intent') is None,'HUMAN_CALIBRATION_STATE')
+            grant_sha256=self.store._project_authorization_sha256(reader,grant)
+            stage=self._human_bound_stage(reader,grant,grant_sha256,snap['state'],run,'CALIBRATION',
+                request,result,request_ref,result_ref,allowed_states=('CONSUMED',))
+            observed=self._human_observed(reader,grant,evidence,('menu_closed','no_activation'),
+                'HUMAN_CALIBRATION_EVIDENCE')
+            require(observed==stage['observed'],'HUMAN_CALIBRATION_EVIDENCE')
+            cal=self._human_calibration(reader,grant,calibration,observed)
+        finally:reader.close()
+        def calibrate(cfg,s):
+            current=Store._human_state_run(s,grant,run_id)
+            require(current.get('phase')=='OPEN_ALBUM' and current.get('intent') is None,
+                'HUMAN_CALIBRATION_STATE')
+            payload=dict(calibration=copy.deepcopy(cal),evidence=copy.deepcopy(observed),
+                request_ref=copy.deepcopy(stage['request_ref']),result_ref=copy.deepcopy(stage['result_ref']))
+            self.event(current,'SAVE_ALL_CALIBRATION',payload)
+            return dict(status='CALIBRATED',run_id=run_id,calibration=copy.deepcopy(cal),
+                request_reference=copy.deepcopy(stage['request_ref']),
+                result_reference=copy.deepcopy(stage['result_ref']),
+                raw_evidence_refs=copy.deepcopy(observed['raw_evidence_refs']))
+        return self.store._update(expected,calibrate,operation='calibrate')
+
+    def human_commit_intent(self,expected,binding,run_id,calibration,fresh_evidence):
+        grant=self._human_grant_for(expected,binding,'intent')
+        reader=ProjectReader(self.store.root)
+        try:
+            snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')
+            run=Store._human_state_run(snap['state'],grant,run_id)
+            require(run.get('phase')=='SAVE_ALL_CALIBRATION' and run.get('intent') is None,
+                'LOADED_INTENT_NO_PERMISSION')
+            require(isinstance(calibration,dict) and calibration.get('status')=='CALIBRATED'
+                and calibration.get('run_id')==run_id,'HUMAN_CALIBRATION_REQUIRED')
+            cal=calibration.get('calibration')
+            require(isinstance(cal,dict) and cal==self._human_calibration_from_run(run),
+                'HUMAN_CALIBRATION_REQUIRED')
+            Store._human_calibration_refs(reader,cal,grant)
+            observed=self._human_observed(reader,grant,fresh_evidence,('album_detail_observed',),
+                'HUMAN_PRE_INTENT_EVIDENCE')
+            require(content.inventory(self.store.root,run['destination'])==[],'DESTINATION_NONEMPTY')
+        finally:reader.close()
+        def intent(cfg,s):
+            b,current=self.run(s)
+            require(current['phase']=='SAVE_ALL_CALIBRATION' and current['intent'] is None,
+                'LOADED_INTENT_NO_PERMISSION')
+            require(self._human_calibration_from_run(current)==cal,'HUMAN_CALIBRATION_REQUIRED')
+            require(b['new_transactions_reserved']<min(b['authorized_new_download_limit'],
+                b['configured_new_download_limit']),'LIMIT_REACHED')
+            require(content.inventory(self.store.root,current['destination'])==[],'DESTINATION_NONEMPTY')
+            action='ACTION-'+uuid.uuid4().hex
+            current['intent']=dict(action_id=action,committed_at=utc_now(),owner_execution_id=self.owner,
+                group_key=cfg['group_key'],fingerprint=copy.deepcopy(current['fingerprint']),
+                destination=current['destination'],calibration=copy.deepcopy(cal),
+                save_all_retry_allowed=False,dispatch_outcome='NOT_ATTEMPTED',
+                trigger_outcome='NOT_APPLICABLE')
+            current['intent_state']='INTENT_COMMITTED';b['new_transactions_reserved']+=1
+            refs=list(observed['raw_evidence_refs'])
+            for key in ('detail_ref','menu_ref','closure_ref','attestation_ref'):
+                if cal[key] not in refs:refs.append(copy.deepcopy(cal[key]))
+            self.event(current,'SAVE_ALL_INTENT_COMMITTED',dict(fresh=copy.deepcopy(observed),action_id=action,
+                calibration=copy.deepcopy(cal),raw_evidence_refs=refs))
+            return dict(status='ORIGINAL_INTENT_COMMITTED',run_id=run_id,action_id=action,
+                owner=self.owner,fingerprint=copy.deepcopy(current['fingerprint']),
+                destination=current['destination'],project_album_slot='A',
+                raw_evidence_refs=copy.deepcopy(refs))
+        return self.store._update(expected,intent,operation='intent')
+
+    def human_record_dispatch(self,expected,binding,run_id,intent,intent_readback,save_all,
+            chooser_path,chooser_confirm,chooser_readback=None):
+        grant=self._human_grant_for(expected,binding,'dispatch')
+        reader=ProjectReader(self.store.root)
+        try:
+            snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')
+            run=Store._human_state_run(snap['state'],grant,run_id)
+            persisted=run.get('intent');require(isinstance(persisted,dict),'HUMAN_INTENT_BINDING')
+            require(isinstance(intent,dict) and intent.get('status')=='ORIGINAL_INTENT_COMMITTED'
+                and intent.get('run_id')==run_id,'HUMAN_INTENT_BINDING')
+            for key in ('action_id','destination','fingerprint','owner'):
+                if key=='owner':require(intent.get('owner')==persisted['owner_execution_id'],'HUMAN_INTENT_BINDING')
+                else:require(intent.get(key)==persisted.get(key),'HUMAN_INTENT_BINDING')
+            require(isinstance(intent_readback,dict)
+                and set(intent_readback)=={'run_id','action_id','owner_execution_id','group_key',
+                    'fingerprint','destination','calibration','durable'}
+                and intent_readback.get('run_id')==run_id
+                and intent_readback.get('action_id')==persisted['action_id']
+                and intent_readback.get('owner_execution_id')==persisted['owner_execution_id']
+                and intent_readback.get('group_key')==persisted['group_key']
+                and intent_readback.get('destination')==run['destination']
+                and intent_readback.get('fingerprint')==run['fingerprint']
+                and intent_readback.get('calibration')==persisted['calibration']
+                and intent_readback.get('durable') is True,'HUMAN_INTENT_BINDING')
+            grant_sha256=self.store._project_authorization_sha256(reader,grant)
+            stages={}
+            for stage,record in (('SAVE_ALL',save_all),('CHOOSER_PATH',chooser_path),
+                    ('CHOOSER_CONFIRM',chooser_confirm)):
+                require(isinstance(record,dict) and isinstance(record.get('request'),dict)
+                    and isinstance(record.get('result'),dict),'HUMAN_INPUT_REQUEST_BINDING')
+                bound=self._human_bound_stage(reader,grant,grant_sha256,snap['state'],run,stage,
+                    record['request'],record['result'],record.get('requestReference'),
+                    record.get('resultReference'),record.get('reservation',{}).get('id'),
+                    allowed_states=('CONSUMED',))
+                require(record.get('observed')==bound['observed'],'HUMAN_INPUT_OBSERVED')
+                stages[stage]=bound
+            chooser_reference,chooser_record=self._human_chooser_readback(reader,grant,run_id,
+                'CHOOSER_PATH',chooser_readback)
+            chooser_snapshot=chooser_record['readback']
+            require(chooser_snapshot['id']==stages['CHOOSER_PATH']['entry']['id']==
+                stages['CHOOSER_CONFIRM']['entry']['id']
+                and chooser_snapshot['kind']==stages['CHOOSER_PATH']['entry']['kind']
+                and chooser_snapshot['count']==stages['CHOOSER_PATH']['entry']['count']
+                and chooser_snapshot['slots']==stages['CHOOSER_PATH']['entry']['slots'],
+                'HUMAN_CHOOSER_RESERVATION_READBACK')
+            confirm_refs=stages['CHOOSER_CONFIRM']['request'].get('raw_evidence_refs')
+            require(isinstance(confirm_refs,list) and any(ref==chooser_reference for ref in confirm_refs),
+                'HUMAN_CHOOSER_RESERVATION_READBACK')
+            require(chooser_reference not in (stages['CHOOSER_PATH']['request_ref'],
+                stages['CHOOSER_PATH']['result_ref'],stages['CHOOSER_CONFIRM']['request_ref'],
+                stages['CHOOSER_CONFIRM']['result_ref']),'HUMAN_CHOOSER_RESERVATION_READBACK')
+            path_recorded=Store._human_timestamp(stages['CHOOSER_PATH']['result'].get('recorded_at'))
+            read_at=Store._human_timestamp(chooser_record.get('read_at'))
+            confirm_issued=Store._human_timestamp(stages['CHOOSER_CONFIRM']['request'].get('issued_at'))
+            require(path_recorded is not None and read_at is not None and confirm_issued is not None
+                and path_recorded<=read_at<=confirm_issued,'HUMAN_CHOOSER_RESERVATION_READBACK')
+            save_observed=self._human_observed(reader,grant,stages['SAVE_ALL']['observed'],
+                ('folder_chooser_observed',),'HUMAN_DISPATCH_EVIDENCE')
+            path_observed=self._human_observed(reader,grant,stages['CHOOSER_PATH']['observed'],
+                ('full_path_exact','empty_target','same_window_lineage'),'HUMAN_DISPATCH_EVIDENCE')
+            confirm_observed=self._human_observed(reader,grant,stages['CHOOSER_CONFIRM']['observed'],
+                ('download_started',),'HUMAN_DISPATCH_EVIDENCE')
+            require(stages['CHOOSER_PATH']['entry']['id']==stages['CHOOSER_CONFIRM']['entry']['id'],
+                'HUMAN_CHOOSER_CONFIRM_REQUIRED')
+            ledger=stages['SAVE_ALL']['ledger']
+            confirmations=[]
+            for entry in ledger.get('entries',[]):
+                outcome=self._human_entry_refs(entry)
+                if entry.get('state')=='CONSUMED' and entry.get('run_id')==run_id \
+                        and outcome.get('request_stage')=='CHOOSER_CONFIRM':confirmations.append(entry)
+            save_actions=[]
+            for entry in ledger.get('entries',[]):
+                outcome=self._human_entry_refs(entry)
+                if entry.get('state')=='CONSUMED' and entry.get('run_id')==run_id \
+                        and outcome.get('request_stage')=='SAVE_ALL':save_actions.append(entry)
+            require(len(confirmations)==1 and len(save_actions)==1,'HUMAN_DISPATCH_ATTEMPT_BINDING')
+        finally:reader.close()
+        def record(cfg,s):
+            b,current=self.run(s)
+            require(current['run_id']==run_id and current['intent']==persisted
+                and current['intent_state']=='INTENT_COMMITTED','HUMAN_INTENT_BINDING')
+            require(current['destination']==binding['destination'],'HUMAN_DESTINATION_BINDING')
+            current['intent']['dispatch_outcome']='RETURNED'
+            current['intent']['trigger_outcome']='TRIGGER_CONFIRMED'
+            current['intent_state']='TRIGGER_CONFIRMED';current['dispatch_state']='SAVE_ALL_RETURNED'
+            current['manual_reconciliation_required']=False;current['reconciliation_reason']=None
+            human_dispatch=dict(version='human-assisted-dispatch-1',run_id=run_id,
+                action_id=current['intent']['action_id'],destination=current['destination'],
+                intent_readback=copy.deepcopy(intent_readback),
+                chooser_readback_ref=copy.deepcopy(chooser_reference),
+                chooser_readback=copy.deepcopy(chooser_record),
+                stages={stage:dict(request_ref=copy.deepcopy(stages[stage]['request_ref']),
+                    result_ref=copy.deepcopy(stages[stage]['result_ref']),
+                    observed=copy.deepcopy(stages[stage]['observed'])) for stage in stages})
+            current['dispatch_evidence']=dict(run_id=run_id,action_id=current['intent']['action_id'],
+                execution_id=self.owner,observed_at=confirm_observed['observed_at'],
+                save_all_click_count=None,save_all_invocation_attempted=None,failure_boundary='NONE',
+                folder_chooser_appeared=save_observed['facts'].get('folder_chooser_observed') is True,
+                download_started=confirm_observed['facts'].get('download_started') is True,
+                provenance=json.dumps(human_dispatch,ensure_ascii=False,sort_keys=True))
+            self.event(current,'DOWNLOAD_STARTED',dict(dispatch=copy.deepcopy(human_dispatch)))
+            return dict(status='DOWNLOAD_STARTED',run_id=run_id,
+                action_id=current['intent']['action_id'])
+        return self.store._update(expected,record,operation='dispatch')
+
+    def _human_stage_refs_from_ledger(self,reader,grant,run_id,stage):
+        _,ledger,_=self.store._ledger_open(reader,grant)
+        matches=[]
+        for entry in ledger.get('entries',[]):
+            if not isinstance(entry,dict) or entry.get('state')!='CONSUMED' \
+                    or entry.get('run_id')!=run_id:continue
+            outcome=self._human_entry_refs(entry)
+            if outcome.get('request_stage')==stage:matches.append(entry)
+        require(len(matches)==1,'HUMAN_INPUT_ATTEMPT_BINDING')
+        outcome=self._human_entry_refs(matches[0])
+        request_ref=outcome.get('request_ref');result_ref=outcome.get('result_ref')
+        require(Store._human_ref_shape(request_ref,artifact_dir=grant['artifact_dir'])
+            and Store._human_ref_shape(result_ref,artifact_dir=grant['artifact_dir']),
+            'HUMAN_INPUT_ARTIFACT_REQUIRED')
+        return matches[0],request_ref,result_ref
+
+    @staticmethod
+    def _human_calibration_event_payload(run):
+        for event in reversed(run.get('events',[])):
+            if not isinstance(event,dict) or event.get('phase')!='SAVE_ALL_CALIBRATION':continue
+            try:payload=json.loads(event.get('evidence','{}'))
+            except (TypeError,ValueError):continue
+            require(isinstance(payload,dict) and set(payload)==
+                {'calibration','evidence','request_ref','result_ref'},'HUMAN_CALIBRATION_REQUIRED')
+            return payload
+        require(False,'HUMAN_CALIBRATION_REQUIRED')
+
+    def _human_finalize_stages(self,reader,grant,grant_sha256,state,run):
+        intent=run.get('intent');evidence=run.get('dispatch_evidence')
+        require(isinstance(intent,dict) and isinstance(evidence,dict)
+            and evidence.get('run_id')==run['run_id']
+            and evidence.get('action_id')==intent.get('action_id')
+            and evidence.get('execution_id')==self.owner
+            and evidence.get('folder_chooser_appeared') is True
+            and evidence.get('download_started') is True
+            and evidence.get('save_all_click_count') is None
+            and evidence.get('save_all_invocation_attempted') is None
+            and evidence.get('failure_boundary')=='NONE','HUMAN_DISPATCH_EVIDENCE')
+        provenance=strict_json(evidence.get('provenance','').encode('utf-8'),'HUMAN_DISPATCH_EVIDENCE')
+        require(isinstance(provenance,dict)
+            and set(provenance)=={'version','run_id','action_id','destination','intent_readback',
+                'chooser_readback_ref','chooser_readback','stages'}
+            and provenance.get('version')=='human-assisted-dispatch-1'
+            and provenance.get('run_id')==run['run_id']
+            and provenance.get('action_id')==intent.get('action_id')
+            and provenance.get('destination')==run['destination']
+            and isinstance(provenance.get('stages'),dict)
+            and set(provenance['stages'])=={'SAVE_ALL','CHOOSER_PATH','CHOOSER_CONFIRM'},
+            'HUMAN_DISPATCH_EVIDENCE')
+        readback=provenance.get('intent_readback')
+        require(isinstance(readback,dict) and readback.get('run_id')==run['run_id']
+            and readback.get('action_id')==intent.get('action_id')
+            and readback.get('owner_execution_id')==intent.get('owner_execution_id')
+            and readback.get('group_key')==intent.get('group_key')
+            and readback.get('fingerprint')==intent.get('fingerprint')
+            and readback.get('destination')==intent.get('destination')
+            and readback.get('calibration')==intent.get('calibration')
+            and readback.get('durable') is True,'HUMAN_INTENT_BINDING')
+
+        card_entry,card_request_ref,card_result_ref=self._human_stage_refs_from_ledger(
+            reader,grant,run['run_id'],'CARD')
+        calibration_entry,calibration_request_ref,calibration_result_ref= \
+            self._human_stage_refs_from_ledger(reader,grant,run['run_id'],'CALIBRATION')
+        calibration_event=self._human_calibration_event_payload(run)
+        require(calibration_event.get('request_ref')==calibration_request_ref
+            and calibration_event.get('result_ref')==calibration_result_ref,
+            'HUMAN_CALIBRATION_REQUIRED')
+
+        dispatch_stages=provenance['stages']
+        stage_refs={'CARD':(card_request_ref,card_result_ref,card_entry.get('id')),
+            'CALIBRATION':(calibration_request_ref,calibration_result_ref,calibration_entry.get('id'))}
+        for stage in ('SAVE_ALL','CHOOSER_PATH','CHOOSER_CONFIRM'):
+            persisted=dispatch_stages.get(stage)
+            require(isinstance(persisted,dict) and set(persisted)==
+                {'request_ref','result_ref','observed'},'HUMAN_DISPATCH_EVIDENCE')
+            stage_refs[stage]=(persisted.get('request_ref'),persisted.get('result_ref'),None)
+
+        required_facts={'CARD':('album_detail_observed',),
+            'CALIBRATION':('menu_closed','no_activation'),
+            'SAVE_ALL':('folder_chooser_observed',),
+            'CHOOSER_PATH':('full_path_exact','empty_target','same_window_lineage'),
+            'CHOOSER_CONFIRM':('download_started',)}
+        bound_stages={}
+        for stage in ('CARD','CALIBRATION','SAVE_ALL','CHOOSER_PATH','CHOOSER_CONFIRM'):
+            request_ref,result_ref,reservation_id=stage_refs[stage]
+            request=Store._human_read_json_ref(reader,request_ref,'HUMAN_INPUT_REQUEST_ARTIFACT',
+                artifact_dir=grant['artifact_dir'])
+            result=Store._human_read_json_ref(reader,result_ref,'HUMAN_INPUT_RESULT_ARTIFACT',
+                artifact_dir=grant['artifact_dir'])
+            bound=self._human_bound_stage(reader,grant,grant_sha256,state,run,stage,request,result,
+                request_ref,result_ref,reservation_id,allowed_states=('CONSUMED',))
+            self._human_observed(reader,grant,bound['observed'],required_facts[stage],
+                'HUMAN_FINALIZE_EVIDENCE')
+            if stage in dispatch_stages:
+                require(dispatch_stages[stage].get('observed')==bound['observed'],
+                    'HUMAN_DISPATCH_EVIDENCE')
+            bound_stages[stage]=bound
+
+        chooser_ref=provenance.get('chooser_readback_ref')
+        chooser_record=provenance.get('chooser_readback')
+        read_ref,read_record=self._human_chooser_readback(reader,grant,run['run_id'],
+            'CHOOSER_PATH',{'reference':chooser_ref})
+        require(read_ref==chooser_ref and read_record==chooser_record,
+            'HUMAN_CHOOSER_RESERVATION_READBACK')
+        chooser_entry=bound_stages['CHOOSER_PATH']['entry']
+        require(read_record['readback']['id']==chooser_entry.get('id')
+            and read_record['readback']['kind']==chooser_entry.get('kind')
+            and read_record['readback']['count']==chooser_entry.get('count')
+            and read_record['readback']['slots']==chooser_entry.get('slots'),
+            'HUMAN_CHOOSER_RESERVATION_READBACK')
+        confirm_refs=bound_stages['CHOOSER_CONFIRM']['request'].get('raw_evidence_refs')
+        require(isinstance(confirm_refs,list) and any(ref==chooser_ref for ref in confirm_refs),
+            'HUMAN_CHOOSER_RESERVATION_READBACK')
+        return bound_stages
+
+    def human_finalize(self,expected,binding,run_id,decoder,decoder_sha):
+        grant=self._human_grant_for(expected,binding,'finalize')
+        snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')
+        b,r=self.run(snap['state'])
+        require(r['run_id']==run_id and r['intent_state']=='TRIGGER_CONFIRMED'
+            and r['phase']=='DOWNLOAD_STARTED'
+            and r['destination']==binding['destination']
+            and r['fingerprint']==HUMAN_A56_FINGERPRINT,'DOWNLOAD_NOT_CONFIRMED')
+        reader=ProjectReader(self.store.root)
+        try:
+            grant_sha256=self.store._project_authorization_sha256(reader,grant)
+            self._human_finalize_stages(reader,grant,grant_sha256,snap['state'],r)
+        finally:reader.close()
+        expected_images=HUMAN_A56_FINGERPRINT['expected_images']
+        verification,proof=content.verify(self.store.root,r['destination'],expected_images,
+            snap['config'],decoder,decoder_sha)
+        inventory=verification.get('inventory');files_verified=len(inventory) if isinstance(inventory,list) else 0
+        require(verification.get('outcome')=='PASS' and verification.get('image_files')==expected_images
+            and verification.get('regular_files')==expected_images
+            and files_verified==expected_images,'HUMAN_VERIFICATION_REQUIRED')
+        lease=self.task_json(self.artifact_dir+'/lease-'+run_id+'.json','LEASE_REQUIRED')
+        require(isinstance(lease,dict) and lease.get('version')=='line-backup-transaction-lease-1'
+            and lease.get('run_id')==run_id and lease.get('batch_id')==b['batch_id']
+            and lease.get('owner')==self.owner and lease.get('destination')==r['destination']
+            and lease.get('state')=='OPEN','LEASE_MISMATCH')
+        relative=r['destination'][len(self.store.root)+1:]
+        identity_reader=ProjectReader(self.store.root)
+        try:
+            fd=identity_reader.open(relative,directory=True)
+            try:dest_ident=ProjectReader.ident(os.fstat(fd))
+            finally:os.close(fd)
+        finally:identity_reader.close()
+        evidence_dir=self.artifact_dir+'/human-album-'+run_id
+        reader=ProjectReader(self.store.root)
+        try:
+            parent=reader.open(self.artifact_dir,directory=True)
+            try:os.mkdir('human-album-'+run_id,0o700,dir_fd=parent)
+            finally:os.close(parent)
+        finally:reader.close()
+        evidence=Service(self.store.root,self.owner,evidence_dir,self.store.authorization_path)
+        vref=evidence.publish('filesystem-verification.json',verification)
+        pref=evidence.publish('pixel-and-stability.json',proof)
+        join=dict(record_version='1.0',kind='actual_cua_source_identity_join',
+            join_authority='authoritative_exact_join',execution_mode='HUMAN_ASSISTED',
+            app_identifier=snap['config']['app_identifier'],group_key=r['group_key'],
+            run_id=run_id,fingerprint=copy.deepcopy(r['fingerprint']),destination=r['destination'],
+            evidence=[dict(path=self.store.root+'/'+ref['path'],bytes=ref['bytes'],
+                sha256=ref['sha256']) for ref in (vref,pref)],
+            transaction=copy.deepcopy(r['events']))
+        jref=evidence.publish('source-identity-join.json',join)
+        reference='join:'+jref['path']+':'+jref['sha256']
+        def finish(cfg,s):
+            current_b,current=self.run(s)
+            require(current['run_id']==run_id and current['intent_state']=='TRIGGER_CONFIRMED',
+                'FINALIZE_IDENTITY')
+            require(content.inventory(self.store.root,current['destination'])==inventory,
+                'CONTENT_CHANGED_BEFORE_COMMIT')
+            identity=ProjectReader(self.store.root)
+            try:
+                fd=identity.open(relative,directory=True)
+                try:require(ProjectReader.ident(os.fstat(fd))==tuple(dest_ident),
+                    'DESTINATION_IDENTITY_DRIFT')
+                finally:os.close(fd)
+            finally:identity.close()
+            current['verification']=copy.deepcopy(verification)
+            current['workflow_outcome']='VERIFIED';current['stop_reason']='COMPLETED'
+            event=dict(phase='VERIFIED',at=utc_now(),evidence=reference)
+            current['events'].append(event);current['phase']='VERIFIED'
+            current['checkpoint']=event
+            s['verified_albums'].append(dict(group_key=current['group_key'],
+                fingerprint=copy.deepcopy(current['fingerprint']),verified_run_id=run_id,
+                destinations=[current['destination']],source_kind='filesystem_verification',
+                evidence=reference))
+            s['active_writer_id']=None;s['context_lock']=None
+            current_b['current_album_run_id']=None;current_b['next_index']+=1
+            return dict(status='VERIFIED',run_id=run_id,files_verified=files_verified,
+                expected_images=expected_images,fingerprint=copy.deepcopy(current['fingerprint']),
+                destination=current['destination'],verification_reference=vref)
+        outcome=self.store._update(expected,finish,operation='finalize')
+        try:
+            post=content.inventory(self.store.root,r['destination'])
+            require(post==inventory,'FINALIZE_READBACK_UNCERTAIN')
+        except Exception as exc:
+            failure=getattr(exc,'code',None) or str(exc)
+            self.publish('human-finalize-drift-'+run_id+'.json',dict(version='line-backup-finalize-drift-1',
+                run_id=run_id,state_committed=True,state_revision=outcome['receipt']['revision'],
+                pre_inventory_sha256=sha(json_bytes(inventory)),post_inventory_sha256=None,
+                at=utc_now(),failure=failure))
+            self.publish('lease-close-'+run_id+'.json',dict(version='line-backup-lease-close-1',
+                run_id=run_id,state='UNVERIFIED',state_revision=outcome['receipt']['revision'],at=utc_now()))
+            raise AcceptanceError('FINALIZE_READBACK_UNCERTAIN',str(exc),4) from exc
+        self.publish('lease-close-'+run_id+'.json',dict(version='line-backup-lease-close-1',
+            run_id=run_id,state='CLOSED',post_inventory_sha256=sha(json_bytes(post)),
+            state_revision=outcome['receipt']['revision'],at=utc_now()))
+        return outcome
+
+    def human_stop(self,expected,binding,run_id,reason):
+        grant=self._human_grant_for(expected,binding,'stop')
+        require(isinstance(reason,str) and reason.strip(),'HUMAN_STOP_REASON_REQUIRED')
+        snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')
+        b=snap['state'].get('active_batch')
+        require(isinstance(b,dict) and b.get('owner_execution_id')==self.owner,'HUMAN_BATCH_REQUIRED')
+        runs=[run for run in snap['state'].get('runs',[])
+            if isinstance(run,dict) and run.get('run_id')==run_id and run.get('batch_id')==b.get('batch_id')]
+        require(len(runs)==1,'HUMAN_RUN_BINDING')
+        run=runs[0]
+        terminal=run.get('workflow_outcome') in ('VERIFIED','STOPPED','SAFE_ABORT')
+        if b.get('phase')=='STOPPED' and terminal:
+            require(run.get('stop_reason')==reason and b.get('stop_reason')==reason,
+                'HUMAN_STOP_IDEMPOTENCY_CONFLICT')
+            return dict(status='STOPPED',run_id=run_id,reason=reason,replay_allowed=False,
+                workflow_outcome=run.get('workflow_outcome'))
+        if run.get('workflow_outcome')!='VERIFIED':
+            close_path=self.artifact_dir+'/lease-close-'+run_id+'.json'
+            try:self.task_json(close_path,'LEASE_CLOSE_REQUIRED')
+            except Exception:
+                try:self.publish('lease-close-'+run_id+'.json',dict(version='line-backup-lease-close-1',
+                    run_id=run_id,state='CLOSED',aborted_at=utc_now(),reason=reason))
+                except Exception:pass
+        def stop(cfg,s):
+            current_b=s.get('active_batch')
+            require(isinstance(current_b,dict) and current_b.get('batch_id')==b.get('batch_id')
+                and current_b.get('owner_execution_id')==self.owner,'HUMAN_BATCH_REQUIRED')
+            matches=[run for run in s.get('runs',[])
+                if isinstance(run,dict) and run.get('run_id')==run_id]
+            require(len(matches)==1,'HUMAN_RUN_BINDING')
+            current=matches[0]
+            if current.get('workflow_outcome')!='VERIFIED':
+                current['workflow_outcome']='SAFE_ABORT'
+                current['manual_reconciliation_required']=current.get('intent') is not None
+                current['reconciliation_reason']=('Stopped with non-retryable intent; reconcile only.'
+                    if current.get('intent') else None)
+                self.event(current,'SAFE_ABORT',dict(reason=reason))
+            current['stop_reason']=reason
+            s['active_writer_id']=None;s['context_lock']=None
+            if current_b.get('current_album_run_id')==run_id:current_b['current_album_run_id']=None
+            current_b['phase']='STOPPED';current_b['stop_reason']=reason
+            return dict(status='STOPPED',run_id=run_id,reason=reason,replay_allowed=False,
+                workflow_outcome=current.get('workflow_outcome'))
+        return self.store._update(expected,stop,operation='stop')
+
+    def human_release(self,expected,binding,run_id):
+        grant=self._human_grant_for(expected,binding,'release')
+        snap=self.store.snapshot();require(snap['receipt']==expected,'STALE_CAS')
+        b=snap['state'].get('active_batch')
+        require(isinstance(b,dict) and b.get('owner_execution_id')==self.owner
+            and b.get('phase') in ('STOPPED','COMPLETED'),'TERMINAL_BATCH_REQUIRED')
+        require(b.get('current_album_run_id') is None and snap['state'].get('active_writer_id') is None
+            and snap['state'].get('context_lock') is None,'ALBUM_BUSY')
+        runs=[run for run in snap['state'].get('runs',[])
+            if isinstance(run,dict) and run.get('run_id')==run_id and run.get('batch_id')==b.get('batch_id')]
+        require(len(runs)==1,'HUMAN_RUN_BINDING')
+        run=runs[0]
+        require((run.get('workflow_outcome')=='VERIFIED')
+            or (run.get('workflow_outcome') in ('STOPPED','SAFE_ABORT')
+                and run.get('manual_reconciliation_required') is not True),'UNRESOLVED_BARRIER')
+        close_path=self.artifact_dir+'/lease-close-'+run_id+'.json'
+        if os.path.exists(Path(self.store.root)/close_path):
+            close=self.task_json(close_path,'LEASE_CLOSE_REQUIRED')
+            require(close.get('version')=='line-backup-lease-close-1'
+                and close.get('run_id')==run_id and close.get('state')=='CLOSED','LEASE_OPEN')
+        else:
+            lease_path=self.artifact_dir+'/lease-'+run_id+'.json'
+            if os.path.exists(Path(self.store.root)/lease_path):
+                lease=self.task_json(lease_path,'LEASE_REQUIRED')
+                require(isinstance(lease,dict) and lease.get('run_id')==run_id
+                    and lease.get('state')!='OPEN','LEASE_OPEN')
+            require(run.get('workflow_outcome')!='VERIFIED','LEASE_OPEN')
+        def release(cfg,s):
+            current=s.get('active_batch')
+            require(isinstance(current,dict) and current.get('batch_id')==b.get('batch_id')
+                and current.get('phase') in ('STOPPED','COMPLETED') and current.get('current_album_run_id') is None,
+                'TERMINAL_BATCH_REQUIRED')
+            prior_phase=current.get('phase')
+            current['phase']=('COMPLETED' if run.get('workflow_outcome')=='VERIFIED'
+                else 'STOPPED')
+            result=dict(status='BATCH_RELEASED',batch_id=current['batch_id'],run_id=run_id,
+                prior_phase=prior_phase,workflow_outcome=run.get('workflow_outcome'))
+            s['active_batch']=None;s['active_writer_id']=None;s['context_lock']=None
+            return result
+        return self.store._update(expected,release,operation='release')
+
+    def human_read_intent(self,expected,binding,run_id,action_id):
+        grant=self._human_grant_for(expected,binding,'gui_observe')
+        return self.store.human_intent_fact(grant,run_id,action_id)
+
+    def human_read_verified(self,expected,binding,run_id):
+        grant=self._human_grant_for(expected,binding,'gui_observe')
+        return self.store.human_verified_fact(grant,run_id)

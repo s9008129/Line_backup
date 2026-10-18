@@ -847,16 +847,21 @@ export async function runHumanAssistedSingleAlbumPilot(runtime,options={}){
     const chooserPath=await runStage({stage:'CHOOSER_PATH',actionId:intent.action_id,reservation:chooserReservation,
       preRefs:saveAll.result.raw_evidence_refs,consume:false,
       observe:context=>evidence.chooserPath({...context,binding,run_id:runId,intent,saveAll})});
-    await readStageReservation('CHOOSER_CONFIRM',chooserReservation.id,'HUMAN_CHOOSER_RESERVATION_READBACK');
+    const chooserReadback=await readStageReservation('CHOOSER_CONFIRM',chooserReservation.id,
+      'HUMAN_CHOOSER_RESERVATION_READBACK');
+    const chooserReadbackRef=await humanInput.publish({kind:'HUMAN_CHOOSER_RESERVATION_READBACK',
+      stage:'CHOOSER_PATH',read_at:clock(),readback:chooserReadback});
+    humanNeed(humanEvidenceRef(chooserReadbackRef),'HUMAN_CHOOSER_RESERVATION_READBACK');
     const chooserConfirm=await runStage({stage:'CHOOSER_CONFIRM',actionId:intent.action_id,
-      reservation:chooserReservation,preRefs:chooserPath.result.raw_evidence_refs,consume:true,
+      reservation:chooserReservation,preRefs:humanUniqueRefs([chooserPath.result.raw_evidence_refs,
+        [chooserReadbackRef]]),consume:true,
       observe:context=>evidence.chooserConfirm({...context,binding,run_id:runId,intent,saveAll,chooserPath})});
     const dispatch=await transaction.recordDispatch({binding,run_id:runId,intent,intent_readback:intentReadback,
-      save_all:saveAll,chooser_path:chooserPath,chooser_confirm:chooserConfirm});
+      save_all:saveAll,chooser_path:chooserPath,chooser_confirm:chooserConfirm,
+      chooser_readback:{reference:chooserReadbackRef}});
     humanNeed(dispatch?.status==='DOWNLOAD_STARTED'&&dispatch.run_id===runId
       &&dispatch.action_id===intent.action_id,'HUMAN_DISPATCH_RECORD_REFUSED');
-    const finalized=await transaction.finalize({binding,run_id:runId,decoder:runtime.decoder,
-      requests:{card,calibration,saveAll,chooserPath,chooserConfirm}});
+    const finalized=await transaction.finalize({binding,run_id:runId,decoder:runtime.decoder});
     humanNeed(finalized?.status==='VERIFIED'&&finalized.run_id===runId
       &&finalized.files_verified===56&&finalized.expected_images===56,'HUMAN_VERIFICATION_REQUIRED');
     const verified=await transaction.readVerified({binding,run_id:runId});

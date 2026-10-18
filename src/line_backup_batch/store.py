@@ -583,7 +583,8 @@ class Store:
             and value.get('fingerprint')==HUMAN_A56_FINGERPRINT
             and Store._human_destination(value.get('destination'))
             and value.get('reservation_ids')==[item.get('id')]
-            and Store._human_ref_shape(value.get('request_ref')),'HUMAN_LEDGER_OUTCOME_BINDING')
+            and Store._human_ref_shape(value.get('request_ref'),artifact_dir=grant['artifact_dir']),
+                'HUMAN_LEDGER_OUTCOME_BINDING')
         stage=value['request_stage'];kind,slots=HUMAN_STAGE_RESERVATIONS[stage]
         require(item.get('kind')==kind and item.get('count')==len(slots) and item.get('slots')==slots
             and item.get('workflow_phase')=='A','HUMAN_LEDGER_OUTCOME_BINDING')
@@ -593,7 +594,7 @@ class Store:
         if set(value)==HUMAN_OUTCOME_RESULT_KEYS:
             require(isinstance(value.get('result_id'),str) and value['result_id']
                 and value['result_id']!=value['request_id']
-                and Store._human_ref_shape(value.get('result_ref'))
+                and Store._human_ref_shape(value.get('result_ref'),artifact_dir=grant['artifact_dir'])
                 and value['result_ref']['path']!=value['request_ref']['path'],
                 'HUMAN_LEDGER_RESULT_BINDING')
         else:require(value['outcome']!='HUMAN_REPORTED_RETURNED','HUMAN_LEDGER_RESULT_BINDING')
@@ -803,35 +804,41 @@ class Store:
         present=HUMAN_GRANT_FIELDS.intersection(grant) if isinstance(grant,dict) else set()
         if not present:return False
         require(present==HUMAN_GRANT_FIELDS,'HUMAN_GRANT_BINDING')
+        artifact_dir=grant.get('artifact_dir')
         require(grant.get('grant_version')=='line-two-album-project-grant-1'
             and grant.get('single_album_route') is True
             and grant.get('fixture') is False
             and grant.get('execution_mode')==HUMAN_EXECUTION_MODE
             and grant.get('input_actor')==HUMAN_INPUT_ACTOR
-            and isinstance(grant.get('observer_session_id'),str) and grant['observer_session_id'],
+            and isinstance(grant.get('observer_session_id'),str) and grant['observer_session_id']
+            and isinstance(artifact_dir,str) and artifact_dir.startswith('harness-development/')
+            and '/private/' in artifact_dir+'/' and not artifact_dir.endswith('/')
+            and not any(part in ('','.','..') for part in artifact_dir.split('/')),
             'HUMAN_GRANT_BINDING')
         return True
 
     @staticmethod
-    def _human_ref_shape(value, *, json_required=True):
+    def _human_ref_shape(value, *, artifact_dir, json_required=True):
+        prefix=artifact_dir.rstrip('/')+'/'
         return (isinstance(value,dict) and set(value)=={'path','bytes','sha256'}
             and isinstance(value.get('path'),str) and value['path'].startswith('harness-development/')
             and '/private/' in value['path'] and (not json_required or value['path'].endswith('.json'))
+            and value['path'].startswith(prefix)
             and all(part not in ('','.','..') for part in value['path'].split('/'))
             and type(value.get('bytes')) is int and value['bytes']>0
             and isinstance(value.get('sha256'),str) and len(value['sha256'])==64
             and all(char in '0123456789abcdef' for char in value['sha256']))
 
     @staticmethod
-    def _human_read_ref(reader,ref,code,*,json_required=True):
-        require(Store._human_ref_shape(ref,json_required=json_required),code)
+    def _human_read_ref(reader,ref,code,*,artifact_dir,json_required=True):
+        require(Store._human_ref_shape(ref,json_required=json_required,artifact_dir=artifact_dir),code)
         raw,_=reader.read(ref['path'],code)
         require(len(raw)==ref['bytes'] and sha(raw)==ref['sha256'],code)
         return raw
 
     @staticmethod
-    def _human_read_json_ref(reader,ref,code):
-        return strict_json(Store._human_read_ref(reader,ref,code),code)
+    def _human_read_json_ref(reader,ref,code,*,artifact_dir):
+        return strict_json(Store._human_read_ref(reader,ref,code,artifact_dir=artifact_dir),code)
 
     @staticmethod
     def _human_destination(value):
@@ -865,12 +872,12 @@ class Store:
                 Store._human_reject_fabricated_claims(child,f'{path}[{index}]')
 
     @staticmethod
-    def _human_evidence_refs(reader,refs,code):
+    def _human_evidence_refs(reader,refs,code,*,artifact_dir):
         require(isinstance(refs,list) and refs,'HUMAN_INPUT_EVIDENCE_REQUIRED')
         keys=[]
         for ref in refs:
-            require(Store._human_ref_shape(ref,json_required=False),code)
-            Store._human_read_ref(reader,ref,code,json_required=False)
+            require(Store._human_ref_shape(ref,json_required=False,artifact_dir=artifact_dir),code)
+            Store._human_read_ref(reader,ref,code,json_required=False,artifact_dir=artifact_dir)
             keys.append((ref['path'],ref['bytes'],ref['sha256']))
         require(len(keys)==len(set(keys)),code)
         return refs
@@ -886,8 +893,8 @@ class Store:
         refs=[calibration[key] for key in ('detail_ref','menu_ref','closure_ref','attestation_ref')]
         keys=[]
         for ref in refs:
-            require(Store._human_ref_shape(ref),code)
-            Store._human_read_ref(reader,ref,code)
+            require(Store._human_ref_shape(ref,artifact_dir=grant['artifact_dir']),code)
+            Store._human_read_ref(reader,ref,code,artifact_dir=grant['artifact_dir'])
             keys.append((ref['path'],ref['bytes'],ref['sha256']))
         require(len(keys)==len(set(keys)),code)
 
@@ -987,7 +994,8 @@ class Store:
                 and Store._human_destination(intent.get('destination')),'HUMAN_INPUT_ACTION_BINDING')
             Store._human_calibration_refs(reader,intent.get('calibration'),grant)
         require(Store._human_timestamp(request['issued_at']) is not None,'HUMAN_INPUT_REQUEST_IDENTITY')
-        Store._human_evidence_refs(reader,request.get('raw_evidence_refs'),'HUMAN_INPUT_EVIDENCE')
+        Store._human_evidence_refs(reader,request.get('raw_evidence_refs'),'HUMAN_INPUT_EVIDENCE',
+            artifact_dir=grant['artifact_dir'])
         Store._human_reject_fabricated_claims(request,'request')
         return request
 
@@ -1018,7 +1026,8 @@ class Store:
             'HUMAN_INPUT_OPERATOR_REPORT')
         reported=Store._human_timestamp(operator.get('reported_at'))
         require(reported is not None and issued<=reported<=recorded,'HUMAN_INPUT_OPERATOR_REPORT')
-        Store._human_read_ref(reader,operator.get('raw_response_ref'),'HUMAN_INPUT_OPERATOR_REPORT',json_required=False)
+        Store._human_read_ref(reader,operator.get('raw_response_ref'),'HUMAN_INPUT_OPERATOR_REPORT',
+            json_required=False,artifact_dir=grant['artifact_dir'])
         require(isinstance(observed,dict) and set(observed)==HUMAN_OBSERVED_KEYS
             and observed.get('status') in ('OBSERVED','UNKNOWN')
             and isinstance(observed.get('facts'),dict),'HUMAN_INPUT_OBSERVED')
@@ -1034,8 +1043,10 @@ class Store:
             if operator['outcome']=='UNKNOWN' else 'HUMAN_REPORTED_RETURNED'
             if observed.get('status')=='OBSERVED' else 'UNKNOWN')
         require(result['outcome']==combined,'HUMAN_INPUT_OUTCOME')
-        observed_refs=Store._human_evidence_refs(reader,observed.get('raw_evidence_refs'),'HUMAN_INPUT_EVIDENCE')
-        result_refs=Store._human_evidence_refs(reader,result.get('raw_evidence_refs'),'HUMAN_INPUT_EVIDENCE')
+        observed_refs=Store._human_evidence_refs(reader,observed.get('raw_evidence_refs'),
+            'HUMAN_INPUT_EVIDENCE',artifact_dir=grant['artifact_dir'])
+        result_refs=Store._human_evidence_refs(reader,result.get('raw_evidence_refs'),
+            'HUMAN_INPUT_EVIDENCE',artifact_dir=grant['artifact_dir'])
         expected=[];seen=set()
         for ref in [operator['raw_response_ref'],*observed_refs]:
             key=(ref['path'],ref['bytes'],ref['sha256'])
@@ -1063,8 +1074,10 @@ class Store:
             require(outcome in (None,'UNKNOWN','REFUSED'),'HUMAN_INPUT_REQUEST_REF_REQUIRED')
             return dict(outcome=outcome,execution_mode=HUMAN_EXECUTION_MODE,input_actor=HUMAN_INPUT_ACTOR,
                 observer_session_id=grant['observer_session_id'])
-        require(Store._human_ref_shape(request_ref),'HUMAN_INPUT_REQUEST_ARTIFACT')
-        request=Store._human_read_json_ref(reader,request_ref,'HUMAN_INPUT_REQUEST_ARTIFACT')
+        require(Store._human_ref_shape(request_ref,artifact_dir=grant['artifact_dir']),
+            'HUMAN_INPUT_REQUEST_ARTIFACT')
+        request=Store._human_read_json_ref(reader,request_ref,'HUMAN_INPUT_REQUEST_ARTIFACT',
+            artifact_dir=grant['artifact_dir'])
         run_id=request.get('run_id') if isinstance(request,dict) else None
         require(isinstance(run_id,str) and run_id,'HUMAN_INPUT_REQUEST_BINDING')
         stage=request.get('request_stage')
@@ -1084,9 +1097,10 @@ class Store:
                 action_id=request['action_id'],request_stage=stage,fingerprint=request['fingerprint'],
                 destination=request['destination'],reservation_ids=request['reservation_ids'],
                 request_id=request['request_id'],request_ref=request_ref)
-        require(Store._human_ref_shape(result_ref) and result_ref['path']!=request_ref['path'],
-            'HUMAN_INPUT_RESULT_ARTIFACT')
-        result=Store._human_read_json_ref(reader,result_ref,'HUMAN_INPUT_RESULT_ARTIFACT')
+        require(Store._human_ref_shape(result_ref,artifact_dir=grant['artifact_dir'])
+            and result_ref['path']!=request_ref['path'],'HUMAN_INPUT_RESULT_ARTIFACT')
+        result=Store._human_read_json_ref(reader,result_ref,'HUMAN_INPUT_RESULT_ARTIFACT',
+            artifact_dir=grant['artifact_dir'])
         Store._human_result_binding(reader,result,request,grant,run,entry,stage,outcome)
         require(data.get('result_id')==result['result_id'],'HUMAN_INPUT_RESULT_BINDING')
         if 'evidence_refs' in data:
@@ -1320,6 +1334,151 @@ class Store:
             if ledger.get('profile')=='LINE_TWO_ALBUM_PILOT/1':fact['outcome']=outcome
             return fact
         finally:r.close()
+
+    def _human_selector_grant(self,reader,grant):
+        """Authenticate the exact HUMAN grant without acquiring authority or a lock."""
+        require(Store._human_grant(grant),'HUMAN_GRANT_BINDING')
+        require(self.authorization_path is not None,'PROJECT_GRANT_REQUIRED')
+        self._project_authorization_sha256(reader,grant)
+
+    @staticmethod
+    def _human_stage_entry(entry):
+        require(isinstance(entry,dict),'HUMAN_RESERVATION_BINDING')
+        matches=[stage for stage,(kind,slots) in HUMAN_STAGE_RESERVATIONS.items()
+            if entry.get('kind')==kind and entry.get('slots')==slots
+            and entry.get('count')==len(slots) and entry.get('workflow_phase')=='A']
+        require(matches,'HUMAN_RESERVATION_BINDING')
+        return matches
+
+    def human_reservation_fact(self,grant,reservation_id):
+        """Read one authenticated HUMAN reservation fact without mutation."""
+        require(isinstance(reservation_id,str) and reservation_id,'HUMAN_RESERVATION_BINDING')
+        reader=ProjectReader(self.root)
+        try:
+            self._human_selector_grant(reader,grant)
+            _,ledger,_=self._ledger_open(reader,grant)
+            matches=[entry for entry in ledger['entries'] if entry.get('id')==reservation_id]
+            require(len(matches)==1,'HUMAN_RESERVATION_BINDING')
+            entry=matches[0]
+            require(entry.get('state') in ('RESERVED','CONSUMED'),'HUMAN_RESERVATION_BINDING')
+            require(entry.get('owner')==grant['owner'],'HUMAN_RESERVATION_BINDING')
+            require(isinstance(entry.get('run_id'),str) and entry['run_id'],'HUMAN_RESERVATION_BINDING')
+            self._human_stage_entry(entry)
+            if entry['state']=='RESERVED':
+                require(entry.get('outcome') is None and entry.get('consumed_at') is None,
+                    'HUMAN_RESERVATION_BINDING')
+            else:
+                Store._validate_human_ledger_outcome(entry,grant)
+            _,state,_,_,_=self.load(reader)
+            runs=[run for run in state.get('runs',[])
+                if isinstance(run,dict) and run.get('run_id')==entry['run_id']]
+            require(len(runs)==1,'HUMAN_RUN_BINDING')
+            run=runs[0];batch=state.get('active_batch')
+            require(isinstance(batch,dict) and batch.get('mode')=='backup_batch'
+                and batch.get('batch_id')==run.get('batch_id')
+                and batch.get('owner_execution_id')==grant['owner']
+                and batch.get('source_sha256')==grant['source_sha256']
+                and batch.get('group_key')==run.get('group_key')
+                and state.get('current_run_id')==entry['run_id']
+                and run.get('fingerprint')==HUMAN_A56_FINGERPRINT
+                and Store._human_destination(run.get('destination')),'HUMAN_RUN_BINDING')
+            outcome=copy.deepcopy(entry.get('outcome'))
+            if isinstance(outcome,dict):
+                if 'destination' in outcome:
+                    require(outcome.get('destination')==run.get('destination'),'HUMAN_RESERVATION_BINDING')
+                if outcome.get('action_id') is not None:
+                    intent=run.get('intent')
+                    require(isinstance(intent,dict)
+                        and outcome.get('action_id')==intent.get('action_id'),'HUMAN_RESERVATION_BINDING')
+            return dict(id=entry['id'],kind=entry['kind'],count=entry['count'],run_id=entry['run_id'],
+                owner=entry['owner'],state=entry['state'],slots=copy.deepcopy(entry['slots']),outcome=outcome)
+        finally:reader.close()
+
+    def human_intent_fact(self,grant,run_id,action_id):
+        """Read the persisted HUMAN pre-dispatch intent without mutation."""
+        require(isinstance(run_id,str) and run_id and isinstance(action_id,str) and action_id,
+            'HUMAN_INTENT_BINDING')
+        reader=ProjectReader(self.root)
+        try:
+            self._human_selector_grant(reader,grant)
+            cfg,state,receipt,_,_=self.load(reader)
+            runs=[run for run in state.get('runs',[])
+                if isinstance(run,dict) and run.get('run_id')==run_id]
+            require(len(runs)==1,'HUMAN_RUN_BINDING')
+            run=runs[0];batch=state.get('active_batch')
+            require(isinstance(batch,dict) and batch.get('mode')=='backup_batch'
+                and batch.get('batch_id')==run.get('batch_id')
+                and batch.get('owner_execution_id')==grant['owner']
+                and batch.get('source_sha256')==grant['source_sha256']==receipt.get('source_sha256')
+                and batch.get('group_key')==run.get('group_key')==cfg.get('group_key')
+                and batch.get('current_album_run_id')==run_id and batch.get('phase')=='RUNNING'
+                and batch.get('authorized_new_download_limit')==1
+                and state.get('current_run_id')==run_id and state.get('active_writer_id')==grant['owner']
+                and run.get('workflow_outcome')=='IN_PROGRESS'
+                and run.get('fingerprint')==HUMAN_A56_FINGERPRINT
+                and Store._human_destination(run.get('destination'))
+                and run['destination'].startswith(cfg['backup_root']+'/'),'HUMAN_RUN_BINDING')
+            intent=run.get('intent');require(isinstance(intent,dict),'HUMAN_INTENT_BINDING')
+            require(intent.get('action_id')==action_id
+                and intent.get('owner_execution_id')==grant['owner']
+                and intent.get('group_key')==run.get('group_key')
+                and intent.get('fingerprint')==HUMAN_A56_FINGERPRINT==run.get('fingerprint')
+                and intent.get('destination')==run.get('destination')
+                and Store._human_destination(intent.get('destination')),'HUMAN_INTENT_BINDING')
+            action_matches=[item for item in state['runs'] if isinstance(item,dict)
+                and isinstance(item.get('intent'),dict) and item['intent'].get('action_id')==action_id]
+            require(len(action_matches)==1 and action_matches[0].get('run_id')==run_id,
+                'HUMAN_INTENT_BINDING')
+            Store._human_calibration_refs(reader,intent.get('calibration'),grant,'HUMAN_CALIBRATION_REQUIRED')
+            return dict(run_id=run_id,action_id=action_id,owner_execution_id=intent['owner_execution_id'],
+                group_key=intent['group_key'],fingerprint=copy.deepcopy(intent['fingerprint']),
+                destination=intent['destination'],calibration=copy.deepcopy(intent['calibration']),durable=True)
+        finally:reader.close()
+
+    def human_verified_fact(self,grant,run_id):
+        """Read one persisted HUMAN VERIFIED outcome, deriving its count from inventory."""
+        require(isinstance(run_id,str) and run_id,'HUMAN_VERIFIED_BINDING')
+        reader=ProjectReader(self.root)
+        try:
+            self._human_selector_grant(reader,grant)
+            cfg,state,receipt,_,_=self.load(reader)
+            runs=[run for run in state.get('runs',[])
+                if isinstance(run,dict) and run.get('run_id')==run_id]
+            require(len(runs)==1,'HUMAN_RUN_BINDING')
+            run=runs[0];batch=state.get('active_batch')
+            require(isinstance(batch,dict) and batch.get('mode')=='backup_batch'
+                and batch.get('batch_id')==run.get('batch_id')
+                and batch.get('owner_execution_id')==grant['owner']
+                and batch.get('source_sha256')==grant['source_sha256']==receipt.get('source_sha256')
+                and batch.get('group_key')==run.get('group_key')==cfg.get('group_key')
+                and run.get('workflow_outcome')=='VERIFIED'
+                and run.get('fingerprint')==HUMAN_A56_FINGERPRINT
+                and Store._human_destination(run.get('destination'))
+                and run['destination'].startswith(cfg['backup_root']+'/'),'HUMAN_VERIFIED_BINDING')
+            verification=run.get('verification');require(isinstance(verification,dict),'HUMAN_VERIFIED_BINDING')
+            inventory=verification.get('inventory');require(isinstance(inventory,list),'HUMAN_VERIFIED_BINDING')
+            expected=run['fingerprint']['expected_images'];files_verified=len(inventory)
+            names=[item.get('relative_path') for item in inventory if isinstance(item,dict)]
+            require(files_verified==expected and len(names)==files_verified and len(set(names))==files_verified
+                and verification.get('outcome')=='PASS'
+                and verification.get('image_files')==expected
+                and verification.get('regular_files')==expected,'HUMAN_VERIFIED_BINDING')
+            albums=[entry for entry in state.get('verified_albums',[])
+                if isinstance(entry,dict) and entry.get('verified_run_id')==run_id]
+            require(len(albums)==1,'HUMAN_VERIFIED_BINDING')
+            album=albums[0]
+            require(album.get('group_key')==run.get('group_key')
+                and album.get('fingerprint')==run.get('fingerprint')
+                and album.get('destinations')==[run.get('destination')]
+                and album.get('source_kind')=='filesystem_verification'
+                and isinstance(album.get('evidence'),str) and album['evidence'],'HUMAN_VERIFIED_BINDING')
+            require(any(event.get('phase')=='VERIFIED' and event.get('evidence')==album['evidence']
+                for event in run.get('events',[]) if isinstance(event,dict)),'HUMAN_VERIFIED_BINDING')
+            return dict(run_id=run_id,status='VERIFIED',files_verified=files_verified,
+                expected_images=expected,fingerprint=copy.deepcopy(run['fingerprint']),
+                destination=run['destination'],verification=copy.deepcopy(verification),
+                verification_reference=album['evidence'])
+        finally:reader.close()
 
     def migrate(self,expected,snapshot_path,*,fixture=False,fault=None):
         require(type(fixture) is bool,'INVALID_FIXTURE_MODE')

@@ -20,6 +20,11 @@ const DECODER_SHA='1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99
 const hash=raw=>createHash('sha256').update(raw).digest('hex');
 const need=(ok,code)=>{if(!ok)throw Object.assign(Error(code),{code});};
 const center=b=>[Math.trunc(b[0]+b[2]/2),Math.trunc(b[1]+b[3]/2)];
+const HUMAN_A56_FINGERPRINT=Object.freeze({start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56});
+const HUMAN_OWNER_DEFAULT_TIMEOUT_MS=120000;
+const HUMAN_REPORT_OUTCOMES=new Set(['HUMAN_REPORTED_RETURNED','UNKNOWN','REFUSED']);
+const HUMAN_EXECUTION_MODE='HUMAN_ASSISTED';
+const HUMAN_INPUT_ACTOR='OWNER_HUMAN';
 
 // MENU56 pure locator helpers: fresh-frame structural checks only, no fabricated AX roles.
 const ELLIPSIS={maxArea:16,maxSide:5,stackX:1,stackGap:1.5,pad:4,minSafe:3,minInterior:16};
@@ -169,6 +174,56 @@ function evidenceJSON(value){
     .replace(new RegExp('"'+marker+'(-?\\d+)"','g'),'$1')+'\n';
 }
 
+export function humanDestinationForConfig({projectRoot,groupName}){
+  need(typeof projectRoot==='string'&&path.isAbsolute(projectRoot)&&path.normalize(projectRoot)===projectRoot,
+    'HUMAN_PROJECT_ROOT_REQUIRED');
+  need(typeof groupName==='string'&&groupName&&!groupName.includes('/')&&!groupName.includes('\\')
+    &&groupName!=='.'&&groupName!=='..','HUMAN_GROUP_NAME_REQUIRED');
+  return path.join(projectRoot,'backups',groupName,'2024-05-27_2024-05-31_56張');
+}
+
+export function requiresChooserBaseline(response){
+  return response?.result?.status==='ALBUM_OPEN_READY'
+    &&typeof response.result.frame_id==='string'
+    &&/^[0-9a-f]{64}$/.test(response.result.frame_id);
+}
+
+export function readHumanOwnerResponse(raw,{requestId}={}){
+  need(typeof requestId==='string'&&requestId,'HUMAN_OPERATOR_REQUEST_ID_REQUIRED');
+  let value=raw;
+  if(typeof value==='string'||value instanceof Uint8Array) {
+    try{value=JSON.parse(typeof value==='string'?value:new TextDecoder().decode(value));}
+    catch{need(false,'HUMAN_OPERATOR_REPORT_INVALID');}
+  }
+  need(value&&typeof value==='object'&&!Array.isArray(value),'HUMAN_OPERATOR_REPORT_INVALID');
+  need(value.request_id===requestId,'HUMAN_OPERATOR_REPORT_INVALID');
+  need(HUMAN_REPORT_OUTCOMES.has(value.outcome),'HUMAN_OPERATOR_REPORT_INVALID');
+  need(typeof value.reported_at==='string'
+    &&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/.test(value.reported_at)
+    &&Number.isFinite(Date.parse(value.reported_at)),'HUMAN_OPERATOR_REPORT_INVALID');
+  need(typeof value.statement==='string'&&value.statement.trim(),'HUMAN_OPERATOR_REPORT_INVALID');
+  return value;
+}
+
+export async function publishJSONValue(value,kind,{publish}={}){
+  need(typeof publish==='function','JSON_EVIDENCE_PUBLISHER_REQUIRED');
+  need(typeof kind==='string'&&kind,'JSON_EVIDENCE_KIND_REQUIRED');
+  const raw=Buffer.from(evidenceJSON(value));
+  const reference=await publish(raw,kind,hash(raw),'json');
+  need(reference&&typeof reference.path==='string'&&reference.path.endsWith('.json')
+    &&reference.bytes===raw.byteLength&&reference.sha256===hash(raw),'JSON_EVIDENCE_REFERENCE_REQUIRED');
+  return reference;
+}
+
+function humanFingerprintKey(value){
+  if(!value||typeof value!=='object')return null;
+  return JSON.stringify([value.start_date,value.end_date,value.expected_images]);
+}
+
+function humanError(code,cause){
+  return Object.assign(Error(code),{code,...(cause===undefined?{}:{cause})});
+}
+
 async function realDirectory(absolute){
   need(path.isAbsolute(absolute)&&path.normalize(absolute)===absolute,'CANONICAL_PROJECT_ROOT_REQUIRED');
   let current=path.parse(absolute).root;
@@ -178,9 +233,261 @@ async function realDirectory(absolute){
   }
 }
 
+/**
+ * Build the HUMAN_ASSISTED adapter on top of the authenticated CLI and retained
+ * evidence primitives. The adapter never invents an owner report, reservation,
+ * transaction status, or visual fact; malformed or missing facts fail closed.
+ */
+export function createHumanAssistedAdapter({humanCli,retainJSON,retainRaw,writePrivateJSON,readPrivateBytes,
+    readRetained,observeVisual,owner,destination,humanOwnerTimeoutMs=HUMAN_OWNER_DEFAULT_TIMEOUT_MS,
+    now=()=>new Date().toISOString(),nowMs=()=>Date.now(),sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms))}){
+  need(typeof humanCli==='function'&&typeof retainJSON==='function'
+    &&typeof retainRaw==='function'&&typeof writePrivateJSON==='function'
+    &&typeof readPrivateBytes==='function',
+  'HUMAN_RUNTIME_ADAPTER_REQUIRED');
+  need(typeof owner==='string'&&owner&&typeof destination==='string'&&path.isAbsolute(destination),
+    'HUMAN_RUNTIME_BINDING_REQUIRED');
+  need(Number.isFinite(humanOwnerTimeoutMs)&&humanOwnerTimeoutMs>0,'HUMAN_OWNER_TIMEOUT_REQUIRED');
+  const requestRefs=new Map(),resultRefs=new Map();
+
+  async function retainCheckedJSON(value,kind){
+    const reference=await retainJSON(value,kind);
+    need(reference&&typeof reference.path==='string'&&reference.path.endsWith('.json')
+      &&typeof reference.sha256==='string'&&reference.sha256
+      &&Number.isInteger(reference.bytes)&&reference.bytes>0,'HUMAN_JSON_REFERENCE_REQUIRED');
+    return reference;
+  }
+
+  async function retainCheckedRaw(raw,kind){
+    need(raw instanceof Uint8Array&&raw.byteLength>0,'HUMAN_RAW_EVIDENCE_REQUIRED');
+    const reference=await retainRaw(raw,kind);
+    need(reference&&typeof reference.path==='string'&&reference.path.endsWith('.json')
+      &&typeof reference.sha256==='string'&&reference.sha256
+      &&Number.isInteger(reference.bytes)&&reference.bytes===raw.byteLength,
+    'HUMAN_JSON_REFERENCE_REQUIRED');
+    return reference;
+  }
+
+  async function recordFailure(value){
+    return retainCheckedJSON(value,'human-failure');
+  }
+
+  function humanCalibrationAttestation(binding,evidence){
+    need(evidence?.status==='OBSERVED'&&typeof evidence.observed_at==='string'
+      &&Array.isArray(evidence.raw_evidence_refs),'HUMAN_CALIBRATION_REQUIRED');
+    const refs=evidence.raw_evidence_refs;
+    need(refs.length===4,'HUMAN_CALIBRATION_REQUIRED');
+    const keys=refs.map(ref=>`${ref?.path}|${ref?.bytes}|${ref?.sha256}`);
+    need(new Set(keys).size===4,'HUMAN_CALIBRATION_REQUIRED');
+    return {kind:'human-menu-attestation-1',execution_mode:HUMAN_EXECUTION_MODE,
+      input_actor:HUMAN_INPUT_ACTOR,observer_session_id:binding.observer_session_id,
+      observed_at:evidence.observed_at,detail_ref:refs[0],menu_ref:refs[1],
+      closure_ref:refs[2],attestation_ref:refs[3]};
+  }
+
+  const humanInput=Object.freeze({
+    reserve:async({stage,kind,count,run_id,owner:reservationOwner,slots}={})=>{
+      const response=await humanCli('gui_reserve',{stage,kind,count,run_id,owner:reservationOwner,slots});
+      const id=response.result?.reservation_id??response.result?.id??response.reservation?.id??response.id;
+      need(typeof id==='string'&&id,'HUMAN_RESERVATION_REFUSED');
+      return {id};
+    },
+    readReservation:async reservationId=>{
+      need(typeof reservationId==='string'&&reservationId,'HUMAN_RESERVATION_ID_REQUIRED');
+      const response=await humanCli('inspect',
+        {human_read:{kind:'reservation',reservation_id:reservationId}},{publicRead:true});
+      need(response.human_read&&typeof response.human_read==='object','HUMAN_RESERVATION_READ_REQUIRED');
+      return response.human_read;
+    },
+    consumeReservation:async record=>humanCli('gui_consume',record),
+    publish:async value=>{
+      need(value&&typeof value==='object'&&typeof value.kind==='string'&&value.kind,
+        'HUMAN_INPUT_KIND_REQUIRED');
+      const reference=await retainCheckedJSON(value,value.kind);
+      if(typeof value.request_id==='string'&&value.request_id)requestRefs.set(value.request_id,reference);
+      if(typeof value.result_id==='string'&&value.result_id)resultRefs.set(value.result_id,reference);
+      return reference;
+    },
+    persistLatch:async value=>retainCheckedJSON(value,'human-input-latch'),
+    awaitOperatorReport:async({request,timeoutMs=humanOwnerTimeoutMs}={})=>{
+      need(request&&typeof request==='object','HUMAN_OPERATOR_REQUEST_REQUIRED');
+      const requestId=request.request_id;
+      need(typeof requestId==='string'&&requestId&&/^[A-Za-z0-9._-]+$/.test(requestId),
+        'HUMAN_OPERATOR_REQUEST_ID_REQUIRED');
+      need(typeof timeoutMs==='number'&&Number.isFinite(timeoutMs)&&timeoutMs>0,
+        'HUMAN_OWNER_TIMEOUT_REQUIRED');
+      const requestPath=PRIVATE+'/human-input/requests/'+requestId+'.json';
+      const responsePath=PRIVATE+'/human-input/responses/'+requestId+'.json';
+      await writePrivateJSON(requestPath,request);
+      const deadline=nowMs()+timeoutMs;
+      while(true) {
+        let rawResponse;
+        try{rawResponse=await readPrivateBytes(responsePath);}
+        catch(error){
+          if(error?.code==='ENOENT')rawResponse=undefined;
+          else throw humanError('HUMAN_OPERATOR_REPORT_INVALID',error);
+        }
+        if(rawResponse!==undefined&&rawResponse!==null) {
+          let parsed;
+          try{parsed=JSON.parse(new TextDecoder().decode(rawResponse));}
+          catch(error){throw humanError('HUMAN_OPERATOR_REPORT_INVALID',error);}
+          const report=readHumanOwnerResponse(parsed,{requestId});
+          const rawResponseRef=await retainCheckedRaw(rawResponse,'human-owner-response');
+          return {status:'OPERATOR_REPORTED',outcome:report.outcome,reported_at:report.reported_at,
+            statement:report.statement,raw_response_ref:rawResponseRef};
+        }
+        const current=nowMs();
+        if(current>=deadline)throw humanError('HUMAN_OPERATOR_REPORT_TIMEOUT');
+        await sleep(Math.min(100,Math.max(1,deadline-current)));
+      }
+    }});
+
+  const visualRequirements=Object.freeze({
+    CARD:['album_detail_observed'],
+    CALIBRATION:['menu_closed','no_activation'],
+    PRE_INTENT:['album_detail_observed'],
+    SAVE_ALL:['folder_chooser_observed'],
+    CHOOSER_PATH:['full_path_exact','empty_target','same_window_lineage'],
+    CHOOSER_CONFIRM:['download_started']});
+  const visualSurfaces=Object.freeze({
+    CARD:'ALBUM_DETAIL',CALIBRATION:'ALBUM_DETAIL',PRE_INTENT:'ALBUM_DETAIL',
+    SAVE_ALL:'FOLDER_CHOOSER',CHOOSER_PATH:'FOLDER_CHOOSER',CHOOSER_CONFIRM:'FOLDER_CHOOSER'});
+
+  function unknownObservation(failureRef,extraRefs=[]){
+    return {status:'UNKNOWN',observed_at:null,
+      facts:{observation_status:'UNKNOWN',observation_error:'HUMAN_STAGE_FACT_UNPROVEN'},
+      raw_evidence_refs:[...extraRefs,failureRef]};
+  }
+
+  async function observeStage(stage,context={}){
+    const required=visualRequirements[stage];
+    need(required,'HUMAN_VISUAL_STAGE_REQUIRED');
+    let diagnosticReference=null;
+    try {
+      need(typeof observeVisual==='function','HUMAN_VISUAL_OBSERVER_REQUIRED');
+      const diagnostic=await observeVisual({stage,surface:visualSurfaces[stage],context});
+      diagnosticReference=diagnostic?.reference??null;
+      need(diagnosticReference&&typeof diagnosticReference.path==='string'
+        &&typeof diagnosticReference.sha256==='string'&&diagnosticReference.sha256
+        &&Number.isInteger(diagnosticReference.bytes)&&diagnosticReference.bytes>0,
+      'HUMAN_VISUAL_DIAGNOSTIC_REFERENCE_REQUIRED');
+      need(typeof readRetained==='function','HUMAN_VISUAL_READBACK_REQUIRED');
+      const raw=await readRetained(diagnosticReference);
+      need(raw instanceof Uint8Array&&raw.byteLength===diagnosticReference.bytes
+        &&hash(raw)===diagnosticReference.sha256,'HUMAN_VISUAL_READBACK_DRIFT');
+      let packet;
+      try{packet=JSON.parse(new TextDecoder().decode(raw));}
+      catch{need(false,'HUMAN_VISUAL_DIAGNOSTIC_JSON_REQUIRED');}
+      const diagnosticFacts={...(diagnostic?.facts??{}),...(packet?.facts??{}),
+        ...(packet?.observation?.facts??{}),...(packet?.diagnostic?.facts??{})};
+      const proven=required.every(key=>diagnosticFacts[key]===true);
+      if(!proven) {
+        const failureRef=await recordFailure({kind:'HUMAN_STAGE_EVIDENCE_UNKNOWN',stage,
+          context:{request:context.request??null,reference:context.reference??null},
+          diagnostic_reference:diagnosticReference,required_facts:required,
+          observed_at:now()});
+        return unknownObservation(failureRef,[diagnosticReference]);
+      }
+      const facts={observation_status:'OBSERVED'};
+      for(const key of required)facts[key]=true;
+      return {status:'OBSERVED',observed_at:now(),facts,raw_evidence_refs:[diagnosticReference]};
+    } catch(error) {
+      const failureRef=await recordFailure({kind:'HUMAN_STAGE_EVIDENCE_FAILURE',stage,
+        context:{request:context.request??null,reference:context.reference??null},
+        diagnostic_reference:diagnosticReference,
+        error:{code:error?.code??null,message:String(error?.message??error)},observed_at:now()});
+      return unknownObservation(failureRef,diagnosticReference?[diagnosticReference]:[]);
+    }
+  }
+
+  const evidence=Object.freeze({
+    readiness:async({binding,ledger}={})=>{
+      need(ledger&&ledger.workflow_phase==='A'&&Number.isInteger(ledger.lifecycle_count),
+        'HUMAN_READINESS_LEDGER_REQUIRED');
+      const observedAt=now();
+      const facts={};
+      const reference=await retainCheckedJSON({kind:'HUMAN_READINESS_OBSERVATION',binding,
+        ledger,status:'OBSERVED',observed_at:observedAt,facts},'human-readiness');
+      return {status:'OBSERVED',observed_at:observedAt,facts,raw_evidence_refs:[reference]};
+    },
+    card:context=>observeStage('CARD',context),
+    calibration:context=>observeStage('CALIBRATION',context),
+    preIntent:context=>observeStage('PRE_INTENT',context),
+    saveAll:context=>observeStage('SAVE_ALL',context),
+    chooserPath:context=>observeStage('CHOOSER_PATH',context),
+    chooserConfirm:context=>observeStage('CHOOSER_CONFIRM',context),
+    recordFailure});
+
+  const unwrap=response=>response?.result??response;
+  const transaction=Object.freeze({
+    begin:async({binding,ledger,readiness}={})=>{
+      const response=await humanCli('begin',{binding,ledger,readiness});
+      need(response.result&&typeof response.result==='object','HUMAN_BEGIN_RESPONSE_REQUIRED');
+      return response.result;
+    },
+    admit:async({binding,readiness,begin}={})=>unwrap(await humanCli('admit',{binding,readiness,begin})),
+    prepare:async({binding,readiness,begin,admitted}={})=>{
+      const response=await humanCli('prepare',{binding,readiness,begin,admitted});
+      const prepared=unwrap(response);
+      need(prepared&&typeof prepared==='object','HUMAN_PREPARE_RESPONSE_REQUIRED');
+      need(prepared.destination===destination,'HUMAN_DESTINATION_MISMATCH');
+      need(humanFingerprintKey(prepared.fingerprint)===humanFingerprintKey(HUMAN_A56_FINGERPRINT),
+        'HUMAN_A56_FINGERPRINT_MISMATCH');
+      return prepared;
+    },
+    commitCalibration:async({binding,run_id,request,result,evidence:calibrationEvidence,
+      request_ref,result_ref,calibration}={})=>{
+      const requestRef=request_ref??(request?.request_id?requestRefs.get(request.request_id):null);
+      const resultRef=result_ref??(result?.result_id?resultRefs.get(result.result_id):null);
+      need(requestRef,'HUMAN_REQUEST_REFERENCE_REQUIRED');
+      need(resultRef,'HUMAN_RESULT_REFERENCE_REQUIRED');
+      const attestation=calibration??humanCalibrationAttestation(binding,calibrationEvidence);
+      const response=await humanCli('calibrate',{binding,run_id,request,result,
+        evidence:calibrationEvidence,calibration:attestation,request_ref:requestRef,result_ref:resultRef});
+      return unwrap(response);
+    },
+    commitIntent:async({binding,run_id,calibration,fresh_evidence}={})=>{
+      const response=await humanCli('intent',{binding,run_id,
+        calibration:calibration?.calibration??calibration,fresh_evidence});
+      return unwrap(response);
+    },
+    readIntent:async({binding,run_id,action_id}={})=>{
+      const response=await humanCli('inspect',
+        {human_read:{kind:'intent',run_id,action_id}},{publicRead:true});
+      need(response.human_read&&typeof response.human_read==='object','HUMAN_INTENT_READ_REQUIRED');
+      return response.human_read;
+    },
+    recordDispatch:async({binding,run_id,intent,intent_readback,save_all,chooser_path,
+      chooser_confirm,chooser_readback}={})=>{
+      const response=await humanCli('dispatch',{binding,run_id,intent,intent_readback,save_all,
+        chooser_path,chooser_confirm,chooser_readback});
+      return response.result;
+    },
+    finalize:async({binding,run_id,decoder}={})=>{
+      const response=await humanCli('finalize',{binding,run_id,decoder,
+        decoder_sha256:decoder?.sha256});
+      return response.result;
+    },
+    readVerified:async({binding,run_id}={})=>{
+      const response=await humanCli('inspect',{human_read:{kind:'verified',run_id}},{publicRead:true});
+      need(response.human_read&&typeof response.human_read==='object','HUMAN_VERIFIED_READ_REQUIRED');
+      return response.human_read;
+    },
+    stop:async({binding,run_id,reason}={})=>{
+      const response=await humanCli('stop',{binding,run_id,reason});
+      return response.result;
+    },
+    release:async({binding,run_id}={})=>{
+      const response=await humanCli('release',{binding,run_id});
+      return response.result;
+    }});
+  return Object.freeze({humanInput,transaction,evidence});
+}
+
 /** Exact, read-only component assembly; live admission remains in the existing CLI. */
 export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPath,producerPath,decoderPath,
-    owner,authorization=PRIVATE+'/project-grant.json',buildRecordPath}){
+    owner,authorization=PRIVATE+'/project-grant.json',buildRecordPath,
+    humanOwnerTimeoutMs=HUMAN_OWNER_DEFAULT_TIMEOUT_MS}){
   need(cua?.computer?.target==='mac'&&typeof cua.getApp==='function'&&typeof cua.listApps==='function','REAL_HOSTED_MAC_REQUIRED');
   await realDirectory(projectRoot);
   need(typeof owner==='string'&&owner&&path.isAbsolute(pythonPath)&&path.isAbsolute(producerPath)
@@ -229,6 +536,47 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     const frame=await publish(p.screenshot,'cua-frames',p.frameId,isPng?'png':'jpg'),ax=await publish(Buffer.from(p.ax),'cua-ax',p.frameId);
     rawCaptures.set(p.frameId,{ax:p.ax,frame,axReference:ax});return {...frame,ax};
   }
+  async function retainJSON(value,kind){
+    return publishJSONValue(value,kind,{publish});
+  }
+  async function retainRaw(raw,kind){
+    need(raw instanceof Uint8Array&&raw.byteLength>0&&typeof kind==='string'&&kind,'RETAIN_RAW_JSON_REQUIRED');
+    return publish(raw,kind,hash(raw),'json');
+  }
+  async function writePrivateJSON(relative,value){
+    need(typeof relative==='string'&&relative.startsWith(PRIVATE+'/')
+      &&!relative.split('/').includes('..'),'PRIVATE_WRITE_SCOPE');
+    const absolute=path.join(projectRoot,relative),raw=Buffer.from(evidenceJSON(value));
+    await io.mkdirp(path.dirname(absolute));await io.writeFile(absolute,raw);
+    const readback=await fs.readFile(absolute);
+    need(readback.byteLength===raw.byteLength&&hash(readback)===hash(raw),'PRIVATE_READBACK');
+    return {path:relative,bytes:readback.byteLength,sha256:hash(readback)};
+  }
+  async function readPrivateBytes(relative){
+    need(typeof relative==='string'&&relative.startsWith(PRIVATE+'/')
+      &&!relative.split('/').includes('..'),'PRIVATE_READ_SCOPE');
+    const absolute=path.join(projectRoot,relative);
+    try {
+      const stat=await fs.lstat(absolute);
+      need(stat.isFile()&&!stat.isSymbolicLink(),'PRIVATE_FILE_IDENTITY');
+      return new Uint8Array(await fs.readFile(absolute));
+    } catch(error) {
+      if(error?.code==='ENOENT')return undefined;
+      throw error;
+    }
+  }
+  async function readPrivateJSON(relative){
+    const raw=await readPrivateBytes(relative);
+    return raw===undefined?undefined:JSON.parse(raw);
+  }
+  async function readHumanRetained(reference){
+    need(reference&&typeof reference.path==='string'&&reference.path.startsWith(PRIVATE+'/')
+      &&!reference.path.split('/').includes('..'),'RETAINED_READ_SCOPE');
+    const raw=await readPrivateBytes(reference.path);
+    need(raw instanceof Uint8Array,'RETAINED_FILE_IDENTITY');
+    need(raw.byteLength===reference.bytes&&hash(raw)===reference.sha256,'RETAINED_READBACK_DRIFT');
+    return raw;
+  }
   async function runProcess(argv,{timeoutMs=30000,cap=8*1024*1024}={}){
     need([producerPath,pythonPath].includes(argv[0]),'PINNED_EXECUTABLE_REQUIRED');
     return new Promise((resolve,reject)=>execFile(argv[0],argv.slice(1),{
@@ -239,6 +587,7 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
       resolve({status:error?error.code:0,stdout,stderr,reaped:true,stop_reason:null});
     }));
   }
+  let receiptToken=null;
   async function cli(operation,{authorization:grant=authorization,payload=null}={}){
     const argv=[pythonPath,'-B','-m','line_backup_batch.cli',operation,'--project-root',projectRoot];
     if(grant!==null)argv.push('--authorization',grant);
@@ -250,13 +599,21 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     if(r.status!==0){let e;try{e=JSON.parse(r.stderr);}catch{e={code:'CLI_REFUSED',message:r.stderr};}
       throw Object.assign(Error(e.message),{code:e.code});}
     const response=JSON.parse(r.stdout);
-    if(operation==='prepare'&&response.result?.status==='ALBUM_OPEN_READY'){
+    if(typeof response?.receipt_token==='string')receiptToken=response.receipt_token;
+    if(operation==='prepare'&&requiresChooserBaseline(response)){
       chooser.destinationBaseline=await download.baseline({action:{...response.result,owner},owner,sessionId:owner,
         frameId:response.result.frame_id});
     }
     return response;
   }
   cli.bridge=(operation,{expected_token=null,data={}}={})=>cli(operation,{payload:expected_token===null?{data}:{expected_token,data}});
+  async function humanCli(operation,data={}, {publicRead=false}={}){
+    // A public read omits the expected receipt token, never the grant itself.
+    const response=await cli(operation,{authorization,
+      payload:publicRead?{data}:{expected_token:receiptToken,data}});
+    if(typeof response?.receipt_token==='string')receiptToken=response.receipt_token;
+    return response;
+  }
   // Read the real grant lazily: preparation must never invent live authority.
   const authority={get grantSha256(){need(grantDigest,'LIVE_GRANT_NOT_BOUND');return grantDigest;}};
   let grantDigest=null;
@@ -281,6 +638,11 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     binary:{absolutePath:producerPath},geometryProvider:async({pairFrameId})=>{
       const g=menuGeometry.get(pairFrameId);need(g,'MENU_GEOMETRY_NOT_OBSERVED');return g;
     }});
+  const readRetained=async reference=>{
+    const absolute=path.resolve(projectRoot,reference.path);
+    need(path.relative(projectRoot,absolute).startsWith('harness-development/'),'RETAINED_READ_SCOPE');
+    return new Uint8Array(await fs.readFile(absolute));
+  };
   classifier=createLiveClassifier({retain,readRetained,analyzeCapture:nativeAnalyzer.analyzeCapture,
     analyzeScrollWitness:nativeAnalyzer.analyzeScrollWitness,
     analyzeVisualCardDiagnostic:nativeAnalyzer.analyzeVisualCardDiagnostic,
@@ -309,11 +671,6 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     }finally{await fs.rm(directory,{recursive:true,force:true});}
   }
   const cached=frame=>{const c=classifier.cache.get(frame.frame_id);need(c?.observation,'FRESH_CLASSIFIER_FRAME_REQUIRED');return c;};
-  const readRetained=async reference=>{
-    const absolute=path.resolve(projectRoot,reference.path);
-    need(path.relative(projectRoot,absolute).startsWith('harness-development/'),'RETAINED_READ_SCOPE');
-    return new Uint8Array(await fs.readFile(absolute));
-  };
   function menuTrigger(frame){
     const c=cached(frame),ctx=nativeAnalyzer.contexts.get(frame.frame_id)?.sourceBinding.after.value;
     need(ctx?.visual&&ctx.visual.sourceSHA256===frame.frame_id,'FRESH_VISUAL_SOURCE_REQUIRED');
@@ -445,10 +802,27 @@ export async function createMacRuntime({cua,projectRoot,pythonPath,dependencyPat
     const apps=await cua.listApps({emit:false});need(apps.filter(a=>a.id==='jp.naver.line.mac'&&a.isRunning===true).length===1,'OWNER_MUST_START_LINE');
   }
   const supportCallbacks=createAlbumSupportCallbacks({invokeProducer:producer.invokeProducer});
+  const humanDestination=humanDestinationForConfig({projectRoot,groupName:config.group_name});
+  async function observeHumanVisual({surface,context}={}){
+    need(['ALBUM_DETAIL','FOLDER_CHOOSER'].includes(surface),'HUMAN_VISUAL_SURFACE_REQUIRED');
+    const sessionId=context?.binding?.observer_session_id;
+    need(typeof sessionId==='string'&&sessionId,'HUMAN_OBSERVER_SESSION_REQUIRED');
+    const app=await cua.getApp('jp.naver.line.mac');
+    const observer=createVisualDiagnosticObserver({app,retain,
+      readClock:producer.readVisualDiagnosticClock,beforeCapture:nativeAnalyzer.beforeCapture,
+      capturePair:args=>producer.captureVisualDiagnostic({...args,requestedSurface:surface}),
+      afterCapture:nativeAnalyzer.afterCapture,
+      analyze:args=>classifier.completeVisualCardDiagnostic({...args,
+        analyzePixels:producer.analyzeVisualDiagnostic}),sessionId});
+    return observer.observe();
+  }
+  const humanAssisted=createHumanAssistedAdapter({humanCli,retainJSON,retainRaw,writePrivateJSON,readPrivateBytes,
+    readRetained:readHumanRetained,observeVisual:observeHumanVisual,owner,destination:humanDestination,
+    humanOwnerTimeoutMs});
   let visualCardDiagnosticUsed=false;
   const runtime={profile:'LINE_TWO_ALBUM_PILOT/1',owner,authorization,decoder:{path:decoderPath,sha256:DECODER_SHA},
     one56Fingerprint:{start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56},
-    cli,retain,classifier,classifyScrollWitness:classifier.classifyScrollWitness,decodeRetainedImage,
+    cli,retain,retainJSON,humanAssisted,classifier,classifyScrollWitness:classifier.classifyScrollWitness,decodeRetainedImage,
     producer:{...producer,...supportCallbacks},menuLocator,chooser,navigation,windowLineage,privateEvidence,clock:()=>performance.now(),
     beforeCapture:nativeAnalyzer.beforeCapture,afterCapture:nativeAnalyzer.afterCapture,assertLineAlreadyRunning,
     getApp:async id=>{await bindLiveAuthority();await assertLineAlreadyRunning();need(id==='jp.naver.line.mac','LINE_SCOPE');return cua.getApp(id);}};

@@ -75,6 +75,12 @@ ONE56_HUMAN_STAGE_INSTRUCTIONS={
 ONE56_HUMAN_ACTION_SLOTS={slot for _,_,slots in ONE56_HUMAN_STAGE_RESERVATIONS.values() for slot in slots}
 ONE56_HUMAN_MENU_ATTESTATION_KEYS={'kind','execution_mode','input_actor','observer_session_id','observed_at',
     'detail_ref','menu_ref','closure_ref','attestation_ref'}
+ONE56_HUMAN_BINDING_KEYS={'destination','grant_sha256','observer_session_id','source_sha256','task_id'}
+ONE56_HUMAN_BOUND_OPERATIONS={'begin','admit','prepare','calibrate','intent','dispatch','finalize','stop','release'}
+ONE56_HUMAN_READ_KEYS={
+    'reservation':{'kind','reservation_id'},
+    'intent':{'kind','run_id','action_id'},
+    'verified':{'kind','run_id'}}
 ONE56_HUMAN_FAKE_TOKENS=('cuareturned','classifierpass','precision','exactlyonce','fullautomaticpass',
     'scksupportpass','framesupportpass')
 ONE56_CALLBACK_ROLES={
@@ -385,6 +391,8 @@ def _one56_reject_human_markers(value):
             if normalized=='entrymethod' and isinstance(child,str):
                 require(_one56_normalized(child)!=_one56_normalized(ONE56_HUMAN_ENTRY),
                     'ONE56_MODE_MIXED')
+            if normalized=='binding' and isinstance(child,dict) and set(child)==ONE56_HUMAN_BINDING_KEYS:
+                require(False,'ONE56_MODE_MIXED')
         for child in value.values():_one56_reject_human_markers(child)
     elif isinstance(value,list):
         for child in value:_one56_reject_human_markers(child)
@@ -658,6 +666,34 @@ def _one56_human_destination(value):
         and not any(ord(char)<32 for char in value)
         and unicodedata.normalize('NFC',value)==value and posixpath.normpath(value)==value)
 
+def _one56_human_binding(value,grant):
+    return (isinstance(value,dict) and set(value)==ONE56_HUMAN_BINDING_KEYS
+        and value.get('task_id')==grant.get('task_id')
+        and _one56_human_hash(value.get('grant_sha256'))
+        and value.get('source_sha256')==grant.get('source_sha256')
+        and isinstance(value.get('observer_session_id'),str)
+        and value.get('observer_session_id')==grant.get('observer_session_id')
+        and _one56_human_destination(value.get('destination')))
+
+def _one56_human_read_selector(value):
+    require(isinstance(value,dict) and isinstance(value.get('kind'),str),'HUMAN_READ_SELECTOR')
+    kind=value['kind'];keys=ONE56_HUMAN_READ_KEYS.get(kind)
+    require(keys is not None and set(value)==keys,'HUMAN_READ_SELECTOR')
+    for key in keys-{'kind'}:
+        child=value.get(key)
+        require(isinstance(child,str) and child and child==child.strip()
+            and not any(ord(char)<32 for char in child),'HUMAN_READ_SELECTOR')
+    return kind
+
+def _one56_inspect_expected(root,request,grant):
+    try:expected_raw=base64.b64decode(request.get('expected_token',''),validate=True)
+    except (binascii.Error,ValueError,TypeError):require(False,'INVALID_RECEIPT_TOKEN')
+    expected=strict_json(expected_raw,'INVALID_RECEIPT_TOKEN')
+    require(expected.get('project_root')==root
+        and expected.get('config_sha256')==grant['config_sha256']
+        and expected.get('source_sha256')==grant['source_sha256'],'REQUEST_AUTHORITY_MISMATCH')
+    return expected
+
 def _one56_validate_human_tree(value,grant):
     if isinstance(value,dict):
         for key,child in value.items():
@@ -753,6 +789,8 @@ def _one56_validate_human_payload(grant,operation,payload):
     _one56_validate_human_tree(payload,grant)
     require(isinstance(payload.get('data',{}),dict),'INVALID_INPUT')
     data=payload.get('data') if isinstance(payload.get('data'),dict) else {}
+    if operation in ONE56_HUMAN_BOUND_OPERATIONS:
+        require(_one56_human_binding(data.get('binding'),grant),'HUMAN_INPUT_BINDING_REQUIRED')
     if operation=='gui_reserve':
         stage=data.get('stage');require(stage in ONE56_HUMAN_INPUT_STAGES,'HUMAN_INPUT_STAGE_REQUIRED')
         require(stage!='CHOOSER_CONFIRM','HUMAN_CHOOSER_CONFIRM_REQUIRED')
@@ -767,13 +805,8 @@ def _one56_validate_human_payload(grant,operation,payload):
         require(checkpoint is None or (isinstance(checkpoint,str)
             and not any(token in _one56_normalized(checkpoint)
                 for token in ('pairb','pairc1','scroll','returnatolist'))),'ONE56_MODE_MIXED')
-    elif operation=='begin':
-        require(data.get('mode')=='backup_batch' and type(data.get('limit')) is int
-            and data.get('limit')==1,'ONE56_HUMAN_CAP_ONE')
     elif operation=='admit':
-        require('workflow_link' not in data and data.get('target')==ONE56_HUMAN_FINGERPRINT
-            and data.get('session')==grant['observer_session_id'],
-            'ONE56_MODE_MIXED')
+        require('workflow_link' not in data,'ONE56_MODE_MIXED')
     elif operation=='calibrate':
         calibration=data.get('calibration')
         require(isinstance(calibration,dict) and set(calibration)==ONE56_HUMAN_MENU_ATTESTATION_KEYS
@@ -787,6 +820,10 @@ def _one56_validate_human_payload(grant,operation,payload):
             'HUMAN_CALIBRATION_REQUIRED')
     elif operation=='dispatch':
         require('receipt' not in data or data.get('receipt') is None,'ONE56_MODE_MIXED')
+        readback=data.get('chooser_readback')
+        require(isinstance(readback,dict) and set(readback)=={'reference'}
+            and _one56_human_refs([readback.get('reference')],json_required=True),
+            'HUMAN_CHOOSER_RESERVATION_READBACK')
     elif operation=='finalize':
         decoder_path=grant['decoder_binding']['path']
         decoder_absolute=str(Path(grant['project_root'],decoder_path).resolve())
@@ -1139,17 +1176,23 @@ def execute(ns):
         snapshot=store.snapshot();s=snapshot['state']
         request=load_input(ns.project_root,ns.input) if ns.input else {}
         candidate_data=request.get('data',{})
-        ledger_status=None
-        if candidate_data.get('include_gui_ledger_status') is True:
+        ledger_status=None;human_read=None
+        human_read_requested='human_read' in candidate_data
+        read_kind=_one56_human_read_selector(candidate_data['human_read']) if human_read_requested else None
+        if candidate_data.get('include_gui_ledger_status') is True or read_kind is not None:
             grant=authorize(ns.project_root,ns.authorization,False,'gui_observe')
-            try:expected_raw=base64.b64decode(request.get('expected_token',''),validate=True)
-            except (binascii.Error,ValueError,TypeError):require(False,'INVALID_RECEIPT_TOKEN')
-            expected=strict_json(expected_raw,'INVALID_RECEIPT_TOKEN')
-            require(isinstance(expected,dict) and expected.get('project_root')==ns.project_root
-                and expected.get('config_sha256')==grant['config_sha256']
-                and expected.get('source_sha256')==grant['source_sha256'],'REQUEST_AUTHORITY_MISMATCH')
+            _one56_inspect_expected(ns.project_root,request,grant)
             store.authorization_path=ns.authorization
-            ledger_status=store.project_gui_ledger_status(grant)
+            if read_kind is not None:
+                require(one56_execution_mode(grant)==HUMAN_EXECUTION_MODE,'ONE56_MODE_MIXED')
+                selector=candidate_data['human_read']
+                if read_kind=='reservation':
+                    human_read=store.human_reservation_fact(grant,selector['reservation_id'])
+                elif read_kind=='intent':
+                    human_read=store.human_intent_fact(grant,selector['run_id'],selector['action_id'])
+                else:human_read=store.human_verified_fact(grant,selector['run_id'])
+            if candidate_data.get('include_gui_ledger_status') is True:
+                ledger_status=store.project_gui_ledger_status(grant)
         candidates=candidate_data.get('candidates',[])
         require(isinstance(candidates,list),'INSPECT_CANDIDATES_INVALID')
         eligible=[target for target in candidates if Service.eligible(s,target)]
@@ -1159,8 +1202,10 @@ def execute(ns):
                 active_writer_id=s['active_writer_id'],verified_count=len(s['verified_albums'])),
             eligible_candidates=eligible)
         if ledger_status is not None:result['gui_ledger_status']=ledger_status
+        if human_read_requested:result['human_read']=human_read
         return result
     grant=authorize(ns.project_root,ns.authorization,ns.fixture,ns.operation)
+    mode=one56_execution_mode(grant)
     store.authorization_path=ns.authorization
     service=Service(ns.project_root,grant['owner'],grant['artifact_dir'],ns.authorization)
     if ns.operation=='resume':return service.resume()
@@ -1179,6 +1224,30 @@ def execute(ns):
     require(expected['project_root']==ns.project_root and expected['config_sha256']==grant['config_sha256']
         and expected['source_sha256']==grant['source_sha256'],'REQUEST_AUTHORITY_MISMATCH')
     data=payload.get('data',{})
+    if mode==HUMAN_EXECUTION_MODE:
+        if ns.operation=='begin':
+            return service.human_begin(expected,data['binding'],data.get('readiness'))
+        if ns.operation=='admit':
+            return service.human_admit(expected,data['binding'],data.get('readiness'),data.get('begin'))
+        if ns.operation=='prepare':
+            return service.human_prepare(expected,data['binding'],data.get('readiness'),data.get('begin'),data.get('admitted'))
+        if ns.operation=='calibrate':
+            return service.human_commit_calibration(expected,data['binding'],data['run_id'],data['request'],
+                data['result'],data['evidence'],data['calibration'],data.get('request_ref'),data.get('result_ref'))
+        if ns.operation=='intent':
+            return service.human_commit_intent(expected,data['binding'],data['run_id'],data['calibration'],
+                data.get('fresh_evidence'))
+        if ns.operation=='dispatch':
+            return service.human_record_dispatch(expected,data['binding'],data['run_id'],data['intent'],
+                data.get('intent_readback'),data['save_all'],data['chooser_path'],data['chooser_confirm'],
+                data.get('chooser_readback'))
+        if ns.operation=='finalize':
+            return service.human_finalize(expected,data['binding'],data['run_id'],data['decoder'],
+                data['decoder_sha256'])
+        if ns.operation=='stop':
+            return service.human_stop(expected,data['binding'],data['run_id'],data['reason'])
+        if ns.operation=='release':
+            return service.human_release(expected,data['binding'],data['run_id'])
     if ns.operation=='migrate':return store.migrate(expected,data['snapshot_path'],fixture=ns.fixture)
     if ns.operation=='begin':
         if grant.get('grant_version') in ('line-two-album-project-grant-1',ONE56_GRANT_VERSION):

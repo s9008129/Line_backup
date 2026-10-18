@@ -20,7 +20,8 @@ from line_backup_batch.store import Store,enforce_grant_quota
 from line_backup_batch.service import Service,DISPATCH_RECEIPT_V3_KEYS,DISPATCH_EVENT_ORDER_V3,menu_envelope
 from line_backup_batch.coordinator import Coordinator
 import line_backup_batch.cli as batch_cli
-from line_backup_acceptance.common import AcceptanceError,atomic_write_json,classify_legacy_run,validate_state_strict
+from line_backup_acceptance.common import (AcceptanceError,atomic_write_json,classify_legacy_run,
+    utc_now,validate_state_strict)
 from line_backup_acceptance.project_binding import ProjectReader
 
 SCHEMA_PATHS=sorted({str(Path(module.__file__).resolve().parent.parent)
@@ -1364,6 +1365,35 @@ class HumanOne56StoreTests(unittest.TestCase):
     def bytes(self,ctx):
         return ((ctx.fixture.root/'state/backup_state.json').read_bytes(),
             (ctx.fixture.root/ctx.grant['gui_ledger']).read_bytes())
+    def verify_human_readback(self,ctx,inventory_count=56):
+        state=ctx.fixture.state();run=state['runs'][0]
+        inventory=[dict(relative_path=f'{index}.png',size=10,mtime_ns=index+1,mime='image/png',
+            sha256=f'{index:064x}',status='OK',type='regular',failure_class=None)
+            for index in range(inventory_count)]
+        verification=dict(observed_at=utc_now(),outcome='PASS',regular_files=56,image_files=56,
+            subdirectories=[],total_bytes=inventory_count*10,extensions={'.png':inventory_count},
+            metadata_files=[],zero_byte_files=[],partial_temp_files=[],unrecognized_files=[],
+            other_entries=[],stable_samples=3,inventory=inventory,
+            evidence='persisted full RGB decode and stable inventory')
+        record=dict(app_identifier=ctx.fixture.cfg['app_identifier'],group_key=run['group_key'],
+            run_id=run['run_id'],fingerprint=copy.deepcopy(self.TARGET),destination=run['destination'],
+            verification=copy.deepcopy(verification))
+        ref=ctx.fixture.ref('human-verified-'+uuid.uuid4().hex+'.json',json_bytes(record))
+        reference='fixture:'+ref['path']+':'+ref['sha256']
+        event=dict(phase='VERIFIED',at=utc_now(),evidence=reference)
+        run['verification']=verification;run['workflow_outcome']='VERIFIED';run['stop_reason']='COMPLETED'
+        run['events'].append(event);run['phase']='VERIFIED';run['checkpoint']=event
+        state['verified_albums'].append(dict(group_key=run['group_key'],
+            fingerprint=copy.deepcopy(self.TARGET),verified_run_id=run['run_id'],
+            destinations=[run['destination']],source_kind='filesystem_verification',evidence=reference))
+        state['active_writer_id']=None;state['context_lock']=None
+        state['active_batch']['current_album_run_id']=None;state['active_batch']['next_index']=1
+        ctx.fixture.save(state)
+        return reference
+    def assert_human_readback_unchanged(self,ctx,before):
+        self.assertEqual(self.bytes(ctx),before)
+        self.assertEqual(json.loads(before[0])['revision'],
+            json.loads(self.bytes(ctx)[0])['revision'])
 
     def test_human_calibration_schema_is_v3_only_strict_and_preserves_auto_v2(self):
         ctx=self.context();self.set_intent(ctx);state=ctx.fixture.state()
@@ -1586,3 +1616,108 @@ class HumanOne56StoreTests(unittest.TestCase):
                 with self.assertRaises(AcceptanceError) as caught:self.reserve(ctx,'CALIBRATION')
                 self.assertEqual(caught.exception.code,code);self.assertEqual(ledger_path.read_bytes(),tampered_raw)
                 ledger_path.write_bytes(original)
+
+    def test_human_reservation_fact_readback_is_read_only(self):
+        ctx=self.context();card=self.reserve(ctx,'CARD')
+        before=self.bytes(ctx)
+        fact=ctx.store.human_reservation_fact(ctx.grant,card['id'])
+        self.assertEqual(fact,dict(id=card['id'],kind='album_open',count=1,run_id=ctx.run_id,
+            owner=ctx.grant['owner'],state='RESERVED',slots=['A.CARD'],outcome=None))
+        self.assert_human_readback_unchanged(ctx,before)
+        ctx.store.consume_gui(ctx.grant,self.artifacts(ctx,'CARD',card).data)
+        before=self.bytes(ctx)
+        fact=ctx.store.human_reservation_fact(ctx.grant,card['id'])
+        ledger=json.loads(before[1])
+        self.assertEqual(fact['state'],'CONSUMED')
+        self.assertEqual(fact['outcome'],ledger['entries'][0]['outcome'])
+        self.assert_human_readback_unchanged(ctx,before)
+
+    def test_human_reservation_fact_rejects_actor_session_run_and_missing(self):
+        ctx=self.context();card=self.reserve(ctx,'CARD');before=self.bytes(ctx)
+        for changes,code in (({'execution_mode':'AUTO'},'HUMAN_GRANT_BINDING'),
+            ({'input_actor':'AUTO_CUA'},'HUMAN_GRANT_BINDING'),
+            ({'observer_session_id':'foreign-session'},'GRANT_DRIFT')):
+            with self.subTest(changes=changes):
+                with self.assertRaises(AcceptanceError) as caught:
+                    ctx.store.human_reservation_fact(dict(ctx.grant,**changes),card['id'])
+                self.assertEqual(caught.exception.code,code)
+                self.assert_human_readback_unchanged(ctx,before)
+        with self.assertRaises(AcceptanceError) as caught:
+            ctx.store.human_reservation_fact(ctx.grant,'missing-reservation')
+        self.assertEqual(caught.exception.code,'HUMAN_RESERVATION_BINDING')
+        self.assert_human_readback_unchanged(ctx,before)
+        ledger_path=ctx.fixture.root/ctx.grant['gui_ledger'];ledger=json.loads(ledger_path.read_bytes())
+        ledger['entries'][0]['run_id']='RUN-foreign';ledger_path.write_bytes(json_bytes(ledger))
+        tampered=self.bytes(ctx)
+        with self.assertRaises(AcceptanceError) as caught:
+            ctx.store.human_reservation_fact(ctx.grant,card['id'])
+        self.assertEqual(caught.exception.code,'HUMAN_RUN_BINDING')
+        self.assert_human_readback_unchanged(ctx,tampered)
+
+    def test_human_intent_fact_readback_rejects_wrong_identity(self):
+        ctx=self.context()
+        ctx.store.consume_gui(ctx.grant,self.artifacts(ctx,'CARD',self.reserve(ctx,'CARD')).data)
+        calibration=self.reserve(ctx,'CALIBRATION')
+        ctx.store.consume_gui(ctx.grant,self.artifacts(ctx,'CALIBRATION',calibration).data)
+        intent=self.set_intent(ctx)
+        before=self.bytes(ctx)
+        fact=ctx.store.human_intent_fact(ctx.grant,ctx.run_id,ctx.action_id)
+        self.assertEqual(fact,dict(run_id=ctx.run_id,action_id=ctx.action_id,
+            owner_execution_id=ctx.grant['owner'],group_key=intent['group_key'],
+            fingerprint=self.TARGET,destination=ctx.destination,calibration=intent['calibration'],
+            durable=True))
+        self.assert_human_readback_unchanged(ctx,before)
+        for run_id,action_id,code in (('RUN-foreign',ctx.action_id,'HUMAN_RUN_BINDING'),
+            (ctx.run_id,'ACTION-foreign','HUMAN_INTENT_BINDING')):
+            with self.subTest(run_id=run_id,action_id=action_id):
+                with self.assertRaises(AcceptanceError) as caught:
+                    ctx.store.human_intent_fact(ctx.grant,run_id,action_id)
+                self.assertEqual(caught.exception.code,code)
+                self.assert_human_readback_unchanged(ctx,before)
+        state=ctx.fixture.state();state['runs'][0]['intent']['destination']='/tmp/foreign-A56'
+        ctx.fixture.save(state);tampered=self.bytes(ctx)
+        with self.assertRaises(AcceptanceError):
+            ctx.store.human_intent_fact(ctx.grant,ctx.run_id,ctx.action_id)
+        self.assert_human_readback_unchanged(ctx,tampered)
+        with self.assertRaises(AcceptanceError) as caught:
+            ctx.store.human_intent_fact(dict(ctx.grant,observer_session_id='foreign-session'),
+                ctx.run_id,ctx.action_id)
+        self.assertEqual(caught.exception.code,'GRANT_DRIFT')
+        self.assert_human_readback_unchanged(ctx,tampered)
+
+    def test_human_verified_fact_derives_inventory_count_read_only(self):
+        ctx=self.context();reference=self.verify_human_readback(ctx)
+        before=self.bytes(ctx)
+        fact=ctx.store.human_verified_fact(ctx.grant,ctx.run_id)
+        self.assertEqual(fact['run_id'],ctx.run_id);self.assertEqual(fact['status'],'VERIFIED')
+        self.assertEqual(fact['files_verified'],56);self.assertEqual(fact['expected_images'],56)
+        self.assertEqual(fact['fingerprint'],self.TARGET)
+        self.assertEqual(fact['destination'],ctx.destination)
+        self.assertEqual(fact['verification_reference'],reference)
+        self.assertEqual(len(fact['verification']['inventory']),56)
+        self.assert_human_readback_unchanged(ctx,before)
+        with self.assertRaises(AcceptanceError) as caught:
+            ctx.store.human_verified_fact(ctx.grant,'RUN-foreign')
+        self.assertEqual(caught.exception.code,'HUMAN_RUN_BINDING')
+        self.assert_human_readback_unchanged(ctx,before)
+
+    def test_human_fact_selectors_reject_missing_and_fabricated_state(self):
+        ctx=self.context()
+        before=self.bytes(ctx)
+        with self.assertRaises(AcceptanceError) as caught:
+            ctx.store.human_intent_fact(ctx.grant,ctx.run_id,'ACTION-missing')
+        self.assertEqual(caught.exception.code,'HUMAN_INTENT_BINDING')
+        self.assert_human_readback_unchanged(ctx,before)
+        with self.assertRaises(AcceptanceError) as caught:
+            ctx.store.human_verified_fact(ctx.grant,ctx.run_id)
+        self.assertEqual(caught.exception.code,'HUMAN_VERIFIED_BINDING')
+        self.assert_human_readback_unchanged(ctx,before)
+        with self.assertRaises(AcceptanceError):
+            ctx.store.human_reservation_fact(ctx.grant,'')
+        self.assert_human_readback_unchanged(ctx,before)
+        ctx=self.context();self.verify_human_readback(ctx,inventory_count=55)
+        tampered=self.bytes(ctx)
+        with self.assertRaises(AcceptanceError) as caught:
+            ctx.store.human_verified_fact(ctx.grant,ctx.run_id)
+        self.assertEqual(caught.exception.code,'HUMAN_VERIFIED_BINDING')
+        self.assert_human_readback_unchanged(ctx,tampered)

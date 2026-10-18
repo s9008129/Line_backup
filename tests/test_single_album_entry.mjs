@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import path from 'node:path';
 import {
   createHumanInputCoordinator,
   createHumanInputRequest,
@@ -9,6 +11,13 @@ import {
   validateHumanInputRequest,
   validateHumanInputResult,
 } from '../harness-development/line-two-album-pilot-20261014/two_album_entry.mjs';
+import {
+  humanDestinationForConfig,
+  requiresChooserBaseline,
+  readHumanOwnerResponse,
+  publishJSONValue,
+  createHumanAssistedAdapter,
+} from '../harness-development/line-two-album-pilot-20261014/mac_runtime.mjs';
 
 function runtimeWithUsedLifecycle(){
   const operations=[];
@@ -118,8 +127,8 @@ function humanHarness({unknownStage=null,unknownObservationStage=null,operatorEr
     readIntent:async()=>{calls.transaction.push('readIntent');return {status:'ORIGINAL_INTENT_COMMITTED',run_id:'run-a56',
       action_id:'action-a56',destination:humanBinding.destination,fingerprint:humanFingerprint,durable:true,
       raw_evidence_refs:[humanRef('intent-readback')]};},
-    recordDispatch:async()=>{calls.transaction.push('recordDispatch');return {status:'DOWNLOAD_STARTED',run_id:'run-a56',
-      action_id:'action-a56'};},
+    recordDispatch:async value=>{calls.transaction.push('recordDispatch');calls.dispatch=value;
+      return {status:'DOWNLOAD_STARTED',run_id:'run-a56',action_id:'action-a56'};},
     finalize:async value=>{calls.transaction.push('finalize');calls.finalize.push(value);
       return {status:'VERIFIED',run_id:'run-a56',files_verified:56,expected_images:56};},
     readVerified:async()=>{calls.transaction.push('readVerified');return {status:'VERIFIED',run_id:'run-a56',
@@ -151,6 +160,10 @@ test('human-assisted A-only route issues five ordered requests and never acquire
   assert.equal(result.albumB,'NOT_STARTED');assert.equal(result.c1,'NOT_STARTED');
   assert.equal(result.live_e2e,'NOT_CLAIMED');assert.equal(result.physical_exactly_once,'UNKNOWN');
   assert.deepEqual(h.calls.reserve.map(item=>item.stage),['CARD','CALIBRATION','SAVE_ALL','CHOOSER_PATH']);
+  const inspections=h.calls.cli.filter(item=>item.operation==='inspect');
+  assert.equal(inspections.length>=2,true);
+  assert.deepEqual(inspections.map(item=>item.args.authorization),
+    [null,h.runtime.authorization]);
   assert.equal(h.calls.reserve.every(item=>item.owner===h.runtime.owner),true);
   const requests=h.calls.published.filter(item=>item.kind==='human-input-request-1');
   const results=h.calls.published.filter(item=>item.kind==='human-input-result-1');
@@ -182,8 +195,10 @@ test('human-assisted A-only route issues five ordered requests and never acquire
     &&item.request_id&&item.result_id&&item.evidence_refs.length===2),true);
   assert.equal(h.calls.finalize.length,1);
   assert.equal(h.calls.finalize[0].decoder,h.runtime.decoder);
-  assert.equal(h.calls.finalize[0].requests.card.request.request_stage,'CARD');
-  assert.equal(h.calls.finalize[0].requests.chooserConfirm.request.request_stage,'CHOOSER_CONFIRM');
+  assert.equal(h.calls.finalize[0].requests,undefined);
+  assert.match(h.calls.dispatch.chooser_readback.reference.path,/HUMAN_CHOOSER_RESERVATION_READBACK/);
+  assert.equal(h.calls.dispatch.chooser_path.result.request_stage,'CHOOSER_PATH');
+  assert.equal(h.calls.dispatch.chooser_confirm.result.request_stage,'CHOOSER_CONFIRM');
   assert.deepEqual(h.calls.evidence,['readiness','operator-CARD','card','operator-CALIBRATION','calibration',
     'preIntent','operator-SAVE_ALL','saveAll','operator-CHOOSER_PATH','chooserPath','operator-CHOOSER_CONFIRM','chooserConfirm']);
   assert.equal(h.calls.gui,0);assert.equal(h.calls.cli.length,2);assert.equal(h.stopped,true);
@@ -301,4 +316,190 @@ test('unknown chooser-path operator channel leaves the quartet reserved and neve
   assert.equal(h.calls.consumed.length,3);assert.equal(h.calls.latched.length,1);
   assert.equal([...h.reservations.values()].at(-1).state,'RESERVED');
   assert.equal(h.calls.transaction.includes('stop'),true);assert.equal(h.calls.gui,0);
+});
+
+const ROOT='/Users/example/Line_backup';
+const GROUP='owner-group';
+const DESTINATION=humanDestinationForConfig({projectRoot:ROOT,groupName:GROUP});
+
+function retained(kind,sequence) {
+  return {path:`harness-development/line-two-album-pilot-20261014/private/evidence/${kind}/${sequence}.json`,
+    bytes:16,sha256:'a'.repeat(64)};
+}
+
+function createFakeAdapter(overrides={}) {
+  let sequence=0;
+  const calls=[],writes=[];
+  const retainJSON=overrides.retainJSON??(async(_value,kind)=>retained(kind,++sequence));
+  const retainRaw=overrides.retainRaw??(async(raw,kind)=>({
+    ...retained(kind,++sequence),bytes:raw.byteLength,
+    sha256:createHash('sha256').update(raw).digest('hex'),
+  }));
+  const writePrivateJSON=overrides.writePrivateJSON??(async(relative,value)=>{
+    writes.push({relative,value});return retained('request',++sequence);
+  });
+  const readPrivateJSON=overrides.readPrivateJSON??(async()=>undefined);
+  const readPrivateBytes=overrides.readPrivateBytes??(async(relative)=>{
+    const value=await readPrivateJSON(relative);
+    return value===undefined?undefined:new Uint8Array(Buffer.from(JSON.stringify(value)));
+  });
+  const humanCli=overrides.humanCli??(async(operation,data,options)=>{
+    calls.push({operation,data,options});
+    if(operation==='inspect')return {human_read:{id:'readback',kind:data.human_read.kind}};
+    if(operation==='prepare')return {result:{status:'ALBUM_OPEN_READY',destination:DESTINATION,
+      fingerprint:{start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56}}};
+    return {result:{status:'OK'}};
+  });
+  const adapter=createHumanAssistedAdapter({humanCli,retainJSON,retainRaw,writePrivateJSON,
+    readPrivateBytes,
+    readRetained:overrides.readRetained,observeVisual:overrides.observeVisual,owner:'owner-1',destination:DESTINATION,
+    humanOwnerTimeoutMs:overrides.humanOwnerTimeoutMs,
+    now:overrides.now,nowMs:overrides.nowMs,sleep:overrides.sleep});
+  return {adapter,calls,writes};
+}
+
+test('HUMAN adapter surface matches the coordinator contract',()=>{
+  const {adapter}=createFakeAdapter();
+  assert.equal(typeof runHumanAssistedSingleAlbumPilot,'function');
+  assert.equal(typeof adapter.humanInput,'object');
+  assert.equal(typeof adapter.transaction,'object');
+  assert.equal(typeof adapter.evidence,'object');
+  for(const method of ['reserve','readReservation','publish','awaitOperatorReport','consumeReservation','persistLatch'])
+    assert.equal(typeof adapter.humanInput[method],'function');
+  for(const method of ['begin','admit','prepare','commitCalibration','commitIntent','readIntent',
+    'recordDispatch','finalize','readVerified','stop','release'])
+    assert.equal(typeof adapter.transaction[method],'function');
+  for(const method of ['readiness','card','calibration','preIntent','saveAll','chooserPath','chooserConfirm','recordFailure'])
+    assert.equal(typeof adapter.evidence[method],'function');
+});
+
+test('retainJSON evidence path is readback reference JSON',async()=>{
+  const reference=await publishJSONValue({kind:'request',request_id:'r1'},'request',{
+    publish:async(raw,kind,frameId,suffix)=>({path:`private/${kind}/${frameId}.${suffix}`,
+      bytes:raw.byteLength,sha256:frameId})});
+  assert.match(reference.path,/\.json$/);
+  assert.equal(reference.sha256.length,64);
+});
+
+test('human prepare skips AUTO chooser baseline and validates exact destination',async()=>{
+  assert.equal(requiresChooserBaseline({result:{status:'ALBUM_OPEN_READY'}}),false);
+  assert.equal(requiresChooserBaseline({result:{status:'ALBUM_OPEN_READY',frame_id:''}}),false);
+  assert.equal(requiresChooserBaseline({result:{status:'ALBUM_OPEN_READY',frame_id:'a'.repeat(64)}}),true);
+  const {adapter,calls}=createFakeAdapter();
+  const prepared=await adapter.transaction.prepare({binding:{task_id:'t'},readiness:{},begin:{},admitted:{}});
+  assert.equal(prepared.destination,DESTINATION);
+  assert.deepEqual(calls.map(call=>call.operation),['prepare']);
+});
+
+test('reservation adapter accepts the store reservation envelope',async()=>{
+  const {adapter,calls}=createFakeAdapter({humanCli:async(operation,data,options)=>{
+    calls.push({operation,data,options});return {reservation:{id:'reservation-1',kind:'album_open',count:1}};
+  }});
+  assert.deepEqual(await adapter.humanInput.reserve({stage:'CARD',kind:'album_open',count:1,
+    run_id:'run-1',owner:'owner-1',slots:['card']}),{id:'reservation-1'});
+  assert.equal(calls[0].operation,'gui_reserve');
+});
+
+test('human calibration requires four distinct refs and sends the attestation',async()=>{
+  const refs=[1,2,3,4].map(sequence=>retained('calibration',sequence));
+  const {adapter,calls}=createFakeAdapter();
+  const base={status:'OBSERVED',observed_at:'2026-10-18T00:00:00Z',raw_evidence_refs:refs};
+  await assert.rejects(adapter.transaction.commitCalibration({binding:{observer_session_id:'session-1'},
+    run_id:'run-1',request:{request_id:'request-1'},result:{result_id:'result-1'},
+    evidence:{...base,raw_evidence_refs:[refs[0]]},request_ref:retained('request',9),
+    result_ref:retained('result',9)}),error=>error.code==='HUMAN_CALIBRATION_REQUIRED');
+  await adapter.transaction.commitCalibration({binding:{observer_session_id:'session-1'},
+    run_id:'run-1',request:{request_id:'request-1'},result:{result_id:'result-1'},
+    evidence:base,request_ref:retained('request',10),result_ref:retained('result',10)});
+  const call=calls.at(-1);
+  assert.equal(call.operation,'calibrate');
+  assert.equal(call.data.calibration.kind,'human-menu-attestation-1');
+  assert.equal(call.data.calibration.observer_session_id,'session-1');
+  assert.deepEqual([call.data.calibration.detail_ref,call.data.calibration.menu_ref,
+    call.data.calibration.closure_ref,call.data.calibration.attestation_ref],refs);
+});
+
+test('human dispatch adapter forwards the pre-confirm chooser readback reference',async()=>{
+  const {adapter,calls}=createFakeAdapter();
+  const chooser_readback={reference:retained('HUMAN_CHOOSER_RESERVATION_READBACK',1)};
+  await adapter.transaction.recordDispatch({binding:{},run_id:'run-1',intent:{},intent_readback:{},
+    save_all:{},chooser_path:{},chooser_confirm:{},chooser_readback});
+  assert.equal(calls.at(-1).operation,'dispatch');
+  assert.deepEqual(calls.at(-1).data.chooser_readback,chooser_readback);
+});
+
+test('human prepare rejects a destination outside the exact A56 path',async()=>{
+  const {adapter}=createFakeAdapter({humanCli:async()=>({result:{status:'ALBUM_OPEN_READY',
+    destination:'/wrong',fingerprint:{start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56}}})});
+  await assert.rejects(adapter.transaction.prepare({binding:{},readiness:{},begin:{},admitted:{}}),
+    error=>error.code==='HUMAN_DESTINATION_MISMATCH');
+});
+
+test('owner report timeout is coded and never synthesized',async()=>{
+  let clock=0;
+  const {adapter,writes}=createFakeAdapter({humanOwnerTimeoutMs:5,nowMs:()=>clock,
+    sleep:async milliseconds=>{clock+=milliseconds;}});
+  await assert.rejects(adapter.humanInput.awaitOperatorReport({request:{request_id:'req-timeout'}}),
+    error=>error.code==='HUMAN_OPERATOR_REPORT_TIMEOUT');
+  assert.equal(writes.length,1);
+  assert.equal(writes[0].relative,
+    'harness-development/line-two-album-pilot-20261014/private/human-input/requests/req-timeout.json');
+});
+
+test('wrong-request or malformed owner response is rejected',async()=>{
+  assert.throws(()=>readHumanOwnerResponse({request_id:'other',outcome:'HUMAN_REPORTED_RETURNED',
+    reported_at:'2026-10-18T00:00:00.000Z',statement:'returned'},{requestId:'expected'}),
+  error=>error.code==='HUMAN_OPERATOR_REPORT_INVALID');
+  const {adapter}=createFakeAdapter({readPrivateJSON:async()=>({request_id:'wrong',
+    outcome:'HUMAN_REPORTED_RETURNED',reported_at:'2026-10-18T00:00:00.000Z',statement:'returned'})});
+  await assert.rejects(adapter.humanInput.awaitOperatorReport({request:{request_id:'expected'}}),
+    error=>error.code==='HUMAN_OPERATOR_REPORT_INVALID');
+});
+
+test('valid owner response is retained and returned as OPERATOR_REPORTED',async()=>{
+  const report={request_id:'request-1',outcome:'HUMAN_REPORTED_RETURNED',
+    reported_at:'2026-10-18T00:00:00.000Z',statement:'returned to album list'};
+  const {adapter}=createFakeAdapter({readPrivateJSON:async()=>report});
+  const result=await adapter.humanInput.awaitOperatorReport({request:{request_id:'request-1'}});
+  assert.equal(result.status,'OPERATOR_REPORTED');
+  assert.equal(result.outcome,'HUMAN_REPORTED_RETURNED');
+  assert.match(result.raw_response_ref.path,/\.json$/);
+});
+
+test('read-only inspection uses human_read selectors and no mutations',async()=>{
+  const {adapter,calls}=createFakeAdapter();
+  await adapter.humanInput.readReservation('reservation-1');
+  await adapter.transaction.readIntent({binding:{},run_id:'run-1',action_id:'action-1'});
+  await adapter.transaction.readVerified({binding:{},run_id:'run-1'});
+  assert.equal(calls.length,3);
+  assert.deepEqual(calls.map(call=>call.operation),['inspect','inspect','inspect']);
+  assert.deepEqual(calls.map(call=>call.options.publicRead),[true,true,true]);
+  assert.deepEqual(calls.map(call=>call.data.human_read.kind),['reservation','intent','verified']);
+});
+
+test('missing visual capture or evidence returns UNKNOWN with a real failure ref',async()=>{
+  const {adapter}=createFakeAdapter({observeVisual:async()=>({})});
+  const observed=await adapter.evidence.card({binding:{},prepared:{}});
+  assert.equal(observed.status,'UNKNOWN');
+  assert.equal(observed.observed_at,null);
+  assert.equal(observed.facts.observation_status,'UNKNOWN');
+  assert.equal(observed.raw_evidence_refs.length,1);
+  assert.match(observed.raw_evidence_refs[0].path,/\.json$/);
+});
+
+test('unproven visual facts cannot become OBSERVED',async()=>{
+  const packet=Buffer.from(JSON.stringify({facts:{album_detail_observed:false}}));
+  const reference={path:'harness-development/line-two-album-pilot-20261014/private/evidence/diagnostic.json',
+    bytes:packet.byteLength,sha256:(await import('node:crypto')).createHash('sha256').update(packet).digest('hex')};
+  const {adapter}=createFakeAdapter({observeVisual:async()=>({reference}),
+    readRetained:async()=>new Uint8Array(packet)});
+  const observed=await adapter.evidence.card({binding:{},prepared:{}});
+  assert.equal(observed.status,'UNKNOWN');
+  assert.equal(observed.raw_evidence_refs[0].sha256,reference.sha256);
+});
+
+test('destination helper is exact and rooted in the project',()=>{
+  assert.equal(DESTINATION,path.join(ROOT,'backups',GROUP,'2024-05-27_2024-05-31_56張'));
+  assert.throws(()=>humanDestinationForConfig({projectRoot:ROOT,groupName:'../escape'}),
+    error=>error.code==='HUMAN_GROUP_NAME_REQUIRED');
 });
