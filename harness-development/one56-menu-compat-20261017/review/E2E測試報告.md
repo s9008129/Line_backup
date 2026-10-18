@@ -400,3 +400,21 @@ AGENTS.md已於55396e8改為Owner啟動`deepseek-v4.1-flash:1017`全新獨立Cod
 本輪直接讀檔核對：candidate source SHA=`be0c248ab231fd76e1e8fc7a42800391bc3134d19e12a29a6da676c894856b1d`；installed=`ff717d721c9132abc2b22c738649e3cc4da34637a86fb794f549695e5cd3ca54`，不一致。舊pending runtime-binding仍`cd41ee25387fb784f2aef5158d7dd6bbde27bd44a42d2d42c5a905767b1b6076`，非candidate有效authority。245保護hash相同，canonical state35，無active batch/writer/context；原ledger lifecycle0/entries0，A/B VERIFIED均NOT_RUN，SaveAll總派送0。
 
 原始review與本輪hash／決策紀錄留本機 `private/chief-source-disposition-20261018-01/`：`chief-review.github.json` SHA-256 `532157f65307623716da715d263b747383fc0b45fdb942be3a5e13b55b15e4dc`；本機絕對根路徑由同任務private environment.json提供，公開版本遮蔽個人路徑，不上傳照片、群組名或原始grant。保留原始來源證據引用，不新增影像實驗、Plan或測試框架。本次checkpoint僅固定裁決與唯一待答決策，不代表正式Backup完成。
+
+## 2026-10-18 Owner 接受 HUMAN_ASSISTED；契約差異交接（尚未實作）
+
+Owner在同一對話明確表示「我接受人機協作模式」，因此不再把Owner模式選擇列為未答問題。該決定只允許準備最小安全契約差異供外部ChatGPT審查；不冒充Code Review、runtime grant或當次前景。已固定 [HUMAN_ASSISTED_ONE56/1](human-assisted-one56-contract-delta.md)（12,731 bytes；SHA-256 `1c00d80ff3dc50b167f5fe9e40b25736a13677b7011c40d6f8e1ba7c6ff00c66`），基底5261bc2，狀態PROPOSED_PENDING_EXTERNAL_PLAN_REVIEW。
+
+實際GPT-6-luna/high只讀梳理確認：v3 intent.calibration與common.py目前強制自動座標及HIGH，不能把人工資料偽裝進去；manifest也會先走自動frame-support。修訂限定typed HUMAN證據／manifest分流、strict calibration oneOf及schema pin、原intent/CAS/一次請求、人工result／chooser與原ledger actor outcome。`visual-diagnostic-capture`可提供raw CUA/SCK/native原料，但完整observer仍走OCR分析且Swift surface寫死ALBUMS；提案只重用capture並加mode-gated正確requested surface，沒有新映射算法。Sol不採用另建ledger建議，明定原task／Owner／canonical ledger與收據／已用quota不變，只可在核准後追加真實新事件。十一條待審源碼邊界及既有focused測試清單已明列，並非已修改或已通過測試。
+
+人工CARD／CAL／SAVE_ALL／CHOOSER依原slot先預留，原intent在SaveAll request前durable readback，request以run/action/stage唯一且不重發；未知保留intent與reservation。Owner是人工輸入者，DeepSeek是唯一AI觀察／正式E2E主體，Sol不派送或代判；人工資訊如實標OBSERVED／OPERATOR_REPORTED/HUMAN_ASSISTED。chooser需完整path及空目的地機器核對，最後仍實體56張SHA／完整ImageIO／VERIFIED/readback/release。自動2px/u+4/16×16及M5/M6不放寬、不重寫。A-only，B待A真正完成後獨立grant，不用第一本授權重送或湊第二本。
+
+本輪沒有產品diff、Unit/Integration Tests、native build或authorizer重跑；沒有GUI輸入、formal lifecycle、intent、SaveAll或DeepSeek Session。candidate closure仍`be0c248ab231fd76e1e8fc7a42800391bc3134d19e12a29a6da676c894856b1d`，installed仍`ff717d721c9132abc2b22c738649e3cc4da34637a86fb794f549695e5cd3ca54`，245保護hash零差異；A/B VERIFIED及獨立E2E仍NOT_RUN。真正下一關是固定SHA之契約差異的外部Plan裁決；取得後才最小實作、build、exact-source Code Review及合法runtime/grant準備。沒有把本次文件交付當成真正備份成果。
+
+原始Owner模式文字與源碼／保護hash紀錄留本機 `private/human-assisted-contract-20261018-01/`；`owner-mode-selection.txt` SHA-256 `e29df429030a135e7fa23c9fe7c39b1f571e2034def5b9be4028dbac04c87770`。文字是對話決定的逐字保存，不是簽署receipt；對話message ID未公開，保持NOT_EXPOSED。個人絕對路徑／照片／原始grant不公開。
+
+### 本輪附帶版本核對（唯讀，非LINE E2E）
+
+Owner的VS Code截圖顯示舊工作樹 `Line_backup_capture_first_recovery_20261016`／`implement/one-scroll-slice-20261016`，實際HEAD `22cee2bc7686d18dfda839baa49ea885d90a0ade`。指定的單一GPT-6-luna子代理直接查GitHub refs／PR head及精確Git blobs：該同名遠端branch不存在；本機該工作樹tracked clean，AGENTS工作檔=舊HEAD，SHA-256 `0b1dbb0fcff342417950a205f42da96a0acb94786609b0c29b5b42cc78cd9fe8`，不是未提交改動造成。PR10在查核時為5261bc2；one56_authority候選工作樹同版。其AGENTS與canonical主目錄及GitHub PR bytes相同，SHA-256 `faa2524cd04a971cfe0a6cbca663107d005e148aeebce3a02b42d7430310d404`；canonical主目錄HEAD仍b7bb666，18項既有tracked dirty保留。
+
+建議只在VS Code開正確one56_authority資料夾（detached HEAD是目前隔離工作樹的實際狀態），不對舊樹pull/reset。子代理沒有fetch、checkout、同步、改檔或GUI；本輪後續契約文件提交不改AGENTS，推送後由Sol另核對最新PR HEAD／AGENTS。這個版本核對不是DeepSeek或LINE驗收。

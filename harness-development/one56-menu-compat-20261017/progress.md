@@ -100,3 +100,13 @@ The first menu observation provided actual geometry and confirmed the Escape pro
 Sol一次有界判定只核對現有真實證據及目前支援API文件（cua.rewriteDocumentation，零觀察／輸入）：click仍回void，現有SCK/AX提供畫面／身份與交集定位，不提供已成立的actual dispatch≤2px證明；先前target-bound失敗、popup無可用SaveAll AX action的原始事實不變。結論`AUTOMATIC_CLICK_PROOF_UNSUPPORTED`（限目前支援路徑及既有證據），不是宣稱實際誤差必定>2px或所有未來方法物理不可行。不再展開演算法研究。唯一下一步為Owner是否接受HUMAN_ASSISTED：人工執行無法安全自動派送的選單操作，AI保留交易與後續驗證，DeepSeek獨立驗收；尚未批准或實作，接受後只提actor/intent/receipt/chooser/ledger/驗收模式最小契約差異供外部審查，再實作。
 
 既有AGENTS已在55396e8完成DeepSeek獨立Session角色，無須重複改檔；Handoff只補本次限定來源審查，沒有偽填正式批准或新grant。本輪產品／測試／runtime／grant未改，沒有重跑formal authorizer、GUI、lifecycle或SaveAll，245保護hash不變，state35、ledger lifecycle0/entries0。待Owner唯一模式決策，不能以本次checkpoint冒充備份成果。
+
+## 2026-10-18 Owner 已選 HUMAN_ASSISTED；最小契約差異待外部審查
+
+Owner明確回覆「我接受人機協作模式」，先前唯一模式決策已解除，不再要求重複選擇。Sol整合Luna/high一次唯讀源碼梳理，固定 [HUMAN_ASSISTED_ONE56/1](review/human-assisted-one56-contract-delta.md)，SHA-256 `1c00d80ff3dc50b167f5fe9e40b25736a13677b7011c40d6f8e1ba7c6ff00c66`。它僅針對A56：明示人工觀察／操作來源、strict HUMAN calibration schema、原intent後一次request、原ledger actor outcome、人工chooser完整路徑及原圖VERIFIED；保留AUTO分支、原task/Owner/ledger/counters，沒有新管理框架。raw SCK重用捕捉層但不冒充自動frame-support；B仍須A完成後獨立授權。
+
+此稿只供外部ChatGPT Plan Review，Owner模式選擇不等於實作批准。尚未改產品或測試、建立grant、安裝runtime、GUI或啟動DeepSeek；source closure仍be0c248a…、installed ff717d72…，245保護hash不變。下一步外部核准固定SHA後，Luna/high只在明示11條源碼路徑內最小實作／focused tests／build，固定新HEAD再Code Review；正式交易仍未啟動。
+
+另依Owner截圖完成GPT-6-luna唯讀版本核對：VS Code開的是capture_first_recovery_20261016／implement/one-scroll-slice-20261016／22cee2b，該同名GitHub分支不存在；不是目前PR10。one56_authority工作樹在查核時5261bc2與PR同版，AGENTS與canonical主目錄實際bytes及GitHub相同；舊VS Code工作樹的AGENTS與它自己的舊HEAD相同且乾淨。只建議開正確資料夾，未切分支、fetch/pull/reset或覆寫該舊工作樹。後續本輪文件提交不改AGENTS內容。
+
+Owner另詢問Finder多目錄是否實體隔離；單一GPT-6-luna/high唯讀核對.git metadata/common-dir，確認這些來源目錄為共享同一Git歷史的linked worktrees，各自checkout工作檔／HEAD／index且不自動同步；不是OS、憑證、LINE前景或正式備份狀態的硬體隔離。local_archives無.git，是一般封存目錄。只提供白話說明，未刪除、搬移或同步任何目錄。
