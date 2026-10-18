@@ -86,3 +86,9 @@ The first menu observation provided actual geometry and confirmed the Escape pro
 沒有產品改動或新測試／實驗，沒有重送或消耗正式lifecycle。已在現有[完整E2E報告](review/E2E測試報告.md)記錄第一拒絕、實際runtime雜湊、未執行項目與唯一待決替代：明示人工GUI證據及完整menu→SaveAll輸入的人機協作新模式；其intent/calibration/receipt/chooser契約、scope/grant須Owner決定與外部審查，現行入口不可直接執行。自動模式2px/u+4/16×16與原ledger/history保留；若要求全自動，現有證據仍BLOCKED。不為外部review缺漏造patch或偽造geometry。
 
 本階段checkpoint交付只更新既有報告／進度及一個去識別化[實際preflight JSON](review/formal-route-preflight-20261018.json)，原始截圖/AX/stdout/stderr/245hash留private。下一步：固定新HEAD、push更新Draft PR10，Owner將尚未核准M5/M6與唯一精確契約差異交外部Chief。A/B均NOT_RUN；沒有宣稱背景繼續或完整達標。
+
+## 2026-10-18 Owner 調整正式 Independent E2E 執行者
+
+依 Owner 最新指示，正式 E2E 改為 Ollama Cloud BYOK `deepseek-v4.1-flash:1017`，由 Owner 在全新、獨立 Codex CLI Session 啟動，不是 Sol 子代理。Sol 維持唯一 Planner／Orchestrator，Luna/high 維持必要實作、最小修復與 Unit／Integration Tests；外部 ChatGPT 維持 Plan／Code Review。已對 candidate 與 canonical 相同基底的 AGENTS.md 作角色定點修正，保留其餘 dirty 工作與歷史 Luna 實際紀錄。
+
+已準備[精簡 E2E Handoff](review/deepseek1017-e2e-handoff.md)，僅包含 Owner 目標、固定AC、候選／待核准 Commit 與實際 runtime/grant 身份、A56／B限制、真實入口、config 派生目的地、隔離證據、停止條件及中立回報格式；不傳 Sol 推理歷史或預設PASS。未啟動 DeepSeek，未驗證其 Session 工具能力，不冒稱正式 E2E 已發生。更換角色不會解除前階段的 PROJECT_IMPLEMENTATION_REVIEW_REQUIRED、來源／runtime不一致與未成立的正式校準；不改產品、grant、ledger、239歷史、2px契約或全域Harness。本輪沒有 GUI、正式交易或產品測試，接續主線仍為取得必要外部審查與有效交易準備，再由 Owner 啟動 DeepSeek 接手唯一正式 GUI 操作。

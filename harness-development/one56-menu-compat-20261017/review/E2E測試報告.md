@@ -374,3 +374,15 @@ NEXT_ACTION=OWNER_TRANSFER_EXACT_PR_SOURCE_AND_THIS_SINGLE_CONTRACT_DECISION_TO_
 ```
 
 本階段依持續授權 checkpoint commit/push 到既有 Draft PR #10；Commit 不等於審查或實機核准。請外部 Reviewer 查核精確 HEAD 的既有 M5/M6 實作與本節第一正式拒絕，並裁決上述唯一契約差異；在沒有真實核准、對齊 runtime 與有效前景前，不啟動 A 的唯一 lifecycle。
+
+## 2026-10-18 Owner 角色修訂：DeepSeek 1017 獨立 E2E（尚未啟動）
+
+本節僅記錄 Owner 的角色與交接修訂，並非實機驗收。正式 Independent E2E 改由 Ollama Cloud BYOK `deepseek-v4.1-flash:1017` 在 Owner 啟動的全新、獨立 Codex CLI Session 執行；它不是 Sol 本機 Subagent，Sol 不代操作或代寫判定，Luna/high 僅負責 Implementation／最小修復／Unit及Integration Tests。外部 ChatGPT 的兩道審查保持原職責。
+
+已最小修正專案 [AGENTS.md](../../../AGENTS.md) 所有現行 Luna Independent E2E 角色描述，另明定正式 E2E 的唯一 GUI owner、只讀受審來源／標準／grant與ledger、隔離證據寫入、獨立否決權及修復後新 Commit／必要 Code Review／新 DeepSeek Session 重驗。對本機 canonical AGENTS 的修改僅套用相同內容基底上的本輪角色差異，不覆蓋其餘原有 dirty 工作。歷史報告中的 Luna 模型、測試或判定維持原樣，不追改為 DeepSeek 成果。
+
+[DeepSeek E2E Handoff](deepseek1017-e2e-handoff.md) 固定 Owner 業務AC：A56一次 Save All、56實體原圖 SHA／完整ImageIO、VERIFIED讀回與release後才獨立B；239歷史與65人工排除、目的地分離、未知不重送不變。文件明列實際候選13b547a／既有closure與producer／舊pending bundle等身份，**尚未發放已核准正式 execution Commit／有效runtime/grant／當次前景**。本次文件交付的精確HEAD由同次PR和Owner訊息綁定，不能被當成正式執行批准。B入口／grant尚未交付，ONE56不可挪用。
+
+交接不提供 Sol 完整推理、自評或預設PASS。原始必要環境索引僅留本機 `private/deepseek-e2e-role-20261018-01/environment.json`，記錄 canonical root／config派生backup root／獨立證據目錄／精確待綁定欄位，不含BYOK key。所有正式來源／grant／ledger／state保護不因換模型而放寬；前節實際authorizer拒絕保留，本輪不為同一已知拒絕重跑preflight。
+
+本輪 `DEEPSEEK_SESSION=NOT_STARTED`、`ACTUAL_DEEPSEEK_MODEL=NOT_OBSERVED`、`INDEPENDENT_E2E=NOT_RUN`；GUI輸入、Save All派送及正式lifecycle新增均0。未改產品源碼或測試，未執行產品測試、build或GUI。只做文件一致性、無舊現行角色、交接未含預設PASS／私人內容、closure／控制檔完整性與Git差異檢查；不能把這些當E2E PASS。下一步仍是外部精確來源審查及正式runtime/authority準備，完成後由Owner啟動獨立DeepSeek Session，Sol/Luna讓出正式GUI。
