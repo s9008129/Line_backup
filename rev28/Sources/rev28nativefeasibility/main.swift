@@ -659,13 +659,13 @@ private func runG0(evidenceOnly: Bool = false) throws -> [String: Any] {
     let admissionDecision = PreDownContract.evaluate(admissionRequest, phase: .beforeHover)
     let admissionEvaluatedUTC = utcTimestamp()
     let admissionEvaluatedMonotonic = monotonicTimestamp()
+    guard let screenHeightPt = number(stateReply["screenHeight"]) else {
+        throw ProbeFailure(stage: "F1-G0", capability: "rev28harness.screenHeight", detail: "screenHeight is unavailable; no default screen height substituted")
+    }
+    guard screenHeightPt.isFinite, screenHeightPt > 0 else {
+        throw ProbeFailure(stage: "F1-G0", capability: "rev28harness.screenHeight", detail: "\(screenHeightPt); expected a finite positive measured screen height")
+    }
     if evidenceOnly {
-        guard let screenHeightPt = number(stateReply["screenHeight"]) else {
-            throw ProbeFailure(stage: "F1-G0", capability: "rev28harness.screenHeight", detail: "screenHeight is unavailable; no default screen height substituted")
-        }
-        guard screenHeightPt.isFinite, screenHeightPt > 0 else {
-            throw ProbeFailure(stage: "F1-G0", capability: "rev28harness.screenHeight", detail: "\(screenHeightPt); expected a finite positive measured screen height")
-        }
         let appKitBottomLeftFrame = CGRect(
             x: mainFrame.origin.x,
             y: screenHeightPt - mainFrame.origin.y - mainFrame.height,
