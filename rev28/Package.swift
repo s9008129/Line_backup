@@ -13,6 +13,8 @@ let package = Package(
         .executable(name: "rev28occluder", targets: ["rev28occluder"]),
         .executable(name: "rev28ctl", targets: ["rev28ctl"]),
         .executable(name: "rev28replay", targets: ["rev28replay"]),
+        .library(name: "Rev28NativeFeasibility", targets: ["Rev28NativeFeasibility"]),
+        .executable(name: "rev28nativefeasibility", targets: ["rev28nativefeasibility"]),
     ],
     targets: [
         .target(
@@ -50,10 +52,29 @@ let package = Package(
             path: "Sources/rev28replay",
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
+        .target(
+            name: "Rev28NativeFeasibility",
+            path: "Sources/Rev28NativeFeasibility",
+            sources: ["NativePreDownContract.swift"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+        .executableTarget(
+            name: "rev28nativefeasibility",
+            dependencies: ["Rev28NativeFeasibility"],
+            path: "Sources/rev28nativefeasibility",
+            sources: ["main.swift"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
         .testTarget(
             name: "Rev28CoreTests",
             dependencies: ["Rev28Core"],
             path: "Tests/Rev28CoreTests",
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+        .testTarget(
+            name: "Rev28NativeFeasibilityTests",
+            dependencies: ["Rev28NativeFeasibility"],
+            path: "Tests/Rev28NativeFeasibilityTests",
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
     ]
