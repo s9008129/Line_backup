@@ -238,6 +238,37 @@ private func contractRect(_ value: CGRect) -> ContractRect {
     ContractRect(x: Double(value.origin.x), y: Double(value.origin.y), width: Double(value.width), height: Double(value.height))
 }
 
+private func pointObject(_ value: CGPoint) -> [String: Double] {
+    ["x": Double(value.x), "y": Double(value.y)]
+}
+
+private func pointObject(_ value: ContractPoint) -> [String: Double] {
+    ["x": value.x, "y": value.y]
+}
+
+private func rectObject(_ value: CGRect) -> [String: Double] {
+    [
+        "x": Double(value.origin.x),
+        "y": Double(value.origin.y),
+        "w": Double(value.width),
+        "h": Double(value.height),
+    ]
+}
+
+private func rectObject(_ value: ContractRect) -> [String: Double] {
+    ["x": value.x, "y": value.y, "w": value.width, "h": value.height]
+}
+
+private func utcTimestamp() -> String {
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    return formatter.string(from: Date())
+}
+
+private func monotonicTimestamp() -> Double {
+    ProcessInfo.processInfo.systemUptime
+}
+
 private func allWindows() -> [WindowSnapshot] {
     guard let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID)
         as? [[String: Any]] else {
@@ -276,14 +307,16 @@ private func firstMismatch(_ checks: [(String, Bool)]) -> String? {
     checks.first(where: { !$0.1 })?.0
 }
 
-private func runG0() throws -> [String: Any] {
-    let postAccess = CGPreflightPostEventAccess()
-    let listenAccess = CGPreflightListenEventAccess()
-    if !postAccess {
-        throw ProbeFailure(stage: "F1-G0", capability: "CGPreflightPostEventAccess", detail: "false; no permission prompt or fallback permitted")
-    }
-    if !listenAccess {
-        throw ProbeFailure(stage: "F1-G0", capability: "CGPreflightListenEventAccess", detail: "false; no permission prompt or fallback permitted")
+private func runG0(evidenceOnly: Bool = false) throws -> [String: Any] {
+    let postAccess = evidenceOnly ? false : CGPreflightPostEventAccess()
+    let listenAccess = evidenceOnly ? false : CGPreflightListenEventAccess()
+    if !evidenceOnly {
+        if !postAccess {
+            throw ProbeFailure(stage: "F1-G0", capability: "CGPreflightPostEventAccess", detail: "false; no permission prompt or fallback permitted")
+        }
+        if !listenAccess {
+            throw ProbeFailure(stage: "F1-G0", capability: "CGPreflightListenEventAccess", detail: "false; no permission prompt or fallback permitted")
+        }
     }
 
     let executableDirectory = Bundle.main.executableURL?.deletingLastPathComponent()
@@ -304,13 +337,15 @@ private func runG0() throws -> [String: Any] {
     }
 
     var stateReply = try harness.request("state")
-    if bool(stateReply["active"]) != true {
+    if !evidenceOnly, bool(stateReply["active"]) != true {
         let activation = try harness.request("activate")
         guard bool(activation["active"]) == true else {
             throw ProbeFailure(stage: "F1-G0", capability: "controlled_window_activation", detail: "rev28harness did not become active")
         }
         stateReply = try harness.request("state")
     }
+    let appKitStateObservedUTC = utcTimestamp()
+    let appKitStateObservedMonotonic = monotonicTimestamp()
     guard let mainWindowNumber = (stateReply["mainWindowNumber"] as? NSNumber)?.uint32Value,
           let mainFrame = rect(stateReply["mainFrameTopLeft"]),
           let contentOrigin = point(stateReply["contentOriginLocalTopLeft"]),
@@ -320,6 +355,8 @@ private func runG0() throws -> [String: Any] {
     guard let mainWindow = allWindows().first(where: { $0.number == mainWindowNumber && $0.ownerPID == harnessPID }) else {
         throw ProbeFailure(stage: "F1-G0", capability: "CGWindowList.main_window", detail: "exact rev28harness window was not found")
     }
+    let cgWindowObservedUTC = utcTimestamp()
+    let cgWindowObservedMonotonic = monotonicTimestamp()
     guard mainWindow.layer == 0, mainWindow.onScreen, mainWindow.alpha > 0 else {
         throw ProbeFailure(stage: "F1-G0", capability: "CGWindowList.main_surface", detail: "controlled ordinary surface is not layer-0, on-screen, alpha-positive")
     }
@@ -339,45 +376,53 @@ private func runG0() throws -> [String: Any] {
         throw ProbeFailure(stage: "F1-G0", capability: "noAmbiguousWindowAbove", detail: "windows above target: \(aboveWindows.map(\.number))")
     }
 
-    let resetReply = try harness.request("hitReport", params: ["reset": true])
-    guard integer(resetReply["mainHits"]) == 0, integer(resetReply["popupHits"]) == 0 else {
-        throw ProbeFailure(stage: "F1-G0", capability: "controlled_hit_baseline", detail: "controlled application hit counters did not reset to zero")
+    if !evidenceOnly {
+        let resetReply = try harness.request("hitReport", params: ["reset": true])
+        guard integer(resetReply["mainHits"]) == 0, integer(resetReply["popupHits"]) == 0 else {
+            throw ProbeFailure(stage: "F1-G0", capability: "controlled_hit_baseline", detail: "controlled application hit counters did not reset to zero")
+        }
     }
 
-    let eventMask = (1 << CGEventType.mouseMoved.rawValue)
-        | (1 << CGEventType.leftMouseDown.rawValue)
-        | (1 << CGEventType.leftMouseUp.rawValue)
-    let recorder = TapRecorder()
-    let callback: CGEventTapCallBack = { _, type, event, userInfo in
-        guard let userInfo else { return Unmanaged.passUnretained(event) }
-        let recorder = Unmanaged<TapRecorder>.fromOpaque(userInfo).takeUnretainedValue()
-        switch type {
-        case .mouseMoved, .leftMouseDown, .leftMouseUp:
-            recorder.record(type: type, event: event)
-        case .tapDisabledByTimeout, .tapDisabledByUserInput:
-            recorder.recordDisabled(type: type)
-        default:
-            break
+    var recorder: TapRecorder?
+    var tap: CFMachPort?
+    if !evidenceOnly {
+        let eventMask = (1 << CGEventType.mouseMoved.rawValue)
+            | (1 << CGEventType.leftMouseDown.rawValue)
+            | (1 << CGEventType.leftMouseUp.rawValue)
+        let liveRecorder = TapRecorder()
+        let callback: CGEventTapCallBack = { _, type, event, userInfo in
+            guard let userInfo else { return Unmanaged.passUnretained(event) }
+            let recorder = Unmanaged<TapRecorder>.fromOpaque(userInfo).takeUnretainedValue()
+            switch type {
+            case .mouseMoved, .leftMouseDown, .leftMouseUp:
+                recorder.record(type: type, event: event)
+            case .tapDisabledByTimeout, .tapDisabledByUserInput:
+                recorder.recordDisabled(type: type)
+            default:
+                break
+            }
+            return Unmanaged.passUnretained(event)
         }
-        return Unmanaged.passUnretained(event)
+        guard let liveTap = CGEvent.tapCreateForPid(
+            pid: harnessPID,
+            place: .tailAppendEventTap,
+            options: .listenOnly,
+            eventsOfInterest: CGEventMask(eventMask),
+            callback: callback,
+            userInfo: Unmanaged.passUnretained(liveRecorder).toOpaque()
+        ) else {
+            throw ProbeFailure(stage: "F1-G0", capability: "CGEventTapCreateForPid", detail: "nil tap for exact controlled PID")
+        }
+        let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, liveTap, 0)
+        CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
+        CGEvent.tapEnable(tap: liveTap, enable: true)
+        guard CGEvent.tapIsEnabled(tap: liveTap) else {
+            throw ProbeFailure(stage: "F1-G0", capability: "CGEventTapIsEnabled", detail: "tail/listen-only tap did not become enabled")
+        }
+        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+        recorder = liveRecorder
+        tap = liveTap
     }
-    guard let tap = CGEvent.tapCreateForPid(
-        pid: harnessPID,
-        place: .tailAppendEventTap,
-        options: .listenOnly,
-        eventsOfInterest: CGEventMask(eventMask),
-        callback: callback,
-        userInfo: Unmanaged.passUnretained(recorder).toOpaque()
-    ) else {
-        throw ProbeFailure(stage: "F1-G0", capability: "CGEventTapCreateForPid", detail: "nil tap for exact controlled PID")
-    }
-    let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
-    CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
-    CGEvent.tapEnable(tap: tap, enable: true)
-    guard CGEvent.tapIsEnabled(tap: tap) else {
-        throw ProbeFailure(stage: "F1-G0", capability: "CGEventTapIsEnabled", detail: "tail/listen-only tap did not become enabled")
-    }
-    RunLoop.main.run(until: Date().addingTimeInterval(0.05))
 
     func configuredEvent(type: CGEventType) throws -> CGEvent {
         guard let event = CGEvent(mouseEventSource: nil, mouseType: type, mouseCursorPosition: target, mouseButton: .left) else {
@@ -402,8 +447,11 @@ private func runG0() throws -> [String: Any] {
         throw ProbeFailure(stage: "F1-G0", capability: "CGEventGetLocation", detail: "constructed event location is non-finite")
     }
 
-    let scale = Double(NSScreen.main?.backingScaleFactor ?? 1)
+    let mainScreen = NSScreen.main
+    let scale = Double(mainScreen?.backingScaleFactor ?? 1)
     let displayID = CGMainDisplayID()
+    let displayBounds = CGDisplayBounds(displayID)
+    let mainScreenFrame = mainScreen?.frame ?? .zero
     let captureBBox = contractRect(mainWindow.bounds)
     let captureGeometry = CaptureGeometry(
         windowFramePt: captureBBox,
@@ -430,6 +478,18 @@ private func runG0() throws -> [String: Any] {
         ContractPoint(x: witnessRect.x, y: witnessRect.y),
         ContractPoint(x: witnessRect.maxX, y: witnessRect.maxY),
     ]
+    let roundTripEvidence: [[String: Any]] = roundTripAnchors.map { anchor in
+        let screen = captureGeometry.screenPoint(fromCapture: anchor)
+        let roundTripped = captureGeometry.capturePoint(fromScreen: screen)
+        let dx = abs(roundTripped.x - anchor.x)
+        let dy = abs(roundTripped.y - anchor.y)
+        return [
+            "anchor_capture_px": pointObject(anchor),
+            "screen_point": pointObject(screen),
+            "round_tripped_capture_px": pointObject(roundTripped),
+            "residual_capture_px_before_scale": max(dx, dy),
+        ]
+    }
     let transformPx = roundTripAnchors.map { anchor -> Double in
         let roundTripped = captureGeometry.capturePoint(
             fromScreen: captureGeometry.screenPoint(fromCapture: anchor)
@@ -438,8 +498,15 @@ private func runG0() throws -> [String: Any] {
         let dy = abs(roundTripped.y - anchor.y)
         return max(dx, dy) * scale
     }.max() ?? 0
+    let transformResidualCapturePx = roundTripEvidence.map {
+        $0["residual_capture_px_before_scale"] as? Double ?? 0
+    }.max() ?? 0
 
+    let freshStateObservedUTC = utcTimestamp()
+    let freshStateObservedMonotonic = monotonicTimestamp()
     let freshState = try harness.request("state")
+    let freshStateReceivedUTC = utcTimestamp()
+    let freshStateReceivedMonotonic = monotonicTimestamp()
     let freshFrame = rect(freshState["mainFrameTopLeft"]) ?? mainFrame
     let motionPoints = max(
         abs(Double(freshFrame.origin.x - mainFrame.origin.x)),
@@ -449,6 +516,21 @@ private func runG0() throws -> [String: Any] {
     )
     let motionPx = motionPoints * scale
     let serializedLocations = constructedLocations.map { contractPoint($0) }
+    let serializeEvidence: [[String: Any]] = zip(
+        [ConstructedEventKind.mouseMoved, .leftMouseDown, .leftMouseUp],
+        serializedLocations
+    ).map { (kind, location) in
+        let capture = captureGeometry.capturePoint(fromScreen: location)
+        let dx = abs(capture.x - targetCapture.x)
+        let dy = abs(capture.y - targetCapture.y)
+        return [
+            "kind": kind.rawValue,
+            "location_screen_pt": pointObject(location),
+            "location_capture_px": pointObject(capture),
+            "residual_px": max(dx, max(dy, capture.distance(to: targetCapture))),
+            "posted": false,
+        ]
+    }
     let serializeResidualPx = serializedLocations.map { location -> Double in
         let capture = captureGeometry.capturePoint(fromScreen: location)
         let dx = abs(capture.x - targetCapture.x)
@@ -558,6 +640,204 @@ private func runG0() throws -> [String: Any] {
         preDownDeadlineMonotonic: now + 1
     )
     let admissionDecision = PreDownContract.evaluate(admissionRequest, phase: .beforeHover)
+    let admissionEvaluatedUTC = utcTimestamp()
+    let admissionEvaluatedMonotonic = monotonicTimestamp()
+    if evidenceOnly {
+        let screenHeightPt = number(stateReply["screenHeight"]) ?? 0
+        let appKitBottomLeftFrame = CGRect(
+            x: mainFrame.origin.x,
+            y: screenHeightPt - mainFrame.origin.y - mainFrame.height,
+            width: mainFrame.width,
+            height: mainFrame.height
+        )
+        let constructedCapturePoint = captureGeometry.capturePoint(fromScreen: serializedLocations[1])
+        let constructionResidualPx = max(
+            abs(constructedCapturePoint.x - targetCapture.x),
+            max(
+                abs(constructedCapturePoint.y - targetCapture.y),
+                constructedCapturePoint.distance(to: targetCapture)
+            )
+        )
+        let uPrePx = localizePx + transformPx + motionPx + serializeResidualPx
+        let admissionOutcome: String
+        let admissionTerminal: String
+        let admissionFailures: [[String: String]]
+        switch admissionDecision {
+        case .admitted:
+            admissionOutcome = "ADMITTED"
+            admissionTerminal = "NONE"
+            admissionFailures = []
+        case let .refused(refusal):
+            admissionOutcome = "REFUSED"
+            admissionTerminal = refusal.terminal.rawValue
+            admissionFailures = refusal.failures.map { ["code": $0.code, "detail": $0.detail] }
+        }
+        let rawAppKitState: [String: Any] = [
+            "source": "rev28harness.state",
+            "screenHeight": stateReply["screenHeight"] ?? NSNull(),
+            "mainFrameTopLeft": stateReply["mainFrameTopLeft"] ?? NSNull(),
+            "contentOriginLocalTopLeft": stateReply["contentOriginLocalTopLeft"] ?? NSNull(),
+            "hasShadow": stateReply["hasShadow"] ?? NSNull(),
+            "mainWindowNumber": stateReply["mainWindowNumber"] ?? NSNull(),
+            "mainVisible": stateReply["mainVisible"] ?? NSNull(),
+            "active": stateReply["active"] ?? NSNull(),
+        ]
+        let freshAppKitState: [String: Any] = [
+            "source": "rev28harness.state.second_snapshot",
+            "screenHeight": freshState["screenHeight"] ?? NSNull(),
+            "mainFrameTopLeft": freshState["mainFrameTopLeft"] ?? NSNull(),
+            "freshFramePresent": rect(freshState["mainFrameTopLeft"]) != nil,
+        ]
+        let cgWindowState: [String: Any] = [
+            "source": "CGWindowListCopyWindowInfo.optionOnScreenOnly",
+            "window_id": Int(mainWindow.number),
+            "owner_pid": Int(mainWindow.ownerPID),
+            "layer": mainWindow.layer,
+            "alpha": mainWindow.alpha,
+            "on_screen": mainWindow.onScreen,
+            "bounds": rectObject(mainWindow.bounds),
+        ]
+        let displayState: [String: Any] = [
+            "display_id": Int(displayID),
+            "cg_display_bounds": rectObject(displayBounds),
+            "main_screen_frame": rectObject(mainScreenFrame),
+            "main_screen_count": NSScreen.screens.count,
+            "backing_scale": scale,
+            "scale_source": "NSScreen.main.backingScaleFactor",
+            "window_inside_cg_main_display": displayBounds.contains(mainWindow.bounds),
+            "window_display_binding": displayBounds.contains(mainWindow.bounds)
+                ? "WINDOW_FRAME_INSIDE_CG_MAIN_DISPLAY"
+                : "WINDOW_FRAME_CROSSES_OR_OUTSIDE_CG_MAIN_DISPLAY",
+        ]
+        let localizeInputs: [String: Any] = [
+            "appkit_frame_bottom_left_screen_pt": rectObject(appKitBottomLeftFrame),
+            "appkit_frame_provenance": "DERIVED_FROM_REV28HARNESS_MAIN_FRAME_TOP_LEFT_AND_SCREEN_HEIGHT_SAME_APPKIT_PATH",
+            "appkit_frame_top_left_screen_pt": rectObject(mainFrame),
+            "cgwindow_frame_top_left_screen_pt": rectObject(mainWindow.bounds),
+            "delta_points": [
+                "x": abs(Double(mainFrame.origin.x - mainWindow.bounds.origin.x)),
+                "y": abs(Double(mainFrame.origin.y - mainWindow.bounds.origin.y)),
+                "w": abs(Double(mainFrame.width - mainWindow.bounds.width)),
+                "h": abs(Double(mainFrame.height - mainWindow.bounds.height)),
+            ],
+            "max_delta_points": frameDeltaPoints,
+            "multiplier": scale,
+            "formula": "max(abs(dx),abs(dy),abs(dw),abs(dh)) * backing_scale",
+            "units": "capture_px",
+            "value_px": localizePx,
+        ]
+        let transformInputs: [String: Any] = [
+            "anchors_capture_px": roundTripAnchors.map { pointObject($0) },
+            "round_trips": roundTripEvidence,
+            "residual_capture_px_before_multiplier": transformResidualCapturePx,
+            "multiplier": scale,
+            "formula": "max(max(abs(dx),abs(dy)) * backing_scale) over round-trip anchors",
+            "units": "capture_px",
+            "value_px": transformPx,
+            "source": "CaptureGeometry round trip; not independent SCK-to-CGEvent alignment evidence",
+        ]
+        let motionInputs: [String: Any] = [
+            "first_frame_top_left_screen_pt": rectObject(mainFrame),
+            "second_frame_top_left_screen_pt": freshAppKitState["mainFrameTopLeft"] ?? NSNull(),
+            "second_frame_present": rect(freshState["mainFrameTopLeft"]) != nil,
+            "delta_points": [
+                "x": abs(Double(freshFrame.origin.x - mainFrame.origin.x)),
+                "y": abs(Double(freshFrame.origin.y - mainFrame.origin.y)),
+                "w": abs(Double(freshFrame.width - mainFrame.width)),
+                "h": abs(Double(freshFrame.height - mainFrame.height)),
+            ],
+            "max_delta_points": motionPoints,
+            "multiplier": scale,
+            "formula": "max(abs(dx),abs(dy),abs(dw),abs(dh)) * backing_scale",
+            "units": "capture_px",
+            "value_px": motionPx,
+            "sampling_only": true,
+        ]
+        let serializeInputs: [String: Any] = [
+            "events": serializeEvidence,
+            "constructed_locations_screen_pt": serializedLocations.map { pointObject($0) },
+            "target_capture_px": pointObject(targetCapture),
+            "formula": "max(dx,dy,distance) between constructed location and requested target in capture px",
+            "units": "capture_px",
+            "value_px": serializeResidualPx,
+            "event_posting": 0,
+        ]
+        let evidence: [String: Any] = [
+            "record": "F1_PRE_DOWN_EVIDENCE_V1",
+            "verdict": "PRE_DOWN_EVIDENCE_CAPTURED",
+            "captured_at_utc": utcTimestamp(),
+            "timestamps": [
+                "appkit_state_utc": appKitStateObservedUTC,
+                "appkit_state_monotonic": appKitStateObservedMonotonic,
+                "cgwindow_utc": cgWindowObservedUTC,
+                "cgwindow_monotonic": cgWindowObservedMonotonic,
+                "fresh_state_request_utc": freshStateObservedUTC,
+                "fresh_state_request_monotonic": freshStateObservedMonotonic,
+                "fresh_state_receipt_utc": freshStateReceivedUTC,
+                "fresh_state_receipt_monotonic": freshStateReceivedMonotonic,
+                "admission_evaluation_utc": admissionEvaluatedUTC,
+                "admission_evaluation_monotonic": admissionEvaluatedMonotonic,
+                "clock_units": "UTC ISO8601; monotonic seconds from ProcessInfo.systemUptime",
+            ],
+            "identity": [
+                "harness_pid": Int(harnessPID),
+                "main_window_number": Int(mainWindowNumber),
+                "target_binding": targetBinding,
+                "target_screen_point": pointObject(target),
+                "target_capture_point": pointObject(targetCapture),
+            ],
+            "coordinate_contract": [
+                "appkit_origin": "bottom-left screen points (derived from same rev28harness AppKit path)",
+                "cgwindow_origin": "top-left screen points",
+                "capture_units": "capture pixels after backing_scale",
+                "backing_scale": scale,
+                "sck_geometry": "NOT_USED",
+                "sck_geometry_note": "captureBBox is CGWindow bounds, not an SCK frame",
+            ],
+            "raw_appkit_state": rawAppKitState,
+            "fresh_appkit_state": freshAppKitState,
+            "raw_cgwindow": cgWindowState,
+            "display": displayState,
+            "capture_geometry": [
+                "window_frame_pt": rectObject(captureGeometry.windowFramePt),
+                "capture_bbox_pt": rectObject(captureGeometry.captureBBoxPt),
+                "scale": captureGeometry.scale,
+                "capture_bbox_source": "COPIED_FROM_CGWINDOW_BOUNDS",
+            ],
+            "uncertainty": [
+                "U_localize": localizeInputs,
+                "U_transform": transformInputs,
+                "U_motion": motionInputs,
+                "U_serialize": serializeInputs,
+                "U_pre_px": uPrePx,
+                "contract_total_px": admissionRequest.uncertainty.totalPx.map { $0 as Any } ?? NSNull(),
+                "all_measured": admissionRequest.uncertainty.allMeasured,
+                "component_sum_px": [localizePx, transformPx, motionPx, serializeResidualPx],
+                "construction_residual_px": constructionResidualPx,
+                "threshold_px": 2.0,
+            ],
+            "admission": [
+                "decision": admissionOutcome,
+                "terminal": admissionTerminal,
+                "failures": admissionFailures,
+                "first_failure": admissionFailures.first ?? [String: String](),
+                "phase": AdmissionPhase.beforeHover.rawValue,
+            ],
+            "zero_event_guarantee": [
+                "events_posted": 0,
+                "event_tap_created": false,
+                "event_post_reachable_after_return": false,
+                "fallthrough_to_g0": false,
+                "preflight_post_event_access": "NOT_QUERIED",
+                "preflight_listen_event_access": "NOT_QUERIED",
+                "line_input": 0,
+                "save_all_dispatch": 0,
+                "grant_intent_ledger_calls": 0,
+            ],
+            "evidence_only": true,
+        ]
+        return evidence
+    }
     guard case let .admitted(admission) = admissionDecision else {
         let failures: [String]
         if case let .refused(refusal) = admissionDecision {
@@ -571,6 +851,9 @@ private func runG0() throws -> [String: Any] {
     guard admission.totalUncertaintyPx <= 2.0,
           admission.constructionResidualPx <= admission.totalUncertaintyPx else {
         throw ProbeFailure(stage: "F1-G0", capability: "PRE_DOWN_2PX_BOUND", detail: "admission returned an out-of-bound state")
+    }
+    guard let recorder = recorder, let tap = tap else {
+        throw ProbeFailure(stage: "F1-G0", capability: "F1_ACTIVE_TAP", detail: "dispatch path started without an active recorder/tap")
     }
 
     moveEvent.post(tap: .cghidEventTap)
@@ -742,34 +1025,76 @@ private func sourceTokenHex() -> String {
     String(sourceToken, radix: 16)
 }
 
+let evidenceOnlyMode = CommandLine.arguments.contains("--pre-down-evidence-only")
+
 do {
+    if evidenceOnlyMode {
+        let result = try runG0(evidenceOnly: true)
+        emitJSON(result)
+        exit(0)
+    }
     guard CommandLine.arguments.contains("--g0") else {
-        throw ProbeFailure(stage: "F1-G0", capability: "arguments", detail: "run with --g0")
+        throw ProbeFailure(stage: "F1-G0", capability: "arguments", detail: "run with --g0 or --pre-down-evidence-only")
     }
     let result = try runG0()
     emitJSON(result)
     exit(result["verdict"] as? String == "F1_G0_SUPPORTED" ? 0 : 3)
 } catch let failure as ProbeFailure {
-    emitJSON([
-        "record": "F1_G0_RESULT",
-        "verdict": "F1_UNSUPPORTED",
-        "first_missing_capability": failure.capability,
-        "stage": failure.stage,
-        "detail": failure.detail,
-        "line_input": 0,
-        "save_all_dispatch": 0,
-        "grant_intent_ledger_calls": 0,
-    ])
+    emitJSON(
+        evidenceOnlyMode
+            ? [
+                "record": "F1_PRE_DOWN_EVIDENCE_V1",
+                "verdict": "EVIDENCE_ONLY_INCOMPLETE",
+                "first_missing_capability": failure.capability,
+                "stage": failure.stage,
+                "detail": failure.detail,
+                "zero_event_guarantee": [
+                    "events_posted": 0,
+                    "event_tap_created": false,
+                    "fallthrough_to_g0": false,
+                    "line_input": 0,
+                    "save_all_dispatch": 0,
+                    "grant_intent_ledger_calls": 0,
+                ],
+            ]
+            : [
+                "record": "F1_G0_RESULT",
+                "verdict": "F1_UNSUPPORTED",
+                "first_missing_capability": failure.capability,
+                "stage": failure.stage,
+                "detail": failure.detail,
+                "line_input": 0,
+                "save_all_dispatch": 0,
+                "grant_intent_ledger_calls": 0,
+            ]
+    )
     exit(3)
 } catch {
-    emitJSON([
-        "record": "F1_G0_RESULT",
-        "verdict": "F1_UNSUPPORTED",
-        "first_missing_capability": "unexpected_internal_failure",
-        "detail": String(describing: error),
-        "line_input": 0,
-        "save_all_dispatch": 0,
-        "grant_intent_ledger_calls": 0,
-    ])
+    emitJSON(
+        evidenceOnlyMode
+            ? [
+                "record": "F1_PRE_DOWN_EVIDENCE_V1",
+                "verdict": "EVIDENCE_ONLY_INCOMPLETE",
+                "first_missing_capability": "unexpected_internal_failure",
+                "detail": String(describing: error),
+                "zero_event_guarantee": [
+                    "events_posted": 0,
+                    "event_tap_created": false,
+                    "fallthrough_to_g0": false,
+                    "line_input": 0,
+                    "save_all_dispatch": 0,
+                    "grant_intent_ledger_calls": 0,
+                ],
+            ]
+            : [
+                "record": "F1_G0_RESULT",
+                "verdict": "F1_UNSUPPORTED",
+                "first_missing_capability": "unexpected_internal_failure",
+                "detail": String(describing: error),
+                "line_input": 0,
+                "save_all_dispatch": 0,
+                "grant_intent_ledger_calls": 0,
+            ]
+    )
     exit(3)
 }
