@@ -368,13 +368,17 @@ private func runG0(evidenceOnly: Bool = false) throws -> [String: Any] {
     guard mainWindow.bounds.contains(target) else {
         throw ProbeFailure(stage: "F1-G0", capability: "controlled_target_point", detail: "selected point is outside the exact controlled window")
     }
-    if let above = topmostWindow(at: target), above.number != mainWindow.number {
+    let observedTopmostWindow = topmostWindow(at: target)
+    if !evidenceOnly, let above = observedTopmostWindow, above.number != mainWindow.number {
         throw ProbeFailure(stage: "F1-G0", capability: "topmostSurfaceMatchesTarget", detail: "another alpha-positive window \(above.number) is above controlled window \(mainWindow.number)")
     }
     let aboveWindows = windowsAbove(target: mainWindow, at: target)
-    guard aboveWindows.isEmpty else {
-        throw ProbeFailure(stage: "F1-G0", capability: "noAmbiguousWindowAbove", detail: "windows above target: \(aboveWindows.map(\.number))")
+    if !evidenceOnly {
+        guard aboveWindows.isEmpty else {
+            throw ProbeFailure(stage: "F1-G0", capability: "noAmbiguousWindowAbove", detail: "windows above target: \(aboveWindows.map(\.number))")
+        }
     }
+    let surfaceUnsafe = observedTopmostWindow?.number != mainWindow.number || !aboveWindows.isEmpty
 
     if !evidenceOnly {
         let resetReply = try harness.request("hitReport", params: ["reset": true])
@@ -447,11 +451,16 @@ private func runG0(evidenceOnly: Bool = false) throws -> [String: Any] {
         throw ProbeFailure(stage: "F1-G0", capability: "CGEventGetLocation", detail: "constructed event location is non-finite")
     }
 
-    let mainScreen = NSScreen.main
-    let scale = Double(mainScreen?.backingScaleFactor ?? 1)
+    guard let mainScreen = NSScreen.main else {
+        throw ProbeFailure(stage: "F1-G0", capability: "NSScreen.main", detail: "main screen is unavailable; no default scale substituted")
+    }
+    let scale = Double(mainScreen.backingScaleFactor)
+    guard scale.isFinite, scale > 0 else {
+        throw ProbeFailure(stage: "F1-G0", capability: "NSScreen.main.backingScaleFactor", detail: "\(scale); expected a finite positive measured scale")
+    }
     let displayID = CGMainDisplayID()
     let displayBounds = CGDisplayBounds(displayID)
-    let mainScreenFrame = mainScreen?.frame ?? .zero
+    let mainScreenFrame = mainScreen.frame
     let captureBBox = contractRect(mainWindow.bounds)
     let captureGeometry = CaptureGeometry(
         windowFramePt: captureBBox,
@@ -507,7 +516,15 @@ private func runG0(evidenceOnly: Bool = false) throws -> [String: Any] {
     let freshState = try harness.request("state")
     let freshStateReceivedUTC = utcTimestamp()
     let freshStateReceivedMonotonic = monotonicTimestamp()
-    let freshFrame = rect(freshState["mainFrameTopLeft"]) ?? mainFrame
+    guard let freshFrame = rect(freshState["mainFrameTopLeft"]) else {
+        throw ProbeFailure(stage: "F1-G0", capability: "rev28harness.state.second_snapshot.mainFrameTopLeft", detail: "second frame is unavailable; no default frame substituted")
+    }
+    guard freshFrame.origin.x.isFinite,
+          freshFrame.origin.y.isFinite,
+          freshFrame.size.width.isFinite,
+          freshFrame.size.height.isFinite else {
+        throw ProbeFailure(stage: "F1-G0", capability: "rev28harness.state.second_snapshot.mainFrameTopLeft", detail: "second frame is non-finite")
+    }
     let motionPoints = max(
         abs(Double(freshFrame.origin.x - mainFrame.origin.x)),
         max(abs(Double(freshFrame.origin.y - mainFrame.origin.y)),
@@ -615,7 +632,7 @@ private func runG0(evidenceOnly: Bool = false) throws -> [String: Any] {
         ),
         surface: SurfaceEvidence(
             expectedWindowID: mainWindow.number,
-            observedTopmostWindowID: topmostWindow(at: target)?.number ?? 0,
+            observedTopmostWindowID: observedTopmostWindow?.number ?? 0,
             expectedLayer: mainWindow.layer,
             observedLayer: mainWindow.layer,
             alpha: mainWindow.alpha,
@@ -623,7 +640,7 @@ private func runG0(evidenceOnly: Bool = false) throws -> [String: Any] {
             noAmbiguousWindowAbove: aboveWindows.isEmpty
         ),
         hitTest: HitTestEvidence(
-            selectedPointIdentifiesTarget: topmostWindow(at: target)?.number == mainWindow.number,
+            selectedPointIdentifiesTarget: observedTopmostWindow?.number == mainWindow.number,
             allUncertaintyProbesIdentifyTarget: hitTargetsMatch,
             probeCount: hitProbePoints.count
         ),
@@ -643,7 +660,12 @@ private func runG0(evidenceOnly: Bool = false) throws -> [String: Any] {
     let admissionEvaluatedUTC = utcTimestamp()
     let admissionEvaluatedMonotonic = monotonicTimestamp()
     if evidenceOnly {
-        let screenHeightPt = number(stateReply["screenHeight"]) ?? 0
+        guard let screenHeightPt = number(stateReply["screenHeight"]) else {
+            throw ProbeFailure(stage: "F1-G0", capability: "rev28harness.screenHeight", detail: "screenHeight is unavailable; no default screen height substituted")
+        }
+        guard screenHeightPt.isFinite, screenHeightPt > 0 else {
+            throw ProbeFailure(stage: "F1-G0", capability: "rev28harness.screenHeight", detail: "\(screenHeightPt); expected a finite positive measured screen height")
+        }
         let appKitBottomLeftFrame = CGRect(
             x: mainFrame.origin.x,
             y: screenHeightPt - mainFrame.origin.y - mainFrame.height,
@@ -682,6 +704,12 @@ private func runG0(evidenceOnly: Bool = false) throws -> [String: Any] {
             "mainVisible": stateReply["mainVisible"] ?? NSNull(),
             "active": stateReply["active"] ?? NSNull(),
         ]
+        let observedTopmostWindowIDValue: Any
+        if let topmost = observedTopmostWindow {
+            observedTopmostWindowIDValue = Int(topmost.number)
+        } else {
+            observedTopmostWindowIDValue = NSNull()
+        }
         let freshAppKitState: [String: Any] = [
             "source": "rev28harness.state.second_snapshot",
             "screenHeight": freshState["screenHeight"] ?? NSNull(),
@@ -797,6 +825,25 @@ private func runG0(evidenceOnly: Bool = false) throws -> [String: Any] {
             "raw_appkit_state": rawAppKitState,
             "fresh_appkit_state": freshAppKitState,
             "raw_cgwindow": cgWindowState,
+            "surface": [
+                "source": "CGWindowListCopyWindowInfo.optionOnScreenOnly",
+                "target_screen_point": pointObject(target),
+                "expected_window_id": Int(mainWindow.number),
+                "observed_topmost_window_id": observedTopmostWindowIDValue,
+                "observed_topmost_window_present": observedTopmostWindow != nil,
+                "windows_above_target": aboveWindows.map { window -> [String: Any] in
+                    [
+                        "window_id": Int(window.number),
+                        "owner_pid": Int(window.ownerPID),
+                        "layer": window.layer,
+                        "alpha": window.alpha,
+                        "bounds": rectObject(window.bounds),
+                    ]
+                },
+                "windows_above_target_ids": aboveWindows.map { Int($0.number) },
+                "unsafe_surface": surfaceUnsafe,
+                "ordinary_guard": "SKIPPED_EVIDENCE_ONLY",
+            ],
             "display": displayState,
             "capture_geometry": [
                 "window_frame_pt": rectObject(captureGeometry.windowFramePt),
