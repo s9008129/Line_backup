@@ -227,3 +227,19 @@ Owner 授權當次 LINE 前景後，對相簿列表做了一次可逆捲動（cl
   - **B = `2024/4/21`，78 張**
 - 注意 `2024/4/21` 是**單日相簿**（無前導零、無區間），fingerprint/OCR 需支援此格式；`04/08` 與 `03/25` 兩張卡帶有綠色未讀小點，該標記不得進入 fingerprint。
 - 列表在 `2024/03/25～03/29` 之下尚未到底，總數仍為 UNKNOWN；正式執行只需前兩本，不要求完整覆蓋。
+
+## 11. 2026-10-20 追加 — 單日相簿解析缺口（需 Reviewer 裁決）
+
+以 PR #10 pilot HEAD `516932d` 實跑 `ocr_date_identity()`，畫面文字 `2024/4/21` 回傳 `None`（regex 於 `observations.py:42` 強制兩位數 + 區間；`:494` 的標題期望固定為 `YYYY/MM/DD～MM/DD`）。
+
+因為產品「新→舊」掃描的第二順位就是 `2024/4/21`，**B 目前不可達**；這與 grant／CUA／Save All 無關，屬純解析層缺口，可在零 GUI、零 state 寫入下重現。
+
+本 Plan 追加 **AC9**（若 Reviewer 採 (甲)）：
+
+- `ocr_date_identity('2024/4/21')` → `{'start_date':'2024-04-21','end_date':'2024-04-21'}`
+- 不得把 `2024/4/21` 誤解析為其他年份／月日；非法日期（`2024/2/30`）仍回 `None`
+- `:494` 的標題期望需同時接受「單日」與「區間」兩種畫面格式
+- 此修正**不得**改動 `dispatch`／`intent`／at-most-once 或 any save-all gate；只影響 identity 解析
+- 若採 (乙)（改用 `2024/04/08～04/12` 當 B），則必須先定義「無法解析卡片的安全略過 + 證據留存」語意，不得靜默跳過
+
+變更範圍（若採甲）：`src/line_backup_batch/observations.py`（僅 `ocr_date_identity` 與標題期望）＋ `tests/` 聚焦案例；不新增檔案、不動 schema。

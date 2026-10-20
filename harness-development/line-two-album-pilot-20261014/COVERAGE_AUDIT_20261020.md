@@ -108,3 +108,29 @@ EXCLUDED_65_ALBUM_FILES=0_UNTOUCHED
 NEW_FINDING_1=NO_ELIGIBLE_TARGET_IN_CURRENT_GROUP
 NEW_FINDING_2=A56_VERIFICATION_REDACTED_VS_LOCAL_HASH_MISMATCH
 ```
+
+## 7. 追加發現（2026-10-20 22:50）— 單日相簿 `2024/4/21` 目前無法被產品解析
+
+B 目標 `2024/4/21` 是**單日相簿**，畫面文字沒有前導零、也沒有日期區間。以 PR #10 pilot HEAD `516932d` 的實際程式碼執行：
+
+```text
+$ PYTHONPATH=src python -c "from line_backup_batch.observations import ocr_date_identity; ..."
+'2024/04/22～04/26'   -> {'start_date': '2024-04-22', 'end_date': '2024-04-26'}
+'2024/4/21'           -> None      ← 畫面實際文字
+'2024/04/21'          -> None
+'2024/4/21～4/21'     -> None
+'2024/04/21～04/21'   -> {'start_date': '2024-04-21', 'end_date': '2024-04-21'}
+'2024/03/25～03/29'   -> {'start_date': '2024-03-25', 'end_date': '2024-03-29'}
+```
+
+- 來源：`src/line_backup_batch/observations.py:42`，regex `(\d{4})/(\d{2})/(\d{2})\s*[~～〜]\s*(\d{2})/(\d{2})`，**強制兩位數 + 區間**。
+- 另 `observations.py:494` 的標題期望固定為 `start.replace('-','/') + '～' + end[5:]`（例：`2024/04/21～04/21`），與 LINE 實際顯示的 `2024/4/21` 不符。
+
+**影響**：相簿 A（`04/22～04/26`）本身沒問題；但產品是「新→舊」掃描，第二順位就是 `2024/4/21`。它會解析失敗，連帶讓 B 選不到。這**不是** Save All 或 CUA 問題，是純解析層缺口，且可在無 GUI、無 state 寫入下重現。
+
+**兩個處理選項（需 Reviewer 裁決）**：
+
+- **(甲) 擴充單日支援**：`ocr_date_identity` 增加「無區間」分支（`YYYY/M/D` → start = end），並同步修正 `:494` 的標題期望。屬最小解析修正，需聚焦回歸（不得改動 at-most-once／dispatch 行為）。
+- **(乙) 換 B**：改用 `2024/04/08～04/12`（77 張）。但產品仍會先遇到 `04/21`，因此仍需定義「無法解析的卡片如何安全略過並留下證據」，否則等於把缺口藏起來。
+
+**建議**：採 (甲)，因為單日相簿是真實存在的資料形態；且必須補上「`2024/4/21` → `2024-04-21..2024-04-21`」與「`2024/4/21` 不得被誤解析成其他日期」兩條測試。
