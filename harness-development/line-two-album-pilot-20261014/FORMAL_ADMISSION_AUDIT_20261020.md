@@ -114,6 +114,15 @@ PYTHONPATH=src PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 \
 
 這是 execution environment 的阻塞，不是產品邏輯錯誤；不能因為它而改產品程式。歷史上同一 authorizer 在 2026-10-18 的可執行環境曾真實回應 `exit 4 / PROJECT_IMPLEMENTATION_REVIEW_REQUIRED`（見 `harness-development/one56-menu-compat-20261017/review/formal-route-preflight-20261018.json`），該拒絕仍然有效，且與本次的 `INVALID_REQUEST` 是兩個不同層級的第一拒絕。
 
+環境修復後（2026-10-20 22:0x，Owner 已授權），以隔離 venv（Python 3.13.11、jsonschema 4.26.0、rpds-py 2026.9.1，位於 `/private/tmp/lb-authorizer-20261020/.venv`，不動系統與 global Harness runtime）重跑同一條 `native_authorize`：
+
+```text
+exit 4
+{"status": "REFUSED", "code": "PROJECT_IMPLEMENTATION_REVIEW_REQUIRED", "message": "PROJECT_IMPLEMENTATION_REVIEW_REQUIRED", "dispatch_authorized": false}
+```
+
+這才是目前產品層的真正第一拒絕：authority bundle 仍是 `PENDING_EXTERNAL_REVIEW`，不是 GUI／座標／LINE 問題。環境修復只消除了 `INVALID_REQUEST`，沒有改變授權結論。
+
 ## 4. 狀態總表
 
 | 項目 | 狀態 | 依據 |
@@ -123,7 +132,8 @@ PYTHONPATH=src PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 \
 | 現有產品可合法 import manual 檔案 | **NO** | transaction.py / CLI 稽核 |
 | 正式 `runTwoAlbumPilot()` 准入 | **BLOCKED** | 單相簿 ONE56 grant、PENDING_EXTERNAL_REVIEW、quota 1 |
 | 自動去重排除 A56／B53 | **FAIL（缺口）** | history_decision 只看 state |
-| Authorizer 可執行 | **BLOCKED（環境）** | `No module named 'jsonschema'` |
+| Authorizer 可執行 | **PASS（隔離 venv）** | Python 3.13.11 + jsonschema 4.26.0 |
+| Authorizer 授權 | **REFUSED** | `PROJECT_IMPLEMENTATION_REVIEW_REQUIRED` |
 | 本輪 GUI／Save All | **NOT_RUN（0）** | 無前景輸入 |
 | 正式 A／B VERIFIED | **NOT_RUN** | state revision 35 未變 |
 | Independent DeepSeek 1017 E2E | **NOT_RUN** | 尚未取得合法新 grant |
