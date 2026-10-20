@@ -1,0 +1,105 @@
+{
+  "schema": "MANUAL_DIAGNOSTIC_EVIDENCE_MANIFEST/1",
+  "mode": "MANUAL_DIAGNOSTIC_NOT_FORMAL_E2E",
+  "created_at": "2026-10-20T21:20:00+08:00",
+  "album_b": {
+    "dates": "2024/05/20～05/24",
+    "expected_images": 53,
+    "detail_text_observed": "53張照片",
+    "album_date_text": "2024.05.25"
+  },
+  "navigation": {
+    "pre_title_scroll_sha256": "fd805ff97fb63a990f900b7f16604b8bed8fc7e349874f78e88a4df7b2c454bc",
+    "title_click_point": [147, 1241],
+    "post_title_ocr_boxes": {
+      "2024/05/20～05/24": [32, 177, 391, 40],
+      "53張照片": [29, 243, 102, 25],
+      "2024.05.25": [29, 281, 131, 24]
+    },
+    "post_click_surface": "ALBUM_DETAIL_GRID",
+    "photo_viewer_observed": false
+  },
+  "private_sources": [
+    {
+      "file": "../../private/manual-diagnostic-20261020-b53/b53-pre-title-scroll.png",
+      "bytes": 184752,
+      "sha256": "fd805ff97fb63a990f900b7f16604b8bed8fc7e349874f78e88a4df7b2c454bc",
+      "purpose": "Album list after two bounded scrolls, B title visible",
+      "publication": "WITHHELD_PRIVATE_CONTENT"
+    },
+    {
+      "file": "../../private/manual-diagnostic-20261020-b53/b53-detail.png",
+      "bytes": 189502,
+      "sha256": "552f92657ee7dbe020f63654a2e91b9be5d5677ef986768d67506fd554f9156d",
+      "purpose": "B album-detail grid after title click",
+      "publication": "ONLY_SANITIZED_HEADER_CROP"
+    },
+    {
+      "file": "../../private/manual-diagnostic-20261020-b53/b53-menu-full.png",
+      "bytes": 1600793,
+      "sha256": "7e71fbca41f2face39219294c8f1181ad5ed8f485b94a1945ee985fa8354e81c",
+      "purpose": "Full-screen capture with B ellipsis menu open",
+      "publication": "ONLY_SANITIZED_MENU_CROP"
+    },
+    {
+      "file": "../../private/manual-diagnostic-20261020-b53/b53-chooser-full.png",
+      "bytes": 848569,
+      "sha256": "3081016feaeffb5f8cb49a8e08e67736d201e570d6f1b714e40947cbde01cfd7",
+      "purpose": "Folder chooser after Go to Folder, before confirmation",
+      "publication": "ONLY_SANITIZED_CHOOSER_CROP"
+    }
+  ],
+  "public_evidence": [
+    {
+      "file": "00-detail-header-crop.png",
+      "sha256": "2a4c0cf3fdede1d58a89f446914e22d401f76d057715a656d9bea9ccea1d99bd",
+      "contains": ["2024/05/20～05/24", "53張照片", "2024.05.25"],
+      "privacy": "Header text only"
+    },
+    {
+      "file": "01-menu-crop.png",
+      "sha256": "290da77c3f3cc2fd334ecff99b82395c8ec19f864890945b03fc0ad2f682cec6",
+      "contains": ["選擇項目", "修改相簿名稱", "儲存全部", "刪除相簿", "分享相簿"],
+      "privacy": "Menu panel only; no photos, people, group name, or local path"
+    },
+    {
+      "file": "02-chooser-crop.png",
+      "sha256": "4b8332d8aa0990bafc85fa4724454483cfbed3c7fe5fffa21c19c930c3881bfd",
+      "contains": ["2024-05-20_2024-05-24_...", "取消", "打開"],
+      "privacy": "Chooser panel only; group name and local account path cropped out"
+    },
+    {
+      "file": "b53-sha256.txt",
+      "sha256": "e2da806c67d8a9a217ff73b8edb10fae79fd9bfd61c91677267dac79deb63d36",
+      "contains": "SHA-256 for each of the 53 downloaded JPEG files"
+    },
+    {
+      "file": "b53-verification.json",
+      "sha256": "49881e79f5b0534d15736342d83ad599254d1ed765a978459efa59b2a523229c",
+      "contains": "Sanitized count, byte total, decode result, dispatch counters, and per-file hashes"
+    }
+  ],
+  "screenshot_capture_notes": {
+    "surface": "LINE album-detail independent window plus its menu/chooser overlays",
+    "coordinate_space": "2294x1490 full-screen pixels for overlays; 654x1286 app window points for title click",
+    "menu_ocr_box_for_儲存全部": [1297, 417, 107, 30],
+    "chooser_ocr_boxes": {
+      "Downloads": [210, 776, 140, 31],
+      "destination": [957, 407, 363, 27],
+      "打開": [1731, 1170, 60, 30]
+    }
+  },
+  "redactions": [
+    "Group name replaced with <REDACTED_GROUP> in verification JSON",
+    "Absolute local filesystem paths are not published",
+    "Full screenshots and downloaded photos remain private and are not in Git"
+  ],
+  "side_effect_counters": {
+    "save_all_clicks": 1,
+    "chooser_confirmations": 1,
+    "downloaded_files": 53,
+    "line_messages_sent": 0,
+    "formal_state_mutations": 0,
+    "ledger_mutations": 0
+  }
+}

@@ -20,6 +20,8 @@
 - B 相簿已完成 Save All、下載或驗證；
 - 這是獨立 DeepSeek `deepseek-v4.1-flash:1017` 的正式 E2E。
 
+> **後續：** B 相簿 `2024/05/20～05/24`、53 張也已以相同 manual diagnostic 模式完成 Save All、下載與內容驗證。見 [`MANUAL_DIAGNOSTIC_20261020_B53.md`](./MANUAL_DIAGNOSTIC_20261020_B53.md)。兩本手動流程 PASS 仍不代表正式產品 TWO_ALBUM_AUTO 或 state `VERIFIED`。
+
 ## 1. 為什麼先手動診斷
 
 正式產品執行目前仍受 review／source-runtime binding 阻塞：authorizer 回報 `PROJECT_IMPLEMENTATION_REVIEW_REQUIRED`，ONE56 bundle 仍待外部 review，既有 one-scroll grant 已關閉，且安裝 source/runtime 與受審候選不同。這輪因此只做 owner 授權範圍內的真實 UI 診斷，不偽造 grant、不重置 ledger、不修改 protected state。

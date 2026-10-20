@@ -1,7 +1,7 @@
 # 問題單：CUA 視窗綁定／座標語意漂移與模型請求 413
 
 日期：2026-10-20（Asia/Taipei）  
-狀態：根因已收斂；A 相簿已用人工診斷流程完成 Save All 與 56 檔內容驗證，但正式產品 E2E 仍 BLOCKED  
+狀態：根因已收斂；A（56 張）與 B（53 張）已用人工診斷流程完成 Save All、下載與內容驗證，但正式產品 E2E 仍 BLOCKED  
 嚴重度：High（會造成錯窗點擊、錯誤畫面判定，以及長流程中斷）  
 影響範圍：LINE macOS 多視窗 CUA 操作；Codex／Ollama Cloud 請求上下文管理  
 證據等級：真實 macOS LINE GUI、真實下載檔、SHA-256、完整解碼；另有 provider 原始錯誤字串
@@ -86,6 +86,17 @@ request id: 7caddeb4-33b7-4f9f-9f9e-4cf0e6e6312f
 - 目的地（公開發布時群組名已遮罩）：`backups/<REDACTED_GROUP>/2024-05-27_2024-05-31_56張`。
 - 正式 state／ledger：未寫入；因此不能宣稱 formal product `VERIFIED`。
 
+## B 相簿實測結果
+
+- 相簿：`2024/05/20～05/24`，`53張照片`，日期文字 `2024.05.25`。
+- 在相簿列表執行兩次有界向下捲動後，以 fresh OCR 名稱框 `[147,1241]` 開啟 grid；未出現 `(1/53)`。
+- `⋯` 選單實見相同五項；`儲存全部` 唯一。
+- 第一次以錯算 app-local 點 `[356,216]` 只關閉選單，沒有 chooser、沒有檔案、`~/Downloads` 也沒有新檔，因此不是 UNKNOWN dispatch；沒有重複派送。
+- 重新開啟選單後以 `[626,243]` 精確選取 `儲存全部`，出現 chooser；這是唯一一次 Save All 派送。
+- Go to Folder 精確設定目的地；AX `where popup` 顯示 `2024-05-20_2024-05-24_53張`；以 AX `OKButton` 確認一次。
+- 下載 53/53 檔、17,095,114 bytes；索引 1..53、全部 JPEG、完整解碼 0 errors。
+- formal state／ledger：未寫入；B formal `VERIFIED` 仍是 NOT_RUN。
+
 ## 邊界
 
 - 本輪是 `MANUAL_DIAGNOSTIC`，不是獨立 DeepSeek `deepseek-v4.1-flash:1017` 的正式 E2E。
@@ -96,7 +107,6 @@ request id: 7caddeb4-33b7-4f9f-9f9e-4cf0e6e6312f
 ## 下一步
 
 1. 由 Owner 重新提供一次有效的 LINE 前景交接。
-2. 在 fresh surface 上找到不同的 B（目前候選：`2024/05/20～05/24`、53 張，未在 state verified 清單）。
-3. 以名稱文字 OCR 框開啟 grid，驗證 identity 後才開 `⋯`。
-4. 建立空目的地，單次 Save All，完成 chooser、53 檔 SHA-256、ImageIO/ffmpeg 解碼。
-5. 再由獨立 DeepSeek 1017 Session 做正式產品 E2E；本問題單不代替該驗收。
+2. A56、B53 的 manual diagnostic 已完成；不再重跑或重下載這兩本。
+3. 由外部 Code Reviewer 檢查正式 source/runtime binding 與 review gate。
+4. 修復後由新的獨立 DeepSeek 1017 Session 執行正式 TWO_ALBUM_AUTO、state readback 與 VERIFIED；本問題單不代替該驗收。
