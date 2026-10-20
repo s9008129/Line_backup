@@ -1,0 +1,88 @@
+{
+  "schema": "MANUAL_DIAGNOSTIC_EVIDENCE_MANIFEST/1",
+  "mode": "MANUAL_DIAGNOSTIC_NOT_FORMAL_E2E",
+  "created_at": "2026-10-20T20:54:03+08:00",
+  "album_a": {
+    "dates": "2024/05/27～05/31",
+    "expected_images": 56,
+    "detail_text_observed": "56張照片",
+    "album_date_text": "2024.06.01"
+  },
+  "private_sources": [
+    {
+      "file": "../../private/manual-diagnostic-20261020-a56/pre-saveall.png",
+      "bytes": 2546948,
+      "sha256": "79c6409382cd7d0b6d26396e631ceb5cf28ab3ac3d45c8ce3d5fde135282099d",
+      "purpose": "A detail grid before opening the ellipsis menu",
+      "publication": "WITHHELD_PRIVATE_CONTENT"
+    },
+    {
+      "file": "../../private/manual-diagnostic-20261020-a56/full-ellipsis2.png",
+      "bytes": 2546942,
+      "sha256": "38f09a8208acf65d11149b6ea464c37b3e3a488124c166cabbde7900105b5631",
+      "purpose": "A detail ellipsis menu with five visible items",
+      "publication": "ONLY_SANITIZED_MENU_CROP"
+    },
+    {
+      "file": "../../private/manual-diagnostic-20261020-a56/post-saveall-01.png",
+      "bytes": 1493301,
+      "sha256": "712ae2e5f76c0b8411e4d90367261bcf1ff9df17d7b3e9973b9b34819f967fda",
+      "purpose": "A Save All dispatch acknowledgement state",
+      "publication": "WITHHELD_PRIVATE_CONTENT"
+    },
+    {
+      "file": "../../private/manual-diagnostic-20261020-a56/chooser-in-dest.png",
+      "bytes": 1312611,
+      "sha256": "b5f37d921e0015cba2265056fe2d184797a8068533192583a0e00819fa28429c",
+      "purpose": "Folder chooser after Go to Folder, before one confirmation",
+      "publication": "ONLY_SANITIZED_CHOOSER_CROP"
+    }
+  ],
+  "public_evidence": [
+    {
+      "file": "01-menu-crop.png",
+      "sha256": "609a0f9453d61d8776058304f73bbf8cde58b65a5d9584dec5db4e75630f84e3",
+      "contains": ["選擇項目", "修改相簿名稱", "儲存全部", "刪除相簿", "分享相簿"],
+      "privacy": "Menu panel only; no photos, people, group name, or local path"
+    },
+    {
+      "file": "02-chooser-crop.png",
+      "sha256": "ee11f9cf85c4cca372d47936cea585c0e08ac1a3bd97ff3e1890bd7a82ffe9c6",
+      "contains": ["Downloads", "2024-05-27_2024-05-31_...", "取消", "打開"],
+      "privacy": "Chooser panel only; group name and local account path cropped out"
+    },
+    {
+      "file": "a56-sha256.txt",
+      "sha256": "99c903e91415f6dff275668c5794390e581fa42764912eda9c63a038b45ce976",
+      "contains": "SHA-256 for each of the 56 downloaded JPEG files"
+    },
+    {
+      "file": "a56-verification.json",
+      "sha256": "a67e82078e08a3eed480844b3248ef6e345e6d55b388ec98954d10208af7a38a",
+      "contains": "Sanitized count, byte total, decode result, dispatch counters, and per-file hashes"
+    }
+  ],
+  "screenshot_capture_notes": {
+    "surface": "LINE album-detail independent window",
+    "coordinate_space": "2294x1490 retina screenshot pixels; CUA points are separately mapped and were not reused as historical coordinates",
+    "menu_ocr_box_for_儲存全部": [1297, 417, 107, 30],
+    "chooser_ocr_boxes": {
+      "Downloads": [210, 776, 140, 30],
+      "destination": [957, 407, 357, 30],
+      "打開": [1731, 1170, 60, 30]
+    }
+  },
+  "redactions": [
+    "Group name replaced with <REDACTED_GROUP> in verification JSON",
+    "Absolute local filesystem paths are not published",
+    "Full screenshots and downloaded photos remain private and are not in Git"
+  ],
+  "side_effect_counters": {
+    "save_all_clicks": 1,
+    "chooser_confirmations": 1,
+    "downloaded_files": 56,
+    "line_messages_sent": 0,
+    "formal_state_mutations": 0,
+    "ledger_mutations": 0
+  }
+}

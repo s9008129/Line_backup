@@ -6,6 +6,8 @@
 受測目標：從已登入的 LINE 相簿列表，以名稱點擊開啟兩本不同 eligible 相簿的 grid 詳細頁  
 本輪結論：**第一輪 FAIL（點封面開 `(1/N)` viewer）；第二輪導覽 PASS（點名稱開 grid）；Save All 與下載全部 NOT_RUN**
 
+> **2026-10-20 後續更新：** 本報告保留當時的導覽診斷。後續已在同一真實 LINE 環境完成 A 相簿的 manual Save All、56 檔下載與內容驗證；正式產品 state `VERIFIED` 與 B 仍 NOT_RUN。完整證據見 [`MANUAL_DIAGNOSTIC_20261020_A56.md`](./MANUAL_DIAGNOSTIC_20261020_A56.md)，CUA 多視窗與 413 根因見 [`ISSUE-20261020-cua-window-binding-and-provider-413.md`](./ISSUE-20261020-cua-window-binding-and-provider-413.md)。
+
 ## 0. 重要邊界
 
 本報告只證明「可逆導覽」層面的事實：

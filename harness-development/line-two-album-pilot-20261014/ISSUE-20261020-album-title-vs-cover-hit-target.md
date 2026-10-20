@@ -289,3 +289,20 @@ adapter fixture 將第一次點擊無條件映射成 `ALBUM_DETAIL`；沒有 pho
 - `08-viewer-b-title-crop.png`（B viewer `(1/53)` 標題）
 
 隱私處理：公開檔只保留日期、張數、視窗控制項與 synthetic 示意；不包含群組名稱、人名、照片內容、檔案清單、授權資料或本機絕對路徑。私有原圖保留在本機，未上傳。
+
+---
+
+## 2026-10-20 後續真實驗證（A 相簿 Save All）
+
+本問題單先前把 menu／Save All 標為 NOT_RUN；後續已在 Owner 授權的人工診斷中補上 A 相簿實測，更新如下：
+
+- A `2024/05/27～05/31`、56 張的名稱欄點擊成功開啟 grid detail，沒有出現 `(1/N)`。
+- 右上 `⋯` 實見 `選擇項目`、`修改相簿名稱`、`儲存全部`、`刪除相簿`、`分享相簿`；`儲存全部` 唯一，僅派送 1 次。
+- chooser 經 Go to Folder 進入預先建立的空資料夾，按 `打開` 1 次。
+- 下載 56/56 檔、18,117,492 bytes；檔名索引 1..56、全部 JPEG、完整解碼 0 errors。
+- 這是 `MANUAL_DIAGNOSTIC`，不是正式產品入口與 formal `VERIFIED` state；B 仍 NOT_RUN。
+
+完整證據與新發現的 CUA 視窗綁定／413 根因：
+
+- [`MANUAL_DIAGNOSTIC_20261020_A56.md`](./MANUAL_DIAGNOSTIC_20261020_A56.md)
+- [`ISSUE-20261020-cua-window-binding-and-provider-413.md`](./ISSUE-20261020-cua-window-binding-and-provider-413.md)
