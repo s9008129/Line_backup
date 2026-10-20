@@ -8,6 +8,9 @@
 
 > **2026-10-20 後續更新：** 本報告保留當時的導覽診斷。後續已在同一真實 LINE 環境完成 A 相簿 56 檔與 B 相簿 53 檔的 manual Save All、下載與內容驗證；正式產品 state `VERIFIED` 與 Independent E2E 仍 NOT_RUN。A 證據見 [`MANUAL_DIAGNOSTIC_20261020_A56.md`](./MANUAL_DIAGNOSTIC_20261020_A56.md)，B 證據見 [`MANUAL_DIAGNOSTIC_20261020_B53.md`](./MANUAL_DIAGNOSTIC_20261020_B53.md)，CUA 多視窗與 413 根因見 [`ISSUE-20261020-cua-window-binding-and-provider-413.md`](./ISSUE-20261020-cua-window-binding-and-provider-413.md)。
 
+> **LATEST STATUS（2026-10-20 21:xx）：** A56 56/56、B53 53/53 的實體檔案已重新逐檔 SHA-256 核對，兩本皆 **PASS**（18,117,492 + 17,095,114 bytes；正式 state 仍 revision 35，未寫入）。正式 `runTwoAlbumPilot()` 目前 **BLOCKED**：唯一 authority 是「單相簿 ONE56、`no_second_album=true`、quota 1、`PENDING_EXTERNAL_REVIEW`」，且其 target 正是已完成 manual 下載的 A56；同時 state 沒有 manual provenance，A56/B53 在正式去重邏輯中仍屬 eligible。現有產品沒有合法 import／adopt manual 檔案的路徑。詳見 [`FORMAL_ADMISSION_AUDIT_20261020.md`](./FORMAL_ADMISSION_AUDIT_20261020.md)。本輪 GUI 輸入 0、Save All 0。
+
+
 ## 0. 重要邊界
 
 本報告只證明「可逆導覽」層面的事實：
