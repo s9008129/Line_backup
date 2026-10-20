@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "task": "LINE two-album reversible navigation diagnostic: album title vs cover hit target",
+  "generated_at": "2026-10-20T19:45:00+08:00",
+  "executor": {
+    "kind": "Codex root session with app-bound Computer Use",
+    "formal_independent_e2e": false,
+    "model": "not asserted in this artifact",
+    "note": "This is a reversible navigation diagnostic, not a DeepSeek deepseek-v4.1-flash:1017 Independent E2E session."
+  },
+  "line_context": {
+    "platform": "macOS LINE app",
+    "logged_in": true,
+    "group": "redacted as Group G",
+    "album_a": "2024/05/27-2024/05/31, 56 photos",
+    "album_b": "2024/05/20-2024/05/24, 53 photos, created 2024.05.25"
+  },
+  "privacy": {
+    "public_policy": "Only date ranges, photo counts, window controls, and synthetic schematic are public. No group name, human name, photo content, file inventory, grant data, or absolute local path is included.",
+    "private_originals": "Raw screenshots and AX dumps remain local under the repo-relative private root and are not uploaded.",
+    "review": "Every public crop below was visually inspected after cropping. The raw images were not copied into the public directory."
+  },
+  "private_root": "harness-development/line-two-album-pilot-20261014/private/test-first-20261020-01",
+  "private_evidence": [
+    {
+      "id": "first-round-list-before-cover-click",
+      "path": "evidence-session/04-continue-scrolling-to-reveal-next-album-identity.jpg",
+      "bytes": 174562,
+      "sha256": "9f58313fd7935de9a44331e24bcb3240bc4f92a8e0489fabb7bf1285cc84c837",
+      "observation": "Album list after bounded scroll; 56-photo and 53-photo cards are visible."
+    },
+    {
+      "id": "first-round-a-viewer",
+      "path": "evidence-session/05-open-album-a-and-verify-its-detail-page.jpg",
+      "bytes": 277898,
+      "sha256": "f0489cb06e060b3feb23cfa5c66ef1ba4866da4804985c47cf139a9b2dd8885a",
+      "observation": "Single-photo viewer titled 2024/05/27-05/31(1/56), not album grid."
+    },
+    {
+      "id": "first-round-a-viewer-ax",
+      "path": "evidence-session/05-open-album-a-and-verify-its-detail-page.ax.txt",
+      "bytes": 68707,
+      "sha256": "e3ff2283bfa7c8815cd4afd0ad9c123c9b75c2844272adfbf53074e6d715cf81",
+      "observation": "AX dump paired with the first-round A viewer."
+    },
+    {
+      "id": "first-round-b-list",
+      "path": "evidence-session/10-reveal-b-date-and-photo-count.jpg",
+      "bytes": 171436,
+      "sha256": "b1e657eb9321981d38f708c5185d7d89aec2a87fff1065f4a25660bdeecce8ff",
+      "observation": "B date and count visible in the album list."
+    },
+    {
+      "id": "first-round-b-viewer",
+      "path": "evidence-session/12-wait-for-album-b-detail-to-load.jpg",
+      "bytes": 166161,
+      "sha256": "75020535d74db521e3cfdb84ff27eb3959d7ac5550bd4e2b632a2612f37f10d9",
+      "observation": "Single-photo viewer titled 2024/05/20-05/24(1/53), not album grid."
+    },
+    {
+      "id": "first-round-b-viewer-ax",
+      "path": "evidence-session/12-wait-for-album-b-detail-to-load.ax.txt",
+      "bytes": 68586,
+      "sha256": "9be6c45f214a681e83098b5babe687259955f1cb1b042582464a33fe28c8091b",
+      "observation": "AX dump paired with the first-round B viewer."
+    },
+    {
+      "id": "second-round-list-before-a-title-click",
+      "path": "evidence-title-click-20261020-02/pre-title-click.jpg",
+      "bytes": 173919,
+      "sha256": "1fd4c171eeaa586b2fc77fcd4e066b4a7b1bb5b18d74989ae150dae04ce240c7",
+      "observation": "A title at approximately y=295-325; B title at approximately y=1030-1055."
+    },
+    {
+      "id": "second-round-a-grid-detail",
+      "path": "evidence-title-click-20261020-02/post-title-click.jpg",
+      "bytes": 237242,
+      "sha256": "f732bb30b2db5fbf12536ea0c7a25a9fef827e0098ceadde74bc5b01e5fee2cf",
+      "observation": "Album grid detail titled 2024/05/27-05/31; no (1/N) viewer suffix."
+    },
+    {
+      "id": "second-round-returned-list",
+      "path": "evidence-title-click-20261020-02/returned-to-list.jpg",
+      "bytes": 175304,
+      "sha256": "828dd2df633598c40a3c544718c53269e61a092046a7a1cb7d50a0fd3dea9ce6",
+      "observation": "Album list after Escape from A grid detail."
+    },
+    {
+      "id": "second-round-b-grid-detail",
+      "path": "evidence-title-click-20261020-02/post-b-title-click.jpg",
+      "bytes": 189502,
+      "sha256": "552f92657ee7dbe020f63654a2e91b9be5d5677ef986768d67506fd554f9156d",
+      "observation": "Album grid detail titled 2024/05/20-05/24 with 53 photos and 2024.05.25."
+    },
+    {
+      "id": "second-round-final-returned-list",
+      "path": "evidence-title-click-20261020-02/final-returned-list.jpg",
+      "bytes": 174637,
+      "sha256": "c46c4056812970a8b5c662eec7bf9a1415456685c931122dd2f4d578e6264e9d",
+      "observation": "Album list after Escape from B grid detail."
+    },
+    {
+      "id": "second-round-pre-ax",
+      "path": "evidence-title-click-20261020-02/pre-title-click.ax.txt",
+      "bytes": 1231,
+      "sha256": "f42d1a33ba71008ea48b06e809c69efd842cc51c3ac2d9c9bbfd6d6837ae60e8",
+      "observation": "AX before the A title click; generic list rows only."
+    },
+    {
+      "id": "second-round-a-detail-ax",
+      "path": "evidence-title-click-20261020-02/post-title-click.ax.txt",
+      "bytes": 232,
+      "sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa",
+      "observation": "AX after the A title click; standard window only, no title text."
+    },
+    {
+      "id": "second-round-returned-ax",
+      "path": "evidence-title-click-20261020-02/returned-to-list.ax.txt",
+      "bytes": 1231,
+      "sha256": "f42d1a33ba71008ea48b06e809c69efd842cc51c3ac2d9c9bbfd6d6837ae60e8",
+      "observation": "AX after returning to the list."
+    },
+    {
+      "id": "second-round-b-detail-ax",
+      "path": "evidence-title-click-20261020-02/post-b-title-click.ax.txt",
+      "bytes": 232,
+      "sha256": "e17385e3559f2c2c56f513306ad6bab6b5b7a8f8480d4a2dc98057f7bcc43aaa",
+      "observation": "AX after the B title click; standard window only, no title text."
+    },
+    {
+      "id": "second-round-final-ax",
+      "path": "evidence-title-click-20261020-02/final-returned-list.ax.txt",
+      "bytes": 1231,
+      "sha256": "f42d1a33ba71008ea48b06e809c69efd842cc51c3ac2d9c9bbfd6d6837ae60e8",
+      "observation": "AX after the final return to the list."
+    },
+    {
+      "id": "second-round-combined-ax",
+      "path": "evidence-title-click-20261020-02/pre-and-post-title-click.ax.txt",
+      "bytes": 2695,
+      "sha256": "dd5f742837df5ab86fd3339b9dc0a1e7acbbcefd5cd6e49686e7de53c10c001e",
+      "observation": "Combined pre/post AX sequence; confirms AX does not expose the title."
+    }
+  ],
+  "public_derivatives": [
+    {
+      "id": "schematic",
+      "path": "01-card-hit-target-schematic.svg",
+      "bytes": 6122,
+      "sha256": "ad262191287c310f15bb360bbb9606d181d41ffe193e6c2bd48d3fd187a70191",
+      "kind": "synthetic_svg",
+      "derived_from": null,
+      "privacy_review": "Synthetic shapes and labels only; no screenshot pixels."
+    },
+    {
+      "id": "album-a-metadata",
+      "path": "03-album-a-metadata-crop.png",
+      "bytes": 13873,
+      "sha256": "943036611a60bde8c37e6199822cb25dcc1e79120e6d7ac7b6244d69a34782d9",
+      "kind": "screenshot_crop",
+      "derived_from": "second-round-list-before-a-title-click",
+      "crop": "654x110+0+285",
+      "privacy_review": "Date range, count, and ellipsis only; no photo pixels, no group name."
+    },
+    {
+      "id": "album-b-metadata",
+      "path": "04-album-b-metadata-crop.png",
+      "bytes": 13424,
+      "sha256": "99fc1182c208de07da1d3ee928f5de5eaa2078230343f6adbd11c80db522baf5",
+      "kind": "screenshot_crop",
+      "derived_from": "second-round-list-before-a-title-click",
+      "crop": "654x95+0+1025",
+      "privacy_review": "Date range, count, and ellipsis only; no photo pixels, no group name."
+    },
+    {
+      "id": "album-a-detail-header",
+      "path": "05-album-a-detail-header-crop.png",
+      "bytes": 20420,
+      "sha256": "f3a2cf0ab2e53966c95139b3a80b94b79653fc4e0822c980136527cdcf28c912",
+      "kind": "screenshot_crop",
+      "derived_from": "second-round-a-grid-detail",
+      "crop": "654x130+0+0",
+      "privacy_review": "Window controls, date title, and ellipsis only; no photo pixels."
+    },
+    {
+      "id": "album-b-detail-header",
+      "path": "06-album-b-detail-header-crop.png",
+      "bytes": 36234,
+      "sha256": "3d0d236377cf724805ee6790fda60f38a51343a5870ba67412ce0b9c155a3e46",
+      "kind": "screenshot_crop",
+      "derived_from": "second-round-b-grid-detail",
+      "crop": "654x340+0+0",
+      "privacy_review": "Window controls, date title, photo count, created date, and ellipsis only; no photo pixels."
+    },
+    {
+      "id": "viewer-a-title",
+      "path": "07-viewer-a-title-crop.png",
+      "bytes": 33655,
+      "sha256": "9c627bac8953c932fbc50658249ed26ca85e7bbedb8156b0e9f71bd226fe46fb",
+      "kind": "screenshot_crop",
+      "derived_from": "first-round-a-viewer",
+      "crop": "1280x50+0+0",
+      "privacy_review": "Window controls and the (1/56) viewer title only; no photo pixels."
+    },
+    {
+      "id": "viewer-b-title",
+      "path": "08-viewer-b-title-crop.png",
+      "bytes": 33703,
+      "sha256": "412b3d750f4c95f9b701e6fea33cb089206bc6912f99b0964febca9adb4fd938",
+      "kind": "screenshot_crop",
+      "derived_from": "first-round-b-viewer",
+      "crop": "1280x50+0+0",
+      "privacy_review": "Window controls and the (1/53) viewer title only; no photo pixels."
+    }
+  ],
+  "click_evidence": [
+    {
+      "album": "A",
+      "round": 1,
+      "click": [320, 700],
+      "frame": "654x1286",
+      "hit_region": "cover thumbnail cell",
+      "observed_surface": "single-photo viewer",
+      "observed_title": "2024/05/27-05/31(1/56)",
+      "verdict": "FAIL"
+    },
+    {
+      "album": "A",
+      "round": 2,
+      "click": [120, 310],
+      "frame": "654x1286",
+      "hit_region": "album title text",
+      "observed_surface": "album grid detail",
+      "observed_title": "2024/05/27-05/31",
+      "verdict": "PASS"
+    },
+    {
+      "album": "B",
+      "round": 1,
+      "click": null,
+      "frame": "654x1286",
+      "hit_region": "cover thumbnail cell (same card-center heuristic)",
+      "observed_surface": "single-photo viewer",
+      "observed_title": "2024/05/20-05/24(1/53)",
+      "verdict": "FAIL"
+    },
+    {
+      "album": "B",
+      "round": 2,
+      "click": [120, 1044],
+      "frame": "654x1286",
+      "hit_region": "album title text",
+      "observed_surface": "album grid detail",
+      "observed_title": "2024/05/20-05/24, 53 photos, 2024.05.25",
+      "verdict": "PASS"
+    }
+  ],
+  "side_effects": {
+    "save_all_invocations": 0,
+    "folder_chooser_opens": 0,
+    "downloads": 0,
+    "intent_writes": 0,
+    "ledger_writes": 0,
+    "checkpoint_writes": 0,
+    "backup_state_mutations": 0,
+    "destination_creations": 0,
+    "line_messages_sent": 0
+  },
+  "known_limitations": [
+    "Raw screenshots are not public; only hashes and privacy-reviewed crops are published.",
+    "The first-round exact click coordinate [320,700] is taken from the interactive session record; the persisted viewer screenshots are the definitive outcome evidence.",
+    "There is no OCR JSON sidecar or hash-bound classifier artifact for this manual navigation round.",
+    "The top-right menu and Save All were not re-tested in this round.",
+    "This is not a formal DeepSeek deepseek-v4.1-flash:1017 Independent E2E."
+  ]
+}
