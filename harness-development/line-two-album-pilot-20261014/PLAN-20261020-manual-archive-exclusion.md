@@ -163,3 +163,45 @@ PYTHONPATH=src .venv/bin/python -m unittest tests.test_batch_authority tests.tes
 3. 固定 commit，送 External Code Review。
 4. 建立新的雙相簿 grant，Owner 做當次 LINE 前景交接。
 5. 新的獨立 `deepseek-v4.1-flash:1017` Session 對兩本其他相簿跑正式 E2E；A56／B53 只做唯讀核對。
+
+## 9. 2026-10-20 唯讀對帳後的兩個必要修正
+
+來源：`COVERAGE_AUDIT_20261020.md`（同目錄，唯讀、無 GUI、無 state 寫入）。
+
+### 9.1 修正 A — registry 的 hash 必須「即時計算」，不得手寫
+
+§3.1 範例中的 `verification_sha256: a67e8207…a38a` 是 **PR 分支上已遮蔽版** 的 hash；執行時 loader 讀到的是 Owner 本機 canonical 版 `9381d72a…2a38`（唯一差異是 `destination_workspace_relative` 的群組名）。若照抄範例，loader 必定 fail closed 並拋 `MANUAL_ARCHIVE_REGISTRY_INVALID` —— 表面上「有做」，實際上整個排除機制永遠無法通過。
+
+因此實作階段新增硬性要求：
+
+- registry **不得由人手抄寫 hash**；必須用同一個 loader 的 reader／hash 函式，對「即將被讀取的那個路徑」即時計算後寫入。
+- 提供 `--record-manual-archive`（唯讀計算 + 寫 registry，不碰 state／grant／ledger）或等价的測試 helper；寫入後立即重新載入驗證。
+- 新增測試：同內容但 `destination_workspace_relative` 被遮蔽 → 必須 `MANUAL_ARCHIVE_REGISTRY_INVALID`（證明 fail closed 有效）。
+
+### 9.2 修正 B — 本群組 eligible 相簿數量為 0（`NO_ELIGIBLE_TARGET`）
+
+唯讀對帳結果（`backups/<REDACTED_GROUP>/`，5 本全部已有歸屬）：
+
+| 相簿 | 檔案數 | 歸屬 |
+|---|---|---|
+| 2024-05-06…05-10 | 182 | 正式 `VERIFIED` |
+| 2024-05-13…05-17 | 57 | 正式 `VERIFIED` |
+| 2024-05-20…05-24 | 53 | manual（B53） |
+| 2024-05-27…05-31 | 56 | manual（A56） |
+| 2024-06-02…06-07 | 0 | Owner 排除（空目錄，從未下載） |
+
+182 + 57 = 239（歷史 VERIFIED 總數）、56 + 53 = 109（manual 總數），完全吻合，沒有第 6 本。
+
+**結論**：§6 要求的「兩本不同、未備份的 eligible 相簿」在**目前群組內不存在**。這不是程式 bug，也不是 grant 缺失。
+
+因此新增前置條件（在建立 grant 之前）：
+
+1. **AC8**：`runTwoAlbumPilot()` 在 eligible < 2 時必須回 `NO_ELIGIBLE_TARGET` 並零派送、零副作用（不得為了湊數重開已備份相簿）。
+2. 若要繼續 TWO_ALBUM_AUTO，Owner 需擇一：
+   - **(i)** 指定**另一個 LINE 群組／對話**的相簿作為 A/B（需該群組的真實列表證據）；
+   - **(ii)** 確認本群組在目前可見的 5 本之外還有更早／更晚的相簿（需真機列表 + 實際捲動證據，不得用推測補位）。
+3. 在 (i)／(ii) 取得之前，**不得**建立 `album_quota=2` 的 grant，也不得用 A56／B53／65 張相簿湊數。
+
+### 9.3 不受影響的部分
+
+§2 的 AC1–AC7、§3.2–3.5 的 loader／precedence／service 接線設計、§4 變更檔案清單（除 9.1 新增的 `--record-manual-archive` 與其測試）、§5 測試計畫 1–8 全部維持。9.1／9.2 是增補，不是重寫。

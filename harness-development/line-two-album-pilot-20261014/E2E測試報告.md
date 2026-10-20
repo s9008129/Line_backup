@@ -363,3 +363,20 @@ The focused UI element is 0 標準視窗 Secondary Actions: Raise
 | `08-viewer-b-title-crop.png` | B viewer `(1/53)` 標題 |
 
 隱私：公開檔不含群組名稱、人名、照片內容、檔案清單、授權資料或本機絕對路徑。私有原圖保留本機，未上傳。
+
+## 14. 2026-10-20 覆蓋率對帳（唯讀）— `NO_ELIGIBLE_TARGET` 在目前群組
+
+完整證據：`COVERAGE_AUDIT_20261020.md`。**未開 LINE、未寫 state、未 Save All。**
+
+- 本群組 5 本相簿全部已有歸屬：182 + 57 = 239 正式 `VERIFIED`；56 + 53 = 109 manual；65 張為 Owner 排除（目錄檔案數 0）。
+- 因此「再用另外兩本相簿」在**目前群組內不存在**，屬真實限制回報，不是程式缺陷。
+- 另一發現：A56 `verification.json` 在 PR 分支（已遮蔽）為 `a67e8207…`、Owner 本機 canonical 為 `9381d72a…`，差異僅 `destination_workspace_relative`。Plan 已補 9.1 修正（registry hash 必須即時計算）。
+- state 仍為 `revision 35`、SHA-256 `4550501…8ee6`，與前一輪完全一致。
+
+```text
+COVERAGE_AUDIT=PASS_READ_ONLY
+A56_FILES=56  B53_FILES=53  VERIFIED_239=UNCHANGED  EXCLUDED_65_FILES=0
+ELIGIBLE_ALBUMS_IN_CURRENT_GROUP=0
+TWO_ALBUM_AUTO=NOT_RUN_NO_ELIGIBLE_TARGET
+STATE_WRITES=0  GUI=0  SAVE_ALL=0
+```

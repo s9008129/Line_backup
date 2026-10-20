@@ -1,0 +1,89 @@
+# COVERAGE AUDIT 2026-10-20 — 本群組是否還有「另外兩本」eligible 相簿？
+
+- 狀態：`READ_ONLY_NO_GUI_NO_STATE_WRITE`
+- 目的：在建立新的雙相簿 grant 之前，先確認 Owner 核准的「另外兩本不同相簿」**實際存在且 eligible**
+- 方法：只讀 `state/backup_state.json`、`backups/<REDACTED_GROUP>/` 目錄與既有 manifest／verification；**未開 LINE、未寫 state、未 Save All**
+
+## 1. 結論（先講結果）
+
+**本群組目前沒有可下載的 eligible 相簿。**
+
+已對帳的 5 本相簿中，2 本已是正式 `VERIFIED`、2 本已由 manual diagnostic 實體下載完成、1 本是 Owner 指定排除（且目錄為空、從未下載）。
+因此「再用另外兩本相簿跑 TWO_ALBUM_AUTO」在**目前這個群組內不可能成立**，不是程式 bug，也不是 grant 問題。
+
+## 2. 對帳表（實體檔案層）
+
+群組目錄：`backups/<REDACTED_GROUP>/`（名稱在公開證據中遮蔽）
+
+| 相簿目錄 | 檔案數 | 狀態來源 | eligibility |
+|---|---|---|---|
+| `2024-05-06_2024-05-10_182張` | 182 | 正式 `VERIFIED` | `SKIP_VERIFIED` |
+| `2024-05-13_2024-05-17_57張` | 57 | 正式 `VERIFIED` | `SKIP_VERIFIED` |
+| `2024-05-20_2024-05-24_53張` | 53 | manual diagnostic（B53） | 應為 `SKIP_MANUAL_DIAGNOSTIC`（本輪尚未實作） |
+| `2024-05-27_2024-05-31_56張` | 56 | manual diagnostic（A56） | 應為 `SKIP_MANUAL_DIAGNOSTIC`（本輪尚未實作） |
+| `2024-06-02_2024-06-07_65張` | **0** | Owner 指定排除 | 永不可選 |
+
+182 + 57 = **239**，正好等於歷史 `VERIFIED` 總數；56 + 53 = **109**，正好等於本輪 manual 下載總數。三者互不重疊。
+
+## 3. 正式 state 對帳（revision 35，未寫入）
+
+- `state/backup_state.json` SHA-256 = `455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6`（與前一輪一致，未變）
+- `revision = 35`、`active_batch = null`、`current_run_id = RUN-20261009-project-album182`（終態）
+- `verified_albums` 僅 2 筆：
+  - `2024-05-13 .. 2024-05-17`，57 張 → `RUN-20261004-project-album57-45ee0a78`（VERIFIED）
+  - `2024-05-06 .. 2024-05-10`，182 張 → `RUN-20261009-project-album182`（VERIFIED）
+- `runs` 僅 2 筆，皆 `VERIFIED`
+- 56／53 **不在** `verified_albums`，也不在 `runs` → 這是 `history_decision()` 會把它們判成 eligible 的唯一原因
+
+## 4. 第二個發現：A56 verification JSON 有「已遮蔽版」與「本機原版」兩種 hash
+
+| 檔案 | SHA-256 | 說明 |
+|---|---|---|
+| `a56-sha256.txt` | `99c903e91415f6dff275668c5794390e581fa42764912eda9c63a038b45ce976` | 兩邊一致 |
+| `a56-verification.json`（PR 分支上的已遮蔽版） | `a67e82078e08a3eed480844b3248ef6e345e6d55b388ec98954d10208af7a38a` | Plan 目前引用這個值 |
+| `a56-verification.json`（Owner 本機 canonical 版） | `9381d72a01adf3b65f3738c91c226868e02d18de96453fc91eadc07ff6db2a38` | 實際執行時會被讀到的檔案 |
+
+兩者差異只有一個欄位：
+
+```text
+destination_workspace_relative
+  committed(redacted) : backups/<REDACTED_GROUP>/2024-05-27_2024-05-31_56張
+  canonical(local)    : backups/<真實群組名>/2024-05-27_2024-05-31_56張
+```
+
+**影響（Plan 必須修正）**：`PLAN-20261020-manual-archive-exclusion.md` 的 registry 範例把 `verification_sha256` 寫成已遮蔽版的 hash，但 loader 會去讀 canonical 專案根下的本機檔案 → fail-closed 會直接拋 `MANUAL_ARCHIVE_REGISTRY_INVALID`，整個排除機制在真機上必然失效（而且是「看起來有做、其實永遠擋住」的假成功）。
+
+修正原則：**registry 只能宣告「它實際會讀的那個檔案」的 hash**，不得手工抄寫；hash 必須在建立 registry 時由同一條路徑即時計算，並在讀取時重新核對。
+
+## 5. 這對 grant 設計的影響
+
+- 原本 Plan §6 要求「target 必須是兩本**不同、未在 verified 或 manual registry** 的 eligible 相簿」。
+- 依本節第 2 點的對帳，**本群組內符合條件的相簿數量 = 0**。
+- 因此建立新的 `album_quota=2` grant 之前，必須先取得「另一個群組／對話」的相簿清單，或由 Owner 確認本群組在已看到的 5 本之外還有更多相簿（需真機列表演員與捲動證據，不能用推測）。
+
+## 6. 重現方式（全部唯讀）
+
+```bash
+cd <PROJECT_ROOT>
+shasum -a 256 state/backup_state.json
+python3 -c "import json;s=json.load(open('state/backup_state.json'));print(s['revision'],s['verified_albums'])"
+ls backups/<REDACTED_GROUP>/
+find 'backups/<REDACTED_GROUP>/2024-06-02_2024-06-07_65張' -type f | wc -l   # → 0
+shasum -a 256 harness-development/line-two-album-pilot-20261014/public/manual-diagnostic-20261020-a56/a56-verification.json
+```
+
+## 7. 狀態總結
+
+```text
+STATE_WRITES=0
+GUI_OPENED=NO
+SAVE_ALL=0
+A56_BYTES_UNCHANGED=YES
+B53_BYTES_UNCHANGED=YES
+VERIFIED_TOTAL=239_UNCHANGED
+MANUAL_TOTAL=109_ALREADY_BACKED_UP
+ELIGIBLE_ALBUMS_IN_CURRENT_GROUP=0
+EXCLUDED_65_ALBUM_FILES=0_UNTOUCHED
+NEW_FINDING_1=NO_ELIGIBLE_TARGET_IN_CURRENT_GROUP
+NEW_FINDING_2=A56_VERIFICATION_REDACTED_VS_LOCAL_HASH_MISMATCH
+```
