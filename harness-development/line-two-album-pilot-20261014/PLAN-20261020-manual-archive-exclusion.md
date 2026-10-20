@@ -132,7 +132,7 @@ PROJECT_BUSY
 - `tests/test_batch_authority.py`／`tests/test_project_binding.py`／`tests/test_batch_observations.py`（回歸）
 - `tests/test_detail_grid_name_target.mjs`／`tests/test_cua_adapter.mjs`（既有 JS 測試，聚焦單日／區間標題）
 - `harness-development/line-two-album-pilot-20261014/config/manual_archives.example.json`（格式範例，placeholder）
-- 重算並更新既有 source／runtime manifest，確保 `manual_archive.py`、`observations.py`、analyzer／classifier 都進入正式 Source Closure；這是實作階段的必要交付，不是本輪文件修訂。
+- 重算並更新既有 source／runtime manifest：`manual_archive.py` 必須加入 `SOURCE_PATHS`；`observations.py` 已在 Source Closure 內；analyzer／classifier 由既有 entry binding 覆蓋，變更後必須重算對應 entry／runtime binding。這是實作階段的必要交付，不是本輪文件修訂。
 - 不改 `state_v3.schema.json`、不改 grant／ledger、不改 Save All／dispatch／at-most-once 語意、不改 JS CUA adapter 的派送路徑
 
 ## 5. 測試計畫（無 GUI）

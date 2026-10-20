@@ -3,7 +3,7 @@
 - 狀態：`READ_ONLY_NO_GUI_NO_STATE_WRITE`
 - 目的：在建立新的雙相簿 grant 之前，先確認 Owner 核准的「另外兩本不同相簿」**實際存在且 eligible**
 - 方法：只讀 `state/backup_state.json`、`backups/<REDACTED_GROUP>/` 目錄與既有 manifest／verification；**未開 LINE、未寫 state、未 Save All**
-- **最新狀態（2026-10-20，Plan v4.1 輸入）**：真實 LINE 已觀察到至少 5 本既有備份之外的 eligible 候選；本次唯一正式目標為 **A45（`2024/04/22～04/26`）與 B78（`2024/4/21` 單日）**，65 張相簿永久排除。下方 §1／§7 的 `ELIGIBLE_ALBUMS_IN_CURRENT_GROUP=0` 是歷史推論，已被 CORRECTION 推翻；不刪除原文。
+- **最新狀態（2026-10-20，Plan v4.1 輸入）**：真實 LINE 已觀察到至少 5 本既有備份之外的 eligible 候選；本次唯一正式目標為 **A45（`2024/04/22～04/26`）與 B78（`2024/4/21` 單日）**，65 張相簿永久排除。下方 §1／§5／§7 的 `ELIGIBLE_ALBUMS_IN_CURRENT_GROUP=0` 是歷史推論，已被 CORRECTION 推翻；不刪除原文。
 
 > ## ⚠️ CORRECTION（2026-10-20 22:38，本節推翻下面 §1 的結論）
 >
