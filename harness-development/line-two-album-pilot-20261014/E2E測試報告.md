@@ -380,3 +380,19 @@ ELIGIBLE_ALBUMS_IN_CURRENT_GROUP=0
 TWO_ALBUM_AUTO=NOT_RUN_NO_ELIGIBLE_TARGET
 STATE_WRITES=0  GUI=0  SAVE_ALL=0
 ```
+
+### 14.1 更正（同日 22:38，真機捲動）
+
+第 14 節的「eligible = 0」是**錯的**。Owner 授權前景後實際向下捲動，發現 `2024/05/06` 之後仍有相簿，且至少 5 本不在既有備份：
+
+`04/22～04/26 (45)`、`4/21 (78)`、`04/08～04/12 (77)`、`04/01～04/03 (42)`、`03/25～03/29 (87)`。
+
+捲動證據為本機私有（`private/album-list-scroll-20261020/`，含兒童照片，未上傳）。本輪 click 0、Save All 0、下載 0、state 寫入 0。
+
+```text
+CORRECTION=ELIGIBLE_ALBUMS_EXIST
+SUGGESTED_A=2024-04-22..04-26 (45)
+SUGGESTED_B=2024-04-21 (78)
+ALBUM_LIST_BOTTOM_REACHED=NO
+CLICKS=0 SAVE_ALL=0 DOWNLOADS=0 STATE_WRITES=0
+```
