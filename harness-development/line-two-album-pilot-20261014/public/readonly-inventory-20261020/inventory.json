@@ -2,12 +2,13 @@
   "schema": "READONLY_MANUAL_ARCHIVE_INVENTORY/1",
   "mode": "READ_ONLY_NO_GUI_NO_STATE_WRITE",
   "workspace_root_redacted": true,
+  "group_name_redacted": true,
   "state_revision_read": 35,
   "albums": [
     {
       "label": "A56",
       "dates": "2024/05/27～05/31",
-      "physical_dir": "backups/旻謙允禎成長日記/2024-05-27_2024-05-31_56張",
+      "physical_dir": "backups/<REDACTED_GROUP>/2024-05-27_2024-05-31_56張",
       "manifest": "harness-development/line-two-album-pilot-20261014/public/manual-diagnostic-20261020-a56/a56-sha256.txt",
       "physical_file_count": 56,
       "physical_total_bytes": 18117492,
@@ -362,7 +363,7 @@
     {
       "label": "B53",
       "dates": "2024/05/20～05/24",
-      "physical_dir": "backups/旻謙允禎成長日記/2024-05-20_2024-05-24_53張",
+      "physical_dir": "backups/<REDACTED_GROUP>/2024-05-20_2024-05-24_53張",
       "manifest": "harness-development/line-two-album-pilot-20261014/public/manual-diagnostic-20261020-b53/b53-sha256.txt",
       "physical_file_count": 53,
       "physical_total_bytes": 17095114,

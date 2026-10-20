@@ -19,7 +19,7 @@
 | A56 `2024/05/27～05/31` | 56 | 18,117,492 | 56 | 0 | 0 | 0 | **PASS** |
 | B53 `2024/05/20～05/24` | 53 | 17,095,114 | 53 | 0 | 0 | 0 | **PASS** |
 
-- 證據：[`public/readonly-inventory-20261020/inventory.json`](./public/readonly-inventory-20261020/inventory.json)（SHA-256 `ec1a41d6…5c610`）
+- 證據：[`public/readonly-inventory-20261020/inventory.json`](./public/readonly-inventory-20261020/inventory.json)（SHA-256 `53eaee61…8bc`）
 - 重算工具：[`scripts/readonly_inventory_20261020.py`](./scripts/readonly_inventory_20261020.py)
 - A manifest：`manual-diagnostic-20261020-a56/a56-sha256.txt`（`99c903e9…e976`）
 - A verification：`manual-diagnostic-20261020-a56/a56-verification.json`（`a67e8207…a38a`）

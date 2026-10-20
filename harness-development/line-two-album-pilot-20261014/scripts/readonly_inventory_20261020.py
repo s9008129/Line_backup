@@ -17,7 +17,7 @@ ALBUMS = [
     {
         "label": "A56",
         "dates": "2024/05/27～05/31",
-        "backup_dir": "backups/旻謙允禎成長日記/2024-05-27_2024-05-31_56張",
+        "backup_suffix": "2024-05-27_2024-05-31_56張",
         "public_dir": "harness-development/line-two-album-pilot-20261014/public/manual-diagnostic-20261020-a56",
         "manifest_txt": "a56-sha256.txt",
         "verification_json": "a56-verification.json",
@@ -25,7 +25,7 @@ ALBUMS = [
     {
         "label": "B53",
         "dates": "2024/05/20～05/24",
-        "backup_dir": "backups/旻謙允禎成長日記/2024-05-20_2024-05-24_53張",
+        "backup_suffix": "2024-05-20_2024-05-24_53張",
         "public_dir": "harness-development/line-two-album-pilot-20261014/public/manual-diagnostic-20261020-b53",
         "manifest_txt": "b53-sha256.txt",
         "verification_json": "b53-verification.json",
@@ -52,8 +52,15 @@ def load_manifest_txt(path: Path) -> dict[str, str]:
     return entries
 
 
+def resolve_backup_dir(repo_root: Path, suffix: str) -> Path:
+    matches = sorted(p for p in (repo_root / "backups").glob(f"*/{suffix}") if p.is_dir())
+    if len(matches) != 1:
+        raise SystemExit(f"expected exactly one backup dir for {suffix}, found {len(matches)}")
+    return matches[0]
+
+
 def audit_album(repo_root: Path, evidence_root: Path, spec: dict) -> dict:
-    backup_dir = repo_root / spec["backup_dir"]
+    backup_dir = resolve_backup_dir(repo_root, spec["backup_suffix"])
     public_dir = evidence_root / spec["public_dir"]
     manifest = load_manifest_txt(public_dir / spec["manifest_txt"])
     verification = json.loads((public_dir / spec["verification_json"]).read_text(encoding="utf-8"))
@@ -99,7 +106,7 @@ def audit_album(repo_root: Path, evidence_root: Path, spec: dict) -> dict:
     return {
         "label": spec["label"],
         "dates": spec["dates"],
-        "physical_dir": spec["backup_dir"],
+        "physical_dir": f"backups/<REDACTED_GROUP>/{spec['backup_suffix']}",
         "manifest": f"{spec['public_dir']}/{spec['manifest_txt']}",
         "physical_file_count": len(physical),
         "physical_total_bytes": total_bytes,
@@ -129,6 +136,7 @@ def main() -> int:
         "schema": "READONLY_MANUAL_ARCHIVE_INVENTORY/1",
         "mode": "READ_ONLY_NO_GUI_NO_STATE_WRITE",
         "workspace_root_redacted": True,
+        "group_name_redacted": True,
         "state_revision_read": 35,
         "albums": albums,
         "overall_status": "PASS" if all(a["status"] == "PASS" for a in albums) else "FAIL",
