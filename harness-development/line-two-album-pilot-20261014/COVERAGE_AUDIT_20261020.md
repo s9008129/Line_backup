@@ -3,6 +3,7 @@
 - 狀態：`READ_ONLY_NO_GUI_NO_STATE_WRITE`
 - 目的：在建立新的雙相簿 grant 之前，先確認 Owner 核准的「另外兩本不同相簿」**實際存在且 eligible**
 - 方法：只讀 `state/backup_state.json`、`backups/<REDACTED_GROUP>/` 目錄與既有 manifest／verification；**未開 LINE、未寫 state、未 Save All**
+- **最新狀態（2026-10-20，Plan v4.1 輸入）**：真實 LINE 已觀察到至少 5 本既有備份之外的 eligible 候選；本次唯一正式目標為 **A45（`2024/04/22～04/26`）與 B78（`2024/4/21` 單日）**，65 張相簿永久排除。下方 §1／§7 的 `ELIGIBLE_ALBUMS_IN_CURRENT_GROUP=0` 是歷史推論，已被 CORRECTION 推翻；不刪除原文。
 
 > ## ⚠️ CORRECTION（2026-10-20 22:38，本節推翻下面 §1 的結論）
 >
@@ -61,7 +62,7 @@
 | 檔案 | SHA-256 | 說明 |
 |---|---|---|
 | `a56-sha256.txt` | `99c903e91415f6dff275668c5794390e581fa42764912eda9c63a038b45ce976` | 兩邊一致 |
-| `a56-verification.json`（PR 分支上的已遮蔽版） | `a67e82078e08a3eed480844b3248ef6e345e6d55b388ec98954d10208af7a38a` | Plan 目前引用這個值 |
+| `a56-verification.json`（PR 分支上的已遮蔽版） | `a67e82078e08a3eed480844b3248ef6e345e6d55b388ec98954d10208af7a38a` | Plan v4 曾引用；v4.1 已改為實際路徑即時計算 |
 | `a56-verification.json`（Owner 本機 canonical 版） | `9381d72a01adf3b65f3738c91c226868e02d18de96453fc91eadc07ff6db2a38` | 實際執行時會被讀到的檔案 |
 
 兩者差異只有一個欄位：
@@ -76,7 +77,7 @@ destination_workspace_relative
 
 修正原則：**registry 只能宣告「它實際會讀的那個檔案」的 hash**，不得手工抄寫；hash 必須在建立 registry 時由同一條路徑即時計算，並在讀取時重新核對。
 
-## 5. 這對 grant 設計的影響
+## 5. 這對 grant 設計的影響（歷史推論；已被 CORRECTION 與 §8 推翻）
 
 - 原本 Plan §6 要求「target 必須是兩本**不同、未在 verified 或 manual registry** 的 eligible 相簿」。
 - 依本節第 2 點的對帳，**本群組內符合條件的相簿數量 = 0**。
@@ -93,7 +94,9 @@ find 'backups/<REDACTED_GROUP>/2024-06-02_2024-06-07_65張' -type f | wc -l   # 
 shasum -a 256 harness-development/line-two-album-pilot-20261014/public/manual-diagnostic-20261020-a56/a56-verification.json
 ```
 
-## 7. 狀態總結
+## 7. 狀態總結（歷史快照；`ELIGIBLE_ALBUMS_IN_CURRENT_GROUP=0` 已被上方 CORRECTION 推翻）
+
+> **HISTORICAL / OVERRIDDEN：** 本節保留當初唯讀目錄對帳的快照，不作現況。現況是至少 5 本新候選，正式目標 A45／B78；不需為此再取得新證據。
 
 ```text
 STATE_WRITES=0
@@ -109,7 +112,18 @@ NEW_FINDING_1=NO_ELIGIBLE_TARGET_IN_CURRENT_GROUP
 NEW_FINDING_2=A56_VERIFICATION_REDACTED_VS_LOCAL_HASH_MISMATCH
 ```
 
-## 7. 追加發現（2026-10-20 22:50）— 單日相簿 `2024/4/21` 目前無法被產品解析
+## 8. 現況覆寫（Plan v4.1）
+
+```text
+ELIGIBLE_ALBUMS_IN_CURRENT_GROUP=AT_LEAST_5_OBSERVED_IN_REAL_LINE
+HISTORICAL_ELIGIBLE_ZERO_STATUS=OVERRIDDEN_BY_CORRECTION
+TARGET_A=2024-04-22..2024-04-26_45
+TARGET_B=2024-04-21..2024-04-21_78
+OWNER_EXCLUDED=2024-06-02..2024-06-07_65_UNTOUCHED
+PLAN_REVISION=v4.1_PENDING_FAST_REREVIEW
+```
+
+## 9. 追加發現（2026-10-20 22:50）— 單日相簿 `2024/4/21` 目前無法被產品解析
 
 B 目標 `2024/4/21` 是**單日相簿**，畫面文字沒有前導零、也沒有日期區間。以 PR #10 pilot HEAD `516932d` 的實際程式碼執行：
 
