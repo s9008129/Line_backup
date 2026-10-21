@@ -33,7 +33,16 @@ class ObservationTests(unittest.TestCase):
             {'start_date':'2024-05-27','end_date':'2024-05-31'})
         self.assertEqual(ocr_date_identity('2024/05/27～05/31'),
             {'start_date':'2024-05-27','end_date':'2024-05-31'})
+        self.assertEqual(ocr_date_identity('2024/4/21'),
+            {'start_date':'2024-04-21','end_date':'2024-04-21'})
+        self.assertEqual(ocr_date_identity('2024/4/21～4/21'),
+            {'start_date':'2024-04-21','end_date':'2024-04-21'})
+        self.assertEqual(ocr_date_identity('2024/12/30～01/02'),
+            {'start_date':'2024-12-30','end_date':'2025-01-02'})
         self.assertIsNone(ocr_date_identity('2024/05/27~02/31'))
+        self.assertIsNone(ocr_date_identity('2024/2/30'))
+        self.assertIsNone(ocr_date_identity('2023/2/29'))
+        self.assertIsNone(ocr_date_identity('2024/4/21(1/78)'))
     def test_partial_card_prohibits_click(self):
         observation=self.f.observation([identity()]);observation['cards'][0]['fully_visible']=False
         with self.assertRaisesRegex(AcceptanceError,'CARD_NOT_FULLY_VISIBLE'):

@@ -659,6 +659,12 @@ def validate_project_runtime_binding(reader,grant,one56_bundle=None):
     return manifest
 
 def execute(ns):
+    if ns.operation=='manual_record':
+        from line_backup_acceptance.manual_archive import record_manual_archives
+        payload=load_input(ns.project_root,ns.input)
+        data=payload.get('data',{}) if isinstance(payload,dict) else {}
+        require(isinstance(data,dict) and set(data)=={'records'},'MANUAL_ARCHIVE_RECORD_INVALID')
+        return record_manual_archives(ns.project_root,data['records'])
     if ns.operation=='native_authorize':
         # Read-only reuse of the complete live project authority check. This
         # never initializes the GUI ledger, acquires an owner or observes LINE.
@@ -695,7 +701,12 @@ def execute(ns):
             ledger_status=store.project_gui_ledger_status(grant)
         candidates=candidate_data.get('candidates',[])
         require(isinstance(candidates,list),'INSPECT_CANDIDATES_INVALID')
-        eligible=[target for target in candidates if Service.eligible(s,target)]
+        project_targets=candidate_data.get('project_target_allowlist') is True
+        from line_backup_acceptance.manual_archive import REQUIRED_MANUAL_FINGERPRINTS,owner_target_allowed
+        manual=store.manual_fingerprints(required=project_targets and store.manual_registry_required(),
+            required_fingerprints=REQUIRED_MANUAL_FINGERPRINTS)
+        eligible=[target for target in candidates if Service.eligible(s,target,manual)=='PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION'
+            and (not project_targets or owner_target_allowed(target))]
         # JS may consume this safe summary; never roundtrip raw canonical history.
         result=dict(receipt=snapshot['receipt'],config=snapshot['config'],dispatch_authorized=False,
             state_facts=dict(schema_version=s['schema_version'],revision=s['revision'],active_batch=s.get('active_batch'),
@@ -742,7 +753,7 @@ def execute(ns):
 
 def main(argv=None):
     p=argparse.ArgumentParser(prog='line_backup_batch')
-    p.add_argument('operation',choices=['inspect','migrate','begin','admit','prepare','calibrate','intent','dispatch','finalize','stop','finish','release','resume','gui_reserve','gui_consume','gui_initialize','gui_phase','gui_observe','native_authorize'])
+    p.add_argument('operation',choices=['inspect','manual_record','migrate','begin','admit','prepare','calibrate','intent','dispatch','finalize','stop','finish','release','resume','gui_reserve','gui_consume','gui_initialize','gui_phase','gui_observe','native_authorize'])
     p.add_argument('--project-root',required=True);p.add_argument('--authorization');p.add_argument('--input')
     p.add_argument('--fixture',action='store_true');ns=p.parse_args(argv)
     try:

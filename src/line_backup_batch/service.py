@@ -179,8 +179,12 @@ class Service:
         return b
 
     def begin(self,expected,mode,limit):
-        if self.project_profile():require(mode=='backup_batch' and limit==1,'PROJECT_BEGIN_SCOPE')
-        grant=self._project_grant() if self.project_profile() else None
+        from line_backup_acceptance.manual_archive import REQUIRED_MANUAL_FINGERPRINTS
+        project=self.project_profile()
+        self.store.manual_fingerprints(required=project and self.store.manual_registry_required(),
+            required_fingerprints=REQUIRED_MANUAL_FINGERPRINTS)
+        if project:require(mode=='backup_batch' and limit==1,'PROJECT_BEGIN_SCOPE')
+        grant=self._project_grant() if project else None
         if grant and grant.get('single_album_route') is True:
             # Fail closed before Store.begin writes active_batch. A one56 route has
             # exactly one lifecycle and can only start from the untouched A phase.
@@ -205,7 +209,7 @@ class Service:
                 new_transactions_reserved=0,manifest_reference=None,next_index=0,current_album_run_id=None,stop_reason=None)
             return dict(batch_id=batch_id,status='BATCH_OWNED')
         result=self.store._update(expected,acquire,operation='begin')
-        if self.project_profile():
+        if project:
             self.store.start_project_lifecycle(self._project_grant(),result['result']['batch_id'])
         return result
 
@@ -265,7 +269,13 @@ class Service:
                 and b.get('new_transactions_reserved')==0 and b.get('authorized_new_download_limit')==1,
                 'BOUNDED_LIFECYCLE_ALREADY_ADMITTED')
             self._validate_bounded_lifecycle(reader,state,b,target,workflow_link)
-            require(self.eligible(state,target)=='PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION','BOUNDED_TARGET_INELIGIBLE')
+            if self.store.manual_registry_required():
+                from line_backup_acceptance.manual_archive import require_owner_target
+                require_owner_target(target)
+            from line_backup_acceptance.manual_archive import REQUIRED_MANUAL_FINGERPRINTS
+            manual=self.store.manual_fingerprints(required=self.store.manual_registry_required(),
+                required_fingerprints=REQUIRED_MANUAL_FINGERPRINTS)
+            require(self.eligible(state,target,manual)=='PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION','BOUNDED_TARGET_INELIGIBLE')
             # A bounded admission proves one selected candidate; it deliberately does not
             # claim that this frame reaches either catalog boundary or enumerates the group.
             require(isinstance(target,dict) and set(target)=={'start_date','end_date','expected_images'}
@@ -378,9 +388,9 @@ class Service:
             if owned:reader.close()
 
     @staticmethod
-    def eligible(s,target):
+    def eligible(s,target,manual=frozenset()):
         view=copy.deepcopy(s);view['active_batch']=None
-        return history_decision(view,dict(fingerprint=target),{r['run_id']:r for r in view['runs']})[0]
+        return history_decision(view,dict(fingerprint=target),{r['run_id']:r for r in view['runs']},manual)[0]
 
     @staticmethod
     def event(r,phase,evidence):
@@ -397,13 +407,16 @@ class Service:
             require(b['mode']=='backup_batch' and b['phase'] in ('ADMITTED','RUNNING'),'CATALOG_DISPATCH_REFUSED')
             require(b['current_album_run_id'] is None,'ALBUM_BUSY')
             index=b['next_index'];require(index<len(m['identities']),'MANIFEST_END')
-            target=m['identities'][index];decision=self.eligible(snap['state'],target)
+            from line_backup_acceptance.manual_archive import REQUIRED_MANUAL_FINGERPRINTS
+            manual=self.store.manual_fingerprints(required=self.project_profile() and self.store.manual_registry_required(),
+                required_fingerprints=REQUIRED_MANUAL_FINGERPRINTS)
+            target=m['identities'][index];decision=self.eligible(snap['state'],target,manual)
             if self._one56():require(target==ONE56_FINGERPRINT,'ONE56_TARGET_MISMATCH')
             click=None
             if decision=='PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION':
                 require(b['new_transactions_reserved']<min(b['authorized_new_download_limit'],b['configured_new_download_limit']),'LIMIT_REACHED')
                 click=card_target(reader,observation,snap['config'],target,m['session_id'])
-            else:require(decision=='SKIP_VERIFIED',decision)
+            else:require(decision in ('SKIP_VERIFIED','SKIP_MANUAL_DIAGNOSTIC'),decision)
         finally:reader.close()
         run_id='RUN-v3-'+uuid.uuid4().hex
         relative=f"backups/{snap['config']['group_name']}/{target['start_date']}_{target['end_date']}_{target['expected_images']}張"
@@ -412,9 +425,9 @@ class Service:
             b=self.batch(s)
             if self._one56():require(target==ONE56_FINGERPRINT,'ONE56_TARGET_MISMATCH')
             require(b['next_index']==index and b['current_album_run_id'] is None,'ALBUM_BUSY')
-            require(self.eligible(s,target)==decision,'HISTORY_DRIFT')
-            if decision=='SKIP_VERIFIED':
-                b['next_index']+=1;return dict(status='SKIP_VERIFIED',fingerprint=target)
+            require(self.eligible(s,target,manual)==decision,'HISTORY_DRIFT')
+            if decision in ('SKIP_VERIFIED','SKIP_MANUAL_DIAGNOSTIC'):
+                b['next_index']+=1;return dict(status=decision,fingerprint=target)
             require(cfg['group_name']==snap['config']['group_name'],'CONFIG_GROUP_DRIFT')
             destination=self.store.root+'/'+relative
             self.publish('filesystem-intent-'+run_id+'.json',dict(version='line-backup-filesystem-intent-1',run_id=run_id,

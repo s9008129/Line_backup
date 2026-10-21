@@ -39,7 +39,8 @@ PROJECT_PAIRED_CHECKPOINTS.update(f'PAIR-C1-SCROLL_{slot}_AFTER' for slot in (1,
 PACKAGE_NAMES=['__init__.py','__main__.py','cli.py','content.py','coordinator.py','image_decode.swift',
                'observations.py','schema.py','service.py','state_v3.schema.json','store.py']
 SOURCE_PATHS=[f'src/line_backup_acceptance/{n}' for n in
-    ['__init__.py','__main__.py','authority.py','cli.py','common.py','project_binding.py','status.py','transaction.py','verifier.py']]
+    ['__init__.py','__main__.py','authority.py','cli.py','common.py','manual_archive.py',
+     'project_binding.py','status.py','transaction.py','verifier.py']]
 SOURCE_PATHS += [f'src/line_backup_batch/{n}' for n in PACKAGE_NAMES]+['scripts/line_backup_cua_adapter.mjs']
 TRANSITION_FIELDS={
     'migrate': {'schema_version','active_batch'},
@@ -191,6 +192,22 @@ class Store:
             cfg,s,receipt,_,inventory=self.load(r);r.fresh_root()
             return dict(receipt=receipt,config=cfg,state=s,source_files=inventory,dispatch_authorized=False)
         finally:r.close()
+
+    def manual_fingerprints(self,*,required=False,required_fingerprints=()):
+        """Re-read the local exclusion registry; no cached eligibility is trusted."""
+        from line_backup_acceptance.manual_archive import load_manual_archives
+        r=ProjectReader(self.root)
+        try:
+            cfg=strict_json(r.read(CONFIG)[0],'INVALID_CONFIG')
+            validate_config(cfg,self.root)
+            return load_manual_archives(r,app_identifier=cfg['app_identifier'],group_key=cfg['group_key'],
+                required=required,required_fingerprints=required_fingerprints)
+        finally:r.close()
+
+    def manual_registry_required(self):
+        """The Owner A56/B53 scope applies to this installed project, not generic fixtures."""
+        from line_backup_acceptance.manual_archive import required_for_root
+        return required_for_root(self.root)
 
     @contextlib.contextmanager
     def guard(self):
@@ -474,6 +491,8 @@ class Store:
 
     def initialize_project_ledger(self,grant,data):
         self._authorize_project_mutation(grant,'gui_initialize')
+        from line_backup_acceptance.manual_archive import REQUIRED_MANUAL_FINGERPRINTS
+        self.manual_fingerprints(required=self.manual_registry_required(),required_fingerprints=REQUIRED_MANUAL_FINGERPRINTS)
         require(data=={'confirm_initialization':True},'PROJECT_LEDGER_INITIALIZATION_REFUSED')
         path=self.ledger_path(grant);receipt_path=path[:-len('gui-ledger.json')]+'gui-ledger-initialization.json'
         with self.guard() as (r,parent,check_lock,lock_identity):

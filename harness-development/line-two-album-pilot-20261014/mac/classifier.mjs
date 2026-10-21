@@ -301,15 +301,17 @@ export function createLiveClassifier({retain,readRetained,frameSupport,analyzeCa
           'SCROLL_ROW_METADATA_BOUNDS');
         for(const b of row.metadata_bounds){rect(b,width,height,'SCROLL_ROW_METADATA_BOUNDS');
           need(inside(b,row.row_bounds)&&inside(b,viewport),'SCROLL_ROW_METADATA_CLIPPED');}
-        const title=`${id.start_date.replaceAll('-','/')}～${id.end_date.slice(5).replaceAll('-','/')}`;
-        const channelMatches=(items)=>items.filter(item=>item.text===title&&item.confidence>=.5
+        const matchesIdentity=text=>{const parsed=completeDateTitle(text);
+          return parsed?.start_date===id.start_date&&parsed?.end_date===id.end_date;};
+        const channelMatches=(items)=>items.filter(item=>matchesIdentity(item.text)&&item.confidence>=.5
           &&item.candidate_count===1&&inside(item.bounds,row.row_bounds)&&inside(item.bounds,viewport));
         const countMatches=(items)=>items.filter(item=>item.text===String(id.expected_images)&&item.confidence>=.5
           &&item.candidate_count===1&&inside(item.bounds,row.row_bounds)&&inside(item.bounds,viewport));
-        const uniqueSckText=(items,text)=>items.filter(item=>item.text===text&&item.confidence>=.5
+        const uniqueSckText=(items,predicate)=>items.filter(item=>predicate(item.text)&&item.confidence>=.5
           &&item.candidate_count===1);
         need(channelMatches(ocr.cua).length===1&&countMatches(ocr.cua).length===1
-          &&uniqueSckText(ocr.sck,title).length===1&&uniqueSckText(ocr.sck,String(id.expected_images)).length===1,
+          &&uniqueSckText(ocr.sck,matchesIdentity).length===1
+          &&uniqueSckText(ocr.sck,text=>text===String(id.expected_images)).length===1,
           'SCROLL_ROW_OCR_CROSS_SOURCE');
         scrollRows.push({fingerprint:id,row_bounds:row.row_bounds,fully_visible:row.fully_visible,
           identity_visible:true,metadata_bounds:row.metadata_bounds,row_ax_index:row.row_ax_index});
@@ -350,8 +352,9 @@ export function createLiveClassifier({retain,readRetained,frameSupport,analyzeCa
         &&Number.isInteger(id.expected_images)&&id.expected_images>0,'CLASSIFIER_CARD_IDENTITY');
       const identity=JSON.stringify([id.start_date,id.end_date,id.expected_images]);
       need(!seen.has(identity),'CLASSIFIER_CARD_AMBIGUOUS');seen.add(identity);
-      const expectedTitle=`${id.start_date.replaceAll('-','/')}～${id.end_date.slice(5).replaceAll('-','/')}`;
-      need(candidate.title===expectedTitle&&typeof candidate.fully_visible==='boolean','CLASSIFIER_CARD_TITLE');
+      const parsedCardTitle=completeDateTitle(candidate.title);
+      need(parsedCardTitle?.start_date===id.start_date&&parsedCardTitle?.end_date===id.end_date
+        &&typeof candidate.fully_visible==='boolean','CLASSIFIER_CARD_TITLE');
       rect(candidate.card_bounds,width,height,'CLASSIFIER_CARD_BOUNDS');
       rect(candidate.metadata_bounds,width,height,'CLASSIFIER_METADATA_BOUNDS');
       rect(candidate.safe_metadata_bounds,width,height,'CLASSIFIER_SAFE_METADATA_BOUNDS');

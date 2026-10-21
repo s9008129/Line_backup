@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {deflateSync} from 'node:zlib';
-import {createLiveAnalyzer} from '../harness-development/line-two-album-pilot-20261014/mac/analyzer.mjs';
+import {completeDateTitle,createLiveAnalyzer} from '../harness-development/line-two-album-pilot-20261014/mac/analyzer.mjs';
 import {createLiveClassifier} from '../harness-development/line-two-album-pilot-20261014/mac/classifier.mjs';
 
 const target={start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56};
@@ -215,4 +215,34 @@ test('classifier binds detail grid identity to CUA bounds and exact SCK text aft
   const negative=createLiveClassifier({retain,frameSupport,groupKey:'stable-group',analyzeCapture:async()=>analysis});
   await assert.rejects(()=>negative.classify({capture:{screenshot,state},saved,frameId,sessionId,
     capturedAt:'2026-10-17T00:00:00.000Z',sourceBinding:{}}),/CLASSIFIER_DETAIL_OCR_BINDING/);
+});
+
+
+test('single-day date titles parse to a one-day fingerprint and stay verbatim in the card witness', async () => {
+  assert.deepEqual(completeDateTitle('2024/4/21'), {start_date: '2024-04-21', end_date: '2024-04-21'});
+  assert.deepEqual(completeDateTitle('2024/04/21～04/21'), {start_date: '2024-04-21', end_date: '2024-04-21'});
+  assert.deepEqual(completeDateTitle('2024/12/30～01/02'), {start_date: '2024-12-30', end_date: '2025-01-02'});
+  assert.equal(completeDateTitle('2024/2/30'), null);
+  assert.equal(completeDateTitle('2023/2/29'), null);
+  assert.deepEqual(completeDateTitle('2024/2/29'), {start_date: '2024-02-29', end_date: '2024-02-29'});
+  assert.equal(completeDateTitle('2024/05/27～05/31(1/56)'), null);
+  const ocr = [
+    {text: canonical, confidence: .9, candidateCount: 1, bounds: {x: 14, y: 88, width: 200, height: 24}},
+    {text: '相簿', confidence: .9, candidateCount: 1, bounds: {x: 18, y: 145, width: 60, height: 20}},
+    {text: '2024/4/21', confidence: .95, candidateCount: 1, bounds: {x: 31, y: 1136, width: 258, height: 30}},
+    {text: '78', confidence: .95, candidateCount: 1, bounds: {x: 31, y: 1174, width: 50, height: 24}}
+  ];
+  const frameId = '9'.repeat(64);
+  const before = native({frameId, at: 9990, ocr});
+  const after = native({frameId, at: 10010, ocr});
+  for (const value of [before, after]) {
+    const row = value.nodes.find(node => node.id === 'row');
+    row.children.push('thumbnail');
+    value.nodes.push({id: 'thumbnail', parentID: 'row', role: 'AXImage',
+      framePt: {x: 360, y: 150, width: 100, height: 100}, offscreen: false, children: []});
+  }
+  const list = await capture(analyzer(), {frameId, beforeValue: before, afterValue: after});
+  assert.equal(list.surface, 'ALBUMS');
+  assert.deepEqual(list.cards[0].fingerprint, {start_date: '2024-04-21', end_date: '2024-04-21', expected_images: 78});
+  assert.equal(list.cards[0].title, '2024/4/21');
 });

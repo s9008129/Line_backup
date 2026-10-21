@@ -26,12 +26,22 @@ export function verifyNativePair(before,after) {
 }
 
 export function completeDateTitle(text) {
-  const m=/^(\d{4})\/(\d{2})\/(\d{2})\s*[~～〜]\s*(\d{2})\/(\d{2})$/.exec(text);
+  const m=/^(\d{4})\/(\d{1,2})\/(\d{1,2})(?:\s*[~～〜]\s*(\d{1,2})\/(\d{1,2}))?$/.exec(text);
   if(!m)return null;
-  const start=`${m[1]}-${m[2]}-${m[3]}`;let year=Number(m[1]);
-  if(`${m[4]}-${m[5]}`<`${m[2]}-${m[3]}`)year++;
-  const end=`${year}-${m[4]}-${m[5]}`;
-  for(const s of [start,end])if(new Date(s+'T00:00:00Z').toISOString().slice(0,10)!==s)return null;
+  const year=Number(m[1]),month=Number(m[2]),day=Number(m[3]);
+  const valid=(y,mo,d)=>Number.isInteger(y)&&Number.isInteger(mo)&&Number.isInteger(d)
+    &&y>=1&&mo>=1&&mo<=12&&d>=1&&d<=31
+    &&new Date(Date.UTC(y,mo-1,d)).toISOString().slice(0,10)===`${String(y).padStart(4,'0')}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  if(!valid(year,month,day))return null;
+  let endYear=year,endMonth=month,endDay=day;
+  if(m[4]!==undefined){
+    endMonth=Number(m[4]);endDay=Number(m[5]);
+    endYear=year+((endMonth<month||(endMonth===month&&endDay<day))?1:0);
+    if(!valid(endYear,endMonth,endDay))return null;
+  }
+  const iso=(y,mo,d)=>`${String(y).padStart(4,'0')}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  const start=iso(year,month,day);
+  const end=iso(endYear,endMonth,endDay);
   return {start_date:start,end_date:end};
 }
 
@@ -369,7 +379,7 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
         const metadata=[x,y,right-x,bottom-y],margin=6;
         const safe=[title.bounds[0]+margin,title.bounds[1]+margin,title.bounds[2]-2*margin,title.bounds[3]-2*margin];
         if(safe[2]<8||safe[3]<8||!inside(title.bounds,cardBounds)||!inside(counts[0].bounds,cardBounds))continue;
-        cards.push({fingerprint:id,title:`${id.start_date.replaceAll('-','/')}～${id.end_date.slice(5).replaceAll('-','/')}`,
+        cards.push({fingerprint:id,title:title.text,
           metadata_bounds:metadata,card_bounds:cardBounds,fully_visible:inside(cardBounds,[0,0,width,height]),
           safe_metadata_bounds:safe,neighbor_bounds:[],thumbnail_bounds:null,card_ax_index:nativeIDs.get(node.id),
           thumbnail_ax_index:null});
@@ -396,7 +406,7 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
         options.sort((a,b)=>b[2]*b[3]-a[2]*a[3]);safe=options[0];
       }
       need(safe[2]>=16&&safe[3]>=16&&!intersects(safe,thumbBounds),'CARD_SAFE_GEOMETRY');
-      cards.push({fingerprint:id,title:`${id.start_date.replaceAll('-','/')}～${id.end_date.slice(5).replaceAll('-','/')}`,
+      cards.push({fingerprint:id,title:title.text,
         metadata_bounds:metadata,card_bounds:cardBounds,fully_visible:true,safe_metadata_bounds:safe,
         neighbor_bounds:[],thumbnail_bounds:thumbBounds,card_ax_index:nativeIDs.get(node.id),thumbnail_ax_index:nativeIDs.get(thumbnails[0].id)});
     }

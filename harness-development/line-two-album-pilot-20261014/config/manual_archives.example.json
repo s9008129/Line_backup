@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "kind": "manual_archive_registry",
+  "app_identifier": "jp.naver.line.mac",
+  "group_key": "line:jp.naver.line.mac:<OWNER_GROUP>",
+  "entries": [
+    {
+      "fingerprint": {
+        "start_date": "2024-05-27",
+        "end_date": "2024-05-31",
+        "expected_images": 56
+      },
+      "provenance": "MANUAL_DIAGNOSTIC",
+      "recorded_at": "<ISO-8601-WITH-TIMEZONE>",
+      "manifest_path": "<CANONICAL-PATH-UNDER-PROJECT>/a56-sha256.txt",
+      "manifest_sha256": "<SHA256-OF-EXACT-LOCAL-FILE>",
+      "verification_path": "<CANONICAL-PATH-UNDER-PROJECT>/a56-verification.json",
+      "verification_sha256": "<SHA256-OF-EXACT-LOCAL-FILE>",
+      "file_count": 56,
+      "total_bytes": 18117492
+    }
+  ]
+}

@@ -39,12 +39,19 @@ def fp(value):
     return value
 
 def ocr_date_identity(text):
-    match=re.fullmatch(r'(\d{4})/(\d{2})/(\d{2})\s*[~～〜]\s*(\d{2})/(\d{2})',text) if isinstance(text,str) else None
+    match=re.fullmatch(r'(\d{4})/(\d{1,2})/(\d{1,2})(?:\s*[~～〜]\s*(\d{1,2})/(\d{1,2}))?',
+        text) if isinstance(text,str) else None
     if match is None:return None
-    year,month,day,end_month,end_day=map(int,match.groups())
-    end_year=year+((end_month,end_day)<(month,day))
-    try:start=dt.date(year,month,day);end=dt.date(end_year,end_month,end_day)
+    year,month,day,end_month,end_day=match.groups()
+    year,month,day=map(int,(year,month,day))
+    try:start=dt.date(year,month,day)
     except ValueError:return None
+    if end_month is None:end=start
+    else:
+        end_month,end_day=map(int,(end_month,end_day))
+        end_year=year+((end_month,end_day)<(month,day))
+        try:end=dt.date(end_year,end_month,end_day)
+        except ValueError:return None
     return {'start_date':start.isoformat(),'end_date':end.isoformat()}
 
 def rect(value,width,height):
@@ -491,7 +498,7 @@ def _validate_frame(reader,record,cfg,*,session,now=None,max_age=5,allow_high_ed
         require(set(card)=={'fingerprint','title','metadata_bounds','card_bounds','fully_visible','safe_metadata_bounds','neighbor_bounds'},'INVALID_CARD')
         ident=fp(card['fingerprint']);key=tuple(ident.values());datekey=(ident['start_date'],ident['end_date'])
         require(key not in seen and datekey not in by_dates,'AMBIGUOUS_ALBUM_IDENTITY');seen.add(key);by_dates.add(datekey)
-        require(card['title']==ident['start_date'].replace('-','/')+'～'+ident['end_date'][5:].replace('-','/'),'NON_DATE_TITLE')
+        require(ocr_date_identity(card['title'])=={'start_date':ident['start_date'],'end_date':ident['end_date']},'NON_DATE_TITLE')
         rect(card['metadata_bounds'],*size)
         if card['fully_visible'] is True:
             rect(card['card_bounds'],*size);rect(card['safe_metadata_bounds'],*size)

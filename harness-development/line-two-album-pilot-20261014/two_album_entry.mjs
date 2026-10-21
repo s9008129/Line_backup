@@ -277,17 +277,17 @@ async function runAlbumWorkflow(runtime,{singleAlbum=false}={}) {
   let proofs=navigation.scrollEvidence();
   requireFact(afterScroll?.surface==='ALBUMS'&&proofs.length>=1,'C1_BOUNDED_SCROLL_REQUIRED');
   let candidateSet=proofs.at(-1).new_candidates;
-  let inspectedB=await cli('inspect',{candidates:candidateSet},true);
+  let inspectedB=await cli('inspect',{candidates:candidateSet,project_target_allowlist:true},true);
   let eligibleCandidates=inspectedB?.eligible_candidates??[];
   while(!eligibleCandidates.length&&totalScrolls<4){
     const nextTarget=await runtime.navigation.scrollTarget(afterScroll);
     afterScroll=await navigation.boundedScroll(afterScroll,nextTarget,'down',0.25,`SCROLL_${totalScrolls+1}`);
     totalScrolls++;proofs=navigation.scrollEvidence();candidateSet=proofs.at(-1).new_candidates;
-    inspectedB=await cli('inspect',{candidates:candidateSet},true);
+    inspectedB=await cli('inspect',{candidates:candidateSet,project_target_allowlist:true},true);
     eligibleCandidates=inspectedB?.eligible_candidates??[];
   }
   navigation.close();activeNavigation=null;
-  requireFact(eligibleCandidates.length>0,'NO_ELIGIBLE_TARGET_B');
+  requireFact(eligibleCandidates.length>0,'PARTIAL_A_VERIFIED_B_NOT_RUN');
   candidateSet=eligibleCandidates;
   const c1={kind:'LINE_TWO_ALBUM_C1',status:'PASS',a_run_id:a.runId,group_key:a.list.group_key,
     verified_scroll_count:proofs.length,scrolls:proofs,new_candidates:proofs.at(-1).new_candidates};
