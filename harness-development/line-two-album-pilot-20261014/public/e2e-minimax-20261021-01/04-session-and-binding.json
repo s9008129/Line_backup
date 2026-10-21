@@ -12,7 +12,26 @@
     "test_worktree_head": "b7bb666fa78b8e9dfffed8247c4f2a7f869a481b",
     "test_worktree_branch": "v43-ab/codex-rev28",
     "candidate_product_head_pr24": "6a81326c8920e313191ea77e4ad930c79e2bd52c",
-    "candidate_product_branch_pr24": "implement/line-two-album-v4-1-20261021"
+    "candidate_product_branch_pr24": "implement/line-two-album-v4-1-20261021",
+    "source_paths_closure_files": 22,
+    "source_closure_identical_to_pr24_head": 22,
+    "source_closure_difference_vs_pr24_head": {
+      "path": "harness-development/line-two-album-pilot-20261014/mac_runtime.mjs",
+      "pr24_sha256": "a1d2c16528b5584a02780045384afb535715287925cabccdaab2111d03ffe27d",
+      "working_tree_sha256": "0d76c238fb5e9b053df4b85b4e508a9b970cd8d3660874437224cfb520b470f1",
+      "change": "pure 5-line relocation of the const readRetained=async reference=>{...} declaration ahead of its use; byte count unchanged (34994); not present in the PR #24 diff; not reviewed",
+      "effect": "The installed closure used by this test session matches PR #24 byte for byte on all 22 SOURCE_PATHS files, on src/line_backup_batch/cli.py and on two_album_entry.mjs. The first refusal is therefore NOT attributable to a source drift inside the reviewed PR."
+    },
+    "executed_vs_inspected": {
+      "executed": [
+        "src/line_backup_batch/cli.py (read-only authorizer operations only)"
+      ],
+      "inspected_not_executed": [
+        "harness-development/line-two-album-pilot-20261014/two_album_entry.mjs",
+        "harness-development/line-two-album-pilot-20261014/mac_runtime.mjs"
+      ]
+    },
+    "test_worktree_head_note": "The test worktree HEAD b7bb666fa78b8e9dfffed8247c4f2a7f869a481b (branch v43-ab/codex-rev28) does not itself contain the project authorizer route (src/line_backup_batch/cli.py at that HEAD is 281 lines without authorize_project); the authorizer that produced this run is the PR #24 content installed in the working tree, which is byte-identical to the PR #24 head blobs for all 22 closure files. The HEAD is recorded only as the branch/repo context of the run."
   },
   "source_and_runtime_binding": {
     "grant_contract_sha256": "6258099c2afe7751f2888f28005e0232990db70ef23ec25562b466a7af189c29",
@@ -32,7 +51,8 @@
     "actual_runtime_binding_sha256": "81d3b4e45091c9a97a570fbad0702eeab61a09e0b0d2f8641ad5d14448b21739",
     "review_runtime_binding_sha256": "81d3b4e45091c9a97a570fbad0702eeab61a09e0b0d2f8641ad5d14448b21739",
     "config_sha256_grant_and_actual": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
-    "conclusion": "The installed source/runtime binding does not match the reviewed HEAD and does not match the live grant. There is no authority bundle bound to the currently installed source closure."
+    "conclusion": "The installed source/runtime binding does not match the reviewed HEAD and does not match the live grant. There is no authority bundle bound to the currently installed source closure.",
+    "grant_bound_contract_location": "harness-development/line-two-album-pilot-20261014/private/one-scroll-live-22cee2b-20261017-01/previous-closed-authority/project-contract.json (53063B, sha 6258099c..., source_head d5436e1..., source_sha256 da0f5043..., entry_binding 19826B/69cd4743..., runtime_binding 21539B/400235b5..., 21 source_files, allowed_operations = the same 4 GUI operations). The live private/project-contract.json is 53733B / c2d70e2c... with source_head 22cee2b..., source_sha256 ca76267c..., entry_binding 20699B/f21fc0a5..., runtime_binding 21539B/81d3b4e4.... runtime-binding.json, implementation-review.json and live-readiness.json all reference the newer 22cee2b generation, while the grant references the older d5436e1 generation: PROJECT_CONTRACT_DRIFT is a two-generation authority mismatch, not a wrong contract body."
   },
   "mac_runtime_tdz": {
     "file": "harness-development/line-two-album-pilot-20261014/mac_runtime.mjs",

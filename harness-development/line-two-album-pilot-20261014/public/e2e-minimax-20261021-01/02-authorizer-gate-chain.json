@@ -1,10 +1,31 @@
 {
   "schema_version": 1,
-  "purpose": "Ordered authorizer gate chain for the formal two-album pilot route, derived read-only from src/line_backup_batch/cli.py at the tested worktree HEAD. Gate 1 is the observed first refusal; gates 2..9 are the subsequent refusals that would fire if only gate 1 were repaired.",
+  "purpose": "Conditional follow-up authorizer gates for the formal two-album pilot route, derived read-only from src/line_backup_batch/cli.py at the tested worktree HEAD. Gate 1 is the observed first refusal. Gates 2..9 are INDEPENDENT blocking conditions that would each fail on their own once gate 1 is repaired; they are NOT a single code path that would surface 9 errors in order. In particular cli.py:413-415 is evaluated BEFORE :437 but only fails when the requested operation is absent from grant.operations, and every operation this run requested (gui_observe / gui_initialize / inspect) IS present in the grant, so it was not the observed failure.",
   "source_file": "src/line_backup_batch/cli.py",
   "entry": "authorize() -> authorize_project() -> validate_project_runtime_binding()",
-  "grant_operations_declared": ["gui_initialize", "gui_observe", "gui_reserve", "gui_consume"],
-  "project_operations_allowed_by_cli": ["begin", "admit", "prepare", "calibrate", "intent", "dispatch", "finalize", "stop", "release", "resume", "gui_reserve", "gui_consume", "gui_initialize", "gui_phase", "gui_observe"],
+  "grant_operations_declared": [
+    "gui_initialize",
+    "gui_observe",
+    "gui_reserve",
+    "gui_consume"
+  ],
+  "project_operations_allowed_by_cli": [
+    "begin",
+    "admit",
+    "prepare",
+    "calibrate",
+    "intent",
+    "dispatch",
+    "finalize",
+    "stop",
+    "release",
+    "resume",
+    "gui_reserve",
+    "gui_consume",
+    "gui_initialize",
+    "gui_phase",
+    "gui_observe"
+  ],
   "quota_required_by_cli": {
     "album_quota": 2,
     "lifecycle_album_limit": 1,
@@ -33,7 +54,7 @@
       "code": "PROJECT_SOURCE_CLOSURE_MISMATCH",
       "line": 615,
       "observed": false,
-      "mismatch": "runtime-binding.json lists 21 source_files; actual SOURCE_PATHS closure is 22 (extra: src/line_backup_acceptance/manual_archive.py)"
+      "mismatch": "runtime-binding.json lists 21 source_files; the live SOURCE_PATHS closure is 22 (extra: src/line_backup_acceptance/manual_archive.py). Comparison statement is at cli.py:614, require at 615."
     },
     {
       "order": 4,
@@ -45,30 +66,30 @@
     {
       "order": 5,
       "code": "PROJECT_IMPLEMENTATION_REVIEW_REQUIRED",
-      "line": 455,
+      "line": "455-461",
       "observed": false,
       "mismatch": "implementation-review.json entry_sha256 / runtime_binding_sha256 do not equal grant.entry_binding.sha256 / grant.runtime_binding.sha256"
     },
     {
       "order": 6,
       "code": "PROJECT_LIVE_READINESS_REQUIRED",
-      "line": 462,
+      "line": "462-470",
       "observed": false,
       "mismatch": "live-readiness.json gui_ready = false (gate requires true); readiness source_sha256/entry_sha256/runtime_binding_sha256 also differ from the grant"
     },
     {
       "order": 7,
       "code": "PROJECT_LIVE_CONSENT_REQUIRED",
-      "line": 471,
+      "line": "472-473",
       "observed": false,
-      "mismatch": "owner-decision.json live_gui_authorized = false and full_two_album_pilot_authorized = false (gate requires live_gui_authorized true)"
+      "mismatch": "owner-decision.json live_gui_authorized = false and full_two_album_pilot_authorized = false (gate requires live_gui_authorized true). The referenced owner consent file is scoped effective_scope=ONE_SCROLL_PROBE_ONLY with save_all_authorized_by_this_grant=false."
     },
     {
       "order": 8,
       "code": "PROJECT_GRANT_OPERATIONS",
-      "line": 413,
+      "line": "413-415",
       "observed": false,
-      "mismatch": "grant.operations only contains 4 GUI-observation operations; the formal two-album lifecycle needs begin/admit/prepare/calibrate/intent/dispatch/finalize/stop/release/resume/gui_phase"
+      "mismatch": "grant.operations only contains the 4 GUI-observation operations; the formal two-album lifecycle needs 10 more (begin/admit/prepare/calibrate/intent/dispatch/finalize/stop/release/gui_phase). This gate fires only when the REQUESTED operation is not in grant.operations, so it was not the observed failure of this run (gui_observe / gui_initialize / inspect are all present)."
     },
     {
       "order": 9,
@@ -80,6 +101,159 @@
   ],
   "not_a_blocker_but_noted": {
     "PROJECT_GRANT_QUOTA": "line 416-418; the existing grant already carries (2,1,2,2,23), so the dual-album quota itself is satisfied. The failure is authority binding and consent, not quota.",
-    "PROJECT_CONFIG_DRIFT": "line 478; config/line_backup_config.json actual sha256 equals grant.config_sha256 (5e4f769d...), so config binding currently passes."
+    "PROJECT_CONFIG_DRIFT": "line 478; config/line_backup_config.json actual sha256 equals grant.config_sha256 (5e4f769d...), so config binding currently passes.",
+    "PROJECT_LEDGER_ALREADY_EXISTS": "src/line_backup_batch/store.py:500. This is a ledger-initialization layer condition, not an authorizer gate. The old one-scroll gui-ledger.json and its gui-ledger-initialization.json receipt both exist, so a fresh ledger cannot be created for the same path; the ledger must not be reused or reset."
+  },
+  "reading_order_note": "Evaluation order inside authorize_project() is: PROJECT_GRANT_OPERATIONS (415) -> PROJECT_GRANT_QUOTA (418) -> PROJECT_GRANT_BINDING (419-432) -> PROJECT_CONTRACT_DRIFT (437) -> ARTIFACT_DRIFT for owner-decision/implementation-review/live-readiness (442-444) -> validate_project_runtime_binding called at 445 (606/611/615/629/633) -> PROJECT_IMPLEMENTATION_REVIEW_REQUIRED (455-461) -> PROJECT_LIVE_READINESS_REQUIRED (462-470) -> PROJECT_LIVE_CONSENT_REQUIRED (472-473, only when the operation is mutating) -> PROJECT_CONFIG_DRIFT (478) -> PROJECT_SOURCE_DRIFT (480).",
+  "project_operations_count": 15,
+  "grant_operations_count": 4,
+  "operations_missing_from_grant_count": 11,
+  "operations_missing_from_grant": [
+    "begin",
+    "admit",
+    "prepare",
+    "calibrate",
+    "intent",
+    "dispatch",
+    "finalize",
+    "stop",
+    "release",
+    "gui_phase",
+    "resume"
+  ],
+  "operations_never_called_by_formal_entry": [
+    "resume"
+  ],
+  "operations_actually_invoked_by_formal_entry": {
+    "two_album_entry.mjs": {
+      "begin": 164,
+      "admit": 189,
+      "prepare": 225,
+      "calibrate": 233,
+      "finalize": 243,
+      "stop": [
+        247,
+        312
+      ],
+      "release": [
+        248,
+        315
+      ],
+      "gui_phase": [
+        262,
+        295,
+        301,
+        320
+      ]
+    },
+    "scripts/line_backup_cua_adapter.mjs": {
+      "intent": 573,
+      "dispatch": [
+        711,
+        824
+      ],
+      "gui_reserve": [
+        346,
+        886
+      ],
+      "gui_consume": [
+        354,
+        891
+      ],
+      "gui_observe": [
+        334,
+        878
+      ]
+    }
+  },
+  "operations_actually_invoked_note": "The formal two-album lifecycle therefore needs 10 authorised operations (the 11 missing ones minus 'resume', which the entrypoint and adapter never call).",
+  "artifact_drift_require_location": {
+    "require_body": "src/line_backup_batch/observations.py:18 (require(len(raw)==ref['bytes'] and sha(raw)==ref['sha256'],'ARTIFACT_DRIFT'))",
+    "artifact_call_sites": {
+      "owner_decision": "src/line_backup_batch/cli.py:442",
+      "implementation_review": "src/line_backup_batch/cli.py:443",
+      "live_readiness": "src/line_backup_batch/cli.py:444",
+      "runtime_binding": "src/line_backup_batch/cli.py:606 (inside validate_project_runtime_binding, called from cli.py:445)"
+    },
+    "note": "cli.py:445 is the outer call validate_project_runtime_binding(reader,grant); the artifact() invocation for the runtime binding is at cli.py:606 and the ARTIFACT_DRIFT require body lives in src/line_backup_batch/observations.py:18."
+  },
+  "code_head_equivalence": {
+    "source_paths_closure_files": 22,
+    "identical_to_pr24_head": 22,
+    "cli_py_sha256": "4e0e1bcd10866aef8ff098afabd3bf048416f4b86b6105fb7153bcca4065dae1",
+    "cli_py_bytes": 55047,
+    "two_album_entry_sha256": "708b5e0ce421c0f7610fb56ff2bfff44fe9782e7b7018016832ab7dbd6b0e925",
+    "two_album_entry_bytes": 21935,
+    "only_difference_vs_pr24_head": {
+      "path": "harness-development/line-two-album-pilot-20261014/mac_runtime.mjs",
+      "pr24_sha256": "a1d2c16528b5584a02780045384afb535715287925cabccdaab2111d03ffe27d",
+      "working_tree_sha256": "0d76c238fb5e9b053df4b85b4e508a9b970cd8d3660874437224cfb520b470f1",
+      "change": "pure 5-line relocation of the const readRetained=async reference=>{...} declaration ahead of its use; byte count unchanged; not in PR #24 diff; not reviewed"
+    },
+    "executed_vs_inspected": "src/line_backup_batch/cli.py was the only product code actually executed (read-only authorizer operations). two_album_entry.mjs was only read and hash-compared, never executed."
+  },
+  "contract_drift_root_cause": {
+    "grant_contract_sha256": "6258099c2afe7751f2888f28005e0232990db70ef23ec25562b466a7af189c29",
+    "live_contract_sha256": "c2d70e2cb6a209478805169da453475ce2deb2c3cc9821402f5449acad32e5d5",
+    "live_contract_bytes": 53733,
+    "grant_contract_bytes": 53063,
+    "grant_bound_contract_still_present_at": "harness-development/line-two-album-pilot-20261014/private/one-scroll-live-22cee2b-20261017-01/previous-closed-authority/project-contract.json",
+    "two_authority_generations": {
+      "grant_bound_d5436e1_generation": {
+        "bytes": 53063,
+        "sha256": "6258099c2afe7751f2888f28005e0232990db70ef23ec25562b466a7af189c29",
+        "source_head": "d5436e1cf1e2dd7fc87c0c501c7934840adf52e0",
+        "source_sha256": "da0f504301b7a689dfc9e0d5b77919678b32b472609fa6f0595ee67b5d4846e9",
+        "entry_binding": {
+          "bytes": 19826,
+          "sha256": "69cd47436de8e6c56668d8879c04cb3439e6c11a4f3d8381415fe0d10d1881c1"
+        },
+        "runtime_binding": {
+          "bytes": 21539,
+          "sha256": "400235b51957708a86f31dd75ad3e150869eafe80efbced5367542b0112834e7"
+        },
+        "source_files_count": 21,
+        "allowed_operations": [
+          "gui_initialize",
+          "gui_observe",
+          "gui_reserve",
+          "gui_consume"
+        ],
+        "status": "ONE_SCROLL_ATTEMPT_ENDED_BEFORE_INPUT_NO_RETRY",
+        "matches_grant_fields": [
+          "source_sha256",
+          "entry_binding",
+          "runtime_binding"
+        ]
+      },
+      "live_22cee2b_generation": {
+        "bytes": 53733,
+        "sha256": "c2d70e2cb6a209478805169da453475ce2deb2c3cc9821402f5449acad32e5d5",
+        "source_head": "22cee2bc7686d18dfda839baa49ea885d90a0ade",
+        "source_sha256": "ca76267c2f249d324cd1ecc827283a085ae52630ef727bafea544dcf2465cbfe",
+        "entry_binding": {
+          "bytes": 20699,
+          "sha256": "f21fc0a577235342919321c65214035a2632c4916ca390bd500044d41dca0a54"
+        },
+        "runtime_binding": {
+          "bytes": 21539,
+          "sha256": "81d3b4e45091c9a97a570fbad0702eeab61a09e0b0d2f8641ad5d14448b21739"
+        },
+        "source_files_count": 21,
+        "allowed_operations": [
+          "gui_initialize",
+          "gui_observe",
+          "gui_reserve",
+          "gui_consume"
+        ],
+        "status": "ONE_SCROLL_ATTEMPT_ENDED_BEFORE_INPUT_CLOSED_NO_REPLAY",
+        "referenced_by": [
+          "private/runtime-binding.json",
+          "private/implementation-review.json",
+          "private/live-readiness.json"
+        ]
+      }
+    },
+    "conclusion": "Root cause is NOT a wrong contract body. The grant binds the older d5436e1-generation contract (53063B, sha 6258099c...), while the live private/project-contract.json, runtime-binding.json, implementation-review.json and live-readiness.json all belong to the newer 22cee2b generation (53733B, sha c2d70e2c..., runtime 81d3b4e4...). Two authority generations are in play. The implementor must pick one generation and re-issue the WHOLE set (contract + runtime-binding + implementation-review + live-readiness + owner-decision + grant); changing a single sha field is not sufficient."
   }
 }
