@@ -14,6 +14,11 @@ const role=v=>({'AXWindow':'window','AXSheet':'sheet','AXDialog':'dialog','AXRow
   'AXCell':'cell','AXImage':'image','AXStaticText':'static text','AXTextField':'text field','AXButton':'button',
   'AXScrollBar':'scroll bar','AXScrollArea':'scroll area','AXMenu':'menu','AXMenuItem':'menu item'}[v]??String(v??'').replace(/^AX/,'').toLowerCase());
 const ONE56={start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56};
+const A45={start_date:'2024-04-22',end_date:'2024-04-26',expected_images:45};
+const B78={start_date:'2024-04-21',end_date:'2024-04-21',expected_images:78};
+const NAME_ONLY_TARGETS=[ONE56,A45,B78];
+const isNameOnlyTarget=id=>NAME_ONLY_TARGETS.some(target=>target.start_date===id.start_date
+  &&target.end_date===id.end_date&&target.expected_images===id.expected_images);
 
 export function verifyNativePair(before,after) {
   for(const value of [before,after])need(value?.schemaVersion===1&&value.complete===true&&value.truncated===false,
@@ -369,9 +374,9 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
       const id={...completeDateTitle(title.text),expected_images:Number(counts[0].text)};
       need(id.expected_images>0,'CARD_COUNT_INVALID');
       if(thumbnails.length===0){
-        const exact=JSON.stringify(id)===JSON.stringify(ONE56);
-        const unsafe=visible.some(n=>n.role==='button'&&n.enabled&&intersects(title.bounds,px(n.framePt)));
-        if(!exact||node.role!=='AXRow'||title.confidence<.5||title.candidate_count!==1
+        const fullyVisible=inside(cardBounds,[0,0,width,height]);
+        const unsafe=visible.some(n=>role(n.role)==='button'&&n.enabled&&intersects(title.bounds,px(n.framePt)));
+        if(!isNameOnlyTarget(id)||!fullyVisible||node.role!=='AXRow'||title.confidence<.5||title.candidate_count!==1
           ||counts[0].confidence<.5||counts[0].candidate_count!==1||unsafe)continue;
         const x=Math.min(title.bounds[0],counts[0].bounds[0]),y=title.bounds[1];
         const right=Math.max(title.bounds[0]+title.bounds[2],counts[0].bounds[0]+counts[0].bounds[2]);
@@ -380,7 +385,7 @@ export function createLiveAnalyzer({runProcess,binary,repoRoot,retain,groupKey,g
         const safe=[title.bounds[0]+margin,title.bounds[1]+margin,title.bounds[2]-2*margin,title.bounds[3]-2*margin];
         if(safe[2]<8||safe[3]<8||!inside(title.bounds,cardBounds)||!inside(counts[0].bounds,cardBounds))continue;
         cards.push({fingerprint:id,title:title.text,
-          metadata_bounds:metadata,card_bounds:cardBounds,fully_visible:inside(cardBounds,[0,0,width,height]),
+          metadata_bounds:metadata,card_bounds:cardBounds,fully_visible:fullyVisible,
           safe_metadata_bounds:safe,neighbor_bounds:[],thumbnail_bounds:null,card_ax_index:nativeIDs.get(node.id),
           thumbnail_ax_index:null});
         continue;

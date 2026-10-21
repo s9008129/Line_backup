@@ -53,6 +53,11 @@ const erode=(r,margin)=>[r[0]+margin,r[1]+margin,r[2]-2*margin,r[3]-2*margin];
 const observationKeys=['frame','frame_id','session_id','group_key','surface','captured_at','provider','layout_key',
   'window_id','pid','width','height','mapping','cards','boundary','editable_focus','occlusion'];
 const ONE56={start_date:'2024-05-27',end_date:'2024-05-31',expected_images:56};
+const A45={start_date:'2024-04-22',end_date:'2024-04-26',expected_images:45};
+const B78={start_date:'2024-04-21',end_date:'2024-04-21',expected_images:78};
+const NAME_ONLY_TARGETS=[ONE56,A45,B78];
+const isNameOnlyTarget=id=>NAME_ONLY_TARGETS.some(target=>target.start_date===id.start_date
+  &&target.end_date===id.end_date&&target.expected_images===id.expected_images);
 
 export function createLiveClassifier({retain,readRetained,frameSupport,analyzeCapture,analyzeScrollWitness,analyzeVisualCardDiagnostic,analyzeMenuFrame,buildMenuEnvelope,groupKey,clock=()=>Date.now()}) {
   need(typeof retain==='function'&&typeof frameSupport==='function'&&typeof analyzeCapture==='function','CLASSIFIER_DEPENDENCY_REQUIRED');
@@ -358,8 +363,9 @@ export function createLiveClassifier({retain,readRetained,frameSupport,analyzeCa
       rect(candidate.card_bounds,width,height,'CLASSIFIER_CARD_BOUNDS');
       rect(candidate.metadata_bounds,width,height,'CLASSIFIER_METADATA_BOUNDS');
       rect(candidate.safe_metadata_bounds,width,height,'CLASSIFIER_SAFE_METADATA_BOUNDS');
-      const nameOnly= candidate.thumbnail_bounds===null&&candidate.thumbnail_ax_index===null
-        &&JSON.stringify(id)===JSON.stringify(ONE56);
+      const nameOnlyShape=candidate.thumbnail_bounds===null&&candidate.thumbnail_ax_index===null;
+      const nameOnly=nameOnlyShape&&candidate.fully_visible===true&&isNameOnlyTarget(id);
+      need(!nameOnlyShape||nameOnly,'CLASSIFIER_NAME_ONLY_WITNESS');
       if(!nameOnly)rect(candidate.thumbnail_bounds,width,height,'CLASSIFIER_THUMBNAIL_BOUNDS');
       need(Array.isArray(candidate.neighbor_bounds),'CLASSIFIER_NEIGHBORS');
       for(const b of candidate.neighbor_bounds)rect(b,width,height,'CLASSIFIER_NEIGHBOR_BOUNDS');
@@ -378,6 +384,8 @@ export function createLiveClassifier({retain,readRetained,frameSupport,analyzeCa
         &&o.candidate_count===1&&o.confidence>=0.5&&inside(o.bounds,candidate.metadata_bounds));
       need(titleMatches.length===1&&countMatches.length===1&&titleMatches[0]!==countMatches[0],
         'CLASSIFIER_OCR_CARD_BINDING');
+      need(!(nameOnly&&axElements.some(el=>el.role==='button'&&el.enabled
+        &&intersects(el.bounds_px,titleMatches[0].bounds))),'CLASSIFIER_NAME_ONLY_TITLE_OCCLUDED');
       const titleOcr={text:titleMatches[0].text,bounds:titleMatches[0].bounds};
       const countOcr={text:countMatches[0].text,bounds:countMatches[0].bounds};
       for(const item of [titleOcr,countOcr])rect(item.bounds,width,height,'CLASSIFIER_OCR_BOUNDS');

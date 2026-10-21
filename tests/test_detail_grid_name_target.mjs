@@ -55,16 +55,25 @@ function analyzer({groupTitleAliases=[]}={}){
       bytes:JSON.stringify(artifact).length,sha256:'a'.repeat(64)}),groupKey:'stable-group',groupTitle:canonical,
     groupTitleAliases,authorization:'bundle/project-grant.json',grantSha256:'b'.repeat(64),owner:'owner'});
 }
-function tinyPNG(){
+function tinyPNG(width=10,height=10,shade=100){
   const crc32=b=>{let c=0xffffffff;for(const x of b){c^=x;for(let i=0;i<8;i++)c=(c>>>1)^((c&1)?0xedb88320:0);}return(c^0xffffffff)>>>0;};
   const chunk=(type,data)=>{const name=Buffer.from(type),len=Buffer.alloc(4),crc=Buffer.alloc(4);len.writeUInt32BE(data.length);
     crc.writeUInt32BE(crc32(Buffer.concat([name,data])));return Buffer.concat([len,name,data,crc]);};
-  const ihdr=Buffer.alloc(13);ihdr.writeUInt32BE(10,0);ihdr.writeUInt32BE(10,4);ihdr[8]=8;ihdr[9]=2;
-  const rows=Buffer.concat(Array.from({length:10},()=>Buffer.from([0,...Array(30).fill(100)])));
+  const ihdr=Buffer.alloc(13);ihdr.writeUInt32BE(width,0);ihdr.writeUInt32BE(height,4);ihdr[8]=8;ihdr[9]=2;
+  const rows=Buffer.concat(Array.from({length:height},()=>Buffer.from([0,...Array(width*3).fill(shade)])));
   return new Uint8Array(Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]),chunk('IHDR',ihdr),
     chunk('IDAT',deflateSync(rows)),chunk('IEND',Buffer.alloc(0))]));
 }
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+const a45={start_date:'2024-04-22',end_date:'2024-04-26',expected_images:45};
+const b78={start_date:'2024-04-21',end_date:'2024-04-21',expected_images:78};
+const listOcr=(title,count,extra=[])=>[
+  {text:canonical,confidence:.9,candidateCount:1,bounds:{x:14,y:88,width:200,height:24}},
+  {text:'相簿',confidence:.9,candidateCount:1,bounds:{x:18,y:145,width:60,height:20}},
+  {text:title,confidence:.95,candidateCount:1,bounds:{x:31,y:1136,width:258,height:30}},
+  {text:String(count),confidence:.95,candidateCount:1,bounds:{x:31,y:1174,width:50,height:24}},
+  ...extra
+];
 function capture(analyzerInstance,{frameId,kind='list',at=10000,beforeValue=null,afterValue=null,includeList=true,ocr=null,
   group=canonical,scrollValue='225',min=0,max=300,scrollWitness=false}={}){
   const sessionId='session';const before=beforeValue??native({frameId,at:at-10,kind,includeList,ocr,group,scrollValue,min,max});
@@ -73,6 +82,45 @@ function capture(analyzerInstance,{frameId,kind='list',at=10000,beforeValue=null
   const args={frameId,sessionId,capturedAt:new Date(at).toISOString(),width:654,height:1286,
     sourceAXSha256:'d'.repeat(64),sourceBinding:{before:{value:before},after:{value:after,reference:nativeRef}}};
   return scrollWitness?analyzerInstance.analyzeScrollWitness(args):analyzerInstance.analyzeCapture(args);
+}
+
+function bodyRef(name,body){
+  const bytes=Buffer.from(body);
+  return {path:`harness-development/${name}.json`,bytes:bytes.length,sha256:hash(bytes)};
+}
+async function classifyNameOnly({title,count,shade=101,mutateAnalysis=()=>{},mutateOcr=()=>{}}){
+  const screenshot=tinyPNG(654,1286,shade),frameId=hash(screenshot),sessionId='name-only',state='name-only AX snapshot';
+  const ocr=listOcr(title,count);const before=native({frameId,at:19990,ocr}),after=native({frameId,at:20010,ocr});
+  const nativeRef=bodyRef('native-context',JSON.stringify(after));
+  const sourceBinding={before:{value:before},after:{value:after,reference:nativeRef}};
+  const args={frameId,sessionId,capturedAt:new Date(20000).toISOString(),width:654,height:1286,
+    sourceAXSha256:hash(Buffer.from(state)),sourceBinding};
+  const analysis=await analyzer().analyzeCapture(args);mutateAnalysis(analysis);
+  const ocrJson={cua_frame_id:frameId,sck_frame_sha256:'e'.repeat(64),cua:ocr.map(item=>({
+    text:item.text,confidence:item.confidence,candidate_count:item.candidateCount,
+    bounds:[item.bounds.x,item.bounds.y,item.bounds.width,item.bounds.height]})),sck:[]};
+  mutateOcr(ocrJson);
+  const ocrBody=JSON.stringify(ocrJson),ocrRef=bodyRef('name-only-ocr',ocrBody);
+  const supportRef=bodyRef('name-only-support','support');
+  const artifacts=[];
+  const retain=async({artifact,kind})=>{const body=JSON.stringify(artifact);artifacts.push({kind,artifact});
+    return bodyRef(`retained-${kind}-${artifacts.length}`,body);};
+  let manifestBody='',manifestRef;
+  const frameSupport=async({layoutKey,geometryRef})=>{
+    const manifest={pairFrameId:frameId,surface:'ALBUMS',layoutKey,
+      geometryEvidence:{path:geometryRef.path,sha256:geometryRef.sha256},
+      support:{path:supportRef.path,sha256:supportRef.sha256},sckFrameId:'e'.repeat(64),ocr:ocrRef};
+    manifestBody=JSON.stringify(manifest);manifestRef=bodyRef('name-only-manifest',manifestBody);
+    return {provider:'SCREEN_CAPTURE_KIT',surface:'ALBUMS',pairFrameId:frameId,sessionId,uncertaintyPx:2,safeMarginPx:6,
+      reference:supportRef,manifestReference:manifestRef,
+      readRef:async item=>new Uint8Array(Buffer.from(item.path===manifestRef.path?manifestBody:ocrBody))};
+  };
+  const classifier=createLiveClassifier({retain,frameSupport,groupKey:'stable-group',analyzeCapture:async()=>analysis});
+  const saved={path:'harness-development/name-only-frame.png',bytes:screenshot.length,sha256:frameId,
+    ax:{path:'harness-development/name-only-ax.txt',bytes:Buffer.byteLength(state),sha256:hash(Buffer.from(state))}};
+  const observation=await classifier.classify({capture:{screenshot,state},saved,frameId,sessionId,
+    capturedAt:args.capturedAt,sourceBinding});
+  return {observation,analysis,artifacts};
 }
 
 test('real-shape detail grid is recognized only through same-process list-to-new-window lineage and literal count',async()=>{
@@ -218,7 +266,7 @@ test('classifier binds detail grid identity to CUA bounds and exact SCK text aft
 });
 
 
-test('single-day date titles parse to a one-day fingerprint and stay verbatim in the card witness', async () => {
+test('single-day parsing and AXRow name-only cards accept exactly ONE56, A45, and B78 without AXImage', async () => {
   assert.deepEqual(completeDateTitle('2024/4/21'), {start_date: '2024-04-21', end_date: '2024-04-21'});
   assert.deepEqual(completeDateTitle('2024/04/21～04/21'), {start_date: '2024-04-21', end_date: '2024-04-21'});
   assert.deepEqual(completeDateTitle('2024/12/30～01/02'), {start_date: '2024-12-30', end_date: '2025-01-02'});
@@ -226,23 +274,125 @@ test('single-day date titles parse to a one-day fingerprint and stay verbatim in
   assert.equal(completeDateTitle('2023/2/29'), null);
   assert.deepEqual(completeDateTitle('2024/2/29'), {start_date: '2024-02-29', end_date: '2024-02-29'});
   assert.equal(completeDateTitle('2024/05/27～05/31(1/56)'), null);
-  const ocr = [
-    {text: canonical, confidence: .9, candidateCount: 1, bounds: {x: 14, y: 88, width: 200, height: 24}},
-    {text: '相簿', confidence: .9, candidateCount: 1, bounds: {x: 18, y: 145, width: 60, height: 20}},
-    {text: '2024/4/21', confidence: .95, candidateCount: 1, bounds: {x: 31, y: 1136, width: 258, height: 30}},
-    {text: '78', confidence: .95, candidateCount: 1, bounds: {x: 31, y: 1174, width: 50, height: 24}}
+  const positives = [
+    {title: '2024/4/22～4/26', count: 45, fingerprint: a45},
+    {title: '2024/4/21', count: 78, fingerprint: b78}
   ];
-  const frameId = '9'.repeat(64);
-  const before = native({frameId, at: 9990, ocr});
-  const after = native({frameId, at: 10010, ocr});
-  for (const value of [before, after]) {
-    const row = value.nodes.find(node => node.id === 'row');
-    row.children.push('thumbnail');
-    value.nodes.push({id: 'thumbnail', parentID: 'row', role: 'AXImage',
-      framePt: {x: 360, y: 150, width: 100, height: 100}, offscreen: false, children: []});
+  for (const item of positives) {
+    const frameId = hash(Buffer.from(`positive-${item.title}`));
+    const ocr = listOcr(item.title, item.count);
+    const before = native({frameId, at: 9990, ocr}), after = native({frameId, at: 10010, ocr});
+    assert.equal(before.nodes.some(node => node.role === 'AXImage'), false);
+    const list = await capture(analyzer(), {frameId, beforeValue: before, afterValue: after});
+    assert.equal(list.surface, 'ALBUMS');
+    assert.deepEqual(list.cards[0].fingerprint, item.fingerprint);
+    assert.equal(list.cards[0].title, item.title);
+    assert.equal(list.cards[0].fully_visible, true);
+    assert.equal(list.cards[0].thumbnail_bounds, null);
+    assert.equal(list.cards[0].thumbnail_ax_index, null);
   }
-  const list = await capture(analyzer(), {frameId, beforeValue: before, afterValue: after});
-  assert.equal(list.surface, 'ALBUMS');
-  assert.deepEqual(list.cards[0].fingerprint, {start_date: '2024-04-21', end_date: '2024-04-21', expected_images: 78});
-  assert.equal(list.cards[0].title, '2024/4/21');
+
+  const duplicate = (item, offset) => ({...item, bounds: {...item.bounds, x: item.bounds.x + offset}});
+  const negatives = [
+    {name: 'non-owner fingerprint', ocr: listOcr('2024/4/20', 45)},
+    {name: 'duplicate title OCR', ocr: listOcr('2024/4/22～4/26', 45,
+      [duplicate(listOcr('2024/4/22～4/26', 45)[2], 20)])},
+    {name: 'duplicate count OCR', ocr: listOcr('2024/4/22～4/26', 45,
+      [duplicate(listOcr('2024/4/22～4/26', 45)[3], 20)])},
+    {name: 'photo viewer counter', ocr: listOcr('2024/4/21(1/78)', 78)}
+  ];
+  for (const bad of negatives) {
+    const frameId = hash(Buffer.from(`negative-${bad.name}`));
+    const before = native({frameId, at: 9990, ocr: bad.ocr}), after = native({frameId, at: 10010, ocr: bad.ocr});
+    await assert.rejects(() => capture(analyzer(), {frameId, beforeValue: before, afterValue: after}),
+      /FULL_CARD_WITNESS_MISSING|ALBUM_SURFACE_NOT_GROUNDED/, bad.name);
+  }
+
+  const partial = native({frameId: hash(Buffer.from('partial-row')), at: 9990, ocr: listOcr('2024/4/22～4/26', 45)});
+  const partialAfter = structuredClone(partial); partialAfter.observedAtUnixMilliseconds = 10010;
+  for (const value of [partial, partialAfter]) {
+    const row = value.nodes.find(node => node.id === 'row');
+    row.framePt = {...row.framePt, x: 348};
+  }
+  await assert.rejects(() => capture(analyzer(), {frameId: partial.visual.sourceSHA256, beforeValue: partial,
+    afterValue: partialAfter}), /FULL_CARD_WITNESS_MISSING|ALBUM_SURFACE_NOT_GROUNDED/, 'partially visible AXRow');
+
+  const coveredId = hash(Buffer.from('covered-title'));
+  const covered = native({frameId: coveredId, at: 9990, ocr: listOcr('2024/4/22～4/26', 45)});
+  const coveredAfter = structuredClone(covered); coveredAfter.observedAtUnixMilliseconds = 10010;
+  for (const value of [covered, coveredAfter]) {
+    const row = value.nodes.find(node => node.id === 'row');
+    row.children.push('title-cover');
+    value.nodes.push({id: 'title-cover', parentID: 'row', role: 'AXButton', title: 'Cover', enabled: true,
+      framePt: {x: 370, y: 610, width: 100, height: 30}, offscreen: false, children: []});
+  }
+  await assert.rejects(() => capture(analyzer(), {frameId: coveredId, beforeValue: covered,
+    afterValue: coveredAfter}), /FULL_CARD_WITNESS_MISSING|ALBUM_SURFACE_NOT_GROUNDED/, 'title covered by enabled AXButton');
+});
+
+test('classifier binds name-only A45 and B78 witnesses and rejects foreign, partial, duplicate, occluded, and viewer OCR', async () => {
+  const positives = [
+    {title: '2024/4/22～4/26', count: 45, fingerprint: a45, shade: 101},
+    {title: '2024/4/21', count: 78, fingerprint: b78, shade: 102}
+  ];
+  for (const item of positives) {
+    const result = await classifyNameOnly(item);
+    assert.equal(result.observation.surface, 'ALBUMS');
+    assert.deepEqual(result.observation.cards[0].fingerprint, item.fingerprint);
+    assert.equal(result.observation.cards[0].title, item.title);
+    const witness = result.artifacts.find(entry => entry.kind === 'classifier-evidence').artifact.cards[0];
+    assert.equal(witness.thumbnail_bounds, null);
+    assert.equal(witness.thumbnail_ax_index, null);
+    assert.equal(Number.isInteger(witness.card_ax_index), true);
+  }
+
+  const duplicate = (item, offset) => ({...item, bounds: [item.bounds[0] + offset, ...item.bounds.slice(1)]});
+  const negatives = [
+    {
+      name: 'non-owner fingerprint',
+      mutateAnalysis: analysis => {
+        analysis.cards[0].fingerprint = {start_date: '2024-04-20', end_date: '2024-04-26', expected_images: 45};
+        analysis.cards[0].title = '2024/4/20～04/26';
+      },
+      mutateOcr: ocr => {ocr.cua.find(item => item.text === '2024/4/22～4/26').text = '2024/4/20～04/26';},
+      code: /CLASSIFIER_NAME_ONLY_WITNESS/
+    },
+    {
+      name: 'duplicate title OCR',
+      mutateOcr: ocr => {ocr.cua.push(duplicate(ocr.cua.find(item => item.text === '2024/4/22～4/26'), 0));},
+      code: /CLASSIFIER_OCR_CARD_BINDING/
+    },
+    {
+      name: 'duplicate count OCR',
+      mutateOcr: ocr => {ocr.cua.push(duplicate(ocr.cua.find(item => item.text === '45'), 20));},
+      code: /CLASSIFIER_OCR_CARD_BINDING/
+    },
+    {
+      name: 'partially visible AXRow',
+      mutateAnalysis: analysis => {analysis.cards[0].fully_visible = false;},
+      code: /CLASSIFIER_NAME_ONLY_WITNESS/
+    },
+    {
+      name: 'title covered by enabled AXButton',
+      mutateAnalysis: analysis => {
+        const index = Math.max(...analysis.ax.elements.map(element => element.index)) + 1;
+        analysis.ax.elements.push({index, role: 'button', subrole: '', identifier: 'title-cover', label: 'Cover',
+          value: null, bounds_px: [40, 1140, 40, 20], parent_index: null, enabled: true});
+      },
+      code: /CLASSIFIER_NAME_ONLY_TITLE_OCCLUDED/
+    },
+    {
+      name: 'photo viewer counter',
+      title: '2024/4/21',
+      count: 78,
+      mutateAnalysis: analysis => {analysis.cards[0].title = '2024/4/21(1/78)';},
+      mutateOcr: ocr => {ocr.cua.find(item => item.text === '2024/4/21').text = '2024/4/21(1/78)';},
+      code: /CLASSIFIER_CARD_TITLE/
+    }
+  ];
+  for (const [index, bad] of negatives.entries()) {
+    await assert.rejects(() => classifyNameOnly({title: bad.title ?? '2024/4/22～4/26', count: bad.count ?? 45,
+      shade: 110 + index,
+      mutateAnalysis: bad.mutateAnalysis, mutateOcr: bad.mutateOcr}), bad.code, bad.name);
+  }
 });
