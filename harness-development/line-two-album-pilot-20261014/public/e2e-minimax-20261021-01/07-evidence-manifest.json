@@ -232,36 +232,42 @@
         "id": 1,
         "requirement": "Do not present the gate list as 15 actual failures or as a dynamic sequential order.",
         "disposition": "DONE_IN_THIRD_ROUND",
+        "response": "DONE_IN_THIRD_ROUND; 02-authorizer-gate-chain.json (purpose, gates_observed_count, gates_note; 16 numbered non-execution-order entries, only G1 observed=true)",
         "evidence_ref": "02-authorizer-gate-chain.json (purpose, gates_observed_count, gates_note; 16 numbered non-execution-order entries, only G1 observed=true)"
       },
       {
         "id": 2,
         "requirement": "gui_initialize has write potential and must not be used or described as a read-only probe.",
         "disposition": "DONE_IN_THIRD_ROUND",
+        "response": "DONE_IN_THIRD_ROUND; 01-authorizer-refusal.json (case_note, per-invocation read_only, repeat_probe_note) and 04-session-and-binding.json (code.executed_vs_inspected)",
         "evidence_ref": "01-authorizer-refusal.json (case_note, per-invocation read_only, repeat_probe_note) and 04-session-and-binding.json (code.executed_vs_inspected)"
       },
       {
         "id": 3,
         "requirement": "Record the installed closure, dirty patches, PYTHONPATH and native binding in the next round.",
         "disposition": "DONE_IN_THIRD_ROUND",
+        "response": "DONE_IN_THIRD_ROUND; 04-session-and-binding.json (execution_environment, native_runtime_binding)",
         "evidence_ref": "04-session-and-binding.json (execution_environment, native_runtime_binding)"
       },
       {
         "id": 4,
         "requirement": "Record Issue #27 and do not mislabel it as observed.",
         "disposition": "DONE_IN_THIRD_ROUND",
+        "response": "DONE_IN_THIRD_ROUND; 05-pr24-and-issue25-state.json (issue_27), 02-authorizer-gate-chain.json (ledger_rotation_cyclic_blocker), 06-side-effects.json (ledger_path_collision_note)",
         "evidence_ref": "05-pr24-and-issue25-state.json (issue_27), 02-authorizer-gate-chain.json (ledger_rotation_cyclic_blocker), 06-side-effects.json (ledger_path_collision_note)"
       },
       {
         "id": 5,
         "requirement": "Permit only a SINGLE read-only native_authorize probe after the fix.",
         "disposition": "DONE_IN_THIRD_ROUND",
+        "response": "DONE_IN_THIRD_ROUND; 01-authorizer-refusal.json (repeat_probe_note)",
         "evidence_ref": "01-authorizer-refusal.json (repeat_probe_note)"
       },
       {
         "id": 6,
         "requirement": "A45 and B78 are the only targets; no raw CUA, no harness changes, no new engine.",
         "disposition": "SATISFIED",
+        "response": "SATISFIED; 07-evidence-manifest.json (outcome) and 03-target-eligibility.json",
         "evidence_ref": "07-evidence-manifest.json (outcome) and 03-target-eligibility.json"
       }
     ],

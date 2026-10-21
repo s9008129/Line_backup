@@ -1,14 +1,40 @@
 {
   "schema_version": 1,
   "case": "formal project authorizer admission probe (no LINE GUI, no Save All, no download)",
-  "case_note": "This was an admission probe, not a read-only preflight as a whole. The probe covered Authorizer operations only: native_authorize is genuinely read-only (src/line_backup_batch/cli.py:668-671 states it does not initialize the GUI ledger, does not take owner consent and does not observe LINE), but gui_initialize belongs to the PROJECT_MUTATING set (src/line_backup_batch/cli.py:55) and inspect --include_gui_ledger_status authorizes internally with gui_observe (src/line_backup_batch/cli.py:693), which is also PROJECT_MUTATING. In this run both mutating-capable operations were refused before reading their payload, so no ledger, receipt, state entry or GUI observation was written. The per-invocation read_only field below states this per operation; the run as a whole must not be described as a read-only preflight.",
+  "case_note": "This was an admission probe, not a read-only preflight as a whole. The probe covered Authorizer operations only: native_authorize is genuinely read-only (src/line_backup_batch/cli.py:668-671 states it does not initialize the GUI ledger, does not take owner consent and does not observe LINE), but gui_initialize belongs to the PROJECT_MUTATING set (src/line_backup_batch/cli.py:55) and inspect --include_gui_ledger_status authorizes internally with gui_observe (src/line_backup_batch/cli.py:693), which is also PROJECT_MUTATING. In this run both mutating-capable operations were refused before reading their payload, so no ledger, receipt, state entry or GUI observation was written. The per-invocation read_only field below states this per operation; the run as a whole must not be described as a read-only preflight. This round made 7 CLI invocation groups in total (#10-#16): 5 of them exited 4 and were refused with the identical PROJECT_CONTRACT_DRIFT stderr, and 2 of them were plain inspect calls that exited 0 without an authorization argument (#10 and #16, whose stdout is byte-identical, so they are one and the same read-only state snapshot rather than two independent confirmations).",
   "executor": {
     "role": "independent formal E2E tester",
     "model": "minimax-m3.1-flash",
     "provider": "Ollama Cloud",
     "session": "01a15e53-3ac3-7561-a1b3-95001521cc68"
   },
+  "invocation_count": 7,
+  "invocation_ids": [
+    "10-authorizer-inspect",
+    "11-native-authorize",
+    "12-gui-initialize",
+    "13-gui-initialize-correct-input",
+    "14-native-authorize-rerun",
+    "15-inspect-ledger-status",
+    "16-inspect-plain"
+  ],
   "invocations": [
+    {
+      "id": "10-authorizer-inspect",
+      "operation": "inspect (no authorization argument)",
+      "read_only": true,
+      "side_effects": "none (read-only state snapshot only; does NOT prove grant admission, is NOT a Save All authorization and does NOT establish authority over the LINE GUI)",
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 1215,
+        "sha256": "cc21c6ea2f07c01150e3029ed2fa0585ab1f46f121cab5cdd133c9e86743b367"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "note": "Reads state only. A zero exit here is not grant admission, is not a Save All authorization and does not establish that any GUI operation would be admitted. Its stdout is byte-identical to the stdout of invocation 16 (same state snapshot); the two exit-0 invocations are therefore one and the same read-only snapshot, not two independent confirmations."
+    },
     {
       "id": "11-native-authorize",
       "operation": "native_authorize",
@@ -21,6 +47,27 @@
         "message": "PROJECT_CONTRACT_DRIFT",
         "dispatch_authorized": false
       }
+    },
+    {
+      "id": "12-gui-initialize",
+      "operation": "gui_initialize",
+      "input_shape": "legacy payload that does not satisfy the data=={'confirm_initialization':True} expectation at src/line_backup_batch/store.py:496 (the exact literal was not retained in the private evidence set, so only the shape mismatch is asserted here)",
+      "read_only": false,
+      "side_effects": "refused before the payload was read, so no ledger write, no gui-ledger-initialization.json receipt and no state entry occurred. read_only=false because gui_initialize belongs to the PROJECT_MUTATING set (src/line_backup_batch/cli.py:55) and therefore has write potential. The payload used here is the legacy shape, which does not satisfy the data=={'confirm_initialization':True} expectation at src/line_backup_batch/store.py:496, but the authorization was already refused before the payload was inspected, so this payload defect does not affect the first-refusal conclusion and was never the operative cause of the refusal.",
+      "exit_code": 4,
+      "stderr": {
+        "status": "REFUSED",
+        "code": "PROJECT_CONTRACT_DRIFT",
+        "message": "PROJECT_CONTRACT_DRIFT",
+        "dispatch_authorized": false,
+        "bytes": 123,
+        "sha256": "fca852c8d682b74c0065c5cb7280caa283bdc58f342c6f7512b515257d54bf2a"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "note": "Same refusal code and byte-identical stderr as invocations 11, 13, 14 and 15 (sha256 fca852c8...), which shows the refusal happened at the shared PROJECT_CONTRACT_DRIFT gate and not at any operation-specific check."
     },
     {
       "id": "13-gui-initialize-correct-input",
@@ -68,10 +115,18 @@
       "read_only": true,
       "side_effects": "none (read-only state snapshot only; does NOT prove grant admission, is NOT a Save All authorization and does NOT establish authority over the LINE GUI)",
       "exit_code": 0,
-      "note": "Reads state only. A zero exit here is not grant admission, is not a Save All authorization and does not establish that any GUI operation would be admitted."
+      "stdout": {
+        "bytes": 1215,
+        "sha256": "cc21c6ea2f07c01150e3029ed2fa0585ab1f46f121cab5cdd133c9e86743b367"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "note": "Reads state only. A zero exit here is not grant admission, is not a Save All authorization and does not establish that any GUI operation would be admitted. Its stdout is byte-identical to the stdout of invocation 10 (same state snapshot); the two exit-0 invocations are therefore one and the same read-only snapshot, not two independent confirmations."
     }
   ],
-  "repeat_probe_note": "Invocation 13 (gui_initialize re-run with the correct payload, issued to clear up evidence) and invocation 14 (native_authorize re-run) are unnecessary duplicate calls of operations that had already been refused with the identical PROJECT_CONTRACT_DRIFT code. Stopping at the first refusal was the correct behaviour in this run, but it must not be adopted as the standing procedure: the probe cost two extra invocations without producing any new discriminating information. For the next round only a SINGLE read-only native_authorize admission probe is permitted; no gui_initialize probe and no inspect --include_gui_ledger_status probe may be issued, because both are PROJECT_MUTATING and must never be used as read-only probes.",
+  "repeat_probe_note": "Invocation 13 (gui_initialize re-run with the correct payload, issued to clear up evidence) and invocation 14 (native_authorize re-run) are unnecessary duplicate calls of operations that had already been refused with the identical PROJECT_CONTRACT_DRIFT code. Invocation 12 (gui_initialize with a legacy payload) is a further probe of a PROJECT_MUTATING operation and, although it was refused before its payload was read, it likewise produced no discriminating information beyond the already-observed refusal code. Stopping at the first refusal was the correct behaviour in this run, but it must not be adopted as the standing procedure: the probe cost extra invocations without producing any new discriminating information. For the next round only a SINGLE read-only native_authorize admission probe is permitted; no gui_initialize probe and no inspect --include_gui_ledger_status probe may be issued, because both are PROJECT_MUTATING and must never be used as read-only probes.",
   "first_refusal": {
     "code": "PROJECT_CONTRACT_DRIFT",
     "source_location": "src/line_backup_batch/cli.py:437",

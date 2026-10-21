@@ -166,9 +166,45 @@
   ],
   "gates_observed_count": 1,
   "gates_total_count": 16,
-  "gates_note": "Only G1 carries observed=true. The remaining 15 entries are static source comparisons; they were NOT executed, NOT triggered and NOT observed as failures in this round. Reading this array as a 16-step runtime sequence, or as 16 observed failures, is a misreading.",
+  "gates_note": "Only G1 carries observed=true. The remaining 15 entries are static source comparisons; they were NOT executed, NOT triggered and NOT observed as failures in this round. Reading this array as a 16-step runtime sequence, or as 16 observed failures, is a misreading. This table is NOT exhaustive: it is a numbered, non-execution-order static comparison checklist, so its length must not be read as the total number of refusal points in the product, and it must not be read as a count of failures either.",
+  "gates_are_not_exhaustive": true,
+  "gates_not_listed": {
+    "note": "At least four further static gates exist in the reviewed product source and are deliberately NOT enumerated in the gates array, so that array stays a stable, non-execution-order comparison checklist. Every entry below is a SOURCE_STATIC_COMPARISON inference; none of them was executed, triggered or observed in this round.",
+    "source_file": "src/line_backup_batch/cli.py at reviewed product head 6a81326c8920e313191ea77e4ad930c79e2bd52c (line numbers with zero offset)",
+    "gates": [
+      {
+        "code": "PROJECT_DECISION_PATH",
+        "line": "438-441",
+        "observed": false,
+        "evidence_level": "SOURCE_STATIC_COMPARISON",
+        "mismatch": "Requires grant.owner_decision.path, grant.external_review.path and grant.live_readiness.path to be exactly the three fixed private/ paths (owner-decision.json, implementation-review.json, live-readiness.json). Any other path is refused before the artifacts are read; in this round the run was already refused at G1 so this gate was never reached."
+      },
+      {
+        "code": "PROJECT_OWNER_DECISION_MISMATCH",
+        "line": "446-447",
+        "observed": false,
+        "evidence_level": "SOURCE_STATIC_COMPARISON",
+        "mismatch": "Requires the owner-decision artifact to carry profile PROJECT_SCOPE, decision AUTHORIZE_SCOPED_NON_GUI_IMPLEMENTATION and non_gui_authorized true. It sits after the G2/G3/G4 artifact loads, so it was never reached in this round."
+      },
+      {
+        "code": "PROJECT_RUNTIME_MEMBERSHIP",
+        "line": "619, 623, 625",
+        "observed": false,
+        "evidence_level": "SOURCE_STATIC_COMPARISON",
+        "mismatch": "Requires the runtime-binding manifest runtime_files list to have exactly the same length as the expected producer/decoder/entry bindings, every role to be unique, and the role set to equal that expected set. It was never reached in this round."
+      },
+      {
+        "code": "PROJECT_RUNTIME_PATH",
+        "line": "631",
+        "observed": false,
+        "evidence_level": "SOURCE_STATIC_COMPARISON",
+        "mismatch": "Requires each runtime_files path to be relative and free of empty, dot and dot-dot path segments. It was never reached in this round."
+      }
+    ]
+  },
   "ledger_rotation_cyclic_blocker": {
     "status": "SOURCE_STATIC_PROOF_NOT_LIVE_TRIGGERED",
+    "ledger_collision_status": "SOURCE_STATIC_PROOF_NOT_LIVE_TRIGGERED",
     "observed": false,
     "issue_ref": 27,
     "issue_url": "https://github.com/s9008129/Line_backup/issues/27",

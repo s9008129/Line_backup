@@ -58,6 +58,7 @@
     "evidence_level": "SOURCE_STATIC_PROOF",
     "live_triggered_in_this_run": false,
     "trigger_status": "SOURCE_STATIC_PROOF_NOT_LIVE_TRIGGERED",
+    "ledger_collision_status": "SOURCE_STATIC_PROOF_NOT_LIVE_TRIGGERED",
     "escalation": "REQUEST_OWNER_APPROVAL_GPT_6_1_SOL_XHIGH",
     "summary": "The formal E2E run was refused at PROJECT_CONTRACT_DRIFT before any ledger initialization was attempted, so this issue was NOT triggered live in this round. It is recorded as a source-static design blocker discovered by reading the reviewed source at PR #24 head 6a81326c8920e313191ea77e4ad930c79e2bd52c (src/line_backup_batch/cli.py 769 lines, src/line_backup_batch/store.py 907 lines, line numbers with zero offset).",
     "source_facts": [

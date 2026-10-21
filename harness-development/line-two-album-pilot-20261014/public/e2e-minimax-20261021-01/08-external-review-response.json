@@ -80,6 +80,7 @@
     "evidence_level": "SOURCE_STATIC_PROOF",
     "observed": false,
     "trigger_status": "SOURCE_STATIC_PROOF_NOT_LIVE_TRIGGERED",
+    "ledger_collision_status": "SOURCE_STATIC_PROOF_NOT_LIVE_TRIGGERED",
     "escalation": "REQUEST_OWNER_APPROVAL_GPT_6_1_SOL_XHIGH",
     "source_facts": [
       "src/line_backup_batch/cli.py:419-423 hard-codes the expected grant gui_ledger path to PROJECT_DIR + '/private/gui-ledger.json' and refuses any grant that points elsewhere",
