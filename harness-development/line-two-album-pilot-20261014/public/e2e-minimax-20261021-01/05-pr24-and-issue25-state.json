@@ -76,13 +76,15 @@
     "state": "OPEN",
     "is_draft": true,
     "head_oid": "79cdddf03ea4117afccc44e298310bb663b2d7d2",
+    "head_oid_observed_at": "2026-10-22 (start of the 4th evidence round, before this round's commits were pushed)",
+    "head_oid_note": "The head_oid above is a historical observation only: it was the PR #26 head observed at the start of the 4th evidence round, before this round's commits were pushed. The PR #26 head has since advanced past that value. The commit that carries this file is the current head of PR #26, and the authoritative SHA for the next external review is the current HEAD of branch evidence/two-album-formal-e2e-20261021, quoted from the PR #26 description and from the body of the commit that carries this file. The next external review must re-bind its anchor to that current HEAD; the head_oid value recorded here must not be read as the current PR head.",
     "purpose": "evidence-only test report PR for this MiniMax formal E2E attempt; it must not be merged as a product change",
     "review": {
       "id": 5601384875,
       "state": "COMMENTED",
       "submitted_at": "2026-10-21T14:32:48Z",
       "commit_id": "5cd7914aada0ffa81f0526419b04b33d994942e6",
-      "anchor_head_note": "The review is anchored to commit 5cd7914aada0ffa81f0526419b04b33d994942e6, which is NOT the current PR head 79cdddf03ea4117afccc44e298310bb663b2d7d2. A re-bind against the new head is required before the next external review.",
+      "anchor_head_note": "The external Chief review is anchored to commit 5cd7914aada0ffa81f0526419b04b33d994942e6. That commit is an OLD head of PR #26, and it is NOT the commit that carries this file. The next external review must re-bind its anchor to the current HEAD of branch evidence/two-album-formal-e2e-20261021 before it counts as a review of the current evidence set.",
       "verdict": "ACCEPT_BLOCKED_AUTHORIZER_PREFLIGHT_EVIDENCE_ONLY",
       "machine_summary_lines": [
         "REVIEWED_PR=26",

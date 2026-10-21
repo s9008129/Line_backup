@@ -15,7 +15,7 @@
     "state": "COMMENTED",
     "submitted_at": "2026-10-21T14:32:48Z",
     "anchor_commit_id": "5cd7914aada0ffa81f0526419b04b33d994942e6",
-    "anchor_head_note": "The review is anchored to 5cd7914aada0ffa81f0526419b04b33d994942e6, which is not the current PR #26 head 79cdddf03ea4117afccc44e298310bb663b2d7d2. A re-bind against the new head is required before the next external review.",
+    "anchor_head_note": "The external Chief review is anchored to commit 5cd7914aada0ffa81f0526419b04b33d994942e6. That commit is an OLD head of PR #26, and it is NOT the commit that carries this file. The next external review must re-bind its anchor to the current HEAD of branch evidence/two-album-formal-e2e-20261021 before it counts as a review of the current evidence set.",
     "verdict": "ACCEPT_BLOCKED_AUTHORIZER_PREFLIGHT_EVIDENCE_ONLY",
     "machine_summary_lines": [
       "REVIEWED_PR=26",
@@ -43,7 +43,7 @@
     {
       "id": 2,
       "requirement": "gui_initialize has write potential and must not be described or used as a read-only probe.",
-      "response": "Accepted. The top-level case string was changed from 'read-only preflight' to 'admission probe' and a case_note was added stating that the run as a whole was not a read-only preflight. Every invocation now carries a read_only boolean: native_authorize (invocations 11 and 14) and plain inspect (16) are true; gui_initialize (13) and inspect --include_gui_ledger_status (15) are false. The side_effects text of invocation 13 states that it was refused before any ledger write and that read_only is false because gui_initialize belongs to the PROJECT_MUTATING set at cli.py:55, so it must not be reused as a read-only probe. The side_effects text of invocation 15 states that include_gui_ledger_status authorizes internally with gui_observe at cli.py:693 and that gui_observe is also PROJECT_MUTATING. The executed_product_code and executed_vs_inspected narratives in 04 and 07 were corrected to the same wording.",
+      "response": "Accepted. The top-level case string was changed from 'read-only preflight' to 'admission probe' and a case_note was added stating that the run as a whole was not a read-only preflight. Every invocation now carries a read_only boolean: native_authorize (invocations 11 and 14) and plain inspect (10 and 16) are true; gui_initialize (13) and inspect --include_gui_ledger_status (15) are false. Invocations 10 and 16 produced byte-identical stdout (the same read-only state snapshot), and the exit code 0 of both does NOT prove grant admission. The side_effects text of invocation 13 states that it was refused before any ledger write and that read_only is false because gui_initialize belongs to the PROJECT_MUTATING set at cli.py:55, so it must not be reused as a read-only probe. The side_effects text of invocation 15 states that include_gui_ledger_status authorizes internally with gui_observe at cli.py:693 and that gui_observe is also PROJECT_MUTATING. The executed_product_code and executed_vs_inspected narratives in 04 and 07 were corrected to the same wording.",
       "evidence_ref": "01-authorizer-refusal.json (case, case_note, invocations[].read_only, invocations[].side_effects), 04-session-and-binding.json (code.executed_vs_inspected), 07-evidence-manifest.json (code.executed_product_code)"
     },
     {
