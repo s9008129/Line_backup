@@ -24,7 +24,7 @@
     },
     "executed_vs_inspected": {
       "executed": [
-        "src/line_backup_batch/cli.py (read-only authorizer operations only)"
+        "src/line_backup_batch/cli.py (Authorizer operations only; native_authorize is genuinely read-only per cli.py:668-671, gui_initialize belongs to the PROJECT_MUTATING set per cli.py:55 but was refused before its payload was read and wrote no ledger, inspect --include_gui_ledger_status authorizes internally with gui_observe per cli.py:693 and was likewise refused before any write)"
       ],
       "inspected_not_executed": [
         "harness-development/line-two-album-pilot-20261014/two_album_entry.mjs",
@@ -32,6 +32,88 @@
       ]
     },
     "test_worktree_head_note": "The test worktree HEAD b7bb666fa78b8e9dfffed8247c4f2a7f869a481b (branch v43-ab/codex-rev28) does not itself contain the project authorizer route (src/line_backup_batch/cli.py at that HEAD is 281 lines without authorize_project); the authorizer that produced this run is the PR #24 content installed in the working tree, which is byte-identical to the PR #24 head blobs for all 22 closure files. The HEAD is recorded only as the branch/repo context of the run."
+  },
+  "execution_environment": {
+    "installed_source_closure_digest": "66854ceaab0a59edcc7e57402d975a73e0de82cb28a45643cba35146aa10e789",
+    "installed_source_closure_digest_note": "This is a 22-file SOURCE_PATHS closure digest, NOT the sha256 of any single file. It is computed by src/line_backup_batch/store.py:141-148, which concatenates sha256(path \\0 bytes \\0) over the 22 closure members.",
+    "installed_closure_vs_pr24_head": "22 of 22 closure files are byte-identical to PR #24 head 6a81326c8920e313191ea77e4ad930c79e2bd52c.",
+    "working_tree_dirty_and_local_patch_state": {
+      "state": "DIRTY_WITH_UNREVIEWED_LOCAL_PATCH",
+      "mac_runtime_mjs": {
+        "pr24_sha256": "a1d2c16528b5584a02780045384afb535715287925cabccdaab2111d03ffe27d",
+        "working_tree_sha256": "0d76c238fb5e9b053df4b85b4e508a9b970cd8d3660874437224cfb520b470f1",
+        "change": "pure 5-line relocation of the const readRetained=async reference=>{...} declaration ahead of its use; byte count unchanged (34994)",
+        "in_pr24_diff": false,
+        "reviewed": false,
+        "note": "This local relocation is the known mac_runtime.mjs readRetained temporal-dead-zone issue. It is NOT part of PR #24 and has NOT been reviewed, so it must not be presented as a reviewed fix."
+      },
+      "uncommitted_product_files_vs_main_head": "Relative to the main test worktree HEAD b7bb666, 6 product files are uncommitted in the working tree, but their content is the PR #24 head version. The installed closure used for this run therefore matches PR #24 byte for byte, and the first refusal is not attributable to source drift inside the reviewed PR."
+    },
+    "pythonpath": {
+      "value": "<repo>/src:<dependencyPath>",
+      "consistency": "harness-development/line-two-album-pilot-20261014/mac_runtime.mjs:236 and rev28/Sources/rev28ctl/PilotNativeAuthority.swift:162 agree on this PYTHONPATH shape.",
+      "dependency_path": "A one-off virtual environment (Python 3.13.11 with jsonschema 4.26.0). The path is de-identified here.",
+      "system_python3_hazard": "The system python3 is 3.9.6 and has no jsonschema installed. Running the Authorizer with the system interpreter returns INVALID_REQUEST and would MASK the real refusal code, so every invocation in this run used the dependency venv interpreter."
+    }
+  },
+  "native_runtime_binding": {
+    "producer": {
+      "path": "harness-development/line-two-album-pilot-20261014/private/bin/rev28ctl-diagnostic-1cdd12b3e02a",
+      "bytes": 10847456,
+      "sha256": "ef66d33c4fa03e8d0f23f9aaa86beafc6563f53b231be32bda3713ee223f7cdf"
+    },
+    "decoder": {
+      "path": "harness-development/line-v3-live-e2e-20261010/bin/image_decode",
+      "bytes": 102064,
+      "sha256": "1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf"
+    },
+    "entry": {
+      "manifest_bytes": 20699,
+      "manifest_sha256": "f21fc0a577235342919321c65214035a2632c4916ca390bd500044d41dca0a54",
+      "actual_bytes": 21935,
+      "actual_sha256": "708b5e0ce421c0f7610fb56ff2bfff44fe9782e7b7018016832ab7dbd6b0e925",
+      "actual_path": "harness-development/line-two-album-pilot-20261014/two_album_entry.mjs",
+      "note": "The manifest records 20699 bytes / f21fc0a5... while the installed entry file is 21935 bytes / 708b5e0c.... This size difference is one of the runtime-binding mismatches recorded as G8/G9."
+    },
+    "grant_decoder_binding_equality": {
+      "rule": "src/line_backup_batch/cli.py:432 requires grant['native_binary_sha256'] == grant['decoder_binding']['sha256'].",
+      "satisfied_for_this_grant": true
+    },
+    "callback_sources": {
+      "total": 69,
+      "identical_to_pr24_head": 62,
+      "different": 7,
+      "different_paths": [
+        "harness-development/line-two-album-pilot-20261014/mac_runtime.mjs",
+        "harness-development/line-two-album-pilot-20261014/mac/analyzer.mjs",
+        "harness-development/line-two-album-pilot-20261014/mac/classifier.mjs",
+        "scripts/line_backup_cua_adapter.mjs",
+        "src/line_backup_batch/cli.py",
+        "rev28/Sources/Rev28Core/Observation/PassiveContextObservation.swift",
+        "rev28/Sources/rev28ctl/PilotNativeAuthority.swift"
+      ]
+    },
+    "mac_producer_mjs": {
+      "path": "harness-development/line-two-album-pilot-20261014/mac/producer.mjs",
+      "sha256": "3f3e6532f07a622fd9e4c57a8bd802fc05945595e616c59c328d3dfbd0d8cd48",
+      "note": "Identical blob in PR #24 and in the working tree, so there is no drift in this file."
+    },
+    "unreferenced_two_album_native_binary": {
+      "path": "harness-development/line-two-album-pilot-20261014/private/bin/rev28ctl-two-album-6a81326-20261021",
+      "bytes": 10869296,
+      "sha256": "9ef75efe4b217edd1049a623f26739bc0ea4d5950115e208f704976bb1efdf20",
+      "build_record": "harness-development/line-two-album-pilot-20261014/private/native-build-6a81326-20261021.json",
+      "build_record_parent_head": "e35d67c33a82fa1690bc7b13dc17bee9b1fea437",
+      "build_record_parent_head_equals_reviewed_head": false,
+      "reviewed_head": "6a81326c8920e313191ea77e4ad930c79e2bd52c",
+      "rev28_source_hash_comparison": "All 62 rev28 source hashes inside this binary match 6a81326 exactly.",
+      "authority_references": {
+        "project_grant_json": 0,
+        "project_contract_json": 0,
+        "runtime_binding_json": 0
+      },
+      "conclusion": "This two-album native binary is NOT referenced by any authority document (grant, contract or runtime binding reference this file name 0 times). Its build record parent_head is e35d67c..., which is NOT the reviewed head 6a81326..., so it cannot be treated as the reviewed-and-bound runtime for a formal run."
+    }
   },
   "source_and_runtime_binding": {
     "grant_contract_sha256": "6258099c2afe7751f2888f28005e0232990db70ef23ec25562b466a7af189c29",

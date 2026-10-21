@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
-  "case": "formal project authorizer read-only preflight (no LINE GUI, no Save All, no download)",
+  "case": "formal project authorizer admission probe (no LINE GUI, no Save All, no download)",
+  "case_note": "This was an admission probe, not a read-only preflight as a whole. The probe covered Authorizer operations only: native_authorize is genuinely read-only (src/line_backup_batch/cli.py:668-671 states it does not initialize the GUI ledger, does not take owner consent and does not observe LINE), but gui_initialize belongs to the PROJECT_MUTATING set (src/line_backup_batch/cli.py:55) and inspect --include_gui_ledger_status authorizes internally with gui_observe (src/line_backup_batch/cli.py:693), which is also PROJECT_MUTATING. In this run both mutating-capable operations were refused before reading their payload, so no ledger, receipt, state entry or GUI observation was written. The per-invocation read_only field below states this per operation; the run as a whole must not be described as a read-only preflight.",
   "executor": {
     "role": "independent formal E2E tester",
     "model": "minimax-m3.1-flash",
@@ -11,7 +12,8 @@
     {
       "id": "11-native-authorize",
       "operation": "native_authorize",
-      "side_effects": "none (read-only authority check; does not initialize ledger, does not observe LINE)",
+      "read_only": true,
+      "side_effects": "none (read-only authority check; does not initialize ledger, does not observe LINE, does not take owner consent; src/line_backup_batch/cli.py:668-671)",
       "exit_code": 4,
       "stderr": {
         "status": "REFUSED",
@@ -24,7 +26,8 @@
       "id": "13-gui-initialize-correct-input",
       "operation": "gui_initialize",
       "input": { "data": { "confirm_initialization": true } },
-      "side_effects": "none (refused before any ledger write; receipt path untouched)",
+      "read_only": false,
+      "side_effects": "refused before any ledger write; receipt path untouched. read_only=false because gui_initialize belongs to the PROJECT_MUTATING set (src/line_backup_batch/cli.py:55) and therefore has write potential (it initializes the GUI ledger and its gui-ledger-initialization.json receipt); it must not be reused as a read-only probe.",
       "exit_code": 4,
       "stderr": {
         "status": "REFUSED",
@@ -36,7 +39,8 @@
     {
       "id": "14-native-authorize-rerun",
       "operation": "native_authorize",
-      "side_effects": "none",
+      "read_only": true,
+      "side_effects": "none (read-only authority check, same as 11-native-authorize)",
       "exit_code": 4,
       "stderr": {
         "status": "REFUSED",
@@ -48,7 +52,8 @@
     {
       "id": "15-inspect-ledger-status",
       "operation": "inspect (include_gui_ledger_status=true)",
-      "side_effects": "none (read-only)",
+      "read_only": false,
+      "side_effects": "refused before any write. read_only=false because inspect --include_gui_ledger_status authorizes internally with gui_observe (src/line_backup_batch/cli.py:693), and gui_observe belongs to the PROJECT_MUTATING set (src/line_backup_batch/cli.py:55) because it can append GUI observation entries to the ledger.",
       "exit_code": 4,
       "stderr": {
         "status": "REFUSED",
@@ -60,11 +65,13 @@
     {
       "id": "16-inspect-plain",
       "operation": "inspect (no authorization argument)",
-      "side_effects": "none (read-only state snapshot only; does NOT prove grant admission)",
+      "read_only": true,
+      "side_effects": "none (read-only state snapshot only; does NOT prove grant admission, is NOT a Save All authorization and does NOT establish authority over the LINE GUI)",
       "exit_code": 0,
-      "note": "Reads state only. A zero exit here is not grant admission and is not a Save All authorization."
+      "note": "Reads state only. A zero exit here is not grant admission, is not a Save All authorization and does not establish that any GUI operation would be admitted."
     }
   ],
+  "repeat_probe_note": "Invocation 13 (gui_initialize re-run with the correct payload, issued to clear up evidence) and invocation 14 (native_authorize re-run) are unnecessary duplicate calls of operations that had already been refused with the identical PROJECT_CONTRACT_DRIFT code. Stopping at the first refusal was the correct behaviour in this run, but it must not be adopted as the standing procedure: the probe cost two extra invocations without producing any new discriminating information. For the next round only a SINGLE read-only native_authorize admission probe is permitted; no gui_initialize probe and no inspect --include_gui_ledger_status probe may be issued, because both are PROJECT_MUTATING and must never be used as read-only probes.",
   "first_refusal": {
     "code": "PROJECT_CONTRACT_DRIFT",
     "source_location": "src/line_backup_batch/cli.py:437",

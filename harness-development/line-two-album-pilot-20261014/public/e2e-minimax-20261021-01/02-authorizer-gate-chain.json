@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "purpose": "Conditional follow-up authorizer gates for the formal two-album pilot route, derived read-only from src/line_backup_batch/cli.py at the tested worktree HEAD. Gate 1 is the observed first refusal. Gates 2..9 are INDEPENDENT blocking conditions that would each fail on their own once gate 1 is repaired; they are NOT a single code path that would surface 9 errors in order. In particular cli.py:413-415 is evaluated BEFORE :437 but only fails when the requested operation is absent from grant.operations, and every operation this run requested (gui_observe / gui_initialize / inspect) IS present in the grant, so it was not the observed failure.",
+  "purpose": "Static authorizer gate inventory for the formal two-album pilot route, derived read-only from src/line_backup_batch/cli.py (769 lines) and src/line_backup_batch/store.py (907 lines) at the reviewed product head 6a81326c8920e313191ea77e4ad930c79e2bd52c (line numbers have zero offset against that head). IMPORTANT: the gates array below is a NUMBERED, NON-EXECUTION-ORDER static comparison checklist. It is NOT a dynamic execution sequence, NOT a transcript of 16 observed failures, and NOT a claim that 16 errors would be surfaced one after another. Only G1 was actually OBSERVED as the refusal of this run (PROJECT_CONTRACT_DRIFT, exit 4). Every other entry is a SOURCE_STATIC_COMPARISON inference derived from reading the source, and none of them was executed or triggered in this round. cli.py:413-415 (PROJECT_GRANT_OPERATIONS, G14) is evaluated before :437 in the program, but it only fails when the REQUESTED operation is absent from grant.operations; every operation this run requested (gui_observe / gui_initialize / inspect) is present in the grant, so it was not the observed failure. G13 is a ledger-initialization layer condition in store.py rather than an authorizer gate, and is listed here because it blocks the formal ledger initialization of any new task under the current authority design (see ledger_rotation_cyclic_blocker).",
   "source_file": "src/line_backup_batch/cli.py",
   "entry": "authorize() -> authorize_project() -> validate_project_runtime_binding()",
   "grant_operations_declared": [
@@ -35,74 +35,161 @@
   },
   "gates": [
     {
-      "order": 1,
+      "id": "G1",
       "code": "PROJECT_CONTRACT_DRIFT",
       "line": 437,
       "observed": true,
+      "evidence_level": "OBSERVED",
       "observed_result": "REFUSED (exit 4) on native_authorize, gui_initialize, inspect+ledger_status",
       "mismatch": "grant.contract_sha256 (6258099c...) vs actual sha256(private/project-contract.json) (c2d70e2c...)"
     },
     {
-      "order": 2,
+      "id": "G2",
+      "code": "ARTIFACT_DRIFT (owner-decision artifact)",
+      "line": "442 (require body src/line_backup_batch/observations.py:18)",
+      "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
+      "mismatch": "the owner-decision artifact referenced by the grant is compared by artifact() at cli.py:442 against the recorded bytes/sha256; the require body lives in src/line_backup_batch/observations.py:18. The artifact() call site was never reached in this run because G1 refused first."
+    },
+    {
+      "id": "G3",
+      "code": "ARTIFACT_DRIFT (implementation-review artifact)",
+      "line": "443 (require body src/line_backup_batch/observations.py:18)",
+      "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
+      "mismatch": "the implementation-review artifact referenced by the grant is compared by artifact() at cli.py:443; require body at src/line_backup_batch/observations.py:18. Not reached in this run."
+    },
+    {
+      "id": "G4",
+      "code": "ARTIFACT_DRIFT (live-readiness artifact)",
+      "line": "444 (require body src/line_backup_batch/observations.py:18)",
+      "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
+      "mismatch": "the live-readiness artifact referenced by the grant is compared by artifact() at cli.py:444; require body at src/line_backup_batch/observations.py:18. Not reached in this run."
+    },
+    {
+      "id": "G5",
+      "code": "ARTIFACT_DRIFT (runtime-binding artifact)",
+      "line": "606 (artifact() call site) / observations.py:18 (require body)",
+      "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
+      "mismatch": "validate_project_runtime_binding() is called from cli.py:445; inside it the runtime-binding artifact() call site is cli.py:606 and the ARTIFACT_DRIFT require body is src/line_backup_batch/observations.py:18. Not reached in this run."
+    },
+    {
+      "id": "G6",
       "code": "PROJECT_RUNTIME_BINDING_MISMATCH",
       "line": 611,
       "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
       "mismatch": "runtime-binding.json source_sha256 (ca76267c...) vs grant.source_sha256 (da0f5043...)"
     },
     {
-      "order": 3,
+      "id": "G7",
       "code": "PROJECT_SOURCE_CLOSURE_MISMATCH",
-      "line": 615,
+      "line": "615 (comparison statement at 614)",
       "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
       "mismatch": "runtime-binding.json lists 21 source_files; the live SOURCE_PATHS closure is 22 (extra: src/line_backup_acceptance/manual_archive.py). Comparison statement is at cli.py:614, require at 615."
     },
     {
-      "order": 4,
-      "code": "PROJECT_RUNTIME_FILE_DRIFT / PROJECT_RUNTIME_BINDING_MISMATCH",
+      "id": "G8",
+      "code": "PROJECT_RUNTIME_BINDING_MISMATCH",
       "line": 629,
       "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
       "mismatch": "two_album_entry.mjs actual bytes 21935 (sha 708b5e0c...) ; grant.entry_binding bytes 19826 (sha 69cd4743...) ; runtime manifest bytes 20699 (sha f21fc0a5...)"
     },
     {
-      "order": 5,
+      "id": "G9",
+      "code": "PROJECT_RUNTIME_FILE_DRIFT",
+      "line": 633,
+      "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
+      "mismatch": "the installed runtime member files are compared against the runtime-binding record; the installed source closure digest (66854cea...) does not equal the grant source_sha256 (da0f5043...), and the entry file bytes differ from both the grant entry binding and the runtime manifest."
+    },
+    {
+      "id": "G10",
       "code": "PROJECT_IMPLEMENTATION_REVIEW_REQUIRED",
       "line": "455-461",
       "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
       "mismatch": "implementation-review.json entry_sha256 / runtime_binding_sha256 do not equal grant.entry_binding.sha256 / grant.runtime_binding.sha256"
     },
     {
-      "order": 6,
+      "id": "G11",
       "code": "PROJECT_LIVE_READINESS_REQUIRED",
       "line": "462-470",
       "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
       "mismatch": "live-readiness.json gui_ready = false (gate requires true); readiness source_sha256/entry_sha256/runtime_binding_sha256 also differ from the grant"
     },
     {
-      "order": 7,
+      "id": "G12",
       "code": "PROJECT_LIVE_CONSENT_REQUIRED",
-      "line": "472-473",
+      "line": "471-473",
       "observed": false,
-      "mismatch": "owner-decision.json live_gui_authorized = false and full_two_album_pilot_authorized = false (gate requires live_gui_authorized true). The referenced owner consent file is scoped effective_scope=ONE_SCROLL_PROBE_ONLY with save_all_authorized_by_this_grant=false."
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
+      "mismatch": "owner-decision.json live_gui_authorized = false and full_two_album_pilot_authorized = false (gate requires live_gui_authorized true). The referenced owner consent file is scoped effective_scope=ONE_SCROLL_PROBE_ONLY with save_all_authorized_by_this_grant=false. This gate is only reached for a mutating operation and follows G1 in the source order."
     },
     {
-      "order": 8,
+      "id": "G13",
+      "code": "PROJECT_LEDGER_ALREADY_EXISTS",
+      "line": "src/line_backup_batch/store.py:500 (ledger initialization layer, not an authorizer gate; when the gui-ledger-initialization.json receipt already exists the same path raises PROJECT_LEDGER_ALREADY_INITIALIZED)",
+      "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
+      "mismatch": "store.py:492-505 requires that the target ledger path and its gui-ledger-initialization.json receipt are completely unused. The pre-existing one-scroll ledger at the project private path and its receipt both exist, so the same path is refused. Not triggered in this round: the run was refused at G1 before any ledger initialization was attempted."
+    },
+    {
+      "id": "G14",
       "code": "PROJECT_GRANT_OPERATIONS",
       "line": "413-415",
       "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
       "mismatch": "grant.operations only contains the 4 GUI-observation operations; the formal two-album lifecycle needs 10 more (begin/admit/prepare/calibrate/intent/dispatch/finalize/stop/release/gui_phase). This gate fires only when the REQUESTED operation is not in grant.operations, so it was not the observed failure of this run (gui_observe / gui_initialize / inspect are all present)."
     },
     {
-      "order": 9,
+      "id": "G15",
       "code": "PROJECT_SOURCE_DRIFT",
       "line": 480,
       "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
       "mismatch": "current installed source closure receipt.source_sha256 (66854cea...) vs grant.source_sha256 (da0f5043...)"
+    },
+    {
+      "id": "G16",
+      "code": "PROJECT_GRANT_BINDING",
+      "line": "419-423 (the same hard-coded gui_ledger binding is repeated on the one56 route at 501-505)",
+      "observed": false,
+      "evidence_level": "SOURCE_STATIC_COMPARISON",
+      "mismatch": "cli.py:419-423 hard-codes the expected grant gui_ledger path to PROJECT_DIR + '/private/gui-ledger.json' (PROJECT_DIR = harness-development/line-two-album-pilot-20261014) and refuses any grant that points elsewhere; cli.py:426 additionally requires the path to be hex-shaped. A new task with a new ledger path is therefore refused by this binding check. Not triggered in this round: the run was refused at G1 first."
     }
   ],
+  "gates_observed_count": 1,
+  "gates_total_count": 16,
+  "gates_note": "Only G1 carries observed=true. The remaining 15 entries are static source comparisons; they were NOT executed, NOT triggered and NOT observed as failures in this round. Reading this array as a 16-step runtime sequence, or as 16 observed failures, is a misreading.",
+  "ledger_rotation_cyclic_blocker": {
+    "status": "SOURCE_STATIC_PROOF_NOT_LIVE_TRIGGERED",
+    "observed": false,
+    "issue_ref": 27,
+    "issue_url": "https://github.com/s9008129/Line_backup/issues/27",
+    "escalation": "REQUEST_OWNER_APPROVAL_GPT_6_1_SOL_XHIGH",
+    "summary": "G13 and G16 close each other: keeping the existing ledger path is refused by G13 (store.py:500, because that path and its gui-ledger-initialization.json receipt are already used), while moving to a new task id plus a new ledger path is refused by G16 (cli.py:419-423, because the grant gui_ledger path is hard-coded to PROJECT_DIR + '/private/gui-ledger.json'). Therefore 'new task plus new ledger path' is not feasible under the current Authorizer design, and a new formal task cannot initialize any ledger at all.",
+    "source_facts": [
+      "cli.py:419-423 hard-codes grant['gui_ledger'] == PROJECT_DIR + '/private/gui-ledger.json' and refuses any other value",
+      "cli.py:501-505 repeats the same hard-coded gui_ledger binding on the one56 route",
+      "cli.py:410 pins artifact_dir to PROJECT_DIR + '/private'",
+      "store.py:368-373 Store.ledger_path() accepts any grant ledger path that starts with harness-development/ and ends with gui-ledger.json, checking prefix, suffix and traversal only",
+      "store.py:429-454 _ledger_open() requires the receipt and the ledger to agree on task_id, owner, profile, cap and ledger_path",
+      "store.py:492-505 initialize_project_ledger() requires the target ledger path and its gui-ledger-initialization.json receipt to be completely unused, otherwise it raises PROJECT_LEDGER_ALREADY_EXISTS (store.py:500) or PROJECT_LEDGER_ALREADY_INITIALIZED"
+    ],
+    "consequence": "This is a second, independent design-level blocker. It is recorded from source reading only; it was NOT live-triggered in this round and must not be reported as an observed failure."
+  },
   "not_a_blocker_but_noted": {
     "PROJECT_GRANT_QUOTA": "line 416-418; the existing grant already carries (2,1,2,2,23), so the dual-album quota itself is satisfied. The failure is authority binding and consent, not quota.",
     "PROJECT_CONFIG_DRIFT": "line 478; config/line_backup_config.json actual sha256 equals grant.config_sha256 (5e4f769d...), so config binding currently passes.",
-    "PROJECT_LEDGER_ALREADY_EXISTS": "src/line_backup_batch/store.py:500. This is a ledger-initialization layer condition, not an authorizer gate. The old one-scroll gui-ledger.json and its gui-ledger-initialization.json receipt both exist, so a fresh ledger cannot be created for the same path; the ledger must not be reused or reset."
+    "PROJECT_OWNER_CONSENT_MISMATCH": "line 474-477. This check follows PROJECT_LIVE_CONSENT_REQUIRED (G12) in the source order and was not reached in this run; it is a downstream consequence of G12 rather than an independent blocker.",
+    "PROJECT_DECODER_BINDING": "line 432; the gate requires grant['native_binary_sha256'] == grant['decoder_binding']['sha256'], and for this grant the two are equal, so the decoder binding itself is satisfied. The installed decoder is harness-development/line-v3-live-e2e-20261010/bin/image_decode (102064 bytes, sha256 1f5605225b9eae8dd0eea3cedaa089216a8f3674056b3ee226b0f4c10de99bcf).",
+    "PROJECT_LEDGER_ALREADY_EXISTS": "Promoted to gate G13 above; it is no longer listed as a non-blocker note because it participates in the G13/G16 cyclic ledger-rotation blocker."
   },
   "reading_order_note": "Evaluation order inside authorize_project() is: PROJECT_GRANT_OPERATIONS (415) -> PROJECT_GRANT_QUOTA (418) -> PROJECT_GRANT_BINDING (419-432) -> PROJECT_CONTRACT_DRIFT (437) -> ARTIFACT_DRIFT for owner-decision/implementation-review/live-readiness (442-444) -> validate_project_runtime_binding called at 445 (606/611/615/629/633) -> PROJECT_IMPLEMENTATION_REVIEW_REQUIRED (455-461) -> PROJECT_LIVE_READINESS_REQUIRED (462-470) -> PROJECT_LIVE_CONSENT_REQUIRED (472-473, only when the operation is mutating) -> PROJECT_CONFIG_DRIFT (478) -> PROJECT_SOURCE_DRIFT (480).",
   "project_operations_count": 15,
@@ -190,7 +277,7 @@
       "working_tree_sha256": "0d76c238fb5e9b053df4b85b4e508a9b970cd8d3660874437224cfb520b470f1",
       "change": "pure 5-line relocation of the const readRetained=async reference=>{...} declaration ahead of its use; byte count unchanged; not in PR #24 diff; not reviewed"
     },
-    "executed_vs_inspected": "src/line_backup_batch/cli.py was the only product code actually executed (read-only authorizer operations). two_album_entry.mjs was only read and hash-compared, never executed."
+    "executed_vs_inspected": "src/line_backup_batch/cli.py was the only product code actually executed (Authorizer operations only: native_authorize is genuinely read-only per cli.py:668-671, while gui_initialize is PROJECT_MUTATING per cli.py:55 and inspect --include_gui_ledger_status authorizes internally with gui_observe per cli.py:693; both of the latter were refused before any write). two_album_entry.mjs was only read and hash-compared, never executed."
   },
   "contract_drift_root_cause": {
     "grant_contract_sha256": "6258099c2afe7751f2888f28005e0232990db70ef23ec25562b466a7af189c29",

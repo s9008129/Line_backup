@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "purpose": "Side-effect counters for this independent E2E attempt. All counters are zero because the run was refused at the read-only authorizer gate before any LINE or state interaction.",
+  "purpose": "Side-effect counters for this independent E2E attempt. All counters are zero because the run was refused at the authorizer gate before any LINE or state interaction. The refusal happened while the Authorizer was evaluating the read-only operations, and also while evaluating the one mutating-capable operation (gui_initialize, which belongs to the PROJECT_MUTATING set at src/line_backup_batch/cli.py:55) but that operation was refused before its payload was read, so no ledger, receipt, state entry or GUI observation was written.",
   "counters": {
     "save_all_dispatched": 0,
     "chooser_confirmations": 0,
@@ -21,9 +21,17 @@
     "gui_ledger_sha256_before_and_after": "08aa18e42bfee7a8e4d0529bac5b793d830efc1127794dac4baa8f4bdb9864e2",
     "gui_ledger_observation_counts": { "app": 2, "paired": 2, "extra_ax": 0, "popup": { "A": 0, "B": 0 } },
     "gui_ledger_task_id": "PILOT-ONE-SCROLL-<REDACTED-SHA>-20261017-01",
-    "gui_ledger_note": "This ledger belongs to a previous, closed one-scroll task. It must not be reused or reset for the two-album pilot.",
+    "gui_ledger_note": "This ledger belongs to a previous, closed one-scroll task. It must not be reused or reset for the two-album pilot. Under the current Authorizer this 'must not be reused, must not be reset' rule also means that a NEW task cannot initialize any ledger at all, because the grant gui_ledger path is hard-coded to a single fixed path (src/line_backup_batch/cli.py:419-423 and :501-505). That is the second, independent blocker recorded in Issue #27; it is a source-static conclusion and was NOT live-triggered in this round.",
     "backup_files_before_and_after": 348,
     "backup_size_before_and_after": "88M"
+  },
+  "ledger_path_collision_note": {
+    "status": "SOURCE_STATIC_PROOF_NOT_LIVE_TRIGGERED",
+    "issue_ref": 27,
+    "escalation": "REQUEST_OWNER_APPROVAL_GPT_6_1_SOL_XHIGH",
+    "cyclic_closure": "Keeping the existing ledger path is refused by the ledger-initialization layer (src/line_backup_batch/store.py:500, because that path and its gui-ledger-initialization.json receipt are already used), and moving to a new task id with a new ledger path is refused by the Authorizer hard-coded grant binding (src/line_backup_batch/cli.py:419-423). The two conditions close each other, so 'new task plus new ledger path' is not feasible under the current authority design.",
+    "observed_in_this_run": false,
+    "note": "Recorded from source reading only. The run was refused at PROJECT_CONTRACT_DRIFT before any ledger initialization was attempted, so this must not be reported as an observed side effect or an observed failure."
   },
   "excluded_albums_not_touched": {
     "formal_verified_239_images": "untouched",

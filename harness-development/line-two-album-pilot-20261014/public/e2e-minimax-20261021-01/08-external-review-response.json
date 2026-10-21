@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "purpose": "Point-by-point response to the External Chief review of the evidence-only PR #26 for this blocked MiniMax formal E2E attempt. This file records dispositions only; it does not approve anything, does not re-run any gate, and does not change the recorded outcome.",
+  "session": {
+    "id": "e2e-minimax-20261021-01",
+    "thread": "01a15e53-3ac3-7561-a1b3-95001521cc68",
+    "test_model": "minimax-m3.1-flash",
+    "provider": "Ollama Cloud",
+    "role": "independent formal E2E tester (third evidence round, documentation only; no product code, grant, ledger or state was modified)"
+  },
+  "review": {
+    "pr": 26,
+    "pr_url": "https://github.com/s9008129/Line_backup/pull/26",
+    "id": 5601384875,
+    "state": "COMMENTED",
+    "submitted_at": "2026-10-21T14:32:48Z",
+    "anchor_commit_id": "5cd7914aada0ffa81f0526419b04b33d994942e6",
+    "anchor_head_note": "The review is anchored to 5cd7914aada0ffa81f0526419b04b33d994942e6, which is not the current PR #26 head 79cdddf03ea4117afccc44e298310bb663b2d7d2. A re-bind against the new head is required before the next external review.",
+    "verdict": "ACCEPT_BLOCKED_AUTHORIZER_PREFLIGHT_EVIDENCE_ONLY",
+    "machine_summary_lines": [
+      "REVIEWED_PR=26",
+      "REVIEWED_HEAD=5cd7914aada0ffa81f0526419b04b33d994942e6",
+      "VERDICT=ACCEPT_BLOCKED_AUTHORIZER_PREFLIGHT_EVIDENCE_ONLY",
+      "OBSERVED_FIRST_REFUSAL=PROJECT_CONTRACT_DRIFT",
+      "OTHER_GATES=STATIC_INFERENCES_NOT_EXECUTED",
+      "GUI_INITIALIZE_READ_ONLY=FALSE",
+      "REAL_LINE_GUI_ACTIONS=0_REPORTED",
+      "SAVE_ALL_A45_B78=NOT_RUN",
+      "FORMAL_VERIFIED_A45_B78=NOT_RUN",
+      "MINIMAX_PROVIDER=SESSION_SELF_REPORTED",
+      "NEW_DESIGN_ISSUE=https://github.com/s9008129/Line_backup/issues/27",
+      "SOL_ESCALATION=OWNER_APPROVAL_REQUESTED_FOR_TASK_SCOPED_LEDGER_COLLISION",
+      "NEXT=MINIMAL_TDZ_FIX_AND_REVIEWED_AUTHORITY_PLAN__SAFE_LEDGER_ROTATION_DECISION__FRESH_PRECHECK"
+    ]
+  },
+  "mandatory_clarifications": [
+    {
+      "id": 1,
+      "requirement": "Do not present the gate list as 15 actual failures or as a dynamic sequential order; only the first refusal was observed and the remaining gates are static inferences.",
+      "response": "Accepted. The gate inventory was rewritten as a 16-entry, explicitly NUMBERED and NON-EXECUTION-ORDER static comparison checklist (G1..G16). The purpose field states that the array is not a dynamic sequence, not a transcript of 16 failures, and that only G1 was OBSERVED. Each entry now carries an explicit evidence_level of OBSERVED (G1 only) or SOURCE_STATIC_COMPARISON, plus gates_observed_count = 1 and gates_total_count = 16, plus a gates_note that spells out the misreading being avoided. The old 'order' key was removed so no reader can mistake the numbering for an execution sequence. A ledger-initialization-layer condition was promoted into the list as G13 and marked as belonging to store.py rather than the authorizer, so it can no longer hide in the 'not a blocker' section.",
+      "evidence_ref": "02-authorizer-gate-chain.json (purpose, gates, gates_observed_count, gates_total_count, gates_note)"
+    },
+    {
+      "id": 2,
+      "requirement": "gui_initialize has write potential and must not be described or used as a read-only probe.",
+      "response": "Accepted. The top-level case string was changed from 'read-only preflight' to 'admission probe' and a case_note was added stating that the run as a whole was not a read-only preflight. Every invocation now carries a read_only boolean: native_authorize (invocations 11 and 14) and plain inspect (16) are true; gui_initialize (13) and inspect --include_gui_ledger_status (15) are false. The side_effects text of invocation 13 states that it was refused before any ledger write and that read_only is false because gui_initialize belongs to the PROJECT_MUTATING set at cli.py:55, so it must not be reused as a read-only probe. The side_effects text of invocation 15 states that include_gui_ledger_status authorizes internally with gui_observe at cli.py:693 and that gui_observe is also PROJECT_MUTATING. The executed_product_code and executed_vs_inspected narratives in 04 and 07 were corrected to the same wording.",
+      "evidence_ref": "01-authorizer-refusal.json (case, case_note, invocations[].read_only, invocations[].side_effects), 04-session-and-binding.json (code.executed_vs_inspected), 07-evidence-manifest.json (code.executed_product_code)"
+    },
+    {
+      "id": 3,
+      "requirement": "Record the installed closure, dirty patches, PYTHONPATH and native binding in the next round.",
+      "response": "Accepted. A new execution_environment block was added to 04-session-and-binding.json: the installed 22-file SOURCE_PATHS closure digest 66854ceaab0a59edcc7e57402d975a73e0de82cb28a45643cba35146aa10e789 with the explicit note that it is a closure digest computed by store.py:141-148 and not the sha256 of any single file; 22 of 22 closure files byte-identical to PR #24 head; the dirty working-tree state including the unreviewed 5-line mac_runtime.mjs relocation (a1d2c165... -> 0d76c238...) that is not in the PR #24 diff and has not been reviewed, plus the six product files that are uncommitted relative to the main HEAD but hold PR #24 head content; and PYTHONPATH = <repo>/src:<dependencyPath> with the one-off venv identity (Python 3.13.11 + jsonschema 4.26.0, path de-identified) and the system python3 3.9.6 hazard that would mask the real refusal code with INVALID_REQUEST. A native_runtime_binding block was added with producer, decoder, entry (manifest bytes/sha versus actual bytes/sha), the grant decoder-binding equality, the 69 callback_sources split of 62 identical and 7 different (with the 7 differing paths), the mac/producer.mjs no-drift blob, and the unreferenced two-album native binary with its non-matching build parent_head and its 0 authority references.",
+      "evidence_ref": "04-session-and-binding.json (execution_environment, native_runtime_binding)"
+    },
+    {
+      "id": 4,
+      "requirement": "Record Issue #27 and do not mislabel it as observed.",
+      "response": "Accepted. Issue #27 is recorded in three places, each with an explicit not-live-triggered marker: 05-pr24-and-issue25-state.json gained an issue_27 block with number, URL, OPEN state, creation timestamp, title, evidence_level SOURCE_STATIC_PROOF, live_triggered_in_this_run false, trigger_status SOURCE_STATIC_PROOF_NOT_LIVE_TRIGGERED, escalation and the source facts; 02-authorizer-gate-chain.json gained a ledger_rotation_cyclic_blocker block with observed false, issue_ref 27 and the same escalation; 06-side-effects.json gained a ledger_path_collision_note with the same status. The G13 and G16 entries are marked observed false, and the first_refusal block and the BLOCKED verdict remain unchanged. The escalation field records a request for Owner approval to escalate; this session did not switch models.",
+      "evidence_ref": "05-pr24-and-issue25-state.json (issue_27), 02-authorizer-gate-chain.json (ledger_rotation_cyclic_blocker, gates G13, gates G16), 06-side-effects.json (ledger_path_collision_note)"
+    },
+    {
+      "id": 5,
+      "requirement": "Permit only a SINGLE read-only native_authorize probe after the fix.",
+      "response": "Accepted as a forward constraint. A repeat_probe_note was added to 01-authorizer-refusal.json recording that invocation 13 (a gui_initialize re-run with the correct payload, issued to clear up evidence) and invocation 14 (a native_authorize re-run) were unnecessary duplicate calls that produced no new discriminating information; that stopping at the first refusal was correct in this run but must not become standing procedure; and that the next round permits exactly ONE read-only native_authorize admission probe, with no gui_initialize probe and no inspect --include_gui_ledger_status probe, because both are PROJECT_MUTATING and must never be used as read-only probes. The note also fixes the misleading framing that every probe in the run was read-only.",
+      "evidence_ref": "01-authorizer-refusal.json (repeat_probe_note)"
+    },
+    {
+      "id": 6,
+      "requirement": "A45 and B78 are the only targets; no raw CUA, no harness changes and no new engine.",
+      "response": "Already satisfied and unchanged. The eligible set remains the two Owner-authorized albums only, with the 239-image formally VERIFIED set, the 109-image manual diagnostic set and the Owner-excluded 65-image set untouched. No raw CUA was used, the harness was not modified, no native engine was added, and no product source, grant, ledger, state or private evidence was changed in this round. This round changed only the de-identified public JSON evidence artifacts and the Markdown report.",
+      "evidence_ref": "03-target-eligibility.json, 06-side-effects.json (counters, excluded_albums_not_touched), 07-evidence-manifest.json (outcome)"
+    }
+  ],
+  "issue_27": {
+    "number": 27,
+    "url": "https://github.com/s9008129/Line_backup/issues/27",
+    "state": "OPEN",
+    "created_at": "2026-10-21T14:31:29Z",
+    "title": "[FORMAL E2E][Authority] New task cannot initialize GUI ledger: fixed path collides with immutable prior-task ledger",
+    "evidence_level": "SOURCE_STATIC_PROOF",
+    "observed": false,
+    "trigger_status": "SOURCE_STATIC_PROOF_NOT_LIVE_TRIGGERED",
+    "escalation": "REQUEST_OWNER_APPROVAL_GPT_6_1_SOL_XHIGH",
+    "source_facts": [
+      "src/line_backup_batch/cli.py:419-423 hard-codes the expected grant gui_ledger path to PROJECT_DIR + '/private/gui-ledger.json' and refuses any grant that points elsewhere",
+      "src/line_backup_batch/cli.py:501-505 repeats the same hard-coded gui_ledger binding on the one56 route",
+      "src/line_backup_batch/cli.py:410 pins artifact_dir to PROJECT_DIR + '/private'",
+      "src/line_backup_batch/store.py:368-373 Store.ledger_path() accepts any grant ledger path starting with harness-development/ and ending with gui-ledger.json, checking only prefix, suffix and traversal",
+      "src/line_backup_batch/store.py:492-505 initialize_project_ledger() requires the target ledger path and its gui-ledger-initialization.json receipt to be completely unused, otherwise PROJECT_LEDGER_ALREADY_EXISTS (store.py:500) or PROJECT_LEDGER_ALREADY_INITIALIZED",
+      "src/line_backup_batch/store.py:429-454 _ledger_open() requires the receipt and the ledger to agree on task_id, owner, profile, cap and ledger_path"
+    ],
+    "consequence": "Keeping the existing ledger path is refused by the ledger-initialization layer and moving to a new task id with a new ledger path is refused by the Authorizer hard-coded grant binding, so a new formal task cannot initialize any ledger under the current authority design. The two conditions close each other; this is a second, independent, design-level blocker.",
+    "note": "Discovered by source reading at the reviewed product head, NOT live-triggered in this round. The formal E2E run was refused at PROJECT_CONTRACT_DRIFT before any ledger initialization was attempted. This session did not switch models and does not request escalation on its own authority."
+  },
+  "unchanged_facts": {
+    "first_refusal": {
+      "code": "PROJECT_CONTRACT_DRIFT",
+      "source_location": "src/line_backup_batch/cli.py:437",
+      "expected": "6258099c2afe7751f2888f28005e0232990db70ef23ec25562b466a7af189c29",
+      "actual": "c2d70e2cb6a209478805169da453475ce2deb2c3cc9821402f5449acad32e5d5"
+    },
+    "FORMAL_TWO_ALBUM_AUTO": "BLOCKED",
+    "album_a_save_all": "NOT_RUN",
+    "album_a_download": "NOT_RUN",
+    "album_a_formal_verified": "NOT_RUN",
+    "album_b_save_all": "NOT_RUN",
+    "album_b_download": "NOT_RUN",
+    "album_b_formal_verified": "NOT_RUN",
+    "real_scrolls_performed": 0,
+    "save_all_dispatched": 0,
+    "downloaded_files": 0,
+    "gui_ledger_writes": 0,
+    "state_mutation_operations": 0,
+    "state_revision_before_and_after": 35,
+    "excluded_sets_untouched": {
+      "formal_verified_239_images": "untouched",
+      "manual_diagnostic_109_images": "untouched",
+      "owner_excluded_65_images": "untouched"
+    },
+    "grant_quota": {
+      "value": [2, 1, 2, 2, 23],
+      "satisfied": true,
+      "note": "The dual-album quota itself is satisfied. The refusal is authority binding and consent, not quota."
+    }
+  },
+  "next_action": [
+    "Owner decides whether Issue #27 (task-scoped ledger collision) is escalated to GPT-6.1-SOL x-high for a reviewed authority design. This session must not decide or switch models on its own.",
+    "Implementor applies the minimal fix set: the targeted Node construction test for the mac_runtime.mjs readRetained temporal-dead-zone relocation, a reviewed authority plan for task-scoped ledger rotation, and a re-issued whole authority generation (contract + runtime-binding + implementation-review + live-readiness + owner-decision + grant bound to one consistent source closure and to the reviewed HEAD).",
+    "External Chief Code Review of the new fixed head, with an explicit re-bind of the review anchor to that head.",
+    "A fresh independent MiniMax session runs exactly ONE read-only native_authorize admission probe. Only if that probe is admitted does the formal runTwoAlbumPilot() proceed, with A45 then a real scroll then B78, Save All once per album, and per-file SHA-256 plus full content decode verification.",
+    "If the single probe is refused, the session reports the first real refusal with its evidence and stops; it must not re-issue Save All and must not fall back to raw CUA."
+  ]
+}

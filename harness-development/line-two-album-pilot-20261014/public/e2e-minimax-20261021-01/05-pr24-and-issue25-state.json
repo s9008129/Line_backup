@@ -49,6 +49,66 @@
     "contains_recorded_readRetained_relocation_fix": true,
     "fix_status": "recorded, pending review; not present in PR #24"
   },
+  "issue_27": {
+    "number": 27,
+    "url": "https://github.com/s9008129/Line_backup/issues/27",
+    "state": "OPEN",
+    "created_at": "2026-10-21T14:31:29Z",
+    "title": "[FORMAL E2E][Authority] New task cannot initialize GUI ledger: fixed path collides with immutable prior-task ledger",
+    "evidence_level": "SOURCE_STATIC_PROOF",
+    "live_triggered_in_this_run": false,
+    "trigger_status": "SOURCE_STATIC_PROOF_NOT_LIVE_TRIGGERED",
+    "escalation": "REQUEST_OWNER_APPROVAL_GPT_6_1_SOL_XHIGH",
+    "summary": "The formal E2E run was refused at PROJECT_CONTRACT_DRIFT before any ledger initialization was attempted, so this issue was NOT triggered live in this round. It is recorded as a source-static design blocker discovered by reading the reviewed source at PR #24 head 6a81326c8920e313191ea77e4ad930c79e2bd52c (src/line_backup_batch/cli.py 769 lines, src/line_backup_batch/store.py 907 lines, line numbers with zero offset).",
+    "source_facts": [
+      "src/line_backup_batch/cli.py:419-423 and :501-505 hard-code the expected grant gui_ledger path to PROJECT_DIR + '/private/gui-ledger.json' (PROJECT_DIR = harness-development/line-two-album-pilot-20261014) and refuse any grant that points at a different ledger path; cli.py:410 additionally pins artifact_dir to PROJECT_DIR + '/private'.",
+      "src/line_backup_batch/store.py:492-505 initialize_project_ledger() requires the target ledger path and its gui-ledger-initialization.json receipt to be completely unused, otherwise it raises PROJECT_LEDGER_ALREADY_EXISTS (store.py:500) or PROJECT_LEDGER_ALREADY_INITIALIZED.",
+      "src/line_backup_batch/store.py:429-454 _ledger_open() requires the receipt and the ledger to agree on task_id, owner, profile, cap and ledger_path, so a new task id cannot adopt the previous task's ledger.",
+      "src/line_backup_batch/store.py:368-373 Store.ledger_path() accepts any grant ledger path that starts with harness-development/ and ends with gui-ledger.json, checking only prefix, suffix and traversal.",
+      "Consequence: keeping the existing path is refused by the ledger-initialization layer, and moving to a new task id with a new ledger path is refused by the Authorizer's hard-coded grant binding. A new formal task therefore cannot initialize any ledger under the current authority design."
+    ],
+    "note": "The escalation field records a request for Owner approval to escalate to GPT-6.1-SOL x-high. This test session did not and cannot switch models itself."
+  },
+  "pr_26_external_review": {
+    "pr": 26,
+    "url": "https://github.com/s9008129/Line_backup/pull/26",
+    "state": "OPEN",
+    "is_draft": true,
+    "head_oid": "79cdddf03ea4117afccc44e298310bb663b2d7d2",
+    "purpose": "evidence-only test report PR for this MiniMax formal E2E attempt; it must not be merged as a product change",
+    "review": {
+      "id": 5601384875,
+      "state": "COMMENTED",
+      "submitted_at": "2026-10-21T14:32:48Z",
+      "commit_id": "5cd7914aada0ffa81f0526419b04b33d994942e6",
+      "anchor_head_note": "The review is anchored to commit 5cd7914aada0ffa81f0526419b04b33d994942e6, which is NOT the current PR head 79cdddf03ea4117afccc44e298310bb663b2d7d2. A re-bind against the new head is required before the next external review.",
+      "verdict": "ACCEPT_BLOCKED_AUTHORIZER_PREFLIGHT_EVIDENCE_ONLY",
+      "machine_summary_lines": [
+        "REVIEWED_PR=26",
+        "REVIEWED_HEAD=5cd7914aada0ffa81f0526419b04b33d994942e6",
+        "VERDICT=ACCEPT_BLOCKED_AUTHORIZER_PREFLIGHT_EVIDENCE_ONLY",
+        "OBSERVED_FIRST_REFUSAL=PROJECT_CONTRACT_DRIFT",
+        "OTHER_GATES=STATIC_INFERENCES_NOT_EXECUTED",
+        "GUI_INITIALIZE_READ_ONLY=FALSE",
+        "REAL_LINE_GUI_ACTIONS=0_REPORTED",
+        "SAVE_ALL_A45_B78=NOT_RUN",
+        "FORMAL_VERIFIED_A45_B78=NOT_RUN",
+        "MINIMAX_PROVIDER=SESSION_SELF_REPORTED",
+        "NEW_DESIGN_ISSUE=https://github.com/s9008129/Line_backup/issues/27",
+        "SOL_ESCALATION=OWNER_APPROVAL_REQUESTED_FOR_TASK_SCOPED_LEDGER_COLLISION",
+        "NEXT=MINIMAL_TDZ_FIX_AND_REVIEWED_AUTHORITY_PLAN__SAFE_LEDGER_ROTATION_DECISION__FRESH_PRECHECK"
+      ]
+    },
+    "mandatory_clarifications": [
+      "Do not present the gate list as 15 actual failures or as a dynamic sequential order; only the first refusal was observed and the rest are static inferences.",
+      "gui_initialize has write potential and must not be described or used as a read-only probe.",
+      "Record the installed closure, dirty patches, PYTHONPATH and native binding in the next round.",
+      "Record Issue #27 and do not mislabel it as observed.",
+      "Permit only a SINGLE read-only native_authorize probe after the fix.",
+      "A45 and B78 are the only targets; no raw CUA, no harness changes, no new engine."
+    ],
+    "response_recorded_in": "08-external-review-response.json"
+  },
   "other_open_draft_prs": [
     { "number": 21, "url": "https://github.com/s9008129/Line_backup/pull/21", "title": "docs(line-two-album): A56+B53 manual Save All evidence and CUA/413 root causes", "head_oid": "1bd8a1ab5bce7cbc713b53a9be7dcd5285be7f3d", "is_draft": true },
     { "number": 18, "url": "https://github.com/s9008129/Line_backup/pull/18", "title": "test(native-feasibility): add zero-event pre-down evidence mode", "is_draft": true },

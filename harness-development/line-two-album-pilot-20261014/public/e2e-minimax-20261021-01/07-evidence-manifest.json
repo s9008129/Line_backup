@@ -14,7 +14,7 @@
     "candidate_product_head_pr24": "6a81326c8920e313191ea77e4ad930c79e2bd52c",
     "source_paths_closure_files": 22,
     "source_closure_identical_to_pr24_head": 22,
-    "executed_product_code": "src/line_backup_batch/cli.py (read-only authorizer operations only)"
+    "executed_product_code": "src/line_backup_batch/cli.py (Authorizer operations only; native_authorize is genuinely read-only per cli.py:668-671; gui_initialize belongs to the PROJECT_MUTATING set per cli.py:55 but was refused before its payload was read and wrote no ledger; inspect --include_gui_ledger_status authorizes internally with gui_observe per cli.py:693 and was likewise refused before any write)"
   },
   "outcome": {
     "FORMAL_TWO_ALBUM_AUTO": "BLOCKED",
@@ -31,7 +31,7 @@
     "private_originals": "Raw command stdout/stderr, the private grant/contract/ledger files and the raw state files stay local under the repo-relative private root and are never uploaded.",
     "children_images": "No album was opened and no photo was captured in this run, so no private imagery of any kind entered the evidence set.",
     "no_photo_uploaded": true,
-    "absolute_local_paths": "none. Verified by scan: the 7 public artifacts and the Markdown report contain zero absolute local filesystem paths (no home-directory, temporary-directory, volume or user-directory prefixes)."
+    "absolute_local_paths": "none. Verified by scan: the 8 public artifacts and the Markdown report contain zero absolute local filesystem paths (no home-directory, temporary-directory, volume or user-directory prefixes)."
   },
   "private_root": "harness-development/line-two-album-pilot-20261014/private/e2e-minimax-20261021-01",
   "private_evidence_sha256": [
@@ -199,7 +199,81 @@
     "04-session-and-binding.json",
     "05-pr24-and-issue25-state.json",
     "06-side-effects.json",
-    "07-evidence-manifest.json"
+    "07-evidence-manifest.json",
+    "08-external-review-response.json"
   ],
-  "public_artifacts_note": "This manifest lists itself as the 7th public artifact. Its own SHA-256 cannot be embedded inside itself; hash the committed blob directly to verify it."
+  "public_artifacts_note": "This manifest lists itself as the 8th public artifact. Its own SHA-256 cannot be embedded inside itself; hash the committed blob directly to verify it.",
+  "external_review": {
+    "pr": 26,
+    "pr_url": "https://github.com/s9008129/Line_backup/pull/26",
+    "review_id": 5601384875,
+    "review_state": "COMMENTED",
+    "submitted_at": "2026-10-21T14:32:48Z",
+    "anchor_commit_id": "5cd7914aada0ffa81f0526419b04b33d994942e6",
+    "anchor_head_note": "The review is anchored to 5cd7914aada0ffa81f0526419b04b33d994942e6, which is not the current PR #26 head 79cdddf03ea4117afccc44e298310bb663b2d7d2. A re-bind against the new head is required before the next external review.",
+    "verdict": "ACCEPT_BLOCKED_AUTHORIZER_PREFLIGHT_EVIDENCE_ONLY",
+    "machine_summary_lines": [
+      "REVIEWED_PR=26",
+      "REVIEWED_HEAD=5cd7914aada0ffa81f0526419b04b33d994942e6",
+      "VERDICT=ACCEPT_BLOCKED_AUTHORIZER_PREFLIGHT_EVIDENCE_ONLY",
+      "OBSERVED_FIRST_REFUSAL=PROJECT_CONTRACT_DRIFT",
+      "OTHER_GATES=STATIC_INFERENCES_NOT_EXECUTED",
+      "GUI_INITIALIZE_READ_ONLY=FALSE",
+      "REAL_LINE_GUI_ACTIONS=0_REPORTED",
+      "SAVE_ALL_A45_B78=NOT_RUN",
+      "FORMAL_VERIFIED_A45_B78=NOT_RUN",
+      "MINIMAX_PROVIDER=SESSION_SELF_REPORTED",
+      "NEW_DESIGN_ISSUE=https://github.com/s9008129/Line_backup/issues/27",
+      "SOL_ESCALATION=OWNER_APPROVAL_REQUESTED_FOR_TASK_SCOPED_LEDGER_COLLISION",
+      "NEXT=MINIMAL_TDZ_FIX_AND_REVIEWED_AUTHORITY_PLAN__SAFE_LEDGER_ROTATION_DECISION__FRESH_PRECHECK"
+    ],
+    "mandatory_clarification_disposition": [
+      {
+        "id": 1,
+        "requirement": "Do not present the gate list as 15 actual failures or as a dynamic sequential order.",
+        "disposition": "DONE_IN_THIRD_ROUND",
+        "evidence_ref": "02-authorizer-gate-chain.json (purpose, gates_observed_count, gates_note; 16 numbered non-execution-order entries, only G1 observed=true)"
+      },
+      {
+        "id": 2,
+        "requirement": "gui_initialize has write potential and must not be used or described as a read-only probe.",
+        "disposition": "DONE_IN_THIRD_ROUND",
+        "evidence_ref": "01-authorizer-refusal.json (case_note, per-invocation read_only, repeat_probe_note) and 04-session-and-binding.json (code.executed_vs_inspected)"
+      },
+      {
+        "id": 3,
+        "requirement": "Record the installed closure, dirty patches, PYTHONPATH and native binding in the next round.",
+        "disposition": "DONE_IN_THIRD_ROUND",
+        "evidence_ref": "04-session-and-binding.json (execution_environment, native_runtime_binding)"
+      },
+      {
+        "id": 4,
+        "requirement": "Record Issue #27 and do not mislabel it as observed.",
+        "disposition": "DONE_IN_THIRD_ROUND",
+        "evidence_ref": "05-pr24-and-issue25-state.json (issue_27), 02-authorizer-gate-chain.json (ledger_rotation_cyclic_blocker), 06-side-effects.json (ledger_path_collision_note)"
+      },
+      {
+        "id": 5,
+        "requirement": "Permit only a SINGLE read-only native_authorize probe after the fix.",
+        "disposition": "DONE_IN_THIRD_ROUND",
+        "evidence_ref": "01-authorizer-refusal.json (repeat_probe_note)"
+      },
+      {
+        "id": 6,
+        "requirement": "A45 and B78 are the only targets; no raw CUA, no harness changes, no new engine.",
+        "disposition": "SATISFIED",
+        "evidence_ref": "07-evidence-manifest.json (outcome) and 03-target-eligibility.json"
+      }
+    ],
+    "issue_27": {
+      "number": 27,
+      "url": "https://github.com/s9008129/Line_backup/issues/27",
+      "state": "OPEN",
+      "evidence_level": "SOURCE_STATIC_PROOF",
+      "observed": false,
+      "escalation": "REQUEST_OWNER_APPROVAL_GPT_6_1_SOL_XHIGH"
+    },
+    "response_recorded_in": "08-external-review-response.json",
+    "self_approval_note": "This session did not approve, merge or claim any external review verdict for itself. The external Chief review verdict above is quoted as an observed external artifact only."
+  }
 }
