@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "purpose": "Ordered authorizer gate chain for the formal two-album pilot route, derived read-only from src/line_backup_batch/cli.py at the tested worktree HEAD. Gate 1 is the observed first refusal; gates 2..9 are the subsequent refusals that would fire if only gate 1 were repaired.",
+  "source_file": "src/line_backup_batch/cli.py",
+  "entry": "authorize() -> authorize_project() -> validate_project_runtime_binding()",
+  "grant_operations_declared": ["gui_initialize", "gui_observe", "gui_reserve", "gui_consume"],
+  "project_operations_allowed_by_cli": ["begin", "admit", "prepare", "calibrate", "intent", "dispatch", "finalize", "stop", "release", "resume", "gui_reserve", "gui_consume", "gui_initialize", "gui_phase", "gui_observe"],
+  "quota_required_by_cli": {
+    "album_quota": 2,
+    "lifecycle_album_limit": 1,
+    "save_all_dispatch_limit": 2,
+    "chooser_confirmation_limit": 2,
+    "reversible_gui_invocation_limit": 23
+  },
+  "gates": [
+    {
+      "order": 1,
+      "code": "PROJECT_CONTRACT_DRIFT",
+      "line": 437,
+      "observed": true,
+      "observed_result": "REFUSED (exit 4) on native_authorize, gui_initialize, inspect+ledger_status",
+      "mismatch": "grant.contract_sha256 (6258099c...) vs actual sha256(private/project-contract.json) (c2d70e2c...)"
+    },
+    {
+      "order": 2,
+      "code": "PROJECT_RUNTIME_BINDING_MISMATCH",
+      "line": 611,
+      "observed": false,
+      "mismatch": "runtime-binding.json source_sha256 (ca76267c...) vs grant.source_sha256 (da0f5043...)"
+    },
+    {
+      "order": 3,
+      "code": "PROJECT_SOURCE_CLOSURE_MISMATCH",
+      "line": 615,
+      "observed": false,
+      "mismatch": "runtime-binding.json lists 21 source_files; actual SOURCE_PATHS closure is 22 (extra: src/line_backup_acceptance/manual_archive.py)"
+    },
+    {
+      "order": 4,
+      "code": "PROJECT_RUNTIME_FILE_DRIFT / PROJECT_RUNTIME_BINDING_MISMATCH",
+      "line": 629,
+      "observed": false,
+      "mismatch": "two_album_entry.mjs actual bytes 21935 (sha 708b5e0c...) ; grant.entry_binding bytes 19826 (sha 69cd4743...) ; runtime manifest bytes 20699 (sha f21fc0a5...)"
+    },
+    {
+      "order": 5,
+      "code": "PROJECT_IMPLEMENTATION_REVIEW_REQUIRED",
+      "line": 455,
+      "observed": false,
+      "mismatch": "implementation-review.json entry_sha256 / runtime_binding_sha256 do not equal grant.entry_binding.sha256 / grant.runtime_binding.sha256"
+    },
+    {
+      "order": 6,
+      "code": "PROJECT_LIVE_READINESS_REQUIRED",
+      "line": 462,
+      "observed": false,
+      "mismatch": "live-readiness.json gui_ready = false (gate requires true); readiness source_sha256/entry_sha256/runtime_binding_sha256 also differ from the grant"
+    },
+    {
+      "order": 7,
+      "code": "PROJECT_LIVE_CONSENT_REQUIRED",
+      "line": 471,
+      "observed": false,
+      "mismatch": "owner-decision.json live_gui_authorized = false and full_two_album_pilot_authorized = false (gate requires live_gui_authorized true)"
+    },
+    {
+      "order": 8,
+      "code": "PROJECT_GRANT_OPERATIONS",
+      "line": 413,
+      "observed": false,
+      "mismatch": "grant.operations only contains 4 GUI-observation operations; the formal two-album lifecycle needs begin/admit/prepare/calibrate/intent/dispatch/finalize/stop/release/resume/gui_phase"
+    },
+    {
+      "order": 9,
+      "code": "PROJECT_SOURCE_DRIFT",
+      "line": 480,
+      "observed": false,
+      "mismatch": "current installed source closure receipt.source_sha256 (66854cea...) vs grant.source_sha256 (da0f5043...)"
+    }
+  ],
+  "not_a_blocker_but_noted": {
+    "PROJECT_GRANT_QUOTA": "line 416-418; the existing grant already carries (2,1,2,2,23), so the dual-album quota itself is satisfied. The failure is authority binding and consent, not quota.",
+    "PROJECT_CONFIG_DRIFT": "line 478; config/line_backup_config.json actual sha256 equals grant.config_sha256 (5e4f769d...), so config binding currently passes."
+  }
+}

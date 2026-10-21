@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "pull_request_24": {
+    "number": 24,
+    "url": "https://github.com/s9008129/Line_backup/pull/24",
+    "state": "OPEN",
+    "is_draft": true,
+    "head_ref": "implement/line-two-album-v4-1-20261021",
+    "head_oid": "6a81326c8920e313191ea77e4ad930c79e2bd52c",
+    "base_ref": "implement/line-two-album-pilot-v1-20261014",
+    "mergeable": "MERGEABLE",
+    "merge_state_status": "CLEAN",
+    "updated_at": "2026-10-21T02:58:00Z",
+    "reviews": [
+      {
+        "id": 5594263766,
+        "state": "COMMENTED",
+        "submitted_at": "2026-10-21T02:35:53Z",
+        "commit_id": "a790d0825eb176828bc1f1e90dc69e4b56ba3dbd",
+        "verdict": "CHANGES_REQUIRED",
+        "scope": "code review of the first-round implementation head"
+      },
+      {
+        "id": 5594427784,
+        "state": "COMMENTED",
+        "submitted_at": "2026-10-21T02:58:00Z",
+        "commit_id": "6a81326c8920e313191ea77e4ad930c79e2bd52c",
+        "verdict": "APPROVE_IMPLEMENTATION (CODE/SCOPE ONLY)",
+        "scope": "source code and scope review of 6a81326 only",
+        "explicit_non_claims": [
+          "does not create an effective APPROVE_IMPLEMENTATION machine-readable authorizer receipt or signed grant",
+          "does not approve a merge",
+          "does not consent to operate the LINE GUI",
+          "NATIVE_RUNTIME_GRANT_READY=NOT_PROVEN",
+          "FORMAL_LINE_GUI_SAVE_ALL_AUTHORIZED=NO",
+          "FORMAL_TWO_ALBUM_E2E=NOT_RUN"
+        ]
+      }
+    ],
+    "authority_review_present": false,
+    "authority_review_note": "No review on PR #24 approves a formal E2E authority, grant, or LINE GUI Save All. Both reviews are code/scope reviews only, and both are COMMENTED rather than GitHub-native APPROVED."
+  },
+  "issue_25": {
+    "number": 25,
+    "url": "https://github.com/s9008129/Line_backup/issues/25",
+    "state": "OPEN",
+    "title": "[Codex Workflow] Managed worktree under ~/.codex caused write stalls and blocked TWO_ALBUM_AUTO preflight",
+    "updated_at": "2026-10-21T05:33:57Z",
+    "contains_recorded_readRetained_relocation_fix": true,
+    "fix_status": "recorded, pending review; not present in PR #24"
+  },
+  "other_open_draft_prs": [
+    { "number": 21, "url": "https://github.com/s9008129/Line_backup/pull/21", "title": "docs(line-two-album): A56+B53 manual Save All evidence and CUA/413 root causes", "head_oid": "1bd8a1ab5bce7cbc713b53a9be7dcd5285be7f3d", "is_draft": true },
+    { "number": 18, "url": "https://github.com/s9008129/Line_backup/pull/18", "title": "test(native-feasibility): add zero-event pre-down evidence mode", "is_draft": true },
+    { "number": 17, "url": "https://github.com/s9008129/Line_backup/pull/17", "title": "test(native-auto-click): execute approved F0 and bounded F1-G0", "is_draft": true },
+    { "number": 16, "url": "https://github.com/s9008129/Line_backup/pull/16", "title": "docs(native-auto-click): submit macOS native input feasibility plan", "is_draft": true },
+    { "number": 15, "url": "https://github.com/s9008129/Line_backup/pull/15", "title": "docs(two-album-auto): submit minimal AUTO plan for external review", "is_draft": true }
+  ]
+}

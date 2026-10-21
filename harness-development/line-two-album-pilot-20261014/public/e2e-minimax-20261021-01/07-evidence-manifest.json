@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "task": "Independent formal E2E attempt for the Owner-authorized two-album LINE pilot (A45 then B78) using the official runTwoAlbumPilot() entrypoint",
+  "generated_at": "2026-10-21T13:00:00+08:00",
+  "executor": {
+    "kind": "Independent formal E2E tester session (not the implementer, not a local subagent of the implementer)",
+    "test_model": "minimax-m3.1-flash",
+    "provider": "Ollama Cloud",
+    "thread": "01a15e53-3ac3-7561-a1b3-95001521cc68"
+  },
+  "code": {
+    "test_worktree_head": "b7bb666fa78b8e9dfffed8247c4f2a7f869a481b",
+    "test_worktree_branch": "v43-ab/codex-rev28",
+    "candidate_product_head_pr24": "6a81326c8920e313191ea77e4ad930c79e2bd52c"
+  },
+  "outcome": {
+    "FORMAL_TWO_ALBUM_AUTO": "BLOCKED",
+    "album_a_save_all": "NOT_RUN",
+    "album_a_download": "NOT_RUN",
+    "album_a_formal_verified": "NOT_RUN",
+    "album_b_save_all": "NOT_RUN",
+    "album_b_download": "NOT_RUN",
+    "album_b_formal_verified": "NOT_RUN",
+    "first_refusal": "PROJECT_CONTRACT_DRIFT at src/line_backup_batch/cli.py:437"
+  },
+  "privacy": {
+    "public_policy": "Only refusal codes, hashes, counts, dates and photo counts are public. No group name, human name, photo content, file inventory, grant internals, absolute local path, or raw state dump is included.",
+    "private_originals": "Raw command stdout/stderr, the private grant/contract/ledger files and the raw state files stay local under the repo-relative private root and are never uploaded.",
+    "children_images": "No album was opened and no photo was captured in this run, so no private imagery of any kind entered the evidence set.",
+    "no_photo_uploaded": true
+  },
+  "private_root": "harness-development/line-two-album-pilot-20261014/private/e2e-minimax-20261021-01",
+  "private_evidence_sha256": [
+    { "id": "00-session", "file": "00-session.txt", "bytes": 180, "sha256": "7c50b7d8b5582f4ba44aefc74352dc2fec76049648d63c84ca9337568872914d" },
+    { "id": "01-pr24", "file": "01-pr24.json", "bytes": 414, "sha256": "7e414bc62b5237ca2c997f6565f2c73ba1c61243b8f25f58356c0ee9b17a0677" },
+    { "id": "02-issue25", "file": "02-issue25.json", "bytes": 238, "sha256": "05d3eca1a3098d7b5a5a1e664335af45e66e5a25f03d258dec750b2b8580d0e7" },
+    { "id": "03-pr24-reviews", "file": "03-pr24-reviews.json", "bytes": 656, "sha256": "770f6739a60b7e18f60827b0b5d75ddedeb524f60067a8a8912711518560ef7e" },
+    { "id": "10-authorizer-inspect-rc", "file": "10-authorizer-inspect.rc.txt", "bytes": 26, "sha256": "54c6dca0baff918b651d07a3912d3e5324d2b123f4e1d4b8906ec8a360424d6c" },
+    { "id": "10-authorizer-inspect-stdout", "file": "10-authorizer-inspect.stdout.json", "bytes": 1215, "sha256": "cc21c6ea2f07c01150e3029ed2fa0585ab1f46f121cab5cdd133c9e86743b367" },
+    { "id": "10-authorizer-inspect-stderr", "file": "10-authorizer-inspect.stderr.json", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" },
+    { "id": "11-native-authorize-rc", "file": "11-native-authorize.rc.txt", "bytes": 24, "sha256": "0acdde9e2554b791d3c0c8c78c3b45ca288ab69f7fa3a67035381bd7c623170d" },
+    { "id": "11-native-authorize-stderr", "file": "11-native-authorize.stderr.json", "bytes": 123, "sha256": "fca852c8d682b74c0065c5cb7280caa283bdc58f342c6f7512b515257d54bf2a" },
+    { "id": "11-native-authorize-stdout", "file": "11-native-authorize.stdout.json", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" },
+    { "id": "12-gui-initialize-rc", "file": "12-gui-initialize.rc.txt", "bytes": 22, "sha256": "61de6365fdf6f8a577005e7342d379f6a2f5f0c2c6eb5821221088835117016e" },
+    { "id": "12-gui-initialize-stderr", "file": "12-gui-initialize.stderr.json", "bytes": 123, "sha256": "fca852c8d682b74c0065c5cb7280caa283bdc58f342c6f7512b515257d54bf2a" },
+    { "id": "12-gui-initialize-stdout", "file": "12-gui-initialize.stdout.json", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" },
+    { "id": "13-gui-init-input", "file": "13-gui-init-input.json", "bytes": 55, "sha256": "d09285d506024964d0a79f8cb880a7a8b6497bfe9964f2f8b53597eef4320ba8" },
+    { "id": "13-gui-initialize-correct-input-rc", "file": "13-gui-initialize-correct-input.rc.txt", "bytes": 30, "sha256": "6b80bfda4ee9f453d46a3ec360ab5059517f6dd0606374f0b3be4ca2a1b5ba31" },
+    { "id": "13-gui-initialize-correct-input-stderr", "file": "13-gui-initialize-correct-input.stderr.json", "bytes": 123, "sha256": "fca852c8d682b74c0065c5cb7280caa283bdc58f342c6f7512b515257d54bf2a" },
+    { "id": "13-gui-initialize-correct-input-stdout", "file": "13-gui-initialize-correct-input.stdout.json", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" },
+    { "id": "14-native-authorize-rerun-rc", "file": "14-native-authorize-rerun.rc.txt", "bytes": 30, "sha256": "32a4efdb95e48db24ff0482eaab6a8d09c9fe96a928c77a49d2de66efe5a2a4a" },
+    { "id": "14-native-authorize-rerun-stderr", "file": "14-native-authorize-rerun.stderr.json", "bytes": 123, "sha256": "fca852c8d682b74c0065c5cb7280caa283bdc58f342c6f7512b515257d54bf2a" },
+    { "id": "14-native-authorize-rerun-stdout", "file": "14-native-authorize-rerun.stdout.json", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" },
+    { "id": "15-inspect-ledger-status-rc", "file": "15-inspect-ledger-status.rc.txt", "bytes": 29, "sha256": "ae946edbf9bf0072c7a7a209ff8bd6f26937ae4bda4fe75280c0334e770b55fb" },
+    { "id": "15-inspect-ledger-status-stderr", "file": "15-inspect-ledger-status.stderr.json", "bytes": 123, "sha256": "fca852c8d682b74c0065c5cb7280caa283bdc58f342c6f7512b515257d54bf2a" },
+    { "id": "15-inspect-ledger-status-stdout", "file": "15-inspect-ledger-status.stdout.json", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" },
+    { "id": "16-inspect-plain-rc", "file": "16-inspect-plain.rc.txt", "bytes": 21, "sha256": "4581c079bd799a5a3d2ee7348b966dec681703ffa32d03ce1735a333675bd175" },
+    { "id": "16-inspect-plain-stderr", "file": "16-inspect-plain.stderr.json", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" },
+    { "id": "16-inspect-plain-stdout", "file": "16-inspect-plain.stdout.json", "bytes": 1215, "sha256": "cc21c6ea2f07c01150e3029ed2fa0585ab1f46f121cab5cdd133c9e86743b367" }
+  ],
+  "public_artifacts": [
+    "01-authorizer-refusal.json",
+    "02-authorizer-gate-chain.json",
+    "03-target-eligibility.json",
+    "04-session-and-binding.json",
+    "05-pr24-and-issue25-state.json",
+    "06-side-effects.json"
+  ]
+}

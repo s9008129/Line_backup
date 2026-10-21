@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "purpose": "Side-effect counters for this independent E2E attempt. All counters are zero because the run was refused at the read-only authorizer gate before any LINE or state interaction.",
+  "counters": {
+    "save_all_dispatched": 0,
+    "chooser_confirmations": 0,
+    "downloaded_files": 0,
+    "downloaded_bytes": 0,
+    "formal_intent_created": 0,
+    "formal_dispatch_records": 0,
+    "formal_finalize_verified": 0,
+    "gui_ledger_writes": 0,
+    "gui_observation_entries": 0,
+    "state_mutation_operations": 0,
+    "line_messages_sent": 0,
+    "albums_opened": 0,
+    "real_scrolls_performed": 0
+  },
+  "pre_existing_state_unchanged": {
+    "state_revision_before_and_after": 35,
+    "gui_ledger_sha256_before_and_after": "08aa18e42bfee7a8e4d0529bac5b793d830efc1127794dac4baa8f4bdb9864e2",
+    "gui_ledger_observation_counts": { "app": 2, "paired": 2, "extra_ax": 0, "popup": { "A": 0, "B": 0 } },
+    "gui_ledger_task_id": "PILOT-ONE-SCROLL-<REDACTED-SHA>-20261017-01",
+    "gui_ledger_note": "This ledger belongs to a previous, closed one-scroll task. It must not be reused or reset for the two-album pilot.",
+    "backup_files_before_and_after": 348,
+    "backup_size_before_and_after": "88M"
+  },
+  "excluded_albums_not_touched": {
+    "formal_verified_239_images": "untouched",
+    "manual_diagnostic_109_images": "untouched",
+    "owner_excluded_65_images": "untouched"
+  }
+}

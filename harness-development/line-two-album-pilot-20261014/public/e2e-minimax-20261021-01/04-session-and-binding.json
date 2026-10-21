@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "session": {
+    "id": "e2e-minimax-20261021-01",
+    "thread": "01a15e53-3ac3-7561-a1b3-95001521cc68",
+    "test_model": "minimax-m3.1-flash",
+    "provider": "Ollama Cloud",
+    "utc_started": "2026-10-21T12:13:06Z",
+    "role": "independent formal E2E tester (no product source modification, no Save All, no download, no state mutation)"
+  },
+  "code": {
+    "test_worktree_head": "b7bb666fa78b8e9dfffed8247c4f2a7f869a481b",
+    "test_worktree_branch": "v43-ab/codex-rev28",
+    "candidate_product_head_pr24": "6a81326c8920e313191ea77e4ad930c79e2bd52c",
+    "candidate_product_branch_pr24": "implement/line-two-album-v4-1-20261021"
+  },
+  "source_and_runtime_binding": {
+    "grant_contract_sha256": "6258099c2afe7751f2888f28005e0232990db70ef23ec25562b466a7af189c29",
+    "actual_contract_sha256": "c2d70e2cb6a209478805169da453475ce2deb2c3cc9821402f5449acad32e5d5",
+    "grant_source_sha256": "da0f504301b7a689dfc9e0d5b77919678b32b472609fa6f0595ee67b5d4846e9",
+    "runtime_manifest_source_sha256": "ca76267c2f249d324cd1ecc827283a085ae52630ef727bafea544dcf2465cbfe",
+    "installed_source_closure_receipt_sha256": "66854ceaab0a59edcc7e57402d975a73e0de82cb28a45643cba35146aa10e789",
+    "grant_entry_sha256": "69cd47436de8e6c56668d8879c04cb3439e6c11a4f3d8381415fe0d10d1881c1",
+    "grant_entry_bytes": 19826,
+    "review_entry_sha256": "f21fc0a577235342919321c65214035a2632c4916ca390bd500044d41dca0a54",
+    "runtime_manifest_entry_sha256": "f21fc0a577235342919321c65214035a2632c4916ca390bd500044d41dca0a54",
+    "runtime_manifest_entry_bytes": 20699,
+    "actual_entry_sha256_pr24_head": "708b5e0ce421c0f7610fb56ff2bfff44fe9782e7b7018016832ab7dbd6b0e925",
+    "actual_entry_bytes_pr24_head": 21935,
+    "actual_entry_sha256_working_tree": "708b5e0ce421c0f7610fb56ff2bfff44fe9782e7b7018016832ab7dbd6b0e925",
+    "grant_runtime_binding_sha256": "400235b51957708a86f31dd75ad3e150869eafe80efbced5367542b0112834e7",
+    "actual_runtime_binding_sha256": "81d3b4e45091c9a97a570fbad0702eeab61a09e0b0d2f8641ad5d14448b21739",
+    "review_runtime_binding_sha256": "81d3b4e45091c9a97a570fbad0702eeab61a09e0b0d2f8641ad5d14448b21739",
+    "config_sha256_grant_and_actual": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+    "conclusion": "The installed source/runtime binding does not match the reviewed HEAD and does not match the live grant. There is no authority bundle bound to the currently installed source closure."
+  },
+  "mac_runtime_tdz": {
+    "file": "harness-development/line-two-album-pilot-20261014/mac_runtime.mjs",
+    "pr24_head_sha256": "a1d2c16528b5584a02780045384afb535715287925cabccdaab2111d03ffe27d",
+    "pr24_reference_line": 283,
+    "pr24_declaration_line": 311,
+    "pr24_state": "REFERENCE_BEFORE_DECLARATION (temporal dead zone risk)",
+    "working_tree_sha256": "0d76c238fb5e9b053df4b85b4e508a9b970cd8d3660874437224cfb520b470f1",
+    "working_tree_state": "local minimal relocation present (declaration before reference); NOT part of PR #24 and NOT reviewed",
+    "pr24_changed_files_include_mac_runtime": false
+  }
+}

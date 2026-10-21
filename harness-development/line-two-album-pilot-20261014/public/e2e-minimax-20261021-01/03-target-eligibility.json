@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "purpose": "Owner-allowlist target eligibility and existing-exclusion inventory, verified read-only by executing the real product predicates.",
+  "predicates_executed": "src/line_backup_acceptance/manual_archive.py (owner_target_allowed / owner_target_excluded), state/backup_state.json, state/manual_archives.json, backups/ directory listing",
+  "owner_allowlist_targets": [
+    {
+      "label": "A",
+      "fingerprint": { "start_date": "2024-04-22", "end_date": "2024-04-26", "expected_images": 45 },
+      "owner_target_allowed": true,
+      "owner_target_excluded": false,
+      "in_required_manual_fingerprints": false,
+      "download_authorized_by_owner": true
+    },
+    {
+      "label": "B",
+      "fingerprint": { "start_date": "2024-04-21", "end_date": "2024-04-21", "expected_images": 78 },
+      "owner_target_allowed": true,
+      "owner_target_excluded": false,
+      "in_required_manual_fingerprints": false,
+      "download_authorized_by_owner": true
+    }
+  ],
+  "existing_formal_verified": {
+    "count_albums": 2,
+    "count_images": 239,
+    "albums": [
+      { "fingerprint": { "start_date": "2024-05-13", "end_date": "2024-05-17", "expected_images": 57 }, "source_kind": "filesystem_verification" },
+      { "fingerprint": { "start_date": "2024-05-06", "end_date": "2024-05-10", "expected_images": 182 }, "source_kind": "filesystem_verification" }
+    ],
+    "must_not_repeat": true
+  },
+  "existing_manual_diagnostic": {
+    "count_images": 109,
+    "provenance": "MANUAL_DIAGNOSTIC",
+    "albums": [
+      { "fingerprint": { "start_date": "2024-05-27", "end_date": "2024-05-31", "expected_images": 56 }, "file_count": 56 },
+      { "fingerprint": { "start_date": "2024-05-20", "end_date": "2024-05-24", "expected_images": 53 }, "file_count": 53 }
+    ],
+    "must_not_repeat": true
+  },
+  "owner_excluded_album": {
+    "fingerprint": { "start_date": "2024-06-02", "end_date": "2024-06-07", "expected_images": 65 },
+    "owner_target_excluded": true,
+    "must_not_repeat": true,
+    "note": "Recorded in the exclusion fingerprint list, not in the manual archive registry."
+  },
+  "backup_destination_inventory": {
+    "album_directories": [
+      "2024-05-06_2024-05-10_182張 (182 files)",
+      "2024-05-13_2024-05-17_57張 (57 files)",
+      "2024-05-20_2024-05-24_53張 (53 files)",
+      "2024-05-27_2024-05-31_56張 (56 files)",
+      "2024-06-02_2024-06-07_65張 (0 files, empty directory)"
+    ],
+    "directories_matching_2024_04": 0,
+    "files_matching_2024_04": 0,
+    "total_files": 348,
+    "total_size_human": "88M",
+    "conclusion": "No 2024-04 destination exists, so A45 and B78 have never been downloaded. This run added zero files."
+  }
+}

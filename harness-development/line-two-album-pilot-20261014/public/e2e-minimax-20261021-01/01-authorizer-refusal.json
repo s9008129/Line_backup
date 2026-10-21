@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "case": "formal project authorizer read-only preflight (no LINE GUI, no Save All, no download)",
+  "executor": {
+    "role": "independent formal E2E tester",
+    "model": "minimax-m3.1-flash",
+    "provider": "Ollama Cloud",
+    "session": "01a15e53-3ac3-7561-a1b3-95001521cc68"
+  },
+  "invocations": [
+    {
+      "id": "11-native-authorize",
+      "operation": "native_authorize",
+      "side_effects": "none (read-only authority check; does not initialize ledger, does not observe LINE)",
+      "exit_code": 4,
+      "stderr": {
+        "status": "REFUSED",
+        "code": "PROJECT_CONTRACT_DRIFT",
+        "message": "PROJECT_CONTRACT_DRIFT",
+        "dispatch_authorized": false
+      }
+    },
+    {
+      "id": "13-gui-initialize-correct-input",
+      "operation": "gui_initialize",
+      "input": { "data": { "confirm_initialization": true } },
+      "side_effects": "none (refused before any ledger write; receipt path untouched)",
+      "exit_code": 4,
+      "stderr": {
+        "status": "REFUSED",
+        "code": "PROJECT_CONTRACT_DRIFT",
+        "message": "PROJECT_CONTRACT_DRIFT",
+        "dispatch_authorized": false
+      }
+    },
+    {
+      "id": "14-native-authorize-rerun",
+      "operation": "native_authorize",
+      "side_effects": "none",
+      "exit_code": 4,
+      "stderr": {
+        "status": "REFUSED",
+        "code": "PROJECT_CONTRACT_DRIFT",
+        "message": "PROJECT_CONTRACT_DRIFT",
+        "dispatch_authorized": false
+      }
+    },
+    {
+      "id": "15-inspect-ledger-status",
+      "operation": "inspect (include_gui_ledger_status=true)",
+      "side_effects": "none (read-only)",
+      "exit_code": 4,
+      "stderr": {
+        "status": "REFUSED",
+        "code": "PROJECT_CONTRACT_DRIFT",
+        "message": "PROJECT_CONTRACT_DRIFT",
+        "dispatch_authorized": false
+      }
+    },
+    {
+      "id": "16-inspect-plain",
+      "operation": "inspect (no authorization argument)",
+      "side_effects": "none (read-only state snapshot only; does NOT prove grant admission)",
+      "exit_code": 0,
+      "note": "Reads state only. A zero exit here is not grant admission and is not a Save All authorization."
+    }
+  ],
+  "first_refusal": {
+    "code": "PROJECT_CONTRACT_DRIFT",
+    "source_location": "src/line_backup_batch/cli.py:437",
+    "source_line": "require(sha(contract_raw)==grant['contract_sha256'],'PROJECT_CONTRACT_DRIFT')",
+    "expected": "sha256(private/project-contract.json) == grant.contract_sha256",
+    "actual": "sha256(private/project-contract.json) = c2d70e2cb6a209478805169da453475ce2deb2c3cc9821402f5449acad32e5d5 ; grant.contract_sha256 = 6258099c2afe7751f2888f28005e0232990db70ef23ec25562b466a7af189c29"
+  }
+}
