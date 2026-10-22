@@ -6,6 +6,8 @@
 - Owner 決策：`EXTERNAL_PLAN_REVIEW=OWNER_WAIVED`。本次豁免只涵蓋 Plan Review；External Code Review 與獨立 E2E 仍為必要關卡。
 - CI B base：`1b9a010aeba2e75a406d842be123d7251501548c`
 - CI B branch：`implement/agent-resume-ci-20261022`
+- CI B 產品／測試 HEAD：`e0b77857eb77536329f9565bf65fa8087b73873d`
+- CI B Draft PR：[PR #33](https://github.com/s9008129/Line_backup/pull/33)
 - Feature 產品驗證來源維持 `cdf92ce94d6fb67080eadda0d4d182b84f83e0cc`；兩個 HEAD 的綠燈不得互相轉移。
 
 ## 1. 結論與狀態
@@ -14,9 +16,9 @@
 
 ```text
 PRIMARY_OUTCOME_STATUS=PLANNED_NOT_IMPLEMENTED
-IMPLEMENTATION_STATUS=M0_M1_OFFLINE_COMPLETE_M2_CI_B_LOCAL_VERIFIED
+IMPLEMENTATION_STATUS=M0_M1_OFFLINE_COMPLETE_M2_CI_B_COMPLETE
 CORE_ACCEPTANCE_STATUS=PARTIAL_OFFLINE_ONLY
-REQUIRED_VERIFICATION_STATUS=LOCAL_PASS_REMOTE_PENDING
+REQUIRED_VERIFICATION_STATUS=FEATURE_CI_PASS_LEGACY_CI_PASS
 INDEPENDENT_ACCEPTANCE_STATUS=NOT_RUN
 TASK_CLOSURE_STATUS=OPEN
 EXTERNAL_PLAN_REVIEW=OWNER_WAIVED
@@ -24,7 +26,9 @@ EXTERNAL_CODE_REVIEW=NOT_RUN
 FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
 ```
 
-本報告的 `PASS` 僅表示列出的離線命令在目前工作樹成功。遠端 CI B run 尚未建立或讀回，不能記為 remote PASS。
+CI B 的產品／測試 HEAD `e0b77857eb77536329f9565bf65fa8087b73873d` 已由遠端 [run 39785111593](https://github.com/s9008129/Line_backup/actions/runs/39785111593) 讀回：`deterministic` 與 `headed` 兩個 job 均 success。
+
+本報告的 `PASS` 只對所列精確 HEAD 有效。加入本節與遠端結果的後續 commit 僅更新報告，仍以該 docs-only HEAD 自己的遠端 checks 為準。
 
 ## 2. 修改範圍與來源
 
@@ -151,6 +155,26 @@ cmp .tmp-rev28-replay/final-run-1.json .tmp-rev28-replay/final-run-2.json
 - `save_all_locator=candidate`、`album_card_locator=candidate`。
 - 兩份 JSON byte-identical，SHA-256 均為 `81f6da94ad18d601a21bf0b521d5a96869f13b5a0a3e96db66239b2f90a47261`。
 
+### 4.6 遠端 CI B 精確 HEAD
+
+[run 39785111593](https://github.com/s9008129/Line_backup/actions/runs/39785111593) 綁定 `e0b77857eb77536329f9565bf65fa8087b73873d`，`status=completed`、`conclusion=success`：
+
+| Job | 實際結果 |
+|---|---|
+| `Deterministic Swift contract` | SUCCESS，3m6s；fixture 6/6、330/330、adversarial 27×2、replay 20/20 |
+| `Headed macOS 27 capability + W2 item 5` | SUCCESS，1m50s；AX／screen／post event capability、SCK=OK、W2 item 5 與 bounded Vision limitation enforcement 依設計通過 |
+
+遠端 fixture manifest SHA-256 為 `d4550967e48ef3f594cdd89de7a31abb40f974abbd1420fb12bceb3b9ad221b6`；`rev28-host.txt` 顯示 macOS 27.0.1、Xcode 27.0、Swift 6.4、SDK macOS 27.0。遠端 replay artifact 的兩份 JSON SHA-256 均為 `81f6da94ad18d601a21bf0b521d5a96869f13b5a0a3e96db66239b2f90a47261`，與本機一致。
+
+Headed job 的 Vision parity diagnostic 實際是 `Executed 5 tests, with 5 failures`；該 diagnostic 以 `continue-on-error` 保留 Apple hosted Vision `ERROR/unknownError` 限制，再由 `Enforce bounded hosted Vision limitation` 驗證，不能把 5 個失敗測試寫成 PASS。W2 item 5 的實際輸出為 `PASS`，`monitorPosts=0`、`maxLatencyMs=67.047119140625`。
+
+下載後的遠端證據 SHA-256：
+
+- `rev28-project-inspection/manifest.json`：`d4550967e48ef3f594cdd89de7a31abb40f974abbd1420fb12bceb3b9ad221b6`
+- `rev28-host.txt`：`a6adebd27e4617ecc1cd62f616d46d71853bcb862476868427eada3bbfb96f1e`
+- deterministic job log：`8ee5e261e6a70e48ac982c16cfde5c53a73104ae64219e51fb6aa0d8dc4e562f`
+- headed job log：`ce797de32c88f6a4ac61fb7542df29771993b1a32683aaa6ce9a168808436c51`
+
 ## 5. 嘗試歷史與環境挫折
 
 第一次 replay 使用 Xcode toolchain PATH，但沒有固定 `SDKROOT`，得到三個 failure：Swift manifest compilation 失敗，以及兩個依賴 production replay 的 locator disagreement。錯誤顯示 SwiftPM 選到 `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk`；該 SDK 由 Swift 6.4 建置，與目前 Swift 6.3.3 compiler 不相容。
@@ -163,10 +187,10 @@ cmp .tmp-rev28-replay/final-run-1.json .tmp-rev28-replay/final-run-2.json
 - 狀態後：上述五個受權產品路徑已有本機 PASS；git tracked 變更之外只產生 `.tmp-*` 暫存 fixture／log／replay。
 - GUI observations／inputs／Save All／Chooser／downloads：0。
 - 真實 LINE、真實照片、正式 state／grant／ledger、protected runtime：未取得、未修改。
-- 遠端 CI B、PR 建立／head／merge-ref 綁定：PENDING。
+- 遠端 CI B：產品／測試 HEAD `e0b7785` 的 run 39785111593 全部 success；PR #33 仍為 Draft，報告 docs-only follow-up 仍需自己的 checks。
 - External Code Review：NOT_RUN。
 - 獨立 DeepSeek `deepseek-v4.1-flash:1017` 兩本相簿 E2E：NOT_RUN。
 
 ## 7. 下一個安全動作
 
-只 stage 上列受權產品路徑與本目錄報告，先跑 `git diff --check`、隱私掃描及完整 diff review，再以含「意圖／做了什麼／驗證與結果／下一步的建議」的 commit body 提交、push，建立 target `v43-ab/codex-rev28` 的 Draft PR。遠端 run 必須綁定實際 CI B HEAD 後才能把 `REQUIRED_VERIFICATION_STATUS` 更新為 remote PASS；在取得真實 External Code Review 與獨立 E2E 前，不得宣稱 `FORMAL_TWO_ALBUM_AUTO` 或整體 DONE。
+CI B 產品／測試 HEAD `e0b7785` 與 PR #33 已建立並取得遠端全綠。將本報告更新逐檔提交、push 後，讀回 docs-only HEAD 自己的 deterministic／headed checks；再把 feature PR #32 與 PR #33 的 exact HEAD、diff、報告及全部 PASS／FAIL／NOT_RUN 交 Owner 轉交外部 ChatGPT Code Review。在取得真實 `APPROVE_IMPLEMENTATION`、有效 runtime authorization 與當次 LINE 前景交接前，不得宣稱 `FORMAL_TWO_ALBUM_AUTO` 或整體 DONE。
