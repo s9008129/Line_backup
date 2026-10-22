@@ -1,28 +1,30 @@
 # LINE Agent 100 本相簿中斷接續：最小修正 Plan
 
-- Task：`AGENT-RESUME-P0-20261022`；revision：`v2.0 / 2026-10-22`。
+- Task：`AGENT-RESUME-P0-20261022`；revision：`v2.1 / 2026-10-22`。
 - 範圍：PR #31 B01～B04、完整過度工程化審查、Agent 模式 A 跨 Session／Mac 重啟接續。
 - 本輪只交付文件。產品實作、零 GUI runtime preflight、故障注入、新 ImageIO、LINE 操作及獨立 E2E 均 `NOT_RUN`。
 - 請求的 Planner：GPT-6.1-SOL／xhigh；沒有可獨立核對的模型／effort 收據，不冒稱 runtime attestation。
-- 本版取代 `aa415ef6a2f665bf866631762154dc4b0470d3a3` 的 v1.1 執行指令；舊版及其 Owner-waiver／角色安排保留 Git 歷史，不視為本輪新審查批准。
+- 本版承接 `82773cffee7b1ffdabcd14ca0d688a682a3be24f` 的 v2.0，依Owner最新明確指示「本次 Plan 不需要獨立審查」取消本次獨立Plan／設計audit等待關卡；v1.1、v2.0與原裁決保留Git歷史。
 
 ## 0. 裁決、授權與第一個動作
 
 ```text
-OVERENGINEERING_AUDIT=NEEDS_SIMPLIFICATION
-MINIMAL_IMPLEMENTATION_PLAN=NOT_READY
-CANDIDATE_DESIGN=MINIMAL_A_SPECIFIED_PENDING_INDEPENDENT_REVIEW
-EXTERNAL_PLAN_REVIEW=PENDING_OWNER_FORWARD
+OVERENGINEERING_AUDIT=PASS
+OVERENGINEERING_AUDIT_SCOPE=PLAN_V2_1_MINIMAL_DESIGN
+OVERENGINEERING_AUDIT_ROLE=PLANNER_NOT_INDEPENDENT
+PR31_SOURCE_OVERENGINEERING_AUDIT=NEEDS_SIMPLIFICATION
+MINIMAL_IMPLEMENTATION_PLAN=READY
+EXTERNAL_PLAN_REVIEW=OWNER_WAIVED
 FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
 ```
 
-上述裁決針對 PR31 現況與尚未獨立核准的候選修正；不能因文件完成、自我檢查或 commit 就改成 PASS／READY。本版已把前輪三項缺口寫成具體契約：排除旁支依賴、固定 wrapper／controller 生命週期、補足 CI producer／consumer 漂移處置。是否充分，交 Owner 指定 External Chief 獨立審查。
+Owner最新明確決定：「本次 Plan 不需要獨立審查。」本版據此將獨立Plan Review記為OWNER_WAIVED，不生成APPROVE_PLAN或獨立review PASS，也不以另一個獨立設計audit名稱保留同一等待關卡。強制Overengineering Audit仍保留；§4.3對已完成的最小設計逐項收斂覆核，Planner判定設計層PASS，並完整保留PR31產品來源NEEDS_SIMPLIFICATION。免審本身不是audit通過的證據。
 
-當下允許：文件核對、唯讀來源／環境盤點、保存本版與 Git／Draft PR 交付。未取得本版精確 SHA 的真實 `APPROVE_PLAN` 及獨立 `OVERENGINEERING_AUDIT=PASS` 前，不開始產品寫入、runtime prototype 或 GUI。這兩個條件成立且無未決設計阻塞後，才把 `MINIMAL_IMPLEMENTATION_PLAN` 記為 READY；M0 runtime 能力是獲准 Implementation 的第一個出口，不是虛構已完成的事實。
+MINIMAL_IMPLEMENTATION_PLAN=READY只表示本版有界離線工作包可交實作者接手，先做M0零LINE接線實證；不表示runtime能力、程式、CI、檔案或實機已通過。當下本Session仍只更新文件與Git；下一位受派Implementor可在固定scope依序做M0／M1／M2，不必再等待獨立Plan批准或重問相同授權。
 
-本輪不沿用 v1.1 的免審指令取消最新要求的 External Chief Gate。原始 PRD、最新 Owner 要求及適用 AGENTS 優先；不改 Harness V4.8.0，不建立或修改執行 grant，不回收 quota，不重設 ledger，不重開 CLOSED authority。
+本次豁免僅限Plan層。實作後External Code Review、必要離線／遠端CI與獨立DeepSeek E2E保留；LINE前景、新相簿Save All及Mac重啟仍需原有當次條件。不改Harness、執行grant、quota、ledger或CLOSED authority，不擴張產品範圍。
 
-第一個 next_action：向 Owner 交付本版 Plan、Handoff、精確 commit／Plan SHA、原始 PRD 定位及 PR31／PR28 證據，供指定 External Chief 審查。實作者可先唯讀對帳，不能把「準備接手」當實作批准。
+第一個next_action：交付本版精確commit／Plan SHA與Handoff；接手Implementor唯讀對帳後直接從M0開始。M0若能力不成立，保全第一失敗成單，不新增bridge或GUI引擎。
 
 ## 1. GOAL／SCOPE／NON-GOALS
 
@@ -137,7 +139,7 @@ CI新發現：Python `project_binding.py:18,391`已新增manual_archive.py來源
 | B/state_v3.schema.json | 正式schema | 與新store無關 | DEFER | 不增加正式版本 | 不污染state |
 | C/Composition/ProjectBackupBinding.swift | inspection consumer | 與Python集合漂移 | SIMPLIFY | CI範圍有界修復 | 保持canDispatch=false |
 | T/ProjectBackupBindingTests.swift | strict consumer負例 | fixtures未供應 | KEEP | 生成合成資料，不skip | 防CI假綠 |
-| plan.md／handoff.md v1.1 | 恢復方案 | 多份持久狀態、固定重複核驗、tmp一律阻塞 | SIMPLIFY | 本版單真相／推導結果／明確tmp規則 | 待獨立審查 |
+| plan.md／handoff.md v1.1 | 恢復方案 | 多份持久狀態、固定重複核驗、tmp一律阻塞 | SIMPLIFY | 本版單真相／推導結果／明確tmp規則 | 設計覆核見§4.3；實作待驗 |
 
 ### 4.2 方案A／B與必要複雜度
 
@@ -155,6 +157,23 @@ CI新發現：Python `project_binding.py:18,391`已新增manual_archive.py來源
 
 精簡決策：單checkpoint內保存tasks／歷史reference／邏輯append-only事件；task phase、next_index、VERIFYING及PARTIAL結果由事實推導，沒有第二份可寫狀態機。獨立reconcile供預覽，resume持鎖呼叫同一核對函式一次，不要求先預覽再必重做兩次全量解碼。事件不作通用event-sourcing重播。
 
+### 4.3 v2.1最小設計收斂覆核（Planner，非獨立審查）
+
+此覆核針對本Plan的實際設計與固定檔案契約，不對尚未修改的PR31程式發出PASS。逐項依據如下：
+
+| 必要複雜度／原疑慮 | 本版實際收斂與必要性證據 | 設計判定 |
+|---|---|---|
+| 多套狀態／ledger／registry | §6～§8只有一份控制checkpoint；phase／next_index／驗證結果推導；歷史只讀reference，不建第二可寫真相 | PASS |
+| 新CUA／Native／OCR架構 | §5.2只新增控制器與副作用wrapper，兩Swift原樣；31檔audit的旁支不納入feature | PASS |
+| wrapper／跨語言必要性 | PR28是工具驅動Agent，Python負責本機durability，既有Node app呼叫保留；§8限定單一stdio，不引入service／daemon／framework。click後摘要前crash的具體缺口要求pre-intent控制 | PASS |
+| 重複驗證成本 | §6與§8.4重用同一verifier；resume一次持鎖核對，不強制先跑另一份preview；in-flight完整穩定性、已完成前後inventory／hash／decode各有資料安全理由 | PASS |
+| 過度保守tmp規則 | §7區分有效canonical與壞／缺canonical，temp永不當許可；不因孤立temp一律癱瘓，也不刪掉必要intent | PASS |
+| 過多測試／無業務效果 | §10僅固定TC01～20及新wrapper／真ImageIO，100本用小fixture，實機只兩本新目標；不反覆要求旁支全repo回歸 | PASS |
+| CI修復擴scope | §5.3及§9獨立legacy工作包，六case＋consumer小修，不將依賴閉包帶入feature，不為過綠放寬guard | PASS |
+| 不可刪的持久化控制 | 無pre-intent會重送、無共用鎖會雙writer、無跨task歷史可換ID重下載；sync／readback／decode均對應已列故障，不因精簡刪除 | PASS |
+
+反向驗證仍為「最少兩個新控制／接線檔加既有工具即可完成」，因此選A，沒有新增架構的必要性。本版沒有未說明的設計層複雜度：OVERENGINEERING_AUDIT=PASS／scope=PLAN_V2_1_MINIMAL_DESIGN。M0可用性、來源實作精簡與全部驗收仍NOT_RUN；M0失敗是執行阻塞，不以本設計PASS掩蓋。
+
 ## 5. AC與最小檔案契約
 
 | AC | 必須成立 |
@@ -168,13 +187,13 @@ CI新發現：Python `project_binding.py:18,391`已新增manual_archive.py來源
 | AC07 | 239／109／329與65排除不重下載／覆寫；正式State／Grant／Ledger／Harness不變 |
 | AC08 | 兩本新eligible相簿：第一本完整→Owner Mac重啟→新獨立Session→跳第一本→第二本完整 |
 | AC09 | CI fixtures可攜、現producer契約受測、遠端必要checks綠；各HEAD分開 |
-| AC10 | 乾淨PR、逐檔最小diff、完整報告／hash、兩道External Review及獨立E2E可追溯 |
+| AC10 | 乾淨PR、逐檔最小diff、完整報告／hash、本次Plan免審決策、實作後External Code Review及獨立E2E可追溯 |
 
 ### 5.1 本輪文件寫入範圍
 
 僅根目錄 `plan.md`、`handoff.md`；在既有乾淨文件worktree更新並同步原repo已核對同bytes的副本。原branch／HEAD／index及其他dirty檔保留。不另外建立相同內容的Plan.md大小寫副本。
 
-### 5.2 獲准後Feature A允許檔案
+### 5.2 Feature A固定允許檔案
 
 | 路徑 | 唯一責任 |
 |---|---|
@@ -185,16 +204,16 @@ CI新發現：Python `project_binding.py:18,391`已新增manual_archive.py來源
 | tests/test_agent_resume.py | 核心100本／storage／identity／process故障測試 |
 | tests/test_agent_resume_cua.mjs | 真wrapper＋fake app，實際呼叫／失聯測試 |
 | .github/workflows/agent-resume.yml | 新功能乾淨checkout的Python／Node／Mac ImageIO checks |
-| plan.md、handoff.md | 僅必要澄清提案；已審版不回填執行狀態，不改AC／授權／Gate |
+| plan.md、handoff.md | 僅必要澄清提案；固定版本不回填執行狀態，不改AC／授權／Gate |
 | harness-development/agent-resume-20261022/E2E測試報告.md | 單一完整報告，分離offline／ImageIO／GUI／independent判定 |
 | 同task progress.md／issues/ | 既有規範要求的短進度及有真實問題才新增的提報；不複製報告 |
 | .gitignore | 僅必要時追加該task private忽略規則 |
 
 不import正式交易package；不增加framework／另一decoder／另一OCR。原樣工具可因master缺少而納入新路徑，需逐bytes驗SHA，不維護兩套不同實作。
 
-版本綁定：核准後保留已審Plan／Handoff的原bytes與digest；READY、執行進度及結果寫入task報告／真實審查收據，不為回填狀態直接改已審文件。必要澄清先建立新revision並列出影響分析；即使不改契約，也須由External Chief真實確認新SHA的適用性，才沿用授權。scope／AC／授權／Gate／架構有實質變更則完整重審；不能把舊批准自動轉移。此列允許提出文件修訂，不授權改寫或降低已審契約。
+版本綁定：本次免獨立Plan審查，仍固定本版Plan／Handoff的bytes與digest供執行對帳；進度與結果寫task報告，不為回填進度改契約。必要澄清建立新revision並作影響分析，同一Owner已授權範圍內不重加獨立Plan Review；scope／AC／授權／Gate／架構有實質變更先回Owner決策。實作後Code Review仍綁精確來源commit，不能把舊來源批准轉移至新程式。
 
-### 5.3 獲准後CI B獨立允許檔案
+### 5.3 CI B獨立允許檔案
 
 CI分支base固定PR31 HEAD，target原legacy分支，僅以下範圍：`.github/workflows/rev28-macos27.yml`、`tests/build_inspection_fixtures.py`、`tests/fixtures/project_inspection/`（純合成seed）、`rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift`、`rev28/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift`、`harness-development/agent-resume-ci-20261022/E2E測試報告.md`與必要progress／issues。不改Python producer來隱藏現有輸出，不改native capture／Harness／正式執行State。
 
@@ -316,7 +335,7 @@ fixture至少100個不同album identity，前49完整、#50 expected80、其餘�
 | 19 | 重複inspect／reconcile、讀期間generation變化 | 零mutation；變化報不穩定；AC01 |
 | 20 | 全流程禁止範圍／歷史baseline | protected bytes不變；AC07 |
 
-獲准後命令：`python3 -B -m unittest discover -s tests -p 'test_agent_resume.py'`；`node --test tests/test_agent_resume_cua.mjs`。目前檔案／測試尚未建立，不宣稱執行。
+實作後驗證命令：`python3 -B -m unittest discover -s tests -p 'test_agent_resume.py'`；`node --test tests/test_agent_resume_cua.mjs`。目前檔案／測試尚未建立，不宣稱執行。
 
 macOS編譯原樣decoder，至少正常、截斷、post-decode變動及錯誤目的地負例；記source／binary hashes。stub不是ImageIO PASS，kill -9不是實體掉電PASS。不為本功能反覆重跑無關全repo suites；舊Rev28 CI依原required checks跑。
 
@@ -330,12 +349,12 @@ G0～G3成立後，由Owner另啟全新獨立DeepSeek V4.1 Flash1017／ollama_cl
 
 ## 11. 階段、角色、Gate與失敗處理
 
-本功能後續風險CRITICAL（重送／照片污染），依既有風險路由保留獨立Plan Review及Acceptance；本輪只是文件。Harness resources不在root對應路徑，無本task stage packet／emitted validation commands；不修改Harness、不借歷史task製造admission／format3驗證收據。
+本功能後續風險CRITICAL（重送／照片污染）；依Owner本次明確決定，Plan Review為OWNER_WAIVED，必要實作後Code Review及獨立Acceptance保留。本輪只是文件，不把豁免改寫成Harness內建Gate PASS。Harness resources不在root對應路徑，無本task stage packet／emitted validation commands；不修改Harness、不借歷史task製造admission／format3驗證收據。
 
 | 階段 | 執行者與出口 |
 |---|---|
 | D0文件交付 | Sol保存本版、Luna唯讀梳理並擬詳細commit；root逐檔commit/push／更新Draft PR |
-| G0獨立Plan/Audit | Owner指定外部Chief；精確Plan SHA，APPROVE_PLAN且audit PASS才READY／可M0 |
+| G0 Plan交接 | OWNER_WAIVED；設計層audit依§4.3由Planner覆核PASS，非獨立批准；核對本版SHA後可M0，不等待外部Plan Review |
 | M0最短接線 | 指定Implementor，fake app、原樣工具來源、spawn／stdio／長鎖／host身分／EOF／sync能力；零LINE app取得／capture／input。失敗即停，不造新bridge |
 | M1核心 | 同一Implementor，store／history／同一verifier／wrapper及TC01～20；先薄切片再完整100本，不先建旁支框架 |
 | M2交付 | root整合最小diff、本地證據、feature與CI兩個精確HEAD／Draft PR；不當功能PASS |
@@ -368,17 +387,20 @@ Gate PASS須實際證據。Owner前景／reboot觀察記OBSERVED，不替代工�
 
 ## 14. 固定結論與下一個可驗收動作
 
-本候選Plan的精簡內容已寫明；審查批准、runtime feasibility與實作／驗收尚未發生。沒有未決產品選擇要重問Owner；live仍缺新F/G身分、當次授權／前景及reboot時點。先查已有私有資料，缺少只阻擋相依live。
+本版最小設計已由Planner按§4.3覆核，Owner明確免除獨立Plan Review；runtime feasibility與實作／驗收尚未發生。沒有未決產品選擇要重問Owner；live仍缺新F/G身分、當次授權／前景及reboot時點。先查已有私有資料，缺少只阻擋相依live。
 
 ```text
 TASK_ID=AGENT-RESUME-P0-20261022
-PLAN_REVISION=v2.0
+PLAN_REVISION=v2.1
 PRD_VERSION=v1.0
-OVERENGINEERING_AUDIT=NEEDS_SIMPLIFICATION
-MINIMAL_IMPLEMENTATION_PLAN=NOT_READY
+OVERENGINEERING_AUDIT=PASS
+OVERENGINEERING_AUDIT_SCOPE=PLAN_V2_1_MINIMAL_DESIGN
+OVERENGINEERING_AUDIT_ROLE=PLANNER_NOT_INDEPENDENT
+PR31_SOURCE_OVERENGINEERING_AUDIT=NEEDS_SIMPLIFICATION
+MINIMAL_IMPLEMENTATION_PLAN=READY
 DESIGN_DECISION=MINIMAL_A_SINGLE_CHECKPOINT_EXISTING_TOOLS
 PARTIAL_DOWNLOAD_POLICY=BLOCK_AND_PRESERVE_WHOLE_TASK
-EXTERNAL_PLAN_REVIEW=PENDING_OWNER_FORWARD
+EXTERNAL_PLAN_REVIEW=OWNER_WAIVED
 EXTERNAL_CODE_REVIEW=NOT_RUN
 ZERO_GUI_PREFLIGHT=NOT_RUN
 PRIMARY_OUTCOME_STATUS=PLANNED_NOT_IMPLEMENTED
@@ -392,4 +414,4 @@ HARNESS_TOUCHED=NO
 FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
 ```
 
-下一步先獨立審查本精確revision／SHA。沒有外部APPROVE_PLAN／audit PASS，不開始產品；通過後從M0最短接線實證開始，若失敗保全第一阻塞並成單，不擴架構。
+下一步交接本版精確revision／SHA；受派Implementor完成環境對帳後直接M0，毋須獨立Plan審查。M0失敗保全第一阻塞並成單，不擴架構；產品交付後仍完成Code Review及獨立E2E。

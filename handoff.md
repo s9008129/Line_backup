@@ -1,13 +1,13 @@
 # 接手 Agent 啟動 Prompt（先讀此段）
 
 ```text
-你是 s9008129/Line_backup 的接手 Implementor，任務 AGENT-RESUME-P0-20261022，Plan v2.0。目標是沿用 PR28 已成功的 Agent 模式 A，可靠恢復100本相簿在#50中斷的工作；#1～49不重下載，#50完整且來源成立才重驗補提交並續#51，partial／unknown保留照片並停止全task，不重送。
+你是 s9008129/Line_backup 的接手 Implementor，任務 AGENT-RESUME-P0-20261022，Plan v2.1。目標是沿用 PR28 已成功的 Agent 模式 A，可靠恢復100本相簿在#50中斷的工作；#1～49不重下載，#50完整且來源成立才重驗補提交並續#51，partial／unknown保留照片並停止全task，不重送。
 
-先完整讀本文件與同目錄plan.md，核對Plan SHA-256：b5f6dd6d5e742ac00d852fc1874bc22b692d8258b3cb69d2da5a11a57f600c05。記錄真實模型／effort（不可得寫unknown）、Session、repo／remote／branch／HEAD／dirty狀態。依現行AGENTS預設由Sol派給GPT-6 luna／high實作；DeepSeek deepseek-v4.1-flash:1017／ollama_cloud保留給Owner另啟的獨立E2E。Owner若另明確指定實作模型，附真實決策再用，不依舊v1.1擅改角色。
+先完整讀本文件與同目錄plan.md，核對Plan SHA-256：4ba9be2daf887aa8a65a0255e337da5bff8d0ae5aa2d5ada13990f5c85b76502。記錄真實模型／effort（不可得寫unknown）、Session、repo／remote／branch／HEAD／dirty狀態。依現行AGENTS預設由Sol派給GPT-6 luna／high實作；DeepSeek deepseek-v4.1-flash:1017／ollama_cloud保留給Owner另啟的獨立E2E。Owner若另明確指定實作模型，附真實決策再用，不依舊v1.1擅改角色。
 
-目前OVERENGINEERING_AUDIT=NEEDS_SIMPLIFICATION，MINIMAL_IMPLEMENTATION_PLAN=NOT_READY，EXTERNAL_PLAN_REVIEW=PENDING_OWNER_FORWARD。本文件不是APPROVE_PLAN。當下只能唯讀對帳及文件／Git交付；未取得精確本版SHA的External Chief真實APPROVE_PLAN與獨立audit PASS，不寫產品、不做runtime prototype、不取得LINE app／畫面／輸入。保留舊waiver為歷史，不沿用它取消本輪要求的獨立Gate；已存在有效批准時直接核對，不重問相同授權。
+Owner最新明確指示「本次 Plan 不需要獨立審查」。EXTERNAL_PLAN_REVIEW=OWNER_WAIVED，不生成APPROVE_PLAN或獨立review PASS。Plan§4.3完成設計層最小化覆核，OVERENGINEERING_AUDIT=PASS（scope=PLAN_V2_1_MINIMAL_DESIGN，Planner非獨立）；PR31來源仍NEEDS_SIMPLIFICATION，未宣稱程式已改。MINIMAL_IMPLEMENTATION_PLAN=READY，接手對帳後可直接從M0有界離線實作，不再等待外部Plan／獨立設計audit。Code Review、必要測試與獨立E2E保留；本次豁免不建立LINE前景／新下載或reboot授權。
 
-取得本版批准後，只依plan§5.2的Feature A及§5.3的CI B工作包操作。Feature從當時最新master的乾淨外部worktree開始，逐檔移入本版文件與必要原樣工具；CI sibling從1b9a010開始、PR target原legacy分支。不要把177 commits／1900檔PR31或整筆1b9a010帶入master，不reset／clean／stash原dirty樹，不覆寫已存在worktree。兩包序列做，不新增writer／reviewer代理樹。
+依本次Owner免審決定，只依plan§5.2的Feature A及§5.3的CI B工作包操作。Feature從當時最新master的乾淨外部worktree開始，逐檔移入本版文件與必要原樣工具；CI sibling從1b9a010開始、PR target原legacy分支。不要把177 commits／1900檔PR31或整筆1b9a010帶入master，不reset／clean／stash原dirty樹，不覆寫已存在worktree。兩包序列做，不新增writer／reviewer代理樹。
 
 M0先以fake app證明現有hosted CUA Node可用node:child_process.spawn＋單一stdio連接Python長活session，固定root全域flock、真實host/controller/boot身分、EOF即永久停止新輸入、pending input／舊host活拒接管，以及目標Mac sync能力。零LINE觀察／操作。spawn／stdio能力不成立就保全第一錯誤提報，不另造bridge、GUI引擎或修改Harness。
 
@@ -25,19 +25,19 @@ Save All：fresh list／detail／menu及當次Owner前景／清單核對→檢�
 
 交付逐項AC／TC真實PASS/FAIL/BLOCKED/NOT_RUN、精確HEAD／Plan SHA／source/runtime hashes、完整E2E測試報告與first blocker。按既有Git授權逐檔add/commit/push、同scope Draft PR；commit body含意圖／做了什麼／驗證與結果／下一步的建議，不merge、不amend／force-push。外部Code Review與獨立Mac E2E是不同Gate，不以自評或離線測試冒充完成。
 
-開始先白話回報目前Gate及最短安全next_action，然後唯讀對帳。不要要求Owner先開LINE，不執行Save All或reboot。G0尚缺就交精確審查包；G0已真實成立才從M0開始，不新增無關研究循環。
+開始先白話回報接手目標與本次Plan免審，完成環境／SHA唯讀對帳後直接M0；不重問Plan批准，不再等待外部Plan Review。不要要求Owner先開LINE，不執行Save All或reboot，不新增無關研究循環。
 ```
 
-# LINE Agent 恢復功能交接（v2.0）
+# LINE Agent 恢復功能交接（v2.1）
 
 ## 1. 文件與來源綁定
 
 | 項目 | 值 |
 |---|---|
 | Task | AGENT-RESUME-P0-20261022 |
-| Plan／Handoff revision | v2.0／2026-10-22 |
+| Plan／Handoff revision | v2.1／2026-10-22 |
 | Canonical Plan | 同目錄`plan.md`；沿用repo既有小寫檔名，沒有另一份Plan.md |
-| Plan SHA-256 | `b5f6dd6d5e742ac00d852fc1874bc22b692d8258b3cb69d2da5a11a57f600c05` |
+| Plan SHA-256 | `4ba9be2daf887aa8a65a0255e337da5bff8d0ae5aa2d5ada13990f5c85b76502` |
 | PRD | `~/Downloads/LINE_backup_PRD_Agent_Interrupted_Resume_v1.0_20261022.md` |
 | PRD SHA-256 | `0d69c560490504f1b2af5466db680768e27924c4416c879d8c0545f1224a75d5` |
 | 文件交付分支／PR | docs/agent-resume-handoff-20261022／[PR30](https://github.com/s9008129/Line_backup/pull/30) |
@@ -46,16 +46,19 @@ Save All：fresh list／detail／menu及當次Owner前景／清單核對→檢�
 | 文件分支原parent／本輪master讀回 | 64515eb56b04accc40ade9e2db2fe0ad18c1ced3；接手時重讀，不假設不變 |
 | 產品實作commit | 尚未產生；不可把文件commit當產品版本 |
 
-本版落實前輪B01～B04與完整過度工程化審查，不新增產品功能。舊v1.1的免審／DeepSeek實作指令留Git歷史，但不作本版執行依據。Owner最新指令優先；若Plan／Handoff矛盾，停止相依操作並列出差異，不自行選較寬鬆版本。
+本版承接82773cffee7b1ffdabcd14ca0d688a682a3be24f的v2.0，依Owner最新明確決定免除本次獨立Plan審查；完整audit仍保留，設計層覆核見Plan§4.3，不新增產品功能。舊v1.1／v2.0指令保留Git歷史，以本次明確決定為準，角色不因此改變。Owner最新指令優先；若Plan／Handoff矛盾，停止相依操作並列出差異，不自行選較寬鬆版本。
 
-本文件不自含自己的新Git commit SHA，以免自引用；交付時從Git／PR讀回精確commit。Plan digest綁定實際bytes，任何Plan變更都須更新本文件兩處digest並重核，舊review不自動轉移。核准後保留已審Plan／Handoff的原bytes，READY與進度寫task報告／真實審查收據，不直接回填已審文件；必要澄清建立新revision及影響分析，由External Chief確認新SHA適用性，實質契約變更完整重審。
+本文件不自含自己的新Git commit SHA，以免自引用；交付時從Git／PR讀回精確commit。Plan digest綁定實際bytes，任何Plan變更都須更新本文件兩處digest並重核，舊review不自動轉移。本次Plan免獨立審查仍固定本版bytes／SHA；進度寫task報告，必要澄清建立新revision及影響分析，不再加獨立Plan等待；實質scope／AC／授權／Gate／架構變更先回Owner決策。實作後Code Review仍綁精確來源，不轉移舊批准。
 
 ## 2. 當下允許與不得冒稱的狀態
 
 ```text
-OVERENGINEERING_AUDIT=NEEDS_SIMPLIFICATION
-MINIMAL_IMPLEMENTATION_PLAN=NOT_READY
-EXTERNAL_PLAN_REVIEW=PENDING_OWNER_FORWARD
+OVERENGINEERING_AUDIT=PASS
+OVERENGINEERING_AUDIT_SCOPE=PLAN_V2_1_MINIMAL_DESIGN
+OVERENGINEERING_AUDIT_ROLE=PLANNER_NOT_INDEPENDENT
+PR31_SOURCE_OVERENGINEERING_AUDIT=NEEDS_SIMPLIFICATION
+MINIMAL_IMPLEMENTATION_PLAN=READY
+EXTERNAL_PLAN_REVIEW=OWNER_WAIVED
 EXTERNAL_CODE_REVIEW=NOT_RUN
 ZERO_GUI_PREFLIGHT=NOT_RUN
 PRIMARY_OUTCOME_STATUS=PLANNED_NOT_IMPLEMENTED
@@ -67,7 +70,7 @@ TASK_CLOSURE_STATUS=OPEN
 FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
 ```
 
-目前只可唯讀盤點及文件／Git交付；本版精簡設計已寫明，不代表外部審查通過。External Chief對精確Plan SHA真實APPROVE_PLAN及獨立audit PASS，且無未決設計阻塞，才可記READY並進M0。M0目前未跑；它是獲准Implementation的第一個有界能力檢查。
+本Session仍只更新文件及Git。受派Implementor可依本次Owner免審決定，核對本版SHA後從M0開始有界離線實作；不等待External Plan Review或獨立設計audit。設計層PASS有Plan§4.3的逐項收斂理由，非免審即PASS；M0／產品／CI／實機均未執行。
 
 本輪文件與Git授權不建立Mac前景、目標manifest、Save All或重啟授權。所有實機仍待Code Review／必要測試及Owner當次交接；重開Mac由Owner執行。Implementor不可自填獨立E2E PASS。
 
@@ -135,9 +138,9 @@ FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
 
 實際input、RETURNED／UNKNOWN、intent預留、檔案完成與VERIFIED分開計數。相同照片hash合法；不得要求329不同digest的歷史特性成為產品限制。
 
-## 7. 獲准後最短里程碑
+## 7. 接手後最短里程碑
 
-- M0：核對原樣工具source；fake app＋真stdio controller／flock／EOF／host與boot身分／storage primitive。無LINE app取得、截圖或input；失敗只提報，不重研發CUA。
+- M0（無獨立Plan前置）：核對原樣工具source；fake app＋真stdio controller／flock／EOF／host與boot身分／storage primitive。無LINE app取得、截圖或input；失敗只提報，不重研發CUA。
 - M1：單一store、固定manifest、history reference、同一verifier、單次Save All／chooser及fault tests；禁止新框架／冗餘狀態機。
 - M2：100本TC矩陣與Mac ImageIO；Feature CI及legacy CI各精確HEAD。完整報告與Draft PR供External Chief看實際源碼。
 - G4：只有Code Review及必要Gate成立、Owner新F/G與前景交接後，另啟獨立DeepSeek1017 Session完成兩本＋Mac重啟。實作者不操作正式E2E或代寫判定。
@@ -171,9 +174,9 @@ HIGH_MODEL_HANDOFF=PENDING_OWNER_FORWARD
 
 本task尚無已審frozen contract、controller stage packet或固定validation命令，因此本文件是Markdown advisory handoff；不生成假handoff.json，不宣稱deterministic compiler、optional review PASS、format3 validation或controller admission。文件一致性檢查只是本地文件檢查，不是該角色的正式Gate。
 
-## 10. 本輪文件階段驗證紀錄
+## 10. 文件階段驗證紀錄（v2.0歷史及v2.1追加）
 
-本輪只更新兩份Markdown；完整規劃／審查報告在plan.md，不另造E2E成功報告。檢查項目及結果由root實際執行後補記於此，提交前不得保留未執行項為PASS。
+以下v2.0紀錄保留歷史，不自動轉作v2.1驗證；兩版皆只更新兩份Markdown。完整規劃／審查報告在plan.md，不另造E2E成功報告。
 
 - 本地文件一致性檢查11/11 PASS：UTF-8／無NUL、code fences成對、Plan digest兩處相符、開頭Prompt、AC01～10、TC01～20、六狀態／裁決一致、無個人絕對路徑、僅兩檔差異、audit精確對應指定commit全部31個不同路徑。首次TC檢查因regex未補零誤報，修正檢查器為03～20後通過；沒有修改AC／TC湊PASS。
 - Plan／Handoff的scope／Gate／狀態／工具SHA已讀回核對。Luna指出核准後文件回填可能造成SHA漂移；本版已收窄：已審bytes凍結、進度寫報告／收據，修訂需新revision與External Chief確認新SHA適用性。
@@ -182,6 +185,14 @@ HIGH_MODEL_HANDOFF=PENDING_OWNER_FORWARD
 - 已依Owner明確要求用collaboration.spawn_agent設定gpt-6-luna／high、fork_turns=none，執行luna_commit_context唯讀梳理完整Plan／Handoff、原PRD、指定prompt與diff，回報版本綁定疑慮及含意圖／做了什麼／驗證與結果／下一步的建議之commit草稿。root修正疑慮並負責最終Git；此協作不是External Review或獨立E2E。
 - 產品測試／新ImageIO／LINE GUI／Save All／Mac重啟／獨立E2E：NOT_RUN。
 
+### v2.1追加
+
+- Owner明確免除本次獨立Plan Review；G0記OWNER_WAIVED，並保留Code Review／獨立E2E。Plan§4.3為Planner設計層audit，未冒充獨立批准或產品PASS。
+- 本版本地文件檢查16/16 PASS：UTF-8／無NUL、fences、Plan digest兩處綁定、開頭Prompt、AC01～10、TC01～20、具scope裁決、六狀態、無個人絕對路徑、兩檔範圍、31檔audit精確對應指定commit、免審語義、Code Review／E2E保留、設計必要性理由、無runtime PASS、工具／指定prompt hashes。git diff --check亦PASS；這不是產品測試或獨立審查。
+- 原repo branch／HEAD／index、兩個其他tracked dirty檔與四個protected hashes已對照本次修改前baseline，PASS；同步前兩份原文件亦與前版相同。最終同步／stage後仍由root讀回核對，Git／PR遠端結果以實際commit為準。
+- 已由原gpt-6-luna／high唯讀子代理luna_commit_context續梳理本版完整Plan／Handoff、相對82773cf的diff與Owner免審語義，確認沒有隱藏Plan等待條件，提供含意圖／做了什麼／驗證與結果／下一步的建議之詳細commit message；root負責最終文件及Git。此協作不是Independent Plan Review。
+- M0／產品測試／ImageIO／CI重跑／LINE GUI／Save All／Mac重啟／獨立E2E：NOT_RUN。
+
 ## 11. 第一個next_action
 
-root完成文件檢查、Luna提交訊息與逐檔Git交付後，提供PR30／精確commit／Plan SHA供Owner轉External Chief。接手Agent先唯讀核對G0；有本版真實批准才M0，缺少則停在具體審查包，不從舊waiver直接實作。
+root完成文件檢查、Luna提交訊息與逐檔Git交付後，提供更新PR30／精確commit／Plan SHA。接手Agent核對Owner本次明確免審、角色、scope與SHA，直接M0，不再停在Plan送審。實作交付後仍交External Chief Code Review與獨立DeepSeek E2E。
