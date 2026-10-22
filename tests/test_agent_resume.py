@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import base64
+import datetime as dt
 import hashlib
 import fcntl
 import json
@@ -13,12 +15,270 @@ import tempfile
 import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 import line_backup_agent_resume as resume
+
+
+PNG_1X1 = base64.b64decode(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+)
+GROUP_KEY = "fixture-group"
+
+
+def write_json(path: Path, value: object) -> None:
+    Path(path).write_bytes(resume.canonical_json(value) + b"\n")
+
+
+def seed_history_store(root: Path, count: int = 49) -> dict:
+    root.mkdir(mode=0o700, parents=True, exist_ok=True)
+    os.chmod(root, 0o700)
+    source = root / "fixture-history.json"
+    write_json(source, {"fixture": "synthetic-history", "barriers": count})
+    source_raw = source.read_bytes()
+    destination = root / "fixture-history-destination"
+    destination.mkdir(mode=0o700, exist_ok=True)
+    os.chmod(destination, 0o700)
+    (destination / "history.png").write_bytes(PNG_1X1)
+    reference = {
+        "source_kind": "fixture_history",
+        "path": str(source.resolve()),
+        "sha256": hashlib.sha256(source_raw).hexdigest(),
+        "bytes": len(source_raw),
+        "imported_at_utc": resume.utc_now(),
+    }
+    base = dt.date(2023, 1, 1)
+    barriers = []
+    for index in range(count):
+        day = base + dt.timedelta(days=index)
+        barriers.append(
+            resume._barrier(
+                "fixture_history",
+                reference["sha256"],
+                GROUP_KEY,
+                {
+                    "start_date": day.isoformat(),
+                    "end_date": day.isoformat(),
+                    "expected_images": 1,
+                },
+                [str(destination.resolve())],
+                1,
+                "SYNTHETIC_HISTORY_BARRIER",
+                "history-%03d" % (index + 1),
+            )
+        )
+    store = resume._initial_store()
+    store["history"] = {"references": [reference], "barriers": barriers}
+    store["payload_sha256"] = resume._payload_digest(store)
+    resume._atomic_json_write(root / "checkpoint.json", store)
+    return store
+
+
+def build_manifest(task_id: str, *, date_offset_days: int = 0) -> dict:
+    history_base = dt.date(2023, 1, 1)
+    active_base = dt.date(2025, 1, 1) + dt.timedelta(days=date_offset_days)
+    albums = []
+    for ordinal in range(1, 101):
+        day = history_base + dt.timedelta(days=ordinal - 1) if ordinal <= 49 else active_base + dt.timedelta(days=ordinal - 50)
+        expected = 80 if ordinal == 50 else 1
+        albums.append(
+            {
+                "identity": {
+                    "group_key": GROUP_KEY,
+                    "start_date": day.isoformat(),
+                    "end_date": day.isoformat(),
+                    "expected_images": expected,
+                    "observed_title": "album-%03d" % ordinal,
+                    "disambiguator": "owner:%03d" % ordinal,
+                },
+                "destination": "downloads/album-%03d" % ordinal,
+            }
+        )
+    return {
+        "schema_version": 1,
+        "task_id": task_id,
+        "scope": {
+            "group_key": GROUP_KEY,
+            "app_identifier": "com.example.line-fixture",
+            "owner_id": "fixture-owner",
+            "scope_id": "fixture-scope",
+        },
+        "owner_authorization_reference": "OWNER_FIXTURE_ONLY",
+        "exclusions": [],
+        "albums": albums,
+    }
+
+
+def create_runtime_fixture(root: Path, task_id: str, *, date_offset_days: int = 0) -> dict:
+    checkpoint = root / "checkpoint.json"
+    if checkpoint.exists():
+        store = resume.read_store(root)
+        if not store["history"]["barriers"]:
+            seed_history_store(root)
+    else:
+        seed_history_store(root)
+    manifest_path = root.parent / ("%s-manifest.json" % task_id)
+    manifest = build_manifest(task_id, date_offset_days=date_offset_days)
+    write_json(manifest_path, manifest)
+    result = resume.create_task(root, manifest_path)
+    lock = root / ".session.lock"
+    if lock.exists():
+        lock.unlink()
+    return {"root": root, "task_id": task_id, "manifest": manifest, "result": result}
+
+
+def build_custom_manifest(
+    task_id: str,
+    prefix_albums: list[dict],
+    *,
+    active_count: int = 96,
+    active_date_offset_days: int = 0,
+) -> dict:
+    albums = list(prefix_albums)
+    active_base = dt.date(2026, 1, 1) + dt.timedelta(days=active_date_offset_days)
+    for index in range(active_count):
+        ordinal = len(albums) + 1
+        day = active_base + dt.timedelta(days=index)
+        albums.append(
+            {
+                "identity": {
+                    "group_key": GROUP_KEY,
+                    "start_date": day.isoformat(),
+                    "end_date": day.isoformat(),
+                    "expected_images": 1,
+                    "observed_title": "active-%03d" % ordinal,
+                    "disambiguator": "fixture:%03d" % ordinal,
+                },
+                "destination": "downloads/active-%03d" % ordinal,
+            }
+        )
+    return {
+        "schema_version": 1,
+        "task_id": task_id,
+        "scope": {
+            "group_key": GROUP_KEY,
+            "app_identifier": "com.example.line-fixture",
+            "owner_id": "fixture-owner",
+            "scope_id": "fixture-scope",
+        },
+        "owner_authorization_reference": "OWNER_FIXTURE_ONLY",
+        "exclusions": [],
+        "albums": albums,
+    }
+
+
+def create_custom_runtime_fixture(
+    root: Path,
+    task_id: str,
+    prefix_albums: list[dict],
+    *,
+    active_count: int = 96,
+    active_date_offset_days: int = 0,
+    history_count: int = 1,
+) -> dict:
+    checkpoint = root / "checkpoint.json"
+    if not checkpoint.exists():
+        seed_history_store(root, count=history_count)
+    manifest_path = root.parent / ("%s-manifest.json" % task_id)
+    manifest = build_custom_manifest(
+        task_id,
+        prefix_albums,
+        active_count=active_count,
+        active_date_offset_days=active_date_offset_days,
+    )
+    write_json(manifest_path, manifest)
+    result = resume.create_task(root, manifest_path)
+    lock = root / ".session.lock"
+    if lock.exists():
+        lock.unlink()
+    return {"root": root, "task_id": task_id, "manifest": manifest, "result": result}
+
+
+def task_and_album(root: Path, task_id: str, ordinal: int) -> tuple[dict, dict]:
+    store = resume.read_store(root)
+    task = store["tasks"][task_id]
+    return store, task["albums"][task["album_order"][ordinal - 1]]
+
+
+def make_grounding(task: dict, album_key: str, *, chooser: bool = False) -> dict:
+    common = {
+        "app_identifier": task["scope"]["app_identifier"],
+        "group_key": task["scope"]["group_key"],
+        "album_key": album_key,
+        "window_id": "fixture-window",
+        "foreground_authorization_reference": "OWNER_FIXTURE_FOREGROUND",
+        "click_point": {"x": 120.0, "y": 240.0},
+        "evidence_sha256": hashlib.sha256(("evidence:%s" % album_key).encode("utf-8")).hexdigest(),
+    }
+    if chooser:
+        return {**common, "chooser_identity": "fixture-chooser"}
+    return {
+        **common,
+        "detail_identity": "fixture-detail",
+        "menu_identity": "fixture-save-all-menu",
+        "destination_empty": True,
+    }
+
+
+def dispatch_and_choose(
+    root: Path,
+    task_id: str,
+    session_id: str,
+    generation: int,
+    album_key: str,
+    task: dict,
+) -> tuple[int, dict, dict]:
+    evidence = hashlib.sha256(("result:%s" % album_key).encode("utf-8")).hexdigest()
+    save_intent = resume.prepare_save_all(
+        root,
+        task_id,
+        session_id,
+        generation,
+        album_key,
+        make_grounding(task, album_key),
+    )
+    save_result = resume.record_save_all_result(
+        root,
+        task_id,
+        session_id,
+        save_intent["generation"],
+        album_key,
+        save_intent["action_id"],
+        "RETURNED",
+        evidence,
+    )
+    chooser_intent = resume.prepare_chooser_confirm(
+        root,
+        task_id,
+        session_id,
+        save_result["generation"],
+        album_key,
+        make_grounding(task, album_key, chooser=True),
+    )
+    chooser_result = resume.record_chooser_result(
+        root,
+        task_id,
+        session_id,
+        chooser_intent["generation"],
+        album_key,
+        chooser_intent["action_id"],
+        "RETURNED",
+        evidence,
+    )
+    return chooser_result["generation"], save_intent, chooser_intent
+
+
+def write_png_count(destination: Path, count: int) -> None:
+    for index in range(count):
+        (destination / ("%04d.png" % index)).write_bytes(PNG_1X1)
+
+
+def home_temporary_directory() -> tempfile.TemporaryDirectory[str]:
+    return tempfile.TemporaryDirectory(prefix="line-backup-agent-resume-test-", dir=Path.home())
 
 
 def write_lock_record(root: Path, record: dict) -> None:
@@ -83,18 +343,598 @@ class IdentityAndSyncTests(unittest.TestCase):
             self.assertEqual(actual, digest)
 
 
+class ResumeCoreTests(unittest.TestCase):
+    @staticmethod
+    def _compile_decoder_in(directory: Path) -> Path:
+        decoder_directory = directory / "decoder"
+        decoder_directory.mkdir(mode=0o700)
+        return resume._compile_decoder(decoder_directory)
+
+    def test_ordered_manifest_resumes_at_50_and_read_only_views_do_not_mutate(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-READONLY"
+            create_runtime_fixture(root, task_id)
+            before = (root / "checkpoint.json").read_bytes()
+
+            first = resume.inspect_task(root, task_id)
+            second = resume.inspect_task(root, task_id)
+            with mock.patch.object(resume, "_compile_decoder", return_value=Path("/unused-fixture-decoder")):
+                reconciled = resume.reconcile_task(root, task_id)
+
+            self.assertEqual(first, second)
+            self.assertEqual(reconciled["generation"], first["generation"])
+            self.assertEqual(first["album_count"], 100)
+            self.assertEqual(first["next_safe_ordinal"], 50)
+            self.assertEqual(first["counts"]["SKIPPED_EXISTING"], 49)
+            self.assertEqual(first["counts"]["NOT_STARTED"], 51)
+            self.assertEqual(first["gui_dispatches"], 0)
+            self.assertEqual((root / "checkpoint.json").read_bytes(), before)
+
+    def test_partial_50_blocks_whole_task_and_preserves_32_files(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-PARTIAL"
+            create_runtime_fixture(root, task_id)
+            store, task = task_and_album(root, task_id, 50)
+            album_key = task["album_key"]
+            generation, _, _ = dispatch_and_choose(
+                root,
+                task_id,
+                "partial-session",
+                store["generation"],
+                album_key,
+                store["tasks"][task_id],
+            )
+            destination = resume._task_absolute_path(root, task_id, task["destination"])
+            write_png_count(destination, 32)
+            before_hashes = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in destination.iterdir()}
+            before_checkpoint = (root / "checkpoint.json").read_bytes()
+
+            state = resume.derive_task_state(root, resume.read_store(root), task_id, deep=False)
+            self.assertEqual(state["task_phase"], "BLOCKED_AND_PRESERVE_WHOLE_TASK")
+            self.assertEqual(state["first_blocker"]["state"], "BLOCKED_PARTIAL")
+            self.assertEqual(state["first_blocker"]["inventory_count"], 32)
+            self.assertIsNone(state["next_safe_album_key"])
+
+            current_task = resume.read_store(root)["tasks"][task_id]
+            for ordinal in range(51, 101):
+                candidate_key = current_task["album_order"][ordinal - 1]
+                with self.subTest(ordinal=ordinal):
+                    with self.assertRaises(resume.SafetyBlock) as caught:
+                        resume.prepare_save_all(
+                            root,
+                            task_id,
+                            "partial-session",
+                            generation,
+                            candidate_key,
+                            make_grounding(current_task, candidate_key),
+                        )
+                    self.assertEqual(caught.exception.code, "TASK_BLOCKED")
+
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.verify_album(
+                    root,
+                    task_id,
+                    "partial-session",
+                    generation,
+                    album_key,
+                    interval_seconds=0,
+                    timeout_seconds=1,
+                    sleep_fn=lambda _: None,
+                )
+            self.assertEqual(caught.exception.code, "TASK_BLOCKED")
+            with mock.patch.object(resume, "_compile_decoder", return_value=Path("/unused-fixture-decoder")):
+                reconciled = resume.reconcile_task(root, task_id)
+            self.assertEqual(reconciled["first_blocker"]["state"], "BLOCKED_PARTIAL")
+            self.assertEqual((root / "checkpoint.json").read_bytes(), before_checkpoint)
+            self.assertEqual(
+                {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in destination.iterdir()},
+                before_hashes,
+            )
+
+    def test_full_50_verification_advances_to_51_then_completes_100(self) -> None:
+        with home_temporary_directory() as temporary:
+            base = Path(temporary).resolve()
+            root = base / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-FULL"
+            create_runtime_fixture(root, task_id)
+            decoder = self._compile_decoder_in(base)
+            session_id = "full-session"
+
+            with mock.patch.object(resume, "_compile_decoder", return_value=decoder):
+                for ordinal in range(50, 101):
+                    store = resume.read_store(root)
+                    task = store["tasks"][task_id]
+                    state = resume.derive_task_state(root, store, task_id, deep=False)
+                    self.assertEqual(state["next_safe_ordinal"], ordinal)
+                    album_key = task["album_order"][ordinal - 1]
+                    album = task["albums"][album_key]
+                    generation, _, _ = dispatch_and_choose(
+                        root,
+                        task_id,
+                        session_id,
+                        store["generation"],
+                        album_key,
+                        task,
+                    )
+                    destination = resume._task_absolute_path(root, task_id, album["destination"])
+                    write_png_count(destination, int(album["identity"]["expected_images"]))
+                    ready = resume.derive_task_state(root, resume.read_store(root), task_id, deep=False)
+                    self.assertEqual(ready["task_phase"], "READY_TO_VERIFY")
+                    result = resume.verify_album(
+                        root,
+                        task_id,
+                        session_id,
+                        generation,
+                        album_key,
+                        interval_seconds=0,
+                        timeout_seconds=10,
+                        sleep_fn=lambda _: None,
+                    )
+                    self.assertEqual(result["state"], "VERIFIED")
+                    if ordinal == 50:
+                        resumed = resume.derive_task_state(root, resume.read_store(root), task_id, deep=False)
+                        self.assertEqual(resumed["next_safe_ordinal"], 51)
+                        self.assertEqual(resumed["counts"]["SKIPPED_EXISTING"], 49)
+                        self.assertEqual(resumed["counts"]["VERIFIED"], 1)
+
+                completed_store = resume.read_store(root)
+                completed = resume.derive_task_state(root, completed_store, task_id, deep=False)
+                self.assertEqual(completed["task_phase"], "COMPLETE")
+                self.assertEqual(completed["counts"]["SKIPPED_EXISTING"], 49)
+                self.assertEqual(completed["counts"]["VERIFIED"], 51)
+                self.assertEqual(completed["photo_count"], 179)
+                before_idempotent = (root / "checkpoint.json").read_bytes()
+                again = resume.verify_album(
+                    root,
+                    task_id,
+                    session_id,
+                    completed["generation"],
+                    next(item["album_key"] for item in completed["albums"] if item["state"] == "VERIFIED"),
+                    interval_seconds=0,
+                    timeout_seconds=10,
+                    sleep_fn=lambda _: None,
+                )
+                self.assertTrue(again["already_verified"])
+                self.assertEqual((root / "checkpoint.json").read_bytes(), before_idempotent)
+
+    def test_intent_before_click_is_unknown_and_never_retried(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-UNKNOWN"
+            create_runtime_fixture(root, task_id)
+            store, task = task_and_album(root, task_id, 50)
+            album_key = task["album_key"]
+            intent = resume.prepare_save_all(
+                root,
+                task_id,
+                "unknown-session",
+                store["generation"],
+                album_key,
+                make_grounding(store["tasks"][task_id], album_key),
+            )
+            after_prepare = (root / "checkpoint.json").read_bytes()
+            state = resume.derive_task_state(root, resume.read_store(root), task_id, deep=False)
+            self.assertEqual(state["task_phase"], "BLOCKED_AND_PRESERVE_WHOLE_TASK")
+            self.assertEqual(state["first_blocker"]["state"], "UNKNOWN")
+            self.assertEqual(state["first_blocker"]["reason"], "SAVE_ALL_OUTCOME_UNKNOWN")
+
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.prepare_save_all(
+                    root,
+                    task_id,
+                    "unknown-session",
+                    intent["generation"],
+                    album_key,
+                    make_grounding(store["tasks"][task_id], album_key),
+                )
+            self.assertEqual(caught.exception.code, "SAVE_ALL_INTENT_EXISTS")
+            self.assertEqual((root / "checkpoint.json").read_bytes(), after_prepare)
+
+    def test_missing_or_nonempty_destination_blocks_without_recreation(self) -> None:
+        with home_temporary_directory() as temporary:
+            base = Path(temporary).resolve()
+            missing_root = base / "missing" / "agent-resume"
+            missing_task = "AGENT-RESUME-TEST-MISSING-DEST"
+            create_runtime_fixture(missing_root, missing_task)
+            store, task = task_and_album(missing_root, missing_task, 50)
+            destination = resume._task_absolute_path(missing_root, missing_task, task["destination"])
+            destination.rmdir()
+            state = resume.derive_task_state(missing_root, store, missing_task, deep=False)
+            self.assertEqual(state["first_blocker"]["reason"], "DESTINATION_MISSING")
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.prepare_save_all(
+                    missing_root,
+                    missing_task,
+                    "missing-session",
+                    store["generation"],
+                    task["album_key"],
+                    make_grounding(store["tasks"][missing_task], task["album_key"]),
+                )
+            self.assertEqual(caught.exception.code, "TASK_BLOCKED")
+            self.assertFalse(destination.exists())
+
+            extra_root = base / "extra" / "agent-resume"
+            extra_task = "AGENT-RESUME-TEST-EXTRA-DEST"
+            create_runtime_fixture(extra_root, extra_task)
+            extra_store, extra_album = task_and_album(extra_root, extra_task, 50)
+            extra_destination = resume._task_absolute_path(extra_root, extra_task, extra_album["destination"])
+            (extra_destination / "unknown.bin").write_bytes(b"do not overwrite")
+            extra_state = resume.derive_task_state(extra_root, extra_store, extra_task, deep=False)
+            self.assertEqual(extra_state["first_blocker"]["reason"], "DESTINATION_NOT_EMPTY_WITHOUT_INTENT")
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.prepare_save_all(
+                    extra_root,
+                    extra_task,
+                    "extra-session",
+                    extra_store["generation"],
+                    extra_album["album_key"],
+                    make_grounding(extra_store["tasks"][extra_task], extra_album["album_key"]),
+                )
+            self.assertEqual(caught.exception.code, "TASK_BLOCKED")
+            self.assertEqual((extra_destination / "unknown.bin").read_bytes(), b"do not overwrite")
+
+    def test_stable_inventory_waits_for_late_destination_content(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            destination = Path(temporary) / "downloads"
+            destination.mkdir(mode=0o700)
+            clock = [0.0]
+            created = [False]
+
+            def sleep(seconds: float) -> None:
+                clock[0] += seconds
+                if not created[0]:
+                    (destination / "0001.png").write_bytes(PNG_1X1)
+                    created[0] = True
+
+            with mock.patch.object(resume.time, "monotonic", side_effect=lambda: clock[0]):
+                stable = resume._sample_stable_inventory(
+                    destination,
+                    interval_seconds=1.0,
+                    timeout_seconds=10.0,
+                    sleep_fn=sleep,
+                )
+
+            self.assertEqual(stable["count"], 1)
+            self.assertEqual(stable["stability_samples"], 3)
+            self.assertTrue(created[0])
+
+    def test_stable_inventory_empty_destination_times_out(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            destination = Path(temporary) / "downloads"
+            destination.mkdir(mode=0o700)
+            clock = [0.0]
+
+            def sleep(seconds: float) -> None:
+                clock[0] += seconds
+
+            with mock.patch.object(resume.time, "monotonic", side_effect=lambda: clock[0]):
+                with self.assertRaises(resume.SafetyBlock) as caught:
+                    resume._sample_stable_inventory(
+                        destination,
+                        interval_seconds=1.0,
+                        timeout_seconds=2.0,
+                        sleep_fn=sleep,
+                    )
+
+            self.assertEqual(caught.exception.code, "DESTINATION_EMPTY")
+            self.assertEqual(list(destination.iterdir()), [])
+
+
+class HistoryAndCrossTaskTests(unittest.TestCase):
+    def test_history_barriers_cover_239_109_329_and_65_without_redownload(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            root.mkdir(mode=0o700, parents=True)
+            source = root / "history-fixture.json"
+            write_json(source, {"fixture": "history-totals"})
+            source_raw = source.read_bytes()
+            source_sha = hashlib.sha256(source_raw).hexdigest()
+            specifications = [
+                ("official_state", "2022-01-01", 239),
+                ("manual_archives", "2022-02-01", 109),
+                ("pr28_checkpoints", "2022-03-01", 329),
+                ("exclusion_gate", "2022-04-01", 65),
+            ]
+            references = [
+                {
+                    "source_kind": source_kind,
+                    "path": str(source.resolve()),
+                    "sha256": source_sha,
+                    "bytes": len(source_raw),
+                    "imported_at_utc": resume.utc_now(),
+                }
+                for source_kind, _date_text, _count in specifications
+            ]
+            barriers = []
+            prefix_albums = []
+            for source_kind, date_text, count in specifications:
+                destination = root / ("history-%s" % source_kind)
+                destination.mkdir(mode=0o700)
+                for index in range(count):
+                    (destination / ("%04d.bin" % index)).write_bytes(b"h")
+                barriers.append(
+                    resume._barrier(
+                        source_kind,
+                        source_sha,
+                        GROUP_KEY,
+                        {
+                            "start_date": date_text,
+                            "end_date": date_text,
+                            "expected_images": count,
+                        },
+                        [str(destination.resolve())],
+                        count,
+                        "HISTORY_ALREADY_BACKED_UP",
+                        "history-%s" % source_kind,
+                    )
+                )
+                prefix_albums.append(
+                    {
+                        "identity": {
+                            "group_key": GROUP_KEY,
+                            "start_date": date_text,
+                            "end_date": date_text,
+                            "expected_images": count,
+                            "observed_title": source_kind,
+                            "disambiguator": "owner:%s" % source_kind,
+                        },
+                        "destination": "downloads/history-%s" % source_kind,
+                    }
+                )
+            store = resume._initial_store()
+            store["history"] = {"references": references, "barriers": barriers}
+            store["payload_sha256"] = resume._payload_digest(store)
+            resume._atomic_json_write(root / "checkpoint.json", store)
+            task_id = "AGENT-RESUME-TEST-HISTORY-TOTALS"
+            fixture = create_custom_runtime_fixture(root, task_id, prefix_albums, active_count=96)
+
+            self.assertEqual(fixture["result"]["skipped_existing_count"], 4)
+            current = resume.read_store(root)
+            state = resume.derive_task_state(root, current, task_id, deep=False)
+            self.assertEqual(state["counts"]["SKIPPED_EXISTING"], 4)
+            self.assertEqual(state["photo_count"], 742)
+            self.assertEqual(state["next_safe_ordinal"], 5)
+            observed_counts = [album["history"]["verified_file_count"] for album in state["albums"][:4]]
+            self.assertEqual(observed_counts, [239, 109, 329, 65])
+            for _source_kind, _date_text, count in specifications:
+                self.assertGreater(count, 0)
+
+    def test_cross_task_verified_album_is_skipped_and_unresolved_intent_blocks_new_task(self) -> None:
+        with home_temporary_directory() as temporary:
+            base = Path(temporary).resolve()
+            root = base / "agent-resume"
+            first_task_id = "AGENT-RESUME-TEST-CROSS-A"
+            first_fixture = create_custom_runtime_fixture(root, first_task_id, [], active_count=100, history_count=1)
+            self.assertEqual(first_fixture["result"]["album_count"], 100)
+            decoder = ResumeCoreTests._compile_decoder_in(base)
+            with mock.patch.object(resume, "_compile_decoder", return_value=decoder):
+                first_store = resume.read_store(root)
+                first_task = first_store["tasks"][first_task_id]
+                first_key = first_task["album_order"][0]
+                first_album = first_task["albums"][first_key]
+                generation, _, _ = dispatch_and_choose(
+                    root,
+                    first_task_id,
+                    "cross-session-a",
+                    first_store["generation"],
+                    first_key,
+                    first_task,
+                )
+                first_destination = resume._task_absolute_path(root, first_task_id, first_album["destination"])
+                write_png_count(first_destination, 1)
+                verified = resume.verify_album(
+                    root,
+                    first_task_id,
+                    "cross-session-a",
+                    generation,
+                    first_key,
+                    interval_seconds=0,
+                    timeout_seconds=10,
+                    sleep_fn=lambda _: None,
+                )
+                self.assertEqual(verified["state"], "VERIFIED")
+
+            exact_prefix = [
+                {
+                    "identity": dict(first_album["identity"]),
+                    "destination": "downloads/cross-verified",
+                }
+            ]
+            second_task_id = "AGENT-RESUME-TEST-CROSS-B"
+            second_fixture = create_custom_runtime_fixture(
+                root,
+                second_task_id,
+                exact_prefix,
+                active_count=99,
+                active_date_offset_days=365,
+            )
+            self.assertEqual(second_fixture["result"]["skipped_existing_count"], 1)
+            second_store = resume.read_store(root)
+            second_state = resume.derive_task_state(root, second_store, second_task_id, deep=False)
+            self.assertEqual(second_state["albums"][0]["state"], "SKIPPED_EXISTING")
+            self.assertEqual(second_state["albums"][0]["reason"], "CROSS_TASK_VERIFIED")
+
+            first_store = resume.read_store(root)
+            first_task = first_store["tasks"][first_task_id]
+            second_key = first_task["album_order"][1]
+            resume.prepare_save_all(
+                root,
+                first_task_id,
+                "cross-session-a",
+                first_store["generation"],
+                second_key,
+                make_grounding(first_task, second_key),
+            )
+            unresolved_prefix = [
+                {
+                    "identity": dict(first_task["albums"][second_key]["identity"]),
+                    "destination": "downloads/cross-unresolved",
+                }
+            ]
+            third_task_id = "AGENT-RESUME-TEST-CROSS-C"
+            third_manifest = build_custom_manifest(
+                third_task_id,
+                unresolved_prefix,
+                active_count=99,
+                active_date_offset_days=365,
+            )
+            third_manifest_path = root.parent / ("%s-manifest.json" % third_task_id)
+            write_json(third_manifest_path, third_manifest)
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.create_task(root, third_manifest_path)
+            self.assertEqual(caught.exception.code, "CROSS_TASK_INTENT_UNRESOLVED")
+            self.assertFalse((root / "tasks" / third_task_id).exists())
+
+    def test_cross_task_date_ambiguity_propagates_exact_blocker(self) -> None:
+        with home_temporary_directory() as temporary:
+            base = Path(temporary).resolve()
+            root = base / "agent-resume"
+            first_task_id = "AGENT-RESUME-TEST-DATE-CROSS-A"
+            create_custom_runtime_fixture(root, first_task_id, [], active_count=100, history_count=1)
+            first_store = resume.read_store(root)
+            first_task = first_store["tasks"][first_task_id]
+            first_key = first_task["album_order"][0]
+            first_album = first_task["albums"][first_key]
+
+            ambiguous_identity = dict(first_album["identity"])
+            ambiguous_identity["expected_images"] += 1
+            ambiguous_identity["observed_title"] = "same-date-different-count"
+            ambiguous_identity["disambiguator"] = "ambiguous:same-date"
+            ambiguous_prefix = [
+                {
+                    "identity": ambiguous_identity,
+                    "destination": "downloads/ambiguous-date",
+                }
+            ]
+            second_task_id = "AGENT-RESUME-TEST-DATE-CROSS-B"
+            second_manifest = build_custom_manifest(
+                second_task_id,
+                ambiguous_prefix,
+                active_count=99,
+                active_date_offset_days=365,
+            )
+            second_manifest_path = root.parent / ("%s-manifest.json" % second_task_id)
+            write_json(second_manifest_path, second_manifest)
+
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.create_task(root, second_manifest_path)
+            self.assertEqual(caught.exception.code, "CROSS_TASK_DATE_AMBIGUOUS")
+            self.assertFalse((root / "tasks" / second_task_id).exists())
+
+
+class StoreValidationTests(unittest.TestCase):
+    def _assert_store_rejected(self, mutate, expected_code: str) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-SCHEMA"
+            create_runtime_fixture(root, task_id)
+            store = resume.read_store(root)
+            mutate(root, store)
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.read_store(root)
+            self.assertEqual(caught.exception.code, expected_code)
+
+    def test_store_checksum_schema_and_manifest_bindings_fail_closed(self) -> None:
+        def checksum_mutation(root: Path, store: dict) -> None:
+            store["generation"] += 1
+            resume._atomic_json_write(root / "checkpoint.json", store)
+
+        def schema_mutation(root: Path, store: dict) -> None:
+            store["schema_version"] = 2
+            store["payload_sha256"] = resume._payload_digest(store)
+            resume._atomic_json_write(root / "checkpoint.json", store)
+
+        def album_mutation(root: Path, store: dict) -> None:
+            task = store["tasks"]["AGENT-RESUME-TEST-SCHEMA"]
+            album_key = task["album_order"][0]
+            task["albums"][album_key]["identity"]["observed_title"] = "tampered"
+            store["payload_sha256"] = resume._payload_digest(store)
+            resume._atomic_json_write(root / "checkpoint.json", store)
+
+        def binding_mutation(root: Path, store: dict) -> None:
+            task = store["tasks"]["AGENT-RESUME-TEST-SCHEMA"]
+            task["manifest_binding_sha256"] = "0" * 64
+            store["payload_sha256"] = resume._payload_digest(store)
+            resume._atomic_json_write(root / "checkpoint.json", store)
+
+        self._assert_store_rejected(checksum_mutation, "STORE_CHECKSUM_INVALID")
+        self._assert_store_rejected(schema_mutation, "STORE_SCHEMA_UNKNOWN")
+        self._assert_store_rejected(album_mutation, "STORE_SCHEMA_INVALID")
+        self._assert_store_rejected(binding_mutation, "STORE_MANIFEST_BINDING_INVALID")
+
+    def test_symlink_and_orphan_temp_checkpoint_fail_closed(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "symlink-root"
+            create_runtime_fixture(root, "AGENT-RESUME-TEST-SYMLINK")
+            checkpoint = root / "checkpoint.json"
+            backup = root / "checkpoint.backup"
+            checkpoint.rename(backup)
+            checkpoint.symlink_to(backup)
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.read_store(root)
+            self.assertEqual(caught.exception.code, "CHECKPOINT_SYMLINK")
+
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "temp-root"
+            create_runtime_fixture(root, "AGENT-RESUME-TEST-TEMP")
+            checkpoint = root / "checkpoint.json"
+            checkpoint.rename(root / ".checkpoint.tmp.fixture")
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.read_store(root)
+            self.assertEqual(caught.exception.code, "STORE_MISSING_WITH_TEMP")
+
+    def test_stale_generation_and_foreign_scope_grounding_cannot_prepare(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-GENERATION"
+            create_runtime_fixture(root, task_id)
+            store, album = task_and_album(root, task_id, 50)
+            task = store["tasks"][task_id]
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.prepare_save_all(
+                    root,
+                    task_id,
+                    "stale-session",
+                    store["generation"] - 1,
+                    album["album_key"],
+                    make_grounding(task, album["album_key"]),
+                )
+            self.assertEqual(caught.exception.code, "GENERATION_STALE")
+
+            foreign_grounding = make_grounding(task, album["album_key"])
+            foreign_grounding["app_identifier"] = "com.example.foreign"
+            with self.assertRaises(resume.InputError) as caught:
+                resume.prepare_save_all(
+                    root,
+                    task_id,
+                    "foreign-session",
+                    store["generation"],
+                    album["album_key"],
+                    foreign_grounding,
+                )
+            self.assertEqual(caught.exception.code, "SAVE_ALL_GROUNDING_INVALID")
+            unchanged = resume.read_store(root)
+            self.assertEqual(unchanged["generation"], store["generation"])
+            self.assertIsNone(unchanged["tasks"][task_id]["albums"][album["album_key"]]["save_all_intent"])
+
+
 class SessionRootTests(unittest.TestCase):
     def _record(self, host: dict, pending_input: bool = False) -> dict:
+        now = resume.utc_now()
         return {
             "schema_version": 1,
-            "state": "active",
+            "state": "ACTIVE",
             "session_id": "session-test",
             "task_id": "AGENT-RESUME-P0-20261022",
             "boot_id": resume.boot_identity(),
             "controller": {"pid": 999_999_998, "started_at": "not-running"},
             "host": host,
             "pending_input": pending_input,
-            "started_at_utc": resume.utc_now(),
+            "started_at_utc": now,
+            "updated_at_utc": now,
+            "checkpoint_generation": 0,
         }
 
     def test_global_writer_lock_and_clean_close(self) -> None:
@@ -117,7 +957,7 @@ class SessionRootTests(unittest.TestCase):
                 third.activate(self._record(identity))
                 third.close_clean()
                 record = json.loads((root / ".session.lock").read_text(encoding="utf-8"))
-                self.assertEqual(record["state"], "closed")
+                self.assertEqual(record["state"], "CLOSED")
                 self.assertEqual(stat.S_IMODE((root / ".session.lock").stat().st_mode), 0o600)
             finally:
                 host.terminate()
@@ -171,6 +1011,8 @@ class SessionEofTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "agent-resume"
             task_id = "AGENT-RESUME-M0-EOF"
+            create_runtime_fixture(root, task_id)
+            base_generation = resume.read_store(root)["generation"]
             host = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
             process = None
             try:
@@ -195,7 +1037,7 @@ class SessionEofTests(unittest.TestCase):
                     "request_id": "eof-hello",
                     "session_id": "eof-session",
                     "task_id": task_id,
-                    "expected_generation": 0,
+                    "expected_generation": base_generation,
                     "operation": "hello",
                     "data": {"host": host_identity, "boot_id": resume.boot_identity()},
                 }
