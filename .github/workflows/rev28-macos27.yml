@@ -7,11 +7,17 @@ on:
       - rev28-prelive-finalization
     paths:
       - "rev28/**"
+      - "src/line_backup_acceptance/**"
+      - "tests/build_inspection_fixtures.py"
+      - "tests/fixtures/project_inspection/**"
       - ".github/workflows/rev28-macos27.yml"
   workflow_dispatch:
   pull_request:
     paths:
       - "rev28/**"
+      - "src/line_backup_acceptance/**"
+      - "tests/build_inspection_fixtures.py"
+      - "tests/fixtures/project_inspection/**"
       - ".github/workflows/rev28-macos27.yml"
 
 permissions:
@@ -36,6 +42,14 @@ jobs:
         run: |
           set -euo pipefail
           python3 rev28/Tools/verify_pre_live_provenance.py
+
+      - name: Build synthetic project-inspection fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$RUNNER_TEMP/rev28-project-inspection"
+          python3 tests/build_inspection_fixtures.py --output "$output"
+          echo "LINE_BACKUP_INSPECTION_FIXTURES=$output" >> "$GITHUB_ENV"
 
       - name: Record runner and toolchain
         shell: bash
@@ -91,6 +105,7 @@ jobs:
           name: rev28-deterministic-evidence
           path: |
             ${{ runner.temp }}/rev28-host.txt
+            ${{ runner.temp }}/rev28-project-inspection/manifest.json
             ${{ runner.temp }}/rev28-replay
           if-no-files-found: warn
 

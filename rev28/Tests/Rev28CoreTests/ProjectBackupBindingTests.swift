@@ -104,6 +104,31 @@ final class ProjectBackupBindingTests: XCTestCase {
         XCTAssertThrowsError(try bind(f, material: material)); XCTAssertThrowsError(try bind(f, material: Array(f.material.dropFirst())))
         XCTAssertThrowsError(try bind(f, material: f.material.reversed()))
     }
+    func testProducerSourceSetIncludesManualArchiveAndCannotBeReduced() throws {
+        let f = try load()
+        XCTAssertTrue(f.material.map(\.relativePath).contains("src/line_backup_acceptance/manual_archive.py"))
+        var reduced = f
+        try mutate(&reduced) { o in var p = o["producer"] as! [String: Any]; p["source_files"] = Array((p["source_files"] as! [Any]).dropLast()); o["producer"] = p }
+        XCTAssertThrowsError(try bind(reduced))
+    }
+    func testManualArchiveMatchMustBeLiteralFalse() throws {
+        for value in [true as Any, "false" as Any, 0 as Any] {
+            var f = try load()
+            try mutate(&f) { o in
+                var facts = o["state_facts"] as! [String: Any]
+                facts["manual_archive_match"] = value
+                o["state_facts"] = facts
+            }
+            XCTAssertThrowsError(try bind(f))
+        }
+        var missing = try load()
+        try mutate(&missing) { o in
+            var facts = o["state_facts"] as! [String: Any]
+            facts.removeValue(forKey: "manual_archive_match")
+            o["state_facts"] = facts
+        }
+        XCTAssertThrowsError(try bind(missing))
+    }
     func testReanchoredReducedSourceSetRejected() throws {
         var f = try load(); try mutate(&f) { o in var p = o["producer"] as! [String: Any]; p["source_files"] = Array((p["source_files"] as! [Any]).dropFirst()); o["producer"] = p }
         XCTAssertThrowsError(try bind(f, material: Array(f.material.dropFirst())))

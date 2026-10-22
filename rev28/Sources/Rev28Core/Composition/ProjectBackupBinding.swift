@@ -55,7 +55,7 @@ public enum ProjectBackupBindingError: Error, Equatable {
 public enum ProjectBackupBinding {
     private typealias Object = [String: Any]
     private static let sourceNames = ["__init__.py", "__main__.py", "authority.py", "cli.py", "common.py",
-                                      "project_binding.py", "status.py", "transaction.py", "verifier.py"]
+                                      "manual_archive.py", "project_binding.py", "status.py", "transaction.py", "verifier.py"]
     private static let phases = Set(["LOAD_STATE", "CUA_RUNTIME_GATE", "TARGET_CONTEXT", "TARGET_CONTEXT_LOCKED", "ALBUM_DISCOVERY", "DUPLICATE_GATE", "PREPARE_DESTINATION", "OPEN_ALBUM", "SAVE_ALL_CALIBRATION", "SAVE_ALL_INTENT_COMMITTED", "SAVE_ALL_TRIGGERED", "CHOOSER", "DOWNLOAD_STARTED", "VERIFYING", "VERIFIED", "SAFE_ABORT", "ABORTED_BEFORE_SAVE_ALL_DISPATCH", "SAVE_ALL_DISPATCH_ATTEMPTED", "TRIGGER_CONFIRMED", "TRIGGER_UNKNOWN", "NONDESTRUCTIVE_CALIBRATION_MODE"])
     private static func require(_ condition: Bool, _ error: ProjectBackupBindingError = .invalidContract) throws {
         if !condition { throw error }
@@ -324,7 +324,8 @@ public enum ProjectBackupBinding {
             aggregate.append(Data(m.relativePath.utf8)); aggregate.append(0); aggregate.append(m.rawBytes); aggregate.append(0)
         }
         try require(try string(producer["source_sha256"]) == hash(aggregate), .inconsistentSource)
-        let facts = try object(report["state_facts"], keys: ["current_run_id", "current_run_terminal", "active_writer_id", "context_lock_present", "verified_match_run_ids", "verified_match_registry_count", "unresolved_run_ids", "purported_release_run_ids", "destination_status"])
+        let facts = try object(report["state_facts"], keys: ["current_run_id", "current_run_terminal", "active_writer_id", "context_lock_present", "verified_match_run_ids", "verified_match_registry_count", "unresolved_run_ids", "purported_release_run_ids", "manual_archive_match", "destination_status"])
+        try require(try bool(facts["manual_archive_match"]) == false, .inconsistentHistory)
         try require(equal(facts["current_run_id"]!, s["current_run_id"]!) && equal(facts["active_writer_id"]!, s["active_writer_id"]!), .inconsistentHistory)
         let current = runs.first { equal($0["run_id"]!, s["current_run_id"]!) }
         if let current { try require(try bool(facts["current_run_terminal"]) == terminal(current), .inconsistentHistory) }

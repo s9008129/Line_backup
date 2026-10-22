@@ -1,0 +1,16 @@
+{
+  "cases": [
+    "eligible",
+    "verified",
+    "busy",
+    "unresolved",
+    "ambiguous",
+    "destination"
+  ],
+  "group_name": "Synthetic Inspection Group",
+  "target": {
+    "start_date": "2025-01-06",
+    "end_date": "2025-01-10",
+    "expected_images": 42
+  }
+}
