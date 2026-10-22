@@ -3,10 +3,11 @@
 - 日期：2026-10-22（Asia/Taipei）
 - Plan revision：v2.1；SHA-256 `4ba9be2daf887aa8a65a0255e337da5bff8d0ae5aa2d5ada13990f5c85b76502`
 - Handoff SHA-256：`d95c73fca8abcb631a2af56f1c376bbe4d899556eb521f425570038010326d9b`
-- Owner 決策：`EXTERNAL_PLAN_REVIEW=OWNER_WAIVED`。本次豁免只涵蓋 Plan Review，不代表產品、Code Review、遠端 legacy CI 或獨立 E2E PASS。
+- Owner 決策：`EXTERNAL_PLAN_REVIEW=OWNER_WAIVED`。本次豁免只涵蓋 Plan Review，不代表產品、Code Review 或獨立 E2E PASS；legacy CI B 另以其精確 HEAD 的遠端結果記錄。
 - Feature base：master `64515eb56b04accc40ade9e2db2fe0ad18c1ced3`
 - 已驗證的產品來源 HEAD：`cdf92ce94d6fb67080eadda0d4d182b84f83e0cc`
 - Feature branch／Draft PR：[`implement/agent-resume-p0-20261022`](https://github.com/s9008129/Line_backup/tree/cdf92ce94d6fb67080eadda0d4d182b84f83e0cc)／[PR #32](https://github.com/s9008129/Line_backup/pull/32)
+- Legacy CI B 產品／測試 HEAD：`e0b77857eb77536329f9565bf65fa8087b73873d`；Draft [PR #33](https://github.com/s9008129/Line_backup/pull/33)
 
 ## 1. 結論與狀態
 
@@ -18,9 +19,9 @@ M1 的離線核心與故障矩陣已通過本地及乾淨 macOS CI：100 本 ord
 
 ```text
 PRIMARY_OUTCOME_STATUS=PLANNED_NOT_IMPLEMENTED
-IMPLEMENTATION_STATUS=M0_M1_OFFLINE_COMPLETE_M2_CI_B_PENDING
+IMPLEMENTATION_STATUS=M0_M1_OFFLINE_COMPLETE_M2_CI_B_COMPLETE
 CORE_ACCEPTANCE_STATUS=PARTIAL_OFFLINE_ONLY
-REQUIRED_VERIFICATION_STATUS=PARTIAL_FEATURE_CI_PASS_LEGACY_CI_NOT_RUN
+REQUIRED_VERIFICATION_STATUS=FEATURE_CI_PASS_LEGACY_CI_PASS
 INDEPENDENT_ACCEPTANCE_STATUS=NOT_RUN
 TASK_CLOSURE_STATUS=OPEN
 EXTERNAL_PLAN_REVIEW=OWNER_WAIVED
@@ -69,6 +70,19 @@ FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
 | `mac-imageio` | SUCCESS；原樣 ImageIO 的 2 個聚焦測試 |
 
 這是 feature CI 的 PASS，不是 legacy CI、Code Review 或 LINE E2E 的替代證據。
+
+### 2.4 遠端 legacy CI B
+
+[run 39785111593](https://github.com/s9008129/Line_backup/actions/runs/39785111593) 綁定 `e0b77857eb77536329f9565bf65fa8087b73873d`，`status=completed`、`conclusion=success`：
+
+| Job | 實際結果 |
+|---|---|
+| `Deterministic Swift contract` | SUCCESS；fixture 6/6、非 Vision Swift 330/330、adversarial 27×2、historical replay 20/20 |
+| `Headed macOS 27 capability + W2 item 5` | SUCCESS；SCK／AX／Quartz 可用、W2 item 5 PASS；Vision parity diagnostic 為 5 tests／5 failures，另由 bounded limitation enforcement 驗證 known `unknownError`，不得寫成 Vision PASS |
+
+遠端 fixture manifest SHA-256 為 `d4550967e48ef3f594cdd89de7a31abb40f974abbd1420fb12bceb3b9ad221b6`。遠端 replay artifact 的兩份 JSON 均為 `81f6da94ad18d601a21bf0b521d5a96869f13b5a0a3e96db66239b2f90a47261`，與本機一致；W2 item 5 實際輸出 `monitorPosts=0`、`maxLatencyMs=67.047119140625`。細節與其他 evidence hashes 見 PR #33 的 task 報告。
+
+feature 與 legacy CI 的 PASS 各自綁定上列產品／測試 HEAD，不能互相轉移。兩份報告的 docs-only follow-up 仍須各自讀回 checks。
 
 ## 3. M0 實際結果
 
@@ -165,7 +179,7 @@ ImageIO 與 OCR 來源已逐 bytes 核對 Plan 指定 SHA-256。`MacImageDecoder
 - M1 完整化：擴充到 45 Python／17 Node tests 與 feature CI；聚焦回歸找到 deep reconcile 未重新 decode 的缺陷，修正後全數通過。
 - 未證明實體掉電耐久性；`kill -9` 僅是程序故障注入。也不宣稱 OS sandbox 或網路隔離。
 - `test_protected_fixture_sentinels_remain_byte_identical` 只使用合成 sentinel，沒有讀寫正式 protected state。
-- legacy CI B（PR31 HEAD `1b9a010` 的 inspection fixture／Swift consumer 修復）尚未實作或執行。
+- legacy CI B 已在 sibling PR #33 完成：產品／測試 HEAD `e0b7785` 的 run 39785111593 deterministic／headed 均 SUCCESS；不是 feature CI 的替代證據。
 - External Code Review、獨立 DeepSeek `deepseek-v4.1-flash:1017` E2E：NOT_RUN。
 - LINE app 取得、唯讀觀察、截圖、AX、真實 OCR、scroll：NOT_RUN。
 - 真實相簿 Save All、Chooser、下載、逐檔 SHA-256、真實照片 ImageIO、VERIFIED readback：NOT_RUN。
@@ -173,7 +187,6 @@ ImageIO 與 OCR 來源已逐 bytes 核對 Plan 指定 SHA-256。`MacImageDecoder
 
 ## 7. 下一個安全動作
 
-1. 完成 M2 的 CI B 工作包：從 PR31 HEAD `1b9a010` 建立 sibling branch，只修改 Plan §5.3 允許的 inspection fixture／workflow／consumer／test／報告檔，於原始 legacy branch 的遠端 required checks 取得精確 HEAD PASS。
-2. 更新並讀回 PR #32 的精確 HEAD、報告與兩份 CI 證據，保持 Draft。
-3. 將 feature 與 CI B 的 exact HEAD、AC／TC 對照、diff、來源 hash、已知 FAIL／NOT_RUN 交 Owner 轉交外部 ChatGPT Code Review。
-4. 只有取得真實 `APPROVE_IMPLEMENTATION`、有效 runtime authorization 與當次 LINE 前景交接後，才可由 Owner 另啟獨立 DeepSeek session 進行兩本真實相簿 E2E；Sol／Luna 不得代替其判定。
+1. 提交本報告的 CI B 對帳更新，讀回 feature docs-only HEAD 的 checks；CI B docs-only HEAD 已手動 dispatch `Rev28 macOS 27 pre-live`，其結果另行讀回。
+2. 將 feature PR #32 與 legacy CI B PR #33 的 exact HEAD、diff、完整報告、來源 hash、已知 FAIL／NOT_RUN 交 Owner 轉交外部 ChatGPT Code Review。
+3. 只有取得真實 `APPROVE_IMPLEMENTATION`、有效 runtime authorization 與當次 LINE 前景交接後，才可由 Owner 另啟獨立 DeepSeek session 進行兩本真實相簿 E2E；Sol／Luna 不得代替其判定。
