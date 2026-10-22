@@ -82,7 +82,7 @@ FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
 
 遠端 fixture manifest SHA-256 為 `d4550967e48ef3f594cdd89de7a31abb40f974abbd1420fb12bceb3b9ad221b6`。遠端 replay artifact 的兩份 JSON 均為 `81f6da94ad18d601a21bf0b521d5a96869f13b5a0a3e96db66239b2f90a47261`，與本機一致；W2 item 5 實際輸出 `monitorPosts=0`、`maxLatencyMs=67.047119140625`。細節與其他 evidence hashes 見 PR #33 的 task 報告。
 
-feature 與 legacy CI 的 PASS 各自綁定上列產品／測試 HEAD，不能互相轉移。兩份報告的 docs-only follow-up 仍須各自讀回 checks。
+feature 與 legacy CI 的 PASS 各自綁定上列產品／測試 HEAD，不能互相轉移。後續 docs-only HEAD 已分別讀回 feature run 39786518568、legacy PR run 39786235147 與 manual run 39786239965，均 SUCCESS；任何再新增的 docs commit 仍以自己的 checks 為準。
 
 ## 3. M0 實際結果
 
@@ -187,6 +187,5 @@ ImageIO 與 OCR 來源已逐 bytes 核對 Plan 指定 SHA-256。`MacImageDecoder
 
 ## 7. 下一個安全動作
 
-1. 提交本報告的 CI B 對帳更新，讀回 feature docs-only HEAD 的 checks；CI B docs-only HEAD 已手動 dispatch `Rev28 macOS 27 pre-live`，其結果另行讀回。
-2. 將 feature PR #32 與 legacy CI B PR #33 的 exact HEAD、diff、完整報告、來源 hash、已知 FAIL／NOT_RUN 交 Owner 轉交外部 ChatGPT Code Review。
-3. 只有取得真實 `APPROVE_IMPLEMENTATION`、有效 runtime authorization 與當次 LINE 前景交接後，才可由 Owner 另啟獨立 DeepSeek session 進行兩本真實相簿 E2E；Sol／Luna 不得代替其判定。
+1. 將 feature PR #32 與 legacy CI B PR #33 的 exact HEAD、diff、完整報告、來源 hash、已知 FAIL／NOT_RUN 交 Owner 轉交外部 ChatGPT Code Review。
+2. 只有取得真實 `APPROVE_IMPLEMENTATION`、有效 runtime authorization 與當次 LINE 前景交接後，才可由 Owner 另啟獨立 DeepSeek session 進行兩本真實相簿 E2E；Sol／Luna 不得代替其判定。
