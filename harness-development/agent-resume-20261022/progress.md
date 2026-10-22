@@ -3,8 +3,7 @@
 - Plan v2.1 SHA 已核對；Owner 已明確記為 `EXTERNAL_PLAN_REVIEW=OWNER_WAIVED`。
 - Feature 從 master `64515eb56b04accc40ade9e2db2fe0ad18c1ced3` 的 external clean worktree 建立，未改動原 dirty repo。
 - M0 零 LINE 能力：PASS。Node `spawn` + 單一 stdio Python session、固定 root flock、真 process／boot 身分、EOF 永久停止、舊 host／pending input 拒接管、Mac `F_FULLFSYNC` readback 均有本地證據。
-- M1 離線薄切片：`IN_PROGRESS`。已實作並以合成資料／fake app 測試 ordered 100 本 manifest、單一 checkpoint、history／跨 task 屏障、durable Save All／Chooser intent、同一 verifier、單次 click 與 controller 遺失永久停止。
-- 本地測試：Python 24/24 PASS；Node 9/9 PASS；`py_compile`、`node --check`、`git diff --check` 均 exit 0。私有證據位於 task evidence `m1-final-20261022/`。
-- M1 尚缺：TC01～20 的完整 fault point、atomic write／ENOSPC／decoder timeout／malformed protocol／wrapper result-record failure 等負例、跨新程序完整 100 本故障注入、protected baseline 全流程比較。
-- 未執行：M1 完整驗收、M2、feature／legacy CI、LINE GUI、正式 Save All、Chooser、下載、真實照片、External Code Review、獨立 E2E。
-- 下一步：先補 M1 矩陣與 feature workflow，固定精確 HEAD 並執行遠端 checks；完成前不操作 LINE。
+- M1 離線核心與故障矩陣：本機 Python 45/45 PASS（175.003s）、Node 17/17 PASS；feature CI [run 39782491253](https://github.com/s9008129/Line_backup/actions/runs/39782491253) 綁定 `cdf92ce`，Python／Node／Mac ImageIO 全綠。
+- 聚焦回歸修正 deep reconcile：既有 VERIFIED album 現在會重新 hash／ImageIO decode，不再只信任檔案 bytes；回歸測試確認 decoder 被實際呼叫。
+- 未執行：M2 CI B、legacy CI、LINE GUI、正式 Save All、Chooser、下載、真實照片、External Code Review、獨立 E2E。
+- 下一步：先完成 CI B sibling branch 與精確 HEAD checks，再更新 PR #32 並交 Owner 指定的外部 ChatGPT Code Review；核准前不操作 LINE。
