@@ -1,464 +1,395 @@
-# plan.md｜LINE Agent 跨 Session 與 Mac 重啟接續備份
+# LINE Agent 100 本相簿中斷接續：最小修正 Plan
 
-- **Task ID：** `AGENT-RESUME-P0-20261022`
-- **版本：** v1.1／2026-10-22；承接本對話 v1.0 技術計畫。
-- **需求基準：**《LINE_backup_PRD_Agent_Interrupted_Resume_v1.0_20261022.md》，SHA-256 `0d69c560490504f1b2af5466db680768e27924c4416c879d8c0545f1224a75d5`。
-- **本階段產物：** 計畫與交接文件；產品實作、故障測試、LINE GUI、下載與新 E2E 均為 `NOT_RUN`。
-- **指定 Planner：** `gpt-6.1-sol / xhigh`；目前工具未提供可獨立核對的模型／effort 執行收據，不冒稱 runtime attestation。
+- Task：`AGENT-RESUME-P0-20261022`；revision：`v2.0 / 2026-10-22`。
+- 範圍：PR #31 B01～B04、完整過度工程化審查、Agent 模式 A 跨 Session／Mac 重啟接續。
+- 本輪只交付文件。產品實作、零 GUI runtime preflight、故障注入、新 ImageIO、LINE 操作及獨立 E2E 均 `NOT_RUN`。
+- 請求的 Planner：GPT-6.1-SOL／xhigh；沒有可獨立核對的模型／effort 收據，不冒稱 runtime attestation。
+- 本版取代 `aa415ef6a2f665bf866631762154dc4b0470d3a3` 的 v1.1 執行指令；舊版及其 Owner-waiver／角色安排保留 Git 歷史，不視為本輪新審查批准。
 
-## 0. 本次 Owner 決策與適用順序
-
-Owner 在本對話後續明確指示：本次不用外部獨立審查，將計畫實際落檔並交接 `deepseek-v4.1-flash:1017` 實作；無法解決的問題必須寫問題提報單，交高階模型分析；本輪以 GPT-6 luna 子代理梳理上下文及撰寫提交訊息，再 add／commit／push。
-
-因此，本工作包可由 DeepSeek 直接依本計畫開始離線實作，不再等待原 v1.0 的外部 Plan／Handoff 審查。此次工作包不以外部 Chief 審查作新增執行前置；審查狀態記為 `OWNER_WAIVED`，絕不寫成 `APPROVE_PLAN`、`APPROVE_IMPLEMENTATION` 或獨立 review PASS。這是本次 Owner 的流程決策，不修改 AGENTS.md、Harness 或任何正式執行 guard，也不把豁免擴張到其他任務。
-
-獨立實機 E2E、資料驗證、當次前景交接與新相簿下載授權沒有免除。實作者不能自填獨立 E2E PASS；實機仍由 Owner 另啟全新 DeepSeek Session。Git 交付授權不等於 GUI、Save All 或 Mac 重開機的當次授權。
-
-本版相對 v1.0 僅變更角色、審查路線、文件落檔及阻塞提報要求；核心功能、安全不變條件和驗收標準不變。`handoff.md` 必須與本版一致，不能把原先待外部核准或 Luna 實作的文字留作有效指令。
-
-## 1. GOAL / SCOPE / SUCCESS CRITERIA
-
-### 1.1 目標與最小方案
-
-保留 PR #28 已成功的 DeepSeek Computer Use、fresh screenshot、AX、Vision OCR、Save All、Chooser、SHA-256 與 ImageIO 流程，新增薄型恢復控制：
-
-**有序任務清單＋單一原子 checkpoint＋跨 Session 防重送屏障＋唯讀 reconcile＋受控 GUI 包裝。**
-
-Owner 已選定：
-
-- 新 checkpoint 與新下載照片放在 `~/Library/Application Support/LineBackup/agent-resume/`，跨 worktree 使用同一個固定資料根目錄。
-- 最小真實 E2E 使用兩本未備份的新相簿；第一本完整驗證後，由 Owner 重開 Mac，再以全新 DeepSeek Session 接續第二本。
-- 既有照片保留原處，只建立唯讀參照。
-
-### 1.2 P0 成功標準／Acceptance Criteria
-
-| AC | 必須成立的結果 |
-|---|---|
-| AC-01 | 至少 100 本固定順序任務可跨程序／Session 恢復，不依賴舊對話。 |
-| AC-02 | #50 從未 intent：核對前 49 本後可 fresh 定位 #50；#1～49 不重送。 |
-| AC-03 | #50 完整下載但未提交 VERIFIED：重新驗證、持久提交後下一次 Save All 僅 #51；#1～50新增派送 0。 |
-| AC-04 | #50 只有32／80或 dispatch不明：保留所有檔案，停止整個任務，#50～100不得自動派送。 |
-| AC-05 | 重複請求、回覆遺失、程序崩潰與 Mac 重啟不解除 intent 屏障；單 writer成立。 |
-| AC-06 | 兩本新相簿完成第一本→Mac重啟→新Session→跳過第一本→第二本；每本各一次Save All、完整SHA／ImageIO及checkpoint讀回。 |
-| AC-07 | 歷史239／109／329與排除65張不重下載、不覆寫；正式State／Grant／Ledger／Harness不變。 |
-| AC-08 | 最小diff、TC-01～20對應證據、來源／runtime hashes、完整報告與未解問題皆可追溯。 |
-
-### 1.3 不做事項
-
-不做相簿內續傳、強制重試、跳過 PARTIAL 後繼續、排程、開機自動執行、GUI 引擎重寫、正式 AUTO 修復、大範圍分支合併或歷史照片搬移。
-
-功能名稱為 `AGENT_RESUMABLE_BACKUP`；不宣稱 `FORMAL_TWO_ALBUM_AUTO=PASS`。不以 Issue #25／#27 或正式 Authorizer、Grant、Ledger 作必要依賴。
-
-## 2. SOURCE-VERIFIED BASELINE
-
-### 2.1 已核對來源與證據邊界
-
-以下是本次唯讀規劃的觀察，不代表產品功能已實作。
-
-| 資產 | 核對結果 | 設計用途 |
-|---|---|---|
-| 本機原工作樹 | `v43-ab/codex-rev28`，HEAD `72dae704a9a5f3dbdee21e33178201350b6e7a06`；19項既存tracked修改及其他untracked資料 | 全部保留，不在該分支開發產品 |
-| GitHub master | 本次讀回 `64515eb56b04accc40ade9e2db2fe0ad18c1ced3` | 乾淨文件交付與功能開發之共同祖先 |
-| [PR #28](https://github.com/s9008129/Line_backup/pull/28) | 已關閉、未合併；HEAD如上；整體diff 1,887檔／176commits | 不整支合併 |
-| [PR #29](https://github.com/s9008129/Line_backup/pull/29) | 已合併，僅八個證據檔 | 主線已有報告／公開索引，沒有完整實測工具 |
-| [舊Chief Review](https://github.com/s9008129/Line_backup/pull/28#pullrequestreview-5608322661) | 接受manual-diagnostic evidence，保留私有證據未獨立重現之限制 | 不轉成新功能review PASS |
-| PR28 `private/checkpoints.json` | 本機可讀；1783bytes；SHA `69d385ac9ccf3f5ba139ca45b6d0412c17499ce9e3e6c44eb50b62cb786f548e` | 唯讀歷史匯入 |
-| [PR28報告88～146行](https://github.com/s9008129/Line_backup/blob/72dae704a9a5f3dbdee21e33178201350b6e7a06/harness-development/line-five-album-manual-20261022/E2E測試報告.md#L88) | metadata點擊、detail身分核對、真實menu OCR、Chooser、下載與完整解碼流程 | 保持既有操作順序 |
-| [ImageIO decoder第7～68行](https://github.com/s9008129/Line_backup/blob/72dae704a9a5f3dbdee21e33178201350b6e7a06/src/line_backup_batch/image_decode.swift#L7) | 源碼與報告hash相同；完整RGB draw、逐檔SHA、只讀輸出 | 原樣重用 |
-| 本機 `harness-development/catalog-diagnostic-20261010/modern_ocr.swift` | hash與報告相同；目前不是HEAD的tracked檔 | 將原始bytes納入新功能，不能假稱從Git HEAD取得 |
-| [content.py第14～78行](https://github.com/s9008129/Line_backup/blob/72dae704a9a5f3dbdee21e33178201350b6e7a06/src/line_backup_batch/content.py#L14) | 有穩定取樣、hash／decoder交叉比對、解碼後再核對；依賴正式package與固定backups containment | 重用檢查方法，不整包import |
-| [batch resume第588～591行](https://github.com/s9008129/Line_backup/blob/72dae704a9a5f3dbdee21e33178201350b6e7a06/src/line_backup_batch/service.py#L588) | RECONCILE_ONLY、禁止dispatch | 不修改、不當方案A入口 |
-| [transaction resume第380～428行](https://github.com/s9008129/Line_backup/blob/72dae704a9a5f3dbdee21e33178201350b6e7a06/src/line_backup_acceptance/transaction.py#L380) | UNKNOWN barrier、不重新派送 | 參考不變條件，不調用正式授權流程 |
-
-目前 Agent 入口為 DeepSeek 透過工具執行的程序；尚未找到 PR28 專用、可獨立呼叫的批次續跑 executable。
-
-### 2.2 私有 checkpoint 實際結構
-
-原測試包：`harness-development/line-five-album-manual-20261022/`。
-
-頂層：`test_type, model, provider, session_id, repo_head_at_start, updated_at, albums, totals`。
-
-`albums`是以A45／B78／C77／D42／E87為鍵的object；每本有`status, expected_images, verified_images, save_all_dispatches_this_session, destination, unknown_outcome`；A45另有`previous_session_save_all_dispatches`。
-
-五本均記錄`FILES_VERIFIED`。目的地是相對於原測試包的路徑；以正確基準解析後，五個目錄存在，分別有45／78／77／42／87個非零一般檔案。
-
-缺少schema version、ordered manifest、durable pre-intent、generation、事件序號及writer ownership。結論：原檔保留，不原地升級；建立sidecar，只讀匯入歷史參照。
-
-### 2.3 UNVERIFIED ASSUMPTIONS
-
-- 本輪沒有重新ImageIO解碼或逐檔重算五本照片hash；檔數核對不等於新的完整驗證PASS。
-- JSON內容無法證明其歷史寫入原子性／fsync；舊成功也不證明任意crash點可恢復。
-- 新GUI包裝、長生命週期鎖及固定目錄durability尚未實作／驗證。
-- 已檢查設定與五本索引只有排除65張之摘要，尚缺完整可用排除身分映射。
-- 原Mac Python為3.9.6；新Python須相容3.9。Swift／Node版本接手時重讀，不依賴規劃時版本。
-- GitHub／新clone不包含本機私有checkpoint、原圖及未tracked OCR；缺少時誠實報錯，不能重建假資料。
-
-## 3. ROOT CAUSE AND GAP MATRIX
-
-根因是成功操作的持久化控制邊界尚未產品化：Agent上下文與完成摘要無法可靠回答crash時是否可能已派送Save All。
-
-| FR | 現況／缺口 | 最小處理 |
-|---|---|---|
-| FR-01、14 | 五本摘要；無固定順序、scope digest與可推導進度 | manifest、task ID、摘要 |
-| FR-02、05 | 獨立目的地／ImageIO已實測；無一致恢復入口 | 原樣decoder、只讀verifier、收據 |
-| FR-03、04 | 無durable intent與click先後證據 | 原子checkpoint；成功提交才可click |
-| FR-06、07 | 正式resume禁止派送；手動接續依提示詞 | 只讀reconcile與受控續跑分離 |
-| FR-08、12 | partial／unknown恢復政策未一致 | BLOCK_AND_PRESERVE，禁止重試及後續派送 |
-| FR-09 | fresh OCR／AX／detail已實測 | 每Session重新定位，不恢復座標 |
-| FR-10 | 正式／manual／五本資料分散 | 統一唯讀歷史參照與跨task屏障 |
-| FR-11、13 | 無方案A共用ownership | 固定根目錄全域session lock；當次交接獨立記錄 |
-| FR-15 | 停止後無一致收尾 | 關閉新輸入、保留intent、等待已發出呼叫結束 |
-| FR-16 | 舊schema現已可讀 | 專用非破壞匯入，不泛化migration framework |
-
-## 4. MINIMAL FILE-LEVEL CHANGESET
-
-文件交付分支`docs/agent-resume-handoff-20261022`只修改根目錄`plan.md`、`handoff.md`；產品實作另建`feature/agent-backup-resume`的外部乾淨worktree。實作以本次文件交付commit為base（parent為`64515eb...`），接手時解析並記錄精確SHA，不在原dirty分支切換／reset／clean／stash。若分支或位置已存在，先查其身分與狀態，不覆寫。
-
-| 檔案 | 責任 |
-|---|---|
-| `scripts/line_backup_agent_resume.py` | 新增；標準庫schema、原子checkpoint、鎖、歷史匯入、reconcile、session controller與CLI |
-| `scripts/line_backup_agent_resume_cua.mjs` | 新增；薄型CUA包裝，連接durable intent與原始單次Save All，不重寫辨識／定位 |
-| `scripts/agent_resume/image_decode.swift` | 原樣複製；SHA `238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b` |
-| `scripts/agent_resume/modern_ocr.swift` | 原樣複製本機來源；SHA `19f6787f4523332b5eb8a4235c4461fee5e49314c615b4865cc9ec848f2a2861` |
-| `tests/test_agent_resume.py` | 100本、檔案驗證、持久化、鎖、故障注入 |
-| `tests/test_agent_resume_cua.mjs` | 實際新包裝＋fake app；計算callback與重放拒絕 |
-| `docs/agent-resume.md` | 使用流程、資料契約、恢復政策、一行Prompt、停止條件 |
-| `.gitignore` | 只追加新測試包private忽略規則 |
-| `plan.md`、`handoff.md` | 只允許必要的範圍內澄清與交付狀態更新；不能自行改AC／保護政策 |
-| `harness-development/agent-resume-20261022/E2E測試報告.md` | 持續記錄離線／實機結果、FAIL／BLOCKED／NOT_RUN |
-| `harness-development/agent-resume-20261022/progress.md` | 短記進度、嘗試次數、第一阻塞與next_action，不複製大量報告 |
-| `harness-development/agent-resume-20261022/issues/` | 僅在有實際未解問題時新增問題提報單及安全的文字證據 |
-
-開發／測試原始證據可寫新task package的`private/`，必須先確保忽略，不stage。新功能runtime資料只寫Owner選定固定私有根目錄。測試只能使用隔離臨時fixture，不能對正式資料注入故障。
-
-絕不修改Harness／controller／schemas／runtime defaults、`src/line_backup_batch/`、`src/line_backup_acceptance/`、原`line_backup_cua_adapter.mjs`、正式`two_album_entry.mjs`、正式state／Grant／Ledger／pilot policy、歷史證據／照片與PR28原checkpoint。
-
-新功能不import正式授權／交易package，只以普通只讀方式取得歷史防重複資料。
-
-## 5. 持久化契約與技術決策
-
-### 5.1 單一原子checkpoint
+## 0. 裁決、授權與第一個動作
 
 ```text
-agent-resume/
-  checkpoint.json
-  .session.lock
-  tasks/<task_id>/
-    downloads/<ordinal>-<album_key_prefix>/
-    evidence/
-    verification/
+OVERENGINEERING_AUDIT=NEEDS_SIMPLIFICATION
+MINIMAL_IMPLEMENTATION_PLAN=NOT_READY
+CANDIDATE_DESIGN=MINIMAL_A_SPECIFIED_PENDING_INDEPENDENT_REVIEW
+EXTERNAL_PLAN_REVIEW=PENDING_OWNER_FORWARD
+FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
 ```
 
-`checkpoint.json`為跨task唯一控制真相，包含已登記task、歷史archive references、exclusions、ownership與events。100本不需要SQLite或獨立JSONL journal；整份原子替換可避免雙檔一致性與journal尾端修復。events在邏輯上只能追加，既有事件不得改刪。
+上述裁決針對 PR31 現況與尚未獨立核准的候選修正；不能因文件完成、自我檢查或 commit 就改成 PASS／READY。本版已把前輪三項缺口寫成具體契約：排除旁支依賴、固定 wrapper／controller 生命週期、補足 CI producer／consumer 漂移處置。是否充分，交 Owner 指定 External Chief 獨立審查。
 
-逐檔manifest／decoder收據／GUI證據另存不可變檔，checkpoint存摘要、參照與SHA。新store缺少時不自動初始化；無法證明完整歷史時不得GUI。
+當下允許：文件核對、唯讀來源／環境盤點、保存本版與 Git／Draft PR 交付。未取得本版精確 SHA 的真實 `APPROVE_PLAN` 及獨立 `OVERENGINEERING_AUDIT=PASS` 前，不開始產品寫入、runtime prototype 或 GUI。這兩個條件成立且無未決設計阻塞後，才把 `MINIMAL_IMPLEMENTATION_PLAN` 記為 READY；M0 runtime 能力是獲准 Implementation 的第一個出口，不是虛構已完成的事實。
 
-### 5.2 最低schema與相容性
+本輪不沿用 v1.1 的免審指令取消最新要求的 External Chief Gate。原始 PRD、最新 Owner 要求及適用 AGENTS 優先；不改 Harness V4.8.0，不建立或修改執行 grant，不回收 quota，不重設 ledger，不重開 CLOSED authority。
 
-| 區塊 | 必要資料 |
+第一個 next_action：向 Owner 交付本版 Plan、Handoff、精確 commit／Plan SHA、原始 PRD 定位及 PR31／PR28 證據，供指定 External Chief 審查。實作者可先唯讀對帳，不能把「準備接手」當實作批准。
+
+## 1. GOAL／SCOPE／NON-GOALS
+
+保留 PR28 已成功的 DeepSeek Agent Computer Use、fresh screenshot、AX、Vision OCR、metadata 點擊、detail 核對、真實 menu OCR、Save All、Chooser、SHA-256／ImageIO；增加最少的持久化控制。使用者每次自行啟動 Agent；新 Session 從 Mac 本機資料恢復，不依賴舊對話。
+
+核心案例：100 本清單的 #1～49 已完成，#50 中斷。#50 完整且來源證據足夠，重驗並提交後只續 #51；#50 partial／仍 unknown，保留照片，整個 task 停止，不重送、不跳過。
+
+沿用既有決策：runtime root 為 `~/Library/Application Support/LineBackup/agent-resume/`；歷史照片原處只讀；最小真實 E2E 為兩本未備份新相簿，第一本完整後由 Owner 重開 Mac，再由新獨立 DeepSeek Session 接續第二本。
+
+不做：相簿內續傳、強制 retry／reset／skip blocker、排程、開機自動執行、新 GUI／OCR／capture 引擎、Native Diagnostic 修復、正式 TWO_ALBUM_AUTO 修復、Harness 重設計、SQLite／新大型 framework、通用 migration、歷史照片搬移或大分支合併。
+
+## 2. SOURCE-VERIFIED BASELINE／事實與未知
+
+### 2.1 固定來源
+
+| 來源 | 已核對的事實與限制 |
 |---|---|
-| Store | `schema_version=1, generation, payload_sha256, last_event_seq, owner` |
-| Task manifest | task_id、建立時間、固定group scope、Owner scope reference、有序albums、排除規則、manifest_sha256 |
-| Identity | ordinal、album_key、日期起訖、預期張數、可取得title／detail date等消歧欄位 |
-| Operation | intent、dispatch observation、chooser intent／observation、固定目的地、來源身分證據 |
-| Verification | outcome、count／bytes、逐檔manifest digest、decoder source／binary hash、收據、完成時間 |
-| Event | 單調seq、時間、session／task／album、事件、前後狀態、證據參照 |
-| Historical reference | source kind／root／digest、identity、原目的地、驗證參照、排除或屏障原因 |
+| 原始需求 | 本機 `~/Downloads/LINE_backup_PRD_Agent_Interrupted_Resume_v1.0_20261022.md`；SHA `0d69c560490504f1b2af5466db680768e27924c4416c879d8c0545f1224a75d5`；FR01～16、TC01～20仍適用 |
+| [PR31](https://github.com/s9008129/Line_backup/pull/31) | exact HEAD `1b9a010aeba2e75a406d842be123d7251501548c`；單筆 commit 31檔、+6911／-193；整個PR 177 commits／1900檔，不可直接merge |
+| [PR31 Chief Review](https://github.com/s9008129/Line_backup/pull/31#pullrequestreview-5611062176) | `BLOCKED_FOR_RESUMABLE_AGENT_FEATURE`／`NOT_APPROVED_TO_MERGE`，B01～B04；不是新方案批准 |
+| [PR30](https://github.com/s9008129/Line_backup/pull/30) | 既有文件commit `aa415ef6a2f665bf866631762154dc4b0470d3a3`；舊Plan SHA `8ff887a153e5a363979bbd3e622dc998db4ae9e4f705ef45a5a4ba975c5f646b`；本輪更新同範圍Draft PR |
+| master | 本輪remote讀回 `64515eb56b04accc40ade9e2db2fe0ad18c1ced3`；接手時重讀最新base並記SHA，不憑分支名稱推定 |
+| [PR28 Chief Review](https://github.com/s9008129/Line_backup/pull/28#pullrequestreview-5608322661) | 接受manual-diagnostic公開證據；私有照片解碼／GUI操作仍為本機Agent報告，不等於外部重現 |
+| PR28工具來源 | `72dae704a9a5f3dbdee21e33178201350b6e7a06`；完整[報告](https://github.com/s9008129/Line_backup/blob/72dae704a9a5f3dbdee21e33178201350b6e7a06/harness-development/line-five-album-manual-20261022/E2E測試報告.md)；master經PR29只收八個證據檔，不能假設全部工具已存在 |
+| 正式batch | PR31 HEAD `src/line_backup_batch/coordinator.py:13`遇active batch返回；`service.py:1015`只有RECONCILE_ONLY、不dispatch；不修改 |
+| 正式transaction | `src/line_backup_acceptance/transaction.py:380` resume保留UNKNOWN屏障；參考不變條件，不調用正式授權流程 |
+| ImageIO | `src/line_backup_batch/image_decode.swift`；SHA `238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b`；原樣重用 |
+| OCR | 本機 `harness-development/catalog-diagnostic-20261010/modern_ocr.swift`；SHA `19f6787f4523332b5eb8a4235c4461fee5e49314c615b4865cc9ec848f2a2861`；未tracked來源須原bytes納入乾淨PR，不假稱從master取得 |
+| 內容驗證方法 | `src/line_backup_batch/content.py:14`；穩定inventory、hash／decoder交叉比對、post-decode核對；因正式package／backups containment耦合，不整包import |
 
-Canonical JSON：UTF-8、排序object keys、固定separators，拒絕duplicate keys／NaN；digest排除自身欄位。未知schema版本直接拒絕，不猜測升降版。
+行號綁定上述commit，之後改動需使用新SHA／行號，不轉移舊PASS。
 
-Manifest建立後不可原地改scope／清單／身分／目的地／順序；新需求建新task，仍受全域歷史及intent屏障約束。不改寫舊checkpoint；不存在通用原地migration入口。
+### 2.2 PR28私有checkpoint已實際讀取
 
-### 5.3 原子提交順序
+來源：原repo `harness-development/line-five-album-manual-20261022/private/checkpoints.json`；1783 bytes；SHA `69d385ac9ccf3f5ba139ca45b6d0412c17499ce9e3e6c44eb50b62cb786f548e`。
 
-1. 持session lock重讀，驗證schema、checksum、generation、事件前綴與操作前提。
-2. 同目錄唯一temporary file完整寫入／flush。
-3. file fsync；macOS對regular file執行F_FULLFSYNC。
-4. os.replace原子替換checkpoint。
-5. sync父目錄，再對新checkpoint full sync。
-6. 重開解析，比對generation與digest。
-7. 全部成功才回覆committed；不能提前發送GUI資格。
+頂層為 `albums/model/provider/repo_head_at_start/session_id/test_type/totals/updated_at`。albums為A45／B78／C77／D42／E87 object；欄位包含destination、expected_images、verified_images、status、unknown_outcome、save_all_dispatches_this_session，A45另有previous_session_save_all_dispatches。五本記FILES_VERIFIED。
 
-必要primitive不支援或任何步驟失敗，禁止GUI；不能默默降級。發現malformed checkpoint、未知schema、checksum錯或未完成temporary revision，回報`BLOCKED_STORAGE_INTEGRITY`；不自動載入較舊backup、刪暫存或初始化空紀錄。
+它缺schema_version、ordered manifest、durable pre-intent、generation及writer ownership。只建立唯讀參照；不原地升級、不把字串狀態直接當新VERIFIED。相對目的地以原測試包解析，不能相對新worktree或cwd解析。
 
-一般fsync不等於drive已持久化；採Apple較強flush仍不宣稱任意硬體故障的絕對保證。[Apple fsync文件](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/fsync.2.html)
+### 2.3 未知與證據限制
 
-### 5.4 公開CLI與輸出
+- 本輪沒有重新計算歷史照片SHA或ImageIO，不宣稱329張新驗證PASS。
+- 既有成功不能證明任意crash點的耐久性或實體exactly-once。
+- hosted CUA runtime能否安全維持子程序stdio／長生命週期controller尚待M0；不預設工具能力。
+- macOS filesystem的directory sync／F_FULLFSYNC及照片flush回傳語義須M0／M1實測，不靜默降級。
+- 65張完整日期指紋可從既有manual_archive常數取得候選，但其當前群組／Owner排除關聯仍須與私有來源核對；不能只靠「65」排除。缺少只阻擋live，不阻擋獲准的合成測試。
+- 新clone不含私有checkpoint、照片及原始GUI證據；缺少就報來源不足，不重建假歷史。
 
-- `init`：首次明確建立store，不由resume自動呼叫。
-- `import-history`：匯入明列來源之唯讀參照。
-- `create-task --manifest FILE`：驗證並凍結新清單。
-- `inspect --task ID`：只讀結構／進度。
-- `reconcile --task ID`：只讀檔案核對，stdout輸出恢復建議。
-- `session --task ID`：供CUA包裝使用之session controller，持鎖／提交狀態，本身不生成GUI input。
+## 3. B01～B04根因與修正邊界
 
-所有命令顯式接受固定`--root`；Agent使用預設根目錄前仍確認與本task綁定，不自動搜尋另一store。`inspect/reconcile`不建鎖檔、不寫checkpoint、不提交VERIFIED，不依賴LINE／網路／模型。輸出generation、manifest digest、各狀態本數、照片統計、first blocker、next action及`gui_dispatches=0`。
-
-退出碼：0成功；2輸入／schema不合法；3任務被阻塞；4writer busy；5storage／runtime不足。
-
-## 6. STATE MACHINE / IDEMPOTENCY / LOCK
-
-### 6.1 正交狀態
-
-- Operation：`NOT_STARTED → INTENT_RECORDED → CALL_RETURNED / DISPATCH_UNKNOWN`。
-- Chooser：獨立保存目標確認intent、呼叫結果及證據。
-- Filesystem：`UNCHECKED / VERIFYING / COMPLETE / PARTIAL / INVALID`。
-- 對外結果：`NOT_STARTED / VERIFIED / SKIPPED_EXISTING / BLOCKED_PARTIAL / BLOCKED_AMBIGUOUS`。
-
-`TARGET_CONFIRMED`只屬當次有效GUI證據，不能載入後恢復有效性；task狀態與下一ordinal由資料推導，next_index最多是顯示快取。
-
-### 6.2 Save All與Chooser邊界
-
-沿用PR28：fresh list／detail→展開menu→fresh OCR找到實際儲存全部。在真正Save All click之前：
-
-1. 檢查本次前景交接、fresh identity／menu binding、空目的地、跨task重複及未解屏障。
-2. durable intent綁定task／album／session／action／目的地／證據。
-3. 收到新提交成功回覆。
-4. 記憶體中消耗原始呼叫資格，再呼叫一次app.click。
-5. 保存返回／錯誤／觀察，timeout或錯誤皆不重試。
-
-`dispatchSaveAllOnce(...)`自行只呼叫一次Save All input，不接受能迴圈dispatch的任意callback。相同request ID重送只能回覆已存在，不能重獲資格。資格不序列化、不從checkpoint重建，也不暴露成獨立可重播CLI token；回覆遺失直接停止，不以重試換新資格。
-
-Chooser最終確認也先保存intent，並獨立限制單次確認。新Session不自動接續舊chooser；先filesystem reconcile，不足就停止。工具實際呼叫、RETURNED、UNKNOWN及保守預留計數分開報告，不能用預留計數冒稱真實click。
-
-### 6.3 不變條件
-
-- 有intent的同一相簿，所有後續Session／task都不得重新Save All。
-- intent後crash，即使計數零或目的地空，也不能推論未派送。
-- VERIFIED／SKIPPED_EXISTING不退回可下載；完整性失效轉BLOCKED。
-- 清owner、換task ID／目的地不解除屏障。
-- PARTIAL／UNKNOWN不略過，不派送下一本。
-- intent與GUI無共同原子交易；接受可能沒下載但阻塞，不宣稱exactly-once。
-
-### 6.4 單writer／接管
-
-Python controller在整段GUI作業持有固定根目錄`.session.lock`的非阻塞exclusive flock，涵蓋所有task。短CLI退出不代表GUI ownership結束。
-
-Owner記錄session、controller與GUI host的真實程序身分／boot identity。正常close停止新輸入、等待已發出呼叫結束、保存收尾才釋放鎖。程序結束／Mac重啟由OS釋放鎖；lock檔存在本身不表示busy。舊GUI host活著或不明就拒絕接管，回報`PREVIOUS_GUI_SESSION_NOT_RELEASED`；不TTL搶鎖、不自動kill、不unlink lock、不把stale owner當重送授權。
-
-[flock是合作式鎖](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/flock.2.html)，無法禁止未遵循流程的其他工具或人工；實機期間Owner維持唯一GUI operator，不宣稱OS隔離。
-
-第一實作里程碑以零GUI input preflight證明CUA載入、長生命週期controller、程序身分與bridge可用；失敗提報，不改Harness、不改用shell GUI引擎。
-
-## 7. 歷史匯入、去重與驗證
-
-### 7.1 歷史來源
-
-固定支援正式backup_state verified／verification、manual_archives manifest／verification，以及PR28 checkpoint＋公開候選身分索引＋私有manifest／decoder／身分證據。另需Owner排除65張的完整scope-bound identity，只有65不能辨識。
-
-匯入前保存來源digest；需備份時只在新私有目錄建副本，不改原檔／圖。PR28目的地以原測試包解析。初始狀態為HISTORICAL_REFERENCE，不能憑FILES_VERIFIED字串變新VERIFIED；身分映射及本機驗證成立才SKIPPED_EXISTING。來源缺少／身分不明保留deny barrier，不能當未備份。
-
-### 7.2 跨task去重
-
-album_key由固定group scope、日期起訖、預期張數及既有消歧欄位canonical identity計算，不只用title或照片內容hash。
-
-- 完全相同且有效archive：核對後SKIP。
-- 同scope同日期但張數改變：可能來源變動，先BLOCK，不能直接當新相簿。
-- 同日期／張數多候選：需title／detail date等獨立證據，仍不明就BLOCK。
-- 群組重名／改名／scope不明：BLOCK，不合併不同Unicode字元群組。
-- 不同檔案可有相同內容hash；逐檔mapping／multiset核對，不以digest唯一性刪檔或拒絕。
-
-歷史完成、exclusion與未解intent均跨task檢查；不得另建store規避。
-
-### 7.3 完整檔案驗證
-
-canonical no-follow路徑；拒絕traversal、symlink、未知子目錄／檔案。照片數必須等於expected，零byte／partial／temp／unrecognized均為0。取三次相同inventory、間隔3秒，核對檔名、大小、mtime、SHA；逐張ImageIO完整RGB解碼，decoder逐檔SHA必須與inventory一致，解碼後再取inventory。
-
-新下載提交VERIFIED前，以只讀descriptor flush照片及目的地，失敗不提交。live等待上限600秒，不足／不穩定就保留原圖停止。P0每次恢復完整核對task中已完成項，不先做驗證快取。
-
-檔數／hash不獨立證明LINE來源。in-flight滿額promotion另需intent前detail identity、空目錄證據、固定目的地及chooser目標綁定；缺少來源關聯，即使80張均解碼也AMBIGUOUS。公共manifest使用安全索引，不搬移或改名原圖。
-
-## 8. 100本恢復演算法
-
-1. 新Session先inspect／reconcile指定固定store；缺少／損壞停止，不自動init。
-2. 驗證schema、checksum、manifest、scope、事件／狀態及路徑。
-3. 檢查writer、歷史來源與跨task屏障。
-4. 優先核對in-flight #50，再核對前49本；任何其他宣稱完成項也需有效。
-5. 只輸出建議，不在唯讀階段提交。
-6. 當次前景交接成立後，controller持鎖重核generation及檔案；未變才提交恢復結果。
-7. 從第一個未完成ordinal開始，有前置BLOCKED則不進GUI。
-8. 以新screenshot／AX／OCR重找相簿，list與detail均MATCH才Save All。
-9. 每本完整驗證及checkpoint readback成功才返回列表、fresh scroll／grounding下一本。
-10. 全部有效VERIFIED／SKIPPED_EXISTING、無未解intent／失效驗證，才COMPLETED。
-
-| #50事實 | 結果 |
-|---|---|
-| 有效完整checkpoint從未有intent，目的地不存在／合法空 | NOT_STARTED；fresh定位後開始#50 |
-| 有intent，目錄空 | DISPATCH_UNKNOWN；停止，不重送 |
-| 有intent，32／80 | BLOCKED_PARTIAL；保留32，#50～100零派送 |
-| 有intent，80／80及來源綁定完整 | 持鎖提交VERIFIED，下一本#51 |
-| 80／80但來源不足／額外檔案 | BLOCKED_AMBIGUOUS |
-| VERIFIED後少檔／hash改變／壞檔 | 失效驗證、BLOCKED，不補下載 |
-| 壞checkpoint／manifest變動／多個未解in-flight | storage／identity conflict，停止 |
-
-PARTIAL後外部下載自然完成，可再唯讀核對及持鎖提交，不等於重送。P0沒有force、reset、重開intent、跳過阻塞開關。
-
-## 9. EXECUTION PLAN / ROLLBACK / ESCALATION
-
-風險為CRITICAL（重送與照片污染），但本次外部獨立審查依Owner記為OWNER_WAIVED，不生成假review。實作由`deepseek-v4.1-flash:1017 / ollama_cloud`接手，記錄真實Session／模型／provider；不可用就報阻塞，不暗中換模型。後續產品實作不預設派子代理：max_parallel_read_only_helpers=0、max_parallel_writers=0。本輪Owner另授權一名GPT-6 luna／high只讀文件梳理與提交訊息，不是產品writer或獨立Acceptance。
-
-| 階段 | Owner／工作 | 出口與失敗處理 |
+| Finding | 根因 | 最小修正／不做事項 |
 |---|---|---|
-| 0 文件交付 | 主Agent保存本plan／handoff與Owner決策；Luna只讀梳理並擬commit；主Agent驗證、commit／push／Draft PR | 文件一致、精確SHA可追溯；external review=OWNER_WAIVED，不等於功能PASS |
-| 1 核心實作 | DeepSeek先環境對帳、兩Swift來源核對、零GUI runtime preflight；再store／import／reconcile／wrapper／tests | TC離線項、100本與重放計數有真實證據；未解問題按本節立即提報 |
-| 2 整合交付 | DeepSeek完成最小diff、本地驗證、AC矩陣、完整報告、commit／push／Draft PR，供Owner讀取 | IMPLEMENTATION_DONE只代表實作範圍交付；不新增外部Chief前置，也不自填E2E PASS |
-| 3 真實驗收 | Owner啟動新的獨立DeepSeek Session，授權新相簿與前景，中間由Owner重啟Mac | 兩本、完整檔案、零歷史重送、保護邊界均有證據才結案；FAIL／BLOCKED保留否決 |
+| B01 | 正式coordinator／resume只對帳，沒有Agent A continuation | 新獨立Agent A入口；不放寬正式resume、不清active_batch |
+| B02 | A45／B78 allowlist、兩本quota、單本lifecycle是正式pilot範圍 | Owner凍結ordered manifest至少100本；不改quota、不套A45/B78當一般資格 |
+| B03 | CI缺環境與可攜fixtures；另有Python／Swift契約漂移 | 生成六組合成fixtures＋env／precondition＋有界consumer修復；不skip，不引入新診斷架構 |
+| B04 | 小commit位於177 commits／1900檔分支 | 新feature自最新master逐檔移植；CI維修另target legacy；不merge／整筆cherry-pick PR31 |
 
-Rollback僅停用新程式或回前一個相容程式版本；保留store／照片／intent，不刪資料、不恢復舊checkpoint、不讓舊程式猜新schema。
+CI新發現：Python `project_binding.py:18,391`已新增manual_archive.py來源與manual_archive_match事實；Swift `ProjectBackupBinding.swift:57,327`仍要求舊集合。這是源碼可見的不相容，尚未在本輪執行重現；不能說只補env即可全綠。
 
-### 9.1 無法解決問題的強制提報
+## 4. 完整Overengineering Audit
 
-遇到無法在目前範圍／工具內解決、涉及架構／AC／安全邊界、證據矛盾、GUI能力不足或未知Save All結果，立即停止依賴該前提的動作，先保全證據，再寫`harness-development/agent-resume-20261022/issues/ISSUE-<UTC>-<slug>.md`，交Owner轉高階模型分析；不得只回聊天摘要。
+分類針對本次100本恢復的採用範圍；DEFER不等於刪歷史，KEEP不等於移入feature。REMOVE_CANDIDATE需另證明caller與移除安全性，本Plan不授權刪除它。
 
-同根因至多三次有證據嘗試；連續兩次無新資訊，或已遇material blocker，提前停止。重開Session／換模型不重置歷史。提報單含task／plan SHA／source commit、環境、受影響AC／TC、最小重現、expected／actual、第一拒絕與原始錯誤、GUI真實派送／UNKNOWN、狀態前後、每次嘗試及新資訊、facts／inferences／unknowns、證據定位及SHA、副作用、可安全繼續項、已停止項、高階模型需裁決的精確問題。私有raw留本機，公開版本遮蔽。
+縮寫：C=`rev28/Sources/Rev28Core/`，X=`rev28/Sources/rev28ctl/`，T=`rev28/Tests/Rev28CoreTests/`，B=`src/line_backup_batch/`，A=`src/line_backup_acceptance/`。下表31列與指定commit的實際changed-file list逐一對應。
 
-高階模型指定GPT-6.1-SOL／xhigh或Owner明確指定等級；未實際送達不能寫已提交／已分析／已核准。Owner轉交前記`HIGH_MODEL_HANDOFF=PENDING_OWNER_FORWARD`；取得回覆須記真實來源及精確結論。不得為等待分析反覆同樣測試或越權改AC。
+| 模組／檔案 | 實際用途 | 過度工程化證據／範圍判斷 | 分類 | 最小調整 | 風險 |
+|---|---|---|---|---|---|
+| `harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_classifier.mjs` | boundary排序修復 | 歷史classifier，不提供恢復 | DEFER | 留原支線 | 低 |
+| `rev28/ARCHITECTURE.md` | 診斷架構文件 | 多數內容無關本PRD | DEFER | 不移植 | 低 |
+| `rev28/CAPABILITY-MATRIX.md` | 診斷能力限制 | 非task continuation | DEFER | 保留歷史 | 低 |
+| `C/Composition/LiveComposition.swift` | 拒診斷進正式路徑 | 必要隔離，非冗餘 | KEEP | 原處維持 | 刪除破壞隔離 |
+| `C/Composition/PassiveNativeDiagnostic.swift` | 三版本packet／重建 | 510行獨立診斷系統 | DEFER | 不作Agent依賴 | packet相容性 |
+| `C/Composition/ProductionObservationSource.swift` | descriptor及capture | 診斷擴展，不是checkpoint | DEFER | 原處維持 | native耦合 |
+| `C/Observation/NativeObservationSession.swift` | v3 binding | 擴展觀察契約，無下載接續 | DEFER | 不移入 | 高耦合 |
+| `C/Observation/PassiveContextObservation.swift` | AX／CG／OCR collector | 631行另一觀察流程 | DEFER | 用PR28既有方式 | 避免重建引擎 |
+| `C/Observation/VisualDiagnosticContract.swift` | capture／clock配對 | 334行獨立診斷契約 | DEFER | 不作前置 | 診斷不能授權 |
+| `C/Perception/AlbumVisualWitness.swift` | 完整卡片safe-area | 查無production呼叫；已有metadata成功流程 | REMOVE_CANDIDATE | feature不納入；刪除另審 | 外部caller未知 |
+| `C/Sensor/ExplicitLineCaptureSelection.swift` | 特殊capture集合 | 新診斷架構 | DEFER | 不移入 | 與恢復無關 |
+| `C/Sensor/RunEpochAuthority.swift` | descriptor epoch | 診斷目錄生命週期 | DEFER | 不當album進度 | epoch不是intent |
+| `X/PassiveCaptureDiagnostic.swift` | passive CLI | 額外診斷入口 | DEFER | 不移入 | 低 |
+| `X/PilotNativeAuthority.swift` | Swift→Python authorizer | 重複grant／runtime檢查、ONE56與特定Python路徑 | DEFER | Agent不調用 | 正式guard不可刪 |
+| `X/VisualDiagnostic.swift` | CUA／SCK／OCR診斷 | 增加跨capture契約 | DEFER | 不移入 | 中 |
+| `X/main.swift` | 多診斷CLI接線 | 旁支依賴閉包大 | DEFER | 不整包移植 | 隱含依賴 |
+| `T/AlbumVisualWitnessTests.swift` | 幾何單測 | 功能不在本PRD | DEFER | 不計恢復AC | 非E2E |
+| `T/ExplicitLineCaptureSelectionTests.swift` | capture負例 | 同上 | DEFER | 留原支線 | 低 |
+| `T/LiveCompositionTests.swift` | 診斷隔離負例 | 必要安全測試 | KEEP | 原處維持 | 不可刪隔離 |
+| `T/NativeObservationSessionTests.swift` | v3／mapping負例 | 不對應100本恢復 | DEFER | 不當核心Gate | 非恢復證據 |
+| `T/PassiveContextObservationTests.swift` | schema roundtrip | 不驗真capture／恢復 | DEFER | 留原支線 | 有限覆蓋 |
+| `T/PassiveNativeDiagnosticTests.swift` | packet／filesystem負例 | 479行服務旁支功能 | DEFER | 不列恢復成果 | 保留歷史 |
+| `scripts/line_backup_cua_adapter.mjs` | 正式session／chooser／scroll | PNG decoder、兩套viewport比較、V2／V3／hooks混合 | SIMPLIFY | 本輪不原地重構；新wrapper只包副作用 | 原地精簡高風險 |
+| `A/manual_archive.py` | 歷史109防重複 | writer、硬編碼allowlist及重複JSON／原子寫入 | REUSE | 只讀資料與證據；不呼叫writer | 漏歷史會重送 |
+| `A/project_binding.py` | inspection／歷史判斷 | Python／Swift契約重複且已漂移 | SIMPLIFY | Agent無新Swift consumer；CI獨立修 | 不可寬鬆解析 |
+| `B/cli.py` | grant／ONE56 | 約500新增行硬綁PR10／actor／paths | DEFER | 不納入Agent | 正式guard保留 |
+| `B/observations.py` | grounding／lineage | native鏈及56張特例 | DEFER | 不泛化到100本 | 特例非授權 |
+| `B/service.py` | A／C1／B交易 | 與ledger重複workflow；resume仍不續跑 | DEFER | 原樣維持 | 不擴正式AUTO |
+| `B/store.py` | CAS／GUI ledger | 雙檔phase／slots／quota，非Agent需求 | KEEP | 正式保留；Agent不複製 | 原子與防重送必要 |
+| `tests/test_batch_authority.py` | 正式authority負例 | 不驗100本新Session | KEEP | 不當核心AC | 數量非完成 |
+| `tests/test_cua_adapter.mjs` | adapter／scroll合成 | 無100本持久化；該檔未見requireV3測例 | KEEP | 另測新wrapper | 22/22非全路徑 |
 
-## 10. TEST MATRIX
+### 4.1 直接依賴審查
 
-離線使用小型生成照片的100本fixture：前49完成，#50 expected80，其餘小型不同身分；包含合法相同照片bytes。測試只寫fixture，不碰live資料。
+| 模組／檔案 | 實際用途 | 過度工程化證據／必要性 | 分類 | 最小調整 | 風險 |
+|---|---|---|---|---|---|
+| PR28 private checkpoint | 五本摘要 | 缺pre-intent與durability | KEEP | 只讀reference | 不可直接升VERIFIED |
+| B/coordinator.py | 正式協調 | active直接返回 | DEFER | 不改 | 不放寬AUTO |
+| A/transaction.py | UNKNOWN屏障 | 真正必要不變條件 | KEEP | 參考語義 | 不可移除 |
+| A/common.py | 原子JSON | dir fsync失敗可降級 | REUSE | 參考算法；新store嚴格失敗 | 不直接沿用降級 |
+| B/content.py | 內容驗證 | 綁正式package／backups | REUSE | 重用順序，不整包import | 不可只數檔案 |
+| B/image_decode.swift | 完整RGB解碼 | 已實測成熟工具 | REUSE | 原bytes納入 | stub非解碼PASS |
+| modern_ocr.swift | Vision OCR | 已實測但未tracked | REUSE | 原bytes納入 | 缺來源須停 |
+| B/state_v3.schema.json | 正式schema | 與新store無關 | DEFER | 不增加正式版本 | 不污染state |
+| C/Composition/ProjectBackupBinding.swift | inspection consumer | 與Python集合漂移 | SIMPLIFY | CI範圍有界修復 | 保持canDispatch=false |
+| T/ProjectBackupBindingTests.swift | strict consumer負例 | fixtures未供應 | KEEP | 生成合成資料，不skip | 防CI假綠 |
+| plan.md／handoff.md v1.1 | 恢復方案 | 多份持久狀態、固定重複核驗、tmp一律阻塞 | SIMPLIFY | 本版單真相／推導結果／明確tmp規則 | 待獨立審查 |
 
-| TC | 必要測試與證據 |
+### 4.2 方案A／B與必要複雜度
+
+| 評估 | A：既有工具＋薄持久化控制 | B：正式AUTO擴張／新架構 |
+|---|---|---|
+| 必要功能 | ordered scope、intent、verify、single writer | 仍需相同核心 |
+| 範圍 | 兩個控制／接線檔、原樣工具與聚焦測試 | Python／Swift／CUA／grant／ledger |
+| 跨Session | 單一控制真相＋不可撤intent | 多份契約一致性負擔 |
+| 測試／維護 | 對應TC01～20 | 額外版本、mapping、capture組合 |
+| 回歸 | 正式AUTO隔離 | 觸及凍結邊界 |
+
+選A。反向驗證答案為「可以用最少新控制及既有工具完成」，因此明確不採B。沒有實際失敗案例支持新增capture／service／ledger架構。
+
+必要新增控制不可再刪：原checkpoint在click後摘要前crash無法區分是否派送；跨Session無單writer會雙派送；跨task無共同屏障可換ID重下載。保留原子寫入、sync、readback、generation、schema及intent，不因行數精簡刪安全性。
+
+精簡決策：單checkpoint內保存tasks／歷史reference／邏輯append-only事件；task phase、next_index、VERIFYING及PARTIAL結果由事實推導，沒有第二份可寫狀態機。獨立reconcile供預覽，resume持鎖呼叫同一核對函式一次，不要求先預覽再必重做兩次全量解碼。事件不作通用event-sourcing重播。
+
+## 5. AC與最小檔案契約
+
+| AC | 必須成立 |
 |---|---|
-| 01–02 | #50 intent前結束程序；新程序可開始#50；#1～49增量0 |
-| 03 | durable intent後、click前kill；UNKNOWN、再次wrapper零click |
-| 04 | click後回覆／chooser observation遺失，不重送 |
-| 05 | 32／80保留全部hash；#50～100增量0 |
-| 06 | 完整80／80＋來源綁定，未VERIFIED即kill；重核後僅#51 |
-| 07 | VERIFIED後刪／改／截斷檔，BLOCK、不補下載 |
-| 08 | temp write、file sync、replace、dir sync、readback前後失敗／kill；完整revision或BLOCK |
-| 09 | HTTP413、timeout、回覆遺失、新程序、重複request，不重放 |
-| 10 | fake app換視窗／session／binding，舊座標拒絕；實機另驗fresh定位 |
-| 11 | 同task及不同task雙程序只一owner；helper死而GUI host活也拒接管 |
-| 12 | 同日期不同張數、同名／改名、同日期張數碰撞不猜測／誤SKIP |
-| 13 | 非空目的地／未知檔案／archive，SKIP或BLOCK，不能當新目的地 |
-| 14 | manifest／scope／session／generation變動，拒stale mutation |
-| 15 | ENOSPC、sync failure、decoder timeout、OCR／chooser缺證據；first failure保存，不重送 |
-| 16 | fixtures涵蓋239／109／329與65 exclusion，跨task重複零派送 |
-| 17 | #50恢復後#51～100完成；100／100正確、#1～50新增0 |
-| 18 | 壞JSON／duplicate keys／未知版本／checksum／symlink／traversal／孤立tmp，零GUI零覆寫 |
-| 19 | 重複只讀inspect／reconcile，checkpoint／照片bytes與可觀測結果不變 |
-| 20 | 禁止範圍、舊checkpoint、歷史照片前後hash不變 |
+| AC01 | 至少100本固定ordered manifest跨新程序／Session恢復，不靠chat |
+| AC02 | 前49有效且#50無intent：前49零重送，#50 fresh開始 |
+| AC03 | #50滿額且來源成立、未提交VERIFIED：重驗補提交，下一次僅#51；#1～50增量0 |
+| AC04 | #50 32/80或仍UNKNOWN：保留原bytes，全task停止，#50～100零自動派送 |
+| AC05 | intent、重複request、遺失回覆、crash／reboot不解除屏障；單writer跨task成立 |
+| AC06 | 只操作Owner manifest且當次前景授權有效；新Session不用舊座標／PID／AX引用 |
+| AC07 | 239／109／329與65排除不重下載／覆寫；正式State／Grant／Ledger／Harness不變 |
+| AC08 | 兩本新eligible相簿：第一本完整→Owner Mac重啟→新獨立Session→跳第一本→第二本完整 |
+| AC09 | CI fixtures可攜、現producer契約受測、遠端必要checks綠；各HEAD分開 |
+| AC10 | 乾淨PR、逐檔最小diff、完整報告／hash、兩道External Review及獨立E2E可追溯 |
 
-```text
-python3 -m unittest discover -s tests -p 'test_agent_resume.py'
-node --test tests/test_agent_resume_cua.mjs
-```
+### 5.1 本輪文件寫入範圍
 
-macOS須實際編譯原樣decoder，驗正常影像、截斷影像、解碼後變動及錯誤目的地。其他OS的stub只證明控制邏輯，不填ImageIO PASS。fault injection僅test-only依賴注入，production CLI無略過驗證／stub dispatch選項。kill -9不是實體斷電PASS。
+僅根目錄 `plan.md`、`handoff.md`；在既有乾淨文件worktree更新並同步原repo已核對同bytes的副本。原branch／HEAD／index及其他dirty檔保留。不另外建立相同內容的Plan.md大小寫副本。
 
-### 10.1 最小真實Mac E2E
+### 5.2 獲准後Feature A允許檔案
 
-Owner在離線實作交付後另啟獨立`deepseek-v4.1-flash:1017 / ollama_cloud`，不得由實作者自己宣稱獨立驗收。
-
-1. 登記F／G兩本未備份eligible新相簿、完整歷史及65 exclusion。
-2. 保存正式資料、舊checkpoint與歷史照片baseline hashes。
-3. 第一Session完成F：一次Save All、一次chooser確認、全檔SHA／ImageIO、durable checkpoint讀回。
-4. 正常close controller並確認無pending input；Owner當次確認後自行重開Mac，Agent不自行reboot。
-5. 第二全新Session只取得task ID、核准來源／資料位置／固定AC，不輸入實作者完整推理歷史；先無GUI reconcile。
-6. F核對有效、Save All增量0；新前景交接後fresh定位G並完整完成一次下載／驗證。
-7. 保存兩個Session／boot identities、F＋G完成、所有保護資料不變與歷史零派送。
-
-不刻意中斷真實partial download；不為補測重跑舊相簿。真實中斷下載非P0必要，PARTIAL由離線注入覆蓋，報告分開標示。
-
-## 11. RISK REGISTER / PROTECTION
-
-| 風險 | 控制 |
+| 路徑 | 唯一責任 |
 |---|---|
-| Save All回覆遺失重送 | durable intent、單次wrapper、重複request無新資格 |
-| 部分下載 | 全task停、原圖保留、只讀核對 |
-| 壞檔／假完成 | hash、完整ImageIO、穩定取樣、post-decode inventory |
-| 雙Session | 全域持鎖，舊GUI host活／不明不接管 |
-| 前景／定位過期 | 新Session交接、fresh list／detail／menu，前景變更停輸入 |
-| 關機／磁碟滿 | 強持久化順序，uncertain commit無GUI，完整revision恢復 |
-| dirty tree／廣泛誤合併 | 外部worktree、固定base、逐檔stage、不合併PR28歷史 |
-| 隱私 | 私有目錄0700／檔0600，公開遮蔽索引，不上傳原照片／OCR／AX／個人絕對路徑 |
-| 正式state污染 | 無正式package import、禁止寫入集合、diff與前後hash |
-| 身分碰撞／來源變動 | scope-bound identity，不能只靠title／count／內容hash |
-| store遺失／回復舊版 | 不自動init／downgrade；未解前禁止GUI |
-| runtime不足 | 零GUI preflight，提報高階模型，不改Harness補洞 |
-| 未解問題被掩蓋 | 強制問題提報、保留嘗試／未知與六狀態，不以文件完成宣稱產品完成 |
+| scripts/line_backup_agent_resume.py | 標準庫store／嚴格JSON／鎖／read-only history／verify／next-safe／CLI／stdio session |
+| scripts/line_backup_agent_resume_cua.mjs | 既有app單次副作用邊界與stdio接線；不做新locator／OCR／capture |
+| scripts/agent_resume/image_decode.swift | 指定SHA原樣工具 |
+| scripts/agent_resume/modern_ocr.swift | 指定SHA原樣工具 |
+| tests/test_agent_resume.py | 核心100本／storage／identity／process故障測試 |
+| tests/test_agent_resume_cua.mjs | 真wrapper＋fake app，實際呼叫／失聯測試 |
+| .github/workflows/agent-resume.yml | 新功能乾淨checkout的Python／Node／Mac ImageIO checks |
+| plan.md、handoff.md | 僅必要澄清提案；已審版不回填執行狀態，不改AC／授權／Gate |
+| harness-development/agent-resume-20261022/E2E測試報告.md | 單一完整報告，分離offline／ImageIO／GUI／independent判定 |
+| 同task progress.md／issues/ | 既有規範要求的短進度及有真實問題才新增的提報；不複製報告 |
+| .gitignore | 僅必要時追加該task private忽略規則 |
 
-## 12. OPEN OWNER DECISIONS
+不import正式交易package；不增加framework／另一decoder／另一OCR。原樣工具可因master缺少而納入新路徑，需逐bytes驗SHA，不維護兩套不同實作。
 
-目前沒有阻擋離線實作的未決產品選擇。資料根目錄、兩本＋Mac重啟、PARTIAL停止、DeepSeek實作、本次外部審查免除與高階模型提報皆已指定，不重問。
+版本綁定：核准後保留已審Plan／Handoff的原bytes與digest；READY、執行進度及結果寫入task報告／真實審查收據，不為回填狀態直接改已審文件。必要澄清先建立新revision並列出影響分析；即使不改契約，也須由External Chief真實確認新SHA的適用性，才沿用授權。scope／AC／授權／Gate／架構有實質變更則完整重審；不能把舊批准自動轉移。此列允許提出文件修訂，不授權改寫或降低已審契約。
 
-真實執行前仍需：F／G身分與下載授權、65排除身分映射、當次前景交接與Owner重啟時點。可從本機來源取得的先查，不憑摘要猜；缺少只阻擋相依的live操作，不拿來阻塞無關離線實作。
+### 5.3 獲准後CI B獨立允許檔案
 
-## 13. READY-TO-IMPLEMENT PROMPT
+CI分支base固定PR31 HEAD，target原legacy分支，僅以下範圍：`.github/workflows/rev28-macos27.yml`、`tests/build_inspection_fixtures.py`、`tests/fixtures/project_inspection/`（純合成seed）、`rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift`、`rev28/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift`、`harness-development/agent-resume-ci-20261022/E2E測試報告.md`與必要progress／issues。不改Python producer來隱藏現有輸出，不改native capture／Harness／正式執行State。
 
-> 你是本工作包Implementor，指定deepseek-v4.1-flash:1017／ollama_cloud。先完整讀plan.md與handoff.md，記錄真實模型／Session；不可用就提報，不暗換。Owner已免本次外部審查，可直接進入有界離線實作；不是review PASS，也不是GUI或新下載授權。
->
-> 以文件交付commit的乾淨外部worktree開發，只改第4節允許路徑，不動原dirty樹、Harness、正式AUTO程式／State／Grant／Ledger、舊checkpoint與照片。依指定SHA原樣納入decoder與本機未tracked OCR；缺少／hash不符提報。
->
-> 先證明零GUI runtime／lock preflight，再實作單一原子checkpoint、固定manifest、append-only邏輯events、generation／checksum、只讀import／inspect／reconcile及受控session。Save All intent未完整durable commit／readback不click；loaded intent、重複request、timeout／回覆遺失不重送。保持PR28成功的fresh metadata／detail／menu OCR／Chooser流程，不建新引擎。
->
-> 完成TC-01～20對應、100本fixture、32／80保留、80／80補提交僅#51續跑、雙Session、儲存故障與實際callback計數。用真實ImageIO測試時記錄source／binary hashes，stub不冒充實機。未獲Owner當次授權與前景交接不操作LINE；獨立實機由Owner另啟新Session。
->
-> 任何無法解決問題立即保全證據、停止相依操作，按第9.1節寫問題提報單交Owner轉高階模型。最多三次有證據嘗試，連續兩次無新資訊提前停，不改AC或略過guard。回報精確問題、重現、原始錯誤、已做嘗試、GUI派送／UNKNOWN、證據SHA與需要高階模型裁決的一件事。
->
-> 最後交付最小diff／commit、測試命令結果、AC逐項狀態、完整報告、未解問題及next_action；逐檔commit／push／Draft PR，commit body含意圖／做了什麼／驗證與結果／下一步的建議。不merge、不amend／force-push，不把IMPLEMENTATION_DONE當整體E2E PASS。
+Feature與CI兩個工作包序列交付，不需平行writer。不得把CI legacy依賴閉包移入feature。
 
-最短使用Prompt：
+## 6. Checkpoint、身分、歷史與檔案核對
 
-> 接續LINE備份任務`<task_id>`。先從固定私有store唯讀reconcile；PARTIAL／UNKNOWN就停。無阻塞時取得當次前景交接，只處理剩餘NOT_STARTED，不重送既有intent。
+固定root：`~/Library/Application Support/LineBackup/agent-resume/`。只有checkpoint.json及固定.session.lock是控制檔；tasks/<task_id>/下放downloads、evidence、verification。private目錄0700、檔0600，runtime store與原圖不進Git。
 
-## 14. DELIVERY / ACCEPTANCE GATES
-
-提供原PRD定位與digest、plan SHA、精確implementation commit、最小source diff、兩Swift／binary hashes、AC／TC矩陣、完整E2E報告。私有index記相對／絕對定位及SHA；公開index只用安全代碼。不曾讀取的私有內容標operator-reported，不冒稱獨立核驗。
-
-| Gate | 狀態／PASS條件 |
+| 持久事實 | 最低資料 |
 |---|---|
-| G0外部Plan／Handoff review | OWNER_WAIVED，不能寫PASS／APPROVE；文件版本／SHA仍須一致 |
-| G1 runtime／離線 | 實際preflight、100本、fault injection、鎖、驗證及重放測試有可核對結果 |
-| G2實作交付 | 精確HEAD、最小diff、AC矩陣、報告、必要測試與未解問題；本次外部Code Review不作新增前置，也不聲稱已完成 |
-| G3獨立live E2E | Owner另啟DeepSeek新Session；兩本、Mac重啟、新Session、各一次Save All、全檔驗證、無歷史重送 |
-| G4保護與結案 | 禁止範圍／歷史照片不變，G1～G3及全部AC成立，問題已解或未達標明確保留 |
+| Store | schema_version=1、generation、payload_sha256、last_event_seq、session ownership記錄 |
+| Task | task_id、建立時間、固定scope、Owner authorization reference、ordered albums、排除項、manifest_sha256 |
+| Album | ordinal、scope-bound album_key、日期起訖／預期數／消歧資料、固定destination、save_all_intent或null、chooser_confirm_intent或null、結果事實與verification reference |
+| History | 原來源種類／基準root／digest、身份、目的地、驗證參照或deny原因；只讀正式／manual／PR28 |
+| Event | seq、UTC、session／task／album、動作、前後推導結果、證據reference；只追加 |
 
-Owner前景／重啟確認屬OBSERVED，不能代替檔案／程式Gate PASS。版本變更須影響分析與必要重驗。開發及E2E證據保存在task repository，非全域.codex；runtime原圖及持久化控制資料使用固定私有store，repo報告引用其可核對識別。
+canonical JSON為UTF-8、排序keys、固定separators，拒duplicate keys／NaN／未知schema。digest排除自身欄位，不把checksum稱簽章或防惡意rollback保證。沒有外部anchor時不能宣稱偵測人為還原整份store；P0不提供restore／rollback／force入口。
 
-指定handoff prompt為`03_handoff_prompt.md`（v4.8 Optional Handoff Reviewer）。本次沒有此新task的controller stage packet／emitted CONTRACT／RESULT命令，故只交付advisory Markdown handoff，不冒稱deterministic compiler、format3機器契約驗證或controller admission PASS，也不借用其他task schema命令造收據。這不新增Harness依賴。
+manifest建立後scope／identity／order／destination不可原地改；新需求建新task，仍查同store的全部歷史及intent。album_key是scope與canonical身份摘要，不能只用title／ordinal／照片hash。日期相同張數改變、同日期張數多候選、Unicode群組歧義均BLOCK。相同照片bytes可合法重複，以逐檔mapping／multiset核對，不要求hash全唯一、不刪重圖。
 
-### 14.1 固定狀態欄位
+歷史匯入只建立reference及deny barrier。完整性／來源成立才能SKIPPED_EXISTING；資料缺失不推定未下載。PR28目的地相對原測試包解析。所有manifest目標需對照239正式、109 manual、329五本、65排除及新tasks；換task／目錄／owner不解除屏障。
+
+新下載獨立空目錄，禁止symlink／traversal／非一般檔／未知額外檔／零byte／partial／temp。新下載穩定性沿用三次相同inventory、3秒間隔、上限600秒；逐檔SHA與原樣ImageIO完整RGB結果對應，再post-decode inventory。已完成album在新resume中重hash／decode；穩定舊完成項不必強制逐本再等兩次3秒，使用前後相同inventory及解碼hash確認；in-flight仍做完整穩定取樣。不新增驗證快取。
+
+完整張數／hash不單獨證明LINE來源。#50 promotion需intent前fresh detail／menu身份、空目的地、固定destination及chooser目標證據。缺證據，即使80張皆decode仍BLOCK。新照片提交前flush照片及目的地，具體可用primitive須在Mac驗證；失敗不能提交VERIFIED。
+
+## 7. 原子提交與恢復決策
+
+每次控制寫入：持全域鎖重讀與驗generation／schema／前提 → 同目錄唯一O_EXCL／no-follow temp → 完整寫入、flush、fsync及目標Mac F_FULLFSYNC → atomic replace → directory durability → 重開解析與generation／digest readback。全部成功才回committed。失敗／回覆不明不產生click資格，不靜默降級。
+
+Apple說明一般fsync未必flush裝置buffer；F_FULLFSYNC適合更嚴格順序，但不保證任意硬體故障：[fsync](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/fsync.2.html)。M0/M1記錄實際OS／filesystem／primitive回傳；不因文件提及即稱durability PASS。
+
+temp規則：temp永不當authority、不自動promotion、不覆蓋canonical。canonical有效且可證明所有GUI均在完整提交後才呼叫時，保留孤立temp並依canonical revision決策；canonical缺少／損壞／無法判斷則BLOCK，不從舊backup初始化。temp存在本身不推翻有效intent，也不當第二次派送許可。
+
+對外NOT_STARTED／VERIFIED／SKIPPED_EXISTING／BLOCKED_PARTIAL／BLOCKED_AMBIGUOUS由持久事實和本輪核對推導，不另持久化獨立task phase／next_index／VERIFYING狀態。事件仍記轉移以滿足PRD診斷需求。
+
+| #50事實 | 決策 |
+|---|---|
+| 有效完整store無intent，合法空目的地 | fresh定位#50可開始；前49零派送 |
+| 有intent、0檔／工具回覆遺失 | UNKNOWN，全task停，不重送 |
+| 有intent、32/80 | BLOCKED_PARTIAL，保留32及證據；#50～100零派送 |
+| 有intent、80/80＋來源／chooser關聯及完整驗證 | 持鎖提交VERIFIED；下一次只#51 |
+| 滿額但來源／目標關聯不足 | BLOCKED_AMBIGUOUS |
+| VERIFIED後缺檔／hash變／decode失敗 | BLOCK，無補下載 |
+| manifest／history衝突、壞canonical、多個未解in-flight | 停止，不推定安全 |
+
+PARTIAL後LINE自然完成可再次唯讀reconcile並重驗promotion；這不是重送。全task有未解blocker時，不自動開始任何後續item。
+
+## 8. 固定CLI與wrapper／controller生命週期
+
+### 8.1 最小公開CLI
+
+`init`（明確首次建立，resume不自動init）、`import-history`（只寫新store reference）、`create-task --manifest FILE`、`inspect --task ID`、`reconcile --task ID`、`session --task ID`。root固定且與task綁定，不自動搜尋／另建store規避歷史。inspect／reconcile不建lock檔、不寫checkpoint／照片、不需LINE／網路／模型；讀取期間generation變化回報不穩定，不拿舊結果授權。
+
+輸出至少含generation／manifest digest、完成／未知／未開始本數、照片數、first blocker、next safe action、gui_dispatches=0（僅唯讀命令）。退出碼0成功、2輸入錯誤、3安全阻塞、4writer busy、5storage／runtime不足。
+
+### 8.2 最小接線契約，不建新transport framework
+
+既有hosted CUA Node wrapper以標準 `node:child_process.spawn` 啟動本地Python `session`，用單一stdio JSON-lines request／response；不經shell、不開socket／HTTP／daemon、不修改CUA或Harness。此能力目前UNVERIFIED；M0若host不允許spawn／穩定stdio／可靠host身分，立即成單停止，不能改用shell GUI或自行研發另一bridge。
+
+wrapper建構接收既有app handle與已批准操作所需的新鮮grounding資料；不接收可任意loop派送的callback。保留PR28辨識與chooser順序，不import原正式adapter，不編造新的app API。M0只能用fake app核對接線，不取得LINE app／畫面。
+
+每個request明確含version=1、request_id、session_id、task_id、expected_generation、operation及限定data；controller驗shape／scope／generation。操作只限session內的reconcile、prepare_save_all、record_save_all_result、prepare_chooser_confirm、record_chooser_result、verify_album、close；不提供獨立prepare／重播token CLI。重複request只返回已存在事實／拒絕，不能再次返回可click的資格。
+
+controller在session開始持固定root非阻塞exclusive flock，涵蓋GUI與所有task。hello記controller PID／start、GUI host PID／start、boot identity；不接受虛構PID。只有stdio原連線與同wrapper原始promise內的首次成功ack可進click；ack含task／album／action_id／generation／checkpoint digest，純檔案或JSON不能重建記憶體資格。
+
+### 8.3 單次副作用與失聯
+
+1. fresh list／detail／menu與Owner清單／當次前景一致，歷史與空目的地通過。
+2. wrapper向controller申請intent；controller持鎖durable commit／readback後首次ack。
+3. wrapper驗binding、ack未重用、controller仍連線且非closed；在記憶體消耗一次資格，自己呼叫既有app.click一次。
+4. 保存RETURNED／exception／timeout事實；任何不確定不retry。不得把RETURNED當下載完整。
+5. chooser最終確認同樣先intent再一次app呼叫；未完成chooser的新Session只reconcile，不接續舊操作。
+6. wrapper內所有LINE輸入入口均序列化，檢查session alive／未停止；controller EOF／exit／protocol錯誤使wrapper永久closed，不再開始後續GUI。已發出input不能撤回，記UNKNOWN。
+
+controller死後OS釋放flock不代表舊GUI已結束。接手先查boot＋host process instance；舊host仍活／身分未知／pending input無法排除就拒接管，不TTL、不kill、不unlink lock。Owner先正常關閉舊作業並提供新的前景交接。新boot可排除舊boot程序，仍不能解除album intent。
+
+正常close：停止新輸入→等待已發出呼叫結束→保存事實→close ack→釋放鎖；失聯保留未解owner／intent。flock僅合作式鎖，不聲稱阻止人工或其他不合作工具：[flock](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/flock.2.html)。
+
+### 8.4 resume演算法
+
+新Session讀固定store／scope／history → 持鎖核對最近in-flight與所有完成項（同一verify函式一次） → 有blocker就輸出並停止 → 完整#50在鎖內補提交 → 推導第一個NOT_STARTED → 取得當次Owner前景／目標授權 → fresh定位／核對 → 單次Save All／chooser → 完整verify／checkpoint readback → 返回列表並fresh定位下一本。獨立preview不作許可、不要求另跑一次preview；若使用者先做preview，resume仍以當下事實重新核對。
+
+## 9. B03 CI的有界修正
+
+[run39743196793](https://github.com/s9008129/Line_backup/actions/runs/39743196793)的job119705214521：build成功、328 executed／16 failed；16項同在ProjectBackupBindingTests.swift:15缺env。adversarial／replay與headed後續未跑。實際checkout為PR merge commit `3394dfa1ddb83d73b9cde189b4363e89c2435299`，不是直接branch HEAD。這是已讀遠端log，非本輪重跑。
+
+1. build_inspection_fixtures.py由repo位置及明確--output定位，在RUNNER_TEMP生成eligible／verified／busy／unresolved／ambiguous／destination。seed為可公開合成資料，不攜本機照片、群組、人名、歷史證據或絕對個人路徑。
+2. 重用既有六case的構造語義，不直接執行私人check_driver／舊Harness腳本；source closure來自當前checkout。verified case所需join／verification要合成一致並重新綁digest，不能弱化校驗。
+3. 以當前Python producer實際產生stdout；不是手工PASS或舊report。生成後檢查六組config.json／state.json／stdout.json及引用資料，設定絕對LINE_BACKUP_INSPECTION_FIXTURES到GITHUB_ENV；缺少即precondition FAIL。
+4. 必要consumer修復限同步來源清單、嚴格接受新增manual_archive_match=false；true明確拒絕unsupported，不信任boolean直接SKIP，不擴展manual權限或放寬canDispatch=false。補false正常、true拒絕、缺／錯型欄位、來源缺少／改動負例。若需要更大wire／state改版，保全第一失敗提報，不自行擴scope。
+5. 維持既有非Vision deterministic suite、adversarial、replay及原required checks；不skip／continue-on-error／調低requiredness。記錄實際測試數，不能硬填333。上傳sanitized fixture index／測試log／toolchain。
+6. 遠端新run精確綁CI修復HEAD及merge SHA。feature自己的乾淨CI獨立驗Python／Node／Mac ImageIO；兩個HEAD的綠燈不互相轉移。
+
+## 10. 測試矩陣與證據
+
+fixture至少100個不同album identity，前49完整、#50 expected80、其餘小型；允許合法相同照片bytes。fault injection僅隔離fixture／test seam，不開production略過驗證或stub dispatch旗標。每個重啟用新程序，不只重建object；外部fake app記實際呼叫，不能以intent預留計數替代click。
+
+| TC | 注入／案例 | 斷言／AC |
+|---|---|---|
+| 01–02 | #50 intent前退出／開相簿後退出 | 前49增量0；#50 fresh；AC01/02 |
+| 03 | durable intent後click前kill | UNKNOWN、重啟零click；AC05 |
+| 04 | Save All後／chooser前失聯 | 不重送、保留證據；AC04/05 |
+| 05 | 32/80中斷 | 32 bytes/hash不變，#50～100零派送；AC04 |
+| 06 | 80/80後VERIFIED前kill | 真核對補提交、下一次只#51；AC03 |
+| 07 | VERIFIED後少檔／改檔／截斷 | BLOCK、不補下載；AC07 |
+| 08 | temp／file sync／replace／dir sync／readback各前後故障 | 完整revision或BLOCK，intent不消失；AC05 |
+| 09 | 413／timeout／重複request／遺失ack | 實際click至多1；AC05 |
+| 10 | 舊PID／AX／window／尺寸／Session | stale拒絕；fresh不符零click；AC06 |
+| 11 | 同task／跨task雙程序，controller死、舊host活、pending input | 只有一writer；wrapper停；不接管未知；AC05 |
+| 12 | 同名／同日期異張數／重命名／碰撞 | 不猜SKIP；AC06 |
+| 13 | 非空目錄／未知照片／額外檔案 | SKIP或BLOCK，不覆寫；AC07 |
+| 14 | scope／manifest／owner／generation改動 | stale拒絕；AC06 |
+| 15 | ENOSPC／sync failure／decoder timeout／chooser缺證據 | 第一失敗保留、不重送；AC04/05 |
+| 16 | 歷史239／109／329／65與跨新task | 零重下載、排除不操作；AC07 |
+| 17 | #50恢復後#51～100完成 | 100/100，前50增量0；AC01/03 |
+| 18 | 壞JSON／duplicate keys／未知schema／checksum／symlink／traversal／orphan temp | 零GUI／零覆寫，按§7區分canonical有效與損壞；AC05/07 |
+| 19 | 重複inspect／reconcile、讀期間generation變化 | 零mutation；變化報不穩定；AC01 |
+| 20 | 全流程禁止範圍／歷史baseline | protected bytes不變；AC07 |
+
+獲准後命令：`python3 -B -m unittest discover -s tests -p 'test_agent_resume.py'`；`node --test tests/test_agent_resume_cua.mjs`。目前檔案／測試尚未建立，不宣稱執行。
+
+macOS編譯原樣decoder，至少正常、截斷、post-decode變動及錯誤目的地負例；記source／binary hashes。stub不是ImageIO PASS，kill -9不是實體掉電PASS。不為本功能反覆重跑無關全repo suites；舊Rev28 CI依原required checks跑。
+
+### 10.1 最小獨立真實Mac E2E
+
+G0～G3成立後，由Owner另啟全新獨立DeepSeek V4.1 Flash1017／ollama_cloud Session；實作者不可自填獨立判定。只交原目標、AC、精確來源／runtime／root／目標授權、隔離evidence位置及stop規則，不交實作者完整推理。
+
+新F/G均未備份、manifest及65 exclusion已核對。保存protected baseline；第一Session完成F一次Save All／chooser、全檔SHA／ImageIO、durable readback。正常close後Owner自行重開Mac。新Session只靠task ID／固定store恢復，唯讀核對F，F增量0；新前景交接後fresh定位G並各一次操作、完整verify。保留返回列表及至少一次有界真實scroll前後AX／OCR／畫面變化；跨重啟不要求相同PID／window連續，分別綁各Session，禁止假造跨boot連續性。
+
+不刻意中斷新相簿partial下載，不重跑舊329／239／109／65湊數。無eligible新目標就NO_ELIGIBLE_TARGET。此功能驗收AGENT_RESUMABLE_BACKUP，不升格正式TWO_ALBUM_AUTO。
+
+## 11. 階段、角色、Gate與失敗處理
+
+本功能後續風險CRITICAL（重送／照片污染），依既有風險路由保留獨立Plan Review及Acceptance；本輪只是文件。Harness resources不在root對應路徑，無本task stage packet／emitted validation commands；不修改Harness、不借歷史task製造admission／format3驗證收據。
+
+| 階段 | 執行者與出口 |
+|---|---|
+| D0文件交付 | Sol保存本版、Luna唯讀梳理並擬詳細commit；root逐檔commit/push／更新Draft PR |
+| G0獨立Plan/Audit | Owner指定外部Chief；精確Plan SHA，APPROVE_PLAN且audit PASS才READY／可M0 |
+| M0最短接線 | 指定Implementor，fake app、原樣工具來源、spawn／stdio／長鎖／host身分／EOF／sync能力；零LINE app取得／capture／input。失敗即停，不造新bridge |
+| M1核心 | 同一Implementor，store／history／同一verifier／wrapper及TC01～20；先薄切片再完整100本，不先建旁支框架 |
+| M2交付 | root整合最小diff、本地證據、feature與CI兩個精確HEAD／Draft PR；不當功能PASS |
+| G1 Code Review | 外部Chief真實APPROVE_IMPLEMENTATION，源碼／負例／scope完整；不以本機自評代替 |
+| G2離線／G3遠端CI | TC及ImageIO實證、feature CI與legacy CI各自精確HEAD；缺一保留未完成 |
+| G4獨立Mac | Owner啟新DeepSeek Session，兩本＋reboot＋no-replay，FAIL/BLOCKED否決 |
+| G5結案 | 全AC、保護、不重送、必要review／checks成立，才AGENT_BACKUP_RESUME_P0=PASS |
+
+Implementor依當前AGENTS預設GPT-6 luna／high，由Sol明確派包；若Owner另明確指定實作模型，記錄決策及真實Session再執行，不沿用舊文件私自改角色。DeepSeek1017為獨立E2E指定者。本輪提交訊息子代理GPT-6 luna只讀，不是產品writer／review批准。後續產品工作包 `max_parallel_read_only_helpers=0, max_parallel_writers=0`；需delegation先按既有Harness合法分配，不嵌套。
+
+Gate PASS須實際證據。Owner前景／reboot觀察記OBSERVED，不替代工具驗證。未讀私有內容標operator-reported。僅貼審查請求不代表已送達外部模型。
+
+同根因至多三次有證據attempt，連續兩次無新資訊或material blocker提前停。保全最小重現／原錯誤／未完成AC／每次學到什麼；寫task issues/ISSUE-<UTC>-<slug>.md，交Owner轉高階模型，送達前PENDING_OWNER_FORWARD。不得換Session重算預算、降AC、放寬guard。rollback只停用新程式，保留store／intent／照片，不還原舊checkpoint。
+
+## 12. Git／PR交付、報告與保護
+
+本文件更新既有乾淨 `docs/agent-resume-handoff-20261022`／PR30；其parent為master64515eb，只有plan／handoff，不混原dirty樹。先驗遠端未前進再提交，不amend／force-push。原repo副本只在確認舊bytes與文件分支相同後同步，保留其他dirty、原HEAD／index與protected hashes。
+
+未來feature自當時最新master建乾淨外部worktree，逐檔帶入本版文件／必要原樣工具；記base SHA與文件commit，不以PR31為base。CI sibling分支自1b9a010建，PR target v43-ab/codex-rev28，只審§5.3修復，不自動merge或改原分支。兩包可序列做，避免多writer。不得把兩支一起merge master。
+
+有實際成果就逐檔stage、commit body填「意圖／做了什麼／驗證與結果／下一步的建議」、push並更新同scope Draft PR。讀回真正commit body、遠端HEAD／PR head與檔案；不只貼PR摘要。不提交照片、群組／人名、原圖檔名、raw OCR／AX／截圖、grant／憑證或個人絕對路徑。
+
+本輪完整規劃／審查報告即本Plan；文件檢查紀錄寫handoff末段，不另造E2E成功報告。未來實測更新task現有E2E測試報告.md，含順序、環境、命令／片段、expected／actual、狀態前後、副作用、attempt／資訊增益、未知／stop、證據相對與私有絕對定位／bytes／SHA。公開版遮蔽，私有raw留本機。progress只短記，不複製多份長文。
+
+## 13. 03_handoff_prompt.md的適用方式
+
+已讀Owner指定 `~/.codex/prompts/v4.8.0/03_handoff_prompt.md`；SHA `e27860d1da047ec1d9ece6440d9ec3f19014b0cefbb2e7b6ff00f8d564ebde37`。它是Optional Handoff Reviewer，只有workflow_policy.handoff_review_required=true才執行；不能重寫／擴scope／執行implementation，只核對已審Plan與compiled handoff，使用stage packet emitted CONTRACT／RESULT命令。
+
+本task無controller stage packet、未有已審frozen contract、未發出fixed validator命令，因此交付的是Owner要求的Markdown advisory handoff。它必須逐項與本Plan相同，不能宣稱deterministic compilation／optional reviewer PASS／format3 schema validation／controller admission。取得真實packet後才依其命令，不自行拼validator或建立假的handoff.json。不因這個缺口新增Harness研發。
+
+## 14. 固定結論與下一個可驗收動作
+
+本候選Plan的精簡內容已寫明；審查批准、runtime feasibility與實作／驗收尚未發生。沒有未決產品選擇要重問Owner；live仍缺新F/G身分、當次授權／前景及reboot時點。先查已有私有資料，缺少只阻擋相依live。
 
 ```text
 TASK_ID=AGENT-RESUME-P0-20261022
-PLAN_REVISION=v1.1
+PLAN_REVISION=v2.0
 PRD_VERSION=v1.0
-PLANNER_MODEL=gpt-6.1-sol
-REASONING_EFFORT=xhigh
-MODEL_ATTRIBUTION=REQUESTED_NOT_RUNTIME_ATTESTED
-IMPLEMENTOR_MODEL=deepseek-v4.1-flash:1017
-IMPLEMENTOR_PROVIDER=ollama_cloud
-SOURCE_BASELINE_HEAD=72dae704a9a5f3dbdee21e33178201350b6e7a06
-DELIVERY_BASE=64515eb56b04accc40ade9e2db2fe0ad18c1ced3
-IMPLEMENTATION_BASE=EXACT_COMMIT_CONTAINING_THIS_PLAN_AND_HANDOFF
-CURRENT_AGENT_ENTRYPOINT=DEEPSEEK_TOOL_DRIVEN_MANUAL_DIAGNOSTIC
-PRIVATE_CHECKPOINT_SCHEMA=VERIFIED
-PRIVATE_PHOTO_FULL_VERIFICATION_THIS_PHASE=NOT_RUN
-DESIGN_DECISION=ISOLATED_ATOMIC_CHECKPOINT_EMBEDDED_EVENTS_THIN_CUA_WRAPPER
-P0_FILE_CHANGESET=SECTION_4
-FORMAL_AUTO_CODE_TOUCHED=NO
-HARNESS_TOUCHED=NO
-DUPLICATE_GUARD_DESIGN=GLOBAL_HISTORY_IRREVERSIBLE_INTENT_BARRIER
-CRASH_RECONCILIATION_DESIGN=READ_ONLY_VERIFY_LOCKED_REVALIDATE_COMMIT
-PARTIAL_DOWNLOAD_POLICY=BLOCK_AND_PRESERVE
-100_ALBUM_FIXTURE_PLAN=SECTION_10
-MINIMAL_LIVE_E2E_PLAN=TWO_NEW_ALBUMS_OWNER_MAC_REBOOT_NEW_DEEPSEEK_SESSION
-FIRST_IMPLEMENTATION_BLOCKER=NONE_BEFORE_PREFLIGHT
-OWNER_DECISIONS=NONE_FOR_OFFLINE_IMPLEMENTATION
-LIVE_INPUTS_PENDING=NEW_ALBUM_IDENTITIES_EXCLUSION_IDENTITY_FOREGROUND_HANDOFF
-IMPLEMENTOR_PROMPT=SECTION_13_AND_HANDOFF_OPENING
-EXTERNAL_REVIEW_GATE=OWNER_WAIVED_FOR_THIS_WORK_PACKAGE
-HARNESS_HANDOFF_COMPILER=NOT_INVOKED
-HIGH_MODEL_ESCALATION=REQUIRED_ON_UNRESOLVED_PROBLEM
+OVERENGINEERING_AUDIT=NEEDS_SIMPLIFICATION
+MINIMAL_IMPLEMENTATION_PLAN=NOT_READY
+DESIGN_DECISION=MINIMAL_A_SINGLE_CHECKPOINT_EXISTING_TOOLS
+PARTIAL_DOWNLOAD_POLICY=BLOCK_AND_PRESERVE_WHOLE_TASK
+EXTERNAL_PLAN_REVIEW=PENDING_OWNER_FORWARD
+EXTERNAL_CODE_REVIEW=NOT_RUN
+ZERO_GUI_PREFLIGHT=NOT_RUN
 PRIMARY_OUTCOME_STATUS=PLANNED_NOT_IMPLEMENTED
 IMPLEMENTATION_STATUS=NOT_RUN
 CORE_ACCEPTANCE_STATUS=NOT_RUN
 REQUIRED_VERIFICATION_STATUS=NOT_RUN
 INDEPENDENT_ACCEPTANCE_STATUS=NOT_RUN
 TASK_CLOSURE_STATUS=OPEN
+FORMAL_AUTO_CODE_TOUCHED=NO_IN_FEATURE
+HARNESS_TOUCHED=NO
 FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
 ```
 
-最終建議：採隔離sidecar；核心只有Python控制器與CUA薄包裝，兩個成熟Swift工具原樣重用。先證明durability／單次派送／100本恢復，再兩本真實重啟驗收。不增正式AUTO、相簿內續傳或大型框架；沒有可靠實作耗時資料，不估造工期。
+下一步先獨立審查本精確revision／SHA。沒有外部APPROVE_PLAN／audit PASS，不開始產品；通過後從M0最短接線實證開始，若失敗保全第一阻塞並成單，不擴架構。
