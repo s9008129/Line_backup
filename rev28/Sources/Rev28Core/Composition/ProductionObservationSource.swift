@@ -66,6 +66,28 @@ public struct ProductionObservationSource: ObservationSource {
         try await enumerate()
     }
 
+    /// Passive diagnostics use a pinned existing directory, never the URL
+    /// initializer's directory-creation behavior. Sensor semantics are identical.
+    public init(
+        target: ObservationTarget,
+        existingEvidenceDirectoryDescriptor: Int32,
+        ruleBook: CaptureGeometryRuleBook,
+        signingIdentity: @escaping @Sendable (Int32) -> String?,
+        clock: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds },
+        enumerate: @escaping @Sendable () async throws -> [SCWindowSnapshot] = {
+            WindowSensor.snapshots(from: try await WindowSensor.shareableContent(onScreenWindowsOnly: true))
+        },
+        cgInventoryProvider: @escaping @Sendable () -> [CGWindowSnapshot] = { CGWindowInventory.onScreenWindows() }
+    ) throws {
+        self.target = target
+        self.ruleBook = ruleBook
+        self.epochAuthority = try RunEpochAuthority(existingDirectoryDescriptor: existingEvidenceDirectoryDescriptor)
+        self.signingIdentity = signingIdentity
+        self.clock = clock
+        self.enumerate = enumerate
+        self.cgInventoryProvider = cgInventoryProvider
+    }
+
     public func cgInventory() -> [CGWindowSnapshot] {
         cgInventoryProvider()
     }
@@ -86,6 +108,29 @@ public struct ProductionObservationSource: ObservationSource {
             )
         }
         let content = try await WindowSensor.shareableContent(onScreenWindowsOnly: true)
+        if configuration.kind == .explicitLineWindows {
+            try ExplicitLineCaptureSelection.validateFreshSelection(requested: includedWindows,
+                inventory: WindowSensor.snapshots(from: content), target: target, main: window)
+            var handles: [SCWindow] = []
+            for snapshot in ExplicitLineCaptureSelection.normalized(includedWindows) {
+                let matches = content.windows.filter { $0.windowID == snapshot.windowID }
+                guard matches.count == 1, let handle = matches.first else {
+                    throw ProductionObservationSourceError.windowHandleUnavailable(snapshot.windowID)
+                }
+                handles.append(handle)
+            }
+            let bounds = try ExplicitLineCaptureSelection.union(of: includedWindows)
+            let displays = content.displays.map { ExplicitLineDisplaySnapshot(displayID: $0.displayID,
+                frame: $0.frame, widthPt: $0.width, heightPt: $0.height) }
+            let selectedDisplay = try ExplicitLineCaptureSelection.containingDisplay(for: bounds, displays: displays)
+            let matches = content.displays.filter { $0.displayID == selectedDisplay.displayID }
+            guard matches.count == 1, let display = matches.first else {
+                throw ObservationRefusal.invalidBundle("explicit LINE display handle is not unique")
+            }
+            let service = await FrameCaptureService(ruleBook: ruleBook)
+            return try await service.captureExplicitLineRetained(windows: handles, display: display,
+                configuration: configuration, includedWindows: includedWindows, state: geometryState, epoch: epoch)
+        }
         guard let handle = content.windows.first(where: { $0.windowID == window.windowID }) else {
             throw ProductionObservationSourceError.windowHandleUnavailable(window.windowID)
         }

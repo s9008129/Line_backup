@@ -85,6 +85,14 @@ recorded cropped bbox.
 
 No historical screen coordinate is accepted as production input.
 
+An invalid-frame refusal retains the original violations plus
+`recordedFrameGeometry`: pixel width/height, expected width/height in points,
+point-pixel scale and independent backing scale already present in the record.
+These numbers are labeled as recorded fields because rejection precedes PNG
+verification. They do not validate the image, locate clipping edges, explain
+the renderer's behavior, or authorize another capture. No window positions,
+identifiers, titles or pixels are added to the refusal.
+
 ## 3. OCR is identity, not click geometry
 
 The production OCR path is Swift Vision `RecognizeTextRequest` with:
@@ -338,3 +346,75 @@ The remaining production sequence is:
 6. independent Stage-05 recomputation from disk.
 
 Until those complete, `PRIMARY_OUTCOME_STATUS=NOT_ACHIEVED`.
+
+## Passive native diagnostic packet
+
+`rev28ctl capture-diagnostic --project-root <absolute-project-root> --output <existing-empty-project-root/harness-development/native-diagnostics/directory> --rulebook <regular-project-file> --bundle-id jp.naver.line.mac --pid <fresh-LINE-pid>` provides one passive native observation. The executable must reside inside the explicit project root so its actual bytes can be retained in provenance. The caller prepares the empty output directory. Absolute paths reject traversal and symlink components; an exclusive claim prevents reuse, and partial output remains on failure. Missing arguments exit 64; observation or publication refusal exits 77.
+
+The command binds the fresh PID to LINE, checks existing AX/screen-capture permission without requesting it, measures window settling with two fresh SCK samples and activation with `NSRunningApplication.isActive`, then uses `ProductionObservationSource`, `NativeObservationSession`, and `VisionOcrEngine`. Capture defaults to `primaryWindow`; optional `--capture-profile childUnion` explicitly selects the existing child-window capture path. State is `appReady`, localization is `none`. It constructs no transaction owner, input actuator, goal slot, or backup-state writer and does not activate an application.
+
+The packet retains `claim.json`, `observation.png`, the full raw bundle projection in `observation.json`, actual `rulebook.json` bytes, source/executable file hashes in `provenance.json`, and a manifest. Files use exclusive no-follow creation, sync, and readback. `PassiveNativeDiagnostic.load(directory:expectedManifestSHA256:)` requires an external manifest SHA256 from the original receipt or independent review; omission or mismatch refuses. It checks every retained file and reconstructs the existing bundle validator using the actual PNG, then independently recomputes configuration, included-window, geometry-rule and scale consistency. The manifest is not signed; provenance hashes do not establish OS code attestation.
+
+Success means `OBSERVED_VALID_BUNDLE`. Calibration, occlusion, current composer, and Phase B permission remain `UNKNOWN`. CG inventory is one post-capture census and does not establish atomic acquisition, bracketing occlusion, popup ownership or topmost status. This diagnostic packet issues no production permit, resets no transaction budget, and does not satisfy the missing full native backup acceptance gates.
+
+Passive observer construction uses the output's pinned directory descriptor and a separate existing-directory-only `RunEpochAuthority` mode. This mode owns its descriptor, derives epoch floors directly from retained directory entries, and never resolves a URL or creates a directory. Path identity is checked before and after construction; deletion or symlink/ancestor replacement refuses without recreating output or redirecting creation. Existing live callers retain their original URL initializer semantics. Diagnostic source construction and collection are each single use.
+
+Primary-window packets retain format version 1. Child-union packets use version 2 in both record and manifest; loading rejects a disagreement or a version/profile mismatch. The child profile requires at least one affirmative on-screen child snapshot from the same LINE process, intersecting the unique main window. The complete selected main/child snapshots must agree between both settling samples and the session's pre/post inventories and included-window set. Duplicate IDs, missing or changed children, unsupported configurations, or geometry that cannot be recomputed from their union refuse before successful publication. Validation uses the retained PNG and the original bundle validator. No automatic profile fallback occurs.
+
+These snapshot checks bound diagnostic collection; they do not prove AX parentage, popup ownership, topmost status, or lack of occlusion. All four certifications remain `UNKNOWN`. The live engine and its production permission gates are unchanged; accepting or collecting a child-union packet does not authorize backup execution.
+
+The settling samples report a non-unique main-window count through `targetWindowNotUnique(found:)`, distinguishing zero candidates from multiple candidates in future refusals. Selection predicates and short-circuit order remain unchanged. A count does not choose a window, permit a retry, or reconstruct counts missing from historical records.
+# Explicit LINE diagnostic packet v3
+
+`explicitLineWindows` is an opt-in, diagnostic-only profile. Logical selection is
+the exact fresh LINE main plus intersecting on-screen same-process candidate
+children; it is independent of the SDK's `includeChildWindows=false` flag. The
+source resolves every selected native handle and refuses set/owner/frame/layer
+drift. One `SCContentFilter(display:including:)` contains those handles only;
+menu bar, implicit children, shadows and cursor are disabled, clipping remains
+enabled, and the effective source rectangle is the complete selected union.
+The first implementation supports one containing display at origin `(0,0)`
+with matching point dimensions and independently known NSScreen backing scale.
+Crossing/mirrored/nonzero-origin/unknown-scale selections refuse before screenshot.
+
+`ExplicitLineRequestBinding` retains the original crop-free request, geometry
+state, settled selected snapshots and the existing frozen rulebook input.
+`ExplicitLineSelectionWitness` retains selected IDs, display facts, actual crop,
+filter bounds/scale and effective child/menu-bar flags. The same pure validator
+checks original request versus retained effective facts, exact settling/pre/post
+sets and numeric geometry inside `ObservationBundle.validated()` before return
+and `completedCaptures` increment, and again at strict retained reconstruction.
+The final session deadline includes this validation. Source downgrade cannot
+discard the original request. The rulebook requires an `explicitLineWindows-v3-`
+ID, affirmative settling, and the existing 1-point-or-stricter bounds; the prefix
+is profile binding, not actual calibration certification.
+
+Passive packet/manifest v3 retains this binding and requires an external manifest
+anchor. V1/v2 keep their existing defaults, wire and flags, read absent optional
+fields, and reject v3 witness/request fields. `LiveCompositionFactory.validate`
+rejects the new kind before constructing any owner, session or adapter.
+Synthetic session/packet tests and valid witnesses do not certify native pixels,
+popup ownership, occlusion, current composer, Phase B or end-to-end backup.
+Current work authorizes local implementation and offline checks only; any real
+LINE image/full supporting inventories still require a separate explicit grant.
+
+### Project authority inspection (read-only foundation)
+
+`project-preflight` reads only an explicitly selected project's canonical config, accepted
+RC2 state, bound registry evidence, producer source bytes and proposed directory entries.
+It performs two stable reads with file identity checks. This is a snapshot, not a writer
+lease or an atomic transaction across files. Terminal current run pointers do not imply
+active ownership; verified fingerprints remain skip barriers across destinations. Unverified
+historical intents remain blocked even when a record claims release.
+
+`ProjectBackupBinding.inspect` accepts the original request, raw config/state, actual stdout
+and its external SHA256, and the complete ordered producer source material. It validates
+strict JSON, exact report keys, source byte aggregates and recomputed authority/history
+facts. Its only output is `ProjectBackupInspectionBinding`, whose `canDispatch` is always
+false. Destination inspection remains a reported observation, not a reservation. Source
+binding is not OS code attestation. Every later runtime must read fresh authority again
+at a shared writer boundary; config identity does not prove the current native LINE group.
+
+Shared writer/native intent commit ordering, dynamic target continuity, content acceptance,
+Phase A/B readiness and production authorization remain separate future work. No current
+production guard, immutable authorization, owner, ledger or GoalSlot is changed here.

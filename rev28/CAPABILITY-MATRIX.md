@@ -73,3 +73,45 @@ group/date/count, popup ownership and lack of occlusion, independently reviewed
 source/binary eligibility, and actual chooser/filesystem observations remain
 required. A new runID cannot bypass a pre-existing goal slot; recovery or source
 authorization migration requires a separately reviewed decision.
+
+### Passive native diagnostic collection
+
+| Capability | Current boundary |
+| --- | --- |
+| Reusable passive CLI | `capture-diagnostic`, LINE-only fresh PID binding, explicit project root, existing empty output under `harness-development/native-diagnostics` |
+| Native observation retention | Default primary-window PNG (v1); explicit optional child-union PNG (v2), full raw native bundle, OCR, SCK/CG/AX/process identities, rulebook and actual source/executable hashes |
+| Packet verification | External manifest SHA required; matching record/manifest version and profile, retained-file hashes, actual PNG bundle validation and independently recomputed geometry/scale |
+| Child diagnostic boundary | Affirmative same-process on-screen intersecting children; exact selected snapshot agreement across settling samples, session inventories and included set; recomputed union; no automatic fallback |
+| Output safety | Symlink/traversal/nonempty/reuse refusal, exclusive claim/files, partial output retained, no overwrite |
+| Application input | No activation, permission request, transaction owner or actuator in this command |
+| Calibration / occlusion / current composer / Phase B | `UNKNOWN`; passive collection cannot authorize live backup or claim native E2E acceptance |
+| OS attestation | `UNKNOWN`; source and binary hashes are observed file provenance |
+
+Local fake-boundary regressions verify packet and refusal behavior. Actual LINE collection and native end-to-end acceptance are separate required observations and have not been established by these tests.
+
+Passive source initialization is descriptor-bound and noncreating, including the assertion-to-constructor gap. Deterministic filesystem-only tests cover deletion, symlink and ancestor replacement, descriptor ownership and persistent epoch floors; these tests run no native capture or GUI input.
+
+Version 2 snapshot agreement does not establish AX parentage, menu ownership, topmost status or occlusion. The existing live engine still uses its original capture configuration and permission gates. Local child-profile tests and backwards loading of an actual version 1 packet cannot certify current LINE child-window capture or native backup completion.
+# Explicit LINE diagnostic profile (v3)
+
+| Capability | Local implementation boundary | Actual native status |
+|---|---|---|
+| Exact LINE window group | Explicit IDs/handles, fresh facts, one containing zero-origin display, no implicit child additions | Unverified |
+| Crop and scale evidence | Actual full union crop, filter content rectangle/scale, selected display/backing-scale match | Unverified renderer behavior |
+| Successful session binding | Shared request/settling/effective/witness validator before return/count and final deadline check | Offline synthetic evidence only |
+| Strict packet v3 | Same validator at reconstruct/load with external anchor; legacy v1/v2 remain separate | No real v3 packet |
+| Production eligibility | New diagnostic kind refused before composition construction | No Phase B permit |
+
+V3 implementation or synthetic success leaves calibration, ownership, occlusion,
+current composer and the reusable native workflow UNKNOWN/not achieved. The
+historical production 3/3 budget and two consumed child observations remain;
+this profile supplies no new native grant and no download authorization.
+
+| Project inspection foundation | Capability | Limit |
+| --- | --- | --- |
+| Python `project-preflight` | Canonical project snapshot, target/history decisions, source digests | Read-only; no writer, state change, native observation or dispatch |
+| Swift `ProjectBackupBinding.inspect` | Strict byte-bound inspection consumer; recomputes authority/history | `canDispatch=false`; no native permit or ownership |
+| Verified target | Always skipped when project is healthy | No photo rescan or second download |
+| Unverified historical intent | Conservatively blocked, including purported releases | Future release adoption needs separate evidence and design |
+| Destination proposal | Existing safe directory entries or absent path observation | Not a reservation or a freshness guarantee |
+| Full native integration | Pending | Shared writer boundary, target continuity and readiness remain required |

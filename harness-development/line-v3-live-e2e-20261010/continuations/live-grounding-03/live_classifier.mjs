@@ -126,7 +126,8 @@ export function createLiveClassifier({retain,frameSupport,analyzeCapture,groupKe
       'CLASSIFIER_BOUNDARY_RETAIN_REQUIRED');
     if(analysis.surface==='ALBUMS') {
       const proof=analysis.boundary_evidence;
-      need(Object.keys(proof).sort().join(',')==='version,frame_id,session_id,source,indicator_index,minimum,maximum,value'
+      need(Object.keys(proof).sort().join(',')===['version','frame_id','session_id','source',
+        'indicator_index','minimum','maximum','value'].sort().join(',')
         &&proof.source==='AX_SCROLLBAR'&&Number.isInteger(proof.indicator_index)
         &&Number.isFinite(proof.minimum)&&Number.isFinite(proof.maximum)&&Number.isFinite(proof.value)
         &&proof.maximum>proof.minimum,'CLASSIFIER_BOUNDARY_EVIDENCE');

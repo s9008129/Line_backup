@@ -48,6 +48,118 @@ extension NativeObservationSessionTests {
         }
     }
 
+    func testExplicitV3ValidSessionReturnsExactLogicalSetAndCountsOnce() async throws {
+        let source = ExplicitSessionFakeSource()
+        let session = NativeObservationSession(sessionID: "explicit-synthetic-session", source: source, ocr: FakeOcr())
+        let bundle = try await session.capture(ExplicitLineTestFixture.request())
+        XCTAssertEqual(source.capturedWindows, ExplicitLineTestFixture.windows)
+        XCTAssertFalse(source.capturedConfiguration!.includeChildWindows)
+        XCTAssertEqual(bundle.explicitLineRequestBinding, ExplicitLineTestFixture.binding)
+        XCTAssertNoThrow(try bundle.validated())
+        let count = await session.captureCount
+        XCTAssertEqual(count, 1)
+    }
+
+    func testExplicitV3MalformedRetainedBindingsCannotReturnOrCountSuccess() async throws {
+        typealias F = ExplicitLineTestFixture
+        let transforms: [(CapturedFrameRecord) throws -> CapturedFrameRecord] = [
+            { var f = $0; f.explicitLineSelectionWitness = nil; return f },
+            { var f = $0; f.explicitLineSelectionWitness?.selectedWindowIDs = [10]; return f },
+            { var f = $0; f.explicitLineSelectionWitness?.effectiveSourceRect = F.main.frame; return f },
+            { var f = $0; f.explicitLineSelectionWitness?.includeChildWindows = true; return f },
+            { var f = $0; f.explicitLineSelectionWitness?.includeMenuBar = true; return f },
+            { var f = $0; f.explicitLineSelectionWitness?.pointPixelScale = 2; return f },
+            { try F.mutateFrame($0) { $0["stateKey"] = "wrong-state" } },
+            { try F.mutateFrame($0) { var c = $0["configuration"] as! [String: Any]; c.removeValue(forKey: "sourceRect"); $0["configuration"] = c } },
+            { try F.mutateFrame($0) { var c = $0["configuration"] as! [String: Any]; c["ignoreClipping"] = true; $0["configuration"] = c } },
+            { try F.mutateFrame($0) {
+                $0["captureKind"] = "window"; $0.removeValue(forKey: "explicitLineSelectionWitness")
+                $0["configuration"] = try! JSONSerialization.jsonObject(with: EvidenceIO.encodeJSON(CaptureConfiguration.primaryWindow))
+            } }
+        ]
+        for (index, transform) in transforms.enumerated() {
+            let source = ExplicitSessionFakeSource(); source.transform = transform
+            let session = NativeObservationSession(sessionID: "explicit-negative-\(index)", source: source, ocr: FakeOcr())
+            do { _ = try await session.capture(F.request()); XCTFail("invalid v3 source returned successful bundle: \(index)") }
+            catch { XCTAssertTrue(error is ObservationRefusal, "\(error)") }
+            XCTAssertEqual(source.captureCalls, 1)
+            let count = await session.captureCount
+            XCTAssertEqual(count, 0)
+        }
+    }
+
+    func testExplicitV3OriginalRequestAndTemporalDriftRefuseBeforeSuccess() async throws {
+        typealias F = ExplicitLineTestFixture
+        var wrongRequest = F.binding; wrongRequest.configuration = .childUnion
+        var wrongState = F.binding; wrongState.geometryState.activated = false
+        for binding in [nil, wrongRequest, wrongState] as [ExplicitLineRequestBinding?] {
+            let source = ExplicitSessionFakeSource()
+            let session = NativeObservationSession(sessionID: "explicit-request-negative", source: source, ocr: FakeOcr())
+            do { _ = try await session.capture(F.request(binding: binding)); XCTFail("invalid original request accepted") } catch {}
+            XCTAssertEqual(source.captureCalls, 0)
+            let count = await session.captureCount; XCTAssertEqual(count, 0)
+        }
+        // Coherent B/B is still different from the frozen A/A selection.
+        let source = ExplicitSessionFakeSource()
+        source.fake.preInventoryOverride = [F.main, F.changedChild(id: 12)]
+        source.fake.postInventoryOverride = source.fake.preInventoryOverride
+        let session = NativeObservationSession(sessionID: "explicit-aa-bb-negative", source: source, ocr: FakeOcr())
+        do { _ = try await session.capture(F.request()); XCTFail("coherent replacement B/B accepted") } catch {}
+        let count = await session.captureCount; XCTAssertEqual(count, 0)
+        let postDrift = ExplicitSessionFakeSource(); postDrift.fake.postInventoryOverride = [F.main, F.changedChild(layer: 9)]
+        let second = NativeObservationSession(sessionID: "explicit-post-drift", source: postDrift, ocr: FakeOcr())
+        do { _ = try await second.capture(F.request()); XCTFail("post layer drift accepted") } catch {}
+        let secondCount = await second.captureCount; XCTAssertEqual(secondCount, 0)
+    }
+
+    func testExplicitV3ValidationDeadlineStillPrecedesCompletionCount() async throws {
+        let source = ExplicitSessionFakeSource(); source.expireAtFinalValidation = true
+        let session = NativeObservationSession(sessionID: "explicit-deadline", source: source, ocr: FakeOcr())
+        do { _ = try await session.capture(ExplicitLineTestFixture.request()); XCTFail("validation deadline ignored") }
+        catch { XCTAssertEqual(error as? ObservationRefusal, .deadlineExceeded(stage: "validation")) }
+        let count = await session.captureCount; XCTAssertEqual(count, 0)
+    }
+}
+
+extension ExplicitLineTestFixture {
+    static func request(binding: ExplicitLineRequestBinding? = ExplicitLineTestFixture.binding) -> NativeObservationRequest {
+        NativeObservationRequest(runID: "explicit-v3-synthetic", state: .appReady, target: target, configuration: .explicitLineWindows,
+            geometryState: state, localization: .none, observationBudgetNanos: 5_000_000_000, explicitLineRequestBinding: binding)
+    }
+    static func bundle() async throws -> ObservationBundle {
+        try await NativeObservationSession(sessionID: "explicit-v3-synthetic-session", source: ExplicitSessionFakeSource(), ocr: FakeOcr()).capture(request())
+    }
+}
+
+/// Local source seam retains valid process/signing/AX/CG/PNG/epoch facts while
+/// malformed v3 fields exercise the actual session's successful-return boundary.
+final class ExplicitSessionFakeSource: @unchecked Sendable, ObservationSource {
+    let fake = FakeObservationSource(window: ExplicitLineTestFixture.main, bundleID: "jp.naver.line.mac", pid: 4242)
+    var transform: ((CapturedFrameRecord) throws -> CapturedFrameRecord)?
+    var expireAtFinalValidation = false
+    var capturedWindows: [SCWindowSnapshot] = []
+    var capturedConfiguration: CaptureConfiguration?
+    var captureCalls = 0
+    private var clockCalls = 0
+    init() { fake.preInventoryOverride = ExplicitLineTestFixture.windows; fake.postInventoryOverride = ExplicitLineTestFixture.windows }
+    func enumerateWindows() async throws -> [SCWindowSnapshot] { try await fake.enumerateWindows() }
+    func cgInventory() -> [CGWindowSnapshot] { fake.cgInventory() }
+    func captureTarget(window: SCWindowSnapshot, includedWindows: [SCWindowSnapshot], configuration: CaptureConfiguration,
+                       geometryState: CaptureGeometryState, epoch: UInt64) async throws -> ObservationCapturedImage {
+        capturedWindows = includedWindows; capturedConfiguration = configuration; captureCalls += 1
+        let frame = ExplicitLineTestFixture.frame(epoch: epoch)
+        return ObservationCapturedImage(image: ExplicitLineTestFixture.image, record: try transform?(frame) ?? frame)
+    }
+    func readAXIdentity(pid: Int32, windowID: UInt32) throws -> AXIdentityRead { try fake.readAXIdentity(pid: pid, windowID: windowID) }
+    func processInstance(pid: Int32) throws -> ProcessInstanceID { try fake.processInstance(pid: pid) }
+    func signingIdentity(pid: Int32) throws -> String? { try fake.signingIdentity(pid: pid) }
+    func nextEpoch() -> UInt64 { fake.nextEpoch() }
+    func monotonicNanos() -> UInt64 {
+        clockCalls += 1
+        return fake.monotonicNanos() + (expireAtFinalValidation && clockCalls >= 5 ? 5_000_000_001 : 0)
+    }
+}
+
 final class NativeObservationSessionTests: XCTestCase {
     // MARK: - Fakes (substitutions stay below perception/predicate/state decisions)
 
@@ -59,6 +171,7 @@ final class NativeObservationSessionTests: XCTestCase {
         var postInventoryOverride: [SCWindowSnapshot]?
         var cgInventoryOverride: [CGWindowSnapshot]?
         var recordImageSHAOverride: String?
+        var invalidFrameExpectedBBox: CGRect?
         var captureError: Error?
         var captureClockAdvance: UInt64 = 0
         var onCaptureStart: (@Sendable () async -> Void)?
@@ -149,7 +262,7 @@ final class NativeObservationSessionTests: XCTestCase {
                 captureKind: configuration.kind,
                 configuration: configuration,
                 includedWindows: includedWindows,
-                expectedBBoxPt: window.frame,
+                expectedBBoxPt: invalidFrameExpectedBBox ?? window.frame,
                 imageWidthPx: image.width,
                 imageHeightPx: image.height,
                 actualBBoxPt: window.frame,
@@ -161,8 +274,8 @@ final class NativeObservationSessionTests: XCTestCase {
                 capturedAtISO8601: "2026-09-29T00:00:00.000Z",
                 imageSHA256: sha,
                 stateKey: "SETTLED_ACTIVATED",
-                validity: .valid,
-                violations: [],
+                validity: invalidFrameExpectedBBox == nil ? .valid : .invalid,
+                violations: invalidFrameExpectedBBox == nil ? [] : ["injected-size-mismatch"],
                 identity: nil
             )
             return ObservationCapturedImage(image: image, record: record)
@@ -460,6 +573,32 @@ final class NativeObservationSessionTests: XCTestCase {
 
     // MARK: - Tests
 
+    func testInvalidFrameRefusalPreservesRecordedDimensionsWithoutCompletingCapture() async throws {
+        let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
+        // Scripted record fault, not an OS capture: expected width is 93 points
+        // wider than the 400-pixel image at record scale 1. The independent
+        // scale remains distinct so diagnostics cannot silently conflate them.
+        source.invalidFrameExpectedBBox = CGRect(x: 50, y: 60, width: 493, height: 600)
+        let session = NativeObservationSession(sessionID: "invalid-frame-dimensions", source: source, ocr: FakeOcr())
+        do {
+            _ = try await session.capture(makeRequest())
+            XCTFail("an invalid frame must still refuse")
+        } catch let refusal as ObservationRefusal {
+            guard case .invalidFrameGeometry(let details) = refusal else {
+                return XCTFail("unexpected refusal \(refusal)")
+            }
+            XCTAssertEqual(details.first, "injected-size-mismatch")
+            let description = refusal.description
+            XCTAssertTrue(description.contains("recordedFrameGeometry("), description)
+            XCTAssertTrue(description.contains("imagePx=[w=400,h=600]"), description)
+            XCTAssertTrue(description.contains("expectedPt=[w=493.0,h=600.0]"), description)
+            XCTAssertTrue(description.contains("pointPixelScale=1.0"), description)
+            XCTAssertTrue(description.contains("backingScaleFactor=2.0"), description)
+        }
+        let captureCount = await session.captureCount
+        XCTAssertEqual(captureCount, 0, "diagnostic numbers cannot make an invalid frame successful")
+    }
+
     func testCaptureProducesValidatedBundleFromRetainedImage() async throws {
         let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
         let ocr = FakeOcr(items: [ocrItem("LINE", CGRect(x: 10, y: 10, width: 40, height: 12))])
@@ -695,5 +834,107 @@ private actor CaptureGate {
     func release() {
         releaseContinuation?.resume()
         releaseContinuation = nil
+    }
+}
+
+extension NativeObservationSessionTests {
+    private func albumSupportBinding() -> AlbumSupportNativeBinding {
+        AlbumSupportNativeBinding(bundleId: "jp.naver.line.mac", pid: 42, windowId: 7, displayId: 1,
+            cuaCaptureBoundsPoints: [100, 100, 500, 400], sckWindowBoundsPoints: [100, 100, 500, 400],
+            displayBoundsPoints: [0, 0, 1000, 800], cuaSizePx: [1000, 800], sckSizePx: [2000, 1600])
+    }
+
+    private func albumSupportMeasure(point: CGPoint, menu: [Double], addressable: [Double],
+                                     row: CGRect = CGRect(x: 500, y: 500, width: 100, height: 40),
+                                     uncertainty: Double = 2)
+        -> Result<AlbumSupportEvaluation.CaptureMeasurement, AlbumSupportRefusal> {
+        guard let mapping = AlbumSupportMapping(binding: albumSupportBinding()) else {
+            return .failure(.mapUnavailable)
+        }
+        return AlbumSupportEvaluation.measureCapture(sckItems: [ocrItem(AlbumSupportEvaluation.saveAllText, row)],
+            mapping: mapping, menuBoundsCuaPx: menu, addressableBoundsCuaPx: addressable,
+            saveAllPointCuaPx: point, uncertaintyPx: uncertainty)
+    }
+
+    func testAlbumSupportGeometryMarginRefusesBelowUncertaintyPlusFour() throws {
+        let menu: [Double] = [300, 300, 100, 40], addressable: [Double] = [300, 300, 100, 40]
+        switch albumSupportMeasure(point: CGPoint(x: 305, y: 320), menu: menu, addressable: addressable) {
+        case .success: XCTFail("a 5 px margin must refuse below uncertainty 2 + 4")
+        case let .failure(error): XCTAssertEqual(error, .safeMarginBelowUncertainty(marginPx: 5, requiredPx: 6))
+        }
+        switch albumSupportMeasure(point: CGPoint(x: 306, y: 320), menu: menu, addressable: addressable) {
+        case let .success(value): XCTAssertEqual(value.safeMarginPx, 6, accuracy: 0.0001)
+        case let .failure(error): XCTFail("a 6 px margin must pass: \(error)")
+        }
+    }
+
+    func testAlbumSupportGeometryIntersectionRefusesUnderSixteenPixels() throws {
+        let narrow: [Double] = [300, 300, 15, 40]
+        switch albumSupportMeasure(point: CGPoint(x: 306, y: 320), menu: narrow, addressable: narrow) {
+        case .success: XCTFail("a 15 px intersection must refuse")
+        case let .failure(error): XCTAssertEqual(error, .intersectionBelowMinimum(narrow))
+        }
+        let minimal: [Double] = [300, 300, 16, 16]
+        switch albumSupportMeasure(point: CGPoint(x: 306, y: 320), menu: minimal, addressable: minimal) {
+        case let .success(value): XCTAssertEqual(value.interactiveIntersectionPx, minimal)
+        case let .failure(error): XCTFail("a 16x16 intersection must pass: \(error)")
+        }
+    }
+
+    func testAlbumSupportGuardReturnsTheCalibratedPointUnchanged() throws {
+        guard let mapping = AlbumSupportMapping(binding: albumSupportBinding()) else { return XCTFail("mapping") }
+        let row = ocrItem(AlbumSupportEvaluation.saveAllText, CGRect(x: 500, y: 500, width: 100, height: 40))
+        let calibrated = CGPoint(x: 350, y: 320)
+        switch AlbumSupportEvaluation.guardPoint(sckItems: [row], mapping: mapping,
+            saveAllPointCuaPx: calibrated, uncertaintyPx: 2) {
+        case let .success(confirmed):
+            XCTAssertEqual(confirmed.x, calibrated.x, accuracy: 0.0001)
+            XCTAssertEqual(confirmed.y, calibrated.y, accuracy: 0.0001)
+        case let .failure(error): XCTFail("the guard echoed a different point: \(error)")
+        }
+        // A re-located row center must not be accepted as the calibrated point.
+        let center = CGPoint(x: 350, y: 520)
+        XCTAssertNotEqual(center.y, calibrated.y, accuracy: 0.0001)
+    }
+
+    func testAlbumSupportGuardRefusesAmbiguousOrMissingSaveAllRow() throws {
+        guard let mapping = AlbumSupportMapping(binding: albumSupportBinding()) else { return XCTFail("mapping") }
+        let row = ocrItem(AlbumSupportEvaluation.saveAllText, CGRect(x: 500, y: 500, width: 100, height: 40))
+        switch AlbumSupportEvaluation.guardPoint(sckItems: [row, row], mapping: mapping,
+            saveAllPointCuaPx: CGPoint(x: 350, y: 320), uncertaintyPx: 2) {
+        case .success: XCTFail("a duplicated Save All row must refuse")
+        case let .failure(error): XCTAssertEqual(error, .saveAllRowMissingOrAmbiguous(2))
+        }
+        switch AlbumSupportEvaluation.guardPoint(sckItems: [], mapping: mapping,
+            saveAllPointCuaPx: CGPoint(x: 350, y: 320), uncertaintyPx: 2) {
+        case .success: XCTFail("a missing Save All row must refuse")
+        case let .failure(error): XCTAssertEqual(error, .saveAllRowMissingOrAmbiguous(0))
+        }
+    }
+
+    func testSidecarParityResidualIncludesLooseConfidenceAnchors() throws {
+        let native = NativeCaptureBounds(cuaCaptureBoundsPoints: CGRect(x: 100, y: 100, width: 500, height: 400),
+            sckWindowBoundsPoints: CGRect(x: 100, y: 100, width: 500, height: 400),
+            displayBoundsPoints: CGRect(x: 0, y: 0, width: 1000, height: 800),
+            cuaSizePixels: CGSize(width: 1000, height: 800), sckSizePixels: CGSize(width: 2000, height: 1600))
+        let cleanCua = [ocrItem("Group", CGRect(x: 90, y: 90, width: 20, height: 20)),
+                        ocrItem("Album", CGRect(x: 790, y: 90, width: 20, height: 20)),
+                        ocrItem("Save All", CGRect(x: 290, y: 690, width: 20, height: 20))]
+        let cleanSck = [ocrItem("Group", CGRect(x: 290, y: 290, width: 20, height: 20)),
+                        ocrItem("Album", CGRect(x: 990, y: 290, width: 20, height: 20)),
+                        ocrItem("Save All", CGRect(x: 490, y: 890, width: 20, height: 20))]
+        XCTAssertNoThrow(try AutomaticOcrAnchorMapper.derive(cua: cleanCua, sck: cleanSck, native: native))
+        // The Python authority indexes this low-confidence item too, so a
+        // Swift-only confidence filter could accept a capture the authority
+        // refuses; parity must refuse it here.
+        let loose = OcrItem(text: "Ghost", confidence: 0.2, candidateCount: 1,
+            quadCapturePx: [], boundingBoxCapturePx: CGRect(x: 490, y: 390, width: 20, height: 20))
+        let looseSck = OcrItem(text: "Ghost", confidence: 0.2, candidateCount: 1,
+            quadCapturePx: [], boundingBoxCapturePx: CGRect(x: 0, y: 0, width: 20, height: 20))
+        XCTAssertThrowsError(try AutomaticOcrAnchorMapper.derive(cua: cleanCua + [loose], sck: cleanSck + [looseSck], native: native)) {
+            guard case .residualTooLarge = $0 as? AutomaticAnchorMappingError else {
+                return XCTFail("expected residualTooLarge, got \($0)")
+            }
+        }
     }
 }

@@ -6,6 +6,24 @@ import XCTest
 /// The live composition factory is the single entry both CLI commands use, so
 /// these tests exercise the same assembly the production commands build.
 final class LiveCompositionTests: XCTestCase {
+    func testExplicitDiagnosticProfileRefusesBeforeOwnerOrObservationConstruction() throws {
+        let (root, authorization) = try makeRunRoot()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let before = try FileManager.default.contentsOfDirectory(atPath: root.path).sorted()
+        let configuration = LiveCompositionConfiguration(observationBudgetNanos: 0, captureConfiguration: .explicitLineWindows,
+            geometryState: ExplicitLineTestFixture.state, geometryRuleBook: ExplicitLineTestFixture.rules,
+            menuBoundsCapture: .zero, addressableBoundsCapture: .zero, chooserPredicate: TestChooserFixtures.predicate(),
+            baselineReferenceFile: root.appendingPathComponent("absent-baseline"))
+        let source = ExplicitSessionFakeSource()
+        XCTAssertThrowsError(try LiveCompositionFactory.make(authorization: authorization,
+            ledgerURL: root.appendingPathComponent("must-not-create/ledger.jsonl"), checkpointURL: root.appendingPathComponent("must-not-create/checkpoint.json"),
+            configuration: configuration, target: ExplicitLineTestFixture.target, source: source,
+            environment: FakeActuationEnvironment(), postSave: FakePostSaveEnvironment(), sessionID: "must-not-construct")) {
+            XCTAssertEqual($0 as? LiveCompositionError, .diagnosticOnlyCaptureKind)
+        }
+        XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: root.path).sorted(), before)
+        XCTAssertEqual(source.captureCalls, 0)
+    }
     private let geometryState = CaptureGeometryState(
         settled: true,
         activated: true,

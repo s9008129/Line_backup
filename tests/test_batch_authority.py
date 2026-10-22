@@ -118,3 +118,96 @@ class AuthorityTests(unittest.TestCase):
         with self.assertRaisesRegex(AcceptanceError,'Canonical state requires'):
             atomic_write_json(ROOT/'state/backup_state.json',{})
         self.assertEqual((ROOT/'state/backup_state.json').read_bytes(),before)
+
+class GuiLedgerTests(unittest.TestCase):
+    def setUp(self):self.f=Fixture()
+    def tearDown(self):self.f.close()
+    def gui_grant(self,cap):
+        grant=self.f.grant([]);grant['gui_ledger']=self.f.artifacts+'/gui-ledger.json'
+        grant['reversible_gui_invocation_limit']=cap;return grant
+    def reserve(self,grant,**overrides):
+        data=dict(kind='dispatch_inputs',count=1,run_id='RUN-gui',owner=self.f.owner);data.update(overrides)
+        return self.f.svc.store.reserve_gui(grant,data)
+    def ledger(self):return json.loads((self.f.root/'harness-development/evidence/gui-ledger.json').read_bytes())
+    def test_reserve_consume_and_fact(self):
+        grant=self.gui_grant(5);out=self.reserve(grant,count=2)
+        self.assertEqual((out['used'],out['cap']),(2,5))
+        reservation=out['reservation']
+        consumed=self.f.svc.store.consume_gui(grant,dict(reservation_id=reservation['id'],outcome='RETURNED'))
+        self.assertEqual(consumed['reservation'],dict(id=reservation['id'],kind='dispatch_inputs',count=2,state='CONSUMED'))
+        fact=self.f.svc.store.gui_reservation_fact('harness-development/evidence/gui-ledger.json',reservation['id'])
+        self.assertEqual(fact,dict(kind='dispatch_inputs',count=2,owner=self.f.owner,run_id='RUN-gui',state='CONSUMED',slots=None))
+        ledger=self.ledger()
+        self.assertEqual(ledger['version'],'line-backup-gui-ledger-1');self.assertEqual(ledger['task_id'],'TASK-20261010-line-v3-live-e2e')
+        self.assertEqual((ledger['cap'],len(ledger['entries'])),(5,1))
+        self.assertEqual(ledger['entries'][0]['outcome'],json.dumps('RETURNED'))
+    def test_exhaustion_counts_reserved_and_consumed_and_never_refunds(self):
+        grant=self.gui_grant(3);first=self.reserve(grant,count=2)
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(grant,count=2)
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_EXHAUSTED')
+        self.f.svc.store.consume_gui(grant,dict(reservation_id=first['reservation']['id']))
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(grant,count=2)
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_EXHAUSTED')
+        self.assertEqual(sum(entry['count'] for entry in self.ledger()['entries']),2)
+    def test_consume_unknown_double_and_missing_refused(self):
+        grant=self.gui_grant(3)
+        with self.assertRaises(AcceptanceError) as caught:self.f.svc.store.consume_gui(grant,dict(reservation_id='nope'))
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_UNKNOWN_RESERVATION')
+        out=self.reserve(grant,count=1)
+        self.f.svc.store.consume_gui(grant,dict(reservation_id=out['reservation']['id']))
+        with self.assertRaises(AcceptanceError) as caught:self.f.svc.store.consume_gui(grant,dict(reservation_id=out['reservation']['id']))
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_STATE')
+        with self.assertRaises(AcceptanceError) as caught:self.f.svc.store.consume_gui(grant,{})
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_RESERVATION')
+        with self.assertRaises(AcceptanceError) as caught:self.f.svc.store.gui_reservation_fact('harness-development/evidence/gui-ledger.json','nope')
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_STATE')
+    def test_second_grant_with_same_task_and_cap_shares_the_ledger(self):
+        grant=self.gui_grant(4);self.reserve(grant,count=3)
+        second=copy.deepcopy(grant)
+        out=self.reserve(second,count=1)
+        self.assertEqual(out['used'],4)
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(second,count=1)
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_EXHAUSTED')
+    def test_task_or_cap_change_is_ledger_drift(self):
+        grant=self.gui_grant(4);self.reserve(grant,count=1)
+        for name,mutate in (('cap',lambda g:g.__setitem__('reversible_gui_invocation_limit',5)),
+            ('task',lambda g:g.__setitem__('task_id','TASK-other'))):
+            with self.subTest(name=name):
+                changed=copy.deepcopy(grant);mutate(changed)
+                with self.assertRaises(AcceptanceError) as caught:self.reserve(changed,count=1)
+                self.assertEqual(caught.exception.code,'GUI_LEDGER_DRIFT')
+    def test_scope_kind_count_owner_and_run_validation(self):
+        grant=self.gui_grant(4)
+        scoped=copy.deepcopy(grant);scoped['gui_ledger']='harness-development/evidence/other.json'
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(scoped)
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_SCOPE')
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(grant,kind='bogus')
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_KIND')
+        for bad in (0,True,'2'):
+            with self.assertRaises(AcceptanceError) as caught:self.reserve(grant,count=bad)
+            self.assertEqual(caught.exception.code,'GUI_LEDGER_COUNT')
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(grant,owner='someone-else')
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_OWNER')
+        with self.assertRaises(AcceptanceError) as caught:self.reserve(grant,run_id=5)
+        self.assertEqual(caught.exception.code,'GUI_LEDGER_RUN')
+        self.assertFalse((self.f.root/'harness-development/evidence/gui-ledger.json').exists())
+
+class LiveRootAuthorityTests(unittest.TestCase):
+    def live_service(self):
+        return Service(str(ROOT),'live-guard-owner','harness-development/line-v3-live-e2e-20261010/evidence',None)
+    def state_bytes(self):return (ROOT/'state/backup_state.json').read_bytes()
+    def test_live_dispatch_without_retained_receipt_refuses(self):
+        before=self.state_bytes();svc=self.live_service()
+        with self.assertRaises(AcceptanceError) as caught:
+            svc.dispatch(svc.store.snapshot()['receipt'],{}, {}, True)
+        self.assertEqual(caught.exception.code,'RETAINED_RECEIPT_REQUIRED')
+        self.assertEqual(self.state_bytes(),before)
+    def test_live_finalize_with_fixture_options_or_fault_refused(self):
+        before=self.state_bytes();svc=self.live_service();receipt=svc.store.snapshot()['receipt']
+        with self.assertRaises(AcceptanceError) as caught:
+            svc.finalize(receipt,'/usr/bin/false','0'*64,verify_options={})
+        self.assertEqual(caught.exception.code,'FIXTURE_IO_REFUSED_FOR_LIVE_PROJECT')
+        with self.assertRaises(AcceptanceError) as caught:
+            svc.finalize(receipt,'/usr/bin/false','0'*64,fault='DRIFT_AFTER_COMMIT')
+        self.assertEqual(caught.exception.code,'INVALID_FINALIZE_FAULT')
+        self.assertEqual(self.state_bytes(),before)

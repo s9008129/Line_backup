@@ -10,6 +10,7 @@ import Foundation
 // it refuses without touching the target.
 
 public enum LiveCompositionError: Error, Equatable, CustomStringConvertible {
+    case diagnosticOnlyCaptureKind
     case invalidObservationBudget(UInt64)
     case missingFrozenGeometryRule(stateKey: String, ruleID: String)
     case invalidFrozenGeometryRule(stateKey: String, detail: String)
@@ -18,6 +19,8 @@ public enum LiveCompositionError: Error, Equatable, CustomStringConvertible {
 
     public var description: String {
         switch self {
+        case .diagnosticOnlyCaptureKind:
+            return "diagnosticOnlyCaptureKind"
         case let .invalidObservationBudget(budget):
             return "invalidObservationBudget(\(budget))"
         case let .missingFrozenGeometryRule(stateKey, ruleID):
@@ -155,6 +158,9 @@ public enum LiveCompositionFactory {
     /// geometry state must exist, so an uncalibrated device refuses before the
     /// first capture instead of producing INVALID frames at the boundary.
     public static func validate(_ configuration: LiveCompositionConfiguration) throws {
+        guard configuration.captureConfiguration.kind != .explicitLineWindows else {
+            throw LiveCompositionError.diagnosticOnlyCaptureKind
+        }
         let budget = configuration.observationBudgetNanos
         guard budget >= minimumObservationBudgetNanos, budget <= maximumObservationBudgetNanos else {
             throw LiveCompositionError.invalidObservationBudget(budget)

@@ -16,7 +16,7 @@ CONFIG_PATH = 'config/line_backup_config.json'
 STATE_PATH = 'state/backup_state.json'
 SOURCE_DIR = 'src/line_backup_acceptance'
 SOURCE_NAMES = ['__init__.py', '__main__.py', 'authority.py', 'cli.py', 'common.py',
-                'project_binding.py', 'status.py', 'transaction.py', 'verifier.py']
+                'manual_archive.py', 'project_binding.py', 'status.py', 'transaction.py', 'verifier.py']
 CONFIG_KEYS = {'schema_version', 'group_key', 'group_name', 'backup_root', 'app_identifier',
                'max_albums_per_run', 'recovery_limit', 'poll_interval_seconds', 'stable_samples',
                'max_wait_seconds'}
@@ -365,9 +365,10 @@ def validate_history(state, cfg, reader, *, allow_v3=False):
     return by_id
 
 
-def history_decision(state, target, by_id):
+def history_decision(state, target, by_id, manual=frozenset()):
     """Pure decision precedence; terminal current pointers are not active ownership."""
     fp = target['fingerprint']
+    manual_key = (fp['start_date'], fp['end_date'], fp['expected_images'])
     runs = state['runs']
     same = [r for r in runs if r['fingerprint'] == fp]
     verified = sorted(r['run_id'] for r in same if r['workflow_outcome'] == 'VERIFIED')
@@ -387,6 +388,7 @@ def history_decision(state, target, by_id):
                  active_writer_id=state['active_writer_id'], context_lock_present=state['context_lock'] is not None,
                  verified_match_run_ids=verified, verified_match_registry_count=registries,
                  unresolved_run_ids=unresolved_ids, purported_release_run_ids=releases,
+                 manual_archive_match=manual_key in manual,
                  destination_status='NOT_INSPECTED_BLOCKED')
     if state.get('active_batch') is not None or state['active_writer_id'] is not None or state['context_lock'] is not None or any(
             r['fingerprint'] != fp and unresolved(r) for r in runs):
@@ -398,6 +400,8 @@ def history_decision(state, target, by_id):
         decision = 'AMBIGUOUS_FINGERPRINT'
     elif unresolved_ids:
         decision = 'BLOCKED_UNRESOLVED'
+    elif manual_key in manual:
+        decision = 'SKIP_MANUAL_DIAGNOSTIC'; facts['destination_status'] = 'MANUAL_ARCHIVE_RECORDED'
     else:
         decision = 'PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION'
     return decision, facts
@@ -459,7 +463,12 @@ def inspect(project_root, start_date, end_date, expected_images):
         fp = dict(start_date=start_date, end_date=end_date, expected_images=expected_images)
         relative = f"backups/{cfg['group_name']}/{start_date}_{end_date}_{expected_images}張"
         target = dict(group_key=cfg['group_key'], fingerprint=fp, proposed_destination=project_root + '/' + relative)
-        decision, facts = history_decision(state, target, by_id)
+        from line_backup_acceptance.manual_archive import (
+            REQUIRED_MANUAL_FINGERPRINTS, load_manual_archives, required_for_root)
+        manual = load_manual_archives(reader, app_identifier=cfg['app_identifier'], group_key=cfg['group_key'],
+                                      required=required_for_root(project_root),
+                                      required_fingerprints=REQUIRED_MANUAL_FINGERPRINTS)
+        decision, facts = history_decision(state, target, by_id, manual)
         if decision == 'PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION':
             facts['destination_status'] = destination_status(reader, relative)
             if facts['destination_status'] in {'UNSAFE', 'NONEMPTY'}:

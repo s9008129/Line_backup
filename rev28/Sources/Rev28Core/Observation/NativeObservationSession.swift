@@ -108,6 +108,7 @@ public struct NativeObservationRequest: Sendable {
     /// Budget in the session source's monotonic clock domain. The session turns
     /// it into one absolute deadline and never extends it.
     public let observationBudgetNanos: UInt64
+    public let explicitLineRequestBinding: ExplicitLineRequestBinding?
 
     public init(
         runID: String,
@@ -116,7 +117,8 @@ public struct NativeObservationRequest: Sendable {
         configuration: CaptureConfiguration,
         geometryState: CaptureGeometryState,
         localization: ObservationLocalization,
-        observationBudgetNanos: UInt64
+        observationBudgetNanos: UInt64,
+        explicitLineRequestBinding: ExplicitLineRequestBinding? = nil
     ) {
         self.runID = runID
         self.state = state
@@ -125,6 +127,7 @@ public struct NativeObservationRequest: Sendable {
         self.geometryState = geometryState
         self.localization = localization
         self.observationBudgetNanos = observationBudgetNanos
+        self.explicitLineRequestBinding = explicitLineRequestBinding
     }
 }
 
@@ -156,6 +159,7 @@ public struct ObservationBundle: Equatable, Sendable {
     public let cgInventory: [CGWindowSnapshot]
     public let axIdentity: AXIdentityRead
     public let localization: ObservationLocalization
+    public var explicitLineRequestBinding: ExplicitLineRequestBinding? = nil
 
     public var surfaceBinding: SurfaceBinding {
         SurfaceBinding(
@@ -197,7 +201,16 @@ public struct ObservationBundle: Equatable, Sendable {
             throw ObservationRefusal.invalidBundle("frame/identity epoch or image hash mismatch")
         }
         guard frame.validity == .valid else {
-            throw ObservationRefusal.invalidFrameGeometry(frame.violations)
+            // These are record fields, not validated PNG measurements: the
+            // invalid-frame guard precedes retained-image verification.
+            let recordedGeometry = "recordedFrameGeometry(imagePx=[w=\(frame.imageWidthPx),h=\(frame.imageHeightPx)], expectedPt=[w=\(frame.expectedBBoxPt.width),h=\(frame.expectedBBoxPt.height)], pointPixelScale=\(frame.scale), backingScaleFactor=\(frame.backingScaleFactor))"
+            throw ObservationRefusal.invalidFrameGeometry(frame.violations + [recordedGeometry])
+        }
+        if frame.captureKind == .explicitLineWindows || explicitLineRequestBinding != nil {
+            try ExplicitLineCaptureSelection.validate(binding: explicitLineRequestBinding, target: target,
+                mainID: window.windowID, preInventory: preInventory, postInventory: postInventory, frame: frame)
+        } else if frame.explicitLineSelectionWitness != nil {
+            throw ObservationRefusal.invalidBundle("legacy capture cannot carry explicit LINE selection witness")
         }
         guard !framePNGData.isEmpty,
               EvidenceIO.sha256Hex(framePNGData) == frame.imageSHA256 else {
@@ -376,7 +389,20 @@ public actor NativeObservationSession {
             throw ObservationRefusal.targetWindowNotUnique(found: candidates.count)
         }
         let children = WindowSensor.childWindows(of: main, in: preInventory)
-        let includedWindows = request.configuration.includeChildWindows ? [main] + children : [main]
+        let includedWindows: [SCWindowSnapshot]
+        if request.configuration.kind == .explicitLineWindows {
+            guard let binding = request.explicitLineRequestBinding else {
+                throw ObservationRefusal.invalidBundle("explicit LINE original request binding required")
+            }
+            try ExplicitLineCaptureSelection.validateRequest(binding, configuration: request.configuration,
+                state: request.geometryState, target: request.target, preInventory: preInventory)
+            includedWindows = try ExplicitLineCaptureSelection.selectedWindows(in: preInventory, target: request.target)
+        } else {
+            guard request.explicitLineRequestBinding == nil else {
+                throw ObservationRefusal.invalidBundle("legacy request cannot carry explicit LINE binding")
+            }
+            includedWindows = request.configuration.includeChildWindows ? [main] + children : [main]
+        }
 
         let signingIdentity: String?
         let axIdentity: AXIdentityRead
@@ -525,7 +551,8 @@ public actor NativeObservationSession {
             postInventory: postInventory,
             cgInventory: cgInventory,
             axIdentity: axIdentity,
-            localization: request.localization
+            localization: request.localization,
+            explicitLineRequestBinding: request.explicitLineRequestBinding
         )
         try bundle.validated()
         try checkDeadline(deadline, now: source.monotonicNanos(), stage: "validation")
