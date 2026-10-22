@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {spawn, spawnSync} from 'node:child_process';
 import {once} from 'node:events';
 import {randomUUID} from 'node:crypto';
-import {mkdtempSync, rmSync} from 'node:fs';
+import {mkdtempSync, rmSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {
@@ -14,6 +14,107 @@ import {
 } from '../scripts/line_backup_agent_resume_cua.mjs';
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+function killIfAlive(pid) {
+  try {
+    process.kill(pid, 'SIGKILL');
+  } catch {
+    return;
+  }
+}
+
+function createFakeController(directory, mode) {
+  const path = join(directory, `fake-controller-${mode}.py`);
+  writeFileSync(path, String.raw`
+import hashlib
+import json
+import os
+import sys
+
+MODE = ${JSON.stringify(mode)}
+args = sys.argv[1:]
+task_id = args[args.index("--task") + 1]
+root = args[args.index("--root") + 1]
+CHECKPOINT = "a" * 64
+
+
+def emit(value):
+    sys.stdout.write(json.dumps(value, separators=(",", ":")) + "\n")
+    sys.stdout.flush()
+
+
+if args and args[0] == "inspect":
+    emit({
+        "ok": True,
+        "task_id": task_id,
+        "generation": 0,
+        "checkpoint_sha256": CHECKPOINT,
+        "album_count": 100,
+        "gui_dispatches": 0,
+    })
+    raise SystemExit(0)
+
+for raw in sys.stdin:
+    request = json.loads(raw)
+    operation = request["operation"]
+    request_id = request["request_id"]
+    response = {
+        "ok": True,
+        "version": 1,
+        "request_id": request_id,
+        "session_id": request["session_id"],
+        "operation": operation,
+    }
+    if operation == "hello":
+        response["result"] = {
+            "generation": 0,
+            "writer_lock": "held",
+            "record_state": "ACTIVE",
+            "checkpoint_sha256": CHECKPOINT,
+            "root_sha256": hashlib.sha256(root.encode("utf-8")).hexdigest(),
+            "boot_id": request["data"]["boot_id"],
+            "session_id": request["session_id"],
+            "controller": {"pid": os.getpid(), "started_at": "fake-controller-start"},
+            "host": request["data"]["host"],
+            "sync": {
+                "file_fsync": True,
+                "fullfsync": True,
+                "directory_fsync": True,
+                "readback": True,
+            },
+            "gui_observations": 0,
+            "gui_dispatches": 0,
+        }
+        emit(response)
+    elif operation == "reconcile":
+        result = {"task_id": task_id, "generation": 0, "album_count": 100}
+        if MODE == "malformed":
+            sys.stdout.write("{not-json\n")
+            sys.stdout.flush()
+        elif MODE == "oversized":
+            sys.stdout.write("x" * (1024 * 1024 + 1) + "\n")
+            sys.stdout.flush()
+        elif MODE == "binding":
+            response["operation"] = "wrong-operation"
+            response["result"] = result
+            emit(response)
+        elif MODE == "lost-ack":
+            continue
+        else:
+            response["result"] = result
+            emit(response)
+            if MODE == "duplicate":
+                emit(response)
+    elif operation == "close":
+        if MODE == "close-error":
+            emit({"ok": False, "request_id": request_id, "error": {"code": "FAKE_CLOSE_FAILURE", "message": "close rejected"}})
+            raise SystemExit(3)
+        response["result"] = {"closed": True, "generation": 0}
+        emit(response)
+        raise SystemExit(0)
+`, {encoding: 'utf8', mode: 0o700});
+  return path;
+}
 
 async function startFakeHost() {
   const child = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], {
@@ -292,6 +393,74 @@ test('M0 fixed-root JSON-lines session capabilities', async t => {
   });
 });
 
+test('fake controller protocol failures are terminal and never gain GUI retry', async t => {
+  const host = await startFakeHost();
+  const directory = mkdtempSync(join(tmpdir(), 'agent-resume-protocol-'));
+  t.after(async () => {
+    await stopFakeHost(host);
+    rmSync(directory, {recursive: true, force: true});
+  });
+
+  const rejectingModes = new Map([
+    ['malformed', 'PROTOCOL_JSON_INVALID'],
+    ['oversized', 'PROTOCOL_LINE_TOO_LARGE'],
+    ['binding', 'PROTOCOL_BINDING_MISMATCH'],
+    ['lost-ack', 'REQUEST_TIMEOUT'],
+  ]);
+  for (const [mode, expectedCode] of rejectingModes) {
+    await t.test(`${mode} closes the wrapper`, async () => {
+      await assert.rejects(
+        openAgentResumeSession({
+          taskId: `AGENT-RESUME-PROTOCOL-${mode}`,
+          host: host.identity,
+          app: fakeApp,
+          scriptPath: createFakeController(directory, mode),
+          requestTimeoutMs: 1_000,
+          longOperationTimeoutMs: 1_000,
+        }),
+        error => error instanceof AgentResumeSessionError && error.code === expectedCode,
+      );
+    });
+  }
+
+  await t.test('duplicate response is fatal even after the first acknowledgement', async () => {
+    const session = await openAgentResumeSession({
+      taskId: 'AGENT-RESUME-PROTOCOL-duplicate',
+      host: host.identity,
+      app: fakeApp,
+      scriptPath: createFakeController(directory, 'duplicate'),
+      requestTimeoutMs: 1_000,
+      longOperationTimeoutMs: 1_000,
+    });
+    try {
+      await waitUntil(() => session.closed);
+      await assert.rejects(
+        session.reconcile(),
+        error => error instanceof AgentResumeSessionError && error.code === 'PROTOCOL_REQUEST_MISMATCH',
+      );
+    } finally {
+      killIfAlive(session.controller.pid);
+    }
+  });
+
+  await t.test('close rejection is surfaced and leaves an unusable session', async () => {
+    const session = await openAgentResumeSession({
+      taskId: 'AGENT-RESUME-PROTOCOL-close-error',
+      host: host.identity,
+      app: fakeApp,
+      scriptPath: createFakeController(directory, 'close-error'),
+      requestTimeoutMs: 1_000,
+      longOperationTimeoutMs: 1_000,
+    });
+    await assert.rejects(
+      session.close(),
+      error => error instanceof AgentResumeSessionError && error.code === 'FAKE_CLOSE_FAILURE',
+    );
+    killIfAlive(session.controller.pid);
+    await assert.rejects(session.reconcile(), error => error instanceof AgentResumeSessionError);
+  });
+});
+
 test('M1 wrapper intent calls remain single-shot and click-bounded', async t => {
   await t.test('non-positive timeouts are rejected before spawning the controller', async () => {
     const host = await startFakeHost();
@@ -304,6 +473,10 @@ test('M1 wrapper intent calls remain single-shot and click-bounded', async t => 
       await assert.rejects(
         openAgentResumeSession({taskId, host: host.identity, app: fakeApp, requestTimeoutMs: -1}),
         error => error.code === 'REQUEST_TIMEOUT_INVALID',
+      );
+      await assert.rejects(
+        openAgentResumeSession({taskId, host: host.identity, app: fakeApp, longOperationTimeoutMs: 0}),
+        error => error.code === 'LONG_OPERATION_TIMEOUT_INVALID',
       );
     } finally {
       await stopFakeHost(host);
@@ -434,6 +607,87 @@ test('M1 wrapper intent calls remain single-shot and click-bounded', async t => 
             resultEvidenceSha256: '2'.repeat(64),
           }),
           error => error.code === 'SAVE_ALL_INTENT_EXISTS',
+        );
+        assert.equal(secondClicks, 0);
+      } finally {
+        if (secondSession && !secondSession.closed) {
+          try { await secondSession.close(); } catch {}
+        }
+        await stopFakeHost(secondHost);
+      }
+    } finally {
+      if (firstSession && !firstSession.closed) {
+        try { await firstSession.close(); } catch {}
+      }
+      await stopFakeHost(firstHost);
+      if (originalHome === undefined) delete process.env.HOME;
+      else process.env.HOME = originalHome;
+      rmSync(fixture.home, {recursive: true, force: true});
+    }
+  });
+
+  await t.test('successful click followed by result-record loss stays UNKNOWN with zero retry', async t => {
+    const taskId = `AGENT-RESUME-RECORD-LOSS-${randomUUID()}`;
+    const originalHome = process.env.HOME;
+    const fixture = createResumeFixture(taskId);
+    process.env.HOME = fixture.home;
+    const firstHost = await startFakeHost();
+    let firstSession;
+    let secondSession;
+    let secondClicks = 0;
+    try {
+      let clicked = false;
+      firstSession = await openAgentResumeSession({
+        taskId,
+        host: firstHost.identity,
+        app: {
+          async click() {
+            clicked = true;
+            process.kill(firstSession.controller.pid, 'SIGKILL');
+            return {clicked: true};
+          },
+        },
+      });
+      const album = firstNotStartedAlbum(firstSession);
+      await assert.rejects(
+        firstSession.saveAll({
+          albumKey: album.album_key,
+          grounding: saveAllGrounding(album.album_key),
+          resultEvidenceSha256: '3'.repeat(64),
+        }),
+        error => error instanceof AgentResumeSessionError
+          && error.code === 'INTENT_RESULT_RECORD_FAILED'
+          && error.details.outcome === 'RETURNED',
+      );
+      assert.equal(clicked, true);
+      await waitUntil(() => firstSession.closed);
+      await stopFakeHost(firstHost);
+
+      const root = join(fixture.home, 'Library', 'Application Support', 'LineBackup', 'agent-resume');
+      const inspected = spawnSync('/usr/bin/python3', [
+        join(process.cwd(), 'scripts', 'line_backup_agent_resume.py'),
+        'inspect', '--root', root, '--task', taskId,
+      ], {encoding: 'utf8', env: {...process.env, HOME: fixture.home}});
+      assert.equal(inspected.status, 0, inspected.stderr);
+      const inspectedTask = JSON.parse(inspected.stdout.trim());
+      const durableAlbum = inspectedTask.albums.find(item => item.album_key === album.album_key);
+      assert.equal(durableAlbum.state, 'UNKNOWN');
+      assert.equal(durableAlbum.reason, 'SAVE_ALL_OUTCOME_UNKNOWN');
+
+      const secondHost = await startFakeHost();
+      try {
+        await assert.rejects(
+          openAgentResumeSession({
+            taskId,
+            host: secondHost.identity,
+            app: {
+              async click() {
+                secondClicks += 1;
+                return {clicked: true};
+              },
+            },
+          }),
+          error => error instanceof AgentResumeSessionError && error.code === 'PENDING_INPUT_UNRESOLVED',
         );
         assert.equal(secondClicks, 0);
       } finally {

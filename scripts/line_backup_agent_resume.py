@@ -57,6 +57,7 @@ LEGACY_SESSION_OWNER_KEYS = {
 }
 MAX_LINE_BYTES = 1024 * 1024
 MAX_CHECKPOINT_BYTES = 64 * 1024 * 1024
+MAX_DECODER_OUTPUT_BYTES = 32 * 1024 * 1024
 MAX_LOCK_RECORD_BYTES = 64 * 1024
 MAX_EXPECTED_IMAGES = 10_000
 DEFAULT_ROOT = Path.home() / "Library" / "Application Support" / "LineBackup" / "agent-resume"
@@ -2226,6 +2227,28 @@ def _compile_decoder(directory: Path) -> Path:
     return binary
 
 
+_ORIGINAL_COMPILE_DECODER = _compile_decoder
+_DECODER_CACHE_CONTEXT: Optional[tempfile.TemporaryDirectory[str]] = None
+_DECODER_CACHE: Dict[str, Path] = {}
+
+
+def _compile_decoder_once() -> Path:
+    global _DECODER_CACHE_CONTEXT
+
+    compile_decoder = _compile_decoder
+    cacheable = compile_decoder is _ORIGINAL_COMPILE_DECODER
+    if cacheable:
+        cached = _DECODER_CACHE.get(IMAGE_DECODER_SOURCE_SHA256)
+        if cached is not None and cached.exists() and not cached.is_symlink() and stat.S_ISREG(cached.stat().st_mode):
+            return cached
+    if _DECODER_CACHE_CONTEXT is None:
+        _DECODER_CACHE_CONTEXT = tempfile.TemporaryDirectory(prefix="line-backup-agent-resume-decoder-")
+    binary = compile_decoder(Path(_DECODER_CACHE_CONTEXT.name))
+    if cacheable:
+        _DECODER_CACHE[IMAGE_DECODER_SOURCE_SHA256] = Path(binary)
+    return Path(binary)
+
+
 def _decode_inventory(
     path: Path,
     expected_images: int,
@@ -2233,12 +2256,10 @@ def _decode_inventory(
     decoder_binary: Optional[Path] = None,
 ) -> Tuple[Dict[str, Dict[str, Any]], str]:
     _validate_decoder_source()
-    path = Path(path).resolve()
-    temporary_context: Optional[tempfile.TemporaryDirectory[str]] = None
+    path = Path(path)
     try:
         if decoder_binary is None:
-            temporary_context = tempfile.TemporaryDirectory(prefix="line-backup-agent-resume-decode-")
-            decoder_binary = _compile_decoder(Path(temporary_context.name))
+            decoder_binary = _compile_decoder_once()
         binary = Path(decoder_binary)
         if binary.is_symlink() or not binary.exists() or not stat.S_ISREG(binary.stat().st_mode):
             raise StorageRuntimeError("IMAGE_DECODER_MISSING", "compiled ImageIO decoder is unavailable")
@@ -2250,11 +2271,10 @@ def _decode_inventory(
             timeout=max(60, min(600, expected_images * 5)),
             env=_process_env(),
         )
+    except subprocess.TimeoutExpired as exc:
+        raise StorageRuntimeError("IMAGE_DECODER_TIMEOUT", "pinned ImageIO decoder timed out") from exc
     except (OSError, subprocess.SubprocessError) as exc:
         raise StorageRuntimeError("IMAGE_DECODER_EXECUTION_FAILED", "pinned ImageIO decoder failed to execute") from exc
-    finally:
-        if temporary_context is not None:
-            temporary_context.cleanup()
     if decode_result.returncode != 0 or not decode_result.stdout:
         stderr = decode_result.stderr.decode("utf-8", errors="replace").strip()[:512]
         detail = "exit %d" % decode_result.returncode
@@ -2262,7 +2282,7 @@ def _decode_inventory(
             detail += "; %s" % stderr
         raise SafetyBlock("IMAGE_DECODE_REJECTED", "pinned ImageIO decoder rejected the destination: %s" % detail)
     try:
-        decoded = strict_json_loads(decode_result.stdout, MAX_CHECKPOINT_BYTES)
+        decoded = strict_json_loads(decode_result.stdout, MAX_DECODER_OUTPUT_BYTES)
     except InputError as exc:
         raise SafetyBlock("IMAGE_DECODER_OUTPUT_INVALID", "pinned ImageIO decoder output is not strict JSON") from exc
     if not isinstance(decoded, dict) or decoded.get("verdict") != "PASS":
@@ -2375,7 +2395,9 @@ def _verification_matches_current(
     if verification["pre_inventory_sha256"] != verification["post_inventory_sha256"]:
         raise SafetyBlock("VERIFIED_INVENTORY_UNSTABLE", "verified inventory digest changed around decode and flush")
     before = _inventory_directory(path, max_entries=max(MAX_EXPECTED_IMAGES, int(verification["expected_images"]) + 1))
-    if before["count"] != verification["expected_images"] or before["sha256"] != verification["pre_inventory_sha256"]:
+    if before["count"] != verification["expected_images"]:
+        raise SafetyBlock("VERIFIED_CONTENT_CHANGED", "previously verified album content changed")
+    if _content_entry_binding(before["entries"]) != _content_entry_binding(verification["inventory"]):
         raise SafetyBlock("VERIFIED_CONTENT_CHANGED", "previously verified album content changed")
     decoded, binary_sha256 = _decode_inventory(
         path,
@@ -2685,27 +2707,18 @@ def derive_task_state(
     if task_id not in store["tasks"]:
         raise InputError("TASK_NOT_FOUND", "task does not exist")
     task = store["tasks"][task_id]
-    decoder_context: Optional[tempfile.TemporaryDirectory[str]] = None
-    decoder_binary: Optional[Path] = None
-    if deep:
-        decoder_context = tempfile.TemporaryDirectory(prefix="line-backup-agent-resume-reconcile-")
-        decoder_binary = _compile_decoder(Path(decoder_context.name))
-    try:
-        albums = []
-        for album_key in task["album_order"]:
-            albums.append(
-                _derive_album_state(
-                    root,
-                    store,
-                    task,
-                    task["albums"][album_key],
-                    deep=deep,
-                    decoder_binary=decoder_binary,
-                )
+    albums = []
+    for album_key in task["album_order"]:
+        albums.append(
+            _derive_album_state(
+                root,
+                store,
+                task,
+                task["albums"][album_key],
+                deep=deep,
+                decoder_binary=None,
             )
-    finally:
-        if decoder_context is not None:
-            decoder_context.cleanup()
+        )
     blockers = [
         item
         for item in albums
@@ -2808,7 +2821,7 @@ def prepare_save_all(
         raise SafetyBlock("SAVE_ALL_INTENT_EXISTS", "save-all was already prepared for this album")
     if album["verification"] is not None or _album_history_skip(current, task, album, root=root, deep=False) is not None:
         raise SafetyBlock("ALBUM_NOT_DISPATCHABLE", "album is already verified or historical")
-    derived = derive_task_state(root, current, task_id, deep=False)
+    derived = derive_task_state(root, current, task_id, deep=True)
     if derived["first_blocker"] is not None:
         raise SafetyBlock("TASK_BLOCKED", "an unresolved task blocker prevents any new dispatch")
     if derived["next_safe_album_key"] != album_key:
@@ -2932,7 +2945,7 @@ def prepare_chooser_confirm(
         _validate_chooser_grounding(grounding, scope=task["scope"], album=album)
     except SafetyBlock as exc:
         raise InputError("CHOOSER_GROUNDING_INVALID", exc.message) from exc
-    derived = derive_task_state(root, current, task_id, deep=False)
+    derived = derive_task_state(root, current, task_id, deep=True)
     blocker = derived["first_blocker"]
     if blocker is not None and not (
         blocker["album_key"] == album_key and blocker["reason"] in ("CHOOSER_OUTCOME_UNKNOWN", "SAVE_ALL_OUTCOME_UNKNOWN")
@@ -3061,7 +3074,7 @@ def verify_album(
     chooser_intent = album["chooser_confirm_intent"]
     if not _intent_returned(save_intent) or not _intent_returned(chooser_intent):
         raise SafetyBlock("DISPATCH_EVIDENCE_INCOMPLETE", "save-all and chooser returned evidence are required")
-    derived = derive_task_state(root, current, task_id, deep=False)
+    derived = derive_task_state(root, current, task_id, deep=True)
     if derived["first_blocker"] is not None:
         raise SafetyBlock("TASK_BLOCKED", "an unresolved blocker prevents verification promotion")
     if derived["task_phase"] != "READY_TO_VERIFY" or derived["next_safe_action"] != "VERIFY_ALBUM:%s" % album_key:
@@ -3080,27 +3093,21 @@ def verify_album(
         if stable["count"] < expected:
             raise SafetyBlock("INCOMPLETE_DOWNLOAD", "verified album inventory is incomplete")
         raise SafetyBlock("UNEXPECTED_EXTRA_FILES", "verified album inventory contains extra files")
-    with tempfile.TemporaryDirectory(prefix="line-backup-agent-resume-verify-") as temporary:
-        decoder_binary = _compile_decoder(Path(temporary))
-        decoded, decoder_binary_sha256 = _decode_inventory(
-            destination,
-            expected,
-            decoder_binary=decoder_binary,
-        )
-        decoded_entries = _apply_decode_result(stable, decoded)
-        post_decode = _inventory_directory(destination, max_entries=max(MAX_EXPECTED_IMAGES, expected + 1))
-        if (
-            post_decode["sha256"] != stable["sha256"]
-            or _content_entry_binding(post_decode["entries"]) != _content_entry_binding(stable["entries"])
-        ):
-            raise SafetyBlock("DESTINATION_CHANGED", "destination changed during post-decode inventory")
-        _flush_inventory(destination, stable)
-        post_flush = _inventory_directory(destination, max_entries=max(MAX_EXPECTED_IMAGES, expected + 1))
-        if (
-            post_flush["sha256"] != stable["sha256"]
-            or _content_entry_binding(post_flush["entries"]) != _content_entry_binding(stable["entries"])
-        ):
-            raise SafetyBlock("DESTINATION_CHANGED", "destination changed during post-flush readback")
+    decoded, decoder_binary_sha256 = _decode_inventory(destination, expected)
+    decoded_entries = _apply_decode_result(stable, decoded)
+    post_decode = _inventory_directory(destination, max_entries=max(MAX_EXPECTED_IMAGES, expected + 1))
+    if (
+        post_decode["sha256"] != stable["sha256"]
+        or _content_entry_binding(post_decode["entries"]) != _content_entry_binding(stable["entries"])
+    ):
+        raise SafetyBlock("DESTINATION_CHANGED", "destination changed during post-decode inventory")
+    _flush_inventory(destination, stable)
+    post_flush = _inventory_directory(destination, max_entries=max(MAX_EXPECTED_IMAGES, expected + 1))
+    if (
+        post_flush["sha256"] != stable["sha256"]
+        or _content_entry_binding(post_flush["entries"]) != _content_entry_binding(stable["entries"])
+    ):
+        raise SafetyBlock("DESTINATION_CHANGED", "destination changed during post-flush readback")
     verification = {
         "verified_at_utc": utc_now(),
         "expected_images": expected,

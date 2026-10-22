@@ -234,6 +234,7 @@ export async function openAgentResumeSession({
   pythonExecutable = DEFAULT_PYTHON,
   scriptPath = DEFAULT_SCRIPT,
   requestTimeoutMs = DEFAULT_TIMEOUT_MS,
+  longOperationTimeoutMs = LONG_OPERATION_TIMEOUT_MS,
   clickTimeoutMs = DEFAULT_TIMEOUT_MS,
 } = {}) {
   if (typeof taskId !== 'string' || !TASK_ID_PATTERN.test(taskId)) {
@@ -255,6 +256,9 @@ export async function openAgentResumeSession({
   }
   if (!Number.isFinite(requestTimeoutMs) || requestTimeoutMs <= 0) {
     throw new AgentResumeSessionError('REQUEST_TIMEOUT_INVALID', 'requestTimeoutMs must be positive');
+  }
+  if (!Number.isFinite(longOperationTimeoutMs) || longOperationTimeoutMs <= 0) {
+    throw new AgentResumeSessionError('LONG_OPERATION_TIMEOUT_INVALID', 'longOperationTimeoutMs must be positive');
   }
 
   const root = fixedRoot();
@@ -454,7 +458,7 @@ export async function openAgentResumeSession({
   };
 
   const reconcileInternal = async () => {
-    const result = await request('reconcile', {}, generation, LONG_OPERATION_TIMEOUT_MS);
+    const result = await request('reconcile', {}, generation, longOperationTimeoutMs);
     if (!result || result.task_id !== taskId || !Number.isInteger(result.generation)) {
       throw new AgentResumeSessionError('RECONCILE_INVALID', 'reconciliation result is invalid');
     }
@@ -634,7 +638,7 @@ export async function openAgentResumeSession({
     if (typeof albumKey !== 'string' || !SHA256_PATTERN.test(albumKey)) {
       throw new AgentResumeSessionError('ALBUM_KEY_INVALID', 'albumKey is invalid');
     }
-    const result = await request('verify_album', {album_key: albumKey}, generation, LONG_OPERATION_TIMEOUT_MS);
+    const result = await request('verify_album', {album_key: albumKey}, generation, longOperationTimeoutMs);
     updateGeneration(result);
     return Object.freeze({...result});
   });

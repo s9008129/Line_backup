@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import base64
+import copy
 import datetime as dt
+import errno
 import hashlib
 import fcntl
 import json
@@ -29,9 +31,262 @@ PNG_1X1 = base64.b64decode(
 )
 GROUP_KEY = "fixture-group"
 
+ATOMIC_KILL_WORKER = r"""
+import json
+import os
+import sys
+from pathlib import Path
+
+sys.path.insert(0, sys.argv[1])
+import line_backup_agent_resume as resume
+
+target = Path(sys.argv[2])
+value = json.loads(Path(sys.argv[3]).read_text(encoding="utf-8"))
+hook_name = sys.argv[4]
+resume._atomic_json_write(target, value, hooks={hook_name: lambda: os._exit(77)})
+"""
+
+PROCESS_RESUME_WORKER = r"""
+import base64
+import hashlib
+import json
+import os
+import sys
+from pathlib import Path
+
+sys.path.insert(0, sys.argv[1])
+import line_backup_agent_resume as resume
+
+root = Path(sys.argv[2])
+task_id = sys.argv[3]
+action = sys.argv[4]
+pid_log = Path(sys.argv[5])
+decoder_helper = sys.argv[6]
+session_id = "process-%d" % os.getpid()
+png = base64.b64decode(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+)
+with pid_log.open("a", encoding="utf-8") as stream:
+    stream.write("%d\n" % os.getpid())
+    stream.flush()
+    os.fsync(stream.fileno())
+
+
+def grounding(task, album_key, chooser=False):
+    common = {
+        "app_identifier": task["scope"]["app_identifier"],
+        "group_key": task["scope"]["group_key"],
+        "album_key": album_key,
+        "window_id": "fixture-window-%d" % os.getpid(),
+        "foreground_authorization_reference": "OWNER_FIXTURE_FOREGROUND",
+        "click_point": {"x": 120.0, "y": 240.0},
+        "evidence_sha256": hashlib.sha256(
+            ("%s:%s:%s" % (action, os.getpid(), album_key)).encode("utf-8")
+        ).hexdigest(),
+    }
+    if chooser:
+        return {**common, "chooser_identity": "fixture-chooser"}
+    return {
+        **common,
+        "detail_identity": "fixture-detail",
+        "menu_identity": "fixture-save-all-menu",
+        "destination_empty": True,
+    }
+
+
+def dispatch_and_choose(store, task, album_key):
+    generation = store["generation"]
+    intent = resume.prepare_save_all(
+        root,
+        task_id,
+        session_id,
+        generation,
+        album_key,
+        grounding(task, album_key),
+    )
+    result = resume.record_save_all_result(
+        root,
+        task_id,
+        session_id,
+        intent["generation"],
+        album_key,
+        intent["action_id"],
+        "RETURNED",
+        hashlib.sha256(("save:%s" % album_key).encode("utf-8")).hexdigest(),
+    )
+    chooser = resume.prepare_chooser_confirm(
+        root,
+        task_id,
+        session_id,
+        result["generation"],
+        album_key,
+        grounding(task, album_key, chooser=True),
+    )
+    final = resume.record_chooser_result(
+        root,
+        task_id,
+        session_id,
+        chooser["generation"],
+        album_key,
+        chooser["action_id"],
+        "RETURNED",
+        hashlib.sha256(("chooser:%s" % album_key).encode("utf-8")).hexdigest(),
+    )
+    return final["generation"]
+
+
+def write_expected_files(task, album_key):
+    album = task["albums"][album_key]
+    destination = resume._task_absolute_path(root, task_id, album["destination"])
+    for index in range(int(album["identity"]["expected_images"])):
+        (destination / ("%04d.png" % index)).write_bytes(png)
+
+
+def state_snapshot(store):
+    state = resume.derive_task_state(root, store, task_id, deep=False)
+    return {
+        "generation": state["generation"],
+        "phase": state["task_phase"],
+        "next_safe_ordinal": state["next_safe_ordinal"],
+        "next_safe_action": state["next_safe_action"],
+        "counts": state["counts"],
+        "photo_count": state["photo_count"],
+        "blocker": state["first_blocker"],
+    }
+
+
+store = resume.read_store(root)
+task = store["tasks"][task_id]
+state = resume.derive_task_state(root, store, task_id, deep=False)
+if action in ("inspect", "open-only"):
+    print(json.dumps(state_snapshot(store), sort_keys=True), flush=True)
+elif action == "open-only-kill":
+    print(json.dumps(state_snapshot(store), sort_keys=True), flush=True)
+    os._exit(77)
+elif action == "intent-only-kill":
+    album_key = state["next_safe_album_key"]
+    intent = resume.prepare_save_all(
+        root,
+        task_id,
+        session_id,
+        store["generation"],
+        album_key,
+        grounding(task, album_key),
+    )
+    print(json.dumps({"album_key": album_key, "action_id": intent["action_id"]}), flush=True)
+    os._exit(77)
+elif action == "save-returned-kill":
+    album_key = state["next_safe_album_key"]
+    intent = resume.prepare_save_all(
+        root,
+        task_id,
+        session_id,
+        store["generation"],
+        album_key,
+        grounding(task, album_key),
+    )
+    result = resume.record_save_all_result(
+        root,
+        task_id,
+        session_id,
+        intent["generation"],
+        album_key,
+        intent["action_id"],
+        "RETURNED",
+        hashlib.sha256(("save:%s" % album_key).encode("utf-8")).hexdigest(),
+    )
+    print(json.dumps({"album_key": album_key, "generation": result["generation"]}), flush=True)
+    os._exit(77)
+elif action == "dispatch-files-kill":
+    album_key = state["next_safe_album_key"]
+    dispatch_and_choose(store, task, album_key)
+    write_expected_files(task, album_key)
+    print(json.dumps({"album_key": album_key, "ordinal": state["next_safe_ordinal"]}), flush=True)
+    os._exit(77)
+elif action in ("verify-real", "verify-fake"):
+    album_key = next(item["album_key"] for item in state["albums"] if item["state"] == "VERIFYING")
+    resume._compile_decoder = lambda _directory: Path(decoder_helper)
+    result = resume.verify_album(
+        root,
+        task_id,
+        session_id,
+        store["generation"],
+        album_key,
+        interval_seconds=0,
+        timeout_seconds=10,
+        sleep_fn=lambda _seconds: None,
+    )
+    print(json.dumps(result, sort_keys=True), flush=True)
+elif action == "dispatch-verify-fake":
+    album_key = state["next_safe_album_key"]
+    if album_key is None:
+        raise SystemExit("no dispatchable album")
+    dispatch_and_choose(store, task, album_key)
+    write_expected_files(task, album_key)
+    refreshed = resume.read_store(root)
+    resume._compile_decoder = lambda _directory: Path(decoder_helper)
+    result = resume.verify_album(
+        root,
+        task_id,
+        session_id,
+        refreshed["generation"],
+        album_key,
+        interval_seconds=0,
+        timeout_seconds=10,
+        sleep_fn=lambda _seconds: None,
+    )
+    print(json.dumps(result, sort_keys=True), flush=True)
+else:
+    raise SystemExit("unknown action")
+"""
+
 
 def write_json(path: Path, value: object) -> None:
     Path(path).write_bytes(resume.canonical_json(value) + b"\n")
+
+
+def create_fake_decoder(directory: Path) -> Path:
+    directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+    decoder = directory / "fake_image_decode"
+    decoder.write_text(
+        "#!/usr/bin/env python3\n"
+        "import hashlib\n"
+        "import json\n"
+        "import os\n"
+        "import sys\n"
+        "from pathlib import Path\n"
+        "root = Path(sys.argv[1])\n"
+        "expected = int(sys.argv[2])\n"
+        "names = sorted(entry.name for entry in root.iterdir())\n"
+        "entries = []\n"
+        "for name in names:\n"
+        "    raw = (root / name).read_bytes()\n"
+        "    entries.append({\n"
+        "        'name': name, 'decoded': True, 'width': 1, 'height': 1,\n"
+        "        'contentType': 'public.png',\n"
+        "        'sha256': hashlib.sha256(raw).hexdigest(),\n"
+        "    })\n"
+        "passed = len(entries) == expected and all(item['decoded'] for item in entries)\n"
+        "print(json.dumps({\n"
+        "    'verdict': 'PASS' if passed else 'FAIL', 'expected': expected,\n"
+        "    'actualEntries': len(entries), 'destination': str(root), 'entries': entries,\n"
+        "}, sort_keys=True))\n"
+        "raise SystemExit(0 if passed else 1)\n",
+        encoding="utf-8",
+    )
+    decoder.chmod(0o700)
+    return decoder
+
+
+def run_worker(code: str, arguments: list[str], *, timeout: float = 60.0) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        [sys.executable, "-B", "-c", code, *arguments],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+        cwd=str(REPO_ROOT),
+    )
 
 
 def seed_history_store(root: Path, count: int = 49) -> dict:
@@ -343,6 +598,317 @@ class IdentityAndSyncTests(unittest.TestCase):
             self.assertEqual(actual, digest)
 
 
+class AtomicWriteFaultTests(unittest.TestCase):
+    HOOKS = (
+        "before_write",
+        "after_write",
+        "after_file_sync",
+        "before_replace",
+        "after_replace",
+        "after_directory_sync",
+        "after_readback",
+    )
+    PRE_REPLACE_HOOKS = set(HOOKS[:4])
+
+    @staticmethod
+    def _store(generation: int) -> dict:
+        value = resume._initial_store()
+        value["generation"] = generation
+        value["payload_sha256"] = resume._payload_digest(value)
+        return value
+
+    def test_process_interruption_at_every_atomic_boundary_keeps_one_valid_revision(self) -> None:
+        for hook_name in self.HOOKS:
+            with self.subTest(hook=hook_name), home_temporary_directory() as temporary:
+                root = Path(temporary).resolve() / "agent-resume"
+                root.mkdir(mode=0o700)
+                checkpoint = root / "checkpoint.json"
+                resume._atomic_json_write(checkpoint, self._store(0))
+                replacement_path = root.parent / ("replacement-%s.json" % hook_name)
+                write_json(replacement_path, self._store(1))
+
+                completed = run_worker(
+                    ATOMIC_KILL_WORKER,
+                    [str(REPO_ROOT / "scripts"), str(checkpoint), str(replacement_path), hook_name],
+                )
+                self.assertEqual(completed.returncode, 77, completed.stderr)
+
+                observed = resume.read_store(root)
+                expected_generation = 0 if hook_name in self.PRE_REPLACE_HOOKS else 1
+                self.assertEqual(observed["generation"], expected_generation)
+                self.assertEqual(observed["payload_sha256"], resume._payload_digest(observed))
+                temp_files = list(root.glob(".checkpoint.json.tmp.*"))
+                self.assertEqual(len(temp_files), 1 if hook_name in self.PRE_REPLACE_HOOKS else 0)
+
+    def test_enospc_fsync_replace_and_readback_failures_are_explicit(self) -> None:
+        cases = (
+            ("ENOSPC", mock.patch.object(resume, "_write_all", side_effect=OSError(errno.ENOSPC, "full")), "ATOMIC_WRITE_FAILED", 0),
+            ("file-fsync", mock.patch.object(resume, "_full_sync", side_effect=OSError(errno.EIO, "fsync")), "ATOMIC_WRITE_FAILED", 0),
+            ("replace", mock.patch.object(resume.os, "replace", side_effect=OSError(errno.EIO, "replace")), "ATOMIC_WRITE_FAILED", 0),
+            ("directory-fsync", mock.patch.object(resume, "_directory_sync", side_effect=OSError(errno.EIO, "dir")), "ATOMIC_WRITE_FAILED", 1),
+            ("readback", mock.patch.object(resume, "_read_regular_bytes", return_value=b"wrong\n"), "ATOMIC_READBACK_MISMATCH", 1),
+        )
+        for name, patcher, expected_code, expected_generation in cases:
+            with self.subTest(case=name), home_temporary_directory() as temporary:
+                root = Path(temporary).resolve() / "agent-resume"
+                root.mkdir(mode=0o700)
+                checkpoint = root / "checkpoint.json"
+                resume._atomic_json_write(checkpoint, self._store(0))
+                with patcher:
+                    with self.assertRaises(resume.StorageRuntimeError) as caught:
+                        resume._atomic_json_write(checkpoint, self._store(1))
+                self.assertEqual(caught.exception.code, expected_code)
+                observed = resume.read_store(root)
+                self.assertEqual(observed["generation"], expected_generation)
+                self.assertEqual(observed["payload_sha256"], resume._payload_digest(observed))
+
+    def test_failed_intent_write_never_returns_click_eligibility(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-ENOSPC-INTENT"
+            create_runtime_fixture(root, task_id)
+            store, album = task_and_album(root, task_id, 50)
+            task = store["tasks"][task_id]
+            original = (root / "checkpoint.json").read_bytes()
+            with mock.patch.object(resume, "_full_sync", side_effect=OSError(errno.ENOSPC, "full")):
+                with self.assertRaises(resume.StorageRuntimeError) as caught:
+                    resume.prepare_save_all(
+                        root,
+                        task_id,
+                        "failed-intent-session",
+                        store["generation"],
+                        album["album_key"],
+                        make_grounding(task, album["album_key"]),
+                    )
+            self.assertEqual(caught.exception.code, "ATOMIC_WRITE_FAILED")
+            self.assertEqual((root / "checkpoint.json").read_bytes(), original)
+            state = resume.derive_task_state(root, resume.read_store(root), task_id, deep=False)
+            self.assertEqual(state["next_safe_ordinal"], 50)
+
+            with mock.patch.object(resume, "_directory_sync", side_effect=OSError(errno.EIO, "dir")):
+                with self.assertRaises(resume.StorageRuntimeError) as caught:
+                    resume.prepare_save_all(
+                        root,
+                        task_id,
+                        "uncertain-intent-session",
+                        store["generation"],
+                        album["album_key"],
+                        make_grounding(task, album["album_key"]),
+                    )
+            self.assertEqual(caught.exception.code, "ATOMIC_WRITE_FAILED")
+            recovered = resume.read_store(root)
+            recovered_album = recovered["tasks"][task_id]["albums"][album["album_key"]]
+            self.assertIsNotNone(recovered_album["save_all_intent"])
+            recovered_state = resume.derive_task_state(root, recovered, task_id, deep=False)
+            self.assertEqual(recovered_state["first_blocker"]["reason"], "SAVE_ALL_OUTCOME_UNKNOWN")
+
+
+class DecoderFaultTests(unittest.TestCase):
+    def _input(self, directory: Path) -> tuple[Path, Path]:
+        destination = directory / "downloads"
+        destination.mkdir(mode=0o700)
+        (destination / "0001.png").write_bytes(PNG_1X1)
+        decoder = directory / "decoder-binary"
+        decoder.write_bytes(b"fixture decoder")
+        decoder.chmod(0o700)
+        return destination, decoder
+
+    def test_decoder_timeout_is_distinct_and_non_mutating(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            destination, decoder = self._input(Path(temporary))
+            with mock.patch.object(resume, "_validate_decoder_source"):
+                with mock.patch.object(
+                    resume.subprocess,
+                    "run",
+                    side_effect=subprocess.TimeoutExpired(cmd=[str(decoder)], timeout=60),
+                ):
+                    with self.assertRaises(resume.StorageRuntimeError) as caught:
+                        resume._decode_inventory(destination, 1, decoder_binary=decoder)
+            self.assertEqual(caught.exception.code, "IMAGE_DECODER_TIMEOUT")
+            self.assertEqual((destination / "0001.png").read_bytes(), PNG_1X1)
+
+    def test_decoder_malformed_duplicate_and_oversized_output_fail_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            destination, decoder = self._input(Path(temporary))
+            completed = subprocess.CompletedProcess(args=[str(decoder)], returncode=0, stdout=b'{}', stderr=b"")
+            with mock.patch.object(resume, "_validate_decoder_source"):
+                for name, stdout in (
+                    ("malformed", b'{"verdict":'),
+                    ("duplicate", b'{"verdict":"PASS","verdict":"FAIL"}'),
+                ):
+                    with self.subTest(case=name), mock.patch.object(
+                        resume.subprocess,
+                        "run",
+                        return_value=subprocess.CompletedProcess(args=completed.args, returncode=0, stdout=stdout, stderr=b""),
+                    ):
+                        with self.assertRaises(resume.SafetyBlock) as caught:
+                            resume._decode_inventory(destination, 1, decoder_binary=decoder)
+                    self.assertEqual(caught.exception.code, "IMAGE_DECODER_OUTPUT_INVALID")
+                with mock.patch.object(resume, "MAX_DECODER_OUTPUT_BYTES", 64):
+                    with mock.patch.object(
+                        resume.subprocess,
+                        "run",
+                        return_value=subprocess.CompletedProcess(args=completed.args, returncode=0, stdout=b" " * 65, stderr=b""),
+                    ):
+                        with self.assertRaises(resume.SafetyBlock) as caught:
+                            resume._decode_inventory(destination, 1, decoder_binary=decoder)
+            self.assertEqual(caught.exception.code, "IMAGE_DECODER_OUTPUT_INVALID")
+
+
+class MacImageDecoderTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls._temporary = tempfile.TemporaryDirectory(prefix="line-backup-imageio-test-")
+        cls.decoder = resume._compile_decoder(Path(cls._temporary.name))
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls._temporary.cleanup()
+
+    def test_pinned_imageio_decodes_valid_png_and_rejects_truncated_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            valid = base / "valid"
+            valid.mkdir(mode=0o700)
+            (valid / "0001.png").write_bytes(PNG_1X1)
+            decoded, binary_sha256 = resume._decode_inventory(valid, 1, decoder_binary=self.decoder)
+            self.assertEqual(decoded["0001.png"]["width"], 1)
+            self.assertEqual(decoded["0001.png"]["height"], 1)
+            self.assertRegex(binary_sha256, r"^[0-9a-f]{64}$")
+
+            truncated = base / "truncated"
+            truncated.mkdir(mode=0o700)
+            truncated_bytes = PNG_1X1[:20]
+            (truncated / "0001.png").write_bytes(truncated_bytes)
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume._decode_inventory(truncated, 1, decoder_binary=self.decoder)
+            self.assertIn(caught.exception.code, {"IMAGE_DECODE_REJECTED", "IMAGE_DECODE_COUNT_MISMATCH"})
+            self.assertEqual((truncated / "0001.png").read_bytes(), truncated_bytes)
+
+    def test_real_imageio_decode_then_destination_change_is_not_verified(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-IMAGEIO-POST-DECODE"
+            create_runtime_fixture(root, task_id)
+            store, album = task_and_album(root, task_id, 50)
+            generation, _, _ = dispatch_and_choose(
+                root,
+                task_id,
+                "imageio-post-decode",
+                store["generation"],
+                album["album_key"],
+                store["tasks"][task_id],
+            )
+            destination = resume._task_absolute_path(root, task_id, album["destination"])
+            write_png_count(destination, 80)
+            real_decode = resume._decode_inventory
+            decoder = self.decoder
+
+            def decode_then_change(path: Path, expected: int, *, decoder_binary: Path | None = None):
+                result = real_decode(path, expected, decoder_binary=decoder)
+                target = path / "0000.png"
+                target.write_bytes(target.read_bytes() + b"changed-after-decode")
+                return result
+
+            with mock.patch.object(resume, "_decode_inventory", side_effect=decode_then_change):
+                with self.assertRaises(resume.SafetyBlock) as caught:
+                    resume.verify_album(
+                        root,
+                        task_id,
+                        "imageio-post-decode",
+                        generation,
+                        album["album_key"],
+                        interval_seconds=0,
+                        timeout_seconds=1,
+                        sleep_fn=lambda _seconds: None,
+                    )
+            self.assertEqual(caught.exception.code, "DESTINATION_CHANGED")
+            current = resume.read_store(root)
+            self.assertIsNone(current["tasks"][task_id]["albums"][album["album_key"]]["verification"])
+
+
+class DestinationSafetyTests(unittest.TestCase):
+    def test_partial_zero_symlink_and_non_directory_entries_fail_closed(self) -> None:
+        cases = []
+
+        def partial(path: Path) -> None:
+            (path / "0001.png.part").write_bytes(PNG_1X1)
+
+        def zero(path: Path) -> None:
+            (path / "0001.png").write_bytes(b"")
+
+        def symlink(path: Path) -> None:
+            target = path.parent / "outside.png"
+            target.write_bytes(PNG_1X1)
+            (path / "0001.png").symlink_to(target)
+
+        def directory(path: Path) -> None:
+            (path / "nested").mkdir()
+
+        cases.extend(
+            (
+                ("partial", partial, "PARTIAL_FILE_PRESENT"),
+                ("zero", zero, "ZERO_BYTE_FILE"),
+                ("symlink", symlink, "DESTINATION_INVALID"),
+                ("directory", directory, "DESTINATION_INVALID"),
+            )
+        )
+        for name, populate, expected_code in cases:
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as temporary:
+                destination = Path(temporary) / "downloads"
+                destination.mkdir(mode=0o700)
+                populate(destination)
+                with self.assertRaises(resume.SafetyBlock) as caught:
+                    resume._inventory_directory(destination)
+                self.assertEqual(caught.exception.code, expected_code)
+
+    def test_traversal_destination_is_rejected_before_any_task_directory(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            seed_history_store(root)
+            manifest = build_custom_manifest("AGENT-RESUME-TEST-TRAVERSAL", [], active_count=100)
+            manifest["albums"][0]["destination"] = "../../escape"
+            manifest_path = root.parent / "traversal.json"
+            write_json(manifest_path, manifest)
+            with self.assertRaises(resume.InputError) as caught:
+                resume.create_task(root, manifest_path)
+            self.assertEqual(caught.exception.code, "DESTINATION_INVALID")
+            self.assertFalse((root / "tasks" / "AGENT-RESUME-TEST-TRAVERSAL").exists())
+
+    def test_extra_file_after_returned_chooser_blocks_without_redownload(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-EXTRA-AFTER-INTENT"
+            create_runtime_fixture(root, task_id)
+            store, album = task_and_album(root, task_id, 50)
+            generation, _, _ = dispatch_and_choose(
+                root,
+                task_id,
+                "extra-after-intent",
+                store["generation"],
+                album["album_key"],
+                store["tasks"][task_id],
+            )
+            destination = resume._task_absolute_path(root, task_id, album["destination"])
+            write_png_count(destination, 81)
+            before = {path.name: path.read_bytes() for path in destination.iterdir()}
+            state = resume.derive_task_state(root, resume.read_store(root), task_id, deep=False)
+            self.assertEqual(state["first_blocker"]["reason"], "UNEXPECTED_EXTRA_FILES")
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.verify_album(
+                    root,
+                    task_id,
+                    "extra-after-intent",
+                    generation,
+                    album["album_key"],
+                    interval_seconds=0,
+                    timeout_seconds=1,
+                    sleep_fn=lambda _: None,
+                )
+            self.assertIn(caught.exception.code, {"TASK_BLOCKED", "UNEXPECTED_EXTRA_FILES"})
+            self.assertEqual({path.name: path.read_bytes() for path in destination.iterdir()}, before)
+
+
 class ResumeCoreTests(unittest.TestCase):
     @staticmethod
     def _compile_decoder_in(directory: Path) -> Path:
@@ -370,6 +936,21 @@ class ResumeCoreTests(unittest.TestCase):
             self.assertEqual(first["counts"]["NOT_STARTED"], 51)
             self.assertEqual(first["gui_dispatches"], 0)
             self.assertEqual((root / "checkpoint.json").read_bytes(), before)
+
+    def test_deep_state_compiles_decoder_only_when_a_verified_binding_is_present(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-LAZY-DECODER"
+            create_runtime_fixture(root, task_id)
+            store = resume.read_store(root)
+            with mock.patch.object(
+                resume,
+                "_compile_decoder",
+                side_effect=AssertionError("decoder must stay lazy before any verification exists"),
+            ):
+                state = resume.derive_task_state(root, store, task_id, deep=True)
+            self.assertEqual(state["next_safe_ordinal"], 50)
+            self.assertEqual(state["counts"]["SKIPPED_EXISTING"], 49)
 
     def test_partial_50_blocks_whole_task_and_preserves_32_files(self) -> None:
         with home_temporary_directory() as temporary:
@@ -432,6 +1013,202 @@ class ResumeCoreTests(unittest.TestCase):
                 {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in destination.iterdir()},
                 before_hashes,
             )
+
+    def test_fresh_process_intent_kill_leaves_unknown_without_retry(self) -> None:
+        with home_temporary_directory() as temporary:
+            base = Path(temporary).resolve()
+            root = base / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-PROCESS-INTENT"
+            create_runtime_fixture(root, task_id)
+            decoder = create_fake_decoder(base / "fake-intent-decoder")
+            pid_log = base / "intent-pids.log"
+
+            killed = run_worker(
+                PROCESS_RESUME_WORKER,
+                [str(REPO_ROOT / "scripts"), str(root), task_id, "intent-only-kill", str(pid_log), str(decoder)],
+            )
+            self.assertEqual(killed.returncode, 77, killed.stderr)
+            killed_record = json.loads(killed.stdout.strip())
+
+            observed = run_worker(
+                PROCESS_RESUME_WORKER,
+                [str(REPO_ROOT / "scripts"), str(root), task_id, "inspect", str(pid_log), str(decoder)],
+            )
+            self.assertEqual(observed.returncode, 0, observed.stderr)
+            snapshot = json.loads(observed.stdout.strip())
+            self.assertEqual(snapshot["phase"], "BLOCKED_AND_PRESERVE_WHOLE_TASK")
+            self.assertEqual(snapshot["blocker"]["state"], "UNKNOWN")
+            self.assertEqual(snapshot["blocker"]["reason"], "SAVE_ALL_OUTCOME_UNKNOWN")
+
+            store, album = task_and_album(root, task_id, 50)
+            self.assertEqual(album["album_key"], killed_record["album_key"])
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.prepare_save_all(
+                    root,
+                    task_id,
+                    "fresh-retry-session",
+                    store["generation"],
+                    album["album_key"],
+                    make_grounding(store["tasks"][task_id], album["album_key"]),
+                )
+            self.assertEqual(caught.exception.code, "SAVE_ALL_INTENT_EXISTS")
+            pids = [int(line) for line in pid_log.read_text(encoding="utf-8").splitlines() if line.strip()]
+            self.assertEqual(len(pids), 2)
+            self.assertEqual(len(set(pids)), 2)
+
+    def test_fresh_process_without_intent_leaves_50_fresh(self) -> None:
+        with home_temporary_directory() as temporary:
+            base = Path(temporary).resolve()
+            root = base / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-PROCESS-BEFORE-INTENT"
+            create_runtime_fixture(root, task_id)
+            decoder = create_fake_decoder(base / "fake-before-intent-decoder")
+            pid_log = base / "before-intent-pids.log"
+            before_checkpoint = (root / "checkpoint.json").read_bytes()
+
+            killed = run_worker(
+                PROCESS_RESUME_WORKER,
+                [str(REPO_ROOT / "scripts"), str(root), task_id, "open-only-kill", str(pid_log), str(decoder)],
+            )
+            self.assertEqual(killed.returncode, 77, killed.stderr)
+            self.assertEqual(json.loads(killed.stdout.strip())["next_safe_ordinal"], 50)
+
+            observed = run_worker(
+                PROCESS_RESUME_WORKER,
+                [str(REPO_ROOT / "scripts"), str(root), task_id, "inspect", str(pid_log), str(decoder)],
+            )
+            self.assertEqual(observed.returncode, 0, observed.stderr)
+            snapshot = json.loads(observed.stdout.strip())
+            self.assertEqual(snapshot["next_safe_ordinal"], 50)
+            self.assertIsNone(snapshot["blocker"])
+            self.assertEqual((root / "checkpoint.json").read_bytes(), before_checkpoint)
+
+    def test_fresh_process_save_all_returned_before_chooser_preserves_unknown(self) -> None:
+        with home_temporary_directory() as temporary:
+            base = Path(temporary).resolve()
+            root = base / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-PROCESS-SAVE-RETURNED"
+            create_runtime_fixture(root, task_id)
+            decoder = create_fake_decoder(base / "fake-save-decoder")
+            pid_log = base / "save-pids.log"
+            before_checkpoint = (root / "checkpoint.json").read_bytes()
+
+            killed = run_worker(
+                PROCESS_RESUME_WORKER,
+                [str(REPO_ROOT / "scripts"), str(root), task_id, "save-returned-kill", str(pid_log), str(decoder)],
+            )
+            self.assertEqual(killed.returncode, 77, killed.stderr)
+
+            observed = run_worker(
+                PROCESS_RESUME_WORKER,
+                [str(REPO_ROOT / "scripts"), str(root), task_id, "inspect", str(pid_log), str(decoder)],
+            )
+            self.assertEqual(observed.returncode, 0, observed.stderr)
+            snapshot = json.loads(observed.stdout.strip())
+            self.assertEqual(snapshot["blocker"]["state"], "UNKNOWN")
+            self.assertEqual(snapshot["blocker"]["reason"], "CHOOSER_OUTCOME_UNKNOWN")
+            self.assertNotEqual((root / "checkpoint.json").read_bytes(), before_checkpoint)
+
+            store, album = task_and_album(root, task_id, 50)
+            destination = resume._task_absolute_path(root, task_id, album["destination"])
+            self.assertEqual(list(destination.iterdir()), [])
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.prepare_save_all(
+                    root,
+                    task_id,
+                    "fresh-save-retry",
+                    store["generation"],
+                    album["album_key"],
+                    make_grounding(store["tasks"][task_id], album["album_key"]),
+                )
+            self.assertEqual(caught.exception.code, "SAVE_ALL_INTENT_EXISTS")
+
+    def test_missing_chooser_evidence_blocks_verification_without_mutation(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-MISSING-CHOOSER"
+            create_runtime_fixture(root, task_id)
+            store, album = task_and_album(root, task_id, 50)
+            task = store["tasks"][task_id]
+            intent = resume.prepare_save_all(
+                root,
+                task_id,
+                "missing-chooser-session",
+                store["generation"],
+                album["album_key"],
+                make_grounding(task, album["album_key"]),
+            )
+            result = resume.record_save_all_result(
+                root,
+                task_id,
+                "missing-chooser-session",
+                intent["generation"],
+                album["album_key"],
+                intent["action_id"],
+                "RETURNED",
+                "a" * 64,
+            )
+            destination = resume._task_absolute_path(root, task_id, album["destination"])
+            write_png_count(destination, 80)
+            before = (root / "checkpoint.json").read_bytes()
+            with self.assertRaises(resume.SafetyBlock) as caught:
+                resume.verify_album(
+                    root,
+                    task_id,
+                    "missing-chooser-session",
+                    result["generation"],
+                    album["album_key"],
+                    interval_seconds=0,
+                    timeout_seconds=1,
+                    sleep_fn=lambda _seconds: None,
+                )
+            self.assertEqual(caught.exception.code, "DISPATCH_EVIDENCE_INCOMPLETE")
+            self.assertEqual((root / "checkpoint.json").read_bytes(), before)
+
+    def test_fresh_process_80_of_80_kill_verifies_then_advances_to_51(self) -> None:
+        with home_temporary_directory() as temporary:
+            base = Path(temporary).resolve()
+            root = base / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-PROCESS-80"
+            create_runtime_fixture(root, task_id)
+            decoder = create_fake_decoder(base / "fake-verify-decoder")
+            pid_log = base / "verify-pids.log"
+
+            dispatched = run_worker(
+                PROCESS_RESUME_WORKER,
+                [str(REPO_ROOT / "scripts"), str(root), task_id, "dispatch-files-kill", str(pid_log), str(decoder)],
+            )
+            self.assertEqual(dispatched.returncode, 77, dispatched.stderr)
+            killed_record = json.loads(dispatched.stdout.strip())
+            self.assertEqual(killed_record["ordinal"], 50)
+            store, album = task_and_album(root, task_id, 50)
+            destination = resume._task_absolute_path(root, task_id, album["destination"])
+            before_hashes = {
+                path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+                for path in destination.iterdir()
+            }
+            self.assertEqual(len(before_hashes), 80)
+
+            verified = run_worker(
+                PROCESS_RESUME_WORKER,
+                [str(REPO_ROOT / "scripts"), str(root), task_id, "verify-fake", str(pid_log), str(decoder)],
+            )
+            self.assertEqual(verified.returncode, 0, verified.stderr)
+            verification = json.loads(verified.stdout.strip())
+            self.assertEqual(verification["state"], "VERIFIED")
+            self.assertEqual(
+                {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in destination.iterdir()},
+                before_hashes,
+            )
+
+            resumed = resume.derive_task_state(root, resume.read_store(root), task_id, deep=True)
+            self.assertEqual(resumed["next_safe_ordinal"], 51)
+            self.assertEqual(resumed["counts"]["SKIPPED_EXISTING"], 49)
+            self.assertEqual(resumed["counts"]["VERIFIED"], 1)
+            self.assertEqual(resumed["counts"]["NOT_STARTED"], 50)
+            pids = [int(line) for line in pid_log.read_text(encoding="utf-8").splitlines() if line.strip()]
+            self.assertEqual(len(pids), 2)
+            self.assertEqual(len(set(pids)), 2)
 
     def test_full_50_verification_advances_to_51_then_completes_100(self) -> None:
         with home_temporary_directory() as temporary:
@@ -498,6 +1275,169 @@ class ResumeCoreTests(unittest.TestCase):
                 )
                 self.assertTrue(again["already_verified"])
                 self.assertEqual((root / "checkpoint.json").read_bytes(), before_idempotent)
+
+    def test_deep_reconcile_redecodes_verified_album(self) -> None:
+        with home_temporary_directory() as temporary:
+            base = Path(temporary).resolve()
+            root = base / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-DEEP-DECODE"
+            create_runtime_fixture(root, task_id)
+            decoder = create_fake_decoder(base / "deep-verify-decoder")
+            store, album = task_and_album(root, task_id, 50)
+            task = store["tasks"][task_id]
+            generation, _, _ = dispatch_and_choose(
+                root,
+                task_id,
+                "deep-decode-session",
+                store["generation"],
+                album["album_key"],
+                task,
+            )
+            destination = resume._task_absolute_path(root, task_id, album["destination"])
+            write_png_count(destination, int(album["identity"]["expected_images"]))
+            with mock.patch.object(resume, "_compile_decoder", return_value=decoder):
+                verified = resume.verify_album(
+                    root,
+                    task_id,
+                    "deep-decode-session",
+                    generation,
+                    album["album_key"],
+                    interval_seconds=0,
+                    timeout_seconds=1,
+                    sleep_fn=lambda _seconds: None,
+                )
+            self.assertEqual(verified["state"], "VERIFIED")
+
+            real_decode = resume._decode_inventory
+
+            def decode_with_fixture(path: Path, expected: int, *, decoder_binary: Path | None = None):
+                return real_decode(path, expected, decoder_binary=decoder)
+
+            with mock.patch.object(resume, "_decode_inventory", side_effect=decode_with_fixture) as decode:
+                reconciled = resume.reconcile_task(root, task_id)
+            self.assertEqual(decode.call_count, 1)
+            self.assertEqual(reconciled["counts"]["VERIFIED"], 1)
+            self.assertEqual(reconciled["next_safe_ordinal"], 51)
+
+    def test_verified_album_missing_modified_or_truncated_file_blocks_without_redownload(self) -> None:
+        cases = (
+            ("missing", lambda destination: (destination / "0000.png").unlink(), "VERIFIED_CONTENT_CHANGED"),
+            ("modified", lambda destination: (destination / "0000.png").write_bytes(b"changed"), "VERIFIED_CONTENT_CHANGED"),
+            ("truncated", lambda destination: (destination / "0000.png").write_bytes(b""), "ZERO_BYTE_FILE"),
+        )
+        for name, corrupt, expected_code in cases:
+            with self.subTest(case=name), home_temporary_directory() as temporary:
+                base = Path(temporary).resolve()
+                root = base / "agent-resume"
+                task_id = "AGENT-RESUME-TEST-POST-VERIFIED-%s" % name.upper()
+                create_runtime_fixture(root, task_id)
+                decoder = create_fake_decoder(base / "fake-decoder")
+                store, album = task_and_album(root, task_id, 50)
+                task = store["tasks"][task_id]
+                album_key = album["album_key"]
+                generation, _, _ = dispatch_and_choose(
+                    root,
+                    task_id,
+                    "post-verified-%s" % name,
+                    store["generation"],
+                    album_key,
+                    task,
+                )
+                destination = resume._task_absolute_path(root, task_id, album["destination"])
+                write_png_count(destination, int(album["identity"]["expected_images"]))
+                with mock.patch.object(resume, "_compile_decoder", return_value=decoder):
+                    verified = resume.verify_album(
+                        root,
+                        task_id,
+                        "post-verified-%s" % name,
+                        generation,
+                        album_key,
+                        interval_seconds=0,
+                        timeout_seconds=10,
+                        sleep_fn=lambda _seconds: None,
+                    )
+                self.assertEqual(verified["state"], "VERIFIED")
+                before_checkpoint = (root / "checkpoint.json").read_bytes()
+                corrupt(destination)
+                with mock.patch.object(resume, "_compile_decoder", return_value=decoder):
+                    state = resume.reconcile_task(root, task_id)
+                self.assertEqual(state["first_blocker"]["reason"], expected_code)
+                self.assertIsNone(state["next_safe_album_key"])
+                self.assertEqual((root / "checkpoint.json").read_bytes(), before_checkpoint)
+
+                next_task = resume.read_store(root)["tasks"][task_id]
+                next_key = next_task["album_order"][50]
+                with self.assertRaises(resume.SafetyBlock) as caught:
+                    resume.prepare_save_all(
+                        root,
+                        task_id,
+                        "post-verified-next",
+                        resume.read_store(root)["generation"],
+                        next_key,
+                        make_grounding(next_task, next_key),
+                    )
+                self.assertEqual(caught.exception.code, "TASK_BLOCKED")
+                next_destination = resume._task_absolute_path(root, task_id, next_task["albums"][next_key]["destination"])
+                self.assertTrue(next_destination.is_dir())
+                self.assertEqual(list(next_destination.iterdir()), [])
+
+    def test_fresh_process_resume_completes_50_through_100_with_distinct_pids(self) -> None:
+        with home_temporary_directory() as temporary:
+            base = Path(temporary).resolve()
+            root = base / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-FRESH-PROCESS"
+            create_runtime_fixture(root, task_id)
+            decoder = create_fake_decoder(base / "fake-process-decoder")
+            pid_log = base / "fresh-process-pids.log"
+
+            for ordinal in range(50, 101):
+                state = resume.derive_task_state(root, resume.read_store(root), task_id, deep=False)
+                self.assertEqual(state["next_safe_ordinal"], ordinal)
+                completed = run_worker(
+                    PROCESS_RESUME_WORKER,
+                    [str(REPO_ROOT / "scripts"), str(root), task_id, "dispatch-verify-fake", str(pid_log), str(decoder)],
+                )
+                self.assertEqual(completed.returncode, 0, completed.stderr)
+                result = json.loads(completed.stdout.strip())
+                self.assertEqual(result["state"], "VERIFIED")
+
+            completed = resume.derive_task_state(root, resume.read_store(root), task_id, deep=False)
+            self.assertEqual(completed["task_phase"], "COMPLETE")
+            self.assertEqual(completed["counts"]["SKIPPED_EXISTING"], 49)
+            self.assertEqual(completed["counts"]["VERIFIED"], 51)
+            pids = [int(line) for line in pid_log.read_text(encoding="utf-8").splitlines() if line.strip()]
+            self.assertEqual(len(pids), 51)
+            self.assertEqual(len(set(pids)), 51)
+
+    def test_protected_fixture_sentinels_remain_byte_identical(self) -> None:
+        with home_temporary_directory() as temporary:
+            base = Path(temporary).resolve()
+            root = base / "agent-resume"
+            protected = base / "protected"
+            protected.mkdir(mode=0o700)
+            sentinels = {
+                protected / "grant.bin": b"grant-fixture",
+                protected / "ledger.json": b"ledger-fixture",
+                protected / "manual.bin": b"manual-fixture",
+            }
+            for path, payload in sentinels.items():
+                path.write_bytes(payload)
+            before = {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in sentinels}
+            create_runtime_fixture(root, "AGENT-RESUME-TEST-PROTECTED")
+            store, album = task_and_album(root, "AGENT-RESUME-TEST-PROTECTED", 50)
+            task = store["tasks"]["AGENT-RESUME-TEST-PROTECTED"]
+            dispatch_and_choose(
+                root,
+                "AGENT-RESUME-TEST-PROTECTED",
+                "protected-session",
+                store["generation"],
+                album["album_key"],
+                task,
+            )
+            destination = resume._task_absolute_path(root, "AGENT-RESUME-TEST-PROTECTED", album["destination"])
+            write_png_count(destination, int(album["identity"]["expected_images"]))
+            after = {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in sentinels}
+            self.assertEqual(after, before)
 
     def test_intent_before_click_is_unknown_and_never_retried(self) -> None:
         with home_temporary_directory() as temporary:
@@ -835,6 +1775,22 @@ class StoreValidationTests(unittest.TestCase):
             with self.assertRaises(resume.SafetyBlock) as caught:
                 resume.read_store(root)
             self.assertEqual(caught.exception.code, expected_code)
+
+    def test_generation_change_during_inspection_is_reported_without_mutation(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-UNSTABLE"
+            create_runtime_fixture(root, task_id)
+            first = resume.read_store(root)
+            changed = copy.deepcopy(first)
+            changed["generation"] += 1
+            changed["payload_sha256"] = resume._payload_digest(changed)
+            before = (root / "checkpoint.json").read_bytes()
+            with mock.patch.object(resume, "read_store", side_effect=[first, changed]):
+                with self.assertRaises(resume.SafetyBlock) as caught:
+                    resume.inspect_task(root, task_id)
+            self.assertEqual(caught.exception.code, "GENERATION_UNSTABLE")
+            self.assertEqual((root / "checkpoint.json").read_bytes(), before)
 
     def test_store_checksum_schema_and_manifest_bindings_fail_closed(self) -> None:
         def checksum_mutation(root: Path, store: dict) -> None:
