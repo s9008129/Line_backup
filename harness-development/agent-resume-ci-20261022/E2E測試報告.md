@@ -28,7 +28,7 @@ FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
 
 CI B 的產品／測試 HEAD `e0b77857eb77536329f9565bf65fa8087b73873d` 已由遠端 [run 39785111593](https://github.com/s9008129/Line_backup/actions/runs/39785111593) 讀回：`deterministic` 與 `headed` 兩個 job 均 success。
 
-本報告的 `PASS` 只對所列精確 HEAD 有效。加入本節與遠端結果的後續 commit 僅更新報告，仍以該 docs-only HEAD 自己的遠端 checks 為準。
+本報告的 `PASS` 只對所列精確 HEAD 有效。docs HEAD `6a3e02f` 已由 [PR run 39786235147](https://github.com/s9008129/Line_backup/actions/runs/39786235147) 與 [manual run 39786239965](https://github.com/s9008129/Line_backup/actions/runs/39786239965) 讀回 SUCCESS；任何再新增的 docs commit 仍以自己的 checks 為準。
 
 ## 2. 修改範圍與來源
 
@@ -193,4 +193,4 @@ Headed job 的 Vision parity diagnostic 實際是 `Executed 5 tests, with 5 fail
 
 ## 7. 下一個安全動作
 
-CI B 產品／測試 HEAD `e0b7785` 與 PR #33 已建立並取得遠端全綠。將本報告更新逐檔提交、push 後，讀回 docs-only HEAD 自己的 deterministic／headed checks；再把 feature PR #32 與 PR #33 的 exact HEAD、diff、報告及全部 PASS／FAIL／NOT_RUN 交 Owner 轉交外部 ChatGPT Code Review。在取得真實 `APPROVE_IMPLEMENTATION`、有效 runtime authorization 與當次 LINE 前景交接前，不得宣稱 `FORMAL_TWO_ALBUM_AUTO` 或整體 DONE。
+CI B 產品／測試 HEAD `e0b7785` 與 PR #33 已建立並取得遠端全綠；report docs HEAD `6a3e02f` 的 PR／manual runs 也已 SUCCESS。下一步是把 feature PR #32 與 PR #33 的 exact HEAD、diff、報告及全部 PASS／FAIL／NOT_RUN 交 Owner 轉交外部 ChatGPT Code Review。在取得真實 `APPROVE_IMPLEMENTATION`、有效 runtime authorization 與當次 LINE 前景交接前，不得宣稱 `FORMAL_TWO_ALBUM_AUTO` 或整體 DONE。
