@@ -1,58 +1,48 @@
 {
-  "report_id": "MANUAL-DIAGNOSTIC-FIVE-20261022-01",
-  "created_at": "2026-10-22T08:07:04+08:00",
+  "report_id": "MANUAL-DIAGNOSTIC-FIVE-20261022-02",
+  "created_at": "2026-10-22T09:22:00+08:00",
   "test_type": "MANUAL_DIAGNOSTIC",
   "formal_two_album_auto": "NOT_CLAIMED",
   "session": {
-    "executor": "Codex CLI current session",
-    "model_identity": "UNKNOWN",
+    "model": "deepseek-v4.1-flash:1017",
+    "provider": "ollama_cloud",
+    "session_id": "01a1611a-cc0b-7ea1-a868-9b6ff98c9664",
+    "executor": "Independent Codex CLI LINE GUI operator",
     "platform": "macOS",
     "line_app": "jp.naver.line.mac",
     "ui_methods": [
-      "Computer Use screenshot and coordinate input",
-      "macOS Vision RecognizeTextRequest OCR",
+      "Computer Use native app coordinate input",
+      "fresh macOS screenshots",
       "LINE accessibility observation",
-      "native screencapture for transient menu evidence"
-    ],
-    "owner_authorization": "授權本次五本各一次 Save All；LINE 已交給你操作。",
-    "foreground_change_observed_after_chooser_open": true,
-    "owner_stopped_batch_after_a45": true
+      "macOS Vision RecognizeTextRequest OCR",
+      "native screencapture for transient menus"
+    ]
+  },
+  "execution_source": {
+    "repo": "https://github.com/s9008129/Line_backup",
+    "branch": "v43-ab/codex-rev28",
+    "repo_head_at_start": "7682a94d69dc5e031e3a61dc6a0d621d38e26077",
+    "working_tree_clean": false,
+    "product_source_modified_by_this_test": false,
+    "image_decoder": {
+      "path": "src/line_backup_batch/image_decode.swift",
+      "sha256": "238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b"
+    },
+    "ocr_source": {
+      "path": "harness-development/catalog-diagnostic-20261010/modern_ocr.swift",
+      "sha256": "19f6787f4523332b5eb8a4235c4461fee5e49314c615b4865cc9ec848f2a2861"
+    },
+    "ocr_executable_sha256": "fe25c9f7ce44b9ca59cfd693cbb5b7db4cfedbab2be7b3ffd4abc13787ea4324"
   },
   "baseline": {
     "state_backup_sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
     "manual_archives_sha256": "efe572afc9da1ae2123b3016430370f9ecd84ffb259f3bf73b0e5d26cd667bc5",
     "pilot_policy_sha256": "59d94b72f4fd59d829b56d21a494c9d83c6b91eb2513c15795a58021194a39e9",
-    "post_test_state_hashes_equal": true,
-    "verified_albums": [
-      {
-        "start_date": "2024-05-06",
-        "end_date": "2024-05-10",
-        "expected_images": 182
-      },
-      {
-        "start_date": "2024-05-13",
-        "end_date": "2024-05-17",
-        "expected_images": 57
-      }
-    ],
-    "manual_diagnostic_albums": [
-      {
-        "start_date": "2024-05-20",
-        "end_date": "2024-05-24",
-        "expected_images": 53
-      },
-      {
-        "start_date": "2024-05-27",
-        "end_date": "2024-05-31",
-        "expected_images": 56
-      }
-    ],
-    "excluded_album": {
-      "start_date": "2024-06-02",
-      "end_date": "2024-06-07",
-      "expected_images": 65,
-      "touched": false
-    }
+    "post_test_hashes_equal": true,
+    "verified_images_protected": 239,
+    "manual_diagnostic_images_protected": 109,
+    "excluded_album_images_protected": 65,
+    "previous_a45_images_protected": 45
   },
   "candidates": [
     {
@@ -60,200 +50,343 @@
       "start_date": "2024-04-22",
       "end_date": "2024-04-26",
       "expected_images": 45,
-      "status": "PASS",
-      "save_all_count": 1,
+      "status": "COMPLETE",
+      "previous_session_save_all_count": 1,
+      "this_session_save_all_count": 0,
+      "unknown_outcome": false,
       "downloaded_count": 45,
-      "unknown_outcome": false
+      "total_bytes": 14433233,
+      "indices_contiguous": true,
+      "zero_byte_files": 0,
+      "non_jpeg_files": 0,
+      "private_manifest_sha256": "3e3f8253ca20aff2f5e464a7ad403d5458a6940c96fb4f99ef21f10632c1338c",
+      "decoder_receipt_sha256": "577d995610349c199113b82892935de0b0ec7bee8cf2207e2404a74a4ecbb0ce",
+      "decoded": 45,
+      "decode_failures": 0,
+      "public_manifest": "public/A45-manifest.sha256"
     },
     {
       "id": "B78",
       "start_date": "2024-04-21",
       "end_date": "2024-04-21",
       "expected_images": 78,
-      "status": "NOT_RUN",
-      "save_all_count": 0
+      "status": "PASS",
+      "save_all_count": 1,
+      "chooser_opens": 1,
+      "unknown_outcome": false,
+      "identification": {
+        "list_ocr_title": "2024/4/21",
+        "list_ocr_title_box_px": [29.46165935469848, 616.09570272579913, 123.33897634412422, 24.337761088212233],
+        "list_ocr_count": "78",
+        "list_ocr_count_box_px": [29.483606412192625, 648.3583332217014, 34.844262295081961, 26.791666666666629],
+        "detail_title": "2024/4/21",
+        "detail_count_text": "78張照片",
+        "detail_created_date": "2024.04.21",
+        "detail_was_grid": true,
+        "detail_was_photo_viewer": false
+      },
+      "evidence": {
+        "list": "private/evidence/10-B78-list.png",
+        "preclick": "private/evidence/11-B78-preclick.png",
+        "detail": "private/evidence/12-B78-detail.png",
+        "menu_ocr": "private/evidence/14-B78-menu-native-screen.ocr.json",
+        "post_saveall_chooser": "private/evidence/15-B78-post-saveall-cua.png",
+        "chooser_correct_folder": "private/evidence/17-B78-chooser-correct-folder.png",
+        "download_started": "private/evidence/18-B78-download-started.png",
+        "download_complete": "private/evidence/19-B78-download-complete.png",
+        "returned_to_list": "private/evidence/20-after-B78-back-to-list.png"
+      },
+      "downloads": {
+        "actual_files": 78,
+        "indices_contiguous_1_to_78": true,
+        "zero_byte_files": 0,
+        "non_jpeg_files": 0,
+        "temporary_or_partial_files": 0,
+        "total_bytes": 29297748,
+        "private_manifest_sha256": "b5eacb9771acfc1736b70b0f6538d8cd868c15faff92c8a244b3600a73f97394",
+        "image_decode_verdict": "PASS",
+        "image_decode_expected": 78,
+        "image_decode_decoded": 78,
+        "image_decode_failed": 0,
+        "decoder_receipt_sha256": "420e8e2b68f8d7a83fbf8f8a08cef2d85f3eb9b432ceca152e1f63540af0663c"
+      },
+      "public_manifest": "public/B78-manifest.sha256"
     },
     {
       "id": "C77",
       "start_date": "2024-04-08",
       "end_date": "2024-04-12",
       "expected_images": 77,
-      "status": "NOT_RUN",
-      "save_all_count": 0
+      "status": "PASS",
+      "save_all_count": 1,
+      "chooser_opens": 1,
+      "unknown_outcome": false,
+      "identification": {
+        "list_ocr_title": "2024/04/08~04/12",
+        "list_ocr_title_box_px": [29.48360642493731, 275.95416665248285, 230.50819672131149, 24.112500000000068],
+        "list_ocr_count": "77",
+        "list_ocr_count_box_px": [29.483606423360655, 310.78333322616669, 32.16393442622951, 21.43333333333328],
+        "scrollbar_before_click": 3220,
+        "detail_title": "2024/04/08~04/12",
+        "detail_count_text": "77張照片",
+        "detail_created_date": "2024.04.14",
+        "detail_was_grid": true,
+        "detail_was_photo_viewer": false
+      },
+      "evidence": {
+        "list_scroll": "private/evidence/21-before-C77-scroll.png",
+        "preclick": "private/evidence/22-C77-preclick.png",
+        "detail": "private/evidence/23-C77-detail.png",
+        "menu_ocr": "private/evidence/25-C77-menu-native-screen.ocr.json",
+        "post_saveall_chooser": "private/evidence/26-C77-post-saveall-cua.png",
+        "chooser_correct_folder": "private/evidence/28-C77-chooser-correct-folder.png",
+        "download_started": "private/evidence/29-C77-download-started.png",
+        "download_complete": "private/evidence/30-C77-download-complete.png",
+        "returned_to_list": "private/evidence/31-after-C77-back-to-list.png"
+      },
+      "downloads": {
+        "actual_files": 77,
+        "indices_contiguous_1_to_77": true,
+        "zero_byte_files": 0,
+        "non_jpeg_files": 0,
+        "temporary_or_partial_files": 0,
+        "total_bytes": 29449320,
+        "private_manifest_sha256": "b416958135dea250346d440141fb809344a003a0f1dfecb2552434f3d555abc4",
+        "image_decode_verdict": "PASS",
+        "image_decode_expected": 77,
+        "image_decode_decoded": 77,
+        "image_decode_failed": 0,
+        "decoder_receipt_sha256": "332ea60328662fe4bbbecb9d1a373d86ef17b0d5dc72774906288656b0a0654d"
+      },
+      "public_manifest": "public/C77-manifest.sha256"
     },
     {
       "id": "D42",
       "start_date": "2024-04-01",
       "end_date": "2024-04-03",
       "expected_images": 42,
-      "status": "NOT_RUN",
-      "save_all_count": 0
+      "status": "PASS",
+      "save_all_count": 1,
+      "chooser_opens": 1,
+      "unknown_outcome": false,
+      "guard_event": {
+        "expected": "2024/04/01~04/03, 42",
+        "actual_first_fresh_list": "2024/03/25~03/29, 87",
+        "clicked_wrong_album": false,
+        "save_all_dispatched": false,
+        "recovered": true
+      },
+      "identification": {
+        "list_ocr_title": "2024/04/01~04/03",
+        "list_ocr_title_box_px": [29.483608058360627, 1002.0083330654168, 230.50819672131144, 26.791666666666515],
+        "list_ocr_count": "42",
+        "list_ocr_count_box_px": [29.483606423360655, 1039.5166665461043, 32.16393442622951, 24.112499999999955],
+        "scrollbar_after_reacquire": 3221,
+        "detail_title": "2024/04/01~04/03",
+        "detail_count_text": "42張照片",
+        "detail_created_date": "2024.04.05",
+        "detail_was_grid": true,
+        "detail_was_photo_viewer": false
+      },
+      "evidence": {
+        "wrong_candidate_no_click": "private/evidence/32-D42-list.png",
+        "correct_list_reacquired": "private/evidence/33-D42-list-reacquired.png",
+        "detail": "private/evidence/34-D42-detail.png",
+        "menu_ocr": "private/evidence/36-D42-menu-native-screen.ocr.json",
+        "post_saveall_chooser": "private/evidence/37-D42-post-saveall-cua.png",
+        "chooser_correct_folder": "private/evidence/39-D42-chooser-correct-folder.png",
+        "download_started": "private/evidence/40-D42-download-started.png",
+        "download_complete": "private/evidence/41-D42-download-complete.png",
+        "returned_to_list": "private/evidence/42-after-D42-back-to-list.png"
+      },
+      "downloads": {
+        "actual_files": 42,
+        "indices_contiguous_1_to_42": true,
+        "zero_byte_files": 0,
+        "non_jpeg_files": 0,
+        "temporary_or_partial_files": 0,
+        "total_bytes": 14310708,
+        "private_manifest_sha256": "7be7abd30c25aa4e14af07f2c2396882af42c10677023e1f356c5ee1022ab613",
+        "image_decode_verdict": "PASS",
+        "image_decode_expected": 42,
+        "image_decode_decoded": 42,
+        "image_decode_failed": 0,
+        "decoder_receipt_sha256": "899670388a92814913ff5b20a4fd8d34e64651cb9ab791d9eeef372eebec927f"
+      },
+      "public_manifest": "public/D42-manifest.sha256"
     },
     {
       "id": "E87",
       "start_date": "2024-03-25",
       "end_date": "2024-03-29",
       "expected_images": 87,
-      "status": "NOT_RUN",
-      "save_all_count": 0
+      "status": "PASS",
+      "save_all_count": 1,
+      "chooser_opens": 1,
+      "unknown_outcome": false,
+      "identification": {
+        "list_ocr_title": "2024/03/25~03/29",
+        "list_ocr_title_box_px": [29.483606420244008, 664.43333331931444, 235.86885245901638, 24.112499999999955],
+        "list_ocr_count": "87",
+        "list_ocr_count_box_px": [29.483606411177352, 699.26249990257577, 32.163934426229503, 21.43333333333328],
+        "fresh_preclick_title_box_px": [26.674414899607193, 783.33333361748112, 240.06977460187568, 26.854166626930351],
+        "fresh_preclick_count_box_px": [30.008720336855887, 819.5000001730233, 30.00872182523446, 20.499999841054318],
+        "metadata_strip_click_px": [140, 672],
+        "detail_title": "2024/03/25~03/29",
+        "detail_count_text": "87張照片",
+        "detail_created_date": "2024.03.30",
+        "detail_was_grid": true,
+        "detail_was_photo_viewer": false
+      },
+      "menu_and_dispatch": {
+        "menu_button_click_px": [610, 88],
+        "save_all_ocr_box_fullscreen_px": [1297.0436042090626, 379.9999997413837, 106.69767496937493, 30.00000041723257],
+        "save_all_row_click_px": [635, 273],
+        "save_all_dispatch_count": 1,
+        "chooser_open_count": 1,
+        "destination_was_empty_before_open": true,
+        "unknown_outcome": false
+      },
+      "evidence": {
+        "list": "private/evidence/43-E87-list.png",
+        "preclick": "private/evidence/44-E87-preclick.png",
+        "detail": "private/evidence/45-E87-detail.png",
+        "menu": "private/evidence/46-E87-menu.png",
+        "chooser_initial": "private/evidence/47-E87-chooser-initial.png",
+        "chooser_correct_folder": "private/evidence/48-E87-chooser-correct-folder.png",
+        "download_started": "private/evidence/49-E87-download-started.png",
+        "download_complete": "private/evidence/50-E87-download-complete.png",
+        "returned_to_list": "private/evidence/51-after-E87-back-to-list.png",
+        "scrolled_list": "private/evidence/52-after-E87-scroll.png",
+        "scrolled_list_ocr": "private/evidence/52-after-E87-scroll.ocr.json"
+      },
+      "downloads": {
+        "actual_files": 87,
+        "indices_contiguous_1_to_87": true,
+        "zero_byte_files": 0,
+        "non_jpeg_files": 0,
+        "temporary_or_partial_files": 0,
+        "total_bytes": 25576208,
+        "private_manifest_sha256": "90c56a17070a9d57bf2ab6d73569bc4810f967676c509a0e73da75597e91fc4f",
+        "image_decode_verdict": "PASS",
+        "image_decode_expected": 87,
+        "image_decode_decoded": 87,
+        "image_decode_failed": 0,
+        "decoder_receipt_sha256": "9556eb9d1a16f97bc9811e6c68431e3199a4bc501bf68825ef9853ec33e52fbf",
+        "download_observation": {
+          "sample_interval_seconds": 3,
+          "file_counts": [20, 27, 34, 39, 45, 52, 59, 63, 67, 72, 78, 81, 85, 87],
+          "stable_after_3_seconds": true
+        }
+      },
+      "post_album_scroll": {
+        "scrollbar_before": 3757,
+        "scrollbar_after": 4294,
+        "fresh_content_after_scroll": ["2024/03/18~03/22:69", "2024/03/12~03/15:46"]
+      },
+      "public_manifest": "public/E87-manifest.sha256"
     }
   ],
-  "a45": {
-    "identification": {
-      "list_ocr_title": "2024/04/22～04/26",
-      "list_ocr_title_box_px": [26.803278554508186, 956.4624999861423, 238.54918032786881, 24.11249999999984],
-      "list_ocr_count": "45",
-      "list_ocr_count_box_px": [29.483606423360655, 991.2916665461042, 32.16393442622951, 24.112500000000068],
-      "clicked_metadata_strip_px": [120, 968],
-      "detail_title": "2024/04/22~04/26",
-      "detail_count_text": "45張照片",
-      "detail_created_date": "2024.04.27",
-      "detail_was_grid": true,
-      "detail_was_photo_viewer": false
-    },
-    "menu_and_dispatch": {
-      "menu_button_click_px": [610, 88],
-      "save_all_row_click_px": [635, 276],
-      "save_all_dispatch_count": 1,
-      "chooser_open_count": 1,
-      "destination_was_empty_before_open": true,
-      "unknown_outcome": false
-    },
-    "downloads": {
-      "actual_files": 45,
-      "indices_contiguous_1_to_45": true,
-      "non_jpeg_files": 0,
-      "total_bytes": 14433233,
-      "per_file_manifest": "private/evidence/A45-redacted-manifest.sha256",
-      "per_file_manifest_sha256": "ce125d76266d664f13a858195ac9bd183cc913ef915a9feeb0d82978c7baee6f",
-      "private_full_path_manifest_sha256": "3e3f8253ca20aff2f5e464a7ad403d5458a6940c96fb4f99ef21f10632c1338c",
-      "image_decoder": "macOS ImageIO plus full RGB bitmap draw",
-      "image_decode_verdict": "PASS",
-      "image_decode_expected": 45,
-      "image_decode_decoded": 45,
-      "image_decode_failed": 0,
-      "image_decoder_result_sha256": "577d995610349c199113b82892935de0b0ec7bee8cf2207e2404a74a4ecbb0ce"
-    }
+  "totals": {
+    "new_albums": 4,
+    "new_save_all_dispatches": 4,
+    "new_images_expected": 284,
+    "new_images_verified": 284,
+    "new_bytes": 98633984,
+    "image_decode_failures": 0,
+    "wrong_album_dispatches": 0,
+    "duplicate_dispatches": 0,
+    "unknown_download_outcomes": 0
   },
   "side_effects": {
-    "save_all_dispatches_total": 1,
-    "chooser_opens_total": 1,
-    "downloaded_files_total": 45,
     "formal_state_mutations": 0,
     "ledger_mutations": 0,
     "grant_mutations": 0,
+    "manual_registry_mutations": 0,
+    "policy_mutations": 0,
     "historical_verified_files_touched": 0,
     "manual_diagnostic_files_touched": 0,
     "excluded_album_files_touched": 0,
-    "unknown_download_outcomes": 0
+    "previous_a45_files_touched_or_redownloaded": 0,
+    "new_private_photo_files": 284
   },
   "private_evidence": {
-    "root_relative": "harness-development/line-five-album-manual-20261022/private/evidence",
-    "absolute_paths_published": false,
-    "entries": [
-      {
-        "path": "private/evidence/00-initial-line.png",
-        "bytes": 184297,
-        "sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42"
-      },
-      {
-        "path": "private/evidence/01-scroll-1.png",
-        "bytes": 188821,
-        "sha256": "e554c74612e7c38551f347a4237b8b2dde1ca850b0a4bd164dfae83b4187b235"
-      },
-      {
-        "path": "private/evidence/02-scroll-2.png",
-        "bytes": 165325,
-        "sha256": "7ff366c5fe14d26790d3cfdbb8838d1bc4a95d92f1be8088c8032fdfe208287a"
-      },
-      {
-        "path": "private/evidence/03-scroll-3.png",
-        "bytes": 200485,
-        "sha256": "e7d8cac884ec38f09e14058c9327cdf5d3e5622ca28d21a382f56ba6c46d3fb9"
-      },
-      {
-        "path": "private/evidence/04-scroll-4.png",
-        "bytes": 171493,
-        "sha256": "ae5ed9ddf2e289250ccd518d391baddcef88e304911f93241dd149b637930ec6"
-      },
-      {
-        "path": "private/evidence/04-scroll-4.ocr.json",
-        "bytes": 3039,
-        "sha256": "8668b6ee556be72af8acec3dc4b04078808d58d318b9bf2a84eb9cb4e988941f"
-      },
-      {
-        "path": "private/evidence/A45-02-detail-loaded.png",
-        "bytes": 195216,
-        "sha256": "307b0af7ba923fb9dec0946f0009fdb4f12c1a7a0cba9eaf3c0cc52b37b3c469"
-      },
-      {
-        "path": "private/evidence/A45-02-detail-loaded.ocr.json",
-        "bytes": 2757,
-        "sha256": "600ccaf93708847da8a48796d212baeef6d756edda5833fbc64ea89591269177"
-      },
-      {
-        "path": "private/evidence/A45-07-menu-native-screen.png",
-        "bytes": 3361082,
-        "sha256": "141596abe6955fff2247d21b615baf01df4c1bd83ece7e4a8b33c9de3acd03ad"
-      },
-      {
-        "path": "private/evidence/A45-08-menu-pre-saveall.png",
-        "bytes": 3370380,
-        "sha256": "cd036372faf15ac9b7bc6ac257e8f632cf4898b65b7307798fa1c61617300e8f"
-      },
-      {
-        "path": "private/evidence/A45-09-post-saveall-chooser.png",
-        "bytes": 2204696,
-        "sha256": "87231ad7a965718ca2f3bf5a640579962b7adf7b794b6ecf2252af28c5b7423e"
-      },
-      {
-        "path": "private/evidence/A45-10-chooser-correct-folder.png",
-        "bytes": 1965337,
-        "sha256": "374842dd16b809d655cad3db52651b1f9881adc8da91d0a2cad8051226d33389"
-      },
-      {
-        "path": "private/evidence/A45-11-download-started.png",
-        "bytes": 3114559,
-        "sha256": "3001930cc870c8cfad34705d8448c0a2bc2a76d1016115a07d36bc5b94731c65"
-      },
-      {
-        "path": "private/evidence/A45-image-decoder.json",
-        "bytes": 12125,
-        "sha256": "577d995610349c199113b82892935de0b0ec7bee8cf2207e2404a74a4ecbb0ce"
-      },
-      {
-        "path": "private/evidence/A45-manifest.sha256",
-        "bytes": 9216,
-        "sha256": "3e3f8253ca20aff2f5e464a7ad403d5458a6940c96fb4f99ef21f10632c1338c"
-      },
-      {
-        "path": "private/evidence/A45-redacted-manifest.sha256",
-        "bytes": 4806,
-        "sha256": "ce125d76266d664f13a858195ac9bd183cc913ef915a9feeb0d82978c7baee6f"
-      },
-      {
-        "path": "private/evidence/baseline-state-sha256.txt",
-        "bytes": 287,
-        "sha256": "a53a33eb21edba7d7b1a942bda7ae27fad875de2db9b567718421845f5433c0e"
-      }
-    ]
+    "root_relative": "harness-development/line-five-album-manual-20261022/private",
+    "photos_and_raw_names_private_only": true,
+    "checkpoint": "private/checkpoints.json",
+    "complete_hashes_manifest": "public/evidence-sha256.txt",
+    "complete_hashes_manifest_sha256": "9bc137d7fbb3f13d0492f545e6939af9210166b09ef22090dbac44245f80bc3a",
+    "complete_hashes_manifest_entries_excluding_downloads": 156,
+    "absolute_paths_published": false
   },
-  "public_redacted_manifest": "public/A45-manifest.sha256",
+  "public_artifacts": {
+    "report": {
+      "path": "E2E測試報告.md",
+      "bytes": 14904,
+      "sha256": "4342a6b1f812ac72bd9cdf4b4d3901fca198b5b9c150135c56c25838bdb66ec0"
+    },
+    "evidence_hash_manifest": {
+      "path": "public/evidence-sha256.txt",
+      "bytes": 16884,
+      "sha256": "9bc137d7fbb3f13d0492f545e6939af9210166b09ef22090dbac44245f80bc3a"
+    },
+    "sanitized_manifests": {
+      "A45": {
+        "path": "public/A45-manifest.sha256",
+        "lines": 45,
+        "sha256": "6d18cacd1e3d1dc7e77458799273d18ed439ad845cf00b4cb2845f27591e6bdb"
+      },
+      "B78": {
+        "path": "public/B78-manifest.sha256",
+        "lines": 78,
+        "sha256": "ddcfe2b673e8ce4dd3b977969eb720e701e4e028351bbdbdd680f0766144d83c"
+      },
+      "C77": {
+        "path": "public/C77-manifest.sha256",
+        "lines": 77,
+        "sha256": "cfde8c77d70bb31875742d599a7712196299e34a70246aadb177f020b4ec9795"
+      },
+      "D42": {
+        "path": "public/D42-manifest.sha256",
+        "lines": 42,
+        "sha256": "ec1f10541e48af43ca6f5f6ad9146852a8461e4053b9761b7c123f2966f61c3f"
+      },
+      "E87": {
+        "path": "public/E87-manifest.sha256",
+        "lines": 87,
+        "sha256": "95c013bf3ac1f55211f92c21630114c422b5ecfe475fea194c7b9c714b087bb2"
+      }
+    }
+  },
+  "final_fields": {
+    "MODEL": "deepseek-v4.1-flash:1017",
+    "PROVIDER": "ollama_cloud",
+    "SESSION_ID": "01a1611a-cc0b-7ea1-a868-9b6ff98c9664",
+    "PREVIOUS_A45": "COMPLETE",
+    "B78": "PASS",
+    "C77": "PASS",
+    "D42": "PASS",
+    "E87": "PASS",
+    "SAVE_ALL_DISPATCHES_BY_ALBUM": "B78:1,C77:1,D42:1,E87:1",
+    "FILES_VERIFIED_BY_ALBUM": "B78:78,C77:77,D42:42,E87:87",
+    "TOTAL_NEW_FILES_VERIFIED": "284/284",
+    "IMAGE_DECODE_FAILURES": 0,
+    "WRONG_ALBUM_OR_DUPLICATE_DISPATCHES": 0,
+    "FOUR_ALBUM_REAL_DOWNLOAD_E2E": "PASS",
+    "FORMAL_TWO_ALBUM_AUTO": "NOT_CLAIMED",
+    "FIRST_REAL_BLOCKER": "NONE"
+  },
   "statuses": {
-    "PRIMARY_OUTCOME_STATUS": "PARTIAL",
+    "PRIMARY_OUTCOME_STATUS": "PASS",
     "IMPLEMENTATION_STATUS": "NOT_CHANGED",
-    "CORE_ACCEPTANCE_STATUS": "PARTIAL",
-    "REQUIRED_VERIFICATION_STATUS": "PARTIAL",
+    "CORE_ACCEPTANCE_STATUS": "PASS",
+    "REQUIRED_VERIFICATION_STATUS": "PASS",
     "INDEPENDENT_ACCEPTANCE_STATUS": "NOT_RUN",
     "TASK_CLOSURE_STATUS": "OPEN"
   },
   "next_action": [
-    "The Owner-designated independent reviewer checks this report, evidence index, public manifest, and bound commit; this executor does not self-report reviewer PASS.",
-    "After review, the Owner gives a new test instruction and a fresh LINE foreground handoff before any further GUI input.",
-    "If instructed to continue, run B78 only: fresh list grounding, duplicate check, new empty folder, and at most one Save All.",
-    "Stop the whole batch without retrying Save All if the B78 outcome is UNKNOWN, the count is not 78, a duplicate chooser appears, or the download is interrupted.",
-    "Verify B78's contiguous 1..78 indices, bytes, per-file SHA-256, manifest hash, and full ImageIO decode before handing evidence back to the reviewer and Owner.",
-    "Do not start C77, D42, or E87 until B78 is completely verified and the Owner gives the next instruction.",
-    "Do not claim formal AUTO; this manual diagnostic is not sufficient evidence for all-album unattended automation."
+    "Deliver the evidence-only Draft PR to the Owner-designated external ChatGPT Chief Reviewer.",
+    "Reviewer independently checks the exact evidence HEAD, four one-time Save All dispatches, 284/284 file and decoder hashes, and unchanged formal state hashes.",
+    "Do not upgrade this MANUAL_DIAGNOSTIC to formal TWO_ALBUM_AUTO or reuse these four downloaded albums as new automation evidence."
   ]
 }
