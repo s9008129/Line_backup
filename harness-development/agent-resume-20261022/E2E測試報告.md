@@ -3,7 +3,7 @@
 - 日期：2026-10-23（Asia/Taipei）
 - 目標：Mac 重開機、Codex Session 中斷或程序終止後，新 Session 只靠唯一 canonical checkpoint 找到第一個尚未安全完成的相簿，跳過既有 VERIFIED，安全接續下載。
 - 基線：`a03bf504a2ea0f315d8f56c25f685e97e5410007`；branch `implement/agent-resume-p0-20261022`；Draft [PR #32](https://github.com/s9008129/Line_backup/pull/32)，base `master`。
-- 修正前程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`；本輪發現 JSON-lines 容量與 manifest 上限不一致，修正後精確 HEAD 於 implementation commit 綁定。
+- 修正前程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`；本輪修正 implementation commit：`a247550fb9cdc42e4d68fc7c827f0d24b311f0c2`（PR 分支 push 後核對遠端 HEAD）。
 - 沿用 Plan v2.1（SHA-256 `4ba9be2daf887aa8a65a0255e337da5bff8d0ae5aa2d5ada13990f5c85b76502`）；沒有新增第二份計畫、資料庫、cursor store、daemon 或 GUI framework。
 - 前一外部 Code Review 綁定 `a03bf50`，結論為 `CHANGES_REQUIRED_BEFORE_APPROVE_IMPLEMENTATION`；本輪只處理 R32-01 small manifest、R32-02 ambiguous chooser crash、R32-03 runbook 三個 bounded 缺口。**目前 HEAD 尚未取得新的外部 Code Review 核准。**
 

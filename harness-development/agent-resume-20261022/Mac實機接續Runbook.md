@@ -1,6 +1,6 @@
 # Mac LINE 中斷接續 Runbook
 
-適用版本：PR #32、`implement/agent-resume-p0-20261022`；本輪 JSON-lines 容量修正與精確來源 SHA-256 綁定於同 task 的 E2E 測試報告及 `evidence/source-sha256.txt`。
+適用版本：PR #32、`implement/agent-resume-p0-20261022`；JSON-lines 容量修正程式 commit `a247550fb9cdc42e4d68fc7c827f0d24b311f0c2`。來源 SHA-256 綁定於同 task 的 E2E 測試報告及 `evidence/source-sha256.txt`。
 本文件只描述既有 CLI／Node wrapper；不是 Save All 授權，也不代表實機 E2E PASS。
 
 ## 1. 開始前固定事實
