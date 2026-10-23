@@ -1,0 +1,38 @@
+{
+  "evidence_id": "E00-SCK-DISPLAY-04",
+  "capture_verdict": "CAPTURED",
+  "target_correspondence_verdict": "OBSERVED_MATCH",
+  "image_path": "evidence/e00-display-04.png",
+  "manifest_path": "evidence/e00-display-04.json",
+  "image_sha256": "cff72b134c0f53d54256dbe0322da2fb95341c7ad6dca41b0a45e72a64d65064",
+  "nonce": "e00-20261010-0402Z-7c2e",
+  "image_dimensions_pixels": [2294, 1490],
+  "display_id": 1,
+  "scale_pixels_per_point": 2,
+  "target_bundle_id": "jp.naver.line.mac",
+  "target_pid": 34387,
+  "target_window_binding": "SCK_TARGET_WINDOW_BOUND",
+  "sck_target_application_on_screen_window_count": 1,
+  "selected_sck_window": {
+    "window_id": 3365,
+    "frame_points": {"x": 67, "y": 31, "width": 327, "height": 643},
+    "on_screen": true
+  },
+  "physical_display_visual_observation": "The full-display capture visibly contains the LINE window on the left, showing the group header, Albums tab, first album card and its date/count. A separate Codex terminal window is visible to the right and does not cover the LINE surface. The LINE surface corresponds to the fresh app-bound CUA screenshot.",
+  "same_source_vision_evidence": {
+    "profile": "line-fullscreen-vision-r3-zh-hant-en-us-minheight0-nearest2x-v1",
+    "result_path": "evidence/e00-display-04-ocr.json",
+    "input_sha256": "cff72b134c0f53d54256dbe0322da2fb95341c7ad6dca41b0a45e72a64d65064",
+    "recognized_group_title": {"text": "旻謙允禎成長日記", "source_bbox_pixels_top_left": {"x": 237.5342463188883, "y": 103.92441837564591, "width": 95.89041137695312, "height": 13.430233001708952}},
+    "recognized_tab": {"text": "相簿", "source_bbox_pixels_top_left": {"x": 190.54794502917704, "y": 139.41860468800553, "width": 24.931507110595707, "height": 12.581395149230936}},
+    "recognized_first_visible_album_date": {"text": "2024/06/02~06/07", "source_bbox_pixels_top_left": {"x": 136.84931492626401, "y": 486.68604628088974, "width": 117.94520568847656, "height": 13.430233001708952}},
+    "recognized_first_visible_album_count": {"text": "65", "source_bbox_pixels_top_left": {"x": 137.80821930650143, "y": 504.9127905345798, "width": 15.3424654006958, "height": 11.587209701538118}}
+  },
+  "ui_input_during_capture": false,
+  "save_all_invocations": 0,
+  "confirmation_actions": 0,
+  "state_mutation": false,
+  "destination_created": false,
+  "e00_subcheck_verdict": "PASS_TARGET_SURFACE_BOUND_TO_PHYSICAL_DISPLAY",
+  "e00_gate_verdict": "PARTIAL_PENDING_MENU_AND_AUTOMATED_MAPPING"
+}

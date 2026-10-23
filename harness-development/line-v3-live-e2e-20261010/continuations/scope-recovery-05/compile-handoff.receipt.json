@@ -1,0 +1,35 @@
+{
+  "kind": "LOCAL_DETERMINISTIC_COPY_NOT_CONTROLLER_RECEIPT",
+  "created_at": "2026-10-10T22:44:01.695986+00:00",
+  "task_id": "TASK-20261011-line-receipt-recovery",
+  "run_id": "6f0a3c14-12e3-4c54-9981-95593c26f789",
+  "compiler": "ROOT_DOCUMENT_AUTHOR_NO_MODEL_CALL",
+  "plan": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan.md",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan.md",
+    "bytes": 12002,
+    "sha256": "e3bdc89bfd4e627d82cc5d22fce3b66bcc83311fb928aac4652c7695e8aa4020"
+  },
+  "contract": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-contract.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-contract.json",
+    "bytes": 2758,
+    "sha256": "6b2076527f343e895f0a9798ffe4c8b85f4e855b2afcdd19d2de168ba1f0f7a0"
+  },
+  "handoff_json": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.json",
+    "bytes": 2758,
+    "sha256": "6b2076527f343e895f0a9798ffe4c8b85f4e855b2afcdd19d2de168ba1f0f7a0"
+  },
+  "handoff_md": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.md",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.md",
+    "bytes": 7358,
+    "sha256": "9f08c1b5bcd43ceecbe2dc01a0b364aacdaef4b83384619c84ec287a1a6f3e30"
+  },
+  "byte_equality": true,
+  "prompt_first_paragraph_sha256": "34dca123e2e8d273147fabef755b3002ec9c8bd1ce1185bb5295dfede3217543",
+  "handoff_review_required": false,
+  "native_stage_publication": "NOT_RUN"
+}

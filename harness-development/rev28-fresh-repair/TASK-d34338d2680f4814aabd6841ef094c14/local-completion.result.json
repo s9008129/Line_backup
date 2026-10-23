@@ -1,0 +1,143 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+  "run_id": "feee4794-6442-47ab-8200-9ea2be5fbfbc",
+  "role": "IMPLEMENTER",
+  "stage": "IMPLEMENT",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "TARGETED_DIAGNOSTIC",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "CORE_ACCEPTANCE_STATUS": "PASS",
+    "REQUIRED_VERIFICATION_STATUS": "PASS",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PASS",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G1_PLAN_REVIEW",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G2_REGRESSIONS",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G3_LOCAL_CHECKS",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G4_PRESERVATION",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G5_INDEPENDENT_ACCEPTANCE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    }
+  ],
+  "evidence_ids": [
+    "local-independent-acceptance",
+    "local-final-preservation",
+    "local-final-checks",
+    "local-next-step"
+  ],
+  "plan_sha256": "a6ec005c49cdd524d12660a52e9dc2465837cacb52d044226fe50d99e89b091a",
+  "handoff_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+  "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "feee4794-6442-47ab-8200-9ea2be5fbfbc",
+      "role": "IMPLEMENTER",
+      "stage": "IMPLEMENT",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "local-independent-acceptance",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/acceptance-02.result.json",
+      "bytes": 13583,
+      "sha256": "9d30c703cabdf83c8c32ae6896c58811fab6a7f78e42a751e4860527816eecb5",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Actual independent reviewer explicit PASS for exact candidate2; gate belongs to that reviewer, not this root."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "feee4794-6442-47ab-8200-9ea2be5fbfbc",
+      "role": "IMPLEMENTER",
+      "stage": "IMPLEMENT",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "local-final-preservation",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/after-acceptance-preservation.json",
+      "bytes": 571,
+      "sha256": "357549fe68a80dcf01c2516a9171c01e341197c01a4be10b102a17cf3346198b",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Post-review source unchanged and existing work preserved."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "feee4794-6442-47ab-8200-9ea2be5fbfbc",
+      "role": "IMPLEMENTER",
+      "stage": "IMPLEMENT",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "local-final-checks",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/verification-manifest-02.json",
+      "bytes": 6741,
+      "sha256": "8273caa781c307ccc94ea9b6d8ee963dade8bf9a7ad68c4807bb5790322cd7de",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Previously executed candidate2 required local checks and raw bindings; this closure record does not claim new test execution."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "feee4794-6442-47ab-8200-9ea2be5fbfbc",
+      "role": "IMPLEMENTER",
+      "stage": "IMPLEMENT",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "local-next-step",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/next-live-observation.md",
+      "bytes": 1628,
+      "sha256": "98e1207b6c18987bc1da2844b6e7f6f45146a163af838a91cb6a9c8283cc582c",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Concrete next phase requires current LINE observation; no backup or protected data decision is made here."
+    }
+  ],
+  "plan_contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+  "analysis": {
+    "facts": [
+      "Candidate2 local implementation and fresh required verification passed.",
+      "Actual independent Acceptance PASS is preserved in its own role result.",
+      "Post-review audit confirms exact reviewed source and unchanged historical/out-of-scope work, branch/HEAD/index.",
+      "All prior failures, candidate1 preimages and bounded correction remain in this task.",
+      "Controller remains PLAN; no native admission or completed full-project state is claimed."
+    ],
+    "inferences": [
+      "The bounded local identity repair is ready for further live diagnostic planning.",
+      "Real native calibration evidence cannot be replaced with fixture results or CUA visual facts."
+    ],
+    "unknowns": [
+      "Current LINE surface/calibration, popup/occlusion, actual chooser and completed filesystem backup.",
+      "Canonical production authority and existing one-shot entitlement consumption remain unverified by this repair."
+    ],
+    "evidence": [
+      "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/acceptance-02.result.json",
+      "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/after-acceptance-preservation.json",
+      "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/verification-manifest-02.json",
+      "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/next-live-observation.md"
+    ],
+    "confidence": "High for local observed results; full live outcome remains not achieved."
+  },
+  "handoff_summary": "本輪身份與 snapshot 修復完成，candidate2 本機檢查與獨立 Acceptance PASS，審查後 source 未變。完整 LINE 修復／備份仍未完成；下一步按 next-live-observation.md 收集真實畫面與設計缺失校準證據。這份 advisory closure 不重評 gates、不更動 controller 或一次性權利。",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 2,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Attempt2 closes executed temporal process-replacement regression; candidate2 independently accepted and source unchanged after review.",
+    "information_gain": true,
+    "stuck": false
+  }
+}

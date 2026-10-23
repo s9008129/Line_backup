@@ -1,0 +1,52 @@
+docs: 封存 LINE 已授權預檢交接與 Harness 離線驗證缺陷，暫停下一階段
+
+意圖
+
+保存本階段的可接手工作內容、已取得的使用者決策及 Harness
+缺陷證據，讓新 Agent 能分清楚已完成、尚未實作與不能放行的事項。
+依使用者要求，在發布這個文件 checkpoint 後暫停 LINE 工作，
+待 Coding Agent Harness 修補完成並明示恢復，再進入下一個任務。
+
+本次提交做了什麼
+
+- 更新 20261006_handoff.md；以精準接手 prompt 開頭，指向既有
+  Plan03、逐 bytes 相同的 machine Handoff、固定報告 schema
+  與第二次獨立 P1 PASS。記錄暫停要求，防止新視窗立即開始實作。
+- 保存使用者已同意 LINE 本機預檢的原話、七個 literal 產品路徑
+  和對應 hashes；新增暫停決策，原同意保持有效，同範圍恢復時不重問。
+- 發布 Harness Issue：區分原始 P1 DNS 失敗、離線重審恢復、
+  較早同類 4.7 task 與研究代理額外誤觸；加入 OpenAI 官方說明、
+  函式庫原始碼、第三方第一手案例，以及安全重現與具體驗收要求。
+- 附上必要文字研究、case、審查及交付紀錄，封存較早 dated handoff，
+  保留原 BLOCKED、失敗、UNKNOWN 與未 waiver 事實，不改寫歷史 PASS。
+
+工作內容與交付邊界
+
+- 這次 commit 是文件、決策與文字證據的 checkpoint。
+  尚未提交的 dirty 程式、新 source files、照片、config/state、
+  實機 packet、binary、build/cache 與大型 baseline 繼續保留本機。
+- 文件記錄此前 v3 本機元件的獨立 A1，以及 focused60/full302 的
+  歷史檢查，並記錄真實182張詳細頁／儲存全部 packet 的部分成功。
+  本次沒有重跑那些測試，也沒有發布新的產品實作或取得下載權限。
+- 既有57張已 VERIFIED，不得重新下載；完整native群組證明仍
+  BLOCKED，其他校準／權利仍未知。舊候選／實機預算不重設。
+- Harness 持久修補與七路徑 project-preflight 實作均尚未完成。
+
+本次驗證
+
+核對文件、Plan/Handoff/consent 身份與文字附件；檢查精確 staged
+清單、diff 格式與實際 commit；另以 publication receipts 記錄正常
+push及remote讀回、source/config/state/照片與scope外檔案保存。
+產品測試結果只引用既有證據，不主張本輪重新測試或整套LINE完成。
+
+下一步建議
+
+1. 把 Issue 交給 Harness 維護模型，在新修補候選建立固定離線
+   驗證入口，缺引用時本機拒絕，並證明負向案例零DNS／HTTP。
+   保留原不可變 release，取得必要獨立驗收後再決定版本採用方式。
+2. 使用者明示恢復後，先核對本機未提交來源及後續合法Git／文件
+   差異。舊task不直接換controller或悄悄resume到新release。
+3. 依既有已批准Plan03實作唯讀Python producer／Swift consumer，
+   使用task隔離檢查與必要獨立A1；不重問同範圍同意。
+4. 只有後續具體方案及必要新授權，才進行原生整合／實機操作／下載。
+   報告六個status，局部PASS不等於整套native備份DONE。

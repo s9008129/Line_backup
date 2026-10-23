@@ -1,0 +1,17 @@
+{
+  "attempt": 1,
+  "command": "fullscreen-capture --image evidence/e00-display.png --manifest evidence/e00-display.json --nonce e00-20261010-0352Z-7f2a --bundle-id jp.naver.line.mac",
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": {
+    "verdict": "FAIL",
+    "stage": "fullscreen_capture",
+    "error": "ScreenCaptureKit returned no on-screen target application window",
+    "task_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010"
+  },
+  "image_written": false,
+  "manifest_written": false,
+  "save_all_invocations": 0,
+  "ui_input_sent": false,
+  "learning": "The first helper required an SCK-owned on-screen LINE window and stopped before capture. This did not distinguish TCC denial from content/window-list behavior; no root cause is claimed."
+}

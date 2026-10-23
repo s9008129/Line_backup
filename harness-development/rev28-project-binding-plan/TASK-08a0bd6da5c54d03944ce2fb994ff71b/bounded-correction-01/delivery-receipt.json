@@ -1,0 +1,62 @@
+{
+  "verdict": "PASS",
+  "local_unit": "DONE",
+  "independent_A1": "PASS",
+  "artifacts": [
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/user-grant.json",
+      "bytes": 1258,
+      "sha256": "ed7300b407d518f9e04710a178e522110aad196ecca4a70926c2d6e4b4922db6"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/acceptance.result.json",
+      "bytes": 17169,
+      "sha256": "d35f5fb88a7c260e0de0b85d33da94620976634debe935f607daaced2c90a416"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/acceptance-archive-validation.json",
+      "bytes": 1079,
+      "sha256": "3d64a80f6bb66531b345d9b673268404133f72b855cf0ec1691d7e43e11b5f9d"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/root-final.result.json",
+      "bytes": 19940,
+      "sha256": "9c63524ca7879e64bf0728b08a26e52d902796e6274fbd7dac9a7dc1e0176197"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-source-manifest.json",
+      "bytes": 34327,
+      "sha256": "1c15dbf4949231e9b7ac96c8721c4965e8ed610b4ee8276ee2859d312fdb8bbe"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-preservation-verification.json",
+      "bytes": 64489,
+      "sha256": "936e18a1dfacf8f989d8502880f175a110efa5ac29fe6b0ee885216b394ee12f"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/admission-order-deviation.json",
+      "bytes": 1492,
+      "sha256": "0ef11f53bf17d1bf74900ee407be121cc4d1d33f87c1178b0e8432da360cc17c"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/result.md",
+      "bytes": 3749,
+      "sha256": "d55c95e0f1223170621b3776f207b4eaa7b8ba531db130cb57e430f70911700b"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/continuation-completed-20261009.md",
+      "bytes": 968,
+      "sha256": "63a5bbe6e2376e7817526b8e23b46e8e1ed9c6cbfe455e7cf3c20ad7394504c3"
+    }
+  ],
+  "preserved_outside_entries": 77918,
+  "prior_artifacts_preserved": 312,
+  "original_issue_attempts": "3/3 unchanged",
+  "explicit_supplement": "1/1 used",
+  "cumulative_candidates": 4,
+  "whole_LINE": "NOT_ACHIEVED",
+  "native_calls": 0,
+  "protected_config_state_photos_Git_unchanged": true,
+  "ordering_deviation_retained": true,
+  "controller_or_OS_enforcement": "UNKNOWN/UNAVAILABLE; no claim"
+}

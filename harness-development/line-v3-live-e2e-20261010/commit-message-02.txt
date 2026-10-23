@@ -1,0 +1,44 @@
+完成 LINE v3 live-bridge 接線與 D1/D2 阻塞證明，並記錄使用者決策 A（implement-02 checkpoint）
+
+意圖
+- 依 implement-02 凍結計畫與 contract，本輪把離線、授權、遷移前置做完，建立 `live_runner.mjs` 接線 scaffold，並以可重跑證據判定 live 相簿 E2E 能否在不降低 gate 的前提下開始。
+- 使用者在本輪回覆「A」並指示「完成後…接著執行 add,commit」；本 commit 是依此新指示建立的本機 task-package checkpoint：只 add＋commit、不 push，不代表獨立 Acceptance、G_DELIVERY、任何 live gate 或完整備份 E2E 已通過。
+
+本次做了什麼
+- 建立 `live_runner.mjs`：包 flat CLI stdout 為 adapter 需要的 `{new_intent, receipt_token, result}`、retain 觀察影格與 dispatch 收據、接 `rev28ctl` 的 `album-support`／`album-support-guard` 為 `captureMenuSupport`／`guardMenu`；只接線、不改產品行為。
+- 修正最後一個介面縫合缺陷：`live_runner.mjs:390` → `createAlbumSupportCallbacks({invokeProducer: producer.invokeProducer})`，讓 capture/guard 兩模式共用同一條 producer 呼叫；檔案 25,510 B、sha256 `d3936b1f8898b3f29f00d8c2c24c87ffbce69c94f5aeb1c9f669bb8be702c831`；`node --check` PASS。
+- 三名唯讀 helper 平行複核（`max_parallel_read_only_helpers=3`、writers=0）：
+  - 介面重稽核 CONFIRMED PASS：line 390 routing 修正已複核，無剩餘介面缺陷。
+  - adapter 形狀 smoke（fake I/O）：v2 suite 11/11 PASS；case 11 PASS；新增 case 12（capture 模式→receipt、guard 模式→verdict、各恰一次 producer 呼叫）PASS。v1 flat suite 7/10，3 個失敗為修正前舊期待（flat intent stdout、舊 `captureMenuSupport({geometry})` API、flat prepare），不是模組 regression。
+  - 證據事實表 10 組在 3 處修正後全數核對相符，`MISMATCHES: none`（含 runner、plan/contract、freeze、state、gates、grants、waiver）。
+  - 紀錄：`evidence/subagent-verification-round2.json`（3,484 B，`2f836770...`）。Helper 是唯讀模型報告，不是產品 gate 的工具 PASS，也不替代 Acceptance。
+- 以 `checks/live_support_requirement_proof.py`（4,680 B，`22c0c1ee...`）證明 D1 與 D2：V1 `FIXTURE_ONLY` → REFUSED `SCK_PROVIDER_MISMATCH`；V2 `SCREEN_CAPTURE_KIT` → ACCEPTED（僅形狀）。輸出 `evidence/live-branch-proof.stdout`（567 B，`0888a211...`）、stderr 空（`e3b0c442...`）。
+- 以 `regenerate_swift_inspection.py`（5,316 B，`bca86b0e...`）重新產生 Swift inspection fixtures；收據 `evidence/fixture-chain-repair-ee2fba83...`（6,330 B）。
+- 執行並讀回 schema 2 rev34 → schema 3 rev35 migration：快照 `ed8075e7...` 保留，現行 state `45505011...`（252,115 B），只有 schema_version／revision／active_batch 三欄改變；runs 與 verified_albums 逐 byte 相同。
+- 本輪落檔並登錄：`E2E測試報告.md`（25,063 B，`580e2c62...`）、`progress.md`（3,820 B，`8c56b162...`）、`attempt-ledger.json`（28,144 B，`d67fdaf7...`；28 current + 1 inherited）、`blocker-packet.md`（4,519 B，`ae5fe499...`）、`results/implementer.result.json`（22,278 B，`a279ebcb...`，修正一個過期欄位後定稿）。
+- 新增使用者決策紀錄 `continuations/implement-02/user-decision-A.json`（3,666 B，`ff05bf65c9f6c8d687ef04cdc0e5aa0199ce31f25c528205078f1620f45c4097`）：使用者選 A；其 supersedes 欄位註明 `blocker-packet.md`／`progress.md` 中「下一個精確動作＝使用者就 A/B/C 給出決定」屬決策前凍結文字，該兩檔刻意保持 byte 不變（hash 凍結），本檔為決策的現行紀錄。
+- 同時落檔本訊息 `commit-message-02.txt`（TP root）。Stage 精確範圍：預審的 131 檔核心集（TP 內 61 檔 tracked-modified，含 `results/implementer.result.json`；70 檔 untracked：`live_runner.mjs`、`live-grant-1/2.json`、`regenerate_swift_inspection.py`、`continuations/implement-02/baseline-fresh.json`、`checks/`、`inputs/`、`evidence/`（57）、6 個 nested `filesystem-verification.json`）＋`user-decision-A.json`＋`commit-message-02.txt`。build outputs（`bin/image_decode`）、`swift-build-26.5/`、`module-cache*/`、`tmp/`、`__pycache__/`、`fixtures/TemporaryDirectory.*`、`*.lock`、`baseline/` 與所有無關 dirty 工作全部保留、不進 commit。
+
+實際驗證
+- PASS：G_AUTH（`675165b3...`；grant-1 全 12 個、grant-2 全 11 個 operation `authorize(...fixture=False)` 全數 PASS）。
+- PASS：G_OFFLINE（`d5304dd3...`；Python 67/31/5、Node adapter、node --check、Swift 325/0，收據 `fa2b1496...`，用掉使用者核准的唯一一次例外額度）。
+- PASS：G_MIGRATION（`46098af9...`）。
+- PASS：G_PRESERVE（baseline 648/648 untracked 與 11/11 dirty 全部保留、0 刪除、index tree `b222085d...` 與 HEAD `7172604d...` 不變；目的地 239 檔案、0 個 2026-10-10 mtime）。
+- PASS（決策本身）：plan-review waiver `f3c7e51c...`，Plan Review 記 WAIVED／NOT_RUN。
+- 提交前 git status 806 條（725 untracked、81 tracked 變動）；本輪新增的 4 條皆為 task-package 產物。
+- 零副作用：LINE 輸入 0、Save All 0、chooser confirmation 0、download 0；`gui-ledger.json` 不存在（GUI reservation 0）。以上 smoke 僅 fake I/O，不能當實機證據。
+
+未完成與目前事實
+- 六項狀態：PRIMARY_OUTCOME=NOT_ACHIEVED、IMPLEMENTATION=BLOCKED、CORE_ACCEPTANCE=BLOCKED、REQUIRED_VERIFICATION=INCOMPLETE、INDEPENDENT_ACCEPTANCE=BLOCKED、TASK_CLOSURE=REPLAN_REQUIRED。
+- Gates：PASS＝plan-review waiver、G_AUTH、G_OFFLINE、G_MIGRATION、G_PRESERVE；BLOCKED＝G_CATALOG、G_MENU、G_FIRST、G_SCROLL、G_SECOND、G_ACCEPTANCE；PARTIAL＝G_REPORT、G_DELIVERY。
+- D2：`observations.frame()` 對每一格都要求 SCREEN_CAPTURE_KIT sidecar，唯一 producer `rev28ctl album-support` 只在相簿選單已開啟時可產生；catalog／detail／chooser frame 沒有 menu → LIVE_FRAME_SUPPORT_UNAVAILABLE。
+- D1：沒有可上線的 LINE AX→17-key observation classifier（只有測試假件）→ LIVE_CLASSIFIER_NOT_GROUNDED。
+- 未執行且不得宣稱：fresh catalog、menu 校準、intent、Save All、chooser、download、bounded scroll（SCROLL_TEST_NOT_RUN）、第二本、獨立 Acceptance、native controller admission／validation（NOT_RUN）。
+- 待新計畫決定：grants 的 native_binary 綁定未含 SCK producer `rev28ctl`（`8f6cd81a...`）；helper unknowns：`live.adapterModule` 未列於 documented live object、`prepareCandidates`／`finalRecords` 以同步呼叫、`captureCatalog`／`captureFresh` 必須驅動 runner 自己的 session。
+- 本 commit 只 stage 上列 checkpoint 檔案，保留原有 dirty／untracked 工作、舊資料與目的地內容；commit-only、無 push。
+
+下一步建議
+- 使用者已選 A：下一輪是全新的 Critical Planner session（`01_plan_prompt.md`），輸入為 `blocker-packet.md`、`E2E測試報告.md`、`progress.md`、`results/implementer.result.json` 與 `continuations/implement-02/user-decision-A.json`。
+- 新計畫須涵蓋 non-menu full-display SCK sidecar producer、真機 geometry provider、可上線 classifier、chooser locators、grant sensor-scope 與 native_binary 綁定決策，以及 Swift 新 root issue 的嘗試額度與「第一本→實際 bounded scroll→第二本→驗收」的 gate／證據順序。
+- 在新計畫成形並經審查前，不得執行任何 LINE 前景操作：不取用前景、不做 GUI reservation、不派送 Save All、不開 chooser、不下載、不 scroll；也不得改 gate、證據政策或 scope（那是 B／C 才涉及）。
+- 本 commit 仍為本機 checkpoint：只 add＋commit、不 push；若後續需要 push 或遠端驗收，須另行明確指示。

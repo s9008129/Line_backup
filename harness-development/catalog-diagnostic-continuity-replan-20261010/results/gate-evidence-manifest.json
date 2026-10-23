@@ -1,0 +1,123 @@
+{
+ "candidate_hash": "646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6",
+ "controller_admission": "BLOCKED",
+ "format": "local-gate-evidence-manifest-1",
+ "gates": {
+  "G_ACCEPTANCE": {
+   "evidence": [
+    {
+     "bytes": 5615,
+     "observation": "Ready-to-forward independent review request (updated 2026-10-10)",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/問題單.md",
+     "sha256": "3cde78119f513f0da82e11fa957aa601f42430dc80333efc25d83529786862e7"
+    }
+   ],
+   "note": "Final independent Acceptance requires a non-contributor after the live session; not run.",
+   "verdict": "NOT_RUN"
+  },
+  "G_LIVE": {
+   "blocked_reason": "Pre-live independent review pending (native dispatch platform-failed twice; ready-to-forward packet cd6edf3e...); no fresh user-coordinated LINE foreground; zero inputs sent",
+   "evidence": [
+    {
+     "bytes": 1533,
+     "observation": "PENDING_INDEPENDENT_REVIEW; native dispatch failed at platform layer; no reviewer artifact",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/pre-live-review.result.json",
+     "sha256": "a0e24b87d12c30c67ce1d5bb5a7c3fd3b2f825c651ceaa5ebe1ce061484cc904"
+    },
+    {
+     "bytes": 1914,
+     "observation": "Two spawn attempts, same platform error; no completion records; no fabrication",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/pre-live-review.dispatch.json",
+     "sha256": "584c1f8aa658a39f0c598d8205b81f6d886eb7da4c4802a64e95afdb821a33a3"
+    },
+    {
+     "bytes": 3608,
+     "observation": "Final ready-to-forward packet after correcting the stale candidate-manifest entry",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/pre-live-review.packet.json",
+     "sha256": "cd6edf3edbf44d68ac318d0f508914f83ab771aab989d4b0f1e4fe20a5d315c4"
+    },
+    {
+     "bytes": 1904,
+     "observation": "NOT_RUN; capability facts; zero inputs; budget 0/6",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/live/README.md",
+     "sha256": "d90717a977ebba96dc31b31f0d76caa19c662681baac378b1c7d99deadc3bd48"
+    },
+    {
+     "bytes": 4110,
+     "observation": "Live slot unused; scroll_calls_used=0; remaining_budget=6",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/attempt-ledger.json",
+     "sha256": "3f175c7f5a414f5fdff37c2b9236de7cfef80d03d26d75303d6fc671a62eb9f6"
+    }
+   ],
+   "verdict": "NOT_RUN"
+  },
+  "G_OFFLINE": {
+   "evidence": [
+    {
+     "bytes": 17723,
+     "observation": "R01-R19: 19 PASS / 0 FAIL; R20 NOT_RUN; four-frame continuity/indicator/identity/movement/overlap evidence",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/results.json",
+     "sha256": "9d6da4b653ed25b9db0f69960f545d96b24f99598cfd8f909a545dceae78e971"
+    },
+    {
+     "bytes": 1341,
+     "observation": "Frozen candidate hash 646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6; method file hashes; non-method tool note",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/candidate-manifest.json",
+     "sha256": "675c55e384268f18f029f279b4c1f858691c8f462d3fa7a30be8314b788c9c1e"
+    },
+    {
+     "bytes": 2443,
+     "observation": "Frozen binding (candidate/profile/decoder/binding hashes)",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/binding.json",
+     "sha256": "af37890ecaf652f911771a072c07b8124cf62847f05d17d78eebc45f292044dc"
+    },
+    {
+     "bytes": 23099,
+     "observation": "43 byte-exact replay copies; source==copy hash; content formats recorded",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/replay/manifest.json",
+     "sha256": "204eb15b85679e2f084633f4bccc7a961adf33197c7aa80f77017e28a7b4ba2b"
+    },
+    {
+     "bytes": 25598,
+     "observation": "63 source records PASS; plan-contract==handoff bytes; spec/plan/review hash bindings (byte binding only)",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/verify-packet-01/verify-packet.json",
+     "sha256": "92d9d3ddec3be3c0725263c61ef6d33c387a596da0faed2c7ee928fa4f9b7c9f"
+    }
+   ],
+   "verdict": "PASS"
+  },
+  "G_PRESERVE": {
+   "evidence": [
+    {
+     "bytes": 260747,
+     "observation": "Implementation-start Git/worktree baseline (HEAD 4a7a36f5, branch v43-ab/codex-rev28)",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/preservation.before.json",
+     "sha256": "5f9facf6089a2d809f5f6fb26a4669ff1a39ba843543a5c70c2ffcbc86be7896"
+    },
+    {
+     "bytes": 264168,
+     "observation": "Final-state re-capture taken at close-out",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/preservation.after-02.json",
+     "sha256": "513e2778c79f2fce14d87cc7e0f2a8d265f094d9ab271c325630d39891fac292"
+    },
+    {
+     "bytes": 4106,
+     "observation": "verdict PASS; protected sets unchanged; only task-scope additions",
+     "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/preservation.delta-02.json",
+     "sha256": "a645abf4c29e7f7fbfa3fb3a9e2d3635c2b2fe478654243e388f469f83b655f7"
+    }
+   ],
+   "note": "preservation.after.json / preservation.delta.json (09:42) remain as the earlier interim snapshot; the final-state re-capture is below.",
+   "verdict": "PASS"
+  }
+ },
+ "notes": [
+  "validation_fact NOT_RUN: no applicable stage packet; no fabricated validators, invitations, or receipts.",
+  "controller admission remains BLOCKED; nothing in this manifest lifts it.",
+  "candidate hash is the single frozen candidate bound to the pending review: 646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6."
+ ],
+ "packet_sha256": "cd6edf3edbf44d68ac318d0f508914f83ab771aab989d4b0f1e4fe20a5d315c4",
+ "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+ "validation_fact": "NOT_RUN",
+ "validation_note": "No applicable stage packet exists; CONTRACT/RESULT validation stays NOT_RUN and no controller receipt is claimed. A supplementary local fixed-tool schema check of implementer.result.json is recorded separately (results/implementer.result.schema-validation.json; local record only, not a controller receipt)."
+}

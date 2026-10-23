@@ -1,0 +1,32 @@
+{
+  "verdict": "PASS",
+  "documents": [
+    {
+      "path": "20261006_handoff.md",
+      "bytes": 27496,
+      "sha256": "c15b3c0e85c9c747c9ee936726fc4a98d9486088bca7c4ab8f872f88463979b7"
+    },
+    {
+      "path": "20261006_issue_harness_offline_schema_resolution.md",
+      "bytes": 23281,
+      "sha256": "b7282ead338b077952f7d2d800d95143d37e1d8e75b41717120c28f1fb00ea8e"
+    }
+  ],
+  "consent": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-consent-20261006.json",
+    "bytes": 3505,
+    "sha256": "9f9311e7615f2300258cc575e027a33e50f8f3cf1c877c53793dea5460d760c1"
+  },
+  "validation": {
+    "path": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/validation.json",
+    "bytes": 15545,
+    "sha256": "b29446429f9152a7a0017d94702103b6fe881c69d89d27bea384c5d64b07b82c"
+  },
+  "result": {
+    "path": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/implementer.result.json",
+    "bytes": 8008,
+    "sha256": "fc6904976383c53f8078059ebd5e63861834ae3c18768ff44a45ffd6e6ac62e2"
+  },
+  "source_unchanged": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+  "closure_scope": "Two requested documents only"
+}

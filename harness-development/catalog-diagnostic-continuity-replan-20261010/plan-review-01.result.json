@@ -1,0 +1,68 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+  "run_id": "9CC570EE-BCE2-4ED3-B48F-E3F6B1248F15",
+  "role": "PLAN_REVIEWER",
+  "stage": "PLAN_REVIEW",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "HANDOFF",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [],
+  "evidence_ids": [],
+  "plan_sha256": "d8e0031fa8ef1d7a0a0f260de3682db26421d5779dffc1d1fd1a124969bc5387",
+  "handoff_sha256": null,
+  "source_sha256": "d8e0031fa8ef1d7a0a0f260de3682db26421d5779dffc1d1fd1a124969bc5387",
+  "plan_contract_sha256": null,
+  "evidence_manifests": [],
+  "analysis": {
+    "facts": [
+      "Read-only material check in harness-development/catalog-diagnostic-20261010/: scan-000..003 originals, per-frame legacy ocr.json and modern_ocr.json, transform.json, ax.txt, step-001..003 action/pre traces, agreement/failure files and old role results all exist; the plan's replay-source inventory matches actual files.",
+      "file(1) content identification: scan-000..003 (named .png) are JPEG JFIF 654x1286 images, so the plan's format statement is accurate; ImageIO decode to RGBA8 ran read-only via `swift -` on stdin (no files written).",
+      "scan-003 modern Vision raw output reads 相溥 (raw candidate confidence 0.30) while legacy reads 相簿; scan-003.failure.json records 'header/tab agreement missing', verdict FAIL, further_input_allowed=false. The prior stop cause cited by the plan is the recorded cause.",
+      "Reviewer pixel probe (read-only; exact outputs in plan-review-01.pixel-probe.log): in all four frames, display rows y 0..192 (window controls, group title, 相簿/記事本 tab text band) are bit-exact across every adjacent transition 0-1, 1-2 and 2-3; first small diffs (max channel delta <=14) appear at y 192..200; large content diffs follow below. initial.png == frame-000.png == scan-000.png byte-identical (sha256 da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42): unchanged screens re-capture byte-identically on this binding.",
+      "The plan's v3 gate mapping uses actual gate.schema.json enum values: goal_criticality CORE/SUPPORTING, evidence_role OUTCOME/MUST_NOT_BREAK, closure_gate HARD_CLEAN/BASELINE_DELTA.",
+      "Prior-round record preserved and consistent with the plan: 3 live App.scroll 0.25-page-down calls, step1/step2 agreement PASS, step3 FAIL; zero clicks/keyboard/SaveAll/chooser/download; preservation PASS for config/state/run-log/.git index hashes plus git head/branch; the prior six statuses remain as recorded; 65 and 56 identities remain the only established complete metadata.",
+      "v3 result.schema.json caps meaningful_attempts at 3; the plan states the task-local ledger records 歷史3+追加1 without presenting a cumulative 4 — consistent with the schema, and this review does not claim a 4th v3 attempt.",
+      "The reserved scope harness-development/catalog-diagnostic-continuity-replan-20261010/ did not exist before this review. This review archived the submitted plan text as plan-as-submitted.md (sha256 d8e0031f...) and wrote only its own review artifacts there with exclusive creation. No controller stage packet exists for this task; controller admission remains NOT_RUN/BLOCKED as the plan itself states.",
+      "This result file was validated before submission with the local fixed offline validator (tools/task-orchestrator.py schema validate, selector schemas/v3/result.schema.json, LOCAL_ONLY_DENY_UNKNOWN); the exact verdict is kept alongside as plan-review-01.schema-validation.json. No controller receipt registration is claimed."
+    ],
+    "inferences": [
+      "STANDARD is proportionate: writes stay in the new task directory; the live surface is read-only capture plus <=6 single 0.25-page scrolls with no click/download/state write; the independent pre-live program/evidence review and the final independent acceptance are kept for the consequential parts, and no extra gate burdens routine reversible steps.",
+      "The exact-RGBA continuity rule is feasible on this pipeline (byte-identical recaptures of unchanged screens; chrome bit-exact across the historical scroll transitions). The content-adjacent boundary band with small <=14 JPEG-coupled diffs is what the plan's init-time frozen exclusion mechanism (shadows/separators stored separately) is for; no numeric tolerance is introduced, so a real title/tab change cannot pass unnoticed.",
+      "The plan's separations are internally consistent and fail-closed: chrome continuity by pixels; identity/date/count by OCR with conflict-stops and no uncalibrated 0.95 threshold; movement by per-box D upper bound < 0 with non-empty common intersection and horizontal overlap; coverage chain by suffix/prefix overlap with gaps breaking the chain; coverage fixed NOT_ESTABLISHED.",
+      "With controller admission deliberately BLOCKED, this approval is role-level local semantic evidence; downstream claims must stay within plan/handoff/result artifacts and cannot assert controller-native admission or DONE."
+    ],
+    "unknowns": [
+      "Whether live frozen-guard regions stay bit-exact every step; the offline replay and reverse tests are designed to test this before live, and failure stops the run (fail-closed).",
+      "The v3 plan contract does not exist yet; it must encode this reviewed plan exactly (allowed path, offline/live/preservation/acceptance gates and owners, <=6 inputs, allowed CUA operations, stop rules, replay-ROI initialization from the first replay frame, exclusion freeze). Any material deviation re-opens this review.",
+      "Live foreground preconditions (fresh Albums list, no viewer/dialog, same documented CUA binding and geometry) are runtime facts and cannot be verified at plan time.",
+      "OS enforcement, native ownership, and controller-native admission remain UNKNOWN / NOT_RUN."
+    ],
+    "evidence": [
+      "harness-development/catalog-diagnostic-20261010/scan-003.modern_ocr.json vs scan-003.ocr.json; scan-003.failure.json.",
+      "sha256 da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42 (initial.png == frame-000.png == scan-000.png).",
+      "plan-review-01.pixel-probe.log (exact reviewer probe outputs and script; read-only, no UI/state operation).",
+      "harness-development/catalog-diagnostic-20261010/preservation.json (prior preservation PASS).",
+      "plan-review-01.schema-validation.json (exact fixed offline validator verdict for this result)."
+    ],
+    "confidence": "High for plan-level approval of the submitted method within the local semantic workflow; all execution gates (replay, reverse tests, live, preservation delta, acceptance) remain NOT_RUN."
+  },
+  "handoff_summary": "Independent PLAN_REVIEW (read-only) for 'LINE 相簿盤點診斷：替代證據規則': PASS, plan-level only, bound to plan-as-submitted.md sha256 d8e0031f. Verified the plan's factual premises: the four 'PNG' frames really are JPEG 654x1286; legacy+modern OCR, transforms, AX and action traces exist; scan-003 modern OCR really reads 相溥 (raw 0.30) against legacy 相簿; the v3 gate-enum mapping is real. A reviewer pixel probe found the title/tab chrome bit-exact across all three historical transitions while content moves, supporting the exact-RGBA continuity design; the boundary band needs the plan's own frozen-exclusion mechanism. Approval conditions: the v3 contract must encode this plan exactly (scope, four gates, <=6 inputs, allowed CUA ops, stop rules, replay ROI init, exclusion freeze); pre-live independent program/evidence review and final independent acceptance stay required; controller admission remains BLOCKED — no controller-native DONE. Execution gates are NOT reviewed as PASS. Result validated with the local fixed offline validator.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 0,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Independent read-only PLAN_REVIEW of the submitted replan returned PASS after material, enum, stop-cause and pixel-stability checks; contract encoding, pre-live review and acceptance remain next. Historical 3 attempts + authorized extra 1 stay recorded in the task-local ledger; the v3 field is not inflated.",
+    "information_gain": true,
+    "stuck": false
+  }
+}

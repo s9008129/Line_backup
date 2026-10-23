@@ -1,0 +1,42 @@
+[
+  {
+    "pid": 23229,
+    "exit_code": 0,
+    "stdout": "{\"result\": {\"batch_id\": \"BATCH-4f1bcbb16a5743c29a6fb59e77a74daa\", \"status\": \"BATCH_OWNED\"}, \"lock_identity\": [16777229, 134192202], \"new_intent\": false, \"receipt_token\": \"ewogICJjb25maWdfc2hhMjU2IjogImZmYmU5NTMzNTE2YmY4NmUzNGU2NjkxMThlYzg3MzQ1ZmI0ZTE2OGQ1OWZiMjQ5NTA5NWVkNzg2ZGNlY2JlNzIiLAogICJwcm9qZWN0X3Jvb3QiOiAiL1VzZXJzL2hzaWFvam9obm55L0RvY3VtZW50cy9DaGF0R1BUL0xpbmVfYmFja3VwL2hhcm5lc3MtZGV2ZWxvcG1lbnQvbGluZS12My1saXZlLWUyZS0yMDI2MTAxMC9maXh0dXJlcy90bXAwM2Y3aG9xcCIsCiAgInJldmlzaW9uIjogMSwKICAic291cmNlX3NoYTI1NiI6ICI1Y2Q5MTkzMzdiNWFjMDg3ODhjMzBmODE5NDI2MjQyNGIwMjljZTZkMTQyNmY1YjI5ZTMzYjkxZjM4MTc4Y2IzIiwKICAic3RhdGVfaWRlbnRpdHkiOiBbCiAgICAxNjc3NzIyOSwKICAgIDEzNDE5MjIzNiwKICAgIDMzMTUyLAogICAgOTEwLAogICAgMTc5MTYxNTgyODg1MDAxNDIyMywKICAgIDE3OTE2MTU4Mjg4NTAzMDI0NzMKICBdLAogICJzdGF0ZV9zaGEyNTYiOiAiNDNjOGFjNDkzOWFiOTRjMDUyNzRhNGU1YjhhMzI4MThkMmExNmJmOWM2NWUyNTkyZDhjMWViMjJmYzk2OWVlYSIKfQo=\"}\n",
+    "stderr": "",
+    "argv": [
+      "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python",
+      "-B",
+      "-m",
+      "line_backup_batch",
+      "begin",
+      "--project-root",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures/tmp03f7hoqp",
+      "--authorization",
+      "harness-development/evidence/actors-grant.json",
+      "--input",
+      "harness-development/evidence/actors-input.json",
+      "--fixture"
+    ]
+  },
+  {
+    "pid": 23230,
+    "exit_code": 4,
+    "stdout": "",
+    "stderr": "{\"status\": \"REFUSED\", \"code\": \"STALE_CAS\", \"message\": \"STALE_CAS\", \"dispatch_authorized\": false}\n",
+    "argv": [
+      "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python",
+      "-B",
+      "-m",
+      "line_backup_batch",
+      "begin",
+      "--project-root",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures/tmp03f7hoqp",
+      "--authorization",
+      "harness-development/evidence/actors-grant.json",
+      "--input",
+      "harness-development/evidence/actors-input.json",
+      "--fixture"
+    ]
+  }
+]

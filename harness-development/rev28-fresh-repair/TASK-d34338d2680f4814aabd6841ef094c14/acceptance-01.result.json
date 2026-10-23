@@ -1,0 +1,165 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+  "run_id": "f2e5e62f-57d3-435d-b08c-687fbe4243ed",
+  "role": "ACCEPTANCE_REVIEWER",
+  "candidate_fact": "REVISION_REQUIRED",
+  "validation_fact": "VALID",
+  "routing_fact": "IMPLEMENTER_FIX",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "IN_PROGRESS",
+    "CORE_ACCEPTANCE_STATUS": "FAIL",
+    "REQUIRED_VERIFICATION_STATUS": "PASS",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "FAIL",
+    "TASK_CLOSURE_STATUS": "FIX_REQUIRED"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G1_PLAN_REVIEW",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "acceptance-frozen-plan"
+    },
+    {
+      "gate_id": "G2_REGRESSIONS",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "acceptance-verification"
+    },
+    {
+      "gate_id": "G3_LOCAL_CHECKS",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "acceptance-verification"
+    },
+    {
+      "gate_id": "G4_PRESERVATION",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "acceptance-preservation"
+    },
+    {
+      "gate_id": "G5_INDEPENDENT_ACCEPTANCE",
+      "verdict": "FAIL",
+      "evidence_manifest": "acceptance-timing-defect"
+    }
+  ],
+  "evidence_ids": [
+    "acceptance-frozen-plan",
+    "acceptance-verification",
+    "acceptance-source",
+    "acceptance-preservation",
+    "acceptance-timing-defect"
+  ],
+  "stage": "ACCEPTANCE",
+  "plan_sha256": "a6ec005c49cdd524d12660a52e9dc2465837cacb52d044226fe50d99e89b091a",
+  "handoff_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+  "source_sha256": "942e46be953721878b288deb235d7c4070a0613b2a2729c9dcca5be0ea0df221",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "f2e5e62f-57d3-435d-b08c-687fbe4243ed",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "942e46be953721878b288deb235d7c4070a0613b2a2729c9dcca5be0ea0df221",
+      "evidence_id": "acceptance-frozen-plan",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/plan.md",
+      "bytes": 7396,
+      "sha256": "a6ec005c49cdd524d12660a52e9dc2465837cacb52d044226fe50d99e89b091a",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Read frozen plan; independently verified plan hash and byte-identical contract/Handoff."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "f2e5e62f-57d3-435d-b08c-687fbe4243ed",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "942e46be953721878b288deb235d7c4070a0613b2a2729c9dcca5be0ea0df221",
+      "evidence_id": "acceptance-verification",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/verification-manifest.json",
+      "bytes": 6411,
+      "sha256": "442f2e1ec70ba8c0b3991aa5140db547247a7830ffcb58c1778d1c03d9274a69",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Verified every manifest entry and command/raw-log hash; inspected recorded red-green, full tests, build, replay and provenance results without rerunning them."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "f2e5e62f-57d3-435d-b08c-687fbe4243ed",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "942e46be953721878b288deb235d7c4070a0613b2a2729c9dcca5be0ea0df221",
+      "evidence_id": "acceptance-source",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-source.json",
+      "bytes": 9434,
+      "sha256": "4e9c9652e06ff15150fe930c7b55f6bc9e80a9e52f47e5bf388ff9e65b066fbe",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Independently recomputed source binding over all 49 sorted paths, NUL, bytes, NUL; it matches candidate source SHA256."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "f2e5e62f-57d3-435d-b08c-687fbe4243ed",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "942e46be953721878b288deb235d7c4070a0613b2a2729c9dcca5be0ea0df221",
+      "evidence_id": "acceptance-preservation",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-preservation.json",
+      "bytes": 564,
+      "sha256": "ab36b3cd39678e189f0fa1fbc5298844aae654c8aa1ee91c243b3585049a7207",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Independently checked 24,536 historical files and unchanged file set, 24,763 out-of-scope existing files, HEAD/branch/index, new path scope, and preimage-derived incremental diff."
+    },
+    {
+      "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+      "run_id": "f2e5e62f-57d3-435d-b08c-687fbe4243ed",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "942e46be953721878b288deb235d7c4070a0613b2a2729c9dcca5be0ea0df221",
+      "evidence_id": "acceptance-timing-defect",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-01-files/rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+      "bytes": 26346,
+      "sha256": "84e0c5a6a028591cad1f7b849a5fa7ed1e662314f3f481824e24eb991eeb94c4",
+      "contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+      "observation": "Read source: initial process read follows preInventory; postProcess at line 431 precedes post signing/AX and explicit CG at line 442. Remaining source reads are outside the process bracket."
+    }
+  ],
+  "plan_contract_sha256": "0b36a02c53251ecbbf501db36ad6254ac321a2bc1058b1429d2c2ea68340e89b",
+  "analysis": {
+    "facts": [
+      "Reviewed source, tests, changed documents, frozen plan/contract/Handoff, independent Plan Review, candidate diff/preimages, preservation and raw verification records without writes, builds, tests, GUI, network or production constructors.",
+      "Initial processInstance is read after initial SCK enumeration. Final processInstance is read before post signing, AX and explicit CG acquisition; equality and bundle validation never reread it after those later source reads.",
+      "Provided regressions produced baseline 10/0, red 15 tests/25 assertion failures, final focused 21/0 and full suite 267/0. Build, provenance and diff-check recorded exit 0. These observed results remain proven for this candidate.",
+      "Replay recorded two exit-1 checks and a final exit-0 PASS with 20 fixtures using pinned Python. Second failure explicitly shows SDK/compiler mismatch; first detailed report was overwritten and remains lost, with exit 1 retained.",
+      "Target signing reader uses only requested PID code and returns nil on unavailable target paths; CLI caller fallback is removed. Stable nil signing remains unknown.",
+      "One explicit session CG snapshot is shared between identity and bundle. Retained target uniqueness, finite positive geometry and existing 0.5-point frame tolerance are revalidated. AX production adapter separately reads CG; no atomic OS claim is supported.",
+      "Independently verified all verification-manifest entries, command log byte/SHA records, binary SHA, 49 source entries and aggregate source SHA, contract/Handoff equality, preserved historical/out-of-scope files, Git identity, and exact incremental diff derived from baseline preimages.",
+      "Controller state remains PLAN with no admitted native run; this actual advisory UUID is not a controller actor/admission/completion receipt."
+    ],
+    "inferences": [
+      "Concrete counterexample: both current process reads return instance A. During the later post-signing, post-AX or explicit CG call, the target PID becomes instance B while signature, AX role/title/binding, window ID/owner/layer/frame and retained inventories stay equal. Current code accepts a bundle labelled A because no process read follows that acquisition. This follows source control flow; no new regression was executed by this reviewer.",
+      "At the leading boundary, replacement inside initial enumerateWindows occurs before the first process read; later reads can all return B while the retained initial inventory came from A. Moving the initial process read before that inventory exposes the replacement.",
+      "One bounded action remains inside the reviewed process-before/after repair: take initial processInstance before first enumerateWindows and final processInstance after post inventory, signing, AX and the single explicit CG read. Compare and retain those actual bracket values, preserving typed refusal, original deadline and count-after-validation behavior.",
+      "Add below-OS stateful replacement regressions for initial inventory, post signing, post AX and explicit CG with other identity facts unchanged; demonstrate current candidate accepts, then require typed refusal and captureCount zero after the correction. Refresh candidate-bound required checks and preservation, then obtain independent Acceptance. No architecture, scope, gate, tolerance, production authority or atomic-snapshot expansion is required."
+    ],
+    "unknowns": [
+      "Executed outcome of the new timing regressions and any corrected candidate; this reviewer performed source analysis only.",
+      "Real LINE composition, calibration, popup/occlusion, chooser, filesystem backup acceptance, canonical root and original production authority.",
+      "OS sandbox/network denial enforcement, root actual model and native controller admission/completion receipts.",
+      "Detailed first failed replay report, which was irrecoverably overwritten."
+    ],
+    "evidence": [
+      "Frozen exact plan/contract/Handoff and independent plan-review.result.json.",
+      "Current NativeObservationSession.swift, ProcessCodeIdentity.swift, CLI ProcessIdentity.swift and their tests.",
+      "ProductionObservationSource.swift and ProcessInstanceID native reader, inspected read-only.",
+      "Changed ARCHITECTURE.md/CAPABILITY-MATRIX.md and candidate-incremental.diff against stored preimages.",
+      "Actual raw logs and command metadata, verification manifest, source manifest, start snapshot and preservation records."
+    ],
+    "confidence": "High for source-level timing defect, evidence binding and preserved checks. New counterexample is not an executed test; live behavior remains unknown."
+  },
+  "handoff_summary": "REVISION_REQUIRED: one bounded process-bracketing correction. Read processInstance before initial SCK and after all post signing/AX/explicit CG reads; retain those actual values. Add stateful same-PID replacement counterexamples at initial inventory and final signing/AX/CG, keeping other facts equal; require refusal and count zero. Preserve the observed 21/0 focused, 267/0 full, successful local checks and verified preservation for candidate 942e46, plus both replay failures and lost-report disclosure. Refresh required evidence for the corrected source and return to independent Acceptance. No user decision is needed. Results are advisory only; controller admission, live calibration and the full LINE backup remain unproven.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 1,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Fresh independent read-only acceptance of candidate 1 found an unbracketed process-replacement window and verified source, raw checks and preservation. One within-plan correction is needed.",
+    "information_gain": true,
+    "stuck": false
+  }
+}

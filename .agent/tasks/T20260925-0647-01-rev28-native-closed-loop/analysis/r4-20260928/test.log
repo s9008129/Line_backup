@@ -1,0 +1,113 @@
+[0/1] Planning build
+Building for debugging...
+[0/14] Write sources
+[1/14] Write swift-version--58304C5D6DBC2206.txt
+[3/17] Compiling Rev28CoreTests StagingVerifierTests.swift
+[4/17] Compiling Rev28CoreTests StructuralLocatorsTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:193:17: error: cannot call value of non-function type 'SurfaceBinding'
+191 |     }
+192 |     func testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand() {
+193 |         let b = binding()
+    |                 `- error: cannot call value of non-function type 'SurfaceBinding'
+194 |         let items = [
+195 |             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:195:13: error: cannot find 'ocr' in scope
+193 |         let b = binding()
+194 |         let items = [
+195 |             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+    |             `- error: cannot find 'ocr' in scope
+196 |             ocr("182", CGRect(x: 20, y: 70, width: 30, height: 18)),
+197 |             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:196:13: error: cannot find 'ocr' in scope
+194 |         let items = [
+195 |             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+196 |             ocr("182", CGRect(x: 20, y: 70, width: 30, height: 18)),
+    |             `- error: cannot find 'ocr' in scope
+197 |             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+198 |             ocr("57", CGRect(x: 20, y: 212, width: 24, height: 18)),
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:197:13: error: cannot find 'ocr' in scope
+195 |             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+196 |             ocr("182", CGRect(x: 20, y: 70, width: 30, height: 18)),
+197 |             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+    |             `- error: cannot find 'ocr' in scope
+198 |             ocr("57", CGRect(x: 20, y: 212, width: 24, height: 18)),
+199 |         ]
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:198:13: error: cannot find 'ocr' in scope
+196 |             ocr("182", CGRect(x: 20, y: 70, width: 30, height: 18)),
+197 |             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+198 |             ocr("57", CGRect(x: 20, y: 212, width: 24, height: 18)),
+    |             `- error: cannot find 'ocr' in scope
+199 |         ]
+200 |         let regions = StructuralLocators.segmentAlbumCards(
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:217:13: error: cannot find 'ocr' in scope
+215 |     func testSegmentAlbumCardsRejectsCrossCardCount() {
+216 |         let items = [
+217 |             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+    |             `- error: cannot find 'ocr' in scope
+218 |             ocr("57", CGRect(x: 20, y: 72, width: 24, height: 18)),
+219 |             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:218:13: error: cannot find 'ocr' in scope
+216 |         let items = [
+217 |             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+218 |             ocr("57", CGRect(x: 20, y: 72, width: 24, height: 18)),
+    |             `- error: cannot find 'ocr' in scope
+219 |             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+220 |             ocr("58", CGRect(x: 20, y: 212, width: 24, height: 18)),
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:219:13: error: cannot find 'ocr' in scope
+217 |             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+218 |             ocr("57", CGRect(x: 20, y: 72, width: 24, height: 18)),
+219 |             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+    |             `- error: cannot find 'ocr' in scope
+220 |             ocr("58", CGRect(x: 20, y: 212, width: 24, height: 18)),
+221 |         ]
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:220:13: error: cannot find 'ocr' in scope
+218 |             ocr("57", CGRect(x: 20, y: 72, width: 24, height: 18)),
+219 |             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+220 |             ocr("58", CGRect(x: 20, y: 212, width: 24, height: 18)),
+    |             `- error: cannot find 'ocr' in scope
+221 |         ]
+222 |         let regions = StructuralLocators.segmentAlbumCards(
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:231:22: error: cannot call value of non-function type 'SurfaceBinding'
+229 |             count: "57",
+230 |             regions: regions,
+231 |             binding: binding()
+    |                      `- error: cannot call value of non-function type 'SurfaceBinding'
+232 |         ) else { return XCTFail("cross-card count must refuse") }
+233 |         XCTAssertEqual(reason, .referenceStructureMismatch)
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:233:33: error: type 'Equatable' has no member 'referenceStructureMismatch'
+231 |             binding: binding()
+232 |         ) else { return XCTFail("cross-card count must refuse") }
+233 |         XCTAssertEqual(reason, .referenceStructureMismatch)
+    |                                 `- error: type 'Equatable' has no member 'referenceStructureMismatch'
+234 |     }
+235 | 
+[5/18] Compiling Rev28CoreTests PostconditionMonitorTests.swift
+[6/18] Compiling Rev28CoreTests PersistentTransactionOwnerTests.swift
+[7/18] Compiling Rev28CoreTests IntentLedgerTests.swift
+[8/18] Compiling Rev28CoreTests OcrEngineTests.swift
+[9/18] Compiling Rev28CoreTests ExecutionPolicyTests.swift
+[10/18] Compiling Rev28CoreTests LiveExecutionEngineTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:219:32: warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+217 |         let firstAdapter = FakeAdapter()
+218 |         _ = try await firstAdapter.establish(state: .appReady, owner: owner)
+219 |         try await firstAdapter.dispatchSaveAll(owner: owner)
+    |                                `- warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+220 |         XCTAssertEqual(firstAdapter.saveAllMouseEvents, 3)
+221 | 
+[11/18] Compiling Rev28CoreTests AlbumEllipsisLocatorTests.swift
+[12/18] Compiling Rev28CoreTests CoordinateTransformTests.swift
+[13/18] Compiling Rev28CoreTests ActuationReadinessTests.swift
+[14/18] Compiling Rev28CoreTests AdversarialMatrixTests.swift
+[15/18] Emitting module Rev28CoreTests
+[16/18] Compiling Rev28CoreTests WindowIdentityTests.swift
+error: fatalError

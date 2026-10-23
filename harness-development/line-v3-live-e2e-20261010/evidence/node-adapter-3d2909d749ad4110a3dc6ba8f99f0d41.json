@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/opt/homebrew/bin/node",
+    "--test",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_cua_adapter.mjs"
+  ],
+  "attempt_id": "3d2909d749ad4110a3dc6ba8f99f0d41",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "ended_at": "2026-10-10T07:18:45.303625+00:00",
+  "environment": {
+    "LC_ALL": "C",
+    "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+    "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures"
+  },
+  "exit_code": 1,
+  "started_at": "2026-10-10T07:18:45.210091+00:00",
+  "stderr_bytes": 0,
+  "stderr_path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-3d2909d749ad4110a3dc6ba8f99f0d41.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 2305,
+  "stdout_path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-3d2909d749ad4110a3dc6ba8f99f0d41.stdout",
+  "stdout_sha256": "15c41f566b7be2d7db739e21dd9cedc771ee4c7908539866ae6a5ab9bbddda36",
+  "timed_out": false
+}

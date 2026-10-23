@@ -1,0 +1,1962 @@
+diff --git a/HANDOFF-2026-09-30-rev28-next.md b/HANDOFF-2026-09-30-rev28-next.md
+index c41f8ee..9af6b51 100644
+--- a/HANDOFF-2026-09-30-rev28-next.md
++++ b/HANDOFF-2026-09-30-rev28-next.md
+@@ -1,5 +1,29 @@
+ # HANDOFF — LINE Backup Rev28（2026-09-30 rev3｜prompt-first＋Harness V4.3.1 整合）
+ 
++> **2026-10-04 修復後的接手入口：本段優先於下方 2026-09-30 歷史快照。**
++> 使用者已授權本機修復，新的 v3 計畫、commit 根因分析、驗證與獨立驗收位於
++> `harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/`。
++> 下方「產品凍結、無 pending code work、只剩環境 blocker」及「換 fresh runID 跑 attempt-02」
++> 的操作指示已撤銷；舊紀錄是歷史證據，不能授權目前產品樹或 binary。
++>
++> 接手時先讀新任務 `plan.md`、`commit-review.md`、`progress.md` 與實際 role result／evidence。
++> 修復處理 durable write fail-open、hover 後 capture/epoch/localization、當前 exact identity、
++> 續跑重觀測、Phase A UNKNOWN 與非零 exit，以及文件與實作不符。
++> 不得改寫舊 canonical Plan/Handoff、Phase A attempt-01、GoalSlot 或 authorization；
++> `PRIMARY_NATIVE_COMPOSITION` 歷史 3/3 不重置，本機修復也不構成第 4 次 live attempt。
++>
++> **真實 LINE backup 仍未達成。** 本機修復沒有執行 LINE GUI、Save All、destination confirmation
++> 或 baseline/正式 ledger 的遷移。現有 GoalSlot 以 goal/group/album/stagingRoot 建穩定 key，
++> 同時檢查 runID、run directory 與 source/plan bindings；attempt-01 已建立授權紀錄，
++> 所以「換 runID」即使尚未消耗 entitlement 仍會衝突。不能刪除 slot、換 stagingRoot、
++> 重簽舊 ledger 或沿用舊 source digest 來繞過它。
++> 下一個 live 工作必須另做有獨立審查的 recovery/authorization 計畫，核對既有 slot/ledger/anchor
++> 與保留 counters，再取得目前 composition 的 native calibration、menu/popup/occlusion 綁定證據。
++> `targetWindowNotUnique(found=2)` 是正確拒絕，唯一視窗檢查保留；它並非唯一剩餘條件。
++> Phase A v2 有 FAIL/UNKNOWN 時會發布報告並 exit 77；不能把 exit、候選點或歷史 review label 當作 PASS。
++
++## 2026-09-30 歷史快照（下方指令不能直接執行）
++
+ > 給新對話的接手 Agent：**先讀 §0 的 Prompt，並依它執行**；本文件其餘章節是它引用的完整上下文。
+ > 本文件是 navigation + status snapshot，**不是** canonical 契約，不取代
+ > `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md` 與同目錄 `handoff.md`。**不要覆寫它們。**
+diff --git a/rev28/ARCHITECTURE.md b/rev28/ARCHITECTURE.md
+index fefbfb6..f6c3dba 100644
+--- a/rev28/ARCHITECTURE.md
++++ b/rev28/ARCHITECTURE.md
+@@ -1,6 +1,6 @@
+ # Rev28 Native Closed-Loop Architecture
+ 
+-Status: pre-live implementation/hardening branch. This document describes the reviewed Rev28 architecture; it does **not** claim the LINE production backup has completed.
++Status (2026-10-04): local repair under `harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b`. This document describes the current implementation; independent acceptance and observed check results are recorded in that task. The LINE production backup has not completed.
+ 
+ ## Goal
+ 
+@@ -90,7 +90,7 @@ Distinct glyphs such as `禎` and `楨` are never fuzzy-merged.
+ 
+ ### Album card/detail
+ 
+-Album selection requires a unique exact date title and exact count contained in one explicitly segmented, uniquely identified card region; cross-card pairings and multiple matching regions are rejected. Album detail requires unique exact group title + `57張照片`.
++Album selection requires the current exact group plus a unique exact date title and exact count contained in one explicitly segmented, uniquely identified card region; cross-card pairings and multiple matching regions are rejected. Album detail and subsequent ellipsis/menu/Save All surfaces require unique exact group title, `2024/05/13~05/17` and `57張照片` on their own frames.
+ 
+ ### Album ellipsis
+ 
+@@ -121,7 +121,7 @@ The target must be unique. Click geometry comes from the structural target-row c
+ 
+ ## 5. Final dispatch gate
+ 
+-Immediately before an event can be posted, `DispatchReadinessEvaluator` requires all of:
++Immediately before an event can be posted, `DispatchReadinessGate` requires all of:
+ 
+ - application active,
+ - target frontmost,
+@@ -131,6 +131,21 @@ Immediately before an event can be posted, `DispatchReadinessEvaluator` requires
+ 
+ Failure of any clause refuses dispatch.
+ 
++Production readiness projects the retained `NativeObservationSession` bundle,
++including its original capture timestamp and frozen geometry. After hover the
++same session captures and localizes again with a greater epoch; identical pixels
++do not authorize reuse of the old candidate. A redraw can pass only when the
++fresh target has the same identity and the original click point still meets the
++one-point safe margin, with mapping/frame changes within 0.5 point. Readiness
++frames are retained separately from state transitions. The original one-second
++permit expires even if capture, OCR, durable writes or final guards take time.
++Ledger or anchor write failure prevents mouseDown/mouseUp; its error propagates.
++Each dispatch binds its revalidation records to the exact durable reservation
++entry returned under the owner lock. Its final failure supersedes its own
++provisional success, so a late refusal cannot clear an earlier failed attempt.
++Distinct successful attempts still reset the consecutive-failure counter;
++legacy standalone records keep their existing meaning.
++
+ Quartz actuation remains separated from sensing. A posted event never serves as its own success acknowledgement.
+ 
+ ## 6. Save All postcondition
+@@ -187,6 +202,13 @@ rejects stale snapshots and fsyncs every append. Its separately stored
+ `LedgerHeadAnchor` detects subsequent truncation/rollback when retained
+ independently.
+ 
++Verified pre-intent continuation re-observes the current state before advancing,
++including when it already reached `SAVE_ALL_LOCATED`. It appends a reobservation
++record without rewriting old transitions or resetting budgets. The stable goal
++slot also binds its run and authorization: changing runID is not a recovery
++mechanism. Source changes require new review and a separately reviewed authority
++decision; this repair never rebinds the historical slot or ledger.
++
+ Production event posting is exposed only by `GatedQuartzActuator`; its permit
+ can be minted only from a fresh active/frontmost SC+CG window census and a
+ candidate bound to the live screenshot digest. Permits are single-use,
+@@ -205,14 +227,21 @@ requires an affirmative outcome and rehashed postcondition/tripwire artifacts
+ beneath the same run-ID directory; the legacy unbound-boolean helper can only
+ return indeterminate.
+ 
+-`rev28ctl live-preflight` requires an immutable authorization and a separate
+-one-shot authorization file, recomputes plan and implementation digests, checks
+-the real LINE process, active/frontmost state, unique fresh SC+CG window and AX
+-trust, then consumes the one-shot file. It never posts events.
+-`live-execute` currently fails closed after those checks: this checkout does
+-not provide a calibrated live frame/structural-candidate session provider that
+-binds OCR, destination and tripwire samples into one real observation stream.
+-No mock path is treated as production.
++`LiveCompositionFactory` assembles the native session, common engine, adapter,
++actuation and post-save observers used by both CLI commands. `live-preflight`
++verifies immutable authorization/source bindings and fresh process/window/TCC
++facts. It may perform guarded reversible album/menu navigation, but never Save
++All or destination confirmation and never consumes the irreversible entitlement
++or one-shot execute authorization. It publishes Phase A evidence and exits 77
++with `preflight=blocked` if any required condition is FAIL or UNKNOWN.
++
++Phase A report v2 uses the common exact state-evidence policy. Configured bounds
++and retained pixels alone cannot prove current native calibration or popup
++ownership/absence of occlusion; these remain UNKNOWN until independently bound
++observations exist. The current builder deliberately cannot manufacture their
++PASS from caller flags. `live-execute` requires independently recomputed Phase B
++eligibility before irreversible authority can be consumed. Actual chooser
++observation remains a separate runtime gate.
+ 
+ ### Real-session-only residual evidence
+ 
+@@ -221,8 +250,8 @@ album/menu structure, that native chooser AX semantics match the append-only
+ predicate version, or that the real filesystem tripwire observes every
+ relevant write. Those facts require a live authorized macOS session with LINE,
+ Accessibility and Screen Recording permissions, calibrated capture rules, and
+-preserved evidence. Until those facts and a real observation provider are
+-reviewed, live execution remains deliberately unavailable.
++preserved evidence. Historical calibration and offline provider tests do not
++prove these current-session obligations; production eligibility remains blocked.
+ 
+ ## 9. Filesystem acceptance
+ 
+@@ -271,7 +300,7 @@ It can verify:
+ - state machine/ledger/verifier,
+ - adversarial behavior.
+ 
+-The hosted macOS 27 environment currently returns Vision `unknownError` for **both** Swift `RecognizeTextRequest` and legacy `VNRecognizeTextRequest`. Because both API generations fail while the real Mac's earlier executable-context Vision probe passed, hosted Vision is classified as an environment limitation; no production OCR rule is weakened.
++Historical hosted macOS 27 evidence returned Vision `unknownError` for **both** Swift `RecognizeTextRequest` and legacy `VNRecognizeTextRequest`. Both API generations failed while the real Mac's earlier executable-context Vision probe passed, so that recorded failure was classified as an environment limitation. This repair did not reprobe either live capability or weaken the production OCR rule.
+ 
+ Only the user's real Mac can establish actual LINE app/session state, current LINE UI geometry/labels, real chooser hosting, real download side effects, baseline/staging disk state and final content equality.
+ 
+@@ -282,7 +311,7 @@ Synthetic/CI evidence can advance implementation and pre-live verification, but
+ The remaining production sequence is:
+ 
+ 1. real-Mac preflight and baseline/staging/TCC re-verification,
+-2. Phase A read-only LINE reconnaissance,
++2. Phase A observation plus guarded reversible navigation, with zero irreversible intent,
+ 3. required exact-SHA pre-live review gates,
+ 4. one bounded Phase B production transaction,
+ 5. filesystem/content proof,
+diff --git a/rev28/CAPABILITY-MATRIX.md b/rev28/CAPABILITY-MATRIX.md
+index fbc731f..7de9ba4 100644
+--- a/rev28/CAPABILITY-MATRIX.md
++++ b/rev28/CAPABILITY-MATRIX.md
+@@ -2,7 +2,14 @@
+ 
+ This matrix separates **real-Mac production authority** from **GitHub-hosted pre-live evidence**.
+ 
+-| Capability | User Mac evidence before this branch | GitHub `xcode-27` evidence | Authority / treatment |
++Updated 2026-10-04: the table below describes historical observations, not a new
++probe of current permissions, LINE, hosted runners or baseline data. The current
++local repair's build/test/replay evidence lives in
++`harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b`.
++Native composition is implemented and reachable by both CLI commands. Missing
++current calibration and popup/occlusion proof still block production eligibility.
++
++| Capability | Historical user Mac evidence | Historical GitHub `xcode-27` evidence | Authority / treatment |
+ |---|---|---|---|
+ | macOS | macOS 27.0 | macOS 27.0 (26A428) | both relevant |
+ | Swift/Xcode | Swift 6.3.3 / Xcode-provided SDK | Swift 6.4 / Xcode 27.0 (27A266a) / macOS 27 SDK | CI adds portability coverage |
+@@ -10,7 +17,7 @@ This matrix separates **real-Mac production authority** from **GitHub-hosted pre
+ | Screen capture permission | PASS | `CGPreflightScreenCaptureAccess=true` | required for headed harness |
+ | Quartz post-event permission | PASS | `CGPreflightPostEventAccess=true` | required for headed harness |
+ | ScreenCaptureKit inventory | PASS | PASS, hosted run observed 5 windows / 1 display | pre-live capable |
+-| ScreenCaptureKit capture geometry | W2 calibrated/frozen | build/contracts exercised; SCK available | live geometry still revalidated on real LINE |
++| ScreenCaptureKit capture geometry | W2 calibrated/frozen | build/contracts exercised; SCK available | historical calibration is not bound to the current composer; Phase A v2 reports UNKNOWN |
+ | Vision modern OCR | PASS: exact `儲存全部` and `57張照片` | FAIL: `unknownError` | real Mac remains production authority |
+ | Vision legacy parity | diagnostic only | FAIL: same `unknownError` | supports hosted-runtime limitation classification |
+ | Quartz event construction/routing | W2 PASS | TCC + deterministic/harness coverage | final LINE routing only real Mac |
+@@ -21,7 +28,7 @@ This matrix separates **real-Mac production authority** from **GitHub-hosted pre
+ | Structural locators | historical Python v5-v8 | native Swift album/detail/ellipsis/Save-All contracts + replay | live candidates always fresh-frame bound |
+ | Historical replay | historical artifacts | 20 reviewed fixtures SHA-bound, run twice, byte-identical | deterministic pre-live gate |
+ | Transaction state/budgets | scaffolding | Swift policy + regression tests | pre-live gate |
+-| Hash-chained crash resume | W2 fixture PASS | regression coverage | pre-live gate |
++| Hash-chained crash resume | W2 fixture PASS | regression coverage | stable goal slot/run/source bindings preserved; verified continuation re-observes current state |
+ | Staging exact verifier | historical scripts | native Swift exact predicate + named terminal states | final data only real Mac |
+ | G01-G22 + X01-X03 | planned | 25/25 tests, run twice on successful macOS 27 CI | pre-live gate |
+ | Real LINE account/session | available only on user Mac | unavailable | **real Mac only** |
+@@ -33,7 +40,7 @@ This matrix separates **real-Mac production authority** from **GitHub-hosted pre
+ 
+ ## Hosted Vision limitation
+ 
+-On the GitHub-hosted macOS 27 runner, the same synthetic OCR fixtures fail with `unknownError` using both:
++In the recorded GitHub-hosted macOS 27 run, the same synthetic OCR fixtures failed with `unknownError` using both:
+ 
+ - production Swift `RecognizeTextRequest`, and
+ - diagnostic legacy `VNRecognizeTextRequest`.
+@@ -49,3 +56,11 @@ Deterministic replay output contains no wall-clock or workspace-specific paths,
+ ## Current production conclusion
+ 
+ The hosted environment is strong enough to carry the bulk of W2-W5 pre-live engineering. It is not a substitute for the real LINE app/session and filesystem acceptance path. No CI result alone may produce `DUPLICATE_CONTENT_CONFIRMED`.
++
++`live-preflight` can navigate reversibly and retains fresh session evidence;
++it does not consume Save All authority. A published report with FAIL/UNKNOWN is
++blocked and returns nonzero. Current native calibration, exact visible
++group/date/count, popup ownership and lack of occlusion, independently reviewed
++source/binary eligibility, and actual chooser/filesystem observations remain
++required. A new runID cannot bypass a pre-existing goal slot; recovery or source
++authorization migration requires a separately reviewed decision.
+diff --git a/rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift b/rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift
+index 7ace69c..2c9b9bb 100644
+--- a/rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift
++++ b/rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift
+@@ -1,7 +1,6 @@
+ import AppKit
+ import CoreGraphics
+ import Foundation
+-import ScreenCaptureKit
+ 
+ // MARK: - Quartz actuator (plan §ARCHITECTURE §5)
+ //
+@@ -173,6 +172,10 @@ public struct ReadinessObservation: Sendable {
+     public let captureGeometry: CaptureGeometry
+     public let captureImageSize: CGSize
+     public let observedAtUptime: Double
++    fileprivate var observationRunID: String?
++    fileprivate var observationSessionID: String?
++    fileprivate var configuration: CaptureConfiguration?
++    fileprivate var geometryStateKey: String?
+ 
+     public init(applicationActive: Bool, targetFrontmost: Bool, freshWindow: FreshWindowObservation,
+                 currentEpoch: UInt64, currentBinding: SurfaceBinding, captureGeometry: CaptureGeometry,
+@@ -187,72 +190,33 @@ public struct ReadinessObservation: Sendable {
+         self.observedAtUptime = observedAtUptime
+     }
+ 
+-    public static func captureLive(identity: WindowIdentity, candidate: StructuralCandidate) async throws -> ReadinessObservation {
+-        let pid = pid_t(identity.process.pid)
+-        guard let application = NSRunningApplication(processIdentifier: pid) else {
+-            throw QuartzActuatorError.dispatchRefusedByPrecondition("target process is not running")
+-        }
+-        guard let applicationBundleID = application.bundleIdentifier,
+-              applicationBundleID == identity.bundleID,
+-              let liveProcess = ProcessInstanceID.current(pid: identity.process.pid),
+-              liveProcess == identity.process else {
+-            throw QuartzActuatorError.dispatchRefusedByPrecondition("target bundle or process instance changed")
+-        }
+-        let active = application.isActive
+-        let frontmost = NSWorkspace.shared.frontmostApplication?.processIdentifier == pid
+-        let content = try await WindowSensor.shareableContent(onScreenWindowsOnly: true)
+-        let snapshots = WindowSensor.snapshots(from: content)
+-        let candidates = WindowSensor.mainWindowCandidates(in: snapshots, bundleID: identity.bundleID, pid: identity.process.pid)
+-        guard candidates.count == 1, let window = candidates.first,
+-              window.windowID == identity.windowID else {
+-            throw QuartzActuatorError.dispatchRefusedByPrecondition("fresh SC window census is ambiguous or changed")
+-        }
+-        let cgMatches = CGWindowInventory.onScreenWindows().filter {
+-            $0.windowNumber == identity.windowID && $0.ownerPID == identity.process.pid && $0.layer == 0
+-        }
+-        guard cgMatches.count == 1 else {
+-            throw QuartzActuatorError.dispatchRefusedByPrecondition("fresh CG window census is ambiguous or missing")
+-        }
+-        guard let liveWindow = content.windows.first(where: { $0.windowID == window.windowID }) else {
+-            throw QuartzActuatorError.dispatchRefusedByPrecondition("fresh SC window handle unavailable")
+-        }
+-        let screenshotConfiguration = SCScreenshotConfiguration()
+-        screenshotConfiguration.includeChildWindows = false
+-        screenshotConfiguration.ignoreShadows = true
+-        screenshotConfiguration.showsCursor = false
+-        guard let image = try await SCScreenshotManager.captureScreenshot(
+-            contentFilter: SCContentFilter(desktopIndependentWindow: liveWindow),
+-            configuration: screenshotConfiguration
+-        ).sdrImage,
+-        FrameCaptureSupport.pngSHA256(of: image) == candidate.binding.frameSHA256,
+-        candidate.binding.frameSHA256 == identity.captureImageSHA256 else {
+-            throw QuartzActuatorError.dispatchRefusedByPrecondition("candidate is not bound to the fresh live frame")
+-        }
+-        let pointPixelScale = Double(SCContentFilter(desktopIndependentWindow: liveWindow).pointPixelScale)
+-        guard pointPixelScale.isFinite, pointPixelScale > 0 else {
+-            throw QuartzActuatorError.dispatchRefusedByPrecondition("live capture scale is invalid")
+-        }
+-        let fresh = FreshWindowObservation(
+-            bundleID: applicationBundleID,
+-            process: liveProcess,
+-            windowID: window.windowID,
+-            frame: window.frame,
+-            layer: window.windowLayer,
+-            isOnScreen: window.isOnScreen
+-        )
+-        return ReadinessObservation(
+-            applicationActive: active,
+-            targetFrontmost: frontmost,
+-            freshWindow: fresh,
+-            currentEpoch: identity.captureEpoch,
+-            currentBinding: candidate.binding,
+-            captureGeometry: CaptureGeometry(
+-                windowFrame: window.frame,
+-                captureBBox: window.frame,
+-                scale: pointPixelScale
++    /// Production readiness is a projection of the retained session image,
++    /// including its original capture time. Projection cannot renew its age.
++    public init(bundle: ObservationBundle, applicationActive: Bool, targetFrontmost: Bool) throws {
++        try bundle.validated()
++        self.init(
++            applicationActive: applicationActive, targetFrontmost: targetFrontmost,
++            freshWindow: FreshWindowObservation(
++                bundleID: bundle.window.bundleID, process: bundle.process,
++                windowID: bundle.window.windowID, frame: bundle.window.windowFrame,
++                layer: bundle.window.cgEntry.layer, isOnScreen: true
+             ),
+-            captureImageSize: CGSize(width: image.width, height: image.height),
+-            observedAtUptime: ProcessInfo.processInfo.systemUptime
++            currentEpoch: bundle.epoch, currentBinding: bundle.surfaceBinding,
++            captureGeometry: CaptureGeometry(windowFrame: bundle.window.windowFrame,
++                                            captureBBox: bundle.frame.actualBBoxPt, scale: bundle.frame.scale),
++            captureImageSize: CGSize(width: bundle.frame.imageWidthPx, height: bundle.frame.imageHeightPx),
++            observedAtUptime: Double(bundle.capturedAtMonotonicNanos) / 1_000_000_000
++        )
++        observationRunID = bundle.runID
++        observationSessionID = bundle.sessionID
++        configuration = bundle.frame.configuration
++        geometryStateKey = bundle.frame.stateKey
++    }
++
++    @available(*, deprecated, message: "Use readiness projected from a fresh NativeObservationSession bundle")
++    public static func captureLive(identity: WindowIdentity, candidate: StructuralCandidate) async throws -> ReadinessObservation {
++        throw QuartzActuatorError.dispatchRefusedByPrecondition(
++            "readiness requires a retained session observation with fresh localization and frozen geometry"
+         )
+     }
+ }
+@@ -271,6 +235,10 @@ public final class ReadinessPermit: @unchecked Sendable {
+     fileprivate let safeRectCapturePx: CGRect
+     fileprivate let captureImageSize: CGSize
+     fileprivate let mintedAt: Double
++    fileprivate var observationRunID: String?
++    fileprivate var observationSessionID: String?
++    fileprivate var configuration: CaptureConfiguration?
++    fileprivate var geometryStateKey: String?
+     private let lock = NSLock()
+     private var consumed = false
+ 
+@@ -301,12 +269,18 @@ public final class ReadinessPermit: @unchecked Sendable {
+         }
+         return screenPoint
+     }
++
++    fileprivate func requireUnexpired(now: Double) throws {
++        guard now >= mintedAt, now - mintedAt <= 1.0 else {
++            throw QuartzActuatorError.dispatchRefusedByPrecondition("permit expired before mouseDown")
++        }
++    }
+ }
+ 
+ public enum DispatchReadinessGate {
+     public static func mintPermit(identity: WindowIdentity, candidate: StructuralCandidate,
+                                   observation: ReadinessObservation, maxFrameDeltaPt: Double = 0.5,
+-                                  now: Double = ProcessInfo.processInfo.systemUptime) throws -> ReadinessPermit {
++                                  now: Double = Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000) throws -> ReadinessPermit {
+         guard observation.applicationActive else { throw QuartzActuatorError.dispatchRefusedByPrecondition("application inactive") }
+         guard observation.targetFrontmost else { throw QuartzActuatorError.dispatchRefusedByPrecondition("target not frontmost") }
+         guard WindowIdentityValidator.isFresh(identity: identity, against: observation.freshWindow,
+@@ -351,7 +325,7 @@ public enum DispatchReadinessGate {
+             throw QuartzActuatorError.dispatchRefusedByPrecondition("readiness observation stale")
+         }
+         let screen = observation.captureGeometry.screenPoint(fromCapturePixel: point)
+-        return ReadinessPermit(
++        let permit = ReadinessPermit(
+             screenPoint: screen,
+             targetPID: identity.process.pid,
+             windowID: identity.windowID,
+@@ -363,6 +337,53 @@ public enum DispatchReadinessGate {
+             captureImageSize: observation.captureImageSize,
+             mintedAt: current
+         )
++        permit.observationRunID = observation.observationRunID
++        permit.observationSessionID = observation.observationSessionID
++        permit.configuration = observation.configuration
++        permit.geometryStateKey = observation.geometryStateKey
++        return permit
++    }
++
++    /// A redraw is acceptable only after a new retained capture has localized
++    /// the same target. The already-posted hover point remains the click point.
++    public static func revalidateAfterHover(
++        permit: ReadinessPermit, freshBundle: ObservationBundle,
++        applicationActive: Bool, targetFrontmost: Bool,
++        now: Double = Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000
++    ) throws {
++        try permit.requireUnexpired(now: now)
++        try freshBundle.validated()
++        guard let candidate = freshBundle.candidate,
++              candidate.identity == permit.candidateIdentity,
++              freshBundle.runID == permit.observationRunID,
++              freshBundle.sessionID == permit.observationSessionID,
++              freshBundle.epoch > permit.binding.captureEpoch,
++              freshBundle.process == permit.binding.process,
++              freshBundle.window.windowID == permit.windowID,
++              freshBundle.window.bundleID == permit.binding.bundleID,
++              freshBundle.frame.configuration == permit.configuration,
++              freshBundle.frame.stateKey == permit.geometryStateKey else {
++            throw QuartzActuatorError.dispatchRefusedByPrecondition("fresh localization does not match the permitted action")
++        }
++        let observation = try ReadinessObservation(
++            bundle: freshBundle, applicationActive: applicationActive, targetFrontmost: targetFrontmost
++        )
++        let freshPermit = try mintPermit(
++            identity: freshBundle.window, candidate: candidate, observation: observation, now: now
++        )
++        let frame = freshBundle.window.windowFrame
++        guard abs(Double(frame.minX - permit.windowFrame.minX)) <= 0.5,
++              abs(Double(frame.minY - permit.windowFrame.minY)) <= 0.5,
++              abs(Double(frame.width - permit.windowFrame.width)) <= 0.5,
++              abs(Double(frame.height - permit.windowFrame.height)) <= 0.5,
++              abs(freshPermit.screenPoint.x - permit.screenPoint.x) <= 0.5,
++              abs(freshPermit.screenPoint.y - permit.screenPoint.y) <= 0.5,
++              CaptureGeometryRules.isDispatchableCapturePixels(
++                point: observation.captureGeometry.capturePixelPoint(fromScreen: permit.screenPoint),
++                safeRect: candidate.safeRectCapturePx, captureScale: observation.captureGeometry.scale
++              ) else {
++            throw QuartzActuatorError.dispatchRefusedByPrecondition("original click point is no longer inside the freshly localized safe target")
++        }
+     }
+ 
+     /// Plan C5 post-hover revalidation: re-run every mint-time freshness fact
+@@ -376,7 +397,7 @@ public enum DispatchReadinessGate {
+         freshObservation: ReadinessObservation,
+         maxFrameDeltaPt: Double = 0.5,
+         maxPointDeltaPt: Double = 0.5,
+-        now: Double = ProcessInfo.processInfo.systemUptime
++        now: Double = Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000
+     ) throws {
+         guard freshObservation.applicationActive else {
+             throw QuartzActuatorError.dispatchRefusedByPrecondition("application inactive after the hover")
+@@ -479,8 +500,10 @@ public enum GatedQuartzActuator {
+                                  addressedSurfaceCheck: @escaping (Int32, UInt32, ScreenPoint) -> Bool = { pid, windowID, point in
+                                      GatedQuartzActuator.topmostSurfaceMatchesTarget(at: point, windowID: windowID, pid: pid)
+                                  },
+-                                 now: Double = ProcessInfo.processInfo.systemUptime) async throws {
+-        let point = try permit.consume(now: now)
++                                 now: Double? = nil,
++                                 clock: @escaping () -> Double = { Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000 }) async throws {
++        func currentTime() -> Double { now ?? clock() }
++        let point = try permit.consume(now: currentTime())
+         guard permit.binding == currentBinding else {
+             throw QuartzActuatorError.dispatchRefusedByPrecondition("structural candidate binding is no longer current")
+         }
+@@ -517,12 +540,13 @@ public enum GatedQuartzActuator {
+               let up = CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: point.cgPoint, mouseButton: .left) else {
+             throw QuartzActuatorError.eventCreationFailed
+         }
++        let revalidationAttemptID: String
+         switch intent {
+         case let .reversible(owner, action):
+-            try owner.recordReversibleDispatch(action: action)
++            revalidationAttemptID = try owner.recordReversibleDispatchAttempt(action: action)
+         case let .saveAll(owner):
+             try owner.reserveSaveAll()
+-            try owner.markSaveAllAttempted()
++            revalidationAttemptID = try owner.markSaveAllAttemptedWithRevalidationID()
+         }
+         sink(move, .cghidEventTap)
+         // Plan C5: after the hover, revalidate the full fact set and the
+@@ -531,15 +555,21 @@ public enum GatedQuartzActuator {
+         // guards — before mouseDown. Any failure consumes the permit, durably
+         // records the failed candidate revalidation and posts zero down/up.
+         do {
++            try Task.checkCancellation()
+             try await postHoverRevalidation()
+             try liveGuards()
++            try permit.requireUnexpired(now: currentTime())
++            try Self.recordRevalidationOutcome(intent: intent, passed: true, attemptID: revalidationAttemptID)
++            try permit.requireUnexpired(now: currentTime())
++            try Task.checkCancellation()
++            try liveGuards()
++            try permit.requireUnexpired(now: currentTime())
+         } catch {
+-            Self.recordRevalidationOutcome(intent: intent, passed: false)
++            try Self.recordRevalidationOutcome(intent: intent, passed: false, attemptID: revalidationAttemptID)
+             throw QuartzActuatorError.dispatchRefusedByPrecondition(
+                 "post-hover revalidation failed; mouseDown was not posted (\(error))"
+             )
+         }
+-        Self.recordRevalidationOutcome(intent: intent, passed: true)
+         sink(down, .cghidEventTap)
+         usleep(30_000)
+         sink(up, .cghidEventTap)
+@@ -548,12 +578,12 @@ public enum GatedQuartzActuator {
+     /// Plan C4: persist every candidate-revalidation outcome in the owner's
+     /// ledger so two consecutive failures durably abort instead of living in
+     /// memory. The durable record is written before the refusal surfaces.
+-    static func recordRevalidationOutcome(intent: GatedActuationIntent, passed: Bool) {
++    static func recordRevalidationOutcome(intent: GatedActuationIntent, passed: Bool, attemptID: String) throws {
+         switch intent {
+         case let .reversible(owner, action):
+-            try? owner.recordCandidateRevalidation(blockerKey: action, passed: passed)
++            try owner.recordCandidateRevalidation(blockerKey: action, passed: passed, attemptID: attemptID)
+         case let .saveAll(owner):
+-            try? owner.recordCandidateRevalidation(blockerKey: "saveAll", passed: passed)
++            try owner.recordCandidateRevalidation(blockerKey: "saveAll", passed: passed, attemptID: attemptID)
+         }
+     }
+ }
+diff --git a/rev28/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift b/rev28/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift
+index 444951a..b92fe72 100644
+--- a/rev28/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift
++++ b/rev28/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift
+@@ -32,9 +32,6 @@ public protocol ActuationEnvironment: Sendable {
+     func applicationActive(pid: Int32) -> Bool
+     func targetFrontmost(pid: Int32) -> Bool
+     func uptime() -> Double
+-    /// Fresh live readiness facts for one candidate, captured by the OS seam:
+-    /// production reads SCK/CG/process facts; tests substitute the observation.
+-    func readinessObservation(identity: WindowIdentity, candidate: StructuralCandidate) async throws -> ReadinessObservation
+     func postReversibleClick(
+         permit: ReadinessPermit,
+         binding: SurfaceBinding,
+@@ -216,6 +213,11 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
+     }
+ 
+     func evaluate(state: ExecutionState, bundle: ObservationBundle) throws -> Bool {
++        func unique(_ text: String) -> Bool {
++            bundle.ocrItems.filter { $0.text == text }.count == 1
++        }
++        let detailIdentity = unique(LiveExecutionEngine.targetGroup)
++            && unique(Self.albumTitle) && unique(Self.albumDetailCountText)
+         switch state {
+         case .appReady:
+             guard environment.applicationActive(pid: configuration.target.pid),
+@@ -227,22 +229,20 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
+             }
+             return true
+         case .groupReady:
+-            return bundle.ocrItems.contains { $0.text == LiveExecutionEngine.targetGroup }
++            return unique(LiveExecutionEngine.targetGroup)
+         case .albumListReady:
+-            return !StructuralLocators.segmentAlbumCards(
++            return unique(LiveExecutionEngine.targetGroup) && !StructuralLocators.segmentAlbumCards(
+                 items: bundle.ocrItems,
+                 imageBounds: Self.imageBounds(of: bundle)
+             ).isEmpty
+         case .targetAlbumLocated:
+-            return bundle.candidate != nil
++            return unique(LiveExecutionEngine.targetGroup) && bundle.candidate != nil
+         case .albumDetailVerified:
+-            let texts = Set(bundle.ocrItems.map(\.text))
+-            return texts.contains(LiveExecutionEngine.targetGroup) && texts.contains(Self.albumDetailCountText)
++            return detailIdentity
+         case .ellipsisLocated:
+-            return bundle.candidate != nil
++            return detailIdentity && bundle.candidate != nil
+         case .menuVerified:
+-            let texts = Set(bundle.ocrItems.map(\.text))
+-            return StructuralLocators.lineAlbumMenuReference.allSatisfy { texts.contains($0) }
++            return detailIdentity && StructuralLocators.lineAlbumMenuReference.allSatisfy(unique)
+         case .saveAllLocated:
+             guard configuration.menuBoundsCapture != nil else {
+                 throw ComposedAdapterError.stateRefused(
+@@ -250,7 +250,7 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
+                     detail: "frozen menu-surface geometry is not calibrated"
+                 )
+             }
+-            return bundle.candidate?.identity == "儲存全部"
++            return detailIdentity && bundle.candidate?.identity == "儲存全部"
+         default:
+             throw ComposedAdapterError.stateRefused(
+                 state: state.rawValue,
+@@ -271,6 +271,12 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
+                 detail: "Save All candidate cannot be clicked reversibly"
+             )
+         }
++        guard bundle.ocrItems.filter({ $0.text == LiveExecutionEngine.targetGroup }).count == 1 else {
++            throw ComposedAdapterError.recoveryRefused(
++                state: bundle.state.rawValue, detail: "recovery requires the unique exact target group on the current frame"
++            )
++        }
++        try requireRecoveryIdentity(bundle)
+         // Freshness facts are projections of the same retained bundle: the
+         // post-capture inventory the session already validated, never
+         // caller-authored flags.
+@@ -281,27 +287,7 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
+                 detail: "post-capture inventory lost the target window"
+             )
+         }
+-        let observation = ReadinessObservation(
+-            applicationActive: environment.applicationActive(pid: configuration.target.pid),
+-            targetFrontmost: environment.targetFrontmost(pid: configuration.target.pid),
+-            freshWindow: FreshWindowObservation(
+-                bundleID: post.ownerBundleID ?? "",
+-                process: bundle.process,
+-                windowID: post.windowID,
+-                frame: post.frame,
+-                layer: post.windowLayer,
+-                isOnScreen: post.isOnScreen
+-            ),
+-            currentEpoch: bundle.epoch,
+-            currentBinding: bundle.surfaceBinding,
+-            captureGeometry: CaptureGeometry(
+-                windowFrame: bundle.window.windowFrame,
+-                captureBBox: bundle.frame.actualBBoxPt,
+-                scale: bundle.frame.scale
+-            ),
+-            captureImageSize: CGSize(width: bundle.frame.imageWidthPx, height: bundle.frame.imageHeightPx),
+-            observedAtUptime: environment.uptime()
+-        )
++        let observation = try readiness(from: bundle)
+         let permit = try DispatchReadinessGate.mintPermit(
+             identity: bundle.window,
+             candidate: candidate,
+@@ -311,14 +297,7 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
+         // Plan C5: the post-hover revalidation re-runs the fresh live
+         // observation path and requires it to still match the permit's bound
+         // candidate/window/geometry before mouseDown.
+-        let revalidation: @Sendable () async throws -> Void = { [environment] in
+-            let fresh = try await environment.readinessObservation(identity: bundle.window, candidate: candidate)
+-            try DispatchReadinessGate.revalidateAfterHover(
+-                permit: permit,
+-                freshObservation: fresh,
+-                now: environment.uptime()
+-            )
+-        }
++        let revalidation = postHoverRevalidation(permit: permit, original: bundle, owner: owner)
+         try await environment.postReversibleClick(
+             permit: permit,
+             binding: bundle.surfaceBinding,
+@@ -330,11 +309,12 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
+ 
+     private func persist(
+         bundle: ObservationBundle,
+-        owner: PersistentTransactionOwner
++        owner: PersistentTransactionOwner,
++        prefix: String = "state"
+     ) throws -> EstablishedStateEvidence {
+         let runDirectory = URL(fileURLWithPath: owner.authorization.evidenceRunDirectory)
+-        let frameName = "state-\(bundle.state.rawValue)-\(bundle.epoch).png"
+-        let artifactName = "state-\(bundle.state.rawValue)-\(bundle.epoch).json"
++        let frameName = "\(prefix)-\(bundle.state.rawValue)-\(bundle.epoch).png"
++        let artifactName = "\(prefix)-\(bundle.state.rawValue)-\(bundle.epoch).json"
+         try bundle.framePNGData.write(to: runDirectory.appendingPathComponent(frameName))
+         let artifact = StateEvidenceArtifact(bundle: bundle, retainedFrameName: frameName)
+         let artifactData = try JSONEncoder().encode(artifact)
+@@ -346,6 +326,59 @@ public struct ComposedNativeAdapter: LiveExecutionAdapter, Sendable {
+         )
+     }
+ 
++    func readiness(from bundle: ObservationBundle) throws -> ReadinessObservation {
++        try ReadinessObservation(
++            bundle: bundle,
++            applicationActive: environment.applicationActive(pid: configuration.target.pid),
++            targetFrontmost: environment.targetFrontmost(pid: configuration.target.pid)
++        )
++    }
++
++    func postHoverRevalidation(
++        permit: ReadinessPermit, original: ObservationBundle, owner: PersistentTransactionOwner
++    ) -> @Sendable () async throws -> Void {
++        { [self] in
++            let fresh = try await observe(
++                state: original.state, owner: owner, localization: original.localization
++            )
++            // Retain a completed capture even when its target later refuses.
++            // Readiness artifacts never become state-transition evidence.
++            // The state- prefix lets the existing durable epoch authority
++            // include this capture after a crash. Phase A excludes the
++            // readiness subtype from established-state evidence.
++            _ = try persist(bundle: fresh, owner: owner, prefix: "state-readiness")
++            guard fresh.ocrItems.filter({ $0.text == LiveExecutionEngine.targetGroup }).count == 1 else {
++                throw ComposedAdapterError.recoveryRefused(
++                    state: original.state.rawValue, detail: "target identity changed after the hover"
++                )
++            }
++            try requireRecoveryIdentity(fresh)
++            if original.state == .saveAllLocated, try !evaluate(state: .saveAllLocated, bundle: fresh) {
++                throw ComposedAdapterError.recoveryRefused(
++                    state: original.state.rawValue, detail: "Save All target identity changed after the hover"
++                )
++            }
++            try DispatchReadinessGate.revalidateAfterHover(
++                permit: permit, freshBundle: fresh,
++                applicationActive: environment.applicationActive(pid: configuration.target.pid),
++                targetFrontmost: environment.targetFrontmost(pid: configuration.target.pid),
++                now: environment.uptime()
++            )
++        }
++    }
++
++    private func requireRecoveryIdentity(_ bundle: ObservationBundle) throws {
++        if bundle.candidate?.identity == "album-ellipsis" {
++            guard [Self.albumTitle, Self.albumDetailCountText].allSatisfy({ text in
++                bundle.ocrItems.filter { $0.text == text }.count == 1
++            }) else {
++                throw ComposedAdapterError.recoveryRefused(
++                    state: bundle.state.rawValue, detail: "ellipsis recovery requires the unique exact album date and count"
++                )
++            }
++        }
++    }
++
+     static func imageBounds(of bundle: ObservationBundle) -> CGRect {
+         CGRect(
+             origin: .zero,
+diff --git a/rev28/Sources/Rev28Core/Composition/PhaseAEvidence.swift b/rev28/Sources/Rev28Core/Composition/PhaseAEvidence.swift
+index 3ddf2ac..26b1ebd 100644
+--- a/rev28/Sources/Rev28Core/Composition/PhaseAEvidence.swift
++++ b/rev28/Sources/Rev28Core/Composition/PhaseAEvidence.swift
+@@ -387,7 +387,7 @@ public struct PhaseARunArtifacts: Sendable {
+ // MARK: - Report
+ 
+ public struct PhaseAEvidenceReport: Codable, Equatable, Sendable {
+-    public static let currentVersion = 1
++    public static let currentVersion = 2
+ 
+     public let reportVersion: Int
+     public let runID: String
+@@ -402,7 +402,16 @@ public struct PhaseAEvidenceReport: Codable, Equatable, Sendable {
+     public let preflightOutcomeArtifactName: String?
+     public let rawEvidenceManifestName: String
+ 
+-    public var allConditionsPass: Bool { phaseBPreventedBy.isEmpty }
++    public var allConditionsPass: Bool {
++        reportVersion == Self.currentVersion
++            && conditions.count == PhaseAEvidenceBuilder.conditionIdentifiers.count
++            && Set(conditions.map(\.identifier)) == Set(PhaseAEvidenceBuilder.conditionIdentifiers)
++            && conditions.allSatisfy { $0.status == .pass }
++            && phaseBPreventedBy.isEmpty
++            && ledgerProvenZeroIrreversible && irreversible.isZeroIrreversible
++    }
++
++    public var exitCode: Int32 { allConditionsPass ? 0 : 77 }
+ 
+     public var statusCounts: (pass: Int, fail: Int, unknown: Int) {
+         var pass = 0, fail = 0, unknown = 0
+@@ -503,7 +512,7 @@ public enum PhaseAEvidenceBuilder {
+     public static let deferredRuntimeGateIdentifiers: [String] = ["ACTUAL_LINE_CHOOSER_OBSERVED"]
+ 
+     public static let chooserAssumptionStatement =
+-        "chooser assumptions calibrated on real NSOpenPanel, actual LINE chooser not yet observed"
++        "historical NSOpenPanel calibration does not prove the current composition; actual LINE chooser not yet observed"
+ 
+     /// Reads the raw run directory: state artifacts with their retained frames,
+     /// and the pre-dispatch context records. Malformed artifacts are named, not
+@@ -512,7 +521,7 @@ public enum PhaseAEvidenceBuilder {
+         let names = try FileManager.default.contentsOfDirectory(atPath: runDirectory.path).sorted()
+         var states: [PhaseACapturedState] = []
+         var malformed: [String] = []
+-        for name in names where name.hasPrefix("state-") && name.hasSuffix(".json") {
++        for name in names where name.hasPrefix("state-") && !name.hasPrefix("state-readiness-") && name.hasSuffix(".json") {
+             let url = runDirectory.appendingPathComponent(name)
+             guard let data = try? Data(contentsOf: url),
+                   let artifact = try? JSONDecoder().decode(StateEvidenceArtifact.self, from: data) else {
+@@ -662,8 +671,8 @@ public enum PhaseAEvidenceBuilder {
+                 + "addressableBounds=\(geometry.addressableBoundsCapture) nonzeroStateFrames=\(framesOK)"
+             conditions.append(PhaseACondition(
+                 identifier: "FROZEN_CAPTURE_GEOMETRY",
+-                status: ok ? .pass : .fail,
+-                detail: detail
++                status: ok ? .unknown : .fail,
++                detail: detail + "; frame/configuration facts do not establish current-composer native calibration; no bound calibration observation was supplied"
+             ))
+         } else {
+             conditions.append(PhaseACondition(
+@@ -677,19 +686,19 @@ public enum PhaseAEvidenceBuilder {
+         // the OCR-bearing states carry the texts the policy requires.
+         do {
+             let framesVerified = !inspection.states.isEmpty && inspection.states.allSatisfy(\.retainedFrameVerified)
+-            let ocrRequirement: [(ExecutionState, [String])] = [
+-                (.groupReady, [LiveExecutionEngine.targetGroup]),
+-                (.albumDetailVerified, [LiveExecutionEngine.targetGroup, "57張照片"]),
+-                (.menuVerified, StructuralLocators.lineAlbumMenuReference),
+-            ]
+             var missing: [String] = []
+-            for (state, texts) in ocrRequirement {
++            for state in LiveExecutionEngine.preSaveStates {
+                 guard let captured = latest[state.rawValue] else {
+                     missing.append("\(state.rawValue):artifact-missing")
+                     continue
+                 }
+-                for text in texts where !captured.artifact.ocrTexts.contains(text) {
+-                    missing.append("\(state.rawValue):\(text)")
++                do {
++                    try ExecutionStateEvidencePolicy.validate(
++                        artifact: captured.artifact, expectedState: state,
++                        authorization: inputs.authorization, previousEpoch: nil
++                    )
++                } catch {
++                    missing.append("\(state.rawValue):\(error)")
+                 }
+             }
+             let malformed = inspection.malformedArtifactNames
+@@ -710,7 +719,8 @@ public enum PhaseAEvidenceBuilder {
+             let suffix = ":2024/05/13~05/17|57"
+             let group = latest[ExecutionState.groupReady.rawValue]
+             let located = latest[ExecutionState.targetAlbumLocated.rawValue]
+-            let groupOK = group?.artifact.ocrTexts.contains(LiveExecutionEngine.targetGroup) == true
++            let groupOK = group?.artifact.ocrTexts.filter { $0 == LiveExecutionEngine.targetGroup }.count == 1
++                && located?.artifact.ocrTexts.filter { $0 == LiveExecutionEngine.targetGroup }.count == 1
+             let identityOK = located?.artifact.candidateRefusal == nil
+                 && located?.artifact.candidateIdentity?.hasSuffix(suffix) == true
+             let cardOK = located.map { $0.artifact.cardRegionCount >= 1 } == true
+@@ -730,15 +740,16 @@ public enum PhaseAEvidenceBuilder {
+         do {
+             let verified = latest[ExecutionState.albumDetailVerified.rawValue]
+             let located = latest[ExecutionState.targetAlbumLocated.rawValue]
+-            let textsOK = verified.map {
+-                $0.artifact.ocrTexts.contains(LiveExecutionEngine.targetGroup)
+-                    && $0.artifact.ocrTexts.contains("57張照片")
++            let textsOK = verified.map { captured in
++                [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"].allSatisfy { text in
++                    captured.artifact.ocrTexts.filter { $0 == text }.count == 1
++                }
+             } == true
+             let freshCapture = verified.map { captured in
+                 captured.artifact.epoch > (located?.artifact.epoch ?? 0) && captured.retainedFrameVerified
+             } == true
+             let ok = textsOK && freshCapture
+-            let detail = "detailOcr=\(textsOK ? "group+57張照片" : "missing") "
++            let detail = "detailOcr=\(textsOK ? "unique group+date+57張照片" : "missing or ambiguous") "
+                 + "epoch=\(verified?.artifact.epoch ?? 0) afterLocated=\(located?.artifact.epoch ?? 0) "
+                 + "retainedFrame=\(verified?.retainedFrameDetail ?? "artifact-missing")"
+             conditions.append(PhaseACondition(
+@@ -756,7 +767,7 @@ public enum PhaseAEvidenceBuilder {
+             let menu = latest[ExecutionState.menuVerified.rawValue]
+             let ellipsisOK = ellipsis?.artifact.candidateRefusal == nil
+                 && ellipsis?.artifact.candidateIdentity == "album-ellipsis"
+-            let observedRows = reference.filter { menu?.artifact.ocrTexts.contains($0) == true }
++            let observedRows = reference.filter { text in menu?.artifact.ocrTexts.filter { $0 == text }.count == 1 }
+             let menuOK = reference.count == 5 && observedRows.count == reference.count
+                 && (menu?.artifact.epoch ?? 0) > (ellipsis?.artifact.epoch ?? 0)
+             let ok = ellipsisOK && menuOK
+@@ -789,8 +800,8 @@ public enum PhaseAEvidenceBuilder {
+                 + "saveAllCandidate=\(saveAll?.artifact.candidateIdentity ?? "none") frozenBounds=\(boundsOK) retainedFrame=\(saveAll?.retainedFrameDetail ?? "artifact-missing")"
+             conditions.append(PhaseACondition(
+                 identifier: "POPUP_OCCLUSION_ASSUMPTIONS",
+-                status: ok ? .pass : .fail,
+-                detail: detail,
++                status: ok ? .unknown : .fail,
++                detail: detail + "; candidate/frame containment does not prove popup ownership or absence of occlusion; direct bound observations are missing",
+                 artifacts: [saveAll?.artifactName].compactMap { $0 }
+             ))
+         }
+diff --git a/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift b/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift
+index 4630dd4..99c6ce0 100644
+--- a/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift
++++ b/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift
+@@ -237,7 +237,7 @@ extension ComposedNativeAdapter {
+                 detail: "pre-dispatch census is empty; chooser affirmation would widen to refusal"
+             )
+         }
+-        let observation = try await environment.readinessObservation(identity: bundle.window, candidate: candidate)
++        let observation = try readiness(from: bundle)
+         let permit = try DispatchReadinessGate.mintPermit(
+             identity: bundle.window,
+             candidate: candidate,
+@@ -263,14 +263,7 @@ extension ComposedNativeAdapter {
+         // Plan C5: the post-hover revalidation re-runs the fresh live
+         // observation path and requires it to still match the permit's bound
+         // candidate/window/geometry before mouseDown.
+-        let revalidation: @Sendable () async throws -> Void = { [environment] in
+-            let fresh = try await environment.readinessObservation(identity: bundle.window, candidate: candidate)
+-            try DispatchReadinessGate.revalidateAfterHover(
+-                permit: permit,
+-                freshObservation: fresh,
+-                now: environment.uptime()
+-            )
+-        }
++        let revalidation = postHoverRevalidation(permit: permit, original: bundle, owner: owner)
+         postSave.markDispatchBoundary()
+         // Plan C6: bind the chooser postcondition timer to this dispatch
+         // boundary, not to a later adapter invocation.
+diff --git a/rev28/Sources/Rev28Core/Composition/ProductionActuationEnvironment.swift b/rev28/Sources/Rev28Core/Composition/ProductionActuationEnvironment.swift
+index b6c6fcb..011a76c 100644
+--- a/rev28/Sources/Rev28Core/Composition/ProductionActuationEnvironment.swift
++++ b/rev28/Sources/Rev28Core/Composition/ProductionActuationEnvironment.swift
+@@ -20,14 +20,7 @@ public struct ProductionActuationEnvironment: ActuationEnvironment {
+     }
+ 
+     public func uptime() -> Double {
+-        ProcessInfo.processInfo.systemUptime
+-    }
+-
+-    public func readinessObservation(
+-        identity: WindowIdentity,
+-        candidate: StructuralCandidate
+-    ) async throws -> ReadinessObservation {
+-        try await ReadinessObservation.captureLive(identity: identity, candidate: candidate)
++        Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000
+     }
+ 
+     public func postReversibleClick(
+diff --git a/rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift b/rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift
+index 8c1f16e..762fe0f 100644
+--- a/rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift
++++ b/rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift
+@@ -284,12 +284,16 @@ public actor NativeObservationSession {
+     public var captureCount: Int { completedCaptures }
+ 
+     public func capture(_ request: NativeObservationRequest) async throws -> ObservationBundle {
++        try Task.checkCancellation()
+         guard !captureInProgress else { throw ObservationRefusal.sessionBusy }
+         captureInProgress = true
+         defer { captureInProgress = false }
+ 
+         let started = source.monotonicNanos()
+-        let deadline = started &+ request.observationBudgetNanos
++        let (deadline, overflow) = started.addingReportingOverflow(request.observationBudgetNanos)
++        guard !overflow, request.observationBudgetNanos > 0 else {
++            throw ObservationRefusal.invalidBundle("observation deadline overflow or zero budget")
++        }
+         try checkDeadline(deadline, now: started, stage: "start")
+ 
+         let preInventory: [SCWindowSnapshot]
+@@ -336,6 +340,7 @@ public actor NativeObservationSession {
+             throw ObservationRefusal.observerFailure(stage: "captureTarget", detail: String(describing: error))
+         }
+         let capturedAt = source.monotonicNanos()
++        try Task.checkCancellation()
+         try checkDeadline(deadline, now: capturedAt, stage: "capture")
+ 
+         guard let pngData = FrameCaptureSupport.pngData(of: captured.image) else {
+@@ -355,6 +360,8 @@ public actor NativeObservationSession {
+         } catch {
+             throw ObservationRefusal.observerFailure(stage: "ocr", detail: String(describing: error))
+         }
++        try Task.checkCancellation()
++        try checkDeadline(deadline, now: source.monotonicNanos(), stage: "ocr")
+ 
+         let postInventory: [SCWindowSnapshot]
+         do {
+@@ -483,6 +490,12 @@ public actor NativeObservationSession {
+                 let matches = OcrTextIdentity.exactMatches(in: ocrItems, expected: expected)
+                 return matches.count == 1 ? matches[0].boundingBoxCapturePx : nil
+             }
++            if let groupTitle {
++                let matches = OcrTextIdentity.exactMatches(in: ocrItems, expected: groupTitle)
++                guard matches.count == 1 else {
++                    return ([], nil, matches.isEmpty ? .missingIdentity : .ambiguousIdentity)
++                }
++            }
+             do {
+                 switch try AlbumEllipsisLocator.locate(
+                     image: image,
+diff --git a/rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift b/rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift
+index 4135577..666a66f 100644
+--- a/rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift
++++ b/rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift
+@@ -228,16 +228,23 @@ public struct LiveExecutionEngine {
+     @discardableResult
+     public func establishPreSaveStates() async throws -> Int {
+         let startIndex: Int
++        var previousEpoch: UInt64?
++        var observations = 0
+         if let current = owner.currentState {
+             guard let index = Self.preSaveStates.firstIndex(of: current) else {
+                 throw LiveExecutionEngineError.stateAlreadyStarted
+             }
++            // A durable state records history, not the current UI. Re-establish
++            // it before continuing, including when already SAVE_ALL_LOCATED.
++            let fresh = try await adapter.establish(state: current, owner: owner)
++            try Self.validateEstablishedEvidence(fresh, state: current, owner: owner, previousEpoch: nil)
++            try owner.recordReobservation(state: current, evidenceSHA256: fresh.evidenceSHA256)
++            previousEpoch = fresh.artifact.epoch
++            observations += 1
+             startIndex = index + 1
+         } else {
+             startIndex = 0
+         }
+-        var previousEpoch: UInt64?
+-        var observations = 0
+         for state in Self.preSaveStates.dropFirst(startIndex) {
+             let evidence = try await adapter.establish(state: state, owner: owner)
+             try Self.validateEstablishedEvidence(
+diff --git a/rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift b/rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift
+index acdad77..93a0e9d 100644
+--- a/rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift
++++ b/rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift
+@@ -288,6 +288,19 @@ public final class PersistentTransactionOwner {
+         ]))
+     }
+ 
++    /// Re-observation preserves the monotonic state and every existing budget.
++    public func recordReobservation(state: ExecutionState, evidenceSHA256: String) throws {
++        stateLock.lock()
++        defer { stateLock.unlock() }
++        guard currentState == state, !hasIrreversibleRecords,
++              Self.validSHA256(evidenceSHA256) else {
++            throw PersistentTransactionError.invalidStateEvidence
++        }
++        try append(kind: "state.reobservation", payload: binding([
++            "state": state.rawValue, "evidenceSHA256": evidenceSHA256,
++        ]))
++    }
++
+     public var irreversibleOperationCounts: (saveAll: Int, destinationConfirmation: Int) {
+         (ledger.entries.filter { $0.kind == "intent.saveAll" || $0.kind == "attempt.saveAll" }.count,
+          ledger.entries.filter { $0.kind == "intent.destinationConfirmation" || $0.kind == "attempt.destinationConfirmation" }.count)
+@@ -309,7 +322,13 @@ public final class PersistentTransactionOwner {
+     /// Consecutive candidate-revalidation failures ending at the ledger head.
+     public var consecutiveCandidateRevalidationFailures: Int {
+         var failures = 0
++        var seenAttempts = Set<String>()
+         for entry in ledger.entries.reversed() where entry.kind == "budget.revalidation" {
++            // Final refusal supersedes only this invocation's provisional
++            // success. Distinct successes and legacy records still reset.
++            if let attemptID = entry.payload["attemptID"], !seenAttempts.insert(attemptID).inserted {
++                continue
++            }
+             guard entry.payload["passed"] == "false" else { break }
+             failures += 1
+         }
+@@ -330,6 +349,12 @@ public final class PersistentTransactionOwner {
+     /// `blockerKey` defaults to the reviewed action grouping, so a caller
+     /// cannot rename a retry to escape the per-blocker ceiling.
+     public func recordReversibleDispatch(action: String, blockerKey: String? = nil) throws {
++        _ = try recordReversibleDispatchAttempt(action: action, blockerKey: blockerKey)
++    }
++
++    /// Return the exact reservation entry while holding the owner lock. A
++    /// later append cannot change the identity of this dispatch invocation.
++    func recordReversibleDispatchAttempt(action: String, blockerKey: String? = nil) throws -> String {
+         stateLock.lock()
+         defer { stateLock.unlock() }
+         guard reversibleDispatchCount < LiveDispatchBudget.reversibleCeiling else {
+@@ -348,21 +373,28 @@ public final class PersistentTransactionOwner {
+             throw ExecutionPolicyError.candidateRevalidationExhausted
+         }
+         try append(kind: "dispatch.reversible", payload: binding(["action": action]))
+-        try append(kind: "budget.blocker", payload: binding(["blockerKey": key]))
++        return try append(kind: "budget.blocker", payload: binding(["blockerKey": key])).selfHash
+     }
+ 
+     /// Persists one candidate revalidation outcome. Two consecutive failures
+     /// abort: the second failure is durable before the error surfaces, so a
+     /// restart cannot re-derive a cleared revalidation history.
+-    public func recordCandidateRevalidation(blockerKey: String, passed: Bool) throws {
++    public func recordCandidateRevalidation(blockerKey: String, passed: Bool, attemptID: String? = nil) throws {
+         stateLock.lock()
+         defer { stateLock.unlock() }
+-        let consecutive = passed ? 0 : consecutiveCandidateRevalidationFailures + 1
+-        try append(kind: "budget.revalidation", payload: binding([
++        var payload = [
+             "blockerKey": blockerKey,
+             "passed": passed ? "true" : "false",
+-        ]))
+-        if consecutive >= 2 {
++        ]
++        if let attemptID {
++            guard ledger.entries.contains(where: {
++                $0.selfHash == attemptID && isBound($0)
++                    && ($0.kind == "budget.blocker" || $0.kind == "attempt.saveAll")
++            }) else { throw PersistentTransactionError.invalidStateEvidence }
++            payload["attemptID"] = attemptID
++        }
++        try append(kind: "budget.revalidation", payload: binding(payload))
++        if consecutiveCandidateRevalidationFailures >= LiveDispatchBudget.consecutiveRevalidationAbortThreshold {
+             throw ExecutionPolicyError.candidateRevalidationExhausted
+         }
+     }
+@@ -434,6 +466,10 @@ public final class PersistentTransactionOwner {
+ 
+     /// Must be persisted immediately before event dispatch; a crash afterwards is observe-only.
+     public func markSaveAllAttempted() throws {
++        _ = try markSaveAllAttemptedWithRevalidationID()
++    }
++
++    func markSaveAllAttemptedWithRevalidationID() throws -> String {
+         stateLock.lock()
+         defer { stateLock.unlock() }
+         guard saveAllIntentOwnedByThisProcess,
+@@ -441,8 +477,9 @@ public final class PersistentTransactionOwner {
+               irreversibleOperationCounts.saveAll == 1 else {
+             throw PersistentTransactionError.irreversibleAttemptAlreadyRecorded("saveAll")
+         }
+-        try append(kind: "attempt.saveAll", payload: binding([:]))
++        let entry = try append(kind: "attempt.saveAll", payload: binding([:]))
+         saveAllIntentOwnedByThisProcess = false
++        return entry.selfHash
+     }
+ 
+     public func recordChooserVerified(
+@@ -541,9 +578,11 @@ public final class PersistentTransactionOwner {
+         confirmationIntentOwnedByThisProcess = false
+     }
+ 
+-    private func append(kind: String, payload: [String: String]) throws {
+-        try ledger.append(kind: kind, payload: payload)
++    @discardableResult
++    private func append(kind: String, payload: [String: String]) throws -> LedgerEntry {
++        let entry = try ledger.append(kind: kind, payload: payload)
+         try checkpoint()
++        return entry
+     }
+ 
+     private func checkpoint() throws {
+diff --git a/rev28/Sources/Rev28Core/Transaction/StateEvidence.swift b/rev28/Sources/Rev28Core/Transaction/StateEvidence.swift
+index 95495bd..c84fd8f 100644
+--- a/rev28/Sources/Rev28Core/Transaction/StateEvidence.swift
++++ b/rev28/Sources/Rev28Core/Transaction/StateEvidence.swift
+@@ -181,15 +181,19 @@ public enum ExecutionStateEvidencePolicy {
+         case .groupReady:
+             return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup])
+         case .targetAlbumLocated:
+-            return Requirement(candidateIdentitySuffix: ":2024/05/13~05/17|57")
++            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup],
++                               candidateIdentitySuffix: ":2024/05/13~05/17|57")
+         case .albumDetailVerified:
+-            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup, "57張照片"])
++            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"])
+         case .ellipsisLocated:
+-            return Requirement(exactCandidateIdentity: "album-ellipsis")
++            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"],
++                               exactCandidateIdentity: "album-ellipsis")
+         case .menuVerified:
+-            return Requirement(requiredOcrTexts: StructuralLocators.lineAlbumMenuReference)
++            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"]
++                               + StructuralLocators.lineAlbumMenuReference)
+         case .saveAllLocated:
+-            return Requirement(exactCandidateIdentity: "儲存全部")
++            return Requirement(requiredOcrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"],
++                               exactCandidateIdentity: "儲存全部")
+         case .chooserVerified, .destinationPrepared, .downloadConfirmed,
+              .downloadInProgress, .filesystemStable, .contentVerified, .finalized:
+             return Requirement()
+@@ -223,7 +227,7 @@ public enum ExecutionStateEvidencePolicy {
+             throw StateEvidenceError.nonMonotonicTimes
+         }
+         let requirement = requirement(for: expectedState)
+-        for text in requirement.requiredOcrTexts where !artifact.ocrTexts.contains(text) {
++        for text in requirement.requiredOcrTexts where artifact.ocrTexts.filter({ $0 == text }).count != 1 {
+             throw StateEvidenceError.missingIdentityText(state: expectedState.rawValue, text: text)
+         }
+         if let exact = requirement.exactCandidateIdentity {
+diff --git a/rev28/Sources/rev28ctl/main.swift b/rev28/Sources/rev28ctl/main.swift
+index 4fa18f5..75f9934 100644
+--- a/rev28/Sources/rev28ctl/main.swift
++++ b/rev28/Sources/rev28ctl/main.swift
+@@ -473,14 +473,14 @@ if arguments.count >= 2, ["live-preflight", "live-execute"].contains(arguments[1
+             )
+             let published = try PhaseAEvidencePublisher.publish(report: phaseAReport, runDirectory: runDirectory)
+             FileHandle.standardOutput.write(Data("""
+-            preflight=passed runID=\(auth.runID) finalState=\(outcome.finalState.rawValue) observations=\(outcome.observationsThisRun) \
++            preflight=\(phaseAReport.allConditionsPass ? "passed" : "blocked") runID=\(auth.runID) finalState=\(outcome.finalState.rawValue) observations=\(outcome.observationsThisRun) \
+             sessionCaptures=\(captures) irreversible=0 entitlement=unconsumed outcome=\(outcomeURL.lastPathComponent) \
+             phaseA=\(published.reportName) sha256=\(published.reportSHA256) manifest=\(published.manifestName) \
+             entries=\(published.manifestEntryCount) conditions=\(published.passCount)P/\(published.failCount)F/\(published.unknownCount)U \
+             phaseBPreventedBy=\(published.phaseBPreventedBy.isEmpty ? "none" : published.phaseBPreventedBy.joined(separator: ","))
+ 
+             """.utf8))
+-            exit(0)
++            exit(phaseAReport.exitCode)
+         default:
+             let outcome = try await composition.engine.run()
+             FileHandle.standardError.write(Data(
+diff --git a/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift b/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift
+index ec873ba..f483055 100644
+--- a/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift
++++ b/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift
+@@ -3,7 +3,7 @@ import XCTest
+ @testable import Rev28Core
+ 
+ final class ActuationReadinessTests: XCTestCase {
+-    private func transactionOwner() throws -> PersistentTransactionOwner {
++    private func transactionOwner(checkpoint: Bool = false) throws -> PersistentTransactionOwner {
+         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+         let staging = root.appendingPathComponent("staging")
+         let run = staging.appendingPathComponent("run")
+@@ -16,11 +16,12 @@ final class ActuationReadinessTests: XCTestCase {
+         )
+         return try PersistentTransactionOwner(
+             authorization: authorization,
+-            ledger: IntentLedger(fileURL: root.appendingPathComponent("ledger.jsonl"))
++            ledger: IntentLedger(fileURL: root.appendingPathComponent("ledger.jsonl")),
++            checkpointURL: checkpoint ? root.appendingPathComponent("ledger-head.anchor") : nil
+         )
+     }
+ 
+-    private func fixture(active: Bool = true, frontmost: Bool = true, epoch: UInt64 = 4) -> (
++    private func fixture(active: Bool = true, frontmost: Bool = true, epoch: UInt64 = 4, target: String = "target") -> (
+         WindowIdentity, StructuralCandidate, CaptureGeometry, ReadinessObservation
+     ) {
+         let process = ProcessInstanceID(pid: 42, startTimeSeconds: 10, startTimeMicroseconds: 2)
+@@ -43,7 +44,7 @@ final class ActuationReadinessTests: XCTestCase {
+             frameSHA256: identity.captureImageSHA256
+         )
+         let candidate = StructuralCandidate(
+-            identity: "target",
++            identity: target,
+             safeRectCapturePx: CGRect(x: 0, y: 0, width: 100, height: 100),
+             pointCapturePx: CapturePixelPoint(x: 50, y: 50),
+             binding: binding
+@@ -391,4 +392,223 @@ final class ActuationReadinessTests: XCTestCase {
+         XCTAssertEqual(posted, [.mouseMoved])
+         XCTAssertEqual(owner.consecutiveCandidateRevalidationFailures, 1)
+     }
++
++    func testDurableRevalidationWriteFailureAfterHoverPostsNoMouseDown() async throws {
++        let (identity, candidate, _, observation) = fixture()
++        let permit = try DispatchReadinessGate.mintPermit(
++            identity: identity, candidate: candidate, observation: observation, now: 10
++        )
++        let owner = try transactionOwner()
++        var posted: [CGEventType] = []
++        do {
++            try await GatedQuartzActuator.postClick(
++                permit: permit, currentBinding: candidate.binding,
++                intent: .reversible(owner, action: "recover-state"),
++                postHoverRevalidation: {
++                    // Reservation succeeded. The next durable append must now fail.
++                    try Data("changed after reservation".utf8).write(to: owner.ledger.fileURL)
++                },
++                sink: { event, _ in posted.append(event.type) },
++                readinessCheck: { _, _ in true }, processIdentityCheck: { _, _ in true },
++                postEventAccessCheck: { true }, addressedSurfaceCheck: { _, _, _ in true }, now: 10
++            )
++            XCTFail("a failed durable write must prevent mouseDown")
++        } catch {}
++        XCTAssertEqual(posted, [.mouseMoved])
++    }
++
++    func testLedgerAndAnchorFaultsRefuseReversibleAndSaveAllEvenWhenFailureRecordCannotPersist() async throws {
++        for saveAll in [false, true] {
++            for anchorFault in [false, true] {
++                for visualFailure in [false, true] {
++                    let (identity, candidate, _, observation) = fixture(target: saveAll ? "儲存全部" : "target")
++                    let permit = try DispatchReadinessGate.mintPermit(
++                        identity: identity, candidate: candidate, observation: observation, now: 10
++                    )
++                    let owner = try transactionOwner(checkpoint: true)
++                    if saveAll {
++                        try owner.initializeState(evidenceSHA256: EvidenceIO.sha256Hex(Data("app".utf8)))
++                        for state in LiveExecutionEngine.preSaveStates.dropFirst() {
++                            try owner.transition(to: state, evidenceSHA256: EvidenceIO.sha256Hex(Data(state.rawValue.utf8)))
++                        }
++                        try EligibilityTestSupport.recordEligibility(on: owner)
++                    }
++                    let events = MouseEvents()
++                    var refused = false
++                    do {
++                        try await GatedQuartzActuator.postClick(
++                            permit: permit, currentBinding: candidate.binding,
++                            intent: saveAll ? .saveAll(owner) : .reversible(owner, action: "test"),
++                            postHoverRevalidation: {
++                                if anchorFault {
++                                    let anchor = owner.ledger.fileURL.deletingLastPathComponent().appendingPathComponent("ledger-head.anchor")
++                                    try FileManager.default.removeItem(at: anchor)
++                                    try FileManager.default.createDirectory(at: anchor, withIntermediateDirectories: false)
++                                } else {
++                                    try Data("corruption after reservation".utf8).write(to: owner.ledger.fileURL)
++                                }
++                                if visualFailure {
++                                    throw QuartzActuatorError.dispatchRefusedByPrecondition("candidate lost")
++                                }
++                            },
++                            sink: { event, _ in events.append(event.type) },
++                            readinessCheck: { _, _ in true }, processIdentityCheck: { _, _ in true },
++                            postEventAccessCheck: { true }, addressedSurfaceCheck: { _, _, _ in true }, now: 10
++                        )
++                    } catch { refused = true }
++                    let context = "saveAll=\(saveAll) anchorFault=\(anchorFault) visualFailure=\(visualFailure)"
++                    XCTAssertTrue(refused, context)
++                    XCTAssertEqual(events.values, [.mouseMoved], context)
++                    if saveAll {
++                        XCTAssertEqual(owner.irreversibleOperationCounts.saveAll, 2, "intent/attempt remain consumed: \(context)")
++                        XCTAssertThrowsError(try owner.reserveSaveAll(), context)
++                    } else {
++                        XCTAssertEqual(owner.reversibleDispatchCount, 1, context)
++                    }
++                }
++            }
++        }
++    }
++
++    func testOriginalPermitExpiresDuringDurableWriteAndPostsNoDown() async throws {
++        let (identity, candidate, _, observation) = fixture()
++        let permit = try DispatchReadinessGate.mintPermit(
++            identity: identity, candidate: candidate, observation: observation, now: 10
++        )
++        let owner = try transactionOwner(checkpoint: true)
++        let events = MouseEvents()
++        do {
++            try await GatedQuartzActuator.postClick(
++                permit: permit, currentBinding: candidate.binding,
++                intent: .reversible(owner, action: "test"), postHoverRevalidation: {},
++                sink: { event, _ in events.append(event.type) },
++                readinessCheck: { _, _ in true }, processIdentityCheck: { _, _ in true },
++                postEventAccessCheck: { true }, addressedSurfaceCheck: { _, _, _ in true },
++                clock: {
++                    // The fault clock advances only after the success record is
++                    // actually appended, modeling durable-I/O latency.
++                    owner.ledger.entries.contains { $0.kind == "budget.revalidation" && $0.payload["passed"] == "true" } ? 12 : 10
++                }
++            )
++            XCTFail("a new capture or successful write cannot extend the original permit")
++        } catch {}
++        XCTAssertEqual(events.values, [.mouseMoved])
++        XCTAssertEqual(owner.consecutiveCandidateRevalidationFailures, 1)
++        _ = try IntentLedger.verifyHeadAnchor(
++            fileURL: owner.ledger.fileURL,
++            anchorURL: owner.ledger.fileURL.deletingLastPathComponent().appendingPathComponent("ledger-head.anchor")
++        )
++    }
++
++    func testRetainedSessionRevalidationAcceptsRedrawButRejectsStaleMovedLostAndAmbiguousTargets() async throws {
++        let scene = FakeLineScene()
++        let source = FakeObservationSource(window: NativeObservationTestWindows.lineWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
++        source.imageProvider = { scene.image }
++        let session = NativeObservationSession(sessionID: "readiness-session", source: source, ocr: ScriptedOcr(scene: scene))
++        let request = NativeObservationRequest(
++            runID: "readiness-run", state: .targetAlbumLocated,
++            target: ObservationTarget(bundleID: "jp.naver.line.mac", pid: 4242),
++            configuration: .primaryWindow,
++            geometryState: CaptureGeometryState(settled: true, activated: true, includeChildWindows: false, ignoreShadows: true),
++            localization: .albumCards(title: ComposedNativeAdapter.albumTitle, count: "57"),
++            observationBudgetNanos: 5_000_000_000
++        )
++        let original = try await session.capture(request)
++        let permit = try DispatchReadinessGate.mintPermit(
++            identity: original.window, candidate: XCTUnwrap(original.candidate),
++            observation: ReadinessObservation(bundle: original, applicationActive: true, targetFrontmost: true), now: 100
++        )
++        func revalidate(_ fresh: ObservationBundle, now: Double = 100) throws {
++            try DispatchReadinessGate.revalidateAfterHover(
++                permit: permit, freshBundle: fresh, applicationActive: true, targetFrontmost: true, now: now
++            )
++        }
++        XCTAssertThrowsError(try revalidate(original), "equal pixels cannot authorize a reused epoch")
++        let samePixels = try await session.capture(request)
++        XCTAssertEqual(samePixels.frame.imageSHA256, original.frame.imageSHA256)
++        XCTAssertGreaterThan(samePixels.epoch, original.epoch)
++        XCTAssertNoThrow(try revalidate(samePixels))
++        scene.imageOverride = FakeLineScene.plainImage(red: 0.8)
++        let redraw = try await session.capture(request)
++        XCTAssertNotEqual(redraw.frame.imageSHA256, original.frame.imageSHA256)
++        XCTAssertNoThrow(try revalidate(redraw), "changed pixels require fresh localization, not hash equality")
++        let stale = try ReadinessObservation(bundle: original, applicationActive: true, targetFrontmost: true)
++        XCTAssertEqual(stale.observedAtUptime, 100)
++        XCTAssertThrowsError(try DispatchReadinessGate.mintPermit(
++            identity: original.window, candidate: XCTUnwrap(original.candidate), observation: stale, now: 102
++        ), "projection must preserve capture age")
++        XCTAssertThrowsError(try revalidate(redraw, now: 102), "relocalization cannot renew the original permit")
++
++        let items = scene.ocrItems
++        scene.ocrOverride = items.map { item in
++            guard item.text == ComposedNativeAdapter.albumTitle || item.text == "57" else { return item }
++            // Card geometry spans the full row, so a horizontal OCR text shift
++            // is not a target move. Move the date band's structural boundary.
++            return scene.item(item.text, item.boundingBoxCapturePx.offsetBy(dx: 0, dy: 20))
++        }
++        let moved = try await session.capture(request)
++        XCTAssertNotNil(moved.candidate)
++        XCTAssertThrowsError(try revalidate(moved), "do not retarget the already-posted hover")
++        scene.ocrOverride = items.filter { $0.text != "57" }
++        let lost = try await session.capture(request)
++        XCTAssertNil(lost.candidate)
++        XCTAssertThrowsError(try revalidate(lost))
++        scene.ocrOverride = items + [scene.item("57", CGRect(x: 65, y: 130, width: 30, height: 16))]
++        let ambiguous = try await session.capture(request)
++        XCTAssertNil(ambiguous.candidate)
++        XCTAssertThrowsError(try revalidate(ambiguous))
++    }
++
++    private final class MouseEvents: @unchecked Sendable {
++        private let lock = NSLock()
++        private var stored: [CGEventType] = []
++        var values: [CGEventType] { lock.withLock { stored } }
++        func append(_ type: CGEventType) { lock.withLock { stored.append(type) } }
++    }
++
++    func testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart() async throws {
++        for expiry in [true, false] {
++            let (identity, candidate, _, observation) = fixture()
++            let permit = try DispatchReadinessGate.mintPermit(
++                identity: identity, candidate: candidate, observation: observation, now: 10
++            )
++            let owner = try transactionOwner(checkpoint: true)
++            try owner.recordCandidateRevalidation(blockerKey: "previous-attempt", passed: false)
++            let events = MouseEvents()
++            var guardCalls = 0
++            do {
++                try await GatedQuartzActuator.postClick(
++                    permit: permit, currentBinding: candidate.binding,
++                    intent: .reversible(owner, action: "test"), postHoverRevalidation: {},
++                    sink: { event, _ in events.append(event.type) },
++                    readinessCheck: { _, _ in
++                        guardCalls += 1
++                        return expiry || guardCalls < 3
++                    },
++                    processIdentityCheck: { _, _ in true }, postEventAccessCheck: { true },
++                    addressedSurfaceCheck: { _, _, _ in true },
++                    clock: {
++                        expiry && owner.ledger.entries.contains {
++                            $0.kind == "budget.revalidation" && $0.payload["passed"] == "true"
++                        } ? 12 : 10
++                    }
++                )
++                XCTFail("late failure must refuse")
++            } catch {}
++            XCTAssertEqual(events.values, [.mouseMoved])
++            XCTAssertEqual(owner.consecutiveCandidateRevalidationFailures, 2, "late failure cannot erase the previous failure")
++            XCTAssertThrowsError(try owner.recordReversibleDispatch(action: "later-attempt")) {
++                XCTAssertEqual($0 as? ExecutionPolicyError, .candidateRevalidationExhausted)
++            }
++            let resumed = try PersistentTransactionOwner(
++                authorization: owner.authorization, ledger: IntentLedger(fileURL: owner.ledger.fileURL),
++                checkpointURL: owner.ledger.fileURL.deletingLastPathComponent().appendingPathComponent("ledger-head.anchor"),
++                requireCheckpointOnResume: true
++            )
++            XCTAssertEqual(resumed.consecutiveCandidateRevalidationFailures, 2)
++            XCTAssertThrowsError(try resumed.recordReversibleDispatch(action: "restart-attempt")) {
++                XCTAssertEqual($0 as? ExecutionPolicyError, .candidateRevalidationExhausted)
++            }
++        }
++    }
+ }
+diff --git a/rev28/Tests/Rev28CoreTests/ComposedAdaptersTests.swift b/rev28/Tests/Rev28CoreTests/ComposedAdaptersTests.swift
+index 5aaba3d..5da198a 100644
+--- a/rev28/Tests/Rev28CoreTests/ComposedAdaptersTests.swift
++++ b/rev28/Tests/Rev28CoreTests/ComposedAdaptersTests.swift
+@@ -147,7 +147,7 @@ final class ComposedAdaptersTests: XCTestCase {
+         XCTAssertEqual(owner.irreversibleOperationCounts.destinationConfirmation, 0)
+         XCTAssertEqual(owner.reversibleDispatchCount, 2)
+         XCTAssertEqual(fixture.environment.postedActions, ["open-album-card", "open-album-menu"])
+-        XCTAssertEqual(fixture.source.captureCount, 12)
++        XCTAssertEqual(fixture.source.captureCount, 14, "both reversible clicks retain a fresh post-hover capture")
+         let slot = try GoalSlot.load(directory: fixture.goalSlotDirectory, authorization: fixture.authorization)
+         XCTAssertEqual(slot?.entitlementConsumed, false)
+ 
+@@ -260,9 +260,9 @@ final class ComposedAdaptersTests: XCTestCase {
+         let outcome = try await LiveExecutionEngine(owner: resumed, adapter: makeAdapter(fixture)).runPreflight()
+ 
+         XCTAssertEqual(outcome.finalState, .saveAllLocated)
+-        XCTAssertEqual(outcome.observationsThisRun, 5)
++        XCTAssertEqual(outcome.observationsThisRun, 6, "resume re-observes the current state before advancing")
+         XCTAssertEqual(outcome.entitlementConsumed, false)
+-        XCTAssertEqual(fixture.source.captureCount - firstRunCaptures, 9)
++        XCTAssertEqual(fixture.source.captureCount - firstRunCaptures, 12)
+ 
+         let transitions = resumed.ledger.entries.filter { $0.kind == "state.transition" }
+         XCTAssertEqual(transitions.count, 8)
+@@ -272,14 +272,17 @@ final class ComposedAdaptersTests: XCTestCase {
+         XCTAssertEqual(Set(evidenceDigests).count, 8)
+         XCTAssertEqual(Array(evidenceDigests.prefix(3)), firstRunEvidence)
+ 
+-        // Resumed proofs are fresh captures with strictly greater epochs; the
+-        // completed states are neither re-established nor rewritten.
++        XCTAssertEqual(resumed.ledger.entries.filter { $0.kind == "state.reobservation" }.count, 1)
++        // The current state is freshly observed without rewriting its prior
++        // transition or resetting any authority or budget.
+         let evidenceDirectory = URL(fileURLWithPath: resumed.authorization.evidenceRunDirectory)
+         let epochs = try LiveExecutionEngine.preSaveStates.map { state -> UInt64 in
+             let files = try FileManager.default.contentsOfDirectory(atPath: evidenceDirectory.path)
+                 .filter { $0.hasPrefix("state-\(state.rawValue)-") && $0.hasSuffix(".json") }
+-            XCTAssertEqual(files.count, 1)
+-            return try XCTUnwrap(UInt64(files[0].split(separator: "-").last?.replacingOccurrences(of: ".json", with: "") ?? ""))
++            XCTAssertEqual(files.count, state == .albumListReady ? 2 : 1)
++            return try XCTUnwrap(files.compactMap {
++                UInt64($0.split(separator: "-").last?.replacingOccurrences(of: ".json", with: "") ?? "")
++            }.max())
+         }
+         XCTAssertEqual(epochs, epochs.sorted())
+         XCTAssertEqual(epochs.first, 1)
+@@ -288,6 +291,123 @@ final class ComposedAdaptersTests: XCTestCase {
+ 
+     // MARK: - Irreversible boundary (fail closed without Phase B eligibility)
+ 
++    func testHoverRedrawUsesFreshLocalizationAndRetainsBothReadinessCaptures() async throws {
++        let fixture = try makeFixture()
++        fixture.environment.onHover = {
++            fixture.scene.imageOverride = fixture.scene.current == .albumList
++                ? FakeLineScene.plainImage(red: 0.8)
++                : FakeLineScene.imageWithAlbumEllipsis(red: 0.8)
++        }
++        // Clear the artificial list redraw when the scripted UI navigates.
++        fixture.environment.onClick = { action in
++            fixture.scene.imageOverride = nil
++            fixture.scene.current = action == "open-album-card" ? .albumDetail : .menuOpen
++        }
++        let owner = try makeOwner(fixture)
++        let outcome = try await LiveExecutionEngine(owner: owner, adapter: makeAdapter(fixture)).runPreflight()
++        XCTAssertEqual(outcome.finalState, .saveAllLocated)
++        XCTAssertEqual(fixture.environment.postedMouseEvents, [
++            .mouseMoved, .leftMouseDown, .leftMouseUp, .mouseMoved, .leftMouseDown, .leftMouseUp,
++        ])
++        let names = try FileManager.default.contentsOfDirectory(atPath: owner.authorization.evidenceRunDirectory)
++        XCTAssertEqual(names.filter { $0.hasPrefix("state-readiness-") && $0.hasSuffix(".json") }.count, 2)
++        XCTAssertEqual(names.filter { $0.hasPrefix("state-readiness-") && $0.hasSuffix(".png") }.count, 2)
++        XCTAssertEqual(fixture.source.captureCount, 14)
++        XCTAssertEqual(owner.irreversibleOperationCounts.saveAll, 0)
++    }
++
++    func testHoverTargetLossPostsOnlyMoveAndRetainsRefusedReadinessFrame() async throws {
++        let fixture = try makeFixture()
++        fixture.environment.onHover = { fixture.scene.ocrOverride = [] }
++        let owner = try makeOwner(fixture)
++        do {
++            _ = try await LiveExecutionEngine(owner: owner, adapter: makeAdapter(fixture)).runPreflight()
++            XCTFail("lost identity after the hover must refuse")
++        } catch {}
++        XCTAssertEqual(fixture.environment.postedMouseEvents, [.mouseMoved])
++        XCTAssertEqual(owner.consecutiveCandidateRevalidationFailures, 1)
++        XCTAssertEqual(owner.irreversibleOperationCounts.saveAll, 0)
++        let directory = URL(fileURLWithPath: owner.authorization.evidenceRunDirectory)
++        let names = try FileManager.default.contentsOfDirectory(atPath: directory.path)
++        let readinessNames = names.filter { $0.hasPrefix("state-readiness-") && $0.hasSuffix(".json") }
++        XCTAssertEqual(readinessNames.count, 1)
++        let retainedEpoch = try XCTUnwrap(readinessNames.compactMap {
++            UInt64($0.split(separator: "-").last?.replacingOccurrences(of: ".json", with: "") ?? "")
++        }.max())
++        let restartedAuthority = try RunEpochAuthority(evidenceRunDirectory: directory)
++        XCTAssertEqual(restartedAuthority.floor, retainedEpoch)
++        XCTAssertGreaterThan(restartedAuthority.nextEpoch(), retainedEpoch, "a crash after refused hover cannot reissue its retained epoch")
++        let inspection = try PhaseAEvidenceBuilder.inspect(runDirectory: directory)
++        XCTAssertNil(inspection.latestPerState[ExecutionState.albumDetailVerified.rawValue], "readiness evidence is not a completed state")
++    }
++
++    func testDetailAndLaterSurfacesRejectWrongOrAmbiguousExactIdentityWithoutEvents() async throws {
++        for state in [ExecutionState.albumDetailVerified, .ellipsisLocated, .menuVerified, .saveAllLocated] {
++            for mutation in ["wrong-date", "duplicate-date", "wrong-group", "duplicate-group", "wrong-glyph", "missing-count"] {
++                let fixture = try makeFixture()
++                fixture.scene.current = (state == .menuVerified || state == .saveAllLocated) ? .menuOpen : .albumDetail
++                let items = fixture.scene.ocrItems
++                switch mutation {
++                case "wrong-date":
++                    fixture.scene.ocrOverride = items.map { item in
++                        item.text == ComposedNativeAdapter.albumTitle ? fixture.scene.item("2024/04/01~04/10", item.boundingBoxCapturePx) : item
++                    }
++                case "duplicate-date":
++                    fixture.scene.ocrOverride = items + [fixture.scene.item(ComposedNativeAdapter.albumTitle, CGRect(x: 20, y: 330, width: 140, height: 20))]
++                case "wrong-group", "wrong-glyph":
++                    fixture.scene.ocrOverride = items.map { item in
++                        item.text == LiveExecutionEngine.targetGroup
++                            ? fixture.scene.item(mutation == "wrong-group" ? "other group" : "旻謙允楨成長日記", item.boundingBoxCapturePx) : item
++                    }
++                case "duplicate-group":
++                    fixture.scene.ocrOverride = items + [fixture.scene.item(LiveExecutionEngine.targetGroup, CGRect(x: 20, y: 400, width: 160, height: 18))]
++                default: fixture.scene.ocrOverride = items.filter { $0.text != ComposedNativeAdapter.albumDetailCountText }
++                }
++                let owner = try makeOwner(fixture)
++                do {
++                    _ = try await makeAdapter(fixture).establish(state: state, owner: owner)
++                    XCTFail("\(state.rawValue) accepted \(mutation)")
++                } catch {}
++                XCTAssertEqual(fixture.environment.postedMouseEvents, [], "\(state.rawValue) \(mutation)")
++                XCTAssertEqual(owner.irreversibleOperationCounts.saveAll, 0)
++            }
++        }
++    }
++
++    func testResumeAtSaveAllLocatedReobservesWithoutResettingTransitionsOrBudgets() async throws {
++        let fixture = try makeFixture()
++        let owner = try makeOwner(fixture)
++        _ = try await LiveExecutionEngine(owner: owner, adapter: makeAdapter(fixture)).runPreflight()
++        let transitions = owner.ledger.entries.filter { $0.kind == "state.transition" }
++        let captures = fixture.source.captureCount
++        let resumed = try makeOwner(fixture, requireCheckpointOnResume: true)
++        let outcome = try await LiveExecutionEngine(owner: resumed, adapter: makeAdapter(fixture)).runPreflight()
++        XCTAssertEqual(outcome.observationsThisRun, 1)
++        XCTAssertEqual(fixture.source.captureCount, captures + 1)
++        XCTAssertEqual(resumed.ledger.entries.filter { $0.kind == "state.transition" }, transitions)
++        XCTAssertEqual(resumed.ledger.entries.filter { $0.kind == "state.reobservation" }.count, 1)
++        XCTAssertEqual(resumed.reversibleDispatchCount, 2)
++        XCTAssertEqual(resumed.irreversibleOperationCounts.saveAll, 0)
++        XCTAssertFalse(outcome.entitlementConsumed)
++        XCTAssertEqual(fixture.environment.postedActions, ["open-album-card", "open-album-menu"])
++    }
++
++    func testResumeAtSaveAllLocatedRefusesLostIdentityInsteadOfTrustingPriorProof() async throws {
++        let fixture = try makeFixture()
++        let owner = try makeOwner(fixture)
++        _ = try await LiveExecutionEngine(owner: owner, adapter: makeAdapter(fixture)).runPreflight()
++        fixture.scene.ocrOverride = fixture.scene.ocrItems.filter { $0.text != LiveExecutionEngine.targetGroup }
++        let events = fixture.environment.postedMouseEvents
++        let resumed = try makeOwner(fixture, requireCheckpointOnResume: true)
++        do {
++            _ = try await LiveExecutionEngine(owner: resumed, adapter: makeAdapter(fixture)).runPreflight()
++            XCTFail("a durable state cannot replace fresh target evidence")
++        } catch {}
++        XCTAssertEqual(fixture.environment.postedMouseEvents, events)
++        XCTAssertEqual(resumed.irreversibleOperationCounts.saveAll, 0)
++        XCTAssertFalse(try XCTUnwrap(GoalSlot.load(directory: fixture.goalSlotDirectory, authorization: fixture.authorization)).entitlementConsumed)
++    }
++
+     func testExecuteRefusesSaveAllDispatchWithoutPhaseBEligibility() async throws {
+         let fixture = try makeFixture()
+         let owner = try makeOwner(fixture)
+diff --git a/rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift b/rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift
+index 2b8eced..d62cfd7 100644
+--- a/rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift
++++ b/rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift
+@@ -176,7 +176,7 @@ final class LiveCompositionTests: XCTestCase {
+         XCTAssertEqual(outcome.entitlementConsumed, false)
+         XCTAssertEqual(environment.postedActions, ["open-album-card", "open-album-menu"])
+         let captures = await composition.session.captureCount
+-        XCTAssertEqual(captures, 12)
++        XCTAssertEqual(captures, 14)
+         XCTAssertEqual(composition.epochAuthority.floor, 0)
+         XCTAssertEqual(composition.owner.irreversibleOperationCounts.saveAll, 0)
+         XCTAssertEqual(composition.owner.irreversibleOperationCounts.destinationConfirmation, 0)
+diff --git a/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift b/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift
+index f99d5f5..7f202c6 100644
+--- a/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift
++++ b/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift
+@@ -332,8 +332,8 @@ final class LiveExecutionEngineTests: XCTestCase {
+ 
+     /// Plan C4: a restart with zero irreversible records, a verified
+     /// checkpoint and a pre-boundary state resumes as a pre-intent
+-    /// continuation, re-establishing only the remaining states from fresh
+-    /// live facts; already-recorded states are never re-established.
++    /// continuation, re-observing its current state and establishing remaining
++    /// states from fresh live facts without rewriting prior transitions.
+     func testPreIntentResumeContinuesOnlyRemainingStatesWithFreshEvidence() async throws {
+         let (ledgerURL, auth, owner) = try setup()
+         let firstAdapter = FakeAdapter()
+@@ -362,7 +362,7 @@ final class LiveExecutionEngineTests: XCTestCase {
+         guard case .contentVerified = outcome else {
+             return XCTFail("a pre-intent restart must continue, got \(outcome)")
+         }
+-        XCTAssertEqual(secondAdapter.establishCount, 1, "only saveAllLocated remains to re-establish")
++        XCTAssertEqual(secondAdapter.establishCount, 2, "menuVerified is re-observed before saveAllLocated is established")
+         XCTAssertEqual(secondAdapter.saveAllMouseEvents, 3)
+         XCTAssertEqual(resumed.irreversibleOperationCounts.saveAll, 2)
+         XCTAssertEqual(resumed.currentState, .contentVerified)
+diff --git a/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift b/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift
+index ab1baa5..0570bcd 100644
+--- a/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift
++++ b/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift
+@@ -136,6 +136,7 @@ final class NativeObservationSessionTests: XCTestCase {
+     private final class FakeOcr: @unchecked Sendable, OcrPerforming {
+         var items: [OcrItem]
+         var error: Error?
++        var onRecognize: (@Sendable () -> Void)?
+ 
+         init(items: [OcrItem] = [], error: Error? = nil) {
+             self.items = items
+@@ -143,6 +144,7 @@ final class NativeObservationSessionTests: XCTestCase {
+         }
+ 
+         func recognize(image: CGImage) async throws -> [OcrItem] {
++            onRecognize?()
+             if let error { throw error }
+             return items
+         }
+@@ -311,6 +313,31 @@ final class NativeObservationSessionTests: XCTestCase {
+         }
+     }
+ 
++    func testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget() async throws {
++        let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
++        let ocr = FakeOcr()
++        ocr.onRecognize = { source.advanceClock(by: 2_000) }
++        let session = NativeObservationSession(sessionID: "ocr-deadline", source: source, ocr: ocr)
++        do {
++            _ = try await session.capture(makeRequest(budget: 1_500))
++            XCTFail("OCR cannot extend the capture deadline")
++        } catch {
++            XCTAssertEqual(error as? ObservationRefusal, .deadlineExceeded(stage: "ocr"))
++        }
++        for budget in [UInt64(0), UInt64.max] {
++            do {
++                _ = try await session.capture(makeRequest(budget: budget))
++                XCTFail("invalid budget \(budget) must refuse")
++            } catch {
++                guard case .invalidBundle = error as? ObservationRefusal else {
++                    return XCTFail("unexpected \(error)")
++                }
++            }
++        }
++        let completed = await session.captureCount
++        XCTAssertEqual(completed, 0)
++    }
++
+     func testConcurrentCaptureOnOneSessionIsRefused() async throws {
+         let source = FakeObservationSource(window: makeWindow(), bundleID: "jp.naver.line.mac", pid: 4242)
+         let gate = CaptureGate()
+diff --git a/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift b/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift
+index dbb3609..8257c9d 100644
+--- a/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift
++++ b/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift
+@@ -14,6 +14,18 @@ final class FakeLineScene: @unchecked Sendable {
+ 
+     private let lock = NSLock()
+     private var stage: Stage = .albumList
++    private var overriddenOCR: [OcrItem]?
++    private var overriddenImage: CGImage?
++
++    var ocrOverride: [OcrItem]? {
++        get { lock.withLock { overriddenOCR } }
++        set { lock.withLock { overriddenOCR = newValue } }
++    }
++
++    var imageOverride: CGImage? {
++        get { lock.withLock { overriddenImage } }
++        set { lock.withLock { overriddenImage = newValue } }
++    }
+ 
+     var current: Stage {
+         get {
+@@ -29,6 +41,7 @@ final class FakeLineScene: @unchecked Sendable {
+     }
+ 
+     var ocrItems: [OcrItem] {
++        if let ocrOverride { return ocrOverride }
+         switch current {
+         case .albumList:
+             return [
+@@ -45,13 +58,18 @@ final class FakeLineScene: @unchecked Sendable {
+             ]
+         case .menuOpen:
+             let rows = StructuralLocators.lineAlbumMenuReference
+-            return (0..<rows.count).map { index in
++            return [
++                item(LiveExecutionEngine.targetGroup, CGRect(x: 20, y: 20, width: 160, height: 18)),
++                item("2024/05/13~05/17", CGRect(x: 20, y: 100, width: 140, height: 20)),
++                item("57張照片", CGRect(x: 20, y: 140, width: 100, height: 18)),
++            ] + (0..<rows.count).map { index in
+                 item(rows[index], CGRect(x: 220, y: 60 + CGFloat(index) * 50, width: 120, height: 24))
+             }
+         }
+     }
+ 
+     var image: CGImage {
++        if let imageOverride { return imageOverride }
+         switch current {
+         case .albumList:
+             return Self.plainImage()
+@@ -75,18 +93,18 @@ final class FakeLineScene: @unchecked Sendable {
+         )
+     }
+ 
+-    static func plainImage(width: Int = 400, height: Int = 600) -> CGImage {
++    static func plainImage(width: Int = 400, height: Int = 600, red: CGFloat = 0.92) -> CGImage {
+         let context = makeContext(width: width, height: height)
+-        context.setFillColor(CGColor(red: 0.92, green: 0.92, blue: 0.94, alpha: 1))
++        context.setFillColor(CGColor(red: red, green: 0.92, blue: 0.94, alpha: 1))
+         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+         return context.makeImage()!
+     }
+ 
+     /// Three stacked compact dots in the reviewed album-header band above the
+     /// title box, so the ellipsis pixel detector finds a unique triple.
+-    static func imageWithAlbumEllipsis(width: Int = 400, height: Int = 600) -> CGImage {
++    static func imageWithAlbumEllipsis(width: Int = 400, height: Int = 600, red: CGFloat = 0.92) -> CGImage {
+         let context = makeContext(width: width, height: height)
+-        context.setFillColor(CGColor(red: 0.92, green: 0.92, blue: 0.94, alpha: 1))
++        context.setFillColor(CGColor(red: red, green: 0.92, blue: 0.94, alpha: 1))
+         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+         context.setFillColor(CGColor(red: 0.05, green: 0.05, blue: 0.05, alpha: 1))
+         for index in 0..<3 {
+@@ -141,7 +159,7 @@ final class FakeObservationSource: @unchecked Sendable, ObservationSource {
+ 
+     private let lock = NSLock()
+     private var epochCounter: UInt64 = 0
+-    private var now: UInt64 = 1_000
++    private var now: UInt64 = 100_000_000_000
+     private var enumerateCalls = 0
+     private var captureCountValue = 0
+ 
+@@ -266,12 +284,16 @@ final class FakeActuationEnvironment: @unchecked Sendable, ActuationEnvironment
+     var frontmost = true
+     var uptimeValue: Double = 100
+     var onClick: (@Sendable (String) -> Void)?
++    var onHover: (@Sendable () -> Void)?
+     /// Simulates a failed post-hover revalidation from the OS seam (a fresh
+     /// observation that no longer matches the permit) so the composed path's
+     /// zero-down/up refusal can be proven.
+     var postHoverRevalidationFailure: String?
+     private let lock = NSLock()
+     private var posted: [String] = []
++    private var mouseEvents: [CGEventType] = []
++
++    var postedMouseEvents: [CGEventType] { lock.withLock { mouseEvents } }
+ 
+     var postedActions: [String] {
+         lock.lock()
+@@ -283,40 +305,6 @@ final class FakeActuationEnvironment: @unchecked Sendable, ActuationEnvironment
+     func targetFrontmost(pid: Int32) -> Bool { frontmost }
+     func uptime() -> Double { uptimeValue }
+ 
+-    /// Substitution for the live SCK/CG freshness read: the scripted scene's
+-    /// window and the candidate's own binding are the fresh facts, so the
+-    /// production permit/geometry decisions in `mintPermit` still run.
+-    func readinessObservation(
+-        identity: WindowIdentity,
+-        candidate: StructuralCandidate
+-    ) async throws -> ReadinessObservation {
+-        let point = candidate.pointCapturePx
+-        let safe = candidate.safeRectCapturePx
+-        let width = max(safe.maxX, point.x) + 100
+-        let height = max(safe.maxY, point.y) + 100
+-        return ReadinessObservation(
+-            applicationActive: active,
+-            targetFrontmost: frontmost,
+-            freshWindow: FreshWindowObservation(
+-                bundleID: identity.bundleID,
+-                process: identity.process,
+-                windowID: identity.windowID,
+-                frame: identity.cgEntry.frame,
+-                layer: identity.cgEntry.layer,
+-                isOnScreen: true
+-            ),
+-            currentEpoch: identity.captureEpoch,
+-            currentBinding: candidate.binding,
+-            captureGeometry: CaptureGeometry(
+-                windowFrame: identity.cgEntry.frame,
+-                captureBBox: identity.cgEntry.frame,
+-                scale: 1
+-            ),
+-            captureImageSize: CGSize(width: width, height: height),
+-            observedAtUptime: uptimeValue
+-        )
+-    }
+-
+     func postReversibleClick(
+         permit: ReadinessPermit,
+         binding: SurfaceBinding,
+@@ -332,12 +320,15 @@ final class FakeActuationEnvironment: @unchecked Sendable, ActuationEnvironment
+             currentBinding: binding,
+             intent: .reversible(owner, action: action),
+             postHoverRevalidation: postHoverRevalidation,
+-            sink: { _, _ in },
++            sink: { event, _ in
++                self.lock.withLock { self.mouseEvents.append(event.type) }
++                if event.type == .mouseMoved { self.onHover?() }
++            },
+             readinessCheck: { _, _ in true },
+             processIdentityCheck: { _, _ in true },
+             postEventAccessCheck: { true },
+             addressedSurfaceCheck: { _, _, _ in true },
+-            now: uptimeValue
++            clock: { self.uptimeValue }
+         )
+         lock.lock()
+         posted.append(action)
+diff --git a/rev28/Tests/Rev28CoreTests/PhaseAEvidenceTests.swift b/rev28/Tests/Rev28CoreTests/PhaseAEvidenceTests.swift
+index ad5a8a4..3c00285 100644
+--- a/rev28/Tests/Rev28CoreTests/PhaseAEvidenceTests.swift
++++ b/rev28/Tests/Rev28CoreTests/PhaseAEvidenceTests.swift
+@@ -46,11 +46,11 @@ final class PhaseAEvidenceTests: XCTestCase {
+             StateSpec(state: .appReady, ocrTexts: [], cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
+             StateSpec(state: .groupReady, ocrTexts: [LiveExecutionEngine.targetGroup], cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
+             StateSpec(state: .albumListReady, ocrTexts: [], cardRegionCount: 2, candidateIdentity: nil, candidateRefusal: nil),
+-            StateSpec(state: .targetAlbumLocated, ocrTexts: ["2024/05/13~05/17"], cardRegionCount: 3, candidateIdentity: "album-card:2024/05/13~05/17|57", candidateRefusal: nil),
+-            StateSpec(state: .albumDetailVerified, ocrTexts: [LiveExecutionEngine.targetGroup, "57張照片"], cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
+-            StateSpec(state: .ellipsisLocated, ocrTexts: [], cardRegionCount: 0, candidateIdentity: "album-ellipsis", candidateRefusal: nil),
+-            StateSpec(state: .menuVerified, ocrTexts: StructuralLocators.lineAlbumMenuReference, cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
+-            StateSpec(state: .saveAllLocated, ocrTexts: ["儲存全部"], cardRegionCount: 0, candidateIdentity: "儲存全部", candidateRefusal: nil),
++            StateSpec(state: .targetAlbumLocated, ocrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17"], cardRegionCount: 3, candidateIdentity: "album-card:2024/05/13~05/17|57", candidateRefusal: nil),
++            StateSpec(state: .albumDetailVerified, ocrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"], cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
++            StateSpec(state: .ellipsisLocated, ocrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"], cardRegionCount: 0, candidateIdentity: "album-ellipsis", candidateRefusal: nil),
++            StateSpec(state: .menuVerified, ocrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片"] + StructuralLocators.lineAlbumMenuReference, cardRegionCount: 0, candidateIdentity: nil, candidateRefusal: nil),
++            StateSpec(state: .saveAllLocated, ocrTexts: [LiveExecutionEngine.targetGroup, "2024/05/13~05/17", "57張照片", "儲存全部"], cardRegionCount: 0, candidateIdentity: "儲存全部", candidateRefusal: nil),
+         ]
+     }
+ 
+@@ -231,7 +231,8 @@ final class PhaseAEvidenceTests: XCTestCase {
+         )
+     }
+ 
+-    /// One complete, all-PASS synthetic run directory plus its inputs.
++    /// A complete synthetic observation chain. Real calibration and popup
++    /// ownership evidence remain missing even when every state is present.
+     private func makeCompleteRun(specs: [StateSpec]? = nil) throws -> (
+         root: URL,
+         authorization: ImmutableRunAuthorization,
+@@ -266,20 +267,23 @@ final class PhaseAEvidenceTests: XCTestCase {
+ 
+     // MARK: - Complete run
+ 
+-    func testCompleteRunPassesEveryConditionWithZeroIrreversible() throws {
++    func testCompleteRunKeepsUnobservedCalibrationAndOcclusionUnknown() throws {
+         let run = try makeCompleteRun()
+         XCTAssertEqual(run.report.conditions.map(\.identifier), PhaseAEvidenceBuilder.conditionIdentifiers)
+-        XCTAssertEqual(run.report.phaseBPreventedBy, [])
+-        XCTAssertTrue(run.report.allConditionsPass)
++        XCTAssertEqual(run.report.phaseBPreventedBy, ["FROZEN_CAPTURE_GEOMETRY", "POPUP_OCCLUSION_ASSUMPTIONS"])
++        XCTAssertFalse(run.report.allConditionsPass)
++        XCTAssertEqual(run.report.exitCode, 77)
+         XCTAssertTrue(run.report.ledgerProvenZeroIrreversible)
+         XCTAssertEqual(run.report.irreversible.reversibleDispatches, 3)
+-        XCTAssertEqual(run.report.statusCounts.pass, PhaseAEvidenceBuilder.conditionIdentifiers.count)
++        XCTAssertEqual(run.report.statusCounts.pass, PhaseAEvidenceBuilder.conditionIdentifiers.count - 2)
++        XCTAssertEqual(run.report.statusCounts.unknown, 2)
++        XCTAssertEqual(run.report.statusCounts.fail, 0)
+         XCTAssertEqual(run.report.deferredRuntimeGates.map(\.identifier), PhaseAEvidenceBuilder.deferredRuntimeGateIdentifiers)
+         XCTAssertEqual(run.report.deferredRuntimeGates.first?.status, .unknown)
+         XCTAssertEqual(run.report.deferredRuntimeGates.first?.runtimeGate, "PHASE_B")
+         XCTAssertEqual(
+             run.report.chooserAssumptionStatement,
+-            "chooser assumptions calibrated on real NSOpenPanel, actual LINE chooser not yet observed"
++            "historical NSOpenPanel calibration does not prove the current composition; actual LINE chooser not yet observed"
+         )
+     }
+ 
+@@ -288,7 +292,7 @@ final class PhaseAEvidenceTests: XCTestCase {
+         let published = try PhaseAEvidencePublisher.publish(report: run.report, runDirectory: run.runDirectory)
+         XCTAssertEqual(published.reportName, "phase-a.json")
+         XCTAssertEqual(published.manifestName, "phase-a-manifest.json")
+-        XCTAssertEqual(published.phaseBPreventedBy, [])
++        XCTAssertEqual(published.phaseBPreventedBy, ["FROZEN_CAPTURE_GEOMETRY", "POPUP_OCCLUSION_ASSUMPTIONS"])
+         XCTAssertEqual(published.manifestEntryCount, run.inspection.states.count * 2 + 2)
+ 
+         let manifestData = try Data(contentsOf: run.runDirectory.appendingPathComponent("phase-a-manifest.json"))
+@@ -630,4 +634,51 @@ final class PhaseAEvidenceTests: XCTestCase {
+         XCTAssertEqual(condition.status, .fail)
+         XCTAssertTrue(condition.detail.contains("rowsObserved=2/5"))
+     }
++
++    func testClearedBlockerListCannotTurnUnknownConditionsIntoSuccess() throws {
++        let run = try makeCompleteRun()
++        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(run.report)) as? [String: Any])
++        object["phaseBPreventedBy"] = []
++        let decoded = try JSONDecoder().decode(PhaseAEvidenceReport.self, from: JSONSerialization.data(withJSONObject: object))
++        XCTAssertFalse(decoded.allConditionsPass)
++        XCTAssertEqual(decoded.exitCode, 77)
++    }
++
++    func testMissingDuplicateAndLegacyConditionsCannotPassEvenWhenLabelsSayPass() throws {
++        let run = try makeCompleteRun()
++        let encoded = try JSONEncoder().encode(run.report)
++        for mutation in ["missing", "duplicate", "legacy", "nonzero-ledger"] {
++            var object = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
++            var conditions = try XCTUnwrap(object["conditions"] as? [[String: Any]])
++            for index in conditions.indices { conditions[index]["status"] = "PASS" }
++            object["phaseBPreventedBy"] = []
++            switch mutation {
++            case "missing": conditions.removeLast()
++            case "duplicate": conditions[conditions.count - 1] = conditions[0]
++            case "legacy": object["reportVersion"] = 1
++            default: object["ledgerProvenZeroIrreversible"] = false
++            }
++            object["conditions"] = conditions
++            let decoded = try JSONDecoder().decode(PhaseAEvidenceReport.self, from: JSONSerialization.data(withJSONObject: object))
++            XCTAssertFalse(decoded.allConditionsPass, mutation)
++            XCTAssertEqual(decoded.exitCode, 77, mutation)
++        }
++    }
++
++    func testCurrentFrameIdentityAndMenuDuplicatesFailCommonEvidencePolicy() throws {
++        for state in [ExecutionState.targetAlbumLocated, .albumDetailVerified, .ellipsisLocated, .menuVerified, .saveAllLocated] {
++            var specs = defaultStateSpecs()
++            specs = specs.map { spec in
++                guard spec.state == state else { return spec }
++                return StateSpec(
++                    state: state, ocrTexts: spec.ocrTexts + [LiveExecutionEngine.targetGroup],
++                    cardRegionCount: spec.cardRegionCount, candidateIdentity: spec.candidateIdentity,
++                    candidateRefusal: spec.candidateRefusal
++                )
++            }
++            let run = try makeCompleteRun(specs: specs)
++            XCTAssertEqual(status(run.report, "SAME_FRAME_VISION"), .fail, state.rawValue)
++            XCTAssertEqual(run.report.exitCode, 77)
++        }
++    }
+ }

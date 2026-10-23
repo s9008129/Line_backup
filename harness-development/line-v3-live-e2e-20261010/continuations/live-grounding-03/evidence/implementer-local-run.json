@@ -1,0 +1,6 @@
+{
+  "kind": "LOCAL_IMPLEMENTER_RESULT_ID",
+  "run_id": "53f1351d-45b4-48f6-921c-81506e411d7d",
+  "native_harness_run_id": null,
+  "note": "This UUID identifies the locally authored role result only; no native controller run, invitation, or stage receipt was allocated."
+}

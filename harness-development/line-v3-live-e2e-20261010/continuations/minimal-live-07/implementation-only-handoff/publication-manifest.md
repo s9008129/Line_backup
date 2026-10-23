@@ -1,0 +1,11 @@
+# Partial checkpoint publication manifest
+
+This is a literal, non-recursive candidate list for root's later Git publication. It names exact paths only; it does not stage, commit, or push anything. The final evidence manifest's current root-log hash is not pinned here because A must update that manifest after this recorder update. Root should review the actual staged content before publication.
+
+The companion `git-stage-paths.txt` contains the exact regular-file paths proposed for this checkpoint, including the root collaboration log, this message, and this manifest. It deliberately excludes the nine product paths because the current report says none changed. Original `plan.md` and `handoff.md` are already in the baseline and unchanged, so this list does not restage them.
+
+The R paths are limited to task documentation, the implementation-only handoff, readiness/check tooling and tests, compact reports/receipts, formal e01 receipts, e02 freeze/materialization/dependency records and frozen source copies, and e03 dependency input/install observations. The full user-input annex and its raw transcript are excluded; the read-only authority receipt is retained. Historical source recovery includes the two recovered source files plus its manifest/receipt; the original transcript itself is not included.
+
+The following are explicitly excluded: all nine product paths (no changes), the pre-existing 11 tracked dirty files, all unrelated untracked trees, Swift dependency files already present in the worktree, the 2.38 MB user transcript, the full 3.18 MB input annex, the two approximately 58 MB raw baseline scans, other raw metadata inventories, photos/backups, state and GUI ledger, e03 runtime `site-packages`, wheels, caches, build outputs, and any recursively included runtime/raw-input directory. These files remain in the workspace and are not represented as published.
+
+The candidate is an audit/readiness checkpoint, not a claim that product implementation, offline product acceptance, native verification, LINE E2E, or task closure passed. The root owns any later staging/commit/push and must check the literal file contents against the current worktree immediately before publication.

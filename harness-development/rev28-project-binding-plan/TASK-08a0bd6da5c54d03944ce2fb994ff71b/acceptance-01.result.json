@@ -1,0 +1,272 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+  "run_id": "a9e31030-efe4-4557-98b6-a86efd4ce241",
+  "role": "ACCEPTANCE_REVIEWER",
+  "candidate_fact": "FAIL",
+  "validation_fact": "VALID",
+  "routing_fact": "BLOCKED",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "CORE_ACCEPTANCE_STATUS": "FAIL",
+    "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "FAIL",
+    "TASK_CLOSURE_STATUS": "ACCEPTANCE_BLOCKED"
+  },
+  "gate_results": [
+    {
+      "gate_id": "P1_PLAN_REVIEW",
+      "verdict": "PASS",
+      "evidence_manifest": "plan-review-02.result.json"
+    },
+    {
+      "gate_id": "I0_PUBLIC_PROJECT_BINDING_DECISION",
+      "verdict": "PASS",
+      "evidence_manifest": "user-consent-20261006.json"
+    },
+    {
+      "gate_id": "I1_PROJECT_AUTHORITY_CONTRACT",
+      "verdict": "FAIL",
+      "evidence_manifest": "swift-fixtures/verified/state.json"
+    },
+    {
+      "gate_id": "I2_DUPLICATE_BARRIERS",
+      "verdict": "FAIL",
+      "evidence_manifest": "swift-fixtures/verified/stdout.json"
+    },
+    {
+      "gate_id": "I3_READ_ONLY_SCOPE",
+      "verdict": "PASS",
+      "evidence_manifest": "final-preservation-verification.json"
+    },
+    {
+      "gate_id": "I4_ISOLATED_OFFLINE_CHECKS",
+      "verdict": "PARTIAL",
+      "evidence_manifest": "final-isolation-verification.json"
+    },
+    {
+      "gate_id": "I5_LEGACY_COMPATIBILITY",
+      "verdict": "PASS",
+      "evidence_manifest": "retained-packet-compatibility.json"
+    },
+    {
+      "gate_id": "I6_PRESERVATION",
+      "verdict": "PASS",
+      "evidence_manifest": "final-preservation-verification.json"
+    },
+    {
+      "gate_id": "A1_ACCEPTANCE",
+      "verdict": "FAIL",
+      "evidence_manifest": "swift-fixtures/verified/stdout.json"
+    }
+  ],
+  "stage": "ACCEPTANCE",
+  "plan_sha256": "6ff4f4ec472be1b21104ed8143bb8cbcc3f9c9390e485d4e3491d82c3700c9e7",
+  "handoff_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+  "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+  "plan_contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "a9e31030-efe4-4557-98b6-a86efd4ce241",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "plan-03.md",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-03.md",
+      "bytes": 17800,
+      "sha256": "6ff4f4ec472be1b21104ed8143bb8cbcc3f9c9390e485d4e3491d82c3700c9e7",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Reviewed frozen requirement for exact verified run/group/fingerprint/destination/verification/evidence relationships."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "a9e31030-efe4-4557-98b6-a86efd4ce241",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "final-source-manifest.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-source-manifest.json",
+      "bytes": 34327,
+      "sha256": "3c6ada0b8ca2bca02525f83b1b5ad6f091d096c68531ee3b33e361d56d896b13",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Independently rehashed all 117 source/test files and recomputed Swift53 and Python9 raw-byte aggregates; exact current identities match."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "a9e31030-efe4-4557-98b6-a86efd4ce241",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "final-isolation-verification.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-isolation-verification.json",
+      "bytes": 57795,
+      "sha256": "9ec3ecb7be7e696eb0db6ceccbf42cfd45a60813dd016f46225ffd64d88aabe5",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Independently compared 87 original/copy files with exactly 26 permitted literal substitutions; reviewed four resource copies and producer raw-source fixture joins."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "a9e31030-efe4-4557-98b6-a86efd4ce241",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "final-preservation-verification.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-preservation-verification.json",
+      "bytes": 3330,
+      "sha256": "ab65cbfb50d74247f9c90d0d402b3565beb90906bfcf9b1597fff07c9b97c9fc",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Reviewed complete preservation comparison code and 77918-entry receipt; independently rehashed 59 config/state/backup entries and preimages, and checked HEAD/branch/index/staged state."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "a9e31030-efe4-4557-98b6-a86efd4ce241",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "candidate-03-python.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-python.json",
+      "bytes": 22469,
+      "sha256": "b49171f9d3eaae5e49209c3fc5ad0bb61265f3069150a6de053db64346b7d2e8",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Observed bound actual log:22 tests PASS including corrected destination-parent/absence races. Passing tests omit evidence-artifact content mismatch rejection."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "a9e31030-efe4-4557-98b6-a86efd4ce241",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "candidate-03-swift-focused.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-swift-focused.json",
+      "bytes": 22702,
+      "sha256": "962f70ba64ada470ca4c9d83b0f942d43fbe815efa439d946ef0ecb4b4a6dd8a",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Observed bound actual log:16 tests PASS; verified fixture consumer accepts the artifact-destination contradiction described below."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "a9e31030-efe4-4557-98b6-a86efd4ce241",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "swift-fixtures/verified/state.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/state.json",
+      "bytes": 63608,
+      "sha256": "3b1e35a083163debfd77bc1315e52f0c2ff611a644adb1bda0fe19a89cb3d050",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Registry and verified run destinations point into the task-local selected project; evidence reference names the retained join artifact."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "a9e31030-efe4-4557-98b6-a86efd4ce241",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "swift-fixtures/verified/stdout.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/stdout.json",
+      "bytes": 3773,
+      "sha256": "00cd04616b86b7df2768a43e8d730715fa9d539781c0e8d74807724445f95aee",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Final producer emits SKIP_VERIFIED for that contradicted history; source aggregate equals final Python9 aggregate."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "a9e31030-efe4-4557-98b6-a86efd4ce241",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "swift-fixtures/verified/project/harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json",
+      "bytes": 3934,
+      "sha256": "de21e89d00ffc7c6b4356e56e5bb1ef09f8bf0844831a748131f365d8a3375b7",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Referenced SHA matches raw bytes, but the artifact destination names the original production backup rather than the task-local verified run destination."
+    }
+  ],
+  "needs_human": false,
+  "human_decisions": [],
+  "writer_receipts": [],
+  "evidence_ids": [
+    "plan-03.md",
+    "final-source-manifest.json",
+    "final-isolation-verification.json",
+    "final-preservation-verification.json",
+    "candidate-03-python.json",
+    "candidate-03-swift-focused.json",
+    "swift-fixtures/verified/state.json",
+    "swift-fixtures/verified/stdout.json",
+    "swift-fixtures/verified/project/harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json",
+    "implementer-final.result.json",
+    "literal-product-diffs.json",
+    "final-full-swift-source-join.json",
+    "candidate-02-swift-full.json",
+    "candidate-02-swift-legacy.json",
+    "candidate-02-cli-build.json",
+    "candidate-03-actual-cli-summary.json",
+    "retained-packet-compatibility.json"
+  ],
+  "analysis": {
+    "facts": [
+      "Reviewer remained an independent non-contributor: zero edits, product executions, tests/builds, GUI/native actions, network attempts, helpers or writers. Only local read/hash/schema-validation operations were performed.",
+      "Frozen Plan03/Handoff/wire hashes, final source/test manifests and evidence file hashes match. Seven literal product paths and dirty preimages remain bound.",
+      "Actual checks passed: final Python22/0 and Swift focused16/0; related legacy54/0, fullSwift318/0/0skip, CLI build and retained-v1/real-v3 strict loaders. All Swift bytes in the full check equal final bytes. Final actualCLI57 SKIP and182 inspectioneligible retain all four false flags. These tool PASS facts remain valid.",
+      "Independently identified destination-parent drift was fixed in candidate03 and meaningful regressions passed. No remaining defect was found in that bounded fix.",
+      "Final producer validates registry/run group/fingerprint/destination and passing verification, then validates referenced evidence only by grammar, no-follow read, hash and stable snapshot. It never parses or compares the evidence artifact content anchors.",
+      "Existing verified fixture is an observed contradiction: registry/run destination is inside its task-local project, referenced join artifact destination is inside the original production project. The referenced SHA is correct; final producer still reports SKIP_VERIFIED, and the actual Swift test accepts that report.",
+      "common.binding_artifact_matches already distinguishes byte binding from content matching through join_authority/app/group/fingerprint checks; project_binding does not perform corresponding content validation.",
+      "Product budget is exhausted at3/3. Required evidence content-join negative cases are absent despite successful executed checks. No fourth candidate or budget reset is authorized by this result."
+    ],
+    "inferences": [
+      "A matching SHA identifies arbitrary referenced bytes; it cannot establish that those bytes support the exact verified history row. Foreign or malformed artifact contents can therefore be accepted after correct reanchoring.",
+      "Plan03 requires exact verification/evidence relationships and foreigngroup/source mismatch rejection. The observed destination contradiction and missing artifact parsing are a material authority-contract gap; inspection-only flags do not waive that requirement.",
+      "A1 must fail. Implementation, successful checks, preservation and compatibility facts remain proven; required semantic coverage and local task closure remain unmet."
+    ],
+    "unknowns": [
+      "Foreign-group/fingerprint/non-JSON artifact variants were not executed by this reviewer; acceptance of them is inferred directly from the missing parser/content checks.",
+      "Whether any real project history besides the coherent retained production record contains contradictory referenced artifact content is unknown.",
+      "Controller/provider admission and OS network denial remain unavailable/unknown. Whole native group context remains BLOCKED and certifications UNKNOWN."
+    ],
+    "evidence": [
+      "plan-03.md",
+      "final-source-manifest.json",
+      "final-isolation-verification.json",
+      "final-preservation-verification.json",
+      "candidate-03-python.json",
+      "candidate-03-swift-focused.json",
+      "swift-fixtures/verified/state.json",
+      "swift-fixtures/verified/stdout.json",
+      "swift-fixtures/verified/project/harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json",
+      "implementer-final.result.json",
+      "literal-product-diffs.json",
+      "final-full-swift-source-join.json",
+      "candidate-02-swift-full.json",
+      "candidate-02-swift-legacy.json",
+      "candidate-02-cli-build.json",
+      "candidate-03-actual-cli-summary.json",
+      "retained-packet-compatibility.json"
+    ],
+    "confidence": "High: the code gap and an actual final fixture contradiction were observed independently; no new execution or permission claim.",
+    "dependencies": {
+      "exact_handoff": "PREREQUISITE_SATISFIED",
+      "protected_I0": "PREREQUISITE_SATISFIED",
+      "evidence_content_join": "PREREQUISITE_BLOCKED",
+      "whole_native_runtime": "PREREQUISITE_BLOCKED"
+    },
+    "bounded_finding": {
+      "id": "PROJECT_REGISTRY_EVIDENCE_CONTENT_NOT_JOINED",
+      "severity": "MATERIAL",
+      "minimal_reproduction": "Read swift-fixtures/verified/state.json, stdout.json and referenced join artifact: state/run destination is task-local, artifact destination is production-root, digest matches, stdout decision is SKIP_VERIFIED, actual final Swift test passes.",
+      "required_resolution": "A reviewed continuation must parse evidence strictly and validate kind-specific content anchors against exact config/registry/run/verification relationships; add coherent fixtures and content-mismatch refusal evidence. Preserve the current3/3 budget and stop this run."
+    }
+  },
+  "handoff_summary": "A1 FAIL: evidence references are byte-bound but their content is not joined to exact verified history. The final verified fixture already contains a destination contradiction yet emits SKIP_VERIFIED and passes the consumer. Preserve implementation/check/preservation successes, keep local closure blocked, and stop at the exhausted3/3 budget. The parent-drift fix is accepted; whole native LINE backup remains NOT_ACHIEVED.",
+  "convergence": {
+    "meaningful_attempts": 3,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Candidate03 fixed destination drift and passed checks; final independent review then observed missing registry-evidence content validation and an accepted contradictory fixture.",
+    "information_gain": true,
+    "stuck": true
+  }
+}

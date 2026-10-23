@@ -1,0 +1,33 @@
+{
+  "record_type": "user_message_semantic_transcription",
+  "recorded_local_date": "2026-10-09",
+  "timezone": "Asia/Taipei",
+  "platform_message_timestamp": null,
+  "decisions": [
+    {
+      "id": "next_real_album",
+      "user_words": "1.以「旻謙允禎成長日記／2024-05-06～05-10／182 張」作為下一個實機目標",
+      "meaning": "Confirmed group/date/count; supersedes earlier contradictory 否 wording."
+    },
+    {
+      "id": "continue_best_practices",
+      "user_words": "2.用 Best Practices 的建議繼續完成這一個任務。\n將這兩個決策放到交接文件中。",
+      "meaning": "Continue towards the complete tool, with bounded evidence-based engineering; do not ask again whether to continue."
+    },
+    {
+      "id": "core_product_goal",
+      "user_words": "交接文件中必須要寫明，本專案最核心的目標是要打造一個 LINE 相簿備份工具。由使用者指定群組名稱，使用者打開相簿列表之後，可以自動點擊並自動下載所有相簿中的照片到指定的資料夾存放，過程中都不需要人工介入。可以使用所有的視覺定位，包含但不限於 OCR、computer use 等相關功能，還有 macOS 原生的相關視覺輔助技術。",
+      "meaning": "Unattended batch product is the core goal; OCR, Computer Use and macOS native visual/accessibility capabilities are allowed. Current one-album test is a milestone, not product completion."
+    },
+    {
+      "id": "explicit_real_test_authority",
+      "user_words": "然後我明確授權接下來的任務可以直接去點擊我所指定的 LINE 相簿，然後做實際的測試。",
+      "meaning": "Next task may freshly identify and click the confirmed 182-photo album and conduct actual backup testing within the selected project/config destination and existing safety rules. No repeated blanket permission request. Historical exhausted attempts remain historical; this is a newly authorized next test task, not retroactive waiver/reset or authority to repeat an uncertain Save All."
+    }
+  ],
+  "scope_notes": [
+    "Current requested deliverable remains handoff and explicitly authorized git add/commit/push; no LINE actions occur in this documentation publication unit.",
+    "No authority to delete/overwrite existing backups, alter historical facts, weaken barriers, operate other groups/albums, or send external messages.",
+    "The complete unattended all-albums tool is the product goal. Current next real test is limited to the specified 182-photo album; current config max_albums_per_run=1 remains until reviewed batch work."
+  ]
+}

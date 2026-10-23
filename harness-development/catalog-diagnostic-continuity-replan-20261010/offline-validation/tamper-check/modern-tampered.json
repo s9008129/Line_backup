@@ -1,0 +1,177 @@
+{
+ "api": "modern",
+ "api_revision": "revision3",
+ "apis_independent": false,
+ "automatically_detects_language": false,
+ "confidenceCalibration": "UNKNOWN",
+ "custom_words": [],
+ "derivative_height": 2572,
+ "derivative_sha256": "7b9aa879659e1032e47968c4b01bf1760723f6e6ec7548925718e41a5b377588",
+ "derivative_width": 1308,
+ "imageHeight": 1286,
+ "imageWidth": 654,
+ "items": [
+  {
+   "boxTopLeftDerivativePixels": [
+    461.0163932115602,
+    182.18333328714078,
+    385.967213114754,
+    53.58333333333343
+   ],
+   "boxTopLeftPixels": [
+    461.0163932115602,
+    182.18333328714078,
+    385.967213114754,
+    53.58333333333343
+   ],
+   "boxTopLeftSourcePixels": [
+    230.5081966057801,
+    91.09166664357039,
+    192.983606557377,
+    26.791666666666714
+   ],
+   "candidates": [
+    {
+     "confidence": 0.5,
+     "text": "旻謙允禎成長日記"
+    }
+   ],
+   "confidence": 0.5,
+   "text": "TAMPERED"
+  },
+  {
+   "boxTopLeftDerivativePixels": [
+    273.3934423549181,
+    321.4999998424019,
+    101.85245901639337,
+    53.58333333333343
+   ],
+   "boxTopLeftPixels": [
+    273.3934423549181,
+    321.4999998424019,
+    101.85245901639337,
+    53.58333333333343
+   ],
+   "boxTopLeftSourcePixels": [
+    136.69672117745904,
+    160.74999992120095,
+    50.926229508196684,
+    26.791666666666714
+   ],
+   "candidates": [
+    {
+     "confidence": 0.30000001192092896,
+     "text": "相簿"
+    }
+   ],
+   "confidence": 0.30000001192092896,
+   "text": "相簿"
+  },
+  {
+   "boxTopLeftDerivativePixels": [
+    900.5901636663936,
+    326.85833324059286,
+    150.0983606557378,
+    48.225000000000136
+   ],
+   "boxTopLeftPixels": [
+    900.5901636663936,
+    326.85833324059286,
+    150.0983606557378,
+    48.225000000000136
+   ],
+   "boxTopLeftSourcePixels": [
+    450.2950818331968,
+    163.42916662029643,
+    75.0491803278689,
+    24.112500000000068
+   ],
+   "candidates": [
+    {
+     "confidence": 1,
+     "text": "記事本"
+    }
+   ],
+   "confidence": 1,
+   "text": "記事本"
+  },
+  {
+   "boxTopLeftDerivativePixels": [
+    58.96721030040989,
+    1178.8333326635418,
+    471.7377049180328,
+    53.58333333333326
+   ],
+   "boxTopLeftPixels": [
+    58.96721030040989,
+    1178.8333326635418,
+    471.7377049180328,
+    53.58333333333326
+   ],
+   "boxTopLeftSourcePixels": [
+    29.483605150204944,
+    589.4166663317709,
+    235.8688524590164,
+    26.79166666666663
+   ],
+   "candidates": [
+    {
+     "confidence": 0.5,
+     "text": "2024/06/02～06/07"
+    }
+   ],
+   "confidence": 0.5,
+   "text": "2024/06/02～06/07"
+  },
+  {
+   "boxTopLeftDerivativePixels": [
+    58.967213248770484,
+    1248.4916660638542,
+    64.327868852459,
+    48.225000000000136
+   ],
+   "boxTopLeftPixels": [
+    58.967213248770484,
+    1248.4916660638542,
+    64.327868852459,
+    48.225000000000136
+   ],
+   "boxTopLeftSourcePixels": [
+    29.483606624385242,
+    624.2458330319271,
+    32.1639344262295,
+    24.112500000000068
+   ],
+   "candidates": [
+    {
+     "confidence": 1,
+     "text": "65"
+    }
+   ],
+   "confidence": 1,
+   "text": "65"
+  }
+ ],
+ "os_version": "Version 27.0.1 (Build 26A434)",
+ "profile_name": "identity-header-metadata",
+ "recognition_languages": [
+  "zh-Hant",
+  "en-US"
+ ],
+ "recognition_level": "accurate",
+ "requested_automatically_detects_language": false,
+ "roi_source_pixels": {
+  "x0": 0,
+  "x1": 654,
+  "y0": 0,
+  "y1": 1286
+ },
+ "scale": 2,
+ "screen_capture": false,
+ "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-001.png",
+ "source_sha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57",
+ "top_candidates_requested": 3,
+ "transform": "crop first (source px), then nearest-neighbour 2x; source = roi_origin + derivative/2",
+ "ui_inputs_sent": 0,
+ "uses_language_correction": false
+}

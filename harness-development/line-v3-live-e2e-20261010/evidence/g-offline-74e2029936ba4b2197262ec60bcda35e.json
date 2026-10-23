@@ -1,0 +1,48 @@
+{
+  "freeze": "evidence/freeze-336ccec02db84df1a25538fc61481290.json",
+  "generated_at": "2026-10-10T10:00:42.111545+00:00",
+  "groups": {
+    "node": {
+      "exit_code": 0,
+      "receipt": {
+        "bytes": 1086,
+        "path": "harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-d5f8646258ec42f0a21e8db53190e4e4.json",
+        "sha256": "17cba6737f3e3fb8e72a8e9c7f622e3e80980cfa52e2908d3928bccb589987a6"
+      }
+    },
+    "node_check": {
+      "exit_code": 0,
+      "receipt": {
+        "bytes": 737,
+        "path": "harness-development/line-v3-live-e2e-20261010/evidence/node-check-87c3eb6077e547cfbe47366931cac31c.json",
+        "sha256": "2f3a68682648853be25f4ddd1f36f8af4d7f076c9d7917d988e06b96903409c5"
+      }
+    },
+    "python": {
+      "counts": {
+        "batch": 67,
+        "project_binding": 31,
+        "transaction_core": 5
+      },
+      "exit_code": 0,
+      "receipt": {
+        "bytes": 5337,
+        "path": "harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-2e3c6fa0b809407381f7d55e11946d8b.json",
+        "sha256": "30f8ec348ed5378e0bf90f0c9e8494cd80cedc1983c1857d574fe8219b8d6c92"
+      }
+    },
+    "swift": {
+      "exit_code": 0,
+      "failures": 0,
+      "receipt": {
+        "bytes": 1942,
+        "path": "harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-b5d112cd07e64c86a089e83d97631793.json",
+        "sha256": "fa2b1496e75cd03b748c559f392d6ed27a4a166b25a0e81605f6435c6e1f0cd9"
+      },
+      "tests": 5
+    }
+  },
+  "kind": "g-offline-receipt",
+  "note": "all four receipts produced on this working tree; python/node receipts predate only the two Swift-line fixes, which are outside the Python/JS source inventory",
+  "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077"
+}

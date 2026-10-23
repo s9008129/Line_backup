@@ -1,0 +1,1320 @@
+{
+  "verdict": "PASS",
+  "outside_entries": 77918,
+  "literal_changes": [
+    {
+      "path": "src/line_backup_acceptance/project_binding.py",
+      "before": {
+        "path": "src/line_backup_acceptance/project_binding.py",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 20040,
+        "sha256": "51cc12a3dd47ac4e1eed83d1578e73d3076bbf630229e22fd132815c84808e79"
+      },
+      "after": {
+        "path": "src/line_backup_acceptance/project_binding.py",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 26500,
+        "sha256": "a057d0ad3afdc888fe7330e617908b92c8c114006f797080f840f61ffeaf8a43"
+      }
+    },
+    {
+      "path": "tests/test_project_binding.py",
+      "before": {
+        "path": "tests/test_project_binding.py",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 16630,
+        "sha256": "33c6661e0fb00ac058b8942ac0e83c62c66f9aaf13c461b8d9ed76001b31c2c3"
+      },
+      "after": {
+        "path": "tests/test_project_binding.py",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 27102,
+        "sha256": "572de89393411561bb1d1c50fba6fc15cfac0af695dc7f722d0641de8027b79d"
+      }
+    }
+  ],
+  "prior_artifacts": [
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/acceptance-01-archive-validation.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/acceptance-01.result.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-cli-summary.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project182.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project182.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project182.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project57.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project57.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project57.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/archive_independent_acceptance.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/baseline.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/blocked-checkpoint-delivery.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-evidence-join-correction.md",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-python.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-python.log",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-swift-focused.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-swift-focused.log",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-cli-build.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-cli-build.log",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-loader-build.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-loader-build.log",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-python.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-python.log",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-source-manifest.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-focused.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-focused.log",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-full.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-full.log",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-legacy.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-legacy.log",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-cli-summary.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project182.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project182.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project182.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project57.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project57.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project57.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-count.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-count.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-count.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-date.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-date.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-date.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-usage.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-usage.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-usage.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-python.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-python.log",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-source-manifest.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-swift-focused.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-swift-focused.log",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/check_driver.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/decision.md",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-ARCHITECTURE.md.patch",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-CAPABILITY-MATRIX.md.patch",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-ProjectBackupBinding.swift.patch",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-ProjectBackupBindingTests.swift.patch",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-cli.py.patch",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-project_binding.py.patch",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-test_project_binding.py.patch",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence-finalization-mechanical-note.md",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence-join-gap-reproduction.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence/20260917-vision-reader/frames/route5r_frame_post.jpg",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence/20260925-rev28-native-closed-loop/baseline-content-multiset.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence/20260925-rev28-native-closed-loop/harness/frozen/chooser-affirmation-predicate-v2.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence/20260925-rev28-native-closed-loop/harness/frozen/chooser-ax-calibration-v2.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/execution-baseline-20261009.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/execution-preimages/ARCHITECTURE.md",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/execution-preimages/CAPABILITY-MATRIX.md",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/execution-preimages/cli.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-full-swift-source-join.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-isolation-verification.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-preservation-verification.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-source-manifest.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final_evidence.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final_evidence_continuation.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/first-principles-assessment-20261009.md",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-count.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-count.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-count.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-date.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-date.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-date.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-usage.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-usage.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-usage.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/handoff-validation.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/handoff.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/implement-gates-final.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/implementer-final.result.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Package.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Actuation/AXDriver.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Actuation/QuartzActuator.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Chooser/ChooserAffirmationPredicate.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Chooser/FolderChooserDriver.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Composition/LiveComposition.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Composition/PassiveNativeDiagnostic.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Composition/PhaseAEvidence.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Composition/PostSaveComposition.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Composition/PostSaveEnvironment.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Composition/ProductionActuationEnvironment.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Composition/ProductionObservationSource.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Composition/ProjectBackupBinding.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Diagnostics/DiagnosticHooks.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Geometry/Coordinates.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Identity/AXWindowIdentitySelector.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Identity/ProcessCodeIdentity.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Identity/WindowIdentity.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Perception/AlbumEllipsisLocator.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Perception/OcrEngine.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Perception/StructuralLocators.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Policy/ExecutionPolicy.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Postcondition/PostconditionMonitor.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Sensor/ExplicitLineCaptureSelection.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Sensor/FrameCapture.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Sensor/RunEpochAuthority.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Sensor/WindowSensor.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Transaction/FilesystemTripwireJournal.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Transaction/GoalSlot.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Transaction/IntentLedger.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Transaction/PhaseBEligibility.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Transaction/ReviewedBuildState.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Transaction/ReviewedImplementationDigest.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Transaction/StateEvidence.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Transaction/TripwireAttribution.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Verification/BaselineVerifier.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/Rev28Core/Verification/StagingVerifier.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28ctl/EvidenceRun.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28ctl/FolderChooserDriver.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28ctl/HarnessCalibration.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28ctl/PassiveCaptureDiagnostic.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28ctl/ProcessIdentity.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28ctl/ProcessPeer.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28ctl/QuartzActuator.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28ctl/RawCapture.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28ctl/RestartFixture.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28ctl/main.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28harness/HarnessApp.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28harness/main.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28occluder/main.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28probe/CapabilityProbe.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28probe/main.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Sources/rev28replay/main.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/AXWindowIdentitySelectorTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/ActuationReadinessTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/AdversarialMatrixTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/AlbumEllipsisLocatorTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/ChooserPredicateProductionDerivationTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/ComposedAdaptersTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/CoordinateTransformTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/EligibilityTestSupport.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/ExecutionPolicyTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/ExplicitLineCaptureSelectionTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/GoalSlotTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/IntentLedgerTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/LiveCompositionTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/NativeObservationTestSupport.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/OcrEngineTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/PassiveNativeDiagnosticTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/PersistentTransactionOwnerTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/PhaseAEvidenceTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/PhaseBEligibilityTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/PostconditionMonitorTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/ProcessCodeIdentityTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/ReviewedBuildStateTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/RunEpochAuthorityTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/StagingVerifierTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/StructuralLocatorsTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/TripwirePostDispatchGateTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/Tests/Rev28CoreTests/WindowIdentityTests.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolation-20261009.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/legacy-fixture-copy-20261009.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/literal-product-diffs.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/offline-loader-source-binding.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/offline-validation/Package.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/offline-validation/Sources/PacketValidator/main.swift",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-02.md",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-03.md",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-contract-02.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-contract.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-review-01.result.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-review-02.result.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan.md",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/planner-02.result.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/planner-03.result.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/planner.result.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/post-final-root-evidence-concern.md",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_candidate02.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_candidate03.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_handoff.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_review_02.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_review_03.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/progress.md",
+      "status": "Original bytes preserved, append-only progress"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/project-binding-report.schema.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/read-only-diagnostic.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/reproduce_evidence_join_gap.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/result-20261009.md",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/resume-admission-20261009.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/resume-unrelated-metadata-drift.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/resume_baseline.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-legacy-v1.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-legacy-v1.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-legacy-v1.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-packet-compatibility.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-real-v3.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-real-v3.stderr",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-real-v3.stdout",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/review-01-admission.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/review-02-preparation.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/root-acceptance-blocked.result.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/config/line_backup_config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/src/line_backup_acceptance/__init__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/src/line_backup_acceptance/__main__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/src/line_backup_acceptance/authority.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/src/line_backup_acceptance/cli.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/src/line_backup_acceptance/common.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/src/line_backup_acceptance/project_binding.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/src/line_backup_acceptance/status.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/src/line_backup_acceptance/transaction.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/src/line_backup_acceptance/verifier.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/project/state/backup_state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/ambiguous/stdout.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/config/line_backup_config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/src/line_backup_acceptance/__init__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/src/line_backup_acceptance/__main__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/src/line_backup_acceptance/authority.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/src/line_backup_acceptance/cli.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/src/line_backup_acceptance/common.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/src/line_backup_acceptance/project_binding.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/src/line_backup_acceptance/status.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/src/line_backup_acceptance/transaction.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/src/line_backup_acceptance/verifier.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/project/state/backup_state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/busy/stdout.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/backups/旻謙允禎成長日記/2024-05-06_2024-05-10_182張/existing",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/config/line_backup_config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/src/line_backup_acceptance/__init__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/src/line_backup_acceptance/__main__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/src/line_backup_acceptance/authority.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/src/line_backup_acceptance/cli.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/src/line_backup_acceptance/common.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/src/line_backup_acceptance/project_binding.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/src/line_backup_acceptance/status.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/src/line_backup_acceptance/transaction.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/src/line_backup_acceptance/verifier.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/project/state/backup_state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/destination/stdout.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/config/line_backup_config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/src/line_backup_acceptance/__init__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/src/line_backup_acceptance/__main__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/src/line_backup_acceptance/authority.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/src/line_backup_acceptance/cli.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/src/line_backup_acceptance/common.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/src/line_backup_acceptance/project_binding.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/src/line_backup_acceptance/status.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/src/line_backup_acceptance/transaction.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/src/line_backup_acceptance/verifier.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/project/state/backup_state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/eligible/stdout.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/config/line_backup_config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/src/line_backup_acceptance/__init__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/src/line_backup_acceptance/__main__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/src/line_backup_acceptance/authority.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/src/line_backup_acceptance/cli.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/src/line_backup_acceptance/common.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/src/line_backup_acceptance/project_binding.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/src/line_backup_acceptance/status.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/src/line_backup_acceptance/transaction.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/src/line_backup_acceptance/verifier.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/project/state/backup_state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/unresolved/stdout.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/config/line_backup_config.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/src/line_backup_acceptance/__init__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/src/line_backup_acceptance/__main__.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/src/line_backup_acceptance/authority.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/src/line_backup_acceptance/cli.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/src/line_backup_acceptance/common.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/src/line_backup_acceptance/project_binding.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/src/line_backup_acceptance/status.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/src/line_backup_acceptance/transaction.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/src/line_backup_acceptance/verifier.py",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/project/state/backup_state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/state.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/verified/stdout.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-consent-20261006.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-pause-20261006.json",
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/verify_cli_and_loader.py",
+      "status": "BYTE_IDENTICAL"
+    }
+  ],
+  "prior_A1_FAIL_and_bad_fixtures": "Retained byte-identically",
+  "unrelated_metadata_drift": [
+    {
+      "path": ".DS_Store",
+      "before": {
+        "path": ".DS_Store",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 6148,
+        "sha256": "0bc42f5942c8bf4bdc0ec5150642ad1f96bca375a274c6dd9bbb40cff142fd75"
+      },
+      "after": {
+        "path": ".DS_Store",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 6148,
+        "sha256": "bafd9c447b729b61b7cf64b5f95d38527f220d1662203dd21d8564defba724ce"
+      }
+    }
+  ],
+  "admission_order_deviation": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/admission-order-deviation.json",
+    "bytes": 1492,
+    "sha256": "0ef11f53bf17d1bf74900ee407be121cc4d1d33f87c1178b0e8432da360cc17c"
+  },
+  "protected_config_state_photos_and_Git_unchanged": true,
+  "git_head": "e3b5af056733133a6eea37d3f21fee33588b5a4b",
+  "git_branch": "v43-ab/codex-rev28",
+  "index_sha256": "3af7210b0d898bfff3cdeff3b6c52701210a7a54eaac365ca21dcc6a2033da23",
+  "native_calls": 0
+}

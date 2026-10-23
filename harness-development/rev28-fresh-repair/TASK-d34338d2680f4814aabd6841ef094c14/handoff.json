@@ -1,0 +1,29 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+  "goal": "Repair native observation subject identity and snapshot coherence from current evidence, preserving existing work and production one-shot authority; independently verify the local candidate before concrete live-user intervention.",
+  "task_class": "CRITICAL",
+  "allowed_paths": [
+    "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+    "rev28/Sources/Rev28Core/Identity/ProcessCodeIdentity.swift",
+    "rev28/Sources/rev28ctl/ProcessIdentity.swift",
+    "rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+    "rev28/Tests/Rev28CoreTests/ProcessCodeIdentityTests.swift",
+    "rev28/ARCHITECTURE.md",
+    "rev28/CAPABILITY-MATRIX.md",
+    "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14",
+    "harness-development/rev28-fresh-repair/.locks/TASK-d34338d2680f4814aabd6841ef094c14.lock"
+  ],
+  "required_evidence": ["independent-plan-review", "fresh-red-green-regressions", "fresh-local-checks", "current-work-preservation", "independent-local-acceptance"],
+  "gate_specs": [
+    {"gate_id": "G1_PLAN_REVIEW", "required": true, "owner": "ROLE", "phase": "PLAN", "evidence_source": "ROLE_OBSERVATION", "goal_criticality": "CORE", "evidence_role": "MUST_NOT_BREAK", "closure_gate": "HARD_CLEAN", "reuse": "NEVER"},
+    {"gate_id": "G2_REGRESSIONS", "required": true, "owner": "ROLE", "phase": "IMPLEMENT", "evidence_source": "ROLE_OBSERVATION", "goal_criticality": "CORE", "evidence_role": "OUTCOME", "closure_gate": "HARD_CLEAN", "reuse": "NEVER"},
+    {"gate_id": "G3_LOCAL_CHECKS", "required": true, "owner": "ROLE", "phase": "IMPLEMENT", "evidence_source": "ROLE_OBSERVATION", "goal_criticality": "SUPPORTING", "evidence_role": "REPOSITORY_HEALTH", "closure_gate": "HARD_CLEAN", "reuse": "NEVER"},
+    {"gate_id": "G4_PRESERVATION", "required": true, "owner": "ROLE", "phase": "IMPLEMENT", "evidence_source": "ROLE_OBSERVATION", "goal_criticality": "CORE", "evidence_role": "MUST_NOT_BREAK", "closure_gate": "HARD_CLEAN", "reuse": "NEVER"},
+    {"gate_id": "G5_INDEPENDENT_ACCEPTANCE", "required": true, "owner": "ROLE", "phase": "ACCEPTANCE", "evidence_source": "ROLE_OBSERVATION", "goal_criticality": "CORE", "evidence_role": "OUTCOME", "closure_gate": "HARD_CLEAN", "reuse": "NEVER"}
+  ],
+  "capability_policy": {"network": "OFF", "browser": false, "destinations": []},
+  "retry_policy": {"transient_read_only_retries": 2, "delays_seconds": [10, 30]},
+  "resource_policy": {"prompt_bytes": 65536, "state_bytes": 524288, "inspect_bytes": 16384, "log_bytes": 134217728},
+  "workflow_policy": {"plan_review_required": true, "independent_acceptance_required": true, "max_parallel_read_only_helpers": 0, "max_parallel_writers": 0, "handoff_review_required": false}
+}

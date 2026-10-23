@@ -1,0 +1,48 @@
+{
+  "freeze": "evidence/freeze-336ccec02db84df1a25538fc61481290.json",
+  "generated_at": "2026-10-10T10:00:42.081719+00:00",
+  "grants": {
+    "live-grant-1.json": {
+      "bytes": 1342,
+      "path": "harness-development/line-v3-live-e2e-20261010/live-grant-1.json",
+      "sha256": "3546288758d70aca6e7e306b858e96da0337d03a6f897dac370f5aca5aeff234"
+    },
+    "live-grant-2.json": {
+      "bytes": 1327,
+      "path": "harness-development/line-v3-live-e2e-20261010/live-grant-2.json",
+      "sha256": "04aa1a2ad4b2dd8f2f6956a5cee699a636ff11b2f689f2c2309063b5dae35d29"
+    }
+  },
+  "kind": "g-auth-receipt",
+  "method": "line_backup_batch.cli.authorize(root,grant,fixture=False,operation) read-only call for every operation listed in each grant",
+  "operations": {
+    "live-grant-1.json": {
+      "admit": "PASS",
+      "begin": "PASS",
+      "calibrate": "PASS",
+      "dispatch": "PASS",
+      "finalize": "PASS",
+      "finish": "PASS",
+      "gui_consume": "PASS",
+      "gui_reserve": "PASS",
+      "intent": "PASS",
+      "migrate": "PASS",
+      "prepare": "PASS",
+      "release": "PASS"
+    },
+    "live-grant-2.json": {
+      "admit": "PASS",
+      "begin": "PASS",
+      "calibrate": "PASS",
+      "dispatch": "PASS",
+      "finalize": "PASS",
+      "finish": "PASS",
+      "gui_consume": "PASS",
+      "gui_reserve": "PASS",
+      "intent": "PASS",
+      "prepare": "PASS",
+      "release": "PASS"
+    }
+  },
+  "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077"
+}

@@ -1,0 +1,182 @@
+{
+  "api" : "legacy",
+  "api_revision" : 3,
+  "apis_independent" : false,
+  "automatically_detects_language" : false,
+  "confidenceCalibration" : "UNKNOWN",
+  "custom_words" : [
+
+  ],
+  "derivative_height" : 2572,
+  "derivative_sha256" : "d02c1870d24dfc876a5f9d79f5021daeca36478100dde722e2972dfbe9d80972",
+  "derivative_width" : 1308,
+  "imageHeight" : 1286,
+  "imageWidth" : 654,
+  "item_count" : 5,
+  "items" : [
+    {
+      "boxTopLeftDerivativePixels" : [
+        463.40571575745207,
+        183.00000028352065,
+        381.18856811523426,
+        53.000000000000036
+      ],
+      "boxTopLeftPixels" : [
+        463.40571575745207,
+        183.00000028352065,
+        381.18856811523426,
+        53.000000000000036
+      ],
+      "boxTopLeftSourcePixels" : [
+        231.70285787872604,
+        91.500000141760324,
+        190.59428405761713,
+        26.500000000000018
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.5,
+          "text" : "旻謙允禎成長日記"
+        }
+      ],
+      "confidence" : 0.5,
+      "text" : "旻謙允禎成長日記"
+    },
+    {
+      "boxTopLeftDerivativePixels" : [
+        276.54857267413348,
+        321.50000023069589,
+        97.16571044921875,
+        52.500000000000149
+      ],
+      "boxTopLeftPixels" : [
+        276.54857267413348,
+        321.50000023069589,
+        97.16571044921875,
+        52.500000000000149
+      ],
+      "boxTopLeftSourcePixels" : [
+        138.27428633706674,
+        160.75000011534794,
+        48.582855224609375,
+        26.250000000000075
+      ],
+      "candidates" : [
+        {
+          "confidence" : 1,
+          "text" : "相簿"
+        }
+      ],
+      "confidence" : 1,
+      "text" : "相簿"
+    },
+    {
+      "boxTopLeftDerivativePixels" : [
+        900.65143126778241,
+        321.50000067229115,
+        145.74856567382795,
+        52.500000000000149
+      ],
+      "boxTopLeftPixels" : [
+        900.65143126778241,
+        321.50000067229115,
+        145.74856567382795,
+        52.500000000000149
+      ],
+      "boxTopLeftSourcePixels" : [
+        450.32571563389121,
+        160.75000033614558,
+        72.874282836913977,
+        26.250000000000075
+      ],
+      "candidates" : [
+        {
+          "confidence" : 1,
+          "text" : "記事本"
+        }
+      ],
+      "confidence" : 1,
+      "text" : "記事本"
+    },
+    {
+      "boxTopLeftDerivativePixels" : [
+        63.531430190684148,
+        1711.9999994322707,
+        467.14285278320318,
+        53.000000000000036
+      ],
+      "boxTopLeftPixels" : [
+        63.531430190684148,
+        1711.9999994322707,
+        467.14285278320318,
+        53.000000000000036
+      ],
+      "boxTopLeftSourcePixels" : [
+        31.765715095342074,
+        855.99999971613533,
+        233.57142639160159,
+        26.500000000000018
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.5,
+          "text" : "2024\/06\/02~06\/07"
+        }
+      ],
+      "confidence" : 0.5,
+      "text" : "2024\/06\/02~06\/07"
+    },
+    {
+      "boxTopLeftDerivativePixels" : [
+        67.268571581159321,
+        1793.9999991873387,
+        52.319999694824219,
+        34.063953399658395
+      ],
+      "boxTopLeftPixels" : [
+        67.268571581159321,
+        1793.9999991873387,
+        52.319999694824219,
+        34.063953399658395
+      ],
+      "boxTopLeftSourcePixels" : [
+        33.634285790579661,
+        896.99999959366937,
+        26.159999847412109,
+        17.031976699829197
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.30000001192092896,
+          "text" : "65"
+        }
+      ],
+      "confidence" : 0.30000001192092896,
+      "text" : "65"
+    }
+  ],
+  "os_version" : "Version 27.0.1 (Build 26A434)",
+  "out_dir" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/catalog-diagnostic-continuity-replan-20261010\/offline-validation\/ocr\/scan-000.metadata_legacy",
+  "profile_name" : "identity-header-metadata-legacy",
+  "recognition_languages" : [
+    "zh-Hant",
+    "en-US"
+  ],
+  "recognition_level" : "accurate",
+  "requested_automatically_detects_language" : false,
+  "roi_source_pixels" : {
+    "x0" : 0,
+    "x1" : 654,
+    "y0" : 0,
+    "y1" : 1286
+  },
+  "scale" : 2,
+  "screen_capture" : false,
+  "source_path" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/catalog-diagnostic-continuity-replan-20261010\/replay\/scan-000.png",
+  "source_sha256" : "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+  "top_candidates_requested" : 3,
+  "transform" : "crop first (source px), then nearest-neighbour 2x; source = roi_origin + derivative\/2",
+  "ui_inputs_sent" : 0,
+  "uses_language_correction" : false
+}
+

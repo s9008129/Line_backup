@@ -1,0 +1,9 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "rev28/Tools/verify_pre_live_provenance.py"
+  ],
+  "cwd": ".",
+  "exit_code": 0
+}

@@ -1,0 +1,16 @@
+{
+  "proof": "live-branch SCK sidecar requirement",
+  "scratch_root": "harness-development/line-v3-live-e2e-20261010/tmp/live-branch-proof",
+  "results": {
+    "v1_fixture_only_sidecar": {
+      "outcome": "REFUSED",
+      "code": "SCK_PROVIDER_MISMATCH",
+      "message": "SCK_PROVIDER_MISMATCH",
+      "sidecar_sha256": "5d17c890276e6c7ff66ce994f968b43dbe63f02cebb099152d9b733692d9cdab"
+    },
+    "v2_screen_capture_kit_sidecar": {
+      "outcome": "ACCEPTED",
+      "sidecar_sha256": "c0cfb6b3bfa6ff4cca54abe44c0e49f9168b97d17d2af0f89d89f93d8054655d"
+    }
+  }
+}

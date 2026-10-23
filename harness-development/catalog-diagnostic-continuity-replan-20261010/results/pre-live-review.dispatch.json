@@ -1,0 +1,42 @@
+{
+ "attempts": [
+  {
+   "agent_id": "01a1237d-0989-7572-aa5b-d46325b482cb",
+   "analysis_received": false,
+   "date": "2026-10-10",
+   "error": "input[0]: unknown input item type: \"additional_tools\" (ref: b1e78050-3fab-4bab-b2d0-dd0f94fdd03b)",
+   "status": "errored"
+  },
+  {
+   "agent_id": "01a1237d-34c7-7e10-a74a-56b2545eaae3",
+   "analysis_received": false,
+   "date": "2026-10-10",
+   "error": "input[0]: unknown input item type: \"additional_tools\" (ref: 18a5e050-507b-489d-b693-1e6c6521760a)",
+   "nickname": "Ohm",
+   "status": "errored"
+  }
+ ],
+ "completion_records": [],
+ "conclusion": "The spawn request was accepted but the platform rejected the delegation request with the same error on both attempts; no reviewer analysis exists and no completion record was imported. Per 04_implement_prompt.md, the ready-to-forward path is used instead: the user relays results/pre-live-review.packet.json to a non-contributor high-reasoning model.",
+ "configured_role_settings": {
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "xhigh",
+  "source": "templates/v4.8.0/runtime-defaults.json"
+ },
+ "constraints_kept": [
+  "no fabricated dispatch",
+  "no fabricated completion record",
+  "no root self-signature",
+  "no reviewer artifact claimed from the failed attempts",
+  "no retry loop: stopped after two identical platform errors"
+ ],
+ "dispatch_channel": "Codex native delegation (multi-agent spawn tool), fresh context (fork_context=false), explicitly read-only; no helpers, no writers.",
+ "format": "local-native-dispatch-record-1",
+ "packet": {
+  "path": "results/pre-live-review.packet.json",
+  "sha256": "cd6edf3edbf44d68ac318d0f508914f83ab771aab989d4b0f1e4fe20a5d315c4"
+ },
+ "purpose": "Independent same-candidate pre-live program/evidence review (G_LIVE precondition); read-only, fresh context.",
+ "role": "HIGH_REASONING_REVIEWER",
+ "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+}

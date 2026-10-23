@@ -1,0 +1,55 @@
+Building for debugging...
+[0/13] Write sources
+[1/13] Write swift-version--58304C5D6DBC2206.txt
+[3/15] Emitting module Rev28Core
+[4/15] Compiling Rev28Core StructuralLocators.swift
+[4/21] Write Objects.LinkFileList
+[10/21] Linking rev28PackageTests
+[11/21] Linking rev28occluder
+[12/21] Applying rev28occluder
+[13/21] Linking rev28replay
+[14/21] Linking rev28harness
+[15/21] Linking rev28probe
+[16/21] Applying rev28replay
+[17/21] Applying rev28probe
+[18/21] Applying rev28harness
+[19/21] Linking rev28ctl
+[20/21] Applying rev28ctl
+Build complete! (1.13s)
+Test Suite 'Selected tests' started at 2026-09-29 05:18:26.500.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 05:18:26.501.
+Test Suite 'StructuralLocatorsTests' started at 2026-09-29 05:18:26.501.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardDuplicateCountRefusesAmbiguity]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardDuplicateCountRefusesAmbiguity]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsCrossPairedTitleAndCountAcrossCards]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsCrossPairedTitleAndCountAcrossCards]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsTwoVerifiedCardsAsAmbiguous]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsTwoVerifiedCardsAsAmbiguous]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRequiresExactUniqueTitleAndCount]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRequiresExactUniqueTitleAndCount]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumDetailRejectsWrongZhenGlyph]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumDetailRejectsWrongZhenGlyph]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotBeReusedAcrossEpoch]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotBeReusedAcrossEpoch]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotSurviveProcessRestartOrPIDReuse]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotSurviveProcessRestartOrPIDReuse]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllDuplicateTargetFailsClosed]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllDuplicateTargetFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllRequiresFullReferenceStructure]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllRequiresFullReferenceStructure]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllWrongNeighborRowFailsClosed]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllWrongNeighborRowFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsCrossCardCount]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsCrossCardCount]' passed (0.000 seconds).
+Test Suite 'StructuralLocatorsTests' passed at 2026-09-29 05:18:26.503.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 05:18:26.503.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 05:18:26.503.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

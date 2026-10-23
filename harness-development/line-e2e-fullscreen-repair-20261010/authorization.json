@@ -1,0 +1,19 @@
+{
+  "format": "local-explicit-user-authorization-1",
+  "task_id": "TASK-20261010-line-e2e-fullscreen-repair",
+  "source": "current conversation user messages",
+  "user_requested_artifact": "詳細精準的技術修復計畫.md，可直接交給Implementer進行E2E及撰寫報告",
+  "quotes": [
+    "這份計劃不需要獨立審查，目的是交給implementer直接實作進行E2E的測試與撰寫測試報告",
+    "我授權給你你所有需要的數量與權限"
+  ],
+  "execution_scope": "Implementer may directly implement and conduct real LINE fullscreen capture, grounding, at-most-once backup of two distinct eligible albums and evidence-bearing repairs within the plan. No repeated Plan Review or method/album permission request.",
+  "plan_review_decision": "Explicit user waiver; NOT a reviewer PASS",
+  "independent_pre_live_review_required": false,
+  "formal_product_independent_acceptance": "Post E2E/report; not a precondition to the authorized experiment",
+  "extension_material_attempts": 5,
+  "user_permission_does_not_reset_history": true,
+  "controller_receipt": false,
+  "native_identity": "UNKNOWN",
+  "created_at": "2026-10-10T03:40:34.514687+00:00"
+}

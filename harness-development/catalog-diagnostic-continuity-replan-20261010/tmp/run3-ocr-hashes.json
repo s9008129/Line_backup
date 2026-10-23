@@ -1,0 +1,18 @@
+{
+ "ocr/scan-000.label_live/recognize.json": "bf89ab4bd5e66950dddc2c4acdeb05777fa404389ab6c8866323efc267ed7ccb",
+ "ocr/scan-000.label_offline/recognize.json": "30d1d72f1c6c7190b5d7be8167ef3e23f310bd8c0c412c3ea6104b9a58047ac6",
+ "ocr/scan-000.metadata_legacy/recognize.json": "39bd1dc673e1004a798d0a322195c8da164665fca5db5788adf0a91d59551b3f",
+ "ocr/scan-000.metadata_modern/recognize.json": "0838125ab8df7b4a7cc2248e8e18abe6f68e4d4e9ea95b1a6284038e9934d2af",
+ "ocr/scan-001.label_live/recognize.json": "d695ce3d4fba00dbb1c2c9dd2a3c27d7da09d4c37e34140ee71e0482ac6569d1",
+ "ocr/scan-001.label_offline/recognize.json": "b6fd41fe955104aa22dd332014266b32490fe7af2746a7c335fab89532b89f88",
+ "ocr/scan-001.metadata_legacy/recognize.json": "b7083abbf28d2d4d8e37cff8ac3c3523441cb06f6e3328cc8f906b1ac911b42f",
+ "ocr/scan-001.metadata_modern/recognize.json": "98867ec42c94bba34b8b70d7aab9a847c7c5026aca909d5331985a206b49e72e",
+ "ocr/scan-002.label_live/recognize.json": "afe0b5011bf73052f831f01bd82b3e1f6146c5c9e475392b4958ee9ab9fe22f7",
+ "ocr/scan-002.label_offline/recognize.json": "51ff464ee2d7f26507c26bcc20add379789477427e11d4fda8267104ee80c377",
+ "ocr/scan-002.metadata_legacy/recognize.json": "1bcf06b0388fb73bf91eee753cac92a2995aec48dd7e02dbc32c1a3607a78d52",
+ "ocr/scan-002.metadata_modern/recognize.json": "d06763031b323d86d1da628192d0598411537b004b4db4ee1079e4ab12a48b89",
+ "ocr/scan-003.label_live/recognize.json": "134326a0567973f246cfe909825f04aef00a42d337cda54ec10784d8ab818333",
+ "ocr/scan-003.label_offline/recognize.json": "1820c5106e2d90308c0152d3fa1089bd8bca7b5c0f637f4b70bddeabdc7d27c8",
+ "ocr/scan-003.metadata_legacy/recognize.json": "e2064f6d74fe2e62321b117e34705691230694ebda11a3ba428ad606b74cf3f4",
+ "ocr/scan-003.metadata_modern/recognize.json": "e0d8cc884a148b7e805fef4ec93817ad47a896de316171a2310e8fe3cdf1618f"
+}

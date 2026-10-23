@@ -1,0 +1,316 @@
+{
+  "kind": "IMPLEMENTER_REPORT_MANIFEST",
+  "task_id": "TASK-20261011-line-receipt-recovery",
+  "run_id": "scope-recovery-05-implementer-01",
+  "stage": "IMPLEMENT",
+  "role": "IMPLEMENTER",
+  "manifest_status": "PASS",
+  "gate_results": {
+    "G_BASELINE": "FAIL",
+    "G_RUNNER": "NOT_RUN",
+    "G_ADAPTER_OFFLINE": "NOT_RUN",
+    "G_PRESERVE": "BLOCKED",
+    "G_REPORT": "PASS_AFTER_MANIFEST_READBACK"
+  },
+  "files": [
+    {
+      "evidence_id": "E_PLAN",
+      "path": "plan.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan.md",
+      "bytes": 13567,
+      "sha256": "43ebe2d8b940703ff5aa67ccc6f430de5789d976ef6e6776259fe2d85041bea4",
+      "observation": "Reviewed Plan Amendment 01; implementation scope and gates."
+    },
+    {
+      "evidence_id": "E_PLAN_CONTRACT",
+      "path": "plan-contract.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-contract.json",
+      "bytes": 2757,
+      "sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7",
+      "observation": "Format 3 local contract."
+    },
+    {
+      "evidence_id": "E_HANDOFF_JSON",
+      "path": "handoff.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.json",
+      "bytes": 2757,
+      "sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7",
+      "observation": "Byte-identical contract handoff."
+    },
+    {
+      "evidence_id": "E_HANDOFF",
+      "path": "handoff.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.md",
+      "bytes": 7784,
+      "sha256": "5cbd6be4b27688b5d20efe49e793cc5d264cf6011a43733ec0413d52e53924e6",
+      "observation": "Deterministic Implementer handoff."
+    },
+    {
+      "evidence_id": "E_CHECK_SPECS",
+      "path": "check-specs.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/check-specs.json",
+      "bytes": 6581,
+      "sha256": "258a30213850153024b4fc97afe38f28b7ad4382103e2f5c78b1e8859bb30ffb",
+      "observation": "Frozen commands; no product command was run."
+    },
+    {
+      "evidence_id": "E_PLAN_REVIEW",
+      "path": "plan-amendment-01-review.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-amendment-01-review.md",
+      "bytes": 1490,
+      "sha256": "d1d7469a4ba56ae8f62716cabbb7945c3f57c6d6f7e0553cd6d079309ee72bcf",
+      "observation": "Independent local read-only amendment review."
+    },
+    {
+      "evidence_id": "E_HELPER_NOTES",
+      "path": "plan-amendment-01-helper-notes.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-amendment-01-helper-notes.md",
+      "bytes": 2431,
+      "sha256": "aa9ae6d0803e9e1cda6d0096fb5ed9fd4faf9340b8ab722d48820ca859f89463",
+      "observation": "Three advisory read-only helper findings."
+    },
+    {
+      "evidence_id": "E_IMPLEMENTER_REPORT",
+      "path": "E2E測試報告.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/E2E測試報告.md",
+      "bytes": 21815,
+      "sha256": "168dc950512ab10872447840ca7fbe3ab267f34965e52bd5a6f2639794d0bb5d",
+      "observation": "Full implementation-stage blocker report."
+    },
+    {
+      "evidence_id": "E_PROGRESS",
+      "path": "progress.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/progress.md",
+      "bytes": 5604,
+      "sha256": "508eb5a96812d8f5a818eb8e71d9761f0b00e4e4776cb494abeb9875fc8a4ca3",
+      "observation": "Plain-language status and next decision."
+    },
+    {
+      "evidence_id": "E_BASELINE_FAILURE",
+      "path": "evidence/g-baseline.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline.json",
+      "bytes": 142531,
+      "sha256": "b8837c5dc8aadccf46e24c25d768ed57fa4dde7e7644e5938448b90e67ef464d",
+      "observation": "Immutable failed baseline receipt; inventory incomplete."
+    },
+    {
+      "evidence_id": "E_BASELINE_FAILURE_DETAIL",
+      "path": "evidence/g-baseline-failure-detail.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline-failure-detail.json",
+      "bytes": 1680,
+      "sha256": "c0ce0019b68df53f72e2b0e6ab2c0e0ac151df2c3dd8e6619c7289ed38a6a005",
+      "observation": "Read-only FIFO lstat and Git classification."
+    },
+    {
+      "evidence_id": "E_BASELINE_ATTEMPT_01_INVOCATION",
+      "path": ".local/implementer-baseline-attempt-01.invocation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/implementer-baseline-attempt-01.invocation.json",
+      "bytes": 1595,
+      "sha256": "2bba45fe6ca80c1fcacbcde911e71081d90e3ae1b27321fe9da927799706c032",
+      "observation": "First baseline-helper invocation record."
+    },
+    {
+      "evidence_id": "E_BASELINE_ATTEMPT_01_STDERR",
+      "path": ".local/implementer-baseline-attempt-01.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/implementer-baseline-attempt-01.stderr",
+      "bytes": 1049,
+      "sha256": "327d40c8511455adcbb6dcd376cfd8e0d08404f96916c7e76c24f5846db1a8ec",
+      "observation": "Saved first baseline-helper traceback."
+    },
+    {
+      "evidence_id": "E_BASELINE_ATTEMPT_01_STDOUT",
+      "path": ".local/implementer-baseline-attempt-01.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/implementer-baseline-attempt-01.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observation": "First attempt empty stdout."
+    },
+    {
+      "evidence_id": "E_INCOMPLETE_MANIFEST",
+      "path": ".local/implementer-preexisting-files.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/implementer-preexisting-files.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "observation": "Three-byte empty JSON list emitted after inventory failed; not a snapshot."
+    },
+    {
+      "evidence_id": "E_BASELINE_RAW_STATUS",
+      "path": ".local/implementer-preexisting-status.z",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/implementer-preexisting-status.z",
+      "bytes": 11951956,
+      "sha256": "9476ae506c9dbf0193544cf76d67ddc891341c2671d5fa3b477c984c47d8fd6d",
+      "observation": "Raw Git status from failed baseline attempt."
+    },
+    {
+      "evidence_id": "E_BASELINE_HELPER",
+      "path": ".local/implementer_baseline.py",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/implementer_baseline.py",
+      "bytes": 28375,
+      "sha256": "f0f3a6dd7bb58ea1b436a188ef475982d38242de7ec621ebafa84cf175ee6397",
+      "observation": "Local baseline/preservation helper source; not the product runner."
+    },
+    {
+      "evidence_id": "E_LOCAL_PYCOMPILE_ARTIFACT",
+      "path": ".local/__pycache__/implementer_baseline.cpython-313.pyc",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/__pycache__/implementer_baseline.cpython-313.pyc",
+      "bytes": 37625,
+      "sha256": "a3b9f1fb2f4220be926bda0b305826644624840417a87e8d39e30bcd8774fa14",
+      "observation": "Unintended local Python compile artifact created before baseline."
+    },
+    {
+      "evidence_id": "E_HISTORIC_MANIFEST",
+      "path": ".local/preexisting-files.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/preexisting-files.json",
+      "bytes": 27949525,
+      "sha256": "b115df6ea55e3a985e98651018e742769b02e6f7854989e68f8d7214680832f2",
+      "observation": "Historical document-stage manifest; not a fresh gate."
+    },
+    {
+      "evidence_id": "E_HISTORIC_STATUS",
+      "path": ".local/preexisting-status.z",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/preexisting-status.z",
+      "bytes": 11943372,
+      "sha256": "67f7855774654f9f32f635fba5dbc80262b1e72fc950d32df00360a39fa40f04",
+      "observation": "Historical document-stage raw Git status."
+    },
+    {
+      "evidence_id": "E_HISTORIC_BASELINE",
+      "path": "baseline.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/baseline.json",
+      "bytes": 2038,
+      "sha256": "616e31f3f76254235ad664c55763bdc78f6503de8242aa041873949eab3d4dde",
+      "observation": "Historical publication baseline explicitly not an implementation pass."
+    },
+    {
+      "evidence_id": "E_INCIDENT_RECONCILIATION",
+      "path": "incident-reconciliation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/incident-reconciliation.json",
+      "bytes": 5045,
+      "sha256": "f7ed1782ccb48f83ea3be58d8e3e2143e95069d38a54f4a3cd6c1e531406ab63",
+      "observation": "Original out-of-scope receipts and readback records."
+    },
+    {
+      "evidence_id": "E_NATIVE_ADMISSION",
+      "path": "native-admission.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/native-admission.json",
+      "bytes": 904,
+      "sha256": "5592b23c20ea46fa8896899ac3c4b6e4f122abce482c25ffd3ccef0e50c9aec5",
+      "observation": "Native Harness remains NOT_RUN."
+    },
+    {
+      "evidence_id": "E_LINEAGE",
+      "path": "lineage.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/lineage.json",
+      "bytes": 2765,
+      "sha256": "a5df41e2b5d9d1d755ecf662f3b3f9ed79476e66a7d44c5ff6e249ea4aa89394",
+      "observation": "Parent attempt counts and status facts."
+    },
+    {
+      "evidence_id": "E_ADAPTER_SOURCE",
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/scripts/line_backup_cua_adapter.mjs",
+      "bytes": 39953,
+      "sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "observation": "Unchanged candidate adapter source; read-only reference."
+    },
+    {
+      "evidence_id": "E_EXISTING_ADAPTER_TEST",
+      "path": "tests/test_cua_adapter.mjs",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_cua_adapter.mjs",
+      "bytes": 18529,
+      "sha256": "0bb0d99636f35150272fc952b6efa84261e1e9c68375225787221b8b389662bd",
+      "observation": "Pre-existing dirty suite; read-only reference."
+    },
+    {
+      "evidence_id": "E_STATE",
+      "path": "state/backup_state.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/state/backup_state.json",
+      "bytes": 252115,
+      "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+      "observation": "Read-only state snapshot."
+    },
+    {
+      "evidence_id": "E_CONFIG",
+      "path": "config/line_backup_config.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/config/line_backup_config.json",
+      "bytes": 384,
+      "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+      "observation": "Read-only backup configuration."
+    },
+    {
+      "evidence_id": "E_GUI_LEDGER",
+      "path": "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+      "bytes": 123,
+      "sha256": "92bab0cf122871b42f3db62af956289b62fbf4e279219766a8850b61f20e135f",
+      "observation": "Read-only GUI ledger."
+    },
+    {
+      "evidence_id": "E_PARENT_ATTEMPT_LEDGER",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+      "bytes": 10014,
+      "sha256": "205461d838d4d1b4d596c5637e03ea087373d229837c3b4aec57fe5a4cdeba1a",
+      "observation": "Read-only parent attempt ledger."
+    },
+    {
+      "evidence_id": "E_INCIDENT_01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.invocation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.invocation.json",
+      "bytes": 303,
+      "sha256": "e6af579520a315edb79877c4fb7fb6ecab8066cd9f1c4c9fccd396d296bc9e3e",
+      "observation": "Original incident receipt; unchanged."
+    },
+    {
+      "evidence_id": "E_INCIDENT_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.receipt.json",
+      "bytes": 678,
+      "sha256": "e1d16b370f6f7c9d7d6275e8afd21fe77946dececef290ebc64a740914637719",
+      "observation": "Original incident receipt; unchanged."
+    },
+    {
+      "evidence_id": "E_INCIDENT_03",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observation": "Original incident receipt; unchanged, empty stream."
+    },
+    {
+      "evidence_id": "E_INCIDENT_04",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stderr",
+      "bytes": 318,
+      "sha256": "8948d951d254f345d8f1ce65686618a314622897641a6a037058ed782bff1fa4",
+      "observation": "Original incident receipt; unchanged."
+    },
+    {
+      "evidence_id": "E_PYTHON_RUNTIME",
+      "path": "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "absolute_path": "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "bytes": 52640,
+      "sha256": "34af8eed630f46919dcb77457077ae3564f7cd25f5d83c56530e64d00de78804",
+      "observation": "Pinned host Python runtime; read-only hash check."
+    },
+    {
+      "evidence_id": "E_NODE_RUNTIME",
+      "path": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+      "absolute_path": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+      "bytes": 50320,
+      "sha256": "1ef99ea25fe70c9b67e7efe768ef8ee22148d3cabc703db6131b57aeb617d040",
+      "observation": "Pinned Node runtime; read-only hash check."
+    }
+  ],
+  "special_object": {
+    "path": "evidence/20260916-auto-verification/attempt-01/archive-phase1/private-tmp/line-backup-acceptance-verifier/special/backup/destination/special.fifo",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/archive-phase1/private-tmp/line-backup-acceptance-verifier/special/backup/destination/special.fifo",
+    "kind": "FIFO",
+    "content_read": false,
+    "content_hash": null,
+    "evidence_id": "E_BASELINE_FAILURE_DETAIL"
+  },
+  "self_reference": "Excluded; the manifest is verified by the role result and readback.",
+  "result_path": "evidence/implementation-result.json",
+  "native_harness_schema_validation": "NOT_RUN"
+}

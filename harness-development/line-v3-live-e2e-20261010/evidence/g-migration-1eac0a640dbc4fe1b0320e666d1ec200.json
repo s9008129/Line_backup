@@ -1,0 +1,52 @@
+{
+  "changed_top_level_keys": [
+    "revision",
+    "schema_version",
+    "active_batch"
+  ],
+  "current_run_id_unchanged": true,
+  "generated_at": "2026-10-10T10:01:04.637532+00:00",
+  "grant": {
+    "bytes": 1342,
+    "path": "harness-development/line-v3-live-e2e-20261010/live-grant-1.json",
+    "sha256": "3546288758d70aca6e7e306b858e96da0337d03a6f897dac370f5aca5aeff234"
+  },
+  "input": {
+    "bytes": 793,
+    "path": "harness-development/line-v3-live-e2e-20261010/inputs/migrate-1.json",
+    "sha256": "7d8763e3499b676aa9a39149d0a7f6e65a458af8328821a260d85834b834cfee"
+  },
+  "kind": "g-migration-receipt",
+  "new_sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+  "old_raw_sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9",
+  "readback": {
+    "active_batch": null,
+    "active_writer_id": null,
+    "revision": 35,
+    "schema_version": 3,
+    "verified_count": 2
+  },
+  "runs_identical": true,
+  "snapshot": {
+    "bytes": 252091,
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/state-schema2-snapshot-01.json",
+    "sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9"
+  },
+  "state_after": {
+    "bytes": 252115,
+    "path": "state/backup_state.json",
+    "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6"
+  },
+  "status": "PASS",
+  "stderr": {
+    "bytes": 0,
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/migrate-1.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 949,
+    "path": "harness-development/line-v3-live-e2e-20261010/evidence/migrate-1.stdout",
+    "sha256": "f8bbb80335d042ecbc657bfe4231fc984eb4ed7a9b74dd80b4cb15714edb478f"
+  },
+  "verified_albums_identical": true
+}

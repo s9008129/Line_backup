@@ -1,0 +1,91 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-497487f77d8e438394e37742f0c374f5",
+  "run_id": "95540041-bca5-47a3-8e92-a0ec9b032920",
+  "role": "PLANNER",
+  "stage": "PLAN",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "HANDOFF",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "NOT_REQUIRED",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G1_ACCEPTED_SOURCE_EVIDENCE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G2_EXACT_PUBLICATION",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G3_PRESERVATION",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G4_GIT_DELIVERY",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    }
+  ],
+  "evidence_ids": [
+    "initial-snapshot"
+  ],
+  "plan_sha256": "8f73bd0195405ac08a3f142766f45db2e81c507ab331d3e8f33cec08043013f0",
+  "handoff_sha256": "0796b081731ea80e462d606966845f85d20e48870b82b142c779949c63dfe27a",
+  "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-497487f77d8e438394e37742f0c374f5",
+      "run_id": "95540041-bca5-47a3-8e92-a0ec9b032920",
+      "role": "PLANNER",
+      "stage": "PLAN",
+      "source_sha256": "097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19",
+      "evidence_id": "initial-snapshot",
+      "path": "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/start-snapshot.json",
+      "bytes": 2176157,
+      "sha256": "77e4e9bc0c44a94983f22960c42330a4b5355f1f39a70100a26a25898c148b48",
+      "contract_sha256": "0796b081731ea80e462d606966845f85d20e48870b82b142c779949c63dfe27a",
+      "observation": "Actual initial HEAD/index and all dirty/untracked regular file or symlink payload bytes/modes, plus root handoff, preserved before edits."
+    }
+  ],
+  "plan_contract_sha256": "0796b081731ea80e462d606966845f85d20e48870b82b142c779949c63dfe27a",
+  "analysis": {
+    "facts": [
+      "User explicitly requested add/commit/push.",
+      "HEAD c19fc90 published handoff only; accepted repair remains dirty.",
+      "Current 49-file source equals independently accepted aggregate 097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19.",
+      "Source Critical independent reviews remain unchanged; this QUICK packaging makes no product byte changes."
+    ],
+    "inferences": [
+      "Publishing exact accepted code and bounded text traceability resolves remote/local source mismatch."
+    ],
+    "unknowns": [
+      "Native controller/proxy/OS sandbox enforcement unavailable or unproven; no claim.",
+      "Whole native automation remains incomplete; publication cannot discharge its gates."
+    ],
+    "evidence": [
+      "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/start-snapshot.json"
+    ],
+    "confidence": "HIGH"
+  },
+  "handoff_summary": "依明示授权发布 exact accepted source、测试与选择的文字证据；两份 navigation 更新 Git 状态。保留照片、live state/config 与完整历史证据，不操作 LINE；四项发布核对全通过才 DONE，整套原生验收不变。",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 0,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Publication plan frozen before any navigation edit or Git staging.",
+    "information_gain": true,
+    "stuck": false
+  }
+}

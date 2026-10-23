@@ -1,0 +1,189 @@
+{
+  "format": "local-diagnostic-spec-1",
+  "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+  "normative_procedure": {
+    "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/handoff.md",
+    "bytes": 34206,
+    "sha256": "e207b97d69fe8da22a4d54a2637cdf4e3b82b911a5fb72b941f2a1a6bbaf7831"
+  },
+  "reviewed_plan": {
+    "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-as-submitted.md",
+    "bytes": 7830,
+    "sha256": "d8e0031fa8ef1d7a0a0f260de3682db26421d5779dffc1d1fd1a124969bc5387"
+  },
+  "review_result": {
+    "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-review-01.result.json",
+    "bytes": 8555,
+    "sha256": "09acf8d2391b943217da8a2d211099a3144d8b4da9a4fa98095d8fb346e4d884"
+  },
+  "read_precedence": [
+    "latest_user_authorization",
+    "reviewed_plan",
+    "handoff_mechanical_details",
+    "documented_CUA_runtime"
+  ],
+  "scope": {
+    "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+    "allowed_paths": [
+      "harness-development/catalog-diagnostic-continuity-replan-20261010/"
+    ],
+    "immutable_packet_inputs": true,
+    "public_state_schema_change": false,
+    "max_parallel_read_only_helpers": 0,
+    "max_parallel_writers": 0
+  },
+  "ocr": {
+    "primary": "Vision RecognizeTextRequest",
+    "diagnostic": "Vision VNRecognizeTextRequest",
+    "apis_independent": false,
+    "level": "accurate",
+    "languages": [
+      "zh-Hant",
+      "en-US"
+    ],
+    "top_candidates": 3,
+    "confidence_threshold": null,
+    "confidence_calibration": "UNKNOWN",
+    "fixed_labels": {
+      "correction": true,
+      "custom_words": [
+        "相簿",
+        "記事本"
+      ]
+    },
+    "offline_fixed_label_comparison": {
+      "correction": false,
+      "custom_words": [],
+      "comparison_runs": 1,
+      "does_not_select_live_profile": true
+    },
+    "identity_header_metadata": {
+      "correction": false,
+      "custom_words": []
+    }
+  },
+  "raster": {
+    "actual_format_from_content": true,
+    "canonical": "RGBA8 sRGB opaque alpha=255 top-left",
+    "roi_min": "floor",
+    "roi_max": "ceil",
+    "roi_half_open": true,
+    "new_ocr_transform": "crop first, nearest-neighbor 2x; source coordinate = crop origin + derivative coordinate/2",
+    "text_guard": "full-slot exact RGBA; exclusions frozen at bootstrap and non-text only",
+    "text_padding_capture_pixels": 1,
+    "indicator": "raw RGBA retained; independently compare fixed structural bright mask/bbox/relative selected tab; no whole-boundary-band RGB-equality veto",
+    "indicator_luma": "(54R+183G+19B)>>8",
+    "indicator_bright_at_least": 128,
+    "indicator_connectivity": 8,
+    "indicator_filter_small_components": false,
+    "adaptive_tolerance_allowed": false
+  },
+  "identity": {
+    "key": [
+      "group_key",
+      "start_date",
+      "end_date",
+      "positive_count"
+    ],
+    "date_format": "YYYY/MM/DD [~～〜-] [YYYY/]MM/DD; optional whitespace; omitted end year inherits start year only",
+    "best_candidate_must_parse": true,
+    "different_valid_candidate_stops": true,
+    "different_valid_API_identity_stops": true,
+    "legacy_missing_is_not_agreement": true,
+    "qualified_overlap_requires_both_API_complete_same_identity": true,
+    "count_unique_below_date": true,
+    "pair_vertical_gap": "<=2*max(date.height,count.height)",
+    "pair_left_edge_delta": "<=max(date.height,count.height)",
+    "partial_rows_bridge": false
+  },
+  "movement": {
+    "range": "[current.ymin-previous.ymax,current.ymax-previous.ymin]",
+    "all_fields": [
+      "date",
+      "count"
+    ],
+    "all_shared_identities": true,
+    "every_upper_strictly_negative": true,
+    "common_interval_nonempty": true,
+    "positive_horizontal_projection_overlap": true,
+    "range_is_calibrated_confidence_bound": false,
+    "unchanged_identity_set_is_not_no_progress": true,
+    "transport_or_AX_alone_proves_effect": false
+  },
+  "coverage": {
+    "adjacent_overlap": "ordered previous suffix == current prefix, length >=1",
+    "partial_or_unconfirmed_bridge": false,
+    "full_collection_coverage": "NOT_ESTABLISHED"
+  },
+  "live": {
+    "permitted_CUA_operations": [
+      "getApp",
+      "getAXStateAndScreenshot",
+      "App.scroll"
+    ],
+    "direction": "down",
+    "pages_per_call": 0.25,
+    "max_total_scroll_calls": 6,
+    "single_input_then_fresh_observation": true,
+    "max_pre_input_age_seconds": 5,
+    "freshness_origin": "capture time if actual; otherwise conservative request-start upper bound",
+    "max_read_only_pre_input_refreshes": 2,
+    "max_unknown_effect_read_only_observations": 2,
+    "unknown_effect_delays_seconds": [
+      10,
+      30
+    ],
+    "unknown_effect_resend": false,
+    "error_resend": false,
+    "restart_or_resume_live_slot": false,
+    "requires_offline_PASS": true,
+    "requires_same_candidate_independent_pre_live_PASS": true,
+    "requires_new_foreground_readiness": true,
+    "album_open_allowed": false,
+    "save_all_allowed": false,
+    "live_state_write_allowed": false
+  },
+  "budget": {
+    "historic_method_attempts": 3,
+    "authorized_additional_fixed_method_slots": 1,
+    "consumed_before_first_new_OCR": true,
+    "public_v3_convergence_maximum": 3,
+    "total_3_plus_actual_extension_recorded_separately": true,
+    "task_rename_resets_budget": false
+  },
+  "evidence": "All traces/captures/derivatives/stdout/stderr/tests/decisions exclusive-create and append-only; visual-only classification OBSERVED.",
+  "required_test_ids": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20"
+  ],
+  "formal_validation": {
+    "controller_admission": "BLOCKED",
+    "stage_packet": "NOT_AVAILABLE",
+    "CONTRACT_validation": "NOT_RUN",
+    "RESULT_validation": "NOT_RUN",
+    "native_DONE_allowed": false
+  },
+  "packet_verification": {
+    "required_current_records": "REQUIRED_CURRENT_HASH",
+    "git_prepublication_record": "PROVENANCE_ONLY",
+    "implementation_Git_baseline": "Capture fresh at IMPLEMENT start after handoff publication; do not compare to prepublication index."
+  }
+}

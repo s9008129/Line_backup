@@ -1,0 +1,43 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "artifact_dir": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03",
+  "contract_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-contract.json",
+  "contract_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+  "source_sha256": "6acdec34fbfd163e560bbe8ec93661a64a4bd8fcb24f0ced9e27971e99b69064",
+  "config_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+  "authorized_owners": [
+    "live-grounding-03-g1",
+    "live-grounding-03-g2"
+  ],
+  "decision_code": "A",
+  "decision_ref": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/implement-02/user-decision-A.json",
+    "bytes": 3666,
+    "sha256": "ff05bf65c9f6c8d687ef04cdc0e5aa0199ce31f25c528205078f1620f45c4097"
+  },
+  "plan_review_decision": "USER_WAIVED_NOT_RUN",
+  "plan_review_waiver_ref": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-review-waiver.json",
+    "bytes": 666,
+    "sha256": "1e4524ab74f54b98237e4a629f6e0c868be65ac6180aca192eca814b144aa163"
+  },
+  "sensor_scope": {
+    "bundle_id": "jp.naver.line.mac",
+    "provider": "SCREEN_CAPTURE_KIT",
+    "capture_scope": "FULL_DISPLAY",
+    "surfaces": [
+      "ALBUMS",
+      "ALBUM_DETAIL",
+      "FOLDER_CHOOSER"
+    ],
+    "menu_capture_guard": true
+  },
+  "album_quota": 2,
+  "config_albums_per_lifecycle": 1,
+  "save_all_dispatch_cap": 2,
+  "chooser_confirmation_cap": 2,
+  "additional_reversible_gui_invocation_cap": 1000,
+  "independent_acceptance_required": true
+}

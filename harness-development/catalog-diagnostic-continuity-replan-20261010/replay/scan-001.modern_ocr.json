@@ -1,0 +1,91 @@
+{
+  "confidenceCalibration" : "UNKNOWN",
+  "imageHeight" : 2572,
+  "imageWidth" : 1308,
+  "items" : [
+    {
+      "boxTopLeftPixels" : [
+        461.01639321156023,
+        182.18333328714078,
+        385.96721311475397,
+        53.583333333333428
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.5,
+          "text" : "旻謙允禎成長日記"
+        }
+      ],
+      "confidence" : 0.5,
+      "text" : "旻謙允禎成長日記"
+    },
+    {
+      "boxTopLeftPixels" : [
+        273.39344235491808,
+        321.49999984240191,
+        101.85245901639337,
+        53.583333333333428
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.30000001192092896,
+          "text" : "相簿"
+        }
+      ],
+      "confidence" : 0.30000001192092896,
+      "text" : "相簿"
+    },
+    {
+      "boxTopLeftPixels" : [
+        900.59016366639355,
+        326.85833324059286,
+        150.09836065573779,
+        48.225000000000136
+      ],
+      "candidates" : [
+        {
+          "confidence" : 1,
+          "text" : "記事本"
+        }
+      ],
+      "confidence" : 1,
+      "text" : "記事本"
+    },
+    {
+      "boxTopLeftPixels" : [
+        58.967210300409889,
+        1178.8333326635418,
+        471.73770491803282,
+        53.583333333333258
+      ],
+      "candidates" : [
+        {
+          "confidence" : 0.5,
+          "text" : "2024\/06\/02～06\/07"
+        }
+      ],
+      "confidence" : 0.5,
+      "text" : "2024\/06\/02～06\/07"
+    },
+    {
+      "boxTopLeftPixels" : [
+        58.967213248770484,
+        1248.4916660638542,
+        64.327868852459005,
+        48.225000000000136
+      ],
+      "candidates" : [
+        {
+          "confidence" : 1,
+          "text" : "65"
+        }
+      ],
+      "confidence" : 1,
+      "text" : "65"
+    }
+  ],
+  "method" : "Vision RecognizeTextRequest",
+  "screenCapture" : false,
+  "source" : "\/Users\/hsiaojohnny\/Documents\/ChatGPT\/Line_backup\/harness-development\/catalog-diagnostic-20261010\/scan-001.scale2.png",
+  "uiInputsSent" : 0
+}

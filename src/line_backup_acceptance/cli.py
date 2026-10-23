@@ -24,6 +24,11 @@ def _common(parser):
 def parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(prog="line_backup_acceptance")
     sub = ap.add_subparsers(dest="command")
+    preflight = sub.add_parser("project-preflight")
+    preflight.add_argument("--project-root", required=True)
+    preflight.add_argument("--start-date", required=True)
+    preflight.add_argument("--end-date", required=True)
+    preflight.add_argument("--expected-images", required=True, type=int)
     verify = sub.add_parser("verify-only")
     _common(verify)
     verify.add_argument("--destination")
@@ -81,6 +86,9 @@ def _error(ns, exc: AcceptanceError) -> int:
 def main(argv=None) -> int:
     ap = parser()
     ns = ap.parse_args(argv)
+    if ns.command == "project-preflight":
+        from . import project_binding
+        return project_binding.run(ns)
     try:
         if ns.command == "verify-only":
             result, code = verifier.inspect(ns)

@@ -1,0 +1,36 @@
+{
+  "kind": "DETERMINISTIC_LOCAL_HANDOFF_NOT_NATIVE_CONTROLLER",
+  "created_at": "2026-10-10T15:51:15.772652+00:00",
+  "plan": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan.md",
+    "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan.md",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan.md",
+    "bytes": 21119,
+    "sha256": "c8ed33dfa1040c9c7843fda7008167eb14b7c0b9f45e94f6cee1c40419e65aaf"
+  },
+  "contract": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan-contract.json",
+    "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan-contract.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan-contract.json",
+    "bytes": 6455,
+    "sha256": "a83bec99428ad66ae32e1795dfb17545e8dbd7df4df802cfb54b9f4e8b345883"
+  },
+  "handoff_json": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/handoff.json",
+    "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/handoff.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/handoff.json",
+    "bytes": 6455,
+    "sha256": "a83bec99428ad66ae32e1795dfb17545e8dbd7df4df802cfb54b9f4e8b345883"
+  },
+  "handoff_markdown": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/handoff.md",
+    "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/handoff.md",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/handoff.md",
+    "bytes": 11168,
+    "sha256": "855261ee24d61173692e63024cb4129eb0803e264124c2075a5b37bc028c0715"
+  },
+  "exact_contract_copy": true,
+  "handoff_review_required": false,
+  "handoff_reviewer_invoked": false,
+  "native_admission": "NOT_RUN"
+}

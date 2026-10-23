@@ -1,0 +1,148 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261010-catalog-diagnostic",
+  "run_id": "9970ce46-d4d0-4cd1-b646-ce4b69eaa2a6",
+  "role": "IMPLEMENTER",
+  "stage": "IMPLEMENT",
+  "candidate_fact": "BLOCKED",
+  "validation_fact": "VALID",
+  "routing_fact": "BLOCKED",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "BLOCKED",
+    "CORE_ACCEPTANCE_STATUS": "BLOCKED",
+    "REQUIRED_VERIFICATION_STATUS": "FAIL",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "NOT_REQUIRED",
+    "TASK_CLOSURE_STATUS": "IMPLEMENTATION_BLOCKED"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G1",
+      "verdict": "PASS",
+      "evidence_manifest": "G1"
+    },
+    {
+      "gate_id": "G2",
+      "verdict": "FAIL",
+      "evidence_manifest": "G2"
+    },
+    {
+      "gate_id": "G3",
+      "verdict": "PASS",
+      "evidence_manifest": "G3"
+    }
+  ],
+  "evidence_ids": [
+    "G1",
+    "G2",
+    "G3",
+    "PREFIX",
+    "REVIEW"
+  ],
+  "plan_sha256": "525e3b3dd811de4a07c47a659c4441f9fc877ffb6426f5c2c0d5d41a138021fb",
+  "handoff_sha256": "79d4bc11af408e05f5897a8a0db39adb598c18e6209bbca4dc8611cc7935ddad",
+  "source_sha256": "ce44790a2f543e7727534ee6165b9483e31963d3ff5926e89b982b666c952edc",
+  "plan_contract_sha256": "79d4bc11af408e05f5897a8a0db39adb598c18e6209bbca4dc8611cc7935ddad",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic",
+      "run_id": "9970ce46-d4d0-4cd1-b646-ce4b69eaa2a6",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "ce44790a2f543e7727534ee6165b9483e31963d3ff5926e89b982b666c952edc",
+      "evidence_id": "G1",
+      "path": "harness-development/catalog-diagnostic-20261010/scan-000.agreement.json",
+      "bytes": 890,
+      "sha256": "d738f6d1ffdda3697953a3f2ac878e48136df9ef4d69eb40d842d4f985179e30",
+      "contract_sha256": "79d4bc11af408e05f5897a8a0db39adb598c18e6209bbca4dc8611cc7935ddad",
+      "observation": "Actual bounded diagnostic evidence; visual findings remain OBSERVED."
+    },
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic",
+      "run_id": "9970ce46-d4d0-4cd1-b646-ce4b69eaa2a6",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "ce44790a2f543e7727534ee6165b9483e31963d3ff5926e89b982b666c952edc",
+      "evidence_id": "G2",
+      "path": "harness-development/catalog-diagnostic-20261010/scan-003.failure.json",
+      "bytes": 101,
+      "sha256": "1d8b1f34ed3ad8e9ffac2d1114c05b5fb64771a2ff3aadd8fc9e012c044ede1a",
+      "contract_sha256": "79d4bc11af408e05f5897a8a0db39adb598c18e6209bbca4dc8611cc7935ddad",
+      "observation": "Actual bounded diagnostic evidence; visual findings remain OBSERVED."
+    },
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic",
+      "run_id": "9970ce46-d4d0-4cd1-b646-ce4b69eaa2a6",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "ce44790a2f543e7727534ee6165b9483e31963d3ff5926e89b982b666c952edc",
+      "evidence_id": "G3",
+      "path": "harness-development/catalog-diagnostic-20261010/preservation.json",
+      "bytes": 1154,
+      "sha256": "4bd1bec6cf0d2e6df588b06fdcc9fd78315ab5c2ee07178c5ed1c4aa154e01a1",
+      "contract_sha256": "79d4bc11af408e05f5897a8a0db39adb598c18e6209bbca4dc8611cc7935ddad",
+      "observation": "Actual bounded diagnostic evidence; visual findings remain OBSERVED."
+    },
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic",
+      "run_id": "9970ce46-d4d0-4cd1-b646-ce4b69eaa2a6",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "ce44790a2f543e7727534ee6165b9483e31963d3ff5926e89b982b666c952edc",
+      "evidence_id": "PREFIX",
+      "path": "harness-development/catalog-diagnostic-20261010/scan-002.agreement.json",
+      "bytes": 1574,
+      "sha256": "84a1dfeeffb5007dbf0cc1a4e3743cec11051545b74a4423240a32f81473df7d",
+      "contract_sha256": "79d4bc11af408e05f5897a8a0db39adb598c18e6209bbca4dc8611cc7935ddad",
+      "observation": "Actual bounded diagnostic evidence; visual findings remain OBSERVED."
+    },
+    {
+      "task_id": "TASK-20261010-catalog-diagnostic",
+      "run_id": "9970ce46-d4d0-4cd1-b646-ce4b69eaa2a6",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "ce44790a2f543e7727534ee6165b9483e31963d3ff5926e89b982b666c952edc",
+      "evidence_id": "REVIEW",
+      "path": "harness-development/catalog-diagnostic-20261010/review-03.txt",
+      "bytes": 458,
+      "sha256": "c5698b9126e4f166f233c425d5bc022384e7be136fb0bc145cfe93e1ab27b7d2",
+      "contract_sha256": "79d4bc11af408e05f5897a8a0db39adb598c18e6209bbca4dc8611cc7935ddad",
+      "observation": "Actual bounded diagnostic evidence; visual findings remain OBSERVED."
+    }
+  ],
+  "analysis": {
+    "facts": [
+      "Three native single.25page scrolls RETURNED, each with fresh capture and task-local pretrace/readback.",
+      "Start/firsttwo postframes met reviewed fixed OCR agreement; normalized65/56 metadata discovered.",
+      "Thirdpostframe legacy相簿 vs modern相溥 requiredagreement FAIL; stopped without resend/tuning.",
+      "Controls/Git unchanged; no clicks/keys/albumopen/menu/SaveAll/chooser/download/statewrite."
+    ],
+    "inferences": [
+      "Current fixed fullframe OCR method is insufficient for stable crossframe tab recognition.",
+      "Partial discoveries and successfulprefix do not prove complete collection coverage or production readiness."
+    ],
+    "unknowns": [
+      "Confidence calibration UNKNOWN; both APIs shareVision, not independent.",
+      "Nativeownership/OSenforcement UNKNOWN; controlleradmission NOT_RUN.",
+      "Completecollectioncoverage NOT_RUN; header pixel equality NOT_RUN."
+    ],
+    "evidence": [
+      "G1",
+      "G2",
+      "G3",
+      "PREFIX",
+      "REVIEW"
+    ],
+    "confidence": "High for exact rawoutputs, action trace and preserved controls; no claim of full catalog or production safety."
+  },
+  "handoff_summary": "Boundedno-downloaddiagnostic stopped after3scrolls: first2overlap/effectchecksPASS, third tabOCRdisagreement相簿/相溥FAIL. Partial65/56 metadata retained. No albumopening/download/statewrite; controls/Git preserved. UsermayresumeLINE; nextwork is offline fixedtab/continuity reproduction and reviewed repair.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 3,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Final fixed2x agreement candidate passed probe/review, then third livepostframe failed exacttabagreement; stopped with new crossframe evidence.",
+    "information_gain": true,
+    "stuck": true
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "actor_id": "/root/ml08_adapter",
+  "information_gain": true,
+  "outcome": "COMPLETED",
+  "platform_session_id": "01a12e01-11c6-7421-82e5-4b65f190d671",
+  "raw_path": "operator-records/adapter-completion.raw.json",
+  "raw_sha256": "5d3a9e5bbc27ed2bb62eb06260599664cf2dfeee7c74a4cadd2ed00b997ffeed",
+  "reported_effort": null,
+  "reported_model": null,
+  "requested_effort": "high",
+  "requested_model": "gpt-6-luna",
+  "run_id": "d895b8ed-a814-4785-85ee-9e39b9e52559",
+  "source": "TRUSTED_OPERATOR",
+  "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+  "worker_id": "adapter"
+}

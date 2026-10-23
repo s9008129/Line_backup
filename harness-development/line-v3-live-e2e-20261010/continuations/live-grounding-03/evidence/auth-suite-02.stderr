@@ -1,0 +1,29 @@
+test_cli_explicit_authority_and_opaque_receipt (test_batch_authority.AuthorityTests.test_cli_explicit_authority_and_opaque_receipt) ... ok
+test_config_drift_blocks_even_fresh_receipt (test_batch_authority.AuthorityTests.test_config_drift_blocks_even_fresh_receipt) ... ok
+test_fixture_grant_is_operation_exact_and_cannot_dispatch (test_batch_authority.AuthorityTests.test_fixture_grant_is_operation_exact_and_cannot_dispatch) ... ok
+test_fixture_service_intent_is_not_live_dispatch_capability (test_batch_authority.AuthorityTests.test_fixture_service_intent_is_not_live_dispatch_capability) ... ok
+test_foreign_owner_has_no_inter_album_window (test_batch_authority.AuthorityTests.test_foreign_owner_has_no_inter_album_window) ... ok
+test_generic_mutation_has_no_production_authorization_fallback (test_batch_authority.AuthorityTests.test_generic_mutation_has_no_production_authorization_fallback) ... ok
+test_legacy_canonical_replacement_refused (test_batch_authority.AuthorityTests.test_legacy_canonical_replacement_refused) ... ok
+test_missing_lock_refuses_before_creation (test_batch_authority.AuthorityTests.test_missing_lock_refuses_before_creation) ... ok
+test_missing_state_never_initializes (test_batch_authority.AuthorityTests.test_missing_state_never_initializes) ... ok
+test_old_operator_idle_v3_refuses_before_lock_or_destination (test_batch_authority.AuthorityTests.test_old_operator_idle_v3_refuses_before_lock_or_destination) ... ok
+test_operation_label_cannot_mutate_an_unrelated_state_section (test_batch_authority.AuthorityTests.test_operation_label_cannot_mutate_an_unrelated_state_section) ... ok
+test_persisted_intents_bound_two_separate_lifecycles (test_batch_authority.AuthorityTests.test_persisted_intents_bound_two_separate_lifecycles) ... ok
+test_production_api_without_grant_refuses (test_batch_authority.AuthorityTests.test_production_api_without_grant_refuses) ... ok
+test_source_drift_blocks (test_batch_authority.AuthorityTests.test_source_drift_blocks) ... ok
+test_stale_revision_hash_and_inode_refused (test_batch_authority.AuthorityTests.test_stale_revision_hash_and_inode_refused) ... ok
+test_symlink_state_and_root_refused (test_batch_authority.AuthorityTests.test_symlink_state_and_root_refused) ... ok
+test_consume_unknown_double_and_missing_refused (test_batch_authority.GuiLedgerTests.test_consume_unknown_double_and_missing_refused) ... ok
+test_exhaustion_counts_reserved_and_consumed_and_never_refunds (test_batch_authority.GuiLedgerTests.test_exhaustion_counts_reserved_and_consumed_and_never_refunds) ... ok
+test_reserve_consume_and_fact (test_batch_authority.GuiLedgerTests.test_reserve_consume_and_fact) ... ok
+test_scope_kind_count_owner_and_run_validation (test_batch_authority.GuiLedgerTests.test_scope_kind_count_owner_and_run_validation) ... ok
+test_second_grant_with_same_task_and_cap_shares_the_ledger (test_batch_authority.GuiLedgerTests.test_second_grant_with_same_task_and_cap_shares_the_ledger) ... ok
+test_task_or_cap_change_is_ledger_drift (test_batch_authority.GuiLedgerTests.test_task_or_cap_change_is_ledger_drift) ... ok
+test_live_dispatch_without_retained_receipt_refuses (test_batch_authority.LiveRootAuthorityTests.test_live_dispatch_without_retained_receipt_refuses) ... ok
+test_live_finalize_with_fixture_options_or_fault_refused (test_batch_authority.LiveRootAuthorityTests.test_live_finalize_with_fixture_options_or_fault_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.610s
+
+OK

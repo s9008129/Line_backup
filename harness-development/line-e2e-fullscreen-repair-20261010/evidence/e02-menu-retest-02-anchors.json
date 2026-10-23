@@ -1,0 +1,37 @@
+{
+  "format_version": 1,
+  "observation": "Fresh CUA getScreenshot after the menu-opening click showed the same album-detail window; the separate native popup is omitted from that bound-window screenshot. The persisted SCK full-display frame provides the source-side pixels. The date and photo-count boxes were matched to their CUA-window counterparts; the third anchor is the matching center seam in the photo grid. These are manual visual correspondences, not a byte-equality claim.",
+  "source_capture": "evidence/e02-menu-retest-02.json",
+  "source_capture_sha256": "254934128ade2f8c4ede672461d3d127d6bedbdf8c5158e1b70092d865b0a8df",
+  "source_capture_nonce": "e02-20261010-menu-retest-02",
+  "detail_window_id": 6743,
+  "cua_observation_id": "cua-getScreenshot-after-menu-opening-click-e02-01",
+  "cua_screenshot_pixels": {"width": 654, "height": 1286},
+  "detail_crop_path": "evidence/e02-menu-retest-02-detail-ocr/detail-1x.png",
+  "anchors": [
+    {
+      "name": "album-date-heading",
+      "kind": "unique OCR text box",
+      "cua_bbox_pixels": [32, 178, 387, 40],
+      "display_bbox_pixels": [745.7657165671, 287.5, 386.7942810059, 39.5]
+    },
+    {
+      "name": "photo-count-label",
+      "kind": "unique OCR text box",
+      "cua_bbox_pixels": [32, 243, 99, 25],
+      "display_bbox_pixels": [745.7657165671, 353.0, 99.0, 24.5]
+    },
+    {
+      "name": "photo-grid-center-divider",
+      "kind": "unique long vertical image seam",
+      "cua_bbox_pixels": [326, 800, 2, 2],
+      "display_bbox_pixels": [1040, 910, 2, 2]
+    }
+  ],
+  "measurement_status": "OBSERVED_MANUAL_VISUAL_CROSS_CHECK",
+  "limitations": [
+    "The CUA screenshot bytes are represented by the live tool result and are not independently persisted as a PNG in the task package.",
+    "The popup is visible only in the same-hash full-display SCK frame, not the bound CUA window screenshot.",
+    "The geometry result remains candidate evidence and does not itself authorize Save All dispatch."
+  ]
+}

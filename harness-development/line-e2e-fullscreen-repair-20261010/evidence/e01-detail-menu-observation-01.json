@@ -1,0 +1,78 @@
+{
+  "format_version": 1,
+  "phase": "E01_AUTOMATED_ALBUM_DETAIL_MENU_OBSERVATION",
+  "candidate_album": {
+    "group": "旻謙允禎成長日記",
+    "date_range": "2024/06/02~06/07",
+    "photo_count": 65,
+    "identity_status": "MATCH_FROM_FRESH_DETAIL_VIEW"
+  },
+  "menu_capture": {
+    "provider": "ScreenCaptureKit.display",
+    "capture_manifest": "evidence/e01-detail-menu-01.json",
+    "capture_image": "evidence/e01-detail-menu-01.png",
+    "capture_nonce": "e01-20261010-detail-menu-01",
+    "capture_start_wall_utc": "2026-10-10T04:25:13.685Z",
+    "image_sha256": "685a142c7cf0868a4215097651ca099b7741762c11f833ecbfa66dfcf6adf86c",
+    "image_dimensions_pixels": [2294, 1490],
+    "display_scale_pixels_per_point": 2,
+    "line_bundle_id": "jp.naver.line.mac",
+    "line_pid": 34387,
+    "line_launch_date": "2026-10-09T21:53:38.897Z",
+    "detail_window_id": 6743,
+    "detail_window_frame_points": {"x": 357, "y": 55, "width": 327, "height": 643},
+    "popup_window_id": 6778,
+    "popup_window_frame_points": {"x": 640, "y": 107, "width": 137, "height": 167},
+    "popup_window_on_screen": true,
+    "app_bound_capture_omitted_popup": true
+  },
+  "menu_ocr": {
+    "provider": "Vision.RecognizeTextRequest",
+    "profile": "revision3 accurate zh-Hant+en-US, no correction, scale 3",
+    "input_sha256": "685a142c7cf0868a4215097651ca099b7741762c11f833ecbfa66dfcf6adf86c",
+    "output": "evidence/e01-detail-menu-01-ocr.json",
+    "visible_items_in_order": [
+      {"text": "選擇項目", "confidence": 1.0, "bbox_pixels": [1279.53, 213.23, 33.61, 8.87]},
+      {"text": "修改相簿名稱", "confidence": 1.0, "bbox_pixels": [1279.31, 231.12, 51.83, 9.14]},
+      {"text": "儲存全部", "confidence": 1.0, "bbox_pixels": [1279.30, 248.99, 34.95, 9.36]},
+      {"text": "刪除相簿", "confidence": 0.5, "bbox_pixels": [1279.11, 267.33, 35.11, 8.89]},
+      {"text": "分享相簿", "confidence": 1.0, "bbox_pixels": [1279.10, 285.07, 35.36, 9.86]}
+    ],
+    "visual_cross_check": "Full-display PNG visibly confirms all five labels, including the lower-confidence OCR label 刪除相簿."
+  },
+  "coordinate_analysis": {
+    "menu_display_pixel_rect": {"x": 1280, "y": 214, "width": 274, "height": 334},
+    "detail_window_display_pixel_rect": {"x": 714, "y": 110, "width": 654, "height": 1286},
+    "popup_detail_window_intersection_points": {"x": 640, "y": 107, "width": 44, "height": 167},
+    "save_all_text_center_display_pixels": {"x": 1296.78, "y": 253.67},
+    "save_all_text_center_display_points": {"x": 648.39, "y": 126.84},
+    "save_all_row_geometry_status": "OBSERVED; candidate safe interior is the midpoint between adjacent row text bounds, but dispatch mapping is not yet approved",
+    "three_anchor_transform_residuals": "NOT_MEASURED",
+    "pre_dispatch_ready": false
+  },
+  "input_trace": [
+    {"action": "open-menu coordinate click sequence", "coordinates": [[610, 100], [609, 99], [610, 100], [610, 100], [610, 89]], "provider": "documented CUA", "result": "App-bound screenshots continued to show the album detail; full-display SCK then observed the native popup window. One intermediate call returned the foreground-changed guard; exact invocation receipts remain in the live conversation/tool trace."},
+    {"action": "close-calibration-menu", "coordinates": [500, 50], "provider": "documented CUA", "target_basis": "Visually identified blank title-bar area outside the popup and all visible controls", "result": "Popup dismissed without activating a menu item."}
+  ],
+  "post_close_capture": {
+    "provider": "ScreenCaptureKit.display",
+    "capture_manifest": "evidence/e01-detail-menu-03.json",
+    "capture_image": "evidence/e01-detail-menu-03.png",
+    "capture_nonce": "e01-20261010-detail-menu-03",
+    "capture_start_wall_utc": "2026-10-10T04:27:51.852Z",
+    "image_sha256": "6b3974332b7a5f1c745c99c98ea8c7dddc37ecde7a7d63645d182e5104710ce6",
+    "line_on_screen_window_count_after_close": 2,
+    "same_album_detail_still_visible": true,
+    "menu_popup_window_present_after_close": false,
+    "chooser_or_download_observed": false
+  },
+  "side_effects": {
+    "save_all_selected": false,
+    "menu_command_selected": false,
+    "confirmation_count": 0,
+    "download_started": false,
+    "destination_created": false,
+    "backup_state_mutated": false
+  },
+  "verdict": "MENU_OBSERVED_AND_CLOSED; MAPPING_GATE_PENDING"
+}

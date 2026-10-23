@@ -1,0 +1,102 @@
+{
+  "task_id": "T20260925-0647-01-rev28-native-closed-loop",
+  "round": "V-09 pre-Phase-A code/rules review, attempt-03",
+  "recorded_at": "2026-09-29T07:47+0800",
+  "branch": "v43-ab/codex-rev28",
+  "head": "a758317b725370b008fe58c848e0d28463e86709",
+  "product_tree": "a758317 is the product-tree commit under review; every later commit touches only .agent records. Reviewers must verify: `git diff --stat a758317 -- rev28` is empty and `git diff --name-only a758317 HEAD` contains only `.agent/` paths.",
+  "supersedes": {
+    "attempt": "v09/attempt-02",
+    "implementation_digest": "e80e4f0fb5483ec9a7e1c795e62662235dcfcdd884276d2fd25c9d22a5a254e9",
+    "note": "attempt-01 and attempt-02 reports are immutable and stay bound to their superseded digests (eb4415f9…f6b1 and e80e4f0f…54e9). attempt-03 binds to the tree repaired after the attempt-02 findings; attempt-01/02 evidence must not be reused as proof."
+  },
+  "plan_sha256": "05413807f5d7c04d5fe57eb058da6da734ddef5e350a9b023bfa8f8d72f84c1b",
+  "handoff_sha256": "67fc16a638b115fef8b8e99e57ec0d6a2fc344cdd15c6eaf6a72bcdb1c227a33",
+  "implementation_digest": {
+    "sha256": "e748568dbc7c23a642eeead559afc0df345c56e91ff694dc1b6012744615c0cf",
+    "files": 48,
+    "manifest": "45 swift (36 under rev28/Sources/Rev28Core + 9 under rev28/Sources/rev28ctl) + rev28/Package.swift + rev28/Tools/replay_rev28.py + rev28/Tools/verify_pre_live_provenance.py",
+    "algorithm": "sha256 over sorted (repo-relative path + NUL + file bytes + NUL) for every path returned by ReviewedImplementationDigest.manifestPaths (swift under the two reviewed source roots, the reviewed Package.swift, every file under rev28/Tools)",
+    "measured_by": "production ReviewedImplementationDigest.compute through a temporary test, since removed",
+    "verified_at": "2026-09-29T07:42+0800",
+    "evidence": "execution-evidence/a45-digest-attempt02-final-20260929T074221.log (ZZDIGEST_SHA256=e748568d…c0cf, ZZDIGEST_PATHCOUNT=48)",
+    "delta_vs_attempt_02": "+rev28/Sources/Rev28Core/Transaction/ReviewedBuildState.swift, +rev28/Package.swift, +rev28/Tools/replay_rev28.py, +rev28/Tools/verify_pre_live_provenance.py; manifestPaths/reviewedPaths unified and the /private/var relative-path handling fixed"
+  },
+  "ci_freeze_provenance": {
+    "guard": "rev28/Tools/verify_pre_live_provenance.py (fail-closed; drift in the bound source blob forbids review/live use until a new hosted freeze)",
+    "frozen_source_blob_sha": "c411011b1b44b1efb614e000f526b2118f45d120",
+    "result": "PASS",
+    "evidence": "execution-evidence/a44-provenance-attempt02-final-20260929T074210.log (status=PASS, generation v3, sampleCount 20, maxLatencyMs 155.18903732299805)",
+    "note": "rev28/Sources/rev28ctl/HarnessCalibration.swift is byte-identical to the v3-frozen blob (git hash-object c411011b…); its own AX read intentionally keeps the frozen bytes. The attempt-01 C3 binding repair is scoped to the production observation path."
+  },
+  "frozen_rule_artifacts": {
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/capture-geometry-rulebook-v1.json": "09e1cf2ae181f519f9ed47979e0286212f0b051f197ced6909a9789f2f1a62ed",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/chooser-affirmation-predicate-v2.json": "0472aa0a364711fd357f872d93c5ad7e13b393cc267dbbc6244d47a20de6f3f2",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/chooser-ax-calibration-v2.json": "13aa01a2fa5d2b2d3e52d28e17a1b421ac25e6943fda1c44a572be610ef7e569",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/capture-matrix-v1.json": "e008478201770f0496d6a252680ae2a737473c32a70db888ebd2bf4aafb7ba7b",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/tripwire-attribution-ladder-v1.json": "d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/restart-observe-only-fixture-v1.json": "146b373a93c7a1ab02041e079c95eed645a7dd46d45ef518bc4a49bc8128a93f",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/postcondition-bounds-v3.json": "c10dcb43e9da14feedaed4f9e1ef5fdbf9b6afdd96d6ee8e79b84ac45a055e84",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/postcondition-latency-observations-v3.json": "ca4beabefc1f671162cec06345cf06755a62ad77a28458ac1b03a563f640b155",
+    "evidence/20260925-rev28-native-closed-loop/harness/ci-w2-item5-freeze-provenance-v3.json": "4f6f5fdcea491503b51e279b688de123ae4e38883b9d54edd02ad794baa0b152"
+  },
+  "repaired_tree_verification_evidence": {
+    "build": "execution-evidence/a37-build-attempt02-final-20260929T074109.log — Build complete",
+    "focused_11_suites": "execution-evidence/a38-focused-attempt02-final-20260929T074114.log — 96 tests / 0 failures",
+    "full_suite": "execution-evidence/a39-full-suite-attempt02-final-20260929T074124.log — 241 tests / 0 failures / 0 skipped",
+    "adversarial_x2": [
+      "execution-evidence/a40-adversarial-attempt02-final-run1-20260929T074153.log — 27 tests / 0 failures",
+      "execution-evidence/a41-adversarial-attempt02-final-run2-20260929T074153.log — 27 tests / 0 failures"
+    ],
+    "replay_x2_byte_identical": [
+      "execution-evidence/a42-replay-attempt02-final-run1-20260929T074157.json — 20 fixtures, verdict=PASS",
+      "execution-evidence/a43-replay-attempt02-final-run2-20260929T074157.json — 20 fixtures, verdict=PASS"
+    ],
+    "replay_output_sha256": "81f6da94ad18d601a21bf0b521d5a96869f13b5a0a3e96db66239b2f90a47261",
+    "provenance": "execution-evidence/a44-provenance-attempt02-final-20260929T074210.log — status=PASS, generation v3",
+    "digest_measurement": "execution-evidence/a45-digest-attempt02-final-20260929T074221.log",
+    "cli_refusal_fixture": {
+      "dir": "execution-evidence/cli-refusal-20260929T0742/",
+      "transcript": "live-execute 77 / live-preflight 77 / CI guard 77 / missing config 64 / stale digest 77",
+      "side_effects": "evidence files 0, staging files 0, ledger absent, anchor absent, one-shot not renamed",
+      "bound_digest": "e748568dbc7c23a642eeead559afc0df345c56e91ff694dc1b6012744615c0cf"
+    }
+  },
+  "repair_claims_to_verify": [
+    "V09_A2_MAJOR_1_DISPATCH_BOUNDARY_TIMER — the chooser postcondition window is bound to the recorded Save All dispatch boundary: PostSaveJournalBox.recordDispatchBoundary/recordedDispatchBoundary; StrictPostconditionMonitor.run(dispatchBoundaryMonotonic:) starts at min(boundary, now); observeChooser refuses when no boundary was recorded; SaveAllDispatchRecord carries dispatchBoundaryMonotonicNanos (Composition/PostSaveComposition.swift, Postcondition/PostconditionMonitor.swift)",
+    "V09_A2_MAJOR_2_POST_HOVER_REVALIDATION — before mouseDown the actuator re-derives the fresh frame-bound observation and the addressed/topmost surface: ReadinessPermit retains frame/capturePoint/safeRect/imageSize; DispatchReadinessGate.revalidateAfterHover re-checks active/frontmost/window identity/process/binding/scale/staleness (≤1 s)/frame (0.5 pt)/point movement; GatedQuartzActuator.topmostSurfaceMatchesTarget uses CGWindowListCopyWindowInfo front-to-back (the first alpha>0 layer-0 window containing the point must be the target); postClick is async, takes postHoverRevalidation + addressedSurfaceCheck, and a failure records recordRevalidationOutcome(passed:false) and posts zero down/up (Actuation/QuartzActuator.swift, Composition/PostSaveComposition.swift)",
+    "V09_A2_MAJOR_3_BUDGET_ENFORCEMENT — LiveDispatchBudget static ceilings + isExhausted; PersistentTransactionError.phaseBBudgetExhausted; reserveSaveAll refuses when exhausted before consuming the entitlement; recordReversibleDispatch refuses after 2 consecutive durable revalidation failures; PhaseBEligibility.requiredPredicates includes REVERSIBLE_AND_REVALIDATION_BUDGETS_NOT_EXHAUSTED (18 predicates) (Policy/ExecutionPolicy.swift, Transaction/PersistentTransactionOwner.swift, Transaction/PhaseBEligibility.swift)",
+    "V09_A2_MAJOR_A_CANONICAL_ELIGIBILITY_BINDINGS — eligibility handoff/frozen/predicate bindings are canonical-reviewed and path-contained, with reviewed HEAD/diff/binary recomputed live: CanonicalEvidenceBinding + allowedEvidenceRoots; declared artifacts compared with canonical values; exact frozen name-set and predicate-set equality; containment of all declared and canonical paths; ReviewedBuildState.observe() via /usr/bin/git (HEAD, reviewed-HEAD ancestor check, reviewed-paths diff SHA-256, executable SHA-256); CLI LiveConfig requires eligibilityCanonicalBindings + reviewedHeadSHA/reviewedPathsDiffSHA256/reviewedBinarySHA256 whenever phaseBEligibilityPath is set; artifact requires PhaseBEligibilityReviewedBuild (Transaction/PhaseBEligibility.swift, Transaction/ReviewedBuildState.swift, rev28ctl/main.swift)",
+    "V09_A2_MINOR_1_AX_VALUE_PRIMITIVE — the AX value write is durably recorded via willPostPrimitive(\"chooser.navigate.setPathFieldValue\") when the field is settable (Chooser/FolderChooserDriver.swift)",
+    "V09_A2_MINOR_2_TRIPWIRE_RECHECK — the post-dispatch tripwire gate is re-checked at every download poll (writes download-progress-terminal.json with terminal \"TRIPWIRE_ABORTED\") and at observeFilesystemStable + verifyContent entry (Composition/PostSaveEnvironment.swift, Composition/PostSaveComposition.swift)",
+    "DIGEST_MANIFEST — ReviewedImplementationDigest.manifestPaths includes Package.swift and every file under rev28/Tools; reviewedPaths is reused for the git HEAD/diff check; relative paths are derived from the reviewed root marker so /private/var does not break them (Transaction/ReviewedImplementationDigest.swift)"
+  ],
+  "trust_boundary_dispositions_to_verify": [
+    "03-MINOR-C — crash window between entitlement consumption and the durable intent.saveAll append: documented no-code-change because every observed recovery path fails closed (retry maps to irreversibleIntentAlreadyRecorded; a restart reaches the entitlementConsumed refusal at dispatchSaveAll's eligibility re-validation); verify the reasoning, not a code change",
+    "03-MINOR-D — goal-slot identity includes the staging root: documented no-code-change because plan.md:134 keys the slot to task/group/album/approved new-path authorization and the approved root is itself part of the reviewed authorization config; verify the reasoning",
+    "01-MINOR-1 — locator menu/addressable bounds remain config-supplied but bounded fail-closed (retained-frame containment + ordered five-row identity + per-row menu intersection + ≥8 px addressable overlap + safe-rect containment); hash-binding stays an explicitly tracked Phase A obligation (the frozen set contains no real LINE menu bounds)"
+  ],
+  "prior_review_claims_still_in_force": [
+    "All attempt-01 repair claims recorded in v09/attempt-02/bindings.json (repair_claims_to_verify) remain in force on this tree and must be re-verified against a758317; the attempt-02 reviewers verified them against e80e4f0f…54e9 and that verification must not be reused as proof."
+  ],
+  "prior_verification_bound_to_previous_digest": {
+    "corrected_tree_gates": [
+      "execution-evidence/a29-build-v09-repairs-provenance-restore-20260929T0722.log",
+      "execution-evidence/a30-focused-v09-repairs-provenance-restore-20260929T0722.log",
+      "execution-evidence/a31-full-suite-v09-repairs-provenance-restore-20260929T0723.log",
+      "execution-evidence/a32-provenance-v09-repairs-provenance-restore-20260929T0726.log",
+      "execution-evidence/a33-adversarial-run1-v09repairs-20260929T0732.log",
+      "execution-evidence/a34-adversarial-run2-v09repairs-20260929T0732.log",
+      "execution-evidence/a35-replay-run1-v09repairs-20260929T0732.json",
+      "execution-evidence/a36-replay-run2-v09repairs-20260929T0732.json",
+      "execution-evidence/cli-refusal-20260929T0713/"
+    ],
+    "note": "these runs verify the pre-attempt-02-repair tree (digest e80e4f0f…54e9); they are not accepted as repaired-tree evidence for attempt-03"
+  },
+  "reviewer_contexts": [
+    "01-perception-geometry",
+    "02-timing-automation",
+    "03-transaction-history"
+  ],
+  "phase_b_status": "FORBIDDEN_AB_EVALUATION"
+}

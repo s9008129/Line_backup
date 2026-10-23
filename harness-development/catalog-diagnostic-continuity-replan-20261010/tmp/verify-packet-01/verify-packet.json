@@ -1,0 +1,644 @@
+{
+ "contract_equals_handoff_bytes": true,
+ "format": "local-packet-verification-1",
+ "note": "JSON parse + byte binding only; this is not controller schema VALID.",
+ "packet_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010",
+ "records": [
+  {
+   "actual_bytes": 7830,
+   "actual_sha256": "d8e0031fa8ef1d7a0a0f260de3682db26421d5779dffc1d1fd1a124969bc5387",
+   "exists": true,
+   "expected_bytes": 7830,
+   "expected_sha256": "d8e0031fa8ef1d7a0a0f260de3682db26421d5779dffc1d1fd1a124969bc5387",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-as-submitted.md",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 8555,
+   "actual_sha256": "09acf8d2391b943217da8a2d211099a3144d8b4da9a4fa98095d8fb346e4d884",
+   "exists": true,
+   "expected_bytes": 8555,
+   "expected_sha256": "09acf8d2391b943217da8a2d211099a3144d8b4da9a4fa98095d8fb346e4d884",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-review-01.result.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 8803,
+   "actual_sha256": "a3073f387b8cac43ba73162476b0a9acba099737872db74b60d928503724ce8f",
+   "exists": true,
+   "expected_bytes": 8803,
+   "expected_sha256": "a3073f387b8cac43ba73162476b0a9acba099737872db74b60d928503724ce8f",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-review-01.pixel-probe.log",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 911,
+   "actual_sha256": "50550e43aaff58ba222751a7806864e9b9eb746985ae8e640cac37be39f917b4",
+   "exists": true,
+   "expected_bytes": 911,
+   "expected_sha256": "50550e43aaff58ba222751a7806864e9b9eb746985ae8e640cac37be39f917b4",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-review-01.schema-validation.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 34206,
+   "actual_sha256": "e207b97d69fe8da22a4d54a2637cdf4e3b82b911a5fb72b941f2a1a6bbaf7831",
+   "exists": true,
+   "expected_bytes": 34206,
+   "expected_sha256": "e207b97d69fe8da22a4d54a2637cdf4e3b82b911a5fb72b941f2a1a6bbaf7831",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/handoff.md",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 2912,
+   "actual_sha256": "9b926dc41f54736a342a11b40a7b1202748a07292d5b03c0fbf509c4faa7f873",
+   "exists": true,
+   "expected_bytes": 2912,
+   "expected_sha256": "9b926dc41f54736a342a11b40a7b1202748a07292d5b03c0fbf509c4faa7f873",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/authorization.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 6242,
+   "actual_sha256": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8",
+   "exists": true,
+   "expected_bytes": 6242,
+   "expected_sha256": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/diagnostic-spec.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 3588,
+   "actual_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+   "exists": true,
+   "expected_bytes": 3588,
+   "expected_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-contract.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 3588,
+   "actual_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+   "exists": true,
+   "expected_bytes": 3588,
+   "expected_sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/handoff.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 184297,
+   "actual_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+   "exists": true,
+   "expected_bytes": 184297,
+   "expected_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-000.png",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1325568,
+   "actual_sha256": "f3fec63b11e4138d5bbb86353de70f5a9b6a1fda36a9d87a2378493e5138e8fe",
+   "exists": true,
+   "expected_bytes": 1325568,
+   "expected_sha256": "f3fec63b11e4138d5bbb86353de70f5a9b6a1fda36a9d87a2378493e5138e8fe",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-000.scale2.png",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1359,
+   "actual_sha256": "cac68c80f2ed25880defbc9802e78683a34e11d13cf93015ec237ba3d8b45957",
+   "exists": true,
+   "expected_bytes": 1359,
+   "expected_sha256": "cac68c80f2ed25880defbc9802e78683a34e11d13cf93015ec237ba3d8b45957",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-000.ocr.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 2389,
+   "actual_sha256": "188cb4639b83de7323cea2dc59825762a4877891922d0018d02efa04b31e9458",
+   "exists": true,
+   "expected_bytes": 2389,
+   "expected_sha256": "188cb4639b83de7323cea2dc59825762a4877891922d0018d02efa04b31e9458",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-000.modern_ocr.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 346,
+   "actual_sha256": "998610c7ae36c9801913ca79b18d7c6f521d6d99da63ddb6fb34ba452d99555c",
+   "exists": true,
+   "expected_bytes": 346,
+   "expected_sha256": "998610c7ae36c9801913ca79b18d7c6f521d6d99da63ddb6fb34ba452d99555c",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-000.transform.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1299,
+   "actual_sha256": "511c6cf8ad8709ca1fc5b595e26ebcec9e02d0bd73dc9e42e32b92e2b0eb90f2",
+   "exists": true,
+   "expected_bytes": 1299,
+   "expected_sha256": "511c6cf8ad8709ca1fc5b595e26ebcec9e02d0bd73dc9e42e32b92e2b0eb90f2",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-000.ax.txt",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 191039,
+   "actual_sha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57",
+   "exists": true,
+   "expected_bytes": 191039,
+   "expected_sha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-001.png",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1380891,
+   "actual_sha256": "8300a2a001ca951a99bc279a4dcaac7ca7b66ae34653e4f60f34cc6a58877d00",
+   "exists": true,
+   "expected_bytes": 1380891,
+   "expected_sha256": "8300a2a001ca951a99bc279a4dcaac7ca7b66ae34653e4f60f34cc6a58877d00",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-001.scale2.png",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1361,
+   "actual_sha256": "fbb398f6e05e68191637246dc96657bd4465eb4291cfeafc5ed4df9065b1a170",
+   "exists": true,
+   "expected_bytes": 1361,
+   "expected_sha256": "fbb398f6e05e68191637246dc96657bd4465eb4291cfeafc5ed4df9065b1a170",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-001.ocr.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 2039,
+   "actual_sha256": "60fdfe851283af1fff7b091540fb35fccd66b4dc3d9bb045175d095c20825e40",
+   "exists": true,
+   "expected_bytes": 2039,
+   "expected_sha256": "60fdfe851283af1fff7b091540fb35fccd66b4dc3d9bb045175d095c20825e40",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-001.modern_ocr.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 346,
+   "actual_sha256": "79f809452714ade5471b39cf84319cbc696a2bb0748855c51662ae27d09e0a48",
+   "exists": true,
+   "expected_bytes": 346,
+   "expected_sha256": "79f809452714ade5471b39cf84319cbc696a2bb0748855c51662ae27d09e0a48",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-001.transform.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1301,
+   "actual_sha256": "603be04565f1dabd8e73ffc4e9db85d4294edc8a3c089d8b8e5bfa4c8b536436",
+   "exists": true,
+   "expected_bytes": 1301,
+   "expected_sha256": "603be04565f1dabd8e73ffc4e9db85d4294edc8a3c089d8b8e5bfa4c8b536436",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-001.ax.txt",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 173800,
+   "actual_sha256": "65af93e64fa0ae38d2214a2e9d973cafcdd4db99ae47124e2ccb5e6aeb9b3adb",
+   "exists": true,
+   "expected_bytes": 173800,
+   "expected_sha256": "65af93e64fa0ae38d2214a2e9d973cafcdd4db99ae47124e2ccb5e6aeb9b3adb",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-002.png",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1212803,
+   "actual_sha256": "ae188f90afbe185d913ec9e029af9b80c6dfd367878ed0dc66bf48340bbc460d",
+   "exists": true,
+   "expected_bytes": 1212803,
+   "expected_sha256": "ae188f90afbe185d913ec9e029af9b80c6dfd367878ed0dc66bf48340bbc460d",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-002.scale2.png",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1774,
+   "actual_sha256": "85d8d299eac6929736124e2145fb9c4cf59ba7d1e032ad5768503d267e5995cf",
+   "exists": true,
+   "expected_bytes": 1774,
+   "expected_sha256": "85d8d299eac6929736124e2145fb9c4cf59ba7d1e032ad5768503d267e5995cf",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-002.ocr.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 2666,
+   "actual_sha256": "525d8fd3f8fd03eb51a1bfd1b93eee4cd598fdce5ba1a4ea6cdd6e32c4e42227",
+   "exists": true,
+   "expected_bytes": 2666,
+   "expected_sha256": "525d8fd3f8fd03eb51a1bfd1b93eee4cd598fdce5ba1a4ea6cdd6e32c4e42227",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-002.modern_ocr.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 346,
+   "actual_sha256": "3abb4a86f8299bc927f62c314d4c47db1534df60c0dc5c9c87480d6c5eeb6f34",
+   "exists": true,
+   "expected_bytes": 346,
+   "expected_sha256": "3abb4a86f8299bc927f62c314d4c47db1534df60c0dc5c9c87480d6c5eeb6f34",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-002.transform.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 308,
+   "actual_sha256": "35eed60f1819da1f97ec9b7c83e2595fee79ec014552dbc547e6645bf413673a",
+   "exists": true,
+   "expected_bytes": 308,
+   "expected_sha256": "35eed60f1819da1f97ec9b7c83e2595fee79ec014552dbc547e6645bf413673a",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-002.ax.txt",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 193699,
+   "actual_sha256": "934cc2cac6be8fdb37a9bd014d90321be271d8517134070d9a9adcf62d091cdf",
+   "exists": true,
+   "expected_bytes": 193699,
+   "expected_sha256": "934cc2cac6be8fdb37a9bd014d90321be271d8517134070d9a9adcf62d091cdf",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-003.png",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1392164,
+   "actual_sha256": "6833bb03d99f1269c733cd63f2154191ec6e361dc73d7a173bc998eb1ed342c4",
+   "exists": true,
+   "expected_bytes": 1392164,
+   "expected_sha256": "6833bb03d99f1269c733cd63f2154191ec6e361dc73d7a173bc998eb1ed342c4",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-003.scale2.png",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1361,
+   "actual_sha256": "1bfff6c0778f790c47a09a08aede84f1d5be260726c8bcef75230503fa1fcf3a",
+   "exists": true,
+   "expected_bytes": 1361,
+   "expected_sha256": "1bfff6c0778f790c47a09a08aede84f1d5be260726c8bcef75230503fa1fcf3a",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-003.ocr.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 2038,
+   "actual_sha256": "2a970ff0ed59843f86aa791ea6aa211a5c235269ec0a63192413464f4bb95610",
+   "exists": true,
+   "expected_bytes": 2038,
+   "expected_sha256": "2a970ff0ed59843f86aa791ea6aa211a5c235269ec0a63192413464f4bb95610",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-003.modern_ocr.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 346,
+   "actual_sha256": "f45e0efded3896038f918fe65b89682352656868b959147d5c93acb64ee5592a",
+   "exists": true,
+   "expected_bytes": 346,
+   "expected_sha256": "f45e0efded3896038f918fe65b89682352656868b959147d5c93acb64ee5592a",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-003.transform.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 316,
+   "actual_sha256": "e70bbbaaf6a3f159fde7d672d1a66c9dde043b837917a80d47979569b8823de7",
+   "exists": true,
+   "expected_bytes": 316,
+   "expected_sha256": "e70bbbaaf6a3f159fde7d672d1a66c9dde043b837917a80d47979569b8823de7",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-003.ax.txt",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 589,
+   "actual_sha256": "8a344b021019ba9f20c442a301f8ddc719616504dc423c110e1e78b20f89d3fe",
+   "exists": true,
+   "expected_bytes": 589,
+   "expected_sha256": "8a344b021019ba9f20c442a301f8ddc719616504dc423c110e1e78b20f89d3fe",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/step-001.pre.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 150,
+   "actual_sha256": "961e3425ee00fdd004be5d1e49d7e7e927d56ff579f695d25b1a9af5b129f1fe",
+   "exists": true,
+   "expected_bytes": 150,
+   "expected_sha256": "961e3425ee00fdd004be5d1e49d7e7e927d56ff579f695d25b1a9af5b129f1fe",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/step-001.action.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 516,
+   "actual_sha256": "42653d423d8ba0d065c6051e66ce354c50be616954993bda362e0aef629de212",
+   "exists": true,
+   "expected_bytes": 516,
+   "expected_sha256": "42653d423d8ba0d065c6051e66ce354c50be616954993bda362e0aef629de212",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/step-002.pre.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 146,
+   "actual_sha256": "862bd3ba984d1556f755fc1090019fd45c5841b63d88f112fbb99f474670a4de",
+   "exists": true,
+   "expected_bytes": 146,
+   "expected_sha256": "862bd3ba984d1556f755fc1090019fd45c5841b63d88f112fbb99f474670a4de",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/step-002.action.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 517,
+   "actual_sha256": "8bba52aca770821fa753f0ec539ba5e8e368526dfd583cd0614ecc2effc78b82",
+   "exists": true,
+   "expected_bytes": 517,
+   "expected_sha256": "8bba52aca770821fa753f0ec539ba5e8e368526dfd583cd0614ecc2effc78b82",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/step-003.pre.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 146,
+   "actual_sha256": "d3939deb63ab4c028f07af2bacd8fadaaa2d02ababb084381b22113e5aee27b4",
+   "exists": true,
+   "expected_bytes": 146,
+   "expected_sha256": "d3939deb63ab4c028f07af2bacd8fadaaa2d02ababb084381b22113e5aee27b4",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/step-003.action.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 5259,
+   "actual_sha256": "162a775aba1d1ca828b12e2c81b2e8061043526e5195f854443b23e316862a27",
+   "exists": true,
+   "expected_bytes": 5259,
+   "expected_sha256": "162a775aba1d1ca828b12e2c81b2e8061043526e5195f854443b23e316862a27",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/agreement.py",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 3208,
+   "actual_sha256": "43094c225a2dd371c00f86aa16bf43b643fd89c2c180d1f437637ca9cb0c70b8",
+   "exists": true,
+   "expected_bytes": 3208,
+   "expected_sha256": "43094c225a2dd371c00f86aa16bf43b643fd89c2c180d1f437637ca9cb0c70b8",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/analyze.py",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1939,
+   "actual_sha256": "19f6787f4523332b5eb8a4235c4461fee5e49314c615b4865cc9ec848f2a2861",
+   "exists": true,
+   "expected_bytes": 1939,
+   "expected_sha256": "19f6787f4523332b5eb8a4235c4461fee5e49314c615b4865cc9ec848f2a2861",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/modern_ocr.swift",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1342,
+   "actual_sha256": "c53da3480dd6596cc662dad8a46089f2aa5ab36148a59a2610866344387891e5",
+   "exists": true,
+   "expected_bytes": 1342,
+   "expected_sha256": "c53da3480dd6596cc662dad8a46089f2aa5ab36148a59a2610866344387891e5",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/ocr.swift",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1251,
+   "actual_sha256": "c81a650832ca3ac71f147f864ca566845f3ba1a07451711fcf9887e4615b74df",
+   "exists": true,
+   "expected_bytes": 1251,
+   "expected_sha256": "c81a650832ca3ac71f147f864ca566845f3ba1a07451711fcf9887e4615b74df",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/baseline.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1154,
+   "actual_sha256": "4bd1bec6cf0d2e6df588b06fdcc9fd78315ab5c2ee07178c5ed1c4aa154e01a1",
+   "exists": true,
+   "expected_bytes": 1154,
+   "expected_sha256": "4bd1bec6cf0d2e6df588b06fdcc9fd78315ab5c2ee07178c5ed1c4aa154e01a1",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/preservation.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 3857,
+   "actual_sha256": "c05f4521be0e234542d43ec4ff6fb6b6615e121d05b6da919019df793ae4741f",
+   "exists": true,
+   "expected_bytes": 3857,
+   "expected_sha256": "c05f4521be0e234542d43ec4ff6fb6b6615e121d05b6da919019df793ae4741f",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/report.md",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 6588,
+   "actual_sha256": "4f432bc00269a62876d7e4ecaa8c0e14611a9ec46aabfc4a1d392810db5d240d",
+   "exists": true,
+   "expected_bytes": 6588,
+   "expected_sha256": "4f432bc00269a62876d7e4ecaa8c0e14611a9ec46aabfc4a1d392810db5d240d",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/implementer.result.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 6566,
+   "actual_sha256": "525e3b3dd811de4a07c47a659c4441f9fc877ffb6426f5c2c0d5d41a138021fb",
+   "exists": true,
+   "expected_bytes": 6566,
+   "expected_sha256": "525e3b3dd811de4a07c47a659c4441f9fc877ffb6426f5c2c0d5d41a138021fb",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/plan.md",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1085,
+   "actual_sha256": "e2eb3e4cd979f4c2d08562c1ad7facc5cde7c6b66cbe9663189a56279d4b5347",
+   "exists": true,
+   "expected_bytes": 1085,
+   "expected_sha256": "e2eb3e4cd979f4c2d08562c1ad7facc5cde7c6b66cbe9663189a56279d4b5347",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/plan-contract-02.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1085,
+   "actual_sha256": "e2eb3e4cd979f4c2d08562c1ad7facc5cde7c6b66cbe9663189a56279d4b5347",
+   "exists": true,
+   "expected_bytes": 1085,
+   "expected_sha256": "e2eb3e4cd979f4c2d08562c1ad7facc5cde7c6b66cbe9663189a56279d4b5347",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/handoff-02.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 101,
+   "actual_sha256": "1d8b1f34ed3ad8e9ffac2d1114c05b5fb64771a2ff3aadd8fc9e012c044ede1a",
+   "exists": true,
+   "expected_bytes": 101,
+   "expected_sha256": "1d8b1f34ed3ad8e9ffac2d1114c05b5fb64771a2ff3aadd8fc9e012c044ede1a",
+   "match": true,
+   "path": "harness-development/catalog-diagnostic-20261010/scan-003.failure.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 384,
+   "actual_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+   "exists": true,
+   "expected_bytes": 384,
+   "expected_sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+   "match": true,
+   "path": "config/line_backup_config.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 252091,
+   "actual_sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9",
+   "exists": true,
+   "expected_bytes": 252091,
+   "expected_sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9",
+   "match": true,
+   "path": "state/backup_state.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 14736,
+   "actual_sha256": "d96739e255261a6f1e1eae02df928a55d64192b3d1146983e6f2c40ad6528333",
+   "exists": true,
+   "expected_bytes": 14736,
+   "expected_sha256": "d96739e255261a6f1e1eae02df928a55d64192b3d1146983e6f2c40ad6528333",
+   "match": true,
+   "path": "state/run_log.md",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 4883108,
+   "actual_sha256": "bc622c3374f8fd2d1644515b0e930838da5b74d0544596304e1b36995014257f",
+   "exists": true,
+   "expected_bytes": 4881587,
+   "expected_sha256": "ea5920d7cb3139bf3fa08fea89ceb960daea8c3ecbb828eaa1d081710997976a",
+   "match": false,
+   "path": ".git/index",
+   "verification": "PROVENANCE_ONLY"
+  },
+  {
+   "actual_bytes": 6957,
+   "actual_sha256": "a42397c48ba276576c754b7018e30a729d228f99a78f5e8100e4513a49d673a8",
+   "exists": true,
+   "expected_bytes": 6957,
+   "expected_sha256": "a42397c48ba276576c754b7018e30a729d228f99a78f5e8100e4513a49d673a8",
+   "match": true,
+   "path": "/Users/hsiaojohnny/.codex/AGENTS.md",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1271,
+   "actual_sha256": "e27860d1da047ec1d9ece6440d9ec3f19014b0cefbb2e7b6ff00f8d564ebde37",
+   "exists": true,
+   "expected_bytes": 1271,
+   "expected_sha256": "e27860d1da047ec1d9ece6440d9ec3f19014b0cefbb2e7b6ff00f8d564ebde37",
+   "match": true,
+   "path": "/Users/hsiaojohnny/.codex/prompts/v4.8.0/03_handoff_prompt.md",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 5878,
+   "actual_sha256": "9e9d4bbd19939f042afaaea7eda024130742f893b50e099953109a63ef1a117e",
+   "exists": true,
+   "expected_bytes": 5878,
+   "expected_sha256": "9e9d4bbd19939f042afaaea7eda024130742f893b50e099953109a63ef1a117e",
+   "match": true,
+   "path": "/Users/hsiaojohnny/.codex/prompts/v4.8.0/04_implement_prompt.md",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 7525,
+   "actual_sha256": "7c2251913507a8cc09b4a697576963aaf6694ffd7fd7af55a6eb2e813a690912",
+   "exists": true,
+   "expected_bytes": 7525,
+   "expected_sha256": "7c2251913507a8cc09b4a697576963aaf6694ffd7fd7af55a6eb2e813a690912",
+   "match": true,
+   "path": "/Users/hsiaojohnny/.codex/policies/v4.8.0/workflow-routing.md",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1215,
+   "actual_sha256": "2e940cbd2edec33f3a13734038719f69eed53ef61a7fb59fe75e13b488ea7bbc",
+   "exists": true,
+   "expected_bytes": 1215,
+   "expected_sha256": "2e940cbd2edec33f3a13734038719f69eed53ef61a7fb59fe75e13b488ea7bbc",
+   "match": true,
+   "path": "/Users/hsiaojohnny/.codex/templates/v4.8.0/runtime-defaults.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 3989,
+   "actual_sha256": "5a8e7b7227985c123e1a70bcd005d28129b46dd4068d4ee78ed48c71740c8d72",
+   "exists": true,
+   "expected_bytes": 3989,
+   "expected_sha256": "5a8e7b7227985c123e1a70bcd005d28129b46dd4068d4ee78ed48c71740c8d72",
+   "match": true,
+   "path": "/Users/hsiaojohnny/.codex/schemas/v3/task.schema.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 1529,
+   "actual_sha256": "886dbb435dbb4543116e51a779205c953f9e8ae677def6825562cfbdf3f0f5cb",
+   "exists": true,
+   "expected_bytes": 1529,
+   "expected_sha256": "886dbb435dbb4543116e51a779205c953f9e8ae677def6825562cfbdf3f0f5cb",
+   "match": true,
+   "path": "/Users/hsiaojohnny/.codex/schemas/v3/gate.schema.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  },
+  {
+   "actual_bytes": 11013,
+   "actual_sha256": "e74c5209be396c690287c53aaff2ef588084ef03573d947d0a98655f527de886",
+   "exists": true,
+   "expected_bytes": 11013,
+   "expected_sha256": "e74c5209be396c690287c53aaff2ef588084ef03573d947d0a98655f527de886",
+   "match": true,
+   "path": "/Users/hsiaojohnny/.codex/schemas/v3/result.schema.json",
+   "verification": "REQUIRED_CURRENT_HASH"
+  }
+ ],
+ "records_checked": 63,
+ "required_current_mismatches": [],
+ "spec_handoff_binding": true,
+ "spec_plan_binding": true,
+ "spec_review_binding": true,
+ "verdict": "PASS"
+}

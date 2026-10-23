@@ -1,0 +1,92 @@
+{
+  "attempt": 7,
+  "sdk_path": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+  "sdk_exists": true,
+  "xcodebuild_exit_code": 0,
+  "xcodebuild_stdout": "Xcode 26.6\nBuild version 17F113\n",
+  "xcodebuild_stderr": "",
+  "swiftc_exit_code": 0,
+  "swiftc_stdout": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)\nTarget: arm64-apple-macosx28.0\n",
+  "swiftc_stderr": "swift-driver version: 1.148.6 ",
+  "checks": [
+    {
+      "name": "fullscreen-capture",
+      "command": [
+        "/usr/bin/xcrun",
+        "--sdk",
+        "macosx26.5",
+        "swiftc",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-target",
+        "arm64-apple-macosx26.0",
+        "-swift-version",
+        "6",
+        "-parse-as-library",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/FullscreenCapture.swift",
+        "-o",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/bin/fullscreen-capture"
+      ],
+      "source": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/FullscreenCapture.swift",
+      "source_sha256": "6080c65adb93288042123dc69d7a8f70c8bc4cfc3d67c370189c0477b4673050",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "binary": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/bin/fullscreen-capture",
+      "binary_sha256": "f12954d671d1e016f5626d76bebaab7a03e6e1c5779ec60927471b88daa30a2c"
+    },
+    {
+      "name": "vision-regions",
+      "command": [
+        "/usr/bin/xcrun",
+        "--sdk",
+        "macosx26.5",
+        "swiftc",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-target",
+        "arm64-apple-macosx26.0",
+        "-swift-version",
+        "6",
+        "-parse-as-library",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/VisionRegions.swift",
+        "-o",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/bin/vision-regions"
+      ],
+      "source": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/VisionRegions.swift",
+      "source_sha256": "a43d3d5667d76a6a15f0238ff813fb48012d6a174f6ef09942e250f24b78cb02",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "binary": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/bin/vision-regions",
+      "binary_sha256": "7a35228d7e565934b8857cdb0271c2705702fd79f73a61d2363b03a38c7d069f"
+    },
+    {
+      "name": "image-decode",
+      "command": [
+        "/usr/bin/xcrun",
+        "--sdk",
+        "macosx26.5",
+        "swiftc",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-target",
+        "arm64-apple-macosx26.0",
+        "-swift-version",
+        "6",
+        "-parse-as-library",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/image_decode.swift",
+        "-o",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/bin/image-decode"
+      ],
+      "source": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/image_decode.swift",
+      "source_sha256": "fb995dd23d7dfc1a74783f69309112769b78e7f45dc550382739a85a1526fedd",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/image_decode.swift:7:1: error: statements are not allowed at the top level\n 5 | \n 6 | // Task-local read-only full RGB decode, for an explicit destination/count.\n 7 | guard CommandLine.arguments.count == 3,\n   | `- error: statements are not allowed at the top level\n 8 |       let expected = Int(CommandLine.arguments[2]), expected > 0 else { exit(2) }\n 9 | let root = URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true)\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/image_decode.swift:10:1: error: statements are not allowed at the top level\n 8 |       let expected = Int(CommandLine.arguments[2]), expected > 0 else { exit(2) }\n 9 | let root = URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true)\n10 | guard root.standardizedFileURL.path == root.path,\n   | `- error: statements are not allowed at the top level\n11 |       root.resolvingSymlinksInPath().path == root.path else { exit(2) }\n12 | let names = try FileManager.default.contentsOfDirectory(atPath: root.path).sorted()\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/image_decode.swift:14:1: error: statements are not allowed at the top level\n12 | let names = try FileManager.default.contentsOfDirectory(atPath: root.path).sorted()\n13 | var results: [[String: Any]] = []\n14 | for name in names {\n   | `- error: statements are not allowed at the top level\n15 |     let url = root.appendingPathComponent(name)\n16 |     var item: [String: Any] = [\"name\": name, \"decoded\": false]\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/image_decode.swift:60:1: error: expressions are not allowed at the top level\n58 |     \"actualEntries\": names.count, \"decoder\": \"macOS ImageIO plus full RGB bitmap draw\",\n59 |     \"destination\": root.path, \"entries\": results, \"readOnly\": true]\n60 | FileHandle.standardOutput.write(try JSONSerialization.data(withJSONObject: output, options: [.prettyPrinted, .sortedKeys]))\n   | `- error: expressions are not allowed at the top level\n61 | FileHandle.standardOutput.write(Data(\"\\n\".utf8))\n62 | exit(passed ? 0 : 1)\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/image_decode.swift:61:1: error: expressions are not allowed at the top level\n59 |     \"destination\": root.path, \"entries\": results, \"readOnly\": true]\n60 | FileHandle.standardOutput.write(try JSONSerialization.data(withJSONObject: output, options: [.prettyPrinted, .sortedKeys]))\n61 | FileHandle.standardOutput.write(Data(\"\\n\".utf8))\n   | `- error: expressions are not allowed at the top level\n62 | exit(passed ? 0 : 1)\n63 | \n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/image_decode.swift:62:1: error: expressions are not allowed at the top level\n60 | FileHandle.standardOutput.write(try JSONSerialization.data(withJSONObject: output, options: [.prettyPrinted, .sortedKeys]))\n61 | FileHandle.standardOutput.write(Data(\"\\n\".utf8))\n62 | exit(passed ? 0 : 1)\n   | `- error: expressions are not allowed at the top level\n63 | \n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/image_decode.swift:12:17: error: call can throw, but errors cannot be thrown out of a global variable initializer\n10 | guard root.standardizedFileURL.path == root.path,\n11 |       root.resolvingSymlinksInPath().path == root.path else { exit(2) }\n12 | let names = try FileManager.default.contentsOfDirectory(atPath: root.path).sorted()\n   |                 `- error: call can throw, but errors cannot be thrown out of a global variable initializer\n13 | var results: [[String: Any]] = []\n14 | for name in names {\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/image_decode.swift:13:5: error: var 'results' is not concurrency-safe because it is nonisolated global shared mutable state [#MutableGlobalVariable]\n11 |       root.resolvingSymlinksInPath().path == root.path else { exit(2) }\n12 | let names = try FileManager.default.contentsOfDirectory(atPath: root.path).sorted()\n13 | var results: [[String: Any]] = []\n   |     |- error: var 'results' is not concurrency-safe because it is nonisolated global shared mutable state [#MutableGlobalVariable]\n   |     |- note: convert 'results' to a 'let' constant to make 'Sendable' shared state immutable\n   |     |- note: add '@MainActor' to make var 'results' part of global actor 'MainActor'\n   |     `- note: disable concurrency-safety checks if accesses are protected by an external synchronization mechanism\n14 | for name in names {\n15 |     let url = root.appendingPathComponent(name)\n\n/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v2/image_decode.swift:57:5: error: let 'output' is not concurrency-safe because non-'Sendable' type '[String : Any]' may have shared mutable state [#MutableGlobalVariable]\n55 | }\n56 | let passed = results.count == expected && results.allSatisfy { $0[\"decoded\"] as? Bool == true }\n57 | let output: [String: Any] = [\"verdict\": passed ? \"PASS\" : \"FAIL\", \"expected\": expected,\n   |     |- error: let 'output' is not concurrency-safe because non-'Sendable' type '[String : Any]' may have shared mutable state [#MutableGlobalVariable]\n   |     |- note: add '@MainActor' to make let 'output' part of global actor 'MainActor'\n   |     `- note: disable concurrency-safety checks if accesses are protected by an external synchronization mechanism\n58 |     \"actualEntries\": names.count, \"decoder\": \"macOS ImageIO plus full RGB bitmap draw\",\n59 |     \"destination\": root.path, \"entries\": results, \"readOnly\": true]\n\n[#MutableGlobalVariable]: <https://docs.swift.org/compiler/documentation/diagnostics/mutable-global-variable>\n",
+      "binary": null,
+      "binary_sha256": null
+    }
+  ],
+  "verdict": "FAIL"
+}

@@ -1,0 +1,13 @@
+{
+  "source_sha256": "934cc2cac6be8fdb37a9bd014d90321be271d8517134070d9a9adcf62d091cdf",
+  "derivative_sha256": "6833bb03d99f1269c733cd63f2154191ec6e361dc73d7a173bc998eb1ed342c4",
+  "scale": 2,
+  "crop": [
+    0,
+    0,
+    654,
+    1286
+  ],
+  "mapping": "all OCR coordinates divided by2",
+  "method": "CGContext .none2x fullframe derivative"
+}

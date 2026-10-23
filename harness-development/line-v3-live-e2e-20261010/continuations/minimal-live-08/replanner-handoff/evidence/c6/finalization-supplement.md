@@ -1,0 +1,11 @@
+# c6 finalization supplement
+
+This supplement records events after the schema-validated candidate and closeout evidence index were frozen. It does not modify either sealed file.
+
+The unchanged selected-root RESULT validation API accepted the exact 8,109-byte candidate result with verdict `VALID`, SHA256 `0e9a4f7439209703bcf4b45742fde3344905c2feaf913d45d7704f9ba2787c07`. The controller-persisted receipt is at `controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/runs/c6c6b55d-865f-467b-94ba-3fd669df97ec/schema-validations/03ec4870bd4d1a1ee76cafda4b0c993139040db10ede859617aecc9dd666f6a9.json`; its stored validation verdict is `VALID`. The separate API wrapper is `.../result-validation-api.json` and the exact stdout is `.../result-validation-api.stdout.json`. The wrapper's auxiliary stdout summary looked up a nonexistent nested key and printed `verdict:null`; the actual persisted schema receipt is authoritative. No validation rerun or candidate edit occurred.
+
+The first attempt to locate the prior helper used the wrong path `Q/tools/native_support.py`; that file is at `Q/controller/tools/native_support.py`. This was a read-only lookup mistake, not a runtime or controller failure. The follow-up inspected that exact reference file without importing it. A separate read-only lookup also tried nonexistent `src/line_backup_batch/live_runner.py`; the correct current runner is Q's `live_runner.mjs`. No product source changed.
+
+The ordering correction is in `planner-handoff-c6-erratum.md`; `planner-handoff-c6-post-return.md` points to it and is the current compact Planner packet. The old candidate result and old Planner handoff remain immutable and are not authoritative for the corrected order or the 17-frame/V2-grant count distinction.
+
+`tools/import_c6_final_result.py` is prepared but not run. The parent should run it only after this role's actual final assistant message is present in the native session log. It requires exact byte equality with the validated candidate, verifies the persisted `validation.verdict: VALID` receipt and selected Luna/high turn, records the actual native completion with backend `UNKNOWN`, then invokes the unchanged `CandidateController.record_result` once. Its future controller route is not claimed here.

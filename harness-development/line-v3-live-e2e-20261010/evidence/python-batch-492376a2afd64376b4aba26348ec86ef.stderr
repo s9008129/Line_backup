@@ -1,0 +1,40 @@
+test_cli_explicit_authority_and_opaque_receipt (test_batch_authority.AuthorityTests.test_cli_explicit_authority_and_opaque_receipt) ... ok
+test_config_drift_blocks_even_fresh_receipt (test_batch_authority.AuthorityTests.test_config_drift_blocks_even_fresh_receipt) ... ok
+test_foreign_owner_has_no_inter_album_window (test_batch_authority.AuthorityTests.test_foreign_owner_has_no_inter_album_window) ... ok
+test_legacy_canonical_replacement_refused (test_batch_authority.AuthorityTests.test_legacy_canonical_replacement_refused) ... ok
+test_missing_lock_refuses_before_creation (test_batch_authority.AuthorityTests.test_missing_lock_refuses_before_creation) ... ok
+test_missing_state_never_initializes (test_batch_authority.AuthorityTests.test_missing_state_never_initializes) ... ok
+test_old_operator_idle_v3_refuses_before_lock_or_destination (test_batch_authority.AuthorityTests.test_old_operator_idle_v3_refuses_before_lock_or_destination) ... ok
+test_production_api_without_grant_refuses (test_batch_authority.AuthorityTests.test_production_api_without_grant_refuses) ... ok
+test_source_drift_blocks (test_batch_authority.AuthorityTests.test_source_drift_blocks) ... ok
+test_stale_revision_hash_and_inode_refused (test_batch_authority.AuthorityTests.test_stale_revision_hash_and_inode_refused) ... ok
+test_symlink_state_and_root_refused (test_batch_authority.AuthorityTests.test_symlink_state_and_root_refused) ... ok
+test_actual_full_rgb_decoder_dynamic_counts_and_measured_bytes (test_batch_content.ContentTests.test_actual_full_rgb_decoder_dynamic_counts_and_measured_bytes) ... ok
+test_content_mutation_after_decode_refuses (test_batch_content.ContentTests.test_content_mutation_after_decode_refuses) ... ok
+test_extra_hidden_directory_symlink_zero_and_temp_refuse (test_batch_content.ContentTests.test_extra_hidden_directory_symlink_zero_and_temp_refuse) ... ok
+test_interval_cannot_be_faked_by_non_advancing_clock (test_batch_content.ContentTests.test_interval_cannot_be_faked_by_non_advancing_clock) ... ok
+test_pause_missing_count_never_passes_stability_alone (test_batch_content.ContentTests.test_pause_missing_count_never_passes_stability_alone) ... ok
+test_truncated_png_actual_pixel_decoder_rejects (test_batch_content.ContentTests.test_truncated_png_actual_pixel_decoder_rejects) ... ok
+test_cap_one_does_not_loop_around_limit (test_batch_coordinator.CoordinatorTests.test_cap_one_does_not_loop_around_limit) ... ok
+test_final_scan_drift_is_not_all_complete (test_batch_coordinator.CoordinatorTests.test_final_scan_drift_is_not_all_complete) ... ok
+test_loaded_intent_and_fresh_ids_never_get_second_permission (test_batch_coordinator.CoordinatorTests.test_loaded_intent_and_fresh_ids_never_get_second_permission) ... ok
+test_true_service_two_dynamic_albums_plus_verified_skips (test_batch_coordinator.CoordinatorTests.test_true_service_two_dynamic_albums_plus_verified_skips) ... ok
+test_wrong_detail_before_intent_creates_no_barrier (test_batch_coordinator.CoordinatorTests.test_wrong_detail_before_intent_creates_no_barrier) ... ok
+test_active_owner_refuses (test_batch_migration.MigrationTests.test_active_owner_refuses) ... ok
+test_before_replace_failure_preserves_raw (test_batch_migration.MigrationTests.test_before_replace_failure_preserves_raw) ... ok
+test_true_cli_migration_preserves_large_integers_and_history (test_batch_migration.MigrationTests.test_true_cli_migration_preserves_large_integers_and_history) ... ok
+test_two_cli_processes_one_stable_lock_cas_winner (test_batch_migration.MigrationTests.test_two_cli_processes_one_stable_lock_cas_winner) ... /opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/tempfile.py:961: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures/tmprsq94z45'>
+  _warnings.warn(warn_message, ResourceWarning)
+ok
+test_uncertain_readback_keeps_committed_candidate_and_no_retry (test_batch_migration.MigrationTests.test_uncertain_readback_keeps_committed_candidate_and_no_retry) ... ok
+test_complete_overlapping_catalog_and_negative_gap_boundaries (test_batch_observations.ObservationTests.test_complete_overlapping_catalog_and_negative_gap_boundaries) ... ok
+test_duplicate_identity_count_drift_and_non_date_refuse (test_batch_observations.ObservationTests.test_duplicate_identity_count_drift_and_non_date_refuse) ... ok
+test_metadata_cross_pair_and_neighbor_overlap_refuse (test_batch_observations.ObservationTests.test_metadata_cross_pair_and_neighbor_overlap_refuse) ... ok
+test_partial_card_prohibits_click (test_batch_observations.ObservationTests.test_partial_card_prohibits_click) ... ok
+test_same_frame_full_card_safe_metadata (test_batch_observations.ObservationTests.test_same_frame_full_card_safe_metadata) ... ok
+test_wrong_group_session_stale_mapping_and_focus_refuse (test_batch_observations.ObservationTests.test_wrong_group_session_stale_mapping_and_focus_refuse) ... ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 1.633s
+
+OK

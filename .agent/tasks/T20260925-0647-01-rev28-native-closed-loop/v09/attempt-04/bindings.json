@@ -1,0 +1,95 @@
+{
+  "task_id": "T20260925-0647-01-rev28-native-closed-loop",
+  "round": "V-09 pre-Phase-A code/rules review, attempt-04 (fresh verification of the attempt-03 M-1 repair)",
+  "recorded_at": "2026-09-29T08:15+0800",
+  "branch": "v43-ab/codex-rev28",
+  "head": "cf39fdcc63e2b9c0d94ff8f34fd34b7aaaf58ff1",
+  "product_tree": "cf39fdcc is the product-tree commit under review (the attempt-03 M-1 repair; commits 3d74248b and later touch only .agent records). Reviewers must verify: `git diff --stat cf39fdcc -- rev28` is empty and `git diff --name-only cf39fdcc HEAD` contains only `.agent/` paths.",
+  "supersedes": {
+    "attempt": "v09/attempt-03",
+    "implementation_digest": "e748568dbc7c23a642eeead559afc0df345c56e91ff694dc1b6012744615c0cf",
+    "note": "attempt-03 reports are immutable and stay bound to the superseded digest e748568d…c0cf. attempt-04 binds to the tree repaired after the attempt-03 findings (M-1 code repair + MINOR-1 record correction). attempt-01/02/03 evidence must not be reused as proof for this digest."
+  },
+  "plan_sha256": "05413807f5d7c04d5fe57eb058da6da734ddef5e350a9b023bfa8f8d72f84c1b",
+  "handoff_sha256": "67fc16a638b115fef8b8e99e57ec0d6a2fc344cdd15c6eaf6a72bcdb1c227a33",
+  "implementation_digest": {
+    "sha256": "6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686",
+    "files": 48,
+    "manifest": "45 swift (36 under rev28/Sources/Rev28Core + 9 under rev28/Sources/rev28ctl) + rev28/Package.swift + rev28/Tools/replay_rev28.py + rev28/Tools/verify_pre_live_provenance.py",
+    "algorithm": "sha256 over sorted (repo-relative path + NUL + file bytes + NUL) for every path returned by ReviewedImplementationDigest.manifestPaths (swift under the two reviewed source roots, the reviewed Package.swift, every file under rev28/Tools)",
+    "measured_by": "production ReviewedImplementationDigest.compute through a temporary test, since removed; independently reproduced by a Python replica of the same manifest formula",
+    "verified_at": "2026-09-29T08:06+0800",
+    "evidence": "execution-evidence/a49-digest-m1-repair-20260929T0806.log (ZZDIGEST_SHA256=6734dda5…a686, ZZDIGEST_PATHCOUNT=48; Python replica identical)",
+    "delta_vs_attempt_03": "rev28/Sources/Rev28Core/Geometry/Coordinates.swift (dispatchMinimumMarginPt + isDispatchableCapturePixels), rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift (mintPermit margin), rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift (new regression; tests are outside the manifest)"
+  },
+  "ci_freeze_provenance": {
+    "guard": "rev28/Tools/verify_pre_live_provenance.py (fail-closed; drift in the bound source blob forbids review/live use until a new hosted freeze)",
+    "frozen_source_blob_sha": "c411011b1b44b1efb614e000f526b2118f45d120",
+    "result": "PASS",
+    "evidence": "execution-evidence/a54-provenance-m1-repair-20260929T0808.log (status=PASS, generation v3, sampleCount 20, maxLatencyMs 155.18903732299805)",
+    "note": "rev28/Sources/rev28ctl/HarnessCalibration.swift is byte-identical to the v3-frozen blob (git hash-object c411011b…); the repair did not touch it."
+  },
+  "frozen_rule_artifacts": {
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/capture-geometry-rulebook-v1.json": "09e1cf2ae181f519f9ed47979e0286212f0b051f197ced6909a9789f2f1a62ed",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/chooser-affirmation-predicate-v2.json": "0472aa0a364711fd357f872d93c5ad7e13b393cc267dbbc6244d47a20de6f3f2",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/chooser-ax-calibration-v2.json": "13aa01a2fa5d2b2d3e52d28e17a1b421ac25e6943fda1c44a572be610ef7e569",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/capture-matrix-v1.json": "e008478201770f0496d6a252680ae2a737473c32a70db888ebd2bf4aafb7ba7b",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/tripwire-attribution-ladder-v1.json": "d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/restart-observe-only-fixture-v1.json": "146b373a93c7a1ab02041e079c95eed645a7dd46d45ef518bc4a49bc8128a93f",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/postcondition-bounds-v3.json": "c10dcb43e9da14feedaed4f9e1ef5fdbf9b6afdd96d6ee8e79b84ac45a055e84",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/postcondition-latency-observations-v3.json": "ca4beabefc1f671162cec06345cf06755a62ad77a28458ac1b03a563f640b155",
+    "evidence/20260925-rev28-native-closed-loop/harness/ci-w2-item5-freeze-provenance-v3.json": "4f6f5fdcea491503b51e279b688de123ae4e38883b9d54edd02ad794baa0b152"
+  },
+  "repaired_tree_verification_evidence": {
+    "build": "execution-evidence/a46-build-attempt03-repair-20260929T080503.log — Build complete",
+    "focused_6_suites": "execution-evidence/a47-focused-m1-repair-20260929T0805.log — 88 tests / 0 failures (ActuationReadiness, CoordinateTransform, AdversarialMatrix, StructuralLocators, ComposedAdapters, LiveExecutionEngine; includes the new margin regression)",
+    "full_suite": "execution-evidence/a48-full-suite-m1-repair-20260929T0806.log — 242 tests / 0 failures / 0 skipped",
+    "adversarial_x2": [
+      "execution-evidence/a50-adversarial-m1-repair-run1-20260929T0808.log — 27 tests / 0 failures",
+      "execution-evidence/a51-adversarial-m1-repair-run2-20260929T0808.log — 27 tests / 0 failures"
+    ],
+    "replay_x2_byte_identical": [
+      "execution-evidence/a52-replay-m1-repair-run1-20260929T0808.json — 20 fixtures, verdict=PASS",
+      "execution-evidence/a53-replay-m1-repair-run2-20260929T0808.json — 20 fixtures, verdict=PASS"
+    ],
+    "replay_output_sha256": "81f6da94ad18d601a21bf0b521d5a96869f13b5a0a3e96db66239b2f90a47261",
+    "provenance": "execution-evidence/a54-provenance-m1-repair-20260929T0808.log — status=PASS, generation v3",
+    "digest_measurement": "execution-evidence/a49-digest-m1-repair-20260929T0806.log",
+    "cli_refusal_fixture": {
+      "dir": "execution-evidence/cli-refusal-20260929T0807/",
+      "transcript": "live-execute 77 / live-preflight 77 / CI guard 77 / missing config 64 / stale digest 77",
+      "side_effects": "evidence files 0, staging files 0, ledger absent, anchor absent, one-shot not renamed",
+      "bound_digest": "6734dda58539c28b7ae74755dbafc3d50aecd08c869a88497e08235582a0a686"
+    }
+  },
+  "repair_claims_to_verify": [
+    "V09_A3_M1_RETINA_MARGIN_SCALE — DispatchReadinessGate.mintPermit now evaluates invariant 5 in capture-pixel space with the 1-point margin converted at the observed capture scale: CaptureGeometryRules.dispatchMinimumMarginPt = 1.0 is a single constant also used as isDispatchable's default; new isDispatchableCapturePixels(point:safeRect:captureScale:) requires margins.min() >= 1.0 * captureScale and refuses non-finite/non-positive scales; the raw ±1-pixel comparisons are gone (rev28/Sources/Rev28Core/Geometry/Coordinates.swift, rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift). Verify the conversion, the semantics match with isDispatchable (>= at exactly 1 pt), the fail-closed invalid-scale handling, and that the production candidates (Save All midpoint within its safe rect; ellipsis middle-dot centre with >=4 px inset) still satisfy the guard at their real capture scale.",
+    "V09_A3_M1_REGRESSION_TEST — ActuationReadinessTests.testDispatchMarginConvertsOnePointAtCaptureScaleNotOnePixel covers 2x (1 px refused / 2 px accepted), 3x (2 px refused), 1x (1 px accepted) and NaN scale, plus direct isDispatchableCapturePixels assertions (rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift). Reviewers do not execute tests; the bound test output is evidence a47/a48.",
+    "V09_A3_M1_NO_BEHAVIOR_DRIFT — at 1x the guard admits exactly the same points as CaptureGeometryRules.isDispatchable; existing fixtures (scale 1, margins >=5 px) and production call sites keep their behaviour; revalidateAfterHover intentionally has no second margin check because the permit's point/safeRect fields are immutable after mint — verify this reasoning is sound.",
+    "V09_A3_SUITE_COUNT_LABEL_DISPOSITION — the record correction: progress.md and execution.md now read 'focused 8 suites 96/0' for a38 (the a38 log contains 8 suite-start blocks summing to 96 tests); the immutable attempt-03 bindings.json key focused_11_suites was not modified. Verify against the a38 log."
+  ],
+  "trust_boundary_dispositions_to_verify": [
+    "03-MINOR-C — crash window between entitlement consumption and the durable intent.saveAll append: documented no-code-change because every observed recovery path fails closed (retry maps to irreversibleIntentAlreadyRecorded; a restart reaches the entitlementConsumed refusal at dispatchSaveAll's eligibility re-validation); verify the reasoning, not a code change",
+    "03-MINOR-D — goal-slot identity includes the staging root: documented no-code-change because plan.md:134 keys the slot to task/group/album/approved new-path authorization and the approved root is itself part of the reviewed authorization config; verify the reasoning",
+    "01-MINOR-1 — locator menu/addressable bounds remain config-supplied but bounded fail-closed (retained-frame containment + ordered five-row identity + per-row menu intersection + >=8 px addressable overlap + safe-rect containment); hash-binding stays an explicitly tracked Phase A obligation (the frozen set contains no real LINE menu bounds)"
+  ],
+  "prior_review_claims_still_in_force": [
+    "All attempt-01/02/03 repair claims and prior VERIFIED claims remain in force on this tree and must be re-verified against cf39fdcc on digest 6734dda5…a686; the attempt-03 reviewers verified them against e748568d…c0cf and that verification must not be reused as proof. The attempt-03→attempt-04 delta touches only the readiness margin path (QuartzActuator.swift/Coordinates.swift) plus a test outside the manifest, so verification may focus on the readiness-gate consumers (Composition/ComposedNativeAdapter.swift, Composition/PostSaveComposition.swift), the geometry claims that cite QuartzActuator.swift/Coordinates.swift (post-hover revalidation perception half, invariant 5, menu/addressable bounds), and the digest/bindings recomputation; line references in QuartzActuator.swift shift by +3 after this repair."
+  ],
+  "prior_verification_bound_to_previous_digest": {
+    "attempt_03_evidence": [
+      "v09/attempt-03/bindings.json",
+      "v09/attempt-03/01-perception-geometry.md",
+      "v09/attempt-03/02-timing-automation.md",
+      "v09/attempt-03/03-transaction-history.md",
+      "execution-evidence/a37…a45 and cli-refusal-20260929T0742/"
+    ],
+    "note": "these runs and reports verify the pre-repair tree (digest e748568d…c0cf); they are not accepted as repaired-tree evidence for attempt-04"
+  },
+  "reviewer_contexts": [
+    "01-perception-geometry",
+    "02-timing-automation",
+    "03-transaction-history"
+  ],
+  "phase_b_status": "FORBIDDEN_AB_EVALUATION"
+}

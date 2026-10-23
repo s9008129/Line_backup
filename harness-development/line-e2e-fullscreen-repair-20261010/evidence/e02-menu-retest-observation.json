@@ -1,0 +1,55 @@
+{
+  "format_version": 1,
+  "observation_id": "e02-detail-menu-retest-20261010-1259-taipei",
+  "status": "OBSERVED",
+  "foreground_handoff": "The user stated that the foreground had been taken for typing, then explicitly returned it before the successful retry.",
+  "candidate": {
+    "group": "旻謙允禎成長日記",
+    "group_visual_ocr": "evidence/e02-menu-retest-03-group-ocr.json",
+    "date_range": "2024/06/02~06/07",
+    "photo_count": 65,
+    "created": "2024.06.09"
+  },
+  "attempts": [
+    {
+      "observation": "evidence/e02-menu-retest-01.json",
+      "result": "No popup present in the frame taken while foreground input had been interrupted."
+    },
+    {
+      "action": "After the user returned the foreground, one documented CUA click on the fresh detail-window ellipsis coordinate [610, 100].",
+      "result": "The full-display frame visibly shows the native popup and all five menu rows; the CUA bound-window screenshot alone omits the popup.",
+      "capture": "evidence/e02-menu-retest-02.json",
+      "capture_sha256": "254934128ade2f8c4ede672461d3d127d6bedbdf8c5158e1b70092d865b0a8df",
+      "rows": ["選擇項目", "修改相簿名稱", "儲存全部", "刪除相簿", "分享相簿"]
+    },
+    {
+      "action": "One CUA click on the visually identified blank title-bar area [500, 50], outside the popup.",
+      "result": "The next full-display capture shows the same detail window and no native popup; two LINE windows remain on-screen.",
+      "capture": "evidence/e02-menu-retest-03.json",
+      "capture_sha256": "b4bbb0d007d0b21fa105a3cab4f4569045ce1c5750508bb70be4bed436612d5a"
+    }
+  ],
+  "fresh_geometry": {
+    "ocr": "evidence/e02-menu-retest-02-ocr.json",
+    "anchors": "evidence/e02-menu-retest-02-anchors.json",
+    "result": "evidence/e02-menu-retest-02-geometry.json",
+    "pre_dispatch_ready": true,
+    "maximum_anchor_residual_source_pixels": 0.8222927430150858,
+    "save_all_row_clearance_display_pixels": 26.999999758633862,
+    "required_clearance_display_pixels": 6,
+    "derived_cua_point_pixels": [610, 271.49999998487533],
+    "meaning": "Candidate geometry observation only; it does not create intent or authorize Save All."
+  },
+  "side_effects": {
+    "save_all_invocations": 0,
+    "confirmation_actions": 0,
+    "download_started": false,
+    "destination_created": false,
+    "backup_state_mutated": false
+  },
+  "limitations": [
+    "Human foreground ownership can change between observations; a missing popup immediately after the user's foreground interruption was not interpreted as a successful click.",
+    "The CUA app-bound screenshot omits LINE's native popup; the same-display SCK image provides the popup observation.",
+    "No dispatch or download was performed."
+  ]
+}

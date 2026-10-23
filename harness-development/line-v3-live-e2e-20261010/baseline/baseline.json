@@ -1,0 +1,36 @@
+{
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "head": "7035809c695dd7410bc919ed791914137c87174a",
+  "branch": "v43-ab/codex-rev28",
+  "index_tree": "67f25e8cf1e104de48c532235b3c5082c2c2a3ac",
+  "state": {
+    "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/state/backup_state.json",
+    "sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9",
+    "bytes": 252091
+  },
+  "config": {
+    "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/config/line_backup_config.json",
+    "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+    "bytes": 384
+  },
+  "destination": {
+    "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/backups/旻謙允禎成長日記/2024-06-02_2024-06-07_65張",
+    "exists": true,
+    "is_symlink": false,
+    "inode": 134162099,
+    "entries": [],
+    "entry_count": 0
+  },
+  "prior_report": {
+    "path": "harness-development/line-e2e-fullscreen-repair-20261010/E2E測試報告.md",
+    "sha256": "7c45cb1f632a6ec8993c04c7f2f4b195972a070dfff78f18542c50dd62ed5e3c"
+  },
+  "git_baseline_artifacts": {
+    "baseline/focused-existing-product.diff": "27837a169486f726ce66958deda804041e04ff817e1c9991368d43d381751881",
+    "baseline/git-status-porcelain.txt": "7a941c1460408686d1792b60444b57b05996d5bd3be0ab3f32e7a1f39a060e78",
+    "baseline/preexisting-index.diff": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "baseline/preexisting-tracked.diff": "48c72645db2adf1c4250384803d753dda471c779df757a031fa3c88f2a8994d1"
+  },
+  "preexisting_status_line_count": 61328,
+  "captured_at": "2026-10-10T06:58:19.792544+00:00"
+}

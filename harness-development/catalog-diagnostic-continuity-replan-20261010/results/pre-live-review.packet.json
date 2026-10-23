@@ -1,0 +1,43 @@
+{
+ "artifacts": {
+  "attempt-ledger.json": "3f175c7f5a414f5fdff37c2b9236de7cfef80d03d26d75303d6fc671a62eb9f6",
+  "binding.json": "af37890ecaf652f911771a072c07b8124cf62847f05d17d78eebc45f292044dc",
+  "candidate-manifest.json": "675c55e384268f18f029f279b4c1f858691c8f462d3fa7a30be8314b788c9c1e",
+  "preservation.before.json": "5f9facf6089a2d809f5f6fb26a4669ff1a39ba843543a5c70c2ffcbc86be7896",
+  "replay-manifest.json": "204eb15b85679e2f084633f4bccc7a961adf33197c7aa80f77017e28a7b4ba2b",
+  "results.json": "9d6da4b653ed25b9db0f69960f545d96b24f99598cfd8f909a545dceae78e971",
+  "verify-packet.json": "92d9d3ddec3be3c0725263c61ef6d33c387a596da0faed2c7ee928fa4f9b7c9f"
+ },
+ "candidate_files": {
+  "capture_preservation.py": "db5a583464d4e83f69f87c7bdd3ea7ff7721ecdaf77f4568cce6faf663abeaa6",
+  "catalog_diagnostic.py": "babf3ec263099e3598be727cb02daa3aab44e0cf64330c4ac4cdce3c4c88819f",
+  "offline_vision.swift": "ff0e50f340b05e871d0291efe9505e8c766534929418975bad41b1ed2d8b8c0f",
+  "profiles.json": "18bc872d99940de8e010f34cd2a864cb3eebd3f99eb3b3cce018029b26001bb0",
+  "run_offline_once.py": "eeaa72f8f4d9ce1a5c86a21a31885202dedf3f0149fa9b1c13d878a76b7847d0",
+  "test_catalog_diagnostic.py": "959d94e5e08abf062f7f792d3af27e5e035d014c012dd062a2b385cf4bb92c67"
+ },
+ "expected_review_output": "A single verdict PASS/FAIL bound to the same candidate hash, with any bounded action, exact path list, success check and stop condition.",
+ "format": "local-pre-live-review-packet-1",
+ "frozen_inputs": {
+  "authorization.json": "9b926dc41f54736a342a11b40a7b1202748a07292d5b03c0fbf509c4faa7f873",
+  "diagnostic-spec.json": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8",
+  "handoff.json": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+  "handoff.md": "e207b97d69fe8da22a4d54a2637cdf4e3b82b911a5fb72b941f2a1a6bbaf7831",
+  "plan-as-submitted.md": "d8e0031fa8ef1d7a0a0f260de3682db26421d5779dffc1d1fd1a124969bc5387",
+  "plan-contract.json": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+  "plan-review-01.result.json": "09acf8d2391b943217da8a2d211099a3144d8b4da9a4fa98095d8fb346e4d884",
+  "source-manifest.json": "0e451f6f929e6e265bbbc1de8697ae5e45bd50aee3aa6acc3dcdc2e2d45e927f"
+ },
+ "offline_validation_run": "offline-validation/",
+ "purpose": "Independent same-candidate program/evidence review required before any live foreground coordination (G_LIVE precondition).",
+ "review_questions": [
+  "Do the frozen packet hashes and byte bindings match the recorded source manifest and spec?",
+  "Does candidate/offline_vision.swift decode by content (JPEG data in .png names), preserve top-left orientation (corner fixture), and implement the declared local-ROI nearest 2x transform exactly once?",
+  "Does candidate/catalog_diagnostic.py implement full-slot exact-RGBA continuity (no luma/threshold shortcut), the independent indicator structure check, fail-closed identity/ambiguity rules, separate movement D and ordered overlap, and replay scroll_eligible=false?",
+  "Does offline-validation prove four-frame continuity/indicator/identity/movement/overlap with the expected joint D ranges and preserve the raw 相溥?",
+  "Are R01-R19 results genuine (recorded expected/actual/verdict) and is R20 correctly NOT_RUN without live CUA?",
+  "Is any evidence fabricated, any threshold/tolerance added after failure, or any historic status rewritten?",
+  "Is the candidate hash the single frozen candidate bound to this review (646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6)?"
+ ],
+ "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+}

@@ -1,0 +1,284 @@
+test_absent_destination_becoming_nonempty_rejected (test_project_binding.ProjectBindingTests.test_absent_destination_becoming_nonempty_rejected) ... ERROR
+test_busy_precedes_skip (test_project_binding.ProjectBindingTests.test_busy_precedes_skip) ... ERROR
+test_cli_refusal_and_legacy_parser (test_project_binding.ProjectBindingTests.test_cli_refusal_and_legacy_parser) ... ERROR
+test_config_contract (test_project_binding.ProjectBindingTests.test_config_contract) ... ERROR
+test_correctly_rehashed_foreign_join_content_refused (test_project_binding.ProjectBindingTests.test_correctly_rehashed_foreign_join_content_refused) ... ERROR
+test_correctly_rehashed_nonjson_and_duplicate_keys_refused (test_project_binding.ProjectBindingTests.test_correctly_rehashed_nonjson_and_duplicate_keys_refused) ... ERROR
+test_count_ambiguity (test_project_binding.ProjectBindingTests.test_count_ambiguity) ... ERROR
+test_dates_and_count_types (test_project_binding.ProjectBindingTests.test_dates_and_count_types) ... ERROR
+test_destination_and_parent_replacement_rejected (test_project_binding.ProjectBindingTests.test_destination_and_parent_replacement_rejected) ... ERROR
+test_duplicate_keys_and_malformed_state (test_project_binding.ProjectBindingTests.test_duplicate_keys_and_malformed_state) ... ERROR
+test_evidence_hash_or_path_is_not_trusted (test_project_binding.ProjectBindingTests.test_evidence_hash_or_path_is_not_trusted) ... ERROR
+test_fixture_kind_joins_exact_run_and_verification (test_project_binding.ProjectBindingTests.test_fixture_kind_joins_exact_run_and_verification) ... ERROR
+test_invalid_history_relationships (test_project_binding.ProjectBindingTests.test_invalid_history_relationships) ... ERROR
+test_join_verification_references_refused_if_missing_or_unsafe (test_project_binding.ProjectBindingTests.test_join_verification_references_refused_if_missing_or_unsafe) ... ERROR
+test_legacy_unknown_is_not_permission (test_project_binding.ProjectBindingTests.test_legacy_unknown_is_not_permission) ... ERROR
+test_missing_join_anchors_and_event_reference_refused (test_project_binding.ProjectBindingTests.test_missing_join_anchors_and_event_reference_refused) ... ERROR
+test_missing_source_and_evidence (test_project_binding.ProjectBindingTests.test_missing_source_and_evidence) ... ERROR
+test_new_verification_read_is_in_stable_snapshot (test_project_binding.ProjectBindingTests.test_new_verification_read_is_in_stable_snapshot) ... ERROR
+test_nonempty_and_unsafe_destination (test_project_binding.ProjectBindingTests.test_nonempty_and_unsafe_destination) ... ERROR
+test_nonterminal_other_target_is_busy (test_project_binding.ProjectBindingTests.test_nonterminal_other_target_is_busy) ... ERROR
+test_purported_release_does_not_clear_intent (test_project_binding.ProjectBindingTests.test_purported_release_does_not_clear_intent) ... ERROR
+test_registry_evidence_is_part_of_stable_snapshot (test_project_binding.ProjectBindingTests.test_registry_evidence_is_part_of_stable_snapshot) ... ERROR
+test_root_and_component_symlinks (test_project_binding.ProjectBindingTests.test_root_and_component_symlinks) ... ERROR
+test_stable_read_rejects_change_and_replacement (test_project_binding.ProjectBindingTests.test_stable_read_rejects_change_and_replacement) ... ERROR
+test_terminal_pointer_and_unknown_content (test_project_binding.ProjectBindingTests.test_terminal_pointer_and_unknown_content) ... ERROR
+test_unknown_intent_failed_and_safe_abort_block (test_project_binding.ProjectBindingTests.test_unknown_intent_failed_and_safe_abort_block) ... ERROR
+test_user_attestation_null_run_still_skips (test_project_binding.ProjectBindingTests.test_user_attestation_null_run_still_skips) ... ERROR
+test_user_fact_source_kind_and_confirmation_mismatches_refused (test_project_binding.ProjectBindingTests.test_user_fact_source_kind_and_confirmation_mismatches_refused) ... ERROR
+test_verification_content_mismatch_with_correct_digest_refused (test_project_binding.ProjectBindingTests.test_verification_content_mismatch_with_correct_digest_refused) ... ERROR
+test_verified_skip_never_inspects_photos (test_project_binding.ProjectBindingTests.test_verified_skip_never_inspects_photos) ... ERROR
+test_wire_schema_offline (test_project_binding.ProjectBindingTests.test_wire_schema_offline) ... ERROR
+
+======================================================================
+ERROR: test_absent_destination_becoming_nonempty_rejected (test_project_binding.ProjectBindingTests.test_absent_destination_becoming_nonempty_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_busy_precedes_skip (test_project_binding.ProjectBindingTests.test_busy_precedes_skip)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_cli_refusal_and_legacy_parser (test_project_binding.ProjectBindingTests.test_cli_refusal_and_legacy_parser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_config_contract (test_project_binding.ProjectBindingTests.test_config_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_correctly_rehashed_foreign_join_content_refused (test_project_binding.ProjectBindingTests.test_correctly_rehashed_foreign_join_content_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_correctly_rehashed_nonjson_and_duplicate_keys_refused (test_project_binding.ProjectBindingTests.test_correctly_rehashed_nonjson_and_duplicate_keys_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_count_ambiguity (test_project_binding.ProjectBindingTests.test_count_ambiguity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_dates_and_count_types (test_project_binding.ProjectBindingTests.test_dates_and_count_types)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_destination_and_parent_replacement_rejected (test_project_binding.ProjectBindingTests.test_destination_and_parent_replacement_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_duplicate_keys_and_malformed_state (test_project_binding.ProjectBindingTests.test_duplicate_keys_and_malformed_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_evidence_hash_or_path_is_not_trusted (test_project_binding.ProjectBindingTests.test_evidence_hash_or_path_is_not_trusted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_fixture_kind_joins_exact_run_and_verification (test_project_binding.ProjectBindingTests.test_fixture_kind_joins_exact_run_and_verification)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_invalid_history_relationships (test_project_binding.ProjectBindingTests.test_invalid_history_relationships)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_join_verification_references_refused_if_missing_or_unsafe (test_project_binding.ProjectBindingTests.test_join_verification_references_refused_if_missing_or_unsafe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_legacy_unknown_is_not_permission (test_project_binding.ProjectBindingTests.test_legacy_unknown_is_not_permission)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_missing_join_anchors_and_event_reference_refused (test_project_binding.ProjectBindingTests.test_missing_join_anchors_and_event_reference_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_missing_source_and_evidence (test_project_binding.ProjectBindingTests.test_missing_source_and_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_new_verification_read_is_in_stable_snapshot (test_project_binding.ProjectBindingTests.test_new_verification_read_is_in_stable_snapshot)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_nonempty_and_unsafe_destination (test_project_binding.ProjectBindingTests.test_nonempty_and_unsafe_destination)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_nonterminal_other_target_is_busy (test_project_binding.ProjectBindingTests.test_nonterminal_other_target_is_busy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_purported_release_does_not_clear_intent (test_project_binding.ProjectBindingTests.test_purported_release_does_not_clear_intent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_registry_evidence_is_part_of_stable_snapshot (test_project_binding.ProjectBindingTests.test_registry_evidence_is_part_of_stable_snapshot)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_root_and_component_symlinks (test_project_binding.ProjectBindingTests.test_root_and_component_symlinks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_stable_read_rejects_change_and_replacement (test_project_binding.ProjectBindingTests.test_stable_read_rejects_change_and_replacement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_terminal_pointer_and_unknown_content (test_project_binding.ProjectBindingTests.test_terminal_pointer_and_unknown_content)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_unknown_intent_failed_and_safe_abort_block (test_project_binding.ProjectBindingTests.test_unknown_intent_failed_and_safe_abort_block)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_user_attestation_null_run_still_skips (test_project_binding.ProjectBindingTests.test_user_attestation_null_run_still_skips)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_user_fact_source_kind_and_confirmation_mismatches_refused (test_project_binding.ProjectBindingTests.test_user_fact_source_kind_and_confirmation_mismatches_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_verification_content_mismatch_with_correct_digest_refused (test_project_binding.ProjectBindingTests.test_verification_content_mismatch_with_correct_digest_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_verified_skip_never_inspects_photos (test_project_binding.ProjectBindingTests.test_verified_skip_never_inspects_photos)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+======================================================================
+ERROR: test_wire_schema_offline (test_project_binding.ProjectBindingTests.test_wire_schema_offline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 57, in setUp
+    raise RuntimeError('Explicit task-local test root is required')
+RuntimeError: Explicit task-local test root is required
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.002s
+
+FAILED (errors=31)

@@ -1,0 +1,407 @@
+{
+  "format": "local-handoff-source-manifest-1",
+  "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+  "created_at": "2026-10-10T01:25:48.241990+00:00",
+  "source_role": "Actual handoff document input byte set; not a controller source snapshot.",
+  "records": [
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-as-submitted.md",
+      "bytes": 7830,
+      "sha256": "d8e0031fa8ef1d7a0a0f260de3682db26421d5779dffc1d1fd1a124969bc5387",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-review-01.result.json",
+      "bytes": 8555,
+      "sha256": "09acf8d2391b943217da8a2d211099a3144d8b4da9a4fa98095d8fb346e4d884",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-review-01.pixel-probe.log",
+      "bytes": 8803,
+      "sha256": "a3073f387b8cac43ba73162476b0a9acba099737872db74b60d928503724ce8f",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-review-01.schema-validation.json",
+      "bytes": 911,
+      "sha256": "50550e43aaff58ba222751a7806864e9b9eb746985ae8e640cac37be39f917b4",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/handoff.md",
+      "bytes": 34206,
+      "sha256": "e207b97d69fe8da22a4d54a2637cdf4e3b82b911a5fb72b941f2a1a6bbaf7831",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/authorization.json",
+      "bytes": 2912,
+      "sha256": "9b926dc41f54736a342a11b40a7b1202748a07292d5b03c0fbf509c4faa7f873",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/diagnostic-spec.json",
+      "bytes": 6242,
+      "sha256": "f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/plan-contract.json",
+      "bytes": 3588,
+      "sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/handoff.json",
+      "bytes": 3588,
+      "sha256": "0c141010ecd092e3b2556bacf3488bd53d2897d5a234f2b4f4eb2c4945d0818d",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-000.png",
+      "bytes": 184297,
+      "sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-000.scale2.png",
+      "bytes": 1325568,
+      "sha256": "f3fec63b11e4138d5bbb86353de70f5a9b6a1fda36a9d87a2378493e5138e8fe",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-000.ocr.json",
+      "bytes": 1359,
+      "sha256": "cac68c80f2ed25880defbc9802e78683a34e11d13cf93015ec237ba3d8b45957",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-000.modern_ocr.json",
+      "bytes": 2389,
+      "sha256": "188cb4639b83de7323cea2dc59825762a4877891922d0018d02efa04b31e9458",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-000.transform.json",
+      "bytes": 346,
+      "sha256": "998610c7ae36c9801913ca79b18d7c6f521d6d99da63ddb6fb34ba452d99555c",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-000.ax.txt",
+      "bytes": 1299,
+      "sha256": "511c6cf8ad8709ca1fc5b595e26ebcec9e02d0bd73dc9e42e32b92e2b0eb90f2",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-001.png",
+      "bytes": 191039,
+      "sha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-001.scale2.png",
+      "bytes": 1380891,
+      "sha256": "8300a2a001ca951a99bc279a4dcaac7ca7b66ae34653e4f60f34cc6a58877d00",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-001.ocr.json",
+      "bytes": 1361,
+      "sha256": "fbb398f6e05e68191637246dc96657bd4465eb4291cfeafc5ed4df9065b1a170",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-001.modern_ocr.json",
+      "bytes": 2039,
+      "sha256": "60fdfe851283af1fff7b091540fb35fccd66b4dc3d9bb045175d095c20825e40",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-001.transform.json",
+      "bytes": 346,
+      "sha256": "79f809452714ade5471b39cf84319cbc696a2bb0748855c51662ae27d09e0a48",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-001.ax.txt",
+      "bytes": 1301,
+      "sha256": "603be04565f1dabd8e73ffc4e9db85d4294edc8a3c089d8b8e5bfa4c8b536436",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-002.png",
+      "bytes": 173800,
+      "sha256": "65af93e64fa0ae38d2214a2e9d973cafcdd4db99ae47124e2ccb5e6aeb9b3adb",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-002.scale2.png",
+      "bytes": 1212803,
+      "sha256": "ae188f90afbe185d913ec9e029af9b80c6dfd367878ed0dc66bf48340bbc460d",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-002.ocr.json",
+      "bytes": 1774,
+      "sha256": "85d8d299eac6929736124e2145fb9c4cf59ba7d1e032ad5768503d267e5995cf",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-002.modern_ocr.json",
+      "bytes": 2666,
+      "sha256": "525d8fd3f8fd03eb51a1bfd1b93eee4cd598fdce5ba1a4ea6cdd6e32c4e42227",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-002.transform.json",
+      "bytes": 346,
+      "sha256": "3abb4a86f8299bc927f62c314d4c47db1534df60c0dc5c9c87480d6c5eeb6f34",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-002.ax.txt",
+      "bytes": 308,
+      "sha256": "35eed60f1819da1f97ec9b7c83e2595fee79ec014552dbc547e6645bf413673a",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-003.png",
+      "bytes": 193699,
+      "sha256": "934cc2cac6be8fdb37a9bd014d90321be271d8517134070d9a9adcf62d091cdf",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-003.scale2.png",
+      "bytes": 1392164,
+      "sha256": "6833bb03d99f1269c733cd63f2154191ec6e361dc73d7a173bc998eb1ed342c4",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-003.ocr.json",
+      "bytes": 1361,
+      "sha256": "1bfff6c0778f790c47a09a08aede84f1d5be260726c8bcef75230503fa1fcf3a",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-003.modern_ocr.json",
+      "bytes": 2038,
+      "sha256": "2a970ff0ed59843f86aa791ea6aa211a5c235269ec0a63192413464f4bb95610",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-003.transform.json",
+      "bytes": 346,
+      "sha256": "f45e0efded3896038f918fe65b89682352656868b959147d5c93acb64ee5592a",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-003.ax.txt",
+      "bytes": 316,
+      "sha256": "e70bbbaaf6a3f159fde7d672d1a66c9dde043b837917a80d47979569b8823de7",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/step-001.pre.json",
+      "bytes": 589,
+      "sha256": "8a344b021019ba9f20c442a301f8ddc719616504dc423c110e1e78b20f89d3fe",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/step-001.action.json",
+      "bytes": 150,
+      "sha256": "961e3425ee00fdd004be5d1e49d7e7e927d56ff579f695d25b1a9af5b129f1fe",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/step-002.pre.json",
+      "bytes": 516,
+      "sha256": "42653d423d8ba0d065c6051e66ce354c50be616954993bda362e0aef629de212",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/step-002.action.json",
+      "bytes": 146,
+      "sha256": "862bd3ba984d1556f755fc1090019fd45c5841b63d88f112fbb99f474670a4de",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/step-003.pre.json",
+      "bytes": 517,
+      "sha256": "8bba52aca770821fa753f0ec539ba5e8e368526dfd583cd0614ecc2effc78b82",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/step-003.action.json",
+      "bytes": 146,
+      "sha256": "d3939deb63ab4c028f07af2bacd8fadaaa2d02ababb084381b22113e5aee27b4",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/agreement.py",
+      "bytes": 5259,
+      "sha256": "162a775aba1d1ca828b12e2c81b2e8061043526e5195f854443b23e316862a27",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/analyze.py",
+      "bytes": 3208,
+      "sha256": "43094c225a2dd371c00f86aa16bf43b643fd89c2c180d1f437637ca9cb0c70b8",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/modern_ocr.swift",
+      "bytes": 1939,
+      "sha256": "19f6787f4523332b5eb8a4235c4461fee5e49314c615b4865cc9ec848f2a2861",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/ocr.swift",
+      "bytes": 1342,
+      "sha256": "c53da3480dd6596cc662dad8a46089f2aa5ab36148a59a2610866344387891e5",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/baseline.json",
+      "bytes": 1251,
+      "sha256": "c81a650832ca3ac71f147f864ca566845f3ba1a07451711fcf9887e4615b74df",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/preservation.json",
+      "bytes": 1154,
+      "sha256": "4bd1bec6cf0d2e6df588b06fdcc9fd78315ab5c2ee07178c5ed1c4aa154e01a1",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/report.md",
+      "bytes": 3857,
+      "sha256": "c05f4521be0e234542d43ec4ff6fb6b6615e121d05b6da919019df793ae4741f",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/implementer.result.json",
+      "bytes": 6588,
+      "sha256": "4f432bc00269a62876d7e4ecaa8c0e14611a9ec46aabfc4a1d392810db5d240d",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/plan.md",
+      "bytes": 6566,
+      "sha256": "525e3b3dd811de4a07c47a659c4441f9fc877ffb6426f5c2c0d5d41a138021fb",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/plan-contract-02.json",
+      "bytes": 1085,
+      "sha256": "e2eb3e4cd979f4c2d08562c1ad7facc5cde7c6b66cbe9663189a56279d4b5347",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/handoff-02.json",
+      "bytes": 1085,
+      "sha256": "e2eb3e4cd979f4c2d08562c1ad7facc5cde7c6b66cbe9663189a56279d4b5347",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-20261010/scan-003.failure.json",
+      "bytes": 101,
+      "sha256": "1d8b1f34ed3ad8e9ffac2d1114c05b5fb64771a2ff3aadd8fc9e012c044ede1a",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "config/line_backup_config.json",
+      "bytes": 384,
+      "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "state/backup_state.json",
+      "bytes": 252091,
+      "sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "state/run_log.md",
+      "bytes": 14736,
+      "sha256": "d96739e255261a6f1e1eae02df928a55d64192b3d1146983e6f2c40ad6528333",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": ".git/index",
+      "bytes": 4881587,
+      "sha256": "ea5920d7cb3139bf3fa08fea89ceb960daea8c3ecbb828eaa1d081710997976a",
+      "verification": "PROVENANCE_ONLY"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/AGENTS.md",
+      "bytes": 6957,
+      "sha256": "a42397c48ba276576c754b7018e30a729d228f99a78f5e8100e4513a49d673a8",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/prompts/v4.8.0/03_handoff_prompt.md",
+      "bytes": 1271,
+      "sha256": "e27860d1da047ec1d9ece6440d9ec3f19014b0cefbb2e7b6ff00f8d564ebde37",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/prompts/v4.8.0/04_implement_prompt.md",
+      "bytes": 5878,
+      "sha256": "9e9d4bbd19939f042afaaea7eda024130742f893b50e099953109a63ef1a117e",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/policies/v4.8.0/workflow-routing.md",
+      "bytes": 7525,
+      "sha256": "7c2251913507a8cc09b4a697576963aaf6694ffd7fd7af55a6eb2e813a690912",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/templates/v4.8.0/runtime-defaults.json",
+      "bytes": 1215,
+      "sha256": "2e940cbd2edec33f3a13734038719f69eed53ef61a7fb59fe75e13b488ea7bbc",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/schemas/v3/task.schema.json",
+      "bytes": 3989,
+      "sha256": "5a8e7b7227985c123e1a70bcd005d28129b46dd4068d4ee78ed48c71740c8d72",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/schemas/v3/gate.schema.json",
+      "bytes": 1529,
+      "sha256": "886dbb435dbb4543116e51a779205c953f9e8ae677def6825562cfbdf3f0f5cb",
+      "verification": "REQUIRED_CURRENT_HASH"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/schemas/v3/result.schema.json",
+      "bytes": 11013,
+      "sha256": "e74c5209be396c690287c53aaff2ef588084ef03573d947d0a98655f527de886",
+      "verification": "REQUIRED_CURRENT_HASH"
+    }
+  ],
+  "git_head_at_documentation": "a81278235922a58d38ca8c3bd1fc61b911870926",
+  "git_branch_at_documentation": "v43-ab/codex-rev28",
+  "git_dirty_tracked_at_documentation": [
+    " M rev28/ARCHITECTURE.md",
+    " M rev28/CAPABILITY-MATRIX.md",
+    " M rev28/Sources/Rev28Core/Composition/LiveComposition.swift",
+    " M rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift",
+    " M rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+    " M rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+    " M rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift",
+    " M rev28/Sources/rev28ctl/main.swift",
+    " M rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift",
+    " M rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+    " M src/line_backup_acceptance/authority.py",
+    " M src/line_backup_acceptance/cli.py",
+    " M src/line_backup_acceptance/common.py",
+    " M src/line_backup_acceptance/transaction.py"
+  ],
+  "git_publication_exception": "User explicitly authorizes add/commit for this packet only. .git/index/HEAD records are pre-publication provenance, not post-commit invariants or IMPLEMENT baseline.",
+  "formal_admission": "BLOCKED",
+  "schema_validation": "NOT_RUN; applicable controller stage-packet commands absent."
+}

@@ -1,0 +1,55 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write rev28replay-entitlement.plist
+[1/17] Write sources
+[5/21] Write swift-version--58304C5D6DBC2206.txt
+[7/36] Compiling Rev28Core BaselineVerifier.swift
+[8/37] Compiling Rev28Core LiveExecutionEngine.swift
+[9/37] Compiling Rev28Core PersistentTransactionOwner.swift
+[10/37] Compiling Rev28Core FrameCapture.swift
+[11/37] Compiling Rev28Core PostconditionMonitor.swift
+[12/37] Compiling Rev28Core AlbumEllipsisLocator.swift
+[13/37] Compiling Rev28Core OcrEngine.swift
+[14/37] Compiling Rev28Core ExecutionPolicy.swift
+[15/37] Compiling Rev28Core IntentLedger.swift
+[16/37] Compiling Rev28Core StructuralLocators.swift
+[17/37] Emitting module Rev28Core
+[18/37] Compiling Rev28Core FolderChooserDriver.swift
+[19/37] Compiling Rev28Core Coordinates.swift
+[20/37] Compiling Rev28Core QuartzActuator.swift
+[21/37] Compiling Rev28Core ChooserAffirmationPredicate.swift
+[22/37] Compiling Rev28Core StagingVerifier.swift
+[23/55] Compiling rev28replay main.swift
+[24/55] Emitting module rev28replay
+[24/55] Write Objects.LinkFileList
+[26/55] Emitting module rev28occluder
+[27/55] Compiling rev28occluder main.swift
+[27/55] Write Objects.LinkFileList
+[29/55] Compiling rev28ctl RawCapture.swift
+[30/55] Compiling rev28ctl RestartFixture.swift
+[31/55] Compiling rev28ctl QuartzActuator.swift
+[32/55] Compiling rev28ctl main.swift
+[33/55] Emitting module rev28probe
+[34/55] Compiling rev28probe CapabilityProbe.swift
+[34/55] Write Objects.LinkFileList
+[36/55] Emitting module rev28harness
+[37/55] Compiling rev28harness HarnessApp.swift
+[37/55] Write Objects.LinkFileList
+[38/55] Linking rev28occluder
+[38/55] Linking rev28replay
+[40/55] Linking rev28probe
+[41/55] Applying rev28replay
+[42/55] Applying rev28occluder
+[43/55] Applying rev28probe
+[44/55] Linking rev28harness
+[45/55] Applying rev28harness
+[47/55] Compiling rev28ctl ProcessIdentity.swift
+[48/55] Compiling rev28ctl ProcessPeer.swift
+[49/55] Compiling rev28ctl FolderChooserDriver.swift
+[50/55] Compiling rev28ctl HarnessCalibration.swift
+[51/55] Compiling rev28ctl EvidenceRun.swift
+[52/55] Emitting module rev28ctl
+[52/55] Write Objects.LinkFileList
+[53/55] Linking rev28ctl
+[54/55] Applying rev28ctl
+Build complete! (6.69s)

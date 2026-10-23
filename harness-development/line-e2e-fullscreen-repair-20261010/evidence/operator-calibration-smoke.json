@@ -1,0 +1,21 @@
+{
+  "format_version": 1,
+  "test": "candidate/v2/operator.py validate_calibration_package against e02 fresh evidence",
+  "verdict": "PASS",
+  "state_mutated": false,
+  "results": [
+    {"case": "valid fresh v2 package", "result": "PASS"},
+    {"case": "tampered geometry hash", "result": "REFUSED", "reason": "calibration geometry SHA-256 drift"},
+    {"case": "point moved into adjacent Rename row", "result": "REFUSED", "reason": "calibration dispatch point differs from bound geometry"}
+  ],
+  "calibration_bundle": "evidence/e02-calibration-bundle.json",
+  "target_evidence": "evidence/e02-target-match.json",
+  "target_fingerprint": {
+    "start_date": "2024-06-02",
+    "end_date": "2024-06-07",
+    "expected_images": 65
+  },
+  "limitations": [
+    "This validator smoke does not commit an intent or authorize a UI dispatch."
+  ]
+}

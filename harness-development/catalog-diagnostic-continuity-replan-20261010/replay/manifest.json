@@ -1,0 +1,353 @@
+{
+ "copy_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay",
+ "format": "local-replay-manifest-1",
+ "immutable_note": "Copies are byte-exact and must never be overwritten; reruns need a new directory.",
+ "records": [
+  {
+   "bytes": 184297,
+   "content_format": "JPEG",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-000.png",
+   "copy_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-000.png",
+   "source_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42"
+  },
+  {
+   "bytes": 1325568,
+   "content_format": "PNG",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-000.scale2.png",
+   "copy_sha256": "f3fec63b11e4138d5bbb86353de70f5a9b6a1fda36a9d87a2378493e5138e8fe",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-000.scale2.png",
+   "source_sha256": "f3fec63b11e4138d5bbb86353de70f5a9b6a1fda36a9d87a2378493e5138e8fe"
+  },
+  {
+   "bytes": 1359,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-000.ocr.json",
+   "copy_sha256": "cac68c80f2ed25880defbc9802e78683a34e11d13cf93015ec237ba3d8b45957",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-000.ocr.json",
+   "source_sha256": "cac68c80f2ed25880defbc9802e78683a34e11d13cf93015ec237ba3d8b45957"
+  },
+  {
+   "bytes": 2389,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-000.modern_ocr.json",
+   "copy_sha256": "188cb4639b83de7323cea2dc59825762a4877891922d0018d02efa04b31e9458",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-000.modern_ocr.json",
+   "source_sha256": "188cb4639b83de7323cea2dc59825762a4877891922d0018d02efa04b31e9458"
+  },
+  {
+   "bytes": 346,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-000.transform.json",
+   "copy_sha256": "998610c7ae36c9801913ca79b18d7c6f521d6d99da63ddb6fb34ba452d99555c",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-000.transform.json",
+   "source_sha256": "998610c7ae36c9801913ca79b18d7c6f521d6d99da63ddb6fb34ba452d99555c"
+  },
+  {
+   "bytes": 1299,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-000.ax.txt",
+   "copy_sha256": "511c6cf8ad8709ca1fc5b595e26ebcec9e02d0bd73dc9e42e32b92e2b0eb90f2",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-000.ax.txt",
+   "source_sha256": "511c6cf8ad8709ca1fc5b595e26ebcec9e02d0bd73dc9e42e32b92e2b0eb90f2"
+  },
+  {
+   "bytes": 191039,
+   "content_format": "JPEG",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-001.png",
+   "copy_sha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-001.png",
+   "source_sha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57"
+  },
+  {
+   "bytes": 1380891,
+   "content_format": "PNG",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-001.scale2.png",
+   "copy_sha256": "8300a2a001ca951a99bc279a4dcaac7ca7b66ae34653e4f60f34cc6a58877d00",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-001.scale2.png",
+   "source_sha256": "8300a2a001ca951a99bc279a4dcaac7ca7b66ae34653e4f60f34cc6a58877d00"
+  },
+  {
+   "bytes": 1361,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-001.ocr.json",
+   "copy_sha256": "fbb398f6e05e68191637246dc96657bd4465eb4291cfeafc5ed4df9065b1a170",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-001.ocr.json",
+   "source_sha256": "fbb398f6e05e68191637246dc96657bd4465eb4291cfeafc5ed4df9065b1a170"
+  },
+  {
+   "bytes": 2039,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-001.modern_ocr.json",
+   "copy_sha256": "60fdfe851283af1fff7b091540fb35fccd66b4dc3d9bb045175d095c20825e40",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-001.modern_ocr.json",
+   "source_sha256": "60fdfe851283af1fff7b091540fb35fccd66b4dc3d9bb045175d095c20825e40"
+  },
+  {
+   "bytes": 346,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-001.transform.json",
+   "copy_sha256": "79f809452714ade5471b39cf84319cbc696a2bb0748855c51662ae27d09e0a48",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-001.transform.json",
+   "source_sha256": "79f809452714ade5471b39cf84319cbc696a2bb0748855c51662ae27d09e0a48"
+  },
+  {
+   "bytes": 1301,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-001.ax.txt",
+   "copy_sha256": "603be04565f1dabd8e73ffc4e9db85d4294edc8a3c089d8b8e5bfa4c8b536436",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-001.ax.txt",
+   "source_sha256": "603be04565f1dabd8e73ffc4e9db85d4294edc8a3c089d8b8e5bfa4c8b536436"
+  },
+  {
+   "bytes": 173800,
+   "content_format": "JPEG",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-002.png",
+   "copy_sha256": "65af93e64fa0ae38d2214a2e9d973cafcdd4db99ae47124e2ccb5e6aeb9b3adb",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-002.png",
+   "source_sha256": "65af93e64fa0ae38d2214a2e9d973cafcdd4db99ae47124e2ccb5e6aeb9b3adb"
+  },
+  {
+   "bytes": 1212803,
+   "content_format": "PNG",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-002.scale2.png",
+   "copy_sha256": "ae188f90afbe185d913ec9e029af9b80c6dfd367878ed0dc66bf48340bbc460d",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-002.scale2.png",
+   "source_sha256": "ae188f90afbe185d913ec9e029af9b80c6dfd367878ed0dc66bf48340bbc460d"
+  },
+  {
+   "bytes": 1774,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-002.ocr.json",
+   "copy_sha256": "85d8d299eac6929736124e2145fb9c4cf59ba7d1e032ad5768503d267e5995cf",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-002.ocr.json",
+   "source_sha256": "85d8d299eac6929736124e2145fb9c4cf59ba7d1e032ad5768503d267e5995cf"
+  },
+  {
+   "bytes": 2666,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-002.modern_ocr.json",
+   "copy_sha256": "525d8fd3f8fd03eb51a1bfd1b93eee4cd598fdce5ba1a4ea6cdd6e32c4e42227",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-002.modern_ocr.json",
+   "source_sha256": "525d8fd3f8fd03eb51a1bfd1b93eee4cd598fdce5ba1a4ea6cdd6e32c4e42227"
+  },
+  {
+   "bytes": 346,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-002.transform.json",
+   "copy_sha256": "3abb4a86f8299bc927f62c314d4c47db1534df60c0dc5c9c87480d6c5eeb6f34",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-002.transform.json",
+   "source_sha256": "3abb4a86f8299bc927f62c314d4c47db1534df60c0dc5c9c87480d6c5eeb6f34"
+  },
+  {
+   "bytes": 308,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-002.ax.txt",
+   "copy_sha256": "35eed60f1819da1f97ec9b7c83e2595fee79ec014552dbc547e6645bf413673a",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-002.ax.txt",
+   "source_sha256": "35eed60f1819da1f97ec9b7c83e2595fee79ec014552dbc547e6645bf413673a"
+  },
+  {
+   "bytes": 193699,
+   "content_format": "JPEG",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-003.png",
+   "copy_sha256": "934cc2cac6be8fdb37a9bd014d90321be271d8517134070d9a9adcf62d091cdf",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-003.png",
+   "source_sha256": "934cc2cac6be8fdb37a9bd014d90321be271d8517134070d9a9adcf62d091cdf"
+  },
+  {
+   "bytes": 1392164,
+   "content_format": "PNG",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-003.scale2.png",
+   "copy_sha256": "6833bb03d99f1269c733cd63f2154191ec6e361dc73d7a173bc998eb1ed342c4",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-003.scale2.png",
+   "source_sha256": "6833bb03d99f1269c733cd63f2154191ec6e361dc73d7a173bc998eb1ed342c4"
+  },
+  {
+   "bytes": 1361,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-003.ocr.json",
+   "copy_sha256": "1bfff6c0778f790c47a09a08aede84f1d5be260726c8bcef75230503fa1fcf3a",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-003.ocr.json",
+   "source_sha256": "1bfff6c0778f790c47a09a08aede84f1d5be260726c8bcef75230503fa1fcf3a"
+  },
+  {
+   "bytes": 2038,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-003.modern_ocr.json",
+   "copy_sha256": "2a970ff0ed59843f86aa791ea6aa211a5c235269ec0a63192413464f4bb95610",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-003.modern_ocr.json",
+   "source_sha256": "2a970ff0ed59843f86aa791ea6aa211a5c235269ec0a63192413464f4bb95610"
+  },
+  {
+   "bytes": 346,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-003.transform.json",
+   "copy_sha256": "f45e0efded3896038f918fe65b89682352656868b959147d5c93acb64ee5592a",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-003.transform.json",
+   "source_sha256": "f45e0efded3896038f918fe65b89682352656868b959147d5c93acb64ee5592a"
+  },
+  {
+   "bytes": 316,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-003.ax.txt",
+   "copy_sha256": "e70bbbaaf6a3f159fde7d672d1a66c9dde043b837917a80d47979569b8823de7",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-003.ax.txt",
+   "source_sha256": "e70bbbaaf6a3f159fde7d672d1a66c9dde043b837917a80d47979569b8823de7"
+  },
+  {
+   "bytes": 589,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/step-001.pre.json",
+   "copy_sha256": "8a344b021019ba9f20c442a301f8ddc719616504dc423c110e1e78b20f89d3fe",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/step-001.pre.json",
+   "source_sha256": "8a344b021019ba9f20c442a301f8ddc719616504dc423c110e1e78b20f89d3fe"
+  },
+  {
+   "bytes": 150,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/step-001.action.json",
+   "copy_sha256": "961e3425ee00fdd004be5d1e49d7e7e927d56ff579f695d25b1a9af5b129f1fe",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/step-001.action.json",
+   "source_sha256": "961e3425ee00fdd004be5d1e49d7e7e927d56ff579f695d25b1a9af5b129f1fe"
+  },
+  {
+   "bytes": 516,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/step-002.pre.json",
+   "copy_sha256": "42653d423d8ba0d065c6051e66ce354c50be616954993bda362e0aef629de212",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/step-002.pre.json",
+   "source_sha256": "42653d423d8ba0d065c6051e66ce354c50be616954993bda362e0aef629de212"
+  },
+  {
+   "bytes": 146,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/step-002.action.json",
+   "copy_sha256": "862bd3ba984d1556f755fc1090019fd45c5841b63d88f112fbb99f474670a4de",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/step-002.action.json",
+   "source_sha256": "862bd3ba984d1556f755fc1090019fd45c5841b63d88f112fbb99f474670a4de"
+  },
+  {
+   "bytes": 517,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/step-003.pre.json",
+   "copy_sha256": "8bba52aca770821fa753f0ec539ba5e8e368526dfd583cd0614ecc2effc78b82",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/step-003.pre.json",
+   "source_sha256": "8bba52aca770821fa753f0ec539ba5e8e368526dfd583cd0614ecc2effc78b82"
+  },
+  {
+   "bytes": 146,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/step-003.action.json",
+   "copy_sha256": "d3939deb63ab4c028f07af2bacd8fadaaa2d02ababb084381b22113e5aee27b4",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/step-003.action.json",
+   "source_sha256": "d3939deb63ab4c028f07af2bacd8fadaaa2d02ababb084381b22113e5aee27b4"
+  },
+  {
+   "bytes": 890,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-000.agreement.json",
+   "copy_sha256": "d738f6d1ffdda3697953a3f2ac878e48136df9ef4d69eb40d842d4f985179e30",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-000.agreement.json",
+   "source_sha256": "d738f6d1ffdda3697953a3f2ac878e48136df9ef4d69eb40d842d4f985179e30"
+  },
+  {
+   "bytes": 1042,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-001.agreement.json",
+   "copy_sha256": "4e56fb84092223506e59a7e137c8421413b2f682841d2dd92c3467a95c590c0e",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-001.agreement.json",
+   "source_sha256": "4e56fb84092223506e59a7e137c8421413b2f682841d2dd92c3467a95c590c0e"
+  },
+  {
+   "bytes": 1574,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-002.agreement.json",
+   "copy_sha256": "84a1dfeeffb5007dbf0cc1a4e3743cec11051545b74a4423240a32f81473df7d",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-002.agreement.json",
+   "source_sha256": "84a1dfeeffb5007dbf0cc1a4e3743cec11051545b74a4423240a32f81473df7d"
+  },
+  {
+   "bytes": 101,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/scan-003.failure.json",
+   "copy_sha256": "1d8b1f34ed3ad8e9ffac2d1114c05b5fb64771a2ff3aadd8fc9e012c044ede1a",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/scan-003.failure.json",
+   "source_sha256": "1d8b1f34ed3ad8e9ffac2d1114c05b5fb64771a2ff3aadd8fc9e012c044ede1a"
+  },
+  {
+   "bytes": 1251,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/baseline.json",
+   "copy_sha256": "c81a650832ca3ac71f147f864ca566845f3ba1a07451711fcf9887e4615b74df",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/baseline.json",
+   "source_sha256": "c81a650832ca3ac71f147f864ca566845f3ba1a07451711fcf9887e4615b74df"
+  },
+  {
+   "bytes": 1154,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/preservation.json",
+   "copy_sha256": "4bd1bec6cf0d2e6df588b06fdcc9fd78315ab5c2ee07178c5ed1c4aa154e01a1",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/preservation.json",
+   "source_sha256": "4bd1bec6cf0d2e6df588b06fdcc9fd78315ab5c2ee07178c5ed1c4aa154e01a1"
+  },
+  {
+   "bytes": 3857,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/report.md",
+   "copy_sha256": "c05f4521be0e234542d43ec4ff6fb6b6615e121d05b6da919019df793ae4741f",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/report.md",
+   "source_sha256": "c05f4521be0e234542d43ec4ff6fb6b6615e121d05b6da919019df793ae4741f"
+  },
+  {
+   "bytes": 6588,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/implementer.result.json",
+   "copy_sha256": "4f432bc00269a62876d7e4ecaa8c0e14611a9ec46aabfc4a1d392810db5d240d",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/implementer.result.json",
+   "source_sha256": "4f432bc00269a62876d7e4ecaa8c0e14611a9ec46aabfc4a1d392810db5d240d"
+  },
+  {
+   "bytes": 6566,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/plan.md",
+   "copy_sha256": "525e3b3dd811de4a07c47a659c4441f9fc877ffb6426f5c2c0d5d41a138021fb",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/plan.md",
+   "source_sha256": "525e3b3dd811de4a07c47a659c4441f9fc877ffb6426f5c2c0d5d41a138021fb"
+  },
+  {
+   "bytes": 1085,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/plan-contract-02.json",
+   "copy_sha256": "e2eb3e4cd979f4c2d08562c1ad7facc5cde7c6b66cbe9663189a56279d4b5347",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/plan-contract-02.json",
+   "source_sha256": "e2eb3e4cd979f4c2d08562c1ad7facc5cde7c6b66cbe9663189a56279d4b5347"
+  },
+  {
+   "bytes": 1085,
+   "content_format": "TEXT",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/handoff-02.json",
+   "copy_sha256": "e2eb3e4cd979f4c2d08562c1ad7facc5cde7c6b66cbe9663189a56279d4b5347",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/handoff-02.json",
+   "source_sha256": "e2eb3e4cd979f4c2d08562c1ad7facc5cde7c6b66cbe9663189a56279d4b5347"
+  },
+  {
+   "bytes": 184297,
+   "content_format": "JPEG",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/initial.png",
+   "copy_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/initial.png",
+   "source_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42"
+  },
+  {
+   "bytes": 184297,
+   "content_format": "JPEG",
+   "copy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/replay/frame-000.png",
+   "copy_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+   "source_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010/frame-000.png",
+   "source_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42"
+  }
+ ],
+ "source_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-20261010",
+ "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan"
+}

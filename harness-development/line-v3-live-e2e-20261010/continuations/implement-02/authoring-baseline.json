@@ -1,0 +1,17 @@
+{
+  "kind": "documentation_delivery_preservation_baseline",
+  "head": "fad3641a3193e25b2ae5b6b3ce036e8d33843418",
+  "branch": "v43-ab/codex-rev28",
+  "index_tree": "d918a338773ea42e43061e05281a7a09a276bfb1",
+  "tracked_dirty_status": " M harness-development/catalog-diagnostic-continuity-replan-20261010/progress.md\n M rev28/ARCHITECTURE.md\n M rev28/CAPABILITY-MATRIX.md\n M rev28/Sources/Rev28Core/Composition/LiveComposition.swift\n M rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift\n M rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift\n M rev28/Sources/Rev28Core/Sensor/FrameCapture.swift\n M rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift\n M rev28/Sources/rev28ctl/main.swift\n M rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift\n M rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift\n",
+  "tracked_worktree_diff_sha256": "64abcf68a5ad602acefdad10087591479cdb7a95e912c7d85c2e99de9001eb07",
+  "state": {
+    "path": "state/backup_state.json",
+    "sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9"
+  },
+  "config": {
+    "path": "config/line_backup_config.json",
+    "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362"
+  },
+  "note": "Only continuation documents are staged for this delivery; original source diff and canonical bytes must remain unchanged."
+}

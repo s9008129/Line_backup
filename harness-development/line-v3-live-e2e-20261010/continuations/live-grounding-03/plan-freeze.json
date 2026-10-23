@@ -1,0 +1,17 @@
+{
+  "kind": "LOCAL_PLAN_FREEZE_BEFORE_HANDOFF",
+  "created_at": "2026-10-10T12:00:46.532403+00:00",
+  "plan": {
+    "path": "plan.md",
+    "bytes": 30678,
+    "sha256": "001b90861631fe27b0d21ec871be5fc19446bf3070e88bb116350a0f3690708c"
+  },
+  "contract": {
+    "path": "plan-contract.json",
+    "bytes": 6318,
+    "sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219"
+  },
+  "review_status": "USER_WAIVED_NOT_RUN",
+  "native_stage_publication": "NOT_RUN",
+  "handoff_created_at_freeze": false
+}

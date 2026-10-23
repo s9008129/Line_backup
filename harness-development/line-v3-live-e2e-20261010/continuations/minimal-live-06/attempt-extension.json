@@ -1,0 +1,12 @@
+{
+  "format_version": "1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "root_issue": "LIVE_CLASSIFIER_CHOOSER",
+  "historical_attempts_consumed": 3,
+  "additional_bounded_collections_authorized": 1,
+  "source": "minimal-live-06 plan/handoff and recorded parent user decision",
+  "status": "AUTHORIZED_NOT_STARTED",
+  "attempt_start_required_before": "D01-raw-cua product evidence action",
+  "formal_check_retries": false,
+  "no_new_lineage_or_attempt_reset": true
+}

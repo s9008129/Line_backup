@@ -1,0 +1,40 @@
+{
+  "format": "MINIMAL_LIVE_06_PROTECTED_READBACK_V1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "run_rel": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06",
+  "observation_kind": "READ_ONLY_POST_AUDIT_READBACK",
+  "formal_check": false,
+  "method": "Compared current lstat identity, type, bytes, SHA-256, and symlink target for each prewrite protected path against both equal anchors in prewrite-anchors.json. Ran unstaged and staged git diff name-only over the nine exact product paths.",
+  "prewrite_anchor_ref": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/prewrite-anchors.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/prewrite-anchors.json",
+    "bytes": 1605066,
+    "sha256": "a3c4160b6eeb8f653f45313bf470fd8db72ffd4a323e9d477395c154a7930e69"
+  },
+  "protected_readbacks": [
+    {"path":"config/line_backup_config.json","exists":true,"dev":16777229,"ino":131735394,"bytes":384,"sha256":"5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362","matches_both_prewrite_anchors":true},
+    {"path":"state/backup_state.json","exists":true,"dev":16777229,"ino":134297409,"bytes":252115,"sha256":"455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6","matches_both_prewrite_anchors":true},
+    {"path":"state/.line-backup-state.lock","exists":true,"dev":16777229,"ino":131735395,"bytes":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","matches_both_prewrite_anchors":true},
+    {"path":"state/.line-backup-v3.tmp","exists":false,"matches_both_prewrite_anchors":true},
+    {"path":"harness-development/line-v3-live-e2e-20261010/gui-ledger.json","exists":true,"dev":16777229,"ino":134431321,"bytes":123,"sha256":"92bab0cf122871b42f3db62af956289b62fbf4e279219766a8850b61f20e135f","matches_both_prewrite_anchors":true},
+    {"path":"harness-development/line-v3-live-e2e-20261010/.gui-ledger-v3.tmp","exists":false,"matches_both_prewrite_anchors":true},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/plan.md","exists":true,"dev":16777229,"ino":134598353,"bytes":57670,"sha256":"57090d3af4ea0075b23d40c6733e7e094a757ed3b8f0969e91b48a0f8da94cb8","matches_both_prewrite_anchors":true},
+    {"path":"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/handoff.md","exists":true,"dev":16777229,"ino":134599496,"bytes":33962,"sha256":"22803c91fcbcbfd6943bd46bcfab8e8364a08e6e492fa71e2cbb88fd274ed3eb","matches_both_prewrite_anchors":true}
+  ],
+  "product_paths": [
+    "scripts/line_backup_cua_adapter.mjs",
+    "src/line_backup_batch/cli.py",
+    "src/line_backup_batch/observations.py",
+    "src/line_backup_batch/store.py",
+    "rev28/Sources/rev28ctl/main.swift",
+    "rev28/Sources/Rev28Core/Observation/PassiveContextObservation.swift",
+    "rev28/Sources/Rev28Core/Perception/AlbumVisualWitness.swift",
+    "rev28/Tests/Rev28CoreTests/PassiveContextObservationTests.swift",
+    "rev28/Tests/Rev28CoreTests/AlbumVisualWitnessTests.swift"
+  ],
+  "product_paths_unstaged_diff_names": [],
+  "product_paths_staged_diff_names": [],
+  "result": "Protected config/state/lock/ledger and both fixed temp paths match prewrite anchors. No staged or unstaged tracked product-path diff is present.",
+  "limits": "This readback does not replace B01's full namespace paired scan or prove the complete bootstrap delta. It does not claim a preservation gate PASS.",
+  "native_harness_validation": "NOT_RUN"
+}

@@ -1,0 +1,13 @@
+{
+  "waiver_format_version": "1",
+  "source": "TRUSTED_OPERATOR",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "gate_id": "G_PLAN_REVIEW_WAIVER",
+  "contract_sha256": "ffef63e5ce295910cf0b07a5cc5615bc2719dc651e425306677666b5d8a68ab1",
+  "decision": "WAIVE_GATE",
+  "authority": "USER",
+  "reason": "The user supplied this approved plan with Plan Review explicitly waived. Preserve the unmet review as WAIVED/NOT_RUN, never as reviewer PASS; keep independent post-implementation Acceptance required.",
+  "user_confirmation": "Plan Review 依使用者明確要求免除，另存 waiver；事後獨立 Acceptance 保留。",
+  "observation_sha256": null,
+  "created_at": "2026-10-10T06:56:43Z"
+}

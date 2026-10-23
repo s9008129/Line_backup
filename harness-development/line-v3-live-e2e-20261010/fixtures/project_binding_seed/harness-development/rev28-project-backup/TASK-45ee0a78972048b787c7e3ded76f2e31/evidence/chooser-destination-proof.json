@@ -1,0 +1,21 @@
+{
+  "phase": "CHOOSER",
+  "runtime_errors": [
+    "NONDESTRUCTIVE_CALIBRATION_MODE: Error: The user changed '/Applications/LINE.app'. Re-query the latest state with `get_app_state` before sending more actions. Fresh observation and one bounded non-destructive menu retry succeeded; no SaveAll retry.",
+    "CHOOSER: Computer Use server error -10005: Timed out waiting for the application to read the clipboard. Fresh AX+visual showed original selected text unchanged; no Return. Supported setValue on identified PathTextField then succeeded."
+  ],
+  "evidence": {
+    "save_all_invocations": 1,
+    "folder_chooser": "Actual macOS open-panel appeared after one atomic SaveAll",
+    "go_to_folder": "super+shift+g RETURNED; identified GoToWindow and PathTextField",
+    "clipboard_attempt": "ERROR -10005; fresh NO effect, prior path still selected; no confirmation or navigation to prior location",
+    "path_entry_method": "Documented CUA setValue11 on current settable PathTextField; exact full path observed in AX and visual breadcrumb",
+    "exact_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張",
+    "go_to_folder_return": "One Return in the identified path-entry UI navigated to destination",
+    "post_navigation": "Fresh AX+visual open-panel: where popup exact leaf2024-05-13_2024-05-17_57張, empty file list, button打開 OKButton62",
+    "correct_destination": true,
+    "confirmation_invocations_so_far": 0,
+    "planned_confirmation": "One current freshly identified OKButton62 click; observe result; never re-SaveAll or overwrite existing files",
+    "native_production_acceptance": "Not claimed"
+  }
+}

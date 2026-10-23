@@ -1,0 +1,24 @@
+{
+  "check_id": "batch-python-06",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "command": [
+    "/usr/bin/env",
+    "PYTHONPATH=src",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "LINE_BACKUP_BATCH_TASK=harness-development/line-v3-live-e2e-20261010",
+    "LINE_BACKUP_INSPECTION_TEST_ROOT=harness-development/line-v3-live-e2e-20261010/fixtures",
+    "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_batch_*.py",
+    "-v"
+  ],
+  "started_at": "2026-10-10T13:38:41.562Z",
+  "ended_at": "2026-10-10T13:38:46.187Z",
+  "exit_code": 0
+}

@@ -1,0 +1,607 @@
+Building for debugging...
+[0/13] Write sources
+[1/13] Write swift-version--58304C5D6DBC2206.txt
+[3/16] Emitting module Rev28Core
+[4/16] Compiling Rev28Core QuartzActuator.swift
+[5/16] Compiling Rev28Core PersistentTransactionOwner.swift
+[6/23] Compiling Rev28Core PostSaveEnvironment.swift
+[7/23] Compiling Rev28Core LiveExecutionEngine.swift
+[8/23] Compiling Rev28Core LiveComposition.swift
+[9/23] Compiling Rev28Core ProductionActuationEnvironment.swift
+[10/23] Compiling Rev28Core ComposedNativeAdapter.swift
+[11/23] Compiling Rev28Core FolderChooserDriver.swift
+[12/23] Compiling Rev28Core PostSaveComposition.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:127:13: warning: result of 'try?' is unused [#no-usage]
+125 |                 recordedAtISO8601: EvidenceIO.iso8601()
+126 |             )
+127 |             try? EvidenceIO.writeJSONAtomically(
+    |             `- warning: result of 'try?' is unused [#no-usage]
+128 |                 record,
+129 |                 to: runDirectory.appendingPathComponent("pre-dispatch-context-refused-\(stamp).json")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:142:13: warning: result of 'try?' is unused [#no-usage]
+140 |                 recordedAtISO8601: EvidenceIO.iso8601()
+141 |             )
+142 |             try? EvidenceIO.writeJSONAtomically(
+    |             `- warning: result of 'try?' is unused [#no-usage]
+143 |                 record,
+144 |                 to: runDirectory.appendingPathComponent("pre-dispatch-context-refused-\(stamp).json")
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift:329:66: warning: immutable value 'affirmation' was never used; consider replacing with '_' or removing it [#no-usage]
+327 |                     )
+328 |                     adapter.journalBox.recordDetail(evaluation.detail)
+329 |                     if let candidate = evaluation.candidate, let affirmation = evaluation.affirmation {
+    |                                                                  `- warning: immutable value 'affirmation' was never used; consider replacing with '_' or removing it [#no-usage]
+330 |                         adapter.journalBox.recordChooser(candidate: candidate, windowIDs: [candidate.windowID])
+331 |                     }
+[12/31] Write Objects.LinkFileList
+[15/44] Emitting module rev28occluder
+[15/44] Write Objects.LinkFileList
+[17/44] Emitting module rev28harness
+[17/44] Write Objects.LinkFileList
+[19/44] Compiling Rev28CoreTests TripwirePostDispatchGateTests.swift
+[20/44] Compiling Rev28CoreTests LiveCompositionTests.swift
+[20/44] Linking rev28probe
+[21/44] Linking rev28replay
+[22/44] Applying rev28probe
+[23/44] Applying rev28replay
+[25/44] Compiling Rev28CoreTests PersistentTransactionOwnerTests.swift
+[26/44] Compiling Rev28CoreTests AdversarialMatrixTests.swift
+[27/44] Compiling Rev28CoreTests NativeObservationTestSupport.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:185:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+183 | 
+184 |     func enumerateWindows() async throws -> [SCWindowSnapshot] {
+185 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+186 |         enumerateCalls += 1
+187 |         let call = enumerateCalls
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:188:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+186 |         enumerateCalls += 1
+187 |         let call = enumerateCalls
+188 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+189 |         return call == 1 ? (preInventoryOverride ?? [window]) : (postInventoryOverride ?? [window])
+190 |     }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:206:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+204 |     ) async throws -> ObservationCapturedImage {
+205 |         if let onCaptureStart { await onCaptureStart() }
+206 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+207 |         now += captureClockAdvance
+208 |         captureCountValue += 1
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:209:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+207 |         now += captureClockAdvance
+208 |         captureCountValue += 1
+209 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+210 |         if let captureError { throw captureError }
+211 |         let image = imageProvider?() ?? FakeLineScene.plainImage()
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:333:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+331 |             clock: { self.uptimeValue }
+332 |         )
+333 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+334 |         posted.append(action)
+335 |         lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:335:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+333 |         lock.lock()
+334 |         posted.append(action)
+335 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+336 |         onClick?(action)
+337 |     }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:562:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+560 | 
+561 |     func sampleChooserFacts(preCensus: ChooserCensus) async -> ChooserFactsResult {
+562 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+563 |         defer { lock.unlock() }
+564 |         guard !chooserResults.isEmpty else { return .facts(TestChooserFixtures.emptyFacts()) }
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:563:22: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+561 |     func sampleChooserFacts(preCensus: ChooserCensus) async -> ChooserFactsResult {
+562 |         lock.lock()
+563 |         defer { lock.unlock() }
+    |                      `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+564 |         guard !chooserResults.isEmpty else { return .facts(TestChooserFixtures.emptyFacts()) }
+565 |         let result = chooserResults[min(chooserIndex, chooserResults.count - 1)]
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:576:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+574 |         postHoverRevalidation: @escaping @Sendable () async throws -> Void
+575 |     ) async throws {
+576 |         lock.lock(); saveAllClicks += 1; lock.unlock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+577 |         if let failure = postHoverRevalidationFailure {
+578 |             throw QuartzActuatorError.dispatchRefusedByPrecondition(failure)
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:576:47: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+574 |         postHoverRevalidation: @escaping @Sendable () async throws -> Void
+575 |     ) async throws {
+576 |         lock.lock(); saveAllClicks += 1; lock.unlock()
+    |                                               `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+577 |         if let failure = postHoverRevalidationFailure {
+578 |             throw QuartzActuatorError.dispatchRefusedByPrecondition(failure)
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:670:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+668 | 
+669 |     func sleep(seconds: Double) async {
+670 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+671 |         clock += max(0, seconds) + sleepSecondsAdvance
+672 |         lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:672:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+670 |         lock.lock()
+671 |         clock += max(0, seconds) + sleepSecondsAdvance
+672 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+673 |     }
+674 | 
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+[28/44] Compiling Rev28CoreTests EligibilityTestSupport.swift
+[29/44] Emitting module Rev28CoreTests
+[30/44] Compiling Rev28CoreTests GoalSlotTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/GoalSlotTests.swift:80:9: warning: 'reading' mutated after capture by sendable closure
+ 60 |         let reads = NSLock()
+ 61 |         var readFailures: [String] = []
+ 62 |         var reading = true
+    |             `- note: variable defined here
+ 63 |         let reader = Thread {
+    |                             `- note: variable captured by sendable closure
+ 64 |             while true {
+ 65 |                 reads.lock()
+ 66 |                 let keepGoing = reading
+    |                                 `- note: capturing use
+ 67 |                 reads.unlock()
+ 68 |                 if !keepGoing { return }
+    :
+ 78 |         }
+ 79 |         reader.start()
+ 80 |         defer {
+    |         `- warning: 'reading' mutated after capture by sendable closure
+ 81 |             reads.lock()
+ 82 |             reading = false
+[31/44] Compiling Rev28CoreTests LiveExecutionEngineTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:20:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 18 |         func establish(state: ExecutionState, owner: PersistentTransactionOwner) async throws -> EstablishedStateEvidence {
+ 19 |             if failAtState == state { throw NSError(domain: "FakeAdapter", code: 1) }
+ 20 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 21 |             establishCount += 1
+ 22 |             lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:22:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 20 |             lock.lock()
+ 21 |             establishCount += 1
+ 22 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 23 |             return try writeEvidence(state: state, owner: owner)
+ 24 |         }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:315:32: warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+313 |             }
+314 |         }
+315 |         try await firstAdapter.dispatchSaveAll(owner: owner)
+    |                                `- warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+316 |         XCTAssertEqual(firstAdapter.saveAllMouseEvents, 3)
+317 | 
+[32/44] Compiling rev28ctl main.swift
+[33/44] Emitting module rev28ctl
+[33/44] Write Objects.LinkFileList
+[35/44] Compiling Rev28CoreTests ComposedAdaptersTests.swift
+[36/44] Compiling Rev28CoreTests ActuationReadinessTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:306:21: warning: mutation of captured var 'revalidationCalls' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+304 |                 intent: .reversible(owner, action: "recover-state"),
+305 |                 postHoverRevalidation: {
+306 |                     revalidationCalls += 1
+    |                     `- warning: mutation of captured var 'revalidationCalls' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+307 |                     throw QuartzActuatorError.dispatchRefusedByPrecondition("window geometry changed")
+308 |                 },
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:346:21: warning: mutation of captured var 'revalidationSawMove' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+344 |                 intent: .reversible(owner, action: "recover-state"),
+345 |                 postHoverRevalidation: {
+346 |                     revalidationSawMove = posted == [.mouseMoved]
+    |                     `- warning: mutation of captured var 'revalidationSawMove' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+347 |                 },
+348 |                 sink: { event, _ in posted.append(event.type) },
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:346:43: warning: reference to captured var 'posted' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+344 |                 intent: .reversible(owner, action: "recover-state"),
+345 |                 postHoverRevalidation: {
+346 |                     revalidationSawMove = posted == [.mouseMoved]
+    |                                           `- warning: reference to captured var 'posted' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+347 |                 },
+348 |                 sink: { event, _ in posted.append(event.type) },
+
+[#SendableClosureCaptures]: <https://docs.swift.org/compiler/documentation/diagnostics/sendable-closure-captures>
+[36/44] Linking rev28harness
+[37/44] Linking rev28occluder
+[38/44] Write Objects.LinkFileList
+[39/44] Applying rev28harness
+[40/44] Applying rev28occluder
+[41/44] Linking rev28ctl
+[42/44] Applying rev28ctl
+[43/44] Linking rev28PackageTests
+Build complete! (2.41s)
+Test Suite 'Selected tests' started at 2026-10-04 17:42:34.498.
+Test Suite 'rev28PackageTests.xctest' started at 2026-10-04 17:42:34.499.
+Test Suite 'ActuationReadinessTests' started at 2026-10-04 17:42:34.499.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testDispatchMarginConvertsOnePointAtCaptureScaleNotOnePixel]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testDispatchMarginConvertsOnePointAtCaptureScaleNotOnePixel]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testDurableRevalidationWriteFailureAfterHoverPostsNoMouseDown]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testDurableRevalidationWriteFailureAfterHoverPostsNoMouseDown]' passed (0.013 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testExpiredSingleUsePermitPostsZeroEvents]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testExpiredSingleUsePermitPostsZeroEvents]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFailedPostHoverRevalidationPostsZeroClickEventsAndRecordsFailure]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFailedPostHoverRevalidationPostsZeroClickEventsAndRecordsFailure]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFocusTheftAfterPermitMintPostsZeroEvents]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFocusTheftAfterPermitMintPostsZeroEvents]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFocusTheftBetweenHoverAndMouseDownPostsZeroClickEvents]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFocusTheftBetweenHoverAndMouseDownPostsZeroClickEvents]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFocusTheftRefusesPermitBeforeAnyEventCanBePosted]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testFocusTheftRefusesPermitBeforeAnyEventCanBePosted]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testLateFailureSupersedesOnlyItsOwnSuccessAndPreservesTwoFailureAbortAfterRestart]' passed (0.020 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testLedgerAndAnchorFaultsRefuseReversibleAndSaveAllEvenWhenFailureRecordCannotPersist]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testLedgerAndAnchorFaultsRefuseReversibleAndSaveAllEvenWhenFailureRecordCannotPersist]' passed (0.140 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testOcclusionAtGuardedBoundaryPostsZeroEvents]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testOcclusionAtGuardedBoundaryPostsZeroEvents]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testOcclusionBetweenHoverAndMouseDownPostsZeroClickEvents]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testOcclusionBetweenHoverAndMouseDownPostsZeroClickEvents]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testOriginalPermitExpiresDuringDurableWriteAndPostsNoDown]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testOriginalPermitExpiresDuringDurableWriteAndPostsNoDown]' passed (0.007 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testRetainedSessionRevalidationAcceptsRedrawButRejectsStaleMovedLostAndAmbiguousTargets]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testRetainedSessionRevalidationAcceptsRedrawButRejectsStaleMovedLostAndAmbiguousTargets]' passed (0.019 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testStaleCandidateBindingAtGuardedBoundaryPostsZeroEvents]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testStaleCandidateBindingAtGuardedBoundaryPostsZeroEvents]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testStaleIdentityRefusesPermit]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testStaleIdentityRefusesPermit]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testSuccessfulPostHoverRevalidationRunsAfterHoverAndResetsFailures]' started.
+Test Case '-[Rev28CoreTests.ActuationReadinessTests testSuccessfulPostHoverRevalidationRunsAfterHoverAndResetsFailures]' passed (0.040 seconds).
+Test Suite 'ActuationReadinessTests' passed at 2026-10-04 17:42:34.763.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.263 (0.263) seconds
+Test Suite 'ComposedAdaptersTests' started at 2026-10-04 17:42:34.763.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testAppReadyRequiresFrontmostTargetAndPostsNothing]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testAppReadyRequiresFrontmostTargetAndPostsNothing]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testChooserAffirmationProducesBoundArtifactsAndNamedRefusals]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testChooserAffirmationProducesBoundArtifactsAndNamedRefusals]' passed (1.203 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testDestinationPreparationAndSingleConfirmationUseTheBoundChooser]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testDestinationPreparationAndSingleConfirmationUseTheBoundChooser]' passed (0.434 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testDetailAndLaterSurfacesRejectWrongOrAmbiguousExactIdentityWithoutEvents]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testDetailAndLaterSurfacesRejectWrongOrAmbiguousExactIdentityWithoutEvents]' passed (0.264 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testDownloadObservationStopsAtTheCapAndProvesStabilityOtherwise]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testDownloadObservationStopsAtTheCapAndProvesStabilityOtherwise]' passed (0.663 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testExecuteRefusesSaveAllDispatchWithoutPhaseBEligibility]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testExecuteRefusesSaveAllDispatchWithoutPhaseBEligibility]' passed (0.329 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testHoverRedrawUsesFreshLocalizationAndRetainsBothReadinessCaptures]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testHoverRedrawUsesFreshLocalizationAndRetainsBothReadinessCaptures]' passed (0.332 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testHoverTargetLossPostsOnlyMoveAndRetainsRefusedReadinessFrame]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testHoverTargetLossPostsOnlyMoveAndRetainsRefusedReadinessFrame]' passed (0.036 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesLedgerThatAlreadyRecordedIrreversibleIntent]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesLedgerThatAlreadyRecordedIrreversibleIntent]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesSaveAllLocatedWhenFrozenMenuGeometryIsAbsent]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesSaveAllLocatedWhenFrozenMenuGeometryIsAbsent]' passed (0.320 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightWalksEveryPreSaveStateWithGuardedRecoveriesAndZeroIrreversibleIntent]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightWalksEveryPreSaveStateWithGuardedRecoveriesAndZeroIrreversibleIntent]' passed (0.327 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreIntentContinuationResumesWithoutReusingEvidence]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreIntentContinuationResumesWithoutReusingEvidence]' passed (0.336 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testResumeAtSaveAllLocatedRefusesLostIdentityInsteadOfTrustingPriorProof]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testResumeAtSaveAllLocatedRefusesLostIdentityInsteadOfTrustingPriorProof]' passed (0.333 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testResumeAtSaveAllLocatedReobservesWithoutResettingTransitionsOrBudgets]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testResumeAtSaveAllLocatedReobservesWithoutResettingTransitionsOrBudgets]' passed (0.335 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testSaveAllDispatchConsumesExactlyOneGuardedClickAndRecordsEvidence]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testSaveAllDispatchConsumesExactlyOneGuardedClickAndRecordsEvidence]' passed (0.393 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testSaveAllDispatchRefusesWhenThePreDispatchContextGaps]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testSaveAllDispatchRefusesWhenThePreDispatchContextGaps]' passed (0.340 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testTripwireGapAtCompletionGatesRefuses]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testTripwireGapAtCompletionGatesRefuses]' passed (0.326 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testTripwireGapDuringDownloadRefusesWithTerminalRecord]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testTripwireGapDuringDownloadRefusesWithTerminalRecord]' passed (0.330 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testVerifyContentConfirmsExactMultisetAndRefusesBaselineChange]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testVerifyContentConfirmsExactMultisetAndRefusesBaselineChange]' passed (0.320 seconds).
+Test Suite 'ComposedAdaptersTests' passed at 2026-10-04 17:42:41.396.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 6.632 (6.633) seconds
+Test Suite 'CoordinateTransformTests' started at 2026-10-04 17:42:41.396.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testCapturePixelConversionUsesRecordedBBox]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testCapturePixelConversionUsesRecordedBBox]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testDeltaBeyondToleranceFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testDeltaBeyondToleranceFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testExactGeometryPassesWithinRule]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testExactGeometryPassesWithinRule]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testFrozenOriginPaddingShiftsRecordedBBox]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testFrozenOriginPaddingShiftsRecordedBBox]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testNoFrozenRuleFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testNoFrozenRuleFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testPaddingBeyondMaximumFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testPaddingBeyondMaximumFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testRoundTripsPreservePoint]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testRoundTripsPreservePoint]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSafeInteriorMarginRefusesNearBoundary]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSafeInteriorMarginRefusesNearBoundary]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testScaleMismatchDetected]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testScaleMismatchDetected]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSmallDeltaWithinTolerancePasses]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSmallDeltaWithinTolerancePasses]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSourceRectOriginAndExtentAreRecordedInCaptureBBoxAndTransform]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testSourceRectOriginAndExtentAreRecordedInCaptureBBoxAndTransform]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testStateWithoutRuleFailsClosed]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testStateWithoutRuleFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testUndersizedCaptureFailsClosedUsingAbsoluteResidual]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testUndersizedCaptureFailsClosedUsingAbsoluteResidual]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testWindowLocalToScreenUsesWindowOriginOnly]' started.
+Test Case '-[Rev28CoreTests.CoordinateTransformTests testWindowLocalToScreenUsesWindowOriginOnly]' passed (0.000 seconds).
+Test Suite 'CoordinateTransformTests' passed at 2026-10-04 17:42:41.397.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'GoalSlotTests' started at 2026-10-04 17:42:41.397.
+Test Case '-[Rev28CoreTests.GoalSlotTests testConsumedSlotWithEmptyOrMovedLedgerCannotResetEntitlement]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testConsumedSlotWithEmptyOrMovedLedgerCannotResetEntitlement]' passed (0.021 seconds).
+Test Case '-[Rev28CoreTests.GoalSlotTests testDifferentRunIdentityCannotClaimTheSameGoalSlot]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testDifferentRunIdentityCannotClaimTheSameGoalSlot]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.GoalSlotTests testEntitlementConsumptionIsOneWay]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testEntitlementConsumptionIsOneWay]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.GoalSlotTests testFreshSlotIsCreatedAndVerifiedOnReopen]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testFreshSlotIsCreatedAndVerifiedOnReopen]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.GoalSlotTests testReserveSaveAllConsumesGoalSlotEntitlement]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testReserveSaveAllConsumesGoalSlotEntitlement]' passed (0.018 seconds).
+Test Case '-[Rev28CoreTests.GoalSlotTests testReserveSaveAllRequiresSaveAllLocatedState]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testReserveSaveAllRequiresSaveAllLocatedState]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.GoalSlotTests testSlotReplaceIsAtomicUnderConcurrentReads]' started.
+Test Case '-[Rev28CoreTests.GoalSlotTests testSlotReplaceIsAtomicUnderConcurrentReads]' passed (0.100 seconds).
+Test Suite 'GoalSlotTests' passed at 2026-10-04 17:42:41.543.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.145 (0.146) seconds
+Test Suite 'LiveCompositionTests' started at 2026-10-04 17:42:41.543.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssembledExecuteStopsAtTheIrreversibleBoundary]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssembledExecuteStopsAtTheIrreversibleBoundary]' passed (0.317 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssemblesOneCompositionThatReachesTheSaveAllBoundary]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryAssemblesOneCompositionThatReachesTheSaveAllBoundary]' passed (0.320 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryRefusesUncalibratedConfigurationBeforeAnyObservation]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testFactoryRefusesUncalibratedConfigurationBeforeAnyObservation]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationAcceptsTheReviewedShape]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationAcceptsTheReviewedShape]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesBudgetOutsideReviewedBounds]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesBudgetOutsideReviewedBounds]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesDegenerateLocatorGeometry]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesDegenerateLocatorGeometry]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesMissingFrozenRuleForTheConfiguredState]' started.
+Test Case '-[Rev28CoreTests.LiveCompositionTests testValidationRefusesMissingFrozenRuleForTheConfiguredState]' passed (0.000 seconds).
+Test Suite 'LiveCompositionTests' passed at 2026-10-04 17:42:42.181.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.638 (0.638) seconds
+Test Suite 'LiveExecutionEngineTests' started at 2026-10-04 17:42:42.181.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testFailureBeforeSaveAllPostsZeroIrreversibleEvents]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testFailureBeforeSaveAllPostsZeroIrreversibleEvents]' passed (0.009 seconds).
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testMissingRetainedFrameEvidenceIsRejected]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testMissingRetainedFrameEvidenceIsRejected]' passed (0.013 seconds).
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testPreIntentResumeContinuesOnlyRemainingStatesWithFreshEvidence]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testPreIntentResumeContinuesOnlyRemainingStatesWithFreshEvidence]' passed (0.109 seconds).
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testPreIntentResumeWithoutVerifiedAnchorStaysObserveOnly]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testPreIntentResumeWithoutVerifiedAnchorStaysObserveOnly]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testRestartAfterIrreversibleAttemptIsObserveOnlyAndPostsNothing]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testRestartAfterIrreversibleAttemptIsObserveOnlyAndPostsNothing]' passed (0.069 seconds).
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testReusedCaptureEpochIsRejectedAsStaleEvidence]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testReusedCaptureEpochIsRejectedAsStaleEvidence]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testTypedStateEvidenceForgeryIsRejectedBeforeTransition]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testTypedStateEvidenceForgeryIsRejectedBeforeTransition]' passed (0.007 seconds).
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testValidSyntheticTransactionUsesSameGuardedBoundariesAndReachesContentVerified]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testValidSyntheticTransactionUsesSameGuardedBoundariesAndReachesContentVerified]' passed (0.104 seconds).
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testWrongTargetAuthorizationIsRejectedBeforeAnyAction]' started.
+Test Case '-[Rev28CoreTests.LiveExecutionEngineTests testWrongTargetAuthorizationIsRejectedBeforeAnyAction]' passed (0.002 seconds).
+Test Suite 'LiveExecutionEngineTests' passed at 2026-10-04 17:42:42.504.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.323 (0.323) seconds
+Test Suite 'NativeObservationSessionTests' started at 2026-10-04 17:42:42.504.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' passed (0.002 seconds).
+Test Suite 'NativeObservationSessionTests' passed at 2026-10-04 17:42:42.530.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.025 (0.026) seconds
+Test Suite 'PersistentTransactionOwnerTests' started at 2026-10-04 17:42:42.530.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationBindsAcceptedContentContract]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationBindsAcceptedContentContract]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationIsImmutableAndConfirmationRequiresVerifiedChooser]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testAuthorizationIsImmutableAndConfirmationRequiresVerifiedChooser]' passed (0.032 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testChooserVerificationRequiresDispatchedSaveAllAndIsOneShot]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testChooserVerificationRequiresDispatchedSaveAllAndIsOneShot]' passed (0.043 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testProductionCheckpointIsRequiredAndDetectsRollback]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testProductionCheckpointIsRequiredAndDetectsRollback]' passed (0.024 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testReserveSaveAllRefusesWhenDurableBudgetsAreExhausted]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testReserveSaveAllRefusesWhenDurableBudgetsAreExhausted]' passed (0.018 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testRestartAfterSaveAllIntentCannotRearmOrDispatch]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testRestartAfterSaveAllIntentCannotRearmOrDispatch]' passed (0.022 seconds).
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testReversibleDispatchRefusesAfterTwoConsecutiveRevalidationFailures]' started.
+Test Case '-[Rev28CoreTests.PersistentTransactionOwnerTests testReversibleDispatchRefusesAfterTwoConsecutiveRevalidationFailures]' passed (0.007 seconds).
+Test Suite 'PersistentTransactionOwnerTests' passed at 2026-10-04 17:42:42.678.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.148 (0.148) seconds
+Test Suite 'PhaseAEvidenceTests' started at 2026-10-04 17:42:42.678.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testArtifactProcessMismatchFailsIdentityCondition]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testArtifactProcessMismatchFailsIdentityCondition]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testBaselineErrorIsRecordedAsFail]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testBaselineErrorIsRecordedAsFail]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testBaselineMismatchFailsBaselineIntegrity]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testBaselineMismatchFailsBaselineIntegrity]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testClearedBlockerListCannotTurnUnknownConditionsIntoSuccess]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testClearedBlockerListCannotTurnUnknownConditionsIntoSuccess]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testCompleteRunKeepsUnobservedCalibrationAndOcclusionUnknown]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testCompleteRunKeepsUnobservedCalibrationAndOcclusionUnknown]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testCurrentFrameIdentityAndMenuDuplicatesFailCommonEvidencePolicy]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testCurrentFrameIdentityAndMenuDuplicatesFailCommonEvidencePolicy]' passed (0.021 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testDeniedTccFailsExecutableContext]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testDeniedTccFailsExecutableContext]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testInventoryDisagreementFails]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testInventoryDisagreementFails]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testIrreversibleLedgerRecordFailsAndIsReported]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testIrreversibleLedgerRecordFailsAndIsReported]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMalformedArtifactIsNamedNotSkipped]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMalformedArtifactIsNamedNotSkipped]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMissingCensusIsFailWithError]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMissingCensusIsFailWithError]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMissingDuplicateAndLegacyConditionsCannotPassEvenWhenLabelsSayPass]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMissingDuplicateAndLegacyConditionsCannotPassEvenWhenLabelsSayPass]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMissingSaveAllArtifactFailsPopupConditionAndPreventsPhaseB]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMissingSaveAllArtifactFailsPopupConditionAndPreventsPhaseB]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMixedDisplayScalesFail]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testMixedDisplayScalesFail]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testNonEmptyStagingFailsSeparation]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testNonEmptyStagingFailsSeparation]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testNonMatchingMenuRowsFailLocalization]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testNonMatchingMenuRowsFailLocalization]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testPanelServiceInCensusFailsPrePanelCensus]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testPanelServiceInCensusFailsPrePanelCensus]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testProcessMismatchFailsIdentityCondition]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testProcessMismatchFailsIdentityCondition]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testPublicationWritesReportAndManifestCoveringEveryRawArtifact]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testPublicationWritesReportAndManifestCoveringEveryRawArtifact]' passed (0.008 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testRetainedFrameHashMismatchFailsSameFrameVision]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testRetainedFrameHashMismatchFailsSameFrameVision]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testSecondPublicationIsRefusedAppendOnly]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testSecondPublicationIsRefusedAppendOnly]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testShortOrGappedPreDispatchContextFails]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testShortOrGappedPreDispatchContextFails]' passed (0.010 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testTripwireGapFailsReadiness]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testTripwireGapFailsReadiness]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testUnboundPreDispatchContextDigestFails]' started.
+Test Case '-[Rev28CoreTests.PhaseAEvidenceTests testUnboundPreDispatchContextDigestFails]' passed (0.004 seconds).
+Test Suite 'PhaseAEvidenceTests' passed at 2026-10-04 17:42:42.815.
+	 Executed 24 tests, with 0 failures (0 unexpected) in 0.136 (0.137) seconds
+Test Suite 'StructuralLocatorsTests' started at 2026-10-04 17:42:42.815.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardDuplicateCountRefusesAmbiguity]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardDuplicateCountRefusesAmbiguity]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsCrossPairedTitleAndCountAcrossCards]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsCrossPairedTitleAndCountAcrossCards]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsTwoVerifiedCardsAsAmbiguous]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRejectsTwoVerifiedCardsAsAmbiguous]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRequiresExactUniqueTitleAndCount]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumCardRequiresExactUniqueTitleAndCount]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumDetailRejectsWrongZhenGlyph]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testAlbumDetailRejectsWrongZhenGlyph]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotBeReusedAcrossEpoch]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotBeReusedAcrossEpoch]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotSurviveProcessRestartOrPIDReuse]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testCandidateCannotSurviveProcessRestartOrPIDReuse]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllDuplicateTargetFailsClosed]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllDuplicateTargetFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllRequiresFullReferenceStructure]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllRequiresFullReferenceStructure]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllWrongNeighborRowFailsClosed]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSaveAllWrongNeighborRowFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsCrossCardCount]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsCrossCardCount]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsUnsupportedShortEndShape]' started.
+Test Case '-[Rev28CoreTests.StructuralLocatorsTests testSegmentAlbumCardsRejectsUnsupportedShortEndShape]' passed (0.000 seconds).
+Test Suite 'StructuralLocatorsTests' passed at 2026-10-04 17:42:42.816.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-10-04 17:42:42.816.
+	 Executed 126 tests, with 0 failures (0 unexpected) in 8.311 (8.317) seconds
+Test Suite 'Selected tests' passed at 2026-10-04 17:42:42.816.
+	 Executed 126 tests, with 0 failures (0 unexpected) in 8.311 (8.317) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

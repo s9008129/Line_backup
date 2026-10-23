@@ -1,0 +1,89 @@
+{
+  "format_version": "3",
+  "kind": "LOCAL_TASK_CLOSURE_ADVISORY",
+  "receipt_id": "f27f0f25-09c3-48c6-b115-39d804272b11",
+  "observed_at": "2026-10-05T02:50:53.920511+00:00",
+  "task_id": "TASK-45ee0a78972048b787c7e3ded76f2e31",
+  "scope": "One user-authorized CUA backup of 旻謙允禎成長日記 / 2024-05-13 through 2024-05-17 / 57 images into the explicitly selected current project, preserving previous work and native-calibration status.",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "ACHIEVED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "CORE_ACCEPTANCE_STATUS": "PASS",
+    "REQUIRED_VERIFICATION_STATUS": "PASS",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PASS",
+    "TASK_CLOSURE_STATUS": "DONE"
+  },
+  "gate_chain": {
+    "P1_PLAN_REVIEW": {
+      "phase": "PLAN_REVIEW",
+      "evidence_manifest": "plan",
+      "result": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/plan-review.result.json"
+    },
+    "I1_AUTHORITY_STATE": {
+      "phase": "IMPLEMENT",
+      "evidence_manifest": "terminal",
+      "result": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/implementer.result.json"
+    },
+    "I2_TARGET_DISPATCH": {
+      "phase": "IMPLEMENT",
+      "evidence_manifest": "dispatch",
+      "result": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/implementer.result.json"
+    },
+    "I3_FILESYSTEM_FINALIZATION": {
+      "phase": "IMPLEMENT",
+      "evidence_manifest": "filesystem",
+      "result": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/implementer.result.json"
+    },
+    "I4_PRESERVATION": {
+      "phase": "IMPLEMENT",
+      "evidence_manifest": "preservation",
+      "result": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/implementer.result.json"
+    },
+    "A1_INDEPENDENT_ACCEPTANCE": {
+      "phase": "ACCEPTANCE",
+      "evidence_manifest": "acceptance",
+      "result": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/acceptance.result.json"
+    }
+  },
+  "role_results": [
+    {
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/plan-review.result.json",
+      "bytes": 17477,
+      "sha256": "688bea707d95fde17391bbfe74eb1a5358a66a3700875221ccc763d52a223a73",
+      "role": "PLAN_REVIEWER",
+      "phase": "PLAN_REVIEW"
+    },
+    {
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/implementer.result.json",
+      "bytes": 16300,
+      "sha256": "314064213d48ed892b9bdb333dc561beaed6854733355e8b1061913c566cda2d",
+      "role": "IMPLEMENTER",
+      "phase": "IMPLEMENT"
+    },
+    {
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/acceptance.result.json",
+      "bytes": 12870,
+      "sha256": "0439be76a89f60074411f4fa77bb21fd099a18d73c3ed0ca458c8fdf227ed03f",
+      "role": "ACCEPTANCE_REVIEWER",
+      "phase": "ACCEPTANCE"
+    }
+  ],
+  "source_sha256": "0647382e21ae18f04abfe11f936d64065389c7504d39deefce079b03ababacc9",
+  "plan_sha256": "a0780b3bb048c8a139542d52c5a8b13003fe2888e795dcf3fa374d140f07723e",
+  "contract_sha256": "782e4b0cfd1b6611d66bbef8a272d2da328f7620439a3dc4db11f0fc38f5d2a6",
+  "terminal_state_sha256": "1093dd3065f7ce80ce4cfcb97081cabbb9b4334a53eeb77d1233985e5432acb9",
+  "terminal_state_revision": 16,
+  "recognized_images": 57,
+  "total_bytes": 17924900,
+  "destination": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張",
+  "owner_and_context_released": true,
+  "backup_report": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/backup-result.md",
+  "full_native_project_primary_outcome_status": "NOT_ACHIEVED",
+  "native_calibration_and_original_slot": "UNKNOWN, unchanged",
+  "controller_admission": "UNAVAILABLE; actual controller remains PLAN with empty run_ids; not advanced by this advisory receipt",
+  "enforcement_claims": "No signed provider/OS delivery/sandbox/network-denial claim",
+  "preservation": {
+    "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/after-acceptance-preservation.json",
+    "sha256": "a01f181f6cf6dba88063b2ddc1bedc105433128a07fef632bd3f988ac2131203"
+  }
+}

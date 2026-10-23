@@ -1,0 +1,186 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "continuation": "live-grounding-03",
+  "attempt_limit_per_root_issue": 3,
+  "escalate_after_consecutive_no_progress": 2,
+  "source_checkpoint": "a26a8e99141d9d4141c08e85f22491d35847f81c",
+  "start_baseline": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/baseline-implementer.json",
+    "sha256": "10e49b71fa7d2214a5e933358504fa10cdaa3bff477cb10979b29d17cb8d422d"
+  },
+  "historical_attempt_ledger": {
+    "path": "harness-development/line-v3-live-e2e-20261010/attempt-ledger.json",
+    "bytes": 28144,
+    "sha256": "d67fdaf77056ae3426cc1db76436f7cf32c932cec5de6fad8fafbc04297a64a7",
+    "attempts": 28,
+    "inherited_attempts": 1,
+    "reuse": "READ_ONLY_REFERENCE; no old attempt is relabeled or reset"
+  },
+  "root_issues": [
+    {
+      "id": "NON_MENU_SCK_SUPPORT",
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "IN_PROGRESS",
+          "started_at": "2026-10-10T12:18:15Z",
+          "scope": "Add read-only full-display non-menu SCK support, capture timing, native geometry binding, and focused offline coverage."
+        }
+      ],
+      "consecutive_no_progress": 0,
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "LIVE_CLASSIFIER_CHOOSER",
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "IN_PROGRESS",
+          "started_at": "2026-10-10T12:18:15Z",
+          "scope": "Add same-capture grounded classifier evidence, typed chooser phases, independent download evidence, and receipt v2 while preserving strict 17-key frame output."
+        }
+      ],
+      "consecutive_no_progress": 0,
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "LIVE_RUNTIME_BINDING_ORCHESTRATION",
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "IN_PROGRESS",
+          "started_at": "2026-10-10T12:18:15Z",
+          "scope": "Bind v2 grants to the new contract, runtime and producer binary; preserve shared quotas and enforce stopped dispatch/navigation-only session lifecycle."
+        }
+      ],
+      "consecutive_no_progress": 0,
+      "status": "IN_PROGRESS"
+    }
+  ],
+  "check_reservations": [
+    {
+      "check_id": "swift-full-suite-01",
+      "issue_id": "NON_MENU_SCK_SUPPORT",
+      "status": "FAILED_CONSUMED",
+      "reserved_at": "2026-10-10T13:39:04Z",
+      "command": [
+        "/usr/bin/swift",
+        "test",
+        "--package-path",
+        "rev28",
+        "--sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "--scratch-path",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/swift-build-26.5"
+      ],
+      "environment": {
+        "SWIFT_MODULE_CACHE_PATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/swift-module-cache-26.5",
+        "CLANG_MODULE_CACHE_PATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/clang-module-cache-26.5",
+        "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/tmp-swift-26.5"
+      },
+      "receipt": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-01.receipt.json",
+      "stdout": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-01.stdout",
+      "stderr": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-01.stderr",
+      "budget_consumed_on_start": true,
+      "completed_at": "2026-10-10T13:39:58Z",
+      "exit_code": 1,
+      "failure_summary": "Compilation failed in rev28ctl/main.swift: Any? grant comparisons, throwing resourceValues calls, and a missing menu manifestReference argument. The suite did not execute tests."
+    },
+    {
+      "check_id": "swift-full-suite-02",
+      "issue_id": "NON_MENU_SCK_SUPPORT",
+      "status": "FAILED_CONSUMED",
+      "reserved_at": "2026-10-10T13:41:31Z",
+      "command": [
+        "/usr/bin/swift",
+        "test",
+        "--package-path",
+        "rev28",
+        "--sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "--scratch-path",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/swift-build-26.5"
+      ],
+      "environment": {
+        "SWIFT_MODULE_CACHE_PATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/swift-module-cache-26.5",
+        "CLANG_MODULE_CACHE_PATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/clang-module-cache-26.5",
+        "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/tmp-swift-26.5"
+      },
+      "receipt": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-02.receipt.json",
+      "stdout": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-02.stdout",
+      "stderr": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-02.stderr",
+      "budget_consumed_on_start": true,
+      "completed_at": "2026-10-10T13:44:29.308Z",
+      "exit_code": 1,
+      "failure_summary": "The suite compiled and executed 329 tests; 17 failed. Sixteen ProjectBackupBinding failures were caused by the missing LINE_BACKUP_INSPECTION_FIXTURES environment binding. One FrameSupport test expected clipping for a rectangle that exactly fit the frame; its fixture was corrected to extend one pixel beyond the frame."
+    },
+    {
+      "check_id": "swift-full-suite-03",
+      "issue_id": "NON_MENU_SCK_SUPPORT",
+      "status": "PASS_CONSUMED",
+      "reserved_at": "2026-10-10T13:46:12Z",
+      "command": [
+        "/usr/bin/swift",
+        "test",
+        "--package-path",
+        "rev28",
+        "--sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "--scratch-path",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/swift-build-26.5"
+      ],
+      "environment": {
+        "SWIFT_MODULE_CACHE_PATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/swift-module-cache-26.5",
+        "CLANG_MODULE_CACHE_PATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/clang-module-cache-26.5",
+        "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/tmp-swift-26.5",
+        "LINE_BACKUP_INSPECTION_FIXTURES": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/fixtures/swift-inspection"
+      },
+      "receipt": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-03.receipt.json",
+      "stdout": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-03.stdout",
+      "stderr": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-03.stderr",
+      "budget_consumed_on_start": true,
+      "completed_at": "2026-10-10T13:46:42.848Z",
+      "exit_code": 0,
+      "result_summary": "The complete Swift package suite passed: 329 tests, 0 failures."
+    }
+  ],
+  "prior_learning": [
+    "Historical attempts establish a menu-only SCK producer and absence of grounded classifier/locators; they do not count as attempts against these new root issues.",
+    "The old Swift issue's four receipts and one exception receipt remain preserved; new frame-support work uses only the new NON_MENU_SCK_SUPPORT budget."
+  ],
+  "unknown_historical_attempts": "As recorded in the immutable historical ledger; not inferred or recounted.",
+  "updated_at": "2026-10-10T14:07:31.087Z",
+  "updated_note": "Three Swift full-suite reservations are consumed (01 compile failure, 02 test/setup failures, 03 PASS). Runtime binding/grants were regenerated after two authorization preflight defects; auth-suite-02, grant-validation-03 and producer startup passed. Live GUI remains unrun; 14 outside-scope untracked artifacts were detected and left untouched.",
+  "implementation_observations": [
+    {
+      "root_issue_id": "NON_MENU_SCK_SUPPORT",
+      "status": "OFFLINE_PASS_LIVE_NOT_RUN",
+      "evidence": [
+        "swift-full-suite-01",
+        "swift-full-suite-02",
+        "swift-full-suite-03"
+      ],
+      "note": "The native suite passed 329 tests; live CUA frame support still awaits foreground handoff."
+    },
+    {
+      "root_issue_id": "LIVE_CLASSIFIER_CHOOSER",
+      "status": "OFFLINE_PARTIAL_LIVE_NOT_RUN",
+      "evidence": [
+        "classifier-suite-04",
+        "runner-suite-03"
+      ],
+      "note": "Offline frame/chooser/scroll/download checks passed; actual CUA analyzer binding remains unknown."
+    },
+    {
+      "root_issue_id": "LIVE_RUNTIME_BINDING_ORCHESTRATION",
+      "status": "LOCAL_BINDING_PASS_LIVE_NOT_RUN",
+      "evidence": [
+        "auth-suite-02",
+        "grant-validation-03",
+        "producer-cli-preflight-01"
+      ],
+      "note": "Both current v2 grants validate against exact runtime membership and quotas; live process bridge/lifecycle remains unrun."
+    }
+  ]
+}

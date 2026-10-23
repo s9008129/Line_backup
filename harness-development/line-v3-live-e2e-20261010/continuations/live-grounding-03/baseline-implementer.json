@@ -1,0 +1,251 @@
+{
+  "format_version": "3",
+  "kind": "IMPLEMENTER_START_BASELINE",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "continuation": "live-grounding-03",
+  "captured_at": "2026-10-10T12:15:18.552732+00:00",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "branch": "v43-ab/codex-rev28",
+  "head": "77b83c4eb8f9bafdf86fda625e6ecd3a85b32ddb",
+  "source_checkpoint": "a26a8e99141d9d4141c08e85f22491d35847f81c",
+  "source_checkpoint_is_ancestor": true,
+  "index_entries_sha256": "ea9eda76bebcec2c39f9d99ed08ef64ea7fcf466ba020660fd37a04f8a2bbdae",
+  "index_entries_bytes": 4467808,
+  "working_tree_status_sha256": "9e8f0003bad4fb921c06c74f5fa215e6df81e099952919752e785ff1b013a0e9",
+  "working_tree_status_bytes": 11314497,
+  "working_tree_status_entries": 64905,
+  "tracked_worktree_diff_sha256": "f36411d19a129d3157d29f9d4e8b69c58a7c2b31fbe23c1ea8dff1ea237eecc8",
+  "tracked_worktree_diff_bytes": 219261,
+  "plan": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan.md",
+    "bytes": 30678,
+    "sha256": "001b90861631fe27b0d21ec871be5fc19446bf3070e88bb116350a0f3690708c"
+  },
+  "handoff": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/handoff.md",
+    "bytes": 18640,
+    "sha256": "d44fa1eb21fd15b50fcc2131c5a5499be69ce3b40bbf69b128f6f3cc8ee4df03"
+  },
+  "contract": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-contract.json",
+    "bytes": 6318,
+    "sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+    "handoff_json_equals_contract": true
+  },
+  "source_files": [
+    {
+      "path": "src/line_backup_acceptance/__init__.py",
+      "exists": true,
+      "bytes": 85,
+      "sha256": "5ae55afa11a74a856393b707db26b37202ad66d2142d1b56e02720f1a235a53b"
+    },
+    {
+      "path": "src/line_backup_acceptance/__main__.py",
+      "exists": true,
+      "bytes": 48,
+      "sha256": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d"
+    },
+    {
+      "path": "src/line_backup_acceptance/authority.py",
+      "exists": true,
+      "bytes": 9441,
+      "sha256": "7805ec0c53bca8991c3cc727339df4242d1e45a114b407913a2b0780614b6e7e"
+    },
+    {
+      "path": "src/line_backup_acceptance/cli.py",
+      "exists": true,
+      "bytes": 5587,
+      "sha256": "832896eda31583199b192a0df51b921257fb7875835b1b502e476f9f1383d82f"
+    },
+    {
+      "path": "src/line_backup_acceptance/common.py",
+      "exists": true,
+      "bytes": 35808,
+      "sha256": "2737d5c2febeeaf248b2d81e2e112ce0e99d48640e946bfa6dd8e71b5a2cf127"
+    },
+    {
+      "path": "src/line_backup_acceptance/project_binding.py",
+      "exists": true,
+      "bytes": 27866,
+      "sha256": "f8894652fc9070416df5544b9573c26cee440300ca8a14f201f654f3886874f8"
+    },
+    {
+      "path": "src/line_backup_acceptance/status.py",
+      "exists": true,
+      "bytes": 7937,
+      "sha256": "1c8c27edf204d9243e8773cd830e16566269fb3814faa332dd8237c71587180e"
+    },
+    {
+      "path": "src/line_backup_acceptance/transaction.py",
+      "exists": true,
+      "bytes": 42494,
+      "sha256": "0dd44fec005c70d6bb19436ed899e6c95d7b4d232dd83baa056732f4213a9da9"
+    },
+    {
+      "path": "src/line_backup_acceptance/verifier.py",
+      "exists": true,
+      "bytes": 25377,
+      "sha256": "a07ffe450284ade34fce27f646bd4a0c37baccb65de5660e77aea3faf48b23b6"
+    },
+    {
+      "path": "src/line_backup_batch/__init__.py",
+      "exists": true,
+      "bytes": 77,
+      "sha256": "ae2e6f7132820073b853877b5fbae4cbef55f9dcada8a6ceba0608d5e043fb83"
+    },
+    {
+      "path": "src/line_backup_batch/__main__.py",
+      "exists": true,
+      "bytes": 47,
+      "sha256": "79ee6f134c5c5193377cf9b189cbdcc3e2095e49ba9cec310114441c15a917c4"
+    },
+    {
+      "path": "src/line_backup_batch/cli.py",
+      "exists": true,
+      "bytes": 11588,
+      "sha256": "2d16ad6a3d137d6f4aea33c9d874500da37edaf89f8106b26d5b85002a5530d8"
+    },
+    {
+      "path": "src/line_backup_batch/content.py",
+      "exists": true,
+      "bytes": 4943,
+      "sha256": "45837c8a84c22564efb668001fa0c7e9d443bec0b6fd3d9340e87bb6b7921205"
+    },
+    {
+      "path": "src/line_backup_batch/coordinator.py",
+      "exists": true,
+      "bytes": 2552,
+      "sha256": "285d0411d62f21133075e7bf203eca2376170b36faaf25a74edff0bb59060b8f"
+    },
+    {
+      "path": "src/line_backup_batch/image_decode.swift",
+      "exists": true,
+      "bytes": 4120,
+      "sha256": "238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b"
+    },
+    {
+      "path": "src/line_backup_batch/observations.py",
+      "exists": true,
+      "bytes": 13671,
+      "sha256": "cadf3a47c1a386b96955e2632689fa79c8b5038e32e63a6290c4c8f0fb15dea6"
+    },
+    {
+      "path": "src/line_backup_batch/schema.py",
+      "exists": true,
+      "bytes": 2623,
+      "sha256": "d400cb0e5cdee4a0f0ce555e3222a590093c2dcaae9f10f464e205b9d1da3302"
+    },
+    {
+      "path": "src/line_backup_batch/service.py",
+      "exists": true,
+      "bytes": 32287,
+      "sha256": "9cd1903700a0ad3f0ef8a72d57e20317d71bd27cddc4e3a8bfd164241df1e419"
+    },
+    {
+      "path": "src/line_backup_batch/state_v3.schema.json",
+      "exists": true,
+      "bytes": 33379,
+      "sha256": "d30ff068623f7dc6c9988387935beabbd5347e4b3a5e2c3a784daf8197db2a37"
+    },
+    {
+      "path": "src/line_backup_batch/store.py",
+      "exists": true,
+      "bytes": 23549,
+      "sha256": "664d53fe65a34c5756d8988c16e5c4a251aea1c7cf4c84beac7180d93df3a70a"
+    },
+    {
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "exists": true,
+      "bytes": 16672,
+      "sha256": "dfc57cc6a6d7e49ff17f432d3639eb78cb769d58f54a21f4674f78dbca576294"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Perception/OcrEngine.swift",
+      "exists": true,
+      "bytes": 26613,
+      "sha256": "216610422cfafb346cb2a8a3629c2be3a179d0b507817768665f9ba3ee75d248"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+      "exists": true,
+      "bytes": 29404,
+      "sha256": "b715041ba941315c3c1a94caff3e91b09cfb4d89429a41f40d4d0e52aa157030"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/main.swift",
+      "exists": true,
+      "bytes": 51729,
+      "sha256": "2412bb5b49b00ab2f0c8b4ef2d5d7ab5628f939e2f1be1fd38df83c30fb59625"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/OcrEngineTests.swift",
+      "exists": true,
+      "bytes": 6027,
+      "sha256": "a43b88bd76f850ced2a0a6bf4ac3a89386c87240c0b564b6bddf6b4a14c164b3"
+    },
+    {
+      "path": "tests/test_batch_authority.py",
+      "exists": true,
+      "bytes": 14930,
+      "sha256": "e7adfff030b5105cf342b8f0bc1af72014eb6ab449e1ed600600423450f358e5"
+    },
+    {
+      "path": "tests/test_batch_observations.py",
+      "exists": true,
+      "bytes": 9718,
+      "sha256": "a8cb9fe2e4da70400d18109c9cc82c7a8692b9dbdce2b7a1781d68f18405242b"
+    },
+    {
+      "path": "tests/test_batch_coordinator.py",
+      "exists": true,
+      "bytes": 20927,
+      "sha256": "b57b9ab918652cc3ddd72b11f2516c1595adc1585326027bd4a94dde72ab393f"
+    },
+    {
+      "path": "tests/test_batch_lifecycle.py",
+      "exists": true,
+      "bytes": 2256,
+      "sha256": "aeeedbf61bf29a80ee6529628223dce4c1c01783f6da6c64b01e81242f11011b"
+    },
+    {
+      "path": "tests/test_cua_adapter.mjs",
+      "exists": true,
+      "bytes": 14835,
+      "sha256": "abfd03a9de4a5740cab99c72f98ad2efa450806c904f50845a886eef7970dedf"
+    }
+  ],
+  "config": {
+    "path": "config/line_backup_config.json",
+    "bytes": 384,
+    "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362"
+  },
+  "state": {
+    "path": "state/backup_state.json",
+    "bytes": 252115,
+    "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+    "schema_version": 3,
+    "revision": 35,
+    "verified_count": 2,
+    "run_count": 2,
+    "active_batch": null,
+    "active_writer_id": null,
+    "context_lock": null
+  },
+  "gui_ledger": {
+    "path": "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+    "exists": false
+  },
+  "backup_destination": {
+    "path": "backups/旻謙允禎成長日記",
+    "exists": true,
+    "entry_count": 239,
+    "regular_file_bytes": 55970747,
+    "inventory_sha256": "10f88e014c237f82084c333468576b11735f1179ebd08ed42ba8bf31bc6ad8a6",
+    "symlink_count": 0
+  },
+  "plan_input_mismatches": [],
+  "notes": [
+    "Read-only starting snapshot; no product test, Swift build, GUI input, state mutation, or LINE capture performed before this record.",
+    "Hash records preserve identity without copying backup media into evidence."
+  ]
+}

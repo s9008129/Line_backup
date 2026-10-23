@@ -1,0 +1,112 @@
+{
+  "format_version": "1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "recorded_at": "2026-10-10T16:06:42Z",
+  "plan": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan.md",
+    "sha256": "c8ed33dfa1040c9c7843fda7008167eb14b7c0b9f45e94f6cee1c40419e65aaf"
+  },
+  "contract": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan-contract.json",
+    "sha256": "a83bec99428ad66ae32e1795dfb17545e8dbd7df4df802cfb54b9f4e8b345883"
+  },
+  "incident": "OUT_OF_SCOPE_EVIDENCE_WRITE",
+  "status": "STOPPED",
+  "cause": {
+    "helper_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/run_command.py",
+    "helper_sha256": "ddc77f501d0db15ea7116837caf886db2045df12d6a7d114c3163cbcb478cd8f",
+    "helper_assumption": "The copied runner computes HERE as its parent.parent and expects itself under CON/checks/.",
+    "actual_location": "The helper was copied to the CON root, shifting its computed repository root one directory upward.",
+    "actual_cwd": "/Users/hsiaojohnny/Documents/ChatGPT",
+    "attempted_command": [
+      "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "-B",
+      "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/run_command.py",
+      "node-adapter-syntax-01",
+      "--",
+      "/opt/homebrew/bin/node",
+      "--check",
+      "scripts/line_backup_cua_adapter.mjs"
+    ],
+    "error": "Cannot find module '/Users/hsiaojohnny/Documents/ChatGPT/scripts/line_backup_cua_adapter.mjs' (MODULE_NOT_FOUND)"
+  },
+  "out_of_scope_artifacts": [
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.invocation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.invocation.json",
+      "bytes": 303,
+      "sha256": "e6af579520a315edb79877c4fb7fb6ecab8066cd9f1c4c9fccd396d296bc9e3e"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.receipt.json",
+      "bytes": 678,
+      "sha256": "e1d16b370f6f7c9d7d6275e8afd21fe77946dececef290ebc64a740914637719"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stderr",
+      "bytes": 318,
+      "sha256": "8948d951d254f345d8f1ce65686618a314622897641a6a037058ed782bff1fa4"
+    }
+  ],
+  "implementation_attempt": {
+    "root_issue": "LIVE_CLASSIFIER_CHOOSER",
+    "previous_known_issue_attempts": 1,
+    "meaningful_attempt": 2,
+    "change": "Added one cross-realm Uint8Array/Buffer normalizer and capture request timing fields in both transaction and navigation observation entry points; added tests for foreign-realm byte views, Buffer offsets, rejection cases, byte hashes, and capture intervals.",
+    "source": {
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "bytes": 39953,
+      "sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2"
+    },
+    "test": {
+      "path": "tests/test_cua_adapter.mjs",
+      "bytes": 18529,
+      "sha256": "0bb0d99636f35150272fc952b6efa84261e1e9c68375225787221b8b389662bd"
+    },
+    "verification": "NOT_ESTABLISHED; the Node process ran from the wrong cwd, so product syntax/tests remain unknown.",
+    "new_information": "The inherited run_command.py is location-sensitive; copying it to the CON root wrote its output outside the allowed CON scope."
+  },
+  "preservation_observations": {
+    "head": "b06b47b717da1aa9ae63e70d6d86c24d34282bba",
+    "branch": "v43-ab/codex-rev28",
+    "state": {
+      "path": "state/backup_state.json",
+      "bytes": 252115,
+      "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+      "revision": 35,
+      "verified_count": 2,
+      "active_batch": null,
+      "active_writer_id": null,
+      "context_lock": null
+    },
+    "config": {
+      "path": "config/line_backup_config.json",
+      "bytes": 384,
+      "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362"
+    },
+    "line_foreground_input": 0,
+    "save_all_dispatch": 0,
+    "chooser_confirmation": 0,
+    "download": 0,
+    "state_or_config_mutation": 0,
+    "backup_inventory": "NOT_RERUN"
+  },
+  "native_harness": {
+    "admission": "NOT_RUN",
+    "stage_publication": "NOT_RUN",
+    "contract_validation": "NOT_RUN",
+    "result_validation": "NOT_RUN",
+    "fixed_python_runtime": "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python3",
+    "fixed_python_runtime_exists": false,
+    "admission_evidence": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/native-admission.json"
+  },
+  "required_next_decision": "An authorized Planner must review this out-of-scope artifact write and issue a bounded continuation plan that defines how to preserve or reconcile the sibling evidence directory and places the check runner under the correct CON-relative location. No LINE foreground handoff is requested until the local gates and required evidence bridge are ready."
+}

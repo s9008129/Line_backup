@@ -1,0 +1,732 @@
+[0/1] Planning build
+Building for debugging...
+[0/14] Write sources
+[1/14] Write swift-version--58304C5D6DBC2206.txt
+[3/29] Compiling Rev28CoreTests ExecutionPolicyTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/GoalSlotTests.swift:80:9: warning: 'reading' mutated after capture by sendable closure
+ 60 |         let reads = NSLock()
+ 61 |         var readFailures: [String] = []
+ 62 |         var reading = true
+    |             `- note: variable defined here
+ 63 |         let reader = Thread {
+    |                             `- note: variable captured by sendable closure
+ 64 |             while true {
+ 65 |                 reads.lock()
+ 66 |                 let keepGoing = reading
+    |                                 `- note: capturing use
+ 67 |                 reads.unlock()
+ 68 |                 if !keepGoing { return }
+    :
+ 78 |         }
+ 79 |         reader.start()
+ 80 |         defer {
+    |         `- warning: 'reading' mutated after capture by sendable closure
+ 81 |             reads.lock()
+ 82 |             reading = false
+[4/29] Compiling Rev28CoreTests GoalSlotTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/GoalSlotTests.swift:80:9: warning: 'reading' mutated after capture by sendable closure
+ 60 |         let reads = NSLock()
+ 61 |         var readFailures: [String] = []
+ 62 |         var reading = true
+    |             `- note: variable defined here
+ 63 |         let reader = Thread {
+    |                             `- note: variable captured by sendable closure
+ 64 |             while true {
+ 65 |                 reads.lock()
+ 66 |                 let keepGoing = reading
+    |                                 `- note: capturing use
+ 67 |                 reads.unlock()
+ 68 |                 if !keepGoing { return }
+    :
+ 78 |         }
+ 79 |         reader.start()
+ 80 |         defer {
+    |         `- warning: 'reading' mutated after capture by sendable closure
+ 81 |             reads.lock()
+ 82 |             reading = false
+[5/29] Compiling Rev28CoreTests IntentLedgerTests.swift
+[6/29] Compiling Rev28CoreTests LiveCompositionTests.swift
+[7/29] Compiling Rev28CoreTests CoordinateTransformTests.swift
+[8/29] Compiling Rev28CoreTests EligibilityTestSupport.swift
+[9/31] Compiling Rev28CoreTests StagingVerifierTests.swift
+[10/31] Compiling Rev28CoreTests StructuralLocatorsTests.swift
+[11/31] Compiling Rev28CoreTests PhaseBEligibilityTests.swift
+[12/31] Compiling Rev28CoreTests PostconditionMonitorTests.swift
+[13/31] Compiling Rev28CoreTests NativeObservationTestSupport.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:167:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+165 | 
+166 |     func enumerateWindows() async throws -> [SCWindowSnapshot] {
+167 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+168 |         enumerateCalls += 1
+169 |         let call = enumerateCalls
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:170:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+168 |         enumerateCalls += 1
+169 |         let call = enumerateCalls
+170 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+171 |         return call == 1 ? (preInventoryOverride ?? [window]) : (postInventoryOverride ?? [window])
+172 |     }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:188:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+186 |     ) async throws -> ObservationCapturedImage {
+187 |         if let onCaptureStart { await onCaptureStart() }
+188 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+189 |         now += captureClockAdvance
+190 |         captureCountValue += 1
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:191:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+189 |         now += captureClockAdvance
+190 |         captureCountValue += 1
+191 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+192 |         if let captureError { throw captureError }
+193 |         let image = imageProvider?() ?? FakeLineScene.plainImage()
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:342:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+340 |             now: uptimeValue
+341 |         )
+342 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+343 |         posted.append(action)
+344 |         lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:344:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+342 |         lock.lock()
+343 |         posted.append(action)
+344 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+345 |         onClick?(action)
+346 |     }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:571:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+569 | 
+570 |     func sampleChooserFacts(preCensus: ChooserCensus) async -> ChooserFactsResult {
+571 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+572 |         defer { lock.unlock() }
+573 |         guard !chooserResults.isEmpty else { return .facts(TestChooserFixtures.emptyFacts()) }
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:572:22: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+570 |     func sampleChooserFacts(preCensus: ChooserCensus) async -> ChooserFactsResult {
+571 |         lock.lock()
+572 |         defer { lock.unlock() }
+    |                      `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+573 |         guard !chooserResults.isEmpty else { return .facts(TestChooserFixtures.emptyFacts()) }
+574 |         let result = chooserResults[min(chooserIndex, chooserResults.count - 1)]
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:585:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+583 |         postHoverRevalidation: @escaping @Sendable () async throws -> Void
+584 |     ) async throws {
+585 |         lock.lock(); saveAllClicks += 1; lock.unlock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+586 |         if let failure = postHoverRevalidationFailure {
+587 |             throw QuartzActuatorError.dispatchRefusedByPrecondition(failure)
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:585:47: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+583 |         postHoverRevalidation: @escaping @Sendable () async throws -> Void
+584 |     ) async throws {
+585 |         lock.lock(); saveAllClicks += 1; lock.unlock()
+    |                                               `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+586 |         if let failure = postHoverRevalidationFailure {
+587 |             throw QuartzActuatorError.dispatchRefusedByPrecondition(failure)
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:679:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+677 | 
+678 |     func sleep(seconds: Double) async {
+679 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+680 |         clock += max(0, seconds) + sleepSecondsAdvance
+681 |         lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:681:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+679 |         lock.lock()
+680 |         clock += max(0, seconds) + sleepSecondsAdvance
+681 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+682 |     }
+683 | 
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+[14/31] Compiling Rev28CoreTests OcrEngineTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:167:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+165 | 
+166 |     func enumerateWindows() async throws -> [SCWindowSnapshot] {
+167 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+168 |         enumerateCalls += 1
+169 |         let call = enumerateCalls
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:170:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+168 |         enumerateCalls += 1
+169 |         let call = enumerateCalls
+170 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+171 |         return call == 1 ? (preInventoryOverride ?? [window]) : (postInventoryOverride ?? [window])
+172 |     }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:188:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+186 |     ) async throws -> ObservationCapturedImage {
+187 |         if let onCaptureStart { await onCaptureStart() }
+188 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+189 |         now += captureClockAdvance
+190 |         captureCountValue += 1
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:191:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+189 |         now += captureClockAdvance
+190 |         captureCountValue += 1
+191 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+192 |         if let captureError { throw captureError }
+193 |         let image = imageProvider?() ?? FakeLineScene.plainImage()
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:342:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+340 |             now: uptimeValue
+341 |         )
+342 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+343 |         posted.append(action)
+344 |         lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:344:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+342 |         lock.lock()
+343 |         posted.append(action)
+344 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+345 |         onClick?(action)
+346 |     }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:571:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+569 | 
+570 |     func sampleChooserFacts(preCensus: ChooserCensus) async -> ChooserFactsResult {
+571 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+572 |         defer { lock.unlock() }
+573 |         guard !chooserResults.isEmpty else { return .facts(TestChooserFixtures.emptyFacts()) }
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:572:22: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+570 |     func sampleChooserFacts(preCensus: ChooserCensus) async -> ChooserFactsResult {
+571 |         lock.lock()
+572 |         defer { lock.unlock() }
+    |                      `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+573 |         guard !chooserResults.isEmpty else { return .facts(TestChooserFixtures.emptyFacts()) }
+574 |         let result = chooserResults[min(chooserIndex, chooserResults.count - 1)]
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:585:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+583 |         postHoverRevalidation: @escaping @Sendable () async throws -> Void
+584 |     ) async throws {
+585 |         lock.lock(); saveAllClicks += 1; lock.unlock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+586 |         if let failure = postHoverRevalidationFailure {
+587 |             throw QuartzActuatorError.dispatchRefusedByPrecondition(failure)
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:585:47: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+583 |         postHoverRevalidation: @escaping @Sendable () async throws -> Void
+584 |     ) async throws {
+585 |         lock.lock(); saveAllClicks += 1; lock.unlock()
+    |                                               `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+586 |         if let failure = postHoverRevalidationFailure {
+587 |             throw QuartzActuatorError.dispatchRefusedByPrecondition(failure)
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:679:14: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+677 | 
+678 |     func sleep(seconds: Double) async {
+679 |         lock.lock()
+    |              `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+680 |         clock += max(0, seconds) + sleepSecondsAdvance
+681 |         lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationTestSupport.swift:681:14: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+679 |         lock.lock()
+680 |         clock += max(0, seconds) + sleepSecondsAdvance
+681 |         lock.unlock()
+    |              `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+682 |     }
+683 | 
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+[15/31] Compiling Rev28CoreTests PersistentTransactionOwnerTests.swift
+[16/31] Compiling Rev28CoreTests PhaseAEvidenceTests.swift
+[17/31] Compiling Rev28CoreTests ReviewedBuildStateTests.swift
+[18/31] Compiling Rev28CoreTests RunEpochAuthorityTests.swift
+[19/31] Compiling Rev28CoreTests AXWindowIdentitySelectorTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:305:21: warning: mutation of captured var 'revalidationCalls' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+303 |                 intent: .reversible(owner, action: "recover-state"),
+304 |                 postHoverRevalidation: {
+305 |                     revalidationCalls += 1
+    |                     `- warning: mutation of captured var 'revalidationCalls' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+306 |                     throw QuartzActuatorError.dispatchRefusedByPrecondition("window geometry changed")
+307 |                 },
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:345:21: warning: mutation of captured var 'revalidationSawMove' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+343 |                 intent: .reversible(owner, action: "recover-state"),
+344 |                 postHoverRevalidation: {
+345 |                     revalidationSawMove = posted == [.mouseMoved]
+    |                     `- warning: mutation of captured var 'revalidationSawMove' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+346 |                 },
+347 |                 sink: { event, _ in posted.append(event.type) },
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:345:43: warning: reference to captured var 'posted' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+343 |                 intent: .reversible(owner, action: "recover-state"),
+344 |                 postHoverRevalidation: {
+345 |                     revalidationSawMove = posted == [.mouseMoved]
+    |                                           `- warning: reference to captured var 'posted' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+346 |                 },
+347 |                 sink: { event, _ in posted.append(event.type) },
+
+[#SendableClosureCaptures]: <https://docs.swift.org/compiler/documentation/diagnostics/sendable-closure-captures>
+[20/31] Compiling Rev28CoreTests ActuationReadinessTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:305:21: warning: mutation of captured var 'revalidationCalls' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+303 |                 intent: .reversible(owner, action: "recover-state"),
+304 |                 postHoverRevalidation: {
+305 |                     revalidationCalls += 1
+    |                     `- warning: mutation of captured var 'revalidationCalls' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+306 |                     throw QuartzActuatorError.dispatchRefusedByPrecondition("window geometry changed")
+307 |                 },
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:345:21: warning: mutation of captured var 'revalidationSawMove' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+343 |                 intent: .reversible(owner, action: "recover-state"),
+344 |                 postHoverRevalidation: {
+345 |                     revalidationSawMove = posted == [.mouseMoved]
+    |                     `- warning: mutation of captured var 'revalidationSawMove' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+346 |                 },
+347 |                 sink: { event, _ in posted.append(event.type) },
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:345:43: warning: reference to captured var 'posted' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+343 |                 intent: .reversible(owner, action: "recover-state"),
+344 |                 postHoverRevalidation: {
+345 |                     revalidationSawMove = posted == [.mouseMoved]
+    |                                           `- warning: reference to captured var 'posted' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+346 |                 },
+347 |                 sink: { event, _ in posted.append(event.type) },
+
+[#SendableClosureCaptures]: <https://docs.swift.org/compiler/documentation/diagnostics/sendable-closure-captures>
+[21/31] Compiling Rev28CoreTests AdversarialMatrixTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:305:21: warning: mutation of captured var 'revalidationCalls' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+303 |                 intent: .reversible(owner, action: "recover-state"),
+304 |                 postHoverRevalidation: {
+305 |                     revalidationCalls += 1
+    |                     `- warning: mutation of captured var 'revalidationCalls' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+306 |                     throw QuartzActuatorError.dispatchRefusedByPrecondition("window geometry changed")
+307 |                 },
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:345:21: warning: mutation of captured var 'revalidationSawMove' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+343 |                 intent: .reversible(owner, action: "recover-state"),
+344 |                 postHoverRevalidation: {
+345 |                     revalidationSawMove = posted == [.mouseMoved]
+    |                     `- warning: mutation of captured var 'revalidationSawMove' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+346 |                 },
+347 |                 sink: { event, _ in posted.append(event.type) },
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift:345:43: warning: reference to captured var 'posted' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+343 |                 intent: .reversible(owner, action: "recover-state"),
+344 |                 postHoverRevalidation: {
+345 |                     revalidationSawMove = posted == [.mouseMoved]
+    |                                           `- warning: reference to captured var 'posted' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+346 |                 },
+347 |                 sink: { event, _ in posted.append(event.type) },
+
+[#SendableClosureCaptures]: <https://docs.swift.org/compiler/documentation/diagnostics/sendable-closure-captures>
+[22/31] Compiling Rev28CoreTests LiveExecutionEngineTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:20:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 18 |         func establish(state: ExecutionState, owner: PersistentTransactionOwner) async throws -> EstablishedStateEvidence {
+ 19 |             if failAtState == state { throw NSError(domain: "FakeAdapter", code: 1) }
+ 20 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 21 |             establishCount += 1
+ 22 |             lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:22:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 20 |             lock.lock()
+ 21 |             establishCount += 1
+ 22 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 23 |             return try writeEvidence(state: state, owner: owner)
+ 24 |         }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:315:32: warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+313 |             }
+314 |         }
+315 |         try await firstAdapter.dispatchSaveAll(owner: owner)
+    |                                `- warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+316 |         XCTAssertEqual(firstAdapter.saveAllMouseEvents, 3)
+317 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:40:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 38 | 
+ 39 |         func enumerateWindows() async throws -> [SCWindowSnapshot] {
+ 40 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 41 |             enumerateCalls += 1
+ 42 |             let call = enumerateCalls
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:43:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 41 |             enumerateCalls += 1
+ 42 |             let call = enumerateCalls
+ 43 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 44 |             return call == 1 ? (preInventoryOverride ?? [window]) : (postInventoryOverride ?? [window])
+ 45 |         }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:61:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 59 |         ) async throws -> ObservationCapturedImage {
+ 60 |             if let onCaptureStart { await onCaptureStart() }
+ 61 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 62 |             now += captureClockAdvance
+ 63 |             lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:63:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 61 |             lock.lock()
+ 62 |             now += captureClockAdvance
+ 63 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 64 |             if let captureError { throw captureError }
+ 65 |             let image = Self.makeImage(width: 400, height: 600)
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+[23/31] Compiling Rev28CoreTests NativeObservationSessionTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:20:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 18 |         func establish(state: ExecutionState, owner: PersistentTransactionOwner) async throws -> EstablishedStateEvidence {
+ 19 |             if failAtState == state { throw NSError(domain: "FakeAdapter", code: 1) }
+ 20 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 21 |             establishCount += 1
+ 22 |             lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:22:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 20 |             lock.lock()
+ 21 |             establishCount += 1
+ 22 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 23 |             return try writeEvidence(state: state, owner: owner)
+ 24 |         }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift:315:32: warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+313 |             }
+314 |         }
+315 |         try await firstAdapter.dispatchSaveAll(owner: owner)
+    |                                `- warning: result of call to 'dispatchSaveAll(owner:)' is unused [#no-usage]
+316 |         XCTAssertEqual(firstAdapter.saveAllMouseEvents, 3)
+317 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:40:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 38 | 
+ 39 |         func enumerateWindows() async throws -> [SCWindowSnapshot] {
+ 40 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 41 |             enumerateCalls += 1
+ 42 |             let call = enumerateCalls
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:43:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 41 |             enumerateCalls += 1
+ 42 |             let call = enumerateCalls
+ 43 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 44 |             return call == 1 ? (preInventoryOverride ?? [window]) : (postInventoryOverride ?? [window])
+ 45 |         }
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:61:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 59 |         ) async throws -> ObservationCapturedImage {
+ 60 |             if let onCaptureStart { await onCaptureStart() }
+ 61 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 62 |             now += captureClockAdvance
+ 63 |             lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:63:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 61 |             lock.lock()
+ 62 |             now += captureClockAdvance
+ 63 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 64 |             if let captureError { throw captureError }
+ 65 |             let image = Self.makeImage(width: 400, height: 600)
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+[24/31] Emitting module Rev28CoreTests
+[25/31] Compiling Rev28CoreTests AlbumEllipsisLocatorTests.swift
+[26/31] Compiling Rev28CoreTests ChooserPredicateProductionDerivationTests.swift
+[27/31] Compiling Rev28CoreTests ComposedAdaptersTests.swift
+[28/31] Compiling Rev28CoreTests TripwirePostDispatchGateTests.swift
+[29/31] Compiling Rev28CoreTests WindowIdentityTests.swift
+[29/31] Write Objects.LinkFileList
+[30/31] Linking rev28PackageTests
+Build complete! (1.30s)
+Test Suite 'Selected tests' started at 2026-09-29 08:06:18.126.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 08:06:18.126.
+Test Suite 'AdversarialMatrixTests' started at 2026-09-29 08:06:18.126.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testChooserPredicateV2RequiresBothButtonsAndStableProcessInstances]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testChooserPredicateV2RequiresBothButtonsAndStableProcessInstances]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testFrozenLegacyChooserPredicateCanOnlyUpgradeWithObservedButtons]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testFrozenLegacyChooserPredicateCanOnlyUpgradeWithObservedButtons]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG01WrongWindowRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG01WrongWindowRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG02WrongBundleRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG02WrongBundleRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG03StaleEpochRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG03StaleEpochRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG04WrongRetinaScaleRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG04WrongRetinaScaleRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG05SeparateProcessOccluderPostsZeroEventsAtGuardedBoundary]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG05SeparateProcessOccluderPostsZeroEventsAtGuardedBoundary]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG06WindowMovementInvalidatesIdentity]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG06WindowMovementInvalidatesIdentity]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG07PopupMovementInvalidatesCandidateAtGuardedBoundary]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG07PopupMovementInvalidatesCandidateAtGuardedBoundary]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG08WrongRowRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG08WrongRowRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG09DuplicateOCRRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG09DuplicateOCRRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG10SingleGlyphCorruptionRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG10SingleGlyphCorruptionRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG11WholeScreenFalsePositiveOutsidePopupRefused]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG11WholeScreenFalsePositiveOutsidePopupRefused]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG12OutsideSafeRegionIsNotDispatchable]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG12OutsideSafeRegionIsNotDispatchable]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG13SaveAllCandidateStaysInsideTargetStructuralCell]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG13SaveAllCandidateStaysInsideTargetStructuralCell]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG14FocusTheftPostsZeroEventsAtGuardedBoundary]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG14FocusTheftPostsZeroEventsAtGuardedBoundary]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG15PostconditionTimeoutIsNamedAndDoesNotRetry]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG15PostconditionTimeoutIsNamedAndDoesNotRetry]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG16ExistingWindowCannotMasqueradeAsNewChooser]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG16ExistingWindowCannotMasqueradeAsNewChooser]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG17UnattributedL2WriteFailsClosed]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG17UnattributedL2WriteFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG18ZeroByteStagingIsIncomplete]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG18ZeroByteStagingIsIncomplete]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG19PartialSuffixIsIncomplete]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG19PartialSuffixIsIncomplete]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG20ExtraFileHasDedicatedOutcome]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG20ExtraFileHasDedicatedOutcome]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG21RestartAfterSaveAllCannotRedispatch]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG21RestartAfterSaveAllCannotRedispatch]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG22IndependentScaleMismatchFailsClosed]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testG22IndependentScaleMismatchFailsClosed]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX01RelayoutFrameDeltaInvalidatesRead]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX01RelayoutFrameDeltaInvalidatesRead]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX02MenuWithoutAddressablePopupOverlapRefuses]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX02MenuWithoutAddressablePopupOverlapRefuses]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX03InactiveTargetFailsFinalDispatchGate]' started.
+Test Case '-[Rev28CoreTests.AdversarialMatrixTests testX03InactiveTargetFailsFinalDispatchGate]' passed (0.000 seconds).
+Test Suite 'AdversarialMatrixTests' passed at 2026-09-29 08:06:18.139.
+	 Executed 27 tests, with 0 failures (0 unexpected) in 0.011 (0.012) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 08:06:18.139.
+	 Executed 27 tests, with 0 failures (0 unexpected) in 0.011 (0.013) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 08:06:18.139.
+	 Executed 27 tests, with 0 failures (0 unexpected) in 0.011 (0.013) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

@@ -1,0 +1,2458 @@
+{
+  "scope": "publication of current research, repair plan and handoff only",
+  "baseline_head": "f6e5d4c48642cdfd650301d91eeff4ef6b1a985f",
+  "baseline_branch": "v43-ab/codex-rev28",
+  "baseline_index_empty": true,
+  "outside_scope_status": [
+    {
+      "status": " M",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/progress.md"
+    },
+    {
+      "status": " M",
+      "path": "rev28/ARCHITECTURE.md"
+    },
+    {
+      "status": " M",
+      "path": "rev28/CAPABILITY-MATRIX.md"
+    },
+    {
+      "status": " M",
+      "path": "rev28/Sources/Rev28Core/Composition/LiveComposition.swift"
+    },
+    {
+      "status": " M",
+      "path": "rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift"
+    },
+    {
+      "status": " M",
+      "path": "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift"
+    },
+    {
+      "status": " M",
+      "path": "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift"
+    },
+    {
+      "status": " M",
+      "path": "rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift"
+    },
+    {
+      "status": " M",
+      "path": "rev28/Sources/rev28ctl/main.swift"
+    },
+    {
+      "status": " M",
+      "path": "rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift"
+    },
+    {
+      "status": " M",
+      "path": "rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift"
+    },
+    {
+      "status": " M",
+      "path": "src/line_backup_acceptance/authority.py"
+    },
+    {
+      "status": " M",
+      "path": "src/line_backup_acceptance/cli.py"
+    },
+    {
+      "status": " M",
+      "path": "src/line_backup_acceptance/common.py"
+    },
+    {
+      "status": " M",
+      "path": "src/line_backup_acceptance/transaction.py"
+    },
+    {
+      "status": "??",
+      "path": "20261009_harness_v4.8.0_問題提報單.md"
+    },
+    {
+      "status": "??",
+      "path": "20261009_line_batch_backup_plan.md"
+    },
+    {
+      "status": "??",
+      "path": "20261010_harness_v4.9.0_原生接手紀錄缺口_問題提報單.md"
+    },
+    {
+      "status": "??",
+      "path": "20261010_harness_v4.9.0_問題提報_證據包.zip"
+    },
+    {
+      "status": "??",
+      "path": "backups/"
+    },
+    {
+      "status": "??",
+      "path": "config/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/additional-tools-incremental-20261010/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/automatic-album-batch/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/catalog-diagnostic-20261010/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/module-cache/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/repair-01/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/repair-01-run-01.report.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/__pycache__/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/smoke-repair/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/handoff-sidecar-validation-20261010/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/manual-handoffs/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/native-diagnostics/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-child-observation/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-context-handoff/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-context-publication/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-continuation/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-count-observation/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-download182/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/acceptance-archive-validation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/archive_result.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/baseline.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/capture-rulebook.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/common.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/context-assessment.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/continuation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/explicit-consent.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/finalize_observation.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/fresh-process.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/handoff-validation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/handoff.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/implementer.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/invocation-result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/invocation-start.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/invoke_once.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/loader-result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/loader.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/loader.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/native.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/native.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/packet-validation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/plan-contract.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/plan-review.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/plan.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/planner.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/post-observation-continuation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/post_invocation.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/prepare.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/prepare_handoff.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/preservation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/progress.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/user-preparation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/.build/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/.isolated-build/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/.offline-build/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/acceptance-archive-validation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-legacy-v1-load.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-legacy-v1-load.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-legacy-v1-load.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-synthetic-v3-load.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-synthetic-v3-load.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/actual-synthetic-v3-load.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/archive_acceptance.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/baseline-02-input.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/baseline.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/candidate-03-changes.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/candidate-03-product.diff"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-build-source.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-build.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-build.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-ci-refusal.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-ci-refusal.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-ci-refusal.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-foreign-bundle.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-foreign-bundle.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-foreign-bundle.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-refusal-fixture/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-refusals.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-unknown-profile.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-unknown-profile.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-unknown-profile.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-usage.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-usage.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/cli-usage.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/compile_handoff_02.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/context-note.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/evidence/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/explicit-public-profile-consent.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/final-preservation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/finalize_implementation.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-01.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-01.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-02-source.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-02.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-02.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-final.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-final.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-isolated-source.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-isolated.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-isolated.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/freeze_plan_02.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite-isolated-source.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite-isolated.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite-isolated.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite-source.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/full-suite.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/handoff-compiler.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/handoff-validation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/handoff.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/handoff.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/history/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/implementation-preimages/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/implementation-start.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/implementer-pre-isolation.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/implementer.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolated-artifacts/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolated-package-proof.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolated-package/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolated-test-root-only.diff"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolated-test-root/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-baseline-03.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-baseline-04.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-contract-03.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-contract-04.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-handoff-04.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-handoff-validation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-plan-03.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-plan-04.diff"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-plan-04.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-planner-03.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-planner-04.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-review-03.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/isolation-review-04.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-crop-drift.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-crop-drift.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-crop-drift.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-epoch-drift.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-epoch-drift.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-epoch-drift.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-fixtures/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-foreign-id.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-foreign-id.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-foreign-id.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-implicit-child.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-implicit-child.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-implicit-child.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-request.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-request.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-request.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-witness.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-witness.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-missing-witness.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-request-effective-confusion.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-request-effective-confusion.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-request-effective-confusion.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-scale-drift.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-scale-drift.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-scale-drift.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-state-drift.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-state-drift.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-state-drift.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-version-mix.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-version-mix.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/loader-tamper-version-mix.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/offline-loader-verification.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/offline-validation/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan-01-archive.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan-02-review-request.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan-02.diff"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan-contract.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan-review.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/plan.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/planner.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/prepare.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/prepare_isolated_package.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/prepare_isolation_plan.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/progress.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/record_isolation_blocker.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/resume-audit.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/resume_audit.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/review-interruption.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/revise_isolation_plan_04.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/run_check.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/start_implementation.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/swift-module-cache/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/swiftpm-cache/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/synthetic-v3-packet/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/synthetic-v3-receipt.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/test-isolation-blocker.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/tmp/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/validator-build-source.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/validator-build.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/validator-build.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/verification-summary.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/verify_offline_routes.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/.locks/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-72f1aa0a445a4c27af10491fefe014f2/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/acceptance-01.received.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/audit.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/check.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/events.jsonl"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/after-acceptance-incremental.diff"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-files/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-preservation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-product.diff"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-source.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-01-files/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/diff-check.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/green-identity.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/green-identity.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/local-closure-validation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/replay-02.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/replay-03.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/replay.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/review-freeze.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/state-root-baseline.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/finalize_local.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/finish_candidate_02.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/implementer-01.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/implementer-02.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/next-live-observation.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/progress.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/record_results.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/start-snapshot.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/state.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-geometry-refusal/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-delivery/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/baseline.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/handoff.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/plan-contract.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/plan.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/planner.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/preparation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/prepare.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/progress.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/verify.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/commit-receipt.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/commit-verification.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/final-schema-check.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/implementer.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/post-publication-preservation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/preservation-baseline.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/progress-completed.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/publication-receipt.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/push-receipt.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/remote-readback.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/stage-check-attempt-01.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc/stage-receipt.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-live-diagnostic/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/.locks/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/.build/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/Package.swift"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/Sources/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/bind.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/check.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/events.jsonl"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/build-01.command.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/build-01.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/capture-01-launch-error.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/capture-02.command.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/capture-02.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/final-preservation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/observation-run/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/review-freeze.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/evidence/source-binary-binding.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/finalize.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/handoff.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/handoff.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/implementer.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/plan-contract.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/plan.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/planner.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/progress.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/start-snapshot.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-capture/TASK-b9b7bfc7bf1e433ab26b78f7af9e5188/state.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-native-inventory/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-passive-child-profile/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-passive-collector/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/.locks/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/backup-result.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/config-proposal.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/events.jsonl"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/evidence/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/handoff.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/handoff.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/image_decode"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/image_decode.swift"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/implementer.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/initialization-decision.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/menu_ocr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/menu_ocr.swift"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/operator.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/plan-contract.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/plan-review.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/plan.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/planner.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/prepare_finalization.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/prepare_intent.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/preservation.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/progress.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/read_metadata.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/record_results.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/source-identity-join.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/start-snapshot.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/state-proposal.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/state.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-backup/TASK-45ee0a78972048b787c7e3ded76f2e31/verify_download.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/.build/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/.offline-build/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/acceptance-01-archive-validation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-cli-summary.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project182.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project182.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project182.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project57.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project57.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/actual-project57.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/archive_independent_acceptance.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/baseline.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/blocked-checkpoint-delivery.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project182.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project182.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project57.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project57.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/admit.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/admit_continuation.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/archive_role.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/baseline.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/candidate-source-manifest.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/cli_checks.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/content_helpers.literal.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/content_tests.literal.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/deliver.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/diff-project_binding.py.patch"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/diff-test_project_binding.py.patch"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/driver.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/finalize.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/fixture-invalid-date.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/fixture-invalid-date.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/fixture-invalid-date.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/fixture_builder.literal.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/implementer.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/literal-product-diffs.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/preimages/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/prepared-fixtures.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-contradiction-refusal.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-contradiction-refusal.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-other-target-contradiction-refusal.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-other-target-contradiction-refusal.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/supplemental-handoff.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/swift-fixtures/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/tmp/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/verify_delivery.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-evidence-join-correction.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-python.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-python.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-swift-focused.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-01-swift-focused.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-loader-build.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-loader-build.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-python.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-python.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-source-manifest.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-focused.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-focused.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-cli-summary.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project182.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project182.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project182.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project57.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project57.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-actual-project57.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-count.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-count.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-count.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-date.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-date.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-invalid-date.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-usage.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-usage.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-fixture-usage.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-python.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-python.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-source-manifest.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-swift-focused.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-03-swift-focused.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/check_driver.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/decision.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-ARCHITECTURE.md.patch"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-CAPABILITY-MATRIX.md.patch"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-ProjectBackupBinding.swift.patch"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-ProjectBackupBindingTests.swift.patch"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-cli.py.patch"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-project_binding.py.patch"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/diff-test_project_binding.py.patch"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence-finalization-mechanical-note.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/execution-baseline-20261009.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/execution-preimages/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-full-swift-source-join.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-isolation-verification.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-preservation-verification.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final-source-manifest.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final_evidence.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/final_evidence_continuation.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/first-principles-assessment-20261009.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-count.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-count.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-count.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-date.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-date.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-invalid-date.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-usage.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-usage.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/fixture-usage.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/implement-gates-final.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/implementer-final.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-package/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolated-test-root/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/isolation-20261009.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/legacy-fixture-copy-20261009.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/literal-product-diffs.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/offline-loader-source-binding.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/offline-validation/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-02.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-contract.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/planner-02.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/planner-03.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/planner.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/post-final-root-evidence-concern.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_candidate02.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_candidate03.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_handoff.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_review_02.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_review_03.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/read-only-diagnostic.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/reproduce_evidence_join_gap.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/result-20261009.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/resume-unrelated-metadata-drift.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/resume_baseline.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-legacy-v1.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-legacy-v1.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-legacy-v1.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-real-v3.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-real-v3.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-real-v3.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/review-02-preparation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-cache/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/swift-fixtures/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/tmp/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/verify_cli_and_loader.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-refusal-count/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/closure-validation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/commit-verification.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/git-delivery.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/metadata-validation-learning.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/post-push-preservation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/previous-root-handoff.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/evidence/staged-publication.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/implementer.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/progress.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair-publication/TASK-497487f77d8e438394e37742f0c374f5/start-snapshot.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/.locks/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/audit.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/events.jsonl"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/build.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/build.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/focused.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/focused.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/full-suite.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/full-suite.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/preservation.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/attempt-02/replay.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/baseline-durable-fault.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/baseline-durable-fault.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/build.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/build.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/final-record-verification.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/final-verification-summary.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-01.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-01.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-02.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-02.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-03.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-03.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-04.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/focused-04.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/full-suite.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/full-suite.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/patch.diff"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/preservation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/provenance-command.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/provenance.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/replay-command.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/replay.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/replay.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/source-manifest.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/verification-manifest.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/execution.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/high-reasoning-review.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/implementer-02.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/implementer.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/progress.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/record_advisory_results.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/start-snapshot.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/state.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/baseline.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/commit-receipt.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/delivery-receipt.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/editing-note.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/implementer.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/post-push-preservation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/pre-push-preservation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/pre-stage-check.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/prepare.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/progress.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/push-receipt.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-stage-publication/TASK-21a4e6fa5b4048188018efd1e38b60cb/stage-receipt.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-system-continuation/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/.validator-build/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/acceptance.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/assessment.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/baseline.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/check_preservation.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/fresh-context.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/fresh-process.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/handoff.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/handoff.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/history/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/implementer.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/invocation-result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/invocation-start.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/invoke_once.py"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/native.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/native.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/offline-validation/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/offline-validator.stderr"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/offline-validator.stdout"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/packet-validation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/plan-contract.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/plan-review-01.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/plan-review-02.result.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/plan.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/preparation-observations.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/preservation.json"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/progress.md"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/user-correct-target-menu.png"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/user-menu-on-upper-card.png"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/user-selected-album.png"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/validator-build.log"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/rev28-window-preparation/"
+    },
+    {
+      "status": "??",
+      "path": "harness-development/verify182-20261010/"
+    },
+    {
+      "status": "??",
+      "path": "rev28/Sources/Rev28Core/Composition/PassiveNativeDiagnostic.swift"
+    },
+    {
+      "status": "??",
+      "path": "rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift"
+    },
+    {
+      "status": "??",
+      "path": "rev28/Sources/Rev28Core/Sensor/ExplicitLineCaptureSelection.swift"
+    },
+    {
+      "status": "??",
+      "path": "rev28/Sources/rev28ctl/PassiveCaptureDiagnostic.swift"
+    },
+    {
+      "status": "??",
+      "path": "rev28/Tests/Rev28CoreTests/ExplicitLineCaptureSelectionTests.swift"
+    },
+    {
+      "status": "??",
+      "path": "rev28/Tests/Rev28CoreTests/PassiveNativeDiagnosticTests.swift"
+    },
+    {
+      "status": "??",
+      "path": "rev28/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift"
+    },
+    {
+      "status": "??",
+      "path": "scripts/"
+    },
+    {
+      "status": "??",
+      "path": "src/line_backup_acceptance/__pycache__/"
+    },
+    {
+      "status": "??",
+      "path": "src/line_backup_acceptance/project_binding.py"
+    },
+    {
+      "status": "??",
+      "path": "src/line_backup_batch/"
+    },
+    {
+      "status": "??",
+      "path": "state/"
+    },
+    {
+      "status": "??",
+      "path": "tests/test_batch_authority.py"
+    },
+    {
+      "status": "??",
+      "path": "tests/test_batch_content.py"
+    },
+    {
+      "status": "??",
+      "path": "tests/test_batch_coordinator.py"
+    },
+    {
+      "status": "??",
+      "path": "tests/test_batch_migration.py"
+    },
+    {
+      "status": "??",
+      "path": "tests/test_batch_observations.py"
+    },
+    {
+      "status": "??",
+      "path": "tests/test_cua_adapter.mjs"
+    },
+    {
+      "status": "??",
+      "path": "tests/test_project_binding.py"
+    }
+  ],
+  "tracked_dirty_bytes": [
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/progress.md",
+      "sha256": "f7e211da9ccb054c2150c94e056e35e1c2b253fb78fc25ac7440aa30b9503ce7",
+      "bytes": 4565
+    },
+    {
+      "path": "rev28/ARCHITECTURE.md",
+      "sha256": "333424392e8c0e62e2f17e45f711bcbd62e07b31e2b6df2f80088bdfbc9a5427",
+      "bytes": 25640
+    },
+    {
+      "path": "rev28/CAPABILITY-MATRIX.md",
+      "sha256": "341a06c130d96520fe3182d97f211e4101e8dd32df56b4874757d49854263be8",
+      "bytes": 10429
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/LiveComposition.swift",
+      "sha256": "2440a1e56dc97c989835cc3a98c896fa644936296a11c7f9fdf24d0f12713dfd",
+      "bytes": 8765
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift",
+      "sha256": "3745e6de06bc2bee83097b69cb6a30a481d79d631c465564c218ebed008003e6",
+      "bytes": 8574
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+      "sha256": "9230ec99679badd7cad01d53c0c4d9811db6cd149f1aa42b0b98a3c34885e4c2",
+      "bytes": 29055
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+      "sha256": "3a876cf4232622a5f3b5e495f91b25a478b16eba7af20a9dc054676e67e6901b",
+      "bytes": 19634
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift",
+      "sha256": "b738df79817441240804531c033ab87f8be5b0dec78fd6683a3aa4a7c7162e3c",
+      "bytes": 8716
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/main.swift",
+      "sha256": "b1f61a0bfc7063dbdf7c0eccd148c48166e7ea40d8c3a27f45150b0bdbeef550",
+      "bytes": 28232
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift",
+      "sha256": "9c7fa5be30b379685d5756cbc1f4b4c1101f8e37b14115833633fdfe5f5e45c5",
+      "bytes": 12338
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+      "sha256": "98f0a2df0d2801f4732a446ecc9ff5207a70caccf311fe62860b6e8f2fb122fd",
+      "bytes": 39358
+    },
+    {
+      "path": "src/line_backup_acceptance/authority.py",
+      "sha256": "7805ec0c53bca8991c3cc727339df4242d1e45a114b407913a2b0780614b6e7e",
+      "bytes": 9441
+    },
+    {
+      "path": "src/line_backup_acceptance/cli.py",
+      "sha256": "832896eda31583199b192a0df51b921257fb7875835b1b502e476f9f1383d82f",
+      "bytes": 5587
+    },
+    {
+      "path": "src/line_backup_acceptance/common.py",
+      "sha256": "2737d5c2febeeaf248b2d81e2e112ce0e99d48640e946bfa6dd8e71b5a2cf127",
+      "bytes": 35808
+    },
+    {
+      "path": "src/line_backup_acceptance/transaction.py",
+      "sha256": "0dd44fec005c70d6bb19436ed899e6c95d7b4d232dd83baa056732f4213a9da9",
+      "bytes": 42494
+    }
+  ],
+  "untracked_contents": "Not inspected or uploaded by this publication; path/status preservation only."
+}

@@ -1,0 +1,147 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-ca57c5e4415b487ab07cc0b7df96b855",
+  "run_id": "793c6d90-0de7-4e82-b65f-ac97428c4700",
+  "role": "HIGH_REASONING_REVIEWER",
+  "candidate_fact": "PARTIAL",
+  "validation_fact": "VALID",
+  "routing_fact": "PLANNER_REPLAN",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "ACHIEVED",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_REQUIRED",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "NOT_REQUIRED",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [],
+  "evidence_ids": [
+    "scope.md",
+    "reviewer-trace-report.json",
+    "research-report.md",
+    "root-judgment.md",
+    "research-dns-deviation.md"
+  ],
+  "stage": "HIGH_REASONING_REVIEW",
+  "plan_sha256": null,
+  "handoff_sha256": null,
+  "source_sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-ca57c5e4415b487ab07cc0b7df96b855",
+      "run_id": "793c6d90-0de7-4e82-b65f-ac97428c4700",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+      "evidence_id": "scope.md",
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/scope.md",
+      "bytes": 2739,
+      "sha256": "ce1541589f4a5c44e089fc0e1b34033dbc74d859c99fde02fd521246b8226a2e",
+      "contract_sha256": null,
+      "observation": "Archived research scope, agent report or root judgment. Source hash binds reviewed runtime validators.py only; no controller admission or OS telemetry claimed."
+    },
+    {
+      "task_id": "TASK-ca57c5e4415b487ab07cc0b7df96b855",
+      "run_id": "793c6d90-0de7-4e82-b65f-ac97428c4700",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+      "evidence_id": "reviewer-trace-report.json",
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/reviewer-trace-report.json",
+      "bytes": 1944,
+      "sha256": "bee0428dd4495dce0aa79a68c58a95ceb01d23622d2126cc05a5190175a87612",
+      "contract_sha256": null,
+      "observation": "Archived research scope, agent report or root judgment. Source hash binds reviewed runtime validators.py only; no controller admission or OS telemetry claimed."
+    },
+    {
+      "task_id": "TASK-ca57c5e4415b487ab07cc0b7df96b855",
+      "run_id": "793c6d90-0de7-4e82-b65f-ac97428c4700",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+      "evidence_id": "research-report.md",
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/research-report.md",
+      "bytes": 8304,
+      "sha256": "4f44258634d53a4e6070c19399aacbe6fcab90cfe3bf9df822de6557e9739312",
+      "contract_sha256": null,
+      "observation": "Archived research scope, agent report or root judgment. Source hash binds reviewed runtime validators.py only; no controller admission or OS telemetry claimed."
+    },
+    {
+      "task_id": "TASK-ca57c5e4415b487ab07cc0b7df96b855",
+      "run_id": "793c6d90-0de7-4e82-b65f-ac97428c4700",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+      "evidence_id": "root-judgment.md",
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/root-judgment.md",
+      "bytes": 8590,
+      "sha256": "3210c5b71ed19120a757623c5f16aef4e20203064b6c272585b91ae79a48b273",
+      "contract_sha256": null,
+      "observation": "Archived research scope, agent report or root judgment. Source hash binds reviewed runtime validators.py only; no controller admission or OS telemetry claimed."
+    },
+    {
+      "task_id": "TASK-ca57c5e4415b487ab07cc0b7df96b855",
+      "run_id": "793c6d90-0de7-4e82-b65f-ac97428c4700",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+      "evidence_id": "research-dns-deviation.md",
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/research-dns-deviation.md",
+      "bytes": 2576,
+      "sha256": "5ff97d549bc0ffdc970675853b18f637a6e6958fe164c501f03dc1ee62c4a076",
+      "contract_sha256": null,
+      "observation": "Archived research scope, agent report or root judgment. Source hash binds reviewed runtime validators.py only; no controller admission or OS telemetry claimed."
+    }
+  ],
+  "plan_contract_sha256": null,
+  "analysis": {
+    "facts": [
+      "User explicitly requested another GPT-6 Luna Max research subagent and public-source research; spawn used that requested configuration.",
+      "Root independently read pinned schema, runtime validators.py and release contracts.py, opened primary sources and firsthand issue reports, and observed current package metadata jsonschema4.26.0/referencing0.37.0.",
+      "Raw validator without explicit Registry resolves relative gate.schema.json against https://codex.local/schemas/v3/task.schema.json and reaches default remote retrieval.",
+      "urlopen precedes the deprecation warning in inspected runtime source.",
+      "Current controller wrapper provides explicit local Registry; original reviewer bypassed it.",
+      "Earlier same-URI error note hash verified; its prepare.py pins same 4.7.0 release, not proven earlier release.",
+      "Research agent reported one additional unguarded failed DNS probe despite the research restriction; preserved separately, no HTTP response/schema reported.",
+      "Full agent natural-language report archived; root-result is root-authored structured assessment, not original agent wire output."
+    ],
+    "inferences": [
+      "Immediate cause is unregistered-reference fallback; durable recurrence risk is bypass of the standard validation entrypoint.",
+      "DNS failure is not evidence of OS network denial or an OpenAI service outage.",
+      "A fixed offline entrypoint, complete local reference graph, retrieval refusal and zero-I/O negative checks are the smallest credible repair direction."
+    ],
+    "unknowns": [
+      "Original process OS transport telemetry and all external effects were not observed by root.",
+      "User previous-release failure provenance is not established.",
+      "Provider admission/OS enforcement for research agent is not attested.",
+      "Harness repair is not implemented; no new release or regression gate acceptance is claimed."
+    ],
+    "evidence": [
+      "scope.md",
+      "reviewer-trace-report.json",
+      "research-report.md",
+      "root-judgment.md",
+      "research-dns-deviation.md"
+    ],
+    "confidence": "High for source-backed current resolver mechanism and entrypoint gap; limited for original transport telemetry and previous-release equivalence.",
+    "status_scope": "Six statuses describe this research assessment only: requested findings delivered, no repair implementation requested/performed, no frozen research acceptance gate. Execution deviation remains visible, so compliant Harness closure is not asserted. Whole LINE task remains unmet as described in root-judgment.md.",
+    "research_configuration": {
+      "requested_model": "gpt-6-luna",
+      "requested_reasoning": "max",
+      "agent": "/root/schema_resolution_research",
+      "provider_admission": "UNKNOWN"
+    },
+    "network_scope": "Public research authorized; codex.local probe explicitly prohibited and violated once by research agent."
+  },
+  "handoff_summary": "Research findings delivered to root and independently assessed. Cause: bare jsonschema validator bypassed explicit offline Registry; default fallback attempted codex.local DNS. Keep current P1 recovery separate and retain historical admission BLOCKED. Research DNS deviation preserved. No release/product/native edits or gate waivers. Repair recommendations need a separately reviewed candidate; no compliant closure claim.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 0,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Read-only library/schema/source investigation and public-source comparison produced a supported causal explanation; separate accidental research DNS attempt retained, not a product or native attempt.",
+    "information_gain": true,
+    "stuck": false
+  },
+  "writer_receipts": []
+}

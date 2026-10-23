@@ -1,0 +1,13 @@
+candidate/offline_vision.swift:415:1: error: 'main' attribute cannot be used in a module that contains top-level code
+  1 | // offline_vision.swift — task-local offline image helper for the LINE album catalog
+    | |- note: top-level code defined in this source file
+    | `- note: pass '-parse-as-library' to compiler invocation if this is intentional
+  2 | // diagnostic (TASK-20261010-catalog-diagnostic-continuity-replan).
+  3 | // Read-only with respect to system state: decodes saved images, builds task-local
+    :
+413 | }
+414 | 
+415 | @main struct OfflineVision {
+    | `- error: 'main' attribute cannot be used in a module that contains top-level code
+416 |     static func main() async {
+417 |         do {

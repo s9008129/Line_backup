@@ -1,0 +1,22 @@
+docs(line-backup): preserve blocked ML07 readiness checkpoint
+
+Intention:
+Preserve the reviewed evidence/readiness work and an honest restart point for the LINE album backup task. This is a partial, blocked checkpoint; it does not claim the requested implementation or E2E is complete.
+
+Completed:
+- Preserve the e01 formal outcomes (E01 PASS, 8 tests; E02 PASS, 3 tests; B01 FAIL) and e02 preclaim E01 refusal without retrying consumed IDs.
+- Record the e03 readiness result: the two namespace scans matched at 129,613 records with the same records hash, but the namespace verdict remained BLOCKED. The full 53,189-token output was truncated at 6,000 tokens, so the remaining problem distribution is unknown; the 172 pending dependency artifacts are not proven to be the only blocker.
+- Retain bounded evidence/readiness tooling, historical source recovery, reports, local review artifacts, and draft-only results. The final focused offline draft suite passed 15/15; earlier 16/16 and 17/17 outcomes, including the first 17-case fixture failure, remain separate records and are not formal gates.
+- Add the collaboration record and a literal file publication list while preserving the original R recorder log and unrelated workspace changes.
+
+Not completed:
+- None of the nine product paths changed. Product implementation and product-chain offline acceptance remain incomplete.
+- No e03 freeze, dependency finalization receipt, formal e03 E01/E02/B01 check, or tail gate completed. No e03 formal ID was consumed.
+- No D01 capture, CUA or LINE operation, foreground handoff, Save All, download, transaction, bounded scroll, second album, native verification, or independent Acceptance occurred.
+- The local format-3-shaped result is not native validated: run_id is null, schema validation was not run, and source_sha256 is a local tool hash rather than an e03 freeze binding.
+- The workspace contains pre-existing dirty/untracked dependencies; no clean-clone build or publication equivalence is claimed.
+
+Next:
+Prepare a bounded plan to resolve the complete e03 preflight blocker from preserved evidence without repeating the truncated scan or creating e04. If the blocker is safely resolved within the reviewed plan, complete the required e03 evidence reconciliation and run formal E01 → E02 → B01 once each, with readback. Then finish the nine-path product implementation and offline product acceptance. Keep LINE/native work for the separately authorized new E2E conversation: obtain foreground handoff, capture and ground fresh album candidates, complete a first transaction, perform the required bounded scroll, and complete a different second-album transaction and final independent Acceptance.
+
+Publication is limited to the literal regular files in git-stage-paths.txt. No stage, commit, or push success is implied by this message.

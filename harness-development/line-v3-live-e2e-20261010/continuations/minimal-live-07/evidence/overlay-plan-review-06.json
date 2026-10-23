@@ -1,0 +1,26 @@
+{
+  "format": "ML07_OVERLAY_PLAN_REVIEW_EVIDENCE_V1",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "result": "PASS",
+  "reviewer_agent": "/root/contract_evidence",
+  "review_scope": [
+    "replan-amendment-06.md",
+    "implementation-only-handoff/implementation-plan.md",
+    "implementation-only-handoff/plan-contract.json"
+  ],
+  "reviewed_sha256": {
+    "replan-amendment-06.md": "d2db592f85973e2e25ecdcb08e58158d385811c1efc8f4453ad4fbe2e9e3d3a4",
+    "implementation-only-handoff/implementation-plan.md": "29d0a9844c7964f612df24086efc82b66a4037b20760d24f1ae8e4474c1c6ff1",
+    "implementation-only-handoff/plan-contract.json": "71dcb33bfa1ec7c4f06ac3182403a4687fc08b4dcf6d2f1da43868be5a63822b"
+  },
+  "source": "collaboration.list_agents completion result for /root/contract_evidence (not native controller result)",
+  "observed_at_utc": null,
+  "observed_at_unknown": true,
+  "original_result_text": "Task-local Plan Review PASS for the frozen candidate:\n\n- Amendment 06: `d2db592f…e9e3d3a4`\n- Implementation plan: `29d0a984…c1c6ff1`\n- Overlay contract: `71dcb33b…5a63822b`\n\nThe narrowed paths, named serial owners, root’s coordinator-only role, implementation network policy, original gate carry-forward, and live-gate deferral are consistent. The original contract copy remains unchanged. The compiled overlay handoff may now be created as an exact copy of the reviewed contract and checked afterward.\n\nThis is task-local Plan Review only. Native controller Plan Review remains unavailable/unknown; the original waiver and independent Acceptance status are unchanged.",
+  "limitations": [
+    "not original PlanReview PASS",
+    "not native controller PlanReview PASS",
+    "not independent Acceptance PASS",
+    "does not authorize GUI or LINE action"
+  ]
+}

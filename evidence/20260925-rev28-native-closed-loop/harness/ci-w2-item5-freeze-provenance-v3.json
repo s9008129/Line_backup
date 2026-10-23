@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "rev28.ci-w2-item5-provenance.v3",
+  "status": "FROZEN_VALIDATED",
+  "generation": "v3",
+  "implementation": {
+    "validatedCommitSHA": "2ecfeb9c1803d9ab184e69381b0a340e69bd46ea",
+    "sourcePath": "rev28/Sources/rev28ctl/HarnessCalibration.swift",
+    "sourceGitBlobSHA": "c411011b1b44b1efb614e000f526b2118f45d120",
+    "note": "Later evidence/docs-only commits are allowed only while this source blob remains byte-identical."
+  },
+  "ci": {
+    "workflow": "Rev28 macOS 27 pre-live",
+    "workflowRunID": 36125874509,
+    "workflowRunEvent": "push",
+    "workflowConclusion": "success",
+    "headSHA": "2ecfeb9c1803d9ab184e69381b0a340e69bd46ea",
+    "headedArtifactID": 10859833286,
+    "headedArtifactDigest": "sha256:b36e87bbf843fab63ea3d0ac34a2f075745e6e8d526c798c6f6e865692ef3bfb",
+    "deterministicArtifactID": 10859694380,
+    "deterministicArtifactDigest": "sha256:e2ebf825d3631e22c8dc506570c5004a3558280e6f4746eb664482ceca414ce4"
+  },
+  "harness": {
+    "runID": "HARNESS-20260925-105114",
+    "withinWindowOutcome": "chooserVerified",
+    "timeoutOutcome": "noChooserObserved",
+    "lateOutcome": "chooserObservedAfterWindow",
+    "lateAffirmationNonNil": true,
+    "monitorInputPosts": 0,
+    "zeroFurtherInputDuringMonitors": true,
+    "sampleCount": 20,
+    "maxLatencyMs": 155.18903732299805,
+    "medianLatencyMs": 57.60502815246582,
+    "p95LatencyMs": 155.18903732299805
+  },
+  "frozenFiles": {
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/postcondition-bounds-v3.json": "c10dcb43e9da14feedaed4f9e1ef5fdbf9b6afdd96d6ee8e79b84ac45a055e84",
+    "evidence/20260925-rev28-native-closed-loop/harness/frozen/postcondition-latency-observations-v3.json": "ca4beabefc1f671162cec06345cf06755a62ad77a28458ac1b03a563f640b155",
+    "evidence/20260925-rev28-native-closed-loop/harness/runs/HARNESS-20260925-105114/items/05-postcondition-proofs.json": "3343ebf02d0e9c8ea477d7d14d0d3bb70d47517cdc1bb4213ea4e515e9a625cb"
+  },
+  "hostedCapability": {
+    "macOS": "27.0 (26A428)",
+    "xcode": "27.0 (27A266a)",
+    "swift": "6.4",
+    "accessibility": true,
+    "screenCapture": true,
+    "postEvent": true,
+    "screenCaptureKit": "OK",
+    "vision": {
+      "status": "ERROR",
+      "error": "unknownError",
+      "treatment": "bounded hosted runtime limitation; real-Mac Vision remains production authority"
+    }
+  }
+}

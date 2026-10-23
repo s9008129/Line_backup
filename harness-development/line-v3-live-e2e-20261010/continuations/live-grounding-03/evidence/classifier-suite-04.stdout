@@ -1,0 +1,11 @@
+✔ classifier returns exactly the frozen 17-key frame with captured-source bindings (1.44875ms)
+✔ classifier rejects an analyzer result from another screenshot (0.249542ms)
+✔ chooser locators only resolve a typed focused path field and enabled confirm control (1.117125ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 54.119208

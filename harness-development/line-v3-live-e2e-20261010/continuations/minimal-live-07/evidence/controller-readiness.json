@@ -1,0 +1,23 @@
+{
+  "candidate_python": [
+    {
+      "is_executable": false,
+      "lexists": false,
+      "path": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source/harness-runtime/4.8.0/.venv/bin/python3",
+      "realpath": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source/harness-runtime/4.8.0/.venv/bin/python3"
+    },
+    {
+      "is_executable": false,
+      "lexists": false,
+      "path": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source/.venv/bin/python3",
+      "realpath": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source/.venv/bin/python3"
+    }
+  ],
+  "checked_at_utc": "2026-10-11T06:08:53.749512+00:00",
+  "exit_code": 1,
+  "launcher": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source/bin/harness",
+  "launcher_sha256": "a16a9acdd66f185af77de3f836a6d3e3246dd68946fdf3f10936d0517868fef0",
+  "native_validation": "NOT_RUN",
+  "stderr": "Harness Python runtime is missing. Run the documented Harness setup for /Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source.\n",
+  "stdout": ""
+}

@@ -1,0 +1,438 @@
+Deterministic Swift contract	UNKNOWN STEP	﻿2026-09-28T10:43:57.5467070Z Current runner version: '2.337.0'
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5483050Z ##[group]Runner Image Provisioner
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5483600Z Hosted Compute Agent
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5484060Z Version: 20260828.587
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5484470Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5484960Z Build Date: 2026-08-28T16:44:25Z
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5485400Z Worker ID: {ea7a27b2-03a5-4b7b-a6b9-3b8bb68d0ef0}
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5485880Z Azure Region: westus
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5486260Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5487220Z ##[group]Operating System
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5487630Z macOS
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5488030Z 27.0
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5488410Z 26A428
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5488750Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5489270Z ##[group]Runner Image
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5489800Z Image: xcode-27-arm64
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5493760Z Version: 20260921.0210.1
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5494680Z Included Software: https://github.com/actions/runner-images/blob/xcode-27-arm64/20260921.0210/images/macos/xcode-27-arm64-Readme.md
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5495820Z Image Release: https://github.com/actions/runner-images/releases/tag/xcode-27-arm64%2F20260921.0210
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5496530Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5497350Z ##[group]GITHUB_TOKEN Permissions
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5498630Z Contents: read
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5499010Z Metadata: read
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5499390Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5500980Z Secret source: Actions
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5501620Z Cache mode: write
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5502090Z Prepare workflow directory
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5770530Z Prepare all required actions
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.5810300Z Getting action download info
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:57.9957490Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.2307230Z Download action repository 'actions/upload-artifact@v7' (SHA:043fb46d1a93c77aae656e7c1c64a875d1fc6a0a)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.3964020Z Complete job name: Deterministic Swift contract
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4488220Z ##[group]Run actions/checkout@v7
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4488990Z with:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4489450Z   persist-credentials: false
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4490510Z   repository: s9008129/Line_backup
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4494130Z   token: ***
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4494560Z   ssh-strict: true
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4494990Z   ssh-user: git
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4495400Z   clean: true
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4495840Z   sparse-checkout-cone-mode: true
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4496310Z   fetch-depth: 1
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4496720Z   fetch-tags: false
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4497160Z   show-progress: true
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4497600Z   lfs: false
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4497970Z   submodules: false
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4498420Z   set-safe-directory: true
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4498920Z   allow-unsafe-pr-checkout: false
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.4499860Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8366800Z Syncing repository: s9008129/Line_backup
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8414180Z ##[group]Getting Git version info
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8429560Z Working directory is '/Users/runner/work/Line_backup/Line_backup'
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8482250Z [command]/opt/homebrew/bin/git version
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8516310Z git version 2.55.0
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8607850Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8631490Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/6a18d0be-ebed-41ef-b412-9b394dbda067/.gitconfig'
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8636700Z Temporarily overriding HOME='/Users/runner/work/_temp/6a18d0be-ebed-41ef-b412-9b394dbda067' before making global git config changes
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8659870Z Adding repository directory to the temporary git global config as a safe directory
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8678920Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/Line_backup/Line_backup
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8692180Z Deleting the contents of '/Users/runner/work/Line_backup/Line_backup'
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8693850Z ##[group]Determining repository object format
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8694800Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8695500Z ##[group]Initializing the repository
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8696880Z [command]/opt/homebrew/bin/git init /Users/runner/work/Line_backup/Line_backup
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8697710Z hint: Using 'master' as the name for the initial branch. This default branch name
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8698770Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8699450Z hint: to use in all of your new repositories, which will suppress this warning,
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8700010Z hint: call:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8700320Z hint:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8700730Z hint: 	git config --global init.defaultBranch <name>
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8701180Z hint:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8701610Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8702290Z hint: 'development'. The just-created branch can be renamed via this command:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8702830Z hint:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8703190Z hint: 	git branch -m <name>
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8703560Z hint:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8704050Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8704820Z Initialized empty Git repository in /Users/runner/work/Line_backup/Line_backup/.git/
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8706430Z [command]/opt/homebrew/bin/git remote add origin https://github.com/s9008129/Line_backup
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8707970Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8708840Z ##[group]Disabling automatic garbage collection
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8709650Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8711340Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8711990Z ##[group]Setting up auth
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8712500Z Removing SSH command configuration
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8713210Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:58.8715450Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.0263060Z Removing HTTP extra header
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.0265570Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.0342030Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.1459110Z Removing includeIf entries pointing to credentials config files
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.1462310Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.1553890Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.2701680Z [command]/opt/homebrew/bin/git config --file /Users/runner/work/_temp/git-credentials-f671c4ec-e6ba-4816-87f7-052ad2d05d66.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.2781350Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/Line_backup/Line_backup/.git.path /Users/runner/work/_temp/git-credentials-f671c4ec-e6ba-4816-87f7-052ad2d05d66.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.2850080Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/Line_backup/Line_backup/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-f671c4ec-e6ba-4816-87f7-052ad2d05d66.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.2924530Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-f671c4ec-e6ba-4816-87f7-052ad2d05d66.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.2996180Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-f671c4ec-e6ba-4816-87f7-052ad2d05d66.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.3065430Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.3066060Z ##[group]Fetching the repository
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:43:59.3070720Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +1b149a5679fd14ee9a008c736a1bc3cfae9106f1:refs/remotes/pull/1/merge
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:02.2359660Z From https://github.com/s9008129/Line_backup
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:02.2361440Z  * [new ref]         1b149a5679fd14ee9a008c736a1bc3cfae9106f1 -> pull/1/merge
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:02.2363850Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:02.2364780Z ##[group]Determining the checkout info
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:02.2366040Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:02.2366780Z [command]/opt/homebrew/bin/git sparse-checkout disable
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:02.2462810Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:02.2534300Z ##[group]Checking out the ref
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:02.2536110Z [command]/opt/homebrew/bin/git checkout --progress --force refs/remotes/pull/1/merge
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.4465170Z Updating files:  49% (12013/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.4705660Z Updating files:  50% (12240/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.5809320Z Updating files:  51% (12485/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.6791000Z Updating files:  52% (12730/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.7055430Z Updating files:  53% (12975/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.7259700Z Updating files:  54% (13220/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.7511030Z Updating files:  55% (13464/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.7750890Z Updating files:  56% (13709/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.8151420Z Updating files:  57% (13954/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.8369680Z Updating files:  58% (14199/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.8654190Z Updating files:  59% (14444/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.8910920Z Updating files:  60% (14688/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.9159810Z Updating files:  61% (14933/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.9404560Z Updating files:  62% (15178/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:03.9726420Z Updating files:  63% (15423/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.0042190Z Updating files:  64% (15668/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.0313960Z Updating files:  65% (15912/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.0614690Z Updating files:  66% (16157/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.0968570Z Updating files:  67% (16402/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.1298890Z Updating files:  68% (16647/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.1620450Z Updating files:  69% (16892/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.1911460Z Updating files:  70% (17136/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.2181290Z Updating files:  71% (17381/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.2466750Z Updating files:  72% (17626/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.2770420Z Updating files:  73% (17871/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.2831730Z Updating files:  74% (18116/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.3063740Z Updating files:  74% (18171/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.3323730Z Updating files:  75% (18360/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.3616370Z Updating files:  76% (18605/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.3887570Z Updating files:  77% (18850/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.4177840Z Updating files:  78% (19095/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.4445990Z Updating files:  79% (19340/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.4752550Z Updating files:  80% (19584/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.5026860Z Updating files:  81% (19829/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.5301740Z Updating files:  82% (20074/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.5538700Z Updating files:  83% (20319/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.5848320Z Updating files:  84% (20564/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.6165260Z Updating files:  85% (20808/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.6586970Z Updating files:  86% (21053/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.6849830Z Updating files:  87% (21298/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.7135910Z Updating files:  88% (21543/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.7402940Z Updating files:  89% (21788/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.7672770Z Updating files:  90% (22032/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.7928790Z Updating files:  91% (22277/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.8216250Z Updating files:  92% (22522/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.8449240Z Updating files:  93% (22767/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.8704050Z Updating files:  94% (23012/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.8997070Z Updating files:  95% (23256/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:04.9869060Z Updating files:  96% (23501/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.1109660Z Updating files:  97% (23746/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.2517500Z Updating files:  98% (23991/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.2814690Z Updating files:  99% (24236/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.2874190Z Updating files:  99% (24453/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.2875010Z Updating files: 100% (24480/24480)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.2877240Z Updating files: 100% (24480/24480), done.
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.3261070Z HEAD is now at 1b149a5 Merge 67c4fad9f2dded272cc9720100b1a6958fe352da into 9db32f68d271272fd8ac5a6337522534e88d9ab2
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.3316180Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.3537930Z [command]/opt/homebrew/bin/git log -1 --format=%H
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.3617170Z 1b149a5679fd14ee9a008c736a1bc3cfae9106f1
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.3627300Z ##[group]Removing auth
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.3627500Z Removing SSH command configuration
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.3632140Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.3750430Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.4975870Z Removing HTTP extra header
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.4979780Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.5057130Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6488970Z Removing includeIf entries pointing to credentials config files
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6590030Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6659820Z includeif.gitdir:/Users/runner/work/Line_backup/Line_backup/.git.path
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6660640Z includeif.gitdir:/Users/runner/work/Line_backup/Line_backup/.git/worktrees/*.path
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6661740Z includeif.gitdir:/github/workspace/.git.path
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6662190Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6663690Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/Line_backup/Line_backup/.git.path
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6664360Z /Users/runner/work/_temp/git-credentials-f671c4ec-e6ba-4816-87f7-052ad2d05d66.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6665830Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/Line_backup/Line_backup/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-f671c4ec\-e6ba\-4816\-87f7\-052ad2d05d66\.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6667390Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/Line_backup/Line_backup/.git/worktrees/*.path
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6668110Z /Users/runner/work/_temp/git-credentials-f671c4ec-e6ba-4816-87f7-052ad2d05d66.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6669490Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/Line_backup/Line_backup/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-f671c4ec\-e6ba\-4816\-87f7\-052ad2d05d66\.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6708220Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6766470Z /github/runner_temp/git-credentials-f671c4ec-e6ba-4816-87f7-052ad2d05d66.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6771110Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-f671c4ec\-e6ba\-4816\-87f7\-052ad2d05d66\.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6832630Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6892170Z /github/runner_temp/git-credentials-f671c4ec-e6ba-4816-87f7-052ad2d05d66.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6898170Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-f671c4ec\-e6ba\-4816\-87f7\-052ad2d05d66\.config
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.6968160Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.7771870Z Removing credentials config '/Users/runner/work/_temp/git-credentials-f671c4ec-e6ba-4816-87f7-052ad2d05d66.config'
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.7780180Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.7942000Z ##[group]Run set -euo pipefail
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.7942270Z ^[[36;1mset -euo pipefail^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.7942510Z ^[[36;1mpython3 rev28/Tools/verify_pre_live_provenance.py^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.7992050Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:05.7992300Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0464630Z {"generation": "v3", "harnessRunID": "HARNESS-20260925-105114", "headedArtifactDigest": "sha256:b36e87bbf843fab63ea3d0ac34a2f075745e6e8d526c798c6f6e865692ef3bfb", "implementationSourceGitBlobSHA": "c411011b1b44b1efb614e000f526b2118f45d120", "maxLatencyMs": 155.18903732299805, "outcomes": {"lateOutcome": "chooserObservedAfterWindow", "timeoutOutcome": "noChooserObserved", "withinWindowOutcome": "chooserVerified"}, "sampleCount": 20, "status": "PASS", "validatedImplementationCommit": "2ecfeb9c1803d9ab184e69381b0a340e69bd46ea", "workflowRunID": 36125874509}
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0612090Z ##[group]Run set -euo pipefail
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0612390Z ^[[36;1mset -euo pipefail^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0612560Z ^[[36;1m{^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0612720Z ^[[36;1m  sw_vers^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0612910Z ^[[36;1m  uname -a^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0613140Z ^[[36;1m  xcodebuild -version^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0613330Z ^[[36;1m  swift --version^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0613550Z ^[[36;1m  xcrun --sdk macosx --show-sdk-path^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0613880Z ^[[36;1m} | tee "$RUNNER_TEMP/rev28-host.txt"^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0657300Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.0657620Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.1282280Z ProductName:		macOS
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.1283610Z ProductVersion:		27.0
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.1284230Z BuildVersion:		26A428
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.1310210Z Darwin sjc22-bt152-caaa7176-a3f8-47c5-b188-43bb2eb5c7c1-BA3223311736.local 27.0.0 Darwin Kernel Version 27.0.0: Tue Aug 11 21:00:07 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_VMAPPLE arm64
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.5625140Z Xcode 27.0
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:06.5641050Z Build version 27A266a
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:10.4439320Z Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:10.4440210Z Target: arm64-apple-macosx27.0.0
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:10.4704530Z /Applications/Xcode_27.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:10.4806500Z swift-driver version: 1.168.6 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:10.4983950Z ##[group]Run set -euo pipefail
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:10.4984270Z ^[[36;1mset -euo pipefail^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:10.4984670Z ^[[36;1mexport DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:10.4985120Z ^[[36;1mxcrun swift build --package-path rev28^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:10.5022910Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:10.5023230Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:23.6478520Z Building for debugging...
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:23.6479270Z [Constructing description]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:23.9834330Z [Planning deferred tasks]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:31.3105230Z [44 / 88]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:32.9255790Z [45 / 89] Rev28Core
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:33.0451680Z [48 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:33.1494480Z [55 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:33.2912480Z [58 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:33.4329370Z [65 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:33.5699900Z [67 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:33.9223420Z [69 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:34.0447460Z [74 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:34.1475080Z [75 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:34.2829660Z [77 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:34.4100490Z [79 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:34.5238900Z [82 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:34.6607840Z [87 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:34.8686720Z [90 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:34.9738410Z [92 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:35.4179180Z [93 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:35.5169930Z [97 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:35.6949040Z [102 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:35.8256510Z [108 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:36.0444870Z [109 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:36.1434680Z [113 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:36.2631750Z [117 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:36.4110550Z [118 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:36.5239730Z [119 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:36.7026940Z [121 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:37.1796420Z [122 / 171]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:38.0664140Z [127 / 171] Rev28Core
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:41.7541990Z [128 / 171] Rev28Core
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:41.8487600Z [141 / 171] rev28harness-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:42.6493630Z [144 / 172]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:42.8546550Z [146 / 174] rev28replay-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:42.9719940Z [147 / 174] rev28replay-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:43.6787430Z [148 / 175] rev28replay-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:43.8131120Z [154 / 180] rev28probe-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:44.6378080Z [155 / 180] rev28probe-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:44.8227700Z [159 / 185] rev28probe-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:44.9333180Z [163 / 185] rev28harness-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:45.3101390Z [164 / 185] rev28harness-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:45.4716520Z [167 / 186]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:46.0277080Z [168 / 186] rev28probe-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:47.7480280Z [171 / 190] rev28ctl-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:48.1791900Z [174 / 190] rev28occluder-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:48.5840460Z [177 / 190] rev28ctl-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:48.6950760Z [181 / 190]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:48.8732940Z [186 / 190] rev28ctl-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:58.9623280Z [188 / 190] rev28ctl-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:59.1158010Z Build complete! (35.73 sec)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:59.1873260Z ##[group]Run set -euo pipefail
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:59.1873770Z ^[[36;1mset -euo pipefail^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:59.1875030Z ^[[36;1mexport DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:59.1875670Z ^[[36;1m# OcrEngineTests exercise Apple's on-device Vision runtime and are^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:59.1876220Z ^[[36;1m# intentionally executed in the headed/runtime job below. Everything^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:59.1876610Z ^[[36;1m# else is a deterministic contract gate.^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:59.1877200Z ^[[36;1mxcrun swift test --package-path rev28 --skip OcrEngineTests^[[0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:59.3596910Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:44:59.3597180Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:02.4276490Z Building for debugging...
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:02.4279880Z [Provisioning 1 / 9]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:02.5604150Z [Pre-planning 1 / 240]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:02.7774280Z [Planning deferred tasks]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:02.9034010Z [10 / 39] Rev28Core
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:04.5428800Z [15 / 26] Rev28CoreTests-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:04.6748120Z [17 / 35]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:04.8049860Z [19 / 35]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:04.9264400Z [20 / 35]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.3721570Z [24 / 35] Rev28CoreTests-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9581130Z error: SwiftCompile normal arm64 /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift failed with a nonzero exit code. Command line:     cd /Users/runner/work/Line_backup/Line_backup
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9682230Z     builtin-SwiftPerFileCompile StructuralLocatorsTests.swift
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9709210Z /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:193:17: ^[[1;31merror: ^[[1;39mcannot call value of non-function type 'SurfaceBinding'^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9710480Z ^[[0;36m191 |^[[0;0m     }
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9711600Z ^[[0;36m192 |^[[0;0m     func testSegmentAlbumCardsKeepsTargetCountInsideItsDateBand() {
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9713670Z ^[[0;36m193 |^[[0;0m         let b = binding()
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9716280Z     ^[[0;36m|^[[0;0m                 `- ^[[1;31merror: ^[[1;39mcannot call value of non-function type 'SurfaceBinding'^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9718430Z ^[[0;36m194 |^[[0;0m         let items = [
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9719350Z ^[[0;36m195 |^[[0;0m             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9728180Z 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9729210Z /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:195:13: ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9731830Z ^[[0;36m193 |^[[0;0m         let b = binding()
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9732330Z ^[[0;36m194 |^[[0;0m         let items = [
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9733210Z ^[[0;36m195 |^[[0;0m             ^[[4;39mocr^[[0;0m("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9733980Z     ^[[0;36m|^[[0;0m             `- ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9734690Z ^[[0;36m196 |^[[0;0m             ocr("182", CGRect(x: 20, y: 70, width: 30, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9735330Z ^[[0;36m197 |^[[0;0m             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9736420Z 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9737250Z /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:196:13: ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9738170Z ^[[0;36m194 |^[[0;0m         let items = [
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9738690Z ^[[0;36m195 |^[[0;0m             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9739260Z ^[[0;36m196 |^[[0;0m             ^[[4;39mocr^[[0;0m("182", CGRect(x: 20, y: 70, width: 30, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9739840Z     ^[[0;36m|^[[0;0m             `- ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9740370Z ^[[0;36m197 |^[[0;0m             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9741760Z ^[[0;36m198 |^[[0;0m             ocr("57", CGRect(x: 20, y: 212, width: 24, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9742140Z 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9742890Z /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:197:13: ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9743780Z ^[[0;36m195 |^[[0;0m             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9744410Z ^[[0;36m196 |^[[0;0m             ocr("182", CGRect(x: 20, y: 70, width: 30, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9745030Z ^[[0;36m197 |^[[0;0m             ^[[4;39mocr^[[0;0m("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9745590Z     ^[[0;36m|^[[0;0m             `- ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9746050Z ^[[0;36m198 |^[[0;0m             ocr("57", CGRect(x: 20, y: 212, width: 24, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9746530Z ^[[0;36m199 |^[[0;0m         ]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9746740Z 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9747390Z /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:198:13: ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9748230Z ^[[0;36m196 |^[[0;0m             ocr("182", CGRect(x: 20, y: 70, width: 30, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9748940Z ^[[0;36m197 |^[[0;0m             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9749550Z ^[[0;36m198 |^[[0;0m             ^[[4;39mocr^[[0;0m("57", CGRect(x: 20, y: 212, width: 24, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9750190Z     ^[[0;36m|^[[0;0m             `- ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9750610Z ^[[0;36m199 |^[[0;0m         ]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9751110Z ^[[0;36m200 |^[[0;0m         let regions = StructuralLocators.segmentAlbumCards(
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9751430Z 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9751960Z /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:217:13: ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9752780Z ^[[0;36m215 |^[[0;0m     func testSegmentAlbumCardsRejectsCrossCardCount() {
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9753360Z ^[[0;36m216 |^[[0;0m         let items = [
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9753940Z ^[[0;36m217 |^[[0;0m             ^[[4;39mocr^[[0;0m("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9754570Z     ^[[0;36m|^[[0;0m             `- ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9755600Z ^[[0;36m218 |^[[0;0m             ocr("57", CGRect(x: 20, y: 72, width: 24, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9756150Z ^[[0;36m219 |^[[0;0m             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9756500Z 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9757010Z /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:218:13: ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9757670Z ^[[0;36m216 |^[[0;0m         let items = [
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9758190Z ^[[0;36m217 |^[[0;0m             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9758700Z ^[[0;36m218 |^[[0;0m             ^[[4;39mocr^[[0;0m("57", CGRect(x: 20, y: 72, width: 24, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9759240Z     ^[[0;36m|^[[0;0m             `- ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9759950Z ^[[0;36m219 |^[[0;0m             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9760540Z ^[[0;36m220 |^[[0;0m             ocr("58", CGRect(x: 20, y: 212, width: 24, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9760860Z 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9761430Z /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:219:13: ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9762250Z ^[[0;36m217 |^[[0;0m             ocr("2024/05/06~05/10", CGRect(x: 20, y: 40, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9763060Z ^[[0;36m218 |^[[0;0m             ocr("57", CGRect(x: 20, y: 72, width: 24, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9763640Z ^[[0;36m219 |^[[0;0m             ^[[4;39mocr^[[0;0m("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9764320Z     ^[[0;36m|^[[0;0m             `- ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9764910Z ^[[0;36m220 |^[[0;0m             ocr("58", CGRect(x: 20, y: 212, width: 24, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9765450Z ^[[0;36m221 |^[[0;0m         ]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9765680Z 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9766240Z /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:220:13: ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9767020Z ^[[0;36m218 |^[[0;0m             ocr("57", CGRect(x: 20, y: 72, width: 24, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9767580Z ^[[0;36m219 |^[[0;0m             ocr("2024/05/13~05/17", CGRect(x: 20, y: 180, width: 160, height: 20)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9768110Z ^[[0;36m220 |^[[0;0m             ^[[4;39mocr^[[0;0m("58", CGRect(x: 20, y: 212, width: 24, height: 18)),
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9768640Z     ^[[0;36m|^[[0;0m             `- ^[[1;31merror: ^[[1;39mcannot find 'ocr' in scope^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9769040Z ^[[0;36m221 |^[[0;0m         ]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9769400Z ^[[0;36m222 |^[[0;0m         let regions = StructuralLocators.segmentAlbumCards(
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9769710Z 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9770450Z /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:231:22: ^[[1;31merror: ^[[1;39mcannot call value of non-function type 'SurfaceBinding'^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9771350Z ^[[0;36m229 |^[[0;0m             count: "57",
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9771800Z ^[[0;36m230 |^[[0;0m             regions: regions,
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9772160Z ^[[0;36m231 |^[[0;0m             binding: binding()
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9772650Z     ^[[0;36m|^[[0;0m                      `- ^[[1;31merror: ^[[1;39mcannot call value of non-function type 'SurfaceBinding'^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9773260Z ^[[0;36m232 |^[[0;0m         ) else { return XCTFail("cross-card count must refuse") }
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9773740Z ^[[0;36m233 |^[[0;0m         XCTAssertEqual(reason, .referenceStructureMismatch)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9774030Z 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9774690Z /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift:233:33: ^[[1;31merror: ^[[1;39mtype 'Equatable' has no member 'referenceStructureMismatch'^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9775630Z ^[[0;36m231 |^[[0;0m             binding: binding()
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9776060Z ^[[0;36m232 |^[[0;0m         ) else { return XCTFail("cross-card count must refuse") }
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9776640Z ^[[0;36m233 |^[[0;0m         XCTAssertEqual(reason, ^[[4;39m.referenceStructureMismatch^[[0;0m)
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9777380Z     ^[[0;36m|^[[0;0m                                 `- ^[[1;31merror: ^[[1;39mtype 'Equatable' has no member 'referenceStructureMismatch'^[[0;0m
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9777930Z ^[[0;36m234 |^[[0;0m     }
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9778160Z ^[[0;36m235 |^[[0;0m 
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9778470Z Failed frontend command:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9807350Z /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/DerivedSources/test_entry_point.swift /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/ActuationReadinessTests.swift /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/AdversarialMatrixTests.swift /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/AlbumEllipsisLocatorTests.swift /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/CoordinateTransformTests.swift /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/ExecutionPolicyTests.swift /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/IntentLedgerTests.swift /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/LiveExecutionEngineTests.swift /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/OcrEngineTests.swift /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/PersistentTransactionOwnerTests.swift -primary-file /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/PostconditionMonitorTests.swift -primary-file /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StagingVerifierTests.swift -primary-file /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift -primary-file /Users/runner/work/Line_backup/Line_backup/rev28/Tests/Rev28CoreTests/WindowIdentityTests.swift -supplementary-output-file-map /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/supplementaryOutputs-3 -target arm64-apple-macos26.0 -module-can-import-version Testing 2084 0 -module-can-import-version XCTest 25228 0 -disable-cross-import-overlay-search -swift-module-cross-import Testing /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/Testing.framework/Modules/Testing.swiftcrossimport/AppKit.swiftoverlay -swift-module-cross-import Testing /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/Testing.framework/Modules/Testing.swiftcrossimport/CoreGraphics.swiftoverlay -swift-module-cross-import Testing /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/Testing.framework/Modules/Testing.swiftcrossimport/CoreImage.swiftoverlay -swift-module-cross-import Testing /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/Testing.framework/Modules/Testing.swiftcrossimport/CoreTransferable.swiftoverlay -swift-module-cross-import Testing /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/Testing.framework/Modules/Testing.swiftcrossimport/Foundation.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing/libTestingMacros.dylib\#\#TestingMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/Rev28CoreTests-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -stack-check -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -I /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Products/Debug/PackageFrameworks -F /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -module-cache-path /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/SwiftExplicitPrecompiledModules -color-diagnostics -Xcc -fcolor-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -swift-version 5 -Onone -D SWIFT_PACKAGE -D DEBUG -D Xcode -serialize-debugging-options -enable-experimental-feature DebugDescriptionMacro -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/runner/work/Line_backup/Line_backup -enable-anonymous-context-mangled-names -file-compilation-dir /Users/runner/work/Line_backup/Line_backup -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/SDKStatCaches.noindex/macosx27.0-26A425-a0facfad118c1a7a18f0aad9463f65497231f6df4def33e022ae2eb8f782df1a.sdkstatcache -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -Xcc -I/Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Products/Debug/include -Xcc -I/Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name Rev28CoreTests -package-name rev28 -const-gather-protocols-file /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/Rev28CoreTests_const_extract_protocols.json -disable-clang-spi -clang-target arm64-apple-macos27.0 -target-sdk-version 27.0 -target-sdk-name macosx27.0 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -parse-as-library -o /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/PostconditionMonitorTests.o -o /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/StagingVerifierTests.o -o /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/StructuralLocatorsTests.o -o /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/WindowIdentityTests.o -debug-module-path /Users/runner/work/Line_backup/Line_backup/rev28/.build/out/Intermediates.noindex/rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/Rev28CoreTests.swiftmodule -index-unit-output-path /rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/PostconditionMonitorTests.o -index-unit-output-path /rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/StagingVerifierTests.o -index-unit-output-path /rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/StructuralLocatorsTests.o -index-unit-output-path /rev28.build/Debug/Rev28CoreTests-p.build/Objects-normal/arm64/WindowIdentityTests.o -index-store-path /Users/runner/work/Line_backup/Line_backup/rev28/.build/out -index-system-modules
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:05.9836040Z [25 / 35] Rev28CoreTests-product
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0100850Z error: Build failed
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0356310Z error: fatalError
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0506540Z ##[error]Process completed with exit code 1.
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0662950Z ##[group]Run actions/upload-artifact@v7
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0663790Z with:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0664240Z   name: rev28-deterministic-evidence
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0665370Z   path: /Users/runner/work/_temp/rev28-host.txt
+Deterministic Swift contract	UNKNOWN STEP	/Users/runner/work/_temp/rev28-replay
+Deterministic Swift contract	UNKNOWN STEP	
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0666330Z   if-no-files-found: warn
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0666740Z   compression-level: 6
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0667050Z   overwrite: false
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0667280Z   include-hidden-files: false
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0667550Z   archive: true
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.0667870Z ##[endgroup]
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.5443440Z Multiple search paths detected. Calculating the least common ancestor of all paths
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.5444650Z The least common ancestor is /Users/runner/work/_temp. This will be the root directory of the artifact
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.5445130Z With the provided path, there will be 1 file uploaded
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.5447200Z Artifact name is valid!
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.5447540Z Root directory input is valid!
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.9394620Z Uploading artifact: rev28-deterministic-evidence.zip
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:06.9416660Z Beginning upload of artifact content to blob storage
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.2384660Z Uploaded bytes 473
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.3042000Z Finished uploading artifact content to blob storage!
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.3042560Z SHA256 digest of uploaded artifact is 1f254e3442440468a07958c98886f37d0d14d951af7593cb274d84c9ee618c4e
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.3043160Z Finalizing artifact upload
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.7901040Z Artifact rev28-deterministic-evidence successfully finalized. Artifact ID 10964611892
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.7901940Z Artifact rev28-deterministic-evidence has been successfully uploaded! Final size is 473 bytes. Artifact ID is 10964611892
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.7903360Z Artifact download URL: https://github.com/s9008129/Line_backup/actions/runs/36411316643/artifacts/10964611892
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.8060960Z Post job cleanup.
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.9105500Z [command]/opt/homebrew/bin/git version
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.9195010Z git version 2.55.0
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.9213120Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/711a88eb-41e1-4e27-98d9-012813efb827/.gitconfig'
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.9220850Z Temporarily overriding HOME='/Users/runner/work/_temp/711a88eb-41e1-4e27-98d9-012813efb827' before making global git config changes
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.9222120Z Adding repository directory to the temporary git global config as a safe directory
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.9224410Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/Line_backup/Line_backup
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.9295000Z Removing SSH command configuration
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.9299860Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:07.9376140Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:08.0555540Z Removing HTTP extra header
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:08.0560160Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:08.0635140Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:08.1817310Z Removing includeIf entries pointing to credentials config files
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:08.1923420Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:08.2224990Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Deterministic Swift contract	UNKNOWN STEP	2026-09-28T10:45:08.3617560Z Cleaning up orphan processes

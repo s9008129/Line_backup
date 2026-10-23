@@ -1,0 +1,28 @@
+補強 LINE v3 交易與 OCR 幾何驗證，保存 E2E 阻塞證據
+
+意圖
+依 2026-10-10 凍結計畫修正 LINE v3 writer、內容 inventory、CUA adapter 與 OCR 幾何驗證，並保存本輪離線測試收據、基線和停止原因。這是依使用者最新明確指示建立的本機部分 checkpoint，不代表兩本相簿已完成備份，也不代表原計畫的 G_DELIVERY 或整體任務已通過。
+
+本次做了什麼
+- 將 `other_entries` 修正為 schema 要求的陣列，補上缺少 shared lock 時對錯誤碼與無副作用的檢查。
+- 為 v3 Store 的 mutation 增加依 operation 核對頂層 transition 的防護，收緊 fixture authority，並更新 Python authority、migration、content、observation、project-binding 與 batch lifecycle 測試。此變更尚未證明巢狀 state 欄位已完整受 operation 權限約束。
+- 更新 CUA adapter 的新鮮度、單次 token、menu guard callback seam、chooser 目的地核對與每次 scroll 上限，並補上離線 adapter 測試。這些測試使用 fake I/O，不能證明正式 SCK/menu callback 已接線。
+- 加入 native bounds 到 CUA/SCK 座標轉換及唯一分散 OCR anchors 的 residual 驗證程式與測試；正式 full-display popup capture、live sidecar producer 與實機 menu guard 仍未完成。
+- 保存本輪 Harness format 3 task package，包括凍結計畫、Plan Review waiver、handoff、fixture、基線、attempt ledger、原始 stdout/stderr、測試收據、部分 E2E 報告與 blocker packet。為保留原始文字證據中的空白位元組並通過 whitespace 檢查，五個含尾端空白的原始 stdout/stderr／baseline diff 以可無損還原的 gzip 副本隨附，對照清單記錄原檔與壓縮檔 hash；原始檔仍留在工作目錄。Plan Review 是 WAIVED/NOT_RUN；唯讀 Planner replan 是阻塞分析，不是正式 Plan Review。事後獨立 Acceptance 仍未執行。
+
+實際驗證
+- PASS：Python 77 項（batch 41、project-binding 31、transaction-core 5），exit code 0。收據 `harness-development/line-v3-live-e2e-20261010/evidence/python-attempt-f3ee5d7423a24d8199ba2f33cc8781ca.json`，SHA-256 `fc10698afcf472bf5315da2fd863b303b8141603c070eb3569b9434b5c376d83`。
+- PASS：Node adapter 10 項，exit code 0；採 fake I/O。收據 `harness-development/line-v3-live-e2e-20261010/evidence/node-adapter-4b0b62cd61364344a68f047a56d20276.json`，SHA-256 `55abfd7a46c9215ff30b4dddc947ecedb51274c971231eb829f13e5af3f55fb6`。
+- FAIL：Swift SDK 26.5 執行 320 項，317 項通過、3 項 `ProjectBackupBindingTests` 失敗；nested fixture 的 `destination`／`intent.destination` 仍綁到舊 task root，回報 `inconsistentAuthority`。最新收據 `harness-development/line-v3-live-e2e-20261010/evidence/swift-26.5-24fbfc8ff57743af97e60a9edc25ba23.json`，SHA-256 `21f9bcddb45baf27fe3c41bf2cc090d0d5b6ea860b854d106224e388d9a66087`。
+- 後續找回的早期收據證明同一 Swift root issue 實際執行四次，超過每 issue 三次上限；四次結果均保留，不再重跑該 issue。沒有在提交前重跑這組測試。
+- PASS（交付檢查）：`git diff --cached --check` 對暫存快照回傳 exit code 0；這只檢查差異空白格式，不會改變上述產品測試結果。
+
+未完成與目前事實
+- G_AUTH=BLOCKED、G_OFFLINE=FAIL、G_MIGRATION=NOT_RUN、G_MENU=BLOCKED、G_FIRST/G_SCROLL/G_SECOND=NOT_RUN、G_ACCEPTANCE=BLOCKED。
+- 本輪沒有點擊 LINE、沒有 Save All、沒有 chooser confirmation、沒有下載或實際 scroll；canonical state 保持 schema 2、revision 34，SHA-256 `ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9`。Config 未修改。不得將 Python/Node fixture PASS 寫成相簿實機 PASS。
+- 本提交只做本機 checkpoint，沒有 push；G_DELIVERY 仍為 PARTIAL，因 Acceptance、完整 gates 與 remote readback 尚未完成。
+
+下一步建議
+- 將 blocker packet 交給新的 Critical Planner，先決定如何在不重置超額嘗試紀錄的前提下處理 G_OFFLINE；不得改名或換模型重跑同一 Swift root issue。
+- 依新核准計畫補齊 nested mutation authority、dispatch receipt、GUI action 記帳、目的地副作用收據與 commit 前後內容漂移保護，並接上具獨立 post-ellipsis frame identity 的正式 SCK sidecar 與 menu guard，再完成合法的離線驗證與 source freeze。
+- 只有前置 gates 和 structured execution grant 通過後，才進行 state migration 及重新確認 LINE 前景；再完成第一本、實際 bounded scroll、第二本、內容驗收、state readback/release、獨立 Acceptance，最後才評估完整 push 與遠端驗收。

@@ -1,0 +1,21 @@
+name: Cancel stale Rev28 autofix generation
+on:
+  workflow_dispatch:
+    inputs:
+      approve_cloud_runner:
+        description: "I explicitly authorize this cloud runner execution"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+concurrency:
+  group: rev28-v09-autofix
+  cancel-in-progress: true
+jobs:
+  cancel-stale:
+    if: ${{ github.actor == 's9008129' && inputs.approve_cloud_runner }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Superseding stale Rev28 autofix generation; no repository mutation."

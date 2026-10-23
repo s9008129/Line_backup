@@ -1,0 +1,113 @@
+{
+ "binding_hash": "100296f041b984324afb1fe49fa9667acf7506d7ae2bacdd496f42c71862f638",
+ "candidate_hash": "646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6",
+ "canonical_group_key": "canonical config group_key (unchanged)",
+ "capture_height": 1286,
+ "capture_width": 654,
+ "configured_display_name": "旻謙允禎成長日記",
+ "decoded_rgba_sha256": "dc83ceb79c18638dd7e9a31417a60f6b7abd7953d1e11fbdbcca4cd144481e7d",
+ "decoder": "candidate/offline_vision.swift decode",
+ "decoder_hash": "ff0e50f340b05e871d0291efe9505e8c766534929418975bad41b1ed2d8b8c0f",
+ "diagnostic_only": true,
+ "exclusions": [],
+ "format": "local-catalog-binding-1",
+ "height": 1286,
+ "indicator": {
+  "album_region": {
+   "x0": 100,
+   "x1": 300,
+   "y0": 196,
+   "y1": 206
+  },
+  "album_tab_horizontal": [
+   130,
+   300
+  ],
+  "baseline_bbox": [
+   138,
+   202,
+   186,
+   206
+  ],
+  "baseline_mask_sha256": "9831a05738d4c8eef662f6b98b0880c8912ff54c9649c0888db82c3bee9a0d9d",
+  "bright_at_least": 128,
+  "connectivity": 8,
+  "filter_small_components": false,
+  "luma": "(54R+183G+19B)>>8",
+  "notes_region": {
+   "x0": 400,
+   "x1": 620,
+   "y0": 196,
+   "y1": 206
+  },
+  "notes_tab_horizontal": [
+   400,
+   620
+  ],
+  "region": {
+   "x0": 0,
+   "x1": 654,
+   "y0": 196,
+   "y1": 206
+  }
+ },
+ "list_viewport": {
+  "x0": 0,
+  "x1": 654,
+  "y0": 206,
+  "y1": 1286
+ },
+ "mode": "replay",
+ "observation_id": "replay-bootstrap-scan-000",
+ "observed_display_name": "旻謙允禎成長日記",
+ "profile_hashes": {
+  "profiles.json": "18bc872d99940de8e010f34cd2a864cb3eebd3f99eb3b3cce018029b26001bb0"
+ },
+ "replay_manifest_format": "local-replay-manifest-1",
+ "run_id": "replay-catalog-diagnostic-20261010",
+ "safety_note": "replay frames carry no live runtime safety observation",
+ "safety_observation": "UNKNOWN",
+ "source_artifact": "replay/scan-000.png",
+ "source_artifact_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+ "text_slot_guard": {
+  "x0": 0,
+  "x1": 654,
+  "y0": 0,
+  "y1": 192
+ },
+ "text_slots": {
+  "album_tab": {
+   "rect": {
+    "x0": 128,
+    "x1": 296,
+    "y0": 153,
+    "y1": 192
+   }
+  },
+  "notes_tab": {
+   "rect": {
+    "x0": 442,
+    "x1": 614,
+    "y0": 153,
+    "y1": 192
+   }
+  },
+  "title": {
+   "rect": {
+    "x0": 210,
+    "x1": 460,
+    "y0": 80,
+    "y1": 128
+   }
+  },
+  "title_region": {
+   "rect": {
+    "x0": 200,
+    "x1": 500,
+    "y0": 75,
+    "y1": 132
+   }
+  }
+ },
+ "width": 654
+}

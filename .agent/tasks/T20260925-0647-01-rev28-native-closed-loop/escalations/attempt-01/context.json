@@ -1,0 +1,73 @@
+{
+  "task_id": "T20260925-0647-01-rev28-native-closed-loop",
+  "stage": "04",
+  "state": "ESCALATED",
+  "blocker_fingerprint": {
+    "stage": "04",
+    "check": "PRIMARY_NATIVE_COMPOSITION",
+    "surface": "rev28ctl live-execute / Rev28Core.LiveExecutionEngine adapter",
+    "expected": "One reachable native path binds fresh observation, actual adapters, common engine, durable owner, chooser, and filesystem proof",
+    "observed": "CLI refuses because no reviewed native frame+structural-candidate session provider is configured"
+  },
+  "attempts": {
+    "used": 3,
+    "maximum": 3,
+    "history": [
+      {
+        "origin": "same-task local history on v43-ab/codex-rev28",
+        "commit": "c7eb3f99f5fd3ce3bcdad4ae44ca5a677e48ac1c",
+        "result": "Preflight composition assembled, but live execution remained fail-closed before dispatch."
+      },
+      {
+        "origin": "current Stage 04 attempt 02",
+        "result": "Retained image to same-frame OCR and binding implemented; five injected tests passed. Full composition remained unresolved."
+      },
+      {
+        "origin": "current Stage 04 attempt 03",
+        "result": "Read-only source-contract trace disproved that a factory seam alone can meet C2-C7; no product edits or tests."
+      }
+    ]
+  },
+  "new_evidence": [
+    "LiveExecutionAdapter.establish returns String digests (rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift:54).",
+    "LiveExecutionEngine.run starts only from empty state and runs through Save All and destination confirmation (LiveExecutionEngine.swift:93-150).",
+    "rev28ctl refuses live-execute before engine construction/invocation because no native observation provider exists (rev28/Sources/rev28ctl/main.swift:105-108)."
+  ],
+  "eliminated_hypotheses": [
+    "A retained-image-to-OCR handoff was impossible to implement/test offline.",
+    "A factory wrapped around current engine/adapter contracts alone can satisfy the approved native-composition criterion."
+  ],
+  "remaining_uncertainty": "How to implement typed run-bound evidence, phase control, durable owner/goal-slot authority, native same-session observation, guarded actuation, chooser binding and filesystem proof coherently through the existing common engine.",
+  "why_retry_low_information": "The task-scoped budget is exhausted and source evidence shows a facade-only retry cannot satisfy the acceptance condition. Further edits require coordinated architecture decisions across engine, owner, phase controller and native adapters.",
+  "source_paths": [
+    "rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift",
+    "rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift",
+    "rev28/Sources/rev28ctl/main.swift",
+    "rev28/Sources/Rev28Core/Sensor/SameFramePerception.swift",
+    "rev28/Tests/Rev28CoreTests/SameFramePerceptionTests.swift",
+    ".agent/tasks/T20260925-0647-01-rev28-native-closed-loop/progress.md"
+  ],
+  "must_not_break": [
+    "Owner plus IntentLedger remain sole transaction authority with durable goal slot and independent anchor.",
+    "Phase A leaves irreversible intents/attempts at zero and one-shot entitlement unconsumed.",
+    "Typed run-bound evidence, not arbitrary digest strings or caller freshness flags, gates state and action.",
+    "One common engine/authority is used in injected and production paths.",
+    "Any irreversible intent/attempt makes all restarts observe-only; no retry or replacement.",
+    "Preserve approved C2-C7 identity, geometry, chooser, destination, tripwire, baseline, content and refusal semantics.",
+    "No real LINE, GUI, live-preflight, live-execute, Phase A or Phase B during offline A/B evaluation."
+  ],
+  "review_question": "What is the smallest coherent decomposition of approved C2-C7 that preserves one common state/evidence/intent authority and keeps live-preflight reversible and unconsumed? Specify typed evidence, phase controller, owner persistence/eligibility interfaces, injected OS boundaries and test order; identify any Plan elements requiring Stage 01 replan if semantics must change.",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "ESCALATED",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "HIGH_REASONING_REVIEW_REQUIRED",
+    "PHASE_A_STATUS": "NOT_STARTED",
+    "PHASE_B_STATUS": "FORBIDDEN_AB_EVALUATION"
+  },
+  "real_line_interaction": "NONE",
+  "production_save_all_dispatches": 0,
+  "destination_confirmations": 0
+}

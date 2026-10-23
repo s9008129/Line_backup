@@ -1,0 +1,17 @@
+建立 LINE v3 implement-02 計畫與交接封包
+
+為 TASK-20261010-line-v3-live-e2e 建立 implement-02 continuation 的可執行計畫、deterministic handoff 與使用者決策紀錄，讓後續 Implementer 可在既有 gate、資料保全及 LINE 前景交接規則下繼續處理產品整合與兩本相簿實機驗收。
+
+本次實際完成的是文件與交接封包：記錄已核對的歷史基線、既有 Python/Node PASS 與 Swift 320 項中 3 項 FAIL、同一 Swift root issue 的四筆原始收據及更早歷史 UNKNOWN；保存 Plan Review 的明確 waiver（WAIVED/NOT_RUN），並保留事後獨立 Acceptance 作為完整結案條件。plan-contract.json 與 handoff.json 是逐 byte 相同的契約；原 gate、criticality、writer limit 及 required evidence 維持，契約只增列計畫所需的 state/.line-backup-v3.tmp。
+
+交接具體規定先修正六組 hermetic Swift producer fixtures 的外層 config/state/report 一致性，正向 fixture 須先成功 binding，再做負向變異；接著補強巢狀 Store transition 權限、retained dispatch receipt 驗證、跨 lifecycle 持久 GUI quota、prepare side-effect receipt、finalize inventory/readback drift fence，以及 full-display SCK/Vision popup producer 與正式 live guard bridge。計畫明列 Python、Node 與一次完整 Swift package regression 的順序和收據要求。
+
+Swift 歷史不會改名、重置或刪除。依使用者在本次對話的實際回覆，計畫記錄四次既有執行後額外核准一次 Swift package validation；修完離線缺口並先持久 reserve 後才可啟動。compile/test failure、timeout、crash 或收據不完整都會消耗這唯一額度並立即停止同 issue 的 Swift 重跑，不得再跑第六次。這項明確例外保留歷史嘗試及失敗，不等於既有 G_OFFLINE 已通過。
+
+前置 gate 通過後，計畫才允許 schema 2/revision 34 到 schema 3/revision 35 的受控 migration，以及 live 操作。完整 E2E 要求第一本交易驗證並釋放 owner 後，實際執行有證據的 bounded scroll，再以不同 fingerprint 完成第二個 cap=1 lifecycle；兩本各自需有 Save All、chooser、下載、逐檔解碼、state readback/release 證據。全程共用兩次 Save All、兩次 chooser confirmation 和 GUI invocation 上限；不確定時 fail closed。
+
+目前只落檔及直接 task/waiver schema 檢查，contract/handoff bytes/hash 相符。native controller admission/validation 仍 NOT_RUN；本 continuation 沒有產品修改、Swift/Python/Node 新回歸、migration、LINE capture/input、Save All、chooser 或下載。Canonical state/config、舊照片與原有 dirty source work 必須由接手者重新核對並保全。本文件 commit/push 是可審查的計畫 checkpoint，不代表 G_OFFLINE、任何 live gate、獨立 Acceptance、G_DELIVERY 或完整備份目標 PASS。
+
+Next: 接手 Implementer 依 handoff 先 fresh inspect Git/state/config/source，保留無關 dirty work；完成 fixture coherency 與交易/SCK 實作後執行規定的離線回歸並保存完整證據。只有 G_AUTH/G_OFFLINE 明確通過才做 migration/live preflight；每次實機測試更新本 continuation 的 E2E測試報告、progress、attempt ledger 和必要 blocker。任何 grant、source、identity、前景、quota、目的地或 readback 不確定立即停。若完成適用 gates，仍須由獨立 Acceptance 驗收後才能宣告整體完成。
+
+精確細節已有 plan.md、handoff.md、handoff-prompt.txt、plan-contract.json、handoff.json、continuation-policy.json、plan-review-waiver.json、compile-handoff.receipt.json、progress.md 與 authoring-baseline.json；commit 只 stage 本次 continuation 文件，保留工作樹原有無關變更。

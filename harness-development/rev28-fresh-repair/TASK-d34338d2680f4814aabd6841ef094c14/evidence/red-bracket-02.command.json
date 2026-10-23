@@ -1,0 +1,21 @@
+{
+  "command": [
+    "swift",
+    "test",
+    "--package-path",
+    "rev28",
+    "--filter",
+    "NativeObservationSessionTests.testProcessReplacementDuringBoundaryReadsIsRefused"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "exit_code": 1,
+  "duration_seconds": 2.407,
+  "at_utc": "2026-10-04T11:20:49.035718+00:00",
+  "log": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/red-bracket-02.log",
+  "log_bytes": 7137,
+  "log_sha256": "9182250f2ab71f7846488e1391dbe7c05c85aa9fc75928c57913b03f921c8907",
+  "tests_summary": {
+    "tests": 1,
+    "failures": 8
+  }
+}

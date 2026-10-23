@@ -1,0 +1,25 @@
+{
+  "captured_at": "2026-10-10T06:58:19.792544+00:00",
+  "artifacts": [
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/baseline/git-status-porcelain.txt",
+      "bytes": 10831481,
+      "sha256": "7a941c1460408686d1792b60444b57b05996d5bd3be0ab3f32e7a1f39a060e78"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/baseline/focused-existing-product.diff",
+      "bytes": 63494,
+      "sha256": "27837a169486f726ce66958deda804041e04ff817e1c9991368d43d381751881"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/baseline/preexisting-tracked.diff",
+      "bytes": 65001,
+      "sha256": "48c72645db2adf1c4250384803d753dda471c779df757a031fa3c88f2a8994d1"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/baseline/preexisting-index.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "kind": "READ_ONLY_INCIDENT_RECONCILIATION_NOT_RETROACTIVE_GATE_PASS",
+  "created_at": "2026-10-10T22:44:01.695986+00:00",
+  "incident": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/scope-incident-001.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/scope-incident-001.json",
+    "bytes": 5976,
+    "sha256": "0fa1e0d11325bdbc15290b98d178cd808e89ae9aaf3c773bf106ee3f8c56418f"
+  },
+  "cause": "Location-dependent runner placed at CON root; parent.parent shifted cwd and evidence one level upward.",
+  "original_incident": "OUT_OF_SCOPE_EVIDENCE_WRITE",
+  "original_preservation_gate": "FAIL/BLOCKED",
+  "original_node_result": "MODULE_NOT_FOUND_FROM_WRONG_CWD_NOT_ADAPTER_SYNTAX_RESULT",
+  "artifacts": [
+    {
+      "original": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.invocation.json",
+        "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.invocation.json",
+        "bytes": 303,
+        "sha256": "e6af579520a315edb79877c4fb7fb6ecab8066cd9f1c4c9fccd396d296bc9e3e"
+      },
+      "readonly_readback": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.invocation.json",
+        "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.invocation.json",
+        "bytes": 303,
+        "sha256": "e6af579520a315edb79877c4fb7fb6ecab8066cd9f1c4c9fccd396d296bc9e3e"
+      },
+      "matches_incident": true,
+      "disposition": "KEEP_ORIGINAL_IN_PLACE_READ_ONLY",
+      "new_writes_to_original": 0
+    },
+    {
+      "original": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.receipt.json",
+        "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.receipt.json",
+        "bytes": 678,
+        "sha256": "e1d16b370f6f7c9d7d6275e8afd21fe77946dececef290ebc64a740914637719"
+      },
+      "readonly_readback": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.receipt.json",
+        "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.receipt.json",
+        "bytes": 678,
+        "sha256": "e1d16b370f6f7c9d7d6275e8afd21fe77946dececef290ebc64a740914637719"
+      },
+      "matches_incident": true,
+      "disposition": "KEEP_ORIGINAL_IN_PLACE_READ_ONLY",
+      "new_writes_to_original": 0
+    },
+    {
+      "original": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stdout",
+        "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "readonly_readback": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stdout",
+        "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "matches_incident": true,
+      "disposition": "KEEP_ORIGINAL_IN_PLACE_READ_ONLY",
+      "new_writes_to_original": 0
+    },
+    {
+      "original": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stderr",
+        "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stderr",
+        "bytes": 318,
+        "sha256": "8948d951d254f345d8f1ce65686618a314622897641a6a037058ed782bff1fa4"
+      },
+      "readonly_readback": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stderr",
+        "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/evidence/node-adapter-syntax-01.stderr",
+        "bytes": 318,
+        "sha256": "8948d951d254f345d8f1ce65686618a314622897641a6a037058ed782bff1fa4"
+      },
+      "matches_incident": true,
+      "disposition": "KEEP_ORIGINAL_IN_PLACE_READ_ONLY",
+      "new_writes_to_original": 0
+    }
+  ],
+  "relocated": false,
+  "deleted": false,
+  "overwritten": false,
+  "product_validation": "NOT_RUN"
+}

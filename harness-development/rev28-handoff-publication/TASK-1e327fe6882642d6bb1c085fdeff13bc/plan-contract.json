@@ -1,0 +1,120 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-1e327fe6882642d6bb1c085fdeff13bc",
+  "goal": "Publish exact detailed LINE tool handoff, confirmed182 and actual-test authority, retained final text evidence; normal commit/push only.",
+  "task_class": "QUICK",
+  "allowed_paths": [
+    "20261009_handoff.md",
+    "harness-development/rev28-handoff-publication/TASK-1e327fe6882642d6bb1c085fdeff13bc",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/acceptance-01.result.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/acceptance-archive-validation.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/acceptance.result.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-cli-summary.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project182.stdout",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/actual-project57.stdout",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/admission-order-deviation.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/delivery-receipt.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-isolation-verification.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-preservation-verification.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-source-manifest.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/full-swift-compatibility-join.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/implement-gates.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/implementation-note.md",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/python-focused.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/python-focused.log",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/result.md",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-contradiction-refusal.stdout",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-other-target-contradiction-refusal.stdout",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/root-final.result.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/supplemental-convergence.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/swift-focused.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/swift-focused.log",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/user-grant.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-cli-build.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-cli-build.log",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-full.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-full.log",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-legacy.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-legacy.log",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/continuation-completed-20261009.md",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/evidence-join-gap-reproduction.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/handoff.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-03.md",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-contract-02.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-review-02.result.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/progress.md",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/project-binding-report.schema.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/resume-admission-20261009.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-packet-compatibility.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/root-acceptance-blocked.result.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-consent-20261006.json",
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-pause-20261006.json"
+  ],
+  "required_evidence": [
+    "DOC",
+    "PRESERVE",
+    "GIT"
+  ],
+  "gate_specs": [
+    {
+      "gate_id": "DOC",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "PRESERVE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "GIT",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    }
+  ],
+  "capability_policy": {
+    "network": "PROXY_ALLOWLIST",
+    "browser": false,
+    "destinations": [
+      "https://github.com/s9008129/Line_backup.git"
+    ]
+  },
+  "retry_policy": {
+    "transient_read_only_retries": 2,
+    "delays_seconds": [
+      10,
+      30
+    ]
+  },
+  "resource_policy": {
+    "prompt_bytes": 65536,
+    "state_bytes": 524288,
+    "inspect_bytes": 16384,
+    "log_bytes": 134217728
+  },
+  "workflow_policy": {
+    "plan_review_required": false,
+    "independent_acceptance_required": false,
+    "max_parallel_read_only_helpers": 0,
+    "max_parallel_writers": 0,
+    "handoff_review_required": false
+  }
+}

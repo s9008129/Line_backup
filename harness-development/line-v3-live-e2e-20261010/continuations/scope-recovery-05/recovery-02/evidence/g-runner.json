@@ -1,0 +1,146 @@
+{
+  "checks": [
+    {
+      "name": "g_baseline_pass",
+      "ok": true
+    },
+    {
+      "mismatched": [],
+      "missing": [],
+      "name": "freeze_all_sources_resolved",
+      "ok": true
+    },
+    {
+      "name": "freeze_adapter_test",
+      "ok": true
+    },
+    {
+      "detail": 0,
+      "name": "runner-preflight-01_exit",
+      "ok": true,
+      "stderr_bytes": 0,
+      "stdout_bytes": 3703
+    },
+    {
+      "name": "runner-preflight-01_streams",
+      "ok": true
+    },
+    {
+      "name": "preflight_report",
+      "ok": true,
+      "status": "PREFLIGHT_OK"
+    },
+    {
+      "name": "preflight_before_node_launch",
+      "ok": true
+    },
+    {
+      "detail": 0,
+      "name": "runner-selftest-01_exit",
+      "ok": true,
+      "stderr_bytes": 0,
+      "stdout_bytes": 3285
+    },
+    {
+      "name": "runner-selftest-01_streams",
+      "ok": true
+    },
+    {
+      "cases": 12,
+      "failed": [],
+      "name": "runner_selftest_pass",
+      "ok": true
+    },
+    {
+      "name": "runner_selftest_binding",
+      "ok": true
+    }
+  ],
+  "created_at_utc": "2026-10-11T03:14:15.651098+00:00",
+  "created_monotonic_ns": 131334867879375,
+  "failures": [],
+  "format": "RECOVERY_02_GATE_RECEIPT_V1",
+  "gate_id": "g-runner",
+  "kind": "RECOVERY_02_GATE_RECEIPT",
+  "native_harness_validation": "NOT_RUN",
+  "refs": {
+    "check-specs-freeze.json": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs-freeze.json",
+      "bytes": 2278,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs-freeze.json",
+      "sha256": "1010261ee03bf1d327410d125488b00fc8ae5678d1fe0516e12dcd95ba5a6a70"
+    },
+    "check-specs.json": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs.json",
+      "bytes": 11288,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs.json",
+      "sha256": "5bd52c11c232fecee06b6edb83b009ea49fcb1378459a5653f31310bb8b59d4c"
+    },
+    "freeze": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs-freeze.json",
+      "bytes": 2278,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs-freeze.json",
+      "sha256": "1010261ee03bf1d327410d125488b00fc8ae5678d1fe0516e12dcd95ba5a6a70"
+    },
+    "g-baseline-recovery-02": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-baseline-recovery-02.json",
+      "bytes": 24360,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-baseline-recovery-02.json",
+      "sha256": "879e4aec93999278f32b175b7850ac1ff87527eafe86829a46c0c708fc772279"
+    },
+    "run_command.py": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/run_command.py",
+      "bytes": 19829,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/run_command.py",
+      "sha256": "7a99176f828aeb098f0f68a16f470e6685782677386d2a9237b6908a10521cf3"
+    },
+    "runner-preflight-01.receipt": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.receipt.json",
+      "bytes": 2799,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.receipt.json",
+      "sha256": "02a5f555ad44643e423572447fe271dc5561bd7f14fc1207d7396cc059104639"
+    },
+    "runner-preflight-01.stderr": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stderr",
+      "bytes": 0,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runner-preflight-01.stdout": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stdout",
+      "bytes": 3703,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stdout",
+      "sha256": "22f4bb2263df6f874a6072765a5836edc64132a142a7f5ba6e3a75d3c0c73b8e"
+    },
+    "runner-selftest-01.receipt": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.receipt.json",
+      "bytes": 2882,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.receipt.json",
+      "sha256": "fbb9245c1ebb03d96f7fe88c96effa722fd240edcb16b39184710cabe7f277be"
+    },
+    "runner-selftest-01.stderr": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stderr",
+      "bytes": 0,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runner-selftest-01.stdout": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stdout",
+      "bytes": 3285,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stdout",
+      "sha256": "8fc299ba1a62c8a4e21fae43f314cfbd2ac067792f4547678e4c4d08036ce449"
+    },
+    "test_run_command.py": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_run_command.py",
+      "bytes": 14764,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_run_command.py",
+      "sha256": "157a37c1f3415b50af0e42fa8ada8175c69fb23c967c880fa60835a0620e1d98"
+    }
+  },
+  "status": "PASS",
+  "task_id": "TASK-20261011-line-baseline-recovery-02",
+  "tool": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tools/gate_receipts.py",
+    "sha256": "18fafe68fcfff2b34b694e3e9020256111c33c0b22cf1517ddf16223c88154fd"
+  }
+}

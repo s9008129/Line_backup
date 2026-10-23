@@ -1,0 +1,49 @@
+[0/1] Planning build
+Building for debugging...
+[0/12] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.16s)
+Test Suite 'Selected tests' started at 2026-10-09 08:27:18.314.
+Test Suite 'rev28PackageTests.xctest' started at 2026-10-09 08:27:18.314.
+Test Suite 'ProjectBackupBindingTests' started at 2026-10-09 08:27:18.314.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testActualProducerEligibleNeverDispatches]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testActualProducerEligibleNeverDispatches]' passed (0.007 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testActualProducerVerifiedNeverDispatches]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testActualProducerVerifiedNeverDispatches]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testBusyUnresolvedAmbiguousAndDestinationReports]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testBusyUnresolvedAmbiguousAndDestinationReports]' passed (0.023 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testDigestForgeryRejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testDigestForgeryRejected]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testDuplicateEscapedKeysAndInvalidUTF8Rejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testDuplicateEscapedKeysAndInvalidUTF8Rejected]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testExternalAnchorMismatchRejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testExternalAnchorMismatchRejected]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testOriginalRequestForeignRootRejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testOriginalRequestForeignRootRejected]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testReanchoredDecisionAndFactsContradictionsRejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testReanchoredDecisionAndFactsContradictionsRejected]' passed (0.037 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testReanchoredForgedFlagsRejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testReanchoredForgedFlagsRejected]' passed (0.034 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testReanchoredRawStateHistoryContradictionRejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testReanchoredRawStateHistoryContradictionRejected]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testReanchoredReducedSourceSetRejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testReanchoredReducedSourceSetRejected]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testReanchoredTargetAndAuthorityForgeryRejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testReanchoredTargetAndAuthorityForgeryRejected]' passed (0.023 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testSourceTamperAndMissingMaterialRejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testSourceTamperAndMissingMaterialRejected]' passed (0.014 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testStaleRawConfigAndStateRejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testStaleRawConfigAndStateRejected]' passed (0.008 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testUnknownContentCannotBecomeZero]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testUnknownContentCannotBecomeZero]' passed (0.009 seconds).
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testUnknownKeysVersionsAndRefusalRejected]' started.
+Test Case '-[Rev28CoreTests.ProjectBackupBindingTests testUnknownKeysVersionsAndRefusalRejected]' passed (0.013 seconds).
+Test Suite 'ProjectBackupBindingTests' passed at 2026-10-09 08:27:18.508.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.192 (0.193) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-10-09 08:27:18.508.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.192 (0.193) seconds
+Test Suite 'Selected tests' passed at 2026-10-09 08:27:18.508.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.192 (0.194) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

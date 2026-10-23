@@ -1,0 +1,1 @@
+{"dispatch_authorized": false, "error": {"code": "INVALID_PROJECT_HISTORY", "exit_code": 2, "message": "Evidence content group/run/destination disagrees with verified history"}, "kind": "REFUSAL", "native_observation_performed": false, "report_format_version": 1, "scope": "PROJECT_PREFLIGHT_READ_ONLY", "state_modified": false, "writer_acquired": false}

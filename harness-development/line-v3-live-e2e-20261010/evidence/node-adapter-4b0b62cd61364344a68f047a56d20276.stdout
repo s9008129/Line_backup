@@ -1,0 +1,18 @@
+✔ original pair contains only two clicks and timer; one-shot cannot replay (1.226541ms)
+✔ loaded JSON cannot mint a dispatch or chooser capability (0.178ms)
+✔ fixture authority cannot mint a live app dispatch token (0.34975ms)
+✔ ellipse error never invokes SaveAll; all tokens stay consumed (0.188083ms)
+✔ SaveAll error is attempted once and prohibits replay (0.151583ms)
+✔ expired capture and expired second-click boundary both stop (0.157125ms)
+✔ correct chooser path and fresh control confirmed exactly once (0.89925ms)
+✔ wrong full path refuses navigation/confirmation (0.168667ms)
+✔ a stale field index is refused before typing (0.122209ms)
+✔ native scroll is limited to one quarter viewport per invocation (0.129125ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49.18525

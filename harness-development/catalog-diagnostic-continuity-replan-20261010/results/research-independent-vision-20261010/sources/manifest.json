@@ -1,0 +1,53 @@
+{
+  "note": "Public Apple source snapshots for independent research; documentation translations are not OCR language support lists.",
+  "records": [
+    {
+      "url": "https://developer.apple.com/documentation/vision/ocrtool.md",
+      "file": "vision__ocrtool.md",
+      "bytes": 1723,
+      "sha256": "0d06a70c25aba1269094c120cf160d794d3ad9a814d2ed2914f920db12227eab"
+    },
+    {
+      "url": "https://developer.apple.com/documentation/vision/recognizetextrequest/minimumtextheightfraction.md",
+      "file": "vision__recognizetextrequest__minimumtextheightfraction.md",
+      "bytes": 1291,
+      "sha256": "edef77ccc8bae0d26c6e9092827a7e024cb05a7aa46edb75c1ca25312c70ac4e"
+    },
+    {
+      "url": "https://developer.apple.com/documentation/vision/vnrecognizetextrequest/minimumtextheight.md",
+      "file": "vision__vnrecognizetextrequest__minimumtextheight.md",
+      "bytes": 1292,
+      "sha256": "177d606728ef5fe2f0a948c6677cd3b0b29b85f82009700ee4ed5093bb519a64"
+    },
+    {
+      "url": "https://developer.apple.com/documentation/vision/recognizing-text-in-images.md",
+      "file": "vision__recognizing-text-in-images.md",
+      "bytes": 8337,
+      "sha256": "1dcc23ff500565e4d8e534b31065f3e2e69b2445ebab335eb15613eb6aab3454"
+    },
+    {
+      "url": "https://developer.apple.com/documentation/foundationmodels/generationoptions/samplingmode-swift.struct/greedy.md",
+      "file": "foundationmodels__generationoptions__samplingmode-swift.struct__greedy.md",
+      "bytes": 1527,
+      "sha256": "3ec66b8d98e50062265cf8768cb19b8bd1b9eac1461c629fb6ae617b777b1fc5"
+    },
+    {
+      "url": "https://developer.apple.com/documentation/screencapturekit/scscreenshotconfiguration/includechildwindows.md",
+      "file": "screencapturekit__scscreenshotconfiguration__includechildwindows.md",
+      "bytes": 1088,
+      "sha256": "bf6644711d3f631893815fee75d755e6e07b9077a0c8bc12acdae7843ccb62a8"
+    },
+    {
+      "url": "https://developer.apple.com/documentation/screencapturekit/sccontentfilter/pointpixelscale.md",
+      "file": "screencapturekit__sccontentfilter__pointpixelscale.md",
+      "bytes": 934,
+      "sha256": "35a9945091fed5b8a5a381c7cd5229db0fab9eddf0312c8b3e033adf097ca3a5"
+    },
+    {
+      "url": "https://developer.apple.com/tutorials/data/documentation/vision/ocrtool.json",
+      "file": "ocrtool.docc.json",
+      "bytes": 8250,
+      "sha256": "61e4e52877afcf5e5207fe2e25ef088235c827828febb349479cbbdfe03d7460"
+    }
+  ]
+}

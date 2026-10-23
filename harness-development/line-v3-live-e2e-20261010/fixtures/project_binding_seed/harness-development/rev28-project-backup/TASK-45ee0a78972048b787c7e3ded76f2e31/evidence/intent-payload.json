@@ -1,0 +1,30 @@
+{
+  "fresh_target_match": true,
+  "safe_calibration_closed_no_activation": true,
+  "calibration": {
+    "observed_at": "2026-10-05T01:23:28Z",
+    "screenshot_width": 654,
+    "screenshot_height": 1286,
+    "ellipsis": {
+      "x": 610,
+      "y": 100
+    },
+    "dot_spacing": 11,
+    "save_all_point": {
+      "x": 635,
+      "y": 273
+    },
+    "confidence": "HIGH",
+    "evidence": "{\"affirmative_menu_source\": \"Fresh user full-desktop PNG; retained unchanged; offline macOS Vision OCR confirms exact 儲存全部 at confidence1\", \"menu_image_sha256\": \"2a03dc81fba37fb0476fd317b5ddd67db6685107445f95eacec4f8a30defe494\", \"desktop_dimensions\": [2294, 1490], \"album_window_origin_in_desktop_pixels\": [674, 82], \"album_window_dimensions\": [654, 1286], \"mapping\": \"Same pixel dimensions as current CUA screenshot; translation only, no resampling or native-CG coordinate conversion. Matching close-button center [712,114] -> [38,32], ellipsis [1284,182] -> [610,100], photo grid [706,534] -> [32,452], right boundary1328 ->654.\", \"current_CUA_observation\": \"Fresh combined AX/screenshot matches same 57-photo detail,654x1286,ellipsis [610,100],photo-grid top452; no different album or visible command/dialog\", \"save_all_label\": \"儲存全部\", \"save_all_label_bbox_desktop\": [1293.6751285097782, 339.8780774549271, 106.76602172851562, 30.243844985961896], \"menu_items_observed\": [\"選擇項目\", \"修改相簿名稱\", \"儲存全部\", \"刪除相簿\", \"分享相簿\"], \"calibrated_safe_point_CUA_pixels\": [635, 273], \"point_desktop_pixels\": [1309, 355], \"adjacent_label_midpoint_boundaries_desktop_y\": [328.333, 381.667], \"vertical_margin_pixels\": [26.667, 26.667], \"observation_uncertainty\": \"Up to3px visual anchor/typographic-center uncertainty still leaves >23px to neighboring-row midpoint boundaries; point falls inside exact observed SaveAll glyph bounding region and within current654px-wide CUA frame\", \"safe_close\": {\"method\": \"One positively identified menu-exterior non-action metadata-area click\", \"point_CUA_pixels\": [450, 330], \"safe_blank_region_CUA_pixels\": [346, 308, 190, 50], \"source\": \"Same full screenshot and current CUA image: blank metadata area, above photo grid452, away from creator controls at390 and popup starting586px horizontally\", \"planned_postcondition\": \"Correct unchanged album detail; no rename/deletion/selection/share dialog, chooser or download; verify actual menu closure separately from omitted-popup screenshot\"}, \"intent_committed\": false, \"save_all_invocations\": 0, \"native_current_composer_calibration\": \"UNKNOWN; this CUA/image calibration does not certify it\", \"provider\": \"unified-computer-use CUA mac native\", \"app\": \"jp.naver.line.mac\", \"line_version\": \"26.0.2\", \"language\": \"zh-Hant\", \"window_geometry_class\": \"album-detail654x1286-screenshot-pixels\", \"pixel_scale\": \"1:1 user PNG to current CUA screenshot, confirmed by multiple identical anchors; no CG/backing-scale conversion\", \"safe_close_result\": {\"safe_close_coordinate\": [450, 330], \"safe_close_call\": \"RETURNED\", \"menu_item_invocations_during_calibration\": 0, \"closure_proof\": \"Fresh user full-desktop image after safe outside click shows original album, menu absent, no command/dialog/chooser; current CUA combined AX/screenshot confirms unchanged exact date and57 count\", \"closure_image_sha256\": \"3c7f830cdd6db24615afa85f6e9115417e89b73a17d1bc2d8d577c148a8783d7\", \"closure_image_path\": \"evidence/user-calibration-safe-closed-20261005.png\", \"group_proof\": \"Actual offline Vision OCR of full open-menu image reads exact 旻謙允禎成長日記 at confidence1; user-selected canonical group and same album photo/date/count continuity\", \"fingerprint_match\": \"2024-05-13 through2024-05-17;57\", \"fresh_CUA_dimensions\": [654, 1286], \"fresh_ellipsis\": [610, 100], \"same_layout\": \"Current title/count, control positions,11px dot spacing and photo-grid top452 match full menu screenshot by exact1:1 pixel translation; no resize/reflow or intervening menu-item activation\", \"calibration_point\": [635, 273], \"visual_verdict\": \"OBSERVED; retained human screenshot and actual OCR support geometry, not a native current-composer gate PASS\", \"save_all_invocations\": 0, \"intent_committed\": false}, \"original_ocr_sha256\": \"b01f54a497d3883139ee7767286d3e9156fd4fea0d89cac884230db028961056\", \"final_replay_anchor\": [610, 100], \"save_all_point_inside_current_CUA_frame\": true, \"native_current_composer_gate\": \"UNKNOWN, unchanged\"}"
+  },
+  "preconditions": {
+    "destination": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張",
+    "initially_empty": true,
+    "currently_empty": true,
+    "duplicate_gate": "PASS for independently reviewed explicit new-project operation",
+    "state_revision": 11,
+    "state_sha256": "29700cb480d3796eacbab340d387ca2009eb462cae1be9569a306eb51abd34fc",
+    "save_all_invocations": 0,
+    "retry_allowed": false
+  }
+}

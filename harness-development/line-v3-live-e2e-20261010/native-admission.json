@@ -1,0 +1,9 @@
+{
+  "controller_release": "4.8.0",
+  "controller_path": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source/tools/task-orchestrator.py",
+  "admission": "NOT_RUN",
+  "reason": "The pinned CRITICAL task schema requires plan_review_required=true and the controller route will allocate PLAN_REVIEW before IMPLEMENT. The user explicitly waived Plan Review. Per the frozen user plan, use deterministic local handoff and the recorded waiver; do not fabricate native controller admission, reviewer PASS, invitation, run ID, or platform receipt.",
+  "task_controller_mutation": "NOT_RUN",
+  "os_sandbox_enforcement": "UNKNOWN",
+  "network_denial_enforcement": "UNKNOWN"
+}

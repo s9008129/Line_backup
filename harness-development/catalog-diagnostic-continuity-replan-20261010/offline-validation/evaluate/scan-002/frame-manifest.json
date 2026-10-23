@@ -1,0 +1,196 @@
+{
+ "format": "local-frame-manifest-1",
+ "frame_id": "scan-002",
+ "height": 1286,
+ "metadata": {
+  "complete_rows": [
+   {
+    "count": 65,
+    "count_box": [
+     29.48360655737705,
+     356.32916642554164,
+     61.647540983606554,
+     380.4416664255417
+    ],
+    "count_candidates": [
+     {
+      "confidence": 1,
+      "text": "65"
+     }
+    ],
+    "count_confidence": 1,
+    "count_text": "65",
+    "date_box": [
+     29.4836055745902,
+     321.4999997767361,
+     265.3524580336066,
+     348.2916664434028
+    ],
+    "date_candidates": [
+     {
+      "confidence": 0.5,
+      "text": "2024/06/02～06/07"
+     }
+    ],
+    "date_confidence": 0.5,
+    "date_text": "2024/06/02～06/07",
+    "identity_dates": [
+     "2024-06-02",
+     "2024-06-07"
+    ]
+   },
+   {
+    "count": 56,
+    "count_box": [
+     29.483606423360666,
+     1090.4208332440278,
+     61.64754084959017,
+     1111.8541665773612
+    ],
+    "count_candidates": [
+     {
+      "confidence": 1,
+      "text": "56"
+     }
+    ],
+    "count_confidence": 1,
+    "count_text": "56",
+    "date_box": [
+     29.483606453142066,
+     1052.912499975193,
+     259.99180317445354,
+     1079.7041666418597
+    ],
+    "date_candidates": [
+     {
+      "confidence": 0.5,
+      "text": "2024/05/27～05/31"
+     }
+    ],
+    "date_confidence": 0.5,
+    "date_text": "2024/05/27～05/31",
+    "identity_dates": [
+     "2024-05-27",
+     "2024-05-31"
+    ]
+   }
+  ],
+  "ordered_qualified_ids": [
+   "2024-06-02_2024-06-07_65",
+   "2024-05-27_2024-05-31_56"
+  ],
+  "qualified": [
+   {
+    "count": 65,
+    "count_box": [
+     29.48360655737705,
+     356.32916642554164,
+     61.647540983606554,
+     380.4416664255417
+    ],
+    "count_candidates": [
+     {
+      "confidence": 1,
+      "text": "65"
+     }
+    ],
+    "count_confidence": 1,
+    "count_text": "65",
+    "date_box": [
+     29.4836055745902,
+     321.4999997767361,
+     265.3524580336066,
+     348.2916664434028
+    ],
+    "date_candidates": [
+     {
+      "confidence": 0.5,
+      "text": "2024/06/02～06/07"
+     }
+    ],
+    "date_confidence": 0.5,
+    "date_text": "2024/06/02～06/07",
+    "identity_dates": [
+     "2024-06-02",
+     "2024-06-07"
+    ],
+    "legacy_count_box": [
+     31.765714005776516,
+     356.99999963157194,
+     63.53142865116226,
+     379.499999631572
+    ],
+    "legacy_count_text": "65",
+    "legacy_date_box": [
+     31.765715299186212,
+     321.4999995850087,
+     265.3371416907878,
+     345.99999958500877
+    ],
+    "legacy_date_text": "2024/06/02~06/07"
+   },
+   {
+    "count": 56,
+    "count_box": [
+     29.483606423360666,
+     1090.4208332440278,
+     61.64754084959017,
+     1111.8541665773612
+    ],
+    "count_candidates": [
+     {
+      "confidence": 1,
+      "text": "56"
+     }
+    ],
+    "count_confidence": 1,
+    "count_text": "56",
+    "date_box": [
+     29.483606453142066,
+     1052.912499975193,
+     259.99180317445354,
+     1079.7041666418597
+    ],
+    "date_candidates": [
+     {
+      "confidence": 0.5,
+      "text": "2024/05/27～05/31"
+     }
+    ],
+    "date_confidence": 0.5,
+    "date_text": "2024/05/27～05/31",
+    "identity_dates": [
+     "2024-05-27",
+     "2024-05-31"
+    ],
+    "legacy_count_box": [
+     31.76571442290479,
+     1087.8662787617127,
+     61.66285683318311,
+     1110.5000001133362
+    ],
+    "legacy_count_text": "56",
+    "legacy_date_box": [
+     31.765714477384734,
+     1052.3517445146201,
+     259.7314279783613,
+     1078.5203484117148
+    ],
+    "legacy_date_text": "2024/05/27~05/31"
+   }
+  ]
+ },
+ "mode": "replay",
+ "note": "replay frame; timestamps/provenance are not live values",
+ "observation_id": "replay-bootstrap-scan-000",
+ "previous_frame_id": "scan-001",
+ "rgba": {
+  "decoded_rgba_sha256": "a25f1c23bf9e16432825305db61ad5859da21bf1cf09af0bd43bc38f6a96322e",
+  "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/decoded/scan-002/decoded.rgba",
+  "source_sha256": "65af93e64fa0ae38d2214a2e9d973cafcdd4db99ae47124e2ccb5e6aeb9b3adb"
+ },
+ "run_id": "replay-catalog-diagnostic-20261010",
+ "safety_observation": null,
+ "source_artifact_sha256": "65af93e64fa0ae38d2214a2e9d973cafcdd4db99ae47124e2ccb5e6aeb9b3adb",
+ "width": 654
+}

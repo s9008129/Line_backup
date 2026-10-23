@@ -1,0 +1,34 @@
+{
+  "verdict": "PASS",
+  "checks": {
+    "config/line_backup_config.json": {
+      "expected": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+      "actual": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+      "PASS": true
+    },
+    "state/backup_state.json": {
+      "expected": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9",
+      "actual": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9",
+      "PASS": true
+    },
+    "state/run_log.md": {
+      "expected": "d96739e255261a6f1e1eae02df928a55d64192b3d1146983e6f2c40ad6528333",
+      "actual": "d96739e255261a6f1e1eae02df928a55d64192b3d1146983e6f2c40ad6528333",
+      "PASS": true
+    },
+    ".git/index": {
+      "expected": "4b381d5411ccd91802fd88e23a8170f5edf061dab89eaf7ab2c04b0abaf74ede",
+      "actual": "4b381d5411ccd91802fd88e23a8170f5edf061dab89eaf7ab2c04b0abaf74ede",
+      "PASS": true
+    },
+    "git_head": {
+      "PASS": true
+    },
+    "git_branch": {
+      "PASS": true
+    }
+  },
+  "product_edits_performed": false,
+  "backup_file_content_not_inspected": true,
+  "prior_photos_not_redecoded": true
+}

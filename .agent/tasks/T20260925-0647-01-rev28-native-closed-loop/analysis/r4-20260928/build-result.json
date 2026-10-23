@@ -1,0 +1,12 @@
+{
+  "command": [
+    "xcrun",
+    "swift",
+    "build",
+    "--package-path",
+    "rev28"
+  ],
+  "startedAt": "2026-09-28T14:21:54.115193+00:00",
+  "exitCode": 0,
+  "endedAt": "2026-09-28T14:22:02.047696+00:00"
+}

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "swift",
+    "build",
+    "--package-path",
+    "rev28",
+    "--product",
+    "rev28ctl"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "exit_code": 0,
+  "duration_seconds": 0.476,
+  "at_utc": "2026-10-04T11:22:27.495780+00:00",
+  "log": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/build-02.log",
+  "log_bytes": 141,
+  "log_sha256": "3c055c0f387a300022acae68066ae6e25da4e5e01e48e672aa9944bd3a8471c2",
+  "tests_summary": null
+}

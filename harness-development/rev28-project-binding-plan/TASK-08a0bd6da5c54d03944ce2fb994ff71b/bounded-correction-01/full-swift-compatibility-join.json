@@ -1,0 +1,39 @@
+{
+  "verdict": "PASS",
+  "full_check": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-full.json",
+    "bytes": 22653,
+    "sha256": "73cb7aefb528883dff93e80345787c5c2ebc2ec80533de29a3b20e02e9267823"
+  },
+  "full_log": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-full.log",
+    "bytes": 82964,
+    "sha256": "9e1cb9205c10e64807d721f0a4b4cad068c34ad75f12bb1a050228f6b94dc91c"
+  },
+  "final_manifest": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-source-manifest.json",
+    "bytes": 34327,
+    "sha256": "1c15dbf4949231e9b7ac96c8721c4965e8ed610b4ee8276ee2859d312fdb8bbe"
+  },
+  "all_swift_source_and_tests_byte_identical": true,
+  "full_tests": 318,
+  "failures": 0,
+  "skipped": 0,
+  "prior_legacy": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-swift-legacy.json",
+    "bytes": 22757,
+    "sha256": "ca697cab2ae454c292ed99b04d1602e2cbe425dc8fa29e307dfe1a67a1c64636"
+  },
+  "prior_cli_build": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/candidate-02-cli-build.json",
+    "bytes": 22682,
+    "sha256": "ddb0f087e08b82ac950249df99fccf6bac27aa0448cc237c1c5d2e7e5408c9b6"
+  },
+  "prior_packet_loads": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/retained-packet-compatibility.json",
+    "bytes": 2768,
+    "sha256": "987569476f84f8ae0667710d469db0a7764d3151651c30e9e5274dc5123640cf"
+  },
+  "CLI_and_loader_binary_bytes_identical": true,
+  "reason": "Granted correction changes only Python producer/tests; final-source byte joins preserve prior fullSwift/build/loader evidence. Updated producer/consumer raw-source fixtures and actual CLI checked anew."
+}

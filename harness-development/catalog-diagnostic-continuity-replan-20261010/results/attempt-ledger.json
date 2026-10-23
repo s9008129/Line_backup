@@ -1,0 +1,77 @@
+{
+ "format": "local-attempt-ledger-1",
+ "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+ "append_only": true,
+ "note": "Append-only factual ledger. Historic root-cause attempts are NOT reset by this new task; the authorized additional slot is recorded separately.",
+ "events": [
+  {
+   "event": "historic_method_attempts",
+   "count": 3,
+   "source": "harness-development/catalog-diagnostic-20261010/attempt-01.json, implementer.result.json (convergence.meaningful_attempts=3), report.md",
+   "facts": [
+    "Attempt 1: frozen .95 confidence threshold + prior-rendered-alias requirement failed on a fresh Albums frame (header conf 0.5, albums conf 0.30); zero scrolls.",
+    "Attempts 2-3: fixed 2x full-frame derivative method passed probe review, then three real single-input .25-page scrolls were used; the third post-frame showed legacy 相簿 vs modern 相溥 disagreement and stopped.",
+    "Original six statuses remain NOT_ACHIEVED / BLOCKED / BLOCKED / FAIL / NOT_REQUIRED / IMPLEMENTATION_BLOCKED."
+   ],
+   "live_scrolls_total_across_history": 3
+  },
+  {
+   "event": "authorized_additional_method_slot",
+   "count": 1,
+   "authorization_source": "authorization.json decision bounded-extension ('我授權你用最佳的方式處理') and plan-contract.json",
+   "scope": "one fixed offline replay + reverse tests, plus one live session of at most six documented non-download App.scroll calls"
+  },
+  {
+   "event": "additional_method_slot_used",
+   "value": true,
+   "consumed_at": "2026-10-10 before the first new-OCR verification completed",
+   "candidate_hash": "646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6",
+   "profile_sha256": "see offline-validation/candidate-manifest.json files.profiles.json",
+   "hypothesis": "A frozen full-slot exact-RGBA text continuity guard (not per-frame tab OCR agreement) plus independent selected-indicator structure and separate date/count identity, movement and ordered-overlap judgments can carry the catalog diagnostic across the four historical frames, including the scan-003 相溥/相簿 variance.",
+   "falsifiable_expected_result": "All four replay frames pass full-slot continuity, the selected indicator stays unique under 相簿 and clear under 記事本, every shared date/count identity yields one joint up-move D range and adjacent ordered overlap; scan-003 modern text still reads 相溥 and is preserved; replay never grants live permission.",
+   "actual_learning": {
+    "result": "PASS",
+    "joint_D_observed": {
+     "scan_000_to_001": [
+      -292.0291666666666,
+      -243.80416666666667
+     ],
+     "scan_001_to_002": [
+      -292.0291666063855,
+      -243.80416660638537
+     ],
+     "scan_002_to_003": [
+      -292.02916669792364,
+      -246.4833333645903
+     ]
+    },
+    "scan_003_modern_text_preserved": "相溥 (confidence 0.30) kept verbatim; no replacement or threshold",
+    "checks_passed": 19,
+    "checks_not_run": 1,
+    "not_run_check": "R20 (six real live steps; no documented CUA live surface exercised in this offline environment)",
+    "notes": [
+     "Full-slot RGBA was bit-identical across all four frames for rows 0..191, so the old failure mode (per-frame tab OCR flapping) no longer gates continuity.",
+     "OCR outputs were byte-stable across all development runs of the runner (16 artifacts compared by sha256), so no parameter search occurred."
+    ]
+   },
+   "information_gain": true,
+   "stop_reason": null
+  },
+  {
+   "event": "live_slot",
+   "live_session_slots": 1,
+   "live_session_slot_used": false,
+   "scroll_calls_used": 0,
+   "remaining_budget": 6,
+   "reason": "G_LIVE preconditions not met: no independent same-candidate pre-live review receipt and no documented CUA live surface exercised in this offline environment."
+  }
+ ],
+ "totals": {
+  "historic_method_attempts": 3,
+  "authorized_additional_method_slots": 1,
+  "additional_method_slot_used": true,
+  "historic_plus_actual_extension": 4,
+  "public_v3_convergence_value_kept": 3,
+  "public_v3_note": "schemas/v3 convergence.meaningful_attempts stays <= 3; the true 3+1 total lives in this ledger."
+ }
+}

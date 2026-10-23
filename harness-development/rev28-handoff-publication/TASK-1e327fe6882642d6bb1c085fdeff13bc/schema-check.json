@@ -1,0 +1,11 @@
+{
+  "verdict": "PASS",
+  "schema_root": "/Users/hsiaojohnny/.codex/harness-releases/4.8.0/2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f/source/schemas/v3",
+  "validated": [
+    "plan-contract.json",
+    "planner.result.json"
+  ],
+  "handoff_byte_identical": true,
+  "network_schema_resolution": false,
+  "method": "Complete pinned offline referencing.Registry; unknown retrieval raises error. Standalone role validation, not controller admission."
+}

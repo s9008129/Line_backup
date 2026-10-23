@@ -1,0 +1,23 @@
+{
+  "config/line_backup_config.json": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+  "state/backup_state.json": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9",
+  "state/run_log.md": "d96739e255261a6f1e1eae02df928a55d64192b3d1146983e6f2c40ad6528333",
+  ".git/index": "4b381d5411ccd91802fd88e23a8170f5edf061dab89eaf7ab2c04b0abaf74ede",
+  "git_head": "7eb350a62bb092c7597a01955281f579c128a545",
+  "git_branch": "v43-ab/codex-rev28",
+  "historical_user_confirmation": {
+    "time_origin": "No platform timestamp fabricated",
+    "prepared_message": "已就緒",
+    "identity_question": "Currently rendered 晏謙允禎成長日記 is the same group as configured 旻謙允禎成長日記?",
+    "identity_answer": "是",
+    "scope": "Canonical config/group_key unchanged; user confirmation for current UI context only",
+    "route_question_pending": false,
+    "preparation_history": [
+      {
+        "route_question_pending": true
+      }
+    ],
+    "current_ui_freshness": "INVALIDATED: user said foreground is being taken away; no click or live state yet. Reacquire fresh UI when offline readiness complete."
+  },
+  "user_image_sha256": "65236562586184c4655ada2d8b52011099491740b900d43050ce3be594178bfd"
+}

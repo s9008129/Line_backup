@@ -1,0 +1,167 @@
+{
+  "kind": "IMPLEMENTER_EVIDENCE_MANIFEST",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "run_id": "53f1351d-45b4-48f6-921c-81506e411d7d",
+  "stage": "IMPLEMENT",
+  "role": "IMPLEMENTER",
+  "source_sha256": "6acdec34fbfd163e560bbe8ec93661a64a4bd8fcb24f0ced9e27971e99b69064",
+  "contract_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+  "entries": [
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/g-auth.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/g-auth.json",
+      "bytes": 8114,
+      "sha256": "56567d6cad77be998a5c10952920ac36f5e3421e48c53e152ff59ec5ea668a38"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/g-offline.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/g-offline.json",
+      "bytes": 50807,
+      "sha256": "8b091b837286e27356743e722cc23b44c76a06a80945c7b09e63711c02eefacb"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/state-continuity.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/state-continuity.json",
+      "bytes": 1206,
+      "sha256": "638bedbb7b41f91328703a8ff3891f983d36ff8fe0aad46feae7fca73f543702"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/preservation.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/preservation.json",
+      "bytes": 9109,
+      "sha256": "e735a2f44b28bb988e74895af0f4dd0883c1d60729720d0d4f19a5083d375207"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-03.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-03.receipt.json",
+      "bytes": 685,
+      "sha256": "17f40c3c70ebcdf9ae203c3f7df7b98762ed76e119dc5604339363bb8b69d01f"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-03.stdout",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-03.stdout",
+      "bytes": 85955,
+      "sha256": "d1aaa94f715d456c1908cd481315a0f46397a76e4b7a2b47cdca8227cba4dda6"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-03.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/swift-full-suite-03.stderr",
+      "bytes": 298,
+      "sha256": "3b955a3a547eaac6435e0581b09d275b3eeca934e51b0edbed773117b17c596e"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/batch-python-06.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/batch-python-06.receipt.json",
+      "bytes": 671,
+      "sha256": "517d2494bf29ab8bf796b02043ac7640f1b5bb8072b020aaed06ae76a6abc318"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/batch-python-06.stderr",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/batch-python-06.stderr",
+      "bytes": 10460,
+      "sha256": "0d0ceb1ad142485d043005d256069791beaa61906c6e55b78d8136960d2c1533"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/adapter-suite-04.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/adapter-suite-04.receipt.json",
+      "bytes": 673,
+      "sha256": "414c7ce936ae5a757309f9655b4afacda81d80bce5498f43c431c9ee80855441"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/classifier-suite-04.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/classifier-suite-04.receipt.json",
+      "bytes": 681,
+      "sha256": "a078424547f6bd5b7bc24b6de2453bf2f68644db074d07ba0579e4c6af620a68"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/runner-suite-03.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/runner-suite-03.receipt.json",
+      "bytes": 669,
+      "sha256": "b141cfaaa9de9d96b17931eac7d9e1ed3de50e68b3e033f64b9488427b75c04f"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/auth-suite-02.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/auth-suite-02.receipt.json",
+      "bytes": 664,
+      "sha256": "dfba63ae7cc38328525a3e65269a2fb50442b3a1a3c14c370843054296186993"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-03.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-03.receipt.json",
+      "bytes": 681,
+      "sha256": "2a5eecb54de879ab6c2e5dc0cbfb9e4eac2cfc718aba2f7950886ef547110f67"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/producer-cli-preflight-01.receipt.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/producer-cli-preflight-01.receipt.json",
+      "bytes": 699,
+      "sha256": "0b5824836a62a1be2bc2a590723c6f554aa99df5a902c512ab5520c9c779a570"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/E2E測試報告.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/E2E測試報告.md",
+      "bytes": 21632,
+      "sha256": "868b09d4bfc5224832909212e1118a785ec739c35f69c4613c8ee1f55c6a2a46"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/progress.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/progress.md",
+      "bytes": 1894,
+      "sha256": "42f93c7eb2dccc73b9c7bd14cba17a53d4b9b5f6b5001917acfbb7a27aed527b"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/blocker-packet.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/blocker-packet.md",
+      "bytes": 2547,
+      "sha256": "e0d2866e0c70a5b05561c887c12c688d90abfecabb51359005a5374f65895a8c"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+      "bytes": 10014,
+      "sha256": "205461d838d4d1b4d596c5637e03ea087373d229837c3b4aec57fe5a4cdeba1a"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/runtime-binding.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/runtime-binding.json",
+      "bytes": 24270,
+      "sha256": "b8a46d64b20ada6fc67b309b1902816c52954325e0b30fe4cfffd55441b04a28"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/authorization.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/authorization.json",
+      "bytes": 1738,
+      "sha256": "0e3adabe2907761785d32bb5dab93a5b0af78714e99c1921f7bfbccef1abc7b3"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-1.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-1.json",
+      "bytes": 2295,
+      "sha256": "ff87076087221ca67a3fc7723cddd12a0d800cffab73ce973ef5f0b2a0114277"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-2.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-2.json",
+      "bytes": 2295,
+      "sha256": "78cad2a0262de68e10dbb01f9513149b5b46ab53e3ee635cce184b1172d35b1b"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-review-waiver.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-review-waiver.json",
+      "bytes": 666,
+      "sha256": "1e4524ab74f54b98237e4a629f6e0c868be65ac6180aca192eca814b144aa163"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan.md",
+      "bytes": 30678,
+      "sha256": "001b90861631fe27b0d21ec871be5fc19446bf3070e88bb116350a0f3690708c"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/handoff.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/handoff.md",
+      "bytes": 18640,
+      "sha256": "d44fa1eb21fd15b50fcc2131c5a5499be69ce3b40bbf69b128f6f3cc8ee4df03"
+    }
+  ]
+}

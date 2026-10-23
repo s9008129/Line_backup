@@ -1,0 +1,25 @@
+✖ classifier returns exactly the frozen 17-key frame with captured-source bindings (1.475375ms)
+✔ classifier rejects an analyzer result from another screenshot (0.251834ms)
+✔ chooser locators only resolve a typed focused path field and enabled confirm control (0.706333ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 2
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49.36075
+
+✖ failing tests:
+
+test at harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/checks/test_live_classifier.mjs:50:1
+✖ classifier returns exactly the frozen 17-key frame with captured-source bindings (1.475375ms)
+  Error: CLASSIFIER_BOUNDARY_EVIDENCE
+      at fail (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_classifier.mjs:3:44)
+      at need (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_classifier.mjs:4:39)
+      at Object.classify (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_classifier.mjs:121:5)
+      at async TestContext.<anonymous> (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/checks/test_live_classifier.mjs:52:21)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    code: 'CLASSIFIER_BOUNDARY_EVIDENCE'
+  }

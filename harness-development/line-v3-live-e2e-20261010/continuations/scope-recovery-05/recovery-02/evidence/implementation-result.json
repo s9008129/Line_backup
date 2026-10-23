@@ -1,0 +1,242 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261011-line-baseline-recovery-02",
+  "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+  "role": "IMPLEMENTER",
+  "candidate_fact": "FAIL",
+  "validation_fact": "NOT_RUN",
+  "routing_fact": "PLANNER_REPLAN",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "CORE_ACCEPTANCE_STATUS": "FAIL",
+    "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "NOT_REQUIRED",
+    "TASK_CLOSURE_STATUS": "REPLAN_REQUIRED"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G_BASELINE",
+      "verdict": "PASS",
+      "evidence_manifest": "evidence/g-baseline-recovery-02.json"
+    },
+    {
+      "gate_id": "G_RUNNER",
+      "verdict": "PASS",
+      "evidence_manifest": "evidence/g-runner.json"
+    },
+    {
+      "gate_id": "G_ADAPTER_OFFLINE",
+      "verdict": "PASS",
+      "evidence_manifest": "evidence/g-adapter-offline.json"
+    },
+    {
+      "gate_id": "G_PRESERVE",
+      "verdict": "FAIL",
+      "evidence_manifest": "evidence/preservation-recovery-02.json"
+    },
+    {
+      "gate_id": "G_REPORT",
+      "verdict": "PASS",
+      "evidence_manifest": "evidence/report-manifest.json"
+    }
+  ],
+  "evidence_ids": [
+    "E_BOOTSTRAP",
+    "E_BASELINE_RECOVERY_02",
+    "E_INCIDENT_RECONCILIATION",
+    "E_RUNNER",
+    "E_ADAPTER_OFFLINE",
+    "E_PRESERVATION_RECOVERY_02",
+    "E_REPORT",
+    "E_PROGRESS",
+    "E_REPORT_MANIFEST"
+  ],
+  "blocker_fingerprint": "recovery-02:g-preserve:host-capture-file-consistency:2026-10-11",
+  "information_gain": true,
+  "stage": "IMPLEMENT",
+  "plan_sha256": "6604529c8e9bf06aa59eeb4a0c92358a0b0e7218335d6cd568e8cd4d96bb71bc",
+  "handoff_sha256": "fa076f677c547abe690f6b0be5d1d996c85110bc89cd5634c4f023022a72c3c5",
+  "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-20261011-line-baseline-recovery-02",
+      "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_BOOTSTRAP",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/bootstrap-prewrite-runroot-v2.json",
+      "bytes": 26694,
+      "sha256": "4e067bac795173164d11361029c09d4f4a17890d07f3c90cbfbc2428c45f96ce",
+      "contract_sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+      "observation": "Pre-write anchor hashed before any contract/tool write; self-declared NOT_A_GATE."
+    },
+    {
+      "task_id": "TASK-20261011-line-baseline-recovery-02",
+      "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_BASELINE_RECOVERY_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-baseline-recovery-02.json",
+      "bytes": 24360,
+      "sha256": "879e4aec93999278f32b175b7850ac1ff87527eafe86829a46c0c708fc772279",
+      "contract_sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+      "observation": "G_BASELINE PASS 37/37; two identical fresh full inventories; historical/bootstrap reconciliation; FIFO lstat-only."
+    },
+    {
+      "task_id": "TASK-20261011-line-baseline-recovery-02",
+      "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_INCIDENT_RECONCILIATION",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/incident-reconciliation.json",
+      "bytes": 5045,
+      "sha256": "f7ed1782ccb48f83ea3be58d8e3e2143e95069d38a54f4a3cd6c1e531406ab63",
+      "contract_sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+      "observation": "Read-only parent-round incident reconciliation retained unchanged."
+    },
+    {
+      "task_id": "TASK-20261011-line-baseline-recovery-02",
+      "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_RUNNER",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-runner.json",
+      "bytes": 7361,
+      "sha256": "072bf7c508a2631315b2e23f7c47f47c82c8ed408340e45cf86b43acfeaf202b",
+      "contract_sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+      "observation": "G_RUNNER PASS 11/11; fixed-root preflight PREFLIGHT_OK; runner self-test 12/12."
+    },
+    {
+      "task_id": "TASK-20261011-line-baseline-recovery-02",
+      "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_ADAPTER_OFFLINE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-adapter-offline.json",
+      "bytes": 8948,
+      "sha256": "ad59db8d590adf580f48c34b103f0989b0abe0a3cc8266bba5a95f2f699257b1",
+      "contract_sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+      "observation": "G_ADAPTER_OFFLINE PASS 15/15; unchanged hashes; Node syntax and full suite PASS."
+    },
+    {
+      "task_id": "TASK-20261011-line-baseline-recovery-02",
+      "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_PRESERVATION_RECOVERY_02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/preservation-recovery-02.json",
+      "bytes": 18870,
+      "sha256": "c8d9d2ba15250bc595944c2abbcae4261ddb723a7d616020720e506e7f6ae9d7",
+      "contract_sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+      "observation": "G_PRESERVE FAIL: 23 checks / 22 ok; compare_preservation 7 failures (host-capture files vs declared self-output policy); verdict preserved, never lowered or rerun."
+    },
+    {
+      "task_id": "TASK-20261011-line-baseline-recovery-02",
+      "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_REPORT",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/E2E測試報告.md",
+      "bytes": 43533,
+      "sha256": "0336b8990edae40bc6ea561d161a9059e97e58fab5398964bdc331f26b71feca",
+      "contract_sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+      "observation": "Full implementation-stage report; Planner handoff pending (no channel)."
+    },
+    {
+      "task_id": "TASK-20261011-line-baseline-recovery-02",
+      "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_REPORT_MANIFEST",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/report-manifest.json",
+      "bytes": 50795,
+      "sha256": "1cdb2cba9089460179f018c6b7a03fccafec563156c3353cacd4ff31a795edc0",
+      "contract_sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+      "observation": "The manifest content and file references were read back. This is not native Harness evidence."
+    },
+    {
+      "task_id": "TASK-20261011-line-baseline-recovery-02",
+      "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "bf83dd93e8fd53ace40d6a65f09bcfa9bf31ffa0fbfff92dfb2e8f43459026d2",
+      "evidence_id": "E_PROGRESS",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/progress.md",
+      "bytes": 4267,
+      "sha256": "3f626c55ba07a4fe8a542651d118dc20b8e3ceaf9e641e08bf9b1c37a49b592a",
+      "contract_sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+      "observation": "Plain-language status and next decision."
+    }
+  ],
+  "plan_contract_sha256": "057145c121290465b8c4970ed85f30ad860be91013336c301f46ea77c1c6f45a",
+  "analysis": {
+    "facts": [
+      "G_BASELINE PASS: evidence/g-baseline-recovery-02.json 37/37 checks, 0 failures; two fresh full inventories (128671/128672 records) compare equal; historical/bootstrap reconciliation missing 0 / changed 0 outside RUNROOT; FIFO observed by lstat only (content_read=false, content_hash=null); 239 backup files all read_verified.",
+      "G_RUNNER PASS: evidence/g-runner.json 11/11 checks, 0 failures; fixed-root preflight PREFLIGHT_OK; runner self-test 12/12 with raw invocation/receipt/stream evidence.",
+      "G_ADAPTER_OFFLINE PASS: evidence/g-adapter-offline.json 15/15 checks (internal gate_id 'g-adapter'); adapter/tests hashes unchanged (bf83dd93…/0bb0d996…); Node syntax PASS; full existing+supplemental suite PASS.",
+      "G_PRESERVE FAIL: evidence/preservation-recovery-02.json 23 checks, 22 ok, failures=[compare_preservation]; compare-preservation (21100 B, 3ee56302…) reports ADDED_NOT_ALLOWED x2 (tmp/inventory-preservation-02.stdout/.stderr) and FIELD_MISMATCH x5 on tmp/inventory-preservation-01.stdout (0 B -> 725 B, 39d1010d…); b1->p2 delta itself clean (added 35 = declared planned additions, removed 0, changed 0).",
+      "Host-capture files tmp/inventory-preservation-0*.stdout/.stderr are comparator-invocation outputs inside RUNROOT tmp; SELF_OUTPUTS (checks/compare_inventories.py L55-60) declares only the four evidence/ inventory JSONs, so the comparator flags its own capture as added/changed files.",
+      "The FAIL was deterministically reproducible in the one-shot run; per stop rules the gate was preserved (no rerun, no lowering, no baseline update) and the decision was referred to Planner.",
+      "No LINE UI/foreground, no Save All/chooser/download, no product/state/config/ledger/backups writes, no commit/push, no network; adapter/state/config/gui-ledger hashes unchanged; product budget LIVE_CLASSIFIER_CHOOSER 3/3 consumed (third at node-adapter-syntax-02 launch 03:14:19.529959Z).",
+      "Tail deliverables completed this continuation: E2E測試報告.md 43533/0336b899…, progress.md 4267/3f626c55…, attempt-ledger-recovery-02.json 35079/827c5241…, evidence/report-manifest.json 50795/1cdb2cba….",
+      "Observed extra file RUNROOT/檢討報告.md (authored outside this round's chain; preserved read-only, hash recorded in the manifest).",
+      "native Harness admission/contract/result validation NOT_RUN; no stage packet; no controller writer allocations/receipts."
+    ],
+    "inferences": [
+      "The G_PRESERVE failure is a check-policy modeling gap for the comparator's own host-capture streams, not a preservation regression: the measured delta equals the declared additions exactly, RUNROOT-outside drift is 0, and FIFO/backups are intact.",
+      "Re-running the same one-shot check set would add no information; the smallest safe path to a PASS-able preservation verification is to declare or avoid the host-capture files and re-verify under a fresh lineage without lowering the gate."
+    ],
+    "unknowns": [
+      "Whether the Planner selects option A/B/C; whether product attempt budget is renewed and whether native validators are rebound in a new run.",
+      "attempt-ledger records the runner-selftest cleanup deletions as UNKNOWN while on-disk stdout evidence (baseline-selftest-02.stdout removed.paths=68) exists; the discrepancy is flagged for Planner reconciliation on disk evidence.",
+      "Pre-freeze helper intermediate revisions are only partially recoverable; older ledger attempts remain UNKNOWN."
+    ],
+    "evidence": [
+      "evidence/g-baseline-recovery-02.json (24360 B; SHA-256 879e4aec93999278f32b175b7850ac1ff87527eafe86829a46c0c708fc772279)",
+      "evidence/g-runner.json (7361 B; SHA-256 072bf7c508a2631315b2e23f7c47f47c82c8ed408340e45cf86b43acfeaf202b)",
+      "evidence/g-adapter-offline.json (8948 B; SHA-256 ad59db8d590adf580f48c34b103f0989b0abe0a3cc8266bba5a95f2f699257b1)",
+      "evidence/preservation-recovery-02.json (18870 B; SHA-256 c8d9d2ba15250bc595944c2abbcae4261ddb723a7d616020720e506e7f6ae9d7)",
+      "evidence/compare-preservation.json (21100 B; SHA-256 3ee56302567089d4a0739e301a52c70e18e243a477cb159904a5f8f263d675bd)",
+      "E2E測試報告.md (43533 B; SHA-256 0336b8990edae40bc6ea561d161a9059e97e58fab5398964bdc331f26b71feca)",
+      "evidence/report-manifest.json (50795 B; SHA-256 1cdb2cba9089460179f018c6b7a03fccafec563156c3353cacd4ff31a795edc0)"
+    ],
+    "confidence": "High for the recorded gate verdicts and the deterministic host-capture/policy interaction; no claim is made about preservation beyond the measured delta or about native validation.",
+    "dependencies": {
+      "G_BASELINE": "PREREQUISITE_SATISFIED",
+      "G_RUNNER": "PREREQUISITE_SATISFIED",
+      "G_ADAPTER_OFFLINE": "PREREQUISITE_SATISFIED",
+      "G_PRESERVE": "INDEPENDENT",
+      "G_REPORT": "PREREQUISITE_SATISFIED"
+    }
+  },
+  "handoff_summary": "本地目標：G_BASELINE PASS（37/37）、G_RUNNER PASS（11/11）、G_ADAPTER_OFFLINE PASS（15/15）；G_PRESERVE FAIL（23 checks/22 ok；compare_preservation 7 筆全為 host-capture stdout/stderr 未被宣告為 self output 的 deterministic policy 互動；b1→p2 delta 乾淨：added 35 已宣告、removed 0、changed 0，FIFO 僅 lstat、239 backups 全部 read_verified；gate 未降低、未重跑）。報告、progress、attempt ledger、report-manifest 與本 result 均已完成並 readback（manifest 50795 B / 1cdb2cba…）。parent 維持 NOT_ACHIEVED/BLOCKED/BLOCKED/INCOMPLETE/PENDING/REPLAN_REQUIRED；SCROLL_TEST_NOT_RUN、兩本交易未執行、本輪無 LINE 前景需求。Planner 交接無通道、尚未提交；native validators NOT_RUN、無 stage packet。需決策：依報告 §12 選項 A 準備新 reviewed Plan 修正 capture/compare policy，再以 fresh lineage 重驗 preservation；產品 LIVE_CLASSIFIER_CHOOSER 額度 3/3 已用盡。另觀察到 RUNROOT 內非本鏈新增的 檢討報告.md（已保全並記錄）。",
+  "needs_human": true,
+  "human_decisions": [
+    {
+      "id": "PLAN_CAPTURE_POLICY_PRESERVE_RECOVERY",
+      "question": "是否依 E2E測試報告 §12 選項 A 準備新 reviewed Plan：把 tmp host-capture stdout/stderr 宣告為 allowed self outputs（或改為不落地捕捉），再以 fresh lineage 重驗 preservation（不得降低 gate）？並請一併裁示產品 LIVE_CLASSIFIER_CHOOSER 額度 3/3 已用盡後是否重配，以及新 run 是否重新綁定 native validators。",
+      "options": [
+        "A（建議）：修正 capture/compare policy 後以 fresh lineage 重驗 preservation",
+        "B：維持現行 policy，以 delta 乾淨事實申請替代判定（需 waiver，CORE/MUST_NOT_BREAK，不建議）",
+        "C：由 Planner 重新凍結 check 集合與 policy（含額度與 stage packet 決策）"
+      ],
+      "recommendation": "建議 A：最小且不降 gate；B 不建議；同時保留既有 FAIL 收據不動，任何重驗以新 evidence ID 進行。注意產品額度已 3/3 用盡。"
+    }
+  ],
+  "convergence": {
+    "meaningful_attempts": 3,
+    "consecutive_no_progress": 0,
+    "last_attempt": "第三次集合已於 node-adapter-syntax-02 launch（03:14:19.529959Z）消耗後完成 G_ADAPTER_OFFLINE PASS；G_PRESERVE 首跑即確定性 FAIL 於 host-capture×policy 互動，已保全現場並停止依賴步驟。",
+    "information_gain": true,
+    "stuck": false
+  }
+}

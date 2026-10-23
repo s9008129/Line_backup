@@ -1,0 +1,51 @@
+{
+  "kind": "DOCUMENT_PUBLICATION_BASELINE_NOT_IMPLEMENTATION_GATE_PASS",
+  "created_at": "2026-10-10T22:40:27.025345+00:00",
+  "task_id": "TASK-20261011-line-receipt-recovery",
+  "run_id": "6f0a3c14-12e3-4c54-9981-95593c26f789",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "con": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05",
+  "head": "3d8539a8447a3bfee08f493c4d2322772422c5d3",
+  "branch": "v43-ab/codex-rev28",
+  "index_sha256": "332ee75226fe1928e73427e4f635b2ff04cd93429c44cee3814af6f16d7f1519",
+  "staged_paths": [],
+  "status_bytes": 11943372,
+  "status_sha256": "67f7855774654f9f32f635fba5dbc80262b1e72fc950d32df00360a39fa40f04",
+  "preexisting_file_count": 98513,
+  "preexisting_manifest": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/preexisting-files.json",
+    "bytes": 27949525,
+    "sha256": "b115df6ea55e3a985e98651018e742769b02e6f7854989e68f8d7214680832f2"
+  },
+  "scope_incident": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/scope-incident-001.json",
+    "kind": "REGULAR",
+    "bytes": 5976,
+    "sha256": "0fa1e0d11325bdbc15290b98d178cd808e89ae9aaf3c773bf106ee3f8c56418f",
+    "mode": 420
+  },
+  "parent_task_id": "TASK-20261010-line-v3-live-e2e",
+  "state": {
+    "path": "state/backup_state.json",
+    "kind": "REGULAR",
+    "bytes": 252115,
+    "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+    "mode": 384
+  },
+  "config": {
+    "path": "config/line_backup_config.json",
+    "kind": "REGULAR",
+    "bytes": 384,
+    "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+    "mode": 420
+  },
+  "gui_ledger": {
+    "path": "harness-development/line-v3-live-e2e-20261010/gui-ledger.json",
+    "kind": "REGULAR",
+    "bytes": 123,
+    "sha256": "92bab0cf122871b42f3db62af956289b62fbf4e279219766a8850b61f20e135f",
+    "mode": 420
+  },
+  "backup_file_count": 239,
+  "native_admission": "NOT_RUN"
+}

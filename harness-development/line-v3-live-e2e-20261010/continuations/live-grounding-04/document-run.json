@@ -1,0 +1,24 @@
+{
+  "kind": "LOCAL_DOCUMENT_AUTHORING_NOT_CONTROLLER",
+  "local_run_id": "e07ebadf-aca8-498c-927c-8f8b11051251",
+  "created_at": "2026-10-10T15:40:43.487484+00:00",
+  "controller_run_id": null,
+  "controller_invitation": null,
+  "native_admission": "NOT_RUN",
+  "authority": [
+    "本次修正計劃不需要獨立審查",
+    "acceptance_scope = 橋接修復＋兩本 E2E (Recommended)",
+    "evidence_contract = 加入 v2 證據 (Recommended)",
+    "layout_precondition = 允許調整版面 (Recommended)",
+    "同意文件落檔與 add,commit,push"
+  ],
+  "scope": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04",
+  "role": "PLANNER",
+  "research_helper": {
+    "task_name": "/root/native_evidence_research",
+    "requested_model": "gpt-6-luna",
+    "read_only": true,
+    "completed": true,
+    "controller_allocation": null
+  }
+}

@@ -1,0 +1,97 @@
+diff --git a/scripts/line_backup_cua_adapter.mjs b/scripts/line_backup_cua_adapter.mjs
+index 0b9ff562abad2efc7affb695c3c93ea769abcde2..b193cc996b8de7199c448b4915e9fa1bdff111b3 100644
+--- a/scripts/line_backup_cua_adapter.mjs
++++ b/scripts/line_backup_cua_adapter.mjs
+@@ -75,10 +75,13 @@ export function createAlbumSupportCallbacks({invokeProducer}) {
+ }
+ 
+ export function createHostedSession({app, bridge, retain, classify, classifyChooser = null, requireV2 = false,
+-    chooser = null, sessionId = randomUUID(),
++    chooser = null, beforeCapture = null, afterCapture = null, sessionId = randomUUID(),
+     clock = () => performance.now(), wait = ms => new Promise(r => setTimeout(r,ms)), menuWaitMs = 1200}) {
+   requireFact(app && ['getAXStateAndScreenshot','getAXState','click','pressKey','setValue','scroll'].every(k => typeof app[k] === 'function'), 'DOCUMENTED_APP_REQUIRED');
+   requireFact(typeof bridge === 'function' && typeof retain === 'function' && typeof classify === 'function','HOST_BRIDGE_REQUIRED');
++  const hasCaptureContextHooks = beforeCapture !== null || afterCapture !== null;
++  requireFact(!hasCaptureContextHooks || (typeof beforeCapture === 'function' && typeof afterCapture === 'function'),
++    'CAPTURE_CONTEXT_HOOKS_REQUIRED');
+   requireFact(Number.isInteger(menuWaitMs) && menuWaitMs >= 800 && menuWaitMs <= 1500,'MENU_WAIT_OUTSIDE_POLICY');
+   if (requireV2) requireFact(typeof classifyChooser === 'function' && chooser
+     && ['locatePathField','validatePath','validateLeaf','locateConfirm','refreshBaseline','observeDownload']
+@@ -107,6 +110,9 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
+   }
+   async function observe() {
+     requireFact(!stopped,'SESSION_STOPPED');
++    // Native context sampling happens outside the GUI capture call. The callback
++    // receives no app handle, so it cannot interleave input into a GUI action.
++    const beforeContext = hasCaptureContextHooks ? await beforeCapture({sessionId}) : null;
+     const requestStartedAtMonotonic = clock();
+     const requestStartedAtUtc = new Date().toISOString();
+     const rawCapture = await app.getAXStateAndScreenshot({emit:false,disableDiffing:true});
+@@ -123,19 +129,26 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
+     const saved = await retain({screenshot,ax:capture.state,frameId,sessionId,capturedAt:requestStartedAtUtc,
+       requestStartedAtUtc,requestEndedAtUtc,monotonicInterval});
+     verifyFrameReference(saved,frameId,screenshot.byteLength);
+-    const observation = await classify({capture,saved,frameId,sessionId,capturedAt:requestStartedAtUtc,
++    // The retained CUA frame is available to native-context/OCR readers here.
++    // Keep capturedAt anchored to the original CUA request start; persistence
++    // and OCR work must never make the frame appear newer.
++    const afterContext = hasCaptureContextHooks ? await afterCapture({capture,saved,frameId,sessionId,
++      sourceBinding:beforeContext,capturedAt:requestStartedAtUtc,requestStartedAtUtc,requestEndedAtUtc,monotonicInterval}) : null;
++    const sourceBinding = hasCaptureContextHooks ? Object.freeze({before:beforeContext,after:afterContext}) : null;
++    const capturedContext = sourceBinding;
++    const observation = await classify({capture,saved,frameId,sessionId,sourceBinding,capturedContext,capturedAt:requestStartedAtUtc,
+       requestStartedAtUtc,requestEndedAtUtc,monotonicInterval});
+     requireFact(observation.frame_id === frameId && observation.session_id === sessionId,'CLASSIFIER_FRAME_MISMATCH');
+     // The capture interval starts before CUA and never renews during persistence/OCR.
+     latest = Object.freeze({frameId,at:requestStartedAtMonotonic,capturedAt:requestStartedAtUtc,
+-      requestStartedAtUtc,requestEndedAtUtc,monotonicInterval,observation,saved,capture});
++      requestStartedAtUtc,requestEndedAtUtc,monotonicInterval,sourceBinding,capturedContext,observation,saved,capture});
+     return observation;
+   }
+   async function makeChooserPhase(phase, dispatchInfo, previous=null) {
+     requireFact(typeof classifyChooser==='function' && latest,'CHOOSER_CLASSIFIER_REQUIRED');
+     const envelope=await classifyChooser({phase,dispatch:dispatchInfo,previous:previous?.envelope??null,
+       capture:latest.capture,saved:latest.saved,observation:latest.observation,frameId:latest.frameId,
+-      sessionId,capturedAt:latest.capturedAt});
++      sessionId,sourceBinding:latest.sourceBinding,capturedContext:latest.capturedContext,capturedAt:latest.capturedAt});
+     requireFact(envelope?.version===1 && envelope.phase===phase && envelope.frame?.frame_id===latest.frameId
+       && envelope.frame?.session_id===sessionId,'CHOOSER_PHASE_FRAME_MISMATCH');
+     const reference=await retain({artifact:envelope,kind:`chooser-phase-${phase.toLowerCase()}`,
+@@ -481,12 +494,15 @@ export function createHostedSession({app, bridge, retain, classify, classifyChoo
+ 
+ // A fresh object for post-VERIFIED navigation. It exposes no intent, menu, chooser,
+ // or dispatch capability and cannot revive a stopped transaction session.
+-export function createNavigationObserver({app,bridge,retain,classify,sessionId=randomUUID(),
++export function createNavigationObserver({app,bridge,retain,classify,beforeCapture=null,afterCapture=null,sessionId=randomUUID(),
+     clock=()=>performance.now()}) {
+   requireFact(app&&['getAXStateAndScreenshot','getAXState','click','pressKey','scroll'].every(k=>typeof app[k]==='function'),
+     'DOCUMENTED_APP_REQUIRED');
+   requireFact(typeof bridge==='function'&&typeof retain==='function'&&typeof classify==='function',
+     'NAVIGATION_OBSERVER_DEPENDENCIES');
++  const hasCaptureContextHooks=beforeCapture!==null||afterCapture!==null;
++  requireFact(!hasCaptureContextHooks||(typeof beforeCapture==='function'&&typeof afterCapture==='function'),
++    'CAPTURE_CONTEXT_HOOKS_REQUIRED');
+   let latest=null,closed=false;const trace=[];
+   const record=(event,extra={})=>trace.push(Object.freeze({event,at:clock(),wallAt:new Date().toISOString(),...extra}));
+   async function reserve(kind,count) {
+@@ -501,6 +517,7 @@ export function createNavigationObserver({app,bridge,retain,classify,sessionId=r
+   }
+   async function observe() {
+     requireFact(!closed,'NAVIGATION_OBSERVER_CLOSED');
++    const beforeContext=hasCaptureContextHooks?await beforeCapture({sessionId}):null;
+     const started=clock(),requestStartedAtUtc=new Date().toISOString();
+     const rawCapture=await app.getAXStateAndScreenshot({emit:false,disableDiffing:true});
+     const ended=clock(),requestEndedAtUtc=new Date().toISOString();
+@@ -513,7 +530,11 @@ export function createNavigationObserver({app,bridge,retain,classify,sessionId=r
+     const saved=await retain({screenshot,ax:capture.state,frameId,sessionId,capturedAt:requestStartedAtUtc,
+       requestStartedAtUtc,requestEndedAtUtc,monotonicInterval});
+     verifyFrameReference(saved,frameId,screenshot.byteLength);
+-    const observation=await classify({capture,saved,frameId,sessionId,capturedAt:requestStartedAtUtc,
++    const afterContext=hasCaptureContextHooks?await afterCapture({capture,saved,frameId,sessionId,
++      sourceBinding:beforeContext,capturedAt:requestStartedAtUtc,requestStartedAtUtc,requestEndedAtUtc,monotonicInterval}):null;
++    const sourceBinding=hasCaptureContextHooks?Object.freeze({before:beforeContext,after:afterContext}):null;
++    const capturedContext=sourceBinding;
++    const observation=await classify({capture,saved,frameId,sessionId,sourceBinding,capturedContext,capturedAt:requestStartedAtUtc,
+       requestStartedAtUtc,requestEndedAtUtc,monotonicInterval});
+     requireFact(observation.frame_id===frameId&&observation.session_id===sessionId,'CLASSIFIER_FRAME_MISMATCH');
+     latest=Object.freeze({started,capturedAt:requestStartedAtUtc,requestStartedAtUtc,requestEndedAtUtc,

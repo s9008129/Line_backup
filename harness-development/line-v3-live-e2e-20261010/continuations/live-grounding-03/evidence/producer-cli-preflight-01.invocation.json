@@ -1,0 +1,13 @@
+{
+  "check_id": "producer-cli-preflight-01",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "command": [
+    "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python3",
+    "-B",
+    "-c",
+    "import subprocess,sys; p=subprocess.run([\"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/bin/rev28ctl\"],stdout=subprocess.PIPE,stderr=subprocess.PIPE); sys.stdout.buffer.write(p.stdout); sys.stderr.buffer.write(p.stderr); sys.stderr.write(f\"\\nobserved_exit={p.returncode}\\n\"); sys.exit(0 if p.returncode==64 and b\"usage:\" in p.stderr else 1)"
+  ],
+  "started_at": "2026-10-10T13:57:01.959Z",
+  "ended_at": "2026-10-10T13:57:02.491Z",
+  "exit_code": 0
+}

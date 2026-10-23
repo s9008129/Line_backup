@@ -1,0 +1,9 @@
+G_OFFLINE: harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/results.json bytes=17723 sha256=9d6da4b653ed25b9db0f69960f545d96b24f99598cfd8f909a545dceae78e971
+G_OFFLINE: harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/candidate-manifest.json bytes=1341 sha256=675c55e384268f18f029f279b4c1f858691c8f462d3fa7a30be8314b788c9c1e
+G_OFFLINE: harness-development/catalog-diagnostic-continuity-replan-20261010/replay/manifest.json bytes=23099 sha256=204eb15b85679e2f084633f4bccc7a961adf33197c7aa80f77017e28a7b4ba2b
+G_OFFLINE: harness-development/catalog-diagnostic-continuity-replan-20261010/tmp/verify-packet-01/verify-packet.json bytes=25598 sha256=92d9d3ddec3be3c0725263c61ef6d33c387a596da0faed2c7ee928fa4f9b7c9f
+G_LIVE: harness-development/catalog-diagnostic-continuity-replan-20261010/results/pre-live-review.result.json bytes=1208 sha256=d4dd4195f93e659addb5e22de9f9af72b8f944e6a9dd457b81e605e6ef13d8c5
+G_PRESERVE: harness-development/catalog-diagnostic-continuity-replan-20261010/results/preservation.before.json bytes=260747 sha256=5f9facf6089a2d809f5f6fb26a4669ff1a39ba843543a5c70c2ffcbc86be7896
+G_PRESERVE: MISSING harness-development/catalog-diagnostic-continuity-replan-20261010/results/preservation.after.json
+G_PRESERVE: MISSING harness-development/catalog-diagnostic-continuity-replan-20261010/results/preservation.delta.json
+G_ACCEPTANCE: harness-development/catalog-diagnostic-continuity-replan-20261010/問題單.md bytes=4564 sha256=8fd16090bbb538bed89dcf745c55da9d80f1447d3c7e83f8acfe5a9966c5b337

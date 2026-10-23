@@ -1,0 +1,22 @@
+{
+  "phase": "OPEN_ALBUM",
+  "evidence": {
+    "observation_id": "CUA-project-album-card-01",
+    "source": "Immediately preceding fresh CUA combined AX/screenshot, 654x1286; no GUI action since it",
+    "group": "旻謙允禎成長日記",
+    "albums_context": "selected 相簿, visible complete target card",
+    "fingerprint": {"start_date": "2024-05-13", "end_date": "2024-05-17", "expected_images": 57},
+    "fully_visible": true,
+    "target_photo_bounds_screenshot": [32,282,588,588],
+    "target_metadata_safe_bounds_screenshot": [32,894,510,70],
+    "target_card_bounds_screenshot": [32,282,588,703],
+    "previous_card": "Only trailing count53 above target, at screenshot y207-231; outside target card",
+    "next_card_photo_top_screenshot": 1015,
+    "candidate_to_click_action_trace": [],
+    "click_coordinate": [130,920],
+    "coordinate_provenance": "Fresh rendered CUA screenshot-local position in date metadata; no external/native image transform applied. Use documented bound-app coordinate click, then affirm exact album date/count before any further action.",
+    "visual_status": "OBSERVED",
+    "album_open_ready": true,
+    "stop_condition": "Any unknown click effect only observes; a different album is terminal mismatch. No SaveAll before exact post-click MATCH."
+  }
+}

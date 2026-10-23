@@ -1,0 +1,713 @@
+{
+  "format_version": 3,
+  "task_id": "TASK-20261011-line-baseline-recovery-02",
+  "continuation": "recovery-02",
+  "run_id": "a8e86935-d398-4e9c-b860-03f52cba8fec",
+  "date": "2026-10-11",
+  "lineage": {
+    "parent_local_task": "TASK-20261011-line-receipt-recovery",
+    "parent_project_task": "TASK-20261010-line-v3-live-e2e",
+    "chain": [
+      "TASK-20261010-line-v3-live-e2e",
+      "TASK-20261011-line-receipt-recovery",
+      "TASK-20261011-line-baseline-recovery-02"
+    ]
+  },
+  "attempt_limit_per_root_issue": 3,
+  "escalate_after_consecutive_no_progress": 2,
+  "historical_attempt_ledger": {
+    "path": "harness-development/line-v3-live-e2e-20261010/attempt-ledger.json",
+    "bytes": 28144,
+    "sha256": "d67fdaf77056ae3426cc1db76436f7cf32c932cec5de6fad8fafbc04297a64a7",
+    "attempt_count_recorded": 28,
+    "reuse": "READ_ONLY_REFERENCE; no old attempt is relabeled, recounted or reset; this recovery-02 ledger appends new facts only"
+  },
+  "sibling_ledger_reference": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+    "bytes": 10014,
+    "sha256": "205461d838d4d1b4d596c5637e03ea087373d229837c3b4aec57fe5a4cdeba1a",
+    "reuse": "READ_ONLY_REFERENCE; not modified; supplies the parent LIVE_CLASSIFIER_CHOOSER attempt history (attempt 1 recorded there; attempt 2 stopped and recorded in live-grounding-04/scope-incident-001.json)"
+  },
+  "inherited_attempts": [
+    {
+      "attempt": 1,
+      "root_issue": "RECOVERY_02_TOOL_REPAIR",
+      "origin": "inherited from CON document-stage Implementer begin; not re-run in this round",
+      "result": "FAIL (NameError) while writing a fresh full-workspace baseline with the CON/.local/implementer_baseline.py helper",
+      "new_information": [
+        "first mechanical baseline attempt aborted before a usable inventory existed"
+      ],
+      "evidence": [
+        {
+          "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/.local/implementer-baseline-attempt-01.stderr",
+          "bytes": 1049,
+          "sha256": "327d40c8511455adcbb6dcd376cfd8e0d08404f96916c7e76c24f5846db1a8ec"
+        }
+      ]
+    },
+    {
+      "attempt": 2,
+      "root_issue": "RECOVERY_02_TOOL_REPAIR",
+      "origin": "inherited from CON document-stage Implementer begin; not re-run in this round",
+      "result": "FAIL (FIFO handling); inventory incomplete with 0 records; the failure was preserved instead of being rewritten",
+      "new_information": [
+        "the only allowlisted FIFO exists in the historical tree and cannot be read or content-hashed (lstat-only)",
+        "the historical Git-derived manifest covered 170 directories while the type census found 30,131, proving a coverage gap",
+        "the old check tooling could not represent incomplete-observation failures and demanded an empty evidence directory"
+      ],
+      "evidence": [
+        {
+          "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline.json",
+          "bytes": 142531,
+          "sha256": "b8837c5dc8aadccf46e24c25d768ed57fa4dde7e7644e5938448b90e67ef464d"
+        },
+        {
+          "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline-failure-detail.json",
+          "bytes": 1680,
+          "sha256": "c0ce0019b68df53f72e2b0e6ab2c0e0ac151df2c3dd8e6619c7289ed38a6a005"
+        }
+      ]
+    }
+  ],
+  "prior_learning": [
+    "Two of three tool-repair attempts were inherited and consumed; recovery-02 therefore ran the conservative single remaining evidence-bearing attempt for the tool-repair root issue (all official checks exactly once).",
+    "The parent LIVE_CLASSIFIER_CHOOSER issue already had two attempts (live-grounding-03 attempt 1; attempt 2 stopped by the live-grounding-04 scope incident). Recovery-02's single frozen Node adapter verification set was the final remaining (third) product attempt for that issue and was consumed at the node-adapter-syntax-02 launch.",
+    "The five recovery-02 checks form one frozen set; no check, gate or compare was re-run after any result, including the G_PRESERVE failure."
+  ],
+  "check_reservations": [
+    {
+      "check_id": "baseline-selftest-02",
+      "status": "PASS_CONSUMED",
+      "consumed": true,
+      "executions": 1,
+      "product_attempt": false,
+      "task_issue": "RECOVERY_02_TOOL_REPAIR",
+      "receipt": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.receipt.json",
+        "bytes": 2797,
+        "sha256": "bd4e5c0cb84449d63dc4ec424058b7cf1518616112a372a086599a6298c87e09"
+      },
+      "invocation": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.invocation.json",
+        "bytes": 2523,
+        "sha256": "16eb47ec61ccf7242740d53e84480cea9f35b722c1d5248424068fccf1e2ff62"
+      },
+      "stdout": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stdout",
+        "bytes": 11702,
+        "sha256": "a1ad63ff46b507df6abdc5c389f2d220ca8a6f4e25025baa29a44773ed673cd2"
+      },
+      "stderr": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "started_at_utc": "2026-10-11T03:10:42Z",
+      "ended_at_utc": "2026-10-11T03:10:49.077144+00:00"
+    },
+    {
+      "check_id": "runner-preflight-01",
+      "status": "PASS_CONSUMED",
+      "consumed": true,
+      "executions": 1,
+      "product_attempt": false,
+      "task_issue": "RECOVERY_02_TOOL_REPAIR",
+      "receipt": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.receipt.json",
+        "bytes": 2799,
+        "sha256": "02a5f555ad44643e423572447fe271dc5561bd7f14fc1207d7396cc059104639"
+      },
+      "invocation": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.invocation.json",
+        "bytes": 2544,
+        "sha256": "29479fc5f73fb2309bc18e4775e864b4e27981f4f58b3dd8aa658c6b444301e0"
+      },
+      "stdout": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stdout",
+        "bytes": 3703,
+        "sha256": "22f4bb2263df6f874a6072765a5836edc64132a142a7f5ba6e3a75d3c0c73b8e"
+      },
+      "stderr": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "started_at_utc": "2026-10-11T03:12:31Z",
+      "ended_at_utc": "2026-10-11T03:13:19.804892+00:00"
+    },
+    {
+      "check_id": "runner-selftest-01",
+      "status": "PASS_CONSUMED",
+      "consumed": true,
+      "executions": 1,
+      "product_attempt": false,
+      "task_issue": "RECOVERY_02_TOOL_REPAIR",
+      "receipt": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.receipt.json",
+        "bytes": 2882,
+        "sha256": "fbb9245c1ebb03d96f7fe88c96effa722fd240edcb16b39184710cabe7f277be"
+      },
+      "invocation": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.invocation.json",
+        "bytes": 2517,
+        "sha256": "db2d5ccb0460e9c388252f031b59a13f133971811225c1d20d2e4fb87d41cc05"
+      },
+      "stdout": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stdout",
+        "bytes": 3285,
+        "sha256": "8fc299ba1a62c8a4e21fae43f314cfbd2ac067792f4547678e4c4d08036ce449"
+      },
+      "stderr": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "started_at_utc": "2026-10-11T03:13:22Z",
+      "ended_at_utc": "2026-10-11T03:13:41.744093+00:00"
+    },
+    {
+      "check_id": "node-adapter-syntax-02",
+      "status": "PASS_CONSUMED",
+      "consumed": true,
+      "executions": 1,
+      "product_attempt": true,
+      "product_attempt_issue": "LIVE_CLASSIFIER_CHOOSER",
+      "product_attempt_consumed_on_launch": true,
+      "task_issue": "RECOVERY_02_TOOL_REPAIR",
+      "receipt": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.receipt.json",
+        "bytes": 3362,
+        "sha256": "f483031a49a67ec0757d63d0dac1633f037ec3b43753e5540dfdf8e6b68336e6"
+      },
+      "invocation": null,
+      "invocation_note": "no invocation.json by design for runner-mediated Node checks; the runner was the launcher",
+      "stdout": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stdout",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "started_at_utc": "2026-10-11T03:14:19.529959+00:00",
+      "ended_at_utc": "2026-10-11T03:14:19.566200+00:00"
+    },
+    {
+      "check_id": "node-adapter-tests-01",
+      "status": "PASS_CONSUMED",
+      "consumed": true,
+      "executions": 1,
+      "product_attempt": true,
+      "product_attempt_issue": "LIVE_CLASSIFIER_CHOOSER",
+      "product_attempt_consumed_on_launch": false,
+      "product_attempt_note": "part of the same single frozen product verification set whose budget was already consumed at the node-adapter-syntax-02 launch; not a separate attempt",
+      "task_issue": "RECOVERY_02_TOOL_REPAIR",
+      "receipt": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.receipt.json",
+        "bytes": 3743,
+        "sha256": "f5d51efaede49cff45d9760ace29a00aed3feb7da599b4c1ed6be3e3c4a193c6"
+      },
+      "invocation": null,
+      "invocation_note": "no invocation.json by design for runner-mediated Node checks; the runner was the launcher",
+      "stdout": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stdout",
+        "bytes": 2660,
+        "sha256": "541d58cb4af4a8168279119a02ce476e6f9591f086188356813a24ebf4b2b23b"
+      },
+      "stderr": {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "started_at_utc": "2026-10-11T03:14:22.878522+00:00",
+      "ended_at_utc": "2026-10-11T03:14:22.968503+00:00",
+      "result_summary": "31/31 PASS, 0 fail"
+    }
+  ],
+  "inventory_reservations": [
+    {
+      "id": "inventory-baseline-01",
+      "mode": "baseline",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-01.json",
+      "bytes": 75024668,
+      "sha256": "36e825ee70ea24892a96be5ed0e44e8724db8171c4bd788cc22309783946e69e",
+      "records": 128671,
+      "consumed": true,
+      "executions": 1
+    },
+    {
+      "id": "inventory-baseline-02",
+      "mode": "baseline-consistency",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-02.json",
+      "bytes": 75025245,
+      "sha256": "3cfa66cab97c1afa14b967d67cfd9000ce90d13b4b426c661e1ee6f8eb94c7d2",
+      "records": 128672,
+      "consumed": true,
+      "executions": 1
+    },
+    {
+      "id": "inventory-preservation-01",
+      "mode": "preservation-01",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-01.json",
+      "bytes": 75043000,
+      "sha256": "c4b1a330cccca80d1dfc5312dd3be4f96b79c77edcf42602f97fca5a1c4df905",
+      "records": 128703,
+      "elapsed_ms": 16554,
+      "started_at_utc": "2026-10-11T03:14:45.443Z",
+      "ended_at_utc": "2026-10-11T03:15:01.998Z",
+      "consumed": true,
+      "executions": 1
+    },
+    {
+      "id": "inventory-preservation-02",
+      "mode": "preservation-02",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-02.json",
+      "bytes": 75044728,
+      "sha256": "f4b864e0be855f237360f9553380f6a508c45bbd655ff4c865bbb83922a5af54",
+      "records": 128706,
+      "elapsed_ms": 6810,
+      "started_at_utc": "2026-10-11T03:15:05.527Z",
+      "ended_at_utc": "2026-10-11T03:15:12.338Z",
+      "consumed": true,
+      "executions": 1
+    }
+  ],
+  "compare_reservations": [
+    {
+      "id": "compare-baseline-consistency",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-baseline-consistency.json",
+      "bytes": 1884,
+      "sha256": "088aa45f3667d63066577276ecb51389c99ab80cf356c8a3c9a0f1118bdf7827",
+      "status": "PASS",
+      "added": 1,
+      "removed": 0,
+      "changed": 0,
+      "added_detail": "only evidence/inventory-baseline-01.json itself (written between baseline-01 and baseline-02)",
+      "consumed": true,
+      "executions": 1
+    },
+    {
+      "id": "compare-bootstrap-delta",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-bootstrap-delta.json",
+      "bytes": 9311,
+      "sha256": "f38a3ff58c9b083216dbe2602340649ad5a511b36dc1a46753b6a834ef300d33",
+      "status": "PASS",
+      "added": 51,
+      "removed": 0,
+      "changed": 0,
+      "added_detail": "bootstrap-prewrite-runroot-v2.json -> inventory-baseline-01; all RUNROOT-local (pre-baseline tool creation plus already-present host outputs)",
+      "consumed": true,
+      "executions": 1
+    },
+    {
+      "id": "compare-historical",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-historical.json",
+      "bytes": 6132,
+      "sha256": "89aa047f6083ba5b7b9d730e25deb42639911e49b0e0c8568af418ffbb497954",
+      "status": "PASS",
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "consumed": true,
+      "executions": 1
+    },
+    {
+      "id": "compare-preservation",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-preservation.json",
+      "bytes": 21100,
+      "sha256": "3ee56302567089d4a0739e301a52c70e18e243a477cb159904a5f8f263d675bd",
+      "status": "FAIL",
+      "mode": "preservation",
+      "delta": {
+        "added": 35,
+        "removed": 0,
+        "changed": 0,
+        "added_detail": "baseline-01 -> preservation-02; all 35 additions are inside RUNROOT and exactly equal the declared evidence/planned-additions.json post_baseline_additions set; zero changes outside RUNROOT"
+      },
+      "consistency": {
+        "added": 3,
+        "removed": 0,
+        "changed": 1
+      },
+      "failure_count": 7,
+      "failure_codes": [
+        "ADDED_NOT_ALLOWED x2",
+        "FIELD_MISMATCH x5 (bytes, ctime_ns, mtime_ns, sha256, size)"
+      ],
+      "created_at_utc": "2026-10-11T03:17:13.828504+00:00",
+      "consumed": true,
+      "executions": 1
+    }
+  ],
+  "root_issues": [
+    {
+      "id": "RECOVERY_02_TOOL_REPAIR",
+      "status": "CLOSED_PASS",
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "INHERITED_FAIL",
+          "source": "CON/.local/implementer-baseline-attempt-01.stderr"
+        },
+        {
+          "attempt": 2,
+          "status": "INHERITED_FAIL",
+          "source": "CON/evidence/g-baseline.json + g-baseline-failure-detail.json"
+        },
+        {
+          "attempt": 3,
+          "status": "PASS",
+          "started_at": "2026-10-11T03:10:42Z",
+          "ended_at": "2026-10-11T03:17:26.529Z",
+          "scope": "Rebuild the complete type-aware baseline (including lstat-only FIFO handling), a fixed-root check runner, and the offline adapter verification set; run every frozen check exactly once."
+        }
+      ],
+      "consecutive_no_progress": 0,
+      "gates": [
+        {
+          "gate_id": "G_BASELINE",
+          "status": "PASS",
+          "checks": 37,
+          "evidence": {
+            "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-baseline-recovery-02.json",
+            "bytes": 24360,
+            "sha256": "879e4aec93999278f32b175b7850ac1ff87527eafe86829a46c0c708fc772279"
+          }
+        },
+        {
+          "gate_id": "G_RUNNER",
+          "status": "PASS",
+          "checks": 11,
+          "evidence": {
+            "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-runner.json",
+            "bytes": 7361,
+            "sha256": "072bf7c508a2631315b2e23f7c47f47c82c8ed408340e45cf86b43acfeaf202b"
+          }
+        },
+        {
+          "gate_id": "G_ADAPTER_OFFLINE",
+          "status": "PASS",
+          "checks": 15,
+          "evidence": {
+            "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-adapter-offline.json",
+            "bytes": 8948,
+            "sha256": "ad59db8d590adf580f48c34b103f0989b0abe0a3cc8266bba5a95f2f699257b1"
+          }
+        }
+      ],
+      "note": "The tool-repair root issue is closed with three official checks consumed once each and three gates PASS; the product adapter itself was never modified and remains hash-pinned."
+    },
+    {
+      "id": "RECOVERY_02_PRESERVATION_EVIDENCE",
+      "status": "FAIL_NEW_INFORMATION",
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "FAIL",
+          "ended_at": "2026-10-11T03:17:26.529Z",
+          "scope": "Run the frozen post-baseline preservation comparison (two identical inventories plus delta and consistency checks) and produce evidence/preservation-recovery-02.json."
+        }
+      ],
+      "consecutive_no_progress": 0,
+      "gate": {
+        "gate_id": "G_PRESERVE",
+        "status": "FAIL",
+        "checks": 23,
+        "failed_checks": [
+          "compare_preservation"
+        ],
+        "evidence": {
+          "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/preservation-recovery-02.json",
+          "bytes": 18870,
+          "sha256": "c8d9d2ba15250bc595944c2abbcae4261ddb723a7d616020720e506e7f6ae9d7"
+        }
+      },
+      "failure_detail": {
+        "summary": "Deterministic host-capture/policy interaction: the 7 failures all come from the p1 -> p2 consistency comparison, not from any real data change.",
+        "items": [
+          "ADDED_NOT_ALLOWED: tmp/inventory-preservation-02.stderr (0 bytes) — the host captured the stderr redirect after its own scan had passed it",
+          "ADDED_NOT_ALLOWED: tmp/inventory-preservation-02.stdout (724 bytes / b0823611b77c2aeec60c477ff53485785417952171e575c7a91a981e55ee9fc9) — same host-redirect timing",
+          "FIELD_MISMATCH bytes/size on tmp/inventory-preservation-01.stdout: observed 0 bytes at capture time, 725 bytes after the host redirect finished",
+          "FIELD_MISMATCH sha256 on tmp/inventory-preservation-01.stdout: e3b0c442… (empty) vs 39d1010df0a413d2d8e711029377dc5c1462741dee34fdadfdd317c2c867b73a",
+          "FIELD_MISMATCH mtime_ns and ctime_ns on tmp/inventory-preservation-01.stdout (host redirect completion timestamps)"
+        ],
+        "policy_gap": "The consistency compare's SELF_OUTPUTS policy lists only the four inventory JSONs under evidence/; the host-capture stdout/stderr files in tmp/ were never declared as self-outputs and are also absent from planned-additions.json post_baseline_additions.",
+        "underlying_delta_clean": "Independent read-only helper audits plus the embedded delta sub-check agree: baseline-01 -> preservation-02 has exactly 35 additions, all inside RUNROOT and exactly equal to post_baseline_additions; zero outside-RUNROOT changes; zero removals; zero changed fields; the FIFO lstat metadata is identical across all four inventories (content_read=false, content_hash=null); all 239 backup files are REGULAR and read-verified in all four inventories; the adapter/tests/state/config/ledger are identical between baseline-01 and preservation-02."
+      },
+      "next_action": "A new reviewed plan must fix the capture/compare policy (declare host-capture stdout/stderr as self-outputs, or capture without persisting files inside RUNROOT) and re-verify preservation under a fresh lineage. The failed gate stays FAIL; no rerun, no lowering, no relabeling.",
+      "consumed": true
+    }
+  ],
+  "gates_summary": [
+    {
+      "gate_id": "G_BASELINE",
+      "status": "PASS",
+      "evidence": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-baseline-recovery-02.json"
+    },
+    {
+      "gate_id": "G_RUNNER",
+      "status": "PASS",
+      "evidence": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-runner.json"
+    },
+    {
+      "gate_id": "G_ADAPTER_OFFLINE",
+      "status": "PASS",
+      "evidence": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-adapter-offline.json"
+    },
+    {
+      "gate_id": "G_PRESERVE",
+      "status": "FAIL",
+      "evidence": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/preservation-recovery-02.json"
+    },
+    {
+      "gate_id": "G_REPORT",
+      "status": "PASS_AFTER_MANIFEST_READBACK",
+      "evidence": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/report-manifest.json",
+      "note": "written after this ledger; the report gate is satisfied by the report/progress/manifest/result tail files and their readback"
+    }
+  ],
+  "product_attempt_budget": {
+    "root_issue": "LIVE_CLASSIFIER_CHOOSER",
+    "limit": 3,
+    "consumed": 3,
+    "remaining": 0,
+    "consumption": [
+      {
+        "attempt": 1,
+        "when": "2026-10-10",
+        "source": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json"
+      },
+      {
+        "attempt": 2,
+        "when": "2026-10-10",
+        "source": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/scope-incident-001.json"
+      },
+      {
+        "attempt": 3,
+        "when": "2026-10-11T03:14:19.529959+00:00",
+        "source": "recovery-02 node-adapter-syntax-02 launch (frozen single verification set)"
+      }
+    ],
+    "note": "No remaining product attempt budget exists for this root issue; any further product checks require an explicit user decision and a new reviewed plan."
+  },
+  "helper_usage": {
+    "pre_baseline_helper_reports": {
+      "directory": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-reports/",
+      "count": 17,
+      "note": "All 17 were audited/verified read-only or bounded-creation helpers used before the official baseline; their reports were captured verbatim and consumed by the root. This ledger lists file identity only; scope/outcome detail remains in evidence/helper-usage-readonly-01.json.",
+      "files": [
+        {
+          "file": "agent-01a128be-96b8-7520-b8aa-7a7c8ae36477.json",
+          "bytes": 28812,
+          "sha256": "022a827935b17ad8633cb7f30f1afaac52f82cb621a1aa7add0f7f8e2a915f8f"
+        },
+        {
+          "file": "agent-01a128c3-e6ab-72f2-b8a8-6da489d256a1.json",
+          "bytes": 21371,
+          "sha256": "f205928bae69b5e2c51c74a5082b993c081ba40e9e917607b8f672826556c46b"
+        },
+        {
+          "file": "agent-01a128c3-e6ef-7250-b9de-a0be056889ed.json",
+          "bytes": 20954,
+          "sha256": "52e548e20cd9321427207db372e2421027e886a2c81b2875b932ab7bd100c6f9"
+        },
+        {
+          "file": "agent-01a128c3-e73b-7911-8623-ce522bdbe28e.json",
+          "bytes": 13696,
+          "sha256": "07bcc4bf69350b055c58e93905a5182bded2de9a50569dfc05ee0af827c8c878"
+        },
+        {
+          "file": "agent-01a128c3-e771-71b0-b2ae-44b5602844de.json",
+          "bytes": 7461,
+          "sha256": "c76ba1ce4911b2d2600d9f7ec01ca9dc42dafba67b21214e80e37115fb267997"
+        },
+        {
+          "file": "agent-01a128ca-8541-7af1-b258-3264a9c869b2.json",
+          "bytes": 11278,
+          "sha256": "b8b0d09003054eacb16d1d13d9726ef00c31c394e954b8749fadb976bb93b9e7"
+        },
+        {
+          "file": "agent-01a128ca-8589-7752-9713-09ffc7a03bb3.json",
+          "bytes": 12074,
+          "sha256": "2c5b2359a4784d70c52d1a64b00ae1e252e7730b0e5e0c2ac381fc373aed037e"
+        },
+        {
+          "file": "agent-01a128ca-85db-7db1-a5d2-8488859cb14c.json",
+          "bytes": 4875,
+          "sha256": "bd8b883398143e771aca9dc2f9ede00ce43a02b5fdadd4c208b5311ee99f9ccb"
+        },
+        {
+          "file": "agent-01a128ca-8614-7c81-a9d0-3a0cb166ccd1.json",
+          "bytes": 17964,
+          "sha256": "84914a20cf57f6da081d63ed27f47c3864410237e53be5ab76ddc31f5b7ee848"
+        },
+        {
+          "file": "agent-01a128d6-68c7-7973-90bf-d101c881f191.json",
+          "bytes": 3679,
+          "sha256": "816f45699e984ee20c6688bfa3e366e6a36dd357477040506029ca106534af94"
+        },
+        {
+          "file": "agent-01a128d6-690d-7d02-bd23-44628a71f9c0.json",
+          "bytes": 7244,
+          "sha256": "3dc355e2b22ec362edf46860ee04c2234b2a5335b535f723772dcd2bc8676162"
+        },
+        {
+          "file": "agent-01a128df-e926-7710-91aa-bd58f0bcbc0b.json",
+          "bytes": 4949,
+          "sha256": "ca069759d6c6e09665d5656c089c8b4c205e876dc085ea45e277ecfda0f56b85"
+        },
+        {
+          "file": "agent-01a128df-e95e-7c33-a293-c3847916eb69.json",
+          "bytes": 12415,
+          "sha256": "329dfd36cc214dbd60a240cade48ef7252b98d0240c49003ad6b09e6b8ea4dde"
+        },
+        {
+          "file": "agent-01a128df-e999-7361-9997-c78163f2f96a.json",
+          "bytes": 10500,
+          "sha256": "72d4d3cbc5c4472be155147bdf6c8ad3f5feb2955e711572f643ed861f8bd8ec"
+        },
+        {
+          "file": "agent-01a128e7-5938-7a01-8f94-7265b0432633.json",
+          "bytes": 12539,
+          "sha256": "e6fd649d5bbdf5cd153792d96463d3657134688ea16757339ff05c80e64b9b60"
+        },
+        {
+          "file": "agent-01a128e7-5991-7950-a5f4-a1de3dac0390.json",
+          "bytes": 14665,
+          "sha256": "907304d1542b996bbb750a0d3c4638780ff0afdaa66841f0ec7324848f66301a"
+        },
+        {
+          "file": "agent-01a128e7-59d8-7362-9f31-7ad7de131244.json",
+          "bytes": 12209,
+          "sha256": "4d140b4b75da65044d2fe9ca8aa2b8030539ff680daa5216c2cf8e3360c38b03"
+        }
+      ]
+    },
+    "session_read_only_helpers": [
+      {
+        "agent_id": "01a128f8-44b2-7542-8b46-a338d3de1543",
+        "nickname": "Goodall",
+        "scope": "read-only hash census of evidence/gate/compare/receipt/inventory files",
+        "status": "completed"
+      },
+      {
+        "agent_id": "01a128f8-44f5-72b1-a77d-9a1c8970e5d3",
+        "nickname": "Hegel",
+        "scope": "read-only static derivation of the compare/consistency policy and failure codes",
+        "status": "completed"
+      },
+      {
+        "agent_id": "01a128f8-4548-7533-a558-6d13c94a3a06",
+        "nickname": "Linnaeus",
+        "scope": "read-only preservation audit: delta set, FIFO lstat stability, 239 backups, git identity",
+        "status": "completed"
+      },
+      {
+        "agent_id": "01a128f8-4597-7723-9b22-b760da665d7a",
+        "nickname": "Beauvoir",
+        "scope": "read-only receipt-set audit: exactly one official receipt per stem, hash recomputation",
+        "status": "completed"
+      }
+    ],
+    "helper_usage_evidence": {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/helper-usage-readonly-01.json",
+      "bytes": 11093,
+      "sha256": "dc5949303d451cda2e93f2bc3a3999e4f51db79bc2c86c8a71b10a7359803cc4"
+    },
+    "frozen_note": "helper-usage-readonly-01.json was written pre-baseline and remained frozen and unmodified in this session; no helper ran LINE UI actions, downloads, network calls, product/state/config/ledger edits, commits, or branch/index changes."
+  },
+  "user_authorized_parallel_authoring": {
+    "authorization": "The user explicitly authorized maximum parallel subagent use (write-capable, not read-only) to accelerate this implementation round and produce the next planning inputs (2026-10-11 implement turn).",
+    "deviation_note": "This authorization covers drafting/verification subagents for the tail deliverables only. It does not authorize product edits, state/config/ledger edits, LINE UI, downloads, commits or pushes.",
+    "native_controller_status": "NOT_RUN",
+    "native_controller_note": "No Harness native controller or stage packet exists in this environment; therefore no native writer allocations, worktrees, or controller receipts were created, and none are claimed. The subagents below are user-authorized drafting/verification helpers, not controller-registered writers.",
+    "agent_ids": [
+      {
+        "agent_id": "01a12900-4f19-7c51-bfea-0933dc421007",
+        "nickname": "Hume",
+        "role": "report-drafter",
+        "scope": "draft E2E測試報告.md (write-capable; single-file, RUNROOT-only)"
+      },
+      {
+        "agent_id": "01a12900-4f4f-71c2-a569-1a671a12fdcd",
+        "nickname": "Halley",
+        "role": "ledger-drafter",
+        "scope": "draft evidence/attempt-ledger-recovery-02.json (this file; write-capable; single-file, RUNROOT-only)"
+      },
+      {
+        "agent_id": "01a12900-4f8c-76f2-a6fb-b41ae9a72b3a",
+        "nickname": "Carver",
+        "role": "hash-verifier",
+        "scope": "read-only hash census of all referenced evidence files"
+      },
+      {
+        "agent_id": "01a12900-4fb8-7d22-8574-c5969d3cf900",
+        "nickname": "Darwin",
+        "role": "preservation-verifier",
+        "scope": "read-only audit of preservation/gate facts and failure codes"
+      }
+    ],
+    "scope_discipline": "Single-file, mutually exclusive, RUNROOT-only scopes; final bytes are hash-checked by the root.",
+    "agent_ids_note": "IDs recorded as supplied by the root for this parallel authoring wave; if the root issues a later addendum it will be appended in the tail files, not in this ledger."
+  },
+  "side_effects": {
+    "extra_host_capture_files": [
+      {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/compare-preservation.stdout",
+        "bytes": 516,
+        "sha256": "830ae7592f1a339c0c4a1917352a20683a0b1fedf8fbd98a64e0180ea8186ef7",
+        "note": "host-capture redirect from the compare step; not in post_baseline_additions or tail_writes_declared"
+      },
+      {
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/compare-preservation.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "post_baseline_additions": {
+      "count": 35,
+      "scope": "all inside RUNROOT",
+      "outside_runroot_changes": 0,
+      "evidence": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/planned-additions.json",
+      "evidence_sha256": "98b62f049ed1c9bdff64039b43cdfac6e688edfc4d7e7147e8a421201ed22d92"
+    },
+    "deletions": [
+      {
+        "item": "failed-smoke fixture trees",
+        "trees": [
+          "fixtures/selftest-20261011T024918Z-98375",
+          "fixtures/selftest-20261011T025117Z-99017"
+        ],
+        "captured_before_deletion": {
+          "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/smoke-fixture-listing.json",
+          "bytes": 34979,
+          "sha256": "4ca777d7ddbd933009bc36663ba511e27bf33e12b3712a8992976e5ce1809485",
+          "entries": 134
+        },
+        "note": "134 entries (67 per tree) listed before deletion; deletion targeted only failed-smoke fixtures created this round"
+      },
+      {
+        "item": "runner selftest cleanup deletions",
+        "status": "UNKNOWN",
+        "note": "The runner selftest (12/12 PASS) cleaned its own test fixtures; the exact 68-path deletion set was not captured as a durable RUNROOT record in this session, so it is recorded as UNKNOWN rather than asserted."
+      }
+    ],
+    "git_identity": {
+      "head": "6dbd45679ebf54a2c27faf1c8212b475c4b87f7a",
+      "branch": "v43-ab/codex-rev28",
+      "index_sha256": "13fe8bd0c329367fbbc6a24439a0cf27635c4e30c6193c17b1b940980351cb83",
+      "index_bytes": 5080170,
+      "staged": "",
+      "observations": "git_observation_1 and git_observation_2 in g-baseline-recovery-02.json agree on HEAD/branch/index; informational status_z drift (996042055ed817989b403c4fb9fa115886c5843cf314207f52410c97bcede759 / 11968907 bytes vs historic 67f78557…) was recorded but is not compared by this gate"
+    }
+  },
+  "unknown_historical_attempts": "UNKNOWN; not counted as zero. The immutable historical ledger and the live-grounding-03 ledger keep their own records and are referenced read-only.",
+  "updated_at": "2026-10-11T03:30:00Z",
+  "updated_note": "Recovery-02 terminal ledger entry: three gates PASS (G_BASELINE 37 checks, G_RUNNER 11 checks, G_ADAPTER_OFFLINE 15 checks), G_PRESERVE FAIL with new information (host-capture/compare-policy interaction; underlying delta clean), G_REPORT pending manifest readback. Product attempt budget LIVE_CLASSIFIER_CHOOSER consumed 3/3. No existing ledger was modified; this is a new append-only file. First write of this drafting agent contained placeholder sha256 guesses in three stdout entries; they were corrected to the recomputed actual file hashes within the same drafting session (pre-repair identity 63111c72…). The referenced stdout files themselves were never modified."
+}

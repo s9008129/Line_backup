@@ -1,0 +1,21 @@
+{
+  "canonical" : "RGBA8 sRGB opaque alpha=255 top-left origin",
+  "decoded_rgba_bytes" : 8192,
+  "decoded_rgba_sha256" : "afb5ffbee0a0bf4ed63e9f1384cb425a3febd1fe06920cc3d2c61e5fa57f9c31",
+  "decoder" : "ImageIO CGImageSourceCreateImageAtIndex + CGContext(premultipliedLast, sRGB)",
+  "exif_orientation" : 1,
+  "height" : 32,
+  "method" : "offline decode",
+  "screen_capture" : false,
+  "source_bits_per_component" : 8,
+  "source_bits_per_pixel" : 32,
+  "source_bytes" : 131,
+  "source_colorspace" : "kCGColorSpaceSRGB",
+  "source_has_alpha" : false,
+  "source_path" : "tmp\/recon\/corners.png",
+  "source_sha256" : "7dc6811b592ca79662d2822e7f92100d224c43b699897021942c6d186e440b24",
+  "source_type_identifier" : "public.png",
+  "stride_bytes" : 256,
+  "ui_inputs_sent" : 0,
+  "width" : 64
+}

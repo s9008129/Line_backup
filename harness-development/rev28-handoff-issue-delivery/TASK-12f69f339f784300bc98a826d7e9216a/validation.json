@@ -1,0 +1,383 @@
+{
+  "verdict": "PASS",
+  "scope": "Documentation delivery only; not product/native/Harness repair acceptance",
+  "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+  "outside_entries": 77904,
+  "allowed_actual_changes": [
+    {
+      "path": "20261006_handoff.md",
+      "before": {
+        "path": "20261006_handoff.md",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 50718,
+        "sha256": "8fbb2e370f2469486d694c4c095f5ed39681acc62d3c439e165bbf467ca5225d"
+      },
+      "after": {
+        "path": "20261006_handoff.md",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 27496,
+        "sha256": "c15b3c0e85c9c747c9ee936726fc4a98d9486088bca7c4ab8f872f88463979b7"
+      }
+    },
+    {
+      "path": "20261006_issue_harness_offline_schema_resolution.md",
+      "before": null,
+      "after": {
+        "path": "20261006_issue_harness_offline_schema_resolution.md",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 23281,
+        "sha256": "b7282ead338b077952f7d2d800d95143d37e1d8e75b41717120c28f1fb00ea8e"
+      }
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/progress.md",
+      "before": {
+        "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/progress.md",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 2315,
+        "sha256": "a66029a965ee20fb6642d8fb4fe9538441b08d4cf2c22ca68b4cca625d55324e"
+      },
+      "after": {
+        "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/progress.md",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 3130,
+        "sha256": "72a91a420a734fe5077c2081c87083f08f9d8ba4188d2e86b521a2d8308fb0e2"
+      }
+    },
+    {
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-consent-20261006.json",
+      "before": null,
+      "after": {
+        "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-consent-20261006.json",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 3505,
+        "sha256": "9f9311e7615f2300258cc575e027a33e50f8f3cf1c877c53793dea5460d760c1"
+      }
+    }
+  ],
+  "git_head": "9d52ca6081e38a63648a0515f572d85563d07cba",
+  "git_index_sha256": "6c0091711bf88e5809341902f56d9d3f3c120179338c3d78736bb86f5e2c05f1",
+  "staged": "",
+  "previous_document_preserved": true,
+  "reviewed_project_binding_unchanged": true,
+  "user_consent_bound": true,
+  "local_links_checked": 41,
+  "public_source_links": 9,
+  "links": [
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/previous-20261006_handoff.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-consent-20261006.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/decision.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/handoff-validation.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/local-result.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/acceptance.result.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-final-source.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/result.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/acceptance.result.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/context-assessment.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/post-observation-continuation.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/native-diagnostics/TASK-8696b5b7009a404383e00cd07fb555b9/attempt-03",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-03.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-contract-02.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/handoff.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/project-binding-report.schema.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-review-02.result.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-consent-20261006.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/review-01-admission.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/baseline.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "20261006_issue_harness_offline_schema_resolution.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/research-report.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_handoff.md",
+      "target": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/root-judgment.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/reviewer-trace-report.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-review-01.result.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/review-01-admission.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/prepare_review_02.py",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-review-02.result.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/handoff-validation.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/tooling-errors.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/rev28-target-observation/TASK-91a404524b134364bef6b57f330c1125/prepare.py",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/scope.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/research-dns-deviation.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/research-report.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "https://github.com/python-jsonschema/jsonschema/blob/v4.26.0/jsonschema/validators.py#L108-L134",
+      "kind": "public-source-link",
+      "checked": "Sources opened during this turn; file checker does not fetch"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "https://learn.chatgpt.com/docs/agent-approvals-security",
+      "kind": "public-source-link",
+      "checked": "Sources opened during this turn; file checker does not fetch"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "https://learn.chatgpt.com/docs/sandboxing",
+      "kind": "public-source-link",
+      "checked": "Sources opened during this turn; file checker does not fetch"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "https://json-schema.org/understanding-json-schema/structuring",
+      "kind": "public-source-link",
+      "checked": "Sources opened during this turn; file checker does not fetch"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "https://python-jsonschema.readthedocs.io/en/v4.26.0/referencing/",
+      "kind": "public-source-link",
+      "checked": "Sources opened during this turn; file checker does not fetch"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "https://github.com/python-jsonschema/jsonschema/blob/v4.26.0/jsonschema/validators.py#L108-L134",
+      "kind": "public-source-link",
+      "checked": "Sources opened during this turn; file checker does not fetch"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "https://github.com/python-jsonschema/referencing/blob/v0.37.0/referencing/_core.py#L293-L329",
+      "kind": "public-source-link",
+      "checked": "Sources opened during this turn; file checker does not fetch"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "https://stackoverflow.com/questions/53968770/how-to-set-up-local-file-references-in-python-jsonschema-document",
+      "kind": "public-source-link",
+      "checked": "Sources opened during this turn; file checker does not fetch"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "https://github.com/python-jsonschema/jsonschema/issues/1454",
+      "kind": "public-source-link",
+      "checked": "Sources opened during this turn; file checker does not fetch"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-consent-20261006.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "20261006_handoff.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/root-judgment.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/research-report.md",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/root-result.json",
+      "kind": "local-link",
+      "checked": "exists"
+    },
+    {
+      "document": "20261006_issue_harness_offline_schema_resolution.md",
+      "target": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/archive-validation.json",
+      "kind": "local-link",
+      "checked": "exists"
+    }
+  ],
+  "issue_reproducer": "AST syntax checked only, not executed; no new resolver/network probe",
+  "backup57": {
+    "files": 57,
+    "bytes": 17924900,
+    "preserved": true
+  },
+  "product_edits": 0,
+  "native_calls": 0,
+  "controller_admission": "UNAVAILABLE/UNKNOWN; no OS/provider proof"
+}

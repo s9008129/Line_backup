@@ -1,0 +1,101 @@
+test_batch_authority (unittest.loader._FailedTest.test_batch_authority) ... ERROR
+test_batch_content (unittest.loader._FailedTest.test_batch_content) ... ERROR
+test_batch_coordinator (unittest.loader._FailedTest.test_batch_coordinator) ... ERROR
+test_batch_lifecycle (unittest.loader._FailedTest.test_batch_lifecycle) ... ERROR
+test_batch_migration (unittest.loader._FailedTest.test_batch_migration) ... ERROR
+test_batch_observations (unittest.loader._FailedTest.test_batch_observations) ... ERROR
+
+======================================================================
+ERROR: test_batch_authority (unittest.loader._FailedTest.test_batch_authority)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_authority
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_authority.py", line 10, in <module>
+    from fixture_support import Fixture,ROOT,TASK,identity,sha,json_bytes,token
+ModuleNotFoundError: No module named 'fixture_support'
+
+
+======================================================================
+ERROR: test_batch_content (unittest.loader._FailedTest.test_batch_content)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_content
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_content.py", line 6, in <module>
+    from fixture_support import Fixture,png
+ModuleNotFoundError: No module named 'fixture_support'
+
+
+======================================================================
+ERROR: test_batch_coordinator (unittest.loader._FailedTest.test_batch_coordinator)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_coordinator
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_coordinator.py", line 13, in <module>
+    from fixture_support import Fixture,Provider,TASK,ROOT,identity,json_bytes,png,utc_now
+ModuleNotFoundError: No module named 'fixture_support'
+
+
+======================================================================
+ERROR: test_batch_lifecycle (unittest.loader._FailedTest.test_batch_lifecycle)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_lifecycle
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_lifecycle.py", line 5, in <module>
+    from fixture_support import Fixture,Provider,identity
+ModuleNotFoundError: No module named 'fixture_support'
+
+
+======================================================================
+ERROR: test_batch_migration (unittest.loader._FailedTest.test_batch_migration)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_migration
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_migration.py", line 10, in <module>
+    from fixture_support import Fixture,TASK,ROOT,identity,token,json_bytes,sha
+ModuleNotFoundError: No module named 'fixture_support'
+
+
+======================================================================
+ERROR: test_batch_observations (unittest.loader._FailedTest.test_batch_observations)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_observations
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_observations.py", line 9, in <module>
+    from fixture_support import Fixture,identity,json_bytes,sha
+ModuleNotFoundError: No module named 'fixture_support'
+
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.000s
+
+FAILED (errors=6)

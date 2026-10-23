@@ -1,0 +1,37 @@
+[0/1] Planning build
+Building for debugging...
+[0/12] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.16s)
+Test Suite 'Selected tests' started at 2026-10-04 18:54:20.341.
+Test Suite 'rev28PackageTests.xctest' started at 2026-10-04 18:54:20.342.
+Test Suite 'NativeObservationSessionTests' started at 2026-10-04 18:54:20.342.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' passed (0.003 seconds).
+Test Suite 'NativeObservationSessionTests' passed at 2026-10-04 18:54:20.372.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.029 (0.030) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-10-04 18:54:20.372.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.029 (0.030) seconds
+Test Suite 'Selected tests' passed at 2026-10-04 18:54:20.372.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.029 (0.031) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

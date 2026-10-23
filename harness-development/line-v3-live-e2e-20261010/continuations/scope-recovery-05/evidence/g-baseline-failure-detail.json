@@ -1,0 +1,32 @@
+{
+  "kind": "G_BASELINE_FAILURE_DETAIL_READ_ONLY",
+  "gate": "G_BASELINE",
+  "status": "BLOCKING_SPECIAL_FILESYSTEM_OBJECT",
+  "observation": {
+    "path": "evidence/20260916-auto-verification/attempt-01/archive-phase1/private-tmp/line-backup-acceptance-verifier/special/backup/destination/special.fifo",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/evidence/20260916-auto-verification/attempt-01/archive-phase1/private-tmp/line-backup-acceptance-verifier/special/backup/destination/special.fifo",
+    "lstat_mode_octal": "0o10644",
+    "lstat_mode_decimal": 4516,
+    "is_fifo": true,
+    "is_regular_file": false,
+    "is_symlink": false,
+    "lstat_size_field": 0,
+    "content_read": false,
+    "content_hash": null
+  },
+  "git_observation": {
+    "tracked": false,
+    "git_ls_files_error": "pathspec did not match any file(s) known to git",
+    "root_porcelain_entry": null,
+    "check_ignore_match": null,
+    "historical_preexisting_manifest_entry": false
+  },
+  "failed_baseline_receipt": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/evidence/g-baseline.json",
+    "bytes": 142531,
+    "sha256": "b8837c5dc8aadccf46e24c25d768ed57fa4dde7e7644e5938448b90e67ef464d"
+  },
+  "disposition": "PRESERVE_IN_PLACE; DO_NOT_OPEN, MOVE, REMOVE, OR RECREATE. A new reviewed plan must define how the baseline inventories and compares this known FIFO before a new baseline evidence ID can be issued.",
+  "native_validation": "NOT_RUN"
+}

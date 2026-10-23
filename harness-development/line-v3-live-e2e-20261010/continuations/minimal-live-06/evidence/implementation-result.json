@@ -1,0 +1,252 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "run_id": "626dd79d-7916-449a-b1f3-dc49ed09a92d",
+  "role": "IMPLEMENTER",
+  "candidate_fact": "BLOCKED",
+  "validation_fact": "NOT_RUN",
+  "routing_fact": "PLANNER_REPLAN",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "BLOCKED",
+    "CORE_ACCEPTANCE_STATUS": "BLOCKED",
+    "REQUIRED_VERIFICATION_STATUS": "BLOCKED",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "REPLAN_REQUIRED"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G_BASELINE_06",
+      "verdict": "BLOCKED",
+      "evidence_manifest": "evidence/gates/G_BASELINE_06.json"
+    },
+    {
+      "gate_id": "G_EVIDENCE_POLICY",
+      "verdict": "BLOCKED",
+      "evidence_manifest": "evidence/gates/G_EVIDENCE_POLICY.json"
+    },
+    {
+      "gate_id": "G_AUTH_RUNTIME",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "evidence/gates/G_AUTH_RUNTIME.json"
+    },
+    {
+      "gate_id": "G_REAL_LINK",
+      "verdict": "BLOCKED",
+      "evidence_manifest": "evidence/gates/G_REAL_LINK.json"
+    },
+    {
+      "gate_id": "G_OFFLINE",
+      "verdict": "BLOCKED",
+      "evidence_manifest": "evidence/gates/G_OFFLINE.json"
+    },
+    {
+      "gate_id": "G_CATALOG_1",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "evidence/gates/G_CATALOG_1.json"
+    },
+    {
+      "gate_id": "G_CATALOG_2",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "evidence/gates/G_CATALOG_2.json"
+    },
+    {
+      "gate_id": "G_MENU_1",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "evidence/gates/G_MENU_1.json"
+    },
+    {
+      "gate_id": "G_MENU_2",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "evidence/gates/G_MENU_2.json"
+    },
+    {
+      "gate_id": "G_FIRST",
+      "verdict": "BLOCKED",
+      "evidence_manifest": "evidence/gates/G_FIRST.json"
+    },
+    {
+      "gate_id": "G_SCROLL",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "evidence/gates/G_SCROLL.json"
+    },
+    {
+      "gate_id": "G_SECOND",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "evidence/gates/G_SECOND.json"
+    },
+    {
+      "gate_id": "G_PRESERVE_06",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "evidence/gates/G_PRESERVE_06.json"
+    },
+    {
+      "gate_id": "G_REPORT",
+      "verdict": "PARTIAL",
+      "evidence_manifest": "evidence/gates/G_REPORT.json"
+    },
+    {
+      "gate_id": "G_ACCEPTANCE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "evidence/gates/G_ACCEPTANCE.json"
+    }
+  ],
+  "evidence_ids": [
+    "issue-report",
+    "e2e-report",
+    "progress",
+    "attempt-ledger",
+    "bootstrap-static-audit",
+    "protected-readback"
+  ],
+  "stage": "IMPLEMENT",
+  "plan_sha256": "57090d3af4ea0075b23d40c6733e7e094a757ed3b8f0969e91b48a0f8da94cb8",
+  "handoff_sha256": "22803c91fcbcbfd6943bd46bcfab8e8364a08e6e492fa71e2cbb88fd274ed3eb",
+  "source_sha256": "4f287f4055ad6891c801eecc5d49551c925ccd3073c1449e16eb6be60ed7fde5",
+  "evidence_manifests": [
+    {
+      "worker_id": null,
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "626dd79d-7916-449a-b1f3-dc49ed09a92d",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "4f287f4055ad6891c801eecc5d49551c925ccd3073c1449e16eb6be60ed7fde5",
+      "evidence_id": "issue-report",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/問題提報單.md",
+      "bytes": 14117,
+      "sha256": "1ab89332a1bb8638595c10cf851bda03154b376682aece87d4d690c8bb07f690",
+      "contract_sha256": "e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1",
+      "observation": "Issue report contains concrete source findings, consequences, current statuses, and the exact high-level decision requested."
+    },
+    {
+      "worker_id": null,
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "626dd79d-7916-449a-b1f3-dc49ed09a92d",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "4f287f4055ad6891c801eecc5d49551c925ccd3073c1449e16eb6be60ed7fde5",
+      "evidence_id": "e2e-report",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/E2E測試報告.md",
+      "bytes": 9269,
+      "sha256": "4d12a17ae0f027e8765d480fd5f3af208c1e1e7dc5ec7c572a2a35bd6d5fa18a",
+      "contract_sha256": "e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1",
+      "observation": "Reports actual read-only steps and explicitly marks every formal check, live capture, transaction, scroll, and acceptance as not run or blocked."
+    },
+    {
+      "worker_id": null,
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "626dd79d-7916-449a-b1f3-dc49ed09a92d",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "4f287f4055ad6891c801eecc5d49551c925ccd3073c1449e16eb6be60ed7fde5",
+      "evidence_id": "progress",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/progress.md",
+      "bytes": 2129,
+      "sha256": "82b330af243e5dddac721987f47235fd200c84c6f6c55ee0a4c3c10e2e06c4da",
+      "contract_sha256": "e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1",
+      "observation": "Plain-language progress report explains what is done, the blocker, attempt budget, information gained, and the next replan decision."
+    },
+    {
+      "worker_id": null,
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "626dd79d-7916-449a-b1f3-dc49ed09a92d",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "4f287f4055ad6891c801eecc5d49551c925ccd3073c1449e16eb6be60ed7fde5",
+      "evidence_id": "attempt-ledger",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/evidence/attempt-ledger-06.json",
+      "bytes": 3989,
+      "sha256": "b9a7e210dc10c9ad65e70d304a79e7e8bfae6ba65f7e331b0cd03e99bc15149b",
+      "contract_sha256": "e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1",
+      "observation": "Records historical versus current attempt counts, all formal check IDs as not run, gates, helper allocation, and absence of native controller receipts."
+    },
+    {
+      "worker_id": null,
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "626dd79d-7916-449a-b1f3-dc49ed09a92d",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "4f287f4055ad6891c801eecc5d49551c925ccd3073c1449e16eb6be60ed7fde5",
+      "evidence_id": "bootstrap-static-audit",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/evidence/artifacts/command-0001.json",
+      "bytes": 6514,
+      "sha256": "e7529fecc6e46fec45b5066824969eebcff1df67336ea133b33619b9ab41aa3f",
+      "contract_sha256": "e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1",
+      "observation": "Read-only audit records source hashes, concrete gaps, missing files, and the reason formal checks were stopped before launch."
+    },
+    {
+      "worker_id": null,
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "626dd79d-7916-449a-b1f3-dc49ed09a92d",
+      "stage": "IMPLEMENT",
+      "role": "IMPLEMENTER",
+      "source_sha256": "4f287f4055ad6891c801eecc5d49551c925ccd3073c1449e16eb6be60ed7fde5",
+      "evidence_id": "protected-readback",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-06/evidence/artifacts/command-0002.json",
+      "bytes": 3597,
+      "sha256": "cdbe22149586efa3eabd88d6551203cb4fe6ca55082babd5eb80356c7768de18",
+      "contract_sha256": "e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1",
+      "observation": "Protected paths match both prewrite anchors and the nine authorized product paths have no staged or unstaged tracked diff."
+    }
+  ],
+  "plan_contract_sha256": "e3cbf77f28a093e88188e9a4c9ec22dabbe3e03ca7b12f86f936ffec960811a1",
+  "analysis": {
+    "facts": [
+      "No formal check ID was launched; E01, E02, and B01 are NOT_RUN.",
+      "The current runner hardcodes recovery-02 instead of minimal-live-06.",
+      "The current inventory comparator cannot reconcile bootstrap anchors or enforce the frozen output and transaction rules.",
+      "The protected state/config/ledger paths match their prewrite anchors and the nine product files have no tracked diff.",
+      "No LINE app, album, CUA capture, UI input, or download was used."
+    ],
+    "inferences": [
+      "A baseline PASS from the current tool would not establish G_BASELINE_06.",
+      "The current comparator cannot support the planned G_PRESERVE_06 transaction and evidence deltas.",
+      "Starting D01 now would violate the frozen order because G_EVIDENCE_POLICY and G_BASELINE_06 have not passed."
+    ],
+    "unknowns": [
+      "Whether a corrected output policy and runner can pass their one-shot formal checks.",
+      "Whether the prepared LINE Albums screen contains a valid non-empty eligible catalog.",
+      "Whether CUA/native/SCK/OCR/geometry can establish the required same-window evidence.",
+      "Whether two distinct eligible albums exist and can complete the full transaction/scroll workflow."
+    ],
+    "evidence": [
+      "問題提報單.md",
+      "E2E測試報告.md",
+      "evidence/artifacts/command-0001.json",
+      "evidence/artifacts/command-0002.json",
+      "evidence/attempt-ledger-06.json",
+      "evidence/gates/*.json"
+    ],
+    "confidence": "High that the current bootstrap is not ready for E01/E02/B01; no inference is made about live LINE behavior because no live test occurred.",
+    "dependencies": {
+      "E01_E02": "PREREQUISITE_BLOCKED",
+      "B01_G_BASELINE_06": "PREREQUISITE_BLOCKED",
+      "D01_R01_G_REAL_LINK": "PREREQUISITE_BLOCKED",
+      "product_edits_and_offline_tests": "PREREQUISITE_BLOCKED",
+      "LINE_transactions_and_scroll": "PREREQUISITE_BLOCKED",
+      "independent_acceptance": "UNKNOWN"
+    }
+  },
+  "handoff_summary": "Stopped before formal checks and product edits after finding that the current runner targets recovery-02 and the inventory/policy implementation cannot establish the planned baseline or preservation gates. The issue report and read-only evidence are in minimal-live-06. No LINE interaction or download occurred. Route to a higher-level Planner for a reviewed policy/continuation decision; do not treat any gate as PASS.",
+  "needs_human": true,
+  "human_decisions": [
+    {
+      "id": "REPLAN_BOOTSTRAP_POLICY",
+      "question": "How should the frozen bootstrap/output-policy and preservation-comparator defect be handled before any formal check or LINE capture?",
+      "options": [
+        "Create a fresh reviewed continuation with corrected exact output lifecycles and gate checks",
+        "Authorize a bounded revised policy in minimal-live-06 before any formal ID is launched"
+      ],
+      "recommendation": "Create a fresh reviewed continuation because output-policy-frozen.json already exists and the current preservation comparator cannot support the planned transaction deltas."
+    }
+  ],
+  "convergence": {
+    "meaningful_attempts": 1,
+    "consecutive_no_progress": 0,
+    "last_attempt": "A read-only bootstrap audit found material evidence-tool gaps before any formal ID or live action; the finding was captured in a task issue report.",
+    "information_gain": true,
+    "stuck": true
+  },
+  "blocker_fingerprint": "55bbdf25593a799f66df0f434bb14a20349afcd12fc8e653c7131bdaaa76de5b",
+  "information_gain": true
+}

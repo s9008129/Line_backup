@@ -1,0 +1,13 @@
+test_canonical_transaction_requires_bound_receipt (__main__.EvidencePolicyTests.test_canonical_transaction_requires_bound_receipt) ... ok
+test_exact_ledger_chain_and_missing_state_chain (__main__.EvidencePolicyTests.test_exact_ledger_chain_and_missing_state_chain) ... ok
+test_exact_phase_producer_cap_and_unregistered_dynamic (__main__.EvidencePolicyTests.test_exact_phase_producer_cap_and_unregistered_dynamic) ... ok
+test_exclusive_readback_collision_symlink_parent (__main__.EvidencePolicyTests.test_exclusive_readback_collision_symlink_parent) ... ok
+test_partial_timeout_and_changed_pair_block (__main__.EvidencePolicyTests.test_partial_timeout_and_changed_pair_block) ... ok
+test_pinned_real_schema_dependency_and_format_rejections (__main__.EvidencePolicyTests.test_pinned_real_schema_dependency_and_format_rejections) ... ok
+test_real_scan_pair_delayed_stream_and_special_lstat_only (__main__.EvidencePolicyTests.test_real_scan_pair_delayed_stream_and_special_lstat_only) ... ok
+test_registration_claim_receipt_and_real_tail_readback (__main__.EvidencePolicyTests.test_registration_claim_receipt_and_real_tail_readback) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.435s
+
+OK

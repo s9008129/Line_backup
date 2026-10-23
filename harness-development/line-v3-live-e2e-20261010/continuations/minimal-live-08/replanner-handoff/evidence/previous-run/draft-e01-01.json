@@ -1,0 +1,51 @@
+{
+  "formal_claim_created": false,
+  "format": "ML08_DRAFT_FIXTURE_EXECUTION_V1",
+  "fresh_repository_namespace_scan": false,
+  "outcome": {
+    "argv": [
+      "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "-B",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/epochs/e01/checks/run_e01.py"
+    ],
+    "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+    "elapsed_seconds": 0.8122092909998173,
+    "ended_at": "2026-10-12T02:24:13.913537+00:00",
+    "exit_code": 0,
+    "failure_boundary": null,
+    "reaped": true,
+    "started_at": "2026-10-12T02:24:13.101230+00:00",
+    "truncated": {
+      "stderr": false,
+      "stdout": false
+    }
+  },
+  "streams": {
+    "stderr": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/draft-e01-01.stderr",
+      "bytes": 3215,
+      "created_at_ns": 1791771853914154652,
+      "dev": 16777234,
+      "exclusive_create": true,
+      "file_fsync": true,
+      "ino": 134805031,
+      "parent_fsync": true,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/draft-e01-01.stderr",
+      "readback_verified": true,
+      "sha256": "88470988f33c2e5e9a6fe0ee99caf9d20645f0c33fc59d0dbc0f2ed10a001fb6"
+    },
+    "stdout": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/draft-e01-01.stdout",
+      "bytes": 0,
+      "created_at_ns": 1791771853913882944,
+      "dev": 16777234,
+      "exclusive_create": true,
+      "file_fsync": true,
+      "ino": 134805030,
+      "parent_fsync": true,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/draft-e01-01.stdout",
+      "readback_verified": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

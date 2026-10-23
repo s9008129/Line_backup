@@ -1,0 +1,19 @@
+docs: 建立 LINE 相簿替代證據實作交接封包
+
+意圖
+原診斷在前三次捲動的前兩步取得重疊與位移證據，第三步卻因新版 Vision 將分頁讀成「相溥」、舊版讀成「相簿」而觸發逐幀 OCR 一致性失敗。這份交接把已審查的替代證據方案整理成可執行規格，供下一位 Implementer 在保留原三次嘗試的前提下，使用唯一一次已授權的固定方法驗證額度。
+
+內容
+- 新增八份本地交接、規格、契約、授權、來源清單及一致性記錄，並保存文件交付進度與本提交訊息；handoff.md 開頭提供可直接交給 Implementer 的完整 prompt。
+- 沿用 a812782 已提交的四份計畫／審查材料：plan-as-submitted.md、plan-review-01.result.json、pixel-probe.log 及 schema-validation.json。另一模型的獨立 PLAN_REVIEW 對計畫層級回報 PASS，並保留其 pixel probe 和本地 schema 驗證記錄；不把這些結果當成本次交接驗收。
+- 將方法拆成完整文字槽的 exact-RGBA 連續性、獨立的選中指示、metadata 身份與衝突、OCR 框支持的位移，以及有序 suffix/prefix 重疊。原始 OCR 文字須保留；集合相同不代表沒有移動；完整相簿覆蓋維持 NOT_ESTABLISHED。
+- 明列 R01–R20 測試、四道 required gate、單一固定方法、最多六次向下 0.25-page scroll、允許的 CUA 操作、停止條件與交付狀態。範圍只限新 task 目錄；目前 14 個其他產品 tracked 修改不納入本次提交。
+- plan-contract.json 逐 bytes 複製為 handoff.json，並以 spec/document/source hashes 綁定交接。文件提交前的 Git HEAD/index 僅為 provenance；接手 Implementer 必須建立提交後的新 baseline。
+
+驗證與限制
+本次文件一致性檢查記錄 JSON parse、契約與 handoff 逐位元相同、63 筆來源 bytes/hash、spec 文件綁定、四道 gate／六次輸入上限／零 writers，以及 prompt 置首均 PASS。這些是本地文件檢查，不代表正式 schema 驗證或實作通過。本次沒有實作候選程式、重跑 OCR、LINE/UI、候選測試或 Acceptance；handoff validation 為 NOT_RUN，沒有適用的 stage packet，controller admission 維持 BLOCKED。
+
+下一步
+交接發布後，Implementer 應重新擷取當下的 preservation 與 Git baseline，再建立不可覆寫回放副本、固定單一 candidate 並完成離線回放和反向測試。只有離線 gate 通過、同一 candidate hash 的獨立實機前審查 PASS，且完成新的前景就緒協調後，才可開始唯一一次最多六步的實機 session。之後還須完成保存核對與獨立 Acceptance；若正式 runner 不可用或任一 gate 失敗，保留證據並據實回報狀態，不宣稱 controller-native DONE。
+
+提交訊息由使用者指定參數 gpt-6-luna/xhigh 的唯讀 subagent 梳理上下文後起草，root 僅修正檔案數量與已提交材料的表述。未聲稱 effective model 或 controller-native identity 已獲驗證。

@@ -1,0 +1,287 @@
+{
+  "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+  "files": [
+    {
+      "path": "rev28/Package.swift",
+      "bytes": 1972,
+      "sha256": "f9cefa31739ce6667e850461deefe7336b82df09de6bf204f784c666be26cc57"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Actuation/AXDriver.swift",
+      "bytes": 11360,
+      "sha256": "94590f9a7c2ca5766e68c82ff9731cfbf9d8eeb4debc4e548372a47b80450e26"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Actuation/QuartzActuator.swift",
+      "bytes": 31626,
+      "sha256": "bf7bfb4d9dc3db108e962649a110dd40c999286c1398745480d1a6ff44e3b9f8"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Chooser/ChooserAffirmationPredicate.swift",
+      "bytes": 20392,
+      "sha256": "ecbdd6bb5ee806ed9a061c4b317747af980ac5ce0428065935bb34f461af8248"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Chooser/FolderChooserDriver.swift",
+      "bytes": 25392,
+      "sha256": "4602d0ad941cf276ecf9b6601bb0f422aee7a20894b6aaf59c0f4d880ac15bbc"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/ComposedNativeAdapter.swift",
+      "bytes": 17645,
+      "sha256": "e0c2282998d445adb438384835ea92c41779ae8ec73faf895fb10649c60cc688"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/LiveComposition.swift",
+      "bytes": 8765,
+      "sha256": "2440a1e56dc97c989835cc3a98c896fa644936296a11c7f9fdf24d0f12713dfd"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/PassiveNativeDiagnostic.swift",
+      "bytes": 32855,
+      "sha256": "e7b1a2546de758d87c349b0800e8626f84115bedd412a69c45aaaa71cecb7ee4"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/PhaseAEvidence.swift",
+      "bytes": 46672,
+      "sha256": "e56df8319aa49255b5a9f6bb4f942db0e6a887f1e331044c6899bd1f9e96a016"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/PostSaveComposition.swift",
+      "bytes": 36531,
+      "sha256": "165f184467f2e92bad7848303dbb56ab48e482f902b2a3e472e787fabe5d9c3f"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/PostSaveEnvironment.swift",
+      "bytes": 18972,
+      "sha256": "6d1f85ea488647de2116b29d08d7c4c3e5e6b1197e2dbd617d872de0dbe5ff2b"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/ProductionActuationEnvironment.swift",
+      "bytes": 1358,
+      "sha256": "3e9932d1a50e2fc19f60fbd10e6bdb73c3f0544c3cb8078b98f5f81ee00e2b0c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/ProductionObservationSource.swift",
+      "bytes": 8574,
+      "sha256": "3745e6de06bc2bee83097b69cb6a30a481d79d631c465564c218ebed008003e6"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Diagnostics/DiagnosticHooks.swift",
+      "bytes": 6609,
+      "sha256": "93db7d0968cf99a94526de498d680d614e9a63822aba739591a65fa7d360d107"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Geometry/Coordinates.swift",
+      "bytes": 14431,
+      "sha256": "f9b77879cfc7abf596de4f0ab562ba8e7506bde2673844a94d37d96b4b0d564c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Identity/AXWindowIdentitySelector.swift",
+      "bytes": 3637,
+      "sha256": "c1ae64a0cb942b5fe636e95c0407cba02387a8c44ef67d5cd05dc6afe49a7896"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Identity/ProcessCodeIdentity.swift",
+      "bytes": 1673,
+      "sha256": "14e3b0d5d660c19550700cb6bd67d191af4b4dea138c5757f2079bca8e55a30c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Identity/WindowIdentity.swift",
+      "bytes": 8939,
+      "sha256": "e9a6a82672dc0d1d2eb2b5dbff47b878bd7eb625a7d6c6fee915e23f985b7edf"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Observation/NativeObservationSession.swift",
+      "bytes": 29055,
+      "sha256": "9230ec99679badd7cad01d53c0c4d9811db6cd149f1aa42b0b98a3c34885e4c2"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Perception/AlbumEllipsisLocator.swift",
+      "bytes": 11963,
+      "sha256": "260ad5634dd86783a9d74a063eb598f17c1ffb361328347cf106499a4cb5e240"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Perception/OcrEngine.swift",
+      "bytes": 6521,
+      "sha256": "d763edc478499849f3d440a6dc1c019ac32e86e96ed63b363642af3b761c3726"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Perception/StructuralLocators.swift",
+      "bytes": 13525,
+      "sha256": "f2e1b53a32ae2319f2d007855fab935a8e2992e8760e4228dffc9b75b9455127"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Policy/ExecutionPolicy.swift",
+      "bytes": 7016,
+      "sha256": "154a8c4a470bd76f6d401f9b85c51b51c9efe0851133f20e005b28a3025a3f14"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Postcondition/PostconditionMonitor.swift",
+      "bytes": 13521,
+      "sha256": "9a62c41d80c77fc1ccae05933c39c52218a86f80c51118864e5075ed75fe34a1"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/ExplicitLineCaptureSelection.swift",
+      "bytes": 10414,
+      "sha256": "5662baca0285f45859ac918d064ed404c6f14d528c4382a7598c4b2d86933e6c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/FrameCapture.swift",
+      "bytes": 19634,
+      "sha256": "3a876cf4232622a5f3b5e495f91b25a478b16eba7af20a9dc054676e67e6901b"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/RunEpochAuthority.swift",
+      "bytes": 8716,
+      "sha256": "b738df79817441240804531c033ab87f8be5b0dec78fd6683a3aa4a7c7162e3c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Sensor/WindowSensor.swift",
+      "bytes": 5433,
+      "sha256": "46e657fa73a6c70f0bc6cd0b7fec3de01f28ae73bec5d9e2321cff5d4bc7454c"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/FilesystemTripwireJournal.swift",
+      "bytes": 10279,
+      "sha256": "b721640fbc07c43dc283b1d34824fa69768c66423fcd3fa0e4783296a9c556f9"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/GoalSlot.swift",
+      "bytes": 9822,
+      "sha256": "ade90b545e73322af583ba7fc7669c2be51fad2b6e512863c1a470414eae1a1f"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/IntentLedger.swift",
+      "bytes": 24858,
+      "sha256": "3f50ec9d1b2b81866f185c493a880fa0480f2d8badac8f3be6eb790ea5883260"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/LiveExecutionEngine.swift",
+      "bytes": 17470,
+      "sha256": "22963b60bbd54a8df890b2d7558564e9980bd8d267095af78332ba8fea1c16cf"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/PersistentTransactionOwner.swift",
+      "bytes": 31013,
+      "sha256": "ee539a585410cb7f4c2ed0cc9bb5b3c5b047088ae97c36c1038ed4e82d93333a"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/PhaseBEligibility.swift",
+      "bytes": 22990,
+      "sha256": "444038f10f8d9b341b6bd3c51156854b2fb130e5636091a7def94f19930b1fd6"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/ReviewedBuildState.swift",
+      "bytes": 7664,
+      "sha256": "95a28802e92abc1bb62b8d2ecadaf6d4deb0cab14f2e7b0fdb7b3b01ec049c78"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/ReviewedImplementationDigest.swift",
+      "bytes": 4643,
+      "sha256": "fd9dd5a21fe011eb75690355db2ebeddbcc5c3937e9d3ea4c8b0950fd59b1802"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/StateEvidence.swift",
+      "bytes": 11758,
+      "sha256": "2ea1815031892930a5a43bac5f0f7f41b39821f934583a1bcf0cfc0c6e4fedbb"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Transaction/TripwireAttribution.swift",
+      "bytes": 6732,
+      "sha256": "8bd8fea6ec2eb153181cc936bc9fb35a4ebcfdf666d33d585433ba0d8d8c7917"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Verification/BaselineVerifier.swift",
+      "bytes": 5810,
+      "sha256": "171f88a2eabfbb74d7192b36ff8b00cdce4ba68af370f05de249c06074990058"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Verification/StagingVerifier.swift",
+      "bytes": 10691,
+      "sha256": "d93f068d0747524ad654ab79a4b9c497628ac1daa89b45b90c49e62be5cdd208"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/EvidenceRun.swift",
+      "bytes": 3652,
+      "sha256": "11ad1889ff3d82911e87b94d7e653e4678e39be62fe2830fa73f5c3973bae81c"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/FolderChooserDriver.swift",
+      "bytes": 4526,
+      "sha256": "4bf99db5ce820e185b101179223a64120da65128119f8a0411ab69d858decec0"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/HarnessCalibration.swift",
+      "bytes": 143034,
+      "sha256": "4a3fe1c4944904a2f1a174b274fc937914dee64a5e163a0cf5a4c17e78c6d860"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/PassiveCaptureDiagnostic.swift",
+      "bytes": 8128,
+      "sha256": "b32029b10c9d9611656b4a1fe1debb504233b5cf8f98f8453f886edaa7f88ecc"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/ProcessIdentity.swift",
+      "bytes": 975,
+      "sha256": "97116b4e399dc31b6528ce83425b23937b719dfb2a39c291e3f25020f9f52cb3"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/ProcessPeer.swift",
+      "bytes": 4719,
+      "sha256": "3167f8b33af5f4370d95b53cc9e4d77d9bb07a745fed844ee423fc158864b5c0"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/QuartzActuator.swift",
+      "bytes": 2617,
+      "sha256": "e956d4e0073cd9d5b9f0a068753be8ead2122e525b5eb349e13e0dc222c34c4c"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/RawCapture.swift",
+      "bytes": 2554,
+      "sha256": "3228444e510eb45f88e3c6128b50d102832af939144469e3c789847e4ab8f38f"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/RestartFixture.swift",
+      "bytes": 3688,
+      "sha256": "e00acabe3b1a85576fb1cc4f5bfe350a7cdfeb080ffd32125aca171d81d5d9cd"
+    },
+    {
+      "path": "rev28/Sources/rev28ctl/main.swift",
+      "bytes": 27891,
+      "sha256": "dc247e24f4fc8c53f873d4764158071b51feba9ffde66da5c36156a44ac65dcd"
+    },
+    {
+      "path": "rev28/Tools/replay_rev28.py",
+      "bytes": 9312,
+      "sha256": "b0b578340bcd7e8b8110d83c7f37338afa5777ea526c48ac505884bc4b0b93b6"
+    },
+    {
+      "path": "rev28/Tools/verify_pre_live_provenance.py",
+      "bytes": 5231,
+      "sha256": "b0005db31331d4597e16b4ba74a1221e39a55260f54fea8d6140bee4ad5e7905"
+    }
+  ],
+  "tests": [
+    {
+      "path": "rev28/Tests/Rev28CoreTests/ExplicitLineCaptureSelectionTests.swift",
+      "bytes": 11587,
+      "sha256": "28f3946f970e3d94a35fbaa9d49336a7fa37b2e372bad90c944e84907d5e5e5a"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift",
+      "bytes": 39358,
+      "sha256": "98f0a2df0d2801f4732a446ecc9ff5207a70caccf311fe62860b6e8f2fb122fd"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/PassiveNativeDiagnosticTests.swift",
+      "bytes": 36558,
+      "sha256": "1159d83d1ae1893e9737d09d910de2504d900ba6f1577b28bed1b968b16a688d"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/LiveCompositionTests.swift",
+      "bytes": 12338,
+      "sha256": "9c7fa5be30b379685d5756cbc1f4b4c1101f8e37b14115833633fdfe5f5e45c5"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+✔ bounded downward scroll requires continuous context, moved full overlap and a new complete card (0.716291ms)
+✔ scroll evidence rejects duplicate fingerprints and unchanged or incomplete overlap (0.484333ms)
+✔ download-start evidence follows a fresh empty baseline and records exact file identity (1.5555ms)
+✔ download-start evidence rejects unknown files and a baseline captured after confirmation (0.296959ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 51.538084

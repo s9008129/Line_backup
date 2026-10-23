@@ -1,0 +1,128 @@
+[0/1] Planning build
+Building for debugging...
+[0/14] Write sources
+[1/14] Write swift-version--58304C5D6DBC2206.txt
+[3/7] Compiling rev28ctl main.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/main.swift:1212:15: warning: value 'mapping' was defined but never used; consider replacing with boolean test [#no-usage]
+1210 |         displayBoundsPoints: albumSupportRectArray(display.frame), cuaSizePx: [pairImage.width, pairImage.height],
+1211 |         sckSizePx: [captured.image.width, captured.image.height])
+1212 |     guard let mapping = AlbumSupportMapping(binding: binding) else {
+     |               `- warning: value 'mapping' was defined but never used; consider replacing with boolean test [#no-usage]
+1213 |         throw FrameSupportCommandError.refused("native CUA/SCK geometry cannot produce a verified transform")
+1214 |     }
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/main.swift:1125:25: warning: non-Sendable type 'ISO8601DateFormatter' of let 'albumSupportISO8601' cannot exit main actor-isolated context; this is an error in the Swift 6 language mode
+1123 |     let pairData = try frameSupportReadRef(pairRef, root: projectRoot, name: "retained CUA frame")
+1124 |     let pairImage = try albumSupportDecodeImage(pairData)
+1125 |     guard let cuaDate = albumSupportISO8601.date(from: cuaCapturedAt), abs(Date().timeIntervalSince(cuaDate)) <= 5 else {
+     |                         `- warning: non-Sendable type 'ISO8601DateFormatter' of let 'albumSupportISO8601' cannot exit main actor-isolated context; this is an error in the Swift 6 language mode
+1126 |         throw FrameSupportCommandError.refused("retained CUA frame is outside the five-second pre-capture window")
+1127 |     }
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSISO8601DateFormatter.h:46:12: note: class 'ISO8601DateFormatter' does not conform to the 'Sendable' protocol
+44 | 
+45 | API_AVAILABLE(macosx(10.12), ios(10.0), watchos(3.0), tvos(10.0))
+46 | @interface NSISO8601DateFormatter : NSFormatter <NSSecureCoding> {
+   |            `- note: class 'ISO8601DateFormatter' does not conform to the 'Sendable' protocol
+47 | @private
+48 |     CFDateFormatterRef _formatter;
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/main.swift:1192:26: warning: non-Sendable type 'ISO8601DateFormatter' of let 'albumSupportISO8601' cannot exit main actor-isolated context; this is an error in the Swift 6 language mode
+1190 |     let captured = try await service.captureFullDisplayRetained(display: display, configuration: .fullDisplayPopup)
+1191 |     guard let captureTiming = captured.record.fullDisplayCaptureTiming,
+1192 |           let sckStart = albumSupportISO8601.date(from: captureTiming.requestStartedAtISO8601),
+     |                          `- warning: non-Sendable type 'ISO8601DateFormatter' of let 'albumSupportISO8601' cannot exit main actor-isolated context; this is an error in the Swift 6 language mode
+1193 |           let sckEnd = albumSupportISO8601.date(from: captureTiming.requestFinishedAtISO8601),
+1194 |           captureTiming.durationMilliseconds.isFinite, captureTiming.durationMilliseconds >= 0,
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSISO8601DateFormatter.h:46:12: note: class 'ISO8601DateFormatter' does not conform to the 'Sendable' protocol
+44 | 
+45 | API_AVAILABLE(macosx(10.12), ios(10.0), watchos(3.0), tvos(10.0))
+46 | @interface NSISO8601DateFormatter : NSFormatter <NSSecureCoding> {
+   |            `- note: class 'ISO8601DateFormatter' does not conform to the 'Sendable' protocol
+47 | @private
+48 |     CFDateFormatterRef _formatter;
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/main.swift:1193:24: warning: non-Sendable type 'ISO8601DateFormatter' of let 'albumSupportISO8601' cannot exit main actor-isolated context; this is an error in the Swift 6 language mode
+1191 |     guard let captureTiming = captured.record.fullDisplayCaptureTiming,
+1192 |           let sckStart = albumSupportISO8601.date(from: captureTiming.requestStartedAtISO8601),
+1193 |           let sckEnd = albumSupportISO8601.date(from: captureTiming.requestFinishedAtISO8601),
+     |                        `- warning: non-Sendable type 'ISO8601DateFormatter' of let 'albumSupportISO8601' cannot exit main actor-isolated context; this is an error in the Swift 6 language mode
+1194 |           captureTiming.durationMilliseconds.isFinite, captureTiming.durationMilliseconds >= 0,
+1195 |           sckStart >= cuaDate, sckEnd >= sckStart, sckEnd.timeIntervalSince(cuaDate) <= 5 else {
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSISO8601DateFormatter.h:46:12: note: class 'ISO8601DateFormatter' does not conform to the 'Sendable' protocol
+44 | 
+45 | API_AVAILABLE(macosx(10.12), ios(10.0), watchos(3.0), tvos(10.0))
+46 | @interface NSISO8601DateFormatter : NSFormatter <NSSecureCoding> {
+   |            `- note: class 'ISO8601DateFormatter' does not conform to the 'Sendable' protocol
+47 | @private
+48 |     CFDateFormatterRef _formatter;
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/main.swift:1125:25: warning: main actor-isolated let 'albumSupportISO8601' cannot be accessed from outside of the actor; this is an error in the Swift 6 language mode
+1123 |     let pairData = try frameSupportReadRef(pairRef, root: projectRoot, name: "retained CUA frame")
+1124 |     let pairImage = try albumSupportDecodeImage(pairData)
+1125 |     guard let cuaDate = albumSupportISO8601.date(from: cuaCapturedAt), abs(Date().timeIntervalSince(cuaDate)) <= 5 else {
+     |                         `- warning: main actor-isolated let 'albumSupportISO8601' cannot be accessed from outside of the actor; this is an error in the Swift 6 language mode
+1126 |         throw FrameSupportCommandError.refused("retained CUA frame is outside the five-second pre-capture window")
+1127 |     }
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/main.swift:1192:26: warning: main actor-isolated let 'albumSupportISO8601' cannot be accessed from outside of the actor; this is an error in the Swift 6 language mode
+1190 |     let captured = try await service.captureFullDisplayRetained(display: display, configuration: .fullDisplayPopup)
+1191 |     guard let captureTiming = captured.record.fullDisplayCaptureTiming,
+1192 |           let sckStart = albumSupportISO8601.date(from: captureTiming.requestStartedAtISO8601),
+     |                          `- warning: main actor-isolated let 'albumSupportISO8601' cannot be accessed from outside of the actor; this is an error in the Swift 6 language mode
+1193 |           let sckEnd = albumSupportISO8601.date(from: captureTiming.requestFinishedAtISO8601),
+1194 |           captureTiming.durationMilliseconds.isFinite, captureTiming.durationMilliseconds >= 0,
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/main.swift:1193:24: warning: main actor-isolated let 'albumSupportISO8601' cannot be accessed from outside of the actor; this is an error in the Swift 6 language mode
+1191 |     guard let captureTiming = captured.record.fullDisplayCaptureTiming,
+1192 |           let sckStart = albumSupportISO8601.date(from: captureTiming.requestStartedAtISO8601),
+1193 |           let sckEnd = albumSupportISO8601.date(from: captureTiming.requestFinishedAtISO8601),
+     |                        `- warning: main actor-isolated let 'albumSupportISO8601' cannot be accessed from outside of the actor; this is an error in the Swift 6 language mode
+1194 |           captureTiming.durationMilliseconds.isFinite, captureTiming.durationMilliseconds >= 0,
+1195 |           sckStart >= cuaDate, sckEnd >= sckStart, sckEnd.timeIntervalSince(cuaDate) <= 5 else {
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/main.swift:1332:25: warning: non-Sendable type 'ISO8601DateFormatter' of let 'albumSupportISO8601' cannot exit main actor-isolated context; this is an error in the Swift 6 language mode
+1330 |     }
+1331 |     let pairImage = try albumSupportDecodeImage(pairData)
+1332 |     guard let cuaDate = albumSupportISO8601.date(from: cuaCapturedAt) else {
+     |                         `- warning: non-Sendable type 'ISO8601DateFormatter' of let 'albumSupportISO8601' cannot exit main actor-isolated context; this is an error in the Swift 6 language mode
+1333 |         throw AlbumSupportCommandError.refused("--cua-captured-at must be ISO8601 with fractional seconds")
+1334 |     }
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSISO8601DateFormatter.h:46:12: note: class 'ISO8601DateFormatter' does not conform to the 'Sendable' protocol
+44 | 
+45 | API_AVAILABLE(macosx(10.12), ios(10.0), watchos(3.0), tvos(10.0))
+46 | @interface NSISO8601DateFormatter : NSFormatter <NSSecureCoding> {
+   |            `- note: class 'ISO8601DateFormatter' does not conform to the 'Sendable' protocol
+47 | @private
+48 |     CFDateFormatterRef _formatter;
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/main.swift:1332:25: warning: main actor-isolated let 'albumSupportISO8601' cannot be accessed from outside of the actor; this is an error in the Swift 6 language mode
+1330 |     }
+1331 |     let pairImage = try albumSupportDecodeImage(pairData)
+1332 |     guard let cuaDate = albumSupportISO8601.date(from: cuaCapturedAt) else {
+     |                         `- warning: main actor-isolated let 'albumSupportISO8601' cannot be accessed from outside of the actor; this is an error in the Swift 6 language mode
+1333 |         throw AlbumSupportCommandError.refused("--cua-captured-at must be ISO8601 with fractional seconds")
+1334 |     }
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Sources/rev28ctl/main.swift:1274:57: warning: will never be executed
+ 559 | }
+ 560 | FileHandle.standardError.write(Data(("usage: " + PassiveCaptureDiagnostic.usage + " | rev28ctl harness-calibrate --evidence <dir> [--items 1,2,5] [--binary-dir <dir>] | restart-child --ledger <path> --head-file <path> --point <name> | live-preflight|live-execute --config <json> --one-shot-authorization <json> | frame-support --project-root <dir> --grant <path> --grant-sha256 <sha> --output <dir> --bundle-id <id> --pid <n> --window-id <n> --display-id <n> --session-id <id> --layout-key <sha> --surface ALBUMS|ALBUM_DETAIL|FOLDER_CHOOSER --pair-frame <path> --pair-frame-id <sha> --geometry-evidence <path> --geometry-evidence-sha256 <sha> --cua-captured-at <iso> --cua-bounds <x,y,w,h> | album-support ... | album-support-guard ...\n").utf8))
+ 561 | exit(64)
+     | `- note: a call to a never-returning function
+ 562 | 
+ 563 | /// Durable Phase A preflight outcome. Written into the run's evidence
+     :
+1272 | }
+1273 | 
+1274 | private let albumSupportISO8601: ISO8601DateFormatter = {
+     |                                                         `- warning: will never be executed
+1275 |     let formatter = ISO8601DateFormatter()
+1276 |     formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+[4/7] Emitting module rev28ctl
+[4/7] Write Objects.LinkFileList
+[5/7] Linking rev28ctl
+[6/7] Applying rev28ctl
+Build complete! (2.40s)

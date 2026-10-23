@@ -1,0 +1,49 @@
+{
+ "kind": "read-only-helper-verification-round2",
+ "generated_at": "2026-10-10T18:31:48.803315+08:00",
+ "task_id": "TASK-20261010-line-v3-live-e2e",
+ "continuation": "implement-02",
+ "policy": {
+  "max_parallel_read_only_helpers": 3,
+  "helpers_used_concurrently": 3,
+  "writers": 0,
+  "note": "root performed every product/task-package edit serially (max_parallel_writers=0); helpers were read-only and could not change scope, gates, or files."
+ },
+ "target": {
+  "path": "harness-development/line-v3-live-e2e-20261010/live_runner.mjs",
+  "bytes": 25510,
+  "sha256": "d3936b1f8898b3f29f00d8c2c24c87ffbce69c94f5aeb1c9f669bb8be702c831"
+ },
+ "helpers": [
+  {
+   "role": "interface-re-audit",
+   "read_only": true,
+   "scope": "live_runner.mjs vs scripts/line_backup_cua_adapter.mjs and line_backup_batch.cli stdout contract; rev28ctl producer receipt fields",
+   "result": "CONFIRMED PASS. Fix at line 390 (invokeProducer: producer.invokeProducer) routes adapter mode 'capture'->captureMenuSupport and 'guard'->guardMenu; no regression; bridge intent/dispatch nesting matches CLI/store; token chain not clobbered by gui_reserve/gui_consume; no remaining interface defect found.",
+   "unknowns": [
+    "live.adapterModule is destructured at buildLiveRunner:389 but is absent from the documented live-object list at :319-331 (omitted module -> uncoded TypeError)",
+    "prepareCandidates/finalRecords are invoked synchronously at :354/:379; async implementations would misbehave",
+    "live.captureCatalog/captureFresh must drive the runner's own session because adapter openAlbum requires fresh(prepared.frame_id)"
+   ]
+  },
+  {
+   "role": "smoke-re-run",
+   "read_only": true,
+   "scope": "adapter-shaped fake suites against the fixed module, including case 11 and a new case 12 for capture/guard routing",
+   "result": "v2 adapter suite 11/11 PASS; case 11 PASS (afterFirstAlbum false->true, decoder path+sha correct, no TypeError); case 12 PASS (capture mode -> receipt, guard mode -> verdict, exactly one producer call each). v1 flat-fake suite 7/10: the 3 failures are stale pre-fix flat expectations (flat intent stdout INTENT_SHAPE, old captureMenuSupport({geometry}) API, flat prepare), not module regressions.",
+   "unknowns": [
+    "v1 flat suite was not rewritten to the nested contract; v2 is the contract-shaped suite."
+   ]
+  },
+  {
+   "role": "evidence-fact-table",
+   "read_only": true,
+   "scope": "independent re-hash of headline artifacts and state readback",
+   "result": "All 10 groups matched actual bytes. Driver sha d3936b1f...; plan-contract.json == handoff.json (6505ad38..., byte-identical); freeze-336 07c4607d...; state ed8075e7... snapshot; source digest 7e7f124a... reproduced over all 21 SOURCE_PATHS; gates g-auth 675165b3.../f05ccfaa..., g-offline d5304dd3.../3f62ea6b..., g-migration 46098af9...; grants 35462887.../04aa1a2a...; waiver f3c7e51c...; compile-handoff 47b35d37...; state now 45505011... (schema 3, revision 35, active_batch/active_writer/context_lock null, runs 2, verified 2); TP/gui-ledger.json absent; proof script 22c0c1ee..., proof stdout 0888a211..., stderr empty; attempt ledger current 26 + inherited 1. MISMATCHES: none.",
+   "unknowns": [
+    "Receipt snapshot is time-bound to the verification window 18:29-18:30 +08:00; re-hash before any later acceptance."
+   ]
+  }
+ ],
+ "note": "Helper model reports are read-only advisory verification. They are not tool PASS for product gates and do not replace independent Acceptance."
+}

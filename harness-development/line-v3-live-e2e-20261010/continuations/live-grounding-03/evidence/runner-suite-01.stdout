@@ -1,0 +1,37 @@
+✔ bounded downward scroll requires continuous context, moved full overlap and a new complete card (0.725125ms)
+✔ scroll evidence rejects duplicate fingerprints and unchanged or incomplete overlap (0.149583ms)
+✔ download-start evidence follows a fresh empty baseline and records exact file identity (1.798458ms)
+✖ download-start evidence rejects unknown files and a baseline captured after confirmation (0.407125ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 51.641833
+
+✖ failing tests:
+
+test at harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/checks/test_live_runner.mjs:83:1
+✖ download-start evidence rejects unknown files and a baseline captured after confirmation (0.407125ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /DOWNLOAD_UNKNOWN_ENTRY/. Input:
+  
+  'Error: DOWNLOAD_BASELINE_STALE'
+  
+      at async TestContext.<anonymous> (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/checks/test_live_runner.mjs:87:3)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: DOWNLOAD_BASELINE_STALE
+        at fail (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_runner.mjs:19:39)
+        at need (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_runner.mjs:20:31)
+        at Object.observe (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_runner.mjs:396:5)
+        at TestContext.<anonymous> (file:///Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/checks/test_live_runner.mjs:87:41)
+        at async Test.run (node:internal/test_runner/test:1404:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:969:7),
+    expected: /DOWNLOAD_UNKNOWN_ENTRY/,
+    operator: 'rejects',
+    diff: 'simple'
+  }

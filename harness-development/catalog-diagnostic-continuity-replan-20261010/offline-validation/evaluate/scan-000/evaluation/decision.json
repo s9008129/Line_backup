@@ -1,0 +1,315 @@
+{
+ "ambiguous": [],
+ "auxiliary_ocr_uncertainty": [],
+ "binding_hash": "100296f041b984324afb1fe49fa9667acf7506d7ae2bacdd496f42c71862f638",
+ "binding_validity": {
+  "binding_run_id": "replay-catalog-diagnostic-20261010",
+  "checks": {
+   "height_match": true,
+   "mode_match": true,
+   "observation_match": true,
+   "rgba_source_sha_match": true,
+   "run_id_match": true,
+   "width_match": true
+  },
+  "frame_run_id": "replay-catalog-diagnostic-20261010",
+  "note": "replay-only diagnostic binding; never reusable as live binding",
+  "status": "VALID"
+ },
+ "can_open_album": false,
+ "can_save_all": false,
+ "candidate_hash": "646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6",
+ "chain_edge": null,
+ "chain_extended": false,
+ "complete_rows": [
+  {
+   "count": 65,
+   "count_box": [
+    29.483606624385242,
+    892.1624996985938,
+    61.64754105061475,
+    916.2749996985937
+   ],
+   "count_candidates": [
+    {
+     "confidence": 1,
+     "text": "65"
+    }
+   ],
+   "count_confidence": 1,
+   "count_text": "65",
+   "date_box": [
+    29.483605150204944,
+    857.3333329984375,
+    265.35245760922135,
+    884.1249996651042
+   ],
+   "date_candidates": [
+    {
+     "confidence": 0.5,
+     "text": "2024/06/02～06/07"
+    }
+   ],
+   "date_confidence": 0.5,
+   "date_text": "2024/06/02～06/07",
+   "identity_dates": [
+    "2024-06-02",
+    "2024-06-07"
+   ]
+  }
+ ],
+ "conflicts": [],
+ "continuity": {
+  "guard": null,
+  "note": "bootstrap frame; no previous frame to compare",
+  "previous_frame_id": null,
+  "status": "BOOTSTRAP"
+ },
+ "decoded_rgba_sha256": "dc83ceb79c18638dd7e9a31417a60f6b7abd7953d1e11fbdbcca4cd144481e7d",
+ "decoder_hash": "ff0e50f340b05e871d0291efe9505e8c766534929418975bad41b1ed2d8b8c0f",
+ "facts_not_obtained": [
+  "live runtime provenance, capture timestamps and safety observation are not available in replay",
+  "legacy candidate completeness UNKNOWN (single stored candidate; not fabricated)"
+ ],
+ "format": "local-catalog-diagnostic-1",
+ "frame_id": "scan-000",
+ "full_collection_coverage": "NOT_ESTABLISHED",
+ "identity_status": "COMPLETE",
+ "live_state_write_allowed": false,
+ "mode": "replay",
+ "movement": "NO",
+ "movement_evidence": {
+  "center_deltas": [
+   {
+    "center_delta": [
+     0.0,
+     0.0
+    ],
+    "current_center": [
+     147.418031,
+     870.729166
+    ],
+    "field": "date",
+    "identity": "2024-06-02_2024-06-07_65",
+    "previous_center": [
+     147.418031,
+     870.729166
+    ]
+   },
+   {
+    "center_delta": [
+     0.0,
+     0.0
+    ],
+    "current_center": [
+     45.565574,
+     904.21875
+    ],
+    "field": "count",
+    "identity": "2024-06-02_2024-06-07_65",
+    "previous_center": [
+     45.565574,
+     904.21875
+    ]
+   }
+  ],
+  "fields": {
+   "count": [
+    {
+     "D": [
+      -24.11249999999984,
+      24.11249999999984
+     ],
+     "center_delta": [
+      0.0,
+      0.0
+     ],
+     "current_box": [
+      29.483606624385242,
+      892.1624996985938,
+      61.64754105061475,
+      916.2749996985937
+     ],
+     "horizontal_projection_overlap": 32.1639344262295,
+     "identity": "2024-06-02_2024-06-07_65",
+     "previous_box": [
+      29.483606624385242,
+      892.1624996985938,
+      61.64754105061475,
+      916.2749996985937
+     ]
+    }
+   ],
+   "date": [
+    {
+     "D": [
+      -26.79166666666663,
+      26.79166666666663
+     ],
+     "center_delta": [
+      0.0,
+      0.0
+     ],
+     "current_box": [
+      29.483605150204944,
+      857.3333329984375,
+      265.35245760922135,
+      884.1249996651042
+     ],
+     "horizontal_projection_overlap": 235.8688524590164,
+     "identity": "2024-06-02_2024-06-07_65",
+     "previous_box": [
+      29.483605150204944,
+      857.3333329984375,
+      265.35245760922135,
+      884.1249996651042
+     ]
+    }
+   ]
+  },
+  "horizontal_overlap": "PASS",
+  "joint": [
+   -24.11249999999984,
+   24.11249999999984
+  ],
+  "movement": "NO",
+  "reason": "some D.high >= 0",
+  "shared_identities": [
+   "2024-06-02_2024-06-07_65"
+  ]
+ },
+ "movement_reference": "self (bootstrap frame)",
+ "ordered_complete_ids": [
+  "2024-06-02_2024-06-07_65"
+ ],
+ "ordered_overlap": {
+  "current_ordered_ids": [
+   "2024-06-02_2024-06-07_65"
+  ],
+  "matches": [
+   1
+  ],
+  "max_overlap": 1,
+  "overlap": "PASS",
+  "previous_ordered_ids": [
+   "2024-06-02_2024-06-07_65"
+  ]
+ },
+ "ordered_qualified_ids": [
+  "2024-06-02_2024-06-07_65"
+ ],
+ "partial_rows": [],
+ "profile_hashes": {
+  "profiles.json": "18bc872d99940de8e010f34cd2a864cb3eebd3f99eb3b3cce018029b26001bb0"
+ },
+ "qualified_overlap_rows": [
+  {
+   "count": 65,
+   "count_box": [
+    29.483606624385242,
+    892.1624996985938,
+    61.64754105061475,
+    916.2749996985937
+   ],
+   "count_candidates": [
+    {
+     "confidence": 1,
+     "text": "65"
+    }
+   ],
+   "count_confidence": 1,
+   "count_text": "65",
+   "date_box": [
+    29.483605150204944,
+    857.3333329984375,
+    265.35245760922135,
+    884.1249996651042
+   ],
+   "date_candidates": [
+    {
+     "confidence": 0.5,
+     "text": "2024/06/02～06/07"
+    }
+   ],
+   "date_confidence": 0.5,
+   "date_text": "2024/06/02～06/07",
+   "identity_dates": [
+    "2024-06-02",
+    "2024-06-07"
+   ],
+   "legacy_count_box": [
+    33.63428579057966,
+    896.9999995936694,
+    59.79428563799177,
+    914.0319762934986
+   ],
+   "legacy_count_text": "65",
+   "legacy_date_box": [
+    31.765715095342074,
+    855.9999997161353,
+    265.33714148694366,
+    882.4999997161353
+   ],
+   "legacy_date_text": "2024/06/02~06/07"
+  }
+ ],
+ "raw_ocr_artifacts": {
+  "apis_independent": false,
+  "confidenceCalibration": "UNKNOWN",
+  "confidence_threshold_applied": null,
+  "legacy_completeness": "UNKNOWN",
+  "legacy_item_count": 5,
+  "legacy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-000/legacy-source-converted.json",
+  "legacy_sha256": "00aceef0b0e260ddc1a54866f2d4b7171f264c067b157230f6cd96635a57752d",
+  "modern_completeness": "COMPLETE",
+  "modern_item_count": 6,
+  "modern_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/ocr/scan-000.metadata_modern/recognize.json",
+  "modern_sha256": "0838125ab8df7b4a7cc2248e8e18abe6f68e4d4e9ea95b1a6284038e9934d2af",
+  "text_replacements_applied": 0
+ },
+ "safety_observation": "UNKNOWN",
+ "scroll_eligible": false,
+ "selected_indicator": {
+  "album_bright_pixels": 192,
+  "album_region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "baseline_bbox": [
+   138,
+   202,
+   186,
+   206
+  ],
+  "baseline_mask_sha256": "9831a05738d4c8eef662f6b98b0880c8912ff54c9649c0888db82c3bee9a0d9d",
+  "component_count": 1,
+  "notes_bright_pixels": 0,
+  "notes_region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "observed_bbox": [
+   138,
+   202,
+   186,
+   206
+  ],
+  "observed_mask_sha256": "9831a05738d4c8eef662f6b98b0880c8912ff54c9649c0888db82c3bee9a0d9d",
+  "raw_rgba_retained": true,
+  "reason": "single horizontal bright component under 相簿; 記事本 clear; matches baseline",
+  "region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "status": "PASS",
+  "threshold": 128
+ },
+ "source_artifact_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+ "stop_reason": null
+}

@@ -1,0 +1,87 @@
+[0/1] Planning build
+Building for debugging...
+[0/13] Write sources
+[1/13] Write swift-version--58304C5D6DBC2206.txt
+[3/5] Compiling Rev28CoreTests NativeObservationSessionTests.swift
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:67:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 65 | 
+ 66 |         func enumerateWindows() async throws -> [SCWindowSnapshot] {
+ 67 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 68 |             enumerateCalls += 1
+ 69 |             let call = enumerateCalls
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:70:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 68 |             enumerateCalls += 1
+ 69 |             let call = enumerateCalls
+ 70 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 71 |             if call == 1 { replaceProcess(at: "preInventory") }
+ 72 |             return call == 1 ? (preInventoryOverride ?? [window]) : (postInventoryOverride ?? [window])
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:97:18: warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 95 |         ) async throws -> ObservationCapturedImage {
+ 96 |             if let onCaptureStart { await onCaptureStart() }
+ 97 |             lock.lock()
+    |                  `- warning: instance method 'lock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 98 |             now += captureClockAdvance
+ 99 |             lock.unlock()
+
+Foundation.NSLock.lock:2:11: note: 'lock()' declared here
+1 | class NSLock {
+2 | open func lock()}
+  |           `- note: 'lock()' declared here
+3 | 
+
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:99:18: warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+ 97 |             lock.lock()
+ 98 |             now += captureClockAdvance
+ 99 |             lock.unlock()
+    |                  `- warning: instance method 'unlock' is unavailable from asynchronous contexts; Use async-safe scoped locking instead; this is an error in the Swift 6 language mode
+100 |             if let captureError { throw captureError }
+101 |             let image = Self.makeImage(width: 400, height: 600)
+
+Foundation.NSLock.unlock:2:11: note: 'unlock()' declared here
+1 | class NSLock {
+2 | open func unlock()}
+  |           `- note: 'unlock()' declared here
+3 | 
+[4/5] Emitting module Rev28CoreTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking rev28PackageTests
+Build complete! (1.05s)
+Test Suite 'Selected tests' started at 2026-10-04 19:20:48.932.
+Test Suite 'rev28PackageTests.xctest' started at 2026-10-04 19:20:48.933.
+Test Suite 'NativeObservationSessionTests' started at 2026-10-04 19:20:48.933.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused]' started.
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:230: error: -[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused] : failed - same-PID replacement during preInventory was accepted
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:237: error: -[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused] : XCTAssertEqual failed: ("1") is not equal to ("0") - preInventory
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:230: error: -[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused] : failed - same-PID replacement during postSigning was accepted
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:237: error: -[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused] : XCTAssertEqual failed: ("1") is not equal to ("0") - postSigning
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:230: error: -[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused] : failed - same-PID replacement during postAX was accepted
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:237: error: -[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused] : XCTAssertEqual failed: ("1") is not equal to ("0") - postAX
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:230: error: -[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused] : failed - same-PID replacement during cgInventory was accepted
+/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/Tests/Rev28CoreTests/NativeObservationSessionTests.swift:237: error: -[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused] : XCTAssertEqual failed: ("1") is not equal to ("0") - cgInventory
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused]' failed (0.060 seconds).
+Test Suite 'NativeObservationSessionTests' failed at 2026-10-04 19:20:48.993.
+	 Executed 1 test, with 8 failures (0 unexpected) in 0.060 (0.060) seconds
+Test Suite 'rev28PackageTests.xctest' failed at 2026-10-04 19:20:48.993.
+	 Executed 1 test, with 8 failures (0 unexpected) in 0.060 (0.060) seconds
+Test Suite 'Selected tests' failed at 2026-10-04 19:20:48.993.
+	 Executed 1 test, with 8 failures (0 unexpected) in 0.060 (0.061) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

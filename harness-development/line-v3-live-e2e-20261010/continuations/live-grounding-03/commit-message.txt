@@ -1,0 +1,22 @@
+docs(line-e2e): 凍結 live-grounding-03 計畫與實作交接
+
+意圖
+針對前一輪證實的兩項實機 E2E 阻塞，建立下一輪可執行、可驗收的計畫：缺少非選單畫面的 SCK frame support，以及缺少以真實畫面為依據的 AX／OCR classifier。目標仍是完成兩本不同相簿的 cap-one 交易，並在第一本釋放後實際驗證向下 bounded scroll；既有安全交易與驗收 gates 維持不變。
+
+實際完成
+- 新增 live-grounding-03/plan.md，規劃 non-menu SCK producer、native geometry、grounded classifier、chooser 與 download evidence、grant v2/runtime binding，以及兩個 lifecycle 的 runner/session 順序。
+- Plan 保留 schema 3、唯一 Store/CAS writer、既有歷史與 at-most-once 限制；要求第一本 VERIFIED、readback、finish/release 後，才執行向下 scroll 與第二本完整交易。
+- 新增 handoff.md，首段提供精準 Implementer Prompt；另附 format 3 contract、waiver、freeze、input manifest、驗證收據、progress 與 planner result 等交接材料。
+- 先將 Plan／contract 落檔並凍結，再編譯 deterministic Handoff；handoff.json 與 contract 逐 byte 相同，兩份 Markdown 嵌入相同原文契約。
+- Plan Review 依使用者明確指示記為 WAIVED／NOT_RUN，並保留事後獨立 Acceptance 為必要 gate。
+- GPT-6 luna 子代理閱讀已落檔文件與前輪阻塞／決策資料，梳理上下文並建議本詳細提交訊息；root 校正下一步的前景／chooser時序並限定文件提交範圍。
+
+下一步建議
+Implementer 先核對凍結輸入、Git 基線與既有 dirty work，再依 Plan 完成產品修改、規定的離線回歸、新 runtime binding 與 grants。真機階段先取得明確前景交接，驗證新 producer、geometry、classifier 與 intent 前 menu latency，再執行第一本原始單次 Save All；在其實際 chooser 驗證欄位、路徑、leaf 與一次 confirmation，不另派 Save All 做 chooser 試驗。第一本完整 VERIFIED/readback/finish/release 後，執行實際 downward scroll、第二本完整交易及獨立 Acceptance，每輪更新 E2E 測試報告與原始證據。能力或副作用不確定時停止依賴操作，保留 intent barrier 與部分成功，不重送、不降 gate。
+
+驗證與限制
+本地 immutable 官方 schema API 的 contract、waiver、result 結構檢查為 VALID；Plan SHA-256 為 001b90861631fe27b0d21ec871be5fc19446bf3070e88bb116350a0f3690708c，contract／handoff.json SHA-256 同為 d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219。28 個輸入檔重新核對大小與 hash、20 個原 tracked dirty 檔 hash 保持、64,885 個原 untracked path 仍存在；未對全部 untracked 檔內容重算 hash。
+這些只證明本地文件與結構／byte binding，不是 native controller admission 或 stage validation，兩者均 NOT_RUN。本輪沒有修改產品程式、state、config，未操作 LINE，未執行產品測試或 build。兩本 live E2E 與獨立 Acceptance 尚未完成，專案 primary outcome 仍 NOT_ACHIEVED，實作／core acceptance 仍 BLOCKED。
+
+Git 範圍
+依使用者明確授權，僅 stage／commit／push 本輪新 live-grounding-03 文件目錄；保全所有無關 dirty／untracked 工作。此文件發佈不等於產品備份驗收通過，也不自動授予下一輪 Implementer 產品 Git 發佈權限。

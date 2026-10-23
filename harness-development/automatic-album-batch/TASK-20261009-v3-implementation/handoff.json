@@ -1,0 +1,20 @@
+{
+  "format_version":"3","task_id":"TASK-20261009-v3-implementation",
+  "goal":"Implement and independently verify approved canonical state-v3 batch service, hosted CUA adapter and legacy fences; then exact clean revision34→35 migration after acceptance. No GUI dispatch/config cap change/backup writes; complete automatic live batch remains a later required unit.",
+  "task_class":"CRITICAL",
+  "allowed_paths":["src/line_backup_batch","scripts/line_backup_cua_adapter.mjs","src/line_backup_acceptance/common.py","src/line_backup_acceptance/authority.py","src/line_backup_acceptance/transaction.py","src/line_backup_acceptance/project_binding.py","src/line_backup_acceptance/cli.py","rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift","rev28/Sources/rev28ctl/main.swift","tests/test_batch_authority.py","tests/test_batch_migration.py","tests/test_batch_coordinator.py","tests/test_batch_observations.py","tests/test_batch_content.py","tests/test_cua_adapter.mjs","rev28/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift","state/backup_state.json","state/.line-backup-state.lock","state/.line-backup-migration-v3.tmp","harness-development/automatic-album-batch/TASK-20261009-v3-implementation"],
+  "required_evidence":["I0","I1","I2","I3","I4","A1","M1"],
+  "gate_specs":[
+    {"gate_id":"I0","required":true,"owner":"ROLE","phase":"IMPLEMENT","evidence_source":"ROLE_OBSERVATION","goal_criticality":"CORE","evidence_role":"MUST_NOT_BREAK","closure_gate":"HARD_CLEAN","reuse":"NEVER"},
+    {"gate_id":"I1","required":true,"owner":"ROLE","phase":"IMPLEMENT","evidence_source":"ROLE_OBSERVATION","goal_criticality":"CORE","evidence_role":"MUST_NOT_BREAK","closure_gate":"HARD_CLEAN","reuse":"NEVER"},
+    {"gate_id":"I2","required":true,"owner":"ROLE","phase":"IMPLEMENT","evidence_source":"ROLE_OBSERVATION","goal_criticality":"CORE","evidence_role":"OUTCOME","closure_gate":"HARD_CLEAN","reuse":"NEVER"},
+    {"gate_id":"I3","required":true,"owner":"ROLE","phase":"IMPLEMENT","evidence_source":"ROLE_OBSERVATION","goal_criticality":"CORE","evidence_role":"OUTCOME","closure_gate":"HARD_CLEAN","reuse":"NEVER"},
+    {"gate_id":"I4","required":true,"owner":"ROLE","phase":"IMPLEMENT","evidence_source":"ROLE_OBSERVATION","goal_criticality":"CORE","evidence_role":"MUST_NOT_BREAK","closure_gate":"HARD_CLEAN","reuse":"NEVER"},
+    {"gate_id":"A1","required":true,"owner":"ROLE","phase":"ACCEPTANCE","evidence_source":"ROLE_OBSERVATION","goal_criticality":"CORE","evidence_role":"OUTCOME","closure_gate":"HARD_CLEAN","reuse":"NEVER"},
+    {"gate_id":"M1","required":true,"owner":"ROLE","phase":"ACCEPTANCE","evidence_source":"ROLE_OBSERVATION","goal_criticality":"CORE","evidence_role":"MUST_NOT_BREAK","closure_gate":"HARD_CLEAN","reuse":"NEVER"}
+  ],
+  "capability_policy":{"network":"OFF","browser":false,"destinations":[]},
+  "retry_policy":{"transient_read_only_retries":2,"delays_seconds":[10,30]},
+  "resource_policy":{"prompt_bytes":65536,"state_bytes":524288,"inspect_bytes":16384,"log_bytes":134217728},
+  "workflow_policy":{"plan_review_required":true,"independent_acceptance_required":true,"max_parallel_read_only_helpers":0,"max_parallel_writers":0,"handoff_review_required":false}
+}

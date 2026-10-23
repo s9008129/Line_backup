@@ -1,0 +1,336 @@
+{
+ "ambiguous": [],
+ "auxiliary_ocr_uncertainty": [],
+ "binding_hash": "100296f041b984324afb1fe49fa9667acf7506d7ae2bacdd496f42c71862f638",
+ "binding_validity": {
+  "binding_run_id": "replay-catalog-diagnostic-20261010",
+  "checks": {
+   "height_match": true,
+   "mode_match": true,
+   "observation_match": true,
+   "rgba_source_sha_match": true,
+   "run_id_match": true,
+   "width_match": true
+  },
+  "frame_run_id": "replay-catalog-diagnostic-20261010",
+  "note": "replay-only diagnostic binding; never reusable as live binding",
+  "status": "VALID"
+ },
+ "can_open_album": false,
+ "can_save_all": false,
+ "candidate_hash": "646145c69265cc33aae2ceaa860efa97048b04cc0e4c17c6bdea69902e11a5b6",
+ "chain_edge": null,
+ "chain_extended": false,
+ "complete_rows": [
+  {
+   "count": 65,
+   "count_box": [
+    29.483606624385242,
+    624.2458330319271,
+    61.64754105061475,
+    648.3583330319271
+   ],
+   "count_candidates": [
+    {
+     "confidence": 1,
+     "text": "65"
+    }
+   ],
+   "count_confidence": 1,
+   "count_text": "65",
+   "date_box": [
+    29.483605150204944,
+    589.4166663317709,
+    265.35245760922135,
+    616.2083329984375
+   ],
+   "date_candidates": [
+    {
+     "confidence": 0.5,
+     "text": "2024/06/02～06/07"
+    }
+   ],
+   "date_confidence": 0.5,
+   "date_text": "2024/06/02～06/07",
+   "identity_dates": [
+    "2024-06-02",
+    "2024-06-07"
+   ]
+  }
+ ],
+ "conflicts": [],
+ "continuity": {
+  "guard": {
+   "current_region_sha256": "003cbef1902186e1ecf7ddf0074f47923406d704f6c88030afce9a7b18ee8a63",
+   "exclusions": [],
+   "first_diff": null,
+   "guard_rect": [
+    0,
+    0,
+    654,
+    192
+   ],
+   "pixel_diff_count": 0,
+   "previous_region_sha256": "003cbef1902186e1ecf7ddf0074f47923406d704f6c88030afce9a7b18ee8a63",
+   "reason": "full-slot RGBA identical",
+   "status": "PASS"
+  },
+  "previous_checks": {
+   "previous_frame_id_match": true,
+   "previous_height_match": true,
+   "previous_observation_match": true,
+   "previous_run_id_match": true,
+   "previous_width_match": true
+  },
+  "previous_frame_id": "scan-000",
+  "reason": "all identity checks and full-slot guard pass",
+  "status": "PASS"
+ },
+ "decoded_rgba_sha256": "a961d41e253bdc7f08b3115f824871b4f3c0f8c744fc1dc54e78a671b55652ba",
+ "decoder_hash": "ff0e50f340b05e871d0291efe9505e8c766534929418975bad41b1ed2d8b8c0f",
+ "facts_not_obtained": [
+  "live runtime provenance, capture timestamps and safety observation are not available in replay",
+  "legacy candidate completeness UNKNOWN (single stored candidate; not fabricated)"
+ ],
+ "format": "local-catalog-diagnostic-1",
+ "frame_id": "scan-001",
+ "full_collection_coverage": "NOT_ESTABLISHED",
+ "identity_status": "COMPLETE",
+ "live_state_write_allowed": false,
+ "mode": "replay",
+ "movement": "YES",
+ "movement_evidence": {
+  "center_deltas": [
+   {
+    "center_delta": [
+     0.0,
+     -267.916667
+    ],
+    "current_center": [
+     147.418031,
+     602.8125
+    ],
+    "field": "date",
+    "identity": "2024-06-02_2024-06-07_65",
+    "previous_center": [
+     147.418031,
+     870.729166
+    ]
+   },
+   {
+    "center_delta": [
+     0.0,
+     -267.916667
+    ],
+    "current_center": [
+     45.565574,
+     636.302083
+    ],
+    "field": "count",
+    "identity": "2024-06-02_2024-06-07_65",
+    "previous_center": [
+     45.565574,
+     904.21875
+    ]
+   }
+  ],
+  "fields": {
+   "count": [
+    {
+     "D": [
+      -292.0291666666666,
+      -243.80416666666667
+     ],
+     "center_delta": [
+      0.0,
+      -267.916667
+     ],
+     "current_box": [
+      29.483606624385242,
+      624.2458330319271,
+      61.64754105061475,
+      648.3583330319271
+     ],
+     "horizontal_projection_overlap": 32.1639344262295,
+     "identity": "2024-06-02_2024-06-07_65",
+     "previous_box": [
+      29.483606624385242,
+      892.1624996985938,
+      61.64754105061475,
+      916.2749996985937
+     ]
+    }
+   ],
+   "date": [
+    {
+     "D": [
+      -294.70833333333326,
+      -241.125
+     ],
+     "center_delta": [
+      0.0,
+      -267.916667
+     ],
+     "current_box": [
+      29.483605150204944,
+      589.4166663317709,
+      265.35245760922135,
+      616.2083329984375
+     ],
+     "horizontal_projection_overlap": 235.8688524590164,
+     "identity": "2024-06-02_2024-06-07_65",
+     "previous_box": [
+      29.483605150204944,
+      857.3333329984375,
+      265.35245760922135,
+      884.1249996651042
+     ]
+    }
+   ]
+  },
+  "horizontal_overlap": "PASS",
+  "joint": [
+   -292.0291666666666,
+   -243.80416666666667
+  ],
+  "movement": "YES",
+  "reason": "all fields every identity moved up; joint D non-empty; x overlap positive",
+  "shared_identities": [
+   "2024-06-02_2024-06-07_65"
+  ]
+ },
+ "movement_reference": "previous frame",
+ "ordered_complete_ids": [
+  "2024-06-02_2024-06-07_65"
+ ],
+ "ordered_overlap": {
+  "current_ordered_ids": [
+   "2024-06-02_2024-06-07_65"
+  ],
+  "matches": [
+   1
+  ],
+  "max_overlap": 1,
+  "overlap": "PASS",
+  "previous_ordered_ids": [
+   "2024-06-02_2024-06-07_65"
+  ]
+ },
+ "ordered_qualified_ids": [
+  "2024-06-02_2024-06-07_65"
+ ],
+ "partial_rows": [],
+ "profile_hashes": {
+  "profiles.json": "18bc872d99940de8e010f34cd2a864cb3eebd3f99eb3b3cce018029b26001bb0"
+ },
+ "qualified_overlap_rows": [
+  {
+   "count": 65,
+   "count_box": [
+    29.483606624385242,
+    624.2458330319271,
+    61.64754105061475,
+    648.3583330319271
+   ],
+   "count_candidates": [
+    {
+     "confidence": 1,
+     "text": "65"
+    }
+   ],
+   "count_confidence": 1,
+   "count_text": "65",
+   "date_box": [
+    29.483605150204944,
+    589.4166663317709,
+    265.35245760922135,
+    616.2083329984375
+   ],
+   "date_candidates": [
+    {
+     "confidence": 0.5,
+     "text": "2024/06/02～06/07"
+    }
+   ],
+   "date_confidence": 0.5,
+   "date_text": "2024/06/02～06/07",
+   "identity_dates": [
+    "2024-06-02",
+    "2024-06-07"
+   ],
+   "legacy_count_box": [
+    31.76571412144999,
+    624.3081391261803,
+    63.53142876683573,
+    646.7383721278893
+   ],
+   "legacy_count_text": "65",
+   "legacy_date_box": [
+    31.765715301612943,
+    588.7936050112044,
+    265.3371416932145,
+    615.0000001604353
+   ],
+   "legacy_date_text": "2024/06/02~06/07"
+  }
+ ],
+ "raw_ocr_artifacts": {
+  "apis_independent": false,
+  "confidenceCalibration": "UNKNOWN",
+  "confidence_threshold_applied": null,
+  "legacy_completeness": "UNKNOWN",
+  "legacy_item_count": 5,
+  "legacy_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/evaluate/scan-001/legacy-source-converted.json",
+  "legacy_sha256": "237159725cabce02ad86d4dfe4774e676994200162c6c1a4c011cc59f16924ba",
+  "modern_completeness": "COMPLETE",
+  "modern_item_count": 5,
+  "modern_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/catalog-diagnostic-continuity-replan-20261010/offline-validation/ocr/scan-001.metadata_modern/recognize.json",
+  "modern_sha256": "98867ec42c94bba34b8b70d7aab9a847c7c5026aca909d5331985a206b49e72e",
+  "text_replacements_applied": 0
+ },
+ "safety_observation": "UNKNOWN",
+ "scroll_eligible": false,
+ "selected_indicator": {
+  "album_bright_pixels": 192,
+  "album_region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "baseline_bbox": [
+   138,
+   202,
+   186,
+   206
+  ],
+  "baseline_mask_sha256": "9831a05738d4c8eef662f6b98b0880c8912ff54c9649c0888db82c3bee9a0d9d",
+  "component_count": 1,
+  "notes_bright_pixels": 0,
+  "notes_region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "observed_bbox": [
+   138,
+   202,
+   186,
+   206
+  ],
+  "observed_mask_sha256": "9831a05738d4c8eef662f6b98b0880c8912ff54c9649c0888db82c3bee9a0d9d",
+  "raw_rgba_retained": true,
+  "reason": "single horizontal bright component under 相簿; 記事本 clear; matches baseline",
+  "region": [
+   "x0",
+   "x1",
+   "y0",
+   "y1"
+  ],
+  "status": "PASS",
+  "threshold": 128
+ },
+ "source_artifact_sha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57",
+ "stop_reason": null
+}

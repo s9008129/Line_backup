@@ -1,0 +1,78 @@
+{
+  "kind": "root-research-archive-validation",
+  "result_schema": "pinned v3/result.schema.json",
+  "result_schema_sha256": "57f07137c4e1ba2aa7832c8f3d22142d6776195b1ec6409994ab309245142788",
+  "root_result_sha256": "df94d2f125976aa1cdd7df66335ec52e69458280c151abee3ef84da4f4f8576f",
+  "local_schema_validation": "PASS",
+  "external_retrieval_callback_calls": [],
+  "gate_acceptance_claim": false,
+  "previous_note_sha256": "46da3174c99f46ccbcd2117f4d78354fc80cabd09f13bc325c6c53e31b1944c6",
+  "manifests": [
+    {
+      "task_id": "TASK-ca57c5e4415b487ab07cc0b7df96b855",
+      "run_id": "793c6d90-0de7-4e82-b65f-ac97428c4700",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+      "evidence_id": "scope.md",
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/scope.md",
+      "bytes": 2739,
+      "sha256": "ce1541589f4a5c44e089fc0e1b34033dbc74d859c99fde02fd521246b8226a2e",
+      "contract_sha256": null,
+      "observation": "Archived research scope, agent report or root judgment. Source hash binds reviewed runtime validators.py only; no controller admission or OS telemetry claimed."
+    },
+    {
+      "task_id": "TASK-ca57c5e4415b487ab07cc0b7df96b855",
+      "run_id": "793c6d90-0de7-4e82-b65f-ac97428c4700",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+      "evidence_id": "reviewer-trace-report.json",
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/reviewer-trace-report.json",
+      "bytes": 1944,
+      "sha256": "bee0428dd4495dce0aa79a68c58a95ceb01d23622d2126cc05a5190175a87612",
+      "contract_sha256": null,
+      "observation": "Archived research scope, agent report or root judgment. Source hash binds reviewed runtime validators.py only; no controller admission or OS telemetry claimed."
+    },
+    {
+      "task_id": "TASK-ca57c5e4415b487ab07cc0b7df96b855",
+      "run_id": "793c6d90-0de7-4e82-b65f-ac97428c4700",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+      "evidence_id": "research-report.md",
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/research-report.md",
+      "bytes": 8304,
+      "sha256": "4f44258634d53a4e6070c19399aacbe6fcab90cfe3bf9df822de6557e9739312",
+      "contract_sha256": null,
+      "observation": "Archived research scope, agent report or root judgment. Source hash binds reviewed runtime validators.py only; no controller admission or OS telemetry claimed."
+    },
+    {
+      "task_id": "TASK-ca57c5e4415b487ab07cc0b7df96b855",
+      "run_id": "793c6d90-0de7-4e82-b65f-ac97428c4700",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+      "evidence_id": "root-judgment.md",
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/root-judgment.md",
+      "bytes": 8590,
+      "sha256": "3210c5b71ed19120a757623c5f16aef4e20203064b6c272585b91ae79a48b273",
+      "contract_sha256": null,
+      "observation": "Archived research scope, agent report or root judgment. Source hash binds reviewed runtime validators.py only; no controller admission or OS telemetry claimed."
+    },
+    {
+      "task_id": "TASK-ca57c5e4415b487ab07cc0b7df96b855",
+      "run_id": "793c6d90-0de7-4e82-b65f-ac97428c4700",
+      "stage": "HIGH_REASONING_REVIEW",
+      "role": "HIGH_REASONING_REVIEWER",
+      "source_sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+      "evidence_id": "research-dns-deviation.md",
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/research-dns-deviation.md",
+      "bytes": 2576,
+      "sha256": "5ff97d549bc0ffdc970675853b18f637a6e6958fe164c501f03dc1ee62c4a076",
+      "contract_sha256": null,
+      "observation": "Archived research scope, agent report or root judgment. Source hash binds reviewed runtime validators.py only; no controller admission or OS telemetry claimed."
+    }
+  ],
+  "agent_report_archive": "Natural-language final report transcribed; original messages retained by platform. Not exact tool wire bytes."
+}

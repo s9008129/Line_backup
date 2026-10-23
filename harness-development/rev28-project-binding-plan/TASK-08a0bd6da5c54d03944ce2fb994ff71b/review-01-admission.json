@@ -1,0 +1,18 @@
+{
+  "verdict": "BLOCKED",
+  "reviewed_result": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-review-01.result.json",
+    "bytes": 8481,
+    "sha256": "506c1c31f1096d48c6ec2fdeab921c4b5e29562ae9f1d17e4e0a78532fcef720"
+  },
+  "substantive_reviewer_verdict": "PASS preserved, not rewritten",
+  "whole_role_admitted": false,
+  "reason": "Reviewer disclosed one automatic remote schema reference/DNS lookup despite networkOFF; original role cannot be described as fully offline. No waiver.",
+  "attempted_lookup": "https://codex.local/schemas/v3/gate.schema.json",
+  "observation_source": "Reviewer explicit report, not root transport instrumentation",
+  "reported_remote_response": false,
+  "network_attempts_reported": 1,
+  "corrected_local_validation_reported": true,
+  "recovery": "New bounded independent review of precise schema-bound Plan02 using preloaded local Registry retrieval-refusal only; no product/native attempt or policy expansion",
+  "full_result_serialization": "Full final content transcribed with whitespace normalization, not original wire bytes"
+}

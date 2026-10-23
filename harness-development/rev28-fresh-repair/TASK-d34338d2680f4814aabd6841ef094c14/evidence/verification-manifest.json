@@ -1,0 +1,142 @@
+{
+  "task_id": "TASK-d34338d2680f4814aabd6841ef094c14",
+  "candidate_attempt": 1,
+  "source_sha256": "942e46be953721878b288deb235d7c4070a0613b2a2729c9dcca5be0ea0df221",
+  "final_focused": {
+    "tests": 21,
+    "failures": 0
+  },
+  "full_suite": {
+    "tests": 267,
+    "failures": 0
+  },
+  "historical_replay": "PASS_20_FIXTURES_WITH_PINNED_PYTHON",
+  "build_exit_code": 0,
+  "provenance_exit_code": 0,
+  "preservation": "PASS",
+  "native_controller_admission": "NOT_CLAIMED",
+  "historical_replay_failures_retained": 2,
+  "first_replay_detailed_report": "LOST_BY_LOCAL_COMMAND_RECORD_NAME_COLLISION; exit1 retained",
+  "binary": {
+    "path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/rev28/.build/arm64-apple-macosx/debug/rev28ctl",
+    "bytes": 7337344,
+    "sha256": "cca1b17c4b2751bab2fa8fbb53c8257af115532c63843325b0e7294d591b11c8"
+  },
+  "entries": [
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-observation.json",
+      "bytes": 579,
+      "sha256": "4233e6406e3f73198f60649af18a0c16e1617aaa07c3ff883aa6f5b091abe35e"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/baseline-observation.log",
+      "bytes": 3400,
+      "sha256": "e3a5a24862b81fc3f54cb0f13bb1a47a954a05dd9b67a04250f7ec922504c136"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/red-observation.json",
+      "bytes": 577,
+      "sha256": "ab3796f462e1c2ef093d3fe371b9f3d6c4af21b5dc3cc3085cf17ac4b77bb703"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/red-observation.log",
+      "bytes": 15618,
+      "sha256": "3ba8bedc1bae82085b10cac350409ece7396f349328ef62fddbe470c7ca950be"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/green-final-focused.json",
+      "bytes": 605,
+      "sha256": "a07dafca7764575c24339247586992f459b424a83f6045a1f55f0513603235da"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/green-final-focused.log",
+      "bytes": 10291,
+      "sha256": "d78d0af2926d66009b00f85101ceb1fe9dd7700d96fdaf29bfe4909e7d93503a"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/full-suite.json",
+      "bytes": 519,
+      "sha256": "f129f665163ed4e7b4362b3a87186826e11575da5bca8cf063ddd4489eefb26d"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/full-suite.log",
+      "bytes": 69214,
+      "sha256": "e9c5278e01b7ec08ed8700df1c3521870c1f82a33ff523dde21c245a19c47ddd"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/build-final.command.json",
+      "bytes": 515,
+      "sha256": "dd6bf10f154d81e9ab89ccfd488617b518dc8d6e7a225ba6d2f003f4cbc05eab"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/build-final.log",
+      "bytes": 120,
+      "sha256": "044141489c59fa1ca6556b729ee352f28b2b18d61d06ae1968446551025a02f4"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/provenance.json",
+      "bytes": 493,
+      "sha256": "8ef6f7e2bcec368e6466cb59713addbc075de46a998c500e5c7cb64920312204"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/provenance.log",
+      "bytes": 561,
+      "sha256": "3bf448fa3ed389581b852d95d3c950f3e1bb4ad1c6dd23bd483ca7ea0bbaeb1a"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/diff-check.json",
+      "bytes": 456,
+      "sha256": "bf98f78916cbf5a01b9f233a3302198f8ca263922b4c89527c10929d47f000f1"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/replay.json",
+      "bytes": 594,
+      "sha256": "aa803502ba9460bde90543029f88f552a0adbdb281687034fca21b29d048083b"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/replay-02.json",
+      "bytes": 611,
+      "sha256": "4e8b6c9cb6259035a5b4a20322b0e3efcf8644be1771e3d4187a6211fd5dd58c"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/historical-replay-02.json",
+      "bytes": 13739,
+      "sha256": "30a6065a538098b8f1a912f557e2a2e42c2d340c98c9abc5c6ff708b564adc43"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/replay-03.command.json",
+      "bytes": 659,
+      "sha256": "b05152acf2ea28369dd3d993b6cbd7175deed6731da4ab4ecff9280d058bc95f"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/historical-replay-03.json",
+      "bytes": 4770,
+      "sha256": "81f6da94ad18d601a21bf0b521d5a96869f13b5a0a3e96db66239b2f90a47261"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/verification-learning.md",
+      "bytes": 1605,
+      "sha256": "b592b9d93308a7ad3c37959183b65f5acb63be9650e704c813951480eed540b4"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-source.json",
+      "bytes": 9434,
+      "sha256": "4e9c9652e06ff15150fe930c7b55f6bc9e80a9e52f47e5bf388ff9e65b066fbe"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-preservation.json",
+      "bytes": 564,
+      "sha256": "ab36b3cd39678e189f0fa1fbc5298844aae654c8aa1ee91c243b3585049a7207"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-incremental.diff",
+      "bytes": 30399,
+      "sha256": "44df26841f96eb36cd3bef08648a3370f61202405428c029c3e89b80f2e5f68d"
+    },
+    {
+      "path": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/candidate-changes.json",
+      "bytes": 1620,
+      "sha256": "ff7b343ac60a19e0f8f1ab50e4f7a27da3aa3f0245adff6459ac09d98453b58b"
+    }
+  ]
+}

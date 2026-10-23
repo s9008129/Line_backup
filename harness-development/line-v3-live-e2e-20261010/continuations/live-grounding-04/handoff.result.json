@@ -1,0 +1,186 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "run_id": "e07ebadf-aca8-498c-927c-8f8b11051251",
+  "role": "HANDOFF_COMPILER",
+  "stage": "HANDOFF",
+  "candidate_fact": "PARTIAL",
+  "validation_fact": "NOT_RUN",
+  "routing_fact": "EXTERNAL_BLOCKER",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "BLOCKED",
+    "CORE_ACCEPTANCE_STATUS": "BLOCKED",
+    "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "IMPLEMENTATION_BLOCKED"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G_PLAN_REVIEW_WAIVER",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan-review-waiver.json"
+    },
+    {
+      "gate_id": "G_AUTH",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_OFFLINE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_MIGRATION",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_CATALOG",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_MENU",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_FIRST",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_SCROLL",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_SECOND",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_PRESERVE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_REPORT",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_ACCEPTANCE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_DELIVERY",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    }
+  ],
+  "evidence_ids": [
+    "E_BASELINE",
+    "E_RESEARCH",
+    "E_DECISIONS",
+    "E_NATIVE_LIMIT"
+  ],
+  "plan_sha256": "c8ed33dfa1040c9c7843fda7008167eb14b7c0b9f45e94f6cee1c40419e65aaf",
+  "handoff_sha256": "855261ee24d61173692e63024cb4129eb0803e264124c2075a5b37bc028c0715",
+  "source_sha256": "6acdec34fbfd163e560bbe8ec93661a64a4bd8fcb24f0ced9e27971e99b69064",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "e07ebadf-aca8-498c-927c-8f8b11051251",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "6acdec34fbfd163e560bbe8ec93661a64a4bd8fcb24f0ced9e27971e99b69064",
+      "evidence_id": "E_BASELINE",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/baseline.json",
+      "bytes": 3490,
+      "sha256": "c8e866969087a21199a5f32c25b2ab2006817b4b40714cb6936ead989fa28d5c",
+      "contract_sha256": "a83bec99428ad66ae32e1795dfb17545e8dbd7df4df802cfb54b9f4e8b345883",
+      "observation": "Local retained document evidence; does not certify a future live gate."
+    },
+    {
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "e07ebadf-aca8-498c-927c-8f8b11051251",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "6acdec34fbfd163e560bbe8ec93661a64a4bd8fcb24f0ced9e27971e99b69064",
+      "evidence_id": "E_RESEARCH",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/research-facts.json",
+      "bytes": 2675,
+      "sha256": "4453eaf245401e1945113eaa31c2248cd92b62421dd1c5969ee69a936a53170a",
+      "contract_sha256": "a83bec99428ad66ae32e1795dfb17545e8dbd7df4df802cfb54b9f4e8b345883",
+      "observation": "Local retained document evidence; does not certify a future live gate."
+    },
+    {
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "e07ebadf-aca8-498c-927c-8f8b11051251",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "6acdec34fbfd163e560bbe8ec93661a64a4bd8fcb24f0ced9e27971e99b69064",
+      "evidence_id": "E_DECISIONS",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/user-decisions.json",
+      "bytes": 763,
+      "sha256": "c2d86b3c645fe82e9b2d983e3eab1914113471c4caadb22d973d082ee90757ea",
+      "contract_sha256": "a83bec99428ad66ae32e1795dfb17545e8dbd7df4df802cfb54b9f4e8b345883",
+      "observation": "Local retained document evidence; does not certify a future live gate."
+    },
+    {
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "e07ebadf-aca8-498c-927c-8f8b11051251",
+      "stage": "HANDOFF",
+      "role": "HANDOFF_COMPILER",
+      "source_sha256": "6acdec34fbfd163e560bbe8ec93661a64a4bd8fcb24f0ced9e27971e99b69064",
+      "evidence_id": "E_NATIVE_LIMIT",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/native-admission.json",
+      "bytes": 935,
+      "sha256": "608d3cbe23cda2129795f16cdabd6c89f2854f4493f29d2aedd829d3e9f57950",
+      "contract_sha256": "a83bec99428ad66ae32e1795dfb17545e8dbd7df4df802cfb54b9f4e8b345883",
+      "observation": "Local retained document evidence; does not certify a future live gate."
+    }
+  ],
+  "plan_contract_sha256": "a83bec99428ad66ae32e1795dfb17545e8dbd7df4df802cfb54b9f4e8b345883",
+  "analysis": {
+    "facts": [
+      "User approved full two-album scope, strict v2 evidence, layout preparation and document add/commit/push.",
+      "Local plan and byte-identical deterministic Handoff persisted with actual source/file hashes.",
+      "No product edits, LINE input, download or state/config mutation in this document phase."
+    ],
+    "inferences": [
+      "Repo-owned passive context and byte normalization target the observed production evidence gap."
+    ],
+    "unknowns": [
+      "Formal native schema/admission unavailable",
+      "Native live geometry/classifier/chooser/latency gates unrun"
+    ],
+    "evidence": [
+      "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/baseline.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/research-facts.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/user-decisions.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/native-admission.json"
+    ],
+    "confidence": "HIGH_FOR_OBSERVED_LOCAL_FACTS; LIVE_UNKNOWN",
+    "document_package_status": "LOCAL_HANDOFF_COMPILED",
+    "underlying_plan_review": "USER_WAIVED_NOT_RUN",
+    "native_stage_run_id": null,
+    "convergence_scope": "Preserves known prior NON_MENU_SCK_SUPPORT three attempts; other prior counts remain original ledger, not reset."
+  },
+  "handoff_summary": "本地Plan及精確deterministic Handoff已落檔；接手者依凍結路徑修復bytes/native/v2/chooser/wiring並實驗兩本。Plan Review已由使用者豁免，Acceptance保留。原生Harness固定runtime失效，native驗證仍NOT_RUN；本輪產品與E2E尚未執行。",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 3,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Inherited NON_MENU_SCK_SUPPORT attempt-03 offline PASS; current document phase product/GUI attempts=0. Other issue counts stay in prior ledger.",
+    "information_gain": true,
+    "stuck": true
+  },
+  "blocker_fingerprint": "NATIVE_STAGE_FIXED_PYTHON314_MISSING_AND_LIVE_GROUNDING_UNRUN",
+  "information_gain": true
+}

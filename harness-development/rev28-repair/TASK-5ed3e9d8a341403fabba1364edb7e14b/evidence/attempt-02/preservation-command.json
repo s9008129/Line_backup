@@ -1,0 +1,11 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/audit.py",
+    "--output-subdir",
+    "attempt-02"
+  ],
+  "cwd": ".",
+  "exit_code": 0
+}

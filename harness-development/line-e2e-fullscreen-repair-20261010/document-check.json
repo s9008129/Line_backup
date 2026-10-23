@@ -1,0 +1,32 @@
+{
+  "format": "local-document-schema-check-1",
+  "source": "jsonschema Draft202012Validator on actual files",
+  "results": [
+    {
+      "file": "plan-contract.json",
+      "schema": "/Users/hsiaojohnny/.codex/schemas/v3/task.schema.json",
+      "verdict": "VALID",
+      "errors": [],
+      "bytes": 4982,
+      "sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe"
+    },
+    {
+      "file": "handoff.json",
+      "schema": "/Users/hsiaojohnny/.codex/schemas/v3/task.schema.json",
+      "verdict": "VALID",
+      "errors": [],
+      "bytes": 4982,
+      "sha256": "654eb5411e63c19a2e5664bfb89d9e24d4fc9b0359e5f94ea3d4073754faeebe"
+    },
+    {
+      "file": "planner.result.json",
+      "schema": "/Users/hsiaojohnny/.codex/schemas/v3/result.schema.json",
+      "verdict": "VALID",
+      "errors": [],
+      "bytes": 7287,
+      "sha256": "312a69c8e6bfba4fa8247103f0ed4201e3588341a8e6c191dd43b390bc03415e"
+    }
+  ],
+  "handoff_exact_bytes_equal": true,
+  "interpretation": "Document shape/binding only. No Plan Review, controller receipt, runtime admission, implementation or E2E PASS. Explicit user waiver is archived separately and is not a fabricated TRUSTED_OPERATOR waiver receipt."
+}

@@ -1,0 +1,164 @@
+{
+  "format": "RECOVERY_02_HELPER_USAGE_V1",
+  "task_id": "TASK-20261011-line-baseline-recovery-02",
+  "run_rel": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02",
+  "written_when": "pre-baseline, before inventory-baseline-01; therefore part of pre_baseline_additions for the bootstrap-delta compare",
+  "user_directive": "The user explicitly instructed (2026-10-11 implement turn) to use as many subagents in parallel as possible to accelerate this task. This overrides the frozen plan workflow_policy.max_parallel_read_only_helpers=0 for read-only audit/verification helpers only.",
+  "contract_values": {
+    "max_parallel_read_only_helpers": 0,
+    "max_parallel_writers": 0
+  },
+  "deviation_record": "17 helper agents were used in parallel (13 fully read-only audits, 1 bounded single-file creation helper authorized by the root, 5 earlier research helpers whose reports are stored as report_markdown; one of those close attempts is recorded below). Helper role count does NOT include independent plan review or acceptance review (not required by this plan). No helper performed LINE UI actions, downloads, network actions, product/state/config/ledger edits, commits, pushes or branch/index changes. No helper authored official gate evidence; all official receipts come from root host runs. writers=0 in the frozen contract sense (no parallel writers of frozen sources; the single helper-created file checks/test_capture_regression.mjs was an explicitly bounded root-authorised creation and was later audited read-only by helper Bohr).",
+  "root_writes_before_baseline": "All root writes are inside RUNROOT only, and the complete mechanical enumeration is the bootstrap-delta addition set (b1 inventory minus evidence/bootstrap-prewrite-runroot-v2.json), materialized during the official run as evidence/planned-additions.json. Root-authored sources in that set: check-specs.json (frozen spec), checks/*.py, checks/test_capture_regression.mjs (helper-created, audit-authorised), tools/*.py, tmp/make_host_receipt.py, tmp/extract_helper_report_franklin.py, tmp/smoke-* captures, evidence/bootstrap-prewrite-runroot{,-v2}.json, evidence/helper-reports/* and evidence/helper-usage-readonly-01.json (this file).",
+  "agents": [
+    {
+      "agent_id": "01a128be-96b8-7520-b8aa-7a7c8ae36477",
+      "nickname": "James",
+      "report_file": "evidence/helper-reports/agent-01a128be-96b8-7520-b8aa-7a7c8ae36477.json",
+      "report_shape": "report_markdown_extract",
+      "scope": "read-only research: scripts/line_backup_cua_adapter.mjs API/behavior report",
+      "outcome": "completed; findings consumed by root; no writes"
+    },
+    {
+      "agent_id": "01a128c3-e6ab-72f2-b8a8-6da489d256a1",
+      "nickname": "Lorentz",
+      "report_file": "evidence/helper-reports/agent-01a128c3-e6ab-72f2-b8a8-6da489d256a1.json",
+      "report_shape": "report_markdown_extract",
+      "scope": "read-only verification: adapter exported symbols / behavior",
+      "outcome": "completed; findings consumed by root; no writes"
+    },
+    {
+      "agent_id": "01a128c3-e6ef-7250-b9de-a0be056889ed",
+      "nickname": "Planck",
+      "report_file": "evidence/helper-reports/agent-01a128c3-e6ef-7250-b9de-a0be056889ed.json",
+      "report_shape": "report_markdown_extract",
+      "scope": "read-only verification: scope-recovery-05/.local historical baseline manifest",
+      "outcome": "completed; findings consumed by root; no writes"
+    },
+    {
+      "agent_id": "01a128c3-e73b-7911-8623-ce522bdbe28e",
+      "nickname": "Maxwell",
+      "report_file": "evidence/helper-reports/agent-01a128c3-e73b-7911-8623-ce522bdbe28e.json",
+      "report_shape": "report_markdown_extract",
+      "scope": "read-only git/state survey (all git reads with GIT_OPTIONAL_LOCKS=0)",
+      "outcome": "completed; findings consumed by root; no writes, no git mutations"
+    },
+    {
+      "agent_id": "01a128c3-e771-71b0-b2ae-44b5602844de",
+      "nickname": "Bernoulli",
+      "report_file": "evidence/helper-reports/agent-01a128c3-e771-71b0-b2ae-44b5602844de.json",
+      "report_shape": "report_markdown_extract",
+      "scope": "read-only hash audit of repo files",
+      "outcome": "completed; findings consumed by root; no writes"
+    },
+    {
+      "agent_id": "01a128ca-8541-7af1-b258-3264a9c869b2",
+      "nickname": "Hilbert",
+      "report_file": "evidence/helper-reports/agent-01a128ca-8541-7af1-b258-3264a9c869b2.json",
+      "report_shape": "completed_message_verbatim",
+      "scope": "read-only audit of tools/inventory.py + checks/test_inventory.py",
+      "outcome": "BLOCKER raised (ScanState.complete AttributeError in selftest cases) against that revision; superseded by later fix; final bytes 7c4a749c.../9518e419... were later audited safe-to-freeze by Lovelace and the smoke selftest passes"
+    },
+    {
+      "agent_id": "01a128ca-8589-7752-9713-09ffc7a03bb3",
+      "nickname": "Pasteur",
+      "report_file": "evidence/helper-reports/agent-01a128ca-8589-7752-9713-09ffc7a03bb3.json",
+      "report_shape": "completed_message_verbatim",
+      "scope": "read-only audit of checks/compare_inventories.py revision b4afd4a6... (406 lines)",
+      "outcome": "C1 BLOCKER raised on that revision; the current frozen revision is cbee9e07... (a later revision, audited separately)"
+    },
+    {
+      "agent_id": "01a128ca-85db-7db1-a5d2-8488859cb14c",
+      "nickname": "Ramanujan",
+      "report_file": "evidence/helper-reports/agent-01a128ca-85db-7db1-a5d2-8488859cb14c.json",
+      "report_shape": "completed_message_verbatim",
+      "scope": "bounded file-creation helper: created exactly checks/test_capture_regression.mjs",
+      "outcome": "exactly one file created, nothing else; the one-shot node launch was not consumed; file later audited read-only by Bohr (PASS, node --check exit 0)"
+    },
+    {
+      "agent_id": "01a128ca-8614-7c81-a9d0-3a0cb166ccd1",
+      "nickname": "Plato",
+      "report_file": "evidence/helper-reports/agent-01a128ca-8614-7c81-a9d0-3a0cb166ccd1.json",
+      "report_shape": "completed_message_verbatim",
+      "scope": "read-only evidence audit: incident reconciliation receipt; status-z stability observation",
+      "outcome": "observed status-z hash drift vs the historic expectation (gate_receipts.py does not compare status-z; informational only); no writes, no git mutations"
+    },
+    {
+      "agent_id": "01a128d6-68c7-7973-90bf-d101c881f191",
+      "nickname": "Bohr",
+      "report_file": "evidence/helper-reports/agent-01a128d6-68c7-7973-90bf-d101c881f191.json",
+      "report_shape": "completed_message_verbatim",
+      "scope": "read-only static review of checks/test_capture_regression.mjs (imports/exports/injection points)",
+      "outcome": "STATUS: PASS; node --check on the file exited 0 with the fixed node binary hash verified; no blockers"
+    },
+    {
+      "agent_id": "01a128d6-690d-7d02-bd23-44628a71f9c0",
+      "nickname": "Leibniz",
+      "report_file": "evidence/helper-reports/agent-01a128d6-690d-7d02-bd23-44628a71f9c0.json",
+      "report_shape": "completed_message_verbatim",
+      "scope": "read-only review of tools/gate_receipts.py",
+      "outcome": "BLOCKER raised (backups count could never pass with kind-blind selection); fixed pre-freeze; Pascal's audit F1/F2 later verified the REGULAR-filter fix (239 regular backups)"
+    },
+    {
+      "agent_id": "01a128df-e926-7710-91aa-bd58f0bcbc0b",
+      "nickname": "Lovelace",
+      "report_file": "evidence/helper-reports/agent-01a128df-e926-7710-91aa-bd58f0bcbc0b.json",
+      "report_shape": "completed_message_verbatim",
+      "scope": "read-only static audit of tools/inventory.py + checks/test_inventory.py (sha-verified)",
+      "outcome": "verdict: safe to freeze; no BLOCKER; two NOTE items, both fail-closed and unobserved by any consumer"
+    },
+    {
+      "agent_id": "01a128df-e95e-7c33-a293-c3847916eb69",
+      "nickname": "Huygens",
+      "report_file": "evidence/helper-reports/agent-01a128df-e95e-7c33-a293-c3847916eb69.json",
+      "report_shape": "completed_message_verbatim",
+      "scope": "read-only static audit of checks/, tools/, evidence/ paths",
+      "outcome": "no BLOCKER found in the audited files; absence of check-specs-freeze.json at audit time was confirmed by design"
+    },
+    {
+      "agent_id": "01a128df-e999-7361-9997-c78163f2f96a",
+      "nickname": "Kepler",
+      "report_file": "evidence/helper-reports/agent-01a128df-e999-7361-9997-c78163f2f96a.json",
+      "report_shape": "completed_message_verbatim",
+      "scope": "read-only audit of check-specs.json consistency vs plan.md / handoff.md",
+      "outcome": "verdict: check-specs.json (5bd52c11...) internally consistent; check set/order/argv and NOT_RUN statuses match plan/handoff intent"
+    },
+    {
+      "agent_id": "01a128e7-5938-7a01-8f94-7265b0432633",
+      "nickname": "Pascal",
+      "report_file": "evidence/helper-reports/agent-01a128e7-5938-7a01-8f94-7265b0432633.json",
+      "report_shape": "completed_message_transcribed",
+      "scope": "AUDITOR_A_FINAL_CODE_FIXES: verify patched tools/gate_receipts.py (4 fixes) and checks/run_command.py CHECK_ID_NOT_ALLOWED refusal path",
+      "outcome": "verdict PASS; all four fixes verified against sha-pinned files; F11 NOTE on weak-but-non-vacuous checks (no fix needed before the frozen run)"
+    },
+    {
+      "agent_id": "01a128e7-5991-7950-a5f4-a1de3dac0390",
+      "nickname": "Euclid",
+      "report_file": "evidence/helper-reports/agent-01a128e7-5991-7950-a5f4-a1de3dac0390.json",
+      "report_shape": "completed_message_verbatim",
+      "scope": "AUDITOR_B_FREEZE_AND_ORDER: freeze contract derivation (9 keys), gate ordering, stdout schema expectations",
+      "outcome": "verdict PASS; zero ordering conflicts; stale freeze-draft trap flagged (recompute hashes at write time)"
+    },
+    {
+      "agent_id": "01a128e7-59d8-7362-9f31-7ad7de131244",
+      "nickname": "Franklin",
+      "report_file": "evidence/helper-reports/agent-01a128e7-59d8-7362-9f31-7ad7de131244.json",
+      "report_shape": "completed_message_verbatim",
+      "scope": "AUDITOR_C_BOOTSTRAP_DELTA_SIM: prewrite vs current RUNROOT delta simulation and planned-additions prediction",
+      "outcome": "verdict PASS (predicted); 0 missing / 0 changed prewrite records; 42 predicted pre-baseline additions; directory entry delta explainable"
+    }
+  ],
+  "close_attempts": [
+    {
+      "agents": ["James", "Lorentz", "Planck", "Maxwell", "Bernoulli"],
+      "when": "pre-baseline (this recovery round)",
+      "result": "close_agent returned agent-not-found for each (already closed before the attempt); recorded honestly"
+    },
+    {
+      "agents": ["Pascal", "Euclid", "Franklin"],
+      "when": "pre-baseline (this recovery round)",
+      "result": "close_agent succeeded for each; returned previous_status = completed"
+    }
+  ],
+  "gate_impact": "None. No frozen gate or check reads this file; it is supplementary traceability evidence recording the user-mandated parallel-helper deviation. Every official gate receipt remains produced by root host runs from the frozen specs."
+}

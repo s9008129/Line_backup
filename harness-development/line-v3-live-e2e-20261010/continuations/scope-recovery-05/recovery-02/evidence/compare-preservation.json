@@ -1,0 +1,329 @@
+{
+  "blocked_reasons": [],
+  "consistency": {
+    "added": [
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-01.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stdout"
+    ],
+    "changed": [
+      {
+        "fields": [
+          "bytes",
+          "ctime_ns",
+          "mtime_ns",
+          "sha256",
+          "size"
+        ],
+        "new": {
+          "bytes": 725,
+          "ctime_ns": 1791688502371744904,
+          "mtime_ns": 1791688502371744904,
+          "sha256": "39d1010df0a413d2d8e711029377dc5c1462741dee34fdadfdd317c2c867b73a",
+          "size": 725
+        },
+        "old": {
+          "bytes": 0,
+          "ctime_ns": 1791688485408197891,
+          "mtime_ns": 1791688485408197891,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size": 0
+        },
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+      }
+    ],
+    "directory_explained": [
+      {
+        "entries_delta": [
+          "inventory-preservation-01.json"
+        ],
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence"
+      },
+      {
+        "entries_delta": [
+          "inventory-preservation-02.stderr",
+          "inventory-preservation-02.stdout"
+        ],
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp"
+      }
+    ],
+    "failures": [
+      {
+        "code": "ADDED_NOT_ALLOWED",
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stderr"
+      },
+      {
+        "code": "ADDED_NOT_ALLOWED",
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stdout"
+      },
+      {
+        "code": "FIELD_MISMATCH",
+        "field": "bytes",
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+      },
+      {
+        "code": "FIELD_MISMATCH",
+        "field": "ctime_ns",
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+      },
+      {
+        "code": "FIELD_MISMATCH",
+        "field": "mtime_ns",
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+      },
+      {
+        "code": "FIELD_MISMATCH",
+        "field": "sha256",
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+      },
+      {
+        "code": "FIELD_MISMATCH",
+        "field": "size",
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+      }
+    ],
+    "removed": [],
+    "status": "FAIL"
+  },
+  "consistency_failures": [
+    {
+      "code": "ADDED_NOT_ALLOWED",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stderr"
+    },
+    {
+      "code": "ADDED_NOT_ALLOWED",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stdout"
+    },
+    {
+      "code": "FIELD_MISMATCH",
+      "field": "bytes",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+    },
+    {
+      "code": "FIELD_MISMATCH",
+      "field": "ctime_ns",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+    },
+    {
+      "code": "FIELD_MISMATCH",
+      "field": "mtime_ns",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+    },
+    {
+      "code": "FIELD_MISMATCH",
+      "field": "sha256",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+    },
+    {
+      "code": "FIELD_MISMATCH",
+      "field": "size",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+    }
+  ],
+  "created_at_utc": "2026-10-11T03:17:13.828504+00:00",
+  "delta": {
+    "added": [
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs-freeze.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-baseline-consistency.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-bootstrap-delta.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-historical.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-adapter-offline.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-baseline-recovery-02.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-runner.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-01.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-02.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-01.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.receipt.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.receipt.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/planned-additions.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.receipt.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.invocation.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.receipt.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stdout",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/make_planned_additions.py",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/runner-node-adapter-syntax-02.summary.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/runner-node-adapter-syntax-02.summary.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/runner-node-adapter-tests-01.summary.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/runner-node-adapter-tests-01.summary.stderr",
+      "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/write_freeze.py"
+    ],
+    "changed": [],
+    "directory_explained": [
+      {
+        "entries_delta": [
+          "check-specs-freeze.json"
+        ],
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02"
+      },
+      {
+        "entries_delta": [
+          "compare-baseline-consistency.json",
+          "compare-bootstrap-delta.json",
+          "compare-historical.json",
+          "g-adapter-offline.json",
+          "g-baseline-recovery-02.json",
+          "g-runner.json",
+          "inventory-baseline-01.json",
+          "inventory-baseline-02.json",
+          "inventory-preservation-01.json",
+          "node-adapter-syntax-02.receipt.json",
+          "node-adapter-syntax-02.stderr",
+          "node-adapter-syntax-02.stdout",
+          "node-adapter-tests-01.receipt.json",
+          "node-adapter-tests-01.stderr",
+          "node-adapter-tests-01.stdout",
+          "planned-additions.json",
+          "runner-preflight-01.invocation.json",
+          "runner-preflight-01.receipt.json",
+          "runner-preflight-01.stderr",
+          "runner-preflight-01.stdout",
+          "runner-selftest-01.invocation.json",
+          "runner-selftest-01.receipt.json",
+          "runner-selftest-01.stderr",
+          "runner-selftest-01.stdout"
+        ],
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence"
+      },
+      {
+        "entries_delta": [
+          "inventory-preservation-01.stderr",
+          "inventory-preservation-01.stdout",
+          "inventory-preservation-02.stderr",
+          "inventory-preservation-02.stdout",
+          "make_planned_additions.py",
+          "runner-node-adapter-syntax-02.summary.json",
+          "runner-node-adapter-syntax-02.summary.stderr",
+          "runner-node-adapter-tests-01.summary.json",
+          "runner-node-adapter-tests-01.summary.stderr",
+          "write_freeze.py"
+        ],
+        "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp"
+      }
+    ],
+    "failures": [],
+    "removed": [],
+    "status": "PASS"
+  },
+  "failures": [
+    {
+      "code": "ADDED_NOT_ALLOWED",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stderr"
+    },
+    {
+      "code": "ADDED_NOT_ALLOWED",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stdout"
+    },
+    {
+      "code": "FIELD_MISMATCH",
+      "field": "bytes",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+    },
+    {
+      "code": "FIELD_MISMATCH",
+      "field": "ctime_ns",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+    },
+    {
+      "code": "FIELD_MISMATCH",
+      "field": "mtime_ns",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+    },
+    {
+      "code": "FIELD_MISMATCH",
+      "field": "sha256",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+    },
+    {
+      "code": "FIELD_MISMATCH",
+      "field": "size",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout"
+    }
+  ],
+  "format": "RECOVERY_02_COMPARE_V1",
+  "inputs": {
+    "inventory-baseline-01": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-01.json",
+      "bytes": 75024668,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-01.json",
+      "sha256": "36e825ee70ea24892a96be5ed0e44e8724db8171c4bd788cc22309783946e69e"
+    },
+    "inventory-preservation-01": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-01.json",
+      "bytes": 75043000,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-01.json",
+      "sha256": "c4b1a330cccca80d1dfc5312dd3be4f96b79c77edcf42602f97fca5a1c4df905"
+    },
+    "inventory-preservation-02": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-02.json",
+      "bytes": 75044728,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-02.json",
+      "sha256": "f4b864e0be855f237360f9553380f6a508c45bbd655ff4c865bbb83922a5af54"
+    },
+    "planned-additions": {
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/planned-additions.json",
+      "bytes": 13550,
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/planned-additions.json",
+      "sha256": "98b62f049ed1c9bdff64039b43cdfac6e688edfc4d7e7147e8a421201ed22d92"
+    }
+  },
+  "mode": "preservation",
+  "post_baseline_additions_expected": [
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/check-specs-freeze.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-baseline-consistency.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-bootstrap-delta.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-historical.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-adapter-offline.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-baseline-recovery-02.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/g-runner.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-01.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-baseline-02.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/inventory-preservation-01.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.receipt.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-syntax-02.stdout",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.receipt.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/node-adapter-tests-01.stdout",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/planned-additions.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.invocation.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.receipt.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-preflight-01.stdout",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.invocation.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.receipt.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/runner-selftest-01.stdout",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-01.stdout",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/inventory-preservation-02.stdout",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/make_planned_additions.py",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/runner-node-adapter-syntax-02.summary.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/runner-node-adapter-syntax-02.summary.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/runner-node-adapter-tests-01.summary.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/runner-node-adapter-tests-01.summary.stderr",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp/write_freeze.py"
+  ],
+  "status": "FAIL",
+  "tail_writes_declared": [
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/E2E\u6e2c\u8a66\u5831\u544a.md",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/attempt-ledger-recovery-02.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/compare-preservation.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/implementation-result.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/preservation-recovery-02.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/report-manifest.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/progress.md"
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-20261010-catalog-diagnostic-continuity-replan",
+  "task_class": "STANDARD",
+  "goal": "Implement the reviewed finite LINE album catalog diagnostic, within harness-development/catalog-diagnostic-continuity-replan-20261010/ only. Binding normative spec: harness-development/catalog-diagnostic-continuity-replan-20261010/diagnostic-spec.json SHA256 f9f5886e186c95c716210f65fcda94887c30644a480532cc451cf2e0fb4c43b8. Preserve historic 3 methods; user authorizes exactly one fixed offline replay/reverse-test method and one live session of <=6 single documented App.scroll down 0.25-page calls. CUA allowlist getApp/getAXStateAndScreenshot/App.scroll only; no clicks/keys/open/menu/SaveAll/chooser/download/live state writes. Replay bootstrap from scan-000 only, live bootstrap fresh; ROI/exclusions freeze at initialization, no historic live coordinates. Full-slot exact-RGBA text continuity; selected indicator separate structure; identity conflicts fail closed; movement and ordered overlap independent. Offline tests and independent same-candidate pre-live review PASS before foreground; final independent Acceptance required. Fresh final frame <=5s including pretrace/readback; UNKNOWN observation-only at 10/30s, never resend or restart. Full coverage NOT_ESTABLISHED; controller admission BLOCKED, no controller-native DONE.",
+  "allowed_paths": [
+    "harness-development/catalog-diagnostic-continuity-replan-20261010/"
+  ],
+  "required_evidence": [
+    "PACKET_BINDING",
+    "REPLAY_COPY_HASHES",
+    "CANDIDATE_BUILD_PROFILE_HASHES",
+    "OFFLINE_R01_R19_RESULTS",
+    "PRE_LIVE_INDEPENDENT_REVIEW",
+    "LIVE_R20_ACTION_CONTINUITY_EFFECT_OVERLAP",
+    "PRESERVATION_BASELINE_DELTA",
+    "HISTORIC3_AUTHORIZED_EXTENSION_LEDGER",
+    "FINAL_INDEPENDENT_ACCEPTANCE"
+  ],
+  "gate_specs": [
+    {
+      "gate_id": "G_OFFLINE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "SAME_BUILD"
+    },
+    {
+      "gate_id": "G_LIVE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_PRESERVE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "SUPPORTING",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "BASELINE_DELTA",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_ACCEPTANCE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "ACCEPTANCE",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    }
+  ],
+  "capability_policy": {
+    "network": "OFF",
+    "browser": false,
+    "destinations": []
+  },
+  "retry_policy": {
+    "transient_read_only_retries": 2,
+    "delays_seconds": [
+      10,
+      30
+    ]
+  },
+  "resource_policy": {
+    "prompt_bytes": 65536,
+    "state_bytes": 524288,
+    "inspect_bytes": 16384,
+    "log_bytes": 134217728
+  },
+  "workflow_policy": {
+    "plan_review_required": true,
+    "independent_acceptance_required": true,
+    "max_parallel_read_only_helpers": 0,
+    "max_parallel_writers": 0,
+    "handoff_review_required": false
+  }
+}

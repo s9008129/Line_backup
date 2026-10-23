@@ -1,0 +1,66 @@
+{
+  "attempt": 5,
+  "sdk_path": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+  "sdk_exists": true,
+  "xcodebuild_exit_code": 0,
+  "xcodebuild_stdout": "Xcode 26.6\nBuild version 17F113\n",
+  "xcodebuild_stderr": "",
+  "swiftc_exit_code": 0,
+  "swiftc_stdout": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)\nTarget: arm64-apple-macosx28.0\n",
+  "swiftc_stderr": "swift-driver version: 1.148.6 ",
+  "checks": [
+    {
+      "name": "fullscreen-capture",
+      "command": [
+        "/usr/bin/xcrun",
+        "--sdk",
+        "macosx26.5",
+        "swiftc",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-target",
+        "arm64-apple-macosx26.0",
+        "-swift-version",
+        "6",
+        "-parse-as-library",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/FullscreenCapture.swift",
+        "-o",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/bin/fullscreen-capture"
+      ],
+      "source": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/FullscreenCapture.swift",
+      "source_sha256": "6080c65adb93288042123dc69d7a8f70c8bc4cfc3d67c370189c0477b4673050",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "binary": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/bin/fullscreen-capture",
+      "binary_sha256": "f12954d671d1e016f5626d76bebaab7a03e6e1c5779ec60927471b88daa30a2c"
+    },
+    {
+      "name": "vision-regions",
+      "command": [
+        "/usr/bin/xcrun",
+        "--sdk",
+        "macosx26.5",
+        "swiftc",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-target",
+        "arm64-apple-macosx26.0",
+        "-swift-version",
+        "6",
+        "-parse-as-library",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/VisionRegions.swift",
+        "-o",
+        "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/bin/vision-regions"
+      ],
+      "source": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/VisionRegions.swift",
+      "source_sha256": "7445b34d1cbc4b5520b437d729985c2fa6ef96617a9b134e415495ac7cb0425a",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "binary": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-e2e-fullscreen-repair-20261010/candidate/v1/bin/vision-regions",
+      "binary_sha256": "cc23495dd157cf29ccd5b0ec8d3b87ec663ec93b4a1d2d10ecc8fbe1cc546832"
+    }
+  ],
+  "verdict": "PASS"
+}

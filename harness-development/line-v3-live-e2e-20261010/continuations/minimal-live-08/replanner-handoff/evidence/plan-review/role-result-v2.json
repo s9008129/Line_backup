@@ -1,0 +1,219 @@
+{
+  "analysis": {
+    "confidence": "0.86",
+    "evidence": [
+      "{\"path\": \"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/plan.md\", \"absolute_path\": \"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/plan.md\"}",
+      "{\"path\": \"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/plan-contract.json\", \"absolute_path\": \"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/plan-contract.json\"}",
+      "{\"path\": \"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/contract-admission-correction.json\", \"absolute_path\": \"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/controller/TASK-4acb4326ea2a4c50ace6f333f2de8751/contract-admission-correction.json\"}",
+      "{\"path\": \"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/gate-mapping.json\", \"absolute_path\": \"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/gate-mapping.json\"}",
+      "{\"path\": \"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/commander-decision-01.json\", \"absolute_path\": \"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/commander-decision-01.json\"}",
+      "{\"path\": \"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/continuation-proposal.md\", \"absolute_path\": \"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/continuation-proposal.md\"}",
+      "{\"path\": \"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/stop-01/facts.json\", \"absolute_path\": \"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/stop-01/facts.json\"}",
+      "{\"path\": \"harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/stop-01/preservation-guard.json\", \"absolute_path\": \"/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-08/evidence/stop-01/preservation-guard.json\"}"
+    ],
+    "facts": [
+      "{\"claim\": \"The plan preserves the historical failures and unknowns, keeps the backup, state, and foreground safeguards required, and separates the first album, post-release scroll, second album, and independent Acceptance into required gates.\", \"basis\": \"Read the native plan, gate mapping, commander decision, continuation proposal, saved diagnostic facts, and preservation guard.\"}",
+      "{\"claim\": \"The contract correction makes all 28 required native evidence IDs match declared gate IDs; the 31 historical source aliases remain plan inputs. Requiredness and criticality are unchanged.\", \"basis\": \"Read plan-contract.json, contract-admission-correction.json, and gate-mapping.json.\"}",
+      "{\"claim\": \"The saved diagnostic pair is recorded as identical and complete, while the historical E03 problem distribution remains unknown. The preservation guard reports no protected-file differences and does not claim OS enforcement.\", \"basis\": \"Read evidence/stop-01/facts.json and evidence/stop-01/preservation-guard.json.\"}",
+      "{\"claim\": \"Reviewer task: /root/ml08_plan_review. CODEX_THREAD_ID observed as 01a12ddd-fbc7-7981-82c1-b3ad0861b833; CODEX_SESSION_ID was unset. Requested model: gpt-6-luna/high.\", \"basis\": \"Platform task assignment and tool observations.\"}"
+    ],
+    "inferences": [
+      "{\"claim\": \"The plan is implementable within the declared scope: the writer paths are disjoint, serial merge order is explicit, the original controller remains unchanged, and implementation stops on failed prerequisites or uncertain UI outcomes.\", \"basis\": \"Plan and native contract.\"}"
+    ],
+    "unknowns": [
+      "Actual model/backend attestation is unavailable.",
+      "OS-level sandbox and network enforcement are unknown.",
+      "No implementation, live LINE operation, or Acceptance has run; this review does not assert those gates passed."
+    ]
+  },
+  "candidate_fact": "PASS",
+  "convergence": {
+    "consecutive_no_progress": 0,
+    "information_gain": true,
+    "last_attempt": "Actual independent Luna/high Plan Review completed; frozen 28-gate contract reviewed; no material plan blocker found.",
+    "meaningful_attempts": 1,
+    "stuck": false
+  },
+  "evidence_ids": [
+    "ACTUAL_NATIVE_PLAN_REVIEW"
+  ],
+  "evidence_manifests": [
+    {
+      "bytes": 5308,
+      "contract_sha256": null,
+      "evidence_id": "ACTUAL_NATIVE_PLAN_REVIEW",
+      "observation": "Actual independent Luna/high final review output, captured from real native session.",
+      "path": "runs/960b348b-2afe-4f88-ade7-e33ca8cee681/actual-review.json",
+      "role": "PLAN_REVIEWER",
+      "run_id": "960b348b-2afe-4f88-ade7-e33ca8cee681",
+      "sha256": "020ae0a1f3c90d2b19e38396d63e279a6d9dd6c993a0454822321d25d6dd67ce",
+      "source_sha256": "5fbb8313ba397b3d3a88533d246316991a0cc34786ba19277f51ee1e5ebc2e8b",
+      "stage": "PLAN_REVIEW",
+      "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751"
+    }
+  ],
+  "gate_results": [
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_BASELINE_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_EVIDENCE_POLICY",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_AUTH_RUNTIME",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_REAL_LINK",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_OFFLINE",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_CATALOG_1",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_CATALOG_2",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_MENU_1",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_MENU_2",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_FIRST",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_SCROLL",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_SECOND",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_PRESERVE_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_REPORT",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_ACCEPTANCE",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_EVIDENCE_READINESS_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_EARLY_CHECKS_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_PRODUCTION_FAMILY_OFFLINE_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_B02_PRESERVATION_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_OFFLINE_IMPLEMENTATION_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_FINAL_HANDOFF_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_PARENT_TRACE_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_PLAN_ADMISSION_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_D01_LIVE_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_ALBUM_ONE_LIVE_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_POST_RELEASE_SCROLL_LIVE_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_ALBUM_TWO_LIVE_08",
+      "verdict": "NOT_RUN"
+    },
+    {
+      "evidence_manifest": null,
+      "gate_id": "G_INDEPENDENT_ACCEPTANCE_08",
+      "verdict": "NOT_RUN"
+    }
+  ],
+  "handoff_sha256": null,
+  "handoff_summary": "Independent read-only PlanReview: PASS. The corrected contract uses the controller-required 28 gate IDs, retains historical aliases and failures, and keeps product, preservation, live transaction, scroll, and independent Acceptance gates required. No material plan correction identified. This review does not certify implementation, live E2E, OS enforcement, or actual model backend. Observed CODEX_THREAD_ID 01a12ddd-fbc7-7981-82c1-b3ad0861b833; CODEX_SESSION_ID unavailable; task /root/ml08_plan_review.",
+  "human_decisions": [],
+  "needs_human": false,
+  "plan_contract_sha256": "a043df49903b41b5102d671ca5afb252d73de0d8f796c8bc3749a7b41873dffc",
+  "plan_sha256": "210641620db94ee5de8ee271b979015442d3f2934d9281890a02c19f8719c279",
+  "result_format_version": "3",
+  "role": "PLAN_REVIEWER",
+  "routing_fact": "IMPLEMENT",
+  "run_id": "960b348b-2afe-4f88-ade7-e33ca8cee681",
+  "source_sha256": "5fbb8313ba397b3d3a88533d246316991a0cc34786ba19277f51ee1e5ebc2e8b",
+  "stage": "PLAN_REVIEW",
+  "statuses": {
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "IMPLEMENTATION_STATUS": "NOT_STARTED",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+  "validation_fact": "NOT_RUN"
+}

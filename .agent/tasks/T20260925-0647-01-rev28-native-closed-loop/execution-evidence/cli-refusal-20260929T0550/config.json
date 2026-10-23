@@ -1,0 +1,36 @@
+{
+  "authorization": {
+    "runID": "run-cli-refusal",
+    "goal": "Rev28 target album backup",
+    "group": "旻謙允禎成長日記",
+    "album": "2024/05/13～05/17",
+    "planSHA256": "05413807f5d7c04d5fe57eb058da6da734ddef5e350a9b023bfa8f8d72f84c1b",
+    "reviewedImplementationSHA256": "b0a71b95500ea73a873d301d177828b08883895321ce2c5c5396836976ba0070",
+    "stagingRoot": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0550/staging",
+    "stagingRunDirectory": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0550/staging/run-cli-refusal",
+    "evidenceRunDirectory": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0550/evidence",
+    "expectedFileCount": 57,
+    "expectedTotalBytes": 17924900,
+    "expectedContentMultisetSHA256": "ee958e6467676506a1c7aaf237a4376ecc5e5083fd94aa6fd0d56d376cacdaaf",
+    "baselineTripwireSHA256": "b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd"
+  },
+  "targetBundleID": "jp.naver.line.mac",
+  "targetPID": 1,
+  "ledgerPath": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0550/ledger.jsonl",
+  "checkpointPath": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0550/ledger-head.anchor",
+  "planPath": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md",
+  "repositoryRoot": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "geometryRuleBookPath": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/execution-evidence/cli-refusal-20260929T0550/rulebook.json",
+  "menuBoundsCapture": {
+    "x": 200,
+    "y": 40,
+    "width": 170,
+    "height": 260
+  },
+  "addressableBoundsCapture": {
+    "x": 210,
+    "y": 0,
+    "width": 160,
+    "height": 600
+  }
+}

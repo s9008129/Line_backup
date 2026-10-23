@@ -1,0 +1,38 @@
+{
+  "phase": "DOCUMENT_PUBLICATION_ONLY",
+  "source": "EXPLICIT_USER_AUTHORIZATION",
+  "writable_directory": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05",
+  "product_implementation_in_this_delivery": false,
+  "helper": {
+    "count": 1,
+    "model": "gpt-6-luna",
+    "role": "READ_ONLY_CONTEXT_SYNTHESIS_AND_COMMIT_MESSAGE",
+    "starts_after": "DOCUMENTS_WRITTEN_AND_DOCUMENT_CONSISTENCY_CHECKED",
+    "may_write": false,
+    "may_review_or_change_contract": false,
+    "may_start_nested_agents": false
+  },
+  "max_parallel_writers": 0,
+  "implementation_contract_helper_limit": 0,
+  "git": {
+    "authorized": true,
+    "remote": "origin",
+    "branch": "v43-ab/codex-rev28",
+    "remote_url": "https://github.com/s9008129/Line_backup.git",
+    "observed_remote_before_publication": "b06b47b717da1aa9ae63e70d6d86c24d34282bba",
+    "existing_unpushed_checkpoint": "3d8539a8447a3bfee08f493c4d2322772422c5d3",
+    "new_commit_contents": "EXACT_DOCUMENT_FILES_MANIFEST_ONLY",
+    "force_push": false,
+    "product_files_staged": false,
+    "conflict_route": "STOP_WITH_RECEIPT_NO_MERGE_REBASE_OR_RETRY_WITHOUT_NEW_FACTS"
+  },
+  "local_only_evidence": [
+    ".local/preexisting-files.json",
+    ".local/preexisting-status.z",
+    ".local/preparation-observations.json",
+    ".local/document-verification.json",
+    ".local/commit-message.txt",
+    ".local/git-publication.receipt.json",
+    ".local/post-publication-verification.json"
+  ]
+}

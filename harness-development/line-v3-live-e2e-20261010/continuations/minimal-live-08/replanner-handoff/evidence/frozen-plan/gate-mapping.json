@@ -1,0 +1,741 @@
+{
+  "adopted_decision": "evidence/commander-decision-01.json",
+  "format": "ML08_GATE_MAPPING_V1",
+  "gates": [
+    {
+      "current": {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_BASELINE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_BASELINE_07",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_EVIDENCE_POLICY",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_EVIDENCE_POLICY",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_AUTH_RUNTIME",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_AUTH_RUNTIME",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_REAL_LINK",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_REAL_LINK",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_OFFLINE",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_OFFLINE",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_CATALOG_1",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_CATALOG_1",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_CATALOG_2",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_CATALOG_2",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_MENU_1",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_MENU_1",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_MENU_2",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_MENU_2",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_FIRST",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_FIRST",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_SCROLL",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_SCROLL",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_SECOND",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_SECOND",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_PRESERVE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_PRESERVE_07",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_REPORT",
+        "goal_criticality": "SUPPORTING",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_REPORT",
+        "goal_criticality": "SUPPORTING",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_ACCEPTANCE",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_ACCEPTANCE",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_EVIDENCE_READINESS_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_E03_READINESS_07",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_EARLY_CHECKS_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_E03_EARLY_CHECKS_07",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_PRODUCTION_FAMILY_OFFLINE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_PRODUCTION_FAMILY_OFFLINE_07",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_B02_PRESERVATION_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_B02_PRESERVATION_07",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_OFFLINE_IMPLEMENTATION_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_OFFLINE_IMPLEMENTATION_07",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_FINAL_HANDOFF_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_NEW_CHAT_HANDOFF_07",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "HANDOFF",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Current native admission and final handoff evidence, required before implementation PASS."
+    },
+    {
+      "current": {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "REPOSITORY_HEALTH",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_PARENT_TRACE_08",
+        "goal_criticality": "SUPPORTING",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "BASELINE_DELTA",
+        "evidence_role": "REPOSITORY_HEALTH",
+        "evidence_source": "PARENT_CAPTURE",
+        "gate_id": "G_ROOT_COLLABORATION_LOG_07",
+        "goal_criticality": "SUPPORTING",
+        "owner": "PARENT",
+        "phase": "POST_CHECK",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Independent reviewer verifies actual task-local parent platform trace and read-only root-log preservation."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_PLAN_ADMISSION_08",
+        "goal_criticality": "SUPPORTING",
+        "owner": "ROLE",
+        "phase": "IMPLEMENT",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "MUST_NOT_BREAK",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_AMENDMENT_PLAN_REVIEW_06",
+        "goal_criticality": "SUPPORTING",
+        "owner": "ROLE",
+        "phase": "PLAN",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Current native admission and final handoff evidence, required before implementation PASS."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_D01_LIVE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "PARENT_CAPTURE",
+        "gate_id": "G_D01_LIVE_07",
+        "goal_criticality": "CORE",
+        "owner": "PARENT",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Independent reviewer verifies actual parent-produced live captures; required semantics unchanged."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_ALBUM_ONE_LIVE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "PARENT_CAPTURE",
+        "gate_id": "G_ALBUM_ONE_LIVE_07",
+        "goal_criticality": "CORE",
+        "owner": "PARENT",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Independent reviewer verifies actual parent-produced live captures; required semantics unchanged."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_POST_RELEASE_SCROLL_LIVE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "PARENT_CAPTURE",
+        "gate_id": "G_POST_RELEASE_SCROLL_LIVE_07",
+        "goal_criticality": "CORE",
+        "owner": "PARENT",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Independent reviewer verifies actual parent-produced live captures; required semantics unchanged."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_ALBUM_TWO_LIVE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "PARENT_CAPTURE",
+        "gate_id": "G_ALBUM_TWO_LIVE_07",
+        "goal_criticality": "CORE",
+        "owner": "PARENT",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Independent reviewer verifies actual parent-produced live captures; required semantics unchanged."
+    },
+    {
+      "current": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_INDEPENDENT_ACCEPTANCE_08",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical": {
+        "closure_gate": "HARD_CLEAN",
+        "evidence_role": "OUTCOME",
+        "evidence_source": "ROLE_OBSERVATION",
+        "gate_id": "G_INDEPENDENT_ACCEPTANCE_07",
+        "goal_criticality": "CORE",
+        "owner": "ROLE",
+        "phase": "ACCEPTANCE",
+        "required": true,
+        "reuse": "NEVER"
+      },
+      "historical_verdict_mutated": false,
+      "reason": "Equivalent current evidence; historical verdict is not changed."
+    }
+  ],
+  "historical_contract_sha256": "71dcb33bfa1ec7c4f06ac3182403a4687fc08b4dcf6d2f1da43868be5a63822b",
+  "original_plan_platform_source": {
+    "line": 282,
+    "path": "/Users/hsiaojohnny/.codex/sessions/2026/10/12/rollout-2026-10-12T08-53-50-01a12d9a-01e2-77e2-9587-de1b1c6a5f0f.jsonl",
+    "raw_line_sha256": "f255197ba19381b5486497892ef2a23bb8cf89a311dd622710b3e1dd57c453ba",
+    "text_sha256": "27c849515d7c218a47d1ac8bf3ea84716f29e94ad42b4fb24bcf5eb7f0d91d36"
+  }
+}

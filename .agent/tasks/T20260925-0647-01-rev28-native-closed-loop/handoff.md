@@ -1,140 +1,185 @@
-# Handoff — Rev28 native closed-loop LINE album backup
+# Stage 03 Execution Contract — Rev28 native closed-loop backup
 
 ## TASK
-- TASK_ID: `T20260925-0647-01-rev28-native-closed-loop`
-- STATUS: READY_FOR_IMPLEMENTATION (Stage 04 continuation; task remains open)
-- PLAN_PATH: `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/plan.md`
-- PLAN_REVISION: `3`
-- PLAN_SHA256: `63b25602b215a3e9514fa76db8bd34c097f4bec40f370381d218c57f62745828`
-- REVIEW_REQUIRED: YES
-- REVIEW_REPORT: `review/attempt-05/review_report.md` (`bdc2069158916c40e435b14c2ab5f2f9f2094c1338070a198ff0c33f8f003310`) and `review/attempt-06/review_report.md` (`b716ccd06fee6711b1094206c29924ee7a54ccd0ab8d3ee28a7482b974fecefc`)
-- REVIEWED_PLAN_REVISION: `3`
-- REVIEWED_PLAN_SHA256: `63b25602b215a3e9514fa76db8bd34c097f4bec40f370381d218c57f62745828`
-- INDEPENDENT_ACCEPTANCE_REQUIRED: YES (Stage 05)
-- E2E_REQUIRED: YES (true user-journey run, only after every prior gate)
-- ACCEPTANCE_MODE: approved Stage-02 reviews → W1 → complete W2 → W3 offline replay → W4 policy → W5 adversarial → V-09 reviews → Phase A read-only LINE reconnaissance → one bounded Phase B run → filesystem/content verification → Stage 05 independent acceptance.
-- Fresh Implementer required: YES
-- Planner/Reviewer transcript required: NO
 
-## GOAL_ANCHOR
-Primary outcome: use a new macOS-native closed-loop engine to back up group `旻謙允禎成長日記`, album `2024/05/13～05/17` (57 photos), into a fresh unique staging folder and prove `DUPLICATE_CONTENT_CONFIRMED` against the accepted baseline.
-Success requires direct bounded observation of the real chooser, exactly 57 complete/stable/decodable images totaling 17,924,900 bytes, matching the baseline content multiset `ee958e6467676506a1c7aaf237a4376ecc5e5083fd94aa6fd0d56d376cacdaaf`, with the baseline unchanged.
-No LINE interaction has occurred in this session. Do not open LINE or ask the owner to open the album during synthetic W2 work. Do not claim success from a click, chooser, or file count alone.
-Exactly one Save All dispatch and one destination confirmation are permitted for the eventual live run; an unknown irreversible result is never retried.
+TASK_ID: T20260925-0647-01-rev28-native-closed-loop  
+PLAN_REVISION: 4  
+PLAN_SHA256: 05413807f5d7c04d5fe57eb058da6da734ddef5e350a9b023bfa8f8d72f84c1b  
+PLAN_REVIEW_ATTEMPT: 07  
+PLAN_REVIEW_RESULT: PLAN_APPROVED  
+REVIEW_REFERENCE: `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/review/attempt-07/review_report.md`  
+REVIEWED_HEAD: 67c4fad9f2dded272cc9720100b1a6958fe352da  
+TARGET_BRANCH: `rev28-prelive-finalization`  
+HANDOFF_STATUS: READY_FOR_IMPLEMENTATION  
+INDEPENDENT_ACCEPTANCE_REQUIRED: YES  
+TASK_CLASS: CRITICAL  
+NEXT_STAGE: STAGE_04_IMPLEMENT
 
-## CRITICAL_PATH
-1. Finish W2 item 5 against the synthetic harness using the current source, then verify all nine W2 items and frozen artifacts.
-2. Complete W3 offline structural locators, all 20 SHA-bound historical replay fixtures, registration/tracking, and tests.
-3. Complete W4 state machine, risk classes, ledger, staging verifier, chooser and postcondition behavior; then W5 G01–G22 + X01–X03 deterministic adversarial suite.
-4. Complete all V-09 independent reviews on exact frozen SHAs. Only then may Phase A read-only LINE reconnaissance begin; Phase B remains gated on every pre-live gate.
-5. If every gate passes, perform at most one authorized live run, verify files and baseline, then Stage 05 recomputes acceptance from disk.
+## GOAL_ANCHOR / PRIMARY_OUTCOME
 
-## SEMANTIC_INVARIANTS
-- Plan R1–R25 are authoritative; CORE stays CORE, SUPPORTING stays local/non-gating, and no missing supporting evidence may become a new global veto.
-- Preserve plan §10–13 and the approved closed-loop contract: fresh identity/geometry per capture epoch; Vision text identity separated from click geometry; Quartz action followed by direct postcondition observation; filesystem proof is required for success.
-- Exactly-once irreversibles, durable intent, no blind retry, observe-only crash recovery, fresh unique empty staging inside the approved root, one confirmation method only, and fail-closed ambiguity remain mandatory (R15–R22; see plan §§10–13 and LIVE_RUN_ENVELOPE).
-- Do not change capture tolerances, chooser predicate, postcondition bounds, attribution, restart behavior, requiredness, failure routing, or terminal-state meaning without Stage 01 replan and fresh Stage 02 review. Current incomplete item-5 evidence is not a validated freeze.
-- Never modify the accepted baseline or plan-listed historical artifacts; do not create `__pycache__` in task scope.
+Create one new staging copy from real LINE (`jp.naver.line.mac`), group `旻謙允禎成長日記`, album `2024/05/13～05/17`. The only successful primary outcome is `DUPLICATE_CONTENT_CONFIRMED`, proven by authoritative filesystem evidence and later independent Stage 05 recomputation:
 
-## BEST_EFFORT_DO_NOT_GATE
-- R6 visual registration/tracking, R7 Foundation Models diagnostics, R23 supporting documentation/deliverable completeness, and V-08 replay/adversarial reporting are supporting per plan. V-08 remains a Phase-B interlock as explicitly stated in the plan, but its failure does not by itself redefine the primary outcome or global status.
-- W6 is SUPPORTING. It must not displace unfinished CORE critical-path work.
+- Exactly 57 complete, stable, decodable regular image files; no symlink, hidden/extra/non-image entry, nested directory, partial, zero-byte file, or duplicate content within staging.
+- Exactly 17,924,900 total bytes.
+- Filename-excluded content multiset SHA-256: `ee958e6467676506a1c7aaf237a4376ecc5e5083fd94aa6fd0d56d376cacdaaf`.
+- Baseline unchanged, including per-file names, bytes, hashes and mtimes. Name-inclusive tripwire SHA-256: `b7debe929a24406a44f53708194b644a4811559cf91ad87d5a55e5da91a28fbd`.
+- On a successful production run: exactly one Save All dispatch and exactly one destination confirmation. These are ceilings under refusal/failure; an irreversible intent consumes its budget even if effect is unknown.
+- Preserve and bind the full fresh LINE identity, geometry, chooser, transaction and filesystem evidence chain. Click return, menu/chooser visibility, file count, or Stage 04's verdict alone never establishes completion.
 
-## DEFERRED_NOT_THIS_TASK
-- No LINE/album interaction during W2 or before all pre-live gates.
-- No second production run, accepted-copy creation, historical-coordinate reuse, or broad repo cleanup.
-- No general push authorization is implied by the owner’s explicit request to push this closeout checkpoint.
+Baseline reference: `evidence/20260925-rev28-native-closed-loop/baseline-content-multiset.json`, SHA-256 `3c932d8ccb9f4d2a7945463861fb4ebae066eadb59b8ff2702767b3a9f851bc2`; authoritative source directory is `/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57`. Recompute at execution start and closeout. Preserve the old staging, evidence, review, frozen-rule and unrelated files.
 
-## REPO_ANCHOR
-- Project root: `/Users/hsiaojohnny/Documents/ChatGPT/Line_backup`
-- Branch: `master`
-- Anchor HEAD: `9c29648` (pre-closeout; the closeout commit is intended as its direct descendant)
-- Relevant dirty state at handoff compilation: three modified Rev28 source files; this task’s `execution.md`, regenerated `handoff.md`, archived prior handoff, and Rev28 harness evidence/log. Unrelated Rev27e plans, task files, route evidence and existing `__pycache__` directories were present and must remain untouched/unstaged.
-- Drift since plan/review: implementation and W2 evidence have advanced from the approved plan anchor; plan itself remains byte-identical and attempt-05/06 approvals still match. Owner explicitly authorized add/commit/push for this checkpoint although plan R25 says “no push”; that instruction applies to this requested checkpoint only.
+## CURRENT_BLOCKER / PRIMARY_OUTCOME_GAP
 
-## CURRENT_STATE_DELTA
-Handoff revision 3. Latest plan SHA and both review statuses were recomputed; attempts 05 and 06 are `PLAN_APPROVED` for exact revision 3. Previous handoff archived at `handoff-history/handoff-plan-r3-20260925T1200+0800.md` (SHA-256 `10a46357ae0ef81ebf1baa8d4e6b14d89235857ec6dc10c8f42a89b54e7969dd`).
+`StructuralLocatorsTests.swift` does not compile: two new tests call the computed `binding` property as `binding()` and use nonexistent `ocr` helpers instead of the existing `item` helper. Secondary compiler diagnostics are not a separate blocker. The focused target therefore cannot execute at the reviewed HEAD.
 
-W1 is complete. Current `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun swift test --package-path rev28` completed successfully: build complete, 28 tests, 0 failures. Durable log: `evidence/20260925-rev28-native-closed-loop/harness/build-test-log-20260925T1156+0800.txt` (SHA-256 `4d7dc802ee87b40599a9e8e58fd41c63b35417f223c7ac9fab18cf9f2fd12bc2`). Trailing whitespace was removed from the copied log; command output and test results are unchanged. `git diff --check` passed before handoff edits; rerun before commit.
+The primary outcome gap remains the missing reachable native production composition: the CLI refuses `live-execute`, and no native observation session/real adapter connects the common engine to fresh observations, one-shot transaction authority, actual chooser and final filesystem proof. Repairing the test helper calls only restores diagnostic execution; it does not resolve this gap. R4 also separately records the short end-date segmentation defect and stability-span defect. Handle each in the approved dependency order without loosening identity or acceptance.
 
-W2 item status (evidence under `evidence/20260925-rev28-native-closed-loop/harness/`):
-- 1 capture matrix/rule: PASS, frozen; complete 16-state matrix, no-rule fail-closed and occlusion capture. Rule SHA `09e1cf2ae181f519f9ed47979e0286212f0b051f197ced6909a9789f2f1a62ed`; matrix SHA `e008478201770f0496d6a252680ae2a737473c32a70db888ebd2bf4aafb7ba7b`.
-- 2 Vision localization: PASS; exact menu/count/title, repeated row/safe-point agreement, ambiguity refused (`HARNESS-20260925-090259`).
-- 3 transforms: PASS; round trips/moves 0 pt error, wrong scale detected, boundary refusal demonstrated (`085509`). Recorded-bbox differential itself was not distinguishable in that capture; unit test covers it.
-- 4 Quartz routing: PASS; popup received event and was topmost over peer occluder (`104146`).
-- 5 postcondition latency/bounds: PARTIAL, not validated/frozen. Run `114515` collected 20 real-panel samples (median 27.57 ms, p95/max 275.38 ms; delayed panel visible at 1060.67 ms), but behavior proof was incomplete: within case yielded `chooserObservedAfterWindow` at 5.19 s, timeout `noChooserObserved`, late case `noChooserObserved` / `noEligibleChooserCandidate`; no extra monitor input. The existing v1 bounds (`da579542…`) and latency file (`7ee9a9e5…`) are provisional artifacts from incomplete runs and must not be treated as validated. Latest source changes to sampler isolation, event draining and 8 s/15 s case bounds have not had a GUI rerun. Finish this item on the synthetic harness before W3; do not silently widen plan bounds.
-- 6 chooser: PASS in `HARNESS-20260925-112927`; real panel affirmed, fake/empty-census/unbound/pid-reuse/lookalike cases refused, exact destination reflected, one AXPress confirmation, run-local marker verified. Canonical v2 predicate SHA `0472aa0a364711fd357f872d93c5ad7e13b393cc267dbbc6244d47a20de6f3f2`; AX calibration SHA `13aa01a2fa5d2b2d3e52d28e17a1b421ac25e6943fda1c44a572be610ef7e569`. Earlier v1 files remain provisional history.
-- 7 focus theft: PASS (`085035`); lost focus/frame change detected, recovered after reactivation, zero dispatches during fixture.
-- 8 tripwire attribution: PASS/FROZEN_VALIDATED, SHA `d67abb17afbb77dc03fb3d70efc32d63ae4d3e616f7f259f6d803c8e88ef3216`.
-- 9 restart/observe-only: PASS/FROZEN_VALIDATED, SHA `146b373a93c7a1ab02041e079c95eed645a7dd46d45ef518bc4a49bc8128a93f`.
+## FIRST_IMPLEMENTATION_BLOCKER_FINGERPRINT
 
-Recent source work is limited to `FolderChooserDriver.swift`, `HarnessCalibration.swift`, and `HarnessApp.swift`: chooser focus/path reflection and run-local marker safety; item-5 monitor made independent of MainActor driver, per-scenario identity/event handling and freeze-only-on-PASS guard; harness panel activation/focus reporting. Item 5 still needs GUI verification on this final source. No W3/W4/W5 implementation completion, V-09 reviews, Phase A/B, or Stage 05 has occurred. At last process check no `rev28harness`, `rev28occluder`, `rev28ctl`, or LINE process was running.
+```text
+STAGE=04
+CHECK=DETERMINISTIC_SWIFT_TEST_COMPILATION
+SURFACE=rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift
+EXPECTED=Swift test target compiles and StructuralLocatorsTests executes
+OBSERVED=Swift test target compilation fails before test execution
+```
 
-Orthogonal status at this checkpoint:
-- PRIMARY_OUTCOME_STATUS: NOT_ACHIEVED
-- IMPLEMENTATION_STATUS: IN_PROGRESS
-- CORE_ACCEPTANCE_STATUS: NOT_RUN
-- REQUIRED_VERIFICATION_STATUS: INCOMPLETE (V-02 partial; subsequent required gates pending; no waiver)
-- INDEPENDENT_ACCEPTANCE_STATUS: PENDING
-- TASK_CLOSURE_STATUS: IN_PROGRESS
+This identity is fixed by the failed acceptance condition. Do not rename it when changing hypothesis, model, session or wording. Do not substitute the primary architecture gap as the first material attempt.
 
-## MUST_READ_PLAN
-Before action read plan §§GOAL_CONTRACT, REQUIREMENTS_AND_CRITICALITY (R1–R25), CRITICAL_PATH, CONSTRAINTS_NON_GOALS_AND_DO_NOT_TOUCH, ARCHITECTURE §§1–13, COORDINATE_TRANSFORM_MODEL, SYNTHETIC_HARNESS_CALIBRATION_PLAN items 1–9, HISTORICAL_REPLAY_PLAN, ADVERSARIAL_TEST_MATRIX, REVIEW_PLAN, RECONCILIATION_BARRIER_SUPERSESSION, LIVE_RUN_ENVELOPE, IMPLEMENTATION_WAVES W1–W7, VERIFICATION_AND_ACCEPTANCE V-01–V-11, DEGRADATION_AND_GATE_BEHAVIOR, ACCEPTED_TERMINAL_STATES_AND_CLOSURE, and STATUS_SEMANTICS_AND_CLOSURE_ROUTING.
+## CRITICAL_PATH / IMPLEMENTATION_WAVES
 
-## SETTLED_DO_NOT_REOPEN
-- Plan revision 3 and approved SHA are unchanged; any plan edit invalidates reviews and requires a fresh review.
-- W2 item 5 is the sole unfinished calibration item; the existing v1 bounds/latency artifacts are provisional. Do not start W3 until item 5 is validated and W2 re-audited.
-- Chooser v2 filenames are the resolved append-only republish; preserve provisional v1 files.
-- Owner’s push authorization covers this closeout checkpoint only; plan R25 remains the default for later pushes.
+1. Reverify source/remote/review/Plan/hash and preserve the current dirty worktree. Reconcile the archived R3 execution history and seed V4.3 blocker counters; R4 planning diagnostics are not implementation attempts, and missing telemetry is not proof of unused budget.
+2. Restore test execution with the smallest helper-call correction. Then fix and test exact short-date segmentation and the independently reproduced equal-tail stability-span defect.
+3. Extend the existing `LiveExecutionEngine` and `PersistentTransactionOwner` into one native composition. Add coherent retained-image observation/session evidence, durable goal-slot/ledger/anchor authority, typed eligibility/evidence checks, native tripwire and actual adapter. Do not create a parallel production engine.
+4. Validate the same composition through low-level injected OS interfaces, real synthetic AppKit panels, full refusal/restart matrix, replay/adversarial tests and current V-09 independent exact-binding reviews.
+5. Only after pre-A safety checks, run Phase A on a real Mac/real LINE with zero Save All and zero destination-confirmation intents/attempts. Capture the required real observations and V-09 LINE-specific supplement.
+6. Recompute the complete machine-checkable Phase B conjunction on the exact reviewed source/binary/rules and fresh evidence. B requires every predicate PASS, explicit one-shot Phase B authorization and a valid exact canonical staging path. Any non-PASS means ineligible.
+7. If eligible, perform the one guarded Save All, observe the actual chooser within the hard window, prepare the authorized destination reversibly, then the one bound AXPress. Observe download read-only; verify stable contents and baseline; finalize append-only evidence.
+8. Fresh Independent Stage 05 independently recomputes filesystem and transaction evidence. Close only if every outcome and closure gate passes.
+
+### CORE
+
+C1–C7 in Plan R4 are binding: repair existing test helper usage; exact date/card segmentation and association on one image; one common native composition; one immutable fresh observation bundle; one durable transaction authority and no budget-reset route; guarded single-use actuation; actual chooser/destination binding; real tripwire and stable filesystem proof/finalization. Preserve all refusal behavior and identity/geometry/freshness rules. See approved `plan.md` sections C1–C7 for the complete semantic contract.
+
+### SUPPORTING
+
+Build/test determinism, pinned fixture integrity, replay/adversarial parity, current-composer synthetic calibration, capability/evidence manifests, append-only execution artifacts and preservation audit are required at their specified gates. V-08 is classified SUPPORTING / NON_GATING for closure, but its explicit pre-B interlock remains mandatory.
+
+### BEST_EFFORT_DO_NOT_GATE
+
+Diagnostics/registration/Foundation Models are non-authoritative and non-gating. Do not delay the core route for optional features.
+
+## MUST_NOT_BREAK / SEMANTIC_INVARIANTS
+
+- Owner plus IntentLedger is the sole transaction authority. Persistent goal slot, independently stored anchor, hash chain, exclusive writer, state and budgets must survive run/session/path/token changes. Missing/corrupt/uncertain state fails closed; never reconstruct authority from untrusted history.
+- Phase A leaves `intent.saveAll=0`, `attempt.saveAll=0`, `intent.destinationConfirmation=0`, `attempt.destinationConfirmation=0`, and leaves the one-shot entitlement unconsumed. Do not rename the entitlement to `.consumed` in preflight.
+- Any irreversible intent/attempt makes every restart permanently observe-only. Unknown effects never permit retry, fallback, replacement run, or another confirmation.
+- One retained screenshot/image is the source for its OCR/structure/frame evidence; every observation carries fresh process/window/epoch/geometry/provenance. No stale candidate relabeling, caller-asserted freshness, or observer exception converted to success.
+- Save All requires fresh `SAVE_ALL_LOCATED` plus persisted `PHASE_B_ELIGIBLE`; confirmation requires the actual in-window chooser, approved tripwire and exact prepared destination. Adapters/generic append/SHA strings cannot manufacture semantic authority.
+- Preserve reviewed 150 ms/8 s then 500 ms/15 s chooser monitor bounds, one late forensic sample (never affirmative authority), and no input after post-intent refusal/timeout/uncertainty. Destination confirmation is one AXPress on the unique bound default button; no production Return fallback or retry.
+- Baseline modification always aborts. Preserve Rev27 `SAVE_ALL_SEMANTIC_EFFECT_INDETERMINATE` and historical coordinates as evidence only.
+- Never weaken counts/digests, identity, geometry, chooser, tripwire, time bounds, acceptance, requiredness or gates. Never copy baseline images into staging to pass.
+- Final filesystem stability: at least 3 equal contiguous snapshots spanning at least 4 seconds and at least 5 seconds without file/directory change; hash/decode same bytes; maximum automatic observation 10 minutes from confirmation. Timeout stays incomplete/unstable; no new download.
+
+## ALLOWED_MUTATION_SURFACES
+
+During Stage 04 only, the Plan permits `rev28/Sources/Rev28Core/**`, necessary production composition under `rev28/Sources/rev28ctl/**`, relevant `rev28/Tests/**`, `rev28/Tools/**`, and necessary architecture/capability documentation. Small additions within these areas may implement the explicit native/session/gate contracts. Append task/evidence artifacts. Reuse existing components. Any CI wiring change requires an evidenced need inside the reviewed test contract.
+
+## FORBIDDEN_MUTATION_SURFACES
+
+Do not mutate baseline or staging content, protected files under `rev28/` outside the allowed source/tests/tools scope, frozen calibration/provenance history, `.github/` workflows absent the narrowly evidenced Plan exception, unrelated repository files, or prior append-only task artifacts. No dependency update, broad cleanup/framework rewrite, second backup, packaging, or unrelated feature. Any semantic boundary listed in REPLAN_CONDITIONS requires replan, not local contract drift.
 
 ## REVERIFY_ON_START
-1. `git status`, branch/HEAD/upstream and remote state; preserve all unrelated files. Confirm closeout commit/push and clean status for task-owned paths.
-2. Recompute plan, attempt-05/06 and current handoff hashes; require exact revision-3 match before implementation.
-3. Check canonical W2 artifact hashes and that item-5 v1 artifacts remain marked provisional; inspect latest item-5 source diff before running it.
-4. Recheck build/test on current HEAD, macOS/Swift/Xcode environment, harness permissions and that no harness process is stale.
-5. Reverify approved staging `/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/staging/RUN-20260923-111908-01` is empty, accepted baseline resolves to 57 files/17,924,900 bytes and both plan digests match; do not open or mutate the album.
-6. Confirm do-not-touch/history inputs and unrelated pre-existing work remain unchanged.
 
-## TRIGGERED_POLICIES
-`workflow-routing.md` §7 status semantics; `goal-alignment-design-economy.md`; `testing-verification.md`; `dependencies-contracts.md` (frozen W2 contracts); `security-privacy.md` (user album/baseline); `git-change-hygiene.md`.
+Fetch `origin --prune`; record branch, local HEAD and `origin/rev28-prelive-finalization`; inspect dirty/untracked state before mutation and preserve it. Recheck Plan SHA, review attempt 07/result/snapshot, handoff SHA, source freshness, and new commits against the R4 assumptions and acceptance. Recompute baseline reference plus names/bytes/hashes/mtimes and both digests; inspect old staging and every goal/ledger/anchor history. Unknown transaction state blocks execution. Verify exact source/build configuration/binary/rules/frozen sampler/fixtures/current CI evidence, then recheck executable-context TCC, LINE/session/display/SDK and sensor capabilities in the native context. No Stage 04 work may overwrite unrelated dirt.
 
 ## FIRST_ACTION
-After REVERIFY_ON_START, complete only W2 item 5 in the synthetic harness using the current source: `./rev28/.build/debug/rev28ctl harness-calibrate --evidence evidence/20260925-rev28-native-closed-loop/harness --items 5`. Require valid within-window affirmation, timeout `NO_CHOOSER_OBSERVED`, late affirmative `CHOOSER_OBSERVED_AFTER_WINDOW`, zero further input, and ≥20 latency samples before freezing. If final-code evidence still fails, repair only within plan semantics; if bounds/predicate semantics need change, stop for replan/review. Then re-audit W2 items 1–9 and proceed to W3.
 
-## IMPLEMENTATION_WAVES
-- W1 CORE: DONE.
-- W2 CORE: PARTIAL; items 1–4 and 6–9 pass, item 5 partial and is the next action.
-- W3 CORE: NOT STARTED; offline locators, 20-fixture SHA-bound replay, registration/tracking and tests.
-- W4 CORE: NOT STARTED; state/risk/ledger/verifier/chooser/postcondition policy and tests (some scaffolding exists).
-- W5 CORE: NOT STARTED; G01–G22 + X01–X03 deterministic harness suite.
-- W6 SUPPORTING: incomplete; do not gate core work on it.
-- W7 CORE/CONDITIONAL: not started; only after W1–W5 and V-09 gates.
+After the above rechecks, make the smallest change in `rev28/Tests/Rev28CoreTests/StructuralLocatorsTests.swift`: use the existing computed `binding` property and existing `item(...)` OCR helper at the two erroneous test call sites. Do not delete/skip tests or alter expected refusals. Then run the targeted sequence beginning with `xcrun swift build --package-path rev28` and `xcrun swift test --package-path rev28 --filter StructuralLocatorsTests`.
 
-## ACCEPTANCE_CONTRACT
-All checks have `BASELINE_RULE: none`, `WAIVER_ALLOWED: NO`, `WAIVER_AUTHORITY: NONE`; no agent may self-waive. V-01/V-02/V-08 are diagnostics but Phase-B interlocks per plan. V-03–V-07 and V-09 are hard-clean Phase-B gates; V-10 gates closure; V-11 is supporting repository health.
+Expected mechanical result: test target compiles and the focused test cases execute. If the same compile failure remains, the distinguishing outcome was not achieved; record evidence and count convergence accurately. If tests execute and reveal segmentation behavior, classify that under its own later approved blocker/step. This first action does not connect the production CLI to the engine or prove any real LINE behavior.
 
-| CHECK_ID | COMMAND/SCENARIO | GOAL_CRITICALITY | EVIDENCE_ROLE | CLOSURE_GATE | BASELINE_RULE | FAILURE_ROUTING | WAIVER_ALLOWED | WAIVER_AUTHORITY |
-|---|---|---|---|---|---|---|---|---|
-| V-01 | Executable-context capability probe | CORE | DIAGNOSTIC | NON_GATING | none | NOT_RUN blocks Phase B; FAIL replan/block | NO | NONE |
-| V-02 | W2 calibration + frozen capture rule | CORE | DIAGNOSTIC | NON_GATING | none | repair; semantic change replans | NO | NONE |
-| V-03 | Live capture geometry | CORE | MUST_NOT_BREAK | HARD_CLEAN | none | unexplained INVALID → abort | NO | NONE |
-| V-04 | Bounded direct chooser postcondition | CORE | OUTCOME | HARD_CLEAN | none | named chooser outcome; no retry | NO | NONE |
-| V-05 | Chooser identity + exactly-once confirmation | CORE | OUTCOME | HARD_CLEAN | none | refusal → INDETERMINATE_CHOOSER_REFUSED | NO | NONE |
-| V-06 | 57 stable/decodable files, bytes and content multiset | CORE | OUTCOME | HARD_CLEAN | none | named staging/content mismatch | NO | NONE |
-| V-07 | Baseline path/digests/mtimes unchanged | CORE | MUST_NOT_BREAK | HARD_CLEAN | none | unresolved → BLOCKED; delta → abort | NO | NONE |
-| V-08 | Replay + G01–G22/X01–X03 | SUPPORTING | DIAGNOSTIC | NON_GATING | none | failure repaired before Phase B | NO | NONE |
-| V-09 | Seven reviews + adversarial + barrier review | CORE | DIAGNOSTIC | HARD_CLEAN | none | REVISION_REQUIRED → repair/re-review | NO | NONE |
-| V-10 | Stage-05 recomputation from disk | CORE | OUTCOME | HARD_CLEAN | none | mismatch → fail/replan | NO | NONE |
-| V-11 | Preservation/no-new-pycache audit | SUPPORTING | REPOSITORY_HEALTH | NON_GATING | none | violation → stop/report | NO | NONE |
+## TEST_ORDER
 
-## STOP_AND_ESCALATE_IF
-Plan/review/handoff hash mismatch; any semantic validity, requiredness, gating, failure/fallback, priority, or frozen W2 change; new architecture/root-cause/security decision; baseline/staging precondition failure or baseline delta; wrong album/window/identity; invalid geometry; chooser absent/refused; unknown irreversible dispatch; or any abort condition. Record escalation and replan; never weaken an invariant to proceed.
+Do not start with expensive live E2E. Preserve dependency order and do not skip a later gate after an earlier PASS:
 
-## HISTORICAL_TASK_DEPENDENCIES
-Use only the exact read-only inputs named in plan §§SOURCE_OF_TRUTH, HISTORICAL_REPLAY_PLAN and HISTORICAL_TASK_DEPENDENCIES, including `ISSUE-2026-09-24-rev27e4-r2-ownership-provenance.md`, the named `evidence/20260916-route/attempt-07/**` barrier rationale, and the 20 explicitly listed replay fixtures. Do not scan sibling `.agent/tasks/*`.
+1. Narrow diagnostic: `xcrun swift build --package-path rev28`; focused `StructuralLocatorsTests`; focused `StagingVerifierTests`, adding minimal short-end-date/cross-card and old-different-sample/short-equal-tail regressions.
+2. Run deterministic Swift tests per current macOS 27 workflow, keeping Vision tests and any hosted Vision limitation explicit; then the full suite on this real Mac in executable context. No production LINE input in CI.
+3. Run the existing 25-case adversarial suite and all 20 pinned replay fixtures twice each with semantic parity; verify hashes against archived anchors/current pinned manifest. Replay actual segmentation, not only supplied card regions.
+4. Run the common-composition failure matrix (freshness/identity/geometry, permits, sampling, chooser ownership, destination/focus, tripwire, baseline, content, evidence tampering and invalid state) and owner/restart matrix (second owner, ledger/anchor damage, continuation, crashes at each irreversible boundary, independent dispatch counts).
+5. Run `python3 -B rev28/Tools/verify_pre_live_provenance.py` and preserve exact v3 historical binding. Run current-composer synthetic AppKit calibration with actual NSOpenPanel/SCK/Vision/AX, separate-process occluder and real input sink; include at least 20 panel timings, strict monitor, destination/AXPress and refusal/crash behavior. Never synthetic-dispatch into LINE.
+6. Complete V-09 exact-binding code/rule reviews before Phase A. After Phase A, complete LINE-specific V-09 supplements. These reviews are independent of Plan Review attempt 07.
+7. Phase A eligibility/evidence only after all preceding dependencies. Recompute every Phase B predicate; Phase B is forbidden unless all are PASS and explicit one-shot authorization exists.
+8. Conditional Phase B runtime gates, stable/content/baseline proof and append-only finalization. Stage 05 performs independent recomputation last.
 
-TASK_ID: T20260925-0647-01-rev28-native-closed-loop
-HANDOFF_PATH: .agent/tasks/T20260925-0647-01-rev28-native-closed-loop/handoff.md
-PLAN_REVISION: 3
-STATUS: READY_FOR_IMPLEMENTATION
-NEXT_STAGE: 04_IMPLEMENT
+## MECHANICAL_ACCEPTANCE / ACCEPTANCE_CONTRACT
+
+For every check retain result (`PASS|FAIL|BLOCKED|NOT_RUN`), command/scenario, exact source/binary/rule inputs, raw output/evidence path and SHA, and scoped status. No self-waiver; all checks use `BASELINE_RULE=none`, `BASELINE_REQUIRED=NO`, `WAIVER_ALLOWED=NO`, `WAIVER_AUTHORITY=NONE`, `WAIVER_STATUS=NOT_ALLOWED`. Closure gate classification does not remove explicit pre-B interlocks.
+
+| CHECK_ID | COMMAND/SCENARIO / observable criterion | GOAL_CRITICALITY | EVIDENCE_ROLE | CLOSURE_GATE | BASELINE_RULE | FAILURE_ROUTING |
+|---|---|---|---|---|---|---|
+| V-01 | Actual binary SCK/Vision/AX/Quartz capability | CORE | DIAGNOSTIC | NON_GATING | none | Unknown/fail blocks phase |
+| V-02 | Frozen geometry/chooser/monitor calibration applies to current composer | CORE | DIAGNOSTIC | NON_GATING | none | Repair mechanically or replan; mandatory before B |
+| V-03 | Every frame/permit meets identity, geometry and freshness rules | CORE | MUST_NOT_BREAK | HARD_CLEAN | none | Invalidate candidate; stop at budget/irreversible boundary |
+| V-04 | Actual chooser affirmed by strict predicate within 15 seconds | CORE | OUTCOME | HARD_CLEAN | none | Named terminal; zero further input |
+| V-05 | Bound chooser and exact path; exactly one confirmation; no unknown retry | CORE | OUTCOME | HARD_CLEAN | none | Refusal/indeterminate; preserve spent budget |
+| V-06 | 57 stable decodable regular files, exact bytes and multiset | CORE | OUTCOME | HARD_CLEAN | none | Named staging/content failure; no redownload |
+| V-07 | Reference/baseline digests and per-file mtimes unchanged | CORE | MUST_NOT_BREAK | HARD_CLEAN | none | Block before B or abort with zero input |
+| V-08 | Pinned replay/adversarial suite twice with refusal parity | SUPPORTING | DIAGNOSTIC | NON_GATING | none | Repair/replan; mandatory pre-B interlock |
+| V-09 | Seven topic reviews + adversarial + Rev27 barrier supersession on exact bindings | CORE | DIAGNOSTIC | HARD_CLEAN | none | Resolve and fresh-review before applicable phase |
+| V-10 | Independent Stage 05 filesystem/transaction recomputation | CORE | OUTCOME | HARD_CLEAN | none | Acceptance failure/replan; preserve proven facts |
+| V-11 | Do-not-touch/unrelated-work preservation; no unauthorized commit/push | SUPPORTING | REPOSITORY_HEALTH | NON_GATING | none | Stop closeout claim and report |
+| V-12 | Build and required deterministic/native Swift tests execute and pass | SUPPORTING | DIAGNOSTIC | HARD_CLEAN | none | Repair current compile regression before B |
+| V-13 | Same composed engine/authority/gates in real and injected paths; full failure matrix | CORE | MUST_NOT_BREAK | HARD_CLEAN | none | Repair or replan divergence/forged success |
+| V-14 | Complete real-Mac Phase A evidence and zero irreversible intent/dispatch | CORE | MUST_NOT_BREAK | HARD_CLEAN | none | Fail closed; no B |
+| V-15 | Goal slot/anchor/intent ordering/restart/no-reset authority | CORE | MUST_NOT_BREAK | HARD_CLEAN | none | Uncertainty is observe-only; no B |
+| V-16 | Append-only final manifest/empirical record/ledger bind raw evidence | CORE | OUTCOME | HARD_CLEAN | none | Missing evidence stays incomplete |
+
+True final acceptance is `DUPLICATE_CONTENT_CONFIRMED` only with all exact filesystem and baseline facts in GOAL_ANCHOR, exactly one authorized Save All and one confirmation, complete bound evidence, and Stage 05 independent recomputation. No UI state is sufficient.
+
+## PHASE_A_REQUIREMENTS
+
+Real Mac and real LINE observation/preflight only. Keep production Save All dispatch count and destination confirmation count at zero; both irreversible intents and attempts remain zero; do not consume/rename the one-shot entitlement. Guarded reversible navigation to the exact album and optional open/dismiss of ellipsis are allowed under the persistent reversible budget; never activate a production menu row to test it.
+
+Record real process/signature/start, executable-context TCC, SCK/CG/AX inventory, display/backing scale, frozen capture geometry, same-frame Vision, exact group/date/count and card association, album re-verification, ellipsis and five-row menu localization, popup/occlusion assumptions, pre-panel census, baseline integrity, empty unique staging/evidence separation and native tripwire readiness. Capture ≥10 seconds pre-dispatch environmental context whenever at `SAVE_ALL_LOCATED`. Publish `phase-a.json` and raw evidence manifest with per-condition PASS/FAIL/UNKNOWN and ledger-proven zero irreversible counters. State explicitly that chooser assumptions are calibrated on real NSOpenPanel and actual LINE chooser is not yet observed. Any missing, failed, unknown, not-run, stale, unbound or ambiguous condition prevents B.
+
+## PHASE_B_ELIGIBILITY
+
+All machine-checkable predicates must be PASS and persisted/rechecked at reservation: exact approved Plan and Stage 03 binding; exact reviewed implementation source/config/tool manifest, HEAD/diff and binary hash; current rules/predicate/fixture/provenance hashes; all required independent reviews current and issue-free; V-01/02/08/09/12/13/14/15 prerequisites PASS; fresh Phase A plus immediate fresh LINE re-observation; valid exclusive goal slot/ledger/anchor and unused irreversible budget; baseline and empty canonical staging verified; tripwire has ≥10-second context and no gaps; strict observer/deadline armed; all refusal branches demonstrated; explicit one-shot Phase B authorization. Any FAIL, UNKNOWN, NOT_RUN, stale/missing hash or unbound evidence means `PHASE_B_INELIGIBLE` and zero irreversible dispatch. Human authorization cannot convert a failed machine predicate to PASS. Actual LINE chooser and final content are runtime gates, not pre-B facts.
+
+## PHASE_B_EXECUTION_CONTRACT
+
+Only after eligibility PASS and explicit authorization: reserve/consume one durable Save All intent/attempt, then one guarded Quartz click. Observe the actual new chooser with strict SCK+CG+AX/process/signature/ownership predicate inside the 15-second cap. Any refusal, observer/tripwire error, no/late chooser or uncertainty ends GUI input permanently. On affirmative chooser plus tripwire gate, prepare only the exact authorized canonical staging path with freshly bound panel/navigation field and verified reflected destination. Reserve/consume one confirmation and perform exactly one AXPress on the bound unique default button. No production Return fallback, second AXPress, blind retry, replacement run or new authorization after uncertain effect. Observe download read-only for at most 10 minutes; prove stable snapshots/content/baseline, then append evidence and finalize. Any restart after irreversible intent/attempt is observe-only.
+
+## ATTEMPT_BUDGET / INFORMATION_GAIN_RULE
+
+Budget is scoped to `TASK_ID + BLOCKER_FINGERPRINT`, never model/session/hypothesis wording:
+
+- `MAX_MATERIAL_ATTEMPTS_PER_BLOCKER = 3`
+- `MAX_CONSECUTIVE_NO_INFORMATION_GAIN = 2`
+- `A -> B -> A` caused by attempted fixes: immediate escalation.
+- Ceiling, not quota. Before each attempt require a falsifiable hypothesis, genuinely new information source and distinguishing result. If the next action has none, stop and escalate without spending another attempt.
+
+For each material attempt record `ATTEMPT_ID`, fingerprint, `HYPOTHESIS`, `EXPERIMENT_OR_CHANGE`, `EXPECTED_DISTINGUISHING_RESULT`, `OBSERVED_RESULT`, `ACCEPTANCE_DELTA`, `NEW_EVIDENCE`, `UNCERTAINTY_REDUCED`, `INFORMATION_GAIN: YES|NO`, and `NEXT_DECISION`. Commands/re-runs with materially identical evidence, log rereads, cosmetic changes or renamed hypotheses do not create progress or reset budgets. Reconcile R3 execution history and R4 analysis before initializing counters; R4 decision records zero R4 analysis material implementation attempts, while earlier same-fingerprint material work must still be accounted for if evidenced.
+
+Maintain `.agent/tasks/T20260925-0647-01-rev28-native-closed-loop/progress.md` after every material result and each Stage 04 boundary. At convergence trigger create next unused append-only `escalations/attempt-N/` with installed-template `escalation.md` and `context.json`; set `IMPLEMENTATION_STATUS=ESCALATED`, `TASK_CLOSURE_STATUS=HIGH_REASONING_REVIEW_REQUIRED`. If a load-bearing Plan premise is disproved, route `REPLAN_REQUIRED`. High-reasoning review is Stage 06 escalation, not an automatic Stage 04 implementation wave.
+
+## STOP_CONDITIONS
+
+Stop GUI input and preserve evidence on any failed Phase B eligibility; preservation/baseline violation; missing authority/data; duplicate owner; spent/uncertain irreversible budget; identity/geometry/chooser/tripwire failure; deadline; or exhausted reversible/revalidation limits. No blind retry after unknown effect. Stop automatic download observation at 10 minutes and retain the incomplete/unstable result. Stop substantive local implementation at the convergence guard.
+
+## ESCALATION_CONDITIONS
+
+Immediately escalate on 3 material attempts for the same unresolved blocker, 2 consecutive no-information attempts, fix-caused A→B→A oscillation, an unfalsifiable next action, repeated experiment without a new evidence source, or a need to change a load-bearing semantic/architecture/security/data/public contract. Use the append-only escalation packet and V4.3 status routing; do not self-pause any Goal runtime.
+
+## REPLAN_CONDITIONS
+
+Replan if source/remote drift invalidates a load-bearing premise; architecture/session/owner boundary, chooser shape, capture rule, identity alias, validity/requiredness/gate policy, fallback semantics, migration/security boundary, acceptance/time bound or required attribution semantics must change. Stage 04 may settle mechanical details only. Preserve the existing Rev27 effect classification and do not disguise semantic drift as a bounded fix.
+
+## EXPECTED_ARTIFACTS / STATUS_UPDATE_RULES
+
+Stage 04: `progress.md`; append-only execution evidence and status updates; exact source/binary/rules/provenance manifests; V-09 review artifacts; native composition/calibration/test and authority/restart evidence; `phase-a.json` plus raw manifest; typed `eligibility.json`; transaction ledger/anchors; dispatch/chooser/tripwire/stable snapshot/content/baseline evidence; append-only final manifest/empirical class/FINALIZED transition; escalation packets when triggered. Stage 05 creates next unused `e2e/attempt-N/` and independently recomputes files, baseline mtimes, evidence chain, ledger and action counts. `result.md` only at actual closure.
+
+Keep canonical statuses orthogonal. Initial Stage 04 facts: `PRIMARY_OUTCOME_STATUS=NOT_ACHIEVED`; `IMPLEMENTATION_STATUS=NOT_STARTED`; `CORE_ACCEPTANCE_STATUS=NOT_RUN`; `REQUIRED_VERIFICATION_STATUS=FAIL` (reviewed-head focused test target compile failure); `INDEPENDENT_ACCEPTANCE_STATUS=PENDING`; `TASK_CLOSURE_STATUS=FIX_REQUIRED`. Update only from observed evidence; a build or synthetic run does not imply primary outcome or independent acceptance. Overall `DONE` requires outcome, implementation, CORE acceptance, all required verification, independent acceptance and no hard blocker.
+
+NEXT_STAGE: STAGE_04_IMPLEMENT

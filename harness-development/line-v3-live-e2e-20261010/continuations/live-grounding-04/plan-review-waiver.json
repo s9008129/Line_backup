@@ -1,0 +1,13 @@
+{
+  "waiver_format_version": "1",
+  "source": "TRUSTED_OPERATOR",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "gate_id": "G_PLAN_REVIEW_WAIVER",
+  "contract_sha256": "a83bec99428ad66ae32e1795dfb17545e8dbd7df4df802cfb54b9f4e8b345883",
+  "decision": "WAIVE_GATE",
+  "authority": "USER",
+  "reason": "User explicitly waived independent Plan Review. The immutable CRITICAL policy flag remains true; local Handoff records WAIVED_NOT_RUN and preserves independent post-implementation Acceptance.",
+  "user_confirmation": "本次修正計劃不需要獨立審查；同意文件落檔與 add,commit,push",
+  "observation_sha256": null,
+  "created_at": "2026-10-10T15:51:15.770844+00:00"
+}

@@ -1,0 +1,12 @@
+test_anchor_residual_over_two_pixels_refuses_mapping (test_geometry.GeometryTests.test_anchor_residual_over_two_pixels_refuses_mapping) ... ok
+test_coordinate_scale_bug_regression (test_geometry.GeometryTests.test_coordinate_scale_bug_regression) ... ok
+test_corrected_ocr_and_mapping_produce_safe_interior (test_geometry.GeometryTests.test_corrected_ocr_and_mapping_produce_safe_interior) ... ok
+test_mismatched_image_hash_refuses_mapping (test_geometry.GeometryTests.test_mismatched_image_hash_refuses_mapping) ... ok
+test_uncertain_menu_order_refuses_mapping (test_geometry.GeometryTests.test_uncertain_menu_order_refuses_mapping) ... ok
+test_undersized_popup_intersection_refuses_mapping (test_geometry.GeometryTests.test_undersized_popup_intersection_refuses_mapping) ... ok
+test_wrong_screenshot_dimensions_refuse_mapping (test_geometry.GeometryTests.test_wrong_screenshot_dimensions_refuse_mapping) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.001s
+
+OK

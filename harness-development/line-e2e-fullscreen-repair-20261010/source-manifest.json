@@ -1,0 +1,78 @@
+{
+  "format": "local-planning-source-manifest-1",
+  "records": [
+    {
+      "path": "20261010_LINE全螢幕定位與相簿備份_E2E技術修復計畫.md",
+      "bytes": 39723,
+      "sha256": "9ea60dc98f95efed57cb591481d01028e16053403b8f4270e857a7c8103784b5",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/research-independent-vision-20261010/report.md",
+      "bytes": 34207,
+      "sha256": "6a59d7dbcfd1d2e3a92f71e06ed9979409b8b1b3155450bdd8be6b44014af350",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/research-independent-vision-20261010/sdk-probe-record.json",
+      "bytes": 6771,
+      "sha256": "9999ad3eb2b571950b5c3f952979d0d0dfeb27304c19fee58c07fb5fc094b9dd",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/attempt-ledger.json",
+      "bytes": 4110,
+      "sha256": "3f175c7f5a414f5fdff37c2b9236de7cfef80d03d26d75303d6fc671a62eb9f6",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    },
+    {
+      "path": "harness-development/catalog-diagnostic-continuity-replan-20261010/results/high-reasoning-review-01.md",
+      "bytes": 5443,
+      "sha256": "a2582315b5f0a343460ce5633b598386cfba886c418da17c1442c879e466d477",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    },
+    {
+      "path": "harness-development/rev28-download182/TASK-20261009-download182/report.md",
+      "bytes": 3583,
+      "sha256": "40a1ea4d85a0202361e948ca2e31fb307d1664bf9e2ffc1b3c8c10d3adfef7c5",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    },
+    {
+      "path": "harness-development/rev28-download182/TASK-20261009-download182/evidence/menu-safe-point.json",
+      "bytes": 1221,
+      "sha256": "f9b2ff0773254b4c9974e39edf4eeff236ac60628a4845025425a6c2cd64e0ad",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    },
+    {
+      "path": "harness-development/rev28-download182/TASK-20261009-download182/evidence/menu-geometry-correspondence.json",
+      "bytes": 2155,
+      "sha256": "78fa803fd25647f5cc0efa824607573a351c3d87c22307184e605a8c8ac361ff",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    },
+    {
+      "path": "harness-development/rev28-download182/TASK-20261009-download182/operator.py",
+      "bytes": 22825,
+      "sha256": "0ca39a9f026f2253ca0cf6a8085ee040dec20f05e8eb1a595def54bea662bd43",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    },
+    {
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "bytes": 7463,
+      "sha256": "a46dd45a1d91dbf4667cd29c6286c501e192afdb2374d787bf5a40cbfc0479ef",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    },
+    {
+      "path": "config/line_backup_config.json",
+      "bytes": 384,
+      "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    },
+    {
+      "path": "state/backup_state.json",
+      "bytes": 252091,
+      "sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9",
+      "binding_class": "PLANNING_PROVENANCE_ONLY; capture fresh execution baseline"
+    }
+  ],
+  "note": "No historical CUA coordinates or planning state hash grants current input/ownership. Capture fresh baseline at implementation."
+}

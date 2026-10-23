@@ -1,0 +1,16 @@
+{
+  "step": 2,
+  "goal": "bounded catalog diagnostic",
+  "primitive": "App.scroll",
+  "direction": "down",
+  "pages": 0.25,
+  "target": [
+    180,
+    602
+  ],
+  "sourceFrame": "scan-001",
+  "sourceSha256": "d78a606c6e110eeadc5b4b11934fdc04fd1b6fb6ec0adc01fee5972c967e4b57",
+  "preconditions": "fresh visually OBSERVED Albums/noediting/menu/dialog; metadataagreement PASS; no keyboard",
+  "startedAt": "2026-10-09T22:07:52.583Z",
+  "plannedPostcondition": "fresh samegroup metadata overlap and upward displacement"
+}

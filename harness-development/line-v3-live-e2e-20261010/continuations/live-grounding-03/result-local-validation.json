@@ -1,0 +1,15 @@
+{
+  "kind": "LOCAL_STRUCTURAL_ONLY",
+  "receipt": {
+    "verdict": "VALID",
+    "schema_selector": "schemas/v3/result.schema.json",
+    "input_bytes": 7894,
+    "input_raw_sha256": "9eee04e99b26cab4888be41d445c10fb7b461bf9c79ae82f1a65233e3e41ee8f",
+    "resource_inventory_sha256": "e12d2e8393f50b736ad9c6e142f60a8c15013639578e8c50fa7c440d6bb6f78a",
+    "schema_graph_sha256": "f3577a95bd3044da93021903b30343f086843ff42c20954d8bf983d9b61981c1",
+    "package_content_sha256": "2743a20a3a89ab644b9b77abd849559cfc9a53a6ec9333166e7b2aaf742dbf1f",
+    "retrieval_policy": "LOCAL_ONLY_DENY_UNKNOWN",
+    "os_enforcement": "UNKNOWN"
+  },
+  "native_result_validation": "NOT_RUN"
+}

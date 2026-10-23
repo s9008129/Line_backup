@@ -1,0 +1,40 @@
+{
+  "result_format_version":"3",
+  "task_id":"TASK-5ed3e9d8a341403fabba1364edb7e14b",
+  "run_id":"17ed347f-ec7d-434c-8cc1-34721b1666ca",
+  "role":"ACCEPTANCE_REVIEWER","stage":"ACCEPTANCE",
+  "candidate_fact":"REVISION_REQUIRED","validation_fact":"NOT_RUN","routing_fact":"IMPLEMENTER_FIX",
+  "statuses":{
+    "PRIMARY_OUTCOME_STATUS":"NOT_ACHIEVED","IMPLEMENTATION_STATUS":"IN_PROGRESS",
+    "CORE_ACCEPTANCE_STATUS":"FAIL","REQUIRED_VERIFICATION_STATUS":"PASS",
+    "INDEPENDENT_ACCEPTANCE_STATUS":"FAIL","TASK_CLOSURE_STATUS":"FIX_REQUIRED"
+  },
+  "gate_results":[{"gate_id":"G5_INDEPENDENT_ACCEPTANCE","verdict":"FAIL","evidence_manifest":"harness-development/rev28-repair/TASK-5ed3e9d8a341403fabba1364edb7e14b/evidence/verification-manifest.json"}],
+  "evidence_ids":["final-source-manifest","final-patch","current-verification-manifest"],
+  "evidence_manifests":[],
+  "plan_sha256":"488f1f5e3e4705862121fdd924d0e41061666801a294f22739f443b4b0a66139",
+  "handoff_sha256":"d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+  "source_sha256":"69efa30b51ed3bc0d77e47d483ee3cf8ac2af6c037ec0cede41ccffd3892ebe6",
+  "plan_contract_sha256":"d8f0d6249c36a0aea796c0ffb02041f0b967e8228ff8df36e84d76b31d825905",
+  "analysis":{
+    "record_kind":"Parent summary of the actual independent reviewer final; full format-3 JSON and verified metadata remain in the native tool conversation. Not a fabricated controller receipt.",
+    "facts":[
+      "Reviewer independently verified source 69efa30b…, patch b27feb6a…, all 18 manifest entries, 24,536 historical files and nine frozen artifacts.",
+      "Recorded current suite passed 255 tests, including 125 focused tests; reviewer ran no tests and edited no files.",
+      "QuartzActuator persists passed=true before final expiry/cancellation/guards, then appends false on refusal.",
+      "The owner stops its consecutive-failure derivation at provisional true, so prior false plus current true,false counts one rather than two."
+    ],
+    "inferences":["One in-plan MAJOR correction is required to preserve the mandatory two-failure abort."],
+    "unknowns":["Correction not yet verified at this review.","Actual LINE/calibration/production backup remain unobserved.","Controller admission and platform isolation unproved; UUID is advisory."],
+    "evidence":["QuartzActuator.swift:556-574","PersistentTransactionOwner.swift:322-329","ActuationReadinessTests.swift:473-500","evidence/verification-manifest.json","evidence/full-suite.log"],
+    "confidence":"High: direct append-order/counter analysis; no unperformed reproduction claimed.",
+    "bounded_action":{
+      "severity":"MAJOR",
+      "action":"Bind revalidation outcomes to the exact durable dispatch reservation; terminal false supersedes only its own provisional true. Preserve legacy standalone behavior, distinct successful reset, durable-before-click safety and original deadline.",
+      "minimum_validation":["Seed prior failure, then expiry during persistence and final guard loss; assert only move/count2/further-dispatch refusal.","Reopen ledger/anchor and retain count2.","Preserve normal success, legacy records and durable faults.","Refresh required checks and return for independent Acceptance."]
+    }
+  },
+  "handoff_summary":"REVISION_REQUIRED for one bounded in-plan MAJOR correction: terminal failure of an invocation must not erase the preceding failure. Refresh focused/full/replay/provenance/preservation and independent review. G5 fails; production remains NOT_ACHIEVED and no live action or migration is authorized.",
+  "needs_human":false,"human_decisions":[],
+  "convergence":{"meaningful_attempts":1,"consecutive_no_progress":0,"last_attempt":"Attempt01 produced tested repairs; independent review found a precise failure-budget counterexample.","information_gain":true,"stuck":false}
+}

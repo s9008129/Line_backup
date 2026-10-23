@@ -1,0 +1,214 @@
+```text
+你接手的是 /Users/hsiaojohnny/Documents/ChatGPT/Line_backup 的 LINE macOS 自動相簿備份專案。請先讀完整份 20261006_handoff.md，再依索引讀實際證據；現在不用請使用者準備 LINE 畫面。
+
+你的下一個任務是實作並驗收「已審核的 LINE 本機唯讀預檢方案」，不是重新規劃已完成的 v3 擷取元件，也不是操作 LINE 或下載照片。
+
+權威入口：harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/。讀 plan-03.md、plan-contract-02.json、與 contract 逐 bytes 相同的 handoff.json、project-binding-report.schema.json、plan-review-02.result.json，以及新增的 user-consent-20261006.json。
+
+使用者於 2026-10-06 明示：「我接下來會另開新的視窗來執行這個任務，並且我同意已審核的 LINE 本機預檢方案。」這項同意已精確綁定 Plan03、第二次獨立 P1 PASS、machine Handoff 與七個產品路徑。核對原文件/hash與實際來源後，在 IMPLEMENT admission 記錄 I0 決策已滿足，直接依已審核方案續作，不要重問同一項同意。原 reviewer／handoff-validation／decision 文件的 PENDING 或 NOT_RUN 是當時歷史快照，不能據此忽略後來已收到的同意；也不能改寫舊結果。
+
+實作範圍：新增 Python project-preflight 唯讀報告與 Swift 嚴格 inspection-only consumer，只改下列七個 literal paths，以及該 project-binding task 的證據：src/line_backup_acceptance/project_binding.py、src/line_backup_acceptance/cli.py、rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift、tests/test_project_binding.py、rev28/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift、rev28/ARCHITECTURE.md、rev28/CAPABILITY-MATRIX.md。根 Implementer 串行，helpers/writers=0，必要的獨立 A1 另由真正獨立 reviewer 執行。
+
+先核對 source52、Python來源、config/state、Git與既有預檢 baseline。保留所有 dirty/untracked 工作和舊 baseline；依本交接第8節列出後來明示授權的 research／文件／同意增量，再保存執行起點。不得把整個資料夾或全部差異一概忽略，也不得重跑舊 write-once prepare/invoke/verify scripts。若受保護來源或資料出現未解差異，先說明差異，不能替使用者清理或回退。
+
+檢查規則：57張已 VERIFIED，任何換目的地都仍應跳過；182張最多只標示可繼續檢查，不能下載。active writer、未解下載意圖、歷史矛盾、不安全路徑等必須拒絕。報告的 dispatch_authorized/writer_acquired/native_observation_performed/state_modified 全為 false，未知照片總 bytes/hash 為 null。Swift只能回 canDispatch=false 的 inspection binding；不能簽發 native permit、取得 writer、改 state 或放寬舊57驗證。
+
+schema 檢查必須 preload 固定本機 Registry，未知引用立即拒絕；使用已讀過的 prepare_review_02.offline_validators 或等效已核對入口。禁止裸 jsonschema.validate／Draft202012Validator(schema) 或真實 codex.local DNS/HTTP 重現。network OFF 是任務限制，不能自稱已證明 OS 封網。
+
+依 Plan03 做 task-only 隔離的 Python／Swift focused與full checks、實際唯讀 CLI、保留 packet 的相容性載入及逐檔保存核對；通過後取得獨立 A1。最多3個證據充分的本機產品候選，連續2次沒有新資訊停止；不以新task/model/session重設舊预算。
+
+目前整套 native 主目標仍 NOT_ACHIEVED。v3 本機元件已 A1 PASS，單次真實182張詳細頁／儲存全部選單 packet已 strict-loader PASS，但當前原生群組名稱證明仍 BLOCKED，calibration/occlusion/currentComposer/PhaseB 等仍 UNKNOWN。production3/3、原explicit產品3/3、passive累計3與count1/1保留且不可重設。已完成57張不得重新下載。
+
+本授權不包含 GUI/native query/capture/input/navigation、Save All/chooser/download、config/state/backups寫入、Harness修補或升級、commit/push/deploy或Git破壞性操作。Harness缺陷已另外寫成 20261006_issue_harness_offline_schema_resolution.md，交給另一個修補任務；不要在本次 LINE 實作中改不可變 release。
+
+最後用白話說明完成什麼、實際檢查與證據、剩餘工作及六個 status；只有這個唯讀單元的必要 gates/A1全部滿足，才能宣告此單元完成。不能把它宣稱為整套 LINE 備份完成。除真正擴大範圍或改變受保護決策外，不重複要求已授權事項。
+```
+
+# 2026-10-06 LINE 專案交接：已批準本機預檢，下一視窗開始實作
+
+日期：2026-10-06；時區：Asia/Taipei。本文件以最後一則完整使用者指示為交接基準。這一輪只更新交接、記錄同意與交付 Issue；未開始七路徑產品實作。
+
+## 1. 接手時先掌握的結論
+
+下一個 Agent 應直接接入已審核的本機預檢實作，核對同意後續作。現在不需開啟 LINE、準備選單或重新授權研究。這個唯讀單元讓 Python 與未來 native 程式共用專案／相簿／已備份狀態的判斷資料；它不讓現有 native 自動下載入口變成可用。
+
+本文件更新取代同名文件的「目前續作入口」與「最新狀態」。舊文件原始 bytes 保存於 [舊交接封存](harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a/previous-20261006_handoff.md)，50,718 bytes，SHA256 `8fbb2e370f2469486d694c4c095f5ed39681acc62d3c439e165bbf467ca5225d`。舊文件說「v3 未實作、P1 未完成、passive累計2」已被後來完成工作超越，不是目前狀態。舊歷史、失敗、commit與授權邊界仍保留。
+
+## 2. 使用者授權：已收到，不再重問
+
+使用者此次原話：
+
+> 我接下來會另開新的視窗來執行這個任務，並且我同意已審核的 LINE 本機預檢方案。
+
+完整機械記錄：[user-consent-20261006.json](harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-consent-20261006.json)。這是實際對話同意的 root transcription；沒有平台曝露的訊息精確時間，不補造 timestamp／controller admission。
+
+| 項目 | 授權內容 |
+| --- | --- |
+| 對應 task | `TASK-08a0bd6da5c54d03944ce2fb994ff71b` |
+| 決策 | `I0_PUBLIC_PROJECT_BINDING_DECISION` 明示批準已取得；Implementer核對後記錄該 phase admission |
+| 審核方案 | Plan03、固定 report v1、第二次真正獨立 P1 PASS、exact machine Handoff |
+| 可做 | 七路徑本機實作、task內隔離的離線 checks、必要獨立 A1、該 task 的證據／進度 |
+| 執行者 | 使用者新視窗中的下一個 Agent；本交付 turn 沒有提前實作 |
+| 不含 | LINE畫面操作／查詢／擷取／下載；config/state/photos修改；Harness修改／套件升級／網路；commit/push/deploy；Git清理／回退／換branch/index |
+| 不再問 | 同範圍編碼、local checks、角色交接、已要求的獨立 A1 |
+| 何時才需新決策 | 真正改變架構、資料／公開行為、安全邊界、gate政策，或做未授權實機／寫入／發佈操作 |
+
+原 [decision.md](harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/decision.md)、[handoff-validation.json](harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/handoff-validation.json)、P1內的 I0 NOT_RUN 都保留原本時間點的事實；它們不否定此後的同意。不要覆寫舊 reviewer 結果、回填歷史 PASS，或把同意擴成新下載權限。
+
+## 3. 專案、版本與不可改的界線
+
+- 權威 root：`/Users/hsiaojohnny/Documents/ChatGPT/Line_backup`。新備份只能在此 root 的 `backups/`；禁止回復、搜尋或寫入舊外部備份位置。
+- Canonical group：**旻謙允禎成長日記**，禎是 U+798E，不是楨 U+6968。LINE bundle：`jp.naver.line.mac`。
+- config：`config/line_backup_config.json`，384 bytes，SHA256 `5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362`。
+- state：`state/backup_state.json`，71,365 bytes，SHA256 `1093dd3065f7ce80ce4cfcb97081cabbb9b4334a53eeb77d1233985e5432acb9`。revision16、active_writer_id/context_lock均null；current_run_id是已 VERIFIED 的 `RUN-20261004-project-album57-45ee0a78`。這些是本次測量，不是新程式要硬編碼的值。
+- Git：branch `v43-ab/codex-rev28`，HEAD `9d52ca6081e38a63648a0515f572d85563d07cba`，index SHA256 `6c0091711bf88e5809341902f56d9d3f3c120179338c3d78736bb86f5e2c05f1`，staged空。產品與多項證據有 dirty/untracked；不 reset/clean/stash、不切分支、不自動add/commit。以前只提交舊交接文件的授權，不涵蓋本次新文件或產品。
+- 當前已接受 Core/CLI **52 source files** aggregate：`02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0`。依 `focused-final-source.json` 的 path+NUL+rawBytes+NUL 重算；Git HEAD不是dirty來源的替代品。七路徑實作後應計算新的實際aggregate，不拿此舊hash當新候選。
+- Harness固定release：`/Users/hsiaojohnny/.codex/harness-releases/4.7.0/1bf92f52081df904cf30e1da488734643ee5ec3603464b4bf81b566263ec670d`。
+- Python：`/Users/hsiaojohnny/.codex/harness-runtime/4.7.0/.venv/bin/python -B`。`-B`避免舊task產生pycache。當前 jsonschema4.26.0、referencing0.37.0；不更新套件。
+- schemas/v3、policies/v4.7.0/workflow-routing.md、templates/v4.7.0/runtime-defaults.json都由該固定release讀。既有4.6 tasks只能沿完整4.6 pin讀／處理；不能換4.7controller假resume。
+
+沿用使用者 Global Contract 4.7：保存無關dirty工作；小改動、證據優先；freeze gate的goal_criticality/evidence_role/closure_gate；人工畫面只能OBSERVED；同意和waiver分開；最多3個同根因產品候選／連續2次無新資訊停止；獨立reviewer不可曾參與該artifact；controller或OS隔離能力未知就如實記錄，不補造。證據放專案task內，不寫global `.codex`。
+
+## 4. 已完成與尚未完成的證據
+
+### 4.1 已完成57張備份
+
+2024/05/13～05/17、57張、57個regular JPEG、17,924,900 bytes：`backups/旻謙允禎成長日記/2024-05-13_2024-05-17_57張`。state VERIFIED、writer/context已釋放，既有獨立驗收PASS。此 fingerprint **不得重新下載**，即使換目錄或換run也應跳過。
+
+### 4.2 已完成本機 explicitLineWindows v3 元件
+
+入口：[local-result.md](harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/local-result.md)、[完整A1](harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/acceptance.result.json)、[source/test manifest](harness-development/rev28-explicit-window-plan/TASK-f52e92b56c01401e85b9d13864f6ae11/focused-final-source.json)。
+
+- exact LINE windows／filter／crop／scale／request-effective witness 綁定已實作；session成功計數前與strict load使用共用驗證。
+- 隔離後 focused60/0、full302/0/0skip；CLI/loader實際build、4個CLI拒絕、舊externally anchored v1、synthetic v3與10個語意tamper拒絕通過；獨立A1 PASS。
+- 此profile仍 **diagnostic-only**；production factory刻意拒絕。不刪掉此guard。
+- 原system-temp隔離 I5 FAIL保留、未waive；目前PASS来自修正後的task-local package/test-root，不能重跑原會寫系統tmp的driver。
+
+歷史實際CLI：上述task `.build/arm64-apple-macosx/debug/rev28ctl`，7,966,080 bytes，SHA256 `d42582e45fd7e5877e0fdafad93bf4909b78a9d30e1ef3aa0550c30c148c68f0`。loader：`.offline-build/arm64-apple-macosx/debug/packet-validator`，5,543,440 bytes，SHA256 `51207a6de3d378af25ba2e36b225d062b0942ad9f750a00f6948c773cf2e3088`。兩者是此前實際驗證的binary，不可用新source直接沿用舊binary hash。
+
+### 4.3 單次真實v3診斷已執行，授權已用完
+
+入口：[result.md](harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/result.md)、[完整A1](harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/acceptance.result.json)、[context](harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/context-assessment.json)、[continuation](harness-development/rev28-explicit-observation/TASK-8696b5b7009a404383e00cd07fb555b9/post-observation-continuation.json)。
+
+實際packet：[attempt-03資料夾](harness-development/native-diagnostics/TASK-8696b5b7009a404383e00cd07fb555b9/attempt-03)。run `passive-diagnostic-09084CB8-B880-4F95-82D7-8A956DDD7E75`；session加`-session`；epoch1。歷史PID1322、selected IDs140/913只供讀，不能當現在的視窗身份。
+
+PNG840×1286px／union420×643pt／scale2／四側誤差0；同frame可見2024/05/06～05/10、182張、詳細頁與「儲存全部」。actual strict loader PASS；external manifest anchor `101daa1ad0dbab3df5c9653874a44638a54a2b79bfafda86d6d43f12459badf7`；PNG SHA256 `42ce8784f128434fc8e2c51638beb7c293f1f3bd76377dce354992e7b45acb44`。
+
+**畫面沒有群組名稱，selected window/AX title為空；I2_FRESH_CONTEXT仍 BLOCKED、未waive。** 設定與使用者畫面準備確認不能代替current-native group proof；影像視覺是OBSERVED，不轉成群組gate PASS。A1 PASS只確認這份部分結果與保存報告準確。calibration/ownership/occlusion/currentComposer/PhaseB仍UNKNOWN，182不是下載許可。
+
+## 5. 下一步已批準的唯一產品單元
+
+入口 task：`harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b`。
+
+| 權威檔案 | SHA256／判定 |
+| --- | --- |
+| [plan-03.md](harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-03.md) | `6ff4f4ec472be1b21104ed8143bb8cbcc3f9c9390e485d4e3491d82c3700c9e7` |
+| [plan-contract-02.json](harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-contract-02.json) | `f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d` |
+| [handoff.json](harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/handoff.json) | 與contract逐bytes相同，同hash；不可替換為本Markdown |
+| [project-binding-report.schema.json](harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/project-binding-report.schema.json) | `6269d2721ff6a68ff855195d49376291f84ae56d1ae0f76805c3a94f7b25c18d` |
+| [plan-review-02.result.json](harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-review-02.result.json) | `f9d544026d13dd0f9b4d4d269b03709376eb270ed92469bc8ce1d6c9f0ea8a00`；P1 PASS；run `df3cecd8-7c94-4730-89af-431fe55b28e3` |
+| [user-consent-20261006.json](harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/user-consent-20261006.json) | 本輪新增；明示APPROVED，绑定上述方案，完整hash由本輪交付receipt核對 |
+
+P1全文為原final內容的whitespace-normalized保存，不宣稱原wire bytes。第一個P1 semantic PASS伴随意外schema DNS lookup，原fullresult與root admission BLOCKED保留：[review-01-admission.json](harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/review-01-admission.json)。第二次已用严格local Registry完成真正獨立PASS；不要重跑P1来再次索取同範圍決策。
+
+七個路徑以machine contract為準：
+
+1. NEW `src/line_backup_acceptance/project_binding.py`。
+2. `src/line_backup_acceptance/cli.py`，只增加project-preflight分支，舊command/exit語意保留。
+3. NEW `rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift`。
+4. NEW `tests/test_project_binding.py`。
+5. NEW `rev28/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift`。
+6. `rev28/ARCHITECTURE.md`。
+7. `rev28/CAPABILITY-MATRIX.md`。
+
+當前4個NEW paths仍不存在、其餘3個preimages已保存于原baseline，CLI之外兩個docs已有dirty工作須保存。common/transaction/engine/owner/ledger/GoalSlot/staging/capture／config/state/photos都不在可改範圍。
+
+## 6. 實作語意：避免「做出報告」卻意外取得下載權限
+
+完整語意以Plan03和wire schema為準，此處是防遺漏摘要：
+
+- 公開唯讀入口：`python -B -m line_backup_acceptance project-preflight --project-root <explicit-root> --start-date YYYY-MM-DD --end-date YYYY-MM-DD --expected-images N`。只有stdout/stderr，不mkdir、不lock、不寫run/evidence/state/destination。
+- canonical root/config/state/bundle/group一律由explicit selected project讀，no-follow、各component拒絕symlink/traversal；不從cwd/env/WORK_ROOT找替代root。
+- 沿現有accepted RC2 state驗證；不要拿installed skill的歷史不相容schema替換真實state、遷移或初始化。
+- 兩輪stable bytes/file identity建立唯讀snapshot；這不是writer lease、OS兩檔atomic或並發寫入保證。未來實機仍须在共同writer邊界fresh重核。
+- 既有pure `_evaluate_preconditions(...duplicate_check=False)`把nonnull current_run_id當衝突，連現在terminal VERIFIED也拒絕；**不要修改該舊helper或把它當新預檢實作**。新readonly evaluator須正確辨別terminal/ownership/history。
+- 同fingerprint已verified仍跳過；任何未verified歷史intent第一版均保守阻擋，即使宣稱release也不能直接採納為許可。不同count、dangling或錯registry、foreigngroup、非terminalrun、activewriter與不安全／nonempty目的地依凍結precedence處理。
+- wire v1分REPORT／REFUSAL，exact keys/enum/types固定；duplicate JSON keys拒絕。不自行新增欄位或rename。REPORT eligible/SKIP=exit0；busy/unresolved/ambiguous/destination=exit4；REFUSAL internal=exit1、其他=exit2；usage可無report/stderr2。
+- `dispatch_authorized=false`、`writer_acquired=false`、`native_observation_performed=false`、`state_modified=false`；照片總bytes／內容multiset是null，不用0冒充已知。無native PNG/PID/epoch或「config證明原生群組」欄位。
+- Swift輸入包含originalrequest、rawconfig/state、actualstdout external SHA，以及完整ordered `producerSourceMaterial(relativePath,rawBytes)`；重算每檔digest與path+NUL+rawBytes+NUL aggregate，不能從hashlist假裝重算raw-byte aggregate。
+- Swift只回 `ProjectBackupInspectionBinding(canDispatch=false)`；拒绝REFUSAL/foreignroot/forgedflags/reanchored矛盾。來源binding不是OS code attestation，不產生ImmutableRunAuthorization、ReadinessPermit、PhaseA/B／writer／GoalSlot權利。
+
+## 7. 必要 checks、獨立驗收與预算
+
+凍結gates：P1_PLAN_REVIEW；I0_PUBLIC_PROJECT_BINDING_DECISION；I1_PROJECT_AUTHORITY_CONTRACT；I2_DUPLICATE_BARRIERS；I3_READ_ONLY_SCOPE；I4_ISOLATED_OFFLINE_CHECKS；I5_LEGACY_COMPATIBILITY；I6_PRESERVATION；A1_ACCEPTANCE。P1已PASS，同意已APPROVED；產品I1～I6與A1尚未執行。不能隱性降requiredness、把partial算PASS或自己驗收。
+
+依Plan做新的Pythonfocused、Swiftfocused／相關legacy、一次fullSwift(current302+newtests)、actualCLIbuild／Python parser compatibility；實際project root57與182各一次唯讀CLI及fixture refusal。再在source有新變化需要核對相容性時，用保留externalanchor各載入一次legacy-v1與實际v3，**不擷取新畫面**。
+
+所有fixtures/compiler/cache/tmp/evidence都在project-binding task。Swift exact Package/Sources/Test copy，舊tests只允許已審查的literal temp-root替換（舊26處只是歷史盘點，執行時重新讀）與4個active `#filePath` fixtures逐bytescopy，不改assert、不skip。Python使用task顯式temp root與`-B`，不跑舊會寫private/tmp的acceptance driver、不decode真實57。記錄source/test manifests、實际命令、exit/log與逐檔保存；pass後無新风險不重復整個測试波。
+
+root Implementer串行，helpers/writers=0。真正獨立A1可以按该CRITICAL contract由獨立reviewer角色執行；不是把helpers上限變成可委派的产品writer，也不是root自簽A1。若平台不支持必须review，保存可復審證據並明確缺口，不能制造PASS。native/controller/provider admission若未實际觀察，一律UNKNOWN/UNAVAILABLE。
+
+| Budget主體 | 保留現况 |
+| --- | --- |
+| PRIMARY_NATIVE_COMPOSITION | 歷史3/3耗盡，禁止換ID/root/session取得第4次 |
+| 原explicit v3产品issue | 3/3，已完成本機A1；不重開同根因候選 |
+| child-associated passive | 累計3，最近grant已花完；本次没有新grant |
+| count-only | 1/1已使用；不是pixel或input許可 |
+| PROJECT_AUTHORITY_NOT_BOUND_TO_NATIVE_TARGET_REPORT | 本機产品0/3，新語意单元有不同source/驗收；連續2次無新信息停止 |
+| 本輪文件交付／研究／歸檔 | 不算新的native或产品候選，不重設上述任何预算 |
+
+## 8. Baseline 接續：合法新增要列清楚，不改舊證據
+
+原 [baseline.json](harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/baseline.json) immutable保留，當時outside entries77,871。它包含舊root handoff為critical；此後使用者明確要求更新该文檔，不能誤判成产品回退或偷偷忽略。
+
+本輪 [文件交付task](harness-development/rev28-handoff-issue-delivery/TASK-12f69f339f784300bc98a826d7e9216a) 的baseline／preparation先核對 source52、全部舊critical/preimages／Python／config/state／Git，原baseline差異恰為8個明示授權的research additions；當前snapshot77,902 entries（不同excluded scope，不能用數量差代替逐檔比较）。
+
+合法後續變化只應按具體文件列明：
+
+- research task `TASK-ca57c5e4415b487ab07cc0b7df96b855`：scope.md、reviewer-trace-report.json、research-dns-deviation.md、root-judgment.md、research-report.md、root-result.json、archive-validation.json、designer-brief.md。實际hash／mode／bytes在本輪baseline保留。
+- 本輪root兩文件：更新 `20261006_handoff.md`；新增 `20261006_issue_harness_offline_schema_resolution.md`。
+- project-binding task：新增 `user-consent-20261006.json`；progress.md只追加事實。
+- 本輪文件交付task的實际artifacts，受本輪限定scope授權。不要因此把所有harness-development變化都當合法。
+
+下一個Implementer保存原baseline、讀本輪的最終保存核對與文件manifest、比较實际盘面，逐一加入這些later-authorized differences的receipt，然後創建新的IMPLEMENT execution baseline/preimages。Plan／contract／machineHandoff／wire／P1語意和hash保持，不因纯文檔接續重做審批。若有其他source/state/photo/Git變動，先調查，不reset、不覆盖、不把未知差異打包忽略。
+
+## 9. 脚本與 schema 的避免重犯事項
+
+- 所有舊 `invoke_once.py` 只讀，不執行；歷史PID1091/1322、windowID、座標不能復用。現在無需current GUI surface。
+- 不重跑已exclusive-create／one-shot的prepare/run/verify/finalize；不刪claim、換output或復制舊argv躲額度。
+- COUNT_OBS的prepare.py已讀過guard，可用纯digest/snapshot等helper；CHILD2的prepare.py顶層不guard，不能import；舊GEOMETRY_FIX/verify及CHILD2/verify_refusal含歷史问题，不用它们重寫结果。
+- project-binding prepare.py／prepare_review_02.py的 main-block generators不运行。若用 offline_validators，先检查其依赖的top-level，並僅調用纯helper；本輪文檔prepare.py也含write-once主程式，不能重跑。
+- 必须傳完整本機Registry+retrieval refusal；禁止裸validator觸發相對`$ref`远端fallback。`DeprecationWarning`變error無效，因為4.26.0的urlopen發生在warning之前。
+- 「角色要求network OFF」與「OS封網已驗證」分開記錄；本session上層给full-access/network enabled，不等于主线获得網絡授權。下一视窗须按實际環境記錄能力，不擅自改全域權限。
+- 優先rg/rg --files；依赖和寫入顺序執行。不要将復杂patch藏進shell substitutions；不把未检查的generator當安全helper。
+
+## 10. Harness Issue 是獨立工作，不在 LINE 七路徑里修
+
+正式提報：[20261006_issue_harness_offline_schema_resolution.md](20261006_issue_harness_offline_schema_resolution.md)。原完整研究：[research-report.md](harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/research-report.md)，主线判斷：[root-judgment.md](harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/root-judgment.md)。
+
+主因是role裸validator繞過已有离线wrapper，缺Registry後默認向codex.local查資料。原P1lookup和研究agent額外lookup分別保存；没有external schema response的回報，不是OS全流量遥測或「完全没對外信息」證明。较早同類专案case仍绑4.7.0，使用者提及前版未核對，不能宣稱4.6同根因。没有證據認定OpenAI服务故障或已公布漏洞。
+
+LINE本機工作可按已修正入口續作，不等待完整Harness新版發布；但不能自行改原不可變release、放宽主线network或重寫歷史PASS。Issue修補模型须另建方案／候選及必要review，新版本採用另明定，不替進行中task暗換pin。
+
+## 11. 完整 native 仍需後續設計的工作
+
+當前native engine／adapter／immutable authorization／staging仍hardcode May13～17／57張／已知bytes/hash；Python項目writer/state與nativeowner/ledger/GoalSlot没有共同commit join。v3不能覆盖没有candidate-child的group/list/closedmenu。當前detail/frame没有group header而舊adapter要求同frame群組字，不能以刪除guard解決。
+
+本预检单元A1通過後，下一步另立明確方案處理：sharedwriter與intent/owner crash-safe顺序；動態target與fresh group→card→detail關联；按state選primary/explicit而不静默fallback；新目標內容驗收；nativePhaseA/ownership/occlusion/calibration/currentComposer/PhaseB及明確production authorization／预算。此列表是剩余設計，不是現在授權或允許运行舊production。
+
+未来實機導航/觀察與单相簿SaveAll/chooser/download分開明確範圍；单次動作不自動重试，完成後停止GUI只讀poll files。若需LINE技能，實际操作前讀 `/Users/hsiaojohnny/.codex/skills/line-album-backup/SKILL.md` 並说明使用；不把该skill的舊schema或external root替換本专案authority。
+
+## 12. 六個status與準確最終回報
+
+| Subject | 整套LINE主目標 | 這次已批準的预检单元 |
+| --- | --- | --- |
+| PRIMARY_OUTCOME_STATUS | NOT_ACHIEVED | NOT_ACHIEVED，尚未實作 |
+| IMPLEMENTATION_STATUS | IN_PROGRESS，已有v3與既有57成果 | NOT_STARTED，候選0/3 |
+| CORE_ACCEPTANCE_STATUS | BLOCKED，原生群組I2未滿足 | NOT_RUN |
+| REQUIRED_VERIFICATION_STATUS | INCOMPLETE，native blockers／未知認證保留 | NOT_RUN |
+| INDEPENDENT_ACCEPTANCE_STATUS | PENDING，下一单元尚需獨立A1；此前局部A1各有PASS | PENDING |
+| TASK_CLOSURE_STATUS | IN_PROGRESS | IN_PROGRESS；授權障碍已解除，不是DONE |
+
+用户同意是決策事實，不能代替代码與tests/A1。文檔交付的DONE只指兩份文件和本輪receipt/check完成，不能提升成LINE或Harness完成；原network偏差與隔离FAIL仍可見，没有waiver。
+
+接手第一條進度可直接说：「已接手；你同意的本機预检方案已記錄，我會先核對資料再開始實作。現在不用準備LINE画面。」之後按Plan持續完成，不停在僅提出計划；遇到具體scope扩張才詢问一個真正必要的決策。

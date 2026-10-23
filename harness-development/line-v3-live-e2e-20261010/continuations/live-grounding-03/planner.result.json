@@ -1,0 +1,187 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "run_id": "14c85f1b-0f0a-4ec7-8743-cadb727aefda",
+  "role": "PLANNER",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "HANDOFF",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "BLOCKED",
+    "CORE_ACCEPTANCE_STATUS": "BLOCKED",
+    "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "BLOCKED",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [
+    {
+      "gate_id": "G_PLAN_REVIEW_WAIVER",
+      "verdict": "PARTIAL",
+      "evidence_manifest": "E_USER_WAIVER"
+    },
+    {
+      "gate_id": "G_AUTH",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_OFFLINE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_MIGRATION",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_CATALOG",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_MENU",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_FIRST",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_SCROLL",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_SECOND",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_PRESERVE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_REPORT",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_ACCEPTANCE",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    },
+    {
+      "gate_id": "G_DELIVERY",
+      "verdict": "NOT_RUN",
+      "evidence_manifest": null
+    }
+  ],
+  "evidence_ids": [
+    "E_LOCAL_PLAN",
+    "E_LOCAL_HANDOFF",
+    "E_USER_WAIVER",
+    "E_FROZEN_INPUTS"
+  ],
+  "stage": "PLAN",
+  "plan_sha256": "001b90861631fe27b0d21ec871be5fc19446bf3070e88bb116350a0f3690708c",
+  "handoff_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+  "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "14c85f1b-0f0a-4ec7-8743-cadb727aefda",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+      "evidence_id": "E_LOCAL_PLAN",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-freeze.json",
+      "bytes": 518,
+      "sha256": "96f733780c73eb0dd099b39837940cfa6946c4d5ba83cbc141c75720caeb0471",
+      "contract_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+      "observation": "Local document evidence only; no controller allocated run or native admission."
+    },
+    {
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "14c85f1b-0f0a-4ec7-8743-cadb727aefda",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+      "evidence_id": "E_LOCAL_HANDOFF",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/compile-handoff.receipt.json",
+      "bytes": 1415,
+      "sha256": "e56683fdf30836441aeac79304cf0859d4e821372a0d56da62a8edfe4e9e5ebb",
+      "contract_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+      "observation": "Local document evidence only; no controller allocated run or native admission."
+    },
+    {
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "14c85f1b-0f0a-4ec7-8743-cadb727aefda",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+      "evidence_id": "E_USER_WAIVER",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-review-waiver.json",
+      "bytes": 666,
+      "sha256": "1e4524ab74f54b98237e4a629f6e0c868be65ac6180aca192eca814b144aa163",
+      "contract_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+      "observation": "Local document evidence only; no controller allocated run or native admission."
+    },
+    {
+      "task_id": "TASK-20261010-line-v3-live-e2e",
+      "run_id": "14c85f1b-0f0a-4ec7-8743-cadb727aefda",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+      "evidence_id": "E_FROZEN_INPUTS",
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/input-manifest.json",
+      "bytes": 10088,
+      "sha256": "c9c507f6426a160852ddb293a26e00e1766aaed41828e66eb7aa66be480b7bca",
+      "contract_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+      "observation": "Local document evidence only; no controller allocated run or native admission."
+    }
+  ],
+  "plan_contract_sha256": "d46984fd70e41dde29974280e8054fcbd08c863030df926e5f0f3739f36fd219",
+  "analysis": {
+    "facts": [
+      "The accepted Plan and contract were landed and frozen before local deterministic Handoff compilation.",
+      "The contract and handoff.json are byte-identical; both Markdown files embed the exact contract.",
+      "The user explicitly waived independent Plan Review and authorized document delivery add/commit/push after GPT-6 luna commit-message synthesis.",
+      "All 28 inherited input manifests matched; no product or LINE operation was executed.",
+      "Inherited live project outcome remains blocked; historical offline/migration/preservation evidence remains intact."
+    ],
+    "inferences": [
+      "The bounded approved repairs address the known D1/D2 and integration deficiencies without weakening writer/at-most-once gates."
+    ],
+    "unknowns": [
+      "Live geometry/classifier/chooser grounding, subprocess capability execution and fixed-deadline latency remain unverified.",
+      "Native controller admission and stage validation are NOT_RUN; local document UUID is not a native run allocation."
+    ],
+    "evidence": [
+      "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-freeze.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/compile-handoff.receipt.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/plan-review-waiver.json",
+      "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/input-manifest.json"
+    ],
+    "confidence": "High for local document bindings and authorization; no claim of live implementation acceptance.",
+    "local_document_run": true,
+    "native_admission": "NOT_RUN",
+    "native_stage_validation": "NOT_RUN",
+    "handoff_compilation": "DETERMINISTIC_LOCAL_NOT_MODEL_REVIEW"
+  },
+  "handoff_summary": "已依使用者審閱後的計畫落檔並凍結Plan/contract，再編譯含首段精準Implementer Prompt的Handoff；契約逐byte相等、官方immutable schema API僅做本地結構VALID。接手者可依凍結scope實作並驗證兩本不同相簿與真實scroll；本輪未做產品或LINE操作，Plan Review WAIVED/NOT_RUN，獨立Acceptance保留，native admission/validation NOT_RUN。",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 1,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Local document authoring, immutable schema structural validation, Plan freeze, then deterministic Handoff byte-binding verification.",
+    "information_gain": true,
+    "stuck": false
+  },
+  "writer_receipts": []
+}

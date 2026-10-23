@@ -1,0 +1,16 @@
+✔ original pair contains only two clicks and timer; one-shot cannot replay (1.73575ms)
+✔ loaded JSON cannot mint a dispatch or chooser capability (0.199334ms)
+✔ ellipse error never invokes SaveAll; all tokens stay consumed (0.132709ms)
+✔ SaveAll error is attempted once and prohibits replay (0.41875ms)
+✔ expired capture and expired second-click boundary both stop (0.146417ms)
+✔ correct chooser path and fresh control confirmed exactly once (0.273209ms)
+✔ wrong full path refuses navigation/confirmation (0.26375ms)
+✔ a stale field index is refused before typing (0.1485ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 56.163208

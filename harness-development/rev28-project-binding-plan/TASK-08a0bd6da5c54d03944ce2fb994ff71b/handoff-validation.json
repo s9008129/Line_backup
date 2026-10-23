@@ -1,0 +1,65 @@
+{
+  "verdict": "PASS",
+  "plan": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-03.md",
+    "bytes": 17800,
+    "sha256": "6ff4f4ec472be1b21104ed8143bb8cbcc3f9c9390e485d4e3491d82c3700c9e7"
+  },
+  "contract": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-contract-02.json",
+    "bytes": 4775,
+    "sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d"
+  },
+  "exact_handoff": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/handoff.json",
+    "bytes": 4775,
+    "sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d"
+  },
+  "schema": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/project-binding-report.schema.json",
+    "bytes": 5525,
+    "sha256": "6269d2721ff6a68ff855195d49376291f84ae56d1ae0f76805c3a94f7b25c18d"
+  },
+  "independent_p1": {
+    "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/plan-review-02.result.json",
+    "bytes": 10482,
+    "sha256": "f9d544026d13dd0f9b4d4d269b03709376eb270ed92469bc8ce1d6c9f0ea8a00"
+  },
+  "p1_serialization": "Full final content whitespace normalized, not original wire bytes",
+  "p1_role_admitted": true,
+  "historical_p1_01": "Original substantivePASS retained; roleadmissionBLOCKED/networklookupunwaived",
+  "checked": 77873,
+  "expected_user_authorized_research_additions": [
+    {
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/reviewer-trace-report.json",
+      "before": null,
+      "after": {
+        "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/reviewer-trace-report.json",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 1944,
+        "sha256": "bee0428dd4495dce0aa79a68c58a95ceb01d23622d2126cc05a5190175a87612"
+      }
+    },
+    {
+      "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/scope.md",
+      "before": null,
+      "after": {
+        "path": "harness-development/schema-resolution-research/TASK-ca57c5e4415b487ab07cc0b7df96b855/scope.md",
+        "mode": 420,
+        "kind": "file",
+        "bytes": 2739,
+        "sha256": "ce1541589f4a5c44e089fc0e1b34033dbc74d859c99fde02fd521246b8226a2e"
+      }
+    }
+  ],
+  "later_authority": "User explicitly requested separate LunaMax schema research with publicweb/readonlylocal evidence; additions restricted to that exact task, no mainnetwork waiver",
+  "source_sha256": "02b17aaa488c80f77056ed7e34f03d0a0d51ce4dd0a165d4dda0a65f999037b0",
+  "head": "9d52ca6081e38a63648a0515f572d85563d07cba",
+  "index_sha256": "6c0091711bf88e5809341902f56d9d3f3c120179338c3d78736bb86f5e2c05f1",
+  "staged": "",
+  "protected_public_data_decision": "PENDING; no products changed",
+  "product_candidates": 0,
+  "native_invocations": 0,
+  "controller_admission": "UNAVAILABLE/UNKNOWN; advisory record, no OS sandbox/network denial claim"
+}

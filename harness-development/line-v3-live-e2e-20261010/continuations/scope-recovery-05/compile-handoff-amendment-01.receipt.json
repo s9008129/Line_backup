@@ -1,0 +1,40 @@
+{
+  "kind": "LOCAL_DETERMINISTIC_HANDOFF_COPY_NOT_NATIVE_PUBLICATION",
+  "task_id": "TASK-20261011-line-receipt-recovery",
+  "amendment_id": "PLAN-AMENDMENT-01",
+  "plan": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan.md",
+    "bytes": 13567,
+    "sha256": "43ebe2d8b940703ff5aa67ccc6f430de5789d976ef6e6776259fe2d85041bea4"
+  },
+  "contract": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/plan-contract.json",
+    "bytes": 2757,
+    "sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7"
+  },
+  "handoff_json": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.json",
+    "bytes": 2757,
+    "sha256": "18ea97bc6d41171a2460c3979ce9d3f7ca5e7441aaf104aa922ebd8969d297c7"
+  },
+  "handoff_markdown": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/handoff.md",
+    "bytes": 7784,
+    "sha256": "5cbd6be4b27688b5d20efe49e793cc5d264cf6011a43733ec0413d52e53924e6"
+  },
+  "check_specs": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/check-specs.json",
+    "bytes": 6581,
+    "sha256": "258a30213850153024b4fc97afe38f28b7ad4382103e2f5c78b1e8859bb30ffb"
+  },
+  "checks": {
+    "contract_equals_handoff_json": true,
+    "embedded_markdown_json_equals_contract": true,
+    "check_spec_contract_hash_matches": true,
+    "all_cited_contract_files_read_back": true
+  },
+  "limitations": [
+    "Byte equality and local readback are consistency evidence only.",
+    "Harness controller publication and schema validation remain NOT_RUN because no admitted stage packet or emitted validator exists."
+  ]
+}

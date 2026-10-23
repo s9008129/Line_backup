@@ -1,0 +1,221 @@
+test_absent_destination_becoming_nonempty_rejected (test_project_binding.ProjectBindingTests.test_absent_destination_becoming_nonempty_rejected) ... FAIL
+test_busy_precedes_skip (test_project_binding.ProjectBindingTests.test_busy_precedes_skip) ... ok
+test_cli_refusal_and_legacy_parser (test_project_binding.ProjectBindingTests.test_cli_refusal_and_legacy_parser) ... ok
+test_config_contract (test_project_binding.ProjectBindingTests.test_config_contract) ... ok
+test_correctly_rehashed_foreign_join_content_refused (test_project_binding.ProjectBindingTests.test_correctly_rehashed_foreign_join_content_refused) ... ok
+test_correctly_rehashed_nonjson_and_duplicate_keys_refused (test_project_binding.ProjectBindingTests.test_correctly_rehashed_nonjson_and_duplicate_keys_refused) ... ok
+test_count_ambiguity (test_project_binding.ProjectBindingTests.test_count_ambiguity) ... ok
+test_dates_and_count_types (test_project_binding.ProjectBindingTests.test_dates_and_count_types) ... ok
+test_destination_and_parent_replacement_rejected (test_project_binding.ProjectBindingTests.test_destination_and_parent_replacement_rejected) ... 
+  test_destination_and_parent_replacement_rejected (test_project_binding.ProjectBindingTests.test_destination_and_parent_replacement_rejected) (replacement='destination') ... FAIL
+  test_destination_and_parent_replacement_rejected (test_project_binding.ProjectBindingTests.test_destination_and_parent_replacement_rejected) (replacement='parent') ... FAIL
+test_duplicate_keys_and_malformed_state (test_project_binding.ProjectBindingTests.test_duplicate_keys_and_malformed_state) ... ok
+test_evidence_hash_or_path_is_not_trusted (test_project_binding.ProjectBindingTests.test_evidence_hash_or_path_is_not_trusted) ... ok
+test_fixture_kind_joins_exact_run_and_verification (test_project_binding.ProjectBindingTests.test_fixture_kind_joins_exact_run_and_verification) ... ok
+test_invalid_history_relationships (test_project_binding.ProjectBindingTests.test_invalid_history_relationships) ... ok
+test_join_verification_references_refused_if_missing_or_unsafe (test_project_binding.ProjectBindingTests.test_join_verification_references_refused_if_missing_or_unsafe) ... ok
+test_legacy_unknown_is_not_permission (test_project_binding.ProjectBindingTests.test_legacy_unknown_is_not_permission) ... FAIL
+test_missing_join_anchors_and_event_reference_refused (test_project_binding.ProjectBindingTests.test_missing_join_anchors_and_event_reference_refused) ... ok
+test_missing_source_and_evidence (test_project_binding.ProjectBindingTests.test_missing_source_and_evidence) ... ok
+test_new_verification_read_is_in_stable_snapshot (test_project_binding.ProjectBindingTests.test_new_verification_read_is_in_stable_snapshot) ... ok
+test_nonempty_and_unsafe_destination (test_project_binding.ProjectBindingTests.test_nonempty_and_unsafe_destination) ... FAIL
+test_nonterminal_other_target_is_busy (test_project_binding.ProjectBindingTests.test_nonterminal_other_target_is_busy) ... ok
+test_purported_release_does_not_clear_intent (test_project_binding.ProjectBindingTests.test_purported_release_does_not_clear_intent) ... FAIL
+test_registry_evidence_is_part_of_stable_snapshot (test_project_binding.ProjectBindingTests.test_registry_evidence_is_part_of_stable_snapshot) ... ok
+test_root_and_component_symlinks (test_project_binding.ProjectBindingTests.test_root_and_component_symlinks) ... ok
+test_stable_read_rejects_change_and_replacement (test_project_binding.ProjectBindingTests.test_stable_read_rejects_change_and_replacement) ... ok
+test_terminal_pointer_and_unknown_content (test_project_binding.ProjectBindingTests.test_terminal_pointer_and_unknown_content) ... FAIL
+test_unknown_intent_failed_and_safe_abort_block (test_project_binding.ProjectBindingTests.test_unknown_intent_failed_and_safe_abort_block) ... 
+  test_unknown_intent_failed_and_safe_abort_block (test_project_binding.ProjectBindingTests.test_unknown_intent_failed_and_safe_abort_block) (outcome='IN_PROGRESS') ... ERROR
+  test_unknown_intent_failed_and_safe_abort_block (test_project_binding.ProjectBindingTests.test_unknown_intent_failed_and_safe_abort_block) (outcome='FAILED') ... ERROR
+  test_unknown_intent_failed_and_safe_abort_block (test_project_binding.ProjectBindingTests.test_unknown_intent_failed_and_safe_abort_block) (outcome='SAFE_ABORT') ... ERROR
+test_user_attestation_null_run_still_skips (test_project_binding.ProjectBindingTests.test_user_attestation_null_run_still_skips) ... ERROR
+test_user_fact_source_kind_and_confirmation_mismatches_refused (test_project_binding.ProjectBindingTests.test_user_fact_source_kind_and_confirmation_mismatches_refused) ... ok
+test_verification_content_mismatch_with_correct_digest_refused (test_project_binding.ProjectBindingTests.test_verification_content_mismatch_with_correct_digest_refused) ... ok
+test_verified_skip_never_inspects_photos (test_project_binding.ProjectBindingTests.test_verified_skip_never_inspects_photos) ... ok
+test_wire_schema_offline (test_project_binding.ProjectBindingTests.test_wire_schema_offline) ... ok
+
+======================================================================
+ERROR: test_unknown_intent_failed_and_safe_abort_block (test_project_binding.ProjectBindingTests.test_unknown_intent_failed_and_safe_abort_block) (outcome='IN_PROGRESS')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 268, in test_unknown_intent_failed_and_safe_abort_block
+    self.assertEqual(self.inspect()[0]['decision'], 'BLOCKED_UNRESOLVED')
+                     ~~~~~~~~~~~~^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 69, in inspect
+    return pb.inspect(str(self.root), start, end, count)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 458, in inspect
+    by_id = validate_history(state, cfg, reader, allow_v3=True)
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 337, in validate_history
+    bad('Dangling current run pointer')
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 304, in bad
+    fail('INVALID_PROJECT_HISTORY', message)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 28, in fail
+    raise AcceptanceError(code, message, 2)
+line_backup_acceptance.common.AcceptanceError: Dangling current run pointer
+
+======================================================================
+ERROR: test_unknown_intent_failed_and_safe_abort_block (test_project_binding.ProjectBindingTests.test_unknown_intent_failed_and_safe_abort_block) (outcome='FAILED')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 268, in test_unknown_intent_failed_and_safe_abort_block
+    self.assertEqual(self.inspect()[0]['decision'], 'BLOCKED_UNRESOLVED')
+                     ~~~~~~~~~~~~^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 69, in inspect
+    return pb.inspect(str(self.root), start, end, count)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 458, in inspect
+    by_id = validate_history(state, cfg, reader, allow_v3=True)
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 337, in validate_history
+    bad('Dangling current run pointer')
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 304, in bad
+    fail('INVALID_PROJECT_HISTORY', message)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 28, in fail
+    raise AcceptanceError(code, message, 2)
+line_backup_acceptance.common.AcceptanceError: Dangling current run pointer
+
+======================================================================
+ERROR: test_unknown_intent_failed_and_safe_abort_block (test_project_binding.ProjectBindingTests.test_unknown_intent_failed_and_safe_abort_block) (outcome='SAFE_ABORT')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 268, in test_unknown_intent_failed_and_safe_abort_block
+    self.assertEqual(self.inspect()[0]['decision'], 'BLOCKED_UNRESOLVED')
+                     ~~~~~~~~~~~~^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 69, in inspect
+    return pb.inspect(str(self.root), start, end, count)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 458, in inspect
+    by_id = validate_history(state, cfg, reader, allow_v3=True)
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 337, in validate_history
+    bad('Dangling current run pointer')
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 304, in bad
+    fail('INVALID_PROJECT_HISTORY', message)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 28, in fail
+    raise AcceptanceError(code, message, 2)
+line_backup_acceptance.common.AcceptanceError: Dangling current run pointer
+
+======================================================================
+ERROR: test_user_attestation_null_run_still_skips (test_project_binding.ProjectBindingTests.test_user_attestation_null_run_still_skips)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 203, in test_user_attestation_null_run_still_skips
+    report, code = self.inspect('2024-05-13', '2024-05-17', 57)
+                   ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 69, in inspect
+    return pb.inspect(str(self.root), start, end, count)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 458, in inspect
+    by_id = validate_history(state, cfg, reader, allow_v3=True)
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 355, in validate_history
+    bad('Registry and verified run disagree')
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 304, in bad
+    fail('INVALID_PROJECT_HISTORY', message)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 28, in fail
+    raise AcceptanceError(code, message, 2)
+line_backup_acceptance.common.AcceptanceError: Registry and verified run disagree
+
+======================================================================
+FAIL: test_absent_destination_becoming_nonempty_rejected (test_project_binding.ProjectBindingTests.test_absent_destination_becoming_nonempty_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 410, in test_absent_destination_becoming_nonempty_rejected
+    with patch.object(pb, '_destination_snapshot', changed): self.refuse('PROJECT_SNAPSHOT_CHANGED')
+                                                             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 72, in refuse
+    with self.assertRaises(pb.AcceptanceError) as cm:
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: AcceptanceError not raised
+
+======================================================================
+FAIL: test_destination_and_parent_replacement_rejected (test_project_binding.ProjectBindingTests.test_destination_and_parent_replacement_rejected) (replacement='destination')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 392, in test_destination_and_parent_replacement_rejected
+    with patch.object(os, 'listdir', changed): self.refuse('PROJECT_SNAPSHOT_CHANGED')
+                                               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 72, in refuse
+    with self.assertRaises(pb.AcceptanceError) as cm:
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: AcceptanceError not raised
+
+======================================================================
+FAIL: test_destination_and_parent_replacement_rejected (test_project_binding.ProjectBindingTests.test_destination_and_parent_replacement_rejected) (replacement='parent')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 392, in test_destination_and_parent_replacement_rejected
+    with patch.object(os, 'listdir', changed): self.refuse('PROJECT_SNAPSHOT_CHANGED')
+                                               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 72, in refuse
+    with self.assertRaises(pb.AcceptanceError) as cm:
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: AcceptanceError not raised
+
+======================================================================
+FAIL: test_legacy_unknown_is_not_permission (test_project_binding.ProjectBindingTests.test_legacy_unknown_is_not_permission)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 274, in test_legacy_unknown_is_not_permission
+    self.assertEqual(self.inspect()[0]['decision'], 'BLOCKED_UNRESOLVED')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'SKIP_VERIFIED' != 'BLOCKED_UNRESOLVED'
+- SKIP_VERIFIED
++ BLOCKED_UNRESOLVED
+
+
+======================================================================
+FAIL: test_nonempty_and_unsafe_destination (test_project_binding.ProjectBindingTests.test_nonempty_and_unsafe_destination)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 367, in test_nonempty_and_unsafe_destination
+    self.assertEqual(self.inspect()[0]['decision'], 'BLOCKED_DESTINATION')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'SKIP_VERIFIED' != 'BLOCKED_DESTINATION'
+- SKIP_VERIFIED
++ BLOCKED_DESTINATION
+
+
+======================================================================
+FAIL: test_purported_release_does_not_clear_intent (test_project_binding.ProjectBindingTests.test_purported_release_does_not_clear_intent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 289, in test_purported_release_does_not_clear_intent
+    self.assertEqual((report['decision'], code), ('BLOCKED_UNRESOLVED', 4))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: ('SKIP_VERIFIED', 0) != ('BLOCKED_UNRESOLVED', 4)
+
+First differing element 0:
+'SKIP_VERIFIED'
+'BLOCKED_UNRESOLVED'
+
+- ('SKIP_VERIFIED', 0)
++ ('BLOCKED_UNRESOLVED', 4)
+
+======================================================================
+FAIL: test_terminal_pointer_and_unknown_content (test_project_binding.ProjectBindingTests.test_terminal_pointer_and_unknown_content)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_project_binding.py", line 234, in test_terminal_pointer_and_unknown_content
+    self.assertEqual((code, report['decision']), (0, 'PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION'))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (0, 'SKIP_VERIFIED') != (0, 'PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION')
+
+First differing element 1:
+'SKIP_VERIFIED'
+'PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION'
+
+- (0, 'SKIP_VERIFIED')
++ (0, 'PROJECT_TARGET_ELIGIBLE_FOR_INSPECTION')
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.505s
+
+FAILED (failures=7, errors=4)

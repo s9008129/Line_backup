@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "harness-development/line-v3-live-e2e-20261010/continuations/minimal-live-07/checks/test_evidence_policy.py"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "exit_code": 0,
+  "formal_check_id_consumed": false,
+  "format": "ML07_DRAFT_E01_OBSERVATION_V1",
+  "observed_at_utc": "2026-10-11T06:16:24.930034+00:00",
+  "source_sha256": "9bf23fd339c4e4d101fb1ea1a873da608b841c87350abbb40d403e6d00a3e6b2",
+  "stderr": "test_exact_phase_producer_cap_and_unregistered_dynamic (__main__.EvidencePolicyTests) ... ok\ntest_exclusive_readback_collision_symlink_parent (__main__.EvidencePolicyTests) ... ok\ntest_real_scan_pair_delayed_stream_and_special_lstat_only (__main__.EvidencePolicyTests) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.335s\n\nOK\n",
+  "stdout": ""
+}

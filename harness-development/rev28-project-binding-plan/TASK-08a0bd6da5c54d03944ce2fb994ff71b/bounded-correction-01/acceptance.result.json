@@ -1,0 +1,278 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+  "run_id": "71eb362e-a9e0-432b-b987-a70cebdadf1d",
+  "role": "ACCEPTANCE_REVIEWER",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "DONE",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "COMPLETE",
+    "CORE_ACCEPTANCE_STATUS": "PASS",
+    "REQUIRED_VERIFICATION_STATUS": "PASS",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PASS",
+    "TASK_CLOSURE_STATUS": "DONE"
+  },
+  "gate_results": [
+    {
+      "gate_id": "I0_PUBLIC_PROJECT_BINDING_DECISION",
+      "verdict": "PASS",
+      "evidence_manifest": "bounded-correction-01/user-grant.json"
+    },
+    {
+      "gate_id": "I1_PROJECT_AUTHORITY_CONTRACT",
+      "verdict": "PASS",
+      "evidence_manifest": "bounded-correction-01/implement-gates.json"
+    },
+    {
+      "gate_id": "I2_DUPLICATE_BARRIERS",
+      "verdict": "PASS",
+      "evidence_manifest": "bounded-correction-01/implement-gates.json"
+    },
+    {
+      "gate_id": "I3_READ_ONLY_SCOPE",
+      "verdict": "PASS",
+      "evidence_manifest": "bounded-correction-01/implement-gates.json"
+    },
+    {
+      "gate_id": "I4_ISOLATED_OFFLINE_CHECKS",
+      "verdict": "PASS",
+      "evidence_manifest": "bounded-correction-01/implement-gates.json"
+    },
+    {
+      "gate_id": "I5_LEGACY_COMPATIBILITY",
+      "verdict": "PASS",
+      "evidence_manifest": "bounded-correction-01/implement-gates.json"
+    },
+    {
+      "gate_id": "I6_PRESERVATION",
+      "verdict": "PASS",
+      "evidence_manifest": "bounded-correction-01/implement-gates.json"
+    },
+    {
+      "gate_id": "A1_ACCEPTANCE",
+      "verdict": "PASS",
+      "evidence_manifest": "bounded-correction-01/final-source-manifest.json"
+    }
+  ],
+  "stage": "ACCEPTANCE",
+  "plan_sha256": "6ff4f4ec472be1b21104ed8143bb8cbcc3f9c9390e485d4e3491d82c3700c9e7",
+  "handoff_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+  "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+  "plan_contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "71eb362e-a9e0-432b-b987-a70cebdadf1d",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "bounded-correction-01/user-grant.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/user-grant.json",
+      "bytes": 1258,
+      "sha256": "ed7300b407d518f9e04710a178e522110aad196ecca4a70926c2d6e4b4922db6",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Explicit grant binds the exact bounded proposal; original3/3 remains immutable, supplemental1/1 and cumulative4 are disclosed."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "71eb362e-a9e0-432b-b987-a70cebdadf1d",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "bounded-correction-01/literal-product-diffs.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/literal-product-diffs.json",
+      "bytes": 1713,
+      "sha256": "9834cac1b1502bb0f8d7345123c5596f6c9276639f4d69316a2455d87b09fc2f",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Read exact supplemental diff: only producer and Python tests change; current preimage/after bytes match frozen identities."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "71eb362e-a9e0-432b-b987-a70cebdadf1d",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "bounded-correction-01/final-source-manifest.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-source-manifest.json",
+      "bytes": 34327,
+      "sha256": "1c15dbf4949231e9b7ac96c8721c4965e8ed610b4ee8276ee2859d312fdb8bbe",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Independently rehashed all117 source/test files and recomputed Swift53 and Python9 raw aggregates. Swift is unchanged; Python aggregate is e7ab22b0e7ee57b30df0aa80379b3448888aadbf746d2fab73156a012ca3df55."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "71eb362e-a9e0-432b-b987-a70cebdadf1d",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "bounded-correction-01/python-focused.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/python-focused.json",
+      "bytes": 22486,
+      "sha256": "0593d6f6d1099ce0c2e012105522318023fd89d26403589412fcbecd855dd16d",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Bound actual log shows31/0 with correctly rehashed foreign/malformed payloads, event/content mismatches, kind routing and stable evidence-read regressions."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "71eb362e-a9e0-432b-b987-a70cebdadf1d",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "bounded-correction-01/swift-focused.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/swift-focused.json",
+      "bytes": 22712,
+      "sha256": "bbf145195175839ed515bf0e6bfe305d2510351b71b5798b8ae9f7e8a7172930",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Bound actual log shows16/0 against new coherent config/state/stdout/final-source materials; public Swift code and canDispatch=false remain unchanged."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "71eb362e-a9e0-432b-b987-a70cebdadf1d",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "bounded-correction-01/retained-contradiction-refusal.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/retained-contradiction-refusal.json",
+      "bytes": 23025,
+      "sha256": "64772363b506414f9b9357b1067de74800210dfc161b03923f4dda1d61f42912",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Actual current producer now refuses the unchanged original bad57 fixture with INVALID_PROJECT_HISTORY and exit2."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "71eb362e-a9e0-432b-b987-a70cebdadf1d",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "bounded-correction-01/final-isolation-verification.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-isolation-verification.json",
+      "bytes": 59582,
+      "sha256": "fd13dcbd86734042db39e71bb5ea8ac2fb0380d85e0e4f805e2f62e5320d2375",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Independently compared87 copies and26 permitted literal substitutions; all six new fixtures have matching source/run/destination/event/verification joins."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "71eb362e-a9e0-432b-b987-a70cebdadf1d",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "bounded-correction-01/final-preservation-verification.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/final-preservation-verification.json",
+      "bytes": 64489,
+      "sha256": "936e18a1dfacf8f989d8502880f175a110efa5ac29fe6b0ee885216b394ee12f",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Reviewed77918-entry preservation receipt; independently verified312 prior artifacts or progress prefix, protected59 config/state/backup files, preimages and Git identity."
+    },
+    {
+      "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+      "run_id": "71eb362e-a9e0-432b-b987-a70cebdadf1d",
+      "stage": "ACCEPTANCE",
+      "role": "ACCEPTANCE_REVIEWER",
+      "source_sha256": "bb9af66e6a4386b646ea459e720ae3543e5f8de14a7afb4ed9e6d2b5984e627e",
+      "evidence_id": "bounded-correction-01/admission-order-deviation.json",
+      "path": "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b/bounded-correction-01/admission-order-deviation.json",
+      "bytes": 1492,
+      "sha256": "0ef11f53bf17d1bf74900ee407be121cc4d1d33f87c1178b0e8432da360cc17c",
+      "contract_sha256": "f0bd7bea76510a7cb6fecc90124aefa554d06d50331180e4f983653d59a5895d",
+      "observation": "Initial admission did not finish before an authorized patch. Exact old producer bytes were recovered after editing from frozen retained material; no retrospective pre-edit PASS is claimed."
+    }
+  ],
+  "needs_human": false,
+  "human_decisions": [],
+  "writer_receipts": [],
+  "evidence_ids": [
+    "bounded-correction-01/user-grant.json",
+    "bounded-correction-01/literal-product-diffs.json",
+    "bounded-correction-01/final-source-manifest.json",
+    "bounded-correction-01/python-focused.json",
+    "bounded-correction-01/swift-focused.json",
+    "bounded-correction-01/retained-contradiction-refusal.json",
+    "bounded-correction-01/final-isolation-verification.json",
+    "bounded-correction-01/final-preservation-verification.json",
+    "bounded-correction-01/admission-order-deviation.json",
+    "bounded-correction-01/actual-cli-summary.json",
+    "bounded-correction-01/retained-other-target-contradiction-refusal.json",
+    "bounded-correction-01/full-swift-compatibility-join.json",
+    "bounded-correction-01/implement-gates.json",
+    "bounded-correction-01/supplemental-convergence.json",
+    "acceptance-01.result.json",
+    "plan-03.md",
+    "bounded-evidence-join-correction.md"
+  ],
+  "analysis": {
+    "facts": [
+      "Independent non-contributor review used only local reads, hashes and guarded local schema validation: zero edits, product executions, tests/builds, helpers/writers, network attempts or native/GUI actions.",
+      "User explicitly approved one bounded correction. Original3/3 and acceptance-01 FAIL are retained; supplemental1/1 yields cumulative4 with zero remaining candidates. This is a disclosed grant, not a reset.",
+      "Producer now strictly decodes reference content, joins app/group/fingerprint/run/destination and VERIFIED event reference, and binds the unique filesystem verification artifact by no-follow bytes/size/hash and exact JSON-type equality to run.verification. Fixture/user_fact branches reject incompatible source kinds and unsupported or contradictory anchors.",
+      "Read the product diff and31-test implementation. Actual bound Python31/0 and Swift16/0 logs passed. Correctly rehashed foreign/non-JSON/duplicate/missing/type/event/verification evidence mismatches and source-kind contradictions are covered. New evidence reads remain in the stable snapshot.",
+      "Unchanged original contradictory fixtures now produce actual REFUSAL INVALID_PROJECT_HISTORY/exit2 for both57 and182 requests. Actual production project57 remains SKIP_VERIFIED and182 remains inspectioneligible; all four authority/mutation flags are false.",
+      "Independently rehashed117 current source/test files, recomputed raw source aggregates, checked87 isolated copies with26 exact substitutions, and verified all six new fixture content/verification joins. All Swift bytes equal prior full318/0/0skip, legacy54/0, build and retained-v1/v3 evidence; binaries remain byte-identical.",
+      "Reviewed complete preservation receipt and independently checked312 prior artifacts, including old FAIL and incoherent fixtures, with append-only progress prefix; rehashed59 config/state/backup entries and checked Git HEAD/index. Only the two granted product paths changed during this segment.",
+      "Admission order deviation remains recorded: the initial metadata-drift check had not completed when the first authorized patch was written. Frozen old bytes were recovered afterward and current differences verified. This review does not claim a pre-edit admission PASS or erase that procedural deviation."
+    ],
+    "inferences": [
+      "The original evidence-content A1 finding is resolved by actual contradiction refusals, coherent byte-bound fixtures and meaningful regressions. No material remaining defect was found within the frozen read-only contract and granted correction.",
+      "A1 PASS and TASK_CLOSURE_STATUS DONE apply only to this local project-preflight/Swift inspection unit. The whole native LINE backup goal remains NOT_ACHIEVED and its runtime closure remains open.",
+      "Recorded ordering deviation does not invalidate the observed final product/preservation evidence; it must remain visible and must not be represented as retrospective procedural compliance."
+    ],
+    "unknowns": [
+      "Shared writer/intent ordering, fresh native group-to-target continuity, dynamic content acceptance and PhaseA/B/occlusion/calibration readiness remain incomplete or unknown.",
+      "Controller/provider admission and OS sandbox/network denial remain unavailable/unknown. No new native authorization is inferred."
+    ],
+    "evidence": [
+      "bounded-correction-01/user-grant.json",
+      "bounded-correction-01/literal-product-diffs.json",
+      "bounded-correction-01/final-source-manifest.json",
+      "bounded-correction-01/python-focused.json",
+      "bounded-correction-01/swift-focused.json",
+      "bounded-correction-01/retained-contradiction-refusal.json",
+      "bounded-correction-01/final-isolation-verification.json",
+      "bounded-correction-01/final-preservation-verification.json",
+      "bounded-correction-01/admission-order-deviation.json",
+      "bounded-correction-01/actual-cli-summary.json",
+      "bounded-correction-01/retained-other-target-contradiction-refusal.json",
+      "bounded-correction-01/full-swift-compatibility-join.json",
+      "bounded-correction-01/implement-gates.json",
+      "bounded-correction-01/supplemental-convergence.json",
+      "acceptance-01.result.json",
+      "plan-03.md",
+      "bounded-evidence-join-correction.md"
+    ],
+    "confidence": "High for the narrow final inspection contract, executed checks, corrected evidence join and observed preservation; no whole native completion claim.",
+    "dependencies": {
+      "protected_I0": "PREREQUISITE_SATISFIED",
+      "supplemental_grant": "PREREQUISITE_SATISFIED",
+      "evidence_content_join": "PREREQUISITE_SATISFIED",
+      "whole_native_runtime": "PREREQUISITE_BLOCKED"
+    },
+    "convergence_scope": {
+      "original_issue": {
+        "used": 3,
+        "limit": 3,
+        "reset": false
+      },
+      "supplemental_grant": {
+        "used": 1,
+        "limit": 1
+      },
+      "cumulative_candidates": 4,
+      "remaining": 0,
+      "role_field_scope": "This explicit supplemental segment only"
+    },
+    "resolved_findings": [
+      "PROJECT_REGISTRY_EVIDENCE_CONTENT_NOT_JOINED",
+      "Destination/parent drift finding from original review"
+    ]
+  },
+  "handoff_summary": "獨立 A1 PASS，限本機唯讀預檢單元。引用內容現在與 exact history/verification 綁定，原矛盾 fixtures 已實際拒絕；Python31/0、Swift16/0與既有318/0相容證據成立。原3/3與A1 FAIL保留，本次明示追加1/1、累計4，無剩餘候選。Admission順序偏差保留且不冒稱事前PASS。整體原生LINE備份仍NOT_ACHIEVED，沒有新的下載或native授權。",
+  "convergence": {
+    "meaningful_attempts": 1,
+    "consecutive_no_progress": 0,
+    "last_attempt": "One explicit supplemental correction resolved evidence-content joins and passed final checks/independent review. Original3/3 and prior FAIL remain; cumulative4, no remaining candidate.",
+    "information_gain": true,
+    "stuck": false
+  }
+}

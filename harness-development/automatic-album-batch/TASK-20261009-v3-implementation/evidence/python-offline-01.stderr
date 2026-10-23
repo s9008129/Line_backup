@@ -1,0 +1,281 @@
+test_cli_explicit_authority_and_opaque_receipt (test_batch_authority.AuthorityTests.test_cli_explicit_authority_and_opaque_receipt) ... ok
+test_config_drift_blocks_even_fresh_receipt (test_batch_authority.AuthorityTests.test_config_drift_blocks_even_fresh_receipt) ... ok
+test_foreign_owner_has_no_inter_album_window (test_batch_authority.AuthorityTests.test_foreign_owner_has_no_inter_album_window) ... ok
+test_legacy_canonical_replacement_refused (test_batch_authority.AuthorityTests.test_legacy_canonical_replacement_refused) ... ok
+test_missing_lock_refuses_before_creation (test_batch_authority.AuthorityTests.test_missing_lock_refuses_before_creation) ... FAIL
+test_missing_state_never_initializes (test_batch_authority.AuthorityTests.test_missing_state_never_initializes) ... ok
+test_old_operator_idle_v3_refuses_before_lock_or_destination (test_batch_authority.AuthorityTests.test_old_operator_idle_v3_refuses_before_lock_or_destination) ... ok
+test_production_api_without_grant_refuses (test_batch_authority.AuthorityTests.test_production_api_without_grant_refuses) ... ok
+test_source_drift_blocks (test_batch_authority.AuthorityTests.test_source_drift_blocks) ... ok
+test_stale_revision_hash_and_inode_refused (test_batch_authority.AuthorityTests.test_stale_revision_hash_and_inode_refused) ... ok
+test_symlink_state_and_root_refused (test_batch_authority.AuthorityTests.test_symlink_state_and_root_refused) ... ok
+test_actual_full_rgb_decoder_dynamic_counts_and_measured_bytes (test_batch_content.ContentTests.test_actual_full_rgb_decoder_dynamic_counts_and_measured_bytes) ... ok
+test_content_mutation_after_decode_refuses (test_batch_content.ContentTests.test_content_mutation_after_decode_refuses) ... ok
+test_extra_hidden_directory_symlink_zero_and_temp_refuse (test_batch_content.ContentTests.test_extra_hidden_directory_symlink_zero_and_temp_refuse) ... ok
+test_interval_cannot_be_faked_by_non_advancing_clock (test_batch_content.ContentTests.test_interval_cannot_be_faked_by_non_advancing_clock) ... ok
+test_pause_missing_count_never_passes_stability_alone (test_batch_content.ContentTests.test_pause_missing_count_never_passes_stability_alone) ... ok
+test_truncated_png_actual_pixel_decoder_rejects (test_batch_content.ContentTests.test_truncated_png_actual_pixel_decoder_rejects) ... ok
+test_cap_one_does_not_loop_around_limit (test_batch_coordinator.CoordinatorTests.test_cap_one_does_not_loop_around_limit) ... ERROR
+test_final_scan_drift_is_not_all_complete (test_batch_coordinator.CoordinatorTests.test_final_scan_drift_is_not_all_complete) ... ok
+test_loaded_intent_and_fresh_ids_never_get_second_permission (test_batch_coordinator.CoordinatorTests.test_loaded_intent_and_fresh_ids_never_get_second_permission) ... ok
+test_true_service_two_dynamic_albums_plus_verified_skips (test_batch_coordinator.CoordinatorTests.test_true_service_two_dynamic_albums_plus_verified_skips) ... ERROR
+test_wrong_detail_before_intent_creates_no_barrier (test_batch_coordinator.CoordinatorTests.test_wrong_detail_before_intent_creates_no_barrier) ... ok
+test_active_owner_refuses (test_batch_migration.MigrationTests.test_active_owner_refuses) ... ok
+test_before_replace_failure_preserves_raw (test_batch_migration.MigrationTests.test_before_replace_failure_preserves_raw) ... ok
+test_true_cli_migration_preserves_large_integers_and_history (test_batch_migration.MigrationTests.test_true_cli_migration_preserves_large_integers_and_history) ... FAIL
+test_two_cli_processes_one_stable_lock_cas_winner (test_batch_migration.MigrationTests.test_two_cli_processes_one_stable_lock_cas_winner) ... /opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/tempfile.py:961: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/automatic-album-batch/TASK-20261009-v3-implementation/fixtures/tmpj9neefb4'>
+  _warnings.warn(warn_message, ResourceWarning)
+ok
+test_uncertain_readback_keeps_committed_candidate_and_no_retry (test_batch_migration.MigrationTests.test_uncertain_readback_keeps_committed_candidate_and_no_retry) ... ok
+test_complete_overlapping_catalog_and_negative_gap_boundaries (test_batch_observations.ObservationTests.test_complete_overlapping_catalog_and_negative_gap_boundaries) ... ok
+test_duplicate_identity_count_drift_and_non_date_refuse (test_batch_observations.ObservationTests.test_duplicate_identity_count_drift_and_non_date_refuse) ... ok
+test_metadata_cross_pair_and_neighbor_overlap_refuse (test_batch_observations.ObservationTests.test_metadata_cross_pair_and_neighbor_overlap_refuse) ... ok
+test_partial_card_prohibits_click (test_batch_observations.ObservationTests.test_partial_card_prohibits_click) ... ok
+test_same_frame_full_card_safe_metadata (test_batch_observations.ObservationTests.test_same_frame_full_card_safe_metadata) ... ok
+test_wrong_group_session_stale_mapping_and_focus_refuse (test_batch_observations.ObservationTests.test_wrong_group_session_stale_mapping_and_focus_refuse) ... ok
+
+======================================================================
+ERROR: test_cap_one_does_not_loop_around_limit (test_batch_coordinator.CoordinatorTests.test_cap_one_does_not_loop_around_limit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/schema.py", line 20, in validate
+    registry=Registry(retrieve=lambda uri:require(False,'EXTERNAL_SCHEMA_REFUSED'))).validate(state)
+                                                                                     ~~~~~~~~^^^^^^^
+  File "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/lib/python3.14/site-packages/jsonschema/validators.py", line 450, in validate
+    raise error
+jsonschema.exceptions.ValidationError: {'observed_at': '2026-10-09T12:41:47Z', 'outcome': 'PASS', 'regular_files': 2, 'image_files': 2, 'subdirectories': [], 'total_bytes': 145, 'extensions': {'.png': 2}, 'metadata_files': [], 'zero_byte_files': [], 'partial_temp_files': [], 'unrecognized_files': [], 'other_entries': 0, 'stable_samples': 3, 'inventory': [{'relative_path': '0.png', 'size': 72, 'mtime_ns': 1791549707439716810, 'mime': 'image/png', 'sha256': '525eff84c8227b765dcf6caee2841c312ccb92b24a19cb39a51a5e37768812d4', 'status': 'OK', 'type': 'regular', 'failure_class': None}, {'relative_path': '1.png', 'size': 73, 'mtime_ns': 1791549707439823477, 'mime': 'image/png', 'sha256': '6cf46ba2791b2215c6e8e8ad2cc33f15c4a7800341207a457fd1c0a84294aa35', 'status': 'OK', 'type': 'regular', 'failure_class': None}], 'evidence': 'actual full RGB decode; stable interval/count; exact post-decode inventory'} is not valid under any of the given schemas
+
+Failed validating 'oneOf' in schema['properties']['runs']['items']['properties']['verification']:
+    {'oneOf': [{'type': 'null'}, {'$ref': '#/$defs/verification'}]}
+
+On instance['runs'][0]['verification']:
+    {'observed_at': '2026-10-09T12:41:47Z',
+     'outcome': 'PASS',
+     'regular_files': 2,
+     'image_files': 2,
+     'subdirectories': [],
+     'total_bytes': 145,
+     'extensions': {'.png': 2},
+     'metadata_files': [],
+     'zero_byte_files': [],
+     'partial_temp_files': [],
+     'unrecognized_files': [],
+     'other_entries': 0,
+     'stable_samples': 3,
+     'inventory': [{'relative_path': '0.png',
+                    'size': 72,
+                    'mtime_ns': 1791549707439716810,
+                    'mime': 'image/png',
+                    'sha256': '525eff84c8227b765dcf6caee2841c312ccb92b24a19cb39a51a5e37768812d4',
+                    'status': 'OK',
+                    'type': 'regular',
+                    'failure_class': None},
+                   {'relative_path': '1.png',
+                    'size': 73,
+                    'mtime_ns': 1791549707439823477,
+                    'mime': 'image/png',
+                    'sha256': '6cf46ba2791b2215c6e8e8ad2cc33f15c4a7800341207a457fd1c0a84294aa35',
+                    'status': 'OK',
+                    'type': 'regular',
+                    'failure_class': None}],
+     'evidence': 'actual full RGB decode; stable interval/count; exact '
+                 'post-decode inventory'}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_coordinator.py", line 36, in test_cap_one_does_not_loop_around_limit
+    result,p=self.run_batch([identity(2,1),identity(3,2)],2)
+             ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_coordinator.py", line 21, in run_batch
+    return c.run(limit),p
+           ~~~~~^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/coordinator.py", line 36, in run
+    finished=svc.finalize(receipt,self.decoder,self.decoder_sha,verify_options=p.verification_io())
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/service.py", line 271, in finalize
+    return self.store.update(expected,finish)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/store.py", line 104, in update
+    validate_state_strict(candidate)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/common.py", line 377, in validate_state_strict
+    validate(state)
+    ~~~~~~~~^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/schema.py", line 22, in validate
+    except Exception as exc:raise AcceptanceError('INVALID_STATE_V3',str(exc),4) from exc
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+line_backup_acceptance.common.AcceptanceError: {'observed_at': '2026-10-09T12:41:47Z', 'outcome': 'PASS', 'regular_files': 2, 'image_files': 2, 'subdirectories': [], 'total_bytes': 145, 'extensions': {'.png': 2}, 'metadata_files': [], 'zero_byte_files': [], 'partial_temp_files': [], 'unrecognized_files': [], 'other_entries': 0, 'stable_samples': 3, 'inventory': [{'relative_path': '0.png', 'size': 72, 'mtime_ns': 1791549707439716810, 'mime': 'image/png', 'sha256': '525eff84c8227b765dcf6caee2841c312ccb92b24a19cb39a51a5e37768812d4', 'status': 'OK', 'type': 'regular', 'failure_class': None}, {'relative_path': '1.png', 'size': 73, 'mtime_ns': 1791549707439823477, 'mime': 'image/png', 'sha256': '6cf46ba2791b2215c6e8e8ad2cc33f15c4a7800341207a457fd1c0a84294aa35', 'status': 'OK', 'type': 'regular', 'failure_class': None}], 'evidence': 'actual full RGB decode; stable interval/count; exact post-decode inventory'} is not valid under any of the given schemas
+
+Failed validating 'oneOf' in schema['properties']['runs']['items']['properties']['verification']:
+    {'oneOf': [{'type': 'null'}, {'$ref': '#/$defs/verification'}]}
+
+On instance['runs'][0]['verification']:
+    {'observed_at': '2026-10-09T12:41:47Z',
+     'outcome': 'PASS',
+     'regular_files': 2,
+     'image_files': 2,
+     'subdirectories': [],
+     'total_bytes': 145,
+     'extensions': {'.png': 2},
+     'metadata_files': [],
+     'zero_byte_files': [],
+     'partial_temp_files': [],
+     'unrecognized_files': [],
+     'other_entries': 0,
+     'stable_samples': 3,
+     'inventory': [{'relative_path': '0.png',
+                    'size': 72,
+                    'mtime_ns': 1791549707439716810,
+                    'mime': 'image/png',
+                    'sha256': '525eff84c8227b765dcf6caee2841c312ccb92b24a19cb39a51a5e37768812d4',
+                    'status': 'OK',
+                    'type': 'regular',
+                    'failure_class': None},
+                   {'relative_path': '1.png',
+                    'size': 73,
+                    'mtime_ns': 1791549707439823477,
+                    'mime': 'image/png',
+                    'sha256': '6cf46ba2791b2215c6e8e8ad2cc33f15c4a7800341207a457fd1c0a84294aa35',
+                    'status': 'OK',
+                    'type': 'regular',
+                    'failure_class': None}],
+     'evidence': 'actual full RGB decode; stable interval/count; exact '
+                 'post-decode inventory'}
+
+======================================================================
+ERROR: test_true_service_two_dynamic_albums_plus_verified_skips (test_batch_coordinator.CoordinatorTests.test_true_service_two_dynamic_albums_plus_verified_skips)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/schema.py", line 20, in validate
+    registry=Registry(retrieve=lambda uri:require(False,'EXTERNAL_SCHEMA_REFUSED'))).validate(state)
+                                                                                     ~~~~~~~~^^^^^^^
+  File "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/lib/python3.14/site-packages/jsonschema/validators.py", line 450, in validate
+    raise error
+jsonschema.exceptions.ValidationError: {'evidence': 'retained fixture proof; never decode on SKIP', 'extensions': {'.png': 57}, 'image_files': 57, 'inventory': [{'failure_class': None, 'mime': 'image/png', 'mtime_ns': 9223372036854775000, 'relative_path': 'retained-fixture.png', 'sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'size': 3, 'status': 'OK', 'type': 'regular'}], 'metadata_files': [], 'observed_at': '2026-10-09T12:41:47Z', 'other_entries': 0, 'outcome': 'PASS', 'partial_temp_files': [], 'regular_files': 57, 'stable_samples': 3, 'subdirectories': [], 'total_bytes': 3, 'unrecognized_files': [], 'zero_byte_files': []} is not valid under any of the given schemas
+
+Failed validating 'oneOf' in schema['properties']['runs']['items']['properties']['verification']:
+    {'oneOf': [{'type': 'null'}, {'$ref': '#/$defs/verification'}]}
+
+On instance['runs'][0]['verification']:
+    {'evidence': 'retained fixture proof; never decode on SKIP',
+     'extensions': {'.png': 57},
+     'image_files': 57,
+     'inventory': [{'failure_class': None,
+                    'mime': 'image/png',
+                    'mtime_ns': 9223372036854775000,
+                    'relative_path': 'retained-fixture.png',
+                    'sha256': '0000000000000000000000000000000000000000000000000000000000000000',
+                    'size': 3,
+                    'status': 'OK',
+                    'type': 'regular'}],
+     'metadata_files': [],
+     'observed_at': '2026-10-09T12:41:47Z',
+     'other_entries': 0,
+     'outcome': 'PASS',
+     'partial_temp_files': [],
+     'regular_files': 57,
+     'stable_samples': 3,
+     'subdirectories': [],
+     'total_bytes': 3,
+     'unrecognized_files': [],
+     'zero_byte_files': []}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 295, in validate_history
+    validate_state_strict(state)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/common.py", line 377, in validate_state_strict
+    validate(state)
+    ~~~~~~~~^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/schema.py", line 22, in validate
+    except Exception as exc:raise AcceptanceError('INVALID_STATE_V3',str(exc),4) from exc
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+line_backup_acceptance.common.AcceptanceError: {'evidence': 'retained fixture proof; never decode on SKIP', 'extensions': {'.png': 57}, 'image_files': 57, 'inventory': [{'failure_class': None, 'mime': 'image/png', 'mtime_ns': 9223372036854775000, 'relative_path': 'retained-fixture.png', 'sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'size': 3, 'status': 'OK', 'type': 'regular'}], 'metadata_files': [], 'observed_at': '2026-10-09T12:41:47Z', 'other_entries': 0, 'outcome': 'PASS', 'partial_temp_files': [], 'regular_files': 57, 'stable_samples': 3, 'subdirectories': [], 'total_bytes': 3, 'unrecognized_files': [], 'zero_byte_files': []} is not valid under any of the given schemas
+
+Failed validating 'oneOf' in schema['properties']['runs']['items']['properties']['verification']:
+    {'oneOf': [{'type': 'null'}, {'$ref': '#/$defs/verification'}]}
+
+On instance['runs'][0]['verification']:
+    {'evidence': 'retained fixture proof; never decode on SKIP',
+     'extensions': {'.png': 57},
+     'image_files': 57,
+     'inventory': [{'failure_class': None,
+                    'mime': 'image/png',
+                    'mtime_ns': 9223372036854775000,
+                    'relative_path': 'retained-fixture.png',
+                    'sha256': '0000000000000000000000000000000000000000000000000000000000000000',
+                    'size': 3,
+                    'status': 'OK',
+                    'type': 'regular'}],
+     'metadata_files': [],
+     'observed_at': '2026-10-09T12:41:47Z',
+     'other_entries': 0,
+     'outcome': 'PASS',
+     'partial_temp_files': [],
+     'regular_files': 57,
+     'stable_samples': 3,
+     'subdirectories': [],
+     'total_bytes': 3,
+     'unrecognized_files': [],
+     'zero_byte_files': []}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_coordinator.py", line 25, in test_true_service_two_dynamic_albums_plus_verified_skips
+    result,p=self.run_batch([old1,a,b,old2],2)
+             ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_coordinator.py", line 21, in run_batch
+    return c.run(limit),p
+           ~~~~~^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/coordinator.py", line 11, in run
+    svc=self.service;p=self.provider;receipt=svc.store.snapshot()['receipt'];results=[]
+                                             ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/store.py", line 57, in snapshot
+    cfg,s,receipt,_,inventory=self.load(r);r.fresh_root()
+                              ~~~~~~~~~^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/store.py", line 44, in load
+    validate_config(cfg,self.root);validate_history(s,cfg,r,allow_v3=True)
+                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 297, in validate_history
+    fail('INVALID_STATE', 'State does not match the accepted RC2/legacy contract')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_acceptance/project_binding.py", line 28, in fail
+    raise AcceptanceError(code, message, 2)
+line_backup_acceptance.common.AcceptanceError: State does not match the accepted RC2/legacy contract
+
+======================================================================
+FAIL: test_missing_lock_refuses_before_creation (test_batch_authority.AuthorityTests.test_missing_lock_refuses_before_creation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/store.py", line 68, in guard
+    lock=os.open('.line-backup-state.lock',os.O_RDWR|os.O_NOFOLLOW|os.O_NONBLOCK,dir_fd=parent)
+FileNotFoundError: [Errno 2] No such file or directory: '.line-backup-state.lock'
+
+The above exception was the direct cause of the following exception:
+
+line_backup_acceptance.common.AcceptanceError: [Errno 2] No such file or directory: '.line-backup-state.lock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_authority.py", line 26, in test_missing_lock_refuses_before_creation
+    with self.assertRaisesRegex(AcceptanceError,'SHARED_LOCK_UNAVAILABLE'):self.f.svc.begin(expected,'backup_batch',1)
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "SHARED_LOCK_UNAVAILABLE" does not match "[Errno 2] No such file or directory: '.line-backup-state.lock'"
+
+======================================================================
+FAIL: test_true_cli_migration_preserves_large_integers_and_history (test_batch_migration.MigrationTests.test_true_cli_migration_preserves_large_integers_and_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_migration.py", line 19, in test_true_cli_migration_preserves_large_integers_and_history
+    self.assertEqual(p.returncode,0,p.stderr);after=self.f.state()
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4 != 0 : b'{"status": "REFUSED", "code": "INVALID_STATE_V3", "message": "{\'evidence\': \'retained fixture proof; never decode on SKIP\', \'extensions\': {\'.png\': 57}, \'image_files\': 57, \'inventory\': [{\'failure_class\': None, \'mime\': \'image/png\', \'mtime_ns\': 9223372036854775000, \'relative_path\': \'retained-fixture.png\', \'sha256\': \'0000000000000000000000000000000000000000000000000000000000000000\', \'size\': 3, \'status\': \'OK\', \'type\': \'regular\'}], \'metadata_files\': [], \'observed_at\': \'2026-10-09T12:41:47Z\', \'other_entries\': 0, \'outcome\': \'PASS\', \'partial_temp_files\': [], \'regular_files\': 57, \'stable_samples\': 3, \'subdirectories\': [], \'total_bytes\': 3, \'unrecognized_files\': [], \'zero_byte_files\': []} is not valid under any of the given schemas\\n\\nFailed validating \'oneOf\' in schema[\'properties\'][\'runs\'][\'items\'][\'properties\'][\'verification\']:\\n    {\'oneOf\': [{\'type\': \'null\'}, {\'$ref\': \'#/$defs/verification\'}]}\\n\\nOn instance[\'runs\'][0][\'verification\']:\\n    {\'evidence\': \'retained fixture proof; never decode on SKIP\',\\n     \'extensions\': {\'.png\': 57},\\n     \'image_files\': 57,\\n     \'inventory\': [{\'failure_class\': None,\\n                    \'mime\': \'image/png\',\\n                    \'mtime_ns\': 9223372036854775000,\\n                    \'relative_path\': \'retained-fixture.png\',\\n                    \'sha256\': \'0000000000000000000000000000000000000000000000000000000000000000\',\\n                    \'size\': 3,\\n                    \'status\': \'OK\',\\n                    \'type\': \'regular\'}],\\n     \'metadata_files\': [],\\n     \'observed_at\': \'2026-10-09T12:41:47Z\',\\n     \'other_entries\': 0,\\n     \'outcome\': \'PASS\',\\n     \'partial_temp_files\': [],\\n     \'regular_files\': 57,\\n     \'stable_samples\': 3,\\n     \'subdirectories\': [],\\n     \'total_bytes\': 3,\\n     \'unrecognized_files\': [],\\n     \'zero_byte_files\': []}", "dispatch_authorized": false}\n'
+
+----------------------------------------------------------------------
+Ran 33 tests in 1.865s
+
+FAILED (failures=2, errors=2)

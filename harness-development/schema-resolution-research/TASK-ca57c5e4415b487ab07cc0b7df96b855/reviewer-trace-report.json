@@ -1,0 +1,24 @@
+{
+  "source":"Explicit message from /root/project_binding_p1, reporting its existing first-turn tool context; root did not rerun the failure",
+  "original_review_run_id":"2411c72b-bf75-493d-b03d-c29eff242b23",
+  "original_failed_stage":"First task.schema.json validation, before planner.result.json validation",
+  "command_as_reported":"import json,pathlib,hashlib,jsonschema; r=pathlib.Path('/Users/hsiaojohnny/.codex/harness-releases/4.7.0/1bf92f52081df904cf30e1da488734643ee5ec3603464b4bf81b566263ec670d'); for file,schema in [('plan-contract.json','task.schema.json'),('planner.result.json','result.schema.json')]: jsonschema.Draft202012Validator(json.loads((r/'schemas/v3'/schema).read_bytes())).validate(json.loads((p/file).read_bytes())).",
+  "command_serialization_note":"Verbatim readable code report from the reviewer, not a claim of exact executable original wire bytes; p was the reviewed task directory",
+  "runtime_as_reported":"Pinned harness-runtime/4.7.0/.venv/bin/python -B via stdin",
+  "trace_excerpt_as_reported":[
+    "jsonschema/validators.py:112 _warn_for_remote_retrieve -> urlopen(request)",
+    "urllib.request -> socket.getaddrinfo",
+    "socket.gaierror [Errno 8] nodename nor servname provided, or not known",
+    "wrapped urllib.error.URLError",
+    "referencing.exceptions.Unretrievable: 'https://codex.local/schemas/v3/gate.schema.json'",
+    "referencing.exceptions.Unresolvable: gate.schema.json",
+    "jsonschema.exceptions._WrappedReferencingError: Unresolvable: gate.schema.json"
+  ],
+  "exit_code_as_reported":1,
+  "wall_seconds_as_reported":5.049890375,
+  "python_version_as_reported":"3.14.3 path in observed trace",
+  "jsonschema_version_as_reported":"NOT_OBSERVED",
+  "referencing_version_as_reported":"NOT_OBSERVED",
+  "new_network_calls_to_obtain_this_report":0,
+  "root_transport_telemetry":"UNAVAILABLE; this file preserves reviewer observation, not independently instrumented DNS/HTTP capture"
+}

@@ -1,0 +1,9 @@
+{
+  "user_message": "批准改版，MUST use BEST practice to do all tasks",
+  "source": "current conversation user-authored message",
+  "project_root": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "config_cap": 1,
+  "proposal_sha256": "37b3fde11e3000643e9c3507d6d24340d7cc74f8586b14307f7f262cef50b8d4",
+  "decision_sha256": "9b8a43286bb27f6cf3bb3d8a3c4cc98b438ee1baefe344b7ed4ce1a7817c2a48",
+  "scope": "approved product implementation/offline acceptance/exact clean migration; GUI fresh coordination later"
+}

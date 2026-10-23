@@ -1,0 +1,18 @@
+{
+  "format_version": "1",
+  "check_id": "grant-validation-02",
+  "status": "FAIL",
+  "exit_code": 1,
+  "started_at": "2026-10-10T13:51:08.696Z",
+  "ended_at": "2026-10-10T13:51:08.759Z",
+  "stdout": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-02.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/grant-validation-02.stderr",
+    "bytes": 2306,
+    "sha256": "04600c334c2de9084710c10de35cc132aeb1b34f7ca0a525d753f610bf40216f"
+  }
+}

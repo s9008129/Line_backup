@@ -1,0 +1,97 @@
+{
+  "result_format_version": "3",
+  "task_id": "TASK-20261009-v3-implementation",
+  "run_id": "d07c02a4-2140-4e65-b692-410cbce50836",
+  "role": "PLANNER",
+  "candidate_fact": "PASS",
+  "validation_fact": "VALID",
+  "routing_fact": "PLAN_REVIEW",
+  "statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "IN_PROGRESS",
+    "CORE_ACCEPTANCE_STATUS": "NOT_RUN",
+    "REQUIRED_VERIFICATION_STATUS": "NOT_RUN",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "IN_PROGRESS"
+  },
+  "gate_results": [],
+  "evidence_ids": [
+    "PLAN",
+    "CONTRACT",
+    "FIX"
+  ],
+  "stage": "PLAN",
+  "plan_sha256": "0106f629c748310c1ca4e90f64488cb40becd7e81f52e87773445e53ad170383",
+  "handoff_sha256": null,
+  "source_sha256": "60a4a2c5db2faecfe9b64fb747e73515b3889b3cad8b3565ffdb71abc0bff590",
+  "evidence_manifests": [
+    {
+      "task_id": "TASK-20261009-v3-implementation",
+      "run_id": "d07c02a4-2140-4e65-b692-410cbce50836",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "60a4a2c5db2faecfe9b64fb747e73515b3889b3cad8b3565ffdb71abc0bff590",
+      "evidence_id": "PLAN",
+      "path": "harness-development/automatic-album-batch/TASK-20261009-v3-implementation/plan.md",
+      "bytes": 7999,
+      "sha256": "0106f629c748310c1ca4e90f64488cb40becd7e81f52e87773445e53ad170383",
+      "contract_sha256": "95ea89853d8cf00402fadd868e23da0c6cb209c3005f141bc52b0d91d96c22d5",
+      "observation": "Corrected earliest legacy fence"
+    },
+    {
+      "task_id": "TASK-20261009-v3-implementation",
+      "run_id": "d07c02a4-2140-4e65-b692-410cbce50836",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "60a4a2c5db2faecfe9b64fb747e73515b3889b3cad8b3565ffdb71abc0bff590",
+      "evidence_id": "CONTRACT",
+      "path": "harness-development/automatic-album-batch/TASK-20261009-v3-implementation/plan-contract.json",
+      "bytes": 3211,
+      "sha256": "95ea89853d8cf00402fadd868e23da0c6cb209c3005f141bc52b0d91d96c22d5",
+      "contract_sha256": "95ea89853d8cf00402fadd868e23da0c6cb209c3005f141bc52b0d91d96c22d5",
+      "observation": "Unchanged Critical contract"
+    },
+    {
+      "task_id": "TASK-20261009-v3-implementation",
+      "run_id": "d07c02a4-2140-4e65-b692-410cbce50836",
+      "stage": "PLAN",
+      "role": "PLANNER",
+      "source_sha256": "60a4a2c5db2faecfe9b64fb747e73515b3889b3cad8b3565ffdb71abc0bff590",
+      "evidence_id": "FIX",
+      "path": "harness-development/automatic-album-batch/TASK-20261009-v3-implementation/evidence/plan-correction-01.json",
+      "bytes": 400,
+      "sha256": "39ba9e5acc34e318fbad9757fba7a0e7801468e2a4a4a457f8e1c95f17b0ca8e",
+      "contract_sha256": "95ea89853d8cf00402fadd868e23da0c6cb209c3005f141bc52b0d91d96c22d5",
+      "observation": "Independent bounded correction recorded"
+    }
+  ],
+  "plan_contract_sha256": "95ea89853d8cf00402fadd868e23da0c6cb209c3005f141bc52b0d91d96c22d5",
+  "analysis": {
+    "facts": [
+      "No product edits; corrected early fence and real old operator tests.",
+      "Full liveG2–G6 future; source/config/state still original."
+    ],
+    "inferences": [
+      "This implementation/migration unit does not establish live GUI G2–G6 or complete automatic backup."
+    ],
+    "unknowns": [
+      "Controller admission NOT_RUN; OS sandbox/network denial UNKNOWN; live readiness NOT_RUN."
+    ],
+    "evidence": [
+      "PLAN",
+      "CONTRACT",
+      "FIX"
+    ],
+    "confidence": "Scoped to actual evidence, not asserted production readiness"
+  },
+  "handoff_summary": "Earliest legacy fence added; independent re-review requested.",
+  "needs_human": false,
+  "human_decisions": [],
+  "convergence": {
+    "meaningful_attempts": 1,
+    "consecutive_no_progress": 0,
+    "last_attempt": "Fresh task-local read-only preparation evidence.",
+    "information_gain": true,
+    "stuck": false
+  }
+}

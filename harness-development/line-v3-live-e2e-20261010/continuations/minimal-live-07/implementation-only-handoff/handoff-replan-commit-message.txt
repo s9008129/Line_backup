@@ -1,0 +1,17 @@
+docs(line-backup): audit ML07 handoff for bounded replan
+
+Intent
+Provide the next high-level Planner a current, evidence-aware handoff after the previous handoff was found to omit required gate and sequence detail. This is a documentation and replan-readiness checkpoint only. It does not claim product implementation, product acceptance, LINE E2E, native verification, or task closure.
+
+What changed
+- Updated the root collaboration record, E2E report, implementation-only handoff, local implementer result, and final evidence manifest to incorporate the latest read-only handoff audit and clarify what remains unknown or blocked.
+- Mapped all 28 required gates to their current evidence/status, correcting the prior handoff's incomplete 15-gate presentation. Preserved separate six-status values and the distinction between draft evidence, formal receipts, PlanReview, native verification, and Acceptance.
+- Recorded the missing seven production-chain files/tests and the outstanding E03 freeze/finalization receipts, runtime, grants, binary/source bindings, and existing untracked Swift dependencies. Added references to the input annex and historical source recovery while retaining their provenance and local-workspace limits.
+- Updated Git context from the previously published parent checkpoint `57a1de36373ade66db7ae239aa046209e14675e7`; a new HEAD requires fresh source/grant/runtime bindings. The prior checkpoint's add/commit/push is historical evidence, not success for this publication.
+- Preserved the unresolved mapping/ordering question between `G_REAL_LINK`, `G_OFFLINE`, and `N02` for the Planner to decide explicitly. The audit did not run a scan, test, replan, implementation, GUI/LINE action, or native check.
+
+Next
+Have the high-level Planner produce a bounded, reviewed replan that resolves the truncated E03 diagnostic and specifies exact evidence, phases, consumed-ID rules, attempt accounting, and the relationship between live `G_REAL_LINK` and offline `G_OFFLINE`/`N02`. Do not repeat the truncated scan merely to recover output, assume the 172 pending artifacts are the sole blocker, retry consumed IDs, create E04, or treat current readiness evidence as PASS. If continuation remains within the authorized lineage, Luna should complete the explicitly scoped product implementation and offline acceptance with fresh bindings after the new HEAD. Keep the later live track for a separate authorized session: actual foreground handoff, D01/R01 evidence as required, two distinct album transactions, required bounded scroll with before/action/after evidence, file/state verification, and independent Acceptance.
+
+Current limits
+The last supported E03 preflight remains `BLOCKED_DIAGNOSTIC_TRUNCATED`; its full problem distribution is unknown. No product implementation or product-chain acceptance completed, and no CUA/LINE/native verification ran. Root-issue aggregate attempts remain unknown except for the verified e01 B01 attempt 1; collection counts and formal IDs are separate subjects. The local result's `run_id=null` is a known schema deviation and validation was not run. Existing Swift dependencies and other dirty/untracked workspace content mean no clean-clone claim is made. This message describes the documentation changes and next decision; it does not imply that the current add/commit/push has succeeded.

@@ -1,0 +1,35 @@
+{
+  "format_version": 1,
+  "observation": "The CUA getAXStateAndScreenshot immediately after the menu click showed the same detail window; its standalone native popup was omitted. The persisted SCK full-display frame and its exact detail-window crop are the source-side images. Anchor boxes below were visually matched between the CUA tool image and the full-display window crop; they are manual visual measurements, not a byte-equality claim.",
+  "source_capture": "evidence/e01-detail-menu-01.json",
+  "source_capture_sha256": "685a142c7cf0868a4215097651ca099b7741762c11f833ecbfa66dfcf6adf86c",
+  "detail_window_id": 6743,
+  "cua_observation_id": "cua-getAXStateAndScreenshot-after-detail-ellipsis-click",
+  "cua_screenshot_pixels": {"width": 654, "height": 1286},
+  "detail_crop_path": "evidence/e01-detail-menu-01-v2-anchor-ocr/detailwindowv2-1x.png",
+  "anchors": [
+    {
+      "name": "album-date-heading",
+      "kind": "unique OCR text box",
+      "cua_bbox_pixels": [32, 178, 387, 40],
+      "display_bbox_pixels": [745.7657165671, 287.5, 386.7942810059, 39.5]
+    },
+    {
+      "name": "photo-grid-center-divider",
+      "kind": "unique long vertical image seam",
+      "cua_bbox_pixels": [326, 800, 2, 2],
+      "display_bbox_pixels": [1040, 910, 2, 2]
+    },
+    {
+      "name": "album-filter-control",
+      "kind": "unique slider glyph",
+      "cua_bbox_pixels": [600, 380, 20, 25],
+      "display_bbox_pixels": [1314, 490, 20, 25]
+    }
+  ],
+  "measurement_status": "OBSERVED_MANUAL_VISUAL_CROSS_CHECK",
+  "limitations": [
+    "The CUA screenshot bytes are represented by the live tool result and are not independently persisted as a PNG in the task package.",
+    "This anchor evidence does not replace fresh independent validation after candidate v2 is built."
+  ]
+}

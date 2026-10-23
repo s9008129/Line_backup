@@ -1,0 +1,29 @@
+{
+  "evidence_id": "E00-SCK-DISPLAY-02",
+  "capture_verdict": "CAPTURED",
+  "target_correspondence_verdict": "OBSERVED_MISMATCH",
+  "image_path": "evidence/e00-display-02.png",
+  "manifest_path": "evidence/e00-display-02.json",
+  "image_sha256": "6382c463baf432abb05aba71d2bc2804db2ac81945761a016afab6d5cd3a5d9a",
+  "nonce": "e00-20261010-0412Z-4c91",
+  "image_dimensions_pixels": [2294, 1490],
+  "display_id": 1,
+  "scale_pixels_per_point": 2,
+  "screen_recording_preflight": true,
+  "target_bundle_id": "jp.naver.line.mac",
+  "target_pid": 34387,
+  "target_window_binding": "NO_SCK_TARGET_WINDOW_SINGLE_DISPLAY_FALLBACK",
+  "sck_target_application_on_screen_window_count": 0,
+  "sck_reported_line_main_window": {
+    "window_id": 3342,
+    "title": "LINE",
+    "frame_points": {"x": -1, "y": 45, "width": 1147, "height": 699},
+    "on_screen": false
+  },
+  "human_visual_observation": "The captured full display shows the Codex terminal and its conversation. LINE is not visible in the full-display image. This differs from the CUA app-bound screenshot, which showed LINE's Albums surface.",
+  "interpretation": "The app-bound CUA screenshot did not establish physical foreground visibility. Raise LINE through its documented CUA window action, then reacquire SCK metadata and pixels before any LINE coordinate action.",
+  "ui_input_during_capture": false,
+  "save_all_invocations": 0,
+  "state_mutation": false,
+  "destination_created": false
+}

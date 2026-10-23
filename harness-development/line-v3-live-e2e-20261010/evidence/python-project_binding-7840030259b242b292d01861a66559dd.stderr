@@ -1,0 +1,36 @@
+test_absent_destination_becoming_nonempty_rejected (test_project_binding.ProjectBindingTests.test_absent_destination_becoming_nonempty_rejected) ... ok
+test_busy_precedes_skip (test_project_binding.ProjectBindingTests.test_busy_precedes_skip) ... ok
+test_cli_refusal_and_legacy_parser (test_project_binding.ProjectBindingTests.test_cli_refusal_and_legacy_parser) ... ok
+test_config_contract (test_project_binding.ProjectBindingTests.test_config_contract) ... ok
+test_correctly_rehashed_foreign_join_content_refused (test_project_binding.ProjectBindingTests.test_correctly_rehashed_foreign_join_content_refused) ... ok
+test_correctly_rehashed_nonjson_and_duplicate_keys_refused (test_project_binding.ProjectBindingTests.test_correctly_rehashed_nonjson_and_duplicate_keys_refused) ... ok
+test_count_ambiguity (test_project_binding.ProjectBindingTests.test_count_ambiguity) ... ok
+test_dates_and_count_types (test_project_binding.ProjectBindingTests.test_dates_and_count_types) ... ok
+test_destination_and_parent_replacement_rejected (test_project_binding.ProjectBindingTests.test_destination_and_parent_replacement_rejected) ... ok
+test_duplicate_keys_and_malformed_state (test_project_binding.ProjectBindingTests.test_duplicate_keys_and_malformed_state) ... ok
+test_evidence_hash_or_path_is_not_trusted (test_project_binding.ProjectBindingTests.test_evidence_hash_or_path_is_not_trusted) ... ok
+test_fixture_kind_joins_exact_run_and_verification (test_project_binding.ProjectBindingTests.test_fixture_kind_joins_exact_run_and_verification) ... ok
+test_invalid_history_relationships (test_project_binding.ProjectBindingTests.test_invalid_history_relationships) ... ok
+test_join_verification_references_refused_if_missing_or_unsafe (test_project_binding.ProjectBindingTests.test_join_verification_references_refused_if_missing_or_unsafe) ... ok
+test_legacy_unknown_is_not_permission (test_project_binding.ProjectBindingTests.test_legacy_unknown_is_not_permission) ... ok
+test_missing_join_anchors_and_event_reference_refused (test_project_binding.ProjectBindingTests.test_missing_join_anchors_and_event_reference_refused) ... ok
+test_missing_source_and_evidence (test_project_binding.ProjectBindingTests.test_missing_source_and_evidence) ... ok
+test_new_verification_read_is_in_stable_snapshot (test_project_binding.ProjectBindingTests.test_new_verification_read_is_in_stable_snapshot) ... ok
+test_nonempty_and_unsafe_destination (test_project_binding.ProjectBindingTests.test_nonempty_and_unsafe_destination) ... ok
+test_nonterminal_other_target_is_busy (test_project_binding.ProjectBindingTests.test_nonterminal_other_target_is_busy) ... ok
+test_purported_release_does_not_clear_intent (test_project_binding.ProjectBindingTests.test_purported_release_does_not_clear_intent) ... ok
+test_registry_evidence_is_part_of_stable_snapshot (test_project_binding.ProjectBindingTests.test_registry_evidence_is_part_of_stable_snapshot) ... ok
+test_root_and_component_symlinks (test_project_binding.ProjectBindingTests.test_root_and_component_symlinks) ... ok
+test_stable_read_rejects_change_and_replacement (test_project_binding.ProjectBindingTests.test_stable_read_rejects_change_and_replacement) ... ok
+test_terminal_pointer_and_unknown_content (test_project_binding.ProjectBindingTests.test_terminal_pointer_and_unknown_content) ... ok
+test_unknown_intent_failed_and_safe_abort_block (test_project_binding.ProjectBindingTests.test_unknown_intent_failed_and_safe_abort_block) ... ok
+test_user_attestation_null_run_still_skips (test_project_binding.ProjectBindingTests.test_user_attestation_null_run_still_skips) ... ok
+test_user_fact_source_kind_and_confirmation_mismatches_refused (test_project_binding.ProjectBindingTests.test_user_fact_source_kind_and_confirmation_mismatches_refused) ... ok
+test_verification_content_mismatch_with_correct_digest_refused (test_project_binding.ProjectBindingTests.test_verification_content_mismatch_with_correct_digest_refused) ... ok
+test_verified_skip_never_inspects_photos (test_project_binding.ProjectBindingTests.test_verified_skip_never_inspects_photos) ... ok
+test_wire_schema_offline (test_project_binding.ProjectBindingTests.test_wire_schema_offline) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.303s
+
+OK

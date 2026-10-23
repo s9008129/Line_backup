@@ -1,0 +1,39 @@
+{
+  "frame": "scan-000",
+  "agreement": "PASS",
+  "rows": [
+    {
+      "identity": "2024-06-02_2024-06-07_65",
+      "start_date": "2024-06-02",
+      "end_date": "2024-06-07",
+      "expected_images": 65,
+      "date_box_source": [
+        31.765715095342074,
+        855.9999997161353,
+        233.5714263916016,
+        26.500000000000018
+      ],
+      "count_box_source": [
+        33.63428579057966,
+        896.9999995936694,
+        26.15999984741211,
+        17.031976699829197
+      ],
+      "raw_confidence": [
+        0.5,
+        0.30000001192092896,
+        0.5,
+        1
+      ]
+    }
+  ],
+  "partial_dates": [
+    [],
+    []
+  ],
+  "confidence_calibration": "UNKNOWN",
+  "apis_independent": false,
+  "visual_safety": "OBSERVED separately",
+  "source_sha256": "da605c7d71557e1cade2c15d74e8c697f4d8970b0940508c154c23bea2c36c42",
+  "legacy_competing_candidates": "UNKNOWN"
+}

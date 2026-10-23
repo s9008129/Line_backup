@@ -1,0 +1,50 @@
+{
+  "actor_id": "/root/ml08_python",
+  "allocation_version": "1",
+  "attempt_index": 1,
+  "baseline": {
+    "path": "workers/python/baseline.json",
+    "sha256": "12b2a9607febccbf9e01c3d24c3458b060fd691da2614a07917bd4a73e59619a"
+  },
+  "git_identity": {
+    "common_dir": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.git",
+    "git_dir": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/.git/worktrees/Line_backup_ml08_python",
+    "git_dir_identity": [
+      16777234,
+      134841258
+    ],
+    "registered": [
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-deepseek",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup-ab-luna",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup_ml08_python",
+      "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup_ml08_swift"
+    ],
+    "worktree_identity": [
+      16777234,
+      134841260
+    ]
+  },
+  "invitation": {
+    "path": "workers/python/invitation.json",
+    "sha256": "5448d29de3e217042f263771b6cdf6a442262db1e991512db6135f0252d0c083"
+  },
+  "invitation_nonce": "00430ca6d62e2a4e91fc0555a95851e2",
+  "isolation": {
+    "base_sha": "153eefe86fb61feb7fc4322c9c259895437a3428",
+    "mode": "WORKTREE",
+    "worktree": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup_ml08_python"
+  },
+  "issue_id": "ML08_PYTHON",
+  "platform_session_id": "01a12e01-30fb-7122-8c94-01ec0fb811d1",
+  "run_id": "d895b8ed-a814-4785-85ee-9e39b9e52559",
+  "scope": [
+    "src/line_backup_batch/cli.py",
+    "src/line_backup_batch/observations.py",
+    "src/line_backup_batch/store.py"
+  ],
+  "stage": "IMPLEMENT",
+  "started_at": "2026-10-12T02:49:51.725134+00:00",
+  "task_id": "TASK-4acb4326ea2a4c50ace6f333f2de8751",
+  "writer_id": "python"
+}

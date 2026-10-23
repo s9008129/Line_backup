@@ -1,0 +1,18 @@
+{
+  "format_version": "1",
+  "check_id": "batch-python-06",
+  "status": "PASS",
+  "exit_code": 0,
+  "started_at": "2026-10-10T13:38:41.562Z",
+  "ended_at": "2026-10-10T13:38:46.187Z",
+  "stdout": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/batch-python-06.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/batch-python-06.stderr",
+    "bytes": 10460,
+    "sha256": "0d0ceb1ad142485d043005d256069791beaa61906c6e55b78d8136960d2c1533"
+  }
+}

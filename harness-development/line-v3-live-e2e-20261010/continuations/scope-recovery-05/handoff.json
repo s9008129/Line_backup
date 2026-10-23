@@ -1,0 +1,99 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-20261011-line-receipt-recovery",
+  "goal": "Preserve the four original out-of-scope receipts in place; repair a CON-bound local check runner and verify the unchanged candidate CUA adapter offline; preserve all unrelated work and report back to Planner without LINE input, downloads, product/state/config/ledger edits or parent E2E closure.",
+  "task_class": "QUICK",
+  "allowed_paths": [
+    "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05"
+  ],
+  "required_evidence": [
+    "E_BASELINE",
+    "E_INCIDENT_RECONCILIATION",
+    "E_RUNNER",
+    "E_ADAPTER_OFFLINE",
+    "E_PRESERVATION",
+    "E_REPORT"
+  ],
+  "gate_specs": [
+    {
+      "gate_id": "G_BASELINE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_RUNNER",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_ADAPTER_OFFLINE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_PRESERVE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "BASELINE_DELTA",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "G_REPORT",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "SUPPORTING",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    }
+  ],
+  "capability_policy": {
+    "network": "OFF",
+    "browser": false,
+    "destinations": []
+  },
+  "retry_policy": {
+    "transient_read_only_retries": 2,
+    "delays_seconds": [
+      10,
+      30
+    ]
+  },
+  "resource_policy": {
+    "prompt_bytes": 65536,
+    "state_bytes": 524288,
+    "inspect_bytes": 16384,
+    "log_bytes": 134217728
+  },
+  "workflow_policy": {
+    "plan_review_required": true,
+    "independent_acceptance_required": false,
+    "max_parallel_read_only_helpers": 3,
+    "max_parallel_writers": 0,
+    "handoff_review_required": false
+  }
+}

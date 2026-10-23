@@ -1,0 +1,68 @@
+Building for debugging...
+[0/12] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.10s)
+Test Suite 'Selected tests' started at 2026-09-29 05:43:08.950.
+Test Suite 'rev28PackageTests.xctest' started at 2026-09-29 05:43:08.951.
+Test Suite 'AlbumEllipsisLocatorTests' started at 2026-09-29 05:43:08.951.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testPixelDetectorFindsSyntheticThreeDots]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testPixelDetectorFindsSyntheticThreeDots]' passed (0.015 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testPixelDetectorReportsTopLeftRowsForKnownRasterRows]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testPixelDetectorReportsTopLeftRowsForKnownRasterRows]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testPixelDetectorReproducesReviewedV5FrameDots]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testPixelDetectorReproducesReviewedV5FrameDots]' passed (0.184 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testPixelStructureLocatesEllipsisAboveTitleBoxInFreshCapture]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testPixelStructureLocatesEllipsisAboveTitleBoxInFreshCapture]' passed (0.057 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testReviewedV5GeometryLocatesAlbumEllipsis]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testReviewedV5GeometryLocatesAlbumEllipsis]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTextGlyphTripleIsBlocked]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTextGlyphTripleIsBlocked]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTitleStripTripleIsNotEligible]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTitleStripTripleIsNotEligible]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTwoEligibleTriplesAreAmbiguous]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testTwoEligibleTriplesAreAmbiguous]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testWrongSpacingFailsClosed]' started.
+Test Case '-[Rev28CoreTests.AlbumEllipsisLocatorTests testWrongSpacingFailsClosed]' passed (0.000 seconds).
+Test Suite 'AlbumEllipsisLocatorTests' passed at 2026-09-29 05:43:09.207.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.256 (0.257) seconds
+Test Suite 'ComposedAdaptersTests' started at 2026-09-29 05:43:09.207.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testAppReadyRequiresFrontmostTargetAndPostsNothing]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testAppReadyRequiresFrontmostTargetAndPostsNothing]' passed (0.007 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testExecuteStopsAtSaveAllBoundaryWithoutIrreversibleRecords]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testExecuteStopsAtSaveAllBoundaryWithoutIrreversibleRecords]' passed (0.168 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesLedgerThatAlreadyRecordedIrreversibleIntent]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesLedgerThatAlreadyRecordedIrreversibleIntent]' passed (0.004 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesSaveAllLocatedWhenFrozenMenuGeometryIsAbsent]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightRefusesSaveAllLocatedWhenFrozenMenuGeometryIsAbsent]' passed (0.163 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightWalksEveryPreSaveStateWithGuardedRecoveriesAndZeroIrreversibleIntent]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreflightWalksEveryPreSaveStateWithGuardedRecoveriesAndZeroIrreversibleIntent]' passed (0.167 seconds).
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreIntentContinuationResumesWithoutReusingEvidence]' started.
+Test Case '-[Rev28CoreTests.ComposedAdaptersTests testPreIntentContinuationResumesWithoutReusingEvidence]' passed (0.167 seconds).
+Test Suite 'ComposedAdaptersTests' passed at 2026-09-29 05:43:09.884.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.677 (0.677) seconds
+Test Suite 'NativeObservationSessionTests' started at 2026-09-29 05:43:09.884.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' passed (0.001 seconds).
+Test Suite 'NativeObservationSessionTests' passed at 2026-09-29 05:43:09.905.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.020 (0.020) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-09-29 05:43:09.905.
+	 Executed 23 tests, with 0 failures (0 unexpected) in 0.953 (0.954) seconds
+Test Suite 'Selected tests' passed at 2026-09-29 05:43:09.905.
+	 Executed 23 tests, with 0 failures (0 unexpected) in 0.953 (0.955) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

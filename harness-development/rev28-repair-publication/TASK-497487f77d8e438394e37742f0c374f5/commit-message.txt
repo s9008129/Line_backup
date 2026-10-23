@@ -1,0 +1,31 @@
+fix(rev28): 發布已驗收安全修復、process identity 與相簿流程交接
+
+意圖
+- 修正產品對 durable 副作用邊界、最新畫面、精確相簿身分與程序身分的依賴不一致；保留 fail-closed、不可重試 intent、既有 authority 與嘗試預算。
+- 補齊 c19fc90 僅發布 handoff.md 後留下的遠端／本機落差，讓接手 Agent 取得真正經獨立驗收的程式與測試，而非舊 committed source。
+- 清楚區分「57 張單一相簿已 DONE」、「本機修復已驗收」與「整套原生自動化尚未完成」，避免文件或 exit0 被誤當 production permit。
+
+做了什麼
+- Quartz dispatch 必須成功持久化 revalidation／reservation，才可送出輸入；移除吞掉寫入失敗而繼續 dispatch 的路徑。以鎖內取得的 attempt identity 綁定結果，保留連續失敗及不可逆操作 budget。
+- hover 後重新 capture、定位與取得同 epoch readiness；phase/state 證據使用精確群組、日期與 57 張身分，拒絕缺失、重複或不同相簿的 OCR 身分。
+- 恢復執行時保留既有單調 state、不可逆 barrier 與 counters，以 state.reobservation 重新取得證據，不藉 restart 清除歷史。
+- Phase A 不再把 config／candidate 當成原生校準及 popup 綁定證明；未知保持 UNKNOWN。live-preflight 發布實際 report 並在條件未通過時 exit77。
+- 新增 ProcessCodeIdentity：要求 Security 取得指定 PID 的簽章身分，拒絕 fallback 到呼叫者。Observation 在 SCK 前與完整讀取後綁定 process/signing/AX；使用單一明確 CG snapshot 驗證 unique owner、layer0、有限正面積與 frame 一致性。
+- observation deadline 包含最後身分讀取及驗證，拒絕過期、替換、混合 epoch 或不一致結果；只有接受的 capture 才增加計數。保留 timing 與 PID counterexample 回歸測試。
+- 原樣提交 23 個已接受的程式／測試／架構與 navigation 檔案。沒有新增產品或測試 bytes 修改；更新根目錄 handoff.md 的發布事實與同機續跑限制。
+- 原樣保留並發布 88 個選定文字紀錄：兩輪 Plan／獨立 Plan Review／contract／Handoff、先前 FAIL 與最後 PASS、source／verification manifest、反例、測試／build／replay／provenance 命令及 log，以及單一相簿結案與原生 capture 的少量結果 metadata。
+- 新增發布計畫、精確 publication-paths、來源／postimage 核對與 SHA 索引。本集合是文字追溯集，不是完整實機證據包；原引用及歷史未知沒有改寫。
+
+驗證與界線
+- 既有第一輪實際驗證：focused 126/0、full 256/0，build、20-fixture replay、provenance 與獨立 Acceptance PASS；原首次 Acceptance FAIL 保留。
+- 最後 fresh identity 修復的既有實際驗證：focused 22/0、full 268/0、20-fixture replay、build／provenance PASS，獨立 Acceptance-02 PASS；首輪 FAIL 與失敗反例保留。
+- 本次實讀核對全部 49 個接受來源檔案，aggregate 為 097ed57f97ed9d22ff0919e75bc116237877b84e7b1e78ef505cce7f6d311b19；另以原接受 patch 重建 16 個未被後續取代的 postimage，核對 fresh repair 的 7 個接受後檔案及 62 筆歷史 manifest entry 的 bytes/SHA。
+- 本次只執行來源／schema／保留性／Git 核對與 diff --check，沒有重跑 Swift、操作 LINE 或下載相簿。照片、桌面原圖、raw Computer Use trace、live config/state 及編譯 cache 留在本機。
+- 57 個 JPEG、17,924,900 bytes 的專案內單一相簿備份已有產品 verify-only 與獨立 A1 PASS，state revision16 VERIFIED；這份 Git 發布不擴大其 scope，也不重新驗收或再次下載。
+
+下一步建議
+- 新 Agent 先完整讀根目錄 handoff.md，核對 source、config/state 與既有 evidence join；目前不需要請使用者把 LINE 開到前景。
+- 先唯讀釐清 CUA 浮動選單遺漏與原生 SCK/CG/AX 的證據能力，保留 FROZEN_CAPTURE_GEOMETRY、POPUP_OCCLUSION_ASSUMPTIONS 與舊 native authority UNKNOWN。
+- 若需校準、持久化或授權語意修復，另建 Harness4.7 format3 CRITICAL continuation Plan，走獨立 Plan Review、原樣 machine Handoff、Implementation 與獨立 Acceptance；凍結受測入口、反例、成功／停止條件。
+- 不使用舊外部備份位置；新備份只能在本專案 backups。不得重下載已 VERIFIED 的 57 張，不重置 PRIMARY_NATIVE_COMPOSITION 3/3、不藉新 task/run/session 取得第4次 live attempt，也不刪改 registry、GoalSlot 或 ledger。
+- 只有整套流程必要的實作、真實驗證及獨立驗收全部通過才宣布整套 DONE；需要使用者前景／解鎖等實際介入時，再提出一個具體動作。

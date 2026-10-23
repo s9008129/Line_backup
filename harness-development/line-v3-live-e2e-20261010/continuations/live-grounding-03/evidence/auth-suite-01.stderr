@@ -1,0 +1,23 @@
+test_batch_authority (unittest.loader._FailedTest.test_batch_authority) ... ERROR
+
+======================================================================
+ERROR: test_batch_authority (unittest.loader._FailedTest.test_batch_authority)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_batch_authority
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests/test_batch_authority.py", line 9, in <module>
+    sys.path.insert(0,os.environ['LINE_BACKUP_BATCH_TASK'])
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 709, in __getitem__
+KeyError: 'LINE_BACKUP_BATCH_TASK'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

@@ -1,0 +1,61 @@
+{
+  "record": "user_decision_and_git_authorization",
+  "task_id": "TASK-20261010-line-v3-live-e2e",
+  "continuation": "implement-02",
+  "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+  "role": "IMPLEMENTER",
+  "decided_at": "2026-10-10T18:57:07+0800",
+  "decision": {
+    "id": "A",
+    "decided_by": "user",
+    "question": "blocker-packet.md 的 A/B/C 選項；Implementer 以白話整理後詢問，使用者回覆「A」",
+    "meaning": "核准先做一次新的 Critical Planner 計畫：實作非 menu frame 的 native SCK sidecar producer、真機 live 幾何 provider、grounded AX→17-key classifier 與 chooser locators，維持原凍結設計意圖。Swift 視為新的 root issue（自己的 ≤3 次嘗試額度）；grants 需加 sensor scope。",
+    "not_authorized": [
+      "任何 LINE 前景輸入、GUI reservation、Save All、chooser、下載或 scroll（需新計畫與新的前景交接）",
+      "gate、證據政策或 scope 的變更（那是選項 B/C）",
+      "產品程式、state、config 的修改"
+    ]
+  },
+  "git_authorization": {
+    "commit": "授權：使用者於 implement-02 session 的訊息（2026-10-10）『完成後…接著執行add,commit』；本 checkpoint 只做本機 commit。",
+    "push": "NOT authorized；不執行 push。",
+    "scope": "只 stage 本輪（implement-02）task package 產物；無關 dirty／untracked 工作、build outputs、cache 與 temp 全數保留，不進 commit。"
+  },
+  "supersedes": "blocker-packet.md 與 progress.md 中『下一個精確動作＝使用者就 A/B/C 給出決定』屬決策前的凍結文字；該兩檔刻意保持 byte 不變（hash 凍結），本檔為決策的現行紀錄。",
+  "next_role": "PLANNER（Critical）",
+  "next_role_inputs": [
+    "harness-development/line-v3-live-e2e-20261010/blocker-packet.md",
+    "harness-development/line-v3-live-e2e-20261010/E2E測試報告.md",
+    "harness-development/line-v3-live-e2e-20261010/progress.md",
+    "harness-development/line-v3-live-e2e-20261010/results/implementer.result.json",
+    "harness-development/line-v3-live-e2e-20261010/continuations/implement-02/user-decision-A.json（本檔）"
+  ],
+  "required_next_output": "新的經審查 Critical 計畫（plan.md＋handoff.md）：涵蓋 non-menu SCK sidecar producer、真機 geometry provider、grounded classifier、chooser locators、grant sensor-scope 與 native_binary 綁定決策、Swift 新 root issue 之嘗試額度，以及第一本 → 實際 bounded scroll → 第二本 → 驗收 的 gate 與證據順序。",
+  "references": {
+    "blocker_packet": {
+      "path": "harness-development/line-v3-live-e2e-20261010/blocker-packet.md",
+      "bytes": 4519,
+      "sha256": "ae5fe4992013c9903d818bf14550f06b2fef6c9b0409a4f6754481dac6ca6667"
+    },
+    "e2e_report": {
+      "path": "harness-development/line-v3-live-e2e-20261010/E2E測試報告.md",
+      "bytes": 25063,
+      "sha256": "580e2c628a55ea44bb10638e83a94d03cca8ad7dcab39cf9967e99f7503cea2c"
+    },
+    "progress": {
+      "path": "harness-development/line-v3-live-e2e-20261010/progress.md",
+      "bytes": 3820,
+      "sha256": "8c56b1623950acc62ccee5f665577680fe123f6ef32fabf77fc27f19f177b6e2"
+    },
+    "attempt_ledger": {
+      "path": "harness-development/line-v3-live-e2e-20261010/attempt-ledger.json",
+      "bytes": 28144,
+      "sha256": "d67fdaf77056ae3426cc1db76436f7cf32c932cec5de6fad8fafbc04297a64a7"
+    },
+    "implementer_result": {
+      "path": "harness-development/line-v3-live-e2e-20261010/results/implementer.result.json",
+      "bytes": 22278,
+      "sha256": "a279ebcbd4f88935aa59e8fcc5e8ab1e26b20beb8b7acd1d9b423b4451e45cf3"
+    }
+  }
+}

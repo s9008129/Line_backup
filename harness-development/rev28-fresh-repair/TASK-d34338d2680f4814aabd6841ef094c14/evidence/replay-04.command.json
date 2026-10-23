@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/Users/hsiaojohnny/.codex/harness-runtime/4.7.0/.venv/bin/python",
+    "rev28/Tools/replay_rev28.py",
+    "--output",
+    "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/historical-replay-04.json"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "exit_code": 0,
+  "duration_seconds": 2.388,
+  "at_utc": "2026-10-04T11:22:38.568952+00:00",
+  "log": "harness-development/rev28-fresh-repair/TASK-d34338d2680f4814aabd6841ef094c14/evidence/replay-04.log",
+  "log_bytes": 0,
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "tests_summary": null
+}

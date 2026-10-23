@@ -1,0 +1,18 @@
+{
+  "format_version": "1",
+  "check_id": "transaction-python-02",
+  "status": "PASS",
+  "exit_code": 0,
+  "started_at": "2026-10-10T13:38:21.646Z",
+  "ended_at": "2026-10-10T13:38:21.818Z",
+  "stdout": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/transaction-python-02.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/transaction-python-02.stderr",
+    "bytes": 940,
+    "sha256": "55f760c20d3525ae53c2a120e64e3a39d3fe649e75c3640f06d1ed72201badbe"
+  }
+}

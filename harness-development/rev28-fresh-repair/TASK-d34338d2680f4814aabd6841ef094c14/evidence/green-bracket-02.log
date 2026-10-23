@@ -1,0 +1,78 @@
+Building for debugging...
+[0/13] Write sources
+[1/13] Write swift-version--58304C5D6DBC2206.txt
+[3/15] Emitting module Rev28Core
+[4/15] Compiling Rev28Core NativeObservationSession.swift
+[4/21] Write Objects.LinkFileList
+[10/21] Linking rev28replay
+[11/21] Linking rev28occluder
+[12/21] Linking rev28probe
+[12/21] Linking rev28harness
+[14/21] Applying rev28replay
+[14/21] Applying rev28occluder
+[16/21] Applying rev28harness
+[16/21] Applying rev28probe
+[18/21] Linking rev28ctl
+[19/21] Linking rev28PackageTests
+[20/21] Applying rev28ctl
+Build complete! (1.12s)
+Test Suite 'Selected tests' started at 2026-10-04 19:21:40.336.
+Test Suite 'rev28PackageTests.xctest' started at 2026-10-04 19:21:40.337.
+Test Suite 'NativeObservationSessionTests' started at 2026-10-04 19:21:40.337.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testAlbumCardLocalizationBindsCandidateToBundleEpoch]' passed (0.006 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCaptureProducesValidatedBundleFromRetainedImage]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGDuplicateAndInvalidOrDriftedGeometryAreRefused]' passed (0.011 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGGeometryWithinExistingHalfPointTolerancePasses]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testCGGeometryWithinExistingHalfPointTolerancePasses]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConcurrentCaptureOnOneSessionIsRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConflictingDuplicateSCKWindowIDIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testConflictingDuplicateSCKWindowIDIsRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineBreachIsRefusedAfterCapture]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testDeadlineIncludesOcrAndRejectsOverflowOrZeroBudget]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testInventoryChangeAndWindowMultiplicityAreRefused]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testLocalizationRefusalIsRecordedAsTypedRefusal]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testObserverAndOcrFailuresNeverBecomeEmptySuccess]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testOneExplicitCGSnapshotIsSharedByIdentityAndBundle]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testOneExplicitCGSnapshotIsSharedByIdentityAndBundle]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureIdentityReadErrorsAreRefused]' passed (0.005 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostCaptureProcessSigningAndAXChangesAreRefused]' passed (0.009 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostIdentityReadDoesNotExtendAbsoluteDeadline]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testPostIdentityReadDoesNotExtendAbsoluteDeadline]' passed (0.002 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testProcessReplacementDuringBoundaryReadsIsRefused]' passed (0.009 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testRetainedImageHashMismatchIsRefused]' passed (0.001 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testStableUnavailableSigningRemainsUnknown]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testStableUnavailableSigningRemainsUnknown]' passed (0.003 seconds).
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' started.
+Test Case '-[Rev28CoreTests.NativeObservationSessionTests testUnboundAXIdentityIsRefused]' passed (0.002 seconds).
+Test Suite 'NativeObservationSessionTests' passed at 2026-10-04 19:21:40.411.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.074 (0.075) seconds
+Test Suite 'ProcessCodeIdentityTests' started at 2026-10-04 19:21:40.411.
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testMissingOrMalformedTargetIdentityIsUnknown]' started.
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testMissingOrMalformedTargetIdentityIsUnknown]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testObservedIdentifierAndTeamArePreserved]' started.
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testObservedIdentifierAndTeamArePreserved]' passed (0.000 seconds).
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testUnavailableTargetRemainsUnknown]' started.
+Test Case '-[Rev28CoreTests.ProcessCodeIdentityTests testUnavailableTargetRemainsUnknown]' passed (0.001 seconds).
+Test Suite 'ProcessCodeIdentityTests' passed at 2026-10-04 19:21:40.413.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'rev28PackageTests.xctest' passed at 2026-10-04 19:21:40.413.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.075 (0.076) seconds
+Test Suite 'Selected tests' passed at 2026-10-04 19:21:40.413.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.075 (0.077) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

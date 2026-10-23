@@ -1,0 +1,436 @@
+{
+ "result_format_version": "3",
+ "task_id": "TASK-20261010-line-v3-live-e2e",
+ "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+ "role": "IMPLEMENTER",
+ "candidate_fact": "BLOCKED",
+ "validation_fact": "NOT_RUN",
+ "routing_fact": "PLANNER_REPLAN",
+ "statuses": {
+  "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+  "IMPLEMENTATION_STATUS": "BLOCKED",
+  "CORE_ACCEPTANCE_STATUS": "BLOCKED",
+  "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+  "INDEPENDENT_ACCEPTANCE_STATUS": "BLOCKED",
+  "TASK_CLOSURE_STATUS": "REPLAN_REQUIRED"
+ },
+ "gate_results": [
+  {
+   "gate_id": "G_PLAN_REVIEW_WAIVER",
+   "verdict": "PASS",
+   "evidence_manifest": "harness-development/line-v3-live-e2e-20261010/continuations/implement-02/plan-review-waiver.json"
+  },
+  {
+   "gate_id": "G_AUTH",
+   "verdict": "PASS",
+   "evidence_manifest": "harness-development/line-v3-live-e2e-20261010/evidence/g-auth-002b06e139ab4f6a846dd87dfc3324cd.json"
+  },
+  {
+   "gate_id": "G_OFFLINE",
+   "verdict": "PASS",
+   "evidence_manifest": "harness-development/line-v3-live-e2e-20261010/evidence/g-offline-74e2029936ba4b2197262ec60bcda35e.json"
+  },
+  {
+   "gate_id": "G_MIGRATION",
+   "verdict": "PASS",
+   "evidence_manifest": "harness-development/line-v3-live-e2e-20261010/evidence/g-migration-1eac0a640dbc4fe1b0320e666d1ec200.json"
+  },
+  {
+   "gate_id": "G_CATALOG",
+   "verdict": "BLOCKED",
+   "evidence_manifest": null
+  },
+  {
+   "gate_id": "G_MENU",
+   "verdict": "BLOCKED",
+   "evidence_manifest": null
+  },
+  {
+   "gate_id": "G_FIRST",
+   "verdict": "BLOCKED",
+   "evidence_manifest": null
+  },
+  {
+   "gate_id": "G_SCROLL",
+   "verdict": "BLOCKED",
+   "evidence_manifest": null
+  },
+  {
+   "gate_id": "G_SECOND",
+   "verdict": "BLOCKED",
+   "evidence_manifest": null
+  },
+  {
+   "gate_id": "G_PRESERVE",
+   "verdict": "PASS",
+   "evidence_manifest": "harness-development/line-v3-live-e2e-20261010/continuations/implement-02/baseline-fresh.json"
+  },
+  {
+   "gate_id": "G_REPORT",
+   "verdict": "PARTIAL",
+   "evidence_manifest": "harness-development/line-v3-live-e2e-20261010/E2E測試報告.md"
+  },
+  {
+   "gate_id": "G_ACCEPTANCE",
+   "verdict": "BLOCKED",
+   "evidence_manifest": null
+  },
+  {
+   "gate_id": "G_DELIVERY",
+   "verdict": "PARTIAL",
+   "evidence_manifest": "harness-development/line-v3-live-e2e-20261010/E2E測試報告.md"
+  }
+ ],
+ "evidence_ids": [
+  "e2e_report",
+  "progress",
+  "attempt_ledger",
+  "blocker_packet",
+  "freeze_primary",
+  "g_auth",
+  "g_offline",
+  "g_migration",
+  "state_snapshot",
+  "live_runner",
+  "d2_proof_script",
+  "d2_proof_output",
+  "helper_verification",
+  "baseline_preservation",
+  "live_grant_1",
+  "live_grant_2",
+  "contract_handoff",
+  "plan_review_waiver",
+  "compile_handoff"
+ ],
+ "blocker_fingerprint": "7446d6a44a12b7699f64d04df9da4f1f2aa9b786b72053ff69767a234a4051cb",
+ "information_gain": true,
+ "stage": "IMPLEMENT",
+ "plan_sha256": "b81ca57103bb71b60dacc7848a104e8cb0efcd28347fba862ad8736997756a49",
+ "handoff_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+ "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+ "evidence_manifests": [
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "e2e_report",
+   "path": "harness-development/line-v3-live-e2e-20261010/E2E測試報告.md",
+  "bytes": 25063,
+  "sha256": "580e2c628a55ea44bb10638e83a94d03cca8ad7dcab39cf9967e99f7503cea2c",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "2026-10-10 live-bridge round report: offline/migration PASS, D1/D2 live branch structurally blocked, zero LINE input."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "progress",
+   "path": "harness-development/line-v3-live-e2e-20261010/progress.md",
+   "bytes": 3820,
+   "sha256": "8c56b1623950acc62ccee5f665577680fe123f6ef32fabf77fc27f19f177b6e2",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Plain-language progress, attempt learning, and the D1/D2 decision request."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "attempt_ledger",
+   "path": "harness-development/line-v3-live-e2e-20261010/attempt-ledger.json",
+   "bytes": 28144,
+   "sha256": "d67fdaf77056ae3426cc1db76436f7cf32c932cec5de6fad8fafbc04297a64a7",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "28 current attempts + 1 inherited; attempts 27 (runner+verifications) and 28 (D1/D2 proof) added this round."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "blocker_packet",
+   "path": "harness-development/line-v3-live-e2e-20261010/blocker-packet.md",
+   "bytes": 4519,
+   "sha256": "ae5fe4992013c9903d818bf14550f06b2fef6c9b0409a4f6754481dac6ca6667",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Minimum reproduction and options A/B/C for the live-branch blocker."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "freeze_primary",
+   "path": "harness-development/line-v3-live-e2e-20261010/evidence/freeze-336ccec02db84df1a25538fc61481290.json",
+   "bytes": 4940,
+   "sha256": "07c4607d795f51c5483ce6ac77a18fdacac39f7accd82508c43a03c5d58a648d",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Source/config/state/native freeze at HEAD 7172604d; 21 source records."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "g_auth",
+   "path": "harness-development/line-v3-live-e2e-20261010/evidence/g-auth-002b06e139ab4f6a846dd87dfc3324cd.json",
+   "bytes": 1511,
+   "sha256": "675165b3c614a63a7c4d9d7af582e7294121694043b83e8dd8a4dd9c3532c67d",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "All grant operations authorize with fixture=False."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "g_offline",
+   "path": "harness-development/line-v3-live-e2e-20261010/evidence/g-offline-74e2029936ba4b2197262ec60bcda35e.json",
+   "bytes": 1799,
+   "sha256": "d5304dd34ab5cf513672488383dadccc7aba092731babb4abec298a658881ea7",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Index of Python/Node/node-check/Swift receipts."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "g_migration",
+   "path": "harness-development/line-v3-live-e2e-20261010/evidence/g-migration-1eac0a640dbc4fe1b0320e666d1ec200.json",
+   "bytes": 1813,
+   "sha256": "46098af973723840de009cda215ff455df30006a06106d1b2e2553b7c65f999c",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Schema2 rev34 -> schema3 rev35 with snapshot, readback, history byte-identical."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "state_snapshot",
+   "path": "harness-development/line-v3-live-e2e-20261010/evidence/state-schema2-snapshot-01.json",
+   "bytes": 252091,
+   "sha256": "ed8075e71d22f13c4d1f2394c896bdda4696dcfbd4e7cb9d7f29c0fff59bf3a9",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Pre-migration canonical state snapshot ed8075e7..."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "live_runner",
+   "path": "harness-development/line-v3-live-e2e-20261010/live_runner.mjs",
+   "bytes": 25510,
+   "sha256": "d3936b1f8898b3f29f00d8c2c24c87ffbce69c94f5aeb1c9f669bb8be702c831",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Task-package live bridge scaffold; node --check PASS; adapter-shaped smoke 11/11; routing fix verified."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "d2_proof_script",
+   "path": "harness-development/line-v3-live-e2e-20261010/checks/live_support_requirement_proof.py",
+   "bytes": 4680,
+   "sha256": "22c0c1ee686860d43f807c24f2c595e966858e7c6c5d9ec953a009cfaf299c7d",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Executable proof that frame() requires a SCREEN_CAPTURE_KIT sidecar and refuses fixture-only support."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "d2_proof_output",
+   "path": "harness-development/line-v3-live-e2e-20261010/evidence/live-branch-proof.stdout",
+   "bytes": 567,
+   "sha256": "0888a21113843f21a5328ebf5e5601c8f9047e8508e2469e7883c5a2889bdb2f",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "V1 FIXTURE_ONLY REFUSED SCK_PROVIDER_MISMATCH; V2 SCREEN_CAPTURE_KIT ACCEPTED (shape)."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "helper_verification",
+   "path": "harness-development/line-v3-live-e2e-20261010/evidence/subagent-verification-round2.json",
+   "bytes": 3484,
+   "sha256": "2f836770b49b9fd692de9f1fec4f5ed29ec3d3da4197d3b9ee6846f30be374c2",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Three read-only helper reports: interface re-audit PASS, smoke 11/11, evidence facts all match."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "baseline_preservation",
+   "path": "harness-development/line-v3-live-e2e-20261010/continuations/implement-02/baseline-fresh.json",
+   "bytes": 72778,
+   "sha256": "eb7355dcb043c0dae0cd826549a915b1a355769f2c0e5aed9f75163ac0fd3f93",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Pre-work preservation baseline: 11 tracked dirty + 648 untracked; 648/648 and 11/11 still present, 0 deletions, index/HEAD unchanged."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "live_grant_1",
+   "path": "harness-development/line-v3-live-e2e-20261010/live-grant-1.json",
+   "bytes": 1342,
+   "sha256": "3546288758d70aca6e7e306b858e96da0337d03a6f897dac370f5aca5aeff234",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Execution grant owner execution-live-g1 (includes migrate)."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "live_grant_2",
+   "path": "harness-development/line-v3-live-e2e-20261010/live-grant-2.json",
+   "bytes": 1327,
+   "sha256": "04aa1a2ad4b2dd8f2f6956a5cee699a636ff11b2f689f2c2309063b5dae35d29",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Execution grant owner execution-live-g2."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "contract_handoff",
+   "path": "harness-development/line-v3-live-e2e-20261010/continuations/implement-02/plan-contract.json",
+   "bytes": 6973,
+   "sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Machine contract frozen for this continuation; byte-identical to handoff.json."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "plan_review_waiver",
+   "path": "harness-development/line-v3-live-e2e-20261010/continuations/implement-02/plan-review-waiver.json",
+   "bytes": 655,
+   "sha256": "f3c7e51c8a671d8d0e92c4a3ae7876ec7b8169509ea959083796a4f7bb13207d",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "USER waiver of independent plan review; post-implementation Acceptance remains required."
+  },
+  {
+   "task_id": "TASK-20261010-line-v3-live-e2e",
+   "run_id": "f92205f0-9c09-4a49-8514-4ca6e4558961",
+   "stage": "IMPLEMENT",
+   "role": "IMPLEMENTER",
+   "source_sha256": "7e7f124a563e42dfdc308718774eb9aacabb9d3adbad897eee7e8150d463b077",
+   "evidence_id": "compile_handoff",
+   "path": "harness-development/line-v3-live-e2e-20261010/continuations/implement-02/compile-handoff.receipt.json",
+   "bytes": 2062,
+   "sha256": "47b35d37718e5ec8373901a44dbd0cc2ca64bc043cb610cdb731dcc183405f34",
+   "contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+   "observation": "Contract/handoff byte equality and schema check; native admission NOT_RUN."
+  }
+ ],
+ "plan_contract_sha256": "6505ad3817a899c223d42a8e814ec81cbb0f3317bb206d73a4a503671726d419",
+ "analysis": {
+  "facts": [
+   "G_AUTH, G_OFFLINE, and G_MIGRATION each passed with receipts: 21-file source freeze 7e7f124a..., two live grants, all operations authorized, Python 67/31/5 + Node adapter + node --check + Swift 325 tests/0 failures, and schema2 rev34 -> schema3 rev35 with only schema_version/revision/active_batch changed and runs/verified_albums byte-identical.",
+   "Canonical state is now schema 3 revision 35, sha 45505011..., active_batch/active_writer_id/context_lock null, verified_count 2; pre-migration snapshot ed8075e7... is preserved.",
+   "Preservation check: all 648 baseline untracked paths and all 11 baseline dirty tracked paths still exist; zero deletions; index tree b222085d and HEAD 7172604d unchanged; destination has 239 files with 0 files written on 2026-10-10.",
+   "live_runner.mjs (d3936b1f...) passes node --check and adapter-shaped fake-I/O smoke 11/11 with capture/guard routing verified; three read-only helpers independently confirmed interface PASS, smoke PASS, and all evidence hashes.",
+   "D2: every observation frame requires a SCREEN_CAPTURE_KIT sidecar (observations.py:54-60) while the only producer rev28ctl album-support is menu-only (OcrEngine.swift:500-501,543-547; main.swift:518-566); executable proof: V1 fixture-only refused SCK_PROVIDER_MISMATCH, V2 SCK accepted (evidence/live-branch-proof.stdout 0888a211...).",
+   "D1: no grounded LINE AX -> 17-key classifier exists; live_runner.mjs:282 fails closed with LIVE_CLASSIFIER_NOT_GROUNDED.",
+   "No LINE input occurred: gui-ledger.json does not exist (0 reservations), Save All 0, chooser confirmations 0, downloads 0."
+  ],
+  "inferences": [
+   "The live catalog/menu/first/scroll/second gates cannot start without a new reviewed plan that provides a non-menu SCK sidecar producer and a grounded classifier, or an explicitly user-approved evidence-policy change.",
+   "The offline/migration checkpoint is complete and safe to carry forward; it should not be redone."
+  ],
+  "unknowns": [
+   "Whether a non-menu full-display SCK producer is implementable under the frozen evidence policy without a new Swift root-issue budget.",
+   "Grants bind native_binary_sha256 to bin/image_decode (1f560522...), not to the SCK producer rev28ctl (8f6cd81a...); a new plan must decide whether to bind the producer.",
+   "Historical attempts before this continuation remain UNKNOWN and are not counted as zero.",
+   "Native stage admission/controller validation is NOT_RUN; this result was only structurally checked against the immutable v3 result schema, not controller-validated."
+  ],
+  "evidence": [
+   "E2E測試報告.md",
+   "progress.md",
+   "attempt-ledger.json",
+   "blocker-packet.md",
+   "evidence/freeze-336ccec02db84df1a25538fc61481290.json",
+   "evidence/g-auth-002b06e139ab4f6a846dd87dfc3324cd.json",
+   "evidence/g-offline-74e2029936ba4b2197262ec60bcda35e.json",
+   "evidence/g-migration-1eac0a640dbc4fe1b0320e666d1ec200.json",
+   "evidence/state-schema2-snapshot-01.json",
+   "live_runner.mjs",
+   "checks/live_support_requirement_proof.py",
+   "evidence/live-branch-proof.stdout",
+   "evidence/subagent-verification-round2.json",
+   "continuations/implement-02/baseline-fresh.json"
+  ],
+  "confidence": "High for receipt counts, hashes, migration readback, preservation check, and the two negative proof results; medium only for the helper-advisory interface notes. No live UI or download claim is made.",
+  "dependencies": {
+   "G_PLAN_REVIEW_WAIVER": "PREREQUISITE_SATISFIED",
+   "G_AUTH": "PREREQUISITE_SATISFIED",
+   "G_OFFLINE": "PREREQUISITE_SATISFIED",
+   "G_MIGRATION": "PREREQUISITE_SATISFIED",
+   "G_CATALOG": "PREREQUISITE_BLOCKED",
+   "G_MENU": "PREREQUISITE_BLOCKED",
+   "G_FIRST": "PREREQUISITE_BLOCKED",
+   "G_SCROLL": "PREREQUISITE_BLOCKED",
+   "G_SECOND": "PREREQUISITE_BLOCKED",
+   "G_PRESERVE": "PREREQUISITE_SATISFIED",
+   "G_REPORT": "PREREQUISITE_SATISFIED",
+   "G_ACCEPTANCE": "PREREQUISITE_BLOCKED",
+   "G_DELIVERY": "PREREQUISITE_BLOCKED"
+  }
+ },
+ "handoff_summary": "Offline/migration checkpoint complete: source freeze, two grants, G_AUTH, G_OFFLINE (Python 67/31/5, Node adapter, node --check, Swift 325/0 on the single authorized extra attempt), and exact schema2 rev34 -> schema3 rev35 migration with snapshot and byte-identical history. Live branch is structurally blocked by D1 (no grounded AX->17-key classifier) and D2 (every frame needs a SCREEN_CAPTURE_KIT sidecar, but the only producer rev28ctl album-support is menu-only). Proof is reproducible: checks/live_support_requirement_proof.py and evidence/live-branch-proof.stdout. live_runner.mjs is built, node --check clean, smoke 11/11, and three read-only helpers independently verified the interface, smoke, and evidence hashes. Zero LINE input, zero Save All, zero chooser confirmations, zero downloads; state/config/destination/history preserved. A new Critical plan and an explicit user decision (A/B/C in blocker-packet.md; A recommended) are required before any live step.",
+ "needs_human": true,
+ "human_decisions": [
+  {
+   "id": "live_branch_recovery_D1_D2",
+   "question": "非選單畫面沒有 SCK sidecar producer（D2），也没有可上線的 AX→17-key classifier（D1），live E2E 無法開始。要用哪條路恢復？",
+   "options": [
+    "A：開新的 Critical 計畫，補非選單 full-display SCK sidecar producer＋真機 geometry／classifier／chooser locators；Swift 預算視為新 root issue（建議）",
+    "B：新計畫改寫 observation 證據政策，取消非選單每格 SCK sidecar 強制，並同步調整 gates（需明確授權）",
+    "C：暫停或縮小 live E2E，保留離線／授權／遷移成果，維持 PARTIAL"
+   ],
+   "recommendation": "選 A：唯一能在不降低現行證據政策與安全 gate 的前提下恢復 live E2E；新計畫須明列 Swift 新 root issue 的預算與驗收方式。"
+  }
+ ],
+ "convergence": {
+  "meaningful_attempts": 2,
+  "consecutive_no_progress": 0,
+  "last_attempt": "attempt 28：以產品 validator 證明每格 frame 需要 SCREEN_CAPTURE_KIT sidecar（V1 拒／V2 收），而唯一 producer 是 menu-only、classifier 只有測試假件——live 分支結構性 BLOCKED，需新計畫與使用者決策。",
+  "information_gain": true,
+  "stuck": true
+ },
+ "writer_receipts": []
+}

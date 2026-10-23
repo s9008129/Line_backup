@@ -1,0 +1,49 @@
+{
+  "task_id": "TASK-20261011-line-receipt-recovery",
+  "continuation": "scope-recovery-05",
+  "parent_task_id": "TASK-20261010-line-v3-live-e2e",
+  "parent_contract": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan-contract.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan-contract.json",
+    "bytes": 6455,
+    "sha256": "a83bec99428ad66ae32e1795dfb17545e8dbd7df4df802cfb54b9f4e8b345883"
+  },
+  "parent_plan": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan.md",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/plan.md",
+    "bytes": 21119,
+    "sha256": "c8ed33dfa1040c9c7843fda7008167eb14b7c0b9f45e94f6cee1c40419e65aaf"
+  },
+  "parent_report": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/E2E測試報告.md",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/E2E測試報告.md",
+    "bytes": 11706,
+    "sha256": "0349409782896e2a5397a496aff7537f18e6b76c6df64109d13fb3abc440faca"
+  },
+  "parent_scope_incident": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/scope-incident-001.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-04/scope-incident-001.json",
+    "bytes": 5976,
+    "sha256": "0fa1e0d11325bdbc15290b98d178cd808e89ae9aaf3c773bf106ee3f8c56418f"
+  },
+  "parent_attempt_ledger": {
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+    "bytes": 10014,
+    "sha256": "205461d838d4d1b4d596c5637e03ea087373d229837c3b4aec57fe5a4cdeba1a"
+  },
+  "known_live_classifier_chooser_attempts": 2,
+  "remaining_candidate_verification_attempts": 1,
+  "attempts_reset": false,
+  "other_historical_counts": "UNCHANGED_OR_UNKNOWN_NOT_INFERRED",
+  "parent_statuses": {
+    "PRIMARY_OUTCOME_STATUS": "NOT_ACHIEVED",
+    "IMPLEMENTATION_STATUS": "BLOCKED",
+    "CORE_ACCEPTANCE_STATUS": "BLOCKED",
+    "REQUIRED_VERIFICATION_STATUS": "INCOMPLETE",
+    "INDEPENDENT_ACCEPTANCE_STATUS": "PENDING",
+    "TASK_CLOSURE_STATUS": "REPLAN_REQUIRED"
+  },
+  "parent_scroll": "SCROLL_TEST_NOT_RUN",
+  "parent_acceptance_required": true
+}

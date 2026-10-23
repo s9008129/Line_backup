@@ -1,0 +1,47 @@
+{
+  "argv": [
+    "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+    "-B",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/checks/test_inventory.py"
+  ],
+  "automatic_retry": false,
+  "check_id": "baseline-selftest-02",
+  "created_at_utc": "2026-10-11T03:10:49.077144+00:00",
+  "created_monotonic_ns": 131128294019750,
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "elapsed_ms": 0,
+  "ended_at_utc": "2026-10-11T03:10:49.077144+00:00",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TEMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+    "TMP": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp",
+    "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/tmp"
+  },
+  "exit_code": 0,
+  "format": "RECOVERY_02_HOST_RECEIPT_V1",
+  "kind": "RECOVERY_02_HOST_RECEIPT",
+  "native_harness_validation": "NOT_RUN",
+  "readback_verified": true,
+  "run_rel": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02",
+  "source_hashes": {
+    "checks/compare_inventories.py": "cbee9e07d7467ef66eeda55266f0162ad437b145bb91038fd8a7916990707f9e",
+    "checks/test_inventory.py": "9518e419d08cd41170731e4852c4dde5948140ef7f48e5cd88b441e125a087a0",
+    "tools/inventory.py": "7c4a749c2eeed6b67c9b5c4deda3b4710ddf57cd421bae645b03891a2b7b8e5e"
+  },
+  "started_at_utc": "2026-10-11T03:10:42Z",
+  "status": "PASS",
+  "stderr": {
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stderr",
+    "bytes": 0,
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stdout",
+    "bytes": 11702,
+    "path": "harness-development/line-v3-live-e2e-20261010/continuations/scope-recovery-05/recovery-02/evidence/baseline-selftest-02.stdout",
+    "sha256": "a1ad63ff46b507df6abdc5c389f2d220ca8a6f4e25025baa29a44773ed673cd2"
+  },
+  "task_id": "TASK-20261011-line-baseline-recovery-02",
+  "timeout": false
+}

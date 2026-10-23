@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "captured_at": "2026-10-10T15:47:48.734054+00:00",
+  "entries": [
+    {
+      "path": "AGENTS.md",
+      "relative_path": "AGENTS.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/AGENTS.md",
+      "bytes": 6044,
+      "sha256": "96f0576057855764462ac605a5fe8414a5a77097b644c77bbbaaf4976277414b",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "config/line_backup_config.json",
+      "relative_path": "config/line_backup_config.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/config/line_backup_config.json",
+      "bytes": 384,
+      "sha256": "5e4f769ddf3cb359f6810f80770eddc0643e95e95e03ce6f2d74699c4d6df362",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "state/backup_state.json",
+      "relative_path": "state/backup_state.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/state/backup_state.json",
+      "bytes": 252115,
+      "sha256": "455050110dbdcfcafda4a712a36dfcf840efcdfaf828cd3d6201107c93888ee6",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "scripts/line_backup_cua_adapter.mjs",
+      "relative_path": "scripts/line_backup_cua_adapter.mjs",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/scripts/line_backup_cua_adapter.mjs",
+      "bytes": 36414,
+      "sha256": "12975749e4449449287da6f932edcf67a395012dd56e504dcc873a4da1bffceb",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "src/line_backup_batch/cli.py",
+      "relative_path": "src/line_backup_batch/cli.py",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/cli.py",
+      "bytes": 19312,
+      "sha256": "7aeed3f9a6e64f7a09f88ee9f2dc71793af46d4a1c70fdac1cbef258f37b17eb",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "src/line_backup_batch/observations.py",
+      "relative_path": "src/line_backup_batch/observations.py",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src/line_backup_batch/observations.py",
+      "bytes": 48175,
+      "sha256": "a027d28bce9d45d9dcfcbe92e53ea6271cc58c665c8bf4d72b28dee4cb95d982",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/E2E測試報告.md",
+      "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/E2E測試報告.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/E2E測試報告.md",
+      "bytes": 23376,
+      "sha256": "661f5c2a364dfbdd6371a812c8d9e422c5b93475da90b79875191bd28ce04407",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/blocker-packet.md",
+      "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/blocker-packet.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/blocker-packet.md",
+      "bytes": 3480,
+      "sha256": "a379314264e9b7cea033e7e030640938f2fc00108758872c9b10417d3201dc92",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/progress.md",
+      "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/progress.md",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/progress.md",
+      "bytes": 2668,
+      "sha256": "1d582ec9c0077ec95734e50e2995b90eed7a8cc6ff66f3ee791954e8cf760d42",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+      "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/attempt-ledger.json",
+      "bytes": 10014,
+      "sha256": "205461d838d4d1b4d596c5637e03ea087373d229837c3b4aec57fe5a4cdeba1a",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_classifier.mjs",
+      "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_classifier.mjs",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_classifier.mjs",
+      "bytes": 23029,
+      "sha256": "2a83cdeafd64d4dbf3c655d3474a1b54d3af4e9926a16a7d64c576b9832a43ea",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_runner.mjs",
+      "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_runner.mjs",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live_runner.mjs",
+      "bytes": 38247,
+      "sha256": "1a57ef91f2fb5ffcdc05f0a7dd237b6e9d356b0fbe1ce28f232b568f37f4902c",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/native-admission.json",
+      "relative_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/native-admission.json",
+      "absolute_path": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/native-admission.json",
+      "bytes": 769,
+      "sha256": "1a9b15c7a8f160fbee0fd6923090b4c18dfd6dd33b35e1f7a2cb1b2674021ade",
+      "classification": "WORKSPACE_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/prompts/v4.8.0/01_plan_prompt.md",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/.codex/prompts/v4.8.0/01_plan_prompt.md",
+      "bytes": 4269,
+      "sha256": "fc197860bda3d9558704e283721572b84d5c4ffd5cee01b3c7c95499268d7164",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/prompts/v4.8.0/03_handoff_prompt.md",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/.codex/prompts/v4.8.0/03_handoff_prompt.md",
+      "bytes": 1271,
+      "sha256": "e27860d1da047ec1d9ece6440d9ec3f19014b0cefbb2e7b6ff00f8d564ebde37",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/skills/line-album-backup/SKILL.md",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/.codex/skills/line-album-backup/SKILL.md",
+      "bytes": 22674,
+      "sha256": "79291fcb852c48013ca6e5beec305ceb8dfc25b46820a628c6a02a3695e555f4",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/policies/v4.8.0/workflow-routing.md",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/.codex/policies/v4.8.0/workflow-routing.md",
+      "bytes": 7525,
+      "sha256": "7c2251913507a8cc09b4a697576963aaf6694ffd7fd7af55a6eb2e813a690912",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/templates/v4.8.0/runtime-defaults.json",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/.codex/templates/v4.8.0/runtime-defaults.json",
+      "bytes": 1215,
+      "sha256": "2e940cbd2edec33f3a13734038719f69eed53ef61a7fb59fe75e13b488ea7bbc",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Library/Application Support/LineNativeAXGUIBridge/deployment-manifest.json",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/Library/Application Support/LineNativeAXGUIBridge/deployment-manifest.json",
+      "bytes": 4424,
+      "sha256": "b5a5c7e490880fd9c2de2251c570943ccd40a4917c5d359cfdfa6ffbd1de430a",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Library/Application Support/LineNativeAXGUIBridge/bin/line-native-ax-gui-session-bridge",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/Library/Application Support/LineNativeAXGUIBridge/bin/line-native-ax-gui-session-bridge",
+      "bytes": 578832,
+      "sha256": "e708e3c671fc946421a9ef68b5bb4efc3cb3b5b1147cf88137b46509bbf5f52a",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Library/Application Support/LineNativeAXGUIBridge/bin/line-native-ax-readonly-scrollbar-probe",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/Library/Application Support/LineNativeAXGUIBridge/bin/line-native-ax-readonly-scrollbar-probe",
+      "bytes": 1347312,
+      "sha256": "cf8d830a454977497d527d210c1c40f6f74c89a7489c181510b075b494dd45e0",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Library/Application Support/LineNativeAXGUIBridge/controller-raw/5e75ec84-9c49-4779-a0d8-26975de4e528/readiness-output/readiness.json",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/Library/Application Support/LineNativeAXGUIBridge/controller-raw/5e75ec84-9c49-4779-a0d8-26975de4e528/readiness-output/readiness.json",
+      "bytes": 490,
+      "sha256": "16c8f4ef6574504a26e4843ef42a54a763cd2539eda26abb5e14b56b8ac667e3",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Library/Application Support/LineNativeAXGUIBridge/responses/5e75ec84-9c49-4779-a0d8-26975de4e528.response.json",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/Library/Application Support/LineNativeAXGUIBridge/responses/5e75ec84-9c49-4779-a0d8-26975de4e528.response.json",
+      "bytes": 474,
+      "sha256": "7d1d22ab963e4c3819a53878b93e53836040c28d1412e03242423b4776502150",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/line-native-ax-gui-session-bridge/Sources/LineNativeAXGUISessionBridge/main.swift",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/line-native-ax-gui-session-bridge/Sources/LineNativeAXGUISessionBridge/main.swift",
+      "bytes": 78918,
+      "sha256": "bd2209b984836fe43addcd8c82eb602f521443d3a226cbfac722364fc6ea82a4",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/line-native-ax-gui-session-bridge/Sources/LineNativeAXGUISessionBridgeCore/BridgeContract.swift",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/line-native-ax-gui-session-bridge/Sources/LineNativeAXGUISessionBridgeCore/BridgeContract.swift",
+      "bytes": 20044,
+      "sha256": "48f2de9657f1f303d4a2df5a23d45c69996e2423496e6a2e0ad0f7d35f6e1f74",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/line-native-ax-readonly-scrollbar-probe/README.md",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/line-native-ax-readonly-scrollbar-probe/README.md",
+      "bytes": 7865,
+      "sha256": "f1dcc82c9a76fd144bdff7b908063e508db171769efa2c12b6883fef75a1a30f",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/line-native-ax-readonly-scrollbar-probe/Sources/LineNativeAXReadonlyScrollbarProbe/main.swift",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/line-native-ax-readonly-scrollbar-probe/Sources/LineNativeAXReadonlyScrollbarProbe/main.swift",
+      "bytes": 113946,
+      "sha256": "8ebedcf63793f6e8ceb50bd06a8386802fef1088cd08b90093aa708ba55fdf16",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    },
+    {
+      "path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/line-native-ax-readonly-scrollbar-probe/Sources/LineNativeAXReadonlyScrollbarProbe/MenuObservationRuntime.swift",
+      "relative_path": null,
+      "absolute_path": "/Users/hsiaojohnny/Documents/Codex/2026-09-12/line-native-ax-readonly-scrollbar-probe/Sources/LineNativeAXReadonlyScrollbarProbe/MenuObservationRuntime.swift",
+      "bytes": 44633,
+      "sha256": "623b224e74c397fc5e9e2411993733ec7c54ab00a17aba585829e3d9d2a88590",
+      "classification": "EXTERNAL_READ_ONLY_ORIGINAL"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "kind": "SUPERSEDED_RUNTIME_BINDINGS",
+  "reason": "Product source changed after the initial v2 binding preflight; these byte-identical artifacts are retained for history and are not current authority.",
+  "created_at": "2026-10-10T13:51:46+00:00",
+  "archived": [
+    {
+      "original_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/runtime-binding.json",
+      "archived_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/superseded-bindings-01/runtime-binding.json",
+      "bytes": 24270,
+      "sha256": "212d64c7daf77d478a216488af5a993a964c28cbbd507259427bb83fc9b30b38"
+    },
+    {
+      "original_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/authorization.json",
+      "archived_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/superseded-bindings-01/authorization.json",
+      "bytes": 1738,
+      "sha256": "333211b3955c5a4c46eb8ab77227255364304a4723bd44607d87c379d146f2d5"
+    },
+    {
+      "original_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-1.json",
+      "archived_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/superseded-bindings-01/live-grant-1.json",
+      "bytes": 2295,
+      "sha256": "7feb98651cc85818859e7ac41c174cd356c43ad67a2301841228b510b69658d8"
+    },
+    {
+      "original_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/live-grant-2.json",
+      "archived_path": "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/evidence/superseded-bindings-01/live-grant-2.json",
+      "bytes": 2295,
+      "sha256": "2bfb368d5e3b01f62027a165acd6cf75be5d104e945441a553e1d53e01d72853"
+    }
+  ]
+}

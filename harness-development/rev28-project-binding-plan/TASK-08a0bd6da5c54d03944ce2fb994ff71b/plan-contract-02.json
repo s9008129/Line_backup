@@ -1,0 +1,156 @@
+{
+  "format_version": "3",
+  "task_id": "TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+  "goal": "Implement only the reviewed local read-only project-preflight producer and strict Swift inspection binding after one explicit protected public/data-contract decision. Canonical project/config/state and dynamic target/duplicate facts, no dispatch permission or mutation. Preserve native partial facts, fixed legacy57, all consumed budgets and history; whole native outcome remains unmet.",
+  "task_class": "CRITICAL",
+  "allowed_paths": [
+    "harness-development/rev28-project-binding-plan/TASK-08a0bd6da5c54d03944ce2fb994ff71b",
+    "src/line_backup_acceptance/project_binding.py",
+    "src/line_backup_acceptance/cli.py",
+    "rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift",
+    "tests/test_project_binding.py",
+    "rev28/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift",
+    "rev28/ARCHITECTURE.md",
+    "rev28/CAPABILITY-MATRIX.md"
+  ],
+  "required_evidence": [
+    "independent-plan-review",
+    "exact-handoff",
+    "protected-public-project-binding-consent",
+    "literal-preimages-current-source",
+    "strict-project-target-history-contract",
+    "no-native-or-mutating-call-graph",
+    "task-isolated-offline-checks",
+    "actual-read-only-CLI",
+    "legacy-wire-and-source-compatibility",
+    "scope-preservation",
+    "independent-acceptance",
+    "frozen-project-report-wire-schema"
+  ],
+  "gate_specs": [
+    {
+      "gate_id": "P1_PLAN_REVIEW",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "PLAN",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I0_PUBLIC_PROJECT_BINDING_DECISION",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I1_PROJECT_AUTHORITY_CONTRACT",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I2_DUPLICATE_BARRIERS",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I3_READ_ONLY_SCOPE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I4_ISOLATED_OFFLINE_CHECKS",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I5_LEGACY_COMPATIBILITY",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "I6_PRESERVATION",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "IMPLEMENT",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "MUST_NOT_BREAK",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    },
+    {
+      "gate_id": "A1_ACCEPTANCE",
+      "required": true,
+      "owner": "ROLE",
+      "phase": "ACCEPTANCE",
+      "evidence_source": "ROLE_OBSERVATION",
+      "goal_criticality": "CORE",
+      "evidence_role": "OUTCOME",
+      "closure_gate": "HARD_CLEAN",
+      "reuse": "NEVER"
+    }
+  ],
+  "capability_policy": {
+    "network": "OFF",
+    "browser": false,
+    "destinations": []
+  },
+  "retry_policy": {
+    "transient_read_only_retries": 2,
+    "delays_seconds": [
+      10,
+      30
+    ]
+  },
+  "resource_policy": {
+    "prompt_bytes": 65536,
+    "state_bytes": 524288,
+    "inspect_bytes": 16384,
+    "log_bytes": 134217728
+  },
+  "workflow_policy": {
+    "plan_review_required": true,
+    "independent_acceptance_required": true,
+    "max_parallel_read_only_helpers": 0,
+    "max_parallel_writers": 0,
+    "handoff_review_required": false
+  }
+}

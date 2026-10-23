@@ -1,0 +1,15 @@
+== fixture digest ==
+reviewedImplementationSHA256=b0a71b95500ea73a873d301d177828b08883895321ce2c5c5396836976ba0070 (tree after dead XCTargetProcess removal)
+
+== live-execute (same fixture) ==
+live-execute refused: dispatchRefusedByPrecondition(target process is not the reviewed LINE instance)
+EXIT=77
+== CI guard ==
+live-preflight: live execution is disabled in CI
+EXIT=77
+== missing --config ==
+live-preflight: requires --config and --one-shot-authorization; CI never dispatches
+EXIT=64
+== stale reviewed-implementation digest ==
+live-preflight refused: dispatchRefusedByPrecondition(one-shot authorization or plan digest mismatch)
+EXIT=77

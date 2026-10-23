@@ -1,0 +1,9 @@
+{
+  "command": [
+    "swift",
+    "build"
+  ],
+  "cwd": "rev28",
+  "exit_code": 0,
+  "scope": "local/injected OS only; exact reservation identity"
+}

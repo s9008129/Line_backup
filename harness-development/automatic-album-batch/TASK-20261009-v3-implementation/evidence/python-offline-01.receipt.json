@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/Users/hsiaojohnny/.codex/harness-runtime/4.8.0/.venv/bin/python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/tests",
+    "-p",
+    "test_batch_*.py",
+    "-v"
+  ],
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "started_at": "2026-10-09T12:41:46.368329+00:00",
+  "ended_at": "2026-10-09T12:41:48.327895+00:00",
+  "exit_code": 1,
+  "timed_out": false,
+  "env_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/src",
+    "TMPDIR": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/automatic-album-batch/TASK-20261009-v3-implementation/fixtures",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "explicit_env": {
+    "LINE_BACKUP_BATCH_TASK": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup/harness-development/automatic-album-batch/TASK-20261009-v3-implementation"
+  },
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_bytes": 23320,
+  "stderr_sha256": "d180800181362e83128d701ed07c96fdc39922be0dea97b67bf9604893a700ac"
+}

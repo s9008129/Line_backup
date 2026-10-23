@@ -1,0 +1,12 @@
+{
+  "check_id": "node-check-locators",
+  "cwd": "/Users/hsiaojohnny/Documents/ChatGPT/Line_backup",
+  "command": [
+    "/opt/homebrew/bin/node",
+    "--check",
+    "harness-development/line-v3-live-e2e-20261010/continuations/live-grounding-03/chooser_locators.mjs"
+  ],
+  "started_at": "2026-10-10T13:14:00.443Z",
+  "ended_at": "2026-10-10T13:14:00.478Z",
+  "exit_code": 0
+}
