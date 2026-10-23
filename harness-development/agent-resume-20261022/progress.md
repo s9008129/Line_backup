@@ -1,11 +1,12 @@
 # AGENT-RESUME-P0-20261022 progress
 
-- Plan v2.1 SHA 已核對；Owner 已明確記為 `EXTERNAL_PLAN_REVIEW=OWNER_WAIVED`。
-- Feature 從 master `64515eb56b04accc40ade9e2db2fe0ad18c1ced3` 的 external clean worktree 建立，未改動原 dirty repo。
-- M0 零 LINE 能力：PASS。Node `spawn` + 單一 stdio Python session、固定 root flock、真 process／boot 身分、EOF 永久停止、舊 host／pending input 拒接管、Mac `F_FULLFSYNC` readback 均有本地證據。
-- M1 離線核心與故障矩陣：本機 Python 45/45 PASS（175.003s）、Node 17/17 PASS；feature CI [run 39782491253](https://github.com/s9008129/Line_backup/actions/runs/39782491253) 綁定 `cdf92ce`，Python／Node／Mac ImageIO 全綠。
-- 聚焦回歸修正 deep reconcile：既有 VERIFIED album 現在會重新 hash／ImageIO decode，不再只信任檔案 bytes；回歸測試確認 decoder 被實際呼叫。
-- M2 legacy CI B：sibling PR #33 的產品／測試 HEAD `e0b7785` 已由 [run 39785111593](https://github.com/s9008129/Line_backup/actions/runs/39785111593) 讀回 deterministic／headed 均 SUCCESS；Vision diagnostic 仍為 5/5 failure，只能記為 bounded known limitation，不是 Vision PASS。
-- 未執行：LINE GUI、正式 Save All、Chooser、下載、真實照片、External Code Review、獨立 E2E。
-- Docs checks：feature HEAD `8869b8b` 的 run 39786518568、legacy CI B HEAD `6a3e02f` 的 PR run 39786235147／manual run 39786239965 均 SUCCESS。
-- 下一步：把 PR #32／#33 exact HEAD、diff、報告與全部 PASS／FAIL／NOT_RUN 交 Owner 指定的外部 ChatGPT Code Review；核准前不操作 LINE。
+- Plan v2.1 SHA 已核對；Owner 已記為 `EXTERNAL_PLAN_REVIEW=OWNER_WAIVED`。此豁免不代表新 HEAD 的 Code Review 或 E2E 已核准。
+- Feature 從 master `64515eb56b04accc40ade9e2db2fe0ad18c1ced3` 的 external clean worktree 建立，未改動原 dirty repo；本輪基線為 `a03bf50`。
+- 本輪已驗證程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`。前一輪 Code Review 為 `CHANGES_REQUIRED_BEFORE_APPROVE_IMPLEMENTATION`，本輪只處理 small manifest、ambiguous chooser crash 與 runbook 三個 bounded 缺口。
+- Fast Resume：以既有 canonical checkpoint 推導狀態，已移除 100 本硬下限；normal preflight 對先前 VERIFIED 只做 metadata 核對，明確 `reconcile` 仍保留 SHA-256／ImageIO deep audit。
+- 本機：Python 49/49 PASS（45.651s），Node 17/17 PASS（6588.837917ms），py_compile／node --check／git diff --check PASS。
+- Metrics receipt：`fast_resume_elapsed_ms=7`、`verified_albums_skipped=49`、`metadata_files_checked=49`、`prior_verified_rehash_bytes=0`、`prior_verified_decode_calls=0`、`next_safe_ordinal=50`。
+- Crash 邊界：Chooser click 後、record 前 kill，維持 `CHOOSER_OUTCOME_UNKNOWN`、`pending_input=true`、零重送、零 VERIFIED 升級；新 mutating session 被 `PENDING_INPUT_UNRESOLVED` 擋下。
+- 遠端 feature CI：[run 39887815723](https://github.com/s9008129/Line_backup/actions/runs/39887815723) 綁定 `4ba44a8`，`python-core`、`node-wrapper`、`mac-imageio` 三 job SUCCESS。
+- 未執行：真實 LINE GUI、Save All、Chooser、下載、真實照片、External Code Review at `4ba44a8`、獨立 DeepSeek 1017 E2E、Mac reboot F／G。
+- 下一步：請 Owner 把 `4ba44a8` 產品來源、最新 docs HEAD、[E2E測試報告.md](E2E測試報告.md) 與 [Runbook](Mac實機接續Runbook.md) 交指定外部 Code Reviewer；核准與新授權前不操作 LINE。

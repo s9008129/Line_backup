@@ -1,191 +1,141 @@
-# AGENT-RESUME-P0-20261022：M0／M1 離線驗證報告
+# AGENT-RESUME-P0-20261022：Fast Interrupted Download Resume
 
-- 日期：2026-10-22（Asia/Taipei）
-- Plan revision：v2.1；SHA-256 `4ba9be2daf887aa8a65a0255e337da5bff8d0ae5aa2d5ada13990f5c85b76502`
-- Handoff SHA-256：`d95c73fca8abcb631a2af56f1c376bbe4d899556eb521f425570038010326d9b`
-- Owner 決策：`EXTERNAL_PLAN_REVIEW=OWNER_WAIVED`。本次豁免只涵蓋 Plan Review，不代表產品、Code Review 或獨立 E2E PASS；legacy CI B 另以其精確 HEAD 的遠端結果記錄。
-- Feature base：master `64515eb56b04accc40ade9e2db2fe0ad18c1ced3`
-- 已驗證的產品來源 HEAD：`cdf92ce94d6fb67080eadda0d4d182b84f83e0cc`
-- Feature branch／Draft PR：[`implement/agent-resume-p0-20261022`](https://github.com/s9008129/Line_backup/tree/cdf92ce94d6fb67080eadda0d4d182b84f83e0cc)／[PR #32](https://github.com/s9008129/Line_backup/pull/32)
-- Legacy CI B 產品／測試 HEAD：`e0b77857eb77536329f9565bf65fa8087b73873d`；Draft [PR #33](https://github.com/s9008129/Line_backup/pull/33)
+- 日期：2026-10-23（Asia/Taipei）
+- 目標：Mac 重開機、Codex Session 中斷或程序終止後，新 Session 只靠唯一 canonical checkpoint 找到第一個尚未安全完成的相簿，跳過既有 VERIFIED，安全接續下載。
+- 基線：`a03bf504a2ea0f315d8f56c25f685e97e5410007`；branch `implement/agent-resume-p0-20261022`；Draft [PR #32](https://github.com/s9008129/Line_backup/pull/32)，base `master`。
+- 本次已驗證程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`。Docs-only commits 不改寫此程式綁定。
+- 沿用 Plan v2.1（SHA-256 `4ba9be2daf887aa8a65a0255e337da5bff8d0ae5aa2d5ada13990f5c85b76502`）；沒有新增第二份計畫、資料庫、cursor store、daemon 或 GUI framework。
+- 前一外部 Code Review 綁定 `a03bf50`，結論為 `CHANGES_REQUIRED_BEFORE_APPROVE_IMPLEMENTATION`；本輪只處理 R32-01 small manifest、R32-02 ambiguous chooser crash、R32-03 runbook 三個 bounded 缺口。**目前 HEAD 尚未取得新的外部 Code Review 核准。**
 
 ## 1. 結論與狀態
 
-M0 的零 LINE 接線能力已通過：真 Node process 以 `node:child_process.spawn`、`shell=false` 啟動本地 Python 長活 session，只經單一 stdin/stdout JSON-lines 通訊；固定 runtime root 全域 `flock`、真 process／boot 身分、durable owner record、EOF 永久停止、舊 host／pending input 拒接管，以及 target Mac 的 file fsync、`F_FULLFSYNC`、directory fsync、readback 均有可重現測試。
+Fast Resume 已把「已完成」與「下一個合法動作」完全由既有 checkpoint 事實推導：`album_order`、`verification`、`save_all_intent`、`chooser_confirm_intent`、`generation`、`payload_sha256`、`session_owner`。沒有新增持久 `next_index` 或需要同步的第二份狀態。
 
-M1 的離線核心與故障矩陣已通過本地及乾淨 macOS CI：100 本 ordered manifest、單一 checkpoint／generation／checksum、跨 task history／intent barrier、239／109／329／65 唯讀 barrier、durable Save All／Chooser intent、三次穩定 inventory、逐檔 SHA-256、原樣 ImageIO 完整 RGB、post-decode 核對、單次 app click，以及 controller 遺失後永久停止。這些證據只覆蓋合成 fixture 與 fake app。
-
-本輪另修正一個由聚焦回歸找到的根因：deep reconcile 先前可能只信任既有 VERIFIED bytes／hash，沒有再次呼叫 ImageIO 解碼。現已在 deep path 重新 hash／decode；新增回歸測試確認 `_decode_inventory` 確實被呼叫，且 VERIFIED／next ordinal 維持正確。
+正常 preflight 對先前 VERIFIED 相簿只做檔名、檔數、size、mtime_ns、ctime_ns、regular-file、owner 與 symlink 防護的輕量 metadata 核對；不重新讀取圖片 bytes、不呼叫 SHA-256、不呼叫 ImageIO。新下載目標仍走原本嚴格的三次穩定 inventory、逐檔 SHA-256、ImageIO 完整解碼與 post-decode／post-flush 核對。Owner 主動執行 `reconcile` 時，仍保留完整 deep audit。
 
 ```text
-PRIMARY_OUTCOME_STATUS=PLANNED_NOT_IMPLEMENTED
-IMPLEMENTATION_STATUS=M0_M1_OFFLINE_COMPLETE_M2_CI_B_COMPLETE
+PRIMARY_OUTCOME_STATUS=NOT_YET_ACHIEVED_REAL_MAC_RESUME
+IMPLEMENTATION_STATUS=FAST_RESUME_OFFLINE_COMPLETE
 CORE_ACCEPTANCE_STATUS=PARTIAL_OFFLINE_ONLY
-REQUIRED_VERIFICATION_STATUS=FEATURE_CI_PASS_LEGACY_CI_PASS
+REQUIRED_VERIFICATION_STATUS=LOCAL_AND_FEATURE_CI_PASS
 INDEPENDENT_ACCEPTANCE_STATUS=NOT_RUN
-TASK_CLOSURE_STATUS=OPEN
-EXTERNAL_PLAN_REVIEW=OWNER_WAIVED
-EXTERNAL_CODE_REVIEW=NOT_RUN
+EXTERNAL_CODE_REVIEW_AT_THIS_HEAD=NOT_RUN
+REAL_MAC_E2E=NOT_RUN
 FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
+TASK_CLOSURE_STATUS=OPEN
 ```
 
-沒有取得 LINE app、截圖、AX、OCR 畫面、選單、相簿或真實照片；本輪離線程序證據中的 `gui_observations=0`、`gui_dispatches=0`。wrapper 測試只呼叫 fake app，沒有正式 GUI 派送。
+本輪沒有取得 LINE app、截圖、AX、OCR、相簿、Save All、Chooser、下載或真實照片；所有程式證據都是合成 fixture 或 fake app。`gui_dispatches=0`，不可寫成實機下載 PASS。
 
-## 2. 來源、環境與證據
+## 2. 實際行為與聚焦案例
 
-### 2.1 固定來源
+| Case | 實際行為 | 測試證據 | 結果 |
+|---|---|---|---|
+| 1／2／5／10 本 manifest | 非空 Owner ordered manifest 可建立；空 manifest 以 `TASK_MANIFEST_EMPTY` 拒絕；上限 10,000 | `test_small_owner_authorized_manifests_and_empty_manifest_rejection` | PASS |
+| 100 本，#1～49 VERIFIED | 只核對既有檔案 metadata；`verified_albums_skipped=49`、`metadata_files_checked=49`、`prior_verified_rehash_bytes=0`、`prior_verified_decode_calls=0`，next ordinal `50` | `test_fast_resume_skips_49_verified_then_verifies_only_50`；[metrics receipt](evidence/local-fast-resume-metrics.json) | PASS |
+| #50 未開始 | 由 manifest 順序定位 #50，phase `READY_TO_DISPATCH`，不依賴舊 Session 記憶 | 同上；receipt 的 `next_safe_ordinal=50` | PASS |
+| #50 有完整 Save All＋Chooser RETURNED，80/80 已落盤 | `READY_TO_VERIFY` 只暴露 #50；目標相簿執行一次嚴格解碼；成功後 next ordinal 變 `51` | `test_fast_resume_skips_49_verified_then_verifies_only_50`、`test_fresh_process_80_of_80_kill_verifies_then_advances_to_51` | PASS |
+| #50 partial 32/80 | `BLOCKED_PARTIAL`／`INCOMPLETE_DOWNLOAD`，whole task 停止，保留 32 檔，不重送 | `test_partial_50_blocks_whole_task_and_preserves_32_files` | PASS |
+| Chooser click 已發出，80/80 可能落盤，紀錄前程序被 kill | `CHOOSER_OUTCOME_UNKNOWN`、`pending_input=true`、next safe 為 null；新 mutating session 被 `PENDING_INPUT_UNRESOLVED` 擋下；無額外 Save All／Chooser、無偽造 RETURNED、無 VERIFIED 升級，checkpoint bytes 不變 | `test_chooser_click_then_process_kill_stays_unknown_and_blocks_takeover` | PASS |
+| 先前 VERIFIED 目錄被移動／metadata 變動 | 快速 metadata 檢查發現 `DESTINATION_MISSING`、`VERIFIED_CONTENT_CHANGED` 等，fail closed，不自動重下載 | `test_verified_album_missing_moved_or_modified_metadata_blocks_fast_resume` | PASS |
+| 明確 deep audit | `reconcile` 仍重新 SHA-256／ImageIO；可發現內容異動 | `test_deep_reconcile_redecodes_verified_album` | PASS |
+| 新 process／boot／Session | 新 process 從 checkpoint 恢復，不依賴舊 PID、舊 host 或舊 GUI 座標 | `test_fresh_process_resume_completes_50_through_100_with_distinct_pids`、Node host identity 測試 | PASS（合成） |
+| 歷史與跨 task 防護 | 239／109／329／65 合成 history barriers 與 unresolved cross-task intent 維持 fail closed | `test_history_barriers_cover_239_109_329_and_65_without_redownload`、`test_cross_task_verified_album_is_skipped_and_unresolved_intent_blocks_new_task` | PASS（合成） |
+| 較早 blocker 與後方 VERIFYING 並存 | 不暴露後方目標；`next_safe` 全部為 null，只回 `STOP_AND_RECONCILE_ONLY` | `test_blocker_never_exposes_a_later_verifying_album_as_next_safe` | PASS |
 
-| 項目 | 已核對值 |
-|---|---|
-| Plan SHA-256 | `4ba9be2daf887aa8a65a0255e337da5bff8d0ae5aa2d5ada13990f5c85b76502` |
-| Handoff SHA-256 | `d95c73fca8abcb631a2af56f1c376bbe4d899556eb521f425570038010326d9b` |
-| Python controller | `scripts/line_backup_agent_resume.py`：`942d89c2f93dc7bd74eab61023072c3aa9be687cea0b03d9982d40eba12e81f0` |
-| Node wrapper | `scripts/line_backup_agent_resume_cua.mjs`：`6d442a998272e0871bb8b55fea01989ba960877f40235f1d999ceb89a989257d` |
-| Python tests | `tests/test_agent_resume.py`：`8081eddd45d3d2be5384e3ea47437c9e6643065d96df5e483cd63fd809b4818c` |
-| Node tests | `tests/test_agent_resume_cua.mjs`：`d38d659873050f79754ad90d33ef31b689ac726677361a5abbc85530d24f727b` |
-| Feature workflow | `.github/workflows/agent-resume.yml`：`f3de2131b4adf1c8fd9cd2fc87c05af485431e815e41b5a108b0b6cca881b26f` |
-| ImageIO source | `scripts/agent_resume/image_decode.swift`：`238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b` |
-| OCR source | `scripts/agent_resume/modern_ocr.swift`：`19f6787f4523332b5eb8a4235c4461fee5e49314c615b4865cc9ec848f2a2861` |
+## 3. 實際命令、環境與結果
 
-### 2.2 實際執行環境
+### 3.1 本機
 
-本機為 macOS 27.0.1（Darwin 27.0.0，arm64）；Python `3.9.6`、Node `v24.22.1`、Apple Swift `6.3.3`。遠端 feature CI 使用 GitHub Actions `macos-15`。
-
-私有原始證據保留於固定 runtime root 的 task evidence，公開路徑遮蔽為：
-
-```text
-<HOME>/Library/Application Support/LineBackup/agent-resume/tasks/AGENT-RESUME-P0-20261022/evidence/m1-complete-20261022T205243/
-```
-
-該目錄保存 `python-unittest.*`、`node-test.*`、`mac-imageio.*`、`py-compile.*`、`node-check.*`、`diff-check.*`、`environment.txt`、`source-sha256.txt`、`evidence-sha256.txt` 與 `ci-run.*`。關鍵 exit-code 檔均為 `0`；原始 bytes 的 SHA-256 已逐檔列在 `evidence-sha256.txt`。公開報告不重貼私有照片、個人路徑或憑證。
-
-### 2.3 遠端 feature CI
-
-[run 39782491253](https://github.com/s9008129/Line_backup/actions/runs/39782491253) 綁定 `cdf92ce94d6fb67080eadda0d4d182b84f83e0cc`，`status=completed`、`conclusion=success`：
-
-| Job | 實際結果 |
-|---|---|
-| `python-core` | SUCCESS；45 tests，215.792 秒 |
-| `node-wrapper` | SUCCESS；syntax check 與 wrapper suite |
-| `mac-imageio` | SUCCESS；原樣 ImageIO 的 2 個聚焦測試 |
-
-這是 feature CI 的 PASS，不是 legacy CI、Code Review 或 LINE E2E 的替代證據。
-
-### 2.4 遠端 legacy CI B
-
-[run 39785111593](https://github.com/s9008129/Line_backup/actions/runs/39785111593) 綁定 `e0b77857eb77536329f9565bf65fa8087b73873d`，`status=completed`、`conclusion=success`：
-
-| Job | 實際結果 |
-|---|---|
-| `Deterministic Swift contract` | SUCCESS；fixture 6/6、非 Vision Swift 330/330、adversarial 27×2、historical replay 20/20 |
-| `Headed macOS 27 capability + W2 item 5` | SUCCESS；SCK／AX／Quartz 可用、W2 item 5 PASS；Vision parity diagnostic 為 5 tests／5 failures，另由 bounded limitation enforcement 驗證 known `unknownError`，不得寫成 Vision PASS |
-
-遠端 fixture manifest SHA-256 為 `d4550967e48ef3f594cdd89de7a31abb40f974abbd1420fb12bceb3b9ad221b6`。遠端 replay artifact 的兩份 JSON 均為 `81f6da94ad18d601a21bf0b521d5a96869f13b5a0a3e96db66239b2f90a47261`，與本機一致；W2 item 5 實際輸出 `monitorPosts=0`、`maxLatencyMs=67.047119140625`。細節與其他 evidence hashes 見 PR #33 的 task 報告。
-
-feature 與 legacy CI 的 PASS 各自綁定上列產品／測試 HEAD，不能互相轉移。後續 docs-only HEAD 已分別讀回 feature run 39786518568、legacy PR run 39786235147 與 manual run 39786239965，均 SUCCESS；任何再新增的 docs commit 仍以自己的 checks 為準。
-
-## 3. M0 實際結果
-
-### 3.1 Python 核心
-
-命令：
-
-```text
-python3 -B -m unittest discover -s tests -p 'test_agent_resume.py' -v
-```
-
-本機實際結果：exit `0`，`Ran 45 tests`，`OK`（175.003 秒）。M0 相關測試涵蓋：
-
-- strict JSON duplicate key／NaN／NUL／size 拒絕。
-- 真實 controller process start identity、boot identity 與不存在 PID。
-- 固定 root 的 real file fsync／`F_FULLFSYNC`／directory fsync／readback，probe 清理後無殘留。
-- 固定 root 全域 writer lock；第二 writer 得到 `WRITER_BUSY`。
-- active owner 的舊 host 仍活時拒絕接管；host 結束後可接管。
-- `pending_input=true` 在 host 已死時仍拒絕接管。
-- canonical lock record 損壞或 duplicate key 時 fail closed。
-- hello 後 stdin EOF 以 exit `3` 停止，留下 active barrier；舊 host 未退出時不接管。
-- 指定 Swift 工具來源 hash 與 Plan 指定值一致。
-
-### 3.2 Node／Python 真程序接線
-
-命令：
-
-```text
+```sh
+python3 -B -m unittest tests.test_agent_resume -v
 node --test tests/test_agent_resume_cua.mjs
+python3 -B -m py_compile scripts/line_backup_agent_resume.py
+node --check scripts/line_backup_agent_resume_cua.mjs
+git diff --check
 ```
 
-本機實際結果：exit `0`，`tests 17`、`pass 17`、`fail 0`、`skipped 0`、`duration_ms 5944.132667`。其中 M0 案例驗證：
+- Python：exit `0`，`Ran 49 tests in 45.651s`、`OK`；原始輸出見 [local-python-tests.txt](evidence/local-python-tests.txt) 與 [exit code](evidence/local-python-tests.exit)。
+- Node：exit `0`，`tests 17`、`pass 17`、`fail 0`、`duration_ms 6588.837917`；原始輸出見 [local-node-tests.txt](evidence/local-node-tests.txt) 與 [exit code](evidence/local-node-tests.exit)。
+- Static checks：exit `0`；見 [local-static-checks.txt](evidence/local-static-checks.txt)。
+- 環境：macOS `27.0.1`（Darwin `27.0.0`，arm64）、Python `3.9.6`、Node `v24.22.1`、Apple Swift `6.3.3`；見 [environment.txt](evidence/environment.txt)。
 
-- Node 以 `spawn` 啟動 Python session，使用單一 stdin/stdout JSON-lines 連線成功。
-- hello 的 controller PID/start、host PID/start、boot identity、fixed-root SHA-256、generation 與 writer lock 均由 wrapper 重驗。
-- file fsync、fullfsync、directory fsync、readback 四項皆為 `true`。
-- clean record 為 `state=closed`；root mode `0700`、lock mode `0600`。
-- stale host identity 在 GUI 能力前被拒絕；controller 遺失後 wrapper 永久 closed。
-- 舊 host 仍活時新 controller 得到 `OLD_HOST_ALIVE`；第二 controller 得到 `WRITER_BUSY`。
+### 3.2 Fast Resume 實測 receipt
 
-### 3.3 原樣 Mac 工具
+以既有 test helper 建立 100 本 synthetic manifest、驗證 #1～49，再以 `inspect` 讀取。這不是實機下載，只證明 normal preflight 的決策與工作量：
 
-ImageIO 與 OCR 來源已逐 bytes 核對 Plan 指定 SHA-256。`MacImageDecoderTests` 的 2 個測試已在本機與遠端 macOS CI 通過：有效 PNG 可完整解碼，截斷 bytes 正確失敗。這是工具能力與正負例結果，不是真實相簿照片的 ImageIO PASS。
+```text
+task_phase=READY_TO_DISPATCH
+next_safe_ordinal=50
+first_blocker=null
+verified_albums_skipped=49
+metadata_files_checked=49
+fast_resume_elapsed_ms=7
+prior_verified_rehash_bytes=0
+prior_verified_decode_calls=0
+target_album_decode_calls=0
+gui_dispatches=0
+```
 
-## 4. M1 實際結果
+完整 JSON 與 exit code：[local-fast-resume-metrics.json](evidence/local-fast-resume-metrics.json)、[exit](evidence/local-fast-resume-metrics.exit)。`fast_resume_elapsed_ms` 是單次本機合成觀察值，不是效能 SLA。
 
-### 4.1 已完成能力
+### 3.3 遠端 feature CI
 
-- 固定 100 本 ordered manifest；#1～49 為 `SKIPPED_EXISTING`，next safe ordinal 為 #50。
-- 單一 canonical checkpoint、generation、payload checksum、append-only event；inspect／reconcile 不寫 checkpoint、照片或 lock。
-- 跨 task VERIFIED／日期歧義 barrier；歷史 239／109／329 與 65 排除均以唯讀資料建立屏障。
-- Save All／Chooser durable intent、generation／scope／grounding 驗證、readback 後才提供一次 click 資格。
-- controller 遺失、回應遺失、result-record 遺失、malformed／oversize／duplicate response 均永久停止新輸入；新 Session 零重試。
-- 獨立空目的地、非空目錄／symlink／traversal／partial／zero-byte／未知額外檔 fail closed。
-- 三次相同 inventory、3 秒間隔、600 秒上限；逐檔 SHA-256 與原樣 ImageIO 完整 RGB 解碼；post-decode inventory 再核對。
-- 既有 VERIFIED 在新 resume deep reconcile 時重新 hash／ImageIO 解碼；缺檔、改檔或截斷會 `BLOCK` 且不補下載。
+[agent-resume run 39887815723](https://github.com/s9008129/Line_backup/actions/runs/39887815723) 精確綁定 `4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`，`status=completed`、`conclusion=success`：
 
-### 4.2 根因修正
-
-聚焦測試 `test_deep_reconcile_redecodes_verified_album` 暴露：既有 VERIFIED album 的 deep reconcile 先前只重用檔案 bytes／hash 事實，未證明本次仍呼叫 ImageIO。修正後，deep path 會重新呼叫共同 decoder，測試以 spy 確認 `_decode_inventory` 至少被呼叫一次，且 album 維持 `VERIFIED`、next ordinal 正確推進到 #51。
-
-這是目前最重要的一項真實缺陷修正；它仍只由離線合成 bytes 驗證，不能外推為真實照片或實機 E2E PASS。
-
-## 5. TC01～20 對應
-
-下列只是「合成／fake app 測試涵蓋」對照。LINE GUI、真實下載與獨立驗收仍未執行。
-
-| TC | 對應測試／實際涵蓋 |
+| Job | 實際結果 |
 |---|---|
-| 01–02 | `test_ordered_manifest_resumes_at_50_and_read_only_views_do_not_mutate`、`test_fresh_process_without_intent_leaves_50_fresh`；前 49 零增量、#50 fresh |
-| 03 | `test_fresh_process_intent_kill_leaves_unknown_without_retry`、`test_intent_before_click_is_unknown_and_never_retried` |
-| 04 | `test_fresh_process_save_all_returned_before_chooser_preserves_unknown`、Node `successful click followed by result-record loss stays UNKNOWN with zero retry` |
-| 05 | `test_partial_50_blocks_whole_task_and_preserves_32_files` |
-| 06 | `test_fresh_process_80_of_80_kill_verifies_then_advances_to_51` |
-| 07 | `test_verified_album_missing_modified_or_truncated_file_blocks_without_redownload`、`test_deep_reconcile_redecodes_verified_album` |
-| 08 | `test_process_interruption_at_every_atomic_boundary_keeps_one_valid_revision`、`test_enospc_fsync_replace_and_readback_failures_are_explicit` |
-| 09 | Node `fake controller protocol failures are terminal...`、`save all and chooser each use the existing app exactly once`、`failed GUI click...zero retry` |
-| 10 | `test_stale_generation_and_foreign_scope_grounding_cannot_prepare`、Node `stale host start identity...` |
-| 11 | `test_global_writer_lock_and_clean_close`、`test_live_old_host_blocks_takeover_until_it_exits`、`test_pending_input_blocks_takeover_even_after_host_exit`、`test_eof_after_hello_is_unclean...` |
-| 12 | `test_cross_task_date_ambiguity_propagates_exact_blocker`；manifest／identity binding negative cases |
-| 13 | `test_missing_or_nonempty_destination_blocks_without_recreation`、`test_partial_zero_symlink_and_non_directory_entries_fail_closed`、`test_extra_file_after_returned_chooser_blocks_without_redownload` |
-| 14 | `test_store_checksum_schema_and_manifest_bindings_fail_closed`、`test_stale_generation_and_foreign_scope_grounding_cannot_prepare` |
-| 15 | `test_decoder_timeout_is_distinct_and_non_mutating`、`test_enospc_fsync_replace_and_readback_failures_are_explicit`、`test_missing_chooser_evidence_blocks_verification_without_mutation` |
-| 16 | `test_history_barriers_cover_239_109_329_and_65_without_redownload`、`test_cross_task_verified_album_is_skipped_and_unresolved_intent_blocks_new_task` |
-| 17 | `test_fresh_process_resume_completes_50_through_100_with_distinct_pids`、`test_full_50_verification_advances_to_51_then_completes_100` |
-| 18 | Strict JSON tests、`test_store_checksum_schema_and_manifest_bindings_fail_closed`、`test_symlink_and_orphan_temp_checkpoint_fail_closed`、destination safety tests |
-| 19 | `test_ordered_manifest_resumes_at_50_and_read_only_views_do_not_mutate`、`test_generation_change_during_inspection_is_reported_without_mutation` |
-| 20 | `test_protected_fixture_sentinels_remain_byte_identical`；只證明 fixture sentinels 不變，非正式 State／Grant／Ledger baseline |
+| `python-core` | SUCCESS；`Ran 49 tests in 52.680s`、`OK` |
+| `node-wrapper` | SUCCESS；`tests 17`、`pass 17`、`fail 0` |
+| `mac-imageio` | SUCCESS |
 
-## 6. 嘗試歷史、未知與限制
+機器可讀 receipt：[ci-run-39887815723.json](evidence/ci-run-39887815723.json)。這是 feature CI 證據，不是實機 E2E、外部 Code Review 或正式兩本相簿驗收。
 
-- M0：第一次即建立真 process／stdio／lock／sync 能力，無 LINE 呼叫；結果 PASS。
-- M1 薄切片：先以 24 Python／9 Node tests 建立 store、history、intent、verifier、wrapper；結果 PASS，但矩陣不完整。
-- M1 完整化：擴充到 45 Python／17 Node tests 與 feature CI；聚焦回歸找到 deep reconcile 未重新 decode 的缺陷，修正後全數通過。
-- 未證明實體掉電耐久性；`kill -9` 僅是程序故障注入。也不宣稱 OS sandbox 或網路隔離。
-- `test_protected_fixture_sentinels_remain_byte_identical` 只使用合成 sentinel，沒有讀寫正式 protected state。
-- legacy CI B 已在 sibling PR #33 完成：產品／測試 HEAD `e0b7785` 的 run 39785111593 deterministic／headed 均 SUCCESS；不是 feature CI 的替代證據。
-- External Code Review、獨立 DeepSeek `deepseek-v4.1-flash:1017` E2E：NOT_RUN。
-- LINE app 取得、唯讀觀察、截圖、AX、真實 OCR、scroll：NOT_RUN。
-- 真實相簿 Save All、Chooser、下載、逐檔 SHA-256、真實照片 ImageIO、VERIFIED readback：NOT_RUN。
-- 兩本不同 eligible 相簿、Mac reboot 接續、no-replay：NOT_RUN。
+### 3.4 來源與證據識別
+
+| 項目 | SHA-256 |
+|---|---|
+| Python controller | `82aada19edb2039fa6c254906904f1d478b6d8158b2456a943d792f39c7d87cb` |
+| Node wrapper | `bfd2cdceffe7e4af2e506133b76989f280a47133d794e4c0e7d5777ffe3fb585` |
+| Python tests | `c55b5af3d702c05cc5d8fbd85a7788404a140d1152170daf0d32d19407fa106b` |
+| Node tests | `4c92e3dabad573b517871e9083de2595d74285e8a9a61c68d5eec628d6b61a1c` |
+| Runbook | `4e64e38a0bd1526682045d192729e02d7eed6e1fbdcddaef3e07bac0bd2cf02c` |
+| ImageIO source | `238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b` |
+| Vision OCR source | `19f6787f4523332b5eb8a4235c4461fee5e49314c615b4865cc9ec848f2a2861` |
+
+本機完整證據根目錄為 `harness-development/agent-resume-20261022/evidence/`；其遮罩後的絕對路徑為 `/Users/<USER>/.codex/worktrees/a269/Line_backup/harness-development/agent-resume-20261022/evidence/`。公開報告不包含私人照片、LINE 畫面、憑證或原始 protected state。[evidence-sha256.txt](evidence/evidence-sha256.txt) 逐檔綁定本目錄的證據 bytes。
+
+## 4. Crash／UNKNOWN 邊界
+
+`test_chooser_click_then_process_kill_stays_unknown_and_blocks_takeover` 先完成 #1～49，對 #50 持久化 Save All 與 Chooser intent，寫入 80 個合成檔案，然後在 `record_chooser_result` 前直接 kill controller。新 process 的唯讀 `inspect` 顯示：
+
+- 第一個 blocker 是 #50，state `UNKNOWN`、reason `CHOOSER_OUTCOME_UNKNOWN`。
+- `pending_input=true`；owner action 為 `DO_NOT_TAKE_OVER; INSPECT_ONLY; RECONCILE_PRIVATE_FILES_WITH_OWNER`。
+- `next_safe_ordinal`／`next_safe_album_key` 為 null。
+- `VERIFIED` 仍為 49；`chooser_confirm_intent.result` 仍為 null；沒有新增 Save All／Chooser、沒有偽造 RETURNED，也沒有把檔案數升級成 VERIFIED。
+- checkpoint bytes 在 crash 前後完全相同；新 `SessionRoot` 以 `PENDING_INPUT_UNRESOLVED` 拒絕接管。
+
+這是刻意保留的 fail-closed 邊界，不是 `--force` 或缺點。無法安全自動恢復時，唯一合法結果是 `BLOCKED` 加精確人工核對工作。
+
+## 5. 嘗試歷史、未知與限制
+
+- 既有離線核心曾為 45 Python tests；本輪加入 small manifest、fast metadata resume、target-only verify、blocker 順序與 crash 邊界後，增至 49，全數通過。
+- 實作後自我審查發現：有 blocker 時仍可能暴露後方 `VERIFYING` 為 next safe；已改為 blocker 存在時 next safe 一律 null，並加入回歸測試。
+- 未證明實體斷電、macOS reboot 或真實程序終止後的 durability；只使用 `kill`／atomic fault injection 與合成 filesystem。
+- 未證明真實 LINE 畫面、fresh screenshot／AX／Vision OCR、scroll、menu identity、chooser 目的地或實際點擊 correspondence。
+- 未證明真實相簿 80/80 檔案的 SHA-256、ImageIO、VERIFIED readback 或 release。
+- 兩本不同 eligible 新相簿的 F → reboot → G 實機流程：`NOT_RUN`。
+- 外部 Code Review 對 `4ba44a8` 的新一輪審查：`NOT_RUN`；本報告不把前一輪 `a03bf50` 的審查轉移到新 HEAD。
+
+## 6. Overengineering Audit
+
+- `KEEP`：單一 canonical checkpoint、atomic fsync／readback、checksum／generation、single writer lock、Save All／Chooser durable intent、UNKNOWN 保留、SHA-256／ImageIO、target-only 嚴格驗證、explicit deep reconcile、239／109／329／65 歷史 barrier。
+- `REUSE`：既有 PR #28 Agent CUA／AX／OCR／GUI 入口；本輪沒有新增 OCR、AX、NativeDiagnostic、資料庫、daemon、scheduler 或第二套 cursor store。
+- `SIMPLIFY`：移除 100 本硬下限與每次 Session hello／GUI preparation 的強制全歷史 deep reconcile；normal resume 只做一次輕量 metadata preflight，explicit audit 仍可按需 deep。
+- `DEFER`：真實 Mac F／G E2E、外部 Code Review、正式 TWO_ALBUM_AUTO／grant／ledger 驗收。這些不能以合成測試、PR 留言或 CI 綠燈替代。
 
 ## 7. 下一個安全動作
 
-1. 將 feature PR #32 與 legacy CI B PR #33 的 exact HEAD、diff、完整報告、來源 hash、已知 FAIL／NOT_RUN 交 Owner 轉交外部 ChatGPT Code Review。
-2. 只有取得真實 `APPROVE_IMPLEMENTATION`、有效 runtime authorization 與當次 LINE 前景交接後，才可由 Owner 另啟獨立 DeepSeek session 進行兩本真實相簿 E2E；Sol／Luna 不得代替其判定。
+1. 由 Owner 指定的外部 Code Reviewer 對精確 `4ba44a8` 產品來源、PR #32 最新 docs HEAD、本報告與 evidence hashes 做 bounded re-review；不得宣稱已核准，直到有真實審查結果。
+2. 審查通過後，Owner 另啟全新、獨立的 DeepSeek `deepseek-v4.1-flash:1017` Session，依 [Mac實機接續Runbook.md](Mac實機接續Runbook.md) 先完成新相簿 F、重開 Mac、新 Session 快速跳過 F，再以 fresh GUI identity 定位不同的 eligible G。
+3. F／G 未完成前維持 `CORE_ACCEPTANCE_STATUS=PARTIAL_OFFLINE_ONLY`；任何 UNKNOWN／PARTIAL 只輸出精確 blocker，不重送、不刪 checkpoint、不繞過 pending input。

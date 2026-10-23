@@ -1,6 +1,6 @@
 # Mac LINE 中斷接續 Runbook
 
-適用版本：PR #32、`implement/agent-resume-p0-20261022`、Owner manifest 已建立。
+適用版本：PR #32、`implement/agent-resume-p0-20261022`；已驗證的程式來源為 `4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`（之後的 docs-only commit 不改變程式）。
 本文件只描述既有 CLI／Node wrapper；不是 Save All 授權，也不代表實機 E2E PASS。
 
 ## 1. 開始前固定事實
@@ -13,6 +13,27 @@ export ROOT="$HOME/Library/Application Support/LineBackup/agent-resume"
 ```
 
 必須同時具備：正確 task、當次 Mac 前景授權、LINE 群組／視窗可辨識、Owner 對新的 eligible 相簿授權。缺少任一項就停止，不以舊 Session 記憶或舊點位補足。
+
+若 task 尚未建立，只可使用既有的 history barrier 與 Owner ordered manifest；空 manifest 會被拒絕，1～10,000 本均可：
+
+```sh
+/usr/bin/python3 -B scripts/line_backup_agent_resume.py \
+  init --root "$ROOT"
+
+/usr/bin/python3 -B scripts/line_backup_agent_resume.py \
+  import-history --root "$ROOT" \
+  --official-state "$OFFICIAL_STATE" \
+  --manual-archives "$MANUAL_ARCHIVES" \
+  --pr28-checkpoints "$PR28_CHECKPOINTS" \
+  --exclusion-gate "$EXCLUSION_GATE" \
+  --project-root "$PROJECT_ROOT" --pr28-root "$PR28_ROOT" \
+  --group-key "$GROUP_KEY"
+
+/usr/bin/python3 -B scripts/line_backup_agent_resume.py \
+  create-task --root "$ROOT" --manifest "$MANIFEST"
+```
+
+`create-task` 不會建立 history、exclusion、identity 或 destination 防護的替代品；任何 conflict 都應停止，不以空目錄或合成相簿補齊。
 
 ## 2. 唯讀快速恢復
 
@@ -44,6 +65,8 @@ export ROOT="$HOME/Library/Application Support/LineBackup/agent-resume"
 ```
 
 `reconcile` 會對既有 VERIFIED 相簿重新 SHA-256 與 ImageIO decode，屬明確的完整稽核，不是每次恢復的必經步驟；它不會把 UNKNOWN 升級為 VERIFIED。
+
+若 mutating session 回報 `PENDING_INPUT_UNRESOLVED`，代表先前已持久化 intent 但結果不明。這不是可用 `--force`、刪 lock／checkpoint 或重送 Save All／Chooser 解決的錯誤；只保留 `inspect`／`reconcile` 的唯讀證據，交 Owner 以私人檔案與畫面證據人工核對。
 
 ## 3. 接上既有 PR28 Agent 入口
 
