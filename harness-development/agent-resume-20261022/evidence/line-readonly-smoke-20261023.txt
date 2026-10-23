@@ -1,0 +1,14 @@
+Task: AGENT-RESUME-P0-20261022 / PR #32 CUA bridge read-only smoke
+Date: 2026-10-23 Asia/Taipei
+Authorization: Owner approved a short LINE foreground read-only Smoke in this session.
+Tool: native macOS CUA snapshot with accessibility-tree observation; no input APIs invoked.
+
+Observed facts:
+- LINE was in the foreground on an album-list surface; accessibility exposed a scrollable list (101 rows reported).
+- A visible album item showed 65 images. It matched the project's existing exclusion and was not opened or operated.
+- UI input count: 0. Scroll count: 0. Save All count: 0. Chooser confirmations: 0. Downloads: 0.
+- No screenshot was persisted because the UI contained private album content.
+- The canonical runtime root existed, but checkpoint.json was absent. No checkpoint was initialized.
+- Python inspect/reconcile were NOT_RUN because there was no checkpoint. Node hello was NOT_RUN because hello persists session-owner state and therefore is not a read-only operation.
+
+Result: PARTIAL_OBSERVED, not PASS. This observation does not prove the Node-Python bridge, album identity grounding, Save All, downloads, file verification, or full real-Mac E2E.

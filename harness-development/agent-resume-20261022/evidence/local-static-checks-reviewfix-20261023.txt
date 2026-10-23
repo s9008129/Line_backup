@@ -1,0 +1,9 @@
+Date: 2026-10-23 Asia/Taipei
+Source tree: PR #32 follow-up working tree, after identity/request/history payload bounds.
+
+Commands:
+- python3 -B -m py_compile scripts/line_backup_agent_resume.py
+- node --check scripts/line_backup_agent_resume_cua.mjs
+- git diff --check
+
+Result: all commands exited 0.

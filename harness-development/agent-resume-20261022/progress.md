@@ -1,19 +1,11 @@
 # AGENT-RESUME-P0-20261022 progress
 
-- 2026-10-23 handoff-2 接續：read-only inspection 發現 `MAX_TASK_ALBUMS=10,000`，但 CUA 每條 JSON response 限 1 MiB，hello 會帶完整逐相簿狀態；原 100 本測試與 fake hello 未涵蓋此容量交界。
-- 最小修正：上限改為 1,000；1,000 本 synthetic `resume_state` envelope 實測 172,279 bytes；1,001 本回 `TASK_MANIFEST_TOO_LARGE` 且 checkpoint bytes 不變。Node 真 Python controller 在 1,000 本下完成 hello/reconcile，回傳 1,000 entries。
-- Implementation commit：`a247550fb9cdc42e4d68fc7c827f0d24b311f0c2`；body 已核對含意圖、變更、驗證及下一步。尚未推送，PR #32 remote head 仍為 `505c960`。
-- 本輪本機回歸：Python 50/50 PASS（48.759s）、Node 18/18 PASS（8206ms）；Python compile、Node syntax、`git diff --check` PASS。詳見新 evidence files。
-- 真實 LINE GUI／Mac CUA Smoke、Save All、下載及照片驗證均未執行。Owner 表示正在用電腦；已提出只讀 Smoke 的短暫 LINE 前景控制權申請，等待回覆，不再操作 GUI。
-- 最終程式 commit、feature CI exact-head、Code Review handoff 與 PR #32 合併尚未完成；舊 `505c960` 的 CI 不會被說成新 HEAD 的 CI。
+We are closing PR #32's fast-resume payload boundary and doing the permitted read-only Mac Smoke. The original worktree contains unrelated changes, so all work remains isolated in `/tmp/Line_backup-agent-resume-p0-20261023`.
 
-- Plan v2.1 SHA 已核對；Owner 已記為 `EXTERNAL_PLAN_REVIEW=OWNER_WAIVED`。此豁免不代表新 HEAD 的 Code Review 或 E2E 已核准。
-- Feature 從 master `64515eb56b04accc40ade9e2db2fe0ad18c1ced3` 的 external clean worktree 建立，未改動原 dirty repo；本輪基線為 `a03bf50`。
-- 本輪已驗證程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`。前一輪 Code Review 為 `CHANGES_REQUIRED_BEFORE_APPROVE_IMPLEMENTATION`，本輪只處理 small manifest、ambiguous chooser crash 與 runbook 三個 bounded 缺口。
-- Fast Resume：以既有 canonical checkpoint 推導狀態，已移除 100 本硬下限；normal preflight 對先前 VERIFIED 只做 metadata 核對，明確 `reconcile` 仍保留 SHA-256／ImageIO deep audit。
-- 本機：Python 49/49 PASS（45.651s），Node 17/17 PASS（6588.837917ms），py_compile／node --check／git diff --check PASS。
-- Metrics receipt：`fast_resume_elapsed_ms=7`、`verified_albums_skipped=49`、`metadata_files_checked=49`、`prior_verified_rehash_bytes=0`、`prior_verified_decode_calls=0`、`next_safe_ordinal=50`。
-- Crash 邊界：Chooser click 後、record 前 kill，維持 `CHOOSER_OUTCOME_UNKNOWN`、`pending_input=true`、零重送、零 VERIFIED 升級；新 mutating session 被 `PENDING_INPUT_UNRESOLVED` 擋下。
-- 遠端 feature CI：[run 39887815723](https://github.com/s9008129/Line_backup/actions/runs/39887815723) 綁定 `4ba44a8`，`python-core`、`node-wrapper`、`mac-imageio` 三 job SUCCESS。
-- 未執行：真實 LINE GUI、Save All、Chooser、下載、真實照片、External Code Review at `4ba44a8`、獨立 DeepSeek 1017 E2E、Mac reboot F／G。
-- 下一步：請 Owner 把 `4ba44a8` 產品來源、最新 docs HEAD、[E2E測試報告.md](E2E測試報告.md) 與 [Runbook](Mac實機接續Runbook.md) 交指定外部 Code Reviewer；核准與新授權前不操作 LINE。
+- Source fix commit: `8eb52207bd47e0425526eeeb951b945439c2a639`. It keeps accepted hello responses within Node's 1 MiB line limit by bounding task albums to 1,000, identity text, reflected request/session IDs, and persisted history source labels.
+- Final local verification on that source: Python 51/51 PASS (48.403s); Node 18/18 PASS (8.268s); Python compile, Node syntax, and `git diff --check` PASS. The 1,000-album maximum-identity response measured 182,926 bytes; the 1,000-entry maximum history-summary projection measured 544,449 bytes. Receipts and raw logs are linked from `E2E測試報告.md`.
+- An independent read-only source audit first found unbounded identity text, then reflected IDs and history source labels. Those paths are now bounded; the final audit found no remaining unbounded fields in a successful hello. This is not a GitHub review event or approval.
+- Owner approved a short foreground read-only LINE Smoke. I observed the album list and AX only, with zero clicks, scrolls, Save All actions, chooser confirmations, or downloads. A visible 65-image item matched the existing exclusion and was left untouched. No private screenshot was saved.
+- The canonical runtime root exists but has no `checkpoint.json`. Python inspect/reconcile were NOT_RUN; Node `hello` was NOT_RUN because it persists session-owner state. Smoke status is PARTIAL/OBSERVED, not bridge PASS or E2E PASS.
+- PR #32 remains Draft/Open. Exact-head CI at the previous docs head `a1a64d3` passed all three jobs, but it does not cover source commit `8eb5220`. Branch-protection lookup returned HTTP 403; review requirements are unknown, and there is no current-head GitHub approval.
+- We are closer on payload safety and have completed the requested Smoke. Next: commit the evidence/report update, push to the existing PR branch, run exact-head CI, and deliver the exact source/review packet. Do not merge unless current review requirements and approval are actually satisfied. Real Save All, downloads, photo verification, and two-album reboot E2E remain unrun.

@@ -1,0 +1,15 @@
+Scope: Read-only independent review of PR #32 payload-bound changes in the isolated worktree.
+Reviewed paths: scripts/line_backup_agent_resume.py and tests/test_agent_resume.py.
+
+Initial finding:
+- A one-album manifest with an oversized observed_title was accepted; its successful hello response serialized to 1,050,133 bytes, above MAX_LINE_BYTES=1,048,576.
+- The successful response also reflected request_id/session_id without a length bound, and history summaries reflected source_kind from persisted history.
+
+Follow-up review:
+- Identity fields are UTF-8 bounded (group_key 256 bytes, observed_title 1,024, disambiguator 256).
+- Reflected request_id/session_id are bounded to 128 bytes.
+- Persisted history reference/barrier source_kind is bounded to 32 bytes; invalid UTF-8 surrogate strings fail validation cleanly.
+- Boundary tests cover 1,000 maximum-size albums with escaped identity and reflected IDs (182,926-byte hello envelope), 1,000 NUL-escaped maximum history summaries (544,449 bytes), and rejection before checkpoint mutation.
+- Reviewer found no remaining unbounded successful-hello fields in the reviewed paths.
+
+This was a local read-only source audit, not a GitHub PR review event or approval. No LINE data was accessed during the code review.
