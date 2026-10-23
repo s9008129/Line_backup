@@ -49,6 +49,7 @@ if args and args[0] == "inspect":
         "task_id": task_id,
         "generation": 0,
         "checkpoint_sha256": CHECKPOINT,
+        "manifest_binding_sha256": "b" * 64,
         "album_count": 100,
         "gui_dispatches": 0,
     })
@@ -76,6 +77,39 @@ for raw in sys.stdin:
             "session_id": request["session_id"],
             "controller": {"pid": os.getpid(), "started_at": "fake-controller-start"},
             "host": request["data"]["host"],
+            "resume_state": {
+                "task_id": task_id,
+                "generation": 0,
+                "checkpoint_sha256": CHECKPOINT,
+                "manifest_binding_sha256": "b" * 64,
+                "album_count": 100,
+                "task_phase": "READY_TO_DISPATCH",
+                "albums": [{
+                    "album_key": "c" * 64,
+                    "ordinal": 50,
+                    "state": "NOT_STARTED",
+                    "dispatchable": True,
+                    "reason": None,
+                    "inventory_count": 0,
+                }],
+                "counts": {"VERIFIED": 0, "NOT_STARTED": 100},
+                "photo_count": 0,
+                "first_blocker": None,
+                "pending_input": False,
+                "owner_action": None,
+                "next_safe_album_key": "c" * 64,
+                "next_safe_ordinal": 50,
+                "next_safe_action": "PREPARE_SAVE_ALL:" + "c" * 64,
+                "resume_metrics": {
+                    "fast_resume_elapsed_ms": 0,
+                    "verified_albums_skipped": 0,
+                    "metadata_files_checked": 0,
+                    "prior_verified_rehash_bytes": 0,
+                    "prior_verified_decode_calls": 0,
+                    "target_album_decode_calls": 0,
+                },
+                "gui_dispatches": 0,
+            },
             "sync": {
                 "file_fsync": True,
                 "fullfsync": True,
@@ -176,35 +210,40 @@ reference = {
     "bytes": len(source_raw),
     "imported_at_utc": resume.utc_now(),
 }
-barrier = resume._barrier(
-    "fixture_history",
-    source_sha,
-    "fixture-group",
-    {"start_date": "2023-01-01", "end_date": "2023-01-01", "expected_images": 1},
-    [str(history_destination.resolve())],
-    1,
-    "SYNTHETIC_HISTORY_BARRIER",
-    "fixture-history",
-)
+history_base = dt.date(2023, 1, 1)
+barriers = []
+for index in range(49):
+    day = history_base + dt.timedelta(days=index)
+    barriers.append(resume._barrier(
+        "fixture_history",
+        source_sha,
+        "fixture-group",
+        {"start_date": day.isoformat(), "end_date": day.isoformat(), "expected_images": 1},
+        [str(history_destination.resolve())],
+        1,
+        "SYNTHETIC_HISTORY_BARRIER",
+        "fixture-history-%03d" % (index + 1),
+    ))
 store = resume._initial_store()
-store["history"] = {"references": [reference], "barriers": [barrier]}
+store["history"] = {"references": [reference], "barriers": barriers}
 store["payload_sha256"] = resume._payload_digest(store)
 resume._atomic_json_write(root / "checkpoint.json", store)
 
-active_base = dt.date(2026, 1, 1)
+active_base = dt.date(2025, 1, 1)
 albums = []
 for index in range(100):
-    if index == 0:
-        day = dt.date(2023, 1, 1)
-    else:
-        day = active_base + dt.timedelta(days=index - 1)
     ordinal = index + 1
+    if ordinal <= 49:
+        day = history_base + dt.timedelta(days=ordinal - 1)
+    else:
+        day = active_base + dt.timedelta(days=ordinal - 50)
+    expected_images = 80 if ordinal == 50 else 1
     albums.append({
         "identity": {
             "group_key": "fixture-group",
             "start_date": day.isoformat(),
             "end_date": day.isoformat(),
-            "expected_images": 1,
+            "expected_images": expected_images,
             "observed_title": "fixture-album-%03d" % ordinal,
             "disambiguator": "fixture:%03d" % ordinal,
         },
@@ -409,17 +448,25 @@ test('fake controller protocol failures are terminal and never gain GUI retry', 
   ]);
   for (const [mode, expectedCode] of rejectingModes) {
     await t.test(`${mode} closes the wrapper`, async () => {
-      await assert.rejects(
-        openAgentResumeSession({
+      let session;
+      try {
+        session = await openAgentResumeSession({
           taskId: `AGENT-RESUME-PROTOCOL-${mode}`,
           host: host.identity,
           app: fakeApp,
           scriptPath: createFakeController(directory, mode),
           requestTimeoutMs: 1_000,
           longOperationTimeoutMs: 1_000,
-        }),
-        error => error instanceof AgentResumeSessionError && error.code === expectedCode,
-      );
+        });
+        await assert.rejects(
+          session.reconcile(),
+          error => error instanceof AgentResumeSessionError && error.code === expectedCode,
+        );
+      } finally {
+        if (session && !session.closed) {
+          try { await session.close(); } catch {}
+        }
+      }
     });
   }
 
@@ -433,11 +480,9 @@ test('fake controller protocol failures are terminal and never gain GUI retry', 
       longOperationTimeoutMs: 1_000,
     });
     try {
+      await session.reconcile();
       await waitUntil(() => session.closed);
-      await assert.rejects(
-        session.reconcile(),
-        error => error instanceof AgentResumeSessionError && error.code === 'PROTOCOL_REQUEST_MISMATCH',
-      );
+      await assert.rejects(session.preflight(), error => error instanceof AgentResumeSessionError);
     } finally {
       killIfAlive(session.controller.pid);
     }

@@ -60,6 +60,7 @@ MAX_CHECKPOINT_BYTES = 64 * 1024 * 1024
 MAX_DECODER_OUTPUT_BYTES = 32 * 1024 * 1024
 MAX_LOCK_RECORD_BYTES = 64 * 1024
 MAX_EXPECTED_IMAGES = 10_000
+MAX_TASK_ALBUMS = 10_000
 DEFAULT_ROOT = Path.home() / "Library" / "Application Support" / "LineBackup" / "agent-resume"
 MODULE_ROOT = Path(__file__).resolve().parents[1]
 IMAGE_DECODER_SOURCE = MODULE_ROOT / "scripts" / "agent_resume" / "image_decode.swift"
@@ -1271,8 +1272,10 @@ def _validate_task(task: Any) -> None:
         raise SafetyBlock("STORE_SCHEMA_INVALID", "manifest binding digest is invalid")
     order = task["album_order"]
     albums = task["albums"]
-    if not isinstance(order, list) or not isinstance(albums, dict) or len(order) < 100:
-        raise SafetyBlock("STORE_SCHEMA_INVALID", "ordered manifest must contain at least 100 albums")
+    if not isinstance(order, list) or not isinstance(albums, dict) or not order:
+        raise SafetyBlock("STORE_SCHEMA_INVALID", "ordered manifest must contain at least one album")
+    if len(order) > MAX_TASK_ALBUMS:
+        raise SafetyBlock("STORE_SCHEMA_INVALID", "ordered manifest exceeds the supported album limit")
     if len(order) != len(albums) or len(set(order)) != len(order) or set(order) != set(albums):
         raise SafetyBlock("STORE_SCHEMA_INVALID", "album order and album map disagree")
     if [albums[album_key]["ordinal"] for album_key in order] != list(range(1, len(order) + 1)):
@@ -1898,8 +1901,10 @@ def create_task(root: Path, manifest_path: Path) -> Dict[str, Any]:
     if not isinstance(exclusions, list):
         raise InputError("TASK_EXCLUSIONS_INVALID", "task exclusions must be a list")
     source_albums = manifest.get("albums")
-    if not isinstance(source_albums, list) or len(source_albums) < 100:
-        raise InputError("TASK_MANIFEST_TOO_SMALL", "task manifest must contain at least 100 albums")
+    if not isinstance(source_albums, list) or not source_albums:
+        raise InputError("TASK_MANIFEST_EMPTY", "task manifest must contain at least one album")
+    if len(source_albums) > MAX_TASK_ALBUMS:
+        raise InputError("TASK_MANIFEST_TOO_LARGE", "task manifest exceeds the supported album limit")
 
     lease = SessionRoot(root)
     lease.acquire()
@@ -2382,11 +2387,74 @@ def _flush_inventory(path: Path, inventory: Mapping[str, Any]) -> None:
         raise StorageRuntimeError("DESTINATION_FLUSH_FAILED", "downloaded destination directory flush failed") from exc
 
 
+def _verification_metadata_matches_current(
+    path: Path,
+    verification: Mapping[str, Any],
+    *,
+    metrics: Optional[Dict[str, int]] = None,
+) -> Dict[str, Any]:
+    """Fast fail-closed check for already VERIFIED albums.
+
+    This compares only directory/file metadata against the durable verification
+    inventory. It never reads image bytes and is therefore not a substitute for
+    the explicit deep reconcile path.
+    """
+    if verification["decoder_source_sha256"] != IMAGE_DECODER_SOURCE_SHA256:
+        raise SafetyBlock("VERIFIED_DECODER_SOURCE_CHANGED", "verification was not bound to the pinned decoder source")
+    if verification["expected_images"] != verification["actual_entries"]:
+        raise SafetyBlock("VERIFIED_COUNT_INVALID", "verification entry count is incomplete")
+    if verification["pre_inventory_sha256"] != verification["post_inventory_sha256"]:
+        raise SafetyBlock("VERIFIED_INVENTORY_UNSTABLE", "verified inventory digest changed around decode and flush")
+    path = Path(path)
+    try:
+        root_info = path.lstat()
+    except FileNotFoundError as exc:
+        raise SafetyBlock("DESTINATION_MISSING", "verified album destination is missing") from exc
+    if stat.S_ISLNK(root_info.st_mode) or not stat.S_ISDIR(root_info.st_mode) or root_info.st_uid != os.getuid():
+        raise SafetyBlock("DESTINATION_INVALID", "verified album destination must be a current-user real directory")
+    try:
+        names = sorted(entry.name for entry in path.iterdir())
+    except OSError as exc:
+        raise StorageRuntimeError("DESTINATION_READ_FAILED", "verified album metadata cannot be read") from exc
+    expected_entries = verification["inventory"]
+    if len(names) != len(expected_entries):
+        raise SafetyBlock("VERIFIED_CONTENT_CHANGED", "previously verified album entry count changed")
+
+    checked = 0
+    for expected, name in zip(expected_entries, names):
+        if expected["name"] != name:
+            raise SafetyBlock("VERIFIED_CONTENT_CHANGED", "previously verified album file names changed")
+        if not name or "/" in name or "\\" in name or name in (".", "..") or "\x00" in name:
+            raise SafetyBlock("DESTINATION_INVALID", "verified album contains an invalid entry name")
+        if name.lower().endswith(PARTIAL_SUFFIXES):
+            raise SafetyBlock("PARTIAL_FILE_PRESENT", "verified album contains a partial or temporary file")
+        entry_path = path / name
+        try:
+            info = entry_path.lstat()
+        except OSError as exc:
+            raise SafetyBlock("VERIFIED_CONTENT_CHANGED", "previously verified album entry changed") from exc
+        if stat.S_ISLNK(info.st_mode) or not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid():
+            raise SafetyBlock("VERIFIED_CONTENT_CHANGED", "previously verified album entry is no longer a regular file")
+        if info.st_size <= 0:
+            raise SafetyBlock("ZERO_BYTE_FILE", "previously verified album contains a zero-byte file")
+        if (
+            info.st_size != expected["bytes"]
+            or info.st_mtime_ns != expected["mtime_ns"]
+            or info.st_ctime_ns != expected["ctime_ns"]
+        ):
+            raise SafetyBlock("VERIFIED_CONTENT_CHANGED", "previously verified album metadata changed")
+        checked += 1
+    if metrics is not None:
+        metrics["metadata_files_checked"] += checked
+    return {"verified": True, "metadata_files_checked": checked}
+
+
 def _verification_matches_current(
     path: Path,
     verification: Mapping[str, Any],
     *,
     decoder_binary: Optional[Path] = None,
+    metrics: Optional[Dict[str, int]] = None,
 ) -> Dict[str, Any]:
     if verification["decoder_source_sha256"] != IMAGE_DECODER_SOURCE_SHA256:
         raise SafetyBlock("VERIFIED_DECODER_SOURCE_CHANGED", "verification was not bound to the pinned decoder source")
@@ -2399,6 +2467,9 @@ def _verification_matches_current(
         raise SafetyBlock("VERIFIED_CONTENT_CHANGED", "previously verified album content changed")
     if _content_entry_binding(before["entries"]) != _content_entry_binding(verification["inventory"]):
         raise SafetyBlock("VERIFIED_CONTENT_CHANGED", "previously verified album content changed")
+    if metrics is not None:
+        metrics["prior_verified_rehash_bytes"] += sum(int(entry["bytes"]) for entry in before["entries"])
+        metrics["prior_verified_decode_calls"] += 1
     decoded, binary_sha256 = _decode_inventory(
         path,
         int(verification["expected_images"]),
@@ -2425,6 +2496,7 @@ def _cross_task_fact(
     *,
     deep: bool,
     decoder_binary: Optional[Path] = None,
+    metrics: Optional[Dict[str, int]] = None,
 ) -> Optional[Dict[str, Any]]:
     verified: List[Tuple[str, str, Mapping[str, Any]]] = []
     unresolved: List[Tuple[str, str, str]] = []
@@ -2461,12 +2533,19 @@ def _cross_task_fact(
     if not verified:
         return None
     for other_task_id, other_key, other_album in verified:
+        other_destination = _task_absolute_path(root, other_task_id, other_album["destination"])
         if deep:
-            other_destination = _task_absolute_path(root, other_task_id, other_album["destination"])
             _verification_matches_current(
                 other_destination,
                 other_album["verification"],
                 decoder_binary=decoder_binary,
+                metrics=metrics,
+            )
+        else:
+            _verification_metadata_matches_current(
+                other_destination,
+                other_album["verification"],
+                metrics=metrics,
             )
     first_task_id, first_key, first_album = verified[0]
     return {
@@ -2486,6 +2565,7 @@ def _album_history_skip(
     root: Optional[Path] = None,
     deep: bool = False,
     decoder_binary: Optional[Path] = None,
+    metrics: Optional[Dict[str, int]] = None,
 ) -> Optional[Dict[str, Any]]:
     matches = _history_matches(store, album["identity"])
     if matches:
@@ -2510,6 +2590,7 @@ def _album_history_skip(
             album,
             deep=deep,
             decoder_binary=decoder_binary,
+            metrics=metrics,
         )
         if cross_task is not None:
             return cross_task
@@ -2535,6 +2616,7 @@ def _derive_album_state(
     *,
     deep: bool,
     decoder_binary: Optional[Path] = None,
+    metrics: Optional[Dict[str, int]] = None,
 ) -> Dict[str, Any]:
     album_key = album["album_key"]
     try:
@@ -2545,6 +2627,7 @@ def _derive_album_state(
             root=root,
             deep=deep,
             decoder_binary=decoder_binary,
+            metrics=metrics,
         )
     except ResumeError as exc:
         return {
@@ -2577,22 +2660,29 @@ def _derive_album_state(
         }
     destination = _task_absolute_path(root, task["task_id"], album["destination"])
     if album["verification"] is not None:
-        if deep:
-            try:
+        try:
+            if deep:
                 _verification_matches_current(
                     destination,
                     album["verification"],
                     decoder_binary=decoder_binary,
+                    metrics=metrics,
                 )
-            except ResumeError as exc:
-                return {
-                    "album_key": album_key,
-                    "ordinal": album["ordinal"],
-                    "state": "BLOCKED_AMBIGUOUS",
-                    "dispatchable": False,
-                    "reason": exc.code,
-                    "inventory_count": album["verification"]["actual_entries"],
-                }
+            else:
+                _verification_metadata_matches_current(
+                    destination,
+                    album["verification"],
+                    metrics=metrics,
+                )
+        except ResumeError as exc:
+            return {
+                "album_key": album_key,
+                "ordinal": album["ordinal"],
+                "state": "BLOCKED_AMBIGUOUS",
+                "dispatchable": False,
+                "reason": exc.code,
+                "inventory_count": album["verification"]["actual_entries"],
+            }
         return {
             "album_key": album_key,
             "ordinal": album["ordinal"],
@@ -2704,10 +2794,17 @@ def derive_task_state(
     *,
     deep: bool = False,
 ) -> Dict[str, Any]:
+    started = time.perf_counter()
     if task_id not in store["tasks"]:
         raise InputError("TASK_NOT_FOUND", "task does not exist")
     task = store["tasks"][task_id]
     albums = []
+    metrics = {
+        "metadata_files_checked": 0,
+        "prior_verified_rehash_bytes": 0,
+        "prior_verified_decode_calls": 0,
+        "target_album_decode_calls": 0,
+    }
     for album_key in task["album_order"]:
         albums.append(
             _derive_album_state(
@@ -2717,6 +2814,7 @@ def derive_task_state(
                 task["albums"][album_key],
                 deep=deep,
                 decoder_binary=None,
+                metrics=metrics,
             )
         )
     blockers = [
@@ -2749,6 +2847,24 @@ def derive_task_state(
         phase = "COMPLETE"
         next_action = "NONE"
     first_blocker = blockers[0] if blockers else None
+    next_safe = verifying if verifying is not None else next_dispatch
+    next_safe_album = task["albums"][next_safe["album_key"]] if next_safe is not None else None
+    owner = store.get("session_owner")
+    pending_input = bool(isinstance(owner, dict) and owner.get("pending_input") is True)
+    owner_action = None
+    if first_blocker is not None:
+        if pending_input:
+            owner_action = "DO_NOT_TAKE_OVER; INSPECT_ONLY; RECONCILE_PRIVATE_FILES_WITH_OWNER"
+        elif first_blocker["reason"] in ("SAVE_ALL_OUTCOME_UNKNOWN", "CHOOSER_OUTCOME_UNKNOWN"):
+            owner_action = "DO_NOT_RETRY_DISPATCH; PRESERVE_FILES; RECONCILE_WITH_OWNER"
+        elif first_blocker["reason"] == "INCOMPLETE_DOWNLOAD":
+            owner_action = "DO_NOT_REDOWNLOAD; PRESERVE_PARTIAL_FILES; INVESTIGATE_TRANSFER"
+        elif first_blocker["reason"] in ("DESTINATION_MISSING", "VERIFIED_CONTENT_CHANGED", "DESTINATION_INVALID"):
+            owner_action = "DO_NOT_REDOWNLOAD; RESTORE_OR_RECONCILE_VERIFIED_FILES"
+        else:
+            owner_action = "STOP_AND_RECONCILE_ONLY"
+    metrics["verified_albums_skipped"] = counts["VERIFIED"] + counts["SKIPPED_EXISTING"]
+    metrics["fast_resume_elapsed_ms"] = int(round((time.perf_counter() - started) * 1000))
     return {
         "task_id": task_id,
         "generation": store["generation"],
@@ -2761,9 +2877,15 @@ def derive_task_state(
         "counts": counts,
         "photo_count": photo_count,
         "first_blocker": first_blocker,
-        "next_safe_album_key": next_dispatch["album_key"] if next_dispatch is not None else None,
-        "next_safe_ordinal": next_dispatch["ordinal"] if next_dispatch is not None else None,
+        "pending_input": pending_input,
+        "owner_action": owner_action,
+        "next_safe_album_key": next_safe["album_key"] if next_safe is not None else None,
+        "next_safe_ordinal": next_safe["ordinal"] if next_safe is not None else None,
+        "next_safe_album_identity": (
+            copy.deepcopy(next_safe_album["identity"]) if next_safe_album is not None else None
+        ),
         "next_safe_action": next_action,
+        "resume_metrics": metrics,
         "gui_dispatches": 0,
     }
 
@@ -2821,7 +2943,7 @@ def prepare_save_all(
         raise SafetyBlock("SAVE_ALL_INTENT_EXISTS", "save-all was already prepared for this album")
     if album["verification"] is not None or _album_history_skip(current, task, album, root=root, deep=False) is not None:
         raise SafetyBlock("ALBUM_NOT_DISPATCHABLE", "album is already verified or historical")
-    derived = derive_task_state(root, current, task_id, deep=True)
+    derived = derive_task_state(root, current, task_id, deep=False)
     if derived["first_blocker"] is not None:
         raise SafetyBlock("TASK_BLOCKED", "an unresolved task blocker prevents any new dispatch")
     if derived["next_safe_album_key"] != album_key:
@@ -2945,7 +3067,7 @@ def prepare_chooser_confirm(
         _validate_chooser_grounding(grounding, scope=task["scope"], album=album)
     except SafetyBlock as exc:
         raise InputError("CHOOSER_GROUNDING_INVALID", exc.message) from exc
-    derived = derive_task_state(root, current, task_id, deep=True)
+    derived = derive_task_state(root, current, task_id, deep=False)
     blocker = derived["first_blocker"]
     if blocker is not None and not (
         blocker["album_key"] == album_key and blocker["reason"] in ("CHOOSER_OUTCOME_UNKNOWN", "SAVE_ALL_OUTCOME_UNKNOWN")
@@ -3069,12 +3191,13 @@ def verify_album(
             "generation": current["generation"],
             "checkpoint_sha256": current["payload_sha256"],
             "already_verified": True,
+            "target_album_decode_calls": 1,
         }
     save_intent = album["save_all_intent"]
     chooser_intent = album["chooser_confirm_intent"]
     if not _intent_returned(save_intent) or not _intent_returned(chooser_intent):
         raise SafetyBlock("DISPATCH_EVIDENCE_INCOMPLETE", "save-all and chooser returned evidence are required")
-    derived = derive_task_state(root, current, task_id, deep=True)
+    derived = derive_task_state(root, current, task_id, deep=False)
     if derived["first_blocker"] is not None:
         raise SafetyBlock("TASK_BLOCKED", "an unresolved blocker prevents verification promotion")
     if derived["task_phase"] != "READY_TO_VERIFY" or derived["next_safe_action"] != "VERIFY_ALBUM:%s" % album_key:
@@ -3155,6 +3278,7 @@ def verify_album(
         "generation": updated["generation"],
         "checkpoint_sha256": updated["payload_sha256"],
         "already_verified": False,
+        "target_album_decode_calls": 1,
     }
 
 
@@ -3233,7 +3357,7 @@ class SessionServer:
         self.generation: Optional[int] = None
         self.hello_seen = False
         self.stopped = False
-        self.deep_reconciled = False
+        self.preflighted = False
         self.writer = SessionRoot(self.root)
         self.seen_request_ids: set[str] = set()
         self.verification_interval_seconds = verification_interval_seconds
@@ -3369,6 +3493,10 @@ class SessionServer:
             "checkpoint_generation": updated["generation"],
         }
         self.writer.activate(lock_record)
+        resume_state = derive_task_state(self.root, updated, self.task_id, deep=False)
+        if resume_state["generation"] != updated["generation"]:
+            raise SafetyBlock("GENERATION_UNSTABLE", "fast preflight observed a different generation")
+        self.preflighted = True
         return {
             "generation": updated["generation"],
             "checkpoint_sha256": updated["payload_sha256"],
@@ -3380,6 +3508,7 @@ class SessionServer:
             "writer_lock": "held",
             "record_state": "ACTIVE",
             "sync": sync,
+            "resume_state": resume_state,
             "gui_observations": 0,
             "gui_dispatches": 0,
         }
@@ -3393,10 +3522,10 @@ class SessionServer:
             result = reconcile_task(self.root, self.task_id)
             if result["generation"] != self.generation:
                 raise SafetyBlock("GENERATION_UNSTABLE", "reconciliation observed a different generation")
-            self.deep_reconciled = True
+            self.preflighted = True
             return result
         if operation == "prepare_save_all":
-            self._require_deep_reconcile()
+            self._require_preflight()
             _require_exact_keys(data, ("album_key", "grounding"), "PREPARE_SAVE_ALL_DATA_INVALID")
             result = prepare_save_all(
                 self.root,
@@ -3429,7 +3558,7 @@ class SessionServer:
             self.writer.set_pending_input(False, self.generation)
             return result
         if operation == "prepare_chooser_confirm":
-            self._require_deep_reconcile()
+            self._require_preflight()
             _require_exact_keys(data, ("album_key", "grounding"), "PREPARE_CHOOSER_DATA_INVALID")
             result = prepare_chooser_confirm(
                 self.root,
@@ -3462,7 +3591,7 @@ class SessionServer:
             self.writer.set_pending_input(False, self.generation)
             return result
         if operation == "verify_album":
-            self._require_deep_reconcile()
+            self._require_preflight()
             _require_exact_keys(data, ("album_key",), "VERIFY_ALBUM_DATA_INVALID")
             result = verify_album(
                 self.root,
@@ -3478,9 +3607,9 @@ class SessionServer:
             return result
         raise SafetyBlock("OPERATION_NOT_AVAILABLE", "operation is not available in the session")
 
-    def _require_deep_reconcile(self) -> None:
-        if not self.deep_reconciled:
-            raise SafetyBlock("DEEP_RECONCILE_REQUIRED", "a successful deep reconciliation is required first")
+    def _require_preflight(self) -> None:
+        if not self.preflighted:
+            raise SafetyBlock("FAST_PREFLIGHT_REQUIRED", "a successful fast preflight is required first")
 
     def _close_session(self) -> Dict[str, Any]:
         current = read_store(self.root)

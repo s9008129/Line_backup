@@ -147,7 +147,7 @@ function inspectTask({pythonExecutable, scriptPath, taskId}) {
     throw new AgentResumeSessionError('INSPECT_GENERATION_INVALID', 'inspection generation is invalid');
   }
   requireSha256(result.checkpoint_sha256, 'INSPECT_CHECKPOINT_INVALID', 'checkpoint_sha256');
-  if (!Number.isInteger(result.album_count) || result.album_count < 100) {
+  if (!Number.isInteger(result.album_count) || result.album_count < 1) {
     throw new AgentResumeSessionError('INSPECT_MANIFEST_INVALID', 'inspection did not bind an ordered manifest');
   }
   if (result.gui_dispatches !== 0) {
@@ -190,6 +190,17 @@ function validateHello(result, expected) {
   }
   if (result.gui_observations !== 0 || result.gui_dispatches !== 0) {
     throw new AgentResumeSessionError('ZERO_GUI_BOUNDARY_BROKEN', 'hello must not observe or dispatch GUI');
+  }
+  if (
+    !result.resume_state
+    || typeof result.resume_state !== 'object'
+    || result.resume_state.task_id !== expected.taskId
+    || result.resume_state.generation !== result.generation
+    || result.resume_state.checkpoint_sha256 !== result.checkpoint_sha256
+    || !Number.isInteger(result.resume_state.album_count)
+    || result.resume_state.album_count < 1
+  ) {
+    throw new AgentResumeSessionError('HELLO_PREFLIGHT_INVALID', 'hello did not include a bound fast preflight');
   }
 }
 
@@ -276,7 +287,7 @@ export async function openAgentResumeSession({
   let fatalError = null;
   let stdoutBuffer = '';
   let stderrBuffer = '';
-  let deepReconciled = false;
+  let preflighted = false;
   let latestReconcile = null;
   const pending = new Map();
   const consumedActionIds = new Set();
@@ -295,6 +306,7 @@ export async function openAgentResumeSession({
     closed = true;
     if (error && !fatalError) fatalError = error;
     rejectPending(error ?? new AgentResumeSessionError('SESSION_CLOSED', 'session is permanently closed'));
+    child.kill('SIGKILL');
   };
 
   const serialized = operation => {
@@ -463,7 +475,7 @@ export async function openAgentResumeSession({
       throw new AgentResumeSessionError('RECONCILE_INVALID', 'reconciliation result is invalid');
     }
     updateGeneration(result);
-    deepReconciled = true;
+    preflighted = true;
     latestReconcile = result;
     return result;
   };
@@ -471,13 +483,18 @@ export async function openAgentResumeSession({
   let hello;
   try {
     hello = await request('hello', {host, boot_id: bootId}, initial.generation);
-    validateHello(hello, {host, bootId, sessionId, root, controllerPid: child.pid});
+    validateHello(hello, {taskId, host, bootId, sessionId, root, controllerPid: child.pid});
     updateGeneration(hello);
     const postHello = verifyCheckpointBinding(hello.generation, hello.checkpoint_sha256);
-    if (postHello.album_count < 100) {
+    if (
+      postHello.album_count < 1
+      || hello.resume_state.album_count !== postHello.album_count
+      || hello.resume_state.manifest_binding_sha256 !== postHello.manifest_binding_sha256
+    ) {
       throw new AgentResumeSessionError('HELLO_MANIFEST_INVALID', 'session task manifest is incomplete');
     }
-    await reconcileInternal();
+    preflighted = true;
+    latestReconcile = hello.resume_state;
   } catch (error) {
     const failure = error instanceof AgentResumeSessionError
       ? error
@@ -560,8 +577,8 @@ export async function openAgentResumeSession({
     grounding,
     resultEvidenceSha256,
   }) => {
-    if (!deepReconciled) {
-      throw new AgentResumeSessionError('DEEP_RECONCILE_REQUIRED', 'a deep reconciliation must succeed first');
+    if (!preflighted) {
+      throw new AgentResumeSessionError('FAST_PREFLIGHT_REQUIRED', 'a fast preflight must succeed first');
     }
     requireSha256(resultEvidenceSha256, 'RESULT_EVIDENCE_INVALID', 'resultEvidenceSha256');
     const point = clickPoint(grounding);
@@ -615,6 +632,19 @@ export async function openAgentResumeSession({
 
   const reconcile = () => serialized(() => reconcileInternal());
 
+  const preflight = () => serialized(async () => {
+    if (closed) {
+      throw fatalError ?? new AgentResumeSessionError('SESSION_CLOSED', 'session is permanently closed');
+    }
+    const current = readback();
+    if (current.generation !== generation) {
+      throw new AgentResumeSessionError('GENERATION_STALE', 'fast preflight observed a newer checkpoint');
+    }
+    latestReconcile = current;
+    preflighted = true;
+    return current;
+  });
+
   const saveAll = ({albumKey, grounding, resultEvidenceSha256} = {}) => serialized(() => executeIntent({
     prepareOperation: 'prepare_save_all',
     recordOperation: 'record_save_all_result',
@@ -632,8 +662,8 @@ export async function openAgentResumeSession({
   }));
 
   const verifyAlbum = ({albumKey} = {}) => serialized(async () => {
-    if (!deepReconciled) {
-      throw new AgentResumeSessionError('DEEP_RECONCILE_REQUIRED', 'a deep reconciliation must succeed first');
+    if (!preflighted) {
+      throw new AgentResumeSessionError('FAST_PREFLIGHT_REQUIRED', 'a fast preflight must succeed first');
     }
     if (typeof albumKey !== 'string' || !SHA256_PATTERN.test(albumKey)) {
       throw new AgentResumeSessionError('ALBUM_KEY_INVALID', 'albumKey is invalid');
@@ -673,7 +703,11 @@ export async function openAgentResumeSession({
     get reconcileResult() {
       return latestReconcile;
     },
+    get preflightResult() {
+      return latestReconcile;
+    },
     reconcile,
+    preflight,
     saveAll,
     confirmChooser,
     verifyAlbum,
