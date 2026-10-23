@@ -1,8 +1,10 @@
 {
   "task_id": "AGENT-RESUME-P0-20261022",
-  "source_commit": "8eb52207bd47e0425526eeeb951b945439c2a639",
+  "source_commit": "8eb52208422fd824dea04079b916b275ac0afeb0",
   "docs_head_with_exact_ci": "80596cfaa9734c44d33e164b4b09253e6cb4aff1",
   "exact_head_ci_run": "39893283420",
+  "latest_docs_only_head_with_exact_ci": "73f461693f89ce9ccbda26ee7f4b18ff23dd039f",
+  "latest_docs_only_ci_run": "39893549081",
   "observation": "Synthetic-only JSON-lines capacity regression for the PR #32 implementation; the review follow-up also bounds the identity strings returned for the next album.",
   "max_task_albums": 1000,
   "measured_resume_state_response_envelope_bytes": 182926,
