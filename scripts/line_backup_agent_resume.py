@@ -61,6 +61,11 @@ MAX_DECODER_OUTPUT_BYTES = 32 * 1024 * 1024
 MAX_LOCK_RECORD_BYTES = 64 * 1024
 MAX_EXPECTED_IMAGES = 10_000
 MAX_TASK_ALBUMS = 1_000
+MAX_REFLECTED_REQUEST_ID_BYTES = 128
+MAX_GROUP_KEY_BYTES = 256
+MAX_OBSERVED_TITLE_BYTES = 1_024
+MAX_DISAMBIGUATOR_BYTES = 256
+MAX_HISTORY_SOURCE_KIND_BYTES = 32
 DEFAULT_ROOT = Path.home() / "Library" / "Application Support" / "LineBackup" / "agent-resume"
 MODULE_ROOT = Path(__file__).resolve().parents[1]
 IMAGE_DECODER_SOURCE = MODULE_ROOT / "scripts" / "agent_resume" / "image_decode.swift"
@@ -836,8 +841,16 @@ def _validate_identity(identity: Any) -> None:
     required = {"group_key", "start_date", "end_date", "expected_images", "observed_title", "disambiguator"}
     if not isinstance(identity, dict) or set(identity) != required:
         raise SafetyBlock("STORE_SCHEMA_INVALID", "album identity shape is invalid")
-    if not isinstance(identity["group_key"], str) or not identity["group_key"]:
-        raise SafetyBlock("STORE_SCHEMA_INVALID", "group_key is invalid")
+    bounded_text = (
+        ("group_key", MAX_GROUP_KEY_BYTES),
+        ("observed_title", MAX_OBSERVED_TITLE_BYTES),
+        ("disambiguator", MAX_DISAMBIGUATOR_BYTES),
+    )
+    for field, max_bytes in bounded_text:
+        value = identity[field]
+        value_bytes = _utf8_byte_length(value) if isinstance(value, str) else None
+        if not value or value_bytes is None or value_bytes > max_bytes:
+            raise SafetyBlock("STORE_SCHEMA_INVALID", "%s is invalid or exceeds its UTF-8 byte limit" % field)
     if not DATE_RE.fullmatch(str(identity["start_date"])) or not DATE_RE.fullmatch(str(identity["end_date"])):
         raise SafetyBlock("STORE_SCHEMA_INVALID", "album date is invalid")
     if str(identity["start_date"]) > str(identity["end_date"]):
@@ -845,8 +858,6 @@ def _validate_identity(identity: Any) -> None:
     count = identity["expected_images"]
     if not isinstance(count, int) or isinstance(count, bool) or count <= 0 or count > MAX_EXPECTED_IMAGES:
         raise SafetyBlock("STORE_SCHEMA_INVALID", "expected image count is invalid")
-    if not isinstance(identity["observed_title"], str) or not isinstance(identity["disambiguator"], str):
-        raise SafetyBlock("STORE_SCHEMA_INVALID", "album text identity is invalid")
 
 
 def _validate_process_binding(value: Any, field: str) -> None:
@@ -889,6 +900,9 @@ def _validate_history(history: Any) -> None:
             raise SafetyBlock("STORE_SCHEMA_INVALID", "history reference shape is invalid")
         for field in ("source_kind", "path", "imported_at_utc"):
             _validate_nonempty_text(reference[field], "history.reference.%s" % field)
+        source_kind_bytes = _utf8_byte_length(reference["source_kind"])
+        if source_kind_bytes is None or source_kind_bytes > MAX_HISTORY_SOURCE_KIND_BYTES:
+            raise SafetyBlock("STORE_SCHEMA_INVALID", "history reference source_kind exceeds its UTF-8 byte limit")
         if not Path(reference["path"]).is_absolute():
             raise SafetyBlock("STORE_SCHEMA_INVALID", "history reference path must be absolute")
         if not SHA256_RE.fullmatch(str(reference["sha256"])):
@@ -910,6 +924,9 @@ def _validate_history(history: Any) -> None:
         barrier_ids.add(barrier["barrier_id"])
         for field in ("source_kind", "source_sha256", "group_key", "deny_reason"):
             _validate_nonempty_text(barrier[field], "history.barrier.%s" % field)
+        source_kind_bytes = _utf8_byte_length(barrier["source_kind"])
+        if source_kind_bytes is None or source_kind_bytes > MAX_HISTORY_SOURCE_KIND_BYTES:
+            raise SafetyBlock("STORE_SCHEMA_INVALID", "history barrier source_kind exceeds its UTF-8 byte limit")
         if not SHA256_RE.fullmatch(barrier["source_sha256"]):
             raise SafetyBlock("STORE_SCHEMA_INVALID", "history barrier source digest is invalid")
         if (barrier["source_kind"], barrier["source_sha256"]) not in reference_hashes:
@@ -1009,6 +1026,13 @@ def _validate_uuid(value: Any, field: str) -> None:
 def _validate_nonempty_text(value: Any, field: str) -> None:
     if not isinstance(value, str) or not value:
         raise SafetyBlock("STORE_SCHEMA_INVALID", "%s must be a non-empty string" % field)
+
+
+def _utf8_byte_length(value: str) -> Optional[int]:
+    try:
+        return len(value.encode("utf-8"))
+    except UnicodeEncodeError:
+        return None
 
 
 def _validate_click_point(value: Any) -> None:
@@ -3300,6 +3324,10 @@ def _validate_request(value: Any) -> Dict[str, Any]:
     for key in ("request_id", "session_id", "task_id"):
         if not isinstance(value[key], str) or not value[key]:
             raise InputError("REQUEST_INVALID", "%s must be a non-empty string" % key)
+    for key in ("request_id", "session_id"):
+        value_bytes = _utf8_byte_length(value[key])
+        if value_bytes is None or value_bytes > MAX_REFLECTED_REQUEST_ID_BYTES:
+            raise InputError("REQUEST_INVALID", "%s exceeds the UTF-8 byte limit" % key)
     if not TASK_ID_RE.fullmatch(value["task_id"]):
         raise InputError("TASK_ID_INVALID", "task_id is invalid")
     generation = value["expected_generation"]

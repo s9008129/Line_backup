@@ -1115,17 +1115,49 @@ class ResumeCoreTests(unittest.TestCase):
         with home_temporary_directory() as temporary:
             root = Path(temporary).resolve() / "agent-resume"
             task_id = "AGENT-RESUME-TEST-MAX-PAYLOAD"
-            create_active_runtime_fixture(root, task_id, resume.MAX_TASK_ALBUMS)
+            seed_history_store(root)
+            manifest = build_custom_manifest(task_id, [], active_count=resume.MAX_TASK_ALBUMS)
+            max_group_key = "\x00" * resume.MAX_GROUP_KEY_BYTES
+            manifest["scope"]["group_key"] = max_group_key
+            for album in manifest["albums"]:
+                album["identity"]["group_key"] = max_group_key
+            manifest["albums"][0]["identity"]["observed_title"] = "\x00" * resume.MAX_OBSERVED_TITLE_BYTES
+            manifest["albums"][0]["identity"]["disambiguator"] = "\x00" * resume.MAX_DISAMBIGUATOR_BYTES
+            manifest_path = root.parent / "maximum-payload-manifest.json"
+            write_json(manifest_path, manifest)
+            resume.create_task(root, manifest_path)
             state = resume.inspect_task(root, task_id)
             request = {
-                "request_id": "request-fixture",
-                "session_id": "session-fixture",
+                "request_id": "\x00" * resume.MAX_REFLECTED_REQUEST_ID_BYTES,
+                "session_id": "\x00" * resume.MAX_REFLECTED_REQUEST_ID_BYTES,
                 "operation": "hello",
             }
             response = resume._response(request, {"resume_state": state})
             response_bytes = len(resume.canonical_json(response))
             self.assertEqual(state["album_count"], resume.MAX_TASK_ALBUMS)
             self.assertLessEqual(response_bytes, resume.MAX_LINE_BYTES)
+
+            def derived_history(_root, _store, _task, album, **_kwargs):
+                return {
+                    "album_key": album["album_key"],
+                    "ordinal": album["ordinal"],
+                    "state": "SKIPPED_EXISTING",
+                    "dispatchable": False,
+                    "reason": "HISTORY_EXACT",
+                    "history": {
+                        "reason": "HISTORY_EXACT",
+                        "barrier_id": "f" * 64,
+                        "source_kind": "\x00" * resume.MAX_HISTORY_SOURCE_KIND_BYTES,
+                        "verified_file_count": resume.MAX_EXPECTED_IMAGES,
+                    },
+                    "inventory_count": 1,
+                }
+
+            with mock.patch.object(resume, "_derive_album_state", side_effect=derived_history):
+                all_history_state = resume.derive_task_state(root, resume.read_store(root), task_id)
+            all_history_response = resume._response(request, {"resume_state": all_history_state})
+            history_response_bytes = len(resume.canonical_json(all_history_response))
+            self.assertLessEqual(history_response_bytes, resume.MAX_LINE_BYTES)
 
             checkpoint_before = (root / "checkpoint.json").read_bytes()
             oversized = build_custom_manifest(
@@ -1138,6 +1170,35 @@ class ResumeCoreTests(unittest.TestCase):
             with self.assertRaises(resume.InputError) as caught:
                 resume.create_task(root, manifest_path)
             self.assertEqual(caught.exception.code, "TASK_MANIFEST_TOO_LARGE")
+            self.assertEqual((root / "checkpoint.json").read_bytes(), checkpoint_before)
+
+            oversized_text = build_custom_manifest(
+                "AGENT-RESUME-TEST-OVER-TEXT-LIMIT",
+                [],
+                active_count=1,
+            )
+            oversized_text["albums"][0]["identity"]["observed_title"] = "x" * (
+                resume.MAX_OBSERVED_TITLE_BYTES + 1
+            )
+            text_manifest_path = root.parent / "over-limit-text-manifest.json"
+            write_json(text_manifest_path, oversized_text)
+            with self.assertRaises(resume.InputError) as caught:
+                resume.create_task(root, text_manifest_path)
+            self.assertEqual(caught.exception.code, "STORE_SCHEMA_INVALID")
+            self.assertEqual((root / "checkpoint.json").read_bytes(), checkpoint_before)
+
+            oversized_request = {
+                "version": 1,
+                "request_id": "\x00" * (resume.MAX_REFLECTED_REQUEST_ID_BYTES + 1),
+                "session_id": "session-fixture",
+                "task_id": task_id,
+                "expected_generation": 1,
+                "operation": "hello",
+                "data": {},
+            }
+            with self.assertRaises(resume.InputError) as caught:
+                resume._validate_request(oversized_request)
+            self.assertEqual(caught.exception.code, "REQUEST_INVALID")
             self.assertEqual((root / "checkpoint.json").read_bytes(), checkpoint_before)
 
     def test_fast_resume_skips_49_verified_then_verifies_only_50(self) -> None:
@@ -2276,6 +2337,16 @@ class StoreValidationTests(unittest.TestCase):
                     resume.inspect_task(root, task_id)
             self.assertEqual(caught.exception.code, "GENERATION_UNSTABLE")
             self.assertEqual((root / "checkpoint.json").read_bytes(), before)
+
+    def test_history_source_kind_is_bounded_before_it_can_be_returned(self) -> None:
+        def oversized_source_kind(root: Path, store: dict) -> None:
+            store["history"]["references"][0]["source_kind"] = "x" * (
+                resume.MAX_HISTORY_SOURCE_KIND_BYTES + 1
+            )
+            store["payload_sha256"] = resume._payload_digest(store)
+            resume._atomic_json_write(root / "checkpoint.json", store)
+
+        self._assert_store_rejected(oversized_source_kind, "STORE_SCHEMA_INVALID")
 
     def test_store_checksum_schema_and_manifest_bindings_fail_closed(self) -> None:
         def checksum_mutation(root: Path, store: dict) -> None:
