@@ -3,7 +3,7 @@
 - 日期：2026-10-23（Asia/Taipei）
 - 目標：Mac 重開機、Codex Session 中斷或程序終止後，新 Session 只靠唯一 canonical checkpoint 找到第一個尚未安全完成的相簿，跳過既有 VERIFIED，安全接續下載。
 - 基線：`a03bf504a2ea0f315d8f56c25f685e97e5410007`；branch `implement/agent-resume-p0-20261022`；Draft [PR #32](https://github.com/s9008129/Line_backup/pull/32)，base `master`。
-- 修正前程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`；payload 上限修正 commit：`a247550fb9cdc42e4d68fc7c827f0d24b311f0c2`；本輪 review-fix source commit：`8eb52207bd47e0425526eeeb951b945439c2a639`；前一文件綁定 commit：`a1a64d3152dce798874079d24b594abf4f3a0eff`；本報告最新更新待提交。
+- 修正前程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`；payload 上限修正 commit：`a247550fb9cdc42e4d68fc7c827f0d24b311f0c2`；本輪 review-fix source commit：`8eb52207bd47e0425526eeeb951b945439c2a639`；最新來源與 exact-head CI 綁定 commit：`80596cfaa9734c44d33e164b4b09253e6cb4aff1`。
 - 沿用 Plan v2.1（SHA-256 `4ba9be2daf887aa8a65a0255e337da5bff8d0ae5aa2d5ada13990f5c85b76502`）；沒有新增第二份計畫、資料庫、cursor store、daemon 或 GUI framework。
 - 前一外部 Code Review 綁定 `a03bf50`，結論為 `CHANGES_REQUIRED_BEFORE_APPROVE_IMPLEMENTATION`；本輪只處理 R32-01 small manifest、R32-02 ambiguous chooser crash、R32-03 runbook 三個 bounded 缺口。**目前 HEAD 尚未取得新的外部 Code Review 核准。**
 
@@ -17,7 +17,7 @@ Fast Resume 已把「已完成」與「下一個合法動作」完全由既有 c
 PRIMARY_OUTCOME_STATUS=NOT_YET_ACHIEVED_REAL_MAC_RESUME
 IMPLEMENTATION_STATUS=FAST_RESUME_OFFLINE_WITH_LINE_BOUNDARY_FIX
 CORE_ACCEPTANCE_STATUS=PARTIAL_OFFLINE_ONLY
-REQUIRED_VERIFICATION_STATUS=LOCAL_PASS_PR_CI_PENDING
+REQUIRED_VERIFICATION_STATUS=LOCAL_PASS_PR_CI_PASS
 INDEPENDENT_ACCEPTANCE_STATUS=NOT_RUN
 EXTERNAL_CODE_REVIEW_AT_THIS_HEAD=NOT_RUN
 REAL_MAC_CUA_SMOKE=PARTIAL_OBSERVED
@@ -96,15 +96,19 @@ gui_dispatches=0
 
 ### 3.4 PR #32 前一 HEAD CI
 
-PR HEAD `a1a64d3152dce798874079d24b594abf4f3a0eff`（Draft／Open，base `64515eb56b04accc40ade9e2db2fe0ad18c1ced3`）的 [run 39891908001](https://github.com/s9008129/Line_backup/actions/runs/39891908001) 三個 job 均為 `SUCCESS`：`python-core`、`node-wrapper`、`mac-imageio`。之後獨立 review 發現極長 identity 欄位可超過 JSON line 上限，因此此 run 不驗證修補後的新來源。PR 維持 Draft，尚未合併；新來源 CI 待跑。此 CI 不代表 GitHub review approval 或實機 E2E。
+較早 PR HEAD `a1a64d3152dce798874079d24b594abf4f3a0eff` 的 [run 39891908001](https://github.com/s9008129/Line_backup/actions/runs/39891908001) 三 job 曾全數 SUCCESS；該來源仍有 payload 邊界漏洞，故不作本輪修補 CI 證據。
 
-### 3.4 來源與證據識別
+### 3.5 本輪 PR #32 exact-head CI
+
+PR #32 的本輪來源與證據 HEAD `80596cfaa9734c44d33e164b4b09253e6cb4aff1`（Draft／Open；base `64515eb56b04accc40ade9e2db2fe0ad18c1ced3`）之 [run 39893283420](https://github.com/s9008129/Line_backup/actions/runs/39893283420) 綁定 exact head，`python-core`、`node-wrapper`、`mac-imageio` 三 job 全數 `SUCCESS`。機器 receipt：[ci-run-39893283420.json](evidence/ci-run-39893283420.json)。PR 可合併且無衝突，但仍為 Draft；reviewDecision 空白，僅有舊 `a03bf50` 的 COMMENTED review，branch-protection API 回 403，因此目前無法確認是否要求新 approval。沒有 GitHub review approval，也沒有 merge。
+
+### 3.6 來源與證據識別
 
 | 項目 | SHA-256 |
 |---|---|
-| Python controller | `b4e863a85fc7546d0782ef6fb5e05c1925b1568851b276782f503140da0afbf6` |
+| Python controller | `1d983426767dc9621b4858cdde1947abd85215dd8941b213c82c5268be61b0d1` |
 | Node wrapper | `bfd2cdceffe7e4af2e506133b76989f280a47133d794e4c0e7d5777ffe3fb585` |
-| Python tests | `4abc0857e26b1332ada2b8ca5b29ec2db742bc903cc016bf002ecc3d63fd26fc` |
+| Python tests | `e32fb1edc3962a965886fcbbb19b03afb7d681914b44269e4fead2e785bfe1aa` |
 | Node tests | `e02d12ac4362cd2b1530c26073dc05e73a2697b3b31bbe4b0640d592f41601b1` |
 | Runbook | `625c88e63f23fb7a02a33d67cc5b9dcf0018e203e41155f7c8d4722bef0835c1` |
 | ImageIO source | `238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b` |
@@ -136,7 +140,7 @@ PR HEAD `a1a64d3152dce798874079d24b594abf4f3a0eff`（Draft／Open，base `64515e
 - 未證明 Vision OCR、列表捲動、menu identity、chooser 目的地或實際點擊 correspondence；沒有執行 Save All、Chooser、下載或照片讀取。
 - 未證明真實相簿 80/80 檔案的 SHA-256、ImageIO、VERIFIED readback 或 release。
 - 兩本不同 eligible 新相簿的 F → reboot → G 實機流程：`NOT_RUN`。
-- PR #32 exact-head CI 已在 `a1a64d3` 通過，但 review finding 後有新的產品來源修補待驗；先前 CI 不適用修補後來源。GitHub review API 沒有目前 HEAD 的 approval；branch-protection endpoint 回 403，規則未知。本報告不把前一輪 `a03bf50` 審查或舊 CI 轉移到新來源。
+- PR #32 exact-head CI 在 `80596cf` 三 job 全通過。沒有目前 HEAD 的 GitHub approval；目前只有舊 `a03bf50` 的 COMMENTED review。branch-protection endpoint 回 403，review 要求未知；本地 read-only source audit 不是 GitHub approval。
 
 ## 6. Overengineering Audit
 
@@ -147,6 +151,6 @@ PR HEAD `a1a64d3152dce798874079d24b594abf4f3a0eff`（Draft／Open，base `64515e
 
 ## 7. 下一個安全動作
 
-1. 完成本輪 bounds fix 的 local suites、commit／push 並查 exact-head CI；之後需要新的真實 review approval 才能評估合併。目前 GitHub branch protection 要求未知（API 403），不得推定不需要 review。
+1. 由 Owner 指定的外部 Reviewer 對 exact source `8eb5220`、docs head `80596cf`、報告及 hash receipts 做 bounded re-review。若平台要求新 approval，需取得真實 review；分支保護查詢為 403，不能推定不需要 review或自行批准。
 2. 審查通過後，Owner 另啟全新、獨立的 DeepSeek `deepseek-v4.1-flash:1017` Session，依 [Mac實機接續Runbook.md](Mac實機接續Runbook.md) 先完成新相簿 F、重開 Mac、新 Session 快速跳過 F，再以 fresh GUI identity 定位不同的 eligible G。
 3. F／G 未完成前維持 `CORE_ACCEPTANCE_STATUS=PARTIAL_OFFLINE_ONLY`；任何 UNKNOWN／PARTIAL 只輸出精確 blocker，不重送、不刪 checkpoint、不繞過 pending input。
