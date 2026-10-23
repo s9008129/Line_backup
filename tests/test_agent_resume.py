@@ -2109,6 +2109,23 @@ class ResumeCoreTests(unittest.TestCase):
 
 
 class HistoryAndCrossTaskTests(unittest.TestCase):
+    def test_history_barrier_accepts_legacy_empty_observed_title(self) -> None:
+        barrier = resume._barrier(
+            "official_state",
+            "a" * 64,
+            GROUP_KEY,
+            {
+                "start_date": "2022-01-01",
+                "end_date": "2022-01-01",
+                "expected_images": 1,
+            },
+            [],
+            1,
+            "HISTORICAL_OFFICIAL_VERIFIED",
+        )
+
+        self.assertEqual(barrier["identity"]["observed_title"], "")
+
     def test_history_barriers_cover_239_109_329_and_65_without_redownload(self) -> None:
         with home_temporary_directory() as temporary:
             root = Path(temporary).resolve() / "agent-resume"

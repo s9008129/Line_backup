@@ -849,7 +849,7 @@ def _validate_identity(identity: Any) -> None:
     for field, max_bytes in bounded_text:
         value = identity[field]
         value_bytes = _utf8_byte_length(value) if isinstance(value, str) else None
-        if not value or value_bytes is None or value_bytes > max_bytes:
+        if (not value and field != "observed_title") or value_bytes is None or value_bytes > max_bytes:
             raise SafetyBlock("STORE_SCHEMA_INVALID", "%s is invalid or exceeds its UTF-8 byte limit" % field)
     if not DATE_RE.fullmatch(str(identity["start_date"])) or not DATE_RE.fullmatch(str(identity["end_date"])):
         raise SafetyBlock("STORE_SCHEMA_INVALID", "album date is invalid")
