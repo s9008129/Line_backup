@@ -5,6 +5,8 @@
   "exact_head_ci_run": "39893283420",
   "latest_docs_only_head_with_exact_ci": "73f461693f89ce9ccbda26ee7f4b18ff23dd039f",
   "latest_docs_only_ci_run": "39893549081",
+  "current_ci_snapshot_head": "cd451bbfcfec28869d5da231d555ce8e23870de6",
+  "current_exact_head_ci_run": "39893793753",
   "observation": "Synthetic-only JSON-lines capacity regression for the PR #32 implementation; the review follow-up also bounds the identity strings returned for the next album.",
   "max_task_albums": 1000,
   "measured_resume_state_response_envelope_bytes": 182926,

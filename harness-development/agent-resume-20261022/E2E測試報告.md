@@ -3,7 +3,7 @@
 - 日期：2026-10-23（Asia/Taipei）
 - 目標：Mac 重開機、Codex Session 中斷或程序終止後，新 Session 只靠唯一 canonical checkpoint 找到第一個尚未安全完成的相簿，跳過既有 VERIFIED，安全接續下載。
 - 基線：`a03bf504a2ea0f315d8f56c25f685e97e5410007`；branch `implement/agent-resume-p0-20261022`；Draft [PR #32](https://github.com/s9008129/Line_backup/pull/32)，base `master`。
-- 修正前程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`；payload 上限修正 commit：`a247550fb9cdc42e4d68fc7c827f0d24b311f0c2`；本輪 review-fix source commit：`8eb52208422fd824dea04079b916b275ac0afeb0`；exact-head CI 已在 `80596cf` 與後續 docs-only HEAD `73f4616` 驗證。
+- 修正前程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`；payload 上限修正 commit：`a247550fb9cdc42e4d68fc7c827f0d24b311f0c2`；本輪 review-fix source commit：`8eb52208422fd824dea04079b916b275ac0afeb0`；exact-head CI 已在來源／文件快照 `cd451bb` 驗證。
 - 沿用 Plan v2.1（SHA-256 `4ba9be2daf887aa8a65a0255e337da5bff8d0ae5aa2d5ada13990f5c85b76502`）；沒有新增第二份計畫、資料庫、cursor store、daemon 或 GUI framework。
 - 前一外部 Code Review 綁定 `a03bf50`，結論為 `CHANGES_REQUIRED_BEFORE_APPROVE_IMPLEMENTATION`；本輪只處理 R32-01 small manifest、R32-02 ambiguous chooser crash、R32-03 runbook 三個 bounded 缺口。**目前 HEAD 尚未取得新的外部 Code Review 核准。**
 
@@ -100,7 +100,7 @@ gui_dispatches=0
 
 ### 3.5 本輪 PR #32 exact-head CI
 
-PR #32 的 docs HEAD `73f461693f89ce9ccbda26ee7f4b18ff23dd039f`（Draft／Open；base `64515eb56b04accc40ade9e2db2fe0ad18c1ced3`）之 [run 39893549081](https://github.com/s9008129/Line_backup/actions/runs/39893549081) 綁定 exact head，`python-core`、`node-wrapper`、`mac-imageio` 三 job 全數 `SUCCESS`；該 commit 只更新文件與證據，程式來源仍是 `8eb52208422fd824dea04079b916b275ac0afeb0`。機器 receipt：[ci-run-39893549081.json](evidence/ci-run-39893549081.json)。PR 可合併且無衝突，但仍為 Draft；reviewDecision 空白，僅有舊 `a03bf50` 的 COMMENTED review，branch-protection API 回 403，因此目前無法確認是否要求新 approval。沒有 GitHub review approval，也沒有 merge。
+PR #32 的來源／文件快照 `cd451bbfcfec28869d5da231d555ce8e23870de6`（Draft／Open；base `64515eb56b04accc40ade9e2db2fe0ad18c1ced3`）之 [run 39893793753](https://github.com/s9008129/Line_backup/actions/runs/39893793753) 以 workflow dispatch 綁定 exact head，`python-core`、`node-wrapper`、`mac-imageio` 三 job 全數 `SUCCESS`；該快照的產品程式來源仍是 `8eb52208422fd824dea04079b916b275ac0afeb0`。機器 receipt：[ci-run-39893793753.json](evidence/ci-run-39893793753.json)。PR 可合併且無衝突，但仍為 Draft；reviewDecision 空白，僅有舊 `a03bf50` 的 COMMENTED review，branch-protection API 回 403，因此目前無法確認是否要求新 approval。沒有 GitHub review approval，也沒有 merge。
 
 ### 3.6 來源與證據識別
 
