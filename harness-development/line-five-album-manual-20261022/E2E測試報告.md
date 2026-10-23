@@ -256,3 +256,15 @@ Owner 本輪只授權 B78、C77、D42、E87 各一次真實 Save All；A45 僅�
 - LINE 觀察來自本輪即時 CUA 畫面／AX；本輪沒有將候選畫面另存為持久證據，因此該觀察屬 `OBSERVED`，不能視為可由本報告單獨重播的檔案證據。
 - H69 私有既有證據記錄 69 張、23,375,742 bytes，且 69 張 ImageIO 完整解碼通過；這不是正式 VERIFIED，也沒有登錄成可自動阻擋派送的 H69 checkpoint。
 - 本輪未執行正式 AUTO admission、下載、取消或原生接續驗收；這些狀態均為 `NOT_TESTED`。
+
+## 14. 258 張候選取消與原生接續觀察（2026-10-23）
+
+- 目標詳細頁日期／張數／照片格核對：`PASS`（2023/12/04~12/08，258 張）。去重與已知排除比對未命中；使用全新空白私有隔離目錄。執行路線為 `MANUAL_DIAGNOSTIC`，未宣稱正式 AUTO PASS。
+- 唯一「儲存全部」派送 1 次；LINE 顯示 `0/258` 後開始寫檔。進度 `25/258` 且正常取消按鈕可見時取消 1 次，modal 關閉並回到相簿詳細頁。
+- 取消後穩定 inventory 為 40 張 JPEG／12,070,568 bytes，編號連續，所有檔案非零；檔名／大小／SHA-256 的兩次 inventory 一致。ImageIO 對這 40 張完整解碼 40/40，失敗 0。缺漏 218 張，沒有補回。
+- 點取消當下的精確檔案數沒有被擷取；最後一筆較早的 watcher 觀察為 16 張／5,052,315 bytes，之後看到 UI 進度 25/258 並隨即取消。這兩次觀察之間的實際檔數未知，不回填估算值。
+- 返回列表並重新進入同相簿後，詳細頁及 popup 均沒有顯示 Resume/Continue；popup OCR 看見「儲存全部」等一般項目。未再點「儲存全部」，`RESUME_ACTION_COUNT=0`、`NATIVE_RESUME_STATUS=NATIVE_RESUME_NOT_OBSERVED`。這不推論 LINE 在其他狀態或介面一定不支援接續。
+- 正式 state、manual archive、PR28 checkpoint hash 與派送前相同；H69 原有 69 檔／23,375,742 bytes 的實體檔案 SHA-256 與既有 inventory 相符。
+- 去識別化本機摘要 SHA-256：`82a162f837a1e138eef896ab8b22a2c89deff13c93c117ad8a4b38ca9b271dc2`；取消後 inventory SHA-256：`382bfa373c7a65b95101a31209251e98734163ab766ab8c143e6104f5d9a6591`；ImageIO 摘要 SHA-256：`dfbfe5399f522a4d4debdd695dc4cf5e54a0811ed4a24ab644db88c529f62f7d`。原始照片、完整 LINE 畫面與逐檔清單留在本機 Git 忽略的私有目錄，未上傳；取消進度畫面未另存。
+
+`CANCEL_EFFECT=PASS`（部分下載後 modal 關閉，40 張檔案穩定且 218 張缺漏）；原生接續仍為 `NOT_OBSERVED`，不是 FAIL。下一步是保留部分檔案，不重派 Save All；若要驗證接續，需觀察到明確且安全的原生 Resume/Continue 控制。
