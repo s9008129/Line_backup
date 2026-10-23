@@ -1187,6 +1187,33 @@ class ResumeCoreTests(unittest.TestCase):
             self.assertEqual(resumed["resume_metrics"]["prior_verified_rehash_bytes"], 0)
             self.assertEqual(resumed["resume_metrics"]["prior_verified_decode_calls"], 0)
 
+    def test_blocker_never_exposes_a_later_verifying_album_as_next_safe(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-BLOCKER-ORDER"
+            create_active_runtime_fixture(root, task_id, count=2)
+            store = resume.read_store(root)
+
+            def derived_album(_root, _store, _task, album, **_kwargs):
+                is_blocked = album["ordinal"] == 1
+                return {
+                    "album_key": album["album_key"],
+                    "ordinal": album["ordinal"],
+                    "state": "UNKNOWN" if is_blocked else "VERIFYING",
+                    "dispatchable": False,
+                    "reason": "SAVE_ALL_OUTCOME_UNKNOWN" if is_blocked else "FULL_INVENTORY_NEEDS_VERIFICATION",
+                    "inventory_count": 0,
+                }
+
+            with mock.patch.object(resume, "_derive_album_state", side_effect=derived_album):
+                state = resume.derive_task_state(root, store, task_id)
+            self.assertEqual(state["task_phase"], "BLOCKED_AND_PRESERVE_WHOLE_TASK")
+            self.assertEqual(state["first_blocker"]["ordinal"], 1)
+            self.assertIsNone(state["next_safe_album_key"])
+            self.assertIsNone(state["next_safe_ordinal"])
+            self.assertIsNone(state["next_safe_album_identity"])
+            self.assertEqual(state["next_safe_action"], "STOP_AND_RECONCILE_ONLY")
+
     def test_chooser_click_then_process_kill_stays_unknown_and_blocks_takeover(self) -> None:
         with home_temporary_directory() as temporary:
             base = Path(temporary).resolve()

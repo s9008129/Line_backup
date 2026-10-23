@@ -2847,7 +2847,7 @@ def derive_task_state(
         phase = "COMPLETE"
         next_action = "NONE"
     first_blocker = blockers[0] if blockers else None
-    next_safe = verifying if verifying is not None else next_dispatch
+    next_safe = None if blockers else (verifying if verifying is not None else next_dispatch)
     next_safe_album = task["albums"][next_safe["album_key"]] if next_safe is not None else None
     owner = store.get("session_owner")
     pending_input = bool(isinstance(owner, dict) and owner.get("pending_input") is True)
