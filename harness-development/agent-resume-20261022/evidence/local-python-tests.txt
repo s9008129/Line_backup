@@ -1,0 +1,54 @@
+test_enospc_fsync_replace_and_readback_failures_are_explicit (tests.test_agent_resume.AtomicWriteFaultTests) ... ok
+test_failed_intent_write_never_returns_click_eligibility (tests.test_agent_resume.AtomicWriteFaultTests) ... ok
+test_process_interruption_at_every_atomic_boundary_keeps_one_valid_revision (tests.test_agent_resume.AtomicWriteFaultTests) ... ok
+test_decoder_malformed_duplicate_and_oversized_output_fail_closed (tests.test_agent_resume.DecoderFaultTests) ... ok
+test_decoder_timeout_is_distinct_and_non_mutating (tests.test_agent_resume.DecoderFaultTests) ... ok
+test_extra_file_after_returned_chooser_blocks_without_redownload (tests.test_agent_resume.DestinationSafetyTests) ... ok
+test_partial_zero_symlink_and_non_directory_entries_fail_closed (tests.test_agent_resume.DestinationSafetyTests) ... ok
+test_traversal_destination_is_rejected_before_any_task_directory (tests.test_agent_resume.DestinationSafetyTests) ... ok
+test_cross_task_date_ambiguity_propagates_exact_blocker (tests.test_agent_resume.HistoryAndCrossTaskTests) ... ok
+test_cross_task_verified_album_is_skipped_and_unresolved_intent_blocks_new_task (tests.test_agent_resume.HistoryAndCrossTaskTests) ... ok
+test_history_barriers_cover_239_109_329_and_65_without_redownload (tests.test_agent_resume.HistoryAndCrossTaskTests) ... ok
+test_pinned_swift_sources_are_byte_identical (tests.test_agent_resume.IdentityAndSyncTests) ... ok
+test_real_process_and_boot_identity (tests.test_agent_resume.IdentityAndSyncTests) ... ok
+test_sync_probe_uses_real_primitives_and_cleans_up (tests.test_agent_resume.IdentityAndSyncTests) ... ok
+test_pinned_imageio_decodes_valid_png_and_rejects_truncated_bytes (tests.test_agent_resume.MacImageDecoderTests) ... ok
+test_real_imageio_decode_then_destination_change_is_not_verified (tests.test_agent_resume.MacImageDecoderTests) ... ok
+test_blocker_never_exposes_a_later_verifying_album_as_next_safe (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_chooser_click_then_process_kill_stays_unknown_and_blocks_takeover (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_deep_reconcile_redecodes_verified_album (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_deep_state_compiles_decoder_only_when_a_verified_binding_is_present (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_fast_resume_skips_49_verified_then_verifies_only_50 (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_fresh_process_80_of_80_kill_verifies_then_advances_to_51 (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_fresh_process_intent_kill_leaves_unknown_without_retry (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_fresh_process_resume_completes_50_through_100_with_distinct_pids (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_fresh_process_save_all_returned_before_chooser_preserves_unknown (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_fresh_process_without_intent_leaves_50_fresh (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_full_50_verification_advances_to_51_then_completes_100 (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_intent_before_click_is_unknown_and_never_retried (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_missing_chooser_evidence_blocks_verification_without_mutation (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_missing_or_nonempty_destination_blocks_without_recreation (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_ordered_manifest_resumes_at_50_and_read_only_views_do_not_mutate (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_partial_50_blocks_whole_task_and_preserves_32_files (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_protected_fixture_sentinels_remain_byte_identical (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_small_owner_authorized_manifests_and_empty_manifest_rejection (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_stable_inventory_empty_destination_times_out (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_stable_inventory_waits_for_late_destination_content (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_verified_album_missing_moved_or_modified_metadata_blocks_fast_resume (tests.test_agent_resume.ResumeCoreTests) ... ok
+test_eof_after_hello_is_unclean_and_leaves_takeover_barrier (tests.test_agent_resume.SessionEofTests) ... ok
+test_corrupt_or_non_private_owner_record_fails_closed (tests.test_agent_resume.SessionRootTests) ... ok
+test_global_writer_lock_and_clean_close (tests.test_agent_resume.SessionRootTests) ... ok
+test_live_old_host_blocks_takeover_until_it_exits (tests.test_agent_resume.SessionRootTests) ... ok
+test_pending_input_blocks_takeover_even_after_host_exit (tests.test_agent_resume.SessionRootTests) ... ok
+test_generation_change_during_inspection_is_reported_without_mutation (tests.test_agent_resume.StoreValidationTests) ... ok
+test_stale_generation_and_foreign_scope_grounding_cannot_prepare (tests.test_agent_resume.StoreValidationTests) ... ok
+test_store_checksum_schema_and_manifest_bindings_fail_closed (tests.test_agent_resume.StoreValidationTests) ... ok
+test_symlink_and_orphan_temp_checkpoint_fail_closed (tests.test_agent_resume.StoreValidationTests) ... ok
+test_duplicate_key_is_rejected (tests.test_agent_resume.StrictJsonTests) ... ok
+test_non_finite_number_is_rejected (tests.test_agent_resume.StrictJsonTests) ... ok
+test_nul_and_size_are_rejected (tests.test_agent_resume.StrictJsonTests) ... ok
+
+----------------------------------------------------------------------
+Ran 49 tests in 45.651s
+
+OK

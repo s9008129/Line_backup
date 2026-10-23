@@ -1,0 +1,49 @@
+name: agent-resume
+
+on:
+  workflow_dispatch:
+    inputs:
+      approve_cloud_runner:
+        description: "I explicitly authorize this billable cloud runner execution"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  python-core:
+    if: ${{ github.actor == 's9008129' && inputs.approve_cloud_runner }}
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record toolchain
+        run: python3 --version && uname -a
+      - name: Run Python core tests
+        run: python3 -B -m unittest discover -s tests -p 'test_agent_resume.py' -v
+
+  node-wrapper:
+    if: ${{ github.actor == 's9008129' && inputs.approve_cloud_runner }}
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record toolchain
+        run: node --version && python3 --version && uname -a
+      - name: Check wrapper syntax
+        run: node --check scripts/line_backup_agent_resume_cua.mjs
+      - name: Run wrapper tests
+        run: node --test tests/test_agent_resume_cua.mjs
+
+  mac-imageio:
+    if: ${{ github.actor == 's9008129' && inputs.approve_cloud_runner }}
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record toolchain
+        run: xcrun swiftc --version && python3 --version && uname -a
+      - name: Run pinned ImageIO tests
+        run: python3 -B -m unittest tests.test_agent_resume.MacImageDecoderTests -v

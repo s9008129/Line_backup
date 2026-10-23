@@ -1,0 +1,39 @@
+{
+  "task_id": "AGENT-RESUME-P0-20261022",
+  "source_commit": "8eb52208422fd824dea04079b916b275ac0afeb0",
+  "docs_head_with_exact_ci": "80596cfaa9734c44d33e164b4b09253e6cb4aff1",
+  "exact_head_ci_run": "39893283420",
+  "latest_docs_only_head_with_exact_ci": "73f461693f89ce9ccbda26ee7f4b18ff23dd039f",
+  "latest_docs_only_ci_run": "39893549081",
+  "current_ci_snapshot_head": "f3e8d42e4d49ba78d52b49c4896d1bc847a317a4",
+  "current_exact_head_ci_run": "39893993234",
+  "observation": "Synthetic-only JSON-lines capacity regression for the PR #32 implementation; the review follow-up also bounds the identity strings returned for the next album.",
+  "max_task_albums": 1000,
+  "measured_resume_state_response_envelope_bytes": 182926,
+  "node_max_response_line_bytes": 1048576,
+  "capacity_ratio": 0.17445087432861328,
+  "max_reflected_request_id_utf8_bytes": 128,
+  "identity_utf8_limits": {
+    "group_key": 256,
+    "observed_title": 1024,
+    "disambiguator": 256
+  },
+  "history_source_kind_utf8_limit": 32,
+  "boundary_fixture": "1,000 albums; next-safe identity at each text-field byte limit; NUL characters exercise JSON escape expansion in identity and maximum reflected request/session IDs; separate all-1,000-album history-summary projection at maximum source_kind length",
+  "all_max_history_projection_response_bytes": 544449,
+  "over_limit_album_count": 1001,
+  "over_limit_result": "TASK_MANIFEST_TOO_LARGE",
+  "checkpoint_bytes_unchanged_on_over_limit": true,
+  "over_limit_identity": "observed_title at 1,025 UTF-8 bytes rejected as STORE_SCHEMA_INVALID",
+  "checkpoint_bytes_unchanged_on_over_limit_identity": true,
+  "real_python_controller_wrapper": {
+    "albums": 1000,
+    "hello": "PASS",
+    "reconcile": "PASS",
+    "reported_album_entries": 1000,
+    "test": "real controller hello and reconcile fit the CUA line limit at 1,000 albums"
+  },
+  "gui_observations": 0,
+  "gui_dispatches": 0,
+  "scope_note": "The 182926-byte envelope covers maximum bounded identity strings and 128-byte NUL request/session IDs. A separate worst-projection fixture returns 1,000 SKIPPED_EXISTING history summaries, each with a maximum 32-byte NUL source_kind, and measures 544449 bytes. The Node integration test separately verifies complete hello and reconcile responses fit its parser. Oversized album count, identity, reflected IDs, and persisted history source_kind are rejected before checkpoint mutation. No LINE backup data was accessed. The separate redacted Mac Smoke was read-only and is documented in line-readonly-smoke-20261023.txt."
+}

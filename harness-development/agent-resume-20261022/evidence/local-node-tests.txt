@@ -1,0 +1,28 @@
+▶ M0 fixed-root JSON-lines session capabilities
+  ✔ single stdio session, real identities, full sync, clean close (347.18925ms)
+  ✔ stale host start identity is refused before GUI capability (56.405709ms)
+  ✔ controller loss permanently closes wrapper; live old host blocks takeover (867.407ms)
+  ✔ second controller receives writer busy (530.108333ms)
+✔ M0 fixed-root JSON-lines session capabilities (2086.839917ms)
+▶ fake controller protocol failures are terminal and never gain GUI retry
+  ✔ malformed closes the wrapper (79.8565ms)
+  ✔ oversized closes the wrapper (116.116709ms)
+  ✔ binding closes the wrapper (73.373375ms)
+  ✔ lost-ack closes the wrapper (1075.362959ms)
+  ✔ duplicate response is fatal even after the first acknowledgement (95.943875ms)
+  ✔ close rejection is surfaced and leaves an unusable session (71.995542ms)
+✔ fake controller protocol failures are terminal and never gain GUI retry (1570.100791ms)
+▶ M1 wrapper intent calls remain single-shot and click-bounded
+  ✔ non-positive timeouts are rejected before spawning the controller (59.3735ms)
+  ✔ save all and chooser each use the existing app exactly once (869.341458ms)
+  ✔ failed GUI click records UNKNOWN and survives into a fresh session without retry (1030.314875ms)
+  ✔ successful click followed by result-record loss stays UNKNOWN with zero retry (933.986209ms)
+✔ M1 wrapper intent calls remain single-shot and click-bounded (2893.642833ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6588.837917

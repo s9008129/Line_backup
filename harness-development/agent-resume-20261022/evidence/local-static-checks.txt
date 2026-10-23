@@ -1,0 +1,11 @@
+$ python3 -B -m py_compile scripts/line_backup_agent_resume.py
+PASS
+
+$ node --check scripts/line_backup_agent_resume_cua.mjs
+PASS
+
+$ git diff --check
+PASS
+
+$ git diff --check a03bf504a2ea0f315d8f56c25f685e97e5410007..HEAD
+PASS

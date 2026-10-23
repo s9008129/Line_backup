@@ -1,0 +1,27 @@
+{
+  "checkpoint_sha256": "1459f6b66bff31ebdd862e8b3c33cdeaa6b8ce7d889b3795f13a71bc29606a78",
+  "counts": {
+    "BLOCKED_AMBIGUOUS": 0,
+    "BLOCKED_PARTIAL": 0,
+    "NOT_STARTED": 51,
+    "SKIPPED_EXISTING": 0,
+    "UNKNOWN": 0,
+    "VERIFIED": 49,
+    "VERIFYING": 0
+  },
+  "first_blocker": null,
+  "generation": 246,
+  "gui_dispatches": 0,
+  "next_safe_album_key": "c1538dda8350c851bcaf2f846cc35b836eb5644d1967f003352fdd7ed16dc505",
+  "next_safe_ordinal": 50,
+  "resume_metrics": {
+    "fast_resume_elapsed_ms": 7,
+    "metadata_files_checked": 49,
+    "prior_verified_decode_calls": 0,
+    "prior_verified_rehash_bytes": 0,
+    "target_album_decode_calls": 0,
+    "verified_albums_skipped": 49
+  },
+  "task_id": "AGENT-RESUME-EVIDENCE-FAST",
+  "task_phase": "READY_TO_DISPATCH"
+}
