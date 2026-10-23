@@ -3,7 +3,7 @@
 - 日期：2026-10-23（Asia/Taipei）
 - 目標：Mac 重開機、Codex Session 中斷或程序終止後，新 Session 只靠唯一 canonical checkpoint 找到第一個尚未安全完成的相簿，跳過既有 VERIFIED，安全接續下載。
 - 基線：`a03bf504a2ea0f315d8f56c25f685e97e5410007`；branch `implement/agent-resume-p0-20261022`；Draft [PR #32](https://github.com/s9008129/Line_backup/pull/32)，base `master`。
-- 本次已驗證程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`。Docs-only commits 不改寫此程式綁定。
+- 修正前程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`；本輪發現 JSON-lines 容量與 manifest 上限不一致，修正後精確 HEAD 於 implementation commit 綁定。
 - 沿用 Plan v2.1（SHA-256 `4ba9be2daf887aa8a65a0255e337da5bff8d0ae5aa2d5ada13990f5c85b76502`）；沒有新增第二份計畫、資料庫、cursor store、daemon 或 GUI framework。
 - 前一外部 Code Review 綁定 `a03bf50`，結論為 `CHANGES_REQUIRED_BEFORE_APPROVE_IMPLEMENTATION`；本輪只處理 R32-01 small manifest、R32-02 ambiguous chooser crash、R32-03 runbook 三個 bounded 缺口。**目前 HEAD 尚未取得新的外部 Code Review 核准。**
 
@@ -15,9 +15,9 @@ Fast Resume 已把「已完成」與「下一個合法動作」完全由既有 c
 
 ```text
 PRIMARY_OUTCOME_STATUS=NOT_YET_ACHIEVED_REAL_MAC_RESUME
-IMPLEMENTATION_STATUS=FAST_RESUME_OFFLINE_COMPLETE
+IMPLEMENTATION_STATUS=FAST_RESUME_OFFLINE_WITH_LINE_BOUNDARY_FIX
 CORE_ACCEPTANCE_STATUS=PARTIAL_OFFLINE_ONLY
-REQUIRED_VERIFICATION_STATUS=LOCAL_AND_FEATURE_CI_PASS
+REQUIRED_VERIFICATION_STATUS=LOCAL_PASS_PR_CI_PENDING
 INDEPENDENT_ACCEPTANCE_STATUS=NOT_RUN
 EXTERNAL_CODE_REVIEW_AT_THIS_HEAD=NOT_RUN
 REAL_MAC_E2E=NOT_RUN
@@ -25,13 +25,14 @@ FORMAL_TWO_ALBUM_AUTO=NOT_CLAIMED
 TASK_CLOSURE_STATUS=OPEN
 ```
 
-本輪沒有取得 LINE app、截圖、AX、OCR、相簿、Save All、Chooser、下載或真實照片；所有程式證據都是合成 fixture 或 fake app。`gui_dispatches=0`，不可寫成實機下載 PASS。
+本輪沒有將 LINE 切到前景或操作 GUI；所有程式證據都是合成 fixture 或 fake host/app。`gui_observations=0`、`gui_dispatches=0`，不可寫成實機下載 PASS。
 
 ## 2. 實際行為與聚焦案例
 
 | Case | 實際行為 | 測試證據 | 結果 |
 |---|---|---|---|
-| 1／2／5／10 本 manifest | 非空 Owner ordered manifest 可建立；空 manifest 以 `TASK_MANIFEST_EMPTY` 拒絕；上限 10,000 | `test_small_owner_authorized_manifests_and_empty_manifest_rejection` | PASS |
+| manifest 上限與 CUA JSON-lines 容量 | 上限收斂為 1,000；1,000 本實際 `resume_state` response envelope 為 172,279 bytes（1 MiB 上限）；1,001 本以 `TASK_MANIFEST_TOO_LARGE` 拒絕且 checkpoint bytes 不變 | `test_maximum_manifest_fits_cua_hello_line_and_one_over_is_rejected`；`real controller hello and reconcile fit the CUA line limit at 1,000 albums`；[capacity receipt](evidence/line-payload-boundary.json) | PASS（合成） |
+| 1／2／5／10 本 manifest | 非空 Owner ordered manifest 可建立；空 manifest 以 `TASK_MANIFEST_EMPTY` 拒絕 | `test_small_owner_authorized_manifests_and_empty_manifest_rejection` | PASS |
 | 100 本，#1～49 VERIFIED | 只核對既有檔案 metadata；`verified_albums_skipped=49`、`metadata_files_checked=49`、`prior_verified_rehash_bytes=0`、`prior_verified_decode_calls=0`，next ordinal `50` | `test_fast_resume_skips_49_verified_then_verifies_only_50`；[metrics receipt](evidence/local-fast-resume-metrics.json) | PASS |
 | #50 未開始 | 由 manifest 順序定位 #50，phase `READY_TO_DISPATCH`，不依賴舊 Session 記憶 | 同上；receipt 的 `next_safe_ordinal=50` | PASS |
 | #50 有完整 Save All＋Chooser RETURNED，80/80 已落盤 | `READY_TO_VERIFY` 只暴露 #50；目標相簿執行一次嚴格解碼；成功後 next ordinal 變 `51` | `test_fast_resume_skips_49_verified_then_verifies_only_50`、`test_fresh_process_80_of_80_kill_verifies_then_advances_to_51` | PASS |
@@ -55,8 +56,9 @@ node --check scripts/line_backup_agent_resume_cua.mjs
 git diff --check
 ```
 
-- Python：exit `0`，`Ran 49 tests in 45.651s`、`OK`；原始輸出見 [local-python-tests.txt](evidence/local-python-tests.txt) 與 [exit code](evidence/local-python-tests.exit)。
-- Node：exit `0`，`tests 17`、`pass 17`、`fail 0`、`duration_ms 6588.837917`；原始輸出見 [local-node-tests.txt](evidence/local-node-tests.txt) 與 [exit code](evidence/local-node-tests.exit)。
+- Python：原本 49 項回歸加上本輪上限／bytes case，50/50 PASS，48.759 秒；原始輸出與 exit code：[local-python-tests-20261023.txt](evidence/local-python-tests-20261023.txt)、[exit](evidence/local-python-tests-exit-20261023.txt)。
+- Node：原本 17 項回歸加上 1,000 本真 Python controller hello/reconcile wrapper case，18/18 PASS，8.206 秒；原始輸出與 exit code：[local-node-tests-20261023.txt](evidence/local-node-tests-20261023.txt)、[exit](evidence/local-node-tests-exit-20261023.txt)。
+- Python compile、Node syntax、`git diff --check`：exit `0`；[static checks](evidence/local-static-checks-20261023.txt)。
 - Static checks：exit `0`；見 [local-static-checks.txt](evidence/local-static-checks.txt)。
 - 環境：macOS `27.0.1`（Darwin `27.0.0`，arm64）、Python `3.9.6`、Node `v24.22.1`、Apple Swift `6.3.3`；見 [environment.txt](evidence/environment.txt)。
 
@@ -95,11 +97,11 @@ gui_dispatches=0
 
 | 項目 | SHA-256 |
 |---|---|
-| Python controller | `82aada19edb2039fa6c254906904f1d478b6d8158b2456a943d792f39c7d87cb` |
+| Python controller | `b4e863a85fc7546d0782ef6fb5e05c1925b1568851b276782f503140da0afbf6` |
 | Node wrapper | `bfd2cdceffe7e4af2e506133b76989f280a47133d794e4c0e7d5777ffe3fb585` |
-| Python tests | `c55b5af3d702c05cc5d8fbd85a7788404a140d1152170daf0d32d19407fa106b` |
-| Node tests | `4c92e3dabad573b517871e9083de2595d74285e8a9a61c68d5eec628d6b61a1c` |
-| Runbook | `4e64e38a0bd1526682045d192729e02d7eed6e1fbdcddaef3e07bac0bd2cf02c` |
+| Python tests | `4abc0857e26b1332ada2b8ca5b29ec2db742bc903cc016bf002ecc3d63fd26fc` |
+| Node tests | `e02d12ac4362cd2b1530c26073dc05e73a2697b3b31bbe4b0640d592f41601b1` |
+| Runbook | `625c88e63f23fb7a02a33d67cc5b9dcf0018e203e41155f7c8d4722bef0835c1` |
 | ImageIO source | `238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b` |
 | Vision OCR source | `19f6787f4523332b5eb8a4235c4461fee5e49314c615b4865cc9ec848f2a2861` |
 
@@ -122,7 +124,9 @@ gui_dispatches=0
 - 既有離線核心曾為 45 Python tests；本輪加入 small manifest、fast metadata resume、target-only verify、blocker 順序與 crash 邊界後，增至 49，全數通過。
 - 實作後自我審查發現：有 blocker 時仍可能暴露後方 `VERIFYING` 為 next safe；已改為 blocker 存在時 next safe 一律 null，並加入回歸測試。
 - 未證明實體斷電、macOS reboot 或真實程序終止後的 durability；只使用 `kill`／atomic fault injection 與合成 filesystem。
+- 本輪修正：Python `MAX_TASK_ALBUMS` 原為 10,000，而 Node 每條 response line 限 1 MiB；完整 `resume_state` 陣列隨相簿數增長。以 1,000 本 fixture 量到 response envelope 172,279 bytes；Node 真實 Python controller 整合測試在相同上限完成 hello 與 reconcile。上限設為 1,000，保留原 100 本 AC 並留有回覆容量餘裕。
 - 未證明真實 LINE 畫面、fresh screenshot／AX／Vision OCR、scroll、menu identity、chooser 目的地或實際點擊 correspondence。
+- 真實 Mac 唯讀 CUA smoke：`NOT_RUN`；Owner 表示正在使用電腦，已提出短暫 LINE 前景控制權申請，尚未開始 GUI 操作。
 - 未證明真實相簿 80/80 檔案的 SHA-256、ImageIO、VERIFIED readback 或 release。
 - 兩本不同 eligible 新相簿的 F → reboot → G 實機流程：`NOT_RUN`。
 - 外部 Code Review 對 `4ba44a8` 的新一輪審查：`NOT_RUN`；本報告不把前一輪 `a03bf50` 的審查轉移到新 HEAD。

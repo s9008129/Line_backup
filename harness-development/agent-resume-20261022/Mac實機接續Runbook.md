@@ -1,6 +1,6 @@
 # Mac LINE 中斷接續 Runbook
 
-適用版本：PR #32、`implement/agent-resume-p0-20261022`；已驗證的程式來源為 `4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`（之後的 docs-only commit 不改變程式）。
+適用版本：PR #32、`implement/agent-resume-p0-20261022`；本輪 JSON-lines 容量修正與精確來源 SHA-256 綁定於同 task 的 E2E 測試報告及 `evidence/source-sha256.txt`。
 本文件只描述既有 CLI／Node wrapper；不是 Save All 授權，也不代表實機 E2E PASS。
 
 ## 1. 開始前固定事實
@@ -14,7 +14,7 @@ export ROOT="$HOME/Library/Application Support/LineBackup/agent-resume"
 
 必須同時具備：正確 task、當次 Mac 前景授權、LINE 群組／視窗可辨識、Owner 對新的 eligible 相簿授權。缺少任一項就停止，不以舊 Session 記憶或舊點位補足。
 
-若 task 尚未建立，只可使用既有的 history barrier 與 Owner ordered manifest；空 manifest 會被拒絕，1～10,000 本均可：
+若 task 尚未建立，只可使用既有的 history barrier 與 Owner ordered manifest；空 manifest 會被拒絕，最多 1,000 本，以符合 Node JSON-lines 1 MiB 回覆限制：
 
 ```sh
 /usr/bin/python3 -B scripts/line_backup_agent_resume.py \

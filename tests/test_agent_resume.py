@@ -1111,6 +1111,35 @@ class ResumeCoreTests(unittest.TestCase):
                 resume.create_task(root, empty_path)
             self.assertEqual(caught.exception.code, "TASK_MANIFEST_EMPTY")
 
+    def test_maximum_manifest_fits_cua_hello_line_and_one_over_is_rejected(self) -> None:
+        with home_temporary_directory() as temporary:
+            root = Path(temporary).resolve() / "agent-resume"
+            task_id = "AGENT-RESUME-TEST-MAX-PAYLOAD"
+            create_active_runtime_fixture(root, task_id, resume.MAX_TASK_ALBUMS)
+            state = resume.inspect_task(root, task_id)
+            request = {
+                "request_id": "request-fixture",
+                "session_id": "session-fixture",
+                "operation": "hello",
+            }
+            response = resume._response(request, {"resume_state": state})
+            response_bytes = len(resume.canonical_json(response))
+            self.assertEqual(state["album_count"], resume.MAX_TASK_ALBUMS)
+            self.assertLessEqual(response_bytes, resume.MAX_LINE_BYTES)
+
+            checkpoint_before = (root / "checkpoint.json").read_bytes()
+            oversized = build_custom_manifest(
+                "AGENT-RESUME-TEST-OVER-MAX-PAYLOAD",
+                [],
+                active_count=resume.MAX_TASK_ALBUMS + 1,
+            )
+            manifest_path = root.parent / "over-limit-manifest.json"
+            write_json(manifest_path, oversized)
+            with self.assertRaises(resume.InputError) as caught:
+                resume.create_task(root, manifest_path)
+            self.assertEqual(caught.exception.code, "TASK_MANIFEST_TOO_LARGE")
+            self.assertEqual((root / "checkpoint.json").read_bytes(), checkpoint_before)
+
     def test_fast_resume_skips_49_verified_then_verifies_only_50(self) -> None:
         with home_temporary_directory() as temporary:
             base = Path(temporary).resolve()

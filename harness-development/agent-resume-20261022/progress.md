@@ -1,5 +1,11 @@
 # AGENT-RESUME-P0-20261022 progress
 
+- 2026-10-23 handoff-2 接續：read-only inspection 發現 `MAX_TASK_ALBUMS=10,000`，但 CUA 每條 JSON response 限 1 MiB，hello 會帶完整逐相簿狀態；原 100 本測試與 fake hello 未涵蓋此容量交界。
+- 最小修正：上限改為 1,000；1,000 本 synthetic `resume_state` envelope 實測 172,279 bytes；1,001 本回 `TASK_MANIFEST_TOO_LARGE` 且 checkpoint bytes 不變。Node 真 Python controller 在 1,000 本下完成 hello/reconcile，回傳 1,000 entries。
+- 本輪本機回歸：Python 50/50 PASS（48.759s）、Node 18/18 PASS（8206ms）；Python compile、Node syntax、`git diff --check` PASS。詳見新 evidence files。
+- 真實 LINE GUI／Mac CUA Smoke、Save All、下載及照片驗證均未執行。Owner 表示正在用電腦；已提出只讀 Smoke 的短暫 LINE 前景控制權申請，等待回覆，不再操作 GUI。
+- 最終程式 commit、feature CI exact-head、Code Review handoff 與 PR #32 合併尚未完成；舊 `505c960` 的 CI 不會被說成新 HEAD 的 CI。
+
 - Plan v2.1 SHA 已核對；Owner 已記為 `EXTERNAL_PLAN_REVIEW=OWNER_WAIVED`。此豁免不代表新 HEAD 的 Code Review 或 E2E 已核准。
 - Feature 從 master `64515eb56b04accc40ade9e2db2fe0ad18c1ced3` 的 external clean worktree 建立，未改動原 dirty repo；本輪基線為 `a03bf50`。
 - 本輪已驗證程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`。前一輪 Code Review 為 `CHANGES_REQUIRED_BEFORE_APPROVE_IMPLEMENTATION`，本輪只處理 small manifest、ambiguous chooser crash 與 runbook 三個 bounded 缺口。

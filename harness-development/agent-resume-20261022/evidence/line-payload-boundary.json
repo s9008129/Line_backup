@@ -1,0 +1,21 @@
+{
+  "task_id": "AGENT-RESUME-P0-20261022",
+  "observation": "Synthetic-only JSON-lines capacity regression on PR #32 head 505c960f18cb0c1d143efbb86acdd4580e2adf69",
+  "max_task_albums": 1000,
+  "measured_resume_state_response_envelope_bytes": 172279,
+  "node_max_response_line_bytes": 1048576,
+  "capacity_ratio": 0.16429805755615234,
+  "over_limit_album_count": 1001,
+  "over_limit_result": "TASK_MANIFEST_TOO_LARGE",
+  "checkpoint_bytes_unchanged_on_over_limit": true,
+  "real_python_controller_wrapper": {
+    "albums": 1000,
+    "hello": "PASS",
+    "reconcile": "PASS",
+    "reported_album_entries": 1000,
+    "test": "real controller hello and reconcile fit the CUA line limit at 1,000 albums"
+  },
+  "gui_observations": 0,
+  "gui_dispatches": 0,
+  "scope_note": "The 172279-byte measurement covers the serialized JSON response envelope containing resume_state; the Node integration test separately verifies the complete hello and reconcile responses fit its parser. No LINE UI or backup data was accessed."
+}

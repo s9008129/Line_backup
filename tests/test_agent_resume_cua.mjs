@@ -231,7 +231,7 @@ resume._atomic_json_write(root / "checkpoint.json", store)
 
 active_base = dt.date(2025, 1, 1)
 albums = []
-for index in range(100):
+for index in range(int(os.environ.get("ALBUM_COUNT", "100"))):
     ordinal = index + 1
     if ordinal <= 49:
         day = history_base + dt.timedelta(days=ordinal - 1)
@@ -268,7 +268,7 @@ resume.create_task(root, manifest_path)
 print(json.dumps({"generation": resume.read_store(root)["generation"]}))
 `;
 
-function createResumeFixture(taskId) {
+function createResumeFixture(taskId, albumCount = 100) {
   const home = mkdtempSync(join(tmpdir(), 'agent-resume-cua-'));
   const setup = spawnSync('/usr/bin/python3', ['-c', fixtureScript], {
     encoding: 'utf8',
@@ -277,6 +277,7 @@ function createResumeFixture(taskId) {
       HOME: home,
       REPO_ROOT: process.cwd(),
       TASK_ID: taskId,
+      ALBUM_COUNT: String(albumCount),
     },
     timeout: 30_000,
   });
@@ -430,6 +431,34 @@ test('M0 fixed-root JSON-lines session capabilities', async t => {
       await stopFakeHost(secondHost);
     }
   });
+});
+
+test('real controller hello and reconcile fit the CUA line limit at 1,000 albums', async t => {
+  const taskId = `AGENT-RESUME-MAX-LINE-${randomUUID()}`;
+  const originalHome = process.env.HOME;
+  const fixture = createResumeFixture(taskId, 1_000);
+  process.env.HOME = fixture.home;
+  t.after(() => {
+    if (originalHome === undefined) delete process.env.HOME;
+    else process.env.HOME = originalHome;
+    rmSync(fixture.home, {recursive: true, force: true});
+  });
+
+  const host = await startFakeHost();
+  let session;
+  try {
+    session = await openAgentResumeSession({taskId, host: host.identity, app: fakeApp});
+    assert.equal(session.preflightResult.album_count, 1_000);
+    const state = await session.reconcile();
+    assert.equal(state.album_count, 1_000);
+    assert.equal(state.albums.length, 1_000);
+    await session.close();
+  } finally {
+    if (session && !session.closed) {
+      try { await session.close(); } catch {}
+    }
+    await stopFakeHost(host);
+  }
 });
 
 test('fake controller protocol failures are terminal and never gain GUI retry', async t => {
