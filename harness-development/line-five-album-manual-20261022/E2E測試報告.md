@@ -226,3 +226,17 @@ Owner 本輪只授權 B78、C77、D42、E87 各一次真實 Save All；A45 僅�
 1. 將本報告、`public/evidence-index.json`、五本公開 manifest 與 evidence hash manifest 隨 Draft PR 交付 Owner 指定的外部 ChatGPT Chief Reviewer。
 2. Reviewer 核對精確 commit HEAD、四本各一次 Save All、284/284 檔案與 decoder hash、正式 state hash 不變。
 3. 本 MANUAL_DIAGNOSTIC 不升級成正式 `TWO_ALBUM_AUTO`；若要正式自動化，另立有界 Plan，使用新的 eligible 相簿與新的交易授權，不重用本輪已下載的四本。
+
+## 12. Owner 授權的一次取消診斷（未派送）
+
+2026-10-23 另一次 MANUAL_DIAGNOSTIC 取得 Owner 明確前景交接後，以新的 LINE 列表與詳細頁核對指定候選身分。為該次測試建立新的隔離目的地，派送前確認為空。公開報告省略相簿日期、群組與本機目的地；原始畫面未上傳。
+
+- 相簿詳細頁身分核對：PASS。
+- 打開相簿溢位選單：BLOCKED；重新依當前畫面定位後仍未顯示選單，故停止輸入。
+- Save All 派送：0 次；取消：未執行。
+- 隔離目的地：派送前與停止後均為 0 檔、0 bytes；未產生部分下載。
+- 繼續／重新下載選項：未觀察；原生缺檔接續：`NOT_TESTED`。
+- 未觀察到重複下載或覆寫；正式 Task、checkpoint、VERIFIED 狀態與既有照片未操作。
+- 去識別化本機證據備忘錄 SHA-256：`be4f2ad22bd052e964a1b94af38355e50394dd9a5bfe060ea054ed306c168fd0`。本次沒有下載照片；原始截圖未提交，僅於當次工具觀察。
+
+下一步：以 fresh frame 重新定位並驗證選單控制項可正常打開；此校準確認前不得派送 Save All。此阻塞結果不改寫上方五本相簿已完成的歷史結果，也不代表中斷接續測試已執行。
