@@ -1,24 +1,13 @@
 name: Rev28 macOS 27 pre-live
 
 on:
-  push:
-    branches:
-      - master
-      - rev28-prelive-finalization
-    paths:
-      - "rev28/**"
-      - "src/line_backup_acceptance/**"
-      - "tests/build_inspection_fixtures.py"
-      - "tests/fixtures/project_inspection/**"
-      - ".github/workflows/rev28-macos27.yml"
   workflow_dispatch:
-  pull_request:
-    paths:
-      - "rev28/**"
-      - "src/line_backup_acceptance/**"
-      - "tests/build_inspection_fixtures.py"
-      - "tests/fixtures/project_inspection/**"
-      - ".github/workflows/rev28-macos27.yml"
+    inputs:
+      approve_cloud_runner:
+        description: "I explicitly authorize this cloud runner execution"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -29,6 +18,7 @@ concurrency:
 
 jobs:
   deterministic:
+    if: ${{ github.actor == 's9008129' && inputs.approve_cloud_runner }}
     name: Deterministic Swift contract
     runs-on: xcode-27
     timeout-minutes: 20
@@ -110,6 +100,7 @@ jobs:
           if-no-files-found: warn
 
   headed-macos27:
+    if: ${{ github.actor == 's9008129' && inputs.approve_cloud_runner }}
     name: Headed macOS 27 capability + W2 item 5
     needs: deterministic
     runs-on: xcode-27
