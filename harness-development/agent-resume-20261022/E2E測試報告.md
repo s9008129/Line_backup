@@ -1,9 +1,9 @@
 # AGENT-RESUME-P0-20261022：Fast Interrupted Download Resume
 
 - 日期：2026-10-23（Asia/Taipei）
-- 目標：Mac 重開機、Codex Session 中斷或程序終止後，新 Session 只靠唯一 canonical checkpoint 找到第一個尚未安全完成的相簿，跳過既有 VERIFIED，安全接續下載。
-- 基線：`a03bf504a2ea0f315d8f56c25f685e97e5410007`；branch `implement/agent-resume-p0-20261022`；Draft [PR #32](https://github.com/s9008129/Line_backup/pull/32)，base `master`。
-- 修正前程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`；payload 上限修正 commit：`a247550fb9cdc42e4d68fc7c827f0d24b311f0c2`；本輪 review-fix source commit：`8eb52208422fd824dea04079b916b275ac0afeb0`；exact-head CI 已在來源／文件快照 `f3e8d42` 驗證。
+- 目前目標（Owner 2026-10-23 更正）：不重開 Mac；取消下載中的任務，再執行同一任務時，辨認相簿總數、已完成相簿及中斷位置，跳過已 VERIFIED 相簿並安全接續。不得把既有的 reboot／new-session 測試描述當成本次驗收條件。
+- 基線：`a03bf504a2ea0f315d8f56c25f685e97e5410007`；branch `implement/agent-resume-p0-20261022`；Draft [PR #32](https://github.com/s9008129/Line_backup/pull/32)，base `master`。本次實機觀察前 PR head 為 `72c328c6dcd5257a2fc77c913c3080876cd87be1`。
+- 修正前程式 HEAD：`4ba44a8b4eda1f500c0eeb4386b774e6c27233dc`；payload 上限修正 commit：`a247550fb9cdc42e4d68fc7c827f0d24b311f0c2`；本輪產品 source commit：`c501ee4947edf7975fae8f03e4b39b48a13bf4d5`；該 exact-head CI 為 [run 39897242576](https://github.com/s9008129/Line_backup/actions/runs/39897242576)，三個 job 成功。其後 `9b03500`、`72c328c` 是 CI consent／文件提交，沒有產品 source 修改；本輪未手動重跑 CI。
 - 沿用 Plan v2.1（SHA-256 `4ba9be2daf887aa8a65a0255e337da5bff8d0ae5aa2d5ada13990f5c85b76502`）；沒有新增第二份計畫、資料庫、cursor store、daemon 或 GUI framework。
 - 前一外部 Code Review 綁定 `a03bf50`，結論為 `CHANGES_REQUIRED_BEFORE_APPROVE_IMPLEMENTATION`；本輪只處理 R32-01 small manifest、R32-02 ambiguous chooser crash、R32-03 runbook 三個 bounded 缺口。**目前 HEAD 尚未取得新的外部 Code Review 核准。**
 
@@ -106,9 +106,9 @@ PR #32 的來源／文件快照 `f3e8d42e4d49ba78d52b49c4896d1bc847a317a4`（Dra
 
 | 項目 | SHA-256 |
 |---|---|
-| Python controller | `1d983426767dc9621b4858cdde1947abd85215dd8941b213c82c5268be61b0d1` |
+| Python controller（source `c501ee4`） | `e81bd218c7d981d4b3f069dade955aff0531995cc0f89a751f8135ca3155bf1c` |
 | Node wrapper | `bfd2cdceffe7e4af2e506133b76989f280a47133d794e4c0e7d5777ffe3fb585` |
-| Python tests | `e32fb1edc3962a965886fcbbb19b03afb7d681914b44269e4fead2e785bfe1aa` |
+| Python tests（source `c501ee4`） | `bee788d5436e71fb1b75a5b2dc0e8fe7bc5344e7171cc18928a681566be44900` |
 | Node tests | `e02d12ac4362cd2b1530c26073dc05e73a2697b3b31bbe4b0640d592f41601b1` |
 | Runbook | `625c88e63f23fb7a02a33d67cc5b9dcf0018e203e41155f7c8d4722bef0835c1` |
 | ImageIO source | `238e97415d84cdc9c426ef7d0b1f52f4786329b06d91616ad10b5a2bbb44ff8b` |
@@ -136,10 +136,10 @@ PR #32 的來源／文件快照 `f3e8d42e4d49ba78d52b49c4896d1bc847a317a4`（Dra
 - 本輪修正：Python `MAX_TASK_ALBUMS` 原為 10,000，而 Node 每條 response line 限 1 MiB；完整 `resume_state` 陣列隨相簿數增長。先以一般 1,000 本 fixture 量到 172,279 bytes，再以最大身份／反射 ID 及全量歷史摘要投影測得 182,926／544,449 bytes。Node 真實 Python controller 整合測試在 1,000 本下完成 hello 與 reconcile。上限設為 1,000，保留原 100 本 AC。
 - 回覆邊界複核：獨立檢查發現 `next_safe_album_identity`、反射 IDs 及 persisted history `source_kind` 都需有界。identity text 上限為 256／1,024／256 UTF-8 bytes，request/session IDs 128 bytes，history source_kind 32 bytes。最大 identity／ID envelope 為 182,926 bytes；1,000 本全帶最大 escaping 歷史摘要 envelope 為 544,449 bytes。超限 album 數、identity、reflected ID、history source_kind 均拒絕或 fail closed。獨立二次來源審視未發現其他無界成功回覆欄位；非 GitHub 審查事件，詳見 [review receipt](evidence/payload-review-20261023.txt)。
 - 真實 Mac 唯讀 CUA smoke：`PARTIAL_OBSERVED`。Owner 當次同意後，讀取 LINE 前景相簿列表的 AX 與畫面；零 UI 輸入、零派送。當時看見的 65 張相簿未操作，符合已知排除政策。未保存原始截圖，避免將私人相簿內容納入 PR。
-- Canonical runtime 根目錄存在但沒有 `checkpoint.json`，因此 Python `inspect`／`reconcile` 與 Node-Python `hello` 整合尚未在使用者 runtime 執行。Node wrapper `hello` 會建立 `SESSION_OPENED`／session owner 狀態，並非唯讀；本次沒有執行或初始化 checkpoint。這是目前第一個實機整合阻塞。
+- Canonical runtime 已初始化並匯入既有歷史；本次建立兩本相簿的正式任務後，checkpoint 為 generation 2。唯讀 `inspect` 前後一致，未執行會建立 `SESSION_OPENED`／session owner 狀態的 Node wrapper `hello`。本次可用的 CUA app handle 不能傳給要求既有 PR28 host／`app.click()` 的 Node wrapper，這是交易測試的整合阻塞。
 - 未證明 Vision OCR、列表捲動、menu identity、chooser 目的地或實際點擊 correspondence；沒有執行 Save All、Chooser、下載或照片讀取。
 - 未證明真實相簿 80/80 檔案的 SHA-256、ImageIO、VERIFIED readback 或 release。
-- 兩本不同 eligible 新相簿的 F → reboot → G 實機流程：`NOT_RUN`。
+- Owner 更正後的兩本相簿取消／同任務重跑／從中斷位置接續流程：`NOT_RUN`。
 - PR #32 exact-head CI 在 `80596cf` 三 job 全通過。沒有目前 HEAD 的 GitHub approval；目前只有舊 `a03bf50` 的 COMMENTED review。branch-protection endpoint 回 403，review 要求未知；本地 read-only source audit 不是 GitHub approval。
 
 ## 6. Overengineering Audit
@@ -151,6 +151,16 @@ PR #32 的來源／文件快照 `f3e8d42e4d49ba78d52b49c4896d1bc847a317a4`（Dra
 
 ## 7. 下一個安全動作
 
-1. 由 Owner 指定的外部 Reviewer 對 exact source `8eb5220`、docs head `80596cf`、報告及 hash receipts 做 bounded re-review。若平台要求新 approval，需取得真實 review；分支保護查詢為 403，不能推定不需要 review或自行批准。
-2. 審查通過後，Owner 另啟全新、獨立的 DeepSeek `deepseek-v4.1-flash:1017` Session，依 [Mac實機接續Runbook.md](Mac實機接續Runbook.md) 先完成新相簿 F、重開 Mac、新 Session 快速跳過 F，再以 fresh GUI identity 定位不同的 eligible G。
-3. F／G 未完成前維持 `CORE_ACCEPTANCE_STATUS=PARTIAL_OFFLINE_ONLY`；任何 UNKNOWN／PARTIAL 只輸出精確 blocker，不重送、不刪 checkpoint、不繞過 pending input。
+1. 目前 source `c501ee4` 的 exact-head CI 三個 job 已通過；PR 最新 HEAD 的外部 Code Review 仍未核准。此觀察不是正式 E2E，也沒有進行 Save All。
+2. 部分下載目前回 `BLOCKED_PARTIAL` 並禁止重下；要達成 Owner 的取消後接續需求，先由 Planner 提出最小、可審查的恢復規則，再交獨立審查者核對交易與重複下載邊界。
+3. 在既有 PR28 host／app handle 可由執行入口提供，且部分下載接續行為完成核准與實機驗證前，維持 `CORE_ACCEPTANCE_STATUS=PARTIAL_OFFLINE_ONLY`；UNKNOWN／PARTIAL 時保留資料並停止派送。
+
+## 8. 2026-10-23 真實 LINE 畫面核對（OBSERVED；非 E2E）
+
+- Owner 交付電腦控制權後，以 `mcp__cua_repl` 對當前 LINE 視窗重新取得 AX／畫面。畫面中的群組及兩本 Owner 選定目標均與本機 manifest 相符；公開紀錄遮蔽相簿標題、日期、張數與照片內容。
+- 在相簿列表做一次 0.25-page 向下捲動，AX 捲軸從 3991 變為 4531；看到另一個目標卡片完整顯示。以卡片標題進入詳細頁，畫面再次顯示與 Owner 提供資料一致的標題及照片總數。按 Escape 返回列表；向上 0.25 page 後，以同樣方法核對另一個目標詳細頁，再返回列表。
+- 有一次捲動因使用過期 AX element ID 失敗，工具明確在派送前拒絕該 ID；重新讀取 AX 後使用當下 ID 成功。沒有重送任何結果不明的輸入。
+- 任務唯讀 `inspect` 前後皆為 generation `2`、兩本 `NOT_STARTED`、`READY_TO_DISPATCH`、`pending_input=false`、`gui_dispatches=0`；任務下載目錄檔案數為 0。239 張歷史 VERIFIED 照片未讀寫、未重下載。LINE 前景中沒有 Save All、Chooser、取消下載或照片下載操作。
+- CUA 回傳的私人相簿畫面只在本對話操作期間可見，沒有存入 repo 或上傳；因此原始畫面沒有可提供的檔案 SHA-256。去識別化操作紀錄與 runtime 摘要見 [line-cancel-resume-observation-20261023.txt](evidence/line-cancel-resume-observation-20261023.txt)，SHA-256 `b9b03faa601a12948d40d481dfc283f705222a3cef91ed86737484ce46d408b`。這是實際 GUI `OBSERVED`，不是 CUA wrapper PASS、下載驗證或正式 E2E。
+- source `c501ee4947edf7975fae8f03e4b39b48a13bf4d5` 的既有狀態推導在收到已確認的部分 inventory 時會回傳 `BLOCKED_PARTIAL`／`INCOMPLETE_DOWNLOAD`，並要求保留檔案及停止，不會從相簿內未完成位置繼續。對應程式 `scripts/line_backup_agent_resume.py:_derive_album_state`、回歸案例 `tests/test_agent_resume.py::test_partial_50_blocks_whole_task_and_preserves_32_files`；這些是既有程式／離線測試證據，本輪沒有執行該測試。
+- 本次真實取消／重跑接續測試：`NOT_RUN`；實際 Save All 派送 `0`、下載 `0`。第一個 blocker 是既有 Node wrapper 需要 PR28 host 內可呼叫的 `app.click()` handle，而本次可用的 CUA app handle 位於獨立工具工作階段，不能傳給該 wrapper；另有上述部分 inventory 目前 fail-closed 而不接續的產品缺口。沒有以手動點擊繞過交易入口。

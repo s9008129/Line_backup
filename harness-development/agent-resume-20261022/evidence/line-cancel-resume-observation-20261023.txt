@@ -1,0 +1,33 @@
+LINE cancellation/resume observation — 2026-10-23
+Classification: OBSERVED only; no download or formal E2E.
+
+Privacy
+- Album titles, dates, photo counts, group name, images, file names, and local personal paths are intentionally omitted.
+- CUA screenshots were visible only during the live tool session. They were not retained or uploaded, so they have no file hash.
+
+Implementation binding
+- PR #32 branch at observation: implement/agent-resume-p0-20261022
+- PR head observed before this evidence update: 72c328c6dcd5257a2fc77c913c3080876cd87be1
+- Product source used for read-only inspection: c501ee4947edf7975fae8f03e4b39b48a13bf4d5
+- scripts/line_backup_agent_resume.py SHA-256: e81bd218c7d981d4b3f069dade955aff0531995cc0f89a751f8135ca3155bf1c
+- scripts/line_backup_agent_resume_cua.mjs SHA-256: bfd2cdceffe7e4af2e506133b76989f280a47133d794e4c0e7d5777ffe3fb585
+
+Observed LINE interactions
+1. Reattached to the current LINE app and obtained fresh AX state plus screenshot.
+2. Album list AX exposed 101 rows and a scrollbar value of 3991. The current group and owner-selected album cards were visible; identifying text is redacted here.
+3. One 0.25-page downward scroll changed the AX scrollbar value from 3991 to 4531. The second owner-selected card became fully visible. Opened its title area and the detail page matched the owner-provided album identity and total count.
+4. Pressed Escape to return to the list. A scroll using a stale AX ID was rejected before input; refreshed AX, then one 0.25-page upward scroll returned the value from 4531 to 3991.
+5. Opened the first owner-selected card by its title area. Its detail page matched the owner-provided identity and total count. Pressed Escape and left LINE on the album list.
+
+Runtime readback before and after GUI observation
+- Command: existing PR #32 controller `inspect --task E2E-CANCEL-RESUME-20261023` (read-only).
+- Both readbacks matched: checkpoint generation 2; two albums; both NOT_STARTED; task READY_TO_DISPATCH; no first blocker; pending_input=false; gui_dispatches=0; verified photo count 0.
+- Task download directory contained zero files. The 239 historical VERIFIED photos were not read, written, deleted, or downloaded by this observation.
+
+Not performed
+- No Save All, Chooser, download, download cancellation, session hello, runtime mutation, or photo content verification.
+- Therefore cancellation/re-run resume is NOT_RUN. Current partial inventory behavior is documented separately in the main report and must not be inferred as an observed LINE download outcome.
+
+Tool trace
+- Tool: `mcp__cua_repl`, app `LINE`.
+- The original screenshots and raw image bytes were intentionally not saved; this redacted log is an observation summary, not a replacement image artifact.
