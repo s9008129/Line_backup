@@ -2,6 +2,12 @@ name: Rev28 V-09 independent review (external reviewer gate)
 
 on:
   workflow_dispatch:
+    inputs:
+      approve_cloud_runner:
+        description: "I explicitly authorize this cloud runner execution"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -14,6 +20,7 @@ concurrency:
 # manual-only until an independent reviewer provider is explicitly configured.
 jobs:
   input-gate:
+    if: ${{ github.actor == 's9008129' && inputs.approve_cloud_runner }}
     name: Freeze + provenance gate
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -67,6 +74,7 @@ jobs:
           retention-days: 90
 
   review:
+    if: ${{ github.actor == 's9008129' && inputs.approve_cloud_runner }}
     name: V-09 ${{ matrix.slug }}
     needs: input-gate
     runs-on: ubuntu-latest
@@ -298,6 +306,7 @@ jobs:
         run: exit 1
 
   aggregate:
+    if: ${{ github.actor == 's9008129' && inputs.approve_cloud_runner }}
     name: V-09 all topics approved
     needs: review
     if: always()
