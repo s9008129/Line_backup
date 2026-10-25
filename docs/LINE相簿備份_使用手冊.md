@@ -4,7 +4,33 @@
 
 把正確群組的「相簿列表」開在前景，告訴 Agent 照片要存在哪裡，就可以開始準備。不用輸入群組名稱，也不用核對中文辨識結果是否一字不差。
 
-**目前版本狀態：**已有真實 LINE 的導覽、儲存全部與照片驗證案例。本輪新增前景紀錄、完整列表對帳與相簿級恢復的本機候選實作；新群組正式下載仍缺受審的一般授權簽發入口。因此 Agent 可能先完成準備，再停在「儲存全部」之前，交代具體缺項；不能把這當作完整自動備份已驗收。
+**目前版本狀態：**已有真實 LINE 的導覽、儲存全部與照片驗證案例。本機 P3 候選可產生綁定來源／runtime／群組／相簿／目的地的審查準備資料、驗證受審與 Owner 簽章介面、持久預留一次 attempt，並用既有 ImageIO 驗證後寫回 `MANUAL_DIAGNOSTIC` 紀錄。正式執行所需的 reviewer／Owner／runtime 公鑰與可信外部簽發通道尚未由受信任管理者配置；任意 JSON、Agent 自選公鑰及測試 fixture 都不構成授權。故 production CLI 目前會 fail closed，Save All 與 CUA receipt bridge 尚未接通；不得把 P3 離線通過寫成實機或正式 AUTO 驗收。
+
+## P3 授權入口（目前 fail closed）
+
+P3 的準備、預留與完成讀回入口為：
+
+```sh
+PYTHONPATH=src python3 -m line_backup_batch.daily p3-prepare --root "$BACKUP_ROOT" --input <受信任準備資料>
+PYTHONPATH=src python3 -m line_backup_batch.daily p3-reserve --root "$BACKUP_ROOT" --input <受審核准資料>
+PYTHONPATH=src python3 -m line_backup_batch.daily p3-finalize --root "$BACKUP_ROOT" --input <runtime收據資料>
+```
+
+`prepare` 只整理待審資料，不授權下載。`reserve` 必須核對與實作版本綁定的獨立 implementation review、Owner 當輪 L2 範圍、群組 UUID、相簿身份、前景／歷史證據、目的地 mount/device/inode、runtime closure、有效期限、唯一 nonce 及一次 attempt 配額；完成檔案與 ImageIO 驗證後，`finalize` 才能寫回既有的人工診斷記錄。程式會在建立 intent 前做目的地與檔案系統檢查，並在預留不明或 crash 後永久阻止同 nonce 重送。
+
+一般使用者不可自行填 JSON、貼入聊天中的核准文字、修改目的地路徑或提供自選公鑰來取得授權。Production CLI 不接受測試 fixture 或 caller 自選 verifier；reviewer、Owner、runtime 三種簽章需由獨立角色的受信任公鑰驗證。目前尚無受信任管理者配置與外部簽發通道，production reserve／finalize 會停止。CUA runtime 尚未產生 P3 簽章收據，亦沒有可執行 Save All 的 P3 bridge；在這兩項完成並獲獨立實作審查前，禁止正式下載。
+
+## 第一次 51 張正式 E2E 的人工交接
+
+目標 51 張相簿尚未完成實機身份核對。既有唯讀 preflight 記錄目的地磁碟未掛載、目的地尚不存在，且群組 UUID、前景證據、審查與 runtime grant 都缺少；本輪沒有讀取照片或操作 LINE。開始正式 E2E 前，Owner 需在當輪指定：
+
+1. 將正確群組的相簿列表交到 Mac 前景，並指定實際備份目的地；**不需要輸入 GROUP_NAME**。前景交接成立後，Agent 以當下畫面核對群組與日期／張數，不沿用舊座標。
+2. 確認真正目的地磁碟已掛載。Agent 在寫入前重新檢查 canonical path、mount、device、inode、空白新 attempt 目錄及硬連結／原子建立／fsync／flock 能力；實際 NTFS 尚未驗證，能力檢查失敗就停止。
+3. 先完成核准來源、runtime closure 與三個獨立簽章角色的可信配置，再取得精確 implementation commit 的外部 Code Review 和 Owner 對此群組／相簿／目的地的一次 L2。手動 Prompt 或一般 JSON 不代替 grant。
+4. 只在所有 gate 通過且 fresh 詳細頁再次核對為 51 張後派送一次 Save All。下載完成後逐檔核對數量、SHA-256、既有 ImageIO 完整像素解碼及持久狀態讀回；不得把人工測試升格正式 AUTO。
+5. Save All 派送結果若為 `UNKNOWN`，立即停止且不重送。只有清楚記錄 `STOPPED`／`NOT_SENT`、保留原始部分檔案，並取得對原 attempt 的新 scoped recovery 授權後，才能用另一個新空白目錄開始恢復。
+
+目前因可信 authority channel 與 P3/CUA receipt bridge 未接通，51 張正式 E2E 是 `BLOCKED`；以上是之後的人工交接條件，不構成本輪授權或已完成證據。
 
 ## 第一次使用前
 

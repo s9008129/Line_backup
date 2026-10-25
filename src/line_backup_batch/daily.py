@@ -569,10 +569,19 @@ def verify_directory(destination, expected, decoder, decoder_sha256):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('operation', choices=['init', 'bind', 'history', 'scan', 'page', 'detail',
-                                             'intent', 'outcome', 'verify', 'summary', 'authorization-request'])
+                                             'intent', 'outcome', 'verify', 'summary', 'authorization-request',
+                                             'p3-prepare', 'p3-reserve', 'p3-finalize'])
     parser.add_argument('--root', required=True)
     parser.add_argument('--input', help='Private JSON input, using the method argument names in daily.py')
     ns = parser.parse_args(argv)
+    if ns.operation in ('p3-prepare', 'p3-reserve', 'p3-finalize'):
+        if not ns.input:
+            print(json.dumps(dict(status='REFUSED', reason='P3_INPUT_REQUIRED',
+                                  dispatch_authorized=False)))
+            return 4
+        from .p3 import main as p3_main
+        return p3_main([ns.operation.removeprefix('p3-'), '--root', ns.root,
+                        '--input', ns.input])
     try:
         methods = {'init': 'initialize', 'scan': 'start_scan', 'verify': 'complete',
                    'authorization-request': 'authorization_request'}

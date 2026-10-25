@@ -1,0 +1,100 @@
+P3-SCOPED-GRANT-MVP-20261025 — redacted public test results
+Raw logs remain in this task package's ignored private/logs directory. This file lists
+per-test outcomes without machine-specific absolute paths or private fixture paths.
+
+P3 focused: `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -B -m unittest tests/test_p3_scoped_authorization.py`
+Exit 0; 15 tests; 15 PASS; 0 FAIL.
+
+PASS test_valid_scoped_flow_reserves_one_attempt_and_never_dispatches
+PASS test_same_grant_cannot_be_reused_with_a_fresh_nonce
+PASS test_nonce_path_traversal_and_stale_record_head_are_rejected
+PASS test_expired_missing_tampered_wrong_scope_and_review_owner_fail_closed
+PASS test_python_swift_javascript_skill_runtime_and_commit_mismatches_refuse
+PASS test_mount_inode_replacement_and_destination_binding_refuse
+PASS test_nonce_burn_survives_crash_and_hardlink_durability_failure
+PASS test_stopped_attempt_requires_new_scoped_recovery_and_keeps_original
+PASS test_unmounted_or_symlink_path_and_durability_error_are_refused
+PASS test_actual_destination_inode_replacement_is_refused
+PASS test_production_cli_has_no_fixture_authority_and_fails_closed
+PASS test_real_ed25519_signature_verifies_and_tamper_is_rejected
+PASS test_existing_unknown_and_completed_attempts_never_replay
+PASS test_synthetic_51_signed_receipt_imageio_and_persistent_readback
+PASS test_synthetic_51_imageio_rejects_corrupt_content_without_completion
+
+Daily records: `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -B -m unittest discover -s tests -p test_daily_records.py`
+Exit 0; 19 tests; 19 PASS; 0 FAIL.
+
+PASS test_identity_needs_visual_disambiguator_not_name_ocr
+PASS test_destination_group_and_session_bindings_are_separate
+PASS test_imported_history_never_crosses_group_even_for_identical_cards
+PASS test_unsupported_history_is_protected_unknown_and_cannot_make_daily_pass
+PASS test_normalized_history_requires_matching_group_identity_and_photo_proof
+PASS test_source_with_wrong_normalized_group_is_protected_not_completed
+PASS test_full_ordered_overlap_deduplicates_cards_but_does_not_imply_completion
+PASS test_no_top_no_overlap_reorder_and_ambiguous_same_page_are_refused
+PASS test_same_cards_alone_cannot_establish_bottom
+PASS test_unresolved_cards_and_missing_prior_scan_cards_prevent_completeness
+PASS test_new_session_requires_new_scan_not_old_cursor_or_coordinates
+PASS test_durable_unknown_survives_fresh_process_object_and_blocks_every_album
+PASS test_explicit_unknown_outcome_cannot_be_rewritten_as_stopped_or_not_sent
+PASS test_album_recovery_preserves_partial_files_and_requires_specific_authorization
+PASS test_real_imageio_duplicate_content_allowed_and_completed_never_redownloaded
+PASS test_count_mismatch_corrupt_content_and_decoder_drift_never_complete
+PASS test_symlink_destination_evidence_and_download_refused
+PASS test_cross_group_authorization_request_cannot_create_consent_review_or_grant
+PASS test_torn_event_or_changed_evidence_blocks_without_resetting_history
+
+CUA adapter: `node --test tests/test_cua_adapter.mjs`
+Exit 0; 22 tests; 22 PASS; 0 FAIL.
+
+PASS byte normalizer accepts foreign Uint8Array and honors byteOffset for Buffer views
+PASS byte normalizer rejects non-byte views, DataView, empty and oversized inputs
+PASS session capture hashes and retains the copied cross-realm bytes with the request interval
+PASS navigation observer uses the same copied-byte and request-time boundary
+PASS original pair contains only two clicks and timer; one-shot cannot replay
+PASS loaded JSON cannot mint a dispatch or chooser capability
+PASS fixture authority cannot mint a live app dispatch token
+PASS ellipse error never invokes SaveAll; all tokens stay consumed
+PASS SaveAll error is attempted once and prohibits replay
+PASS expired capture and expired second-click boundary both stop
+PASS correct chooser path and fresh control confirmed exactly once
+PASS wrong full path refuses navigation/confirmation
+PASS a stale field index is refused before typing
+PASS native scroll is limited to one quarter viewport per invocation
+PASS SCK pair and popup frames stay distinct and guard binds both ids
+PASS SCK capture refuses a popup frame equal to the pair frame
+PASS popup frame equal to the pair frame refuses before SaveAll
+PASS guard popup frame mismatch refuses before SaveAll
+PASS guard action point change refuses before SaveAll
+PASS menu callbacks are required before the ellipsis click
+PASS GUI ledger reserve precedes the ellipsis and consume follows SaveAll
+PASS exhausted GUI ledger refuses the dispatch with zero clicks
+
+rev28 Swift: `SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk swift test --package-path rev28`
+Exit 1; 334 tests; 317 PASS; 17 FAIL; 0 unexpected failures. All 17 failures are
+ProjectBackupBindingTests because LINE_BACKUP_INSPECTION_FIXTURES was absent. Each
+failed at the test's line 15 `XCTUnwrap`: expected non-nil String. The fixture directory
+was not available in this worktree, so no fixture path was guessed and this test run
+was not repeated. The other 317 Swift tests passed.
+
+FAIL ProjectBackupBindingTests.testActualProducerEligibleNeverDispatches — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testActualProducerVerifiedNeverDispatches — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testBusyUnresolvedAmbiguousAndDestinationReports — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testDigestForgeryRejected — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testDuplicateEscapedKeysAndInvalidUTF8Rejected — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testExternalAnchorMismatchRejected — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testManualArchiveMatchIsRejectedFailClosed — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testOriginalRequestForeignRootRejected — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testReanchoredDecisionAndFactsContradictionsRejected — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testReanchoredForgedFlagsRejected — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testReanchoredRawStateHistoryContradictionRejected — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testReanchoredReducedSourceSetRejected — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testReanchoredTargetAndAuthorityForgeryRejected — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testSourceTamperAndMissingMaterialRejected — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testStaleRawConfigAndStateRejected — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testUnknownContentCannotBecomeZero — missing fixture env (line 15)
+FAIL ProjectBackupBindingTests.testUnknownKeysVersionsAndRefusalRejected — missing fixture env (line 15)
+
+The P3 focused suite separately compiled the existing `image_decode.swift` and accepted
+51 valid synthetic PNG files; it rejected a 51-file set containing a corrupt PNG.
+This does not validate a real LINE download, external volume, NTFS, or formal VERIFIED state.
