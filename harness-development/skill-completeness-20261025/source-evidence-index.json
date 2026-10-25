@@ -1,25 +1,25 @@
 {
-  "scope": "Skill authoring and repository consolidation; no LINE operation",
+  "scope": "Skill default backup and automatic startup recovery; no live LINE operation",
   "files": [
     {
       "path": ".agents/skills/line-album-agent-cua/SKILL.md",
-      "bytes": 3930,
-      "sha256": "090960172812cd1a03b26db80c178daf5abec50124f117b57b2c4e5efab9e22c"
+      "bytes": 4407,
+      "sha256": "6a6f668277a47b6b0e6d7e6becfa119cb5fed460c7b66968a12a30dc4cd21e5a"
     },
     {
       "path": ".agents/skills/line-album-agent-cua/references/backup-and-resume.md",
-      "bytes": 9693,
-      "sha256": "89464daa199f355c3abea3fd5e9f187d52984963d6814cab088f7d814829c246"
+      "bytes": 12229,
+      "sha256": "2d1c28ad83f0fbc238db930b554a25c55090289ce5dff699e17c6eca6be3596a"
     },
     {
       "path": ".agents/skills/line-album-agent-cua/references/daily-backup.md",
-      "bytes": 9039,
-      "sha256": "2a27ee0cf3fa0e6585637dde2a554f973f442f60427d9940b1c985dc3456326f"
+      "bytes": 9172,
+      "sha256": "e9f46419a4d407bbe1d7246a1f9ace7d1f0997172d432f298a72a12de09f2820"
     },
     {
       "path": ".agents/skills/line-album-agent-cua/references/inventory.md",
-      "bytes": 5946,
-      "sha256": "ca635c96b68f894ffff642c5c30c22cd646fcf0e80df24a7b5769ad87d624eb3"
+      "bytes": 5435,
+      "sha256": "1a0501a23d642be1a5fea31b7a8d00e6b67a7cfaa70bfa8cb2ddf540008f595a"
     },
     {
       "path": ".agents/skills/line-album-agent-cua/references/legacy-formal.md",
@@ -33,13 +33,13 @@
     },
     {
       "path": "docs/LINE相簿備份_使用手冊.md",
-      "bytes": 4778,
-      "sha256": "f03cf75b39daa6e779bbc98270228a33bc0f2bda313af5948fab8f83838a5fd4"
+      "bytes": 5935,
+      "sha256": "067221a9379df389f68de941f09d3d23d89d31a5fce2d9017153421b407e5080"
     },
     {
       "path": "harness-development/skill-completeness-20261025/Skill審查與整理紀錄.md",
-      "bytes": 10799,
-      "sha256": "668e704c56579f8dd27fc66e3679bae9d95fa5cedb0b551d0857cf575baa0094"
+      "bytes": 12090,
+      "sha256": "fab70a8dacb968bc1cafd6a545625779fe21e7ae8a6c9dd4f868556b270970c4"
     },
     {
       "path": "scripts/agent_resume/modern_ocr.swift",

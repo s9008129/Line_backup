@@ -98,3 +98,11 @@ REQUIRED_VERIFICATION_STATUS=LINKS_YAML_DIFF_PASS_PYTHON_VALIDATOR_BLOCKED
 INDEPENDENT_ACCEPTANCE_STATUS=READ_ONLY_SCENARIO_CHECK_ONLY_NOT_FORMAL_E2E
 TASK_CLOSURE_STATUS=SKILL_SLICE_READY_REPOSITORY_CONSOLIDATION_IN_PROGRESS
 ```
+
+## 最新日常入口決策
+
+Owner 已進一步更正：不需要只盤點模式或使用者手填 RESUME。日常預設完成指定列表全部符合資格的相簿，每次啟動由 Agent 自查上次任務與實際檔案，判斷完成、下載中、待驗證、中斷或未知，並在初始任務授權內自動接續。先盤點是內部步驟，不是等待另一道下載指令的工作模式。
+
+已同步 Skill、盤點／接續／紀錄參考、唯一啟動提示詞及 README／AGENTS。規定本機 active-task 僅保存真實原紀錄位置，不複製一份游標或完成帳；索引不存在先找真實歷史，不當作空帳。只有實際建立任務時才寫索引，本次文件整理沒有偽造任務資料或實機結果。
+
+再由同一只讀 Skill 評估者前推三個新情境：初始授權涵蓋恢復且前次明確停止、前次 UNKNOWN 只有部分檔案、位置入口遺失但原保存位置仍有操作紀錄。文件能引導自動恢復已知停止的相簿、不要求 MODE／RESUME 或逐本重複同意；未知先查證不派送；入口遺失不初始化空帳。評估指出歷史來源查找順序太抽象，已補入有限位置的查找／多候選核對順序。此為文件行為檢查，不是實際下載或接續已成功的證明。

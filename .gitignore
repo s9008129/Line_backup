@@ -6,6 +6,7 @@ __pycache__/
 
 # Local machine settings and protected backup data are not public source.
 /.codex/
+/.local/line-backup/
 /state/
 /backups/
 /config/

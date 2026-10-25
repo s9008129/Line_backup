@@ -1,6 +1,6 @@
 # LINE 相簿 Agent 備份
 
-你人工開好 LINE 相簿列表、指定保存位置並授權，Agent 使用 [專屬 Skill](.agents/skills/line-album-agent-cua/SKILL.md) 先盤點、再備份，按相簿接續中斷任務。不以群組名稱辨識，不新增控制器。啟動方式只有 [使用手冊的提示詞](docs/LINE相簿備份_使用手冊.md)；只審查 Skill 或只盤點時不下載。
+你人工開好 LINE 相簿列表、首次指定保存位置並授權，Agent 使用 [專屬 Skill](.agents/skills/line-album-agent-cua/SKILL.md) 自動查明前次任務狀態，下載所有尚未完成且未排除的相簿，中斷就按相簿接續。不填 MODE／RESUME；完整盤點是下載前的內部步驟。不以群組名稱辨識，不新增控制器。唯一啟動入口是 [使用手冊的提示詞](docs/LINE相簿備份_使用手冊.md)；討論或審查 Skill 不會啟動下載。
 
 往後只維護 master。必要小工具沿用現有照片驗證與持久紀錄程式；下方 acceptance CLI 是保留的舊正式驗收工具，不是日常下載入口。舊研究來源與過時檔案的保存方式見 [整理紀錄](docs/專案整理紀錄.md)。新版完整盤點與相簿級接續尚需另行實機驗證，沒有在這輪整理中執行下載。
 

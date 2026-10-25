@@ -38,7 +38,7 @@ BACKUP_ROOT/
 
 `detail` 記錄當次詳細頁核對。`intent` 需最新相符 detail，會建立新空白 attempt 目錄並持久保留「可能派送／禁止重送」。回傳固定 `dispatch_authorized=false`：它只保留本地操作紀錄，不授予下載權限。日常 GUI 依 Owner 真實授權及前景交接；不得把這個回傳值改成 true，或把本地 reservation 當成程式 runtime grant。
 
-`outcome` 記 `UNKNOWN|NOT_SENT|STOPPED|DOWNLOAD_FINISHED`。預留 intent 後可記錄第一個實際已知結果；一旦寫入明確 `UNKNOWN`，該 outcome 不可由普通 outcome 改成 STOPPED／NOT_SENT，也不能因此自動恢復或重送。`DOWNLOAD_FINISHED` 只能進驗證。前次明確 STOPPED／NOT_SENT 後，另有該列表、該相簿、該 attempt 的 Owner 恢復授權，才可建立保留原檔的新空目錄；使用者授權與事實來源須真實，既有工具的拒絕不因文字簡化而解除。
+`outcome` 記 `UNKNOWN|NOT_SENT|STOPPED|DOWNLOAD_FINISHED`。預留 intent 後可記錄第一個實際已知結果；一旦寫入明確 `UNKNOWN`，該 outcome 不可由普通 outcome 改成 STOPPED／NOT_SENT，也不能因此自動恢復或重送。`DOWNLOAD_FINISHED` 只能進驗證。前次明確 STOPPED／NOT_SENT 且原任務授權涵蓋自動相簿級恢復時，Agent 依真實初始授權整理該列表／相簿／attempt 的恢復資料，再建立保留原檔的新空目錄；不用使用者逐本重下指令，既有工具的拒絕仍有效。
 
 恢復僅允許前次 `STOPPED|NOT_SENT` 且提供專屬 `recovery_authorization` 檔，內容：
 
@@ -53,7 +53,7 @@ BACKUP_ROOT/
 }
 ```
 
-此為輸入格式示意，不是有效同意。必須有真實 Owner 來源，不可由 Agent 自行預填批准。恢復會新增 attempt／新空白資料夾並引用前次；原檔全留。UNKNOWN 不受此檔覆蓋。日常 helper 只核對授權檔格式及所引來源仍存在；不驗證簽章，也不簽發 runtime grant。
+此為輸入格式示意，不是有效同意。必須引用 Owner 實際提交且涵蓋該任務自動恢復的初始授權；Agent 可整理條件符合與逐本綁定資料，不可捏造 Owner 曾另給一次批准。恢復會新增 attempt／新空白資料夾並引用前次；原檔全留。UNKNOWN 不受此檔覆蓋。日常 helper 只核對資料格式及所引來源仍存在，不驗證簽章，也不簽發 runtime grant。
 
 `verify` 需已知下載完成、當次 decoder path／SHA-256。沿用 `src/line_backup_batch/image_decode.swift`，可用已確認來源相同的既有 binary；需編譯時先確認編譯器和 SDK 相符，不修改系統 toolchain。三次間隔樣本一致、數量相符、逐檔非空 SHA-256、ImageIO 完整 RGB 解碼、decoder hash 與目錄事後重核全部通過，才追加 completion。重啟對完成檔做 metadata 核對，異動就停止而不重下載。
 
