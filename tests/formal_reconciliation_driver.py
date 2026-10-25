@@ -12,15 +12,9 @@ import sys
 from pathlib import Path
 
 
-WORKSPACE = Path("/Users/hsiaojohnny/Documents/ChatGPT/Line_backup")
+WORKSPACE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(WORKSPACE / "tests" / "automation_verification"))
 import harness as H  # noqa: E402
-PROJECT = Path("/Users/hsiaojohnny/Documents/Codex/2026-09-07/line-album-backup-line-backup-state")
-CONFIG = PROJECT / "config/line_backup_config.json"
-STATE = PROJECT / "state/backup_state.json"
-RUN_LOG = PROJECT / "state/run_log.md"
-DESTINATION = Path("/Users/hsiaojohnny/Downloads/LINE-Backup-PoC/album-2024-05-13_to_2024-05-17_57")
-GROUP = "line:jp.naver.line.mac:旻謙允禎成長日記"
 
 
 def digest(path: Path) -> dict:
@@ -60,16 +54,28 @@ def main() -> int:
     parser.add_argument("--baseline-pre", required=True)
     parser.add_argument("--baseline-post", required=True)
     parser.add_argument("--summary", required=True)
+    parser.add_argument("--project-root", required=True, type=Path)
+    parser.add_argument("--destination", required=True, type=Path)
+    parser.add_argument("--group-key", required=True)
+    parser.add_argument("--start-date", required=True)
+    parser.add_argument("--end-date", required=True)
+    parser.add_argument("--expected-images", required=True, type=int)
     ns = parser.parse_args()
+    project = ns.project_root.expanduser().resolve(strict=True)
+    destination = ns.destination.expanduser().resolve(strict=True)
+    config = project / "config/line_backup_config.json"
+    state = project / "state/backup_state.json"
+    run_log = project / "state/run_log.md"
     evidence = Path(ns.evidence_dir)
     evidence.mkdir(parents=True, exist_ok=True)
     verify_argv = ["/usr/bin/python3", "-m", "line_backup_acceptance", "verify-only",
-                   "--project-root", str(PROJECT), "--config", str(CONFIG), "--state", str(STATE),
-                   "--destination", str(DESTINATION), "--group-key", GROUP, "--start-date", "2024-05-13",
-                   "--end-date", "2024-05-17", "--expected-images", "57", "--evidence-dir", str(evidence / "product")]
+                   "--project-root", str(project), "--config", str(config), "--state", str(state),
+                   "--destination", str(destination), "--group-key", ns.group_key,
+                   "--start-date", ns.start_date, "--end-date", ns.end_date,
+                   "--expected-images", str(ns.expected_images), "--evidence-dir", str(evidence / "product")]
     verify_record, verify_result = run(verify_argv, evidence / "process")
-    baseline_argv = ["/usr/bin/python3", str(WORKSPACE / "tests/authority_baseline.py"), "--config", str(CONFIG),
-                     "--state", str(STATE), "--run-log", str(RUN_LOG), "--destination", str(DESTINATION),
+    baseline_argv = ["/usr/bin/python3", str(WORKSPACE / "tests/authority_baseline.py"), "--config", str(config),
+                     "--state", str(state), "--run-log", str(run_log), "--destination", str(destination),
                      "--output", str(ns.baseline_post)]
     baseline_record, _ = run(baseline_argv, evidence / "baseline-post-process")
     baseline_pre = Path(ns.baseline_pre)

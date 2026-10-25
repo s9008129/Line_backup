@@ -1,0 +1,237 @@
+{
+  "task_id": "FOREGROUND-ALBUM-20261025",
+  "source_lane": "LOCAL_CANDIDATE",
+  "external_review": "NOT_RUN",
+  "real_line_e2e": "NOT_TESTED",
+  "privacy": "Only relative identifiers and hashes; no raw private content",
+  "files": [
+    {
+      "path": "src/line_backup_batch/daily.py",
+      "bytes": 31861,
+      "sha256": "efff45a290ea0db0ae3ff34f2aae466b74e418482a4338e7dfb9674cbb0bdb01",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": "tests/test_daily_records.py",
+      "bytes": 24047,
+      "sha256": "1e35b71f6f6566342606ca123155143672687af5264f442481717f7f10feb364",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": "tests/formal_reconciliation_driver.py",
+      "bytes": 6139,
+      "sha256": "94076f1d03bb4684025238d52d92ea29ee3af703db78afc63e3cc9bf7329f0ea",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": "rev28/Sources/Rev28Core/Composition/ProjectBackupBinding.swift",
+      "bytes": 34094,
+      "sha256": "25d109822478fc6ddb35bcc918b72101a29b8f3aad84c01a546c9a2fe2bc41c3",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": "rev28/Tests/Rev28CoreTests/ProjectBackupBindingTests.swift",
+      "bytes": 9081,
+      "sha256": "09b4c72b1e8b6de28b85c51545fa190d6a6f0b93db1901db8a1ab389ecf68c30",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/SKILL.md",
+      "bytes": 4945,
+      "sha256": "eefea4e9fae7da0ff6af6a0bb8838ded6ad799fcb2882fda75e1c53cd4a049f8",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/daily-backup.md",
+      "bytes": 9074,
+      "sha256": "b14ff406627fa253da55294805d23c1c54c63a7b4259ab2bf0b6666469a4c34d",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/verified-experience.md",
+      "bytes": 6951,
+      "sha256": "9fb746b2c7efc2add3821517a0c6a9ae134aec6470359a63e837b2a403440d17",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3920,
+      "sha256": "248c525e413ba8fd7328f2a9e37b253eaaf28a73036621529249b4ef66c34750",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": "docs/LINE相簿備份_使用手冊.md",
+      "bytes": 9740,
+      "sha256": "326f1c9fd306c5737999a049bfb583c429c774746972cc366e25e15d31b506bb",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": "docs/專案整理與搬移.md",
+      "bytes": 2737,
+      "sha256": "62a75b7f42842783dbff76ef53e1225f6d13e7eb1dc36c72f74f94e73a9e6f49",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": "docs/封存資料_建議刪除清單.md",
+      "bytes": 4679,
+      "sha256": "5d48d243bd58377e030259d75a66103c6de99bb636dd641140b08cf0c35960ed",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/plan.md",
+      "bytes": 4924,
+      "sha256": "6ff69b57524e2aee73d0506c2d9f04b3e16f8084190708e434e1bbd40c9050e1",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/public/cleanup-allowlist.csv",
+      "bytes": 5882,
+      "sha256": "62086d3ac31edadc93fe10810afa5ca37d4ef37921f9e13b9ef57ba619bfb8aa",
+      "kind": "public_source_or_document"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/preservation-baseline.json",
+      "bytes": 251841,
+      "sha256": "a5cfe69b2c6ed4a6686dcc67330f324fc8479d9459ba858fd879a422c650f4ef",
+      "kind": "private_evidence_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/cleanup-20261025-active-root-prune/receipt.json",
+      "bytes": 7946,
+      "sha256": "1b35a65d79eb80d724ab31ffc7516b7e0c1b29c32223ab40509460e9d52ae719",
+      "kind": "private_evidence_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/luna-implementation/merged-receipt.json",
+      "bytes": 5285,
+      "sha256": "276232bb7ad3c9c89d0ed48ab6ba3c5de201972431c91de4a8d0e17275b67025",
+      "kind": "private_evidence_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/luna-implementation/daily-records-test-02.stderr",
+      "bytes": 118,
+      "sha256": "2565068995ac9372e526ddaded4be0e5d31c0818e84e0f7801ad6ae5cb000c8e",
+      "kind": "private_evidence_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/luna-implementation/skill-quick-validate-output.txt",
+      "bytes": 293,
+      "sha256": "787186175b423742c379ba80ac4682f6fcec7e96750a04945ef3f1b5688d6668",
+      "kind": "private_evidence_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/luna-implementation/candidate-final-daily-portability-receipt.json",
+      "bytes": 3647,
+      "sha256": "14c5e692827149258d1174445f5262b839a4394f596f0234593802243a1d7e49",
+      "kind": "private_evidence_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/merged-receipt.json",
+      "bytes": 19102,
+      "sha256": "9c86716322dfc1cdfa0096cb11a91b8930d25f558fa4613a6cd524044686b21c",
+      "kind": "private_evidence_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/cli/acceptance-help.log",
+      "bytes": 409,
+      "sha256": "f7db8cd634a5ed9679bf1257a22669bb21ae4d140924d5f47ffac5a085827bbd",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/cli/batch-help.log",
+      "bytes": 874,
+      "sha256": "472e82ca1b8b5504698d97a4830d57dddd801692a4d1adafd3eebef5d2cb0567",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/cli/daily-help.log",
+      "bytes": 904,
+      "sha256": "16e310c3a081cc31db1f21d02b41530c51f1540149f29f6f0e3113e85fa1d648",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/cli/formal-driver-help.log",
+      "bytes": 1048,
+      "sha256": "3a4324c595aabb71a2fe35587df9b9b77dcbc0a8b8794cc292bf88b09a61c114",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/daily/daily-suite.log",
+      "bytes": 246,
+      "sha256": "ed7befcf0444127f23d27cd01ac9051a652981c67aac444e9b0d4d1d50f7c1d5",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/swift/swift-full-20261025.log",
+      "bytes": 87827,
+      "sha256": "1e8c2b32c747f230de620586d3790d27ec91551bf22bd79a0b748da974a5b705",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/swift/swift-project-binding-20261025.log",
+      "bytes": 6007,
+      "sha256": "86a9b535e4a4779a5ce69a8a62040b2ad71f5d821e1d49214f415e7fe19335db",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/swift/swift-project-binding-final-20261025.log",
+      "bytes": 4811,
+      "sha256": "9642fdc0a44681960fa4d56519bae04100ff41628a2cb1facce729da41621738",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/swift/swift-test-20261025.log",
+      "bytes": 179567,
+      "sha256": "ce7da848508ed55d029da5cf2744863af683a2dbd60137aee7e8fef8c0a9ad61",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/swift/swift-test-withfixtures-20261025.log",
+      "bytes": 88434,
+      "sha256": "efb373e8dac73725667c451ff61ed7f9291964ba97ff986bab68d4ef3d6ab8a5",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/node-final/stdout.log",
+      "bytes": 1848,
+      "sha256": "d793f2c16d1bd7315cf398b43aa71773a331213226cdd54fe7897d9a8a83c46f",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/node-final/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/node-final/exit-code.txt",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "kind": "private_test_log_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/consolidation-verification/node-final/receipt.json",
+      "bytes": 1323,
+      "sha256": "7d05c0c6f57529d0668b36129559ae0c54046186760317a4fc975965b595b33b",
+      "kind": "private_evidence_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/luna-implementation/owner-case-preflight.json",
+      "bytes": 3850,
+      "sha256": "a34918021cbc41158b0d457b918a3c21194892b7c6da3806da75825e9e4e8941",
+      "kind": "private_evidence_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/private/luna-implementation/owner-case-preflight.md",
+      "bytes": 3142,
+      "sha256": "221d730394d92dfda99115c2cc2590c75850a5f4e63c38ff668737e8c8008cac",
+      "kind": "private_evidence_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/owner-merge-decision.md",
+      "bytes": 1163,
+      "sha256": "26c3a936085a0a42640c792249ccafc1102c45cfd5d4d1d903875021f90efedd",
+      "kind": "owner_decision_record"
+    }
+  ]
+}

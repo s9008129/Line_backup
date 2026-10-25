@@ -138,6 +138,24 @@ final class CoordinateTransformTests: XCTestCase {
         XCTAssertEqual(allowed, 1.0, accuracy: 1e-9)
     }
 
+    func testUndersizedCaptureFailsClosedUsingAbsoluteResidual() {
+        let expected = CGRect(x: 100, y: 50, width: 400, height: 332)
+        let result = CaptureGeometryRules.evaluate(
+            expectedBBox: expected,
+            imageWidthPx: 794,
+            imageHeightPx: 656,
+            scale: 2.0,
+            ruleBook: ruleBook(maxPerSideDelta: 1.0),
+            state: state
+        )
+        guard case let .failure(.sizeDeltaExceedsTolerance(_, perSide, allowed)) = result else {
+            return XCTFail("undersized capture must fail closed")
+        }
+        XCTAssertEqual(perSide.left, -1.5, accuracy: 1e-9)
+        XCTAssertEqual(perSide.top, -2, accuracy: 1e-9)
+        XCTAssertEqual(allowed, 1.0, accuracy: 1e-9)
+    }
+
     func testNoFrozenRuleFailsClosed() throws {
         let expected = CGRect(x: 100, y: 50, width: 400, height: 332)
         let result = CaptureGeometryRules.evaluate(
@@ -193,6 +211,30 @@ final class CoordinateTransformTests: XCTestCase {
         case let .failure(violation):
             XCTFail("expected success, got \(violation)")
         }
+    }
+
+    func testSourceRectOriginAndExtentAreRecordedInCaptureBBoxAndTransform() throws {
+        let windowBBox = CGRect(x: 100, y: 50, width: 400, height: 332)
+        let crop = CGRect(x: 12, y: 18, width: 200, height: 100)
+        guard let expected = FrameCaptureSupport.expectedCaptureBBox(windowBBox: windowBBox, sourceRect: crop) else {
+            return XCTFail("valid in-window crop should produce a bbox")
+        }
+        XCTAssertEqual(expected, CGRect(x: 112, y: 68, width: 200, height: 100))
+        let result = CaptureGeometryRules.evaluate(
+            expectedBBox: expected,
+            imageWidthPx: 400,
+            imageHeightPx: 200,
+            scale: 2.0,
+            ruleBook: ruleBook(maxPerSideDelta: 0),
+            state: state
+        )
+        guard case let .success(evaluation) = result else { return XCTFail("crop geometry should pass") }
+        XCTAssertEqual(evaluation.actualBBoxPt, expected)
+        let geometry = CaptureGeometry(windowFrame: windowBBox, captureBBox: evaluation.actualBBoxPt, scale: 2)
+        let screen = geometry.screenPoint(fromCapturePixel: CapturePixelPoint(x: 0, y: 0))
+        XCTAssertEqual(screen.x, 112, accuracy: 1e-9)
+        XCTAssertEqual(screen.y, 68, accuracy: 1e-9)
+        XCTAssertNil(FrameCaptureSupport.expectedCaptureBBox(windowBBox: windowBBox, sourceRect: CGRect(x: 390, y: 0, width: 20, height: 10)))
     }
 
     func testPaddingBeyondMaximumFailsClosed() throws {

@@ -12,6 +12,7 @@ let package = Package(
         .executable(name: "rev28harness", targets: ["rev28harness"]),
         .executable(name: "rev28occluder", targets: ["rev28occluder"]),
         .executable(name: "rev28ctl", targets: ["rev28ctl"]),
+        .executable(name: "rev28replay", targets: ["rev28replay"]),
     ],
     targets: [
         .target(
@@ -41,6 +42,12 @@ let package = Package(
             name: "rev28ctl",
             dependencies: ["Rev28Core"],
             path: "Sources/rev28ctl",
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+        .executableTarget(
+            name: "rev28replay",
+            dependencies: ["Rev28Core"],
+            path: "Sources/rev28replay",
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .testTarget(
