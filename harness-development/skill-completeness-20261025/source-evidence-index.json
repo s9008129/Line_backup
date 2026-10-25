@@ -1,0 +1,45 @@
+{
+  "scope": "Skill authoring; no live LINE test",
+  "files": [
+    {
+      "path": ".agents/skills/line-album-agent-cua/SKILL.md",
+      "bytes": 3930,
+      "sha256": "090960172812cd1a03b26db80c178daf5abec50124f117b57b2c4e5efab9e22c"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/backup-and-resume.md",
+      "bytes": 8976,
+      "sha256": "e6f3430f81792977b4a0c6f3dc273d9375dd8e382727656dec65295e5634b81b"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/daily-backup.md",
+      "bytes": 9039,
+      "sha256": "2a27ee0cf3fa0e6585637dde2a554f973f442f60427d9940b1c985dc3456326f"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/inventory.md",
+      "bytes": 5946,
+      "sha256": "ca635c96b68f894ffff642c5c30c22cd646fcf0e80df24a7b5769ad87d624eb3"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/legacy-formal.md",
+      "bytes": 1745,
+      "sha256": "47c137fb40d6ffe6f38524ba5dcf0cc8c21156072b8e8b25ec75732c45b39571"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/verified-experience.md",
+      "bytes": 3721,
+      "sha256": "689832b21292241f30046103b3976bbd1ba380f369b94ea376aa978a6c789151"
+    },
+    {
+      "path": "harness-development/skill-completeness-20261025/Skill審查與整理紀錄.md",
+      "bytes": 10433,
+      "sha256": "6432cc8bc2a1281a0ab7798f40630537867a18faf056ab9a1dc1948ee30ef2a7"
+    },
+    {
+      "path": "docs/LINE相簿備份_使用手冊.md",
+      "bytes": 4778,
+      "sha256": "f03cf75b39daa6e779bbc98270228a33bc0f2bda313af5948fab8f83838a5fd4"
+    }
+  ]
+}
