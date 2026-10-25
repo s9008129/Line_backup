@@ -1,30 +1,45 @@
 {
-  "scope": "offline Skill audit; not real LINE acceptance",
+  "scope": "Skill authoring and offline scenario check; no LINE operation",
   "files": [
     {
       "path": ".agents/skills/line-album-agent-cua/SKILL.md",
-      "bytes": 5809,
-      "sha256": "b66ad305b2f1948df88aaed3adbde07c0febad2a22bdc1e0aebd561f413534b8"
+      "bytes": 3930,
+      "sha256": "090960172812cd1a03b26db80c178daf5abec50124f117b57b2c4e5efab9e22c"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/backup-and-resume.md",
+      "bytes": 7344,
+      "sha256": "2df1637108f5491be4dbce034551e6408eba9cc1eca083ffa18ba692a503edd3"
     },
     {
       "path": ".agents/skills/line-album-agent-cua/references/daily-backup.md",
-      "bytes": 9074,
-      "sha256": "b14ff406627fa253da55294805d23c1c54c63a7b4259ab2bf0b6666469a4c34d"
+      "bytes": 9039,
+      "sha256": "2a27ee0cf3fa0e6585637dde2a554f973f442f60427d9940b1c985dc3456326f"
     },
     {
       "path": ".agents/skills/line-album-agent-cua/references/inventory.md",
-      "bytes": 5926,
-      "sha256": "7be631c237199f92c250ac3cdee63d0509e0145064ade44c9b6cc25cd923b07b"
+      "bytes": 5946,
+      "sha256": "ca635c96b68f894ffff642c5c30c22cd646fcf0e80df24a7b5769ad87d624eb3"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/legacy-formal.md",
+      "bytes": 1745,
+      "sha256": "47c137fb40d6ffe6f38524ba5dcf0cc8c21156072b8e8b25ec75732c45b39571"
     },
     {
       "path": ".agents/skills/line-album-agent-cua/references/verified-experience.md",
-      "bytes": 6951,
-      "sha256": "9fb746b2c7efc2add3821517a0c6a9ae134aec6470359a63e837b2a403440d17"
+      "bytes": 3721,
+      "sha256": "689832b21292241f30046103b3976bbd1ba380f369b94ea376aa978a6c789151"
     },
     {
       "path": "harness-development/skill-completeness-20261025/E2E測試報告.md",
-      "bytes": 7323,
-      "sha256": "c980b06256a3c52baa9b9711bbea455233210435489c2c7f407960c4bd39788d"
+      "bytes": 10201,
+      "sha256": "5f696f183da823cdc4ed49e869cbaf393d23d8ab69eda0e6d13f7a51df07365e"
+    },
+    {
+      "path": "docs/LINE相簿備份_使用手冊.md",
+      "bytes": 4778,
+      "sha256": "f03cf75b39daa6e779bbc98270228a33bc0f2bda313af5948fab8f83838a5fd4"
     }
   ]
 }

@@ -11,7 +11,7 @@
 
 ## 原生捲動方法
 
-沿用 [PR28／PR32 實機經驗](verified-experience.md)：在已確認的相簿列表捲動，一次動作後立即重新觀察，保留相鄰畫面的共同卡片。PR32 曾以四分之一可視高度成功；舊 scrollbar 數值及座標不是新的點位。
+沿用 [重疊捲動方法](verified-experience.md)：在已確認的相簿列表捲動，一次動作後立即重新觀察，保留相鄰畫面的共同卡片。四分之一可視高度已有成功操作經驗；每次仍依當下畫面核對位移與重疊，不沿用舊位置。
 
 在本 Session 的 CUA 文件明確提供 macOS `App.scroll(target, direction, pages)` 時，可用以下呼叫形狀；`listTarget` 必須來自最新 AX 的列表元素或已確認座標基準下的安全列表區域：
 

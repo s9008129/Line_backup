@@ -1,6 +1,8 @@
-# 前景盤點、持久紀錄及相簿級恢復
+# 本地紀錄工具與舊紀錄對帳
 
 此參考用於完整列表／跨 Session 工作。GUI 仍由 Agent 在既有 CUA 中進行；此文件與輔助 CLI 都不授予 GUI 權限。
+
+Owner 已選日常 AI Agent 流程。這裡是現有工具的輸入規則，不是使用者的啟動表單；不要要求使用者手填 JSON，也不要把記錄工具變成新授權系統。實際下載／恢復步驟見 [備份與恢復](backup-and-resume.md)。
 
 ## 本地紀錄入口
 
@@ -34,9 +36,9 @@ BACKUP_ROOT/
 
 ## 交易與恢復
 
-`detail` 記錄當次詳細頁核對。`intent` 需最新相符 detail，會建立新空白 attempt 目錄並持久保留「可能派送／禁止重送」。回傳固定 `dispatch_authorized=false`：呼叫端還要通過真正 L2 與既有交易入口，不能拿本地 reservation 直接當 Save All permit。
+`detail` 記錄當次詳細頁核對。`intent` 需最新相符 detail，會建立新空白 attempt 目錄並持久保留「可能派送／禁止重送」。回傳固定 `dispatch_authorized=false`：它只保留本地操作紀錄，不授予下載權限。日常 GUI 依 Owner 真實授權及前景交接；不得把這個回傳值改成 true，或把本地 reservation 當成程式 runtime grant。
 
-`outcome` 記 `UNKNOWN|NOT_SENT|STOPPED|DOWNLOAD_FINISHED`。預留 intent 後可記錄第一個實際已知結果；一旦寫入明確 `UNKNOWN`，該 outcome 不可由普通 outcome 改成 STOPPED／NOT_SENT，也不能因此自動恢復或重送。`DOWNLOAD_FINISHED` 只能進驗證。前次明確 STOPPED／NOT_SENT 後，另有該群組、該相簿、該 attempt 的 Owner 恢復授權，才可建立保留原檔的新空目錄；這個日常紀錄格式不是執行時授權，正式 L2／交易 gate 仍須獨立成立。
+`outcome` 記 `UNKNOWN|NOT_SENT|STOPPED|DOWNLOAD_FINISHED`。預留 intent 後可記錄第一個實際已知結果；一旦寫入明確 `UNKNOWN`，該 outcome 不可由普通 outcome 改成 STOPPED／NOT_SENT，也不能因此自動恢復或重送。`DOWNLOAD_FINISHED` 只能進驗證。前次明確 STOPPED／NOT_SENT 後，另有該列表、該相簿、該 attempt 的 Owner 恢復授權，才可建立保留原檔的新空目錄；使用者授權與事實來源須真實，既有工具的拒絕不因文字簡化而解除。
 
 恢復僅允許前次 `STOPPED|NOT_SENT` 且提供專屬 `recovery_authorization` 檔，內容：
 
@@ -51,19 +53,19 @@ BACKUP_ROOT/
 }
 ```
 
-此為輸入格式示意，不是有效同意。必須有真實 Owner 來源，不可由 Agent 自行預填批准。恢復會新增 attempt／新空白資料夾並引用前次；原檔全留。UNKNOWN 不受此檔覆蓋。日常 helper 只核對授權檔格式及所引來源仍存在；不驗證簽章、不簽發 runtime grant，不能替代正式 gate。
+此為輸入格式示意，不是有效同意。必須有真實 Owner 來源，不可由 Agent 自行預填批准。恢復會新增 attempt／新空白資料夾並引用前次；原檔全留。UNKNOWN 不受此檔覆蓋。日常 helper 只核對授權檔格式及所引來源仍存在；不驗證簽章，也不簽發 runtime grant。
 
 `verify` 需已知下載完成、當次 decoder path／SHA-256。沿用 `src/line_backup_batch/image_decode.swift`，可用已確認來源相同的既有 binary；需編譯時先確認編譯器和 SDK 相符，不修改系統 toolchain。三次間隔樣本一致、數量相符、逐檔非空 SHA-256、ImageIO 完整 RGB 解碼、decoder hash 與目錄事後重核全部通過，才追加 completion。重啟對完成檔做 metadata 核對，異動就停止而不重下載。
 
 `summary` 投影目前 scan 的逐本狀態；曾見但新 scan 消失的卡片也記 UNKNOWN。輸出明示 `evidence_role=AGENT_ATTESTED_OBSERVATIONS`、`sensor_verified=false`、`real_line_e2e=NOT_TESTED`、`pass_scope=AGENT_ATTESTED_ACCOUNTING_ONLY`。`ALL_ELIGIBLE_ALBUMS_BACKED_UP=PASS` 只表示呼叫者提供的逐本狀態簿記完整；不是工具對畫面／照片的獨立 PASS、不是實機 LINE E2E，也不是正式 AUTO。`PROTECTED_HISTORY` 必須為零，且 `INCOMPLETE=UNKNOWN=0`、到底證據存在，才可有此日常簿記 PASS。
 
-## 跨群組正式核准資料
+## 舊紀錄對帳
 
-`authorization-request` 輸入 `session_id`、候選 `identity`、真實 `owner_request`。唯讀輸出群組 UUID、目的地 stat、候選、來源 hashes、event head 及缺件；不建立 grant、ledger、consent 或 review。
+先列來源、相簿識別、目的地、張數、實際完成／派送證據及原紀錄格式；保留來源不變。日期／張數相同不是同一本的證明，也不跨列表套用。
 
-已追溯：`policies/line-two-album-pilot-v1.json` 的 `gui_authorized_by_this_profile=false` 是來源實作政策與 GUI 執行權限分離；`src/line_backup_batch/cli.py:native_authorize` 只驗既存 project grant，明確 `dispatch_authorized=false`，不是 issuer。正式 project/ONE56 檢查又綁定固定舊 task、config、root、source/runtime、Owner 決策及真實外部 review；不能挪用給新群組。
+只有能用現有支援格式及完整證據安全對應的來源，才交工具讀入。缺本地識別、manifest、完整解碼或原始來源時，標成受保護歷史：先跳過下載，向 Owner 白話說明缺哪項。不可自己補造驗證結果、改寫舊檔或為了清零狀態重下照片。沒有可靠轉入方法時保留對照清單與具體阻塞，不臨時開發新的匯入框架。
 
-本輪缺的是**通過獨立審查的一般跨群組 issuer 與對應交易入口**，不是把 false 改 true。request 會如實回 `BLOCKED_NEW_GROUP_ISSUER_REQUIRES_REVIEW`，審查／runtime grant 保持 null。精確審查需涵蓋新群組 UUID／目的地／source-runtime 閉包、專屬新 ledger、既有 duplicate／intent／at-most-once、Owner L1/L2 與各自的真實 review；未完成前停在 Save All 之前。
+舊 `authorization-request` 及 formal 研究限制見 [歷史正式流程](legacy-formal.md)，不作日常備份的新增開發需求。
 
 ## Skill 文件維護參考
 

@@ -65,3 +65,32 @@ REQUIRED_VERIFICATION_STATUS=LINKS_AND_DIFF_PASS_VALIDATOR_BLOCKED_LIVE_NOT_RUN
 INDEPENDENT_ACCEPTANCE_STATUS=NOT_RUN
 TASK_CLOSURE_STATUS=OPEN_OWNER_DESIGN_CLARIFICATION_AND_SKILL_GAPS_REMAIN
 ```
+
+## 後續 Owner 決策與官方作者流程
+
+Owner 已明確選擇「日常 Skill 依 Agent 流程精簡」，要求萃取方法而非引用 PR／分支；之後再次要求安全封存過時資料、所有分支只保留有價值內容並收斂 master。這些新指示取代前文尚待決策狀態；不代表舊外部 review 通過，不授權 LINE 下載。
+
+本輪實際使用本機 OpenAI `skill-creator`，並開啟 OpenAI Build skills 與 Anthropic Skill authoring best practices 官方頁面。採用主入口精簡、按需載入、保留 Agent 判斷自由、只對容易造成資料風險的步驟明訂條件，以及用實際使用情境檢查的做法。
+
+已完成文件調整：
+
+- 主 Skill 改成任務邊界、五步工作流程及必要保護；不再列過時案例／PR／分支，也不要求先開發一般 issuer。
+- 成功經驗萃取為文字區開啟、重疊捲動、獨立選單觀察、完整路徑選擇、檔案驗證及取消／不明派送教訓。
+- 盤點參考、備份／相簿級恢復、記錄工具按需讀取；恢復 Prompt、chooser／Go to Folder、ImageIO 呼叫與限制已補入。
+- 舊正式研究限制另存歷史參考；程式 gate、grant、ledger、VERIFIED 及原測試結果沒有修改。
+- 使用手冊改為一份 MODE／保存位置的結構化啟動 Prompt，預設只盤點；不要求群組名稱或填 JSON。
+
+依 skill-creator 的 Independent Forward-Testing 指引，唯一只讀 GPT-6-luna/high 評估者用三個獨立情境檢查會採取的步驟：審查 Skill、盤點有歧義卡片與捲動缺頁、接續已有完成及 UNKNOWN 的任務。三者均判斷不得越界下載，也保留 UNKNOWN barrier。評估指出主流程不應對純盤點要求儲存位置，以及缺頁應先安全回捲修補而非立刻問 Owner；兩項均修正。這是文件前推檢查，不是 formal reviewer／真實 GUI／獨立 E2E。
+
+新的離線檢查：Ruby 標準 YAML parser 解析主 Skill frontmatter／name／description 通過，所有本地連結存在、diff whitespace 檢查通過、Skill 無 PR 數字或工作分支名稱。原 OpenAI Python validator 仍因缺 PyYAML 無法執行，未安裝依賴、不改寫為該 validator PASS。
+
+仍需實測的新能力是完整真實列表遍歷與跨 Session 相簿級恢復；獨立 popup 支援則須依當次工具確認。這些未測項不因文字重整而通過。現有源碼與保護紀錄的使用限制仍有效。
+
+```text
+PRIMARY_OUTCOME_STATUS=SKILL_METHODS_RESTRUCTURED
+IMPLEMENTATION_STATUS=DOCUMENTATION_COMPLETE_FOR_CURRENT_OWNER_DECISIONS
+CORE_ACCEPTANCE_STATUS=OFFLINE_BEHAVIOR_CHECKED_LIVE_NOT_RUN
+REQUIRED_VERIFICATION_STATUS=LINKS_YAML_DIFF_PASS_PYTHON_VALIDATOR_BLOCKED
+INDEPENDENT_ACCEPTANCE_STATUS=READ_ONLY_SCENARIO_CHECK_ONLY_NOT_FORMAL_E2E
+TASK_CLOSURE_STATUS=SKILL_SLICE_READY_REPOSITORY_CONSOLIDATION_IN_PROGRESS
+```
