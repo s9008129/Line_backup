@@ -1,0 +1,30 @@
+{
+  "scope": "offline Skill audit; not real LINE acceptance",
+  "files": [
+    {
+      "path": ".agents/skills/line-album-agent-cua/SKILL.md",
+      "bytes": 5809,
+      "sha256": "b66ad305b2f1948df88aaed3adbde07c0febad2a22bdc1e0aebd561f413534b8"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/daily-backup.md",
+      "bytes": 9074,
+      "sha256": "b14ff406627fa253da55294805d23c1c54c63a7b4259ab2bf0b6666469a4c34d"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/inventory.md",
+      "bytes": 5926,
+      "sha256": "7be631c237199f92c250ac3cdee63d0509e0145064ade44c9b6cc25cd923b07b"
+    },
+    {
+      "path": ".agents/skills/line-album-agent-cua/references/verified-experience.md",
+      "bytes": 6951,
+      "sha256": "9fb746b2c7efc2add3821517a0c6a9ae134aec6470359a63e837b2a403440d17"
+    },
+    {
+      "path": "harness-development/skill-completeness-20261025/E2E測試報告.md",
+      "bytes": 7323,
+      "sha256": "c980b06256a3c52baa9b9711bbea455233210435489c2c7f407960c4bd39788d"
+    }
+  ]
+}
