@@ -1,5 +1,5 @@
 {
-  "scope": "Skill authoring and offline scenario check; no LINE operation",
+  "scope": "Skill authoring; no live LINE test",
   "files": [
     {
       "path": ".agents/skills/line-album-agent-cua/SKILL.md",
@@ -8,8 +8,8 @@
     },
     {
       "path": ".agents/skills/line-album-agent-cua/references/backup-and-resume.md",
-      "bytes": 7344,
-      "sha256": "2df1637108f5491be4dbce034551e6408eba9cc1eca083ffa18ba692a503edd3"
+      "bytes": 8976,
+      "sha256": "e6f3430f81792977b4a0c6f3dc273d9375dd8e382727656dec65295e5634b81b"
     },
     {
       "path": ".agents/skills/line-album-agent-cua/references/daily-backup.md",
@@ -32,9 +32,9 @@
       "sha256": "689832b21292241f30046103b3976bbd1ba380f369b94ea376aa978a6c789151"
     },
     {
-      "path": "harness-development/skill-completeness-20261025/E2E測試報告.md",
-      "bytes": 10201,
-      "sha256": "5f696f183da823cdc4ed49e869cbaf393d23d8ab69eda0e6d13f7a51df07365e"
+      "path": "harness-development/skill-completeness-20261025/Skill審查與整理紀錄.md",
+      "bytes": 10433,
+      "sha256": "6432cc8bc2a1281a0ab7798f40630537867a18faf056ab9a1dc1948ee30ef2a7"
     },
     {
       "path": "docs/LINE相簿備份_使用手冊.md",

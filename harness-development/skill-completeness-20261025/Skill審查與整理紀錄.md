@@ -1,5 +1,7 @@
 # 專屬 Skill 完備性審查（離線）
 
+本文件記錄 Skill 整理，不是 LINE 測試報告。原檔名誤用 E2E，已依 Owner 提醒更正；歷史實機測試報告未因此改名或改寫結果。下文的 YAML／連結／情境檢查都是離線文件檢查。
+
 日期：2026-10-25；task_id：SKILL-COMPLETENESS-20261025；revision：1。
 
 ## Owner 意圖與範圍
