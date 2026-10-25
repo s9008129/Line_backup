@@ -105,7 +105,7 @@ Skill validator 實際使用本機既有 Python3.11／PyYAML，輸出 `Skill is 
 
 PR31 的 [真實外審](https://github.com/s9008129/Line_backup/pull/31#pullrequestreview-5611062176) 明確擋整支大範圍 merge；PR32 的 [真實外審](https://github.com/s9008129/Line_backup/pull/32#pullrequestreview-5615459643) 仍要求先修正與重審。GitHub review state 為 COMMENTED，本文不將其冒稱新版本批准。Luna 技術檢查、root 裁決、本地測試皆不是外部 APPROVE_IMPLEMENTATION。
 
-PR32 唯一實作仍由既存分支與 all-refs bundle 保存；未經核准不混入本輪主入口、不丟棄來源。新候選尚無真實外部 Plan／Code Review 或 DeepSeek 獨立 E2E。主分支若要在重審前接納未發布候選，需要 Owner 明確決定 merge-only 例外；即使允許，也不啟用 GUI／L2 或宣稱 review 通過。
+PR32 唯一實作仍由既存分支與 all-refs bundle 保存；未經核准不混入本輪主入口、不丟棄來源。新候選尚無真實外部 Plan／Code Review 或 DeepSeek 獨立 E2E。Owner 於 2026-10-25 明確給予綁定 PR #36／原候選 `af99c14459202cb148a3eceda8faa0b6871bb3f2` 的 merge-only exception，允許合併主分支，但正式下載仍停用；此決策不構成外部批准或 E2E PASS，也不改變 PR31／PR32 既有審查狀態。決策原文與範圍見 [Owner merge-only decision](owner-merge-decision.md)。在本文件更新時，PR #36 的 docs-only 決策紀錄提交與正常合併仍待完成。
 
 ## 證據、雜湊與狀態
 
@@ -123,7 +123,7 @@ PR32 唯一實作仍由既存分支與 all-refs bundle 保存；未經核准不�
 
 - 乾淨候選另行實際執行 `node --test tests/test_cua_adapter.mjs`：22 tests、22 pass、0 fail、exit 0。此次補測有保留原始 stdout（1,848 bytes，SHA-256 `d793f2c16d1bd7315cf398b43aa71773a331213226cdd54fe7897d9a8a83c46f`）、stderr（0 bytes，SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`）及 exit code；路徑／hash 在 `public/evidence-index.json`。這是補做的新測試，沒有覆寫「先前 22/22 工具輸出未保存」的歷史限制。沒有 GUI 操作。
 - Owner 51 張案例的最新 offline preflight 只保留私有相對識別與 hash：`private/luna-implementation/owner-case-preflight.json`（3,850 bytes，SHA-256 `a34918021cbc41158b0d457b918a3c21194892b7c6da3806da75825e9e4e8941`）及 `.md`（3,142 bytes，SHA-256 `221d730394d92dfda99115c2cc2590c75850a5f4e63c38ff668737e8c8008cac`）。結果為 volume 未掛載、目的地不存在、容量 UNKNOWN，UUID／觀察／foreground／review／grant 均 null，正式 request 未產生；沒有列出或讀取照片，也沒有猜補前景或授權。
-- 本索引目前 37 項：14 項 public source/document hash 在候選逐一相符，23 項 private 記錄僅發布相對識別、大小、hash 及種類，沒有發布私有內容。報告本身不加入索引，避免 self-hash 循環。
+- 本索引目前 38 項：14 項 public source/document hash 在候選逐一相符，另有 1 項公開 Owner 決策紀錄，23 項 private 記錄僅發布相對識別、大小、hash 及種類，沒有發布私有內容。報告本身不加入索引，避免 self-hash 循環。
 
 ```text
 PRIMARY_OUTCOME_STATUS=PARTIAL_LOCAL_FIX_AND_ARCHIVE

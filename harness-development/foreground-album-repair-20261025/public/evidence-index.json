@@ -226,6 +226,12 @@
       "bytes": 3142,
       "sha256": "221d730394d92dfda99115c2cc2590c75850a5f4e63c38ff668737e8c8008cac",
       "kind": "private_evidence_not_uploaded"
+    },
+    {
+      "path": "harness-development/foreground-album-repair-20261025/owner-merge-decision.md",
+      "bytes": 1163,
+      "sha256": "26c3a936085a0a42640c792249ccafc1102c45cfd5d4d1d903875021f90efedd",
+      "kind": "owner_decision_record"
     }
   ]
 }

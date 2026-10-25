@@ -10,10 +10,10 @@ Luna 技術檢查另發現歷史來源採信與 UNKNOWN 可改寫風險，已交
 
 已建立完整外部工作樹 clone 快照與 all-refs Git bundle，copy／bundle create／verify 均 exit0。Luna 正依精確 scope 核對 hashes 後移出過期文書／重建快取。原 1,275 份受保護 artifacts 保留基線。
 
-尚欠：功能修正後測試、清理 receipts、乾淨候選整合與本地檢查。正式新群組 issuer、外部 review、精確 runtime、磁碟掛載與當輪前景未成立，不能執行 Save All。主分支仍有真實外審 merge blockers；準備具體候選後交 Owner 決策，不偽造批准。
+功能修正、清理 receipts、乾淨候選整合與本地檢查已完成；本輪不重跑既有測試。正式新群組 issuer、外部 review、精確 runtime、磁碟掛載與當輪前景未成立，不能執行 Save All。Owner 已針對 PR #36 原候選 `af99c14459202cb148a3eceda8faa0b6871bb3f2` 明確核准 merge-only exception；正式下載仍停用，例外不構成外部批准或 E2E。
 
 最新結果：Luna 完成19/19 daily負例及最終跨checkout可攜檢查，22/22 Node adapter測試、官方bundled Skill validator PASS。完整Swift測試揭露來源列表與manual-archive欄位漂移；已用既有測試修復non-manual報告相容，manual=true/數值0/缺欄仍拒絕。聚焦17/17、完整334/334 PASS。只改兩個Swift source/test，不啟用manual archive新能力。
 
 實際清理63項/53,983節點/3,662,301,514 bytes，均移到外部封存；1,275項baseline零差異。Owner要求完成後提供永久刪除建議與信心，已產生63項精確CSV及決策文件，沒有永久刪除。
 
-目前只剩候選證據固定、Luna深讀後的Commit訊息與Git交付、以及明確外審merge blocker的Owner決策。原任務P0/P1/P2離線候選及P4已完成；P3正式跨群組issuer與實機E2E仍BLOCKED/NOT_TESTED。不能把本機測試和整理完成寫成兩本真實交易達標。
+候選證據固定與本地 Git checkpoint／Draft PR 已完成。Owner merge-only 決策已逐字記錄，文件提交與 PR #36 正常合併仍待完成；PR31／PR32 的外審狀態不變，沒有新 external review。原任務 P0/P1/P2 離線候選及 P4 已完成；P3 正式跨群組 issuer 與實機 E2E 仍 BLOCKED/NOT_TESTED。正式下載停用，不能把本機測試和整理完成寫成兩本真實交易達標。
