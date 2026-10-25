@@ -1,5 +1,5 @@
 {
-  "scope": "Skill authoring; no live LINE test",
+  "scope": "Skill authoring and repository consolidation; no LINE operation",
   "files": [
     {
       "path": ".agents/skills/line-album-agent-cua/SKILL.md",
@@ -8,8 +8,8 @@
     },
     {
       "path": ".agents/skills/line-album-agent-cua/references/backup-and-resume.md",
-      "bytes": 8976,
-      "sha256": "e6f3430f81792977b4a0c6f3dc273d9375dd8e382727656dec65295e5634b81b"
+      "bytes": 9693,
+      "sha256": "89464daa199f355c3abea3fd5e9f187d52984963d6814cab088f7d814829c246"
     },
     {
       "path": ".agents/skills/line-album-agent-cua/references/daily-backup.md",
@@ -32,14 +32,19 @@
       "sha256": "689832b21292241f30046103b3976bbd1ba380f369b94ea376aa978a6c789151"
     },
     {
-      "path": "harness-development/skill-completeness-20261025/Skill審查與整理紀錄.md",
-      "bytes": 10433,
-      "sha256": "6432cc8bc2a1281a0ab7798f40630537867a18faf056ab9a1dc1948ee30ef2a7"
-    },
-    {
       "path": "docs/LINE相簿備份_使用手冊.md",
       "bytes": 4778,
       "sha256": "f03cf75b39daa6e779bbc98270228a33bc0f2bda313af5948fab8f83838a5fd4"
+    },
+    {
+      "path": "harness-development/skill-completeness-20261025/Skill審查與整理紀錄.md",
+      "bytes": 10799,
+      "sha256": "668e704c56579f8dd27fc66e3679bae9d95fa5cedb0b551d0857cf575baa0094"
+    },
+    {
+      "path": "scripts/agent_resume/modern_ocr.swift",
+      "bytes": 1939,
+      "sha256": "19f6787f4523332b5eb8a4235c4461fee5e49314c615b4865cc9ec848f2a2861"
     }
   ]
 }

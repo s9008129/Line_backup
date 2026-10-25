@@ -1,6 +1,8 @@
-# LINE backup acceptance package
+# LINE 相簿 Agent 備份
 
-日常 Mac LINE 相簿備份請先閱讀 [LINE 相簿備份使用手冊](docs/LINE相簿備份_使用手冊.md)，內含可複製的多群組啟動 Prompt。操作入口為具備原生 Mac Computer Use 的 Codex Agent＋既有 Skill；下列 acceptance CLI 不會操作 LINE 或派送「儲存全部」。新群組實機驗證與正式 AUTO 驗收狀態請以手冊限制為準。
+你人工開好 LINE 相簿列表、指定保存位置並授權，Agent 使用 [專屬 Skill](.agents/skills/line-album-agent-cua/SKILL.md) 先盤點、再備份，按相簿接續中斷任務。不以群組名稱辨識，不新增控制器。啟動方式只有 [使用手冊的提示詞](docs/LINE相簿備份_使用手冊.md)；只審查 Skill 或只盤點時不下載。
+
+往後只維護 master。必要小工具沿用現有照片驗證與持久紀錄程式；下方 acceptance CLI 是保留的舊正式驗收工具，不是日常下載入口。舊研究來源與過時檔案的保存方式見 [整理紀錄](docs/專案整理紀錄.md)。新版完整盤點與相簿級接續尚需另行實機驗證，沒有在這輪整理中執行下載。
 
 This repository contains the reusable `line_backup_acceptance` operator CLI for the LINE album acceptance workflow. It is fail-closed by design: authority is explicit, verify-only is read-only, and transaction state is guarded by a POSIX lock plus same-directory atomic replacement and read-back.
 

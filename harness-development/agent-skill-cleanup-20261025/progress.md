@@ -10,4 +10,4 @@
 
 已清除原工作目錄 307 個可重建 bytecode 檔案（4,967,614 bytes），每檔刪除前核對完整保存點 SHA-256。候選主分支清除其中 260 個已追蹤 bytecode（3,512,130 bytes），不觸碰 runtime/bin 或 rev28/.build。這不是全部非必要資料已清乾淨的證明。
 
-候選本機測試：daily records 19/19、CUA adapter 22/22 通過。replay 首次漏傳必填 --output，退出 2；補齊參數重跑退出 0，輸出留私有保存點。pre-live provenance 退出 1：主分支原本就缺 v3 manifest，該檔未列入此次刪除；不改寫為 PASS。LINE GUI／下載／正式 E2E 均未執行。
+候選本機檢查：daily records 19/19、CUA adapter 22/22 通過。replay 首次缺必填 --output，退出 2；補齊參數後輸出的 JSON 實際為 FAIL，先前把組合命令末尾退出碼誤作 replay 退出 0 的回報在此更正。整理前後 fixture manifest 與檢查結果一致，原本的錯誤是預設 Swift SDK 不相符；後續僅設定本程序 SDKROOT 為現有相符 SDK 後 replay 實際退出 0。原始失敗 JSON 保留。pre-live provenance 退出 1：主分支原本就缺 v3 manifest，不在刪除名單。LINE GUI／下載／正式 E2E 均未執行。

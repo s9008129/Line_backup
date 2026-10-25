@@ -11,11 +11,13 @@ Skill 提供判斷與方法，程式只做精準、可重複的工作。工具�
 | Codex 原生 Computer Use | 當次指定的 LINE 畫面／AX；每次輸入後重新觀察結果 | 取得前景交接後，盤點或已授權的下載 |
 | `src/line_backup_batch/image_decode.swift` 對應執行檔 | 相簿目錄及預期張數；退出碼、逐檔 SHA-256、完整像素解碼結果 | 下載穩定後或明確要求核對現有照片；用法見下文 |
 | `src/line_backup_batch/daily.py` | 真實觀察及原始紀錄；持久事件、完成／未知狀態與對帳摘要 | 保存清單、派送前紀錄、完成證據及新 Session 接續；欄位見 [紀錄工具](daily-backup.md) |
-| 當次已支援的 OCR | 新鮮截圖；輔助讀日期、張數與選單文字 | 視覺或 AX 資訊不足時選用，不用來辨識群組 |
+| 當次已支援的 OCR；另有既存 `scripts/agent_resume/modern_ocr.swift` | 已保存的影像；輸出文字、信心值及左上原點框座標 | 視覺或 AX 資訊不足時選用，不用來辨識群組。此小工具不截圖、不操作 GUI，也不補足缺少的 popup 擷取能力 |
 
 Agent 不靠心算或聊天記憶維護大量相簿清單；工具幫忙加總與持久保存。但 `daily summary` 把尚未完成統一列為 INCOMPLETE，Agent 必須根據是否有先前派送紀錄，分成「待下載」與「先前未完成」回報，不能假裝工具已有獨立 PENDING 欄位。數字對上不證明畫面沒有漏卡，仍須完成盤點的重疊與頂底確認。
 
 不因使用本 Skill 而載入舊 GUI adapter、啟動自動控制器或建立簽章／一般授權系統。現有記錄工具若資料不相容，保留原始來源與阻塞，不重寫一套工具偷渡成功。
+
+離線 OCR 沿用已有來源，不另造一套。需使用時以相符 SDK／編譯器、`-parse-as-library` 及支援該 Vision API 的 macOS deployment target 編譯至隔離位置；傳入一個真實可讀的影像絕對路徑。輸出含 imageWidth／imageHeight、items 的 text／confidence／boxTopLeftPixels；座標是影像內座標，不能直接當螢幕座標。確認退出碼與 JSON，辨識信心不是身分證明；不安裝新工具鏈、不讀無關私人影像。原始工具沒有無參數提示，不空呼叫或當獨立備份入口。
 
 ## 開始下載前
 
