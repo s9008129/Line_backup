@@ -92,6 +92,24 @@ public enum AXDriver {
         (copyAttribute(element, attribute) as? NSNumber)?.boolValue
     }
 
+    /// Best-effort exact CGWindowID for an AX window element via the
+    /// long-stable `_AXUIElementGetWindow` introspection symbol. Read-only;
+    /// returns nil when the symbol or the value is unavailable, in which case
+    /// identity binding falls back to frame geometry against the CG entry.
+    private static let axWindowIDFunction: (@convention(c) (AXUIElement, UnsafeMutablePointer<CGWindowID>) -> AXError)? = {
+        guard let symbol = dlsym(UnsafeMutableRawPointer(bitPattern: -2), "_AXUIElementGetWindow") else {
+            return nil
+        }
+        return unsafeBitCast(symbol, to: (@convention(c) (AXUIElement, UnsafeMutablePointer<CGWindowID>) -> AXError).self)
+    }()
+
+    public static func windowNumber(of element: AXUIElement) -> UInt32? {
+        guard let function = axWindowIDFunction else { return nil }
+        var windowID: CGWindowID = 0
+        guard function(element, &windowID) == .success, windowID != 0 else { return nil }
+        return UInt32(windowID)
+    }
+
     public static func role(of element: AXUIElement) -> String? { stringAttribute(element, kAXRoleAttribute as String) }
     public static func subrole(of element: AXUIElement) -> String? { stringAttribute(element, kAXSubroleAttribute as String) }
     public static func title(of element: AXUIElement) -> String? { stringAttribute(element, kAXTitleAttribute as String) }
@@ -134,6 +152,22 @@ public enum AXDriver {
     public static func children(of element: AXUIElement) -> [AXUIElement] {
         guard let raw = copyAttribute(element, kAXChildrenAttribute as String) else { return [] }
         return raw as? [AXUIElement] ?? []
+    }
+
+    /// True when `element` is `ancestor` itself or a descendant of it, walking
+    /// the AX parent chain. Used to prove that a focused field / button belongs
+    /// to the unique verified panel window instead of another app window.
+    public static func isDescendant(_ element: AXUIElement, of ancestor: AXUIElement, maxDepth: Int = 8) -> Bool {
+        var current: AXUIElement? = element
+        var depth = 0
+        while let node = current, depth <= maxDepth {
+            if CFEqual(node, ancestor) { return true }
+            guard let raw = copyAttribute(node, kAXParentAttribute as String),
+                  CFGetTypeID(raw) == AXUIElementGetTypeID() else { return false }
+            current = (raw as! AXUIElement)
+            depth += 1
+        }
+        return false
     }
 
     public static func windows(ofApp pid: pid_t) -> [AXUIElement] {

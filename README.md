@@ -1,66 +1,32 @@
-# LINE 相簿自動備份
+# LINE backup acceptance package
 
-這個專案希望幫你把 LINE 群組相簿中的照片安全地備份到 Mac。它的目標是辨認正確相簿、避免重複下載、檢查照片是否完整，並在下載中斷後安全接續。
+日常 Mac LINE 相簿備份請先閱讀 [LINE 相簿備份使用手冊](docs/LINE相簿備份_使用手冊.md)，內含可複製的多群組啟動 Prompt。操作入口為具備原生 Mac Computer Use 的 Codex Agent＋既有 Skill；下列 acceptance CLI 不會操作 LINE 或派送「儲存全部」。新群組實機驗證與正式 AUTO 驗收狀態請以手冊限制為準。
 
-目前仍在開發與真實 Mac 驗證階段，還不是安裝後就能放心使用的一鍵備份工具。以下會清楚區分已經實際做到的事，以及仍待驗證的部分。
+This repository contains the reusable `line_backup_acceptance` operator CLI for the LINE album acceptance workflow. It is fail-closed by design: authority is explicit, verify-only is read-only, and transaction state is guarded by a POSIX lock plus same-directory atomic replacement and read-back.
 
-## 為什麼要做這個工具？
+## Operator entry points
 
-LINE 相簿裡的照片可能需要一個相簿一個相簿保存；相簿多時，人工整理既花時間，也不容易確認哪些已完成。若下載途中中斷，還要查明哪些照片已經存好，避免從頭下載或不小心覆蓋舊檔。
+Set `PYTHONPATH` to the repository `src` directory and invoke `/usr/bin/python3 -m line_backup_acceptance`.
 
-這個專案想把辨認、備份與檢查的步驟串起來，讓結果能被核對，也讓中斷後的處理更安全。
+`verify-only` requires explicit `--project-root`, canonical `--config` and `--state`, destination, exact group key, date fingerprint, and an evidence directory. It emits independent filesystem, registry, source, state, and overall outcomes. Test-mode pause barriers are limited to the verifier fixture root.
 
-## 它預計怎麼運作？
+`transaction prepare`, `resume`, `commit`, `finalize`, and `duplicate-check` require production canonical authority paths. Test mode is bounded to the 25 literal `/private/tmp/line-backup-acceptance-case-N` roots and `state.json`; both lexical and symlink-resolved fixture paths must remain inside the selected case root. It is for deterministic adapter fixtures only.
 
-1. AI Agent（能理解畫面並判斷下一步的助理）觀察 LINE，確認群組、相簿日期和照片數量。
-2. Agent 使用 Computer Use（讓助理操作電腦畫面的功能）開啟相簿；macOS 的文字辨識與輔助使用介面資訊可協助確認畫面。
-3. 備份程式檢查相簿是否已備份、保存位置是否安全，以及照片檔案是否完整。
-4. 若下載中斷，目標是保留已完成的照片，再確認 LINE 能否接續缺少的部分，並避免重複下載或覆寫。
+The persisted RC2 axes are kept separate. A committed intent always has `save_all_retry_allowed=false`; uncertain or possibly dispatched work becomes `TRIGGER_UNKNOWN`/`UNKNOWN` and is never replayed. Both `commit` and `finalize --outcome VERIFIED` require the same completed-dispatch proof before verification can advance. Only terminal `finalize` can commit `VERIFIED` or `SAFE_ABORT`. `duplicate-check` returns `SKIP_DUPLICATE`, while terminal `resume` returns `SKIP_TERMINAL`.
 
-Agent 負責看懂當下畫面、選擇操作並確認結果；程式負責授權、重複檢查、狀態保存與檔案驗證。每次操作都要依當下畫面判斷，不能照搬舊座標。
+## Acceptance drivers
 
-## 目前已經做到什麼？
+The subprocess drivers in `tests/` create isolated fixtures and retain raw stdout, stderr, exit codes, state snapshots, manifests, and hashes. They do not serve as the product state machine or accept a product status line as an oracle.
 
-專案曾以真實 Mac 上的 LINE、AI Agent 與 Computer Use，完成五本相簿共 **329/329 張照片**的下載與完整性檢查；逐張檢查檔案雜湊並以 macOS 影像解碼功能確認照片可完整讀取。過程也證明，畫面上的相簿身分不符時可以先停止，重新確認後再操作。
+No command in this package dispatches LINE Save All. Formal project state, grants and existing backup files remain outside the daily helper's write surface. The current owner-facing goal is real LINE album backup; this acceptance CLI and the daily helper do not establish that outcome by themselves.
 
-這些成果屬於**手動診斷流程**：有人在過程中協助觀察與操作，並非正式的一鍵全自動備份驗收。它們證明部分操作方法曾在真實 LINE 上成功，不代表其他畫面或相簿一定能用相同位置操作。
+## Daily foreground records
 
-## 目前還在解決什麼？
+`PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily --help` lists the local record operations. This helper records Agent-attested foreground observations, reserves local album attempts and checks downloaded files. It does not observe or operate LINE, authorize Save All, issue runtime grants, or verify that submitted screenshot/AX evidence is genuine. Its summary explicitly reports `sensor_verified=false`, `real_line_e2e=NOT_TESTED`, and `pass_scope=AGENT_ATTESTED_ACCOUNTING_ONLY`; a bookkeeping `PASS` is not a tool PASS or formal E2E acceptance.
 
-- LINE 原生下載在取消後是否能接續尚未完成實測。
-- 是否能安全辨認中斷位置、保留已下載照片並只處理缺少部分，仍待驗證。
-- 從辨認相簿到完成檢查，再自動移至下一本相簿的完整批次流程，尚未通過正式驗收。
+Only supported normalized history with matching local group UUID, full album identity, status and required photo-verification evidence can count as COMPLETED. Legacy/unsupported history stays `PROTECTED_HISTORY`: it is preserved and blocks redownload, but also blocks a completeness PASS until resolved through a supported evidence path. An explicit UNKNOWN outcome is terminal for this helper and cannot be changed to STOPPED/NOT_SENT by another ordinary outcome call.
 
-在這些項目有真實證據前，專案不會宣稱中斷接續或完整自動備份已經完成。
 
-## 照片與個人資料安全
+## Workspace portability
 
-操作 LINE 前需有當次授權；測試時使用隔離的保存位置，先檢查相簿是否已備份，再確認下載結果。已完成的備份、手動保存的照片和排除清單都必須保留，不可為了測試而重下載或覆寫。結果不明時會先停止，不猜測下載是否成功，也不盲目重試。
-
-公開文件不放家庭照片、私人截圖、群組資訊、私人相簿名稱或個人電腦路徑。
-
-## 目前可以直接使用嗎？
-
-目前不建議把它當成一般使用者可直接安裝的備份產品。專案仍在開發與實機驗證中；操作介面、完整自動流程及中斷接續能力都尚未完成正式驗收。README 中的開發者命令是用來檢查驗收工具，不會替你操作 LINE 或自動下載照片。
-
-## 開發者資訊
-
-### 驗收工具
-
-專案包含 Python 套件 `line_backup_acceptance`，用於檢查備份資料、準備或讀回受控交易狀態，以及執行重複項目檢查。它採取保守做法：需要明確的授權與路徑；遇到結果不明的操作不會允許再次派送。**這個 CLI 不會點擊 LINE 的「儲存全部」，也不等於完整 LINE 備份產品流程。**
-
-在 repository 根目錄可查看命令說明：
-
-```sh
-PYTHONPATH=src /usr/bin/python3 -m line_backup_acceptance --help
-```
-
-`verify-only` 需要明確指定專案根目錄、正式設定與狀態檔、目的地、群組識別、日期指紋及證據目錄，並分別回報檔案系統、登錄資料、來源、狀態及整體結果。交易命令包含 `prepare`、`resume`、`commit`、`finalize` 和 `duplicate-check`；正式模式要求正式授權路徑。測試模式僅限 25 個指定的 `/private/tmp/line-backup-acceptance-case-N` 測試資料夾及其中的 `state.json`，包含解析符號連結後也不得離開所選資料夾。
-
-交易狀態使用 POSIX 鎖定、同資料夾原子寫入及寫入後讀回保護。各項狀態分開保存；已提交的操作意圖不允許重送 Save All，若派送結果不明就標記為 `TRIGGER_UNKNOWN`／`UNKNOWN` 並停止。`commit` 與 `finalize --outcome VERIFIED` 都需要已完成派送的證明；只有終結用的 `finalize` 可提交 `VERIFIED` 或 `SAFE_ABORT`。`duplicate-check` 可回報 `SKIP_DUPLICATE`，已終結的 `resume` 則回報 `SKIP_TERMINAL`。這些 CLI 命令不會替你按 LINE 的「儲存全部」。
-
-### 開發與測試
-
-`tests/` 內的驗收驅動程式會建立隔離測試資料，保留命令輸出、結束碼、狀態快照、manifest（檔案清單與雜湊紀錄）及雜湊。這些測試用來檢查工具行為，不能代替真實 LINE 畫面、下載或中斷接續測試。
-
-正式路徑綁定預設以 repository 根目錄為基準。只有在授權綁定資料確實存放於其他位置時，才設定 `LINE_BACKUP_WORK_ROOT`。更多操作與安全規範請先閱讀根目錄的 `AGENTS.md`，真實 LINE 操作經驗請閱讀 `.agents/skills/line-album-agent-cua/`。
+Production `join:` and `user_fact:` binding references default to the checked-out repository root instead of an owner-specific home-directory path. Set `LINE_BACKUP_WORK_ROOT` only when the canonical binding-artifact workspace intentionally lives elsewhere.

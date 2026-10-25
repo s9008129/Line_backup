@@ -1,40 +1,37 @@
 ---
 name: line-album-agent-cua
-description: 在 Line_backup 專案使用 AI Agent、Computer Use、macOS LINE、畫面／AX／OCR 辨識、相簿導覽、Save All、下載取消或中斷接續實機測試時使用；重用已成功的 Agent 視覺操作經驗，避免過度工程化並保護既有備份。
+description: 在 macOS LINE 以目前前景相簿列表進行 Agent 備份、完整盤點與相簿級中斷恢復；使用原生 Computer Use，保護既有照片及完成紀錄。
 ---
 
-# LINE 相簿 AI Agent 實機操作
+# LINE 前景相簿備份
 
-## 核心原則
+使用者把正確群組的「相簿列表」放到前景並指定儲存位置即可；**不要求輸入 GROUP_NAME，不以中文 OCR 精確相等作為 gate**。Agent 根據最新畫面、AX、視覺脈絡及必要 OCR 判斷；Computer Use 執行輸入，程式守住紀錄、去重與檔案安全。不新增 GUI 框架、不重用舊座標。
 
-- **AI Agent 負責理解任務、觀察畫面、選擇行動與驗證結果**；Computer Use 負責實際操作；程式碼主要負責授權、去重、狀態、檔案與證據安全。不要把本專案退化成固定座標腳本或每個 UI 控制都需要先開發 locator 的傳統自動化。
-- 優先重用 [已驗證的實機經驗](references/verified-experience.md)。以最少且有資訊增益的真實操作推進原生「部分下載 → 取消 → 再次進入 → 缺檔接續」驗收。
-- **成功案例不等於通用定位保證**：歷史點位、捲動值、螢幕比例及 GUI 畫面不能跨 session 重用；每次都以當下新鮮畫面定位，確認截圖與點擊的座標基準一致。無法確認時停止，不能猜點。
-- AX 缺少某按鈕並不代表畫面上不存在該控制。讓 Agent 綜合新鮮截圖、視覺結構、必要時 OCR/AX 做語意辨識；不要將「repo 缺少 `locateMenu` 函式」誤判成 Agent 完全不能辨識選單。
-- 遵循根目錄 `AGENTS.md`、上層 Harness 與本輪明確授權；本 Skill 不提供新的 GUI、下載、取消、GitHub Actions 或資料修改授權，也不放寬正式 AUTO gate。
+## 依情境讀取
 
-## 最短可用操作迴圈
+- 實機導覽／選單：先讀 [已驗證經驗](references/verified-experience.md)，使用 PR28 metadata strip → 詳細頁核對 → fresh menu 的方法，及 PR32 過期 AX 重新觀察／重疊捲動經驗。
+- 完整列表、跨群組紀錄或中斷恢復：讀 [日常備份與恢復](references/daily-backup.md)，使用現有 `src/line_backup_batch/daily.py` 輔助記錄及 `image_decode.swift` 驗證；輔助 CLI 不操作 LINE、不簽發 grant。
+- 首次使用、交接給一般使用者：讀 [使用手冊](../../../docs/LINE相簿備份_使用手冊.md)。
 
-1. **唯讀檢查。** 檢查本輪候選是否存在於正式備份 state、manual archive、排除清單與私有 checkpoint；確認舊 VERIFIED、手動已完成相簿均不重下載。記錄隔離目的地原有檔數與 bytes。
-2. **確認授權與前景。** 僅在 Owner 本輪明確授權、前景交接完成、動作與次數均在範圍內時，才對真實 LINE 派送輸入。授權用完、發生中斷或疑義，立即停止；不得套用上一輪 grant。
-3. **觀察 → 理解 → 行動 → 再觀察。** 讀取 fresh LINE 截圖及可用 AX；以群組脈絡、日期及照片數雙重核對目標詳細頁。由 Agent 在當前畫面辨識右上 `⋯`，以當前截圖和已確認的 CUA 點擊座標基準計算點位。若當次只授權一次選單點擊，最多點一次，立即檢查選單是否真的出現；不能繼續按 `儲存全部`。
-4. **必要時才進入下載階段。** 下載、取消、重啟下載各需涵蓋該動作的明確授權。確認唯一 `儲存全部` 與正確相簿、去重及持久 intent / at-most-once 安全條件，才允許一次 Save All；使用隔離的新目的地，不改寫既有照片。取消後保留全部部分檔案，觀察 LINE 是否提供原生接續選項；未知結果不得重派 Save All。
-5. **以行為證據結案。** 記錄實際動作次數、前後頁面狀態、目的地檔數／bytes、檔案清單與 hash、可解碼結果及是否出現原生 resume。沒有操作或沒有觀察到的項目記為 `NOT_RUN`／`NOT_TESTED`，不能推論為 PASS。
+## 執行迴圈
 
-## 發生障礙時
+1. 先讀根目錄 `AGENTS.md` 及當次授權。核對原生 Mac 工具、LINE 與當次前景交接；Owner 正在使用電腦時先做離線工作，真正需要前景才提出交接。登入畫面、前景中斷或對象不明時停止 GUI 輸入。
+2. **前景是對象，目的地是紀錄邊界。** 唯讀查正式 state、manual archive、私有 completion／intent、最新 batch summary 及排除清單；只使用已確認屬於當前群組的紀錄。目的地綁定持久本地 UUID；LINE 若有可靠 opaque ID 可輔助，名稱／路徑名稱／一字 OCR 差異都不決定群組身分。新 Session 以新畫面重核群組與 UUID 對應，有歧義才請 Owner 確認，不自動跨群組套用舊紀錄。
+3. 從頂端開始；每次捲動保留有序重疊與前後證據，逐卡去重。日期／張數相同仍須視覺識別。到底需同一末卡及向下捲動無位移證據。AX 子項數不是總本數；每張卡有完成、排除、未完成、未知或受保護歷史狀態。舊格式／不完整來源保留為 `PROTECTED_HISTORY`：不重下載，但也不能當完成或排除來湊 PASS。
+4. 點卡片 metadata strip；在詳細頁重新核對日期、張數及可區分的視覺脈絡，再看 fresh `⋯` 選單。主視窗看不到 popup 時，先沿用現有 native window list／指定 popup screenshot／OCR 方法觀察，不盲點。每次動作後重新觀察 AX／畫面。
+5. Save All 前須有有效 L2、受審且綁定的 runtime、正式交易 gate、去重、持久 intent、唯一選單和新空白目的地。**本 Skill、Owner 日常 Prompt、本地紀錄或 request JSON 都不是 runtime grant。** 不改 `gui_authorized_by_this_profile`、不偽造 consent／review、不重開 closed grant、不重置 ledger。未合法成立就停在 Save All 前。
+6. 單次派送 → chooser 核對新空白目錄 → 觀察下載結束與穩定 → 張數／非空檔／逐檔 SHA-256／既有 ImageIO 完整像素解碼 → 寫後讀回。相同 SHA-256 的不同照片檔允許保留。日常完成標 `MANUAL_DIAGNOSTIC`、`formal_auto_verified=false`，不改正式 VERIFIED。
+7. 返回列表繼續逐本對帳。只有覆蓋從頂到底、所有卡片已完成或明確排除、`PROTECTED_HISTORY=0`、`INCOMPLETE=0` 且 `UNKNOWN=0` 才可報日常列表簿記完整。`daily summary` 明示 `evidence_role=AGENT_ATTESTED_OBSERVATIONS`、`sensor_verified=false`、`real_line_e2e=NOT_TESTED`；它只投影 Agent 提交的證據參照與狀態，不是 sensor/tool PASS 或實機驗收。此結論不能升格正式 AUTO。
 
-- 遇到錯誤相簿或失效 AX node：停止派送、重新取得新鮮畫面與 AX，再確認對象；沿用 D42 曾成功擋下錯誤候選的做法。
-- 選單點擊沒有反應：記錄「已派送點擊」與「未派送點擊」的差別、點位來源、目前畫面、可觀察結果與座標基準；單次授權耗盡即停止。不要改試多個舊座標，也不要先製作新的通用 locator 框架。
-- 只有在真實證據證明 Agent 視覺定位反覆無法安全操作時，才提議**最小**的單一視覺輔助函式或座標轉換修補；保留 AI Agent 的場景理解、選擇及驗證責任。先證明缺口，再寫程式。
-- 不得用人工介入的成功冒充 `AUTO PASS`；不得用離線 mock click、CI 綠燈或模擬選單取代真實 LINE E2E。
-- 本輪不需要修改 Harness V4.8.0、啟動 GitHub Actions、重跑已驗證下載，或為文書完整性而增加與當前 blocker 無關的 gate。
+## 正式恢復基準
 
-## 每輪回報最少包含
+`RECOVERY_STRATEGY=ALBUM_LEVEL`；`PHOTO_LEVEL_RESUME=FUTURE_RESEARCH`。
 
-- **業務進度**：目前距離「取消後接續缺漏照片」還差哪個可觀察行為。
-- **授權與實際動作**：GUI、選單、Save All、取消的派送次數；已執行／未執行清楚區分。
-- **證據與資料安全**：相簿身分、新鮮畫面依據、隔離資料夾前後差異、受保護狀態是否改動、未知事項；私人照片與完整截圖不得上傳公開 repo。
-- **下一個最小動作**：限一個有資訊增益的步驟，標註是否需要新 Owner 授權。
-- **避免過度工程化自檢**：若新增工具、模組、契約或規劃，說明為何沿用已成功的 Agent 操作仍不能完成當前測試。
+- COMPLETED／FILES_VERIFIED／VERIFIED 與已人工完成相簿永不重下載；遺失或改動則停止核對，不能自動補下。
+- 中斷保留全部部分檔案與 intent；明確 `UNKNOWN` outcome 不可由普通 outcome 改成 STOPPED／NOT_SENT，也禁止自動重送。只有 intent 尚無 outcome 時，才可記錄第一個實際已知結果。
+- 前次派送狀態明確、已確認終止、取得**該群組／該本／該次**恢復授權後，才建立另一個新空白目錄及新 intent。原目錄不覆寫、不刪除，另通過有效 L2／交易 gate。
+- 照片級／LINE 原生 resume 尚未實證；不把它當目前產品完成的前置條件。
 
-完整既有案例、其證據層級與已知反例請讀 [references/verified-experience.md](references/verified-experience.md)。
+## 回報
+
+記錄 GUI／選單／Save All／取消的實際次數、下載與解碼張數、列表覆蓋、四種相簿狀態、受保護資料差異及唯一下一步；未實測標 `NOT_TESTED`。實機證據、原始檔名及家庭照片保留本機私有位置。更新當輪 `E2E測試報告.md`；人工觀察記 `OBSERVED`，不寫成工具或正式 AUTO PASS。

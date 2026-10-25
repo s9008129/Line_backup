@@ -4,7 +4,9 @@ import CoreText
 import XCTest
 @testable import Rev28Core
 
-/// Renders its own synthetic fixtures (no screen content) for OCR tests.
+/// Renders its own synthetic fixtures (no screen content) for OCR runtime tests.
+/// These tests exercise Apple's on-device Vision service and are therefore kept
+/// separate from the pure deterministic contract gate in GitHub Actions.
 enum TestImageFactory {
     static func image(text: String, fontSize: CGFloat = 120, padding: CGFloat = 60) -> CGImage? {
         let font = CTFontCreateWithName("PingFangTC-Medium" as CFString, fontSize, nil)
@@ -45,7 +47,11 @@ enum TestImageFactory {
 final class OcrEngineTests: XCTestCase {
     private let engine = VisionOcrEngine()
 
-    private func recognizedStrings(in text: String, fontSize: CGFloat = 120) async throws -> [String] {
+    private func recognizedStrings(
+        in text: String,
+        fontSize: CGFloat = 120,
+        engine: any OcrPerforming
+    ) async throws -> [String] {
         guard let image = TestImageFactory.image(text: text, fontSize: fontSize) else {
             throw XCTSkip("fixture rendering failed")
         }
@@ -54,7 +60,7 @@ final class OcrEngineTests: XCTestCase {
     }
 
     func testRecognizesMenuRowIdentity() async throws {
-        let strings = try await recognizedStrings(in: "儲存全部")
+        let strings = try await recognizedStrings(in: "儲存全部", engine: engine)
         XCTAssertTrue(
             strings.contains(where: { OcrTextIdentity.isExactMatch($0, "儲存全部") }),
             "expected exact 儲存全部, got \(strings)"
@@ -62,13 +68,12 @@ final class OcrEngineTests: XCTestCase {
     }
 
     func testRecognizesCountIdentity() async throws {
-        let strings = try await recognizedStrings(in: "57張照片")
+        let strings = try await recognizedStrings(in: "57張照片", engine: engine)
         XCTAssertTrue(
             strings.contains(where: { OcrTextIdentity.isExactMatch($0, "57張照片") }),
             "expected exact 57張照片, got \(strings)"
         )
     }
-
 
     func testDiscriminatesZhenGlyphsInAlbumTitleContext() async throws {
         // 禎 (U+798E) vs 楨 (U+6968): exact matching, never normalized or merged.
@@ -76,8 +81,8 @@ final class OcrEngineTests: XCTestCase {
         // a bare single 楨 glyph is below Vision's text-detection granularity.
         let zhenText = "旻謙允禎成長日記"
         let zhenVariantText = "旻謙允楨成長日記"
-        let zhen = try await recognizedStrings(in: zhenText, fontSize: 120)
-        let zhenVariant = try await recognizedStrings(in: zhenVariantText, fontSize: 120)
+        let zhen = try await recognizedStrings(in: zhenText, fontSize: 120, engine: engine)
+        let zhenVariant = try await recognizedStrings(in: zhenVariantText, fontSize: 120, engine: engine)
         XCTAssertTrue(
             zhen.contains(where: { OcrTextIdentity.isExactMatch($0, zhenText) }),
             "expected exact \(zhenText), got \(zhen)"
@@ -110,5 +115,18 @@ final class OcrEngineTests: XCTestCase {
         XCTAssertLessThanOrEqual(item.boundingBoxCapturePx.maxX, CGFloat(image.width) + 1.0)
         XCTAssertLessThanOrEqual(item.boundingBoxCapturePx.maxY, CGFloat(image.height) + 1.0)
         XCTAssertGreaterThan(item.confidence, 0.0)
+    }
+
+    /// Diagnostic only: plan §ARCHITECTURE §3 permits the Objective-C Vision
+    /// request as a best-effort parity wrapper. If both this and the modern API
+    /// fail on a hosted runner, the evidence points at the runner's Vision
+    /// runtime rather than an API-specific regression in the production path.
+    func testLegacyVisionParityBackendRecognizesMenuRow() async throws {
+        let legacy = LegacyVisionOcrParityEngine()
+        let strings = try await recognizedStrings(in: "儲存全部", engine: legacy)
+        XCTAssertTrue(
+            strings.contains(where: { OcrTextIdentity.isExactMatch($0, "儲存全部") }),
+            "legacy parity backend expected 儲存全部, got \(strings)"
+        )
     }
 }

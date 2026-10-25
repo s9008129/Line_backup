@@ -2,6 +2,12 @@
 
 以下是可重用的**方法與判斷**，不是允許複製座標或重新下載既有相簿的授權。
 
+> Owner 2026-10-25：`RECOVERY_STRATEGY=ALBUM_LEVEL`；`PHOTO_LEVEL_RESUME=FUTURE_RESEARCH`。歷史取消結果仍是 `CANCEL_WINDOW_MISSED`，原生 resume 與缺檔恢復仍為 `NOT_TESTED`，不可改寫為成功。以下方法只供當次新鮮畫面與授權下重新判斷；舊座標、window ID 與 bounds 一律不可重用。
+
+## 2026-10-24／批次摘要（僅讀歷史成果）
+
+私有摘要 SHA-256：`1a16956beb3b8669104bff049b4398dfac1b9d3092f0da8a96668fd10be52917`。記錄為新增 **19 本／1,555 張／19 次 Save All**，ImageIO 驗證 1,555 張、重複下載 0。這是對既有歷史結果的摘要，不是新群組驗收、當前實機測試或正式外部核准。
+
 ## 2026-10-22／PR28 五本實機紀錄
 
 來源：repo `harness-development/line-five-album-manual-20261022/E2E測試報告.md`（PR #28）。
@@ -30,6 +36,16 @@
 - CUA 在真實 LINE 已能擷取 AX、看到 101 個相簿列表 row；單次 0.25-view-height scroll 將 scrollbar `3991 → 4531`，並能點擊兩本候選的 metadata/title，從詳細頁核對身份；過期 AX ID 被拒絕後可以重新擷取。
 - 上述測試**沒有** Save All、下載、取消或接續；因此不能用來宣稱 `CANCEL_RESUME=PASS`。
 - PR28 手動診斷流程與 PR32 Agent-resume 控制器尚不能推定為同一個已整合且完整驗收的 runtime。不要將「不同 branch 下各自成功」升級為整體產品 PASS。
+
+## 2026-10-23／H69 獨立 macOS 功能表及取消時序
+
+來源：本機私有實機證據 `harness-development/line-five-album-manual-20261022/private/h69-cancel-resume-20261023/`；該目錄在 Git 忽略規則內，不公開照片或完整 LINE 畫面。
+
+- 目標詳細頁由新鮮畫面核對為 `2024/03/18~03/22`、69 張。一次點擊當前右上 `⋯` 後，CUA 主視窗仍只顯示相簿詳細頁；native window list 卻顯示獨立 LINE popup（當次 window ID 379、layer 101）。指定 popup 的 native screenshot 與 OCR 成功辨識到唯一 `儲存全部`。**主 CUA 視窗沒有選單，不代表選單未開啟。**window ID、bounds 與座標只屬於當次觀察，不能跨 session 重用。
+- 此案例驗證「native window list + 指定視窗 screenshot + OCR」能補足主視窗觀察盲點；先檢查 popup，再判斷要不要再次定位或點擊，避免將觀察面不完整誤認為點擊失敗。
+- H69 在畫面顯示 `36/69` 時點擊一次 LINE 正常「取消」。點擊後 modal 關閉，但盤點立即得到 69 張 JPEG、23,375,742 bytes；兩秒後檔名、大小與 SHA-256 集合相同。結果為 `CANCEL_WINDOW_MISSED`，不能宣稱取消成功或失敗，也不能推論 LINE 不支援取消。
+- 後續唯讀 ImageIO 檢查完整解碼 69/69，但這只驗證已下載 JPEG 可解碼，不驗證取消保留部分檔案，也不驗證原生 Resume。因沒有缺檔集合，`NATIVE_RESUME_STATUS=NOT_TESTED`、`MISSING_FILES_RECOVERED=NOT_TESTED`；不得再次 Save All 冒充接續。
+- 本次是 `MANUAL_DIAGNOSTIC`，非正式 AUTO。私有 intent 檔與 `SAVE_ALL_DISPATCH_ARMED` 事件可證明任務限定預留及一次派送紀錄；intent 檔仍記 `save_all_attempts_consumed=0`，且沒有正式 runtime admission／強制 at-most-once 收據，因此不得升格為正式交易安全 gate PASS。
 
 ## 審查者的快速裁決
 
