@@ -1,34 +1,33 @@
 # LINE 相簿 Agent 備份
 
-你人工開好 LINE 相簿列表、首次指定保存位置並授權，Agent 使用 [專屬 Skill](.agents/skills/line-album-agent-cua/SKILL.md) 自動查明前次任務狀態，下載所有尚未完成且未排除的相簿，中斷就按相簿接續。不填 MODE／RESUME；完整盤點是下載前的內部步驟。不以群組名稱辨識，不新增控制器。唯一啟動入口是 [使用手冊的提示詞](docs/LINE相簿備份_使用手冊.md)；討論或審查 Skill 不會啟動下載。
+人工開好 LINE 相簿列表、首次指定保存位置並交接前景，由 AI Agent 使用[專案 Skill](.agents/skills/line-album-agent-cua/SKILL.md) 查明舊進度、完整盤點、逐本下載與驗證。已完成的不重下，結果未知先查證，中斷採相簿級恢復。
 
-往後只維護 master。必要小工具沿用現有照片驗證與持久紀錄程式；下方 acceptance CLI 是保留的舊正式驗收工具，不是日常下載入口。舊研究來源與過時檔案的保存方式見 [整理紀錄](docs/專案整理紀錄.md)。新版完整盤點與相簿級接續尚需另行實機驗證，沒有在這輪整理中執行下載。
+日常入口是[使用手冊的 Prompt](docs/LINE相簿備份_使用手冊.md)。審查文件或整理專案不會啟動 LINE；群組中文名稱不作身分依據。
 
-This repository contains the reusable `line_backup_acceptance` operator CLI for the LINE album acceptance workflow. It is fail-closed by design: authority is explicit, verify-only is read-only, and transaction state is guarded by a POSIX lock plus same-directory atomic replacement and read-back.
+## 保留的工具
 
-## Operator entry points
+- `src/line_backup_batch/daily.py`：本地列表、事件、完成與中斷紀錄。
+- `src/line_backup_batch/image_decode.swift`：逐檔 SHA-256 與 ImageIO 完整解碼。
+- `scripts/agent_resume/modern_ocr.swift`：選用的離線影像 OCR，不截圖或操作 GUI。
+- `tests/test_daily_records.py`：記錄、資料保護、恢復與真實 ImageIO fixture 回歸。
 
-Set `PYTHONPATH` to the repository `src` directory and invoke `/usr/bin/python3 -m line_backup_acceptance`.
+```sh
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily --help
+PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p test_daily_records.py
+```
 
-`verify-only` requires explicit `--project-root`, canonical `--config` and `--state`, destination, exact group key, date fingerprint, and an evidence directory. It emits independent filesystem, registry, source, state, and overall outcomes. Test-mode pause barriers are limited to the verifier fixture root.
+工具不操作 LINE、不簽發下載授權，也不獨立證明畫面內容真實。summary 的 PASS 只代表 Agent 提交資料的簿記結果；`sensor_verified=false`、`real_line_e2e=NOT_TESTED`，不能升格為正式 AUTO 或獨立 E2E。
 
-`transaction prepare`, `resume`, `commit`, `finalize`, and `duplicate-check` require production canonical authority paths. Test mode is bounded to the 25 literal `/private/tmp/line-backup-acceptance-case-N` roots and `state.json`; both lexical and symlink-resolved fixture paths must remain inside the selected case root. It is for deterministic adapter fixtures only.
+## 唯一核心目錄與備份記憶
 
-The persisted RC2 axes are kept separate. A committed intent always has `save_all_retry_allowed=false`; uncertain or possibly dispatched work becomes `TRIGGER_UNKNOWN`/`UNKNOWN` and is never replayed. Both `commit` and `finalize --outcome VERIFIED` require the same completed-dispatch proof before verification can advance. Only terminal `finalize` can commit `VERIFIED` or `SAFE_ABORT`. `duplicate-check` returns `SKIP_DUPLICATE`, while terminal `resume` returns `SKIP_TERMINAL`.
+`Line_backup` 是唯一核心目錄。`.local/line-backup/active-task.json` 指向本專案 `backups/backup-records`；相簿身分、完成／排除／未知操作與身分未明的照片提示，保存在其中的追加式 JSON。日常啟動不查封存、外層舊資料或 Git 歷史。
 
-## Acceptance drivers
+```sh
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily memory --root "$PWD/backups"
+```
 
-The subprocess drivers in `tests/` create isolated fixtures and retain raw stdout, stderr, exit codes, state snapshots, manifests, and hashes. They do not serve as the product state machine or accept a product status line as an oracle.
+這個唯讀指令投影目前記憶；事件仍是唯一狀態來源，不另存一份可變游標。歷史來源只在轉入時評估，後續直接讀已保存的事實。照片與逐檔完成證據留在本專案，異動時停止、不重下。未釐清的照片提示只保護可能相符項目，不擋住無關相簿，也不當成跨列表完成證明。
 
-No command in this package dispatches LINE Save All. Formal project state, grants and existing backup files remain outside the daily helper's write surface. The current owner-facing goal is real LINE album backup; this acceptance CLI and the daily helper do not establish that outcome by themselves.
+舊 Harness、交易程式與專屬測試已退役。穩定操作方法在 Skill／程式中，開發歷程在 Git 中；都不需要啟動舊程式。結構化記憶與轉入限制見[紀錄工具](.agents/skills/line-album-agent-cua/references/daily-backup.md)。
 
-## Daily foreground records
-
-`PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily --help` lists the local record operations. This helper records Agent-attested foreground observations, reserves local album attempts and checks downloaded files. It does not observe or operate LINE, authorize Save All, issue runtime grants, or verify that submitted screenshot/AX evidence is genuine. Its summary explicitly reports `sensor_verified=false`, `real_line_e2e=NOT_TESTED`, and `pass_scope=AGENT_ATTESTED_ACCOUNTING_ONLY`; a bookkeeping `PASS` is not a tool PASS or formal E2E acceptance.
-
-Only supported normalized history with matching local group UUID, full album identity, status and required photo-verification evidence can count as COMPLETED. Legacy/unsupported history stays `PROTECTED_HISTORY`: it is preserved and blocks redownload, but also blocks a completeness PASS until resolved through a supported evidence path. An explicit UNKNOWN outcome is terminal for this helper and cannot be changed to STOPPED/NOT_SENT by another ordinary outcome call.
-
-
-## Workspace portability
-
-Production `join:` and `user_fact:` binding references default to the checked-out repository root instead of an owner-specific home-directory path. Set `LINE_BACKUP_WORK_ROOT` only when the canonical binding-artifact workspace intentionally lives elsewhere.
+記憶位置、轉入結果與驗證界限見[結構化備份記憶](docs/結構化備份記憶.md)。離線測試不表示新的 LINE 實機或跨 Session 恢復驗收已通過。

@@ -7,7 +7,7 @@ Owner 已選日常 AI Agent 流程。這裡是現有工具的輸入規則，不�
 ## 本地紀錄入口
 
 在 repo root 使用 `PYTHONPATH=src python3 -B -m line_backup_batch.daily --help`。
-每個操作使用 `--root <Owner選定的既存目錄> --input <私有JSON>`；JSON 由 Agent 依實際證據產生，使用者不必手填。
+每個操作使用 `--root <Line_backup內Owner選定的既存目錄> --input <私有JSON>`；JSON 由 Agent 依實際證據產生，使用者不必手填。目的地、證據與編譯後工具均放在本專案內，外部 root／證據引用會被拒絕；不要將外層舊目錄加回輸入。
 輸入欄位就是 `DailyRecords` 同名 method 的 keyword arguments，來源：`src/line_backup_batch/daily.py`。
 
 ```text
@@ -15,16 +15,20 @@ BACKUP_ROOT/
   albums/<attempt UUID>/       每次嘗試各自的新空白目錄
   backup-records/
     group.json                本地群組 UUID、目的地與磁碟／目錄識別
-    events/00000001.json ...   追加式 inventory／history／intent／outcome／completion
+    events/00000001.json ...   追加式 inventory／history／memory／intent／outcome／completion
+    memory-anchors/*.json      匯入記憶事件的獨立 SHA-256 校驗紀錄
     .lock                     本地序列寫入鎖
 ```
 
 不同類別共用一份有序事件紀錄，各自可投影讀出，沒有第二份容易不同步的可變 cursor。每筆有前筆 hash、sequence、群組 UUID；exclusive publish、fsync、readback。發現 pending write 或破損紀錄就停止，不刪紀錄來解鎖。這不是平台 sandbox、正式 writer admission 或實體 exactly-once 證明。
 
-- `init`：需當次前景／目的地對應證據及歷史來源盤點範圍證據。可靠 `context_id` 可省略。新目錄不是「沒有舊備份」的證明；先查 state／manual archives／私有 checkpoints／completion／最新 summary／排除項。
+記憶事件另有不可覆寫的 `memory-anchors` 校驗紀錄，讀取時核對事件內容與集合，防止末筆記憶被單獨改寫／移除後繼續。寫入中斷而缺少校驗紀錄也會停止；保留原件查明原因。這是本機一致性保護，不是對具有整個目錄寫入權限者的簽章或防竄改保證。
+
+- `memory`：唯讀投影 `line-backup-memory/v1`，包含完整相簿身分、目前狀態、attempt、completion 與 `legacy_albums`。這是日常讀取入口，不寫第二份容易不同步的狀態檔。記憶與原始事件都在本專案；方法與開發歷程由 Skill、程式及 Git 管理。
+- `init`：需當次前景／目的地對應證據及本專案結構化記憶／實際照片盤點範圍證據。可靠 `context_id` 可省略。新目錄不是「沒有舊備份」的證明；先讀本專案現有 backup-records 與已保存排除／操作紀錄。
 - `bind`：傳 `session_id`、既有 `local_group_id`、fresh `observation`、真實 `handoff` 證據檔；可靠 ID 存在時需一致。沒有穩定 LINE ID 時，由 Agent 以實機脈絡對應本地 UUID，歧義才請 Owner 確認。不能只因目錄 basename 或 OCR 相同就認定同群組。
-- `history`：`scope_evidence` 加逐本 `entries`。每筆附本地 UUID、完整 `identity`、聲明狀態與原始 `source` 檔。只有 `line-backup-daily-history/v1` 正規來源會作為完成／排除狀態：來源必須逐欄匹配本地 UUID、完整 identity、`album_key` 與聲明狀態；COMPLETED 另需具預期張數、manifest hash、逐檔 SHA-256 與一致的完整 ImageIO 證據檔；EXCLUDED 需具同群組／同相簿的 `line-backup-exclusion/v1` 證據與 Owner source。這些只證明引用內容相互一致，不提升為正式 AUTO 驗證。
-- 不支援、舊格式、欄位不符或證據不完整的來源保留原始 `source` 與 identity，狀態改為 `PROTECTED_HISTORY`：不重新下載，也不計入完成／排除，並阻止日常 summary PASS。不能猜測舊格式意義來補欄位；跨本地 UUID 的輸入仍拒絕，避免混入其他群組。
+- `history`：`scope_evidence` 加逐本 `entries`。每筆附本地 UUID、完整 `identity`、聲明狀態與本專案 `source` 檔；只在匯入時查核。只有 `line-backup-daily-history/v1` 正規來源會作為完成／排除狀態：來源必須逐欄匹配本地 UUID、完整 identity、`album_key` 與聲明狀態；COMPLETED 另需具預期張數、manifest hash、逐檔 SHA-256 與一致的完整 ImageIO 證據；EXCLUDED 需具同群組／同相簿的 `line-backup-exclusion/v1` 決定與 Owner source。工具把評估結果、必要結構化證據及來源 digest 內嵌進事件，之後讀記憶不再開啟來源。這不提升為正式 AUTO 驗證。
+- 不支援、舊格式、欄位不符或證據不完整者保留來源 digest、identity 與原聲明，轉為 `PROTECTED_HISTORY`；可直接匯入 `UNKNOWN`／`PROTECTED_HISTORY` 保護事實。兩者不重新下載，也不計入完成／排除。跨本地 UUID 的輸入仍拒絕。
 
 正規 `source` JSON 的固定欄位為 `schema`、`local_group_id`、完整 `identity`、`album_key`、`status`。COMPLETED 另含 `photo_verification.expected_images`、`manifest_sha256`、`manifest_evidence` 與 `imageio_evidence`；manifest JSON 形狀為 `{ "manifest": [{"name", "size", "sha256"}], "manifest_sha256": "..." }`，ImageIO JSON 必須含 `verdict=PASS`、`readOnly=true`、相符 expected／actualEntries 與逐檔 decoded/name/SHA。EXCLUDED 改含 `exclusion_evidence`，其 JSON 必須是 `line-backup-exclusion/v1`、同 UUID／identity／key、`decision=EXCLUDE_ALBUM` 及 `owner_source` reference。
 - `scan`：新 Session／重新盤點都開新 scan，完成事實不清除，畫面 cursor 不跨 Session 重用。
@@ -32,7 +36,7 @@ BACKUP_ROOT/
 - `identity`：`start_date`、`end_date`、`expected_images`、持久 `visual_key`。後者是 Agent 依封面／列表鄰接／詳細頁可區分資訊建立的識別，不是中文 OCR 字串。日期／張數不能單獨 dedupe；歧義不亂配。
 - 底端：以同一末頁再次向下捲動，傳 `bottom_stationary=true` 與 `boundary_evidence`；卡片集合／次序、scrollbar／視覺量測位移都須不變。
 
-`boundary_evidence` 是實際觀察的私有 JSON：`edge=top|bottom`、`session_id`、`edge_key`、`before_offset`、`after_offset`、`before_screenshot`、`after_screenshot`、`input_receipt`。offset 使用當次可靠 scrollbar 或同一座標基準的視覺量測；頂端為 0，兩次必須相等。三個 reference 均含 `path/bytes/sha256`，由 `reference()` 建立，後圖需等於當頁 screenshot；底端前圖需等於上一頁 screenshot。這是 Agent 的 `OBSERVED` 證據，不是自動感測器或正式 G2 gate。一般列表導覽不冒充 G2；正式 G2 仍須其原有全部證據與 0.25 viewport 契約。
+`boundary_evidence` 是實際觀察的私有 JSON：`edge=top|bottom`、`session_id`、`edge_key`、`before_offset`、`after_offset`、`before_screenshot`、`after_screenshot`、`input_receipt`。offset 使用當次可靠 scrollbar 或同一座標基準的視覺量測；頂端為 0，兩次必須相等。三個 reference 均含 `path/bytes/sha256`，由 `reference()` 建立，後圖需等於當頁 screenshot；底端前圖需等於上一頁 screenshot。這是 Agent 的 `OBSERVED` 證據，不是自動感測器或已退役的正式 G2 gate。
 
 ## 交易與恢復
 
@@ -61,13 +65,13 @@ BACKUP_ROOT/
 
 `summary` 投影目前 scan 的逐本狀態；曾見但新 scan 消失的卡片也記 UNKNOWN。輸出明示 `evidence_role=AGENT_ATTESTED_OBSERVATIONS`、`sensor_verified=false`、`real_line_e2e=NOT_TESTED`、`pass_scope=AGENT_ATTESTED_ACCOUNTING_ONLY`。`ALL_ELIGIBLE_ALBUMS_BACKED_UP=PASS` 只表示呼叫者提供的逐本狀態簿記完整；不是工具對畫面／照片的獨立 PASS、不是實機 LINE E2E，也不是正式 AUTO。`PROTECTED_HISTORY` 必須為零，且 `INCOMPLETE=UNKNOWN=0`、到底證據存在，才可有此日常簿記 PASS。
 
-## 舊紀錄對帳
+## 一次性記憶轉入與身分未明項
 
-先列來源、相簿識別、目的地、張數、實際完成／派送證據及原紀錄格式；保留來源不變。日期／張數相同不是同一本的證明，也不跨列表套用。
+`memory-import` 是一次性的離線資料整理，不要求也不建立前景交接。輸入 `local_group_id`、`legacy_albums`、`coverage` 與 `provenance`；既有事件不改寫。舊格式 history 的決定在此轉為內嵌記憶，缺證據就降為受保護，既有 UNKNOWN／受保護事實不升格。未轉入且仍有舊格式 history entries 時，讀取回報 `MEMORY_MIGRATION_REQUIRED`，不自行找外部來源。
 
-只有能用現有支援格式及完整證據安全對應的來源，才交工具讀入。缺本地識別、manifest、完整解碼或原始來源時，標成受保護歷史：先跳過下載，向 Owner 白話說明缺哪項。不可自己補造驗證結果、改寫舊檔或為了清零狀態重下照片。沒有可靠轉入方法時保留對照清單與具體阻塞，不臨時開發新的匯入框架。
+每個 `legacy_albums` 項有唯一 `id`、`local_group_id`（未可靠對應為 null）、`identity_hint`（start_date／end_date／expected_images）、`status=UNKNOWN|PROTECTED_HISTORY`、`reason`，可附原聲明、現存照片的相對位置及 SHA-256 清單。不能將開發 fixture、總數或日期／張數轉成逐本完成事實。日常工具只把同日期範圍的候選標成受保護，從不據此跨列表合併或認定完成／排除；實際操作事件的狀態優先。非本列表的提示不應要求還原開發資料，需釐清時只問具體列表／相簿關係。
 
-舊 `authorization-request` 及 formal 研究限制見 [歷史正式流程](legacy-formal.md)，不作日常備份的新增開發需求。
+`authorization-request`、舊 batch／acceptance CLI 及正式 AUTO 控制器已退役。日常流程使用本專案工具與結構化記憶。
 
 ## Skill 文件維護參考
 

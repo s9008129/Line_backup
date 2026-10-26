@@ -1,6 +1,7 @@
 """Synthetic accounting plus real macOS ImageIO; no LINE or GUI input."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import struct
 import subprocess
@@ -8,8 +9,9 @@ import tempfile
 import unittest
 import zlib
 
-from line_backup_batch.daily import (DailyRecords, DailyError, NORMALIZED_HISTORY_SCHEMA,
+from line_backup_batch.daily import (DailyRecords, DailyError, NORMALIZED_HISTORY_SCHEMA, MEMORY_SCHEMA,
                                      album_key, digest, encoded, reference, verify_directory)
+from line_backup_batch.daily import strict_json
 
 
 def png():
@@ -27,7 +29,7 @@ class DailyTests(unittest.TestCase):
         # alias; use a real fixture directory in this checkout instead.
         cls.fixtures = tempfile.TemporaryDirectory(prefix='.line-daily-tests-',
                                                    dir=Path(__file__).resolve().parents[1])
-        cls.tools = tempfile.TemporaryDirectory(prefix='line-daily-decoder-')
+        cls.tools = tempfile.TemporaryDirectory(prefix='decoder-', dir=cls.fixtures.name)
         cls.decoder = Path(cls.tools.name).resolve() / 'image_decode'
         cls.source = Path(__file__).resolve().parents[1] / 'src/line_backup_batch/image_decode.swift'
         # The installed CLT default SDK is newer than its compiler. Select the
@@ -207,8 +209,165 @@ class DailyTests(unittest.TestCase):
             identity=identity, local_group_id=group['local_group_id'], status='COMPLETED',
             source=str(source_path))])
         self.assertEqual(store.status_map()[album_key(identity)], 'COMPLETED')
-        manifest_path.write_bytes(encoded({'manifest': manifest, 'manifest_sha256': '0' * 64}))
-        self.assertEqual(store.status_map()[album_key(identity)], 'PROTECTED_HISTORY')
+        for path in (manifest_path, imageio_path, source_path):
+            path.unlink()
+        reopened = DailyRecords(root)
+        memory = reopened.memory()
+        self.assertEqual(memory['albums'][0]['status'], 'COMPLETED')
+        self.assertEqual(memory['history'][0]['photo_verification']['manifest']['manifest'], manifest)
+
+    def legacy_claim(self, card=None):
+        card = card or self.cards[0]
+        return dict(id='synthetic-existing-photos', local_group_id=None,
+            identity_hint={k: card[k] for k in ('start_date', 'end_date', 'expected_images')},
+            status='PROTECTED_HISTORY', recorded_status='UNMAPPED_LOCAL_PHOTOS',
+            reason='Synthetic local photos without reliable list binding')
+
+    def import_memory(self, entries=None):
+        return self.store.import_memory(local_group_id=self.group['local_group_id'],
+            legacy_albums=entries or [], coverage='SYNTHETIC_LOCAL_FACTS_ONLY', provenance=[])
+
+    def test_legacy_candidates_protect_without_assigning_group_or_blocking_other_dates(self):
+        unrelated = dict(self.cards[1], start_date='2026-02-01', end_date='2026-02-02')
+        self.import_memory([self.legacy_claim()])
+        self.page([self.cards[0], unrelated], top=True)
+        self.page([self.cards[0], unrelated], bottom=True)
+        self.assertEqual(self.store.summary()['PROTECTED_HISTORY'], 1)
+        with self.assertRaisesRegex(DailyError, 'PROTECTED_NO_REDOWNLOAD'):
+            self.intent(self.cards[0])
+        self.assertTrue(self.intent(unrelated)['attempt_id'])
+        reopened = DailyRecords(self.root).memory()
+        self.assertIsNone(reopened['legacy_albums'][0]['local_group_id'])
+        self.assertEqual(reopened['legacy_albums'][0]['recorded_status'], 'UNMAPPED_LOCAL_PHOTOS')
+
+    def test_memory_cannot_override_actual_completion_or_unknown_dispatch(self):
+        self.page(self.cards[:1], top=True)
+        self.page(self.cards[:1], bottom=True)
+        attempt = self.intent(self.cards[0])
+        self.import_memory([self.legacy_claim()])
+        self.assertEqual(self.store.memory()['albums'][0]['status'], 'UNKNOWN')
+        with self.assertRaisesRegex(DailyError, 'UNKNOWN_OR_RUNNING_NO_REPLAY'):
+            self.intent(self.cards[0])
+        for n in (1, 2):
+            (Path(attempt['destination']) / ('%d.png' % n)).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        self.assertEqual(DailyRecords(self.root).summary()['COMPLETED'], 1)
+
+    def test_memory_import_rejects_cross_group_completion_claims_and_second_import(self):
+        before = len(list((self.store.records / 'events').iterdir()))
+        with self.assertRaisesRegex(DailyError, 'WRONG_LOCAL_GROUP'):
+            self.store.import_memory(local_group_id='wrong', legacy_albums=[], coverage='scope', provenance=[])
+        for claim, error in ((dict(self.legacy_claim(), local_group_id='other'), 'CROSS_GROUP_HISTORY_REFUSED'),
+                             (dict(self.legacy_claim(), status='COMPLETED'), 'LEGACY_CLAIM_CANNOT_COMPLETE')):
+            with self.assertRaisesRegex(DailyError, error):
+                self.import_memory([claim])
+        self.assertEqual(len(list((self.store.records / 'events').iterdir())), before)
+        self.import_memory()
+        with self.assertRaisesRegex(DailyError, 'MEMORY_ALREADY_IMPORTED'):
+            self.import_memory()
+
+    def test_memory_reads_only_active_records_not_import_sources(self):
+        from unittest.mock import patch
+        from line_backup_batch import daily
+        self.import_memory([self.legacy_claim()])
+        original = daily.read_file
+        def local_only(path):
+            self.assertTrue(Path(path).is_relative_to(self.store.records), str(path))
+            return original(path)
+        with patch.object(daily, 'read_file', side_effect=local_only):
+            memory = DailyRecords(self.root).memory()
+            self.assertEqual(memory['schema'], MEMORY_SCHEMA)
+            self.assertEqual(DailyRecords(self.root).summary()['total'], 0)
+
+    def test_external_roots_and_evidence_are_not_runtime_inputs(self):
+        with tempfile.TemporaryDirectory(prefix='line-external-input-') as name:
+            outside = Path(name).resolve()
+            with self.assertRaisesRegex(DailyError, 'PROJECT_LOCAL_ROOT_REQUIRED'):
+                DailyRecords(outside)
+            source = outside / 'old-data.json'
+            source.write_text('{}')
+            with self.assertRaisesRegex(DailyError, 'PROJECT_LOCAL_EVIDENCE_REQUIRED'):
+                reference(source)
+            project = Path(__file__).resolve().parents[1]
+            run = subprocess.run(['/usr/bin/python3', '-B', '-m', 'line_backup_batch.daily',
+                'summary', '--root', str(self.root), '--input', str(source)],
+                env=dict(os.environ, PYTHONPATH=str(project / 'src')), capture_output=True, text=True)
+            self.assertEqual(run.returncode, 4)
+            self.assertEqual(json.loads(run.stdout)['reason'], 'PROJECT_LOCAL_EVIDENCE_REQUIRED')
+
+    def test_legacy_event_migration_preserves_unknown_and_downgrades_missing_proof(self):
+        # The fixture emulates the old immutable event format without modifying
+        # any real event. The missing source must become a recorded barrier.
+        old_source = reference(self.evidence('synthetic old source'))
+        with self.store.locked():
+            self.store.append('history', dict(scope_evidence=old_source, entries=[dict(
+                album_key=album_key(self.cards[0]), identity=self.cards[0], status='COMPLETED',
+                declared_status='COMPLETED', source=old_source), dict(
+                album_key=album_key(self.cards[1]), identity=self.cards[1], status='UNKNOWN',
+                declared_status='UNKNOWN', source=old_source)]))
+        Path(old_source['path']).unlink()
+        with self.assertRaisesRegex(DailyError, 'MEMORY_MIGRATION_REQUIRED'):
+            self.store.memory()
+        self.import_memory()
+        memory = DailyRecords(self.root).memory()
+        statuses = {a['album_key']: a['status'] for a in memory['albums']}
+        self.assertEqual(statuses[album_key(self.cards[0])], 'PROTECTED_HISTORY')
+        self.assertEqual(statuses[album_key(self.cards[1])], 'UNKNOWN')
+        self.page(self.cards[:2], top=True)
+        with self.assertRaisesRegex(DailyError, 'PROTECTED_NO_REDOWNLOAD'):
+            self.intent(self.cards[0])
+        with self.assertRaisesRegex(DailyError, 'UNKNOWN_OR_RUNNING_NO_REPLAY'):
+            self.intent(self.cards[1])
+
+    def test_imported_exclusion_is_self_contained_and_never_dispatches(self):
+        root = self.base / 'excluded-group'
+        root.mkdir()
+        store = DailyRecords(root)
+        group = store.initialize(binding_evidence=self.evidence('binding'), history_scope_evidence=self.evidence('scope'))
+        self.bind(group=group, store=store)
+        identity = self.cards[0]
+        owner = self.evidence('synthetic owner exclusion')
+        exclusion = self.evidence(dict(schema='line-backup-exclusion/v1', local_group_id=group['local_group_id'],
+            identity=identity, album_key=album_key(identity), decision='EXCLUDE_ALBUM', owner_source=reference(owner)))
+        source = self.evidence(dict(schema=NORMALIZED_HISTORY_SCHEMA, local_group_id=group['local_group_id'],
+            identity=identity, album_key=album_key(identity), status='EXCLUDED', exclusion_evidence=reference(exclusion)))
+        store.history(session_id=self.session, scope_evidence=self.evidence('scope'), entries=[dict(
+            identity=identity, local_group_id=group['local_group_id'], status='EXCLUDED', source=source)])
+        for filename in (source, exclusion, owner):
+            Path(filename).unlink()
+        store.start_scan(session_id=self.session)
+        self._page_for(store, [identity], group, top=True)
+        self._page_for(store, [identity], group, bottom=True)
+        self.assertEqual(DailyRecords(root).summary()['EXCLUDED'], 1)
+        store.detail(session_id=self.session, identity=identity, evidence=self.evidence('detail'))
+        with self.assertRaisesRegex(DailyError, 'COMPLETED_OR_EXCLUDED_NO_REDOWNLOAD'):
+            store.intent(session_id=self.session, identity=identity)
+
+    def test_memory_event_binding_and_schema_corruption_fail_closed(self):
+        self.import_memory([self.legacy_claim()])
+        path = sorted((self.store.records / 'events').glob('*.json'))[-1]
+        raw = path.read_bytes()
+        event = json.loads(raw)
+        event['data']['schema'] = 'unsupported'
+        path.write_bytes(encoded(event))
+        with self.assertRaisesRegex(DailyError, 'MEMORY_DIGEST_CHANGED'):
+            DailyRecords(self.root).memory()
+        event = json.loads(raw)
+        event['data']['legacy_albums'] = []
+        path.write_bytes(encoded(event))
+        with self.assertRaisesRegex(DailyError, 'MEMORY_DIGEST_CHANGED'):
+            DailyRecords(self.root).memory()
+        path.write_bytes(raw)
+        event = json.loads(raw)
+        event['local_group_id'] = 'wrong'
+        path.write_bytes(encoded(event))
+        with self.assertRaisesRegex(DailyError, 'EVENT_BINDING_CHANGED'):
+            DailyRecords(self.root).memory()
+        path.write_bytes(raw)
+        path.unlink()
+        with self.assertRaisesRegex(DailyError, 'MEMORY_ANCHOR_SET_CHANGED'):
+            DailyRecords(self.root).memory()
 
     def test_source_with_wrong_normalized_group_is_protected_not_completed(self):
         root = self.base / 'mismatched-normalized-group'
@@ -383,16 +542,39 @@ class DailyTests(unittest.TestCase):
         with self.assertRaises(OSError):
             self.complete(attempt)
 
-    def test_cross_group_authorization_request_cannot_create_consent_review_or_grant(self):
-        self.page(self.cards[:1], top=True)
-        request = self.store.authorization_request(session_id=self.session, identity=self.cards[0],
-                                                    owner_request=self.evidence('synthetic Owner request'))
-        self.assertEqual(request['status'], 'BLOCKED_NEW_GROUP_ISSUER_REQUIRES_REVIEW')
-        self.assertFalse(request['dispatch_authorized'])
-        self.assertIsNone(request['external_implementation_review'])
-        self.assertIsNone(request['runtime_grant'])
-        self.assertFalse(request['native_authorize_is_issuer'])
-        self.assertFalse((self.root / 'albums').exists())
+    def test_strict_json_rejects_ambiguous_or_invalid_records(self):
+        for raw in (b'{"status":"UNKNOWN","status":"COMPLETED"}',
+                    b'{"nested":{"x":1,"x":2}}', b'NaN', b'Infinity',
+                    b'-Infinity', b'"\xff"', b'{', b'[' * 2000):
+            with self.subTest(raw=raw[:60]), self.assertRaisesRegex(DailyError, '^INVALID_INPUT$'):
+                strict_json(raw, 'INVALID_INPUT')
+        self.assertEqual(strict_json(b'{"status":"UNKNOWN","n":1}', 'INVALID_INPUT'),
+                         {'status': 'UNKNOWN', 'n': 1})
+
+    def test_retired_commands_refuse_before_accessing_destination(self):
+        project = Path(__file__).resolve().parents[1]
+        env = dict(os.environ, PYTHONPATH=str(project / 'src'))
+        missing = self.base / 'must-not-be-created'
+        for module, args, expected in (
+                ('line_backup_batch', ['begin', '--root', str(missing)], 64),
+                ('line_backup_batch.daily', ['authorization-request', '--root', str(missing)], 2)):
+            run = subprocess.run(['/usr/bin/python3', '-B', '-m', module, *args],
+                                 env=env, capture_output=True, text=True)
+            self.assertEqual(run.returncode, expected, run.stderr)
+            self.assertFalse(missing.exists())
+
+    def test_malformed_cli_input_is_refused_without_writing_records(self):
+        project = Path(__file__).resolve().parents[1]
+        malformed = self.base / 'input.json'
+        malformed.write_bytes(b'{"session_id":"one","session_id":"two"}')
+        before = {p.name: p.read_bytes() for p in (self.root / 'backup-records/events').iterdir()}
+        run = subprocess.run(['/usr/bin/python3', '-B', '-m', 'line_backup_batch.daily',
+                              'scan', '--root', str(self.root), '--input', str(malformed)],
+                             env=dict(os.environ, PYTHONPATH=str(project / 'src')),
+                             capture_output=True, text=True)
+        self.assertEqual(run.returncode, 4, run.stderr)
+        self.assertEqual(json.loads(run.stdout)['reason'], 'INVALID_INPUT')
+        self.assertEqual({p.name: p.read_bytes() for p in (self.root / 'backup-records/events').iterdir()}, before)
 
     def test_torn_event_or_changed_evidence_blocks_without_resetting_history(self):
         self.page(self.cards[:1], top=True)
