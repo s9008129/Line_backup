@@ -57,6 +57,8 @@ BACKUP_ROOT/
 
 `verify` 需已知下載完成、當次 decoder path／SHA-256。沿用 `src/line_backup_batch/image_decode.swift`，可用已確認來源相同的既有 binary；需編譯時先確認編譯器和 SDK 相符，不修改系統 toolchain。三次間隔樣本一致、數量相符、逐檔非空 SHA-256、ImageIO 完整 RGB 解碼、decoder hash 與目錄事後重核全部通過，才追加 completion。重啟對完成檔做 metadata 核對，異動就停止而不重下載。
 
+`outcome` 的第一筆結果不可再追加另一筆，因此明確 UNKNOWN 也不能事後改寫為 DOWNLOAD_FINISHED。此時可依 [備份與恢復](backup-and-resume.md) 直接呼叫既有 decoder 唯讀核驗照片、保存獨立查證證據，但 `daily verify` 不能提交 completion。不要要求 Owner 重複授權、改寫事件或另建 attempt 解鎖；如實回報紀錄收斂所缺的工具能力。
+
 `summary` 投影目前 scan 的逐本狀態；曾見但新 scan 消失的卡片也記 UNKNOWN。輸出明示 `evidence_role=AGENT_ATTESTED_OBSERVATIONS`、`sensor_verified=false`、`real_line_e2e=NOT_TESTED`、`pass_scope=AGENT_ATTESTED_ACCOUNTING_ONLY`。`ALL_ELIGIBLE_ALBUMS_BACKED_UP=PASS` 只表示呼叫者提供的逐本狀態簿記完整；不是工具對畫面／照片的獨立 PASS、不是實機 LINE E2E，也不是正式 AUTO。`PROTECTED_HISTORY` 必須為零，且 `INCOMPLETE=UNKNOWN=0`、到底證據存在，才可有此日常簿記 PASS。
 
 ## 舊紀錄對帳

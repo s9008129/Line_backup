@@ -157,7 +157,7 @@ Prompt 已提供以下必要授權與限制：本次目標是已交接列表中�
 | `.local/line-backup/evidence/current-task/verify-output.json` | SHA-256 `1c0b574264c495fd4b4c7abf0de63b70200b2fd426b3e3661ca2ff5dcbc49676`；manifest、每檔 hash、ImageIO 結果 |
 | `backups/backup-records/events/00000009.json` | 完成事件；包含 51 個檔案 manifest |
 | `download-progress-25-of-51.png` | SHA-256 `14c594892ff5844da0c6b1966f067f3155a8cb18d9554cfbab1cbfba2d333d97`；下載期間畫面 |
-| `post-progress-line.png` | SHA-256 `b415ee42eafe567998de6ec18ef2ca82aff444622bdbc70e8dee7ee3a7ea7c4`；進度視窗消失後的畫面 |
+| `post-progress-line.png` | SHA-256 `b415ee42eafe567998de3a5d26d0a203ef4317011dbf137c7fbd252437db83e4`；進度視窗消失後的畫面；於 Skill 優化時重新計算並更正先前抄錄錯誤 |
 | `detail-line.png` | SHA-256 `4dfc113b4317def9e72cee3feb0d1144329de07fd899a660f95103fdcd4dc471`；詳細頁日期／張數 |
 | `menu-popup-context.png` | SHA-256 `d617f4ff8fddbccc5c93d5d62b6562c34bb12890f5e74a77953019b32b58b6b0`；獨立 popup 選項與位置 |
 | `preverify-manifest.json` | SHA-256 `b07ac2ebc8fcbe445517cb97e581df988829c5d45d8e8e1ff2ffbaf679ba8eb0`；驗證前初始檔案清單 |
