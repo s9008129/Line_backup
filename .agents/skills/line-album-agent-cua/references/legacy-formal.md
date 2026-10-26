@@ -1,16 +1,24 @@
-# 歷史正式 AUTO 研究流程
+# 封存歷史與去重來源
 
-只有 Owner 明確要求舊 formal AUTO／交易驗收、grant 或來源綁定診斷時才讀本文件。Owner 於 2026-10-25 選擇「日常 Skill 依 Agent 流程精簡」，並明確拒絕 P3。這是產品方向決策，不是外部 review 通過、正式 E2E PASS 或可執行 grant。
+2026-10-26，Owner 選擇保留日常 Agent 備份，封存後移出舊研究、控制器、正式交易程式與測試。退役不代表舊驗收完成，也不會重新開啟任何 grant、ledger 或 UNKNOWN 派送。
 
-日常主流程是 Owner 人工開列表、明確授權與交接前景，Agent 依 Skill 盤點、下載、驗證及保存紀錄；不以另建一般授權簽發系統為前提。
+## 每次啟動查找
 
-以下舊路徑仍按原本實際程式限制執行，本輪沒有修改它們：
+讀專案 `.local/line-backup/history-index.json`，核對它的 `archive_manifest`：一般檔案、bytes、SHA-256 及實際位置都須相符。該 manifest 的 `entries` 逐項列出 `original`、`archive`、節點型別及檔案 hash；用完整 `original` 精確查找，再唯讀開啟 `archive` 所指原件。不要把 `original` 的舊專案路徑當成仍存在。
 
-- `policies/line-two-album-pilot-v1.json` 的 `gui_authorized_by_this_profile=false` 不授予 GUI 權限。
-- `line_backup_batch.cli:native_authorize` 只檢查既存 project grant；`dispatch_authorized=false` 不是 issuer。
-- `daily authorization-request` 只輸出待核對資料。它可能回 `BLOCKED_NEW_GROUP_ISSUER_REQUIRES_REVIEW`；保留此真實拒絕，不改值或偽造審查。
-- 舊 project／ONE56 綁定固定 task、config、root、source/runtime、Owner 決策及外部 review。不能挪用到另一列表或用 P3 代替。
-- 舊正式 Save All 路徑仍須原 duplicate、目的地、owner、intent、menu 與 at-most-once 檢查；不可重開 CLOSED grant、重置 ledger、刪除未知派送 barrier 或改寫 VERIFIED。
-- 舊正式獨立 E2E 角色、兩本交易順序、正式 G2 證據及外部審查限制保留。日常完成紀錄不升格正式 AUTO。
+依 `history_source_roots` 查原始正式 state、人工 archives、逐本 completion、checkpoint、批次 summary、排除與未知操作。manifest 同時包含合成 fixture；不可把 fixture 的完成狀態當成真實 LINE 歷史。
 
-若目前選用的工具遇到以上拒絕，停止該動作並回報。不能以「主流程已精簡」為由換入口偷渡原本被擋的同一操作。是否停用或修改舊可執行路徑是另一項明確範圍的任務，不由修改 Skill 偷渡。
+原件內若引用相對路徑，先按其原本的邏輯 task 位置解析成原專案相對路徑，再用 manifest 查該原位置；`join:` 的 project-relative 路徑也按此查找。舊絕對路徑僅在確認屬 manifest 的原專案根目錄後轉成 `original`。核對被引用內容 hash，不改寫原件內的路徑或狀態，也不為了舊 validator 而建立 symlink。
+
+## 保留原來的判定界線
+
+- 索引是位置對照，不是新帳本、完成證明、GUI 授權或 runtime grant。
+- 原始 VERIFIED、人工 COMPLETED、EXCLUDED、UNKNOWN、STOPPED 與實際派送事件分開閱讀；不補造欄位、不升格驗收、不只按日期／張數跨列表合併。
+- 能可靠對應本地列表、完整相簿身分與現有支援證據時，沿用日常工具的既有 history 規則；舊格式或證據不足者仍為 `PROTECTED_HISTORY`，不重下，也不算完成。
+- 封存缺失、hash 不符或身分不明時，保留既有資料並回報具體缺件。不能因原資料夾已移出、索引不存在或目的地是空的，就當成沒有舊備份。
+
+現行 `.local/line-backup/active-task.json` 與照片目的地的 backup-records 仍是日常進度來源，整理沒有重寫其事件。
+
+## 歷史研究
+
+舊程式、原 AGENTS、Plan、grant、ledger、凍結 runtime 與證據均由 manifest 定位。一般日常任務不載入或啟動它們。未來若 Owner 明確要求恢復研究，另定版本、資料／操作範圍與適用審查，先在隔離位置恢復必要原件；封存不保證舊 runtime 能原地重播，也不重新授權任何下載。

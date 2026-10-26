@@ -1,132 +1,58 @@
-# LINE 相簿全自動備份專案憲法
+# LINE 相簿備份專案工作規範
 
-## Owner 最新產品方向（2026-10-25）
+## 目前產品與入口
 
-日常產品以 AI Agent＋本專案 Skill＋原生 Computer Use 與結構化提示詞驅動。Owner 人工開啟指定相簿列表、指定目的地並交接前景；不以群組名稱或中文 OCR 辨識群組。先完整盤點與列出逐本清單，再依當次授權下載；中斷採相簿級恢復，保留原檔、完成的不重下、未知不重送。審查／優化 Skill 不等於 GUI 或下載授權。
+日常產品是 AI Agent＋本專案 Skill＋原生 Computer Use。Owner 人工開啟指定相簿列表、首次指定目的地並交接前景；Agent 自動查前次紀錄、完整盤點、逐本下載及驗證，直到指定列表的合格項完成。先讀 `.agents/skills/line-album-agent-cua/SKILL.md`，相關實機操作讀 `references/verified-experience.md`，並依當次畫面調整，不重用舊座標。
 
-日常流程不再以開發一般 issuer、P3、簽章系統或新控制器為工作目標。下文涉及舊正式 AUTO、兩本 pilot、特定模型角色與其 grant／ledger 的規則，只有明確進行該正式研究／驗收時才適用；其既有可執行限制不因本段被修改或繞過，也不宣稱取得外部批准。
+不以群組中文名稱或中文 OCR 識別列表。不要求 Owner 選盤點／接續模式、逐本重新下令，或手填內部 JSON。盤點是備份必要階段；缺頁先小步補接，有具體且無法自行解決的歧義才問。
 
-日常啟動預設下載全部符合資格相簿，不提供要求 Owner 選擇的盤點／接續模式。每次由 Agent 自動讀回前次任務、紀錄與檔案，確認完成或中斷，再自行接續。初始任務授權涵蓋確認停止後的自動相簿級恢復時，不逐本再向 Owner 索取接續指令；未知結果仍先查證，不盲目重送。首次任務保存本機的原紀錄位置入口，狀態以原紀錄為準，不以聊天記憶代替。
+提示詞見 `docs/LINE相簿備份_使用手冊.md`。討論提示詞、審查 Skill、整理檔案或交出前景本身，不是下載授權。GUI 輸入只在真實任務授權及有效前景交接內執行；前景中斷就停止輸入。正常可逆導覽不逐點請示。
 
-可重用成功方法直接萃取至 Skill，不要求讀者知道 PR／工作分支或重用舊座標。往後只在 master 維護；本次整併保留舊來源封存，只吸收有價值內容，不把舊分支原樣覆蓋較新產品。對 Owner 的提問與回報使用白話，只有真正不明的產品決策才提問。
+## 歷史與資料保護
 
-本文件是 LINE 備份專案的補充規範，與適用的上層 Harness／平台限制並行。Owner 已重新指定短期目標為「在真實 macOS LINE 上，連續完成兩本不同且符合資格相簿的 Save All、下載與原圖驗證」。先前僅針對單次捲動或特定合成測試的任務計畫，不能被當作永久的產品目標或禁止新實機診斷的理由；必要時由 Planner 提出有界的專案級計畫／政策／程式修訂，依 Owner 授權及必要獨立審查實施。本文不自動修改可執行的 grant、ledger 或原始碼，也不得超越更高優先層級的限制。
+- 啟動時讀 `.local/line-backup/active-task.json`、其真實 backup-records／目的地，以及 `.local/line-backup/history-index.json` 的封存來源。缺索引或原資料夾不存在，不等於從未備份。
+- 封存查找方式見 Skill 的 `references/legacy-formal.md`。依 manifest 精確對照原位置、現存位置、節點型別、bytes 與 SHA-256；原始相對引用按原 task 脈絡解析。不要改寫原件、建立 symlink 迎合舊 validator，或啟動封存程式。
+- 已完成、已人工備份、已排除與受保護歷史不重下。日期／張數相同不能跨列表合併；舊格式或缺證據保持 `PROTECTED_HISTORY`，不升格為完成。合成 fixture 不是真實歷史。
+- 一次一本。每次派送前保存並讀回 intent、新空白目的地及禁止重送紀錄；每個 attempt 的 Save All 最多一次。結果未知先查證，不能用新目錄、零計數、重置 ledger 或改寫 UNKNOWN 解鎖。
+- 初始任務已授權確認中斷後的相簿級恢復時，保留原檔，在另一個新空白目錄恢復；完成的跳過，未知的不重送。LINE 原生只補缺檔仍未實證。
+- 不發訊息、刪除、分享、覆寫照片、變更舊完成事實或擴及其他列表。這些副作用不包含在一般備份、審查或整理授權內。
 
-## 專案目標
+## 現有程式與驗證
 
-本專案的完成目標是建立並實證一套完整的 LINE 群組相簿全自動備份流程：能可靠辨識群組與相簿、略過已驗證資料、按安全交易機制派送 LINE 原生下載、驗證所有檔案內容並完成狀態提交，且能安全地移至下一本 eligible 相簿重複流程。只完成畫面辨識、選單定位、單一相簿導覽或離線測試，不得宣稱完整備份 E2E 已完成。
+保留 `src/line_backup_batch/daily.py`、`image_decode.swift`、離線 OCR 與日常測試。小工具負責記錄、去重與檔案一致性；Agent 負責理解任務、辨識畫面與選擇操作。缺 locator／AX 標籤不是增加控制器的理由。
 
-**近期優先交付：**從真實 LINE 畫面辨認相簿 A → 點開及 Save All → 對實際下載檔案逐一核驗 → 回列表並實際捲動 → 找到且核對不同的相簿 B → 點開及 Save All → 完整檔案驗證與狀態核對。優先用真實操作的前後證據找根因、最小修正、再實測；合成測試僅用於回歸，不能取代 LINE 實機結果。若沒有兩本新的 eligible 相簿，忠實回報限制，不能重複下載既有已驗證相簿湊數。
+下載後核對預期數、穩定清單、非空檔、逐檔 SHA-256 與 ImageIO 完整像素解碼，保存完成並讀回。解碼成功本身不證明與服務端原始位元完全相同。完成紀錄或檔案異動時保留來源並停止，不重下補帳。
 
-## 任務層級授權與 Agent 自適應操作
+日常工具不簽發 GUI 權限、不觀察 LINE，也不證明提交畫面真實。`sensor_verified=false`、`real_line_e2e=NOT_TESTED`、簿記 PASS、實際 GUI、檔案驗證、正式 state 與獨立驗收須分開報告。人眼觀察是 OBSERVED，不能冒充工具 PASS 或豁免。
 
-Owner 授權一項有界任務時，授權內容應明確列出：**任務目標、允許操作的對象、允許的操作類別、禁止的副作用與資料變更、停止條件**。同一授權有效期間及範圍內，Agent 可依新鮮畫面自主觀察、理解、規劃、選擇必要的低風險步驟、執行並驗證；不必把每次截圖、捲動、開啟相簿或返回列表拆成個別請示。此原則只適用於當輪明確授權及有效前景交接，不構成永久 GUI 授權、下一任務授權或執行時 grant；上層契約與已核准任務若有更窄限制，仍依其限制。
+最小回歸：
 
-分工須清楚：AI Agent 理解任務、辨識畫面與語意、選擇路徑、因應可預期變化並驗證結果；Computer Use 執行已授權的 GUI 輸入；程式碼守住去重、資料保護、狀態一致性及高風險操作 gate；專案 Skill 提供可實際運用的已驗證知識。正常導覽不應只因缺少 locator、AX 按鈕或固定座標就先增加自動化框架。
+```sh
+PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p test_daily_records.py
+```
 
-操作分為三層：
+僅選本程序相符的現有 Swift SDK，不修改系統工具鏈。離線測試不能代替真實多本備份、即時 popup 或跨 Session 恢復驗收。
 
-- **L1 觀察與一般導覽：**在指定任務範圍與前景交接內，可擷取畫面／AX、辨識頁面、尋找並核對指定相簿、必要時捲動列表、開啟相簿、返回列表、開啟選單並觀察結果。依每個當下畫面核對目標和點位；此類可逆步驟不逐點重新請示。若相簿身分不明、目標錯誤、座標映射不可信、前景交接中斷或出現資料安全疑慮，立即停止輸入並重新確認。
-- **L2 下載及中斷接續測試：**任務授權須明確涵蓋下載、取消、重新進入等實際要測的操作與對象。Agent 可在授權範圍內自主完成測試情境，但仍須核實相簿身分、排除重複、使用核准目的地及隔離範圍、通過 Save All at-most-once 與既有交易 gate；保留部分下載，不覆寫已驗證備份。派送或結果不明時不得重送可能重複的動作。
-- **L3 高風險資料變更：**刪除、覆寫、修改既有 VERIFIED 資料、變更重要狀態或擴及未授權相簿，須另行明確授權並通過既有安全 gate；L1／L2 授權不涵蓋這些變更。
+## 修改、風險與證據
 
-畫面狀態與預期不同本身不代表失敗。若任務目標是 H69 詳細頁，而目前顯示相簿列表，且本輪授權包含尋找並開啟 H69，Agent 應辨識列表、以當下畫面逐步導覽並核對身分後進入詳細頁，不因起始頁面不同就停止。遇到錯誤候選、身分歧義或上述安全／前景條件時則停止，不猜測或擴大操作。
+先查 repo／worktree／branch／HEAD 與 Git 狀態，保留無關 dirty、untracked 與唯一版本。採最小安全修改；架構、對外行為、資料／授權邊界或驗收標準改變時先提出有界計畫。可重建與可刪除不是同義詞；移出唯一歷史資料前先核對封存與恢復入口。
 
-## 強制迭代循環
+例行可逆小修採相稱流程。真正涉及資料遺失、遷移或重要相容性風險時保留適用獨立審查；貢獻者不可把自評當獨立通過。本機唯讀核對、Owner 選定的外部雲端審查與獨立實機 E2E 各自記錄，不能互相替代或預填批准。
 
-每輪工作依以下循環進行，直到整體目標達到經核准的完整驗收條件：
+同一根因最多三次有證據嘗試；兩次無新資訊就停止相同修法，保留最小重現、已知／未知與所需決策。工具拒絕、身分歧義、寫入衝突或不明派送，停止依賴該前提的動作，不換入口繞過。
 
-1. **精簡規劃：** Planner 先讀真實 LINE 證據，直接選擇能推進兩本 Save All 的最短可驗證步驟。已授權且仍在同一前景交接範圍內的正常導覽與自適應，不必每一步重新提案、請示、建 PR、建測試框架或啟動授權循環。只有當證據顯示能力不足、需要改變受保護狀態、不可逆派送方式、可執行授權機制或驗收契約時，才提出相稱的最小修補及必要審查／Owner 決策。
-2. **真實驗證優先：** Implementer 負責必要實作；獨立 E2E 驗收者在合法且有效的執行入口上以真實 LINE 驗證。區分合成、唯讀、L1 實際導覽、實際 Save All、下載檔案與原圖驗證；不得把任何一項混報成另一項 PASS。依任務授權與當次前景交接操作；同一不中斷且仍在授權範圍內的導覽不必每次點擊重做授權或規劃，若前景中斷、範圍改變或觸及更高風險層級則停止並重新確認。
-3. **完整證據回報：** 每輪實際測試都要產生或更新 task package 內的 `E2E測試報告.md`，作為高階 Planner 的持久輸入。報告須記錄目標與計畫版本、實際步驟及順序、使用的工具／程式／命令與關鍵程式片段、測試資料和環境、成功／失敗／未執行項目、預期與實際結果、狀態前後差異、副作用、嘗試歷史及每次嘗試帶來的新資訊；列明未知事項、限制與停止原因。每項關鍵主張須連到 workspace 內的證據檔案，包含相對及絕對路徑；截圖、manifest、OCR、命令輸出、測試記錄和來源檔應提供 hash 或可重現的識別資訊。不得補造未觀察到的證據，也不得把失敗覆寫成成功。
-4. **缺陷驅動迭代：** Planner 對照真實失敗的第一拒絕、實際 GUI 派送數和原始證據，指派最小修正、聚焦回歸並盡快回到實機；不要用大量假資料測試或重複規劃取代實測。專案自訂規則若阻礙可逆導覽，應追到程式與政策來源，提出可稽核的修訂；不得只改報告中的 PASS、偽造授權或跳過仍在執行的 guard。
-5. **持續到實際成果：** 每輪依真實資訊增益推進一個操作或可證明的根因。適用的 Harness 停止／升級規則仍有效；遇到實際阻塞時可經 Owner 核准調整本專案的執行設計，而不是永久停在同一個測試計畫。不得在派送結果不明時盲目重試 Save All。只有兩本不同 eligible 相簿的真實 Save All、檔案內容驗證、正式狀態讀回及獨立 E2E 成立，才能回報完整達標。
+任務原始證據放本專案的私有任務目錄，不放全域 `.codex`。`progress.md` 用白話記錄目標、阻塞、嘗試與學習。必要報告保存 PASS／FAIL／BLOCKED／NOT_RUN、實際命令／環境、前後差異、來源與 hashes，不補造結果。PRIMARY_OUTCOME、IMPLEMENTATION、CORE_ACCEPTANCE、REQUIRED_VERIFICATION、INDEPENDENT_ACCEPTANCE、TASK_CLOSURE 分開呈現，適用關卡未滿足不得稱 DONE。
 
-## 實機診斷與權責分工
+## 歷史 Harness 與正式 AUTO 已退役
 
-- **Owner（使用者）：**目標、範圍、例外政策及真實操作授權的唯一決策者。Owner 本次已概括同意在受控前景下進行真實導覽及針對兩本不同、未備份、符合資格相簿的 Save All 測試；此意向不能冒充已啟用的程式 grant 或當次 Mac 前景狀態。
-- **GPT6.1-sol／xhigh：** Planner／主 Agent，負責問題分析、調度所有 subagents、方案取捨、合併證據與向 Owner 報告。
-- **GPT6-luna／high：** Implementer，僅在明確分工下負責必要實作、最小修復、Unit Tests 與 Integration Tests，向 Sol 報告實作差異及結果；不擔任正式 Independent E2E。
-- **DeepSeek 1017 BYOK Independent E2E：**Ollama Cloud BYOK 的 DeepSeek V4.1 Flash 1017，實際模型 ID 為 `deepseek-v4.1-flash:1017`。由 Owner 啟動全新、獨立的 Codex CLI Session，不作為 Sol 的本機 Subagent；正式 E2E 階段只有 DeepSeek 可操作 LINE GUI，Sol 不得代執行或代寫其判定。
-- **外部雲端 Chief Reviewer（Owner 本次指定 ChatGPT／本對話）：**同時擔任獨立 Plan Reviewer 與實作後的 Independent Code Reviewer；不是 Sol 指派的本機子代理，不在本機 Codex Harness 代理樹內運作，不能被本機 Sol 代審或偽造審查結果。Owner 可日後明確改指定其他雲端模型。由 Owner 將 Plan、PR、完整報告及必要證據交給雲端 Reviewer；只有實際完成的雲端審查才可寫入審查狀態。
-- **可逆導覽**（被動觀察、在已辨識的相簿列表內捲動、點開相簿及返回）：優先在 Mac 真實執行並保留前後證據；不把 LINE 回傳的多個 `AXFocused=true` 當作已證明有多個真正鍵盤焦點。以正確 app／群組／視窗、唯一列表與安全目標區域、可觀察的結果判定。不得點擊無法排除為發訊息、刪除或 Save All 的目標。
-- **技能先行與自適應：**相關實機任務先閱讀 `.agents/skills/line-album-agent-cua/SKILL.md` 及 `references/verified-experience.md`，實際運用其判斷方法，不只記錄 `SKILL_LOADED=YES`。操作可綜合當下新鮮截圖、視覺結構、OCR／AX 及已確認的 CUA 座標基準；缺少 locator、AX 按鈕或固定座標不是先開發新框架的理由。PR28 的日期／張數核對、metadata strip 導覽及 E87 菜單操作／返回列表後捲動，PR32 的真實列表捲動與候選身分核對，都是可借用的方法，不是可重用的舊座標或下載授權。H69 下載取消及原生接續仍未驗證，不得寫成成功。每次相關實機回報須指出採用哪項經驗、如何依最新畫面調整、可觀察成果；若未採用，說明具體原因。只有真實證據顯示既有 Agent 能力不足且最小修補能解決當前阻礙時，才增加程式或工具。
-- **正式下載**（Save All、檔案寫入、state mutation）：仍須明確符合資格、排除歷史重複、檢查目的地與派送結果，遵守有效的交易與不重送保護；239 張歷史 VERIFIED 紀錄以及已人工備份的 65 張相簿不可以重複 Save All。
-- **政策與執行分界：**AGENTS.md 是工作規範，不是執行時授權。專案目前硬編碼於 `mac/analyzer.mjs` 的焦點條件、`src/line_backup_batch/store.py` 的 `2/2` 觀察配額、`two_album_entry.mjs` 的 ledger 初始化及正式 C1／點擊限制，必須透過明確的源碼／政策修訂與適用授權才能改變行為；不得更改已使用計數、改名 checkpoint 偷渡配額、重置 ledger 或重開已關閉 grant。可由 Owner 授權建立有界的獨立可逆診斷入口，保留 append-only 原始證據，不將其結果冒充正式 Save All gate PASS。
+Owner 於 2026-10-26 明確選擇保留日常 Agent 備份、一併退役舊程式、歷史封存後移出。舊 Harness 工作區、頂層 evidence、rev28、policies、config／state、batch／acceptance 交易程式及測試均可由歷史索引定位。原 AGENTS、Plan、凍結 runtime、grant、ledger 與審查紀錄保留原文；原 VERIFIED 與未知派送狀態未改。
 
-## 多代理協作、獨立審查與完成證據
+根目錄沒有可用的 Harness release controller／schemas／runtime-defaults；不新增框架來替代，也不聲稱 controller admission、OS sandbox、網路隔離或正式 IMPLEMENT／E2E PASS。舊 release 不可用別版 controller 冒充恢復。未來恢復正式研究須另定版本、範圍與適用獨立審查；封存與整理不授予 GUI 或重開 CLOSED grant。
 
-本節針對本專案修正「過度管理、實作提前交差、共同錯誤假設、假驗收」的風險。**兩道外部雲端審查（Plan Review、Implementation Code Review）由 Owner 本次指定的 ChatGPT 擔任；本機代理樹只保留 Sol 主控與 Luna/high Implementer。正式 Independent E2E 由 Owner 另行啟動獨立 Codex CLI Session，使用 Ollama Cloud BYOK `deepseek-v4.1-flash:1017`，不屬 Sol 的子代理。**優先執行真正能推進兩本 LINE 相簿 Save All 的工作，不為每個小修補新增代理或審查循環。本節是角色／工作流契約，不表示 Codex CLI 自動具備硬體／權限隔離，也不改寫上層 Harness、執行時 grant 或交易 ledger。
+## Git 與交付
 
-### 角色與不得混淆的兩道外部審查、實作及獨立 E2E
+產品以 master 為準。必要時以暫存審查分支交付 Draft PR，未經另行指示不 merge、不 force-push、不改寫既有審查歷史。Owner 持續授權同範圍修改的 commit／push／Draft PR；不逐輪再問。這不擴張 GUI、Save All 或 protected data 授權。
 
-1. **Plan / GPT6.1-sol（xhigh）主控：**由原始 Owner 目標推導可驗證的 Acceptance Criteria（AC）、不做事項、實機先後順序、候選環境與風險；先查最新真實失敗及程式入口，拆成最小的有界工作包。Sol 決定架構、跨模組整合、修復優先順序與派工，但不代替獨立驗收或以進度敘述裁定 PASS。若指定模型／推理模式不可用，記錄實際模型及替代決策，不能冒稱已使用指定模型。
-2. **Independent Plan Reviewer＝Owner 指定的外部雲端 ChatGPT（本機 Harness 外）：**Sol 完成新 Plan 或重大修訂後，先固定 Plan revision／SHA，連同 **Owner 原始需求、真實 LINE 證據、AC 與保護條件**提交 GitHub／提供 Owner 轉交本對話 ChatGPT。ChatGPT 獨立檢視是否偏離「兩本真實 Save All」、架構假設、正反案例、權限與 AC 可驗性，輸出 `APPROVE_PLAN`／`CHANGES_REQUIRED`／`BLOCKED` 與審查連結；**未取得真實雲端 Plan approval，不得把重大新 Plan 宣稱已核准或進入其正式 Implementation**。Sol／Luna 不能透過本機子代理替代、預填審查意見或覆蓋結論。已核准 Plan 內的有界缺陷修正不必每輪重新 Plan Review；只有目標、架構、授權／資料邊界或 AC 實質變更，才提出精確差異重審。
-3. **Implementation / GPT6-luna（high）：**只接收 Sol 派發的工作包：任務目標與 AC、repo／worktree／base HEAD、授權操作、可修改檔案／排除檔案、接口、真實失敗證據、最低必要測試及交付格式。連續完成工作包，不擅自重定義 AC、不動範圍外程式、不開自己管理的 Reviewer／E2E 代理樹。完成後向 Sol 回報實際 diff／commit、測試命令與結果、未完成 AC、假設及阻塞；`IMPLEMENTATION_DONE` 只能表示工作包完整或逐項明確 BLOCKED，**不代表 E2E PASS**。
-4. **Post-Implementation Independent Code Reviewer＝Owner 指定的外部雲端 ChatGPT（本機 Harness 外）：**Sol 先整合實作、檢查最小 diff 與本地測試，依持續 GitHub 交付規則固定 Commit／push／更新 Draft PR，將**精確 HEAD、核准 Plan SHA、AC、產品來源 diff、實機／測試原始證據、source/runtime hashes、已知 FAIL／NOT_RUN**交由 Owner 轉交雲端 ChatGPT。雲端 Reviewer 獨立查核實際程式、接口、權限邊界、可維護性、錯誤處理、負面案例與實際業務成效，輸出 `APPROVE_IMPLEMENTATION`／`CHANGES_REQUIRED`／`BLOCKED` 及真實可追溯審查連結。**外部 Code Review 與獨立 DeepSeek 1017 E2E 不是同一關卡**；Sol／Luna 不得在本機生成外部批准、由另一個本機 Reviewer 代理自評冒充，或以 Sol 的整合 PASS 取代外部審查。重大實機交易的 Code Review 不得只憑文字報告代替可審查來源；有條件審查／COMMENT／設計接受不能自行升格成正式上線批准。
-5. **Independent E2E / DeepSeek V4.1 Flash 1017（Ollama Cloud BYOK）：**實際模型 ID 為 `deepseek-v4.1-flash:1017`；由 Owner 在**全新、獨立 Codex CLI Session** 啟動，不作為 Sol 的本機 Subagent。僅接收 Owner 原始目標、固定 AC、精確待驗收 Commit／受審來源、必要 runtime／grant／目的地資料及真實證據；不輸入 Sol 完整推理歷史，不以 Implementer 自評或過往 PASS 作為驗收事實。取得真實外部 Code Review 核准、已安裝且與 grant 綁定的精確 source/runtime 及有效前景交接後，DeepSeek 是正式 E2E 唯一 LINE GUI 操作者，獨立核對畫面／AX／SCK、逐檔 SHA-256 與完整 ImageIO 解碼、VERIFIED 讀回及 release。允許唯讀查受審源碼及寫隔離的 E2E 證據／缺陷報告；**不得修改產品程式、原始測試標準、grant、ledger、歷史資料或固定 AC**，既定正式交易寫入僅由核准入口處理。逐項回報 `PASS`／`FAIL`／`BLOCKED`／`NOT_RUN`，附真實 Session／模型、操作與證據 hash。Sol 不得代執行、代寫或覆蓋其判定；FAIL／BLOCKED 具有否決權。修復由 Sol 分析後交 Luna/high，固定新 Commit、完成必要外部 Code Review 後，由新的獨立 DeepSeek Session 重驗受影響項目。A56 Save All 最多一次，未知不得重送；A 的56原圖完整驗證、VERIFIED 讀回及 release 後，才依新的獨立有效 B 交易授權驗收第二本不同 eligible 相簿，不挪用 ONE56 grant。
-6. **Owner／外部雲端 Reviewer 的主權邊界：**Owner 擁有目標、實機／交易授權、驗收標準及雲端審查模型選擇權；目前由本對話 ChatGPT 擔任兩道外部審查。**Sol 只能向 Owner 交付 Plan／PR 審查包，不能指派、取消、干預或取代這兩項雲端審查。**雲端 Reviewer 不受本機 Codex 子代理數量、角色指令、子代理上下文及排程規則支配，但仍依 Owner 原始目標、可讀證據與專案安全／交易契約進行獨立判斷；外部審查不會自動建立可執行 grant、改寫 ledger 或授權 GUI。Owner 後續可明確選用其他雲端模型，須記錄真實模型與審查來源。
+完成計畫、實作切片、重要驗證、交接或阻塞收尾前，檢查 Git。逐檔 stage 受權成果，不夾帶私人照片、群組／人名、原始檔名、憑證、grant 或未遮蔽原始證據。有成果就留下 checkpoint；無必要差異記 `NO_CHANGES_TO_COMMIT`，不造 empty commit。
 
-### 子代理調度、執行環境與修復閉環
-
-- **正式 E2E 的獨立交接與 GUI 獨占：**DeepSeek 1017 Session 由 Owner 在 Code Review 與正式交易準備完成後啟動，不由 Sol spawn、沿用本機子代理或代替撰寫判定。交接只提供原始目標、固定 AC、精確來源／runtime／grant、核准入口與目的地、隔離證據寫入位置及停止／回報格式；不傳 Sol 完整推理歷史或預設結果。正式 E2E 期間 Sol／Luna 停止 LINE GUI 輸入。換模型不會建立 runtime grant、改變交易契約、補齊工具能力或證明 OS 隔離，也不能取代尚缺的 Code Review；來源修復後固定新 Commit、完成必要外部 Code Review，再由新的獨立 DeepSeek Session 重驗。歷史 Luna 驗收紀錄保留原執行者與結論，不改寫為 DeepSeek 的成果。
-- **少量、有限、可衡量的派工：**預設只啟動確有獨立產物的**本機**子代理，通常同時 1–3 個；外部雲端 Plan Review → Luna Implementation → 外部雲端 Code Review → Owner 啟動的獨立 DeepSeek 1017 Codex CLI Session 依關卡進行（已授權的可逆真實診斷可先取得事實、但不得冒充交易 E2E PASS），不能為了平行而讓正式 E2E 讀取未完成的程式。只有真能拆開的不相交工作才平行；禁止重複相同 Reviewer、無界巢狀 spawn、同一檔案的平行寫入與各代理重跑同一組完整測試。超出預設並行或巢狀派工須 Sol 說明必要性、責任、預算及合併點，並遵守實際 Harness 上限。
-- **環境先對帳：**每個工作包先確認 Git remote／root／worktree／branch／base SHA、可修改範圍、工具版本、Python／Swift 或 Container、實際 macOS LINE 實例／window、TCC／GUI 授權及測試目的地。實作可用獨立 worktree；E2E 優先使用固定 Commit 的唯讀／隔離 worktree 與獨立證據輸出，禁止與 Implementer 共寫測試、程式或驗收基準。不同 Session 不等於隔離檔案系統／憑證／macOS 前景：若共享資源，須明確限制寫入者，真實 LINE GUI 同時只能有一個操作 owner。
-- **不中斷正常 Worker：**Sol 在事先約定的里程碑檢查進度，先查工具是否仍執行、是否有新證據；不可只因暫時沒有輸出、輪詢逾時便中止正在有效工作的 Luna，也不可高頻輪詢或每輪重建子代理。明確小修由原 Implementer 完成；跨模組／證據矛盾由 Sol 分析後再派工；需修改架構／AC 才回 Plan Review。相同根因若連續兩次修復沒有新證據或同樣失敗，停止相同派工，先做第一性原理診斷及必要升級；不能用換模型或新 Session 假裝已修復。
-- **禁止提前結案：**Implementer 每項 AC 必須標明完成／未完成／阻塞；Sol 應檢查是否真的整合到指定版本並完成必要測試，不能因 Worker 表示「本輪完成」就宣布整個任務完成。**雲端** Code Review 的 CHANGES_REQUIRED 先退修、固定新 HEAD 後再次送雲端審查；E2E 的 FAIL／BLOCKED 保留完整缺陷與可重現步驟，由 Sol 指派 Implementer 修復，再固定新 Commit、由獨立 E2E 重測受影響與必要回歸項目。結果不明的 Save All 不得盲重送。
-- **版本綁定與驗收裁決：**每次 Plan／實作／Code Review／E2E 交接至少綁定 `task_id`、`plan_revision/sha`、`implementation_commit_sha`、worktree／實際執行環境、AC 清單及每項狀態、實際操作／測試方法、證據引用／SHA、未解缺陷與 `next_action`。獨立 E2E 應提供自己的 Session／執行者資訊與原始證據；舊 Commit 的 PASS 不能自動轉移至新 Commit，來源變更後須做影響分析與必要重驗。未完成項一律留在報告，不得用縮減 AC 或另造成功報告抹除。
-- **用結果衡量，不用代理數量衡量：**每輪在現有 `E2E測試報告.md` 簡記首輪／最終 E2E 通過情形、修復迴圈、人工介入、實際耗時／使用額度（可得時）與驗收後缺陷；優先追蹤真正的 GUI 派送、Save All 次數、逐檔驗證與兩本不同相簿的完整度。不要為了指標再建立大量 Markdown 或反覆執行沒有資訊增益的合成測試。
-
-## LINE 相簿 E2E 的必要證據與順序
-
-- 真正的相簿候選與可點擊區域須來自當下畫面、群組／視窗、日期／照片數及 AX／OCR／影像交叉證據；不重用過期點位。當次 LINE 前景交接必須真實確認，測試期間可連續執行 Owner 已同意的可逆導覽，前景中斷或目標改變時重新確認。正常列表瀏覽可記錄失敗後返回；不得把探索性點擊當作 Save All 身分核對。
-- Save All 只可在核准的 duplicate、目的地、owner、持久 intent、menu identity／geometry 及 at-most-once gates 全部通過後派送；結果不確定時不得重送。每次派送、chooser 確認、下載、檔案驗收與 state readback 都須有獨立可追溯證據。
-- 單一本成功不等於兩本成功。A 真實 Save All、完整驗證及狀態讀回後，應返回相簿列表、實際向下捲動至少一次並確認畫面變化，找到且核對與 A 不同的 eligible B，再執行 B Save All 及驗證。若 B 已可見，仍保留至少一次真實捲動的證據要求，但不必為湊出形式上的新完整卡片而額外捲動；不能重開歷史 VERIFIED 相簿製造第二本。沒有 eligible B 就回報 `NO_ELIGIBLE_TARGET`，不宣稱完整達標。
-- 正式 G2 Scroll Gate 仍須逐次保留操作前／後截圖、AX 與 OCR、方法及派送結果，核對 app／群組／session／PID／window 連續性和可觀察位移；其正式步距如仍固定為 0.25 viewport，變更須修改對應專案契約，不能只改文字。一般 L1 列表導覽不因每次捲動而自動成為正式 G2 gate，也不套用完整鑑識資料配額；但仍須使用新鮮畫面核對目標、操作結果及下一步安全性。對 LINE 部分可見卡片，可用共同列身份、日期／張數、OCR 位置與畫素位移交叉驗證；若當輪驗收明確要求 G2，完整 gate 證據仍不可省略。證據不明時停止，不猜點或盲目重試。
-- 完整驗收至少分開呈現：UI／menu 校準、單本交易完成、下一本 scroll 與 grounding、第二本交易完成，以及整體批次／狀態驗收。每項只能由其自身證據判定。
-
-## 報告交接與阻塞處理
-
-`E2E測試報告.md` 是迭代循環中的正式證據交接物，不是僅供摘要的備忘錄。每輪報告完成後，將它交給本輪指定的高階 Planner；若執行環境沒有可用的 Planner 通道，保留報告與進度記錄，明確回報尚未完成 Planner 交接，不得聲稱已提交。Planner 輸出須精確指出本輪事實、未知、阻塞、下一個決策及其驗收方式。
-
-遇到 writer guard、狀態不一致、身份歧義、前景中斷、目的地副作用或未預期結果時，先保全真實證據並停止依賴該失敗前提的動作；Planner 應快速辨別是 macOS／LINE 技術限制，還是本專案自訂 gate 的假陽性。Owner 明確授權的可逆測試若被不合現況的專案規則擋住，應提出最小且可稽核的政策／源碼修正後重驗，不要無限繞回相同模擬測試。不得偽造 consent、修改歷史紀錄、偷換 writer、繞過仍有效的執行閘門或在不明結果後重送不可逆操作。
-
-## LINE_TWO_ALBUM_PILOT/1 — 有界的 Owner project route
-
-Owner 在後續對話已明確將本專案短期目標擴展為真實 LINE 連續兩本 Save All，並授權所需的可逆導覽實測及符合資格的下載測試。該授權是 Owner 的方向／操作意向，不會自動啟用既有 [LINE_TWO_ALBUM_PILOT/1](policies/line-two-album-pilot-v1.json) 私有 grant，亦不表示可重用 `CLOSED_NO_REPLAY` 或抹除 `2/2` 已用額度。Planner 應優先依 Owner 決策提出有界的專案級授權／測試模式修訂，並保留 source、原 ledger、state 與審查綁定，讓真實導覽能執行、正式 Save All 能獨立驗收。保留上層 Harness／平台限制；不聲稱原生 Controller admission、簽署收據或實體 exactly-once 保證。
-
-## 階段結束前強制 Commit 與可回溯訊息
-
-**強制觸發：**每當 Agent 準備結束本次 Session、交接至下一個 Session、完成一份 Plan（即使尚待外部審查）、完成一個 Implementation 修復切片、完成一次有實質新結果的驗證／E2E 階段，或因 `FAIL`／`BLOCKED` 暫停時，Sol 必須在回報或主動結束前執行一次 **Checkpoint Commit 檢查**。這是有意義的階段邊界，不是每個工具呼叫或每次測試都製造 Commit。即使整體兩本 Save All 尚未完成，也要保存當前已產生的可交付成果與未解問題，不能等整個 Issue 結束才留下 Git 歷史。
-
-1. **先保存實際成果：**確認 repo／branch／HEAD 與 `git status`，整理本階段真正變更的 Plan、程式、測試、可公開的驗證報告或交接紀錄。必要時更新現有 `E2E測試報告.md` 或 Plan／PR handoff，寫明 PASS、FAIL、BLOCKED、NOT_RUN，及可重現證據。僅逐檔 stage 本輪受權變更；不夾帶不相關 dirty／untracked 檔、私有照片、憑證、原始授權或未遮蔽證據。Plan 待審也可提交，**Commit 不代表 Plan／Code Review／E2E 已獲核准**。
-2. **Git Commit 本體必須有三段完整內容：**不得只在 PR 描述或聊天室寫詳情，不能只留下 `fix issue`、`update files` 一類摘要。使用精準的 `<type>(<scope>): <本階段變更重點>` 作為 Subject；**Commit message body 必須明確包含且填妥「意圖」、「做了什麼」、「下一步的建議」**三個標題。建議同時填入「驗證與結果」，清楚列出實際執行命令、測試／實機狀態、失敗原因、未執行項目與證據參照；不捏造 PASS、不把預期寫成實際執行：
-
-   ```text
-   <type>(<scope>): <具體且可辨識的階段成果>
-
-   意圖：
-   - <為何要做；對應 Owner 目標、AC 或已觀察根因>
-
-   做了什麼：
-   - <確實修改／新增哪些重要檔案或行為；範圍與保留條件>
-
-   驗證與結果：
-   - <真實執行的命令／LINE 操作、PASS／FAIL／BLOCKED／NOT_RUN、證據連結或 hash>
-
-   下一步的建議：
-   - <下一個可執行動作、待解阻塞、所需外部雲端審查或 Owner 決策>
-   ```
-
-3. **每個階段獨立留痕並核對：**有本輪可交付變更就 `git commit`、依既有持續授權 `git push` 並建立／更新同範圍 Draft PR；推送後用 `git show -s --format=%B <commit-sha>` 與 GitHub 遠端讀回確認**真正 Git Commit 的 body**包含三要素，而非只有 PR 留言。向 Owner 回報 Commit SHA／連結、PR、真實測試結果與下一步。不得 `--amend` 或 force-push 改寫既有審查歷史來補訊息。
-4. **沒有可提交差異時不得製造虛假歷史：**若本階段只有真實測試或決策產生新資訊，優先更新既有的去識別化報告／handoff 再提交該報告；若確實無任何必要變更，**不建立 empty commit**，明確回報 `NO_CHANGES_TO_COMMIT`、本階段事實與下一步。若 Git／權限／遠端失敗，保留變更與原始錯誤，回報 `COMMIT_OR_PUSH_BLOCKED`，不得聲稱已提交成功。突發斷線無法保證收尾；下一個 Session 啟動時先對帳未提交與未推送成果，再接續任務。
-
-## 修正完成後的自動 GitHub PR 與雲端審查交接
-
-Owner 對本專案各輪已授權範圍內的修正，持續授權以下交付流程；不必每次重新詢問是否 commit、push 或建立 PR。
-
-1. **每輪修正完成即主動交付：**整理本輪差異、完成適用且可執行的驗證，逐檔加入本輪修改，執行 `git add`、`git commit`、`git push`，並在本專案 GitHub 建立 PR；已有涵蓋同一範圍的 PR 時更新該 PR，避免重複建立。保留無關的 dirty／untracked 工作，不得使用整目錄加入而夾帶私人證據或其他修改。即使整體 E2E 尚有阻塞，也應交付可審查的修正，清楚標記失敗、未執行及未完成項目。
-2. **Commit 訊息三要素及 PR 不得省略：**依上節「階段結束前強制 Commit」規則，**每一筆由 Agent 建立的階段性 Commit body** 都必須實際寫出「意圖／做了什麼／下一步的建議」，並附適用的真實驗證結果；PR 標題與說明應概述最後提交的實際內容，但**不能取代 Git Commit 本身的訊息**，也不得沿用過期描述。
-3. **完整報告須能在 GitHub 閱讀：**將本輪 `E2E測試報告.md` 或適用的完整驗證／交接報告，上傳為 PR 中的受版本控制檔案或完整留言；不能只提供使用者本機路徑或摘要。保留成功、失敗、未執行、真機與合成測試的區別及可追溯證據識別；私人照片、群組／人名、檔案清單、敏感授權資料及本機個人路徑先做必要遮蔽，並清楚標示遮蔽範圍，保留本機原始證據。
-4. **把審查入口交給使用者：**完成推送後核對 GitHub 最新 HEAD、PR 與報告內容，向使用者提供 PR 連結、完整報告連結、精確提交版本與尚待審查的事項。**本次 Owner 已指定 ChatGPT 在本對話擔任獨立 Plan Reviewer 與 Post-Implementation Code Reviewer**；Sol 提供精確 Plan／PR、報告、來源及證據連結供 Owner 轉交，不得自行宣稱雲端審查完成。Owner 日後可明確改指定其他雲端模型或供應商，專案不得硬編碼唯一審查供應商。未經 Owner 另行要求，本機 Agent 不代替 Owner 呼叫或冒充外部審查模型。只有真實派送收據或實際審查結果，才能分別聲稱已送審、已完成或通過；貼出 PR 審查請求或通過本地檢查，都不能冒充外部模型已經審查。
-5. **交付不等於核准執行：**沒有另行指示時，PR 維持 Draft，不自動 merge。此持續授權只涵蓋上述 Git／PR 交付，不擴張 GUI、Save All、下載或 protected state 的執行範圍，也不取代適用的獨立審查與精確來源綁定。若推送或建立 PR 實際失敗，保留本輪提交、報告與錯誤，回報真實阻塞及下一步，不冒稱已發布。
+每筆 Agent commit 的實際 message body 必須包含並填妥「意圖」、「做了什麼」、「下一步的建議」，另列真實「驗證與結果」。完成後用 `git show -s --format=%B` 核對本體，不能只把三要素寫在 PR。推送後核對遠端精確 HEAD，提供 PR、完整可讀報告與待審事項；公開報告先遮蔽私人資料。失敗如實回報 `COMMIT_OR_PUSH_BLOCKED`，不冒稱發布或外部審查完成。

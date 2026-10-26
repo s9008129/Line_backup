@@ -1,6 +1,7 @@
 """Synthetic accounting plus real macOS ImageIO; no LINE or GUI input."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import struct
 import subprocess
@@ -10,6 +11,7 @@ import zlib
 
 from line_backup_batch.daily import (DailyRecords, DailyError, NORMALIZED_HISTORY_SCHEMA,
                                      album_key, digest, encoded, reference, verify_directory)
+from line_backup_batch.daily import strict_json
 
 
 def png():
@@ -383,16 +385,39 @@ class DailyTests(unittest.TestCase):
         with self.assertRaises(OSError):
             self.complete(attempt)
 
-    def test_cross_group_authorization_request_cannot_create_consent_review_or_grant(self):
-        self.page(self.cards[:1], top=True)
-        request = self.store.authorization_request(session_id=self.session, identity=self.cards[0],
-                                                    owner_request=self.evidence('synthetic Owner request'))
-        self.assertEqual(request['status'], 'BLOCKED_NEW_GROUP_ISSUER_REQUIRES_REVIEW')
-        self.assertFalse(request['dispatch_authorized'])
-        self.assertIsNone(request['external_implementation_review'])
-        self.assertIsNone(request['runtime_grant'])
-        self.assertFalse(request['native_authorize_is_issuer'])
-        self.assertFalse((self.root / 'albums').exists())
+    def test_strict_json_rejects_ambiguous_or_invalid_records(self):
+        for raw in (b'{"status":"UNKNOWN","status":"COMPLETED"}',
+                    b'{"nested":{"x":1,"x":2}}', b'NaN', b'Infinity',
+                    b'-Infinity', b'"\xff"', b'{', b'[' * 2000):
+            with self.subTest(raw=raw[:60]), self.assertRaisesRegex(DailyError, '^INVALID_INPUT$'):
+                strict_json(raw, 'INVALID_INPUT')
+        self.assertEqual(strict_json(b'{"status":"UNKNOWN","n":1}', 'INVALID_INPUT'),
+                         {'status': 'UNKNOWN', 'n': 1})
+
+    def test_retired_commands_refuse_before_accessing_destination(self):
+        project = Path(__file__).resolve().parents[1]
+        env = dict(os.environ, PYTHONPATH=str(project / 'src'))
+        missing = self.base / 'must-not-be-created'
+        for module, args, expected in (
+                ('line_backup_batch', ['begin', '--root', str(missing)], 64),
+                ('line_backup_batch.daily', ['authorization-request', '--root', str(missing)], 2)):
+            run = subprocess.run(['/usr/bin/python3', '-B', '-m', module, *args],
+                                 env=env, capture_output=True, text=True)
+            self.assertEqual(run.returncode, expected, run.stderr)
+            self.assertFalse(missing.exists())
+
+    def test_malformed_cli_input_is_refused_without_writing_records(self):
+        project = Path(__file__).resolve().parents[1]
+        malformed = self.base / 'input.json'
+        malformed.write_bytes(b'{"session_id":"one","session_id":"two"}')
+        before = {p.name: p.read_bytes() for p in (self.root / 'backup-records/events').iterdir()}
+        run = subprocess.run(['/usr/bin/python3', '-B', '-m', 'line_backup_batch.daily',
+                              'scan', '--root', str(self.root), '--input', str(malformed)],
+                             env=dict(os.environ, PYTHONPATH=str(project / 'src')),
+                             capture_output=True, text=True)
+        self.assertEqual(run.returncode, 4, run.stderr)
+        self.assertEqual(json.loads(run.stdout)['reason'], 'INVALID_INPUT')
+        self.assertEqual({p.name: p.read_bytes() for p in (self.root / 'backup-records/events').iterdir()}, before)
 
     def test_torn_event_or_changed_evidence_blocks_without_resetting_history(self):
         self.page(self.cards[:1], top=True)

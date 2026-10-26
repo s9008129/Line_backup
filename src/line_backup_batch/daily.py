@@ -17,8 +17,6 @@ import subprocess
 import time
 import uuid
 
-from line_backup_acceptance.project_binding import strict_json
-
 NORMALIZED_HISTORY_SCHEMA = 'line-backup-daily-history/v1'
 
 
@@ -29,6 +27,25 @@ class DailyError(ValueError):
 def need(condition, code):
     if not condition:
         raise DailyError(code)
+
+
+def strict_json(data, code):
+    """Read the existing record format without duplicate keys or nonfinite numbers."""
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            need(key not in result, code)
+            result[key] = value
+        return result
+
+    def invalid(_):
+        raise DailyError(code)
+
+    try:
+        return json.loads(data.decode('utf-8'), object_pairs_hook=pairs,
+                          parse_constant=invalid)
+    except (ValueError, UnicodeError, RecursionError) as exc:
+        raise DailyError(code) from exc
 
 
 def encoded(value):
@@ -501,30 +518,6 @@ class DailyRecords:
                 evidence_role='AGENT_ATTESTED_OBSERVATIONS', sensor_verified=False,
                 real_line_e2e='NOT_TESTED', pass_scope='AGENT_ATTESTED_ACCOUNTING_ONLY')
 
-    def authorization_request(self, *, session_id, identity, owner_request):
-        """Prepare missing cross-group issuance inputs without minting credentials."""
-        with self.locked():
-            self.bound(session_id)
-            key = album_key(identity)
-            need(key in {k for p in self.pages() for k in p['keys']}, 'TARGET_NOT_IN_CURRENT_SCAN')
-            need(self.status_map().get(key) == 'INCOMPLETE', 'TARGET_NOT_ELIGIBLE_FOR_REQUEST')
-            need(not [i for i in self.matching('intent') if i['album_key'] == key], 'RECOVERY_REQUIRES_SEPARATE_AUTHORIZATION')
-            return dict(request_version=1, local_group_id=self.group['local_group_id'],
-                destination=str(self.root), destination_device=self.group['destination_device'],
-                destination_inode=self.group['destination_inode'], identity=identity, album_key=key,
-                owner_request=reference(owner_request),
-                source_files=[reference(Path(__file__).with_name(name).resolve()) for name in
-                              ('daily.py', 'cli.py', 'store.py', 'service.py', 'image_decode.swift')],
-                record_head_sha256=self.previous, session_id=session_id,
-                external_plan_review=None, external_implementation_review=None, runtime_grant=None,
-                status='BLOCKED_NEW_GROUP_ISSUER_REQUIRES_REVIEW', dispatch_authorized=False,
-                required=['review exact foreground source and grant/ledger design',
-                          'implement reviewed destination/group-bound issuer and transaction entry',
-                          'genuine external implementation approval and bound runtime',
-                          'Owner current foreground handoff plus separate L1/L2 authority'],
-                legacy_profile_reusable=False, native_authorize_is_issuer=False)
-
-
 def image_inventory(destination):
     root = directory(destination)
     result = []
@@ -569,13 +562,12 @@ def verify_directory(destination, expected, decoder, decoder_sha256):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('operation', choices=['init', 'bind', 'history', 'scan', 'page', 'detail',
-                                             'intent', 'outcome', 'verify', 'summary', 'authorization-request'])
+                                             'intent', 'outcome', 'verify', 'summary'])
     parser.add_argument('--root', required=True)
     parser.add_argument('--input', help='Private JSON input, using the method argument names in daily.py')
     ns = parser.parse_args(argv)
     try:
-        methods = {'init': 'initialize', 'scan': 'start_scan', 'verify': 'complete',
-                   'authorization-request': 'authorization_request'}
+        methods = {'init': 'initialize', 'scan': 'start_scan', 'verify': 'complete'}
         data = strict_json(read_file(ns.input), 'INVALID_INPUT') if ns.input else {}
         result = getattr(DailyRecords(ns.root), methods.get(ns.operation, ns.operation))(**data)
         print(json.dumps(dict(result=result, dispatch_authorized=False), ensure_ascii=False))

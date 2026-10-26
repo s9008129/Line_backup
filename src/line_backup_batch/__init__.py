@@ -1,1 +1,1 @@
-"""Canonical LINE batch authority. UI actions require the hosted adapter."""
+"""Local daily backup records and read-only image verification for the CUA Agent."""
