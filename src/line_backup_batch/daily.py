@@ -18,6 +18,8 @@ import time
 import uuid
 
 NORMALIZED_HISTORY_SCHEMA = 'line-backup-daily-history/v1'
+MEMORY_SCHEMA = 'line-backup-memory/v1'
+CORE_ROOT = Path(__file__).resolve().parents[2]
 
 
 class DailyError(ValueError):
@@ -82,6 +84,7 @@ def read_file(path):
 def reference(value):
     path = Path(value).expanduser().absolute()
     need(path == path.resolve(strict=True), 'EVIDENCE_SYMLINK_REFUSED')
+    need(path.is_relative_to(CORE_ROOT), 'PROJECT_LOCAL_EVIDENCE_REQUIRED')
     raw = read_file(path)
     need(bool(raw), 'EMPTY_EVIDENCE')
     return dict(path=str(path), bytes=len(raw), sha256=digest(raw))
@@ -150,6 +153,7 @@ def boundary_reference(path, edge, session_id, key, screenshot, previous_screens
 class DailyRecords:
     def __init__(self, root):
         self.root = directory(root)
+        need(self.root.is_relative_to(CORE_ROOT), 'PROJECT_LOCAL_ROOT_REQUIRED')
         self.records = self.root / 'backup-records'
 
     def initialize(self, *, binding_evidence, history_scope_evidence, context_id=None):
@@ -188,6 +192,7 @@ class DailyRecords:
                  self.group['destination_device'] == identity.st_dev and
                  self.group['destination_inode'] == identity.st_ino, 'DESTINATION_BINDING_CHANGED')
             self.events = []
+            memory_hashes = {}
             previous = None
             for index, path in enumerate(sorted((self.records / 'events').iterdir()), 1):
                 need(path.name == '%08d.json' % index, 'EVENT_SEQUENCE_OR_PENDING_WRITE')
@@ -196,8 +201,19 @@ class DailyRecords:
                 need(event['sequence'] == index and event['previous_sha256'] == previous and
                      event['local_group_id'] == self.group['local_group_id'], 'EVENT_BINDING_CHANGED')
                 self.events.append(event)
+                if event['kind'] == 'memory' or (event['kind'] == 'history' and
+                                                'memory_schema' in event['data']):
+                    memory_hashes[path.name] = digest(raw)
                 previous = digest(raw)
             self.previous = previous
+            anchors = self.records / 'memory-anchors'
+            if memory_hashes or anchors.exists() or anchors.is_symlink():
+                need(anchors.exists() and directory(anchors) == anchors, 'MEMORY_ANCHOR_REQUIRED')
+                need(sorted(p.name for p in anchors.iterdir()) == sorted(memory_hashes),
+                     'MEMORY_ANCHOR_SET_CHANGED')
+                for name, expected in memory_hashes.items():
+                    anchor = strict_json(read_file(anchors / name), 'INVALID_MEMORY_ANCHOR')
+                    need(anchor == dict(schema=MEMORY_SCHEMA, event_sha256=expected), 'MEMORY_DIGEST_CHANGED')
             yield
         finally:
             os.close(fd)
@@ -208,6 +224,13 @@ class DailyRecords:
         create_json(self.records / 'events' / ('%08d.json' % event['sequence']), event)
         self.events.append(event)
         self.previous = digest(encoded(event))
+        if kind == 'memory' or kind == 'history' and 'memory_schema' in data:
+            anchors = self.records / 'memory-anchors'
+            if not anchors.exists():
+                anchors.mkdir(mode=0o700)
+                sync_dir(self.records)
+            create_json(anchors / ('%08d.json' % event['sequence']),
+                        dict(schema=MEMORY_SCHEMA, event_sha256=self.previous))
         return data
 
     def matching(self, kind):
@@ -230,8 +253,8 @@ class DailyRecords:
     def history(self, *, session_id, scope_evidence, entries):
         """Import explicitly group-mapped barriers; no implicit date/count match.
 
-        The Agent inspects formal state, manual archives, private completions and
-        exclusions first. Each imported barrier keeps its original source/provenance.
+        Assess sources once and persist the decision and necessary facts inline.
+        Source digests are provenance, never runtime file dependencies.
         """
         with self.locked():
             self.bound(session_id)
@@ -240,15 +263,102 @@ class DailyRecords:
             for entry in entries:
                 key = album_key(entry['identity'])
                 need(entry['local_group_id'] == self.group['local_group_id'], 'CROSS_GROUP_HISTORY_REFUSED')
-                need(entry['status'] in ('COMPLETED', 'EXCLUDED'), 'INVALID_HISTORY_STATUS')
+                need(entry['status'] in ('COMPLETED', 'EXCLUDED', 'UNKNOWN', 'PROTECTED_HISTORY'),
+                     'INVALID_HISTORY_STATUS')
                 need(key not in [r['album_key'] for r in result], 'AMBIGUOUS_HISTORY')
-                source = reference(entry['source'])
-                supported = self._normalized_history(source['path'], entry['identity'])
-                status = (supported if supported in ('COMPLETED', 'EXCLUDED') and
-                          supported == entry['status'] else 'PROTECTED_HISTORY')
-                result.append(dict(album_key=key, identity=entry['identity'], status=status,
-                                   declared_status=entry['status'], source=source))
-            return self.append('history', dict(scope_evidence=reference(scope_evidence), entries=result))
+                result.append(self._freeze_history_entry(dict(entry, album_key=key,
+                    declared_status=entry['status'], source=reference(entry['source']))))
+            scope = reference(scope_evidence)
+            return self.append('history', dict(memory_schema=MEMORY_SCHEMA,
+                scope_digest=dict(bytes=scope['bytes'], sha256=scope['sha256']), entries=result))
+
+    def _freeze_history_entry(self, entry):
+        """Snapshot assessed facts, retaining unknowns and never upgrading old barriers."""
+        status = entry['status']
+        source = entry['source']
+        result = dict(album_key=entry['album_key'], identity=entry['identity'],
+                      declared_status=entry.get('declared_status', status),
+                      source_digest=dict(bytes=source['bytes'], sha256=source['sha256']))
+        if status in ('UNKNOWN', 'PROTECTED_HISTORY'):
+            return dict(result, status=status, assessment='PRESERVED_BARRIER')
+        try:
+            check_ref(source)
+            supported = self._normalized_history(source['path'], entry['identity'])
+            if supported != status:
+                return dict(result, status='PROTECTED_HISTORY', assessment='INSUFFICIENT_IDENTITY_OR_PROOF')
+            document = strict_json(read_file(source['path']), 'INVALID_HISTORY_SOURCE')
+            if status == 'COMPLETED':
+                proof = document['photo_verification']
+                result['photo_verification'] = dict(expected_images=proof['expected_images'],
+                    manifest=strict_json(read_file(proof['manifest_evidence']['path']), 'INVALID_MANIFEST'),
+                    imageio=strict_json(read_file(proof['imageio_evidence']['path']), 'INVALID_IMAGEIO'))
+                for ref in (source, proof['manifest_evidence'], proof['imageio_evidence']):
+                    check_ref(ref)
+            else:
+                exclusion = strict_json(read_file(document['exclusion_evidence']['path']), 'INVALID_EXCLUSION')
+                result['exclusion'] = dict(decision=exclusion['decision'],
+                    owner_source_digest={k: exclusion['owner_source'][k] for k in ('bytes', 'sha256')})
+                check_ref(document['exclusion_evidence'])
+                check_ref(exclusion['owner_source'])
+                check_ref(source)
+            return dict(result, status=status, assessment='VALIDATED_AT_IMPORT')
+        except (DailyError, OSError, ValueError, KeyError, TypeError):
+            return dict(result, status='PROTECTED_HISTORY', assessment='SOURCE_UNAVAILABLE_OR_CHANGED')
+
+    def _validate_legacy_albums(self, legacy_albums):
+        need(isinstance(legacy_albums, list), 'INVALID_LEGACY_ALBUMS')
+        seen = set()
+        for album in legacy_albums:
+            need(isinstance(album, dict) and isinstance(album.get('id'), str) and
+                 album['id'] and album['id'] not in seen, 'AMBIGUOUS_LEGACY_ALBUM')
+            seen.add(album['id'])
+            need(album.get('local_group_id') in (None, self.group['local_group_id']), 'CROSS_GROUP_HISTORY_REFUSED')
+            need(album.get('status') in ('UNKNOWN', 'PROTECTED_HISTORY'), 'LEGACY_CLAIM_CANNOT_COMPLETE')
+            hint = album.get('identity_hint', {})
+            need(isinstance(hint, dict) and set(hint) == {'start_date', 'end_date', 'expected_images'} and
+                 type(hint['expected_images']) is int and hint['expected_images'] > 0 and
+                 all(isinstance(hint[k], str) and hint[k].strip() for k in ('start_date', 'end_date')),
+                 'LEGACY_IDENTITY_HINT_REQUIRED')
+            need(isinstance(album.get('reason'), str) and bool(album['reason'].strip()),
+                 'LEGACY_PROTECTION_REASON_REQUIRED')
+
+    def import_memory(self, *, local_group_id, legacy_albums, coverage, provenance):
+        """One-time local data migration. No foreground binding or GUI authority."""
+        with self.locked():
+            need(local_group_id == self.group['local_group_id'], 'WRONG_LOCAL_GROUP')
+            need(not self.matching('memory'), 'MEMORY_ALREADY_IMPORTED')
+            need(self.matching('history'), 'HISTORY_RECONCILIATION_REQUIRED')
+            need(isinstance(coverage, str) and bool(coverage.strip()), 'MEMORY_COVERAGE_REQUIRED')
+            need(isinstance(provenance, list), 'MEMORY_PROVENANCE_REQUIRED')
+            self._validate_legacy_albums(legacy_albums)
+            history = []
+            for event in self.matching('history'):
+                history.extend(event['entries'] if event.get('memory_schema') == MEMORY_SCHEMA else
+                               [self._freeze_history_entry(e) for e in event['entries']])
+            return self.append('memory', dict(schema=MEMORY_SCHEMA, history=history,
+                legacy_albums=legacy_albums, coverage=coverage, provenance=provenance))
+
+    def memory(self):
+        """Read-only structured view; events remain the sole mutable source of truth."""
+        with self.locked():
+            states = self.status_map()
+            identities = {}
+            for event in self.events:
+                data = event['data']
+                if event['kind'] == 'history':
+                    identities.update((e['album_key'], e['identity']) for e in data['entries'])
+                elif event['kind'] == 'page':
+                    identities.update(zip(data['keys'], data['cards']))
+            snapshots = self.matching('memory')
+            return dict(schema=MEMORY_SCHEMA, local_group_id=self.group['local_group_id'],
+                albums=[dict(album_key=key, identity=identities[key], status=status,
+                    attempts=[i for i in self.matching('intent') if i['album_key'] == key],
+                    completions=[c for c in self.matching('completion') if c['album_key'] == key])
+                    for key, status in states.items()],
+                legacy_albums=snapshots[0]['legacy_albums'] if snapshots else [],
+                coverage=snapshots[0]['coverage'] if snapshots else 'CURRENT_RECORDS_ONLY',
+                history=snapshots[0]['history'] if snapshots else
+                    [e for h in self.matching('history') for e in h['entries']])
 
     def _normalized_history(self, source_path, identity):
         """Return a supported normalized status; preserve every other legacy source.
@@ -379,17 +489,19 @@ class DailyRecords:
 
     def status_map(self):
         result = {}
+        snapshots = self.matching('memory')
+        need(len(snapshots) <= 1, 'AMBIGUOUS_MEMORY')
+        if snapshots:
+            need(snapshots[0]['schema'] == MEMORY_SCHEMA, 'UNSUPPORTED_MEMORY_SCHEMA')
+            self._validate_legacy_albums(snapshots[0]['legacy_albums'])
+            result.update((e['album_key'], e['status']) for e in snapshots[0]['history'])
         for event in self.events:
             data = event['data']
             if event['kind'] == 'history':
-                check_ref(data['scope_evidence'])
-                for entry in data['entries']:
-                    check_ref(entry['source'])
-                    status = entry['status']
-                    if status in ('COMPLETED', 'EXCLUDED') and self._normalized_history(
-                            entry['source']['path'], entry['identity']) != status:
-                        status = 'PROTECTED_HISTORY'
-                    result[entry['album_key']] = status
+                if not snapshots:
+                    need(data.get('memory_schema') == MEMORY_SCHEMA or not data['entries'],
+                         'MEMORY_MIGRATION_REQUIRED')
+                    result.update((e['album_key'], e['status']) for e in data['entries'])
             elif event['kind'] == 'page':
                 for key in data['keys']:
                     result.setdefault(key, 'INCOMPLETE')
@@ -408,6 +520,19 @@ class DailyRecords:
                 need(sorted(p.name for p in Path(data['destination']).iterdir()) ==
                      [row['name'] for row in data['proof']['manifest']], 'COMPLETED_FILES_CHANGED_NO_REDOWNLOAD')
                 result[data['album_key']] = 'COMPLETED'
+        # A legacy hint only raises an ambiguity barrier. It never assigns an
+        # album to a group or supersedes real completion/dispatch events.
+        if snapshots:
+            identities = {key: card for page in self.matching('page')
+                          for key, card in zip(page['keys'], page['cards'])}
+            for key, identity in identities.items():
+                if result.get(key) != 'INCOMPLETE':
+                    continue
+                for album in snapshots[0]['legacy_albums']:
+                    hint = album['identity_hint']
+                    if (identity['start_date'], identity['end_date']) == (hint['start_date'], hint['end_date']):
+                        result[key] = 'PROTECTED_HISTORY'
+                        break
         return result
 
     def detail(self, *, session_id, identity, evidence):
@@ -440,6 +565,7 @@ class DailyRecords:
                  'FRESH_DETAIL_REQUIRED')
             check_ref(details[-1]['evidence'])
             prior = [i for i in self.matching('intent') if i['album_key'] == key]
+            need(states.get(key) != 'UNKNOWN' or prior, 'UNKNOWN_OR_RUNNING_NO_REPLAY')
             recovery = None
             if prior:
                 outcomes = [o for o in self.matching('outcome') if o['attempt_id'] == prior[-1]['attempt_id']]
@@ -562,13 +688,13 @@ def verify_directory(destination, expected, decoder, decoder_sha256):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('operation', choices=['init', 'bind', 'history', 'scan', 'page', 'detail',
-                                             'intent', 'outcome', 'verify', 'summary'])
+                                             'intent', 'outcome', 'verify', 'summary', 'memory-import', 'memory'])
     parser.add_argument('--root', required=True)
     parser.add_argument('--input', help='Private JSON input, using the method argument names in daily.py')
     ns = parser.parse_args(argv)
     try:
-        methods = {'init': 'initialize', 'scan': 'start_scan', 'verify': 'complete'}
-        data = strict_json(read_file(ns.input), 'INVALID_INPUT') if ns.input else {}
+        methods = {'init': 'initialize', 'scan': 'start_scan', 'verify': 'complete', 'memory-import': 'import_memory'}
+        data = strict_json(read_file(reference(ns.input)['path']), 'INVALID_INPUT') if ns.input else {}
         result = getattr(DailyRecords(ns.root), methods.get(ns.operation, ns.operation))(**data)
         print(json.dumps(dict(result=result, dispatch_authorized=False), ensure_ascii=False))
         return 0

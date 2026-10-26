@@ -4,7 +4,8 @@
 __pycache__/
 *.py[cod]
 
-# Local machine settings and protected backup data are not public source.
+# The project-local task memory, migration receipts, records and photos are private.
+# Structured memory lives in backup-records/events, never in a sibling archive.
 /.codex/
 /.local/line-backup/
 /state/

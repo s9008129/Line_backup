@@ -18,10 +18,16 @@ PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p test_daily_r
 
 工具不操作 LINE、不簽發下載授權，也不獨立證明畫面內容真實。summary 的 PASS 只代表 Agent 提交資料的簿記結果；`sensor_verified=false`、`real_line_e2e=NOT_TESTED`，不能升格為正式 AUTO 或獨立 E2E。
 
-## 本機資料與封存
+## 唯一核心目錄與備份記憶
 
-`.local/line-backup/active-task.json` 指向當前原始紀錄；`history-index.json` 指向退役流程的原始來源與證據。兩者都要讀，缺失不能當成沒有舊備份。照片及 backup-records 保留原位，不因專案整理重新下載或改寫。
+`Line_backup` 是唯一核心目錄。`.local/line-backup/active-task.json` 指向本專案 `backups/backup-records`；相簿身分、完成／排除／未知操作與身分未明的照片提示，保存在其中的追加式 JSON。日常啟動不查封存、外層舊資料或 Git 歷史。
 
-舊 Harness、`harness-development`、頂層 `evidence`、`rev28`、`policies`、config／state 與專屬程式、測試已封存移出。舊 batch 主入口明確拒絕，acceptance CLI 與 `authorization-request` 已退役。[封存查找方法](.agents/skills/line-album-agent-cua/references/legacy-formal.md)保留原來的去重與未知派送保護。
+```sh
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily memory --root "$PWD/backups"
+```
 
-整理結果與驗證見[專案精簡報告](docs/專案精簡報告.md)；先前整併歷史見[整理紀錄](docs/專案整理紀錄.md)。整理與離線測試不表示新的 LINE 實機或跨 Session 恢復驗收已通過。
+這個唯讀指令投影目前記憶；事件仍是唯一狀態來源，不另存一份可變游標。歷史來源只在轉入時評估，後續直接讀已保存的事實。照片與逐檔完成證據留在本專案，異動時停止、不重下。未釐清的照片提示只保護可能相符項目，不擋住無關相簿，也不當成跨列表完成證明。
+
+舊 Harness、交易程式與專屬測試已退役。穩定操作方法在 Skill／程式中，開發歷程在 Git 中；都不需要啟動舊程式。結構化記憶與轉入限制見[紀錄工具](.agents/skills/line-album-agent-cua/references/daily-backup.md)。
+
+記憶位置、轉入結果與驗證界限見[結構化備份記憶](docs/結構化備份記憶.md)。離線測試不表示新的 LINE 實機或跨 Session 恢復驗收已通過。

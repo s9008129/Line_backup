@@ -10,8 +10,8 @@
 
 ## 歷史與資料保護
 
-- 啟動時讀 `.local/line-backup/active-task.json`、其真實 backup-records／目的地，以及 `.local/line-backup/history-index.json` 的封存來源。缺索引或原資料夾不存在，不等於從未備份。
-- 封存查找方式見 Skill 的 `references/legacy-formal.md`。依 manifest 精確對照原位置、現存位置、節點型別、bytes 與 SHA-256；原始相對引用按原 task 脈絡解析。不要改寫原件、建立 symlink 迎合舊 validator，或啟動封存程式。
+- `Line_backup` 是唯一核心目錄。啟動時讀 `.local/line-backup/active-task.json`、其真實 backup-records／目的地，並用 `daily memory` 讀取結構化進度。日常流程不讀舊開發資料、封存索引、外層保存點或 Git 歷史。
+- 備份記憶保存在 `backup-records/events` 的追加式 JSON；歷史來源只在一次性轉入時評估，必要事實與證據內嵌後不再依賴來源。開發方法留在 Skill／程式，歷程留在 Git。缺記憶或檔案異動不能當成空帳。
 - 已完成、已人工備份、已排除與受保護歷史不重下。日期／張數相同不能跨列表合併；舊格式或缺證據保持 `PROTECTED_HISTORY`，不升格為完成。合成 fixture 不是真實歷史。
 - 一次一本。每次派送前保存並讀回 intent、新空白目的地及禁止重送紀錄；每個 attempt 的 Save All 最多一次。結果未知先查證，不能用新目錄、零計數、重置 ledger 或改寫 UNKNOWN 解鎖。
 - 初始任務已授權確認中斷後的相簿級恢復時，保留原檔，在另一個新空白目錄恢復；完成的跳過，未知的不重送。LINE 原生只補缺檔仍未實證。
@@ -45,7 +45,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p test_daily_r
 
 ## 歷史 Harness 與正式 AUTO 已退役
 
-Owner 於 2026-10-26 明確選擇保留日常 Agent 備份、一併退役舊程式、歷史封存後移出。舊 Harness 工作區、頂層 evidence、rev28、policies、config／state、batch／acceptance 交易程式及測試均可由歷史索引定位。原 AGENTS、Plan、凍結 runtime、grant、ledger 與審查紀錄保留原文；原 VERIFIED 與未知派送狀態未改。
+Owner 於 2026-10-26 明確選擇保留日常 Agent 備份、一併退役舊程式，並要求日常運作與過去開發資料完全切割。舊 Harness、evidence、rev28、policies、config／state 與專屬交易／測試均不是日常依賴。現存備份事實轉入本專案結構化記憶；原 VERIFIED 與未知派送狀態不改，開發歷程由 Git 保存。
 
 根目錄沒有可用的 Harness release controller／schemas／runtime-defaults；不新增框架來替代，也不聲稱 controller admission、OS sandbox、網路隔離或正式 IMPLEMENT／E2E PASS。舊 release 不可用別版 controller 冒充恢復。未來恢復正式研究須另定版本、範圍與適用獨立審查；封存與整理不授予 GUI 或重開 CLOSED grant。
 
