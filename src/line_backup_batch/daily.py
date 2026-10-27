@@ -1461,12 +1461,15 @@ class DailyRecords:
             plan['group_directory_device'], plan['group_directory_inode'], plan['transaction_id'])
         need(group_path == new_path, 'GROUP_CORRECTION_PATH_CHANGED')
         albums = self._verify_group_children(group_path, plan, decoder, decoder_sha256)
+        self._precheck_group_plan(group_path, plan)
         info = new_path.stat()
-        return self.append('group-name', dict(schema=NAMING_SCHEMA, action='CORRECT',
+        result = self.append('group-name', dict(schema=NAMING_SCHEMA, action='CORRECT',
             local_group_id=self.group['local_group_id'], display_name=plan['new_group_display_name'],
             path_name=plan['new_group_path_name'], source=plan['source'],
             directory_device=info.st_dev, directory_inode=info.st_ino,
             plan_id=plan['transaction_id'], correction=dict(albums=albums)))
+        self._precheck_group_plan(group_path, plan)
+        return result
 
     def _plan_group_correction(self, *, name, source, decoder, decoder_sha256):
         name_ref = reference(source)

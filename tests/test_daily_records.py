@@ -217,6 +217,54 @@ class DailyTests(unittest.TestCase):
         for path in hold.iterdir():
             os.link(path, sibling / path.name)
 
+    def _renamed_group_path(self, store):
+        correction = [row for row in store.matching('group-name')
+                      if row.get('action') == 'CORRECT'][-1]
+        return self.root / correction['path_name']
+
+    def _drift_group_sibling_content(self, store):
+        victim = sorted((self._renamed_group_path(store) / 'Beta').glob('*.png'))[0]
+        victim.write_bytes(png((0, 0, 255)))
+
+    def _swap_group_sibling_directory(self, store):
+        sibling = self._renamed_group_path(store) / 'Beta'
+        hold = self.base / ('append-time-beta-' + uuid.uuid4().hex)
+        sibling.rename(hold)
+        sibling.mkdir()
+        for path in hold.iterdir():
+            os.link(path, sibling / path.name)
+
+    def _group_correction_append_time_drift(self, mutate, expected, status_expected):
+        from line_backup_batch import daily as daily_module
+        self._seed_two_completed_albums()
+        original_append = daily_module.DailyRecords.append
+        injected = {'value': False}
+
+        def append(store, kind, data):
+            result = original_append(store, kind, data)
+            if (not injected['value'] and kind == 'group-name' and
+                    data.get('action') == 'CORRECT'):
+                injected['value'] = True
+                mutate(store)
+            return result
+
+        with mock.patch.object(daily_module.DailyRecords, 'append', new=append):
+            with self.assertRaisesRegex(DailyError, expected):
+                self.store.correct_group_name(name='Two Albums Renamed',
+                    source=self.evidence('synthetic Owner group correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue(injected['value'])
+        with self.store.locked():
+            corrections = [row for row in self.store.matching('group-name')
+                           if row.get('action') == 'CORRECT']
+        self.assertEqual(len(corrections), 1)
+        group = self.root / corrections[0]['path_name']
+        self.assertTrue((group / 'Alpha').is_dir())
+        self.assertTrue((group / 'Beta').is_dir())
+        self.assertFalse((self.root / 'Two Albums').exists())
+        with self.assertRaisesRegex(DailyError, status_expected):
+            DailyRecords(self.root).status_map()
+
     def test_identity_needs_visual_disambiguator_not_name_ocr(self):
         self.assertNotEqual(album_key(self.cards[0]), album_key(self.cards[1]))
         invalid = dict(self.cards[0], visual_key='')
@@ -1467,6 +1515,20 @@ class DailyTests(unittest.TestCase):
         self._drift_sibling_outcome(self.store)
         with self.assertRaisesRegex(DailyError, 'EVIDENCE_DRIFT'):
             DailyRecords(self.root).status_map()
+
+    def test_group_correction_append_time_outcome_drift_cannot_return_success(self):
+        self._group_correction_append_time_drift(self._drift_sibling_outcome,
+                                                  'EVIDENCE_DRIFT', 'EVIDENCE_DRIFT')
+
+    def test_group_correction_append_time_content_drift_cannot_return_success(self):
+        self._group_correction_append_time_drift(self._drift_group_sibling_content,
+                                                  'CORRECTION_CONTENT_CHANGED',
+                                                  'COMPLETED_FILES_CHANGED_NO_REDOWNLOAD')
+
+    def test_group_correction_append_time_directory_swap_cannot_return_success(self):
+        self._group_correction_append_time_drift(self._swap_group_sibling_directory,
+                                                  'CORRECTION_DIRECTORY_CHANGED',
+                                                  'CORRECTION_DIRECTORY_CHANGED')
 
     def test_group_correction_rejects_swapped_child_directories(self):
         from line_backup_batch import daily as daily_module
