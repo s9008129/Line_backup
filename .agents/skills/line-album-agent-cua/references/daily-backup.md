@@ -8,7 +8,7 @@ Owner 已選日常 AI Agent 流程。這裡是現有工具的輸入規則，不�
 
 在 repo root 使用 `PYTHONPATH=src python3 -B -m line_backup_batch.daily --help`。以下 `daily ...` 都是 `PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily ...` 的簡寫。
 
-名稱取得、`intent`／`outcome`／`verify`、使用者校正與 `resume-naming` 使用 direct CLI 參數；`scan`、`page`、`detail`、`init`、`bind`、`history` 等仍使用 Agent 依實際觀察建立的私有 JSON 證據，絕不由 Owner 手填。直接參數不可和 `--input` 同時使用。`--source` 必須是真實私有證據檔，不可用手寫字串冒充。業務層的成功與拒絕結果都包含 `dispatch_authorized=false`；那只是簿記結果，不是 GUI grant，也不得改寫為 true。參數語法／必填欄位錯誤會在執行前以 exit 2 與純 stderr 拒絕，不會產生 JSON 或任何紀錄變更。
+名稱取得、`intent`／`outcome`／`verify`、使用者校正與 `resume-naming` 使用 direct CLI 參數；`scan`、`page`、`detail`、`init`、`bind`、`history` 等仍使用 Agent 依實際觀察建立的私有 JSON 證據，絕不由 Owner 手填。直接參數不可和 `--input` 同時使用。`--source` 必須是真實私有證據檔，不可用手寫字串冒充。業務層成功以 exit 0、業務拒絕以 exit 4 回傳 JSON，兩者都包含 `dispatch_authorized=false`；那只是簿記結果，不是 GUI grant，也不得改寫為 true。參數語法／必填欄位錯誤會在執行前以 exit 2 與純 stderr 拒絕，不會產生 JSON 或任何紀錄變更。
 
 未另指定時預設為目前專案根目錄的 `backups/`，本工作區是 `/Users/hsiaojohnny/dev/Line_backup/backups`。目的地、證據與編譯後工具均放在本專案內，外部 root／證據引用會被拒絕；不要將外層舊目錄加回輸入。預設路徑不會自動修復搬移後的舊綁定，必須依 [備份與恢復](backup-and-resume.md) 保護原紀錄並停止查明。
 

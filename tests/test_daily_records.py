@@ -1183,6 +1183,60 @@ class DailyTests(unittest.TestCase):
         with self.store.locked():
             self.assertEqual(len(self.store.matching('album-name')), 1)
 
+    def test_group_correction_resume_revalidates_outcome_evidence(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Trip Group',
+            source=self.evidence('synthetic group OCR'))
+        self.store.capture_album_name(session_id=self.session, identity=self.cards[0], name='Trip',
+            source=self.evidence('synthetic album OCR'))
+        self.detail(self.cards[0])
+        attempt = self.store.intent(session_id=self.session, identity=self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=OSError('synthetic stop')):
+            with self.assertRaises(OSError):
+                self.store.correct_group_name(name='Renamed Group',
+                    source=self.evidence('synthetic Owner group correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        with self.store.locked():
+            evidence = Path(self.store.matching('outcome')[-1]['evidence']['path'])
+        evidence.write_text('tampered synthetic correction outcome', encoding='utf-8')
+        with self.assertRaisesRegex(DailyError, 'EVIDENCE_DRIFT'):
+            DailyRecords(self.root).resume_naming(decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue((self.root / 'Trip Group' / 'Trip').is_dir())
+        self.assertEqual(DailyRecords(self.root).status_map()[album_key(self.cards[0])],
+                         'PROTECTED_HISTORY')
+
+    def test_album_correction_resume_revalidates_outcome_evidence(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Trip Group',
+            source=self.evidence('synthetic group OCR'))
+        self.store.capture_album_name(session_id=self.session, identity=self.cards[0], name='Trip',
+            source=self.evidence('synthetic album OCR'))
+        self.detail(self.cards[0])
+        attempt = self.store.intent(session_id=self.session, identity=self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=OSError('synthetic stop')):
+            with self.assertRaises(OSError):
+                self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Renamed',
+                    source=self.evidence('synthetic Owner album correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        with self.store.locked():
+            evidence = Path(self.store.matching('outcome')[-1]['evidence']['path'])
+        evidence.write_text('tampered synthetic correction outcome', encoding='utf-8')
+        with self.assertRaisesRegex(DailyError, 'EVIDENCE_DRIFT'):
+            DailyRecords(self.root).resume_naming(decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue((self.root / 'Trip Group' / 'Trip').is_dir())
+        self.assertEqual(DailyRecords(self.root).status_map()[album_key(self.cards[0])],
+                         'PROTECTED_HISTORY')
+
     def test_group_correction_rejects_swapped_child_directories(self):
         from line_backup_batch import daily as daily_module
         self.page(self.cards[:2], top=True)

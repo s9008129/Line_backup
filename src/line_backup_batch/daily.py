@@ -1372,19 +1372,36 @@ class DailyRecords:
         selected_intents = [intent for intent in intents if intent['attempt_id'] in selected_attempts]
         need(len(selected_intents) == len(selected), 'GROUP_HAS_UNRESOLVED_ALBUMS')
         for intent in intents:
-            outcomes = [event['data'] for event in self.events if event['kind'] == 'outcome' and
-                        event['data']['attempt_id'] == intent['attempt_id']]
             if intent['attempt_id'] in selected_attempts:
-                need(len(outcomes) == 1 and outcomes[0]['outcome'] == 'DOWNLOAD_FINISHED',
-                     'GROUP_HAS_UNRESOLVED_ALBUMS')
+                self._validated_attempt_outcome(intent['attempt_id'], ('DOWNLOAD_FINISHED',),
+                                                'GROUP_HAS_UNRESOLVED_ALBUMS')
                 continue
             need(isinstance(intent.get('naming'), dict) and
                  intent['naming'].get('schema') == NAMING_SCHEMA,
                  'UNSUPPORTED_OLDER_FORMAT_CORRECTION')
-            need(len(outcomes) == 1 and outcomes[0]['outcome'] in ('STOPPED', 'NOT_SENT'),
-                 'GROUP_HAS_UNRESOLVED_ALBUMS')
+            self._validated_attempt_outcome(intent['attempt_id'], ('STOPPED', 'NOT_SENT'),
+                                            'GROUP_HAS_UNRESOLVED_ALBUMS')
+
+    def _validated_attempt_outcome(self, attempt_id, allowed, error):
+        outcomes = [event['data'] for event in self.events if event['kind'] == 'outcome' and
+                    event['data']['attempt_id'] == attempt_id]
+        need(len(outcomes) == 1 and outcomes[0]['outcome'] in allowed, error)
+        check_ref(outcomes[0]['evidence'])
+        return outcomes[0]
+
+    def _assert_album_attempts_safe(self, album_key, completed_attempt_id):
+        for attempt in [event['data'] for event in self.events
+                        if event['kind'] == 'intent' and event['data']['album_key'] == album_key]:
+            allowed = ('DOWNLOAD_FINISHED',) if attempt['attempt_id'] == completed_attempt_id else \
+                ('STOPPED', 'NOT_SENT')
+            self._validated_attempt_outcome(attempt['attempt_id'], allowed, 'UNRESOLVED_ALBUM_ATTEMPT')
 
     def _precheck_group_plan(self, group_path, plan):
+        selected = []
+        for row in plan['albums']:
+            completion = self._completion_by_sequence(row['completion_sequence'])
+            selected.append((completion, self._effective_completion(completion)))
+        self._assert_group_attempts_safe(selected)
         before = {row['completion_sequence']: row['proof'] for row in plan['before_proofs']}
         expected = sorted(row['directory_name'] for row in plan['albums'])
         actual = sorted(entry.name for entry in group_path.iterdir())
@@ -1534,6 +1551,7 @@ class DailyRecords:
         need(completion['data']['album_key'] == plan['album_key'],
              'CORRECTION_COMPLETION_REFERENCE_CHANGED')
         effective = self._effective_completion(completion)
+        self._assert_album_attempts_safe(plan['album_key'], completion['data']['attempt_id'])
         need(plan['before_proof']['manifest'] == effective['proof']['manifest'] and
              plan['before_proof']['manifest_sha256'] == effective['proof']['manifest_sha256'],
              'CORRECTION_CONTENT_CHANGED')
@@ -1618,15 +1636,7 @@ class DailyRecords:
         need(actual == sorted(expected_dirs), 'FOREIGN_OR_INCOMPLETE_GROUP_CONTENT')
         self._assert_group_attempts_safe(group_completions, projection)
         need(self.status_map().get(album_key) == 'COMPLETED', 'ALBUM_NOT_COMPLETED')
-        for attempt in [event['data'] for event in self.events
-                        if event['kind'] == 'intent' and event['data']['album_key'] == album_key]:
-            outcomes = [event['data'] for event in self.events if event['kind'] == 'outcome' and
-                        event['data']['attempt_id'] == attempt['attempt_id']]
-            need(outcomes, 'UNRESOLVED_ALBUM_ATTEMPT')
-            if attempt['attempt_id'] == completion['attempt_id']:
-                need(outcomes[-1]['outcome'] == 'DOWNLOAD_FINISHED', 'UNRESOLVED_ALBUM_ATTEMPT')
-            else:
-                need(outcomes[-1]['outcome'] in ('STOPPED', 'NOT_SENT'), 'UNRESOLVED_ALBUM_ATTEMPT')
+        self._assert_album_attempts_safe(album_key, completion['attempt_id'])
         expected = len(effective['proof']['manifest'])
         before_proof = verify_directory(current_destination, expected, decoder, decoder_sha256)
         need(before_proof['manifest'] == effective['proof']['manifest'] and
