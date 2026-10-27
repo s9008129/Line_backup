@@ -7,18 +7,21 @@ import struct
 import subprocess
 import tempfile
 import unittest
+import uuid
 import zlib
+from unittest import mock
 
 from line_backup_batch.daily import (DailyRecords, DailyError, NORMALIZED_HISTORY_SCHEMA, MEMORY_SCHEMA,
-                                     album_key, digest, encoded, reference, verify_directory)
+                                     NAMING_SCHEMA, album_key, allocate_component, digest, encoded,
+                                     planned_photo_names, reference, safe_component, verify_directory)
 from line_backup_batch.daily import strict_json
 
 
-def png():
+def png(color=(255, 0, 0)):
     def chunk(name, data):
         return struct.pack('>I', len(data)) + name + data + struct.pack('>I', zlib.crc32(name + data) & 0xffffffff)
     return b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', 2, 2, 8, 2, 0, 0, 0)) + \
-        chunk(b'IDAT', zlib.compress((b'\0' + b'\xff\0\0' * 2) * 2)) + chunk(b'IEND', b'')
+        chunk(b'IDAT', zlib.compress((b'\0' + bytes(color) * 2) * 2)) + chunk(b'IEND', b'')
 
 
 class DailyTests(unittest.TestCase):
@@ -97,8 +100,33 @@ class DailyTests(unittest.TestCase):
                                  evidence=self.evidence('synthetic matching detail'))
 
     def intent(self, card, recovery=None):
+        with self.store.locked():
+            group_names = self.store.matching('group-name')
+            album_names = [row for row in self.store.matching('album-name')
+                           if row['album_key'] == album_key(card)]
+        if not group_names:
+            self.store.capture_group_name(session_id=self.session, name='Synthetic Group',
+                source=self.evidence('synthetic group name for regression'))
+        if not album_names:
+            self.store.capture_album_name(session_id=self.session, identity=card,
+                name='Album %s' % card['visual_key'],
+                source=self.evidence('synthetic album name for regression'))
         self.detail(card)
         return self.store.intent(session_id=self.session, identity=card, recovery_authorization=recovery)
+
+    def legacy_intent(self, card):
+        self.detail(card)
+        with self.store.locked():
+            key = album_key(card)
+            attempt_id = uuid.uuid4().hex
+            album_root = self.root / 'albums'
+            album_root.mkdir(exist_ok=True)
+            destination = album_root / attempt_id
+            destination.mkdir()
+            return self.store.append('intent', dict(album_key=key, identity=card,
+                attempt_id=attempt_id, session_id=self.session, destination=str(destination),
+                recovery_of=None, recovery_authorization=None, naming=None,
+                save_all_retry_allowed=False, dispatch_authorized=False))
 
     def finished(self, attempt):
         self.store.outcome(session_id=self.session, attempt_id=attempt['attempt_id'],
@@ -115,6 +143,21 @@ class DailyTests(unittest.TestCase):
             album_key(invalid)
         self.assertNotIn('group_name', self.group)
         self.assertNotIn('GROUP_NAME', self.group)
+
+    def test_new_intent_requires_captured_names_and_never_falls_back_to_legacy_layout(self):
+        self.page(self.cards[:1], top=True)
+        self.store.detail(session_id=self.session, identity=self.cards[0], evidence=self.evidence('detail'))
+        with self.assertRaisesRegex(DailyError, 'GROUP_AND_ALBUM_NAMES_REQUIRED'):
+            self.store.intent(session_id=self.session, identity=self.cards[0])
+        self.store.capture_group_name(session_id=self.session, name='Group',
+            source=self.evidence('synthetic group OCR'))
+        with self.assertRaisesRegex(DailyError, 'GROUP_AND_ALBUM_NAMES_REQUIRED'):
+            self.store.intent(session_id=self.session, identity=self.cards[0])
+        self.store.capture_album_name(session_id=self.session, identity=self.cards[0], name='Album',
+            source=self.evidence('synthetic album OCR'))
+        attempt = self.store.intent(session_id=self.session, identity=self.cards[0])
+        self.assertEqual(Path(attempt['destination']), self.root / 'Group' / 'Album')
+        self.assertFalse((self.root / 'albums' / attempt['attempt_id']).exists())
 
     def test_destination_group_and_session_bindings_are_separate(self):
         other = self.base / 'other-group'
@@ -445,7 +488,9 @@ class DailyTests(unittest.TestCase):
             self.intent(self.cards[0], self.evidence('cannot override unknown'))
         with self.assertRaisesRegex(DailyError, 'PENDING_OTHER_ALBUM_NO_DISPATCH'):
             self.intent(self.cards[1])
-        self.assertEqual(len(list((self.root / 'albums').iterdir())), 1)
+        destination = Path(attempt['destination'])
+        self.assertEqual(destination.parent.parent, self.root)
+        self.assertTrue(destination.is_dir())
 
     def test_explicit_unknown_outcome_cannot_be_rewritten_as_stopped_or_not_sent(self):
         self.page(self.cards[:2], top=True)
@@ -506,7 +551,7 @@ class DailyTests(unittest.TestCase):
             self.intent(self.cards[0])
         with self.assertRaisesRegex(DailyError, 'COMPLETION_IMMUTABLE'):
             self.complete(attempt)
-        (Path(attempt['destination']) / '1.png').unlink()
+        (Path(attempt['destination']) / completed['proof']['manifest'][0]['name']).unlink()
         with self.assertRaisesRegex(DailyError, 'COMPLETED_FILES_CHANGED_NO_REDOWNLOAD'):
             self.intent(self.cards[0])
 
@@ -539,7 +584,7 @@ class DailyTests(unittest.TestCase):
         attempt = self.intent(self.cards[0])
         (Path(attempt['destination']) / '1.png').symlink_to(file)
         self.finished(attempt)
-        with self.assertRaises(OSError):
+        with self.assertRaisesRegex(DailyError, 'DOWNLOAD_NOT_REGULAR'):
             self.complete(attempt)
 
     def test_strict_json_rejects_ambiguous_or_invalid_records(self):
@@ -573,8 +618,137 @@ class DailyTests(unittest.TestCase):
                              env=dict(os.environ, PYTHONPATH=str(project / 'src')),
                              capture_output=True, text=True)
         self.assertEqual(run.returncode, 4, run.stderr)
-        self.assertEqual(json.loads(run.stdout)['reason'], 'INVALID_INPUT')
+        refused = json.loads(run.stdout)
+        self.assertEqual(refused['reason'], 'INVALID_INPUT')
+        self.assertFalse(refused['dispatch_authorized'])
         self.assertEqual({p.name: p.read_bytes() for p in (self.root / 'backup-records/events').iterdir()}, before)
+
+    def test_direct_naming_and_correction_cli_needs_no_hand_edited_json(self):
+        project = Path(__file__).resolve().parents[1]
+        env = dict(os.environ, PYTHONPATH=str(project / 'src'))
+
+        def run_cli(*args):
+            result = subprocess.run(['/usr/bin/python3', '-B', '-m', 'line_backup_batch.daily', *args],
+                                    env=env, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+            return json.loads(result.stdout)
+
+        help_run = subprocess.run(['/usr/bin/python3', '-B', '-m', 'line_backup_batch.daily', '--help'],
+                                  env=env, capture_output=True, text=True)
+        self.assertEqual(help_run.returncode, 0, help_run.stderr)
+        for operation in ('capture-group-name', 'capture-album-name', 'correct-group-name',
+                          'correct-album-name', 'resume-naming'):
+            self.assertIn(operation, help_run.stdout)
+
+        self.page(self.cards[:1], top=True)
+        group = run_cli('capture-group-name', '--root', str(self.root), '--session-id', self.session,
+                        '--name', 'Fans/Group', '--source', self.evidence('synthetic CLI group name'))['result']
+        album = run_cli('capture-album-name', '--root', str(self.root), '--session-id', self.session,
+                        '--album-key', album_key(self.cards[0]), '--name', 'Trip',
+                        '--source', self.evidence('synthetic CLI album name'))['result']
+        self.assertEqual((group['path_name'], album['path_name']), ('Fans Group', 'Trip'))
+        self.detail(self.cards[0])
+        attempt = self.store.intent(session_id=self.session, identity=self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+
+        corrected = run_cli('correct-album-name', '--root', str(self.root),
+                            '--album-key', album_key(self.cards[0]), '--name', 'Journey',
+                            '--source', self.evidence('synthetic CLI album correction'),
+                            '--decoder', str(self.decoder), '--decoder-sha256', self.decoder_sha)
+        self.assertFalse(corrected['dispatch_authorized'])
+        self.assertTrue((self.root / 'Fans Group' / 'Journey').is_dir())
+        group_corrected = run_cli('correct-group-name', '--root', str(self.root),
+                                  '--name', 'Renamed Fans', '--source', self.evidence('synthetic CLI group correction'),
+                                  '--decoder', str(self.decoder), '--decoder-sha256', self.decoder_sha)
+        self.assertFalse(group_corrected['dispatch_authorized'])
+        self.assertTrue((self.root / 'Renamed Fans' / 'Journey').is_dir())
+        resumed = run_cli('resume-naming', '--root', str(self.root), '--decoder', str(self.decoder),
+                          '--decoder-sha256', self.decoder_sha)
+        self.assertEqual(resumed['result']['status'], 'NOTHING_TO_RESUME')
+        self.assertFalse(resumed['dispatch_authorized'])
+
+    def test_direct_intent_outcome_and_verify_close_no_json_flow(self):
+        project = Path(__file__).resolve().parents[1]
+        env = dict(os.environ, PYTHONPATH=str(project / 'src'))
+
+        def run_cli(*args):
+            result = subprocess.run(['/usr/bin/python3', '-B', '-m', 'line_backup_batch.daily', *args],
+                                    env=env, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+            return json.loads(result.stdout)
+
+        self.page(self.cards[:1], top=True)
+        run_cli('capture-group-name', '--root', str(self.root), '--session-id', self.session,
+                '--name', 'Direct Group', '--source', self.evidence('synthetic CLI group name'))
+        run_cli('capture-album-name', '--root', str(self.root), '--session-id', self.session,
+                '--album-key', album_key(self.cards[0]), '--name', 'Direct Album',
+                '--source', self.evidence('synthetic CLI album name'))
+        self.detail(self.cards[0])
+        intent_run = run_cli('intent', '--root', str(self.root), '--session-id', self.session,
+                             '--album-key', album_key(self.cards[0]))
+        attempt = intent_run['result']
+        self.assertFalse(intent_run['dispatch_authorized'])
+        self.assertFalse(attempt['dispatch_authorized'])
+        self.assertFalse(attempt['save_all_retry_allowed'])
+        destination = Path(attempt['destination'])
+        self.assertEqual(destination, self.root / 'Direct Group' / 'Direct Album')
+        (destination / '2.png').write_bytes(png((0, 255, 0)))
+        (destination / '1.png').write_bytes(png())
+
+        outcome_run = run_cli('outcome', '--root', str(self.root), '--session-id', self.session,
+                              '--attempt-id', attempt['attempt_id'], '--outcome', 'DOWNLOAD_FINISHED',
+                              '--evidence', self.evidence('synthetic CLI download finished'))
+        self.assertFalse(outcome_run['dispatch_authorized'])
+        verified = run_cli('verify', '--root', str(self.root), '--session-id', self.session,
+                           '--attempt-id', attempt['attempt_id'], '--decoder', str(self.decoder),
+                           '--decoder-sha256', self.decoder_sha)
+        self.assertFalse(verified['dispatch_authorized'])
+        self.assertEqual([row['name'] for row in verified['result']['proof']['manifest']],
+                         ['Direct Album_001.png', 'Direct Album_002.png'])
+        self.assertFalse((self.root / 'albums').exists())
+        with self.store.locked():
+            self.assertEqual(len(self.store.matching('name-transaction')), 1)
+            self.assertEqual(len(self.store.matching('completion')), 1)
+
+    def test_direct_cli_command_help_and_exclusive_input_contract(self):
+        project = Path(__file__).resolve().parents[1]
+        env = dict(os.environ, PYTHONPATH=str(project / 'src'))
+        help_expectations = {
+            'intent': ('--album-key', '--session-id'),
+            'outcome': ('--attempt-id', '--outcome', '--evidence'),
+            'verify': ('--attempt-id', '--decoder-sha256'),
+            'capture-album-name': ('--album-key', '--name', '--source'),
+            'correct-group-name': ('--name', '--source', '--decoder-sha256'),
+            'resume-naming': ('--decoder', '--decoder-sha256'),
+        }
+        for operation, expected in help_expectations.items():
+            with self.subTest(operation=operation):
+                result = subprocess.run(['/usr/bin/python3', '-B', '-m', 'line_backup_batch.daily',
+                                         operation, '--help'], env=env, capture_output=True, text=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                for option in ('--root', *expected):
+                    self.assertIn(option, result.stdout)
+                self.assertIn('cannot be combined with --input', result.stdout)
+        mixed = subprocess.run(['/usr/bin/python3', '-B', '-m', 'line_backup_batch.daily',
+                                'intent', '--root', str(self.root), '--input', str(self.base / 'legacy.json'),
+                                '--session-id', self.session, '--album-key', album_key(self.cards[0])],
+                               env=env, capture_output=True, text=True)
+        self.assertEqual(mixed.returncode, 2, mixed.stderr)
+        self.assertIn('--input cannot be combined with direct arguments', mixed.stderr)
+        unrelated = subprocess.run(['/usr/bin/python3', '-B', '-m', 'line_backup_batch.daily',
+                                    'resume-naming', '--root', str(self.root), '--name', 'ignored'],
+                                   env=env, capture_output=True, text=True)
+        self.assertEqual(unrelated.returncode, 2, unrelated.stderr)
+        self.assertIn('unexpected arguments for resume-naming: --name', unrelated.stderr)
+        missing = subprocess.run(['/usr/bin/python3', '-B', '-m', 'line_backup_batch.daily',
+                                  'outcome', '--root', str(self.root), '--session-id', self.session,
+                                  '--attempt-id', 'synthetic', '--outcome', 'DOWNLOAD_FINISHED'],
+                                 env=env, capture_output=True, text=True)
+        self.assertEqual(missing.returncode, 2, missing.stderr)
+        self.assertIn('missing arguments for outcome: --evidence', missing.stderr)
 
     def test_torn_event_or_changed_evidence_blocks_without_resetting_history(self):
         self.page(self.cards[:1], top=True)
@@ -585,6 +759,603 @@ class DailyTests(unittest.TestCase):
         with self.assertRaisesRegex(DailyError, 'EVENT_SEQUENCE_OR_PENDING_WRITE'):
             self.store.summary()
         self.assertEqual({p.name: p.read_bytes() for p in events.iterdir() if p != pending}, before)
+
+    def test_named_backup_preserves_identity_sorts_originals_and_avoids_name_collisions(self):
+        sorted_card = dict(self.cards[0], expected_images=3, visual_key='synthetic-sorted-files')
+        colliding_card = dict(self.cards[1], expected_images=1, visual_key='synthetic-colliding-name')
+        self.page([sorted_card, colliding_card], top=True)
+        group = self.store.capture_group_name(session_id=self.session, name='Fans/Group',
+            source=self.evidence('synthetic OCR group name'))
+        first = self.store.capture_album_name(session_id=self.session, identity=sorted_card,
+            name='Trip', source=self.evidence('synthetic OCR album name one'))
+        second = self.store.capture_album_name(session_id=self.session, identity=colliding_card,
+            name='trip', source=self.evidence('synthetic OCR album name two'))
+        self.assertNotEqual(album_key(sorted_card), album_key(colliding_card))
+        self.assertEqual(group['path_name'], 'Fans Group')
+        self.assertEqual(first['path_name'], 'Trip')
+        self.assertEqual(second['path_name'], 'trip (2)')
+        self.detail(sorted_card)
+        attempt = self.store.intent(session_id=self.session, identity=sorted_card)
+        sources = {'10.JPG': png(), '2.jpeg': png() + b'second', '1.png': png() + b'third'}
+        self.assertEqual(Path(attempt['destination']), self.root / 'Fans Group' / 'Trip')
+        for name, content in sources.items():
+            (Path(attempt['destination']) / name).write_bytes(content)
+        self.finished(attempt)
+        completed = self.complete(attempt)
+        self.assertEqual([row['name'] for row in completed['proof']['manifest']],
+                         ['Trip_001.png', 'Trip_002.JPG', 'Trip_003.jpeg'])
+        mapping = {row['source_name']: row['target_name'] for row in completed['naming']['rows']}
+        for source_name, content in sources.items():
+            self.assertEqual((Path(attempt['destination']) / mapping[source_name]).read_bytes(), content)
+        memory = DailyRecords(self.root).memory()
+        self.assertEqual(memory['group']['display_name'], 'Fans/Group')
+        self.assertEqual(memory['group']['path_name'], 'Fans Group')
+        album = next(row for row in memory['albums'] if row['album_key'] == album_key(sorted_card))
+        self.assertEqual(album['display_name'], 'Trip')
+        self.assertEqual(album['current_destination'], str(self.root / 'Fans Group' / 'Trip'))
+        self.assertEqual(album['status'], 'COMPLETED')
+        self.assertNotIn('trip', album_key(sorted_card))
+
+    def test_safe_components_unicode_case_collisions_and_photo_width(self):
+        self.assertEqual(safe_component('  ..Hidden/A\\B\x00C  '), 'Hidden A B C')
+        self.assertEqual(safe_component('A\u0308'), 'Ä')
+        self.assertLessEqual(len(safe_component('x' * 500).encode('utf-8')), 180)
+        for value in ('', '   ', '.', '..', './'):
+            with self.subTest(value=value), self.assertRaisesRegex(DailyError, 'NAME_REQUIRES_USER_INPUT'):
+                safe_component(value)
+        parent = self.base / 'safe-components'
+        parent.mkdir()
+        (parent / 'Trip').mkdir()
+        self.assertEqual(allocate_component(parent, 'trip'), 'trip (2)')
+        self.assertEqual(allocate_component(parent, 'Café', taken=['Cafe\u0301']), 'Café (2)')
+        names = ['original-%04d.png' % number for number in range(1000)]
+        plan = planned_photo_names('Trip', names)
+        self.assertEqual(plan[0]['target_name'], 'Trip_0001.png')
+        self.assertTrue(all(len(Path(row['target_name']).stem.split('_')[-1]) == 4 for row in plan))
+
+    def test_album_and_group_corrections_reverify_and_project_new_paths(self):
+        self.page(self.cards[:2], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Friends',
+            source=self.evidence('synthetic group OCR'))
+        for card, name in ((self.cards[0], 'Trip'), (self.cards[1], 'trip')):
+            self.store.capture_album_name(session_id=self.session, identity=card,
+                name=name, source=self.evidence('synthetic album OCR ' + name))
+        completed = []
+        for card, names in ((self.cards[0], ('b.png', 'a.jpg')), (self.cards[1], ('d.png', 'c.jpg'))):
+            self.detail(card)
+            attempt = self.store.intent(session_id=self.session, identity=card)
+            for name in names:
+                (Path(attempt['destination']) / name).write_bytes(png())
+            self.finished(attempt)
+            completed.append(self.complete(attempt))
+        group_path = self.root / 'Friends'
+        self.assertTrue((group_path / 'Trip').is_dir())
+        corrected = self.store.correct_album_name(album_key=album_key(self.cards[1]), name='Journey',
+            source=self.evidence('synthetic Owner album correction'),
+            decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertFalse((group_path / 'trip (2)').exists())
+        self.assertTrue((group_path / 'Journey').is_dir())
+        self.assertEqual([row['name'] for row in corrected['correction']['albums'][0]['proof']['manifest']],
+                         ['Journey_001.jpg', 'Journey_002.png'])
+        self.assertEqual(self.store.status_map()[album_key(self.cards[1])], 'COMPLETED')
+        grouped = self.store.correct_group_name(name='Friends/Archive',
+            source=self.evidence('synthetic Owner group correction'),
+            decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        new_group = self.root / 'Friends Archive'
+        self.assertFalse(group_path.exists())
+        self.assertTrue((new_group / 'Trip').is_dir())
+        self.assertTrue((new_group / 'Journey').is_dir())
+        self.assertEqual(len(grouped['correction']['albums']), 2)
+        self.assertEqual(set(self.store.status_map()[album_key(card)] for card in self.cards[:2]),
+                         {'COMPLETED'})
+        memory = DailyRecords(self.root).memory()
+        self.assertEqual(memory['group']['path_name'], 'Friends Archive')
+        self.assertEqual({row['current_destination'] for row in memory['albums'][:2]},
+                         {str(new_group / 'Trip'), str(new_group / 'Journey')})
+
+    def test_initial_naming_resumes_after_interruption_without_second_transaction(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Trip Group',
+            source=self.evidence('synthetic group OCR'))
+        self.store.capture_album_name(session_id=self.session, identity=self.cards[0], name='Trip',
+            source=self.evidence('synthetic album OCR'))
+        self.detail(self.cards[0])
+        attempt = self.store.intent(session_id=self.session, identity=self.cards[0])
+        for name in ('2.png', '1.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        original_rename = daily_module.exclusive_rename
+        interrupted_once = {'value': False}
+        def interrupted(source, target):
+            if (not interrupted_once['value'] and Path(target).name.startswith('.line-naming-') and
+                    Path(target).name.endswith('.tmp')):
+                interrupted_once['value'] = True
+                raise OSError('synthetic naming interruption')
+            return original_rename(source, target)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=interrupted):
+            with self.assertRaises(OSError):
+                self.complete(attempt)
+        resumed = DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+                                                        decoder_sha256=self.decoder_sha)
+        self.assertEqual([row['name'] for row in resumed['proof']['manifest']],
+                         ['Trip_001.png', 'Trip_002.png'])
+        with self.store.locked():
+            transactions = self.store.matching('name-transaction')
+            completions = self.store.matching('completion')
+        self.assertEqual(len(transactions), 1)
+        self.assertEqual(len(completions), 1)
+        self.assertEqual(DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+            decoder_sha256=self.decoder_sha)['status'], 'NOTHING_TO_RESUME')
+
+    def test_initial_naming_reconciles_file_rename_completed_before_progress(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Trip Group',
+            source=self.evidence('synthetic group OCR'))
+        self.store.capture_album_name(session_id=self.session, identity=self.cards[0], name='Trip',
+            source=self.evidence('synthetic album OCR'))
+        self.detail(self.cards[0])
+        attempt = self.store.intent(session_id=self.session, identity=self.cards[0])
+        for name in ('2.png', '1.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        original_rename = daily_module.exclusive_rename
+        interrupted_once = {'value': False}
+        def interrupted(source, target):
+            result = original_rename(source, target)
+            if (not interrupted_once['value'] and Path(target).name.startswith('.line-naming-') and
+                    Path(target).name.endswith('.tmp')):
+                interrupted_once['value'] = True
+                raise OSError('synthetic naming progress interruption')
+            return result
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=interrupted):
+            with self.assertRaises(OSError):
+                self.complete(attempt)
+        resumed = DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+            decoder_sha256=self.decoder_sha)
+        self.assertEqual([row['name'] for row in resumed['proof']['manifest']],
+                         ['Trip_001.png', 'Trip_002.png'])
+        with self.store.locked():
+            self.assertEqual(len(self.store.matching('name-transaction')), 1)
+            self.assertEqual(len(self.store.matching('completion')), 1)
+        self.assertEqual(DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+            decoder_sha256=self.decoder_sha)['status'], 'NOTHING_TO_RESUME')
+
+    def test_pending_album_correction_is_protected_then_resumes(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Trip Group',
+            source=self.evidence('synthetic group OCR'))
+        self.store.capture_album_name(session_id=self.session, identity=self.cards[0], name='Trip',
+            source=self.evidence('synthetic album OCR'))
+        self.detail(self.cards[0])
+        attempt = self.store.intent(session_id=self.session, identity=self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        original_rename = daily_module.exclusive_rename
+        interrupted_once = {'value': False}
+        def interrupted(source, target):
+            if (not interrupted_once['value'] and Path(target).name.startswith('.line-naming-') and
+                    Path(target).name.endswith('.tmp')):
+                interrupted_once['value'] = True
+                raise OSError('synthetic correction interruption')
+            return original_rename(source, target)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=interrupted):
+            with self.assertRaises(OSError):
+                self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Renamed',
+                    source=self.evidence('synthetic Owner correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertEqual(DailyRecords(self.root).status_map()[album_key(self.cards[0])],
+                         'PROTECTED_HISTORY')
+        corrected = DailyRecords(self.root).correct_album_name(album_key=album_key(self.cards[0]),
+            name='Renamed', source=self.evidence('retry source is not used for stored plan'),
+            decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue((self.root / 'Trip Group' / 'Renamed').is_dir())
+        self.assertEqual([row['name'] for row in corrected['correction']['albums'][0]['proof']['manifest']],
+                         ['Renamed_001.png', 'Renamed_002.png'])
+        self.assertEqual(DailyRecords(self.root).status_map()[album_key(self.cards[0])], 'COMPLETED')
+
+    def test_album_correction_reconciles_file_rename_completed_before_progress(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Trip Group',
+            source=self.evidence('synthetic group OCR'))
+        self.store.capture_album_name(session_id=self.session, identity=self.cards[0], name='Trip',
+            source=self.evidence('synthetic album OCR'))
+        self.detail(self.cards[0])
+        attempt = self.store.intent(session_id=self.session, identity=self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        original_rename = daily_module.exclusive_rename
+        interrupted_once = {'value': False}
+        def interrupted(source, target):
+            result = original_rename(source, target)
+            if (not interrupted_once['value'] and Path(target).name.startswith('.line-naming-') and
+                    Path(target).name.endswith('.tmp')):
+                interrupted_once['value'] = True
+                raise OSError('synthetic correction progress interruption')
+            return result
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=interrupted):
+            with self.assertRaises(OSError):
+                self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Renamed',
+                    source=self.evidence('synthetic Owner correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        corrected = DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+            decoder_sha256=self.decoder_sha)
+        self.assertTrue((self.root / 'Trip Group' / 'Renamed').is_dir())
+        self.assertEqual([row['name'] for row in corrected['correction']['albums'][0]['proof']['manifest']],
+                         ['Renamed_001.png', 'Renamed_002.png'])
+        with self.store.locked():
+            self.assertEqual(len(self.store.matching('name-correction-plan')), 1)
+            self.assertEqual(len(self.store.matching('album-name')), 2)
+            self.assertEqual(len(self.store.matching('completion')), 1)
+        self.assertEqual(DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+            decoder_sha256=self.decoder_sha)['status'], 'NOTHING_TO_RESUME')
+
+    def test_group_correction_refuses_an_incomplete_named_child(self):
+        self.page(self.cards[:2], top=True)
+        first = self.intent(self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(first['destination']) / name).write_bytes(png())
+        self.finished(first)
+        self.complete(first)
+        self.intent(self.cards[1])
+        with self.assertRaisesRegex(DailyError, 'FOREIGN_OR_INCOMPLETE_GROUP_CONTENT'):
+            self.store.correct_group_name(name='Renamed Group',
+                source=self.evidence('synthetic Owner group correction'),
+                decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+
+    def test_case_only_album_correction_uses_safe_rename_chain(self):
+        self.page(self.cards[:1], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Case Group',
+            source=self.evidence('synthetic group OCR'))
+        self.store.capture_album_name(session_id=self.session, identity=self.cards[0], name='Trip',
+            source=self.evidence('synthetic album OCR'))
+        self.detail(self.cards[0])
+        attempt = self.store.intent(session_id=self.session, identity=self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        corrected = self.store.correct_album_name(album_key=album_key(self.cards[0]), name='trip',
+            source=self.evidence('synthetic case-only Owner correction'),
+            decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue((self.root / 'Case Group' / 'trip').is_dir())
+        self.assertEqual([row['name'] for row in corrected['correction']['albums'][0]['proof']['manifest']],
+                         ['trip_001.png', 'trip_002.png'])
+
+    def test_initial_naming_metadata_drift_after_transaction_is_refused(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        attempt = self.intent(self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        original_rename = daily_module.exclusive_rename
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=OSError('synthetic stop')):
+            with self.assertRaises(OSError):
+                self.complete(attempt)
+        source = Path(attempt['destination']) / '1.png'
+        info = source.stat()
+        os.utime(source, ns=(info.st_atime_ns, info.st_mtime_ns + 1_000_000_000))
+        with self.assertRaisesRegex(DailyError, 'NAMING_FILE_CHANGED'):
+            DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+                                                   decoder_sha256=self.decoder_sha)
+        self.assertTrue(source.exists())
+        self.assertEqual(len(self.store.matching('completion')), 0)
+        self.assertIs(original_rename, daily_module.exclusive_rename)
+
+    def test_resume_naming_recovers_finished_before_transaction(self):
+        self.page(self.cards[:1], top=True)
+        attempt = self.intent(self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        resumed = DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+                                                        decoder_sha256=self.decoder_sha)
+        self.assertEqual([row['name'] for row in resumed['proof']['manifest']],
+                         ['Album synthetic-cover-0_001.png', 'Album synthetic-cover-0_002.png'])
+        with self.store.locked():
+            self.assertEqual(len(self.store.matching('name-transaction')), 1)
+            self.assertEqual(len(self.store.matching('completion')), 1)
+
+    def test_resume_naming_revalidates_finished_evidence(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        attempt = self.intent(self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=OSError('synthetic stop')):
+            with self.assertRaises(OSError):
+                self.complete(attempt)
+        with self.store.locked():
+            evidence = Path(self.store.matching('outcome')[-1]['evidence']['path'])
+        evidence.write_text('tampered synthetic outcome', encoding='utf-8')
+        with self.assertRaisesRegex(DailyError, 'EVIDENCE_DRIFT'):
+            DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+                                                   decoder_sha256=self.decoder_sha)
+        self.assertEqual(len(self.store.matching('completion')), 0)
+
+    def test_resume_naming_refuses_unknown_outcome(self):
+        self.page(self.cards[:1], top=True)
+        attempt = self.intent(self.cards[0])
+        self.store.outcome(session_id=self.session, attempt_id=attempt['attempt_id'],
+                           outcome='UNKNOWN', evidence=self.evidence('synthetic unknown outcome'))
+        with self.assertRaisesRegex(DailyError, 'UNKNOWN_OR_RUNNING_NO_REPLAY'):
+            DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+                                                   decoder_sha256=self.decoder_sha)
+
+    def test_resume_naming_refuses_stopped_outcome(self):
+        self.page(self.cards[:1], top=True)
+        attempt = self.intent(self.cards[0])
+        self.store.outcome(session_id=self.session, attempt_id=attempt['attempt_id'],
+                           outcome='STOPPED', evidence=self.evidence('synthetic stopped outcome'))
+        with self.assertRaisesRegex(DailyError, 'NO_DOWNLOAD_FINISHED_TO_RESUME'):
+            DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+                                                   decoder_sha256=self.decoder_sha)
+
+    def test_resume_naming_refuses_intent_without_outcome(self):
+        self.page(self.cards[:1], top=True)
+        self.intent(self.cards[0])
+        with self.assertRaisesRegex(DailyError, 'KNOWN_DOWNLOAD_FINISH_REQUIRED'):
+            DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+                                                   decoder_sha256=self.decoder_sha)
+
+    def test_complete_refuses_duplicate_while_correction_is_pending(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        attempt = self.intent(self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=OSError('synthetic stop')):
+            with self.assertRaises(OSError):
+                self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Renamed',
+                    source=self.evidence('synthetic Owner correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        with self.assertRaisesRegex(DailyError, 'PENDING_NAMING_TRANSACTION'):
+            self.complete(attempt)
+        self.assertEqual(len(self.store.matching('completion')), 1)
+
+    def test_group_correction_rechecks_content_before_rename(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Trip Group',
+            source=self.evidence('synthetic group OCR'))
+        self.store.capture_album_name(session_id=self.session, identity=self.cards[0], name='Trip',
+            source=self.evidence('synthetic album OCR'))
+        self.detail(self.cards[0])
+        attempt = self.store.intent(session_id=self.session, identity=self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=OSError('synthetic stop')):
+            with self.assertRaises(OSError):
+                self.store.correct_group_name(name='Renamed Group',
+                    source=self.evidence('synthetic Owner group correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        image = next((self.root / 'Trip Group' / 'Trip').glob('*.png'))
+        image.write_bytes(png((0, 255, 0)))
+        with self.assertRaisesRegex(DailyError, 'CORRECTION_CONTENT_CHANGED'):
+            DailyRecords(self.root).correct_group_name(name='Renamed Group',
+                source=self.evidence('unused stored correction source'),
+                decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue((self.root / 'Trip Group' / 'Trip').is_dir())
+        self.assertEqual(DailyRecords(self.root).status_map()[album_key(self.cards[0])],
+                         'PROTECTED_HISTORY')
+
+    def test_album_correction_rechecks_content_after_plan_before_rename(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Trip Group',
+            source=self.evidence('synthetic group OCR'))
+        self.store.capture_album_name(session_id=self.session, identity=self.cards[0], name='Trip',
+            source=self.evidence('synthetic album OCR'))
+        self.detail(self.cards[0])
+        attempt = self.store.intent(session_id=self.session, identity=self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=OSError('synthetic stop')):
+            with self.assertRaises(OSError):
+                self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Renamed',
+                    source=self.evidence('synthetic Owner album correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        album_path = self.root / 'Trip Group' / 'Trip'
+        image = next(album_path.glob('*.png'))
+        changed = png((0, 255, 0))
+        image.write_bytes(changed)
+        with self.assertRaisesRegex(DailyError, 'CORRECTION_CONTENT_CHANGED'):
+            DailyRecords(self.root).resume_naming(decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue(album_path.is_dir())
+        self.assertEqual(image.read_bytes(), changed)
+        self.assertEqual(DailyRecords(self.root).status_map()[album_key(self.cards[0])],
+                         'PROTECTED_HISTORY')
+        with self.store.locked():
+            self.assertEqual(len(self.store.matching('album-name')), 1)
+
+    def test_group_correction_rejects_swapped_child_directories(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:2], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Two Albums',
+            source=self.evidence('synthetic group OCR'))
+        for card, name, color in ((self.cards[0], 'Alpha', (255, 0, 0)),
+                                  (self.cards[1], 'Beta', (0, 255, 0))):
+            self.store.capture_album_name(session_id=self.session, identity=card, name=name,
+                source=self.evidence('synthetic album OCR ' + name))
+            self.detail(card)
+            attempt = self.store.intent(session_id=self.session, identity=card)
+            (Path(attempt['destination']) / '1.png').write_bytes(png(color))
+            (Path(attempt['destination']) / '2.png').write_bytes(png((0, 0, 255)))
+            self.finished(attempt)
+            self.complete(attempt)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=OSError('synthetic stop')):
+            with self.assertRaises(OSError):
+                self.store.correct_group_name(name='Two Albums Renamed',
+                    source=self.evidence('synthetic Owner group correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        group = self.root / 'Two Albums'
+        hold = self.base / 'synthetic-swap-hold'
+        (group / 'Alpha').rename(hold)
+        (group / 'Beta').rename(group / 'Alpha')
+        hold.rename(group / 'Beta')
+        with self.assertRaisesRegex(DailyError, 'CORRECTION_DIRECTORY_CHANGED'):
+            DailyRecords(self.root).correct_group_name(name='Two Albums Renamed',
+                source=self.evidence('unused stored correction source'),
+                decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue(group.is_dir())
+
+    def test_group_correction_resumes_after_directory_temp_rename(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        attempt = self.intent(self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        original_rename = daily_module.exclusive_rename
+        def interrupted(source, target):
+            if Path(target).name == 'Renamed Group':
+                raise OSError('synthetic group directory interruption')
+            return original_rename(source, target)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=interrupted):
+            with self.assertRaises(OSError):
+                self.store.correct_group_name(name='Renamed Group',
+                    source=self.evidence('synthetic Owner group correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        with self.store.locked():
+            plan = self.store.matching('name-correction-plan')[-1]
+        self.assertFalse((self.root / 'Synthetic Group').exists())
+        self.assertTrue((self.root / plan['temp_group_path_name']).is_dir())
+        corrected = DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+            decoder_sha256=self.decoder_sha)
+        self.assertTrue((self.root / 'Renamed Group' / attempt['naming']['album_path_name']).is_dir())
+        self.assertEqual(len(corrected['correction']['albums']), 1)
+        with self.store.locked():
+            self.assertEqual(len(self.store.matching('group-name')), 2)
+
+    def test_group_correction_reconciles_rename_completed_before_progress(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:1], top=True)
+        attempt = self.intent(self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        original_rename = daily_module.exclusive_rename
+        def interrupted(source, target):
+            result = original_rename(source, target)
+            if Path(target).name == 'Renamed Group':
+                raise OSError('synthetic interruption after directory rename')
+            return result
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=interrupted):
+            with self.assertRaises(OSError):
+                self.store.correct_group_name(name='Renamed Group',
+                    source=self.evidence('synthetic Owner group correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertFalse((self.root / 'Synthetic Group').exists())
+        self.assertTrue((self.root / 'Renamed Group' / attempt['naming']['album_path_name']).is_dir())
+        with self.store.locked():
+            plan = self.store.matching('name-correction-plan')[-1]
+            progress = self.store.matching('name-progress')
+        self.assertFalse(any(row.get('action') == 'TEMP_TO_DIRECTORY' for row in progress))
+        corrected = DailyRecords(self.root).resume_naming(decoder=str(self.decoder),
+            decoder_sha256=self.decoder_sha)
+        self.assertEqual(len(corrected['correction']['albums']), 1)
+        with self.store.locked():
+            actions = [row.get('action') for row in self.store.matching('name-progress')
+                       if row.get('transaction_id') == plan['transaction_id']]
+            self.assertEqual(actions.count('DIRECTORY_TO_TEMP'), 1)
+            self.assertEqual(actions.count('TEMP_TO_DIRECTORY'), 1)
+            self.assertEqual(len(self.store.matching('group-name')), 2)
+
+    def test_album_and_group_corrections_refuse_legacy_unknown_outside_group(self):
+        self.page(self.cards[:2], top=True)
+        first = self.intent(self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(first['destination']) / name).write_bytes(png())
+        self.finished(first)
+        self.complete(first)
+        self.legacy_intent(self.cards[1])
+        with self.assertRaisesRegex(DailyError, 'UNSUPPORTED_OLDER_FORMAT_CORRECTION'):
+            self.store.correct_group_name(name='Changed Group',
+                source=self.evidence('synthetic Owner group correction'),
+                decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        with self.assertRaisesRegex(DailyError, 'UNSUPPORTED_OLDER_FORMAT_CORRECTION'):
+            self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Changed Album',
+                source=self.evidence('synthetic Owner album correction'),
+                decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+
+    def test_album_correction_refuses_foreign_group_entry(self):
+        self.page(self.cards[:1], top=True)
+        attempt = self.intent(self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        group = Path(attempt['destination']).parent
+        (group / 'foreign').mkdir()
+        with self.assertRaisesRegex(DailyError, 'FOREIGN_OR_INCOMPLETE_GROUP_CONTENT'):
+            self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Renamed',
+                source=self.evidence('synthetic Owner album correction'),
+                decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+
+    def test_sanitized_names_and_symlink_destination_targets_are_not_followed(self):
+        self.page(self.cards[:1], top=True)
+        group = self.store.capture_group_name(session_id=self.session, name='../Group',
+            source=self.evidence('synthetic traversal group name'))
+        album = self.store.capture_album_name(session_id=self.session, identity=self.cards[0],
+            name='A/B/../Album', source=self.evidence('synthetic traversal album name'))
+        self.assertEqual((group['path_name'], album['path_name']), ('Group', 'A B .. Album'))
+        outside = self.base / 'outside'
+        outside.mkdir()
+        (self.root / 'Group' / 'A B .. Album').symlink_to(outside)
+        self.detail(self.cards[0])
+        with self.assertRaisesRegex(DailyError, 'TARGET_ALREADY_EXISTS'):
+            self.store.intent(session_id=self.session, identity=self.cards[0])
+        self.assertEqual(list(outside.iterdir()), [])
+
+    def test_corrections_refuse_legacy_format_and_foreign_group_content(self):
+        self.page(self.cards[:1], top=True)
+        attempt = self.legacy_intent(self.cards[0])
+        for name in ('1.png', '2.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        self.store.capture_group_name(session_id=self.session, name='Legacy Group',
+            source=self.evidence('synthetic OCR after legacy completion'))
+        self.store.capture_album_name(session_id=self.session, identity=self.cards[0], name='Legacy Album',
+            source=self.evidence('synthetic album OCR after legacy completion'))
+        with self.assertRaisesRegex(DailyError, 'UNSUPPORTED_OLDER_FORMAT_CORRECTION'):
+            self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Changed',
+                source=self.evidence('synthetic Owner correction'),
+                decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+
+        other = dict(self.cards[1], expected_images=1, visual_key='synthetic-new-format-child')
+        self.store.start_scan(session_id=self.session)
+        self.page([self.cards[0], other], top=True)
+        self.store.capture_album_name(session_id=self.session, identity=other, name='Child',
+            source=self.evidence('synthetic second album OCR'))
+        self.detail(other)
+        named_attempt = self.store.intent(session_id=self.session, identity=other)
+        (Path(named_attempt['destination']) / 'one.png').write_bytes(png())
+        self.finished(named_attempt)
+        self.complete(named_attempt)
+        group_path = self.root / 'Legacy Group'
+        (group_path / 'foreign').mkdir()
+        with self.assertRaisesRegex(DailyError, 'FOREIGN_OR_INCOMPLETE_GROUP_CONTENT'):
+            self.store.correct_group_name(name='Changed Group',
+                source=self.evidence('synthetic Owner group correction'),
+                decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
 
 
 if __name__ == '__main__':
