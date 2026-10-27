@@ -1,6 +1,6 @@
 # LINE 相簿 Agent 備份
 
-人工開好 LINE 相簿列表、首次指定保存位置並交接前景，由 AI Agent 使用[專案 Skill](.agents/skills/line-album-agent-cua/SKILL.md) 查明舊進度、完整盤點、逐本下載與驗證。已完成的不重下，結果未知先查證，中斷採相簿級恢復。
+人工開好 LINE 相簿列表並交接前景，由 AI Agent 使用[專案 Skill](.agents/skills/line-album-agent-cua/SKILL.md) 查明舊進度、完整盤點、逐本下載與驗證。未另指定時預設保存在目前專案根目錄的 `backups/`；專案搬移後若舊紀錄綁定不符，先保護原件並停止接續。已完成的不重下，結果未知先查證，中斷採相簿級恢復。
 
 日常入口是[使用手冊的 Prompt](docs/LINE相簿備份_使用手冊.md)。審查文件或整理專案不會啟動 LINE；群組中文名稱不作身分依據。
 

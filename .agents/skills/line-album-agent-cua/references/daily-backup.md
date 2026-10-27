@@ -7,7 +7,7 @@ Owner 已選日常 AI Agent 流程。這裡是現有工具的輸入規則，不�
 ## 本地紀錄入口
 
 在 repo root 使用 `PYTHONPATH=src python3 -B -m line_backup_batch.daily --help`。
-每個操作使用 `--root <Line_backup內Owner選定的既存目錄> --input <私有JSON>`；JSON 由 Agent 依實際證據產生，使用者不必手填。目的地、證據與編譯後工具均放在本專案內，外部 root／證據引用會被拒絕；不要將外層舊目錄加回輸入。
+每個操作使用 `--root <Line_backup內的既存備份目錄> --input <私有JSON>`；未另指定時預設為目前專案根目錄的 `backups/`，本工作區是 `/Users/hsiaojohnny/dev/Line_backup/backups`。JSON 由 Agent 依實際證據產生，使用者不必手填。目的地、證據與編譯後工具均放在本專案內，外部 root／證據引用會被拒絕；不要將外層舊目錄加回輸入。預設路徑不會自動修復搬移後的舊綁定，必須依 [備份與恢復](backup-and-resume.md) 保護原紀錄並停止查明。
 輸入欄位就是 `DailyRecords` 同名 method 的 keyword arguments，來源：`src/line_backup_batch/daily.py`。
 
 ```text
