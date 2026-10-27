@@ -895,6 +895,11 @@ class DailyRecords:
             projected = projection['completion_overrides'].get(event['sequence'])
             destination = projected['destination'] if projected else data['destination']
             proof = projected['proof'] if projected else data['proof']
+            if not projection['pending']:
+                self._assert_album_attempts_safe(data['album_key'], data['attempt_id'])
+                if (isinstance(data.get('naming'), dict) and
+                        data['naming'].get('schema') == NAMING_SCHEMA):
+                    self._assert_completion_directory_identity(event, Path(destination))
             self._check_completion_files(destination, proof)
         # A legacy hint only raises an ambiguity barrier. It never assigns an
         # album to a group or supersedes real completion/dispatch events.
@@ -1529,8 +1534,8 @@ class DailyRecords:
             return self._plan_group_correction(name=name, source=source,
                 decoder=decoder, decoder_sha256=decoder_sha256)
 
-    def _check_album_group_entries(self, group_path, plan, album_name):
-        projection = self._naming_projection()
+    def _check_album_group_entries(self, group_path, plan, album_name, projection=None):
+        projection = projection or self._naming_projection()
         expected = []
         for event, effective in self._completions_under_group(group_path, projection):
             if event['sequence'] == plan['completion_sequence']:
@@ -1567,8 +1572,21 @@ class DailyRecords:
              entry.st_dev == naming['destination_device'] and entry.st_ino == naming['destination_inode'],
              'CORRECTION_DIRECTORY_CHANGED')
 
-    def _precheck_album_plan(self, plan, group_path, album_path):
-        self._check_album_group_entries(group_path, plan, album_path.name)
+    def _assert_album_rows_proof(self, plan, proof):
+        proof_by_name = {row['name']: row for row in proof['manifest']}
+        need(len(proof_by_name) == len(proof['manifest']) and
+             set(proof_by_name) == {row['target_name'] for row in plan['rows']},
+             'ALBUM_CORRECTION_CONTENT_CHANGED')
+        for row in plan['rows']:
+            final = proof_by_name[row['target_name']]
+            need(final['size'] == row['size'] and final['sha256'] == row['sha256'] and
+                 final['mtime_ns'] == row['source_mtime_ns'],
+                 'ALBUM_CORRECTION_CONTENT_CHANGED')
+
+    def _precheck_album_plan(self, plan, group_path, album_path, *, target_proof=None,
+                             projection=None):
+        projection = projection or self._naming_projection()
+        self._check_album_group_entries(group_path, plan, album_path.name, projection=projection)
         entry = _entry(album_path)
         need(entry is not None and stat.S_ISDIR(entry.st_mode) and directory(album_path) == album_path and
              entry.st_dev == plan['album_directory_device'] and
@@ -1576,9 +1594,8 @@ class DailyRecords:
         completion = self._completion_by_sequence(plan['completion_sequence'])
         need(completion['data']['album_key'] == plan['album_key'],
              'CORRECTION_COMPLETION_REFERENCE_CHANGED')
-        effective = self._effective_completion(completion)
+        effective = self._effective_completion(completion, projection)
         self._assert_album_attempts_safe(plan['album_key'], completion['data']['attempt_id'])
-        projection = self._naming_projection()
         group_completions = self._album_correction_group_completions(
             group_path, plan['completion_sequence'], projection)
         self._assert_group_attempts_safe(group_completions, projection)
@@ -1588,6 +1605,12 @@ class DailyRecords:
             sibling_path = Path(sibling['destination'])
             self._assert_completion_directory_identity(event, sibling_path)
             self._check_completion_files(sibling_path, sibling['proof'], 'CORRECTION_CONTENT_CHANGED')
+        if target_proof is not None:
+            need(Path(effective['destination']) == album_path, 'ALBUM_CORRECTION_PATH_CHANGED')
+            self._assert_album_rows_proof(plan, target_proof)
+            self._check_completion_files(album_path, target_proof,
+                                         'ALBUM_CORRECTION_CONTENT_CHANGED')
+            return
         need(plan['before_proof']['manifest'] == effective['proof']['manifest'] and
              plan['before_proof']['manifest_sha256'] == effective['proof']['manifest_sha256'],
              'CORRECTION_CONTENT_CHANGED')
@@ -1619,24 +1642,19 @@ class DailyRecords:
         self._precheck_album_plan(plan, group_path, album_path)
         transaction = dict(kind='ALBUM_CORRECTION', transaction_id=plan['transaction_id'])
         self._execute_file_rows(album_path, transaction, plan['rows'])
-        completion = self._completion_by_sequence(plan['completion_sequence'])
         expected = len(plan['before_proof']['manifest'])
         proof = verify_directory(album_path, expected, decoder, decoder_sha256)
-        proof_by_name = {row['name']: row for row in proof['manifest']}
-        need(set(proof_by_name) == {row['target_name'] for row in plan['rows']},
-             'ALBUM_CORRECTION_CONTENT_CHANGED')
-        for row in plan['rows']:
-            final = proof_by_name[row['target_name']]
-            need(final['size'] == row['size'] and final['sha256'] == row['sha256'] and
-                 final['mtime_ns'] == row['source_mtime_ns'],
-                 'ALBUM_CORRECTION_CONTENT_CHANGED')
-        return self.append('album-name', dict(schema=NAMING_SCHEMA, action='CORRECT',
+        self._assert_album_rows_proof(plan, proof)
+        self._precheck_album_plan(plan, group_path, album_path)
+        result = self.append('album-name', dict(schema=NAMING_SCHEMA, action='CORRECT',
             album_key=plan['album_key'], identity=plan['identity'],
             display_name=plan['new_album_display_name'], path_name=plan['new_album_path_name'],
             source=plan['source'], plan_id=plan['transaction_id'],
             correction=dict(albums=[dict(album_key=plan['album_key'],
                 completion_sequence=plan['completion_sequence'],
                 destination=str(album_path), proof=proof)])))
+        self._precheck_album_plan(plan, group_path, album_path, target_proof=proof)
+        return result
 
     def _plan_album_correction(self, *, album_key, name, source, decoder, decoder_sha256):
         name_ref = reference(source)

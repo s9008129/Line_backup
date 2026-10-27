@@ -136,6 +136,87 @@ class DailyTests(unittest.TestCase):
         return self.store.complete(session_id=self.session, attempt_id=attempt['attempt_id'],
                                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
 
+    def _seed_two_completed_albums(self):
+        self.page(self.cards[:2], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Two Albums',
+            source=self.evidence('synthetic group OCR'))
+        for card, name, color in ((self.cards[0], 'Alpha', (255, 0, 0)),
+                                  (self.cards[1], 'Beta', (0, 255, 0))):
+            self.store.capture_album_name(session_id=self.session, identity=card, name=name,
+                source=self.evidence('synthetic album OCR ' + name))
+            self.detail(card)
+            attempt = self.store.intent(session_id=self.session, identity=card)
+            for index in (1, 2):
+                (Path(attempt['destination']) / ('%d.png' % index)).write_bytes(png(color))
+            self.finished(attempt)
+            self.complete(attempt)
+
+    def _interrupt_album_correction(self):
+        from line_backup_batch import daily as daily_module
+        with mock.patch.object(daily_module, 'exclusive_rename',
+                               side_effect=OSError('synthetic stop before file rows')):
+            with self.assertRaises(OSError):
+                self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Alpha Renamed',
+                    source=self.evidence('synthetic Owner album correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        with self.store.locked():
+            return self.store.matching('name-correction-plan')[-1]
+
+    def _assert_album_correction_pending(self, plan):
+        reopened = DailyRecords(self.root)
+        with reopened.locked():
+            album_names = reopened.matching('album-name')
+            projection = reopened._naming_projection()
+        self.assertFalse([row for row in album_names
+                          if row.get('action') == 'CORRECT' and row.get('plan_id') == plan['transaction_id']])
+        self.assertIn(plan['transaction_id'], projection['pending'])
+        self.assertNotIn(plan['completion_sequence'], projection['completion_overrides'])
+        self.assertIn(plan['album_key'], projection['protected'])
+
+    def _resume_with_mid_file_row_drift(self, plan, mutate, expected):
+        from line_backup_batch import daily as daily_module
+        original_progress = daily_module.DailyRecords._record_progress
+        injected = {'value': False}
+
+        def progress(store, transaction, action, row, reconciled=False, observed_path=None):
+            result = original_progress(store, transaction, action, row,
+                reconciled=reconciled, observed_path=observed_path)
+            if (not injected['value'] and transaction.get('kind') == 'ALBUM_CORRECTION' and
+                    action == 'TEMP_TO_TARGET' and row.get('index') == 1):
+                self.assertIsNotNone(observed_path)
+                album_path = Path(observed_path).parent
+                self.assertEqual(album_path.name, plan['new_album_path_name'])
+                injected['value'] = True
+                mutate(store, album_path)
+            return result
+
+        with mock.patch.object(daily_module.DailyRecords, '_record_progress', new=progress):
+            with self.assertRaisesRegex(DailyError, expected):
+                daily_module.DailyRecords(self.root).resume_naming(
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue(injected['value'])
+
+    def _drift_sibling_outcome(self, store, _album_path=None):
+        sibling = next(row for row in store.matching('intent')
+                       if row['album_key'] == album_key(self.cards[1]))
+        outcome = next(row for row in store.matching('outcome')
+                       if row['attempt_id'] == sibling['attempt_id'])
+        Path(outcome['evidence']['path']).write_text(
+            'tampered sibling outcome during album correction', encoding='utf-8')
+
+    def _drift_sibling_content(self, _store, album_path):
+        sibling = Path(album_path).parent / 'Beta'
+        victim = sorted(sibling.glob('*.png'))[0]
+        victim.write_bytes(png((0, 0, 255)))
+
+    def _swap_sibling_directory(self, _store, album_path):
+        sibling = Path(album_path).parent / 'Beta'
+        hold = self.base / ('mid-operation-beta-' + uuid.uuid4().hex)
+        sibling.rename(hold)
+        sibling.mkdir()
+        for path in hold.iterdir():
+            os.link(path, sibling / path.name)
+
     def test_identity_needs_visual_disambiguator_not_name_ocr(self):
         self.assertNotEqual(album_key(self.cards[0]), album_key(self.cards[1]))
         invalid = dict(self.cards[0], visual_key='')
@@ -1330,6 +1411,62 @@ class DailyTests(unittest.TestCase):
             DailyRecords(self.root).resume_naming(decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
         self.assertTrue((group / 'Alpha').is_dir())
         self.assertFalse((group / 'Alpha Renamed').exists())
+
+    def test_album_correction_mid_file_rows_rejects_sibling_outcome_evidence_drift(self):
+        self._seed_two_completed_albums()
+        plan = self._interrupt_album_correction()
+        self._resume_with_mid_file_row_drift(plan, self._drift_sibling_outcome, 'EVIDENCE_DRIFT')
+        self._assert_album_correction_pending(plan)
+
+    def test_album_correction_mid_file_rows_rejects_sibling_content_drift(self):
+        self._seed_two_completed_albums()
+        plan = self._interrupt_album_correction()
+        self._resume_with_mid_file_row_drift(plan, self._drift_sibling_content,
+                                             'CORRECTION_CONTENT_CHANGED')
+        self._assert_album_correction_pending(plan)
+
+    def test_album_correction_mid_file_rows_rejects_sibling_directory_swap(self):
+        self._seed_two_completed_albums()
+        plan = self._interrupt_album_correction()
+        self._resume_with_mid_file_row_drift(plan, self._swap_sibling_directory,
+                                             'CORRECTION_DIRECTORY_CHANGED')
+        self._assert_album_correction_pending(plan)
+
+    def test_album_correction_append_time_drift_cannot_project_completed(self):
+        from line_backup_batch import daily as daily_module
+        self._seed_two_completed_albums()
+        original_append = daily_module.DailyRecords.append
+        injected = {'value': False}
+
+        def append(store, kind, data):
+            if (not injected['value'] and kind == 'album-name' and
+                    data.get('action') == 'CORRECT'):
+                injected['value'] = True
+                self._drift_sibling_outcome(store)
+            return original_append(store, kind, data)
+
+        with mock.patch.object(daily_module.DailyRecords, 'append', new=append):
+            with self.assertRaisesRegex(DailyError, 'EVIDENCE_DRIFT'):
+                self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Alpha Renamed',
+                    source=self.evidence('synthetic Owner album correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue(injected['value'])
+        with self.store.locked():
+            corrections = [row for row in self.store.matching('album-name')
+                           if row.get('action') == 'CORRECT']
+        self.assertEqual(len(corrections), 1)
+        self.assertTrue((self.root / 'Two Albums' / 'Alpha Renamed').is_dir())
+        with self.assertRaisesRegex(DailyError, 'EVIDENCE_DRIFT'):
+            DailyRecords(self.root).status_map()
+
+    def test_applied_album_correction_status_revalidates_sibling_evidence(self):
+        self._seed_two_completed_albums()
+        self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Alpha Renamed',
+            source=self.evidence('synthetic Owner album correction'),
+            decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self._drift_sibling_outcome(self.store)
+        with self.assertRaisesRegex(DailyError, 'EVIDENCE_DRIFT'):
+            DailyRecords(self.root).status_map()
 
     def test_group_correction_rejects_swapped_child_directories(self):
         from line_backup_batch import daily as daily_module
