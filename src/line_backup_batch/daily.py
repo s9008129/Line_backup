@@ -1541,6 +1541,32 @@ class DailyRecords:
         actual = sorted(entry.name for entry in group_path.iterdir())
         need(actual == sorted(expected), 'FOREIGN_OR_INCOMPLETE_GROUP_CONTENT')
 
+    def _album_correction_group_completions(self, group_path, completion_sequence, projection=None):
+        projection = projection or self._naming_projection()
+        result = []
+        for event in self.events:
+            if event['kind'] != 'completion':
+                continue
+            effective = self._effective_completion(event, projection)
+            if (event['sequence'] == completion_sequence or
+                    Path(effective['destination']).parent == group_path):
+                result.append((event, effective))
+        return result
+
+    def _assert_completion_directory_identity(self, completion, path):
+        attempt_id = completion['data']['attempt_id']
+        intents = [event['data'] for event in self.events if event['kind'] == 'intent' and
+                   event['data']['attempt_id'] == attempt_id]
+        need(len(intents) == 1, 'CORRECTION_DIRECTORY_CHANGED')
+        naming = intents[0].get('naming')
+        need(isinstance(naming, dict) and naming.get('schema') == NAMING_SCHEMA and
+             naming.get('format') == NAMING_FORMAT and type(naming.get('destination_device')) is int and
+             type(naming.get('destination_inode')) is int, 'CORRECTION_DIRECTORY_CHANGED')
+        entry = _entry(path)
+        need(entry is not None and stat.S_ISDIR(entry.st_mode) and directory(path) == path and
+             entry.st_dev == naming['destination_device'] and entry.st_ino == naming['destination_inode'],
+             'CORRECTION_DIRECTORY_CHANGED')
+
     def _precheck_album_plan(self, plan, group_path, album_path):
         self._check_album_group_entries(group_path, plan, album_path.name)
         entry = _entry(album_path)
@@ -1552,6 +1578,16 @@ class DailyRecords:
              'CORRECTION_COMPLETION_REFERENCE_CHANGED')
         effective = self._effective_completion(completion)
         self._assert_album_attempts_safe(plan['album_key'], completion['data']['attempt_id'])
+        projection = self._naming_projection()
+        group_completions = self._album_correction_group_completions(
+            group_path, plan['completion_sequence'], projection)
+        self._assert_group_attempts_safe(group_completions, projection)
+        for event, sibling in group_completions:
+            if event['sequence'] == plan['completion_sequence']:
+                continue
+            sibling_path = Path(sibling['destination'])
+            self._assert_completion_directory_identity(event, sibling_path)
+            self._check_completion_files(sibling_path, sibling['proof'], 'CORRECTION_CONTENT_CHANGED')
         need(plan['before_proof']['manifest'] == effective['proof']['manifest'] and
              plan['before_proof']['manifest_sha256'] == effective['proof']['manifest_sha256'],
              'CORRECTION_CONTENT_CHANGED')

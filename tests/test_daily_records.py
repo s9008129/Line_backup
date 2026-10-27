@@ -1237,6 +1237,100 @@ class DailyTests(unittest.TestCase):
         self.assertEqual(DailyRecords(self.root).status_map()[album_key(self.cards[0])],
                          'PROTECTED_HISTORY')
 
+    def test_album_correction_resume_revalidates_sibling_outcome_evidence(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:2], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Two Albums',
+            source=self.evidence('synthetic group OCR'))
+        for card, name, color in ((self.cards[0], 'Alpha', (255, 0, 0)), (self.cards[1], 'Beta', (0, 255, 0))):
+            self.store.capture_album_name(session_id=self.session, identity=card, name=name,
+                source=self.evidence('synthetic album OCR ' + name))
+            self.detail(card)
+            attempt = self.store.intent(session_id=self.session, identity=card)
+            for index in (1, 2):
+                (Path(attempt['destination']) / ('%d.png' % index)).write_bytes(png(color))
+            self.finished(attempt)
+            self.complete(attempt)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=OSError('synthetic stop')):
+            with self.assertRaises(OSError):
+                self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Alpha Renamed',
+                    source=self.evidence('synthetic Owner album correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        with self.store.locked():
+            sibling = next(row for row in self.store.matching('intent')
+                           if row['album_key'] == album_key(self.cards[1]))
+            outcome = next(row for row in self.store.matching('outcome')
+                           if row['attempt_id'] == sibling['attempt_id'])
+        Path(outcome['evidence']['path']).write_text('tampered sibling outcome evidence', encoding='utf-8')
+        with self.assertRaisesRegex(DailyError, 'EVIDENCE_DRIFT'):
+            DailyRecords(self.root).resume_naming(decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        group = self.root / 'Two Albums'
+        self.assertTrue((group / 'Alpha').is_dir())
+        self.assertFalse((group / 'Alpha Renamed').exists())
+        self.assertEqual(DailyRecords(self.root).status_map()[album_key(self.cards[0])],
+                         'PROTECTED_HISTORY')
+        self.assertEqual(DailyRecords(self.root).status_map()[album_key(self.cards[1])], 'COMPLETED')
+
+    def test_album_correction_resume_refuses_sibling_content_drift(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:2], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Two Albums',
+            source=self.evidence('synthetic group OCR'))
+        for card, name, color in ((self.cards[0], 'Alpha', (255, 0, 0)), (self.cards[1], 'Beta', (0, 255, 0))):
+            self.store.capture_album_name(session_id=self.session, identity=card, name=name,
+                source=self.evidence('synthetic album OCR ' + name))
+            self.detail(card)
+            attempt = self.store.intent(session_id=self.session, identity=card)
+            for index in (1, 2):
+                (Path(attempt['destination']) / ('%d.png' % index)).write_bytes(png(color))
+            self.finished(attempt)
+            self.complete(attempt)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=OSError('synthetic stop')):
+            with self.assertRaises(OSError):
+                self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Alpha Renamed',
+                    source=self.evidence('synthetic Owner album correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        group = self.root / 'Two Albums'
+        sibling = next((group / 'Beta').glob('*.png'))
+        changed = png((0, 0, 255))
+        sibling.write_bytes(changed)
+        with self.assertRaisesRegex(DailyError, 'CORRECTION_CONTENT_CHANGED'):
+            DailyRecords(self.root).resume_naming(decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue((group / 'Alpha').is_dir())
+        self.assertFalse((group / 'Alpha Renamed').exists())
+        self.assertEqual(sibling.read_bytes(), changed)
+
+    def test_album_correction_resume_refuses_sibling_directory_swap(self):
+        from line_backup_batch import daily as daily_module
+        self.page(self.cards[:2], top=True)
+        self.store.capture_group_name(session_id=self.session, name='Two Albums',
+            source=self.evidence('synthetic group OCR'))
+        for card, name, color in ((self.cards[0], 'Alpha', (255, 0, 0)), (self.cards[1], 'Beta', (0, 255, 0))):
+            self.store.capture_album_name(session_id=self.session, identity=card, name=name,
+                source=self.evidence('synthetic album OCR ' + name))
+            self.detail(card)
+            attempt = self.store.intent(session_id=self.session, identity=card)
+            for index in (1, 2):
+                (Path(attempt['destination']) / ('%d.png' % index)).write_bytes(png(color))
+            self.finished(attempt)
+            self.complete(attempt)
+        with mock.patch.object(daily_module, 'exclusive_rename', side_effect=OSError('synthetic stop')):
+            with self.assertRaises(OSError):
+                self.store.correct_album_name(album_key=album_key(self.cards[0]), name='Alpha Renamed',
+                    source=self.evidence('synthetic Owner album correction'),
+                    decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        group = self.root / 'Two Albums'
+        sibling = group / 'Beta'
+        hold = self.base / 'synthetic-beta-hold'
+        sibling.rename(hold)
+        sibling.mkdir()
+        for path in hold.iterdir():
+            os.link(path, sibling / path.name)
+        with self.assertRaisesRegex(DailyError, 'CORRECTION_DIRECTORY_CHANGED'):
+            DailyRecords(self.root).resume_naming(decoder=str(self.decoder), decoder_sha256=self.decoder_sha)
+        self.assertTrue((group / 'Alpha').is_dir())
+        self.assertFalse((group / 'Alpha Renamed').exists())
+
     def test_group_correction_rejects_swapped_child_directories(self):
         from line_backup_batch import daily as daily_module
         self.page(self.cards[:2], top=True)
