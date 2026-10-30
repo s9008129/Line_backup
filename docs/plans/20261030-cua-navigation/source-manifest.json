@@ -1,0 +1,100 @@
+{
+  "product_baseline": "66ebd9d50378d3b1d533c83eaf48eaca9a72ef43",
+  "sources": [
+    {
+      "source": "AGENTS.md",
+      "bytes": 6726,
+      "sha256": "783f81256e752b703d37a38a984cd7baab4d1103a9f5c3bb79facc40da99f44b"
+    },
+    {
+      "source": ".agents/skills/line-album-agent-cua/SKILL.md",
+      "bytes": 8829,
+      "sha256": "2933bd6ec53f7738a072e442d1c300e09250a9d6aece24fa765bf1cecb5c3a10"
+    },
+    {
+      "source": ".agents/skills/line-album-agent-cua/references/inventory.md",
+      "bytes": 5700,
+      "sha256": "2ad47500a6bcce259671bce0c38a6bc4e044361f73f04e5bbf26694097bfe469"
+    },
+    {
+      "source": ".agents/skills/line-album-agent-cua/references/verified-experience.md",
+      "bytes": 4335,
+      "sha256": "b1bec6378debb3a8f1b26b8b9af3ddd43299dad98501e33fbabfc3bffd4b8d05"
+    },
+    {
+      "source": ".agents/skills/line-album-agent-cua/references/visual-grounding.md",
+      "bytes": 4091,
+      "sha256": "7d517b0d783e3f6a8cfff362d3a4a1ce7558994656c70277866744f16754b991"
+    },
+    {
+      "source": ".agents/skills/line-album-agent-cua/references/backup-and-resume.md",
+      "bytes": 18239,
+      "sha256": "90ec8a8bac89bfc2c6768642726877e882c788e58f9db8f7e747736d1c60a471"
+    },
+    {
+      "source": ".agents/skills/line-album-agent-cua/references/daily-backup.md",
+      "bytes": 17463,
+      "sha256": "4e64c70c038b73212b5595b322102452795474c4778939465f3fbb94bb37d8b6"
+    },
+    {
+      "source": "docs/LINE相簿備份_使用手冊.md",
+      "bytes": 9844,
+      "sha256": "f6cb0f4621704d003c06f4362b150900b6eca94dea6ad09e2ba6e5779799592c"
+    },
+    {
+      "source": "src/line_backup_batch/daily.py",
+      "bytes": 121520,
+      "sha256": "a63c481dfef89f34754f3a65c6a4079c19b3acd7889c66b238993232c1010ae7"
+    },
+    {
+      "source": "tests/test_daily_records.py",
+      "bytes": 104756,
+      "sha256": "cf6961d4b49cd8f7f3beebe0319d1efbe6954835509705c50294c6d9e8bdfd09"
+    },
+    {
+      "source": "installed-codex/prompts/v4.9.0/01_plan_prompt.md",
+      "bytes": 4162,
+      "sha256": "bcdf692251700d61b8f6215a854e6597fb28282529b8f95d75fae16ad9e6d814"
+    },
+    {
+      "source": "installed-codex/policies/v4.9.0/workflow-routing.md",
+      "bytes": 4574,
+      "sha256": "9e2e02ad9a5e82436049b91b2ab8b55863fd3953d61ea9b0c9be8f325f0084dd"
+    },
+    {
+      "source": "installed-codex/policies/v4.9.0/subagent-model-policy.md",
+      "bytes": 4108,
+      "sha256": "70f64afe8b9cb25a8636a7901d4757d1c2c94ec92c86e98d5e1d2c74419ca8fc"
+    },
+    {
+      "source": "installed-codex/templates/v4.9.0/plan.template.md",
+      "bytes": 1287,
+      "sha256": "6243f062727c6dfed98958adf17e6b22ff27ec7fe92f4789ebb2423c9bfef221"
+    },
+    {
+      "source": "installed-codex/templates/v4.9.0/handoff.template.md",
+      "bytes": 1305,
+      "sha256": "285a5ac555d7c817b331a36f3db9e2da138f1d40a95260ef2ff8a48812ec54f8"
+    },
+    {
+      "source": "installed-codex/templates/v4.9.0/role-report.template.md",
+      "bytes": 1234,
+      "sha256": "4317c31356c2b1164542716f6220eb5ae3915a0cf28e98f21311ac98cc7dc9a8"
+    }
+  ],
+  "official_sources": [
+    {
+      "url": "https://developers.openai.com/plugins/concepts/skills",
+      "supports": "Skill provides workflow instructions; tools provide controlled actions."
+    },
+    {
+      "url": "https://learn.chatgpt.com/docs/customization/overview",
+      "supports": "Metadata discovery, SKILL.md activation, references on demand."
+    },
+    {
+      "url": "https://developers.openai.com/api/docs/models/gpt-6-luna",
+      "supports": "Named model documentation; does not establish cause of this incident."
+    }
+  ],
+  "incident_source": "Current conversation visible tool calls and screenshots; summarized, not exported raw trace."
+}
