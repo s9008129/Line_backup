@@ -81,7 +81,7 @@
 - 產品候選 commit：`a33fed16571aeb95daaa0a20af4672672198fd6e`。`git show -s --format=%B` 已讀回，body 含意圖、做了什麼、下一步的建議、驗證與結果；`git rev-parse HEAD` 與 `git ls-remote origin refs/heads/fix/cua-navigation-20261030` 均為同一精確 SHA；工作樹乾淨；相對起始 HEAD 的七檔範圍與 `src`／`tests`／`AGENTS` 未變檢查均 PASS。
 - 實作 Draft PR：[#43](https://github.com/s9008129/Line_backup/pull/43)，base `plan/cua-navigation-20261030`、head `fix/cua-navigation-20261030`、Draft、`CLEAN`；未合併、未 force-push。
 - 本報告的 V6 結果追加只形成 report-only follow-up，不改變產品候選；該追加 commit 推送後的 final local／remote HEAD 與工作樹結果另存私有 `evidence/` 並在交接訊息回報，不改寫已推送的產品歷史。
-- 證據：`evidence/v6-initial-commit.txt`，`RESULT PASS`、exit `0`。
+- 證據：產品候選的 commit／HEAD／範圍核對為 `evidence/v6-initial-commit.txt`；report-only follow-up 的本機／遠端 HEAD、PR 與工作樹核對為 `evidence/v6-final.txt`；兩者 `RESULT PASS`、exit `0`。
 
 ## B01–B08 的執行狀態
 
@@ -89,7 +89,7 @@
 
 ## 事實、推論與未知
 
-- 事實：本次六份文件修改在允許路徑內；V1、V2、V3、V4、V5 的本地檢查已實際執行並保存輸出；V6 尚待 commit／push 後完成。
+- 事實：本次六份文件修改在允許路徑內；V1、V2、V3、V4、V5 的本地檢查已實際執行並保存輸出；V6 已在產品候選與 report-only follow-up 實際執行並保存輸出。
 - 事實：起始 HEAD 的規劃交付已包含 plan v2、handoff 與 manifest；原 plan 簡化審查 PASS 不自動覆蓋 v2，本次 helper 核對也不是正式接受。
 - 推論：入口判定與輸入前作用依據是最小指令修補；保留「有據自主返回」可避免模型退化成一律停住。
 - 未知：Markdown 對任意模型是否具強制力、跨模型遵循率、不同 LINE／macOS 版本的快捷鍵語意、provider 身分與 usage、真實 GUI 行為、至少兩本的跨本循環、即時 popup、跨 Session 恢復與完整備份 Acceptance。
