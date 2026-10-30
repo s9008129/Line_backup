@@ -1,0 +1,12 @@
+{
+  "base_commit": "33bfe5b508ffa6af80517bd240b49782d9ea4a6f",
+  "sha256": {
+    ".agents/skills/line-album-agent-cua/SKILL.md": "02d34f334b4d1faad843f5f9bf7141276297c31ff13ea6df824e3ae8c458b11b",
+    ".agents/skills/line-album-agent-cua/references/verified-experience.md": "d8aca686435316ed0ca2e0e1f2352f6ff73b12e5037696a458d4a09a94bece5d",
+    ".agents/skills/line-album-agent-cua/references/visual-grounding.md": "7d517b0d783e3f6a8cfff362d3a4a1ce7558994656c70277866744f16754b991",
+    ".agents/skills/line-album-agent-cua/references/backup-and-resume.md": "fa20d81d5dc96b49719e8ad5406167047ea1690e0e54ab58989c1c2c49725f46",
+    ".agents/skills/line-album-agent-cua/references/inventory.md": "aeb42b52e5f891f373b09fbcfe4fa7fa14405cfd7e09027d50ade840784268a7",
+    "docs/LINE相簿備份_使用手冊.md": "088602774b0b0ea71ec5dcb7531ba69d7a3aba465a32f5cb4e1f2488b2d84f77",
+    "docs/plans/20261030-cua-navigation/behavior-cases.md": "9f55bf9e2269626f8e465bd9426f472909e41b1cdbcca1c7403564481f0e4e75"
+  }
+}

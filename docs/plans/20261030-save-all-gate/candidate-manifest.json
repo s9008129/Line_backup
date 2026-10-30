@@ -1,0 +1,11 @@
+{
+  "base_commit": "33bfe5b508ffa6af80517bd240b49782d9ea4a6f",
+  "product_sha256": {
+    ".agents/skills/line-album-agent-cua/SKILL.md": "982f7c1715c32c87054260cc9bd30281dc14c6432547ed066b78e8dbf3d43c61",
+    ".agents/skills/line-album-agent-cua/references/verified-experience.md": "056e72fa3700639ebfe69983eca596b7ff770cf3fbd9c08131815055b62b9c17",
+    ".agents/skills/line-album-agent-cua/references/visual-grounding.md": "ff69641291dc7422a780cb05c94e7944a0cfde5d18d3109de7d6f34ec1bdd3f3",
+    ".agents/skills/line-album-agent-cua/references/backup-and-resume.md": "d4572a2c22f0efc165313dca31c0ae535bba0625ceafe874828b33e8c578ebfd",
+    ".agents/skills/line-album-agent-cua/references/inventory.md": "8849954cf610b406b1d6f762e72429124f39f78c8d18b7c48219c4e8c781cf84",
+    "docs/LINE相簿備份_使用手冊.md": "137d368749129e36edc3122f751869a932506caffa5414ab43d507b66dc4d417"
+  }
+}
