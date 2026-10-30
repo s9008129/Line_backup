@@ -26,6 +26,7 @@ NORMALIZED_HISTORY_SCHEMA = 'line-backup-daily-history/v1'
 MEMORY_SCHEMA = 'line-backup-memory/v1'
 NAMING_SCHEMA = 'line-backup-naming/v1'
 NAMING_FORMAT = 'GROUPED_V1'
+FLAT_NAMING_FORMAT = 'FLAT_V1'
 SAFE_COMPONENT_MAX_BYTES = 180
 CORE_ROOT = Path(__file__).resolve().parents[2]
 
@@ -294,7 +295,8 @@ class DailyRecords:
         need(self.root.is_relative_to(CORE_ROOT), 'PROJECT_LOCAL_ROOT_REQUIRED')
         self.records = self.root / 'backup-records'
 
-    def initialize(self, *, binding_evidence, history_scope_evidence, context_id=None):
+    def initialize(self, *, binding_evidence, history_scope_evidence, context_id=None,
+                   layout=FLAT_NAMING_FORMAT):
         """Only after current foreground handoff and history-scope inspection.
 
         context_id is an optional reliable opaque LINE id. An OCR title is not one.
@@ -303,13 +305,14 @@ class DailyRecords:
         binding = reference(binding_evidence)
         history = reference(history_scope_evidence)
         need(context_id is None or isinstance(context_id, str) and bool(context_id), 'INVALID_CONTEXT_ID')
+        need(layout in (NAMING_FORMAT, FLAT_NAMING_FORMAT), 'INVALID_BACKUP_LAYOUT')
         need(not self.records.exists() and not self.records.is_symlink(), 'RECORDS_ALREADY_EXIST')
         self.records.mkdir(mode=0o700)
         (self.records / 'events').mkdir(mode=0o700)
         identity = self.root.stat()
         group = dict(version=1, local_group_id=str(uuid.uuid4()), destination=str(self.root),
                      destination_device=identity.st_dev, destination_inode=identity.st_ino,
-                     context_id=context_id, binding_evidence=binding, history_scope_evidence=history,
+                     context_id=context_id, layout=layout, binding_evidence=binding, history_scope_evidence=history,
                      recovery_strategy='ALBUM_LEVEL', photo_level_resume='FUTURE_RESEARCH')
         create_json(self.records / 'group.json', group)
         sync_dir(self.root)
@@ -324,7 +327,14 @@ class DailyRecords:
         try:
             need(stat.S_ISREG(os.fstat(fd).st_mode) and os.fstat(fd).st_nlink == 1, 'UNSAFE_LOCK')
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            self.group = strict_json(read_file(self.records / 'group.json'), 'INVALID_GROUP_RECORD')
+            group_raw = read_file(self.records / 'group.json')
+            self.group = strict_json(group_raw, 'INVALID_GROUP_RECORD')
+            from .relocation import load_receipt, project
+            self.relocation = load_receipt(self.root, group_raw)
+            if self.relocation:
+                self.group = dict(self.group, destination=str(self.root),
+                    destination_device=self.relocation['device'],
+                    destination_inode=self.relocation['inode'], layout=self.relocation['layout'])
             identity = self.root.stat()
             need(self.group['destination'] == str(self.root) and
                  self.group['destination_device'] == identity.st_dev and
@@ -352,6 +362,10 @@ class DailyRecords:
                 for name, expected in memory_hashes.items():
                     anchor = strict_json(read_file(anchors / name), 'INVALID_MEMORY_ANCHOR')
                     need(anchor == dict(schema=MEMORY_SCHEMA, event_sha256=expected), 'MEMORY_DIGEST_CHANGED')
+            if self.relocation:
+                self.events = [project(event, self.relocation)
+                    if event['sequence'] <= self.relocation['through_sequence'] else event
+                    for event in self.events]
             yield
         finally:
             os.close(fd)
@@ -375,6 +389,11 @@ class DailyRecords:
         return [e['data'] for e in self.events if e['kind'] == kind]
 
     def bound(self, session_id):
+        if getattr(self, 'relocation', None):
+            need(any(event['kind'] == 'binding' and
+                     event['sequence'] > self.relocation['through_sequence'] and
+                     event['data']['session_id'] == session_id for event in self.events),
+                 'FRESH_FOREGROUND_BINDING_REQUIRED')
         bindings = self.matching('binding')
         need(bindings and bindings[-1]['session_id'] == session_id, 'FRESH_FOREGROUND_BINDING_REQUIRED')
         for ref in bindings[-1]['evidence'].values():
@@ -429,7 +448,8 @@ class DailyRecords:
         return events[-1] if events else None
 
     def _group_directory(self, data):
-        path = self.root / validate_component(data['path_name'])
+        path = (self.root if self.group.get('layout') == FLAT_NAMING_FORMAT else
+                self.root / validate_component(data['path_name']))
         need(directory(path) == path and path.stat().st_dev == data['directory_device'] and
              path.stat().st_ino == data['directory_inode'], 'GROUP_DIRECTORY_BINDING_CHANGED')
         return path
@@ -447,8 +467,10 @@ class DailyRecords:
                 return existing
             need(isinstance(name, str) and bool(name.strip()), 'NAME_REQUIRES_USER_INPUT')
             component = allocate_component(self.root, safe_component(name), reserved=('backup-records', 'albums'))
-            group_path = self.root / component
-            group_path.mkdir(mode=0o700)
+            group_path = (self.root if self.group.get('layout') == FLAT_NAMING_FORMAT else
+                          self.root / component)
+            if group_path != self.root:
+                group_path.mkdir(mode=0o700)
             info = group_path.stat()
             data = dict(schema=NAMING_SCHEMA, action='CAPTURE', local_group_id=self.group['local_group_id'],
                         display_name=name, path_name=component, source=name_ref,
@@ -473,7 +495,8 @@ class DailyRecords:
             group_dir = self._group_directory(group_event[1])
             taken = [event['data']['path_name'] for event in self.events
                      if event['kind'] == 'album-name' and event['data'].get('album_key') != key]
-            component = allocate_component(group_dir, safe_component(name), taken=taken)
+            component = allocate_component(group_dir, safe_component(name), taken=taken,
+                                           reserved=('backup-records', 'albums'))
             data = dict(schema=NAMING_SCHEMA, action='CAPTURE', album_key=key, identity=identity,
                         display_name=name, path_name=component, source=name_ref)
             return self.append('album-name', data)
@@ -603,7 +626,7 @@ class DailyRecords:
                 group=dict(local_group_id=self.group['local_group_id'],
                     display_name=group_data['display_name'] if group_data else None,
                     path_name=group_data['path_name'] if group_data else None,
-                    current_path=str(self.root / group_data['path_name']) if group_data else None),
+                    current_path=str(self._group_directory(group_data)) if group_data else None),
                 naming_schema=NAMING_SCHEMA, albums=albums,
                 legacy_albums=snapshots[0]['legacy_albums'] if snapshots else [],
                 coverage=snapshots[0]['coverage'] if snapshots else 'CURRENT_RECORDS_ONLY',
@@ -848,8 +871,14 @@ class DailyRecords:
             path = destination / row['name']
             need(path.exists() and not path.is_symlink(), code)
             info = path.stat()
+            metadata = getattr(self, 'relocation', None)
+            relocated = metadata['completion_metadata'].get(str(path)) if metadata else None
+            expected = relocated or row
+            if relocated:
+                need(relocated['name'] == row['name'] and relocated['size'] == row['size'] and
+                     relocated['sha256'] == row['sha256'], code)
             need(stat.S_ISREG(info.st_mode) and info.st_size == row['size'] and
-                 info.st_mtime_ns == row['mtime_ns'] and info.st_ctime_ns == row['ctime_ns'],
+                 info.st_mtime_ns == expected['mtime_ns'] and info.st_ctime_ns == expected['ctime_ns'],
                  code)
             need(digest(read_file(path)) == row['sha256'], code)
         need(sorted(p.name for p in destination.iterdir()) ==
@@ -984,7 +1013,7 @@ class DailyRecords:
             destination.mkdir(mode=0o700)
             sync_dir(group_dir)
             info = destination.stat()
-            naming = dict(schema=NAMING_SCHEMA, format=NAMING_FORMAT,
+            naming = dict(schema=NAMING_SCHEMA, format=self.group.get('layout', NAMING_FORMAT),
                 group_name_sequence=group_event[0]['sequence'],
                 album_name_sequence=album_event[0]['sequence'],
                 group_display_name=group_data['display_name'],
@@ -1017,10 +1046,12 @@ class DailyRecords:
     def _named_destination(self, attempt, expected_device=None, expected_inode=None):
         naming = attempt.get('naming')
         need(isinstance(naming, dict) and naming.get('schema') == NAMING_SCHEMA and
-             naming.get('format') == NAMING_FORMAT, 'INVALID_NAMING_BINDING')
+             naming.get('format') in (NAMING_FORMAT, FLAT_NAMING_FORMAT), 'INVALID_NAMING_BINDING')
+        need(naming['format'] == self.group.get('layout', NAMING_FORMAT), 'NAMING_LAYOUT_CHANGED')
         group_name = validate_component(naming.get('group_path_name'))
         album_name = validate_component(naming.get('album_path_name'))
-        destination = self.root / group_name / album_name
+        destination = (self.root / album_name if naming['format'] == FLAT_NAMING_FORMAT else
+                       self.root / group_name / album_name)
         need(str(destination) == attempt['destination'] and directory(destination) == destination,
              'NAMING_DESTINATION_CHANGED')
         info = destination.stat()
@@ -1472,6 +1503,7 @@ class DailyRecords:
         return result
 
     def _plan_group_correction(self, *, name, source, decoder, decoder_sha256):
+        need(self.group.get('layout') != FLAT_NAMING_FORMAT, 'FLAT_NAME_CORRECTION_NOT_SUPPORTED')
         name_ref = reference(source)
         group_event = self._group_name_event()
         need(group_event, 'GROUP_NAME_REQUIRED')
@@ -1568,7 +1600,7 @@ class DailyRecords:
         need(len(intents) == 1, 'CORRECTION_DIRECTORY_CHANGED')
         naming = intents[0].get('naming')
         need(isinstance(naming, dict) and naming.get('schema') == NAMING_SCHEMA and
-             naming.get('format') == NAMING_FORMAT and type(naming.get('destination_device')) is int and
+             naming.get('format') in (NAMING_FORMAT, FLAT_NAMING_FORMAT) and type(naming.get('destination_device')) is int and
              type(naming.get('destination_inode')) is int, 'CORRECTION_DIRECTORY_CHANGED')
         entry = _entry(path)
         need(entry is not None and stat.S_ISDIR(entry.st_mode) and directory(path) == path and
@@ -1660,6 +1692,7 @@ class DailyRecords:
         return result
 
     def _plan_album_correction(self, *, album_key, name, source, decoder, decoder_sha256):
+        need(self.group.get('layout') != FLAT_NAMING_FORMAT, 'FLAT_NAME_CORRECTION_NOT_SUPPORTED')
         name_ref = reference(source)
         album_event = self._album_name_event(album_key)
         need(album_event, 'ALBUM_NAME_REQUIRED')

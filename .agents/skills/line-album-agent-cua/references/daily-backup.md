@@ -10,13 +10,13 @@ Owner 已選日常 AI Agent 流程。這裡是現有工具的輸入規則，不�
 
 名稱取得、`intent`／`outcome`／`verify`、使用者校正與 `resume-naming` 使用 direct CLI 參數；`scan`、`page`、`detail`、`init`、`bind`、`history` 等仍使用 Agent 依實際觀察建立的私有 JSON 證據，絕不由 Owner 手填。直接參數不可和 `--input` 同時使用。`--source` 必須是真實私有證據檔，不可用手寫字串冒充。業務層成功以 exit 0、業務拒絕以 exit 4 回傳 JSON，兩者都包含 `dispatch_authorized=false`；那只是簿記結果，不是 GUI grant，也不得改寫為 true。參數語法／必填欄位錯誤會在執行前以 exit 2 與純 stderr 拒絕，不會產生 JSON 或任何紀錄變更。
 
-未另指定時預設為目前專案根目錄的 `backups/`，本工作區是 `/Users/hsiaojohnny/dev/Line_backup/backups`。目的地、證據與編譯後工具均放在本專案內，外部 root／證據引用會被拒絕；不要將外層舊目錄加回輸入。預設路徑不會自動修復搬移後的舊綁定，必須依 [備份與恢復](backup-and-resume.md) 保護原紀錄並停止查明。
+未另指定時預設為目前專案根目錄的 `backup/`，本工作區是 `/Users/hsiaojohnny/dev/Line_backup/backup`。目的地、證據與編譯後工具均放在本專案內，外部 root／證據引用會被拒絕；不要將外層舊目錄加回輸入。預設路徑不會自動修復搬移後的舊綁定，必須依 [備份與恢復](backup-and-resume.md) 保護原紀錄並停止查明。
 
-新備份使用 `BACKUP_ROOT/<群組實際目錄名>/<相簿實際目錄名>/<相簿實際目錄名>_001.<原副檔名>`。名稱只供顯示及路徑使用；群組／相簿身分仍由 `local_group_id`、`album_key` 與視覺證據決定。新流程固定順序為 `bind → scan/page → capture-group-name（同組一次）→ capture-album-name（每本）→ detail → intent → Save All → outcome → verify`。新 `intent` 必須先取得群組與相簿名稱及最新 detail，完全讀不到名稱時詢問 Owner，不再以舊 `albums/<UUID>` 默默建立新備份。既有、沒有 `naming` 欄位的舊 intent 仍可完成，既有 `albums/<UUID>` 與照片不遷移。
+新備份使用 `BACKUP_ROOT/<相簿實際目錄名>/<相簿實際目錄名>_001.<原副檔名>`。名稱只供顯示及路徑使用；群組／相簿身分仍由 `local_group_id`、`album_key` 與視覺證據決定。新流程固定順序為 `bind → scan/page → capture-group-name（同組一次）→ capture-album-name（每本）→ detail → intent → Save All → outcome → verify`。新 `intent` 必須先取得群組與相簿名稱及最新 detail，完全讀不到名稱時詢問 Owner，不再以舊 `albums/<UUID>` 默默建立新備份。既有、沒有 `naming` 欄位的舊 intent 仍可完成，既有 `albums/<UUID>` 與照片不遷移。
 
 ```text
 BACKUP_ROOT/
-  <group-path>/<album-path>/   新格式；相簿目錄內為 <album-path>_001.<ext> ...
+  <album-path>/   新格式；相簿目錄內為 <album-path>_001.<ext> ...
   albums/<attempt UUID>/       僅舊／未命名備份相容，不用於新 intent
   backup-records/
     group.json                本地群組 UUID、目的地與磁碟／目錄識別
@@ -118,3 +118,5 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily correct-album-name
 ## Skill 文件維護參考
 
 維護 Skill 時可參考 [OpenAI Skill 文件](https://learn.chatgpt.com/docs/build-skills) 與 [Anthropic Skill best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)：description 保持精簡，較長流程放在 references 並按需載入。這些參考連結不代表本 Skill 已受官方審核。
+
+新任務預設使用 `FLAT_V1`，照片位置為 `backup/<相簿名稱>/`；群組名稱仍保存為顯示資訊，不建立群組資料夾。舊任務缺少 layout 欄位時維持 `GROUPED_V1`，既有資料不搬移。扁平布局目前不支援名稱校正，工具會以 `FLAT_NAME_CORRECTION_NOT_SUPPORTED` 拒絕；不可在 Finder 手改或改寫紀錄繞過。
