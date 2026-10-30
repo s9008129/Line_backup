@@ -18,7 +18,7 @@
 | 產品基準 | `66ebd9d50378d3b1d533c83eaf48eaca9a72ef43` |
 | `implementation_plan.md` SHA-256 | `171a7c6d1d3b94348ecad41ffa24122300f39b5930069bb76358cf0b6f8a29ea` |
 | `handoff.md` SHA-256 | `863b1be87b1beb75c96bf5c6f94c13e50800837d7e0856ffdc6d57cddb31ab73` |
-| 本切片交付 commit | `PENDING_COMMIT` |
+| 本切片產品候選 commit | `a33fed16571aeb95daaa0a20af4672672198fd6e` |
 
 起始工作樹沒有需要保留的產品 dirty 或 untracked 變更；本次新增／修改的檔案全部位於 plan 允許路徑。其他既有 worktree、舊 artifact、封存與歷史資料均未改動。
 
@@ -78,8 +78,10 @@
 ### V6 — Commit body、HEAD 與遠端
 
 - 計畫命令：`git show -s --format=%B`、`git rev-parse HEAD`、`git ls-remote origin <完整 ref>`、`git status --short --branch`。
-- 狀態：`PENDING_POST_COMMIT`。
-- 完成條件：commit body 含意圖、做了什麼、下一步的建議、驗證與結果；本機與遠端精確 HEAD 相同；工作樹乾淨。
+- 產品候選 commit：`a33fed16571aeb95daaa0a20af4672672198fd6e`。`git show -s --format=%B` 已讀回，body 含意圖、做了什麼、下一步的建議、驗證與結果；`git rev-parse HEAD` 與 `git ls-remote origin refs/heads/fix/cua-navigation-20261030` 均為同一精確 SHA；工作樹乾淨；相對起始 HEAD 的七檔範圍與 `src`／`tests`／`AGENTS` 未變檢查均 PASS。
+- 實作 Draft PR：[#43](https://github.com/s9008129/Line_backup/pull/43)，base `plan/cua-navigation-20261030`、head `fix/cua-navigation-20261030`、Draft、`CLEAN`；未合併、未 force-push。
+- 本報告的 V6 結果追加只形成 report-only follow-up，不改變產品候選；該追加 commit 推送後的 final local／remote HEAD 與工作樹結果另存私有 `evidence/` 並在交接訊息回報，不改寫已推送的產品歷史。
+- 證據：`evidence/v6-initial-commit.txt`，`RESULT PASS`、exit `0`。
 
 ## B01–B08 的執行狀態
 
@@ -94,15 +96,15 @@
 
 ## 停止點與下一步
 
-本 Session 交付第一切片後停止，不啟動下一個正式角色。Owner 應以本報告、精確 commit 與私有證據啟動獨立的實作 Simplicity Review；只有該 checkpoint 完成並另行決定後，才安排模型行為矩陣與獨立 GUI／真實備份 Acceptance。沒有新授權不得操作 LINE、Save All、真實照片或正式備份紀錄。
+本 Session 交付第一切片後停止，不啟動下一個正式角色。Owner 應以本報告、Draft PR #43、精確 commit 與私有證據啟動獨立的實作 Simplicity Review；只有該 checkpoint 完成並另行決定後，才安排模型行為矩陣與獨立 GUI／真實備份 Acceptance。沒有新授權不得操作 LINE、Save All、真實照片或正式備份紀錄。
 
 ## 六狀態
 
 ```text
-PRIMARY_OUTCOME_STATUS: PENDING_FINAL_GIT_VERIFICATION
-IMPLEMENTATION_STATUS: PENDING_FINAL_GIT_VERIFICATION
+PRIMARY_OUTCOME_STATUS: FIRST_SLICE_READY_FOR_SIMPLICITY_REVIEW
+IMPLEMENTATION_STATUS: PASS
 CORE_ACCEPTANCE_STATUS: NOT_RUN
-REQUIRED_VERIFICATION_STATUS: V1-V5_COMPLETE; V6_PENDING; GUI_AND_E2E_NOT_RUN
+REQUIRED_VERIFICATION_STATUS: V1-V6_PASS_FOR_LOCAL_DOCUMENT_SLICE; MODEL_MATRIX_GUI_AND_E2E_NOT_RUN
 INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
 TASK_CLOSURE_STATUS: PENDING_HUMAN_HANDOFF
 ```
