@@ -1,6 +1,6 @@
 ---
 name: line-album-agent-cua
-description: 由 AI Agent 以原生 Mac Computer Use 自主盤點、逐本下載及驗證使用者交接的 LINE 相簿列表，依持久紀錄跳過完成項並接續中斷；亦用於審查及優化此備份流程。
+description: 由 AI Agent 以原生 Mac Computer Use 自主判讀使用者交接的 LINE 相簿畫面，盤點、逐本下載及驗證列表，依持久紀錄跳過完成項並接續中斷；亦用於審查及優化此備份流程。
 ---
 
 # LINE 相簿備份
@@ -19,6 +19,8 @@ description: 由 AI Agent 以原生 Mac Computer Use 自主盤點、逐本下載
 
 每次輸入前分別判斷：**允許做什麼、現在看到什麼、工具能可靠操作哪個目標、前次是否可能已送出**。缺少 popup 畫面是觀察問題，不能報成缺少下載授權；點擊結果未知則是查證問題，不能再點。沿用原授權做可逆導覽與觀察，直到下一步可可靠操作，或有具體且自行無法解決的阻塞。
 
+導覽前另依 [實機操作方法](references/verified-experience.md) 核對入口與作用依據：目前頁面／視窗角色／焦點、目標，以及為何這個控制項或已驗證快捷鍵能到達預期頁面。交接頁可能不是列表；只有已確認列表才開始盤點。單本照片頁有當次可靠返回控制項，或有符合角色／焦點的已驗證快捷鍵時，自主返回一次並核對原列表；沒有可靠依據就保留原視窗、停止相關輸入，先唯讀釐清，仍不能判定才問入口。不得把 Escape、Command-W 或關閉按鈕當未知頁面的通用返回。每次輸入後與完成一本後返回時都遵守同一條件；意外到聊天、原視窗消失或前景中斷，停止依賴舊身分／定位的輸入。
+
 `Line_backup` 是唯一核心目錄。日常記憶來自本專案的結構化 JSON 與實際照片；開發歷程留在 Git，不作為啟動或接續的依據。命名與校正流程使用 `daily` 的直接參數入口，Agent 自行從 `memory` 取得 `album_key` 並保存證據，不要求 Owner 手填 JSON。
 
 預設備份位置是**目前本 Skill 所在專案根目錄的 `backup/`**；此工作區目前為 `/Users/hsiaojohnny/dev/Line_backup/backup`。先由當前專案根目錄計算實際路徑，不依賴舊的絕對路徑；使用者指定其他專案內位置時依其指示。預設位置不是新任務或重下載的許可，仍須先核對前次任務及其紀錄。
@@ -30,15 +32,15 @@ description: 由 AI Agent 以原生 Mac Computer Use 自主盤點、逐本下載
 | 啟動、舊進度、恢復、完成檔案驗證 | [備份與恢復](references/backup-and-resume.md)；需要 CLI 欄位時再讀 [紀錄工具](references/daily-backup.md) |
 | 名稱取得、分層目錄、改名、群組／相簿校正 | [紀錄工具](references/daily-backup.md)；操作順序見 [備份與恢復](references/backup-and-resume.md) |
 | 列表頂底、漏卡、重複身份、排序變動 | [完整盤點](references/inventory.md) |
-| 開卡、捲動、選單或 chooser | [實機操作方法](references/verified-experience.md)；popup 不可見或座標不明再讀 [畫面觀察與定位](references/visual-grounding.md) |
+| 入口判定、返回、開卡、捲動、選單或 chooser | [實機操作方法](references/verified-experience.md)；popup 不可見或座標不明再讀 [畫面觀察與定位](references/visual-grounding.md) |
 | 結構化記憶、既存照片與身分未明項 | [紀錄工具](references/daily-backup.md) |
 
 ## 工作流程
 
 1. **自動找回前次任務。** 讀本專案 `.local/line-backup/active-task.json` 指向的 `backup-records`，以 `daily memory` 讀取逐本身分、狀態、操作與結構化歷史提示，再核對目的地照片。依 [啟動與自動接續](references/backup-and-resume.md) 判斷前次已完成、仍在下載、待驗證、已中斷或未知；不用使用者提供接續參數。入口指向舊專案位置、目錄身分不符或工具拒絕時，保留原件並停止接續，不改索引、紀錄或初始化空帳；專案搬移需另行安全對帳。歷史提示只保護可能相符項目，不跨列表認領完成；開發資料是否存在不影響日常接續。
-2. **接受人工交接。** 使用者開好相簿列表並交出前景；未另指定位置時，使用目前專案的預設備份位置，接續時仍須先核對原任務與位置綁定。這個列表就是對象，不用群組名稱或中文 OCR（含模糊比對）辨識群組。名稱可作顯示與目錄，但完全讀不到時才問 Owner。疑似另一列表才問，不自動改配。只用當次文件支援的原生工具；前景中斷就停止輸入。
-3. **完整盤點並排程。** 依 [盤點方法](references/inventory.md) 從頂到底，以相鄰畫面重疊避免漏卡，保存總本數、逐本狀態及有序下載清單。日期／張數相同仍須其他視覺依據；缺頁先小步回捲補接，仍有歧義才停下釐清。同一列表先以 `capture-group-name` 保存群組名稱一次；每一本經視覺身分確認後再以 `capture-album-name` 保存相簿名稱。名稱不參與 dedupe 或歷史合併。接續時核對已保存清單與當下列表，內容有變或覆蓋不足才重建；不能沿用舊座標。盤點及對帳完成後，自動繼續下載。
-4. **逐本下載及驗證。** 讀 [操作方法](references/verified-experience.md) 與 [備份及恢復](references/backup-and-resume.md)。詳細頁再次核對相簿，先以私有 evidence 保存 `detail`；再以 direct `intent --album-key` 建立具名 `BACKUP_ROOT/<相簿>/` 新空白目的地並讀回，才點選唯一「儲存全部」，每個 attempt 只送一次。核對 chooser 完整路徑後確認一次。下載後以 direct `outcome` 記錄第一個已知結果，再以 direct `verify --attempt-id` 完成持久改名交易，逐檔核對數量、SHA-256 及 ImageIO 完整解碼，保存完成紀錄並讀回。命名中斷用 `resume-naming`，不重送。接著返回同一列表，以新畫面定位下一本，重複至待辦為零。
+2. **接受人工交接並判定入口。** 使用者交出指定的 LINE 當次畫面與有效前景；未另指定位置時，使用目前專案的預設備份位置，接續時仍須先核對原任務與位置綁定。依 [入口與導覽條件](references/verified-experience.md) 判定畫面，不以口語名稱代替證據：已確認列表才接續盤點；單本照片頁只在有可靠返回控制項或符合角色／焦點的已驗證快捷鍵時返回一次並核對原列表，否則保留原視窗、停止相關輸入，先唯讀釐清，仍不能判定才請 Owner 開好指定列表。確認後的列表就是對象，不用群組名稱或中文 OCR（含模糊比對）辨識群組。名稱可作顯示與目錄，但完全讀不到時才問 Owner。疑似另一列表才問，不自動改配。只用當次文件支援的原生工具；前景中斷就停止輸入。
+3. **完整盤點並排程。** 只在已確認且連續的相簿列表盤點；入口或返回後的連續性不足，先依 [入口與導覽條件](references/verified-experience.md) 處理，不先下載。依 [盤點方法](references/inventory.md) 從頂到底，以相鄰畫面重疊避免漏卡，保存總本數、逐本狀態及有序下載清單。日期／張數相同仍須其他視覺依據；缺頁先小步回捲補接，仍有歧義才停下釐清。同一列表先以 `capture-group-name` 保存群組名稱一次；每一本經視覺身分確認後再以 `capture-album-name` 保存相簿名稱。名稱不參與 dedupe 或歷史合併。接續時核對已保存清單與當下列表，內容有變或覆蓋不足才重建；不能沿用舊座標。盤點及對帳完成後，自動繼續下載。
+4. **逐本下載及驗證。** 讀 [操作方法](references/verified-experience.md) 與 [備份及恢復](references/backup-and-resume.md)。詳細頁再次核對相簿，先以私有 evidence 保存 `detail`；再以 direct `intent --album-key` 建立具名 `BACKUP_ROOT/<相簿>/` 新空白目的地並讀回，才點選唯一「儲存全部」，每個 attempt 只送一次。核對 chooser 完整路徑後確認一次。下載後以 direct `outcome` 記錄第一個已知結果，再以 direct `verify --attempt-id` 完成持久改名交易，逐檔核對數量、SHA-256 及 ImageIO 完整解碼，保存完成紀錄並讀回。命名中斷用 `resume-naming`，不重送。完成事件與檔案讀回成功後，依同一入口與導覽條件確認可靠返回入口；有據才返回原列表並以新畫面定位下一本，無據就保留原視窗並回報入口缺口，不猜 Escape／Command-W／關閉，重複至待辦為零。
 5. **結束對帳。** 總本數須等於「已完成＋已排除＋待下載＋先前未完成＋未知＋受保護歷史」。只有已完成及排除以外均為零，且列表覆蓋證據完整，才回報這次列表全部處理完成。列表內容有變先更新盤點，不覆寫舊完成事實。
 
 ## 保護資料與接續
