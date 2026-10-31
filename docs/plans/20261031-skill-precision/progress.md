@@ -13,3 +13,23 @@
 Owner 提供 FIX_REQUIRED 後重新交辦修復。基線 5873db760fcbe561707c77f2b9049e447bfaf5fe；原驗收報告 hash 已核對，兩份未追蹤 acceptance 保留不改、不提交。修正人工來源的六類歸類、唯一 Prompt 的保護例外，並統一 README root、截圖／OCR 同意及歷史範本註記；具體根因與 finding 對應見 fix-01.md。
 
 本輪只作新的實作切片，不兼任驗收或自動修復另一角色。既有隔離 venv 的 quick_validate 已通過，文件連結／錨點檢查通過；最小回歸 exit 0，73 tests / 318.059s，OK。18 份文件、59 個本地連結／錨點通過，最終 diff check 通過。新的獨立驗收交接見 fix-01-acceptance-prompt.md。LINE GUI、實機多本、跨 Session 與恢復本輪均 NOT_RUN，不能以文件修復解除交接或 UNKNOWN 限制。
+
+
+## 日常入口釐清
+
+Owner 再次明示核心產品是「開好列表、貼同一份 Prompt，Agent 使用 Skill／工具實際備份，Owner 親自確認結果」，並非日常啟動正式 Independent Acceptance。據此僅調整手冊、Skill、AGENTS 的任務路由用語；移除日常說明中容易被理解為必須正式驗收／至少兩本才開始的安排。正式角色的歷史交辦與報告不改寫。本輪未授權或操作 LINE。
+
+同時明列現有一個 backup_root 對應一個列表的工具限制，不把任意不同列表一律用同一預設 root 的需求冒充已實作。新列表與舊綁定無法對應仍須停止釐清，不擴張本次文件修改為資料模型變更。
+
+這是小幅文件路由澄清；沒有 source／test 變更，不重跑已通過且不受此次文案影響的 73 項回歸。本次檢查採 quick_validate、Markdown 本地引用／錨點、差異與既有未追蹤檔雜湊核對；不是獨立接受或 GUI 結果。
+
+本次實際檢查：既有隔離 venv 的 quick_validate exit 0；`python3 .local/line-backup/tasks/20261031-skill-precision-fix01/check_docs.py` exit 0（18 份 Markdown、59 個本地連結／錨點）；`git diff --check`／staged diff check exit 0。輸出保存在 `.local/line-backup/tasks/20261031-daily-prompt-clarification/`。兩份未追蹤 acceptance 的 SHA-256 仍分別為 672ddf5e… 與 b95c86b9…，不改寫、不 stage。
+
+```text
+PRIMARY_OUTCOME_STATUS: REUSABLE_DAILY_PROMPT_CLARIFIED
+IMPLEMENTATION_STATUS: DOCUMENTATION_UPDATED
+CORE_ACCEPTANCE_STATUS: NOT_RUN
+REQUIRED_VERIFICATION_STATUS: SKILL_VALIDATOR_PASS; DOC_CHECKS_PASS; REGRESSION_NOT_RUN_DOCUMENT_ONLY
+INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
+TASK_CLOSURE_STATUS: DAILY_PROMPT_DELIVERED_PENDING_OWNER_TRIAL
+```
