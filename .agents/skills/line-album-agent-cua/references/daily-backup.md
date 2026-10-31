@@ -38,6 +38,7 @@ BACKUP_ROOT/
 - `init`：需當次前景／目的地對應證據及本專案結構化記憶／實際照片盤點範圍證據。可靠 `context_id` 可省略。新目錄不是「沒有舊備份」的證明；先讀本專案現有 backup-records 與已保存排除／操作紀錄。
 - `bind`：傳 `session_id`、既有 `local_group_id`、fresh `observation`、真實 `handoff` 證據檔；可靠 ID 存在時需一致。沒有穩定 LINE ID 時，由 Agent 以實機脈絡對應本地 UUID，歧義才請 Owner 確認。不能只因目錄 basename 或 OCR 相同就認定同群組。
 - `history`：`scope_evidence` 加逐本 `entries`。每筆附本地 UUID、完整 `identity`、聲明狀態與本專案 `source` 檔；只在匯入時查核。只有 `line-backup-daily-history/v1` 正規來源會作為完成／排除狀態：來源必須逐欄匹配本地 UUID、完整 identity、`album_key` 與聲明狀態；COMPLETED 另需具預期張數、manifest hash、逐檔 SHA-256 與一致的完整 ImageIO 證據；EXCLUDED 需具同群組／同相簿的 `line-backup-exclusion/v1` 決定與 Owner source。工具把評估結果、必要結構化證據及來源 digest 內嵌進事件，之後讀記憶不再開啟來源。這不提升為正式 AUTO 驗證。
+- 人工備份只是來源，不新增狀態：同列表／相簿經現有 completion 或上述正規 history 驗證才計 COMPLETED；只有人工聲明或證據不足則依既有保護入口計 PROTECTED_HISTORY，不冒充 EXCLUDED、不改既有 UNKNOWN／pending 交易。六類歸類見 [人工備份與六類狀態](inventory.md#人工備份與六類狀態)。
 - 不支援、舊格式、欄位不符或證據不完整者保留來源 digest、identity 與原聲明，轉為 `PROTECTED_HISTORY`；可直接匯入 `UNKNOWN`／`PROTECTED_HISTORY` 保護事實。兩者不重新下載，也不計入完成／排除。跨本地 UUID 的輸入仍拒絕。
 
 正規 `source` JSON 的固定欄位為 `schema`、`local_group_id`、完整 `identity`、`album_key`、`status`。COMPLETED 另含 `photo_verification.expected_images`、`manifest_sha256`、`manifest_evidence` 與 `imageio_evidence`；manifest JSON 形狀為 `{ "manifest": [{"name", "size", "sha256"}], "manifest_sha256": "..." }`，ImageIO JSON 必須含 `verdict=PASS`、`readOnly=true`、相符 expected／actualEntries 與逐檔 decoded/name/SHA。EXCLUDED 改含 `exclusion_evidence`，其 JSON 必須是 `line-backup-exclusion/v1`、同 UUID／identity／key、`decision=EXCLUDE_ALBUM` 及 `owner_source` reference。

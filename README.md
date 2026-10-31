@@ -1,6 +1,6 @@
 # LINE 相簿 Agent 備份
 
-人工開好 LINE 相簿列表並交接前景，由 AI Agent 使用[專案 Skill](.agents/skills/line-album-agent-cua/SKILL.md) 查明舊進度、完整盤點、逐本下載與驗證。未另指定時預設保存在目前專案根目錄的 `backups/`；專案搬移後若舊紀錄綁定不符，先保護原件並停止接續。已完成的不重下，結果未知先查證，中斷採相簿級恢復。
+人工開好 LINE 相簿列表並交接前景，由 AI Agent 使用[專案 Skill](.agents/skills/line-album-agent-cua/SKILL.md) 查明舊進度、完整盤點、逐本下載與驗證。未另指定時預設保存在目前專案根目錄的 `backup/`；專案搬移後若舊紀錄綁定不符，先保護原件並停止接續。已完成的不重下，結果未知先查證，中斷採相簿級恢復。
 
 日常入口是[使用手冊的 Prompt](docs/LINE相簿備份_使用手冊.md)。審查文件或整理專案不會啟動 LINE；群組中文名稱不作身分依據。
 
@@ -20,13 +20,13 @@ PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p test_daily_r
 
 ## 唯一核心目錄與備份記憶
 
-`Line_backup` 是唯一核心目錄。`.local/line-backup/active-task.json` 指向本專案 `backups/backup-records`；相簿身分、完成／排除／未知操作與身分未明的照片提示，保存在其中的追加式 JSON。日常啟動不查封存、外層舊資料或 Git 歷史。
+`Line_backup` 是唯一核心目錄。`.local/line-backup/active-task.json` 指向已核對任務的實際 records_root（預設為本專案 `backup/backup-records`）；相簿身分、完成／排除／未知操作與身分未明的照片提示，保存在其中的追加式 JSON。日常啟動不查封存、外層舊資料或 Git 歷史。
 
 ```sh
-PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily memory --root "$PWD/backups"
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily memory --root "$PWD/backup"
 ```
 
-這個唯讀指令投影目前記憶；事件仍是唯一狀態來源，不另存一份可變游標。歷史來源只在轉入時評估，後續直接讀已保存的事實。照片與逐檔完成證據留在本專案，異動時停止、不重下。未釐清的照片提示只保護可能相符項目，不擋住無關相簿，也不當成跨列表完成證明。
+上例只適用已核對任務使用預設 root；若 active-task 綁定其他受支援位置，使用該任務實際 root，不另開空帳。這個唯讀指令投影目前記憶；事件仍是唯一狀態來源，不另存一份可變游標。歷史來源只在轉入時評估，後續直接讀已保存的事實。照片與逐檔完成證據留在本專案，異動時停止、不重下。未釐清的照片提示只保護可能相符項目，不擋住無關相簿，也不當成跨列表完成證明。
 
 舊 Harness、交易程式與專屬測試已退役。穩定操作方法在 Skill／程式中，開發歷程在 Git 中；都不需要啟動舊程式。結構化記憶與轉入限制見[紀錄工具](.agents/skills/line-album-agent-cua/references/daily-backup.md)。
 
