@@ -58,7 +58,8 @@ class DailyTests(unittest.TestCase):
         self.counter = 0
         self.store = DailyRecords(self.root)
         self.group = self.store.initialize(binding_evidence=self.evidence('synthetic foreground'),
-                                          history_scope_evidence=self.evidence('synthetic history scope'))
+                                          history_scope_evidence=self.evidence('synthetic history scope'),
+                                          layout='GROUPED_V1')
         self.session = 'synthetic-session'
         self.bind()
         self.cards = [dict(start_date='2026-01-01', end_date='2026-01-02', expected_images=2,
@@ -924,6 +925,34 @@ class DailyTests(unittest.TestCase):
         self.assertEqual(album['current_destination'], str(self.root / 'Fans Group' / 'Trip'))
         self.assertEqual(album['status'], 'COMPLETED')
         self.assertNotIn('trip', album_key(sorted_card))
+
+    def test_flat_layout_creates_album_directly_under_root_and_verifies(self):
+        group_file = self.root / 'backup-records' / 'group.json'
+        group = json.loads(group_file.read_text())
+        group['layout'] = 'FLAT_V1'
+        group_file.write_text(json.dumps(group))
+        self.page(self.cards[:1], top=True)
+        attempt = self.intent(self.cards[0])
+        self.assertEqual(Path(attempt['destination']).parent, self.root)
+        self.assertEqual(attempt['naming']['format'], 'FLAT_V1')
+        self.assertFalse((self.root / 'Synthetic Group').exists())
+        for name in ('one.png', 'two.png'):
+            (Path(attempt['destination']) / name).write_bytes(png())
+        self.finished(attempt)
+        self.complete(attempt)
+        memory = DailyRecords(self.root).memory()
+        self.assertEqual(memory['albums'][0]['status'], 'COMPLETED')
+        self.assertEqual(memory['group']['current_path'], str(self.root))
+        with self.store.locked(), self.assertRaisesRegex(DailyError, 'FLAT_NAME_CORRECTION_NOT_SUPPORTED'):
+            self.store._plan_group_correction(name='Changed', source=None, decoder=None,
+                                               decoder_sha256=None)
+
+    def test_new_records_default_to_flat_layout(self):
+        root = self.base / 'new-flat'
+        root.mkdir()
+        group = DailyRecords(root).initialize(binding_evidence=self.evidence('new binding'),
+            history_scope_evidence=self.evidence('new scope'))
+        self.assertEqual(group['layout'], 'FLAT_V1')
 
     def test_safe_components_unicode_case_collisions_and_photo_width(self):
         self.assertEqual(safe_component('  ..Hidden/A\\B\x00C  '), 'Hidden A B C')

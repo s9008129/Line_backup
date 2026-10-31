@@ -10,6 +10,7 @@ __pycache__/
 /.local/line-backup/
 /state/
 /backups/
+/backup/
 /config/
 
 # Temporary isolated regression fixtures clean themselves up after testing.
