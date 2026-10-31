@@ -5,12 +5,13 @@ __pycache__/
 *.py[cod]
 
 # The project-local task memory, migration receipts, records and photos are private.
-# Structured memory lives in backup-records/events, never in a sibling archive.
+# Permanent structured memory lives in backup-records/<UUID>/events.
 /.codex/
 /.local/line-backup/
 /state/
 /backups/
 /backup/
+/backup-records/
 /config/
 
 # Temporary isolated regression fixtures clean themselves up after testing.

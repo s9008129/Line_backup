@@ -45,6 +45,9 @@ def prepare(source, current, destination, evidence):
     Caller must hold an exclusive maintenance window (no concurrent GUI task).
     """
     source, current = directory(source), directory(current)
+    need(not (source / 'backup-records/record-store.json').exists() and
+         not (current / 'backup-records/record-store.json').exists(),
+         'LEGACY_RECORDS_READ_ONLY_USE_RECORDS_ROOT')
     destination = Path(destination).absolute()
     evidence = Path(evidence).absolute()
     need(current.is_relative_to(CORE_ROOT) and destination.parent == CORE_ROOT and
