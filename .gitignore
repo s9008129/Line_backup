@@ -12,8 +12,11 @@ __pycache__/
 /backups/
 /backup/
 /backup-records/
+/notes-backup-records/
 /config/
 
 # Temporary isolated regression fixtures clean themselves up after testing.
 /.line-daily-tests-*/
+/.line-notes-*/
+/notes-records-*/
 /.cleanup-audit-tests-*/
