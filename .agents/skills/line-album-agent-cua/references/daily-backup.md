@@ -10,19 +10,28 @@ Owner 已選日常 AI Agent 流程。這裡是現有工具的輸入規則，不�
 
 名稱取得、`intent`／`outcome`／`verify`、使用者校正與 `resume-naming` 使用 direct CLI 參數；`scan`、`page`、`detail`、`init`、`bind`、`history` 等仍使用 Agent 依實際觀察建立的私有 JSON 證據，絕不由 Owner 手填。直接參數不可和 `--input` 同時使用。`--source` 必須是真實私有證據檔，不可用手寫字串冒充。業務層成功以 exit 0、業務拒絕以 exit 4 回傳 JSON，兩者都包含 `dispatch_authorized=false`；那只是簿記結果，不是 GUI grant，也不得改寫為 true。參數語法／必填欄位錯誤會在執行前以 exit 2 與純 stderr 拒絕，不會產生 JSON 或任何紀錄變更。
 
-未另指定時預設為目前專案根目錄的 `backup/`，本工作區是 `/Users/hsiaojohnny/dev/Line_backup/backup`。目的地、證據與編譯後工具均放在本專案內，外部 root／證據引用會被拒絕；不要將外層舊目錄加回輸入。預設路徑不會自動修復搬移後的舊綁定，必須依 [備份與恢復](backup-and-resume.md) 保護原紀錄並停止查明。
+照片未另指定時使用目前專案根目錄的 `backup/`；永久帳本預設使用 `backup-records/<local_group_id>/`，不可放回照片區。帳本、目的地、必要私有證據與編譯後工具均在本專案內，外部 root／證據引用仍拒絕。`--records-root` 是指定列表帳本，`--root` 是當批照片目的地；兩者不可混用。讀取 `memory`／`summary` 只需前者，寫入操作明確帶前者及需要的照片 root。Agent 從工具結果取得 UUID／路徑，不要求 Owner 填內部欄位。
+
+- `daily groups`：列出全部已登錄永久帳本；`index.json` 只定位，狀態仍從事件讀取。不因 active-task 只指最近一組而忽略其他組。
+- `daily memory --records-root "$RECORDS_ROOT"`／`summary`：無需 `--root`，照片 root 已刪除也可讀歷史；完成狀態與本機照片可用性分開。整本完成目錄缺席不降格、不重下；仍存在但部分缺檔／hash／身分異常時保護並阻擋新派送。
+- `daily init --root "$BACKUP_ROOT" --input "$PRIVATE_INPUT"`：新帳本預設建在專案永久區，保留原有真實前景與歷史盤點證據要求；新照片目錄不代表沒有歷史。指定 collection 時沿用工具支援的 `--records-root`，不是由 Owner 自選列表 UUID。
+- `daily migrate-records --root "$OLD_BACKUP_ROOT"`：安全複製舊照片樹內帳本到預設永久區；可加 `--records-root "$COLLECTION"` 指定受支援 collection。保留舊原件、原 UUID、事件與 anchors，校驗並讀回後切換；舊入口拒絕寫入，避免分叉。不用 `relocation.prepare` 搬命名帳本。只在已授權維護、無並行寫入時執行。
+- `daily destination --records-root "$RECORDS_ROOT" --root "$NEW_BACKUP_ROOT" --session-id "$SESSION" --source "$PRIVATE_DESTINATION_EVIDENCE"`：fresh bind 後為新一批追加目的地綁定；來源是本次真實目的地證據。保留舊完成路徑，不解除 UNKNOWN／pending，不驗證外接硬碟副本。完整啟動決策見 [備份與恢復](backup-and-resume.md#每次啟動都自動找回任務)。
 
 新備份使用 `BACKUP_ROOT/<相簿實際目錄名>/<相簿實際目錄名>_001.<原副檔名>`。名稱只供顯示及路徑使用；群組／相簿身分仍由 `local_group_id`、`album_key` 與視覺證據決定。新流程固定順序為 `bind → scan/page → capture-group-name（同組一次）→ capture-album-name（每本）→ detail → intent → Save All → outcome → verify`。新 `intent` 必須先取得群組與相簿名稱及最新 detail，完全讀不到名稱時詢問 Owner，不再以舊 `albums/<UUID>` 默默建立新備份。既有、沒有 `naming` 欄位的舊 intent 仍可完成，既有 `albums/<UUID>` 與照片不遷移。
 
 ```text
-BACKUP_ROOT/
-  <album-path>/   新格式；相簿目錄內為 <album-path>_001.<ext> ...
-  albums/<attempt UUID>/       僅舊／未命名備份相容，不用於新 intent
-  backup-records/
-    group.json                本地群組 UUID、目的地與磁碟／目錄識別
-    events/00000001.json ...   追加式 inventory／history／memory／intent／outcome／completion
-    memory-anchors/*.json      匯入記憶事件的獨立 SHA-256 校驗紀錄
-    .lock                     本地序列寫入鎖
+Line_backup/
+  backup-records/              永久私有紀錄，不隨照片刪除
+    index.json                 僅登錄帳本位置
+    <local_group_id>/
+      group.json               原列表 UUID 與歷史目的地綁定
+      events/00000001.json ...  追加式盤點／歷史／操作／完成／新目的地綁定
+      memory-anchors/*.json    匯入記憶事件的 SHA-256 校驗
+      .lock                    本地序列寫入鎖
+  backup/                      可由 Owner 搬走並整個刪除的照片區
+    <album-path>/              <album-path>_001.<ext> ...
+  .local/line-backup/           任務入口、私有證據與工具，不隨照片刪除
 ```
 
 同名或 Unicode／大小寫正規化後同名的不同實體使用 ` (2)`、` (3)`；恢復使用 ` (恢復 N)` 的新空白相簿目錄並保留前次。名稱清理、路徑元件上限、原子不覆寫改名與每次改名 progress 均由工具處理。不可在 Finder 手動改名來代替校正工具。
@@ -31,9 +40,9 @@ BACKUP_ROOT/
 
 記憶事件另有不可覆寫的 `memory-anchors` 校驗紀錄，讀取時核對事件內容與集合，防止末筆記憶被單獨改寫／移除後繼續。寫入中斷而缺少校驗紀錄也會停止；保留原件查明原因。這是本機一致性保護，不是對具有整個目錄寫入權限者的簽章或防竄改保證。
 
-- `memory`：唯讀投影 `line-backup-memory/v1`，包含完整相簿身分、目前狀態、名稱、目前目的地、attempt、completion 與 `legacy_albums`。校正時先用它取得 `album_key`。這是日常讀取入口，不寫第二份容易不同步的狀態檔。
-- `capture-group-name`：在有效前景 binding 內保存 Agent 看到的群組顯示名與安全目錄名。範例：`daily capture-group-name --root "$BACKUP_ROOT" --session-id "$SESSION" --name "$GROUP_NAME" --source "$PRIVATE_SOURCE_FILE"`。名稱不是群組搜尋或身分依據。
-- `capture-album-name`：用最新盤點畫面中的 `album_key` 保存相簿顯示名；工具從 `memory` 解析完整 identity，不要求手填 identity JSON。範例：`daily capture-album-name --root "$BACKUP_ROOT" --session-id "$SESSION" --album-key "$ALBUM_KEY" --name "$ALBUM_NAME" --source "$PRIVATE_SOURCE_FILE"`。
+- `memory`：永久帳本唯讀投影 `line-backup-memory/v2`（未遷移舊帳本保留 v1），包含完整相簿身分、目前狀態、名稱、目前目的地、attempt、completion 與 `legacy_albums`。校正時先用它取得 `album_key`。另含逐本 `local_files=VERIFIED_PRESENT|LOCAL_MISSING|LOCAL_CHANGED` 與 `external_copy_verified=false`。這是日常讀取入口，不寫第二份容易不同步的狀態檔。
+- `capture-group-name`：在有效前景 binding 內保存 Agent 看到的群組顯示名與安全目錄名。範例：`daily capture-group-name --records-root "$RECORDS_ROOT" --root "$BACKUP_ROOT" --session-id "$SESSION" --name "$GROUP_NAME" --source "$PRIVATE_SOURCE_FILE"`。名稱不是群組搜尋或身分依據。
+- `capture-album-name`：用最新盤點畫面中的 `album_key` 保存相簿顯示名；工具從 `memory` 解析完整 identity，不要求手填 identity JSON。範例：`daily capture-album-name --records-root "$RECORDS_ROOT" --root "$BACKUP_ROOT" --session-id "$SESSION" --album-key "$ALBUM_KEY" --name "$ALBUM_NAME" --source "$PRIVATE_SOURCE_FILE"`。
 - `intent`／`outcome`／`verify`：以 `--album-key` 或 `--attempt-id` 直接操作，不需要 JSON；三者都回傳 `dispatch_authorized=false`。先用 `capture-group-name` 與 `capture-album-name` 保存名稱，`intent` 才能建立新格式空白目的地。
 - `init`：需當次前景／目的地對應證據及本專案結構化記憶／實際照片盤點範圍證據。可靠 `context_id` 可省略。新目錄不是「沒有舊備份」的證明；先讀本專案現有 backup-records 與已保存排除／操作紀錄。
 - `bind`：傳 `session_id`、既有 `local_group_id`、fresh `observation`、真實 `handoff` 證據檔；可靠 ID 存在時需一致。沒有穩定 LINE ID 時，由 Agent 以實機脈絡對應本地 UUID，歧義才請 Owner 確認。不能只因目錄 basename 或 OCR 相同就認定同群組。
@@ -55,14 +64,14 @@ BACKUP_ROOT/
 
 ```sh
 PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily intent \
-  --root "$BACKUP_ROOT" --session-id "$SESSION" --album-key "$ALBUM_KEY"
+  --records-root "$RECORDS_ROOT" --root "$BACKUP_ROOT" --session-id "$SESSION" --album-key "$ALBUM_KEY"
 
 PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily outcome \
-  --root "$BACKUP_ROOT" --session-id "$SESSION" --attempt-id "$ATTEMPT_ID" \
+  --records-root "$RECORDS_ROOT" --root "$BACKUP_ROOT" --session-id "$SESSION" --attempt-id "$ATTEMPT_ID" \
   --outcome DOWNLOAD_FINISHED --evidence "$PRIVATE_DOWNLOAD_EVIDENCE"
 
 PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily verify \
-  --root "$BACKUP_ROOT" --session-id "$SESSION" --attempt-id "$ATTEMPT_ID" \
+  --records-root "$RECORDS_ROOT" --root "$BACKUP_ROOT" --session-id "$SESSION" --attempt-id "$ATTEMPT_ID" \
   --decoder "$DECODER" --decoder-sha256 "$DECODER_SHA256"
 ```
 
@@ -83,9 +92,9 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily verify \
 
 此為輸入格式示意，不是有效同意。必須引用 Owner 實際提交且涵蓋該任務自動恢復的初始授權；Agent 可整理條件符合與逐本綁定資料，不可捏造 Owner 曾另給一次批准。恢復會新增 attempt／新空白資料夾並引用前次；原檔全留。UNKNOWN 不受此檔覆蓋。日常 helper 只核對資料格式及所引來源仍存在，不驗證簽章，也不簽發 runtime grant。
 
-`verify` 需已知下載完成、當次 decoder path／SHA-256。新格式會先保存原名／暫名／目標名／大小／SHA-256／mtime／ctime 交易，逐檔以不覆寫 rename 改成 `<相簿目錄名>_001.<ext>`，再執行三次間隔樣本、數量、逐檔非空 SHA-256、ImageIO 完整 RGB 解碼、decoder hash 與目錄事後重核；全部通過才追加 completion。沿用 `src/line_backup_batch/image_decode.swift` 或已確認來源相同的既有 binary，不修改系統 toolchain。重啟對完成檔做逐檔 SHA-256 與 metadata 核對，異動就停止而不重下載。
+`verify` 需已知下載完成、當次 decoder path／SHA-256。新格式會先保存原名／暫名／目標名／大小／SHA-256／mtime／ctime 交易，逐檔以不覆寫 rename 改成 `<相簿目錄名>_001.<ext>`，再執行三次間隔樣本、數量、逐檔非空 SHA-256、ImageIO 完整 RGB 解碼、decoder hash 與目錄事後重核；全部通過才追加 completion。沿用 `src/line_backup_batch/image_decode.swift` 或已確認來源相同的既有 binary，不修改系統 toolchain。重啟核對仍在本機的完成檔案；整本目錄缺席保留歷史完成，仍存在但逐檔 SHA-256、metadata 或檔集異常時停止新派送，不重下載。
 
-命名或改名中斷用 `resume-naming --root "$BACKUP_ROOT" --decoder "$DECODER" --decoder-sha256 "$DECODER_SHA256"` 接續；它可接續已記錄 `DOWNLOAD_FINISHED` 但尚未建立 name-transaction 的邊界，也會重驗 outcome evidence。不得重送 Save All、重下或手動改資料夾。重跑相同校正時必須使用同一 pending 目標／名稱；不同名稱會被 `PENDING_NAMING_TRANSACTION` 拒絕。`intent`、`outcome`、`verify` 在 pending 校正期間也都停止。
+命名或改名中斷用 `resume-naming --records-root "$RECORDS_ROOT" --root "$BACKUP_ROOT" --decoder "$DECODER" --decoder-sha256 "$DECODER_SHA256"` 接續；它可接續已記錄 `DOWNLOAD_FINISHED` 但尚未建立 name-transaction 的邊界，也會重驗 outcome evidence。不得重送 Save All、重下或手動改資料夾。重跑相同校正時必須使用同一 pending 目標／名稱；不同名稱會被 `PENDING_NAMING_TRANSACTION` 拒絕。`intent`、`outcome`、`verify` 在 pending 校正期間也都停止。
 
 | 中斷／狀態 | 處置 |
 |---|---|
@@ -98,7 +107,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily verify \
 
 ```sh
 PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily correct-album-name \
-  --root "$BACKUP_ROOT" --album-key "$ALBUM_KEY" --name "$NEW_NAME" \
+  --records-root "$RECORDS_ROOT" --root "$BACKUP_ROOT" --album-key "$ALBUM_KEY" --name "$NEW_NAME" \
   --source "$PRIVATE_OWNER_SOURCE" --decoder "$DECODER" --decoder-sha256 "$DECODER_SHA256"
 ```
 

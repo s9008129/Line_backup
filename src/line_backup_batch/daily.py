@@ -24,6 +24,7 @@ import uuid
 
 NORMALIZED_HISTORY_SCHEMA = 'line-backup-daily-history/v1'
 MEMORY_SCHEMA = 'line-backup-memory/v1'
+PERMANENT_MEMORY_SCHEMA = 'line-backup-memory/v2'
 NAMING_SCHEMA = 'line-backup-naming/v1'
 NAMING_FORMAT = 'GROUPED_V1'
 FLAT_NAMING_FORMAT = 'FLAT_V1'
@@ -270,7 +271,7 @@ def album_key(identity):
     return digest(encoded(identity))
 
 
-def boundary_reference(path, edge, session_id, key, screenshot, previous_screenshot=None):
+def boundary_reference(path, edge, session_id, key, screenshot, previous_screenshot=None, normalize=None):
     ref = reference(path)
     observation = strict_json(read_file(path), 'INVALID_BOUNDARY_OBSERVATION')
     need(observation.get('edge') == edge and observation.get('session_id') == session_id and
@@ -283,6 +284,8 @@ def boundary_reference(path, edge, session_id, key, screenshot, previous_screens
         need(after == 0, 'TOP_NOT_REACHED')
     for name in ('before_screenshot', 'after_screenshot', 'input_receipt'):
         check_ref(observation[name])
+        if normalize:
+            observation[name] = normalize(observation[name]['path'])
     need(observation['after_screenshot'] == screenshot, 'BOUNDARY_FRAME_MISMATCH')
     if previous_screenshot is not None:
         need(observation['before_screenshot'] == previous_screenshot, 'BOUNDARY_BEFORE_FRAME_MISMATCH')
@@ -290,10 +293,50 @@ def boundary_reference(path, edge, session_id, key, screenshot, previous_screens
 
 
 class DailyRecords:
-    def __init__(self, root):
-        self.root = directory(root)
-        need(self.root.is_relative_to(CORE_ROOT), 'PROJECT_LOCAL_ROOT_REQUIRED')
-        self.records = self.root / 'backup-records'
+    def __init__(self, root=None, *, records_root=None, _maintenance=False):
+        self.permanent = records_root is not None
+        self._maintenance = _maintenance
+        self.requested_root = Path(root).expanduser().absolute() if root is not None else None
+        if self.permanent:
+            from .record_store import local_path
+            self.records = local_path(records_root)
+            self.root = self.requested_root
+        else:
+            self.root = directory(root)
+            need(self.root.is_relative_to(CORE_ROOT), 'PROJECT_LOCAL_ROOT_REQUIRED')
+            self.records = self.root / 'backup-records'
+        if not _maintenance:
+            need(not (self.records / 'record-store.json').exists(), 'LEGACY_RECORDS_READ_ONLY_USE_RECORDS_ROOT')
+
+    def _reference(self, path):
+        if not self.permanent:
+            return reference(path)
+        from .record_store import preserve_reference
+        return preserve_reference(self.records, path)
+
+    def _check_ref(self, ref):
+        replacement = getattr(self, 'store_metadata', {}).get('references', {}).get(ref.get('path'))
+        if replacement:
+            need(ref['bytes'] == replacement['bytes'] and ref['sha256'] == replacement['sha256'],
+                 'EVIDENCE_DRIFT')
+            check_ref(replacement)
+        else:
+            check_ref(ref)
+
+    def _require_destination(self):
+        identity = directory(self.root).stat()
+        need(str(self.root) == self.group['destination'] and
+             identity.st_dev == self.group['destination_device'] and
+             identity.st_ino == self.group['destination_inode'], 'DESTINATION_BINDING_CHANGED')
+
+    def _root_at(self, sequence):
+        root = self.historical_root
+        for event in self.events:
+            if event['sequence'] > sequence:
+                break
+            if event['kind'] == 'destination':
+                root = Path(event['data']['destination'])
+        return root
 
     def initialize(self, *, binding_evidence, history_scope_evidence, context_id=None,
                    layout=FLAT_NAMING_FORMAT):
@@ -306,11 +349,19 @@ class DailyRecords:
         history = reference(history_scope_evidence)
         need(context_id is None or isinstance(context_id, str) and bool(context_id), 'INVALID_CONTEXT_ID')
         need(layout in (NAMING_FORMAT, FLAT_NAMING_FORMAT), 'INVALID_BACKUP_LAYOUT')
+        self.root = directory(self.root)
+        need(self.root.is_relative_to(CORE_ROOT), 'PROJECT_LOCAL_ROOT_REQUIRED')
+        if self.permanent:
+            need(not self.records.is_relative_to(self.root) and not self.root.is_relative_to(self.records),
+                 'RECORDS_MUST_BE_OUTSIDE_PHOTOS')
         need(not self.records.exists() and not self.records.is_symlink(), 'RECORDS_ALREADY_EXIST')
         self.records.mkdir(mode=0o700)
         (self.records / 'events').mkdir(mode=0o700)
+        if self.permanent:
+            binding = self._reference(binding_evidence)
+            history = self._reference(history_scope_evidence)
         identity = self.root.stat()
-        group = dict(version=1, local_group_id=str(uuid.uuid4()), destination=str(self.root),
+        group = dict(version=1, local_group_id=self.records.name if self.permanent else str(uuid.uuid4()), destination=str(self.root),
                      destination_device=identity.st_dev, destination_inode=identity.st_ino,
                      context_id=context_id, layout=layout, binding_evidence=binding, history_scope_evidence=history,
                      recovery_strategy='ALBUM_LEVEL', photo_level_resume='FUTURE_RESEARCH')
@@ -320,7 +371,10 @@ class DailyRecords:
 
     @contextlib.contextmanager
     def locked(self):
-        directory(self.root)
+        if not self.permanent:
+            directory(self.root)
+        if not self._maintenance:
+            need(not (self.records / 'record-store.json').exists(), 'LEGACY_RECORDS_READ_ONLY_USE_RECORDS_ROOT')
         need(directory(self.records) == self.records, 'RECORD_DIRECTORY_CHANGED')
         need(directory(self.records / 'events') == self.records / 'events', 'EVENT_DIRECTORY_CHANGED')
         fd = os.open(str(self.records / '.lock'), os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
@@ -330,15 +384,21 @@ class DailyRecords:
             group_raw = read_file(self.records / 'group.json')
             self.group = strict_json(group_raw, 'INVALID_GROUP_RECORD')
             from .relocation import load_receipt, project
-            self.relocation = load_receipt(self.root, group_raw)
+            if self.permanent:
+                from .record_store import load_metadata
+                self.store_metadata = load_metadata(self.records)
+                need(self.store_metadata['local_group_id'] == self.group['local_group_id'], 'WRONG_LOCAL_GROUP')
+                self.relocation = self.store_metadata.get('relocation')
+                self.root = Path(self.store_metadata.get('historical_root', self.group['destination']))
+            else:
+                self.relocation = load_receipt(self.root, group_raw)
+            self.historical_root = self.root
             if self.relocation:
                 self.group = dict(self.group, destination=str(self.root),
                     destination_device=self.relocation['device'],
                     destination_inode=self.relocation['inode'], layout=self.relocation['layout'])
-            identity = self.root.stat()
-            need(self.group['destination'] == str(self.root) and
-                 self.group['destination_device'] == identity.st_dev and
-                 self.group['destination_inode'] == identity.st_ino, 'DESTINATION_BINDING_CHANGED')
+            if not self.permanent:
+                self._require_destination()
             self.events = []
             memory_hashes = {}
             previous = None
@@ -366,6 +426,18 @@ class DailyRecords:
                 self.events = [project(event, self.relocation)
                     if event['sequence'] <= self.relocation['through_sequence'] else event
                     for event in self.events]
+            for event in self.events:
+                if event['kind'] == 'destination':
+                    data = event['data']
+                    need(self.permanent and data.get('previous_destination') == str(self.root),
+                         'DESTINATION_CHAIN_CHANGED')
+                    self.root = Path(data['destination'])
+                    need(self.root.is_absolute() and self.root.is_relative_to(CORE_ROOT),
+                         'PROJECT_LOCAL_ROOT_REQUIRED')
+                    self.group = dict(self.group, destination=str(self.root),
+                        destination_device=data['device'], destination_inode=data['inode'])
+            if self.requested_root is not None:
+                need(self.requested_root == self.root, 'USE_DESTINATION_COMMAND_FOR_NEW_ROOT')
             yield
         finally:
             os.close(fd)
@@ -388,7 +460,9 @@ class DailyRecords:
     def matching(self, kind):
         return [e['data'] for e in self.events if e['kind'] == kind]
 
-    def bound(self, session_id):
+    def bound(self, session_id, *, require_destination=True):
+        if require_destination:
+            self._require_destination()
         if getattr(self, 'relocation', None):
             need(any(event['kind'] == 'binding' and
                      event['sequence'] > self.relocation['through_sequence'] and
@@ -397,7 +471,7 @@ class DailyRecords:
         bindings = self.matching('binding')
         need(bindings and bindings[-1]['session_id'] == session_id, 'FRESH_FOREGROUND_BINDING_REQUIRED')
         for ref in bindings[-1]['evidence'].values():
-            check_ref(ref)
+            self._check_ref(ref)
 
     def bind(self, *, session_id, local_group_id, observation, handoff, context_id=None):
         with self.locked():
@@ -405,7 +479,37 @@ class DailyRecords:
             need(context_id == self.group['context_id'], 'WRONG_CONTEXT')
             need(isinstance(session_id, str) and bool(session_id), 'SESSION_REQUIRED')
             return self.append('binding', dict(session_id=session_id,
-                evidence=dict(observation=reference(observation), handoff=reference(handoff))))
+                evidence=dict(observation=self._reference(observation), handoff=self._reference(handoff))))
+
+    def destination(self, *, root, session_id, source):
+        """Bind a new empty photo root without changing any past completion path."""
+        need(self.permanent, 'PERMANENT_RECORDS_REQUIRED')
+        root = directory(root)
+        need(root.is_relative_to(CORE_ROOT) and not self.records.is_relative_to(root) and
+             not root.is_relative_to(self.records.parent), 'PROJECT_LOCAL_PHOTO_ROOT_REQUIRED')
+        with self.locked():
+            self.bound(session_id, require_destination=False)
+            need(not self._naming_projection()['pending'] and not self._pending_initial_transactions(),
+                 'PENDING_NAMING_TRANSACTION')
+            states = self.status_map()
+            for attempt in self.matching('intent'):
+                need(states.get(attempt['album_key']) == 'COMPLETED', 'UNRESOLVED_ATTEMPT_NO_NEW_DESTINATION')
+            self._assert_local_completions()
+            need(not list(root.iterdir()), 'NEW_EMPTY_PHOTO_ROOT_REQUIRED')
+            name = self._group_name_event()
+            info = root.stat()
+            previous = str(self.root)
+            data = dict(destination=str(root), previous_destination=previous,
+                device=info.st_dev, inode=info.st_ino, source=self._reference(source), session_id=session_id)
+            if name:
+                old = name[1]
+                path = root if self.group.get('layout') == FLAT_NAMING_FORMAT else root / old['path_name']
+                if path != root:
+                    path.mkdir(mode=0o700)
+                info = path.stat()
+                data['group_name'] = dict(old, action='CAPTURE', directory_device=info.st_dev,
+                    directory_inode=info.st_ino, source=data['source'])
+            return self.append('destination', data)
 
     def _validate_group_name_data(self, data):
         need(isinstance(data, dict) and data.get('schema') == NAMING_SCHEMA and
@@ -435,7 +539,9 @@ class DailyRecords:
         return data
 
     def _group_name_event(self):
-        events = [(event, event['data']) for event in self.events if event['kind'] == 'group-name']
+        events = [(event, event['data'] if event['kind'] == 'group-name' else event['data']['group_name'])
+                  for event in self.events if event['kind'] == 'group-name' or
+                  event['kind'] == 'destination' and 'group_name' in event['data']]
         for _, data in events:
             self._validate_group_name_data(data)
         return events[-1] if events else None
@@ -456,7 +562,7 @@ class DailyRecords:
 
     def capture_group_name(self, *, session_id, name, source):
         """Persist an Agent-observed display name; it is never identity evidence."""
-        name_ref = reference(source)
+        name_ref = self._reference(source)
         with self.locked():
             self.bound(session_id)
             existing = self._group_name_event()
@@ -479,7 +585,7 @@ class DailyRecords:
 
     def capture_album_name(self, *, session_id, identity, name, source):
         """Persist a display name separately from visual album identity."""
-        name_ref = reference(source)
+        name_ref = self._reference(source)
         with self.locked():
             self.bound(session_id)
             key = album_key(identity)
@@ -518,8 +624,8 @@ class DailyRecords:
                      'INVALID_HISTORY_STATUS')
                 need(key not in [r['album_key'] for r in result], 'AMBIGUOUS_HISTORY')
                 result.append(self._freeze_history_entry(dict(entry, album_key=key,
-                    declared_status=entry['status'], source=reference(entry['source']))))
-            scope = reference(scope_evidence)
+                    declared_status=entry['status'], source=self._reference(entry['source']))))
+            scope = self._reference(scope_evidence)
             return self.append('history', dict(memory_schema=MEMORY_SCHEMA,
                 scope_digest=dict(bytes=scope['bytes'], sha256=scope['sha256']), entries=result))
 
@@ -533,7 +639,7 @@ class DailyRecords:
         if status in ('UNKNOWN', 'PROTECTED_HISTORY'):
             return dict(result, status=status, assessment='PRESERVED_BARRIER')
         try:
-            check_ref(source)
+            self._check_ref(source)
             supported = self._normalized_history(source['path'], entry['identity'])
             if supported != status:
                 return dict(result, status='PROTECTED_HISTORY', assessment='INSUFFICIENT_IDENTITY_OR_PROOF')
@@ -544,14 +650,14 @@ class DailyRecords:
                     manifest=strict_json(read_file(proof['manifest_evidence']['path']), 'INVALID_MANIFEST'),
                     imageio=strict_json(read_file(proof['imageio_evidence']['path']), 'INVALID_IMAGEIO'))
                 for ref in (source, proof['manifest_evidence'], proof['imageio_evidence']):
-                    check_ref(ref)
+                    self._check_ref(ref)
             else:
                 exclusion = strict_json(read_file(document['exclusion_evidence']['path']), 'INVALID_EXCLUSION')
                 result['exclusion'] = dict(decision=exclusion['decision'],
                     owner_source_digest={k: exclusion['owner_source'][k] for k in ('bytes', 'sha256')})
-                check_ref(document['exclusion_evidence'])
-                check_ref(exclusion['owner_source'])
-                check_ref(source)
+                self._check_ref(document['exclusion_evidence'])
+                self._check_ref(exclusion['owner_source'])
+                self._check_ref(source)
             return dict(result, status=status, assessment='VALIDATED_AT_IMPORT')
         except (DailyError, OSError, ValueError, KeyError, TypeError):
             return dict(result, status='PROTECTED_HISTORY', assessment='SOURCE_UNAVAILABLE_OR_CHANGED')
@@ -613,20 +719,27 @@ class DailyRecords:
                 for event in completion_events:
                     effective = self._effective_completion(event, projection)
                     current_destination = effective['destination']
-                    completions.append(dict(event['data'], current_destination=effective['destination']))
+                    completions.append(dict(event['data'], current_destination=effective['destination'],
+                        local_files=self._completion_availability(event, projection) if self.permanent else 'VERIFIED_PRESENT'))
                 name_data = projection['albums'].get(key)
                 albums.append(dict(album_key=key, identity=identities[key], status=status,
                     display_name=name_data['display_name'] if name_data else None,
                     path_name=name_data['path_name'] if name_data else None,
                     current_destination=current_destination,
+                    local_files=completions[-1]['local_files'] if completions else 'NOT_COMPLETED',
                     attempts=[i for i in self.matching('intent') if i['album_key'] == key],
                     completions=completions))
             group_data = projection['group']
-            return dict(schema=MEMORY_SCHEMA, local_group_id=self.group['local_group_id'],
+            group_path = (self.root if self.group.get('layout') == FLAT_NAMING_FORMAT else
+                          self.root / group_data['path_name']) if group_data else None
+            return dict(schema=PERMANENT_MEMORY_SCHEMA if self.permanent else MEMORY_SCHEMA,
+                records_root=str(self.records), external_copy_verified=False,
+                local_group_id=self.group['local_group_id'],
                 group=dict(local_group_id=self.group['local_group_id'],
                     display_name=group_data['display_name'] if group_data else None,
                     path_name=group_data['path_name'] if group_data else None,
-                    current_path=str(self._group_directory(group_data)) if group_data else None),
+                    current_path=str(group_path) if self.permanent and group_path else
+                        str(self._group_directory(group_data)) if group_data else None),
                 naming_schema=NAMING_SCHEMA, albums=albums,
                 legacy_albums=snapshots[0]['legacy_albums'] if snapshots else [],
                 coverage=snapshots[0]['coverage'] if snapshots else 'CURRENT_RECORDS_ONLY',
@@ -654,7 +767,7 @@ class DailyRecords:
         if status == 'EXCLUDED':
             try:
                 exclusion_ref = document['exclusion_evidence']
-                check_ref(exclusion_ref)
+                self._check_ref(exclusion_ref)
                 exclusion = json.loads(read_file(exclusion_ref['path']))
                 if (not isinstance(exclusion, dict) or
                         exclusion.get('schema') != 'line-backup-exclusion/v1' or
@@ -663,7 +776,7 @@ class DailyRecords:
                         exclusion.get('album_key') != album_key(identity) or
                         exclusion.get('decision') != 'EXCLUDE_ALBUM'):
                     return None
-                check_ref(exclusion['owner_source'])
+                self._check_ref(exclusion['owner_source'])
             except (KeyError, DailyError, OSError, ValueError, TypeError):
                 return None
             return status
@@ -676,8 +789,8 @@ class DailyRecords:
                 return None
             manifest_ref = proof['manifest_evidence']
             imageio_ref = proof['imageio_evidence']
-            check_ref(manifest_ref)
-            check_ref(imageio_ref)
+            self._check_ref(manifest_ref)
+            self._check_ref(imageio_ref)
             manifest_doc = json.loads(read_file(manifest_ref['path']))
             imageio = json.loads(read_file(imageio_ref['path']))
             manifest = manifest_doc['manifest']
@@ -731,17 +844,17 @@ class DailyRecords:
             keys = [album_key(card) for card in cards]
             need(len(keys) == len(set(keys)), 'AMBIGUOUS_SAME_PAGE_CARDS')
             pages = self.pages()
-            evidence = dict(screenshot=reference(screenshot), ax=reference(ax))
+            evidence = dict(screenshot=self._reference(screenshot), ax=self._reference(ax))
             if not pages:
                 need(top_confirmed is True and boundary_evidence, 'TOP_BOUNDARY_REQUIRED')
                 evidence['boundary'] = boundary_reference(boundary_evidence, 'top', session_id,
-                                                           keys[0], evidence['screenshot'])
+                    keys[0], evidence['screenshot'], normalize=self._reference if self.permanent else None)
                 need(not bottom_stationary, 'SEPARATE_BOTTOM_OBSERVATION_REQUIRED')
             else:
                 need(not pages[-1]['bottom_stationary'], 'SCAN_ALREADY_AT_BOTTOM')
                 previous = pages[-1]['keys']
                 need(scroll_evidence, 'SCROLL_OBSERVATION_REQUIRED')
-                evidence['scroll'] = reference(scroll_evidence)
+                evidence['scroll'] = self._reference(scroll_evidence)
                 need(evidence['screenshot'] != pages[-1]['evidence']['screenshot'], 'FRESH_OBSERVATION_REQUIRED')
                 # The overlapping suffix/prefix must preserve order. A mere set
                 # intersection cannot prove that no rows were skipped.
@@ -754,9 +867,12 @@ class DailyRecords:
                     need(previous == keys and unresolved == 0 and boundary_evidence,
                          'BOTTOM_NOT_STATIONARY')
                     evidence['boundary'] = boundary_reference(boundary_evidence, 'bottom', session_id,
-                        keys[-1], evidence['screenshot'], pages[-1]['evidence']['screenshot'])
+                        keys[-1], evidence['screenshot'], pages[-1]['evidence']['screenshot'],
+                        normalize=self._reference if self.permanent else None)
                 else:
                     need(previous != keys, 'NO_MOVEMENT_IS_NOT_A_NEW_PAGE')
+            if boundary_evidence and 'boundary' in evidence:
+                evidence['boundary'] = self._reference(boundary_evidence)
             return self.append('page', dict(scan_id=scans[-1]['scan_id'], cards=cards, keys=keys,
                 unresolved=unresolved, bottom_stationary=bottom_stationary, evidence=evidence))
 
@@ -791,6 +907,8 @@ class DailyRecords:
         protected = set()
         for event in self.events:
             kind, data = event['kind'], event['data']
+            if kind == 'destination' and 'group_name' in data:
+                kind, data = 'group-name', data['group_name']
             if kind == 'group-name':
                 self._validate_group_name_data(data)
                 if data['action'] == 'CORRECT':
@@ -810,7 +928,7 @@ class DailyRecords:
                         seen.add(sequence)
                         completion = self._completion_by_sequence(sequence)
                         need(completion['data']['album_key'] == planned[sequence]['album_key'] and
-                             Path(row['destination']).parent == self.root / data['path_name'] and
+                             Path(row['destination']).parent == self._root_at(event['sequence']) / data['path_name'] and
                              Path(row['destination']).name == planned[sequence]['directory_name'],
                              'GROUP_CORRECTION_CHAIN_CHANGED')
                         self._validate_proof(row.get('proof'),
@@ -884,6 +1002,29 @@ class DailyRecords:
         need(sorted(p.name for p in destination.iterdir()) ==
              [row['name'] for row in proof['manifest']], code)
 
+    def _completion_availability(self, event, projection=None):
+        effective = self._effective_completion(event, projection)
+        path = Path(effective['destination'])
+        try:
+            need(path.is_absolute() and path.is_relative_to(CORE_ROOT) and path == path.resolve(),
+                 'COMPLETED_FILES_CHANGED_NO_REDOWNLOAD')
+            if _entry(path) is None:
+                return 'LOCAL_MISSING'
+            if isinstance(event['data'].get('naming'), dict):
+                self._assert_completion_directory_identity(event, path)
+            self._check_completion_files(path, effective['proof'])
+        except (DailyError, OSError, ValueError):
+            return 'LOCAL_CHANGED'
+        return 'VERIFIED_PRESENT'
+
+    def _assert_local_completions(self):
+        if self.permanent:
+            projection = self._naming_projection()
+            for event in self.events:
+                if event['kind'] == 'completion':
+                    need(self._completion_availability(event, projection) != 'LOCAL_CHANGED',
+                         'COMPLETED_FILES_CHANGED_NO_REDOWNLOAD')
+
     def status_map(self):
         if not hasattr(self, 'events'):
             with self.locked():
@@ -924,6 +1065,10 @@ class DailyRecords:
             projected = projection['completion_overrides'].get(event['sequence'])
             destination = projected['destination'] if projected else data['destination']
             proof = projected['proof'] if projected else data['proof']
+            if self.permanent:
+                self._validate_proof(proof, len(proof['manifest']))
+                self._assert_album_attempts_safe(data['album_key'], data['attempt_id'])
+                continue
             if not projection['pending']:
                 self._assert_album_attempts_safe(data['album_key'], data['attempt_id'])
                 if (isinstance(data.get('naming'), dict) and
@@ -951,7 +1096,7 @@ class DailyRecords:
             key = album_key(identity)
             need(key in {k for p in self.pages() for k in p['keys']}, 'TARGET_NOT_IN_CURRENT_SCAN')
             return self.append('detail', dict(session_id=session_id, album_key=key,
-                                              evidence=reference(evidence)))
+                                              evidence=self._reference(evidence)))
 
     def intent(self, *, session_id, identity, recovery_authorization=None):
         """Local reservation only. Caller must also pass real transaction gates.
@@ -964,6 +1109,7 @@ class DailyRecords:
             key = album_key(identity)
             need(not self._naming_projection()['pending'], 'PENDING_NAMING_TRANSACTION')
             states = self.status_map()
+            self._assert_local_completions()
             need(states.get(key) != 'PROTECTED_HISTORY', 'PROTECTED_NO_REDOWNLOAD')
             need(states.get(key) not in ('COMPLETED', 'EXCLUDED'), 'COMPLETED_OR_EXCLUDED_NO_REDOWNLOAD')
             need(key in {k for p in self.pages() for k in p['keys']}, 'TARGET_NOT_IN_CURRENT_SCAN')
@@ -974,23 +1120,23 @@ class DailyRecords:
             details = self.matching('detail')
             need(details and details[-1]['session_id'] == session_id and details[-1]['album_key'] == key,
                  'FRESH_DETAIL_REQUIRED')
-            check_ref(details[-1]['evidence'])
+            self._check_ref(details[-1]['evidence'])
             prior = [i for i in self.matching('intent') if i['album_key'] == key]
             need(states.get(key) != 'UNKNOWN' or prior, 'UNKNOWN_OR_RUNNING_NO_REPLAY')
             recovery = None
             if prior:
                 outcomes = [o for o in self.matching('outcome') if o['attempt_id'] == prior[-1]['attempt_id']]
                 need(outcomes and outcomes[-1]['outcome'] in ('STOPPED', 'NOT_SENT'), 'UNKNOWN_OR_RUNNING_NO_REPLAY')
-                check_ref(outcomes[-1]['evidence'])
+                self._check_ref(outcomes[-1]['evidence'])
                 need(recovery_authorization, 'ALBUM_RECOVERY_AUTHORIZATION_REQUIRED')
-                recovery = reference(recovery_authorization)
+                recovery = self._reference(recovery_authorization)
                 decision = strict_json(read_file(recovery_authorization), 'INVALID_RECOVERY_AUTHORIZATION')
                 need(decision.get('decision') == 'AUTHORIZE_ALBUM_RECOVERY' and
                      decision.get('local_group_id') == self.group['local_group_id'] and
                      decision.get('album_key') == key and
                      decision.get('previous_attempt_id') == prior[-1]['attempt_id'] and
                      decision.get('preserve_existing') is True, 'RECOVERY_AUTHORIZATION_SCOPE_MISMATCH')
-                check_ref(decision['owner_source'])
+                self._check_ref(decision['owner_source'])
             else:
                 need(recovery_authorization is None, 'NO_PRIOR_ATTEMPT_TO_RECOVER')
             attempt_id = uuid.uuid4().hex
@@ -1041,7 +1187,7 @@ class DailyRecords:
             outcomes = [o for o in self.matching('outcome') if o['attempt_id'] == attempt_id]
             need(not outcomes, 'OUTCOME_ALREADY_KNOWN')
             return self.append('outcome', dict(attempt_id=attempt_id, album_key=target['album_key'],
-                                               outcome=outcome, evidence=reference(evidence)))
+                                               outcome=outcome, evidence=self._reference(evidence)))
 
     def _named_destination(self, attempt, expected_device=None, expected_inode=None):
         naming = attempt.get('naming')
@@ -1422,7 +1568,7 @@ class DailyRecords:
         outcomes = [event['data'] for event in self.events if event['kind'] == 'outcome' and
                     event['data']['attempt_id'] == attempt_id]
         need(len(outcomes) == 1 and outcomes[0]['outcome'] in allowed, error)
-        check_ref(outcomes[0]['evidence'])
+        self._check_ref(outcomes[0]['evidence'])
         return outcomes[0]
 
     def _assert_album_attempts_safe(self, album_key, completed_attempt_id):
@@ -1504,7 +1650,7 @@ class DailyRecords:
 
     def _plan_group_correction(self, *, name, source, decoder, decoder_sha256):
         need(self.group.get('layout') != FLAT_NAMING_FORMAT, 'FLAT_NAME_CORRECTION_NOT_SUPPORTED')
-        name_ref = reference(source)
+        name_ref = self._reference(source)
         group_event = self._group_name_event()
         need(group_event, 'GROUP_NAME_REQUIRED')
         group_data = group_event[1]
@@ -1556,6 +1702,7 @@ class DailyRecords:
     def correct_group_name(self, *, name, source, decoder, decoder_sha256):
         """Rename one captured group and every completed new-format album beneath it."""
         with self.locked():
+            self._require_destination()
             projection = self._naming_projection()
             if projection['pending']:
                 pending = list(projection['pending'].values())
@@ -1693,7 +1840,7 @@ class DailyRecords:
 
     def _plan_album_correction(self, *, album_key, name, source, decoder, decoder_sha256):
         need(self.group.get('layout') != FLAT_NAMING_FORMAT, 'FLAT_NAME_CORRECTION_NOT_SUPPORTED')
-        name_ref = reference(source)
+        name_ref = self._reference(source)
         album_event = self._album_name_event(album_key)
         need(album_event, 'ALBUM_NAME_REQUIRED')
         album_data = album_event[1]
@@ -1773,6 +1920,7 @@ class DailyRecords:
     def correct_album_name(self, *, album_key, name, source, decoder, decoder_sha256):
         """Correct one completed album's folder/prefix using an album_key from memory."""
         with self.locked():
+            self._require_destination()
             projection = self._naming_projection()
             if projection['pending']:
                 pending = list(projection['pending'].values())
@@ -1786,6 +1934,7 @@ class DailyRecords:
     def resume_naming(self, *, decoder, decoder_sha256):
         """Resume one durable naming or correction plan without redispatching downloads."""
         with self.locked():
+            self._require_destination()
             projection = self._naming_projection()
             need(len(projection['pending']) <= 1, 'MULTIPLE_PENDING_NAMING_TRANSACTIONS')
             if projection['pending']:
@@ -1816,7 +1965,7 @@ class DailyRecords:
                 raise DailyError('UNKNOWN_OR_RUNNING_NO_REPLAY')
             if latest_outcome != 'DOWNLOAD_FINISHED':
                 raise DailyError('NO_DOWNLOAD_FINISHED_TO_RESUME')
-            check_ref(outcomes[0]['evidence'])
+            self._check_ref(outcomes[0]['evidence'])
             need(target.get('naming'), 'UNSUPPORTED_OLDER_FORMAT_CORRECTION')
             return self._complete_named(target, decoder, decoder_sha256)
 
@@ -1895,7 +2044,7 @@ class DailyRecords:
             need(self.status_map()[target['album_key']] != 'COMPLETED', 'COMPLETION_IMMUTABLE')
             outcomes = [o for o in self.matching('outcome') if o['attempt_id'] == attempt_id]
             need(outcomes and outcomes[-1]['outcome'] == 'DOWNLOAD_FINISHED', 'KNOWN_DOWNLOAD_FINISH_REQUIRED')
-            check_ref(outcomes[-1]['evidence'])
+            self._check_ref(outcomes[-1]['evidence'])
             if target.get('naming'):
                 return self._complete_named(target, decoder, decoder_sha256)
             proof = verify_directory(target['destination'], target['identity']['expected_images'],
@@ -1914,10 +2063,14 @@ class DailyRecords:
                       for status in ('COMPLETED', 'EXCLUDED', 'INCOMPLETE', 'UNKNOWN', 'PROTECTED_HISTORY')}
             counts['UNKNOWN'] += sum(p['unresolved'] for p in pages) + len(ever_seen - current)
             covered = bool(pages and pages[-1]['bottom_stationary'])
+            local = {event['data']['album_key']: self._completion_availability(event)
+                     for event in self.events if event['kind'] == 'completion'} if self.permanent else {}
             return dict(local_group_id=self.group['local_group_id'], total=len(current), **counts,
+                local_files=local, external_copy_verified=False,
                 list_coverage='OBSERVED' if covered else 'INCOMPLETE',
                 ALL_ELIGIBLE_ALBUMS_BACKED_UP='PASS' if covered and current and
-                    counts['INCOMPLETE'] == counts['UNKNOWN'] == counts['PROTECTED_HISTORY'] == 0 else 'INCOMPLETE',
+                    counts['INCOMPLETE'] == counts['UNKNOWN'] == counts['PROTECTED_HISTORY'] == 0 and
+                    'LOCAL_CHANGED' not in local.values() else 'INCOMPLETE',
                 dispatch_authorized=False, formal_auto_verified=False,
                 recovery_strategy='ALBUM_LEVEL', photo_level_resume='FUTURE_RESEARCH',
                 evidence_role='AGENT_ATTESTED_OBSERVATIONS', sensor_verified=False,
@@ -1976,6 +2129,7 @@ DIRECT_KEYS = ('session_id', 'album_key', 'name', 'source', 'decoder', 'decoder_
                'attempt_id', 'outcome', 'evidence', 'recovery_authorization')
 DIRECT_PATH_KEYS = ('source', 'decoder', 'evidence', 'recovery_authorization')
 DIRECT_OPERATIONS = {
+    'destination': dict(method='destination', required={'session_id', 'source'}, optional=set()),
     'capture-group-name': dict(method='capture_group_name',
                                required={'session_id', 'name', 'source'}, optional=set()),
     'capture-album-name': dict(method='capture_album_name',
@@ -2020,6 +2174,13 @@ def _direct_args_present(namespace):
 
 
 def _operation_help(operation):
+    if operation == 'groups':
+        return 'usage: python3 -m line_backup_batch.daily groups [--records-root COLLECTION]'
+    if operation == 'migrate-records':
+        return 'usage: python3 -m line_backup_batch.daily migrate-records --root OLD_PHOTO_ROOT [--records-root COLLECTION]'
+    if operation in ('memory', 'summary'):
+        return ('usage: python3 -m line_backup_batch.daily %s --records-root GROUP_RECORDS\n'
+                'Legacy (not migrated): --root ROOT [--input PRIVATE_JSON]' % operation)
     spec = DIRECT_OPERATIONS.get(operation)
     if not spec:
         return ('usage: python3 -m line_backup_batch.daily %s --root ROOT [--input PRIVATE_JSON]\n\n'
@@ -2035,7 +2196,8 @@ def _operation_help(operation):
         lines.append('       python3 -m line_backup_batch.daily %s --root ROOT --input PRIVATE_JSON'
                      % operation)
     lines.append('')
-    lines.append('Direct arguments cannot be combined with --input. Paths must be regular files inside this project.')
+    lines.append('Permanent records: add --records-root GROUP_RECORDS; --root is optional except destination.\n'
+                 'Direct arguments cannot be combined with --input. Paths must be regular files inside this project.')
     return '\n'.join(lines)
 
 
@@ -2049,7 +2211,7 @@ def _album_identity(records, key):
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     operations = ['init', 'bind', 'history', 'scan', 'page', 'detail', 'summary',
-                  'memory-import', 'memory', *DIRECT_OPERATIONS]
+                  'memory-import', 'memory', 'groups', 'migrate-records', *DIRECT_OPERATIONS]
     if argv and argv[0] in operations and any(arg in ('-h', '--help') for arg in argv[1:]):
         print(_operation_help(argv[0]))
         return 0
@@ -2057,7 +2219,8 @@ def main(argv=None):
         description=__doc__,
         epilog='Correction commands take direct --name/--source/--decoder arguments; no hand-edited JSON is needed.')
     parser.add_argument('operation', choices=operations)
-    parser.add_argument('--root', required=True)
+    parser.add_argument('--root', help='Photo destination (legacy records live below this root)')
+    parser.add_argument('--records-root', help='Permanent group records; collection for init/groups/migrate-records')
     parser.add_argument('--input', help='Private JSON input, using the method argument names in daily.py')
     parser.add_argument('--session-id', help='Current foreground session id for name capture')
     parser.add_argument('--album-key', help='Album key from the read-only memory projection')
@@ -2070,18 +2233,44 @@ def main(argv=None):
     parser.add_argument('--evidence', help='Private evidence file for an observed outcome')
     parser.add_argument('--recovery-authorization', help='Private Owner authorization for album recovery')
     ns = parser.parse_args(argv)
+    if ns.operation in ('init', 'migrate-records', 'destination') and not ns.root:
+        parser.error('--root is required for %s' % ns.operation)
+    if ns.operation not in ('init', 'migrate-records', 'groups') and not (ns.root or ns.records_root):
+        parser.error('--records-root or legacy --root is required')
+    if ns.operation == 'destination' and not ns.records_root:
+        parser.error('--records-root is required for destination')
     try:
+        from .record_store import STORE_ROOT, create_group, groups, migrate
         methods = {'init': 'initialize', 'scan': 'start_scan', 'verify': 'complete', 'memory-import': 'import_memory'}
         direct_spec = DIRECT_OPERATIONS.get(ns.operation)
         direct_present = _direct_args_present(ns)
+        if ns.operation in ('groups', 'migrate-records'):
+            if direct_present or ns.input or ns.operation == 'groups' and ns.root:
+                parser.error('unexpected arguments for %s' % ns.operation)
+            collection = ns.records_root or STORE_ROOT
+            result = groups(collection) if ns.operation == 'groups' else migrate(ns.root, collection)
+            print(json.dumps(dict(result=result, dispatch_authorized=False), ensure_ascii=False))
+            return 0
+        if ns.operation == 'init':
+            if direct_present:
+                parser.error('direct arguments are not accepted with init')
+            data = strict_json(read_file(reference(ns.input)['path']), 'INVALID_INPUT') if ns.input else {}
+            result = create_group(ns.root, data, ns.records_root or STORE_ROOT)
+            print(json.dumps(dict(result=result, dispatch_authorized=False), ensure_ascii=False))
+            return 0
+        # destination supplies a new root, while the ledger still holds the old one.
+        record_args = dict(records_root=ns.records_root) if ns.records_root else {}
+        root = None if ns.operation == 'destination' else ns.root
         if direct_spec and ns.input:
             if direct_present:
                 parser.error('--input cannot be combined with direct arguments')
             data = strict_json(read_file(reference(ns.input)['path']), 'INVALID_INPUT')
-            method = getattr(DailyRecords(ns.root), methods.get(ns.operation, direct_spec['method']))
+            method = getattr(DailyRecords(root, **record_args), methods.get(ns.operation, direct_spec['method']))
         elif direct_spec:
             data = _direct_cli_data(parser, ns)
-            records = DailyRecords(ns.root)
+            records = DailyRecords(root, **record_args)
+            if ns.operation == 'destination':
+                data['root'] = ns.root
             if ns.operation in ('capture-album-name', 'intent'):
                 data['identity'] = _album_identity(records, data['album_key'])
                 data.pop('album_key')
@@ -2090,7 +2279,7 @@ def main(argv=None):
             if direct_present:
                 parser.error('direct arguments are not accepted with %s' % ns.operation)
             data = strict_json(read_file(reference(ns.input)['path']), 'INVALID_INPUT') if ns.input else {}
-            method = getattr(DailyRecords(ns.root), methods.get(ns.operation, ns.operation))
+            method = getattr(DailyRecords(root, **record_args), methods.get(ns.operation, ns.operation))
         result = method(**data)
         print(json.dumps(dict(result=result, dispatch_authorized=False), ensure_ascii=False))
         return 0
@@ -2100,4 +2289,5 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
+    sys.modules['line_backup_batch.daily'] = sys.modules[__name__]
     raise SystemExit(main())

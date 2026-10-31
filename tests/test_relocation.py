@@ -8,6 +8,18 @@ from line_backup_batch.relocation import prepare
 
 
 class RelocationTests(unittest.TestCase):
+    def test_migrated_source_cannot_be_reopened_by_legacy_relocation(self):
+        with tempfile.TemporaryDirectory(prefix='.line-daily-tests-', dir=CORE_ROOT) as tmp:
+            base = Path(tmp)
+            source, current = base / 'source', base / 'copy'
+            source.mkdir()
+            (source / 'backup-records').mkdir()
+            (source / 'backup-records/record-store.json').write_text('{"synthetic":true}')
+            shutil.copytree(source, current)
+            with self.assertRaisesRegex(DailyError, 'LEGACY_RECORDS_READ_ONLY'):
+                prepare(source, current, CORE_ROOT / (base.name + '-destination'), base / 'receipt')
+            self.assertFalse((base / 'receipt').exists())
+
     def test_different_copies_are_rejected_before_any_receipt(self):
         with tempfile.TemporaryDirectory(prefix='.line-daily-tests-', dir=CORE_ROOT) as tmp:
             base = Path(tmp)
