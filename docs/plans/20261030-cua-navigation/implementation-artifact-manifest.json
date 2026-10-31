@@ -1,0 +1,20 @@
+{
+  "version": "implementation-handoff-v2",
+  "preparation_base_commit": "a748cfc561a44d2347142fc7b72609584baaaffd",
+  "product_baseline": "66ebd9d50378d3b1d533c83eaf48eaca9a72ef43",
+  "historical_plan_commit": "159d194b4276976d42eaa11d46f7c1ed0e4ee893",
+  "historical_manifest_validation": "Validate artifact-manifest.json at historical_plan_commit, including the original handoff.md; it does not bind the replacement handoff.md.",
+  "artifacts": {
+    "implementation_plan.md": "171a7c6d1d3b94348ecad41ffa24122300f39b5930069bb76358cf0b6f8a29ea",
+    "handoff.md": "863b1be87b1beb75c96bf5c6f94c13e50800837d7e0856ffdc6d57cddb31ab73"
+  },
+  "sources": {
+    "plan.md": "6ee6c554b4722cd11277a64892e0111a750835114bbe89bfa55ad4d6c47f2cf2",
+    "analysis.md": "f4209edd7f7d59667fd7ef8406de3350fcf11b2013d65017a119fb661ceed044",
+    "role-report.md": "b345c8333e4dd82e412222e210ee6517be400560a953dc406f0b484370bcf938",
+    "source-manifest.json": "8576e576475a5c6e9c9865f80fd3102cbb82b0ba2e248239104b57fadb90432c",
+    "artifact-manifest.json": "0f8f51811b5d9063f33c15afc46599673f0c46ae025f9bbf72374dfe924dcb25",
+    "simplicity-plan-review.md": "e47baf8921b09cacb069e106380f40b68dc3e0085357b09541bf5669c13b97c0"
+  },
+  "identity": "Read this manifest and its artifacts from the same delivery commit. This manifest does not hash itself and grants no approval."
+}
