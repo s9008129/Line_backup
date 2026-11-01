@@ -17,8 +17,8 @@ Owner 先人工開啟指定的 LINE 記事本列表，指定目的地（未指�
 
 Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
-1. 自動查全部記事本帳本、目前任務與相符的永久記憶。
-2. 核對列表；證明是新列表且沒有缺損歷史或候選歧義時自動初始化，既有列表則綁定原帳本。
+1. 自動查全部記事本帳本、目前任務與相符的永久記憶，先讀 `summary` 的 `unresolved_attempts`、`dispatch_blockers` 與掃描覆蓋。
+2. 核對列表；證明是新列表且沒有缺損歷史或候選歧義時自動初始化，既有列表則綁定原帳本。新掃描前先處理舊 attempt；掃描綁定不符時只做唯讀查證並停止待人工審查。
 3. 從頂端到底端完整盤點貼文，再逐篇核對照片／影片；盤點是下載前必要階段。
 4. 依紀錄跳過已處理項，對每個合格項只送出一次下載派送，並在結果後驗證、發布及讀回 completion。
 5. 遇到已授權的中斷恢復時，保留原檔並自動接續或建立新的空白恢復 attempt；UNKNOWN、活動下載及未完成命名交易先查證，不以重下解鎖。
@@ -62,7 +62,9 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 - intent 一旦持久寫入，就按「可能已派送」對待；在 `outcome` 有正面證據前，禁止第二個下載派送，也不得把工具逾時、畫面未變或舊計數為零當成 `NOT_SENT`。
 - `outcome` 的第一筆結果不可任意改寫。尚未寫 outcome 時先以 `outcome` 保存第一筆真實結果；只有帳本已有第一筆 `outcome=UNKNOWN` 時才用 `reconcile` 查原事件、目的地與當次狀態。未收斂前不得 `verify`、建立新 attempt 或重下。
 - 定位、input 原始回傳、App 階段性回應、下載結果、檔案驗證與 completion 是不同命題；只有可歸屬的正面證據組合能前進。timeout、畫面未變、空目錄、缺少 marker、API 成敗或播放結束都不足以判未派送或完成，詳見 [證據與允許行為矩陣](references/verification-and-recovery.md#證據與允許行為矩陣)。
+- 新寫入的事件證據必須是 `evidence-pack` 產生且由 CLI 回傳的 `line-notes-evidence/v2` bundle；不手寫 bundle、不改內部 JSON／hash。`evidence-audit` 只作唯讀引用稽核；完整性失敗時 exit 4，且不得把一般 `summary` 或 audit 的局部結果當成可信業務投影。`evidence-correct` 只修 page 引用，保留 page 成員、順序、頂底與 scan 覆蓋；`media-kind-correct` 只處理尚無任何 attempt 的已盤點媒體，不改 key、貼文、順序或數量。兩者都不是日常自動動作，真實帳本仍須精確資料授權與證據。
 - 只有原 attempt 已確認 `STOPPED`／`NOT_SENT`、原檔保留、帳本已持久化 `recovery_authorized=true`，且具充分停止證據時，才可依 [下載與 notes CLI](references/download-and-ledger.md) 以 `--recovery-evidence` 建立該項的新空白恢復 attempt；現行 CLI 沒有事後改寫此授權的命令，未持久化時停止，不手改 ledger。已完成項跳過。
+- 來源已明確到期且原最新 attempt 為 `STOPPED` 時，才可追加 `source-unavailable`；它只記 `SOURCE_EXPIRED`，不是完成、排除、重試授權或服務端已回收的證明。該項不得再建立 intent，其他項仍受列表級 blocker 約束。
 - 命名交易、暫名與目標身分可唯一核對時用 `resume`；無法唯一下一步時保留原檔與 pending 證據並停止，不手動改資料夾或重下。
 - 已完成事實與本機可用性分開：整篇目錄缺席記 `LOCAL_MISSING` 並保留完成、禁止重下；目錄仍存在但有缺檔、額外檔、hash／身分漂移或 symlink 時記 `LOCAL_CHANGED` 並停止新派送。
 - 六類業務狀態為 `COMPLETED`、`EXCLUDED`、`PENDING`、`PREVIOUSLY_INCOMPLETE`、`UNKNOWN`、`PROTECTED_HISTORY`。`NO_MEDIA` 是貼文層級標記，不是第七類，也不是下載完成。
@@ -86,7 +88,7 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 ## 參考文件
 
 - [GUI 導覽與盤點](references/gui-inventory.md)：入口、三層身分、縮圖／更多／viewer 交叉、來源／範圍、popup、時鐘、座標映射、控制與輸入觀察規則。
-- [下載與 notes CLI](references/download-and-ledger.md)：目前子命令、intent 前後核對、下載／chooser 各最多一次、outcome／reconcile 分流、命名恢復。
-- [驗證與恢復](references/verification-and-recovery.md)：證據矩陣、完成／停止證據組合、照片／影片解碼、六類狀態與本機可用性。
-- [證據範本](references/evidence-template.md)：可直接填寫的私有 evidence 欄位與引用 hash／唯一檔名規則；不是 CLI schema。
+- [下載與 notes CLI](references/download-and-ledger.md)：目前子命令、v2 證據封裝、intent 前後核對、下載／chooser 各最多一次、outcome／reconcile 分流、更正與命名恢復。
+- [驗證與恢復](references/verification-and-recovery.md)：證據稽核／更正、完成／停止證據組合、類型更正、來源到期、照片／影片解碼、六類狀態與本機可用性。
+- [證據範本](references/evidence-template.md)：供 `evidence-pack` statement 使用的私有紀錄欄位與唯一檔名規則；不是可直接傳給 `--evidence` 的自由文字 schema。
 - [證據判定案例](references/evidence-decision-cases.md)：控制隱藏、API error、chooser 延遲、晚到結果、播放結束、crash window 與充分／不足證據的假設案例。

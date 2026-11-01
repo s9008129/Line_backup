@@ -4,8 +4,10 @@ These tests use only generated records and local process fixtures. They do not
 observe LINE, operate a GUI, or touch private media or permanent ledgers.
 """
 import contextlib
+import copy
 import hashlib
 import inspect
+import io
 import json
 import os
 from pathlib import Path
@@ -194,6 +196,12 @@ class NotesRegressionTests(unittest.TestCase):
         return NotesRecords(str(ledger.records.records),
                             _allow_injected_verification=True)
 
+    def run_notes_cli(self, *args):
+        output = io.StringIO()
+        with mock.patch('sys.stdout', new=output):
+            code = notes.main([str(value) for value in args])
+        return code, json.loads(output.getvalue())
+
     def observe_post(self, ledger, visual_key, media_identities, *,
                      no_media=False, media_count=None):
         records = ledger.records
@@ -299,6 +307,42 @@ class NotesRegressionTests(unittest.TestCase):
             evidence=ledger.evidence(list_key=list_key_value,
                                      scan_id=scan['scan_id']))
         return scan
+
+    def append_historical_scan(self, ledger, post_identities):
+        """Append a legacy scan graph directly after the public gates existed."""
+        records = ledger.records
+        list_key_value = ledger.summary['list_key']
+        scan_id = uuid.uuid4().hex
+        rows = [dict(post_key=notes.post_key(list_key_value, identity),
+                     identity=identity, date_summary='synthetic',
+                     source_order=index)
+                for index, identity in enumerate(post_identities)]
+        start_context = notes._evidence_context(list_key=list_key_value)
+        scan_context = notes._evidence_context(
+            list_key=list_key_value, scan_id=scan_id)
+        records.append('scan', dict(
+            schema='line-notes-scan/v1', action='START', scan_id=scan_id,
+            session_id=ledger.session,
+            evidence=notes._preserve_evidence(
+                records.records,
+                ledger.evidence(list_key=list_key_value),
+                start_context)))
+        records.append('page', dict(
+            schema='line-notes-page/v1', scan_id=scan_id,
+            session_id=ledger.session, page_index=0, top_reached=True,
+            bottom_reached=True, overlap_keys=[], posts=rows,
+            evidence=notes._preserve_evidence(
+                records.records,
+                ledger.evidence(list_key=list_key_value, scan_id=scan_id),
+                scan_context)))
+        records.append('scan', dict(
+            schema='line-notes-scan/v1', action='COMPLETE', scan_id=scan_id,
+            session_id=ledger.session, posts=rows,
+            evidence=notes._preserve_evidence(
+                records.records,
+                ledger.evidence(list_key=list_key_value, scan_id=scan_id),
+                scan_context)))
+        return scan_id
 
     def mutate_page(self, ledger, page_index, post_identities,
                     overlap_identities):
@@ -739,11 +783,17 @@ class NotesRegressionTests(unittest.TestCase):
         ledger.records.outcome(
             session_id=ledger.session,
             attempt_id=attempt['attempt_id'],
-            outcome='UNKNOWN',
+            outcome='STOPPED',
             evidence=ledger.evidence_for_attempt(attempt),
         )
         self.observe_post(
             ledger, 'summary-unknown-outside-scan-new', [], no_media=True)
+        events = self.read_events(ledger.records)
+        outcome = next(event for event in events
+                       if event['kind'] == 'outcome' and
+                       event['data']['attempt_id'] == attempt['attempt_id'])
+        outcome['data']['outcome'] = 'UNKNOWN'
+        self.rewrite_events(ledger.records, events)
 
         summary = self.reopen(ledger).summary()
         self.assertFalse(summary['all_known_media_complete'])
@@ -886,6 +936,164 @@ class NotesRegressionTests(unittest.TestCase):
         self.assertFalse(summary['all_known_media_complete'])
         self.assertIn('POST_COVERAGE_INCOMPLETE',
                       summary['dispatch_blockers'])
+
+    def test_start_scan_and_intent_share_coverage_gate(self):
+        ledger = self.new_ledger('scan-coverage-gate')
+        detailed_post = notes.post_identity(
+            visual_key='scan-coverage-detailed-post')
+        pending_post = notes.post_identity(
+            visual_key='scan-coverage-pending-post')
+        self.scan_with_pages(
+            ledger, [([detailed_post, pending_post], [])])
+        detailed_key = notes.post_key(
+            ledger.summary['list_key'], detailed_post)
+        pending_key = notes.post_key(
+            ledger.summary['list_key'], pending_post)
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='scan-coverage-detailed-media')
+        media_key_value = self.media_key(
+            ledger, detailed_key, identity)
+        ledger.records.record_post(
+            session_id=ledger.session,
+            post_key_value=detailed_key,
+            date_summary='synthetic',
+            media_count=1,
+            text_sha256=None,
+            evidence=ledger.evidence_for_post(detailed_key),
+            no_media=False,
+        )
+        ledger.records.record_media(
+            session_id=ledger.session,
+            post_key_value=detailed_key,
+            items=[dict(identity=identity)],
+            missing=[],
+            evidence=ledger.evidence_for_post(detailed_key),
+        )
+
+        summary = ledger.records.summary()
+        self.assertIn('POST_DETAIL_PENDING', summary['dispatch_blockers'])
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.scan(
+                session_id=ledger.session, action='START',
+                evidence=ledger.evidence_for_scan())
+        self.assertEqual(raised.exception.args[0],
+                         'SCAN_COVERAGE_INCOMPLETE')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.intent(
+                session_id=ledger.session,
+                media_key_value=media_key_value)
+        self.assertEqual(raised.exception.args[0], 'POST_DETAIL_PENDING')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        ledger.records.record_post(
+            session_id=ledger.session,
+            post_key_value=pending_key,
+            date_summary='synthetic',
+            media_count=0,
+            text_sha256=None,
+            evidence=ledger.evidence_for_post(pending_key),
+            no_media=True,
+        )
+        summary = self.reopen(ledger).summary()
+        pending = next(row for row in summary['posts']
+                       if row['post_key'] == pending_key)
+        self.assertEqual(pending['state'], 'NO_MEDIA')
+        self.assertNotIn('POST_DETAIL_PENDING', summary['dispatch_blockers'])
+        self.assertNotIn('POST_COVERAGE_INCOMPLETE',
+                         summary['dispatch_blockers'])
+        scan = ledger.records.scan(
+            session_id=ledger.session, action='START',
+            evidence=ledger.evidence_for_scan())
+        self.assertIn('scan_id', scan)
+
+    def test_start_scan_blocks_unresolved_attempts_and_verify_required(self):
+        ledger = self.new_ledger('scan-unresolved-attempt')
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='scan-unresolved-media')
+        _post, post_key_value = self.observe_post(
+            ledger, 'scan-unresolved-post', [identity])
+        key = self.media_key(ledger, post_key_value, identity)
+        attempt = ledger.records.intent(
+            session_id=ledger.session, media_key_value=key)
+
+        summary = ledger.records.summary()
+        self.assertIn('UNKNOWN_ATTEMPT', summary['dispatch_blockers'])
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.scan(
+                session_id=ledger.session, action='START',
+                evidence=ledger.evidence_for_scan())
+        self.assertEqual(raised.exception.args[0],
+                         'UNRESOLVED_ATTEMPT_BLOCKS_CHANGE')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        ledger.records.outcome(
+            session_id=ledger.session,
+            attempt_id=attempt['attempt_id'],
+            outcome='UNKNOWN',
+            evidence=ledger.evidence_for_attempt(attempt),
+        )
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.scan(
+                session_id=ledger.session, action='START',
+                evidence=ledger.evidence_for_scan())
+        self.assertEqual(raised.exception.args[0],
+                         'UNRESOLVED_ATTEMPT_BLOCKS_CHANGE')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+        ledger.records.reconcile(
+            session_id=ledger.session,
+            attempt_id=attempt['attempt_id'],
+            result='STOPPED',
+            evidence=ledger.evidence_for_attempt(attempt),
+        )
+        repaired_scan = ledger.records.scan(
+            session_id=ledger.session, action='START',
+            evidence=ledger.evidence_for_scan())
+        self.assertIn('scan_id', repaired_scan)
+
+        ledger2 = self.new_ledger('scan-verify-required')
+        _identity, _key, _attempt, _target = self.prepare_download(
+            ledger2, PHOTO, 'scan-verify-required-media')
+        summary = ledger2.records.summary()
+        self.assertIn('VERIFY_REQUIRED', summary['dispatch_blockers'])
+        before = self.event_bytes(ledger2.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger2.records.scan(
+                session_id=ledger2.session, action='START',
+                evidence=ledger2.evidence_for_scan())
+        self.assertEqual(raised.exception.args[0],
+                         'UNRESOLVED_ATTEMPT_BLOCKS_CHANGE')
+        self.assertEqual(self.event_bytes(ledger2.records), before)
+
+    def test_start_scan_blocks_pending_naming_transaction(self):
+        ledger = self.new_ledger('scan-pending-naming')
+        _identity, _key, attempt, _target = self.prepare_download(
+            ledger, PHOTO, 'scan-pending-naming-media')
+        with mock.patch.object(
+                NotesRecords, '_execute_publish',
+                side_effect=OSError('synthetic publish interruption')):
+            with self.assertRaisesRegex(
+                    OSError, 'synthetic publish interruption'):
+                ledger.records.verify(
+                    session_id=ledger.session,
+                    attempt_id=attempt['attempt_id'],
+                    verifier=self.pass_verifier,
+                    stability_interval=0,
+                )
+        summary = ledger.records.summary()
+        self.assertIn('PENDING_NAMING', summary['dispatch_blockers'])
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.scan(
+                session_id=ledger.session, action='START',
+                evidence=ledger.evidence_for_scan())
+        self.assertEqual(raised.exception.args[0],
+                         'PENDING_NAMING_TRANSACTION')
+        self.assertEqual(self.event_bytes(ledger.records), before)
 
     def read_events(self, records):
         rows = []
@@ -1267,6 +1475,7 @@ class NotesRegressionTests(unittest.TestCase):
         post, post_key_value = self.observe_post(
             ledger, 'summary-legacy-unbound-post', [identity])
 
+        self.scan_with_pages(ledger, [([post], [])])
         events = self.read_events(ledger.records)
         legacy = self.legacy_evidence(ledger, 'unbound-detail')
         for event in events:
@@ -1275,7 +1484,6 @@ class NotesRegressionTests(unittest.TestCase):
                 event['data']['evidence'] = legacy
         self.rewrite_events(ledger.records, events)
 
-        self.scan_with_pages(ledger, [([post], [])])
         ledger.records.record_post(
             session_id=ledger.session,
             post_key_value=post_key_value,
@@ -1399,6 +1607,9 @@ class NotesRegressionTests(unittest.TestCase):
                       if event['kind'] == 'intent' and
                       event['data']['attempt_id'] == attempt['attempt_id'])
         intent['data'].pop('scan_id')
+        intent['data']['schema'] = 'line-notes-intent/v1'
+        intent['data'].pop('effective_kind')
+        intent['data'].pop('kind_correction_ref')
         self.rewrite_events(ledger.records, events)
         reopened = self.reopen(ledger)
         before = self.event_bytes(ledger.records)
@@ -1413,10 +1624,9 @@ class NotesRegressionTests(unittest.TestCase):
         self.assertEqual(raised.exception.args[0],
                          'INTENT_SCAN_BINDING_REQUIRED')
         self.assertEqual(self.event_bytes(ledger.records), before)
-        with self.assertRaises(NotesError) as raised:
-            reopened.resume()
-        self.assertEqual(raised.exception.args[0],
-                         'INTENT_SCAN_BINDING_REQUIRED')
+        resumed = reopened.resume()
+        self.assertEqual(resumed['pending'][0]['action'],
+                         'SCAN_BINDING_REVIEW_REQUIRED')
         self.assertEqual(self.event_bytes(ledger.records), before)
 
     def test_verify_and_pending_resume_reject_attempt_after_new_scan(self):
@@ -1437,7 +1647,7 @@ class NotesRegressionTests(unittest.TestCase):
             evidence=ledger.evidence_for_attempt(attempt),
         )
 
-        self.scan_with_pages(ledger, [([post], [])])
+        self.append_historical_scan(ledger, [post])
         before = self.event_bytes(ledger.records)
         with self.assertRaises(NotesError) as raised:
             ledger.records.verify(
@@ -1477,12 +1687,12 @@ class NotesRegressionTests(unittest.TestCase):
                     stability_interval=0,
                 )
 
-        self.scan_with_pages(ledger2, [([post2], [])])
+        self.append_historical_scan(ledger2, [post2])
         before = self.event_bytes(ledger2.records)
         with self.assertRaises(NotesError) as raised:
             ledger2.records.resume()
         self.assertEqual(raised.exception.args[0],
-                         'ATTEMPT_SCAN_BINDING_CHANGED')
+                         'SCAN_BINDING_REVIEW_REQUIRED')
         self.assertEqual(self.event_bytes(ledger2.records), before)
 
     def test_bind_is_refused_while_scan_is_open(self):
@@ -1727,6 +1937,843 @@ class NotesRegressionTests(unittest.TestCase):
             self.run_progress_script(script)
         self.assertIn(raised.exception.code,
                       {'INVALID_PROGRESS', 'DECODE_PROGRESS_WITHOUT_METRICS'})
+
+    def test_evidence_audit_reports_outer_drift_and_refuses_projection(self):
+        ledger = self.new_ledger('audit-outer-drift')
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='audit-outer-drift-media')
+        self.observe_post(ledger, 'audit-outer-drift-post', [identity])
+        before = self.event_bytes(ledger.records)
+
+        audit = ledger.records.evidence_audit()
+        self.assertEqual(audit['schema'], 'line-notes-evidence-audit/v1')
+        self.assertEqual(audit['event_chain'], 'VERIFIED')
+        self.assertTrue(audit['integrity_ok'])
+        self.assertTrue(audit['business_projection_omitted'])
+        self.assertTrue(audit['references'])
+        self.assertNotIn('status_counts', audit)
+        self.assertNotIn('posts', audit)
+        self.assertTrue(all(row['integrity_ok']
+                            for row in audit['references']))
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        code, payload = self.run_notes_cli(
+            'evidence-audit', '--records-root', ledger.records.records)
+        self.assertEqual(code, 0)
+        self.assertTrue(payload['integrity_ok'])
+        self.assertFalse(payload['dispatch_authorized'])
+
+        events = self.read_events(ledger.records)
+        page = next(event for event in events if event['kind'] == 'page')
+        Path(page['data']['evidence']['path']).write_bytes(
+            b'tampered saved evidence bundle\n')
+        before = self.event_bytes(ledger.records)
+        audit = ledger.records.evidence_audit()
+        self.assertFalse(audit['integrity_ok'])
+        row = next(row for row in audit['references']
+                   if row['event_sequence'] == page['sequence'])
+        self.assertFalse(row['integrity_ok'])
+        self.assertIn('EVIDENCE_DRIFT', row['errors'])
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.summary()
+        self.assertEqual(raised.exception.args[0], 'EVIDENCE_DRIFT')
+
+        code, payload = self.run_notes_cli(
+            'evidence-audit', '--records-root', ledger.records.records)
+        self.assertEqual(code, 4)
+        self.assertFalse(payload['integrity_ok'])
+        self.assertTrue(payload['business_projection_omitted'])
+        self.assertNotIn('status_counts', payload)
+        self.assertFalse(payload['dispatch_authorized'])
+
+    def test_evidence_audit_reports_child_missing_and_symlink_drift(self):
+        for case in ('missing', 'symlink'):
+            with self.subTest(case=case):
+                ledger = self.new_ledger('audit-child-' + case)
+                identity = notes.media_identity(
+                    kind=PHOTO, visual_key='audit-child-' + case + '-media')
+                self.observe_post(
+                    ledger, 'audit-child-' + case + '-post', [identity])
+                events = self.read_events(ledger.records)
+                page = next(event for event in events
+                            if event['kind'] == 'page')
+                bundle = json.loads(
+                    Path(page['data']['evidence']['path']).read_bytes())
+                child = (ledger.records.records / 'evidence' /
+                         bundle['assets'][0]['sha256'])
+                child.unlink()
+                if case == 'symlink':
+                    child.symlink_to(ledger.evidence_source)
+
+                audit = ledger.records.evidence_audit()
+                self.assertFalse(audit['integrity_ok'])
+                row = next(row for row in audit['references']
+                           if row['event_sequence'] == page['sequence'])
+                self.assertFalse(row['integrity_ok'])
+                self.assertEqual(row['reference_check'],
+                                 'REFERENCE_CHECK_NOT_AVAILABLE')
+                self.assertTrue(any(
+                    child_row['status'] == 'DRIFT' and
+                    child_row['error'] == 'EVIDENCE_CHILD_MISSING'
+                    for child_row in row['child_assets']))
+                with self.assertRaises(NotesError) as raised:
+                    ledger.records.summary()
+                self.assertEqual(raised.exception.args[0],
+                                 'EVIDENCE_CHILD_MISSING')
+
+    def test_evidence_audit_stops_on_malformed_structural_ref(self):
+        ledger = self.new_ledger('audit-malformed-ref')
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='audit-malformed-ref-media')
+        self.observe_post(ledger, 'audit-malformed-ref-post', [identity])
+        events = self.read_events(ledger.records)
+        page = next(event for event in events if event['kind'] == 'page')
+        page['data']['evidence'].pop('sha256')
+        self.rewrite_events(ledger.records, events)
+        before = self.event_bytes(ledger.records)
+
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.evidence_audit()
+        self.assertEqual(raised.exception.args[0], 'INVALID_PAGE_EVENT')
+        code, payload = self.run_notes_cli(
+            'evidence-audit', '--records-root', ledger.records.records)
+        self.assertEqual(code, 4)
+        self.assertEqual(payload['status'], 'REFUSED')
+        self.assertEqual(payload['reason'], 'INVALID_PAGE_EVENT')
+        self.assertNotIn('integrity_ok', payload)
+        self.assertNotIn('status_counts', payload)
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+    def test_evidence_audit_keeps_legacy_page_opaque_and_exits_zero(self):
+        ledger = self.new_ledger('audit-legacy-page')
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='audit-legacy-page-media')
+        self.observe_post(ledger, 'audit-legacy-page-post', [identity])
+        events = self.read_events(ledger.records)
+        page = next(event for event in events if event['kind'] == 'page')
+        page['data']['evidence'] = self.legacy_evidence(
+            ledger, 'audit-legacy-page')
+        self.rewrite_events(ledger.records, events)
+        before = self.event_bytes(ledger.records)
+
+        audit = ledger.records.evidence_audit()
+        self.assertTrue(audit['integrity_ok'])
+        row = next(row for row in audit['references']
+                   if row['event_sequence'] == page['sequence'])
+        self.assertEqual(row['classification'], 'LEGACY_OPAQUE')
+        self.assertEqual(row['reference_check'],
+                         'REFERENCE_CHECK_NOT_AVAILABLE')
+        self.assertTrue(row['integrity_ok'])
+        self.assertEqual(self.event_bytes(ledger.records), before)
+        summary = ledger.records.summary()
+        self.assertEqual(summary['evidence_corrections'], [])
+
+        code, payload = self.run_notes_cli(
+            'evidence-audit', '--records-root', ledger.records.records)
+        self.assertEqual(code, 0)
+        self.assertTrue(payload['integrity_ok'])
+        self.assertFalse(payload['dispatch_authorized'])
+
+    def test_evidence_correction_appends_only_to_exact_target_and_chain(self):
+        ledger = self.new_ledger('evidence-correction-chain')
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='evidence-correction-chain-media')
+        self.observe_post(ledger, 'evidence-correction-chain-post', [identity])
+        events = self.read_events(ledger.records)
+        page = next(event for event in events if event['kind'] == 'page')
+        scan = next(event for event in events
+                    if event['kind'] == 'scan' and
+                    event['data']['action'] == 'START')
+        page_sequence = page['sequence']
+        page_sha256 = digest(encoded(page))
+        original_sha256 = page['data']['evidence']['sha256']
+        scan_id = page['data']['scan_id']
+        replacement = ledger.evidence(
+            list_key=ledger.summary['list_key'], scan_id=scan_id)
+
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.evidence_correct(
+                session_id=ledger.session,
+                page_sequence=scan['sequence'],
+                page_sha256=page_sha256,
+                original_evidence_sha256=original_sha256,
+                replacement=replacement,
+                reason='synthetic correction',
+            )
+        self.assertEqual(raised.exception.args[0],
+                         'EVIDENCE_CORRECTION_TARGET_CHANGED')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.evidence_correct(
+                session_id=ledger.session,
+                page_sequence=page_sequence,
+                page_sha256='0' * 64,
+                original_evidence_sha256=original_sha256,
+                replacement=replacement,
+                reason='synthetic correction',
+            )
+        self.assertEqual(raised.exception.args[0],
+                         'EVIDENCE_CORRECTION_TARGET_CHANGED')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.evidence_correct(
+                session_id=ledger.session,
+                page_sequence=page_sequence,
+                page_sha256=page_sha256,
+                original_evidence_sha256='0' * 64,
+                replacement=replacement,
+                reason='synthetic correction',
+            )
+        self.assertEqual(raised.exception.args[0],
+                         'EVIDENCE_CORRECTION_ORIGINAL_CHANGED')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.evidence_correct(
+                session_id=ledger.session,
+                page_sequence=page_sequence,
+                page_sha256=page_sha256,
+                original_evidence_sha256=original_sha256,
+                replacement=replacement,
+                reason='synthetic correction',
+                previous_correction_ref=dict(
+                    sequence=1, sha256='0' * 64),
+            )
+        self.assertEqual(raised.exception.args[0],
+                         'EVIDENCE_CORRECTION_CHAIN_CHANGED')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        first = ledger.records.evidence_correct(
+            session_id=ledger.session,
+            page_sequence=page_sequence,
+            page_sha256=page_sha256,
+            original_evidence_sha256=original_sha256,
+            replacement=replacement,
+            reason='synthetic correction',
+        )
+        self.assertEqual(first['schema'],
+                         'line-notes-evidence-correction/v1')
+        after_first = self.event_bytes(ledger.records)
+        self.assertEqual(set(before) - set(after_first), set())
+        for name, raw in before.items():
+            self.assertEqual(after_first[name], raw)
+        summary = ledger.records.summary()
+        self.assertEqual(len(summary['evidence_corrections']), 1)
+        self.assertEqual(summary['evidence_corrections'][0]['sequence'],
+                         first['correction_ref']['sequence'])
+
+        second = ledger.records.evidence_correct(
+            session_id=ledger.session,
+            page_sequence=page_sequence,
+            page_sha256=page_sha256,
+            original_evidence_sha256=original_sha256,
+            replacement=replacement,
+            reason='synthetic repeated correction',
+            previous_correction_ref=first['correction_ref'],
+        )
+        summary = ledger.records.summary()
+        self.assertEqual(len(summary['evidence_corrections']), 2)
+        self.assertEqual(
+            summary['evidence_corrections'][1]['previous_correction_ref'],
+            first['correction_ref'])
+        self.assertEqual(second['previous_correction_ref'],
+                         first['correction_ref'])
+
+        before_fork = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.evidence_correct(
+                session_id=ledger.session,
+                page_sequence=page_sequence,
+                page_sha256=page_sha256,
+                original_evidence_sha256=original_sha256,
+                replacement=replacement,
+                reason='synthetic forked correction',
+            )
+        self.assertEqual(raised.exception.args[0],
+                         'EVIDENCE_CORRECTION_CHAIN_CHANGED')
+        self.assertEqual(self.event_bytes(ledger.records), before_fork)
+
+        events = self.read_events(ledger.records)
+        correction = [event for event in events
+                      if event['kind'] == 'evidence-correction'][-1]
+        correction['data']['previous_correction_ref'] = None
+        self.rewrite_events(ledger.records, events)
+        with self.assertRaises(NotesError) as raised:
+            self.reopen(ledger).summary()
+        self.assertEqual(raised.exception.args[0],
+                         'EVIDENCE_CORRECTION_CHAIN_CHANGED')
+
+    def test_evidence_correction_scopes_to_target_page_and_scan(self):
+        ledger = self.new_ledger('evidence-correction-scope')
+        post_a = notes.post_identity(visual_key='evidence-scope-a')
+        post_b = notes.post_identity(visual_key='evidence-scope-b')
+        self.scan_with_pages(
+            ledger, [([post_a], []), ([post_a, post_b], [post_a])])
+        events = self.read_events(ledger.records)
+        pages = [event for event in events if event['kind'] == 'page']
+        self.assertEqual(len(pages), 2)
+        Path(pages[1]['data']['evidence']['path']).write_bytes(
+            b'tampered non-target page evidence\n')
+        replacement = ledger.evidence(
+            list_key=ledger.summary['list_key'],
+            scan_id=pages[0]['data']['scan_id'])
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.evidence_correct(
+                session_id=ledger.session,
+                page_sequence=pages[0]['sequence'],
+                page_sha256=digest(encoded(pages[0])),
+                original_evidence_sha256=pages[0]['data']['evidence']['sha256'],
+                replacement=replacement,
+                reason='synthetic target-only correction',
+            )
+        self.assertEqual(raised.exception.args[0],
+                         'EVIDENCE_REPAIR_SCOPE_MISMATCH')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        ledger2 = self.new_ledger('evidence-correction-scan-context')
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='evidence-correction-scan-context-media')
+        post, _post_key = self.observe_post(
+            ledger2, 'evidence-correction-scan-context-post', [identity])
+        page = next(event for event in self.read_events(ledger2.records)
+                    if event['kind'] == 'page')
+        original_scan_id = page['data']['scan_id']
+        unique_statement = ledger2.photo_root.parent / 'unique-page-evidence.txt'
+        unique_statement.write_bytes(b'unique page evidence statement\n')
+        page_context = dict(list_key=ledger2.summary['list_key'],
+                            scan_id=original_scan_id)
+        unique_page_bundle = notes_evidence.create_bundle(
+            statement=str(unique_statement),
+            assets=[('screenshot', str(ledger2.evidence_screenshot))],
+            context=page_context,
+            output_dir=str(ledger2.evidence_packs / uuid.uuid4().hex),
+        )['bundle_path']
+        events = self.read_events(ledger2.records)
+        page = next(event for event in events if event['kind'] == 'page')
+        page['data']['evidence'] = notes._preserve_evidence(
+            ledger2.records.records, unique_page_bundle, page_context)
+        self.rewrite_events(ledger2.records, events)
+        ledger2.records = self.reopen(ledger2)
+        ledger2.records.summary()
+        page = next(event for event in self.read_events(ledger2.records)
+                    if event['kind'] == 'page')
+        original_sha256 = page['data']['evidence']['sha256']
+        self.append_historical_scan(ledger2, [post])
+        latest_scan_id = ledger2.records._latest_complete_scan_id()
+        latest_replacement = ledger2.evidence(
+            list_key=ledger2.summary['list_key'], scan_id=latest_scan_id)
+        target_replacement = ledger2.evidence(
+            list_key=ledger2.summary['list_key'], scan_id=original_scan_id)
+        Path(page['data']['evidence']['path']).write_bytes(
+            b'tampered original page evidence\n')
+        before = self.event_bytes(ledger2.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger2.records.evidence_correct(
+                session_id=ledger2.session,
+                page_sequence=page['sequence'],
+                page_sha256=digest(encoded(page)),
+                original_evidence_sha256=original_sha256,
+                replacement=latest_replacement,
+                reason='synthetic wrong scan context',
+            )
+        self.assertEqual(raised.exception.args[0], 'EVIDENCE_CONTEXT_MISMATCH')
+        self.assertEqual(self.event_bytes(ledger2.records), before)
+
+        correction = ledger2.records.evidence_correct(
+            session_id=ledger2.session,
+            page_sequence=page['sequence'],
+            page_sha256=digest(encoded(page)),
+            original_evidence_sha256=original_sha256,
+            replacement=target_replacement,
+            reason='synthetic target scan correction',
+        )
+        summary = ledger2.records.summary()
+        self.assertEqual(len(summary['evidence_corrections']), 1)
+        self.assertEqual(summary['evidence_corrections'][0]['page_sequence'],
+                         page['sequence'])
+        self.assertEqual(correction['replacement_ref']['sha256'],
+                         summary['evidence_corrections'][0]
+                         ['replacement_ref']['sha256'])
+
+        audit = ledger2.records.evidence_audit()
+        self.assertFalse(audit['integrity_ok'])
+        page_row = next(row for row in audit['references']
+                        if row['event_sequence'] == page['sequence'])
+        self.assertIn('EVIDENCE_DRIFT', page_row['errors'])
+        correction_row = next(
+            row for row in audit['references']
+            if row.get('event_kind') == 'evidence-correction' and
+            row.get('event_page_sequence') == page['sequence'])
+        self.assertTrue(correction_row['integrity_ok'])
+
+    def test_media_kind_correction_preserves_nineteen_items_and_v2_attempt(self):
+        ledger = self.new_ledger('kind-correction-nineteen')
+        identities = [
+            notes.media_identity(
+                kind=PHOTO, visual_key='kind-correction-%02d' % index)
+            for index in range(19)]
+        _post, post_key_value = self.observe_post(
+            ledger, 'kind-correction-nineteen-post', identities)
+        list_key_value = ledger.summary['list_key']
+        events = self.read_events(ledger.records)
+        media_event = next(event for event in events
+                           if event['kind'] == 'media')
+        scan_id = media_event['data']['scan_id']
+        items = media_event['data']['items']
+        self.assertEqual(len(items), 19)
+        before_summary = ledger.records.summary()
+        before_media = {row['media_key']: row
+                        for row in before_summary['media']}
+        self.assertEqual(len(before_media), 19)
+        before_status = dict(before_summary['status_counts'])
+        before_bytes = self.event_bytes(ledger.records)
+        inventory_sha256 = digest(encoded(media_event))
+
+        for index, item in enumerate(items):
+            evidence = ledger.evidence(
+                list_key=list_key_value, post_key=post_key_value,
+                media_key=item['media_key'], scan_id=scan_id)
+            ledger.records.media_kind_correct(
+                session_id=ledger.session,
+                media_key_value=item['media_key'],
+                inventory_sequence=media_event['sequence'],
+                inventory_sha256=(inventory_sha256 if index == 0 else None),
+                to_kind=VIDEO,
+                evidence=evidence,
+            )
+
+        after_summary = ledger.records.summary()
+        after_media = {row['media_key']: row
+                       for row in after_summary['media']}
+        self.assertEqual(set(after_media), set(before_media))
+        self.assertEqual(len(after_media), 19)
+        self.assertEqual(after_summary['status_counts'], before_status)
+        for key, before_row in before_media.items():
+            after_row = after_media[key]
+            self.assertEqual(after_row['post_key'], before_row['post_key'])
+            self.assertEqual(after_row['source_order'],
+                             before_row['source_order'])
+            self.assertEqual(after_row['kind'], PHOTO)
+            self.assertEqual(after_row['effective_kind'], VIDEO)
+            self.assertIsNotNone(after_row['kind_correction_ref'])
+        after_bytes = self.event_bytes(ledger.records)
+        for name, raw in before_bytes.items():
+            self.assertEqual(after_bytes[name], raw)
+        self.assertEqual(len(after_bytes), len(before_bytes) + 19)
+
+        reopened = self.reopen(ledger)
+        reopened_summary = reopened.summary()
+        self.assertEqual(
+            {row['effective_kind'] for row in reopened_summary['media']},
+            {VIDEO})
+        key = items[0]['media_key']
+        attempt = reopened.intent(
+            session_id=ledger.session, media_key_value=key)
+        self.assertEqual(attempt['schema'], 'line-notes-intent/v2')
+        self.assertEqual(attempt['identity']['kind'], PHOTO)
+        self.assertEqual(attempt['effective_kind'], VIDEO)
+        self.assertIsNotNone(attempt['kind_correction_ref'])
+        self.assertEqual(attempt['scan_id'], scan_id)
+
+        target = Path(attempt['destination']) / 'corrected-kind.mp4'
+        target.write_bytes(b'synthetic corrected video bytes')
+        reopened.outcome(
+            session_id=ledger.session,
+            attempt_id=attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=ledger.evidence_for_attempt(attempt),
+        )
+        with self.strict_dispatch(self.strict_pass) as calls:
+            completion = reopened.verify(
+                session_id=ledger.session,
+                attempt_id=attempt['attempt_id'],
+                stability_interval=0,
+                stall_seconds=0.01,
+            )
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0][1], VIDEO)
+        self.assertEqual(completion['kind'], 'completion')
+        self.assertEqual(reopened.summary()['status_counts']['COMPLETED'], 1)
+
+    def test_media_kind_correction_rejects_scope_hash_and_stale_scan(self):
+        ledger = self.new_ledger('kind-correction-scope')
+        post_a = notes.post_identity(visual_key='kind-scope-a')
+        post_b = notes.post_identity(visual_key='kind-scope-b')
+        list_key_value = ledger.summary['list_key']
+        scan = self.scan_with_pages(ledger, [([post_a, post_b], [])])
+        post_key_a = notes.post_key(list_key_value, post_a)
+        post_key_b = notes.post_key(list_key_value, post_b)
+        identity_a0 = notes.media_identity(
+            kind=PHOTO, visual_key='kind-scope-a-0')
+        identity_a1 = notes.media_identity(
+            kind=PHOTO, visual_key='kind-scope-a-1')
+        identity_b0 = notes.media_identity(
+            kind=PHOTO, visual_key='kind-scope-b-0')
+        ledger.records.record_post(
+            session_id=ledger.session, post_key_value=post_key_a,
+            date_summary='synthetic', media_count=2, text_sha256=None,
+            evidence=ledger.evidence(
+                list_key=list_key_value, post_key=post_key_a,
+                scan_id=scan['scan_id']),
+            scan_id=scan['scan_id'])
+        ledger.records.record_media(
+            session_id=ledger.session, post_key_value=post_key_a,
+            items=[{'identity': identity_a0}, {'identity': identity_a1}],
+            missing=[], evidence=ledger.evidence(
+                list_key=list_key_value, post_key=post_key_a,
+                scan_id=scan['scan_id']),
+            scan_id=scan['scan_id'])
+        ledger.records.record_post(
+            session_id=ledger.session, post_key_value=post_key_b,
+            date_summary='synthetic', media_count=1, text_sha256=None,
+            evidence=ledger.evidence(
+                list_key=list_key_value, post_key=post_key_b,
+                scan_id=scan['scan_id']),
+            scan_id=scan['scan_id'])
+        ledger.records.record_media(
+            session_id=ledger.session, post_key_value=post_key_b,
+            items=[{'identity': identity_b0}], missing=[],
+            evidence=ledger.evidence(
+                list_key=list_key_value, post_key=post_key_b,
+                scan_id=scan['scan_id']),
+            scan_id=scan['scan_id'])
+        events = self.read_events(ledger.records)
+        media_a = next(event for event in events
+                       if event['kind'] == 'media' and
+                       event['data']['post_key'] == post_key_a)
+        media_b = next(event for event in events
+                       if event['kind'] == 'media' and
+                       event['data']['post_key'] == post_key_b)
+        key_b = notes.media_key(list_key_value, post_key_b, identity_b0)
+        evidence_b = ledger.evidence(
+            list_key=list_key_value, post_key=post_key_b,
+            media_key=key_b, scan_id=scan['scan_id'])
+
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.media_kind_correct(
+                session_id=ledger.session, media_key_value=key_b,
+                inventory_sequence=media_b['sequence'],
+                inventory_sha256='0' * 64, to_kind=VIDEO,
+                evidence=evidence_b)
+        self.assertEqual(raised.exception.args[0],
+                         'MEDIA_KIND_INVENTORY_CHANGED')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.media_kind_correct(
+                session_id=ledger.session, media_key_value=key_b,
+                inventory_sequence=media_a['sequence'], to_kind=VIDEO,
+                evidence=evidence_b)
+        self.assertEqual(raised.exception.args[0],
+                         'MEDIA_KIND_SCOPE_CHANGED')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        self.append_historical_scan(ledger, [post_a, post_b])
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.media_kind_correct(
+                session_id=ledger.session, media_key_value=key_b,
+                inventory_sequence=media_b['sequence'], to_kind=VIDEO,
+                evidence=evidence_b)
+        self.assertEqual(raised.exception.args[0],
+                         'MEDIA_KIND_SCAN_CHANGED')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+    def test_media_kind_correction_rejects_after_attempt_or_completion(self):
+        ledger = self.new_ledger('kind-correction-after-attempt')
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='kind-correction-after-attempt-media')
+        _post, post_key_value = self.observe_post(
+            ledger, 'kind-correction-after-attempt-post', [identity])
+        list_key_value = ledger.summary['list_key']
+        key = notes.media_key(list_key_value, post_key_value, identity)
+        events = self.read_events(ledger.records)
+        media_event = next(event for event in events
+                           if event['kind'] == 'media')
+        scan_id = media_event['data']['scan_id']
+        evidence = ledger.evidence(
+            list_key=list_key_value, post_key=post_key_value,
+            media_key=key, scan_id=scan_id)
+        ledger.records.media_kind_correct(
+            session_id=ledger.session, media_key_value=key,
+            inventory_sequence=media_event['sequence'], to_kind=VIDEO,
+            evidence=evidence)
+        ledger.records.intent(session_id=ledger.session, media_key_value=key)
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.media_kind_correct(
+                session_id=ledger.session, media_key_value=key,
+                inventory_sequence=media_event['sequence'], to_kind=PHOTO,
+                evidence=evidence)
+        self.assertEqual(raised.exception.args[0], 'MEDIA_KIND_AFTER_ATTEMPT')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        ledger2 = self.new_ledger('kind-correction-after-completion')
+        _identity2, key2, _attempt2, _completion2 = self.complete_media(
+            ledger2, PHOTO, 'kind-correction-after-completion-media')
+        events2 = self.read_events(ledger2.records)
+        media_event2 = next(event for event in events2
+                            if event['kind'] == 'media')
+        scan_id2 = media_event2['data']['scan_id']
+        evidence2 = ledger2.evidence(
+            list_key=ledger2.summary['list_key'],
+            post_key=media_event2['data']['post_key'],
+            media_key=key2, scan_id=scan_id2)
+        before2 = self.event_bytes(ledger2.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger2.records.media_kind_correct(
+                session_id=ledger2.session, media_key_value=key2,
+                inventory_sequence=media_event2['sequence'], to_kind=VIDEO,
+                evidence=evidence2)
+        self.assertEqual(raised.exception.args[0], 'MEDIA_KIND_AFTER_ATTEMPT')
+        self.assertEqual(self.event_bytes(ledger2.records), before2)
+
+    def test_v1_intent_compatibility_and_forged_post_correction_order(self):
+        ledger = self.new_ledger('kind-v1-intent-valid')
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='kind-v1-intent-valid-media')
+        _post, post_key_value = self.observe_post(
+            ledger, 'kind-v1-intent-valid-post', [identity])
+        key = notes.media_key(
+            ledger.summary['list_key'], post_key_value, identity)
+        attempt = ledger.records.intent(
+            session_id=ledger.session, media_key_value=key)
+        events = self.read_events(ledger.records)
+        intent_event = next(event for event in events
+                            if event['kind'] == 'intent' and
+                            event['data']['attempt_id'] ==
+                            attempt['attempt_id'])
+        intent_event['data']['schema'] = 'line-notes-intent/v1'
+        intent_event['data'].pop('effective_kind')
+        intent_event['data'].pop('kind_correction_ref')
+        self.rewrite_events(ledger.records, events)
+        (Path(attempt['destination']) / 'v1-intent.png').write_bytes(
+            b'synthetic v1 intent media')
+        ledger.records.outcome(
+            session_id=ledger.session, attempt_id=attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=ledger.evidence_for_attempt(attempt))
+        completion = ledger.records.verify(
+            session_id=ledger.session, attempt_id=attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        self.assertEqual(completion['kind'], 'completion')
+        self.assertEqual(ledger.records.summary()['status_counts']['COMPLETED'], 1)
+
+        ledger2 = self.new_ledger('kind-v1-intent-forged')
+        identity2 = notes.media_identity(
+            kind=PHOTO, visual_key='kind-v1-intent-forged-media')
+        _post2, post_key2 = self.observe_post(
+            ledger2, 'kind-v1-intent-forged-post', [identity2])
+        key2 = notes.media_key(
+            ledger2.summary['list_key'], post_key2, identity2)
+        events2 = self.read_events(ledger2.records)
+        media_event = next(event for event in events2
+                           if event['kind'] == 'media')
+        ledger2.records.media_kind_correct(
+            session_id=ledger2.session, media_key_value=key2,
+            inventory_sequence=media_event['sequence'], to_kind=VIDEO,
+            evidence=ledger2.evidence(
+                list_key=ledger2.summary['list_key'], post_key=post_key2,
+                media_key=key2, scan_id=media_event['data']['scan_id']))
+        attempt2 = ledger2.records.intent(
+            session_id=ledger2.session, media_key_value=key2)
+        events2 = self.read_events(ledger2.records)
+        intent2 = next(event for event in events2
+                       if event['kind'] == 'intent' and
+                       event['data']['attempt_id'] == attempt2['attempt_id'])
+        intent2['data']['schema'] = 'line-notes-intent/v1'
+        intent2['data'].pop('effective_kind')
+        intent2['data'].pop('kind_correction_ref')
+        self.rewrite_events(ledger2.records, events2)
+        with self.assertRaises(NotesError) as raised:
+            self.reopen(ledger2).summary()
+        self.assertEqual(raised.exception.args[0],
+                         'V1_INTENT_AFTER_KIND_CORRECTION')
+
+        ledger3 = self.new_ledger('kind-correction-wrong-order')
+        identity3 = notes.media_identity(
+            kind=PHOTO, visual_key='kind-correction-wrong-order-media')
+        _post3, post_key3 = self.observe_post(
+            ledger3, 'kind-correction-wrong-order-post', [identity3])
+        key3 = notes.media_key(
+            ledger3.summary['list_key'], post_key3, identity3)
+        events3 = self.read_events(ledger3.records)
+        media_event3 = next(event for event in events3
+                            if event['kind'] == 'media')
+        ledger3.records.media_kind_correct(
+            session_id=ledger3.session, media_key_value=key3,
+            inventory_sequence=media_event3['sequence'], to_kind=VIDEO,
+            evidence=ledger3.evidence(
+                list_key=ledger3.summary['list_key'], post_key=post_key3,
+                media_key=key3, scan_id=media_event3['data']['scan_id']))
+        ledger3.records.intent(session_id=ledger3.session, media_key_value=key3)
+        events3 = self.read_events(ledger3.records)
+        correction_index = next(
+            index for index, event in enumerate(events3)
+            if event['kind'] == 'media-kind-correction')
+        intent_index = next(
+            index for index, event in enumerate(events3)
+            if event['kind'] == 'intent')
+        events3[correction_index], events3[intent_index] = (
+            events3[intent_index], events3[correction_index])
+        self.rewrite_events(ledger3.records, events3)
+        with self.assertRaises(NotesError) as raised:
+            self.reopen(ledger3).summary()
+        self.assertEqual(raised.exception.args[0], 'MEDIA_KIND_AFTER_ATTEMPT')
+
+    def test_source_unavailable_preserves_incomplete_without_recovery(self):
+        ledger = self.new_ledger('source-unavailable-preserve')
+        identities = [
+            notes.media_identity(
+                kind=PHOTO, visual_key='source-unavailable-%d' % index)
+            for index in range(2)]
+        _post, post_key_value = self.observe_post(
+            ledger, 'source-unavailable-preserve-post', identities)
+        list_key_value = ledger.summary['list_key']
+        key_a = notes.media_key(
+            list_key_value, post_key_value, identities[0])
+        key_b = notes.media_key(
+            list_key_value, post_key_value, identities[1])
+        attempt = ledger.records.intent(
+            session_id=ledger.session, media_key_value=key_a)
+        ledger.records.outcome(
+            session_id=ledger.session, attempt_id=attempt['attempt_id'],
+            outcome='STOPPED', evidence=ledger.evidence_for_attempt(attempt))
+
+        before = ledger.records.summary()
+        before_rows = {row['media_key']: row for row in before['media']}
+        self.assertEqual(before_rows[key_a]['status'], 'PREVIOUSLY_INCOMPLETE')
+        self.assertEqual(before_rows[key_a]['source_availability'], 'UNKNOWN')
+        self.assertEqual(before_rows[key_b]['status'], 'PENDING')
+        self.assertEqual(before_rows[key_b]['source_availability'], 'UNKNOWN')
+        before_counts = dict(before['status_counts'])
+        before_incomplete = before['current_incomplete']
+        self.assertEqual(before_counts['PREVIOUSLY_INCOMPLETE'], 1)
+        self.assertEqual(before_counts['PENDING'], 1)
+        self.assertFalse(before['all_known_media_complete'])
+
+        resume_before = ledger.records.resume()
+        self.assertEqual(len(resume_before['pending']), 1)
+        self.assertEqual(resume_before['pending'][0]['media_key'], key_a)
+        self.assertEqual(resume_before['pending'][0]['action'],
+                         'RECOVERY_REVIEW_REQUIRED')
+
+        result = ledger.records.source_unavailable(
+            session_id=ledger.session, media_key_value=key_a,
+            attempt_id=attempt['attempt_id'],
+            evidence=ledger.evidence_for_attempt(attempt))
+        self.assertEqual(result['schema'],
+                         'line-notes-source-unavailable/v1')
+        self.assertEqual(result['reason'], 'SOURCE_EXPIRED')
+
+        after = ledger.records.summary()
+        after_rows = {row['media_key']: row for row in after['media']}
+        self.assertEqual(after_rows[key_a]['status'],
+                         'PREVIOUSLY_INCOMPLETE')
+        self.assertEqual(after_rows[key_a]['source_availability'], 'EXPIRED')
+        self.assertEqual(after_rows[key_b]['status'], 'PENDING')
+        self.assertEqual(after_rows[key_b]['source_availability'], 'UNKNOWN')
+        self.assertEqual(after['status_counts'], before_counts)
+        self.assertEqual(after['current_incomplete'], before_incomplete)
+        self.assertFalse(after['all_known_media_complete'])
+        unresolved = {row['media_key']: row
+                      for row in after['unresolved_attempts']}
+        self.assertEqual(unresolved[key_a]['source_availability'], 'EXPIRED')
+        self.assertEqual(unresolved[key_a]['last_result'], 'STOPPED')
+        self.assertTrue(unresolved[key_a]['has_outcome'])
+        self.assertNotIn(key_b, unresolved)
+
+        before_intent = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.intent(
+                session_id=ledger.session, media_key_value=key_a)
+        self.assertEqual(raised.exception.args[0],
+                         'SOURCE_UNAVAILABLE_NO_RECOVERY')
+        self.assertEqual(self.event_bytes(ledger.records), before_intent)
+
+        resume_after = ledger.records.resume()
+        by_key = {row['media_key']: row for row in resume_after['pending']}
+        self.assertEqual(by_key[key_a]['action'], 'SOURCE_UNAVAILABLE')
+        self.assertFalse(resume_after['dispatch_authorized'])
+
+        before_duplicate = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.source_unavailable(
+                session_id=ledger.session, media_key_value=key_a,
+                attempt_id=attempt['attempt_id'],
+                evidence=ledger.evidence_for_attempt(attempt))
+        self.assertEqual(raised.exception.args[0],
+                         'DUPLICATE_SOURCE_UNAVAILABLE')
+        self.assertEqual(self.event_bytes(ledger.records), before_duplicate)
+        final = ledger.records.summary()
+        self.assertEqual(final['status_counts']['COMPLETED'], 0)
+        self.assertEqual(final['status_counts']['EXCLUDED'], 0)
+
+    def test_source_unavailable_rejects_unknown_and_forged_recovery(self):
+        ledger = self.new_ledger('source-unavailable-unknown')
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='source-unavailable-unknown-media')
+        _post, post_key_value = self.observe_post(
+            ledger, 'source-unavailable-unknown-post', [identity])
+        key = notes.media_key(
+            ledger.summary['list_key'], post_key_value, identity)
+        attempt = ledger.records.intent(
+            session_id=ledger.session, media_key_value=key)
+        ledger.records.outcome(
+            session_id=ledger.session, attempt_id=attempt['attempt_id'],
+            outcome='UNKNOWN', evidence=ledger.evidence_for_attempt(attempt))
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.source_unavailable(
+                session_id=ledger.session, media_key_value=key,
+                attempt_id=attempt['attempt_id'],
+                evidence=ledger.evidence_for_attempt(attempt))
+        self.assertEqual(raised.exception.args[0],
+                         'SOURCE_UNAVAILABLE_REQUIRES_STOPPED')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        ledger2 = self.new_ledger('source-unavailable-forged-intent')
+        identity2 = notes.media_identity(
+            kind=PHOTO, visual_key='source-unavailable-forged-media')
+        _post2, post_key2 = self.observe_post(
+            ledger2, 'source-unavailable-forged-post', [identity2])
+        key2 = notes.media_key(
+            ledger2.summary['list_key'], post_key2, identity2)
+        attempt2 = ledger2.records.intent(
+            session_id=ledger2.session, media_key_value=key2)
+        ledger2.records.outcome(
+            session_id=ledger2.session, attempt_id=attempt2['attempt_id'],
+            outcome='STOPPED',
+            evidence=ledger2.evidence_for_attempt(attempt2))
+        ledger2.records.source_unavailable(
+            session_id=ledger2.session, media_key_value=key2,
+            attempt_id=attempt2['attempt_id'],
+            evidence=ledger2.evidence_for_attempt(attempt2))
+
+        events = self.read_events(ledger2.records)
+        original_intent = next(event for event in events
+                               if event['kind'] == 'intent')
+        forged = copy.deepcopy(original_intent)
+        forged['data']['attempt_id'] = uuid.uuid4().hex
+        forged['data']['schema'] = 'line-notes-intent/v1'
+        forged['data'].pop('effective_kind')
+        forged['data'].pop('kind_correction_ref')
+        forged['data']['recovery_of'] = attempt2['attempt_id']
+        forged['data']['recovery_evidence'] = (
+            ledger2.stored_evidence_for_attempt(attempt2))
+        events.append(forged)
+        self.rewrite_events(ledger2.records, events)
+        with self.assertRaises(NotesError) as raised:
+            self.reopen(ledger2).summary()
+        self.assertEqual(raised.exception.args[0],
+                         'INTENT_AFTER_SOURCE_UNAVAILABLE')
 
 
 if __name__ == '__main__':

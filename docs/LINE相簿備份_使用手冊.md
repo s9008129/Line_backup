@@ -178,10 +178,17 @@ NOTES_BACKUP_ROOT 留空時使用目前專案根目錄的 backup/記事本/；
 若 UI 顯示 Save All，須先證明它是本記事本自己的控制，不沿用相簿入口。
 下載後先保存第一筆 outcome；只有確認下載完成才驗證檔案。
 結果未知先查證與調和，不直接 verify、不建立新 intent、不重送。
+新一輪 scan 前先讀 summary 的 unresolved_attempts、dispatch_blockers 與
+scan 覆蓋；舊 attempt 先 reconcile／verify／resume，不可用新 scan 掩蓋。
+事件證據先用 evidence-pack 產生並讀回 v2 bundle，不手寫 JSON、hash 或 context。
 
 本次亦授權恢復：確認先前已停止且未完成時，保留原檔，
 依 Skill 建立新的空白恢復 attempt；已完成項跳過，
 待驗證項先驗證，命名交易中斷接續原交易而不重下。
+若單一來源已明確到期且原 attempt 只有 STOPPED，只追加來源不可用紀錄；
+它不代表完成、排除或可重試，不得據此再下載或推論其他項到期。
+遇到舊 page 證據或 media 類型疑義時，先做唯讀稽核並回報；
+未經另一次精確資料授權，不套用證據或類型更正。
 已完成的事實不因新 Session、重排、圖片搬走或新目的地而改寫。
 純文字貼文記貼文層 NO_MEDIA，不建立下載 intent，
 也不是第七類媒體狀態或下載完成，最後須另列篇數。
@@ -218,7 +225,11 @@ UNKNOWN、活動下載及未完成命名交易不因照片缺席或新目錄解�
 
 Agent 先依當次畫面與 AX 脈絡核對列表入口，不以中文標題或 OCR 單獨認定身分。身分依序為列表→貼文→媒體；貼文重排只更新來源順序，不重新命名舊完成檔。新媒體只補可唯一識別者，編號取該貼文目前最大編號加一。相簿與記事本、同日期貼文、相同張數或相同檔案 hash 都不能跨列表合併。
 
-每個媒體下載都遵守一次一項。intent 一旦持久保存就按「可能已派送」處理；沒有正面證據不得因工具逾時、畫面未變或舊計數為零就重送。成功 intent 的 `status=UNKNOWN` 只是派送前初始狀態，不表示已下載。`memory`／`summary` 只供摘要投影，不提供完整 attempt、staging 目的地或 completion manifest；交易細節以該次 `intent`／`verify` JSON 及帳本追加事件為準。`UNKNOWN` 必須先以原事件、目的地與當次檔案查證；未收斂前不能直接驗證、建立新 attempt 或改用新目錄解鎖。只有確認先前已停止／未派送、保留原檔且原任務涵蓋恢復時，才可建立新的空白恢復 attempt。
+每個媒體下載都遵守一次一項。intent 一旦持久保存就按「可能已派送」處理；沒有正面證據不得因工具逾時、畫面未變或舊計數為零就重送。成功 intent 的 `status=UNKNOWN` 只是派送前初始狀態，不表示已下載。`memory`／`summary` 只供摘要投影，不提供完整 attempt 歷史、staging 目的地或 completion manifest；但它會列 `unresolved_attempts`、`source_availability`、`evidence_corrections`、scan binding 與 blockers，交易細節以該次 `intent`／`verify` JSON 及帳本追加事件為準。`UNKNOWN` 必須先以原事件、目的地與當次檔案查證；未收斂前不能直接驗證、建立新 attempt 或改用新目錄解鎖。只有確認先前已停止／未派送、保留原檔且原任務涵蓋恢復時，才可建立新的空白恢復 attempt。
+
+新 Session 或新一輪盤點前，先處理 `unresolved_attempts`：無 outcome／`UNKNOWN` 先 `reconcile`，`DOWNLOAD_FINISHED` 先 `verify`，待命名交易先 `resume`。`scan start` 也會拒絕仍待驗、未決 attempt、待命名交易或上一個 scan coverage 不完整的情況。若回 `SCAN_BINDING_REVIEW_REQUIRED`，代表舊 attempt 與 scan 的綁定不能安全自動改寫；Agent 只保留證據並交人審查，不換綁定或用新 scan 掩蓋。
+
+事件 evidence 現在必須是由 `notes evidence-pack` 產生的 `line-notes-evidence/v2` bundle；statement 可依 Skill 的證據範本書寫，但傳給 `--evidence` 等參數的是回傳 `bundle_path`，不是手寫文字或 JSON。`evidence-audit` 可唯讀列出 evidence／legacy／correction 引用；完整性失敗以 exit 4 結束且不輸出可信業務投影。`evidence-correct` 只修精確 page 引用，`media-kind-correct` 只改尚未 attempt 的已盤點媒體種類；兩者均保留原 key、事件、順序與完成事實，真實帳本必須先經精確資料預覽與另行授權，不是日常自動修補。若最新 attempt 為 `STOPPED` 且來源已明確到期，`source-unavailable` 只記 `SOURCE_EXPIRED` 與 `source_availability=EXPIRED`，仍保留欠件、禁止該項 intent／recovery，也不等於服務端已回收。
 
 六類媒體業務狀態是 `COMPLETED`、`EXCLUDED`、`PENDING`、`PREVIOUSLY_INCOMPLETE`、`UNKNOWN`、`PROTECTED_HISTORY`。`NO_MEDIA` 是貼文層標記，不是第七類，也不能計入下載完成。人工備份聲明只是來源註記，不能單獨升格為工具認定的完成。
 
@@ -235,6 +246,8 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes --help
 notes CLI 的業務成功以 exit 0、已列業務拒絕以 exit 4 回傳 JSON 簿記結果，這兩種 JSON 固定包含 `dispatch_authorized=false`；參數語法或必填欄位錯誤以 exit 2 拒絕，只在 stderr 顯示錯誤且不改紀錄，不輸出 JSON；未預期內部錯誤以 exit 70 回傳 `status=INTERNAL_ERROR`、`reason=UNEXPECTED_EXCEPTION`、`dispatch_authorized=false`。exit 70 不是可重試業務拒絕，不得據此重送、改寫 ledger、建立新 attempt、換目的地或換入口繞過；應停止並保留現場、原始輸出與證據後回報。`dispatch_authorized=false` 只表示工具不授予 GUI，不能當成下載授權、實機 PASS 或獨立驗收。實際下載仍只能發生在本次任務授權與有效前景交接內。
 
 新列表流程是 `init` → `bind` → `scan start` → `page`… → `scan finish` → `post`／`media`；既有列表是 `bind` → `scan start` → 後續同一盤點流程。`lists`／`init` 使用 collection；除 `lists`、`init` 外，所有帳本命令都要 `--records-root`。`init`／`destination` 另要求 `--photo-root`。完整參數矩陣見[記事本下載與 notes CLI](../.agents/skills/line-notes-agent-cua/references/download-and-ledger.md)；照片 `verify` 必須成對傳 `--decoder` 與 `--decoder-sha256`，影片則不傳該照片 decoder 組合。
+
+本輪 CLI 另提供 `evidence-pack`、`evidence-audit`、`evidence-correct`、`media-kind-correct` 與 `source-unavailable`。其中 `evidence-audit` 是唯讀操作，`evidence-pack` 只建立私有 v2 bundle；後三個會追加帳本事實，必須符合 Skill 的精確 target／evidence／授權條件，不由一般備份流程自行猜測套用。Agent 從 CLI 讀回 key、sequence、hash 與 context，Owner 不需手填。
 
 相簿、記事本摘要及個別媒體是三個不同層級的完成訊號，不能互換：
 

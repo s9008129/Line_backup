@@ -1,8 +1,20 @@
-# 記事本操作證據範本
+# 記事本 evidence-pack statement 範本
 
-本範本是給 Agent 在現有 `notes` 子命令的 `--evidence FILE` 使用的自由文字紀錄格式，不是新的 CLI schema、parser 或語意驗證器。CLI 仍檢查專案內非空、非 symlink 的 regular file，並在保存與讀回時核對內容定址 bytes／SHA-256；它不解析欄位語意，也不知道欄位是否真實、畫面是否屬於該 attempt，或證據是否足以判完成。
+本範本是 Agent 撰寫 `notes evidence-pack --statement FILE` 的人工紀錄內容，不是可直接傳給事件 evidence 參數的自由文字檔，也不是 CLI schema、parser 或語意驗證器。Agent 把這份 statement 與當次截圖／AX／input receipt／command stdout／stderr 等原件用 `evidence-pack` 封裝；成功後只把回傳的 `bundle_path` 傳給 `--evidence`、`--binding-evidence`、`--observation` 或其他證據參數。CLI 核對 v2 bundle 的結構、context 與保存子 blob 的 bytes／SHA-256，但不解析欄位語意，也不知道欄位是否真實、畫面是否屬於該 attempt，或證據是否足以判完成。
 
-每次下載控制、chooser 確認、outcome、reconcile 與恢復前，先建立這份私有證據檔；有 `--evidence FILE` 的子命令使用同一份或引用它。`intent` 沒有一般 evidence 參數，其預檢與讀回證據留在私有任務區。無法取得的欄位寫 `UNKNOWN` 並說明原因；不要用空白、猜測、檔名或另一個畫面補值。原始證據留在專案任務所需的私有區域，不外傳。
+每次下載控制、chooser 確認、outcome、reconcile、更正與恢復前，先建立這份私有 statement，再用 `evidence-pack` 產生 bundle。context 只填該命令唯一主體的已知 ID；適用 ID 不可留 `UNKNOWN` 或誤填另一主體，未分配／不適用的欄位才由 `evidence-pack` 保持 `UNKNOWN`。`intent` 沒有一般 evidence 參數，其預檢與讀回證據留在私有任務區。無法取得的欄位寫 `UNKNOWN` 並說明原因；不要用空白、猜測、檔名或另一個畫面補值。原始證據留在專案任務所需的私有區域，不外傳。
+
+```sh
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
+  --statement STATEMENT_FILE \
+  --asset screenshot PRIVATE_SCREENSHOT \
+  --asset ax PRIVATE_AX_CAPTURE \
+  --output-dir .local/line-backup/tasks/TASK_ID/evidence/NEW_UUID \
+  --list-key LIST_KEY [--post-key POST_KEY] [--media-key MEDIA_KEY] \
+  [--attempt-id ATTEMPT_ID] [--scan-id SCAN_ID]
+```
+
+`--asset` 可重複；role 限 `screenshot`、`ax`、`input_receipt`、`command_stdout`、`command_stderr`、`observation`。statement 與畫面／AX 不可空；`command_stdout`／`command_stderr` 可為零 bytes。`--output-dir` 必須在 `.local/line-backup/tasks/` 下、尚不存在且不可用既有目錄代替；不要手動命名或覆寫 hash。Owner 不需要提供 JSON、UUID、key 或 hash。
 
 ## 必錄欄位
 
@@ -56,10 +68,9 @@ observation:
   clock_source: UNKNOWN
   timezone: UNKNOWN
   precision: UNKNOWN
-  evidence_path: UNKNOWN
-  evidence_bytes: UNKNOWN
-  evidence_sha256: UNKNOWN
-  hash_tool: UNKNOWN
+  evidence_bundle_path: UNKNOWN
+  evidence_bundle_sha256: UNKNOWN
+  evidence_pack_command_ref: UNKNOWN
 
 localization:
   page_role: UNKNOWN
@@ -115,8 +126,8 @@ unknowns:
 
 ## 引用檔名與 hash
 
-- 使用可避免覆寫的唯一檔名，例如 `<attempt_id>__<phase>__<sequence>__<source_kind>.<ext>`；不得因同名而覆寫先前證據。
-- 對最終保存後的檔案使用允許的 SHA-256 工具計算 hash，保存原始命令與輸出，再讀回同一路徑重算核對。hash 只證明該引用檔的位元組，不證明畫面真實、媒體身分或下載完成。
+- 使用可避免覆寫的唯一檔名，例如 `<attempt_id>__<phase>__<sequence>__<source_kind>.<ext>`；不得因同名而覆寫先前證據。`evidence-pack` 會自行計算並核對原件 hash；不要手填或改寫 bundle 內部 hash。
+- 保存 `evidence-pack` 的完整命令、exit code、stdout 與 stderr；用回傳的 `bundle_path`、outer SHA-256 及 context 作引用。hash 只證明 bundle／子 blob 的位元組與 context，不證明畫面真實、媒體身分、控制命中或下載完成。
 - 檔名、修改時間、hash、畫面出現順序與鄰近時間都不能單獨建立 attempt／chooser／檔案歸屬；關聯不足就寫 `UNKNOWN`。
 
 ## 使用界限

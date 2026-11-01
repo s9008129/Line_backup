@@ -199,7 +199,7 @@ class NotesLockTests(unittest.TestCase):
     def test_records_lock_is_precise_for_reads_and_resume(self):
         locked_path = self.records.records / '.lock'
         with self.hold_lock(locked_path):
-            for command in ('memory', 'summary'):
+            for command in ('memory', 'summary', 'evidence-audit'):
                 with self.subTest(command=command):
                     code, payload = self.run_main(
                         command, '--records-root', self.records.records)

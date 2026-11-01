@@ -46,7 +46,8 @@ LOCAL_VERIFIED = 'VERIFIED_PRESENT'
 LOCAL_MISSING = 'LOCAL_MISSING'
 LOCAL_CHANGED = 'LOCAL_CHANGED'
 LOCAL_NOT_APPLICABLE = 'NOT_APPLICABLE'
-READ_ONLY_COMMANDS = frozenset(('lists', 'memory', 'summary'))
+READ_ONLY_COMMANDS = frozenset(('lists', 'memory', 'summary',
+                                'evidence-audit'))
 
 PHOTO_SUFFIXES = frozenset(('.jpg', '.jpeg', '.png', '.heic', '.heif',
                             '.webp', '.tif', '.tiff', '.gif'))
@@ -351,6 +352,23 @@ def _evidence_context(**values):
         return notes_evidence.normalize_context(values)
     except notes_evidence.NotesEvidenceError as exc:
         raise NotesError(exc.code) from exc
+
+
+def _event_sha256(event):
+    return digest(encoded(event))
+
+
+def _event_ref(event):
+    return dict(sequence=event['sequence'], sha256=_event_sha256(event))
+
+
+def _check_event_ref(value, code):
+    need(isinstance(value, dict) and
+         set(value) == {'sequence', 'sha256'} and
+         type(value['sequence']) is int and value['sequence'] >= 1,
+         code)
+    _hex(value['sha256'], code)
+    return value
 
 
 def _read_regular(path, *, allowed_nlinks=(1,), code='FILE_CHANGED'):
@@ -697,21 +715,22 @@ class NotesRecords:
                  'NOTES_RECORDS_NOT_REGISTERED')
 
     @contextlib.contextmanager
-    def locked(self):
+    def locked(self, *, audit_rows=None):
         records = _canonical_existing_directory(
             self.records, 'CANONICAL_NOTES_RECORDS_REQUIRED')
         need((records / 'events').is_dir() and
              (records / 'evidence').is_dir(), 'NOTES_RECORDS_STRUCTURE_CHANGED')
         with _file_lock(records / '.lock', scope='records'):
             try:
-                self._load(records)
+                self._load(records, audit_rows=audit_rows)
             except NotesError:
                 raise
             except (ArithmeticError, RecursionError) as exc:
                 raise NotesError('NOTES_LEDGER_NUMERIC_INVALID') from exc
             yield
 
-    def _load(self, records):
+    def _load(self, records, *, audit_rows=None):
+        self._audit_rows = audit_rows
         list_data = _read_json(records / 'list.json', 'INVALID_NOTES_LIST')
         store = _read_json(records / 'store.json', 'INVALID_NOTES_STORE')
         _check_exact(list_data, ('schema', 'version', 'local_list_id',
@@ -791,6 +810,37 @@ class NotesRecords:
         self._validate_destination_chain()
         self._validate_event_graph()
 
+    def _event_evidence(self, event, field, ref, expected_context,
+                        *, require_v2=False, require_scan_context=False):
+        if self._audit_rows is not None:
+            row = notes_evidence.audit_saved_evidence(
+                _evidence_directory(self.records), ref, expected_context)
+            row = dict(row, event_sequence=event.get('sequence'),
+                       event_kind=event['kind'], field=field)
+            if 'page_sequence' in event.get('data', {}):
+                row['event_page_sequence'] = event['data']['page_sequence']
+            if require_v2 and (row['classification'] != 'V2' or
+                               row['reference_check'] != 'VERIFIED'):
+                row['integrity_ok'] = False
+                row['errors'] = sorted(set(row['errors'] +
+                                           ['EVIDENCE_BUNDLE_REQUIRED']))
+            if (require_scan_context and row['classification'] == 'V2' and
+                    expected_context['scan_id'] == notes_evidence.UNKNOWN):
+                row['integrity_ok'] = False
+                row['errors'] = sorted(set(row['errors'] +
+                                           ['EVIDENCE_SCAN_CONTEXT_REQUIRED']))
+            self._audit_rows.append(row)
+            return row
+        loaded = _check_evidence(
+            self.records, ref, expected_context=expected_context)
+        if require_v2:
+            need(loaded['classification'] == 'REFERENCE_VERIFIED',
+                 'EVIDENCE_BUNDLE_REQUIRED')
+        if require_scan_context and loaded['classification'] == 'REFERENCE_VERIFIED':
+            need(expected_context['scan_id'] != notes_evidence.UNKNOWN,
+                 'EVIDENCE_SCAN_CONTEXT_REQUIRED')
+        return loaded
+
     def _intent_evidence_context(self, attempt_id):
         for event in self.events:
             if event['kind'] != 'intent':
@@ -840,10 +890,10 @@ class NotesRecords:
                  isinstance(data['list_directory'], str),
                  'INVALID_CREATED_EVENT')
             context = _evidence_context(list_key=data['list_key'])
-            _check_evidence(self.records, data['binding_evidence'],
-                            expected_context=context)
-            _check_evidence(self.records, data['history_scope_evidence'],
-                            expected_context=context)
+            self._event_evidence(event, 'binding_evidence',
+                                 data['binding_evidence'], context)
+            self._event_evidence(event, 'history_scope_evidence',
+                                 data['history_scope_evidence'], context)
             need(Path(data['list_directory']).parent == Path(data['photo_root']),
                  'INVALID_CREATED_EVENT')
         elif kind == 'binding':
@@ -854,10 +904,9 @@ class NotesRecords:
                  isinstance(data['session_id'], str) and
                  bool(data['session_id']), 'INVALID_BINDING_EVENT')
             context = _evidence_context(list_key=self.list_data['list_key'])
-            _check_evidence(self.records, data['observation'],
-                            expected_context=context)
-            _check_evidence(self.records, data['handoff'],
-                            expected_context=context)
+            self._event_evidence(event, 'observation', data['observation'],
+                                 context)
+            self._event_evidence(event, 'handoff', data['handoff'], context)
         elif kind == 'destination':
             _check_exact(data, ('schema', 'photo_root', 'previous_root',
                                 'list_directory', 'previous_list_directory',
@@ -874,10 +923,9 @@ class NotesRecords:
                  type(data['directory_inode']) is int and
                  isinstance(data['session_id'], str) and
                  bool(data['session_id']), 'INVALID_DESTINATION_EVENT')
-            _check_evidence(
-                self.records, data['evidence'],
-                expected_context=_evidence_context(
-                    list_key=self.list_data['list_key']))
+            self._event_evidence(
+                event, 'evidence', data['evidence'],
+                _evidence_context(list_key=self.list_data['list_key']))
         elif kind == 'scan':
             need(data.get('schema') == 'line-notes-scan/v1' and
                  data.get('action') in ('START', 'COMPLETE') and
@@ -885,9 +933,9 @@ class NotesRecords:
                  bool(data.get('scan_id')) and
                  isinstance(data.get('session_id'), str) and
                  bool(data.get('session_id')), 'INVALID_SCAN_EVENT')
-            _check_evidence(
-                self.records, data.get('evidence'),
-                expected_context=_evidence_context(
+            self._event_evidence(
+                event, 'evidence', data.get('evidence'),
+                _evidence_context(
                     list_key=self.list_data['list_key'],
                     scan_id=(data.get('scan_id')
                              if data.get('action') == 'COMPLETE' else None)))
@@ -925,11 +973,14 @@ class NotesRecords:
                  isinstance(data['overlap_keys'], list) and
                  all(isinstance(key, str) for key in data['overlap_keys']),
                  'INVALID_PAGE_EVENT')
-            _check_scan_context_evidence(
-                self.records, data['evidence'],
-                expected_context=_evidence_context(
-                    list_key=self.list_data['list_key'],
-                    scan_id=data['scan_id']))
+            _validate_evidence_ref_shape(data['evidence'],
+                                         'INVALID_PAGE_EVENT')
+            if self._audit_rows is not None:
+                self._event_evidence(
+                    event, 'evidence', data['evidence'],
+                    _evidence_context(list_key=self.list_data['list_key'],
+                                      scan_id=data['scan_id']),
+                    require_scan_context=True)
             need(isinstance(data['posts'], list), 'INVALID_PAGE_EVENT')
             seen = set()
             for row in data['posts']:
@@ -962,11 +1013,12 @@ class NotesRecords:
             if 'scan_id' in data:
                 need(isinstance(data['scan_id'], str) and
                      bool(data['scan_id'].strip()), 'INVALID_POST_EVENT')
-            _check_scan_context_evidence(
-                self.records, data['evidence'],
-                expected_context=_evidence_context(
-                    list_key=self.list_data['list_key'],
-                    post_key=data['post_key'], scan_id=data.get('scan_id')))
+            self._event_evidence(
+                event, 'evidence', data['evidence'],
+                _evidence_context(list_key=self.list_data['list_key'],
+                                  post_key=data['post_key'],
+                                  scan_id=data.get('scan_id')),
+                require_scan_context=True)
         elif kind == 'media':
             required = {'schema', 'post_key', 'items', 'missing', 'evidence'}
             need(isinstance(data, dict) and required <= set(data) and
@@ -979,11 +1031,12 @@ class NotesRecords:
             if 'scan_id' in data:
                 need(isinstance(data['scan_id'], str) and
                      bool(data['scan_id'].strip()), 'INVALID_MEDIA_EVENT')
-            _check_scan_context_evidence(
-                self.records, data['evidence'],
-                expected_context=_evidence_context(
-                    list_key=self.list_data['list_key'],
-                    post_key=data['post_key'], scan_id=data.get('scan_id')))
+            self._event_evidence(
+                event, 'evidence', data['evidence'],
+                _evidence_context(list_key=self.list_data['list_key'],
+                                  post_key=data['post_key'],
+                                  scan_id=data.get('scan_id')),
+                require_scan_context=True)
             seen = set()
             seen_orders = set()
             for order, row in enumerate(data['items']):
@@ -1007,20 +1060,22 @@ class NotesRecords:
                      bool(row['reason'].strip()), 'INVALID_MEDIA_EVENT')
                 seen_orders.add(row['source_order'])
         elif kind == 'intent':
-            required = ('schema', 'media_key', 'post_key', 'identity',
-                        'attempt_id', 'session_id', 'destination',
-                        'directory_device', 'directory_inode',
-                        'save_all_limit', 'save_all_count', 'recovery_of',
-                        'recovery_evidence')
+            common = {'schema', 'media_key', 'post_key', 'identity',
+                      'attempt_id', 'session_id', 'destination',
+                      'directory_device', 'directory_inode',
+                      'save_all_limit', 'save_all_count', 'recovery_of',
+                      'recovery_evidence'}
+            v2_fields = common | {'scan_id', 'effective_kind',
+                                  'kind_correction_ref'}
             need(isinstance(data, dict) and
-                 set(required) <= set(data) and
-                 set(data) <= set(required) | {'scan_id'},
-                 'INVALID_INTENT_EVENT')
+                 ((data.get('schema') == 'line-notes-intent/v1' and
+                   common <= set(data) and set(data) <= common | {'scan_id'}) or
+                  (data.get('schema') == 'line-notes-intent/v2' and
+                   set(data) == v2_fields)), 'INVALID_INTENT_EVENT')
             if 'scan_id' in data:
                 need(isinstance(data['scan_id'], str) and
                      bool(data['scan_id'].strip()), 'INVALID_INTENT_EVENT')
-            need(data['schema'] == 'line-notes-intent/v1' and
-                 _is_hex(data['media_key']) and _is_hex(data['post_key']) and
+            need(_is_hex(data['media_key']) and _is_hex(data['post_key']) and
                  media_key(self.list_data['list_key'], data['post_key'],
                            data['identity']) == data['media_key'] and
                  isinstance(data['attempt_id'], str) and
@@ -1033,11 +1088,23 @@ class NotesRecords:
                  data['save_all_limit'] == 1 and
                  data['save_all_count'] == 0,
                  'INVALID_INTENT_EVENT')
+            earlier_corrections = [
+                candidate for candidate in self.events
+                if candidate['kind'] == 'media-kind-correction' and
+                candidate['data']['media_key'] == data['media_key']]
+            if data['schema'] == 'line-notes-intent/v1':
+                need(not earlier_corrections,
+                     'V1_INTENT_AFTER_KIND_CORRECTION')
+            else:
+                need(data['effective_kind'] in MEDIA_KINDS,
+                     'INVALID_INTENT_EVENT')
+                if data['kind_correction_ref'] is not None:
+                    _check_event_ref(data['kind_correction_ref'],
+                                     'INVALID_INTENT_EVENT')
             if data['recovery_evidence'] is not None:
-                _check_scan_context_evidence(
-                    self.records, data['recovery_evidence'],
-                    expected_context=self._intent_evidence_context(
-                        data['recovery_of']))
+                self._event_evidence(
+                    event, 'recovery_evidence', data['recovery_evidence'],
+                    self._intent_evidence_context(data['recovery_of']))
         elif kind == 'outcome':
             _check_exact(data, ('schema', 'attempt_id', 'media_key',
                                 'outcome', 'evidence'), 'INVALID_OUTCOME_EVENT')
@@ -1045,10 +1112,9 @@ class NotesRecords:
                  isinstance(data['attempt_id'], str) and
                  _is_hex(data['media_key']) and
                  data['outcome'] in OUTCOMES, 'INVALID_OUTCOME_EVENT')
-            _check_evidence(
-                self.records, data['evidence'],
-                expected_context=self._intent_evidence_context(
-                    data['attempt_id']))
+            self._event_evidence(
+                event, 'evidence', data['evidence'],
+                self._intent_evidence_context(data['attempt_id']))
         elif kind == 'reconcile':
             _check_exact(data, ('schema', 'attempt_id', 'media_key',
                                 'result', 'evidence'), 'INVALID_RECONCILE_EVENT')
@@ -1056,10 +1122,9 @@ class NotesRecords:
                  isinstance(data['attempt_id'], str) and
                  _is_hex(data['media_key']) and
                  data['result'] in OUTCOMES, 'INVALID_RECONCILE_EVENT')
-            _check_evidence(
-                self.records, data['evidence'],
-                expected_context=self._intent_evidence_context(
-                    data['attempt_id']))
+            self._event_evidence(
+                event, 'evidence', data['evidence'],
+                self._intent_evidence_context(data['attempt_id']))
         elif kind == 'verification':
             _check_exact(data, ('schema', 'attempt_id', 'media_key',
                                 'post_key', 'kind', 'source', 'manifest',
@@ -1130,6 +1195,82 @@ class NotesRecords:
                  isinstance(data['target_file'], dict) and
                  isinstance(data['target_directory'], dict) and
                  isinstance(data['naming'], dict), 'INVALID_COMPLETION_EVENT')
+        elif kind == 'evidence-correction':
+            _check_exact(data, ('schema', 'page_sequence', 'page_sha256',
+                                'original_evidence_sha256',
+                                'replacement_ref', 'reason', 'session_id',
+                                'previous_correction_ref'),
+                         'INVALID_EVIDENCE_CORRECTION')
+            need(data['schema'] == 'line-notes-evidence-correction/v1' and
+                 type(data['page_sequence']) is int and
+                 data['page_sequence'] >= 1 and
+                 _is_hex(data['page_sha256']) and
+                 _is_hex(data['original_evidence_sha256']) and
+                 isinstance(data['reason'], str) and
+                 bool(data['reason'].strip()) and
+                 isinstance(data['session_id'], str) and
+                 bool(data['session_id']), 'INVALID_EVIDENCE_CORRECTION')
+            target = self._event_by_sequence(data['page_sequence'])
+            need(target is not None and target['kind'] == 'page' and
+                 digest(encoded(target)) == data['page_sha256'],
+                 'EVIDENCE_CORRECTION_TARGET_CHANGED')
+            original = _validate_evidence_ref_shape(
+                target['data']['evidence'], 'INVALID_EVIDENCE_CORRECTION')
+            need(original['sha256'] == data['original_evidence_sha256'],
+                 'EVIDENCE_CORRECTION_ORIGINAL_CHANGED')
+            if data['previous_correction_ref'] is not None:
+                _check_event_ref(data['previous_correction_ref'],
+                                 'INVALID_EVIDENCE_CORRECTION')
+            self._event_evidence(
+                event, 'replacement_ref', data['replacement_ref'],
+                _evidence_context(list_key=self.list_data['list_key'],
+                                  scan_id=target['data']['scan_id']),
+                require_v2=True, require_scan_context=True)
+        elif kind == 'media-kind-correction':
+            _check_exact(data, ('schema', 'media_key', 'post_key', 'scan_id',
+                                'inventory_sequence', 'inventory_sha256',
+                                'from_kind', 'to_kind',
+                                'previous_correction', 'evidence',
+                                'session_id'),
+                         'INVALID_MEDIA_KIND_CORRECTION')
+            need(data['schema'] == 'line-notes-media-kind-correction/v1' and
+                 _is_hex(data['media_key']) and _is_hex(data['post_key']) and
+                 isinstance(data['scan_id'], str) and
+                 bool(data['scan_id'].strip()) and
+                 type(data['inventory_sequence']) is int and
+                 data['inventory_sequence'] >= 1 and
+                 _is_hex(data['inventory_sha256']) and
+                 data['from_kind'] in MEDIA_KINDS and
+                 data['to_kind'] in MEDIA_KINDS and
+                 data['from_kind'] != data['to_kind'] and
+                 isinstance(data['session_id'], str) and
+                 bool(data['session_id']), 'INVALID_MEDIA_KIND_CORRECTION')
+            if data['previous_correction'] is not None:
+                _check_event_ref(data['previous_correction'],
+                                 'INVALID_MEDIA_KIND_CORRECTION')
+            self._event_evidence(
+                event, 'evidence', data['evidence'],
+                _evidence_context(list_key=self.list_data['list_key'],
+                                  post_key=data['post_key'],
+                                  media_key=data['media_key'],
+                                  scan_id=data['scan_id']),
+                require_v2=True, require_scan_context=True)
+        elif kind == 'source-unavailable':
+            _check_exact(data, ('schema', 'media_key', 'post_key',
+                                'attempt_id', 'reason', 'evidence',
+                                'session_id'),
+                         'INVALID_SOURCE_UNAVAILABLE')
+            need(data['schema'] == 'line-notes-source-unavailable/v1' and
+                 _is_hex(data['media_key']) and _is_hex(data['post_key']) and
+                 isinstance(data['attempt_id'], str) and
+                 bool(data['attempt_id']) and
+                 data['reason'] == 'SOURCE_EXPIRED' and
+                 isinstance(data['session_id'], str) and
+                 bool(data['session_id']), 'INVALID_SOURCE_UNAVAILABLE')
+            self._event_evidence(
+                event, 'evidence', data['evidence'],
+                self._intent_evidence_context(data['attempt_id']),
+                require_v2=True, require_scan_context=True)
         elif kind in ('exclusion', 'protection'):
             _check_exact(data, ('schema', 'media_key', 'reason', 'evidence'),
                          'INVALID_%s_EVENT' % kind.upper())
@@ -1137,10 +1278,9 @@ class NotesRecords:
                  _is_hex(data['media_key']) and
                  isinstance(data['reason'], str) and
                  bool(data['reason'].strip()), 'INVALID_%s_EVENT' % kind.upper())
-            _check_evidence(
-                self.records, data['evidence'],
-                expected_context=self._media_evidence_context(
-                    data['media_key']))
+            self._event_evidence(
+                event, 'evidence', data['evidence'],
+                self._media_evidence_context(data['media_key']))
         else:
             raise NotesError('UNKNOWN_NOTES_EVENT_KIND')
 
@@ -1171,6 +1311,111 @@ class NotesRecords:
              type(row['ctime_ns']) is int, code)
         return row
 
+    def _evidence_correction_projection(self):
+        by_page = {}
+        latest = {}
+        for event in self.events:
+            if event['kind'] != 'evidence-correction':
+                continue
+            data = event['data']
+            page_sequence = data['page_sequence']
+            previous = latest.get(page_sequence)
+            prior_ref = data['previous_correction_ref']
+            if previous is None:
+                need(prior_ref is None,
+                     'EVIDENCE_CORRECTION_FORK')
+            else:
+                need(prior_ref == _event_ref(previous),
+                     'EVIDENCE_CORRECTION_CHAIN_CHANGED')
+            by_page.setdefault(page_sequence, []).append(event)
+            latest[page_sequence] = event
+        return by_page, latest
+
+    def _media_kind_correction_projection(self):
+        by_media = {}
+        latest = {}
+        terminal = {'intent', 'verification', 'completion', 'exclusion',
+                    'protection'}
+        for event in self.events:
+            if event['kind'] != 'media-kind-correction':
+                continue
+            data = event['data']
+            key = data['media_key']
+            need(data['inventory_sequence'] < event['sequence'],
+                 'MEDIA_KIND_INVENTORY_CHANGED')
+            prefix = self.events[:event['sequence'] - 1]
+            inventory = self._event_by_sequence(data['inventory_sequence'])
+            need(inventory is not None and inventory['kind'] == 'media' and
+                 _event_sha256(inventory) == data['inventory_sha256'],
+                 'MEDIA_KIND_INVENTORY_CHANGED')
+            inventory_data = inventory['data']
+            need(inventory_data['post_key'] == data['post_key'] and
+                 inventory_data.get('scan_id') == data['scan_id'] and
+                 any(row['media_key'] == key
+                     for row in inventory_data['items']),
+                 'MEDIA_KIND_INVENTORY_CHANGED')
+            prefix_latest, prefix_scans = self._open_scan(prefix)
+            scan = prefix_scans.get(data['scan_id'])
+            need(scan is not None and scan['complete'] is not None and
+                 scan['complete']['sequence'] < event['sequence'] and
+                 prefix_latest == data['scan_id'],
+                 'MEDIA_KIND_SCAN_CHANGED')
+            prefix_media, prefix_snapshots = self._media_projection(prefix)
+            current = [
+                snapshot for snapshot in prefix_snapshots.get(
+                    data['post_key'], [])
+                if snapshot['data'].get('scan_id') == data['scan_id']]
+            need(current and current[-1]['sequence'] ==
+                 data['inventory_sequence'], 'MEDIA_KIND_INVENTORY_CHANGED')
+            row = prefix_media.get(key)
+            need(row is not None and row['post_key'] == data['post_key'] and
+                 not row.get('missing') and
+                 row.get('scan_id') == data['scan_id'],
+                 'MEDIA_KIND_SCOPE_CHANGED')
+            prior = latest.get(key)
+            if prior is None:
+                need(data['previous_correction'] is None and
+                     data['from_kind'] == row['identity']['kind'],
+                     'MEDIA_KIND_CHAIN_CHANGED')
+            else:
+                need(data['previous_correction'] == _event_ref(prior) and
+                     data['from_kind'] == prior['data']['to_kind'],
+                     'MEDIA_KIND_CHAIN_CHANGED')
+            for earlier in self.events[:event['sequence'] - 1]:
+                if (earlier['kind'] in terminal and
+                        earlier['data'].get('media_key') == key):
+                    raise NotesError('MEDIA_KIND_AFTER_ATTEMPT')
+            by_media.setdefault(key, []).append(event)
+            latest[key] = event
+        return by_media, latest
+
+    def _source_unavailable_projection(self):
+        result = {}
+        for event in self.events:
+            if event['kind'] != 'source-unavailable':
+                continue
+            data = event['data']
+            key = data['media_key']
+            need(key not in result, 'DUPLICATE_SOURCE_UNAVAILABLE')
+            prefix = self.events[:event['sequence'] - 1]
+            attempts = self._attempt_projection(prefix)
+            attempt_id = attempts['latest_by_media'].get(key)
+            need(attempt_id == data['attempt_id'] and
+                 attempts['attempts'][attempt_id]['post_key'] ==
+                 data['post_key'], 'SOURCE_UNAVAILABLE_ATTEMPT_CHANGED')
+            need(self._attempt_result(attempt_id, attempts) == 'STOPPED',
+                 'SOURCE_UNAVAILABLE_REQUIRES_STOPPED')
+            for earlier in prefix:
+                if (earlier['kind'] in ('completion', 'publish-plan') and
+                        earlier['data'].get('media_key') == key):
+                    raise NotesError('SOURCE_UNAVAILABLE_WITH_TERMINAL_WORK')
+            for later in self.events[event['sequence']:]:
+                need(not (later['kind'] == 'intent' and
+                          later['data'].get('media_key') == key),
+                     'INTENT_AFTER_SOURCE_UNAVAILABLE')
+            result[key] = event
+        return result
+
     def _validate_event_graph(self):
         """Reject internally inconsistent event graphs before projecting them."""
         latest, scans = self._open_scan()
@@ -1191,6 +1436,23 @@ class NotesRecords:
                     row['post_key']
                     for row in scan['complete']['data']['posts']
                 }
+
+        evidence_corrections, latest_evidence_correction = (
+            self._evidence_correction_projection())
+        if self._audit_rows is None:
+            for event in self.events:
+                if event['kind'] != 'page':
+                    continue
+                correction = latest_evidence_correction.get(event['sequence'])
+                ref = (correction['data']['replacement_ref']
+                       if correction is not None
+                       else event['data']['evidence'])
+                if correction is None:
+                    self._event_evidence(
+                        event, 'evidence', ref,
+                        _evidence_context(list_key=self.list_data['list_key'],
+                                          scan_id=event['data']['scan_id']),
+                        require_scan_context=True)
 
         bound_details = {}
         bound_media = set()
@@ -1283,6 +1545,8 @@ class NotesRecords:
             if event['kind'] == 'destination':
                 list_directories.add(event['data']['list_directory'])
 
+        kind_corrections, _latest_kind_correction = (
+            self._media_kind_correction_projection())
         media, _ = self._media_projection()
         for event in self.events:
             if event['kind'] == 'media':
@@ -1292,6 +1556,25 @@ class NotesRecords:
                      'POST_DETAIL_REQUIRED_BEFORE_MEDIA')
 
         attempts = self._attempt_projection()
+        self._source_unavailable_projection()
+        for event in self.events:
+            if event['kind'] != 'intent' or event['data']['schema'] != (
+                    'line-notes-intent/v2'):
+                continue
+            data = event['data']
+            corrections = [
+                correction for correction in kind_corrections.get(
+                    data['media_key'], [])
+                if correction['sequence'] < event['sequence']]
+            if corrections:
+                latest = corrections[-1]
+                need(data['kind_correction_ref'] == _event_ref(latest) and
+                     data['effective_kind'] == latest['data']['to_kind'],
+                     'INTENT_KIND_CORRECTION_CHANGED')
+            else:
+                need(data['kind_correction_ref'] is None and
+                     data['effective_kind'] == data['identity']['kind'],
+                     'INTENT_KIND_CORRECTION_CHANGED')
         for attempt_id, data in attempts['attempts'].items():
             row = media.get(data['media_key'])
             need(row is not None and row['post_key'] == data['post_key'] and
@@ -1344,7 +1627,7 @@ class NotesRecords:
             attempt = attempts['attempts'][data['attempt_id']]
             need(data['media_key'] == attempt['media_key'] and
                  data['post_key'] == attempt['post_key'] and
-                 data['kind'] == attempt['identity']['kind'],
+                 data['kind'] == self._attempt_kind(attempt),
                  'VERIFICATION_ATTEMPT_CHANGED')
             need(self._attempt_result(data['attempt_id'], attempts) ==
                  'DOWNLOAD_FINISHED',
@@ -1620,11 +1903,11 @@ class NotesRecords:
             self.append('destination', data)
             return data
 
-    def _open_scan(self):
+    def _open_scan(self, events=None):
         starts = {}
         latest = None
         open_scan_id = None
-        for event in self.events:
+        for event in (self.events if events is None else events):
             if event['kind'] == 'page':
                 data = event['data']
                 need(open_scan_id is not None and
@@ -1709,9 +1992,14 @@ class NotesRecords:
         with self.locked():
             self._require_session(session_id)
             latest, scans = self._open_scan()
+            need(not self._pending_publish_plans(),
+                 'PENDING_NAMING_TRANSACTION')
+            self._assert_no_unknown_attempts()
             if latest is not None:
                 need(scans[latest]['complete'] is not None,
                      'SCAN_ALREADY_OPEN')
+                coverage_errors = self._coverage_errors()
+                need(not coverage_errors, 'SCAN_COVERAGE_INCOMPLETE')
             scan_id = uuid.uuid4().hex
             context = _evidence_context(
                 list_key=self.list_data['list_key'])
@@ -1864,28 +2152,36 @@ class NotesRecords:
              'COMPLETE_NOTES_SCAN_REQUIRED')
         return latest
 
-    def _require_attempt_scan_binding(self, intent_data):
+    def _attempt_scan_binding_matches(self, intent_data):
         bound = intent_data.get('scan_id')
-        need(bound is not None, 'INTENT_SCAN_BINDING_REQUIRED')
+        if bound is None:
+            return False
         latest, scans = self._open_scan()
-        need(latest is not None and scans[latest]['complete'] is not None and
-             bound == latest, 'ATTEMPT_SCAN_BINDING_CHANGED')
+        if (latest is None or scans[latest]['complete'] is None or
+                bound != latest):
+            return False
         complete_posts = {
             row['post_key']
             for row in scans[bound]['complete']['data']['posts']
         }
-        need(intent_data['post_key'] in complete_posts,
-             'ATTEMPT_SCAN_BINDING_CHANGED')
+        if intent_data['post_key'] not in complete_posts:
+            return False
         detail = self._post_detail_for_scan(intent_data['post_key'], bound)
-        need(detail is not None and detail.get('scan_id') == bound,
-             'ATTEMPT_SCAN_BINDING_CHANGED')
+        if detail is None or detail.get('scan_id') != bound:
+            return False
         media, _ = self._media_projection()
         target = media.get(intent_data['media_key'])
-        need(target is not None and
-             target.get('post_key') == intent_data['post_key'] and
-             target.get('scan_id') == bound,
-             'ATTEMPT_SCAN_BINDING_CHANGED')
-        return bound
+        return (target is not None and
+                target.get('post_key') == intent_data['post_key'] and
+                target.get('scan_id') == bound)
+
+    def _require_attempt_scan_binding(
+            self, intent_data, code='ATTEMPT_SCAN_BINDING_CHANGED',
+            missing_code='INTENT_SCAN_BINDING_REQUIRED'):
+        need(intent_data.get('scan_id') is not None,
+             missing_code)
+        need(self._attempt_scan_binding_matches(intent_data), code)
+        return intent_data['scan_id']
 
     def record_post(self, *, session_id, post_key_value, date_summary,
                     media_count, text_sha256, evidence, no_media=False,
@@ -1937,10 +2233,10 @@ class NotesRecords:
                 event['data'].get('scan_id') == scan_id]
         return rows[-1] if rows else None
 
-    def _media_projection(self):
+    def _media_projection(self, events=None):
         media = {}
         snapshots = {}
-        for event in self.events:
+        for event in (self.events if events is None else events):
             if event['kind'] != 'media':
                 continue
             data = event['data']
@@ -2056,12 +2352,12 @@ class NotesRecords:
             self.append('media', data)
             return data
 
-    def _attempt_projection(self):
+    def _attempt_projection(self, events=None):
         attempts = {}
         order = {}
         outcomes = {}
         reconciles = {}
-        for event in self.events:
+        for event in (self.events if events is None else events):
             data = event['data']
             if event['kind'] == 'intent':
                 attempt_id = data['attempt_id']
@@ -2090,6 +2386,12 @@ class NotesRecords:
         return dict(attempts=attempts, order=order, outcomes=outcomes,
                     reconciles=reconciles, latest_by_media=latest_by_media,
                     attempts_by_media=attempts_by_media)
+
+    @staticmethod
+    def _attempt_kind(intent_data):
+        return (intent_data.get('effective_kind')
+                if intent_data['schema'] == 'line-notes-intent/v2'
+                else intent_data['identity']['kind'])
 
     def _attempt_result(self, attempt_id, projection=None):
         projection = projection or self._attempt_projection()
@@ -2307,6 +2609,40 @@ class NotesRecords:
         need(posts is not None, 'COMPLETE_NOTES_SCAN_REQUIRED')
         return posts
 
+    def _coverage_errors(self):
+        latest, scans = self._open_scan()
+        if latest is None or scans[latest]['complete'] is None:
+            return ['COMPLETE_NOTES_SCAN_REQUIRED']
+        posts = scans[latest]['complete']['data']['posts']
+        if not posts:
+            return ['POST_COVERAGE_INCOMPLETE']
+        _media, snapshots = self._media_projection()
+        errors = set()
+        for row in posts:
+            detail = self._post_detail_for_scan(row['post_key'], latest)
+            if detail is None:
+                errors.add('POST_DETAIL_PENDING')
+                continue
+            current = [event for event in snapshots.get(row['post_key'], [])
+                       if event['data'].get('scan_id') == latest]
+            if detail['no_media']:
+                if detail['media_count'] != 0:
+                    errors.add('POST_COVERAGE_INCOMPLETE')
+                continue
+            if not current:
+                errors.add('POST_COVERAGE_INCOMPLETE')
+                continue
+            snapshot = current[-1]['data']
+            if (len(snapshot['items']) + len(snapshot['missing']) !=
+                    detail['media_count']):
+                errors.add('POST_COVERAGE_INCOMPLETE')
+        return sorted(errors)
+
+    def _assert_dispatch_coverage(self):
+        errors = self._coverage_errors()
+        if errors:
+            raise NotesError(errors[0])
+
     def intent(self, *, session_id, media_key_value, recovery_evidence=None):
         with self.locked():
             self._require_session(session_id)
@@ -2322,6 +2658,13 @@ class NotesRecords:
             need(target['post_key'] in observed_posts,
                  'MEDIA_POST_NOT_IN_COMPLETE_SCAN')
             need(not target.get('missing'), 'MEDIA_CURRENTLY_MISSING')
+            need(media_key_value not in self._source_unavailable_projection(),
+                 'SOURCE_UNAVAILABLE_NO_RECOVERY')
+            status = self._status_map()[media_key_value]
+            need(status not in ('COMPLETED', 'EXCLUDED'),
+                 'COMPLETED_OR_EXCLUDED_NO_REDOWNLOAD')
+            need(status != 'PROTECTED_HISTORY',
+                 'PROTECTED_HISTORY_NO_REDOWNLOAD')
             detail = self._post_detail(target['post_key'])
             need(detail is not None and not detail['no_media'],
                  'POST_MEDIA_DETAIL_REQUIRED')
@@ -2329,11 +2672,7 @@ class NotesRecords:
                  'STALE_POST_DETAIL')
             need(target.get('scan_id') == latest_scan_id,
                  'STALE_MEDIA_INVENTORY')
-            status = self._status_map()[media_key_value]
-            need(status not in ('COMPLETED', 'EXCLUDED'),
-                 'COMPLETED_OR_EXCLUDED_NO_REDOWNLOAD')
-            need(status != 'PROTECTED_HISTORY',
-                 'PROTECTED_HISTORY_NO_REDOWNLOAD')
+            self._assert_dispatch_coverage()
             attempts = self._attempt_projection()
             prior = attempts['latest_by_media'].get(media_key_value)
             if prior is not None:
@@ -2364,10 +2703,14 @@ class NotesRecords:
                     self.records, recovery_evidence,
                     self._intent_evidence_context(prior))
                 if recovery_evidence is not None else None)
-            data = dict(schema='line-notes-intent/v1',
+            effective_kind, kind_correction_ref = self._effective_media_kind(
+                media_key_value, target['identity']['kind'])
+            data = dict(schema='line-notes-intent/v2',
                         media_key=media_key_value,
                         post_key=target['post_key'],
                         identity=target['identity'],
+                        effective_kind=effective_kind,
+                        kind_correction_ref=kind_correction_ref,
                         attempt_id=uuid.uuid4().hex,
                         session_id=session_id,
                         scan_id=latest_scan_id,
@@ -2468,22 +2811,209 @@ class NotesRecords:
         return self._record_terminal_media_state(
             'protection', media_key_value, reason, evidence)
 
+    def evidence_audit(self):
+        rows = []
+        with self.locked(audit_rows=rows):
+            corrections, _latest = self._evidence_correction_projection()
+            correction_rows = [
+                dict(event['data'], sequence=event['sequence'],
+                     event_sha256=_event_sha256(event))
+                for events in corrections.values() for event in events]
+            return dict(
+                schema='line-notes-evidence-audit/v1',
+                local_list_id=self.records.name,
+                event_count=len(self.events),
+                event_chain='VERIFIED',
+                integrity_ok=all(row['integrity_ok'] for row in rows),
+                references=rows,
+                evidence_corrections=correction_rows,
+                business_projection_omitted=True)
+
+    def evidence_correct(self, *, session_id, page_sequence, page_sha256,
+                         original_evidence_sha256, replacement,
+                         reason, previous_correction_ref=None):
+        audit_rows = []
+        with self.locked(audit_rows=audit_rows):
+            self._require_session(session_id)
+            _hex(page_sha256, 'INVALID_EVIDENCE_CORRECTION')
+            _hex(original_evidence_sha256, 'INVALID_EVIDENCE_CORRECTION')
+            need(isinstance(reason, str) and bool(reason.strip()),
+                 'INVALID_EVIDENCE_CORRECTION')
+            if previous_correction_ref is not None:
+                _check_event_ref(previous_correction_ref,
+                                 'INVALID_EVIDENCE_CORRECTION')
+            target = self._event_by_sequence(page_sequence)
+            need(target is not None and target['kind'] == 'page',
+                 'EVIDENCE_CORRECTION_TARGET_CHANGED')
+            need(digest(encoded(target)) == page_sha256,
+                 'EVIDENCE_CORRECTION_TARGET_CHANGED')
+            original = _validate_evidence_ref_shape(
+                target['data']['evidence'], 'EVIDENCE_CORRECTION_ORIGINAL_CHANGED')
+            need(original['sha256'] == original_evidence_sha256,
+                 'EVIDENCE_CORRECTION_ORIGINAL_CHANGED')
+            prior = [
+                event for event in self.events
+                if event['kind'] == 'evidence-correction' and
+                event['data']['page_sequence'] == page_sequence]
+            if prior:
+                need(previous_correction_ref == _event_ref(prior[-1]),
+                     'EVIDENCE_CORRECTION_CHAIN_CHANGED')
+            else:
+                need(previous_correction_ref is None,
+                     'EVIDENCE_CORRECTION_CHAIN_CHANGED')
+            for row in audit_rows:
+                if row['integrity_ok']:
+                    continue
+                if row.get('event_sequence') == page_sequence:
+                    continue
+                if (row.get('event_kind') == 'evidence-correction' and
+                        row.get('event_page_sequence') == page_sequence):
+                    continue
+                raise NotesError('EVIDENCE_REPAIR_SCOPE_MISMATCH')
+            context = _evidence_context(
+                list_key=self.list_data['list_key'],
+                scan_id=target['data']['scan_id'])
+            data = dict(
+                schema='line-notes-evidence-correction/v1',
+                page_sequence=page_sequence,
+                page_sha256=page_sha256,
+                original_evidence_sha256=original_evidence_sha256,
+                replacement_ref=_preserve_evidence(
+                    self.records, replacement, context),
+                reason=reason,
+                session_id=session_id,
+                previous_correction_ref=previous_correction_ref)
+            self.append('evidence-correction', data)
+            return dict(data, correction_ref=_event_ref(self.events[-1]))
+
+    def media_kind_correct(self, *, session_id, media_key_value,
+                           inventory_sequence, to_kind, evidence,
+                           inventory_sha256=None):
+        with self.locked():
+            self._require_session(session_id)
+            latest, scans = self._open_scan()
+            need(latest is not None and scans[latest]['complete'] is not None,
+                 'COMPLETE_NOTES_SCAN_REQUIRED')
+            inventory = self._event_by_sequence(inventory_sequence)
+            need(inventory is not None and inventory['kind'] == 'media',
+                 'MEDIA_KIND_INVENTORY_CHANGED')
+            data = inventory['data']
+            need(data.get('scan_id') == latest,
+                 'MEDIA_KIND_SCAN_CHANGED')
+            rows = [row for row in data['items']
+                    if row['media_key'] == media_key_value]
+            need(len(rows) == 1, 'MEDIA_KIND_SCOPE_CHANGED')
+            media, snapshots = self._media_projection()
+            target = media.get(media_key_value)
+            need(target is not None and not target.get('missing') and
+                 target['post_key'] == data['post_key'] and
+                 target['scan_id'] == latest,
+                 'MEDIA_KIND_SCOPE_CHANGED')
+            current = [event for event in snapshots.get(data['post_key'], [])
+                       if event['data'].get('scan_id') == latest]
+            need(current and current[-1]['sequence'] == inventory_sequence,
+                 'MEDIA_KIND_INVENTORY_CHANGED')
+            for earlier in self.events:
+                if (earlier['kind'] in ('intent', 'verification', 'completion',
+                                        'exclusion', 'protection') and
+                        earlier['data'].get('media_key') == media_key_value):
+                    raise NotesError('MEDIA_KIND_AFTER_ATTEMPT')
+            from_kind, _prior_ref = self._effective_media_kind(
+                media_key_value, target['identity']['kind'])
+            need(to_kind in MEDIA_KINDS and to_kind != from_kind,
+                 'INVALID_MEDIA_KIND_CORRECTION')
+            actual_inventory_sha256 = _event_sha256(inventory)
+            if inventory_sha256 is not None:
+                _hex(inventory_sha256, 'INVALID_MEDIA_KIND_CORRECTION')
+                need(inventory_sha256 == actual_inventory_sha256,
+                     'MEDIA_KIND_INVENTORY_CHANGED')
+            corrections = [event for event in self.events
+                           if event['kind'] == 'media-kind-correction' and
+                           event['data']['media_key'] == media_key_value]
+            previous = _event_ref(corrections[-1]) if corrections else None
+            context = _evidence_context(
+                list_key=self.list_data['list_key'],
+                post_key=data['post_key'], media_key=media_key_value,
+                scan_id=latest)
+            correction = dict(
+                schema='line-notes-media-kind-correction/v1',
+                media_key=media_key_value,
+                post_key=data['post_key'],
+                scan_id=latest,
+                inventory_sequence=inventory_sequence,
+                inventory_sha256=actual_inventory_sha256,
+                from_kind=from_kind,
+                to_kind=to_kind,
+                previous_correction=previous,
+                evidence=_preserve_evidence(self.records, evidence, context),
+                session_id=session_id)
+            self.append('media-kind-correction', correction)
+            return dict(correction, correction_ref=_event_ref(self.events[-1]))
+
+    def source_unavailable(self, *, session_id, media_key_value,
+                           attempt_id, evidence):
+        with self.locked():
+            self._require_session(session_id)
+            attempts = self._attempt_projection()
+            need(attempts['latest_by_media'].get(media_key_value) == attempt_id,
+                 'SOURCE_UNAVAILABLE_ATTEMPT_CHANGED')
+            intent_data = attempts['attempts'][attempt_id]
+            need(self._attempt_result(attempt_id, attempts) == 'STOPPED',
+                 'SOURCE_UNAVAILABLE_REQUIRES_STOPPED')
+            need(media_key_value not in self._completion_projection()[0] and
+                 media_key_value not in self._exclusion_projection() and
+                 media_key_value not in self._protection_projection(),
+                 'SOURCE_UNAVAILABLE_WITH_TERMINAL_WORK')
+            need(not any(event['data'].get('attempt_id') == attempt_id
+                         for event in self._pending_publish_plans()),
+                 'SOURCE_UNAVAILABLE_WITH_TERMINAL_WORK')
+            need(media_key_value not in self._source_unavailable_projection(),
+                 'DUPLICATE_SOURCE_UNAVAILABLE')
+            context = self._intent_evidence_context(attempt_id)
+            data = dict(
+                schema='line-notes-source-unavailable/v1',
+                media_key=media_key_value,
+                post_key=intent_data['post_key'],
+                attempt_id=attempt_id,
+                reason='SOURCE_EXPIRED',
+                evidence=_preserve_evidence(self.records, evidence, context),
+                session_id=session_id)
+            self.append('source-unavailable', data)
+            return data
+
     def _media_rows(self):
         media, _ = self._media_projection()
         statuses = self._status_map()
         availability = self._completion_availability()
+        unavailable = self._source_unavailable_projection()
         rows = []
         for key, row in media.items():
             status = statuses[key]
             local = availability.get(key, LOCAL_NOT_APPLICABLE)
+            effective_kind, correction_ref = self._effective_media_kind(
+                key, row['identity']['kind'])
             rows.append(dict(media_key=key, post_key=row['post_key'],
                              identity=row['identity'],
                              kind=row['identity']['kind'],
+                             effective_kind=effective_kind,
+                             kind_correction_ref=correction_ref,
                              source_order=row['source_order'],
                              missing=bool(row.get('missing')),
                              missing_reason=row.get('missing_reason'),
-                             status=status, local_files=local))
+                             status=status, local_files=local,
+                             source_availability=(
+                                 'EXPIRED' if key in unavailable
+                                 else 'UNKNOWN')))
         return rows
+
+    def _effective_media_kind(self, media_key_value, original_kind):
+        corrections = [event for event in self.events
+                       if event['kind'] == 'media-kind-correction' and
+                       event['data']['media_key'] == media_key_value]
+        if not corrections:
+            return original_kind, None
+        latest = corrections[-1]
+        return latest['data']['to_kind'], _event_ref(latest)
 
     def _post_rows(self):
         media_rows = self._media_rows()
@@ -2542,6 +3072,33 @@ class NotesRecords:
     def summary(self):
         with self.locked():
             return self._project_summary()
+
+    def _unresolved_attempts(self):
+        attempts = self._attempt_projection()
+        completions, _ = self._completion_projection()
+        exclusions = self._exclusion_projection()
+        protections = self._protection_projection()
+        pending = {event['data']['attempt_id']:
+                   event['data']['transaction_id']
+                   for event in self._pending_publish_plans()}
+        unavailable = self._source_unavailable_projection()
+        rows = []
+        for key, attempt_id in attempts['latest_by_media'].items():
+            if key in completions or key in exclusions or key in protections:
+                continue
+            data = attempts['attempts'][attempt_id]
+            rows.append(dict(
+                media_key=key,
+                attempt_id=attempt_id,
+                scan_id=data.get('scan_id'),
+                has_outcome=attempt_id in attempts['outcomes'],
+                last_result=self._attempt_result(attempt_id, attempts),
+                destination=data['destination'],
+                pending_naming=attempt_id in pending,
+                scan_binding_match=self._attempt_scan_binding_matches(data),
+                source_availability=('EXPIRED' if key in unavailable
+                                     else 'UNKNOWN')))
+        return sorted(rows, key=lambda row: row['media_key'])
 
     def _project_summary(self):
         media_rows = self._media_rows()
@@ -2656,6 +3213,13 @@ class NotesRecords:
         all_media_complete = (scan_coverage == 'COMPLETE' and
                               post_coverage_complete and
                               current_incomplete == 0 and not blockers)
+        corrections, _latest_correction = (
+            self._evidence_correction_projection())
+        correction_rows = [dict(event['data'],
+                                sequence=event['sequence'],
+                                event_sha256=_event_sha256(event))
+                           for events in corrections.values()
+                           for event in events]
         return dict(schema=MEMORY_SCHEMA,
                     local_list_id=self.records.name,
                     records_root=str(self.records),
@@ -2672,6 +3236,8 @@ class NotesRecords:
                     status_counts=counts,
                     local_counts=local_counts,
                     current_incomplete=current_incomplete,
+                    unresolved_attempts=self._unresolved_attempts(),
+                    evidence_corrections=correction_rows,
                     dispatch_blockers=blockers,
                     all_known_media_complete=all_media_complete,
                     external_copy_verified=False,
@@ -3043,7 +3609,7 @@ class NotesRecords:
                 stable = _stable_media_inventory(
                     staging, expected=1, interval=stability_interval)
                 source = stable[0]
-                kind = intent_data['identity']['kind']
+                kind = self._attempt_kind(intent_data)
                 _validate_media_suffix(kind, source['name'])
                 verification = _verify_media(
                     kind=kind, path=Path(source['path']),
@@ -3087,25 +3653,32 @@ class NotesRecords:
                 attempts = self._attempt_projection()
                 intent_data = attempts['attempts'].get(attempt_id)
                 need(intent_data is not None, 'PUBLISH_ATTEMPT_CHANGED')
-                self._require_attempt_scan_binding(intent_data)
+                self._require_attempt_scan_binding(
+                    intent_data, code='SCAN_BINDING_REVIEW_REQUIRED',
+                    missing_code='SCAN_BINDING_REVIEW_REQUIRED')
                 completion = self._execute_publish(plans[0])
                 return dict(action='PUBLISH_RESUMED',
                             completion=completion['data'],
                             dispatch_authorized=False)
             projection = self._attempt_projection()
+            unavailable = self._source_unavailable_projection()
             actions = []
             for media_key_value, attempt_id in projection['latest_by_media'].items():
                 if media_key_value in self._completion_projection()[0]:
                     continue
-                self._require_attempt_scan_binding(
-                    projection['attempts'][attempt_id])
-                result = self._attempt_result(attempt_id, projection)
-                if result in (None, 'UNKNOWN'):
-                    action = 'RECONCILE_REQUIRED'
-                elif result == 'DOWNLOAD_FINISHED':
-                    action = 'VERIFY_REQUIRED'
+                intent_data = projection['attempts'][attempt_id]
+                if media_key_value in unavailable:
+                    action = 'SOURCE_UNAVAILABLE'
+                elif not self._attempt_scan_binding_matches(intent_data):
+                    action = 'SCAN_BINDING_REVIEW_REQUIRED'
                 else:
-                    action = 'RECOVERY_AVAILABLE'
+                    result = self._attempt_result(attempt_id, projection)
+                    if result in (None, 'UNKNOWN'):
+                        action = 'RECONCILE_REQUIRED'
+                    elif result == 'DOWNLOAD_FINISHED':
+                        action = 'VERIFY_REQUIRED'
+                    else:
+                        action = 'RECOVERY_REVIEW_REQUIRED'
                 actions.append(dict(media_key=media_key_value,
                                     attempt_id=attempt_id, action=action))
             return dict(action='NO_NAMING_TRANSACTION', pending=actions,
@@ -3735,6 +4308,44 @@ def _build_notes_parser():
     summary = sub.add_parser('summary', help='Project one ledger summary')
     add_records(summary, 'Project one ledger summary')
 
+    evidence_audit = sub.add_parser(
+        'evidence-audit', help='Audit saved evidence references without projection')
+    add_records(evidence_audit, 'Audit saved evidence references')
+
+    evidence_correct = sub.add_parser(
+        'evidence-correct', help='Append one page evidence correction')
+    add_records(evidence_correct, 'Append one page evidence correction')
+    evidence_correct.add_argument('--session-id', required=True)
+    evidence_correct.add_argument('--page-sequence', required=True, type=int)
+    evidence_correct.add_argument('--page-sha256', required=True)
+    evidence_correct.add_argument('--original-evidence-sha256', required=True)
+    evidence_correct.add_argument('--replacement', required=True,
+                                  help='Replacement line-notes-evidence/v2 bundle')
+    evidence_correct.add_argument('--reason', required=True)
+    evidence_correct.add_argument(
+        '--previous-correction-ref',
+        help='JSON {sequence,sha256} for a repeated correction')
+
+    media_kind_correct = sub.add_parser(
+        'media-kind-correct', help='Correct kind before any attempt is dispatched')
+    add_records(media_kind_correct, 'Correct kind before dispatch')
+    media_kind_correct.add_argument('--session-id', required=True)
+    media_kind_correct.add_argument('--media-key', required=True)
+    media_kind_correct.add_argument('--inventory-sequence', required=True,
+                                    type=int)
+    media_kind_correct.add_argument('--inventory-sha256')
+    media_kind_correct.add_argument('--to-kind', required=True, type=str.upper,
+                                    choices=MEDIA_KINDS)
+    media_kind_correct.add_argument('--evidence', required=True)
+
+    source_unavailable = sub.add_parser(
+        'source-unavailable', help='Record an explicitly expired media source')
+    add_records(source_unavailable, 'Record one expired media source')
+    source_unavailable.add_argument('--session-id', required=True)
+    source_unavailable.add_argument('--media-key', required=True)
+    source_unavailable.add_argument('--attempt-id', required=True)
+    source_unavailable.add_argument('--evidence', required=True)
+
     destination = sub.add_parser('destination', help='Append a new destination root')
     add_records(destination, 'Append a new destination root')
     destination.add_argument('--photo-root', required=True)
@@ -3799,8 +4410,10 @@ def main(argv=None):
                 recovery_authorized=args.recovery_authorized)
         elif args.command in ('memory', 'bind', 'scan', 'page', 'post',
                               'media', 'intent', 'outcome', 'reconcile',
-                              'verify', 'resume', 'summary', 'destination',
-                              'exclude', 'protect'):
+                              'verify', 'resume', 'summary', 'evidence-audit',
+                              'evidence-correct', 'media-kind-correct',
+                              'source-unavailable', 'destination', 'exclude',
+                              'protect'):
             records = NotesRecords(args.records_root)
             if args.command == 'memory':
                 result = records.memory()
@@ -3881,6 +4494,34 @@ def main(argv=None):
                 result = records.resume(progress_callback=_cli_progress)
             elif args.command == 'summary':
                 result = records.summary()
+            elif args.command == 'evidence-audit':
+                result = records.evidence_audit()
+            elif args.command == 'evidence-correct':
+                previous = _json_cli_argument(
+                    parser, args.previous_correction_ref,
+                    '--previous-correction-ref', None)
+                result = records.evidence_correct(
+                    session_id=args.session_id,
+                    page_sequence=args.page_sequence,
+                    page_sha256=args.page_sha256,
+                    original_evidence_sha256=args.original_evidence_sha256,
+                    replacement=args.replacement,
+                    reason=args.reason,
+                    previous_correction_ref=previous)
+            elif args.command == 'media-kind-correct':
+                result = records.media_kind_correct(
+                    session_id=args.session_id,
+                    media_key_value=args.media_key,
+                    inventory_sequence=args.inventory_sequence,
+                    inventory_sha256=args.inventory_sha256,
+                    to_kind=args.to_kind,
+                    evidence=args.evidence)
+            elif args.command == 'source-unavailable':
+                result = records.source_unavailable(
+                    session_id=args.session_id,
+                    media_key_value=args.media_key,
+                    attempt_id=args.attempt_id,
+                    evidence=args.evidence)
             elif args.command == 'destination':
                 result = records.destination(
                     photo_root=args.photo_root, session_id=args.session_id,
@@ -3897,6 +4538,8 @@ def main(argv=None):
         else:
             parser.error('unknown command')
         _print_cli_result(result)
+        if args.command == 'evidence-audit' and not result['integrity_ok']:
+            return 4
         return 0
     except NotesLockBusy as exc:
         payload = dict(status='REFUSED', reason='NOTES_LOCK_BUSY',

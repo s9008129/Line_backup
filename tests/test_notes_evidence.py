@@ -408,6 +408,23 @@ class NotesV1CompatibilityTests(unittest.TestCase):
             return {key: self.portable(item) for key, item in value.items()}
         return value
 
+    def assert_projection_subset(self, actual, expected, path='projection'):
+        if isinstance(expected, dict):
+            self.assertIsInstance(actual, dict, path)
+            self.assertLessEqual(set(expected), set(actual), path)
+            for key, value in expected.items():
+                self.assert_projection_subset(actual[key], value,
+                                              path + '.' + key)
+        elif isinstance(expected, list):
+            self.assertIsInstance(actual, list, path)
+            self.assertEqual(len(actual), len(expected), path)
+            for index, (actual_row, expected_row) in enumerate(
+                    zip(actual, expected)):
+                self.assert_projection_subset(
+                    actual_row, expected_row, '%s[%d]' % (path, index))
+        else:
+            self.assertEqual(actual, expected, path)
+
     def test_frozen_v1_projection_and_bytes_do_not_upgrade(self):
         events = sorted((self.records / 'events').iterdir())
         self.assertEqual(
@@ -423,11 +440,28 @@ class NotesV1CompatibilityTests(unittest.TestCase):
 
         golden = self.portable(json.loads(
             (FIXTURE_ROOT / 'golden.json').read_bytes()))
-        self.assertEqual(summary, golden['summary'])
-        self.assertEqual(memory, golden['memory'])
-        self.assertEqual(lists['lists'], [golden['summary']])
+        self.assert_projection_subset(summary, golden['summary'], 'summary')
+        self.assert_projection_subset(memory, golden['memory'], 'memory')
+        self.assert_projection_subset(
+            lists['lists'][0], golden['summary'], 'lists[0]')
+        self.assertEqual(memory, summary)
+        self.assertEqual(summary['evidence_corrections'], [])
+        for row in summary['media']:
+            self.assertEqual(row['effective_kind'], row['kind'])
+            self.assertIsNone(row['kind_correction_ref'])
+            self.assertEqual(row['source_availability'], 'UNKNOWN')
         self.assertEqual(
             {path.name: path.read_bytes() for path in events}, before)
+
+        audit = records.evidence_audit()
+        self.assertTrue(audit['integrity_ok'])
+        self.assertTrue(audit['business_projection_omitted'])
+        self.assertTrue(audit['references'])
+        for row in audit['references']:
+            self.assertEqual(row['classification'], 'LEGACY_OPAQUE')
+            self.assertEqual(row['reference_check'],
+                             'REFERENCE_CHECK_NOT_AVAILABLE')
+            self.assertTrue(row['integrity_ok'])
 
         evidence_ref = json.loads(events[0].read_bytes())['data'][
             'binding_evidence']

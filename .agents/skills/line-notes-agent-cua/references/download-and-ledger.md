@@ -7,8 +7,9 @@
 ## CLI 共同契約
 
 - Agent 從 `page`／`post`／`media` 結果取得 `post_key`、`media_key`；Owner 不填 UUID、key 或內部 JSON。`lists`／`init` 使用 collection；除 `lists`、`init` 外，所有帳本命令都要 `--records-root`。`init`／`destination` 另要求 `--photo-root`；`backup/記事本/` 是 Agent 層預設，不是 CLI 全域預設。
-- `memory`／`summary` 只回摘要投影：列表身分、`scan_coverage`、貼文／媒體列、`status_counts`、`local_counts`、`dispatch_blockers` 與 `all_known_media_complete`；`memory()` 與 `summary()` 是同一投影。它們不提供完整 attempt、staging 目的地或 completion manifest。`attempt_id`／`destination` 以該次 `intent` JSON 及追加事件為準，completion 以 `verify` JSON 及 `completion` 事件為準；目前沒有獨立的 attempts／completions 查詢子命令。跨 Session 可先以 `memory` 定位 `records_root` 與 blockers，再唯讀核對該帳本 `events/*.json`，不得從 `photo_root` 或目錄名猜交易。
-- observation、handoff、下載與 chooser 等 evidence 參數（`--binding-evidence`、`--history-scope-evidence`、`--observation`、`--handoff`、`--evidence`、`--recovery-evidence`）必須指向專案內非空、非 symlink 的 regular file；不可用手寫字串、目錄或範例內容冒充。
+- `memory`／`summary` 只回摘要投影：列表身分、`scan_coverage`、貼文／媒體列、`status_counts`、`local_counts`、`unresolved_attempts`、`evidence_corrections`、`dispatch_blockers` 與 `all_known_media_complete`；`memory()` 與 `summary()` 是同一投影。`unresolved_attempts` 只列尚未完成／排除／受保護的最新 attempt，不提供完整 attempt 歷史、staging 目的地或 completion manifest。`attempt_id`／`destination` 以該次 `intent` JSON 及追加事件為準，completion 以 `verify` JSON 及 `completion` 事件為準；目前沒有完整的 attempts／completions 查詢子命令。跨 Session 可先以 `memory` 定位 `records_root` 與 blockers，再唯讀核對該帳本 `events/*.json`，不得從 `photo_root` 或目錄名猜交易。
+- observation、handoff、下載、chooser、更正與恢復等證據參數（`--binding-evidence`、`--history-scope-evidence`、`--observation`、`--handoff`、`--evidence`、`--recovery-evidence`、`--replacement`）必須是先以 `evidence-pack` 封裝、再由 CLI 回傳的 `line-notes-evidence/v2` bundle 路徑；不可用手寫 JSON、自由文字、目錄或範例內容冒充。bundle 的 statement 可依 [證據範本](evidence-template.md) 撰寫；畫面／AX／input receipt 等原件以 `--asset ROLE PATH` 加入。`source_path` 只記錄匯入來源，重開時核對帳本內保存的子 blob，不要求原件仍在。
+- `evidence-pack` 的 `--output-dir` 必須是 `.local/line-backup/tasks/` 下尚不存在的 project-local 目錄；固定五欄 context 由 Agent 從 CLI 輸出帶入，適用 ID 不得填 `UNKNOWN` 或另一個主體。成功後把回傳的 `bundle_path` 傳給事件參數。Owner 不需填 JSON、UUID、key 或 hash；bundle 只核對 bytes／context，不證明畫面真實、控制命中或下載結果。
 - 成功的 JSON 與業務拒絕 JSON 固定含 `dispatch_authorized=false`；參數／必填欄位錯誤以 exit 2 結束，只在 stderr 顯示 argparse 錯誤，不輸出 JSON；已列業務拒絕以 exit 4 回傳 JSON；未預期內部錯誤以 exit 70 回傳 `status=INTERNAL_ERROR`、`reason=UNEXPECTED_EXCEPTION`、`dispatch_authorized=false`。`dispatch_authorized=false` 是簿記聲明，不是 GUI grant、已派送證明或 E2E PASS；不得把它改成 true 或當成 Owner 同意。
 - exit 70 不是可重試業務拒絕，不得據此重送、改寫 ledger、建立新 attempt、換目的地或換入口繞過；先停止並保留現場、原始 JSON、命令與證據，回報實作者／維護者。
 - 成功以 exit 0 回傳 JSON；實際使用時記錄命令、exit code 與原始輸出摘要。看到 70 時必須原樣記錄並停止，不能降格成 exit 4 或其他業務狀態。
@@ -22,6 +23,8 @@
 |---|---|---|
 | `lists` | 列出全部記事本帳本位置與可讀狀態 | `index.json` 只定位；不以 active-task 或最近修改時間代替全歷史 |
 | `memory` | 讀單一帳本的摘要投影：貼文／媒體狀態、blockers 與本機可用性 | 不含完整 attempt、staging 目的地或 completion manifest；照片 root 消失仍可讀摘要，缺帳本不能當空帳 |
+| `evidence-pack` | 將 statement、截圖／AX／input 等原件封裝成不可覆寫的 v2 evidence bundle | 只做位元引用與 context 核對；不是 GUI sensor、下載結果或 acceptance |
+| `evidence-audit` | 唯讀逐引用稽核保存的 evidence、legacy 分類與 correction 鏈 | 不投影業務狀態；`integrity_ok=false` 或結構鏈異常時不得使用一般 summary 的局部結果 |
 | `init` | 建立新的記事本帳本 | 只用於已證明的新列表；歷史缺損、索引毀損或候選歧義時拒絕 |
 | `bind` | 將當次列表與既有帳本綁定 | 須有真實前景／觀察 evidence；不靠名稱、日期或張數猜配 |
 | `scan` | 建立本次 Session 的新盤點 | 每個新 Session 開新 scan；不重用舊 cursor、舊座標或舊畫面 |
@@ -34,6 +37,9 @@
 | `verify` | 穩定檔案、hash、解碼、發布及保存 completion | 只接受已證明 `DOWNLOAD_FINISHED` 的 attempt；不重下補帳 |
 | `resume` | 接續中斷的命名／發布交易 | 只用唯一可核對的同一交易；不重送下載、不手動改名 |
 | `summary` | 投影本次盤點與六類狀態、缺項及完成數 | `all_known_media_complete=true` 只代表摘要投影一致，不是畫面／檔案獨立驗收，也不是真實 LINE E2E |
+| `evidence-correct` | 針對已精確核對的 page 追加 replacement evidence 更正 | 只修 page 引用；不改 page 成員／順序／頂底／scan 覆蓋，也不把更正當成原證據或完成證明 |
+| `media-kind-correct` | 在任何 attempt 前更正已盤點媒體的種類 | 只限最新完整 scan、尚無 intent／verification／completion／排除／保護的項目；不改 media key、貼文、數量或來源順序 |
+| `source-unavailable` | 記錄單一媒體來源已明確到期 | 只限最新 attempt 為 `STOPPED`；不是完成、排除、重試授權或服務端已回收證明 |
 | `destination` | 為新批次追加目的地綁定 | 保留舊完成路徑；不得解鎖 UNKNOWN／pending／LOCAL_CHANGED |
 | `exclude` | 以觀察證據把已盤點媒體標為排除 | 只能處理已觀察項；不得覆蓋 UNKNOWN／活動 attempt，也不得成為跳過未盤點項的藉口 |
 | `protect` | 以證據把媒體列為受保護歷史 | 不升格完成、不默認排除、不重下；不得覆蓋 UNKNOWN／活動 attempt |
@@ -45,6 +51,9 @@
 ```text
 lists        [--collection COLLECTION]
 memory       --records-root RECORDS_ROOT
+evidence-pack --statement FILE [--asset ROLE PATH ...] --output-dir NEW_DIR
+             [--list-key KEY] [--post-key KEY] [--media-key KEY]
+             [--attempt-id ID] [--scan-id SCAN_ID]
 init         --photo-root PHOTO_ROOT --name NAME --visual-key VISUAL_KEY
              --binding-evidence FILE --history-scope-evidence FILE
              [--collection COLLECTION] [--context-id ID] [--signals JSON]
@@ -74,6 +83,16 @@ verify       --records-root RECORDS_ROOT --session-id SESSION_ID --attempt-id ID
              [--stall-seconds SECONDS]
 resume       --records-root RECORDS_ROOT
 summary      --records-root RECORDS_ROOT
+evidence-audit --records-root RECORDS_ROOT
+evidence-correct --records-root RECORDS_ROOT --session-id SESSION_ID
+             --page-sequence N --page-sha256 SHA256
+             --original-evidence-sha256 SHA256 --replacement BUNDLE
+             --reason TEXT [--previous-correction-ref JSON]
+media-kind-correct --records-root RECORDS_ROOT --session-id SESSION_ID
+             --media-key KEY --inventory-sequence N [--inventory-sha256 SHA256]
+             --to-kind {PHOTO,VIDEO} --evidence BUNDLE
+source-unavailable --records-root RECORDS_ROOT --session-id SESSION_ID
+             --media-key KEY --attempt-id ID --evidence BUNDLE
 destination  --records-root RECORDS_ROOT --photo-root PHOTO_ROOT
              --session-id SESSION_ID --evidence FILE
 exclude      --records-root RECORDS_ROOT --media-key KEY --session-id SESSION_ID
@@ -86,13 +105,29 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 
 `scan start` 禁止 `--scan-id`；`scan finish` 必須有 `--scan-id`。照片 `verify` 必須成對提供 `--decoder` 與 `--decoder-sha256`；影片 `verify` 不傳這兩個照片參數。`post` 的 `--no-media` 與非零 `--media-count` 衝突。
 
+`evidence-audit` 是不可寫入的一般唯讀命令；event chain／結構性引用無法可靠解析時停止，不輸出可誤用的 audit row。引用或子 blob 漂移時仍輸出 audit JSON，但 `integrity_ok=false`、exit 4、`business_projection_omitted=true`，不得從它推論完成數或下一步。legacy opaque 可保持 `LEGACY_OPAQUE`／`REFERENCE_CHECK_NOT_AVAILABLE`，這不是損壞，也不是已核對的原始位元。
+
+`evidence-correct` 只用於已確認的 page 證據錯引。Agent 從目前帳本事件取得 page 的 sequence／SHA-256、原 evidence SHA-256 及替換 bundle；替換 bundle 的 scan context 必須對應 target page 當時的 scan，不是現在最新 scan。若 page 以外仍有 evidence 損壞，拒絕 `EVIDENCE_REPAIR_SCOPE_MISMATCH`；重複更正須帶前一筆 correction 的 sequence／SHA-256，不得分叉。成功只追加 correction，不修改 page 成員、順序、top/bottom、scan 覆蓋、media key 或已完成事實；真實帳本仍須 D2 的精確資料預覽與授權。
+
+`media-kind-correct` 只處理最新完整 scan 中、尚無任何 intent／verification／completion／exclusion／protection 的已盤點媒體。來源 inventory 必須是最新且 context 相符；更正只新增 `media-kind-correction`，原 media key、貼文、數量、次序與 inventory 保留。`summary` 會同時顯示原始 `kind`、`effective_kind` 與 correction ref；新 `intent` 使用 `line-notes-intent/v2` 凍結 effective kind，後續 `verify` 選擇對應照片／影片驗證器。合法舊 v1 intent 保持可讀，但任何更正後才偽造的 v1 intent 會 fail closed；不手改 schema 或 events。
+
+`source-unavailable` 只在單一來源已明確到期、最新 attempt 為 `STOPPED`，且沒有完成／排除／保護／待命名交易時可用。成功只代表該項來源不可用：摘要顯示 `source_availability=EXPIRED`，`resume` 對該項列 `SOURCE_UNAVAILABLE`，不得再 `intent`；六類狀態與 `current_incomplete` 不改，也不能批次推論同列表其他項到期或自動排除。
+
+## 掃描覆蓋與綁定 gate
+
+`summary` 的 `scan_coverage`、`dispatch_blockers`、`unresolved_attempts` 與 `scan_binding_match` 是唯讀事實投影，不是下載許可。新 Session 先以 `summary` 找舊 attempt：無 outcome／`UNKNOWN` 先 `reconcile`，`DOWNLOAD_FINISHED` 先 `verify`，pending naming 先 `resume`；在這些狀態未處理前不得開始新 scan。
+
+`scan start` 會拒絕待命名交易、尚有未解 attempt，或上一個 scan 的貼文／媒體 coverage 不完整。已完成項與正面 `STOPPED`／`NOT_SENT` 不會被重下；後者仍需原恢復授權與充分證據才可另建 attempt。`summary` 與 `intent` 共用細盤 coverage gate：頂底／重疊、所有現存貼文 detail、media 數量與本 scan inventory 必須一致；純文字貼文以 `NO_MEDIA` 表示，不可當成缺少媒體。
+
+若舊 attempt 的 `scan_binding_match=false` 或 `resume` 回 `SCAN_BINDING_REVIEW_REQUIRED`，不得改綁定、重寫舊 intent、開新 scan 覆蓋、隱藏該項或自動另建 attempt；只保留原資料、收集最小證據並交人工審查。
+
 `--decoder`／`--decoder-sha256` 由呼叫端提供；CLI 只核對呼叫端提供的 SHA-256，並確認執行前後是同一個 binary、沒有內容漂移，不能證明該 binary 來自 repo 的 `src/line_backup_batch/image_decode.swift`。實作者仍須自行核對建置來源、路徑與版本；來源無法確認時停止，不得以 caller 提供的 hash 相符代替 provenance。
 
 ## 啟動與帳本對帳
 
 1. 先執行 `lists`，再讀 `.local/line-backup/active-notes-task.json`；以本次連續入口與當次畫面核對相符的 `local_list_id`，不要只讀最近一個帳本。
-2. 以 `memory` 讀摘要中的列表、貼文／媒體狀態、缺項、blockers 與本機可用性；需要 attempt、staging 目的地或 completion 細節時，依上節回到 `intent`／`verify` 結果及追加事件。索引缺失、帳本損壞、證據鏈異常或出現兩個可能列表時停止相關動作，不建立新空帳。
-3. 新列表只有在入口、列表身分與歷史均確認，且沒有缺損／歧義時才 `init`；從結果取得 `records_root` 後依序執行 **`init` → `bind` → `scan start`**。既有列表從 `lists`／`memory` 取得帳本後執行 **`bind` → `scan start`**；不因新 Session、照片 root 改變或使用者重交前景而重新初始化。
+2. 以 `memory` 讀摘要中的列表、貼文／媒體狀態、缺項、`unresolved_attempts`、`dispatch_blockers`、scan binding 與本機可用性；需要 staging 目的地或 completion 細節時，依上節回到 `intent`／`verify` 結果及追加事件。索引缺失、帳本損壞、證據鏈異常或出現兩個可能列表時停止相關動作，不建立新空帳。
+3. 新列表只有在入口、列表身分與歷史均確認，且沒有缺損／歧義時才 `init`；從結果取得 `records_root` 後先處理 `unresolved_attempts`，再依序執行 **`init` → `bind` → `scan start`**。既有列表從 `lists`／`memory` 取得帳本後先處理舊 attempt，再執行 **`bind` → `scan start`**；不因新 Session、照片 root 改變或使用者重交前景而重新初始化。
 4. `scan start` → `page`… → `scan finish` → `post`／`media` 保存本輪完整盤點。`scan finish` 前必須已看到頂端、底端與有序重疊；`post`／`media` 需要最新完成的 scan。新 Session 必須重新看頂底與重疊，不沿用上一個 Session 的畫面 cursor。純文字貼文由 `post` 記 `NO_MEDIA`，不建立媒體下載項。
 5. 重新更換照片 root 時用 `destination` 追加綁定；舊 completion 路徑不改，UNKNOWN、活動下載、pending 命名或 `LOCAL_CHANGED` 不因換位置解鎖。
 
@@ -110,7 +145,7 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 8. **驗證與完成。** 只有具備可歸屬的下載終結結果及穩定結果檔，才可記 `DOWNLOAD_FINISHED` 並執行 `verify`。`verify` 先保存命名／發布交易，再核對穩定檔集、預期數、非空、SHA-256、逐檔內容解碼及前後身分；成功才追加不可覆寫 completion 並讀回。驗證或紀錄寫入失敗時保留原檔，不重新下載補帳。
 9. **命名中斷。** 只要來源、暫名、目標及 journal 可唯一核對，執行 `resume` 接續同一交易；`resume` 不得觸發下載。目標已存在、額外檔、symlink、hash／mtime／ctime 漂移或來源與目標歧義時，保護原檔並停止，不用手動改名解鎖。
 
-每次下載控制、chooser 確認、outcome、reconcile 與恢復前，都依 [證據範本](evidence-template.md) 保存當次私有證據；有 `--evidence FILE` 的子命令使用同一份或引用它。`intent` 沒有一般 evidence 參數，其預檢與讀回證據留在私有任務區，不能冒充 CLI 欄位。同一 attempt 可多次 reconcile；每次完成後都要追加該次 sequence／event SHA-256 與結果引用，保留全部歷史，不以最後一筆覆寫。證據檔是既有介面接收的自由文字，不是新增 schema；CLI 仍驗證專案內非空、非 symlink 的 regular file 與內容定址 bytes／hash，但不解析欄位語意或畫面真實性。缺少必要值時寫 `UNKNOWN`，不可由檔名、猜測或另一個來源補值。
+每次下載控制、chooser 確認、outcome、reconcile、更正與恢復前，先依 [證據範本](evidence-template.md) 寫當次私有 statement，再把 statement 與必要截圖／AX／input receipt／stdout／stderr 等原件用 `evidence-pack` 封裝；有 `--evidence` 或其他證據參數的子命令傳回傳的 `bundle_path`。`intent` 沒有一般 evidence 參數，其預檢與讀回證據留在私有任務區，不能冒充 CLI 欄位。同一 attempt 可多次 reconcile；每次完成後都要追加該次 sequence／event SHA-256 與結果引用，保留全部歷史，不以最後一筆覆寫。bundle 只證明指定 bytes 與 context 一致，不解析 statement 的語意真假；缺少必要值時寫 `UNKNOWN`，不可由檔名、猜測或另一個來源補值。
 
 ## 恢復與不可解鎖狀態
 
@@ -121,6 +156,8 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 | 已 `DOWNLOAD_FINISHED`、尚未 completion | 驗證現有暫存／目標並完成或 `resume`，不重下 |
 | 命名／發布交易中斷 | `resume` 同一交易；不得重送下載 |
 | 已有 `outcome=UNKNOWN` | 先 `reconcile`；未收斂前不 verify、不建新 attempt、不重下、不派下一項；沒有新資訊就停止相同查證 |
+| `source_availability=EXPIRED` | 該項保留原欠件並停止 recovery／intent；`resume` 只列 `SOURCE_UNAVAILABLE`，不自動排除、不計完成、不宣稱服務端已回收 |
+| `scan_binding_match=false` 或 `SCAN_BINDING_REVIEW_REQUIRED` | 不改舊 intent.scan_id、不隱藏、不自動新 scan／新 attempt；保留原事件與目的地，交人工審查 |
 | 明確 `STOPPED` 或 `NOT_SENT`、原檔保留、帳本已有持久化 `recovery_authorized=true`，且有充分停止證據 | 保存並讀回證據，以 `intent --recovery-evidence` 綁定前次 attempt，由 CLI 建立另一個新空白恢復目錄；已完成項跳過。授權未持久化、證據不足或前項不是終止狀態時停止，不手動建目錄或改 ledger |
 | `PREVIOUSLY_INCOMPLETE` | 依原授權走上述恢復判斷，不當普通待下載直接派送 |
 | `PROTECTED_HISTORY` | 保留來源與缺項；只有完整盤點、無列表級歧義且不是活動／UNKNOWN／pending 時才可跳過該項，不計完成或排除 |

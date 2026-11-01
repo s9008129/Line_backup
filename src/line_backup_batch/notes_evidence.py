@@ -312,6 +312,88 @@ def load_saved_evidence(evidence_dir, outer_ref, expected_context=None):
     return dict(classification='LEGACY_OPAQUE', outer_ref=outer_ref)
 
 
+def audit_saved_evidence(evidence_dir, outer_ref, expected_context=None):
+    """Inspect one saved evidence reference without stopping at child drift.
+
+    This uses the same strict bundle parser and digest checks as the normal
+    loader. It is intentionally audit-only: callers must not project business
+    state from an audit result whose ``integrity_ok`` is false.
+    """
+    evidence_dir = _canonical_directory(evidence_dir,
+                                        'EVIDENCE_DIRECTORY_CHANGED')
+    row = dict(outer_ref=outer_ref, classification='UNVERIFIED',
+               integrity_ok=False, errors=[], child_assets=[],
+               reference_check='REFERENCE_CHECK_NOT_AVAILABLE')
+
+    if not isinstance(outer_ref, dict) or set(outer_ref) != set(OUTER_FIELDS):
+        row['errors'].append('INVALID_EVIDENCE_REF')
+        return row
+    if not (isinstance(outer_ref['path'], str) and
+            outer_ref['path'].startswith('/') and
+            type(outer_ref['bytes']) is int and outer_ref['bytes'] >= 0 and
+            isinstance(outer_ref['sha256'], str) and
+            len(outer_ref['sha256']) == 64 and
+            all(character in '0123456789abcdef'
+                for character in outer_ref['sha256'])):
+        row['errors'].append('INVALID_EVIDENCE_REF')
+        return row
+
+    path = Path(outer_ref['path'])
+    if path.parent != evidence_dir or path.name != outer_ref['sha256']:
+        row['errors'].append('EVIDENCE_BINDING_CHANGED')
+        return row
+    try:
+        raw = _read_regular(path, 'EVIDENCE_DRIFT')
+    except NotesEvidenceError as exc:
+        row['errors'].append(exc.code)
+        return row
+    if len(raw) != outer_ref['bytes'] or digest(raw) != outer_ref['sha256']:
+        row['errors'].append('EVIDENCE_DRIFT')
+        return row
+    if not raw:
+        row['errors'].append('EMPTY_EVIDENCE')
+        return row
+
+    try:
+        data = strict_json(raw, 'INVALID_EVIDENCE_BUNDLE')
+    except DailyError:
+        if _is_evidence_family_payload(raw):
+            row['errors'].append('INVALID_EVIDENCE_BUNDLE')
+        else:
+            row['classification'] = 'LEGACY_OPAQUE'
+            row['integrity_ok'] = True
+        return row
+    if not (isinstance(data, dict) and isinstance(data.get('schema'), str) and
+            data['schema'].startswith(SCHEMA_FAMILY)):
+        row['classification'] = 'LEGACY_OPAQUE'
+        row['integrity_ok'] = True
+        return row
+
+    row['classification'] = 'V2'
+    try:
+        _validate_bundle(data, expected_context)
+    except NotesEvidenceError as exc:
+        row['errors'].append(exc.code)
+        return row
+    for ref in _bundle_refs(data):
+        child = dict(role=ref['role'], sha256=ref['sha256'],
+                     bytes=ref['bytes'], status='VERIFIED', error=None,
+                     actual_sha256=None, actual_bytes=None)
+        try:
+            _, child_raw = _verify_child_path(evidence_dir, ref)
+            child['actual_sha256'] = digest(child_raw)
+            child['actual_bytes'] = len(child_raw)
+        except NotesEvidenceError as exc:
+            child['status'] = 'DRIFT'
+            child['error'] = exc.code
+        row['child_assets'].append(child)
+    row['integrity_ok'] = not row['errors'] and all(
+        child['status'] == 'VERIFIED' for child in row['child_assets'])
+    if row['integrity_ok']:
+        row['reference_check'] = 'VERIFIED'
+    return row
+
+
 def preserve_bundle(records, source, expected_context=None,
                     expected_reference=None):
     inspected = inspect_source_bundle(source, expected_context, verify_sources=True)

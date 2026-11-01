@@ -15,7 +15,7 @@
 
 ## 證據與允許行為矩陣
 
-下表是操作決策，不是新增 CLI schema。`--evidence` 仍檢查專案內非空、非 symlink 的 regular file 與內容定址 bytes／hash，但不解析或替 Agent 判斷欄位語意及內容真實性；欄位格式見 [證據範本](evidence-template.md)，操作順序見 [下載與 notes CLI](download-and-ledger.md)。
+下表是操作決策。新寫入的 `--evidence` 等參數要求 `evidence-pack` 產生的 `line-notes-evidence/v2` bundle；statement 可依 [證據範本](evidence-template.md) 撰寫，但 CLI 只核對 bundle 結構、context、保存子 blob 的 bytes／hash，不替 Agent 判斷欄位語意或畫面真實性。操作順序見 [下載與 notes CLI](download-and-ledger.md)。
 
 | 證據來源 | 能證明的命題 | 允許行為／仍未知時 |
 |---|---|---|
@@ -33,6 +33,14 @@
 - **下載結果。** 需要同時能歸屬原 attempt／viewer／原目的地，並具備當次正面終結觀察與穩定結果檔；照片的「下載完畢」提示只是可能的終結觀察之一，不是影片的必要條件。影片仍須有當次可歸屬的正面終結證據，不能因照片案例或播放結束而自行補規則。
 - **檔案與 completion。** `DOWNLOAD_FINISHED` 只允許進入驗證；還要通過穩定檔集、預期數、非空、SHA-256、逐檔內容解碼、發布及 completion 讀回，才可計 `COMPLETED`。任何一層缺失都停在對應層次，不重下補帳。
 - **停止／未派送。** 必須有可歸屬、能排除原操作稍後繼續的正面證據；`timeout`、API error、控制不見、空目錄、缺少 marker、舊計數為零與播放結束都不足。假設案例中的此類 receipt 不得寫成已取得；沒有證據就保留 `UNKNOWN` 並停止新派送。
+
+## 證據稽核、頁面更正與類型更正
+
+`evidence-audit` 是獨立於一般 `summary` 的唯讀引用稽核。它先要求 event 結構／sequence／hash chain 可讀，再逐引用檢查外層 bundle、context 與子資產；結構性引用不可信時直接停止，不產生可誤用的 row。引用漂移時仍列明錯誤並以 exit 4 結束，`business_projection_omitted=true`，不得把完成數、貼文狀態或 audit 局部結果當成下一步依據。legacy opaque 可為 `LEGACY_OPAQUE`／`REFERENCE_CHECK_NOT_AVAILABLE`：這表示未做位元核對，不是損壞，也不是已升級驗證。
+
+`evidence-correct` 只處理 page evidence 的錯引，必須精確指向原 page 的 sequence／SHA-256、原 evidence SHA-256、context 相符的 replacement bundle 與 reason。它不修改 page 成員、順序、top/bottom、scan 覆蓋、貼文／媒體 key 或舊完成；page 以外有其他證據損壞時整筆拒絕。重複更正須串接前一筆 correction ref，不能分叉或覆寫。`summary.evidence_corrections` 顯示追加鏈，但不把 replacement 證明成原頁面的真實性或業務完成。真實帳本套用前仍須精確資料預覽與授權。
+
+`media-kind-correct` 只適用最新完整 scan 中已盤點、且從未有 intent／verification／completion／exclusion／protection 的媒體。更正 append `media-kind-correction`，保留原 media key、貼文、數量、來源順序與原 inventory；投影另列 `kind`、`effective_kind`、`kind_correction_ref`。新 intent 使用 v2 並凍結更正後種類，照片與影片分別走嚴格驗證器。合法舊 v1 intent 仍可讀取，但更正後才出現、聲稱舊種類的 v1 intent 會被拒絕；不手改 schema、event 或 key。真實資料須先確認 19 項等精確清單均無 attempt，再依 D2 預覽授權套用，不得批次猜測。
 
 ## 照片驗證
 
@@ -132,6 +140,8 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 | 命名／發布 journal 中斷 | `resume` 同一交易；不重送下載 |
 | `STOPPED`／`NOT_SENT` 且未完成、原授權涵蓋恢復、帳本已持久化 `recovery_authorized=true` 且有充分停止證據 | 保留原檔，依 [下載與 notes CLI](download-and-ledger.md) 以 `intent --recovery-evidence` 建立另一個新空白恢復目錄及新 attempt；授權未持久化或證據不足時停止，已完成項跳過 |
 | 已有 `outcome=UNKNOWN` | 先 `reconcile` 原事件、目的地與當次畫面／檔案；未收斂前不 verify、不重送、不建新 attempt、不派下一項；沒有新資訊就停止相同查證 |
+| 單項來源已明確到期，最新 attempt 為 `STOPPED` | 以精確 attempt context 的 v2 evidence 追加 `source-unavailable`；該項列 `source_availability=EXPIRED`、`resume` 行動為 `SOURCE_UNAVAILABLE`，不建立新 intent、不排除、不計完成。不要推論其他項或把標記當成服務端已回收證明 |
+| `scan_binding_match=false`／`SCAN_BINDING_REVIEW_REQUIRED` | 保留舊 scan、intent 與目的地；不改綁定、不自動新 scan、不另建 attempt。收集最小證據交人工審查 |
 | 缺帳本、索引毀損或多個列表候選 | 保留原件與來源，停止相關寫入；不以空帳、重掃或改名解鎖 |
 | 純文字貼文 | 記貼文層 `NO_MEDIA`，不做下載 attempt |
 
@@ -148,6 +158,10 @@ notes 功能至少需以合成 fixture 覆蓋以下驗證，實際執行結果�
 - 來源重排、新增媒體、刪除媒體、編輯貼文與 `NO_MEDIA`。
 - 有聲影片、無聲影片、截斷檔、解碼失敗、只有 attached picture／沒有有效影像、長影片 stall／等待。
 - 照片完整解碼、非空檔、穩定前後 hash、非預期 stderr 與工具版本／binary hash。
+- v2 evidence 父／子漂移、legacy 唯讀、page correction 與非目標 scope 拒絕；audit 完整性失敗 exit 4 且不投影業務狀態。
+- 更正後 media key／數量／來源順序不變、v2 intent 使用 effective kind、合法 v1 相容與偽造 v1 拒絕。
+- 單項 `SOURCE_EXPIRED` 維持欠件、禁止 recovery／intent，且未授權時不改完成／排除計數。
+- 新 scan 的共享 coverage gate、未決 attempt／pending naming blocker，以及 resume scan binding mismatch 零檔案 mutation。
 
 合成 fixture 的 PASS 只證明該次實作在該測試矩陣下的簿記、檔案與解碼行為；不證明真實 LINE 記事本畫面、下載按鈕、popup、chooser、混合附件、跨 Session 或使用者驗收。真實 GUI 場景必須另有一次正式任務及有效前景交接，才能標 `OBSERVED` 或進一步的 E2E；沒有當次執行就維持 `NOT_RUN`。
 
@@ -157,6 +171,7 @@ notes 功能至少需以合成 fixture 覆蓋以下驗證，實際執行結果�
 
 ```text
 業務狀態：COMPLETED / EXCLUDED / PENDING / PREVIOUSLY_INCOMPLETE / UNKNOWN / PROTECTED_HISTORY
+來源可用性：UNKNOWN / EXPIRED；未決 attempt：列出 action 或 NOT_APPLICABLE
 貼文層：NO_MEDIA=...；本機可用性：VERIFIED_PRESENT=... / LOCAL_MISSING=... / LOCAL_CHANGED=... / NOT_APPLICABLE=...
 工具簿記：命令、exit code、驗證範圍
 檔案驗證：ImageIO / ffmpeg / manifest / completion
