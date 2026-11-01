@@ -1,6 +1,6 @@
 # 下載、notes CLI 與恢復
 
-本文件定義記事本備份的單項交易與目前 branch 的 `notes` CLI 介面。GUI 的實際點擊仍依 [GUI 導覽與盤點](gui-inventory.md) 與當次 Computer Use 畫面；CLI 只做持久紀錄、交易與驗證，不授予 GUI 權限。
+本文件是記事本備份單項交易與操作順序的唯一來源，也定義目前 branch 的 `notes` CLI 介面。GUI 的定位與觀察依 [GUI 導覽與盤點](gui-inventory.md)，結果、驗證與恢復依 [驗證與恢復](verification-and-recovery.md)，證據欄位依 [證據範本](evidence-template.md)。CLI 只做持久紀錄、交易與驗證，不授予 GUI 權限。
 
 > 這些命令已在 `feature/line-notes-media` 工作樹提供，但尚未合併 `master`，也尚未經真實 GUI E2E 驗證。使用前先在 repo root 執行 `PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes --help` 核對當次 commands 與 flags；退出碼契約見下節。若不存在或 help 失敗，停止並回報 `IMPLEMENTATION_NOT_AVAILABLE`，不得手寫 JSON、建空帳或改用相簿命令冒充。
 
@@ -100,15 +100,17 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 
 每次只處理一個已核對的貼文／媒體 attempt，不得平行下載多項。固定順序如下：
 
-1. **資格核對。** 從 `memory`／本次 scan 確認該項不是 `COMPLETED`、`EXCLUDED` 或不可跳過的 `PROTECTED_HISTORY`；`PREVIOUSLY_INCOMPLETE` 先走恢復判斷，`UNKNOWN` 先 `reconcile`。重新觀察貼文、媒體及下載控制，保存真實 evidence。
-2. **建立 intent。** 在任何下載派送前執行 `intent`，讓 CLI 保存 attempt、新空白暫存目錄與「可能已派送、禁止重送」紀錄；讀回 JSON 中的 `attempt_id`、`destination`、`save_all_limit` 與 `save_all_count`。成功 intent 會帶 `status=UNKNOWN`，那是**派送前初始狀態**，不表示已點擊或下載；寫入後仍按可能已派送處理，在取得正面 `outcome` 前不得再送。`save_all_limit=1`／`save_all_count=0` 只是 intent 建立時的 ledger 約束與初始值，不是 GUI 點擊計數，也不證明記事本 Save All（或任何下載控制）實際被按下幾次；不得據此宣稱 GUI 只按一次、已派送或已下載。
-3. **確認下載控制。** 只使用記事本當次畫面與工具文件提供的控制；不要沿用相簿的 `⋯ → 儲存全部`、錄影座標或舊 Session 位置。若記事本 UI 顯示批次下載控制（包括 Save All 字樣），仍要重新證明其出處、作用及目標貼文／媒體；它是記事本自己的流程，不是相簿 Save All 的替代入口。
-4. **單次派送。** 每個 attempt 的記事本當次下載控制最多派送一次；若 UI 顯示 Save All，須先證明它是本記事本自己的控制，不得沿用相簿入口。選單或 popup 的開啟輸入與下載派送分開計數；已派送但結果不明時不得重開或再點。若畫面沒有清楚出現 chooser／進度，先記錄不確定，不要用第二次點擊查證。
-5. **chooser 精確讀回。** 若出現儲存位置 chooser，只輸入此 attempt 的新空白暫存絕對路徑；讀回欄位真正值，確認末層目錄、空白狀態與來源貼文一致後確認一次。不能依賴上次位置、猜資料列或盲目按 Return。欄位不符、出處不明或確認結果未知時停止，不重派。
-6. **第一個 outcome。** 觀察下載完成、明確錯誤、停止或未派送的正面證據後執行 `outcome`。工具逾時、呼叫成功但畫面沒變、進度尚在跑或檔案尚未穩定，都不能自行寫 `NOT_SENT`；至少記 `UNKNOWN`。第一筆結果不可用第二筆普通 outcome 覆蓋。
-7. **未知先 reconcile。** 若結果是 `UNKNOWN`，先讀原事件、原視窗、chooser／進度、實際暫存與目的地，再用 `reconcile` 追加新證據。只有調和後能正面證明已下載完成，才可進入驗證；仍不能證明就保留 UNKNOWN，不得直接 `verify`、建立新 intent、換目錄或重下。
-8. **驗證與完成。** `outcome=DOWNLOAD_FINISHED` 後執行 `verify`：先保存命名／發布交易，再核對穩定檔集、預期數、非空、SHA-256、逐檔內容解碼及前後身分。成功才追加不可覆寫 completion 並讀回。驗證或紀錄寫入失敗時保留原檔，不重新下載補帳。
+1. **intent 前預檢。** 從 `memory`／本次 scan 確認該項不是 `COMPLETED`、`EXCLUDED` 或不可跳過的 `PROTECTED_HISTORY`；`PREVIOUSLY_INCOMPLETE` 先走恢復判斷，已有 outcome 的 `UNKNOWN` 先 `reconcile`。在建立 attempt 前，再次核對同一列表、貼文、媒體、viewer 與記事本下載控制；只有資格、來源身分、控制出處／可見性與當次映射都能成立時才可繼續。任一項是 `UNKNOWN`，或控制可能屬於相簿／另一畫面，就停止在 intent 前，不為取得證據而先按下載控制。
+2. **建立並讀回 intent。** 在任何下載派送前執行 `intent`，讓 CLI 保存 attempt、新空白暫存目錄與「可能已派送、禁止重送」紀錄；讀回 JSON 中的 `attempt_id`、`destination`、`save_all_limit` 與 `save_all_count`，並在私有任務區保存這次預檢與讀回的證據。成功 intent 會帶 `status=UNKNOWN`，那是**派送前初始狀態**，不表示已點擊或下載。`save_all_limit=1`／`save_all_count=0` 只是 intent 建立時的 ledger 約束與初始值，不是 GUI 點擊計數，也不證明記事本下載控制實際被按下幾次。
+3. **讀回後再次定位。** 在任何輸入前，重新取得當次畫面／AX，核對同一列表、貼文、媒體、viewer、控制與 intent 讀回的 `post_key`、`media_key`、原目的地；視窗移動、縮放、換頁、popup 重開或來源改變都會使舊映射失效。重新定位失敗時停止所有 GUI 輸入，保留本次 intent 為可能已派送；不得建立替代 attempt，也不得以 marker／chooser 缺席解鎖。
+4. **下載控制至多一次。** 只使用記事本當次畫面與工具文件提供的控制，不沿用相簿的 `⋯ → 儲存全部`、錄影座標或舊 Session 位置。每個 attempt 的實際下載控制呼叫上限是一；失敗、逾時、呼叫成功但結果不明也都算一次，必須分別保存工具原始回傳與獨立觀察。選單開啟、滑鼠移動或 chooser 路徑輸入不得重置這個計數；已派送但結果不明時，不得重開或再點下載控制查證。
+5. **chooser 觀察與至多一次確認。** 下載控制呼叫與 chooser 最終確認是兩個獨立計數。chooser 可能延遲出現；只有視窗／process、來源 viewer 與 attempt 能唯一歸屬時，才輸入此 attempt 的新空白暫存絕對路徑，讀回欄位真正值並確認末層目錄、空白狀態與來源貼文後，確認至多一次。出處不明、欄位不符或確認結果未知時不得確認，也不得用第二次確認、猜 Return 或重派恢復。出現 chooser 只證明 App 有階段性回應，不是下載完成。
+6. **記錄第一筆 outcome。** 先確認該 attempt 是否已有 outcome 事件，不從 `memory` 顯示的 `UNKNOWN` 猜測。沒有 outcome 時只執行一次 `outcome`，依第一筆真實結果記錄；若只有逾時、畫面未變、進度未終止、chooser／檔案的歸屬不足或其他不確定訊號，就記 `UNKNOWN`，不得改寫成 `NOT_SENT`／`STOPPED`，也不得先呼叫 `reconcile`。已有 `outcome=UNKNOWN` 時，才可以在取得新證據後使用 `reconcile`；不得再做第二次 `outcome`。
+7. **未收斂即停止。** 結果未達可進入驗證的正面終結前，不得 `verify`、建立新 intent、重下或派送下一項；晚到結果只能先歸回原 attempt 並調和，不能算成下一項。相同查證連續兩次沒有新資訊就停止，不重置次數或換入口繞過。只有可歸屬且足以排除原操作稍後繼續的明確停止／未派送證據，才可能進 `STOPPED`／`NOT_SENT`；目前是否能取得此證據仍 `UNKNOWN`。
+8. **驗證與完成。** 只有具備可歸屬的下載終結結果及穩定結果檔，才可記 `DOWNLOAD_FINISHED` 並執行 `verify`。`verify` 先保存命名／發布交易，再核對穩定檔集、預期數、非空、SHA-256、逐檔內容解碼及前後身分；成功才追加不可覆寫 completion 並讀回。驗證或紀錄寫入失敗時保留原檔，不重新下載補帳。
 9. **命名中斷。** 只要來源、暫名、目標及 journal 可唯一核對，執行 `resume` 接續同一交易；`resume` 不得觸發下載。目標已存在、額外檔、symlink、hash／mtime／ctime 漂移或來源與目標歧義時，保護原檔並停止，不用手動改名解鎖。
+
+每次下載控制、chooser 確認、outcome、reconcile 與恢復前，都依 [證據範本](evidence-template.md) 保存當次私有證據；有 `--evidence FILE` 的子命令使用同一份或引用它。`intent` 沒有一般 evidence 參數，其預檢與讀回證據留在私有任務區，不能冒充 CLI 欄位。同一 attempt 可多次 reconcile；每次完成後都要追加該次 sequence／event SHA-256 與結果引用，保留全部歷史，不以最後一筆覆寫。證據檔是既有介面接收的自由文字，不是新增 schema；CLI 仍驗證專案內非空、非 symlink 的 regular file 與內容定址 bytes／hash，但不解析欄位語意或畫面真實性。缺少必要值時寫 `UNKNOWN`，不可由檔名、猜測或另一個來源補值。
 
 ## 恢復與不可解鎖狀態
 
@@ -118,12 +120,14 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 | 完成目錄仍存在但缺檔、額外檔、hash／身分漂移或 symlink | `LOCAL_CHANGED`：保護原件，停止新派送，不重下補帳 |
 | 已 `DOWNLOAD_FINISHED`、尚未 completion | 驗證現有暫存／目標並完成或 `resume`，不重下 |
 | 命名／發布交易中斷 | `resume` 同一交易；不得重送下載 |
-| `UNKNOWN` | 先 `reconcile`；未收斂前不 verify、不建新 attempt、不重下 |
-| 明確 `STOPPED` 或 `NOT_SENT`、原檔保留且原任務授權涵蓋自動恢復 | 綁定前次 attempt，建立另一個新空白恢復目錄；已完成項跳過 |
+| 已有 `outcome=UNKNOWN` | 先 `reconcile`；未收斂前不 verify、不建新 attempt、不重下、不派下一項；沒有新資訊就停止相同查證 |
+| 明確 `STOPPED` 或 `NOT_SENT`、原檔保留、帳本已有持久化 `recovery_authorized=true`，且有充分停止證據 | 保存並讀回證據，以 `intent --recovery-evidence` 綁定前次 attempt，由 CLI 建立另一個新空白恢復目錄；已完成項跳過。授權未持久化、證據不足或前項不是終止狀態時停止，不手動建目錄或改 ledger |
 | `PREVIOUSLY_INCOMPLETE` | 依原授權走上述恢復判斷，不當普通待下載直接派送 |
 | `PROTECTED_HISTORY` | 保留來源與缺項；只有完整盤點、無列表級歧義且不是活動／UNKNOWN／pending 時才可跳過該項，不計完成或排除 |
 
-恢復只重做原授權範圍內未完成的項目，不重跑已完成清單。原本的暫存、部分下載、證據與日誌全部保留；新 attempt 不可覆寫舊目錄或舊事件。若原 Prompt 未涵蓋恢復、UNKNOWN 無法收斂，或工具缺少安全調和能力，停止並提出最小具體問題。
+恢復只重做原授權範圍內未完成的項目，不重跑已完成清單。原本的暫存、部分下載、證據與日誌全部保留；新 attempt 不可覆寫舊目錄或舊事件。若原 Prompt 未涵蓋恢復、UNKNOWN 無法收斂，或工具缺少安全調和能力，停止並提出最小具體問題；未收斂的同一列表不得派送下一項。
+
+現行 CLI 只在 `init --recovery-authorized` 時把恢復授權持久化到列表帳本；沒有事後修改該授權的子命令。既有列表若 `memory` 顯示未授權，停止恢復並交人決定，不直接編輯 `list.json`、事件或另造空帳。
 
 ## 新媒體、重排與跨列表
 

@@ -52,16 +52,17 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 1. **找回前次任務。** 先查全部記事本帳本與 active-notes-task，再讀相符帳本的 `memory` 摘要。不能用缺少帳本、索引缺失或 active-task 不存在推論為空帳。新列表須有完整、無歧義的新列表證據才依序 `init` → `bind` → `scan start`；既有列表用 `bind` → `scan start`。`memory` 不含完整 attempt、staging 目的地或 completion manifest；交易細節以 `intent`／`verify` 結果及追加事件為準。新一批目的地以 `destination` 追加，保留舊完成路徑。
 2. **判定入口。** 在有效前景交接內用當次 AX／畫面確認目標是記事本列表，不是相簿、聊天、貼文檢視器或出處不明頁面。需要返回時只使用當次可靠控制項或已證實且符合角色／焦點的快捷鍵；不得猜 Escape、Command-W 或關閉。入口未確認前不捲動、不盤點、不下載。
 3. **完整盤點。** 依 [GUI 導覽與盤點](references/gui-inventory.md) 從頂端到底端，以有序重疊避免漏篇；逐篇核對媒體縮圖、更多指示、viewer 與來源順序。只有頂底、重疊、篇數與逐篇媒體覆蓋已成立，才可產生合格下載排程。純文字貼文記 `NO_MEDIA`，不得當成下載完成。
-4. **一次一項下載。** 依 [下載與 notes CLI](references/download-and-ledger.md) 為每次 attempt 先保存並讀回 intent、新空白暫存目錄及禁止重送紀錄。確認貼文、媒體與下載控制出處後，**每個 attempt 的記事本當次下載控制最多派送一次**；若 UI 顯示 Save All，須先證明它是本記事本自己的控制，不得沿用相簿入口。下載控制與 chooser 確認分開記錄；chooser 須精確讀回完整暫存路徑後只確認一次。
-5. **結果、驗證與命名。** 下載後先 `outcome` 記第一個實際結果；只有 `DOWNLOAD_FINISHED` 才能 `verify`。結果未知先 `reconcile`，不得直接 verify、建立新 intent 或重新派送。命名／發布交易中斷用 `resume` 接續同一交易，絕不重下。檔案驗證見 [驗證與恢復](references/verification-and-recovery.md)。
+4. **一次一項下載。** 依 [下載與 notes CLI](references/download-and-ledger.md) 在 intent 前確認資格、來源及記事本控制；為每次 attempt 保存並讀回 intent、新空白暫存目錄及禁止重送紀錄，讀回後在輸入前再次定位同一列表／貼文／媒體／viewer／控制。**每個 attempt 的下載控制呼叫與 chooser 最終確認各最多一次**，兩者分開保存真實工具回傳；若 UI 顯示 Save All，須先證明它是本記事本自己的控制，不得沿用相簿入口。chooser 須可歸屬同一 attempt、精確讀回完整暫存路徑後才確認一次。
+5. **結果、驗證與命名。** 先查該 attempt 是否已有 outcome／UNKNOWN：沒有 outcome 時用 `outcome` 記錄第一筆真實結果（可為 UNKNOWN）；已有 `outcome=UNKNOWN` 才用 `reconcile`。未收斂不得 verify、建立新 intent、重下或派下一項；只有 `DOWNLOAD_FINISHED` 才能 `verify`。命名／發布交易中斷用 `resume` 接續同一交易，絕不重下。檔案驗證見 [驗證與恢復](references/verification-and-recovery.md)。
 6. **逐項循環與結束對帳。** 完成一項後保存並讀回 completion，重新觀察原貼文／列表，再定位下一個合格項。遇到新媒體、重排、刪除、編輯或檔案異常時先更新盤點與狀態，不覆寫舊完成事實。最後以 `summary` 與當次畫面交叉核對；只有覆蓋完整且所有未解類別已誠實列出，才回報本次工作結果。
 
 ## 下載與恢復的硬邊界
 
 - 一次只處理一個貼文／媒體 attempt；不得平行派送多個下載。
 - intent 一旦持久寫入，就按「可能已派送」對待；在 `outcome` 有正面證據前，禁止第二個下載派送，也不得把工具逾時、畫面未變或舊計數為零當成 `NOT_SENT`。
-- `outcome` 的第一筆結果不可任意改寫。明確 `UNKNOWN` 必須用 `reconcile` 查原事件、目的地與當次狀態；未收斂前不得 `verify`、建立新 attempt 或重下。
-- 只有確認 `STOPPED`／`NOT_SENT`、保留原檔且原任務授權涵蓋恢復時，才可建立該項的新空白恢復 attempt；已完成項跳過。
+- `outcome` 的第一筆結果不可任意改寫。尚未寫 outcome 時先以 `outcome` 保存第一筆真實結果；只有帳本已有第一筆 `outcome=UNKNOWN` 時才用 `reconcile` 查原事件、目的地與當次狀態。未收斂前不得 `verify`、建立新 attempt 或重下。
+- 定位、input 原始回傳、App 階段性回應、下載結果、檔案驗證與 completion 是不同命題；只有可歸屬的正面證據組合能前進。timeout、畫面未變、空目錄、缺少 marker、API 成敗或播放結束都不足以判未派送或完成，詳見 [證據與允許行為矩陣](references/verification-and-recovery.md#證據與允許行為矩陣)。
+- 只有原 attempt 已確認 `STOPPED`／`NOT_SENT`、原檔保留、帳本已持久化 `recovery_authorized=true`，且具充分停止證據時，才可依 [下載與 notes CLI](references/download-and-ledger.md) 以 `--recovery-evidence` 建立該項的新空白恢復 attempt；現行 CLI 沒有事後改寫此授權的命令，未持久化時停止，不手改 ledger。已完成項跳過。
 - 命名交易、暫名與目標身分可唯一核對時用 `resume`；無法唯一下一步時保留原檔與 pending 證據並停止，不手動改資料夾或重下。
 - 已完成事實與本機可用性分開：整篇目錄缺席記 `LOCAL_MISSING` 並保留完成、禁止重下；目錄仍存在但有缺檔、額外檔、hash／身分漂移或 symlink 時記 `LOCAL_CHANGED` 並停止新派送。
 - 六類業務狀態為 `COMPLETED`、`EXCLUDED`、`PENDING`、`PREVIOUSLY_INCOMPLETE`、`UNKNOWN`、`PROTECTED_HISTORY`。`NO_MEDIA` 是貼文層級標記，不是第七類，也不是下載完成。
@@ -84,6 +85,8 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
 ## 參考文件
 
-- [GUI 導覽與盤點](references/gui-inventory.md)：入口、三層身分、縮圖／更多／viewer 交叉、重疊與頂底、變動處理。
-- [下載與 notes CLI](references/download-and-ledger.md)：目前子命令、intent 到 verify 的單項交易、未知調和、命名恢復。
-- [驗證與恢復](references/verification-and-recovery.md)：照片／影片解碼、六類狀態、`LOCAL_MISSING`／`LOCAL_CHANGED`、合成測試與證據界限。
+- [GUI 導覽與盤點](references/gui-inventory.md)：入口、三層身分、縮圖／更多／viewer 交叉、來源／範圍、popup、時鐘、座標映射、控制與輸入觀察規則。
+- [下載與 notes CLI](references/download-and-ledger.md)：目前子命令、intent 前後核對、下載／chooser 各最多一次、outcome／reconcile 分流、命名恢復。
+- [驗證與恢復](references/verification-and-recovery.md)：證據矩陣、完成／停止證據組合、照片／影片解碼、六類狀態與本機可用性。
+- [證據範本](references/evidence-template.md)：可直接填寫的私有 evidence 欄位與引用 hash／唯一檔名規則；不是 CLI schema。
+- [證據判定案例](references/evidence-decision-cases.md)：控制隱藏、API error、chooser 延遲、晚到結果、播放結束、crash window 與充分／不足證據的假設案例。
