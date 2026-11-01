@@ -10,9 +10,10 @@ import subprocess
 import tempfile
 import unittest
 from unittest import mock
+import uuid
 import zlib
 
-from line_backup_batch import notes
+from line_backup_batch import notes, notes_evidence
 from line_backup_batch.daily import DailyError
 from line_backup_batch.notes import (
     LOCAL_CHANGED,
@@ -26,6 +27,7 @@ from line_backup_batch.notes import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PRIVATE_TASKS = ROOT / '.local' / 'line-backup' / 'tasks'
 PYTHON = '/usr/bin/python3'
 
 
@@ -46,11 +48,16 @@ def video_bytes(marker=0):
 
 class NotesRecordsTests(unittest.TestCase):
     def setUp(self):
+        PRIVATE_TASKS.mkdir(parents=True, exist_ok=True)
         self.temporary = tempfile.TemporaryDirectory(
-            prefix='notes-records-', dir=ROOT)
+            prefix='notes-records-', dir=PRIVATE_TASKS)
         self.base = Path(self.temporary.name).resolve()
         self.evidence = self.base / 'synthetic-evidence.txt'
         self.evidence.write_bytes(b'synthetic notes evidence')
+        self.screenshot = self.base / 'synthetic-screenshot.txt'
+        self.screenshot.write_bytes(b'synthetic screenshot evidence')
+        self.evidence_packs = self.base / 'evidence-packs'
+        self.evidence_packs.mkdir()
         self.photo_root = self.base / 'photos'
         self.collection_path = self.base / 'records'
         self.collection = NotesCollection(str(self.collection_path))
@@ -65,20 +72,32 @@ class NotesRecordsTests(unittest.TestCase):
         self.active_patch.stop()
         self.temporary.cleanup()
 
+    def make_evidence(self, **context):
+        output = self.evidence_packs / uuid.uuid4().hex
+        return notes_evidence.create_bundle(
+            statement=str(self.evidence),
+            assets=[('screenshot', str(self.screenshot))],
+            context=context, output_dir=str(output))['bundle_path']
+
     def new_ledger(self, visual_key, *, recovery_authorized=False,
                    display_name='Synthetic Notes'):
+        identity = notes.list_identity(visual_key=visual_key)
+        list_key_value = notes.list_key(identity)
+        evidence = self.make_evidence(list_key=list_key_value)
         summary = self.collection.create(
             photo_root=str(self.photo_root),
             display_name=display_name,
-            identity=notes.list_identity(visual_key=visual_key),
-            binding_evidence=str(self.evidence),
-            history_scope_evidence=str(self.evidence),
+            identity=identity,
+            binding_evidence=evidence,
+            history_scope_evidence=evidence,
             recovery_authorized=recovery_authorized)
         records = NotesRecords(
             summary['records_root'], _allow_injected_verification=True)
         records.bind(session_id=self.session,
-                     observation=str(self.evidence),
-                     handoff=str(self.evidence))
+                     observation=self.make_evidence(
+                         list_key=summary['list_key']),
+                     handoff=self.make_evidence(
+                         list_key=summary['list_key']))
         return records, summary
 
     def reopen(self, records):
@@ -87,8 +106,10 @@ class NotesRecordsTests(unittest.TestCase):
 
     def bind(self, records, session):
         return records.bind(session_id=session,
-                            observation=str(self.evidence),
-                            handoff=str(self.evidence))
+                            observation=self.make_evidence(
+                                list_key=records.list_data['list_key']),
+                            handoff=self.make_evidence(
+                                list_key=records.list_data['list_key']))
 
     def observe_post(self, records, list_key, post_visual, media_identities,
                      *, session=None, no_media=False, media_count=None,
@@ -97,30 +118,41 @@ class NotesRecordsTests(unittest.TestCase):
         post = notes.post_identity(visual_key=post_visual)
         post_key_value = notes.post_key(list_key, post)
         scan = records.scan(session_id=session, action='START',
-                            evidence=str(self.evidence))
+                            evidence=self.make_evidence(list_key=list_key))
+        scan_evidence = self.make_evidence(
+            list_key=list_key, scan_id=scan['scan_id'])
         records.page(
             session_id=session, scan_id=scan['scan_id'], page_index=0,
             posts=[dict(identity=post, date_summary=date)],
             top_reached=True, bottom_reached=True, overlap_keys=[],
-            evidence=str(self.evidence))
+            evidence=scan_evidence)
         records.scan(session_id=session, action='FINISH',
-                     scan_id=scan['scan_id'], evidence=str(self.evidence))
+                     scan_id=scan['scan_id'], evidence=scan_evidence)
         count = 0 if no_media else (
             len(media_identities) if media_count is None else media_count)
+        post_evidence = self.make_evidence(
+            list_key=list_key, post_key=post_key_value,
+            scan_id=scan['scan_id'])
         records.record_post(
             session_id=session, post_key_value=post_key_value,
             date_summary=date, media_count=count, text_sha256=None,
-            evidence=str(self.evidence), no_media=no_media)
+            evidence=post_evidence, no_media=no_media)
         if media_identities:
             records.record_media(
                 session_id=session, post_key_value=post_key_value,
                 items=[{'identity': identity} for identity in media_identities],
-                missing=[], evidence=str(self.evidence))
+                missing=[], evidence=post_evidence)
         return post, post_key_value, scan
 
     def media_key(self, records, post_key_value, identity):
         return notes.media_key(records.list_data['list_key'],
                                post_key_value, identity)
+
+    def attempt_evidence(self, records, attempt):
+        return self.make_evidence(
+            list_key=records.list_data['list_key'],
+            post_key=attempt['post_key'], media_key=attempt['media_key'],
+            attempt_id=attempt['attempt_id'], scan_id=attempt['scan_id'])
 
     def download(self, records, media_key_value, filename, payload,
                  *, session=None, outcome='DOWNLOAD_FINISHED',
@@ -130,12 +162,13 @@ class NotesRecordsTests(unittest.TestCase):
                                  media_key_value=media_key_value)
         staging = Path(attempt['destination'])
         (staging / filename).write_bytes(payload)
+        evidence = self.attempt_evidence(records, attempt)
         records.outcome(session_id=session, attempt_id=attempt['attempt_id'],
-                        outcome=outcome, evidence=str(self.evidence))
+                        outcome=outcome, evidence=evidence)
         if outcome == 'UNKNOWN' and reconcile is not None:
             records.reconcile(session_id=session,
                               attempt_id=attempt['attempt_id'],
-                              result=reconcile, evidence=str(self.evidence))
+                              result=reconcile, evidence=evidence)
         completion = records.verify(
             session_id=session, attempt_id=attempt['attempt_id'],
             verifier=verifier or self.pass_verifier,
@@ -232,12 +265,14 @@ class NotesRecordsTests(unittest.TestCase):
         (staging / 'photo.png').write_bytes(png())
         self.records.outcome(
             session_id=self.session, attempt_id=attempt['attempt_id'],
-            outcome='DOWNLOAD_FINISHED', evidence=str(self.evidence))
+            outcome='DOWNLOAD_FINISHED',
+            evidence=self.attempt_evidence(self.records, attempt))
         before = self.event_bytes()
         with self.assertRaisesRegex(NotesError, 'OUTCOME_ALREADY_RECORDED'):
             self.records.outcome(
                 session_id=self.session, attempt_id=attempt['attempt_id'],
-                outcome='NOT_SENT', evidence=str(self.evidence))
+                outcome='NOT_SENT',
+                evidence=self.attempt_evidence(self.records, attempt))
         with self.assertRaisesRegex(NotesError, 'UNKNOWN_OR_RUNNING_NO_REPLAY'):
             self.records.intent(session_id=self.session, media_key_value=key)
         self.assertEqual(self.event_bytes(), before)
@@ -253,7 +288,8 @@ class NotesRecordsTests(unittest.TestCase):
             session_id=self.session, media_key_value=key)
         self.records.outcome(
             session_id=self.session, attempt_id=attempt['attempt_id'],
-            outcome='UNKNOWN', evidence=str(self.evidence))
+            outcome='UNKNOWN',
+            evidence=self.attempt_evidence(self.records, attempt))
         before = self.event_bytes()
         with self.assertRaisesRegex(
                 NotesError, 'KNOWN_DOWNLOAD_FINISH_REQUIRED'):
@@ -266,7 +302,8 @@ class NotesRecordsTests(unittest.TestCase):
 
         self.records.reconcile(
             session_id=self.session, attempt_id=attempt['attempt_id'],
-            result='UNKNOWN', evidence=str(self.evidence))
+            result='UNKNOWN',
+            evidence=self.attempt_evidence(self.records, attempt))
         with self.assertRaisesRegex(
                 NotesError, 'KNOWN_DOWNLOAD_FINISH_REQUIRED'):
             self.records.verify(
@@ -284,22 +321,24 @@ class NotesRecordsTests(unittest.TestCase):
             session_id=self.session, media_key_value=key)
         self.records.outcome(
             session_id=self.session, attempt_id=first['attempt_id'],
-            outcome='STOPPED', evidence=str(self.evidence))
+            outcome='STOPPED',
+            evidence=self.attempt_evidence(self.records, first))
         with self.assertRaisesRegex(NotesError, 'NOTES_RECOVERY_EVIDENCE_REQUIRED'):
             self.records.intent(session_id=self.session, media_key_value=key)
         second = self.records.intent(
             session_id=self.session, media_key_value=key,
-            recovery_evidence=str(self.evidence))
+            recovery_evidence=self.attempt_evidence(self.records, first))
         self.assertNotEqual(first['destination'], second['destination'])
         self.assertEqual(second['recovery_of'], first['attempt_id'])
         self.assertTrue(Path(first['destination']).is_dir())
         self.assertTrue(Path(second['destination']).is_dir())
         self.records.outcome(
             session_id=self.session, attempt_id=second['attempt_id'],
-            outcome='NOT_SENT', evidence=str(self.evidence))
+            outcome='NOT_SENT',
+            evidence=self.attempt_evidence(self.records, second))
         third = self.records.intent(
             session_id=self.session, media_key_value=key,
-            recovery_evidence=str(self.evidence))
+            recovery_evidence=self.attempt_evidence(self.records, second))
         self.assertEqual(third['recovery_of'], second['attempt_id'])
         self.assertNotEqual(third['destination'], first['destination'])
         self.assertNotEqual(third['destination'], second['destination'])
@@ -316,7 +355,8 @@ class NotesRecordsTests(unittest.TestCase):
         (staging / 'naming.png').write_bytes(png())
         self.records.outcome(
             session_id=self.session, attempt_id=attempt['attempt_id'],
-            outcome='DOWNLOAD_FINISHED', evidence=str(self.evidence))
+            outcome='DOWNLOAD_FINISHED',
+            evidence=self.attempt_evidence(self.records, attempt))
         with mock.patch.object(
                 NotesRecords, '_execute_publish',
                 side_effect=OSError('synthetic naming interruption')):
@@ -528,7 +568,8 @@ class NotesRecordsTests(unittest.TestCase):
         with self.assertRaisesRegex(NotesError, 'OUTCOME_ALREADY_RECORDED'):
             reopened.outcome(session_id=self.session,
                              attempt_id=attempt['attempt_id'],
-                             outcome='NOT_SENT', evidence=str(self.evidence))
+                             outcome='NOT_SENT',
+                             evidence=self.attempt_evidence(reopened, attempt))
         self.assertEqual(self.event_bytes(reopened), before)
         self.assertEqual(completion['data']['verification']['verifier'],
                          'INJECTED')
@@ -547,7 +588,8 @@ class NotesRecordsTests(unittest.TestCase):
         (staging / 'synthetic.png').write_bytes(png())
         records.outcome(
             session_id=self.session, attempt_id=attempt['attempt_id'],
-            outcome='DOWNLOAD_FINISHED', evidence=str(self.evidence))
+            outcome='DOWNLOAD_FINISHED',
+            evidence=self.attempt_evidence(records, attempt))
         before = self.event_bytes(records)
 
         production = NotesRecords(str(records.records))

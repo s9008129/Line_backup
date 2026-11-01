@@ -6,9 +6,10 @@ import subprocess
 import tempfile
 import unittest
 from unittest import mock
+import uuid
 import zlib
 
-from line_backup_batch import media_verify, notes
+from line_backup_batch import media_verify, notes, notes_evidence
 from line_backup_batch.notes import (
     LOCAL_VERIFIED,
     PHOTO,
@@ -20,6 +21,7 @@ from line_backup_batch.notes import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PRIVATE_TASKS = ROOT / '.local' / 'line-backup' / 'tasks'
 SWIFT_DECODER_SOURCE = ROOT / 'src/line_backup_batch/image_decode.swift'
 FFMPEG = Path('/opt/homebrew/bin/ffmpeg')
 FFPROBE = Path('/opt/homebrew/bin/ffprobe')
@@ -39,8 +41,9 @@ def png(color=(255, 0, 0)):
 class NotesE2EMediaTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        PRIVATE_TASKS.mkdir(parents=True, exist_ok=True)
         cls.fixtures = tempfile.TemporaryDirectory(
-            prefix='.line-notes-e2e-tests-', dir=str(ROOT))
+            prefix='.line-notes-e2e-tests-', dir=str(PRIVATE_TASKS))
         cls.fixture_root = Path(cls.fixtures.name).resolve()
         try:
             cls._require_video_pair()
@@ -122,10 +125,14 @@ class NotesE2EMediaTests(unittest.TestCase):
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(
-            prefix='.line-notes-e2e-tests-', dir=str(ROOT))
+            prefix='.line-notes-e2e-tests-', dir=str(PRIVATE_TASKS))
         self.base = Path(self.temp.name).resolve()
         self.evidence = self.base / 'synthetic-evidence.txt'
         self.evidence.write_bytes(b'synthetic notes e2e evidence')
+        self.screenshot = self.base / 'synthetic-screenshot.txt'
+        self.screenshot.write_bytes(b'synthetic e2e screenshot')
+        self.evidence_packs = self.base / 'evidence-packs'
+        self.evidence_packs.mkdir()
         self.photo_root = self.base / 'photos'
         self.collection_path = self.base / 'records'
         self.collection = NotesCollection(str(self.collection_path))
@@ -140,17 +147,29 @@ class NotesE2EMediaTests(unittest.TestCase):
         self.temp.cleanup()
 
     def _new_ledger(self, visual_key):
+        identity = notes.list_identity(visual_key=visual_key)
+        list_key_value = notes.list_key(identity)
         memory = self.collection.create(
             photo_root=str(self.photo_root),
             display_name='E2E Notes ' + visual_key,
-            identity=notes.list_identity(visual_key=visual_key),
-            binding_evidence=str(self.evidence),
-            history_scope_evidence=str(self.evidence))
+            identity=identity,
+            binding_evidence=self._evidence(list_key=list_key_value),
+            history_scope_evidence=self._evidence(list_key=list_key_value))
         records = NotesRecords(memory['records_root'])
         records.bind(session_id=self.session,
-                     observation=str(self.evidence),
-                     handoff=str(self.evidence))
+                     observation=self._evidence(list_key=list_key_value),
+                     handoff=self._evidence(list_key=list_key_value))
         return records, memory
+
+    def _evidence(self, **context):
+        context = {key: value for key, value in context.items()
+                   if value is not None}
+        return notes_evidence.create_bundle(
+            statement=str(self.evidence),
+            assets=[('screenshot', str(self.screenshot))],
+            context=context,
+            output_dir=str(self.evidence_packs / uuid.uuid4().hex)
+        )['bundle_path']
 
     def _observe_post(self, visual_key, media_identities):
         post = notes.post_identity(visual_key=visual_key)
@@ -158,26 +177,35 @@ class NotesE2EMediaTests(unittest.TestCase):
             self.memory['list_key'], post)
         scan = self.records.scan(
             session_id=self.session, action='START',
-            evidence=str(self.evidence))
+            evidence=self._evidence(list_key=self.memory['list_key']))
         self.records.page(
             session_id=self.session, scan_id=scan['scan_id'], page_index=0,
             posts=[dict(identity=post, date_summary='2026-10-31')],
             top_reached=True, bottom_reached=True, overlap_keys=[],
-            evidence=str(self.evidence))
+            evidence=self._evidence(list_key=self.memory['list_key'],
+                                    scan_id=scan['scan_id']))
         self.records.scan(
             session_id=self.session, action='FINISH',
-            scan_id=scan['scan_id'], evidence=str(self.evidence))
+            scan_id=scan['scan_id'],
+            evidence=self._evidence(list_key=self.memory['list_key'],
+                                    scan_id=scan['scan_id']))
         self.records.record_post(
             session_id=self.session, post_key_value=post_key_value,
             date_summary='2026-10-31', media_count=len(media_identities),
-            text_sha256=None, evidence=str(self.evidence),
+            text_sha256=None,
+            evidence=self._evidence(list_key=self.memory['list_key'],
+                                    post_key=post_key_value,
+                                    scan_id=scan['scan_id']),
             no_media=not media_identities)
         if media_identities:
             self.records.record_media(
                 session_id=self.session, post_key_value=post_key_value,
                 items=[dict(identity=identity)
                        for identity in media_identities],
-                missing=[], evidence=str(self.evidence))
+                missing=[],
+                evidence=self._evidence(list_key=self.memory['list_key'],
+                                        post_key=post_key_value,
+                                        scan_id=scan['scan_id']))
         return post_key_value
 
     def _download_finished(self, media_key_value, filename, payload):
@@ -190,7 +218,12 @@ class NotesE2EMediaTests(unittest.TestCase):
         staged.write_bytes(payload)
         self.records.outcome(
             session_id=self.session, attempt_id=attempt['attempt_id'],
-            outcome='DOWNLOAD_FINISHED', evidence=str(self.evidence))
+            outcome='DOWNLOAD_FINISHED',
+            evidence=self._evidence(
+                list_key=self.memory['list_key'],
+                post_key=attempt['post_key'], media_key=attempt['media_key'],
+                attempt_id=attempt['attempt_id'],
+                scan_id=attempt.get('scan_id')))
         return attempt, staging, staged
 
     def _verify(self, attempt, progress=None):

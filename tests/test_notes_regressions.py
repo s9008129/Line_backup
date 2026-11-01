@@ -16,8 +16,9 @@ import time
 from types import SimpleNamespace
 import unittest
 from unittest import mock
+import uuid
 
-from line_backup_batch import media_verify, notes
+from line_backup_batch import media_verify, notes, notes_evidence
 from line_backup_batch.daily import digest, encoded
 from line_backup_batch.media_verify import (
     MediaVerificationError,
@@ -33,7 +34,49 @@ from line_backup_batch.notes import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PRIVATE_TASKS = ROOT / '.local' / 'line-backup' / 'tasks'
 STRICT_VERIFY_SIGNATURE = inspect.signature(media_verify.verify_media)
+
+
+class _Ledger(SimpleNamespace):
+    def evidence(self, **context):
+        context = {key: value for key, value in context.items()
+                   if value is not None and value != 'UNKNOWN'}
+        output = self.evidence_packs / uuid.uuid4().hex
+        return notes_evidence.create_bundle(
+            statement=str(self.evidence_source),
+            assets=[('screenshot', str(self.evidence_screenshot))],
+            context=context,
+            output_dir=str(output))['bundle_path']
+
+    def evidence_for_attempt(self, attempt):
+        return self.evidence(
+            list_key=self.summary['list_key'], post_key=attempt['post_key'],
+            media_key=attempt['media_key'],
+            attempt_id=attempt['attempt_id'], scan_id=attempt.get('scan_id'))
+
+    def evidence_for_media(self, media_key_value):
+        return self.evidence(**self.records._media_evidence_context(
+            media_key_value))
+
+    def stored_evidence_for_attempt(self, attempt):
+        context = self.records._intent_evidence_context(attempt['attempt_id'])
+        return notes._preserve_evidence(
+            self.records.records, self.evidence_for_attempt(attempt), context)
+
+    def stored_evidence_for_media(self, media_key_value):
+        context = self.records._media_evidence_context(media_key_value)
+        return notes._preserve_evidence(
+            self.records.records, self.evidence(**context), context)
+
+    def evidence_for_scan(self, scan_id=None):
+        return self.evidence(list_key=self.summary['list_key'],
+                             scan_id=scan_id)
+
+    def evidence_for_post(self, post_key_value):
+        latest, _scans = self.records._open_scan()
+        return self.evidence(list_key=self.summary['list_key'],
+                             post_key=post_key_value, scan_id=latest)
 
 
 class _EofThenHangs:
@@ -76,8 +119,9 @@ class _EofThenHangs:
 
 class NotesRegressionTests(unittest.TestCase):
     def setUp(self):
+        PRIVATE_TASKS.mkdir(parents=True, exist_ok=True)
         self.temporary = tempfile.TemporaryDirectory(
-            prefix='.line-notes-regressions-', dir=str(ROOT))
+            prefix='.line-notes-regressions-', dir=str(PRIVATE_TASKS))
         self.base = Path(self.temporary.name).resolve()
         self.active_patch = mock.patch.object(
             notes, '_write_active_hint', return_value=None)
@@ -92,28 +136,57 @@ class NotesRegressionTests(unittest.TestCase):
         case.mkdir()
         evidence = case / 'synthetic-evidence.txt'
         evidence.write_bytes(b'synthetic notes evidence\n')
+        screenshot = case / 'synthetic-screenshot.txt'
+        screenshot.write_bytes(b'synthetic notes screenshot\n')
+        evidence_packs = case / 'evidence-packs'
+        evidence_packs.mkdir()
         photo_root = case / 'photos'
         collection_path = case / 'records'
         collection = NotesCollection(str(collection_path))
+        list_key_value = notes.list_key(
+            notes.list_identity(visual_key='list-' + label))
+        context = dict(list_key=list_key_value)
+        binding_evidence = notes_evidence.create_bundle(
+            statement=str(evidence),
+            assets=[('screenshot', str(screenshot))],
+            context=context,
+            output_dir=str(evidence_packs / uuid.uuid4().hex))['bundle_path']
+        history_evidence = notes_evidence.create_bundle(
+            statement=str(evidence),
+            assets=[('screenshot', str(screenshot))],
+            context=context,
+            output_dir=str(evidence_packs / uuid.uuid4().hex))['bundle_path']
         summary = collection.create(
             photo_root=str(photo_root),
             display_name='Synthetic ' + label,
             identity=notes.list_identity(visual_key='list-' + label),
-            binding_evidence=str(evidence),
-            history_scope_evidence=str(evidence),
+            binding_evidence=binding_evidence,
+            history_scope_evidence=history_evidence,
             recovery_authorized=recovery_authorized,
         )
         records = NotesRecords(
             summary['records_root'], _allow_injected_verification=True)
         session = 'session-' + label
+        observation = notes_evidence.create_bundle(
+            statement=str(evidence),
+            assets=[('screenshot', str(screenshot))],
+            context=context,
+            output_dir=str(evidence_packs / uuid.uuid4().hex))['bundle_path']
+        handoff = notes_evidence.create_bundle(
+            statement=str(evidence),
+            assets=[('screenshot', str(screenshot))],
+            context=context,
+            output_dir=str(evidence_packs / uuid.uuid4().hex))['bundle_path']
         records.bind(session_id=session,
-                     observation=str(evidence), handoff=str(evidence))
-        return SimpleNamespace(
+                     observation=observation, handoff=handoff)
+        return _Ledger(
             records=records,
             summary=summary,
             collection=collection,
             photo_root=photo_root,
-            evidence=evidence,
+            evidence_source=evidence,
+            evidence_screenshot=screenshot,
+            evidence_packs=evidence_packs,
             session=session,
         )
 
@@ -125,7 +198,8 @@ class NotesRegressionTests(unittest.TestCase):
                      no_media=False, media_count=None):
         records = ledger.records
         session = ledger.session
-        evidence = str(ledger.evidence)
+        list_key_value = ledger.summary['list_key']
+        evidence = ledger.evidence(list_key=list_key_value)
         post = notes.post_identity(visual_key=visual_key)
         post_key_value = notes.post_key(ledger.summary['list_key'], post)
         scan = records.scan(session_id=session, action='START', evidence=evidence)
@@ -137,13 +211,15 @@ class NotesRegressionTests(unittest.TestCase):
             top_reached=True,
             bottom_reached=True,
             overlap_keys=[],
-            evidence=evidence,
+            evidence=ledger.evidence(list_key=list_key_value,
+                                     scan_id=scan['scan_id']),
         )
         records.scan(
             session_id=session,
             action='FINISH',
             scan_id=scan['scan_id'],
-            evidence=evidence,
+            evidence=ledger.evidence(list_key=list_key_value,
+                                     scan_id=scan['scan_id']),
         )
         count = 0 if no_media else (
             len(media_identities) if media_count is None else media_count)
@@ -153,7 +229,9 @@ class NotesRegressionTests(unittest.TestCase):
             date_summary='synthetic',
             media_count=count,
             text_sha256=None,
-            evidence=evidence,
+            evidence=ledger.evidence(list_key=list_key_value,
+                                     post_key=post_key_value,
+                                     scan_id=scan['scan_id']),
             no_media=no_media,
         )
         if media_identities:
@@ -162,14 +240,17 @@ class NotesRegressionTests(unittest.TestCase):
                 post_key_value=post_key_value,
                 items=[{'identity': identity} for identity in media_identities],
                 missing=[],
-                evidence=evidence,
+                evidence=ledger.evidence(list_key=list_key_value,
+                                         post_key=post_key_value,
+                                         scan_id=scan['scan_id']),
             )
         return post, post_key_value
 
     def observe_without_detail(self, ledger, visual_key):
         records = ledger.records
         session = ledger.session
-        evidence = str(ledger.evidence)
+        list_key_value = ledger.summary['list_key']
+        evidence = ledger.evidence(list_key=list_key_value)
         post = notes.post_identity(visual_key=visual_key)
         post_key_value = notes.post_key(ledger.summary['list_key'], post)
         scan = records.scan(session_id=session, action='START', evidence=evidence)
@@ -181,20 +262,23 @@ class NotesRegressionTests(unittest.TestCase):
             top_reached=True,
             bottom_reached=True,
             overlap_keys=[],
-            evidence=evidence,
+            evidence=ledger.evidence(list_key=list_key_value,
+                                     scan_id=scan['scan_id']),
         )
         records.scan(
             session_id=session,
             action='FINISH',
             scan_id=scan['scan_id'],
-            evidence=evidence,
+            evidence=ledger.evidence(list_key=list_key_value,
+                                     scan_id=scan['scan_id']),
         )
         return post_key_value
 
     def scan_with_pages(self, ledger, pages):
         records = ledger.records
         session = ledger.session
-        evidence = str(ledger.evidence)
+        list_key_value = ledger.summary['list_key']
+        evidence = ledger.evidence(list_key=list_key_value)
         scan = records.scan(session_id=session, action='START', evidence=evidence)
         for page_index, (post_identities, overlap_identities) in enumerate(pages):
             records.page(
@@ -207,11 +291,13 @@ class NotesRegressionTests(unittest.TestCase):
                 bottom_reached=page_index == len(pages) - 1,
                 overlap_keys=[notes.post_key(ledger.summary['list_key'], identity)
                               for identity in overlap_identities],
-                evidence=evidence,
+                evidence=ledger.evidence(list_key=list_key_value,
+                                         scan_id=scan['scan_id']),
             )
         records.scan(
             session_id=session, action='FINISH', scan_id=scan['scan_id'],
-            evidence=evidence)
+            evidence=ledger.evidence(list_key=list_key_value,
+                                     scan_id=scan['scan_id']))
         return scan
 
     def mutate_page(self, ledger, page_index, post_identities,
@@ -253,7 +339,7 @@ class NotesRegressionTests(unittest.TestCase):
             session_id=ledger.session,
             attempt_id=attempt['attempt_id'],
             outcome='DOWNLOAD_FINISHED',
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_attempt(attempt),
         )
         return identity, key, attempt, target
 
@@ -273,7 +359,7 @@ class NotesRegressionTests(unittest.TestCase):
             session_id=ledger.session,
             attempt_id=attempt['attempt_id'],
             outcome='DOWNLOAD_FINISHED',
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_attempt(attempt),
         )
         completion = ledger.records.verify(
             session_id=ledger.session,
@@ -654,7 +740,7 @@ class NotesRegressionTests(unittest.TestCase):
             session_id=ledger.session,
             attempt_id=attempt['attempt_id'],
             outcome='UNKNOWN',
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_attempt(attempt),
         )
         self.observe_post(
             ledger, 'summary-unknown-outside-scan-new', [], no_media=True)
@@ -684,7 +770,7 @@ class NotesRegressionTests(unittest.TestCase):
             date_summary='synthetic',
             media_count=2,
             text_sha256=None,
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_post(post_key_value),
             no_media=False,
         )
         with self.assertRaisesRegex(NotesError, 'INVALID_MEDIA_MISSING'):
@@ -694,7 +780,7 @@ class NotesRegressionTests(unittest.TestCase):
                 items=[{'identity': first}],
                 missing=[{'media_key': second_key,
                           'reason': 'source order omitted'}],
-                evidence=str(ledger.evidence),
+                evidence=ledger.evidence_for_post(post_key_value),
             )
         data = ledger.records.record_media(
             session_id=ledger.session,
@@ -702,7 +788,7 @@ class NotesRegressionTests(unittest.TestCase):
             items=[{'identity': first}],
             missing=[{'media_key': second_key, 'source_order': 1,
                       'reason': 'synthetic unavailable'}],
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_post(post_key_value),
         )
         self.assertEqual(data['missing'],
                          [{'media_key': second_key,
@@ -738,7 +824,7 @@ class NotesRegressionTests(unittest.TestCase):
             date_summary='synthetic',
             media_count=2,
             text_sha256=None,
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_post(post_key_value),
             no_media=False,
         )
         data = ledger.records.record_media(
@@ -747,7 +833,7 @@ class NotesRegressionTests(unittest.TestCase):
             items=[{'identity': second}],
             missing=[{'media_key': first_key, 'source_order': 0,
                       'reason': 'synthetic unavailable'}],
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_post(post_key_value),
         )
         self.assertEqual(data['items'][0]['source_order'], 1)
 
@@ -773,7 +859,7 @@ class NotesRegressionTests(unittest.TestCase):
             date_summary='synthetic',
             media_count=3,
             text_sha256=None,
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_post(post_key_value),
             no_media=False,
         )
         with self.assertRaisesRegex(
@@ -783,7 +869,7 @@ class NotesRegressionTests(unittest.TestCase):
                 post_key_value=post_key_value,
                 items=[{'identity': first}, {'identity': second}],
                 missing=[],
-                evidence=str(ledger.evidence),
+                evidence=ledger.evidence_for_post(post_key_value),
             )
 
     def test_summary_blocks_media_count_coverage_mismatch(self):
@@ -828,7 +914,23 @@ class NotesRegressionTests(unittest.TestCase):
                 break
         self.assertIsNotNone(target)
         target['data'].update(changes)
+        if ('recovery_of' in changes and
+                'recovery_evidence' not in changes and
+                target['data']['recovery_evidence'] is not None):
+            prior = next(event['data'] for event in events
+                         if event['kind'] == 'intent' and
+                         event['data']['attempt_id'] ==
+                         target['data']['recovery_of'])
+            target['data']['recovery_evidence'] = \
+                ledger.stored_evidence_for_attempt(prior)
         self.rewrite_events(ledger.records, events)
+
+    def legacy_evidence(self, ledger, label):
+        raw = ('legacy opaque ' + label).encode('utf-8')
+        sha256 = digest(raw)
+        path = ledger.records.records / 'evidence' / sha256
+        path.write_bytes(raw)
+        return dict(path=str(path), bytes=len(raw), sha256=sha256)
 
     def mutate_post_count(self, ledger, post_key_value, media_count):
         events = self.read_events(ledger.records)
@@ -868,17 +970,23 @@ class NotesRegressionTests(unittest.TestCase):
         notes._atomic_replace_json(index_path, index)
 
     def stopped_attempt(self, ledger, key, *, recovery_evidence=None):
+        prior = None
+        if recovery_evidence:
+            prior = next(event['data'] for event in reversed(
+                ledger.records.events)
+                if event['kind'] == 'intent' and
+                event['data']['media_key'] == key)
         attempt = ledger.records.intent(
             session_id=ledger.session,
             media_key_value=key,
-            recovery_evidence=(str(ledger.evidence)
+            recovery_evidence=(str(ledger.evidence_for_attempt(prior))
                                if recovery_evidence else None),
         )
         ledger.records.outcome(
             session_id=ledger.session,
             attempt_id=attempt['attempt_id'],
             outcome='STOPPED',
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_attempt(attempt),
         )
         return attempt
 
@@ -901,7 +1009,7 @@ class NotesRegressionTests(unittest.TestCase):
             third = ledger.records.intent(
                 session_id=ledger.session,
                 media_key_value=key,
-                recovery_evidence=str(ledger.evidence),
+                recovery_evidence=ledger.evidence_for_attempt(second),
             )
             self.mutate_intent(ledger, third['attempt_id'], recovery_of=first['attempt_id'])
             self.assertNotEqual(second['attempt_id'], first['attempt_id'])
@@ -951,17 +1059,11 @@ class NotesRegressionTests(unittest.TestCase):
                 ledger, first_key, recovery_evidence=True)
             unrelated = ledger.records.intent(
                 session_id=ledger.session, media_key_value=second_key)
-            prior_evidence = next(
-                event['data']['recovery_evidence']
-                for event in self.read_events(ledger.records)
-                if event['kind'] == 'intent' and
-                event['data']['attempt_id'] == prior['attempt_id']
-            )
             self.mutate_intent(
                 ledger,
                 unrelated['attempt_id'],
                 recovery_of=prior['attempt_id'],
-                recovery_evidence=prior_evidence,
+                recovery_evidence=ledger.stored_evidence_for_attempt(prior),
             )
             self.assert_recovery_reload_fails(ledger)
 
@@ -989,7 +1091,7 @@ class NotesRegressionTests(unittest.TestCase):
             session_id=ledger.session,
             attempt_id=second_attempt['attempt_id'],
             outcome='DOWNLOAD_FINISHED',
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_attempt(second_attempt),
         )
         with mock.patch.object(
                 NotesRecords,
@@ -1075,7 +1177,7 @@ class NotesRegressionTests(unittest.TestCase):
                 date_summary='synthetic',
                 media_count=1,
                 text_sha256=None,
-                evidence=str(ledger.evidence),
+                evidence=ledger.evidence_for_post(old_key),
                 no_media=False,
             )
         summary = ledger.records.summary()
@@ -1113,7 +1215,7 @@ class NotesRegressionTests(unittest.TestCase):
             date_summary='synthetic',
             media_count=1,
             text_sha256=None,
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_post(post_key_value),
             no_media=False,
         )
 
@@ -1147,7 +1249,7 @@ class NotesRegressionTests(unittest.TestCase):
             date_summary='synthetic',
             media_count=1,
             text_sha256=None,
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_post(post_key_value),
             no_media=False,
         )
         summary = self.reopen(ledger).summary()
@@ -1166,9 +1268,11 @@ class NotesRegressionTests(unittest.TestCase):
             ledger, 'summary-legacy-unbound-post', [identity])
 
         events = self.read_events(ledger.records)
+        legacy = self.legacy_evidence(ledger, 'unbound-detail')
         for event in events:
             if event['kind'] in ('post', 'media'):
                 event['data'].pop('scan_id', None)
+                event['data']['evidence'] = legacy
         self.rewrite_events(ledger.records, events)
 
         self.scan_with_pages(ledger, [([post], [])])
@@ -1178,7 +1282,7 @@ class NotesRegressionTests(unittest.TestCase):
             date_summary='synthetic',
             media_count=1,
             text_sha256=None,
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_post(post_key_value),
             no_media=False,
         )
         ledger.records.record_media(
@@ -1186,13 +1290,43 @@ class NotesRegressionTests(unittest.TestCase):
             post_key_value=post_key_value,
             items=[dict(identity=identity)],
             missing=[],
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_post(post_key_value),
         )
 
         summary = self.reopen(ledger).summary()
         self.assertFalse(summary['all_known_media_complete'])
         self.assertIn('STALE_POST_DETAIL', summary['dispatch_blockers'])
         self.assertIn('STALE_MEDIA_INVENTORY', summary['dispatch_blockers'])
+
+    def test_v2_detail_evidence_requires_bound_scan_context(self):
+        for kind in ('post', 'media'):
+            with self.subTest(kind=kind):
+                label = 'v2-detail-scan-context-' + kind
+                ledger = self.new_ledger(label)
+                identities = []
+                if kind == 'media':
+                    identities.append(notes.media_identity(
+                        kind=PHOTO, visual_key=label + '-media'))
+                _post, post_key_value = self.observe_post(
+                    ledger, label + '-post', identities,
+                    no_media=not identities)
+                context = dict(list_key=ledger.summary['list_key'],
+                               post_key=post_key_value)
+                source = ledger.evidence(**context)
+                stored = notes._preserve_evidence(
+                    ledger.records.records, source, context)
+                events = self.read_events(ledger.records)
+                target = next(event for event in events
+                              if event['kind'] == kind)
+                target['data'].pop('scan_id')
+                target['data']['evidence'] = stored
+                self.rewrite_events(ledger.records, events)
+
+                with self.assertRaises(NotesError) as raised:
+                    self.reopen(ledger).summary()
+                self.assertEqual(
+                    raised.exception.args[0],
+                    'EVIDENCE_SCAN_CONTEXT_REQUIRED')
 
     def test_same_scan_duplicate_post_and_media_writes_are_rejected(self):
         ledger = self.new_ledger('duplicate-writer-events')
@@ -1209,7 +1343,7 @@ class NotesRegressionTests(unittest.TestCase):
                 date_summary='synthetic',
                 media_count=1,
                 text_sha256=None,
-                evidence=str(ledger.evidence),
+                evidence=ledger.evidence_for_post(post_key_value),
                 no_media=False,
             )
         self.assertEqual(raised.exception.args[0],
@@ -1222,7 +1356,7 @@ class NotesRegressionTests(unittest.TestCase):
                 post_key_value=post_key_value,
                 items=[dict(identity=identity)],
                 missing=[],
-                evidence=str(ledger.evidence),
+                evidence=ledger.evidence_for_post(post_key_value),
             )
         self.assertEqual(raised.exception.args[0],
                          'MEDIA_INVENTORY_ALREADY_RECORDED')
@@ -1300,7 +1434,7 @@ class NotesRegressionTests(unittest.TestCase):
             session_id=ledger.session,
             attempt_id=attempt['attempt_id'],
             outcome='DOWNLOAD_FINISHED',
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_attempt(attempt),
         )
 
         self.scan_with_pages(ledger, [([post], [])])
@@ -1330,7 +1464,7 @@ class NotesRegressionTests(unittest.TestCase):
             session_id=ledger2.session,
             attempt_id=attempt2['attempt_id'],
             outcome='DOWNLOAD_FINISHED',
-            evidence=str(ledger2.evidence),
+            evidence=ledger2.evidence_for_attempt(attempt2),
         )
         with mock.patch.object(
                 NotesRecords, '_execute_publish',
@@ -1356,13 +1490,13 @@ class NotesRegressionTests(unittest.TestCase):
         before = self.event_bytes(ledger.records)
         ledger.records.scan(
             session_id=ledger.session, action='START',
-            evidence=str(ledger.evidence))
+            evidence=ledger.evidence_for_scan())
         before = self.event_bytes(ledger.records)
         with self.assertRaises(NotesError) as raised:
             ledger.records.bind(
                 session_id='new-session-during-open-scan',
-                observation=str(ledger.evidence),
-                handoff=str(ledger.evidence))
+                observation=ledger.evidence_for_scan(),
+                handoff=ledger.evidence_for_scan())
         self.assertEqual(raised.exception.args[0], 'SCAN_ALREADY_OPEN')
         self.assertEqual(self.event_bytes(ledger.records), before)
 
@@ -1372,7 +1506,7 @@ class NotesRegressionTests(unittest.TestCase):
             visual_key='scan-session-write-guard-post')
         scan = ledger.records.scan(
             session_id=ledger.session, action='START',
-            evidence=str(ledger.evidence))
+            evidence=ledger.evidence_for_scan())
         before = self.event_bytes(ledger.records)
         with self.assertRaises(NotesError) as raised:
             ledger.records.page(
@@ -1383,7 +1517,7 @@ class NotesRegressionTests(unittest.TestCase):
                 top_reached=True,
                 bottom_reached=True,
                 overlap_keys=[],
-                evidence=str(ledger.evidence),
+                evidence=ledger.evidence_for_scan(scan['scan_id']),
             )
         self.assertEqual(raised.exception.args[0], 'PAGE_SESSION_CHANGED')
         self.assertEqual(self.event_bytes(ledger.records), before)
@@ -1396,7 +1530,7 @@ class NotesRegressionTests(unittest.TestCase):
             top_reached=True,
             bottom_reached=True,
             overlap_keys=[],
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_scan(scan['scan_id']),
         )
         before = self.event_bytes(ledger.records)
         with self.assertRaises(NotesError) as raised:
@@ -1404,7 +1538,7 @@ class NotesRegressionTests(unittest.TestCase):
                 session_id='wrong-session',
                 action='FINISH',
                 scan_id=scan['scan_id'],
-                evidence=str(ledger.evidence),
+                evidence=ledger.evidence_for_scan(scan['scan_id']),
             )
         self.assertEqual(raised.exception.args[0], 'SCAN_SESSION_CHANGED')
         self.assertEqual(self.event_bytes(ledger.records), before)
@@ -1413,7 +1547,7 @@ class NotesRegressionTests(unittest.TestCase):
         ledger = self.new_ledger('zero-post-scan')
         scan = ledger.records.scan(
             session_id=ledger.session, action='START',
-            evidence=str(ledger.evidence))
+            evidence=ledger.evidence_for_scan())
         before = self.event_bytes(ledger.records)
         with self.assertRaises(NotesError) as raised:
             ledger.records.page(
@@ -1424,7 +1558,7 @@ class NotesRegressionTests(unittest.TestCase):
                 top_reached=True,
                 bottom_reached=True,
                 overlap_keys=[],
-                evidence=str(ledger.evidence),
+                evidence=ledger.evidence_for_scan(scan['scan_id']),
             )
         self.assertEqual(raised.exception.args[0], 'EMPTY_PAGE_NOT_ALLOWED')
         self.assertEqual(self.event_bytes(ledger.records), before)
@@ -1433,7 +1567,7 @@ class NotesRegressionTests(unittest.TestCase):
                 session_id=ledger.session,
                 action='FINISH',
                 scan_id=scan['scan_id'],
-                evidence=str(ledger.evidence),
+                evidence=ledger.evidence_for_scan(scan['scan_id']),
             )
         self.assertEqual(raised.exception.args[0], 'SCAN_REQUIRES_PAGE')
         self.assertEqual(self.event_bytes(ledger.records), before)
@@ -1520,7 +1654,7 @@ class NotesRegressionTests(unittest.TestCase):
             session_id=ledger.session,
             attempt_id=attempt['attempt_id'],
             outcome='UNKNOWN',
-            evidence=str(ledger.evidence),
+            evidence=ledger.evidence_for_attempt(attempt),
         )
         events = self.read_events(ledger.records)
         media_event = next(event for event in events
@@ -1534,7 +1668,7 @@ class NotesRegressionTests(unittest.TestCase):
                 schema='line-notes-exclusion/v1',
                 media_key=key,
                 reason='synthetic terminal mutation',
-                evidence=media_event['data']['evidence'],
+                evidence=ledger.stored_evidence_for_media(key),
             ),
         ))
         self.rewrite_events(ledger.records, events)

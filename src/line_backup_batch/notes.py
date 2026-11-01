@@ -7,6 +7,7 @@ identity. The permanent event log is the only business-state source.
 import argparse
 import contextlib
 import datetime
+import errno
 import fcntl
 import hashlib
 import json
@@ -20,9 +21,10 @@ import sys
 import time
 import uuid
 
-from . import media_verify
+from . import media_verify, notes_evidence
 from .daily import (DailyError, create_json, digest, encoded, read_file,
                     safe_component, strict_json, sync_dir)
+from .notes_evidence import NotesEvidenceError
 
 
 CORE_ROOT = Path(__file__).resolve().parents[2]
@@ -44,6 +46,7 @@ LOCAL_VERIFIED = 'VERIFIED_PRESENT'
 LOCAL_MISSING = 'LOCAL_MISSING'
 LOCAL_CHANGED = 'LOCAL_CHANGED'
 LOCAL_NOT_APPLICABLE = 'NOT_APPLICABLE'
+READ_ONLY_COMMANDS = frozenset(('lists', 'memory', 'summary'))
 
 PHOTO_SUFFIXES = frozenset(('.jpg', '.jpeg', '.png', '.heic', '.heif',
                             '.webp', '.tif', '.tiff', '.gif'))
@@ -56,6 +59,12 @@ DEFAULT_STALL_SECONDS = 120.0
 
 class NotesError(ValueError):
     pass
+
+
+class NotesLockBusy(NotesError):
+    def __init__(self, scope):
+        super().__init__('NOTES_LOCK_BUSY')
+        self.scope = scope
 
 
 class NotesMediaVerificationError(NotesError, DailyError):
@@ -277,10 +286,15 @@ def _open_lock(path, create):
 
 
 @contextlib.contextmanager
-def _file_lock(path, create=False):
+def _file_lock(path, create=False, scope='records'):
     fd = _open_lock(path, create)
     try:
-        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            if exc.errno not in (errno.EAGAIN, errno.EWOULDBLOCK):
+                raise
+            raise NotesLockBusy(scope) from exc
         yield
     finally:
         os.close(fd)
@@ -294,52 +308,49 @@ def _evidence_directory(records, create=False):
     return _canonical_existing_directory(path, 'EVIDENCE_DIRECTORY_CHANGED')
 
 
-def _preserve_evidence(records, source):
-    source = _evidence_source(source)
-    raw = read_file(source)
-    need(bool(raw), 'EMPTY_EVIDENCE')
-    sha = digest(raw)
-    evidence = _evidence_directory(records, create=True)
-    target = evidence / sha
-    if _entry(target) is None:
-        temporary = evidence / ('.pending-' + uuid.uuid4().hex)
-        fd = os.open(str(temporary),
-                     os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
-                     0o600)
-        try:
-            with os.fdopen(os.dup(fd), 'wb') as stream:
-                stream.write(raw)
-                stream.flush()
-                os.fsync(stream.fileno())
-            os.link(str(temporary), str(target), follow_symlinks=False)
-        finally:
-            os.close(fd)
-            if temporary.exists() and not temporary.is_symlink():
-                temporary.unlink()
-        sync_dir(evidence)
-    need(read_file(target) == raw, 'EVIDENCE_STORAGE_CHANGED')
-    return dict(path=str(target), bytes=len(raw), sha256=sha)
+def _preflight_evidence(source, expected_context=None):
+    try:
+        return notes_evidence.inspect_source_bundle(
+            source, expected_context, verify_sources=True)
+    except notes_evidence.NotesEvidenceError as exc:
+        raise NotesError(exc.code) from exc
 
 
-def _evidence_source(value):
-    """Validate and canonicalize one evidence source without writing a record."""
-    source = Path(value).expanduser().absolute()
-    core = Path(CORE_ROOT).resolve(strict=True)
-    need(not source.is_symlink(), 'EVIDENCE_SYMLINK_REFUSED')
-    source = source.resolve(strict=True)
-    need(source.is_relative_to(core), 'PROJECT_LOCAL_EVIDENCE_REQUIRED')
-    need(bool(read_file(source)), 'EMPTY_EVIDENCE')
-    return source
+def _preserve_evidence(records, source, expected_context=None,
+                       expected_reference=None):
+    try:
+        return notes_evidence.preserve_bundle(
+            records, source, expected_context, expected_reference)
+    except notes_evidence.NotesEvidenceError as exc:
+        raise NotesError(exc.code) from exc
 
 
-def _check_evidence(records, ref, code='EVIDENCE_DRIFT'):
+def _check_evidence(records, ref, code='EVIDENCE_DRIFT', expected_context=None):
     _check_exact(ref, ('path', 'bytes', 'sha256'), code)
     path = Path(ref['path'])
     evidence = _evidence_directory(records)
     need(path.parent == evidence and path.name == ref['sha256'],
          'EVIDENCE_BINDING_CHANGED')
-    raw = read_file(path)
-    need(len(raw) == ref['bytes'] and digest(raw) == ref['sha256'], code)
+    try:
+        return notes_evidence.load_saved_evidence(
+            evidence, ref, expected_context)
+    except notes_evidence.NotesEvidenceError as exc:
+        raise NotesError(exc.code) from exc
+
+
+def _check_scan_context_evidence(records, ref, expected_context):
+    loaded = _check_evidence(records, ref, expected_context=expected_context)
+    if loaded['classification'] == 'REFERENCE_VERIFIED':
+        need(expected_context['scan_id'] != notes_evidence.UNKNOWN,
+             'EVIDENCE_SCAN_CONTEXT_REQUIRED')
+    return loaded
+
+
+def _evidence_context(**values):
+    try:
+        return notes_evidence.normalize_context(values)
+    except notes_evidence.NotesEvidenceError as exc:
+        raise NotesError(exc.code) from exc
 
 
 def _read_regular(path, *, allowed_nlinks=(1,), code='FILE_CHANGED'):
@@ -501,7 +512,7 @@ class NotesCollection:
         core = Path(CORE_ROOT).resolve(strict=True)
         need(collection.is_relative_to(core),
              'PROJECT_LOCAL_NOTES_PATH_REQUIRED')
-        with _file_lock(collection / '.lock'):
+        with _file_lock(collection / '.lock', scope='collection'):
             yield collection
 
     def _index_unlocked(self, collection):
@@ -575,8 +586,13 @@ class NotesCollection:
         need(not photo_candidate.is_relative_to(collection) and
              not collection.is_relative_to(photo_candidate),
              'RECORDS_MUST_BE_OUTSIDE_PHOTOS')
-        binding_source = _evidence_source(binding_evidence)
-        history_source = _evidence_source(history_scope_evidence)
+        key = list_key(identity)
+        context = dict(list_key=key)
+        binding_preflight = _preflight_evidence(binding_evidence, context)
+        history_preflight = _preflight_evidence(
+            history_scope_evidence, context)
+        binding_source = binding_preflight['path']
+        history_source = history_preflight['path']
         photo_root = _ensure_core_directory(photo_root)
         with self.locked(create=True) as collection:
             index_path = collection / 'index.json'
@@ -587,7 +603,6 @@ class NotesCollection:
                 index = self._empty_index()
             else:
                 index = self._index_unlocked(collection)
-            key = list_key(identity)
             for row in index['lists'].values():
                 store = _read_json(Path(row['records_root']) / 'store.json',
                                    'INVALID_NOTES_STORE')
@@ -611,8 +626,12 @@ class NotesCollection:
             os.mkdir(str(list_directory), 0o700)
             sync_dir(photo_root)
             directory_binding = directory_info(list_directory)
-            binding_ref = _preserve_evidence(records, binding_source)
-            history_ref = _preserve_evidence(records, history_source)
+            binding_ref = _preserve_evidence(
+                records, binding_source, context,
+                binding_preflight['reference'])
+            history_ref = _preserve_evidence(
+                records, history_source, context,
+                history_preflight['reference'])
             list_data = dict(schema=LIST_SCHEMA, version=1,
                              local_list_id=local_list_id, list_key=key,
                              identity=identity, display_name=display_name,
@@ -683,7 +702,7 @@ class NotesRecords:
             self.records, 'CANONICAL_NOTES_RECORDS_REQUIRED')
         need((records / 'events').is_dir() and
              (records / 'evidence').is_dir(), 'NOTES_RECORDS_STRUCTURE_CHANGED')
-        with _file_lock(records / '.lock'):
+        with _file_lock(records / '.lock', scope='records'):
             try:
                 self._load(records)
             except NotesError:
@@ -733,6 +752,7 @@ class NotesRecords:
             event_files.append(path)
         need(event_files, 'EMPTY_NOTES_LEDGER')
         events = []
+        self.events = events
         previous = None
         for index, path in enumerate(event_files, 1):
             need(path.name == '%08d.json' % index,
@@ -771,6 +791,32 @@ class NotesRecords:
         self._validate_destination_chain()
         self._validate_event_graph()
 
+    def _intent_evidence_context(self, attempt_id):
+        for event in self.events:
+            if event['kind'] != 'intent':
+                continue
+            data = event['data']
+            if data['attempt_id'] == attempt_id:
+                return _evidence_context(
+                    list_key=self.list_data['list_key'],
+                    post_key=data['post_key'], media_key=data['media_key'],
+                    attempt_id=attempt_id, scan_id=data.get('scan_id'))
+        raise NotesError('EVIDENCE_ATTEMPT_CONTEXT_MISSING')
+
+    def _media_evidence_context(self, media_key_value):
+        for event in reversed(self.events):
+            if event['kind'] != 'media':
+                continue
+            data = event['data']
+            keys = {row['media_key'] for row in data['items']}
+            keys |= {row['media_key'] for row in data['missing']}
+            if media_key_value in keys:
+                return _evidence_context(
+                    list_key=self.list_data['list_key'],
+                    post_key=data['post_key'], media_key=media_key_value,
+                    scan_id=data.get('scan_id'))
+        raise NotesError('EVIDENCE_MEDIA_CONTEXT_MISSING')
+
     def _validate_event(self, event):
         kind, data = event['kind'], event['data']
         need(isinstance(kind, str) and isinstance(data, dict),
@@ -793,8 +839,11 @@ class NotesRecords:
                  isinstance(data['photo_root'], str) and
                  isinstance(data['list_directory'], str),
                  'INVALID_CREATED_EVENT')
-            _check_evidence(self.records, data['binding_evidence'])
-            _check_evidence(self.records, data['history_scope_evidence'])
+            context = _evidence_context(list_key=data['list_key'])
+            _check_evidence(self.records, data['binding_evidence'],
+                            expected_context=context)
+            _check_evidence(self.records, data['history_scope_evidence'],
+                            expected_context=context)
             need(Path(data['list_directory']).parent == Path(data['photo_root']),
                  'INVALID_CREATED_EVENT')
         elif kind == 'binding':
@@ -804,8 +853,11 @@ class NotesRecords:
             need(data['schema'] == 'line-notes-binding/v1' and
                  isinstance(data['session_id'], str) and
                  bool(data['session_id']), 'INVALID_BINDING_EVENT')
-            _check_evidence(self.records, data['observation'])
-            _check_evidence(self.records, data['handoff'])
+            context = _evidence_context(list_key=self.list_data['list_key'])
+            _check_evidence(self.records, data['observation'],
+                            expected_context=context)
+            _check_evidence(self.records, data['handoff'],
+                            expected_context=context)
         elif kind == 'destination':
             _check_exact(data, ('schema', 'photo_root', 'previous_root',
                                 'list_directory', 'previous_list_directory',
@@ -822,7 +874,10 @@ class NotesRecords:
                  type(data['directory_inode']) is int and
                  isinstance(data['session_id'], str) and
                  bool(data['session_id']), 'INVALID_DESTINATION_EVENT')
-            _check_evidence(self.records, data['evidence'])
+            _check_evidence(
+                self.records, data['evidence'],
+                expected_context=_evidence_context(
+                    list_key=self.list_data['list_key']))
         elif kind == 'scan':
             need(data.get('schema') == 'line-notes-scan/v1' and
                  data.get('action') in ('START', 'COMPLETE') and
@@ -830,7 +885,12 @@ class NotesRecords:
                  bool(data.get('scan_id')) and
                  isinstance(data.get('session_id'), str) and
                  bool(data.get('session_id')), 'INVALID_SCAN_EVENT')
-            _check_evidence(self.records, data.get('evidence'))
+            _check_evidence(
+                self.records, data.get('evidence'),
+                expected_context=_evidence_context(
+                    list_key=self.list_data['list_key'],
+                    scan_id=(data.get('scan_id')
+                             if data.get('action') == 'COMPLETE' else None)))
             if data['action'] == 'START':
                 _check_exact(data, ('schema', 'action', 'scan_id',
                                     'session_id', 'evidence'),
@@ -865,7 +925,11 @@ class NotesRecords:
                  isinstance(data['overlap_keys'], list) and
                  all(isinstance(key, str) for key in data['overlap_keys']),
                  'INVALID_PAGE_EVENT')
-            _check_evidence(self.records, data['evidence'])
+            _check_scan_context_evidence(
+                self.records, data['evidence'],
+                expected_context=_evidence_context(
+                    list_key=self.list_data['list_key'],
+                    scan_id=data['scan_id']))
             need(isinstance(data['posts'], list), 'INVALID_PAGE_EVENT')
             seen = set()
             for row in data['posts']:
@@ -898,7 +962,11 @@ class NotesRecords:
             if 'scan_id' in data:
                 need(isinstance(data['scan_id'], str) and
                      bool(data['scan_id'].strip()), 'INVALID_POST_EVENT')
-            _check_evidence(self.records, data['evidence'])
+            _check_scan_context_evidence(
+                self.records, data['evidence'],
+                expected_context=_evidence_context(
+                    list_key=self.list_data['list_key'],
+                    post_key=data['post_key'], scan_id=data.get('scan_id')))
         elif kind == 'media':
             required = {'schema', 'post_key', 'items', 'missing', 'evidence'}
             need(isinstance(data, dict) and required <= set(data) and
@@ -911,7 +979,11 @@ class NotesRecords:
             if 'scan_id' in data:
                 need(isinstance(data['scan_id'], str) and
                      bool(data['scan_id'].strip()), 'INVALID_MEDIA_EVENT')
-            _check_evidence(self.records, data['evidence'])
+            _check_scan_context_evidence(
+                self.records, data['evidence'],
+                expected_context=_evidence_context(
+                    list_key=self.list_data['list_key'],
+                    post_key=data['post_key'], scan_id=data.get('scan_id')))
             seen = set()
             seen_orders = set()
             for order, row in enumerate(data['items']):
@@ -962,7 +1034,10 @@ class NotesRecords:
                  data['save_all_count'] == 0,
                  'INVALID_INTENT_EVENT')
             if data['recovery_evidence'] is not None:
-                _check_evidence(self.records, data['recovery_evidence'])
+                _check_scan_context_evidence(
+                    self.records, data['recovery_evidence'],
+                    expected_context=self._intent_evidence_context(
+                        data['recovery_of']))
         elif kind == 'outcome':
             _check_exact(data, ('schema', 'attempt_id', 'media_key',
                                 'outcome', 'evidence'), 'INVALID_OUTCOME_EVENT')
@@ -970,7 +1045,10 @@ class NotesRecords:
                  isinstance(data['attempt_id'], str) and
                  _is_hex(data['media_key']) and
                  data['outcome'] in OUTCOMES, 'INVALID_OUTCOME_EVENT')
-            _check_evidence(self.records, data['evidence'])
+            _check_evidence(
+                self.records, data['evidence'],
+                expected_context=self._intent_evidence_context(
+                    data['attempt_id']))
         elif kind == 'reconcile':
             _check_exact(data, ('schema', 'attempt_id', 'media_key',
                                 'result', 'evidence'), 'INVALID_RECONCILE_EVENT')
@@ -978,7 +1056,10 @@ class NotesRecords:
                  isinstance(data['attempt_id'], str) and
                  _is_hex(data['media_key']) and
                  data['result'] in OUTCOMES, 'INVALID_RECONCILE_EVENT')
-            _check_evidence(self.records, data['evidence'])
+            _check_evidence(
+                self.records, data['evidence'],
+                expected_context=self._intent_evidence_context(
+                    data['attempt_id']))
         elif kind == 'verification':
             _check_exact(data, ('schema', 'attempt_id', 'media_key',
                                 'post_key', 'kind', 'source', 'manifest',
@@ -1056,7 +1137,10 @@ class NotesRecords:
                  _is_hex(data['media_key']) and
                  isinstance(data['reason'], str) and
                  bool(data['reason'].strip()), 'INVALID_%s_EVENT' % kind.upper())
-            _check_evidence(self.records, data['evidence'])
+            _check_evidence(
+                self.records, data['evidence'],
+                expected_context=self._media_evidence_context(
+                    data['media_key']))
         else:
             raise NotesError('UNKNOWN_NOTES_EVENT_KIND')
 
@@ -1463,10 +1547,13 @@ class NotesRecords:
                          event['data']['session_id'] == session_id
                          for event in self.events),
                  'SESSION_ID_ALREADY_BOUND')
+            context = _evidence_context(list_key=self.list_data['list_key'])
             data = dict(schema='line-notes-binding/v1',
                         session_id=session_id, context_id=context_id,
-                        observation=_preserve_evidence(self.records, observation),
-                        handoff=_preserve_evidence(self.records, handoff))
+                        observation=_preserve_evidence(
+                            self.records, observation, context),
+                        handoff=_preserve_evidence(
+                            self.records, handoff, context))
             self.append('binding', data)
             _write_active_hint(self.records, self.records.name, session_id)
             return data
@@ -1526,7 +1613,10 @@ class NotesRecords:
                         directory_device=info['device'],
                         directory_inode=info['inode'],
                         session_id=session_id,
-                        evidence=_preserve_evidence(self.records, evidence))
+                        evidence=_preserve_evidence(
+                            self.records, evidence,
+                            _evidence_context(
+                                list_key=self.list_data['list_key'])))
             self.append('destination', data)
             return data
 
@@ -1622,9 +1712,13 @@ class NotesRecords:
             if latest is not None:
                 need(scans[latest]['complete'] is not None,
                      'SCAN_ALREADY_OPEN')
+            scan_id = uuid.uuid4().hex
+            context = _evidence_context(
+                list_key=self.list_data['list_key'])
             data = dict(schema='line-notes-scan/v1', action='START',
-                        scan_id=uuid.uuid4().hex, session_id=session_id,
-                        evidence=_preserve_evidence(self.records, evidence))
+                        scan_id=scan_id, session_id=session_id,
+                        evidence=_preserve_evidence(
+                            self.records, evidence, context))
             self.append('scan', data)
             return data
 
@@ -1698,7 +1792,11 @@ class NotesRecords:
                         top_reached=bool(top_reached),
                         bottom_reached=bool(bottom_reached),
                         overlap_keys=overlap, posts=page_posts,
-                        evidence=_preserve_evidence(self.records, evidence))
+                        evidence=_preserve_evidence(
+                            self.records, evidence,
+                            _evidence_context(
+                                list_key=self.list_data['list_key'],
+                                scan_id=scan_id)))
             self.append('page', data)
             return data
 
@@ -1730,7 +1828,11 @@ class NotesRecords:
                                         source_order=len(ordered)))
             data = dict(schema='line-notes-scan/v1', action='COMPLETE',
                         scan_id=scan_id, session_id=session_id,
-                        evidence=_preserve_evidence(self.records, evidence),
+                        evidence=_preserve_evidence(
+                            self.records, evidence,
+                            _evidence_context(
+                                list_key=self.list_data['list_key'],
+                                scan_id=scan_id)),
                         posts=ordered)
             self.append('scan', data)
             return data
@@ -1807,6 +1909,9 @@ class NotesRecords:
                 event['data']['post_key'] == post_key_value and
                 event['data'].get('scan_id') == current_scan_id
                 for event in self.events), 'POST_DETAIL_ALREADY_RECORDED')
+            context = _evidence_context(
+                list_key=self.list_data['list_key'],
+                post_key=post_key_value, scan_id=current_scan_id)
             data = dict(schema='line-notes-post/v1',
                         post_key=post_key_value,
                         date_summary=date_summary,
@@ -1814,7 +1919,8 @@ class NotesRecords:
                         media_count=media_count,
                         no_media=bool(no_media),
                         scan_id=current_scan_id,
-                        evidence=_preserve_evidence(self.records, evidence))
+                        evidence=_preserve_evidence(
+                            self.records, evidence, context))
             self.append('post', data)
             return data
 
@@ -1937,12 +2043,16 @@ class NotesRecords:
                 row['source_order'] = source_order
             need(prior_keys <= present | missing_keys,
                  'IMPLICIT_MEDIA_DISAPPEARANCE')
+            context = _evidence_context(
+                list_key=self.list_data['list_key'],
+                post_key=post_key_value, scan_id=current_scan_id)
             data = dict(schema='line-notes-media-inventory/v1',
                         post_key=post_key_value,
                         items=normalized,
                         missing=missing_rows,
                         scan_id=current_scan_id,
-                        evidence=_preserve_evidence(self.records, evidence))
+                        evidence=_preserve_evidence(
+                            self.records, evidence, context))
             self.append('media', data)
             return data
 
@@ -2249,8 +2359,11 @@ class NotesRecords:
                                              '.line-notes-incoming-')
             need(not any(staging.iterdir()), 'EMPTY_STAGING_REQUIRED')
             info = staging.stat()
-            recovery_ref = (_preserve_evidence(self.records, recovery_evidence)
-                            if recovery_evidence is not None else None)
+            recovery_ref = (
+                _preserve_evidence(
+                    self.records, recovery_evidence,
+                    self._intent_evidence_context(prior))
+                if recovery_evidence is not None else None)
             data = dict(schema='line-notes-intent/v1',
                         media_key=media_key_value,
                         post_key=target['post_key'],
@@ -2290,7 +2403,9 @@ class NotesRecords:
                         attempt_id=attempt_id,
                         media_key=media_key_value,
                         outcome=outcome,
-                        evidence=_preserve_evidence(self.records, evidence))
+                        evidence=_preserve_evidence(
+                            self.records, evidence,
+                            self._intent_evidence_context(attempt_id)))
             self.append('outcome', data)
             return data
 
@@ -2307,7 +2422,9 @@ class NotesRecords:
                         attempt_id=attempt_id,
                         media_key=media_key_value,
                         result=result,
-                        evidence=_preserve_evidence(self.records, evidence))
+                        evidence=_preserve_evidence(
+                            self.records, evidence,
+                            self._intent_evidence_context(attempt_id)))
             self.append('reconcile', data)
             return data
 
@@ -2333,10 +2450,12 @@ class NotesRecords:
                 result = self._attempt_result(attempt_id, attempts)
                 need(result in ('STOPPED', 'NOT_SENT'),
                      'ACTIVE_ATTEMPT_CANNOT_BE_CLOSED')
+            context = self._media_evidence_context(media_key_value)
             data = dict(schema='line-notes-%s/v1' % kind,
                         media_key=media_key_value,
                         reason=reason,
-                        evidence=_preserve_evidence(self.records, evidence))
+                        evidence=_preserve_evidence(
+                            self.records, evidence, context))
             self.append(kind, data)
             return data
 
@@ -3492,6 +3611,23 @@ def _build_notes_parser():
     memory = sub.add_parser('memory', help='Read one ledger projection')
     add_records(memory, 'Read one ledger projection')
 
+    evidence_pack = sub.add_parser(
+        'evidence-pack',
+        help='Create one immutable line-notes-evidence/v2 bundle')
+    evidence_pack.add_argument('--statement', required=True,
+                               help='Non-empty statement source file')
+    evidence_pack.add_argument(
+        '--asset', action='append', nargs=2, default=[],
+        metavar=('ROLE', 'PATH'),
+        help='Repeatable asset role/path pair')
+    evidence_pack.add_argument('--output-dir', required=True,
+                               help='New project-local evidence bundle directory')
+    evidence_pack.add_argument('--list-key')
+    evidence_pack.add_argument('--post-key')
+    evidence_pack.add_argument('--media-key')
+    evidence_pack.add_argument('--attempt-id')
+    evidence_pack.add_argument('--scan-id')
+
     init = sub.add_parser('init', help='Create a new notes ledger')
     init.add_argument('--collection', help='Notes collection (default: project notes-backup-records)')
     init.add_argument('--photo-root', required=True,
@@ -3638,7 +3774,15 @@ def main(argv=None):
     parser = _build_notes_parser()
     args = parser.parse_args(argv)
     try:
-        if args.command == 'lists':
+        if args.command == 'evidence-pack':
+            context = dict(
+                list_key=args.list_key, post_key=args.post_key,
+                media_key=args.media_key, attempt_id=args.attempt_id,
+                scan_id=args.scan_id)
+            result = notes_evidence.create_bundle(
+                statement=args.statement, assets=args.asset,
+                context=context, output_dir=args.output_dir)
+        elif args.command == 'lists':
             result = NotesCollection(args.collection).lists()
         elif args.command == 'init':
             identity = list_identity(
@@ -3754,7 +3898,15 @@ def main(argv=None):
             parser.error('unknown command')
         _print_cli_result(result)
         return 0
-    except (NotesError, DailyError, NotesMediaVerificationError, OSError,
+    except NotesLockBusy as exc:
+        payload = dict(status='REFUSED', reason='NOTES_LOCK_BUSY',
+                       scope=exc.scope, dispatch_authorized=False,
+                       retry_safe=args.command in READ_ONLY_COMMANDS)
+        print(json.dumps(payload,
+                         ensure_ascii=False, separators=(',', ':')))
+        return 4
+    except (NotesError, NotesEvidenceError, DailyError,
+            NotesMediaVerificationError, OSError,
             subprocess.SubprocessError) as exc:
         payload = dict(status='REFUSED', reason=str(exc),
                        dispatch_authorized=False)
