@@ -6,10 +6,11 @@
 
 ## CLI 共同契約
 
-- Agent 從 `page`／`post`／`media` 結果取得 `post_key`、`media_key`；Owner 不填 UUID、key 或內部 JSON。`lists`／`init` 使用 collection；除 `lists`、`init` 外，所有帳本命令都要 `--records-root`。`init`／`destination` 另要求 `--photo-root`；`backup/記事本/` 是 Agent 層預設，不是 CLI 全域預設。
+- Agent 從 `page`／`post`／`media` 結果取得 `post_key`、`media_key`；Owner 不填 UUID、key 或內部 JSON。`lists` 的 `--collection` 只定位 collection，`init` 用 collection 建新帳，`evidence-pack` 只建立 bundle，`list-key` 只做 identity 純計算；`memory`、`summary` 及其他持久帳本命令使用 `--records-root`，其中 `destination` 另要求 `--photo-root`。`init` 也要求 `--photo-root`。`backup/記事本/` 是 Agent 層預設，不是 CLI 全域預設。
 - `memory`／`summary` 只回摘要投影：列表身分、`scan_coverage`、貼文／媒體列、`status_counts`、`local_counts`、`unresolved_attempts`、`evidence_corrections`、`dispatch_blockers` 與 `all_known_media_complete`；`memory()` 與 `summary()` 是同一投影。`unresolved_attempts` 只列尚未完成／排除／受保護的最新 attempt，不提供完整 attempt 歷史、staging 目的地或 completion manifest。`attempt_id`／`destination` 以該次 `intent` JSON 及追加事件為準，completion 以 `verify` JSON 及 `completion` 事件為準；目前沒有完整的 attempts／completions 查詢子命令。跨 Session 可先以 `memory` 定位 `records_root` 與 blockers，再唯讀核對該帳本 `events/*.json`，不得從 `photo_root` 或目錄名猜交易。
 - observation、handoff、下載、chooser、更正與恢復等證據參數（`--binding-evidence`、`--history-scope-evidence`、`--observation`、`--handoff`、`--evidence`、`--recovery-evidence`、`--replacement`）必須是先以 `evidence-pack` 封裝、再由 CLI 回傳的 `line-notes-evidence/v2` bundle 路徑；不可用手寫 JSON、自由文字、目錄或範例內容冒充。bundle 的 statement 可依 [證據範本](evidence-template.md) 撰寫；畫面／AX／input receipt 等原件以 `--asset ROLE PATH` 加入。`source_path` 只記錄匯入來源，重開時核對帳本內保存的子 blob，不要求原件仍在。
-- `evidence-pack` 的 `--output-dir` 必須是 `.local/line-backup/tasks/` 下尚不存在的 project-local 目錄；固定五欄 context 由 Agent 從 CLI 輸出帶入，適用 ID 不得填 `UNKNOWN` 或另一個主體。成功後把回傳的 `bundle_path` 傳給事件參數。Owner 不需填 JSON、UUID、key 或 hash；bundle 只核對 bytes／context，不證明畫面真實、控制命中或下載結果。
+- `evidence-pack` 的 statement、每個 asset 與 `--output-dir` 必須使用確認 repo 根目錄後取得的絕對路徑。statement／asset 是專案內 canonical regular file，不是 symlink，且只允許單一 hard link；output 是私有 tasks 下尚不存在的子目錄，其 canonical 父目錄要先存在。Agent 只準備父目錄，不預建輸出子目錄、不自動 resolve 穿過 symlink、不覆寫。固定五欄 context 由 Agent 從 CLI 輸出帶入，適用 ID 不得填 `UNKNOWN` 或另一個主體。成功後把回傳的絕對 `bundle_path` 傳給事件參數。Owner 不需填 JSON、UUID、key 或 hash；bundle 只核對 bytes／context，不證明畫面真實、控制命中或下載結果。
+- 若要以 wrapper 保存一次 child 的 request、stdout／stderr、exit／signal 與程式身分，使用既有 `notes_capture --output-root ABS_PRIVATE_TASK_DIR -- <notes argv>`；`--output-root` 必須是已存在、專案私有的絕對路徑。capture receipt 不是 CUA／GUI 原始回傳，也不證明輸入。wrapper 保存失敗就停止，不為補輸出重跑 child；拒絕與成功各自保存新 receipt。
 - 成功的 JSON 與業務拒絕 JSON 固定含 `dispatch_authorized=false`；參數／必填欄位錯誤以 exit 2 結束，只在 stderr 顯示 argparse 錯誤，不輸出 JSON；已列業務拒絕以 exit 4 回傳 JSON；未預期內部錯誤以 exit 70 回傳 `status=INTERNAL_ERROR`、`reason=UNEXPECTED_EXCEPTION`、`dispatch_authorized=false`。`dispatch_authorized=false` 是簿記聲明，不是 GUI grant、已派送證明或 E2E PASS；不得把它改成 true 或當成 Owner 同意。
 - exit 70 不是可重試業務拒絕，不得據此重送、改寫 ledger、建立新 attempt、換目的地或換入口繞過；先停止並保留現場、原始 JSON、命令與證據，回報實作者／維護者。
 - 成功以 exit 0 回傳 JSON；實際使用時記錄命令、exit code 與原始輸出摘要。看到 70 時必須原樣記錄並停止，不能降格成 exit 4 或其他業務狀態。
@@ -24,6 +25,7 @@
 | `lists` | 列出全部記事本帳本位置與可讀狀態 | `index.json` 只定位；不以 active-task 或最近修改時間代替全歷史 |
 | `memory` | 讀單一帳本的摘要投影：貼文／媒體狀態、blockers 與本機可用性 | 不含完整 attempt、staging 目的地或 completion manifest；照片 root 消失仍可讀摘要，缺帳本不能當空帳 |
 | `evidence-pack` | 將 statement、截圖／AX／input 等原件封裝成不可覆寫的 v2 evidence bundle | 只做位元引用與 context 核對；不是 GUI sensor、下載結果或 acceptance |
+| `list-key` | 在建帳前以同一組 identity 輸入計算 `list_key` | 純計算，只可讀明示的 `--signals @FILE`；不讀寫帳本、照片、active 檔、鎖或事件，也不代表列表身分或下載資格 |
 | `evidence-audit` | 唯讀逐引用稽核保存的 evidence、legacy 分類與 correction 鏈 | 不投影業務狀態；`integrity_ok=false` 或結構鏈異常時不得使用一般 summary 的局部結果 |
 | `init` | 建立新的記事本帳本 | 只用於已證明的新列表；歷史缺損、索引毀損或候選歧義時拒絕 |
 | `bind` | 將當次列表與既有帳本綁定 | 須有真實前景／觀察 evidence；不靠名稱、日期或張數猜配 |
@@ -54,9 +56,10 @@ memory       --records-root RECORDS_ROOT
 evidence-pack --statement FILE [--asset ROLE PATH ...] --output-dir NEW_DIR
              [--list-key KEY] [--post-key KEY] [--media-key KEY]
              [--attempt-id ID] [--scan-id SCAN_ID]
+list-key     --visual-key TEXT [--context-id TEXT] [--signals JSON_OR_@FILE]
 init         --photo-root PHOTO_ROOT --name NAME --visual-key VISUAL_KEY
              --binding-evidence FILE --history-scope-evidence FILE
-             [--collection COLLECTION] [--context-id ID] [--signals JSON]
+             [--collection COLLECTION] [--context-id ID] [--signals JSON_OR_@FILE]
              [--recovery-authorized]
 bind         --records-root RECORDS_ROOT --session-id SESSION_ID
              --observation FILE --handoff FILE [--context-id ID]
@@ -105,7 +108,62 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 
 `scan start` 禁止 `--scan-id`；`scan finish` 必須有 `--scan-id`。照片 `verify` 必須成對提供 `--decoder` 與 `--decoder-sha256`；影片 `verify` 不傳這兩個照片參數。`post` 的 `--no-media` 與非零 `--media-count` 衝突。
 
+`list-key` 成功 JSON 只增加 `identity`、`list_key` 與既有 `dispatch_authorized=false`，不建立或查詢帳本。`visual_key`／`context_id` 僅以 strip 後非空作檢查，實值的前後空白與 Unicode 原樣保留；context 未提供才是省略，空字串／全空白拒絕。signals 未提供與 JSON `null` 都視為省略，`{}` 是實際值；JSON 物件 key 次序／排版不改 key，字串內容與陣列次序保留。沿用 4096 字元字串、256 KiB identity、strict JSON（拒絕 duplicate key／NaN）限制。缺參數或 JSON 語法錯 exit 2、identity 業務拒絕 exit 4、未預期例外 exit 70；沒有 `--collection`／`--records-root`／照片／evidence 參數，也不參與帳本 lock／retry。
+
 `evidence-audit` 是不可寫入的一般唯讀命令；event chain／結構性引用無法可靠解析時停止，不輸出可誤用的 audit row。引用或子 blob 漂移時仍輸出 audit JSON，但 `integrity_ok=false`、exit 4、`business_projection_omitted=true`，不得從它推論完成數或下一步。legacy opaque 可保持 `LEGACY_OPAQUE`／`REFERENCE_CHECK_NOT_AVAILABLE`，這不是損壞，也不是已核對的原始位元。
+
+## 證據路徑與唯讀查詢
+
+路徑範例以 Agent 確認後的專案實體根目錄為基底；下列變數只供 Agent 在當次私有任務區展開，不是要求 Owner 填寫：
+
+```sh
+TASK_PROJECT_ROOT="$(cd "$(git rev-parse --show-toplevel)" && pwd -P)"
+TASK_PRIVATE_DIR="$TASK_PROJECT_ROOT/.local/line-backup/tasks/CURRENT_TASK"
+STATEMENT_FILE="$TASK_PRIVATE_DIR/statement.txt"
+SCREENSHOT_FILE="$TASK_PRIVATE_DIR/screenshot.png"
+EVIDENCE_PARENT="$TASK_PRIVATE_DIR/evidence"
+EVIDENCE_OUTPUT="$EVIDENCE_PARENT/NEW_UNIQUE_EVIDENCE_ID"
+mkdir -p "$EVIDENCE_PARENT"
+
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
+  --statement "$STATEMENT_FILE" \
+  --asset screenshot "$SCREENSHOT_FILE" \
+  --output-dir "$EVIDENCE_OUTPUT" \
+  --list-key "$ABS_LIST_KEY"
+```
+
+`$STATEMENT_FILE`／`$SCREENSHOT_FILE` 必須已存在，且是不可經 symlink 或第二個 hard link 指到的專案內 regular file；Agent 只建立 `$EVIDENCE_PARENT`，不建立 `$EVIDENCE_OUTPUT`。`$ABS_LIST_KEY` 是新列表的 `list-key` 結果，不是顯示名稱或路徑。三種不同路徑拒絕不可混寫：
+
+- statement／asset 傳相對路徑：`PROJECT_LOCAL_EVIDENCE_REQUIRED`。
+- `--output-dir` 傳相對路徑：`NEW_EVIDENCE_DIRECTORY_REQUIRED`。
+- output 的父目錄不存在：`EVIDENCE_OUTPUT_PARENT_REQUIRED`。
+
+其他安全拒絕仍保留：輸入 symlink 為 `EVIDENCE_SYMLINK_REFUSED`，多於一個 hard link 為 `EVIDENCE_SOURCE_CHANGED`，輸出已存在為 `EVIDENCE_OUTPUT_DIRECTORY_EXISTS`，輸出逸出私有 tasks 為 `PROJECT_PRIVATE_EVIDENCE_REQUIRED`。不能用目前觀察反推第一筆歷史 argv 是輸入或 output 錯；舊 argv 未知就保留 `UNKNOWN`，不重跑同一失敗以補歸因。
+
+若要保存單次 child 執行，改用 capture wrapper；它不是 GUI input：
+
+```sh
+CAPTURE_PARENT="$TASK_PRIVATE_DIR/captures"
+mkdir -p "$CAPTURE_PARENT"
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes_capture \
+  --output-root "$CAPTURE_PARENT" -- \
+  summary --records-root "$ABS_LEDGER"
+```
+
+查詢既有帳本時，先用 collection 取得全部摘要列，只選出與當次入口、列表身分及歷史唯一相符的那一列，再把該列的 `records_root` 原值傳給 `summary`：
+
+```sh
+TASK_PROJECT_ROOT="$(cd "$(git rev-parse --show-toplevel)" && pwd -P)"
+ABS_COLLECTION="$TASK_PROJECT_ROOT/notes-backup-records"
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
+  lists --collection "$ABS_COLLECTION"
+
+ABS_LEDGER="/ABS/PROJECT/Line_backup/notes-backup-records/UNIQUE_LOCAL_LIST_ID"
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
+  summary --records-root "$ABS_LEDGER"
+```
+
+`ABS_LEDGER` 必須換成上一步結果中唯一相符列的完整 `records_root`。無相符帳本、多候選、索引／歷史損壞或無法唯一定位時停止；不要靠顯示名稱猜目錄，也不要把 collection 傳給 `summary` 或增加 `--local-list-id`。
 
 `evidence-correct` 只用於已確認的 page 證據錯引。Agent 從目前帳本事件取得 page 的 sequence／SHA-256、原 evidence SHA-256 及替換 bundle；替換 bundle 的 scan context 必須對應 target page 當時的 scan，不是現在最新 scan。若 page 以外仍有 evidence 損壞，拒絕 `EVIDENCE_REPAIR_SCOPE_MISMATCH`；重複更正須帶前一筆 correction 的 sequence／SHA-256，不得分叉。成功只追加 correction，不修改 page 成員、順序、top/bottom、scan 覆蓋、media key 或已完成事實；真實帳本仍須 D2 的精確資料預覽與授權。
 
@@ -125,9 +183,33 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 
 ## 啟動與帳本對帳
 
-1. 先執行 `lists`，再讀 `.local/line-backup/active-notes-task.json`；以本次連續入口與當次畫面核對相符的 `local_list_id`，不要只讀最近一個帳本。
+1. 先執行 `lists`，再讀 `.local/line-backup/active-notes-task.json`；以本次連續入口與當次畫面核對相符的 `local_list_id`，不要只讀最近一個帳本。需要單帳本摘要時，從唯一相符列的 `records_root` 執行 `summary`，不從名稱猜路徑。
 2. 以 `memory` 讀摘要中的列表、貼文／媒體狀態、缺項、`unresolved_attempts`、`dispatch_blockers`、scan binding 與本機可用性；需要 staging 目的地或 completion 細節時，依上節回到 `intent`／`verify` 結果及追加事件。索引缺失、帳本損壞、證據鏈異常或出現兩個可能列表時停止相關動作，不建立新空帳。
-3. 新列表只有在入口、列表身分與歷史均確認，且沒有缺損／歧義時才 `init`；從結果取得 `records_root` 後先處理 `unresolved_attempts`，再依序執行 **`init` → `bind` → `scan start`**。既有列表從 `lists`／`memory` 取得帳本後先處理舊 attempt，再執行 **`bind` → `scan start`**；不因新 Session、照片 root 改變或使用者重交前景而重新初始化。
+3. 新列表只有在入口、列表身分與歷史均確認，且沒有缺損／歧義時才建立。Agent 先固定同一組 `visual_key`、適用 `context_id` 與 signals 輸入，以 `list-key` 取得 key；用同一 `list_key` context 分別建立 binding／history 兩份 v2 evidence；再以完全相同的 identity 參數與兩份 bundle 執行 `init`，最後以回傳的 `records_root` 執行 `summary` 讀回相同 `list_key`。鏈如下；`CONTEXT_ID` 不適用時整項省略，不是空字串或 `UNKNOWN`，SIGNALS 未使用時同樣省略：
+
+   ```sh
+   PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes list-key \
+     --visual-key "$VISUAL_KEY" --context-id "$CONTEXT_ID" --signals "$SIGNALS_INPUT"
+
+   PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
+     --statement "$BINDING_STATEMENT" --asset screenshot "$BINDING_SCREENSHOT" \
+     --output-dir "$BINDING_EVIDENCE_NEW_DIR" --list-key "$LIST_KEY"
+   PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
+     --statement "$HISTORY_STATEMENT" --asset screenshot "$HISTORY_SCREENSHOT" \
+     --output-dir "$HISTORY_EVIDENCE_NEW_DIR" --list-key "$LIST_KEY"
+
+   PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes init \
+     --collection "$ABS_COLLECTION" --photo-root "$ABS_PHOTO_ROOT" \
+     --name "$DISPLAY_NAME" --visual-key "$VISUAL_KEY" \
+     --context-id "$CONTEXT_ID" --signals "$SIGNALS_INPUT" \
+     --binding-evidence "$BINDING_BUNDLE" \
+     --history-scope-evidence "$HISTORY_BUNDLE"
+
+   PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes summary \
+     --records-root "$ABS_LEDGER"
+   ```
+
+   `SIGNALS_INPUT` 是明示的 strict JSON 文字或 `@` 加指定 JSON 檔的絕對路徑；未使用 signals 時連同整個 flag 省略。先核對兩份 bundle 的 context 都等於 list-key 結果，再執行 `init`；若 identity 輸入或明示 signals 檔在期間改變，舊 bundle 不可沿用。`init` 後只使用其回傳的 `records_root` 讀回 key，不一致或有未預期副作用就停止；不得先建空帳取得 key、手填 key／JSON，或讓適用 ID 留 `UNKNOWN`。讀回成功後才依序 **`bind` → `scan start`**，並先處理任何 `unresolved_attempts`。既有列表從 `lists`／`memory` 取得帳本後先處理舊 attempt，再執行 **`bind` → `scan start`**；不因新 Session、照片 root 改變或使用者重交前景而重新初始化。
 4. `scan start` → `page`… → `scan finish` → `post`／`media` 保存本輪完整盤點。`scan finish` 前必須已看到頂端、底端與有序重疊；`post`／`media` 需要最新完成的 scan。新 Session 必須重新看頂底與重疊，不沿用上一個 Session 的畫面 cursor。純文字貼文由 `post` 記 `NO_MEDIA`，不建立媒體下載項。
 5. 重新更換照片 root 時用 `destination` 追加綁定；舊 completion 路徑不改，UNKNOWN、活動下載、pending 命名或 `LOCAL_CHANGED` 不因換位置解鎖。
 

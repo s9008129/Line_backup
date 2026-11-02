@@ -5,16 +5,36 @@
 每次下載控制、chooser 確認、outcome、reconcile、更正與恢復前，先建立這份私有 statement，再用 `evidence-pack` 產生 bundle。context 只填該命令唯一主體的已知 ID；適用 ID 不可留 `UNKNOWN` 或誤填另一主體，未分配／不適用的欄位才由 `evidence-pack` 保持 `UNKNOWN`。`intent` 沒有一般 evidence 參數，其預檢與讀回證據留在私有任務區。無法取得的欄位寫 `UNKNOWN` 並說明原因；不要用空白、猜測、檔名或另一個畫面補值。原始證據留在專案任務所需的私有區域，不外傳。
 
 ```sh
+TASK_PROJECT_ROOT="$(cd "$(git rev-parse --show-toplevel)" && pwd -P)"
+TASK_PRIVATE_DIR="$TASK_PROJECT_ROOT/.local/line-backup/tasks/CURRENT_TASK"
+STATEMENT_FILE="$TASK_PRIVATE_DIR/statement.txt"
+PRIVATE_SCREENSHOT="$TASK_PRIVATE_DIR/screenshot.png"
+PRIVATE_AX_CAPTURE="$TASK_PRIVATE_DIR/accessibility.json"
+EVIDENCE_PARENT="$TASK_PRIVATE_DIR/evidence"
+EVIDENCE_OUTPUT="$EVIDENCE_PARENT/NEW_UNIQUE_EVIDENCE_ID"
+mkdir -p "$EVIDENCE_PARENT"
+
 PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
-  --statement STATEMENT_FILE \
-  --asset screenshot PRIVATE_SCREENSHOT \
-  --asset ax PRIVATE_AX_CAPTURE \
-  --output-dir .local/line-backup/tasks/TASK_ID/evidence/NEW_UUID \
-  --list-key LIST_KEY [--post-key POST_KEY] [--media-key MEDIA_KEY] \
-  [--attempt-id ATTEMPT_ID] [--scan-id SCAN_ID]
+  --statement "$STATEMENT_FILE" \
+  --asset screenshot "$PRIVATE_SCREENSHOT" \
+  --asset ax "$PRIVATE_AX_CAPTURE" \
+  --output-dir "$EVIDENCE_OUTPUT" \
+  --list-key "$LIST_KEY"
 ```
 
-`--asset` 可重複；role 限 `screenshot`、`ax`、`input_receipt`、`command_stdout`、`command_stderr`、`observation`。statement 與畫面／AX 不可空；`command_stdout`／`command_stderr` 可為零 bytes。`--output-dir` 必須在 `.local/line-backup/tasks/` 下、尚不存在且不可用既有目錄代替；不要手動命名或覆寫 hash。Owner 不需要提供 JSON、UUID、key 或 hash。
+`--asset` 可重複；role 限 `screenshot`、`ax`、`input_receipt`、`command_stdout`、`command_stderr`、`observation`。statement 與畫面／AX 不可空；`command_stdout`／`command_stderr` 可為零 bytes。貼文層另加 `--post-key "$POST_KEY"`；媒體層再加 `--media-key "$MEDIA_KEY"` 及適用的 `--attempt-id "$ATTEMPT_ID"`／`--scan-id "$SCAN_ID"`。Owner 不需要提供 JSON、UUID、key、路徑或 hash。
+
+## 路徑與前置條件
+
+- 先確認 repo 的實體根目錄，再以它展開 `TASK_PROJECT_ROOT`；statement、每個 asset、要匯入的 bundle 與 output 都使用絕對路徑。不可把範例中的 `.local/...` 相對字串直接當 argv。
+- statement／asset 必須是專案內 canonical regular file，不可為 symlink，且只允許一個 hard link。先由 Agent 取得或建立原件並讀回；不要讓工具自動 resolve 穿過 symlink。
+- `EVIDENCE_PARENT` 必須是已存在、位於專案私有 tasks 下的 canonical directory。Agent 只建立這個父目錄；`EVIDENCE_OUTPUT` 必須是它下面尚不存在的子目錄，不可預建、不可指向既有目錄、不可覆寫。
+- 以下三種拒絕原因不同，不能互換：
+  - statement／asset 相對路徑：`PROJECT_LOCAL_EVIDENCE_REQUIRED`。
+  - `--output-dir` 相對路徑：`NEW_EVIDENCE_DIRECTORY_REQUIRED`。
+  - output 父目錄不存在：`EVIDENCE_OUTPUT_PARENT_REQUIRED`。
+- 其他安全拒絕仍成立：input symlink 為 `EVIDENCE_SYMLINK_REFUSED`、多 hard link 為 `EVIDENCE_SOURCE_CHANGED`、輸出已存在為 `EVIDENCE_OUTPUT_DIRECTORY_EXISTS`、輸出逸出私有 tasks 為 `PROJECT_PRIVATE_EVIDENCE_REQUIRED`。舊紀錄沒有當時 argv 時保留 `UNKNOWN`，不要重跑一次來猜原失敗屬於哪一類。
+- 成功後只把 CLI 回傳的絕對 `bundle_path` 作 context 引用。原始 GUI／AX／input receipt 與整理 statement 分開保存；statement 的說明不能冒充工具原始回傳，bundle 只核對 bytes／context，不證明畫面真實或控制命中。
 
 ## 必錄欄位
 

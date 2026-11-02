@@ -145,6 +145,8 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily resume-naming \
 
 `NOTES_BACKUP_ROOT` 可留空，Agent 會在初始化或追加目的地時使用目前專案根目錄的 `backup/記事本/`。若要指定其他工具支援的專案內位置，填完整絕對路徑。`backup/記事本/` 是 Agent 層預設，不是 CLI 的全域預設：`init`／`destination` 實際都要求明確傳入 `--photo-root`。此欄只指定照片／影片區；永久紀錄由 Agent 自動管理，不要手動搬移、改名或刪除內部帳本。
 
+真正的新列表由 Agent 先以同一組 identity 執行 `list-key`，再用該 key 建立兩份 v2 evidence、以相同 identity `init` 並讀回 key；只有讀回一致且無未預期副作用時才開始盤點。這個前置鏈不需要 Owner 提供內部 key 或 JSON，也不得以「先建空帳再補」代替；完整命令與停止條件見[下載與 notes CLI](../.agents/skills/line-notes-agent-cua/references/download-and-ledger.md#啟動與帳本對帳)。
+
 ### 可直接貼用的啟動 Prompt
 
 首次與下次啟動都使用這一份記事本 Prompt。請只在正確列表已在前景時提交；只討論、引用或修改範本不代表授權執行。
@@ -245,9 +247,26 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes --help
 
 notes CLI 的業務成功以 exit 0、已列業務拒絕以 exit 4 回傳 JSON 簿記結果，這兩種 JSON 固定包含 `dispatch_authorized=false`；參數語法或必填欄位錯誤以 exit 2 拒絕，只在 stderr 顯示錯誤且不改紀錄，不輸出 JSON；未預期內部錯誤以 exit 70 回傳 `status=INTERNAL_ERROR`、`reason=UNEXPECTED_EXCEPTION`、`dispatch_authorized=false`。exit 70 不是可重試業務拒絕，不得據此重送、改寫 ledger、建立新 attempt、換目的地或換入口繞過；應停止並保留現場、原始輸出與證據後回報。`dispatch_authorized=false` 只表示工具不授予 GUI，不能當成下載授權、實機 PASS 或獨立驗收。實際下載仍只能發生在本次任務授權與有效前景交接內。
 
-新列表流程是 `init` → `bind` → `scan start` → `page`… → `scan finish` → `post`／`media`；既有列表是 `bind` → `scan start` → 後續同一盤點流程。`lists`／`init` 使用 collection；除 `lists`、`init` 外，所有帳本命令都要 `--records-root`。`init`／`destination` 另要求 `--photo-root`。完整參數矩陣見[記事本下載與 notes CLI](../.agents/skills/line-notes-agent-cua/references/download-and-ledger.md)；照片 `verify` 必須成對傳 `--decoder` 與 `--decoder-sha256`，影片則不傳該照片 decoder 組合。
+新列表流程是先以固定 identity 執行 `list-key` → 同 key context 的兩份 v2 evidence → 同 identity `init` → 讀回 key，成功後才 `bind` → `scan start` → `page`… → `scan finish` → `post`／`media`；既有列表是 `bind` → `scan start` → 後續同一盤點流程。`lists` 用 `--collection` 定位，`init` 用 collection 建帳並傳 `--photo-root`，`evidence-pack` 只封裝 bundle，`list-key` 只做純計算；`memory`、`summary` 及其他持久帳本命令使用 `--records-root`，`destination` 另要求 `--photo-root`。完整參數矩陣見[記事本下載與 notes CLI](../.agents/skills/line-notes-agent-cua/references/download-and-ledger.md)；照片 `verify` 必須成對傳 `--decoder` 與 `--decoder-sha256`，影片則不傳該照片 decoder 組合。
 
-本輪 CLI 另提供 `evidence-pack`、`evidence-audit`、`evidence-correct`、`media-kind-correct` 與 `source-unavailable`。其中 `evidence-audit` 是唯讀操作，`evidence-pack` 只建立私有 v2 bundle；後三個會追加帳本事實，必須符合 Skill 的精確 target／evidence／授權條件，不由一般備份流程自行猜測套用。Agent 從 CLI 讀回 key、sequence、hash 與 context，Owner 不需手填。
+`evidence-pack` 的 statement、asset 與 output 都使用專案內絕對路徑。statement／asset 必須是不可經 symlink 或多 hard link 指到的 regular file；Agent 只建立 output 的父目錄，不預建新輸出子目錄。相對輸入、相對輸出與父目錄缺席分別回報 `PROJECT_LOCAL_EVIDENCE_REQUIRED`、`NEW_EVIDENCE_DIRECTORY_REQUIRED`、`EVIDENCE_OUTPUT_PARENT_REQUIRED`，不可混成一個錯誤。完整例子見[證據範本](../.agents/skills/line-notes-agent-cua/references/evidence-template.md#路徑與前置條件)。
+
+查詢既有列表時，Agent 先用 collection 列出全部帳本摘要，只在入口、列表身分與歷史唯一相符時取該列原值 `records_root`，再查單帳本摘要；無候選、多候選或壞歷史即停止，不以顯示名稱猜目錄。例如：
+
+```sh
+TASK_PROJECT_ROOT="$(cd "$(git rev-parse --show-toplevel)" && pwd -P)"
+ABS_COLLECTION="$TASK_PROJECT_ROOT/notes-backup-records"
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
+  lists --collection "$ABS_COLLECTION"
+
+ABS_LEDGER="/ABS/PROJECT/Line_backup/notes-backup-records/UNIQUE_LOCAL_LIST_ID"
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
+  summary --records-root "$ABS_LEDGER"
+```
+
+`ABS_LEDGER` 要換成 `lists` 結果唯一相符列的完整 `records_root`；collection 不可傳給 `summary`，也不存在 `--local-list-id` 參數。
+
+本輪 CLI 另提供 `list-key`、`evidence-pack`、`evidence-audit`、`evidence-correct`、`media-kind-correct` 與 `source-unavailable`。`list-key` 與 `evidence-audit` 是唯讀操作；`list-key` 不建帳、不讀寫帳本／照片／active／鎖／事件，`evidence-pack` 只建立私有 v2 bundle；後三個會追加帳本事實，必須符合 Skill 的精確 target／evidence／授權條件，不由一般備份流程自行猜測套用。Agent 從 CLI 讀回 key、sequence、hash 與 context，Owner 不需手填。
 
 相簿、記事本摘要及個別媒體是三個不同層級的完成訊號，不能互換：
 

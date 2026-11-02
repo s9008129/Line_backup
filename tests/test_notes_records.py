@@ -623,6 +623,7 @@ class NotesRecordsTests(unittest.TestCase):
         help_result = self.run_cli('--help')
         self.assertEqual(help_result.returncode, 0)
         self.assertIn('usage:', help_result.stdout)
+        self.assertIn('list-key', help_result.stdout)
         self.assertIn('intent', help_result.stdout)
         self.assertIn('exit 70', help_result.stdout)
         self.assertIn('INTERNAL_ERROR', help_result.stdout)
@@ -647,6 +648,49 @@ class NotesRecordsTests(unittest.TestCase):
         self.assertEqual(payload['reason'], 'MEDIA_NOT_OBSERVED')
         self.assertFalse(payload['dispatch_authorized'])
         self.assertEqual(self.event_bytes(), before)
+
+    def test_lists_records_root_feeds_summary_without_local_list_id_flag(self):
+        listed = self.run_cli('lists', '--collection', self.collection_path)
+        self.assertEqual(listed.returncode, 0, listed.stderr)
+        listed_payload = json.loads(listed.stdout)
+        self.assertEqual(len(listed_payload['lists']), 1)
+        row = listed_payload['lists'][0]
+        self.assertEqual(row['records_root'], self.summary['records_root'])
+        self.assertEqual(row['list_key'], self.summary['list_key'])
+
+        summarized = self.run_cli(
+            'summary', '--records-root', row['records_root'])
+        self.assertEqual(summarized.returncode, 0, summarized.stderr)
+        summary_payload = json.loads(summarized.stdout)
+        self.assertEqual(summary_payload['records_root'], row['records_root'])
+        self.assertEqual(summary_payload['local_list_id'], row['local_list_id'])
+        self.assertEqual(summary_payload['list_key'], row['list_key'])
+        self.assertFalse(summary_payload['dispatch_authorized'])
+
+        unknown_flag = self.run_cli(
+            'summary', '--records-root', row['records_root'],
+            '--local-list-id', row['local_list_id'])
+        self.assertEqual(unknown_flag.returncode, 2)
+        self.assertEqual(unknown_flag.stdout, '')
+        self.assertIn('unrecognized arguments', unknown_flag.stderr)
+
+    def test_rejected_evidence_pack_does_not_append_business_event(self):
+        before = self.event_bytes()
+        missing_parent = self.evidence_packs / uuid.uuid4().hex / 'new-bundle'
+        rejected = self.run_cli(
+            'evidence-pack',
+            '--statement', self.evidence,
+            '--asset', 'screenshot', self.screenshot,
+            '--list-key', self.summary['list_key'],
+            '--output-dir', missing_parent)
+
+        self.assertEqual(rejected.returncode, 4)
+        payload = json.loads(rejected.stdout)
+        self.assertEqual(payload['status'], 'REFUSED')
+        self.assertEqual(payload['reason'], 'EVIDENCE_OUTPUT_PARENT_REQUIRED')
+        self.assertFalse(payload['dispatch_authorized'])
+        self.assertEqual(self.event_bytes(), before)
+        self.assertFalse(missing_parent.exists())
 
         listed = self.run_cli('lists', '--collection', self.collection_path)
         self.assertEqual(listed.returncode, 0)
@@ -685,6 +729,296 @@ class NotesRecordsTests(unittest.TestCase):
                 self.assertEqual(payload['status'], 'REFUSED')
                 self.assertFalse(payload['dispatch_authorized'])
                 self.assertNotIn('Traceback', output.getvalue())
+
+
+class NotesListKeyCliTests(unittest.TestCase):
+    def setUp(self):
+        PRIVATE_TASKS.mkdir(parents=True, exist_ok=True)
+        self.temporary = tempfile.TemporaryDirectory(
+            prefix='notes-list-key-', dir=PRIVATE_TASKS)
+        self.base = Path(self.temporary.name).resolve()
+        self.collection = self.base / 'collection'
+        self.photo_root = self.base / 'photos'
+        self.statement = self.base / 'statement.txt'
+        self.statement.write_bytes(b'synthetic list identity statement\n')
+        self.screenshot = self.base / 'screenshot.bin'
+        self.screenshot.write_bytes(b'synthetic list identity screenshot')
+        self.packs = self.base / 'evidence-packs'
+        self.packs.mkdir()
+        self.active_read = mock.patch.object(
+            notes, '_read_active_hint', return_value=None)
+        self.active_write = mock.patch.object(
+            notes, '_write_active_hint', return_value=None)
+        self.active_read.start()
+        self.active_write.start()
+
+    def tearDown(self):
+        self.active_write.stop()
+        self.active_read.stop()
+        self.temporary.cleanup()
+
+    def run_main(self, *args):
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        with mock.patch('sys.stdout', new=stdout), \
+                mock.patch('sys.stderr', new=stderr):
+            try:
+                code = notes.main([str(value) for value in args])
+            except SystemExit as exc:
+                code = exc.code
+        return code, stdout.getvalue(), stderr.getvalue()
+
+    def list_key_payload(self, *args):
+        code, stdout, stderr = self.run_main('list-key', *args)
+        self.assertEqual(code, 0, stderr)
+        payload = json.loads(stdout)
+        self.assertFalse(payload['dispatch_authorized'])
+        self.assertEqual(payload['list_key'], notes.list_key(payload['identity']))
+        return payload
+
+    def make_bundle(self, list_key_value):
+        output = self.packs / uuid.uuid4().hex
+        return notes_evidence.create_bundle(
+            statement=str(self.statement),
+            assets=[('screenshot', str(self.screenshot))],
+            context=dict(list_key=list_key_value),
+            output_dir=str(output))['bundle_path']
+
+    def test_list_key_matches_init_and_readback(self):
+        identity_args = (
+            '--visual-key', '  Synthetic List Ω  ',
+            '--context-id', '  Foreground e\u0301  ',
+            '--signals', '{"z":[2,1],"a":{"second":2,"first":1}}')
+        computed = self.list_key_payload(*identity_args)
+        first_bundle = self.make_bundle(computed['list_key'])
+        second_bundle = self.make_bundle(computed['list_key'])
+
+        code, stdout, stderr = self.run_main(
+            'init', '--collection', self.collection,
+            '--photo-root', self.photo_root, '--name', 'Synthetic Notes',
+            *identity_args,
+            '--binding-evidence', first_bundle,
+            '--history-scope-evidence', second_bundle)
+        self.assertEqual(code, 0, stderr)
+        initialized = json.loads(stdout)
+        self.assertFalse(initialized['dispatch_authorized'])
+        self.assertEqual(initialized['identity'], computed['identity'])
+        self.assertEqual(initialized['list_key'], computed['list_key'])
+        readback = NotesRecords(initialized['records_root']).summary()
+        self.assertEqual(readback['list_key'], computed['list_key'])
+
+    def test_list_key_preserves_identity_json_semantics_and_boundaries(self):
+        plain = self.list_key_payload('--visual-key', 'plain')
+        as_null = self.list_key_payload(
+            '--visual-key', 'plain', '--signals', 'null')
+        empty_object = self.list_key_payload(
+            '--visual-key', 'plain', '--signals', '{}')
+        self.assertNotIn('signals', plain['identity'])
+        self.assertEqual(as_null, plain)
+        self.assertEqual(empty_object['identity']['signals'], {})
+        self.assertNotEqual(empty_object['list_key'], plain['list_key'])
+
+        reordered_a = self.list_key_payload(
+            '--visual-key', 'ordered', '--signals',
+            '{"b":[2],"a":{"y":2,"x":1}}')
+        reordered_b = self.list_key_payload(
+            '--visual-key', 'ordered', '--signals',
+            '{ "a": {"x": 1, "y": 2}, "b": [2] }')
+        self.assertEqual(reordered_a, reordered_b)
+
+        array_a = self.list_key_payload(
+            '--visual-key', 'array', '--signals', '{"items":["a","b"]}')
+        array_b = self.list_key_payload(
+            '--visual-key', 'array', '--signals', '{"items":["b","a"]}')
+        self.assertNotEqual(array_a['list_key'], array_b['list_key'])
+
+        spaced = self.list_key_payload(
+            '--visual-key', '  列表 Ω  ',
+            '--context-id', '  前景 e\u0301  ',
+            '--signals', '{"text":"  keep case Ω  "}')
+        self.assertEqual(spaced['identity']['visual_key'], '  列表 Ω  ')
+        self.assertEqual(spaced['identity']['context_id'], '  前景 e\u0301  ')
+        self.assertEqual(spaced['identity']['signals']['text'], '  keep case Ω  ')
+        trimmed = self.list_key_payload('--visual-key', '列表 Ω')
+        self.assertNotEqual(spaced['list_key'], trimmed['list_key'])
+
+        self.list_key_payload('--visual-key', 'x' * 4096)
+        self.list_key_payload(
+            '--visual-key', 'x', '--context-id', 'c' * 4096)
+        for args, reason in (
+                (('--visual-key', '   '), 'LIST_VISUAL_KEY_REQUIRED'),
+                (('--visual-key', 'x', '--context-id', '   '),
+                 'INVALID_CONTEXT_ID'),
+                (('--visual-key', 'x' * 4097), 'LIST_VISUAL_KEY_REQUIRED'),
+                (('--visual-key', 'x', '--context-id', 'c' * 4097),
+                 'INVALID_CONTEXT_ID')):
+            with self.subTest(reason=reason, length=len(args[1])):
+                code, stdout, stderr = self.run_main('list-key', *args)
+                self.assertEqual(code, 4, stderr)
+                payload = json.loads(stdout)
+                self.assertEqual(payload['status'], 'REFUSED')
+                self.assertEqual(payload['reason'], reason)
+                self.assertFalse(payload['dispatch_authorized'])
+
+        oversized = self.base / 'oversized-signals.json'
+        oversized.write_text(
+            json.dumps({'blob': 'x' * (256 * 1024)}), encoding='utf-8')
+        code, stdout, _stderr = self.run_main(
+            'list-key', '--visual-key', 'large', '--signals', '@' + str(oversized))
+        self.assertEqual(code, 4)
+        self.assertEqual(json.loads(stdout)['reason'], 'INVALID_IDENTITY_SIGNALS')
+
+        for value in (
+                '{"a":1,"a":2}', '{"number":NaN}', '{not-json}'):
+            with self.subTest(signals=value):
+                code, stdout, stderr = self.run_main(
+                    'list-key', '--visual-key', 'bad-json', '--signals', value)
+                self.assertEqual(code, 2)
+                self.assertEqual(stdout, '')
+                self.assertIn('--signals must be valid JSON', stderr)
+
+        code, stdout, stderr = self.run_main('list-key')
+        self.assertEqual(code, 2)
+        self.assertEqual(stdout, '')
+        self.assertIn('--visual-key', stderr)
+        code, stdout, _stderr = self.run_main(
+            'list-key', '--visual-key', 'x', '--collection', self.collection)
+        self.assertEqual(code, 2)
+        self.assertEqual(stdout, '')
+
+        output = io.StringIO()
+        with mock.patch.object(notes, 'list_key', side_effect=RuntimeError('synthetic')):
+            with mock.patch('sys.stdout', new=output):
+                code = notes.main(['list-key', '--visual-key', 'synthetic'])
+        self.assertEqual(code, 70)
+        payload = json.loads(output.getvalue())
+        self.assertEqual(payload['status'], 'INTERNAL_ERROR')
+        self.assertEqual(payload['reason'], 'UNEXPECTED_EXCEPTION')
+        self.assertFalse(payload['dispatch_authorized'])
+
+
+class NotesListKeyIsolationTests(unittest.TestCase):
+    def setUp(self):
+        PRIVATE_TASKS.mkdir(parents=True, exist_ok=True)
+        self.temporary = tempfile.TemporaryDirectory(
+            prefix='notes-list-key-isolation-', dir=PRIVATE_TASKS)
+        self.base = Path(self.temporary.name).resolve()
+        self.collection = self.base / 'collection'
+        self.photo_root = self.base / 'photos'
+        self.ledger = self.collection / 'synthetic-ledger'
+        self.events = self.ledger / 'events'
+        self.events.mkdir(parents=True)
+        (self.events / '00000001.json').write_bytes(b'{"synthetic":"event"}\n')
+        (self.ledger / '.lock').write_bytes(b'lock-bytes')
+        (self.collection / 'index.json').write_bytes(
+            b'{"synthetic":"index"}\n'
+        )
+        self.photo_root.mkdir()
+        (self.photo_root / 'synthetic-photo.jpg').write_bytes(b'photo-bytes')
+        (self.base / 'active-notes-task.json').write_bytes(
+            b'{"synthetic":"active-hint"}\n')
+
+    def tearDown(self):
+        self.temporary.cleanup()
+
+    def snapshot(self):
+        result = {}
+        for path in sorted(self.base.rglob('*')):
+            relative = str(path.relative_to(self.base))
+            info = path.lstat()
+            if path.is_dir():
+                result[relative] = ('directory', info.st_mode)
+            else:
+                result[relative] = ('file', info.st_mode, path.read_bytes())
+        return result
+
+    def run_main(self, *args):
+        stdout = io.StringIO()
+        with mock.patch('sys.stdout', new=stdout):
+            try:
+                code = notes.main([str(value) for value in args])
+            except SystemExit as exc:
+                code = exc.code
+        return code, stdout.getvalue()
+
+    def test_list_key_reads_no_files_or_constructs_ledgers_without_signals_file(self):
+        before = self.snapshot()
+        with mock.patch.object(notes, 'NotesCollection', side_effect=AssertionError):
+            with mock.patch.object(notes, 'NotesRecords', side_effect=AssertionError):
+                with mock.patch.object(notes, '_read_active_hint',
+                                       side_effect=AssertionError):
+                    with mock.patch.object(notes, '_write_active_hint',
+                                           side_effect=AssertionError):
+                        with mock.patch.object(
+                                notes.Path, 'read_bytes', autospec=True,
+                                side_effect=AssertionError('unexpected file read')):
+                            with mock.patch.object(
+                                    notes, '_open_lock',
+                                    side_effect=AssertionError('unexpected lock')):
+                                with mock.patch.object(
+                                        notes.subprocess, 'run',
+                                        side_effect=AssertionError('unexpected subprocess')):
+                                    with mock.patch.object(
+                                            notes.subprocess, 'Popen',
+                                            side_effect=AssertionError('unexpected subprocess')):
+                                        code, stdout = self.run_main(
+                                            'list-key', '--visual-key', 'no-ledger')
+        self.assertEqual(code, 0)
+        self.assertFalse(json.loads(stdout)['dispatch_authorized'])
+        self.assertEqual(self.snapshot(), before)
+
+    def test_list_key_reads_only_the_named_signals_file_without_retry(self):
+        signals = self.base / 'signals.json'
+        signals.write_bytes(b'{"list":"synthetic"}\n')
+        before = self.snapshot()
+        reads = []
+        original_read = Path.read_bytes
+
+        def tracked_read(path):
+            reads.append(path)
+            if path != signals:
+                raise AssertionError('unexpected file read: %s' % path)
+            return original_read(path)
+
+        with mock.patch.object(notes, 'NotesCollection', side_effect=AssertionError):
+            with mock.patch.object(notes, 'NotesRecords', side_effect=AssertionError):
+                with mock.patch.object(notes, '_read_active_hint',
+                                       side_effect=AssertionError):
+                    with mock.patch.object(notes, '_write_active_hint',
+                                           side_effect=AssertionError):
+                        with mock.patch.object(
+                                notes.Path, 'read_bytes', autospec=True,
+                                side_effect=tracked_read):
+                            code, stdout = self.run_main(
+                                'list-key', '--visual-key', 'with-file',
+                                '--signals', '@' + str(signals))
+        self.assertEqual(code, 0)
+        self.assertEqual(reads, [signals])
+        self.assertEqual(json.loads(stdout)['identity']['signals'],
+                         {'list': 'synthetic'})
+        self.assertEqual(self.snapshot(), before)
+
+        duplicate = self.base / 'duplicate-signals.json'
+        duplicate.write_bytes(b'{"a":1,"a":2}\n')
+        before = self.snapshot()
+        reads[:] = []
+
+        def duplicate_read(path):
+            reads.append(path)
+            if path != duplicate:
+                raise AssertionError('unexpected file read: %s' % path)
+            return original_read(path)
+
+        with mock.patch.object(
+                notes.Path, 'read_bytes', autospec=True,
+                side_effect=duplicate_read):
+            code, stdout = self.run_main(
+                'list-key', '--visual-key', 'bad-file',
+                '--signals', '@' + str(duplicate))
+        self.assertEqual(code, 2)
+        self.assertEqual(stdout, '')
+        self.assertEqual(reads, [duplicate])
+        self.assertEqual(self.snapshot(), before)
 
 
 if __name__ == '__main__':

@@ -4152,6 +4152,13 @@ def _json_cli_argument(parser, value, label, default=None):
                      (label, exc))
 
 
+def _list_identity_cli(parser, args):
+    return list_identity(
+        visual_key=args.visual_key,
+        context_id=args.context_id,
+        signals=_json_cli_argument(parser, args.signals, '--signals', None))
+
+
 def _positive_cli_float(parser, value, label):
     try:
         number = float(value)
@@ -4188,18 +4195,31 @@ def _build_notes_parser():
         'evidence-pack',
         help='Create one immutable line-notes-evidence/v2 bundle')
     evidence_pack.add_argument('--statement', required=True,
-                               help='Non-empty statement source file')
+                               help='Non-empty absolute project-local statement file')
     evidence_pack.add_argument(
         '--asset', action='append', nargs=2, default=[],
         metavar=('ROLE', 'PATH'),
-        help='Repeatable asset role/path pair')
+        help='Repeatable absolute project-local asset role/path pair')
     evidence_pack.add_argument('--output-dir', required=True,
-                               help='New project-local evidence bundle directory')
+                               help=('New absolute project-private evidence directory '
+                                     'under .local/line-backup/tasks; parent must exist'))
     evidence_pack.add_argument('--list-key')
     evidence_pack.add_argument('--post-key')
     evidence_pack.add_argument('--media-key')
     evidence_pack.add_argument('--attempt-id')
     evidence_pack.add_argument('--scan-id')
+
+    list_key_command = sub.add_parser(
+        'list-key',
+        help='Compute one list key from identity inputs without a ledger')
+    list_key_command.add_argument(
+        '--visual-key', required=True,
+        help='Agent-grounded visual identity key; whitespace and Unicode are preserved')
+    list_key_command.add_argument(
+        '--context-id',
+        help='Optional foreground context identity; whitespace and Unicode are preserved')
+    list_key_command.add_argument(
+        '--signals', help='Optional strict JSON identity signals or @JSON-file')
 
     init = sub.add_parser('init', help='Create a new notes ledger')
     init.add_argument('--collection', help='Notes collection (default: project notes-backup-records)')
@@ -4209,7 +4229,8 @@ def _build_notes_parser():
     init.add_argument('--visual-key', required=True,
                       help='Agent-grounded visual identity key')
     init.add_argument('--context-id', help='Optional foreground context identity')
-    init.add_argument('--signals', help='Optional canonical JSON identity signals')
+    init.add_argument('--signals',
+                      help='Optional strict JSON identity signals or @JSON-file')
     init.add_argument('--binding-evidence', required=True,
                       help='Private list binding evidence file')
     init.add_argument('--history-scope-evidence', required=True,
@@ -4385,7 +4406,10 @@ def main(argv=None):
     parser = _build_notes_parser()
     args = parser.parse_args(argv)
     try:
-        if args.command == 'evidence-pack':
+        if args.command == 'list-key':
+            identity = _list_identity_cli(parser, args)
+            result = dict(identity=identity, list_key=list_key(identity))
+        elif args.command == 'evidence-pack':
             context = dict(
                 list_key=args.list_key, post_key=args.post_key,
                 media_key=args.media_key, attempt_id=args.attempt_id,
@@ -4396,11 +4420,7 @@ def main(argv=None):
         elif args.command == 'lists':
             result = NotesCollection(args.collection).lists()
         elif args.command == 'init':
-            identity = list_identity(
-                visual_key=args.visual_key,
-                context_id=args.context_id,
-                signals=_json_cli_argument(parser, args.signals,
-                                           '--signals', None))
+            identity = _list_identity_cli(parser, args)
             result = NotesCollection(args.collection).create(
                 photo_root=args.photo_root,
                 display_name=args.name,

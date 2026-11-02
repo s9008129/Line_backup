@@ -227,6 +227,56 @@ class NotesEvidenceTests(unittest.TestCase):
                     context=self.context,
                     output_dir=str(outside / uuid.uuid4().hex))
 
+    def test_relative_paths_missing_parent_and_hard_link_are_rejected(self):
+        output = self.packs / uuid.uuid4().hex
+        cases = (
+            ('relative_statement', 'statement.txt', [], output,
+             'PROJECT_LOCAL_EVIDENCE_REQUIRED'),
+            ('relative_asset', str(self.statement),
+             [('screenshot', 'screenshot.bin')], output,
+             'PROJECT_LOCAL_EVIDENCE_REQUIRED'),
+            ('relative_output', str(self.statement), [],
+             '.local/line-backup/tasks/synthetic-evidence',
+             'NEW_EVIDENCE_DIRECTORY_REQUIRED'),
+            ('missing_parent', str(self.statement), [],
+             self.packs / uuid.uuid4().hex / 'bundle',
+             'EVIDENCE_OUTPUT_PARENT_REQUIRED'),
+        )
+        for name, statement, assets, output_dir, code in cases:
+            with self.subTest(case=name):
+                with self.assertRaisesRegex(notes_evidence.NotesEvidenceError,
+                                            code):
+                    notes_evidence.create_bundle(
+                        statement=statement, assets=assets,
+                        context=self.context, output_dir=str(output_dir))
+                if name != 'relative_output':
+                    self.assertFalse(Path(output_dir).exists())
+
+        hard_link = self.base / 'statement-hard-link.txt'
+        os.link(str(self.statement), str(hard_link))
+        with self.assertRaisesRegex(notes_evidence.NotesEvidenceError,
+                                    'EVIDENCE_SOURCE_CHANGED'):
+            notes_evidence.create_bundle(
+                statement=str(hard_link), assets=[], context=self.context,
+                output_dir=str(self.packs / uuid.uuid4().hex))
+
+    def test_init_context_mismatch_has_no_collection_or_photo_side_effects(self):
+        collection_path = self.base / 'wrong-context-collection'
+        photo_root = self.base / 'wrong-context-photos'
+        identity = notes.list_identity(visual_key='expected-context')
+        wrong_context = dict(list_key='b' * 64)
+        wrong_bundle = self.make_bundle(
+            context=wrong_context)['bundle_path']
+
+        with self.assertRaisesRegex(NotesError, 'EVIDENCE_CONTEXT_MISMATCH'):
+            NotesCollection(str(collection_path)).create(
+                photo_root=str(photo_root), display_name='Synthetic',
+                identity=identity, binding_evidence=wrong_bundle,
+                history_scope_evidence=wrong_bundle)
+
+        self.assertFalse(collection_path.exists())
+        self.assertFalse(photo_root.exists())
+
     def test_init_rejects_invalid_bundle_before_collection_or_photo_side_effects(self):
         collection_path = self.base / 'collection'
         photo_root = self.base / 'photos'

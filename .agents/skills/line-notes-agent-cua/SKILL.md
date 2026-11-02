@@ -49,7 +49,7 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
 ## 工作流程
 
-1. **找回前次任務。** 先查全部記事本帳本與 active-notes-task，再讀相符帳本的 `memory` 摘要。不能用缺少帳本、索引缺失或 active-task 不存在推論為空帳。新列表須有完整、無歧義的新列表證據才依序 `init` → `bind` → `scan start`；既有列表用 `bind` → `scan start`。`memory` 不含完整 attempt、staging 目的地或 completion manifest；交易細節以 `intent`／`verify` 結果及追加事件為準。新一批目的地以 `destination` 追加，保留舊完成路徑。
+1. **找回前次任務。** 先查全部記事本帳本與 active-notes-task，再讀相符帳本的 `memory` 摘要。不能用缺少帳本、索引缺失或 active-task 不存在推論為空帳。新列表須有完整、無歧義的新列表證據：固定同一組 identity 先執行 `list-key`，以該 key context 建立兩份 v2 evidence，再以相同 identity `init` 並讀回 key，確認後才 `bind` → `scan start`；既有列表用 `bind` → `scan start`。`memory` 不含完整 attempt、staging 目的地或 completion manifest；交易細節以 `intent`／`verify` 結果及追加事件為準。新一批目的地以 `destination` 追加，保留舊完成路徑。
 2. **判定入口。** 在有效前景交接內用當次 AX／畫面確認目標是記事本列表，不是相簿、聊天、貼文檢視器或出處不明頁面。需要返回時只使用當次可靠控制項或已證實且符合角色／焦點的快捷鍵；不得猜 Escape、Command-W 或關閉。入口未確認前不捲動、不盤點、不下載。
 3. **完整盤點。** 依 [GUI 導覽與盤點](references/gui-inventory.md) 從頂端到底端，以有序重疊避免漏篇；逐篇核對媒體縮圖、更多指示、viewer 與來源順序。只有頂底、重疊、篇數與逐篇媒體覆蓋已成立，才可產生合格下載排程。純文字貼文記 `NO_MEDIA`，不得當成下載完成。
 4. **一次一項下載。** 依 [下載與 notes CLI](references/download-and-ledger.md) 在 intent 前確認資格、來源及記事本控制；為每次 attempt 保存並讀回 intent、新空白暫存目錄及禁止重送紀錄，讀回後在輸入前再次定位同一列表／貼文／媒體／viewer／控制。**每個 attempt 的下載控制呼叫與 chooser 最終確認各最多一次**，兩者分開保存真實工具回傳；若 UI 顯示 Save All，須先證明它是本記事本自己的控制，不得沿用相簿入口。chooser 須可歸屬同一 attempt、精確讀回完整暫存路徑後才確認一次。
@@ -88,7 +88,7 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 ## 參考文件
 
 - [GUI 導覽與盤點](references/gui-inventory.md)：入口、三層身分、縮圖／更多／viewer 交叉、來源／範圍、popup、時鐘、座標映射、控制與輸入觀察規則。
-- [下載與 notes CLI](references/download-and-ledger.md)：目前子命令、v2 證據封裝、intent 前後核對、下載／chooser 各最多一次、outcome／reconcile 分流、更正與命名恢復。
+- [下載與 notes CLI](references/download-and-ledger.md)：目前子命令與參數、`list-key` 建帳前 bootstrap、絕對證據路徑、`lists`→`summary` 查詢、capture、intent 前後核對、下載／chooser 各最多一次、outcome／reconcile 分流、更正與命名恢復。
 - [驗證與恢復](references/verification-and-recovery.md)：證據稽核／更正、完成／停止證據組合、類型更正、來源到期、照片／影片解碼、六類狀態與本機可用性。
 - [證據範本](references/evidence-template.md)：供 `evidence-pack` statement 使用的私有紀錄欄位與唯一檔名規則；不是可直接傳給 `--evidence` 的自由文字 schema。
 - [證據判定案例](references/evidence-decision-cases.md)：控制隱藏、API error、chooser 延遲、晚到結果、播放結束、crash window 與充分／不足證據的假設案例。
