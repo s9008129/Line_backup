@@ -14,7 +14,7 @@
 
 | 案例 | 演練判定 | 關鍵結果 |
 |---|---|---|
-| C1 | `READY_FOR_FINISH_PRECONDITION` | 完整卡片雙向對應，頂底與 overlap 成立 |
+| C1 | `READY_FOR_FINISH_PRECONDITION` | 提交前雙向對帳成立後才呼叫 page；每頁成功後讀回相符才前進，讀回不符即停 |
 | C2 | `STOP` | 同時刻的附件卡片仍被辨識為缺 row，不因資格或時間合併 |
 | C3-A | `READY_FOR_PAGE_PRECONDITION` | 高卡片片段已唯一連接，下一卡也完整辨識，只計一張 |
 | C3-B | `STOP` | 下一卡邊界未解，保留待解，不提交 page／finish |
@@ -32,11 +32,14 @@
 
 **實際對帳。**
 
-- 來源→rows：`A → page 0/A`、`B → page 0/B + page 1/B(overlap)`、`C → page 1/C`；無待解卡片。
-- rows→來源：三個 row 都回到 `S1/O1` 或 `S1/O2` 的可區分區域；`B` 是同一張卡片的跨頁重疊，沒有算成新篇。
+- 提交前 page 0：來源→rows 為 `A → page 0/A`、`B → page 0/B`；rows→來源的兩個 row 都回到 `S1/O1` 的可區分區域，待解為零。因此只依雙向對帳把 page 0 的 `page_gate` 記為可提交，此時尚無 page 回傳 key／事件讀回，不把它們列為前置。
+- page 0 成功後：才取得回傳的實際 key 與事件讀回；讀回成員、順序及來源對應與 `A, B` 相符，才可處理 page 1。
+- 提交前 page 1：來源→rows 為 `B → page 1/B(overlap)`、`C → page 1/C`；rows→來源的兩個 row 都回到 `S1/O2` 的可區分區域，待解為零。以 `B` 作既有相鄰 overlap，page 1 的 `page_gate` 才記為可提交。
+- page 1 成功後：才取得該頁回傳 key 與事件讀回；讀回成員、順序及來源對應與 `B, C` 相符，才可前進 finish 前置。
 - 頁內順序為 `A, B, C`；跨頁尾 `B` 與下一頁頭 `B` 相同；頂底皆成立。
+- 反例：若 page 0 或 page 1 成功後的讀回出現缺成員、額外成員、順序或來源對應不符，立即 `STOP`；不提交後續 page、不呼叫 finish、不建立 intent、不下載，也不改寫該 page 成員。
 
-**判定。** `READY_FOR_FINISH_PRECONDITION`。這只表示 finish 前覆蓋條件成立，不是已呼叫 `finish`、已下載或已驗證檔案。
+**判定。** `READY_FOR_FINISH_PRECONDITION`。這只表示提交前雙向對帳與 page 成功後讀回均成立，finish 前覆蓋條件可繼續核對；不是已呼叫 `finish`、已下載或已驗證檔案。
 
 ## C2：同時刻相鄰卡片與非下載附件
 

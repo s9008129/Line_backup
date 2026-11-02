@@ -184,7 +184,7 @@ finish_coverage:
   finish_gate: UNKNOWN
 ```
 
-`source_to_rows`／`rows_to_source` 都成立、待解為零且 page 讀回一致時，才可在私有紀錄把 `page_gate` 記為可提交；finish 另須以原件重核全部 page、頂底、有序聯集與來源變動，任一缺口都保持停止。這裡的 gate 是 Agent 的人工判斷欄位，不是 CLI 狀態、GUI 授權或獨立驗收。完成 statement 應引用這份逐頁紀錄與原件，而不是只寫「頂底成立，共 N 篇」。
+`page_gate` 是提交前判斷：只有 `source_to_rows` 與 `rows_to_source` 都成立且待解為零時，才可在私有紀錄記為可提交；此時 `readback_ref` 仍為 `UNKNOWN`，不得把尚未發生的 page 讀回列為前置條件。`page` 成功後，才把回傳的實際 key 與事件讀回補到同一份紀錄；讀回若與提交成員或來源對應有差異，立即停止後續 page、finish、新 intent 與下載，且不得以 `evidence-correct` 改寫 page 成員。finish 另須逐頁核對已取得的 page 讀回、以原件重核全部 page、頂底、有序聯集與來源變動，任一缺口都保持停止。這裡的 gate 是 Agent 的人工判斷欄位，不是 CLI 狀態、GUI 授權或獨立驗收。完成 statement 應引用這份逐頁紀錄與原件，而不是只寫「頂底成立，共 N 篇」。
 
 ## 引用檔名與 hash
 

@@ -70,3 +70,51 @@ TASK_CLOSURE_STATUS: PENDING_HUMAN_HANDOFF
 ```
 
 以上為本角色交付狀態；`NOT_RUN` 不是 PASS，Git commit／push 也不改產品接受狀態。
+
+## SIM-F01-01 修訂交付
+
+本節是同一 F01-S1 文件切片的審查後修訂記錄；上方初版交付事實保留，不覆寫原檢查。Owner 以 [implementation Simplicity Review](simplicity-implementation-review.md) 的 `REVISION_REQUIRED` 交回唯一阻塞 finding `SIM-F01-01`，本輪只修正「提交前來源對帳」與「提交後讀回檢查」的先後語意，不擴功能、不改公共介面、不操作真實資料。
+
+- 修訂起始版本：`ef9d2cfe07cbd932f3753f400022ad1fecd4e99c`（review report commit）；parent candidate 為 `32bc96211d4a4f7d283034c4bf37839aba662248`，原始實作基線為 `d179a5761831f97d52dd316316e8352001caae2c`。Branch 為 `feature/line-notes-media`；起始本機／遠端 HEAD 相同，tracked、index 與非忽略 untracked 均乾淨，其他 worktree／ignored 真實資料保留。
+- 核准 `plan.md` SHA-256 仍為 `58e38a4755717fc3c6ac39b82c49fd3c2c65c45e8bc662e05b0158e6f3620dfc`；`handoff.md` 仍為 `6ab8d3bb102ecd7329c7da3b0997e72b21ba8d3ad79c7dc6ea92a8392eca07b8`，本輪未改兩者。
+- 本輪精確 track 變更為 `evidence-template.md`、`gui-inventory.md`、`behavior-cases.md`、`implementation.md`；未改 `SKILL.md`，因 finding 只涉及 evidence 條件的循環與 GUI／C1 的時序表達，原入口不需擴張。私有檢查與輸出在 `.local/line-backup/tasks/20261102-notes-f01-simplicity-revision/`，不進 Git。
+
+修訂後契約：
+
+1. 提交前 `page_gate` 只依 `source_to_rows`、`rows_to_source` 成立及待解為零判定；此時 `readback_ref` 為 `UNKNOWN`，不把尚未發生的讀回列為 page 前置。
+2. `page` 成功後才取得實際 key／事件讀回並填 `readback_ref`；讀回與提交成員或來源對應有差異時，立即停止後續 page、finish、新 intent 與下載，且不得改寫 page 成員。
+3. finish 仍須逐頁核對已取得的讀回、以原件重核、確認頂底、有序聯集及來源變動；任一缺口保持停止。
+4. C1 明列「提交前雙向對帳 → page 成功 → 讀回相符 → 下一頁」的順序，並以讀回不符的 STOP 分支防止把讀回誤作提交前條件。
+
+## SIM-F01-01 實際檢查與結果
+
+環境：macOS、zsh、`/usr/bin/python3` 3.9.6；所有命令 cwd 均為 repo 根目錄。此輪只做文件與 Git／範圍檢查，沒有把文件檢查升格為產品 PASS。
+
+| 檢查 | 實際命令／方法 | 結果 |
+|---|---|---|
+| V1 修訂後重跑 | `PYTHONPATH=src /usr/bin/python3 -B .local/line-backup/tasks/20261102-notes-f01-implementation/behavior_check.py` | exit 0：C1–C7 共 9 個案例分支仍成立、7 個負例仍阻止 page／finish；輸出存於本次私有任務區 |
+| V3 時序一致性 | `/usr/bin/python3 -B .local/line-backup/tasks/20261102-notes-f01-simplicity-revision/ordering_check.py` | exit 0：提交前 gate 不含讀回、page 成功後才填讀回、讀回差異停止後續工作、C1 時序及反例均在候選文件中 |
+| V4 文件／範圍 | `/usr/bin/python3 -B .local/line-backup/tasks/20261102-notes-f01-simplicity-revision/verify_revision.py` | exit 0：精確 changed set、plan／handoff bytes、受保護路徑、UTF-8／連結／空白與 `git diff --check` 均通過 |
+| 舊 V2 修訂後重跑 | 原 `20261102-notes-f01-implementation/verify_slice.py` | exit 1：該腳本以修訂前的 `d179…` 為基線，不包含後來加入的 `simplicity-implementation-review.md`，因此把審查報告判為超範圍；不重試，改由 `ef9d…` 基線的 V4 作本修訂的精確範圍檢查 |
+| 產品三項最小回歸、真實 notes GUI、LINE、下載、獨立 Acceptance、G-F01 | 依本切片不執行；沒有 `src/`、`tests/`、schema、事件或產品行為改動 | `NOT_RUN` |
+
+V1 重跑、V3／V4 與舊 V2 重跑失敗的原始 stdout、stderr、exit 保存於私有任務目錄；V4 另保存 document hashes。V1／V3／V4 只證明修訂後文字在既有合成案例、時序與精確範圍上通過，不證明 Agent 遵循率、CLI 拒絕、真實 GUI、完整歷史或零漏篇。舊 V2 的 exit 1 是基線不含 intervening review commit 的檢查版本問題，不是候選產品失敗，也不以成功結果冒充。
+
+**事實：**唯一 finding 的循環前置已從文件移除；提交後讀回與差異即停仍保留，finish 的原件重核保障未降低。
+
+**推論：**Agent 若照此文字操作，首頁可在來源對帳完成後合法呼叫，不必等待尚未存在的讀回；page 成功後仍會因讀回不符停止後續 chain。此為文字層推論，尚待 implementation Simplicity Review 與獨立 Acceptance／G-F01 驗證。
+
+**未知／限制：**模型遵循率、真實高卡片／同時刻畫面、CLI 對不完整 rows 的行為、來源變動判斷、既有帳本相容與恢復仍未被本輪證明；合成案例不是真實歷史。
+
+本輪不自行啟動 implementation Simplicity Review、Acceptance、G-F01 或其他正式角色。請 Owner 在另一個主 Session 以本次精確 commit、本報告、plan／handoff 與私有 V3／V4 證據啟動重審；通過後才安排獨立 Acceptance 與適用 G-F01。
+
+```text
+PRIMARY_OUTCOME_STATUS: F01_S1_IMPLEMENTATION_SIMPLICITY_REVISION_COMPLETE
+IMPLEMENTATION_STATUS: SIM_F01_01_REVISED_LOCAL_DOCUMENT_CHECKS_PASSED
+CORE_ACCEPTANCE_STATUS: NOT_RUN
+REQUIRED_VERIFICATION_STATUS: V1_RECHECK_V3_V4_PASS; LEGACY_V2_NOT_APPLICABLE; PRODUCT_REGRESSION_GUI_AND_E2E_NOT_RUN
+INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
+TASK_CLOSURE_STATUS: PENDING_HUMAN_REVIEW
+```
+
+上列為修訂後最新交付狀態；`NOT_RUN` 不是 PASS，Git commit／push 也不改產品接受狀態。
