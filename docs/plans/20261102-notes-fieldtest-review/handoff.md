@@ -1,3 +1,100 @@
+# 現行交接：Owner 已採納，直接執行 S3a
+
+## 給下一個 Implementer 的完整啟動 Prompt
+
+你是本任務的 **S3a Implementer**。Owner 已明示：「我授權採納新增 CLI 與有界 S3 範圍，再啟動 S3a」。請直接完成下列離線首切片，不再詢問已取得的實作許可。這不是 GUI、真實帳本或 S3b 授權。先完整讀 AGENTS.md、你的 `/Users/hsiaojohnny/.codex/prompts/v4.9.0/04_implement_prompt.md`、同版 workflow-routing／subagent-model-policy、本文件、[核定 plan.md](plan.md) 及 [計畫簡潔性審查](simplicity-plan-review.md)，再實作，不得只看摘要。repo 無 policies 時使用既有 `/Users/hsiaojohnny/.codex/policies/v4.9.0/`，不建立 controller。
+
+### 精確版本、第一個動作與必讀脈絡
+
+- Repo `/Users/hsiaojohnny/dev/Line_backup`；唯一開發分支 `feature/line-notes-media`。本次交接起始 HEAD `4bd709231cc240ca2de882e100081ad56fe8ddae`，工作樹乾淨。
+- Owner 採納的是規劃提交 `75d4053332aa518a3e91e67b03dbd611e5efaf72` 的 plan（SHA-256 `d13b492c0dbd98bbad7522ab5a475692067571e507d1b5d9de10da6c0614c899`）。審查報告提交為上述 4bd7092，PASS 只限計畫簡潔性。
+- 接手使用**包含本更新的 handoff 提交**；以 `git log -1 --format=%H -- docs/plans/20261102-notes-fieldtest-review/handoff.md` 取得並與 Owner 攜帶的精確提交核對。文件不預填自己的未來 SHA。核對 repo／branch／HEAD／worktree／Git status、plan hash 及審查版本，保留無關 dirty/untracked，不 reset/clean；版本衝突停止相依工作。
+- 必讀 [原 replan](../20261101-notes-all-issues-replan/replan.md)、其現行 handoff、[S2 報告](../20261101-notes-all-issues-replan/implementation-s2.md)、[十項診斷](issue-analysis.md)、記事本 Skill 與五份 references。受測產品 `8814d6db0e0a7f368fa5b241fc5ab0010540ea63` 至本交接起始 HEAD 的 src/tests/Skill/AGENTS 無變更；開始前自行核對，不把報告提交當新產品。
+- Planner 私有來源／補充：`.local/line-backup/tasks/20261102-notes-fieldtest-s3-plan/`；審查證據：`.local/line-backup/tasks/20261102-notes-fieldtest-simplicity-plan/`。僅按指定文件讀取，不廣搜私人資料。原始 GUI envelope、clock source、幾何與焦點仍未知；整理 JSON 不是真實工具 receipt。兩張照片的完成按歷史來源保留，不重下、不以成功解鎖別列表。
+
+### 本次只完成 S3a
+
+交付 plan §4 的 CLI/help、bootstrap、路徑與查詢文件，及 §7 C1–C4。S3b 的七項 GUI/B1 文件擴充與最終 C5/R1–R10 整合留待 Owner 後續交接；本輪報告須明列未完成項，不能稱整體修好。G0 欠件不阻擋獨立的 S3a 合成工作。
+
+### 4.1 建帳前 key 的明確入口
+
+建議新增的介面如下，**目前尚不存在，不可當成已可執行命令**：
+
+```text
+notes list-key --visual-key TEXT [--context-id TEXT] [--signals JSON_OR_@FILE]
+成功 JSON：identity、list_key、dispatch_authorized=false；exit 0
+```
+
+實作直接共用 `init` 的 `_json_cli_argument()` → `list_identity()` → `list_key()`（現行 `notes.py:120–154,4141–4152,4400–4404`），結果走既有 `_print_cli_result()`。可在同檔做相稱的小型共用解析，不新增模組／schema／cache。不得複製 hash 或新增正規化。
+
+必要語意：visual key／context 的 strip 只用於非空檢查，實值前後空白與 Unicode 原樣保留，不做 NFC、大小寫或顯示目錄正規化。context 未提供為省略；空字串／全空白拒絕。signals 未提供與 JSON null 均省略；`{}` 是實際值，不能以真值判斷丟掉。JSON object 排序沿用 `encoded()`；不同 key 順序／排版不改 key，字串內容與陣列次序不能擅自等同。沿用 4096 字串與 256 KiB identity 限制、strict JSON 的 duplicate-key／非有限常數拒絕。
+
+無 `--collection`、`--records-root`、photo destination 或 evidence 參數；不建構 `NotesCollection`／`NotesRecords`，不讀寫 index／active／lock／events／照片，不啟動子程序或 GUI。唯有明示 `@FILE` 按現有 signals 契約讀該指定輸入；不新增任意檔案政策。缺參數／JSON 語法錯 exit 2、identity 業務拒絕 exit 4、非預期例外 exit 70，沿用原 JSON／stderr 契約。沒有 flock，不加入 `READ_ONLY_COMMANDS` 的 busy/retry 分支。key 只證明輸入計算結果，不證明列表身分或可下載。
+
+日常文件須給一個由 Agent 執行的完整鏈：先 lists／原記憶與當次列表核對 → 確認新列表且無歷史歧義 → 固定同一組 identity 輸入 → list-key → 兩份相同 list context 的 binding／history bundle → init 帶相同 identity → 讀回 key。Owner 不提供內部 key／JSON；不得為取得 key 先 init 空帳，或讓 context 適用 ID 留 UNKNOWN。若輸入或指定 signals 檔變動，舊 bundle 不可沿用；失敗先查副作用，不用重建帳本解鎖。合成整合能比對兩者 key，但不宣稱真實初始化具跨程序原子性。
+
+### 4.2 證據路徑與帳本查詢
+
+範本以確認 repo 根目錄後取得的實體絕對路徑作基底（例如 Agent 的 `TASK_PROJECT_ROOT`），使用正確 shell quoting／argv，所有 statement、asset、匯入 bundle、output 例子皆為絕對路徑。不可插入真實私人名稱或要求 Owner 手填 UUID。輸入為專案內 canonical regular file，無 symlink，讀取沿用單一 hard link 限制；輸出為私有 tasks 下尚不存在的子目錄，其 canonical 父目錄要先存在。Agent 只準備父目錄，不預建輸出子目錄，不自動 resolve 穿過 symlink、不覆寫。明列輸入相對路徑 `PROJECT_LOCAL_EVIDENCE_REQUIRED`、輸出相對路徑 `NEW_EVIDENCE_DIRECTORY_REQUIRED`、父目錄缺席 `EVIDENCE_OUTPUT_PARENT_REQUIRED` 的差別，不能把第一筆未知 argv 的歷史失敗硬歸因到 output。
+
+用既有 `notes_capture --output-root ABS_PRIVATE_TASK_DIR -- <notes argv>` 保存一次 child 的 request、stdout／stderr、exit／signal 及程式身分；不新增 wrapper。capture receipt 與 CUA 原始回傳分開，前者不證明 GUI 輸入。拒絕和成功各保留新 receipt；wrapper 保存失敗即停止，不為補輸出重跑 child。
+
+提供 `lists --collection ABS_COLLECTION` → 從其結果取得唯一相符 `records_root` → `summary --records-root ABS_LEDGER` 的完整例子。無相符帳本／多候選／壞歷史就停止，不靠名字猜路徑；不得把 collection 傳給 summary 或增加 `--local-list-id`。文件須修正「除 lists/init 外全部需 records-root」這類已不適用 evidence-pack／list-key 的概括，逐類說明即可，不改既有參數名。
+
+
+### 本切片可寫範圍
+
+僅 `src/line_backup_batch/notes.py` 的上述 parser/dispatch/help；`tests/test_notes_records.py`、有實際缺口才改 `tests/test_notes_evidence.py`；記事本 Skill 入口摘要、`references/download-and-ledger.md`、`references/evidence-template.md`；手冊僅第5節必要 CLI/入口一致性；新增本目錄 `implementation-s3a.md`。不得因 plan 的完整白名單含 S3b 檔案就提前實作 S3b。
+
+禁止改 identity/hash/schema/events/retry allowlist、notes_evidence.py/notes_capture.py 行為、v1 fixture、verifier、daily、Swift/OCR、相簿、AGENTS、全域政策、既有計畫與審查。不得讀寫真實 backup/、任何永久帳本或 active task，不操作 LINE、不建立真實 intent。測試在專案私有新任務區，所有 collection/photo/active hint 明確隔離；capture child 亦不可落入真實預設。
+
+### 必做 C1–C4 與回歸
+
+- **C1 key 等價與邊界：**同一 identity 的 list-key／init 結果一致；signals JSON 排版／object key 次序、omitted/null/{}、context 缺省／空白、有效 Unicode／前後空白、陣列次序及既有長度限制按現行函式結果；合法與拒絕輸入都不得另做正規化。缺參數／壞 JSON、空白 identity、非預期例外分別驗 2／4／70，成功 0；JSON 的 dispatch 始終 false。
+- **C2 無資料副作用：**list-key 在無帳本時可算；以 mock 阻止 NotesCollection／NotesRecords 建構並核對隔離 collection／photo／active／lock／events 前後清單與 bytes。除指定 signals 輸入外無資料讀取；@FILE 與 init 同 strict JSON，碰到錯誤不自動補檔或重試。
+- **C3 bootstrap／path：**先 list-key→兩份 v2 evidence→init→讀回 key 的合成鏈，明確隔離所有資料。正確絕對路徑成功；相對輸入／輸出、缺父目錄、symlink、逸出、collision、錯 context 仍拒絕。沿用既有覆蓋，只補實際缺口；錯 context 的 init 不建立帳本／照片，證據 pack 拒絕不產生有效 business event。
+- **C4 query／文件一致：**合成 lists 回傳 records_root 供 summary 使用，未知 `--local-list-id` 仍 exit 2；對照 help、五份 reference、Skill／手冊及十 ID 矩陣。Owner 只需正式 Prompt，不填 key／JSON；完整範例無相對 evidence 路徑、舊座標、假原始 receipt 或未實作命令當成功。
+
+審查非阻塞建議：C2 用同檔獨立小型 class，避免既有 setUp 先建帳；C1 可用 subTest；C3 沿用現有 context/symlink/collision/preflight drift 案例，只補缺口。這些不是額外接受條件，不造新框架或字串快照測試。
+
+實作後必跑並保存 cwd、argv、版本、stdout/stderr、exit、hash：
+
+```sh
+PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p test_daily_records.py
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes --help
+PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p 'test_notes*.py'
+git diff --check
+```
+
+不預填測試數，不把舊 PASS 當本次結果；同版無變更/失效不重跑全套。需要 Swift SDK 時只選本程序相符既有版本，不改系統工具鏈。影片工具規範不變；本切片無真實媒體驗證。
+
+### 驗收證據、Git 交付與停止
+
+`implementation-s3a.md` 必含核定 plan/本handoff 精確版本、起始/候選身分與逐檔 diff、C1–C4→程式/案例/實際結果映射、資料隔離證據、相容與無副作用界線、源碼與輸出 hashes、六狀態、剩餘 S3b/A0/GUI 項及停止原因。合成 PASS 不等於 GUI/獨立 Acceptance；舊 S1 PASS 不涵蓋 S2/S3。
+
+沿用 Owner 同範圍 commit/push 授權，逐檔 stage，私有證據不入 Git。commit body 填意圖、做了什麼、下一步的建議、驗證與結果；`git show -s --format=%B` 讀回，普通 push 後核對遠端完整 HEAD。不得 merge master、force-push、關 Issue 或改外部審查歷史；失敗記 COMMIT_OR_PUSH_BLOCKED。
+
+首切片交付後停止，由 Owner 另啟 implementation Simplicity Review，即使首切片已是最終候選仍適用。不得自行啟動 S3b、Acceptance 或 G0/D1/D2/G1/G2。原 CRITICAL 相容/資料/實機 gate 保留；沒有新格式/資料授權。需超白名單、改公共既有參數/安全gate/資料語意、工具拒絕、來源漂移或寫入衝突時保存證據停止。同根因最多三次有證據嘗試，連續兩次無新資訊就停，不因換角色重置。缺原始 GUI 證據維持 UNKNOWN，不以右鍵/下載重現。
+
+## 本次交接整理結果
+
+本輪只依 Owner 決定更新 handoff，不實作。03_handoff_prompt 是人工交接檢查單，未據此派正式 handoff agent。下方舊 Planner 文稿原樣保留為歷史；其中「待採納／下一步計畫審查／僅兩文件可寫」及舊六狀態只描述當輪，現行入口以上文與本節為準。plan 原 bytes 與原審查不修改。
+
+```text
+PRIMARY_OUTCOME_STATUS: S3A_IMPLEMENTER_HANDOFF_READY
+IMPLEMENTATION_STATUS: NOT_RUN
+CORE_ACCEPTANCE_STATUS: BLOCKED
+REQUIRED_VERIFICATION_STATUS: HANDOFF_DOCUMENT_CHECKS_PASSED; PRODUCT_AND_GUI_TESTS_NOT_RUN
+INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
+TASK_CLOSURE_STATUS: BLOCKED_PENDING_S3A_AND_REMAINING_VERIFICATION
+```
+
+實際 Git/文件核對與交付 receipt 保存 `.local/line-backup/tasks/20261102-notes-s3a-handoff/`。本輪產品測試/CLI/help、GUI、真實資料及獨立驗收 NOT_RUN。Owner 已採納/授權 S3a 是事實；未來實作能否通過仍未知。本輪完成交接與 Git 交付即停止。
+
+---
+
+# 原 Planner 交接（75d4053 歷史）
+
 # S3 補充規劃交接與 Planner 報告
 
 ## 任務與精確版本
