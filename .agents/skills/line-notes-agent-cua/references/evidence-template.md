@@ -153,6 +153,39 @@ unknowns:
   - UNKNOWN: state what evidence is missing and why the next action is blocked
 ```
 
+## page／finish 覆蓋紀錄
+
+本節是 [GUI 導覽與盤點](gui-inventory.md) 所要求之來源卡片台帳的私有摘要，**不是新的 CLI schema**；`evidence-pack` 不解析這些欄位，也不能把填表當成視覺完整或 finish 通過。原件、每個 viewport 與事件讀回仍要保存；`UNKNOWN` 不得用預期、總數或 page 回傳 key 回填。page 成功後才把實際 key 與讀回引用附在同一份紀錄。
+
+```text
+page_coverage:
+  observation_ref: UNKNOWN
+  local_card_ref: UNKNOWN
+  card_region: UNKNOWN
+  part: COMPLETE or TOP or MIDDLE or BOTTOM
+  boundary_and_neighbors: UNKNOWN
+  resolution: UNKNOWN
+  page_index: UNKNOWN
+  page_row: UNKNOWN
+  readback_ref: UNKNOWN
+  unresolved: UNKNOWN
+  source_to_rows: UNKNOWN
+  rows_to_source: UNKNOWN
+  page_gate: UNKNOWN
+
+finish_coverage:
+  source_recheck_refs: UNKNOWN
+  page_readback_refs: UNKNOWN
+  top_bottom_refs: UNKNOWN
+  ordered_union: UNKNOWN
+  missing_or_duplicate: UNKNOWN
+  unresolved_source_cards: UNKNOWN
+  source_change: UNKNOWN
+  finish_gate: UNKNOWN
+```
+
+`source_to_rows`／`rows_to_source` 都成立、待解為零且 page 讀回一致時，才可在私有紀錄把 `page_gate` 記為可提交；finish 另須以原件重核全部 page、頂底、有序聯集與來源變動，任一缺口都保持停止。這裡的 gate 是 Agent 的人工判斷欄位，不是 CLI 狀態、GUI 授權或獨立驗收。完成 statement 應引用這份逐頁紀錄與原件，而不是只寫「頂底成立，共 N 篇」。
+
 ## 引用檔名與 hash
 
 - 使用可避免覆寫的唯一檔名，例如 `<attempt_id>__<phase>__<sequence>__<source_kind>.<ext>`；不得因同名而覆寫先前證據。`evidence-pack` 會自行計算並核對原件 hash；不要手填或改寫 bundle 內部 hash。
