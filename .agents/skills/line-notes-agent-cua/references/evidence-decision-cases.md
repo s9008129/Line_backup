@@ -82,3 +82,12 @@
 - **允許動作：** 充分、授權且帳本已持久化 `recovery_authorized=true` 時，保留原檔並依下載文件以 `intent --recovery-evidence` 建立另一個新空白恢復目錄；授權未持久化或證據不足時停止。不足時保留 `UNKNOWN`，不 verify、不建新 attempt、不重下、不派下一項。
 - **禁止推論：** 假設 receipt 已被本次工具取得；缺 marker 等於停止；新目錄／新 Session 可解鎖；可用相簿控制替代記事本流程。
 - **缺少證據：** 真實平台是否能提供足以排除副作用的停止證據仍 `UNKNOWN`；未提供能力不得由案例補齊。
+
+## C10 Go to Folder 預填值不是 panel 目的地
+
+- **前提：** `intent` 已保存並讀回，chooser 可唯一歸屬同一 viewer／attempt；本次目的地應是該 intent 建立的新空白目錄。
+- **觀察（假設）：** Go to Folder 的 PathTextField 留著上一次路徑，panel 的 where／current directory 尚未可靠讀回；目前資料夾與預填文字不同，intent staging 仍為空。
+- **可支持命題：** 只支持 PathTextField 顯示舊字串；不能證明 panel 已切到舊位置，也不能證明目前位置或 intent staging 正確。
+- **允許動作：** 分開記錄 PathTextField、where／current directory 與 intent staging；輸入或覆寫為本次精確新空白絕對路徑後讀回欄位與目前位置。三者一致且來源貼文／attempt 可歸屬時，才可確認一次；任一不符或 `UNKNOWN` 就停止。
+- **禁止推論：** PathTextField 預填值等於 panel current directory；舊路徑可當本次目的地；空 staging 等於 chooser 未顯示或尚未輸入；同名檔案可建立 attempt 歸屬。
+- **缺少證據：** panel current directory、where 值、PathTextField 真正讀回、intent staging 空白狀態、attempt／viewer 歸屬與確認原始回傳。
