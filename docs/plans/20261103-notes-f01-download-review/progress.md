@@ -29,3 +29,9 @@
 - GitHub 唯讀查詢本分支的 open／all PR 均為空；本輪依明示範圍交付分析提交與普通推送，不另建涵蓋整條 feature branch 的 PR。
 
 六狀態：分析完成；本角色不適用實作、產品未變；core／independent acceptance 與 task closure 維持 BLOCKED；本輪來源核對通過，新 GUI／下載／E2E 為 NOT_RUN。最終提交 SHA、遠端讀回與 helper 實際結果依交付證據及主 Session 回覆，不預填成功。
+
+## 原始輸入補充後的診斷與交付
+
+Owner 交回私有 `20261103-notes-f01-input-evidence` 證據包後，本主 Session 接續原角色核對 86 個 hash references 全部相符，並實讀 32 次呼叫索引、關鍵原始呼叫／輸出及當時文件。細節見 [補充診斷](issue-analysis-addendum.md)。已確認部分操作沿用舊索引；後續正確索引仍能來回移動，因此不能將整體阻塞歸因為工具全面失效。唯一建議更新為 `PLANNER_REPLAN`，由 Owner 啟動 Planner 制定有界實機驗證方案；不需另開同角色重複診斷。
+
+Owner 隨後明示 add／commit／push。本次只發布本目錄新增補充報告及本進度追加；原報告、產品與私有證據保留。提交訊息另依既有要求由 GPT-6 luna helper 梳理後提供，實際交付及模型請求證據留私有任務區。沒有新 GUI／下載／E2E；驗收與結案仍 BLOCKED。
