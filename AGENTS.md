@@ -2,15 +2,24 @@
 
 ## 目前產品與入口
 
-日常產品是 AI Agent＋本專案 Skill＋原生 Computer Use。Owner 人工開啟指定相簿列表、首次指定目的地並交接前景；Agent 自動查前次紀錄、完整盤點、逐本下載及驗證，直到指定列表的合格項完成。先讀 `.agents/skills/line-album-agent-cua/SKILL.md`，相關實機操作讀 `references/verified-experience.md`，並依當次畫面調整，不重用舊座標。
+本專案以可重複使用的 Skill 與固定啟動 Prompt 驅動 AI Agent 完成 LINE 備份；相關程式是記錄、去重與驗證的輔助工具。日常產品是 AI Agent＋本專案 Skill＋原生 Computer Use。Owner 人工開啟指定相簿列表、首次指定目的地並交接前景；Agent 自動查前次紀錄、完整盤點、逐本下載及驗證，直到指定列表的合格項完成。先讀 `.agents/skills/line-album-agent-cua/SKILL.md`，相關實機操作讀 `references/verified-experience.md`，並依當次畫面調整，不重用舊座標。
 
 記事本照片／影片備份是另一條獨立流程。Owner 人工開啟單一記事本列表、指定目的地（未指定時用 `backup/記事本/`）並在正式 Prompt 中交接前景；Agent 使用 `.agents/skills/line-notes-agent-cua/SKILL.md` 與 `PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes` 自動查永久記憶、初始化或綁定列表、完整盤點貼文與媒體，逐項下載、驗證及恢復。只備份貼文內照片與影片；留言、貼圖及連結不納入。notes CLI 退出碼固定區分：0 成功、2 argparse／必填參數錯誤、4 已列業務拒絕、70 未預期內部錯誤；70 會輸出 `status=INTERNAL_ERROR`、`reason=UNEXPECTED_EXCEPTION`、`dispatch_authorized=false`，不是可重試業務拒絕，不得據此重送、改寫 ledger、建立新 attempt、換目的地或換入口繞過，應停止並保留證據回報。相簿與記事本的 Skill、工具、狀態及帳本不得互換，記事本也不得把相簿的 `⋯ → 儲存全部`、選單、按鈕、chooser 或座標當成 fallback。
 
 不以群組中文名稱或中文 OCR 識別列表。不要求 Owner 選盤點／接續模式、逐本重新下令，或手填內部 JSON。盤點是備份必要階段；缺頁先小步補接，有具體且無法自行解決的歧義才問。
 
-提示詞見 `docs/LINE相簿備份_使用手冊.md`；相簿與記事本各自使用對應的正式 Prompt。Owner 親自確認成果屬日常備份；正式 Harness 角色驗收僅在另行明示交辦時適用，不是日常下載前置條件。討論提示詞、審查 Skill、整理檔案或交出前景本身，不是下載授權。GUI 輸入只在真實任務授權及有效前景交接內執行；前景中斷就停止輸入。正常可逆導覽不逐點請示。主要入口為 Owner 先開好指定相簿或記事本列表，再提交該流程的正式 Prompt；該訊息可同時提供任務授權與當次前景交接，不另等第二則開始指令，但仍須核對真實畫面與列表身分。
+提示詞見 `docs/LINE相簿備份_使用手冊.md`；相簿與記事本各自使用對應的正式 Prompt。Owner 親自確認成果及修正後試用均沿用該日常入口，不使用 Harness Acceptance／E2E 角色 Prompt 取代。討論提示詞、審查 Skill、整理檔案或交出前景本身，不是下載授權。GUI 輸入只在真實任務授權及有效前景交接內執行；前景中斷就停止輸入。正常可逆導覽不逐點請示。主要入口為 Owner 先開好指定相簿或記事本列表，再提交該流程的正式 Prompt；該訊息可同時提供任務授權與當次前景交接，不另等第二則開始指令，但仍須核對真實畫面與列表身分。
 
 專案常駐指令只維護邊界與資料保護；Skill／references 維護操作決策，使用手冊維護唯一 Owner 啟動範本。這是專案指引，不是平台 system prompt。日常備份不得為了繼續執行而修改產品程式、紀錄規則或啟動 Git／CI 工作；開發授權須另有交辦。
+
+## 可重複使用與角色辨識
+
+- 核心目標是讓具備本專案所需工具與權限的不同模型、Agent 及 Session，都能使用相同的對應正式 Prompt，讀取同一份 Skill 後自主完成指定列表的備份。相簿與記事本仍各用自己的 Skill／Prompt，不混成同一下載流程；記事本只下載照片與影片，不下載 PDF、Word、網頁文件或其他附件。
+- 日常備份、Owner 試用及 Skill／相關工具修正後的實際可用性確認，都使用上述固定入口。不得因這是「測試」「驗收」或換了 Session，就自動改用 Acceptance Test／Harness Acceptance／E2E Prompt，或要求 Owner 額外交接開發計畫、選擇角色、逐項下令。歷史查詢、身分核對、完整盤點、檔案驗證與恢復仍由 Skill 引導 Agent 執行；只有具體且無法自行消除的歧義才問 Owner。
+- Owner 若以 Acceptance／E2E 角色 Prompt 要求確認 Skill 能否完成備份，Agent **必須先主動提醒**：「本專案使用日常正式備份 Prompt 確認 Skill 的實際能力；Acceptance／E2E 角色 Prompt 會引入不同的角色限制，請使用手冊中對應的正式 Prompt。」同時指出對應入口，不默默套用角色流程。提醒不等於新的任務授權或前景交接；不得忽略 Owner 當次明示的唯讀、不修復或不下載限制，也不得自行改成下載任務。
+- 調查失敗時，先區分 Skill／Prompt 指示缺口、工具缺陷、Agent 未遵循既有指示，以及來源／歷史／環境阻塞。只有具體證據支持現有入口無法可靠重複使用，才提出必要的最小修改；「未證實程式缺陷」不能推成「Skill 沒問題」，也不為滿足角色順序製造空實作或反覆重規劃。這不授權日常備份途中修改產品或資料。
+- 必要操作知識應維護在 Skill／references，固定啟動範本維護在手冊；若成功依賴 Agent 另讀某份開發計畫或臨時補充指令，須明列尚未整合的缺口。是否可重複使用，依相同入口的實際執行證據判斷；單批成功、簿記 PASS、離線測試或審查報告不能證明所有模型每次都能完成，未測範圍仍標 `NOT_RUN`。
+- 相關工具確需修改時，仍保留相稱的程式回歸、資料安全與必要獨立審查；這些不能替代以正式日常 Prompt 完成備份的結果，也不能增加新的日常啟動步驟。永久記憶、禁止重送、前景交接與原有停止條件不因角色調整而放寬。
 
 ## 歷史與資料保護
 
