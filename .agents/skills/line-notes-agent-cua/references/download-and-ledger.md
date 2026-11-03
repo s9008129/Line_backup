@@ -173,7 +173,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 
 ## 掃描覆蓋與綁定 gate
 
-`summary` 的 `scan_coverage`、`dispatch_blockers`、`unresolved_attempts` 與 `scan_binding_match` 是唯讀事實投影，不是下載許可。新 Session 先以 `summary` 找舊 attempt：無 outcome／`UNKNOWN` 先 `reconcile`，`DOWNLOAD_FINISHED` 先 `verify`，pending naming 先 `resume`；在這些狀態未處理前不得開始新 scan。
+`summary` 的 `scan_coverage`、`dispatch_blockers`、`unresolved_attempts` 與 `scan_binding_match` 是唯讀事實投影，不是下載許可。新 Session 先以 `summary` 找舊 attempt，核對當次入口／前景並成功 `bind` 後，才使用要求 Session 的交易命令；不能因為尚無綁定就沿用舊 Session ID。`has_outcome=false` 時依原 attempt 的真實證據先用 `outcome` 保存第一筆結果，證據不足可記 `UNKNOWN`，不得先 `reconcile`；已有 `outcome=UNKNOWN` 才以新證據 `reconcile`；`DOWNLOAD_FINISHED` 先 `verify`，pending naming 先 `resume`。無新證據就保留原狀，不補造結果或重送；在這些狀態未處理前不得開始新 scan。`bind` 若因未完成 scan、身分或證據等條件拒絕，停止並保留原狀，不重建空帳或以新 scan 掩蓋。
 
 `scan start` 會拒絕待命名交易、尚有未解 attempt，或上一個 scan 的貼文／媒體 coverage 不完整。已完成項與正面 `STOPPED`／`NOT_SENT` 不會被重下；後者仍需原恢復授權與充分證據才可另建 attempt。`summary` 與 `intent` 共用細盤 coverage gate：頂底／重疊、所有現存貼文 detail、media 數量與本 scan inventory 必須一致；純文字貼文以 `NO_MEDIA` 表示，不可當成缺少媒體。
 
@@ -209,7 +209,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
      --records-root "$ABS_LEDGER"
    ```
 
-   `SIGNALS_INPUT` 是明示的 strict JSON 文字或 `@` 加指定 JSON 檔的絕對路徑；未使用 signals 時連同整個 flag 省略。先核對兩份 bundle 的 context 都等於 list-key 結果，再執行 `init`；若 identity 輸入或明示 signals 檔在期間改變，舊 bundle 不可沿用。`init` 後只使用其回傳的 `records_root` 讀回 key，不一致或有未預期副作用就停止；不得先建空帳取得 key、手填 key／JSON，或讓適用 ID 留 `UNKNOWN`。讀回成功後才依序 **`bind` → `scan start`**，並先處理任何 `unresolved_attempts`。既有列表從 `lists`／`memory` 取得帳本後先處理舊 attempt，再執行 **`bind` → `scan start`**；不因新 Session、照片 root 改變或使用者重交前景而重新初始化。
+   `SIGNALS_INPUT` 是明示的 strict JSON 文字或 `@` 加指定 JSON 檔的絕對路徑；未使用 signals 時連同整個 flag 省略。當次任務已授權確認停止後的恢復時，在真正新建帳本的 `init` 命令加上 `--recovery-authorized`，並從回傳／摘要讀回 `recovery_authorized=true`；未獲授權不得加此 flag。既有帳本不重新 init，也不手改 false 的授權值。先核對兩份 bundle 的 context 都等於 list-key 結果，再執行 `init`；若 identity 輸入或明示 signals 檔在期間改變，舊 bundle 不可沿用。`init` 後只使用其回傳的 `records_root` 讀回 key，不一致或有未預期副作用就停止；不得先建空帳取得 key、手填 key／JSON，或讓適用 ID 留 `UNKNOWN`。新列表讀回成功、或既有列表從 `lists`／`memory` 找到相符帳本後，先核對當次入口與有效前景，再依序 **`bind` → 處理舊 attempt／命名交易 → `scan start`**；沒有未決項才直接進新 scan。每一命令仍須滿足自己的 scan binding／資料完整性 gate，不能因已 bind 就視為舊 attempt 已獲重送或恢復許可。不因新 Session、照片 root 改變或使用者重交前景而重新初始化。
 4. `scan start` → `page`… → `scan finish` → `post`／`media` 保存本輪完整盤點。`scan finish` 前必須已看到頂端、底端與有序重疊；`post`／`media` 需要最新完成的 scan。新 Session 必須重新看頂底與重疊，不沿用上一個 Session 的畫面 cursor。純文字貼文由 `post` 記 `NO_MEDIA`，不建立媒體下載項。
 5. 重新更換照片 root 時用 `destination` 追加綁定；舊 completion 路徑不改，UNKNOWN、活動下載、pending 命名或 `LOCAL_CHANGED` 不因換位置解鎖。
 
