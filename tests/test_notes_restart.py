@@ -13,6 +13,7 @@ import uuid
 import zlib
 
 from line_backup_batch import media_verify, notes, notes_evidence
+from line_backup_batch.daily import digest, encoded
 from line_backup_batch.media_verify import MediaVerificationError
 from line_backup_batch.notes import (
     LOCAL_VERIFIED,
@@ -220,6 +221,20 @@ class NotesRestartTests(unittest.TestCase):
         return {path.name: path.read_bytes()
                 for path in (records.records / 'events').iterdir()}
 
+    def read_events(self, records):
+        return [json.loads(path.read_text(encoding='utf-8'))
+                for path in sorted((records.records / 'events').iterdir())]
+
+    def rewrite_events(self, records, events):
+        previous = None
+        for index, event in enumerate(events, 1):
+            event['sequence'] = index
+            event['previous_sha256'] = previous
+            raw = encoded(event)
+            notes._atomic_replace_json(
+                records.records / 'events' / ('%08d.json' % index), event)
+            previous = digest(raw)
+
     def one_media_restart_context(self, label, kind=PHOTO, confirm=True):
         photo = notes.media_identity(
             kind=kind, visual_key=label + '-photo')
@@ -325,6 +340,23 @@ class NotesRestartTests(unittest.TestCase):
             event['data'].get('attempt_id') in (first['attempt_id'],
                                                 second['attempt_id'])
             for event in self.records.events))
+
+    def test_restart_replay_rejects_v3_prior_attempt_drift(self):
+        context = self.one_media_restart_context('restart-si-n01')
+        attempt = self.restart_download(
+            self.records, context['key'], 'new.png', png((41, 42, 43)),
+            context['preview']['restart_id'])
+        events = self.read_events(self.records)
+        intent = next(
+            event for event in events if event['kind'] == 'intent' and
+            event['data']['attempt_id'] == attempt['attempt_id'])
+        self.assertIsNotNone(intent['data']['prior_attempt'])
+        intent['data']['prior_attempt'] = None
+        self.rewrite_events(self.records, events)
+
+        with self.assertRaisesRegex(
+                NotesError, 'RESTART_PRIOR_ATTEMPT_CHANGED'):
+            self.reopen(self.records).summary()
 
     def test_interrupted_recovery_scan_and_new_session_are_bound_to_new_attempt(self):
         context = self.one_media_restart_context('restart-c06')

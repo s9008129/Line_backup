@@ -1912,36 +1912,6 @@ class NotesRecords:
                 data['media_key']]
                 if attempts['order'][other] < attempts['order'][attempt_id]]
             if data['schema'] == 'line-notes-intent/v3':
-                confirmation = [
-                    candidate for candidate in self.events
-                    if candidate['kind'] == 'restart-confirm' and
-                    candidate['data']['restart_id'] == data['restart_id'] and
-                    candidate['sequence'] < event['sequence']]
-                need(len(confirmation) == 1,
-                     'RESTART_INTENT_WITHOUT_CONFIRMATION')
-                confirmation = confirmation[0]
-                confirmation_data = confirmation['data']
-                need(data['confirmation_ref'] == _event_ref(confirmation) and
-                     data['generation'] == confirmation_data['generation'],
-                     'RESTART_CONFIRMATION_CHANGED')
-                scope_rows = [
-                    (post, row)
-                    for post in confirmation_data['scope']['posts']
-                    for row in post['media']
-                    if row['media_key'] == data['media_key']]
-                need(len(scope_rows) == 1 and
-                     scope_rows[0][0]['post_key'] == data['post_key'] and
-                     scope_rows[0][1]['identity'] == data['identity'],
-                     'RESTART_INTENT_OUTSIDE_SCOPE')
-                latest_prior = (
-                    max(earlier, key=lambda item: attempts['order'][item])
-                    if earlier else None)
-                expected_prior = (
-                    _event_ref(self._event_by_sequence(
-                        attempts['order'][latest_prior]))
-                    if latest_prior is not None else None)
-                need(data['prior_attempt'] == expected_prior,
-                     'RESTART_PRIOR_ATTEMPT_CHANGED')
                 continue
             recovery_of = data['recovery_of']
             if recovery_of is None:
@@ -4645,7 +4615,7 @@ class NotesRecords:
         self.append('publish-progress', data)
         return self.events[-1]
 
-    def _target_names_for_directory(self, directory, transaction_id=None):
+    def _target_names_for_directory(self, directory):
         names = set()
         directory_string = str(directory)
         for event in self.events:
@@ -4692,8 +4662,7 @@ class NotesRecords:
              not target_directory.is_symlink() and
              target_directory == target_directory.resolve(strict=True),
              'POST_DIRECTORY_CHANGED')
-        expected_names = self._target_names_for_directory(
-            target_directory, plan['transaction_id'])
+        expected_names = self._target_names_for_directory(target_directory)
         actual_names = {path.name for path in target_directory.iterdir()}
         need(actual_names <= expected_names,
              'POST_DIRECTORY_UNEXPECTED_CONTENT')
@@ -4955,25 +4924,9 @@ class NotesRecords:
              'RESTART_VERSION_DIRECTORY_CHANGED')
         return version_directory
 
-    def _restart_target_names_for_directory(self, directory):
-        names = set()
-        directory_string = str(directory)
-        for event in self.events:
-            kind, data = event['kind'], event['data']
-            if kind == 'completion' and data['destination'] == directory_string:
-                names.add(data['target_file']['name'])
-            elif kind == 'publish-plan' and data['target_directory'] == directory_string:
-                names.add(data['target_name'])
-            elif kind == 'restart-copy-plan' and data['target_directory'] == directory_string:
-                names.add(data['target_name'])
-            elif kind == 'restart-candidate' and str(
-                    Path(data['candidate']['path']).parent) == directory_string:
-                names.add(data['candidate']['name'])
-        return names
-
     def _next_restart_media_number(self, target_directory):
         maximum = 0
-        for name in self._restart_target_names_for_directory(target_directory):
+        for name in self._target_names_for_directory(target_directory):
             match = re.fullmatch(r'media_([0-9]+)(\.[^./]+)', name)
             need(match is not None, 'PUBLISHED_MEDIA_NAME_CHANGED')
             maximum = max(maximum, int(match.group(1)))
@@ -5004,7 +4957,7 @@ class NotesRecords:
                  not directory.is_symlink() and
                  directory == directory.resolve(strict=True),
                  'RESTART_VERSION_DIRECTORY_CHANGED')
-        expected = self._restart_target_names_for_directory(target_directory)
+        expected = self._target_names_for_directory(target_directory)
         actual = {path.name for path in target_directory.iterdir()}
         need(actual <= expected, 'RESTART_VERSION_DIRECTORY_UNEXPECTED_CONTENT')
         return target_directory
