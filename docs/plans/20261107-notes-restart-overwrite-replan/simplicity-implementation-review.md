@@ -111,3 +111,90 @@ PRIMARY 只代表本次 S1 最小性判定；IMPLEMENTATION 沿用精確候選�
 交回 Owner 決定是否另開 S2 Implementer。第一個具體步驟是攜本報告、`7f1d978b7ef5dade5e064d080e65d78f675a165e`、核定 plan／handoff 與 implementation.md，先釐清 SI-U01，再按既有計畫補完整矩陣及整合日常入口。這是建議，不是本 Session 啟動下一角色的授權。若需要改計畫、資料／安全邊界或接受標準，先由 Owner 決定適用重審。
 
 本角色完成報告與 Owner 已授權的 add／commit／push 即停止；不修產品、不自動交派 S2／Acceptance、不操作真實資料、不 merge master，也不將剩餘工作標成完成。
+
+---
+
+# 2026-11-08：SI-N01／SI-N02 整理後候選複查
+
+## 本次正式判定與版本
+
+**PASS（僅本次整理差異的簡潔性）。** 兩項非阻塞建議已透過局部刪重處理，未發現新增重大且可避免的複雜機制。必要的 confirmation／scope／prior replay 防護及兩條發布路徑的目錄防護仍有明確來源。本結論不是功能接受，也不解除 SI-U01 或整體 BLOCKED。
+
+本節是 Owner 本次以 `07_simplicity_review_prompt.md` 啟動的 Simplicity Reviewer 複查。上方首輪報告原文逐 bytes 保留；其 PASS 仍只綁定原候選，不自動延伸。本次僅審查指定的後續整理差異，沒有重做整個 S1 或開始 S2。
+
+| 項目 | 本次綁定 |
+|---|---|
+| Repo／worktree | `/Users/hsiaojohnny/dev/Line_backup` |
+| 分支 | `feature/line-notes-media` |
+| 受審候選／入口 HEAD | `275f15e74ac0a97dd1876922da7151b4236d6403` |
+| 差異基底／候選 parent | `4b2dc7ccf8589b8b928b96eb1c4061644c6d3c35` |
+| 初始狀態／遠端 | tracked、index、untracked 均空；兩次查詢遠端 HEAD 均等於受審候選 |
+| 核定設計來源 | `c3c8827cea817db633736d9f8303c43f454fa7cd` 的 [plan.md](plan.md)、[原 handoff](handoff.md) |
+| 採納／切片依據 | `9f9748cbbc00caa516d541e4c8a808a9e0cc8156` 的 [S1 handoff](../20261107-notes-restart-overwrite-s1-handoff/handoff.md)；實作者在 [implementation.md](implementation.md) 記錄的 Owner 採納授權。本次審查權限以本 Session 的 Owner 訊息為準 |
+| 歷史關卡 | `2292aec` 計畫簡潔性、`97a1cbc` Plan Review、`4b2dc7c` 首輪實作簡潔性；各自保持原版本及範圍 |
+| 實作交付 | [implementation-simplicity-followup.md](implementation-simplicity-followup.md) 與精確候選完整 diff |
+| 獨立性 | 本主 Session 未參與受審候選的設計或實作。本次產品唯讀，只追加本報告及私有檢查證據；不宣稱 OS 隔離 |
+
+使用者目標仍是同一日常記事本 Prompt 找回中斷進度；無法直接續作時，確認整批重下與新版本取代，並在再次中斷後找回。需求來源為 [Owner 意圖](../20261107-notes-interruption-replan/plan-review-owner-intent.md)。本輪差異為四檔、119 insertions／51 deletions，其中產品／測試兩檔、36 insertions／51 deletions；數量只用來識別範圍。
+
+## 機制、需求及保留防護
+
+下列行號綁定 `275f15e`，不是上方首輪候選的行號。
+
+| 變更 | 需求／成本與具體來源 | 本次判讀 |
+|---|---|---|
+| SI-N01：刪除一般 graph 中重複的 v3 關係檢查 | 原報告已指出兩處維護同一不變量且序號來源漂移。候選 `notes.py:1914` 只在共同 attempt 迴圈跳過 v3 專屬重複段落 | 共同媒體／目的地在 `:1901`、舊版 recovery guards 在 `:1916` 保留；未刪除整個 graph 層 |
+| v3 關係集中於原 replay | `notes.py:2865` 仍核對先前 confirmation、generation、未啟用、精確 ref、scope 的 media／post／identity／effective_kind，以及當筆 intent 之前 prefix 的最近 prior。confirmation 唯一性及 scan／scope 規則在 `:2818` | 成功 load 在 `:817` 進 graph，graph 在 `:2123` 進 restart projection；`continue` 不會跳過末尾 replay。保留單一權威關係計算，沒有新驗證框架 |
+| SI-N02：共用名稱集合 | 基底兩個 helper 對 completion、publish-plan、restart-copy-plan、restart-candidate 的條件及欄位相同；候選 `notes.py:4618` 保留這四類計算 | 原 `transaction_id` 參數未被函式本體使用；移除參數及呼叫實參不移除既有過濾。三處呼叫在 `:4665`、`:4929`、`:4960` |
+| 普通及 restart 各自的路徑保護 | 普通發布 `notes.py:4637` 保留列表範圍、canonical／symlink、內容與 inode 檢查；restart `:4916`、`:4936` 保留版本路徑與目錄檢查 | 共用的只有名稱蒐集；沒有通用發布器或放寬可接受路徑 |
+| prior drift 回歸測試 | `test_notes_restart.py:344` 先確認 prior 非空，再改為 null；`:228` 重算合成 chain，重開 summary 預期 `RESTART_PRIOR_ATTEMPT_CHANGED` | 針對刪重後關係守衛的可觀察結果，成本相稱。靜態核對案例意圖，不將前輪執行結果冒充本輪重跑 |
+
+`append()` 在 `notes.py:2126` 仍只先做單事件形狀驗證再追加，沒有每次 append 當場完整 graph replay；這是變更前後均存在的行為。本 PASS 僅確認成功載入／重放仍抵達關係守衛，不擴大為所有寫入路徑或並行安全的完整稽核。
+
+原獨立 inode、副本驗證與單筆 activation 均不在本次產品差異內。單筆事件仍只代表合作 CLI 下的投影提交點，不代表 GUI／檔案／帳本共同原子交易、exactly-once 或隔離任意外部 writer。
+
+## 阻塞、建議與未知
+
+**沒有本次簡潔性阻塞，也沒有新增非阻塞整理要求。** SI-N01／SI-N02 在本差異中已對應處理；不要求為風格、行數或未證實的效能成本再開實作。
+
+**SI-U01 保留未解。** 候選 `notes.py:3050` 仍有 `RESTART_MEDIA_ALREADY_ACTIVE`；此處未列入差異。同一媒體已啟用後再確認另一個 generation 的動態結果，本輪 **NOT_RUN**。新增 prior drift 案例沒有覆蓋此情境，也沒有覆蓋全部 confirmation／scope 漂移、v1／v2 相容性或所有寫入路徑。不把待查點寫成動態 FAIL，不以此改判簡潔性拒絕。
+
+C08 完整故障窗口、C10／C12 及其他未完成矩陣、S2 正式入口整合、真實 LINE／CUA／chooser、跨 Session 實機恢復、Owner 日常 Prompt 試用與最終獨立接受仍未由本輪證明。沒有 GUI `OBSERVED`，未操作真實帳本、媒體、index／active 檔或前景；沒有新下載或修復 attempt，歷史次數不重設。
+
+## 實際檢查及證據界線
+
+私有證據：`.local/line-backup/tasks/20261108-notes-restart-overwrite-s1-followup-review/`。`commands.json` 保存實際 argv、stdout、stderr、exit；`candidate.diff` 是完整差異；`sources-before.json` 保存 13 份 repo 來源與 5 份角色／政策／模板／HTML Skill 的大小及 SHA-256；`progress.md` 記本次目標、進度與待決事項。此區不提交公開 Git。
+
+本輪環境為 repo 根目錄、macOS 27.2 arm64、`/usr/bin/python3` 3.9.6、Node v24.22.1。沒有改系統工具鏈或執行 decoder。
+
+| 本輪實際執行 | 結果與限制 |
+|---|---|
+| Git root、branch、HEAD、status、worktree、ls-remote | PASS／exit 0；起始乾淨、版本相符，其他 worktree 保留。不排除查詢後其他 writer |
+| `git diff 4b2dc7c 275f15e`、`git show`、`sed`／`rg` 定位 | PASS／exit 0；核對完整差異及重點載入、重放、helper、測試來源；部分廣泛輸出曾截短，關鍵段另讀 |
+| 來源 snapshot Python heredoc | PASS／exit 0；13 份 repo 檔案與表列提交逐 bytes 相符，另保存 5 份外部規範 hashes |
+| `git diff --check 4b2dc7c 275f15e` | PASS／exit 0；僅空白檢查 |
+| 同角色原生 helper | 唯讀核對 load→graph→replay、四類名稱等價及新增測試限制；主 Session 另核對關鍵引用，正式判定由主 Session 作成 |
+| 實作者報告的 restart 18、notes 154、daily 73、help／py_compile | 來自候選提交中的實作報告及 Owner 交接，報告列 OK／exit 0。本輪未重新執行，也未以原始測試 logs 獨立驗證這些執行事實 |
+| `/usr/bin/python3 -B .local/line-backup/tasks/20261108-notes-restart-overwrite-s1-followup-review/check_review.py`、`git diff --check` | PASS／exit 0；舊報告完整前綴、其餘來源不變、唯一授權檔案、UTF-8／相對連結／六狀態／空白核對；見 `document-checks.json` |
+| 本輪產品回歸、SI-U01、C 項動態矩陣、實機與最終接受 | **NOT_RUN**；本次為產品唯讀簡潔性複查，沒有跨角色重測／接受 |
+
+事實：候選差異、來源身分及必要 replay／目錄守衛可核對，兩項重複已移除。推論：此局部整理降低不變量漂移與重複維護成本，沒有新增重大可避免機制。未知：未跑的功能矩陣、SI-U01 及日常實機能力。既有實作與歷史關卡成果保留，範圍不外推。
+
+模型證據分層：來源 helper dispatch 未提供 model／effort override，平台回覆 task name；這不足以證明 backend identity。依 Owner 指定，報告完成後另請求 `gpt-6-luna` helper 梳理本輪上下文並擬詳細提交訊息；它不提供正式接受。配置預設未用於模型推定；平台顯示及 provider usage 未提供的部分為 UNKNOWN，不宣稱用量、成本或節省。dispatch 若失敗，保存原始錯誤，不換入口繞過。
+
+## 六項狀態與人工交接
+
+```text
+PRIMARY_OUTCOME_STATUS: SIMPLICITY_FOLLOWUP_REVIEW_PASS
+IMPLEMENTATION_STATUS: S1_CANDIDATE_UPDATED
+CORE_ACCEPTANCE_STATUS: BLOCKED
+REQUIRED_VERIFICATION_STATUS: PARTIAL
+INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
+TASK_CLOSURE_STATUS: BLOCKED
+```
+
+PRIMARY 只代表本次精確差異的簡潔性結論；IMPLEMENTATION 描述實作者交付候選，不表示本輪改了產品。REQUIRED 保留已報告的離線成果與未齊的整體矩陣；INDEPENDENT 指最終產品接受，不等於本次獨立簡潔性判斷。
+
+交回 Owner 決定是否另開 S2 Implementer。第一個具體功能釐清點仍是 SI-U01；所需輸入為候選完整 SHA、本報告追加節、plan／原 handoff、S1 handoff 與後續實作報告。若維持核定設計，後續再補矩陣及正式入口；若要限縮恢復次數、改版本模型或接受標準，先由 Owner 決定適用計畫／重審。此建議不授權本 Session 啟動下一角色。
+
+本輪只交付本節、文件檢查與 Owner 已授權的 Git checkpoint，完成後停止；不修 SI-U01、不操作真實資料、不 merge master，也不標整體 DONE。
