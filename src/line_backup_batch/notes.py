@@ -49,6 +49,13 @@ LOCAL_NOT_APPLICABLE = 'NOT_APPLICABLE'
 READ_ONLY_COMMANDS = frozenset(('lists', 'memory', 'summary',
                                 'evidence-audit'))
 
+RESTART_PATH_POLICY = 'SIBLING_VERSION_COPY'
+RESTART_SCOPE_SCHEMA = 'line-notes-restart-scope/v1'
+RESTART_CONFIRM_SCHEMA = 'line-notes-restart-confirm/v1'
+RESTART_COPY_PLAN_SCHEMA = 'line-notes-restart-copy-plan/v1'
+RESTART_CANDIDATE_SCHEMA = 'line-notes-restart-candidate/v1'
+RESTART_ACTIVATION_SCHEMA = 'line-notes-restart-activation/v1'
+
 PHOTO_SUFFIXES = frozenset(('.jpg', '.jpeg', '.png', '.heic', '.heif',
                             '.webp', '.tif', '.tiff', '.gif'))
 VIDEO_SUFFIXES = frozenset(('.mp4', '.mov', '.m4v', '.avi', '.mkv'))
@@ -867,6 +874,164 @@ class NotesRecords:
                     scan_id=data.get('scan_id'))
         raise NotesError('EVIDENCE_MEDIA_CONTEXT_MISSING')
 
+    def _restart_list_directories(self):
+        directories = {Path(self.events[0]['data']['list_directory'])}
+        for event in self.events[1:]:
+            if event['kind'] == 'destination':
+                directories.add(Path(event['data']['list_directory']))
+        return directories
+
+    def _list_directory_at(self, sequence):
+        need(type(sequence) is int and sequence >= 1,
+             'INVALID_EVENT_SEQUENCE')
+        current = Path(self.events[0]['data']['list_directory'])
+        for event in self.events:
+            if event['sequence'] >= sequence:
+                break
+            if event['kind'] == 'destination':
+                candidate = Path(event['data']['list_directory'])
+                need(candidate in self._restart_list_directories(),
+                     'INVALID_DESTINATION_CHAIN')
+                current = candidate
+        return current
+
+    def _validate_restart_scope_shape(self, scope, generation):
+        need(type(generation) is int and generation >= 1,
+             'INVALID_RESTART_GENERATION')
+        _check_exact(scope, ('schema', 'list_key', 'scan', 'scan_id',
+                             'path_policy', 'posts'),
+                     'INVALID_RESTART_SCOPE')
+        need(scope['schema'] == RESTART_SCOPE_SCHEMA and
+             scope['list_key'] == self.list_data['list_key'] and
+             isinstance(scope['scan_id'], str) and
+             bool(scope['scan_id']) and
+             scope['path_policy'] == RESTART_PATH_POLICY and
+             isinstance(scope['posts'], list), 'INVALID_RESTART_SCOPE')
+        _check_event_ref(scope['scan'], 'INVALID_RESTART_SCOPE')
+        seen_posts = set()
+        seen_media = set()
+        seen_missing = set()
+        seen_directories = set()
+        scan_event = self._event_by_sequence(scope['scan']['sequence'])
+        need(scan_event is not None and scan_event['kind'] == 'scan' and
+             _event_ref(scan_event) == scope['scan'] and
+             scan_event['data']['action'] == 'COMPLETE' and
+             scan_event['data']['scan_id'] == scope['scan_id'],
+             'INVALID_RESTART_SCOPE')
+        scan_posts = {row['post_key']: row
+                      for row in scan_event['data']['posts']}
+        list_directories = self._restart_list_directories()
+        need(bool(scope['posts']), 'INVALID_RESTART_SCOPE')
+        for post in scope['posts']:
+            _check_exact(post, ('post_key', 'identity', 'version_directory',
+                                'reasons', 'media', 'missing'),
+                         'INVALID_RESTART_SCOPE')
+            _hex(post['post_key'], 'INVALID_RESTART_SCOPE')
+            _check_identity_shape(post['identity'], 'POST')
+            scan_post = scan_posts.get(post['post_key'])
+            need(scan_post is not None and
+                 scan_post['identity'] == post['identity'],
+                 'INVALID_RESTART_SCOPE')
+            version_directory = Path(post['version_directory'])
+            parent_match = re.fullmatch(r'g([0-9]{8})',
+                                        version_directory.parent.name)
+            directory_generation = (
+                int(parent_match.group(1)) if parent_match is not None
+                else None)
+            version_list_directory = (version_directory.parents[2]
+                                      if len(version_directory.parents) >= 3
+                                      else None)
+            need(post_key(self.list_data['list_key'], post['identity']) ==
+                 post['post_key'] and post['post_key'] not in seen_posts and
+                 isinstance(post['version_directory'], str) and
+                 version_directory.is_absolute() and
+                 str(version_directory) == os.path.normpath(
+                     str(version_directory)) and
+                 version_directory == version_directory.absolute() and
+                 version_directory.parent.parent.name == 'versions' and
+                 version_list_directory in list_directories and
+                 directory_generation is not None and
+                 directory_generation >= 1 and
+                 directory_generation == generation and
+                 isinstance(post['reasons'], list) and post['reasons'] and
+                 post['reasons'] == sorted(set(post['reasons'])) and
+                 set(post['reasons']) <= {'LOCAL_CHANGED', 'UNKNOWN_ATTEMPT',
+                                           'UNFINISHED_ATTEMPT',
+                                           'PENDING_NAMING'} and
+                 isinstance(post['media'], list) and bool(post['media']) and
+                 isinstance(post['missing'], list), 'INVALID_RESTART_SCOPE')
+            expected_directory = self._restart_version_directory(
+                directory_generation, post['post_key'],
+                scan_post['date_summary'], version_list_directory)
+            need(version_directory == expected_directory and
+                 version_directory not in seen_directories,
+                 'INVALID_RESTART_SCOPE')
+            for existing_path in (version_list_directory,
+                                  version_directory.parent.parent,
+                                  version_directory.parent,
+                                  version_directory):
+                existing = _entry(existing_path)
+                if existing is None:
+                    continue
+                need(stat.S_ISDIR(existing.st_mode) and
+                     not existing_path.is_symlink() and
+                     existing_path == existing_path.resolve(strict=True),
+                     'INVALID_RESTART_SCOPE')
+            seen_directories.add(version_directory)
+            seen_posts.add(post['post_key'])
+            media_orders = set()
+            for row in post['media']:
+                _check_exact(row, ('media_key', 'identity', 'effective_kind',
+                                   'source_order', 'prior_attempt',
+                                   'prior_completion', 'prior_pending_plan',
+                                   'local_files'), 'INVALID_RESTART_SCOPE')
+                _hex(row['media_key'], 'INVALID_RESTART_SCOPE')
+                _check_identity_shape(row['identity'], 'MEDIA')
+                need(media_key(self.list_data['list_key'], post['post_key'],
+                               row['identity']) == row['media_key'] and
+                     row['media_key'] not in seen_media and
+                     row['effective_kind'] in MEDIA_KINDS and
+                     _is_nonnegative_int(row['source_order']) and
+                     row['source_order'] not in media_orders and
+                     row['local_files'] in (LOCAL_VERIFIED, LOCAL_MISSING,
+                                            LOCAL_CHANGED,
+                                            LOCAL_NOT_APPLICABLE),
+                     'INVALID_RESTART_SCOPE')
+                if row['prior_attempt'] is not None:
+                    _check_event_ref(row['prior_attempt'],
+                                     'INVALID_RESTART_SCOPE')
+                if row['prior_completion'] is not None:
+                    _check_event_ref(row['prior_completion'],
+                                     'INVALID_RESTART_SCOPE')
+                if row['prior_pending_plan'] is not None:
+                    _check_event_ref(row['prior_pending_plan'],
+                                     'INVALID_RESTART_SCOPE')
+                seen_media.add(row['media_key'])
+                media_orders.add(row['source_order'])
+            for row in post['missing']:
+                _check_exact(row, ('media_key', 'source_order', 'reason'),
+                             'INVALID_RESTART_SCOPE')
+                need(_is_hex(row['media_key']) and
+                     _is_nonnegative_int(row['source_order']) and
+                     row['media_key'] not in seen_media and
+                     row['media_key'] not in seen_missing and
+                     row['source_order'] not in media_orders and
+                     isinstance(row['reason'], str) and bool(row['reason']),
+                     'INVALID_RESTART_SCOPE')
+                seen_missing.add(row['media_key'])
+                media_orders.add(row['source_order'])
+        return scope
+
+    @staticmethod
+    def _restart_scope_digest(restart_id, generation, expected_tip, scope):
+        _hex(restart_id, 'INVALID_RESTART_ID')
+        need(type(generation) is int and generation >= 1,
+             'INVALID_RESTART_GENERATION')
+        _check_event_ref(expected_tip, 'INVALID_RESTART_EXPECTED_TIP')
+        return digest(encoded(dict(
+            schema=RESTART_SCOPE_SCHEMA, restart_id=restart_id,
+            generation=generation, expected_tip=expected_tip, scope=scope)))
+
     def _validate_event(self, event):
         kind, data = event['kind'], event['data']
         need(isinstance(kind, str) and isinstance(data, dict),
@@ -928,7 +1093,7 @@ class NotesRecords:
                 _evidence_context(list_key=self.list_data['list_key']))
         elif kind == 'scan':
             need(data.get('schema') == 'line-notes-scan/v1' and
-                 data.get('action') in ('START', 'COMPLETE') and
+                 data.get('action') in ('START', 'COMPLETE', 'INTERRUPTED') and
                  isinstance(data.get('scan_id'), str) and
                  bool(data.get('scan_id')) and
                  isinstance(data.get('session_id'), str) and
@@ -938,11 +1103,22 @@ class NotesRecords:
                 _evidence_context(
                     list_key=self.list_data['list_key'],
                     scan_id=(data.get('scan_id')
-                             if data.get('action') == 'COMPLETE' else None)))
+                             if data.get('action') != 'START' else None)))
             if data['action'] == 'START':
+                required = {'schema', 'action', 'scan_id', 'session_id',
+                            'evidence'}
+                need(required <= set(data) and
+                     set(data) <= required | {'purpose'},
+                     'INVALID_SCAN_EVENT')
+                if 'purpose' in data:
+                    need(data['purpose'] == 'RECOVERY_EVALUATION',
+                         'INVALID_SCAN_EVENT')
+            elif data['action'] == 'INTERRUPTED':
                 _check_exact(data, ('schema', 'action', 'scan_id',
-                                    'session_id', 'evidence'),
+                                    'session_id', 'reason', 'evidence'),
                              'INVALID_SCAN_EVENT')
+                need(isinstance(data['reason'], str) and
+                     bool(data['reason'].strip()), 'INVALID_SCAN_EVENT')
             else:
                 _check_exact(data, ('schema', 'action', 'scan_id',
                                     'session_id', 'evidence', 'posts'),
@@ -1067,11 +1243,21 @@ class NotesRecords:
                       'recovery_evidence'}
             v2_fields = common | {'scan_id', 'effective_kind',
                                   'kind_correction_ref'}
+            v3_fields = {'schema', 'restart_id', 'generation',
+                         'confirmation_ref', 'prior_attempt',
+                         'media_key', 'post_key', 'identity',
+                         'effective_kind', 'kind_correction_ref',
+                         'attempt_id', 'session_id', 'scan_id',
+                         'destination', 'directory_device',
+                         'directory_inode', 'save_all_limit',
+                         'save_all_count'}
             need(isinstance(data, dict) and
                  ((data.get('schema') == 'line-notes-intent/v1' and
                    common <= set(data) and set(data) <= common | {'scan_id'}) or
                   (data.get('schema') == 'line-notes-intent/v2' and
-                   set(data) == v2_fields)), 'INVALID_INTENT_EVENT')
+                   set(data) == v2_fields) or
+                  (data.get('schema') == 'line-notes-intent/v3' and
+                   set(data) == v3_fields)), 'INVALID_INTENT_EVENT')
             if 'scan_id' in data:
                 need(isinstance(data['scan_id'], str) and
                      bool(data['scan_id'].strip()), 'INVALID_INTENT_EVENT')
@@ -1101,7 +1287,16 @@ class NotesRecords:
                 if data['kind_correction_ref'] is not None:
                     _check_event_ref(data['kind_correction_ref'],
                                      'INVALID_INTENT_EVENT')
-            if data['recovery_evidence'] is not None:
+            if data['schema'] == 'line-notes-intent/v3':
+                _hex(data['restart_id'], 'INVALID_INTENT_EVENT')
+                need(type(data['generation']) is int and data['generation'] >= 1,
+                     'INVALID_INTENT_EVENT')
+                _check_event_ref(data['confirmation_ref'],
+                                 'INVALID_INTENT_EVENT')
+                if data['prior_attempt'] is not None:
+                    _check_event_ref(data['prior_attempt'],
+                                     'INVALID_INTENT_EVENT')
+            elif data['recovery_evidence'] is not None:
                 self._event_evidence(
                     event, 'recovery_evidence', data['recovery_evidence'],
                     self._intent_evidence_context(data['recovery_of']))
@@ -1152,6 +1347,134 @@ class NotesRecords:
             _validate_verification_payload(
                 data['kind'], data['source'], data['verification'],
                 allow_injected=self._allow_injected_verification)
+        elif kind == 'restart-confirm':
+            _check_exact(data, ('schema', 'restart_id', 'generation',
+                                'scope_digest', 'expected_tip', 'scope',
+                                'evidence', 'session_id'),
+                         'INVALID_RESTART_CONFIRM')
+            need(data['schema'] == RESTART_CONFIRM_SCHEMA and
+                 _is_hex(data['restart_id']) and
+                 type(data['generation']) is int and data['generation'] >= 1 and
+                 _is_hex(data['scope_digest']) and
+                 isinstance(data['session_id'], str) and bool(data['session_id']),
+                 'INVALID_RESTART_CONFIRM')
+            _check_event_ref(data['expected_tip'], 'INVALID_RESTART_CONFIRM')
+            self._validate_restart_scope_shape(
+                data['scope'], data['generation'])
+            expected_event = self._event_by_sequence(
+                data['expected_tip']['sequence'])
+            current_sequence = event.get('sequence', len(self.events) + 1)
+            need(expected_event is not None and
+                 _event_ref(expected_event) == data['expected_tip'] and
+                 data['expected_tip']['sequence'] == current_sequence - 1,
+                 'RESTART_EXPECTED_TIP_CHANGED')
+            scan_event = self._event_by_sequence(data['scope']['scan']['sequence'])
+            need(scan_event is not None and scan_event['kind'] == 'scan' and
+                 scan_event['data']['action'] == 'COMPLETE' and
+                 _event_ref(scan_event) == data['scope']['scan'] and
+                 scan_event['data']['scan_id'] == data['scope']['scan_id'],
+                 'RESTART_SCOPE_SCAN_CHANGED')
+            need(data['scope_digest'] == self._restart_scope_digest(
+                     data['restart_id'], data['generation'],
+                     data['expected_tip'], data['scope']),
+                 'RESTART_SCOPE_DIGEST_CHANGED')
+            self._event_evidence(
+                event, 'evidence', data['evidence'],
+                _evidence_context(list_key=self.list_data['list_key'],
+                                  scan_id=data['scope']['scan_id']),
+                require_v2=True, require_scan_context=True)
+        elif kind == 'restart-copy-plan':
+            _check_exact(data, ('schema', 'plan_id', 'restart_id',
+                                'generation', 'confirmation_ref',
+                                'attempt_id', 'media_key', 'post_key',
+                                'source', 'list_directory',
+                                'target_directory', 'target_name',
+                                'number', 'extension',
+                                'target_directory_existed', 'created_at'),
+                         'INVALID_RESTART_COPY_PLAN')
+            need(data['schema'] == RESTART_COPY_PLAN_SCHEMA and
+                 isinstance(data['plan_id'], str) and
+                 re.fullmatch(r'[0-9a-f]{32}', data['plan_id']) is not None and
+                 _is_hex(data['restart_id']) and
+                 type(data['generation']) is int and data['generation'] >= 1 and
+                 isinstance(data['attempt_id'], str) and bool(data['attempt_id']) and
+                 _is_hex(data['media_key']) and _is_hex(data['post_key']) and
+                 isinstance(data['list_directory'], str) and
+                 isinstance(data['target_directory'], str) and
+                 isinstance(data['target_name'], str) and
+                 Path(data['target_name']).name == data['target_name'] and
+                 type(data['number']) is int and data['number'] > 0 and
+                 isinstance(data['extension'], str) and
+                 data['target_name'].endswith(data['extension']) and
+                 type(data['target_directory_existed']) is bool and
+                 isinstance(data['created_at'], str) and bool(data['created_at']),
+                 'INVALID_RESTART_COPY_PLAN')
+            _check_event_ref(data['confirmation_ref'],
+                             'INVALID_RESTART_COPY_PLAN')
+            self._validate_source_row(data['source'],
+                                      'INVALID_RESTART_SOURCE')
+        elif kind == 'restart-candidate':
+            _check_exact(data, ('schema', 'restart_id', 'generation',
+                                'plan_ref', 'attempt_id', 'media_key',
+                                'post_key', 'kind', 'source', 'candidate',
+                                'manifest', 'manifest_sha256',
+                                'verification', 'verified_at'),
+                         'INVALID_RESTART_CANDIDATE')
+            need(data['schema'] == RESTART_CANDIDATE_SCHEMA and
+                 _is_hex(data['restart_id']) and
+                 type(data['generation']) is int and data['generation'] >= 1 and
+                 isinstance(data['attempt_id'], str) and bool(data['attempt_id']) and
+                 _is_hex(data['media_key']) and _is_hex(data['post_key']) and
+                 data['kind'] in MEDIA_KINDS and
+                 isinstance(data['source'], dict) and
+                 isinstance(data['candidate'], dict) and
+                 isinstance(data['manifest'], list) and
+                 data['manifest'] == [data['candidate']] and
+                 data['manifest_sha256'] == digest(encoded(data['manifest'])) and
+                 isinstance(data['verification'], dict) and
+                 bool(data['verification']) and
+                 isinstance(data['verified_at'], str) and
+                 bool(data['verified_at']), 'INVALID_RESTART_CANDIDATE')
+            _check_event_ref(data['plan_ref'], 'INVALID_RESTART_CANDIDATE')
+            self._validate_source_row(data['source'],
+                                      'INVALID_RESTART_CANDIDATE')
+            self._validate_source_row(data['candidate'],
+                                      'INVALID_RESTART_CANDIDATE')
+            _json_value(data['verification'], 'INVALID_VERIFICATION_RESULT')
+            _validate_verification_payload(
+                data['kind'], data['candidate'], data['verification'],
+                allow_injected=self._allow_injected_verification)
+        elif kind == 'restart-activation':
+            _check_exact(data, ('schema', 'restart_id', 'generation',
+                                'confirmation_ref', 'scope_digest',
+                                'candidates', 'session_id', 'activated_at'),
+                         'INVALID_RESTART_ACTIVATION')
+            need(data['schema'] == RESTART_ACTIVATION_SCHEMA and
+                 _is_hex(data['restart_id']) and
+                 type(data['generation']) is int and data['generation'] >= 1 and
+                 _is_hex(data['scope_digest']) and
+                 isinstance(data['candidates'], list) and
+                 isinstance(data['session_id'], str) and bool(data['session_id']) and
+                 isinstance(data['activated_at'], str) and bool(data['activated_at']),
+                 'INVALID_RESTART_ACTIVATION')
+            _check_event_ref(data['confirmation_ref'],
+                             'INVALID_RESTART_ACTIVATION')
+            seen = set()
+            previous_key = None
+            for row in data['candidates']:
+                _check_exact(row, ('media_key', 'post_key',
+                                   'candidate_ref', 'candidate'),
+                             'INVALID_RESTART_ACTIVATION')
+                need(_is_hex(row['media_key']) and _is_hex(row['post_key']) and
+                     row['media_key'] not in seen and
+                     (previous_key is None or previous_key < row['media_key']),
+                     'INVALID_RESTART_ACTIVATION')
+                _check_event_ref(row['candidate_ref'],
+                                 'INVALID_RESTART_ACTIVATION')
+                self._validate_source_row(row['candidate'],
+                                          'INVALID_RESTART_ACTIVATION')
+                seen.add(row['media_key'])
+                previous_key = row['media_key']
         elif kind == 'publish-plan':
             _check_exact(data, ('schema', 'transaction_id', 'attempt_id',
                                 'media_key', 'post_key', 'verification_sequence',
@@ -1558,8 +1881,8 @@ class NotesRecords:
         attempts = self._attempt_projection()
         self._source_unavailable_projection()
         for event in self.events:
-            if event['kind'] != 'intent' or event['data']['schema'] != (
-                    'line-notes-intent/v2'):
+            if event['kind'] != 'intent' or event['data']['schema'] not in (
+                    'line-notes-intent/v2', 'line-notes-intent/v3'):
                 continue
             data = event['data']
             corrections = [
@@ -1588,6 +1911,38 @@ class NotesRecords:
             earlier = [other for other in attempts['attempts_by_media'][
                 data['media_key']]
                 if attempts['order'][other] < attempts['order'][attempt_id]]
+            if data['schema'] == 'line-notes-intent/v3':
+                confirmation = [
+                    candidate for candidate in self.events
+                    if candidate['kind'] == 'restart-confirm' and
+                    candidate['data']['restart_id'] == data['restart_id'] and
+                    candidate['sequence'] < event['sequence']]
+                need(len(confirmation) == 1,
+                     'RESTART_INTENT_WITHOUT_CONFIRMATION')
+                confirmation = confirmation[0]
+                confirmation_data = confirmation['data']
+                need(data['confirmation_ref'] == _event_ref(confirmation) and
+                     data['generation'] == confirmation_data['generation'],
+                     'RESTART_CONFIRMATION_CHANGED')
+                scope_rows = [
+                    (post, row)
+                    for post in confirmation_data['scope']['posts']
+                    for row in post['media']
+                    if row['media_key'] == data['media_key']]
+                need(len(scope_rows) == 1 and
+                     scope_rows[0][0]['post_key'] == data['post_key'] and
+                     scope_rows[0][1]['identity'] == data['identity'],
+                     'RESTART_INTENT_OUTSIDE_SCOPE')
+                latest_prior = (
+                    max(earlier, key=lambda item: attempts['order'][item])
+                    if earlier else None)
+                expected_prior = (
+                    _event_ref(self._event_by_sequence(
+                        attempts['order'][latest_prior]))
+                    if latest_prior is not None else None)
+                need(data['prior_attempt'] == expected_prior,
+                     'RESTART_PRIOR_ATTEMPT_CHANGED')
+                continue
             recovery_of = data['recovery_of']
             if recovery_of is None:
                 need(not earlier, 'RECOVERY_OF_REQUIRED')
@@ -1621,18 +1976,20 @@ class NotesRecords:
             if event['kind'] != 'verification':
                 continue
             data = event['data']
-            need(data['attempt_id'] in attempts['attempts'] and
+            prefix_attempts = self._attempt_projection(
+                self.events[:event['sequence'] - 1])
+            need(data['attempt_id'] in prefix_attempts['attempts'] and
                  data['attempt_id'] not in verifications,
                  'DUPLICATE_OR_ORPHAN_VERIFICATION')
-            attempt = attempts['attempts'][data['attempt_id']]
+            attempt = prefix_attempts['attempts'][data['attempt_id']]
             need(data['media_key'] == attempt['media_key'] and
                  data['post_key'] == attempt['post_key'] and
                  data['kind'] == self._attempt_kind(attempt),
                  'VERIFICATION_ATTEMPT_CHANGED')
-            need(self._attempt_result(data['attempt_id'], attempts) ==
+            need(self._attempt_result(data['attempt_id'], prefix_attempts) ==
                  'DOWNLOAD_FINISHED',
                  'VERIFICATION_REQUIRES_DOWNLOAD_FINISHED')
-            need(attempts['latest_by_media'].get(data['media_key']) ==
+            need(prefix_attempts['latest_by_media'].get(data['media_key']) ==
                  data['attempt_id'], 'VERIFICATION_NOT_LATEST_ATTEMPT')
             self._validate_source_row(data['source'], 'INVALID_VERIFICATION_SOURCE')
             need(Path(data['source']['path']).parent ==
@@ -1652,6 +2009,8 @@ class NotesRecords:
             data = event['data']
             need(data['transaction_id'] not in plans,
                  'DUPLICATE_PUBLISH_TRANSACTION')
+            prefix_attempts = self._attempt_projection(
+                self.events[:event['sequence'] - 1])
             verification = self._event_by_sequence(
                 data['verification_sequence'])
             need(verification is not None and
@@ -1660,16 +2019,20 @@ class NotesRecords:
                  digest(encoded(verification)) == data['verification_sha256'] and
                  data['source'] == verification['data']['source'],
                  'PUBLISH_VERIFICATION_CHANGED')
-            attempt = attempts['attempts'].get(data['attempt_id'])
+            attempt = prefix_attempts['attempts'].get(data['attempt_id'])
             need(attempt is not None and
                  data['media_key'] == attempt['media_key'] and
                  data['post_key'] == attempt['post_key'],
                  'PUBLISH_ATTEMPT_CHANGED')
-            need(attempts['latest_by_media'].get(data['media_key']) ==
+            need(prefix_attempts['latest_by_media'].get(data['media_key']) ==
                  data['attempt_id'], 'PUBLISH_PLAN_NOT_LATEST_ATTEMPT')
+            target_directory = Path(data['target_directory'])
+            list_directory = Path(data['list_directory'])
             need(data['list_directory'] in list_directories and
-                 Path(data['target_directory']).parent ==
-                 Path(data['list_directory']), 'PUBLISH_DIRECTORY_CHANGED')
+                 (target_directory.parent == list_directory or
+                  (target_directory.parent.parent.name == 'versions' and
+                   target_directory.parent.parent.parent == list_directory)),
+                 'PUBLISH_DIRECTORY_CHANGED')
             match = re.fullmatch(r'media_(\d+)(\.[^./]+)',
                                  data['target_name'])
             need(match is not None and int(match.group(1)) == data['number'] and
@@ -1715,9 +2078,12 @@ class NotesRecords:
                          'INVALID_PUBLISH_PROGRESS')
 
         completions, _ = self._completion_projection()
-        for event in completions.values():
+        for completion_event in completions.values():
+            event = completion_event
             data = event['data']
-            attempt = attempts['attempts'].get(data['attempt_id'])
+            prefix_attempts = self._attempt_projection(
+                self.events[:event['sequence'] - 1])
+            attempt = prefix_attempts['attempts'].get(data['attempt_id'])
             plan = plans.get(data['transaction_id'])
             need(attempt is not None and plan is not None and
                  data['media_key'] == plan['data']['media_key'] and
@@ -1758,7 +2124,7 @@ class NotesRecords:
             need(verification is not None and
                  data['verification'] == verification['data']['verification'],
                  'COMPLETION_VERIFICATION_CHANGED')
-            need(attempts['latest_by_media'].get(data['media_key']) ==
+            need(prefix_attempts['latest_by_media'].get(data['media_key']) ==
                  data['attempt_id'], 'COMPLETION_NOT_LATEST_ATTEMPT')
             need((data['transaction_id'], 'SOURCE_REMOVED') in progress,
                  'COMPLETION_WITHOUT_SOURCE_REMOVED')
@@ -1784,6 +2150,7 @@ class NotesRecords:
                 need(key not in exclusive and key not in protected,
                      'MEDIA_ALREADY_TERMINALLY_CLASSIFIED')
                 protected.add(key)
+        self._restart_projection()
         return True
 
     def append(self, kind, data):
@@ -1819,10 +2186,6 @@ class NotesRecords:
         need(isinstance(session_id, str) and bool(session_id),
              'SESSION_REQUIRED')
         with self.locked():
-            latest, scans = self._open_scan()
-            if latest is not None:
-                need(scans[latest]['complete'] is not None,
-                     'SCAN_ALREADY_OPEN')
             expected = self.list_data.get('context_id')
             if expected is not None:
                 need(context_id == expected, 'WRONG_NOTES_CONTEXT')
@@ -1949,18 +2312,22 @@ class NotesRecords:
                 need(open_scan_id is None, 'SCAN_ALREADY_OPEN')
                 need(data['scan_id'] not in starts, 'DUPLICATE_SCAN_START')
                 starts[data['scan_id']] = dict(start=event, complete=None,
-                                                pages=[])
+                                                interrupted=None, pages=[])
                 latest = data['scan_id']
                 open_scan_id = data['scan_id']
             else:
                 need(open_scan_id == data['scan_id'] and
                      data['scan_id'] in starts and
-                     starts[data['scan_id']]['complete'] is None,
+                     starts[data['scan_id']]['complete'] is None and
+                     starts[data['scan_id']]['interrupted'] is None,
                      'SCAN_COMPLETION_WITHOUT_OPEN_SCAN')
-                need(data['session_id'] ==
-                     starts[data['scan_id']]['start']['data']['session_id'],
-                     'SCAN_SESSION_CHANGED')
-                starts[data['scan_id']]['complete'] = event
+                if data['action'] == 'COMPLETE':
+                    need(data['session_id'] ==
+                         starts[data['scan_id']]['start']['data']['session_id'],
+                         'SCAN_SESSION_CHANGED')
+                    starts[data['scan_id']]['complete'] = event
+                else:
+                    starts[data['scan_id']]['interrupted'] = event
                 open_scan_id = None
         for scan in starts.values():
             if scan['complete'] is None:
@@ -1988,18 +2355,21 @@ class NotesRecords:
             return False
         return scans[latest]['complete'] is not None
 
-    def start_scan(self, *, session_id, evidence):
+    def start_scan(self, *, session_id, evidence, recovery=False):
         with self.locked():
             self._require_session(session_id)
             latest, scans = self._open_scan()
-            need(not self._pending_publish_plans(),
-                 'PENDING_NAMING_TRANSACTION')
-            self._assert_no_unknown_attempts()
+            if not recovery:
+                need(not self._pending_publish_plans(),
+                     'PENDING_NAMING_TRANSACTION')
+                self._assert_no_unknown_attempts()
             if latest is not None:
-                need(scans[latest]['complete'] is not None,
+                need(scans[latest]['complete'] is not None or
+                     scans[latest]['interrupted'] is not None,
                      'SCAN_ALREADY_OPEN')
-                coverage_errors = self._coverage_errors()
-                need(not coverage_errors, 'SCAN_COVERAGE_INCOMPLETE')
+                if scans[latest]['complete'] is not None and not recovery:
+                    coverage_errors = self._coverage_errors()
+                    need(not coverage_errors, 'SCAN_COVERAGE_INCOMPLETE')
             scan_id = uuid.uuid4().hex
             context = _evidence_context(
                 list_key=self.list_data['list_key'])
@@ -2007,6 +2377,8 @@ class NotesRecords:
                         scan_id=scan_id, session_id=session_id,
                         evidence=_preserve_evidence(
                             self.records, evidence, context))
+            if recovery:
+                data['purpose'] = 'RECOVERY_EVALUATION'
             self.append('scan', data)
             return data
 
@@ -2023,7 +2395,8 @@ class NotesRecords:
             need(latest is not None and latest == scan_id,
                  'CURRENT_SCAN_REQUIRED')
             scan = scans[scan_id]
-            need(scan['complete'] is None, 'SCAN_ALREADY_COMPLETE')
+            need(scan['complete'] is None and scan['interrupted'] is None,
+                 'SCAN_ALREADY_COMPLETE')
             need(scan['start']['data']['session_id'] == session_id,
                  'PAGE_SESSION_CHANGED')
             self._require_session(session_id)
@@ -2095,6 +2468,7 @@ class NotesRecords:
                  'CURRENT_SCAN_REQUIRED')
             scan = scans[scan_id]
             need(scan['complete'] is None, 'SCAN_ALREADY_COMPLETE')
+            need(scan['interrupted'] is None, 'SCAN_ALREADY_INTERRUPTED')
             need(scan['start']['data']['session_id'] == session_id,
                  'SCAN_SESSION_CHANGED')
             self._require_session(session_id)
@@ -2125,12 +2499,48 @@ class NotesRecords:
             self.append('scan', data)
             return data
 
-    def scan(self, *, session_id, action, scan_id=None, evidence):
-        need(action in ('START', 'FINISH'), 'INVALID_SCAN_ACTION')
+    def interrupt_scan(self, *, session_id, scan_id, reason, evidence):
+        need(isinstance(reason, str) and bool(reason.strip()),
+             'SCAN_INTERRUPTION_REASON_REQUIRED')
+        with self.locked():
+            latest, scans = self._open_scan()
+            need(latest is not None and latest == scan_id,
+                 'CURRENT_SCAN_REQUIRED')
+            scan = scans[scan_id]
+            need(scan['complete'] is None, 'SCAN_ALREADY_COMPLETE')
+            if scan['interrupted'] is not None:
+                existing = scan['interrupted']['data']
+                need(existing['session_id'] == session_id and
+                     existing['reason'] == reason,
+                     'SCAN_INTERRUPTION_CHANGED')
+                return existing
+            self._require_session(session_id)
+            context = _evidence_context(list_key=self.list_data['list_key'],
+                                        scan_id=scan_id)
+            data = dict(schema='line-notes-scan/v1', action='INTERRUPTED',
+                        scan_id=scan_id, session_id=session_id,
+                        reason=reason,
+                        evidence=_preserve_evidence(
+                            self.records, evidence, context))
+            self.append('scan', data)
+            return data
+
+    def scan(self, *, session_id, action, scan_id=None, evidence,
+             recovery=False, reason=None):
+        need(action in ('START', 'FINISH', 'INTERRUPT'),
+             'INVALID_SCAN_ACTION')
         if action == 'START':
             need(scan_id is None, 'SCAN_ID_NOT_ACCEPTED_FOR_START')
-            return self.start_scan(session_id=session_id, evidence=evidence)
+            need(reason is None, 'SCAN_REASON_NOT_ACCEPTED_FOR_START')
+            return self.start_scan(session_id=session_id, evidence=evidence,
+                                   recovery=recovery)
         need(scan_id is not None, 'SCAN_ID_REQUIRED')
+        need(not recovery, 'SCAN_RECOVERY_ONLY_FOR_START')
+        if action == 'INTERRUPT':
+            return self.interrupt_scan(
+                session_id=session_id, scan_id=scan_id, reason=reason,
+                evidence=evidence)
+        need(reason is None, 'SCAN_REASON_ONLY_FOR_INTERRUPT')
         return self.finish_scan(session_id=session_id, scan_id=scan_id,
                                 evidence=evidence)
 
@@ -2390,8 +2800,356 @@ class NotesRecords:
     @staticmethod
     def _attempt_kind(intent_data):
         return (intent_data.get('effective_kind')
-                if intent_data['schema'] == 'line-notes-intent/v2'
+                if intent_data['schema'] in ('line-notes-intent/v2',
+                                             'line-notes-intent/v3')
                 else intent_data['identity']['kind'])
+
+    def _restart_projection(self, events=None):
+        """Validate restart events and project the latest activated versions."""
+        source_events = list(self.events if events is None else events)
+        by_sequence = {event['sequence']: event for event in source_events}
+        need(len(by_sequence) == len(source_events),
+             'DUPLICATE_EVENT_SEQUENCE')
+
+        def event_for_ref(ref, code, kind=None):
+            _check_event_ref(ref, code)
+            event = by_sequence.get(ref['sequence'])
+            need(event is not None and _event_ref(event) == ref and
+                 (kind is None or event['kind'] == kind), code)
+            return event
+
+        def prefix(sequence):
+            return [event for event in source_events
+                    if event['sequence'] < sequence]
+
+        confirmations = {}
+        plans = {}
+        candidates_by_plan = {}
+        candidates = {}
+        activations = {}
+        active_by_media = {}
+        activated_restarts = set()
+        seen_targets = set()
+
+        for event in source_events:
+            kind = event['kind']
+            data = event['data']
+            sequence = event['sequence']
+
+            if kind == 'completion':
+                seen_targets.add((data['destination'],
+                                  data['target_file']['name']))
+                continue
+            if kind == 'publish-plan':
+                seen_targets.add((data['target_directory'],
+                                  data['target_name']))
+                continue
+
+            if kind == 'restart-confirm':
+                restart_id = data['restart_id']
+                need(restart_id not in confirmations,
+                     'DUPLICATE_RESTART_CONFIRMATION')
+                need(not any(existing_id not in activated_restarts
+                             for existing_id in confirmations),
+                     'MULTIPLE_OPEN_RESTART_BATCHES')
+                need(data['generation'] == len(confirmations) + 1,
+                     'RESTART_GENERATION_CHANGED')
+                self._validate_restart_scope_shape(
+                    data['scope'], data['generation'])
+                need(data['scope_digest'] == self._restart_scope_digest(
+                    restart_id, data['generation'], data['expected_tip'],
+                    data['scope']), 'RESTART_SCOPE_DIGEST_CHANGED')
+                expected = event_for_ref(
+                    data['expected_tip'], 'RESTART_EXPECTED_TIP_CHANGED')
+                need(expected['sequence'] == sequence - 1,
+                     'RESTART_EXPECTED_TIP_CHANGED')
+                scan = event_for_ref(
+                    data['scope']['scan'], 'RESTART_SCOPE_SCAN_CHANGED',
+                    kind='scan')
+                need(scan['data']['action'] == 'COMPLETE' and
+                     scan['data']['scan_id'] == data['scope']['scan_id'] and
+                     scan['sequence'] < expected['sequence'],
+                     'RESTART_SCOPE_SCAN_CHANGED')
+                scan_posts = {
+                    row['post_key']: row
+                    for row in scan['data']['posts']}
+                prefix_media = self._media_projection(prefix(sequence))
+                media_by_post = {}
+                for key, row in prefix_media[0].items():
+                    if row.get('scan_id') == data['scope']['scan_id']:
+                        media_by_post.setdefault(
+                            row['post_key'], set()).add(key)
+                for post in data['scope']['posts']:
+                    need(post['post_key'] in scan_posts,
+                         'RESTART_SCOPE_POST_CHANGED')
+                    scope_keys = {row['media_key']
+                                  for row in post['media']}
+                    missing_keys = {row['media_key']
+                                    for row in post['missing']}
+                    need(scope_keys | missing_keys ==
+                         media_by_post.get(post['post_key'], set()),
+                         'RESTART_SCOPE_POST_INCOMPLETE')
+                confirmations[restart_id] = event
+                continue
+
+            if kind == 'intent' and data['schema'] == 'line-notes-intent/v3':
+                confirmation = confirmations.get(data['restart_id'])
+                need(confirmation is not None and
+                     confirmation['sequence'] < sequence and
+                     confirmation['data']['generation'] == data['generation'],
+                     'RESTART_INTENT_WITHOUT_CONFIRMATION')
+                need(data['restart_id'] not in activated_restarts,
+                     'RESTART_ALREADY_ACTIVATED')
+                confirmation_data = confirmation['data']
+                need(data['confirmation_ref'] == _event_ref(confirmation),
+                     'RESTART_CONFIRMATION_CHANGED')
+                scope_media = {
+                    row['media_key']: (post, row)
+                    for post in confirmation_data['scope']['posts']
+                    for row in post['media']
+                }
+                scoped = scope_media.get(data['media_key'])
+                need(scoped is not None and
+                     scoped[0]['post_key'] == data['post_key'] and
+                     scoped[1]['identity'] == data['identity'] and
+                     scoped[1]['effective_kind'] == data['effective_kind'],
+                     'RESTART_INTENT_OUTSIDE_SCOPE')
+                prior_attempts = self._attempt_projection(prefix(sequence))
+                expected_prior = prior_attempts['latest_by_media'].get(
+                    data['media_key'])
+                expected_ref = (
+                    _event_ref(by_sequence[prior_attempts['order'][
+                        expected_prior]])
+                    if expected_prior is not None else None)
+                need(data['prior_attempt'] == expected_ref,
+                     'RESTART_PRIOR_ATTEMPT_CHANGED')
+                continue
+
+            if kind == 'restart-copy-plan':
+                confirmation = confirmations.get(data['restart_id'])
+                need(confirmation is not None and
+                     confirmation['sequence'] < sequence and
+                     confirmation['data']['generation'] == data['generation'] and
+                     data['confirmation_ref'] == _event_ref(confirmation),
+                     'RESTART_COPY_WITHOUT_CONFIRMATION')
+                need(data['restart_id'] not in activated_restarts,
+                     'RESTART_ALREADY_ACTIVATED')
+                need(data['plan_id'] not in plans,
+                     'DUPLICATE_RESTART_COPY_PLAN')
+                scope_media = {
+                    row['media_key']: (post, row)
+                    for post in confirmation['data']['scope']['posts']
+                    for row in post['media']
+                }
+                scoped = scope_media.get(data['media_key'])
+                need(scoped is not None and
+                     scoped[0]['post_key'] == data['post_key'] and
+                     scoped[0]['version_directory'] ==
+                     data['target_directory'] and
+                     data['list_directory'] == str(
+                         Path(scoped[0]['version_directory']).parents[2]),
+                     'RESTART_COPY_OUTSIDE_SCOPE')
+                prefix_attempts = self._attempt_projection(prefix(sequence))
+                intent_data = prefix_attempts['attempts'].get(
+                    data['attempt_id'])
+                need(intent_data is not None and
+                     intent_data['schema'] == 'line-notes-intent/v3' and
+                     intent_data['restart_id'] == data['restart_id'] and
+                     intent_data['generation'] == data['generation'] and
+                     intent_data['media_key'] == data['media_key'] and
+                     intent_data['post_key'] == data['post_key'] and
+                     intent_data['confirmation_ref'] ==
+                     data['confirmation_ref'] and
+                     prefix_attempts['latest_by_media'].get(
+                         data['media_key']) == data['attempt_id'] and
+                     self._attempt_result(
+                         data['attempt_id'], prefix_attempts) ==
+                     'DOWNLOAD_FINISHED',
+                     'RESTART_COPY_ATTEMPT_CHANGED')
+                need(Path(data['source']['path']).parent ==
+                     Path(intent_data['destination']),
+                     'RESTART_COPY_SOURCE_CHANGED')
+                kind_value = self._attempt_kind(intent_data)
+                match = re.fullmatch(r'media_([0-9]+)(\.[^./]+)',
+                                     data['target_name'])
+                need(match is not None and
+                     int(match.group(1)) == data['number'] and
+                     match.group(2) == data['extension'] and
+                     data['extension'].lower() in
+                     (PHOTO_SUFFIXES if kind_value == PHOTO
+                      else VIDEO_SUFFIXES),
+                     'RESTART_COPY_TARGET_CHANGED')
+                key = (data['target_directory'], data['target_name'])
+                need(key not in seen_targets, 'DUPLICATE_TARGET_NAME')
+                seen_targets.add(key)
+                plans[data['plan_id']] = event
+                continue
+
+            if kind == 'restart-candidate':
+                confirmation = confirmations.get(data['restart_id'])
+                need(confirmation is not None and
+                     confirmation['sequence'] < sequence and
+                     confirmation['data']['generation'] == data['generation'],
+                     'RESTART_CANDIDATE_WITHOUT_CONFIRMATION')
+                need(data['restart_id'] not in activated_restarts,
+                     'RESTART_ALREADY_ACTIVATED')
+                plan = event_for_ref(
+                    data['plan_ref'],
+                    'RESTART_CANDIDATE_PLAN_CHANGED',
+                    kind='restart-copy-plan')
+                plan_data = plan['data']
+                need(plan['sequence'] < sequence and
+                     plan_data['plan_id'] in plans and
+                     plan_data['plan_id'] not in candidates_by_plan,
+                     'DUPLICATE_RESTART_CANDIDATE')
+                need(data['restart_id'] == plan_data['restart_id'] and
+                     data['generation'] == plan_data['generation'] and
+                     data['attempt_id'] == plan_data['attempt_id'] and
+                     data['media_key'] == plan_data['media_key'] and
+                     data['post_key'] == plan_data['post_key'] and
+                     data['source'] == plan_data['source'] and
+                     data['candidate']['path'] == str(
+                         Path(plan_data['target_directory']) /
+                         plan_data['target_name']) and
+                     data['candidate']['name'] == plan_data['target_name'],
+                     'RESTART_CANDIDATE_TARGET_CHANGED')
+                need((data['candidate']['device'], data['candidate']['inode']) !=
+                     (data['source']['device'], data['source']['inode']),
+                     'RESTART_CANDIDATE_NOT_ISOLATED')
+                prefix_attempts = self._attempt_projection(prefix(sequence))
+                intent_data = prefix_attempts['attempts'].get(
+                    data['attempt_id'])
+                need(intent_data is not None and
+                     data['kind'] == self._attempt_kind(intent_data),
+                     'RESTART_CANDIDATE_KIND_CHANGED')
+                extension = plan_data['extension'].lower()
+                extension_kind = (
+                    PHOTO if extension in PHOTO_SUFFIXES else
+                    VIDEO if extension in VIDEO_SUFFIXES else None)
+                need(extension_kind == data['kind'],
+                     'RESTART_CANDIDATE_KIND_CHANGED')
+                need(data['manifest'] == [data['candidate']] and
+                     data['manifest_sha256'] ==
+                     digest(encoded(data['manifest'])),
+                     'RESTART_CANDIDATE_MANIFEST_CHANGED')
+                candidates_by_plan[plan_data['plan_id']] = event
+                candidates[data['media_key']] = event
+                continue
+
+            if kind == 'restart-activation':
+                restart_id = data['restart_id']
+                confirmation = confirmations.get(restart_id)
+                need(confirmation is not None and
+                     confirmation['sequence'] < sequence and
+                     confirmation['data']['generation'] == data['generation'] and
+                     data['confirmation_ref'] == _event_ref(confirmation) and
+                     data['scope_digest'] ==
+                     confirmation['data']['scope_digest'],
+                     'RESTART_ACTIVATION_CONFIRMATION_CHANGED')
+                need(restart_id not in activations,
+                     'DUPLICATE_RESTART_ACTIVATION')
+                expected_rows = sorted(
+                    (row['media_key'], post['post_key'])
+                    for post in confirmation['data']['scope']['posts']
+                    for row in post['media'])
+                actual_rows = [(row['media_key'], row['post_key'])
+                               for row in data['candidates']]
+                need(actual_rows == expected_rows,
+                     'RESTART_ACTIVATION_SCOPE_CHANGED')
+                active_post_directories = {}
+                for existing_key, existing in active_by_media.items():
+                    existing_post = existing['candidate']['data']['post_key']
+                    existing_directory = str(Path(
+                        existing['candidate']['data']['candidate']['path']).parent)
+                    active_post_directories.setdefault(
+                        existing_post, set()).add(existing_directory)
+                for row in data['candidates']:
+                    candidate = event_for_ref(
+                        row['candidate_ref'],
+                        'RESTART_ACTIVATION_CANDIDATE_CHANGED',
+                        kind='restart-candidate')
+                    need(candidate['sequence'] < sequence and
+                         candidate is candidates.get(row['media_key']) and
+                         candidate['data']['restart_id'] == restart_id and
+                         candidate['data']['generation'] ==
+                         data['generation'] and
+                         candidate['data']['post_key'] == row['post_key'] and
+                         candidate['data']['candidate'] == row['candidate'],
+                         'RESTART_ACTIVATION_CANDIDATE_CHANGED')
+                    need(row['media_key'] not in active_by_media,
+                         'RESTART_MEDIA_ALREADY_ACTIVE')
+                    active_by_media[row['media_key']] = dict(
+                        activation=event, candidate=candidate,
+                        confirmation=confirmation, row=row)
+                    active_post_directories.setdefault(
+                        row['post_key'], set()).add(str(Path(
+                            row['candidate']['path']).parent))
+                need(all(len(directories) <= 1
+                         for directories in active_post_directories.values()),
+                     'MULTIPLE_ACTIVE_VERSION_DIRECTORIES')
+                activations[restart_id] = event
+                activated_restarts.add(restart_id)
+                continue
+
+        return dict(confirmations=confirmations, plans=plans,
+                    candidates_by_plan=candidates_by_plan,
+                    candidates=candidates, activations=activations,
+                    active_by_media=active_by_media)
+
+    def _active_media_versions(self, events=None):
+        return self._restart_projection(events)['active_by_media']
+
+    def _active_candidate_availability(self, media_key_value):
+        active = self._active_media_versions().get(media_key_value)
+        if active is None:
+            return None
+        return self._candidate_file_availability(
+            active['candidate']['data']['candidate'])
+
+    @staticmethod
+    def _candidate_file_availability(candidate):
+        path = Path(candidate['path'])
+        entry = _entry(path)
+        if entry is None:
+            return LOCAL_MISSING
+        try:
+            need(stat.S_ISREG(entry.st_mode) and entry.st_nlink == 1 and
+                 not path.is_symlink(), 'ACTIVE_CANDIDATE_CHANGED')
+            info = os.stat(str(path), follow_symlinks=False)
+            need((info.st_dev, info.st_ino, info.st_size,
+                  info.st_mtime_ns, info.st_ctime_ns) ==
+                 (candidate['device'], candidate['inode'], candidate['size'],
+                  candidate['mtime_ns'], candidate['ctime_ns']),
+                 'ACTIVE_CANDIDATE_CHANGED')
+            need(digest(read_file(path)) == candidate['sha256'],
+                 'ACTIVE_CANDIDATE_CHANGED')
+            return LOCAL_VERIFIED
+        except (NotesError, DailyError, OSError, ValueError):
+            return LOCAL_CHANGED
+
+    def _restart_target_rows(self, confirmation):
+        posts = []
+        estimated = 0
+        for post in confirmation['data']['scope']['posts']:
+            media_rows = []
+            for number, row in enumerate(
+                    sorted(post['media'], key=lambda item: item['source_order']),
+                    start=1):
+                media_rows.append(dict(
+                    media_key=row['media_key'],
+                    effective_kind=row['effective_kind'],
+                    source_order=row['source_order'],
+                    target_stem='media_%03d' % number))
+                prior = row.get('prior_completion')
+                if prior is not None:
+                    event = self._event_by_sequence(prior['sequence'])
+                    if event is not None and event['kind'] == 'completion':
+                        estimated += event['data']['target_file']['size']
+            posts.append(dict(post_key=post['post_key'],
+                              version_directory=post['version_directory'],
+                              media=media_rows,
+                              missing=list(post['missing'])))
+        return posts, estimated
 
     def _attempt_result(self, attempt_id, projection=None):
         projection = projection or self._attempt_projection()
@@ -2411,10 +3169,10 @@ class NotesRecords:
                 terminal = True
         return result
 
-    def _completion_projection(self):
+    def _completion_projection(self, events=None):
         completions = {}
         by_attempt = {}
-        for event in self.events:
+        for event in (self.events if events is None else events):
             if event['kind'] != 'completion':
                 continue
             data = event['data']
@@ -2444,12 +3202,22 @@ class NotesRecords:
                 result[event['data']['media_key']] = event
         return result
 
-    def _pending_publish_plans(self):
-        completions, _ = self._completion_projection()
+    def _pending_publish_plans(self, events=None):
+        source_events = self.events if events is None else events
+        completions, _ = self._completion_projection(source_events)
         completed_transactions = {event['data']['transaction_id']
                                   for event in completions.values()}
+        suppressed = set()
+        for event in source_events:
+            if event['kind'] != 'restart-confirm':
+                continue
+            for post in event['data']['scope']['posts']:
+                for row in post['media']:
+                    prior = row.get('prior_pending_plan')
+                    if prior is not None:
+                        suppressed.add(prior['sequence'])
         plans = {}
-        for event in self.events:
+        for event in source_events:
             if event['kind'] != 'publish-plan':
                 continue
             data = event['data']
@@ -2457,12 +3225,15 @@ class NotesRecords:
                  'DUPLICATE_PUBLISH_TRANSACTION')
             plans[data['transaction_id']] = event
         return [event for transaction, event in plans.items()
-                if transaction not in completed_transactions]
+                if transaction not in completed_transactions and
+                event['sequence'] not in suppressed]
 
     def _assert_no_unknown_attempts(self):
         projection = self._attempt_projection()
+        resolved = set(self._completion_projection()[0])
+        resolved |= set(self._active_media_versions())
         for media_key_value, attempt_id in projection['latest_by_media'].items():
-            if media_key_value in self._completion_projection()[0]:
+            if media_key_value in resolved:
                 continue
             result = self._attempt_result(attempt_id, projection)
             need(result in ('STOPPED', 'NOT_SENT'),
@@ -2500,6 +3271,12 @@ class NotesRecords:
             data = event['data']
             plan_names.setdefault(data['target_directory'], set()).add(
                 data['target_name'])
+        active_names = {}
+        for version in self._active_media_versions().values():
+            candidate = version['candidate']['data']['candidate']
+            active_names.setdefault(
+                str(Path(candidate['path']).parent), set()).add(
+                    candidate['name'])
         availability = {}
         changed_directories = set()
         missing_directories = set()
@@ -2525,6 +3302,7 @@ class NotesRecords:
                          'COMPLETED_DIRECTORY_CHANGED')
                     expected_names.add(event['data']['target_file']['name'])
                 expected_names |= plan_names.get(directory_string, set())
+                expected_names |= active_names.get(directory_string, set())
                 actual_names = {path.name for path in directory.iterdir()}
                 need(actual_names == expected_names,
                      'COMPLETED_DIRECTORY_CONTENTS_CHANGED')
@@ -2559,20 +3337,31 @@ class NotesRecords:
                 continue
         return availability
 
-    def _assert_no_local_changed(self):
+    def _effective_local_availability(self):
         availability = self._completion_availability()
-        need(not any(value == LOCAL_CHANGED
-                     for value in availability.values()),
+        for key in self._active_media_versions():
+            availability[key] = self._active_candidate_availability(key)
+        return availability
+
+    def _assert_no_local_changed(self, allowing=()):
+        availability = self._effective_local_availability()
+        changed = {key for key, value in availability.items()
+                   if value == LOCAL_CHANGED}
+        need(changed <= set(allowing),
              'COMPLETED_FILES_CHANGED_NO_REDOWNLOAD')
 
     def _status_map(self):
         media, _ = self._media_projection()
         attempts = self._attempt_projection()
         completions, _ = self._completion_projection()
+        active = self._active_media_versions()
         exclusions = self._exclusion_projection()
         protections = self._protection_projection()
         result = {}
         for key, row in media.items():
+            if key in active:
+                result[key] = 'COMPLETED'
+                continue
             if key in completions:
                 result[key] = 'COMPLETED'
                 continue
@@ -2643,7 +3432,412 @@ class NotesRecords:
         if errors:
             raise NotesError(errors[0])
 
-    def intent(self, *, session_id, media_key_value, recovery_evidence=None):
+    def _current_restart_scope(self):
+        latest, scans = self._open_scan()
+        need(latest is not None and scans[latest]['complete'] is not None,
+             'COMPLETE_NOTES_SCAN_REQUIRED')
+        complete = scans[latest]['complete']
+        complete_posts = complete['data']['posts']
+        list_directory_at_scan = self._list_directory_at(complete['sequence'])
+        media, _ = self._media_projection()
+        attempts = self._attempt_projection()
+        completions, _ = self._completion_projection()
+        exclusions = self._exclusion_projection()
+        protections = self._protection_projection()
+        unavailable = self._source_unavailable_projection()
+        availability = self._effective_local_availability()
+        media_rows = {row['media_key']: row for row in self._media_rows()}
+        statuses = self._status_map()
+        current_keys = {
+            key for key, row in media.items()
+            if row.get('scan_id') == latest and
+            row.get('post_key') in {post['post_key'] for post in complete_posts}
+        }
+        pending_by_key = {}
+        for plan in self._pending_publish_plans():
+            pending_by_key.setdefault(plan['data']['media_key'], plan)
+        generation = 1 + max(
+            (event['data']['generation'] for event in self.events
+             if event['kind'] == 'restart-confirm'), default=0)
+        by_post = {}
+        for key in current_keys:
+            by_post.setdefault(media[key]['post_key'], []).append(key)
+        posts = []
+        target_rows = []
+        for post in complete_posts:
+            keys = sorted(by_post.get(post['post_key'], []),
+                          key=lambda key: media[key]['source_order'])
+            reasons = set()
+            for key in keys:
+                row = media_rows[key]
+                status = statuses[key]
+                if row['local_files'] == LOCAL_CHANGED:
+                    reasons.add('LOCAL_CHANGED')
+                if status == 'UNKNOWN':
+                    reasons.add('UNKNOWN_ATTEMPT')
+                elif status == 'PREVIOUSLY_INCOMPLETE':
+                    reasons.add('UNFINISHED_ATTEMPT')
+                if key in pending_by_key:
+                    reasons.add('PENDING_NAMING')
+            if not reasons:
+                continue
+            media_scope = []
+            missing_scope = []
+            for key in keys:
+                row = media_rows[key]
+                reason = None
+                if row['missing']:
+                    reason = 'SOURCE_MISSING'
+                elif row['source_availability'] == 'EXPIRED':
+                    reason = 'SOURCE_EXPIRED'
+                elif row['status'] == 'EXCLUDED':
+                    reason = 'EXCLUDED'
+                elif row['status'] == 'PROTECTED_HISTORY':
+                    reason = 'PROTECTED_HISTORY'
+                if reason is not None:
+                    missing_scope.append(dict(
+                        media_key=key, source_order=row['source_order'],
+                        reason=reason))
+                    continue
+                prior_attempt = None
+                attempt_id = attempts['latest_by_media'].get(key)
+                if attempt_id is not None:
+                    prior_attempt = _event_ref(self._event_by_sequence(
+                        attempts['order'][attempt_id]))
+                prior_completion = None
+                if key in completions:
+                    prior_completion = _event_ref(completions[key])
+                pending = pending_by_key.get(key)
+                media_scope.append(dict(
+                    media_key=key, identity=row['identity'],
+                    effective_kind=row['effective_kind'],
+                    source_order=row['source_order'],
+                    prior_attempt=prior_attempt,
+                    prior_completion=prior_completion,
+                    prior_pending_plan=(_event_ref(pending)
+                                        if pending is not None else None),
+                    local_files=row['local_files']))
+            posts.append(dict(post_key=post['post_key'],
+                              identity=post['identity'],
+                              version_directory=str(
+                                  self._restart_version_directory(
+                                      generation, post['post_key'],
+                                      post['date_summary'],
+                                      list_directory_at_scan)),
+                              reasons=sorted(reasons),
+                              media=sorted(media_scope,
+                                           key=lambda row: row['source_order']),
+                              missing=sorted(missing_scope,
+                                             key=lambda row: row['source_order'])))
+        expected_tip = _event_ref(self.events[-1])
+        scope = dict(schema=RESTART_SCOPE_SCHEMA,
+                     list_key=self.list_data['list_key'],
+                     scan=_event_ref(complete), scan_id=latest,
+                     path_policy=RESTART_PATH_POLICY, posts=posts)
+        restart_id = digest(encoded(dict(
+            list_key=self.list_data['list_key'], expected_tip=expected_tip,
+            generation=generation, scope=scope)))
+        scope_digest = self._restart_scope_digest(
+            restart_id, generation, expected_tip, scope)
+        estimated = 0
+        for post in posts:
+            for row in post['media']:
+                prior = row['prior_completion']
+                if prior is not None:
+                    event = self._event_by_sequence(prior['sequence'])
+                    if event is not None and event['kind'] == 'completion':
+                        estimated += event['data']['target_file']['size']
+        for post in posts:
+            target_rows.append(dict(
+                post_key=post['post_key'],
+                version_directory=post['version_directory']))
+        return dict(restart_id=restart_id, generation=generation,
+                    expected_tip=expected_tip, scope=scope,
+                    scope_digest=scope_digest,
+                    estimated_extra_bytes=estimated,
+                    targets=target_rows)
+
+    def _restart_version_directory(self, generation, post_key_value,
+                                   date_summary, list_directory):
+        need(type(generation) is int and generation >= 1,
+             'INVALID_RESTART_GENERATION')
+        _hex(post_key_value, 'INVALID_POST_KEY')
+        need(isinstance(date_summary, str), 'INVALID_RESTART_SCOPE')
+        list_directory = Path(list_directory).expanduser().absolute()
+        need(list_directory.is_absolute() and
+             str(list_directory) == os.path.normpath(str(list_directory)),
+             'INVALID_RESTART_SCOPE')
+        base = safe_component(date_summary or 'post')
+        while len(base.encode('utf-8')) > 120:
+            base = base[:-1]
+        generation_name = 'g%08d' % generation
+        version_directory = (list_directory / 'versions' /
+                             generation_name /
+                             (base + '_' + post_key_value[:8]))
+        need(version_directory.is_relative_to(list_directory),
+             'INVALID_RESTART_SCOPE')
+        return version_directory
+
+    def _restart_open_confirmation(self):
+        restart = self._restart_projection()
+        open_rows = [event for event in restart['confirmations'].values()
+                     if event['data']['restart_id'] not in
+                     restart['activations']]
+        open_rows.sort(key=lambda event: event['sequence'])
+        need(len(open_rows) <= 1, 'MULTIPLE_OPEN_RESTART_BATCHES')
+        return open_rows[0] if open_rows else None
+
+    def _restart_progress(self, confirmation_event):
+        confirmation = confirmation_event['data']
+        restart_id = confirmation['restart_id']
+        restart = self._restart_projection()
+        activated = restart_id in restart['activations']
+        plans_by_media = {}
+        for plan in restart['plans'].values():
+            if plan['data']['restart_id'] == restart_id:
+                plans_by_media.setdefault(plan['data']['media_key'], []).append(plan)
+        candidates = {
+            event['data']['media_key']: event
+            for event in restart['candidates'].values()
+            if event['data']['restart_id'] == restart_id
+        }
+        attempts = self._attempt_projection()
+        rows = []
+        for post in confirmation['scope']['posts']:
+            for row in post['media']:
+                key = row['media_key']
+                attempt_ids = [
+                    attempt_id for attempt_id in
+                    attempts['attempts_by_media'].get(key, [])
+                    if attempts['attempts'][attempt_id]['schema'] ==
+                    'line-notes-intent/v3' and
+                    attempts['attempts'][attempt_id]['restart_id'] == restart_id]
+                latest_attempt = None
+                if attempt_ids:
+                    latest_attempt = max(attempt_ids,
+                                         key=lambda value: attempts['order'][value])
+                result = (self._attempt_result(latest_attempt, attempts)
+                          if latest_attempt is not None else None)
+                if key in candidates:
+                    availability = self._candidate_file_availability(
+                        candidates[key]['data']['candidate'])
+                    action = ('ACTIVE' if activated else
+                              'CANDIDATE_VERIFIED'
+                              if availability == LOCAL_VERIFIED else
+                              'CANDIDATE_RECHECK_REQUIRED')
+                elif (activated and key in restart['active_by_media'] and
+                      restart['active_by_media'][key]['activation']['data'][
+                          'restart_id'] == restart_id):
+                    action = 'ACTIVE'
+                elif latest_attempt is None:
+                    action = 'INTENT_REQUIRED'
+                elif result in (None, 'UNKNOWN'):
+                    action = 'RECONCILE_OR_NEW_INTENT'
+                elif result == 'DOWNLOAD_FINISHED':
+                    action = 'COPY_AND_VERIFY_REQUIRED'
+                else:
+                    action = 'NEW_INTENT_REQUIRED'
+                rows.append(dict(media_key=key, post_key=post['post_key'],
+                                 attempt_id=latest_attempt, result=result,
+                                 plan_count=len(plans_by_media.get(key, [])),
+                                 candidate_ref=(_event_ref(candidates[key])
+                                                if key in candidates else None),
+                                 action=action))
+        return dict(restart_id=restart_id,
+                    generation=confirmation['generation'],
+                    confirmation_ref=_event_ref(confirmation_event),
+                    scope_digest=confirmation['scope_digest'],
+                    activated=activated,
+                    activation_ref=(_event_ref(restart['activations'][restart_id])
+                                    if activated else None),
+                    media=rows)
+
+    def restart_preview(self):
+        with self.locked():
+            open_confirmation = self._restart_open_confirmation()
+            if open_confirmation is not None:
+                data = open_confirmation['data']
+                targets, estimated = self._restart_target_rows(data)
+                return dict(
+                    schema='line-notes-restart-preview/v1',
+                    status='OPEN_BATCH', restart_required=True,
+                    restart_id=data['restart_id'], generation=data['generation'],
+                    expected_tip=data['expected_tip'], scope=data['scope'],
+                    scope_digest=data['scope_digest'], targets=targets,
+                    estimated_extra_bytes=estimated,
+                    open_batch=self._restart_progress(open_confirmation),
+                    dispatch_authorized=False,
+                    external_copy_verified=False,
+                    real_line_e2e='NOT_TESTED')
+            preview = self._current_restart_scope()
+            return dict(schema='line-notes-restart-preview/v1',
+                        status=('RESTART_REQUIRED' if preview['scope']['posts']
+                                else 'NO_RESTART_REQUIRED'),
+                        restart_required=bool(preview['scope']['posts']),
+                        **preview, open_batch=None,
+                        dispatch_authorized=False,
+                        external_copy_verified=False,
+                        real_line_e2e='NOT_TESTED')
+
+    def restart_confirm(self, *, session_id, preview, evidence):
+        need(isinstance(preview, dict), 'INVALID_RESTART_PREVIEW')
+        required = {'restart_id', 'generation', 'expected_tip', 'scope',
+                    'scope_digest'}
+        need(required <= set(preview), 'INVALID_RESTART_PREVIEW')
+        with self.locked():
+            self._require_session(session_id)
+            restart_id = preview['restart_id']
+            existing = self._restart_projection()['confirmations'].get(restart_id)
+            if existing is not None:
+                data = existing['data']
+                need(data['generation'] == preview['generation'] and
+                     data['expected_tip'] == preview['expected_tip'] and
+                     data['scope'] == preview['scope'] and
+                     data['scope_digest'] == preview['scope_digest'],
+                     'RESTART_CONFIRMATION_CHANGED')
+                return dict(data, status='CONFIRMED', replayed=True,
+                            progress=self._restart_progress(existing),
+                            dispatch_authorized=False,
+                            external_copy_verified=False,
+                            real_line_e2e='NOT_TESTED')
+            open_confirmation = self._restart_open_confirmation()
+            need(open_confirmation is None,
+                 'RESTART_BATCH_ALREADY_OPEN')
+            need(preview['expected_tip'] == _event_ref(self.events[-1]),
+                 'RESTART_EXPECTED_TIP_CHANGED')
+            current = self._current_restart_scope()
+            need(current['scope']['posts'], 'RESTART_NOT_REQUIRED')
+            need(preview['restart_id'] == current['restart_id'] and
+                 preview['generation'] == current['generation'] and
+                 preview['expected_tip'] == current['expected_tip'] and
+                 preview['scope'] == current['scope'] and
+                 preview['scope_digest'] == current['scope_digest'],
+                 'RESTART_PREVIEW_CHANGED')
+            self._validate_restart_scope_shape(
+                current['scope'], current['generation'])
+            context = _evidence_context(list_key=self.list_data['list_key'],
+                                        scan_id=current['scope']['scan_id'])
+            data = dict(schema=RESTART_CONFIRM_SCHEMA,
+                        restart_id=current['restart_id'],
+                        generation=current['generation'],
+                        scope_digest=current['scope_digest'],
+                        expected_tip=current['expected_tip'],
+                        scope=current['scope'],
+                        evidence=_preserve_evidence(
+                            self.records, evidence, context),
+                        session_id=session_id)
+            self.append('restart-confirm', data)
+            return dict(data, status='CONFIRMED', replayed=False,
+                        progress=self._restart_progress(self.events[-1]),
+                        dispatch_authorized=False,
+                        external_copy_verified=False,
+                        real_line_e2e='NOT_TESTED')
+
+    def _restart_intent(self, *, session_id, media_key_value, restart_id):
+        with self.locked():
+            self._require_session(session_id)
+            confirmation = self._restart_projection()['confirmations'].get(
+                restart_id)
+            need(confirmation is not None, 'RESTART_CONFIRMATION_REQUIRED')
+            need(restart_id not in self._restart_projection()['activations'],
+                 'RESTART_ALREADY_ACTIVATED')
+            confirmation_data = confirmation['data']
+            scope_media = {
+                row['media_key']: (post, row)
+                for post in confirmation_data['scope']['posts']
+                for row in post['media']}
+            scope_row = scope_media.get(media_key_value)
+            need(scope_row is not None, 'RESTART_INTENT_OUTSIDE_SCOPE')
+            post, scoped = scope_row
+            list_directory = self._require_current_list_directory()
+            latest_scan_id = self._latest_complete_scan_id()
+            latest_scan = self._event_by_sequence(
+                self._open_scan()[1][latest_scan_id]['start']['sequence'])
+            need(latest_scan is not None and
+                 latest_scan['sequence'] > confirmation['sequence'],
+                 'POST_CONFIRMATION_RECOVERY_SCAN_REQUIRED')
+            posts = self._assert_dispatch_inventory()
+            observed_posts = {row['post_key'] for row in posts}
+            media, _ = self._media_projection()
+            need(media_key_value in media, 'MEDIA_NOT_OBSERVED')
+            target = media[media_key_value]
+            need(target['post_key'] == post['post_key'] and
+                 target['identity'] == scoped['identity'] and
+                 target['post_key'] in observed_posts,
+                 'RESTART_MEDIA_IDENTITY_CHANGED')
+            need(not target.get('missing'), 'MEDIA_CURRENTLY_MISSING')
+            need(target.get('scan_id') == latest_scan_id,
+                 'STALE_MEDIA_INVENTORY')
+            detail = self._post_detail_for_scan(target['post_key'], latest_scan_id)
+            need(detail is not None and not detail['no_media'],
+                 'POST_MEDIA_DETAIL_REQUIRED')
+            need(media_key_value not in self._source_unavailable_projection(),
+                 'SOURCE_UNAVAILABLE_NO_RECOVERY')
+            status = self._status_map()[media_key_value]
+            need(status not in ('EXCLUDED', 'PROTECTED_HISTORY'),
+                 'EXCLUDED_OR_PROTECTED_NO_REDOWNLOAD')
+            need(status != 'COMPLETED' or media_key_value in scope_media,
+                 'COMPLETED_OR_EXCLUDED_NO_REDOWNLOAD')
+            need(not self._pending_publish_plans(),
+                 'PENDING_NAMING_TRANSACTION')
+            self._assert_no_local_changed(allowing=scope_media)
+            attempts = self._attempt_projection()
+            prior = attempts['latest_by_media'].get(media_key_value)
+            if prior is not None:
+                prior_data = attempts['attempts'][prior]
+                if (prior_data['schema'] == 'line-notes-intent/v3' and
+                        prior_data.get('restart_id') == restart_id):
+                    prior_result = self._attempt_result(prior, attempts)
+                    need(prior_result in (None, 'UNKNOWN', 'STOPPED', 'NOT_SENT'),
+                         'RESTART_ATTEMPT_ALREADY_OPEN_OR_FINISHED')
+            resolved = set(self._completion_projection()[0])
+            resolved |= set(self._active_media_versions())
+            for other_key, attempt_id in attempts['latest_by_media'].items():
+                if other_key in scope_media:
+                    continue
+                if other_key in resolved:
+                    continue
+                result = self._attempt_result(attempt_id, attempts)
+                need(result in ('STOPPED', 'NOT_SENT'),
+                     'ANOTHER_MEDIA_ATTEMPT_UNRESOLVED')
+            self._assert_dispatch_coverage()
+            staging = _new_unique_directory(list_directory,
+                                             '.line-notes-incoming-')
+            need(not any(staging.iterdir()), 'EMPTY_STAGING_REQUIRED')
+            info = staging.stat()
+            effective_kind, kind_correction_ref = self._effective_media_kind(
+                media_key_value, target['identity']['kind'])
+            data = dict(schema='line-notes-intent/v3',
+                        restart_id=restart_id,
+                        generation=confirmation_data['generation'],
+                        confirmation_ref=_event_ref(confirmation),
+                        prior_attempt=(_event_ref(self._event_by_sequence(
+                            attempts['order'][prior])) if prior is not None else None),
+                        media_key=media_key_value,
+                        post_key=target['post_key'],
+                        identity=target['identity'],
+                        effective_kind=effective_kind,
+                        kind_correction_ref=kind_correction_ref,
+                        attempt_id=uuid.uuid4().hex,
+                        session_id=session_id,
+                        scan_id=latest_scan_id,
+                        destination=str(staging),
+                        directory_device=info.st_dev,
+                        directory_inode=info.st_ino,
+                        save_all_limit=1,
+                        save_all_count=0)
+            self.append('intent', data)
+            return dict(data, status='UNKNOWN', restart_id=restart_id,
+                        dispatch_authorized=False)
+
+    def intent(self, *, session_id, media_key_value, recovery_evidence=None,
+               restart_id=None):
+        if restart_id is not None:
+            need(recovery_evidence is None,
+                 'RESTART_EVIDENCE_BELONGS_TO_CONFIRMATION')
+            return self._restart_intent(
+                session_id=session_id, media_key_value=media_key_value,
+                restart_id=restart_id)
         with self.locked():
             self._require_session(session_id)
             list_directory = self._require_current_list_directory()
@@ -2686,10 +3880,12 @@ class NotesRecords:
             else:
                 need(recovery_evidence is None,
                      'NO_PRIOR_ATTEMPT_TO_RECOVER')
+            resolved = set(self._completion_projection()[0])
+            resolved |= set(self._active_media_versions())
             for other_key, attempt_id in attempts['latest_by_media'].items():
                 if other_key == media_key_value:
                     continue
-                if other_key in self._completion_projection()[0]:
+                if other_key in resolved:
                     continue
                 other_result = self._attempt_result(attempt_id, attempts)
                 need(other_result in ('STOPPED', 'NOT_SENT'),
@@ -2732,6 +3928,25 @@ class NotesRecords:
              'ONLY_LATEST_ATTEMPT_CAN_CHANGE')
         return projection, media_key_value
 
+    def _restart_attempt_scope(self, attempt_id, projection=None):
+        projection = projection or self._attempt_projection()
+        attempt = projection['attempts'].get(attempt_id)
+        if attempt is None or attempt['schema'] != 'line-notes-intent/v3':
+            return None
+        restart = self._restart_projection()
+        restart_id = attempt['restart_id']
+        confirmation = restart['confirmations'].get(restart_id)
+        need(confirmation is not None, 'RESTART_CONFIRMATION_REQUIRED')
+        need(restart_id not in restart['activations'],
+             'RESTART_ALREADY_ACTIVATED')
+        for post in confirmation['data']['scope']['posts']:
+            for row in post['media']:
+                if (row['media_key'] == attempt['media_key'] and
+                        post['post_key'] == attempt['post_key'] and
+                        row['identity'] == attempt['identity']):
+                    return dict(confirmation=confirmation, post=post, row=row)
+        raise NotesError('RESTART_INTENT_OUTSIDE_SCOPE')
+
     def outcome(self, *, session_id, attempt_id, outcome, evidence):
         need(outcome in OUTCOMES, 'INVALID_OUTCOME')
         with self.locked():
@@ -2740,7 +3955,9 @@ class NotesRecords:
             need(attempt_id not in projection['outcomes'] and
                  attempt_id not in projection['reconciles'],
                  'OUTCOME_ALREADY_RECORDED')
-            need(media_key_value not in self._completion_projection()[0],
+            restart_scope = self._restart_attempt_scope(attempt_id, projection)
+            need(media_key_value not in self._completion_projection()[0] or
+                 restart_scope is not None,
                  'COMPLETION_IMMUTABLE')
             data = dict(schema='line-notes-outcome/v1',
                         attempt_id=attempt_id,
@@ -2759,7 +3976,9 @@ class NotesRecords:
             projection, media_key_value = self._require_latest_attempt(attempt_id)
             current = self._attempt_result(attempt_id, projection)
             need(current == 'UNKNOWN', 'UNKNOWN_OUTCOME_REQUIRED_FOR_RECONCILE')
-            need(media_key_value not in self._completion_projection()[0],
+            restart_scope = self._restart_attempt_scope(attempt_id, projection)
+            need(media_key_value not in self._completion_projection()[0] or
+                 restart_scope is not None,
                  'COMPLETION_IMMUTABLE')
             data = dict(schema='line-notes-reconcile/v1',
                         attempt_id=attempt_id,
@@ -2984,7 +4203,8 @@ class NotesRecords:
     def _media_rows(self):
         media, _ = self._media_projection()
         statuses = self._status_map()
-        availability = self._completion_availability()
+        availability = self._effective_local_availability()
+        active = self._active_media_versions()
         unavailable = self._source_unavailable_projection()
         rows = []
         for key, row in media.items():
@@ -2992,18 +4212,26 @@ class NotesRecords:
             local = availability.get(key, LOCAL_NOT_APPLICABLE)
             effective_kind, correction_ref = self._effective_media_kind(
                 key, row['identity']['kind'])
-            rows.append(dict(media_key=key, post_key=row['post_key'],
-                             identity=row['identity'],
-                             kind=row['identity']['kind'],
-                             effective_kind=effective_kind,
-                             kind_correction_ref=correction_ref,
-                             source_order=row['source_order'],
-                             missing=bool(row.get('missing')),
-                             missing_reason=row.get('missing_reason'),
-                             status=status, local_files=local,
-                             source_availability=(
-                                 'EXPIRED' if key in unavailable
-                                 else 'UNKNOWN')))
+            current = dict(
+                media_key=key, post_key=row['post_key'],
+                identity=row['identity'], kind=row['identity']['kind'],
+                effective_kind=effective_kind,
+                kind_correction_ref=correction_ref,
+                source_order=row['source_order'],
+                missing=bool(row.get('missing')),
+                missing_reason=row.get('missing_reason'),
+                status=status, local_files=local,
+                source_availability=('EXPIRED' if key in unavailable
+                                     else 'UNKNOWN'))
+            if key in active:
+                version = active[key]
+                current.update(
+                    active_restart_id=version['confirmation']['data']['restart_id'],
+                    active_generation=version['confirmation']['data']['generation'],
+                    active_candidate_ref=_event_ref(version['candidate']),
+                    version_directory=str(Path(
+                        version['candidate']['data']['candidate']['path']).parent))
+            rows.append(current)
         return rows
 
     def _effective_media_kind(self, media_key_value, original_kind):
@@ -3103,6 +4331,10 @@ class NotesRecords:
     def _project_summary(self):
         media_rows = self._media_rows()
         post_rows = self._post_rows()
+        open_restart = self._restart_open_confirmation()
+        open_restart_progress = (
+            self._restart_progress(open_restart)
+            if open_restart is not None else None)
         latest, scans = self._open_scan()
         current_scan_id = (
             latest if latest is not None and
@@ -3170,6 +4402,8 @@ class NotesRecords:
         blockers = []
         if scan_coverage != 'COMPLETE':
             blockers.append('SCAN_' + scan_coverage)
+        if open_restart_progress is not None:
+            blockers.append('RESTART_BATCH_OPEN')
         if self._pending_publish_plans():
             blockers.append('PENDING_NAMING')
         if any(row['local_files'] == LOCAL_CHANGED
@@ -3237,6 +4471,8 @@ class NotesRecords:
                     local_counts=local_counts,
                     current_incomplete=current_incomplete,
                     unresolved_attempts=self._unresolved_attempts(),
+                    restart_batch_open=open_restart_progress is not None,
+                    open_restart=open_restart_progress,
                     evidence_corrections=correction_rows,
                     dispatch_blockers=blockers,
                     all_known_media_complete=all_media_complete,
@@ -3268,6 +4504,25 @@ class NotesRecords:
 
     def _post_directory_for_publish(self, post_key_value):
         list_directory = self._require_current_list_directory()
+        active = self._active_media_versions()
+        active_directories = set()
+        for key, version in active.items():
+            candidate = version['candidate']['data']['candidate']
+            if version['candidate']['data']['post_key'] != post_key_value:
+                continue
+            directory = Path(candidate['path']).parent
+            need(directory.is_relative_to(list_directory),
+                 'ACTIVE_VERSION_DIRECTORY_CHANGED')
+            entry = _entry(directory)
+            need(entry is not None and stat.S_ISDIR(entry.st_mode) and
+                 not directory.is_symlink() and
+                 directory == directory.resolve(strict=True),
+                 'ACTIVE_VERSION_DIRECTORY_CHANGED')
+            active_directories.add(directory)
+        need(len(active_directories) <= 1,
+             'MULTIPLE_ACTIVE_VERSION_DIRECTORIES')
+        if active_directories:
+            return active_directories.pop(), True
         completions, _ = self._completion_projection()
         directories = set()
         for event in completions.values():
@@ -3301,19 +4556,35 @@ class NotesRecords:
         need(not any(candidate.iterdir()), 'POST_DIRECTORY_UNEXPECTED_CONTENT')
         return candidate, True
 
-    def _next_media_number(self, post_key_value):
+    def _next_media_number(self, post_key_value, directory):
         maximum = 0
         for event in self.events:
             if event['kind'] == 'completion':
                 data = event['data']
+                if data['destination'] != str(directory):
+                    continue
             elif event['kind'] == 'publish-plan':
                 data = event['data']
+                if data['target_directory'] != str(directory):
+                    continue
+            elif event['kind'] == 'restart-copy-plan':
+                data = event['data']
+                if data['target_directory'] != str(directory):
+                    continue
+            elif event['kind'] == 'restart-candidate':
+                data = event['data']
+                if str(Path(data['candidate']['path']).parent) != str(directory):
+                    continue
             else:
                 continue
             if data['post_key'] != post_key_value:
                 continue
-            name = (data['target_file']['name'] if event['kind'] == 'completion'
-                    else data['target_name'])
+            if event['kind'] == 'completion':
+                name = data['target_file']['name']
+            elif event['kind'] == 'restart-candidate':
+                name = data['candidate']['name']
+            else:
+                name = data['target_name']
             match = re.fullmatch(r'media_(\d+)(\.[^./]+)', name)
             need(match is not None, 'PUBLISHED_MEDIA_NAME_CHANGED')
             maximum = max(maximum, int(match.group(1)))
@@ -3331,7 +4602,8 @@ class NotesRecords:
              'UNSUPPORTED_MEDIA_EXTENSION')
         target_directory, existed = self._post_directory_for_publish(
             intent_data['post_key'])
-        number = self._next_media_number(intent_data['post_key'])
+        number = self._next_media_number(
+            intent_data['post_key'], target_directory)
         width = max(3, len(str(number)))
         target_name = 'media_%0*d%s' % (width, number, suffix)
         need(_entry(target_directory / target_name) is None,
@@ -3375,25 +4647,40 @@ class NotesRecords:
 
     def _target_names_for_directory(self, directory, transaction_id=None):
         names = set()
+        directory_string = str(directory)
         for event in self.events:
             if event['kind'] == 'completion' and \
-                    event['data']['destination'] == str(directory):
+                    event['data']['destination'] == directory_string:
                 names.add(event['data']['target_file']['name'])
             elif event['kind'] == 'publish-plan' and \
-                    event['data']['target_directory'] == str(directory):
+                    event['data']['target_directory'] == directory_string:
                 names.add(event['data']['target_name'])
+            elif event['kind'] == 'restart-copy-plan' and \
+                    event['data']['target_directory'] == directory_string:
+                names.add(event['data']['target_name'])
+            elif event['kind'] == 'restart-candidate' and \
+                    str(Path(event['data']['candidate']['path']).parent) == \
+                    directory_string:
+                names.add(event['data']['candidate']['name'])
         return names
 
     def _ensure_publish_directory(self, plan):
         target_directory = Path(plan['target_directory'])
         list_directory = Path(plan['list_directory'])
         current = self._require_current_list_directory()
+        active_directories = {
+            Path(version['candidate']['data']['candidate']['path']).parent
+            for version in self._active_media_versions().values()}
+        active_target = target_directory in active_directories
         need(list_directory == current and
-             target_directory.parent == current,
+             (target_directory.parent == current or
+              (active_target and target_directory.is_relative_to(current) and
+               target_directory.parent.parent.name == 'versions' and
+               target_directory.parent.parent.parent == current)),
              'PUBLISH_DIRECTORY_OUTSIDE_CURRENT_LIST')
         entry = _entry(target_directory)
         if entry is None:
-            need(plan['target_directory_existed'] is False,
+            need(plan['target_directory_existed'] is False and not active_target,
                  'PRIOR_POST_DIRECTORY_MISSING_USE_DESTINATION')
             try:
                 os.mkdir(str(target_directory), 0o700)
@@ -3580,6 +4867,420 @@ class NotesRecords:
         event = self.events[sequence - 1]
         return event if event['sequence'] == sequence else None
 
+    @staticmethod
+    def _restart_scope_media(confirmation):
+        return {
+            row['media_key']: (post, row)
+            for post in confirmation['scope']['posts']
+            for row in post['media']}
+
+    def _restart_superseded_attempt(self, attempt_id, projection=None):
+        projection = projection or self._attempt_projection()
+        sequence = projection['order'].get(attempt_id)
+        if sequence is None:
+            return False
+        for confirmation in self._restart_projection()['confirmations'].values():
+            for post in confirmation['data']['scope']['posts']:
+                for row in post['media']:
+                    prior = row.get('prior_attempt')
+                    if prior is not None and prior['sequence'] == sequence:
+                        return True
+        return False
+
+    def _validate_attempt_origin_scan(self, intent_data):
+        scan_id = intent_data.get('scan_id')
+        need(isinstance(scan_id, str) and bool(scan_id),
+             'INTENT_SCAN_BINDING_REQUIRED')
+        _latest, scans = self._open_scan()
+        scan = scans.get(scan_id)
+        need(scan is not None and scan['complete'] is not None,
+             'ATTEMPT_SCAN_BINDING_CHANGED')
+        posts = {row['post_key']: row
+                 for row in scan['complete']['data']['posts']}
+        need(intent_data['post_key'] in posts,
+             'ATTEMPT_SCAN_BINDING_CHANGED')
+        detail = self._post_detail_for_scan(
+            intent_data['post_key'], scan_id)
+        need(detail is not None and detail.get('scan_id') == scan_id,
+             'ATTEMPT_SCAN_BINDING_CHANGED')
+        media, _ = self._media_projection()
+        target = media.get(intent_data['media_key'])
+        need(target is not None and
+             target.get('post_key') == intent_data['post_key'] and
+             target.get('scan_id') == scan_id,
+             'ATTEMPT_SCAN_BINDING_CHANGED')
+
+    def _validate_restart_scope_current(self, confirmation):
+        latest, scans = self._open_scan()
+        need(latest is not None and scans[latest]['complete'] is not None,
+             'COMPLETE_NOTES_SCAN_REQUIRED')
+        complete = scans[latest]['complete']
+        need(complete['sequence'] > confirmation['sequence'],
+             'POST_CONFIRMATION_RECOVERY_SCAN_REQUIRED')
+        scan_posts = {row['post_key']: row
+                      for row in complete['data']['posts']}
+        media, _ = self._media_projection()
+        for post in confirmation['data']['scope']['posts']:
+            need(post['post_key'] in scan_posts and
+                 scan_posts[post['post_key']]['identity'] == post['identity'],
+                 'RESTART_SCOPE_POST_CHANGED')
+            expected = {row['media_key'] for row in post['media']}
+            expected |= {row['media_key'] for row in post['missing']}
+            current = {
+                key for key, row in media.items()
+                if row.get('post_key') == post['post_key'] and
+                row.get('scan_id') == latest}
+            need(current == expected, 'RESTART_SCOPE_MEDIA_CHANGED')
+            for key in expected:
+                row = media.get(key)
+                need(row is not None and row.get('post_key') == post['post_key'],
+                     'RESTART_SCOPE_MEDIA_CHANGED')
+                scope_row = next(
+                    (item for item in post['media'] + post['missing']
+                     if item['media_key'] == key), None)
+                need(scope_row is not None, 'RESTART_SCOPE_MEDIA_CHANGED')
+                if 'identity' in scope_row:
+                    need(row.get('identity') == scope_row['identity'],
+                         'RESTART_SCOPE_MEDIA_CHANGED')
+        return latest
+
+    def _restart_version_target_directory(self, confirmation, post):
+        version_directory = Path(post['version_directory'])
+        list_directory = self._require_current_list_directory()
+        need(version_directory.parent.parent.name == 'versions' and
+             version_directory.parent.parent.parent == list_directory and
+             version_directory.parent.name.startswith('g') and
+             version_directory.parent.name == 'g%08d' %
+             confirmation['generation'],
+             'RESTART_VERSION_DIRECTORY_CHANGED')
+        return version_directory
+
+    def _restart_target_names_for_directory(self, directory):
+        names = set()
+        directory_string = str(directory)
+        for event in self.events:
+            kind, data = event['kind'], event['data']
+            if kind == 'completion' and data['destination'] == directory_string:
+                names.add(data['target_file']['name'])
+            elif kind == 'publish-plan' and data['target_directory'] == directory_string:
+                names.add(data['target_name'])
+            elif kind == 'restart-copy-plan' and data['target_directory'] == directory_string:
+                names.add(data['target_name'])
+            elif kind == 'restart-candidate' and str(
+                    Path(data['candidate']['path']).parent) == directory_string:
+                names.add(data['candidate']['name'])
+        return names
+
+    def _next_restart_media_number(self, target_directory):
+        maximum = 0
+        for name in self._restart_target_names_for_directory(target_directory):
+            match = re.fullmatch(r'media_([0-9]+)(\.[^./]+)', name)
+            need(match is not None, 'PUBLISHED_MEDIA_NAME_CHANGED')
+            maximum = max(maximum, int(match.group(1)))
+        return maximum + 1
+
+    def _ensure_restart_version_directory(self, plan):
+        list_directory = self._require_current_list_directory()
+        need(plan['list_directory'] == str(list_directory),
+             'RESTART_LIST_DIRECTORY_CHANGED')
+        target_directory = Path(plan['target_directory'])
+        need(target_directory.is_absolute() and
+             target_directory.is_relative_to(list_directory) and
+             target_directory.parent.parent.name == 'versions' and
+             target_directory.parent.parent.parent == list_directory,
+             'RESTART_VERSION_DIRECTORY_CHANGED')
+        for directory in (list_directory / 'versions',
+                          target_directory.parent,
+                          target_directory):
+            entry = _entry(directory)
+            if entry is None:
+                try:
+                    os.mkdir(str(directory), 0o700)
+                except FileExistsError:
+                    pass
+                sync_dir(directory.parent)
+                entry = _entry(directory)
+            need(entry is not None and stat.S_ISDIR(entry.st_mode) and
+                 not directory.is_symlink() and
+                 directory == directory.resolve(strict=True),
+                 'RESTART_VERSION_DIRECTORY_CHANGED')
+        expected = self._restart_target_names_for_directory(target_directory)
+        actual = {path.name for path in target_directory.iterdir()}
+        need(actual <= expected, 'RESTART_VERSION_DIRECTORY_UNEXPECTED_CONTENT')
+        return target_directory
+
+    def _append_restart_copy_plan(self, *, confirmation_event, intent_data,
+                                  source):
+        confirmation = confirmation_event['data']
+        scope = self._restart_scope_media(confirmation)
+        entry = scope.get(intent_data['media_key'])
+        need(entry is not None, 'RESTART_INTENT_OUTSIDE_SCOPE')
+        post, _scope_row = entry
+        target_directory = self._restart_version_target_directory(
+            confirmation, post)
+        target_directory_existed = _entry(target_directory) is not None
+        number = self._next_restart_media_number(target_directory)
+        width = max(3, len(str(number)))
+        suffix = Path(source['name']).suffix
+        _validate_media_suffix(self._attempt_kind(intent_data), source['name'])
+        target_name = 'media_%0*d%s' % (width, number, suffix)
+        target_path = target_directory / target_name
+        need(_entry(target_path) is None, 'TARGET_ALREADY_EXISTS')
+        data = dict(schema=RESTART_COPY_PLAN_SCHEMA,
+                    plan_id=uuid.uuid4().hex,
+                    restart_id=intent_data['restart_id'],
+                    generation=intent_data['generation'],
+                    confirmation_ref=_event_ref(confirmation_event),
+                    attempt_id=intent_data['attempt_id'],
+                    media_key=intent_data['media_key'],
+                    post_key=intent_data['post_key'],
+                    source=source,
+                    list_directory=str(self._require_current_list_directory()),
+                    target_directory=str(target_directory),
+                    target_name=target_name,
+                    number=number,
+                    extension=suffix,
+                    target_directory_existed=target_directory_existed,
+                    created_at=_utc_now())
+        self.append('restart-copy-plan', data)
+        return self.events[-1], target_path
+
+    def _stable_candidate_file(self, path, interval):
+        samples = []
+        for sample in range(3):
+            if sample and interval:
+                time.sleep(interval)
+            row = _inventory_row(path)
+            need(not samples or row == samples[-1],
+                 'RESTART_CANDIDATE_NOT_STABLE')
+            samples.append(row)
+        return samples[-1]
+
+    def _restart_verify_locked(self, *, session_id, attempt_id, decoder=None,
+                               decoder_sha256=None, verifier=None,
+                               stability_interval=DEFAULT_STABILITY_INTERVAL,
+                               progress_callback=None,
+                               stall_seconds=DEFAULT_STALL_SECONDS):
+        need(verifier is None or self._allow_injected_verification,
+             'INJECTED_VERIFICATION_NOT_ALLOWED')
+        self._require_session(session_id)
+        projection, media_key_value = self._require_latest_attempt(attempt_id)
+        intent_data = projection['attempts'][attempt_id]
+        need(intent_data['schema'] == 'line-notes-intent/v3',
+             'RESTART_INTENT_REQUIRED')
+        restart = self._restart_projection()
+        restart_id = intent_data['restart_id']
+        confirmation = restart['confirmations'].get(restart_id)
+        need(confirmation is not None, 'RESTART_CONFIRMATION_REQUIRED')
+        need(restart_id not in restart['activations'],
+             'RESTART_ALREADY_ACTIVATED')
+        scope = self._restart_scope_media(confirmation['data'])
+        entry = scope.get(media_key_value)
+        need(entry is not None and
+             entry[0]['post_key'] == intent_data['post_key'] and
+             entry[1]['identity'] == intent_data['identity'],
+             'RESTART_INTENT_OUTSIDE_SCOPE')
+        existing = restart['candidates'].get(media_key_value)
+        if existing is not None:
+            need(existing['data']['restart_id'] == restart_id,
+                 'RESTART_CANDIDATE_ATTEMPT_CHANGED')
+            if (existing['data']['attempt_id'] == attempt_id and
+                    self._candidate_file_availability(
+                        existing['data']['candidate']) == LOCAL_VERIFIED):
+                return dict(existing['data'], status='CANDIDATE_VERIFIED',
+                            replayed=True,
+                            candidate_ref=_event_ref(existing),
+                            dispatch_authorized=False)
+        need(self._attempt_result(attempt_id, projection) ==
+             'DOWNLOAD_FINISHED', 'KNOWN_DOWNLOAD_FINISH_REQUIRED')
+        self._validate_attempt_origin_scan(intent_data)
+        self._assert_no_local_changed(allowing=scope)
+        need(not self._pending_publish_plans(),
+             'PENDING_NAMING_TRANSACTION')
+        staging = self._validate_staging(intent_data)
+        stable = _stable_media_inventory(
+            staging, expected=1, interval=stability_interval)
+        source = stable[0]
+        kind = self._attempt_kind(intent_data)
+        _validate_media_suffix(kind, source['name'])
+        plans = [
+            event for event in restart['plans'].values()
+            if event['data']['attempt_id'] == attempt_id and
+            event['data']['media_key'] == media_key_value and
+            event['data']['plan_id'] not in restart['candidates_by_plan']]
+        plans.sort(key=lambda event: event['sequence'])
+        plan_event = plans[-1] if plans else None
+        target_path = None
+        if plan_event is not None:
+            need(plan_event['data']['source'] == source,
+                 'RESTART_COPY_SOURCE_CHANGED')
+            candidate_path = (Path(plan_event['data']['target_directory']) /
+                              plan_event['data']['target_name'])
+            if _entry(candidate_path) is None:
+                target_path = candidate_path
+        if target_path is None:
+            plan_event, target_path = self._append_restart_copy_plan(
+                confirmation_event=confirmation, intent_data=intent_data,
+                source=source)
+        target_directory = self._ensure_restart_version_directory(
+            plan_event['data'])
+        need(target_path.parent == target_directory,
+             'RESTART_COPY_TARGET_CHANGED')
+        try:
+            media_verify.copy_exclusive(
+                Path(source['path']), target_path, source)
+        except media_verify.MediaVerificationError as exc:
+            raise NotesMediaVerificationError(exc.code, exc.evidence) from exc
+        candidate = self._stable_candidate_file(
+            target_path, stability_interval)
+        need(candidate['size'] == source['size'] and
+             candidate['sha256'] == source['sha256'],
+             'ISOLATED_COPY_MISMATCH')
+        verification = _verify_media(
+            kind=kind, path=target_path, row=candidate,
+            identity=intent_data['identity'], records=self.records,
+            decoder=decoder, decoder_sha256=decoder_sha256,
+            verifier=verifier, progress_callback=progress_callback,
+            stall_seconds=stall_seconds,
+            stability_interval=stability_interval)
+        after = _inventory_row(target_path)
+        need(after == candidate, 'RESTART_CANDIDATE_CHANGED')
+        data = dict(schema=RESTART_CANDIDATE_SCHEMA,
+                    restart_id=restart_id,
+                    generation=intent_data['generation'],
+                    plan_ref=_event_ref(plan_event),
+                    attempt_id=attempt_id,
+                    media_key=media_key_value,
+                    post_key=intent_data['post_key'],
+                    kind=kind,
+                    source=source,
+                    candidate=candidate,
+                    manifest=[candidate],
+                    manifest_sha256=digest(encoded([candidate])),
+                    verification=verification,
+                    verified_at=_utc_now())
+        self.append('restart-candidate', data)
+        return dict(data, status='CANDIDATE_VERIFIED', replayed=False,
+                    candidate_ref=_event_ref(self.events[-1]),
+                    dispatch_authorized=False)
+
+    def _restart_activate_locked(self, *, session_id):
+        self._require_session(session_id)
+        restart = self._restart_projection()
+        confirmation = self._restart_open_confirmation()
+        need(confirmation is not None, 'NO_OPEN_RESTART_BATCH')
+        restart_id = confirmation['data']['restart_id']
+        need(restart_id not in restart['activations'],
+             'RESTART_ALREADY_ACTIVATED')
+        self._validate_restart_scope_current(confirmation)
+        need(not self._pending_publish_plans(),
+             'PENDING_NAMING_TRANSACTION')
+        candidates = {
+            event['data']['media_key']: event
+            for event in restart['candidates'].values()
+            if event['data']['restart_id'] == restart_id}
+        rows = []
+        for post in confirmation['data']['scope']['posts']:
+            for scope_row in sorted(post['media'],
+                                    key=lambda item: item['media_key']):
+                key = scope_row['media_key']
+                candidate = candidates.get(key)
+                need(candidate is not None,
+                     'RESTART_CANDIDATE_REQUIRED')
+                need(candidate['data']['post_key'] == post['post_key'] and
+                     candidate['data']['media_key'] == key,
+                     'RESTART_CANDIDATE_SCOPE_CHANGED')
+                availability = self._candidate_file_availability(
+                    candidate['data']['candidate'])
+                need(availability == LOCAL_VERIFIED,
+                     'RESTART_CANDIDATE_CHANGED')
+                rows.append(dict(media_key=key,
+                                 post_key=post['post_key'],
+                                 candidate_ref=_event_ref(candidate),
+                                 candidate=candidate['data']['candidate']))
+        rows.sort(key=lambda row: row['media_key'])
+        data = dict(schema=RESTART_ACTIVATION_SCHEMA,
+                    restart_id=restart_id,
+                    generation=confirmation['data']['generation'],
+                    confirmation_ref=_event_ref(confirmation),
+                    scope_digest=confirmation['data']['scope_digest'],
+                    candidates=rows,
+                    session_id=session_id,
+                    activated_at=_utc_now())
+        self.append('restart-activation', data)
+        return dict(data, status='ACTIVATED', replayed=False,
+                    activation_ref=_event_ref(self.events[-1]),
+                    progress=self._restart_progress(confirmation),
+                    dispatch_authorized=False,
+                    external_copy_verified=False,
+                    real_line_e2e='NOT_TESTED')
+
+    def restart_resume(self, *, session_id, decoder=None,
+                       decoder_sha256=None, verifier=None,
+                       stability_interval=DEFAULT_STABILITY_INTERVAL,
+                       progress_callback=None,
+                       stall_seconds=DEFAULT_STALL_SECONDS):
+        with self.locked():
+            self._require_session(session_id)
+            restart = self._restart_projection()
+            confirmation = self._restart_open_confirmation()
+            if confirmation is None:
+                activated = [
+                    event for event in restart['activations'].values()]
+                if activated:
+                    event = max(activated, key=lambda row: row['sequence'])
+                    return dict(action='ALREADY_ACTIVATED',
+                                activation=event['data'],
+                                activation_ref=_event_ref(event),
+                                dispatch_authorized=False)
+                return dict(action='NO_OPEN_RESTART_BATCH',
+                            dispatch_authorized=False)
+            restart_id = confirmation['data']['restart_id']
+            scope = self._restart_scope_media(confirmation['data'])
+            for key in sorted(scope):
+                candidate = restart['candidates'].get(key)
+                if (candidate is not None and
+                        self._candidate_file_availability(
+                            candidate['data']['candidate']) == LOCAL_VERIFIED):
+                    continue
+                attempt_id = self._attempt_projection()['latest_by_media'].get(key)
+                if attempt_id is None:
+                    continue
+                attempt = self._attempt_projection()['attempts'][attempt_id]
+                if (attempt.get('schema') == 'line-notes-intent/v3' and
+                        attempt.get('restart_id') == restart_id and
+                        self._attempt_result(attempt_id) ==
+                        'DOWNLOAD_FINISHED'):
+                    self._restart_verify_locked(
+                        session_id=session_id, attempt_id=attempt_id,
+                        decoder=decoder, decoder_sha256=decoder_sha256,
+                        verifier=verifier,
+                        stability_interval=stability_interval,
+                        progress_callback=progress_callback,
+                        stall_seconds=stall_seconds)
+            restart = self._restart_projection()
+            candidates = {
+                event['data']['media_key']: event
+                for event in restart['candidates'].values()
+                if event['data']['restart_id'] == restart_id}
+            ready = all(
+                key in candidates and self._candidate_file_availability(
+                    candidates[key]['data']['candidate']) == LOCAL_VERIFIED
+                for key in scope)
+            progress = self._restart_progress(confirmation)
+            if ready:
+                activated = self._restart_activate_locked(
+                    session_id=session_id)
+                return dict(action='RESTART_ACTIVATED',
+                            activation=activated, progress=progress,
+                            dispatch_authorized=False,
+                            external_copy_verified=False,
+                            real_line_e2e='NOT_TESTED')
+            return dict(action='RESTART_IN_PROGRESS', progress=progress,
+                        dispatch_authorized=False,
+                        external_copy_verified=False,
+                        real_line_e2e='NOT_TESTED')
+
     def verify(self, *, session_id, attempt_id, decoder=None,
                decoder_sha256=None, verifier=None,
                stability_interval=DEFAULT_STABILITY_INTERVAL,
@@ -3589,6 +5290,17 @@ class NotesRecords:
         with self.locked():
             self._require_session(session_id)
             projection, media_key_value = self._require_latest_attempt(attempt_id)
+            if projection['attempts'][attempt_id]['schema'] == \
+                    'line-notes-intent/v3':
+                return self._restart_verify_locked(
+                    session_id=session_id, attempt_id=attempt_id,
+                    decoder=decoder, decoder_sha256=decoder_sha256,
+                    verifier=verifier,
+                    stability_interval=stability_interval,
+                    progress_callback=progress_callback,
+                    stall_seconds=stall_seconds)
+            need(not self._restart_superseded_attempt(
+                     attempt_id, projection), 'RESTART_SUPERSEDED_ATTEMPT')
             self._require_attempt_scan_binding(
                 projection['attempts'][attempt_id])
             need(media_key_value not in self._completion_projection()[0],
@@ -3651,6 +5363,8 @@ class NotesRecords:
             if plans:
                 attempt_id = plans[0]['data']['attempt_id']
                 attempts = self._attempt_projection()
+                need(not self._restart_superseded_attempt(
+                         attempt_id, attempts), 'RESTART_SUPERSEDED_ATTEMPT')
                 intent_data = attempts['attempts'].get(attempt_id)
                 need(intent_data is not None, 'PUBLISH_ATTEMPT_CHANGED')
                 self._require_attempt_scan_binding(
@@ -4247,11 +5961,17 @@ def _build_notes_parser():
                       help='Private foreground handoff evidence')
     bind.add_argument('--context-id')
 
-    scan = sub.add_parser('scan', help='Start or finish a complete list scan')
-    add_records(scan, 'Start or finish a complete list scan')
-    scan.add_argument('action', choices=('start', 'finish'))
+    scan = sub.add_parser(
+        'scan', help='Start, finish, or interrupt a complete list scan')
+    add_records(scan, 'Start, finish, or interrupt a complete list scan')
+    scan.add_argument('action', choices=('start', 'finish', 'interrupt'))
     scan.add_argument('--session-id', required=True)
-    scan.add_argument('--scan-id', help='Required for finish; forbidden for start')
+    scan.add_argument('--scan-id',
+                      help='Required for finish/interrupt; forbidden for start')
+    scan.add_argument('--recovery', action='store_true',
+                      help='Mark a recovery-evaluation scan (start only)')
+    scan.add_argument('--reason',
+                      help='Required interruption reason (interrupt only)')
     scan.add_argument('--evidence', required=True,
                       help='Private scan boundary/top-bottom evidence')
 
@@ -4294,8 +6014,26 @@ def _build_notes_parser():
     add_records(intent, 'Persist one download attempt before dispatch')
     intent.add_argument('--session-id', required=True)
     intent.add_argument('--media-key', required=True)
+    intent.add_argument('--restart-id',
+                        help='Confirmed restart batch for this attempt')
     intent.add_argument('--recovery-evidence',
                         help='Required only when recovering a STOPPED/NOT_SENT attempt')
+
+    restart = sub.add_parser(
+        'restart', help='Preview, confirm, or resume one restart batch')
+    add_records(restart, 'Preview, confirm, or resume one restart batch')
+    restart.add_argument('action', choices=('preview', 'confirm', 'resume'))
+    restart.add_argument('--session-id',
+                         help='Required for confirm/resume')
+    restart.add_argument('--preview',
+                         help='JSON preview object or @JSON-file for confirm')
+    restart.add_argument('--evidence',
+                         help='Owner confirmation evidence for confirm')
+    restart.add_argument('--decoder', help='Photo ImageIO decoder executable')
+    restart.add_argument('--decoder-sha256', help='Expected decoder SHA-256')
+    restart.add_argument('--stall-seconds', type=float,
+                         default=DEFAULT_STALL_SECONDS,
+                         help='Video decode progress watchdog seconds')
 
     outcome = sub.add_parser('outcome', help='Append the first observed attempt outcome')
     add_records(outcome, 'Append the first observed attempt outcome')
@@ -4433,7 +6171,7 @@ def main(argv=None):
                               'verify', 'resume', 'summary', 'evidence-audit',
                               'evidence-correct', 'media-kind-correct',
                               'source-unavailable', 'destination', 'exclude',
-                              'protect'):
+                              'protect', 'restart'):
             records = NotesRecords(args.records_root)
             if args.command == 'memory':
                 result = records.memory()
@@ -4447,11 +6185,19 @@ def main(argv=None):
                 if args.action == 'start':
                     if args.scan_id is not None:
                         parser.error('--scan-id is not accepted for scan start')
-                elif args.scan_id is None:
-                    parser.error('--scan-id is required for scan finish')
+                    if args.reason is not None:
+                        parser.error('--reason is only accepted for scan interrupt')
+                else:
+                    if args.scan_id is None:
+                        parser.error('--scan-id is required for scan ' + args.action)
+                    if args.recovery:
+                        parser.error('--recovery is only accepted for scan start')
+                    if args.action == 'finish' and args.reason is not None:
+                        parser.error('--reason is only accepted for scan interrupt')
                 result = records.scan(
                     session_id=args.session_id, action=args.action.upper(),
-                    scan_id=args.scan_id, evidence=args.evidence)
+                    scan_id=args.scan_id, evidence=args.evidence,
+                    recovery=args.recovery, reason=args.reason)
             elif args.command == 'page':
                 posts = _json_cli_argument(parser, args.posts, '--posts')
                 overlap = _json_cli_argument(parser, args.overlap_keys,
@@ -4490,7 +6236,8 @@ def main(argv=None):
                 result = records.intent(
                     session_id=args.session_id,
                     media_key_value=args.media_key,
-                    recovery_evidence=args.recovery_evidence)
+                    recovery_evidence=args.recovery_evidence,
+                    restart_id=args.restart_id)
             elif args.command == 'outcome':
                 result = records.outcome(
                     session_id=args.session_id, attempt_id=args.attempt_id,
@@ -4555,6 +6302,40 @@ def main(argv=None):
                 result = records.protect(
                     media_key_value=args.media_key,
                     reason=args.reason, evidence=args.evidence)
+            elif args.command == 'restart':
+                if args.action == 'preview':
+                    if any(value is not None for value in (
+                            args.session_id, args.preview, args.evidence,
+                            args.decoder, args.decoder_sha256)):
+                        parser.error('restart preview accepts only --records-root')
+                    result = records.restart_preview()
+                elif args.action == 'confirm':
+                    if not args.session_id or args.preview is None or \
+                            args.evidence is None:
+                        parser.error('restart confirm requires --session-id, '
+                                     '--preview, and --evidence')
+                    if args.decoder is not None or \
+                            args.decoder_sha256 is not None:
+                        parser.error('restart confirm does not accept decoder options')
+                    preview = _json_cli_argument(parser, args.preview, '--preview')
+                    result = records.restart_confirm(
+                        session_id=args.session_id, preview=preview,
+                        evidence=args.evidence)
+                else:
+                    if not args.session_id:
+                        parser.error('restart resume requires --session-id')
+                    if args.preview is not None or args.evidence is not None:
+                        parser.error('restart resume does not accept preview/evidence')
+                    if bool(args.decoder) != bool(args.decoder_sha256):
+                        parser.error('--decoder and --decoder-sha256 must be '
+                                     'provided together')
+                    stall_seconds = _positive_cli_float(
+                        parser, args.stall_seconds, '--stall-seconds')
+                    result = records.restart_resume(
+                        session_id=args.session_id, decoder=args.decoder,
+                        decoder_sha256=args.decoder_sha256,
+                        progress_callback=_cli_progress,
+                        stall_seconds=stall_seconds)
         else:
             parser.error('unknown command')
         _print_cli_result(result)
@@ -4562,9 +6343,11 @@ def main(argv=None):
             return 4
         return 0
     except NotesLockBusy as exc:
+        read_only = (args.command in READ_ONLY_COMMANDS or
+                     (args.command == 'restart' and args.action == 'preview'))
         payload = dict(status='REFUSED', reason='NOTES_LOCK_BUSY',
                        scope=exc.scope, dispatch_authorized=False,
-                       retry_safe=args.command in READ_ONLY_COMMANDS)
+                       retry_safe=read_only)
         print(json.dumps(payload,
                          ensure_ascii=False, separators=(',', ':')))
         return 4

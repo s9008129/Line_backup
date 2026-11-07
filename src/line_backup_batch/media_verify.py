@@ -249,6 +249,28 @@ def _validate_sha256(value, code):
           code)
 
 
+def copy_exclusive(source, target, expected):
+    """Copy one stable source into a new inode and durably publish the name.
+
+    ``expected`` is the public notes source row. The private fingerprint adds
+    mode for the lower-level copy helper; callers must not have to manufacture
+    that implementation detail.
+    """
+    fingerprint = _fingerprint_file(Path(source))
+    for key in ('name', 'device', 'inode', 'nlink', 'size', 'sha256',
+                'mtime_ns', 'ctime_ns'):
+        _need(fingerprint[key] == expected.get(key),
+              'MEDIA_CHANGED_DURING_ISOLATION')
+    copied = _copy_exclusive(source, target, fingerprint)
+    parent = Path(target).parent
+    parent_fd = os.open(str(parent), os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        os.fsync(parent_fd)
+    finally:
+        os.close(parent_fd)
+    return copied
+
+
 def _copy_exclusive(source, target, expected):
     flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW
     source_fd = os.open(str(source), os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
@@ -969,6 +991,7 @@ __all__ = [
     'FFPROBE_PATH',
     'FFPROBE_SHA256',
     'MediaVerificationError',
+    'copy_exclusive',
     'VIDEO_TOOL_PINS',
     'VIDEO_TOOL_VERSION',
     'VerificationError',

@@ -1695,20 +1695,60 @@ class NotesRegressionTests(unittest.TestCase):
                          'SCAN_BINDING_REVIEW_REQUIRED')
         self.assertEqual(self.event_bytes(ledger2.records), before)
 
-    def test_bind_is_refused_while_scan_is_open(self):
+    def test_new_session_bind_interrupts_open_scan_and_recovery_resumes(self):
         ledger = self.new_ledger('bind-open-scan')
-        before = self.event_bytes(ledger.records)
-        ledger.records.scan(
+        post = notes.post_identity(visual_key='bind-open-scan-post')
+        scan = ledger.records.scan(
             session_id=ledger.session, action='START',
             evidence=ledger.evidence_for_scan())
+        ledger.records.page(
+            session_id=ledger.session,
+            scan_id=scan['scan_id'],
+            page_index=0,
+            posts=[dict(identity=post, date_summary='synthetic')],
+            top_reached=True,
+            bottom_reached=True,
+            overlap_keys=[],
+            evidence=ledger.evidence_for_scan(scan['scan_id']),
+        )
         before = self.event_bytes(ledger.records)
-        with self.assertRaises(NotesError) as raised:
-            ledger.records.bind(
-                session_id='new-session-during-open-scan',
-                observation=ledger.evidence_for_scan(),
-                handoff=ledger.evidence_for_scan())
-        self.assertEqual(raised.exception.args[0], 'SCAN_ALREADY_OPEN')
-        self.assertEqual(self.event_bytes(ledger.records), before)
+        new_session = 'new-session-during-open-scan'
+        rebound = self.reopen(ledger)
+        rebound.bind(
+            session_id=new_session,
+            observation=ledger.evidence_for_scan(),
+            handoff=ledger.evidence_for_scan(),
+        )
+        after_bind = self.event_bytes(rebound)
+        for name, raw in before.items():
+            self.assertEqual(after_bind[name], raw)
+
+        latest, scans = rebound._open_scan()
+        self.assertEqual(latest, scan['scan_id'])
+        self.assertIsNone(scans[scan['scan_id']]['complete'])
+        self.assertIsNone(scans[scan['scan_id']]['interrupted'])
+        self.assertEqual(
+            scans[scan['scan_id']]['pages'][0]['data']['posts'][0]['identity'],
+            post)
+
+        interrupted = rebound.scan(
+            session_id=new_session, action='INTERRUPT',
+            scan_id=scan['scan_id'], reason='synthetic foreground loss',
+            evidence=ledger.evidence_for_scan(scan['scan_id']))
+        self.assertEqual(interrupted['action'], 'INTERRUPTED')
+
+        reopened = self.reopen(ledger)
+        recovery = reopened.scan(
+            session_id=new_session, action='START', recovery=True,
+            evidence=ledger.evidence_for_scan())
+        self.assertIn('scan_id', recovery)
+        latest, scans = reopened._open_scan()
+        self.assertEqual(latest, recovery['scan_id'])
+        self.assertIsNone(scans[scan['scan_id']]['complete'])
+        self.assertEqual(
+            scans[scan['scan_id']]['interrupted']['data']['action'],
+            'INTERRUPTED')
+        self.assertEqual(len(scans[scan['scan_id']]['pages']), 1)
 
     def test_page_and_finish_session_mismatch_are_refused_before_append(self):
         ledger = self.new_ledger('scan-session-write-guard')
