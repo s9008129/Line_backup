@@ -1,42 +1,40 @@
-# Planner 交接：list directory 重新見證（草案 v1）
+# Planner 交接：list directory 重新見證（草案 v2）
 
 ## 任務與精確版本
 
-- 角色：Owner 以 `/Users/hsiaojohnny/.codex/prompts/v4.9.0/01_plan_prompt.md` 啟動的 Planner，只做規劃。
-- Repo／分支：`/Users/hsiaojohnny/dev/Line_backup`／`feature/line-notes-media`。
-- 初始 HEAD：`9027d8ea4df41480b785017a7c57a39813907e65`；初始工作樹乾淨。其他 worktree 不修改、不整理。
-- 計畫：本目錄 `plan.md` 草案 v1；尚未核准。交付 commit 以本文件所在 commit 為準，私有 `delivery-receipt.md` 另記精確 HEAD、文件 hashes 與遠端核對，避免在文件內自我引用未生成的 commit。
-- 原提報、根因診斷保留原樣；本輪只新增 plan、handoff、planner-report，追加 progress。未改程式／Skill／測試／帳本／照片影片。
+- 角色：Owner 以 `/Users/hsiaojohnny/.codex/prompts/v4.9.0/01_plan_prompt.md` 啟動 Planner，承接獨立 Plan Review 的 B1；本輪只修訂計畫。
+- Repo／分支：`/Users/hsiaojohnny/dev/Line_backup`／`feature/line-notes-media`；本輪初始 HEAD `0edf5cff88bb605b5c4608990ea6924c0d424e75`，工作樹乾淨，其他 worktree 不整理。
+- 目前候選：本目錄 `plan.md` 草案 v2 與本 handoff；交付 commit 以文件所在提交為準。精確 hashes、實際 commit／push／遠端核對保存在 `.local/line-backup/tasks/notes-volume-plan-20261108/planner-revision-b1/delivery-receipt.md`，不自我引用未生成的 commit。
+- 前版：v1 計畫提交 `1ac98575d7296cfd943b871ff24c29ed467dc47a`；Simplicity Review 提交 `0e681e45a8a6812f9c9dc1061c1b20379a1b894b`；獨立 Plan Review 提交 `0edf5cff88bb605b5c4608990ea6924c0d424e75`。兩份報告只適用 v1，保留原樣。
+- 本輪只改 plan／handoff，新增 `planner-revision-report.md`，追加 progress；原 planner-report、診斷、提報、兩份 review、產品、測試、Skill、手冊、帳本與媒體均保留。
 
-## 本角色完成與可主張的結論
+## 本角色完成與限制
 
-已以原始碼確認：list directory gate 使用 destination 的 device／inode，既有 restart 可在精確 scope 處理 LOCAL_CHANGED；本草案因而採 list-only 追加式轉接。完成可執行的 CLI／事件 schema、witness、確認／查回、OPEN_BATCH、fresh scan gates、相容限制、首切片與驗證 owner 設計。
+Owner 已用白話選擇：「先停下來回報，這版只處理第一次變號（建議；修改較少）」。v2 據此改成**每份帳本至多一筆 `list-directory-reattest`**，不是每個 binding／destination／batch／session 各一次。後續再次漂移一律停止，不補上連續 witness 鏈。
 
-結論為 `PLAN_DRAFT_COMPLETE`，不簽發 plan PASS 或產品 PASS。remount 成因、同物件連續性、舊 UNKNOWN 晚到與真實接續均未證明；前輪 28 events 等真實資料結果只作原證據引用，本輪未重新讀取真實帳本／媒體。
+原 completion／v2 intent 的 before witness 不變；old_binding_ref 只可指當時有效的 created／destination。validator 用歷史 prefix 拒絕第二筆事件。新 preview／非精確 replay confirm 遇已有轉接回 `REATTEST_UNSUPPORTED_STATE`；原精確 replay 仍可在新 session 查回，但當前 guard 再漂移回 `REATTEST_CURRENT_BINDING_CHANGED`，不能宣稱現在可用。精確 replay 分支先於首次轉接限額與 stale-tip／無 v3 條件，不新增事件或授權。
 
-本輪實際來源、命令、exit、檢查與六狀態見 `planner-report.md`；最後交付核對放專案私有 `.local/line-backup/tasks/notes-volume-plan-20261108/`。Owner 指定 GPT-6 Luna helper 只在草案完成後整理 commit 訊息；不作獨立 review 或 acceptance。
+新增 T11 覆蓋 D0→D1→D2（第二次在任何 v3 前）、未漂移查回、新 preview 拒絕、session／destination／batch 不重置、graph 拒絕第二筆及零副作用。T3 加上非法第二事件驗證，T10 納入 T11；fresh recovery scan 仍須 START 晚於唯一轉接。S1 仍只讀 preview，需合法新增事件的檢查在 S2。
 
-## 人工需要決定的事項
+本角色結論為 `PLAN_DRAFT_COMPLETE`，只代表修訂草案可交審。B1 尚未由獨立 Reviewer 接受；v1 的 REVISION_REQUIRED 未被本 Planner 改成 PASS。原備份仍阻塞，沒有實作或下載。
 
-1. 是否接受「witness 相符＋精確 Owner 同意的 binding 轉接」，並承認不能排除完美 clone／無法證明 remount。如果要求更強來源連續性，保留阻塞，不把此草案當成可行放行。
-2. 是否接受首版限 OPEN_BATCH 尚無 v3、完整 v2 witness、空舊 staging 與簡單布局；其他情況明確拒絕。前輪尚未證明真實完整 list 子項集合符合這個布局。
-3. 是否接受 CRITICAL 人工關卡、舊 binary 不可讀新增 event kind 的相容界線，以及真實測試須另授權。不藉計畫核准授權對真實帳本 confirm 或操作 LINE。
+## Owner 下一步與傳遞資料
 
-這些決策均待 Owner；本輪規劃與文件提交已獲授權，沒有把待審設計當成既有同意。
+1. 決定 v2 是否需要重做計畫 Simplicity Review；前版 PASS 不自動涵蓋能力變更。
+2. 另開 CRITICAL 獨立 Plan Reviewer 主 Session，攜帶精確交付 commit／diff、plan v2、本 handoff、`planner-revision-report.md`、原 `plan-review.md`（B1）、`simplicity-plan-review.md`、`issue-analysis.md`、`problem-report.md`、`AGENTS.md`。
+3. 審查須確認一次限制、原 witness 比較、精確 replay、第二次漂移停止及 T11 是否一致。未接受前不得啟動 Implementer；本 Planner 不啟動下一正式角色。
 
-## 下一步與必須攜帶的資料
+仍待決定：是否接受 witness-based binding 轉接與無法排除完美 clone 的剩餘風險、其他首版布局限制、舊 binary 拒絕新 kind 的相容界線。Owner 此次只決定「一次轉接」能力，不代表上述 trust 或整份計畫核准。
 
-建議 Owner 先另開 **Simplicity Reviewer（plan）主 Session**，提供本目錄 `plan.md`、本 handoff、`issue-analysis.md`、`problem-report.md`、`planner-report.md`、精確交付 commit／diff 與 `AGENTS.md`。此關卡通過後，再由人啟動 CRITICAL 的獨立 Plan Reviewer。兩者都不是本 Planner 的子代理工作。
+核准與必要關卡完成後，才由 Owner 另啟動 Implementer 做 S1 read-only preview；首切片交付仍需人啟動 implementation Simplicity Review，再決定 S2。獨立 acceptance 與真實日常試用各自保留。日常試用使用手冊記事本正式 Prompt，不把本計畫增加成日常入口要求。
 
-有權限的 reviewer 如需原始證據，參考診斷列出的私有 `notes-volume-review-20261108/` 及原任務；不將原始帳本 ID、群組／人名、媒體檔名、grant 或截圖搬入公開 Git。只審設計不需要執行真實 notes 命令。文件 SHA-256 保存在本輪私有 `artifact-hashes.txt`。
+## 授權、證據與停止
 
-Owner 核准計畫與必要關卡後，才另啟動 Implementer 的 S1：read-only preview＋合成 witness／零副作用檢查；不得先加入 confirm 或有效 binding projection。首切片交付仍需人工啟動 implementation Simplicity Review，再決定 S2。完整產品 acceptance 與真實日常試用分開；日常試用仍用手冊的記事本正式 Prompt，不能要求使用者另讀這份開發計畫才能備份。
+本輪只授權規劃文件與 add／commit／普通 push。commit helper 只整理提交訊息，不代表正式審查。沒有對真實帳本 preview／confirm、bind／scan／intent、LINE、下載、合併 master 或 force-push 的授權。
 
-## 停止條件與授權
+事實與當次文件檢查見修訂報告；真實歷史只引用既有診斷，沒有重新讀取帳本或媒體。未知仍包含 device 改變原因、來源連續性、舊 UNKNOWN 晚到、完整 list 子項集合與後續 gate 能否通過。
 
-本輪只獲規劃與文件 add／commit／push 授權。不操作 LINE，不 bind／scan／intent／reattest 真實帳本，不改 restart scope，不解除 UNKNOWN，不合併 master、不 force-push。後續若實作需要 completion／candidate／staging reattestation、跨帳本協調框架、不同資料布局或證據 schema，先交具體 evidence 由人定路線，不沿用本計畫偷偷擴案。
-
-審查拒絕、缺 source／authority、候選不符或必要檢查阻塞時，紀錄已知與未知後停止；不由本角色修復、重測或啟動下一角色。
+若要支援第二次轉接、改 completion／candidate／staging guard、擴 restart scope／資料布局／證據 schema 或操作真實資料，停止交 Owner。若重審拒絕或必要檢查阻塞，保留成果與證據後停止，不自動修復／重測／結案。
 
 ## 交接時狀態快照
 
@@ -46,5 +44,5 @@ IMPLEMENTATION_STATUS: NOT_STARTED; PRODUCT_UNCHANGED
 CORE_ACCEPTANCE_STATUS: BLOCKED; ORIGINAL_BACKUP_NOT_RESUMED
 REQUIRED_VERIFICATION_STATUS: PASS_DOCUMENT_CHECKS_ONLY; PRODUCT_AND_REAL_ENVIRONMENT_CHECKS_NOT_RUN
 INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
-TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_HUMAN_PLAN_REVIEW
+TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_HUMAN_REVIEW_OF_V2
 ```

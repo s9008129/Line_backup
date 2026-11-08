@@ -59,3 +59,25 @@ REQUIRED_VERIFICATION_STATUS: PASS_DOCUMENT_CHECKS_ONLY; PRODUCT_AND_REAL_ENVIRO
 INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
 TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_HUMAN_PLAN_REVIEW
 ```
+
+
+## 2026-11-08 Planner：回應獨立 Plan Review B1（草案 v2）
+
+本輪初始 HEAD `0edf5cff88bb605b5c4608990ea6924c0d424e75`，分支 `feature/line-notes-media`，工作樹乾淨。Owner 另啟動 Planner 回應 v1 的 REVISION_REQUIRED，不是 Reviewer 自行跨角色修復。
+
+B1 說明：第一次轉接 D0→D1 後，原 completion／v2 staging before 仍是 D0；v1 卻允許第二次轉接要求 before 等於 D1。Owner 以白話選擇「先停下來回報，這版只處理第一次變號」。本輪只修文件，不改產品與真實資料。
+
+v2 明定整份帳本至多一筆轉接，destination／batch／session 不重置；old ref 不可指前次 reattest。精確原 replay 可查回、再漂移仍拒絕，新 preview／confirm 不接受第二次轉接。補 T3／T11 graph／D0→D1→D2／replay／零副作用驗證，保留 fresh scan、OPEN_BATCH、UNKNOWN 與 completion availability 原保護。
+
+文件核對與原始碼行段查證已完成；產品、合成交易、真實 volume、LINE、下載、跨 Session、獨立重審與 acceptance 均 NOT_RUN。原兩份 review、原 planner-report、診斷、提報保留，v1 PASS 不帶到 v2。私有 evidence 在 `planner-revision-b1/`，詳細來源與檢查見 `planner-revision-report.md`。
+
+下一步由 Owner 決定適用 Simplicity 重查並另啟動 CRITICAL 獨立 Plan Review。本輪沒有新增真實恢復／派送 attempt；原備份保持阻塞，B1 尚未獨立接受。commit helper／交付結果另存私有 receipt。
+
+```text
+PRIMARY_OUTCOME_STATUS: PLAN_DRAFT_COMPLETE
+IMPLEMENTATION_STATUS: NOT_STARTED; PRODUCT_UNCHANGED
+CORE_ACCEPTANCE_STATUS: BLOCKED; ORIGINAL_BACKUP_NOT_RESUMED
+REQUIRED_VERIFICATION_STATUS: PASS_DOCUMENT_CHECKS_ONLY; PRODUCT_AND_REAL_ENVIRONMENT_CHECKS_NOT_RUN
+INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
+TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_HUMAN_REVIEW_OF_V2
+```
