@@ -81,3 +81,23 @@ REQUIRED_VERIFICATION_STATUS: PASS_DOCUMENT_CHECKS_ONLY; PRODUCT_AND_REAL_ENVIRO
 INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
 TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_HUMAN_REVIEW_OF_V2
 ```
+
+
+## 2026-11-08 獨立 Plan Review：草案 v2 PASS
+
+本輪由 Owner 另啟動 CRITICAL 獨立 Plan Review 主 Session，起始 HEAD `2b742b9ef670a6b618b794432e11d1af6c009f1b`，分支 `feature/line-notes-media`，工作樹乾淨。受審 plan／handoff 與該 commit 的 SHA-256 相符，即時遠端 HEAD 也相符；產品、測試、Skill、手冊與真實資料未改。
+
+結論為 **PASS**。v2 以每帳本至多一筆 reattest 關閉 B1：before 仍取原 completion／v2 intent，old ref 只可指 created／destination，第二筆由 graph 拒絕。精確 replay 可先查回原確認，另驗目前 guard；再次漂移回現況錯誤，不新增事件、evidence、scan、intent 或 staging。T3、T10、T11 與 fresh recovery scan 的驗證責任及通過證據要求完整。
+
+正式報告為 `plan-review-v2.md`，保留 v1 `plan-review.md` 原樣；私有版本證據在 `critical-plan-review-v2/`。這不是產品修復、真實轉接、下載或獨立 acceptance。產品測試、T1–T11、真實帳本、LINE、跨 Session、v2 計畫 Simplicity 重查與獨立 acceptance 均 NOT_RUN。原備份保持阻塞。
+
+下一步由 Owner 決定是否接受 trust／殘餘風險與首版界線，並決定 v2 計畫 Simplicity 是否重查；核准及必要關卡完成後，才由人另啟動 Implementer 做 S1 read-only preview。本 Reviewer 不啟動下一正式角色。指定 commit helper 與交付結果另記私有 receipt。
+
+```text
+PRIMARY_OUTCOME_STATUS: PLAN_REVIEW_PASS
+IMPLEMENTATION_STATUS: NOT_APPLICABLE_THIS_ROLE; PRODUCT_UNCHANGED
+CORE_ACCEPTANCE_STATUS: BLOCKED; ORIGINAL_BACKUP_NOT_RESUMED
+REQUIRED_VERIFICATION_STATUS: PASS_PLAN_SOURCE_AND_VERSION_CHECKS_ONLY; PRODUCT_AND_REAL_ENVIRONMENT_CHECKS_NOT_RUN
+INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
+TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_OWNER_PLAN_APPROVAL_AND_REQUIRED_CHECKPOINTS
+```
