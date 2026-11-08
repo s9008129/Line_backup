@@ -101,3 +101,11 @@ REQUIRED_VERIFICATION_STATUS: PASS_PLAN_SOURCE_AND_VERSION_CHECKS_ONLY; PRODUCT_
 INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
 TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_OWNER_PLAN_APPROVAL_AND_REQUIRED_CHECKPOINTS
 ```
+
+## 2026-11-08 計畫簡潔性重審 v2
+
+- 本主 Session 依 Owner 的 07_simplicity_review_prompt 交辦決定重審，結果為 PASS（僅計畫簡潔性）。詳見 `simplicity-plan-review-v2.md`；v1 原報告保留。
+- plan／handoff 與 `2b742b9ef670a6b618b794432e11d1af6c009f1b` 的 hashes 相符；起始 HEAD 為 `1818701da49f6092c989f34f6bc01607837878b5`，既有 untracked Session Markdown 未動。
+- 每帳本一次省去連續 witness 鏈；精確 replay、第二次漂移拒絕、完整 witness 與 freshness gates 各對應必要防護，未發現阻塞的可避免複雜度。
+- 一位同角色唯讀來源助手核對現行原語，未提供正式接受。本輪無產品修改、真實帳本／媒體讀取或 LINE 操作；產品測試與實機驗證 NOT_RUN。
+- 既有獨立 Plan Review v2 PASS 保留；待 Owner 核准計畫並接受信任模型及剩餘風險後，另開 Implementer 只做 S1。本角色不啟動下一角色、不修產品、不結案。
