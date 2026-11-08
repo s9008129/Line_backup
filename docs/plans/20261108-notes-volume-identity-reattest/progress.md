@@ -36,3 +36,26 @@ REQUIRED_VERIFICATION_STATUS: PASS_DIAGNOSTIC_ONLY; OTHER_CHECKS_NOT_RUN
 INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
 TASK_CLOSURE_STATUS: NOT_DONE
 ```
+
+## 2026-11-08 Planner 重規劃（另開主 Session）
+
+Owner 以 `01_plan_prompt.md` 啟動 Planner，承接 `PLANNER_REPLAN`。初始 HEAD 為 `9027d8ea4df41480b785017a7c57a39813907e65`，分支仍是 `feature/line-notes-media`，工作樹乾淨；原診斷與提報不回寫。
+
+本輪只交付 `plan.md` 草案 v1、`handoff.md`、`planner-report.md`。選定 CRITICAL、list-only、既有 OPEN_BATCH 尚無 v3 的最小協議；明定 witness、精確同意、單筆追加事件、replay、fresh recovery scan 與舊 binary 不支援新 kind 的限制。舊 completion／UNKNOWN／staging 保護不變。
+
+新增學習：completion 現有 schema 是 v1，應以其所屬 v2 intent 判斷本方案能力，不能誤稱 v2 completion。舊 restart 只要求 scan 晚於 confirmation，新增轉接後還需要 scan START 晚於 reattest。單改 list binding 不應讓舊 completion 回到 VERIFIED_PRESENT。
+
+仍未知 remount 原因、同物件／clone、UNKNOWN 晚到與真實完整 list 子項集合。草案承認這些限制；Owner 尚未同意 witness-based 信任轉接，也未授權實作或對真實帳本寫入。這不妨礙完成待審草案，不能據此宣稱備份解除阻塞。
+
+本輪檢查限文件／來源／Git／hash；產品回歸、合成產品驗證、真實 volume、LINE、跨 Session 與獨立 acceptance 均 NOT_RUN。私有檢查與交付紀錄在 `.local/line-backup/tasks/notes-volume-plan-20261108/`。Owner 指定的 GPT-6 Luna helper 只在草案完成後梳理 commit 訊息，不作獨立審查。
+
+下一步建議 Owner 另開計畫 Simplicity Review，之後進 CRITICAL 獨立 Plan Review；本 Planner 不自動啟動下一角色。沒有新增真實派送／恢復 attempt。
+
+```text
+PRIMARY_OUTCOME_STATUS: PLAN_DRAFT_COMPLETE
+IMPLEMENTATION_STATUS: NOT_STARTED; PRODUCT_UNCHANGED
+CORE_ACCEPTANCE_STATUS: BLOCKED; ORIGINAL_BACKUP_NOT_RESUMED
+REQUIRED_VERIFICATION_STATUS: PASS_DOCUMENT_CHECKS_ONLY; PRODUCT_AND_REAL_ENVIRONMENT_CHECKS_NOT_RUN
+INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
+TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_HUMAN_PLAN_REVIEW
+```
