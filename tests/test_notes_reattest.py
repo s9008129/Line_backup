@@ -5,7 +5,10 @@ import json
 import os
 from pathlib import Path
 import stat
+import subprocess
+import sys
 import tempfile
+import time
 import unittest
 from unittest import mock
 import uuid
@@ -37,9 +40,11 @@ class NotesReattestPreviewTests(unittest.TestCase):
             mock.patch.object(notes, '_read_active_hint', return_value=None),
             mock.patch.object(notes, '_write_active_hint', return_value=None),
         ]
-        for patch in self.patches:
-            patch.start()
+        self.patches[0].start()
+        self.patches[1].start()
+        self.active_hint_writer = self.patches[2].start()
         self.case_number = 0
+        self.confirmation_bundles = {}
 
     def tearDown(self):
         for patch in reversed(self.patches):
@@ -80,12 +85,12 @@ class NotesReattestPreviewTests(unittest.TestCase):
                     collection=collection, records=records,
                     list_key=key, session=session)
 
-    def scan_posts(self, ledger, posts):
+    def scan_posts(self, ledger, posts, *, recovery=False):
         records = ledger['records']
         key = ledger['list_key']
         scan = records.scan(
             session_id=ledger['session'], action='START',
-            evidence=self.evidence(key))
+            evidence=self.evidence(key), recovery=recovery)
         page_rows = [dict(identity=post['identity'],
                           date_summary=post['date']) for post in posts]
         scan_evidence = self.evidence(key, scan_id=scan['scan_id'])
@@ -218,11 +223,17 @@ class NotesReattestPreviewTests(unittest.TestCase):
         ledger['records'] = notes.NotesRecords(
             str(records.records), _allow_injected_verification=True)
 
-    def prepare_batch(self, *, include_completion=True, outside_scope=False,
+    def prepare_batch(self, *, include_completion=True, completion_count=1,
+                      outside_scope=False,
                       change_device=True, wrong_completion_device=False):
         ledger = self.new_ledger()
         photo_a = notes.media_identity(
             kind=notes.PHOTO, visual_key='completed-' + str(self.case_number))
+        completed_photos = [photo_a]
+        for index in range(1, completion_count):
+            completed_photos.append(notes.media_identity(
+                kind=notes.PHOTO,
+                visual_key='completed-%d-%s' % (index, self.case_number)))
         photo_b = notes.media_identity(
             kind=notes.PHOTO, visual_key='unknown-' + str(self.case_number))
         if outside_scope:
@@ -243,16 +254,17 @@ class NotesReattestPreviewTests(unittest.TestCase):
             visual_key='current-post-' + str(self.case_number))
         current_media = [photo_b]
         if include_completion:
-            current_media.insert(0, photo_a)
+            current_media = completed_photos + current_media
         current = self.scan_posts(ledger, [dict(
             name='current', identity=post_identity, date='synthetic',
             media=current_media)])
         media_keys = current['current']['media_keys']
         if include_completion:
-            self.complete_media(
-                ledger, current['current']['post_key'],
-                media_keys[photo_a['visual_key']],
-                'complete-' + str(self.case_number))
+            for index, photo in enumerate(completed_photos):
+                self.complete_media(
+                    ledger, current['current']['post_key'],
+                    media_keys[photo['visual_key']],
+                    'complete-%d-%s' % (index, self.case_number))
         unknown = self.unknown_media(
             ledger, current['current']['post_key'],
             media_keys[photo_b['visual_key']])
@@ -307,6 +319,46 @@ class NotesReattestPreviewTests(unittest.TestCase):
                 code = notes.main([str(value) for value in args])
         return code, json.loads(output.getvalue())
 
+    def run_confirm_cli(self, ledger, preview, evidence):
+        output = io.StringIO()
+        args = ['reattest', 'confirm', '--records-root',
+                ledger['records'].records, '--session-id', ledger['session'],
+                '--preview', json.dumps(preview, ensure_ascii=False),
+                '--evidence', evidence]
+        records_type = notes.NotesRecords
+
+        def constructor(root):
+            return records_type(root, _allow_injected_verification=True)
+
+        with mock.patch.object(notes, 'NotesRecords', side_effect=constructor):
+            with mock.patch('sys.stdout', new=output):
+                code = notes.main([str(value) for value in args])
+        return code, json.loads(output.getvalue())
+
+    def confirm_preview(self, ledger, preview):
+        existing = self.confirmation_bundles.get(preview['preview_digest'])
+        if existing is not None:
+            return ledger['records'].reattest_confirm(
+                session_id=ledger['session'], preview=preview,
+                evidence=existing)
+        statement = self.base / ('consent-%s.txt' % uuid.uuid4().hex)
+        statement.write_text(
+            'Synthetic test consent for preview ' + preview['preview_digest'],
+            encoding='utf-8')
+        preview_path = self.base / ('preview-%s.json' % uuid.uuid4().hex)
+        preview_path.write_bytes(notes.encoded(preview))
+        bundle = notes_evidence.create_bundle(
+            statement=str(statement),
+            assets=[('command_stdout', str(preview_path))],
+            context=dict(list_key=ledger['list_key']),
+            output_dir=str(self.evidence_packs / uuid.uuid4().hex))
+        result = ledger['records'].reattest_confirm(
+            session_id=ledger['session'], preview=preview,
+            evidence=bundle['bundle_path'])
+        self.confirmation_bundles[preview['preview_digest']] = \
+            bundle['bundle_path']
+        return result
+
     @staticmethod
     def snapshot_tree(root):
         root = Path(root)
@@ -338,6 +390,7 @@ class NotesReattestPreviewTests(unittest.TestCase):
     def test_confirmation_required_witness_is_complete_and_read_only(self):
         ledger = self.prepare_batch()
         before = self.snapshot_tree(ledger['case'])
+        hint_writes = self.active_hint_writer.call_count
         code, preview = self.run_preview(ledger)
         self.assertEqual(code, 0)
         self.assertEqual(preview['schema'],
@@ -371,6 +424,7 @@ class NotesReattestPreviewTests(unittest.TestCase):
                              completion['file_after'][key])
         self.assertEqual(preview['scope']['witness_sha256'],
                          notes.digest(notes.encoded(witness)))
+        self.assertEqual(self.active_hint_writer.call_count, hint_writes)
         digest_input = dict(schema=preview['schema'],
                             session_id=preview['session_id'],
                             expected_tip=preview['expected_tip'],
@@ -378,6 +432,365 @@ class NotesReattestPreviewTests(unittest.TestCase):
         self.assertEqual(preview['preview_digest'],
                          notes.digest(notes.encoded(digest_input)))
         self.assertEqual(self.snapshot_tree(ledger['case']), before)
+
+    def test_confirm_persists_one_event_and_exact_replay_reads_it_back(self):
+        ledger = self.prepare_batch()
+        before_summary = ledger['records'].summary()
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        before_event_count = len(ledger['records'].events)
+        hint_writes = self.active_hint_writer.call_count
+        first = self.confirm_preview(ledger, preview)
+        self.assertEqual(first['status'], 'CONFIRMED')
+        self.assertFalse(first['replayed'])
+        self.assertEqual(len(ledger['records'].events), before_event_count + 1)
+        self.assertEqual(self.active_hint_writer.call_count, hint_writes)
+        transition = ledger['records'].events[-1]
+        self.assertEqual(transition['kind'], 'list-directory-reattest')
+        reopened = notes.NotesRecords(
+            str(ledger['records'].records), _allow_injected_verification=True)
+        with reopened.locked():
+            self.assertEqual(reopened._effective_list_binding()[1],
+                             preview['scope']['new_binding'])
+        ledger['records'] = reopened
+        after_summary = reopened.summary()
+        self.assertEqual(after_summary['status_counts'],
+                         before_summary['status_counts'])
+        audit = reopened.evidence_audit()
+        self.assertTrue(audit['integrity_ok'])
+        self.assertTrue(any(
+            row['event_kind'] == 'list-directory-reattest' and
+            row['field'] == 'evidence'
+            for row in audit['references']))
+        replay = self.confirm_preview(ledger, preview)
+        self.assertTrue(replay['replayed'])
+        self.assertEqual(replay['event_ref'], notes._event_ref(transition))
+        self.assertEqual(len(ledger['records'].events), before_event_count + 1)
+
+    def test_replay_with_different_evidence_is_refused_without_append(self):
+        ledger = self.prepare_batch()
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        self.confirm_preview(ledger, preview)
+        event_count = len(ledger['records'].events)
+        statement = self.base / ('different-%s.txt' % uuid.uuid4().hex)
+        statement.write_text('Synthetic different consent evidence',
+                             encoding='utf-8')
+        different = notes_evidence.create_bundle(
+            statement=str(statement), assets=[],
+            context=dict(list_key=ledger['list_key']),
+            output_dir=str(self.evidence_packs / uuid.uuid4().hex))
+        with self.assertRaises(notes.NotesReattestError) as raised:
+            ledger['records'].reattest_confirm(
+                session_id=ledger['session'], preview=preview,
+                evidence=different['bundle_path'])
+        self.assertEqual(raised.exception.reason,
+                         'REATTEST_EVIDENCE_MISMATCH')
+        self.assertEqual(len(ledger['records'].events), event_count)
+
+    def test_cli_confirm_commits_the_exact_preview_once(self):
+        ledger = self.prepare_batch()
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        statement = self.base / ('cli-consent-%s.txt' % uuid.uuid4().hex)
+        statement.write_text(
+            'Synthetic CLI consent ' + preview['preview_digest'],
+            encoding='utf-8')
+        preview_path = self.base / ('cli-preview-%s.json' % uuid.uuid4().hex)
+        preview_path.write_bytes(notes.encoded(preview))
+        bundle = notes_evidence.create_bundle(
+            statement=str(statement),
+            assets=[('command_stdout', str(preview_path))],
+            context=dict(list_key=ledger['list_key']),
+            output_dir=str(self.evidence_packs / uuid.uuid4().hex))
+        code, payload = self.run_confirm_cli(
+            ledger, preview, bundle['bundle_path'])
+        self.assertEqual(code, 0, payload)
+        self.assertEqual(payload['status'], 'CONFIRMED')
+        self.assertFalse(payload['replayed'])
+
+    def test_two_process_confirm_appends_only_one_transition(self):
+        ledger = self.prepare_batch()
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        statement = self.base / ('race-consent-%s.txt' % uuid.uuid4().hex)
+        statement.write_text(
+            'Synthetic concurrent consent ' + preview['preview_digest'],
+            encoding='utf-8')
+        preview_path = self.base / ('race-preview-%s.json' % uuid.uuid4().hex)
+        preview_path.write_bytes(notes.encoded(preview))
+        bundle = notes_evidence.create_bundle(
+            statement=str(statement),
+            assets=[('command_stdout', str(preview_path))],
+            context=dict(list_key=ledger['list_key']),
+            output_dir=str(self.evidence_packs / uuid.uuid4().hex))
+        script = '''
+import json, sys, time
+from pathlib import Path
+from line_backup_batch.notes import NotesLockBusy, NotesRecords
+records = NotesRecords(sys.argv[1], _allow_injected_verification=True)
+original = records._reattest_preview_unlocked
+def delayed(**kwargs):
+    time.sleep(float(sys.argv[4]))
+    return original(**kwargs)
+records._reattest_preview_unlocked = delayed
+try:
+    result = records.reattest_confirm(
+        session_id=sys.argv[2],
+        preview=json.loads(Path(sys.argv[3]).read_text(encoding='utf-8')),
+        evidence=sys.argv[5])
+    print(json.dumps(result))
+except NotesLockBusy as exc:
+    print(json.dumps(dict(status='LOCK_BUSY', scope=exc.scope)))
+    raise SystemExit(4)
+'''
+        cli = [sys.executable, '-B', '-c', script,
+               str(ledger['records'].records), ledger['session'],
+               str(preview_path), '0.3', bundle['bundle_path']]
+        environment = dict(os.environ, PYTHONPATH='src')
+        first = subprocess.Popen(
+            cli, cwd=str(ROOT), env=environment,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        time.sleep(0.1)
+        second = subprocess.Popen(
+            cli, cwd=str(ROOT), env=environment,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        results = [process.communicate(timeout=30) + (process.returncode,)
+                   for process in (first, second)]
+        payloads = [json.loads(stdout) for stdout, _stderr, _code in results]
+        self.assertEqual(sum(row.get('status') == 'CONFIRMED'
+                             for row in payloads), 1, results)
+        self.assertEqual(sum(row.get('status') == 'LOCK_BUSY'
+                             for row in payloads), 1, results)
+        reopened = notes.NotesRecords(
+            str(ledger['records'].records), _allow_injected_verification=True)
+        with reopened.locked():
+            transitions = [row for row in reopened.events
+                           if row['kind'] == 'list-directory-reattest']
+        self.assertEqual(len(transitions), 1)
+        replay = reopened.reattest_confirm(
+            session_id=ledger['session'], preview=preview,
+            evidence=bundle['bundle_path'])
+        self.assertTrue(replay['replayed'])
+        self.assertEqual(len(reopened.events),
+                         len(ledger['records'].events) + 1)
+
+    def test_exact_replay_after_new_session_and_drift_is_safe(self):
+        ledger = self.prepare_batch()
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        self.confirm_preview(ledger, preview)
+        event_count = len(ledger['records'].events)
+        new_session = 'reattest-replay-session-' + str(self.case_number)
+        ledger['records'].bind(
+            session_id=new_session,
+            observation=self.evidence(ledger['list_key']),
+            handoff=self.evidence(ledger['list_key']))
+        evidence_ref = ledger['records'].events[-2]['data']['evidence']
+        # Replay requires the exact saved evidence bundle referenced by the event.
+        replay = ledger['records'].reattest_confirm(
+            session_id=new_session, preview=preview,
+            evidence=evidence_ref['path'])
+        self.assertTrue(replay['replayed'])
+        self.assertEqual(replay['current_session'], new_session)
+        self.assertEqual(len(ledger['records'].events), event_count + 1)
+
+        event = next(row for row in ledger['records'].events
+                     if row['kind'] == 'list-directory-reattest')
+        with mock.patch.object(
+                ledger['records'], '_require_reattest_binding_current',
+                side_effect=notes.NotesReattestError(
+                    'REATTEST_CURRENT_BINDING_CHANGED',
+                    'CURRENT_LIST_BINDING_DRIFT',
+                    (notes._event_ref(event),))):
+            with self.assertRaises(notes.NotesReattestError) as raised:
+                ledger['records'].reattest_confirm(
+                    session_id=new_session, preview=preview,
+                    evidence=evidence_ref['path'])
+        self.assertEqual(raised.exception.reason,
+                         'REATTEST_CURRENT_BINDING_CHANGED')
+        self.assertEqual(len(ledger['records'].events), event_count + 1)
+
+    def test_drift_after_v3_keeps_first_event_and_rejects_every_new_transition(self):
+        ledger = self.prepare_batch()
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        self.confirm_preview(ledger, preview)
+        event = next(row for row in ledger['records'].events
+                     if row['kind'] == 'list-directory-reattest')
+        event_ref = notes._event_ref(event)
+
+        new_session = 'reattest-v3-drift-session-' + str(self.case_number)
+        ledger['records'].bind(
+            session_id=new_session,
+            observation=self.evidence(ledger['list_key']),
+            handoff=self.evidence(ledger['list_key']))
+        ledger['session'] = new_session
+        scope_post = ledger['confirmation']['data']['scope']['posts'][0]
+        before = dict(name='current', identity=scope_post['identity'],
+                      date='synthetic',
+                      media=[row['identity'] for row in scope_post['media']])
+        self.scan_posts(ledger, [before], recovery=True)
+        intent = ledger['records'].intent(
+            session_id=new_session, media_key_value=ledger['current_key'],
+            restart_id=ledger['confirmation']['data']['restart_id'])
+        self.assertEqual(intent['schema'], 'line-notes-intent/v3')
+
+        reopened = notes.NotesRecords(
+            str(ledger['records'].records), _allow_injected_verification=True)
+        with reopened.locked():
+            transition = next(row for row in reopened.events
+                              if row['kind'] == 'list-directory-reattest')
+            self.assertEqual(notes._event_ref(transition), event_ref)
+        event_count = len(reopened.events)
+        saved_evidence = event['data']['evidence']['path']
+        list_directory = Path(event['data']['scope']['new_binding'][
+            'list_directory'])
+        original_stat = Path.stat
+
+        def report_later_device(path, *args, **kwargs):
+            result = original_stat(path, *args, **kwargs)
+            if Path(path) != list_directory:
+                return result
+
+            class StatProxy:
+                pass
+
+            proxy = StatProxy()
+            for name in dir(result):
+                if name.startswith('st_'):
+                    try:
+                        setattr(proxy, name, getattr(result, name))
+                    except (AttributeError, TypeError):
+                        pass
+            proxy.st_dev += 1  # Synthetic D1 -> D2 observation.
+            return proxy
+
+        with mock.patch.object(Path, 'stat', new=report_later_device):
+            with self.assertRaises(notes.NotesReattestError) as raised:
+                reopened.reattest_confirm(
+                    session_id=new_session, preview=preview,
+                    evidence=saved_evidence)
+            self.assertEqual(raised.exception.reason,
+                             'REATTEST_CURRENT_BINDING_CHANGED')
+            self.assertEqual(raised.exception.event_refs, [event_ref])
+
+            with self.assertRaises(notes.NotesReattestError) as raised:
+                reopened.reattest_preview(session_id=new_session)
+            self.assertEqual(raised.exception.reason,
+                             'REATTEST_UNSUPPORTED_STATE')
+            self.assertEqual(raised.exception.event_refs, [event_ref])
+
+            second = json.loads(json.dumps(preview))
+            second['session_id'] = new_session
+            second['expected_tip'] = notes._event_ref(reopened.events[-1])
+            second['scope']['open_batch']['restart_id'] = notes.digest(
+                b'synthetic second restart batch')
+            second['scope']['open_batch']['generation'] += 1
+            second['scope']['open_batch']['scope_digest'] = notes.digest(
+                b'synthetic second restart scope')
+            second['preview_digest'] = notes.digest(notes.encoded(dict(
+                schema=second['schema'], session_id=second['session_id'],
+                expected_tip=second['expected_tip'], scope=second['scope'])))
+            with self.assertRaises(notes.NotesReattestError) as raised:
+                reopened.reattest_confirm(
+                    session_id=new_session, preview=second,
+                    evidence=saved_evidence)
+            self.assertEqual(raised.exception.reason,
+                             'REATTEST_UNSUPPORTED_STATE')
+            self.assertEqual(raised.exception.event_refs, [event_ref])
+
+        self.assertEqual(len(reopened.events), event_count)
+        final = notes.NotesRecords(
+            str(reopened.records), _allow_injected_verification=True)
+        with final.locked():
+            self.assertEqual(sum(row['kind'] == 'list-directory-reattest'
+                                 for row in final.events), 1)
+
+    def test_graph_rejects_a_second_reattest_event(self):
+        ledger = self.prepare_batch()
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        self.confirm_preview(ledger, preview)
+        first = ledger['records'].events[-1]
+        ledger['records'].append('list-directory-reattest', first['data'])
+        reopened = notes.NotesRecords(
+            str(ledger['records'].records), _allow_injected_verification=True)
+        with self.assertRaises(notes.NotesError) as raised:
+            with reopened.locked():
+                pass
+        self.assertEqual(str(raised.exception),
+                         'MULTIPLE_LIST_DIRECTORY_REATTEST')
+
+    def test_recovery_scan_started_before_reattest_cannot_restart_intent(self):
+        ledger = self.prepare_batch()
+        scope_post = ledger['confirmation']['data']['scope']['posts'][0]
+        before = dict(name='current', identity=scope_post['identity'],
+                      date='synthetic',
+                      media=[row['identity'] for row in scope_post['media']])
+        self.scan_posts(ledger, [before], recovery=True)
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        self.confirm_preview(ledger, preview)
+        with self.assertRaises(notes.NotesError) as raised:
+            ledger['records'].intent(
+                session_id=ledger['session'],
+                media_key_value=ledger['current_key'],
+                restart_id=ledger['confirmation']['data']['restart_id'])
+        self.assertEqual(str(raised.exception),
+                         'POST_REATTEST_RECOVERY_SCAN_REQUIRED')
+
+        self.scan_posts(ledger, [before], recovery=True)
+        intent = ledger['records'].intent(
+            session_id=ledger['session'],
+            media_key_value=ledger['current_key'],
+            restart_id=ledger['confirmation']['data']['restart_id'])
+        self.assertEqual(intent['schema'], 'line-notes-intent/v3')
+
+    def test_witness_includes_multiple_completions_and_all_files(self):
+        ledger = self.prepare_batch(completion_count=2)
+        before = self.snapshot_tree(ledger['case'])
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        rows = preview['scope']['witness']['completions']
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(len(preview['scope']['witness']['staging']), 3)
+        self.assertEqual([row['completion_ref']['sequence'] for row in rows],
+                         sorted(row['completion_ref']['sequence']
+                                for row in rows))
+        self.assertEqual(self.snapshot_tree(ledger['case']), before)
+
+    def test_confirm_rejects_no_change_and_stale_preview_without_append(self):
+        ledger = self.prepare_batch(change_device=False)
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        before = len(ledger['records'].events)
+        with self.assertRaises(notes.NotesError) as raised:
+            self.confirm_preview(ledger, preview)
+        self.assertEqual(str(raised.exception), 'REATTEST_NOT_REQUIRED')
+        self.assertEqual(len(ledger['records'].events), before)
+
+        ledger = self.prepare_batch()
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        ledger['records'].scan(
+            session_id=ledger['session'], action='START',
+            evidence=self.evidence(ledger['list_key']), recovery=True)
+        before = len(ledger['records'].events)
+        with self.assertRaises(notes.NotesError) as raised:
+            self.confirm_preview(ledger, preview)
+        self.assertEqual(str(raised.exception), 'REATTEST_EXPECTED_TIP_CHANGED')
+        self.assertEqual(len(ledger['records'].events), before)
+
+    def test_second_preview_is_refused_after_first_reattest(self):
+        ledger = self.prepare_batch()
+        preview = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        self.confirm_preview(ledger, preview)
+        with self.assertRaises(notes.NotesReattestError) as raised:
+            ledger['records'].reattest_preview(session_id=ledger['session'])
+        self.assertEqual(raised.exception.reason,
+                         'REATTEST_UNSUPPORTED_STATE')
 
     def test_same_device_returns_no_change_with_empty_witness(self):
         ledger = self.prepare_batch(change_device=False)
@@ -498,46 +911,37 @@ class NotesReattestPreviewTests(unittest.TestCase):
                     if event['kind'] == 'completion')
                 path = Path(completion['data']['destination']) / \
                     completion['data']['target_file']['name']
-                raw = path.read_bytes()
-                info = path.stat()
-                if mode == 'hash':
-                    path.write_bytes(raw[:-1] + bytes([raw[-1] ^ 1]))
-                elif mode == 'size':
-                    path.write_bytes(raw + b'x')
-                elif mode == 'mtime':
-                    os.utime(path, ns=(info.st_atime_ns,
-                                       info.st_mtime_ns + 1000000000))
-                elif mode == 'ctime':
-                    original = notes._read_regular
+                original = notes._read_regular
 
-                    def changed_ctime(target, **kwargs):
-                        contents, stat_result = original(target, **kwargs)
-                        # os.stat_result exposes nanosecond ctime via attributes;
-                        # use a tiny proxy so the reader's other checks stay real.
-                        class StatProxy:
-                            pass
-                        proxy = StatProxy()
-                        for name in dir(stat_result):
-                            if name.startswith('st_'):
-                                try:
-                                    setattr(proxy, name, getattr(stat_result, name))
-                                except (AttributeError, TypeError):
-                                    pass
-                        proxy.st_ctime_ns = stat_result.st_ctime_ns + 1
-                        return contents, proxy
+                def altered_reader(target, **kwargs):
+                    contents, stat_result = original(target, **kwargs)
+                    if Path(target) != path:
+                        return contents, stat_result
+                    class StatProxy:
+                        pass
+                    proxy = StatProxy()
+                    for name in dir(stat_result):
+                        if name.startswith('st_'):
+                            try:
+                                setattr(proxy, name, getattr(stat_result, name))
+                            except (AttributeError, TypeError):
+                                pass
+                    if mode == 'hash':
+                        contents = contents[:-1] + bytes([contents[-1] ^ 1])
+                    elif mode == 'size':
+                        proxy.st_size += 1
+                    elif mode == 'mtime':
+                        proxy.st_mtime_ns += 1
+                    elif mode == 'ctime':
+                        proxy.st_ctime_ns += 1
+                    else:
+                        proxy.st_ino += 1
+                    return contents, proxy
 
-                    with mock.patch.object(notes, '_read_regular',
-                                           side_effect=changed_ctime):
-                        self.assert_refused_without_mutation(
-                            ledger, 'REATTEST_WITNESS_CHANGED')
-                    continue
-                else:
-                    replacement = path.with_name('replacement.png')
-                    replacement.write_bytes(raw)
-                    path.unlink()
-                    replacement.rename(path)
-                self.assert_refused_without_mutation(
-                    ledger, 'REATTEST_WITNESS_CHANGED')
+                with mock.patch.object(notes, '_read_regular',
+                                       side_effect=altered_reader):
+                    self.assert_refused_without_mutation(
+                        ledger, 'REATTEST_WITNESS_CHANGED')
 
     def test_symlink_hardlink_and_wrong_device_mapping_are_refused(self):
         ledger = self.prepare_batch()

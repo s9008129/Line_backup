@@ -1045,6 +1045,292 @@ class NotesRecords:
             schema=RESTART_SCOPE_SCHEMA, restart_id=restart_id,
             generation=generation, expected_tip=expected_tip, scope=scope)))
 
+    def _validate_reattest_scope_shape(self, scope):
+        _check_exact(scope, ('list_key', 'root_snapshot', 'old_binding_ref',
+                             'old_binding', 'new_binding', 'open_batch',
+                             'witness', 'witness_sha256', 'trust_policy'),
+                     'INVALID_LIST_DIRECTORY_REATTEST')
+        need(scope['list_key'] == self.list_data['list_key'] and
+             scope['trust_policy'] == 'OWNER_ACCEPTED_WITNESS_TRANSITION_V1' and
+             _is_hex(scope['witness_sha256']),
+             'INVALID_LIST_DIRECTORY_REATTEST')
+        _check_event_ref(scope['old_binding_ref'],
+                         'INVALID_LIST_DIRECTORY_REATTEST')
+        _check_exact(scope['root_snapshot'], ('path', 'device', 'inode'),
+                     'INVALID_LIST_DIRECTORY_REATTEST')
+        _check_exact(scope['open_batch'], ('confirmation_ref', 'restart_id',
+                                           'generation', 'scope_digest'),
+                     'INVALID_LIST_DIRECTORY_REATTEST')
+        _check_event_ref(scope['open_batch']['confirmation_ref'],
+                         'INVALID_LIST_DIRECTORY_REATTEST')
+        need(isinstance(scope['root_snapshot']['path'], str) and
+             Path(scope['root_snapshot']['path']).is_absolute() and
+             str(Path(scope['root_snapshot']['path'])) ==
+             os.path.normpath(scope['root_snapshot']['path']) and
+             type(scope['root_snapshot']['device']) is int and
+             scope['root_snapshot']['device'] >= 0 and
+             type(scope['root_snapshot']['inode']) is int and
+             scope['root_snapshot']['inode'] >= 0 and
+             _is_hex(scope['open_batch']['restart_id']) and
+             type(scope['open_batch']['generation']) is int and
+             scope['open_batch']['generation'] >= 1 and
+             _is_hex(scope['open_batch']['scope_digest']),
+             'INVALID_LIST_DIRECTORY_REATTEST')
+        for binding in (scope['old_binding'], scope['new_binding']):
+            _check_exact(binding, ('photo_root', 'list_directory',
+                                   'directory_device', 'directory_inode'),
+                         'INVALID_LIST_DIRECTORY_REATTEST')
+            need(all(isinstance(binding[key], str) and
+                     Path(binding[key]).is_absolute() and
+                     str(Path(binding[key])) ==
+                     os.path.normpath(binding[key])
+                     for key in ('photo_root', 'list_directory')) and
+                 type(binding['directory_device']) is int and
+                 binding['directory_device'] >= 0 and
+                 type(binding['directory_inode']) is int and
+                 binding['directory_inode'] >= 0,
+                 'INVALID_LIST_DIRECTORY_REATTEST')
+        witness = scope['witness']
+        _check_exact(witness, ('schema', 'completions', 'staging'),
+                     'INVALID_LIST_DIRECTORY_REATTEST')
+        need(witness['schema'] == 'line-notes-list-witness/v1' and
+             isinstance(witness['completions'], list) and
+             isinstance(witness['staging'], list) and
+             scope['witness_sha256'] == digest(encoded(witness)),
+             'INVALID_LIST_DIRECTORY_REATTEST')
+        completion_order = []
+        completion_refs = []
+        for row in witness['completions']:
+            _check_exact(row, ('completion_ref', 'directory_before',
+                               'directory_after', 'file_before', 'file_after'),
+                         'INVALID_LIST_DIRECTORY_REATTEST')
+            _check_event_ref(row['completion_ref'],
+                             'INVALID_LIST_DIRECTORY_REATTEST')
+            completion_refs.append(tuple(sorted(row['completion_ref'].items())))
+            for key in ('directory_before', 'directory_after'):
+                value = row[key]
+                _check_exact(value, ('path', 'device', 'inode'),
+                             'INVALID_LIST_DIRECTORY_REATTEST')
+                need(isinstance(value['path'], str) and
+                     Path(value['path']).is_absolute() and
+                     type(value['device']) is int and
+                     type(value['inode']) is int,
+                     'INVALID_LIST_DIRECTORY_REATTEST')
+            for key in ('file_before', 'file_after'):
+                value = row[key]
+                _check_exact(value, ('name', 'device', 'inode', 'size',
+                                     'sha256', 'mtime_ns', 'ctime_ns'),
+                             'INVALID_LIST_DIRECTORY_REATTEST')
+                need(isinstance(value['name'], str) and
+                     Path(value['name']).name == value['name'] and
+                     all(type(value[field]) is int and value[field] >= 0
+                         for field in ('device', 'inode', 'size',
+                                       'mtime_ns', 'ctime_ns')) and
+                     _is_hex(value['sha256']),
+                     'INVALID_LIST_DIRECTORY_REATTEST')
+            need(row['file_before']['name'] == row['file_after']['name'] and
+                 row['directory_before']['path'] ==
+                 row['directory_after']['path'],
+                 'INVALID_LIST_DIRECTORY_REATTEST')
+            completion_order.append((
+                row['directory_before']['path'],
+                row['completion_ref']['sequence']))
+        need(completion_order == sorted(completion_order) and
+             len(completion_refs) == len(set(completion_refs)),
+             'INVALID_LIST_DIRECTORY_REATTEST')
+        staging_order = []
+        staging_refs = []
+        for row in witness['staging']:
+            _check_exact(row, ('intent_ref', 'path', 'state',
+                               'directory_before', 'directory_after', 'children'),
+                         'INVALID_LIST_DIRECTORY_REATTEST')
+            _check_event_ref(row['intent_ref'],
+                             'INVALID_LIST_DIRECTORY_REATTEST')
+            staging_refs.append(tuple(sorted(row['intent_ref'].items())))
+            staging_order.append(row['path'])
+            need(isinstance(row['path'], str) and Path(row['path']).is_absolute() and
+                 row['state'] in ('PRESENT_EMPTY', 'ABSENT_COMPLETED') and
+                 isinstance(row['children'], list) and not row['children'],
+                 'INVALID_LIST_DIRECTORY_REATTEST')
+            for key in ('directory_before', 'directory_after'):
+                value = row[key]
+                if value is None:
+                    need(key == 'directory_after' and
+                         row['state'] == 'ABSENT_COMPLETED',
+                         'INVALID_LIST_DIRECTORY_REATTEST')
+                else:
+                    _check_exact(value, ('path', 'device', 'inode'),
+                                 'INVALID_LIST_DIRECTORY_REATTEST')
+                    need(value['path'] == row['path'] and
+                         type(value['device']) is int and
+                         type(value['inode']) is int,
+                         'INVALID_LIST_DIRECTORY_REATTEST')
+        need(staging_order == sorted(staging_order) and
+             len(staging_refs) == len(set(staging_refs)),
+             'INVALID_LIST_DIRECTORY_REATTEST')
+
+    def _effective_list_binding(self, *, events=None, sequence=None):
+        source = self.events if events is None else events
+        binding = None
+        for event in source:
+            if sequence is not None and event['sequence'] > sequence:
+                break
+            if event['kind'] in ('created', 'destination'):
+                data = event['data']
+                binding = (event, dict(
+                    photo_root=data['photo_root'],
+                    list_directory=data['list_directory'],
+                    directory_device=data['directory_device'],
+                    directory_inode=data['directory_inode']))
+            elif event['kind'] == 'list-directory-reattest':
+                binding = (event, event['data']['scope']['new_binding'])
+        return binding
+
+    def _validate_reattest_projection(self):
+        reattests = [event for event in self.events
+                     if event['kind'] == 'list-directory-reattest']
+        need(len(reattests) <= 1, 'MULTIPLE_LIST_DIRECTORY_REATTEST')
+        for event in reattests:
+            data = event['data']
+            prefix = self.events[:event['sequence'] - 1]
+            need(prefix and data['expected_tip'] == _event_ref(prefix[-1]),
+                 'REATTEST_EXPECTED_TIP_CHANGED')
+            old = self._effective_list_binding(events=prefix)
+            need(old is not None and data['scope']['old_binding_ref'] ==
+                 _event_ref(old[0]) and data['scope']['old_binding'] == old[1],
+                 'REATTEST_BINDING_CHANGED')
+            previous = data['scope']['old_binding']
+            current = data['scope']['new_binding']
+            need(previous['photo_root'] == current['photo_root'] and
+                 previous['list_directory'] == current['list_directory'] and
+                 data['scope']['root_snapshot']['path'] ==
+                 current['photo_root'] and
+                 previous['directory_inode'] == current['directory_inode'] and
+                 previous['directory_device'] != current['directory_device'],
+                 'REATTEST_BINDING_CHANGED')
+            batch_ref = data['scope']['open_batch']['confirmation_ref']
+            confirmation = next((row for row in prefix
+                                 if row['kind'] == 'restart-confirm' and
+                                 _event_ref(row) == batch_ref), None)
+            batch = data['scope']['open_batch']
+            need(confirmation is not None and
+                 confirmation['data']['restart_id'] == batch['restart_id'] and
+                 confirmation['data']['generation'] == batch['generation'] and
+                 confirmation['data']['scope_digest'] == batch['scope_digest'],
+                 'REATTEST_CONFIRMATION_CHANGED')
+            need(confirmation['sequence'] > old[0]['sequence'] and
+                 Path(previous['list_directory']).parent ==
+                 Path(previous['photo_root']),
+                 'REATTEST_CONFIRMATION_CHANGED')
+            restart_projection = self._restart_projection(prefix)
+            need(batch['restart_id'] in restart_projection['confirmations'] and
+                 batch['restart_id'] not in restart_projection['activations'],
+                 'REATTEST_OPEN_BATCH_REQUIRED')
+            need(not any(row['kind'] == 'intent' and
+                         row['data']['schema'] == 'line-notes-intent/v3'
+                         for row in prefix) and
+                 not any(row['kind'] in ('restart-copy-plan',
+                                         'restart-candidate',
+                                         'restart-activation')
+                         for row in prefix) and
+                 not self._pending_publish_plans(prefix),
+                 'REATTEST_UNSUPPORTED_STATE')
+            list_path = previous['list_directory']
+            for row in prefix:
+                if row['kind'] == 'completion':
+                    path = Path(row['data']['destination'])
+                    if path.is_relative_to(Path(list_path)):
+                        need(path.parent == Path(list_path),
+                             'REATTEST_UNSUPPORTED_LAYOUT')
+                elif (row['kind'] == 'intent' and
+                      row['data']['schema'] == 'line-notes-intent/v2'):
+                    path = Path(row['data']['destination'])
+                    if path.is_relative_to(Path(list_path)):
+                        need(path.parent == Path(list_path),
+                             'REATTEST_UNSUPPORTED_LAYOUT')
+            expected_completion_refs = {
+                tuple(sorted(_event_ref(row).items())) for row in prefix
+                if row['kind'] == 'completion' and
+                Path(row['data']['destination']).parent == Path(list_path) and
+                any(intent['kind'] == 'intent' and
+                    intent['data']['attempt_id'] ==
+                    row['data']['attempt_id'] and
+                    intent['data']['schema'] == 'line-notes-intent/v2'
+                    for intent in prefix)}
+            actual_completion_refs = {
+                tuple(sorted(item['completion_ref'].items()))
+                for item in data['scope']['witness']['completions']}
+            need(actual_completion_refs == expected_completion_refs,
+                 'REATTEST_WITNESS_CHANGED')
+            expected_staging_refs = {
+                tuple(sorted(_event_ref(row).items())) for row in prefix
+                if row['kind'] == 'intent' and
+                row['data']['schema'] == 'line-notes-intent/v2' and
+                Path(row['data']['destination']).parent == Path(list_path)}
+            actual_staging_refs = {
+                tuple(sorted(item['intent_ref'].items()))
+                for item in data['scope']['witness']['staging']}
+            need(actual_staging_refs == expected_staging_refs,
+                 'REATTEST_WITNESS_CHANGED')
+            for item in data['scope']['witness']['completions']:
+                completion = next((row for row in prefix
+                                   if row['kind'] == 'completion' and
+                                   _event_ref(row) == item['completion_ref']),
+                                  None)
+                need(completion is not None, 'REATTEST_WITNESS_CHANGED')
+                before_dir = item['directory_before']
+                after_dir = item['directory_after']
+                before_file = item['file_before']
+                after_file = item['file_after']
+                target = completion['data']['target_file']
+                directory = completion['data']['target_directory']
+                need(before_dir == dict(path=completion['data']['destination'],
+                                        device=directory['device'],
+                                        inode=directory['inode']) and
+                     after_dir['path'] == before_dir['path'] and
+                     after_dir['inode'] == before_dir['inode'] and
+                     before_file == {key: target[key] for key in
+                                     ('name', 'device', 'inode', 'size',
+                                      'sha256', 'mtime_ns', 'ctime_ns')} and
+                     after_file['name'] == before_file['name'] and
+                     after_file['device'] == current['directory_device'] and
+                     all(after_file[key] == before_file[key]
+                         for key in ('inode', 'size', 'sha256',
+                                     'mtime_ns', 'ctime_ns')) and
+                     before_file['device'] == previous['directory_device'] and
+                     after_dir['device'] == current['directory_device'] and
+                     before_dir['device'] == previous['directory_device'],
+                     'REATTEST_WITNESS_CHANGED')
+            for item in data['scope']['witness']['staging']:
+                intent = next((row for row in prefix
+                               if row['kind'] == 'intent' and
+                               _event_ref(row) == item['intent_ref']), None)
+                need(intent is not None and
+                     intent['data']['destination'] == item['path'],
+                     'REATTEST_WITNESS_CHANGED')
+                before = item['directory_before']
+                after = item['directory_after']
+                intent_data = intent['data']
+                need(before == dict(path=item['path'],
+                                    device=intent_data['directory_device'],
+                                    inode=intent_data['directory_inode']) and
+                     intent_data['directory_device'] ==
+                     previous['directory_device'],
+                     'REATTEST_WITNESS_CHANGED')
+                if item['state'] == 'PRESENT_EMPTY':
+                    need(after == dict(path=item['path'],
+                                       device=current['directory_device'],
+                                       inode=intent_data['directory_inode']),
+                         'REATTEST_WITNESS_CHANGED')
+                else:
+                    completions, _ = self._completion_projection(prefix)
+                    need(after is None and
+                         intent_data['media_key'] in completions and
+                         completions[intent_data['media_key']]['data'][
+                             'attempt_id'] == intent_data['attempt_id'],
+                         'REATTEST_WITNESS_CHANGED')
+        return reattests
+
     def _validate_event(self, event):
         kind, data = event['kind'], event['data']
         need(isinstance(kind, str) and isinstance(data, dict),
@@ -1531,6 +1817,25 @@ class NotesRecords:
                  isinstance(data['target_file'], dict) and
                  isinstance(data['target_directory'], dict) and
                  isinstance(data['naming'], dict), 'INVALID_COMPLETION_EVENT')
+        elif kind == 'list-directory-reattest':
+            _check_exact(data, ('schema', 'session_id', 'expected_tip',
+                                'scope', 'preview_digest', 'evidence'),
+                         'INVALID_LIST_DIRECTORY_REATTEST')
+            need(data['schema'] == 'line-notes-list-reattest/v1' and
+                 isinstance(data['session_id'], str) and
+                 bool(data['session_id']) and _is_hex(data['preview_digest']),
+                 'INVALID_LIST_DIRECTORY_REATTEST')
+            _check_event_ref(data['expected_tip'],
+                             'INVALID_LIST_DIRECTORY_REATTEST')
+            self._validate_reattest_scope_shape(data['scope'])
+            need(data['preview_digest'] == digest(encoded(dict(
+                schema='line-notes-list-reattest-preview/v1',
+                session_id=data['session_id'], expected_tip=data['expected_tip'],
+                scope=data['scope']))), 'INVALID_LIST_DIRECTORY_REATTEST')
+            self._event_evidence(
+                event, 'evidence', data['evidence'],
+                _evidence_context(list_key=self.list_data['list_key']),
+                require_v2=True)
         elif kind == 'evidence-correction':
             _check_exact(data, ('schema', 'page_sequence', 'page_sha256',
                                 'original_evidence_sha256',
@@ -1754,6 +2059,7 @@ class NotesRecords:
 
     def _validate_event_graph(self):
         """Reject internally inconsistent event graphs before projecting them."""
+        self._validate_reattest_projection()
         latest, scans = self._open_scan()
         for scan_id, scan in scans.items():
             if scan['complete'] is None:
@@ -2195,6 +2501,9 @@ class NotesRecords:
 
     def _require_current_list_directory(self):
         state = self._current_destination_state()
+        effective = self._effective_list_binding()
+        if effective is not None:
+            state = effective[1]
         root = Path(state['photo_root'])
         list_directory = Path(state['list_directory'])
         root_entry = _entry(root)
@@ -2211,6 +2520,33 @@ class NotesRecords:
              info.st_ino == state['directory_inode'],
              'CURRENT_NOTES_LIST_DIRECTORY_CHANGED')
         return list_directory
+
+    def _require_reattest_fresh_scan(self, start_event):
+        binding = self._effective_list_binding()
+        if binding is None or binding[0]['kind'] != 'list-directory-reattest':
+            return
+        need(start_event['sequence'] > binding[0]['sequence'] and
+             start_event['data'].get('purpose') == 'RECOVERY_EVALUATION',
+             'POST_REATTEST_RECOVERY_SCAN_REQUIRED')
+
+    def _require_reattest_binding_current(self, event):
+        binding = event['data']['scope']['new_binding']
+        root = Path(binding['photo_root'])
+        directory = Path(binding['list_directory'])
+        try:
+            need(root.is_dir() and not root.is_symlink() and
+                 root == root.resolve(strict=True) and
+                 directory.is_dir() and not directory.is_symlink() and
+                 directory == directory.resolve(strict=True),
+                 'REATTEST_CURRENT_BINDING_CHANGED')
+            info = directory.stat()
+            need(info.st_dev == binding['directory_device'] and
+                 info.st_ino == binding['directory_inode'],
+                 'REATTEST_CURRENT_BINDING_CHANGED')
+        except (OSError, NotesError) as exc:
+            raise NotesReattestError(
+                'REATTEST_CURRENT_BINDING_CHANGED',
+                'CURRENT_LIST_BINDING_DRIFT', (_event_ref(event),)) from exc
 
     def _reattest_directory_info(self, path, *, reason,
                                  classification, event_refs=()):
@@ -2628,51 +2964,149 @@ class NotesRecords:
 
     def reattest_preview(self, *, session_id):
         with self.locked():
+            return self._reattest_preview_unlocked(session_id=session_id)
+
+    def _reattest_preview_unlocked(self, *, session_id):
+        self._require_session(session_id)
+        reattests = [event for event in self.events
+                     if event['kind'] == 'list-directory-reattest']
+        if reattests:
+            event = reattests[0]
+            raise NotesReattestError(
+                'REATTEST_UNSUPPORTED_STATE', 'PRIOR_REATTEST',
+                (_event_ref(event),))
+        binding = self._effective_list_binding()
+        if binding is None or binding[0]['kind'] == 'list-directory-reattest':
+            raise NotesReattestError(
+                'REATTEST_BINDING_CHANGED', 'CURRENT_BINDING_MISSING')
+        binding_event = binding[0]
+        root, list_directory, root_snapshot, old_binding, new_binding = \
+            self._reattest_current_paths(binding_event)
+        confirmation, open_batch = self._reattest_open_batch(
+            binding_event, list_directory)
+        if (new_binding['directory_device'] ==
+                old_binding['directory_device']):
+            witness = dict(schema='line-notes-list-witness/v1',
+                            completions=[], staging=[])
+            status = 'NO_CHANGE'
+        else:
+            witness = self._reattest_witness(
+                root=root, list_directory=list_directory,
+                old_binding=old_binding, new_binding=new_binding,
+                confirmation=confirmation)
+            status = 'CONFIRMATION_REQUIRED'
+        scope = dict(
+            list_key=self.list_data['list_key'], root_snapshot=root_snapshot,
+            old_binding_ref=_event_ref(binding_event),
+            old_binding=old_binding, new_binding=new_binding,
+            open_batch=open_batch, witness=witness,
+            witness_sha256=digest(encoded(witness)),
+            trust_policy='OWNER_ACCEPTED_WITNESS_TRANSITION_V1')
+        expected_tip = _event_ref(self.events[-1])
+        schema = 'line-notes-list-reattest-preview/v1'
+        preview_digest = digest(encoded(dict(
+            schema=schema, session_id=session_id,
+            expected_tip=expected_tip, scope=scope)))
+        return dict(schema=schema, status=status, session_id=session_id,
+                    expected_tip=expected_tip, scope=scope,
+                    preview_digest=preview_digest,
+                    dispatch_authorized=False,
+                    external_copy_verified=False,
+                    real_line_e2e='NOT_TESTED')
+
+    def reattest_confirm(self, *, session_id, preview, evidence):
+        _check_exact(preview, ('schema', 'status', 'session_id',
+                               'expected_tip', 'scope', 'preview_digest',
+                               'dispatch_authorized',
+                               'external_copy_verified', 'real_line_e2e'),
+                     'REATTEST_PREVIEW_CHANGED')
+        need(preview['schema'] == 'line-notes-list-reattest-preview/v1' and
+             preview['status'] in ('CONFIRMATION_REQUIRED', 'NO_CHANGE') and
+             isinstance(preview['session_id'], str) and
+             type(preview['dispatch_authorized']) is bool and
+             preview['dispatch_authorized'] is False and
+             type(preview['external_copy_verified']) is bool and
+             preview['external_copy_verified'] is False and
+             preview['real_line_e2e'] == 'NOT_TESTED' and
+             _is_hex(preview['preview_digest']), 'REATTEST_PREVIEW_CHANGED')
+        _check_event_ref(preview['expected_tip'], 'REATTEST_PREVIEW_CHANGED')
+        expected_digest = digest(encoded(dict(
+            schema=preview['schema'], session_id=preview['session_id'],
+            expected_tip=preview['expected_tip'], scope=preview['scope'])))
+        need(expected_digest == preview['preview_digest'],
+             'REATTEST_PREVIEW_CHANGED')
+        with self.locked():
             self._require_session(session_id)
-            if any(event['kind'] == 'list-directory-reattest'
-                   for event in self.events):
-                event = next(event for event in self.events
-                             if event['kind'] == 'list-directory-reattest')
+            self._validate_reattest_scope_shape(preview['scope'])
+            context = _evidence_context(list_key=self.list_data['list_key'])
+            prior = next((event for event in self.events
+                          if event['kind'] == 'list-directory-reattest' and
+                          event['data']['preview_digest'] ==
+                          preview['preview_digest']), None)
+            prior_reattests = [event for event in self.events
+                               if event['kind'] == 'list-directory-reattest']
+            if prior is not None:
+                expected = dict(schema='line-notes-list-reattest/v1',
+                                session_id=preview['session_id'],
+                                expected_tip=preview['expected_tip'],
+                                scope=preview['scope'])
+                need({key: prior['data'][key] for key in expected} == expected,
+                     'REATTEST_CONFIRMATION_CHANGED')
+                try:
+                    supplied = _preflight_evidence(evidence, context)
+                    saved = prior['data']['evidence']
+                    need(supplied['reference']['sha256'] == saved['sha256'] and
+                         supplied['reference']['bytes'] == saved['bytes'],
+                         'REATTEST_EVIDENCE_MISMATCH')
+                    _check_evidence(self.records, saved,
+                                    expected_context=context)
+                except NotesError as exc:
+                    raise NotesReattestError(
+                        'REATTEST_EVIDENCE_MISMATCH',
+                        'REPLAY_EVIDENCE_DIFFERENT',
+                        (_event_ref(prior),)) from exc
+                self._require_reattest_binding_current(prior)
+                return dict(status='CONFIRMED', replayed=True,
+                            event_ref=_event_ref(prior),
+                            original_session=prior['data']['session_id'],
+                            current_session=session_id,
+                            dispatch_authorized=False,
+                            external_copy_verified=False,
+                            real_line_e2e='NOT_TESTED')
+            if prior_reattests:
+                first = prior_reattests[0]
                 raise NotesReattestError(
                     'REATTEST_UNSUPPORTED_STATE', 'PRIOR_REATTEST',
-                    (_event_ref(event),))
-            binding_event = next(
-                (event for event in reversed(self.events)
-                 if event['kind'] in ('created', 'destination')), None)
-            if binding_event is None:
+                    (_event_ref(first),))
+            need(session_id == preview['session_id'],
+                 'REATTEST_CONFIRMATION_CHANGED')
+            need(preview['status'] != 'NO_CHANGE', 'REATTEST_NOT_REQUIRED')
+            need(preview['expected_tip'] == _event_ref(self.events[-1]),
+                 'REATTEST_EXPECTED_TIP_CHANGED')
+            current = self._reattest_preview_unlocked(session_id=session_id)
+            need(current == preview, 'REATTEST_WITNESS_CHANGED')
+            inspected = _preflight_evidence(evidence, context)
+            need(inspected['data'].get('schema') == notes_evidence.SCHEMA,
+                 'EVIDENCE_BUNDLE_REQUIRED')
+            saved = _preserve_evidence(self.records, evidence, context)
+            latest = self._reattest_preview_unlocked(session_id=session_id)
+            need(latest == preview, 'REATTEST_WITNESS_CHANGED')
+            data = dict(schema='line-notes-list-reattest/v1',
+                        session_id=session_id,
+                        expected_tip=preview['expected_tip'],
+                        scope=preview['scope'],
+                        preview_digest=preview['preview_digest'],
+                        evidence=saved)
+            self.append('list-directory-reattest', data)
+            event = self.events[-1]
+            try:
+                self._load(self.records)
+            except Exception as exc:
                 raise NotesReattestError(
-                    'REATTEST_BINDING_CHANGED', 'CURRENT_BINDING_MISSING')
-            root, list_directory, root_snapshot, old_binding, new_binding = \
-                self._reattest_current_paths(binding_event)
-            confirmation, open_batch = self._reattest_open_batch(
-                binding_event, list_directory)
-            if (new_binding['directory_device'] ==
-                    old_binding['directory_device']):
-                witness = dict(schema='line-notes-list-witness/v1',
-                                completions=[], staging=[])
-                status = 'NO_CHANGE'
-            else:
-                witness = self._reattest_witness(
-                    root=root, list_directory=list_directory,
-                    old_binding=old_binding, new_binding=new_binding,
-                    confirmation=confirmation)
-                status = 'CONFIRMATION_REQUIRED'
-            scope = dict(
-                list_key=self.list_data['list_key'],
-                root_snapshot=root_snapshot,
-                old_binding_ref=_event_ref(binding_event),
-                old_binding=old_binding, new_binding=new_binding,
-                open_batch=open_batch, witness=witness,
-                witness_sha256=digest(encoded(witness)),
-                trust_policy='OWNER_ACCEPTED_WITNESS_TRANSITION_V1')
-            expected_tip = _event_ref(self.events[-1])
-            schema = 'line-notes-list-reattest-preview/v1'
-            preview_digest = digest(encoded(dict(
-                schema=schema, session_id=session_id,
-                expected_tip=expected_tip, scope=scope)))
-            return dict(schema=schema, status=status,
-                        session_id=session_id, expected_tip=expected_tip,
-                        scope=scope, preview_digest=preview_digest,
+                    'REATTEST_READBACK_FAILED', 'EVENT_READBACK_FAILED',
+                    (_event_ref(event),)) from exc
+            return dict(status='CONFIRMED', replayed=False,
+                        event_ref=_event_ref(event),
                         dispatch_authorized=False,
                         external_copy_verified=False,
                         real_line_e2e='NOT_TESTED')
@@ -3348,6 +3782,21 @@ class NotesRecords:
                      'RESTART_INTENT_WITHOUT_CONFIRMATION')
                 need(data['restart_id'] not in activated_restarts,
                      'RESTART_ALREADY_ACTIVATED')
+                effective_binding = self._effective_list_binding(
+                    events=prefix(sequence))
+                if (effective_binding is not None and
+                        effective_binding[0]['kind'] ==
+                        'list-directory-reattest'):
+                    starts = [row for row in prefix(sequence)
+                              if row['kind'] == 'scan' and
+                              row['data']['action'] == 'START' and
+                              row['data']['scan_id'] == data['scan_id']]
+                    need(len(starts) == 1 and
+                         starts[0]['sequence'] >
+                         effective_binding[0]['sequence'] and
+                         starts[0]['data'].get('purpose') ==
+                         'RECOVERY_EVALUATION',
+                         'POST_REATTEST_RECOVERY_SCAN_REQUIRED')
                 confirmation_data = confirmation['data']
                 need(data['confirmation_ref'] == _event_ref(confirmation),
                      'RESTART_CONFIRMATION_CHANGED')
@@ -4209,6 +4658,7 @@ class NotesRecords:
             need(latest_scan is not None and
                  latest_scan['sequence'] > confirmation['sequence'],
                  'POST_CONFIRMATION_RECOVERY_SCAN_REQUIRED')
+            self._require_reattest_fresh_scan(latest_scan)
             posts = self._assert_dispatch_inventory()
             observed_posts = {row['post_key'] for row in posts}
             media, _ = self._media_projection()
@@ -5369,6 +5819,7 @@ class NotesRecords:
         complete = scans[latest]['complete']
         need(complete['sequence'] > confirmation['sequence'],
              'POST_CONFIRMATION_RECOVERY_SCAN_REQUIRED')
+        self._require_reattest_fresh_scan(scans[latest]['start'])
         scan_posts = {row['post_key']: row
                       for row in complete['data']['posts']}
         media, _ = self._media_projection()
@@ -6469,12 +6920,20 @@ def _build_notes_parser():
                          help='Video decode progress watchdog seconds')
 
     reattest = sub.add_parser(
-        'reattest', help='Read-only preview of a list directory device change')
+        'reattest', help='Preview or confirm one list directory device change')
     reattest_sub = reattest.add_subparsers(dest='action', required=True)
     reattest_preview = reattest_sub.add_parser(
         'preview', help='Build a read-only witness preview')
     add_records(reattest_preview, 'Build a read-only witness preview')
     reattest_preview.add_argument('--session-id', required=True)
+    reattest_confirm = reattest_sub.add_parser(
+        'confirm', help='Confirm or exactly replay one preview')
+    add_records(reattest_confirm, 'Confirm one list binding transition')
+    reattest_confirm.add_argument('--session-id', required=True)
+    reattest_confirm.add_argument('--preview', required=True,
+                                  help='Preview JSON object or @JSON-file')
+    reattest_confirm.add_argument('--evidence', required=True,
+                                  help='Owner confirmation evidence bundle')
 
     outcome = sub.add_parser('outcome', help='Append the first observed attempt outcome')
     add_records(outcome, 'Append the first observed attempt outcome')
@@ -6778,8 +7237,15 @@ def main(argv=None):
                         progress_callback=_cli_progress,
                         stall_seconds=stall_seconds)
             elif args.command == 'reattest':
-                result = records.reattest_preview(
-                    session_id=args.session_id)
+                if args.action == 'preview':
+                    result = records.reattest_preview(
+                        session_id=args.session_id)
+                else:
+                    preview = _json_cli_argument(
+                        parser, args.preview, '--preview')
+                    result = records.reattest_confirm(
+                        session_id=args.session_id, preview=preview,
+                        evidence=args.evidence)
         else:
             parser.error('unknown command')
         _print_cli_result(result)
@@ -6811,7 +7277,7 @@ def main(argv=None):
             subprocess.SubprocessError) as exc:
         payload = dict(status='REFUSED', reason=str(exc),
                        dispatch_authorized=False)
-        if args.command == 'reattest':
+        if args.command == 'reattest' and args.action == 'preview':
             payload['classification'] = 'PREVIEW_GUARD'
         if isinstance(exc, NotesMediaVerificationError):
             payload['verification_code'] = exc.code

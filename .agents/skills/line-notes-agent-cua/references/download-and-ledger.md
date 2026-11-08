@@ -39,6 +39,7 @@
 | `verify` | 穩定檔案、hash、解碼、發布及保存 completion | 只接受已證明 `DOWNLOAD_FINISHED` 的 attempt；不重下補帳 |
 | `resume` | 接續中斷的命名／發布交易 | 只用唯一可核對的同一交易；不重送下載、不手動改名 |
 | `restart` | `preview`／`confirm`／`resume` 一個確認取代批次 | preview 唯讀；confirm 需精確 scope、證據與 Owner 同意；resume 只驗證 candidate／activation，不按 GUI、不下載 |
+| `reattest` | `preview`／`confirm` 一次 list directory device-only binding 轉接 | 僅限既有 OPEN_BATCH 與完整 witness；confirm 需本次精確 Owner 同意；不解除 UNKNOWN／LOCAL_CHANGED，也不授權 GUI |
 | `summary` | 投影本次盤點與六類狀態、缺項及完成數 | `all_known_media_complete=true` 只代表摘要投影一致，不是畫面／檔案獨立驗收，也不是真實 LINE E2E |
 | `evidence-correct` | 針對已精確核對的 page 追加 replacement evidence 更正 | 只修 page 引用；不改 page 成員／順序／頂底／scan 覆蓋，也不把更正當成原證據或完成證明 |
 | `media-kind-correct` | 在任何 attempt 前更正已盤點媒體的種類 | 只限最新完整 scan、尚無 intent／verification／completion／排除／保護的項目；不改 media key、貼文、數量或來源順序 |
@@ -91,6 +92,9 @@ restart confirm --records-root RECORDS_ROOT --session-id SESSION_ID
              --preview @PREVIEW_JSON --evidence BUNDLE
 restart resume --records-root RECORDS_ROOT --session-id SESSION_ID
              [--decoder FILE --decoder-sha256 SHA256] [--stall-seconds SECONDS]
+reattest preview --records-root RECORDS_ROOT --session-id SESSION_ID
+reattest confirm --records-root RECORDS_ROOT --session-id SESSION_ID
+             --preview @PREVIEW_JSON --evidence BUNDLE
 summary      --records-root RECORDS_ROOT
 evidence-audit --records-root RECORDS_ROOT
 evidence-correct --records-root RECORDS_ROOT --session-id SESSION_ID
@@ -130,6 +134,18 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 6. **再次中斷。** 同一個已確認 scope 在完成前再次中斷時，可用 `RESTART_REQUIRED`／`OPEN_BATCH` 找回原批次；已驗證 candidate 與原歷史保留，只對未完成或結果不確定的項目建立新的 v3 attempt。scope、媒體身分、舊版本、目的地或版本策略改變，必須重新 preview 與取得新的 Owner 明示同意。確認不涵蓋另一個列表、其他貼文或無限次重送。
 
 scope 內舊 `UNKNOWN`、無 outcome 或 pending 可被新 attempt 取代，但這不證明舊操作已停止；舊事件、舊 raw、舊 completion 與 UNKNOWN 全部保留。`LOCAL_CHANGED` 只在精確 scope 內以新版本目錄重建，舊目錄不搬動、不覆寫、不自動清理。`LOCAL_MISSING` 不觸發重下；scope 外 `LOCAL_CHANGED`、`EXCLUDED`、`PROTECTED_HISTORY` 與來源 missing／expired 仍保留欠件，不得宣稱整份列表完成。`dispatch_authorized=false` 不是 GUI grant；preview／confirm／resume 的成功都只證明簿記與指定狀態，不證明真實 LINE 派送或 E2E。
+
+### List directory device 轉接（reattest）
+
+此協議只處理既有 OPEN_BATCH 中，canonical list path 與 inode 不變而 device 改變的情況。它保留原 restart confirmation 與 scope；不證明 remount、相同實體 volume 或排除 matching clone。每個帳本最多新增一筆轉接。
+
+confirm 會追加 `list-directory-reattest` 事件。新版本可讀舊帳本；舊版本遇到此事件會以 `UNKNOWN_NOTES_EVENT_KIND` 拒絕。首次真實 confirm 前須確認後續 session 使用相容版本；事件寫入後不得刪除事件或回退成空帳。
+
+1. 在已核對的 session 執行 `reattest preview --records-root RECORDS_ROOT --session-id SESSION_ID`，保存完整 JSON。preview 必須核對所有 completion 與已登錄 staging 的完整 witness；已知拒絕、不支援布局、缺 witness 或任何身分歧義都停止。
+2. 只有 `CONFIRMATION_REQUIRED` 才可向 Owner 展示列表、舊／新 binding、restart scope／generation、witness 摘要、未解項與信任模型剩餘風險。Owner 必須明示同意這個精確 preview；既有 restart 同意、一般備份 Prompt、沉默或「繼續」都不是同意。
+3. 以同一 preview 與 v2 evidence bundle 執行 `reattest confirm --records-root RECORDS_ROOT --session-id SESSION_ID --preview @PREVIEW_JSON --evidence BUNDLE`。statement 記錄 Owner 實際同意與 preview digest；以 `command_stdout` asset 封存完整 preview，context 使用該 list_key。
+4. 成功後先以 `scan start --recovery` 完成新的全量盤點，才按原 OPEN_BATCH 建立合格 v3 intent。confirm 前的舊 scan 不可沿用；轉接不解除 UNKNOWN／LOCAL_CHANGED、不改 completion 或批次 scope，也不授權 GUI。
+5. 精確 replay 只查回同一事件，不新增 evidence 或 event，也不構成新同意。若目前 binding 再漂移，回報 `REATTEST_CURRENT_BINDING_CHANGED` 並停止；不建立第二筆轉接、不換目的地或入口繞過。
 
 ## 證據路徑與唯讀查詢
 
