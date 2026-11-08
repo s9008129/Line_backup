@@ -109,3 +109,20 @@ TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_OWNER_PLAN_APPROVAL_AND_REQUIRED_CHECKPO
 - 每帳本一次省去連續 witness 鏈；精確 replay、第二次漂移拒絕、完整 witness 與 freshness gates 各對應必要防護，未發現阻塞的可避免複雜度。
 - 一位同角色唯讀來源助手核對現行原語，未提供正式接受。本輪無產品修改、真實帳本／媒體讀取或 LINE 操作；產品測試與實機驗證 NOT_RUN。
 - 既有獨立 Plan Review v2 PASS 保留；待 Owner 核准計畫並接受信任模型及剩餘風險後，另開 Implementer 只做 S1。本角色不啟動下一角色、不修產品、不結案。
+
+## 2026-11-08 Owner 核准 v2 與 S1 實作交接
+
+Owner 明示：「我核准並接受信任模型與 clone 剩餘風險」，並要求撰寫開頭含 implementation 啟動 prompt 的 handoff.md 及 add／commit／push。v2 計畫核准與風險接受已有效，不再沿用前輪的待核准狀態；真實精確轉接、LINE、下載、S2 與合併未因此獲准。
+
+新增 `../20261108-notes-reattest-s1-handoff/handoff.md`，保留原受審 plan／handoff 與所有審查報告。新文件綁定 plan v2、兩份 v2 PASS 與起始 HEAD `c99ff874f6f809536a412e59050c50c5990649a4`，記錄最小可寫路徑、三條 S1 檢查、完整 witness／純讀契約、S2 延後項、六狀態與停止點。本輪只整理交接，不實作、不重測產品、不操作真實資料；既有未追蹤 Session Markdown 保留。
+
+下一正式角色由 Owner 另開 Implementer，只做 S1 read-only preview，寫 implementation.md 並交付精確候選與證據後停止；其後由人啟動 implementation Simplicity。原備份仍阻塞，產品及實機驗證仍 NOT_RUN。本輪私有證據與交付 receipt 在 `notes-volume-plan-20261108/s1-handoff/`，位於專案 `.local/line-backup/tasks/` 下。
+
+```text
+PRIMARY_OUTCOME_STATUS: V2_PLAN_APPROVED_BY_OWNER; S1_HANDOFF_PREPARED
+IMPLEMENTATION_STATUS: NOT_STARTED; PRODUCT_UNCHANGED
+CORE_ACCEPTANCE_STATUS: BLOCKED; ORIGINAL_BACKUP_NOT_RESUMED
+REQUIRED_VERIFICATION_STATUS: PASS_SOURCE_AND_VERSION_CHECKS_ONLY; S1_AND_PRODUCT_CHECKS_NOT_RUN
+INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
+TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_HUMAN_START_OF_IMPLEMENTER_S1
+```
