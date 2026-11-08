@@ -75,6 +75,14 @@ class NotesLockBusy(NotesError):
         self.scope = scope
 
 
+class NotesReattestError(NotesError):
+    def __init__(self, reason, classification=None, event_refs=()):
+        super().__init__(reason)
+        self.reason = reason
+        self.classification = classification
+        self.event_refs = list(event_refs)
+
+
 class NotesMediaVerificationError(NotesError, DailyError):
     def __init__(self, code, evidence=None):
         super().__init__(code)
@@ -85,6 +93,11 @@ class NotesMediaVerificationError(NotesError, DailyError):
 def need(condition, code):
     if not condition:
         raise NotesError(code)
+
+
+def reattest_need(condition, reason, classification, event_refs=()):
+    if not condition:
+        raise NotesReattestError(reason, classification, event_refs)
 
 
 def _utc_now():
@@ -2198,6 +2211,471 @@ class NotesRecords:
              info.st_ino == state['directory_inode'],
              'CURRENT_NOTES_LIST_DIRECTORY_CHANGED')
         return list_directory
+
+    def _reattest_directory_info(self, path, *, reason,
+                                 classification, event_refs=()):
+        try:
+            info = directory_info(path)
+            entry = _entry(path)
+            is_symlink = Path(path).is_symlink()
+        except (NotesError, OSError, ValueError) as exc:
+            raise NotesReattestError(
+                reason, classification, event_refs) from exc
+        reattest_need(entry is not None and stat.S_ISDIR(entry.st_mode) and
+                      not is_symlink, reason, classification, event_refs)
+        return info
+
+    def _reattest_current_paths(self, binding_event):
+        data = binding_event['data']
+        root = Path(data['photo_root'])
+        list_directory = Path(data['list_directory'])
+        refs = (_event_ref(binding_event),)
+        core = Path(CORE_ROOT).resolve(strict=True)
+        reattest_need(
+            root.is_absolute() and str(root) == os.path.normpath(str(root)) and
+            list_directory.is_absolute() and
+            str(list_directory) == os.path.normpath(str(list_directory)) and
+            list_directory.parent == root and root != core and
+            root.is_relative_to(core),
+            'REATTEST_BINDING_CHANGED', 'BINDING_PATH_OR_BOUNDARY_CHANGED',
+            refs)
+        root_info = self._reattest_directory_info(
+            root, reason='REATTEST_BINDING_CHANGED',
+            classification='PHOTO_ROOT_PATH_CHANGED', event_refs=refs)
+        list_info = self._reattest_directory_info(
+            list_directory, reason='REATTEST_BINDING_CHANGED',
+            classification='LIST_DIRECTORY_PATH_CHANGED', event_refs=refs)
+        reattest_need(list_info['inode'] == data['directory_inode'],
+                      'REATTEST_BINDING_CHANGED',
+                      'LIST_DIRECTORY_INODE_CHANGED', refs)
+        root_snapshot = dict(path=str(root), device=root_info['device'],
+                             inode=root_info['inode'])
+        new_binding = dict(photo_root=str(root),
+                           list_directory=str(list_directory),
+                           directory_device=list_info['device'],
+                           directory_inode=list_info['inode'])
+        old_binding = dict(photo_root=data['photo_root'],
+                           list_directory=data['list_directory'],
+                           directory_device=data['directory_device'],
+                           directory_inode=data['directory_inode'])
+        return root, list_directory, root_snapshot, old_binding, new_binding
+
+    def _reattest_open_batch(self, binding_event, list_directory):
+        unsupported_events = [
+            event for event in self.events
+            if (event['kind'] in ('restart-copy-plan', 'restart-candidate',
+                                  'restart-activation',
+                                  'list-directory-reattest') or
+                (event['kind'] == 'intent' and
+                 event['data']['schema'] == 'line-notes-intent/v3'))]
+        if unsupported_events:
+            raise NotesReattestError(
+                'REATTEST_UNSUPPORTED_STATE', 'UNSUPPORTED_RESTART_STATE',
+                tuple(_event_ref(event) for event in unsupported_events))
+        pending = self._pending_publish_plans()
+        if pending:
+            raise NotesReattestError(
+                'REATTEST_UNSUPPORTED_STATE', 'PENDING_NAMING_TRANSACTION',
+                tuple(_event_ref(event) for event in pending))
+        confirmation = self._restart_open_confirmation()
+        if confirmation is None:
+            raise NotesReattestError(
+                'REATTEST_OPEN_BATCH_REQUIRED', 'NO_OPEN_BATCH',
+                (_event_ref(binding_event),))
+        reattest_need(binding_event['sequence'] < confirmation['sequence'],
+                      'REATTEST_SCOPE_BLOCKED',
+                      'BINDING_CHANGED_AFTER_CONFIRMATION',
+                      (_event_ref(binding_event), _event_ref(confirmation)))
+        scope = confirmation['data']['scope']
+        scan_ref = scope['scan']
+        scan_event = self._event_by_sequence(scan_ref['sequence'])
+        reattest_need(
+            scan_event is not None and scan_event['kind'] == 'scan' and
+            Path(self._list_directory_at(scan_ref['sequence'])) ==
+            list_directory,
+            'REATTEST_SCOPE_BLOCKED', 'OPEN_BATCH_SCOPE_CHANGED',
+            (scan_ref, _event_ref(confirmation)))
+        return confirmation, dict(
+            confirmation_ref=_event_ref(confirmation),
+            restart_id=confirmation['data']['restart_id'],
+            generation=confirmation['data']['generation'],
+            scope_digest=confirmation['data']['scope_digest'])
+
+    def _reattest_scope_keys(self, confirmation, list_directory):
+        scope_keys = {
+            row['media_key']
+            for post in confirmation['data']['scope']['posts']
+            for row in post['media']
+        }
+        attempts = self._attempt_projection()
+        completions, by_attempt = self._completion_projection()
+        for media_key_value, attempt_id in attempts['latest_by_media'].items():
+            if media_key_value in completions:
+                continue
+            result = self._attempt_result(attempt_id, attempts)
+            if result in ('STOPPED', 'NOT_SENT'):
+                continue
+            attempt = attempts['attempts'][attempt_id]
+            event = self._event_by_sequence(attempts['order'][attempt_id])
+            if (media_key_value not in scope_keys or
+                    attempt['schema'] != 'line-notes-intent/v2' or
+                    Path(attempt['destination']).parent != list_directory):
+                raise NotesReattestError(
+                    'REATTEST_SCOPE_BLOCKED', 'UNSCOPED_UNRESOLVED_ATTEMPT',
+                    (_event_ref(event),) if event is not None else ())
+
+        availability = self._completion_availability()
+        for media_key_value, state in availability.items():
+            if state == LOCAL_CHANGED and media_key_value not in scope_keys:
+                event = completions.get(media_key_value)
+                raise NotesReattestError(
+                    'REATTEST_SCOPE_BLOCKED', 'UNSCOPED_LOCAL_CHANGED',
+                    (_event_ref(event),) if event is not None else ())
+        return scope_keys, attempts, completions, by_attempt
+
+    def _reattest_witness(self, *, root, list_directory, old_binding,
+                          new_binding, confirmation):
+        confirmation_ref = _event_ref(confirmation)
+        scope_keys, attempts, completions, completions_by_attempt = \
+            self._reattest_scope_keys(confirmation, list_directory)
+        completion_groups = {}
+        for event in completions.values():
+            data = event['data']
+            directory = Path(data['destination'])
+            if directory.parent != list_directory:
+                if directory.is_relative_to(list_directory):
+                    raise NotesReattestError(
+                        'REATTEST_UNSUPPORTED_LAYOUT',
+                        'NESTED_COMPLETION_DIRECTORY', (_event_ref(event),))
+                continue
+            attempt = attempts['attempts'].get(data['attempt_id'])
+            if attempt is None or attempt['schema'] != 'line-notes-intent/v2':
+                raise NotesReattestError(
+                    'REATTEST_UNSUPPORTED_LAYOUT',
+                    'UNSUPPORTED_COMPLETION_INTENT', (_event_ref(event),))
+            if (not directory.is_absolute() or
+                    str(directory) != os.path.normpath(str(directory)) or
+                    not directory.is_relative_to(list_directory)):
+                raise NotesReattestError(
+                    'REATTEST_UNSUPPORTED_LAYOUT',
+                    'NON_CANONICAL_COMPLETION_DIRECTORY', (_event_ref(event),))
+            completion_rows = completion_groups.setdefault(directory, [])
+            completion_rows.append(event)
+        if not completion_groups:
+            raise NotesReattestError(
+                'REATTEST_NO_WITNESS', 'NO_COMPLETION_WITNESS',
+                (confirmation_ref,))
+
+        staging_events = []
+        staging_paths = set()
+        for event in self.events:
+            if event['kind'] != 'intent' or \
+                    event['data']['schema'] != 'line-notes-intent/v2':
+                continue
+            data = event['data']
+            path = Path(data['destination'])
+            if path.parent != list_directory:
+                if path.is_relative_to(list_directory):
+                    raise NotesReattestError(
+                        'REATTEST_UNSUPPORTED_LAYOUT',
+                        'NESTED_STAGING_DIRECTORY', (_event_ref(event),))
+                continue
+            if (not path.is_absolute() or
+                    str(path) != os.path.normpath(str(path)) or
+                    not path.name.startswith('.line-notes-incoming-') or
+                    path in staging_paths):
+                raise NotesReattestError(
+                    'REATTEST_UNSUPPORTED_LAYOUT',
+                    'INVALID_STAGING_BINDING', (_event_ref(event),))
+            staging_paths.add(path)
+            staging_events.append(event)
+
+        expected_directories = set(completion_groups)
+        staging_rows = []
+        for event in staging_events:
+            data = event['data']
+            path = Path(data['destination'])
+            before = dict(path=str(path), device=data['directory_device'],
+                          inode=data['directory_inode'])
+            if before['device'] != old_binding['directory_device']:
+                raise NotesReattestError(
+                    'REATTEST_BINDING_CHANGED', 'STAGING_DEVICE_MAPPING',
+                    (_event_ref(event),))
+            entry = _entry(path)
+            completion = completions_by_attempt.get(data['attempt_id'])
+            if entry is None:
+                if completion is None:
+                    raise NotesReattestError(
+                        'REATTEST_WITNESS_CHANGED', 'UNRESOLVED_STAGING_MISSING',
+                        (_event_ref(event), confirmation_ref))
+                staging_rows.append(dict(
+                    intent_ref=_event_ref(event), path=str(path),
+                    state='ABSENT_COMPLETED', directory_before=before,
+                    directory_after=None, children=[]))
+                continue
+            info = self._reattest_directory_info(
+                path, reason='REATTEST_WITNESS_CHANGED',
+                classification='STAGING_DIRECTORY_CHANGED',
+                event_refs=(_event_ref(event),))
+            if (info['inode'] != before['inode'] or
+                    info['device'] != new_binding['directory_device']):
+                raise NotesReattestError(
+                    'REATTEST_WITNESS_CHANGED', 'STAGING_IDENTITY_CHANGED',
+                    (_event_ref(event),))
+            try:
+                children = sorted(child.name for child in path.iterdir())
+            except OSError as exc:
+                raise NotesReattestError(
+                    'REATTEST_WITNESS_CHANGED', 'STAGING_READ_FAILED',
+                    (_event_ref(event),)) from exc
+            if children:
+                raise NotesReattestError(
+                    'REATTEST_UNSUPPORTED_LAYOUT', 'NONEMPTY_STAGING',
+                    (_event_ref(event),))
+            after = self._reattest_directory_info(
+                path, reason='REATTEST_WITNESS_CHANGED',
+                classification='STAGING_DIRECTORY_CHANGED',
+                event_refs=(_event_ref(event),))
+            if after != info:
+                raise NotesReattestError(
+                    'REATTEST_WITNESS_CHANGED',
+                    'STAGING_DIRECTORY_CHANGED_DURING_READ',
+                    (_event_ref(event),))
+            expected_directories.add(path)
+            staging_rows.append(dict(
+                intent_ref=_event_ref(event), path=str(path),
+                state='PRESENT_EMPTY', directory_before=before,
+                directory_after=after, children=[]))
+
+        root_before = self._reattest_directory_info(
+            root, reason='REATTEST_BINDING_CHANGED',
+            classification='PHOTO_ROOT_PATH_CHANGED',
+            event_refs=(confirmation_ref,))
+        list_before = self._reattest_directory_info(
+            list_directory, reason='REATTEST_BINDING_CHANGED',
+            classification='LIST_DIRECTORY_PATH_CHANGED',
+            event_refs=(confirmation_ref,))
+        if (list_before['device'] != new_binding['directory_device'] or
+                list_before['inode'] != old_binding['directory_inode']):
+            raise NotesReattestError(
+                'REATTEST_BINDING_CHANGED', 'LIST_DIRECTORY_MAPPING_CHANGED',
+                (confirmation_ref,))
+        try:
+            names_before = {child.name for child in list_directory.iterdir()}
+        except OSError as exc:
+            raise NotesReattestError(
+                'REATTEST_WITNESS_CHANGED', 'LIST_DIRECTORY_READ_FAILED',
+                (confirmation_ref,)) from exc
+        expected_names = {path.name for path in expected_directories}
+        extra_names = names_before - expected_names
+        missing_names = expected_names - names_before
+        if extra_names:
+            raise NotesReattestError(
+                'REATTEST_UNSUPPORTED_LAYOUT', 'UNREGISTERED_LIST_ENTRY',
+                (confirmation_ref,))
+        if missing_names:
+            raise NotesReattestError(
+                'REATTEST_WITNESS_CHANGED', 'REGISTERED_LIST_ENTRY_MISSING',
+                (confirmation_ref,))
+
+        witness_completions = []
+        for directory in sorted(
+                completion_groups,
+                key=lambda path: path.relative_to(list_directory).as_posix()):
+            rows = sorted(completion_groups[directory],
+                          key=lambda event: event['sequence'])
+            expected_files = set()
+            before_directory = None
+            for event in rows:
+                data = event['data']
+                before = _check_exact(
+                    data['target_directory'], ('path', 'device', 'inode'),
+                    'INVALID_COMPLETION_DIRECTORY')
+                if (before['path'] != str(directory) or
+                        before['device'] != old_binding['directory_device']):
+                    raise NotesReattestError(
+                        'REATTEST_BINDING_CHANGED',
+                        'COMPLETION_DEVICE_MAPPING', (_event_ref(event),))
+                if before_directory is None:
+                    before_directory = dict(before)
+                elif before_directory != before:
+                    raise NotesReattestError(
+                        'REATTEST_WITNESS_CHANGED',
+                        'COMPLETION_DIRECTORY_MAPPING_CHANGED',
+                        tuple(_event_ref(row) for row in rows))
+                file_before = self._completion_file_row(
+                    data['target_file'])
+                if file_before['device'] != old_binding['directory_device']:
+                    raise NotesReattestError(
+                        'REATTEST_BINDING_CHANGED', 'COMPLETION_FILE_MAPPING',
+                        (_event_ref(event),))
+                if file_before['name'] in expected_files:
+                    raise NotesReattestError(
+                        'REATTEST_UNSUPPORTED_LAYOUT',
+                        'DUPLICATE_COMPLETION_NAME', (_event_ref(event),))
+                expected_files.add(file_before['name'])
+
+            directory_info_value = self._reattest_directory_info(
+                directory, reason='REATTEST_WITNESS_CHANGED',
+                classification='COMPLETION_DIRECTORY_CHANGED',
+                event_refs=tuple(_event_ref(row) for row in rows))
+            if (directory_info_value['device'] !=
+                    new_binding['directory_device'] or
+                    directory_info_value['inode'] !=
+                    before_directory['inode']):
+                raise NotesReattestError(
+                    'REATTEST_WITNESS_CHANGED',
+                    'COMPLETION_DIRECTORY_IDENTITY_CHANGED',
+                    tuple(_event_ref(row) for row in rows))
+            try:
+                directory_names = {child.name for child in directory.iterdir()}
+            except OSError as exc:
+                raise NotesReattestError(
+                    'REATTEST_WITNESS_CHANGED',
+                    'COMPLETION_DIRECTORY_READ_FAILED',
+                    tuple(_event_ref(row) for row in rows)) from exc
+            if directory_names != expected_files:
+                reason = ('REATTEST_UNSUPPORTED_LAYOUT'
+                          if directory_names - expected_files else
+                          'REATTEST_WITNESS_CHANGED')
+                raise NotesReattestError(
+                    reason, 'COMPLETION_NAME_SET_CHANGED',
+                    tuple(_event_ref(row) for row in rows))
+
+            for event in rows:
+                data = event['data']
+                file_before = dict(data['target_file'])
+                path = directory / file_before['name']
+                try:
+                    raw, file_info = _read_regular(
+                        path, allowed_nlinks=(1,),
+                        code='REATTEST_WITNESS_CHANGED')
+                except (NotesError, DailyError, OSError, ValueError) as exc:
+                    raise NotesReattestError(
+                        'REATTEST_WITNESS_CHANGED',
+                        'COMPLETION_FILE_CHANGED', (_event_ref(event),)) from exc
+                file_after = dict(
+                    name=file_before['name'], device=file_info.st_dev,
+                    inode=file_info.st_ino, size=file_info.st_size,
+                    sha256=digest(raw), mtime_ns=file_info.st_mtime_ns,
+                    ctime_ns=file_info.st_ctime_ns)
+                if (file_info.st_nlink != 1 or
+                        file_after['device'] !=
+                        new_binding['directory_device'] or
+                        any(file_after[key] != file_before[key]
+                            for key in ('inode', 'size', 'sha256',
+                                        'mtime_ns', 'ctime_ns'))):
+                    raise NotesReattestError(
+                        'REATTEST_WITNESS_CHANGED',
+                        'COMPLETION_FILE_METADATA_CHANGED',
+                        (_event_ref(event),))
+                witness_completions.append(dict(
+                    completion_ref=_event_ref(event),
+                    directory_before=dict(before_directory),
+                    directory_after=dict(directory_info_value),
+                    file_before=file_before, file_after=file_after))
+
+            current_directory = self._reattest_directory_info(
+                directory, reason='REATTEST_WITNESS_CHANGED',
+                classification='COMPLETION_DIRECTORY_CHANGED',
+                event_refs=tuple(_event_ref(row) for row in rows))
+            try:
+                names_after = {child.name for child in directory.iterdir()}
+            except OSError as exc:
+                raise NotesReattestError(
+                    'REATTEST_WITNESS_CHANGED',
+                    'COMPLETION_DIRECTORY_READ_FAILED',
+                    tuple(_event_ref(row) for row in rows)) from exc
+            if current_directory != directory_info_value or \
+                    names_after != directory_names:
+                raise NotesReattestError(
+                    'REATTEST_WITNESS_CHANGED',
+                    'COMPLETION_DIRECTORY_CHANGED_DURING_READ',
+                    tuple(_event_ref(row) for row in rows))
+
+        witness_completions.sort(
+            key=lambda row: (
+                Path(row['directory_before']['path']).relative_to(
+                    list_directory).as_posix(),
+                row['completion_ref']['sequence']))
+        staging_rows.sort(
+            key=lambda row: Path(row['path']).relative_to(
+                list_directory).as_posix())
+
+        try:
+            names_after = {child.name for child in list_directory.iterdir()}
+        except OSError as exc:
+            raise NotesReattestError(
+                'REATTEST_WITNESS_CHANGED', 'LIST_DIRECTORY_READ_FAILED',
+                (confirmation_ref,)) from exc
+        root_after = self._reattest_directory_info(
+            root, reason='REATTEST_WITNESS_CHANGED',
+            classification='PHOTO_ROOT_CHANGED_DURING_READ',
+            event_refs=(confirmation_ref,))
+        list_after = self._reattest_directory_info(
+            list_directory, reason='REATTEST_WITNESS_CHANGED',
+            classification='LIST_DIRECTORY_CHANGED_DURING_READ',
+            event_refs=(confirmation_ref,))
+        if (names_after != names_before or root_after != root_before or
+                list_after != list_before):
+            raise NotesReattestError(
+                'REATTEST_WITNESS_CHANGED', 'LIST_SNAPSHOT_CHANGED',
+                (confirmation_ref,))
+        witness = dict(schema='line-notes-list-witness/v1',
+                        completions=witness_completions,
+                        staging=staging_rows)
+        return witness
+
+    def reattest_preview(self, *, session_id):
+        with self.locked():
+            self._require_session(session_id)
+            if any(event['kind'] == 'list-directory-reattest'
+                   for event in self.events):
+                event = next(event for event in self.events
+                             if event['kind'] == 'list-directory-reattest')
+                raise NotesReattestError(
+                    'REATTEST_UNSUPPORTED_STATE', 'PRIOR_REATTEST',
+                    (_event_ref(event),))
+            binding_event = next(
+                (event for event in reversed(self.events)
+                 if event['kind'] in ('created', 'destination')), None)
+            if binding_event is None:
+                raise NotesReattestError(
+                    'REATTEST_BINDING_CHANGED', 'CURRENT_BINDING_MISSING')
+            root, list_directory, root_snapshot, old_binding, new_binding = \
+                self._reattest_current_paths(binding_event)
+            confirmation, open_batch = self._reattest_open_batch(
+                binding_event, list_directory)
+            if (new_binding['directory_device'] ==
+                    old_binding['directory_device']):
+                witness = dict(schema='line-notes-list-witness/v1',
+                                completions=[], staging=[])
+                status = 'NO_CHANGE'
+            else:
+                witness = self._reattest_witness(
+                    root=root, list_directory=list_directory,
+                    old_binding=old_binding, new_binding=new_binding,
+                    confirmation=confirmation)
+                status = 'CONFIRMATION_REQUIRED'
+            scope = dict(
+                list_key=self.list_data['list_key'],
+                root_snapshot=root_snapshot,
+                old_binding_ref=_event_ref(binding_event),
+                old_binding=old_binding, new_binding=new_binding,
+                open_batch=open_batch, witness=witness,
+                witness_sha256=digest(encoded(witness)),
+                trust_policy='OWNER_ACCEPTED_WITNESS_TRANSITION_V1')
+            expected_tip = _event_ref(self.events[-1])
+            schema = 'line-notes-list-reattest-preview/v1'
+            preview_digest = digest(encoded(dict(
+                schema=schema, session_id=session_id,
+                expected_tip=expected_tip, scope=scope)))
+            return dict(schema=schema, status=status,
+                        session_id=session_id, expected_tip=expected_tip,
+                        scope=scope, preview_digest=preview_digest,
+                        dispatch_authorized=False,
+                        external_copy_verified=False,
+                        real_line_e2e='NOT_TESTED')
 
     def destination(self, *, photo_root, session_id, evidence):
         with self.locked():
@@ -5990,6 +6468,14 @@ def _build_notes_parser():
                          default=DEFAULT_STALL_SECONDS,
                          help='Video decode progress watchdog seconds')
 
+    reattest = sub.add_parser(
+        'reattest', help='Read-only preview of a list directory device change')
+    reattest_sub = reattest.add_subparsers(dest='action', required=True)
+    reattest_preview = reattest_sub.add_parser(
+        'preview', help='Build a read-only witness preview')
+    add_records(reattest_preview, 'Build a read-only witness preview')
+    reattest_preview.add_argument('--session-id', required=True)
+
     outcome = sub.add_parser('outcome', help='Append the first observed attempt outcome')
     add_records(outcome, 'Append the first observed attempt outcome')
     outcome.add_argument('--session-id', required=True)
@@ -6126,7 +6612,7 @@ def main(argv=None):
                               'verify', 'resume', 'summary', 'evidence-audit',
                               'evidence-correct', 'media-kind-correct',
                               'source-unavailable', 'destination', 'exclude',
-                              'protect', 'restart'):
+                              'protect', 'restart', 'reattest'):
             records = NotesRecords(args.records_root)
             if args.command == 'memory':
                 result = records.memory()
@@ -6291,6 +6777,9 @@ def main(argv=None):
                         decoder_sha256=args.decoder_sha256,
                         progress_callback=_cli_progress,
                         stall_seconds=stall_seconds)
+            elif args.command == 'reattest':
+                result = records.reattest_preview(
+                    session_id=args.session_id)
         else:
             parser.error('unknown command')
         _print_cli_result(result)
@@ -6299,10 +6788,21 @@ def main(argv=None):
         return 0
     except NotesLockBusy as exc:
         read_only = (args.command in READ_ONLY_COMMANDS or
-                     (args.command == 'restart' and args.action == 'preview'))
+                     (args.command in ('restart', 'reattest') and
+                      args.action == 'preview'))
         payload = dict(status='REFUSED', reason='NOTES_LOCK_BUSY',
                        scope=exc.scope, dispatch_authorized=False,
                        retry_safe=read_only)
+        print(json.dumps(payload,
+                         ensure_ascii=False, separators=(',', ':')))
+        return 4
+    except NotesReattestError as exc:
+        payload = dict(status='REFUSED', reason=exc.reason,
+                       dispatch_authorized=False)
+        if exc.classification is not None:
+            payload['classification'] = exc.classification
+        if exc.event_refs:
+            payload['event_refs'] = exc.event_refs
         print(json.dumps(payload,
                          ensure_ascii=False, separators=(',', ':')))
         return 4
@@ -6311,6 +6811,8 @@ def main(argv=None):
             subprocess.SubprocessError) as exc:
         payload = dict(status='REFUSED', reason=str(exc),
                        dispatch_authorized=False)
+        if args.command == 'reattest':
+            payload['classification'] = 'PREVIEW_GUARD'
         if isinstance(exc, NotesMediaVerificationError):
             payload['verification_code'] = exc.code
             payload['evidence'] = exc.evidence

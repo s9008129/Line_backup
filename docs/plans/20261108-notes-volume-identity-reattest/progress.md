@@ -126,3 +126,22 @@ REQUIRED_VERIFICATION_STATUS: PASS_SOURCE_AND_VERSION_CHECKS_ONLY; S1_AND_PRODUC
 INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
 TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_HUMAN_START_OF_IMPLEMENTER_S1
 ```
+
+## 2026-11-08 Implementer：S1 唯讀預覽候選
+
+本輪從 branch `feature/line-notes-media`、起始 HEAD `52fef4ab95c5843db4793c9dd5ebab5552bfb60e` 接續；本地與遠端起始 HEAD 相同。僅在核准 S1 範圍內修改 `notes.py`、新增 `test_notes_reattest.py`、補 `test_notes_locks.py`，並新增 implementation 報告。既有未追蹤 Session Markdown 未讀、未改、未 stage。
+
+新增 read-only reattest preview 與 bounded witness：在 lock/session 下確認既有 OPEN_BATCH、限制狀態與 canonical 路徑，完整檢查 list completion／staging 的 device mapping、inode、集合、file metadata/hash 與穩定快照。成功只回 preview/digest；沒有 confirm、新事件或派送路徑。NO_CHANGE 固定空 witness。13 個合成案例覆蓋成功／拒絕、檔案和目錄異動、symlink（含祖先）、hardlink、staging 與 scope 外異常；成功與拒絕快照相等。
+
+本輪指定檢查：`test_notes_reattest.py` exit 0、13 tests；notes `--help` exit 0；`test_notes_locks.py` exit 0、7 tests；`git diff --check` exit 0。環境為 `/usr/bin/python3 3.9.6`、Darwin 27.2.0 arm64。命令分流日誌、stderr、exit 與 hashes 保存在 `.local/line-backup/tasks/notes-volume-reattest-s1-20261108-impl/`。完整回歸、controlled volume、真實帳本、LINE、下載／解碼、跨 Session 與獨立 acceptance 均 `NOT_RUN`；原備份仍阻塞。
+
+下一步交付 S1 候選供 Owner 另啟 Simplicity Reviewer（Implementation）。審查前不進 S2、不做真實轉接或日常備份、不宣稱 acceptance／DONE。
+
+```text
+PRIMARY_OUTCOME_STATUS: S1_READ_ONLY_PREVIEW_CANDIDATE
+IMPLEMENTATION_STATUS: IMPLEMENTED; NO_WRITABLE_CONFIRM_OR_BINDING_CHANGE
+CORE_ACCEPTANCE_STATUS: BLOCKED; ORIGINAL_BACKUP_NOT_RESUMED
+REQUIRED_VERIFICATION_STATUS: PASS_THREE_S1_CHECKS; FULL_REGRESSION_AND_REAL_ENVIRONMENT_NOT_RUN
+INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
+TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_OWNER_START_OF_IMPLEMENTATION_SIMPLICITY_REVIEW
+```

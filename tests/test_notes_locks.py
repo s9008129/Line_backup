@@ -189,6 +189,16 @@ class NotesLockTests(unittest.TestCase):
             self.assertEqual(code, 4)
             self.assert_lock_busy(payload, 'records', True)
 
+            output = io.StringIO()
+            with mock.patch('sys.stdout', new=output):
+                code = notes.main([
+                    'reattest', 'preview', '--records-root',
+                    str(self.records.records), '--session-id',
+                    'synthetic-lock-session'])
+            self.assertEqual(code, 4)
+            self.assert_lock_busy(json.loads(output.getvalue()),
+                                  'records', True)
+
         code, payload = self.run_cli_json(
             'summary', '--records-root', self.records.records)
         self.assertEqual(code, 0)
