@@ -49,11 +49,11 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
 ## 工作流程
 
-1. **找回前次任務。** 先查全部記事本帳本與 active-notes-task，再讀相符帳本的 `memory` 摘要。不能用缺少帳本、索引缺失或 active-task 不存在推論為空帳。新列表須有完整、無歧義的新列表證據：固定同一組 identity 先執行 `list-key`，以該 key context 建立兩份 v2 evidence，再以相同 identity `init` 並讀回 key。新／既有列表都須核對當次入口與有效前景後 `bind`，再依 [下載與 notes CLI](references/download-and-ledger.md#啟動與帳本對帳) 處理舊 attempt／命名交易，收斂後才 `scan start`；不能在未綁定時先寫 outcome／reconcile，也不重用舊 Session ID 繞過綁定拒絕。`memory` 不含完整 attempt、staging 目的地或 completion manifest；交易細節以 `intent`／`verify` 結果及追加事件為準。新一批目的地以 `destination` 追加，保留舊完成路徑。
+1. **找回前次任務。** 先查全部記事本帳本與 active-notes-task，再讀相符帳本的 `memory` 摘要。不能用缺少帳本、索引缺失或 active-task 不存在推論為空帳。新列表須有完整、無歧義的新列表證據：固定同一組 identity 先執行 `list-key`，以該 key context 建立兩份 v2 evidence，再以相同 identity `init` 並讀回 key。新／既有列表都須核對當次入口與有效前景後 `bind`，再依 [下載與 notes CLI](references/download-and-ledger.md#啟動與帳本對帳) 處理舊 attempt／命名交易。普通情境先收斂舊項再 `scan start`；若已確認 restart 批次，則在 `restart confirm` 後先中斷尚未結束的 scan，再以 `scan start --recovery` 建立新的完整 recovery scan，普通 scan 不得用來掩蓋舊問題。不能在未綁定時先寫 outcome／reconcile，也不重用舊 Session ID 繞過綁定拒絕。`memory` 不含完整 attempt、staging 目的地或 completion manifest；交易細節以 `intent`／`verify` 結果及追加事件為準。新一批目的地以 `destination` 追加，保留舊完成路徑。
 2. **判定入口。** 在有效前景交接內用當次 AX／畫面確認目標是記事本列表，不是相簿、聊天、貼文檢視器或出處不明頁面。需要返回時只使用當次可靠控制項或已證實且符合角色／焦點的快捷鍵；不得猜 Escape、Command-W 或關閉。入口未確認前不捲動、不盤點、不下載。
 3. **完整盤點與頁面覆蓋。** 依 [GUI 導覽與盤點](references/gui-inventory.md) 從頂端到底端，以有序重疊避免漏篇；先保存來源逐卡紀錄，再產生 page rows，呼叫 `page` 前完成來源↔rows 雙向對帳。逐篇核對媒體縮圖、更多指示、viewer 與來源順序；viewer 尚未就緒時不定位下載控制、不先建媒體身分，也不以黑底、disabled slider、`00:00` 或缺少影片控制判定種類。只有來源覆蓋、頂底、重疊、篇數與逐篇媒體覆蓋已成立，才可產生合格下載排程。純文字貼文記 `NO_MEDIA`，不得當成下載完成。
 4. **一次一項下載。** 依 [下載與 notes CLI](references/download-and-ledger.md) 在 intent 前確認資格、來源及記事本控制；為每次 attempt 保存並讀回 intent、新空白暫存目錄及禁止重送紀錄，讀回後在輸入前再次定位同一列表／貼文／媒體／viewer／控制。**每個 attempt 的下載控制呼叫與 chooser 最終確認各最多一次**，兩者分開保存真實工具回傳；若 UI 顯示 Save All，須先證明它是本記事本自己的控制，不得沿用相簿入口。chooser 須可歸屬同一 attempt、精確讀回完整暫存路徑後才確認一次。
-5. **結果、驗證與命名。** 先查該 attempt 是否已有 outcome／UNKNOWN：沒有 outcome 時用 `outcome` 記錄第一筆真實結果（可為 UNKNOWN）；已有 `outcome=UNKNOWN` 才用 `reconcile`。未收斂不得 verify、建立新 intent、重下或派下一項；只有 `DOWNLOAD_FINISHED` 才能 `verify`。命名／發布交易中斷用 `resume` 接續同一交易，絕不重下。檔案驗證見 [驗證與恢復](references/verification-and-recovery.md)。
+5. **結果、驗證與命名。** 先查該 attempt 是否已有 outcome／UNKNOWN：沒有 outcome 時用 `outcome` 記錄第一筆真實結果（可為 UNKNOWN）；已有 `outcome=UNKNOWN` 才用 `reconcile`。沒有精確確認批次時，未收斂不得 verify、建立新 intent、重下或派下一項；只有 `DOWNLOAD_FINISHED` 才能 `verify`。命名／發布交易中斷用 `resume` 接續同一交易，絕不重下。若完整盤點後 `restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH`，依下列確認取代流程處理；檔案驗證見 [驗證與恢復](references/verification-and-recovery.md)。
 6. **逐項循環與結束對帳。** 完成一項後保存並讀回 completion，重新觀察原貼文／列表，再定位下一個合格項。遇到新媒體、重排、刪除、編輯或檔案異常時先更新盤點與狀態，不覆寫舊完成事實。最後先重讀本輪原件，依 GUI 本文核對各 page 讀回與有序去重聯集，再以 `summary` 與當次畫面交叉核對；只有覆蓋完整且所有未解類別已誠實列出，才回報本次工作結果。
 
 page 前的來源卡片台帳、部分／高卡片、雙向對帳及 finish 前原件重核，以 [GUI 導覽與盤點](references/gui-inventory.md) 為唯一操作本文。CLI 只檢查已提交 rows 的內部一致性；來源對帳未成立時，即使工具能接受，也不得提交 page／finish 或開始新派送。
@@ -66,9 +66,10 @@ page 前的來源卡片台帳、部分／高卡片、雙向對帳及 finish 前�
 - 定位、input 原始回傳、App 階段性回應、下載結果、檔案驗證與 completion 是不同命題；只有可歸屬的正面證據組合能前進。timeout、畫面未變、空目錄、缺少 marker、API 成敗或播放結束都不足以判未派送或完成，詳見 [證據與允許行為矩陣](references/verification-and-recovery.md#證據與允許行為矩陣)。
 - 新寫入的事件證據必須是 `evidence-pack` 產生且由 CLI 回傳的 `line-notes-evidence/v2` bundle；不手寫 bundle、不改內部 JSON／hash。`evidence-audit` 只作唯讀引用稽核；完整性失敗時 exit 4，且不得把一般 `summary` 或 audit 的局部結果當成可信業務投影。`evidence-correct` 只修 page 引用，保留 page 成員、順序、頂底與 scan 覆蓋；`media-kind-correct` 只處理尚無任何 attempt 的已盤點媒體，不改 key、貼文、順序或數量。兩者都不是日常自動動作，真實帳本仍須精確資料授權與證據。
 - 只有原 attempt 已確認 `STOPPED`／`NOT_SENT`、原檔保留、帳本已持久化 `recovery_authorized=true`，且具充分停止證據時，才可依 [下載與 notes CLI](references/download-and-ledger.md) 以 `--recovery-evidence` 建立該項的新空白恢復 attempt；現行 CLI 沒有事後改寫此授權的命令，未持久化時停止，不手改 ledger。已完成項跳過。
+- 沒有精確確認批次時，`UNKNOWN`、活動下載、未完成命名交易與 `LOCAL_CHANGED` 仍依原規則停止。若 `restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH`，Agent 先用白話列出精確列表／受影響貼文與媒體／舊版位置／新 `versions/gNNNNNNNN/` 路徑／額外空間／缺項與保留項，取得 Owner 明示同意後才可 `restart confirm`；沉默、逾時或一般「繼續」不是同意。confirm 後必須完成新的 recovery scan，才可逐項 `intent --restart-id`；同一媒體的新 generation 可成為目前 active，舊 confirmation、candidate、activation、completion 與 UNKNOWN 歷史全部保留。同一確認批次涵蓋完成前再次中斷；scope、身分、目的地或版本策略改變須重新預覽與確認，不能把一次同意擴成無限重送。`dispatch_authorized=false` 不是 GUI grant；新 attempt 仍使用新的空白 staging，不沿用舊 chooser、路徑或座標。
 - 來源已明確到期且原最新 attempt 為 `STOPPED` 時，才可追加 `source-unavailable`；它只記 `SOURCE_EXPIRED`，不是完成、排除、重試授權或服務端已回收的證明。該項不得再建立 intent，其他項仍受列表級 blocker 約束。
 - 命名交易、暫名與目標身分可唯一核對時用 `resume`；無法唯一下一步時保留原檔與 pending 證據並停止，不手動改資料夾或重下。
-- 已完成事實與本機可用性分開：整篇目錄缺席記 `LOCAL_MISSING` 並保留完成、禁止重下；目錄仍存在但有缺檔、額外檔、hash／身分漂移或 symlink 時記 `LOCAL_CHANGED` 並停止新派送。
+- 已完成事實與本機可用性分開：整篇目錄缺席記 `LOCAL_MISSING` 並保留完成、禁止重下；目錄仍存在但有缺檔、額外檔、hash／身分漂移或 symlink 時記 `LOCAL_CHANGED`。`LOCAL_CHANGED` 僅可在精確確認批次 scope 內保留原檔並複製到新版本目錄重建；scope 外仍停止新派送。
 - 六類業務狀態為 `COMPLETED`、`EXCLUDED`、`PENDING`、`PREVIOUSLY_INCOMPLETE`、`UNKNOWN`、`PROTECTED_HISTORY`。`NO_MEDIA` 是貼文層級標記，不是第七類，也不是下載完成。
 - 不發訊息、刪除、分享、覆寫照片或變更舊完成事實；不擴及其他列表。工具拒絕、身分歧義、寫入衝突或不明派送時停止依賴該前提的動作，不換入口繞過。
 

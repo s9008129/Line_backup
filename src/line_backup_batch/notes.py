@@ -2795,7 +2795,7 @@ class NotesRecords:
         confirmations = {}
         plans = {}
         candidates_by_plan = {}
-        candidates = {}
+        candidates_by_restart = {}
         activations = {}
         active_by_media = {}
         activated_restarts = set()
@@ -3003,7 +3003,8 @@ class NotesRecords:
                      digest(encoded(data['manifest'])),
                      'RESTART_CANDIDATE_MANIFEST_CHANGED')
                 candidates_by_plan[plan_data['plan_id']] = event
-                candidates[data['media_key']] = event
+                candidates_by_restart.setdefault(
+                    data['restart_id'], {})[data['media_key']] = event
                 continue
 
             if kind == 'restart-activation':
@@ -3026,34 +3027,29 @@ class NotesRecords:
                                for row in data['candidates']]
                 need(actual_rows == expected_rows,
                      'RESTART_ACTIVATION_SCOPE_CHANGED')
-                active_post_directories = {}
-                for existing_key, existing in active_by_media.items():
-                    existing_post = existing['candidate']['data']['post_key']
-                    existing_directory = str(Path(
-                        existing['candidate']['data']['candidate']['path']).parent)
-                    active_post_directories.setdefault(
-                        existing_post, set()).add(existing_directory)
                 for row in data['candidates']:
                     candidate = event_for_ref(
                         row['candidate_ref'],
                         'RESTART_ACTIVATION_CANDIDATE_CHANGED',
                         kind='restart-candidate')
                     need(candidate['sequence'] < sequence and
-                         candidate is candidates.get(row['media_key']) and
+                         candidate is candidates_by_restart.get(
+                             restart_id, {}).get(row['media_key']) and
                          candidate['data']['restart_id'] == restart_id and
                          candidate['data']['generation'] ==
                          data['generation'] and
                          candidate['data']['post_key'] == row['post_key'] and
                          candidate['data']['candidate'] == row['candidate'],
                          'RESTART_ACTIVATION_CANDIDATE_CHANGED')
-                    need(row['media_key'] not in active_by_media,
-                         'RESTART_MEDIA_ALREADY_ACTIVE')
                     active_by_media[row['media_key']] = dict(
                         activation=event, candidate=candidate,
                         confirmation=confirmation, row=row)
+                active_post_directories = {}
+                for active in active_by_media.values():
                     active_post_directories.setdefault(
-                        row['post_key'], set()).add(str(Path(
-                            row['candidate']['path']).parent))
+                        active['candidate']['data']['post_key'], set()).add(
+                            str(Path(active['candidate']['data'][
+                                'candidate']['path']).parent))
                 need(all(len(directories) <= 1
                          for directories in active_post_directories.values()),
                      'MULTIPLE_ACTIVE_VERSION_DIRECTORIES')
@@ -3063,7 +3059,8 @@ class NotesRecords:
 
         return dict(confirmations=confirmations, plans=plans,
                     candidates_by_plan=candidates_by_plan,
-                    candidates=candidates, activations=activations,
+                    candidates_by_restart=candidates_by_restart,
+                    activations=activations,
                     active_by_media=active_by_media)
 
     def _active_media_versions(self, events=None):
@@ -3076,8 +3073,7 @@ class NotesRecords:
         return self._candidate_file_availability(
             active['candidate']['data']['candidate'])
 
-    @staticmethod
-    def _candidate_file_availability(candidate):
+    def _candidate_file_availability(self, candidate):
         path = Path(candidate['path'])
         entry = _entry(path)
         if entry is None:
@@ -3093,6 +3089,17 @@ class NotesRecords:
                  'ACTIVE_CANDIDATE_CHANGED')
             need(digest(read_file(path)) == candidate['sha256'],
                  'ACTIVE_CANDIDATE_CHANGED')
+            directory = path.parent
+            directory_entry = _entry(directory)
+            need(directory_entry is not None and
+                 stat.S_ISDIR(directory_entry.st_mode) and
+                 not directory.is_symlink() and
+                 directory == directory.resolve(strict=True),
+                 'ACTIVE_CANDIDATE_CHANGED')
+            expected_names = self._target_names_for_directory(directory)
+            actual_names = {child.name for child in directory.iterdir()}
+            need(actual_names <= expected_names,
+                 'ACTIVE_CANDIDATE_CHANGED')
             return LOCAL_VERIFIED
         except (NotesError, DailyError, OSError, ValueError):
             return LOCAL_CHANGED
@@ -3100,7 +3107,7 @@ class NotesRecords:
     def _restart_target_rows(self, confirmation):
         posts = []
         estimated = 0
-        for post in confirmation['data']['scope']['posts']:
+        for post in confirmation['scope']['posts']:
             media_rows = []
             for number, row in enumerate(
                     sorted(post['media'], key=lambda item: item['source_order']),
@@ -3445,7 +3452,9 @@ class NotesRecords:
                     reasons.add('LOCAL_CHANGED')
                 if status == 'UNKNOWN':
                     reasons.add('UNKNOWN_ATTEMPT')
-                elif status == 'PREVIOUSLY_INCOMPLETE':
+                elif (status == 'PREVIOUSLY_INCOMPLETE' and
+                      not row['missing'] and
+                      row['source_availability'] != 'EXPIRED'):
                     reasons.add('UNFINISHED_ATTEMPT')
                 if key in pending_by_key:
                     reasons.add('PENDING_NAMING')
@@ -3566,11 +3575,7 @@ class NotesRecords:
         for plan in restart['plans'].values():
             if plan['data']['restart_id'] == restart_id:
                 plans_by_media.setdefault(plan['data']['media_key'], []).append(plan)
-        candidates = {
-            event['data']['media_key']: event
-            for event in restart['candidates'].values()
-            if event['data']['restart_id'] == restart_id
-        }
+        candidates = restart['candidates_by_restart'].get(restart_id, {})
         attempts = self._attempt_projection()
         rows = []
         for post in confirmation['scope']['posts']:
@@ -5033,7 +5038,8 @@ class NotesRecords:
              entry[0]['post_key'] == intent_data['post_key'] and
              entry[1]['identity'] == intent_data['identity'],
              'RESTART_INTENT_OUTSIDE_SCOPE')
-        existing = restart['candidates'].get(media_key_value)
+        existing = restart['candidates_by_restart'].get(
+            restart_id, {}).get(media_key_value)
         if existing is not None:
             need(existing['data']['restart_id'] == restart_id,
                  'RESTART_CANDIDATE_ATTEMPT_CHANGED')
@@ -5128,10 +5134,7 @@ class NotesRecords:
         self._validate_restart_scope_current(confirmation)
         need(not self._pending_publish_plans(),
              'PENDING_NAMING_TRANSACTION')
-        candidates = {
-            event['data']['media_key']: event
-            for event in restart['candidates'].values()
-            if event['data']['restart_id'] == restart_id}
+        candidates = restart['candidates_by_restart'].get(restart_id, {})
         rows = []
         for post in confirmation['data']['scope']['posts']:
             for scope_row in sorted(post['media'],
@@ -5191,7 +5194,8 @@ class NotesRecords:
             restart_id = confirmation['data']['restart_id']
             scope = self._restart_scope_media(confirmation['data'])
             for key in sorted(scope):
-                candidate = restart['candidates'].get(key)
+                candidate = restart['candidates_by_restart'].get(
+                    restart_id, {}).get(key)
                 if (candidate is not None and
                         self._candidate_file_availability(
                             candidate['data']['candidate']) == LOCAL_VERIFIED):
@@ -5212,10 +5216,8 @@ class NotesRecords:
                         progress_callback=progress_callback,
                         stall_seconds=stall_seconds)
             restart = self._restart_projection()
-            candidates = {
-                event['data']['media_key']: event
-                for event in restart['candidates'].values()
-                if event['data']['restart_id'] == restart_id}
+            candidates = restart['candidates_by_restart'].get(
+                restart_id, {})
             ready = all(
                 key in candidates and self._candidate_file_availability(
                     candidates[key]['data']['candidate']) == LOCAL_VERIFIED

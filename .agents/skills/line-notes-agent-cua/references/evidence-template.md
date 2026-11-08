@@ -42,6 +42,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
 |---|---|---|
 | 身分 | `list_key`、`post_key`、`media_key`、`source_order` | key 以 notes CLI 產生／讀回值為準；任一層不能唯一對應就記 `UNKNOWN`，不得以顯示名稱、日期、張數、序號或單一 hash 代替 |
 | Attempt | `attempt_id`、`intent_event_ref`、`outcome_event_ref`、`reconcile_event_refs`、`recovery_of`、`recovery_evidence_ref` | `attempt_id` 以 CLI 結果為準。現行 CLI 的 intent／outcome／reconcile 回傳 payload 不直接提供 event sequence；event ref 由唯讀核對 `events/%08d.json`（例如 `00000001.json`）、記錄 sequence 與該檔 SHA-256 讀回建立。同一 attempt 可多次 reconcile；每次都要新增一筆 `reconcile_event_refs`，保留全部 sequence／event SHA-256 與結果，不用最後一筆覆寫先前歷史。沒有 reconcile 記 `NOT_APPLICABLE`；任何一次無法唯一核對時，該次記 `UNKNOWN`，不得由資料夾、檔名或媒體 hash 反推 |
+| Restart 批次 | `restart_id`、`generation`、`confirmation_ref`、`scope_digest`、`version_directory`、`owner_consent_ref`、`recovery_scan_id`、`prior_attempt_ref`、`activation_ref` | 只在精確 `restart preview`／Owner 明示同意／`restart confirm`／confirm 後完整 recovery scan 路徑使用。`confirmation_ref`、`generation`、`scope_digest`、`version_directory` 與新 attempt 必須對應同一個已確認批次；`owner_consent_ref` 指向當次可核對的 Owner 明示回覆，不能以 Prompt 本身、沉默、逾時或一般「繼續」代替。一般 attempt 或未使用欄位記 `NOT_APPLICABLE`；無法唯一讀回才記 `UNKNOWN`，不得由路徑或檔名猜值。此區塊是私有 statement 欄位，不是新的 CLI schema；傳給 CLI 的仍是既有 v2 `bundle_path` |
 | 目的地 | `original_destination`、`destination_event_refs`、`observed_destination` | 原目的地以 intent 讀回值為準。目的地相關事件可能是 `created`（初始 root）、`destination`（追加 root）或 `intent`（attempt 目的地），各自以事件檔與讀回 hash 引用；`binding` 事件不含目的地。chooser 顯示或實際落點另記，不得反寫原目的地 |
 | 觀察來源 | `observation_id`、`source_kind`、`tool`、`api_scope`、`app_window_binding`、`role_children_ref`、`raw_return_ref`、`scope`、`capture_rect`、`raw_rect`、`image_pixels`、`window_frame`、`window_points`、`scale_factor`、`popup_covered` | 記 AX／app-bound 截圖／桌面局部截圖／Computer Use 回傳／真人觀察，並分開 AX client／API scope、app／window 綁定與 role／children 來源；範圍、原始矩形、實際像素、點數與縮放分開，來源未涵蓋 popup 時不可推論不存在。同一 viewer 的 AX 相同不得推定工具列未變，截圖與 AX 也不能互相補值 |
 | 時間 | `observed_at`、`input_at`、`clock_source`、`timezone`、`precision` | 每個時間都要有來源；不可取得工具時間或可信時鐘時寫 `UNKNOWN`，不以 mtime 冒充操作時間 |
@@ -72,6 +73,17 @@ attempt:
   recovery_evidence_ref: NOT_APPLICABLE or UNKNOWN
   original_destination: UNKNOWN
   destination_event_refs: UNKNOWN
+
+restart:
+  restart_id: NOT_APPLICABLE or UNKNOWN
+  generation: NOT_APPLICABLE or UNKNOWN
+  confirmation_ref: NOT_APPLICABLE or UNKNOWN
+  scope_digest: NOT_APPLICABLE or UNKNOWN
+  version_directory: NOT_APPLICABLE or UNKNOWN
+  owner_consent_ref: NOT_APPLICABLE or UNKNOWN
+  recovery_scan_id: NOT_APPLICABLE or UNKNOWN
+  prior_attempt_ref: NOT_APPLICABLE or UNKNOWN
+  activation_ref: NOT_APPLICABLE or UNKNOWN
 
 observation:
   source_kind: UNKNOWN

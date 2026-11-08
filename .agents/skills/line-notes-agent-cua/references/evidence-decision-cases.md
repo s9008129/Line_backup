@@ -91,3 +91,21 @@
 - **允許動作：** 分開記錄 PathTextField、where／current directory 與 intent staging；輸入或覆寫為本次精確新空白絕對路徑後讀回欄位與目前位置。三者一致且來源貼文／attempt 可歸屬時，才可確認一次；任一不符或 `UNKNOWN` 就停止。
 - **禁止推論：** PathTextField 預填值等於 panel current directory；舊路徑可當本次目的地；空 staging 等於 chooser 未顯示或尚未輸入；同名檔案可建立 attempt 歸屬。
 - **缺少證據：** panel current directory、where 值、PathTextField 真正讀回、intent staging 空白狀態、attempt／viewer 歸屬與確認原始回傳。
+
+## C11 Restart preview 不是 Owner 批次同意
+
+- **前提：** 已有一份完整盤點；帳本含 UNKNOWN、無 outcome、pending 或 `LOCAL_CHANGED`，且 `restart preview` 回報 `RESTART_REQUIRED`。Owner 可能只回「繼續」、沉默或逾時。
+- **觀察（假設）：** preview 列出精確列表、受影響貼文／媒體、已完成 sibling、舊版本位置、新 `versions/gNNNNNNNN/` 目錄、額外空間、缺項與保留項；尚未取得針對這批 scope 的明示同意。
+- **可支持命題：** 只支持存在待確認批次；Prompt 本身、沉默、逾時與一般「繼續」都不是批次同意。沒有確認時舊 UNKNOWN／pending／LOCAL_CHANGED 的保護不變。
+- **允許動作：** 保存 preview 與白話摘要，等待 Owner 對這批範圍明示回覆；同意後以既有 v2 `evidence-pack` bundle（context 為 `list_key` 加 preview 的 `scope.scan_id`）在同一 session 執行 `restart confirm`。confirm 後再完成新的完整 recovery scan，才可逐項 `intent --restart-id`。不新增或手寫 schema。
+- **禁止推論：** 一般「繼續」等於同意；`recovery_authorized`、`dispatch_authorized` 或工具成功等於同意；可以順便擴到另一個列表、貼文、媒體、舊版本或不同目的地；confirm 後可直接重用 confirmation 前的 page rows／舊 scan。
+- **缺少證據：** 當次可核對的 Owner 明示同意引用，以及 confirm 時仍相符的 expected tip／scope digest；沒有這些證據就沒有 restart 授權。
+
+## C12 同一批次再次中斷、範圍漂移與晚到結果
+
+- **前提：** 一個已確認 restart 批次尚未 activation；部分 candidate 已驗證，另有 UNKNOWN／無 outcome 項，或流程中再次失去前景。重新查詢可能得到同一 `restart_id` 的 `OPEN_BATCH`。
+- **觀察（假設）：** 舊 confirmation、candidate、activation、completion 與 UNKNOWN 歷史仍在；新 Session 看見新的 viewer／chooser，舊 chooser 仍可能存在或已被取消；舊 raw 路徑稍後出現寫入。
+- **可支持命題：** 同一已確認 scope 在完成前再次中斷可用 `OPEN_BATCH` 找回，只處理未完成或結果仍不確定的項目。舊歷史不被新結果取代，新 candidate 必須是獨立版本目錄；晚到結果只能回到原 attempt，不能歸給新 attempt。取消舊 chooser 不證明舊寫入已停止。
+- **允許動作：** 依同批 `restart_id` 接續；先確認目前是否有完整 recovery scan，缺失或中斷時依規則重新中斷／盤點。只對未完成項以新 viewer／chooser／空白 staging 建立新 attempt，逐項最多一次派送；全部 candidate 通過後才一次 activation。若 scope、身分、目的地或版本策略改變，停止並重新 preview、取得新的 Owner 明示同意。
+- **禁止推論：** 已確認一次就可無限重送或擴及其他項；再次中斷自動代表舊 UNKNOWN 已停止；取消舊 chooser 等於舊操作終止；晚到檔案屬新 attempt；可重用舊路徑、舊座標或把舊 history 改寫成新版本。
+- **缺少證據：** 真實 GUI 的晚到輸入／chooser、舊寫入停止證據、新 viewer 與 staging 的連續歸屬，以及跨 Session 的實際恢復結果仍 `NOT_RUN`；文件案例不能補成 E2E PASS。

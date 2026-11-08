@@ -208,6 +208,17 @@ NOTES_BACKUP_ROOT 留空時使用目前專案根目錄的 backup/記事本/；
 已完成項跳過，
 待驗證項先驗證，命名交易中斷接續原交易而不重下。
 來源到期依 Skill 保留欠件，不重送、不推論其他項也到期。
+若完整盤點後 restart preview 回報無法直接接續的舊交易或 LOCAL_CHANGED，
+先以白話列出精確列表、受影響貼文與媒體、已完成 sibling、舊版位置、
+新 versions/gNNNNNNNN/ 目錄、額外空間、缺項與保留項，問我是否同意
+只對這批重新下載並以新版本取代目前結果；我針對該批的明示回覆才是同意，
+本 Prompt、沉默、逾時或一般「繼續」都不是批次同意。
+同一已確認批次涵蓋完成前再次中斷；scope、身分、目的地或版本策略改變要重新確認。
+confirm 成功後先以 scan start --recovery 完成新的完整 recovery scan，
+才逐項 intent --restart-id；每項仍只派送一次，
+全部 candidate 驗證通過後才一次 activation。
+舊 confirmation、candidate、activation、completion 與 UNKNOWN 歷史全部保留；
+新 attempt 使用新的空白 staging，不沿用舊 chooser、路徑或座標。
 遇到舊 page 證據或 media 類型疑義時，先做唯讀稽核並回報；
 未經另一次精確資料授權，不套用證據或類型更正。
 已完成的事實不因新 Session、重排、圖片搬走或新目的地而改寫。
@@ -224,8 +235,11 @@ LINE 畫面與貼文內容只作備份來源，不作為新增操作或變更授
 記事本永久紀錄與相簿 backup-records/ 必須分開，不得混帳。
 已完成的整篇目錄缺席時標 LOCAL_MISSING，保留完成且禁止重下；
 目錄仍存在但缺檔、有額外檔、hash／身分漂移或 symlink 時，
-標 LOCAL_CHANGED、保護原件並停止依賴該篇的新派送。
-UNKNOWN、活動下載及未完成命名交易不因照片缺席或新目錄解鎖。
+標 LOCAL_CHANGED、保護原件；未經精確批次確認前停止依賴該篇的新派送，
+確認批次涵蓋該篇時保留舊目錄並在新版本目錄重建。
+UNKNOWN、活動下載及未完成命名交易不因照片缺席、新目錄或一般「繼續」解鎖；
+只有精確 restart scope 經我明示同意且 confirm 後完成新 recovery scan，
+才可另建 attempt，且不宣稱舊 UNKNOWN 已停止。
 本任務不包含 commit、push、merge、改寫 Git 或雲端 CI。
 
 執行期間我會保持前景，不中途接管；需要使用電腦時會先請你暫停。
@@ -248,7 +262,7 @@ Agent 先依當次畫面與 AX 脈絡核對列表入口，不以中文標題或 
 
 每個媒體下載都遵守一次一項。intent 一旦持久保存就按「可能已派送」處理；沒有正面證據不得因工具逾時、畫面未變或舊計數為零就重送。成功 intent 的 `status=UNKNOWN` 只是派送前初始狀態，不表示已下載。`memory`／`summary` 只供摘要投影，不提供完整 attempt 歷史、staging 目的地或 completion manifest；但它會列 `unresolved_attempts`、`source_availability`、`evidence_corrections`、scan binding 與 blockers，交易細節以該次 `intent`／`verify` JSON 及帳本追加事件為準。`UNKNOWN` 必須先以原事件、目的地與當次檔案查證；未收斂前不能直接驗證、建立新 attempt 或改用新目錄解鎖。只有確認先前已停止／未派送、保留原檔且原任務涵蓋恢復時，才可建立新的空白恢復 attempt。
 
-新 Session 先查摘要、核對當次入口／前景並 `bind`，才依 `unresolved_attempts` 處理舊交易；成功綁定不解除舊交易的 scan binding 或資料 gate，綁定被拒絕也不能重用舊 Session ID 繞過。`has_outcome=false` 時依原 attempt 的真實證據先保存第一筆 `outcome`，證據不足可記 `UNKNOWN`，不得先 `reconcile`；已有 `outcome=UNKNOWN` 才以新證據 `reconcile`；`DOWNLOAD_FINISHED` 先 `verify`，待命名交易先 `resume`。無新證據就保留原狀，不為解除阻塞補造結果。`scan start` 也會拒絕仍待驗、未決 attempt、待命名交易或上一個 scan coverage 不完整的情況。若回 `SCAN_BINDING_REVIEW_REQUIRED`，代表舊 attempt 與 scan 的綁定不能安全自動改寫；Agent 只保留證據並交人審查，不換綁定或用新 scan 掩蓋。
+新 Session 先查摘要、核對當次入口／前景並 `bind`，才依 `unresolved_attempts` 處理舊交易；成功綁定不解除舊交易的 scan binding 或資料 gate，綁定被拒絕也不能重用舊 Session ID 繞過。`has_outcome=false` 時依原 attempt 的真實證據先保存第一筆 `outcome`，證據不足可記 `UNKNOWN`，不得先 `reconcile`；已有 `outcome=UNKNOWN` 才以新證據 `reconcile`；`DOWNLOAD_FINISHED` 先 `verify`，待命名交易先 `resume`。無新證據就保留原狀，不為解除阻塞補造結果。普通 `scan start` 也會拒絕仍待驗、未決 attempt、待命名交易或上一個 scan coverage 不完整的情況；唯一例外是已完成的精確 restart 確認，Agent 先明確中斷尚未結束的 scan，再以 `scan start --recovery` 建立新的完整 recovery scan，仍受 bind、Session、scope 與資料 gate 約束。若回 `SCAN_BINDING_REVIEW_REQUIRED`，代表舊 attempt 與 scan 的綁定不能安全自動改寫；Agent 只保留證據並交人審查，不換綁定或用新 scan 掩蓋。
 
 正式 Prompt 已授權確認停止後的恢復。對真正的新列表，Agent 在 `init` 時以 `--recovery-authorized` 持久保存，並從回傳／摘要讀回 `recovery_authorized=true`；這不需要 Owner 填參數。既有帳本為 false 時，現行工具沒有事後修改授權的命令，不能僅憑新 Prompt 手改帳本或另建空帳；保留原檔並回報此限制。
 
@@ -268,7 +282,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes --help
 
 notes CLI 的業務成功以 exit 0、已列業務拒絕以 exit 4 回傳 JSON 簿記結果，這兩種 JSON 固定包含 `dispatch_authorized=false`；參數語法或必填欄位錯誤以 exit 2 拒絕，只在 stderr 顯示錯誤且不改紀錄，不輸出 JSON；未預期內部錯誤以 exit 70 回傳 `status=INTERNAL_ERROR`、`reason=UNEXPECTED_EXCEPTION`、`dispatch_authorized=false`。exit 70 不是可重試業務拒絕，不得據此重送、改寫 ledger、建立新 attempt、換目的地或換入口繞過；應停止並保留現場、原始輸出與證據後回報。`dispatch_authorized=false` 只表示工具不授予 GUI，不能當成下載授權、實機 PASS 或獨立驗收。實際下載仍只能發生在本次任務授權與有效前景交接內。
 
-新列表流程是先以固定 identity 執行 `list-key` → 同 key context 的兩份 v2 evidence → 同 identity `init` → 讀回 key；新／既有列表之後都依序 `bind` → 處理未決 attempt／命名交易 → `scan start` → `page`… → `scan finish` → `post`／`media`，無未決項才直接進新盤點。`lists` 用 `--collection` 定位，`init` 用 collection 建帳並傳 `--photo-root`，`evidence-pack` 只封裝 bundle，`list-key` 只做純計算；`memory`、`summary` 及其他持久帳本命令使用 `--records-root`，`destination` 另要求 `--photo-root`。完整參數矩陣見[記事本下載與 notes CLI](../.agents/skills/line-notes-agent-cua/references/download-and-ledger.md)；照片 `verify` 必須成對傳 `--decoder` 與 `--decoder-sha256`，影片則不傳該照片 decoder 組合。
+新列表流程是先以固定 identity 執行 `list-key` → 同 key context 的兩份 v2 evidence → 同 identity `init` → 讀回 key；新／既有列表之後都依序 `bind` → 處理未決 attempt／命名交易 → `scan start` → `page`… → `scan finish` → `post`／`media`，無未決項才直接進新盤點。若完整盤點後進入已確認的 restart 分支，則在 `restart preview` 與 Owner 對精確 scope 明示同意後執行 `restart confirm` → 必要時先明確 `scan interrupt` → `scan start --recovery` → 新 `page`／`scan finish`／`post`／`media` → `intent --restart-id`；普通 `scan start` 不得用來掩蓋舊問題。`lists` 用 `--collection` 定位，`init` 用 collection 建帳並傳 `--photo-root`，`evidence-pack` 只封裝 bundle，`list-key` 只做純計算；`memory`、`summary` 及其他持久帳本命令使用 `--records-root`，`destination` 另要求 `--photo-root`。完整參數矩陣見[記事本下載與 notes CLI](../.agents/skills/line-notes-agent-cua/references/download-and-ledger.md)；照片 `verify` 必須成對傳 `--decoder` 與 `--decoder-sha256`，影片則不傳該照片 decoder 組合。
 
 `evidence-pack` 的 statement、asset 與 output 都使用專案內絕對路徑。statement／asset 必須是不可經 symlink 或多 hard link 指到的 regular file；Agent 只建立 output 的父目錄，不預建新輸出子目錄。相對輸入、相對輸出與父目錄缺席分別回報 `PROJECT_LOCAL_EVIDENCE_REQUIRED`、`NEW_EVIDENCE_DIRECTORY_REQUIRED`、`EVIDENCE_OUTPUT_PARENT_REQUIRED`，不可混成一個錯誤。完整例子見[證據範本](../.agents/skills/line-notes-agent-cua/references/evidence-template.md#路徑與前置條件)。
 

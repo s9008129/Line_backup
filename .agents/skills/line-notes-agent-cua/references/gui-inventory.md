@@ -100,6 +100,13 @@
 
 若貼文只有文字而沒有任何照片／影片，標記貼文層 `NO_MEDIA`，不做下載 attempt，也不計入六類媒體完成。若看不到完整媒體、viewer 總數與貼文數量矛盾、更多指示無法展開或返回後網格變動，保留該篇待確認；只有列表級覆蓋仍成立時，保護該篇並可繼續其他已核對篇。
 
+### restart 確認後的來源重核
+
+- `restart confirm` 後不得沿用確認前的 page rows、cursor、舊 scan 或舊 viewer 當作新 attempt 的來源證據。必須從頂端到底端重新觀察同一個已確認列表，完成新的完整 recovery scan，才可逐項建立 restart intent。
+- 新 attempt 仍要當次列表→貼文→viewer→下載控制→chooser→精確 raw 目的地的連續證據；使用新的空白 staging、當次 viewer／chooser 與重新取得的定位。舊 handle、舊路徑、舊座標或舊 chooser 都不得重用。
+- 取消或關閉舊 chooser 只代表該次取消輸入；不證明先前的下載、寫入或晚到輸入已停止。舊 raw／舊版本可能仍有晚到 bytes，保留在原區並記錄，不合併到新 candidate，也不據此改寫新版本。
+- 再次中斷後從 `OPEN_BATCH` 找回同一批次時，已驗證 candidate 與歷史仍保留；只對未完成或結果不確定的項目建立新 attempt。scope、來源身分、目的地或版本策略改變時，停止並重新預覽、取得新的 Owner 明示同意。
+
 ## 導覽與輸入紀律
 
 - 每次輸入前確認授權、有效前景、頁面角色、焦點、目標控制項及預期結果；輸入後重新觀察，不以 API 回傳、OS 慣例或舊座標代替畫面證據。

@@ -123,10 +123,10 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 業務完成事實與目前照片區是否可用分開投影：
 
 - `LOCAL_MISSING`：整篇完成目錄不存在。保留 `COMPLETED` 與禁止重下，回報「本機不可用；外部副本未驗證」。不要求外接硬碟在線或歸檔登記，也不因此把 completion 降格。
-- `LOCAL_CHANGED`：目錄仍存在，但有部分缺檔、額外檔、檔名／大小／SHA-256／mtime／ctime 漂移、inode／device 改變、symlink、或 manifest／身分不符。保護原件，停止新派送並回報差異；不重下補帳、不重建空目錄、不手改紀錄。
+- `LOCAL_CHANGED`：目錄仍存在，但有部分缺檔、額外檔、檔名／大小／SHA-256／mtime／ctime 漂移、inode／device 改變、symlink、或 manifest／身分不符。保護原件，scope 外停止新派送並回報差異；只有 fresh `restart preview` 精確列出該篇且 Owner 明示確認該批後，才保留舊目錄並在新 `versions/gNNNNNNNN/` 目錄重建。仍不重下補帳、不原地覆寫、不重建空目錄、不手改紀錄。
 - 目錄讀取權限異常、只有部分目錄可見或不能區分是缺席還是損壞時，不自動歸類為 `LOCAL_MISSING`；先保留阻塞並查證。
 
-`LOCAL_MISSING`／`LOCAL_CHANGED` 都不是六類業務狀態，也不得解除 `UNKNOWN`、活動下載或未完成命名交易。照片區可被 Owner 搬走或整個刪除；帳本、證據與 completion 必須留在照片區外。
+`LOCAL_MISSING`／`LOCAL_CHANGED` 都不是六類業務狀態，也不得自行解除 `UNKNOWN`、活動下載或未完成命名交易；只有精確 restart 批次可在已確認 scope 內以新版本重建 `LOCAL_CHANGED`。照片區可被 Owner 搬走或整個刪除；帳本、證據與 completion 必須留在照片區外。
 
 `memory`／`summary` 的 `local_counts` 固定包含四類：`VERIFIED_PRESENT`、`LOCAL_MISSING`、`LOCAL_CHANGED`、`NOT_APPLICABLE`。回報本機可用性時應完整列示；只有 `LOCAL_MISSING`、`LOCAL_CHANGED` 是本機異常說明，四者都不是六類業務狀態。
 
@@ -136,17 +136,18 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 |---|---|
 | `COMPLETED` 且檔案完整 | 跳過並讀回 completion；不重下 |
 | `COMPLETED` 但整篇目錄缺席 | 保留完成，標 `LOCAL_MISSING`；不重下，不聲稱外部副本已驗證 |
-| 完成目錄存在但部分缺檔／漂移／symlink | 標 `LOCAL_CHANGED`，保護原件，停止新派送 |
+| 完成目錄存在但部分缺檔／漂移／symlink | 標 `LOCAL_CHANGED`，保護原件，scope 外停止新派送；只有 fresh restart preview 精確列出且 Owner 明示確認該批，才保留原檔並在新版本目錄重建 |
 | 已下載完成、尚未 verify | 驗證現有檔案並保存 completion；不重下 |
 | 命名／發布 journal 中斷 | `resume` 同一交易；不重送下載 |
 | `STOPPED`／`NOT_SENT` 且未完成、原授權涵蓋恢復、帳本已持久化 `recovery_authorized=true` 且有充分停止證據 | 保留原檔，依 [下載與 notes CLI](download-and-ledger.md) 以 `intent --recovery-evidence` 建立另一個新空白恢復目錄及新 attempt；授權未持久化或證據不足時停止，已完成項跳過 |
-| 已有 `outcome=UNKNOWN` | 先 `reconcile` 原事件、目的地與當次畫面／檔案；未收斂前不 verify、不重送、不建新 attempt、不派下一項；沒有新資訊就停止相同查證 |
+| 已有 `outcome=UNKNOWN` 或 intent 尚無 outcome | 先以原事件、目的地與當次畫面／檔案查證；已有 outcome 才 `reconcile`，尚無 outcome 先保存第一筆真實結果。未收斂前不 verify、不重送、不建新 attempt、不派下一項；沒有新資訊就停止相同查證。只有 fresh restart preview 精確列出該媒體、Owner 明示確認該批，且 confirm 後完成新的完整 recovery scan，才可 `intent --restart-id`；舊 UNKNOWN／無 outcome 保留，不偽造 STOPPED |
+| `restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH` | Agent 出示精確列表、受影響貼文／媒體、已完成 sibling、舊版位置、新 `versions/gNNNNNNNN/`、額外空間及缺項／保留項；Owner 明示同意該 scope 才可 `restart confirm`。confirm 後以 `scan start --recovery` 完成新的完整 recovery scan，才逐項 `intent --restart-id`。同一已確認 scope 完成前再次中斷可從 `OPEN_BATCH` 找回，只對未完成或結果不確定的項目另建 attempt；scope／身分／目的地／版本策略改變要重新預覽與確認 |
 | 單項來源已明確到期，最新 attempt 為 `STOPPED` | 以精確 attempt context 的 v2 evidence 追加 `source-unavailable`；該項列 `source_availability=EXPIRED`、`resume` 行動為 `SOURCE_UNAVAILABLE`，不建立新 intent、不排除、不計完成。不要推論其他項或把標記當成服務端已回收證明 |
 | `scan_binding_match=false`／`SCAN_BINDING_REVIEW_REQUIRED` | 保留舊 scan、intent 與目的地；不改綁定、不自動新 scan、不另建 attempt。收集最小證據交人工審查 |
 | 缺帳本、索引毀損或多個列表候選 | 保留原件與來源，停止相關寫入；不以空帳、重掃或改名解鎖 |
 | 純文字貼文 | 記貼文層 `NO_MEDIA`，不做下載 attempt |
 
-恢復只涵蓋原任務授權內未完成的項目，不重跑已完成清單，也不擴及另一個列表。新 attempt 的目的地必須是新的空白暫存／恢復目錄；原暫存、部分下載、舊 completion 與 evidence 全留。若原 Prompt 沒有涵蓋恢復、結果仍 UNKNOWN、帳本未持久化恢復授權或工具無法安全調和，停止並提出最小具體問題；不直接修改 ledger 取得授權。
+恢復只涵蓋原任務授權內未完成的項目，不重跑已完成清單，也不擴及另一個列表。新 attempt 的目的地必須是新的空白暫存／恢復目錄；原暫存、部分下載、舊 completion 與 evidence 全留。`STOPPED`／`NOT_SENT` 的 v2 recovery 與精確 restart 批次是兩條不同路徑：前者使用 `intent --recovery-evidence`，需要已持久化 `recovery_authorized=true` 與充分停止證據；後者需要 fresh preview、Owner 對精確 scope 的明示同意、`restart confirm`，以及 confirm 後新的完整 `scan start --recovery`。一般日常恢復授權、沉默、逾時或「繼續」都不是批次同意，`recovery_authorized` 也不能代替它。同一已確認批次涵蓋完成前再次中斷；scope、身分、目的地或版本策略改變須重新確認。即使有批次同意，也不宣稱舊 UNKNOWN 已停止；只有全部 candidate 驗證通過並 activation 後，新版本才成為目前結果。若原 Prompt 沒有涵蓋恢復、結果仍 UNKNOWN、帳本未持久化恢復授權或工具無法安全調和，停止並提出最小具體問題；不直接修改 ledger 取得授權。
 
 ## 合成測試與真實 GUI 的證據界限
 
