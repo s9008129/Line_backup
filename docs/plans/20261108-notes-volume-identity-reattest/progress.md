@@ -145,3 +145,23 @@ REQUIRED_VERIFICATION_STATUS: PASS_THREE_S1_CHECKS; FULL_REGRESSION_AND_REAL_ENV
 INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
 TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_OWNER_START_OF_IMPLEMENTATION_SIMPLICITY_REVIEW
 ```
+
+
+## 2026-11-09 Planner：修正環境附屬項檢查邊界（v3 待核准）
+
+Owner 指定 01 Planner，承接 b635218 的根因報告，只改舊計畫的檢查邊界與防再發驗證。起始主 worktree 在 feature/line-notes-media，HEAD b635218da3ba4dbcfe563897e0d94515fe713414，Git 乾淨，即時遠端相同；沒有借用開發角色操作真實資料。
+
+原 v2 把完整媒體檢查擴為整個容器不得有未登錄名稱，並明訂拒絕 .DS_Store。v3 改成先保護媒體、交易與目標碰撞，再排除有界的環境項；只界定未引用的精確 .DS_Store regular file、nlink=1，不泛指 dotfile。範圍涵蓋 reattest、完成／active、intent、inventory、普通／restart 發布與收尾，保留只剩附屬檔的 staging，避免假 pending；產品尚未實作。
+
+同角色唯讀助手協助找 gate／現成測試，未授予正式接受。新增 V1–V9、F1／F2 及精確可寫路徑；既有每帳本一次、原 OPEN_BATCH、fresh scan、UNKNOWN 禁止重送及 Owner 已接受的 v2 trust／clone 風險保留。舊報告與 review 不改；v3 不自動承接舊 PASS。
+
+本輪更新 plan／handoff，新增 planner-boundary-revision-report.md，本 progress 只追加；其餘 tracked bytes 以私有基準核對。來源、文件與交付證據在 .local/line-backup/tasks/notes-environment-boundary-plan-20261109/。未重跑 preview，未執行產品回歸、解碼、LINE、真實帳本或接續；未刪除附屬檔。下一步是 Owner 決定 v3 與適用重審，核准及必要關卡完成後交 04；本角色交付即停。
+
+```text
+PRIMARY_OUTCOME_STATUS: PLAN_DRAFT_COMPLETE
+IMPLEMENTATION_STATUS: NO_PRODUCT_CHANGES_THIS_ROLE; BOUNDARY_FIX_NOT_IMPLEMENTED
+CORE_ACCEPTANCE_STATUS: NOT_RUN; ORIGINAL_SECOND_VIDEO_NOT_RESUMED
+REQUIRED_VERIFICATION_STATUS: PASS_DOCUMENT_CHECKS_ONLY; V1_V9_NOT_RUN
+INDEPENDENT_ACCEPTANCE_STATUS: NOT_RUN
+TASK_CLOSURE_STATUS: NOT_DONE; AWAITING_V3_APPROVAL_AND_APPLICABLE_REVIEWS
+```
